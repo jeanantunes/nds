@@ -4,12 +4,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class FechamentoFisicoLogicoDTO {
@@ -152,20 +150,8 @@ public class FechamentoFisicoLogicoDTO {
 	}
 
 	public void setDataRecolhimento(Date dataRecolhimento) {
-		
-		  Date dataAtual = DateUtil.removerTimestamp(new Date());
-		  if ("P".equals(this.getTipo())){
-			  estoque= TipoEstoque.LANCAMENTO.getDescricao();
-		  }else if ( dataAtual.compareTo(DateUtil.removerTimestamp(dataRecolhimento)) > 0 ){
-			  estoque= TipoEstoque.SUPLEMENTAR.getDescricao();
-		  } else {
-			  estoque= "Encalhe";
-		  }
-		
 		this.dataRecolhimento = dataRecolhimento;
 	}
-
-	
 	
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
@@ -175,9 +161,11 @@ public class FechamentoFisicoLogicoDTO {
 	public String getTipo() {
 		return tipo;
 	}
-
-
-
+	
+	public void setEstoque(String estoque) {
+		this.estoque = estoque;
+	}
+	
 	public String getEstoque() {
 		return estoque;
 	}

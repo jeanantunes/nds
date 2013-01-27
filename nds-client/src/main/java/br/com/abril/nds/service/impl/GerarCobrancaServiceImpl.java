@@ -187,7 +187,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 	private void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		Date dataOperacao = this.distribuidorRepository.obterDatatOperacaoDistribuidor();
 		
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
 		this.cancelarDividaCobranca(null, idCota);
@@ -251,7 +251,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					if (!movimentoFinanceiroCota.getCota().equals(ultimaCota)){
 						
 						if (this.chamadaEncalheCotaRepository.obterQtdListaChamaEncalheCota(ultimaCota.getNumeroCota(), 
-								distribuidor.getDataOperacao(), null, false, false, false) <= 0){
+								dataOperacao, null, false, false, false) <= 0){
 							
 							continue;
 						}
@@ -282,7 +282,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(), politicaPrincipal.isAcumulaDivida(), idUsuario, 
 							tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
 							politicaPrincipal.getNumeroDiasNovaCobranca(),
-							distribuidor, msgs, ultimoFornecedor);
+							dataOperacao, msgs, ultimoFornecedor);
 					
 					if (nossoNumero != null){
 						
@@ -317,7 +317,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
 					politicaPrincipal.isAcumulaDivida(), idUsuario, 
 					tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-					politicaPrincipal.getNumeroDiasNovaCobranca(), distribuidor, msgs, ultimoFornecedor);
+					politicaPrincipal.getNumeroDiasNovaCobranca(), dataOperacao, msgs, ultimoFornecedor);
 			
 			if (nossoNumero != null){
 				
@@ -500,12 +500,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	}
 	
 	private String inserirConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos, BigDecimal valorMininoDistribuidor,
-			boolean acumulaDivida, Long idUsuario, TipoCobranca tipoCobranca, int qtdDiasNovaCobranca, Distribuidor distribuidor, List<String> msgs,
+			boolean acumulaDivida, Long idUsuario, TipoCobranca tipoCobranca, int qtdDiasNovaCobranca, Date dataOperacao, List<String> msgs,
 			Fornecedor fornecedor){
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
 		consolidadoFinanceiroCota.setCota(cota);
-		consolidadoFinanceiroCota.setDataConsolidado(distribuidor.getDataOperacao());
+		consolidadoFinanceiroCota.setDataConsolidado(dataOperacao);
 		consolidadoFinanceiroCota.setMovimentos(movimentos);
 		consolidadoFinanceiroCota.setPendente(this.obterValorPendenteCobrancaConsolidado(cota.getNumeroCota()));
 		
@@ -796,7 +796,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							this.cobrancaService.calcularJuros(
 									null,
 									cota,
-									distribuidor,
 									vlMovFinanTotal.add(novaDivida.getValor()).subtract(valorMulta), 
 									divida.getCobranca().getDataVencimento(),
 									new Date());
@@ -854,7 +853,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			String descPostergado = null;
 			
 			if (diasSemanaConcentracaoPagamento != null && 
-					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_MONTH))){
+					!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
 				
 				descPostergado = "Não existe acúmulo de pagamento para este dia (" + 
 						new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
@@ -915,13 +914,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setDataVencimento(dataVencimento);
 			cobranca.setVias(0);
 			
+			Banco banco = formaCobrancaPrincipal.getBanco();
+			
 			cobranca.setNossoNumero(
 					Util.gerarNossoNumero(
 							cota.getNumeroCota(), 
 							cobranca.getDataEmissao(), 
-							formaCobrancaPrincipal.getBanco().getNumeroBanco(),
+							banco.getNumeroBanco(),
 							fornecedor != null ? fornecedor.getId() : null,
-							movimentos.get(0).getId()
+							movimentos.get(0).getId(),
+							banco.getAgencia(),
+							banco.getConta(),
+							banco.getCarteira()
 							));
 			
 			cobranca.setValor(novaDivida.getValor());

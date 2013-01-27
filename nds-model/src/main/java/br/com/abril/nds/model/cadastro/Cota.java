@@ -175,6 +175,11 @@ public class Cota implements Serializable {
         this.inicioTitularidade = new Date();
     }
 	
+	
+	public Cota(Long id) {
+		this.id = id;
+	}
+
 	public Set<HistoricoNumeroCota> getHistoricoNumeroCota() {
 		return historicoNumeroCota;
 	}
@@ -491,7 +496,7 @@ public class Cota implements Serializable {
         this.titularesCota = titularesCota;
     }
     
-    /**
+	/**
      * Adiciona um novo histórico de titularidade da cota
      * 
      * @param titularCota
@@ -538,5 +543,6 @@ public class Cota implements Serializable {
 		}
 		return null;
 	}
+
 
 }

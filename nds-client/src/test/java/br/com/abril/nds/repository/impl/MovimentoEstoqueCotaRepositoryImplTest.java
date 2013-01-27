@@ -3292,7 +3292,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		this.setupFinanceiroReparteEncalhe();
 		
-		List<MovimentoEstoqueCota> movimentos = this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId());
+		List<MovimentoEstoqueCota> movimentos = 
+				this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
+						cotaValdomiro.getId(),
+						Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		
         Assert.assertNotNull(movimentos);
 		
@@ -3333,6 +3336,16 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
         Assert.assertNotNull(total);
 		
         Assert.assertEquals(0,total.compareTo(new BigDecimal(300)));
+	}
+	
+	
+	@Test
+	public void testObterListaMovimentoEstoqueCotaDevolucaoJuramentada() {
+		
+		Date dataOperacao = Fixture.criarData(10, Calendar.JANUARY, 2012);
+		
+		movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaDevolucaoJuramentada(dataOperacao);
+		
 	}
 	
 

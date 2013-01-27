@@ -321,6 +321,9 @@ public class DataLoader {
 	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFDevolucaoConsignado;
 	private static TipoMovimentoEstoque tipoMovimentoCancelamentoNFEnvioConsignado;
 	
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado;
+	private static TipoMovimentoEstoque tipoMovimentoEstoqueEnvioJornaleiroJuramentado;
+	
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroCredito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebito;
 	private static TipoMovimentoFinanceiro tipoMovimentoFinanceiroDebitoNA;
@@ -2518,67 +2521,67 @@ public class DataLoader {
 
 		List<TipoGeradorFluxoPDV> listaTipoGeradorFluxoPDV = new ArrayList<TipoGeradorFluxoPDV>();
 
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Pre-Escola"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Escola 1 e 2 Grau Particular"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Escola 1 e 2 Grau Publica"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Cursinho"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Superior"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Curso de Lingua"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Curso de Informatica"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Escola de Arte"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Faculdades/Universidades"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Estação de Metro"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Ferroviaria"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Rodoviaria"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Pontos de Onibus"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Terminais de Onibus"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Corredores de Transito"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Padarias"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Lanchonete e Bares"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Restaurantes"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Shopping Center"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Centro Comercial"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Supermercado e Hipermercado"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Convivencia"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Feira Livre"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Mercado Municipal"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Varejão/Sacola"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Parques"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Praia"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Estadio"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Biblioteca"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Clube"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Livraria"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Teatro"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Cinema"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Video Locadora"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Motel"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Centro de Convenções"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Hotel"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Agencia de Turismo"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Aeroporto"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Banco"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Repartição Publica"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Posto de Gasolina"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Igreja"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Empresa/Industria/Escritorio"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Material Esportivo"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Academia de Ginastica/Esportes"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Decoração"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Material de Construção"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Bazares"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Armarinhos"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Farmacias e Drogarias"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Lab. Clinicos/Consultorios"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Hospital"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja p/ Materias de Jardinagem"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Plantas/Floriculturas"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Lojas de Animais"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Clinica Veterinaria"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Disco"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Loja de Instrumentos Musicais"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Escola de Musica"));
-		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(null, "Casas, Aptos e Condominios"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(1l, "Pre-Escola"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(2l, "Escola 1 e 2 Grau Particular"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(3l, "Escola 1 e 2 Grau Publica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(4l, "Cursinho"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(5l, "Superior"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(6l, "Curso de Lingua"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(7l, "Curso de Informatica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(8l, "Escola de Arte"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(9l, "Faculdades/Universidades"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(10l, "Estação de Metro"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(11l, "Ferroviaria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(12l, "Rodoviaria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(13l, "Pontos de Onibus"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(14l, "Terminais de Onibus"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(15l, "Corredores de Transito"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(16l, "Padarias"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(17l, "Lanchonete e Bares"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(18l, "Restaurantes"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(19l, "Shopping Center"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(20l, "Centro Comercial"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(21l, "Supermercado e Hipermercado"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(22l, "Loja de Convivencia"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(23l, "Feira Livre"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(24l, "Mercado Municipal"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(25l, "Varejão/Sacola"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(26l, "Parques"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(27l, "Praia"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(28l, "Estadio"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(29l, "Biblioteca"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(30l, "Clube"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(31l, "Livraria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(32l, "Teatro"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(33l, "Cinema"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(34l, "Video Locadora"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(35l, "Motel"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(36l, "Centro de Convenções"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(37l, "Hotel"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(38l, "Agencia de Turismo"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(39l, "Aeroporto"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(40l, "Banco"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(41l, "Repartição Publica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(42l, "Posto de Gasolina"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(43l, "Igreja"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(44l, "Empresa/Industria/Escritorio"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(45l, "Loja de Material Esportivo"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(46l, "Academia de Ginastica/Esportes"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(47l, "Loja de Decoração"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(48l, "Loja de Material de Construção"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(49l, "Bazares"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(50l, "Loja de Armarinhos"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(51l, "Farmacias e Drogarias"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(52l, "Lab. Clinicos/Consultorios"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(53l, "Hospital"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(54l, "Loja p/ Materias de Jardinagem"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(55l, "Loja de Plantas/Floriculturas"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(56l, "Lojas de Animais"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(57l, "Clinica Veterinaria"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(58l, "Loja de Disco"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(59l, "Loja de Instrumentos Musicais"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(60l, "Escola de Musica"));
+		listaTipoGeradorFluxoPDV.add(Fixture.criarTipoGeradorFluxoPDV(61l, "Casas, Aptos e Condominios"));
 
 		Long contador = 0L;
 		
@@ -2586,7 +2589,7 @@ public class DataLoader {
 			
 			contador++;
 			
-			tipo.setId(contador);
+			tipo.setCodigo(contador);
 			
 			save(session, tipo);
 		}
@@ -5605,35 +5608,35 @@ public class DataLoader {
 
 
 		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(distribuidor, formaBoletoDistribuidor, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(distribuidor, formaBoletoDistribuidor, true, true, true, "Assunto","Mansagem",true,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca2 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor2, true, true, true, "Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca3 =
-				Fixture.criarPoliticaCobranca(null, formaDinheiroDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaDinheiroDistribuidor, true, true, true, "Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca4 =
-				Fixture.criarPoliticaCobranca(null, formaTransferenciBancariaDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaTransferenciBancariaDistribuidor, true, true, true, "Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca5 =
-				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_BOX);
+				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor, true, true, true, "Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_BOX);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca6 =
-				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor3, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
+				Fixture.criarPoliticaCobranca(null, formaBoletoDistribuidor3, true, true, true, "Assunto","Mansagem",false,FormaEmissao.INDIVIDUAL_AGREGADA);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca7 =
-				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor2, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaDepositoDistribuidor2, true, true, true, "Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaCobranca politicaCobranca8 =
-				Fixture.criarPoliticaCobranca(null, formaChequeDistribuidor, true, true, true, 1,"Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
+				Fixture.criarPoliticaCobranca(null, formaChequeDistribuidor, true, true, true, "Assunto","Mansagem",false,FormaEmissao.NAO_IMPRIME);
 			save(session, politicaCobranca);
 
 		PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
@@ -6136,11 +6139,15 @@ public class DataLoader {
 		tipoMovimentoEstoqueEstornoCompraSuplementar = Fixture.tipoMovimentoEstornoCompraSuplementar();
 
 		tipoMovimentoFinanceiroCompraEncalhe = Fixture.tipoMovimentoFinanceiroCompraEncalhe();
+		
+		tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado = Fixture.tipoMovimentoRecebimentoJornaleiroJuramentado();
+		tipoMovimentoEstoqueEnvioJornaleiroJuramentado = Fixture.tipoMovimentoEnvioJornaleiroJuramentado();
+
 
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
 					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
-					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao);
-
+					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao,
+					  tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado, tipoMovimentoEstoqueEnvioJornaleiroJuramentado);
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
 		
@@ -6174,9 +6181,8 @@ public class DataLoader {
 		tipoMovimentoFinanceiroDebitoPostergado = Fixture.tipoMovimentoFinanceiroDebitoPostergado();
 		tipoMovimentoFinanceiroCreditoPostergado = Fixture.tipoMovimentoFinanceiroCreditoPostergado();
 		tipoMovimentoFinanceiroDebitoPostergadoNegociado = Fixture.tipoMovimentoFinanceiroDebitoPostergadoNegociado();
-		
-
 		tipoMovimentoEnvioJornaleiro = Fixture.tipoMovimentoEnvioJornaleiro();
+		
 
 		save(session, tipoMovimentoEnvioJornaleiro,
 				tipoMovimentoEstornoCotaAusente,tipoMovimentoFinanceiroDebitoPostergadoNegociado,
@@ -6202,6 +6208,7 @@ public class DataLoader {
 		tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor = Fixture.tipoMovimentoTransferenciaSaidaProdutosDevolucaoFornecedor();
 		tipoMovimentoDevolucaoEncalheFornecedor = Fixture.tipoMovimentoDevolucaoEncalheFornecedor();
 		tipoMovimentoFinanceiroVendaTotal = Fixture.tipoMovimentoFinanceiroVendaTotal();
+		
 		
 		save(session, tipoMovimentoFaltaEm, tipoMovimentoFaltaDe, tipoMovimentoSuplementarCotaAusente,
 				tipoMovimentoSobraEm, tipoMovimentoSobraDe,

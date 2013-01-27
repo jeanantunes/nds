@@ -31,18 +31,21 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" endereco.bairro as bairro, "); // BAIRRO
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
-        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia "); // AREA DE INFLUÊNCIA
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
         
         if(obterFaturamento){
-        	hql.append(" , sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL
+        	hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL
         	hql.append(" FROM EstoqueProdutoCota as estoqueProdutoCota ");
         	hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
         	hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
         }else{
-        	hql.append(" FROM Cota as cota ");       	
+        	hql.append(" cotaBase.dataInicio as dataInicial, "); // DATA INICIAL
+        	hql.append(" cotaBase.dataFim as dataFinal "); // DATA INICIAL
+        	hql.append(" FROM CotaBaseCota as cotaBaseCota ");
+        	hql.append(" JOIN cotaBaseCota.cota as cota ");
+        	hql.append(" JOIN cotaBaseCota.cotaBase as cotaBase ");
         }
         
-        // FROM
         hql.append(" left join cota.enderecos as cotaEndereco ");
         hql.append(" left join cota.pessoa as pessoa ");
         hql.append(" left join cotaEndereco.endereco as endereco ");
@@ -88,8 +91,9 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL
         
         // FROM
-        hql.append(" FROM CotaBase as cotaBase ");
-        hql.append(" left join cotaBase.cotas as cota ");
+        hql.append(" FROM CotaBaseCota as cotaBaseCota ");        
+        hql.append(" left join cotaBaseCota.cota as cota ");
+        hql.append(" left join cotaBaseCota.cotaBase as cotaBase ");
         hql.append(" left join cota.estoqueProdutoCotas as estoqueProdutoCota ");
         hql.append(" left join estoqueProdutoCota.produtoEdicao as produtoEdicao ");        
         hql.append(" left join cota.enderecos as cotaEndereco ");

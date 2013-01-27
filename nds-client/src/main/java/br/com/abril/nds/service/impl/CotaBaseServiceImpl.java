@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.repository.CotaBaseRepository;
 import br.com.abril.nds.service.CotaBaseService;
 
@@ -28,6 +29,12 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 	@Transactional
 	public List<CotaBaseDTO> obterCotasBases(Cota cotaNova) {
 		return cotaBaseRepository.obterCotasBases(cotaNova);
+	}
+
+	@Override
+	@Transactional
+	public void salvar(CotaBase cotaBase) {
+		this.cotaBaseRepository.adicionar(cotaBase); 
 	}
 
 }

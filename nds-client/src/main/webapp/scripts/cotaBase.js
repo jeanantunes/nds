@@ -683,7 +683,6 @@ var cotaBaseController = $.extend(true, {
 	},		
 	
 	confirmarPeso : function () {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
@@ -693,7 +692,38 @@ var cotaBaseController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					var dto = [];
+					var input = $("#numeroCotaGrid0").val();
+					if(input){
+						dto.push({name:'numerosDeCotasBase', value: input});
+					}
+					input = $("#numeroCotaGrid1").val();
+					if(input){
+						dto.push({name:'numerosDeCotasBase', value: input});
+					}
+					input = $("#numeroCotaGrid2").val();
+					if(input){
+						dto.push({name:'numerosDeCotasBase', value: input});
+					}
+					dto.push({name : 'idCotaNova' , value : $("#idCota").val()});
+					dto.push({name : 'indiceAjuste' , value : $("#indiceAjuste").val()});
+					
+					
+					$.postJSON(contextPath + "/cadastro/cotaBase/confirmarCotasBase",
+							dto, 
+							function(result){
+								//função para sucess
+			 				}, function(result){
+								//Verifica mensagens de erro do retorno da chamada ao controller.
+								if (result.mensagens) {
+									exibirMensagemDialog(
+											result.mensagens.tipoMensagem, 
+											result.mensagens.listaMensagens,""
+									);
+								}
+							}, true,null
+					);
+					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -837,6 +867,10 @@ var cotaBaseController = $.extend(true, {
 		$("#geradorFluxo", cotaBaseController.workspace).val(result.geradorDeFluxo);
 		
 		$("#areaInfluencia", cotaBaseController.workspace).val(result.areaInfluencia);
+		
+		$("#periodoDe", cotaBaseController.workspace).val(result.dataInicial);
+		
+		$("#periodoAte", cotaBaseController.workspace).val(result.dataFinal);
 		
 		if (successCallBack) {
 			

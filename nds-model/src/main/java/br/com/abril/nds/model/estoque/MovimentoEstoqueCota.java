@@ -16,7 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -70,16 +70,12 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
-    
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false)
-	private Lancamento lancamentoProdutoEdicao;
-	
-	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
-	private List<ItemNotaEnvio> listaItemNotaEnvio;
 
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
+	
+	@ManyToMany(mappedBy="movimentos")
+	private List<MovimentoFinanceiroCota> movimentoFinanceiroCota;
 	
 	public Object clone() {
 
@@ -93,10 +89,8 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setDataIntegracao(this.getDataIntegracao());
 		mec.setEstoqueProdutoCota(this.getEstoqueProdutoCota());
 		mec.setEstoqueProdutoCotaJuramentado(this.getEstoqueProdutoCotaJuramentado());
-		//mec.setEstudoCota(this.getEstudoCota());
 		mec.setLancamento(this.getLancamento());
 		mec.setListaConferenciasEncalhe(this.getListaConferenciasEncalhe());
-		mec.setListaItemNotaEnvio(this.getListaItemNotaEnvio());
 		mec.setListaProdutoServicos(this.getListaProdutoServicos());
 		mec.setMotivo(this.getMotivo());
 		mec.setProdutoEdicao(this.getProdutoEdicao());
@@ -198,20 +192,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.lancamento = lancamento;
 	}
 
-	/**
-	 * @return the listaItemNotaEnvio
-	 */
-	public List<ItemNotaEnvio> getListaItemNotaEnvio() {
-		return listaItemNotaEnvio;
-	}
-
-	/**
-	 * @param listaItemNotaEnvio the listaItemNotaEnvio to set
-	 */
-	public void setListaItemNotaEnvio(List<ItemNotaEnvio> listaItemNotaEnvio) {
-		this.listaItemNotaEnvio = listaItemNotaEnvio;
-	}
-
 	public EstoqueProdutoCotaJuramentado getEstoqueProdutoCotaJuramentado() {
 		return estoqueProdutoCotaJuramentado;
 	}
@@ -236,6 +216,21 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 
 	public void setDataLancamentoOriginal(Date dataLancamentoOriginal) {
 		this.dataLancamentoOriginal = dataLancamentoOriginal;
+	}
+
+	/**
+	 * @return the movimentoFinanceiroCota
+	 */
+	public List<MovimentoFinanceiroCota> getMovimentoFinanceiroCota() {
+		return movimentoFinanceiroCota;
+	}
+
+	/**
+	 * @param movimentoFinanceiroCota the movimentoFinanceiroCota to set
+	 */
+	public void setMovimentoFinanceiroCota(
+		List<MovimentoFinanceiroCota> movimentoFinanceiroCota) {
+		this.movimentoFinanceiroCota = movimentoFinanceiroCota;
 	}
 	
 }

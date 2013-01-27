@@ -116,6 +116,7 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.HistoricoTitularidadeService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -126,9 +127,6 @@ import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.stella.validation.CNPJValidator;
-import br.com.caelum.stella.validation.CPFValidator;
-import br.com.caelum.stella.validation.InvalidStateException;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -232,6 +230,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private SocioCotaRepository socioCotaRepository;
+	
+	@Autowired
+	private PessoaService pessoaService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1295,6 +1296,8 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 	
+	
+	
 	/**
 	 * Valida o formato das inforamções referente ao cadastro de uma cota
 	 * @param cotaDto
@@ -1303,24 +1306,12 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(TipoPessoa.JURIDICA.equals(cotaDto.getTipoPessoa())){
 			
-			CNPJValidator cnpjValidator = new CNPJValidator(true);
-			try{
-				cnpjValidator.assertValid(cotaDto.getNumeroCnpj());
-				
-			}catch(InvalidStateException e){
-				throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CNPJ] está inválido!");
-			}
+			this.pessoaService.validarCNPJ(cotaDto.getNumeroCnpj());
 		}
 		
 		if(TipoPessoa.FISICA.equals(cotaDto.getTipoPessoa())){
 			
-			CPFValidator cpfValidator = new CPFValidator(true);
-			try{
-				cpfValidator.assertValid(cotaDto.getNumeroCPF());
-				
-			}catch(InvalidStateException e){
-				throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CPF] está inválido!");
-			}
+			this.pessoaService.validarCPF(cotaDto.getNumeroCPF());
 		}
 		
 		if( cotaDto.getEmail()!= null && !cotaDto.getEmail().isEmpty() && !Util.validarEmail(cotaDto.getEmail())){
@@ -2012,7 +2003,7 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
 		cotaNova.setTitularesCota(titularesCota);
 		cotaNova.setSituacaoCadastro(SituacaoCadastro.ATIVO);
-
+		
 		this.cotaRepository.merge(cotaNova);
 		processarTitularidadeCota(cotaAntiga, cotaDTO);
 		

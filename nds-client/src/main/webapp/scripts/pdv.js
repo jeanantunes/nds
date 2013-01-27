@@ -69,8 +69,7 @@ var PDV =  $.extend(true, {
 			$('#inicioHorario', this.workspace).mask('99:99'); 
 			$('#fimHorario', this.workspace).mask('99:99'); 
 			$("#porcentagemFaturamento", this.workspace).numeric();
-			$("#qntFuncionarios", this.workspace).numeric();
-			$("#numerolicenca", this.workspace).numeric();	
+			$("#qntFuncionarios", this.workspace).numeric();	
 			
 			var options = {
 					success: PDV.tratarRetornoUploadImagem

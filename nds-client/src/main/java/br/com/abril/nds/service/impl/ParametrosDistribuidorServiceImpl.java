@@ -678,9 +678,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		parametrosAprovacaoDistribuidor.setAjusteEstoque(parametrosDistribuidor.getAjusteEstoque());
 		
-		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
-				 					 		this.getGruposMovimentoEstoqueAjusteEstoque(),
-				 					 		!parametrosDistribuidor.getAjusteEstoque());
+//		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
+//		  	  Tratar futuramente, como será utilizado o parametro de ajuste.
+//		
+//		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+//				 					 		this.getGruposMovimentoEstoqueAjusteEstoque(),
+//				 					 		!parametrosDistribuidor.getAjusteEstoque());
 		
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(parametrosDistribuidor.getPostergacaoCobranca());
 		
@@ -787,15 +790,16 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					"Não é possível não utilizar controle de aprovação para negociação. Existem movimentos pendentes!");
 			}
 		}
-
-		if (!parametrosDistribuidor.getAjusteEstoque()) {
-			if (this.movimentoRepository
-					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueAjusteEstoque())) {
-
-				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para ajuste de estoque. Existem movimentos pendentes!");
-			}
-		}
+//		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
+//			  Tratar futuramente, como será utilizado o parametro de ajuste.
+//		if (!parametrosDistribuidor.getAjusteEstoque()) {
+//			if (this.movimentoRepository
+//					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueAjusteEstoque())) {
+//
+//				mensagens.add(
+//					"Não é possível não utilizar controle de aprovação para ajuste de estoque. Existem movimentos pendentes!");
+//			}
+//		}
 
 		if (!parametrosDistribuidor.getPostergacaoCobranca()) {
 			if (this.movimentoRepository

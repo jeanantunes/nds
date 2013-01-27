@@ -26,7 +26,7 @@ public class ParcialDTO implements Serializable{
 	private String dataRecolhimento;
 	@Export(label = "Código", alignment=Alignment.LEFT)
 	private String codigoProduto;
-	@Export(label = "Produto", alignment=Alignment.LEFT)
+	@Export(label = "Produto", alignment=Alignment.LEFT, widthPercent=30)
 	private String nomeProduto;
 	@Export(label = "Edição", alignment=Alignment.LEFT)
 	private Integer numEdicao;
