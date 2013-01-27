@@ -3,6 +3,9 @@ package br.com.abril.nds.dto;
 import java.util.Date;
 
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 /**
  * @author InfoA2 - Samuel Mendes
@@ -11,14 +14,23 @@ import br.com.abril.nds.util.DateUtil;
  *         "Segmentos Que Não Recebem Cota" no menu Distribuição > Segmento Não
  *         Recebido</h1>
  */
+@Exportable
 public class SegmentoNaoRecebeCotaDTO {
 
-	private Long idTipoSegmento;
+	private Long segmentoNaoRecebidoId;
+	
+	@Export(label = "Segmento", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String nomeSegmento;
+	
+	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeUsuario;
 
 	private Date dataAlteracao;
+	
+	@Export(label = "Data Alteração", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private String dataAlteracaoFormatada;
+	
+	@Export(label = "Hora Alteração", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private String horaAlteracaoFormatada;
 
 	public String getNomeSegmento() {
@@ -55,11 +67,14 @@ public class SegmentoNaoRecebeCotaDTO {
 		return horaAlteracaoFormatada;
 	}
 
-	public Long getIdTipoSegmento() {
-		return idTipoSegmento;
+	public Long getSegmentoNaoRecebidoId() {
+		return segmentoNaoRecebidoId;
 	}
 
-	public void setIdTipoSegmento(Long idTipoSegmento) {
-		this.idTipoSegmento = idTipoSegmento;
+	public void setSegmentoNaoRecebidoId(Long segmentoNaoRecebidoId) {
+		this.segmentoNaoRecebidoId = segmentoNaoRecebidoId;
 	}
+
+	
+	
 }

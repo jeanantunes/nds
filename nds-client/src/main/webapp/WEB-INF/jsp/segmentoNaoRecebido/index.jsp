@@ -1,6 +1,9 @@
 <head>
-	<script type="text/javascript" src="scripts/segmentoNaoRecebido.js"/>
+	<script type="text/javascript" src="scripts/segmentoNaoRecebido.js" /></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script language="javascript" type="text/javascript">
+		var pesquisaCota = new PesquisaCota();
+	
 		$(function() {
 			segmentoNaoRecebidoController.init();
 		});
@@ -13,7 +16,8 @@
 </div>
 
 <div id="dialog-novo" title="Novo Segmento">
-	<fieldset style="width:600px!important;">
+	<p>Confirma a inclusão do(s) Segmento(s)?</p>
+	<!-- <fieldset style="width:600px!important;">
     	<legend>Pesquisar Banca</legend>
         <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		  <tr>
@@ -24,7 +28,7 @@
 		    <td width="98"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
 		  </tr>
 		</table>
-	</fieldset>
+	</fieldset> -->
 </div>
 
 <div class="corpo">
@@ -84,9 +88,14 @@
         <table width="756" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
             <tr>
            	  <td width="31">Cota:</td>
-                <td width="90"><input type="text" name="textfield" id="numeroCotaFiltro1" style="width:80px;"/></td>
+                <td width="90">
+                	<input onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCotaFiltro1','#nomeCotaFiltro1');" type="text" name="textfield" id="numeroCotaFiltro1" style="width:80px;"/>
+                </td>
                 <td width="40">Nome:</td>
-                <td width="465"><input type="text" name="textfield2" id="nomeCotaFiltro1" style="width:200px;"/></td>
+                <td width="465">
+                	<input type="text" name="textfield2" id="nomeCotaFiltro1"
+                		onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCotaFiltro1')" style="width:200px;"/>
+                </td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="segmentoNaoRecebidoController.porCota();">Pesquisar</a></span></td>
             </tr>
           </table>
@@ -107,9 +116,9 @@
         	<table class="segmentoNaoRecebidaGrid"></table>
             
             
-            <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+            <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=XLS&tipoExportacao=cotas_nao_recebem_segmento" ><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
             
-            <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+            <span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=cotas_nao_recebem_segmento"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
             
             <span class="bt_novos" title="Exceções Segmentos e Parciais"><a href="tratamento_excessao.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" hspace="5" border="0" />Exceções Segmentos e Parciais</a></span>
       
@@ -122,7 +131,10 @@
        	  <table width="275" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="33">Cota:</td>
-       	      <td width="41"><input type="text" id="numeroCotaFiltro2" style="width:40px;"/></td>
+       	      <td width="41">
+       	      	<input type="text" id="numeroCotaFiltro2" 
+       	      	onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCotaFiltro2','#nomeCotaFiltro2');" style="width:40px;"/>
+       	      </td>
               <td width="41">Nome:</td>
        	      <td width="115"><input type="text" id="nomeCotaFiltro2" style="width:140px;"/></td>
               <td width="19"><span class="classPesquisar"><a href="javascript:;" onclick="segmentoNaoRecebidoController.pesquisarCotasNaoEstaoNoSegmento()">&nbsp;</a></span></td>
@@ -145,9 +157,9 @@
         	<table class="segmentoCotaGrid"></table>
             
             
-            <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+            <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=XLS&tipoExportacao=segmentos_nao_recebem_cota"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
-			<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+			<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=segmentos_nao_recebem_cota"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 	
 			<span class="bt_novos" title="Exceções Segmentos e Parciais"><a href="tratamento_excessao.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" hspace="5" border="0" />Exceções Segmentos e Parciais</a></span>
       
@@ -159,18 +171,18 @@
             <tr>
            	  <td width="60">Segmento:</td>
               <td width="210">
-              	<input name="lstSegmento" type="text" style="width:200px;" id="lstSegmento"/>
+              	<select name="select2" id="tipoSegmentoProdutoInclusao" style="width:200px;"></select>
               </td>
             </tr>
           </table>
           <br />
 
        	<table class="segmentosBGrid"></table>
-            <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+            <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=XLS&tipoExportacao=''"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
-		<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=''"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 
-      <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+      <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirSegmento()"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
         
       </fieldset>
       </div>

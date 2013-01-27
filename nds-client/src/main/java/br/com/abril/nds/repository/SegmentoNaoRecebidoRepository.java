@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.CotaNaoRecebeSegmentoDTO;
 import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroSegmentoNaoRecebidoDTO;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 
 /**
  * @author InfoA2 - Samuel Mendes
@@ -20,7 +21,10 @@ public interface SegmentoNaoRecebidoRepository extends Repository<SegmentoNaoRec
 
 	List<CotaNaoRecebeSegmentoDTO> obterCotasNaoRecebemSegmento(FiltroSegmentoNaoRecebidoDTO filtro);
 	
-	List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebemCota(FiltroSegmentoNaoRecebidoDTO filtro);
+	List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(FiltroSegmentoNaoRecebidoDTO filtro);
 
 	List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro);
+
+	List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(FiltroSegmentoNaoRecebidoDTO filtro);
+
 }

@@ -10,7 +10,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
+@Exportable
 @Entity
 @Table(name = "TIPO_SEGMENTO_PRODUTO")
 @SequenceGenerator(name = "TIPO_SEGMENTO_PRODUTO_SEQ", initialValue = 1, allocationSize = 1)
@@ -23,6 +27,7 @@ public class TipoSegmentoProduto implements Serializable {
 	@GeneratedValue(generator = "TIPO_SEGMENTO_PRODUTO_SEQ")
 	private Long id;
 
+	@Export(label = "Segmento", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
 	

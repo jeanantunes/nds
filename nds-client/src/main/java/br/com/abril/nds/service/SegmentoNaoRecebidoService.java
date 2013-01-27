@@ -17,11 +17,14 @@ public interface SegmentoNaoRecebidoService {
 
 	void excluirSegmentoNaoRecebido(Long segmentoNaoRecebidoId);
 		
-	TipoSegmentoProduto obterTipoProdutoPorId(Long id);
+	TipoSegmentoProduto obterTipoProdutoSegmentoPorId(Long id);
 	
 	void inserirCotasSegmentoNaoRecebido(List<SegmentoNaoRecebido> segmentoNaoRecebido);
 	
 	List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro);
 
-	List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebemCota(FiltroSegmentoNaoRecebidoDTO filtro);
+	List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(FiltroSegmentoNaoRecebidoDTO filtro);
+	
+	List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(FiltroSegmentoNaoRecebidoDTO filtro);
+
 }

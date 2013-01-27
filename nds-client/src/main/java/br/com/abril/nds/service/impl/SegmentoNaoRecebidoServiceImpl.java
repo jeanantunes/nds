@@ -44,9 +44,9 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 		segmentoNaoRecebidoRepo.removerPorId(segmentoNaoRecebidoId);	
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	@Override
-	public TipoSegmentoProduto obterTipoProdutoPorId(Long id) {
+	public TipoSegmentoProduto obterTipoProdutoSegmentoPorId(Long id) {
 		// TODO Auto-generated method stub
 		return tipoSegmentoProdutoRepo.buscarPorId(id);
 	}
@@ -59,19 +59,26 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 		}
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	@Override
 	public List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
 		return  segmentoNaoRecebidoRepo.obterCotasNaoEstaoNoSegmento(filtro);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
-	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebemCota(
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(
 			FiltroSegmentoNaoRecebidoDTO filtro) {
 		// TODO Auto-generated method stub
-		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebemCota(filtro);
+		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCota(filtro);
 	}
 
-	
-	
+	@Transactional(readOnly = true)
+	@Override
+	public List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(
+			FiltroSegmentoNaoRecebidoDTO filtro) {
+		// TODO Auto-generated method stub
+		return segmentoNaoRecebidoRepo.obterSegmentosElegiveisParaInclusaoNaCota(filtro);
+	}
+
 }
