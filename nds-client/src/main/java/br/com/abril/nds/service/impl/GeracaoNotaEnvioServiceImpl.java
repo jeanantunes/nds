@@ -93,8 +93,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	@SuppressWarnings("unchecked")
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
-		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
 
 		Set<Long> idsCotasDestinatarias = 
 			this.cotaRepository.obterIdsCotasComNotaEnvioEntre(filtro);
@@ -114,7 +112,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			List<EstudoCota> listaEstudosCota = 
 				this.estudoCotaRepository.obterEstudosCotaParaNotaEnvio(
-					distribuidor, idCota, filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
+					idCota, filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
 
 			if (listaEstudosCota!= null && !listaEstudosCota.isEmpty()) {
 				
@@ -183,6 +181,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			itemNotaEnvio.setDesconto(percentualDesconto);
 			itemNotaEnvio.setReparte(quantidade);
 			itemNotaEnvio.setPrecoCapa(precoVenda);
+			itemNotaEnvio.setEstudoCota(estudoCota);
 
 			listItemNotaEnvio.add(itemNotaEnvio);
 		}
@@ -251,7 +250,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		List<EstudoCota> listaEstudosCota = 
 			this.estudoCotaRepository.obterEstudosCotaParaNotaEnvio(
-				distribuidor, idCota, periodo, listaIdFornecedores);
+				idCota, periodo, listaIdFornecedores);
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, idCota);
 		
@@ -287,7 +286,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		List<EstudoCota> listaEstudosCota = 
 			this.estudoCotaRepository.obterEstudosCotaParaNotaEnvio(
-				distribuidor, idCota, periodo, listaIdFornecedores);
+				idCota, periodo, listaIdFornecedores);
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, idCota);
 		

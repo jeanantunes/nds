@@ -9,7 +9,8 @@ package br.com.abril.nds.model.planejamento;
 public enum StatusLancamentoParcial {
 		
 	PROJETADO("Projetado"), 
-	RECOLHIDO("Recolhido");
+	RECOLHIDO("Recolhido"), 
+	CANCELADO("Cancelado");
 	
 	private String descricao;
 	

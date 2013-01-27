@@ -1455,13 +1455,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		criteria.createAlias("box", "box");
 		criteria.createAlias("pdvs", "pdvs");
-		
-//		criteria.createAlias("movimentoEstoqueCotas", "mec");
-		
+
 		criteria.createAlias("estudoCotas", "estudoCotas");
 
-//		criteria.createAlias("mec.lancamento", "lancamento");
-		
 		criteria.createAlias("estudoCotas.estudo", "estudo");
 		criteria.createAlias("estudo.lancamentos", "lancamento");
 		
@@ -1469,22 +1465,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			Restrictions.in("lancamento.status", 
 				new StatusLancamento[]{StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO}));
 		
-//		criteria.createAlias("mec.movimentoEstoqueCotaFuro", "movimentoEstoqueCotaFuro",JoinType.LEFT_OUTER_JOIN);
-				
-//		criteria.createAlias("mec.tipoMovimento", "tipoMovimento");
-		
 		criteria.createAlias("pessoa", "pessoa");
 		
 		criteria.setProjection(Projections.distinct(Projections.property("id")));
-		
-//		criteria.add(Restrictions.eq("mec.status", StatusAprovacao.APROVADO));
-		
-//		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
-//		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-//		
-//		criteria.add(Restrictions.in("tipoMovimento.grupoMovimentoEstoque", listaGrupoMovimentoEstoques));
-//		
-//		criteria.add(Restrictions.isNull("movimentoEstoqueCotaFuro.id"));
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			

@@ -17,9 +17,9 @@ public interface FechamentoEncalheService {
 	
 	void salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento);
 	
-	List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, String sortorder, String sortname, int page, int rp);
+	List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
 
-	Integer buscarTotalCotasAusentes(Date dataEncalhe);
+	Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao);
 
 	void postergarCotas(Date dataEncalhe, Date dataPostergacao, List<Long> idsCotas);
 	

@@ -792,7 +792,7 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 	
 	executarPreProcessamentoLancamentosPeriodo : function (result) {
-		debugger;
+		
 		return result;
 	},
 	

@@ -32,6 +32,8 @@ function exibirMensagem(tipoMensagem, mensagens) {
 
 	//clearMessageTimeout();
 	
+	
+	
 	var divSuccess = $("#effectSuccess");
 	var divWarning = $("#effectWarning");
 	var divError = $("#effectError");
@@ -44,6 +46,13 @@ function exibirMensagem(tipoMensagem, mensagens) {
 						   divSuccess, textSuccess,
 						   divWarning, textWarning,
 						   divError, textError, false);
+	
+	shortcut.add("ESC", function(){
+		esconde(false,divSuccess);
+		esconde(false,divWarning);
+		esconde(false,divError);
+	});
+
 }
 
 function exibirMensagemDialog(tipoMensagem, mensagens, idDialog) {
@@ -83,9 +92,7 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 
-		$(divSuccess).show(0);
-
-		$(divSuccess).show(0, esconde(isFromDialog, divSuccess));
+		$(divSuccess).show(0, esconteAutomatico(divSuccess));
 		
 	} else if (tipoMensagem == "WARNING") {
 		
@@ -130,27 +137,24 @@ function isNumeric(a){
 function esconde(isFromDialog, div) {
 
 	$(div).fadeOut("slow");
-
-	/*if (isFromDialog) {
-		
-		messageDialogTimeout =
-			setTimeout(function() {
-				$(div).fadeOut("slow");
-			}, 5000);
-		
-	} else {
-		
-		/*messageTimeout = 
-			setTimeout(function() {
-				$(div).fadeOut("slow");
-			}, 5000);	
-	}*/
-
+	
 	// Remove a div que deixa o fundo desabilitado e escuro 
 	while($("#disabledBackground").length != 0) {
 		$("#disabledBackground").remove();
 	}
 
+}
+
+function esconteAutomatico(div) {
+	messageTimeout = 
+		setTimeout(function() {
+			$(div).fadeOut("slow");
+		}, 3000);
+	
+	// Remove a div que deixa o fundo desabilitado e escuro 
+	while($("#disabledBackground").length != 0) {
+		$("#disabledBackground").remove();
+	}
 }
 
 function clearMessageTimeout() {
