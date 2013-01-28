@@ -16,8 +16,8 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -43,6 +43,8 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		
 		private FornecedorService fornecedorService;
 		private LancamentoService lancamentoService;
+		
+		private MovimentoEstoqueRepository movimentoEstoqueRepository;
 
 		protected static final String SUCESSO = "SUCCESS";
 		protected static final String FALHA = "ERROR";
