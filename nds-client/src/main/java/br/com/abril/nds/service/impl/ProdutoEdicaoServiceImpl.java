@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -787,7 +786,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		dto.setDesconto(produto.getDescontoLogistica() == null
 				? BigDecimal.ZERO 
-				: BigDecimal.valueOf(produto.getDescontoLogistica().getPercentualDesconto()).setScale(2, RoundingMode.HALF_EVEN));
+				: produto.getDescontoLogistica().getPercentualDesconto());
 		
 		if(produto.getDescontoLogistica()!= null){
 			dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());
