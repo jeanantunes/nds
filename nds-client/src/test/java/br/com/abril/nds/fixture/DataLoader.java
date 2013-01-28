@@ -12706,16 +12706,16 @@ public class DataLoader {
 	
 	private static void criarDescontoLogistica(Session session){
 				
-		DescontoLogistica dl1 = Fixture.descontoLogistica(new Date(2007,01,01), 27f, 0f, new Integer(1), "NORMAL");
-		DescontoLogistica dl2 = Fixture.descontoLogistica(new Date(2007,01,01), 20f, 0f, new Integer(2), "PRODUTOS TRIBUTADOS");
-		DescontoLogistica dl3 = Fixture.descontoLogistica(new Date(2007,01,01), 10f, 0f, new Integer(3), "VIDEO PRINT DE 1/1/96 A 1/1/197");
-		DescontoLogistica dl4 = Fixture.descontoLogistica(new Date(2007,01,01), 10f, 0f, new Integer(4), "CROMOS - NORMAL EXC. JUIZ E BH");
-		DescontoLogistica dl5 = Fixture.descontoLogistica(new Date(2007,01,01), 25f, 0f, new Integer(5), "IMPORTADAS - ELETROLIBER");
-		DescontoLogistica dl6 = Fixture.descontoLogistica(new Date(2007,01,01), 18f, 0f, new Integer(6), "PROMOÇÕES");
-		DescontoLogistica dl7 = Fixture.descontoLogistica(new Date(2007,01,01), 23f, 0f, new Integer(7), "ESPECIAL GLOBO");
-		DescontoLogistica dl8 = Fixture.descontoLogistica(new Date(2007,01,01), 5f, 0f, new Integer(8), "FOME ZERO");
-		DescontoLogistica dl9 = Fixture.descontoLogistica(new Date(2007,01,01), 25f, 0f, new Integer(9), "IMPORTADAS MAG");
-		DescontoLogistica dl10 = Fixture.descontoLogistica(new Date(2007,01,01), 25f, 0f, new Integer(11), "IMPORTADAS MAGEXPRESS");
+		DescontoLogistica dl1 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(27f), BigDecimal.ZERO, new Integer(1), "NORMAL");
+		DescontoLogistica dl2 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(20f), BigDecimal.ZERO, new Integer(2), "PRODUTOS TRIBUTADOS");
+		DescontoLogistica dl3 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(10f), BigDecimal.ZERO, new Integer(3), "VIDEO PRINT DE 1/1/96 A 1/1/197");
+		DescontoLogistica dl4 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(10f), BigDecimal.ZERO, new Integer(4), "CROMOS - NORMAL EXC. JUIZ E BH");
+		DescontoLogistica dl5 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(25f), BigDecimal.ZERO, new Integer(5), "IMPORTADAS - ELETROLIBER");
+		DescontoLogistica dl6 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(18f), BigDecimal.ZERO, new Integer(6), "PROMOÇÕES");
+		DescontoLogistica dl7 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(23f), BigDecimal.ZERO, new Integer(7), "ESPECIAL GLOBO");
+		DescontoLogistica dl8 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(5f), BigDecimal.ZERO, new Integer(8), "FOME ZERO");
+		DescontoLogistica dl9 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(25f), BigDecimal.ZERO, new Integer(9), "IMPORTADAS MAG");
+		DescontoLogistica dl10 = Fixture.descontoLogistica(new Date(2007,01,01), new BigDecimal(25f), BigDecimal.ZERO, new Integer(11), "IMPORTADAS MAGEXPRESS");
 		
 	    save(session,dl1,dl2,dl3,dl4,dl5,dl6,dl7,dl8,dl9,dl10);
 	}

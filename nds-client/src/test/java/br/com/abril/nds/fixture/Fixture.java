@@ -3648,7 +3648,7 @@ public class Fixture {
 		return descontoP;
 	}
 	
-    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, Float percentualDesconto, Float percentualPrestacaoServico, Integer tipoDesconto, String descricao){
+    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, BigDecimal percentualDesconto, BigDecimal percentualPrestacaoServico, Integer tipoDesconto, String descricao){
 		
     	DescontoLogistica descontoL = new DescontoLogistica();
 		descontoL.setDataInicioVigencia(dataInicioVigencia);
@@ -3660,7 +3660,7 @@ public class Fixture {
 		return descontoL;
 	}
     
-    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, Float percentualDesconto, Float percentualPrestacaoServico, Integer tipoDesconto, Set<Produto> produtos){
+    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, BigDecimal percentualDesconto, BigDecimal percentualPrestacaoServico, Integer tipoDesconto, Set<Produto> produtos){
 		
     	DescontoLogistica descontoL = new DescontoLogistica();
 		descontoL.setDataInicioVigencia(dataInicioVigencia);
