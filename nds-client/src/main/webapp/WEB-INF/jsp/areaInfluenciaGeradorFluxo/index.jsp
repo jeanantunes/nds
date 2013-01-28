@@ -1,11 +1,8 @@
 <head>
 
 <script type="text/javascript" src="scripts/areaInfluenciaGeradorFluxo.js"/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"/>
 <script language="javascript" type="text/javascript">
 
-	var pesquisaCota = new PesquisaCota();
-	
 	$(function() {
 		areaInfluenciaGeradorFluxoController.init();
 	});
@@ -18,15 +15,6 @@
 		<br clear="all" /> <br />
 
 		<div class="container">
-
-			<div id="effect" style="padding: 0 .7em;"
-				class="ui-state-highlight ui-corner-all">
-				<p>
-					<span style="float: left; margin-right: .3em;"
-						class="ui-icon ui-icon-info"></span> <b>Segmenta��o N�o
-						Recebida < evento > com < status >.</b>
-				</p>
-			</div>
 
 			<fieldset class="classFieldset">
 				<legend> Pesquisar Área de Influência</legend>
@@ -46,9 +34,8 @@
 								<tr>
 									<td width="35">Cota:</td>
 									<td width="93">
-										<input type="text" name="numeroCota" id="numeroCota" style="width: 80px;"
-											onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');" />
-										</td>
+										<input type="text" name="numeroCota" id="numeroCota" style="width: 80px;" />
+									</td>
 									<td width="36">Nome:</td>
 									<td width="348"><input type="text" name="nomeCota"
 										id="nomeCota" style="width: 200px;" /></td>
@@ -69,7 +56,7 @@
 						      			<option value="${areaInfluenciaPDV.key}">${areaInfluenciaPDV.value}</option>	
 						    		</c:forEach>
 						</select></td>
-						<td width="162">Geradores de Fluxo Primário:</td>
+						<td width="162">Geradores de Fluxo Principal:</td>
 						<td width="209">
 							<select name="geradorFluxoPrincipal" id="geradorFluxoPrincipal" style="width: 180px;">
 								<option selected="selected" value="0">Selecione...</option>
@@ -145,4 +132,7 @@
 				</div>
 				
 			</div>
+		</div>
+	</div>
+			
 </body>

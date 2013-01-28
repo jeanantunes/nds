@@ -1,16 +1,7 @@
-var areaInfluenciaGeradorFluxoController = $
-		.extend(
-				true,
-				{
-
-					// pesquisaRealizada : false,
-
-					// descricaoAtribuida : true,
-
-					// intervalo : null,
-
+var areaInfluenciaGeradorFluxoController = $.extend(true,	{
+	
 					init : function() {
-
+        
 						$(".areaInfluenciaGrid", areaInfluenciaGeradorFluxoController.workspace).flexigrid(	{
 											preProcess : areaInfluenciaGeradorFluxoController.executarPreProcessamento,
 											dataType : 'json',
@@ -59,7 +50,7 @@ var areaInfluenciaGeradorFluxoController = $
 													},
 													{
 														display : 'Faturamento R$',
-														name : 'faturamento',
+														name : 'faturamentoFormatado',
 														width : 80,
 														sortable : true,
 														align : 'right'
@@ -112,50 +103,6 @@ var areaInfluenciaGeradorFluxoController = $
 
 					},
 
-					incluirSegmento : function() {
-						// $( "#dialog:ui-dialog" ).dialog( "destroy" );
-
-						$("#dialog-novo").dialog(
-								{
-									resizable : false,
-									height : 500,
-									width : 650,
-									modal : true,
-									buttons : {
-										"Confirmar" : function() {
-											$(this).dialog("close");
-											$("#effect").show("highlight", {},
-													1000, callback);
-										},
-										"Cancelar" : function() {
-											$(this).dialog("close");
-										}
-									}
-								});
-					},
-
-					excluirSegmento : function() {
-						// $( "#dialog:ui-dialog" ).dialog( "destroy" );
-
-						$("#dialog-excluir").dialog(
-								{
-									resizable : false,
-									height : 170,
-									width : 380,
-									modal : true,
-									buttons : {
-										"Confirmar" : function() {
-											$(this).dialog("close");
-											$("#effect").show("highlight", {},
-													1000, callback);
-										},
-										"Cancelar" : function() {
-											$(this).dialog("close");
-										}
-									}
-								});
-					},
-
 					pesquisarPorCota : function() {
 						$('.porCota').show();
 						$('.porArea').hide();
@@ -167,9 +114,7 @@ var areaInfluenciaGeradorFluxoController = $
 								params : areaInfluenciaGeradorFluxoController.getDadosCota(),
 							});
 
-						$(".areaInfluenciaGrid",
-								areaInfluenciaGeradorFluxoController.workspace)
-								.flexReload();
+						$(".areaInfluenciaGrid",areaInfluenciaGeradorFluxoController.workspace).flexReload();
 
 					},
 					
@@ -184,9 +129,7 @@ var areaInfluenciaGeradorFluxoController = $
 									params : areaInfluenciaGeradorFluxoController.getDadosAreaInfluencia(),
 								});
 
-							$(".areaInfluenciaGrid",
-									areaInfluenciaGeradorFluxoController.workspace)
-									.flexReload();
+							$(".areaInfluenciaGrid", areaInfluenciaGeradorFluxoController.workspace).flexReload();
 					},
 					
 					getDadosCota : function() {

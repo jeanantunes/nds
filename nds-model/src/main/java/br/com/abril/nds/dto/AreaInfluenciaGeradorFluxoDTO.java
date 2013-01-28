@@ -1,8 +1,10 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -34,8 +36,10 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 	@Export(label = "Cidade", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private String cidade;
 	
+	private BigDecimal faturamento;
+
 	@Export(label = "Faturamento R$", alignment=Alignment.LEFT, exhibitionOrder = 7)
-	private Double faturamento;
+	private String faturamentoFormatado;
 	
 	@Export(label = "Área de Influência", alignment=Alignment.LEFT, exhibitionOrder = 8)
 	private String areaInfluencia;
@@ -98,12 +102,21 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 		this.cidade = cidade;
 	}
 
-	public Double getFaturamento() {
+	public BigDecimal getFaturamento() {
 		return faturamento;
 	}
 
-	public void setFaturamento(Double faturamento) {
+	public void setFaturamento(BigDecimal faturamento) {
 		this.faturamento = faturamento;
+		this.setFaturamentoFormatado(CurrencyUtil.formatarValor(faturamento));
+	}
+
+	public String getFaturamentoFormatado() {
+		return faturamentoFormatado;
+	}
+
+	public void setFaturamentoFormatado(String faturamentoFormatado) {
+		this.faturamentoFormatado = faturamentoFormatado;
 	}
 
 	public String getGeradorFluxoPrincipal() {

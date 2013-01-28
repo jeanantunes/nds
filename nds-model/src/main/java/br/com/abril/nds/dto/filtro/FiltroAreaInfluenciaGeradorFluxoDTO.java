@@ -44,26 +44,35 @@ public class FiltroAreaInfluenciaGeradorFluxoDTO {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object object) {
+		if (this == object)
+			return true;
 		
-		FiltroAreaInfluenciaGeradorFluxoDTO filtroAtual = (FiltroAreaInfluenciaGeradorFluxoDTO) obj;
+		if (object == null) 
+			return false;
+
+		if (this.getClass() != object.getClass())
+			return false;
+		
+		FiltroAreaInfluenciaGeradorFluxoDTO other = (FiltroAreaInfluenciaGeradorFluxoDTO) object;
 		
 		String novoNomeCota = "";
 		String nomeCota = "";
 		
-		if (filtroAtual.getNomeCota() != null) {
-			novoNomeCota = filtroAtual.getNomeCota(); 	
+		if (other.getNomeCota() != null) {
+			novoNomeCota = other.getNomeCota(); 	
 		}
 		
 		if (this.getNomeCota() != null) {
 			nomeCota = this.getNomeCota();
 		}
 		
-		if (this.getNumeroCota() == filtroAtual.getNumeroCota() &&
+		if (this.getNumeroCota() == other.getNumeroCota() &&
 			nomeCota.equals(novoNomeCota) &&
-			this.getAreaInfluenciaId() == filtroAtual.getAreaInfluenciaId() &&
-			this.getGeradorFluxoPrincipalId() == filtroAtual.getGeradorFluxoPrincipalId() &&
-			this.getGeradorFluxoSecundarioId() == filtroAtual.getGeradorFluxoSecundarioId()) {
+			this.getAreaInfluenciaId() == other.getAreaInfluenciaId() &&
+			this.getGeradorFluxoPrincipalId() == other.getGeradorFluxoPrincipalId() &&
+			this.getGeradorFluxoSecundarioId() == other.getGeradorFluxoSecundarioId() &&
+			this.isCotasAtivas() == other.isCotasAtivas()) {
 			return true;
 		}else {
 			return false;
