@@ -428,13 +428,13 @@ public class ProdutoController extends BaseController {
 	
 	    DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterPorTipoDesconto(codigoTipoDesconto);
 			
-		Float porcentagem = 0f;
+		BigDecimal porcentagem = BigDecimal.ZERO;
 
 		if (descontoLogistica != null) {
 			porcentagem = descontoLogistica.getPercentualDesconto();
 		}
 		
-		this.result.use(Results.json()).from(new BigDecimal(porcentagem), "result").recursive().serialize();
+		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
 	}
 
 	/**

@@ -227,6 +227,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 					} else {
 						
 						produtoExistente.setDescontoLogistica(null);
+						produtoExistente.setDesconto(produto.getDesconto());
+						produtoExistente.setDescricaoDesconto(produto.getDescricaoDesconto());
 					}
 				}
 				
