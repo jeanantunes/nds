@@ -759,8 +759,9 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-descricaoBrinde").attr("readonly", false);
 							$("#produtoEdicaoController-peso").attr("readonly", false);
 							
-							produtoEdicaoController.carregarLancamentosPeriodo(result.id);
-							
+							if(result.id){
+								produtoEdicaoController.carregarLancamentosPeriodo(result.id);
+							}
 						}
 					},
 					function(result) { 
