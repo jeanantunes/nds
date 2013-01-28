@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -779,5 +781,44 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			
 			return new HashSet<ProdutoEdicao>(query.list());
 	}*/
+	
+	
+	/**
+	 * Obtem saldo de produtoEdicao: Total Entrada - Total Saída
+	 * @param numeroEdicao
+	 * @param codigoProduto
+	 * @return BigDecimal
+	 */
+	@Override
+	public BigInteger obterSaldoProdutoEdicao(Long numeroEdicao, String codigoProduto){
+		
+		StringBuilder hql = new StringBuilder("");
+		
+		hql.append(" SELECT (  ");
+		
+		hql.append("           COALESCE(  sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada then m.qtde else 0 end) ");
+	
+		hql.append("                    - sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoSaida then m.qtde else 0 end), 0 )  ");
+	
+		hql.append("         ) AS SALDO ");
+		
+		hql.append(" from MovimentoEstoque m ");		
+	
+		hql.append(" where m.produtoEdicao.numeroEdicao = :numeroEdicao and ");		
+	
+		hql.append(" m.produtoEdicao.produto.codigo = :codigoProduto ");		
+		
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("tipoOperacaoEntrada", OperacaoEstoque.ENTRADA);
+		
+		query.setParameter("tipoOperacaoSaida", OperacaoEstoque.SAIDA);
+	
+		query.setParameter("codigoProduto", codigoProduto);
+		
+		query.setParameter("numeroEdicao", numeroEdicao);
+		
+		return (BigInteger) query.uniqueResult();
+	}
 
 }
