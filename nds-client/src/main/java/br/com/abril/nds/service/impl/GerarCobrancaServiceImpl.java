@@ -187,7 +187,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 	private void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		
-		Date dataOperacao = this.distribuidorRepository.obterDatatOperacaoDistribuidor();
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
 		
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
 		this.cancelarDividaCobranca(null, idCota);
@@ -208,7 +210,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			List<ControleBaixaBancaria> listaControleBaixaBancaria =
 				this.controleBaixaBancariaRepository.obterListaControleBaixaBancaria(
-					distribuidorRepository.obter().getDataOperacao(), StatusControle.CONCLUIDO_SUCESSO);
+					dataOperacao, StatusControle.CONCLUIDO_SUCESSO);
 			
 			if (listaControleBaixaBancaria == null || listaControleBaixaBancaria.isEmpty()) {
 				
@@ -281,7 +283,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
 							politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(), politicaPrincipal.isAcumulaDivida(), idUsuario, 
 							tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-							politicaPrincipal.getNumeroDiasNovaCobranca(),
+							distribuidor.getNumeroDiasNovaCobranca(),
 							dataOperacao, msgs, ultimoFornecedor);
 					
 					if (nossoNumero != null){
@@ -317,7 +319,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
 					politicaPrincipal.isAcumulaDivida(), idUsuario, 
 					tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-					politicaPrincipal.getNumeroDiasNovaCobranca(), dataOperacao, msgs, ultimoFornecedor);
+						distribuidor.getNumeroDiasNovaCobranca(), dataOperacao, msgs, ultimoFornecedor);
 			
 			if (nossoNumero != null){
 				

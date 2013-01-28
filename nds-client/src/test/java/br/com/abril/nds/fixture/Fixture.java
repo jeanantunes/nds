@@ -2298,18 +2298,11 @@ public class Fixture {
 
 	public static PoliticaCobranca criarPoliticaCobranca(
 			Distribuidor distribuidor, FormaCobranca formaCobranca, 
-			boolean aceitaBaixaPagamentoMaior, boolean aceitaBaixaPagamentoMenor,
-			boolean aceitaBaixaPagamentoVencido, String assuntoEmailCobranca, 
-			String mensagemEmailCobranca, boolean principal, FormaEmissao formaEmissao) {
+			boolean principal, FormaEmissao formaEmissao) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
-		politicaCobranca.setAceitaBaixaPagamentoMaior(aceitaBaixaPagamentoMaior);
-		politicaCobranca.setAceitaBaixaPagamentoMenor(aceitaBaixaPagamentoMenor);
-		politicaCobranca.setAceitaBaixaPagamentoVencido(aceitaBaixaPagamentoVencido);
 		politicaCobranca.setDistribuidor(distribuidor);
 		politicaCobranca.setFormaCobranca(formaCobranca);
-		politicaCobranca.setAssuntoEmailCobranca(assuntoEmailCobranca);
-		politicaCobranca.setMensagemEmailCobranca(mensagemEmailCobranca);
 		politicaCobranca.setPrincipal(principal);
 		politicaCobranca.setFormaEmissao(formaEmissao);
 		politicaCobranca.setAtivo(true);

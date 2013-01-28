@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -124,7 +125,9 @@ public class VisaoEstoqueController extends BaseController {
 
 		this.visaoEstoqueService.transferirEstoque(filtro, this.getUsuarioLogado());
 		
-		this.pesquisar(filtro);
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência realizada com sucesso.");
+		
+		this.result.use(Results.json()).from(validacao, "result").recursive().serialize();
 	}
 	
 	private GrupoMovimentoEstoque getGrupoMovimentoTransferencia(TipoEstoque tipoEstoque, boolean isEntrada) {
@@ -231,6 +234,11 @@ public class VisaoEstoqueController extends BaseController {
 	public void exportarConferenciaCega(FileType fileType) throws IOException {
 		
 		List<VisaoEstoqueConferenciaCegaVO> listaExport = (List<VisaoEstoqueConferenciaCegaVO>) this.session.getAttribute(LISTA_CONFERENCIA_CEGA);
+		
+		if (listaExport == null || listaExport.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
 		
 		FileExporter.to("visao-estoque-conferencia-cega", fileType).inHTTPResponse(
 				getNDSFileHeader(), null, null,

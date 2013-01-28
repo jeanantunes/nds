@@ -178,7 +178,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		
 		hql.append(" group by pe.id ");
 		
-		if (!StringUtil.isEmpty(filtro.getPaginacao().getSortColumn())) {
+		if (filtro.getPaginacao() != null && !StringUtil.isEmpty(filtro.getPaginacao().getSortColumn())) {
 			hql.append("order by ")
 					.append(filtro.getPaginacao().getSortColumn()).append(" ")
 					.append(filtro.getPaginacao().getSortOrder());
@@ -320,7 +320,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		String coluna = this.getColunaQtde(tipoEstoque);
 
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT ep." + coluna + " as qtde")
+		hql.append(" SELECT DISTINCT ep." + coluna + " as qtde")
 				.append("   FROM EstoqueProduto as ep ")
 				.append("   JOIN ep.produtoEdicao as pe ")
 				.append("   JOIN pe.lancamentos as lan ");
