@@ -233,6 +233,8 @@ public class BoletoServiceImpl implements BoletoService {
 				"Já foi realizada baixa automática na data de operação atual para o banco " + banco.getNome() + "!");
 		}
 		
+		valorFinanceiro.setScale(2);
+		
 		if (valorFinanceiro == null || arquivoPagamento.getSomaPagamentos() == null
 				|| valorFinanceiro.compareTo(arquivoPagamento.getSomaPagamentos()) != 0) {
 			
