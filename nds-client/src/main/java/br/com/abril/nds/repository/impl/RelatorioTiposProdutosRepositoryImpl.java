@@ -93,10 +93,11 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 				"JOIN pe.produto p " +
 				"JOIN p.tipoProduto t " +
 				"JOIN pe.lancamentos l");
-		
+
+		hql.append(" where pe.ativo = :verdadeiro");
+
 		if(hasFilter) {
-			hql.append(" where true = true");
-			
+
 			if(hasTipoProduto) {
 				hql.append(" and t.id = :idTipoProduto");
 			}
@@ -172,7 +173,9 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 	}
 	
 	private void aplicarFiltroQuery(Query query, FiltroRelatorioTiposProdutos filtro){
-		
+
+		query.setParameter("verdadeiro", true);
+
 		boolean hasTipoProduto = filtro.getTipoProduto() != null && filtro.getTipoProduto().longValue() != -1L;
 		boolean hasLancamentoDe = filtro.getDataLancamentoDe() != null;
 		boolean hasLancamentoAte = filtro.getDataLancamentoAte() != null;
@@ -180,7 +183,7 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 		boolean hasRecolhimentoAte = filtro.getDataRecolhimentoAte() != null;
 		
 		boolean hasFilter = hasTipoProduto || hasLancamentoDe || hasLancamentoAte || hasRecolhimentoDe || hasRecolhimentoAte;
-				
+
 		if(hasFilter) {
 			
 			if(hasTipoProduto) {

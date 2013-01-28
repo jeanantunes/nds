@@ -6,7 +6,7 @@ var PESSOA = {
 			
 			nomePessoa = $.trim(nomePessoa);
 			
-			$(idCampoNome).autocomplete({source: ""});
+			$(idCampoNome).autocomplete({source: [""]});
 			
 			if (nomePessoa && nomePessoa.length > 2) {
 				
@@ -32,12 +32,12 @@ var PESSOA = {
 		},
 		
 		autoCompletarPorNomeFiador : function(idCampoNome, workspace) {
-			
+
 			var nomeFiador = $(idCampoNome,workspace).val();
 			
 			nomeFiador = $.trim(nomeFiador);
 			
-			$(idCampoNome,workspace).autocomplete({source: ""});
+			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
 			if (nomeFiador && nomeFiador.length > 2) {
 				
@@ -57,7 +57,7 @@ var PESSOA = {
 			
 			nomeEntregador = $.trim(nomeEntregador);
 			
-			$(idCampoNome,workspace).autocomplete({source: ""});
+			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
 			if (nomeEntregador && nomeEntregador.length > 2) {
 				
@@ -77,7 +77,7 @@ var PESSOA = {
 			
 			apelidoEntregador = $.trim(apelidoEntregador);
 			
-			$(idCampoNome,workspace).autocomplete({source: ""});
+			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
 			if (apelidoEntregador && apelidoEntregador.length > 2) {
 				
@@ -97,7 +97,7 @@ var PESSOA = {
 			
 			nomeEntregador = $.trim(nomeEntregador);
 			
-			$(idCampoNome,workspace).autocomplete({source: ""});
+			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
 			if (nomeEntregador && nomeEntregador.length > 2) {
 				
@@ -117,7 +117,7 @@ var PESSOA = {
 			
 			apelidoEntregador = $.trim(apelidoEntregador);
 			
-			$(idCampoNome,workspace).autocomplete({source: ""});
+			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
 			if (apelidoEntregador && apelidoEntregador.length > 2) {
 				
@@ -137,7 +137,7 @@ var PESSOA = {
 			
 			nomeEntregador = $.trim(nomeEntregador);
 			
-			$(idCampoNome,workspace).autocomplete({source: ""});
+			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
 			if (nomeEntregador && nomeEntregador.length > 2) {
 				
@@ -157,7 +157,7 @@ var PESSOA = {
 			
 			nomeFantasiaFornecedor = $.trim(nomeFantasiaFornecedor);
 			
-			$(idCampoNome,workspace).autocomplete({source: ""});
+			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
 			if (nomeFantasiaFornecedor && nomeFantasiaFornecedor.length > 2) {
 				
@@ -177,7 +177,7 @@ var PESSOA = {
 			
 			nomeFornecedor = $.trim(nomeFornecedor);
 			
-			$(idCampoNome,workspace).autocomplete({source: ""});
+			$(idCampoNome,workspace).autocomplete({source: [""]});
 			
 			if (nomeFornecedor && nomeFornecedor.length > 2) {
 				

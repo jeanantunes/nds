@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -532,6 +533,8 @@ public class CotaController extends BaseController {
 			
 			listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
 		}
+		
+		Collections.reverse(listaClassificacao);
 		
 		return listaClassificacao;
 	}

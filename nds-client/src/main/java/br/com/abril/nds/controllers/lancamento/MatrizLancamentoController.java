@@ -36,7 +36,6 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -207,7 +206,7 @@ public class MatrizLancamentoController extends BaseController {
 		this.verificarLancamentosConfirmados();
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
-			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").serialize();
+			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").recursive().serialize();
 	}
 
 	@Post
@@ -757,8 +756,6 @@ public class MatrizLancamentoController extends BaseController {
 		
 		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.permiteReprogramacao());
 		
-		produtoBalanceamentoVO.setBloquearExclusao(produtoLancamentoDTO.isBalanceamentoConfirmado());
-		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
 		
 		produtoBalanceamentoVO.setPossuiFuro(produtoLancamentoDTO.isPossuiFuro());
@@ -1107,54 +1104,6 @@ public class MatrizLancamentoController extends BaseController {
 		
 		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
-	}
-	
-	@Post
-	public void excluirLancamento(ProdutoLancamentoDTO produtoLancamento){
-		
-		BalanceamentoLancamentoDTO balanceamentoLancamento = 
-			(BalanceamentoLancamentoDTO)
-				this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
-		
-		if (balanceamentoLancamento == null) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
-		}
-		
-		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento = balanceamentoLancamento.getMatrizLancamento();
-		
-		List<ProdutoLancamentoDTO> listaProdutosLancamento = matrizLancamento.get(produtoLancamento.getNovaDataLancamento());
-		
-		ProdutoLancamentoDTO produtoLancamentoExcluir =
-			this.obterProdutoLancamentoExclusao(produtoLancamento, listaProdutosLancamento);
-		
-		if (produtoLancamentoExcluir != null) {
-		
-			listaProdutosLancamento.remove(produtoLancamentoExcluir);
-			
-			matrizLancamentoService.excluiLancamento(produtoLancamento.getIdLancamento());
-			
-			this.result.use(Results.json())
-				.from(new ValidacaoVO(TipoMensagem.SUCCESS, "Lançamento excluído com sucesso!"), Constantes.PARAM_MSGS)
-					.recursive().serialize();
-		}
-	}
-
-	private ProdutoLancamentoDTO obterProdutoLancamentoExclusao(ProdutoLancamentoDTO produtoLancamento,
-																List<ProdutoLancamentoDTO> listaProdutosLancamento) {
-		
-		if (produtoLancamento != null) {
-		
-			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutosLancamento) {
-				
-				if (produtoLancamentoDTO.getIdLancamento().equals(produtoLancamento.getIdLancamento())) {
-					
-					return produtoLancamentoDTO;
-				}
-			}
-		}
-		
-		return null;
 	}
 	
 }

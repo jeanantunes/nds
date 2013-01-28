@@ -83,12 +83,12 @@
 						<a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 						<div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
-								<input type="checkbox" id="checkBoxSelecionarTodosFornecedores" name="checkBoxSelecionarTodosFornecedores" onclick="checkAll(this, 'checkGroupFornecedores');" style="float:left;"/>
+								<input type="checkbox" checked="checked" id="checkBoxSelecionarTodosFornecedores" name="checkBoxSelecionarTodosFornecedores" onclick="checkAll(this, 'checkGroupFornecedores');" style="float:left;"/>
 								<label for="checkBoxSelecionarTodosFornecedores">Selecionar Todos</label>
 							</span>
 		                    <br clear="all" />
 		                    <c:forEach items="${fornecedores}" var="fornecedor">
-		                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkGroupFornecedores" onclick="verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox"/>
+		                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkGroupFornecedores" onclick="verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox" checked="checked"/>
 		                      	<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.razaoSocial}</label>
 		                     	<br clear="all" />
 		                	</c:forEach> 

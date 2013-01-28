@@ -310,33 +310,39 @@ function Telefone(paramTela,message) {
 		var ramal = $("#"+paramTela + "ramalTD");
 		var radioID = $("#"+paramTela + "radioIDTD");
 		
-		$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
-		
 		switch (opcao) {
-		case 'COMERCIAL':
-		case 'FAX':
-			ramal.show();
-			radioID.hide();
-			div1.show();
-			lbl.text('Ramal:');
-			campo.css('width', 40);
-			break;
-		case 'RADIO':
-			div1.show();
-			lbl.text('ID:');
-			campo.css('width', 167);
-			ramal.hide();
-			radioID.show();
-			break;
-		case 'CELULAR':
-			$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("99999-9999");
-			break;
-		default:
-			div1.hide();
-			campo.val("");
-			ramal.show();
-			radioID.hide();
-			break;
+			case 'COMERCIAL':
+				lbl.text('Ramal:');
+				div1.show();
+				campo.val("");
+				ramal.show();
+				radioID.hide();
+				campo.css('width', 40);
+				$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
+				break;
+			case 'RADIO':
+				lbl.text('ID:');
+				div1.show();
+				campo.val("");
+				ramal.hide();
+				radioID.show();
+				campo.css('width', 167);
+				$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
+				break;
+			case 'CELULAR':
+				div1.hide();
+				campo.val("");
+				ramal.hide();
+				radioID.hide();
+				$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("99999-9999");
+				break;
+			default:
+				div1.hide();
+				campo.val("");
+				ramal.hide();
+				radioID.hide();
+				$("#"+paramTela+"numeroTelefone", Telefone.workspace).mask("9999-9999");
+				break;
 		}
 	};
 	

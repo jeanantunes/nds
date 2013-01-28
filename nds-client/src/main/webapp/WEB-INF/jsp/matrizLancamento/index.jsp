@@ -55,13 +55,6 @@ var lancamentosSelecionados = [];
 </head>
 
 <body>
-<form id="form-excluir-lancamento">
-<div id="dialog-excluir-lancamento" title="Balanceamento da Matriz de Lançamento" style="display:none">
-	
-	<p>Confirma a exclus&atilde;o deste lançamento?</p>
-			   
-</div>
-</form>
 
 <form id="form-confirm">
 <div id="dialog-confirm" title="Balanceamento da Matriz de Lançamento">
@@ -163,12 +156,12 @@ var lancamentosSelecionados = [];
 		              <div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
 
-							<input type="checkbox" id="selTodos1" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+							<input type="checkbox" id="selTodos1" checked="checked" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
 
 							<label for="selTodos1">Selecionar Todos</label></span>
 		                    <br clear="all" />
 		                    <c:forEach items="${fornecedores}" var="fornecedor">
-		                      <input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}"  name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox"/>
+		                      <input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}"  name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox" checked="checked"/>
 		                      <label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label>
 		                      <br clear="all" />
 		                   </c:forEach> 

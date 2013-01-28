@@ -316,14 +316,17 @@ var produtoController = $.extend(true, {
 						if (!(result.origem == "INTERFACE")){
 							
 							produtoController.carregarComboDesconto("MANUAL",result.tipoDesconto);
-							$("#percentualDesconto", produtoController.workspace).removeAttr('disabled');
-							$("#percentualDesconto", produtoController.workspace).removeAttr('readonly');
-							$("#comboTipoDesconto", produtoController.workspace).attr("disabled","disabled");
+							$("#comboTipoDesconto", produtoController.workspace).hide();
+							$("#tipoDescontoManual", produtoController.workspace).show();
+							$("#tipoDescontoManual", produtoController.workspace).val(result.descricaoDescontoManual);
+							$("#percentualDesconto", produtoController.workspace).removeAttr('disabled','disabled');
 						}
 						else{
 							
 							produtoController.carregarComboDesconto("INTERFACE",result.tipoDesconto);
 							$("#percentualDesconto", produtoController.workspace).attr('disabled','disabled');
+							$("#comboTipoDesconto", produtoController.workspace).show();
+							$("#tipoDescontoManual", produtoController.workspace).hide();
 						}	
 					},
 					null,
@@ -345,7 +348,7 @@ var produtoController = $.extend(true, {
 	},
 	
 	removerProduto : function(id) {
-		
+
 		$("#dialog-excluir", this.workspace).dialog( {
 			resizable : false,
 			height : 'auto',
@@ -367,7 +370,11 @@ var produtoController = $.extend(true, {
 										
 										exibirMensagem(tipoMensagem, listaMensagens);
 									}
-											
+
+									$(".filtro", this.workspace).each(function() {  
+										$("input[type='text'], select", this.workspace).val(""); 
+									});
+									
 									$(".produtosGrid", this.workspace).flexReload();
 							   },
 							   null,
@@ -397,8 +404,6 @@ var produtoController = $.extend(true, {
 				"Confirmar": function() {
 
 					produtoController.salvarProduto();
-					
-			   		$(".produtosGrid", this.workspace).flexReload();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -416,9 +421,9 @@ var produtoController = $.extend(true, {
 		this.carregarNovoProduto(this.limparModalCadastro);
 		
 		$("#codigoProdutoCadastro", this.workspace).enable();
+		$("#comboTipoDesconto", produtoController.workspace).hide();
+		$("#tipoDescontoManual", produtoController.workspace).show();
 		$("#percentualDesconto", produtoController.workspace).removeAttr('disabled');
-		$("#percentualDesconto", produtoController.workspace).removeAttr('readonly');
-		$("#comboTipoDesconto", produtoController.workspace).attr('disabled','disabled');
 	},
 
 	carregarNovoProduto : function(callback) {
@@ -449,6 +454,7 @@ var produtoController = $.extend(true, {
 		$("#peb", this.workspace).val("");
 		$("#pacotePadrao", this.workspace).val("");
 		$("#comboPeriodicidade", this.workspace).val("");
+		$("#tipoDescontoManual", this.workspace).val("");
 
 		$("#formaComercializacaoContaFirme", this.workspace).attr('checked', false);
 		$("#formaComercializacaoConsignado", this.workspace).attr('checked', false);
@@ -486,7 +492,8 @@ var produtoController = $.extend(true, {
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
         			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", produtoController.workspace).val()},
         			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()},
-        			   {name:"produto.desconto",value:$("#percentualDesconto", produtoController.workspace).val()}];
+        			   {name:"produto.desconto",value:$("#percentualDesconto", produtoController.workspace).val()},
+        			   {name:"produto.descricaoDesconto",value:$("#tipoDescontoManual", produtoController.workspace).val()}];
  
 		$.postJSON(contextPath + "/produto/salvarProduto",  
 			   	params,
@@ -502,11 +509,10 @@ var produtoController = $.extend(true, {
 					} 
 
 					if (tipoMensagem == 'SUCCESS') {
-						
+
 						$("#dialog-novo", this.workspace).dialog( "close" );
-						
-						produtoController.pesquisar();
-						
+
+						$(".produtosGrid", this.workspace).flexReload();
 					}
 					
 				},

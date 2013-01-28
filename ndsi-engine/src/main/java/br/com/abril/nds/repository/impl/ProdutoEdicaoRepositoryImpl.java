@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +11,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -358,6 +359,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("        JOIN pr.fornecedores fr JOIN fr.juridica jr ");
 		hql.append("        LEFT JOIN pe.lancamentos ln ");
 		hql.append("  WHERE pe.ativo = :indAtivo ");
+		hql.append("  AND   ln.dataLancamentoPrevista = (SELECT MIN(ln2.dataLancamentoPrevista) from Lancamento ln2 WHERE ln2.produtoEdicao.id = pe.id) ");
 		
 		
 		/**
@@ -743,26 +745,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return new HashSet<ProdutoEdicao>(query.list());
 	}
 
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#validarExpedicaoFisicaProdutoEdicao(br.com.abril.nds.model.cadastro.ProdutoEdicao)
-	 */
-	@Override
-	public boolean validarExpedicaoFisicaProdutoEdicao(ProdutoEdicao produtoEdicao) {
-		String queryString = "SELECT notaEnvioItem from " +
-							 "ProdutoEdicao produtoEdicao, " +
-							 "ItemNotaEnvio notaEnvioItem " +
-							 "where notaEnvioItem.produtoEdicao.id = produtoEdicao.id " +
-							 "and produtoEdicao.id = :produtoEdicaoId";
-		Query query = this.getSession().createQuery(queryString);
-
-		query.setParameter("produtoEdicaoId", produtoEdicao.getId());
-		
-		List lista = query.list();
-		
-		// Retorna true caso não seja encontrado resultado para a lista (nenhum registro encontrado, logo, não existe expedição física realizada)
-		return (lista == null || lista.size() == 0);
-	}
-
 	/*@Override
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto) {
 		String queryString = "SELECT "
@@ -799,5 +781,44 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			
 			return new HashSet<ProdutoEdicao>(query.list());
 	}*/
+	
+	
+	/**
+	 * Obtem saldo de produtoEdicao: Total Entrada - Total Saída
+	 * @param numeroEdicao
+	 * @param codigoProduto
+	 * @return BigDecimal
+	 */
+	@Override
+	public BigInteger obterSaldoProdutoEdicao(Long numeroEdicao, String codigoProduto){
+		
+		StringBuilder hql = new StringBuilder("");
+		
+		hql.append(" SELECT (  ");
+		
+		hql.append("           COALESCE(  sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada then m.qtde else 0 end) ");
+	
+		hql.append("                    - sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoSaida then m.qtde else 0 end), 0 )  ");
+	
+		hql.append("         ) AS SALDO ");
+		
+		hql.append(" from MovimentoEstoque m ");		
+	
+		hql.append(" where m.produtoEdicao.numeroEdicao = :numeroEdicao and ");		
+	
+		hql.append(" m.produtoEdicao.produto.codigo = :codigoProduto ");		
+		
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("tipoOperacaoEntrada", OperacaoEstoque.ENTRADA);
+		
+		query.setParameter("tipoOperacaoSaida", OperacaoEstoque.SAIDA);
+	
+		query.setParameter("codigoProduto", codigoProduto);
+		
+		query.setParameter("numeroEdicao", numeroEdicao);
+		
+		return (BigInteger) query.uniqueResult();
+	}
 
 }

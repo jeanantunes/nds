@@ -218,7 +218,19 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setEditor(editor);
 				produtoExistente.addFornecedor(fornecedor);
 				produtoExistente.setTipoProduto(tipoProduto);
-				produto.setDescontoLogistica(obterDescontoLogistica(codigoTipoDesconto));
+				
+				if (Origem.MANUAL == produtoExistente.getOrigem()){
+					
+					if (codigoTipoDesconto != null){
+						
+						produtoExistente.setDescontoLogistica(obterDescontoLogistica(codigoTipoDesconto));
+					} else {
+						
+						produtoExistente.setDescontoLogistica(null);
+						produtoExistente.setDesconto(produto.getDesconto());
+						produtoExistente.setDescricaoDesconto(produto.getDescricaoDesconto());
+					}
+				}
 				
 				this.produtoRepository.alterar(produtoExistente);
 				
@@ -227,11 +239,15 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produto.setEditor(editor);
 				produto.addFornecedor(fornecedor);
 				produto.setTipoProduto(tipoProduto);
-				produto.setDescontoLogistica(obterDescontoLogistica(codigoTipoDesconto));
 				produto.setOrigem(Origem.MANUAL);
 				
 				//TODO: Valor não informado na interface de cadastro de produto
 				produto.setPeso(0L);
+				
+				if (codigoTipoDesconto != null){
+					
+					produto.setDescontoLogistica(obterDescontoLogistica(codigoTipoDesconto));
+				}
 				
 				this.produtoRepository.adicionar(produto);
 			}

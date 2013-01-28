@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -42,6 +43,8 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		
 		private FornecedorService fornecedorService;
 		private LancamentoService lancamentoService;
+		
+		private MovimentoEstoqueRepository movimentoEstoqueRepository;
 
 		protected static final String SUCESSO = "SUCCESS";
 		protected static final String FALHA = "ERROR";
@@ -55,6 +58,8 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		protected static final String ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS = "Erro não esperado ao pesquisar lançamentos não expedidos.";
 		protected static final String MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Não há produtos a serem expedidos na data informada.";
 		//protected static final String MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Há matriz de lançamento confirmada.";
+		
+		protected static final String STATUS_EXPEDICAO = "statusExpedicao";
 		
 		private static final Logger LOG = LoggerFactory
 				.getLogger(ConfirmacaoExpedicaoController.class);
@@ -192,8 +197,13 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, NENHUM_REGISTRO_SELECIONADO));
 				} 
 				
-				lancamentoService.confirmarExpedicoes(selecionados,getUsuarioLogado().getId());
-			
+				session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento(1, selecionados.size()));
+				
+				for(int i=0; i<selecionados.size(); i++) {
+					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId());
+					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));
+				}
+				
 				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
 				
 				grid = gerarGrid(
@@ -218,6 +228,8 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				LOG.error(ERRO_CONFIRMAR_EXPEDICOES, e);
 			}
 			
+			session.setAttribute(STATUS_EXPEDICAO, "FINALIZADO");
+			
 			if(grid==null) {
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			}
@@ -230,6 +242,20 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 			
 			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
+		}
+		
+		private Object getMsgProcessamento(Integer atual, Integer total) {
+			
+			return "Processando Expedições... " + " (" + atual + "/" + total + ")";
+		}
+
+		@Post
+		public void verificarExpedicao(){
+			
+			String status = (String) session.getAttribute(STATUS_EXPEDICAO);
+			
+			
+			result.use(Results.json()).withoutRoot().from(status==null?"Processando Expedições..." : status).recursive().serialize();
 		}
 		
 	

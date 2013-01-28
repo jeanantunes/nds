@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.util.OrdenacaoUtil;
 import br.com.abril.nds.util.Ordenavel;
 import br.com.abril.nds.util.StringUtil;
@@ -35,6 +36,26 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 		this.nome = nome;
 	}
 
+	public static RoteiroRoteirizacaoDTO getDTOFrom(Roteiro roteiro) { 
+		
+		return new RoteiroRoteirizacaoDTO(roteiro.getId(), roteiro.getOrdem(), roteiro.getDescricaoRoteiro()); 
+	}
+	
+	public static List<RoteiroRoteirizacaoDTO> getDTOFrom(List<Roteiro> listaRoteiros) {
+		
+		List<RoteiroRoteirizacaoDTO> listaRoteirosDTO = new ArrayList<RoteiroRoteirizacaoDTO>();
+		
+		for(Roteiro roteiro : listaRoteiros) {
+			
+			RoteiroRoteirizacaoDTO roteiroDTO = new RoteiroRoteirizacaoDTO(roteiro.getId(), roteiro.getOrdem(), roteiro.getDescricaoRoteiro()); 
+			
+			listaRoteirosDTO.add(roteiroDTO);
+			
+		}
+		
+		return listaRoteirosDTO;
+	}
+	
 	/**
 	 * @return the ordem
 	 */
@@ -300,4 +321,30 @@ public class RoteiroRoteirizacaoDTO implements Serializable, Ordenavel {
 		removerRotaDeRotas(ordemRota);
 		removerRotaDeTodasRotas(ordemRota);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RoteiroRoteirizacaoDTO other = (RoteiroRoteirizacaoDTO) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
 }

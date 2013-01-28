@@ -119,14 +119,11 @@ public class Lancamento implements Serializable {
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
-	@OneToOne(mappedBy="lancamento")
+	@OneToOne(mappedBy="lancamento",cascade = {CascadeType.ALL})
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
 	@OneToMany(mappedBy = "lancamento")
 	private List<MovimentoEstoqueCota> movimentoEstoqueCotas;
-	
-	@OneToMany(mappedBy = "lancamentoProdutoEdicao")
-	private List<MovimentoEstoqueCota> movimentoEstoqueCotasProdutoEdicao;
 	
 	@ManyToMany(mappedBy="lancamentos", targetEntity=ChamadaEncalhe.class)
 	private Set<ChamadaEncalhe> chamadaEncalhe;

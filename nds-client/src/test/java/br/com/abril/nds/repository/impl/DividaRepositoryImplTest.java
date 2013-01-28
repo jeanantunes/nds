@@ -134,7 +134,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(formaBoleto, formaDinheiro, formaDeposito);
 
 		PoliticaCobranca politicaCobrancaBoleto =
-				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, 1,"Assunto","Mensagem",true,FormaEmissao.INDIVIDUAL_BOX);
+				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto,true,FormaEmissao.INDIVIDUAL_BOX);
 		
 		save(politicaCobrancaBoleto);
 		
@@ -1196,13 +1196,11 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
      *            data de vencimento das dívidas a serem geradas
      */
     private void criarDadosSumarizacaoDividas(Date vencimento) {
-        PoliticaCobranca politicaCobrancaDinheiro = Fixture.criarPoliticaCobranca(distribuidor, formaDinheiro, true,
-                        false, true, 3, "Assunto", "Mensagem", true, FormaEmissao.INDIVIDUAL_BOX);
+        PoliticaCobranca politicaCobrancaDinheiro = Fixture.criarPoliticaCobranca(distribuidor, formaDinheiro, true, FormaEmissao.INDIVIDUAL_BOX);
         distribuidor.getPoliticasCobranca().add(politicaCobrancaDinheiro);
         save(politicaCobrancaDinheiro);
 
-        PoliticaCobranca politicaCobrancaDeposito = Fixture.criarPoliticaCobranca(distribuidor, formaDeposito, true,
-                        false, true, 3, "Assunto", "Mensagem", true, FormaEmissao.INDIVIDUAL_BOX);
+        PoliticaCobranca politicaCobrancaDeposito = Fixture.criarPoliticaCobranca(distribuidor, formaDeposito, true, FormaEmissao.INDIVIDUAL_BOX);
         distribuidor.getPoliticasCobranca().add(politicaCobrancaDeposito);
         save(politicaCobrancaDeposito);
 

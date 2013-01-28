@@ -318,6 +318,20 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		parametrosDistribuidor.setNegociacaoAteParcelas(CurrencyUtil.formatarValorTruncado(distribuidor.getNegociacaoAteParcelas()));
 		
+		parametrosDistribuidor.setAceitaBaixaPagamentoMaior(
+			(distribuidor.getAceitaBaixaPagamentoMaior() == null) ? false : distribuidor.getAceitaBaixaPagamentoMaior());
+		
+		parametrosDistribuidor.setAceitaBaixaPagamentoMenor(
+			(distribuidor.getAceitaBaixaPagamentoMenor() == null) ? false : distribuidor.getAceitaBaixaPagamentoMenor());
+		
+		parametrosDistribuidor.setAceitaBaixaPagamentoVencido(
+			(distribuidor.getAceitaBaixaPagamentoVencido() == null) ? false : distribuidor.getAceitaBaixaPagamentoVencido());
+		
+		parametrosDistribuidor.setNumeroDiasNovaCobranca(distribuidor.getNumeroDiasNovaCobranca());
+		parametrosDistribuidor.setAssuntoEmailCobranca(distribuidor.getAssuntoEmailCobranca());
+		parametrosDistribuidor.setMensagemEmailCobranca(distribuidor.getMensagemEmailCobranca());
+		
+		
 		// Aprovação
 		parametrosDistribuidor.setUtilizaControleAprovacao(distribuidor.isUtilizaControleAprovacao());
 		
@@ -657,6 +671,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setNegociacaoAteParcelas(null);
 		}
 		
+		distribuidor.setAceitaBaixaPagamentoMaior(parametrosDistribuidor.isAceitaBaixaPagamentoMaior());
+		distribuidor.setAceitaBaixaPagamentoMenor(parametrosDistribuidor.isAceitaBaixaPagamentoMenor());
+		distribuidor.setAceitaBaixaPagamentoVencido(parametrosDistribuidor.isAceitaBaixaPagamentoVencido());
+		distribuidor.setNumeroDiasNovaCobranca(parametrosDistribuidor.getNumeroDiasNovaCobranca());
+		distribuidor.setAssuntoEmailCobranca(parametrosDistribuidor.getAssuntoEmailCobranca());
+		distribuidor.setMensagemEmailCobranca(parametrosDistribuidor.getMensagemEmailCobranca());
+		
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
 		
@@ -678,9 +699,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		parametrosAprovacaoDistribuidor.setAjusteEstoque(parametrosDistribuidor.getAjusteEstoque());
 		
-		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
-				 					 		this.getGruposMovimentoEstoqueAjusteEstoque(),
-				 					 		!parametrosDistribuidor.getAjusteEstoque());
+//		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
+//		  	  Tratar futuramente, como será utilizado o parametro de ajuste.
+//		
+//		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+//				 					 		this.getGruposMovimentoEstoqueAjusteEstoque(),
+//				 					 		!parametrosDistribuidor.getAjusteEstoque());
 		
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(parametrosDistribuidor.getPostergacaoCobranca());
 		
@@ -787,15 +811,16 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					"Não é possível não utilizar controle de aprovação para negociação. Existem movimentos pendentes!");
 			}
 		}
-
-		if (!parametrosDistribuidor.getAjusteEstoque()) {
-			if (this.movimentoRepository
-					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueAjusteEstoque())) {
-
-				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para ajuste de estoque. Existem movimentos pendentes!");
-			}
-		}
+//		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
+//			  Tratar futuramente, como será utilizado o parametro de ajuste.
+//		if (!parametrosDistribuidor.getAjusteEstoque()) {
+//			if (this.movimentoRepository
+//					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueAjusteEstoque())) {
+//
+//				mensagens.add(
+//					"Não é possível não utilizar controle de aprovação para ajuste de estoque. Existem movimentos pendentes!");
+//			}
+//		}
 
 		if (!parametrosDistribuidor.getPostergacaoCobranca()) {
 			if (this.movimentoRepository

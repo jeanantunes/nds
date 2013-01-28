@@ -68,9 +68,14 @@ public class RoteirizacaoDTO implements Serializable{
     private Map<Long, Set<RoteiroRoteirizacaoDTO>> roteirosTransferidos = new HashMap<Long, Set<RoteiroRoteirizacaoDTO>>();
     
     /**
-     * Lista das rotas pertencentes a outra roteirizacao que tiveram novos pdvs adicionados
+     * Lista das rotas pertencentes a outra roteirizacao que tiveram novos pdvs transferidas
      */
-    private List<RotaRoteirizacaoDTO> rotasNovosPDVs = new ArrayList<RotaRoteirizacaoDTO>();
+    private List<RotaRoteirizacaoDTO> rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    
+    /**
+     * Lista dos roteiros pertencentes a outro roteirizacao que tiveram novas rotas transferidas
+     */
+    private List<RoteiroRoteirizacaoDTO> roteirosNovasRotasTransferidas = new ArrayList<RoteiroRoteirizacaoDTO>();
     
     private RoteirizacaoDTO(TipoEdicaoRoteirizacao tipoEdicao, List<BoxRoteirizacaoDTO> boxDisponiveis, boolean addBoxEspecial) {
         this.tipoEdicao = tipoEdicao;
@@ -161,39 +166,69 @@ public class RoteirizacaoDTO implements Serializable{
     }
 
     public List<RotaRoteirizacaoDTO> getRotasNovosPDVsTransferidos() {
-		return rotasNovosPDVs;
+		return rotasNovosPDVsTransferidos;
 	}
+
+	public List<RoteiroRoteirizacaoDTO> getRoteirosNovasRotasTransferidas() {
+		return roteirosNovasRotasTransferidas;
+	}
+
+
 
 	/**
      * Adiciona uma rota que pertence a outra roteirização e teve PDVs adicionados
      * 
      * @param rotaDTO
      */
-    public void addRotaNovosPDVs(RotaRoteirizacaoDTO rotaDTO) {
+    public void addRotaNovosPDVsTransferidos(RotaRoteirizacaoDTO rotaDTO) {
     	
-    	if(this.rotasNovosPDVs == null) {
-    		this.rotasNovosPDVs = new ArrayList<RotaRoteirizacaoDTO>();
+    	if(this.rotasNovosPDVsTransferidos == null) {
+    		this.rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
     	}
     	
-    	this.rotasNovosPDVs.add(rotaDTO);
+    	this.rotasNovosPDVsTransferidos.add(rotaDTO);
     }
 
     
-    public RotaRoteirizacaoDTO obterRotaNovosPDVs(Rota rota) {
+    public RoteiroRoteirizacaoDTO obterRoteirosNovasRotasTransferidas(Roteiro roteiro, List<Rota> listaRotasExistentes) {
     	
-    	if (this.rotasNovosPDVs == null) 
-    		this.rotasNovosPDVs = new ArrayList<RotaRoteirizacaoDTO>();
+    	if (this.roteirosNovasRotasTransferidas == null)
+    		this.roteirosNovasRotasTransferidas = new ArrayList<RoteiroRoteirizacaoDTO>();
     	
-    	for (RotaRoteirizacaoDTO rotaDTO : this.rotasNovosPDVs) {
+    	for (RoteiroRoteirizacaoDTO roteiroDTO : this.roteirosNovasRotasTransferidas) {
+    		if(roteiroDTO.getId().equals(roteiro.getId())) {
+    			return roteiroDTO;
+    		}
+    	}
+    	
+    	RoteiroRoteirizacaoDTO roteiroDTO = RoteiroRoteirizacaoDTO.getDTOFrom(roteiro);
+    	roteiroDTO.addAllRota(RotaRoteirizacaoDTO.getDTOFrom(listaRotasExistentes));
+    	roteirosNovasRotasTransferidas.add(roteiroDTO);
+    	
+    	return roteiroDTO;
+    }
+    
+    /**
+     * Retorna o DTO de uma rota pertencente a outra roteirizacao para transferencia de pdvs.
+     * 
+     * @param rota
+     * @return
+     */
+    public RotaRoteirizacaoDTO obterRotaNovosPDVsTransferidos(Rota rota) {
+    	
+    	if (this.rotasNovosPDVsTransferidos == null) 
+    		this.rotasNovosPDVsTransferidos = new ArrayList<RotaRoteirizacaoDTO>();
+    	
+    	for (RotaRoteirizacaoDTO rotaDTO : this.rotasNovosPDVsTransferidos) {
     		
-    		if (rotaDTO.equals(rota.getId())) {
+    		if (rotaDTO.getId().equals(rota.getId())) {
     			return rotaDTO;
     		}
     	}
     	
     	RotaRoteirizacaoDTO novaRotaDTO = RotaRoteirizacaoDTO.getDTOFrom(rota);
     	
-    	this.addRotaNovosPDVs(novaRotaDTO);
+    	this.addRotaNovosPDVsTransferidos(novaRotaDTO);
     	
     	return novaRotaDTO;
     }

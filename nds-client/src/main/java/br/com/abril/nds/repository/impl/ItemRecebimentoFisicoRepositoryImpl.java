@@ -9,6 +9,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 
 /**
@@ -36,16 +37,23 @@ public class ItemRecebimentoFisicoRepositoryImpl extends
 			throw new NullPointerException();
 		}
 		
-		Criteria criteria = super.getSession().createCriteria(ItemRecebimentoFisico.class, "itemRecebimento");
 		
-		criteria.createAlias("itemRecebimento.itemNotaFiscal", "itemNotaFiscal");
-		criteria.createAlias("itemNotaFiscal.produtoEdicao", "produtoEdicao");
-		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
-		criteria.add(Restrictions.eq("itemNotaFiscal.dataLancamento", dataLancamento));
 		
-		criteria.setMaxResults(1);
+		String hql = " select itemRecebimento from ItemRecebimentoFisico itemRecebimento "
+				   + " join itemRecebimento.itemNotaFiscal itemNotaFiscal "
+				   + " join itemNotaFiscal.produtoEdicao produtoEdicao "
+				   + " where itemNotaFiscal.dataLancamento = :dataLancamento " 
+				   + " and produtoEdicao.id = :idProdutoEdicao";
 		
-		return (ItemRecebimentoFisico) criteria.uniqueResult();
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+				
+		query.setMaxResults(1);
+		
+		return (ItemRecebimentoFisico) query.uniqueResult();
 	}
 	
 	@Override

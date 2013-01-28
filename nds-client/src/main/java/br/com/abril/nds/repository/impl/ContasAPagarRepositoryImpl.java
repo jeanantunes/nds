@@ -791,7 +791,9 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append("	join produto2.fornecedores fo ")
 		   .append("	join fo.juridica pessoa ")
 		   .append("    left join l.movimentoEstoqueCotas mec ")
-		   .append("    left join mec.listaItemNotaEnvio ine ")
+		   .append("    left join l.estudo estudo ")
+		   .append("    left join estudo.estudoCotas estudoCotas ")
+		   .append("    left join estudoCotas.itemNotaEnvio ine ")
 		   .append("  	left join ine.itemNotaEnvioPK.notaEnvio ne ")
 		   .append(" 	left join produtoEdicao.diferencas dif ")
 		   .append("    left join dif.lancamentoDiferenca ld ")
@@ -994,7 +996,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 
         sql.append(" SELECT  p.codigo as codigo, p.nome as produto, ");
         sql.append("	 pe.numeroEdicao as edicao, pe.precoVenda as precoCapa, pe.id as produtoEdicaoID, ");
-        sql.append(" 	 fornec.nomeFantasia as fornecedor, edi.nomeFantasia as editor ");
+        sql.append(" 	 fornec.nomeFantasia as fornecedor, edi.razaoSocial as editor ");
         sql.append(" FROM ProdutoEdicao pe ");
         sql.append(" JOIN  pe.produto p");
         sql.append(" JOIN  p.editor e");

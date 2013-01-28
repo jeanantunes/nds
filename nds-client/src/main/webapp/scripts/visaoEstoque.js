@@ -143,7 +143,6 @@ var visaoEstoqueController = $.extend(true, {
 		var tr = element.parentNode.parentNode.parentNode;
 		var qtdeInventario = parseInt($.trim(element.value) == "" ? 0 : element.value); 
 		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
-		debugger;
 		$('div[abbr="diferenca"]', tr).html(qtdeInventario - qtde);
 	},
 	
@@ -179,9 +178,19 @@ var visaoEstoqueController = $.extend(true, {
 		$.postJSON(
 			this.path + 'transferir?' + $('#pesquisarVisaoEstoqueForm').serialize(),
 			params,
-			function() {
+			function(result) {
+
 				$('#dialog-visaoEstoque-transferencia').dialog('close');
-				visaoEstoqueController.pesquisar();
+				
+				if (result.listaMensagens) {
+				
+					exibirMensagem(
+						result.tipoMensagem, 
+						result.listaMensagens
+					);
+				}
+				
+				$(".visaoEstoqueGrid", this.workspace).flexReload();
 			}
 		);
 	},

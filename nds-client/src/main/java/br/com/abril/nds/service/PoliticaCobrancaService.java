@@ -30,6 +30,12 @@ public interface PoliticaCobrancaService {
 	 * @return comboFormasEmissao: formas de emissão cadastrados
 	 */
     List<ItemDTO<FormaEmissao, String>> getComboFormasEmissaoTipoCobranca(TipoCobranca tipoCobranca);
+    
+    /**
+     * Obtém todas as Politicas de Cobrança
+     * @return List<PoliticaCobranca>
+     */
+    List<PoliticaCobranca> obterPoliticasCobranca();
 
 	/**
 	 * Obtém dados da politica de cobrança (PoliticaCobranca e a Forma de Cobranca vinculada)

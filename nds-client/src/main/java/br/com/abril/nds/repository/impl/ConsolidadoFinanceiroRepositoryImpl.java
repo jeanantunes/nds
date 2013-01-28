@@ -92,7 +92,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" f.juridica.razaoSocial as nomeFornecedor, ");
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");
-		hql.append(" ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaEncalhe() +") as desconto, ");
 		hql.append(" (pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaEncalhe() +") / 100)) as precoComDesconto, ");
 		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaEncalhe() +") / 100))) as total, ");
 		hql.append(" sum(mec.qtde) as encalhe ");
@@ -121,7 +120,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" desconto, ");
 		hql.append(" juridica.razaoSocial ");
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
@@ -209,7 +207,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" f.juridica.razaoSocial as nomeFornecedor, ");
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");
-		hql.append(" ("+ this.obterSQLDescontoObterMovimentoVendaEncalhe() +") as desconto, ");
 		hql.append(" (pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoVendaEncalhe() +") / 100)) as precoComDesconto, ");
 		hql.append(" sum(mec.qtde*(pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoVendaEncalhe() +") / 100))) as total, ");
 		hql.append(" box.codigo as box,");
@@ -237,7 +234,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" desconto, ");
 		hql.append(" f.juridica.razaoSocial ");
 		
 		if (filtro.getOrdenacaoColuna() != null) {
@@ -298,7 +294,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" juridica.razaoSocial as nomeFornecedor, ");				
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" pe.precoVenda as precoCapa, ");
-		hql.append(" ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaConsignado() +") as desconto, ");
 		hql.append(" (pe.precoVenda - (pe.precoVenda * ("+ this.obterSQLDescontoObterMovimentoEstoqueCotaConsignado() +") / 100)) as precoComDesconto, ");
 		hql.append(" ec.qtdePrevista as reparteSugerido, ");
 		hql.append(" ec.qtdeEfetiva as reparteFinal, ");
@@ -337,7 +332,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" desconto, ");
 		hql.append(" juridica.razaoSocial ");
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
@@ -461,8 +455,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	public Long obterQuantidadeDividasGeradasData(List<Long> idsCota) {
 		
 		StringBuilder hql = new StringBuilder("select count(c.id) ");
-		hql.append(" from ConsolidadoFinanceiroCota c, Distribuidor d ")
-		   .append(" where c.dataConsolidado = d.dataOperacao ");
+		hql.append(" from ConsolidadoFinanceiroCota c, Distribuidor d, Divida divida ")
+		   .append(" where c.dataConsolidado = d.dataOperacao ")
+		   .append(" and c.id = divida.consolidado.id ")
+		   .append(" and divida.data = d.dataOperacao ");
 		
 		if (idsCota != null) {
 			

@@ -428,13 +428,13 @@ public class ProdutoController extends BaseController {
 	
 	    DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterPorTipoDesconto(codigoTipoDesconto);
 			
-		Float porcentagem = 0f;
+		BigDecimal porcentagem = BigDecimal.ZERO;
 
 		if (descontoLogistica != null) {
 			porcentagem = descontoLogistica.getPercentualDesconto();
 		}
 		
-		this.result.use(Results.json()).from(new BigDecimal(porcentagem), "result").recursive().serialize();
+		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
 	}
 
 	/**
@@ -542,9 +542,14 @@ public class ProdutoController extends BaseController {
 				produto.setPacotePadrao(produto.getPacotePadrao());
 			}
 			
-			/*if (codigoTipoDesconto == null || codigoTipoDesconto.intValue() == 0) {
+			if ((codigoTipoDesconto == null || codigoTipoDesconto.intValue() == 0) &&
+					(produto.getDescricaoDesconto() == null || produto.getDescricaoDesconto().trim().isEmpty())) {
 				listaMensagens.add("O preenchimento do campo [Tipo de Desconto] é obrigatório!");
-			}*/
+			}
+			
+			if (produto.getDesconto() == null){
+				listaMensagens.add("O preenchimento do campo [% Desconto] é obrigatório!");
+			}
 			
 			if (codigoTipoProduto == null || codigoTipoProduto.intValue() == 0) {
 				listaMensagens.add("O preenchimento do campo [Tipo de Produto] é obrigatório!");

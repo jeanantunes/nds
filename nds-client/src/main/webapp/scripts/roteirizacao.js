@@ -46,6 +46,8 @@ var roteirizacao = $.extend(true, {
     boxReadonly : false,
     modificada: false,
 
+    
+    
     definirTransferenciaCota : function() {
         if (!roteirizacao.isTransferenciaCota()) {
             roteirizacao.tipoTransferencia = TipoTransferencia.COTA;
@@ -1291,6 +1293,7 @@ var roteirizacao = $.extend(true, {
 
         $("#cepPesquisa", roteirizacao.workspace).mask("99999-999");
         $("#cotaPesquisaPdv", roteirizacao.workspace).val('');
+        $("#cotaPesquisaPdv", roteirizacao.workspace).justInput(/[0-9]/);
         $("#nomeCotaPesquisaPdv", roteirizacao.workspace).val('');
 
         $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas',null,
@@ -1485,7 +1488,7 @@ var roteirizacao = $.extend(true, {
                 sortable : false,
                 align : 'center'
             }],
-            sortname : "ordem",
+            sortname : "cota",
             sortorder : "asc",
             width : 800,
             height : 250
@@ -2323,6 +2326,7 @@ var roteirizacao = $.extend(true, {
         roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
         roteirizacao.prepararPopupRoteirizacao();
         roteirizacao.modificada = false;
+        
     },
 
     limparCamposPesquisaGrids : function() {
@@ -2357,22 +2361,22 @@ var roteirizacao = $.extend(true, {
             roteirizacao.desabilitaBotao('botaoExcluirRota');
 
         } else {
-            roteirizacao.habilitaBotao('botaoTransfereciaRota', function(){roteirizacao.popupTransferirRota()});
-            roteirizacao.habilitaBotao('botaoExcluirRota',function(){roteirizacao.popupExcluirRotaRoteiro()});
+            roteirizacao.habilitaBotao('botaoTransfereciaRota', function(){roteirizacao.popupTransferirRota();});
+            roteirizacao.habilitaBotao('botaoExcluirRota',function(){roteirizacao.popupExcluirRotaRoteiro();});
         }
     },
 
     habilitaBotoesRoteirizacao : function() {
 
-        listaRoteirizacao = roteirizacao.buscaRoteirizacaoSelecionadas()
+        listaRoteirizacao = roteirizacao.buscaRoteirizacaoSelecionadas();
 
         if (listaRoteirizacao.length == 0 ) {
             roteirizacao.desabilitaBotao('botaoTransferenciaRoteiro', roteirizacao.workspace);
             roteirizacao.desabilitaBotao('botaoExcluirRoteirizacao', roteirizacao.workspace);
 
         } else {
-            roteirizacao.habilitaBotao('botaoTransferenciaRoteiro', function(){roteirizacao.popupTransferirCota()});
-            roteirizacao.habilitaBotao('botaoExcluirRoteirizacao',function(){roteirizacao.popupExcluirRoteirizacao()});
+            roteirizacao.habilitaBotao('botaoTransferenciaRoteiro', function(){roteirizacao.popupTransferirCota();});
+            roteirizacao.habilitaBotao('botaoExcluirRoteirizacao',function(){roteirizacao.popupExcluirRoteirizacao();});
         }
     },
 
@@ -2382,7 +2386,7 @@ var roteirizacao = $.extend(true, {
         
     	if (roteirizacao.isNovo()) {
             $('#nomeBox', roteirizacao.workspace).prop('disabled', false);
-            $('#lnkPesquisarBox', roteirizacao.workspace).click(function() {roteirizacao.pesquisarBox()});
+            $('#lnkPesquisarBox', roteirizacao.workspace).click(function() {roteirizacao.pesquisarBox();});
         } else {
             $('#nomeBox', roteirizacao.workspace).prop('disabled', true);
             $('#lnkPesquisarBox', roteirizacao.workspace).unbind('click');
@@ -2416,7 +2420,7 @@ var roteirizacao = $.extend(true, {
                 }
                 $( "#dialog-roteirizacao", roteirizacao.workspace ).dialog({
                     resizable: false,
-                    height:610,
+                    height:630,
                     width:955,
                     modal: true,
                     title : roteirizacao.isNovo() ? 'Nova Roteirização' : 'Editar Roteirização',
@@ -2574,15 +2578,15 @@ var roteirizacao = $.extend(true, {
     },
 
     init : function() {
-
-        $("#cotasGrid",roteirizacao.workspace).flexigrid({
+    	
+    	$("#cotasGrid",roteirizacao.workspace).flexigrid({
             autoload : false,
             url : contextPath + '/cadastro/roteirizacao/obterCotasSumarizadas',
             dataType : 'json',
             colModel : [ {
                 display : 'Cota',
                 name : 'numeroCota',
-                width : 100,
+                width : 120,
                 sortable : true,
                 align : 'left'
             }, {
@@ -2592,11 +2596,12 @@ var roteirizacao = $.extend(true, {
                 sortable : true,
                 align : 'left'
             }],
-            sortname : "numeroCota",
-            width : 380,
-            height : 140
+            sortname : "",
+            sortorder : "asc",
+            width : 'auto',
+            height : 200
         });
-        
+    	
     },
     
     limparCamposNovaInclusao : function(){
@@ -2633,7 +2638,7 @@ var roteirizacao = $.extend(true, {
             $.postJSON(
                 contextPath + '/cadastro/roteirizacao/carregarRoteirosTransferenciaRota',
                 [
-                    {name: 'idRoteiro', value: roteirizacao.idRoteiro}
+                    {name: 'idBox', value: roteirizacao.idBox}
                 ],
                 function(result) {
 
@@ -3075,6 +3080,7 @@ var roteirizacao = $.extend(true, {
 
 $(function() {
     roteirizacao.init();
+  
 });
 
 //@ sourceURL=roteirizacao.js
