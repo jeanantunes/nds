@@ -133,7 +133,7 @@ var ConsultaEncalhe = $.extend(true, {
 
 				return resultado.tableModel;
 			}
-			debugger;
+			
 			$.each(resultado.tableModel.rows, function(index, row) {
 				var detalhes = '<a href="javascript:;" ' +
 					(row.cell.indPossuiObservacaoConferenciaEncalhe=='N'?'style="opacity: 0.5;"': 'onclick="ConsultaEncalhe.popupDetalhe(\'' + row.cell.idCota + '\', \'' + row.cell.idFornecedor + '\', \'' + row.cell.idProdutoEdicao + '\', \'' + row.cell.dataMovimento + '\', \'' + row.cell.dataRecolhimento + '\');" style="cursor:pointer"')

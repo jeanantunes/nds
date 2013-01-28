@@ -78,7 +78,7 @@
     			</table>
     			<!-- Entrega de Reparte de Venda -->
         		<input id="${param.tela}repPorPontoVenda" name="repPorPontoVenda" type="checkbox"  value="" style="margin-top:9px;" />
-        		<label for="${param.tela}entregaReparteVenda" style="width:190px;float:left;">Entrega de Reparte de Venda</label>
+        		<label for="${param.tela}entregaReparteVenda" style="width:190px;float:left;">Reparte por PDV</label>
 
          		<br clear="all" />
 

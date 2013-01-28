@@ -497,7 +497,17 @@ public abstract class Util {
 		return cnpj.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 	}
 	
-	
+	/**
+	 * Remove a mascara do CPF
+	 * @param cpf
+	 * @return
+	 */
+	public static String removerMascaraCpf(String cpf){
+		if(cpf == null){
+			return null;
+		}		
+		return cpf.replaceAll("[.-]", "");
+	}
 	
     /**
      * Utilitário para tratamento de valor "null" utilizando
