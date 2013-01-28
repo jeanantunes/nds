@@ -58,23 +58,19 @@ public class DividaServiceImplTest {
         
         Set<PoliticaCobranca> politicas = new HashSet<>();
         PoliticaCobranca politicaCobrancaBoleto = Fixture
-                .criarPoliticaCobranca(distribuidor, formaBoleto, true, false,
-                        false, null, null, true, FormaEmissao.EM_MASSA);
+                .criarPoliticaCobranca(distribuidor, formaBoleto, true, FormaEmissao.EM_MASSA);
         politicas.add(politicaCobrancaBoleto);
 
         PoliticaCobranca politicaCobrancaCheque = Fixture
-                .criarPoliticaCobranca(distribuidor, formaCheque, true, false,
-                        true, null, null, false, FormaEmissao.PONTUAL);
+                .criarPoliticaCobranca(distribuidor, formaCheque, false, FormaEmissao.PONTUAL);
         politicas.add(politicaCobrancaCheque);
 
         PoliticaCobranca politicaCobrancaDinheiro = Fixture
-                .criarPoliticaCobranca(distribuidor, formaDinheiro, true,
-                        false, true, null, null, false, FormaEmissao.PONTUAL);
+                .criarPoliticaCobranca(distribuidor, formaDinheiro, false, FormaEmissao.PONTUAL);
         politicas.add(politicaCobrancaDinheiro);
         
         PoliticaCobranca politicaCobrancaDeposito = Fixture
-                .criarPoliticaCobranca(distribuidor, formaDeposito, true,
-                        false, true, null, null, false, FormaEmissao.PONTUAL);
+                .criarPoliticaCobranca(distribuidor, formaDeposito, false, FormaEmissao.PONTUAL);
         politicas.add(politicaCobrancaDeposito);
         
         distribuidor.setPoliticasCobranca(politicas);

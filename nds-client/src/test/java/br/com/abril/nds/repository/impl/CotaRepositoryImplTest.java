@@ -260,7 +260,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(formaBoleto);
 
 		PoliticaCobranca politicaCobranca = Fixture.criarPoliticaCobranca(null,
-				formaBoleto, true, true, true, "", "", true,
+				formaBoleto, true,
 				FormaEmissao.INDIVIDUAL_BOX);
 		save(politicaCobranca);
 
