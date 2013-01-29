@@ -169,14 +169,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	@Transactional
 	public void confirmarExpedicao(Long idLancamento, Long idUsuario,Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
-		
-		//VERIFICA DISPONIBILIDADE DE ESTOQUE
-		/*
-		if (!this.estoqueDisponivel(lancamento)){
 
-			return;
-		}
-		*/
 		Expedicao expedicao = new Expedicao();
 		expedicao.setDataExpedicao(new Date());
 		expedicao.setResponsavel(new Usuario(idUsuario));
