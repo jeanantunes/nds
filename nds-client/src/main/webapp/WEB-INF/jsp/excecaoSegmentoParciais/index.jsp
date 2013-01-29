@@ -1,0 +1,226 @@
+<head>
+<script language="javascript" type="text/javascript" src="scripts/excecaoSegmentoParciais.js" />
+<script language="javascript" type="text/javascript">
+
+$(function() {
+	excecaoSegmentoParciaisController.init();
+});
+
+function excluir_produto() {
+	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+	$( "#dialog-excluir" ).dialog({
+		resizable: false,
+		height:170,
+		width:380,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				$( this ).dialog( "close" );
+				$("#effect").show("highlight", {}, 1000, callback);
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+};		
+		
+function incluirSegmento() {
+	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+	$( "#dialog-novo" ).dialog({
+		resizable: false,
+		height:500,
+		width:650,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				$( this ).dialog( "close" );
+				$("#effect").show("highlight", {}, 1000, callback);
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+};		
+function porCota(){
+	$('.porCota').show();
+	$('.porExcessao').hide();
+	
+	excecaoSegmentoParciaisController.excessaoBGrid.reload();
+	
+	excecaoSegmentoParciaisController.excessaoBGrid.reload(this.workspace);
+	
+	excecaoSegmentoParciaisController.excessaoBGrid.reload({
+		url : contextPath + "/distribuicao/excecaoSegmentoParciais/teste",
+		dataType : 'json',
+		params : "muitos parametros"
+	});
+}
+function porExcessao(){
+	$('.porCota').hide();
+	$('.porExcessao').show();
+}
+function filtroPorCota(){
+	$('.filtroPorCota').show();
+	$('.filtroPorProduto').hide();
+	$('.porExcessao').hide();
+}
+function filtroPorProduto(){
+	$('.filtroPorCota').hide();
+	$('.filtroPorProduto').show();
+	$('.porCota').hide();
+}
+$(function() {
+		var availableTags = [
+			"1234 - Antonio Carlos Pereira",
+			"2345 - Antonio Pereira",
+			"3456 - Paulo Roberto",
+			"1234 - Antonio Carlos Pereira",
+			"2345 - Antonio Pereira",
+			"3456 - Paulo Roberto",
+			"5678 - Roberto Carlos"
+		];
+		$( "#lstCotas" ).autocomplete({
+			source: availableTags
+		});
+		$( "#lstCotas2" ).autocomplete({
+			source: availableTags
+		});
+	});
+</script>
+
+</head>
+
+<body>
+
+<div id="dialog-excluir" title="Excluir Exceção Não Recebida">
+	<p>Confirma a exclusão desta Exceção?</p>
+</div>
+
+<div class="corpo">
+  
+    <br clear="all"/>
+    <br />
+   
+    <div class="container">
+    
+     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
+				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+				<b>Classificação Não Recebida < evento > com < status >.</b></p>
+	</div>
+    	
+      <fieldset class="classFieldset">
+   	    <legend> Pesquisar Exceções de Segmentos e Parciais</legend>
+        <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
+          <tr>
+            <td width="20"><input type="radio" name="porExcecao" id="radio4" value="radio"/></td>
+            <td width="188">Por Exceção Segmento Cota</td>
+            <td width="20"><input type="radio" name="porExcecao" id="radio3" value="radio"/></td>
+            <td width="696">Por Exceção de Parciais</td>
+          </tr>
+        </table>
+        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+          <tr>
+            <td width="22" align="right"><input type="radio" name="filtroPor" id="radio" value="radio" onclick="filtroPorCota();" /></td>
+            <td width="50">Cota</td>
+            <td width="22"><input type="radio" name="filtroPor" id="radio2" value="radio" onclick="filtroPorProduto()" /></td>
+            <td width="49">Produto</td>
+            <td width="781">
+            <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
+            <tr>
+           	  <td width="30">Cota:</td>
+                <td width="88">
+                <input type="text" name="textfield" id="textfield" style="width:80px;"/></td>
+                <td width="37">Nome:</td>
+                <td width="486"><input type="text" name="textfield2" id="textfield2" style="width:200px;"/></td>
+              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="excecaoSegmentoParciaisController.porCota();">Pesquisar</a></span></td>
+            </tr>
+          </table>
+          
+          <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
+          <tr>
+            <td width="42">Código:</td>
+            <td width="65"><input type="text" name="textfield4" id="textfield5" style="width:60px; float:left; margin-right:5px;"/></td>
+            <td width="47">Produto:</td>
+            <td width="120"><input type="text" name="textfield4" id="textfield6" style="width:120px;"/></td>
+            <td width="67">Fornecedor:</td>
+            <td width="110"><input type="text" name="textfield4" id="textfield6" style="width:110px;" disabled="disabled"/></td>
+            <td width="60">Segmento:</td>
+            <td width="110"><input type="text" name="textfield4" id="textfield6" style="width:110px;" disabled="disabled"/></td>
+            <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="porExcessao();">Pesquisar</a></span></td>
+          </tr>
+        </table>
+            </td>
+          </tr>
+        </table>
+        
+        
+      </fieldset>
+      <div class="linha_separa_fields">&nbsp;</div>
+      <div class="grids" style="display:block;">
+      
+      <div class="porExcessao" style="display:none;">
+      <fieldset class="classFieldset" style="float:left; width:600px!important; margin-right:10px!important;">
+       	  <legend>Cotas que Recebem</legend>
+        
+        	<table class="excessaoNaoRecebidaGrid"></table>
+             <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+
+<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+        
+      </fieldset>
+       <fieldset class="classFieldset" style="float:left; width:333px!important;">
+       	  <legend>Cotas que Não Recebem</legend>
+       	  <table width="276" border="0" cellpadding="2" cellspacing="1" class="filtro">
+       	    <tr>
+       	      <td width="33">Cota:</td>
+       	      <td width="60"><input type="text" style="width:40px;"/></td>
+              <td width="41">Nome:</td>
+              <td width="121">
+              <input type="text" style="width:160px;"/></td>
+   	      </table>
+       	  <br />
+        	<table class="excessaoGrid"></table>
+              <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;"><img src="../images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+        
+      </fieldset>
+      </div>
+      
+      
+      <div class="porCota" style="display:none;">
+      <fieldset class="classFieldset" style="float:left; width:600px!important; margin-right:10px!important;">
+       	  <legend>Produtos Recebidos</legend>
+        
+        	<table class="excessaoCotaGrid"></table>
+             <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+
+<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+        
+      </fieldset>
+      
+      <fieldset class="classFieldset" style="float:left; width:333px!important;">
+       	  <legend>Produtos Não Recebidos</legend>
+       	  <table width="312" border="0" cellpadding="2" cellspacing="1" class="filtro">
+       	    <tr>
+       	      <td width="45">Código:</td>
+       	      <td width="60"><input type="text" style="width:60px;"/></td>
+              <td width="54">Produto:</td>
+              <td width="132">
+              <input type="text" style="width:120px;"/></td>
+   	      </table>
+       	  <br />
+        	<table class="excessaoBGrid"></table>
+              <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;"><img src="../images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+        
+      </fieldset>
+      </div>
+      
+      </div>
+      <div class="linha_separa_fields">&nbsp;</div>
+       
+    </div>
+</div> 
+</body>

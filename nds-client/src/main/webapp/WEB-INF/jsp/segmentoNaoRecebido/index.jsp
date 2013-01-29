@@ -136,8 +136,11 @@
        	      	onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCotaFiltro2','#nomeCotaFiltro2');" style="width:40px;"/>
        	      </td>
               <td width="41">Nome:</td>
-       	      <td width="115"><input type="text" id="nomeCotaFiltro2" style="width:140px;"/></td>
-              <td width="19"><span class="classPesquisar"><a href="javascript:;" onclick="segmentoNaoRecebidoController.pesquisarCotasNaoEstaoNoSegmento()">&nbsp;</a></span></td>
+       	      <td width="115"><input type="text" id="nomeCotaFiltro2" onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCotaFiltro2')" style="width:140px;"/></td>
+              <td width="19">
+              	<span class="classPesquisar"><a href="javascript:;"  
+              	onclick="segmentoNaoRecebidoController.pesquisarCotasNaoEstaoNoSegmento()">&nbsp;</a></span>
+              </td>
    	        </tr>
    	      </table>
        	  <br />

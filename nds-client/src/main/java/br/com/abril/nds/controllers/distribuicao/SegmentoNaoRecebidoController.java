@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -139,9 +140,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>> montarTableModelSegmentosNaoRecebemCota(
-			FiltroSegmentoNaoRecebidoDTO filtro, 
-			List<SegmentoNaoRecebeCotaDTO> listaSegmentoNaoRecebeCotaDTO) {
+	private TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>> montarTableModelSegmentosNaoRecebemCota(FiltroSegmentoNaoRecebidoDTO filtro, List<SegmentoNaoRecebeCotaDTO> listaSegmentoNaoRecebeCotaDTO) {
 		
 		TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>> tableModel = new TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>>();
 
@@ -168,6 +167,8 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		
 		this.validarEntradaFiltroSegmento(filtro);
 		this.validarEntradaFiltroCota(filtro);
+		
+		filtro.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtro.getNomeCota()));
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
 		

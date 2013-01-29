@@ -35,6 +35,7 @@ public enum Permissao
 	ROLE_DISTRIBUICAO("Distribuição",																	   null),
 	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO("Segmento Não Recebido",					 				   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS("Exceção de Segmento e Parciaiso",					 	   Permissao.ROLE_DISTRIBUICAO),
 	
 	ROLE_ESTOQUE("Estoque",																	  			   null),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),
