@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -232,8 +233,6 @@ public class BoletoServiceImpl implements BoletoService {
 			throw new ValidacaoException(TipoMensagem.WARNING, 
 				"Já foi realizada baixa automática na data de operação atual para o banco " + banco.getNome() + "!");
 		}
-		
-		valorFinanceiro.setScale(2);
 		
 		if (valorFinanceiro == null || arquivoPagamento.getSomaPagamentos() == null
 				|| valorFinanceiro.compareTo(arquivoPagamento.getSomaPagamentos()) != 0) {
