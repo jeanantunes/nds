@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.util.Intervalo;
 
@@ -26,7 +27,7 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	 */
 	EstudoCota obterEstudoCota(Integer numeroCota, Date dataReferencia);
 	
-	List<EstudoCota> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao);
+	List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao);
 	
 	EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota);
 	

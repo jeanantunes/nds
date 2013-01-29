@@ -59,6 +59,14 @@ public class EstudoCota implements Serializable {
 	@OneToOne(mappedBy = "estudoCota")
 	private ItemNotaEnvio itemNotaEnvio;
 	
+	public EstudoCota() {
+		
+	}
+	
+	public EstudoCota(Long id) {
+		this.id=id;
+	}
+
 	public Long getId() {
 		return id;
 	}

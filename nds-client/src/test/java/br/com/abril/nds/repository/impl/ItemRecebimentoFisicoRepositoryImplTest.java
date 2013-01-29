@@ -17,15 +17,13 @@ public class ItemRecebimentoFisicoRepositoryImplTest extends AbstractRepositoryI
 	
 	@Test
 	public void testarObterItemPorDataLancamentoIdProdutoEdicao() {
-		
-		ItemRecebimentoFisico itemRecebimentoFisico;
-		
+				
 		Calendar d = Calendar.getInstance();
 		Date dataLancamento = d.getTime();
 		
 		Long idProdutoEdicao = 1L;
 		
-		itemRecebimentoFisico = itemRecebimentoFisicoRepositoryImpl.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
+		Long itemRecebimentoFisico = itemRecebimentoFisicoRepositoryImpl.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
 		
 		Assert.assertNull(itemRecebimentoFisico);
 		
