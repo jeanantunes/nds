@@ -15,7 +15,7 @@ import br.com.abril.nds.util.export.Export.Alignment;
  *         Recebido</h1>
  */
 @Exportable
-public class SegmentoNaoRecebeCotaDTO {
+public class SegmentoNaoRecebeCotaDTO{
 
 	private Long segmentoNaoRecebidoId;
 	

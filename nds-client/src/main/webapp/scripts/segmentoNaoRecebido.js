@@ -515,8 +515,6 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								["segmentosBGrid","segmentoCotaGrid"],
 								this.callBackOnSucess
 						);
-						
-
 					},
 					
 					/**
@@ -543,7 +541,6 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								["segmentoNaoRecebidaGrid","segmentosGrid"],
 								this.callBackOnSucess
 						);
-						
 					},
 					
 					/**
