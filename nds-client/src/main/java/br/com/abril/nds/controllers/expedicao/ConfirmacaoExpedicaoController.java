@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -56,6 +57,8 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 	
 	@Autowired
 	private TipoMovimentoService tipoMovimentoService;
+		
+		private MovimentoEstoqueRepository movimentoEstoqueRepository;
 
 	protected static final String SUCESSO = "SUCCESS";
 	protected static final String FALHA = "ERROR";

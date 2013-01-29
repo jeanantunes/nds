@@ -121,7 +121,7 @@ fieldset li a:hover{color:#000; text-decoration:underline;}
 /* alterado fieldset label{ float: left; line-height: 23px; margin-bottom: 6px; margin-left: 5px; margin-right: 5px; width: 65px;}*/
 fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 5px;}
 
-.classFieldset{ width:960px!important; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
+.classFieldset{ width:980px!important; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
 .classFieldset legend{ color:#01649E;}
 
 .classFieldset_monitoramento{ width:980px; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
@@ -326,7 +326,7 @@ select, input{font-size: 12px; }
 .bt_incluir_novo a:hover{text-decoration:underline;}
 .vermelho{color:#FF0000; font-weight:bold;}
 
-.bt_novos a, .bt_arq a{ border:1px solid #EFEFEF;   float:left; padding:5px; text-decoration:none; margin-left:10px;}
+.bt_novos a, .bt_arq a{ border:1px solid #EFEFEF;   float:left; padding:5px; text-decoration:none; margin-right:10px;}
 /*.bt_novos a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
 .bt_novos a:hover{text-decoration:underline;}*/
 .bt_novos a:hover, .bt_arq a:hover{ border:1px solid #5BF065; float:left;}
@@ -382,8 +382,8 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
     position:absolute;
     z-index:1;
 }
-.fieldFiltro{margin-top:27px; width:960px!important; margin-right:0px!important;}
-.fieldGrid{width:960px;}
+.fieldFiltro{margin-top:27px; width:980px!important; margin-right:0px!important;}
+.fieldGrid{width:980px;}
 .img{margin-right:10px;}
 /* Navigation */
 .nav, .nav ul { 
@@ -646,9 +646,9 @@ input[type='text'], input[type='password'], textarea {
 
 #effectError .msgBody, #effectWarning .msgBody {
 	margin-left: 5px;
-	text-align: justify;
+	text-align: left;
 	max-width: 410px;
-	word-break: break-all;
+	word-break: normal;
 }
 
 #effectWarning {

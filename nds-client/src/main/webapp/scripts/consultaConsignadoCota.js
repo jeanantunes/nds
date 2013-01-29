@@ -354,6 +354,10 @@ var consultaConsignadoCotaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
+			beforeClose: function(){
+				
+				consultaConsignadoCotaController.pesquisar();
+			},
 			form: $("#dialog-detalhes", this.workspace).parents("form")
 		});
 	},
