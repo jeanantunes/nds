@@ -285,6 +285,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	public MapaProdutoCotasDTO obterMapaDeImpressaoPorProdutoQuebrandoPorCota(
 			FiltroMapaAbastecimentoDTO filtro) {
 		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
 		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 		
 		if(produtosBoxRota.size() == 0)
