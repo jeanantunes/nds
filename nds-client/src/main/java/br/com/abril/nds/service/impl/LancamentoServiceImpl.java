@@ -139,36 +139,17 @@ public class LancamentoServiceImpl implements LancamentoService {
 				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
 				fornecedor, 
 				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
-				false);
+				false,
+				lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde().intValue():0);
 		
 		return dto;
 	}
 
-	/**
-	 * Verifica disponibilidade de Estoque do ProdutoEdicao do Lancamento
-	 * @param lcto
-	 * @return True = ((Movimentos de Entrada - Movimentos de Saida) > Reparte)
-	 */
-	private boolean estoqueDisponivel(Long idProdutoEdicao, BigInteger reparte ){
-
-		ProdutoEdicao pe = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-		
-		BigInteger saldo = pe.getEstoqueProduto().getQtde();
-	
-		return ( (saldo!=null?saldo.floatValue():0) - (reparte!=null?reparte.floatValue():0) ) > 0;
-	}
-	
 	@Override
 	@Transactional
 	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario,Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
-
-		//VERIFICA DISPONIBILIDADE DE ESTOQUE
-		if (!this.estoqueDisponivel(lancamento.getIdProdutoEdicao(),lancamento.getReparte())){
-
-			return false;
-		}
 
 		Expedicao expedicao = new Expedicao();
 		expedicao.setDataExpedicao(new Date());
