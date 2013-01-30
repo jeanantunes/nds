@@ -295,6 +295,17 @@ public class BoletoServiceImpl implements BoletoService {
 							 String nomeArquivo, Distribuidor distribuidor,
 							 Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
 		
+		Boleto boleto = gerarBaixaBoleto(tipoBaixaCobranca, pagamento, usuario, nomeArquivo, distribuidor, dataNovoMovimento, resumoBaixaBoletos, banco);
+	
+		boleto.setTipoBaixa(tipoBaixaCobranca);
+		
+		boletoRepository.merge(boleto);
+	}
+	
+	private Boleto gerarBaixaBoleto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento, Usuario usuario,
+							 String nomeArquivo, Distribuidor distribuidor,
+							 Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+		
 		if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
 			validarDadosEntradaBaixaAutomatica(pagamento);
@@ -330,7 +341,7 @@ public class BoletoServiceImpl implements BoletoService {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Boleto não encontrado!");
 			}
 			
-			return;
+			return boleto;
 		}
 			
 		// Boleto já foi pago
@@ -346,7 +357,7 @@ public class BoletoServiceImpl implements BoletoService {
 				throw new ValidacaoException(TipoMensagem.WARNING, "O boleto já foi pago!");
 			}
 			
-			return;
+			return boleto;
 		}
 		
 		Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(boleto.getDataVencimento(), 0);
@@ -369,7 +380,7 @@ public class BoletoServiceImpl implements BoletoService {
 										  dataOperacao, boleto, resumoBaixaBoletos, banco);
 			}
 			
-			return;
+			return boleto;
 		}
 			
 		// Boleto pago com valor correto
@@ -378,7 +389,7 @@ public class BoletoServiceImpl implements BoletoService {
 			baixarBoletoValorCorreto(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
 									 dataOperacao, boleto, resumoBaixaBoletos, banco);
 			
-			return;
+			return boleto;
 			
 		} else if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == 1) {
 			
@@ -393,7 +404,7 @@ public class BoletoServiceImpl implements BoletoService {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Boleto com valor divergente!");
 			}
 			
-			return;
+			return boleto;
 			
 		} else {
 		
@@ -408,7 +419,7 @@ public class BoletoServiceImpl implements BoletoService {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Boleto com valor divergente!");
 			}
 			
-			return;
+			return boleto;
 		}
 	}
 	
@@ -1126,8 +1137,12 @@ public class BoletoServiceImpl implements BoletoService {
 			Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 			
 			byte[] anexo = this.gerarAnexoBoleto(boleto);
-			String[] destinatarios = new String[]{boleto.getCota().getPessoa().getEmail()};
 			
+			if(boleto.getCota().getPessoa().getEmail()==null)
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cota não possui email cadastrado.");
+			
+			String[] destinatarios = new String[]{boleto.getCota().getPessoa().getEmail()};
+						
 			Distribuidor distribuidor = this.distribuidorRepository.obter();
 			
 			String assunto=(distribuidor.getAssuntoEmailCobranca()!=null?distribuidor.getAssuntoEmailCobranca():"");
@@ -1136,8 +1151,9 @@ public class BoletoServiceImpl implements BoletoService {
 					     mensagem, 
 					     destinatarios, 
 					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF));
-		}
-		catch(Exception e){
+		} catch(ValidacaoException e){
+			throw e;
+		}catch(Exception e){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio.");
 		}
 	}

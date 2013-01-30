@@ -89,6 +89,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamen
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -225,7 +226,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		boleto1 = Fixture.boleto("123", "123", "123123", new Date(),
 				Fixture.criarData(10, 10, 2000), new Date(),
-				new BigDecimal(20), new BigDecimal(10.10), "tipoBaixa", "acao",
+				new BigDecimal(20), new BigDecimal(10.10), TipoBaixaCobranca.MANUAL, "acao",
 				StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida1, 0);
 		save(boleto1);
 
@@ -242,7 +243,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		boleto2 = Fixture.boleto("124", "123", "124123", new Date(),
 				Fixture.criarData(1, 10, 2010), new Date(), BigDecimal.ZERO,
-				new BigDecimal(10.10), "tipoBaixa", "acao",
+				new BigDecimal(10.10), TipoBaixaCobranca.MANUAL, "acao",
 				StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida2, 0);
 		save(boleto2);
 
