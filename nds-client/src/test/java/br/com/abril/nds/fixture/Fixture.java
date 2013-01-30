@@ -256,6 +256,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridi
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 
 public class Fixture {
@@ -2257,7 +2258,7 @@ public class Fixture {
 				                Date dataPagamento,
 				                BigDecimal encargos,
 				                BigDecimal valor,
-				                String tipoBaixa,
+				                TipoBaixaCobranca tipoBaixa,
 				                String acao,
 				                StatusCobranca status,
 				                Cota cota,
@@ -2645,7 +2646,7 @@ public class Fixture {
             Date dataPagamento,
             BigDecimal encargos,
             BigDecimal valor,
-            String tipoBaixa,
+            TipoBaixaCobranca tipoBaixa,
             String acao,
             StatusCobranca status,
             Cota cota,
@@ -2676,7 +2677,7 @@ public class Fixture {
             Date dataPagamento,
             BigDecimal encargos,
             BigDecimal valor,
-            String tipoBaixa,
+            TipoBaixaCobranca tipoBaixa,
             String acao,
             StatusCobranca status,
             Cota cota,
@@ -2707,7 +2708,7 @@ public class Fixture {
 									            Date dataPagamento,
 									            BigDecimal encargos,
 									            BigDecimal valor,
-									            String tipoBaixa,
+									            TipoBaixaCobranca tipoBaixa,
 									            String acao,
 									            StatusCobranca status,
 									            Cota cota,
@@ -2737,7 +2738,7 @@ public class Fixture {
 									            Date dataPagamento,
 									            BigDecimal encargos,
 									            BigDecimal valor,
-									            String tipoBaixa,
+									            TipoBaixaCobranca tipoBaixa,
 									            String acao,
 									            StatusCobranca status,
 									            Cota cota,
@@ -2770,7 +2771,7 @@ public class Fixture {
 										            Date dataPagamento,
 										            BigDecimal encargos,
 										            BigDecimal valor,
-										            String tipoBaixa,
+										            TipoBaixaCobranca tipoBaixa,
 										            String acao,
 										            StatusCobranca status,
 										            Cota cota,
@@ -2801,7 +2802,7 @@ public class Fixture {
 										            Date dataPagamento,
 										            BigDecimal encargos,
 										            BigDecimal valor,
-										            String tipoBaixa,
+										            TipoBaixaCobranca tipoBaixa,
 										            String acao,
 										            StatusCobranca status,
 										            Cota cota,

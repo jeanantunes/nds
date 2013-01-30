@@ -206,31 +206,31 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		Boleto boleto1 = Fixture.boleto("1234567890123", "456", "1234567890123456", new Date(),
 									    new Date(), new Date(), BigDecimal.ZERO, 
-                					    new BigDecimal(100), "1", "1", StatusCobranca.PAGO,
+                					    new BigDecimal(100), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.PAGO,
                 					    cota, bancoHSBC, divida1, 0);
 		save(boleto1);
 		
 		Boleto boleto2 = Fixture.boleto("1234567890124", "456", "1234567890124456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-				   						new BigDecimal(100), "1", "1", StatusCobranca.NAO_PAGO,
+				   						new BigDecimal(100), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO,
 				   						cota, bancoHSBC, divida2, 0);
 		save(boleto2);
 		
 		Boleto boleto3 = Fixture.boleto("1234567890125", "456", "1234567890125456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-										new BigDecimal(100), "1", "1", StatusCobranca.NAO_PAGO,
+										new BigDecimal(100), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO,
 										cota, bancoHSBC, divida3, 0);
 		save(boleto3);
 		
 		Boleto boleto4 = Fixture.boleto("1234567890126", "456", "1234567890126456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-										new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+										new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO,
 										cota, bancoHSBC, divida4, 0);
 		save(boleto4);
 		
 		Boleto boleto5 = Fixture.boleto("1234567890127", "456", "1234567890127456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-										new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+										new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO,
 										cota, bancoHSBC, divida5, 0);
 		save(boleto5);
 	}

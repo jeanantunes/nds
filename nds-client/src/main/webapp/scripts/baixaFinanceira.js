@@ -950,7 +950,7 @@ var baixaFinanceiraController = $.extend(true, {
     	};
 		
 		$.postJSON(contextPath + "/financeiro/baixaManualBoleto",param,
-				   function() {mostrarBaixaManual();});
+				   function() {baixaFinanceiraController.mostrarBaixaManual();});
 	},
 	
 	

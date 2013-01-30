@@ -8,7 +8,7 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/baixaFinanceira.js"></script>
 
 	<script type="text/javascript">
-		var pesquisaCotaBaixaFinanceira = new PesquisaCota();
+		var pesquisaCotaBaixaFinanceira = new PesquisaCota(baixaFinanceiraController.workspace);
 		$(function(){
 			baixaFinanceiraController.init();
 		});
