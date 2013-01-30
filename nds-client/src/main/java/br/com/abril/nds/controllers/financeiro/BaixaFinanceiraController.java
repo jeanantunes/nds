@@ -642,6 +642,7 @@ public class BaixaFinanceiraController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 
 	}
+	
 	@Post
 	@Path("/buscaDividasBaixadas")
 	public void buscaDividasBaixadas(Integer numCota,
