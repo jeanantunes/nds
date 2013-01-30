@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -38,7 +38,6 @@ import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
@@ -150,25 +149,26 @@ public class LancamentoServiceImpl implements LancamentoService {
 	 * @param lcto
 	 * @return True = ((Movimentos de Entrada - Movimentos de Saida) > Reparte)
 	 */
-	private boolean estoqueDisponivel(Lancamento lcto){
+	private boolean estoqueDisponivel(Long idProdutoEdicao, BigInteger reparte ){
 
-		if (lcto==null){
-			
-			return false;
-		}
+		ProdutoEdicao pe = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
-		Long numeroEdicao = lcto.getProdutoEdicao().getNumeroEdicao();
-				
-		String codigoProduto =lcto.getProdutoEdicao().getProduto().getCodigo();	
-		
-		BigInteger saldo = this.produtoEdicaoRepository.obterSaldoProdutoEdicao(numeroEdicao, codigoProduto);
+		BigInteger saldo = pe.getEstoqueProduto().getQtde();
 	
-		return ( (saldo!=null?saldo.floatValue():0) - (lcto.getReparte()!=null?lcto.getReparte().floatValue():0) ) > 0;
+		return ( (saldo!=null?saldo.floatValue():0) - (reparte!=null?reparte.floatValue():0) ) > 0;
 	}
 	
 	@Override
 	@Transactional
-	public void confirmarExpedicao(Long idLancamento, Long idUsuario,Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario,Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+		
+		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
+
+		//VERIFICA DISPONIBILIDADE DE ESTOQUE
+		if (!this.estoqueDisponivel(lancamento.getIdProdutoEdicao(),lancamento.getReparte())){
+
+			return false;
+		}
 
 		Expedicao expedicao = new Expedicao();
 		expedicao.setDataExpedicao(new Date());
@@ -176,8 +176,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 		Long idExpedicao = expedicaoRepository.adicionar(expedicao);
 		
 		expedicao.setId(idExpedicao);
-		
-		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
 		
 		lancamentoRepository.alterarLancamento(idLancamento, new Date(), StatusLancamento.EXPEDIDO, expedicao);
 		
@@ -223,6 +221,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			this.descontoProximosLancamentosRepository.alterar(desconto);
 		}*/
 		
+		return true;
 	}
 
 	@Override

@@ -14,15 +14,14 @@
 
 <body>
 
-<form id="form-detalhes">
-<div id="dialog-detalhes" title="Detalhes" style="display:none;">
-	<fieldset>
-    	<legend><span name="numeroNomeCotaPopUp" id="numeroNomeCotaPopUp"></span></legend>
-        
-		<table class="consignadosCotaDetalhesGrid"></table>
-	</fieldset>
-</div>
-</form>
+	 <div id="dialog-detalhes" title="Detalhes" style="display:none;">
+		<fieldset>
+	    	<legend><span name="numeroNomeCotaPopUp" id="numeroNomeCotaPopUp"></span></legend>
+	        
+			<table class="consignadosCotaDetalhesGrid"></table>
+		</fieldset>
+	 </div>
+
 	 <div class="areaBts">
 	 	<div class="area">
 	 		<div class="pesqTodos" style="display:none;">
@@ -52,41 +51,46 @@
 	 		</div>
 	 	</div>
 	 </div>
+	 
 	 <div class="linha_separa_fields">&nbsp;</div>
-     <fieldset class="fieldFiltro">
-   	    <legend>Pesquisar Consignados Cota
-        </legend><table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-  <tr>
-    <td width="34">Cota:</td>
-    <td width="98"><input type="text" name="codigoCota" id="codigoCota" style="width:60px; float:left; margin-right:5px;" onblur="consultaConsignadoCotaController.pesquisarCota();" />
-    	<input type="hidden" id="valorGrid" name="valorGrid" value="total" />
-    </td>
-    <td width="42">Nome:</td>    
-    <td width="220"><span name="nomeCota" id="nomeCota"></span></td>
-    <td width="77">Fornecedor:</td>
-    <td width="208">    	
-    	<select id="idFornecedor" name="idFornecedor" style="width:200px;" onchange="consultaConsignadoCotaController.detalharTodos(this.value);">
-		    <option value="0" selected="selected">Selecione</option>
-		    <option value="-1">Todos</option>
-		    <c:forEach items="${listaFornecedores}" var="fornecedor">
-		      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
-		    </c:forEach>
-		</select>
-    </td>
-    <td width="91">
-	    <div id="detalhes" style="display:none;">
-        <table border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td width="15%"><input name="opcaoDetalhe" id="opcaoDetalhe" type="checkbox" /></td>
-            <td width="85%"><label>Detalhar</label></td>
-          </tr>
-        </table>
-      </div>
-</td>  
-    <td width="139"><span class="bt_novos"><a href="javascript:;"  onclick="consultaConsignadoCotaController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
-  </tr>
-  </table>
+	 
+        <fieldset class="fieldFiltro">
+	   	    <legend>Pesquisar Consignados Cota
+	        </legend>
+	        
+	        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+			  <tr>
+			    <td width="34">Cota:</td>
+			    <td width="98"><input type="text" name="codigoCota" id="codigoCota" style="width:60px; float:left; margin-right:5px;" onblur="consultaConsignadoCotaController.pesquisarCota();" />
+			    	<input type="hidden" id="valorGrid" name="valorGrid" value="total" />
+			    </td>
+			    <td width="42">Nome:</td>    
+			    <td width="220"><span name="nomeCota" id="nomeCota"></span></td>
+			    <td width="77">Fornecedor:</td>
+			    <td width="208">    	
+			    	<select id="idFornecedor" name="idFornecedor" style="width:200px;" onchange="consultaConsignadoCotaController.detalharTodos(this.value);">
+					    <option value="0" selected="selected">Selecione</option>
+					    <option value="-1">Todos</option>
+					    <c:forEach items="${listaFornecedores}" var="fornecedor">
+					      		<option value="${fornecedor.key}">${fornecedor.value}</option>	
+					    </c:forEach>
+					</select>
+			    </td>
+			    <td width="91">
+				    <div id="detalhes" style="display:none;">
+			        <table border="0" cellspacing="0" cellpadding="0">
+			          <tr>
+			            <td width="15%"><input name="opcaoDetalhe" id="opcaoDetalhe" type="checkbox" /></td>
+			            <td width="85%"><label>Detalhar</label></td>
+			          </tr>
+			        </table>
+			      </div>
+			    </td>  
+			    <td width="139"><span class="bt_novos"><a href="javascript:;"  onclick="consultaConsignadoCotaController.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+			  </tr>
+	      </table>
       </fieldset>
+      
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids">
 	      <fieldset class="fieldGrid">
@@ -113,10 +117,8 @@
 			<div class="tabelaGeralPorFornecedor" style="display:none;">
 				<span name="totalGeralPorFornecedor" id="totalGeralPorFornecedor" ></span>
 			</div>
- 		</div>
-
-
-      </fieldset>
-      
-      
+			
+		  </fieldset>
+     </div>
+    
 </body>

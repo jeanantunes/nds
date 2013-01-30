@@ -1597,7 +1597,8 @@ public class LancamentoRepositoryImpl extends
 		String hql = " select lancamento.id as id, " 
 				   + " produtoEdicao.id as idProdutoEdicao, "
 				   + " lancamento.dataLancamentoPrevista as dataPrevista, "
-				   + " lancamento.dataLancamentoDistribuidor as dataDistribuidor "
+				   + " lancamento.dataLancamentoDistribuidor as dataDistribuidor, "
+				   + " lancamento.reparte as reparte "
 				   + " from Lancamento lancamento "
 				   + " join lancamento.produtoEdicao produtoEdicao "
 				   + " where lancamento.id = :idLancamento ";
