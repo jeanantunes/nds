@@ -291,11 +291,19 @@ var MANTER_COTA = $.extend(true, {
                 if(result){
 
                     if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF){
+                    	
+                    	$("#numeroCotaCPF", this.workspace).attr("disabled", "disabled");
+                    	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
+                        
                         COTA_CPF.editarCPF(result);
                     }
                     else {
+                    	
+                    	$("#numeroCota", this.workspace).attr("disabled", "disabled");
+                    	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
+                        
                         COTA_CNPJ.editarCNPJ(result);
                     }
                 }
@@ -386,7 +394,7 @@ var MANTER_COTA = $.extend(true, {
 
     popupCota: function(novo) {
 
-        //Define a funÃ§Ã£o salvar inicial ao abrir o dialog de cadastro de cota
+        //Define a funcao salvar inicial ao abrir o dialog de cadastro de cota
         TAB_COTA.funcaoSalvar = MANTER_COTA.salvarDadosCadastrais;
         
         MANTER_COTA.confirmado = false;
@@ -414,7 +422,6 @@ var MANTER_COTA = $.extend(true, {
             buttonImageOnly: true,
             dateFormat: "dd/mm/yy"
         });
-
 
         if (MANTER_COTA.isModoTelaCadastroCota()) {
             $( "#dialog-cota", this.workspace ).dialog({

@@ -36,9 +36,9 @@ public interface LancamentoService {
 	 * @param tipoMovimentoCota 
 	 * @param tipoMovimento 
 	 * @param dataOperacao 
-	 * @return 
+	 * @return boolean
 	 */
-	void confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota);
+	boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota);
 	
 	Lancamento obterPorId(Long idLancamento);
 	

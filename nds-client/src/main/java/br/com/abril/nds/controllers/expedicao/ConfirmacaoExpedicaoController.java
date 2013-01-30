@@ -61,12 +61,14 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		private MovimentoEstoqueRepository movimentoEstoqueRepository;
 
 	protected static final String SUCESSO = "SUCCESS";
+	protected static final String ALERTA = "WARNING";
 	protected static final String FALHA = "ERROR";
 	protected static final Long COMBO_VAZIO = -1L;
 	
 	protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
 	protected static final String DATA_INVALIDA = "A data informada é inválida";
 	protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
+	protected static final String CONFIRMACAO_EXPEDICAO_ESTOQUE_INDISPONIVEL = "Expedições não confirmadas. Estoque indisponível para todos os lançamentos selecionados !";
 	protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
 	protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro não esperado ao confirmar expedições.";
 	protected static final String ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS = "Erro não esperado ao pesquisar lançamentos não expedidos.";
@@ -205,12 +207,27 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 				Date dataOperacao = distribuidorService.obterDatatOperacaoDistribuidor();
 				
+				boolean lancamentosConfirmados = false;
+				
 				for(int i=0; i<selecionados.size(); i++) {
-					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota);
+					
+					boolean lctoConf = lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota);
+						
+					lancamentosConfirmados = !lancamentosConfirmados?lctoConf:lancamentosConfirmados;
+
 					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));
 				}
 				
-				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
+				if (!lancamentosConfirmados){
+					
+					mensagens.add(CONFIRMACAO_EXPEDICAO_ESTOQUE_INDISPONIVEL);
+					
+					status = ALERTA;
+				}
+				else{
+				
+				    mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
+				}
 				
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);

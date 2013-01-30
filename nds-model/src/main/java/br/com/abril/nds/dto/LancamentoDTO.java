@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 public class LancamentoDTO implements Serializable {
@@ -11,6 +12,7 @@ public class LancamentoDTO implements Serializable {
 	private Long idProdutoEdicao;
 	private Date dataPrevista;
 	private Date dataDistribuidor;
+	private BigInteger reparte;
 	
 	public Long getId() {
 		return id;
@@ -35,6 +37,18 @@ public class LancamentoDTO implements Serializable {
 	}
 	public void setDataDistribuidor(Date dataDistribuidor) {
 		this.dataDistribuidor = dataDistribuidor;
+	}
+	/**
+	 * @return the reparte
+	 */
+	public BigInteger getReparte() {
+		return reparte;
+	}
+	/**
+	 * @param reparte the reparte to set
+	 */
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
 	}
 
 	
