@@ -20,8 +20,9 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	private String fornecedor;
 	private Integer estudo;
 	private Boolean selecionado; 
+	private Integer estoqueLancamentoPE;
 	
-	public LancamentoNaoExpedidoDTO(Long idLancamento, String dataEntrada, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado) {
+	public LancamentoNaoExpedidoDTO(Long idLancamento, String dataEntrada, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado, Integer estoqueLancamentoPE) {
 		super();
 		this.idLancamento = idLancamento;
 		this.dataEntrada = dataEntrada;
@@ -36,6 +37,7 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		this.fornecedor = fornecedor;
 		this.estudo = estudo;
 		this.selecionado = selecionado;
+		this.estoqueLancamentoPE = estoqueLancamentoPE;
 	}
 
 	public Long getIdLancamento() {
@@ -216,6 +218,23 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	public void setSelecionado(Boolean selecionado) {
 		this.selecionado = selecionado;
 	}
+
+
+
+	/**
+	 * @return the estoqueLancamentoPE
+	 */
+	public Integer getEstoqueLancamentoPE() {
+		return estoqueLancamentoPE;
+	}
+
+	/**
+	 * @param estoqueLancamentoPE the estoqueLancamentoPE to set
+	 */
+	public void setEstoqueLancamentoPE(Integer estoqueLancamentoPE) {
+		this.estoqueLancamentoPE = estoqueLancamentoPE;
+	}
+
 
 
 
