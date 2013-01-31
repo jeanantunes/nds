@@ -151,7 +151,8 @@ var confirmaExpedicaoController = $.extend(true, {
 				{selecionado:elementoCheck.checked});	
 		
 		$.each(selects, function(index, row) {
-			row.checked=elementoCheck.checked;
+			    
+			row.checked=!row.disabled?elementoCheck.checked:false;
 		});
 		
 	},
