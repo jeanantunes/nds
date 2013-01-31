@@ -3,6 +3,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/vendaEncalhe.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.justInput.js"></script>
 
 <script type="text/javascript">
 
