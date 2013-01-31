@@ -75,5 +75,19 @@ public class ExpedicaoServiceImpl implements ExpedicaoService {
 	public Date obterDataUltimaExpedicao() {
 		return expedicaoRepository.obterDataUltimaExpedicao();
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public ExpedicaoDTO obterTotaisResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro) {
+		
+		return expedicaoRepository.obterTotaisResumoExpedicaoPorProduto(filtro);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public ExpedicaoDTO obterTotaisResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
+		
+		return expedicaoRepository.obterTotaisResumoExpedicaoProdutosDoBox(filtro);
+	}
 
 }
