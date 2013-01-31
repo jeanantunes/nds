@@ -308,7 +308,7 @@ var geracaoNotaEnvioController = $.extend({
 		gerarNotaEnvio : function() {
 			
 			var cotasSelecionadas = [];
-			
+			var _this = this;
 			var cotasAusentes = $(".checkboxCheckCotasAusentes");
 			
 			for (var index in cotasAusentes) {
@@ -329,9 +329,10 @@ var geracaoNotaEnvioController = $.extend({
                 },
                 successCallback : function() {
                     exibirMensagem("SUCCESS", ["Geração de NE realizada com sucesso!"]);
+                    _this.pesquisar();
                 }
             });
-
+           
 		},
 		
 		/**
