@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -674,9 +675,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		List<Integer> diasSemanaConcentracaoPagamento = null;
 		
 		//obtem a data de vencimento de acordo com o dia em que se concentram os pagamentos da cota
-		int fatorVencimento = cota.getParametroCobranca() != null ? cota.getParametroCobranca().getFatorVencimento() : 0;
+		int fatorVencimento = 0;
+		
+		ParametroCobrancaCota parametroCobrancaCota = cota.getParametroCobranca();
+		
+		if(parametroCobrancaCota!=null && parametroCobrancaCota.getFatorVencimento()!=null) {
+			fatorVencimento = parametroCobrancaCota.getFatorVencimento();
+		}
 		
 		boolean cobrarHoje = false;
+		
 		switch(formaCobrancaPrincipal.getTipoFormaCobranca()){
 
 			case DIARIA:
