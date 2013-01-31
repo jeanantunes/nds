@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
+import br.com.abril.nds.util.TipoMensagem;
 
 @Service
 public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
@@ -42,6 +44,9 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 		else {
 			dividas = dividaRepository.obterDividasGeradasSemBoleto(filtro);
 		}
+		
+		if(dividas.isEmpty())
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dívidas a serem impressas.");
 		
 		return documentoCobrancaService.gerarDocumentoCobranca(dividas, filtro.getTipoCobranca());
 	}

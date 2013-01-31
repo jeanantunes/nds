@@ -7,6 +7,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1146,8 +1147,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new IllegalStateException("Nenhum registro de conferencia de encalhe, não foi possível fazer reabertura.");
 		}
 		
-		//TODO achar o movimento financeiro ae
-		
 		MovimentoEstoqueCota movimentoEstoqueCota = listaConferenciaEncalhe.get(0).getMovimentoEstoqueCota();
 
 		MovimentoFinanceiroCota movimentoFinanceiroCota = 
@@ -1155,9 +1154,30 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(movimentoFinanceiroCota!=null) {
 			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
-			movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
+			
+			if (movimentoFinanceiroCota.getMovimentos() != null){
+				
+				for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
+					
+					mec.setMovimentoFinanceiroCota(null);
+					this.movimentoEstoqueCotaRepository.merge(mec);
+				}
+			}
+			
+			this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 		}
 		
+		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
+						
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
+		);
+			
+		this.movimentoFinanceiroCotaService.removerPostergadosDia(
+					controleConferenciaEncalheCota.getCota().getId(), 
+					listaPostergados);
 	}
 	
 	

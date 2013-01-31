@@ -286,6 +286,24 @@ public class Distribuidor {
 	@Column(name = "FECHAMENTO_DIARIO_EM_ANDAMENTO", nullable = true)
 	private Boolean fechamentoDiarioEmAndamento;
 	
+	@Column(name = "ACEITA_BAIXA_PGTO_MAIOR")
+	private Boolean aceitaBaixaPagamentoMaior;
+	
+	@Column(name = "ACEITA_BAIXA_PGTO_MENOR")
+	private Boolean aceitaBaixaPagamentoMenor;
+	
+	@Column(name = "ACEITA_BAIXA_PGTO_VENCIDO")
+	private Boolean aceitaBaixaPagamentoVencido;	
+	
+	@Column(name = "NUM_DIAS_NOVA_COBRANCA")
+	private Integer numeroDiasNovaCobranca;
+	
+	@Column(name = "ASSUNTO_EMAIL_COBRANCA")
+	private String assuntoEmailCobranca;
+	
+	@Column(name = "MENSAGEM_EMAIL_COBRANCA")
+	private String mensagemEmailCobranca;
+	
 	public Long getId() {
 		return id;
 	}
@@ -968,4 +986,88 @@ public class Distribuidor {
 		this.fechamentoDiarioEmAndamento = fechamentoDiarioEmAndamento;
 	}
 
+	/**
+	 * @return the aceitaBaixaPagamentoMaior
+	 */
+	public Boolean getAceitaBaixaPagamentoMaior() {
+		return aceitaBaixaPagamentoMaior;
+	}
+
+	/**
+	 * @param aceitaBaixaPagamentoMaior the aceitaBaixaPagamentoMaior to set
+	 */
+	public void setAceitaBaixaPagamentoMaior(Boolean aceitaBaixaPagamentoMaior) {
+		this.aceitaBaixaPagamentoMaior = aceitaBaixaPagamentoMaior;
+	}
+
+	/**
+	 * @return the aceitaBaixaPagamentoMenor
+	 */
+	public Boolean getAceitaBaixaPagamentoMenor() {
+		return aceitaBaixaPagamentoMenor;
+	}
+
+	/**
+	 * @param aceitaBaixaPagamentoMenor the aceitaBaixaPagamentoMenor to set
+	 */
+	public void setAceitaBaixaPagamentoMenor(Boolean aceitaBaixaPagamentoMenor) {
+		this.aceitaBaixaPagamentoMenor = aceitaBaixaPagamentoMenor;
+	}
+
+	/**
+	 * @return the aceitaBaixaPagamentoVencido
+	 */
+	public Boolean getAceitaBaixaPagamentoVencido() {
+		return aceitaBaixaPagamentoVencido;
+	}
+
+	/**
+	 * @param aceitaBaixaPagamentoVencido the aceitaBaixaPagamentoVencido to set
+	 */
+	public void setAceitaBaixaPagamentoVencido(Boolean aceitaBaixaPagamentoVencido) {
+		this.aceitaBaixaPagamentoVencido = aceitaBaixaPagamentoVencido;
+	}
+
+	/**
+	 * @return the numeroDiasNovaCobranca
+	 */
+	public Integer getNumeroDiasNovaCobranca() {
+		return numeroDiasNovaCobranca;
+	}
+
+	/**
+	 * @param numeroDiasNovaCobranca the numeroDiasNovaCobranca to set
+	 */
+	public void setNumeroDiasNovaCobranca(Integer numeroDiasNovaCobranca) {
+		this.numeroDiasNovaCobranca = numeroDiasNovaCobranca;
+	}
+
+	/**
+	 * @return the assuntoEmailCobranca
+	 */
+	public String getAssuntoEmailCobranca() {
+		return assuntoEmailCobranca;
+	}
+
+	/**
+	 * @param assuntoEmailCobranca the assuntoEmailCobranca to set
+	 */
+	public void setAssuntoEmailCobranca(String assuntoEmailCobranca) {
+		this.assuntoEmailCobranca = assuntoEmailCobranca;
+	}
+
+	/**
+	 * @return the mensagemEmailCobranca
+	 */
+	public String getMensagemEmailCobranca() {
+		return mensagemEmailCobranca;
+	}
+
+	/**
+	 * @param mensagemEmailCobranca the mensagemEmailCobranca to set
+	 */
+	public void setMensagemEmailCobranca(String mensagemEmailCobranca) {
+		this.mensagemEmailCobranca = mensagemEmailCobranca;
+	}
+	
 }

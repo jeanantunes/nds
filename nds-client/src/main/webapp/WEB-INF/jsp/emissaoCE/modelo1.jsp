@@ -289,8 +289,7 @@ function imprimir(){
           <td width="95" align="right" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-bottom:1px solid #000;"><strong>Preço Desc R$</strong></td>
           <td colspan="2" class="relatorios" width="86" style="padding-left:5px; border-left:1px solid #000; border-left:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
         </tr>
-        
-        
+                
         <c:forEach items="${cotaEmissao.produtos}" var="produto" varStatus="status">
         
 	        <tr class="class_linha_1">
@@ -356,13 +355,13 @@ function imprimir(){
 				<span class="titulo" style="font-size:11px!important;">Capas</span>			
 		</div>	
 	
-	<c:if test="${personalizada}">
+	<c:if test="${!personalizada}">
 		
 		<c:forEach items="${capas}" var="capa" varStatus="status">	
 			
 			<div class="capaImgBox">			
 				<div style="width: inherit; text-align: center;">
-					<strong>${status.index+1}</strong>				
+					<strong>${capa.sequenciaMatriz}</strong>				
 				</div>			
 				<div style="width: inherit; text-align: center;">
 					<img class="capaImg" src="<c:url value='/capa/tratarNoImage/${capa.id}'></c:url>"/>
@@ -374,13 +373,13 @@ function imprimir(){
 		
 	</c:if>
 	
-	<c:if test="${!personalizada}">
+	<c:if test="${personalizada}">
 	
 		<c:forEach items="${cotaEmissao.produtos}" var="produto" varStatus="status">	
 			
 			<div class="capaImgBox">			
 				<div style="width: inherit; text-align: center;">
-					<strong>${status.index+1}</strong>				
+					<strong>${produto.sequencia}</strong>				
 				</div>			
 				<div style="width: inherit; text-align: center;">
 					<img class="capaImg" src="<c:url value='/capa/tratarNoImage/${produto.idProdutoEdicao}'></c:url>"/>

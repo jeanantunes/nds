@@ -121,7 +121,7 @@ fieldset li a:hover{color:#000; text-decoration:underline;}
 /* alterado fieldset label{ float: left; line-height: 23px; margin-bottom: 6px; margin-left: 5px; margin-right: 5px; width: 65px;}*/
 fieldset label{ float: left; line-height: 23px; margin-left: 5px; margin-right: 5px;}
 
-.classFieldset{ width:960px!important; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
+.classFieldset{ width:980px!important; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
 .classFieldset legend{ color:#01649E;}
 
 .classFieldset_monitoramento{ width:980px; margin:2px auto auto auto!important; float:left;  border:1px solid #ccc;}
@@ -326,7 +326,7 @@ select, input{font-size: 12px; }
 .bt_incluir_novo a:hover{text-decoration:underline;}
 .vermelho{color:#FF0000; font-weight:bold;}
 
-.bt_novos a, .bt_arq a{ border:1px solid #EFEFEF;   float:left; padding:5px; text-decoration:none; margin-left:10px;}
+.bt_novos a, .bt_arq a{ border:1px solid #EFEFEF;   float:left; padding:5px; text-decoration:none; margin-right:10px;}
 /*.bt_novos a{color:#000000; text-decoration:none; padding:0px 5px 0px 0px; line-height:27px;}
 .bt_novos a:hover{text-decoration:underline;}*/
 .bt_novos a:hover, .bt_arq a:hover{ border:1px solid #5BF065; float:left;}
@@ -367,7 +367,7 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
 /*.bancosGrid{opacity:0.40; filter:alpha(opacity=40);}
 .bancosGrid:hover{opacity:1.0; filter:alpha(opacity=100);}*/
 
-.area{width:960px;}
+.area{width:980px; margin: 0 auto; }
 .areaBts{
 	background: none repeat scroll 0 0 #FAFCFC;
     border-bottom: 1px solid rgb(207, 207, 207);
@@ -382,8 +382,8 @@ fieldset legend{font-weight:bold; margin-left:5px; color:#5C9CCC; padding-left:5
     position:absolute;
     z-index:1;
 }
-.fieldFiltro{margin-top:27px; width:960px!important; margin-right:0px!important;}
-.fieldGrid{width:960px;}
+.fieldFiltro{margin-top:27px; width:980px!important; margin-right:0px!important;}
+.fieldGrid{width:980px;}
 .img{margin-right:10px;}
 /* Navigation */
 .nav, .nav ul { 
@@ -561,8 +561,8 @@ input[type='text'], input[type='password'], textarea {
 }
 
 #conteudo {
-	margin: 0 auto;
 	width: 980px;
+	margin:0 auto;
 }
 
 .linha_borda {
@@ -602,30 +602,67 @@ input[type='text'], input[type='password'], textarea {
 .redLabel {
 	color: #FF0000;
 }
+
 #effectError, #effectWarning, #effectSuccess{ 
 	line-height:30px; 
 	position:absolute; 
+	display: none; 
+	width: auto; 
+	z-index: 10002;
+	
+}
+
+#effectSuccess {
+	box-shadow: 0 0px 10px rgb(137, 213, 248);
 	left:5px; 
 	right:6px; 
 	top:5px;
-	z-index:1;
 }
 
-#effectSuccess{
-	box-shadow: 0 0px 10px rgb(137, 213, 248);
+#effectError, #effectWarning {
+	line-height:30px; 
+	position:absolute; 
+	left:35%; 
+	right:35%; 
+	top:35%;
+	min-width:320px;
+	max-width:560px;
+	overflow: hidden;
+	background-image: none !important;
 }
 
-#effectError {
-	box-shadow: 0 0px 10px rgb(255, 128, 143);
+#effectError .msgTitle {
+	background: rgb(255, 197, 197);
+}
+
+#effectWarning .msgTitle {
+	background: rgb(255, 208, 86);
+}
+
+#effectError .msgTitle, #effectWarning .msgTitle {
+	float:left;
+	width:100%;
+}
+
+#effectError .msgBody, #effectWarning .msgBody {
+	margin-left: 5px;
+	text-align: left;
+	max-width: 410px;
+	word-break: normal;
 }
 
 #effectWarning {
 	box-shadow: 0 0px 10px rgb(255, 194, 0);;
 }
 
+#effectError {
+	box-shadow: 0 0px 10px rgb(255, 128, 143);
+}
+
 #effectError .ui-icon-info, #effectSuccess .ui-icon-info, #effectWarning .ui-icon-info{
     margin-top: 5px;
-    margin-left:10px;
+    margin-left:5px;
+    margin-right:5px;
 }
 div#ui-tabs-\*.ui-tabs-panel {
 	background-color: blue!important;

@@ -29,13 +29,15 @@ function imprimir(){
 </head>
 
 <body>
+<c:set var="qtdMinima" value="4" />
+<c:set var="qtdColuna" value="${ ( (mapa.cotasQtdes.size()/4) > qtdMinima) ? mapa.cotasQtdes.size()/4 : qtdMinima }" />
 
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
     <td width="121" height="21" align="center">
     	<span>
     		<span class="">
-    		<img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" />
+    		<img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" height="70" width="110" />
     		</span>
     	</span>
     </td>
@@ -64,36 +66,37 @@ function imprimir(){
     </table></td>
   </tr>
 </table>
-<table width="800" border="0" align="center" cellpadding="0" cellspacing="0" >
+<table width="800" border="0" align="center" id="wrapper" cellpadding="0" cellspacing="0" >
  
   <tr>
-    <td width="167" align="left" valign="top">
-    <table width="160"  border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
+    <td width="195" align="left" valign="top">
+    
+    <table width="195"  border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
     
       <tr class="class_linha_3">
-        <td width="89" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-        <td width="73" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
+        <td width="100" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
+        <td width="95" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>
       
-      <c:forEach items="${mapa.cotasQtdes}" var="cota" varStatus="statusCota" end="${mapa.cotasQtdes.size()/4 + (mapa.cotasQtdes.size()%4!=0?1:0)}">
+      <c:forEach items="${mapa.cotasQtdes}" var="cota" varStatus="statusCota" >
       
 	      <tr class="class_linha_${statusCota.index%2==0?1:2}">
 	        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${cota.key}</td>
 	        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${cota.value}</td>
 	      </tr>
 	      
-	      <c:if test="${statusCota.index+1!=mapa.cotasQtdes.size() and (statusCota.index%(mapa.cotasQtdes.size()/4)==0 or mapa.cotasQtdes.size<4)}">
+	      <c:if test="${statusCota.index+1 != mapa.cotasQtdes.size() and (((statusCota.index+1)%qtdColuna)==0 and statusCota.index != 0)}">
 	      	
 		    </table>
 		    
 		    </td>
-		    <td width="158" valign="top">
+		    <td width="195" valign="top">
 		    
-		    <table width="150" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
+		    <table width="195" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
 		    
 		    <tr class="class_linha_3">
-		        <td width="89" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-		        <td width="73" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
+		        <td width="100" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
+		        <td width="95" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
 		      </tr>
 		    
 	      </c:if>

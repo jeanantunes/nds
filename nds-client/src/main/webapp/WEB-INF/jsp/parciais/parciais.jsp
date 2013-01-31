@@ -165,18 +165,21 @@
 	     <fieldset>
 	     	<legend>Novo Período</legend>
 	        <table width="236" border="0" cellspacing="1" cellpadding="1">
-	          <tr>
-	            <td width="103">PEB:</td>
-	            <td width="126">
-	<!-- PEB -->
-	<input id="peb" name="" type="text" style="width:80px;" /> dias</td>
-	          </tr>
-	          <tr>
+	          
+	           <tr>
 	            <td>Qtde. Períodos:</td>
 	            <td>
 	<!-- QTDE -->
 	<input id="qtde" name="" type="text" style="width:80px;" /></td>
 	          </tr>
+	          
+	          <tr>
+	            <td width="103">PEB:</td>
+	            <td width="126">
+	<!-- PEB -->
+	<input id="peb" name="" type="text" style="width:80px;" readonly="readonly" disabled="disabled" /> dias</td>
+	          </tr>
+	         
 	        </table>
 	        
 	     </fieldset>

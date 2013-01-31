@@ -11,9 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -23,6 +26,7 @@ import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
+import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.FuroProdutoService;
@@ -54,6 +58,12 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+
+	@Autowired
+	private ItemNotaEnvioRepository itemNovaEnvioRepository;
 
 	@Transactional
 	@Override
@@ -110,10 +120,21 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(novaData));
 		}
 		
-		if (!validarExpedicaoFisica(lancamento)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto já expedido não pode sofrer furo.");
-		}
+		Distribuidor distribuidor = this.distribuidorService.obter();
 		
+		if (!distribuidor.isRegimeEspecial()) {
+
+			boolean produtoExpedido = this.verificarProdutoExpedido(idLancamento);
+			
+			boolean cobrancaGerada =
+				this.lancamentoRepository.existeCobrancaParaLancamento(idLancamento);
+			
+			if (produtoExpedido && cobrancaGerada) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Produto não pode sofrer furo! Já foi realizada expedição física e gerada a cobrança!");
+			}
+		}
 	}
 
 	@Override
@@ -135,6 +156,19 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	public void efetuarFuroProduto(String codigoProduto, Long idProdutoEdicao, Long idLancamento, Date novaData, Long idUsuario) {		
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor.isRegimeEspecial()) {
+			
+			List<ItemNotaEnvio> itensNotaEnvio = 
+				this.itemNovaEnvioRepository.obterItemNotaEnvio(idLancamento);
+			
+			for (ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
+				
+				this.itemNovaEnvioRepository.remover(itemNotaEnvio);
+			}
+		}
 		
 		if (this.verificarProdutoExpedido(idLancamento)) {
 
@@ -167,22 +201,6 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		this.lancamentoRepository.alterar(lancamento);
 		
 		this.historicoLancamentoRepository.adicionar(historicoLancamento);
-	}
-
-	/**
-	 * Valida se o lançamento já sofreu expedição física -> Possui registro em itemNotaFiscal
-	 * @param lancamento
-	 * @return
-	 */
-	@Transactional(readOnly=true)
-	private boolean validarExpedicaoFisica(Lancamento lancamento) {
-		
-		// !lancamento.getStatus().equals(StatusLancamento.EXPEDIDO)
-		if ( produtoEdicaoRepository.validarExpedicaoFisicaProdutoEdicao(lancamento.getProdutoEdicao()) ) {
-			return true;
-		}
-		
-		return false;
 	}
 	
 }

@@ -31,4 +31,7 @@ public interface ItemNotaEnvioRepository  extends Repository<ItemNotaEnvio, Item
 	DetalheItemNotaFiscalDTO obterItemNotaEnvio(Date dataEmissao,
 												Integer numeroCota,
 												Long idProdutoEdicao);
+	
+	List<ItemNotaEnvio> obterItemNotaEnvio(Long idLancamento);
+	
 }

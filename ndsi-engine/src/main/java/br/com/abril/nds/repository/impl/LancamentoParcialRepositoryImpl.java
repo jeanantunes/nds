@@ -106,7 +106,15 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		hql.append(" join produto.fornecedores fornecedor ");
 		hql.append(" join fornecedor.juridica juridica ");
 		
-		boolean usarAnd = false;
+		hql.append(" where not exists( ");
+		
+		hql.append(" from PeriodoLancamentoParcial parcial ") 
+			.append(" where parcial.lancamentoParcial.id = lancamentoParcial.id ")
+			.append(" and parcial.status = 'CANCELADO' )  ");
+		
+		hql.append(" and lancamentoParcial.status <> 'CANCELADO' ");
+		
+		boolean usarAnd = true;
 		
 		if(filtro.getCodigoProduto() != null) { 
 			hql.append( (usarAnd ? " and ":" where ") + " produto.codigo =:codProduto ");
@@ -142,6 +150,8 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 			hql.append( (usarAnd ? " and ":" where ") + " lancamentoParcial.status=:status ");
 			usarAnd = true;
 		}
+		
+		
 
 		return hql.toString();
 	}

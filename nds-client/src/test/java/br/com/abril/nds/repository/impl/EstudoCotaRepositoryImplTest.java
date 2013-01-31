@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -145,7 +146,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Date dataDeLancamento = Fixture.criarData(29, Calendar.OCTOBER, 2012);
 		
-		List<EstudoCota> estudoCotas = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(dataDeLancamento, null);
+		List<EstudoCotaDTO> estudoCotas = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(dataDeLancamento, null);
 		
 		Assert.assertNotNull(estudoCotas);
 		
@@ -155,7 +156,7 @@ public class EstudoCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterEstudoCotaPorDataProdutoEdicaoIdProdutoEdicao() {
 		Long idProdutoEdicao = 1L;
 				
-		List<EstudoCota> estudoCotas = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(null, idProdutoEdicao);
+		List<EstudoCotaDTO> estudoCotas = estudoCotaRepository.obterEstudoCotaPorDataProdutoEdicao(null, idProdutoEdicao);
 		
 		Assert.assertNotNull(estudoCotas);
 		

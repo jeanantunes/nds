@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
+import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
@@ -16,6 +17,7 @@ import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -263,7 +265,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	BigDecimal obterConsignadoDia(StatusLancamento statusLancamento);
 
-	Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
+	Long obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
 			ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista,
 			Date dataLancamentoDistribuidor);
 
@@ -317,7 +319,17 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	List<Lancamento> obterLancamentosARecolherNaSemana(
 			Intervalo<Date> periodoRecolhimento, List<Long> fornecedores);
+	
+	boolean existeCobrancaParaLancamento(Long idLancamento);
 
 	List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
+
+	LancamentoDTO obterLancamentoPorID(Long idLancamento);
+
+	void alterarLancamento(Long idLancamento,Date date, StatusLancamento expedido,
+			Expedicao expedicao);
+
+	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
+			Date data, Long idFornecedor);
 
 }

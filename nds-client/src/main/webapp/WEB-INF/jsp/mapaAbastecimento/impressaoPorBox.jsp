@@ -32,7 +32,7 @@ function imprimir(){
   <td width="121" height="21" align="center">
     	<span>
     		<span class="">
-    		<img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" />
+    		<img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" height="70" width="110" />
     		</span>
     	</span>
     </td>

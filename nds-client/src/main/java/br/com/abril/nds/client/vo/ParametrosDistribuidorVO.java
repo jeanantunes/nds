@@ -189,6 +189,18 @@ public class ParametrosDistribuidorVO {
     
     private String negociacaoAteParcelas;
     
+    private boolean aceitaBaixaPagamentoMaior;
+    
+    private boolean aceitaBaixaPagamentoMenor;
+    
+    private boolean aceitaBaixaPagamentoVencido;
+    
+    private Integer numeroDiasNovaCobranca;
+    
+    private String assuntoEmailCobranca;
+    
+    private String mensagemEmailCobranca;
+    
     // Aba Aprovação
     // Frame Aprovação
     private boolean utilizaControleAprovacao;
@@ -937,7 +949,91 @@ public class ParametrosDistribuidorVO {
         this.negociacaoAteParcelas = negociacaoAteParcelas;
     }
 
-    public boolean getUtilizaControleAprovacao() {
+	/**
+	 * @return the aceitaBaixaPagamentoMaior
+	 */
+	public boolean isAceitaBaixaPagamentoMaior() {
+		return aceitaBaixaPagamentoMaior;
+	}
+
+	/**
+	 * @param aceitaBaixaPagamentoMaior the aceitaBaixaPagamentoMaior to set
+	 */
+	public void setAceitaBaixaPagamentoMaior(boolean aceitaBaixaPagamentoMaior) {
+		this.aceitaBaixaPagamentoMaior = aceitaBaixaPagamentoMaior;
+	}
+
+	/**
+	 * @return the aceitaBaixaPagamentoMenor
+	 */
+	public boolean isAceitaBaixaPagamentoMenor() {
+		return aceitaBaixaPagamentoMenor;
+	}
+
+	/**
+	 * @param aceitaBaixaPagamentoMenor the aceitaBaixaPagamentoMenor to set
+	 */
+	public void setAceitaBaixaPagamentoMenor(boolean aceitaBaixaPagamentoMenor) {
+		this.aceitaBaixaPagamentoMenor = aceitaBaixaPagamentoMenor;
+	}
+
+	/**
+	 * @return the aceitaBaixaPagamentoVencido
+	 */
+	public boolean isAceitaBaixaPagamentoVencido() {
+		return aceitaBaixaPagamentoVencido;
+	}
+
+	/**
+	 * @param aceitaBaixaPagamentoVencido the aceitaBaixaPagamentoVencido to set
+	 */
+	public void setAceitaBaixaPagamentoVencido(boolean aceitaBaixaPagamentoVencido) {
+		this.aceitaBaixaPagamentoVencido = aceitaBaixaPagamentoVencido;
+	}
+
+	/**
+	 * @return the numeroDiasNovaCobranca
+	 */
+	public Integer getNumeroDiasNovaCobranca() {
+		return numeroDiasNovaCobranca;
+	}
+
+	/**
+	 * @param numeroDiasNovaCobranca the numeroDiasNovaCobranca to set
+	 */
+	public void setNumeroDiasNovaCobranca(Integer numeroDiasNovaCobranca) {
+		this.numeroDiasNovaCobranca = numeroDiasNovaCobranca;
+	}
+
+	/**
+	 * @return the assuntoEmailCobranca
+	 */
+	public String getAssuntoEmailCobranca() {
+		return assuntoEmailCobranca;
+	}
+
+	/**
+	 * @param assuntoEmailCobranca the assuntoEmailCobranca to set
+	 */
+	public void setAssuntoEmailCobranca(String assuntoEmailCobranca) {
+		this.assuntoEmailCobranca = assuntoEmailCobranca;
+	}
+
+	/**
+	 * @return the mensagemEmailCobranca
+	 */
+	public String getMensagemEmailCobranca() {
+		return mensagemEmailCobranca;
+	}
+
+	/**
+	 * @param mensagemEmailCobranca the mensagemEmailCobranca to set
+	 */
+	public void setMensagemEmailCobranca(String mensagemEmailCobranca) {
+		this.mensagemEmailCobranca = mensagemEmailCobranca;
+	}
+
+	public boolean getUtilizaControleAprovacao() {
         return utilizaControleAprovacao;
     }
 

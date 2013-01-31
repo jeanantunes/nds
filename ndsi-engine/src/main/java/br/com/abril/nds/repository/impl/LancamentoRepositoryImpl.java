@@ -19,10 +19,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
+import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
@@ -33,6 +35,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -164,6 +167,39 @@ public class LancamentoRepositoryImpl extends
 		}
 		
 		return (List<Lancamento>)query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> obterIdsLancamentosNaoExpedidos(
+			PaginacaoVO paginacaoVO, Date data, Long idFornecedor) {
+				
+		Map<String, Object> parametros = new HashMap<String, Object>();
+		 
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select lancamento.id ");
+		
+		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, true));	
+		
+		if( paginacaoVO != null ) {
+			hql.append(gerarOrderByProdutosNaoExpedidos(
+					LancamentoNaoExpedidoDTO.SortColumn.getByProperty(paginacaoVO.getSortColumn()),
+					paginacaoVO.getOrdenacao()));
+		}
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		for (Entry<String, Object> entry: parametros.entrySet()) {
+			query.setParameter(entry.getKey(), entry.getValue());
+		}
+		
+		if( paginacaoVO != null ) {
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		}
+		
+		return (List<Long>)query.list();
 	}
 	
 	private String gerarOrderByProdutosNaoExpedidos(LancamentoNaoExpedidoDTO.SortColumn sortOrder, Ordenacao ascOrDesc) {
@@ -1269,11 +1305,11 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@Override
-	public Lancamento obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataLancamentoDistribuidor){
+	public Long obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(ProdutoEdicao produtoEdicao, Date dataLancamentoPrevista, Date dataLancamentoDistribuidor){
 		
 		StringBuilder sql = new StringBuilder();
 	
-		sql.append(" select lancamento  from Lancamento lancamento ");
+		sql.append(" select lancamento.id  from Lancamento lancamento ");
 		sql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		
 		sql.append(" where produtoEdicao.id =:produtoEdicao ");
@@ -1294,7 +1330,7 @@ public class LancamentoRepositoryImpl extends
 		
 		query.setParameter("dataLancamentoDistribuidor", dataLancamentoDistribuidor);
 		
-		return (Lancamento) query.uniqueResult();
+		return (Long) query.uniqueResult();
 	}
 	
 	@Override
@@ -1537,4 +1573,61 @@ public class LancamentoRepositoryImpl extends
 				
 		return query.list();	
 	}
+	
+	@Override
+	public boolean existeCobrancaParaLancamento(Long idLancamento) {
+		
+		String hql = " select case when (count(lancamento) > 0) then true else false end "
+			+ " from Lancamento lancamento "
+			+ " join lancamento.movimentoEstoqueCotas movimentoEstoqueCota "
+			+ " join movimentoEstoqueCota.movimentoFinanceiroCota movimentoFinanceiroCota "
+			+ " join movimentoFinanceiroCota.consolidadoFinanceiroCota consolidadoFinanceiroCota "
+			+ " where lancamento.id = :idLancamento ";
+		
+		Query query = this.getSession().createQuery(hql);
+
+		query.setParameter("idLancamento", idLancamento);
+		
+		return (boolean) query.uniqueResult();
+	}
+
+	@Override
+	public LancamentoDTO obterLancamentoPorID(Long idLancamento) {
+		
+		String hql = " select lancamento.id as id, " 
+				   + " produtoEdicao.id as idProdutoEdicao, "
+				   + " lancamento.dataLancamentoPrevista as dataPrevista, "
+				   + " lancamento.dataLancamentoDistribuidor as dataDistribuidor, "
+				   + " lancamento.reparte as reparte "
+				   + " from Lancamento lancamento "
+				   + " join lancamento.produtoEdicao produtoEdicao "
+				   + " where lancamento.id = :idLancamento ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("idLancamento", idLancamento);
+		
+		query.setResultTransformer(Transformers.aliasToBean(LancamentoDTO.class));
+		
+		return (LancamentoDTO) query.uniqueResult();
+	}
+
+	@Override
+	public void alterarLancamento(Long idLancamento, Date dataStatus, StatusLancamento status,
+			Expedicao expedicao) {
+		
+		String hql = " update Lancamento set dataStatus=:dataStatus, status=:status, expedicao=:expedicao where id=:idLancamento ";
+				
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("idLancamento", idLancamento);
+		query.setParameter("dataStatus", dataStatus);
+		query.setParameter("status", status);
+		query.setParameter("expedicao", expedicao);
+		
+		query.executeUpdate();
+		
+		
+	}
+	
 }

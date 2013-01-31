@@ -99,18 +99,18 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.append(" ( ") 
 						.append("produto.codigo,")
 						.append("produto.nome,")
-						.append("produtoEd.numeroEdicao,")
-						.append("produtoEd.precoVenda,")
+						.append("produtoEdicao.numeroEdicao,")
+						.append("produtoEdicao.precoVenda,")
 						.append("("+ this.getHQLDesconto() +") as desconto,")
 						.append("sum(estudoCota.qtdeEfetiva) as qtdeReparte,")
 						.append(" SUM (( case ")
-							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")
-							.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then (diferenca.qtde * produtoEd.pacotePadrao)")
+							.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEdicao.pacotePadrao))")
+							.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then (diferenca.qtde * produtoEdicao.pacotePadrao)")
 							.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then (-diferenca.qtde)")
 							.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 							.append(" else 0")
 						.append(" end )) as qntDiferenca, ")
-						.append(" sum(estudoCota.qtdeEfetiva) * produtoEd.precoVenda, ")
+						.append(" sum(estudoCota.qtdeEfetiva) * produtoEdicao.precoVenda, ")
 						.append(" juridica.razaoSocial ")
 						
 			.append(" ) ");
@@ -120,8 +120,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.append(" Expedicao expedicao ")
 			.append(" join expedicao.lancamentos lancamento ")
 			.append(" join lancamento.estudo estudo ")
-			.append(" join estudo.produtoEdicao produtoEd ")
-			.append(" join produtoEd.produto produto ")
+			.append(" join estudo.produtoEdicao produtoEdicao ")
+			.append(" join produtoEdicao.produto produto ")
 			.append(" join estudo.estudoCotas estudoCota ")
 			.append(" join estudoCota.cota cota ")
 			.append(" join cota.box box ")
@@ -137,7 +137,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			.append(" and box.codigo =:codigoBox ");
 		
 		hql.append(" group by ")
-			.append("produtoEd.id ");
+			.append("produtoEdicao.id ");
 
 		return hql.toString();
 	}
@@ -147,7 +147,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
 		hql.append(" from ViewDesconto view ")
 		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoEdicaoId = produtoEd.id ")
+		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
 		   .append(" and view.fornecedorId = fornecedor.id),0) ");
 		
 		return hql.toString();
@@ -206,10 +206,10 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 					hql.append(" , produto.nome ");
 					break;
 				case NUMERO_EDICAO:
-					hql.append(" , produtoEd.numeroEdicao ");
+					hql.append(" , produtoEdicao.numeroEdicao ");
 					break;
 				case PRECO_CAPA:
-					hql.append(" , produtoEd.precoVenda ");
+					hql.append(" , produtoEdicao.precoVenda ");
 					break;
 				case REPARTE:
 					hql.append(" , estudo.qtdeReparte ");
@@ -217,15 +217,15 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				case DIFERENCA:
 					hql.append(" , ")
 					.append(" sum( ( case ")
-						.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEd.pacotePadrao))")
-						.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then (diferenca.qtde *  produtoEd.pacotePadrao)")
+						.append(" when (diferenca.tipoDiferenca = 'FALTA_DE') then (-(diferenca.qtde * produtoEdicao.pacotePadrao))")
+						.append(" when (diferenca.tipoDiferenca = 'SOBRA_DE') then (diferenca.qtde *  produtoEdicao.pacotePadrao)")
 						.append(" when (diferenca.tipoDiferenca = 'FALTA_EM') then (-diferenca.qtde)")
 						.append(" when (diferenca.tipoDiferenca = 'SOBRA_EM') then (diferenca.qtde)")
 						.append(" else 0")
 					.append(" end ) )");
 					break;
 				case VALOR_FATURADO:
-					hql.append(" ,  produtoEd.precoVenda*estudo.qtdeReparte ");
+					hql.append(" ,  produtoEdicao.precoVenda*estudo.qtdeReparte ");
 					break;
 				default:
 					hql.append(" , produto.codigo ");

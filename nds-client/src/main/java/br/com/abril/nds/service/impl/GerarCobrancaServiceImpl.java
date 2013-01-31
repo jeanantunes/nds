@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -70,6 +72,7 @@ import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
@@ -158,6 +161,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Autowired
 	private ItemChamadaEncalheFornecedorRepository itemChamadaEncalheFornecedorRepository;
 	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
 	/**
 	 * Obtém a situação da cota
 	 * @param idCota
@@ -188,7 +194,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 	private void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		
-		Date dataOperacao = this.distribuidorRepository.obterDatatOperacaoDistribuidor();
+		Distribuidor distribuidor = distribuidorService.obter();
+		
+		Date dataOperacao = distribuidor.getDataOperacao();
 		
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
 		this.cancelarDividaCobranca(null, idCota);
@@ -209,7 +217,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			List<ControleBaixaBancaria> listaControleBaixaBancaria =
 				this.controleBaixaBancariaRepository.obterListaControleBaixaBancaria(
-					distribuidorRepository.obter().getDataOperacao(), StatusControle.CONCLUIDO_SUCESSO);
+					dataOperacao, StatusControle.CONCLUIDO_SUCESSO);
 			
 			if (listaControleBaixaBancaria == null || listaControleBaixaBancaria.isEmpty()) {
 				
@@ -231,7 +239,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			Fornecedor ultimoFornecedor = null;
 			
-			if (listaMovimentoFinanceiroCota.get(0).getMovimentos() != null && 
+			if (!politicaPrincipal.isUnificaCobranca() && 
+					listaMovimentoFinanceiroCota.get(0).getMovimentos() != null && 
 					!listaMovimentoFinanceiroCota.get(0).getMovimentos().isEmpty() &&
 					listaMovimentoFinanceiroCota.get(0).getMovimentos().get(0) != null){
 				
@@ -259,17 +268,34 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					}
 				}
 				
-				Fornecedor fornecedorProdutoMovimento = (movimentoFinanceiroCota.getMovimentos() != null && 
+				MovimentoEstoqueCota mec = (movimentoFinanceiroCota.getMovimentos() != null && 
 						!movimentoFinanceiroCota.getMovimentos().isEmpty() && 
-						movimentoFinanceiroCota.getMovimentos().get(0) != null &&
-						movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor() != null 
-						? movimentoFinanceiroCota.getMovimentos().get(0).getProdutoEdicao().getProduto().getFornecedor()
-						: null);
+						movimentoFinanceiroCota.getMovimentos().get(0) != null ?
+								movimentoFinanceiroCota.getMovimentos().get(0) : 
+								null);
 				
-				if (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
+				Fornecedor fornecedorProdutoMovimento = null;
+				if (mec != null){
+					
+					if (mec.getProdutoEdicao() != null &&
+							mec.getProdutoEdicao().getProduto() != null){
+						
+						fornecedorProdutoMovimento = 
+								mec.getProdutoEdicao().getProduto().getFornecedor();
+					} else if (mec.getEstoqueProdutoCota() != null && 
+							mec.getEstoqueProdutoCota().getProdutoEdicao() != null && 
+							mec.getEstoqueProdutoCota().getProdutoEdicao().getProduto() != null) {
+						
+						fornecedorProdutoMovimento = 
+								mec.getEstoqueProdutoCota().getProdutoEdicao().getProduto().getFornecedor();
+					}
+				}
+				
+				if (politicaPrincipal.isUnificaCobranca() || 
+						(movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
 						(fornecedorProdutoMovimento != null &&
 								fornecedorProdutoMovimento.equals(ultimoFornecedor) ||
-								fornecedorProdutoMovimento == ultimoFornecedor)){
+								fornecedorProdutoMovimento == ultimoFornecedor))){
 					
 					movimentos.add(movimentoFinanceiroCota);
 				} else {
@@ -282,7 +308,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
 							politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(), politicaPrincipal.isAcumulaDivida(), idUsuario, 
 							tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-							politicaPrincipal.getNumeroDiasNovaCobranca(),
+							distribuidor.getNumeroDiasNovaCobranca(),
 							dataOperacao, msgs, ultimoFornecedor);
 					
 					if (nossoNumero != null){
@@ -293,7 +319,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					//Limpa dados para contabilizar próxima cota
 					ultimaCota = movimentoFinanceiroCota.getCota();
 					
-					if (movimentoFinanceiroCota.getMovimentos() != null && 
+					if (!politicaPrincipal.isUnificaCobranca() && 
+							movimentoFinanceiroCota.getMovimentos() != null && 
 							!movimentoFinanceiroCota.getMovimentos().isEmpty() &&
 							movimentoFinanceiroCota.getMovimentos().get(0) != null){
 						
@@ -318,7 +345,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
 					politicaPrincipal.isAcumulaDivida(), idUsuario, 
 					tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-					politicaPrincipal.getNumeroDiasNovaCobranca(), dataOperacao, msgs, ultimoFornecedor);
+						distribuidor.getNumeroDiasNovaCobranca(), dataOperacao, msgs, ultimoFornecedor);
 			
 			if (nossoNumero != null){
 				
@@ -482,8 +509,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (cota.getParametroCobranca() == null || formaCobtancaPrincipal == null ||
 				formaCobtancaPrincipal.getBanco() == null){	
 			
-			msgs.add("Para pagamento por boleto é necessário que a cota tenha um banco cadastrado. Número da cota sem banco: " + 
-							cota.getNumeroCota());
+			String msg = "Para pagamento por boleto é necessário que a cota tenha um banco cadastrado. Número da cota sem banco: " + 
+					cota.getNumeroCota();
+			
+			if (!msgs.contains(msg)){
+				
+				msgs.add(msg);
+			}
 			
 			return false;
 		}
@@ -515,6 +547,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal vlMovFinanEncalhe = BigDecimal.ZERO;
 		BigDecimal vlMovFinanEncargos = BigDecimal.ZERO;
 		BigDecimal vlMovFinanVendaEncalhe = BigDecimal.ZERO;
+		BigDecimal vlMovPostergado = BigDecimal.ZERO;
 
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
 			
@@ -587,6 +620,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							movimentoFinanceiroCota.getValor() != null ? 
 									movimentoFinanceiroCota.getValor().negate() : 
 										BigDecimal.ZERO);
+					
+					vlMovPostergado = vlMovPostergado.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
 				break;
 				
 				case POSTERGADO_CREDITO:
@@ -597,6 +635,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										BigDecimal.ZERO);
 			
 					vlMovFinanEncargos = vlMovFinanEncargos.add(
+							movimentoFinanceiroCota.getValor() != null ? 
+									movimentoFinanceiroCota.getValor() : 
+										BigDecimal.ZERO);
+					
+					vlMovPostergado = vlMovPostergado.add(
 							movimentoFinanceiroCota.getValor() != null ? 
 									movimentoFinanceiroCota.getValor() : 
 										BigDecimal.ZERO);
@@ -653,6 +696,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setEncalhe(vlMovFinanEncalhe);
 		consolidadoFinanceiroCota.setEncargos(vlMovFinanEncargos);
 		consolidadoFinanceiroCota.setVendaEncalhe(vlMovFinanVendaEncalhe);
+		consolidadoFinanceiroCota.setValorPostergado(vlMovPostergado);
 		
 		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		
@@ -1037,6 +1081,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				}
 				
 				this.consolidadoFinanceiroRepository.remover(consolidado);
+				
+				List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
+							
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
+				);
+				
+				this.movimentoFinanceiroCotaService.removerPostergadosDia(
+						consolidado.getCota().getId(), 
+						listaPostergados);
 			}
 		}
 	}
