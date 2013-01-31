@@ -513,7 +513,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			.append(" where produto.codigo = :codigoProduto ")
 			.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ")
 			.append(" and diferenca.tipoEstoque = :tipoEstoque ")
-			.append(" and diferenca.dataMovimento = :dataMovimento ");
+			.append(" and diferenca.dataMovimento = :dataMovimento ")
+			.append(" and diferenca.statusConfirmacao=:statusConfirmacao");
+		
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -521,6 +523,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		query.setParameter("numeroEdicao", numeroEdicao);
 		query.setParameter("tipoEstoque", tipoEstoque);
 		query.setParameter("dataMovimento", dataMovimento);
+		query.setParameter("statusConfirmacao", StatusConfirmacao.CONFIRMADO);
 		
 		return (BigInteger) query.uniqueResult();
 	}
