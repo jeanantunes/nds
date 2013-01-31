@@ -266,7 +266,7 @@ function imprimir(){
 			
 			<div class="capaImgBox">			
 				<div style="width: inherit; text-align: center;">
-					<strong>${produto.sequencia}</strong>				
+					<strong>${capa.sequenciaMatriz}</strong>				
 				</div>			
 				<div style="width: inherit; text-align: center;">
 					<img class="capaImg" src="<c:url value='/capa/tratarNoImage/${capa.id}'></c:url>"/>
