@@ -46,6 +46,8 @@ var geracaoNotaEnvioController = $.extend({
 			$("#geracaoNotaEnvio-filtro-selectFornecedores").multiselect({
 				selectedList : 6
 			});
+			
+			$("#geracaoNotaEnvio-filtro-selectFornecedores").multiselect("checkAll");
 		},
 		
 		/**
