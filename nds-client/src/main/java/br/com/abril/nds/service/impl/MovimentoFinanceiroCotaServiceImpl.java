@@ -166,11 +166,19 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			
 			movimentoFinanceiroCota.setMovimentos(movimentosEstoqueCota);
 			
-			
 			movimentoFinanceiroCotaMerged = 
 					this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
 
-			gerarHistoricoMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged, movimentoFinanceiroCotaDTO.getTipoEdicao());  
+			gerarHistoricoMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged, movimentoFinanceiroCotaDTO.getTipoEdicao());
+			
+			if (movimentosEstoqueCota != null){
+				
+				for (MovimentoEstoqueCota est : movimentosEstoqueCota){
+					
+					est.setMovimentoFinanceiroCota(movimentoFinanceiroCotaMerged);
+					this.movimentoEstoqueCotaRepository.merge(est);
+				}
+			}
 		}
 		
 		return movimentoFinanceiroCotaMerged;
@@ -311,6 +319,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 					movimentoEstoqueCota.getProdutoEdicao().getProduto() != null){
 				
 				fornecedor = movimentoEstoqueCota.getProdutoEdicao().getProduto().getFornecedor();
+			}
+			
+			if (fornecedor == null &&
+					movimentoEstoqueCota.getEstoqueProdutoCota() != null &&
+					movimentoEstoqueCota.getEstoqueProdutoCota().getProdutoEdicao() != null &&
+					movimentoEstoqueCota.getEstoqueProdutoCota().getProdutoEdicao().getProduto() != null){
+				
+				fornecedor = movimentoEstoqueCota.getEstoqueProdutoCota().getProdutoEdicao().getProduto().getFornecedor();
 			}
 			
 			if (fornecedor != null) {
@@ -744,4 +760,26 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		return false;
 	}
 	
+	@Transactional
+	@Override
+	public void removerPostergadosDia(Long idCota, List<TipoMovimentoFinanceiro> tiposMovimentoPostergado) {
+		
+		List<MovimentoFinanceiroCota> movs = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceirosCotaPorTipoMovimento(
+						idCota, tiposMovimentoPostergado);
+		
+		for (MovimentoFinanceiroCota mfc : movs){
+			
+			if (mfc.getMovimentos() != null){
+				
+				for (MovimentoEstoqueCota mec : mfc.getMovimentos()){
+					
+					mec.setMovimentoFinanceiroCota(null);
+					this.movimentoEstoqueCotaRepository.merge(mec);
+				}
+			}
+			
+			this.movimentoFinanceiroCotaRepository.remover(mfc);
+		}
+	}
 }

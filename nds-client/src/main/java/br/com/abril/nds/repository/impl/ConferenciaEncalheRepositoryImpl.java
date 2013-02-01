@@ -297,7 +297,18 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
-	
+		
+		
+		StringBuilder subSqlObtemDesconto = new StringBuilder();
+		
+		subSqlObtemDesconto.append(" ( ");
+		subSqlObtemDesconto.append(" SELECT VIEW_DESC.DESCONTO FROM VIEW_DESCONTO VIEW_DESC ");		
+		subSqlObtemDesconto.append(" WHERE VIEW_DESC.COTA_ID = CH_ENCALHE_COTA.COTA_ID  ");
+		subSqlObtemDesconto.append(" AND VIEW_DESC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND VIEW_DESC.FORNECEDOR_ID =  ");
+		subSqlObtemDesconto.append(" (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID ) 	");
+		subSqlObtemDesconto.append(" ) ");
+
+		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT                                             		");
@@ -307,10 +318,12 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" CONF_ENCALHE.PRECO_CAPA_INFORMADO AS precoCapaInformado,   ");
 		hql.append(" CONF_ENCALHE.PRODUTO_EDICAO_ID AS idProdutoEdicao, 		");
 		hql.append(" PROD_EDICAO.CODIGO_DE_BARRAS AS codigoDeBarras,    		");
-
-		hql.append(" ( ");
-		hql.append(    subSqlQuerySequenciaMatriz() );
-		hql.append(" ) AS codigoSM, ");
+		
+		hql.append(" PROD_EDICAO.CHAMADA_CAPA AS chamadaCapa,					");			
+		hql.append(" PESSOA_EDITOR.RAZAO_SOCIAL AS nomeEditor,					");			
+		hql.append(" PESSOA_FORNECEDOR.RAZAO_SOCIAL AS nomeFornecedor,			");			
+		
+		hql.append(" ( ").append(subSqlQuerySequenciaMatriz()).append(" ) AS codigoSM, ");
 		
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
 		hql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
@@ -321,39 +334,49 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
 		hql.append(" PROD_EDICAO.PACOTE_PADRAO AS pacotePadrao,              ");
 		
-		hql.append("        ( PROD_EDICAO.PRECO_VENDA *  ( ");
-		hql.append("          coalesce ((SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)),0)"	);		
-		hql.append("         ) / 100 ) AS desconto,        ");
+		hql.append(" ( PROD_EDICAO.PRECO_VENDA *  ( ");
+		hql.append(" coalesce (	").append(subSqlObtemDesconto.toString()).append(" , 0 ) ) / 100 ) AS desconto,");
 		
-		hql.append("         CONF_ENCALHE.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *  ");
 		
-		hql.append(" ( 							");
-		hql.append("          coalesce ((SELECT DESCONTO FROM VIEW_DESCONTO WHERE COTA_ID = CH_ENCALHE_COTA.COTA_ID AND PRODUTO_ID = PROD_EDICAO.ID AND FORNECEDOR_ID = (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID)),0)"	);
-		hql.append(" ) 							");
-		hql.append(" /100)) AS valorTotal,  	");
+		hql.append(" CONF_ENCALHE.QTDE * ( PROD_EDICAO.PRECO_VENDA - ( PROD_EDICAO.PRECO_VENDA *  ");
 		
-		hql.append("         TO_DAYS(CONTROLE_CONF_ENC_COTA.DATA_OPERACAO)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,                ");
-		hql.append("         CONF_ENCALHE.OBSERVACAO AS observacao,                                                      ");
-		hql.append("         CONF_ENCALHE.JURAMENTADA AS juramentada                                                     ");
+		hql.append(" ( coalesce ( ").append(subSqlObtemDesconto.toString()).append(" , 0 ) ) / 100 )) AS valorTotal,  	");
+		
+		
+		hql.append(" TO_DAYS(CONTROLE_CONF_ENC_COTA.DATA_OPERACAO)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,  ");
+		hql.append(" CONF_ENCALHE.OBSERVACAO AS observacao, 	");
+		hql.append(" CONF_ENCALHE.JURAMENTADA AS juramentada 	");
 
-		hql.append("     FROM    ");
+		hql.append(" FROM ");
 
-		hql.append("         CONFERENCIA_ENCALHE CONF_ENCALHE,     						");
-		hql.append("         PRODUTO_EDICAO PROD_EDICAO,           						");
-		hql.append("         PRODUTO PROD,                         						");
-		hql.append("         CHAMADA_ENCALHE_COTA CH_ENCALHE_COTA, 						");
-		hql.append("         CHAMADA_ENCALHE CH_ENCALHE,            					");
-		hql.append("         CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA	");
+		hql.append(" CONFERENCIA_ENCALHE CONF_ENCALHE,     						");
+		hql.append(" PRODUTO_EDICAO PROD_EDICAO,           						");
+		hql.append(" PRODUTO PROD,                         						");
+		hql.append(" CHAMADA_ENCALHE_COTA CH_ENCALHE_COTA, 						");
+		hql.append(" CHAMADA_ENCALHE CH_ENCALHE,            					");
+		hql.append(" CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA,	");
+		hql.append(" FORNECEDOR FORNECEDOR_0, 	");
+		hql.append(" PRODUTO_FORNECEDOR PROD_FORNEC,	");
+		hql.append(" EDITOR EDITOR_0,			");
+		hql.append(" PESSOA PESSOA_FORNECEDOR, 	");
+		hql.append(" PESSOA PESSOA_EDITOR 		");
+		
 		
 
-		hql.append("     WHERE   ");
+		hql.append(" WHERE ");
 		
-		hql.append("         CONF_ENCALHE.PRODUTO_EDICAO_ID=PROD_EDICAO.ID           ");
-		hql.append("         AND PROD_EDICAO.PRODUTO_ID=PROD.ID                          ");
-		hql.append("         AND CONF_ENCALHE.CHAMADA_ENCALHE_COTA_ID=CH_ENCALHE_COTA.ID ");
-		hql.append("         AND CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID=CH_ENCALHE.ID        ");
-		hql.append("         AND CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
-		hql.append("         AND CONTROLE_CONF_ENC_COTA.ID = CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID			 ");
+		hql.append(" CONF_ENCALHE.PRODUTO_EDICAO_ID=PROD_EDICAO.ID           	 ");
+		hql.append(" AND PROD_EDICAO.PRODUTO_ID=PROD.ID                          ");
+		hql.append(" AND CONF_ENCALHE.CHAMADA_ENCALHE_COTA_ID=CH_ENCALHE_COTA.ID ");
+		hql.append(" AND CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID=CH_ENCALHE.ID        ");
+		hql.append(" AND CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
+		hql.append(" AND CONTROLE_CONF_ENC_COTA.ID = CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID			 ");
+		hql.append(" AND FORNECEDOR_0.ID = PROD_FORNEC.FORNECEDORES_ID	");
+		hql.append(" AND PROD.ID = PROD_FORNEC.PRODUTO_ID				");
+		hql.append(" AND PROD.EDITOR_ID = EDITOR_0.ID 					");
+		
+		hql.append(" AND FORNECEDOR_0.JURIDICA_ID = PESSOA_FORNECEDOR.ID 	");
+		hql.append(" AND EDITOR_0.JURIDICA_ID = PESSOA_EDITOR.ID			");
 		
 		
 		hql.append("  ORDER BY codigoSM ");
@@ -366,6 +389,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("juramentada");
 		((SQLQuery)query).addScalar("precoCapaInformado");
 		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
+		((SQLQuery)query).addScalar("chamadaCapa");			
+		((SQLQuery)query).addScalar("nomeEditor");			
+		((SQLQuery)query).addScalar("nomeFornecedor");	
 		((SQLQuery)query).addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("codigoDeBarras");
 		((SQLQuery)query).addScalar("codigoSM", StandardBasicTypes.INTEGER);

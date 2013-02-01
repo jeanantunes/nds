@@ -318,6 +318,20 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		parametrosDistribuidor.setNegociacaoAteParcelas(CurrencyUtil.formatarValorTruncado(distribuidor.getNegociacaoAteParcelas()));
 		
+		parametrosDistribuidor.setAceitaBaixaPagamentoMaior(
+			(distribuidor.getAceitaBaixaPagamentoMaior() == null) ? false : distribuidor.getAceitaBaixaPagamentoMaior());
+		
+		parametrosDistribuidor.setAceitaBaixaPagamentoMenor(
+			(distribuidor.getAceitaBaixaPagamentoMenor() == null) ? false : distribuidor.getAceitaBaixaPagamentoMenor());
+		
+		parametrosDistribuidor.setAceitaBaixaPagamentoVencido(
+			(distribuidor.getAceitaBaixaPagamentoVencido() == null) ? false : distribuidor.getAceitaBaixaPagamentoVencido());
+		
+		parametrosDistribuidor.setNumeroDiasNovaCobranca(distribuidor.getNumeroDiasNovaCobranca());
+		parametrosDistribuidor.setAssuntoEmailCobranca(distribuidor.getAssuntoEmailCobranca());
+		parametrosDistribuidor.setMensagemEmailCobranca(distribuidor.getMensagemEmailCobranca());
+		
+		
 		// Aprovação
 		parametrosDistribuidor.setUtilizaControleAprovacao(distribuidor.isUtilizaControleAprovacao());
 		
@@ -656,6 +670,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		} else {
 			distribuidor.setNegociacaoAteParcelas(null);
 		}
+		
+		distribuidor.setAceitaBaixaPagamentoMaior(parametrosDistribuidor.isAceitaBaixaPagamentoMaior());
+		distribuidor.setAceitaBaixaPagamentoMenor(parametrosDistribuidor.isAceitaBaixaPagamentoMenor());
+		distribuidor.setAceitaBaixaPagamentoVencido(parametrosDistribuidor.isAceitaBaixaPagamentoVencido());
+		distribuidor.setNumeroDiasNovaCobranca(parametrosDistribuidor.getNumeroDiasNovaCobranca());
+		distribuidor.setAssuntoEmailCobranca(parametrosDistribuidor.getAssuntoEmailCobranca());
+		distribuidor.setMensagemEmailCobranca(parametrosDistribuidor.getMensagemEmailCobranca());
 		
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());

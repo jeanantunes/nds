@@ -10,17 +10,22 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -38,28 +43,41 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/confirmacaoExpedicao")
 public class ConfirmacaoExpedicaoController extends BaseController{
 
-		private final Result result;
-		private final HttpSession session;
+	@Autowired
+	private final Result result;
+	@Autowired
+	private final HttpSession session;
 		
-		private FornecedorService fornecedorService;
-		private LancamentoService lancamentoService;
+	@Autowired
+	private DistribuidorService distribuidorService;
+	@Autowired
+	private FornecedorService fornecedorService;
+	@Autowired
+	private LancamentoService lancamentoService;
+	
+	@Autowired
+	private TipoMovimentoService tipoMovimentoService;
+		
+		private MovimentoEstoqueRepository movimentoEstoqueRepository;
 
-		protected static final String SUCESSO = "SUCCESS";
-		protected static final String FALHA = "ERROR";
-		protected static final Long COMBO_VAZIO = -1L;
+	protected static final String SUCESSO = "SUCCESS";
+	protected static final String ALERTA = "WARNING";
+	protected static final String FALHA = "ERROR";
+	protected static final Long COMBO_VAZIO = -1L;
+	
+	protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+	protected static final String DATA_INVALIDA = "A data informada é inválida";
+	protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
+	protected static final String CONFIRMACAO_EXPEDICAO_ESTOQUE_INDISPONIVEL = "Expedições não confirmadas. Estoque indisponível para todos os lançamentos selecionados !";
+	protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
+	protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro não esperado ao confirmar expedições.";
+	protected static final String ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS = "Erro não esperado ao pesquisar lançamentos não expedidos.";
+	protected static final String MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Não há produtos a serem expedidos na data informada.";
+	//protected static final String MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Há matriz de lançamento confirmada.";
 		
-		protected static final String MSG_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
-		protected static final String DATA_INVALIDA = "A data informada é inválida";
-		protected static final String CONFIRMACAO_EXPEDICAO_SUCESSO = "Expedições confirmadas com sucesso!";
-		protected static final String NENHUM_REGISTRO_SELECIONADO="Nenhum registro foi selecionado!";
-		protected static final String ERRO_CONFIRMAR_EXPEDICOES="Erro não esperado ao confirmar expedições.";
-		protected static final String ERRO_PESQUISAR_LANCAMENTOS_NAO_EXPEDIDOS = "Erro não esperado ao pesquisar lançamentos não expedidos.";
-		protected static final String MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Não há produtos a serem expedidos na data informada.";
-		//protected static final String MSG_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO = "Há matriz de lançamento confirmada.";
-		
-		protected static final String STATUS_EXPEDICAO = "statusExpedicao";
-		
-		private static final Logger LOG = LoggerFactory
+	protected static final String STATUS_EXPEDICAO = "statusExpedicao";
+	
+	private static final Logger LOG = LoggerFactory
 				.getLogger(ConfirmacaoExpedicaoController.class);
 		
 		/**
@@ -133,25 +151,11 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 				Date date = (Date) session.getAttribute("date");
 				Long idFornecedor = (Long) session.getAttribute("idFornecedor");
-				Boolean estudo = (Boolean) session.getAttribute("estudo");
 				
-				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 
-						lancamentoService.obterLancamentosNaoExpedidos(null, date, idFornecedor, estudo);
-				
-				@SuppressWarnings("unchecked")
-				List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
-				
-				if(selecionados==null) {
-					selecionados = new ArrayList<Long>();
-				}
-				
-				for ( LancamentoNaoExpedidoDTO lancamento : listaExpedicoes ) {
-					if(lancamento.getEstudo() != null) {
-					selecionados.add(lancamento.getIdLancamento());
-					}
-				}
-				
-				session.setAttribute("selecionados", selecionados);
+				List<Long> listaIdsExpedicoes = 
+						lancamentoService.obterIdsLancamentosNaoExpedidos(null, date, idFornecedor);
+								
+				session.setAttribute("selecionados", listaIdsExpedicoes);
 			}
 			
 			result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
@@ -197,12 +201,33 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				
 				session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento(1, selecionados.size()));
 				
+				TipoMovimentoEstoque tipoMovimento =
+					tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+				TipoMovimentoEstoque tipoMovimentoCota =
+						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				Date dataOperacao = distribuidorService.obterDatatOperacaoDistribuidor();
+				
+				boolean lancamentosConfirmados = false;
+				
 				for(int i=0; i<selecionados.size(); i++) {
-					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId());
+					
+					boolean lctoConf = lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota);
+						
+					lancamentosConfirmados = !lancamentosConfirmados?lctoConf:lancamentosConfirmados;
+
 					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));
 				}
 				
-				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
+				if (!lancamentosConfirmados){
+					
+					mensagens.add(CONFIRMACAO_EXPEDICAO_ESTOQUE_INDISPONIVEL);
+					
+					status = ALERTA;
+				}
+				else{
+				
+				    mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
+				}
 				
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);

@@ -179,7 +179,7 @@ public class ConsultaBoletosController extends BaseController {
 										  (boleto.getDataPagamento()!=null?DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"):""),
 										  (boleto.getEncargos()!=null?boleto.getEncargos().toString():""),
 										  (boleto.getValor()!=null?boleto.getValor().toString():""),
-										  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa():""),
+										  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():""),
 										  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():""),
 										  ""
                       					)
@@ -333,7 +333,7 @@ public class ConsultaBoletosController extends BaseController {
 			boletoVO.setDataPagamento(boleto.getDataPagamento());
 			boletoVO.setEncargos(MathUtil.defaultValue(boleto.getEncargos()));
 			boletoVO.setValor(MathUtil.defaultValue(boleto.getValor()));
-			boletoVO.setTipoBaixa(StringUtils.defaultString(boleto.getTipoBaixa()));
+			boletoVO.setTipoBaixa(boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():"");
 			boletoVO.setStatus(boleto.getStatusCobranca());
 			
 			listaBoletos.add(boletoVO);

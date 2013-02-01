@@ -8,7 +8,7 @@
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/baixaFinanceira.js"></script>
 
 	<script type="text/javascript">
-		var pesquisaCotaBaixaFinanceira = new PesquisaCota();
+		var pesquisaCotaBaixaFinanceira = new PesquisaCota(baixaFinanceiraController.workspace);
 		$(function(){
 			baixaFinanceiraController.init();
 		});
@@ -238,7 +238,7 @@
 			    <p>Deseja confirmar Baixa Manual deste Boleto ?</p>
 		    </div>
 		
-	        <div  id="porNossoNumero">
+	        <div  id="porNossoNumero" align="center">
 		      	<table width="342" border="0" align="center" cellpadding="2" cellspacing="1" style="text-align:left;">
 		      	  <tr>
 		      	    <td colspan="2" class="header_table" align="center">Dados Boleto</td>

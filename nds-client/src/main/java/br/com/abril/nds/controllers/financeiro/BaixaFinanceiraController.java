@@ -48,7 +48,6 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.repository.BaixaCobrancaService;
@@ -181,9 +180,11 @@ public class BaixaFinanceiraController extends BaseController {
 	@Post
 	public void realizarBaixaAutomatica(Date data, UploadedFile uploadedFile, String valorFinanceiro) {
 		
-		validarEntradaDados(uploadedFile, valorFinanceiro);
+		valorFinanceiro = CurrencyUtil.convertValorInternacional(valorFinanceiro);
 		
-		BigDecimal valorFinanceiroConvertido = CurrencyUtil.converterValor(valorFinanceiro);
+		BigDecimal valorFinanceiroConvertido = new BigDecimal(valorFinanceiro);
+		
+		validarEntradaDados(uploadedFile, valorFinanceiroConvertido);
 		
 		ArquivoPagamentoBancoDTO arquivoPagamento = null;
 		
@@ -464,7 +465,7 @@ public class BaixaFinanceiraController extends BaseController {
         file.delete();
     }
 
-	private void validarEntradaDados(UploadedFile uploadedFile, String valorFinanceiro) {
+	private void validarEntradaDados(UploadedFile uploadedFile, BigDecimal valorFinanceiro) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
@@ -475,21 +476,13 @@ public class BaixaFinanceiraController extends BaseController {
 		}
 		
 		//Valida se o valor financeiro foi informado
-		if (valorFinanceiro == null || valorFinanceiro.trim().length() == 0) {
+		if (valorFinanceiro == null || valorFinanceiro.equals(BigDecimal.ZERO)) {
 			
 			listaMensagens.add("O preenchimento do campo [Valor Financeiro] é obrigatório!");
 		} else {
 			
-			BigDecimal valorFinanceiroConvertido = CurrencyUtil.converterValor(valorFinanceiro);
-			
-			//Valida se o valor financeiro é numérico
-			if (valorFinanceiroConvertido == null) {
-			
-				listaMensagens.add("O campo [Valor Financeiro] deve ser numérico!");
-			}
-			
 			//Valida se o valor financeiro é maior que 0
-			if (valorFinanceiroConvertido.compareTo(BigDecimal.ZERO) == 0) {
+			if (valorFinanceiro.compareTo(BigDecimal.ZERO) == 0) {
 			
 				listaMensagens.add("O campo [Valor Financeiro] deve ser maior que 0!");
 			}
@@ -571,10 +564,8 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setValorMulta(multaConvertida);
 		pagamento.setValorDesconto(descontoConvertido);
 		
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
-
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, getUsuarioLogado(),
-								   null,politicaPrincipal , distribuidor,
+								   null, distribuidor,
 								   dataNovoMovimento, null, null);
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
@@ -651,6 +642,7 @@ public class BaixaFinanceiraController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 
 	}
+	
 	@Post
 	@Path("/buscaDividasBaixadas")
 	public void buscaDividasBaixadas(Integer numCota,

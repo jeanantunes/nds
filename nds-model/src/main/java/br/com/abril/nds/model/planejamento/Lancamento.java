@@ -132,6 +132,14 @@ public class Lancamento implements Serializable {
 	@Column(name="ALTERADO_INTERFACE", nullable = false)
 	private boolean alteradoInteface = false;
 	
+	public Lancamento(Long id) {
+		this.id= id; 
+	}
+	
+	public Lancamento() {
+		
+	}
+
 	public Long getId() {
 		return id;
 	}

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO.SortColumn;
+import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
@@ -943,7 +944,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Date dataLancamentoPrevista = Fixture.criarData(05, Calendar.NOVEMBER,
 				2012);
 
-		Lancamento lancamento = lancamentoRepository
+		lancamentoRepository
 				.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
 						produtoEdicao, dataLancamentoPrevista, null);
 	}
@@ -954,7 +955,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Date dataLancamentoDistribuidor = Fixture.criarData(05,
 				Calendar.NOVEMBER, 2012);
 
-		Lancamento lancamento = lancamentoRepository
+		lancamentoRepository
 				.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
 						produtoEdicao, null, dataLancamentoDistribuidor);
 	}

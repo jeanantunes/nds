@@ -847,7 +847,7 @@ var VENDA_PRODUTO = {
 	
 		$("input[name='codProduto']", VENDA_PRODUTO.workspace).numeric();
 		$("input[name='nmProduto']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
-		$("input[name='qntSolicitada']", VENDA_PRODUTO.workspace).numeric();
+		$("input[name='qntSolicitada']", VENDA_PRODUTO.workspace).justInput(/[0-9]/);
 		$("input[name='numEdicao']", VENDA_PRODUTO.workspace).numeric();
 		
 		VENDA_PRODUTO.totalizarQntDisponivelGeral();
@@ -900,7 +900,9 @@ var VENDA_PRODUTO = {
 			
 			var colunaCodigoBarras = linha.find("td")[0];
 			var colunaCodigoProduto = linha.find("td")[1];
+			var colunaNomeProduto = linha.find("td")[2];
 			var colunaNumeroEdicao = linha.find("td")[3];
+			var colunaQntDisponivel = linha.find("td")[5];
 			var colunaQtdeSolicitada = linha.find("td")[6];
 
 			var id = 
@@ -909,9 +911,15 @@ var VENDA_PRODUTO = {
 			var codigoProduto = 
 				$(colunaCodigoProduto).find("div").find('input[name="codProduto"]', VENDA_PRODUTO.workspace).val();
 			
+			var nomeProduto = 
+				$(colunaNomeProduto).find("div").find('input[name="nmProduto"]', VENDA_PRODUTO.workspace).val();
+				
 			var numeroEdicao = 
 				$(colunaNumeroEdicao).find("div").find('input[name="numEdicao"]', VENDA_PRODUTO.workspace).val();
-
+			
+			var qtdeDisponivel = 
+				$(colunaQntDisponivel).find("div").find('input[name="qntDisponivel"]', VENDA_PRODUTO.workspace).val();
+			
 			var qtdeSolicitada = 
 				$(colunaQtdeSolicitada).find("div").find('input[name="qntSolicitada"]', VENDA_PRODUTO.workspace).val();
 			
@@ -920,7 +928,6 @@ var VENDA_PRODUTO = {
 			
 			var formaVenda =
 				$(linha.find("td")[9]).find("div").find('input[name="hiddenComercializacao"]', VENDA_PRODUTO.workspace).val();
-		
 			
 			if (VENDA_PRODUTO.isAtributosVendaVazios(codigoProduto, numeroEdicao, qtdeSolicitada)) {
 
@@ -929,6 +936,8 @@ var VENDA_PRODUTO = {
 			
 			listaVendas.push({name:"listaVendas[" + index + "].idVenda",value:id});
 			listaVendas.push({name:"listaVendas[" + index + "].codigoProduto",value:codigoProduto});
+			listaVendas.push({name:"listaVendas[" + index + "].nomeProduto",value:nomeProduto});
+			listaVendas.push({name:"listaVendas[" + index + "].qntDisponivelProduto",value:qtdeDisponivel});
 			listaVendas.push({name:"listaVendas[" + index + "].numeroEdicao",value:numeroEdicao});
 			listaVendas.push({name:"listaVendas[" + index + "].qntProduto",value:qtdeSolicitada});
 			listaVendas.push({name:"listaVendas[" + index + "].tipoVendaEncalhe",value:tipoVenda});

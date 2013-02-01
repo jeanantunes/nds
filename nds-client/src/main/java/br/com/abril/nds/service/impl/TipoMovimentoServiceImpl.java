@@ -11,12 +11,14 @@ import br.com.abril.nds.dto.TipoMovimentoDTO;
 import br.com.abril.nds.dto.TipoMovimentoDTO.GrupoOperacao;
 import br.com.abril.nds.dto.filtro.FiltroTipoMovimento;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoRepository;
 import br.com.abril.nds.service.TipoMovimentoService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -32,6 +34,9 @@ public class TipoMovimentoServiceImpl implements TipoMovimentoService {
 
 	@Autowired
 	private TipoMovimentoRepository tipoMovimentoRepository;
+	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -170,5 +175,19 @@ public class TipoMovimentoServiceImpl implements TipoMovimentoService {
 		} catch(DataIntegrityViolationException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo de Movimento está em uso, não pode ser excluido.");
 		}
+	}
+
+	@Override
+	@Transactional
+	public TipoMovimentoEstoque buscarTipoMovimentoEstoque(
+			GrupoMovimentoEstoque grupoMovimentoEstoque) {
+		return tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
+	}
+
+	@Override
+	@Transactional
+	public List<TipoMovimentoEstoque> buscarTiposMovimentoEstoque(
+			List<GrupoMovimentoEstoque> gruposMovimentoEstoque) {
+		return tipoMovimentoEstoqueRepository.buscarTiposMovimentoEstoque(gruposMovimentoEstoque);
 	}
 }

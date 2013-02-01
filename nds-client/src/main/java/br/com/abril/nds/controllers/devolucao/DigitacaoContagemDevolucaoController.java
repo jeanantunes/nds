@@ -164,7 +164,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			if (!StringUtil.isEmpty(dataDe) || !StringUtil.isEmpty(dataAte)) {
 				throw new ValidacaoException(new  ValidacaoVO(TipoMensagem.ERROR, 
-						"A pesquisa não pode ser realizada pelo perído e pela Conferencia de Encalhe ao mesmo tempo"));
+						"A pesquisa não pode ser realizada pelo perído e pela Chamada de Encalhe ao mesmo tempo"));
 			}
 			
 			return true;

@@ -212,11 +212,17 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.append(" cobranca.tipoCobranca,")
 				.append(" cobranca.vias, ")
 				.append(" cobranca.nossoNumero, ")
-				.append(" (select f.recebeCobrancaEmail " +
+				.append(" (select (case when count(f.recebeCobrancaEmail)=2 then true else false end) " + //TODO
 						"  from FormaCobranca f " +
-						"  where f.parametroCobrancaCota=parametroCobranca " +
-						"  and f.principal=true group by f.principal )")
+						"  left join f.politicaCobranca p " +
+						"  left join f.parametroCobrancaCota pc " +
+						"  where f.recebeCobrancaEmail=true " +  
+						"  and ( (pc.id=parametroCobranca.id " +
+						"  and f.principal=true " +
+						"  and f.ativa=true) " +
+						"  or (p.principal=true and p.ativo=true) ))")
 			.append(")");
+			
 		}
 		
 		hql.append(" FROM ")

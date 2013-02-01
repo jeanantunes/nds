@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroControleAprovacaoDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
@@ -20,6 +21,7 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LancamentoDiferencaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.service.ControleAprovacaoService;
@@ -45,6 +47,9 @@ public class ControleAprovacaoServiceImpl implements ControleAprovacaoService {
 	
 	@Autowired
 	private DiferencaEstoqueRepository diferencaEstoqueRepository;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -143,9 +148,12 @@ public class ControleAprovacaoServiceImpl implements ControleAprovacaoService {
 	@Override
 	@Transactional
 	public void realizarAprovacaoMovimento(Movimento movimento, Usuario usuario) {
-			
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
 		movimento.setStatus(StatusAprovacao.APROVADO);
 		movimento.setAprovador(usuario);
+		movimento.setDataAprovacao(distribuidor.getDataOperacao());
 		
 		this.movimentoRepository.merge(movimento);
 		

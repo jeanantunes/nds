@@ -74,8 +74,9 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
 	
-	@ManyToMany(mappedBy="movimentos")
-	private List<MovimentoFinanceiroCota> movimentoFinanceiroCota;
+	@ManyToOne
+	@JoinColumn(name = "MOVIMENTO_FINANCEIRO_COTA_ID")
+	private MovimentoFinanceiroCota movimentoFinanceiroCota;
 	
 	public Object clone() {
 
@@ -218,19 +219,12 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.dataLancamentoOriginal = dataLancamentoOriginal;
 	}
 
-	/**
-	 * @return the movimentoFinanceiroCota
-	 */
-	public List<MovimentoFinanceiroCota> getMovimentoFinanceiroCota() {
+	public MovimentoFinanceiroCota getMovimentoFinanceiroCota() {
 		return movimentoFinanceiroCota;
 	}
 
-	/**
-	 * @param movimentoFinanceiroCota the movimentoFinanceiroCota to set
-	 */
 	public void setMovimentoFinanceiroCota(
-		List<MovimentoFinanceiroCota> movimentoFinanceiroCota) {
+			MovimentoFinanceiroCota movimentoFinanceiroCota) {
 		this.movimentoFinanceiroCota = movimentoFinanceiroCota;
 	}
-	
 }

@@ -134,7 +134,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		save(formaBoleto, formaDinheiro, formaDeposito);
 
 		PoliticaCobranca politicaCobrancaBoleto =
-				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto, true, true, true, "Assunto","Mensagem",true,FormaEmissao.INDIVIDUAL_BOX);
+				Fixture.criarPoliticaCobranca(distribuidor, formaBoleto,true,FormaEmissao.INDIVIDUAL_BOX);
 		
 		save(politicaCobrancaBoleto);
 		
@@ -252,7 +252,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                 					   null, 
                 					   BigDecimal.ZERO, 
                 					   new BigDecimal(100.00), 
-                					   "1", 
+                					   TipoBaixaCobranca.MANUAL, 
                 					   "1",
                 					   StatusCobranca.NAO_PAGO,
                 					   cotaManoel,
@@ -281,7 +281,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		cobrancaAcumuloGuilherme2 = Fixture.criarCobrancaDinheiro("3234567890124", 
 				new Date(), Fixture.criarData(2, Calendar.MAY, 2010), null,
                 BigDecimal.ZERO, new BigDecimal(210),
-				"TIPO_BAIXA", "ACAO", StatusCobranca.PAGO,
+                TipoBaixaCobranca.MANUAL, "ACAO", StatusCobranca.PAGO,
 				cotaManoel, bancoHSBC, dividaAcumuladaGuilherme2,1);
 		
 		
@@ -1196,13 +1196,11 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
      *            data de vencimento das dívidas a serem geradas
      */
     private void criarDadosSumarizacaoDividas(Date vencimento) {
-        PoliticaCobranca politicaCobrancaDinheiro = Fixture.criarPoliticaCobranca(distribuidor, formaDinheiro, true,
-                        false, true, "Assunto", "Mensagem", true, FormaEmissao.INDIVIDUAL_BOX);
+        PoliticaCobranca politicaCobrancaDinheiro = Fixture.criarPoliticaCobranca(distribuidor, formaDinheiro, true, FormaEmissao.INDIVIDUAL_BOX);
         distribuidor.getPoliticasCobranca().add(politicaCobrancaDinheiro);
         save(politicaCobrancaDinheiro);
 
-        PoliticaCobranca politicaCobrancaDeposito = Fixture.criarPoliticaCobranca(distribuidor, formaDeposito, true,
-                        false, true, "Assunto", "Mensagem", true, FormaEmissao.INDIVIDUAL_BOX);
+        PoliticaCobranca politicaCobrancaDeposito = Fixture.criarPoliticaCobranca(distribuidor, formaDeposito, true, FormaEmissao.INDIVIDUAL_BOX);
         distribuidor.getPoliticasCobranca().add(politicaCobrancaDeposito);
         save(politicaCobrancaDeposito);
 
@@ -1265,7 +1263,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         save(dividaManoel);
 
         Boleto boletoManoel = Fixture.boleto("5557884985446", "7", "55578849854467", Fixture.criarData(5, Calendar.NOVEMBER, 2012),
-                        vencimento, null, BigDecimal.ZERO, BigDecimal.valueOf(452), "1", "1", StatusCobranca.NAO_PAGO, cotaManoel, bancoHSBC,
+                        vencimento, null, BigDecimal.ZERO, BigDecimal.valueOf(452), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO, cotaManoel, bancoHSBC,
                         dividaManoel, 0);
         save(boletoManoel);
 
@@ -1283,7 +1281,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         save(dividaJose);
 
         CobrancaDinheiro cobrancaJose = Fixture.cobrancaDinheiro("5557884985447", Fixture.criarData(5, Calendar.NOVEMBER, 2012),
-                vencimento, null, BigDecimal.ZERO, BigDecimal.valueOf(500), TipoBaixaCobranca.MANUAL.name(), null, StatusCobranca.NAO_PAGO,
+                vencimento, null, BigDecimal.ZERO, BigDecimal.valueOf(500), TipoBaixaCobranca.MANUAL, null, StatusCobranca.NAO_PAGO,
                 cotaJose, null, dividaJose, 0);
         save(cobrancaJose);
 
@@ -1301,7 +1299,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         save(dividaMaria);
 
         CobrancaDeposito cobrancaMaria = Fixture.cobrancaDeposito("5557884985448", Fixture.criarData(5, Calendar.NOVEMBER, 2012),
-                vencimento, null, BigDecimal.ZERO, BigDecimal.valueOf(750), TipoBaixaCobranca.MANUAL.name(), null, StatusCobranca.NAO_PAGO,
+                vencimento, null, BigDecimal.ZERO, BigDecimal.valueOf(750), TipoBaixaCobranca.MANUAL, null, StatusCobranca.NAO_PAGO,
                 cotaMaria, bancoHSBC, dividaMaria, 0);
         save(cobrancaMaria);
 
@@ -1319,7 +1317,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         save(dividaOrlando);
 
         Boleto boletoOrlando = Fixture.boleto("5557884985452", "8", "55578849854528", Fixture.criarData(5, Calendar.NOVEMBER, 2012), vencimento,
-                vencimento, BigDecimal.ZERO, BigDecimal.valueOf(923.5), "1", "1", StatusCobranca.PAGO, cotaOrlando, bancoHSBC, dividaOrlando, 0);
+                vencimento, BigDecimal.ZERO, BigDecimal.valueOf(923.5), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.PAGO, cotaOrlando, bancoHSBC, dividaOrlando, 0);
         save(boletoOrlando);
         
         BaixaAutomatica baixaOrlando = Fixture.baixaAutomatica(boletoOrlando, vencimento, "arquivo.txt", "55578849854528", 100, StatusBaixa.PAGO, BigDecimal.valueOf(923.5), bancoHSBC);
@@ -1340,7 +1338,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         save(dividaMariana);
 
         CobrancaDeposito cobrancaMariana = Fixture.cobrancaDeposito("5557884985472", Fixture.criarData(5, Calendar.NOVEMBER, 2012), vencimento, 
-                vencimento, BigDecimal.ZERO, BigDecimal.valueOf(621.56), TipoBaixaCobranca.MANUAL.name(),null, StatusCobranca.PAGO, cotaMariana, bancoHSBC,
+                vencimento, BigDecimal.ZERO, BigDecimal.valueOf(621.56), TipoBaixaCobranca.MANUAL,null, StatusCobranca.PAGO, cotaMariana, bancoHSBC,
                 dividaMariana, 0);
         save(cobrancaMariana);
 
@@ -1360,7 +1358,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
         save(dividaLuis);
 
         CobrancaDinheiro cobrancaLuis = Fixture.cobrancaDinheiro("5557884985439", Fixture.criarData(5, Calendar.NOVEMBER, 2012), vencimento, vencimento, BigDecimal.ZERO,
-                BigDecimal.valueOf(489.32), TipoBaixaCobranca.MANUAL.name(), null, StatusCobranca.PAGO, cotaLuis, null, dividaLuis, 0);
+                BigDecimal.valueOf(489.32), TipoBaixaCobranca.MANUAL, null, StatusCobranca.PAGO, cotaLuis, null, dividaLuis, 0);
         save(cobrancaLuis);
 
         BaixaManual baixaLuis = Fixture.baixaManual(cobrancaLuis, vencimento, StatusBaixa.PAGO, BigDecimal.valueOf(489.32), null, StatusAprovacao.APROVADO);

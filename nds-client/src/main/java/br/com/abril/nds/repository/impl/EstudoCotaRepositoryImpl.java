@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.EstudoCotaRepository;
@@ -49,10 +51,14 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<EstudoCota> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
+	public List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
 			
-		String hql = " select estudoCota from EstudoCota estudoCota "
+		String hql = " select estudoCota.id as id, " 
+				   + " estudoCota.qtdeEfetiva as qtdeEfetiva, "
+				   + " cota.id as idCota "
+				   + " from EstudoCota estudoCota "
 				   + " join estudoCota.estudo estudo "
+				   + " join estudoCota.cota cota "
 				   + " join estudo.produtoEdicao produtoEdicao "
 				   + " where estudo.dataLancamento = :dataLancamento " 
 				   + " and produtoEdicao.id = :idProdutoEdicao";
@@ -62,6 +68,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		query.setParameter("dataLancamento", dataLancamento);
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setResultTransformer(Transformers.aliasToBean(EstudoCotaDTO.class));
 		
 		return query.list();
 	}

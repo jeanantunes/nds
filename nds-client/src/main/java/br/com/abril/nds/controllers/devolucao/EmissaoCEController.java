@@ -100,10 +100,7 @@ public class EmissaoCEController extends BaseController {
 		filtro.setOrdenacao(sortorder);
 		filtro.setColunaOrdenacao(sortname);
 		
-
-		if(filtro.getDtRecolhimentoDe()!= null && filtro.getDtRecolhimentoAte() != null
-				&& DateUtil.isDataInicialMaiorDataFinal(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte()))
-			throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de Dt. Recolhimento inválido, o valor inicial é maior que o final.");
+		validarCamposPesquisa(filtro);
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	
@@ -117,6 +114,22 @@ public class EmissaoCEController extends BaseController {
 		
 	}
 		
+	private void validarCamposPesquisa(FiltroEmissaoCE filtro) {
+		
+		if(filtro.getDtRecolhimentoDe() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Dt. Recolhimento] é inválido, o valor deve ser informado.");
+		}
+		
+		if(filtro.getDtRecolhimentoAte() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Até] é inválido, o valor deve ser informado.");
+		}
+		
+		if(filtro.getDtRecolhimentoDe()!= null && filtro.getDtRecolhimentoAte() != null
+				&& DateUtil.isDataInicialMaiorDataFinal(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte()))
+			throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de Dt. Recolhimento inválido, o valor inicial é maior que o final.");
+		
+	}
+
 	/**
 	 * Método responsável por carregar o combo de fornecedores.
 	 * @return 

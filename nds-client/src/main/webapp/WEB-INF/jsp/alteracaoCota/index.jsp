@@ -10,7 +10,7 @@
 	
 	<script type="text/javascript">
 
-		var pesquisaCotaAlteracaoCota = new PesquisaCota();
+		var pesquisaCotaAlteracaoCota = new PesquisaCota(alteracaoCotaController.workspace);
 		
 		$(function(){
 			alteracaoCotaController.init(pesquisaCotaAlteracaoCota);
