@@ -66,6 +66,8 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 	@Path("/pesquisarPorCota")
 	public void pesquisarPorCota(FiltroAreaInfluenciaGeradorFluxoDTO filtro, String sortorder, String sortname, int page, int rp) {
 
+		System.out.println("Estou na controller sem debug");
+		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
 		validarEntradaPorCota(filtro);
@@ -161,7 +163,6 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 		FiltroAreaInfluenciaGeradorFluxoDTO filtroSession = (FiltroAreaInfluenciaGeradorFluxoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
-
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}else if(filtroSession != null) {
 			filtroAtual.getPaginacao().setQtdResultadosTotal(filtroSession.getPaginacao().getQtdResultadosTotal());

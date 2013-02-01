@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.CotaDTO;
@@ -22,6 +23,7 @@ import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroAreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.filtro.FiltroSegmentoNaoRecebidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -29,6 +31,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.SegmentoNaoRecebidoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
@@ -275,6 +278,27 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				"result").recursive().serialize();
 		
+	}
+	
+	/**
+	 * utilizado para auto complete da tela onde o usuário utiliza o nome do Segmento
+	 */
+	@Post
+	public void autoCompletarPorNome(FiltroSegmentoNaoRecebidoDTO filtro) {
+		
+		List<TipoSegmentoProduto> listaTipoSegmentoProduto = segmentoNaoRecebidoService.obterSegmentosElegiveisParaInclusaoNaCota(filtro);
+		
+		List<ItemAutoComplete> listaTipoSegmentoProdutoAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		if (listaTipoSegmentoProduto != null && !listaTipoSegmentoProduto.isEmpty()) {
+			
+			for (TipoSegmentoProduto tipoSegmentoProduto : listaTipoSegmentoProduto) {
+				
+				listaTipoSegmentoProdutoAutoComplete.add(new ItemAutoComplete(tipoSegmentoProduto.getDescricao(), null, tipoSegmentoProduto));
+			}
+		}
+		
+		this.result.use(Results.json()).from(listaTipoSegmentoProdutoAutoComplete, "result").include("value", "chave").serialize();
 	}
 	
 	private TableModel<CellModelKeyValue<CotaDTO>> montarTableModelCotasParaInclusaoSegmento(FiltroSegmentoNaoRecebidoDTO filtro, List<CotaDTO> listaCotaDTO) {

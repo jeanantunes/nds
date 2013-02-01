@@ -1,10 +1,32 @@
 <head>
-<script language="javascript" type="text/javascript" src="scripts/excecaoSegmentoParciais.js" />
-<script language="javascript" type="text/javascript">
+	<script type="text/javascript" src="scripts/excecaoSegmentoParciais.js" ></script>
+	<script type="text/javascript" src="scripts/pesquisaCota.js"></script>
+	<script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
+	<script type="text/javascript">
 
-$(function() {
-	excecaoSegmentoParciaisController.init();
-});
+	var pesquisaCota = new PesquisaCota();
+	var pesquisaProduto = new PesquisaProduto();
+
+	// Assossiando os eventos no DOM
+	$('#numeroCotaFiltroPrincipal').change(function (){
+		pesquisaCota.pesquisarPorNumeroCota('#numeroCotaFiltroPrincipal','#nomeCotaFiltroPrincipal');
+	});
+	
+	$('#nomeCotaFiltroPrincipal').keyup(function (){
+		pesquisaCota.autoCompletarPorNome('#nomeCotaFiltroPrincipal');
+	});
+	
+	$('#codigoProduto').change(function (){
+		pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto');
+	});
+	
+	$('#nomeProduto').keyup(function (){
+		excecaoSegmentoParciaisController.autoCompletarPorNomeProdutoNaoRecebidoPelaCota('#nomeProduto');
+	});
+
+	$(function() {
+		excecaoSegmentoParciaisController.init();
+	});
 
 function excluir_produto() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -45,20 +67,6 @@ function incluirSegmento() {
 		}
 	});
 };		
-function porCota(){
-	$('.porCota').show();
-	$('.porExcessao').hide();
-	
-	excecaoSegmentoParciaisController.excessaoBGrid.reload();
-	
-	excecaoSegmentoParciaisController.excessaoBGrid.reload(this.workspace);
-	
-	excecaoSegmentoParciaisController.excessaoBGrid.reload({
-		url : contextPath + "/distribuicao/excecaoSegmentoParciais/teste",
-		dataType : 'json',
-		params : "muitos parametros"
-	});
-}
 function porExcessao(){
 	$('.porCota').hide();
 	$('.porExcessao').show();
@@ -101,7 +109,6 @@ $(function() {
 </div>
 
 <div class="corpo">
-  
     <br clear="all"/>
     <br />
    
@@ -114,14 +121,17 @@ $(function() {
     	
       <fieldset class="classFieldset">
    	    <legend> Pesquisar Exceções de Segmentos e Parciais</legend>
-        <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
-          <tr>
-            <td width="20"><input type="radio" name="porExcecao" id="radio4" value="radio"/></td>
-            <td width="188">Por Exceção Segmento Cota</td>
-            <td width="20"><input type="radio" name="porExcecao" id="radio3" value="radio"/></td>
-            <td width="696">Por Exceção de Parciais</td>
-          </tr>
-        </table>
+   	    
+   	    
+	        <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
+	          <tr>
+	            <td width="20"><input type="radio" name="tipoExcecao" id="radio4"/></td>
+	            <td width="188">Por Exceção Segmento Cota</td>
+	            <td width="20"><input type="radio" name="tipoExcecao" id="radio3" /></td>
+	            <td width="696">Por Exceção de Parciais</td>
+	          </tr>
+	        </table>
+        
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
             <td width="22" align="right"><input type="radio" name="filtroPor" id="radio" value="radio" onclick="filtroPorCota();" /></td>
@@ -129,17 +139,21 @@ $(function() {
             <td width="22"><input type="radio" name="filtroPor" id="radio2" value="radio" onclick="filtroPorProduto()" /></td>
             <td width="49">Produto</td>
             <td width="781">
-            <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
-            <tr>
-           	  <td width="30">Cota:</td>
-                <td width="88">
-                <input type="text" name="textfield" id="textfield" style="width:80px;"/></td>
-                <td width="37">Nome:</td>
-                <td width="486"><input type="text" name="textfield2" id="textfield2" style="width:200px;"/></td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="excecaoSegmentoParciaisController.porCota();">Pesquisar</a></span></td>
-            </tr>
-          </table>
-          
+            <form id="filtroPrincipalCota">
+	            <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
+		            <tr>
+		           	  <td width="30">Cota:</td>
+		                <td width="88">
+		                	<input type="text" name="filtro.cotaDto.numeroCota" id="numeroCotaFiltroPrincipal" style="width:80px;"/>
+		                </td>
+		                <td width="37">Nome:</td>
+		                <td width="486">
+		                	<input type="text" name="filtro.cotaDto.nomePessoa" id="nomeCotaFiltroPrincipal" style="width:200px;"/>
+		                </td>
+		              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="excecaoSegmentoParciaisController.porCota();">Pesquisar</a></span></td>
+		            </tr>
+	            </table>
+            </form>
           <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="42">Código:</td>
@@ -152,11 +166,12 @@ $(function() {
             <td width="110"><input type="text" name="textfield4" id="textfield6" style="width:110px;" disabled="disabled"/></td>
             <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="porExcessao();">Pesquisar</a></span></td>
           </tr>
+         
         </table>
             </td>
           </tr>
         </table>
-        
+      
         
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -205,11 +220,17 @@ $(function() {
        	  <legend>Produtos Não Recebidos</legend>
        	  <table width="312" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
-       	      <td width="45">Código:</td>
-       	      <td width="60"><input type="text" style="width:60px;"/></td>
-              <td width="54">Produto:</td>
+       	      <td width="45">
+       	      	Código:
+       	      </td>
+       	      <td width="60">
+       	      	<input type="text" name="filtro.codigoProduto" id="codigoProduto" style="width:60px;"/></td>
+              <td width="54">
+              	Produto:
+              </td>
               <td width="132">
-              <input type="text" style="width:120px;"/></td>
+              	<input type="text" id="nomeProduto" name="filtro.nomeProduto" style="width:120px;"/>
+              </td>
    	      </table>
        	  <br />
         	<table class="excessaoBGrid"></table>

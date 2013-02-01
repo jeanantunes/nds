@@ -186,8 +186,9 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 		hql.append(" SegmentoNaoRecebido as segmentoNaoRecebido ");
 		hql.append(" inner join segmentoNaoRecebido.cota as cota ");
 		hql.append(" inner join cota.pessoa as pessoa ");
+		hql.append(" inner join segmentoNaoRecebido.tipoSegmentoProduto as tipoSegmentoProduto ");
 		
-		if (filtro.getNumeroCota() != null || filtro.getNomeCota() != null) {
+		if (filtro.getNumeroCota() != null || filtro.getNomeCota() != null || filtro.getNomeSegmento() != null) {
 			hql.append(" WHERE ");
 		}
 		
@@ -198,6 +199,16 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 		else if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
 			hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') = :nomePessoa )");
 			parameters.put("nomePessoa", filtro.getNomeCota());
+		}
+		
+		if (filtro.getNomeSegmento() != null && !filtro.getNomeSegmento().isEmpty()) {
+			if (filtro.isAutoComplete()) {
+				hql.append(" and tipoSegmentoProduto.descricao = :tipoSegmentoProduto )");
+				parameters.put("tipoSegmentoProduto", filtro.getNomeSegmento());
+			}else {
+				hql.append(" and tipoSegmentoProduto.descricao like :tipoSegmentoProduto )");
+				parameters.put("tipoSegmentoProduto", filtro.getNomeSegmento() + "%");
+			}
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
