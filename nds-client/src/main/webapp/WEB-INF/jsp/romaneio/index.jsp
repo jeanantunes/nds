@@ -15,6 +15,23 @@
 </head>
 
 <body>
+	    		
+    <div class="areaBts">
+		<div class="area">
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/romaneio/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" border="0" />
+				</a>
+			</span>
+			
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/romaneio/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
+				</a>
+			</span>
+		</div>
+	</div>
+	
 	<div class="corpo">
 	    <br clear="all"/>
 	    
@@ -81,27 +98,23 @@
 			<div class="linha_separa_fields">&nbsp;</div>
 			
 			<fieldset class="classFieldset">
+			
 				<legend> Roteiros / Rotas</legend>
+				
 				<div class="grids" style="display:none;">
+				
 					<table class="romaneiosGrid"></table>
-					<span class="bt_novos" title="Gerar Arquivo">
-		          		<a href="${pageContext.request.contextPath}/romaneio/exportar?fileType=XLS">
-		          			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-		          			Arquivo
-		          		</a>
-		          	</span>
-		    		<span class="bt_novos" title="Imprimir">
-		    			<a href="${pageContext.request.contextPath}/romaneio/exportar?fileType=PDF">
-		    				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-		    				Imprimir Romaneio
-		    			</a>
-		    		</span>
+					
 		    		<span style="float:right; margin-top:10px; margin-right:50px;">
 		    			<strong>Total de Entregas:</strong>&nbsp;<span id="totalCotas"></span>
 		    		</span>
-				</div>		
+		    		
+				</div>	
+					
 			</fieldset>
+			
 			<div class="linha_separa_fields">&nbsp;</div>
+			
 		</div>
 	</div>
 </body>
