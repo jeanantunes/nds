@@ -459,16 +459,16 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		Assert.assertNotNull(listaMovimentoFinanceiroCota);
 	}
 
-	@Test
-	@SuppressWarnings("unused")
-	public void obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota() {
-		
-		Long idMovimentoEstoqueCota = 1L;
-		
-		MovimentoFinanceiroCota movimentoFinanceiroCota = 
-				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(idMovimentoEstoqueCota);
-
-	}
+//	@Test
+//	@SuppressWarnings("unused")
+//	public void obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota() {
+//		
+//		Long idMovimentoEstoqueCota = 1L;
+//		
+//		MovimentoFinanceiroCota movimentoFinanceiroCota = 
+//				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(idMovimentoEstoqueCota);
+//
+//	}
 
 	@Test
 	@SuppressWarnings("unused")

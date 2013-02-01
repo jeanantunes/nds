@@ -201,9 +201,9 @@ var contaCorrenteCotaController = $.extend(true, {
 									
 				value.cell.consignado = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+[value.cell.id]+');"/>'+(value.cell.consignado != null?value.cell.consignado:'0.00')+'</a>';
 				value.cell.encalhe = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarEncalheCota('+[value.cell.id]+');"/>'+value.cell.encalhe+'</a>';
-				value.cell.vendaEncalhe = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+value.cell.id+',\''+value.cell.dataConsolidado+'\')"/>'+value.cell.vendaEncalhe+'</a>';
-				value.cell.debitoCredito = '<a href="javascript:;"/>'+value.cell.debitoCredito+'</a>';
-				value.cell.encargos = '<a href="javascript:;"/>'+value.cell.encargos+'</a>';
+				value.cell.vendaEncalhe = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+value.cell.id+',\''+value.cell.dataConsolidado+'\');"/>'+value.cell.vendaEncalhe+'</a>';
+				value.cell.debitoCredito = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+value.cell.id+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito +'\');"/>'+value.cell.debitoCredito+'</a>';
+				value.cell.encargos = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+value.cell.id+',\''+value.cell.dataConsolidado +'\');"/>'+value.cell.encargos+'</a>';
 					
 				value.cell.valorPostergado = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'" href="javascript:;">' +(value.cell.valorPostergado != null?value.cell.valorPostergado:'0.00')+'</a></span>';
 				value.cell.pendente = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'" href="javascript:;">' +value.cell.pendente +'</a></span>';
@@ -212,6 +212,13 @@ var contaCorrenteCotaController = $.extend(true, {
 			
 		
 			$("#cotanome", contaCorrenteCotaController.workspace).html($("#cota", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
+			
+			$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).
+				text("Cota: " + $("#cota", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
+			
+			$("#msgFieldsetEncargos", contaCorrenteCotaController.workspace).
+				text("Cota: " + $("#cota", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
+			
 			$(".grids", contaCorrenteCotaController.workspace).show();
 			
 			return data;
@@ -588,8 +595,7 @@ var contaCorrenteCotaController = $.extend(true, {
 	},
 			
 	popup_contaCorrente : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+		
 		$( "#dialog-conta", contaCorrenteCotaController.workspace ).dialog({
 			resizable: false,
 			height:340,
@@ -608,8 +614,7 @@ var contaCorrenteCotaController = $.extend(true, {
 	},
 		
 	popup_encargos : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+		
 		$( "#dialog-encargos", contaCorrenteCotaController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
@@ -653,6 +658,149 @@ var contaCorrenteCotaController = $.extend(true, {
 		$("#copiaParaCotaEmail").val("");
 		$("#mensagemCotaEmail").val("");
 		$("#emailCotaEmail").attr("readonly", true);
+	},
+	
+	montarGridDebitoCredio : function(){
+		$(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexigrid({
+			preProcess : function(data){
+				
+				$.each(data.rows, function(index, value) {
+					
+					value.cell.dataCriacao = value.cell.dataLancamento;
+					value.cell.observacao = value.cell.observacoes;
+				});
+				
+				return data;
+			},
+			dataType : 'json',	
+			colModel : [ {
+				display : 'Data',
+				name : 'dataLancamento',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Tipo Movimento',
+				name : 'tipoMovimento',
+				width : 90,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Valor R$',
+				name : 'valor',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			}, {
+				display : 'Observação',
+				name : 'observacoes',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}],
+			width : 600,
+			height : 120,
+			sortname : "dataLancamento",
+			sortorder : "asc"
+		});
+		
+		$(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexOptions({
+			url : contextPath + '/financeiro/contaCorrenteCota/consultarDebitoCreditoCota'
+		});
+	},
+	
+	popup_debitoCredito : function(idConsolidado, dataConsolidado, valorTotal){
+		
+		var dadosPesquisa = [
+		   {name:'idConsolidado', value: idConsolidado},
+		   {name:'data', value:dataConsolidado}
+		];
+		
+		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/consultarDebitoCreditoCota",
+			dadosPesquisa,
+			function (result){
+				
+				var texto = $("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).text();
+				$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).text(dataConsolidado + " - " + texto);
+				$("#valorTotalDebitoCredito", contaCorrenteCotaController.workspace).text(valorTotal);
+			
+				contaCorrenteCotaController.montarGridDebitoCredio();
+				$("#dialog-debitos-creditos", contaCorrenteCotaController.workspace ).dialog({
+					resizable: false,
+					height:340,
+					width:660,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+							
+							$(".debitoCreditoGrid", contaCorrenteCotaController.workspace).show();
+							
+						},
+						
+					},
+					form: $("#dialog-debitos-creditos", this.workspace).parents("form")
+				});
+				
+				$(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexAddData({
+					page: result.page, total: result.total, rows: result.rows
+				});
+				
+				contaCorrenteCotaController.idConsolidadoDebitoCredito = idConsolidado;
+				contaCorrenteCotaController.dataDebitoCredito = dataConsolidado;
+				
+				$(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexOptions({
+					params : dadosPesquisa
+				});
+			}
+		);
+	},
+	
+	idConsolidadoDebitoCredito : null,
+	dataDebitoCredito : null,
+	
+	exportarDebitoCredito : function(fyleType){
+		
+		var params = "fileType=" + fyleType + 
+			"&idConsolidado=" + contaCorrenteCotaController.idConsolidadoDebitoCredito + 
+			"&data=" + contaCorrenteCotaController.dataDebitoCredito + 
+			"&sortname=" + $(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexGetSortName() +
+			"&sortorder=" + $(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).getSortOrder();
+		
+		window.open(contextPath + "/financeiro/contaCorrenteCota/exportarDebitoCreditoCota?"+ params);
+	},
+	
+	popup_encargos : function(idConsolidado, dataConsolidado){
+		
+		var dadosPesquisa = [
+		   {name:'idConsolidado', value: idConsolidado},
+		   {name:'data', value:dataConsolidado}
+		];
+		
+		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/consultarEncargosCota",
+			dadosPesquisa,
+			function (result){
+				
+				var texto = $("#msgFieldsetEncargos", contaCorrenteCotaController.workspace).text();
+				$("#msgFieldsetEncargos", contaCorrenteCotaController.workspace).text(dataConsolidado + " - " + texto);
+				
+				$("#txtEncargosJuros", contaCorrenteCotaController.workspace).text(result[0]);
+				$("#txtEncargosMulta", contaCorrenteCotaController.workspace).text(result[1]);
+				
+				$("#dialog-encargos", contaCorrenteCotaController.workspace ).dialog({
+					resizable: false,
+					height:'auto',
+					width:450,
+					modal: true,
+					buttons: {
+						"Fechar": function() {
+							$( this ).dialog( "close" );
+						},
+					},
+					form: $("#dialog-encargos", this.workspace).parents("form")
+				});
+			}
+		);
 	}
 	
 }, BaseController);

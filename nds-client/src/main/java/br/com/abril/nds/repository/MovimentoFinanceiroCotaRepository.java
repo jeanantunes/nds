@@ -21,17 +21,6 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoFinanceiroCota, Long> {
 
-
-	/**
-	 * Obtem MovimentoFinaceiroCota relativo a um registro de MovimentoEstoqueCota. 
-	 * 
-	 * @param idMovimentoEstoqueCota
-	 * 
-	 * @return MovimentoFinanceiroCota;
-	 */
-	MovimentoFinanceiroCota obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(Long idMovimentoEstoqueCota);
-	
-	
 	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota);	
 
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
@@ -148,6 +137,13 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 
 
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceirosCotaPorTipoMovimento(
-			Long idCota,
-			Collection<TipoMovimentoFinanceiro> tiposMovimentoPostergado);
+			Long idCota, Long idConsolidado,
+			Collection<TipoMovimentoFinanceiro> tiposMovimento,
+			Date dataCriacao);
+
+	List<DebitoCreditoCotaDTO> obterCreditoDebitoCota(Long idConsolidado,
+			Date dataCriacao, List<TipoMovimentoFinanceiro> tiposDebitoCredito, String sortorder, String sortname);
+
+	BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado,
+			Date dataCriacao, Collection<TipoMovimentoFinanceiro> tiposMovimento);
 }

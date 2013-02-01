@@ -64,9 +64,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ProdutoServico> listaProdutoServicos;
 	
-	@OneToMany(mappedBy = "movimentoEstoqueCota")
-	private List<ConferenciaEncalhe> listaConferenciasEncalhe;
-	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
@@ -91,7 +88,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setEstoqueProdutoCota(this.getEstoqueProdutoCota());
 		mec.setEstoqueProdutoCotaJuramentado(this.getEstoqueProdutoCotaJuramentado());
 		mec.setLancamento(this.getLancamento());
-		mec.setListaConferenciasEncalhe(this.getListaConferenciasEncalhe());
 		mec.setListaProdutoServicos(this.getListaProdutoServicos());
 		mec.setMotivo(this.getMotivo());
 		mec.setProdutoEdicao(this.getProdutoEdicao());
@@ -162,21 +158,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	 */
 	public void setListaProdutoServicos(List<ProdutoServico> listaProdutoServicos) {
 		this.listaProdutoServicos = listaProdutoServicos;
-	}
-
-	/**
-	 * @return the listaConferenciasEncalhe
-	 */
-	public List<ConferenciaEncalhe> getListaConferenciasEncalhe() {
-		return listaConferenciasEncalhe;
-	}
-
-	/**
-	 * @param listaConferenciasEncalhe the listaConferenciasEncalhe to set
-	 */
-	public void setListaConferenciasEncalhe(
-			List<ConferenciaEncalhe> listaConferenciasEncalhe) {
-		this.listaConferenciasEncalhe = listaConferenciasEncalhe;
 	}
 
 	/**

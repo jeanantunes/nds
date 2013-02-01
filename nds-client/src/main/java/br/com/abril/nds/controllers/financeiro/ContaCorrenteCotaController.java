@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
@@ -59,6 +61,7 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -699,5 +702,51 @@ public class ContaCorrenteCotaController extends BaseController {
 				output);
 	}
 	
+	@Post
+	public void consultarDebitoCreditoCota(Long idConsolidado, Date data,
+			String sortname, String sortorder){
 		
+		List<DebitoCreditoCotaDTO> movs = 
+				 this.contaCorrenteCotaService.consultarDebitoCreditoCota(
+						 idConsolidado, data, sortorder, sortname);
+		
+		if (movs != null && !movs.isEmpty()){
+			
+			this.result.use(FlexiGridJson.class).from(movs).page(1).total(movs.size()).serialize();
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+	}
+	
+	public void exportarDebitoCreditoCota(FileType fileType, Long idConsolidado, Date data,
+			String sortname, String sortorder) throws IOException{
+		
+		List<DebitoCreditoCotaDTO> movs = 
+				 this.contaCorrenteCotaService.consultarDebitoCreditoCota(
+						 idConsolidado, data, sortorder, sortname);
+		
+		FileExporter.to("debito-credito", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), this.obterFiltroExportacao(), null,
+				movs, DebitoCreditoCotaDTO.class,
+				this.httpServletResponse);
+	}
+	
+	@Post
+	public void consultarEncargosCota(Long idConsolidado, Date data){
+		
+		List<BigDecimal> dados = new ArrayList<BigDecimal>();
+		
+		BigDecimal valor = this.contaCorrenteCotaService.consultarJurosCota(idConsolidado, data);
+		dados.add(valor == null ? 
+				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
+				valor.setScale(2, RoundingMode.HALF_EVEN));
+		
+		valor = this.contaCorrenteCotaService.consultarMultaCota(idConsolidado, data);
+		dados.add(valor == null ? 
+				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
+				valor.setScale(2, RoundingMode.HALF_EVEN));
+		
+		this.result.use(Results.json()).from(dados, "result").recursive().serialize();
+	}
 }

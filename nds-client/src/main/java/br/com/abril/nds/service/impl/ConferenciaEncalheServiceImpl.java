@@ -1149,8 +1149,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = listaConferenciaEncalhe.get(0).getMovimentoEstoqueCota();
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota = 
-				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(movimentoEstoqueCota.getId());
+		MovimentoFinanceiroCota movimentoFinanceiroCota = movimentoEstoqueCota.getMovimentoFinanceiroCota();
 		
 		if(movimentoFinanceiroCota!=null) {
 			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
