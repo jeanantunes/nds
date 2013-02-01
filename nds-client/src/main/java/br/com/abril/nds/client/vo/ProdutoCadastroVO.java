@@ -61,6 +61,8 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private String desconto;
 	
+	private String descricaoDescontoManual;
+	
 	/**
 	 * 
 	 */
@@ -468,9 +470,17 @@ public class ProdutoCadastroVO implements Serializable {
 			
 		}else if(produto.getDesconto()!= null){
 			produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor(produto.getDesconto()).replace(",","."));
-			
+			produtoCadastroVO.setDescricaoDescontoManual(produto.getDescricaoDesconto());
 		}
 		
 		return produtoCadastroVO;
+	}
+
+	public String getDescricaoDescontoManual() {
+		return descricaoDescontoManual;
+	}
+
+	public void setDescricaoDescontoManual(String descricaoDescontoManual) {
+		this.descricaoDescontoManual = descricaoDescontoManual;
 	}
 }

@@ -45,6 +45,7 @@ import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -185,19 +186,19 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		Boleto boleto =
 			Fixture.boleto(
 				"5", "5", "5", dataAtual, dataAtual, dataAtual, BigDecimal.ZERO,
-				new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida1, 0);
+				new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.PAGO, cota, bancoHSBC, divida1, 0);
 		save(boleto);
 		
 		Boleto boleto2 =
 			Fixture.boleto(
 				"55", "5", "55", dataAtual, dataAtual, dataAtual, BigDecimal.ZERO,
-				new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida2, 0);
+				new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida2, 0);
 		save(boleto2);
 
 		Boleto boleto3 =
 			Fixture.boleto(
 				"555", "5", "555", dataAtual, dataAtual, dataAtual, BigDecimal.ZERO,
-				new BigDecimal(100.00), "1", "1", StatusCobranca.PAGO, cota, bancoHSBC, divida3, 0);
+				new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.PAGO, cota, bancoHSBC, divida3, 0);
 		save(boleto3);
 		
 		BaixaAutomatica baixa =

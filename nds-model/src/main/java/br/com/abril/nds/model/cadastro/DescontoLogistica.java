@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,10 +32,10 @@ public class DescontoLogistica {
 	private Integer tipoDesconto;
 	
 	@Column(name = "PERCENTUAL_DESCONTO", nullable = false)
-	private Float percentualDesconto;
+	private BigDecimal percentualDesconto;
 	
 	@Column(name = "PERCENTUAL_PRESTACAO_SERVICO", nullable = false)
-	private Float percentualPrestacaoServico;
+	private BigDecimal percentualPrestacaoServico;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DATA_INICIO_VIGENCIA", nullable = false)
@@ -82,28 +83,28 @@ public class DescontoLogistica {
 	/**
 	 * @return the percentualDesconto
 	 */
-	public Float getPercentualDesconto() {
+	public BigDecimal getPercentualDesconto() {
 		return percentualDesconto;
 	}
 
 	/**
 	 * @param percentualDesconto the percentualDesconto to set
 	 */
-	public void setPercentualDesconto(Float percentualDesconto) {
+	public void setPercentualDesconto(BigDecimal percentualDesconto) {
 		this.percentualDesconto = percentualDesconto;
 	}
 
 	/**
 	 * @return the percentualPrestacaoServico
 	 */
-	public Float getPercentualPrestacaoServico() {
+	public BigDecimal getPercentualPrestacaoServico() {
 		return percentualPrestacaoServico;
 	}
 
 	/**
 	 * @param percentualPrestacaoServico the percentualPrestacaoServico to set
 	 */
-	public void setPercentualPrestacaoServico(Float percentualPrestacaoServico) {
+	public void setPercentualPrestacaoServico(BigDecimal percentualPrestacaoServico) {
 		this.percentualPrestacaoServico = percentualPrestacaoServico;
 	}
 

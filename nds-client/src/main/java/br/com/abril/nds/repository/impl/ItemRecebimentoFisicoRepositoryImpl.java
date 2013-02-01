@@ -3,13 +3,10 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
-import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 
 /**
@@ -31,7 +28,7 @@ public class ItemRecebimentoFisicoRepositoryImpl extends
 	}
 	
 	@Override
-	public ItemRecebimentoFisico obterItemPorDataLancamentoIdProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
+	public Long obterItemPorDataLancamentoIdProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
 		
 		if(	idProdutoEdicao == null || dataLancamento == null) {
 			throw new NullPointerException();
@@ -39,7 +36,7 @@ public class ItemRecebimentoFisicoRepositoryImpl extends
 		
 		
 		
-		String hql = " select itemRecebimento from ItemRecebimentoFisico itemRecebimento "
+		String hql = " select itemRecebimento.id from ItemRecebimentoFisico itemRecebimento "
 				   + " join itemRecebimento.itemNotaFiscal itemNotaFiscal "
 				   + " join itemNotaFiscal.produtoEdicao produtoEdicao "
 				   + " where itemNotaFiscal.dataLancamento = :dataLancamento " 
@@ -53,9 +50,10 @@ public class ItemRecebimentoFisicoRepositoryImpl extends
 				
 		query.setMaxResults(1);
 		
-		return (ItemRecebimentoFisico) query.uniqueResult();
+		return (Long) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ItemRecebimentoFisico> obterItemPorIdRecebimentoFisico(Long idRecebimentoFisico) {
 		

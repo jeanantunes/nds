@@ -55,7 +55,7 @@ implements MovimentoEstoqueRepository {
 			hql.append(" and m.status = :statusAprovacao  ");
 		}
 		
-		hql.append(" group by m.id, m.data, m.tipoMovimento.id, m.tipoMovimento.descricao ");		
+		hql.append(" group by m.produtoEdicao.id, m.data, m.tipoMovimento.id ");		
 		
 		hql.append(" order by m.dataCriacao asc, m.id ");
 		
@@ -87,6 +87,5 @@ implements MovimentoEstoqueRepository {
 		return query.list();
 				
 	}
-	
 	
 }

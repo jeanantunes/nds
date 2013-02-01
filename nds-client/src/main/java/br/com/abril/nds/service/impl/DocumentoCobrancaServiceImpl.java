@@ -27,7 +27,6 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -201,13 +200,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 */
 	private void enviarDocumentoPorEmail(Cobranca cobranca) throws AutenticacaoEmailException, Exception {
 		
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		Distribuidor distribuidor = this.distribuidorService.obter();
 		
-		String assunto=(politicaPrincipal!=null
-						? politicaPrincipal.getAssuntoEmailCobranca():"");
+		String assunto=(distribuidor.getAssuntoEmailCobranca()!=null
+						? distribuidor.getAssuntoEmailCobranca():"");
 		
-		String mensagem=(politicaPrincipal!=null
-						? politicaPrincipal.getMensagemEmailCobranca():"");
+		String mensagem=(distribuidor.getMensagemEmailCobranca()!=null
+						? distribuidor.getMensagemEmailCobranca():"");
 		
 		String emailCota = cobranca.getCota().getPessoa().getEmail();
 		String[] destinatarios = new String[]{emailCota};

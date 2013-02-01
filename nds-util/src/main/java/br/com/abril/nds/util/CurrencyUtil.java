@@ -162,11 +162,33 @@ public abstract class CurrencyUtil {
 		
 		if(valor.indexOf(",") < valor.indexOf(".")) {
 			valor = valor.replace(",", "");
-		}
+		} 
 		
 		valor = valor.replace(".", ",");
 		
 		return valor;
 	}
 	
+	
+	/**
+	 * Converte uma string em formato internacional para uma string em formato nacional
+	 * 
+	 *  "1,000.00" to "1.000,00"
+	 * 
+	 * @param valor 
+	 * @return
+	 */
+	public static String convertValorInternacional(String valor) {
+		
+		if(valor == null || valor.isEmpty())
+			return "0.00";
+		
+		if(valor.indexOf(".") < valor.indexOf(",")) {
+			valor = valor.replace(".", "");
+		} 
+		
+		valor = valor.replace(",", ".");
+		
+		return valor;
+	}
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0113.processor;
 
+import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.repository.impl.AbstractRepository;
 import br.com.abril.nds.service.DescontoLogisticaService;
-import br.com.abril.nds.service.DescontoService;
 
 /**
  * @author Jones.Costa
@@ -35,6 +35,8 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DescontoLogisticaService descontoLogisticaService;
 	
+	private static final BigDecimal CEM = new BigDecimal(100);
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
@@ -52,8 +54,8 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 			if (null != descontoLogistica ) {
 								
 				// Divisão por 100 Realizado em conjunto com Cesar Pop Punk
-				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().floatValue()/100);
-				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().floatValue()/100);
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().divide(CEM));
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().divide(CEM));
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().merge(descontoLogistica);
@@ -63,8 +65,8 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 				descontoLogistica.setId(null);//auto increment
 				descontoLogistica.setTipoDesconto(input.getTipoDesconto());
 				// Divisão por 100 Realizado em conjunto com Cesar Pop Punk
-				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().floatValue()/100);
-				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().floatValue()/100);
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().divide(CEM));
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().divide(CEM));
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().persist(descontoLogistica);

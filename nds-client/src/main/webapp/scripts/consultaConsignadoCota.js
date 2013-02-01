@@ -1,6 +1,7 @@
 var consultaConsignadoCotaController = $.extend(true, {
 
 	init : function() {
+		
 		$(".consignadosCotaDetalhesGrid", consultaConsignadoCotaController.workspace).flexigrid({
 			preProcess: consultaConsignadoCotaController.executarPreProcessamento,
 			dataType : 'json',
@@ -353,6 +354,10 @@ var consultaConsignadoCotaController = $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
+			},
+			beforeClose: function(){
+				
+				consultaConsignadoCotaController.pesquisar();
 			},
 			form: $("#dialog-detalhes", this.workspace).parents("form")
 		});

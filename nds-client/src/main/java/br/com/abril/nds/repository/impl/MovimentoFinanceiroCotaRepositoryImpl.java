@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -42,9 +44,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select mfc from MovimentoFinanceiroCota mfc   		")
-		   .append(" inner join mfc.movimentos as mec 			")
-		   .append(" where mec.id = :idMovimentoEstoqueCota 	");
+		hql.append("select mfc from MovimentoFinanceiroCota mfc ")
+		   .append(" join mfc.movimentos as mec ")
+		   .append(" where mec.id = :idMovimentoEstoqueCota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -878,5 +880,23 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoFinanceiroCota> obterMovimentosFinanceirosCotaPorTipoMovimento(
+			Long idCota, Collection<TipoMovimentoFinanceiro> tiposMovimentoPostergado){
+		
+		StringBuilder hql = new StringBuilder("select m from MovimentoFinanceiroCota m ");
+		hql.append(" where m.cota.id = :idCota ")
+		   .append(" and m.dataCriacao = :hoje ")
+		   .append(" and m.tipoMovimento in (:postergados) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("hoje", DateUtil.removerTimestamp(new Date()));
+		query.setParameterList("postergados", tiposMovimentoPostergado);
+		
+		return query.list();
+	}
 }

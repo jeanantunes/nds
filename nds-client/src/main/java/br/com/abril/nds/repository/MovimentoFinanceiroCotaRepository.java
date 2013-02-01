@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -144,5 +145,9 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 
 
 	List<Long> obterIdsMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
-	
+
+
+	List<MovimentoFinanceiroCota> obterMovimentosFinanceirosCotaPorTipoMovimento(
+			Long idCota,
+			Collection<TipoMovimentoFinanceiro> tiposMovimentoPostergado);
 }

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.InformeEncalheDTO;
+import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
@@ -19,6 +21,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -29,6 +32,7 @@ import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -63,6 +67,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
 	@Override
 	@Transactional
 	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
@@ -76,6 +83,14 @@ public class LancamentoServiceImpl implements LancamentoService {
 			dtos.add(montarDTOExpedicao(lancamento));
 		}
 		return dtos;
+	}
+	
+	@Override
+	@Transactional
+	public List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor) {
+		
+		return lancamentoRepository.obterIdsLancamentosNaoExpedidos(
+				paginacaoVO, data, idFornecedor);
 	}
 	
 	@Transactional
@@ -124,34 +139,26 @@ public class LancamentoServiceImpl implements LancamentoService {
 				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
 				fornecedor, 
 				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
-				false);
+				false,
+				lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde().intValue():0);
 		
 		return dto;
 	}
 
-	@Transactional
-	public void confirmarExpedicoes(List<Long> idLancamentos,Long idUsuario) {
-		
-		for( Long idLancamento:idLancamentos ) {		
-			this.confirmarExpedicao(idLancamento, idUsuario);
-		}
-	}
-	
 	@Override
 	@Transactional
-	public void confirmarExpedicao(Long idLancamento, Long idUsuario) {
+	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario,Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
+		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
+
 		Expedicao expedicao = new Expedicao();
 		expedicao.setDataExpedicao(new Date());
 		expedicao.setResponsavel(new Usuario(idUsuario));
-		expedicaoRepository.adicionar(expedicao);
+		Long idExpedicao = expedicaoRepository.adicionar(expedicao);
 		
-		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
-		lancamento.setDataStatus(new Date());
-		lancamento.setStatus(StatusLancamento.EXPEDIDO);
-		lancamento.setExpedicao(expedicao);
+		expedicao.setId(idExpedicao);
 		
-		lancamentoRepository.alterar(lancamento);
+		lancamentoRepository.alterarLancamento(idLancamento, new Date(), StatusLancamento.EXPEDIDO, expedicao);
 		
 		List<MovimentoEstoqueCota> movimentos = movimentoEstoqueCotaRepository.obterPorLancamento(idLancamento);
 		for (MovimentoEstoqueCota movimento : movimentos) {
@@ -161,21 +168,15 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setDataEdicao(new Date());
-		historico.setLancamento(lancamento);
+		historico.setLancamento(new Lancamento(idLancamento));
 		
 		historico.setResponsavel(new Usuario(idUsuario));
-		historico.setStatus(lancamento.getStatus());
+		historico.setStatus(StatusLancamento.EXPEDIDO);
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoLancamentoRepository.adicionar(historico);
 		
-		/*movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
-				lancamento.getDataLancamentoPrevista(), 
-				lancamento.getProdutoEdicao().getId(),
-				idUsuario);*/
-		
-		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(
-				lancamento,
-				idUsuario);
+		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
+				lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
 		
 		// TODO: Sergio, vc poderia corrigir este trecho após finalizar a implementação do DescontoCota fzd favor? Obrigado.
 		/*DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
@@ -201,6 +202,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 			this.descontoProximosLancamentosRepository.alterar(desconto);
 		}*/
 		
+		return true;
 	}
 
 	@Override

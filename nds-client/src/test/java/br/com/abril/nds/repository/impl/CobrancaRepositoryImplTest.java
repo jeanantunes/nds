@@ -46,6 +46,7 @@ import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -198,17 +199,17 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(divida4);
 
 		boleto = Fixture.boleto("5", "5", "5", dataAtual, dataAtual, dataAtual,
-				BigDecimal.ZERO, new BigDecimal(100.00), "1", "1",
+				BigDecimal.ZERO, new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1",
 				StatusCobranca.PAGO, cota, bancoHSBC, divida1, 0);
 		save(boleto);
 
 		boleto2 = Fixture.boleto("55", "5", "55", dataAtual, dataAtual,
-				dataAtual, BigDecimal.ZERO, new BigDecimal(100.00), "1", "1",
+				dataAtual, BigDecimal.ZERO, new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1",
 				StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida2, 0);
 		save(boleto2);
 
 		boleto3 = Fixture.boleto("555", "5", "555", dataAtual, dataAtual,
-				dataAtual, BigDecimal.ZERO, new BigDecimal(100.00), "1", "1",
+				dataAtual, BigDecimal.ZERO, new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1",
 				StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida3, 0);
 		save(boleto3);
 

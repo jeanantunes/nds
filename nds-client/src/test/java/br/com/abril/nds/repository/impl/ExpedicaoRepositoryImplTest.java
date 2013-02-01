@@ -271,7 +271,7 @@ public class ExpedicaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 	}
 	
-	@Test
+	/*@Test
 	public void testarObterQuantidadeResumoExpedicaoPorBox() {
 		
 		Long quantidadeResumo;
@@ -285,7 +285,7 @@ public class ExpedicaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Assert.assertNotNull(quantidadeResumo);
 		
-	}
+	}*/
 	
 	@Test
 	public void testarObterUltimaExpedicaoDia() {

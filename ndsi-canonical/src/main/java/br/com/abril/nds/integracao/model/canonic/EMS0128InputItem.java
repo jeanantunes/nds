@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import com.ancientprogramming.fixedformat4j.annotation.Field;
-import com.ancientprogramming.fixedformat4j.annotation.FixedFormatBoolean;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
@@ -24,7 +22,7 @@ public class EMS0128InputItem extends IntegracaoDocumentDetail implements Serial
 	private Long numeroEdicao;
 	private BigInteger qtd;
 	private BigDecimal precoCapa;
-	private Float percentualDesconto;
+	private BigDecimal percentualDesconto;
 	private String situacaoAcerto;
 	private Long numeroDocumentoAcerto;
 	private Date dataEmicaoDocumentoAcerto;
@@ -107,13 +105,13 @@ public class EMS0128InputItem extends IntegracaoDocumentDetail implements Serial
 	/**
 	 * @return the percentualDesconto
 	 */
-	public Float getPercentualDesconto() {
+	public BigDecimal getPercentualDesconto() {
 		return percentualDesconto;
 	}
 	/**
 	 * @param percentualDesconto the percentualDesconto to set
 	 */
-	public void setPercentualDesconto(Float percentualDesconto) {
+	public void setPercentualDesconto(BigDecimal percentualDesconto) {
 		this.percentualDesconto = percentualDesconto;
 	}
 	/**

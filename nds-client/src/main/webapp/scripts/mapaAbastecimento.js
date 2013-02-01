@@ -264,6 +264,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 			break;
 			
 		default:
+			exibirMensagem("WARNING", ["É necessario selecionar o Tipo de Consulta a ser realizada!"]);
 			break;
 		}
 	},
