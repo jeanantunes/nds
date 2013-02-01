@@ -53,13 +53,6 @@ public interface ExpedicaoRepository extends Repository<Expedicao, Long> {
 	 * @return List<ExpedicaoDTO>
 	 */
 	Long obterQuantidadeResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro);
-	
-	/**
-	 * Retorna a quantidade de resumo de expedição de box.
-	 * @param filtro
-	 * @return List<ExpedicaoDTO>
-	 */
-	Long obterQuantidadeResumoExpedicaoPorBox(Long idBox,Date dataLancamento);
 
 	/**
 	 * Retorna a ultima expedição do dia especificado
@@ -73,5 +66,9 @@ public interface ExpedicaoRepository extends Repository<Expedicao, Long> {
 	 * @return Date
 	 */
 	Date obterDataUltimaExpedicao();
+	
+	ExpedicaoDTO obterTotaisResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro);
+	
+	ExpedicaoDTO obterTotaisResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro);
 
 }

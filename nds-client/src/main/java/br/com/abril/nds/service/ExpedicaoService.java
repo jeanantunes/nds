@@ -63,4 +63,8 @@ public interface ExpedicaoService {
 	 */
 	Date obterDataUltimaExpedicao();
 
+	ExpedicaoDTO obterTotaisResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro);
+	
+	ExpedicaoDTO obterTotaisResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro);
+	
 }

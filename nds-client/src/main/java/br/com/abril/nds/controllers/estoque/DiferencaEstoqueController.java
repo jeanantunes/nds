@@ -2040,8 +2040,8 @@ public class DiferencaEstoqueController extends BaseController {
 		if (somaQtdeRateio.compareTo(diferencaVO.getQuantidade()) > 0) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "A somatória das quantidades de rateio (" 
-					+ somaQtdeRateio + ") é maior que a quantidade da diferença do produto (" 
+				TipoMensagem.WARNING, "A somatória das quantidades do campo [Diferença] (" 
+					+ somaQtdeRateio + ") é maior que a quantidade do campo [Reparte Diferença] referente ao produto informado (" 
 					+ diferencaVO.getQuantidade() + ")!");
 		}
 	}

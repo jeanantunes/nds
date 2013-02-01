@@ -171,22 +171,37 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				this.descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
 
 			BigInteger quantidade = estudoCota.getQtdeEfetiva();
-
-			ItemNotaEnvio itemNotaEnvio = new ItemNotaEnvio();
-
-			itemNotaEnvio.setProdutoEdicao(produtoEdicao);
-			itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-			itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-			itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNome());
-			itemNotaEnvio.setDesconto(percentualDesconto);
-			itemNotaEnvio.setReparte(quantidade);
-			itemNotaEnvio.setPrecoCapa(precoVenda);
-			itemNotaEnvio.setEstudoCota(estudoCota);
-
+			
+			ItemNotaEnvio itemNotaEnvio = estudoCota.getItemNotaEnvio();
+			
+			if (itemNotaEnvio == null) {
+			
+				itemNotaEnvio = criarNovoItemNotaEnvio(estudoCota, produtoEdicao,
+						precoVenda, percentualDesconto, quantidade);
+			}
+			
 			listItemNotaEnvio.add(itemNotaEnvio);
 		}
 
 		return listItemNotaEnvio;
+	}
+
+	private ItemNotaEnvio criarNovoItemNotaEnvio(EstudoCota estudoCota,
+			ProdutoEdicao produtoEdicao, BigDecimal precoVenda,
+			BigDecimal percentualDesconto, BigInteger quantidade) {
+		
+		ItemNotaEnvio itemNotaEnvio = new ItemNotaEnvio();
+
+		itemNotaEnvio.setProdutoEdicao(produtoEdicao);
+		itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+		itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+		itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNome());
+		itemNotaEnvio.setDesconto(percentualDesconto);
+		itemNotaEnvio.setReparte(quantidade);
+		itemNotaEnvio.setPrecoCapa(precoVenda);
+		itemNotaEnvio.setEstudoCota(estudoCota);
+		
+		return itemNotaEnvio;
 	}
 
 	private void sumarizarTotalItensNota(List<EstudoCota> listaEstudosCota,
@@ -283,7 +298,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Distribuidor distribuidor = distribuidorRepository.obter();
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
-
+	
 		List<EstudoCota> listaEstudosCota = 
 			this.estudoCotaRepository.obterEstudosCotaParaNotaEnvio(
 				idCota, periodo, listaIdFornecedores);
@@ -312,9 +327,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			idRota = (Long) cota.getBox().getRoteirizacao().getRoteiro(idRoteiro).getRotas().get(0).getId();
 		}
 		
-		NotaEnvio notaEnvio = 
-			criarNotaEnvio(idCota, idRota, chaveAcesso, codigoNaturezaOperacao, 
-				descricaoNaturezaOperacao, dataEmissao, distribuidor, cota);
+		ItemNotaEnvioPK itemNotaEnvioPK = listaItemNotaEnvio.get(0).getItemNotaEnvioPK();
+		
+		NotaEnvio notaEnvio = (itemNotaEnvioPK == null) ? null : itemNotaEnvioPK.getNotaEnvio();
+		
+		if (notaEnvio != null)
+			return notaEnvio;
+				
+		notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso, codigoNaturezaOperacao, 
+						descricaoNaturezaOperacao, dataEmissao, distribuidor, cota);
 
 		notaEnvioRepository.adicionar(notaEnvio);
 		
