@@ -262,6 +262,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 			movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
 			movimentoEstoque.setAprovador(new Usuario(idUsuario));
+			movimentoEstoque.setDataAprovacao(this.distribuidorService.obter().getDataOperacao());
 			
 			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque,movimentoEstoque);			
 			
@@ -406,11 +407,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(new Cota(idCota));
-		// Alterado por Eduardo "PunkRock" Castro em virture de estar gravando a data do sistema operacional
-		// movimentoEstoqueCota.setData(new Date());
 		
-		if(dataOperacao == null)
+		if (dataOperacao == null) {
+			
 			dataOperacao = distribuidorService.obterDatatOperacaoDistribuidor();
+		}
 		
 		movimentoEstoqueCota.setData(dataOperacao);
 
@@ -422,24 +423,32 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setUsuario(new Usuario(idUsuario));
 		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 
-		if ( dataLancamento != null && idProdutoEdicao != null) {
+		if (dataLancamento != null && idProdutoEdicao != null) {
 			
-			if(idLancamento==null)
-				idLancamento = lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+			if (idLancamento==null) {
+				
+				idLancamento = 
+					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
+						new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+			}
 			
 				
 			if (idLancamento != null) {
+				
 				movimentoEstoqueCota.setLancamento(new Lancamento(idLancamento));
 			}			
 			
-			if(idEstudoCota!=null)
+			if (idEstudoCota != null) {
+				
 				movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));
+			}
 		}
 		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {
 
 			movimentoEstoqueCota.setStatus(StatusAprovacao.APROVADO);
 			movimentoEstoqueCota.setAprovador(new Usuario(idUsuario));
+			movimentoEstoqueCota.setDataAprovacao(dataOperacao);
 			
 			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque,movimentoEstoqueCota);
 			
