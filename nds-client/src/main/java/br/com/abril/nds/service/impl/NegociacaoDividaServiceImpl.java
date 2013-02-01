@@ -269,13 +269,21 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 					cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
 					cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
 					cobranca.setValor(totalNegociacao);
+					
+					Banco banco = formaCobranca.getBanco();
+					
 					cobranca.setNossoNumero(
 							Util.gerarNossoNumero(
 									numeroCota, 
 									dataAtual, 
-									formaCobranca.getBanco().getNumeroBanco(), 
+									banco.getNumeroBanco(),
 									null, 
-									parcelaNegociacao.getMovimentoFinanceiroCota().getId()));
+									parcelaNegociacao.getMovimentoFinanceiroCota().getId(),
+									banco.getAgencia(),
+									banco.getConta(),
+									banco.getCarteira()
+							)
+					);
 					
 					this.dividaRepository.adicionar(divida);
 					this.cobrancaRepository.adicionar(cobranca);

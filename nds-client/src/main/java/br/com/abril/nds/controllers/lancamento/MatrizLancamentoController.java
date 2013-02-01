@@ -206,7 +206,7 @@ public class MatrizLancamentoController extends BaseController {
 		this.verificarLancamentosConfirmados();
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
-			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").serialize();
+			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").recursive().serialize();
 	}
 
 	@Post

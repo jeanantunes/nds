@@ -71,7 +71,7 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"","",true,FormaEmissao.INDIVIDUAL_BOX);
+			Fixture.criarPoliticaCobranca(null, formaBoleto,true,FormaEmissao.INDIVIDUAL_BOX);
 		
 		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
 		politicasCobranca.add(politicaCobranca);

@@ -759,7 +759,6 @@ var cotaAusenteController = $.extend(true, {
 							}, null);	
 				},
 				"Redistribuir": function() {
-					debugger;
 					var qtdeProdutoSeleciodo =  $("input[name='checkgroup']:checked ").length;
 					
 					if(qtdeProdutoSeleciodo === 0) {
@@ -868,3 +867,4 @@ var cotaAusenteController = $.extend(true, {
 	}
 	
 }, BaseController);
+//@ sourceURL=cotaAusente.js

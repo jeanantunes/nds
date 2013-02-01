@@ -15,9 +15,9 @@ var lancamentoNovoController = $.extend(true, {
 		});
 		
 		$("#edicaoProdutoInput", lancamentoNovoController.workspace).numeric();
-		$("#diferencaProdutoInput", lancamentoNovoController.workspace).numeric();
+		$("#diferencaProdutoInput", lancamentoNovoController.workspace).justInput(/[0-9]/);
 		$("#cotaInput1", lancamentoNovoController.workspace).numeric();
-		$("#diferencaInput1", lancamentoNovoController.workspace).numeric();
+		$("#diferencaInput1", lancamentoNovoController.workspace).justInput(/[0-9]/);
 		$("#cotaInputNota", lancamentoNovoController.workspace).numeric();
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).mask("99/99/9999");
 		
@@ -333,7 +333,7 @@ var lancamentoNovoController = $.extend(true, {
 							
 				$("#cotaInput"+ (linhaAtual+1), lancamentoNovoController.workspace).numeric();
 				
-				$("#diferencaInput" + (linhaAtual+1), lancamentoNovoController.workspace).numeric();
+				$("#diferencaInput" + (linhaAtual+1), lancamentoNovoController.workspace).justInput(/[0-9]/);
 					
 				$("#cotaInput" + (linhaAtual+1), lancamentoNovoController.workspace).val(value.numeroCota);
 					
@@ -779,7 +779,7 @@ var lancamentoNovoController = $.extend(true, {
 			
 			var idProdutoEdicao = $("#idProdutoEdicao", lancamentoNovoController.workspace).val();
 			
-			if(!idProdutoEdicao) {
+			if(!idProdutoEdicao && idProdutoEdicao.length > 0) {
 				exibirMensagemDialog('WARNING', ['Produto Edição não selecionado.'],'');			
 				$('#paraCota').attr('checked',false);
 				$("#fieldCota", lancamentoNovoController.workspace).hide();
@@ -829,7 +829,7 @@ var lancamentoNovoController = $.extend(true, {
 			$("#cotaInput" + (linhaAtual + 1), lancamentoNovoController.workspace).focus();
 			
 			$("#cotaInput"+ (linhaAtual + 1), lancamentoNovoController.workspace).numeric();
-			$("#diferencaInput" + (linhaAtual + 1), lancamentoNovoController.workspace).numeric();
+			$("#diferencaInput" + (linhaAtual + 1), lancamentoNovoController.workspace).justInput(/[0-9]/);
 		}
 	},
 	
@@ -996,29 +996,15 @@ var lancamentoNovoController = $.extend(true, {
 		
 		var valorDiferenca = eval($("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val());
 		
-		var valorPacotePadrao = eval($("#pacotePadrao", lancamentoNovoController.workspace).text()) ;
-		
 		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
 		
 		if (tipoDiferenca == "SOBRA_DE" || tipoDiferenca == "SOBRA_EM"){
 			
-			if(tipoDiferenca == "SOBRA_DE"){
-				
-				valorReparteAtual = valorReparteRateio + ( valorDiferenca * valorPacotePadrao);
-			}
-			else{
-				valorReparteAtual = valorReparteRateio +  valorDiferenca;
-			}
+			valorReparteAtual = valorReparteRateio +  valorDiferenca;
 			
 		} else {
-			
-			if(tipoDiferenca == "FALTA_DE"){
-				
-				valorReparteAtual = valorReparteRateio -  ( valorDiferenca * valorPacotePadrao);
-			}
-			else{
-				valorReparteAtual = valorReparteRateio -  valorDiferenca;
-			}
+
+			valorReparteAtual = valorReparteRateio -  valorDiferenca;
 		}
 		
 		$("#reparteAtualText" + idDiv, lancamentoNovoController.workspace).text(valorReparteAtual);

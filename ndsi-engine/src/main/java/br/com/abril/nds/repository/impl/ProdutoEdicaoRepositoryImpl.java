@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +11,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -778,26 +779,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		Query query = this.getSession().createQuery(queryString);
 		
 		return new HashSet<ProdutoEdicao>(query.list());
-	}
-
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#validarExpedicaoFisicaProdutoEdicao(br.com.abril.nds.model.cadastro.ProdutoEdicao)
-	 */
-	@Override
-	public boolean validarExpedicaoFisicaProdutoEdicao(ProdutoEdicao produtoEdicao) {
-		String queryString = "SELECT notaEnvioItem from " +
-							 "ProdutoEdicao produtoEdicao, " +
-							 "ItemNotaEnvio notaEnvioItem " +
-							 "where notaEnvioItem.produtoEdicao.id = produtoEdicao.id " +
-							 "and produtoEdicao.id = :produtoEdicaoId";
-		Query query = this.getSession().createQuery(queryString);
-
-		query.setParameter("produtoEdicaoId", produtoEdicao.getId());
-		
-		List lista = query.list();
-		
-		// Retorna true caso não seja encontrado resultado para a lista (nenhum registro encontrado, logo, não existe expedição física realizada)
-		return (lista == null || lista.size() == 0);
 	}
 
 	/*@Override

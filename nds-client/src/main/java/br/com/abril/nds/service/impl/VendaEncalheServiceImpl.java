@@ -887,7 +887,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		}
 
 		vendaProduto.getMovimentoEstoque().add(movimento);
-
+		
+		vendaProduto.setMovimentoEstoque(null);
+		vendaProduto.setMovimentoFinanceiro(null);
 		vendaProdutoRepository.remover(vendaProduto);
 	}
 

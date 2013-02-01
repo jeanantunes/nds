@@ -78,7 +78,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(
 				input, produtoEdicao);
-		
+
 		this.gerarPeriodoLancamentoParcial(input, lancamentoParcial);
 	}
 	
@@ -164,9 +164,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		if (parcial.getRecolhimentoFinal() == null
 				|| input.getDataRecolhimento().after(
 						parcial.getRecolhimentoFinal())) {
-			parcial.setRecolhimentoFinal(parcial.getRecolhimentoFinal());
+			parcial.setRecolhimentoFinal(input.getDataRecolhimento());
 		}
-		
 		
 		if (parcial.getId() == null) {
 			this.getSession().persist(parcial);
@@ -252,7 +251,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		pParcial.setStatus((input.getDataRecolhimento().compareTo(new Date()) < 0 
 				? StatusLancamentoParcial.RECOLHIDO
 				: StatusLancamentoParcial.PROJETADO));
-		
+
+		input.getDataRecolhimento();
 		if (pParcial.getId() == null) {
 			this.getSession().persist(pParcial);
 		} else {

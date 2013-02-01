@@ -3,9 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -30,24 +28,32 @@ public class ItemRecebimentoFisicoRepositoryImpl extends
 	}
 	
 	@Override
-	public ItemRecebimentoFisico obterItemPorDataLancamentoIdProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
+	public Long obterItemPorDataLancamentoIdProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
 		
 		if(	idProdutoEdicao == null || dataLancamento == null) {
 			throw new NullPointerException();
 		}
 		
-		Criteria criteria = super.getSession().createCriteria(ItemRecebimentoFisico.class, "itemRecebimento");
 		
-		criteria.createAlias("itemRecebimento.itemNotaFiscal", "itemNotaFiscal");
-		criteria.createAlias("itemNotaFiscal.produtoEdicao", "produtoEdicao");
-		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
-		criteria.add(Restrictions.eq("itemNotaFiscal.dataLancamento", dataLancamento));
 		
-		criteria.setMaxResults(1);
+		String hql = " select itemRecebimento.id from ItemRecebimentoFisico itemRecebimento "
+				   + " join itemRecebimento.itemNotaFiscal itemNotaFiscal "
+				   + " join itemNotaFiscal.produtoEdicao produtoEdicao "
+				   + " where itemNotaFiscal.dataLancamento = :dataLancamento " 
+				   + " and produtoEdicao.id = :idProdutoEdicao";
 		
-		return (ItemRecebimentoFisico) criteria.uniqueResult();
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("dataLancamento", dataLancamento);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+				
+		query.setMaxResults(1);
+		
+		return (Long) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ItemRecebimentoFisico> obterItemPorIdRecebimentoFisico(Long idRecebimentoFisico) {
 		

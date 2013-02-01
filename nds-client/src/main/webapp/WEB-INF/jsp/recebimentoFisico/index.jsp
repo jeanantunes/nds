@@ -259,8 +259,8 @@
 
 							<td width="43" align="right">CNPJ:</td>
 							<td width="136">
-								<input id="cnpj"  name="cnpj"
-								style="width: 130px;" />
+								<input id="cnpj" type="text" name="cnpj"
+								style="width: 130px;" disabled="disabled" />
 							</td>
 
 							<td width="76">Nota Fiscal:</td>

@@ -56,7 +56,8 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	@Autowired
 	private DescontoService descontoService;
-	
+
+	private static final String ZEROS_NBM = "000000000";
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -323,7 +324,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo Contexto Produto para: "
 							+ input.getContextoProd());
 		}
-		if (null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() && !produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM())) {
+		if (null != produto.getTipoProduto() && null != produto.getTipoProduto().getCodigoNBM() && !produto.getTipoProduto().getCodigoNBM().equals(input.getCodNBM()) && !input.getCodNBM().equals(ZEROS_NBM)) {
 
 			produto.getTipoProduto().setCodigoNBM(input.getCodNBM());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
@@ -331,7 +332,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo NBM para: " + input.getCodNBM());
 		}
 
-		if (null != produto.getNomeComercial() && !produto.getNomeComercial().equals(input.getNomeComercial())) {
+		if (null != produto.getNomeComercial() && !produto.getNomeComercial().equals(input.getNomeComercial()) && !input.getNomeComercial().isEmpty()) {
 
 			produto.setNomeComercial(input.getNomeComercial());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -452,7 +453,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 		
 		if (null != edicao.getProduto() && null != edicao.getProduto().getNomeComercial() && !edicao.getProduto().getNomeComercial()
-				.equals(input.getNomeComercial())) {
+				.equals(input.getNomeComercial()) && !input.getNomeComercial().isEmpty()) {
 
 			edicao.getProduto().setNomeComercial(input.getNomeComercial());
 			this.ndsiLoggerFactory.getLogger().logInfo(
@@ -463,7 +464,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 		
 		if (null != edicao.getProduto() && null != edicao.getProduto().getTipoProduto() && null != edicao.getProduto().getTipoProduto().getCodigoNBM() && !edicao.getProduto().getTipoProduto().getCodigoNBM()
-				.equals(input.getCodNBM())) {
+				.equals(input.getCodNBM()) && !input.getCodNBM().equals(ZEROS_NBM)) {
 
 			edicao.getProduto().getTipoProduto()
 					.setCodigoNBM(input.getCodNBM());
@@ -472,7 +473,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					"Atualizacao do Codigo NBM para: " + input.getCodNBM());
 		}
 
-		if (null != edicao.getNomeComercial() && !edicao.getNomeComercial().equals(input.getNomeComercial())) {
+		if (null != edicao.getNomeComercial() && !edicao.getNomeComercial().equals(input.getNomeComercial()) && !input.getNomeComercial().isEmpty()) {
 
 			edicao.setNomeComercial(input.getNomeComercial());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,

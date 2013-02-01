@@ -4,6 +4,8 @@ import java.util.List;
 
 import br.com.abril.nds.dto.TipoMovimentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoMovimento;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -61,5 +63,7 @@ public interface TipoMovimentoService {
 	 */
 	void excluirTipoMovimento(Long codigo, Usuario usuario);
 	
-	
+	TipoMovimentoEstoque buscarTipoMovimentoEstoque(GrupoMovimentoEstoque grupoMovimentoEstoque);
+
+	List<TipoMovimentoEstoque> buscarTiposMovimentoEstoque(List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 }

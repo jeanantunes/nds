@@ -7,6 +7,7 @@ import java.util.List;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -32,10 +33,12 @@ public interface LancamentoService {
 	 * 
 	 * @param idLancamento - Código do lançamento
 	 * @param idUsuario - Código do usuario
+	 * @param tipoMovimentoCota 
+	 * @param tipoMovimento 
+	 * @param dataOperacao 
+	 * @return boolean
 	 */
-	void confirmarExpedicao(Long idLancamento, Long idUsuario);
-	
-	void confirmarExpedicoes(List<Long> idLancamentos, Long idUsuario);
+	boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota);
 	
 	Lancamento obterPorId(Long idLancamento);
 	
@@ -115,6 +118,11 @@ public interface LancamentoService {
 	 * @return - true se encontrar e false se não encontrar. 
 	 */
 	public Boolean existeMatrizBalanceamentoConfirmado(Date data);
+
+	public List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
+
+	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
+			Date data, Long idFornecedor);
 	
 }
  

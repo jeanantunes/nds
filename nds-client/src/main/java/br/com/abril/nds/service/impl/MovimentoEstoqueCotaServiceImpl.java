@@ -18,15 +18,12 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
-import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -37,6 +34,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
@@ -72,6 +70,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
@@ -261,10 +262,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	private void gerarMovimentoEstorno(HashMap<ProdutoEdicao, TransferenciaReparteSuplementarDTO> mapaEstornoEnvioCota, 
 									   Cota cota, Usuario usuario) {
 
-		TipoMovimento tipoMovimento = 
-				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_ENVIO_REPARTE);
-
-		Date dataAtual = new Date();
+		TipoMovimentoEstoque tipoMovimento = 
+			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+				GrupoMovimentoEstoque.ESTORNO_ENVIO_REPARTE);
 
 		for (Map.Entry<ProdutoEdicao, TransferenciaReparteSuplementarDTO> entry : mapaEstornoEnvioCota.entrySet()) {
 
@@ -272,23 +272,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			
 			ProdutoEdicao produtoEdicao = entry.getKey();
 			
-			MovimentoEstoqueCota movimentoEstoqueCotaEstorno = new MovimentoEstoqueCota();
-
-			movimentoEstoqueCotaEstorno.setCota(cota);
-			movimentoEstoqueCotaEstorno.setData(dataAtual);
-			movimentoEstoqueCotaEstorno.setDataCriacao(dataAtual);
-			movimentoEstoqueCotaEstorno.setEstoqueProdutoCota(transferencia.getEstoqueProdutoCota());
-			movimentoEstoqueCotaEstorno.setProdutoEdicao(produtoEdicao);
-			movimentoEstoqueCotaEstorno.setQtde(transferencia.getQuantidadeTransferir());
-			movimentoEstoqueCotaEstorno.setTipoMovimento(tipoMovimento);
-			movimentoEstoqueCotaEstorno.setUsuario(usuario);
-
-			if (movimentoEstoqueCotaEstorno.getTipoMovimento().isAprovacaoAutomatica()) {
-
-				this.controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoqueCotaEstorno, usuario);
-			}
-
-			this.movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCotaEstorno);
+			this.movimentoEstoqueService.gerarMovimentoCota(
+				null, produtoEdicao.getId(), cota.getId(), usuario.getId(), 
+					transferencia.getQuantidadeTransferir(), tipoMovimento);
 		}
 	}
 
@@ -321,13 +307,11 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	private void gerarSuplementares(HashMap<ProdutoEdicao, TransferenciaReparteSuplementarDTO> mapaSuplementar,
 									Usuario usuario) {
 
-		TipoMovimento tipoMovimento = this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+		TipoMovimentoEstoque tipoMovimento = this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 			GrupoMovimentoEstoque.ENTRADA_SUPLEMENTAR_ENVIO_REPARTE
 		);
 
 		Iterator<ProdutoEdicao> iterator = mapaSuplementar.keySet().iterator();
-
-		Date dataAtual = new Date();
 
 		while (iterator.hasNext()) {
 
@@ -335,33 +319,10 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 			TransferenciaReparteSuplementarDTO transferencia = mapaSuplementar.get(iterator);
 
-			EstoqueProduto estoqueProduto = this.estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
-
-			gerarMovimentoEstoqueCota(usuario, tipoMovimento, dataAtual,
-					produtoEdicao, transferencia.getQuantidadeTransferir(), estoqueProduto);
+			this.movimentoEstoqueService.gerarMovimentoEstoque(
+				produtoEdicao.getId(), usuario.getId(), 
+					transferencia.getQuantidadeTransferir(), tipoMovimento);
 		}
-	}
-
-	private void gerarMovimentoEstoqueCota(Usuario usuario,	TipoMovimento tipoMovimento, Date dataAtual,
-			ProdutoEdicao produtoEdicao, BigInteger quantidade, EstoqueProduto estoqueProduto) {
-		
-		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-
-		movimentoEstoque.setData(dataAtual);
-		movimentoEstoque.setDataAprovacao(dataAtual);
-		movimentoEstoque.setDataCriacao(dataAtual);
-		movimentoEstoque.setEstoqueProduto(estoqueProduto);
-		movimentoEstoque.setProdutoEdicao(produtoEdicao);
-		movimentoEstoque.setQtde(quantidade);
-		movimentoEstoque.setTipoMovimento(tipoMovimento);
-		movimentoEstoque.setUsuario(usuario);
-
-		if (movimentoEstoque.getTipoMovimento().isAprovacaoAutomatica()) {
-			
-			this.controleAprovacaoService.realizarAprovacaoMovimento(movimentoEstoque, usuario);
-		}
-
-		this.movimentoEstoqueRepository.adicionar(movimentoEstoque);
 	}
 
 	/* (non-Javadoc)
@@ -371,8 +332,8 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	public void envioConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada) {
 		
 		TipoMovimentoEstoque tipoMovimento = 
-				this.tipoMovimentoEstoqueRepository.
-					buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_ENVIO_CONSIGNADO);
+			this.tipoMovimentoEstoqueRepository.
+				buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.CANCELAMENTO_NOTA_FISCAL_ENVIO_CONSIGNADO);
 		
 		List<ProdutoServico> listaProdutosServicosNotaCancelada = notaFiscalCancelada.getProdutosServicos();
 		
@@ -382,12 +343,11 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 				
 				ProdutoEdicao produtoEdicao = movimentoEstoqueCota.getProdutoEdicao();
 				
-				EstoqueProduto estoqueProduto = this.estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
-				
 				Usuario usuario = this.usuarioService.getUsuarioLogado();
 				
-				this.gerarMovimentoEstoqueCota(usuario, tipoMovimento, 
-						new Date(), produtoEdicao, movimentoEstoqueCota.getQtde(), estoqueProduto);
+				this.movimentoEstoqueService.gerarMovimentoEstoque(
+					produtoEdicao.getId(), usuario.getId(), 
+						movimentoEstoqueCota.getQtde(), tipoMovimento);
 				
 			}
 			

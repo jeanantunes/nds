@@ -12,10 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 
@@ -55,6 +57,17 @@ public class EstudoCota implements Serializable {
 
 	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
 	
+	@OneToOne(mappedBy = "estudoCota")
+	private ItemNotaEnvio itemNotaEnvio;
+	
+	public EstudoCota() {
+		
+	}
+	
+	public EstudoCota(Long id) {
+		this.id=id;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -109,6 +122,14 @@ public class EstudoCota implements Serializable {
 
 	public void setMovimentosEstoqueCota(List<MovimentoEstoqueCota> movimentosEstoqueCota) {
 		this.movimentosEstoqueCota = movimentosEstoqueCota;
+	}
+
+	public ItemNotaEnvio getItemNotaEnvio() {
+		return itemNotaEnvio;
+	}
+
+	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
+		this.itemNotaEnvio = itemNotaEnvio;
 	}
 
 }

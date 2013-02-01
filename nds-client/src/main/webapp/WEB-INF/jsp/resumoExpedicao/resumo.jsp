@@ -89,7 +89,7 @@
 	
 	<form action="/expedicao/resumo" id="venda_encalhe_resumo_expedicao_form">
 	
-		<div id="dialog-venda-encalhe" style="display:none;">
+		<div id="dialog-venda-encalhe" style="display:none;" title="Produtos por Box">
 		
 			<fieldset class="classFieldset">
 			

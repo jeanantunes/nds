@@ -3,28 +3,26 @@ package br.com.abril.nds.model.envio.nota;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.planejamento.EstudoCota;
+
 @Entity
 @Table(name="NOTA_ENVIO_ITEM")
 public class ItemNotaEnvio implements Serializable {
 
 	/**
-	 * 
+	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = -3215846434365577294L;
-	
 	
 	@EmbeddedId
 	private ItemNotaEnvioPK itemNotaEnvioPK;
@@ -48,27 +46,18 @@ public class ItemNotaEnvio implements Serializable {
 	@Column(name  = "NUMERO_EDICAO", nullable = false)
 	protected Long numeroEdicao;
 	
-	
 	@Column(name="REPARTE", precision=15, scale=2 , nullable=false)
 	private BigInteger reparte;
 	
 	@Column(name="PRECO_CAPA",precision=21, scale=2 , nullable=false)
 	private BigDecimal precoCapa;
 	
-	
 	@Column(name="DESCONTO",precision=21, scale=2 , nullable=false)
 	private BigDecimal desconto;
 	
-	
-	@ManyToMany
-	@JoinTable( joinColumns = {			
-			@JoinColumn(name = "NOTA_ENVIO_ITEM_SEQUENCIA", referencedColumnName="SEQUENCIA"),
-			@JoinColumn(name = "NOTA_ENVIO_ID", referencedColumnName="NOTA_ENVIO_ID")
-		},
-			inverseJoinColumns = {
-			@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID", referencedColumnName="ID")
-	})
-	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
+	@OneToOne
+	@JoinColumn(name = "ESTUDO_COTA_ID")
+	private EstudoCota estudoCota;
 
 	/**
 	 * @return the produtoEdicao
@@ -77,7 +66,6 @@ public class ItemNotaEnvio implements Serializable {
 		return produtoEdicao;
 	}
 
-
 	/**
 	 * @param produtoEdicao the produtoEdicao to set
 	 */
@@ -85,14 +73,12 @@ public class ItemNotaEnvio implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 
-
 	/**
 	 * @return the codigoProduto
 	 */
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
-
 
 	/**
 	 * @param codigoProduto the codigoProduto to set
@@ -109,14 +95,12 @@ public class ItemNotaEnvio implements Serializable {
 		return publicacao;
 	}
 
-
 	/**
 	 * @param publicacao the publicacao to set
 	 */
 	public void setPublicacao(String publicacao) {
 		this.publicacao = publicacao;
 	}
-
 
 	/**
 	 * @return the numeroEdicao
@@ -125,14 +109,12 @@ public class ItemNotaEnvio implements Serializable {
 		return numeroEdicao;
 	}
 
-
 	/**
 	 * @param numeroEdicao the numeroEdicao to set
 	 */
 	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
-
 
 	/**
 	 * @return the reparte
@@ -141,14 +123,12 @@ public class ItemNotaEnvio implements Serializable {
 		return reparte;
 	}
 
-
 	/**
 	 * @param reparte the reparte to set
 	 */
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
-
 
 	/**
 	 * @return the precoCapa
@@ -157,14 +137,12 @@ public class ItemNotaEnvio implements Serializable {
 		return precoCapa;
 	}
 
-
 	/**
 	 * @param precoCapa the precoCapa to set
 	 */
 	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
 	}
-
 
 	/**
 	 * @return the desconto
@@ -173,29 +151,11 @@ public class ItemNotaEnvio implements Serializable {
 		return desconto;
 	}
 
-
 	/**
 	 * @param desconto the desconto to set
 	 */
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
-	}
-
-
-	/**
-	 * @return the listaMovimentoEstoqueCota
-	 */
-	public List<MovimentoEstoqueCota> getListaMovimentoEstoqueCota() {
-		return listaMovimentoEstoqueCota;
-	}
-
-
-	/**
-	 * @param listaMovimentoEstoqueCota the listaMovimentoEstoqueCota to set
-	 */
-	public void setListaMovimentoEstoqueCota(
-			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
-		this.listaMovimentoEstoqueCota = listaMovimentoEstoqueCota;
 	}
 
 	/**
@@ -214,6 +174,14 @@ public class ItemNotaEnvio implements Serializable {
 
 	public Integer getSequencia() {
 		return this.itemNotaEnvioPK.getSequencia();
+	}
+
+	public EstudoCota getEstudoCota() {
+		return estudoCota;
+	}
+
+	public void setEstudoCota(EstudoCota estudoCota) {
+		this.estudoCota = estudoCota;
 	}
 
 }

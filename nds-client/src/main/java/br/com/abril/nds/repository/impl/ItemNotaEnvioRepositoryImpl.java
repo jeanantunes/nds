@@ -30,11 +30,10 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 				   + " produtoEdicao.pacotePadrao as pacotePadrao "
 				   + " from ItemNotaEnvio itemNotaEnvio "
 				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
-				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
 				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
 				   + " join produtoEdicao.produto produto "
 				   + " where notaEnvio.dataEmissao = :dataEmissao "
-				   + " and movimentoEstoqueCota.cota.numeroCota = :numeroCota "
+				   + " and notaEnvio.destinatario.numeroCota = :numeroCota "
 				   + " group by produtoEdicao.id ";
 		
 		Query query = super.getSession().createQuery(hql);
@@ -61,11 +60,10 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 				   + " produtoEdicao.pacotePadrao as pacotePadrao "
 				   + " from ItemNotaEnvio itemNotaEnvio "
 				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
-				   + " join itemNotaEnvio.listaMovimentoEstoqueCota movimentoEstoqueCota "
 				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
 				   + " join produtoEdicao.produto produto "
 				   + " where notaEnvio.dataEmissao = :dataEmissao "
-				   + " and movimentoEstoqueCota.cota.numeroCota = :numeroCota "
+				   + " and notaEnvio.numeroCota = :numeroCota "
 				   + " and produtoEdicao.id = :idProdutoEdicao "
 				   + " group by produtoEdicao.id ";
 		
@@ -81,6 +79,24 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 		query.setResultTransformer(resultTransformer);
 		
 		return (DetalheItemNotaFiscalDTO) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemNotaEnvio> obterItemNotaEnvio(Long idLancamento) {
+		
+		String hql = " select itemNotaEnvio "
+			+ " from Lancamento lancamento "
+			+ " join lancamento.estudo estudo "
+			+ " join estudo.estudoCotas estudoCotas "
+			+ " join estudoCotas.itemNotaEnvio itemNotaEnvio "
+			+ " where lancamento.id = :idLancamento ";
+
+		Query query = this.getSession().createQuery(hql);
+
+		query.setParameter("idLancamento", idLancamento);
+
+		return query.list();
 	}
 	
 }

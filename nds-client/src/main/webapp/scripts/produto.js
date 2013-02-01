@@ -319,6 +319,7 @@ var produtoController = $.extend(true, {
 							$("#comboTipoDesconto", produtoController.workspace).hide();
 							$("#tipoDescontoManual", produtoController.workspace).show();
 							$("#tipoDescontoManual", produtoController.workspace).val(result.descricaoDescontoManual);
+							$("#percentualDesconto", produtoController.workspace).removeAttr('disabled','disabled');
 						}
 						else{
 							

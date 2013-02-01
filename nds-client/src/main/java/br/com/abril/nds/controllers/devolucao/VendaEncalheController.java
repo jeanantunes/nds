@@ -479,10 +479,6 @@ public class VendaEncalheController extends BaseController {
 	
 	private void validarParametrosVenda(List<VendaEncalheDTO> listaVendas,Long numeroCota, Date dataDebito){
 	
-		if(listaVendas == null || listaVendas.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um produto deve ser informado para venda!");
-		}
-		
 		validarFormatoData();
 		
 		List<String> mensagensValidacao = new ArrayList<String>();
@@ -491,8 +487,23 @@ public class VendaEncalheController extends BaseController {
 			mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
 		}
 		
+		if(listaVendas == null || listaVendas.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um produto deve ser informado para venda!");
+		}
+		else{
+			validarItensVenda(listaVendas);
+		}
+		
 		if(dataDebito == null){
 			mensagensValidacao.add("O preenchimento do campo [Data Vencimento] é obrigatório!");
+		}
+		else{
+			
+			Distribuidor distribuidor = distribuidorService.obter();
+			
+			if(DateUtil.isDataInicialMaiorDataFinal(distribuidor.getDataOperacao(),dataDebito)){
+				mensagensValidacao.add("O campo [Data Vencimento] deve ser maior que a data de operação do sistema!");
+			}
 		}
 		
 		if (!mensagensValidacao.isEmpty()){
@@ -500,6 +511,39 @@ public class VendaEncalheController extends BaseController {
 		}
 	}
 	
+	private void validarItensVenda(List<VendaEncalheDTO> listaVendas) {
+		
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
+		for(VendaEncalheDTO item : listaVendas){
+			
+			if(item.getQntProduto() == null || item.getQntProduto().compareTo(BigInteger.ZERO) == 0){
+				mensagensValidacao.add("O valor do campo [Qtde Solic.] do item [ "+ getInfoItem(item) +" ] deve ser maior que zero! ");
+			}
+			
+			if(item.getQntProduto() != null && item.getQntProduto().compareTo(item.getQntDisponivelProduto()) > 0){
+				mensagensValidacao.add("O valor do campo [Qtde Solic.] do item [ "+ getInfoItem(item) +" ] deve ser maior que a o valor do campo [Qtde Disp.]! ");
+			}
+		}
+		
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
+		}
+		
+	}
+	
+	private String getInfoItem(VendaEncalheDTO item ){
+		
+		StringBuilder retorno = new StringBuilder();
+		
+		retorno.append("Código:").append(item.getCodigoProduto()).append(", ")
+		.append("Produto:").append(item.getNomeProduto()).append(", ")
+		.append("Edição:").append(item.getNumeroEdicao());
+		
+		return retorno.toString();
+		
+	}
+
 	private void validarParametrosFiltro(FiltroVendaEncalheDTO filtro){
 		
 		validarFormatoData();

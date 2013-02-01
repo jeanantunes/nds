@@ -3,7 +3,6 @@ package br.com.abril.nds.integracao.repository.impl;
 import javax.persistence.PersistenceException;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.model.InterfaceExecucao;

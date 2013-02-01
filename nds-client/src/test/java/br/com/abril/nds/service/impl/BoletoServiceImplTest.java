@@ -36,7 +36,6 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -50,6 +49,7 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoletoRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.impl.AbstractRepositoryImplTest;
 import br.com.abril.nds.util.DateUtil;
@@ -65,6 +65,9 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	
 	@Autowired
 	private BoletoRepository boletoRepository;
+	
+	@Mock
+	private DistribuidorRepository distribuidorRepository;
 	
 	private Usuario usuarioJoao;
 	private Distribuidor distribuidor;
@@ -91,13 +94,16 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		save(formaBoleto);
 		
 		PoliticaCobranca politicaCobranca =
-			Fixture.criarPoliticaCobranca(null, formaBoleto, true, true, true, 1,"Assunto","Mansagem",true,FormaEmissao.INDIVIDUAL_BOX);
+			Fixture.criarPoliticaCobranca(null, formaBoleto, true,FormaEmissao.INDIVIDUAL_BOX);
 		save(politicaCobranca);
 		
 		Set<PoliticaCobranca> politicasCobranca = new HashSet<PoliticaCobranca>();
 		politicasCobranca.add(politicaCobranca);
 		
 		distribuidor = Fixture.distribuidor(1, pessoaJuridica, new Date(), politicasCobranca);
+		distribuidor.setAceitaBaixaPagamentoMaior(true);
+		distribuidor.setAceitaBaixaPagamentoMenor(true);
+		distribuidor.setAceitaBaixaPagamentoVencido(true);
 		save(distribuidor);
 		
 		politicaCobranca.setDistribuidor(distribuidor);
@@ -200,31 +206,31 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		
 		Boleto boleto1 = Fixture.boleto("1234567890123", "456", "1234567890123456", new Date(),
 									    new Date(), new Date(), BigDecimal.ZERO, 
-                					    new BigDecimal(100), "1", "1", StatusCobranca.PAGO,
+                					    new BigDecimal(100), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.PAGO,
                 					    cota, bancoHSBC, divida1, 0);
 		save(boleto1);
 		
 		Boleto boleto2 = Fixture.boleto("1234567890124", "456", "1234567890124456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-				   						new BigDecimal(100), "1", "1", StatusCobranca.NAO_PAGO,
+				   						new BigDecimal(100), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO,
 				   						cota, bancoHSBC, divida2, 0);
 		save(boleto2);
 		
 		Boleto boleto3 = Fixture.boleto("1234567890125", "456", "1234567890125456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-										new BigDecimal(100), "1", "1", StatusCobranca.NAO_PAGO,
+										new BigDecimal(100), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO,
 										cota, bancoHSBC, divida3, 0);
 		save(boleto3);
 		
 		Boleto boleto4 = Fixture.boleto("1234567890126", "456", "1234567890126456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-										new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+										new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO,
 										cota, bancoHSBC, divida4, 0);
 		save(boleto4);
 		
 		Boleto boleto5 = Fixture.boleto("1234567890127", "456", "1234567890127456", new Date(),
 										new Date(), new Date(), BigDecimal.ZERO, 
-										new BigDecimal(100.00), "1", "1", StatusCobranca.NAO_PAGO,
+										new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO,
 										cota, bancoHSBC, divida5, 0);
 		save(boleto5);
 	}
@@ -232,11 +238,11 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	@Test
 	public void testeBaixaAutomaticaPermiteDivergencia() {
 		
-		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(null, null, true, true, true, 1, null, null,true,FormaEmissao.INDIVIDUAL_BOX);
+		distribuidor.setAceitaBaixaPagamentoMaior(true);
+		distribuidor.setAceitaBaixaPagamentoMenor(true);
+		distribuidor.setAceitaBaixaPagamentoVencido(true);
 		
-		Mockito.when(politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO))
-			.thenReturn(politicaCobranca);
+		Mockito.when(distribuidorRepository.obter()).thenReturn(distribuidor);
 		
 		ArquivoPagamentoBancoDTO arquivo = criarArquivoPagamentoBanco();
 		
@@ -251,11 +257,11 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 	@Test
 	public void testeBaixaAutomaticaNaoPermiteDivergencia() {
 		
-		PoliticaCobranca politicaCobranca =
-				Fixture.criarPoliticaCobranca(null, null, false, false, false, 1, null, null,true,FormaEmissao.INDIVIDUAL_BOX);
+		distribuidor.setAceitaBaixaPagamentoMaior(false);
+		distribuidor.setAceitaBaixaPagamentoMenor(false);
+		distribuidor.setAceitaBaixaPagamentoVencido(false);
 		
-		Mockito.when(politicaCobrancaRepository.obterPorTipoCobranca(TipoCobranca.BOLETO))
-			.thenReturn(politicaCobranca);
+		Mockito.when(distribuidorRepository.obter()).thenReturn(distribuidor);
 		
 		ArquivoPagamentoBancoDTO arquivo = criarArquivoPagamentoBanco();
 		
@@ -279,10 +285,8 @@ public class BoletoServiceImplTest  extends AbstractRepositoryImplTest {
 		pagamento.setNumeroRegistro(1L);
 		pagamento.setValorPagamento(new BigDecimal(100.00));
 		
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
-		
 		boletoServiceImpl.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, usuarioJoao,
-									   null, politicaPrincipal, distribuidor,
+									   null, distribuidor,
 									   DateUtil.adicionarDias(new Date(), 1), null, null);
 	}
 	

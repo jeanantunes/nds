@@ -133,6 +133,9 @@ public class RomaneioServiceImpl implements RomaneioService {
 			
 			final int qtdProdutos = (filtro.getProdutos() == null 
 					? 0 : filtro.getProdutos().size()); 
+			
+			int qtdColunasProduto = 0;
+			
 			switch (qtdProdutos) {
 				
 				// nenhum produto a exibir:
@@ -171,10 +174,10 @@ public class RomaneioServiceImpl implements RomaneioService {
 												idEdicao)));
 					}
 					
-					final int qtdNomeProdutos = nomesProduto.size();
+					qtdColunasProduto = nomesProduto.size();
 					for (RomaneioModelo01DTO dto : lstRelatorio) {
 						
-						switch (qtdNomeProdutos) {
+						switch (qtdColunasProduto) {
 						case 6:
 							dto.setNomeProduto5(nomesProduto.get(5));
 						case 5:
@@ -192,12 +195,15 @@ public class RomaneioServiceImpl implements RomaneioService {
 					}
 					
 					path.append("/romaneio_modelo03.jasper");
+
 					break;
 			}
+			
 			
 			JRDataSource jrDataSource = new JRBeanCollectionDataSource(lstRelatorio);
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
+			parameters.put("QTD_COLUNAS_PRODUTO", qtdColunasProduto);
 			
 			if (FileType.PDF == fileType) {
 			
@@ -229,7 +235,7 @@ public class RomaneioServiceImpl implements RomaneioService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido.");
 		}
 	}
-	
+		
 	/**
 	 * Para obter e tratar o nome comercial do produto.
 	 * 

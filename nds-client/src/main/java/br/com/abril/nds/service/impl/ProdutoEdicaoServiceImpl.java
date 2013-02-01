@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -732,6 +731,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				
 				lancamento.setStatus(StatusLancamento.CANCELADO);
 				
+				if(lancamento.getPeriodoLancamentoParcial()!= null){
+					
+					lancamento.getPeriodoLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
+					periodoLancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial());
+					
+					lancamento.getPeriodoLancamentoParcial().getLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
+					lancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial().getLancamentoParcial());
+				}
+				
 				this.lancamentoRepository.alterar(lancamento);
 			}
 			
@@ -778,10 +786,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		dto.setDesconto(produto.getDescontoLogistica() == null
 				? BigDecimal.ZERO 
-				: BigDecimal.valueOf(produto.getDescontoLogistica().getPercentualDesconto()).setScale(2, RoundingMode.HALF_EVEN));
+				: produto.getDescontoLogistica().getPercentualDesconto());
 		
-		dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());
-
+		if(produto.getDescontoLogistica()!= null){
+			dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());
+		}else{
+			dto.setDescricaoDesconto(produto.getDescricaoDesconto());
+		}
+		
 		if (idProdutoEdicao != null && Util.isLong(idProdutoEdicao)) {
 
 			Long id = Long.valueOf(idProdutoEdicao);

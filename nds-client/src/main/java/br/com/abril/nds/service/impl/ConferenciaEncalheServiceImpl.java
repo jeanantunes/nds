@@ -7,6 +7,7 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,6 +45,7 @@ import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -1105,7 +1107,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 
-		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCotaRecolhimento(controleConferenciaEncalheCota);
+		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCotaRecolhimento(controleConferenciaEncalheCota, FormaComercializacao.CONSIGNADO);
 
 		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
@@ -1148,9 +1150,30 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(movimentoFinanceiroCota!=null) {
 			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
-			movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
+			
+			if (movimentoFinanceiroCota.getMovimentos() != null){
+				
+				for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
+					
+					mec.setMovimentoFinanceiroCota(null);
+					this.movimentoEstoqueCotaRepository.merge(mec);
+				}
+			}
+			
+			this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 		}
 		
+		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
+						
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
+		);
+			
+		this.movimentoFinanceiroCotaService.removerPostergadosDia(
+					controleConferenciaEncalheCota.getCota().getId(), 
+					listaPostergados);
 	}
 	
 	

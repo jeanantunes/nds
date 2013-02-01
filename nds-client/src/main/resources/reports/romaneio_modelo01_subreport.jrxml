@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo01_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo01_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Empty" isIgnorePagination="true">
 	<property name="ireport.zoom" value="1.9487171000000065"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
-		<conditionalStyle>
-			<conditionExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E3E3E3"/>
-		</conditionalStyle>
-	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
@@ -35,9 +29,9 @@
 		<fieldDescription><![CDATA[uf]]></fieldDescription>
 	</field>
 	<columnHeader>
-		<band height="14" splitType="Stretch">
+		<band height="25" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="50" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="0" y="0" width="50" height="25" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -50,7 +44,7 @@
 				<text><![CDATA[ Nº NE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="50" y="0" width="40" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="50" y="0" width="40" height="25" backcolor="#999999"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -64,7 +58,7 @@
 				<text><![CDATA[ Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="90" y="0" width="190" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="90" y="0" width="190" height="25" backcolor="#999999"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -78,7 +72,7 @@
 				<text><![CDATA[ Nome]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="280" y="0" width="290" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="280" y="0" width="290" height="25" backcolor="#999999"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -92,7 +86,21 @@
 				<text><![CDATA[ Endereço]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="570" y="0" width="60" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="570" y="0" width="60" height="25" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vol.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="630" y="0" width="60" height="25" backcolor="#999999"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -106,7 +114,7 @@
 				<text><![CDATA[Hora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="630" y="0" width="172" height="14" backcolor="#999999"/>
+				<reportElement mode="Opaque" x="690" y="0" width="112" height="25" backcolor="#999999"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -122,9 +130,9 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="17" splitType="Stretch">
+		<band height="25" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" x="0" y="0" width="50" height="17"/>
+				<reportElement x="0" y="0" width="50" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -135,7 +143,7 @@
 				<textFieldExpression><![CDATA[$F{numeroNotaEnvio}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" x="50" y="0" width="40" height="17"/>
+				<reportElement x="50" y="0" width="40" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -146,7 +154,7 @@
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" x="90" y="0" width="190" height="17"/>
+				<reportElement x="90" y="0" width="190" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -157,7 +165,7 @@
 				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" x="280" y="0" width="290" height="17"/>
+				<reportElement x="280" y="0" width="290" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -171,7 +179,7 @@
 + ($F{uf} == null ? "" : $F{uf})]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement style="zebrado" x="570" y="0" width="60" height="17"/>
+				<reportElement x="570" y="0" width="60" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -182,7 +190,18 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="zebrado" x="630" y="0" width="172" height="17"/>
+				<reportElement x="630" y="0" width="60" height="25"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="690" y="0" width="112" height="25"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -194,13 +213,13 @@
 			</staticText>
 		</band>
 	</detail>
-	<pageFooter>
-		<band height="21" splitType="Stretch">
+	<lastPageFooter>
+		<band height="21">
 			<textField>
-				<reportElement x="0" y="5" width="150" height="15"/>
+				<reportElement x="0" y="6" width="150" height="15"/>
 				<textElement verticalAlignment="Middle" markup="html"/>
-				<textFieldExpression><![CDATA[" <b>Total Cotas:</b> " + $V{COLUMN_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" <b>Total Cotas:</b> " + $V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 		</band>
-	</pageFooter>
+	</lastPageFooter>
 </jasperReport>

@@ -132,19 +132,33 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("/cotasAusentes")
-	public void cotasAusentes(Date dataEncalhe,
+	public void cotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao,
 			String sortname, String sortorder, int rp, int page) {
-		
+
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
 		
-		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe);
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
 		
 		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
+			
+			if (isSomenteCotasSemAcao) {
+			
+				this.result.nothing();
+				
+				return;
+			}
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota ausente!");
 		}
 		
 		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
+	}
+	
+	@Path("/cotasAusentesSemAcao")
+	public void cotasAusentesSemAcao(Date dataEncalhe,
+			String sortname, String sortorder, int rp, int page) {
+		
 	}
 	
 	@Path("carregarDataPostergacao")
@@ -239,7 +253,7 @@ public class FechamentoEncalheController extends BaseController {
 		if (idsCotas == null || idsCotas.isEmpty()) {
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
-			throw new ValidacaoException();
+			return;
 		}
 		
 		try {
@@ -248,11 +262,11 @@ public class FechamentoEncalheController extends BaseController {
 
 		} catch (ValidacaoException e) {
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
-			throw new ValidacaoException();
+			return;
 		} catch (Exception e) {
 			this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar cobrar!"), "result").recursive().serialize();
-			throw new ValidacaoException();
+				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar cobrar: " + e.getMessage()), "result").recursive().serialize();
+			return;
 		}
 		
 		this.result.use(Results.json()).from(
@@ -265,7 +279,7 @@ public class FechamentoEncalheController extends BaseController {
 			int rp, int page, FileType fileType) {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, sortorder, sortname, page, rp);
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, false, sortorder, sortname, page, rp);
 
 		if (listaCotasAusenteEncalhe != null && !listaCotasAusenteEncalhe.isEmpty()) {
 		
@@ -323,7 +337,7 @@ public class FechamentoEncalheController extends BaseController {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 			}
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado());
 			
 		} catch (Exception e) {
 			
@@ -336,35 +350,36 @@ public class FechamentoEncalheController extends BaseController {
 	@Path("/verificarEncerrarOperacaoEncalhe")
 	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe, String operacao) {
 		
-		if (dataEncalhe == null) {
-			
-			if(verificarDataEncalhe(dataEncalhe)) {
+		if (dataEncalhe == null || verificarDataEncalhe(dataEncalhe)) {
 				
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
-			}
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 		}
 		
-		int totalCotasAusentes = this.fechamentoEncalheService.buscarQuantidadeCotasAusentes(dataEncalhe);
+		int totalCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, true);
 		
 		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
-			this.result.use(Results.json()).from(Boolean.FALSE, "result").recursive().serialize();			
-		} 
-		else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
+			this.result.use(Results.json()).withoutRoot().from(Boolean.FALSE).recursive().serialize();
 			
-			this.result.use(Results.json()).from(Boolean.TRUE, "result").recursive().serialize();			
+			return;
+		
+		} else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
+			
+			this.result.use(Results.json()).withoutRoot().from(Boolean.TRUE).recursive().serialize();
+			
+			return;
 		}
 			
 		try {
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe);
-		} 
-		catch (Exception e) {
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado());
+		
+		} catch (Exception e) {
 
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar encerrar a operação de encalhe!" + e.getMessage()));
 		}
-
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"),"result").recursive().serialize();
 	}
 
 	private boolean verificarDataEncalhe(Date dataEncalhe) {
@@ -405,14 +420,14 @@ public class FechamentoEncalheController extends BaseController {
 	@Path("/salvarNoEncerrementoOperacao")
 	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
-		if (listaFechamento !=null && !listaFechamento.isEmpty()){
+		if (listaFechamento !=null && !listaFechamento.isEmpty()) {
 			
 			gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId, boxId);
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
+		this.result.use(Results.json()).from("", "result").serialize();
 	}
-
+	
 	private void gravaFechamentoEncalhe(
 			List<FechamentoFisicoLogicoDTO> listaFechamento,
 			String dataEncalhe, Long fornecedorId, Long boxId) {

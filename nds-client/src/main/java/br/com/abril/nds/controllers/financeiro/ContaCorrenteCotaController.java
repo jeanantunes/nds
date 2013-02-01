@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -270,7 +271,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
 			}
 			
-			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor));
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
 			
 		}
 		

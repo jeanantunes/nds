@@ -8,6 +8,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -28,14 +29,20 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 			throw new NullPointerException();
 		}
 		
-		Criteria criteria = super.getSession().createCriteria(EstoqueProdutoCota.class);
+		StringBuilder hql = new StringBuilder("select estoque ");
+		hql.append(" from EstoqueProdutoCota estoque    ")
+		   .append(" join  estoque.produtoEdicao produtoEdicao ")
+		   .append(" join estoque.cota cota")
+		   .append(" where produtoEdicao.id =:idProdutoEdicao ")
+		   .append(" and cota.id            =:idCota ");
 		
-		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
-		criteria.add(Restrictions.eq("cota.id", idCota));
-				
-		criteria.setMaxResults(1);
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
-		return (EstoqueProdutoCota) criteria.uniqueResult();
+		query.setParameter("idCota", idCota);
+		query.setMaxResults(1);
+		
+		return (EstoqueProdutoCota) query.uniqueResult();
 	}
 	
 	public EstoqueProdutoCota buscarEstoquePorProdutEdicaoECota(Long idProdutoEdicao, Long idCota) {

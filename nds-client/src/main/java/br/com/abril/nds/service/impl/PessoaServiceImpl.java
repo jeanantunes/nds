@@ -15,6 +15,9 @@ import br.com.abril.nds.repository.PessoaRepository;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+import br.com.caelum.stella.validation.InvalidStateException;
 
 @Service
 public class PessoaServiceImpl implements PessoaService {
@@ -97,5 +100,70 @@ public class PessoaServiceImpl implements PessoaService {
 	public List<Pessoa> obterPessoasPorNome(String nomePessoa) {
 		
 		return pessoaRepository.buscarPorNome(nomePessoa);
+	}
+	
+	/**
+	 * Verifica se todos os numeros são iguais
+	 * @param str
+	 * @return boolean
+	 */
+	private boolean numerosIguais(String str){
+		
+		for (int i=0; i<str.length()-1;i++){
+	
+			if ((str.charAt(i) != str.charAt(i+1)) ) return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Valida CPF
+	 * @param cpf
+	 */
+	@Override
+	public void validarCPF(String cpf){
+		
+		String c = Util.removerMascaraCpf(cpf);
+		
+		if (c.length() != 11 || this.numerosIguais(c)){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CPF] está inválido!");
+		}
+		
+		CPFValidator cpfValidator = new CPFValidator(true);
+		
+		try{
+			
+			cpfValidator.assertValid(cpf);
+		}catch(InvalidStateException e){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CPF] está inválido!");
+		}
+	}
+	
+	/**
+	 * Valida CNPJ
+	 * @param cnpj
+	 */
+	@Override
+	public void validarCNPJ(String cnpj){
+    	
+    	String c = Util.removerMascaraCnpj(cnpj);
+		
+		if (c.length() != 14 || this.numerosIguais(c)){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CNPJ] está inválido!");
+		}
+		
+		CNPJValidator cnpjValidator = new CNPJValidator(true);
+		
+		try{
+			
+			cnpjValidator.assertValid(cnpj);
+		}catch(InvalidStateException e){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"O preenchimento do campo [Número CNPJ] está inválido!");
+		}
 	}
 }

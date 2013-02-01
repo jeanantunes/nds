@@ -1,6 +1,7 @@
 var confirmaExpedicaoController = $.extend(true, {
 
 	change : false,
+	verificacaoExpedicao : null,
 
 	init : function() {
 		definirAcaoPesquisaTeclaEnter();
@@ -105,8 +106,10 @@ var confirmaExpedicaoController = $.extend(true, {
 		
 	},
 	
-	gerarCheckbox : function(id,name,idLancamento,selecionado) {
+	gerarCheckbox : function(id,name,idLancamento,selecionado,desabilitado) {
+		
 		var html = "";
+		
 		html+= ' <input ';
 		html+= ' id="'+id+'"';
 		html+= ' name="'+name+'"';
@@ -118,9 +121,13 @@ var confirmaExpedicaoController = $.extend(true, {
 			html+= ' checked="checked" ' ;	
 		}
 		
-		html+= ' />';
-		return html;
+		if (desabilitado){
+			html+= ' disabled="disabled" ' ;
+		}
 		
+		html+= ' />';
+		
+		return html;
 	},
 	
 	adicionarSelecao : function(id, check) {
@@ -144,7 +151,8 @@ var confirmaExpedicaoController = $.extend(true, {
 				{selecionado:elementoCheck.checked});	
 		
 		$.each(selects, function(index, row) {
-			row.checked=elementoCheck.checked;
+			    
+			row.checked=!row.disabled?elementoCheck.checked:false;
 		});
 		
 	},
@@ -168,7 +176,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			var cell = grid.rows[i].cell;
 								
 			if(cell.estudo) {
-				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado);
+				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado,(cell.estoqueLancamentoPE < cell.reparte));
 			} else {
 				cell.estudo="";
 				cell.selecionado="";
@@ -210,6 +218,8 @@ var confirmaExpedicaoController = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
+					confirmaExpedicaoController.verificacaoExpedicao = setInterval(confirmaExpedicaoController.atualizarStatusExpedicao,5000);
+					
 					$("#selecionarTodosID", confirmaExpedicaoController.workspace).attr("checked",false);
 					$(".confirmaExpedicaoGrid", confirmaExpedicaoController.workspace).flexOptions({			
 						url : contextPath + '/confirmacaoExpedicao/confirmarExpedicao',
@@ -218,7 +228,7 @@ var confirmaExpedicaoController = $.extend(true, {
 					});
 					
 					$(".confirmaExpedicaoGrid", confirmaExpedicaoController.workspace).flexReload();
-										
+					
 					$(this).dialog("close");
 				},
 				"Cancelar" : function() {
@@ -227,7 +237,21 @@ var confirmaExpedicaoController = $.extend(true, {
 			},
 			form: $("#dialog-confirmar", this.workspace).parents("form")
 		});
-	}
+	} ,
+	
+	atualizarStatusExpedicao : function() {
+		
+		$.postJSON(contextPath + "/confirmacaoExpedicao/verificarExpedicao", 
+			null,
+			function(result) {
+				$('#mensagemLoading').text(result)
+				
+				if(result=='FINALIZADO') {
+					$('#mensagemLoading').text('Aguarde, carregando ...');
+					window.clearInterval(confirmaExpedicaoController.verificacaoExpedicao);
+				}
+			});	
+	} 
 
 }, BaseController);
 //@ sourceURL=confirmaExpedicao.js

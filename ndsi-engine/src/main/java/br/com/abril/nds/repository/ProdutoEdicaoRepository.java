@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -285,12 +286,5 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @param fornecedores
 	 * @return
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto);*/
-
-	/**
-	 * Verifica se a expedição física de um produto edição já foi realizada
-	 * @param produtoEdicao
-	 * @return
-	 */
-	public boolean validarExpedicaoFisicaProdutoEdicao(ProdutoEdicao produtoEdicao);
 	
 }

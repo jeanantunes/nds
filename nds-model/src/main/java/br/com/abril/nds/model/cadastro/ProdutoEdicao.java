@@ -35,6 +35,7 @@ import javax.persistence.UniqueConstraint;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -198,6 +199,16 @@ public class ProdutoEdicao implements Serializable {
 	@OneToOne(mappedBy = "produtoEdicao", optional=true,fetch=FetchType.LAZY)
 	private LancamentoParcial lancamentoParcial;
 	
+    @OneToOne(mappedBy = "produtoEdicao")
+    private EstoqueProduto estoqueProduto;
+
+	public ProdutoEdicao() {
+	}
+	
+	public ProdutoEdicao(Long id) {
+		this.id = id;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -595,6 +606,20 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setLancamentoParcial(LancamentoParcial lancamentoParcial) {
 		this.lancamentoParcial = lancamentoParcial;
+	}
+
+	/**
+	 * @return the estoqueProduto
+	 */
+	public EstoqueProduto getEstoqueProduto() {
+		return estoqueProduto;
+	}
+
+	/**
+	 * @param estoqueProduto the estoqueProduto to set
+	 */
+	public void setEstoqueProduto(EstoqueProduto estoqueProduto) {
+		this.estoqueProduto = estoqueProduto;
 	}
 
 	@Override

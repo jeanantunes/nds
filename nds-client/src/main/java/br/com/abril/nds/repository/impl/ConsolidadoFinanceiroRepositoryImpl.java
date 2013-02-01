@@ -121,7 +121,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" desconto, ");
 		hql.append(" juridica.razaoSocial ");
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
@@ -226,7 +225,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" desconto, ");
 		hql.append(" f.juridica.razaoSocial ");
 		
 		if (filtro.getOrdenacaoColuna() != null) {
@@ -315,7 +313,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" p.nome, ");
 		hql.append(" pe.numeroEdicao, ");
 		hql.append(" pe.precoVenda, ");
-		hql.append(" desconto, ");
 		hql.append(" juridica.razaoSocial ");
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();

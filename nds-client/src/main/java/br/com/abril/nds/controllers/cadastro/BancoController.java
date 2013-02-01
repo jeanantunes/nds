@@ -433,10 +433,6 @@ public class BancoController extends BaseController {
 			errorMsgs.add("Preencha o campo apelido.");
 		}
 		
-		if(carteira == null) {
-			errorMsgs.add("Valor inválido para o campo cateira.");
-		}
-		
 		if(juros==null){
 			errorMsgs.add("Especifique a taxa de juros.");
 		}

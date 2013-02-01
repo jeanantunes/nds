@@ -205,7 +205,7 @@ public class GeracaoNotaEnvioController extends BaseController {
         	DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
         	
         	this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
-
+        	
         	OutputStream output;
 			try {
 				output = this.httpResponse.getOutputStream();

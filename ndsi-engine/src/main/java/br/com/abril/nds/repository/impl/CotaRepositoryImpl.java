@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,7 +17,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -41,7 +39,6 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -1436,38 +1433,33 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return listaIdCotas;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public Set<Long> obterIdsCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro) {
 		
 		Set<Long> listaIdCotas = new HashSet<Long>();
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
+		
 		criteria.createAlias("box", "box");
 		criteria.createAlias("pdvs", "pdvs");
-		criteria.createAlias("movimentoEstoqueCotas", "mec");
 
-		criteria.createAlias("mec.lancamento", "lancamento");
+		criteria.createAlias("estudoCotas", "estudoCotas");
+
+		criteria.createAlias("estudoCotas.estudo", "estudo");
+		criteria.createAlias("estudo.lancamentos", "lancamento");
 		
-		criteria.createAlias("mec.movimentoEstoqueCotaFuro", "movimentoEstoqueCotaFuro",JoinType.LEFT_OUTER_JOIN);
-				
-		criteria.createAlias("mec.tipoMovimento", "tipoMovimento");
+		criteria.add(
+			Restrictions.in("lancamento.status", 
+				new StatusLancamento[]{StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO}));
+		
 		criteria.createAlias("pessoa", "pessoa");
+		
 		criteria.setProjection(Projections.distinct(Projections.property("id")));
-		
-		criteria.add(Restrictions.eq("mec.status", StatusAprovacao.APROVADO));
-		
-		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
-		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-		
-		criteria.add(Restrictions.in("tipoMovimento.grupoMovimentoEstoque", listaGrupoMovimentoEstoques));
-		
-		criteria.add(Restrictions.isNull("movimentoEstoqueCotaFuro.id"));
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			
-			//TODO VALIDAR
-			criteria.createAlias("movimentoEstoqueCotas.produtoEdicao", "produtoEdicao");
+			criteria.createAlias("estudo.produtoEdicao", "produtoEdicao");
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.createAlias("produto.fornecedores", "fornecedor");
 			
@@ -1477,21 +1469,33 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
 			
 			if (filtro.getIntervaloCota().getAte() != null) {
-				criteria.add(Restrictions.between("numeroCota", filtro.getIntervaloCota().getDe(),
-						filtro.getIntervaloCota().getAte()));
+				
+				criteria.add(
+					Restrictions.between(
+						"numeroCota", filtro.getIntervaloCota().getDe(), filtro.getIntervaloCota().getAte()));
+				
 			} else {
+				
 				criteria.add(Restrictions.eq("numeroCota", filtro.getIntervaloCota().getDe()));
 			}
 		}
 		
-		if(filtro.getIntervaloBox() != null && filtro.getIntervaloBox().getDe() != null &&  filtro.getIntervaloBox().getAte() != null){
-			criteria.add(Restrictions.between("box.codigo", filtro.getIntervaloBox().getDe(),
-					filtro.getIntervaloBox().getAte()));
+		if (filtro.getIntervaloBox() != null 
+				&& filtro.getIntervaloBox().getDe() != null 
+				&&  filtro.getIntervaloBox().getAte() != null) {
+			
+			criteria.add(
+				Restrictions.between(
+					"box.codigo", filtro.getIntervaloBox().getDe(), filtro.getIntervaloBox().getAte()));
 		}
-		if(filtro.getCadastro() != null){
+		
+		if (filtro.getCadastro() != null) {
+			
 			criteria.add(Restrictions.eq("situacaoCadastro", filtro.getCadastro()));
 		}
-		if(filtro.getIdRoteiro() != null || filtro.getIdRota() != null){
+		
+		if (filtro.getIdRoteiro() != null || filtro.getIdRota() != null) {
+			
 			criteria.createAlias("pdvs.rotas", "rotaPdv");
 		    criteria.createAlias("rotaPdv.rota", "rota");
 			criteria.createAlias("rota.roteiro", "roteiro");
@@ -1507,12 +1511,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			criteria.add(Restrictions.eq("rota.id", filtro.getIdRota()));
 		}
 		
-		if (filtro.getIntervaloMovimento() != null && filtro.getIntervaloMovimento().getDe() != null && filtro.getIntervaloMovimento().getAte() != null) {
-			criteria.add(Restrictions.between("lancamento.dataLancamentoDistribuidor", filtro.getIntervaloMovimento().getDe(), filtro.getIntervaloMovimento().getAte()));
+		if (filtro.getIntervaloMovimento() != null 
+				&& filtro.getIntervaloMovimento().getDe() != null 
+				&& filtro.getIntervaloMovimento().getAte() != null) {
+			
+			criteria.add(
+				Restrictions.between(
+					"lancamento.dataLancamentoDistribuidor", 
+						filtro.getIntervaloMovimento().getDe(), filtro.getIntervaloMovimento().getAte()));
 		}
 				
-		//Controla a ordenação
 		Map<String, String> columnToSort = new HashMap<String, String>();
+		
 		columnToSort.put("numeroCota", "numeroCota");
 		columnToSort.put("nomeCota", "pessoa.nome");
 		columnToSort.put("cotaSuspensa", "situacaoCadastro");
@@ -1520,25 +1530,31 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
 		
 		String sortName = columnToSort.get(paginacaoVO.getSortColumn());
-		//Verifica a entrada para evitar expressoes SQL
+
 		if (sortName != null && !sortName.isEmpty() && !sortName.matches("[a-zA-Z0-9\\._]*")) {
+			
 			sortName = columnToSort.get("numeroCota");
         }
 				
-		if((sortName != null && !sortName.isEmpty()) && (paginacaoVO.getSortOrder() != null && !paginacaoVO.getSortOrder().isEmpty())) {
-			criteria.addOrder(paginacaoVO.getSortOrder().equals("asc") ? Order.asc(sortName) : Order.desc(sortName));
+		if ((sortName != null && !sortName.isEmpty()) 
+				&& (paginacaoVO.getSortOrder() != null 
+				&& !paginacaoVO.getSortOrder().isEmpty())) {
+			
+			criteria.addOrder(
+				paginacaoVO.getSortOrder().equals("asc") ? Order.asc(sortName) : Order.desc(sortName));
 		}
 		
-		if(filtro.getPaginacaoVO().getPosicaoInicial()!= null){
+		if (filtro.getPaginacaoVO().getPosicaoInicial()!= null){
 
 			criteria.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
 		}
 		
-		if(filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
+		if (filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
 
 			criteria.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
 
 		}	
+		
 		listaIdCotas.addAll(criteria.list());
 		
 		return listaIdCotas;
