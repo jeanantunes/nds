@@ -1018,15 +1018,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCCotaDTO.class.getCanonicalName())
 
-		.append(" ( ")
-		.append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		.append("  (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
-		.append(" 	) else 0 end,")
-
-	    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) )  ")
-		.append(" 	) else 0 end")
-		.append( ") ");
+		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) ) ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 
@@ -1059,17 +1052,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		.append(" ( estoqueProdutoCota.produtoEdicao.produto.codigo , ")
 		.append("   estoqueProdutoCota.produtoEdicao.produto.nome , ")
 		.append("   estoqueProdutoCota.produtoEdicao.numeroEdicao , ")
-		.append("   (sum(estoqueProdutoCota.qtdeRecebida)) , ")
-		
-	    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		.append("   	(sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
-		.append(" 	) else 0 end, ") 
-		
-	    .append("   case when (lancamento.status = :statusLancamentoRecolhido) then ( ")
-		.append("   	( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( "+this.obterSQLDesconto()+" ))) ) ")
-		.append(" 	) else 0 end,")
-		.append(" 	estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id ) ");
-		
+
+		.append("   (sum(movimentos.qtde)) , ")
+		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
+		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) , ")
+		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id ) ");
+
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 		hql.append(getGroupQueryObterCurvaABCCota(filtro));
 
@@ -1745,17 +1733,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return ((Long)query.uniqueResult()).intValue();
 	}
 	
-	private String obterSQLDesconto(){
-		
-		StringBuilder hql = new StringBuilder("select view.desconto ");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
-		   .append(" and view.produtoEdicaoId = estoqueProdutoCota.produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id ");
-		
-		return hql.toString();
-	}
-
     /**
      * {@inheritDoc}
      */

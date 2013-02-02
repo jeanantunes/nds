@@ -25,6 +25,8 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.fiscal.NCM;
@@ -166,44 +168,47 @@ public class DescontoServiceImplTest extends AbstractRepositoryImplTest {
 		this.cotas.add(cotaManoel);
 		this.cotas.add(cotaJoao);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao =
+		Desconto desconto1 = Fixture.desconto(Fixture.usuarioJoao(), TipoDesconto.GERAL);
+		Desconto desconto2 = Fixture.desconto(Fixture.usuarioJoao(), TipoDesconto.PRODUTO);
+		
+		DescontoCotaProdutoExcessao descontoProdutoEdicao =
 			Fixture.descontoProdutoEdicao(
-				cotaManoel, this.valorDesconto, fornecedor, produtoEdicaoVeja, TipoDesconto.GERAL);
+				cotaManoel, desconto1, null, fornecedor, produtoEdicaoVeja, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao2 =
+		DescontoCotaProdutoExcessao descontoProdutoEdicao2 =
 			Fixture.descontoProdutoEdicao(
-				cotaManoel, this.valorDesconto, fornecedor1, produtoEdicaoVeja, TipoDesconto.GERAL);
+				cotaManoel, desconto1, null, fornecedor1, produtoEdicaoVeja, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao2);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao3 =
+		DescontoCotaProdutoExcessao descontoProdutoEdicao3 =
 			Fixture.descontoProdutoEdicao(
-				cotaManoel, this.valorDesconto, fornecedor2, produtoEdicaoVeja, TipoDesconto.GERAL);
+				cotaManoel, desconto1, null, fornecedor2, produtoEdicaoVeja, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao3);
 				
-		DescontoProdutoEdicao descontoProdutoEdicao4 =
+		DescontoCotaProdutoExcessao descontoProdutoEdicao4 =
 			Fixture.descontoProdutoEdicao(
-				cotaManoel, this.valorDesconto, fornecedor3, produtoEdicaoVeja, TipoDesconto.PRODUTO);
+				cotaManoel, desconto2, null, fornecedor3, produtoEdicaoVeja, TipoDesconto.PRODUTO);
 		save(descontoProdutoEdicao4);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao5 =
+		DescontoCotaProdutoExcessao descontoProdutoEdicao5 =
 			Fixture.descontoProdutoEdicao(
-				cotaJoao, this.valorDesconto, fornecedor, produtoEdicaoVeja, TipoDesconto.GERAL);
+				cotaJoao, desconto1, null, fornecedor, produtoEdicaoVeja, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao5);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao6 =
+		DescontoCotaProdutoExcessao descontoProdutoEdicao6 =
 			Fixture.descontoProdutoEdicao(
-				cotaJoao, this.valorDesconto, fornecedor1, produtoEdicaoVeja, TipoDesconto.GERAL);
+				cotaJoao, desconto1, null, fornecedor1, produtoEdicaoVeja, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao6);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao7 =
+		DescontoCotaProdutoExcessao descontoProdutoEdicao7 =
 			Fixture.descontoProdutoEdicao(
-				cotaJoao, this.valorDesconto, fornecedor2, produtoEdicaoVeja, TipoDesconto.GERAL);
+				cotaJoao, desconto1, null, fornecedor2, produtoEdicaoVeja, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao7);
 				
-		DescontoProdutoEdicao descontoProdutoEdicao8 =
+		DescontoCotaProdutoExcessao descontoProdutoEdicao8 =
 			Fixture.descontoProdutoEdicao(
-				cotaJoao, this.valorDesconto, fornecedor3, produtoEdicaoVeja, TipoDesconto.PRODUTO);
+				cotaJoao, desconto2, null, fornecedor3, produtoEdicaoVeja, TipoDesconto.PRODUTO);
 		save(descontoProdutoEdicao8);
 	}
 	

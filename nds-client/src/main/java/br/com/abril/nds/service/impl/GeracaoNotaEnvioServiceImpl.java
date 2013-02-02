@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.envio.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.envio.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
@@ -43,7 +44,6 @@ import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
@@ -62,9 +62,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-
-	@Autowired
-	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 
 	@Autowired
 	private DescontoService descontoService;
@@ -167,8 +164,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
-			BigDecimal percentualDesconto = 
-				this.descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+			Desconto percentualDesconto = 
+				this.descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo().getLancamento(), cota, produtoEdicao);
 
 			BigInteger quantidade = estudoCota.getQtdeEfetiva();
 			
@@ -177,7 +174,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			if (itemNotaEnvio == null) {
 			
 				itemNotaEnvio = criarNovoItemNotaEnvio(estudoCota, produtoEdicao,
-						precoVenda, percentualDesconto, quantidade);
+						precoVenda, ((percentualDesconto != null && percentualDesconto.getValor() != null) ? percentualDesconto.getValor() : BigDecimal.ZERO), quantidade);
 			}
 			
 			listItemNotaEnvio.add(itemNotaEnvio);
@@ -219,10 +216,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
-			BigDecimal percentualDesconto = 
-				descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+			Desconto percentualDesconto = 
+				descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo().getLancamento(), cota, produtoEdicao);
 			
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);	
+			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, ((percentualDesconto != null && percentualDesconto.getValor() != null) ? percentualDesconto.getValor() : BigDecimal.ZERO));	
 			
 			BigInteger qtdeEfetivaEstudoCota = estudoCota.getQtdeEfetiva();
 			

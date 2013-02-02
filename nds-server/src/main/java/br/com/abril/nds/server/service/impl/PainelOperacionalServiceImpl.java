@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ancientprogramming.fixedformat4j.format.impl.StringFormatter;
-
 import br.com.abril.nds.server.model.FormatoIndicador;
 import br.com.abril.nds.server.model.Indicador;
 import br.com.abril.nds.server.model.OperacaoDistribuidor;

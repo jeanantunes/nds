@@ -26,7 +26,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TipoMensagem;
@@ -65,10 +64,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
-	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
-	
+		
 	@Autowired
 	private PoliticaCobrancaService politicaCobrancaService;
 	

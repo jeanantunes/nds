@@ -146,7 +146,7 @@ public class ResumoExpedicaoController extends BaseController {
 			BigDecimal precoDesconto = expd.getPrecoCapa();
 			
 			if (expd.getDesconto() != null) {
-				precoDesconto = expd.getPrecoCapa().subtract(expd.getDesconto());
+				precoDesconto = expd.getPrecoCapa().subtract( expd.getPrecoCapa().multiply( expd.getDesconto().divide(new BigDecimal("100")) ) );
 			}
 			
 			resumoExpedicaoDetalheVO = new ResumoExpedicaoDetalheVO();

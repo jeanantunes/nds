@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,7 +16,6 @@ import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -26,14 +24,10 @@ import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.DescontoProdutoRepository;
-import br.com.abril.nds.repository.DescontoProximosLancamentosRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.TipoMensagem;
@@ -50,31 +44,19 @@ public class LancamentoServiceImpl implements LancamentoService {
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
 
 	@Autowired
-	private UsuarioRepository usuarioRepository;
-	
-	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Autowired
 	private ExpedicaoRepository expedicaoRepository;
 	
 	@Autowired
-	private DescontoProximosLancamentosRepository descontoProximosLancamentosRepository;
-	
-	@Autowired
-	private DescontoProdutoRepository descontoProdutoRepository;
-
-	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
-	
-	@Autowired
-	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Override
 	@Transactional
 	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 		
-		List<Lancamento> lancametos =lancamentoRepository.obterLancamentosNaoExpedidos(
+		List<Lancamento> lancametos = lancamentoRepository.obterLancamentosNaoExpedidos(
 				paginacaoVO, data, idFornecedor, estudo);
 		
 		 List<LancamentoNaoExpedidoDTO> dtos = new ArrayList<LancamentoNaoExpedidoDTO>();

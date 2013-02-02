@@ -53,13 +53,13 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("SELECT new ").append(ResultadoCurvaABCEditor.class.getCanonicalName())
+
 		   .append(" ( ")
 	       .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 		   .append("  		(sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
 		   .append(" ) else 0 end, ")
-		   
   		   .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
-		   .append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - (("+ this.getHQLDesconto() +") * estoqueProdutoCota.produtoEdicao.precoVenda / 100))) )  ")
+		   .append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) )  ")
 		   .append(" ) else 0 end ")
 		   .append(" ) ");
 
@@ -169,17 +169,6 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 
 		return hql.toString();
 
-	}
-	
-	private String getHQLDesconto(){
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
-		   .append(" and view.produtoEdicaoId = estoqueProdutoCota.produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id),0) ");
-		
-		return hql.toString();
 	}
 
 	/**
@@ -298,8 +287,7 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		
 		hqlMargemCota.append(" ")
 		.append(" ((sum (( estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda)")
-		.append(" * ( ").append(getHQLDesconto()).append(" / 100))");
-
+		.append(" * ( ").append("movimentos.valoresAplicados.valorDesconto").append(" / 100))");
 		String hqlFaturamento = "   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( " 
 							  + " 		(sum ( (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda )"
 							  + "	) else 0 end ";
@@ -375,17 +363,8 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
    		    .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 		    .append(" 			sum(estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)  ")
 			.append("		) else 0 end as vendaExemplares, ")
-
    		    .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
-		    .append(" 	sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(produtoEdicao.PRECO_VENDA-(  ")
-		    .append("	 coalesce((select viewDesconto.DESCONTO  ")
-		    .append("    from  ")
-		    .append("        VIEW_DESCONTO viewDesconto  ")
-		    .append("    where  ")
-		    .append("        viewDesconto.COTA_ID=estoqueProduto.COTA_ID  ")
-		    .append("        and viewDesconto.PRODUTO_EDICAO_ID=estoqueProduto.PRODUTO_EDICAO_ID  ")
-		    .append("        and viewDesconto.FORNECEDOR_ID=fornecedor.ID),  ")
-		    .append("    0)*produtoEdicao.PRECO_VENDA/100))) ") 
+		    .append(" 	sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(movimentos.PRECO_COM_DESCONTO)) ") 
 			.append("		) else 0 end as faturamentoCapa, ")
 		    
 		    .append( this.getSqlMargemDistribuidor()).append(" as valorMargemDistribuidor ")
@@ -500,17 +479,12 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 		sql.append("(select sum(sql_margem.margem) from (")
 	
 		.append("	 select ")
-		.append("        ((sum(estoqueProdutoMargem.QTDE_RECEBIDA-estoqueProdutoMargem.QTDE_DEVOLVIDA)* produtoEdicaoMargem.PRECO_VENDA ) ")
-		.append("		   * (fornecedorMargem.MARGEM_DISTRIBUIDOR/100))")
-		.append("			- (sum(estoqueProdutoMargem.QTDE_RECEBIDA-estoqueProdutoMargem.QTDE_DEVOLVIDA)*produtoEdicaoMargem.PRECO_VENDA)* ")
-		.append("				(coalesce((select viewDescontoMargem.DESCONTO ")
-		.append("		        from ")
-		.append("		            VIEW_DESCONTO viewDescontoMargem ")
-		.append("        where ")
-		.append("			viewDescontoMargem.COTA_ID=estoqueProdutoMargem.COTA_ID ")
-		.append("		            and viewDescontoMargem.PRODUTO_EDICAO_ID=estoqueProdutoMargem.PRODUTO_EDICAO_ID ")
-		.append("		            and viewDescontoMargem.FORNECEDOR_ID=fornecedorMargem.ID), ")
-		.append("		        0)/100) ")
+
+		.append("       ((sum(estoqueProdutoMargem.QTDE_RECEBIDA-estoqueProdutoMargem.QTDE_DEVOLVIDA) * ")
+		.append("		movimentosMargem.PRECO_COM_DESCONTO)) ")
+		.append("		- ")
+		.append("		(sum(estoqueProdutoMargem.QTDE_RECEBIDA-estoqueProdutoMargem.QTDE_DEVOLVIDA) * produtoEdicaoMargem.PRECO_VENDA ")
+		.append("		* (fornecedorMargem.MARGEM_DISTRIBUIDOR/100)) ")
 		.append("			as margem ")
 		
 		.append("    from ")

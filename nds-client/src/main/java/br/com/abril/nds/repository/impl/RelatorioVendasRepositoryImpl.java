@@ -39,7 +39,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		   .append("  			sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
 		   .append(" 		else 0 end, ")
 		   .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
-		   .append("   			sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - "+this.obterSQLDesconto()+" )) ) ")
+		   .append("   			sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) ) ")
 		   .append(" 		else 0 end ")
 		   .append(" ) ");
 
@@ -78,13 +78,12 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		.append("   endereco.cidade as municipio, " )
 		.append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 		.append(" 		   sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
-		.append(" 		   else 0 end as vendaExemplares, ")
-		.append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
-		.append("          sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (produtoEdicao.precoVenda - "+this.obterSQLDesconto()+")) ) ")
+		.append(" 		   else 0 end, ")
+		.append("   case when (lancamento.status in (:statusLancamentoRecolhido)) then ( ")
+		.append("          sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) ) ")
 		.append("          else 0 end as faturamentoCapa, ")
-		.append("  produto.id as idProduto ,")
-		.append("  cota.id as idCota ");
-				
+		.append("  estoqueProdutoCota.produtoEdicao.produto.id ,")
+		.append("  estoqueProdutoCota.cota.id )");
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 		hql.append(getGroupQueryObterCurvaABCDistribuidor(filtro));
 		
@@ -271,15 +270,5 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		return lista;
 	}
-	
-	private String obterSQLDesconto(){
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto ");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = estoqueProdutoCota.cota.id ")
-		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedores.id),0) ");
-		
-		return hql.toString();
-	}	
+
 }

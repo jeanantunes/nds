@@ -44,7 +44,6 @@ import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
-import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
@@ -70,6 +69,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 
 	@Autowired
+
 	private EstudoCotaRepository estudoCotaRepository;
 
 	@Autowired
@@ -85,9 +85,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 
 	@Autowired
-	private ControleAprovacaoService controleAprovacaoService;
-
-	@Autowired
 	private LancamentoRepository lancamentoRepository;
 
 	@Autowired
@@ -95,7 +92,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Autowired
 	private UsuarioService usuarioService;
-
+	
 	@Autowired
 	private DistribuidorService distribuidorService;
 
@@ -125,8 +122,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			movimento.setTipoMovimento(tipoMovimentoCota);
 
-			movimento =
-					gerarMovimentoCota(null,idProdutoEdicao, movimento.getCota().getId(),
+			movimento = gerarMovimentoCota(null,idProdutoEdicao, movimento.getCota().getId(),
 					idUsuario, movimento.getQtde(), tipoMovimentoCota);
 
 			// Implementando por Eduardo Punk Rock - Seta o lançamento que gerou os movimentos na movimentoEstoqueCota
@@ -160,6 +156,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 						idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota, dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId());
 
 			total = total.add(estudoCota.getQtdeEfetiva());
+			
 		}
 
 		gerarMovimentoEstoque(dataPrevista, idProdutoEdicao, idUsuario, total, tipoMovimento);
@@ -453,6 +450,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque,movimentoEstoqueCota);
 			
 			movimentoEstoqueCota.setEstoqueProdutoCota(new EstoqueProdutoCota(idEstoqueCota));
+
 		}
 			
 		movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
@@ -507,6 +505,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 				novaQuantidade = quantidadeDevolvida.add(movimentoEstoqueCota.getQtde());
 				estoqueProdutoCota.setQtdeDevolvida(novaQuantidade);
+
 			}
 
 			if(estoqueProdutoCota.getId()==null) {
@@ -532,7 +531,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado =
 			this.estoqueProdutoCotaJuramentadoRepository.buscarEstoquePorProdutoECotaNaData(
-				idProdutoEdicao, idCota, new Date());
+						idProdutoEdicao, idCota, new Date());
 
 		if (estoqueProdutoCotaJuramentado == null) {
 
@@ -546,6 +545,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			estoqueProdutoCotaJuramentado.setCota(cota);
 			estoqueProdutoCotaJuramentado.setData(new Date());
 		}
+
 
 		BigInteger qtdeAtual =
 			(estoqueProdutoCotaJuramentado.getQtde() == null)

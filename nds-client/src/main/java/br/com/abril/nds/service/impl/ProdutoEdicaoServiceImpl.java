@@ -815,10 +815,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setChamadaCapa(pe.getChamadaCapa());
 			dto.setParcial(pe.isParcial());
 			dto.setPossuiBrinde(pe.isPossuiBrinde());
-		
+			
 			//Desconto Fornecedor x Distribuidor
-			dto.setDescricaoDesconto(pe.getDescricaoDesconto()!=null?pe.getDescricaoDesconto():produto.getDescontoLogistica().getDescricao());
-			BigDecimal percentualDesconto = Util.nvl(pe.getDesconto()!=null?pe.getDesconto():produto.getDesconto()!=null?produto.getDesconto():BigDecimal.ZERO, BigDecimal.ZERO);
+			dto.setDescricaoDesconto(pe.getDescricaoDesconto()!=null?pe.getDescricaoDesconto():produto.getDescricaoDesconto());
+			BigDecimal percentualDesconto = Util.nvl(pe.getDescontoProdutoEdicao()!=null?pe.getDescontoProdutoEdicao().getValor():produto.getDesconto()!=null?produto.getDesconto():BigDecimal.ZERO, BigDecimal.ZERO);
+
 			dto.setDesconto(percentualDesconto);
 
 			dto.setPeso(pe.getPeso());

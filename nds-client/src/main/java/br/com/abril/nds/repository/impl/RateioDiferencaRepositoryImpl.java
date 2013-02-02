@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -59,9 +58,7 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido.");
 		}
 		
-		String hqlDesconto = obterHQLDesconto();
-		
-		String hql = getHQLDetalhesDiferencaCota(hqlDesconto);
+		String hql = getHQLDetalhesDiferencaCota();
 
 		if (filtro.getColunaOrdenacao() != null && filtro.getPaginacao() != null) {
 
@@ -84,16 +81,12 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 				hql += " rateioDiferenca.cota.pessoa.nome ";
 				break;
 			case PRECO_DESCONTO:
-				hql += " produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ("+hqlDesconto+" / 100)) ";
+				hql += " mec.valoresAplicados.precoComDesconto ";
 				break;
 			case TOTAL:
-				hql += " rateioDiferenca.qtde * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ("+hqlDesconto+" / 100))) ";
-				break;
 			case TOTAL_APROVADAS:
-				hql += " rateioDiferenca.qtde * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ("+hqlDesconto+" / 100))) ";
-				break;
 			case TOTAL_REJEITADAS:
-				hql += " rateioDiferenca.qtde * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ("+hqlDesconto+" / 100))) ";
+				hql += " rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto) ";
 				break;
 			}
 
@@ -133,14 +126,12 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido.");
 		}
 		
-		String hqlDesconto = obterHQLDesconto();
-		
-		String hql = getHQLDetalhesDiferencaCota(hqlDesconto);
+		String hql = getHQLDetalhesDiferencaCota();
 
 		hql = " select "
 			+ " count(rateioDiferenca) as quantidadeTotalRegistrosDiferencaCota, "
 			+ " sum(rateioDiferenca.qtde) as totalExemplares, "
-			+ " sum(rateioDiferenca.qtde * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (" + hqlDesconto + " / 100)))) as valorTotal "
+			+ " sum(rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto)) as valorTotal "
 			+ hql.substring(hql.lastIndexOf(" from "));
 		
 		Query query = this.getSession().createQuery(hql);
@@ -157,7 +148,7 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		return (DetalheDiferencaCotaDTO) query.uniqueResult();
 	}
 
-	private String getHQLDetalhesDiferencaCota(String hqlDesconto) {
+	private String getHQLDetalhesDiferencaCota() {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -167,16 +158,17 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		   .append(" rateioDiferenca.cota.pessoa.nome as nomeCota, ")
 		   .append(" rateioDiferenca.cota.box.codigo as codigoBox, ")
 		   .append(" rateioDiferenca.qtde as exemplares, ")
-		   .append(" produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (" + hqlDesconto + " / 100)) as precoDesconto, ")
+		   .append(" mec.valoresAplicados.precoComDesconto as precoDesconto, ")
 		   .append(" case when diferenca.statusConfirmacao = :statusConfirmado then ")
-		   .append(" (rateioDiferenca.qtde * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (" + hqlDesconto + " / 100)))) ")
+		   .append(" (rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto)) ")
 		   .append(" else 0 end as totalAprovadas, ")
 		   .append(" case when diferenca.statusConfirmacao = :statusPendente then ")
-		   .append(" (rateioDiferenca.qtde * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (" + hqlDesconto + " / 100)))) ")
+		   .append(" (rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto)) ")
 		   .append(" else 0 end as totalRejeitadas, ")
-		   .append(" rateioDiferenca.qtde * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * (" + hqlDesconto + "  / 100))) as valorTotal ")
+		   .append(" rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto) as valorTotal ")
 		   .append(" from RateioDiferenca rateioDiferenca ")
 		   .append(" inner join rateioDiferenca.diferenca.produtoEdicao as produtoEdicao ")
+		   .append(" inner join rateioDiferenca.diferenca.lancamentoDiferenca.movimentoEstoqueCota as mec ")
 		   .append(" inner join produtoEdicao.produto.fornecedores as fornecedor ")
 		   .append(" inner join rateioDiferenca.diferenca as diferenca ")
 		   .append(" where rateioDiferenca.diferenca.id = :idDiferenca ");
@@ -184,18 +176,4 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		return hql.toString();
 	}
 
-	private String obterHQLDesconto() {
-
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" coalesce ( ")
-		   .append(" coalesce(( ")
-		   .append(" select view.desconto")
-		   .append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = rateioDiferenca.cota.id ")
-		   .append(" and view.produtoEdicaoId = diferenca.produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedor.id), diferenca.produtoEdicao.produto.desconto), 0) ");
-		
-		return hql.toString();
-	}
 }

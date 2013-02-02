@@ -9,7 +9,6 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.hibernate.mapping.Array;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +23,12 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.fiscal.NCM;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.util.EntityUtil;
 
@@ -105,16 +107,19 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		
 		save(cota);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota, BigDecimal.ONE, fornecedor, produtoEdicaoVeja1, TipoDesconto.GERAL);
+		Usuario usuario = Fixture.usuarioJoao();
+		Desconto desconto = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		
+		DescontoCotaProdutoExcessao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoVeja1, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota, BigDecimal.ONE, fornecedor, produtoEdicaoVeja2, TipoDesconto.GERAL);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoVeja2, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao2);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota, BigDecimal.ONE, fornecedor, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
 		save(descontoProdutoEdicao3);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota, BigDecimal.ONE, fornecedor, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
 		save(descontoProdutoEdicao4);
 		
 	}
@@ -269,27 +274,20 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 	@Test
 	public void obterDescontoPorCotaProdutoEdicaoIdCota() {
 		
-		Long idCota = 1L;
+		Cota cota = new Cota();
+		cota.setId(1L);
 		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(idCota, null, null);
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, cota, null);
 				
 	}
 	
 	@Test
 	public void obterDescontoPorCotaProdutoEdicaoIdProdutoEdicao() {
 		
-		Long idProdutoEdicao = 1L;
+		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		produtoEdicao.setId(1L);
 		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, idProdutoEdicao, null);
-				
-	}
-	
-	@Test
-	public void obterDescontoPorCotaProdutoEdicaoIdFornecedor() {
-		
-		Long idFornecedor = 1L;
-		
-		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, null, idFornecedor);
+		descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(null, null, produtoEdicao);
 				
 	}
 	
