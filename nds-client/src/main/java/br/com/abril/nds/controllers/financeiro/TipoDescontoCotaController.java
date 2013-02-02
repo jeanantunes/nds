@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,6 +33,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
@@ -60,6 +60,9 @@ public class TipoDescontoCotaController extends BaseController {
 	private DescontoService descontoService;
 
 	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
 	private HttpSession session;
 	
 	@Autowired
@@ -80,12 +83,6 @@ public class TipoDescontoCotaController extends BaseController {
 	
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaPorCota";
 	
-	private static final String FUTURE_RESULT_PROCESSO_DESCONTO_PRODUTO = "futureDescontoProduto";
-	
-	private static final String FUTURE_RESULT_PROCESSO_DESCONTO_ESPECIFICO = "futureDescontoEspecifico";
-	
-	private static final String FUTURE_RESULT_PROCESSO_DESCONTO_GERAL = "futureDescontoGeral";
-	
 	@Path("/")
 	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA)
 	public void index() {}
@@ -94,26 +91,26 @@ public class TipoDescontoCotaController extends BaseController {
 	@Path("/novoDescontoGeral")
 	public void novoDescontoGeral(BigDecimal desconto, List<Long> fornecedores){
 
-		Future<String> future = descontoService.executarDescontoGeral(desconto, fornecedores, getUsuarioLogado());
-		this.session.setAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_GERAL, future);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
+		descontoService.incluirDescontoDistribuidor(desconto, fornecedores, getUsuarioLogado());
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
+
 	}
 		
 	@Post("/novoDescontoEspecifico")
 	public void novoDescontoEspecifico(Integer numeroCota, BigDecimal desconto, List<Long> fornecedores) {
 		
-		Future<String> future = descontoService.executarDescontoEspecifico(numeroCota, desconto, fornecedores, getUsuarioLogado());
-		this.session.setAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_ESPECIFICO, future);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
+		descontoService.incluirDescontoCota(desconto, fornecedores, numeroCota, getUsuarioLogado());
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
+
 	}
 
 	@Post
 	@Path("/novoDescontoProduto")
 	public void novoDescontoProduto(DescontoProdutoDTO descontoDTO, List<Integer> cotas) {		
 
-		Future<String> future = descontoService.executarDescontoProduto(descontoDTO, cotas, getUsuarioLogado());
-		this.session.setAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_PRODUTO, future);
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Inicio do procedimento de cadastros de Tipo Desconto foi inicializado"),"result").recursive().serialize();
+		descontoService.incluirDescontoProduto(descontoDTO, getUsuarioLogado());
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro de Tipo de Desconto realizado com sucesso"),"result").recursive().serialize();
+
 	}
 	
 	@Path("/pesquisarDescontoGeral")
@@ -136,7 +133,7 @@ public class TipoDescontoCotaController extends BaseController {
 	@Path("/pesquisarDescontoEspecifico")
 	public void pesquisarDescontoEspecifico(Integer cotaEspecifica, String nomeEspecifico, String sortorder, String sortname, int page, int rp) throws Exception {
 		
-		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoEspecifico(cotaEspecifica,nomeEspecifico,sortorder, sortname, page, rp);
+		FiltroTipoDescontoCotaDTO filtro = carregarFiltroPesquisaDescontoEspecifico(cotaEspecifica, nomeEspecifico, sortorder, sortname, page, rp);
 		
 		List<TipoDescontoCotaDTO> listaDescontoCotaEspecifica = descontoService.buscarTipoDescontoCota(filtro);
 			
@@ -153,7 +150,7 @@ public class TipoDescontoCotaController extends BaseController {
 	@Path("/pesquisarDescontoProduto")
 	public void pesquisarDescontoProduto(String codigo, String produto, String sortorder, String sortname, int page, int rp) throws Exception {
 		
-		FiltroTipoDescontoProdutoDTO filtro = carregarFiltroPesquisaDescontoProduto(codigo,produto,sortorder, sortname, page, rp);
+		FiltroTipoDescontoProdutoDTO filtro = carregarFiltroPesquisaDescontoProduto(codigo, produto, sortorder, sortname, page, rp);
 		
 		List<TipoDescontoProdutoDTO> listaTipoDescontoProduto  = descontoService.buscarTipoDescontoProduto(filtro);
 		
@@ -356,7 +353,6 @@ public class TipoDescontoCotaController extends BaseController {
 		return filtro;
 	}
 	
-
 	@Post
 	@Path("/obterFornecedores")
 	public void obterFornecedores(){
@@ -404,7 +400,7 @@ public class TipoDescontoCotaController extends BaseController {
 	@Path("/obterFornecedoresAssociadosDesconto")
 	public void obterFornecedoresAssociadosDesconto(Long idDesconto, TipoDesconto tipoDesconto,String sortorder, String sortname){
 		
-		List<Fornecedor> fornecedores =   descontoService.busacarFornecedoresAssociadosADesconto(idDesconto, tipoDesconto);
+		List<Fornecedor> fornecedores = descontoService.buscarFornecedoresAssociadosADesconto(idDesconto, tipoDesconto);
 		
 		List<ItemDTO<Long, String>> lista = getFornecedores(fornecedores);
 		
@@ -413,75 +409,6 @@ public class TipoDescontoCotaController extends BaseController {
 		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
 		
 		result.use(FlexiGridJson.class).from(lista).total(fornecedores.size()).page(1).serialize();
-	}
-
-	private void resultProcessoCadastroDesconto(Future<String> future) {
-		
-		String resultado = null;		
-			
-		try {
-			
-			if (future.isDone()) {
-				resultado = future.get();
-				result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,  resultado),"result").recursive().serialize();
-			} 
-		} catch (Exception e) {
-			
-			List<String> mensagens = new ArrayList<String>();
-			
-			if (e instanceof ValidacaoException) {
-			
-				mensagens = ((ValidacaoException) e).getValidacao().getListaMensagens();
-			
-			} else {
-				mensagens.add(e.getMessage());
-			}
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, mensagens);
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Get
-	@Path("/verificaProgressoGravacaoDescontoGeral")
-	public void verificaProgressoGravacaoDescontoGeral() {
-		
-		Future<String> future = (Future<String>) this.session.getAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_GERAL);
-	
-		if (future != null) {
-			this.resultProcessoCadastroDesconto(future);
-		} else {
-			result.use(Results.nothing());
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Get
-	@Path("/verificaProgressoGravacaoDescontoEspecifico")
-	public void verificaProgressoGravacaoDescontoEspecifico() {
-		
-		Future<String> future = (Future<String>) this.session.getAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_ESPECIFICO);
-		
-		if (future != null) {
-			this.resultProcessoCadastroDesconto(future);
-		} else {
-			result.use(Results.nothing());
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Get
-	@Path("/verificaProgressoGravacaoDescontoProduto")
-	public void verificaProgressoGravacaoDescontoProduto() {
-		
-		Future<String> future = (Future<String>) this.session.getAttribute(FUTURE_RESULT_PROCESSO_DESCONTO_PRODUTO);
-		
-		if (future != null) {
-			this.resultProcessoCadastroDesconto(future);
-		} else {
-			result.use(Results.nothing());
-		}
 	}
 
 }

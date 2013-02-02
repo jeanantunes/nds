@@ -125,24 +125,6 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		return (BigDecimal) query.uniqueResult();
 	}
 	
-	/**
-	 * Retorna String referente a uma subquery que obtém o valor comissionamento 
-	 * (percentual de desconto) para determinado produtoEdicao a partir de idCota e idFornecedor. 
-	 * 
-	 * @return String
-	 */
-	private static String getSubQueryConsultaValorComissionamento() {
-		
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto");
-		hql.append(" from ViewDesconto view ")
-		   .append(" where view.cotaId = cota.id ")
-		   .append(" and view.produtoEdicaoId = produtoEdicao.id ")
-		   .append(" and view.fornecedorId = fornecedor.id),0) ");
-		
-		return hql.toString();
-		
-	}
-	
 	@Override
 	public BigDecimal obterConsignado(boolean cotaInadimplente){
 		
@@ -176,9 +158,9 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 				
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" SELECT sum((epc.qtdeRecebida - epc.qtdeDevolvida) * (produtoEdicao.precoVenda - (produtoEdicao.precoVenda * ("+ getSubQueryConsultaValorComissionamento() +") / 100) ))")
-		
+		hql.append(" SELECT sum((epc.qtdeRecebida - epc.qtdeDevolvida) * (mec.valoresAplicados.precoComDesconto)) ")
 		.append(" FROM EstoqueProdutoCota AS epc ")
+		.append(" JOIN epc.movimentos as mec ")
 		.append(" JOIN epc.cota as cota ")
 		.append(" JOIN epc.produtoEdicao as produtoEdicao ")
 		.append(" JOIN produtoEdicao.produto.fornecedores as fornecedor ");

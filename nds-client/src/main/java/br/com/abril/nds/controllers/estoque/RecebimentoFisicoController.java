@@ -40,15 +40,12 @@ import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
-import br.com.abril.nds.service.CFOPService;
-import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
-import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -101,18 +98,9 @@ public class RecebimentoFisicoController extends BaseController {
 	
 	@Autowired
 	private TipoNotaFiscalService tipoNotaService;
-
-	@Autowired
-	private CFOPService cfopService;
 	
 	@Autowired
 	private Validator validator;
-	
-	@Autowired
-	private DescontoService descontoService; 
-
-	@Autowired
-	private UsuarioService usuarioService; 
 
 	public RecebimentoFisicoController(
 			Result result, 
@@ -1175,35 +1163,6 @@ public class RecebimentoFisicoController extends BaseController {
 	}
 	
 	/**
-	 * Valida valores monitotarios.
-	 * 
-	 * @param label
-	 * @param valor
-	 * @param msgs
-	 */
-	private void validarCampoMonetario(String label, String valor, List<String> msgs) {
-		
-		if (valor == null || valor.isEmpty()) {
-			
-			msgs.add("O campo " + label + " dever ser informado");
-			
-		} else {
-			
-			try {
-				
-				Double.parseDouble(valor.replace(".", "").replace(",", "."));
-				
-			} catch (NumberFormatException e) {
-				
-				msgs.add("O campo " + label + " é invalido");
-				
-			}
-			
-		}
-		
-	}
-	
-	/**
 	 * confirmaçao de recebimento fisico
 	 * @param notaFiscal
 	 * @param itensRecebimento
@@ -1225,17 +1184,6 @@ public class RecebimentoFisicoController extends BaseController {
 		result.use(Results.json()).from(validacao, Constantes.PARAM_MSGS).recursive().serialize();	
 		
 		
-	}
-	
-	/**
-	 * Retorna valor BigDecimal.
-	 * 
-	 * @param valor
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal getBigDecimalFromValor(String valor) {
-		return new BigDecimal(valor.replace(".", "").replace(",", "."));
 	}
 	
 	public NotaFiscalEntrada getNotaFiscalFromSession() {
@@ -1296,7 +1244,7 @@ public class RecebimentoFisicoController extends BaseController {
 				
 				RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-				BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDesconto(), BigDecimal.ZERO);
+				BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDescontoProduto().getValor(), BigDecimal.ZERO);
 				BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
                 recFisicoDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));
 

@@ -523,7 +523,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	PRODUTO_EDICAO.NUMERO_EDICAO,       	");
 		sql.append("	PRODUTO_EDICAO.PRECO_VENDA,         	");
 		
-		sql.append("    (PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce(("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100, 0))) ");
+		sql.append("    (PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce((MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO) / 100, 0))) ");
 		sql.append("	as precoComDesconto,  ");
 		
 		sql.append("	FORNECEDOR.ID as idFornecedor, 		");
@@ -532,7 +532,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	((TO_DAYS(MOVIMENTO_ESTOQUE_COTA.DATA) - TO_DAYS(CHAMADA_ENCALHE.DATA_RECOLHIMENTO)) + 1) as recolhimento,  ");
 		
-		sql.append( this.obterSQLDescontoObterResumoConsignadosParaChamadao()  ).append(" as valorDesconto ");
+		sql.append("	MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO").append(" as valorDesconto ");
 		
 		sql.append(getFromWhereConsultaEncalhe(filtro));
 		
@@ -670,7 +670,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	PRODUTO_EDICAO.NUMERO_EDICAO 	as numeroEdicao,  		");
 		sql.append("	PRODUTO_EDICAO.PRECO_VENDA 		as precoVenda,    		");
 		
-		sql.append("    (PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce(("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100, 0))) ");
+		sql.append("    (PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce((MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO) / 100, 0))) ");
 		sql.append("	as precoComDesconto,  ");
 
 		sql.append("	SUM(ESTOQUE_PRODUTO_COTA.QTDE_RECEBIDA) as reparte,  		");
@@ -683,11 +683,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	(sum(MOVIMENTO_ESTOQUE_COTA.QTDE) * ( PRODUTO_EDICAO.PRECO_VENDA) ) as valor, ");
 		
-		sql.append("	(sum(MOVIMENTO_ESTOQUE_COTA.QTDE) * ( PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce(("+ this.obterSQLDescontoObterResumoConsignadosParaChamadao() +") / 100, 0) ) ) ) as valorComDesconto, ");
+		sql.append("	(sum(MOVIMENTO_ESTOQUE_COTA.QTDE) * ( PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce((MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO) / 100, 0) ) ) ) as valorComDesconto, ");
 		
 		sql.append("	((TO_DAYS(MOVIMENTO_ESTOQUE_COTA.DATA) - TO_DAYS(CHAMADA_ENCALHE.DATA_RECOLHIMENTO)) + 1) as recolhimento,  ");
 
-		sql.append( this.obterSQLDescontoObterResumoConsignadosParaChamadao()  ).append(" as valorDesconto, ");
+		sql.append("	MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO").append(" as valorDesconto, ");
 		
 		sql.append(	" CASE WHEN ( ").append( getSqlConferenciaEncalheComObservacao() ).append( 
 					" ) > 0 THEN 'S' ELSE 'N' END AS indPossuiObservacaoConferenciaEncalhe ");
@@ -1012,7 +1012,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 		sql.append(" ( PRODUTO_EDICAO.PRECO_VENDA - ( PRODUTO_EDICAO.PRECO_VENDA  *  coalesce((");
 
-		sql.append(this.obterSQLDescontoObterResumoConsignadosParaChamadao());
+		sql.append(" MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO ");
 
 		sql.append(" ) / 100, 0) ) ) ), 0) as valorReparte,");
 			
@@ -1020,7 +1020,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 		sql.append(" ( PRODUTO_EDICAO.PRECO_VENDA - ( PRODUTO_EDICAO.PRECO_VENDA  *  coalesce((");
 
-		sql.append(this.obterSQLDescontoObterResumoConsignadosParaChamadao());
+		sql.append(" MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO ");
 
 		sql.append(" ) / 100, 0) ) ) ), 0) as valorEncalhe ");
 
@@ -1126,8 +1126,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" PROD.CODIGO as codigoProduto,  				");		
 			sql.append(" PROD.NOME as nomeProduto, 						");
 			sql.append(" PROD_EDICAO.NUMERO_EDICAO as numeroEdicao, 	");
-			sql.append(" PROD_EDICAO.PRECO_VENDA as precoVenda, 		");
-			sql.append(" PROD_EDICAO.DESCONTO  as desconto 				");
+			sql.append(" MOV_ESTOQUE_COTA.PRECO_VENDA as precoVenda, 	");
+			sql.append(" MOV_ESTOQUE_COTA.VALOR_DESCONTO as desconto 	");
 			
 		}
 
@@ -1328,7 +1328,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return query.list();
 		
 	}
-
 	
 	/*
 	 * (non-Javadoc)
@@ -2442,17 +2441,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		return result;
 	}
-	
-	private String obterSQLDescontoObterResumoConsignadosParaChamadao(){
-			
-			StringBuilder hql = new StringBuilder("COALESCE((select view.DESCONTO ");
-			hql.append(" from VIEW_DESCONTO view ")
-			   .append(" where view.COTA_ID = COTA.ID ")
-			   .append(" and view.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ")
-			   .append(" and view.FORNECEDOR_ID = PRODUTO_FORNECEDOR.fornecedores_ID),0) ");
-			
-			return hql.toString();
-		}
 
 	@Override
 	public Long obterQuantidadeProdutoEdicaoMovimentadoPorCota(Long idCota, Long idProdutoEdicao, Long idTipoMovimento) {

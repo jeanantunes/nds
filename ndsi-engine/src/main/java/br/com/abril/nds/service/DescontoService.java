@@ -2,7 +2,6 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
@@ -15,6 +14,8 @@ import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -71,7 +72,7 @@ public interface DescontoService {
 	 * @param tipoDesconto - tipo de desconto
 	 * @return List<Fornecedor>
 	 */
-	List<Fornecedor> busacarFornecedoresAssociadosADesconto(Long idDesconto, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto);
+	List<Fornecedor> buscarFornecedoresAssociadosADesconto(Long idDesconto, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto);
 
 	/**
 	 * Método que realiza a inclusão de um tipo de desconto para produto.
@@ -117,18 +118,25 @@ public interface DescontoService {
 	 * Recupera o percentual de desconto a ser aplicado para o produto edição de acordo com o 
 	 * tipo de produto
 	 * 
+	 * @param lancamento TODO
 	 * @param cota Cota para recuperação do percentual de desconto
 	 * @param produtoEdicao produto edição para recuperação do percentual de desconto
+	 * 
 	 * @return percentual de desconto a ser utilizado
 	 */
-	BigDecimal obterDescontoPorCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao);
+	BigDecimal obterValorDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
+	
+	/**
+	 * Recupera o Desconto a ser aplicado para o produto edição de acordo com o tipo de produto
+	 * 
+	 * @param lancamento
+	 * @param cota
+	 * @param produtoEdicao
+	 * @return
+	 */
+	Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
 
 	BigDecimal obterComissaoCota(Integer numeroCota);
 		
-	Future<String> executarDescontoEspecifico(final Integer numeroCota, final BigDecimal desconto, final List<Long> fornecedores, Usuario usuario);
-
-	Future<String> executarDescontoProduto(DescontoProdutoDTO desconto, List<Integer> cotas, Usuario usuario);
-
-	Future<String> executarDescontoGeral(BigDecimal desconto, List<Long> fornecedores, Usuario usuario); 
 }
 	

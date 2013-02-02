@@ -3,8 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TipoDescontoDTO;
@@ -32,38 +31,41 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select desconto.id as sequencial, ")
-			.append(" desconto.id as idTipoDesconto ,")
-			.append(" desconto.usuario.nome as usuario ,")
-			.append(" desconto.desconto as desconto ,")
-			.append(" desconto.dataAlteracao as dataAlteracao , ")
-			.append("(case ")
-				.append("when (select count(fornecedor.id) from DescontoDistribuidor descontoFor JOIN descontoFor.fornecedores fornecedor  ")
-					.append(" where descontoFor.id = desconto.id ) > 1 ")
-				.append("then 'Diversos' ")
-				.append("when (select count(fornecedor.id) from DescontoDistribuidor descontoFor JOIN descontoFor.fornecedores fornecedor  ")
-					.append("where descontoFor.id = desconto.id ) = 1 then pessoa.razaoSocial ")
-			.append("else null end) as fornecedor, 	")
-		    .append(" 'Geral' as descTipoDesconto 	");
-		
-		hql.append(" from DescontoDistribuidor desconto		")
-			.append(" JOIN desconto.fornecedores fornecedor ")
-			.append(" JOIN fornecedor.juridica pessoa 		");
-			
+		hql.append("select hdf.id as sequencial ");
+		hql.append(", hdf.desconto.id as idTipoDesconto ");
+		hql.append(", hdf.usuario.nome as usuario ");
+		hql.append(", hdf.desconto.valor as desconto ");
+		hql.append(", hdf.dataAlteracao as dataAlteracao ");
+		hql.append(", (case ");
+		hql.append("when (select count(hdf1.desconto.id) from HistoricoDescontoFornecedor hdf1 ");
+		hql.append("where hdf1.desconto.id = hdf.desconto.id ");
+		hql.append("group by hdf1.desconto.id) > 1 ");
+		hql.append("then 'Diversos' ");
+		hql.append("when (select count(hdf1.desconto.id) from HistoricoDescontoFornecedor hdf1 ");
+		hql.append("where hdf1.desconto.id = hdf.desconto.id ");
+		hql.append("group by hdf1.desconto.id) = 1 then pessoa.razaoSocial ");
+		hql.append("else null end) as fornecedor");
+		hql.append(", 'Geral' as descTipoDesconto ");
+		hql.append("from HistoricoDescontoFornecedor hdf join hdf.fornecedor f join f.juridica as pessoa ");
+		hql.append("where 1=1 ");
 		
 		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
-			hql.append(" where fornecedor.id in (:idFornecedores) ");
+			hql.append(" and f.id in (:idFornecedores) ");
 		}
 		
-		hql.append(" group by desconto.id ");
+		hql.append("group by hdf.desconto, hdf.dataAlteracao ");
+		hql.append("order by hdf.dataAlteracao desc ");
+		
+		
+		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
+			hql.append(" and f.id in (:idFornecedores) ");
+		}
 		
 		hql.append(getOrdenacao(filtro));
 		
 		Query query  = getSession().createQuery(hql.toString());
-
-		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(TipoDescontoDTO.class);
-
-		query.setResultTransformer(resultTransformer);
+		
+		query.setResultTransformer(Transformers.aliasToBean(TipoDescontoDTO.class));
 		
 		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
 			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
@@ -76,6 +78,7 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
 		return query.list();
+				
 	}
 	
 	@Override
@@ -83,11 +86,19 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(desconto.id) from DescontoDistribuidor desconto ");
+		hql.append("select f ");
+		hql.append("from HistoricoDescontoFornecedor hdf join hdf.fornecedor f join f.juridica as pessoa ");
+		hql.append("where 1=1 ");
+		
+		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
+			hql.append(" and f.id in (:idFornecedores) ");
+		}
+		
+		hql.append("group by hdf.desconto, hdf.dataAlteracao ");
 		
 		Query query  = getSession().createQuery(hql.toString());
 		
-		return ((Long)  query.uniqueResult()).intValue();
+		return query.list().size();
 	}
 	
 	private String getOrdenacao(FiltroTipoDescontoDTO filtro){

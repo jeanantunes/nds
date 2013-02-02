@@ -23,6 +23,8 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.fiscal.NCM;
@@ -147,29 +149,36 @@ public class DescontoComponentImplTest extends AbstractRepositoryImplTest {
 		this.produtos.add(produtoEdicaoVeja3);
 		this.produtos.add(produtoEdicaoBoaForma1);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota123, this.valorDesconto, fornecedorACM, produtoEdicaoVeja1, TipoDesconto.GERAL);
+		Desconto desconto1 = Fixture.desconto(Fixture.usuarioJoao(), TipoDesconto.GERAL);
+		Desconto desconto2 = Fixture.desconto(Fixture.usuarioJoao(), TipoDesconto.ESPECIFICO);
+		Desconto desconto3 = Fixture.desconto(Fixture.usuarioJoao(), TipoDesconto.PRODUTO);
+		
+		DescontoCotaProdutoExcessao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota123, desconto1, null, fornecedorACM, produtoEdicaoVeja1, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota123, this.valorDesconto, fornecedorACM, produtoEdicaoVeja2, TipoDesconto.GERAL);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota123, desconto1, null, fornecedorACM, produtoEdicaoVeja2, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao2);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota123, this.valorDesconto, fornecedorACM, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota123, desconto2, null, fornecedorACM, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
 		save(descontoProdutoEdicao3);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota123, this.valorDesconto, fornecedorACM, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota123, desconto3, null, fornecedorACM, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
 		save(descontoProdutoEdicao4);
 		
+		desconto1 = Fixture.descontoOne(Fixture.usuarioJoao(), TipoDesconto.GERAL);
+		desconto2 = Fixture.descontoOne(Fixture.usuarioJoao(), TipoDesconto.ESPECIFICO);
+		desconto3 = Fixture.descontoOne(Fixture.usuarioJoao(), TipoDesconto.PRODUTO);
 		//
-		DescontoProdutoEdicao descontoProdutoEdicao5 = Fixture.descontoProdutoEdicao(cota1234, BigDecimal.ONE, fornecedorACM, produtoEdicaoVeja1, TipoDesconto.GERAL);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao5 = Fixture.descontoProdutoEdicao(cota1234, desconto1, null, fornecedorACM, produtoEdicaoVeja1, TipoDesconto.GERAL);
 		save(descontoProdutoEdicao5);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao6 = Fixture.descontoProdutoEdicao(cota1234, BigDecimal.ONE, fornecedorTreeLog, produtoEdicaoVeja2, TipoDesconto.ESPECIFICO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao6 = Fixture.descontoProdutoEdicao(cota1234, desconto2, null, fornecedorTreeLog, produtoEdicaoVeja2, TipoDesconto.ESPECIFICO);
 		save(descontoProdutoEdicao6);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao7 = Fixture.descontoProdutoEdicao(cota1234, BigDecimal.ONE, fornecedorTreeLog, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao7 = Fixture.descontoProdutoEdicao(cota1234, desconto2, null, fornecedorTreeLog, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
 		save(descontoProdutoEdicao7);
 		
-		DescontoProdutoEdicao descontoProdutoEdicao8 = Fixture.descontoProdutoEdicao(cota1234, BigDecimal.ONE, fornecedorTreeLog, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao8 = Fixture.descontoProdutoEdicao(cota1234, desconto3, null, fornecedorTreeLog, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
 		save(descontoProdutoEdicao8);
 		
 	}

@@ -36,7 +36,6 @@ import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.financeiro.ViewDesconto;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
@@ -119,14 +118,6 @@ public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTes
 		movimentoEstoqueCota1.setData(Fixture.criarData(8, Calendar.NOVEMBER, 2012));
 		save(movimentoEstoqueCota1);
 		
-		
-		ViewDesconto viewDesconto = new ViewDesconto();
-		viewDesconto.setId(1L);
-		viewDesconto.setDesconto(BigDecimal.ONE);
-		viewDesconto.setCotaId(cotaGuilherme.getId());
-		viewDesconto.setProdutoEdicaoId(produtoEdicaoVeja1.getId());
-		viewDesconto.setFornecedorId(fornecedorDinap.getId());
-		save(viewDesconto);
 	}
 		
 	@Test

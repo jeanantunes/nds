@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -575,7 +576,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicao> obterProdutosEdicoesPorCodigoProdutoLimitado(String codigoProduto, Integer limite) {
-		// TODO Auto-generated method stub
 
 		Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
 		
@@ -586,6 +586,42 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		criteria.setMaxResults(limite);
 		
 		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoDescontoProdutoDTO> obterProdutosEdicoesPorCodigoProdutoComDesconto(
+			String codigoProduto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+//		case when pe.desconto is null or pe.desconto = 0 then (case when p.desconto is null then 0 else p.desconto end) else pe.desconto end		
+		hql .append("select new ")
+			.append(TipoDescontoProdutoDTO.class.getCanonicalName())
+			.append("(p.codigo, p.nome, pe.numeroEdicao, d.valor, d.dataAlteracao, u.nome) ")
+			.append("\n")
+			.append("from ProdutoEdicao pe join pe.produto p join pe.desconto as d join d.usuario u")
+			.append("\n")
+			.append("where p.codigo = :codigoProduto ")
+			.append("\n");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("codigoProduto", codigoProduto);
+		
+		return (List<TipoDescontoProdutoDTO>) q.list();
+		
+		/*Criteria criteria = getSession().createCriteria(ProdutoEdicao.class);
+		
+		criteria.createAlias("produto", "produto");
+		
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+		
+		criteria.add(Restrictions.isNotNull("desconto"));
+		
+		criteria.add(Restrictions.not(Restrictions.eq("desconto", BigDecimal.ZERO)));
+		
+		return criteria.list();*/
 	}
 	
 	/**

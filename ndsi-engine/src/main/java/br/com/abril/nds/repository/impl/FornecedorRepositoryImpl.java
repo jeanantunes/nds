@@ -432,6 +432,26 @@ public class FornecedorRepositoryImpl extends
 
 		return (EnderecoFornecedor) criteria.uniqueResult();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Fornecedor> obterFornecedoresPorDesconto(Long idDesconto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select f ");
+		hql.append("from Fornecedor f, HistoricoDescontoFornecedor hdf ");
+		hql.append("where f.desconto.id = hdf.desconto.id ");
+		hql.append("and f.id = hdf.fornecedor.id ");
+		hql.append("and f.desconto.id = :idDesconto ");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idDesconto", idDesconto);
+		
+		return q.list();
+
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override

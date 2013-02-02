@@ -36,15 +36,13 @@ var descontoProdutoController = $.extend(true,{
 		});	
 	},
 
-	novoDescontoProduto:function() {
+	novoDescontoProduto: function() {
 		
 		var data = descontoProdutoController.obterParametrosNovoDescontoProduto();
 
 		$.postJSON(contextPath+"/financeiro/tipoDescontoCota/novoDescontoProduto",
 				   data,
 				   function(result) {
-
-					   tipoDescontoController.pesquisarDescontoProduto();
 
 					   $( "#dialog-produto",this.workspace ).dialog( "close" );
 
@@ -53,21 +51,12 @@ var descontoProdutoController = $.extend(true,{
 					   if (tipoMensagem && listaMensagens) {
 					       exibirMensagem(tipoMensagem, listaMensagens);
 				       }
+					   
+					   tipoDescontoController.pesquisarDescontoProduto();
 	               },
 				   null,
 				   true);
 
-	    verificadorProgressoGravacaoDescontoGeral = setInterval(function () {
-			$.getJSON(contextPath +"/financeiro/tipoDescontoCota/verificaProgressoGravacaoDescontoProduto",
-					   null,				   
-					   function(result) {
-					   		if (!result.ativo) {
-					   			exibirMensagem(result.tipoMensagem, result.listaMensagens);
-					   			clearInterval(verificadorProgressoGravacaoDescontoGeral);
-					   		}
-				   	   });
-	    }, 20000);
-		
 	},
 
 	obterParametrosNovoDescontoProduto: function() {
@@ -98,7 +87,7 @@ var descontoProdutoController = $.extend(true,{
 			
 		$("input[id^=cotaInput]",this.workspace).each(function(index, value) {
 			if ($(this).val()) {
-				data.push({name:'cotas' , value: $(this).val()});
+				data.push({name:'descontoDTO.cotas' , value: $(this).val()});
 			}
 		});
 		
@@ -187,7 +176,7 @@ var descontoProdutoController = $.extend(true,{
 		});	
 	},
 	
-	init:function(pesquisaCota){
+	init: function(pesquisaCota){
 		
 		descontoProdutoController.pesquisaCota = pesquisaCota;
 		
@@ -200,25 +189,25 @@ var descontoProdutoController = $.extend(true,{
 				display : 'Código',
 				name : 'codigoProduto',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			},{
 				display : 'Produto',
 				name : 'nomeProduto',
 				width : 228,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
 				width : 100,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Desconto %',
 				name : 'desconto',
 				width : 150,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Data Alteração',
@@ -230,7 +219,7 @@ var descontoProdutoController = $.extend(true,{
 				display : 'Usuário',
 				name : 'nomeUsuario',
 				width : 150,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Ação',

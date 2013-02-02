@@ -187,21 +187,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 			
 			.append("		     pessoaEditor.RAZAO_SOCIAL as nomeEditor,  ")
 			
-			.append("		     sum((estoqueProduto.QTDE_RECEBIDA-estoqueProduto.QTDE_DEVOLVIDA)*(produtoEdicao.PRECO_VENDA-(  ")
-			
-			.append("		    	 coalesce((select viewDesconto.DESCONTO  ")
-			
-			.append("		        from   VIEW_DESCONTO viewDesconto  ")
-			
-			.append("		        where  ")
-			
-			.append("		            viewDesconto.COTA_ID=estoqueProduto.COTA_ID  ")
-			
-			.append("		            and viewDesconto.PRODUTO_EDICAO_ID=estoqueProduto.PRODUTO_EDICAO_ID  ")
-			
-			.append("		            and viewDesconto.FORNECEDOR_ID=fornecedor.ID),  ")
-			
-			.append("		        0)*produtoEdicao.PRECO_VENDA/100))) as faturamentoCapa   ")
+			.append("		     sum((estoqueProduto.QTDE_RECEBIDA - estoqueProduto.QTDE_DEVOLVIDA) * (movimentos.PRECO_COM_DESCONTO)) as faturamentoCapa   ")
 				    
 			.append("	     from  ")
 			

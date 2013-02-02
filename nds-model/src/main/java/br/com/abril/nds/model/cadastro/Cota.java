@@ -169,7 +169,7 @@ public class Cota implements Serializable {
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
-	
+		
 	public Cota() {
         this.inicioAtividade = new Date();
         this.inicioTitularidade = new Date();

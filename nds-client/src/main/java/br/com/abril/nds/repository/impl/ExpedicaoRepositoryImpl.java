@@ -71,7 +71,6 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	public Long obterQuantidadeResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
-		
 		hql.append(getHqlResumoLancamentoPorBox());
 		
 		Query query = getSession().createSQLQuery(hql.toString());
