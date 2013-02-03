@@ -6,7 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.repository.impl.AbstractRepositoryModel;
+import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.server.model.Indicador;
 import br.com.abril.nds.server.repository.IndicadorRepository;
 import br.com.abril.nds.util.DateUtil;

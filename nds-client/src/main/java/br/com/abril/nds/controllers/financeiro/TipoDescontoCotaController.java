@@ -23,8 +23,8 @@ import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
@@ -33,9 +33,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.Constantes;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -60,13 +58,7 @@ public class TipoDescontoCotaController extends BaseController {
 	private DescontoService descontoService;
 
 	@Autowired
-	private UsuarioService usuarioService;
-	
-	@Autowired
 	private HttpSession session;
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private FornecedorService fornecedorService;
