@@ -6,13 +6,13 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
-public class FiltroCotasRegiaoDTO implements Serializable {
+public class FiltroCotasRegiaoDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = 2433782322485644813L;
 	
 	private Long id;
 	
-	private PaginacaoVO paginacao;
+	private String nomeCota;
 	
 	private String cepInicial;
 	
@@ -52,14 +52,6 @@ public class FiltroCotasRegiaoDTO implements Serializable {
 		this.id = id;
 	}
 
-	public PaginacaoVO getPaginacao() {
-		return paginacao;
-	}
-
-	public void setPaginacao(PaginacaoVO paginacao) {
-		this.paginacao = paginacao;
-	}
-
 	public String getCepInicial() {
 		return cepInicial;
 	}
@@ -75,5 +67,12 @@ public class FiltroCotasRegiaoDTO implements Serializable {
 	public void setCepFinal(String cepFinal) {
 		this.cepFinal = cepFinal;
 	}
-	
+
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
 }

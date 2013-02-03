@@ -5,6 +5,7 @@ import java.util.Date;
 
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
 public class RegiaoDTO implements Serializable {
@@ -15,6 +16,8 @@ public class RegiaoDTO implements Serializable {
 	private String dataAlteracao;
 	private boolean isFixa;	
 	private String nomeUsuario;
+	
+	private PaginacaoVO paginacao;
 	
 	public String getNomeUsuario() {
 		return nomeUsuario;
@@ -45,5 +48,11 @@ public class RegiaoDTO implements Serializable {
 	}
 	public void setFixa(boolean isFixa) {
 		this.isFixa = isFixa;
+	}
+	public PaginacaoVO getPaginacao() {
+		return paginacao;
+	}
+	public void setPaginacao(PaginacaoVO paginacao) {
+		this.paginacao = paginacao;
 	}
 }

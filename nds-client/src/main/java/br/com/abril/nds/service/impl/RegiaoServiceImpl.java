@@ -12,8 +12,10 @@ import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.repository.RegiaoRepository;
 import br.com.abril.nds.repository.RegistroCotaRegiaoRepository;
+import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -30,6 +32,9 @@ public class RegiaoServiceImpl implements RegiaoService {
 	@Autowired
 	private RegiaoRepository regiaoRepository;
 
+	@Autowired
+	private TipoSegmentoProdutoRepository segmento;
+	
 	@Autowired
 	private RegistroCotaRegiaoRepository registroCotaRegiaoRepository;
 	
@@ -62,8 +67,8 @@ public class RegiaoServiceImpl implements RegiaoService {
 
 	@Override
 	@Transactional
-	public List<RegiaoCotaDTO> carregarCotasRegiao(Long id) {		
-		return regiaoRepository.carregarCotasRegiao(id);
+	public List<RegiaoCotaDTO> carregarCotasRegiao(FiltroCotasRegiaoDTO filtro) {		
+		return regiaoRepository.carregarCotasRegiao(filtro);
 	}
 
 	@Override
@@ -90,6 +95,8 @@ public class RegiaoServiceImpl implements RegiaoService {
 	@Override
 	@Transactional
 	public List<RegiaoCotaDTO> buscarPorCEP(FiltroCotasRegiaoDTO filtro) {
+		if(filtro == null) 
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
 		
 		return regiaoRepository.buscarPorCEP(filtro);
 	}
@@ -103,16 +110,34 @@ public class RegiaoServiceImpl implements RegiaoService {
 	@Override
 	@Transactional
 	public Regiao obterRegiaoPorId(Long idRegiao) {
-		if (idRegiao == null) {
-
-			throw new ValidacaoException(TipoMensagem.ERROR, "Id da cota não pode ser nulo.");
-		}
-		
+//		if (idRegiao == null) {
+//
+//			throw new ValidacaoException(TipoMensagem.ERROR, "Id da cota não pode ser nulo.");
+//		}
+//		
 		return this.regiaoRepository.buscarPorId(idRegiao);
 	}
-	
-	
-	
+
+	@Override
+	@Transactional
+	public List<TipoSegmentoProduto> carregarSegmentos() {
+		return segmento.buscarTodos();
+	}
+
+	@Override
+	@Transactional
+	public List<RegiaoCotaDTO> carregarTodasCotasDaRegiao() {
+		// TODO Auto-generated method stub
+		return this.regiaoRepository.buscarTodasCotasDaRegiao();
+	}
+
+	@Override
+	@Transactional
+	public void alterarRegiao(Regiao regiao) {
+		regiaoRepository.merge(regiao);
+//		regiaoRepository.alterar(regiao);
+		
+	}
 	
 	
 	//implementar nome as cotas

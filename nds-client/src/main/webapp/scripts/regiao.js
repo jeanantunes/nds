@@ -2,6 +2,7 @@ var regiaoController = $.extend(true, {
 	cotaAtual : '',
 	numCotas : null,
 	
+	
 	init : function() {
 	
 		$("#faixaGrid", regiaoController.workspace).flexigrid({
@@ -26,7 +27,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : ' ',
+				display : 'Adicionar',
 				name : 'sel',
 				width : 20,
 				sortable : true,
@@ -43,8 +44,8 @@ var regiaoController = $.extend(true, {
 		});
 
 		$(".lstCotasGrid").flexigrid({
-			url : '../xml/cotasLst-xml.xml',
-			dataType : 'xml',
+//			url : '../xml/cotasLst-xml.xml',
+//			dataType : 'xml',
 			colModel : [ {
 				display : 'Cota',
 				name : 'cota',
@@ -81,8 +82,8 @@ var regiaoController = $.extend(true, {
 		});
 
 		$(".lstProdutosGrid").flexigrid({
-			url : '../xml/nMaioresLst-xml.xml',
-			dataType : 'xml',
+//			url : '../xml/nMaioresLst-xml.xml',
+//			dataType : 'xml',
 			colModel : [ {
 				display : 'Edição',
 				name : 'edicao',
@@ -131,8 +132,8 @@ var regiaoController = $.extend(true, {
 		});
 
 		$(".nMaioresGrid").flexigrid({
-			url : '../xml/nMaiores-xml.xml',
-			dataType : 'xml',
+//			url : '../xml/nMaiores-xml.xml',
+//			dataType : 'xml',
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
@@ -175,8 +176,10 @@ var regiaoController = $.extend(true, {
 		});
 		
 		$(".segmentosGrid").flexigrid({
-			url : '../xml/segmentoB-xml.xml',
-			dataType : 'xml',
+//			url : '../xml/segmentoB-xml.xml',
+//			dataType : 'xml',
+			preProcess : regiaoController.executarPreProcessSegmentosGrid,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
@@ -219,8 +222,8 @@ var regiaoController = $.extend(true, {
 		});
 
 		$(".classificacaoGrid").flexigrid({
-			url : '../xml/segmentos-xml.xml',
-			dataType : 'xml',
+//			url : '../xml/segmentos-xml.xml',
+//			dataType : 'xml',
 			colModel : [ {
 				display : 'Cota',
 				name : 'cota',
@@ -245,8 +248,8 @@ var regiaoController = $.extend(true, {
 		});
 
 		$(".addCotasGrid").flexigrid({
-			url : '../xml/addCotas-xml.xml',
-			dataType : 'xml',
+//			url : '../xml/addCotas-xml.xml',
+//			dataType : 'xml',
 			colModel : [ {
 				display : 'Região',
 				name : 'regiao',
@@ -273,7 +276,7 @@ var regiaoController = $.extend(true, {
 			width : 400,
 			height : 200
 		});
-
+		
 		$(".regioesCadastradasGrid", regiaoController.workspace).flexigrid({
 			preProcess: regiaoController.executarPreProcessamentoTelaManutencao,
 			dataType : 'json',
@@ -443,21 +446,18 @@ var regiaoController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {
-			
-			var linkDetalhe = '<a href="javascript:;" onclick="regiaoController.excluirRegiao('+row.cell.id+');" style="cursor:pointer">' +
-								'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" />'+	
-							   '</a>';
-			
-			row.cell.acao = linkDetalhe;
-			
 			var checkBox = null;
 			if(row.cell.isFixa){
-				checkBox = '<input type="checkbox" name="fixa" id="fixa" checked>';				
+				checkBox = '<input type="checkbox" name="fixa" onchange="regiaoController.alterarRegiao('+row.cell.idRegiao+')" value="'+row.cell.isFixa+'" id="fixa" checked>';				
 			}else{
-				checkBox = '<input type="checkbox" name="fixa" id="fixa">';
+				checkBox = '<input type="checkbox" name="fixa" onchange="regiaoController.alterarRegiao('+row.cell.idRegiao+')" value="'+row.cell.isFixa+'" id="fixa">';
 			}
 			row.cell.isFixa = checkBox;
 			
+			var linkExcluir = '<a href="javascript:;" onclick="regiaoController.excluirRegiao('+row.cell.idRegiao+');" style="cursor:pointer">' +
+								'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" />'+	
+							   '</a>';
+			row.cell.acao = linkExcluir;
 		});
 		
 		$(".grids", regiaoController.workspace).show();
@@ -465,10 +465,66 @@ var regiaoController = $.extend(true, {
 		return resultado;
 	},
 	
+	
+	// Preprocess do faixaGrid
+	executarPreProcessFaixaGrid : function(resultado){
+		
+		if (resultado.mensagens) {
+			exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+			);
+			
+			$(".grids", regiaoController.workspace).hide();
+			
+			return resultado;
+		}
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			var checkAll = '<input type="checkbox" name="cotaSelected" id="cotaSelected" checked value='+row.cell.numeroCota+'>';
+			row.cell.sel = checkAll;
+			
+		});
+		
+		$(".grids", regiaoController.workspace).show();
+		
+		return resultado;
+		
+	},
+
+	// PREPROCESS REGIÃO AUTOMÁTICA - SEGMENTO
+	
+	executarPreProcessSegmentosGrid : function (resultado){
+		if (resultado.mensagens) {
+			
+			exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+			);
+			
+//			$(".grids", regiaoController.workspace).hide();
+			$(".porSegmento", regiaoController.workspace).hide();
+			
+			return resultado;
+		}
+		
+		$(".porSegmento", regiaoController.workspace).show();
+		
+		return resultado;
+	},
+	
+	
 	// -- FUNCTIONS --
+	
+	
+
+	//	FUNCTIONS - REGIÃO
+	
+	
 
 	// FUNCTIONS - CARREGAR REGIAO
-	
+
 	carregarRegiao : function() {
 		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
@@ -496,51 +552,122 @@ var regiaoController = $.extend(true, {
 			}
 		});
 	},
-
-	// FUNCTION - ADD COTAS
-
-	// POSSÍVELMENTE INUTILIZADA
 	
-	addCotas : function() {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+	// FUNCTIONS - Alterar REGIAO
 
-		$("#dialog-cotas").dialog({
+	alterarRegiao : function(id) {
+//		alert (id);
+		
+		var idFixo = id;
+		if(idFixo == id){
+			idFixo = id;
+		}
+		
+		$("#dialog-alterarRegiao").dialog({
 			resizable : false,
-			height : 550,
-			width : 650,
+			height : 170,
+			width : 380,
 			modal : true,
+			
 			buttons : {
-				"Confirmar" : function() {
-					$(this).dialog("close");
+				"Confirmar" : function(idFixo) {
+					$.postJSON(contextPath + "/distribuicao/regiao/alterarRegiao", 
+							{id:id},
+							function(result) {
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+									$(".regioesCadastradasGrid").flexReload();
+							   },
+							   null,
+							   true
+					);
+					$("#dialog-alterarRegiao").dialog("close");
 				},
 				"Cancelar" : function() {
-					$(this).dialog("close");
+//					$(this).dialog("close");
+					$("#dialog-alterarRegiao").dialog("close");
 				}
-			}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout('dialogMensagemNovo');
+			},
 		});
 	},
-
+	
 	
 	// FUNCTION - EDITAR REGIAO
 	
 	editarRegiao : function(){
-		var regiao = $("#comboRegioes option:selected").val();
+//		var regiao = $("#comboRegioes option:selected").val();
 		
 		//alert(regiao);
 		
-		$(".cotasRegiaoGrid", this.workspace).flexOptions({
-			url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
-			dataType : 'json',
-			params:[{
-				name : 'filtro.id', value:regiao
-			}]
+//		$(".cotasRegiaoGrid", this.workspace).flexOptions({
+//			url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
+//			dataType : 'json',
+//			params:[{
+//				name : 'filtro.id', value:regiao
+//			}]
+//		});
+//		
+//		$(".cotasRegiaoGrid", this.workspace).flexReload();
+		
+		$("#dialog-editar").dialog({
+			resizable : false,
+			height : 170,
+			width : 380,
+			modal : true,
+			buttons : {
+				"Confirmar" : function() {
+					$.postJSON(contextPath + "/distribuicao/regiao/editarRegiao", 
+							{id:id},
+							function(result) {
+									$("#dialog-editar", this.workspace).dialog("close");
+
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+											
+									$(".cotasRegiaoGrid", this.workspace).flexReload();
+							},null);
+					
+					
+					
+					$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
+						url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
+						dataType : 'json',
+						params:[{
+							name : 'filtro.id', value:regiao
+						}]
+					});
+						
+					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();		
+					
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			},
+			beforeClose: function() {
+				clearMessageDialogTimeout('dialogMensagemNovo');
+			},
+			form: $("#dialog-excluir", this.workspace).parents("form"),
 		});
-			
-		$(".cotasRegiaoGrid", this.workspace).flexReload();
 			
 	},
 	
-	// FUNCTION - COTAS DA REGIAO
+	
+	// FUNCTION - CARREGAR COMBO REGIÃO
 	
 	cotasDaRegiao : function(){
 		var regiao = $("#comboRegioes option:selected").val();
@@ -559,11 +686,15 @@ var regiaoController = $.extend(true, {
 		$(".regioesCadastradasGrid", this.workspace).flexReload();
 	},
 	
+	
 	// FUNCTION - ADD NOVA REGIAO
 	
 	addNovaRegiao : function() {
 		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
+		$("#nomeRegiao").val("");
+		$("#regiaoIsFixa").removeAttr('checked');
+		
 		$("#dialog-addRegiao").dialog({
 
 					resizable : false,
@@ -574,7 +705,7 @@ var regiaoController = $.extend(true, {
 					buttons : {
 						"Confirmar" : function() {
 							$(this).dialog("close");
-							mostrar();
+//							mostrar();
 							
 							var nome = $("#nomeRegiao").val();
 							var isFixa = $('#regiaoIsFixa').is(':checked');
@@ -588,9 +719,17 @@ var regiaoController = $.extend(true, {
 							// Chamada para a controller
 							$.postJSON(contextPath
 									+ "/distribuicao/regiao/salvarRegiao",
-									data, function(result) {
-									});
-							$("#dialog-addRegiao", this.workspace).flexReload();
+									data, 
+									function(result) 
+									{
+								var options = "<option selected=selected value=0>Selecione...</option>";
+				                 $.each(result.listaRegiao, function(key, tipoRegiao){
+				                    options += '<option value="' + tipoRegiao.idRegiao + '">' + tipoRegiao.nomeRegiao + '</option>';
+				                 });
+				                 $("#comboRegioes").html(options);
+									}
+									);
+//							$("#dialog-addRegiao", this.workspace).flexReload();
 						},
 						"Cancelar" : function() {
 							$(this).dialog("close");
@@ -598,35 +737,73 @@ var regiaoController = $.extend(true, {
 					}
 				});
 
-		$("#regiaoIsFixa", this.regiaoController.workspace).val(0);
-		if (document.dialog - addRegiao.regiaoIsFixa.checked) {
-			$("#regiaoIsFixa", this.regiaoController.workspace).val(1);
-		}
+//		$("#regiaoIsFixa", this.regiaoController.workspace).val(0);
+//		if (document.dialog - addRegiao.regiaoIsFixa.checked) {
+//			$("#regiaoIsFixa", this.regiaoController.workspace).val(1);
+//		}
 	},
 	
-	// FUNCTION - ADD COTA
+// FUNCTION - EXCLUIR REGIÃO
 	
-	addCota : function() {
+	excluirRegiao : function(id) {
 		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+//		alert (id);
+		$("#dialog-excluir").dialog({
+			resizable : false,
+			height : 170,
+			width : 380,
+			modal : true,
+			buttons : {
+				"Confirmar" : function() {
+					$.postJSON(contextPath + "/distribuicao/regiao/excluirRegiao", 
+							{id:id},
+							function(result) {
+//									$(".regioesCadastradasGrid", this.workspace).flexReload(),
+//									$("#dialog-excluir", this.workspace).dialog("close");
 
-		$("#dialog-addCota").dialog({
-					resizable : false,
-					height : 'auto',
-					width : 750,
-					modal : true,
-
-					buttons : {
-						"Confirmar" : function() {
-							$(this).dialog("close");
-							},
-						"Cancelar" : function() {
-							$(this).dialog("close");
-						}
-					}
-				});
-	},	
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+											
+//									$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
+//										url: contextPath + "/distribuicao/regiao/carregarRegiao",
+//										dataType : 'json'
+//									});
+//										
+									$(".regioesCadastradasGrid").flexReload();
+//									$(".regioesCadastradasGrid", this.workspace).flexReload();
+							   },
+							   null,
+							   true
+					);
+					$("#dialog-excluir").dialog("close");
+					
+//					$(".regioesCadastradasGrid", this.workspace).flexOptions({
+//						url: contextPath + "/distribuicao/regiao/carregarRegiao",
+//						dataType : 'json'
+//					});
+//						
+//					$(".regioesCadastradasGrid", this.workspace).flexReload();		
+					
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			},
+			
+			beforeClose: function() {
+				clearMessageDialogTimeout('dialogMensagemNovo');
+			},
+//			form: $("#dialog-excluir", regiaoController.workspace).parents("form")
+		});
+	},
 	
-	// FUNCTION - REGIAO AUTOMÁTICA
+	
+// FUNCTION - REGIAO AUTOMÁTICA - Dialog Principal
 	
 	regiaoAutomatica : function() {
 		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -647,73 +824,129 @@ var regiaoController = $.extend(true, {
 			}
 		});
 	},
+	
 
 	
-	// FUNCTION - EXCLUIR REGIÃO
 	
-	excluirRegiao : function(id) {
+	// FUNCTION - REGIÃO AUTOMÁTICA - GRID PRINCIPAL
+	
+	addCotas : function() {
 		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
-//		alert (id);
-		$("#dialog-excluir").dialog({
+
+		$("#dialog-cotas").dialog({
 			resizable : false,
-			height : 170,
-			width : 380,
+			height : 550,
+			width : 650,
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
-					$.postJSON(contextPath + "/distribuicao/regiao/excluirRegiao", 
-							{id:id},
-							function(result) {
-//									$(".regioesCadastradasGrid", this.workspace).flexReload(),
-									$("#dialog-excluir", this.workspace).dialog("close");
-
-									var tipoMensagem = result.tipoMensagem;
-									var listaMensagens = result.listaMensagens;
-									
-									if (tipoMensagem && listaMensagens) {
-										
-										exibirMensagem(tipoMensagem, listaMensagens);
-									}
-											
-									$(".regioesCadastradasGrid", this.workspace).flexReload();
-							   },
-							   null,
-							   true
-					);
+					//$("#dialog-cota").flexReload();
+//					$("#faixaGrid").flexReload();
+					var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
 					
-					$(".regioesCadastradasGrid", this.workspace).flexOptions({
-						url: contextPath + "/distribuicao/regiao/carregarRegiao",
-						dataType : 'json'
+					$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
+						url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
+						dataType : 'json',
+							params: [{name: "filtro.id", value: idRegiaoSelecionada}]
 					});
-						
-					$(".regioesCadastradasGrid", this.workspace).flexReload();		
 					
+					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
+					$(this).dialog("close");
+//					$("#dialog-cotas").dialog("destroy");
+//					$ ("# jdialog_box_content") vazio ();
+//					$("#dialog-cotas").empty();
+//					$("#faixaGrid").empty();
+					closest('#faixaGrid');
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
+					$("#faixaGrid").closest('#grid');
+//					$("#dialog-cotas").dialog("destroy");
+//					$("#dialog-cotas").flexReload();
+//					$("#faixaGrid").flexReload();
 				}
-			},
-			
-			beforeClose: function() {
-				clearMessageDialogTimeout('dialogMensagemNovo');
-			},
-//			form: $("#dialog-excluir", regiaoController.workspace).parents("form")
+			}
 		});
 	},
+
+	
+
+	// FUNCTIONS - COTA
+	
+	
+	// FUNCTION - ADD COTA
+
+	addCota : function() {
+		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+		$("#dialog-addCota").dialog({
+					resizable : false,
+					height : 'auto',
+					width : 750,
+					modal : true,
+					buttons : {
+						"Confirmar" : function() {
+							$(this).dialog("close");
+							},
+						"Cancelar" : function() {
+							$(this).dialog("close");
+						}
+					}
+				});
+	},	
+	
+	
+	// FUNCTIONS - SEGMENTOS
+
+	
+	// FUNCTIONS - CARREGAR SEGMENTOS
+	
+	carregarSegmento : function() {
+		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+		$(".segmentosGrid", this.workspace).flexOptions({
+			url: contextPath + "/distribuicao/regiao/carregarSegmentos",
+			dataType : 'json',
+		});
+			
+//		$(".segmentosGrid", this.workspace).flexReload();		
+
+//		$("#dialog-novo").dialog({
+//			resizable : false,
+//			height : 400,
+//			width : 650,
+//			modal : true,
+//			buttons : {
+//				"Confirmar" : function() {
+//					$(this).dialog("close");
+//
+//					$("#effect").show("highlight", {}, 1000, callback);
+//				},
+//				"Cancelar" : function() {
+//					$(this).dialog("close");
+//				}
+//			}
+//		});
+	},
+
+	
+	
+	//FUNCTIONS ADD REGIÃO AUTOMÁTICA  
 	
 	
 	// FUNCTION - ADD EM LOTE
 	
-	add_lote : function() {
+	cotaslote : function() {
 		$("#dialog-lote").dialog({
 			resizable : false,
 			height : 320,
-			width : 190,
+			width : 250,
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
 					$(this).dialog("close");
 					$("#effect").show("highlight", {}, 1000, callback);
+//					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
@@ -745,36 +978,56 @@ var regiaoController = $.extend(true, {
 
 	},
 
-//	add_cotas : function() {
-//		$("#dialog-pesqCotas").dialog({
-//			resizable : false,
-//			height : 520,
-//			width : 645,
-//			modal : true,
-//			buttons : {"Confirmar" : function() {
-//					$(this).dialog("close");
-//					$("#effect").show("highlight", {}, 1000, callback);
-//					
-//					var numero = $("#numeroCota").val();
-//					var nome = $("#nomeCota").val();
-//					
-//					var data = [ {
-//						name : 'nome', value : nome}, 
-//						{name : 'numero', value : numero} ];
-//				
-//			},
-//				"Cancelar" : function() {
-//					$(this).dialog("close");
-//				}
-//			}
-//		});
-//
-//	},
+	
+	add_cotas : function() {
+		$("#dialog-confirmacao").dialog({
+			resizable : false,
+			height : 150,
+			width : 200,
+			modal : true,
+			buttons : {"Confirmar" : function() {
+					$(this).dialog("close");
+					$("#effect").show("highlight", {}, 1000, callback);
+					var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
+					var cotas = [];
+
+					$("input[type=checkbox][name='cotaSelected']:checked").each(function() {
+						if(this.value.length>0)
+							cotas.push({name:'cotas', value:this.value});
+					});
+
+					// adicionando a região
+					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
+					
+					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
+							cotas, 
+							function(result) {
+//						$("dialog-confirmacao", this.workspace).dialog("close");
+
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) 
+							exibirMensagem(tipoMensagem, listaMensagens);
+						
+						$(".regioesCadastradasGrid").flexReload();
+								
+//						$(".cotasRegiaoGrid", this.workspace).flexReload();
+					});
+			},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+
+	},
 	
 //	add_cotas : function() {
 //		$("#dialog-addCota").dialog({});
 // 
 //	},
+	
 	
 	// FUNCTION - VERIFICA SE A REGIÃO É FIXA 	
 	
@@ -782,7 +1035,7 @@ var regiaoController = $.extend(true, {
 		
 		var elemento = $("#" + campo, regiaoController.workspace);
 		
-		if(elemento.attr('type') == 'checkbox') {
+		if(elemento.attr('type') == 'ckckbox') {
 			return (elemento.attr('checked') == 'checked') ;
 		} else {
 			return elemento.val();
@@ -790,69 +1043,83 @@ var regiaoController = $.extend(true, {
 		
 	},
 
+	
+	
+	// FILTROS REGIÃO AUTOMÁTICA
+	
 	// FUNCTION - FILTRO POR CEP
 	
 	filtroPorCep : function() {
 		$('.porCep').show();
-		$('.porSegmento').hide();
-
-		$('.gridfaixaCep').hide();
-		$('.gridNMaiores').hide();
-		$('.gridsegmentos').hide();
+		$('.porSegmento').hide("drop", { direction: "left" }, "slow");
+		$('.gridfaixaCep').hide("drop", { direction: "left" }, "slow");
+		$('.gridNMaiores').hide("drop", { direction: "left" }, "slow");
+		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
+		
+//		regiaoController.comboSegmento ();
+		
 	},
 	
 	// FUNCTION - FILTRO POR N-MAIORES
 
 	filtroPorNMaiores : function() {
-		$('.porCep').hide();
-		$('.porSegmento').hide();
-
-		$('.gridfaixaCep').hide();
+		$('.porCep').hide("drop", { direction: "left" }, "slow");
+		$('.porSegmento').hide("drop", { direction: "left" }, "slow");
+		$('.gridfaixaCep').hide("drop", { direction: "left" }, "slow");
 		$('.gridNMaiores').show();
-		$('.gridsegmentos').hide();
+		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
 	},
 
 	// FUNCTION - FILTRO POR SEGMENTO
 	
 	filtroPorSegmento : function() {
-		$('.porCep').hide();
+		$('.porCep').hide("drop", { direction: "left" }, "slow");
 		$('.porSegmento').show();
-
-		$('.gridfaixaCep').hide();
-		$('.gridNMaiores').hide();
-		$('.gridsegmentos').hide();
+		$('.gridfaixaCep').hide("drop", { direction: "left" }, "slow");
+		$('.gridNMaiores').hide("drop", { direction: "left" }, "slow");
+		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
+	
 	},
 
-	// Preprocess do faixaGrid
-	executarPreProcessFaixaGrid : function(resultado){
-		
-		if (resultado.mensagens) {
-
-			exibirMensagem(
-				resultado.mensagens.tipoMensagem, 
-				resultado.mensagens.listaMensagens
-			);
-			
-			$(".grids", regiaoController.workspace).hide();
-
-			return resultado;
-		}
-		
-		$.each(resultado.rows, function(index, row) {
-			
-			var checkBox = '<input type="checkbox" name="cotaSelected" value="'+ row.cell.cotaId +'" />';
-			
-			row.cell.sel = checkBox;
-			
-		});
-		
-		$(".grids", regiaoController.workspace).show();
-		
-		return resultado;
-		
-	},
+	
+	
+	// REGIÃO AUTOMÁTICA GRID'S
+	
 	
 	// FUNCTION - MOSTRAR POR CEP
+	
+	
+// FUNCTION - MOSTRAR POR N-MAIORES
+	
+	mostrarPorNMaiores : function() {
+		$('.gridfaixaCep').hide();
+		$('.gridNMaiores').show();
+		$('.gridsegmentos').hide();
+	},
+	
+	// FUNCTION - MOSTRAR POR SEGMENTO
+
+	mostrarPorSegmento : function() {
+		$('.gridfaixaCep').hide();
+		$('.gridNMaiores').hide();
+		$('.gridsegmentos').show();
+	
+//		$.postJSON(contextPath + "/distribuicao/regiao/buscarPorCep", 
+//				regiaoController.obterRangeDeCep(),
+//				function(result) {
+//						var json = JSON.stringify(result);
+//												
+//						$(".faixaGrid", regiaoController.workspace).flexAddData(json);
+//		
+//						$("#faixaGrid", regiaoController.workspace).flexReload();
+//				   },
+//				   null,
+//				   true
+//		);
+	
+	
+	
+	},
 	
 	mostrarPorCep : function() {
 		$('.gridfaixaCep').show();
@@ -860,35 +1127,35 @@ var regiaoController = $.extend(true, {
 		$('.gridsegmentos').hide();
 		
 		
-//		$("#faixaGrid", regiaoController.workspace).flexOptions({
-//			url: contextPath + "/distribuicao/regiao/buscarPorCep",
-//			dataType : 'json',
-//			params : regiaoController.obterRangeDeCep()
-//		});
-//		
-//		$("#faixaGrid", regiaoController.workspace).flexReload();	
+		$("#faixaGrid").flexOptions({
+			url: contextPath + "/distribuicao/regiao/buscarPorCep",
+			dataType : 'json',
+			params : regiaoController.obterRangeDeCep()
+		});
 		
-		$.postJSON(contextPath + "/distribuicao/regiao/buscarPorCep", 
-				regiaoController.obterRangeDeCep(),
-				function(result) {
-//						var tipoMensagem = result.tipoMensagem;
-//						var listaMensagens = result.listaMensagens;
+		$("#faixaGrid").flexReload();	
+		
+//		$.postJSON(contextPath + "/distribuicao/regiao/buscarPorCep", 
+//				regiaoController.obterRangeDeCep(),
+//				function(result) {
+////						var tipoMensagem = result.tipoMensagem;
+////						var listaMensagens = result.listaMensagens;
+////						
+////						if (tipoMensagem && listaMensagens) {
+////							
+////							exibirMensagem(tipoMensagem, listaMensagens);
+////						}
 //						
-//						if (tipoMensagem && listaMensagens) {
-//							
-//							exibirMensagem(tipoMensagem, listaMensagens);
-//						}
-						
-						var json = JSON.stringify(result);
-												
-						$(".faixaGrid", regiaoController.workspace).flexAddData(json);
-		
-						$("#faixaGrid", regiaoController.workspace).flexReload();
-						
-				   },
-				   null,
-				   true
-		);
+//						var json = JSON.stringify(result);
+//												
+//						$(".faixaGrid", regiaoController.workspace).flexAddData(json);
+//		
+//						$("#faixaGrid", regiaoController.workspace).flexReload();
+//						
+//				   },
+//				   null,
+//				   true
+//		);
 	},
 	
 	// FUNCTION - OBTER RANGE DE CEP'S
@@ -913,21 +1180,26 @@ var regiaoController = $.extend(true, {
 		return data;
 	},
 	
-	// FUNCTION - MOSTRAR POR N-MAIORES
+		
+	// FUNCTION - SEGMENTOS
 	
-	mostrarPorNMaiores : function() {
-		$('.gridfaixaCep').hide();
-		$('.gridNMaiores').show();
-		$('.gridsegmentos').hide();
+	comboSegmento : function(){
+		var segmento = $("#comboSegmento option:selected").val();
+		
+		alert(segmento);
+		
+		$(".cotasRegiaoGrid", this.workspace).flexOptions({
+			url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
+			dataType : 'json',
+			params:[{
+				name : 'filtro.id', value:segmento
+			}]
+		});
+			
+		$(".cotasRegiaoGrid", this.workspace).flexReload();
+		$(".regioesCadastradasGrid", this.workspace).flexReload();
 	},
 	
-	// FUNCTION - MOSTRAR POR SEGMENTO
-
-	mostrarPorSegmento : function() {
-		$('.gridfaixaCep').hide();
-		$('.gridNMaiores').hide();
-		$('.gridsegmentos').show();
-	},
 
 	// FUNCTION - POP UP DETALHES
 	
@@ -980,48 +1252,12 @@ var regiaoController = $.extend(true, {
 			regiaoController.gerarLinhaCota('','');
 		}
 		
-		$( "#dialog-addCota", regiaoController.workspace).dialog({
+		$( "#dialog-addCota").dialog({
 			resizable: false,
 			height:'auto',
 			width:530,
 			modal: true,
 			buttons: {
-				/*
-				"Confirmar" : function() {
-							$(this).dialog("close");
-							mostrar();
-							
-							var nome = $("#nomeRegiao").val();
-							var isFixa = $('#regiaoIsFixa').is(':checked');
-							
-							var data = [ {
-								name : 'nome', value : nome
-							}, {
-								name : 'isFixa', value : isFixa
-							} ];
-
-							// Chamada para a controller
-							$.postJSON(contextPath
-									+ "/distribuicao/regiao/salvarRegiao",
-									data, function(result) {
-									});
-							$("#dialog-addRegiao", this.workspace).flexReload();
-						},
-				 */
-				
-				/*
-				 * regiaoController.numCotas = cotas;
-		
-		var parametros = [];
-		var numero;
-		var idRegicaoSelecionada;
-		
-		$.each(cotas, function(index, num) {			
-			//parametros.push({name:'numCotas['+ index +']', value: num});
-			numero = parametros.push({name : 'numeroCota', value : num});
-			idRegicaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
-	  	});
-				 */
 
 				// FUNCTION - CONFIRMAR ADIÇÃO DE COTA NA REGIAO
 				
@@ -1040,12 +1276,6 @@ var regiaoController = $.extend(true, {
 					// adicionando a região
 					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
 					
-//					var data = [{
-//						name: 'idRegiaoSelecionada', value :  idRegiaoSelecionada
-//					},{
-//						name: 'cotas', value : cotas
-//					}];
-					
 					if(cotas.length === 0) {
 						exibirMensagemDialog("WARNING",["Selecione uma ou mais cotas."]);	
 						return;
@@ -1053,6 +1283,14 @@ var regiaoController = $.extend(true, {
 					
 					$.postJSON(contextPath + "/distribuicao/regiao/addCotaNaRegiao",
 							cotas, function(result) {
+						
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) {
+							
+							exibirMensagem(tipoMensagem, listaMensagens);
+						}
 						
 					});
 					
@@ -1064,10 +1302,11 @@ var regiaoController = $.extend(true, {
 //					$(".regioesCadastradasGrid", this.workspace).flexReload();
 					
 					$( this ).dialog( "close" );
-					
+					$("#idCotas").html("");
 				},
 				"Cancelar": function() {
-										
+					
+					$("#idCotas").html("");
 					$( this ).dialog( "close" );
 				}				
 			},
@@ -1330,37 +1569,18 @@ var regiaoController = $.extend(true, {
 						
 		$('#idNumCota').focus();
 	},
+	 
 	
-	
-	/*(
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
+	checkAll : function() {
+		var valor = $("#todos").is(":checked");
+		$("input[type=checkbox][name='cotaSelected']").attr("checked", valor);
+	},
 	
 	remove_cotas_grid : function(id) {
 		
 		regiao = $("#comboRegioes option:selected").val();
 		
-		$("#dialog-excluir").dialog({
+		$("#dialog-excluirCota").dialog({
 			resizable : false,
 			height : 170,
 			width : 380,
@@ -1371,7 +1591,7 @@ var regiaoController = $.extend(true, {
 							{id:id},
 							function(result) {
 //									$(".regioesCadastradasGrid", this.workspace).flexReload(),
-									$("#dialog-excluir", this.workspace).dialog("close");
+									$("#dialog-excluirCota", this.workspace).dialog("close");
 
 									var tipoMensagem = result.tipoMensagem;
 									var listaMensagens = result.listaMensagens;
@@ -1381,19 +1601,20 @@ var regiaoController = $.extend(true, {
 										exibirMensagem(tipoMensagem, listaMensagens);
 									}
 											
-									$(".cotasRegiaoGrid", this.workspace).flexReload();
+//									$(".cotasRegiaoGrid", this.workspace).flexReload();
+									
+									$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
+										url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
+										dataType : 'json',
+										params:[{
+											name : 'filtro.id', value:regiao
+										}]
+									});
+										
+									$(".cotasRegiaoGrid").flexReload();
+									
 							},null);
-					
-					$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
-						url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
-						dataType : 'json',
-						params:[{
-							name : 'filtro.id', value:regiao
-						}]
-					});
-						
-					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();		
-					
+									$(this).dialog("close");
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
@@ -1402,7 +1623,7 @@ var regiaoController = $.extend(true, {
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
 			},
-			form: $("#dialog-excluir", this.workspace).parents("form"),
+			form: $("#dialog-excluirCota", this.workspace).parents("form"),
 		});
 	}
 }, BaseController);

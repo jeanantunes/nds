@@ -128,7 +128,6 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 	}
 	
-	
 	public Long obterRankingCotaDistribuidor(Long idCota){
 		
 		StringBuilder sql = new StringBuilder();

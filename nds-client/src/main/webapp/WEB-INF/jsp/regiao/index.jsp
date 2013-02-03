@@ -35,11 +35,20 @@ $(function(){
 
 		<div class="container">
 		
+	<!-- 
 	<form action="/produto" id="excluir_form">
-	<div id="dialog-excluir" title="Excluir Produto">
+	<div id="dialog-excluir " title="Excluir Região">
 		<p>Confirma a exclusão desta Região?</p>
 	</div>
 	</form>
+	 -->
+	
+	<form action="/produto" id="excluir_form">
+	<div id="dialog-confirmacao" title="Inserir cota" style="display: none;">
+		<p>Confirma a inserção destas cotas na região?</p>
+	</div>
+	</form>
+	
 	<div id="dialog-pesqCotas" title="Selecionar Cotas"
 		style="display: none;">
 		<fieldset style="width: 600px !important;">
@@ -67,11 +76,14 @@ $(function(){
 		<fieldset style="width: 600px !important; margin-top: 10px !important;">
 			<legend>Selecionar Cotas</legend>
 			<table class="lstCotasGrid"></table>
-			<span class="bt_sellAll" style="float: right;"><label
-				for="sel">Selecionar Todos</label><input type="checkbox" id="sel"
-				name="Todos" onclick="regiaoController.checkAll();"
-				style="float: left; margin-right: 25px;" /> </span>
+			<span class="bt_sellAll" style="float: right;">
+				<label	for="sel">Selecionar Todos</label>
+					<input type="checkbox" id="selCEP"
+					name="checkAllCEP" onclick="regiaoController.checkAll();"
+					style="float: left; margin-right: 25px;" /> 
+			</span>
 		</fieldset>
+		
 	</div>
 
 	<div id="dialog-detalhes" title="Visualizando Produto">
@@ -124,7 +136,6 @@ $(function(){
 	</div>
 	
 	<!-- REGIÃO AUTOMÁTICA -->
-	
 	<div id="dialog-cotas" title="Montagem de Regão Automática"
 		style="display: none;">
 		<fieldset style="width: 600px !important;">
@@ -154,13 +165,13 @@ $(function(){
 					<tr>
 						<td width="86">Faixa de CEP:</td>
 						<td width="133">
-							<input type="text" name="textfield" id="cepInicialPart1" style="width: 80px;" /> 
-							<input type="text" name="textfield3" id="cepInicialPart2" style="width: 30px;" />
+							<input type="text" name="textfield" id="cepInicialPart1" size="5" maxlength="5" style="width: 50px;" /> 
+							<input type="text" name="textfield3" id="cepInicialPart2" size="3" maxlength="3" style="width: 30px;" />
 						</td>
 						<td width="26">Até:</td>
 						<td width="186">
-							<input type="text" name="textfield4" id="cepFinalPart1" style="width: 80px;" /> 
-							<input type="text" name="textfield4" id="cepFinalPart2" style="width: 30px;" /></td>
+							<input type="text" name="textfield4" id="cepFinalPart1" size="5" maxlength="5" style="width: 50px;" /> 
+							<input type="text" name="textfield4" id="cepFinalPart2" size="3" maxlength="3" style="width: 30px;" /></td>
 						<td width="87">
 							<span class="bt_pesquisar">
 								<a href="javascript:;" onclick="regiaoController.mostrarPorCep();">Pesquisar</a>
@@ -176,10 +187,26 @@ $(function(){
 				<table width="550" border="0" cellspacing="2" cellpadding="2">
 					<tr>
 						<td width="51">Segmento:</td>
-						<td width="205"><select name="select" id="select"
-							style="width: 180px;">
-								<option>Selecione...</option>
-						</select>
+						<td width="205">
+							<!-- 
+							<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
+									onchange="$('.grids').toggle(); regiaoController.cotasDaRegiao()">
+									<option selected="selected">Selecione...</option>
+									<c:forEach items="${listaRegiao}" var="regiao">
+										<option value="${regiao.key}">${regiao.value}</option>
+									</c:forEach>
+							</select>
+							 -->
+													
+							<select name="comboSegmento" id="comboSegmento" style="width: 180px;"
+									onchange="$('.grids').toggle(); regiaoController.carregarSegmento()">
+									<option option selected="selected">Selecione...</option>
+										<c:forEach items="${listaSegmento}" var="segmento">
+											<option value="${segmento.key}">${segmento.value}</option>
+										</c:forEach>	
+							</select>
+							
+							
 						</td>
 						<td width="92">Qtde de Cotas:</td>
 						<td width="83"><input type="text" name="textfield2"
@@ -202,15 +229,16 @@ $(function(){
 			<legend>Faixa de Cep</legend>
 			<table class="faixaGrid" id="faixaGrid"></table>
 			
-			<span class="bt_sellAll" style="float: right;">
-				<label for="todos">Selecionar Todos</label>
-				
-				<input type="checkbox" id="todos" name="todos" onclick="regiaoController.checkAll();" style="float: left; margin-right: 25px;" /> 
+				<span class="bt_sellAll" style="float: right;">
+					<label for="todos">Selecionar Todos</label>
+					<input type="checkbox" id="todos" name="todos" onclick="regiaoController.checkAll();" style="float: left; margin-right: 25px;" checked/>					 
 				</span> 
+				
 				<span class="bt_novos">
 					<a	href="javascript:;" onclick="regiaoController.add_cotas();">
 					<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> 
 				</span>
+				
 				<span class="bt_novos"><a href="javascript:;">
 					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a> 
 				</span>
@@ -239,14 +267,30 @@ $(function(){
 			class="gridsegmentos">
 			<legend>Segmento</legend>
 			<table class="segmentosGrid"></table>
-			<span class="bt_sellAll" style="float: right;"><label
-				for="sel">Selecionar Todos</label><input type="checkbox" id="sel"
-				name="Todos" onclick="regiaoController.checkAll();"
-				style="float: left; margin-right: 25px;" /> </span> <span class="bt_novos"><a
-				href="javascript:;" onclick="regiaoController.add_cotas();"><img
-					src="../images/ico_add.gif" hspace="5" border="0" />Incluir</a> </span> <span
-				class="bt_novos"><a href="javascript:;"><img
-					src="../images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a> </span>
+			
+			<span class="bt_sellAll" style="float: right;">
+				<label for="sel">Selecionar Todos</label>
+					<input type="checkbox" id="sel"	name="Todos" onchange='regiaoController.checkAll();'
+						   style="float: left; margin-right: 25px;" /> 
+			</span> 
+			
+			<span class="bt_novos">
+				<a href="javascript:;" onclick="regiaoController.add_cotas();">
+					<img src="../images/ico_add.gif" hspace="5" border="0" />
+				
+				Incluir
+				
+				</a> 
+			</span> 
+			
+			<span class="bt_novos">
+				<a href="javascript:;">
+					<img src="../images/ico_excluir.gif" hspace="5" border="0" />
+				
+				Cancelar
+				
+				</a> 
+			</span>
 		</fieldset>
 	</div>
 	
@@ -254,13 +298,20 @@ $(function(){
 	<!-- ADICIONAR EM LOTE -->
 
 	<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
-		<fieldset style="width: 125px;">
+		<fieldset style="width: 225px;">
 			<legend>Adicionar em Lote</legend>
+			<table width="200" border="0" cellspacing="2" cellpadding="2">
+				<tr>
+					<td width="44">N° cota: <textarea rows="4" cols="30" > </textarea> 
+					<!-- <input name="numCota" id="numCota" type="text" style="width: 100px;" /> --> 
+					</td>
+				</tr>
+			</table>
 			<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
 		</fieldset>
 	</div>
 
-	<!-- ADICIONAR EM LOTE - MONTAGEM DA REGIAO -->
+	<!-- REGIÃO AUTOMÁTICA - MONTAGEM DA REGIAO -->
 
 	<div id="dialog-regiaoAutomatica" title="Montagem Região Automática"
 		style="display: none;">
@@ -304,7 +355,7 @@ $(function(){
 				</tr>
 				<tr>
 					<td align="right"><input name="regiaoIsFixa" id="regiaoIsFixa"
-						type="checkbox" value="" /></td>
+						type="checkbox" value="checked" /></td>
 					<td>Região Fixa</td>
 				</tr>
 			</table>
@@ -353,15 +404,30 @@ $(function(){
 	<div id="dialog-excluir" title="Excluir Região">
 		<p>Confirma a exclusão desta Região?</p>
 	</div>
-
+	
+	<div id="dialog-excluirCota" title="Excluir Cota" style="display:none;">
+		<p>Confirma a exclusão desta Cota?</p>
+	</div>
+	
+	<div id="dialog-alterarRegiao" title="Alterar Região" style="display:none;">
+		<p>Confirma a alteração desta Região?</p>
+	</div>
+			<!-- 
 			<div id="effect" style="padding: 0 .7em;"
 				class="ui-state-highlight ui-corner-all">
 				<p>
 					<span style="float: left; margin-right: .3em;"
-						class="ui-icon ui-icon-info"></span> <b>Região < evento > com
-						< status >.</b>
+						class="ui-icon ui-icon-info">
+					</span> 
+						<b>Região < evento > com < status >.</b>
 				</p>
 			</div>
+			 -->
+			
+	<!-- EDITAR REGIAO -->
+
+	<div id="dialog-editar" title="Editar região">
+	</div>
 
 			<!-- COMBO DE REGIÕES -->
 			
@@ -371,14 +437,14 @@ $(function(){
 					<tr>
 						<td width="48">Região:</td>
 						<td width="752">
-						
-						<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
-								onchange="$('.grids').toggle(); regiaoController.cotasDaRegiao()">
-								<option selected="selected">Selecione...</option>
-								<c:forEach items="${listaRegiao}" var="regiao">
-									<option value="${regiao.key}">${regiao.value}</option>
-								</c:forEach>
-						</select></td>
+							<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
+									onchange="$('.grids').toggle(); regiaoController.cotasDaRegiao()">
+									<option selected="selected">Selecione...</option>
+									<c:forEach items="${listaRegiao}" var="regiao">
+										<option value="${regiao.key}">${regiao.value}</option>
+									</c:forEach>
+							</select>
+						</td>
 						
 						<td width="134"><span class="bt_novos" title="Nova Região"><a
 								href="javascript:;" onclick="regiaoController.addNovaRegiao();"><img
@@ -401,7 +467,7 @@ $(function(){
 						<!-- BOTÕES GRID PRINCIPAL -->
 						
 					<span class="bt_novos" title="Arquivo">
-						<a href="${pageContext.request.contextPath}/distribuicao/regiao/exportar?fileType=XLS&tipoExportacao=popup">
+						<a href="${pageContext.request.contextPath}/distribuicao/regiao/exportar?fileType=XLS">
 							<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 							
 							Arquivo
@@ -410,7 +476,7 @@ $(function(){
 					</span> 
 					
 					<span class="bt_novos" title="Imprimir">
-						<a href="${pageContext.request.contextPath}/distribuicao/regiao/exportar?fileType=PDF&tipoExportacao=popup">
+						<a href="${pageContext.request.contextPath}/distribuicao/regiao/exportar?fileType=PDF">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 							
 							Imprimir
