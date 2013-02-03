@@ -14,15 +14,14 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoProdutoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.NCM;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.StringUtil;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -42,9 +41,6 @@ public class TipoProdutoController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse response;
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private TipoProdutoService tipoProdutoService;
