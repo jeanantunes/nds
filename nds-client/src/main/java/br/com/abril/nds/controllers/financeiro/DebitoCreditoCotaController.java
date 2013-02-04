@@ -30,6 +30,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -938,15 +939,19 @@ public class DebitoCreditoCotaController extends BaseController{
 				msgsErros += ("\nInforme o [número] da [Cota] na linha ["+linha+"] !");
 			}
 			
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			
+			Date dataDistrib = distribuidor.getDataOperacao();
+			
 			if (dataVencimento == null) {
 
 				linhasComErro.add(debitoCredito.getId());
 			
-			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(new Date()), dataVencimento)) {
+			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(DateUtil.adicionarDias(dataDistrib, 1)), dataVencimento)) {
 
 				linhasComErro.add(debitoCredito.getId());
 				
-				msgsErros += ("\nO campo [Data] não pode ser menor que a [Data Atual] na linha ["+linha+"] !");
+				msgsErros += ("\nO campo [Data] deve ser maior que a [Data de Operação: "+DateUtil.formatarDataPTBR(dataDistrib)+"] na linha ["+linha+"] !");
 			}
 
 			if (debitoCredito.getValor() == null) {
