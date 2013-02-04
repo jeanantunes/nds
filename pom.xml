@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.abril</groupId>
@@ -465,7 +466,7 @@
 				<module>nds-repository-client</module>
 				<module>nds-repository-client-impl</module>
 				<module>nds-service-client</module>
-				<module>nds-service-client-impl</module>				
+				<module>nds-service-client-impl</module>
 				<module>nds-service-server</module>
 				<module>nds-integration-canonical</module>
 				<module>nds-integration-server</module>
@@ -474,13 +475,17 @@
 				<module>nds-server</module>
 			</modules>
 		</profile>
-		
+
 		<profile>
 			<id>backend</id>
 			<modules>
 				<module>nds-model</module>
 				<module>nds-util</module>
+				<module>nds-common</module>
+				<module>nds-repository-client</module>
+				<module>nds-repository-client-impl</module>
 				<module>nds-service-client</module>
+				<module>nds-service-client-impl</module>
 				<module>nds-service-server</module>
 				<module>nds-integration-canonical</module>
 				<module>nds-integration-server</module>
@@ -489,8 +494,4 @@
 		</profile>
 	</profiles>
 
-  <modules>
-    <module>nds-service-client-impl</module>
-    <module>nds-repository-client-impl</module>
-  </modules>
 </project>
