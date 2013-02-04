@@ -12,6 +12,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
@@ -19,6 +20,7 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
@@ -516,5 +518,56 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		}
 		
 		return query.list();
+	}
+	
+	public List<ContaCorrenteCotaVO> obterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro){
+		
+		StringBuilder sql = new StringBuilder("select ");
+		sql.append(" CONSOLIDADO_FINANCEIRO_COTA.ID as id, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.cota_ID as cotaId, ")
+		   .append(" COTA.NUMERO_COTA as numeroCota, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.CONSIGNADO as consignado, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.DT_CONSOLIDADO as dataConsolidado, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.DEBITO_CREDITO as debitoCredito, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.ENCALHE as encalhe, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.ENCARGOS as encargos, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.PENDENTE as pendente, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.TOTAL as total, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.VALOR_POSTERGADO as valorPostergado, ")
+		   .append(" CONSOLIDADO_FINANCEIRO_COTA.VENDA_ENCALHE as vendaEncalhe, ")
+		   .append(" 'CONSOLIDADO' as tipo, ")
+		   .append("(")
+		   .append("select case when divida.DATA is not null then divida.DATA else acumulada.DATA end as dataRaiz ")
+		   .append("			from DIVIDA acumulada ")
+		   .append("			left join DIVIDA divida ON divida.ID = acumulada.DIVIDA_RAIZ_ID ")
+		   .append("			where acumulada.CONSOLIDADO_ID = consolidado_financeiro_cota.id ")
+		   .append("		)AS DT_RAIZ_CONSOLIDADO,")
+		   .append("		 NULL as DT_RAIZ_PENDENTE,")
+		   .append("		coalesce((select sum(baixa_cobranca.VALOR_PAGO)")
+		   .append("			from baixa_cobranca INNER JOIN cobranca ON cobranca.ID = baixa_cobranca.COBRANCA_ID")   
+		   .append("			INNER JOIN divida ON divida.ID = cobranca.DIVIDA_ID")
+		   .append("			where baixa_cobranca.STATUS NOT IN ('NAO_PAGO_DIVERGENCIA_VALOR',")
+		   .append("														'NAO_PAGO_DIVERGENCIA_DATA',")
+		   .append("														'NAO_PAGO_BAIXA_JA_REALIZADA',")
+		   .append("														'NAO_PAGO_POSTERGADO')")
+		   .append("			and cota.ID = cobranca.COTA_ID")
+		   .append("			and divida.CONSOLIDADO_ID = consolidado_financeiro_cota.ID")
+		   .append("			and consolidado_financeiro_cota.ID")
+		   .append("		),0) AS VALOR_PAGO,")
+		   .append("	   coalesce((select sum(baixa_cobranca.VALOR_PAGO)")
+		   .append("			from baixa_cobranca INNER JOIN cobranca ON cobranca.ID = baixa_cobranca.COBRANCA_ID")   
+		   .append("			INNER JOIN divida ON divida.ID = cobranca.DIVIDA_ID")
+		   .append("			where baixa_cobranca.STATUS NOT IN ('NAO_PAGO_DIVERGENCIA_VALOR',")
+		   .append("														'NAO_PAGO_DIVERGENCIA_DATA',")
+		   .append("														'NAO_PAGO_BAIXA_JA_REALIZADA',")
+		   .append("														'NAO_PAGO_POSTERGADO')")
+		   .append("			and cota.ID = cobranca.COTA_ID")
+		   .append("			and divida.CONSOLIDADO_ID = consolidado_financeiro_cota.ID")
+		   .append("			and consolidado_financeiro_cota.ID")
+		   .append("		),0) - TOTAL AS SALDO")
+		   .append("FROM consolidado_financeiro_cota")
+		   .append("INNER JOIN cota ON cota.id=consolidado_financeiro_cota.cota_ID");
+		
+		return null;
 	}
 }
