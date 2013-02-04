@@ -917,18 +917,25 @@ public class DebitoCreditoCotaController extends BaseController{
 		}
 		
 		if (listaNovosDebitoCredito==null || listaNovosDebitoCredito.size()<=0){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há movimentos para serem lançados.");
 		}
 		
 		List<Long> linhasComErro = new ArrayList<Long>();
 		
+		String msgsErros = "";
+		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
+			
+			long linha = (debitoCredito.getId()+1l);
 			
 			Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
 			
 			if (debitoCredito.getNumeroCota() == null) {
 				
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nInforme o [número] da [Cota] na linha ["+linha+"] !");
 			}
 			
 			if (dataVencimento == null) {
@@ -938,11 +945,15 @@ public class DebitoCreditoCotaController extends BaseController{
 			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(new Date()), dataVencimento)) {
 
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nO campo [Data] não pode ser menor que a [Data Atual] na linha ["+linha+"] !");
 			}
 
 			if (debitoCredito.getValor() == null) {
 				
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nInforme o [Valor] na linha ["+linha+"] !");
 			
 			} else {
 
@@ -953,14 +964,23 @@ public class DebitoCreditoCotaController extends BaseController{
 				} catch(NumberFormatException e) {
 
 					linhasComErro.add(debitoCredito.getId());
+					
+					msgsErros += ("\nInforme um [Valor] válido na linha ["+linha+"] !");
 				}
-			}			
+			}		
+			
+			if (debitoCredito.getDataVencimento()==null){
+				
+                linhasComErro.add(debitoCredito.getId());
+				
+                msgsErros += ("\nInforme a [Data] na linha ["+linha+"] !");
+			}
 		}
 
 		if (!linhasComErro.isEmpty()) {
 			
 			ValidacaoVO validacao = new ValidacaoVO(
-					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.");
+					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.\n"+msgsErros);
 					
 			validacao.setDados(linhasComErro);
 			
