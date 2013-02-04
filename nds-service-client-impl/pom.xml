@@ -47,13 +47,7 @@
 			<artifactId>nds-service-client</artifactId>
 			<version>1.0</version>
 		</dependency>
-		
-		<dependency>
-			<groupId>br.com.abril</groupId>
-			<artifactId>nds-repository-client</artifactId>
-			<version>1.0</version>
-		</dependency>
-		
+
 		<dependency>
 			<groupId>br.com.abril</groupId>
 			<artifactId>nds-repository-client-impl</artifactId>
