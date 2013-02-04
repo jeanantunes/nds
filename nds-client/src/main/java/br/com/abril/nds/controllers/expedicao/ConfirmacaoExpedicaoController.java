@@ -15,22 +15,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.TipoMovimentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -58,8 +57,6 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 	@Autowired
 	private TipoMovimentoService tipoMovimentoService;
 		
-		private MovimentoEstoqueRepository movimentoEstoqueRepository;
-
 	protected static final String SUCESSO = "SUCCESS";
 	protected static final String ALERTA = "WARNING";
 	protected static final String FALHA = "ERROR";
@@ -325,7 +322,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 			boolean isNewSearch = !ultimaPesquisa.equals((String)session.getAttribute("ultimaPesquisa"));
 			
-			if(isNewSearch) {				
+			if(isNewSearch) {
 				session.setAttribute("selecionados", null);
 				session.setAttribute("ultimaPesquisa", ultimaPesquisa);				
 			}			
@@ -340,7 +337,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 			
-			}catch(ValidacaoException e) {
+			} catch(ValidacaoException e) {
 				mensagens = e.getValidacao().getListaMensagens();
 				status=e.getValidacao().getTipoMensagem().name();
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
@@ -393,7 +390,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			session.setAttribute("estudo",estudo);
 			
 			if(date == null && !dtLancamento.trim().isEmpty()) {
-				throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
+				throw new ValidacaoException("/pesquisarExpedicoes", new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
 			} else {
 			
 				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 

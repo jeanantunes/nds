@@ -135,7 +135,7 @@
 		</dependency>
 		<dependency>
 			<groupId>br.com.abril</groupId>
-			<artifactId>ndsi-engine</artifactId>
+			<artifactId>nds-integration-client</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>
