@@ -12,7 +12,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.ValidationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -234,7 +233,7 @@ public class ImpressaoNFEController extends BaseController {
 					nomeArquivo = "danfes";
 					break;
 				default:
-					throw new ValidationException("O tipo de impressão configurado no Distribuidor não está disponível.");
+					throw new ValidacaoException(TipoMensagem.ERROR, "O tipo de impressão configurado no Distribuidor não está disponível.");
 					
 			}
 
