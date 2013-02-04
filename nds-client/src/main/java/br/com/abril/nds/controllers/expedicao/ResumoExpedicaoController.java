@@ -28,16 +28,16 @@ import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO.TipoPesquisaResumoExpedicao;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ExpedicaoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -146,7 +146,7 @@ public class ResumoExpedicaoController extends BaseController {
 			BigDecimal precoDesconto = expd.getPrecoCapa();
 			
 			if (expd.getDesconto() != null) {
-				precoDesconto = expd.getPrecoCapa().subtract(expd.getDesconto());
+				precoDesconto = expd.getPrecoCapa().subtract( expd.getPrecoCapa().multiply( expd.getDesconto().divide(new BigDecimal("100")) ) );
 			}
 			
 			resumoExpedicaoDetalheVO = new ResumoExpedicaoDetalheVO();

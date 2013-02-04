@@ -14,7 +14,7 @@
 
 	<artifactId>nds-client</artifactId>
 	<packaging>war</packaging>
-	<name>NDS - DClient</name>
+	<name>NDS - Client</name>
 
 	<dependencies>
 		<dependency>
@@ -167,7 +167,19 @@
 
 		<dependency>
 			<groupId>br.com.abril</groupId>
-			<artifactId>ndsi-engine</artifactId>
+			<artifactId>nds-common</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-integration-client</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-service-client-impl</artifactId>
 			<version>1.0</version>
 		</dependency>
 
