@@ -309,17 +309,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
 		
-		
-		StringBuilder subSqlObtemDesconto = new StringBuilder();
-		
-		subSqlObtemDesconto.append(" ( ");
-		subSqlObtemDesconto.append(" SELECT VIEW_DESC.DESCONTO FROM VIEW_DESCONTO VIEW_DESC ");		
-		subSqlObtemDesconto.append(" WHERE VIEW_DESC.COTA_ID = CH_ENCALHE_COTA.COTA_ID  ");
-		subSqlObtemDesconto.append(" AND VIEW_DESC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND VIEW_DESC.FORNECEDOR_ID =  ");
-		subSqlObtemDesconto.append(" (SELECT F.ID FROM FORNECEDOR F, PRODUTO_FORNECEDOR PF WHERE F.ID = PF.FORNECEDORES_ID AND PF.PRODUTO_ID = PROD.ID ) 	");
-		subSqlObtemDesconto.append(" ) ");
-
-		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT                                             		");

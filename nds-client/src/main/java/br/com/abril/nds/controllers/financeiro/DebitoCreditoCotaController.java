@@ -30,6 +30,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -917,32 +918,47 @@ public class DebitoCreditoCotaController extends BaseController{
 		}
 		
 		if (listaNovosDebitoCredito==null || listaNovosDebitoCredito.size()<=0){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há movimentos para serem lançados.");
 		}
 		
 		List<Long> linhasComErro = new ArrayList<Long>();
 		
+		String msgsErros = "";
+		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
+			
+			long linha = (debitoCredito.getId()+1l);
 			
 			Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
 			
 			if (debitoCredito.getNumeroCota() == null) {
 				
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nInforme o [número] da [Cota] na linha ["+linha+"] !");
 			}
+			
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			
+			Date dataDistrib = distribuidor.getDataOperacao();
 			
 			if (dataVencimento == null) {
 
 				linhasComErro.add(debitoCredito.getId());
 			
-			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(new Date()), dataVencimento)) {
+			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(DateUtil.adicionarDias(dataDistrib, 1)), dataVencimento)) {
 
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nO campo [Data] deve ser maior que a [Data de Operação: "+DateUtil.formatarDataPTBR(dataDistrib)+"] na linha ["+linha+"] !");
 			}
 
 			if (debitoCredito.getValor() == null) {
 				
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nInforme o [Valor] na linha ["+linha+"] !");
 			
 			} else {
 
@@ -953,14 +969,23 @@ public class DebitoCreditoCotaController extends BaseController{
 				} catch(NumberFormatException e) {
 
 					linhasComErro.add(debitoCredito.getId());
+					
+					msgsErros += ("\nInforme um [Valor] válido na linha ["+linha+"] !");
 				}
-			}			
+			}		
+			
+			if (debitoCredito.getDataVencimento()==null){
+				
+                linhasComErro.add(debitoCredito.getId());
+				
+                msgsErros += ("\nInforme a [Data] na linha ["+linha+"] !");
+			}
 		}
 
 		if (!linhasComErro.isEmpty()) {
 			
 			ValidacaoVO validacao = new ValidacaoVO(
-					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.");
+					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.\n"+msgsErros);
 					
 			validacao.setDados(linhasComErro);
 			
