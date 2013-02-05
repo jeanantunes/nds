@@ -253,7 +253,7 @@ public class LancamentoRepositoryImpl extends
 	 * @param sortOrder
 	 * @return
 	 */
-	private String gerarQueryProdutosNaoExpedidos(Map<String, Object> parametros, Date data, Long idFornecedor, Boolean estudo) {
+	private String gerarQueryProdutosNaoExpedidos(Map<String, Object> parametros, Date data, Long idFornecedor, Boolean possuiEstudo, Boolean possuiEstoque) {
 		
 		StringBuilder hql = new StringBuilder();	
 		
@@ -265,11 +265,15 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" join produto.fornecedores fornecedor ");
 		}
 		
-		hql.append(" join lancamento.recebimentos itemRecebido ");
+		hql.append(" left join lancamento.recebimentos itemRecebido ");
+		
+		if(possuiEstoque==true) {
+			hql.append(" join produtoEdicao.estoqueProduto estoqueProduto ");
+		}		
 		
 		boolean where = false;
 		
-		if (estudo != null && estudo == true ) {
+		if (possuiEstudo != null && possuiEstudo == true ) {
 
 			hql.append(" join lancamento.estudo estudo ");
 			
@@ -291,6 +295,12 @@ public class LancamentoRepositoryImpl extends
 		
 		//hql.append(" lancamento.status=:statusConfirmado ");
 		hql.append(" lancamento.status=:statusBalanceado ");
+		
+		hql.append(" and ( (itemRecebido.id is null and produtoEdicao.parcial=true) or (itemRecebido.id is not null)) ");
+		
+		if(possuiEstoque==true) {
+			hql.append(" and estoqueProduto.qtde>estudo.qtdeReparte ");
+		}
 		
 		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
 		

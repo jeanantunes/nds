@@ -1,7 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;

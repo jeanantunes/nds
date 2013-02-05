@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -26,6 +27,9 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
 public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable, Serializable {
 	
+	@Embedded
+	private ValoresAplicados valoresAplicados;
+
 	/**
 	 * 
 	 */
@@ -101,6 +105,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setStatusIntegracao(this.getStatusIntegracao());
 		mec.setTipoMovimento(this.getTipoMovimento());
 		mec.setUsuario(this.getUsuario());
+		mec.setValoresAplicados(this.getValoresAplicados());
 
         return mec;
     }
@@ -200,6 +205,14 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setEstoqueProdutoCotaJuramentado(
 			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado) {
 		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
+	}
+
+	public ValoresAplicados getValoresAplicados() {
+		return valoresAplicados;
+	}
+
+	public void setValoresAplicados(ValoresAplicados valoresAplicados) {
+		this.valoresAplicados = valoresAplicados;
 	}
 
 	public MovimentoEstoqueCota getMovimentoEstoqueCotaFuro() {

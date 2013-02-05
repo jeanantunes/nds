@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Garantia;
 import br.com.abril.nds.service.GarantiaService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;

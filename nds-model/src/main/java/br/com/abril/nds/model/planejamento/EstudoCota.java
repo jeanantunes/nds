@@ -54,6 +54,7 @@ public class EstudoCota implements Serializable {
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	
 	@OneToMany(mappedBy = "estudoCota")
+
 	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
 	
 	@OneToOne(mappedBy = "estudoCota")
