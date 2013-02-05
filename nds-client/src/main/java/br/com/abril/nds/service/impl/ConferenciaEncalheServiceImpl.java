@@ -1,5 +1,8 @@
 package br.com.abril.nds.service.impl;
 
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
@@ -16,14 +19,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.ImageIcon;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.itextpdf.text.pdf.codec.Base64.OutputStream;
 
 import br.com.abril.nds.client.util.BigDecimalUtil;
 import br.com.abril.nds.client.util.BigIntegerUtil;
@@ -127,6 +135,7 @@ import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TipoMensagem;
 
@@ -317,6 +326,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private BigInteger obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(Long idCota, Long idProdutoEdicao) {
 		
 		return estoqueProdutoCotaRepository.obterTotalEmEstoqueProdutoCota(idCota, idProdutoEdicao);
+		
+	}
+	
+	@Transactional
+	public boolean isCotaEmiteNfe(Integer numeroCota) {
+		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		if(cota == null) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota não encontrada.");
+		}
+		
+		boolean indEmiteNfe = (	cota.getParametrosCotaNotaFiscalEletronica() != null &&
+								cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() != null ) ? 
+								cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica() : false;
+		
+		return indEmiteNfe;
 		
 	}
 	
@@ -2743,7 +2769,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("VALOR_PAGAMENTO_PENDENTE", slip.getValorTotalPagar());
 		parameters.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
 		parameters.put("VALOR_CREDITO_DIF", slip.getValorTotalPagar());
-
+		
+		try {
+			parameters.put("LOGOTIPO", JasperUtil.getImagemRelatorio(getLogoDistribuidor()));
+		} catch(Exception e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao carregar logotipo do distribuidor no documento de cobrança");
+		}
 		
 		//OBTEM OS MOVIMENTOS FINANCEIROS(DÉBITOS E CRÉDITOS) DA COTA NA DATA DE OPERAÇÃO
 		List<ComposicaoCobrancaSlipDTO> listaComposicaoCobranca = this.conferenciaEncalheRepository.obterComposicaoCobrancaSlip(numeroCota, controleConferenciaEncalheCota.getDataOperacao(), null);
@@ -2829,6 +2860,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		 }
 		
 		 return valorTotalEncalheOperacaoConferenciaEncalhe;
+	}
+	
+	protected InputStream getLogoDistribuidor(){
+		
+		InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
+		
+		if(inputStream == null){
+		  
+			return new ByteArrayInputStream(new byte[0]);
+		}
+		
+		return inputStream;
 	}
 	
 }

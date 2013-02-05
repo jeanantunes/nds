@@ -80,6 +80,15 @@ public interface ConferenciaEncalheService {
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia);
 	
 	/**
+	 * Obtém indicador se a cota em questão emite Nota Fiscal Eletrônica.
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return boolean
+	 */
+	public boolean isCotaEmiteNfe(Integer numeroCota);
+	
+	/**
 	 * Gera documentação referente a conferência de encalhe.
 	 * 
 	 * @param dadosDocumentacaoConfEncalheCotaDTO
