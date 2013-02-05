@@ -21,8 +21,8 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota, boolean obterFaturamento) {		 
-		return cotaBaseRepository.obterDadosFiltro(numeroCota, obterFaturamento);		
+	public FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota, boolean obterFaturamento, boolean semCotaBase) {		 
+		return cotaBaseRepository.obterDadosFiltro(numeroCota, obterFaturamento, semCotaBase);		
 	}
 
 	@Override

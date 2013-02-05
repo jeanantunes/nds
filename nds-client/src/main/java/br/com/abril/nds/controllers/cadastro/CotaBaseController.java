@@ -14,6 +14,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.model.cadastro.CotaBaseCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaBaseCotaService;
 import br.com.abril.nds.service.CotaBaseService;
@@ -57,7 +58,9 @@ public class CotaBaseController {
 		Long existeCotaBaseCota = cotaBaseCotaService.verificarExistenciaCotaBaseCota(this.cotaService.obterPorNumeroDaCota(numeroCota));
 		FiltroCotaBaseDTO filtro = null;
 		if(existeCotaBaseCota != null){
-			filtro = this.cotaBaseService.obterDadosFiltro(numeroCota, false);			
+			filtro = this.cotaBaseService.obterDadosFiltro(numeroCota, false, false);			
+		}else{
+			filtro = this.cotaBaseService.obterDadosFiltro(numeroCota, false, true);
 		}
 		
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
@@ -99,8 +102,6 @@ public class CotaBaseController {
 		
 		tableModel.setTotal(qtdeInicialPadrao);
 		
-		tableModel.setPage(1);
-		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
@@ -109,7 +110,19 @@ public class CotaBaseController {
 	@Path("/obterCota")
 	public void obterCota(Integer numeroCota){
 		
-		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(numeroCota, true);		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		boolean existeCotaBase = this.cotaBaseCotaService.isCotaBaseAtiva(cota);
+		
+		FiltroCotaBaseDTO filtro = null;
+		
+		if(cota.getSituacaoCadastro() != SituacaoCadastro.ATIVO){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não está ativa!");
+		}else if(existeCotaBase){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" tem cota base ativa!");
+		}else{			
+			filtro = this.cotaBaseService.obterDadosFiltro(numeroCota, true, false);			
+		}
 		
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();
 		
@@ -123,19 +136,23 @@ public class CotaBaseController {
 	@Post
 	@Path("/confirmarCotasBase")
 	public void confirmarCotasBase(Integer[] numerosDeCotasBase, Integer idCotaNova, BigDecimal indiceAjuste){
-		List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterCotasBases(this.cotaService.obterPorNumeroDaCota(idCotaNova));
+		
+		Cota cotaNova = this.cotaService.obterPorNumeroDaCota(idCotaNova);
+		
+		List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterCotasBases(cotaNova);
 		
 		validarCotasDigitadas(numerosDeCotasBase, listaCotaBase, idCotaNova);
 		
-		salvar(numerosDeCotasBase, idCotaNova, indiceAjuste);
+		salvar(numerosDeCotasBase, indiceAjuste, cotaNova);
 		
 	}
 
-	private void salvar(Integer[] numerosDeCotasBase, Integer idCotaNova, BigDecimal indiceAjuste) {
+	private void salvar(Integer[] numerosDeCotasBase, BigDecimal indiceAjuste, Cota cotaNova) {
 		CotaBase cotaBase = new CotaBase();
 		cotaBase.setDataInicio(new Date());
 		cotaBase.setDataFim(DateUtil.adicionarDias(new Date(), 180));
 		cotaBase.setIndiceAjuste(indiceAjuste);
+		cotaBase.setCota(cotaNova);
 		this.cotaBaseService.salvar(cotaBase);
 		for(Integer cotabBase: numerosDeCotasBase){
 			CotaBaseCota cotaBaseCota = new CotaBaseCota();

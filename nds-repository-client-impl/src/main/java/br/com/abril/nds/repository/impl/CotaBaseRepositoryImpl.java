@@ -21,7 +21,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 	}
 
 	@Override
-	public FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota, boolean obterFaturamento) {
+	public FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota, boolean obterFaturamento, boolean semCotaBase) {
 		StringBuilder hql = new StringBuilder();
         
         // RETURNING FIELDS
@@ -32,15 +32,19 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" endereco.bairro as bairro, "); // BAIRRO
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
-        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia "); // AREA DE INFLUÊNCIA
         
         if(obterFaturamento){
-        	hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL
+        	hql.append(" , sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL        	
         	hql.append(" FROM EstoqueProdutoCota as estoqueProdutoCota ");
         	hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
         	hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+        }else if(semCotaBase){  
+        	//COTA
+        	hql.append(" FROM Cota as cota ");
         }else{
-        	hql.append(" cotaBase.dataInicio as dataInicial, "); // DATA INICIAL
+        	//COTA BASE 
+        	hql.append(" , cotaBase.dataInicio as dataInicial, "); // DATA INICIAL
         	hql.append(" cotaBase.dataFim as dataFinal "); // DATA INICIAL
         	hql.append(" FROM CotaBaseCota as cotaBaseCota ");
         	hql.append(" JOIN cotaBaseCota.cota as cota ");

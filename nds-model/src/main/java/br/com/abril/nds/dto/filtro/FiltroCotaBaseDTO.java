@@ -24,7 +24,7 @@ public class FiltroCotaBaseDTO implements Serializable {
 	private String faturamentoMedio;
 	
 //	private String diasRestantes;
-//	
+	
 	private String dataInicial;
 	private String dataFinal;
 	
@@ -138,8 +138,7 @@ public class FiltroCotaBaseDTO implements Serializable {
 	public void setDataFinal(Date dataFinal) {
 		this.dataFinal = DateUtil.formatarDataPTBR(dataFinal);
 	}
-	
-	
+
 
 //	public Date getDataFinal() {
 //		return dataFinal;

@@ -712,7 +712,14 @@ var cotaBaseController = $.extend(true, {
 					$.postJSON(contextPath + "/cadastro/cotaBase/confirmarCotasBase",
 							dto, 
 							function(result){
-								//função para sucess
+								if (result.mensagens) {
+									exibirMensagemDialog(
+											result.mensagens.tipoMensagem, 
+											result.mensagens.listaMensagens,""
+									);
+								}
+								
+								cotaBaseController.mostrar_normal();
 			 				}, function(result){
 								//Verifica mensagens de erro do retorno da chamada ao controller.
 								if (result.mensagens) {

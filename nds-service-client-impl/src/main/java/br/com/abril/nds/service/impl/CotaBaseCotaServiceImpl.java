@@ -27,4 +27,10 @@ public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 		return this.cotaBaseCotaRepository.verificarExistenciaCotaBaseCota(cota);
 	}
 
+	@Override
+	@Transactional
+	public boolean isCotaBaseAtiva(Cota cota) {		 
+		return this.cotaBaseCotaRepository.isCotaBaseAtiva(cota);
+	}
+
 }

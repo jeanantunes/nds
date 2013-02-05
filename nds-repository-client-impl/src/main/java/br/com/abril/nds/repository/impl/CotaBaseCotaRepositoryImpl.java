@@ -33,5 +33,27 @@ public class CotaBaseCotaRepositoryImpl extends AbstractRepositoryModel<CotaBase
 		return (Long) query.uniqueResult();
 	}
 
+	@Override
+	public boolean isCotaBaseAtiva(Cota cota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+        hql.append(" select cotaBaseCota ");        
+        
+        hql.append(" FROM CotaBaseCota as cotaBaseCota ");       
+        
+        hql.append(" where cotaBaseCota.cota.numeroCota = :numeroCota ");   
+        
+        hql.append(" AND  cotaBaseCota.ativo = true ");
+        
+        Query query =  getSession().createQuery(hql.toString());
+        
+        query.setParameter("numeroCota", cota.getNumeroCota());
+        
+        Long isAtiva = (Long) query.uniqueResult();
+        
+		return isAtiva != null ? true : false;
+	}
+
 	
 }

@@ -8,5 +8,12 @@ public interface CotaBaseCotaService {
 	void salvar(CotaBaseCota cotaBaseCota);
 
 	Long verificarExistenciaCotaBaseCota(Cota cota);
+	
+	/*
+	 * Verifica se a cota passada está com cotas bases ativas.
+	 * Regra: Após 180 dias do cadastro de cota base para uma cota nova, a cota nova não vai ter mais cotas base amarrado a elas.
+	 * 
+	 */	
+	boolean isCotaBaseAtiva(Cota cota);
 
 }
