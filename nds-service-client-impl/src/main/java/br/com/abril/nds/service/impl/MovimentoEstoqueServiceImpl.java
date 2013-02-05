@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
@@ -27,6 +29,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -44,6 +47,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
@@ -69,11 +73,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 
 	@Autowired
-
 	private EstudoCotaRepository estudoCotaRepository;
 
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private DescontoService descontoService;
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -433,6 +439,28 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			if (idLancamento != null) {
 				
 				movimentoEstoqueCota.setLancamento(new Lancamento(idLancamento));
+				
+				Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
+				Cota cota = cotaRepository.buscarPorId(idCota);
+				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+				
+				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, cota, produtoEdicao);
+								
+				BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda()
+						.subtract(produtoEdicao.getPrecoVenda()
+								.multiply(desconto.getValor()
+										.divide(new BigDecimal("100")
+										)
+									)
+								);
+				
+				ValoresAplicados valoresAplicados = new ValoresAplicados();
+				valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
+				valoresAplicados.setValorDesconto(desconto.getValor());
+				valoresAplicados.setPrecoComDesconto(precoComDesconto);
+				
+				movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
+				
 			}			
 			
 			if (idEstudoCota != null) {
