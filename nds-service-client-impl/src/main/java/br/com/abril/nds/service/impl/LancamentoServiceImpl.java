@@ -144,13 +144,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		expedicao.setId(idExpedicao);
 		
 		lancamentoRepository.alterarLancamento(idLancamento, new Date(), StatusLancamento.EXPEDIDO, expedicao);
-		
-		List<MovimentoEstoqueCota> movimentos = movimentoEstoqueCotaRepository.obterPorLancamento(idLancamento);
-		for (MovimentoEstoqueCota movimento : movimentos) {
-			movimento.setEstudoCota(null);
-			movimentoEstoqueCotaRepository.alterar(movimento);
-		}
-		
+				
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setDataEdicao(new Date());
 		historico.setLancamento(new Lancamento(idLancamento));
