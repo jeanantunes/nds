@@ -241,4 +241,16 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		return resultado > 0;
 	}
 	
+	@Override
+	public Movimento buscarPorId(Long id) {
+		 
+		String hql = " select movimento from Movimento movimento where movimento.id=:id ";
+			
+		Query query = getSession().createQuery(hql);
+			
+		query.setParameter("id", id);
+			
+		return (Movimento) query.uniqueResult();
+	}
+	
 }

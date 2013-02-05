@@ -17,6 +17,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -28,6 +29,7 @@ import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -43,6 +45,9 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	
 	@Autowired
 	private FuroProdutoRepository furoProdutoRepository;
+	
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
@@ -171,9 +176,16 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		}
 		
 		if (this.verificarProdutoExpedido(idLancamento)) {
-
+			
+			List<MovimentoEstoqueCota> movimentos = movimentoEstoqueCotaRepository.obterPorLancamento(idLancamento);
+			for (MovimentoEstoqueCota movimento : movimentos) {
+				movimento.setEstudoCota(null);
+				movimentoEstoqueCotaRepository.alterar(movimento);
+			}
+			
 			// Geração de movimentação de estoque por cota / movimentação de estoque / estoque / estoque cota
 			movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, idUsuario);
+		
 		}
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
