@@ -46,6 +46,8 @@ var geracaoNotaEnvioController = $.extend({
 			$("#geracaoNotaEnvio-filtro-selectFornecedores").multiselect({
 				selectedList : 6
 			});
+			
+			$("#geracaoNotaEnvio-filtro-selectFornecedores").multiselect("checkAll");
 		},
 		
 		/**
@@ -308,7 +310,7 @@ var geracaoNotaEnvioController = $.extend({
 		gerarNotaEnvio : function() {
 			
 			var cotasSelecionadas = [];
-			
+			var _this = this;
 			var cotasAusentes = $(".checkboxCheckCotasAusentes");
 			
 			for (var index in cotasAusentes) {
@@ -325,13 +327,15 @@ var geracaoNotaEnvioController = $.extend({
                 httpMethod : "POST",
                 data : params,
                 failCallback : function() {
+                	
                     exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA!"]);
                 },
                 successCallback : function() {
                     exibirMensagem("SUCCESS", ["Geração de NE realizada com sucesso!"]);
+                    _this.pesquisar();
                 }
             });
-
+           
 		},
 		
 		/**

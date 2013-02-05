@@ -15,6 +15,7 @@ import br.com.abril.nds.client.vo.PeriodoLancamentosProdutoEdicaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
@@ -36,7 +37,6 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -479,7 +479,8 @@ public class ProdutoEdicaoController extends BaseController {
 		if (produtoEdicao!=null){
 		    
 		    BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-		    BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getDesconto()!=null?produtoEdicao.getDesconto():BigDecimal.ZERO, BigDecimal.ZERO);
+		    BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getDescontoProdutoEdicao()!=null?produtoEdicao.getDescontoProdutoEdicao().getValor():BigDecimal.ZERO, BigDecimal.ZERO);
+
             BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			
 			BigDecimal precoComDesconto = null;

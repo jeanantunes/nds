@@ -23,6 +23,8 @@ public @interface Export {
 	
 	float widthPercent() default 0f;
 	
+	ColumType columnType() default ColumType.STRING;
+	
 	public enum Alignment {
 		
 		LEFT(0),

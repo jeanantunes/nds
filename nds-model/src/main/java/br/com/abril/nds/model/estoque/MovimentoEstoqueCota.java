@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -26,6 +27,9 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
 public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable, Serializable {
 	
+	@Embedded
+	private ValoresAplicados valoresAplicados;
+
 	/**
 	 * 
 	 */
@@ -74,8 +78,9 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
 	
-	@ManyToMany(mappedBy="movimentos")
-	private List<MovimentoFinanceiroCota> movimentoFinanceiroCota;
+	@ManyToOne
+	@JoinColumn(name = "MOVIMENTO_FINANCEIRO_COTA_ID")
+	private MovimentoFinanceiroCota movimentoFinanceiroCota;
 	
 	public Object clone() {
 
@@ -100,6 +105,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setStatusIntegracao(this.getStatusIntegracao());
 		mec.setTipoMovimento(this.getTipoMovimento());
 		mec.setUsuario(this.getUsuario());
+		mec.setValoresAplicados(this.getValoresAplicados());
 
         return mec;
     }
@@ -201,6 +207,14 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
 	}
 
+	public ValoresAplicados getValoresAplicados() {
+		return valoresAplicados;
+	}
+
+	public void setValoresAplicados(ValoresAplicados valoresAplicados) {
+		this.valoresAplicados = valoresAplicados;
+	}
+
 	public MovimentoEstoqueCota getMovimentoEstoqueCotaFuro() {
 		return movimentoEstoqueCotaFuro;
 	}
@@ -218,19 +232,12 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.dataLancamentoOriginal = dataLancamentoOriginal;
 	}
 
-	/**
-	 * @return the movimentoFinanceiroCota
-	 */
-	public List<MovimentoFinanceiroCota> getMovimentoFinanceiroCota() {
+	public MovimentoFinanceiroCota getMovimentoFinanceiroCota() {
 		return movimentoFinanceiroCota;
 	}
 
-	/**
-	 * @param movimentoFinanceiroCota the movimentoFinanceiroCota to set
-	 */
 	public void setMovimentoFinanceiroCota(
-		List<MovimentoFinanceiroCota> movimentoFinanceiroCota) {
+			MovimentoFinanceiroCota movimentoFinanceiroCota) {
 		this.movimentoFinanceiroCota = movimentoFinanceiroCota;
 	}
-	
 }

@@ -17,8 +17,8 @@ import br.com.abril.nds.dto.ColunaRelatorioInformeEncalhe;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -26,8 +26,8 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -186,6 +186,13 @@ public class ConsultaInformeEncalheController extends BaseController {
 		
 		if (tipoImpressao != null && tipoImpressao.getColunas() != null){
 			
+			if (tipoImpressao.getColunas().contains("sequenciaMatriz")){
+				
+				colunas.add(new ColunaRelatorioInformeEncalhe("Sequência", 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4), 
+						"sequenciaMatriz"));
+			}
+			
 			if (tipoImpressao.getColunas().contains("codigoProduto")){
 				
 				colunas.add(new ColunaRelatorioInformeEncalhe("Código", 
@@ -272,7 +279,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 		
 		int qtdReg = 0;
 		
-		int quebra = 20;
+		int quebra = 30;
 		
 		int indexImg = 0;
 		
@@ -290,13 +297,19 @@ public class ConsultaInformeEncalheController extends BaseController {
 			if (qtdReg == quebra){
 				
 				qtdReg = 0;
+								
+				switch (tipoImpressao.getCapas()) {
 				
-				quebra = 28;
-				
-				if (!TipoImpressaoInformeEncalheDTO.Capas.NAO.equals(tipoImpressao.getCapas())){
-				
-					if (TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas())){
-					
+					case NAO:
+						
+						InformeEncalheDTO dto = new InformeEncalheDTO();
+						dto.setImagem(true);
+						dto.setSequenciaMatriz(info.getSequenciaMatriz());
+						listaResult.add(dto);					
+						break;
+										
+					case PAR:
+						
 						for (int i = indexImg ; i < indexImg + qtdImg ; i++){
 							
 							InformeEncalheDTO img = new InformeEncalheDTO();
@@ -304,8 +317,8 @@ public class ConsultaInformeEncalheController extends BaseController {
 							
 							if (i < dados.size()){
 							
-								img.setSequenciaMatriz(info.getSequenciaMatriz());
 								img.setIdProdutoEdicao(dados.get(i).getIdProdutoEdicao());
+								img.setSequenciaMatriz(dados.get(i).getSequenciaMatriz());
 							}
 							
 							listaResult.add(img);
@@ -314,20 +327,9 @@ public class ConsultaInformeEncalheController extends BaseController {
 						}
 						
 						indexImg += qtdImg;
-					} else {
-						
-						InformeEncalheDTO dt = new InformeEncalheDTO();
-						dt.setImagem(true);
-						dt.setSequenciaMatriz(info.getSequenciaMatriz());
-						listaResult.add(dt);
-					}
-				} else {
-					
-					InformeEncalheDTO dt = new InformeEncalheDTO();
-					dt.setImagem(true);
-					dt.setSequenciaMatriz(info.getSequenciaMatriz());
-					listaResult.add(dt);
+						break;
 				}
+				
 			}
 		}
 		

@@ -9,18 +9,16 @@ import org.apache.log4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.google.gson.Gson;
-
 import br.com.abril.nds.client.annotation.Public;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.ErrorController;
 import br.com.abril.nds.controllers.HomeController;
 import br.com.abril.nds.controllers.InicialController;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ExceptionUtil;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.InterceptionException;
@@ -33,6 +31,8 @@ import br.com.caelum.vraptor.interceptor.Interceptor;
 import br.com.caelum.vraptor.ioc.RequestScoped;
 import br.com.caelum.vraptor.resource.ResourceMethod;
 import br.com.caelum.vraptor.view.Results;
+
+import com.google.gson.Gson;
 
 @RequestScoped
 @Intercepts(before=ExecuteMethodInterceptor.class)

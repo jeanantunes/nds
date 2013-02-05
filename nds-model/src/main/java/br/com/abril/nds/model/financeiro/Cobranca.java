@@ -29,6 +29,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 /**
  * @author luiz.marcili
@@ -68,8 +69,9 @@ public abstract class Cobranca {
 	@Column(name = "VALOR", nullable = false)
 	protected BigDecimal valor;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_BAIXA", nullable = true)
-	protected String tipoBaixa;
+	protected TipoBaixaCobranca tipoBaixa;
 	
 	@Column(name = "CONTEMPLACAO", nullable = true)
 	protected boolean contemplacao;
@@ -160,11 +162,11 @@ public abstract class Cobranca {
 		this.valor = valor;
 	}
 
-	public String getTipoBaixa() {
+	public TipoBaixaCobranca getTipoBaixa() {
 		return tipoBaixa;
 	}
 
-	public void setTipoBaixa(String tipoBaixa) {
+	public void setTipoBaixa(TipoBaixaCobranca tipoBaixa) {
 		this.tipoBaixa = tipoBaixa;
 	}
 

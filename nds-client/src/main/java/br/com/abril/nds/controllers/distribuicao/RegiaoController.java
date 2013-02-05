@@ -17,6 +17,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
@@ -27,7 +28,6 @@ import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -122,7 +122,7 @@ public class RegiaoController extends BaseController {
 	private void validaEntradaDaCotaEmLote(int[] numeroCota, Long idRegiao) {
 		
 		if (numeroCota.length == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O número da cota é obrigatório.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "O nï¿½mero da cota ï¿½ obrigatï¿½rio.");
 		}
 	}
 	
@@ -144,12 +144,12 @@ public class RegiaoController extends BaseController {
 		Regiao regiao = regiaoService.obterRegiaoPorId(id);
 		
 		if (regiao.isRegiaoIsFixa() == true){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível excluir uma região FIXA.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nï¿½o ï¿½ possï¿½vel excluir uma regiï¿½o FIXA.");
 		}else{
 			
 		this.regiaoService.excluirRegiao(id);
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Regiao excluída com sucesso."), 
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Regiao excluï¿½da com sucesso."), 
 				"result").recursive().serialize();
 		}
 	}
@@ -169,7 +169,7 @@ public class RegiaoController extends BaseController {
 		regiaoService.alterarRegiao(regiao);
 		
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Região alterada com sucesso."), 
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Regiï¿½o alterada com sucesso."), 
 				"result").recursive().serialize();
 	}
 	
@@ -282,7 +282,7 @@ public class RegiaoController extends BaseController {
 		List<RegiaoCotaDTO> listaCotasRegiaoDTO = regiaoService.carregarCotasRegiao(filtro);
 			
 			if(listaCotasRegiaoDTO.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada não obteve resultado.");
+				throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada nï¿½o obteve resultado.");
 			}
 			
 			FileExporter.to("Cotas_Cadastradas_Na_RegiÃ£o", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
@@ -318,14 +318,14 @@ public class RegiaoController extends BaseController {
 	private void validarEntradaRegiao(String nomeRegiao) {
 		if (nomeRegiao == null || (nomeRegiao.isEmpty())) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Nome da regiao é obrigatório.");
+					"Nome da regiao ï¿½ obrigatï¿½rio.");
 		}
 
 		List<RegiaoDTO> listaRegiaoDTO = regiaoService.buscarRegiao();
 
 		for (RegiaoDTO regiaoDTO : listaRegiaoDTO) {
 			if (regiaoDTO.getNomeRegiao().equalsIgnoreCase(nomeRegiao)) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Região já cadastrada.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Regiï¿½o jï¿½ cadastrada.");
 			}
 		}
 	}

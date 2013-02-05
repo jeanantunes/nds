@@ -96,6 +96,11 @@ var bancoController = $.extend(true, {
 			
 			$("#nome", this.workspace).autocomplete({source: ""});
 			
+			bancoController.formatarValores();
+		},
+		
+		formatarValores : function(){
+			
 			$('#newJuros', this.workspace).priceFormat({
 				allowNegative: false,
 				centsSeparator: ',',
@@ -132,7 +137,6 @@ var bancoController = $.extend(true, {
 				centsSeparator: ',',
 			    thousandsSeparator: '.'
 			});
-
 		},
 		
 	    popup : function() {
@@ -386,8 +390,11 @@ var bancoController = $.extend(true, {
 			$("#alterVrMulta", this.workspace).val(resultado.vrMulta);
 			$("#alterInstrucoes", this.workspace).val(resultado.instrucoes);
 			
+			bancoController.formatarValores();
+			
 			bancoController.popup_alterar();
 		},
+		
 	    excluirBanco : function(idBanco) {
 	    	var data = [{name: 'idBanco', value: idBanco}];
 			$.postJSON(contextPath + "/banco/excluirBanco",

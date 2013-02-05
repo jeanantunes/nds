@@ -169,7 +169,7 @@ public class Cota implements Serializable {
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
-	
+		
 	public Cota() {
         this.inicioAtividade = new Date();
         this.inicioTitularidade = new Date();
@@ -504,7 +504,7 @@ public class Cota implements Serializable {
         this.titularesCota = titularesCota;
     }
     
-    /**
+	/**
      * Adiciona um novo histórico de titularidade da cota
      * 
      * @param titularCota
@@ -551,4 +551,5 @@ public class Cota implements Serializable {
 		}
 		return null;
 	}
+
 }

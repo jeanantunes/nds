@@ -5,6 +5,8 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/lancamento.js"></script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.justInput.js"></script>
 
 	<script language="javascript" type="text/javascript">
 

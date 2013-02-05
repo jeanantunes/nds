@@ -28,16 +28,16 @@ import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO.TipoPesquisaResumoExpedicao;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ExpedicaoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -121,26 +121,14 @@ public class ResumoExpedicaoController extends BaseController {
 		tableModel.setTotal((quantidadeRegistros!= null)? quantidadeRegistros.intValue():0);
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		String soma = this.sumarizarTotalProdutoBox(list);
+		ExpedicaoDTO expedicaoDTO =
+			this.expedicaoService.obterTotaisResumoExpedicaoProdutosDoBox(filtro);
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
 		mapa.put("resultado", tableModel);
-		mapa.put("somaTotal", soma);
+		mapa.put("somaTotal", CurrencyUtil.formatarValor(expedicaoDTO.getValorFaturado()));
 		
 		result.use(CustomJson.class).from(mapa).serialize();
-		
-	}
-	
-	private String sumarizarTotalProdutoBox(List<ExpedicaoDTO> list) {
-		
-		BigDecimal soma = BigDecimal.ZERO;
-		
-		for (ExpedicaoDTO expd : list) {
-			if (expd.getValorFaturado() != null) {
-				soma = soma.add(expd.getValorFaturado());
-			}
-		}
-		return CurrencyUtil.formatarValor(soma);
 	}
 	
 	private List<ResumoExpedicaoDetalheVO> pesquisarDetalheResumoExpedicaoDoBox(FiltroResumoExpedicaoDTO filtro, List<ExpedicaoDTO> list){
@@ -158,7 +146,7 @@ public class ResumoExpedicaoController extends BaseController {
 			BigDecimal precoDesconto = expd.getPrecoCapa();
 			
 			if (expd.getDesconto() != null) {
-				precoDesconto = expd.getPrecoCapa().subtract(expd.getDesconto());
+				precoDesconto = expd.getPrecoCapa().subtract( expd.getPrecoCapa().multiply( expd.getDesconto().divide(new BigDecimal("100")) ) );
 			}
 			
 			resumoExpedicaoDetalheVO = new ResumoExpedicaoDetalheVO();
@@ -491,9 +479,6 @@ public class ResumoExpedicaoController extends BaseController {
 		
 		List<ResumoExpedicaoVO> listaLancamentosExpedidos = new LinkedList<ResumoExpedicaoVO>();
 		
-		BigInteger qtdeTotalReparte = BigInteger.ZERO;
-		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
-		
 		ResumoExpedicaoVO resumoExpedicaoVO = null;
 		
 		for (ExpedicaoDTO expd  : list){
@@ -504,20 +489,19 @@ public class ResumoExpedicaoController extends BaseController {
 			resumoExpedicaoVO.setDescricaoProduto(expd.getNomeProduto());
 			resumoExpedicaoVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
 			resumoExpedicaoVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
-			resumoExpedicaoVO.setReparte(getValor(expd.getQntReparte()));
+			resumoExpedicaoVO.setReparte(expd.getQntReparte());
 			resumoExpedicaoVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
-			resumoExpedicaoVO.setQntDiferenca(getValor(expd.getQntDiferenca()));
-			
-			valorTotalFaturado = valorTotalFaturado.add(expd.getValorFaturado());
-			qtdeTotalReparte = qtdeTotalReparte.add(expd.getQntReparte());
+			resumoExpedicaoVO.setQntDiferenca(expd.getQntDiferenca());
 			
 			listaLancamentosExpedidos.add(resumoExpedicaoVO);
 		}
 		
+		ExpedicaoDTO expedicaoDTO = this.expedicaoService.obterTotaisResumoExpedicaoPorProduto(filtro);
+		
 		RetornoExpedicaoVO expedicaoVO = new RetornoExpedicaoVO();
 		expedicaoVO.setResumosExpedicao(listaLancamentosExpedidos);
-		expedicaoVO.setTotalReparte(qtdeTotalReparte);
-		expedicaoVO.setTotalValorFaturado(valorTotalFaturado);
+		expedicaoVO.setTotalReparte(expedicaoDTO.getQntReparte());
+		expedicaoVO.setTotalValorFaturado(expedicaoDTO.getValorFaturado());
 		
 		return expedicaoVO;
 	}
