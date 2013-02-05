@@ -3,7 +3,6 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 
 import br.com.abril.nds.util.export.Exportable;
-import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
 public class FiltroCotasRegiaoDTO extends FiltroDTO implements Serializable {
@@ -19,31 +18,6 @@ public class FiltroCotasRegiaoDTO extends FiltroDTO implements Serializable {
 	private String cepFinal;
 	
 	
-	public enum ColunaOrdenacao {
-
-		EDICAO("edicao"),
-		CHAMADA_CAPA("chamadaCapa");
-		
-		private String nomeColuna;
-		
-		private ColunaOrdenacao(String nomeColuna) {
-			this.nomeColuna = nomeColuna;
-		}
-		
-		@Override
-		public String toString() {
-			return this.nomeColuna;
-		}
-		
-		public static ColunaOrdenacao getPorDescricao(String descricao) {
-			for(ColunaOrdenacao coluna: ColunaOrdenacao.values()) {
-				if(coluna.toString().equals(descricao))
-					return coluna;
-			}
-			return null;
-		}
-	}
-
 	public Long getId() {
 		return id;
 	}

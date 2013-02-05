@@ -49,7 +49,7 @@ public class RegiaoController extends BaseController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroCotasRegiao";
 	
 	@Autowired
-	private RegiaoService regiaoService; // interface
+	private RegiaoService regiaoService;
 	
 	@Autowired
 	private HttpSession session;
@@ -115,34 +115,25 @@ public class RegiaoController extends BaseController {
 			
 			regiaoService.addCotaNaRegiao(registro);
 		}
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota adicionada com sucesso!"), 
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota adicionada com sucesso."), 
 			"result").recursive().serialize();
 	}
 
 	private void validaEntradaDaCotaEmLote(int[] numeroCota, Long idRegiao) {
 		
 		if (numeroCota.length == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O n√∫mero da cota √© obrigat√≥rio.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "O n˙mero da cota È obrigatÛrio.");
 		}
-//		List<RegiaoCotaDTO> cotasCadastradas = regiaoService.carregarCotasRegiao(idRegiao);
-//		
-//		for (RegiaoCotaDTO cotaCad : cotasCadastradas) {
-//			for (int cotasACadastrar : numeroCota) {
-//				if (cotaCad.getNumeroCota().equals(cotasACadastrar)) {
-//					throw new ValidacaoException(TipoMensagem.WARNING, "Cota j√° cadastrada na regi√£o!");
-//				}
-//			}
-//		}
 	}
 	
 	@Post
-	@Path("/excluirRegistroCotaRegiao")
-	public void excluirRegistroCotaRegiao(Long id) {
+	@Path("/excluirCotaDaRegiao")
+	public void excluirCota(Long id) {
 		
 		this.regiaoService.excluirRegistroCotaRegiao(id);
 			
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Cota removida com sucesso!"), 
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Cota removida com sucesso."), 
 				"result").recursive().serialize();
 	}
 	
@@ -153,12 +144,12 @@ public class RegiaoController extends BaseController {
 		Regiao regiao = regiaoService.obterRegiaoPorId(id);
 		
 		if (regiao.isRegiaoIsFixa() == true){
-			throw new ValidacaoException(TipoMensagem.WARNING, "N√£o √© poss√≠vel excluir uma regi√£o FIXA.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "N„o È possÌvel excluir uma regi„o FIXA.");
 		}else{
 			
 		this.regiaoService.excluirRegiao(id);
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Regiao exclu√≠da com sucesso!"), 
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Regiao excluÌda com sucesso."), 
 				"result").recursive().serialize();
 		}
 	}
@@ -177,15 +168,9 @@ public class RegiaoController extends BaseController {
 		
 		regiaoService.alterarRegiao(regiao);
 		
-//		if (regiao.isRegiaoIsFixa() == true){
-//			throw new ValidacaoException(TipoMensagem.WARNING, "N√£o √© poss√≠vel excluir uma regi√£o FIXA.");
-//		}else{
-//			
-//		this.regiaoService.excluirRegiao(id);
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Regi√£o alterada com sucesso."), 
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Regi„o alterada com sucesso."), 
 				"result").recursive().serialize();
-//		}
 	}
 	
 	
@@ -203,6 +188,7 @@ public class RegiaoController extends BaseController {
 	@Post
 	@Path("/carregarCotasRegiao")
 	public void carregarCotasRegiao (FiltroCotasRegiaoDTO filtro, String sortorder, String sortname, int page, int rp){
+		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		this.tratarFiltro(filtro);
@@ -228,8 +214,6 @@ public class RegiaoController extends BaseController {
 
 		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 		
-//		tableModel.setTotal(listaCotasRegiaoDTO.size());
-		
 		return tableModel;
 	}
 	
@@ -250,7 +234,7 @@ public class RegiaoController extends BaseController {
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaRegiao));
 		
-//		tableModel.setPage(regiao.getPaginacao().getPaginaAtual());
+		tableModel.setPage(1);
 
 		tableModel.setTotal(listaRegiao.size());
 
@@ -264,9 +248,6 @@ public class RegiaoController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		this.tratarFiltro(filtro);
-		
-//		List<RegiaoCotaDTO> listaCotasCep = regiaoService.buscarPorCEP(filtro);
-//		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = montarTableModelBuscaCep(filtro, listaCotasCep);
 		
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = montarTableModelBuscaCep(filtro);
 		
@@ -301,7 +282,7 @@ public class RegiaoController extends BaseController {
 		List<RegiaoCotaDTO> listaCotasRegiaoDTO = regiaoService.carregarCotasRegiao(filtro);
 			
 			if(listaCotasRegiaoDTO.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A √∫ltima pesquisa realizada n√£o obteve resultado.");
+				throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada n„o obteve resultado.");
 			}
 			
 			FileExporter.to("Cotas_Cadastradas_Na_Regi√£o", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
@@ -335,17 +316,18 @@ public class RegiaoController extends BaseController {
 	}
 	
 	private void validarEntradaRegiao(String nomeRegiao) {
-		if (nomeRegiao == null || (nomeRegiao.isEmpty())){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nome da regiao √© obrigat√≥rio.");
+		if (nomeRegiao == null || (nomeRegiao.isEmpty())) {
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Nome da regiao È obrigatÛrio.");
 		}
-		
+
 		List<RegiaoDTO> listaRegiaoDTO = regiaoService.buscarRegiao();
-		
+
 		for (RegiaoDTO regiaoDTO : listaRegiaoDTO) {
-			if (regiaoDTO.getNomeRegiao().equalsIgnoreCase(nomeRegiao)){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Regi√£o j√° cadastrada.");
+			if (regiaoDTO.getNomeRegiao().equalsIgnoreCase(nomeRegiao)) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Regi„o j· cadastrada.");
 			}
-					}
+		}
 	}
 	
 	@Post

@@ -239,9 +239,11 @@ $(function(){
 					<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> 
 				</span>
 				
-				<span class="bt_novos"><a href="javascript:;">
+				<!-- 
+				<span class="bt_novos"><a href="javascript:;" >
 					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a> 
 				</span>
+				 -->
 		</fieldset>
 
 		<!-- REGIAO AUTOMÁTICA - POR N-MAIORES -->
@@ -505,7 +507,7 @@ $(function(){
 					</span> 
 					
 					<span class="bt_novos" title="Manutenção">
-						<a href="javascript:;" onclick="regiaoController.carregarRegiao();">
+						<a href="javascript:;" onclick="regiaoController.manutencaoRegiao();">
 							<img src="${pageContext.request.contextPath}/images/bt_administracao.png" hspace="5" border="0" />
 						
 						Manutenção

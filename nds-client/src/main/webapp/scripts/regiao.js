@@ -408,8 +408,6 @@ var regiaoController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			
-			$(".grids", regiaoController.workspace).hide();
-
 			return resultado;
 		}
 		
@@ -520,19 +518,15 @@ var regiaoController = $.extend(true, {
 	
 
 	//	FUNCTIONS - REGIÃO
-	
-	
 
-	// FUNCTIONS - CARREGAR REGIAO
+	// FUNCTIONS - Manutenção Região
 
-	carregarRegiao : function() {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
-
+	manutencaoRegiao : function() {
+		
 		$(".regioesCadastradasGrid", this.workspace).flexOptions({
 			url: contextPath + "/distribuicao/regiao/carregarRegiao",
-			dataType : 'json',
+			dataType : 'json'
 		});
-			
 		$(".regioesCadastradasGrid", this.workspace).flexReload();		
 		
 		$("#dialog-novo").dialog({
@@ -543,7 +537,6 @@ var regiaoController = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					$(this).dialog("close");
-
 					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar" : function() {
@@ -551,6 +544,7 @@ var regiaoController = $.extend(true, {
 				}
 			}
 		});
+//		$(".regioesCadastradasGrid", this.workspace).flexReload();
 	},
 	
 	
@@ -602,6 +596,10 @@ var regiaoController = $.extend(true, {
 	
 	
 	// FUNCTION - EDITAR REGIAO
+	
+	
+//	editarRegiao - ESTÁ EM DESUSO!!!
+	
 	
 	editarRegiao : function(){
 //		var regiao = $("#comboRegioes option:selected").val();
@@ -672,8 +670,6 @@ var regiaoController = $.extend(true, {
 	cotasDaRegiao : function(){
 		var regiao = $("#comboRegioes option:selected").val();
 		
-		//alert(regiao);
-		
 		$(".cotasRegiaoGrid", this.workspace).flexOptions({
 			url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
 			dataType : 'json',
@@ -682,8 +678,7 @@ var regiaoController = $.extend(true, {
 			}]
 		});
 			
-		$(".cotasRegiaoGrid", this.workspace).flexReload();
-		$(".regioesCadastradasGrid", this.workspace).flexReload();
+		$(".cotasRegiaoGrid", this.workspace).flexReload();		
 	},
 	
 	
@@ -729,7 +724,8 @@ var regiaoController = $.extend(true, {
 				                 $("#comboRegioes").html(options);
 									}
 									);
-//							$("#dialog-addRegiao", this.workspace).flexReload();
+							$(".grids", regiaoController.workspace).hide();
+							
 						},
 						"Cancelar" : function() {
 							$(this).dialog("close");
@@ -743,7 +739,10 @@ var regiaoController = $.extend(true, {
 //		}
 	},
 	
-// FUNCTION - EXCLUIR REGIÃO
+
+	
+	// FUNCTION - EXCLUIR REGIÃO
+	
 	
 	excluirRegiao : function(id) {
 		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -768,14 +767,8 @@ var regiaoController = $.extend(true, {
 										
 										exibirMensagem(tipoMensagem, listaMensagens);
 									}
-											
-//									$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
-//										url: contextPath + "/distribuicao/regiao/carregarRegiao",
-//										dataType : 'json'
-//									});
-//										
-									$(".regioesCadastradasGrid").flexReload();
-//									$(".regioesCadastradasGrid", this.workspace).flexReload();
+					                 
+					                 $(".regioesCadastradasGrid").flexReload();
 							   },
 							   null,
 							   true
@@ -1002,7 +995,6 @@ var regiaoController = $.extend(true, {
 					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
 							cotas, 
 							function(result) {
-//						$("dialog-confirmacao", this.workspace).dialog("close");
 
 						var tipoMensagem = result.tipoMensagem;
 						var listaMensagens = result.listaMensagens;
@@ -1010,9 +1002,7 @@ var regiaoController = $.extend(true, {
 						if (tipoMensagem && listaMensagens) 
 							exibirMensagem(tipoMensagem, listaMensagens);
 						
-						$(".regioesCadastradasGrid").flexReload();
-								
-//						$(".cotasRegiaoGrid", this.workspace).flexReload();
+						$(".cotasRegiaoGrid", this.workspace).flexReload();
 					});
 			},
 				"Cancelar" : function() {
@@ -1218,7 +1208,6 @@ var regiaoController = $.extend(true, {
 	
 	popup_detalhes_close : function() {
 		$("#dialog-detalhes").dialog("close");
-
 	},
 
 	// FUNCTION - ADD COTAS NO GRID
@@ -1243,7 +1232,8 @@ var regiaoController = $.extend(true, {
 	 * 
 	 */
 	
-	// FUNCTION - ADD COTAS NA REGIÃO
+	
+	// FUNCTION - ADD COTAS NA REGIÃO [botão add Cotas]
 	
 	popupAddCotaRegiao : function(evitarReset) {
 		
@@ -1259,7 +1249,7 @@ var regiaoController = $.extend(true, {
 			modal: true,
 			buttons: {
 
-				// FUNCTION - CONFIRMAR ADIÇÃO DE COTA NA REGIAO
+				// CONFIRMAR ADIÇÃO DE COTA NA REGIAO
 				
 				"Confirmar": function() {
 					$(this).dialog("close");
@@ -1273,7 +1263,7 @@ var regiaoController = $.extend(true, {
 							cotas.push({name:'numeroCota', value:this.value});
 					});
 					
-					// adicionando a região
+					// adicionando ao array cotas.
 					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
 					
 					if(cotas.length === 0) {
@@ -1292,6 +1282,8 @@ var regiaoController = $.extend(true, {
 							exibirMensagem(tipoMensagem, listaMensagens);
 						}
 						
+						regiaoController.cotasDaRegiao();
+						
 					});
 					
 //					$(".regioesCadastradasGrid", this.workspace).flexOptions({
@@ -1300,7 +1292,7 @@ var regiaoController = $.extend(true, {
 //					});
 //						
 //					$(".regioesCadastradasGrid", this.workspace).flexReload();
-					
+								
 					$( this ).dialog( "close" );
 					$("#idCotas").html("");
 				},
@@ -1312,7 +1304,7 @@ var regiaoController = $.extend(true, {
 			},
 //			form: $("#dialog-addCota", cotaAusenteController.workspace).parents("form")
 		});
-		$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
+//		$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
 	},
 	
 	// FUNCTION - PEGAR DADOS VIA JSON, PARA ENVIAR PRA CONTROLLER
@@ -1439,54 +1431,6 @@ var regiaoController = $.extend(true, {
 		//JSON
 	},
 	
-/* exemplo COTA AUSENTE
- * 	popupConfirmaAusenciaCota : function(cotas) {
-		
-		cotaAusenteController.numCotasAusente = cotas;
-		
-		var parametros = [];
-		
-		$.each(cotas, function(index, num) {			
-			parametros.push({name:'numCotas['+ index +']', value: num});
-	  	});
-		
-		$( "#dialog-confirm", cotaAusenteController.workspace ).dialog({
-			resizable: false,
-			height:'auto',
-			width:350,
-			modal: true,
-			buttons: {
-				"Suplementar": function() {
-					
-					$.postJSON(contextPath + "/cotaAusente/enviarParaSuplementar", 
-							parametros, 
-							function(result){
-								$( "#dialog-confirm", cotaAusenteController.workspace ).dialog("close");
-								if(result[1]!='SUCCESS')
-									cotaAusenteController.popupNovaCotaAusente(true);
-								else
-									$('#idCotas tr').remove();
-								
-								cotaAusenteController.retornoEnvioSuplementar(result);
-									
-							}, null);									
-				},
-				"Redistribuir": function() {
-					
-					$.postJSON(contextPath + "/cotaAusente/carregarDadosRateio", 
-							parametros, 
-							cotaAusenteController.popupRateio);
-					
-					$( "#dialog-confirm", cotaAusenteController.workspace ).dialog("close");
-				}				
-			},
-			form: $("#dialog-confirm", cotaAusenteController.workspace ).parents("form")
-		});
-	},
- */
-	
-	
-	
 	getInput : function(value,id, width,textAlign,onblur,onchange,onkeyup, classe, onfocusin, attr, attrValue) {
 		
 		
@@ -1576,6 +1520,8 @@ var regiaoController = $.extend(true, {
 		$("input[type=checkbox][name='cotaSelected']").attr("checked", valor);
 	},
 	
+	
+	//Remover cota da Regiao
 	remove_cotas_grid : function(id) {
 		
 		regiao = $("#comboRegioes option:selected").val();
@@ -1587,7 +1533,7 @@ var regiaoController = $.extend(true, {
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
-					$.postJSON(contextPath + "/distribuicao/regiao/excluirRegistroCotaRegiao", 
+					$.postJSON(contextPath + "/distribuicao/regiao/excluirCotaDaRegiao", 
 							{id:id},
 							function(result) {
 //									$(".regioesCadastradasGrid", this.workspace).flexReload(),

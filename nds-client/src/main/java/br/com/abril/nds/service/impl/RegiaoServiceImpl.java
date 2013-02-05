@@ -19,13 +19,6 @@ import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.util.TipoMensagem;
 
-/**
- * Classe de implementação de serviços referentes a entidade
- * {@link br.com.abril.nds.model.distribuicao.regiao}  
- * 
- * @author Discover Technology
- *
- */
 @Service
 public class RegiaoServiceImpl implements RegiaoService {
 	
@@ -41,7 +34,6 @@ public class RegiaoServiceImpl implements RegiaoService {
 	@Override
 	@Transactional
 	public void salvarRegiao(Regiao regiao) {
-		//validarParametrosObrigatoriosRegiao(regiao);
 		regiaoRepository.adicionar(regiao);
 		}
 	
@@ -51,44 +43,27 @@ public class RegiaoServiceImpl implements RegiaoService {
 		return regiaoRepository.buscarRegiao();
 	}
 	
-	/**
-	 * Valida as informações referente ao cadasto de uma nova cota.
-	 * 
-	 * @param objRegiao
-	 */
-//	private void validarParametrosObrigatoriosRegiao(Regiao regiao) {
-//		
-//		List<String> mensagensValidacao = new ArrayList<String>();
-//		
-//		if (regiao.getNomeRegiao() == null) {
-//			mensagensValidacao.add("O preenchimento do campo [nome] é obrigatório!");
-//		}
-//	}
-
 	@Override
 	@Transactional
 	public List<RegiaoCotaDTO> carregarCotasRegiao(FiltroCotasRegiaoDTO filtro) {		
-		return regiaoRepository.carregarCotasRegiao(filtro);
+		if(filtro == null) 
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro n�o deve ser nulo.");
+		return registroCotaRegiaoRepository.carregarCotasRegiao(filtro);
 	}
 
 	@Override
 	@Transactional
 	public void excluirRegiao(Long id) {
-		
 		Regiao regiao = this.regiaoRepository.buscarPorId(id);
 		
 		this.regiaoRepository.remover(regiao);
-		
 	}
 
 	@Override
 	@Transactional
 	public void excluirRegistroCotaRegiao(Long id) {
-		
 		RegistroCotaRegiao registro = this.registroCotaRegiaoRepository.buscarPorId(id); 
 		registroCotaRegiaoRepository.remover(registro);
-		
-//		registroCotaRegiaoRepository.removerPorId(id);
 		
 	}
 	
@@ -96,9 +71,9 @@ public class RegiaoServiceImpl implements RegiaoService {
 	@Transactional
 	public List<RegiaoCotaDTO> buscarPorCEP(FiltroCotasRegiaoDTO filtro) {
 		if(filtro == null) 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro não deve ser nulo.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro n�o deve ser nulo.");
 		
-		return regiaoRepository.buscarPorCEP(filtro);
+		return registroCotaRegiaoRepository.buscarPorCEP(filtro);
 	}
 
 	@Override
@@ -110,11 +85,6 @@ public class RegiaoServiceImpl implements RegiaoService {
 	@Override
 	@Transactional
 	public Regiao obterRegiaoPorId(Long idRegiao) {
-//		if (idRegiao == null) {
-//
-//			throw new ValidacaoException(TipoMensagem.ERROR, "Id da cota não pode ser nulo.");
-//		}
-//		
 		return this.regiaoRepository.buscarPorId(idRegiao);
 	}
 
@@ -124,19 +94,11 @@ public class RegiaoServiceImpl implements RegiaoService {
 		return segmento.buscarTodos();
 	}
 
-	@Override
-	@Transactional
-	public List<RegiaoCotaDTO> carregarTodasCotasDaRegiao() {
-		// TODO Auto-generated method stub
-		return this.regiaoRepository.buscarTodasCotasDaRegiao();
-	}
 
 	@Override
 	@Transactional
 	public void alterarRegiao(Regiao regiao) {
 		regiaoRepository.merge(regiao);
-//		regiaoRepository.alterar(regiao);
-		
 	}
 	
 	
