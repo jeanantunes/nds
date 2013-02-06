@@ -13,7 +13,12 @@ public class Cota {
 	private BigDecimal ajusteReparte; // parametro VendaMedia + n na tela de Ajuste de Reparte
 	private BigDecimal vendaMediaFinal;
 	private BigDecimal reparteMinimo; // parametro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
+	private BigDecimal vendaMediaNominalCota; // VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota;
 	private List<EdicaoBase> edicoesBase;
+
+	public void calculate() {
+		
+	}
 
 	public Integer getId() {
 		return id;
@@ -68,5 +73,11 @@ public class Cota {
 	}
 	public void setReparteMinimo(BigDecimal reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
+	}
+	public BigDecimal getVendaMediaNominalCota() {
+		return vendaMediaNominalCota;
+	}
+	public void setVendaMediaNominalCota(BigDecimal vendaMediaNominalCota) {
+		this.vendaMediaNominalCota = vendaMediaNominalCota;
 	}
 }
