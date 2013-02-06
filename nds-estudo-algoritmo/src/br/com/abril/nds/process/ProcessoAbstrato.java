@@ -25,5 +25,5 @@ public abstract class ProcessoAbstrato {
      * Método utilizado para efetivamente realizar os cálculos do processo.
      * @throws Exception 
      */
-    protected abstract void calcular() throws Exception;
+    protected abstract void executar() throws Exception;
 }

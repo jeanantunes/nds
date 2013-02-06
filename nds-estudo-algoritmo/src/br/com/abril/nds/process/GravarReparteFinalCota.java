@@ -15,11 +15,11 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() {
-        calcular();
+        executar();
     }
 
     @Override
-    protected void calcular() {
+    protected void executar() {
         // TODO: implementar método calcular do SubProcesso GravarReparteFinalCota
     }
     
