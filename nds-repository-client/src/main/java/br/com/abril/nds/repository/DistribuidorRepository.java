@@ -48,5 +48,5 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 
 	DiaSemana buscarInicioSemana();
 	
-	Date obterDatatOperacaoDistribuidor();
+	Date obterDataOperacaoDistribuidor();
 }

@@ -202,7 +202,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 					tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
 				TipoMovimentoEstoque tipoMovimentoCota =
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-				Date dataOperacao = distribuidorService.obterDatatOperacaoDistribuidor();
+				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 				
 				boolean lancamentosConfirmados = false;
 				
