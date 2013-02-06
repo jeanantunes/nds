@@ -267,7 +267,7 @@ public class CotaServiceImpl implements CotaService {
 	}
 
 	@Transactional(readOnly = true)
-	public Cota obterPorNome(String nome) {
+	public List<Cota> obterPorNome(String nome) {
 		
 		List<Cota> listaCotas = this.cotaRepository.obterPorNome(nome);
 		
@@ -275,14 +275,14 @@ public class CotaServiceImpl implements CotaService {
 			
 			return null;
 		}
-		
+		/*
 		if (listaCotas.size() > 1) {
 			
 			throw new ValidacaoException(
 				TipoMensagem.ERROR, "Mais de um resultado encontrado para a cota com nome \"" + nome + "\"");
 		}
-		
-		return listaCotas.get(0);
+		*/
+		return listaCotas;
 	}
 	
 	/**
