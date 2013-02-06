@@ -11,7 +11,7 @@ public class Conexao {
 	public static Connection getConexao() throws ClassNotFoundException, SQLException {
 		if (con == null) {
 			Class.forName("com.mysql.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/nds-client-homolog", "root", "root");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/nds-client", "root", "root");
 		}
 		return con;
 	}

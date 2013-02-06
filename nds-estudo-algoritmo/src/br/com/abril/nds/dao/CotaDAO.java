@@ -17,12 +17,13 @@ public class CotaDAO {
 			ResultSet rs = psmt.executeQuery();
 			while (rs.next()) {
 				Cota cota = new Cota();
-				cota.setId(rs.getInt("ID"));
+				cota.setId(rs.getLong("ID"));
 				
 				cotas.add(cota);
 			}
 		} catch (Exception ex) {
 			System.out.println("Ocorreu um erro ao tentar consultar as cotas");
+			ex.printStackTrace();
 		}
 		return cotas;
 	}

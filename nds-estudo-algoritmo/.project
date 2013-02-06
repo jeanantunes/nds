@@ -26,4 +26,10 @@
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>MySQL</name>
+			<value>file:/C:/Users/soaresa/.m2/repository/mysql/mysql-connector-java/5.1.18/mysql-connector-java-5.1.18.jar</value>
+		</variable>
+	</variableList>
 </projectDescription>
