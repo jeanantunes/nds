@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,6 +53,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 @Service
 public class CobrancaServiceImpl implements CobrancaService {
@@ -102,6 +104,11 @@ public class CobrancaServiceImpl implements CobrancaService {
         
 		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
+		
+		
+		
+		
+		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
 		if (banco != null && banco.getJuros() != null ) {
 			
 			taxaJurosMensal = banco.getJuros();
@@ -117,6 +124,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 			taxaJurosMensal = politicaPrincipal.getFormaCobranca().getTaxaJurosMensal();
 		}
+		
+		
+		
+		
 
 		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
 
@@ -284,14 +295,19 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 			//CALCULO DE JUROS E MULTA
 			BigDecimal valorJurosCalculado = BigDecimal.ZERO;
-			BigDecimal valorMultaCalculado = BigDecimal.ZERO;
-			Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(cob.getDataVencimento(), 0);
+			BigDecimal valorMultaCalculado = BigDecimal.ZERO; 
+			
+			Date vencimentoDiaUtil = calendarioService.adicionarDiasUteis(cob.getDataVencimento(), 0);
+
+		    Date dataVencimento = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(vencimentoDiaUtil)));
+	
+		    dataOperacao = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(dataOperacao)));
 			
 			//CALCULA VALOR DO SALDO DA DIVIDA(MOVIMENTOS DE PAGAMENTO PARCIAL)
 			BigDecimal saldoDivida = this.obterSaldoDivida(cob.getId());
 			cobranca.setValorSaldo(CurrencyUtil.formatarValor(saldoDivida));
 			
-			if (dataVencimentoUtil.compareTo(dataOperacao) < 0) {
+			if (dataVencimento.compareTo(dataOperacao) < 0) {
 				
 				//CALCULA JUROS
 				valorJurosCalculado =
@@ -508,6 +524,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 			if (valorPagamentoCobranca.floatValue() >=0 ){
 		    	itemCobranca.setDataPagamento(pagamento.getDataPagamento());
+		    	itemCobranca.setTipoBaixa(TipoBaixaCobranca.MANUAL);
 		    	itemCobranca.setStatusCobranca(StatusCobranca.PAGO);
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
 		    	itemCobranca.setBanco(pagamento.getBanco());

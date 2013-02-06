@@ -129,8 +129,8 @@ var novoDialogDebitoCreditoCotaController = $.extend(true, {
 		
 		$("#dialog-novo", novoDialogDebitoCreditoCotaController.workspace).dialog({
 			resizable: false,
-			height:550,
-			width:860,
+			height:570,
+			width:880,
 			modal: true,
 			buttons:[ 
 			          {

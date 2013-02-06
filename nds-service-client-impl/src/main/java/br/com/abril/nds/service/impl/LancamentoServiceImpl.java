@@ -90,9 +90,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 			fornecedor = lancamento.getProdutoEdicao().getProduto().getFornecedor().getJuridica().getRazaoSocial();			
 		}
 		
-		Date maisRecente = lancamento.getRecebimentos().iterator().next().getRecebimentoFisico().getDataRecebimento();
+		Date maisRecente = null;
 		
-		if(lancamento.getRecebimentos().size()>1) {
+		if(lancamento.getRecebimentos()!=null && lancamento.getRecebimentos().size()==1) {
+			maisRecente = lancamento.getRecebimentos().iterator().next().getRecebimentoFisico().getDataRecebimento();
+		
+		} else if(lancamento.getRecebimentos()!=null && lancamento.getRecebimentos().size()>1) {
 			
 			Iterator<ItemRecebimentoFisico> itemFisico = lancamento.getRecebimentos().iterator();
 			
@@ -110,7 +113,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		LancamentoNaoExpedidoDTO dto = new LancamentoNaoExpedidoDTO(
 				lancamento.getId(), 
-				sdf.format(maisRecente), 
+				maisRecente==null?"":sdf.format(maisRecente), 
 				lancamento.getProdutoEdicao().getProduto().getCodigo(), 
 				lancamento.getProdutoEdicao().getProduto().getNome(), 
 				lancamento.getProdutoEdicao().getNumeroEdicao(), 
@@ -141,13 +144,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 		expedicao.setId(idExpedicao);
 		
 		lancamentoRepository.alterarLancamento(idLancamento, new Date(), StatusLancamento.EXPEDIDO, expedicao);
-		
-		List<MovimentoEstoqueCota> movimentos = movimentoEstoqueCotaRepository.obterPorLancamento(idLancamento);
-		for (MovimentoEstoqueCota movimento : movimentos) {
-			movimento.setEstudoCota(null);
-			movimentoEstoqueCotaRepository.alterar(movimento);
-		}
-		
+				
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setDataEdicao(new Date());
 		historico.setLancamento(new Lancamento(idLancamento));

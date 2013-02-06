@@ -172,6 +172,8 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, true));	
 		
+		hql.append(" and estoque.qtde>=estudo.qtdeReparte ");
+		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
 					LancamentoNaoExpedidoDTO.SortColumn.getByProperty(paginacaoVO.getSortColumn()),
@@ -245,6 +247,7 @@ public class LancamentoRepositoryImpl extends
 	 */
 	private String gerarQueryProdutosNaoExpedidos(Map<String, Object> parametros, Date data, Long idFornecedor, Boolean estudo) {
 		
+
 		StringBuilder hql = new StringBuilder();	
 		
 		hql.append(" from Lancamento lancamento ");
@@ -255,13 +258,15 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" join produto.fornecedores fornecedor ");
 		}
 		
-		hql.append(" join lancamento.recebimentos itemRecebido ");
+		hql.append(" left join lancamento.recebimentos itemRecebido ");
+		
+		hql.append(" left join produtoEdicao.estoqueProduto estoque ");
+		
+		hql.append(" left join lancamento.estudo estudo ");
 		
 		boolean where = false;
 		
 		if (estudo != null && estudo == true ) {
-
-			hql.append(" join lancamento.estudo estudo ");
 			
 			hql.append(" where estudo.status = :statusEstudo ");
 			
@@ -279,8 +284,10 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" and ");
 		}
 		
-		//hql.append(" lancamento.status=:statusConfirmado ");
 		hql.append(" lancamento.status=:statusBalanceado ");
+		
+		hql.append(" and ( (itemRecebido.id is null and produtoEdicao.parcial=true) or (itemRecebido.id is not null)) ");
+				
 		
 		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
 		
