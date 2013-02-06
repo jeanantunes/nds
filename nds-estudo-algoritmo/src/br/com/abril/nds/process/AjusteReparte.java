@@ -20,11 +20,11 @@ public class AjusteReparte extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() {
-        calcular();
+        executar();
     }
 
     @Override
-    protected void calcular() {
+    protected void executar() {
     	for (Cota cota : estudo.getParametro().getCotas()) {
     		if (cota.isVendaMediaMaisN()) {
     			BigDecimal ajusteReparte = new BigDecimal(0);

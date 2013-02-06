@@ -1,5 +1,7 @@
 package br.com.abril.nds.process;
 
+import br.com.abril.nds.model.Estrategia;
+
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
@@ -18,13 +20,16 @@ public class DefinicaoBases extends ProcessoAbstrato {
 
     @Override
     public void executarProcesso() {
-        calcular();
+        executar();
         new BaseParaVeraneio().executar(estudo);
         new BaseParaSaidaVeraneio().executar(estudo);
     }
 
     @Override
-    public void calcular() {
+    public void executar() {
         // TODO: implementar método calcular do Processo DefinicaoBases
+    	Estrategia estrategia;
+    	
+//    	estrategia.getEdicaoBases();
     }
 }

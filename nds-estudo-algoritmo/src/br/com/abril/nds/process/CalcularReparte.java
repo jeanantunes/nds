@@ -19,7 +19,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 
     @Override
     public void executarProcesso() {
-        calcular();
+        executar();
         new MinimoMaximo().executar(estudo);
         new GravarReparteJuramentado().executar(estudo);
         new AjusteFinalReparte().executar(estudo);
@@ -28,7 +28,7 @@ public class CalcularReparte extends ProcessoAbstrato {
     }
 
     @Override
-    public void calcular() {
+    public void executar() {
         // TODO: implementar método calcular do Processo CalcularReparte
     }
 }

@@ -23,5 +23,5 @@ public abstract class ProcessoAbstrato {
     /**
      * Método utilizado para efetivamente realizar os cálculos do processo.
      */
-    protected abstract void calcular();
+    protected abstract void executar();
 }

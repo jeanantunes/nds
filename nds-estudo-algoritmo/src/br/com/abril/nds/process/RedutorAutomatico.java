@@ -20,11 +20,11 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() {
-        calcular();
+        executar();
     }
 
     @Override
-    protected void calcular() {
+    protected void executar() {
     	
     	BigDecimal excedente = new BigDecimal(0);
     	

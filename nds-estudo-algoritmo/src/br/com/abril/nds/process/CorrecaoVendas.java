@@ -17,14 +17,14 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() {
-        calcular();
+        executar();
         new CorrecaoIndividual().executar(estudo);
         new CorrecaoTendencia().executar(estudo);
         new VendaCrescente().executar(estudo);
     }
 
     @Override
-    protected void calcular() {
+    protected void executar() {
         // TODO: implementar método calcular do Processo CorrecaoVendas
     }
     
