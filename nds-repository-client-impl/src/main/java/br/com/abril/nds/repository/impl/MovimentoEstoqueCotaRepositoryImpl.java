@@ -1895,8 +1895,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
-		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
-		
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa, ");
+		hql.append(" 		pessoa.nome as nomeCota ");
 								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList, statusLancamento);
 		
