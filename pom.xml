@@ -490,6 +490,7 @@
 				<module>nds-integration-canonical</module>
 				<module>nds-integration-server</module>
 				<module>nds-integration-client</module>
+				<module>nds-estudo-algoritmo</module>
 			</modules>
 		</profile>
 	</profiles>
