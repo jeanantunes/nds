@@ -604,11 +604,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										movimentoFinanceiroCota.getValor().negate() : 
 											BigDecimal.ZERO);
 					
-					vlMovFinanEncargos = vlMovFinanEncargos.add(
-							movimentoFinanceiroCota.getValor() != null ? 
-									movimentoFinanceiroCota.getValor().negate() : 
-										BigDecimal.ZERO);
-					
 					vlMovPostergado = vlMovPostergado.add(
 							movimentoFinanceiroCota.getValor() != null ? 
 									movimentoFinanceiroCota.getValor().negate() : 
@@ -618,11 +613,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case POSTERGADO_CREDITO:
 					vlMovFinanTotal = 
 						vlMovFinanTotal.add(
-							movimentoFinanceiroCota.getValor() != null ? 
-									movimentoFinanceiroCota.getValor() : 
-										BigDecimal.ZERO);
-			
-					vlMovFinanEncargos = vlMovFinanEncargos.add(
 							movimentoFinanceiroCota.getValor() != null ? 
 									movimentoFinanceiroCota.getValor() : 
 										BigDecimal.ZERO);

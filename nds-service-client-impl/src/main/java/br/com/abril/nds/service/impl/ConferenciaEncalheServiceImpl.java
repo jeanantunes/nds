@@ -34,7 +34,6 @@ import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.dto.SlipDTO;
-import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -1146,8 +1145,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = listaConferenciaEncalhe.get(0).getMovimentoEstoqueCota();
 
-		MovimentoFinanceiroCota movimentoFinanceiroCota = 
-				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(movimentoEstoqueCota.getId());
+		MovimentoFinanceiroCota movimentoFinanceiroCota = movimentoEstoqueCota.getMovimentoFinanceiroCota();
 		
 		if(movimentoFinanceiroCota!=null) {
 			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
@@ -2453,7 +2451,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public byte[] gerarDocumentosConferenciaEncalhe(			
 			Long idControleConferenciaEncalheCota,
 			String nossoNumero,
-			TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe			
+			br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe			
 			) {
 
 		switch(tipoDocumentoConferenciaEncalhe) {
@@ -2471,6 +2469,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			return null;
 		}	
 	}
+	
+	public enum TipoDocumentoConferenciaEncalhe {
+		
+		SLIP, BOLETO_OU_RECIBO;
+		
+	}	
 	
 	/**
 	 * Obtém o valor total de débito ou credito de uma cota na dataOperacao.	
@@ -2821,5 +2825,4 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		 return valorTotalEncalheOperacaoConferenciaEncalhe;
 	}
-	
 }

@@ -41,22 +41,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		super(MovimentoFinanceiroCota.class);
 	}
 	
-	public MovimentoFinanceiroCota obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(Long idMovimentoEstoqueCota) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append("select mfc from MovimentoFinanceiroCota mfc ")
-		   .append(" join mfc.movimentos as mec ")
-		   .append(" where mec.id = :idMovimentoEstoqueCota ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("idMovimentoEstoqueCota", idMovimentoEstoqueCota);
-		
-		return (MovimentoFinanceiroCota) query.uniqueResult();
-		
-	}
-	
 	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota){
 		
@@ -860,19 +844,165 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MovimentoFinanceiroCota> obterMovimentosFinanceirosCotaPorTipoMovimento(
-			Long idCota, Collection<TipoMovimentoFinanceiro> tiposMovimentoPostergado){
+			Long idCota, Long idConsolidado, Collection<TipoMovimentoFinanceiro> tiposMovimento, 
+			Date dataCriacao){
 		
 		StringBuilder hql = new StringBuilder("select m from MovimentoFinanceiroCota m ");
-		hql.append(" where m.cota.id = :idCota ")
-		   .append(" and m.dataCriacao = :hoje ")
-		   .append(" and m.tipoMovimento in (:postergados) ");
+		boolean indWhere = false;
+		
+		if (idConsolidado != null){
+			
+			hql.append(" join m.consolidadoFinanceiroCota c ")
+			   .append(" where c.id = :idConsolidado ");
+			
+			indWhere = true;
+		}
+		
+		if (idCota != null){
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" m.cota.id = :idCota ");
+			
+			indWhere = true;
+		}
+		
+		if (dataCriacao != null){
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" m.dataCriacao = :data ");
+		}
+		
+		hql.append(indWhere ? " and " : " where ")
+		   .append(" m.tipoMovimento in (:postergados) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		query.setParameter("idCota", idCota);
-		query.setParameter("hoje", DateUtil.removerTimestamp(new Date()));
-		query.setParameterList("postergados", tiposMovimentoPostergado);
+		if (idConsolidado != null){
+			
+			query.setParameter("idConsolidado", idConsolidado);
+		}
+		
+		if (idCota != null){
+			
+			query.setParameter("idCota", idCota);
+		}
+		
+		if (dataCriacao != null){
+			
+			query.setParameter("data", DateUtil.removerTimestamp(dataCriacao));
+		}
+		
+		query.setParameterList("postergados", tiposMovimento);
 		
 		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DebitoCreditoCotaDTO> obterCreditoDebitoCota(Long idConsolidado, Date dataCriacao,
+			List<TipoMovimentoFinanceiro> tiposMovimento, String sortorder, String sortname){
+		
+		StringBuilder hql = new StringBuilder("select ");
+		boolean indWhere = false;
+		
+		hql.append(" m.data as dataLancamento, ")
+		   .append(" m.tipoMovimento.descricao as tipoMovimento, ")
+		   .append(" m.valor as valor, ")
+		   .append(" m.observacao as observacoes ")
+		   .append(" from MovimentoFinanceiroCota m ");
+		
+		if (idConsolidado != null){
+			
+			hql.append(" join m.consolidadoFinanceiroCota consolidado ")
+			   .append(" where consolidado.id = :idConsolidado");
+			indWhere = true;
+		}
+		
+		if (dataCriacao != null){
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" m.data = :dataCriacao ");
+			indWhere = true;
+		}
+		
+		hql.append(indWhere ? " and " : " where ")
+		   .append(" m.tipoMovimento in (:tiposMovimento)");
+		
+		if (idConsolidado == null){
+			
+			hql.append(" and m.id not in ")
+			   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
+		}
+		
+		if (sortname != null){
+			
+			hql.append(" order by ").append(sortname);
+			
+			if (sortorder != null){
+				
+				hql.append(" ").append(sortorder);
+			}
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (idConsolidado != null){
+			
+			query.setParameter("idConsolidado", idConsolidado);
+		}
+		
+		if (dataCriacao != null){
+			
+			query.setParameter("dataCriacao", dataCriacao);
+		}
+		
+		query.setParameterList("tiposMovimento", tiposMovimento);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		
+		return query.list();
+	}
+	
+	@Override
+	public BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado, Date dataCriacao, 
+			Collection<TipoMovimentoFinanceiro> tiposMovimento){
+		
+		StringBuilder hql = new StringBuilder("select sum (m.valor) ");
+		boolean indWhere = false;
+		
+		hql.append(" from MovimentoFinanceiroCota m ");
+		
+		if (idConsolidado != null){
+			
+			hql.append(" join m.consolidadoFinanceiroCota consolidado ")
+			   .append(" where consolidado.id = :idConsolidado");
+			indWhere = true;
+		}
+		
+		if (dataCriacao != null){
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" m.dataCriacao = :dataCriacao ");
+			indWhere = true;
+		}
+		
+		hql.append(indWhere ? " and " : " where ")
+		   .append(" m.tipoMovimento in (:tiposMovimento)");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (idConsolidado != null){
+			
+			query.setParameter("idConsolidado", idConsolidado);
+		}
+		
+		if (dataCriacao != null){
+			
+			query.setParameter("dataCriacao", dataCriacao);
+		}
+		
+		query.setParameterList("tiposMovimento", tiposMovimento);
+		
+		return (BigDecimal) query.uniqueResult();
 	}
 }

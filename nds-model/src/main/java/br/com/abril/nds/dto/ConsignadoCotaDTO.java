@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.util.export.Export;
@@ -85,7 +86,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	}
 
 	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
-		this.precoComDesconto = precoComDesconto;
+		this.precoComDesconto = precoComDesconto != null ? precoComDesconto.setScale(2, RoundingMode.HALF_EVEN) : null;
 	}
 
 	public BigInteger getReparteSugerido() {
