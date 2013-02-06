@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.EdicaoBase;
 
 public class CotaDAO {
 
@@ -24,5 +25,22 @@ public class CotaDAO {
 			System.out.println("Ocorreu um erro ao tentar consultar as cotas.");
 		}
 		return cotas;
+	}
+	
+	public List<EdicaoBase> getEdicaoBase(Cota cota) {
+		List<EdicaoBase> edicoesBase = new ArrayList<EdicaoBase>();
+		try {
+			PreparedStatement psmt = Conexao.getConexao().prepareStatement("SELECT QTDE_RECEBIDA, QTDE_DEVOLVIDA,  FROM ESTOQUE_PRODUTO_COTA");
+			ResultSet rs = psmt.executeQuery();
+			while (rs.next()) {
+				EdicaoBase edicaoBase = new EdicaoBase();
+				edicaoBase.setId(rs.getInt("ID"));
+				
+				edicoesBase.add(edicaoBase);
+			}
+		} catch (Exception ex) {
+			System.out.println("Ocorreu um erro ao tentar consultar as cotas.");
+		}
+		return edicoesBase;
 	}
 }

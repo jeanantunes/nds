@@ -1,15 +1,15 @@
 package br.com.abril.nds.process;
 
 /**
- * Processo que tem como objetivo efetuar o c·lculo da divis„o do reparte entre as cotas encontradas para o perfil
- * definido no setup do estudo, levando em consideraÁ„o todas as vari·veis tambÈm definidas no setup.
+ * Processo que tem como objetivo efetuar o c√°lculo da divis√£o do reparte entre as cotas encontradas para o perfil
+ * definido no setup do estudo, levando em considera√ß√£o todas as vari√°veis tamb√©m definidas no setup.
  * <p style="white-space: pre-wrap;">SubProcessos:
  *      - N/A
  * Processo Pai:
  *      - {@link CorrecaoVendas}
  * 
  * Processo Anterior: N/A
- * PrÛximo Processo: {@link CorrecaoTendencia}</p>
+ * Pr√≥ximo Processo: {@link CorrecaoTendencia}</p>
  */
 public class CorrecaoIndividual extends ProcessoAbstrato {
 
@@ -20,7 +20,7 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
 
     @Override
     protected void executar() {
-        // TODO: implementar mÈtodo calcular do SunProcesso CorrecaoIndividual
+        // TODO: implementar m√©todo calcular do SunProcesso CorrecaoIndividual
     }
     
 }

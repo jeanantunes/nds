@@ -27,6 +27,7 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     	// FIXME: concluir desenvolvimento do processo após a resposta do JTrac
     	//BigDecimal excedente = new BigDecimal(0);
     	
+    	
     	for (Cota cota : estudo.getCotas()) {
     		if (cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
     				|| cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
