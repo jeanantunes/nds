@@ -989,6 +989,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		
 		//DADOS DO CEDENTE
+		corpoBoleto.setCodigoCedente(Integer.valueOf(banco.getCodigoCedente()));
 		corpoBoleto.setCedenteNome(nomeCedente);         
 		corpoBoleto.setCedenteDocumento(documentoCedente);
 
@@ -1062,7 +1063,9 @@ public class BoletoServiceImpl implements BoletoService {
         	corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
         }
         
-        corpoBoleto.setContaAgencia(banco.getAgencia().intValue());    
+        corpoBoleto.setContaAgencia(banco.getAgencia().intValue());
+        corpoBoleto.setDigitoAgencia(banco.getDvAgencia());    
+        
         corpoBoleto.setContaNumero(Integer.parseInt(contaNumero));   
         
          
