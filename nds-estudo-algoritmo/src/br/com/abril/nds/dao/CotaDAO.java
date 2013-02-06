@@ -21,7 +21,7 @@ public class CotaDAO {
 				cotas.add(cota);
 			}
 		} catch (Exception ex) {
-			System.out.println("Ocorreu um erro ao tentar consultar as cotas.");
+			System.out.println("Ocorreu um erro ao tentar consultar as cotas");
 		}
 		return cotas;
 	}
