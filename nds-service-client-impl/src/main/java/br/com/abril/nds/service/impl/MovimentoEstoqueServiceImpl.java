@@ -400,20 +400,25 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return null;
 	}
 	
-	private void validarAlteracaoEstoqueProdutoDistribuidor(BigInteger novaQuantidade, TipoEstoque tipoEstoque) {
+	private void validarAlteracaoEstoqueProdutoDistribuidor(BigInteger saldoEstoque, TipoEstoque tipoEstoque) {
 		
-		if (novaQuantidade.compareTo(BigInteger.ZERO) < 0) {
+		if (!this.validarSaldoEstoque(saldoEstoque)) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Saldo no estoque \"" + tipoEstoque.getDescricao() + "\" insuficiente para movimentação.");
 		}
 	}
 	
-	private void validarAlteracaoEstoqueProdutoCota(BigInteger novaQuantidade) {
+	private void validarAlteracaoEstoqueProdutoCota(BigInteger saldoEstoque) {
 		
-		if (novaQuantidade.compareTo(BigInteger.ZERO) < 0) {
+		if (!this.validarSaldoEstoque(saldoEstoque)) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Saldo no estoque da cota insuficiente para movimentação.");
 		}
+	}
+	
+	private boolean validarSaldoEstoque(BigInteger saldoEstoque) {
+		
+		return (saldoEstoque != null && saldoEstoque.compareTo(BigInteger.ZERO) >= 0);
 	}
 
 	@Override
