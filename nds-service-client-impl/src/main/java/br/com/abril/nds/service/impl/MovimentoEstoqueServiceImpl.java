@@ -383,7 +383,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					 throw new ValidacaoException(TipoMensagem.WARNING, "Estoque inválido para a operação.");
 			}
 
-			this.validarAlteracaoEstoqueProduto(novaQuantidade);
+			this.validarAlteracaoEstoqueProdutoDistribuidor(novaQuantidade, tipoEstoque);
 			
 			if (estoqueProduto.getId() == null) {
 				
@@ -400,11 +400,19 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return null;
 	}
 	
-	private void validarAlteracaoEstoqueProduto(BigInteger novaQuantidade) {
+	private void validarAlteracaoEstoqueProdutoDistribuidor(BigInteger novaQuantidade, TipoEstoque tipoEstoque) {
 		
 		if (novaQuantidade.compareTo(BigInteger.ZERO) < 0) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Saldo insuficiente para movimentação de estoque.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Saldo no estoque \"" + tipoEstoque.getDescricao() + "\" insuficiente para movimentação.");
+		}
+	}
+	
+	private void validarAlteracaoEstoqueProdutoCota(BigInteger novaQuantidade) {
+		
+		if (novaQuantidade.compareTo(BigInteger.ZERO) < 0) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Saldo no estoque da cota insuficiente para movimentação.");
 		}
 	}
 
@@ -552,7 +560,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				estoqueProdutoCota.setQtdeDevolvida(novaQuantidade);
 			}
 			
-			this.validarAlteracaoEstoqueProduto(novaQuantidade);
+			this.validarAlteracaoEstoqueProdutoCota(novaQuantidade);
 
 			if (estoqueProdutoCota.getId() == null) {
 				
@@ -611,7 +619,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			estoqueProdutoCotaJuramentado.setQtde(qtdeAtual.subtract(qtdeMovimento));
 		}
 		
-		this.validarAlteracaoEstoqueProduto(estoqueProdutoCotaJuramentado.getQtde());
+		this.validarAlteracaoEstoqueProdutoCota(estoqueProdutoCotaJuramentado.getQtde());
 
 		estoqueProdutoCotaJuramentado.getMovimentos().add(movimentoEstoqueCota);
 
