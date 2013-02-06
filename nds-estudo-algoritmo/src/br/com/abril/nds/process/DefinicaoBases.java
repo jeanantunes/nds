@@ -19,7 +19,7 @@ import br.com.abril.nds.model.Estrategia;
 public class DefinicaoBases extends ProcessoAbstrato {
 
     @Override
-    public void executarProcesso() {
+    public void executarProcesso() throws Exception {
         executar();
         new BaseParaVeraneio().executar(estudo);
         new BaseParaSaidaVeraneio().executar(estudo);

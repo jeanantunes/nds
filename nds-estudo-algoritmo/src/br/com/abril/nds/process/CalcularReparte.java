@@ -18,7 +18,7 @@ package br.com.abril.nds.process;
 public class CalcularReparte extends ProcessoAbstrato {
 
     @Override
-    public void executarProcesso() {
+    public void executarProcesso() throws Exception {
         executar();
         new MinimoMaximo().executar(estudo);
         new GravarReparteJuramentado().executar(estudo);
