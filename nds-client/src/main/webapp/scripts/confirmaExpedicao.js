@@ -122,7 +122,7 @@ var confirmaExpedicaoController = $.extend(true, {
 		}
 		
 		if (desabilitado){
-			html+= ' disabled="disabled" ' ;
+			html+= ' disabled="disabled" title="Estoque insuficiente." ' ;
 		}
 		
 		html+= ' />';
@@ -176,7 +176,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			var cell = grid.rows[i].cell;
 								
 			if(cell.estudo) {
-				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado,(cell.estoqueLancamentoPE < cell.reparte));
+				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado,(cell.estoqueLancamentoPE < cell.estudo));
 			} else {
 				cell.estudo="";
 				cell.selecionado="";
