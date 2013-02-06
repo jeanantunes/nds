@@ -194,33 +194,37 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Post
 	public void gerarNotaEnvio(List<Long> listaIdCotas) {
 		
-		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
-		
-		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
+		try {
+			FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+			
+			List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
 
-		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
-	        
-        if (notasGeradas != null) {
-        	
-        	DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-        	
-        	this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
-        	
-        	OutputStream output;
-			try {
-				output = this.httpResponse.getOutputStream();
+			byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
+			    
+			if (notasGeradas != null) {
+				
+				DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+				
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+				
+				OutputStream output;
+			
+					output = this.httpResponse.getOutputStream();
 
-	        	output.write(notasGeradas);
+			    	output.write(notasGeradas);
 
-	        	httpResponse.getOutputStream().close();
+			    	httpResponse.getOutputStream().close();
 
-	        	result.use(Results.nothing());
+			    	result.use(Results.nothing());
 
-			} catch (IOException e) {
-				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+				
+
 			}
-
-        }
+		} catch(ValidacaoException e ){
+			result.use(Results.json()).from(e.getValidacao(),Constantes.PARAM_MSGS).recursive().serialize();
+		} catch (Exception e) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
+		}
 	}
 	
 	/**

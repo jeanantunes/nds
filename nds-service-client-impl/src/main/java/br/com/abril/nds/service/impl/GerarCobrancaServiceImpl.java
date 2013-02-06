@@ -956,22 +956,32 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			Banco banco = formaCobrancaPrincipal.getBanco();
 			
-			cobranca.setNossoNumero(
-					Util.gerarNossoNumero(
-							cota.getNumeroCota(), 
-							cobranca.getDataEmissao(), 
-							banco.getNumeroBanco(),
-							fornecedor != null ? fornecedor.getId() : null,
-							movimentos.get(0).getId(),
-							banco.getAgencia(),
-							banco.getConta(),
-							banco.getCarteira()
-							));
+			String nossoNumero =
+				Util.gerarNossoNumero(
+					cota.getNumeroCota(), 
+					cobranca.getDataEmissao(), 
+					banco.getNumeroBanco(),
+					fornecedor != null ? fornecedor.getId() : null,
+					movimentos.get(0).getId(),
+					banco.getAgencia(),
+					banco.getConta(),
+					banco.getCarteira());
+			
+			cobranca.setNossoNumero(nossoNumero);
+			
+			String digitoVerificador =
+				Util.calcularDigitoVerificador(
+					nossoNumero, banco.getCodigoCedente(), cobranca.getDataVencimento());
+			
+			cobranca.setDigitoNossoNumero(digitoVerificador);
+			
+			cobranca.setNossoNumeroCompleto(
+				nossoNumero + ((digitoVerificador != null) ? digitoVerificador : ""));
 			
 			cobranca.setValor(novaDivida.getValor());
 			
 			this.cobrancaRepository.adicionar(cobranca);
-
+			
 			if (formaCobrancaPrincipal.isRecebeCobrancaEmail()){
 				
 				try {
