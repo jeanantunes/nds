@@ -15,12 +15,12 @@ public class VerificarTotalFixacoes extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() throws Exception {
-        calcular();
+        executar();
         new SelecaoBancas().executar(estudo);
     }
 
     @Override
-    protected void calcular() {
+    protected void executar() {
         // TODO: implementar método calcular do Processo VerificarTotalFixacoes
     }
     

@@ -18,11 +18,11 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() {
-        calcular();
+        executar();
     }
 
     @Override
-    protected void calcular() {
+    protected void executar() {
     	
     	// FIXME: concluir desenvolvimento do processo após a resposta do JTrac
     	//BigDecimal excedente = new BigDecimal(0);

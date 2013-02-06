@@ -19,11 +19,11 @@ public class ReparteMinimo extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() throws Exception {
-        calcular();
+        executar();
     }
 
     @Override
-    protected void calcular() throws Exception {
+    protected void executar() throws Exception {
         // TODO: implementar método calcular do Processo ReparteMinimo
     	if (estudo.getParametro().isDistribuicaoPorMultiplos()) {
     		BigDecimal somatoriaReparteMinimo = new BigDecimal(0);
