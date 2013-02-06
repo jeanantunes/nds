@@ -29,6 +29,15 @@ public interface ConferenciaEncalheService {
 	public List<Box> obterListaBoxEncalhe(Long idUsuario);
 
 	/**
+	 * Obtem flag indicando se a cota em questão emite Nfe.
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return boolean
+	 */
+	public boolean isCotaEmiteNfe(Integer numeroCota);
+	
+	/**
 	 * Método faz seguintes verificações:
 	 * 
 	 * Se a cota ja possui uma conferencia de encalhe 

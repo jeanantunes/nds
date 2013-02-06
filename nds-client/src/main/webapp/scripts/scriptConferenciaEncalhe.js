@@ -262,6 +262,8 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 			if(result.CONFERENCIA_ENCALHE_COTA_STATUS == 'INICIADA_NAO_SALVA') {
 		
+				ConferenciaEncalhe.modalAberta = true;
+				
 				$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog({
 					resizable : false,
 					height : 180,
@@ -274,10 +276,14 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							$(self).tabs("remove", index);
 							
+							ConferenciaEncalhe.modalAberta = false;
+							
 						},
 						"Não" : function() {
 							
 							$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog("close");
+							
+							ConferenciaEncalhe.modalAberta = false;
 							
 						}
 					},
@@ -339,6 +345,15 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	
+	ifCotaEmiteNfe :  function(data, fnCotaEmiteNfe) {
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarCotaEmiteNFe", data, 
+		function(result){
+			if(result.IND_COTA_EMITE_NFE) {
+				fnCotaEmiteNfe();
+			} 
+		});
+	},
+	
 	_pesquisarCota : function() {
 		
 		var data = [
@@ -364,12 +379,20 @@ var ConferenciaEncalhe = $.extend(true, {
 						"Sim" : function() {
 							
 							ConferenciaEncalhe.carregarListaConferencia(data);
-							ConferenciaEncalhe.popup_alert();
+							
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
+							
+							ConferenciaEncalhe.modalAberta = false;
+							
+							ConferenciaEncalhe.ifCotaEmiteNfe(data, ConferenciaEncalhe.popup_alert);
+							
 						},
 						"Não" : function() {
+							
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
+							
 							ConferenciaEncalhe.modalAberta = false;
+							
 						}
 					},
 					form: $("#dialog-reabertura", this.workspace).parents("form")
@@ -378,8 +401,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			} else {
 				
 				ConferenciaEncalhe.carregarListaConferencia(data);
-				$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
-				ConferenciaEncalhe.popup_alert();
+				
+				ConferenciaEncalhe.ifCotaEmiteNfe(data, ConferenciaEncalhe.popup_alert);
 				
 			}
 			
@@ -403,6 +426,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 				if(	result.CONFERENCIA_ENCALHE_COTA_STATUS == 'INICIADA_NAO_SALVA') {
 					
+					ConferenciaEncalhe.modalAberta = true;
+					
 					$("#dialog-conferencia-nao-salva-troca-de-cota", ConferenciaEncalhe.workspace).dialog({
 						resizable : false,
 						height : 200,
@@ -414,6 +439,8 @@ var ConferenciaEncalhe = $.extend(true, {
 								
 								$("#dialog-conferencia-nao-salva-troca-de-cota", ConferenciaEncalhe.workspace).dialog("close");
 								
+								ConferenciaEncalhe.modalAberta = false;
+								
 								ConferenciaEncalhe._pesquisarCota();
 								
 							},
@@ -421,10 +448,12 @@ var ConferenciaEncalhe = $.extend(true, {
 								
 								$("#dialog-conferencia-nao-salva-troca-de-cota", ConferenciaEncalhe.workspace).dialog("close");
 								
+								ConferenciaEncalhe.modalAberta = false;
+								
 							}
 						},
 						
-						form: $("#dialog-reabertura", this.workspace).parents("form")
+						form: $("#dialog-conferencia-nao-salva-troca-de-cota", this.workspace).parents("form")
 						
 					});
 					
@@ -1426,6 +1455,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				if(conteudo && conteudo.tipoMensagem == 'WARNING') {
 					
 					$("#msgRegerarCobranca", ConferenciaEncalhe.workspace).text(conteudo.listaMensagens[0]);
+						
+					ConferenciaEncalhe.modalAberta = true;
 					
 					$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).dialog({
 						resizable : false,
@@ -1442,7 +1473,14 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 								$("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).dialog("close");
 							}
+						}, 
+						
+						close : function(){
+							
+							ConferenciaEncalhe.modalAberta = false;
 						},
+						
+						
 						form: $("#dialog-confirmar-regerar-cobranca", ConferenciaEncalhe.workspace).parents("form")
 					});
 					
