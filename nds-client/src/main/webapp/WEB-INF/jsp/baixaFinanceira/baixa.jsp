@@ -176,11 +176,28 @@
 		      		 	   onblur="pesquisaCotaBaixaFinanceira.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
 		        </td>
 			  
-				<td width="100">Nosso Número:</td>
-				<td width="200"><input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 200px;" /></td>
-				<td width="280">Exibir apenas Cobran&ccedil;as pagas com pendencia</td>
-				<td width="30"><input type="checkbox" id="checkCobrancasBaixadas"/></td>
-				<td width="30"><span class="bt_pesquisar"><a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();"></a></span></td>
+				<td width="100">
+				    Nosso Número:
+				</td>
+				
+				<td width="200">
+				    <input maxlength="100" type="text" name="filtroNossoNumero" id="filtroNossoNumero" style="width: 200px;" />
+				</td>
+				
+				<td width="280">
+				    Exibir apenas Cobran&ccedil;as pagas com pendencia
+				</td>
+				
+				<td width="30">
+				    <input type="checkbox" id="checkCobrancasBaixadas"/>
+				</td>
+				
+				<td width="30">
+				    <span class="bt_pesquisar">
+				        <a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();"></a>
+				    </span>
+				</td>
+				
 			</tr>
         </table>
         

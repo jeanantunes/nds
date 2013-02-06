@@ -19,9 +19,15 @@
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		
+		<!-- 
 		<property name="url" value="${testDataSourceURL}" />
 		<property name="username" value="${testDataSourceUsername}" />
 		<property name="password" value="${testDataSourcePassword}" />
+		 -->
+		<property name="url" value="jdbc:mysql://localhost:3306/nds-client-test" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
     </bean> 
 
 	<bean id="sessionFactory"
