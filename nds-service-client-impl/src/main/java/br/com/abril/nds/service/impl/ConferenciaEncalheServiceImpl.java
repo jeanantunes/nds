@@ -2682,7 +2682,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			if(produtoEdicaoSlip.getReparte() == null)
 				produtoEdicaoSlip.setReparte(BigInteger.ZERO);
 			
-			valorDevido = BigDecimalUtil.soma(valorDevido,produtoEdicaoSlip.getPrecoVenda().multiply(new BigDecimal(produtoEdicaoSlip.getReparte().intValue())));
+			BigDecimal precoVenda = (produtoEdicaoSlip.getPrecoVenda() == null) ? BigDecimal.ZERO : produtoEdicaoSlip.getPrecoVenda();
+			
+			BigDecimal qtdeReparte = (produtoEdicaoSlip.getReparte() == null) ? BigDecimal.ZERO : new BigDecimal(produtoEdicaoSlip.getReparte().intValue());
+			
+			valorDevido = BigDecimalUtil.soma(valorDevido,precoVenda.multiply(qtdeReparte));
 			
 			dia = this.obterDiasEntreDatas(produtoEdicaoSlip);
  
