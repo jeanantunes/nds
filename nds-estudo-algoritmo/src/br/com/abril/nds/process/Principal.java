@@ -6,8 +6,8 @@ import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.model.Estudo;
 
 /**
- * Processo que tem como objetivo efetuar o c·lculo da divis„o do reparte entre as cotas encontradas para o perfil
- * definido no setup do estudo, levando em consideraÁ„o todas as vari·veis tambÈm definidas no setup.
+ * Processo que tem como objetivo efetuar o c√°lculo da divis√£o do reparte entre as cotas encontradas para o perfil
+ * definido no setup do estudo, levando em considera√ß√£o todas as vari√°veis tamb√©m definidas no setup.
  * <p style="white-space: pre-wrap;">SubProcessos:
  *      - {@link DefinicaoBases}
  *      - {@link SomarFixacoes}
@@ -30,7 +30,7 @@ import br.com.abril.nds.model.Estudo;
  *      - N/A
  * 
  * Processo Anterior: N/A
- * PrÛximo Processo: N/A</p>
+ * Pr√≥ximo Processo: N/A</p>
  */
 public class Principal {
 
@@ -52,7 +52,7 @@ public class Principal {
     }
     
     public void loadCotas() {
-    	// TODO: carregar os Ajustes de Reparte junto com as cotas ou apÛs o carregamento delas
+    	// TODO: carregar os Ajustes de Reparte junto com as cotas ou ap√≥s o carregamento delas
     	estudo.setCotas(new CotaDAO().getCotas());
     }
     

@@ -10,9 +10,9 @@ public class Cota {
 	private ClassificacaoCota classificacao;
 	private BigDecimal reparteCalculado;
 	private boolean vendaMediaMaisN;
-	private BigDecimal ajusteReparte; // parâmetro VendaMedia + n na tela de Ajuste de Reparte
+	private BigDecimal ajusteReparte; // parametro VendaMedia + n na tela de Ajuste de Reparte
 	private BigDecimal vendaMediaFinal;
-	private BigDecimal reparteMinimo; // parâmetro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
+	private BigDecimal reparteMinimo; // parametro ReparteMinimo na tela de bonificaÃ§Ãµes ou na tela Mix de Produto
 	private List<EdicaoBase> edicoesBase;
 
 	public Integer getId() {

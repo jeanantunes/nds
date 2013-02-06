@@ -4,15 +4,15 @@ import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 
 /**
- * Processo que tem como objetivo efetuar o c·lculo da divis„o do reparte entre as cotas encontradas para o perfil
- * definido no setup do estudo, levando em consideraÁ„o todas as vari·veis tambÈm definidas no setup.
+ * Processo que tem como objetivo efetuar o c√°lculo da divis√£o do reparte entre as cotas encontradas para o perfil
+ * definido no setup do estudo, levando em considera√ß√£o todas as vari√°veis tamb√©m definidas no setup.
  * <p style="white-space: pre-wrap;">SubProcessos:
  *      - N/A
  * Processo Pai:
  *      - N/A
  * 
  * Processo Anterior: {@link AjusteReparte}
- * PrÛximo Processo: {@link ReparteMinimo}</p>
+ * Pr√≥ximo Processo: {@link ReparteMinimo}</p>
  */
 public class RedutorAutomatico extends ProcessoAbstrato {
 
@@ -24,7 +24,7 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     @Override
     protected void executar() {
     	
-    	// FIXME: concluir desenvolvimento do processo apÛs a resposta do JTrac
+    	// FIXME: concluir desenvolvimento do processo ap√≥s a resposta do JTrac
     	//BigDecimal excedente = new BigDecimal(0);
     	
     	for (Cota cota : estudo.getCotas()) {

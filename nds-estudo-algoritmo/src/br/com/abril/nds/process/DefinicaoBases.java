@@ -4,9 +4,9 @@ import br.com.abril.nds.model.Estrategia;
 
 
 /**
- * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
+ * Processo que tem como objetivo efetuar o cÃ¡lculo da divisÃ£o do reparte entre
  * as cotas encontradas para o perfil definido no setup do estudo, levando em
- * consideração todas as variáveis também definidas no setup. <p
+ * consideraÃ§Ã£o todas as variÃ¡veis tambÃ©m definidas no setup. <p
  * style="white-space: pre-wrap;">SubProcessos:
  *      - {@link BaseParaVeraneio}
  *      - {@link BaseParaSaidaVeraneio}
@@ -14,7 +14,7 @@ import br.com.abril.nds.model.Estrategia;
  *      - N/A
  *
  * Processo Anterior: N/A
- * Próximo Processo: {@link SomarFixacoes}</p>
+ * PrÃ³ximo Processo: {@link SomarFixacoes}</p>
  */
 public class DefinicaoBases extends ProcessoAbstrato {
 
@@ -27,7 +27,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 
     @Override
     public void executar() {
-        // TODO: implementar método calcular do Processo DefinicaoBases
+        // TODO: implementar mÃ©todo calcular do Processo DefinicaoBases
     	Estrategia estrategia;
     	
 //    	estrategia.getEdicaoBases();
