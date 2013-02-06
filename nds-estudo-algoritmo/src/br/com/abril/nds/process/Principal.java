@@ -4,6 +4,23 @@ import java.util.Date;
 
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.process.ajustecota.AjusteCota;
+import br.com.abril.nds.process.ajustereparte.AjusteReparte;
+import br.com.abril.nds.process.bonificacoes.Bonificacoes;
+import br.com.abril.nds.process.calculoreparte.CalcularReparte;
+import br.com.abril.nds.process.complementarautomatico.ComplementarAutomatico;
+import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
+import br.com.abril.nds.process.definicaobases.DefinicaoBases;
+import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
+import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
+import br.com.abril.nds.process.medias.Medias;
+import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
+import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
+import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
+import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
+import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
+import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
+import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil
