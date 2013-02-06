@@ -2,21 +2,25 @@ package br.com.abril.nds.service.impl;
 
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
-import br.com.abril.nds.service.ConferenciaEncalheService;
 
+@RunWith( MockitoJUnitRunner.class )
 public class ConferenciaEncalheServiceImplTest {
 	
-	private ConferenciaEncalheServiceImpl conferenciaEncalheService;
 	
+	private ConferenciaEncalheServiceImpl conferenciaEncalheServiceImpl;
+	
+	@Mock
 	private ControleConferenciaEncalheCotaRepository controleConferenciaEncalheCotaRepository;
 	
 	
@@ -34,9 +38,7 @@ public class ConferenciaEncalheServiceImplTest {
 				null, 
 				null);
 		
-		conferenciaEncalheService = new ConferenciaEncalheServiceImpl();
-		
-		this.controleConferenciaEncalheCotaRepository = mock(ControleConferenciaEncalheCotaRepository.class);
+		this.conferenciaEncalheServiceImpl = new ConferenciaEncalheServiceImpl();
 		
 		when(this.controleConferenciaEncalheCotaRepository.buscarPorId(anyLong())).thenReturn(controleConfEncCota);
 		
@@ -46,11 +48,9 @@ public class ConferenciaEncalheServiceImplTest {
 	@Test
 	public void test() {
 		
-		ConferenciaEncalheService conf = mock(ConferenciaEncalheServiceImpl.class);
+		when(this.conferenciaEncalheServiceImpl.gerarSlip(anyLong(), anyBoolean())).thenCallRealMethod();
 		
-		when(conf.gerarSlip(anyLong(), anyBoolean())).thenCallRealMethod();
-		
-		conf.gerarSlip(1L, false);
+		this.conferenciaEncalheServiceImpl.gerarSlip(1L, false);
 		
 	}
 	
