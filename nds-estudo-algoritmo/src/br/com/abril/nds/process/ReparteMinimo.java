@@ -1,5 +1,9 @@
 package br.com.abril.nds.process;
 
+import java.math.BigDecimal;
+
+import br.com.abril.nds.model.Cota;
+
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil
  * definido no setup do estudo, levando em consideração todas as variáveis também definidas no setup.
