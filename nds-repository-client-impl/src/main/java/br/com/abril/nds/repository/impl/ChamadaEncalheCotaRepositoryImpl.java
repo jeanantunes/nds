@@ -32,7 +32,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select sum ( ");
-		hql.append(" mec.reparte * (mec.valoresAplicados.valorComDesconto) ");
+		hql.append(" mec.lancamento * (mec.valoresAplicados.valorComDesconto) ");
 		hql.append(" ) ");
 		
 		hql.append(" from ChamadaEncalheCota chamadaEncalheCota ");

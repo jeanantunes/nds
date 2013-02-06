@@ -383,7 +383,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					 throw new ValidacaoException(TipoMensagem.WARNING, "Estoque inválido para a operação.");
 			}
 
-			this.validarAlteracaoEstoqueProduto(novaQuantidade);
+			this.validarAlteracaoEstoqueProdutoDistribuidor(novaQuantidade, tipoEstoque);
 			
 			if (estoqueProduto.getId() == null) {
 				
@@ -400,12 +400,25 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return null;
 	}
 	
-	private void validarAlteracaoEstoqueProduto(BigInteger novaQuantidade) {
+	private void validarAlteracaoEstoqueProdutoDistribuidor(BigInteger saldoEstoque, TipoEstoque tipoEstoque) {
 		
-		if (novaQuantidade.compareTo(BigInteger.ZERO) < 0) {
+		if (!this.validarSaldoEstoque(saldoEstoque)) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Saldo insuficiente para movimentação de estoque.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Saldo no estoque \"" + tipoEstoque.getDescricao() + "\" insuficiente para movimentação.");
 		}
+	}
+	
+	private void validarAlteracaoEstoqueProdutoCota(BigInteger saldoEstoque) {
+		
+		if (!this.validarSaldoEstoque(saldoEstoque)) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Saldo no estoque da cota insuficiente para movimentação.");
+		}
+	}
+	
+	private boolean validarSaldoEstoque(BigInteger saldoEstoque) {
+		
+		return (saldoEstoque != null && saldoEstoque.compareTo(BigInteger.ZERO) >= 0);
 	}
 
 	@Override
@@ -552,7 +565,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				estoqueProdutoCota.setQtdeDevolvida(novaQuantidade);
 			}
 			
-			this.validarAlteracaoEstoqueProduto(novaQuantidade);
+			this.validarAlteracaoEstoqueProdutoCota(novaQuantidade);
 
 			if (estoqueProdutoCota.getId() == null) {
 				
@@ -611,7 +624,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			estoqueProdutoCotaJuramentado.setQtde(qtdeAtual.subtract(qtdeMovimento));
 		}
 		
-		this.validarAlteracaoEstoqueProduto(estoqueProdutoCotaJuramentado.getQtde());
+		this.validarAlteracaoEstoqueProdutoCota(estoqueProdutoCotaJuramentado.getQtde());
 
 		estoqueProdutoCotaJuramentado.getMovimentos().add(movimentoEstoqueCota);
 
