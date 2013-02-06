@@ -83,6 +83,8 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String CONFERENCIA_ENCALHE_COTA_STATUS = "CONFERENCIA_ENCALHE_COTA_STATUS";
 	
+	private static final String IND_COTA_EMITE_NFE = "IND_COTA_EMITE_NFE";
+	
 	/*
 	 * Conferência de encalhe da cota que foi iniciada porém ainda não foi salva.
 	 */
@@ -250,7 +252,12 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	
+	public void verificarCotaEmiteNFe(Integer numeroCota) {
+				
+		boolean emiteNfe = conferenciaEncalheService.isCotaEmiteNfe(numeroCota);
+		
+		this.result.use(CustomMapJson.class).put(IND_COTA_EMITE_NFE, emiteNfe).serialize();
+	}
 	
 	@Post
 	public void verificarReabertura(Integer numeroCota){
@@ -791,36 +798,33 @@ public class ConferenciaEncalheController extends BaseController {
 			Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
 			
 			boolean isUtilizaBoleto = dtoDoc.isUtilizaSlipBoleto();
-			//boolean isUtilizaSlipBoleto = dtoDoc.isUtilizaSlipBoleto();
-			boolean isUtilizaSlip = dtoDoc.isUtilizaSlip();
+			
+			boolean isUtilizaSlip = true;//TODO: voltar apos testes...dtoDoc.isUtilizaSlip();
 			
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			
-			if(isUtilizaBoleto) {
-				arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-						idControleConferenciaEncalheCota, 
-						null,
-						TipoDocumentoConferenciaEncalhe.SLIP));
-			} else if (isUtilizaSlip) {
+			if (isUtilizaSlip) {
+				
 				arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
 							idControleConferenciaEncalheCota, 
 							null, 
 							TipoDocumentoConferenciaEncalhe.SLIP));
 			}
 			
-			for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
+			if(isUtilizaBoleto) {
 				
-				if(isUtilizaBoleto && nossoNumero != null && !nossoNumero.isEmpty()) {
-					
+				for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
+
 					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-									idControleConferenciaEncalheCota, 
-									nossoNumero,
-									TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+							idControleConferenciaEncalheCota, 
+							nossoNumero,
+							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
 					
-				} 
+				}
 				
-				
-			}
+			} 
+
+			
 			
 			byte[] retorno = PDFUtil.mergePDFs(arquivos);
 			
