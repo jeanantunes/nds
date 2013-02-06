@@ -204,27 +204,15 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 				
-				boolean lancamentosConfirmados = false;
-				
 				for(int i=0; i<selecionados.size(); i++) {
 					
-					boolean lctoConf = lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota);
-						
-					lancamentosConfirmados = !lancamentosConfirmados?lctoConf:lancamentosConfirmados;
-
+					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota);
+					
 					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));
 				}
 				
-				if (!lancamentosConfirmados){
-					
-					mensagens.add(CONFIRMACAO_EXPEDICAO_ESTOQUE_INDISPONIVEL);
-					
-					status = ALERTA;
-				}
-				else{
+				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
 				
-				    mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
-				}
 				
 				grid = gerarGrid(
 						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);

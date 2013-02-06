@@ -305,6 +305,7 @@ var bancoController = $.extend(true, {
 					 nome       : $("#newNome", this.workspace).val(),
 					 codigoCedente    : $("#newCodigoCedente", this.workspace).val(),
 					 agencia    : $("#newAgencia", this.workspace).val(),
+					 digitoAgencia    : $("#newDigitoAgencia", this.workspace).val(),
 					 conta      : $("#newConta", this.workspace).val(),
 					 digito     : $("#newDigito", this.workspace).val(),
 					 apelido    : $("#newApelido", this.workspace).val(),
@@ -338,6 +339,7 @@ var bancoController = $.extend(true, {
 					 nome       : $("#alterNome", this.workspace).val(),
 					 codigoCedente    : $("#alterCodigoCedente", this.workspace).val(),
 					 agencia    : $("#alterAgencia", this.workspace).val(),
+					 digitoAgencia    : $("#alterDigitoAgencia", this.workspace).val(),
 					 conta      : $("#alterConta", this.workspace).val(),
 					 digito     : $("#alterDigito", this.workspace).val(),
 					 apelido    : $("#alterApelido", this.workspace).val(),
@@ -377,6 +379,7 @@ var bancoController = $.extend(true, {
 			$("#alterNome", this.workspace).val(resultado.nome);
 			$("#alterCodigoCedente", this.workspace).val(resultado.codigoCedente);
 			$("#alterAgencia", this.workspace).val(resultado.agencia);
+			$("#alterDigitoAgencia", this.workspace).val(resultado.digitoAgencia);
 			$("#alterConta", this.workspace).val(resultado.conta);
 			$("#alterDigito", this.workspace).val(resultado.digito);
 			$("#alterApelido", this.workspace).val(resultado.apelido);

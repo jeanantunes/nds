@@ -975,6 +975,16 @@ public class DescontoServiceImpl implements DescontoService {
             
         }
         
+        String produtoEdicaoSemDesconto = "";
+        if(produtoEdicao != null && produtoEdicao.getProduto() != null)
+        	produtoEdicaoSemDesconto = produtoEdicao.getProduto().getNome();
+        
+        if(produtoEdicao != null)
+        	produtoEdicaoSemDesconto += " / Edição: "+ produtoEdicao.getNumeroEdicao();
+        
+        ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Não existe desconto cadastrado para o Prdouto: "+ produtoEdicaoSemDesconto);
+        if(desconto == null) throw new ValidacaoException(validacaoVO);
+        
         return desconto;
         
     }

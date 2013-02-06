@@ -22,13 +22,13 @@ public class BaixaBoletoCotaVO extends BaixaBoletoBaseVO {
 
 	private static final long serialVersionUID = -8543728277437275653L;
 
-	@Export(label="Cota", exhibitionOrder=-2)
+	@Export(label="Cota", exhibitionOrder=-2, widthPercent = 5)
 	private Integer numeroCota;
 	
-	@Export(label="Nome", exhibitionOrder=-1)
+	@Export(label="Nome", exhibitionOrder=-1, widthPercent = 30)
 	private String nomeCota;
 	
-	@Export(label="Nosso Número", exhibitionOrder=1)
+	@Export(label="Nosso Número", exhibitionOrder=1, widthPercent = 20)
 	private String nossoNumero;
 	
 	@Export(label = "Valor R$", exhibitionOrder=2)

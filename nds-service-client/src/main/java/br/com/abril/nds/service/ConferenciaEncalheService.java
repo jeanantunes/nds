@@ -18,6 +18,7 @@ import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
+import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 
 public interface ConferenciaEncalheService {
 	
@@ -28,6 +29,15 @@ public interface ConferenciaEncalheService {
 	 */
 	public List<Box> obterListaBoxEncalhe(Long idUsuario);
 
+	/**
+	 * Obtem flag indicando se a cota em questão emite Nfe.
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return boolean
+	 */
+	public boolean isCotaEmiteNfe(Integer numeroCota);
+	
 	/**
 	 * Método faz seguintes verificações:
 	 * 
@@ -47,6 +57,15 @@ public interface ConferenciaEncalheService {
 	 * @throws ChamadaEncalheCotaInexistenteException
 	 */
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
+	
+	
+	/**
+	 * Valida a existencia de um fechamento de encalhe para a data em questão, caso positivo
+	 * sera lançada uma exceção {@link FechamentoEncalheRealizadoException}
+	 * 
+	 * @throws FechamentoEncalheRealizadoException
+	 */
+	public void validarFechamentoEncalheRealizado() throws FechamentoEncalheRealizadoException;
 	
 	/**
 	 * Valida se o produto edicao em questão é relalivo a lancamento parcial.
