@@ -1,6 +1,7 @@
 var baixaFinanceiraController = $.extend(true, {
 	
 	dataOperacaoDistribuidor: null,
+	tipoBaixa: null,
 	
 	init : function() {
 		$("#filtroNumCota", baixaFinanceiraController.workspace).numeric();
@@ -547,6 +548,8 @@ var baixaFinanceiraController = $.extend(true, {
 		$('#tableBaixaAuto', baixaFinanceiraController.workspace).hide();
 		$('#extratoBaixaManual', baixaFinanceiraController.workspace).hide();
 		$('#tableBaixaManual', baixaFinanceiraController.workspace).show();
+		
+		baixaFinanceiraController.tipoBaixa = 'MANUAL';
 	},
 	
 	dividaManualNossoNumero : function() {
@@ -1174,6 +1177,8 @@ var baixaFinanceiraController = $.extend(true, {
 		$('#tableBaixaManual', baixaFinanceiraController.workspace).hide();
 		$('#extratoBaixaManual', baixaFinanceiraController.workspace).hide();
 		$('#tableBaixaAuto', baixaFinanceiraController.workspace).show();
+		
+		baixaFinanceiraController.tipoBaixa = 'AUTOMATICA';
 	},
 	
 	integrar : function() {
@@ -1590,6 +1595,11 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 
 	obterResumoBaixaFinanceira: function() {
+		
+		if ((!baixaFinanceiraController.tipoBaixa) || (baixaFinanceiraController.tipoBaixa == 'MANUAL')){
+			
+			return false;
+		}
 
 		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 
@@ -1673,6 +1683,7 @@ var baixaFinanceiraController = $.extend(true, {
 		);
 	},
 
-}, BaseController);
+},
+BaseController);
 
 //@ sourceURL=baixaFinanceira.js

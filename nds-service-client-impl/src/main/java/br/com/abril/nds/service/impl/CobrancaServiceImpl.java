@@ -53,6 +53,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 @Service
 public class CobrancaServiceImpl implements CobrancaService {
@@ -523,6 +524,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 			if (valorPagamentoCobranca.floatValue() >=0 ){
 		    	itemCobranca.setDataPagamento(pagamento.getDataPagamento());
+		    	itemCobranca.setTipoBaixa(TipoBaixaCobranca.MANUAL);
 		    	itemCobranca.setStatusCobranca(StatusCobranca.PAGO);
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
 		    	itemCobranca.setBanco(pagamento.getBanco());
