@@ -438,7 +438,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		if (dataOperacao == null) {
 			
-			dataOperacao = distribuidorService.obterDatatOperacaoDistribuidor();
+			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
 		
 		movimentoEstoqueCota.setData(dataOperacao);

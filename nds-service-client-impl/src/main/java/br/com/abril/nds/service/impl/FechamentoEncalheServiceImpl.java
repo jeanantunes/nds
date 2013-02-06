@@ -368,7 +368,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 			for (Cota cota : listaCotas) {
 	
-				Date dataOperacaoDistribuidor = this.distribuidorService.obterDatatOperacaoDistribuidor();
+				Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 				
 				TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
 					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.VENDA_TOTAL);

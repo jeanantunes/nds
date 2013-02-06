@@ -92,8 +92,8 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Date obterDatatOperacaoDistribuidor(){
+	public Date obterDataOperacaoDistribuidor(){
 		
-		return this.distribuidorRepository.obterDatatOperacaoDistribuidor();
+		return this.distribuidorRepository.obterDataOperacaoDistribuidor();
 	}
 }
