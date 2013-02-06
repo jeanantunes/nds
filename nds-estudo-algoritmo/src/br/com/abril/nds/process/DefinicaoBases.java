@@ -1,5 +1,8 @@
 package br.com.abril.nds.process;
 
+import java.util.Arrays;
+
+import br.com.abril.nds.model.EdicaoBase;
 import br.com.abril.nds.model.Estrategia;
 
 
@@ -28,7 +31,8 @@ public class DefinicaoBases extends ProcessoAbstrato {
     @Override
     public void executar() {
         // TODO: implementar método calcular do Processo DefinicaoBases
-    	Estrategia estrategia;
+    	Estrategia estrategia = new Estrategia();
+    	estrategia.setEdicaoBases(Arrays.asList(new EdicaoBase()));
     	
 //    	estrategia.getEdicaoBases();
     }
