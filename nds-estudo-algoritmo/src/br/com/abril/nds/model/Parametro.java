@@ -7,6 +7,7 @@ public class Parametro {
 
 	private List<Cota> cotas;
 	private BigDecimal pacotePadrao;
+	private boolean distribuicaoPorMultiplos;
 
 	public List<Cota> getCotas() {
 		return cotas;
@@ -22,5 +23,13 @@ public class Parametro {
 
 	public void setPacotePadrao(BigDecimal pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
+	}
+
+	public boolean isDistribuicaoPorMultiplos() {
+		return distribuicaoPorMultiplos;
+	}
+
+	public void setDistribuicaoPorMultiplos(boolean distribuicaoPorMultiplos) {
+		this.distribuicaoPorMultiplos = distribuicaoPorMultiplos;
 	}
 }

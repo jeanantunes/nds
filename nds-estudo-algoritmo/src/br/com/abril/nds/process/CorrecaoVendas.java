@@ -16,7 +16,7 @@ package br.com.abril.nds.process;
 public class CorrecaoVendas extends ProcessoAbstrato {
 
     @Override
-    protected void executarProcesso() {
+    protected void executarProcesso() throws Exception {
         calcular();
         new CorrecaoIndividual().executar(estudo);
         new CorrecaoTendencia().executar(estudo);

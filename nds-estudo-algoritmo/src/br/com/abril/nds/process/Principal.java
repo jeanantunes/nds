@@ -37,9 +37,14 @@ public class Principal {
 	private Estudo estudo = new Estudo();
 	
     public void executar(Date data, Integer fornecedor) {
-        new DefinicaoBases().executar(estudo);
-        new CalcularReparte().executar(estudo);
-        System.out.println("Resultado: "+ estudo);
+        try {
+			new DefinicaoBases().executar(estudo);
+			new CalcularReparte().executar(estudo);
+        	System.out.println("Resultado: "+ estudo);
+        } catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public static void main(String args[]) {

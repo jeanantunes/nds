@@ -14,7 +14,7 @@ package br.com.abril.nds.process;
 public class VerificarTotalFixacoes extends ProcessoAbstrato {
 
     @Override
-    protected void executarProcesso() {
+    protected void executarProcesso() throws Exception {
         calcular();
         new SelecaoBancas().executar(estudo);
     }

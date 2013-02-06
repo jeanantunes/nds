@@ -12,6 +12,7 @@ public class Cota {
 	private boolean vendaMediaMaisN;
 	private BigDecimal ajusteReparte; // parâmetro VendaMedia + n na tela de Ajuste de Reparte
 	private BigDecimal vendaMediaFinal;
+	private BigDecimal reparteMinimo; // parâmetro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
 	private List<EdicaoBase> edicoesBase;
 
 	public Integer getId() {
@@ -61,5 +62,11 @@ public class Cota {
 	}
 	public void setVendaMediaFinal(BigDecimal vendaMediaFinal) {
 		this.vendaMediaFinal = vendaMediaFinal;
+	}
+	public BigDecimal getReparteMinimo() {
+		return reparteMinimo;
+	}
+	public void setReparteMinimo(BigDecimal reparteMinimo) {
+		this.reparteMinimo = reparteMinimo;
 	}
 }

@@ -1,7 +1,5 @@
 package br.com.abril.nds.process;
 
-import java.math.BigDecimal;
-
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 
@@ -26,7 +24,8 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     @Override
     protected void calcular() {
     	
-    	BigDecimal excedente = new BigDecimal(0);
+    	// FIXME: concluir desenvolvimento do processo após a resposta do JTrac
+    	//BigDecimal excedente = new BigDecimal(0);
     	
     	for (Cota cota : estudo.getCotas()) {
     		if (cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)

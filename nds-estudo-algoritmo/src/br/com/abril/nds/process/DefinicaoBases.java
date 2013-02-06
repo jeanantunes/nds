@@ -17,7 +17,7 @@ package br.com.abril.nds.process;
 public class DefinicaoBases extends ProcessoAbstrato {
 
     @Override
-    public void executarProcesso() {
+    public void executarProcesso() throws Exception {
         calcular();
         new BaseParaVeraneio().executar(estudo);
         new BaseParaSaidaVeraneio().executar(estudo);
