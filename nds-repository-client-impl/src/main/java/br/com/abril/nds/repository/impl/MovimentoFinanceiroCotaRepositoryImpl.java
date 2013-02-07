@@ -900,7 +900,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DebitoCreditoCotaDTO> obterCreditoDebitoCota(Long idConsolidado, Date dataCriacao,
-			List<TipoMovimentoFinanceiro> tiposMovimento, String sortorder, String sortname){
+			Integer numeroCota, List<TipoMovimentoFinanceiro> tiposMovimento, String sortorder, String sortname){
 		
 		StringBuilder hql = new StringBuilder("select ");
 		boolean indWhere = false;
@@ -909,7 +909,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		   .append(" m.tipoMovimento.descricao as tipoMovimento, ")
 		   .append(" m.valor as valor, ")
 		   .append(" m.observacao as observacoes ")
-		   .append(" from MovimentoFinanceiroCota m ");
+		   .append(" from MovimentoFinanceiroCota m ")
+		   .append(" join m.cota cota ");
 		
 		if (idConsolidado != null){
 			
@@ -926,7 +927,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 		
 		hql.append(indWhere ? " and " : " where ")
-		   .append(" m.tipoMovimento in (:tiposMovimento)");
+		   .append(" m.tipoMovimento in (:tiposMovimento)")
+		   .append(" and cota.numeroCota = :numeroCota ");
 		
 		if (idConsolidado == null){
 			
@@ -957,6 +959,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 		
 		query.setParameterList("tiposMovimento", tiposMovimento);
+		query.setParameter("numeroCota", numeroCota);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
 		
@@ -965,12 +968,13 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	@Override
 	public BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado, Date dataCriacao, 
-			Collection<TipoMovimentoFinanceiro> tiposMovimento){
+			Integer numeroCota, Collection<TipoMovimentoFinanceiro> tiposMovimento){
 		
 		StringBuilder hql = new StringBuilder("select sum (m.valor) ");
 		boolean indWhere = false;
 		
-		hql.append(" from MovimentoFinanceiroCota m ");
+		hql.append(" from MovimentoFinanceiroCota m ")
+		   .append(" join m.cota cota ");
 		
 		if (idConsolidado != null){
 			
@@ -987,7 +991,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 		
 		hql.append(indWhere ? " and " : " where ")
-		   .append(" m.tipoMovimento in (:tiposMovimento)");
+		   .append(" m.tipoMovimento in (:tiposMovimento)")
+		   .append(" and cota.numeroCota = :numeroCota ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -1002,6 +1007,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		}
 		
 		query.setParameterList("tiposMovimento", tiposMovimento);
+		query.setParameter("numeroCota", numeroCota);
 		
 		return (BigDecimal) query.uniqueResult();
 	}

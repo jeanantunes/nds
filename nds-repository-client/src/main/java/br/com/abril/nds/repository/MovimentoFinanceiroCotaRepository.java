@@ -142,8 +142,8 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 			Date dataCriacao);
 
 	List<DebitoCreditoCotaDTO> obterCreditoDebitoCota(Long idConsolidado,
-			Date dataCriacao, List<TipoMovimentoFinanceiro> tiposDebitoCredito, String sortorder, String sortname);
+			Date dataCriacao, Integer numeroCota, List<TipoMovimentoFinanceiro> tiposDebitoCredito, String sortorder, String sortname);
 
 	BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado,
-			Date dataCriacao, Collection<TipoMovimentoFinanceiro> tiposMovimento);
+			Date dataCriacao, Integer numeroCota, Collection<TipoMovimentoFinanceiro> tiposMovimento);
 }

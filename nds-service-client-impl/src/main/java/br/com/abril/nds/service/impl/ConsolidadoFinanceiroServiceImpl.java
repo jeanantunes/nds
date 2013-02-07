@@ -37,7 +37,8 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	@Transactional(readOnly=true)
-	public List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(FiltroConsolidadoEncalheCotaDTO filtro){		
+	public List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(FiltroConsolidadoEncalheCotaDTO filtro){
+		
 		return consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaEncalhe(filtro);		
 	}
 	@Transactional(readOnly=true)

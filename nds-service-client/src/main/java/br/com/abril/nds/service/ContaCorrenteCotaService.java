@@ -9,9 +9,9 @@ import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 public interface ContaCorrenteCotaService {
 	
 	List<DebitoCreditoCotaDTO> consultarDebitoCreditoCota(Long idConsolidado,
-			Date data, String sortorder, String sortname);
+			Date data, Integer numeroCota, String sortorder, String sortname);
 
-	BigDecimal consultarJurosCota(Long idConsolidado, Date data);
+	BigDecimal consultarJurosCota(Long idConsolidado, Date data, Integer numeroCota);
 
-	BigDecimal consultarMultaCota(Long idConsolidado, Date data);
+	BigDecimal consultarMultaCota(Long idConsolidado, Date data, Integer numeroCota);
 }

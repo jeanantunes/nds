@@ -385,7 +385,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Consolidado',
+				display : 'Cobrado',
 				name : 'tipo',
 				width : 65,
 				sortable : true,
@@ -738,7 +738,8 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		var dadosPesquisa = [
 		   {name:'idConsolidado', value: idConsolidado},
-		   {name:'data', value:dataConsolidado}
+		   {name:'data', value:dataConsolidado},
+		   {name:'numeroCota', value: $("#cota", contaCorrenteCotaController.workspace).val()}
 		];
 		
 		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/consultarDebitoCreditoCota",
@@ -799,7 +800,8 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		var dadosPesquisa = [
 		   {name:'idConsolidado', value: idConsolidado},
-		   {name:'data', value:dataConsolidado}
+		   {name:'data', value:dataConsolidado},
+		   {name:'numeroCota', value:$("#cota", contaCorrenteCotaController.workspace).val()}
 		];
 		
 		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/consultarEncargosCota",

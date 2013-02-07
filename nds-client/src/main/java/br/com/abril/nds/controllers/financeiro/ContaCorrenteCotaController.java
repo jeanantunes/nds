@@ -603,28 +603,22 @@ public class ContaCorrenteCotaController extends BaseController {
 	}
 	
 	@Post
-	public void consultarDebitoCreditoCota(Long idConsolidado, Date data,
+	public void consultarDebitoCreditoCota(Long idConsolidado, Date data, Integer numeroCota,
 			String sortname, String sortorder){
 		
 		List<DebitoCreditoCotaDTO> movs = 
 				 this.contaCorrenteCotaService.consultarDebitoCreditoCota(
-						 idConsolidado, data, sortorder, sortname);
+						 idConsolidado, data, numeroCota, sortorder, sortname);
 		
-		if (movs != null && !movs.isEmpty()){
-			
-			this.result.use(FlexiGridJson.class).from(movs).page(1).total(movs.size()).serialize();
-		} else {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		}
+		this.result.use(FlexiGridJson.class).from(movs).page(1).total(movs.size()).serialize();
 	}
 	
 	public void exportarDebitoCreditoCota(FileType fileType, Long idConsolidado, Date data,
-			String sortname, String sortorder) throws IOException{
+			Integer numeroCota, String sortname, String sortorder) throws IOException{
 		
 		List<DebitoCreditoCotaDTO> movs = 
 				 this.contaCorrenteCotaService.consultarDebitoCreditoCota(
-						 idConsolidado, data, sortorder, sortname);
+						 idConsolidado, data, numeroCota, sortorder, sortname);
 		
 		FileExporter.to("debito-credito", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), this.obterFiltroExportacao(), null,
@@ -633,16 +627,16 @@ public class ContaCorrenteCotaController extends BaseController {
 	}
 	
 	@Post
-	public void consultarEncargosCota(Long idConsolidado, Date data){
+	public void consultarEncargosCota(Long idConsolidado, Date data, Integer numeroCota){
 		
 		List<BigDecimal> dados = new ArrayList<BigDecimal>();
 		
-		BigDecimal valor = this.contaCorrenteCotaService.consultarJurosCota(idConsolidado, data);
+		BigDecimal valor = this.contaCorrenteCotaService.consultarJurosCota(idConsolidado, data, numeroCota);
 		dados.add(valor == null ? 
 				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
 				valor.setScale(2, RoundingMode.HALF_EVEN));
 		
-		valor = this.contaCorrenteCotaService.consultarMultaCota(idConsolidado, data);
+		valor = this.contaCorrenteCotaService.consultarMultaCota(idConsolidado, data, numeroCota);
 		dados.add(valor == null ? 
 				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
 				valor.setScale(2, RoundingMode.HALF_EVEN));

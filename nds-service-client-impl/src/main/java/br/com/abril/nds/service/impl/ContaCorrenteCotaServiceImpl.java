@@ -32,7 +32,7 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<DebitoCreditoCotaDTO> consultarDebitoCreditoCota(Long idConsolidado, Date data,
-			String sortorder, String sortname){
+			Integer numeroCota, String sortorder, String sortname){
 		
 		if (idConsolidado != null){
 			
@@ -48,12 +48,12 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 		);
 		
 		return this.movimentoFinanceiroCotaRepository.obterCreditoDebitoCota(
-				idConsolidado, data, tiposDebitoCredito, sortorder, sortname);
+				idConsolidado, data, numeroCota, tiposDebitoCredito, sortorder, sortname);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public BigDecimal consultarJurosCota(Long idConsolidado, Date data){
+	public BigDecimal consultarJurosCota(Long idConsolidado, Date data, Integer numeroCota){
 		
 		if (idConsolidado != null){
 			
@@ -67,12 +67,12 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 		
 		return this.movimentoFinanceiroCotaRepository.
 				obterSomatorioTipoMovimentoPorConsolidado(
-						idConsolidado, data, tiposMovimento);
+						idConsolidado, data, numeroCota, tiposMovimento);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public BigDecimal consultarMultaCota(Long idConsolidado, Date data){
+	public BigDecimal consultarMultaCota(Long idConsolidado, Date data, Integer numeroCota){
 		
 		if (idConsolidado != null){
 			
@@ -86,6 +86,6 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 		
 		return this.movimentoFinanceiroCotaRepository.
 				obterSomatorioTipoMovimentoPorConsolidado(
-						idConsolidado, data, tiposMovimento);
+						idConsolidado, data, numeroCota, tiposMovimento);
 	}
 }
