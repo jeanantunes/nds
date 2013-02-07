@@ -81,8 +81,6 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 		
 		List<CotaQueRecebeClassificacaoDTO> listaCotaQueRecebeClassificacaoDTO = this.classificacaoNaoRecebidaService.obterCotasQueRecebemClassificacao(filtro);
 
-		guardarFiltroNaSession(filtro);
-		
 		TableModel<CellModelKeyValue<CotaQueRecebeClassificacaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueRecebeClassificacaoDTO>>();
 		
 		configurarTableModelSemPaginacao(listaCotaQueRecebeClassificacaoDTO, tableModel);

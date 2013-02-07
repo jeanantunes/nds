@@ -40,26 +40,27 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		// O filtro sempre terá OU nomeCota OU codigoCota
 		hql.append(" WHERE ");
 		
-		hql.append(" cota id not in ");
+		hql.append(" cota.id not in ");
 		hql.append(" ( SELECT cota.id  ");
 		hql.append(" FROM ClassificacaoNaoRecebida classificacaoNaoRecebida ");
 		hql.append(" INNER JOIN classificacaoNaoRecebida.cota as cota ");
+		hql.append(" INNER JOIN classificacaoNaoRecebida.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 		hql.append(" INNER JOIN cota.pessoa as pessoa ");
 		hql.append(" WHERE ");
 		
-		if (filtro.getIdTipoClassificacaoProduto() != null && !filtro.getIdTipoClassificacaoProduto().equals(0)) {
-			hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProduto ");
-			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
-		}
-		
 		if (filtro.getCotaDto() != null) {
 			if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
-				hql.append(" and cota.numeroCota = :numeroCota )");
+				hql.append(" cota.numeroCota = :numeroCota and ");
 				parameters.put("numeroCota", filtro.getCotaDto().getNumeroCota());
 			}else if (filtro.getCotaDto().getNomePessoa() != null && !filtro.getCotaDto().getNomePessoa().isEmpty()) {
-				hql.append(" and coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') = :nomePessoa )");
+				hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') = :nomePessoa and ");
 				parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
 			}
+		}
+		
+		if (filtro.getIdTipoClassificacaoProduto() != null && !filtro.getIdTipoClassificacaoProduto().equals(0)) {
+			hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProduto )");
+			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
 		}
 		
 		Query query = getSession().createQuery(hql.toString());
