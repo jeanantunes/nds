@@ -18,6 +18,8 @@ public class Cota {
 	private List<ProdutoEdicao> edicoesBase; // edições que servirão de base para o estudo
 	private List<ProdutoEdicao> edicoesRecebidas; // todas as edições que essa cota recebeu
 	private List<EstoqueProdutoCota> estoqueProdutoCotas;
+	// TODO: verificar se essa somatória é de todas as edições da cota ou é somente a última (Processo: Reparte Proporcional)
+	private BigDecimal somaReparteEdicoesAbertas; // Soma do Reparte de todas as edições que essa cota recebeu
 
 	public void calculate() {
 		// Cálculo da Venda Média Final
@@ -160,5 +162,13 @@ public class Cota {
 
 	public void setEdicoesRecebidas(List<ProdutoEdicao> edicoesRecebidas) {
 		this.edicoesRecebidas = edicoesRecebidas;
+	}
+
+	public BigDecimal getSomaReparteEdicoesAbertas() {
+		return somaReparteEdicoesAbertas;
+	}
+
+	public void setSomaReparteEdicoesAbertas(BigDecimal somaReparteEdicoesAbertas) {
+		this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
 	}
 }

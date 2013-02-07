@@ -23,15 +23,18 @@ public class ReparteMinimo extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() throws Exception {
-        // TODO: concluir desenvolvimento do processo ReparteMinimo
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	if (estudo.getParametro().isDistribuicaoPorMultiplos()) {
     		BigDecimal somatoriaReparteMinimo = new BigDecimal(0);
+    		BigDecimal reparteMinimo;
     		for (Cota cota : estudo.getCotas()) {
-    			cota.setReparteMinimo(cota.getReparteMinimo().divide(estudo.getParametro().getPacotePadrao(), 0, BigDecimal.ROUND_FLOOR).multiply(estudo.getParametro().getPacotePadrao()));
+    			reparteMinimo = cota.getReparteMinimo().divide(estudo.getParametro().getPacotePadrao(), 0, BigDecimal.ROUND_FLOOR).multiply(estudo.getParametro().getPacotePadrao());
     			if (cota.getReparteMinimo().equals(BigDecimal.ZERO)) {
-    				cota.setReparteMinimo(estudo.getParametro().getPacotePadrao());
+    				reparteMinimo = estudo.getParametro().getPacotePadrao();
     			}
+    			if (cota.getReparteMinimo().doubleValue() < reparteMinimo.doubleValue()) {
+					cota.setReparteMinimo(reparteMinimo);
+				}
     			somatoriaReparteMinimo.add(cota.getReparteMinimo());
     		}
     		if (somatoriaReparteMinimo.divide(estudo.getReparteDistribuir(), 0, BigDecimal.ROUND_FLOOR).doubleValue() > new BigDecimal(0.75f).doubleValue()) {
