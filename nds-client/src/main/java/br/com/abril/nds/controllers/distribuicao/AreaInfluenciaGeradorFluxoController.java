@@ -66,8 +66,6 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 	@Path("/pesquisarPorCota")
 	public void pesquisarPorCota(FiltroAreaInfluenciaGeradorFluxoDTO filtro, String sortorder, String sortname, int page, int rp) {
 
-		System.out.println("Estou na controller sem debug");
-		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
 		validarEntradaPorCota(filtro);

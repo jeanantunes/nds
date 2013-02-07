@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,17 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
-import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.AreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaNaoRecebeSegmentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroAreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.filtro.FiltroSegmentoNaoRecebidoDTO;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;

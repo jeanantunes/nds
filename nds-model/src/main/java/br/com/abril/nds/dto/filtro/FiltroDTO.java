@@ -13,9 +13,6 @@ public class FiltroDTO  implements Serializable {
 	
 	private static final long serialVersionUID = 267309207250227737L;
 	
-	protected boolean reload;
-	protected boolean selectFromAutoComplete;
-	
 	protected PaginacaoVO paginacao;
 	
 	/**
@@ -64,19 +61,4 @@ public class FiltroDTO  implements Serializable {
 		return true;
 	}
 
-	public boolean isReload() {
-		return reload;
-	}
-
-	public void setReload(boolean reload) {
-		this.reload = reload;
-	}
-
-	public boolean isSelectFromAutoComplete() {
-		return selectFromAutoComplete;
-	}
-
-	public void setSelectFromAutoComplete(boolean selectFromAutoComplete) {
-		this.selectFromAutoComplete = selectFromAutoComplete;
-	}
 }

@@ -1,18 +1,21 @@
 package br.com.abril.nds.dto.filtro;
 
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.ProdutoDTO;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class FiltroExcecaoSegmentoParciaisDTO extends FiltroDTO {
 
 	private static final long serialVersionUID = -1787036634086865972L;
 
 	private Long idExcecaoSegmentoProduto;
 	private CotaDTO cotaDto;
-	private String nomeProduto;
+	private ProdutoDTO produtoDto;
 	
 	private boolean excecaoSegmento;
-	private boolean excecaoParciais;
 	private boolean reload;
+	private boolean autoComplete;
 
 	// fazer restante do filtro por produto
 
@@ -32,14 +35,6 @@ public class FiltroExcecaoSegmentoParciaisDTO extends FiltroDTO {
 		this.cotaDto = cotaDto;
 	}
 
-	public String getNomeProduto() {
-		return nomeProduto;
-	}
-
-	public void setNomeProduto(String nomeProduto) {
-		this.nomeProduto = nomeProduto;
-	}
-
 	public boolean isExcecaoSegmento() {
 		return excecaoSegmento;
 	}
@@ -56,12 +51,20 @@ public class FiltroExcecaoSegmentoParciaisDTO extends FiltroDTO {
 		this.reload = reload;
 	}
 
-	public boolean isExcecaoParciais() {
-		return excecaoParciais;
+	public boolean isAutoComplete() {
+		return autoComplete;
 	}
 
-	public void setExcecaoParciais(boolean excecaoParciais) {
-		this.excecaoParciais = excecaoParciais;
+	public void setAutoComplete(boolean autoComplete) {
+		this.autoComplete = autoComplete;
 	}
 
+	public ProdutoDTO getProdutoDto() {
+		return produtoDto;
+	}
+
+	public void setProdutoDto(ProdutoDTO produtoDto) {
+		this.produtoDto = produtoDto;
+	}
+	
 }

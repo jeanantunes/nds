@@ -17,26 +17,21 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.seguranca.Usuario;
 
-/**
- * @author InfoA2 samuel.mendes
- * 
- */
-
 @Entity
-@Table(name = "SEGMENTO_NAO_RECEBIDO")
-@SequenceGenerator(name = "SEGMENTO_NAO_RECEBIDO_SEQ", initialValue = 1, allocationSize = 1)
-public class SegmentoNaoRecebido implements Serializable {
+@Table(name = "CLASSIFICACAO_NAO_RECEBIDA")
+@SequenceGenerator(name = "CLASSIFICACAO_NAO_RECEBIDA_SEQ", initialValue = 1, allocationSize = 1)
+public class ClassificacaoNaoRecebida implements Serializable {
 
-	private static final long serialVersionUID = -1691381600947543162L;
+	private static final long serialVersionUID = -8285198462735567701L;
 
 	@Id
 	@Column(name = "ID")
-	@GeneratedValue(generator = "SEGMENTO_NAO_RECEBIDO_SEQ")
+	@GeneratedValue(generator = "CLASSIFICACAO_NAO_RECEBIDA_SEQ")
 	private Long id;
 	
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "TIPO_SEGMENTO_PRODUTO_ID")
-	private TipoSegmentoProduto tipoSegmentoProduto;
+	@JoinColumn(name = "TIPO_CLASSIFICACAO_PRODUTO_ID")
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
@@ -49,7 +44,7 @@ public class SegmentoNaoRecebido implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_ALTERACAO")
 	private Date dataAlteracao;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -58,12 +53,13 @@ public class SegmentoNaoRecebido implements Serializable {
 		this.id = id;
 	}
 
-	public TipoSegmentoProduto getTipoSegmentoProduto() {
-		return tipoSegmentoProduto;
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
 	}
 
-	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
-		this.tipoSegmentoProduto = tipoSegmentoProduto;
+	public void setTipoClassificacaoProduto(
+			TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
 
 	public Cota getCota() {
@@ -89,4 +85,5 @@ public class SegmentoNaoRecebido implements Serializable {
 	public void setDataAlteracao(Date dataAlteracao) {
 		this.dataAlteracao = dataAlteracao;
 	}
+	
 }

@@ -4,30 +4,13 @@
 	<script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 	<script type="text/javascript">
 
-	var pesquisaCota = new PesquisaCota();
-	var pesquisaProduto = new PesquisaProduto();
-
-	// Assossiando os eventos no DOM
-	$('#numeroCotaFiltroPrincipal').change(function (){
-		pesquisaCota.pesquisarPorNumeroCota('#numeroCotaFiltroPrincipal','#nomeCotaFiltroPrincipal');
-	});
-	
-	$('#nomeCotaFiltroPrincipal').keyup(function (){
-		pesquisaCota.autoCompletarPorNome('#nomeCotaFiltroPrincipal');
-	});
-	
-	$('#codigoProduto').change(function (){
-		pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto');
-	});
-	
-	$('#nomeProduto').keyup(function (){
-		excecaoSegmentoParciaisController.autoCompletarPorNomeProdutoNaoRecebidoPelaCota('#nomeProduto');
-	});
+	var	pesquisaCota = new PesquisaCota(),
+		pesquisaProduto = new PesquisaProduto();	
 
 	$(function() {
 		excecaoSegmentoParciaisController.init();
 	});
-
+	
 function excluir_produto() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
@@ -81,31 +64,25 @@ function filtroPorProduto(){
 	$('.filtroPorProduto').show();
 	$('.porCota').hide();
 }
-$(function() {
-		var availableTags = [
-			"1234 - Antonio Carlos Pereira",
-			"2345 - Antonio Pereira",
-			"3456 - Paulo Roberto",
-			"1234 - Antonio Carlos Pereira",
-			"2345 - Antonio Pereira",
-			"3456 - Paulo Roberto",
-			"5678 - Roberto Carlos"
-		];
-		$( "#lstCotas" ).autocomplete({
-			source: availableTags
-		});
-		$( "#lstCotas2" ).autocomplete({
-			source: availableTags
-		});
-	});
 </script>
-
 </head>
 
 <body>
 
-<div id="dialog-excluir" title="Excluir Exceção Não Recebida">
+<div id="dialog-excluirExcecao" title="Excluir Exceção " style="display: none;">
 	<p>Confirma a exclusão desta Exceção?</p>
+</div>
+
+<div id="dialog-incluirExcecao" title="Incluir Exceção" style="display: none;">
+	<p>Confirma a inclusão deste(s) produto(s)?</p>
+</div>
+
+<div id="dialog-excluirCotaDaExcecao" title="Excluir Cota da exceção " style="display: none;">
+	<p>Confirma a exclusão desta cota?</p>
+</div>
+
+<div id="dialog-incluirCotaNaExcecao" title="Incluir Exceção" style="display: none;">
+	<p>Confirma a inclusão desta(s) cota(s)?</p>
 </div>
 
 <div class="corpo">
@@ -125,7 +102,7 @@ $(function() {
    	    
 	        <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
 	          <tr>
-	            <td width="20"><input type="radio" name="tipoExcecao" id="radio4"/></td>
+	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento"/></td>
 	            <td width="188">Por Exceção Segmento Cota</td>
 	            <td width="20"><input type="radio" name="tipoExcecao" id="radio3" /></td>
 	            <td width="696">Por Exceção de Parciais</td>
@@ -150,24 +127,26 @@ $(function() {
 		                <td width="486">
 		                	<input type="text" name="filtro.cotaDto.nomePessoa" id="nomeCotaFiltroPrincipal" style="width:200px;"/>
 		                </td>
-		              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="excecaoSegmentoParciaisController.porCota();">Pesquisar</a></span></td>
+		              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="pesquisaPorCota" >Pesquisar</a></span></td>
 		            </tr>
 	            </table>
             </form>
+            <form id="filtroPrincipalProduto">
           <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="42">Código:</td>
-            <td width="65"><input type="text" name="textfield4" id="textfield5" style="width:60px; float:left; margin-right:5px;"/></td>
+            <td width="65"><input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProdutoPrincipal" style="width:60px; float:left; margin-right:5px;"/></td>
             <td width="47">Produto:</td>
-            <td width="120"><input type="text" name="textfield4" id="textfield6" style="width:120px;"/></td>
+            <td width="120"><input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProdutoPrincipal" style="width:120px;"/></td>
             <td width="67">Fornecedor:</td>
-            <td width="110"><input type="text" name="textfield4" id="textfield6" style="width:110px;" disabled="disabled"/></td>
+            <td width="110"><input type="text" name="fornecedorPrincipal" id="fornecedorPrincipal" style="width:110px;" disabled="disabled"/></td>
             <td width="60">Segmento:</td>
-            <td width="110"><input type="text" name="textfield4" id="textfield6" style="width:110px;" disabled="disabled"/></td>
-            <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="porExcessao();">Pesquisar</a></span></td>
+            <td width="110"><input type="text" name="segmentoProdutoPrincipal" id="segmentoProdutoPrincipal" style="width:110px;" disabled="disabled"/></td>
+            <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="pesquisaPorExcecao" >Pesquisar</a></span></td>
           </tr>
          
         </table>
+        </form>
             </td>
           </tr>
         </table>
@@ -182,9 +161,9 @@ $(function() {
        	  <legend>Cotas que Recebem</legend>
         
         	<table class="excessaoNaoRecebidaGrid"></table>
-             <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+             <span class="bt_novos" title="Gerar Arquivo"><a id="gerarXLSPorExcecao"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	<span class="bt_novos" title="Imprimir"><a id="gerarPDFPorExcecao"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
         
       </fieldset>
        <fieldset class="classFieldset" style="float:left; width:333px!important;">
@@ -192,14 +171,16 @@ $(function() {
        	  <table width="276" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="33">Cota:</td>
-       	      <td width="60"><input type="text" style="width:40px;"/></td>
+       	      <td width="60">
+       	      	<input type="text" id="cotasQueNaoRecebemNumeroCota" style="width:40px;"/></td>
               <td width="41">Nome:</td>
               <td width="121">
-              <input type="text" style="width:160px;"/></td>
+              	<input type="text" id="cotasQueNaoRecebemNomeCota" style="width:160px;"/>
+              </td>
    	      </table>
        	  <br />
         	<table class="excessaoGrid"></table>
-              <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;"><img src="../images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+              <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" id="inserirCotaNaExcecao"><img src="images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
         
       </fieldset>
       </div>
@@ -210,9 +191,9 @@ $(function() {
        	  <legend>Produtos Recebidos</legend>
         
         	<table class="excessaoCotaGrid"></table>
-             <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+             <span class="bt_novos" title="Gerar Arquivo"><a id="gerarXLSPorCota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+	<span class="bt_novos" title="Imprimir"><a id="gerarPDFPorCota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
         
       </fieldset>
       
@@ -224,17 +205,17 @@ $(function() {
        	      	Código:
        	      </td>
        	      <td width="60">
-       	      	<input type="text" name="filtro.codigoProduto" id="codigoProduto" style="width:60px;"/></td>
+       	      	<input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProduto" style="width:60px;"/></td>
               <td width="54">
               	Produto:
               </td>
               <td width="132">
-              	<input type="text" id="nomeProduto" name="filtro.nomeProduto" style="width:120px;"/>
+              	<input type="text" id="nomeProduto" name="filtro.produtoDto.nomeProduto" style="width:120px;"/>
               </td>
    	      </table>
        	  <br />
         	<table class="excessaoBGrid"></table>
-              <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;"><img src="../images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+              <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" id="inserirExcecaoDeProdutos"><img src="images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
         
       </fieldset>
       </div>

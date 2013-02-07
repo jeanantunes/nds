@@ -1,5 +1,7 @@
 package br.com.abril.nds.dto;
 
+import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
+
 
 public class ProdutoNaoRecebidoDTO {
 
@@ -48,4 +50,5 @@ public class ProdutoNaoRecebidoDTO {
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
 	}
+
 }
