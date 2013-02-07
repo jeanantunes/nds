@@ -93,4 +93,15 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		return criteria.list();
 	}
 	
+	public LogExecucao inserir(LogExecucao logExecucao) {
+		getSession().persist(logExecucao);
+		getSession().flush();
+		return logExecucao;
+	}
+	
+	public void atualizar(LogExecucao logExecucao) {
+		getSession().merge(logExecucao);
+		getSession().flush();
+	}
+	
 }

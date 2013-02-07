@@ -12,10 +12,14 @@ import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
  */
 public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 
-	public List<ConsultaInterfacesDTO> obterInterfaces();
+	List<ConsultaInterfacesDTO> obterInterfaces();
 
-	public List<LogExecucaoMensagem> obterMensagensLogInterface(Long codigoLogExecucao);
+	List<LogExecucaoMensagem> obterMensagensLogInterface(Long codigoLogExecucao);
 
-	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao);
+	List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao);
+	
+	LogExecucao inserir(LogExecucao logExecucao);
+
+	void atualizar(LogExecucao logExecucao);
 	
 }
