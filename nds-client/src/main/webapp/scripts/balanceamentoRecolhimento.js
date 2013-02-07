@@ -74,8 +74,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
 			},
 			function() {
-
-				$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+				balanceamentoRecolhimentoController.showResumo(false);
 			}
 		);
 	},
@@ -148,7 +147,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	    	});
 	   
 	    
-	    $("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).show();
+	    	balanceamentoRecolhimentoController.showResumo(true);
 	},
 	
 	bloquearCheckAll : function() {
@@ -729,7 +728,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			},
 			function(result) {
 				
-				$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+				balanceamentoRecolhimentoController.showResumo(false);
 			}
 		);
 	},
@@ -752,7 +751,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			},
 			function() {
 				
-				$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+				balanceamentoRecolhimentoController.showResumo(false);
 			}
 		);
 	},
@@ -799,7 +798,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				if(result && result.mensagem && result.mensagem.tratarValidacao == false){
 
-					$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+					balanceamentoRecolhimentoController.showResumo(false);
 				}
 			}
 		);
@@ -957,7 +956,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				   
 					   balanceamentoRecolhimentoController.fecharGridBalanceamento();
 					   
-					   $("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+					   balanceamentoRecolhimentoController.showResumo(false);
 				   }
 		);
 	},
@@ -1036,9 +1035,19 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			balanceamentoRecolhimentoController.deselectCheckAll();
 		});
 		
+	},
+	
+	showResumo : function(ativo) {
+		
+		if(ativo===false) {
+			$(".resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+			$('.fieldFiltro').css('margin-top','0px');
+		} else {
+			$(".resumoPeriodo", balanceamentoRecolhimentoController.workspace).show();
+			$('.fieldFiltro').css('margin-top','27px');
+		}
+		
 	}
-	
-	
 
 }, BaseController);
 
