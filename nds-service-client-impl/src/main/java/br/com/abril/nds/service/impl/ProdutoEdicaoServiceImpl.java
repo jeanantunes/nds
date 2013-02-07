@@ -190,7 +190,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			try {
 				calendar.setTime(new SimpleDateFormat(furoProdutoDTO.DATE_PATTERN_PT_BR).parse(furoProdutoDTO.getNovaData()));
 				Calendar dataOperacao = Calendar.getInstance();
-				dataOperacao.setTime(distribuidorService.obterDatatOperacaoDistribuidor());
+				dataOperacao.setTime(distribuidorService.obterDataOperacaoDistribuidor());
 				
 				if(calendar.before(dataOperacao)){
 					calendar = dataOperacao;
