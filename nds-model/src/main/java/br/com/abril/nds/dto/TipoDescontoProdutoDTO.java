@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class TipoDescontoProdutoDTO implements Serializable {
@@ -33,16 +33,20 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	
 	private Long idTipoDesconto;
 	
+	private boolean excluivel;
+	
 	public TipoDescontoProdutoDTO() {
     }
 	
 	public TipoDescontoProdutoDTO(String codigoProduto, String nomeProduto,
-            Long numeroEdicao, BigDecimal desconto, Date dataAlteracao) {
+            Long numeroEdicao, BigDecimal desconto, Date dataAlteracao, String nomeUsuario, boolean excluivel) {
         this.codigoProduto = codigoProduto;
         this.nomeProduto = nomeProduto;
         this.numeroEdicao = numeroEdicao;
         this.desconto = desconto;
         this.dataAlteracao = dataAlteracao;
+        this.nomeUsuario = nomeUsuario; 
+        this.excluivel = excluivel; 
     }
 
     /**
@@ -83,10 +87,10 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	/**
 	 * @param numeroEdicao the numeroEdicao to set
 	 */
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
+	public void setNumeroEdicao(Number numeroEdicao) {
+		this.numeroEdicao = numeroEdicao != null ? numeroEdicao.longValue() : null;
 	}
-
+	
 	/**
 	 * @return the desconto
 	 */
@@ -140,8 +144,16 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	/**
 	 * @param idTipoDesconto the idTipoDesconto to set
 	 */
-	public void setIdTipoDesconto(Long idTipoDesconto) {
-		this.idTipoDesconto = idTipoDesconto;
+	public void setIdTipoDesconto(Number idTipoDesconto) {
+		this.idTipoDesconto = idTipoDesconto != null ? idTipoDesconto.longValue() : null;
+	}
+
+	public boolean isExcluivel() {
+		return excluivel;
+	}
+
+	public void setExcluivel(boolean excluivel) {
+		this.excluivel = excluivel;
 	}
 
 }

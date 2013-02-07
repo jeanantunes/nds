@@ -63,7 +63,7 @@ $(function() {
 		<div class="area">
 
 
-			<span class="bt_arq"><a href="javascript:;">
+			<span class="bt_arq">
 	       			<a href="${pageContext.request.contextPath}/financeiro/tipoDescontoCota/exportar?fileType=XLS&tipoDesconto=ESPECIFICO" rel="tipsy" title="Gerar Arquivo">
 						<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					</a>

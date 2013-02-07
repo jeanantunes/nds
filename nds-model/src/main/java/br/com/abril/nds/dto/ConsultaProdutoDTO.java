@@ -1,6 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.util.export.Export;
@@ -36,7 +38,7 @@ public class ConsultaProdutoDTO implements Serializable {
 	private Integer pacotePadrao;
 	
 	@Export(label="Desconto %", alignment=Alignment.RIGHT)
-	private Float percentualDesconto;
+	private BigDecimal percentualDesconto;
 
 	@Export(label="Periodicidade", alignment=Alignment.CENTER)
 	private PeriodicidadeProduto periodicidade;
@@ -164,15 +166,15 @@ public class ConsultaProdutoDTO implements Serializable {
 	/**
 	 * @return the percentualDesconto
 	 */
-	public Float getPercentualDesconto() {
+	public BigDecimal getPercentualDesconto() {
 		return percentualDesconto;
 	}
 
 	/**
 	 * @param percentualDesconto the percentualDesconto to set
 	 */
-	public void setPercentualDesconto(Float percentualDesconto) {
-		this.percentualDesconto = percentualDesconto;
+	public void setPercentualDesconto(BigDecimal percentualDesconto) {
+		this.percentualDesconto = percentualDesconto != null ? percentualDesconto.setScale(2, RoundingMode.HALF_EVEN) : null;
 	}
 
 	/**

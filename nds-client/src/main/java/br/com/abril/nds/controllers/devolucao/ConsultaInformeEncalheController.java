@@ -17,17 +17,20 @@ import br.com.abril.nds.dto.ColunaRelatorioInformeEncalhe;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -63,6 +66,8 @@ public class ConsultaInformeEncalheController extends BaseController {
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	private DiaSemana inicioDaSemana;
 	
@@ -84,31 +89,33 @@ public class ConsultaInformeEncalheController extends BaseController {
 			int rp, int page) {
 		Calendar dataInicioRecolhimento = null, dataFimRecolhimento = null;
 
-		if ((semanaRecolhimento == null) ^ (dataRecolhimento == null)) {
-			if (semanaRecolhimento != null) {
-				dataInicioRecolhimento = Calendar.getInstance();
+		if ((semanaRecolhimento == null) && (dataRecolhimento == null)) {
 
-				if (semanaRecolhimento > dataInicioRecolhimento
-						.getMaximum(Calendar.WEEK_OF_YEAR)) {
-					throw new ValidacaoException(new ValidacaoVO(
-							TipoMensagem.WARNING, "Semana inválida."));
-				}
-
-				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
-						semanaRecolhimento);
-				
-				dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
-				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
-				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 6);
-
-			} else if (dataRecolhimento != null) {
-				dataInicioRecolhimento = dataRecolhimento;
-				dataFimRecolhimento = dataRecolhimento;
-			}
-		} else {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Informe [Semana] ou [Data Recolhimento]"));
 		}
+
+		if (semanaRecolhimento != null) {
+			dataInicioRecolhimento = Calendar.getInstance();
+
+			if (semanaRecolhimento > dataInicioRecolhimento
+					.getMaximum(Calendar.WEEK_OF_YEAR)) {
+				throw new ValidacaoException(new ValidacaoVO(
+						TipoMensagem.WARNING, "Semana inválida."));
+			}
+
+			dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
+					semanaRecolhimento);
+			
+			dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
+			dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
+			dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 6);
+
+		} else if (dataRecolhimento != null) {
+			dataInicioRecolhimento = dataRecolhimento;
+			dataFimRecolhimento = dataRecolhimento;
+		}
+			
 		Long quantidade = lancamentoService
 				.quantidadeLancamentoInformeRecolhimento(idFornecedor,
 						dataInicioRecolhimento, dataFimRecolhimento);
@@ -131,8 +138,9 @@ public class ConsultaInformeEncalheController extends BaseController {
 	@Post
 	public void relatorioInformeEncalhe(Long idFornecedor, Integer semanaRecolhimento,
 			Calendar dataRecolhimento,
-			TipoImpressaoInformeEncalheDTO tipoImpressao, String sortname,
-			String sortorder){
+			TipoImpressaoInformeEncalheDTO tipoImpressao, String sortorder){
+
+		final String sortname = "sequenciaMatriz";
 		
 		Calendar dataInicioRecolhimento = null, dataFimRecolhimento = null;
 		
@@ -141,30 +149,35 @@ public class ConsultaInformeEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Parâmetro inválido para geração do relaório.");
 		}
 		
-		if ((semanaRecolhimento == null) ^ (dataRecolhimento == null)) {
-			if (semanaRecolhimento != null) {
-				dataInicioRecolhimento = Calendar.getInstance();
+		if ((semanaRecolhimento == null) && (dataRecolhimento == null)) {
 
-				if (semanaRecolhimento > dataInicioRecolhimento
-						.getMaximum(Calendar.WEEK_OF_YEAR)) {
-					throw new ValidacaoException(new ValidacaoVO(
-							TipoMensagem.WARNING, "Semana inválida."));
-				}
-
-				dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
-						semanaRecolhimento);
-				
-				dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
-				dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
-				dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 6);
-
-			} else if (dataRecolhimento != null) {
-				dataInicioRecolhimento = dataRecolhimento;
-				dataFimRecolhimento = dataRecolhimento;
-			}
-		} else {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Informe [Semana] ou [Data Recolhimento]"));
+		}
+			
+		Distribuidor distribuidor = this.distribuidorService.obter();
+
+		int maxDiaSemanaRecolhimento = obterMaxDiaRecolhimentoDistribuidor(distribuidor.getParametrosRecolhimentoDistribuidor());
+		
+		if (semanaRecolhimento != null) {
+			dataInicioRecolhimento = Calendar.getInstance();
+
+			if (semanaRecolhimento > dataInicioRecolhimento
+					.getMaximum(Calendar.WEEK_OF_YEAR)) {
+				throw new ValidacaoException(new ValidacaoVO(
+						TipoMensagem.WARNING, "Semana inválida."));
+			}
+
+			dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
+					semanaRecolhimento);
+			
+			dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
+			dataFimRecolhimento = Calendar.getInstance();
+			dataFimRecolhimento.setTime(this.calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), maxDiaSemanaRecolhimento));
+
+		} else if (dataRecolhimento != null) {
+			dataInicioRecolhimento = dataRecolhimento;
+			dataFimRecolhimento = dataRecolhimento;
 		}
 
 		List<InformeEncalheDTO> dados = lancamentoService
@@ -172,11 +185,11 @@ public class ConsultaInformeEncalheController extends BaseController {
 						dataInicioRecolhimento, dataFimRecolhimento, sortname,
 						Ordenacao.valueOf(sortorder.toUpperCase()), null, null);
 		
-		this.result.include("diaMesInicioRecolhimento", dataInicioRecolhimento.get(Calendar.DAY_OF_MONTH));
+		this.result.include("diaMesInicioRecolhimento", 1);
 		this.result.include("dataInicioRecolhimento", new SimpleDateFormat("dd/MM").format(dataInicioRecolhimento.getTime()));
 		this.result.include("diaSemanaInicioRecolhimento", DateUtil.obterDiaSemana(dataInicioRecolhimento.get(Calendar.DAY_OF_WEEK)));
 		
-		this.result.include("diaMesFimRecolhimento", dataFimRecolhimento.get(Calendar.DAY_OF_MONTH));
+		this.result.include("diaMesFimRecolhimento", maxDiaSemanaRecolhimento);
 		this.result.include("dataFimRecolhimento", new SimpleDateFormat("dd/MM").format(dataFimRecolhimento.getTime()));
 		this.result.include("diaSemanaFimRecolhimento", DateUtil.obterDiaSemana(dataFimRecolhimento.get(Calendar.DAY_OF_WEEK)));
 		
@@ -185,6 +198,13 @@ public class ConsultaInformeEncalheController extends BaseController {
 		int qtdColunas = tipoImpressao.getColunas().size() == 0 ? 1 : tipoImpressao.getColunas().size();
 		
 		if (tipoImpressao != null && tipoImpressao.getColunas() != null){
+			
+			if (tipoImpressao.getColunas().contains("sequenciaMatriz")){
+				
+				colunas.add(new ColunaRelatorioInformeEncalhe("Sequência", 
+						this.calcularTamanhoColunaRelatorio(qtdColunas, 4), 
+						"sequenciaMatriz"));
+			}
 			
 			if (tipoImpressao.getColunas().contains("codigoProduto")){
 				
@@ -264,7 +284,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 			}
 		}
 		
-		String nomeDistribuidor = this.distribuidorService.obter().getJuridica().getRazaoSocial();
+		String nomeDistribuidor = distribuidor.getJuridica().getRazaoSocial();
 		
 		this.result.include("nomeDistribuidor", nomeDistribuidor);
 		
@@ -272,7 +292,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 		
 		int qtdReg = 0;
 		
-		int quebra = 20;
+		int quebra = 30;
 		
 		int indexImg = 0;
 		
@@ -290,13 +310,19 @@ public class ConsultaInformeEncalheController extends BaseController {
 			if (qtdReg == quebra){
 				
 				qtdReg = 0;
+								
+				switch (tipoImpressao.getCapas()) {
 				
-				quebra = 28;
-				
-				if (!TipoImpressaoInformeEncalheDTO.Capas.NAO.equals(tipoImpressao.getCapas())){
-				
-					if (TipoImpressaoInformeEncalheDTO.Capas.PAR.equals(tipoImpressao.getCapas())){
-					
+					case NAO:
+						
+						InformeEncalheDTO dto = new InformeEncalheDTO();
+						dto.setImagem(true);
+						dto.setSequenciaMatriz(info.getSequenciaMatriz());
+						listaResult.add(dto);					
+						break;
+										
+					case PAR:
+						
 						for (int i = indexImg ; i < indexImg + qtdImg ; i++){
 							
 							InformeEncalheDTO img = new InformeEncalheDTO();
@@ -304,8 +330,8 @@ public class ConsultaInformeEncalheController extends BaseController {
 							
 							if (i < dados.size()){
 							
-								img.setSequenciaMatriz(info.getSequenciaMatriz());
 								img.setIdProdutoEdicao(dados.get(i).getIdProdutoEdicao());
+								img.setSequenciaMatriz(dados.get(i).getSequenciaMatriz());
 							}
 							
 							listaResult.add(img);
@@ -314,20 +340,9 @@ public class ConsultaInformeEncalheController extends BaseController {
 						}
 						
 						indexImg += qtdImg;
-					} else {
-						
-						InformeEncalheDTO dt = new InformeEncalheDTO();
-						dt.setImagem(true);
-						dt.setSequenciaMatriz(info.getSequenciaMatriz());
-						listaResult.add(dt);
-					}
-				} else {
-					
-					InformeEncalheDTO dt = new InformeEncalheDTO();
-					dt.setImagem(true);
-					dt.setSequenciaMatriz(info.getSequenciaMatriz());
-					listaResult.add(dt);
+						break;
 				}
+				
 			}
 		}
 		
@@ -417,6 +432,20 @@ public class ConsultaInformeEncalheController extends BaseController {
 		return tamanhoTotalTable / qtdColunas * porcentual / 100;
 	}
 
+	private int obterMaxDiaRecolhimentoDistribuidor(ParametrosRecolhimentoDistribuidor recolhimento) {
+		
+		if (recolhimento.isDiaRecolhimentoQuinto())
+			return 5;
+		else if (recolhimento.isDiaRecolhimentoQuarto())
+			return 4;
+		else if (recolhimento.isDiaRecolhimentoTerceiro())
+			return 3;
+		else if (recolhimento.isDiaRecolhimentoSegundo())
+			return 2;
+
+		return 0;
+	}
+	
 	/**
 	 * Prepara lista de capas com sequencia na lista de InformeEncalheDTO
 	 * @param informeEncalheDTOs

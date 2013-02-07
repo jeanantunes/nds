@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -22,6 +23,7 @@ import javax.persistence.TemporalType;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
@@ -63,6 +65,15 @@ public class DescontoProximosLancamentos implements Serializable {
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
 	private Distribuidor distribuidor;
 	
+	@Column(name = "APLICADO_A_TODAS_AS_COTAS", nullable = false)
+	private boolean aplicadoATodasAsCotas;
+	
+	/**
+	 * Desconto aplicado no cadastro de Tipo Desconto Cota
+	 */
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto desconto;	
 	
 	/**
 	 * @return the id
@@ -177,6 +188,33 @@ public class DescontoProximosLancamentos implements Serializable {
 	public void setDistribuidor(Distribuidor distribuidor) {
 		this.distribuidor = distribuidor;
 	}
-	
+
+	/**
+	 * @return
+	 */
+	public Desconto getDesconto() {
+		return desconto;
+	}
+
+	/**
+	 * @param desconto
+	 */
+	public void setDesconto(Desconto desconto) {
+		this.desconto = desconto;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isAplicadoATodasAsCotas() {
+		return aplicadoATodasAsCotas;
+	}
+
+	/**
+	 * @param aplicadoATodasAsCotas
+	 */
+	public void setAplicadoATodasAsCotas(boolean aplicadoATodasAsCotas) {
+		this.aplicadoATodasAsCotas = aplicadoATodasAsCotas;
+	}
 	
 }

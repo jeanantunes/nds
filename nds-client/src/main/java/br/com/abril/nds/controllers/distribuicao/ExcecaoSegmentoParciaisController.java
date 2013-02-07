@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.ProdutoNaoRecebidoDTO;
 import br.com.abril.nds.dto.ProdutoRecebidoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -36,7 +37,6 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -174,7 +174,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
 			cota = (cotaService.obterPorNumeroDaCota(filtro.getCotaDto().getNumeroCota()));
 		}else {
-			cota =(cotaService.obterPorNome(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa())));
+			cota =(cotaService.obterPorNome(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()))).get(0);
 		}
 		
 		if (filtro.isExcecaoSegmento()) {

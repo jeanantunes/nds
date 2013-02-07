@@ -1,7 +1,6 @@
 package br.com.abril.nds.client.util;
 
 import java.io.File;
-import java.net.URL;
 import java.util.Date;
 
 import javax.xml.bind.JAXBContext;

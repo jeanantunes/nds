@@ -39,8 +39,8 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO.OrdenacaoColunaDividas;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -48,11 +48,10 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.BaixaCobrancaService;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.BaixaCobrancaService;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
@@ -60,14 +59,13 @@ import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
-import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBaixaCobranca;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -106,9 +104,6 @@ public class BaixaFinanceiraController extends BaseController {
 	
 	@Autowired
 	private CobrancaService cobrancaService;
-	
-	@Autowired
-	private PoliticaCobrancaService politicaCobrancaService;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -181,9 +176,11 @@ public class BaixaFinanceiraController extends BaseController {
 	@Post
 	public void realizarBaixaAutomatica(Date data, UploadedFile uploadedFile, String valorFinanceiro) {
 		
-		validarEntradaDados(uploadedFile, valorFinanceiro);
+		valorFinanceiro = CurrencyUtil.convertValorInternacional(valorFinanceiro);
 		
-		BigDecimal valorFinanceiroConvertido = CurrencyUtil.converterValor(valorFinanceiro);
+		BigDecimal valorFinanceiroConvertido = new BigDecimal(valorFinanceiro);
+		
+		validarEntradaDados(uploadedFile, valorFinanceiroConvertido);
 		
 		ArquivoPagamentoBancoDTO arquivoPagamento = null;
 		
@@ -464,7 +461,7 @@ public class BaixaFinanceiraController extends BaseController {
         file.delete();
     }
 
-	private void validarEntradaDados(UploadedFile uploadedFile, String valorFinanceiro) {
+	private void validarEntradaDados(UploadedFile uploadedFile, BigDecimal valorFinanceiro) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 		
@@ -475,21 +472,13 @@ public class BaixaFinanceiraController extends BaseController {
 		}
 		
 		//Valida se o valor financeiro foi informado
-		if (valorFinanceiro == null || valorFinanceiro.trim().length() == 0) {
+		if (valorFinanceiro == null || valorFinanceiro.equals(BigDecimal.ZERO)) {
 			
 			listaMensagens.add("O preenchimento do campo [Valor Financeiro] é obrigatório!");
 		} else {
 			
-			BigDecimal valorFinanceiroConvertido = CurrencyUtil.converterValor(valorFinanceiro);
-			
-			//Valida se o valor financeiro é numérico
-			if (valorFinanceiroConvertido == null) {
-			
-				listaMensagens.add("O campo [Valor Financeiro] deve ser numérico!");
-			}
-			
 			//Valida se o valor financeiro é maior que 0
-			if (valorFinanceiroConvertido.compareTo(BigDecimal.ZERO) == 0) {
+			if (valorFinanceiro.compareTo(BigDecimal.ZERO) == 0) {
 			
 				listaMensagens.add("O campo [Valor Financeiro] deve ser maior que 0!");
 			}
@@ -571,10 +560,8 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setValorMulta(multaConvertida);
 		pagamento.setValorDesconto(descontoConvertido);
 		
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
-
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, getUsuarioLogado(),
-								   null,politicaPrincipal , distribuidor,
+								   null, distribuidor,
 								   dataNovoMovimento, null, null);
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
@@ -651,6 +638,7 @@ public class BaixaFinanceiraController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 
 	}
+	
 	@Post
 	@Path("/buscaDividasBaixadas")
 	public void buscaDividasBaixadas(Integer numCota,
@@ -1188,7 +1176,9 @@ public class BaixaFinanceiraController extends BaseController {
 	public void exportarResumoBaixaAutomatica(FileType fileType, TipoBaixaBoleto tipoBaixaBoleto) throws IOException {
 
 		FiltroDetalheBaixaBoletoDTO filtro = this.obterFiltroExportacaoDetalhe();
+		
 		List<BaixaBoletoBaseVO> lista = (List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(filtro, tipoBaixaBoleto);		
+		
 		FileExporter.to(tipoBaixaBoleto.getNomeArquivo(), fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					lista, tipoBaixaBoleto.getTipoImpressaoVO(), this.httpResponse);

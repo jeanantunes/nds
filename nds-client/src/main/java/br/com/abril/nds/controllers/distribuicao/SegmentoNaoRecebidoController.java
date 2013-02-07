@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.CotaNaoRecebeSegmentoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroSegmentoNaoRecebidoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
@@ -28,7 +29,6 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -258,7 +258,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 			if (numeroCota != null && numeroCota > 0) {
 				segmentoNaoRecebido.setCota(cotaService.obterPorNumeroDaCota(numeroCota));	
 			}else{
-				segmentoNaoRecebido.setCota(cotaService.obterPorNome(PessoaUtil.removerSufixoDeTipo(nomeCota)));
+				segmentoNaoRecebido.setCota(cotaService.obterPorNome(PessoaUtil.removerSufixoDeTipo(nomeCota)).get(0));
 			}
 			
 			segmentoNaoRecebido.setTipoSegmentoProduto(segmentoNaoRecebidoService.obterTipoProdutoSegmentoPorId(idTipoSegmento));

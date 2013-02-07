@@ -23,7 +23,7 @@
 
 <script language="javascript" type="text/javascript" src="scripts/jquery.json-2.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>'
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.justLetter.js"></script>
@@ -132,7 +132,7 @@
 												logout();
 											};
 											focarPrimeiroElemento();
-										//	$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide) > *').wrap("<div id='conteudo' />");
+											//$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide) > *').wrap("<div id='conteudo' />");
 										}
 									},
 									cache : true
@@ -154,8 +154,15 @@
 									}
 								});
 								if (add) {									
+									
 									tab = self.tabs('add', url, title);									
+									
 									$span = $("<span>").addClass(className);
+									
+									if (url.indexOf("/devolucao/conferenciaEncalhe/") >= 0) {
+										$span = $($span).addClass("conferencia_encalhe");
+									}
+									
 									$('a:contains(' + title + ')', ulTabs).parent().prepend($span);
 									
 								}
@@ -163,14 +170,36 @@
 								
 							},
 							addCloseTab : function() {
+								
 								var self = this.element, o = this.options;
+								
 								$("span.ui-icon-close", self).live(
-										'click',
+										'click',										
 										function() {
-											var index = $("li", $(self)).index(
-													$(this).parent());
-											if (index > -1)
-												$(self).tabs("remove", index);
+											
+											var index = $("li", $(self)).index($(this).parent());
+											
+											if (index > -1) {
+												
+												var indAbaConferenciaEncalhe = $(this).parent().find('.conferencia_encalhe').index() > -1;
+												
+												if(indAbaConferenciaEncalhe) {
+													
+													if((typeof(ConferenciaEncalhe)  == 'undefined') || ConferenciaEncalhe == null) {
+														return;
+													}
+													
+													ConferenciaEncalhe.verificarAlteracoesConferenciaEncalheParaFecharAba(self, index);
+													
+												} else {
+													
+													$(self).tabs("remove", index);
+													
+												}
+												
+												
+											}
+											
 										});
 							}
 							

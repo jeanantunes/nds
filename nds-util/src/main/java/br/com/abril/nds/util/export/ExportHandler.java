@@ -393,7 +393,7 @@ public class ExportHandler {
 			Object methodReturn = method.invoke(exportable, new Object[]{});
 
 			return new ExportColumn(
-				getExportValue(methodReturn), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(),getExportValueType(methodReturn));
+				getExportValue(methodReturn), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(),getExportValueType(methodReturn, exportAnnotation.columnType()));
 		}
 		
 		return null;
@@ -417,7 +417,7 @@ public class ExportHandler {
 			Object fieldValue = field.get(exportable);
 
 			return new ExportColumn(
-				getExportValue(fieldValue), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(), getExportValueType(fieldValue));
+				getExportValue(fieldValue), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(), getExportValueType(fieldValue, exportAnnotation.columnType()));
 		}
 		
 		return null;
@@ -446,13 +446,30 @@ public class ExportHandler {
 		return exportValue;
 	}
 	
-	private static ColumType getExportValueType(Object value) {
-				
-		if (value != null && (value instanceof Number)) {
-				return ColumType.NUMBER;
+	private static ColumType getExportValueType(Object value, ColumType columnType) {
+		
+		ColumType returnColumnType = ColumType.STRING;
+		
+		if (value == null) {
+			
+			return returnColumnType;
 		}
 		
-		return ColumType.STRING;
+		if (value instanceof Number) {
+			
+			returnColumnType = ColumType.NUMBER;
+		}
+		
+		if (columnType.equals(ColumType.INTEGER)) {
+			
+			returnColumnType = ColumType.INTEGER;
+			
+		} else if (columnType.equals(ColumType.DECIMAL)) {
+			
+			returnColumnType = ColumType.DECIMAL;
+		}
+		
+		return returnColumnType;
 	}
 	
 	private static void processHeader(Export exportAnnotation, 

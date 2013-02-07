@@ -17,17 +17,17 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DividaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BaixaBancariaSerivice;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
@@ -74,10 +74,6 @@ public class SuspensaoCotaController extends BaseController {
 		this.distribuidorService = distribuidorService;
 	}
 	
-	public void suspensaoCota() {
-		
-	}
-	
 	/**
 	 * Inicializa dados da tela
 	 */
@@ -85,8 +81,6 @@ public class SuspensaoCotaController extends BaseController {
 	public void index() {
 		
 		session.setAttribute("selecionados",null);
-		
-		result.forwardTo(SuspensaoCotaController.class).suspensaoCota();
 	}
 
 	private void verificarBaixaBancariaNaData() {
@@ -129,7 +123,7 @@ public class SuspensaoCotaController extends BaseController {
 		retorno[1] = mensagens;
 		retorno[2] = status.name();
 		
-		result.use(Results.json()).withoutRoot().from(retorno).serialize();	
+		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();	
 	}
 	
 	public void getInadinplenciasDaCota(Long idCota) {

@@ -18,8 +18,8 @@ import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -32,8 +32,8 @@ import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RoteirizacaoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.caelum.vraptor.Get;
@@ -100,10 +100,7 @@ public class EmissaoCEController extends BaseController {
 		filtro.setOrdenacao(sortorder);
 		filtro.setColunaOrdenacao(sortname);
 		
-
-		if(filtro.getDtRecolhimentoDe()!= null && filtro.getDtRecolhimentoAte() != null
-				&& DateUtil.isDataInicialMaiorDataFinal(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte()))
-			throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de Dt. Recolhimento inválido, o valor inicial é maior que o final.");
+		validarCamposPesquisa(filtro);
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 	
@@ -117,6 +114,22 @@ public class EmissaoCEController extends BaseController {
 		
 	}
 		
+	private void validarCamposPesquisa(FiltroEmissaoCE filtro) {
+		
+		if(filtro.getDtRecolhimentoDe() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Dt. Recolhimento] é inválido, o valor deve ser informado.");
+		}
+		
+		if(filtro.getDtRecolhimentoAte() == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Até] é inválido, o valor deve ser informado.");
+		}
+		
+		if(filtro.getDtRecolhimentoDe()!= null && filtro.getDtRecolhimentoAte() != null
+				&& DateUtil.isDataInicialMaiorDataFinal(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte()))
+			throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de Dt. Recolhimento inválido, o valor inicial é maior que o final.");
+		
+	}
+
 	/**
 	 * Método responsável por carregar o combo de fornecedores.
 	 * @return 
