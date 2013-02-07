@@ -27,7 +27,7 @@ public class ClassificacaoNaoRecebidaServiceImpl implements	ClassificacaoNaoRece
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaQueNaoRecebeClassificacaoDTO> obterCotasQueNaoRecebemClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro) {
-		return null;
+		return classificacaoNaoRecebidarRepository.obterCotasQueNaoRecebemClassificacao(filtro);
 	}
 
 	@Transactional

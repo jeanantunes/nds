@@ -136,7 +136,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 			ClassificaNaoRecebidaGrid : {
 				gridName : "classificaNaoRecebidaGrid",
 				Url : {
-					urlDefault : contextPath + "/distribuicao/classificacaoNaoRecebida/pesquisarClassificacaoNaoRecebida",
+					urlDefault : contextPath + "/distribuicao/classificacaoNaoRecebida/pesquisarCotasQueNaoRecebemClassificacao",
 				},
 				comments : "Por Classificação - GRID DA ESQUERDA",
 				reload : classificacaoNaoRecebidaController.Grids.Util.reload,
@@ -200,7 +200,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 			ClassificacaoGrid : {
 				gridName : "classificacaoGrid",
 				Url : {
-					urlDefault : contextPath + "/distribuicao/excecaoSegmentoParciais/pesquisarProdutosRecebidosPelaCota",
+					urlDefault : contextPath + "/distribuicao/classificacaoNaoRecebida/pesquisarCotasQueRecebemClassificacao",
 				},
 				comments : "Por Classificação - GRID DA DIREITA",
 				reload : classificacaoNaoRecebidaController.Grids.Util.reload,
@@ -219,11 +219,9 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 
 						$.each(result.rows, function(index, row) {
 							
-							var link = '<a href="javascript:;" onclick="excecaoSegmentoParciaisController.excluirExcecaoProduto('+row.cell.idExcecaoProdutoCota+');" style="cursor:pointer">' +
-					   	 				   '<img title="Excluir Exceção" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
-					   	 				   '</a>';
+							var checkBox = '<input type="checkbox" name="cotaQueRecebeClassificacaoProduto" value="' + row.cell.numeroCota + '" />';
 							
-							row.cell.acao = link;
+							row.cell.sel = checkBox;
 						});
 						
 						$(".grids").show();
@@ -235,13 +233,13 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 					$(".classificacaoGrid").flexigrid({
 						colModel : [ {
 							display : 'Cota',
-							name : 'cota',
+							name : 'numeroCota',
 							width : 60,
 							sortable : true,
 							align : 'left'
 						}, {
 							display : 'Nome',
-							name : 'Nome',
+							name : 'nomePessoa',
 							width : 150,
 							sortable : true,
 							align : 'left'
@@ -452,6 +450,11 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 		params = classificacaoNaoRecebidaController.Util.getFiltroByForm('filtroPrincipalClassificacao');
 	
 		grids.ClassificaNaoRecebidaGrid.reload({
+			dataType : 'json',
+			params : params
+		});
+		
+		grids.ClassificacaoGrid.reload({
 			dataType : 'json',
 			params : params
 		});
