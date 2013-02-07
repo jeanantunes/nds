@@ -49,5 +49,4 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     		estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(cota.getReparteCalculado()));
     	}
     }
-    
 }

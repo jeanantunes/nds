@@ -35,7 +35,11 @@ public class ReparteMinimo extends ProcessoAbstrato {
     			somatoriaReparteMinimo.add(cota.getReparteMinimo());
     		}
     		if (somatoriaReparteMinimo.divide(estudo.getReparteDistribuir(), 0, BigDecimal.ROUND_FLOOR).doubleValue() > new BigDecimal(0.75f).doubleValue()) {
-    			throw new Exception("");
+    			throw new Exception("O estudo não pode ser concluído pois o percentual do reparte mínimo é maior que 75% do reparte total à distribuir.\n" +
+    					"Desmarque a opção de reparte mínimo ou escolha uma quantidade menor.");
+    			// A EMS 2050 descrevia que ao ocorrer esse erro deveria ser exibida uma tela para o usuário e após isso o cáculo prosseguir
+    			// por motivos de estrutura esse cálculo não consegue disparar a exibição de uma tela, portanto, essa funcionalidade não foi
+    			// implementada.
     		}
     	}
     }
