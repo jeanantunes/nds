@@ -326,9 +326,14 @@ var geracaoNotaEnvioController = $.extend({
             $.fileDownload(path, {
                 httpMethod : "POST",
                 data : params,
-                failCallback : function() {
-                	
-                    exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA!"]);
+                failCallback : function(responseHtml, url) {
+                	if(responseHtml){
+                		var data =  $.parseJSON($(responseHtml).html());                   	 
+                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+                	}else{
+                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + responseHtml]);
+                	}
+                    
                 },
                 successCallback : function() {
                     exibirMensagem("SUCCESS", ["Geração de NE realizada com sucesso!"]);

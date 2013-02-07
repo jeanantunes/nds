@@ -564,6 +564,10 @@ var baixaFinanceiraController = $.extend(true, {
 		$('#porNossoNumero', baixaFinanceiraController.workspace).hide();
 		$('#extratoBaixaManual', baixaFinanceiraController.workspace).show();
 		$('#porCota', baixaFinanceiraController.workspace).show();
+        $("#totalDividasSelecionadas", baixaFinanceiraController.workspace).html("0,00");
+		$("#totalDividasSelecionadasHidden", baixaFinanceiraController.workspace).val("0,00");
+		$("#totalDividas", baixaFinanceiraController.workspace).html("0,00");
+		$("#totalDividasHidden", baixaFinanceiraController.workspace).val("0,00");
 	},
 	
 	limparCamposBaixaManual : function() {
@@ -812,7 +816,6 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		return resultado;
 	},
-
 	
 	//EFETUA BUSCA DE DIVIDAS(POR COTA) OU COBRANCA(POR NOSSO NUMERO)
 	buscaManual : function() {
@@ -820,14 +823,17 @@ var baixaFinanceiraController = $.extend(true, {
 		dataHolder.clearAction('baixaManual', baixaFinanceiraController.workspace);
 
 		var nossoNumero = $("#filtroNossoNumero", baixaFinanceiraController.workspace).val();
+		
 		var numCota = $("#filtroNumCota", baixaFinanceiraController.workspace).val();
 		
 		var botoesDividasNaoPagas = $("#botoesDividasNaoPagas");
+		
 		var botoesDividasPagas = $("#botoesDividasPagas");
 	
 		if($("#checkCobrancasBaixadas", baixaFinanceiraController.workspace).is(':checked')){
 			
 			botoesDividasPagas.show();
+			
 			botoesDividasNaoPagas.hide();
 			
 			/*BAIXA MANUAL DE DIVIDAS BAIXADAS*/
@@ -1132,11 +1138,10 @@ var baixaFinanceiraController = $.extend(true, {
     			observacoes : $("#observacoesDividas", baixaFinanceiraController.workspace).val(),
     			idBanco : $("#bancoDividas", baixaFinanceiraController.workspace).val(),
     			manterPendente:manterPendente};
-    	
-    	
 
     	param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(), param);
-		$.postJSON(contextPath + "/financeiro/baixaManualDividas",param,
+		
+    	$.postJSON(contextPath + "/financeiro/baixaManualDividas",param,
 				   function(mensagens) {
 					   
 			           $("#dialog-baixa-dividas", baixaFinanceiraController.workspace).dialog("close");

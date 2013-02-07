@@ -221,7 +221,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");		
 		
-		hql.append(" (SELECT mec.PRECO_COM_DESCONTO  						 ");
+		hql.append(" coalesce((SELECT min(mec.PRECO_COM_DESCONTO)  	 ");
 		hql.append(" FROM movimento_estoque_cota mec 						 ");
 		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
 		hql.append(" 	, chamada_encalhe ce 								 ");
@@ -233,7 +233,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" AND mec.PRODUTO_EDICAO_ID = CH_ENCALHE.PRODUTO_EDICAO_ID");
 		hql.append(" AND mec.COTA_ID = CH_ENCALHE_COTA.COTA_ID				 ");
 		hql.append(" AND CH_ENCALHE.ID = ce.ID								 ");
-		hql.append(") AS desconto	 		 								 ");
+		hql.append("), 0) AS desconto	 		 							 ");
 		
 		hql.append("    FROM    ");
 		
@@ -336,7 +336,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		
 		hql.append(" COALESCE( 												 ");
-		hql.append(" (SELECT DISTINCT(mec.PRECO_COM_DESCONTO)  				 ");
+		hql.append(" (SELECT min(mec.PRECO_COM_DESCONTO)  				 	 ");
 		hql.append(" FROM movimento_estoque_cota mec 						 ");
 		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
 		hql.append(" 	, chamada_encalhe ce 								 ");
@@ -354,7 +354,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" COALESCE( 												 ");
 		
-		hql.append(" (SELECT DISTINCT(mec.PRECO_COM_DESCONTO)				 ");
+		hql.append(" (SELECT min(mec.PRECO_COM_DESCONTO)				     ");
 		hql.append(" FROM movimento_estoque_cota mec 						 ");
 		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
 		hql.append(" 	, chamada_encalhe ce 								 ");
