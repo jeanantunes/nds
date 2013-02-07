@@ -5,13 +5,13 @@ import java.util.List;
 
 public class Estrategia {
 	
-	private List<EdicaoBase> edicaoBases;
+	private List<ProdutoEdicao> edicaoBases;
 
-	public List<EdicaoBase> getEdicaoBases() {
+	public List<ProdutoEdicao> getEdicaoBases() {
 		return edicaoBases;
 	}
 
-	public void setEdicaoBases(List<EdicaoBase> edicaoBases) {
+	public void setEdicaoBases(List<ProdutoEdicao> edicaoBases) {
 		this.edicaoBases = edicaoBases;
 	}
 

@@ -43,5 +43,13 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	BaseParaSaidaVeraneio baseParaSaidaVeraneio = new BaseParaSaidaVeraneio(
 		baseParaVeraneio.getEstudo());
 	baseParaSaidaVeraneio.executar();
+<<<<<<< HEAD
+=======
+	// TODO: implementar método calcular do Processo DefinicaoBases
+	Estrategia estrategia = new Estrategia();
+	estrategia.setEdicaoBases(Arrays.asList(new ProdutoEdicao()));
+
+	// estrategia.getEdicaoBases();
+>>>>>>> branch 'master' of https://pedroxs@bitbucket.org/pedroxs/nds.git
     }
 }

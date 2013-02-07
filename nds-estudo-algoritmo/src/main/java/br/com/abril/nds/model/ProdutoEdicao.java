@@ -1,15 +1,18 @@
 package br.com.abril.nds.model;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public class ProdutoEdicao {
 
 	private Long id;
+	private String nome;
 	private Long numeroEdicao;
-	private Long peso;
-	private BigDecimal reparteDistribuido;
-	private List<Produto> produtos;
+	private Integer peso;
+	private BigDecimal reparte;
+	private BigDecimal venda;
+	private boolean parcial;
+	private Integer pacotePadrao;
+	private boolean edicaoAberta;
 
 	public Long getId() {
 		return id;
@@ -27,28 +30,59 @@ public class ProdutoEdicao {
 		this.numeroEdicao = numeroEdicao;
 	}
 
-	public Long getPeso() {
+	public Integer getPeso() {
 		return peso;
 	}
 
-	public void setPeso(Long peso) {
+	public void setPeso(Integer peso) {
 		this.peso = peso;
 	}
 
-	public BigDecimal getReparteDistribuido() {
-		return reparteDistribuido;
+	public BigDecimal getReparte() {
+		return reparte;
 	}
 
-	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
-		this.reparteDistribuido = reparteDistribuido;
+	public void setReparte(BigDecimal reparte) {
+		this.reparte = reparte;
 	}
 
-	public List<Produto> getProdutos() {
-		return produtos;
+	public BigDecimal getVenda() {
+		return venda;
 	}
 
-	public void setProdutos(List<Produto> produtos) {
-		this.produtos = produtos;
+	public void setVenda(BigDecimal venda) {
+		this.venda = venda;
 	}
 
+	public boolean getParcial() {
+		return parcial;
+	}
+
+	public void setParcial(boolean parcial) {
+		this.parcial = parcial;
+	}
+
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	public boolean isEdicaoAberta() {
+		return edicaoAberta;
+	}
+
+	public void setEdicaoAberta(boolean edicaoAberta) {
+		this.edicaoAberta = edicaoAberta;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 }
