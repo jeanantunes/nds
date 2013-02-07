@@ -18,8 +18,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.Origem;
@@ -899,6 +902,50 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Override
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao) {
 		return produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(FiltroHistogramaVendas filtro) {
+		
+		return produtoEdicaoRepository.obterHistoricoEdicoes(filtro);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes){
+		
+		List<AnaliseHistogramaDTO> list = new ArrayList<AnaliseHistogramaDTO>();
+		
+		AnaliseHistogramaDTO totalGeralDTO = new AnaliseHistogramaDTO();
+		totalGeralDTO.setFaixaVenda("Total:");
+		
+		for (int i = 0; i < faixasVenda.length; i++) {
+			String[] faixa = faixasVenda[i].split("-");
+			AnaliseHistogramaDTO obj = produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
+			obj.executeScaleValues();
+			
+			totalGeralDTO.setRepTotal(totalGeralDTO.getRepTotal().add(obj.getRepTotal()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setRepMedio(totalGeralDTO.getRepMedio().add(obj.getRepMedio()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setVdaTotal(totalGeralDTO.getVdaTotal().add(obj.getVdaTotal()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setVdaMedio(totalGeralDTO.getVdaMedio().add(obj.getVdaMedio()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setPercVenda(totalGeralDTO.getPercVenda().add(obj.getPercVenda()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setEncalheMedio(totalGeralDTO.getEncalheMedio().add(obj.getEncalheMedio()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setPartReparte(totalGeralDTO.getPartReparte().add(obj.getPartReparte()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setPartVenda(totalGeralDTO.getPartVenda().add(obj.getPartVenda()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setQtdeCotas(totalGeralDTO.getQtdeCotas().add(obj.getQtdeCotas()));
+			totalGeralDTO.setCotasEsmagadas(totalGeralDTO.getCotasEsmagadas().add(obj.getCotasEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setVendaEsmagadas(totalGeralDTO.getVendaEsmagadas().add(obj.getVendaEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR));
+			totalGeralDTO.setQtdeCotasAtivas(totalGeralDTO.getQtdeCotasAtivas().add(obj.getQtdeCotasAtivas()));
+			totalGeralDTO.setQtdeCotasSemVenda(totalGeralDTO.getQtdeCotasSemVenda().add(obj.getQtdeCotasSemVenda()));
+			
+			if(obj!=null){
+				list.add(obj);
+			}
+		}
+		
+		list.add(totalGeralDTO);  
+		return list;
 	}
 	
 }

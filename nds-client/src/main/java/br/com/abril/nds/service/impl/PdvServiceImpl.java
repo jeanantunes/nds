@@ -190,6 +190,13 @@ public class PdvServiceImpl implements PdvService {
 
         return new ArrayList<TipoGeradorFluxoPDV>();
     }
+    
+    @Transactional(readOnly = true)
+    @Override
+    public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo() {
+
+            return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+    }
 
     @Transactional(readOnly = true)
     @Override

@@ -34,6 +34,7 @@ public enum Permissao
 	
 	ROLE_DISTRIBUICAO("Distribuição",																	   null),
 	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS("Histograma de Vendas", 				   Permissao.ROLE_DISTRIBUICAO),
 	
 	ROLE_ESTOQUE("Estoque",																	  			   null),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),

@@ -179,5 +179,7 @@ public interface PdvService {
      */
     public PDV obterPDVporId(Long idPdv);
     
+    
+    public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo();
 }
 
