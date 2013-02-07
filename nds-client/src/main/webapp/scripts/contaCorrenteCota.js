@@ -199,13 +199,13 @@ var contaCorrenteCotaController = $.extend(true, {
 					dataRaizPendente = value.cell.dataConsolidado;
 				}			
 									
-				value.cell.consignado = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+[value.cell.id]+');"/>'+value.cell.consignado+'</a>';
+				value.cell.consignado = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+[value.cell.id]+');"/>'+(value.cell.consignado != null?value.cell.consignado:'0.00')+'</a>';
 				value.cell.encalhe = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarEncalheCota('+[value.cell.id]+');"/>'+value.cell.encalhe+'</a>';
 				value.cell.vendaEncalhe = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+value.cell.id+',\''+value.cell.dataConsolidado+'\')"/>'+value.cell.vendaEncalhe+'</a>';
 				value.cell.debitoCredito = '<a href="javascript:;"/>'+value.cell.debitoCredito+'</a>';
 				value.cell.encargos = '<a href="javascript:;"/>'+value.cell.encargos+'</a>';
 					
-				value.cell.valorPostergado = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'" href="javascript:;">' +value.cell.valorPostergado +'</a></span>';
+				value.cell.valorPostergado = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'" href="javascript:;">' +(value.cell.valorPostergado != null?value.cell.valorPostergado:'0.00')+'</a></span>';
 				value.cell.pendente = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'" href="javascript:;">' +value.cell.pendente +'</a></span>';
 						
 			});
@@ -656,3 +656,5 @@ var contaCorrenteCotaController = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=contaCorrente.js

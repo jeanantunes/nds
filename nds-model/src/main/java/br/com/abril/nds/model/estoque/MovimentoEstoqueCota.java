@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -16,7 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -26,6 +27,9 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 @Table(name = "MOVIMENTO_ESTOQUE_COTA")
 public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements Cloneable, Serializable {
 	
+	@Embedded
+	private ValoresAplicados valoresAplicados;
+
 	/**
 	 * 
 	 */
@@ -70,16 +74,13 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
-    
-	@ManyToOne(optional = true)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false)
-	private Lancamento lancamentoProdutoEdicao;
-	
-	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
-	private List<ItemNotaEnvio> listaItemNotaEnvio;
 
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
+	
+	@ManyToOne
+	@JoinColumn(name = "MOVIMENTO_FINANCEIRO_COTA_ID")
+	private MovimentoFinanceiroCota movimentoFinanceiroCota;
 	
 	public Object clone() {
 
@@ -93,10 +94,8 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setDataIntegracao(this.getDataIntegracao());
 		mec.setEstoqueProdutoCota(this.getEstoqueProdutoCota());
 		mec.setEstoqueProdutoCotaJuramentado(this.getEstoqueProdutoCotaJuramentado());
-		//mec.setEstudoCota(this.getEstudoCota());
 		mec.setLancamento(this.getLancamento());
 		mec.setListaConferenciasEncalhe(this.getListaConferenciasEncalhe());
-		mec.setListaItemNotaEnvio(this.getListaItemNotaEnvio());
 		mec.setListaProdutoServicos(this.getListaProdutoServicos());
 		mec.setMotivo(this.getMotivo());
 		mec.setProdutoEdicao(this.getProdutoEdicao());
@@ -106,6 +105,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setStatusIntegracao(this.getStatusIntegracao());
 		mec.setTipoMovimento(this.getTipoMovimento());
 		mec.setUsuario(this.getUsuario());
+		mec.setValoresAplicados(this.getValoresAplicados());
 
         return mec;
     }
@@ -198,20 +198,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		this.lancamento = lancamento;
 	}
 
-	/**
-	 * @return the listaItemNotaEnvio
-	 */
-	public List<ItemNotaEnvio> getListaItemNotaEnvio() {
-		return listaItemNotaEnvio;
-	}
-
-	/**
-	 * @param listaItemNotaEnvio the listaItemNotaEnvio to set
-	 */
-	public void setListaItemNotaEnvio(List<ItemNotaEnvio> listaItemNotaEnvio) {
-		this.listaItemNotaEnvio = listaItemNotaEnvio;
-	}
-
 	public EstoqueProdutoCotaJuramentado getEstoqueProdutoCotaJuramentado() {
 		return estoqueProdutoCotaJuramentado;
 	}
@@ -219,6 +205,14 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setEstoqueProdutoCotaJuramentado(
 			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado) {
 		this.estoqueProdutoCotaJuramentado = estoqueProdutoCotaJuramentado;
+	}
+
+	public ValoresAplicados getValoresAplicados() {
+		return valoresAplicados;
+	}
+
+	public void setValoresAplicados(ValoresAplicados valoresAplicados) {
+		this.valoresAplicados = valoresAplicados;
 	}
 
 	public MovimentoEstoqueCota getMovimentoEstoqueCotaFuro() {
@@ -237,5 +231,13 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	public void setDataLancamentoOriginal(Date dataLancamentoOriginal) {
 		this.dataLancamentoOriginal = dataLancamentoOriginal;
 	}
-	
+
+	public MovimentoFinanceiroCota getMovimentoFinanceiroCota() {
+		return movimentoFinanceiroCota;
+	}
+
+	public void setMovimentoFinanceiroCota(
+			MovimentoFinanceiroCota movimentoFinanceiroCota) {
+		this.movimentoFinanceiroCota = movimentoFinanceiroCota;
+	}
 }

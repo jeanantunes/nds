@@ -17,12 +17,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
+
 
 /**
  * @author francisco.garcia
@@ -141,7 +146,6 @@ public class Produto implements Serializable {
 	@Column(name="SUB_GRUPO_EDITORIAL", length=25, nullable = true)
 	private String subGrupoEditorial;
 	
-	
 	protected String fase;
 	
 	protected Long numeroLancamento;
@@ -149,11 +153,32 @@ public class Produto implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 	
+	/**
+	 * Desconto aplicado no cadastro de Tipo Desconto Cota
+	 */
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto descontoProduto;
+
 	@Column(name="DESCONTO")
 	private BigDecimal desconto;
 	
 	@Column(name="DESCRICAO_DESCONTO")
 	private String descricaoDesconto;
+	
+	/**
+	 * Segmento do Produto
+	 */
+	@OneToOne(fetch=FetchType.EAGER, optional=true)
+	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
+	private TipoSegmentoProduto tipoSegmentoProduto;
+	
+	/**
+	 * Classificação do Produto
+	 */
+	@OneToOne(fetch=FetchType.EAGER, optional=true)
+	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
 	public Long getId() {
 		return id;
@@ -560,18 +585,28 @@ public class Produto implements Serializable {
 	/**
 	 * @return the desconto
 	 */
+	public Desconto getDescontoProduto() {
+		return descontoProduto;
+	}
+
+	public void setDescontoProduto(Desconto descontoProduto) {
+		this.descontoProduto = descontoProduto;
+	}
+
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
 
-	/**
-	 * @param desconto the desconto to set
-	 */
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
 
 	/**
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	 * @return the descricaoDesconto
 	 */
 	public String getDescricaoDesconto() {
@@ -586,12 +621,24 @@ public class Produto implements Serializable {
 	}
 
 	/**
+<<<<<<< HEAD
+>>>>>>> DGBti/master
+=======
+>>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
      * Verifica se o produto é um publicação
      * 
      * @return true se o produto é uma publicação, false caso contrário
      */
 	public boolean isPublicacao() {
 	    return !GrupoProduto.OUTROS.equals(tipoProduto.getGrupoProduto());
+	}
+
+	public TipoSegmentoProduto getTipoSegmentoProduto() {
+		return tipoSegmentoProduto;
+	}
+
+	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
+		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
 
 }

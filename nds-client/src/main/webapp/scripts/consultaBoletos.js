@@ -46,7 +46,7 @@ var consultaBoletosController = $.extend(true, {
 				name : 'tipoBaixa',
 				width : 100,
 				sortable : true,
-				align : 'left',
+				align : 'center',
 			}, {
 				display : 'Status',
 				name : 'status',
@@ -142,11 +142,11 @@ var consultaBoletosController = $.extend(true, {
 			         var linkEmail='';
 			         var linkImpressao='';
 			         
-		        	 linkImpressao = '<a href="javascript:;" onclick="consultaBoletosController.imprimeBoleto(' + row.cell[0] + ');" style="cursor:pointer">' +
+		        	 linkImpressao = '<a href="javascript:;" onclick="consultaBoletosController.imprimeBoleto(\'' + row.cell[0] + '\');" style="cursor:pointer">' +
 				 					 '<img src="' + contextPath + '/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime boleto" />' +
 				 					 '</a>';
 			         			 					     
-			         linkEmail = '<a href="javascript:;" onclick="consultaBoletosController.enviaBoleto(' + row.cell[0] + ');" style="cursor:pointer">' +
+			         linkEmail = '<a href="javascript:;" onclick="consultaBoletosController.enviaBoleto(\'' + row.cell[0] + '\');" style="cursor:pointer">' +
 			                     '<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
  					             '</a>';		 					 
 									

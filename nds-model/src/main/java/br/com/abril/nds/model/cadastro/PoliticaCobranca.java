@@ -25,9 +25,6 @@ public class PoliticaCobranca {
 	@OneToOne
 	@JoinColumn(name = "FORMA_COBRANCA_ID", unique = true)
 	private FormaCobranca formaCobranca;
-	
-	@Column(name = "NUM_INADIMPLENCIA_SUSP", nullable = false)
-	private int inadimplenciasSuspencao;
 
 	@ManyToOne
 	@JoinColumn(name = "DISTRIBUIDOR_ID")
@@ -35,27 +32,6 @@ public class PoliticaCobranca {
 	
 	@Column(name = "ACUMULA_DIVIDA", nullable = false)
 	private boolean acumulaDivida;
-	
-	@Column(name = "ACEITA_BAIXA_PGTO_MAIOR")
-	private boolean aceitaBaixaPagamentoMaior;
-	
-	@Column(name = "ACEITA_BAIXA_PGTO_MENOR")
-	private boolean aceitaBaixaPagamentoMenor;
-	
-	@Column(name = "ACEITA_BAIXA_PGTO_VENCIDO")
-	private boolean aceitaBaixaPagamentoVencido;	
-	
-	@Column(name = "NUM_DIAS_NOVA_COBRANCA")
-	private int numeroDiasNovaCobranca;
-	
-	@Column(name = "NUM_DIAS_POSTERGADO")
-	private int numeroDiasPostergado;
-	
-	@Column(name = "ASSUNTO_EMAIL_COBRANCA")
-	private String assuntoEmailCobranca;
-	
-	@Column(name = "MENSAGEM_EMAIL_COBRANCA")
-	private String mensagemEmailCobranca;
 	
 	@Column(name = "PRINCIPAL", nullable = false)
 	private boolean principal;
@@ -78,14 +54,6 @@ public class PoliticaCobranca {
 		this.id = id;
 	}
 	
-	public int getInadimplenciasSuspencao() {
-		return inadimplenciasSuspencao;
-	}
-	
-	public void setInadimplenciasSuspencao(int inadimplenciasSuspencao) {
-		this.inadimplenciasSuspencao = inadimplenciasSuspencao;
-	}
-	
 	public Distribuidor getDistribuidor() {
 		return distribuidor;
 	}
@@ -101,30 +69,6 @@ public class PoliticaCobranca {
 	public void setAcumulaDivida(boolean acumulaDivida) {
 		this.acumulaDivida = acumulaDivida;
 	}
-
-	public boolean isAceitaBaixaPagamentoMaior() {
-		return aceitaBaixaPagamentoMaior;
-	}
-
-	public void setAceitaBaixaPagamentoMaior(boolean aceitaBaixaPagamentoMaior) {
-		this.aceitaBaixaPagamentoMaior = aceitaBaixaPagamentoMaior;
-	}
-
-	public boolean isAceitaBaixaPagamentoMenor() {
-		return aceitaBaixaPagamentoMenor;
-	}
-
-	public void setAceitaBaixaPagamentoMenor(boolean aceitaBaixaPagamentoMenor) {
-		this.aceitaBaixaPagamentoMenor = aceitaBaixaPagamentoMenor;
-	}
-
-	public boolean isAceitaBaixaPagamentoVencido() {
-		return aceitaBaixaPagamentoVencido;
-	}
-
-	public void setAceitaBaixaPagamentoVencido(boolean aceitaBaixaPagamentoVencido) {
-		this.aceitaBaixaPagamentoVencido = aceitaBaixaPagamentoVencido;
-	}
 	
 	public FormaCobranca getFormaCobranca() {
 		return formaCobranca;
@@ -134,38 +78,6 @@ public class PoliticaCobranca {
 		this.formaCobranca = formaCobranca;
 	}
 	
-	public int getNumeroDiasNovaCobranca() {
-		return numeroDiasNovaCobranca;
-	}
-	
-	public void setNumeroDiasNovaCobranca(int numeroDiasNovaCobranca) {
-		this.numeroDiasNovaCobranca = numeroDiasNovaCobranca;
-	}
-	
-	public int getNumeroDiasPostergado() {
-		return numeroDiasPostergado;
-	}
-	
-	public void setNumeroDiasPostergado(int numeroDiasPostergado) {
-		this.numeroDiasPostergado = numeroDiasPostergado;
-	}
-
-	public String getAssuntoEmailCobranca() {
-		return assuntoEmailCobranca;
-	}
-
-	public void setAssuntoEmailCobranca(String assuntoEmailCobranca) {
-		this.assuntoEmailCobranca = assuntoEmailCobranca;
-	}
-
-	public String getMensagemEmailCobranca() {
-		return mensagemEmailCobranca;
-	}
-
-	public void setMensagemEmailCobranca(String mensagemEmailCobranca) {
-		this.mensagemEmailCobranca = mensagemEmailCobranca;
-	}
-
 	public boolean isPrincipal() {
 		return principal;
 	}

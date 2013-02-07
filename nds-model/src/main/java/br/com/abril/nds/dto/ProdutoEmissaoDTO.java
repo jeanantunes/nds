@@ -209,7 +209,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 	 * @param precoVenda the precoVenda to set
 	 */
 	public void setPrecoVenda(BigDecimal precoVenda) {
-		this.precoVenda = precoVenda.doubleValue();
+		this.precoVenda = (precoVenda == null)?0D:precoVenda.doubleValue();
 	}
 	/**
 	 * @return the vlrPrecoComDesconto

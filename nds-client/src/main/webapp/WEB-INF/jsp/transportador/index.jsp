@@ -353,7 +353,7 @@
 		<div class="area">
 			<span class="bt_novos">
 				<a href="javascript:;" onclick="transportadorController.limparCamposCadastroTransportador();transportadorController.popup_novo_transportador();" rel="tipsy" title="Incluir Novo Transportador">
-					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"	hspace="5" border="0" />
+					<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif"	hspace="5" border="0" />
 			</a>
 		</span>
 		</div>

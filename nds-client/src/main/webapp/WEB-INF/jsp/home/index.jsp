@@ -15,6 +15,7 @@
 
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/shortcut.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/utils.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
@@ -22,7 +23,7 @@
 
 <script language="javascript" type="text/javascript" src="scripts/jquery.json-2.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>'
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.justLetter.js"></script>
@@ -131,6 +132,7 @@
 												logout();
 											};
 											focarPrimeiroElemento();
+											//$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide) > *').wrap("<div id='conteudo' />");
 										}
 									},
 									cache : true
@@ -152,23 +154,55 @@
 									}
 								});
 								if (add) {									
+									
 									tab = self.tabs('add', url, title);									
+									
 									$span = $("<span>").addClass(className);
+									
+									if (url.indexOf("/devolucao/conferenciaEncalhe/") >= 0) {
+										$span = $($span).addClass("conferencia_encalhe");
+									}
+									
 									$('a:contains(' + title + ')', ulTabs).parent().prepend($span);
 									
 								}
+								
+								
 							},
 							addCloseTab : function() {
+								
 								var self = this.element, o = this.options;
+								
 								$("span.ui-icon-close", self).live(
-										'click',
+										'click',										
 										function() {
-											var index = $("li", $(self)).index(
-													$(this).parent());
-											if (index > -1)
-												$(self).tabs("remove", index);
+											
+											var index = $("li", $(self)).index($(this).parent());
+											
+											if (index > -1) {
+												
+												var indAbaConferenciaEncalhe = $(this).parent().find('.conferencia_encalhe').index() > -1;
+												
+												if(indAbaConferenciaEncalhe) {
+													
+													if((typeof(ConferenciaEncalhe)  == 'undefined') || ConferenciaEncalhe == null) {
+														return;
+													}
+													
+													ConferenciaEncalhe.verificarAlteracoesConferenciaEncalheParaFecharAba(self, index);
+													
+												} else {
+													
+													$(self).tabs("remove", index);
+													
+												}
+												
+												
+											}
+											
 										});
 							}
+							
 						});
 		$.fn.serializeObject = function(){
 		    var o = {};
@@ -190,7 +224,7 @@
 	$(function() {
 
 		$('#workspace').tabs();
-
+		
 		// Dinamicaly add tabs from menu
 		$("#menu_principal ul li ul li").click(function() {
 			//S2
@@ -199,6 +233,7 @@
 					, $("a", this).prop("href") + "?random=" + Math.random()
 					, $("span", $(this).parents("li")).attr('class')
 			);
+			
 			return false;
 		});
 
@@ -209,6 +244,7 @@
 		});
 
 		$('#linkHome').click();
+		
 	});
 	
 	$(document).ready(function() {
@@ -222,7 +258,7 @@
 		});
 		
 		redimensionarWorkspace();
-
+		
 		window.addEventListener('blur', function() {
 			
 			$().clearAllInterval();
@@ -300,7 +336,6 @@
 			.dialog( "option" ,  "title", "Changelog" )
 			.dialog( "open" );
 		});
-		
 		
 	});
 	
@@ -391,14 +426,16 @@
 		<div id="changes" title="Changelog"><div style="padding: 10px">${changes}</div></div>
 		
 		<div id="workspace">
+			
 			<ul></ul>
+			
 		</div>
 
 	</div>
 
 	<div class="container">
 		<div id="notify" style="display: none;"></div>
-		<div id="effectSuccess" class="ui-state-default ui-corner-all" style="display: none; position: absolute; width: auto; z-index: 10002;">
+		<div id="effectSuccess" class="ui-state-default ui-corner-all">
 			<p>
 				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 				<b id="idTextSuccess"></b>
@@ -407,23 +444,38 @@
 				</span>					
 			</p>
 		</div>
-		<div id="effectWarning" class="ui-state-highlight ui-corner-all" style="display: none; position: absolute; width: auto; z-index: 10002;">
-			<p>
-				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+
+		<div id="effectWarning" class="ui-state-highlight ui-corner-all">
+			<div id="msgHeader">
+				<h3 class="msgTitle">
+					<span style="float: left; margin-right: 1.3em;" class="ui-icon ui-icon-info"></span>
+					<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
+						<a href="javascript:;" onclick="esconde(false, $('#effectWarning'));" class="ui-icon ui-icon-close">&nbsp;</a>
+					</span>	
+					Alerta
+				</h3>
+			</div>
+			<br clear="all" />
+			<p class="msgBody">
 				<b id="idTextWarning"></b>
-				<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
-					<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
-				</span>					
 			</p>
 		</div>
-		<div id="effectError" class="ui-state-error ui-corner-all" style="display: none; position: absolute; width: auto; z-index: 10002;">
-			<p>
-				<span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
+		
+		<div id="effectError" class="ui-state-error ui-corner-all">
+			<div id="msgHeader">
+				<h3 class="msgTitle">
+					<span style="float: left; " class="ui-icon ui-icon-info"></span>
+					<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
+						<a href="javascript:;" onclick="esconde(false, $('#effectError'));" class="ui-icon ui-icon-close">&nbsp;</a>
+					</span>	
+					Erro
+				</h3>
+			</div>
+			<br clear="all" />
+			<p class="msgBody">
 				<b id="idTextError"></b>
-				<span class="ui-state-default ui-corner-all" style="float:right; margin-right: 5px; margin-top: 5px;">
-					<a href="javascript:;" onclick="esconde(false, $(this).closest('div'));" class="ui-icon ui-icon-close">&nbsp;</a>
-				</span>					
 			</p>
+					
 		</div>
 	</div>			
 

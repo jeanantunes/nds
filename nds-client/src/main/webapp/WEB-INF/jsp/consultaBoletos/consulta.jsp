@@ -6,7 +6,7 @@
 
 <script type="text/javascript">
 
-	var pesquisaCotaConsultaBoletos = new PesquisaCota();
+	var pesquisaCotaConsultaBoletos = new PesquisaCota(consultaBoletosController.workspace);
 
 	$(function(){
 		consultaBoletosController.init();

@@ -35,56 +35,6 @@ public class ExpedicaoDTO implements Serializable {
 	private String razaoSocial;
 	
 	public ExpedicaoDTO() {}
-	
-	public ExpedicaoDTO(String codigoProduto, String nomeProduto,
-						Long numeroEdicao, BigDecimal precoCapa, BigDecimal desconto, BigInteger qntReparte,
-						BigInteger qntDiferenca, BigDecimal valorFaturado, String razaoSocial) {
-		
-		this.codigoProduto = codigoProduto;
-		this.nomeProduto = nomeProduto;
-		this.numeroEdicao = numeroEdicao;
-		this.precoCapa = precoCapa;
-		this.desconto = desconto;
-		this.qntReparte = qntReparte;
-		this.qntDiferenca = qntDiferenca;
-		this.valorFaturado = valorFaturado;
-		this.razaoSocial = razaoSocial;
-		
-	}
-	
-	public ExpedicaoDTO(String codigoProduto, String nomeProduto,
-			Long numeroEdicao, BigDecimal precoCapa, BigInteger qntReparte,
-			BigInteger qntDiferenca, BigDecimal valorFaturado) {
-
-		this.codigoProduto = codigoProduto;
-		this.nomeProduto = nomeProduto;
-		this.numeroEdicao = numeroEdicao;
-		this.precoCapa = precoCapa;
-		this.qntReparte = qntReparte;
-		this.qntDiferenca = qntDiferenca;
-		this.valorFaturado = valorFaturado;
-
-	}
-	
-	public ExpedicaoDTO(Date dataLancamento, Long idBox, String codigoBox, String nomeBox,
-			BigDecimal precoCapa, BigInteger qntReparte,
-			BigInteger qntDiferenca, BigDecimal valorFaturado,
-			String codigoProduto, String nomeProduto, Long numeroEdicao) {
-
-		
-		this.dataLancamento = dataLancamento;
-		this.idBox = idBox;
-		this.codigoBox = codigoBox;
-		this.nomeBox = nomeBox;
-		this.precoCapa = precoCapa;
-		this.qntReparte = qntReparte;
-		this.qntDiferenca = qntDiferenca;
-		this.valorFaturado = valorFaturado;
-		this.codigoProduto = codigoProduto;
-		this.nomeProduto = nomeProduto;
-		this.numeroEdicao = numeroEdicao;
-	}
-	
 
 	/**
 	 * @return the codigoProduto

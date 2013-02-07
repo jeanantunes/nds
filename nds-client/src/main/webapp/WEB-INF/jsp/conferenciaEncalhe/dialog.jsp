@@ -1,13 +1,13 @@
 <form id="form-salvar">
-<div id="dialog-salvar" title="Salvar Conferência" style="display:none;">
+<div id="dialog-salvar" title="Salvar Confer&ecirc;ncia" style="display:none;">
 	
 	<jsp:include page="../messagesDialog.jsp">
 		<jsp:param value="idModalConfirmarSalvarConf" name="messageDialog"/>
 	</jsp:include>
 	
 	<fieldset style="width: 415px;">
-        <legend>Salvar Conferência</legend>
-        <p>Confima a Conferência de Encalhe?</p>
+        <legend>Salvar Confer&ecirc;ncia</legend>
+        <p>Confima a Confer&ecirc;ncia de Encalhe?</p>
     </fieldset>
 
 </div>
@@ -41,13 +41,13 @@
 	      				<tr>
 					        <td width="108" style="border-bottom:1px solid #ccc;"><strong>Nome:</strong></td>
 					        <td width="174" style="border-bottom:1px solid #ccc;" id="nomeProdutoDetalhe"></td>
-					        <td width="120" style="border-bottom:1px solid #ccc;"><strong>Preço Capa:</strong></td>
+					        <td width="120" style="border-bottom:1px solid #ccc;"><strong>Pre&ccedil;o Capa:</strong></td>
 					        <td width="151" style="border-bottom:1px solid #ccc;" id="precoCapaDetalhe"></td>
 						</tr>
 						<tr>
 					        <td style="border-bottom:1px solid #ccc;"><strong>Chamada Capa:</strong></td>
 					        <td style="border-bottom:1px solid #ccc;" id="chamadaCapa"></td>
-					        <td style="border-bottom:1px solid #ccc;"><strong>Preço Desconto:</strong></td>
+					        <td style="border-bottom:1px solid #ccc;"><strong>Pre&ccedil;o Desconto:</strong></td>
 					        <td style="border-bottom:1px solid #ccc;" id="precoDesconto"></td>
 				     	</tr>
 				      	<tr>
@@ -59,11 +59,11 @@
 				      	<tr>
 					        <td style="border-bottom:1px solid #ccc;"><strong>Editor:</strong></td>
 					        <td style="border-bottom:1px solid #ccc;" id="editor"></td>
-					        <td style="border-bottom:1px solid #ccc;"><strong>Pacote Padrão:</strong></td>
+					        <td style="border-bottom:1px solid #ccc;"><strong>Pacote Padr&atilde;o:</strong></td>
 					        <td style="border-bottom:1px solid #ccc;" id="pacotePadrao"></td>
 						</tr>
 						<tr>
-					        <td style="border-bottom:1px solid #ccc; display:none;" class="obs"><strong>Observação:</strong></td>
+					        <td style="border-bottom:1px solid #ccc; display:none;" class="obs"><strong>Observa&ccedil;&atilde;o:</strong></td>
 					        <td colspan="3" style="border-bottom:1px solid #ccc; display:none;" class="obs" id="observacaoReadOnly"></td>
 	        			</tr>
 	    			</table>
@@ -72,7 +72,7 @@
 	  		<tr>
 			    <td>&nbsp;</td>
 			    <td>&nbsp;</td>
-	    		<td style="border-bottom:1px solid #ccc;" class="tit"><strong>Observação:</strong></td>
+	    		<td style="border-bottom:1px solid #ccc;" class="tit"><strong>Observa&ccedil;&atilde;o:</strong></td>
 	  		</tr>
 	  		<tr>
 			    <td>&nbsp;</td>
@@ -85,9 +85,9 @@
 			    <td>&nbsp;</td>
 			    <td>&nbsp;</td>
 			    <td>
-			    	<span class="bt_novos" id="btObs" title="Incluir Observação">
+			    	<span class="bt_novos" id="btObs" title="Incluir Observa&ccedil;&atilde;o">
 			    		<a href="javascript:;" onclick="ConferenciaEncalhe.gravaObs();">
-			    			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir Observação
+			    			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir Observa&ccedil;&atilde;o
 			    		</a>
 			    	</span>
 			    </td>
@@ -127,7 +127,7 @@
 		<legend>Pesquisar Produto</legend>
 		<table width="100%" border="0" cellspacing="1" cellpadding="2">
 			<tr>
-				<td width="44%">Digite o Código / Nome do Produto:</td>
+				<td width="44%">Digite o C&oacute;digo / Nome do Produto:</td>
 				<td width="56%">
             		<input name="pesq_prod" type="text" 
             			   id="pesq_prod" style="width:200px; float:left; margin-right:5px;"
@@ -153,9 +153,9 @@
     	<legend>Nota Fiscal</legend>
         	<table width="830" border="0" cellspacing="1" cellpadding="1" style="color:#666;">
           		<tr>
-		            <td width="133">Núm. Nota Fiscal:</td>
+		            <td width="133">N&uacute;. Nota Fiscal:</td>
 		            <td width="307" id="numeroNotaFiscalExibir"></td>
-		            <td width="106">Série:</td>
+		            <td width="106">S&eacute;rie:</td>
 		            <td width="111" id="serieExibir"></td>
           		</tr>
           		<tr>
@@ -178,16 +178,16 @@
         <div style="overflow: auto; height: 250px; width: 828px; border: 1px #EEEEEE solid;">
 			<table class="pesqProdutosNotaGrid gridTeste" style="width: 811px;" id="dadosGridConferenciaEncalheFinalizar">
 				<tr class="header_table">
-					<td style="width: 50px; text-align: left;">Código</td>
+					<td style="width: 50px; text-align: left;">C&oacute;digo</td>
 					<td style="width: 100px; text-align: left;">Produto</td>
-					<td style="width: 50px; text-align: center;">Edição</td>
+					<td style="width: 50px; text-align: center;">Edi&ccedil;&atilde;o</td>
 					<td style="width: 70px; text-align: left;">Dia</td>
 					<td style="width: 70px; text-align: left;">Qtde. info</td>
 					<td style="width: 101px; text-align: left;">Qtde. Recebida</td>
-					<td style="width: 80px; text-align: right;" nowrap="nowrap">Preço Capa R$</td>
-					<td style="width: 80px; text-align: right;" nowrap="nowrap">Preço Desconto R$</td>
+					<td style="width: 80px; text-align: right;" nowrap="nowrap">Pre&ccedil;o Capa R$</td>
+					<td style="width: 80px; text-align: right;" nowrap="nowrap">Pre&ccedil;o Desconto R$</td>
 					<td style="width: 60px; text-align: right;">Total R$</td>
-					<td style="width: 30px; text-align: center;">Ação</td>
+					<td style="width: 30px; text-align: center;">A&ccedil;&atilde;o</td>
 				</tr>
 			</table>
 		</div>
@@ -221,9 +221,9 @@
 	<p><strong>Insira os dados da Nota Fiscal</strong></p>
 	<table width="670" border="0" cellspacing="1" cellpadding="1">
 		<tr>
-			<td width="119">Núm. Nota Fiscal:</td>
+			<td width="119">N&uacute;. Nota Fiscal:</td>
 		    <td width="321"><input type="text" id="numNotaFiscal" style="width:200px;" /></td>
-		    <td width="106">Série:</td>
+		    <td width="106">S&eacute;rie:</td>
 		    <td width="111"><input type="text" id="serieNotaFiscal" style="width:80px;" /></td>
   		</tr>
   		<tr>
@@ -243,7 +243,7 @@
 				        <td width="26"><input type="radio" checked="checked" name="radioNFE" onchange="ConferenciaEncalhe.mostrarChaveAcesso()" id="radioNFEsim" value="S"/></td>
 				        <td width="71" valign="bottom">Sim</td>
 				        <td width="20"><input type="radio"  onchange="ConferenciaEncalhe.mostrarChaveAcesso()" name="radioNFE" id="radioNFEnao" value="N" /></td>
-				        <td width="183" valign="bottom">Não</td>
+				        <td width="183" valign="bottom">N&atilde;o</td>
 	      			
 	      			</tr>
 	    		</table>
@@ -283,24 +283,24 @@
 <div id="dialog-reabertura" title="Reabertura" style="display: none;">
 	<fieldset style="width: 310px;">
 		<legend>Nota Fiscal</legend>
-	    <p>Já existe conferencia de encalhe para esta cota.<br/>
+	    <p>J&aacute; existe conferencia de encalhe para esta cota.<br/>
 	    Efetuar reabertura?</p>
 	</fieldset>
 </div>
 </form>
 
 <form id="form-excluir-conferencia">
-<div id="dialog-excluir-conferencia" title="Conferência" style="display: none;">
+<div id="dialog-excluir-conferencia" title="Confer&ecirc;ncia" style="display: none;">
 	<fieldset style="width: 350px;">
-		<legend>Excluir Conferência</legend>
-	    <p>Confirma a exclusão dessa conferência?</p>
+		<legend>Excluir Confer&ecirc;ncia</legend>
+	    <p>Confirma a exclus&atilde;o dessa confer&ecirc;ncia?</p>
 	</fieldset>
 </div>
 </form>
 <form id="form-confirmar-regerar-cobranca">
-	<div id="dialog-confirmar-regerar-cobranca" title="Regerar Cobrança" style="display: none;">
+	<div id="dialog-confirmar-regerar-cobranca" title="Regerar Cobran&ccedil;a" style="display: none;">
 		<fieldset>
-			<legend>Regerar cobrança?</legend>
+			<legend>Regerar cobran&ccedil;a?</legend>
 			<p id="msgRegerarCobranca"></p>
 		</fieldset>
 	</div>
@@ -312,4 +312,24 @@
 			<p id="msgConfirmar"></p>
 		</fieldset>
 	</div>
+</form>
+
+<form id="form-conferencia-nao-salva">
+<div id="dialog-conferencia-nao-salva" title="Confer&Ecirc;ncia de Encalhe" style="display: none;">
+	<fieldset style="width: 400px;">
+		<legend>Confer&ecirc;ncia de Encalhe da Cota</legend>
+	    <p>Confer&ecirc;ncia de encalhe da cota atual ainda n&atilde;o foi salva.</br> 
+	    Deseja realmente fechar esta aba?</p>
+	</fieldset>
+</div>
+</form>
+
+<form id="form-conferencia-nao-salva-troca-de-cota">
+<div id="dialog-conferencia-nao-salva-troca-de-cota" title="Confer&Ecirc;ncia de Encalhe" style="display: none;">
+	<fieldset style="width: 400px;">
+		<legend>Confer&ecirc;ncia de Encalhe da Cota</legend>
+	    <p>Confer&ecirc;ncia de encalhe da cota atual ainda n&atilde;o foi salva.</br> 
+	    Deseja iniciar a confer&ecirc;ncia de outra cota mesmo assim?</p>
+	</fieldset>
+</div>
 </form>

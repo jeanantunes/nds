@@ -12,7 +12,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.ValidationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,8 +21,8 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -41,9 +40,9 @@ import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -234,7 +233,7 @@ public class ImpressaoNFEController extends BaseController {
 					nomeArquivo = "danfes";
 					break;
 				default:
-					throw new ValidationException("O tipo de impressão configurado no Distribuidor não está disponível.");
+					throw new ValidacaoException(TipoMensagem.ERROR, "O tipo de impressão configurado no Distribuidor não está disponível.");
 					
 			}
 

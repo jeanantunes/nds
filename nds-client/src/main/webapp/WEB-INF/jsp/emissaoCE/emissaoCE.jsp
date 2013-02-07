@@ -75,7 +75,7 @@
     <td width="130">
     
 <!-- Dt Recolhimento até -->
-<input id="dataAte" name="dtRecolhimentoAte" type="text" style="width:80px;"/></td>
+<input id="dataAte" value="${data}" name="dtRecolhimentoAte" type="text" style="width:80px;"/></td>
 
     <td>Intervalo Box:</td>
     <td width="91">
@@ -187,7 +187,7 @@
       
        <fieldset class="fieldGrid">
        	  <legend> Emissão CE</legend>
-        <div class="grids">
+        <div class="grids" style="display:none;">
 		  <table class="ceEmissaoGrid"></table>
 		  		      
         </div>

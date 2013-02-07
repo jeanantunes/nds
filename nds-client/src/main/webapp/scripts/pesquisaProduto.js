@@ -95,6 +95,27 @@ function PesquisaProduto(workspace) {
 		}
 	},
 	
+	/*
+	 * Bloqueia um dos campos de edições do produto para não permitir preenchimento de ambos
+	 */
+	this.validarCamposEdicoes = function(elId) {
+		
+		if(elId == 'edicaoProduto') {
+			if($('#quantidadeEdicoes').val() == '') {
+				$('#quantidadeEdicoes').attr('disabled', 'disabled');
+			}
+		} else {
+			if($('#edicaoProduto').val() == '') {
+				$('#edicaoProduto').attr('disabled', 'disabled');
+			}
+		}
+		
+		if($('#quantidadeEdicoes').val() == '' && $('#edicaoProduto').val() == '') {
+			$('#quantidadeEdicoes').removeAttr('disabled');
+			$('#edicaoProduto').removeAttr('disabled');
+		}
+	},
+	
 	this.pesquisarPorCodigoSuccessCallBack = function(result, idProduto, idEdicao, successCallBack,idCodigo, isFromModal) {
 		
 		$(idEdicao, pesquisaProduto.workspace).removeAttr("disabled");

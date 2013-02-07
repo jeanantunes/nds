@@ -147,7 +147,7 @@ var ParciaisController = $.extend(true, {
 			$('#exportacaoPeriodos',this.workspace).hide();
 		} else {
 			$('#exportacaoPeriodos',this.workspace).show();
-			this.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
+			ParciaisController.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
 		
 		if(result.rows.length > 0 && result.rows[0].cell.geradoPorInterface==true)
@@ -266,12 +266,16 @@ var ParciaisController = $.extend(true, {
 	},
 	
 	gerarAcaoDetalhes : function(index, row) {
-		row.cell.vendas = '<a href="javascript:;" onclick="ParciaisController.detalheVendas(\'' +
-		row.cell.dataLancamento +'\', \''+
-		row.cell.dataRecolhimento +'\', \''+
-		row.cell.idProdutoEdicao +'\', \''+
-		'\');">' + row.cell.vendas + '</a>';
 		
+		if(row.cell.vendas > 0){
+			
+			row.cell.vendas = '<a href="javascript:;" onclick="ParciaisController.detalheVendas(\'' +
+			row.cell.dataLancamento +'\', \''+
+			row.cell.dataRecolhimento +'\', \''+
+			row.cell.idProdutoEdicao +'\', \''+
+			'\');">' + row.cell.vendas + '</a>';
+		}
+	
 		row.cell.acao = 
 			'<a href="javascript:;" ' +
 			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':'onclick="ParciaisController.carregarEdicaoDetalhes(\''+ 

@@ -1,19 +1,22 @@
 
 <div id="form-dialog-novo">
 <div id="dialog-novo" title="Incluir Novo Tipo de Movimento" style="display: none;">
-	<fieldset style="width:815px!important;">
+	<fieldset style="width:830px!important;">
 		<legend>Tipo de Movimento</legend>
 		<jsp:include page="../messagesDialog.jsp" />
 		
 		<input type="hidden" id="grupoMovimentoHidden" />
+		
 		<!-- começa aqui  -->
-		<div style="width:325px; line-height:26px;">Tipo de Lançamento:
-			<select onchange="novoDialogDebitoCreditoCotaController.configuraTelaLancamento(this.value);" name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:200px;float:right;">
+		<div style="width:330px; line-height:26px;">
+		    Tipo de Lançamento:
+			<select onchange="novoDialogDebitoCreditoCotaController.configuraTelaLancamento(this.value);" name="debitoCredito.tipoMovimentoFinanceiro.id" id="novoTipoMovimento" style="width:190px;float:right;">
 				<option selected="selected"></option>
 				<c:forEach items="${tiposMovimentoFinanceiro}" var="tipoMovimento">
 					<option value="${tipoMovimento.id}">${tipoMovimento.descricao}</option>
 				</c:forEach>
 			</select>
+			
 		</div>
 
 		
@@ -34,7 +37,6 @@
 		    <br clear="all"/>
 		</div>
 		
-		
 		<div style="width:235px; line-height:26px; float:left;">Box: <select name="debitoCredito.box.id" id="novoBox" onchange="novoDialogDebitoCreditoCotaController.carregarRoteiros(this.value,0);novoDialogDebitoCreditoCotaController.carregarRotas(0,0);" style="width:110px; float:right;">
 		            <option value="0" selected="selected"></option>
 		            <c:forEach items="${boxes}" var="box">
@@ -47,12 +49,24 @@
 		<br clear="all"/>
 		<div style="width:235px; line-height:26px; float:left;">Data Vencimento: <input type="text" name="debitoCredito.dataVencimento" id="novoDataVencimento" style="width:70px; margin-left:26px;" /></div>
 		
-		<div id="tituloNovoValor" style="width:150px; line-height:26px; float:left; margin-left:5px;">Valor(R$): <input maxlength="16" type="text" style="width:70px;" name="debitoCredito.valor" id="novoValor" /></div>
-		<div style="width:321px; line-height:26px; float:left;">Observação: <input maxlength="150" type="text" style="width:240px;" name="debitoCredito.observacao" id="novoObservacao" /></div>
-		<div style="width:40px; line-height:26px; float:left;"><a href="javascript:;" onclick="novoDialogDebitoCreditoCotaController.obterInformacoesParaLancamento();" style="width:20px;"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" hspace="5" border="0" /></a></div>
+		<div id="tituloNovoValor" style="width:150px; line-height:26px; float:left; margin-left:5px;">
+			Valor(R$): 
+			<input maxlength="16" type="text" style="width:70px;" name="debitoCredito.valor" id="novoValor" />
+		</div>
+		
+		<div style="width:341px; line-height:26px; float:left;">
+			Observação: 
+			<input maxlength="150" type="text" style="width:240px;" name="debitoCredito.observacao" id="novoObservacao" />
+		</div>
+		
+		<div style="width:20px; line-height:26px; float:left;">
+		    <a href="javascript:;" onclick="novoDialogDebitoCreditoCotaController.obterInformacoesParaLancamento();" style="width:20px;">
+		        <img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" hspace="5" border="0" />
+		    </a>
+		</div>
+		
 		<!-- termina aqui  -->
 		<br clear="all" />
-		
 		
 		<br />
 		

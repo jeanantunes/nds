@@ -13,6 +13,7 @@ public enum Permissao
 	ROLE_CADASTRO_PRODUTO("Produto", 										 						  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_EDICAO("Edição", 											 						  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_COTA("Cota", 																		  	   Permissao.ROLE_CADASTRO),
+	ROLE_CADASTRO_COTA_BASE("Cota Base",															  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_FIADOR("Fiador", 																	  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_ENTREGADOR("Entregador", 															  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_TRANSPORTADOR("Transportador", 						                        	 	   Permissao.ROLE_CADASTRO),
@@ -34,7 +35,10 @@ public enum Permissao
 	
 	ROLE_DISTRIBUICAO("Distribuição",																	   null),
 	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS("Histograma de Vendas", 				   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS("Histograma de Vendas", 				   						   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO("Segmento Não Recebido",					 				   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS("Exceção de Segmentos e Parciais",					 	   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA("Classificação Não Recebida",							   Permissao.ROLE_DISTRIBUICAO),
 	
 	ROLE_ESTOQUE("Estoque",																	  			   null),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),
@@ -101,16 +105,14 @@ public enum Permissao
 	ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA("Follow Up do Sistema",									  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_GRUPOS_ACESSO("Grupos de Acesso",											  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_CALENDARIO("Calendario",													  		   Permissao.ROLE_ADMINISTRACAO),
-
-	ROLE_ADMINISTRACAO_INICIAR_DIA("Iniciar o Dia",												  		   Permissao.ROLE_ADMINISTRACAO),	
+	
 	ROLE_ADMINISTRACAO_RELATORIO_SERVICO_ENTREGA("Relatórios de Serviço de Entrega",					   Permissao.ROLE_ADMINISTRACAO),
 	
 	ROLE_ADMINISTRACAO_GERACAO_ARQUIVO("Geracao De Arquivos",									           Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_TIPO_NOTA("Tipos de NF-e",													  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_SISTEMA("Parâmetros de Sistema",	          					 		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR("Parâmetros Distribuidor",	 						 	   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO),
- 	ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração Cota",				          					 		   Permissao.ROLE_ADMINISTRACAO);
+	ROLE_ADMINISTRACAO_HELP("Help",									          					 		   Permissao.ROLE_ADMINISTRACAO);
 
 	private String descricao;
 	private Permissao permissaoPai;

@@ -71,6 +71,14 @@ fieldset label {
 				<table width="825" border="0" cellspacing="0" cellpadding="0"
 					id="colunasTable">
 					<tr>
+						
+						<td width="27"><input name="tipoImpressao.colunas[]"
+							id="tipoImpressao.colunas.sequenciaMatriz" type="checkbox"
+							value="sequenciaMatriz" /></td>
+						<td width="183"><label
+							for="tipoImpressao.colunas.sequenciaMatriz">Sequ&ecirc;ncia</label></td>
+					
+					
 						<td width="27"><input name="tipoImpressao.colunas[]"
 							id="tipoImpressao.colunas.codigoProduto" type="checkbox"
 							value="codigoProduto" /></td>
@@ -96,14 +104,18 @@ fieldset label {
 						<td width="200"><label
 							for="tipoImpressao.colunas.chamadaCapa">Chamada de Capa</label></td>
 
+						
+
+					</tr>
+					<tr>
+						
 						<td><input name="tipoImpressao.colunas[]"
 							id="tipoImpressao.colunas.codigoDeBarras" type="checkbox"
 							value="codigoDeBarras" /></td>
 						<td><label for="tipoImpressao.colunas.codigoDeBarras">C&oacute;digo
 								Barras</label></td>
-
-					</tr>
-					<tr>
+						
+					
 						<td><input name="tipoImpressao.colunas[]"
 							id="tipoImpressao.colunas.precoVenda" type="checkbox"
 							value="precoVenda" /></td>
@@ -121,13 +133,16 @@ fieldset label {
 							value="dataLancamento" /></td>
 						<td><label for="tipoImpressao.colunas.dataLancamento">Data
 								Lan&ccedil;amento</label></td>
+						
+					</tr>
+					<tr>
+						
 						<td><input name="tipoImpressao.colunas[]"
 							id="tipoImpressao.colunas.dataRecolhimento" type="checkbox"
 							value="dataRecolhimento" /></td>
 						<td><label for="tipoImpressao.colunas.dataRecolhimento">Data
 								Recolhimento</label></td>
-					</tr>
-					<tr>
+					
 						<td><input name="tipoImpressao.colunas[]"
 							id="tipoImpressao.colunas.tipoLancamentoParcial"
 							type="checkbox" value="tipoLancamentoParcial" /></td>
