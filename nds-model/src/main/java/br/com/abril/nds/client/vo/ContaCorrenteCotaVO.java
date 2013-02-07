@@ -22,8 +22,16 @@ public class ContaCorrenteCotaVO implements Serializable {
 	 */
 	private static final long serialVersionUID = 410782527293217845L;
 	
+	private Long id;
+	
+	private Long cotaId;
+	
+	private Integer numeroCota;
+	
 	@Export(label = "Data")
 	private Date dataConsolidado;
+	
+	private Date dataRaiz;
 	
 	@Export(label = "Vlr. Postergado", alignment = Alignment.RIGHT)
 	private BigDecimal valorPostergado;
@@ -48,6 +56,12 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	@Export(label = "Total R$", alignment = Alignment.RIGHT)
 	private BigDecimal total;
+	
+	private BigDecimal valorPago;
+	
+	private String tipo;
+	
+	private BigDecimal saldo;
 	
 	/**
 	 * Construtor padrão.
@@ -182,4 +196,59 @@ public class ContaCorrenteCotaVO implements Serializable {
 		this.total = total;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getCotaId() {
+		return cotaId;
+	}
+
+	public void setCotaId(Long cotaId) {
+		this.cotaId = cotaId;
+	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public Date getDataRaiz() {
+		return dataRaiz;
+	}
+
+	public void setDataRaiz(Date dataRaiz) {
+		this.dataRaiz = dataRaiz;
+	}
+
+	public BigDecimal getValorPago() {
+		return valorPago;
+	}
+
+	public void setValorPago(BigDecimal valorPago) {
+		this.valorPago = valorPago;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public BigDecimal getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(BigDecimal saldo) {
+		this.saldo = saldo;
+	}
 }

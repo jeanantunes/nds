@@ -17,6 +17,8 @@ public class FiltroConsolidadoVendaCotaDTO {
 	private String cota;	
 	
 	private Long idConsolidado;
+	
+	private Integer numeroCota;
 			
 	public Long getIdConsolidado() {
 		return idConsolidado;
@@ -136,6 +138,14 @@ public class FiltroConsolidadoVendaCotaDTO {
 		} else if (!paginacao.equals(other.paginacao))
 			return false;
 		return true;
+	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 	
 	
