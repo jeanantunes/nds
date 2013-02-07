@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.model.cadastro.CotaBaseCota;
 
 public interface CotaBaseCotaService {
@@ -14,6 +15,6 @@ public interface CotaBaseCotaService {
 	 * Regra: Após 180 dias do cadastro de cota base para uma cota nova, a cota nova não vai ter mais cotas base amarrado a elas.
 	 * 
 	 */	
-	boolean isCotaBaseAtiva(Cota cota);
+	boolean isCotaBaseAtiva(CotaBase cotaBase);
 
 }

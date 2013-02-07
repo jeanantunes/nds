@@ -4,14 +4,15 @@ import java.util.List;
 
 import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.CotaBase;
 
 
 public interface CotaBaseRepository extends Repository<CotaBase, Long> {
 
-	FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota, boolean obterFaturamento, boolean semCotaBase);
+	FiltroCotaBaseDTO obterDadosFiltro(CotaBase cotaBase, boolean obterFaturamento, boolean semCotaBase, Integer numeroCota);
 	
-	List<CotaBaseDTO> obterCotasBases(Cota cotaNova);
+	List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase);
+
+	CotaBase obterCotaNova(Integer numeroCotaNova);
 
 }

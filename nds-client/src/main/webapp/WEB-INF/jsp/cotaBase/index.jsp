@@ -193,7 +193,7 @@ $(function(){
 	               <td width="41">Cidade:</td>
 	               <td colspan="2"><input type="text" name="cidade" id="cidade" disabled="disabled" style="width:100px;"/></td>
 	               <td colspan="2">Dias Restantes:</td>
-	               <td width="105"><input name="textfield4" type="text" id="textfield4" style="width:40px; text-align:center;" disabled="disabled"/></td>
+	               <td width="105"><input name="diasRestantes" type="text" id="diasRestantes" style="width:40px; text-align:center;" disabled="disabled"/></td>
 	           </tr>
 	           <tr>
 	             <td colspan="3">Gerador de Fluxo: </td>

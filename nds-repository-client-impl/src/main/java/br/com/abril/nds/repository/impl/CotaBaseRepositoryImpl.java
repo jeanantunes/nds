@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaBaseRepository;
@@ -21,7 +20,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 	}
 
 	@Override
-	public FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota, boolean obterFaturamento, boolean semCotaBase) {
+	public FiltroCotaBaseDTO obterDadosFiltro(CotaBase cotaBase, boolean obterFaturamento, boolean semCotaBase, Integer numeroCota) {
 		StringBuilder hql = new StringBuilder();
         
         // RETURNING FIELDS
@@ -63,13 +62,21 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
         hql.append(" and cotaEndereco.principal = true ");
-        hql.append(" and cota.numeroCota = :numeroCota ");
+        if(semCotaBase){
+        	hql.append(" and cota.numeroCota = :numeroCota ");
+        }else{
+        	hql.append(" and cotaBase.id = :idCotaNova ");        	
+        }
         
         hql.append(" group by cota.id ");
         
         Query query =  getSession().createQuery(hql.toString());
         
-        query.setParameter("numeroCota", numeroCota);        
+        if(semCotaBase){
+        	query.setParameter("numeroCota", numeroCota);
+        }else{
+        	query.setParameter("idCotaNova", cotaBase.getId());
+        }
         
         query.setResultTransformer(new AliasToBeanResultTransformer(FiltroCotaBaseDTO.class));
         
@@ -79,7 +86,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<CotaBaseDTO> obterCotasBases(Cota cotaNova) {
+	public List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -113,19 +120,37 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
         hql.append(" and cotaEndereco.principal = true ");
-        hql.append(" and cotaBase.id = :idCota ");
+        hql.append(" and cotaBase.id = :idCotaBase ");
         
         hql.append(" GROUP BY cota.id");
         
         Query query =  getSession().createQuery(hql.toString());
         
-        query.setParameter("idCota", cotaNova.getId());        
+        query.setParameter("idCotaBase", cotaBase.getId());        
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseDTO.class));
         
 		return query.list();
 	}
 
-	
+	@Override
+	public CotaBase obterCotaNova(Integer numeroCotaNova) {
+		
+		StringBuilder hql = new StringBuilder();
+        
+        hql.append(" SELECT cotaBase as cotaBase");
+        
+        hql.append(" FROM CotaBaseCota as cotaBaseCota");
+        hql.append(" JOIN cotaBaseCota.cotaBase as cotaBase");
+       
+        hql.append(" WHERE cotaBaseCota.ativo = true ");
+        hql.append(" AND cotaBase.cota.numeroCota = :numeroCotaNova ");
+        
+        Query query =  getSession().createQuery(hql.toString());
+        
+        query.setParameter("numeroCotaNova", numeroCotaNova);
+        
+        return  (CotaBase) query.uniqueResult();
+	}
 
 }

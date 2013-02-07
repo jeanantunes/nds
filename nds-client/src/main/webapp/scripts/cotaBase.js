@@ -708,24 +708,22 @@ var cotaBaseController = $.extend(true, {
 					dto.push({name : 'idCotaNova' , value : $("#idCota").val()});
 					dto.push({name : 'indiceAjuste' , value : $("#indiceAjuste").val()});
 					
-					
 					$.postJSON(contextPath + "/cadastro/cotaBase/confirmarCotasBase",
 							dto, 
 							function(result){
-								if (result.mensagens) {
+								if (result.tipoMensagem && result.listaMensagens) {
 									exibirMensagemDialog(
-											result.mensagens.tipoMensagem, 
-											result.mensagens.listaMensagens,""
+											result.tipoMensagem, 
+											result.listaMensagens,""
 									);
 								}
 								
 								cotaBaseController.mostrar_normal();
-			 				}, function(result){
-								//Verifica mensagens de erro do retorno da chamada ao controller.
-								if (result.mensagens) {
+			 				}, function(result){								
+			 					if (result.tipoMensagem && result.listaMensagens) {
 									exibirMensagemDialog(
-											result.mensagens.tipoMensagem, 
-											result.mensagens.listaMensagens,""
+											result.tipoMensagem, 
+											result.listaMensagens,""
 									);
 								}
 							}, true,null
@@ -871,13 +869,15 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#cidade", cotaBaseController.workspace).val(result.cidade);
 		
+		$("#diasRestantes", cotaBaseController.workspace).val(result.diasRestantes);
+		
 		$("#geradorFluxo", cotaBaseController.workspace).val(result.geradorDeFluxo);
 		
 		$("#areaInfluencia", cotaBaseController.workspace).val(result.areaInfluencia);
 		
-		$("#periodoDe", cotaBaseController.workspace).val(result.dataInicial);
+		$("#periodoDe", cotaBaseController.workspace).val(result.dataInicialFormatado);
 		
-		$("#periodoAte", cotaBaseController.workspace).val(result.dataFinal);
+		$("#periodoAte", cotaBaseController.workspace).val(result.dataFinalFormatado);
 		
 		if (successCallBack) {
 			

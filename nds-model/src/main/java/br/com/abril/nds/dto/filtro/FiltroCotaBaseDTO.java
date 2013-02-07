@@ -23,10 +23,13 @@ public class FiltroCotaBaseDTO implements Serializable {
 	private String areaInfluencia;
 	private String faturamentoMedio;
 	
-//	private String diasRestantes;
+	private String diasRestantes;
 	
-	private String dataInicial;
-	private String dataFinal;
+	private Date dataInicial;
+	private Date dataFinal;
+	
+	private String dataInicialFormatado;
+	private String dataFinalFormatado;
 	
 	public Long getIdCota() {
 		return idCota;
@@ -120,43 +123,52 @@ public class FiltroCotaBaseDTO implements Serializable {
 	}
 
 
-	public String getDataInicial() {
+	public Date getDataInicial() {
 		return dataInicial;
 	}
 
 
 	public void setDataInicial(Date dataInicial) {
-		this.dataInicial =  DateUtil.formatarDataPTBR(dataInicial);
+		this.dataInicial =  dataInicial;
+		if(dataInicial != null){
+			this.dataInicialFormatado =  DateUtil.formatarDataPTBR(dataInicial);			
+		}
 	}
 
 
-	public String getDataFinal() {
+	public Date getDataFinal() {
 		return dataFinal;
 	}
 
 
 	public void setDataFinal(Date dataFinal) {
-		this.dataFinal = DateUtil.formatarDataPTBR(dataFinal);
+		this.dataFinal = dataFinal;
+		if(dataFinal != null){
+			this.dataFinalFormatado = DateUtil.formatarDataPTBR(dataFinal);
+			
+		}
 	}
 
 
-//	public Date getDataFinal() {
-//		return dataFinal;
-//	}
-//
-//
-//	public void setDataFinal(Date dataFinal) {
-//		this.dataFinal = dataFinal;
-//		if(dataFinal != null){
-//			Long dias = DateUtil.obterDiferencaDias(new Date(), dataFinal);
-//			diasRestantes = dias.toString();
-//		}
-//	}
-//
-//
-//	public String getDiasRestantes() {
-//		return diasRestantes;
-//	}
+	public String getDataInicialFormatado() {
+		return dataInicialFormatado;
+	}
+
+	public String getDataFinalFormatado() {
+		return dataFinalFormatado;
+	}
+
+
+	public String getDiasRestantes() {
+		return diasRestantes;
+	}
+
+
+	public void setDiasRestantes(String diasRestantes) {
+		this.diasRestantes = diasRestantes;
+	}
 	
 	
+
+
 }

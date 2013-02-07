@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.model.cadastro.CotaBaseCota;
 import br.com.abril.nds.repository.CotaBaseCotaRepository;
 import br.com.abril.nds.service.CotaBaseCotaService;
@@ -29,8 +30,8 @@ public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 
 	@Override
 	@Transactional
-	public boolean isCotaBaseAtiva(Cota cota) {		 
-		return this.cotaBaseCotaRepository.isCotaBaseAtiva(cota);
+	public boolean isCotaBaseAtiva(CotaBase cotaBase) {		 
+		return this.cotaBaseCotaRepository.isCotaBaseAtiva(cotaBase);
 	}
 
 }
