@@ -392,11 +392,14 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		int sequencia = 0;
 
 		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
+			if(itemNotaEnvio.getItemNotaEnvioPK() == null){
+				itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,
+						++sequencia));
 
-			itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,
-					++sequencia));
+				itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+			}
 
-			itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+			
 		}
 
 		notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
