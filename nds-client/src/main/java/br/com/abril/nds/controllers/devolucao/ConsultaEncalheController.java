@@ -214,7 +214,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 		if (dataRecolhimento == null || dataRecolhimento.isEmpty()) {
 			
-			mensagens.add("O preenchimento do perído é obrigatório");
+			mensagens.add("O preenchimento do período é obrigatório");
 		} 
 		
 		return mensagens;
