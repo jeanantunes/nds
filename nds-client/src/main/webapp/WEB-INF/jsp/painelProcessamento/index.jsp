@@ -33,7 +33,7 @@
 <div id="dialog-detalhes" title="Detalhes da Interface">
     <fieldset>
     <legend>Detalhe da Interface</legend>
-    <p><strong>Interface:</strong> Lançamento - <strong style="margin-right:5px; margin-left:10px;">Data: </strong>27/04/2012 <strong style="margin-right:5px; margin-left:10px;">Hora:</strong> 13:59h</p>
+    <p><strong>Interface:</strong> <span id="nomeInterface">&nbsp;</span> - <strong style="margin-right:5px; margin-left:10px;">Data: </strong>27/04/2012 <strong style="margin-right:5px; margin-left:10px;">Hora:</strong> 13:59h</p>
     <br clear="all" />
     <table class="detalheInterfaceGrid"></table>
     </fieldset>

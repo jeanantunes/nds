@@ -25,6 +25,6 @@ public interface DistribuidorService {
 	
 	List<ItemDTO<TipoStatusGarantia, String>> getComboTiposStatusGarantia();
 
-	Date obterDatatOperacaoDistribuidor();
+	Date obterDataOperacaoDistribuidor();
 	
 }

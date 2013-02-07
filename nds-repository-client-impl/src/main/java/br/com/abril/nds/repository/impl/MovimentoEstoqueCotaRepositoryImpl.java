@@ -1895,8 +1895,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
-		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
-		
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa, ");
+		hql.append(" 		pessoa.nome as nomeCota ");
 								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList, statusLancamento);
 		
@@ -2701,6 +2701,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("idLancamento", idLancamento);
 		
 		return query.list();
-	}  
+	}
+	
+	@Override
+	public Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota){
 		
+		StringBuilder hql = new StringBuilder(" select produtoEdicao.id  ");
+		
+		hql.append(" from ConferenciaEncalhe conferenciaEncalhe ")
+		   .append(" join conferenciaEncalhe.movimentoEstoqueCota movimentoEstoqueCota ")
+		   .append(" join movimentoEstoqueCota.produtoEdicao produtoEdicao ")
+		   .append(" WHERE conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+		
+		return (Long) query.uniqueResult();
+	}
 }

@@ -91,13 +91,17 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("from HistoricoDescontoFornecedor hdf join hdf.fornecedor f join f.juridica as pessoa ");
 		hql.append("where 1=1 ");
 		
-		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
+		if(filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			hql.append(" and f.id in (:idFornecedores) ");
 		}
 		
 		hql.append("group by hdf.desconto, hdf.dataAlteracao ");
 		
 		Query query  = getSession().createQuery(hql.toString());
+		
+		if(filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
+			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
+		}
 		
 		return query.list().size();
 	}

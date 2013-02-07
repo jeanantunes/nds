@@ -536,6 +536,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal vlMovFinanEncargos = BigDecimal.ZERO;
 		BigDecimal vlMovFinanVendaEncalhe = BigDecimal.ZERO;
 		BigDecimal vlMovPostergado = BigDecimal.ZERO;
+		BigDecimal vlMovConsignado = BigDecimal.ZERO;
 
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
 			
@@ -604,11 +605,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										movimentoFinanceiroCota.getValor().negate() : 
 											BigDecimal.ZERO);
 					
-					vlMovFinanEncargos = vlMovFinanEncargos.add(
-							movimentoFinanceiroCota.getValor() != null ? 
-									movimentoFinanceiroCota.getValor().negate() : 
-										BigDecimal.ZERO);
-					
 					vlMovPostergado = vlMovPostergado.add(
 							movimentoFinanceiroCota.getValor() != null ? 
 									movimentoFinanceiroCota.getValor().negate() : 
@@ -618,11 +614,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case POSTERGADO_CREDITO:
 					vlMovFinanTotal = 
 						vlMovFinanTotal.add(
-							movimentoFinanceiroCota.getValor() != null ? 
-									movimentoFinanceiroCota.getValor() : 
-										BigDecimal.ZERO);
-			
-					vlMovFinanEncargos = vlMovFinanEncargos.add(
 							movimentoFinanceiroCota.getValor() != null ? 
 									movimentoFinanceiroCota.getValor() : 
 										BigDecimal.ZERO);
@@ -639,6 +630,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								movimentoFinanceiroCota.getValor() != null ? 
 										movimentoFinanceiroCota.getValor().negate() : 
 											BigDecimal.ZERO);
+					vlMovConsignado = 
+							vlMovConsignado.add(movimentoFinanceiroCota.getValor() != null ?
+									movimentoFinanceiroCota.getValor() :
+										BigDecimal.ZERO);
 				break;
 				
 				case RECUPERACAO_REPARTE_COTA_AUSENTE:
@@ -685,6 +680,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setEncargos(vlMovFinanEncargos);
 		consolidadoFinanceiroCota.setVendaEncalhe(vlMovFinanVendaEncalhe);
 		consolidadoFinanceiroCota.setValorPostergado(vlMovPostergado);
+		consolidadoFinanceiroCota.setConsignado(vlMovConsignado);
 		
 		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		
@@ -956,22 +952,32 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			Banco banco = formaCobrancaPrincipal.getBanco();
 			
-			cobranca.setNossoNumero(
-					Util.gerarNossoNumero(
-							cota.getNumeroCota(), 
-							cobranca.getDataEmissao(), 
-							banco.getNumeroBanco(),
-							fornecedor != null ? fornecedor.getId() : null,
-							movimentos.get(0).getId(),
-							banco.getAgencia(),
-							banco.getConta(),
-							banco.getCarteira()
-							));
+			String nossoNumero =
+				Util.gerarNossoNumero(
+					cota.getNumeroCota(), 
+					cobranca.getDataEmissao(), 
+					banco.getNumeroBanco(),
+					fornecedor != null ? fornecedor.getId() : null,
+					movimentos.get(0).getId(),
+					banco.getAgencia(),
+					banco.getConta(),
+					banco.getCarteira());
+			
+			cobranca.setNossoNumero(nossoNumero);
+			
+			String digitoVerificador =
+				Util.calcularDigitoVerificador(
+					nossoNumero, banco.getCodigoCedente(), cobranca.getDataVencimento());
+			
+			cobranca.setDigitoNossoNumero(digitoVerificador);
+			
+			cobranca.setNossoNumeroCompleto(
+				nossoNumero + ((digitoVerificador != null) ? digitoVerificador : ""));
 			
 			cobranca.setValor(novaDivida.getValor());
 			
 			this.cobrancaRepository.adicionar(cobranca);
-
+			
 			if (formaCobrancaPrincipal.isRecebeCobrancaEmail()){
 				
 				try {
@@ -995,12 +1001,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		
 		if (movimentoFinanceiroCota != null){
-			
-			if (tipoMovimentoFinanceiro != null && 
-					tipoMovimentoFinanceiro.getId() == null){
-				
-				this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
-			}
 			
 			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}

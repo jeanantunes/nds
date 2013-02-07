@@ -473,3 +473,5 @@ var suspensaoCotaController = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=suspensaoCota.js

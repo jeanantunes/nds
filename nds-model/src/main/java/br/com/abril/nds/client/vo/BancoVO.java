@@ -9,6 +9,7 @@ public class BancoVO {
     String nome;
     String codigoCedente;
     Long agencia;
+    String digitoAgencia;
     Long conta;
     String digito;
     String apelido;
@@ -25,16 +26,17 @@ public class BancoVO {
     
 
 	public BancoVO(long idBanco, String numero, String nome,
-			String codigoCedente, Long agencia, Long conta, String digito,
-			String apelido, Integer carteira, BigDecimal juros,
-			boolean ativo, BigDecimal multa, BigDecimal vrMulta,
-			String instrucoes) {
+			String codigoCedente, Long agencia, String digitoAgencia,
+			Long conta, String digito, String apelido, Integer carteira,
+			BigDecimal juros, boolean ativo, BigDecimal multa,
+			BigDecimal vrMulta, String instrucoes) {
 		super();
 		this.idBanco = idBanco;
 		this.numero = numero;
 		this.nome = nome;
 		this.codigoCedente = codigoCedente;
 		this.agencia = agencia;
+		this.digitoAgencia = digitoAgencia;
 		this.conta = conta;
 		this.digito = digito;
 		this.apelido = apelido;
@@ -86,6 +88,22 @@ public class BancoVO {
 	public void setAgencia(Long agencia) {
 		this.agencia = agencia;
 	}
+
+	/**
+	 * @return the digitoAgencia
+	 */
+	public String getDigitoAgencia() {
+		return digitoAgencia;
+	}
+
+
+	/**
+	 * @param digitoAgencia the digitoAgencia to set
+	 */
+	public void setDigitoAgencia(String digitoAgencia) {
+		this.digitoAgencia = digitoAgencia;
+	}
+
 
 	public Long getConta() {
 		return conta;

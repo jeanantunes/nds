@@ -286,8 +286,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			if (estoqueProduto == null) {
 
 				estoqueProduto = new EstoqueProduto();
-
-				estoqueProduto.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
+				
+				ProdutoEdicao produtoEdicao = 
+					this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+				
+				estoqueProduto.setProdutoEdicao(produtoEdicao);
 
 				estoqueProduto.setQtde(BigInteger.ZERO);
 			}
@@ -383,7 +386,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					 throw new ValidacaoException(TipoMensagem.WARNING, "Estoque inválido para a operação.");
 			}
 
-			this.validarAlteracaoEstoqueProduto(novaQuantidade);
+			this.validarAlteracaoEstoqueProdutoDistribuidor(
+				novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao());
 			
 			if (estoqueProduto.getId() == null) {
 				
@@ -400,12 +404,39 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return null;
 	}
 	
-	private void validarAlteracaoEstoqueProduto(BigInteger novaQuantidade) {
+	private void validarAlteracaoEstoqueProdutoDistribuidor(BigInteger saldoEstoque, 
+															TipoEstoque tipoEstoque,
+															ProdutoEdicao produtoEdicao) {
 		
-		if (novaQuantidade.compareTo(BigInteger.ZERO) < 0) {
+		if (!this.validarSaldoEstoque(saldoEstoque)) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Saldo insuficiente para movimentação de estoque.");
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, 
+					"Saldo do produto [" + produtoEdicao.getProduto().getCodigo() 
+						+ " - " + produtoEdicao.getProduto().getNomeComercial() + " - " 
+						+ produtoEdicao.getNumeroEdicao() 
+						+ "] no estoque \"" + tipoEstoque.getDescricao() 
+						+ "\", insuficiente para movimentação.");
 		}
+	}
+	
+	private void validarAlteracaoEstoqueProdutoCota(BigInteger saldoEstoque, 
+													ProdutoEdicao produtoEdicao) {
+		
+		if (!this.validarSaldoEstoque(saldoEstoque)) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, 
+					"Saldo do produto [" + produtoEdicao.getProduto().getCodigo() 
+						+ " - " + produtoEdicao.getProduto().getNomeComercial() + " - " 
+						+ produtoEdicao.getNumeroEdicao() 
+						+ "] no estoque da cota, insuficiente para movimentação.");
+		}
+	}
+	
+	private boolean validarSaldoEstoque(BigInteger saldoEstoque) {
+		
+		return (saldoEstoque != null && saldoEstoque.compareTo(BigInteger.ZERO) >= 0);
 	}
 
 	@Override
@@ -425,7 +456,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		if (dataOperacao == null) {
 			
-			dataOperacao = distribuidorService.obterDatatOperacaoDistribuidor();
+			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
 		
 		movimentoEstoqueCota.setData(dataOperacao);
@@ -521,7 +552,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				estoqueProdutoCota = new EstoqueProdutoCota();
 				
-				estoqueProdutoCota.setProdutoEdicao(new ProdutoEdicao(idProdutoEd));
+				ProdutoEdicao produtoEdicao = 
+					this.produtoEdicaoRepository.buscarPorId(idProdutoEd);
+				
+				estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 				estoqueProdutoCota.setQtdeDevolvida(BigInteger.ZERO);
 				estoqueProdutoCota.setQtdeRecebida(BigInteger.ZERO);
 				estoqueProdutoCota.setCota(new Cota(idCota));
@@ -552,7 +586,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				estoqueProdutoCota.setQtdeDevolvida(novaQuantidade);
 			}
 			
-			this.validarAlteracaoEstoqueProduto(novaQuantidade);
+			this.validarAlteracaoEstoqueProdutoCota(
+				novaQuantidade, estoqueProdutoCota.getProdutoEdicao());
 
 			if (estoqueProdutoCota.getId() == null) {
 				
@@ -584,12 +619,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		if (estoqueProdutoCotaJuramentado == null) {
 
-			ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+			ProdutoEdicao produtoEdicao = 
+				this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 
 			Cota cota = this.cotaRepository.buscarPorId(idCota);
 
 			estoqueProdutoCotaJuramentado = new EstoqueProdutoCotaJuramentado();
-
+			
 			estoqueProdutoCotaJuramentado.setProdutoEdicao(produtoEdicao);
 			estoqueProdutoCotaJuramentado.setCota(cota);
 			estoqueProdutoCotaJuramentado.setData(new Date());
@@ -611,7 +647,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			estoqueProdutoCotaJuramentado.setQtde(qtdeAtual.subtract(qtdeMovimento));
 		}
 		
-		this.validarAlteracaoEstoqueProduto(estoqueProdutoCotaJuramentado.getQtde());
+		this.validarAlteracaoEstoqueProdutoCota(
+			estoqueProdutoCotaJuramentado.getQtde(), 
+				estoqueProdutoCotaJuramentado.getProdutoEdicao());
 
 		estoqueProdutoCotaJuramentado.getMovimentos().add(movimentoEstoqueCota);
 

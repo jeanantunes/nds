@@ -137,7 +137,7 @@ public class BancoController extends BaseController {
 										  (banco.getId()!=null?banco.getId().toString():""),
 										  (banco.getNumeroBanco()!=null?banco.getNumeroBanco():""),
 										  (banco.getNome()!=null?banco.getNome():""),
-										  (banco.getAgencia()!=null?banco.getAgencia().toString():""),
+										  (banco.getAgencia()!=null?banco.getAgencia().toString()+"-"+banco.getDvAgencia():""),
 										  (banco.getConta()!=null?banco.getConta().toString()+"-"+banco.getDvConta():""),
 										  (banco.getCodigoCedente()!=null?banco.getCodigoCedente().toString():""),
 										  (banco.getApelido()!=null?banco.getApelido().toString():""),
@@ -193,6 +193,7 @@ public class BancoController extends BaseController {
 						  String nome,
 						  String codigoCedente,
 						  String agencia,
+						  String digitoAgencia,
 						  String conta,
 						  String digito,
 						  String apelido,
@@ -213,6 +214,7 @@ public class BancoController extends BaseController {
 				nome,
 				codigoCedente,
 				agencia,
+				digitoAgencia,
 				conta,
 				digito,
 				apelido,
@@ -229,6 +231,7 @@ public class BancoController extends BaseController {
         banco.setNome(nome);
         banco.setCodigoCedente(codigoCedente);
         banco.setAgencia(lAgencia);
+        banco.setDvAgencia(digitoAgencia);
         banco.setConta(lConta);
         banco.setDvConta(digito);
         banco.setApelido(apelido);
@@ -294,6 +297,7 @@ public class BancoController extends BaseController {
 						  	String nome,
 						  	String codigoCedente,
 						  	String agencia,
+						  	String digitoAgencia,
 						  	String conta,
 						  	String digito,
 						  	String apelido,
@@ -313,7 +317,8 @@ public class BancoController extends BaseController {
 				numero, 
 				nome, 
 				codigoCedente, 
-				agencia, 
+				agencia,
+				digitoAgencia, 
 				conta, 
 				digito, 
 				apelido,
@@ -336,6 +341,7 @@ public class BancoController extends BaseController {
 		banco.setNome(nome);
 		banco.setCodigoCedente(codigoCedente);
 		banco.setAgencia(lAgencia);
+		banco.setDvAgencia(digitoAgencia);
 		banco.setConta(lConta);
 		banco.setDvConta(digito);
 		banco.setApelido(apelido);
@@ -365,6 +371,7 @@ public class BancoController extends BaseController {
 	 * @param nome
 	 * @param codigoCedente
 	 * @param agencia
+	 * @param digitoAgencia
 	 * @param conta
 	 * @param digito
 	 * @param apelido
@@ -378,6 +385,7 @@ public class BancoController extends BaseController {
 								  	  String nome,
 								  	  String codigoCedente,
 								  	  String agencia,
+								  	  String digitoAgencia,
 								  	  String conta,
 								  	  String digito,
 								  	  String apelido,
@@ -419,6 +427,10 @@ public class BancoController extends BaseController {
 		
 		if ((agencia==null)||("".equals(agencia))){
 			errorMsgs.add("Preencha o campo agência.");
+		}
+		
+		if ((digitoAgencia==null)||("".equals(digitoAgencia))){
+			errorMsgs.add("Preencha o campo dígito da agência.");
 		}
 		
 		if ((conta==null)||("".equals(conta))){

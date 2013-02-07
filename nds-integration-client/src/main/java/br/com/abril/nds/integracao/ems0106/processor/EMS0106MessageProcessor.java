@@ -68,6 +68,13 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			}
 		}
 		
+		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo!");
+			return;
+		}
+		
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo == null) {
 			

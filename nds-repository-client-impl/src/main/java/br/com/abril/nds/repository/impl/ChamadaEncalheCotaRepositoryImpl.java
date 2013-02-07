@@ -32,7 +32,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select sum ( ");
-		hql.append(" mec.reparte * (mec.valoresAplicados.valorComDesconto) ");
+		hql.append(" mec.qtde * ( COALESCE(mec.valoresAplicados.precoComDesconto, 0) ) ");
 		hql.append(" ) ");
 		
 		hql.append(" from ChamadaEncalheCota chamadaEncalheCota ");
@@ -47,8 +47,9 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		hql.append(" cota.numeroCota = :numeroCota ");
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
 		hql.append(" and chamadaEncalheCota.fechado = :postergado ");
-		hql.append(" and mec.tipoMovimento.grupoMovimento = :grupoMovimento ");
-		hql.append(" and mec.lancamento in (chamadaEncalheCota.chamadaEncalhe.lancamentos) ");
+		hql.append(" and mec.tipoMovimento.grupoMovimentoEstoque = :grupoMovimento ");
+		
+		//hql.append(" and mec.lancamento in (chamadaEncalheCota.chamadaEncalhe.lancamentos) ");
 
 		hql.append(" and chamadaEncalhe.dataRecolhimento = :dataOperacao ");
 		
@@ -456,6 +457,24 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.setParameter("idChamada", idChamadaEncalhe);
 
 		return (Long) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ChamadaEncalheCota> obterListChamadaEncalheCota(
+			Long chamadaEncalheID, Long cotaID) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cec from ChamadaEncalheCota cec ");
+		hql.append(" where cec.chamadaEncalhe.id = :chamadaEncalheID ");
+		hql.append(" and cec.cota.id = :cotaID ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("chamadaEncalheID", chamadaEncalheID);
+		query.setParameter("cotaID", cotaID);
+		
+		return query.list();
 	}
 
 }

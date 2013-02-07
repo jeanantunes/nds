@@ -1176,7 +1176,9 @@ public class BaixaFinanceiraController extends BaseController {
 	public void exportarResumoBaixaAutomatica(FileType fileType, TipoBaixaBoleto tipoBaixaBoleto) throws IOException {
 
 		FiltroDetalheBaixaBoletoDTO filtro = this.obterFiltroExportacaoDetalhe();
+		
 		List<BaixaBoletoBaseVO> lista = (List<BaixaBoletoBaseVO>) this.obterBaixaBoletoExportacaoVO(filtro, tipoBaixaBoleto);		
+		
 		FileExporter.to(tipoBaixaBoleto.getNomeArquivo(), fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					lista, tipoBaixaBoleto.getTipoImpressaoVO(), this.httpResponse);

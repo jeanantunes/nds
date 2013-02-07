@@ -147,7 +147,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(Long codigoLogExecucao) {
 		List<DetalheProcessamentoVO> lista = new ArrayList<DetalheProcessamentoVO>();
 		DetalheProcessamentoVO detalheProcessamentoVO = null;
-		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensErroLogInterface(codigoLogExecucao)) {
+		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensErroLogInterface(codigoLogExecucao, distribuidorService.obterDataOperacaoDistribuidor())) {
 			String tipoErro = "";
 			detalheProcessamentoVO = new DetalheProcessamentoVO();
 			detalheProcessamentoVO.setMensagem(logExecucaoMensagem.getMensagem());
