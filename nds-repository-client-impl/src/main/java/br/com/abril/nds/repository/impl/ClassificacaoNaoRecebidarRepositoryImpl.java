@@ -31,6 +31,54 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT ");
+		hql.append(" cota.numeroCota as numeroCota, "); // NUMERO DA COTA
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomePessoa "); // NOME DA COTA
+		
+		hql.append(" FROM Cota as cota ");
+		hql.append(" INNER JOIN cota.pessoa as pessoa ");
+		
+		// O filtro sempre terá OU nomeCota OU codigoCota
+		hql.append(" WHERE ");
+		
+		hql.append(" cota id not in ");
+		hql.append(" ( SELECT cota.id  ");
+		hql.append(" FROM ClassificacaoNaoRecebida classificacaoNaoRecebida ");
+		hql.append(" INNER JOIN classificacaoNaoRecebida.cota as cota ");
+		hql.append(" INNER JOIN cota.pessoa as pessoa ");
+		hql.append(" WHERE ");
+		
+		if (filtro.getIdTipoClassificacaoProduto() != null && !filtro.getIdTipoClassificacaoProduto().equals(0)) {
+			hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProduto ");
+			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
+		}
+		
+		if (filtro.getCotaDto() != null) {
+			if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
+				hql.append(" and cota.numeroCota = :numeroCota )");
+				parameters.put("numeroCota", filtro.getCotaDto().getNumeroCota());
+			}else if (filtro.getCotaDto().getNomePessoa() != null && !filtro.getCotaDto().getNomePessoa().isEmpty()) {
+				hql.append(" and coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') = :nomePessoa )");
+				parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
+			}
+		}
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaQueRecebeClassificacaoDTO.class));
+		
+		return query.list();
+	}
+	
+	@Override
+	public List<CotaQueNaoRecebeClassificacaoDTO> obterCotasQueNaoRecebemClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro) {
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
 		hql.append(" classificacaoNaoRecebida.id as idClassificacaoNaoRecebida, "); // ID ClassificacaoNaoRecebida
 		hql.append(" cota.numeroCota as numeroCota, "); // NUMERO DA COTA
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomePessoa "); // NOME DA COTA
@@ -52,17 +100,11 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		
 		setParameters(query, parameters);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(CotaQueRecebeClassificacaoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaQueNaoRecebeClassificacaoDTO.class));
 		
 		configurarPaginacao(filtro, query);
 		
 		return query.list();
-	}
-	
-	@Override
-	public List<CotaQueNaoRecebeClassificacaoDTO> obterCotasQueNaoRecebemClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro) {
-		
-		return null;
 	}
 	
 	private void configurarPaginacao(FiltroDTO filtro, Query query) {

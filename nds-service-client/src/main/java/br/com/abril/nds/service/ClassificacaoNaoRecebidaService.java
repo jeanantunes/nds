@@ -8,9 +8,9 @@ import br.com.abril.nds.dto.filtro.FiltroClassificacaoNaoRecebidaDTO;
 
 public interface ClassificacaoNaoRecebidaService {
 
-	List<CotaQueRecebeClassificacaoDTO> obterCotasQueRecebemClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro);
-
 	List<CotaQueNaoRecebeClassificacaoDTO> obterCotasQueNaoRecebemClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro);
+
+	List<CotaQueRecebeClassificacaoDTO> obterCotasQueRecebemClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro);
 	
 	void excluirClassificacaoNaoRecebida(Long id);
 	

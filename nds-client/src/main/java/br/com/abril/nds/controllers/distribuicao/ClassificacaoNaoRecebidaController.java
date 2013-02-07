@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CotaQueNaoRecebeClassificacaoDTO;
 import br.com.abril.nds.dto.CotaQueRecebeClassificacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroClassificacaoNaoRecebidaDTO;
@@ -55,10 +56,27 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisarClassificacaoNaoRecebida(FiltroClassificacaoNaoRecebidaDTO filtro, String sortorder, String sortname, int page, int rp ){
+	public void pesquisarCotasQueNaoRecebemClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro, String sortorder, String sortname, int page, int rp ){
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
+		validarEntradaFiltroClassificacao(filtro);
+		
+		List<CotaQueNaoRecebeClassificacaoDTO> listaCotaQueRecebeClassificacaoDTO = this.classificacaoNaoRecebidaService.obterCotasQueNaoRecebemClassificacao(filtro);
+
+		guardarFiltroNaSession(filtro);
+		
+		TableModel<CellModelKeyValue<CotaQueNaoRecebeClassificacaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueNaoRecebeClassificacaoDTO>>();
+		
+		configurarTableModelComPaginacao(listaCotaQueRecebeClassificacaoDTO, tableModel, filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
+	public void pesquisarCotasQueRecebemClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro, String sortorder, String sortname, int page, int rp ){
+		
 		validarEntradaFiltroClassificacao(filtro);
 		
 		List<CotaQueRecebeClassificacaoDTO> listaCotaQueRecebeClassificacaoDTO = this.classificacaoNaoRecebidaService.obterCotasQueRecebemClassificacao(filtro);
@@ -67,10 +85,9 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 		
 		TableModel<CellModelKeyValue<CotaQueRecebeClassificacaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueRecebeClassificacaoDTO>>();
 		
-		configurarTableModelComPaginacao(listaCotaQueRecebeClassificacaoDTO, tableModel, filtro);
+		configurarTableModelSemPaginacao(listaCotaQueRecebeClassificacaoDTO, tableModel);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
 	}
 	
 	@Post
