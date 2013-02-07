@@ -189,6 +189,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			Calendar calendar = Calendar.getInstance();
 			try {
 				calendar.setTime(new SimpleDateFormat(furoProdutoDTO.DATE_PATTERN_PT_BR).parse(furoProdutoDTO.getNovaData()));
+				Calendar dataOperacao = Calendar.getInstance();
+				dataOperacao.setTime(distribuidorService.obterDatatOperacaoDistribuidor());
+				
+				if(calendar.before(dataOperacao)){
+					calendar = dataOperacao;
+				}
+				
+				
 			} catch (ParseException e) {
 				return furoProdutoDTO;
 			}
