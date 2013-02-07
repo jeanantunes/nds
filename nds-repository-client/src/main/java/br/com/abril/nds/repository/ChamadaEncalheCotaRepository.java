@@ -133,4 +133,14 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @return Long
 	 */
 	Long obterQntChamadaEncalheCota(Long idChamadaEncalhe);
+
+
+	/**
+	 * Obtém chamadas encalhe cota pelo ID da chamada de Encalhe e pelo ID da cota
+	 * 
+	 * @param chamadaEncalheID
+	 * @param cotaID
+	 * @return
+	 */
+	List<ChamadaEncalheCota> obterListChamadaEncalheCota(Long chamadaEncalheID, Long cotaID);
 }

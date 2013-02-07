@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
-import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
@@ -68,13 +67,27 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		Integer qtdeRegistrosConsultaEncalhe = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
 		
-		ConsultaEncalheRodapeDTO consultaEncalheRodapeDTO = movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
-
-		BigDecimal valorVendaDia = consultaEncalheRodapeDTO.getValorReparte().subtract(consultaEncalheRodapeDTO.getValorEncalhe());
+		BigDecimal valorTotalReparte = BigDecimal.ZERO;
+		BigDecimal valorTotalEncalhe = BigDecimal.ZERO;
+		
+		for (ConsultaEncalheDTO consultaEncalhe : listaConsultaEncalhe) {
+			
+			valorTotalReparte = 
+				valorTotalReparte.add(
+					consultaEncalhe.getReparte().multiply(consultaEncalhe.getPrecoVenda()));
+			
+			valorTotalEncalhe = 
+				valorTotalEncalhe.add(
+					consultaEncalhe.getEncalhe().multiply(consultaEncalhe.getPrecoVenda()));
+		}
+		
+		BigDecimal valorVendaDia = valorTotalReparte.subtract(valorTotalEncalhe); 
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
 		
@@ -82,11 +95,16 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
 		
-		if(listaDebitoCreditoCota != null) {
-			for(DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCota) {
-				if(OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+		if (listaDebitoCreditoCota != null) {
+			
+			for (DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCota) {
+				
+				if (OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					
 					valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
-				} else if(OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					
+				} else if (OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					
 					valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
 				}
 			}
@@ -100,9 +118,9 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setQtdeConsultaEncalhe(qtdeRegistrosConsultaEncalhe);
 		
-		info.setValorReparte(consultaEncalheRodapeDTO.getValorReparte());
+		info.setValorReparte(valorTotalReparte);
 		
-		info.setValorEncalhe(consultaEncalheRodapeDTO.getValorEncalhe());
+		info.setValorEncalhe(valorTotalEncalhe);
 		
 		info.setValorVendaDia(valorVendaDia);
 		

@@ -76,7 +76,7 @@ public class ConferenciaEncalheServiceImplTest {
 		
 		when(this.controleConferenciaEncalheCotaRepository.buscarPorId(anyLong())).thenReturn(obterControleConferenciaEncalheCota());
 		
-		when(this.distribuidorService.obterDatatOperacaoDistribuidor()).thenReturn(dataOperacao);
+		when(this.distribuidorService.obterDataOperacaoDistribuidor()).thenReturn(dataOperacao);
 		
 		when(this.conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(anyLong())).thenReturn(obterListaProdutosSlip());
 		
