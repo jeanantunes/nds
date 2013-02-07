@@ -153,14 +153,14 @@
 				<td width="20">Cota:</td>
                 
                 <td>
-              
-                <input name="filtroNumCota" 
-             	    id="filtroNumCota" 
-             		type="text"
-             		maxlength="11"
-             		style="width:60px; 
-             		float:left; margin-right:5px;"
-             		onchange="pesquisaCotaBaixaFinanceira.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
+	                <input name="filtroNumCota" 
+	             	       id="filtroNumCota" 
+	             		   type="text"
+	             		   maxlength="11"
+	             		   style="width:60px; 
+	             		   float:left; 
+	             		   margin-right:5px;"
+	             		   onchange="pesquisaCotaBaixaFinanceira.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
 				</td>
 				
 				<td width="30">Nome:</td>

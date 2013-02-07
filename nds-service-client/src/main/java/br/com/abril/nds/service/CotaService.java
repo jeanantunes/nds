@@ -65,7 +65,7 @@ public interface CotaService {
 
 	List<Cota> obterCotasPorNomePessoa(String nome);
 
-	Cota obterPorNome(String nome);
+	List<Cota> obterPorNome(String nome);
 
 	Cota obterPorId(Long idCota);
 
