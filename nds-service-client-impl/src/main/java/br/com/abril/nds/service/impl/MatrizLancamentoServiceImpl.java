@@ -689,6 +689,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private void processarProdutosLancamentoNaoBalanceaveis(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
 														    DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
 		
+		TreeSet<Date> datasDistribuicao = dadosLancamentoBalanceamento.getDatasDistribuicaoFornecedor();
+		
 		List<ProdutoLancamentoDTO> produtosLancamento =
 			dadosLancamentoBalanceamento.getProdutosLancamento();
 		
@@ -696,12 +698,24 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			Date dataLancamentoDistribuidor = produtoLancamento.getDataLancamentoDistribuidor();
 			
+			if (produtoLancamento.excedeNumeroReprogramacoes()
+					&& !produtoLancamento.isBalanceamentoConfirmado()
+					&& !datasDistribuicao.contains(dataLancamentoDistribuidor)) {
+				
+				Date dataEscolhida = this.obterDataDistribuicaoEscolhida(
+					matrizLancamento, datasDistribuicao, dataLancamentoDistribuidor);
+				
+				this.adicionarProdutoLancamentoNaMatriz(
+					matrizLancamento, produtoLancamento, dataEscolhida);
+				
+				return;
+			}
+			
 			if (!this.isProdutoBalanceavel(produtoLancamento,
 										   dadosLancamentoBalanceamento)) {
 				
-				this.adicionarProdutoLancamentoNaMatriz(matrizLancamento,
-														produtoLancamento,
-				   										dataLancamentoDistribuidor);
+				this.adicionarProdutoLancamentoNaMatriz(
+					matrizLancamento, produtoLancamento, dataLancamentoDistribuidor);
 			}
 		}
 	}
@@ -1104,6 +1118,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		
 		produtoLancamento.setNovaDataLancamento(dataLancamento);
+		produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
 		
 		this.tratarAgrupamentoPorProdutoDataLcto(produtoLancamento, produtosLancamentoMatriz);
 		
@@ -1192,7 +1207,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento,
 										 DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
 		
-		if (!produtoLancamento.permiteReprogramacao()) {
+		if (produtoLancamento.excedeNumeroReprogramacoes()) {
 			
 			return false;
 		}
