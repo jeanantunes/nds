@@ -28,12 +28,25 @@
 	</jsp:include>
 
 	<jsp:include page="dialogs.jsp" />
-		<div class="areaBts">
-			<div class="area">
-				<br />
+		<div class="areaBts" style="height:38px">
+			<div class="area" style="width:auto">
+						
+				<fieldset class="classFieldset" style="height:25px">
+					<table width="950" height="20" border="0" cellpadding="1" cellspacing="1">
+						<tr>
+							<td width="126">&nbsp;</td>
+							<td width="330">&nbsp;</td>
+							<td width="63" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
+							<td width="93" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
+							<td width="120" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
+							<td width="137" bgcolor="#F8F8F8"><strong>F8</strong>-Finalizar Conferência</td>
+							<td width="62" bgcolor="#F8F8F8"><strong>F9</strong>-Salvar</td>
+						</tr>
+					</table>
+				</fieldset>
 			</div>
 		</div>
-		<div class="linha_separa_fields">&nbsp;</div>
+		<div class="linha_separa_fields" style="height:0px">&nbsp;</div>
 		<fieldset class="fieldFiltro">
 			<legend> Pesquisar Encalhe </legend>
 			<table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
@@ -75,6 +88,7 @@
 							<td style="width: 80px; text-align: center;">Recolhimento</td>
 							<td style="width: 80px; text-align: right;">Preço Capa R$</td>
 							<td style="width: 70px; text-align: right;">Desconto R$</td>
+							<td style="width: 70px; text-align: center;">Reparte</td>
 							<td style="width: 100px; text-align: center;">Exemplares</td>
 							<td style="width: 100px; text-align: right;">Total R$</td>
 							<td style="width: 70px; text-align: center;">Juramentada</td>
@@ -110,13 +124,11 @@
 		<fieldset class="classFieldset">
 			<table width="950" height="32" border="0" cellpadding="1" cellspacing="1">
 				<tr>
-					<td width="126">&nbsp;</td>
-					<td width="330">&nbsp;</td>
-					<td width="63" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
-					<td width="93" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
-					<td width="120" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
-					<td width="137" bgcolor="#F8F8F8"><strong>F8</strong>-Finalizar Conferência</td>
-					<td width="62" bgcolor="#F8F8F8"><strong>F9</strong>-Salvar</td>
+					<td width="380">&nbsp;</td>
+					<td width="120" align="center" style="float:left"><strong>Data de Operação:</strong></td>
+					<td width="70" style="float:left">${dataOperacao}</td>
+					<td width="128" style="float:left"><strong>Total de devolução:</strong></td>
+					<td width="62" style="float:left"><span id="totalExemplaresFooter"></span></td>
 				</tr>
 			</table>
 		</fieldset>

@@ -221,7 +221,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");		
 		
-		hql.append(" coalesce((SELECT min(mec.PRECO_COM_DESCONTO)  	 ");
+		hql.append(" coalesce((SELECT min(mec.PRECO_COM_DESCONTO)  	 		 ");
 		hql.append(" FROM movimento_estoque_cota mec 						 ");
 		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
 		hql.append(" 	, chamada_encalhe ce 								 ");

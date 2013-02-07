@@ -342,6 +342,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		var modeloConferenciaEncalhe = result.listaConferenciaEncalhe;
 		
+		var totalExemplaresFooter = 0;
+		
 		ConferenciaEncalheCont.indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
 		
 		$("._dadosConfEncalhe", ConferenciaEncalheCont.workspace).remove();
@@ -388,11 +390,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
 					
-					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
-					
 					var valorExemplares = parseInt(value.qtdExemplar);
 					
-					var inputExemplares = '<input id="qtdExemplaresGrid_' + index + '" maxlength="255" onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
+					totalExemplaresFooter += valorExemplares;
+					
+					innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + valorExemplares + "</td>";
+					
+					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
+					
+					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeypress="ConferenciaEncalheCont.nextInputExemplares('+index+','+valorExemplares+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.validarInputExemplares('+index+','+valorExemplares+');ConferenciaEncalheCont.atualizarValores('+ index +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
@@ -422,6 +428,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 					innerTable = '';
 				}
 			);
+			
+			$("#totalExemplaresFooter").html(totalExemplaresFooter);
 			
 			$('input[id*="qtdExemplaresGrid"]').numeric();
 		}
@@ -672,7 +680,47 @@ var ConferenciaEncalheCont = $.extend(true, {
 			$("#divForChaveAcessoNFE", ConferenciaEncalheCont.workspace).hide();
 			
 		}
+	},
+	
+	redefinirValorTotalExemplaresFooter: function() {
 		
+		var totalAtualizado = 0;
+		
+		$("input[name='inputValorExemplares']", ConferenciaEncalheCont.workspace).each(function() {
+			
+			var parsedValue = parseInt($(this, ConferenciaEncalheCont.workspace).val());
+			
+			var valor = isNaN(parsedValue) ? 0 : parsedValue;
+
+			totalAtualizado += valor;
+		});
+		
+		$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(totalAtualizado);
+	},
+
+	validarInputExemplares :function(curIndex, valorRealExemplares) {
+		
+		var input = $('[tabindex='+ curIndex + ']');
+		
+		var valorInputado = input.val();
+
+		if (valorInputado > valorRealExemplares) {
+			
+			exibirMensagem('WARNING', [ "O valor digitado deve ser menor ou igual ao total do reparte." ]);
+			
+			input.val(valorRealExemplares);
+		}
+	},
+
+	nextInputExemplares : function(curIndex, valorRealExemplares, evt) {
+		
+		this.validarInputExemplares(curIndex, valorRealExemplares);
+	
+		if (evt.keyCode == 13) {
+			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
+			nextElement.select();
+			nextElement.focus();
+		}
 	},
 	
 	abrirDialogNotaFiscalDivergente: function(result){
