@@ -986,12 +986,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (movimentoFinanceiroCota != null){
 			
-			if (tipoMovimentoFinanceiro != null && 
-					tipoMovimentoFinanceiro.getId() == null){
-				
-				this.tipoMovimentoFinanceiroRepository.adicionar(tipoMovimentoFinanceiro);
-			}
-			
 			this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
 		}
 		
