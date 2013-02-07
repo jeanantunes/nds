@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
@@ -21,6 +22,10 @@ import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
  */
 public class RedutorAutomatico extends ProcessoAbstrato {
 
+	public RedutorAutomatico(Estudo estudo) {
+		this.estudo = estudo;
+	}
+	
     @Override
     protected void executarProcesso() {
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
@@ -35,7 +40,7 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     	}
     	
     	for (Cota cota : estudo.getCotas()) {
-    		if ((cota.getVendaMediaNominalCota().doubleValue() <= menorVenda.doubleValue())
+    		if ((cota.getVendaMedia().doubleValue() <= menorVenda.doubleValue())
     				&& (cota.getVendaEdicaoMaisRecenteFechada().equals(BigDecimal.ZERO))) {
     			cota.setReparteCalculado(new BigDecimal(0));
     		}

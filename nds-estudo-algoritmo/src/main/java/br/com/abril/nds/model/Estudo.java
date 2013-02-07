@@ -19,7 +19,7 @@ public class Estudo {
     		if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
     				|| !cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
     				|| !cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico))
-    			somatoriaVendaMediaFinal.add(cota.getVendaMediaFinal());
+    			somatoriaVendaMediaFinal.add(cota.getVendaMedia());
     	}
     }
     

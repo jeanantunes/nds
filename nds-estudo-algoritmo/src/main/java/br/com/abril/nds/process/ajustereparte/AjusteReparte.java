@@ -32,7 +32,7 @@ public class AjusteReparte extends ProcessoAbstrato {
     			} else {
     				ajusteReparte = estudo.getParametro().getPacotePadrao();
     			}
-    			cota.setReparteCalculado(cota.getVendaMediaFinal().add(ajusteReparte));
+    			cota.setReparteCalculado(cota.getVendaMedia().add(ajusteReparte));
     		}	
     	}
     } 
