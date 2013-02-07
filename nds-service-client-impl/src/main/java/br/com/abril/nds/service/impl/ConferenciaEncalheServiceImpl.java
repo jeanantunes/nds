@@ -352,7 +352,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException {
 		
-		Date dataOperacao = this.distribuidorService.obterDatatOperacaoDistribuidor();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
@@ -564,7 +564,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @return BigDecimal
 	 */
-	private BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao) {
+	protected BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao) {
 		
 		BigDecimal reparte =
 			chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
@@ -1267,7 +1267,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 	    
-		Date dataOperacao = this.distribuidorService.obterDatatOperacaoDistribuidor();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		Date dataCriacao = new Date();
 		Integer numeroCota = controleConfEncalheCota.getCota().getNumeroCota();
 		
@@ -2533,7 +2533,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @return BigDecimal
 	 */
-	private BigDecimal obterValorTotalDebitoCreditoCota(Integer numeroCota, Date dataOperacao) {
+	protected BigDecimal obterValorTotalDebitoCreditoCota(Integer numeroCota, Date dataOperacao) {
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
@@ -2654,7 +2654,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			controleConferenciaEncalheCotaRepository.alterar(controleConferenciaEncalheCota);
 		}
 		
-		Date dataOperacao = this.distribuidorService.obterDatatOperacaoDistribuidor();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip = 
 				conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(
@@ -2725,8 +2725,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    exibeSubtotalDia = (listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)==(listaProdutoEdicaoSlip.size()-1))||
 		    		           (dia!=this.obterDiasEntreDatas(listaProdutoEdicaoSlip.get(listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)+1)));	
 			                     
-			produtoEdicaoSlip.setQtdeTotalProdutos(!exibeSubtotalDia?"":CurrencyUtil.formatarValor(qtdeTotalProdutosDia));
- 			produtoEdicaoSlip.setValorTotalEncalhe(!exibeSubtotalDia?"":CurrencyUtil.formatarValor(valorTotalEncalheDia));
+			produtoEdicaoSlip.setQtdeTotalProdutos(!exibeSubtotalDia?"": String.valueOf(qtdeTotalProdutosDia.intValue()));
+ 			
+			produtoEdicaoSlip.setValorTotalEncalhe(!exibeSubtotalDia?"":CurrencyUtil.formatarValor(valorTotalEncalheDia));
  			
  			if(exibeSubtotalDia){
  				qtdeTotalProdutosDia = BigInteger.ZERO;   
@@ -2828,9 +2829,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("VALOR_TOTAL_PAGAR", totalComposicao);
 		
 		
-		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
 		try{
-		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
+			
+		    parameters.put("SUBREPORT_DIR", obterSlipSubReportPath());
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -2839,13 +2840,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
 		
-		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
-		
 		String path = null;
 		
 		try {
 		
-			path = url.toURI().getPath();
+			path = obterSlipReportPath();
 		
 		} catch (URISyntaxException e) {
 			
@@ -2862,6 +2861,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
 		
 		}
+		
+	}
+	
+
+	protected String obterSlipReportPath() throws URISyntaxException {
+		
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
+		
+		return url.toURI().getPath();
+		
+	}
+
+	
+	
+	protected String obterSlipSubReportPath() throws URISyntaxException {
+	
+		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+		
+		return subReportDir.toURI().getPath();
 		
 	}
 	

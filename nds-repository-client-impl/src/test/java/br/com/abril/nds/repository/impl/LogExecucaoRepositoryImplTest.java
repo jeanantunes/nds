@@ -64,7 +64,7 @@ public class LogExecucaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Long codigoLogExecucao = 1L;
 		
-		listaMensagens = logExecucaoRepositoryImpl.obterMensagensErroLogInterface(codigoLogExecucao);
+		listaMensagens = logExecucaoRepositoryImpl.obterMensagensErroLogInterface(codigoLogExecucao, new Date());
 		
 		Assert.assertNotNull(listaMensagens);
 		
