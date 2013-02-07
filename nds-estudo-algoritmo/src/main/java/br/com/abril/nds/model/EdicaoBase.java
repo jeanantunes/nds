@@ -8,6 +8,7 @@ public class EdicaoBase extends Produto {
 	private BigDecimal venda;
 	private Boolean parcial;
 	private Integer pacotePadrao;
+	private boolean edicaoAberta;
 	
 	public BigDecimal getReparte() {
 		return reparte;
@@ -32,5 +33,11 @@ public class EdicaoBase extends Produto {
 	}
 	public void setPacotePadrao(Integer pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
+	}
+	public boolean isEdicaoAberta() {
+		return edicaoAberta;
+	}
+	public void setEdicaoAberta(boolean edicaoAberta) {
+		this.edicaoAberta = edicaoAberta;
 	}
 }
