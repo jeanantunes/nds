@@ -7,8 +7,8 @@ public class Estudo {
 
     private Integer id;
     private BigDecimal reparteDistribuir;
-    private Produto produto;
-    private List<EdicaoBase> edicoesBase;
+    private ProdutoEdicao produto;
+    private List<ProdutoEdicao> edicoesBase;
     private List<Cota> cotas;
     private Parametro parametro;
     private BigDecimal somatoriaVendaMediaFinal;
@@ -31,19 +31,19 @@ public class Estudo {
 		this.reparteDistribuir = reparteDistribuir;
 	}
 
-	public Produto getProduto() {
+	public ProdutoEdicao getProduto() {
 		return produto;
 	}
 
-	public void setProduto(Produto produto) {
+	public void setProduto(ProdutoEdicao produto) {
 		this.produto = produto;
 	}
 
-	public List<EdicaoBase> getEdicoesBase() {
+	public List<ProdutoEdicao> getEdicoesBase() {
 		return edicoesBase;
 	}
 
-	public void setEdicoesBase(List<EdicaoBase> edicoesBase) {
+	public void setEdicoesBase(List<ProdutoEdicao> edicoesBase) {
 		this.edicoesBase = edicoesBase;
 	}
 

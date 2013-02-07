@@ -1,7 +1,7 @@
 package br.com.abril.nds.process.reparteproporcional;
 
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.EdicaoBase;
+import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
@@ -24,7 +24,7 @@ public class ReparteProporcional extends ProcessoAbstrato {
         // TODO: concluir implementação do método calcular do Processo ReparteProporcional
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	boolean temEdicaoBaseAberta = false;
-    	for (EdicaoBase edicao : estudo.getEdicoesBase()) {
+    	for (ProdutoEdicao edicao : estudo.getEdicoesBase()) {
     		if (edicao.isEdicaoAberta()) {
     			temEdicaoBaseAberta = true;
     			break;

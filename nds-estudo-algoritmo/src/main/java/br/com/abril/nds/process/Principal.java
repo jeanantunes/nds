@@ -2,7 +2,6 @@ package br.com.abril.nds.process;
 
 import java.util.Date;
 
-import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;

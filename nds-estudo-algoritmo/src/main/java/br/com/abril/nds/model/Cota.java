@@ -16,7 +16,7 @@ public class Cota {
 	private BigDecimal vendaMediaNominalCota; // VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
 	private BigDecimal vendaEdicaoMaisRecenteFechada;
 	private boolean cotaSoRecebeuEdicaoAberta;
-	private List<EdicaoBase> edicoesBase;
+	private List<ProdutoEdicao> edicoesBase;
 	private List<EstoqueProdutoCota> estoqueProdutoCotas;
 
 	public void calculate() {
@@ -39,11 +39,11 @@ public class Cota {
 		this.nome = nome;
 	}
 
-	public List<EdicaoBase> getEdicoesBase() {
+	public List<ProdutoEdicao> getEdicoesBase() {
 		return edicoesBase;
 	}
 
-	public void setEdicoesBase(List<EdicaoBase> edicoesBase) {
+	public void setEdicoesBase(List<ProdutoEdicao> edicoesBase) {
 		this.edicoesBase = edicoesBase;
 	}
 

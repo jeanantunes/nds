@@ -3,9 +3,9 @@ package br.com.abril.nds.process.definicaobases;
 import java.util.Arrays;
 
 import br.com.abril.nds.dao.CotaDAO;
-import br.com.abril.nds.model.EdicaoBase;
 import br.com.abril.nds.model.Estrategia;
 import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
 
@@ -37,7 +37,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	baseParaSaidaVeraneio.executar();
 	// TODO: implementar método calcular do Processo DefinicaoBases
 	Estrategia estrategia = new Estrategia();
-	estrategia.setEdicaoBases(Arrays.asList(new EdicaoBase()));
+	estrategia.setEdicaoBases(Arrays.asList(new ProdutoEdicao()));
 
 	// estrategia.getEdicaoBases();
     }

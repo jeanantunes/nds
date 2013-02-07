@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.EdicaoBase;
+import br.com.abril.nds.model.ProdutoEdicao;
 
 public class CotaDAO {
 
@@ -28,14 +28,14 @@ public class CotaDAO {
 		return cotas;
 	}
 	
-	public List<EdicaoBase> getEdicaoBase(Cota cota) {
-		List<EdicaoBase> edicoesBase = new ArrayList<EdicaoBase>();
+	public List<ProdutoEdicao> getEdicaoBase(Cota cota) {
+		List<ProdutoEdicao> edicoesBase = new ArrayList<ProdutoEdicao>();
 		try {
 			PreparedStatement psmt = Conexao.getConexao().prepareStatement("SELECT QTDE_RECEBIDA, QTDE_DEVOLVIDA,  FROM ESTOQUE_PRODUTO_COTA");
 			ResultSet rs = psmt.executeQuery();
 			while (rs.next()) {
-				EdicaoBase edicaoBase = new EdicaoBase();
-				edicaoBase.setId(rs.getInt("ID"));
+				ProdutoEdicao edicaoBase = new ProdutoEdicao();
+				edicaoBase.setId(rs.getLong("ID"));
 				
 				edicoesBase.add(edicaoBase);
 			}
