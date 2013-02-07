@@ -69,7 +69,6 @@ public class ConferenciaEncalhe implements Serializable {
 	@Column(name = "DATA", nullable = false)
 	private Date data;
 
-	
 	/**
 	 * Quantidade relativa ao item de nota fiscal de entrada
 	 * fornecida pela cota na operação de conferência de encalhe.
@@ -231,7 +230,7 @@ public class ConferenciaEncalhe implements Serializable {
 	public void setData(Date data) {
 		this.data = data;
 	}
-
+	
 	/**
 	 * Obtém qtdeInformada
 	 *
@@ -299,6 +298,5 @@ public class ConferenciaEncalhe implements Serializable {
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
 	}
-	
 		
 }
