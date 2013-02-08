@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -205,7 +206,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			List<Integer> listaDiasSemana = 
 					this.distribuicaoFornecedorRepository.obterDiasSemanaDistribuicao(
 							furoProdutoDTO.getCodigoProduto(), 
-							furoProdutoDTO.getIdProdutoEdicao());
+							furoProdutoDTO.getIdProdutoEdicao(), OperacaoDistribuidor.DISTRIBUICAO);
 			
 			if (listaDiasSemana != null && !listaDiasSemana.isEmpty()){
 				int diaSemana = -1;
