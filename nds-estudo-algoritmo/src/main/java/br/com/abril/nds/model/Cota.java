@@ -18,6 +18,7 @@ public class Cota {
 	private List<ProdutoEdicao> edicoesBase; // edições que servirão de base para o estudo
 	private List<ProdutoEdicao> edicoesRecebidas; // todas as edições que essa cota recebeu
 	private List<EstoqueProdutoCota> estoqueProdutoCotas;
+	private BigDecimal percentualEncalheMaximo; // Percentual de encalhe máximo definido na tela Ajuste de Reparte (por Cota)
 	// TODO: verificar se essa somatória é de todas as edições da cota ou é somente a última (Processo: Reparte Proporcional)
 	private BigDecimal somaReparteEdicoesAbertas; // Soma do Reparte de todas as edições que essa cota recebeu
 
@@ -170,5 +171,13 @@ public class Cota {
 
 	public void setSomaReparteEdicoesAbertas(BigDecimal somaReparteEdicoesAbertas) {
 		this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
+	}
+
+	public BigDecimal getPercentualEncalheMaximo() {
+		return percentualEncalheMaximo;
+	}
+
+	public void setPercentualEncalheMaximo(BigDecimal percentualEncalheMaximo) {
+		this.percentualEncalheMaximo = percentualEncalheMaximo;
 	}
 }
