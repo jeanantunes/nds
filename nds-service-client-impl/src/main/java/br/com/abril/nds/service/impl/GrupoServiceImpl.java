@@ -61,7 +61,7 @@ public class GrupoServiceImpl implements GrupoService {
 			}
 						
 			dto.setIdGrupo(grupo.getId());
-			dto.setNome(grupo.getNome());
+			dto.setNome(grupo.getNome()==null? "":grupo.getNome());
 			dto.setRecolhimento(dias.toString());
 			dto.setTipoCota(grupo.getTipoCota());
 			dto.setTipoGrupo(grupo.getTipoGrupo());
