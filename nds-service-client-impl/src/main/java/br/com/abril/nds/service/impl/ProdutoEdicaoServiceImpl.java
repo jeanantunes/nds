@@ -24,6 +24,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
@@ -920,6 +921,35 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Override
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao) {
 		return produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+	}
+
+	@Override
+	@Transactional
+	public BigDecimal obterPorcentualDesconto(
+			ProdutoEdicao produtoEdicao) {
+		
+		BigDecimal porcentagemDesconto = null;
+		
+		switch (produtoEdicao.getOrigem()) {
+		
+		case MANUAL:
+			porcentagemDesconto = (produtoEdicao.getDesconto() != null) ? produtoEdicao.getDesconto() : produtoEdicao.getProduto().getDesconto() ;
+			break;
+		
+		case INTERFACE:
+			
+			DescontoLogistica descontoLogistica = (produtoEdicao.getDescontoLogistica() != null) ? produtoEdicao.getDescontoLogistica() : produtoEdicao.getProduto().getDescontoLogistica();
+			
+			porcentagemDesconto = descontoLogistica.getPercentualDesconto();
+			break;
+	
+		}
+		
+		if(porcentagemDesconto == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O produto "+produtoEdicao.getProduto().getNome()+" não possui desconto! É necessario cadastrar um desconto para ele na tela de cadastro de produtos"));
+		}
+		
+		return porcentagemDesconto;
 	}
 	
 }
