@@ -51,8 +51,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append("SELECT distinct  p.codigo as  codigo ");
 		hql.append(" , p.nome as produto ");
 		hql.append(" , pe.numeroEdicao as edicao");
-		hql.append(", (mec.valoresAplicados.precoComDesconto) as precoCapaDesconto ");
-		hql.append(" , mec.valoresAplicados.precoVenda as precoCapa ");
+		hql.append(" , coalesce(mec.valoresAplicados.precoComDesconto, 0) as precoCapaDesconto ");
+		hql.append(" , coalesce(mec.valoresAplicados.precoVenda, 0) as precoCapa ");
 		hql.append(" , pe.id as produtoEdicao ");
 		hql.append(" ,  case when  pe.parcial  = true  then 'P' else 'N' end  as tipo ");
 		hql.append(" , che.dataRecolhimento as dataRecolhimento ");
