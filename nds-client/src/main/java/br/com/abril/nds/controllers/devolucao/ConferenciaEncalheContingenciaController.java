@@ -25,7 +25,7 @@ public class ConferenciaEncalheContingenciaController extends BaseController {
 	public void index(){
 		
 		Date dataOperacao = this.distribuidorService.obter().getDataOperacao();
-		
+
 		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(dataOperacao));
 	}
 }

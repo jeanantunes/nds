@@ -207,6 +207,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" ) AS codigoSM, ");
 		
 		hql.append(" 0 AS qtdExemplar, 		");
+		hql.append(" 0 AS qtdReparte, 		");
 		hql.append(" 0 AS qtdInformada, 	");
 		hql.append(" 0 AS valorTotal, 		");
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapaInformado,          ");
@@ -314,6 +315,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" SELECT                                             		");
 		hql.append(" CONF_ENCALHE.ID AS idConferenciaEncalhe,           		");
 		hql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
+		hql.append(" CONF_ENCALHE.QTDE AS qtdReparte,                  			");
 		hql.append(" CONF_ENCALHE.QTDE_INFORMADA AS qtdInformada,       		");
 		hql.append(" CONF_ENCALHE.PRECO_CAPA_INFORMADO AS precoCapaInformado,   ");
 		hql.append(" CONF_ENCALHE.PRODUTO_EDICAO_ID AS idProdutoEdicao, 		");
@@ -411,6 +413,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery)query).addScalar("qtdReparte", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("juramentada");
 		((SQLQuery)query).addScalar("precoCapaInformado");
