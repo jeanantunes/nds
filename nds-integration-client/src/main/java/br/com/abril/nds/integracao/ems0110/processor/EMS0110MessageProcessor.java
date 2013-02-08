@@ -193,7 +193,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Editor " + input.getCodEditor() + " nao encontrado.");
 
-			throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado.");
+			throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
 		}
 		
 		TipoProduto tipoProduto = this.findTipoProduto(input.getCodCategoria());

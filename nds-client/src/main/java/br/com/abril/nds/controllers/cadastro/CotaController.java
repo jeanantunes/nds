@@ -375,6 +375,25 @@ public class CotaController extends BaseController {
 	}
 
 	/**
+	 * Auto complete para numeroCota. Casos de pesquisa por nome onde existem cotas com nomes iguais.
+	 * @param cotasVO
+	 * @return List<ItemAutoComplete>
+	 */
+	private List<ItemAutoComplete> getAutocompleteNumeroCota(List<CotaVO> cotasVO){
+		
+		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		for (CotaVO cotaVO : cotasVO){
+			
+			String numeroExibicao = cotaVO.getNumero().toString();
+
+			listaCotasAutoComplete.add(new ItemAutoComplete(numeroExibicao, null, cotaVO));
+		}
+		
+		return listaCotasAutoComplete;
+	}
+	
+	/**
 	 * Efetua consulta pelo nome da cota informado
 	 * 
 	 * @param nomeCota - nome da cota
@@ -384,18 +403,30 @@ public class CotaController extends BaseController {
 		
 		nomeCota = PessoaUtil.removerSufixoDeTipo(nomeCota);
 		
-		Cota cota = this.cotaService.obterPorNome(nomeCota);
+		List<Cota> cotas = this.cotaService.obterPorNome(nomeCota);
 		
-		if (cota == null) {
+		if (cotas == null) {
 		
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + nomeCota + "\" não encontrada!");
 		}
 		
-		String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
+		List<CotaVO> cotasVO = new ArrayList<CotaVO>();
+		
+		for (Cota cota : cotas){
+		
+		    String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
 				
-		CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
+		    cotasVO.add( new CotaVO(cota.getNumeroCota(), nomeExibicao) );
+		}
+		
+		if (cotasVO.size() > 1){
 			
-		this.result.use(Results.json()).from(cotaVO, "result").serialize();
+			this.result.use(Results.json()).from(this.getAutocompleteNumeroCota(cotasVO), "result").include("value", "chave").serialize();
+		}
+		else{
+		
+		    this.result.use(Results.json()).from(cotasVO.get(0), "result").recursive().serialize();
+		}
 	}
 	
 	/**

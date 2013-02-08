@@ -328,7 +328,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select boleto.cota.numeroCota as numeroCota, ")
-  		   .append(" 		boleto.cota.pessoa.nome as nomeCota, ")
+  		   .append(" 		(case when (boleto.cota.pessoa.nome is not null)")
+  		   .append("			then boleto.cota.pessoa.nome")
+  		   .append("			else boleto.cota.pessoa.razaoSocial end) as nomeCota, ")
   		   .append(" 		boleto.banco.apelido as nomeBanco, ")
 		   .append(" 		concat(boleto.banco.conta, '-', boleto.banco.dvConta) as numeroConta, ")
   		   .append(" 		boleto.nossoNumeroCompleto as nossoNumero, ")
@@ -358,7 +360,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" select ");
 		hql.append("  boleto.cota.numeroCota as numeroCota, ");
-		hql.append("  boleto.cota.pessoa.nome as nomeCota, ");
+		hql.append(" 		(case when (boleto.cota.pessoa.nome is not null)");
+		hql.append("			then boleto.cota.pessoa.nome");
+		hql.append("			else boleto.cota.pessoa.razaoSocial end) as nomeCota, ");
 		hql.append("  baixaCobranca.banco.apelido as nomeBanco, ");
 		hql.append("  concat(baixaCobranca.banco.conta, '-', baixaCobranca.banco.dvConta) as numeroConta, ");
 		hql.append("  boleto.nossoNumero as nossoNumero, ");
@@ -448,7 +452,9 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" select ");
 		hql.append("  boleto.cota.numeroCota as numeroCota, ");
-		hql.append("  boleto.cota.pessoa.nome as nomeCota, ");
+		hql.append(" 		(case when (boleto.cota.pessoa.nome is not null)");
+		hql.append("			then boleto.cota.pessoa.nome");
+		hql.append("			else boleto.cota.pessoa.razaoSocial end) as nomeCota, ");
 		hql.append("  boleto.banco.apelido as nomeBanco, ");
 		hql.append("  concat(boleto.banco.conta, '-', boleto.banco.dvConta) as numeroConta, ");
 		hql.append("  boleto.nossoNumero as nossoNumero, ");

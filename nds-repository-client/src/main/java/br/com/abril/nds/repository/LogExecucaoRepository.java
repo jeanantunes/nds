@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
@@ -16,10 +17,10 @@ public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 
 	List<LogExecucaoMensagem> obterMensagensLogInterface(Long codigoLogExecucao);
 
-	List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao);
-	
 	LogExecucao inserir(LogExecucao logExecucao);
 
 	void atualizar(LogExecucao logExecucao);
+
+	List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao, Date dataOperacao);
 	
 }

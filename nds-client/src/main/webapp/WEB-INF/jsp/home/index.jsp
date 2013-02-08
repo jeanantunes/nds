@@ -132,7 +132,7 @@
 												logout();
 											};
 											focarPrimeiroElemento();
-											//$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide) > *').wrap("<div id='conteudo' />");
+											$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide) > *').wrap("<div id='conteudo' />");
 										}
 									},
 									cache : true

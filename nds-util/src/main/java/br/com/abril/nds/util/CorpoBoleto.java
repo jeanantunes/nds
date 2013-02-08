@@ -10,6 +10,8 @@ public class CorpoBoleto implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private Integer codigoCedente;
 	private String cedenteNome;
 	private String cedenteDocumento;
 	
@@ -39,6 +41,7 @@ public class CorpoBoleto implements Serializable {
 	private Integer contaNumero;
 	private Integer contaCarteira;
 	private Integer contaAgencia;
+	private String digitoAgencia;
 	
 	private String tituloNumeroDoDocumento;
 	private String tituloNossoNumero;
@@ -70,6 +73,18 @@ public class CorpoBoleto implements Serializable {
     
     private Boolean boletoSemValor;
     
+	/**
+	 * @return the codigoCedente
+	 */
+	public Integer getCodigoCedente() {
+		return codigoCedente;
+	}
+	/**
+	 * @param codigoCedente the codigoCedente to set
+	 */
+	public void setCodigoCedente(Integer codigoCedente) {
+		this.codigoCedente = codigoCedente;
+	}
 	/**
 	 * @return the cedenteNome
 	 */
@@ -349,6 +364,19 @@ public class CorpoBoleto implements Serializable {
 	 */
 	public void setContaAgencia(Integer contaAgencia) {
 		this.contaAgencia = contaAgencia;
+	}
+	
+	/**
+	 * @return the digitoAgencia
+	 */
+	public String getDigitoAgencia() {
+		return digitoAgencia;
+	}
+	/**
+	 * @param digitoAgencia the digitoAgencia to set
+	 */
+	public void setDigitoAgencia(String digitoAgencia) {
+		this.digitoAgencia = digitoAgencia;
 	}
 	/**
 	 * @return the tituloNumeroDoDocumento

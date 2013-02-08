@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ne" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="28" bottomMargin="28" whenResourceMissingType="Empty" uuid="301fc4ef-67db-46b5-9bab-0705906440fc">
 	<property name="ireport.zoom" value="3.300000000000006"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="1315"/>
 	<property name="ireport.y" value="274"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
@@ -591,7 +591,7 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 				<textField isBlankWhenNull="true">
 					<reportElement uuid="bdfbf760-9256-482f-8292-484de1689df0" x="481" y="38" width="81" height="16"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="7"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{destinatarioInscricaoEstadual}]]></textFieldExpression>
 				</textField>

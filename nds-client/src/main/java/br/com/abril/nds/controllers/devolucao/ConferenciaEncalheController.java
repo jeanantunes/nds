@@ -49,6 +49,7 @@ import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
+import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -268,6 +269,16 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (this.session.getAttribute(ID_BOX_LOGADO) == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
+		}
+		
+		try {
+			
+			this.conferenciaEncalheService.validarFechamentoEncalheRealizado();
+			
+		} catch(FechamentoEncalheRealizadoException e) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+			
 		}
 		
 		try {
