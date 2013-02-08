@@ -25,10 +25,10 @@ public class AjusteReparte extends ProcessoAbstrato {
     protected void executarProcesso() {
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	for (Cota cota : estudo.getParametro().getCotas()) {
-    		if (cota.isVendaMediaMaisN()) {
+    		if (cota.getVendaMediaMaisN().longValue() > 0) {
     			BigDecimal ajusteReparte = new BigDecimal(0);
-    			if (cota.getAjusteReparte().intValue() > estudo.getParametro().getPacotePadrao().intValue()) {
-    				ajusteReparte = cota.getAjusteReparte();
+    			if (cota.getVendaMediaMaisN().longValue() > estudo.getParametro().getPacotePadrao().longValue()) {
+    				ajusteReparte = cota.getVendaMediaMaisN();
     			} else {
     				ajusteReparte = estudo.getParametro().getPacotePadrao();
     			}

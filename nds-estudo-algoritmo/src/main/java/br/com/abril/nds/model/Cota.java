@@ -9,8 +9,7 @@ public class Cota {
 	private String nome;
 	private ClassificacaoCota classificacao;
 	private BigDecimal reparteCalculado;
-	private boolean vendaMediaMaisN;
-	private BigDecimal ajusteReparte; // parametro VendaMedia + n na tela de Ajuste de Reparte
+	private BigDecimal vendaMediaMaisN; // parametro VendaMedia + n na tela de Ajuste de Reparte
 	private BigDecimal reparteMinimo; // parametro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
 	private BigDecimal vendaMedia; // VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
 	private BigDecimal vendaEdicaoMaisRecenteFechada;
@@ -72,24 +71,16 @@ public class Cota {
 	public void setReparteCalculado(BigDecimal reparteCalculado) {
 		this.reparteCalculado = reparteCalculado;
 	}
-
-	public boolean isVendaMediaMaisN() {
-		return vendaMediaMaisN;
-	}
-
-	public void setVendaMediaMaisN(boolean vendaMediaMaisN) {
-		this.vendaMediaMaisN = vendaMediaMaisN;
-	}
 	/**
 	 * O AjusteReparte estará preenchido com o valor do parâmetro VendaMedia + n na tela de Ajuste de Reparte
 	 * @return BigDecimal
 	 */
-	public BigDecimal getAjusteReparte() {
-		return ajusteReparte;
+	public BigDecimal getVendaMediaMaisN() {
+		return vendaMediaMaisN;
 	}
 
-	public void setAjusteReparte(BigDecimal ajusteReparte) {
-		this.ajusteReparte = ajusteReparte;
+	public void setVendaMediaMaisN(BigDecimal vendaMediaMaisN) {
+		this.vendaMediaMaisN = vendaMediaMaisN;
 	}
 	/**
 	 * VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota

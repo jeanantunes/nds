@@ -60,10 +60,12 @@ public class Principal {
 	}
 
 	public void loadCotas() {
-		estudo.setCotas(new CotaDAO().getCotas());
+		CotaDAO cotaDAO = new CotaDAO();
+		estudo.setCotas(cotaDAO.getCotas());
 		for (Cota cota : estudo.getCotas()) {
 			ProdutoEdicaoDAO ped = new ProdutoEdicaoDAO();
 			cota.setEdicoesRecebidas(ped.getEdicaoRecebidas(cota));
+			cota = cotaDAO.getAjustesReparteCota(cota);
 		}
 	}
 

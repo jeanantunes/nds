@@ -29,7 +29,8 @@ public class EncalheMaximo extends ProcessoAbstrato {
     		BigDecimal encalhe = estudo.getSomatoriaVendaMedia().divide(estudo.getReparteDistribuir(), 2, BigDecimal.ROUND_FLOOR).multiply(new BigDecimal(100));
     		if ((cota.getPercentualEncalheMaximo().doubleValue() > 0)
     				&& (cota.getPercentualEncalheMaximo().doubleValue() < encalhe.doubleValue())) {
-    			//cota.setReparteCalculado(cota.getVendaMedia().divide());
+    			BigDecimal percentual = new BigDecimal(100).subtract(cota.getPercentualEncalheMaximo()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_FLOOR);
+    			cota.setReparteCalculado(cota.getVendaMedia().divide(percentual));
     		}
     	}
     }
