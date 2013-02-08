@@ -17,18 +17,6 @@
 
 <div id="dialog-novo" title="Novo Segmento">
 	<p>Confirma a inclusão do(s) Segmento(s)?</p>
-	<!-- <fieldset style="width:600px!important;">
-    	<legend>Pesquisar Banca</legend>
-        <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
-		  <tr>
-		    <td width="33">Cota:</td>
-		    <td width="85"><input type="text" name="textfield" id="textfield" style="width:80px;"/></td>
-		    <td width="41">Nome:</td>
-		    <td width="217"><input type="text" name="textfield2" id="textfield2" style="width:200px;"/></td>
-		    <td width="98"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar();">Pesquisar</a></span></td>
-		  </tr>
-		</table>
-	</fieldset> -->
 </div>
 
 <div class="corpo">
@@ -174,7 +162,7 @@
             <tr>
            	  <td width="60">Segmento:</td>
               <td width="210">
-              	<select name="select2" id="tipoSegmentoProdutoInclusao" style="width:200px;"></select>
+              	<input name="lstSegmento" type="text" onkeyup="segmentoNaoRecebidoController.autoCompletarSegmentoPorNome('#lstSegmento')"  style="width:200px;" id="lstSegmento"/>
               </td>
             </tr>
           </table>

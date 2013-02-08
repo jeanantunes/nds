@@ -53,6 +53,13 @@ public class EstoqueProduto {
 	@Column(name = "VERSAO")
 	private Long versao = 0L;
 	
+	public EstoqueProduto() {
+	}
+	
+	public EstoqueProduto(Long id) {
+		this.id=id;
+	}
+
 	public Long getId() {
 		return id;
 	}

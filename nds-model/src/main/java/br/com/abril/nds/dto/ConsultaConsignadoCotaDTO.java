@@ -23,8 +23,16 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	@Export(label = "Produto" , alignment= Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeProduto;
 	
+	private Long produtoEdicaoId;
+	
 	@Export(label = "Edição" , alignment= Alignment.LEFT, exhibitionOrder = 3)
 	private Long numeroEdicao;
+	
+	private Long cotaId;
+	
+	private Integer numeroCota;
+	
+	private Long fornecedorId;
 	
 	@Export(label = "Fornecedor" , alignment= Alignment.LEFT, exhibitionOrder = 4)
 	private String nomeFornecedor;
@@ -81,12 +89,44 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		this.nomeProduto = nomeProduto;
 	}
 
+	public Long getProdutoEdicaoId() {
+		return produtoEdicaoId;
+	}
+
+	public void setProdutoEdicaoId(Long produtoEdicaoId) {
+		this.produtoEdicaoId = produtoEdicaoId;
+	}
+
 	public Long getNumeroEdicao() {
 		return numeroEdicao;
 	}
 
 	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
+	}
+
+	public Long getCotaId() {
+		return cotaId;
+	}
+
+	public void setCotaId(Long cotaId) {
+		this.cotaId = cotaId;
+	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
+
+	public Long getFornecedorId() {
+		return fornecedorId;
+	}
+
+	public void setFornecedorId(Long fornecedorId) {
+		this.fornecedorId = fornecedorId;
 	}
 
 	public String getNomeFornecedor() {

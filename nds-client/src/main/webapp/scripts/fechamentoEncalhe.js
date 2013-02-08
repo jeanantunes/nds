@@ -161,7 +161,8 @@ var fechamentoEncalheController = $.extend(true, {
 			aplicaRegraMudancaTipo = false;
 		}
 		
-		$('#divBotoesPrincipais', fechamentoEncalheController.workspace).show();
+		$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
+		$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).hide();
 		
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexOptions({
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
@@ -198,8 +199,12 @@ var fechamentoEncalheController = $.extend(true, {
             return;
         } 
 		
+		if (resultado.rows && resultado.rows.length > 0) {
+			$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).show();
+			$('.divBotoesPrincipais', fechamentoEncalheController.workspace).show();
+		}
+		
 		$.each(resultado.rows, function(index, row) {
-			
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
 			if ( ( row.cell.diferenca == "0" && valorFisico == '' ) ||  valorFisico == '' ) {
@@ -212,7 +217,7 @@ var fechamentoEncalheController = $.extend(true, {
 			row.cell.replicar = '<input type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
 			
 			if (fechado != '') {
-				$('#divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
+				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 			}
 		});
 		
@@ -222,7 +227,7 @@ var fechamentoEncalheController = $.extend(true, {
 	replicarTodos : function(replicar) {
 	
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		for (i=0; i<tabela.rows.length; i++) {
+		for (i = 0; i<tabela.rows.length; i++) {
 			if (replicar){
 			
 				fechamentoEncalheController.replicarItem(i);
@@ -346,7 +351,7 @@ var fechamentoEncalheController = $.extend(true, {
 			contextPath + "/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe",
 			params,
 			function (result) {
-
+			
 				var tipoMensagem = result.tipoMensagem;
 				var listaMensagens = result.listaMensagens;
 				
@@ -497,9 +502,11 @@ var fechamentoEncalheController = $.extend(true, {
 			buttons: {
 				"Postergar": function() {
 					fechamentoEncalheController.postergarCotas();
+					
 				},
 				"Cobrar": function() {
 					fechamentoEncalheController.veificarCobrancaGerada();
+					
 				},
 				"Cancelar": function() {
 					$(this).dialog( "close" );
@@ -763,7 +770,7 @@ var fechamentoEncalheController = $.extend(true, {
 				
 				if (tipoMensagem && listaMensagens) {
 					if (tipoMensagem == "ERROR"  ){
-						exibirMensagem(tipoMensagem, listaMensagens);
+						exibirMensagem("WARNING", listaMensagens);
 					//	fechamentoEncalheController.pesquisar(false);
 					} else {
 						$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0]);

@@ -77,13 +77,13 @@ public class GeradorBoleto {
         
         //CONTA BANCARIA
         ContaBancaria contaBancaria = new ContaBancaria(getBancoByNumero(corpoBoleto.getContaNumeroBanco()).create());
-        contaBancaria.setNumeroDaConta(new NumeroDaConta(corpoBoleto.getContaNumero(), "0"));
+        contaBancaria.setNumeroDaConta(new NumeroDaConta(corpoBoleto.getCodigoCedente(), null));
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(corpoBoleto.getContaCarteira());
         //TIPO DE COBRANCA DA CARTEIRA DA CONTA BANCARIA  
         carteira.setTipoCobranca(TipoDeCobranca.valueOf(corpoBoleto.getContaTipoDeCobranca())); 
         contaBancaria.setCarteira(carteira);
-        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia(), "1"));
+        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia(), corpoBoleto.getDigitoAgencia()));
         
         //TITULO
         Titulo titulo;

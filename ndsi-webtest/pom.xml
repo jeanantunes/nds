@@ -10,7 +10,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>br.com.abril</groupId>
-			<artifactId>ndsi-engine</artifactId>
+			<artifactId>nds-interface-client</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>

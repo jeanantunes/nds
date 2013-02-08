@@ -530,13 +530,13 @@ var recebimentoFisicoController = $.extend(true, {
 			}, {
 				display : 'Edição',
 				name : 'edicao',
-				width : 60,
+				width : 40,
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Preço c/ Desconto R$',
+				display : 'Preço c/ Desconto R$ ',
 				name : 'precoCapa',
-				width : 120,
+				width : 110,
 				sortable : false,
 				align : 'center'
 			}, {
@@ -558,9 +558,9 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Pacote Padrão',
+				display : 'Pcte. Padrão',
 				name : 'pacotePadrao',
-				width : 60,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}, {				
@@ -580,7 +580,7 @@ var recebimentoFisicoController = $.extend(true, {
 			},{
 				display : 'Ação',
 				name : 'acao',
-				width : 60,
+				width : 40,
 				sortable : true,
 				align : 'center'
 			},{
@@ -594,7 +594,7 @@ var recebimentoFisicoController = $.extend(true, {
 			}],
 		
 			showTableToggleBtn : true,
-			width : 960,
+			width : 980,
 			height : 180
 		});
 	},
@@ -1399,6 +1399,8 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
+				
+				result.precoDesconto = floatToPrice(result.precoDesconto.toString());
 				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(result.precoDesconto);
 			    $("#precoDescontoItem"+index, recebimentoFisicoController.workspace).priceFormat({
 					allowNegative: true,

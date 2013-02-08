@@ -205,8 +205,8 @@ var debitoCreditoCotaController = $.extend(true, {
 		if (permiteAlteracao) {
 			$( "#dialog-editar", debitoCreditoCotaController.workspace ).dialog({
 				resizable: false,
-				height:450,
-				width:500,
+				height:500,
+				width:550,
 				modal: true,
 				buttons:[ 
 				          {

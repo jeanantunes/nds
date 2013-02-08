@@ -22,9 +22,11 @@ public class FiltroSegmentoNaoRecebidoDTO implements Serializable {
 	private Long tipoSegmentoProdutoId;
 	private Integer numeroCota;
 	private String nomeCota;
+	private String nomeSegmento;
 	private Long usuarioId;
 	private boolean cotasAtivas;
-
+	private boolean autoComplete;
+	
 	private PaginacaoVO paginacao;
 
 	@Override
@@ -108,6 +110,22 @@ public class FiltroSegmentoNaoRecebidoDTO implements Serializable {
 
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
+	}
+
+	public String getNomeSegmento() {
+		return nomeSegmento;
+	}
+
+	public void setNomeSegmento(String nomeSegmento) {
+		this.nomeSegmento = nomeSegmento;
+	}
+
+	public boolean isAutoComplete() {
+		return autoComplete;
+	}
+
+	public void setAutoComplete(boolean autoComplete) {
+		this.autoComplete = autoComplete;
 	}
 
 	public static long getSerialversionuid() {

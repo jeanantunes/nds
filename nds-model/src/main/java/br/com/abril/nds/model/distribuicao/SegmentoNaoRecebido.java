@@ -18,7 +18,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
- * @author samuel.mendes
+ * @author InfoA2 samuel.mendes
  * 
  */
 
@@ -89,6 +89,4 @@ public class SegmentoNaoRecebido implements Serializable {
 	public void setDataAlteracao(Date dataAlteracao) {
 		this.dataAlteracao = dataAlteracao;
 	}
-	
-	
 }

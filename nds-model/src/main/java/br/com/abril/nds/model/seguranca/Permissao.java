@@ -13,6 +13,7 @@ public enum Permissao
 	ROLE_CADASTRO_PRODUTO("Produto", 										 						  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_EDICAO("Edição", 											 						  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_COTA("Cota", 																		  	   Permissao.ROLE_CADASTRO),
+	ROLE_CADASTRO_COTA_BASE("Cota Base",															  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_FIADOR("Fiador", 																	  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_ENTREGADOR("Entregador", 															  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_TRANSPORTADOR("Transportador", 						                        	 	   Permissao.ROLE_CADASTRO),
@@ -35,7 +36,8 @@ public enum Permissao
 	ROLE_DISTRIBUICAO("Distribuição",																	   null),
 	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO("Segmento Não Recebido",					 				   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS("Exceção de Segmento e Parciaiso",					 	   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS("Exceção de Segmentos e Parciais",					 	   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA("Classificação Não Recebida"				 ,					 	   Permissao.ROLE_DISTRIBUICAO),
 	
 	ROLE_ESTOQUE("Estoque",																	  			   null),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),

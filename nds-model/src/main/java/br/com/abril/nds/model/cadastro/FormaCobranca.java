@@ -19,8 +19,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -80,6 +80,9 @@ public class FormaCobranca implements Serializable {
 	
 	@Embedded
 	private ContaBancariaDeposito contaBancariaCota;
+	
+	@OneToOne(mappedBy="formaCobranca")
+	private PoliticaCobranca politicaCobranca;
 	
 	@ManyToMany
 	@JoinTable(name = "FORMA_COBRANCA_FORNECEDOR", joinColumns = {@JoinColumn(name = "FORMA_COBRANCA_ID")}, 

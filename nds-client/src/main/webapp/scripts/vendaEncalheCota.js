@@ -139,22 +139,22 @@ var vendaEncalhe = {
 				}
 			});
 		},
-		loadData:function(url, idConsolidado){
-			$(this.grid).flexOptions({"url": url, params:[{name:"idConsolidado",value:idConsolidado}]});	
+		loadData:function(url, idConsolidado, dataEscolhida,numeroCota){
+			$(this.grid).flexOptions({"url": url, params:[{name:"idConsolidado",value:idConsolidado}, {name:"dataEscolhida", value: dataEscolhida}, {name:"numeroCota", value:numeroCota}]});	
 			$(this.grid).flexReload();
 			
 		},
-		showDialog:function(idConsolidado,dataEscolhida){			
+		showDialog:function(idConsolidado,dataEscolhida,numeroCota){			
 			this.dialog(this.dialogId);
-			this.loadData(this.url, idConsolidado);
+			this.loadData(this.url, idConsolidado, dataEscolhida,numeroCota);
 			this.exportButtons(idConsolidado);
 			
 			
 			 $("#datacotanome-venda-encalhe").html(dataEscolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
 		},
-		exportButtons: function(idConsolidado) {
-			$("#dialog-venda-encalhe-export-pdf").attr('href', this.urlExport + "?fileType=PDF" + "&idConsolidado=" + idConsolidado);
-			$("#dialog-venda-encalhe-export-xls").attr('href', this.urlExport + "?fileType=XLS" + "&idConsolidado=" + idConsolidado);
+		exportButtons: function(idConsolidado,dataEscolhida,numeroCota) {
+			$("#dialog-venda-encalhe-export-pdf").attr('href', this.urlExport + "?fileType=PDF" + "&idConsolidado=" + idConsolidado + "&dataEscolhida=" + dataEscolhida + "&numeroCota=" + numeroCota);
+			$("#dialog-venda-encalhe-export-xls").attr('href', this.urlExport + "?fileType=XLS" + "&idConsolidado=" + idConsolidado + "&dataEscolhida=" + dataEscolhida + "&numeroCota=" + numeroCota);
 		}
 		
 		

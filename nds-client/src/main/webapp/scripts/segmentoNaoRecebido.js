@@ -258,10 +258,14 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 										         
 										         // Reload no combobox
 											     segmentoNaoRecebidoController.carregarSelectComSegmentosParaInclusao();
-										         
+											  
+											     $('#lstSegmento', segmentoNaoRecebidoController.workspace).val('');
+											     
 										    },
 											null,
 									        true);
+									// limpa a caixa de texto do autoComplete por segmento
+							         
 									
 								},
 								"Cancelar": function() {
@@ -513,7 +517,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								segmentoNaoRecebidoController.urlIncluirSegmentosNaCota,
 								data,
 								["segmentosBGrid","segmentoCotaGrid"],
-								this.callBackOnSucess
+								this.callBackOnSucess 
 						);
 					},
 					
@@ -804,7 +808,93 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 							return elemento.val();
 						}
 
-					}
+					},
+					
+					//Busca dados para o auto complete do nome da cota
+					autoCompletarSegmentoPorNome : function(idCampoNomeSegmento, isFromModal) {
+						
+						segmentoNaoRecebidoController.pesquisaRealizada = false;
+						
+						var nomeSegmento = $(idCampoNomeSegmento, segmentoNaoRecebidoController.workspace).val();
+						
+						nomeSegmento = $.trim(nomeSegmento);
+						
+						$(idCampoNomeSegmento, segmentoNaoRecebidoController.workspace).autocomplete({source: [""]});
+						
+						if (nomeSegmento && nomeSegmento.length > 2) {
+
+							data = segmentoNaoRecebidoController.getFiltroCota();
+							
+							data.push({
+								name : "filtro.nomeSegmento", 
+								value : nomeSegmento
+							});
+							
+							$.postJSON(
+								contextPath + "/distribuicao/segmentoNaoRecebido/autoCompletarPorNome", data,
+								function(result) { 
+									segmentoNaoRecebidoController.exibirAutoComplete(result, idCampoNomeSegmento);
+											
+									selectedNomeSegmento = $(idCampoNomeSegmento).val();
+									
+									for ( var index in result) {
+										if (result[index].value === selectedNomeSegmento) {
+											
+										returnFromController = segmentoNaoRecebidoController.getFiltroCota();
+										
+										returnFromController.push({
+											name : "filtro.nomeSegmento", 
+											value : selectedNomeSegmento
+										});
+										
+										returnFromController.push({
+											name : "filtro.autoComplete", 
+											value : true
+										});
+										
+										$(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexOptions(
+												{
+													url : segmentoNaoRecebidoController.urlPesquisarSegmentosElegiveisParaInclusao,
+													dataType : 'json',
+													params : returnFromController
+												});
+	
+										$(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexReload();
+										
+										}
+									}
+									
+								},
+								null, 
+								isFromModal
+							);
+						}
+					},
+					
+					descricaoAtribuida : true,
+					
+					pesquisaRealizada : false,
+					
+					intervalo : null,
+					
+					//Exibe o auto complete no campo
+					exibirAutoComplete : function(result, idCampoNomeSegmento) {
+						
+						$(idCampoNomeSegmento, segmentoNaoRecebidoController.workspace).autocomplete({
+							source: result,
+							focus : function(event, ui) {
+								segmentoNaoRecebidoController.descricaoAtribuida = false;
+							},
+							close : function(event, ui) {
+								segmentoNaoRecebidoController.descricaoAtribuida = true;
+							},
+							select : function(event, ui) {
+								segmentoNaoRecebidoController.descricaoAtribuida = true;
+							},
+							minLength: 3,
+							delay : 0,
+						});
+					},
 
 				}, BaseController);
  //@ sourceURL=segmentoNaoRecebido.js

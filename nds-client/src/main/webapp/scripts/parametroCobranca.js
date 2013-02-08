@@ -393,7 +393,7 @@ var parametroCobrancaController = $.extend(true,
 			$("#dTipoCobranca", this.workspace).val(resultado.tipoCobranca);
 			
 			$("#formaCobranca", this.workspace).val(resultado.formaCobranca);
-			$("#banco", this.workspace).val(resultado.idBanco);
+			$("#dBanco", this.workspace).val(resultado.idBanco);
 			
 			$("#valorMinimo", this.workspace).val(resultado.valorMinimo);
 			$("#taxaMulta", this.workspace).val(resultado.taxaMulta);
@@ -467,7 +467,7 @@ var parametroCobrancaController = $.extend(true,
 					tipoFormaCobranca: tipoFormaCobranca,
 					tipoCobranca : $("#dTipoCobranca", this.worspace).val(),
 					formaEmissao : $("#formaEmissao", this.worspace).val(),
-					idBanco : $("#banco", this.worspace).val(),
+					idBanco : $("#dBanco", this.workspace).val(),
 					valorMinimo : $("#valorMinimo", this.worspace).unmask()/100,
 					taxaMulta : $("#taxaMulta", this.worspace).val(),
 					valorMulta : $("#valorMulta", this.worspace).val(),
@@ -490,7 +490,6 @@ var parametroCobrancaController = $.extend(true,
 			$("input[name='radioFormaCobrancaBoleto']:checked", this.workspace).each(function(i) {			
 				parametroCobranca.formaCobrancaBoleto =  $(this, this.workspace).val();
 			});	
-			
 			
 			var postObject = serializeObjectToPost("parametros", parametroCobranca);
 			
@@ -577,7 +576,7 @@ var parametroCobrancaController = $.extend(true,
 			$("#dTipoCobranca", this.workspace).val('');
 			
 			$("#formaCobranca", this.workspace).val('');
-			$("#banco", this.workspace).val('');
+			$("#dBanco", this.workspace).val('');
 			
 			$("#valorMinimo", this.workspace).val('');
 			$("#taxaMulta", this.workspace).val('');
@@ -653,6 +652,17 @@ var parametroCobrancaController = $.extend(true,
 	
 		
 		obterDadosBancarios : function(idBanco){
+			
+			if (idBanco == ""){
+				
+				$("#taxaMulta", this.workspace).val("0.00");
+				$("#valorMulta", this.workspace).val("0.00");
+				$("#taxaJuros", this.workspace).val("0.00");
+				$("#instrucoes", this.workspace).val("0.00");
+		        
+				return;
+		    }
+			
 			var data = [{name: 'idBanco', value: idBanco}];
 			$.postJSON(contextPath+"/distribuidor/parametroCobranca/obterDadosBancarios",
 					   data,
