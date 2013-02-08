@@ -213,15 +213,29 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.append(" cobranca.tipoCobranca,")
 				.append(" cobranca.vias, ")
 				.append(" cobranca.nossoNumero, ")
-				.append(" (select (case when count(f.recebeCobrancaEmail)=2 then true else false end) " + //TODO
-						"  from FormaCobranca f " +
-						"  left join f.politicaCobranca p " +
-						"  left join f.parametroCobrancaCota pc " +
-						"  where f.recebeCobrancaEmail=true " +  
-						"  and ( (pc.id=parametroCobranca.id " +
-						"  and f.principal=true " +
-						"  and f.ativa=true) " +
-						"  or (p.principal=true and p.ativo=true) ))")
+
+				.append(" case when ("+
+				        "           select count(f.recebeCobrancaEmail) " +
+						"           from PoliticaCobranca p " +
+						"           join p.formaCobranca f " +
+						"           where f.recebeCobrancaEmail = true"+
+						"           and p.principal=true " +//TODO
+						"           and p.ativo=true " +
+				        "           ) > 0 " +
+						" then " + 
+				
+				        " (case when ("+
+				        "             select count(f.parametroCobrancaCota) " +
+						"             from FormaCobranca f " +
+						"             join f.parametroCobrancaCota p " +
+						"             join p.cota c " +
+						"             where f.recebeCobrancaEmail = true " +
+						"             and c.id = cota.id"+
+						"             and f.principal=true " +//TODO
+						"             and f.ativa=true "+
+				        "             ) > 0 then true else false end)" +
+						" else false end ")
+						
 			.append(")");
 			
 		}
