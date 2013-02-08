@@ -8,6 +8,7 @@ import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.test.RouteTestTemplate;
 
 public class EMS0127Test extends RouteTestTemplate {
+	
 	@Autowired
 	private EMS0127Route ems0127Route;
 	
@@ -20,9 +21,10 @@ public class EMS0127Test extends RouteTestTemplate {
 	@Override
 	public void test() {
 		
-		// FIXME: Como a EMS-127 não foi especificada, não deve-se ainda rodar
-		// o teste unitário.
+		getRoute().execute("test");
+		
 		return;
+		
 	}
 	
 }

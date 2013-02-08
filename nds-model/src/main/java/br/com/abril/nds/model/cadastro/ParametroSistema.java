@@ -23,8 +23,10 @@ public class ParametroSistema {
 	@GeneratedValue(generator = "PARAM_SIS_SEQ")
 	@Column(name = "ID")
 	private Long id;
+	
 	@Column(name = "VALOR", nullable = false)
 	private String valor;
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_PARAMETRO_SISTEMA", nullable = false)
 	private TipoParametroSistema tipoParametroSistema;

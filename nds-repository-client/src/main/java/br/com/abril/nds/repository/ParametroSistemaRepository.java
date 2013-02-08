@@ -49,4 +49,10 @@ public interface ParametroSistemaRepository extends Repository<ParametroSistema,
 	 */
 	public void salvar(Collection<ParametroSistema> parametrosSistema);
 	
+	/**
+	 * @param string
+	 * @return
+	 */
+	String getParametro(String string);
+	
 }

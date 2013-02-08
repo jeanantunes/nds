@@ -13,16 +13,16 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 public class DynamicRouter {
 	
 	@Autowired
-	private FixedLenghtContentBasedDataRouter FIXED_LENGHT_DATA_ROUTER;
+	protected FixedLenghtContentBasedDataRouter FIXED_LENGHT_DATA_ROUTER;
 	
 	@Autowired
-	private CouchDBImportDataRouter COUCH_DB_IMPORT_DATA_ROUTER;
+	protected CouchDBImportDataRouter COUCH_DB_IMPORT_DATA_ROUTER;
 
 	@Autowired
-	private FileOutputRouter fileOutputRouter;
+	protected FileOutputRouter fileOutputRouter;
 	
 	@Autowired
-	private DBImportDataRouter dBImportDataRouter;
+	protected DBImportDataRouter dBImportDataRouter;
 
 
 	@Autowired

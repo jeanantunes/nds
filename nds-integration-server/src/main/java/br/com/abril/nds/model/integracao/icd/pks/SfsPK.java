@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.icd.model.pks;
+package br.com.abril.nds.model.integracao.icd.pks;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -7,7 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class DfsPK implements Serializable {
+public class SfsPK implements Serializable {
 	/**
 	 * 
 	 */
@@ -21,9 +21,6 @@ public class DfsPK implements Serializable {
 
 	@Column(name = "HRA_SOLICITACAO")
 	private String horaSolicitacao;
-	
-	@Column(name = "NUM_SEQUENCIA_DETALHE")
-	private Integer numeroSequencia;
 
 	/**
 	 * @return the codigoDistribuidor
@@ -66,19 +63,4 @@ public class DfsPK implements Serializable {
 	public void setHoraSolicitacao(String horaSolicitacao) {
 		this.horaSolicitacao = horaSolicitacao;
 	}
-
-	/**
-	 * @return the numeroSequencia
-	 */
-	public Integer getNumeroSequencia() {
-		return numeroSequencia;
-	}
-
-	/**
-	 * @param numeroSequencia the numeroSequencia to set
-	 */
-	public void setNumeroSequencia(Integer numeroSequencia) {
-		this.numeroSequencia = numeroSequencia;
-	}
-
 }

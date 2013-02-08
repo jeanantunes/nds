@@ -36,11 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.MotivoSituacaoFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
-import br.com.abril.nds.integracao.model.InterfaceExecucao;
-import br.com.abril.nds.integracao.model.LogExecucao;
+import br.com.abril.nds.integracao.icd.RouteTemplateIcd;
 import br.com.abril.nds.integracao.model.LogExecucaoArquivo;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
@@ -49,16 +45,21 @@ import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentDetail;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentMaster;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
-import br.com.abril.nds.integracao.model.enums.StatusExecucaoEnum;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
-import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
-import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
 import br.com.abril.nds.integracao.service.IcdObjectService;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
+import br.com.abril.nds.model.integracao.LogExecucao;
+import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
+import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
+import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
+import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
+import br.com.abril.nds.repository.LogExecucaoRepository;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.healthmarketscience.jackcess.Database;
@@ -73,6 +74,7 @@ public class InterfaceExecutor {
 	
 	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
 
+	@SuppressWarnings("unused")
 	private static ApplicationContext applicationContext;
 	
 	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
@@ -85,10 +87,13 @@ public class InterfaceExecutor {
 
 	@Autowired
 	private LogExecucaoRepository logExecucaoRepository;
+	
 	@Autowired
 	private LogExecucaoArquivoRepository logExecucaoArquivoRepository;
+	
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;	
+	
 	@Autowired
 	private InterfaceExecucaoRepository interfaceExecucaoRepository;
 	
@@ -241,7 +246,6 @@ public class InterfaceExecutor {
 		}
 		
 	}
-
 	
 	public List<String> recuperaDistribuidores(Long codigoDistribuidor) {
 		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
@@ -254,12 +258,26 @@ public class InterfaceExecutor {
 			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
 			Long codigoDistribuidor, String nomeUsuario) {
 		
+		getRouteTemplate(interfaceExecucao.getNome()).execute("username");
+		
+	}
+	
+	private static RouteTemplateIcd getRouteTemplate(String className) {
+		try {
+			
+			String classACarregar = "br.com.abril.nds.integracao."+ className.toLowerCase()  +".route."+ className +"Route";
+			
+			return (RouteTemplateIcd) applicationContext.getBean(Class.forName(classACarregar));
+			
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
 	 * Executa uma interface de carga de arquivo.
 	 */
-	
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
 		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);

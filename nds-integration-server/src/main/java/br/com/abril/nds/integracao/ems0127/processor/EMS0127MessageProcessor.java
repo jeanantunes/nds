@@ -1,10 +1,13 @@
 package br.com.abril.nds.integracao.ems0127.processor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,39 +15,58 @@ import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Header;
 import br.com.abril.nds.integracao.ems0127.outbound.EMS0127Detalhe;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.model.integracao.icd.ChamadaEncalheIcd;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
-
 public class EMS0127MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
+	@Autowired
+	private SessionFactory sessionFactoryIcd;
+	
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
 
 	@Autowired
 	private DistribuidorService distribuidorService;
 
+	protected Session getSessionIcd() {
+		
+		Session session = null;
+		try {
+			session = sessionFactoryIcd.getCurrentSession();
+		} catch(Exception e) {
+			
+		}
+		
+		if(session == null)
+			session = sessionFactoryIcd.openSession();
+		
+		return session;
+	}
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		
+		List<Object> list = new ArrayList<Object>();
+		list.add(new Object());
+		
+		tempVar.set(list);
+		
 	}
 
 	@Override
 	public void processMessage(Message message) {
-		// OBTEM DETALHES
-		List<EMS0127Detalhe> detalhes = obterEncalhe(null);
 		
-		// IMPRIMIR HEADER		
-		System.out.println(getHeader(detalhes.size()));
+		List<ChamadaEncalheIcd> chamadasEncalheIcd = obterEncalhe(null);
+
+		for(ChamadaEncalheIcd ceicd : chamadasEncalheIcd) {
+			System.out.println(ceicd.getDataEmissao());
+		}
 		
-		// IMPRIMIR DETALHES
-		System.out.println(getDetail(detalhes));
-		
-		// IMPRIMIR O FOOTER
-		///xxxxx
 	}
 	
 	private String getDetail(List<EMS0127Detalhe> detalhes) {
@@ -70,25 +92,13 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	
-	private List<EMS0127Detalhe> obterEncalhe(List<EMS0127Detalhe> Encalhes) {
+	private List<ChamadaEncalheIcd> obterEncalhe(List<EMS0127Detalhe> Encalhes) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select new br.com.abril.nds.integracao.ems0127.outbound.EMS0127Detalhe( ");
-		hql.append(" p.codigo as codProduto, ce.dataRecolhimento as diaRecolhimento) ");
-		hql.append("   from Lancamento l ");
-		hql.append("   join l.produtoEdicao pe ");
-		hql.append("   join pe.produto p ");
-		hql.append("   join pe.chamadaEncalhes ce ");
+		hql.append(" select ce");
+		hql.append(" from ChamadaEncalheIcd ce ");
 		
-		// FIXME: Verificar se isto esta certo!!!
-		//hql.append("   where pe.numeroEdicao = :codigoPublicacao ");
-
-		Query query = this.getSession().createQuery(hql.toString());
-		/*,
-				EMS0127Detalhe.class);*/
-
-		// FIXME: Verificar se isto esta certo!!!
-		// query.setParameter("codigoPublicacao", codigoPublicacao);
+		Query query = this.getSessionIcd().createQuery(hql.toString());
 
 		return query.list();
 	}

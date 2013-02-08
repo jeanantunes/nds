@@ -34,7 +34,7 @@ public class EMS0185MessageProcessor extends AbstractRepository implements Messa
 	private CouchDbProperties couchDbProperties;
 
 	@Autowired
-	private DataSource dataSource;
+	private DataSource dataSourceIcd;
 
 	
 	@Override
@@ -51,7 +51,7 @@ public class EMS0185MessageProcessor extends AbstractRepository implements Messa
 		try {			
 			dbClient = getCouchDBClient();
 			
-			connection = dataSource.getConnection();
+			connection = dataSourceIcd.getConnection();
 			
 			// VERIFICA SE EXISTE ATUALIZACAO DE CEP NO COUCHDB
 			if (dbClient.contains("AtualizacaoCep")) {

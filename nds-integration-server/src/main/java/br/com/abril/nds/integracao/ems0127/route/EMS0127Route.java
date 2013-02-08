@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.ems0127.processor.EMS0127MessageProcessor;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.RouteInterface;
-import br.com.abril.nds.integracao.engine.data.DBImportRouteTemplate;
+import br.com.abril.nds.integracao.icd.DBImportRouteTemplateIcd;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 
 @Component
 @Scope("prototype")
-public class EMS0127Route extends DBImportRouteTemplate{
+public class EMS0127Route extends DBImportRouteTemplateIcd {
 	
 	@Autowired
 	private EMS0127MessageProcessor messageProcessor;

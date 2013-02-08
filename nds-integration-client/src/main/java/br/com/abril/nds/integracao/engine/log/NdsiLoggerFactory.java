@@ -16,8 +16,7 @@ public class NdsiLoggerFactory {
 	@Autowired
 	private ApplicationContext applicationContext;
 	
-	private NdsiLoggerFactory() 
-	{}
+	private NdsiLoggerFactory() {}
 
 	private class ThreadLocalNdsLogger extends ThreadLocal<NdsiLogger> {
 		public NdsiLogger initialValue() {
