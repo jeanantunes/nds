@@ -1,5 +1,8 @@
 package br.com.abril.nds.process.reparteproporcional;
 
+import java.math.BigDecimal;
+
+import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -24,15 +27,22 @@ public class ReparteProporcional extends ProcessoAbstrato {
         // TODO: concluir implementação do método calcular do Processo ReparteProporcional
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	boolean temEdicaoBaseAberta = false;
-    	for (ProdutoEdicao edicao : estudo.getEdicoesBase()) {
+    	for (ProdutoEdicao edicao : estudo.getEdicoesBaseInsercaoManual()) {
     		if (edicao.isEdicaoAberta()) {
     			temEdicaoBaseAberta = true;
     			break;
     		}
     	}
+    	BigDecimal somaReparteProporcional = new BigDecimal(0);
+    	BigDecimal indiceReparteEdicoesAbertas = estudo.getReparteDistribuirInicial().divide(estudo.getSomatoriaReparteEdicoesAbertas());
     	for (Cota cota : estudo.getCotas()) {
     		if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta()) {
-    			// TODO: desenvolver lógica!
+    			BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);
+    			// FIXME: checar se o arredondamento está correto (Processo: Reparte Proporcional)
+    			repCalculado = new BigDecimal(Math.floor(repCalculado.doubleValue()));
+    			cota.setReparteCalculado(repCalculado);
+    			cota.setClassificacao(ClassificacaoCota.BancaSoComEdicaoBaseAberta);
+    			somaReparteProporcional.add(cota.getReparteCalculado());
     		}
     	}
     }

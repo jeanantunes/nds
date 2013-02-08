@@ -6,20 +6,23 @@ import java.util.List;
 public class Estudo {
 
     private Integer id;
-    private BigDecimal reparteDistribuir;
-    private ProdutoEdicao produto;
-    private List<ProdutoEdicao> edicoesBase;
+    private BigDecimal reparteDistribuir; // Reparte Total a ser distribuído
+    private BigDecimal reparteDistribuirInicial; // Reparte Total a ser distribuído (valor não deverá ser alterado durante o processo)
+    private ProdutoEdicao produto; // produto sobre o qual se trata o estudo
+    private List<ProdutoEdicao> edicoesBaseInsercaoManual;
     private List<Cota> cotas;
-    private Parametro parametro;
-    private BigDecimal somatoriaVendaMediaFinal;
+    private Parametro parametro; // parâmetros a serem carregados durante o estudo
+    private BigDecimal somatoriaVendaMedia; // Soma da Venda Média de todas as cotas (exceto as marcadas com 'FX', 'PR' e 'RD')
+    // TODO: verificar se essa somatória é do estudo total ou somente da cota (Processo: Reparte Proporcional)
+    private BigDecimal somatoriaReparteEdicoesAbertas; // Soma de Reparte de todas as edições abertas
 
     public void calculate() {
-    	somatoriaVendaMediaFinal = new BigDecimal(0);
+    	somatoriaVendaMedia = new BigDecimal(0);
     	for (Cota cota : cotas) {
     		if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
     				|| !cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
     				|| !cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico))
-    			somatoriaVendaMediaFinal.add(cota.getVendaMedia());
+    			somatoriaVendaMedia.add(cota.getVendaMedia());
     	}
     }
     
@@ -39,12 +42,13 @@ public class Estudo {
 		this.produto = produto;
 	}
 
-	public List<ProdutoEdicao> getEdicoesBase() {
-		return edicoesBase;
+	public List<ProdutoEdicao> getEdicoesBaseInsercaoManual() {
+	    return edicoesBaseInsercaoManual;
 	}
 
-	public void setEdicoesBase(List<ProdutoEdicao> edicoesBase) {
-		this.edicoesBase = edicoesBase;
+	public void setEdicoesBaseInsercaoManual(
+		List<ProdutoEdicao> edicoesBaseInsercaoManual) {
+	    this.edicoesBaseInsercaoManual = edicoesBaseInsercaoManual;
 	}
 
 	public List<Cota> getCotas() {
@@ -70,11 +74,27 @@ public class Estudo {
                 + ", \n\treparteCalculado: " + reparteDistribuir +"\n}";
     }
 
-	public BigDecimal getSomatoriaVendaMediaFinal() {
-		return somatoriaVendaMediaFinal;
+	public BigDecimal getSomatoriaVendaMedia() {
+		return somatoriaVendaMedia;
 	}
 
-	public void setSomatoriaVendaMediaFinal(BigDecimal somatoriaVendaMediaFinal) {
-		this.somatoriaVendaMediaFinal = somatoriaVendaMediaFinal;
+	public void setSomatoriaVendaMediaFinal(BigDecimal somatoriaVendaMedia) {
+		this.somatoriaVendaMedia = somatoriaVendaMedia;
+	}
+
+	public BigDecimal getReparteDistribuirInicial() {
+		return reparteDistribuirInicial;
+	}
+
+	public void setReparteDistribuirInicial(BigDecimal reparteDistribuirInicial) {
+		this.reparteDistribuirInicial = reparteDistribuirInicial;
+	}
+
+	public BigDecimal getSomatoriaReparteEdicoesAbertas() {
+		return somatoriaReparteEdicoesAbertas;
+	}
+
+	public void setSomatoriaReparteEdicoesAbertas(BigDecimal somatoriaReparteEdicoesAbertas) {
+		this.somatoriaReparteEdicoesAbertas = somatoriaReparteEdicoesAbertas;
 	}
 }

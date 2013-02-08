@@ -29,8 +29,8 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() {
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
-    	BigDecimal excedente = estudo.getReparteDistribuir().subtract(estudo.getSomatoriaVendaMediaFinal());
-    	BigDecimal percentualExcedente = excedente.divide(estudo.getSomatoriaVendaMediaFinal(), 2, BigDecimal.ROUND_FLOOR);
+    	BigDecimal excedente = estudo.getReparteDistribuir().subtract(estudo.getSomatoriaVendaMedia());
+    	BigDecimal percentualExcedente = excedente.divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_FLOOR);
     	BigDecimal menorVenda = new BigDecimal(0);
 
     	if ((percentualExcedente.doubleValue() > 0.4d) && (percentualExcedente.doubleValue() < 0.6d)) {
@@ -43,10 +43,10 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     		if ((cota.getVendaMedia().doubleValue() <= menorVenda.doubleValue())
     				&& (cota.getVendaEdicaoMaisRecenteFechada().equals(BigDecimal.ZERO))) {
     			cota.setReparteCalculado(new BigDecimal(0));
+    			cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
     		}
     	}
-    	//TODO: verificar qual cota terá sua classificação alterada de acordo com o trac FAQF2-28
-    	//FIXME: checar de acordo com a resposta do trac FAQF2-28 se a conta abaixo está correta (se deve ser subtraído o valor do ReparteCalculado da cota mesmo ou se é outra informação)
+    	
     	for (Cota cota : estudo.getCotas()) {
     		if (cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
     				|| cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)

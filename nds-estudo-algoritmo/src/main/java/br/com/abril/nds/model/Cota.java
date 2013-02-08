@@ -9,8 +9,7 @@ public class Cota {
 	private String nome;
 	private ClassificacaoCota classificacao;
 	private BigDecimal reparteCalculado;
-	private boolean vendaMediaMaisN;
-	private BigDecimal ajusteReparte; // parametro VendaMedia + n na tela de Ajuste de Reparte
+	private BigDecimal vendaMediaMaisN; // parametro VendaMedia + n na tela de Ajuste de Reparte
 	private BigDecimal reparteMinimo; // parametro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
 	private BigDecimal vendaMedia; // VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
 	private BigDecimal vendaEdicaoMaisRecenteFechada;
@@ -18,6 +17,9 @@ public class Cota {
 	private List<ProdutoEdicao> edicoesBase; // edições que servirão de base para o estudo
 	private List<ProdutoEdicao> edicoesRecebidas; // todas as edições que essa cota recebeu
 	private List<EstoqueProdutoCota> estoqueProdutoCotas;
+	private BigDecimal percentualEncalheMaximo; // Percentual de encalhe máximo definido na tela Ajuste de Reparte (por Cota)
+	// TODO: verificar se essa somatória é de todas as edições da cota ou é somente a última (Processo: Reparte Proporcional)
+	private BigDecimal somaReparteEdicoesAbertas; // Soma do Reparte de todas as edições que essa cota recebeu
 
 	public void calculate() {
 		// Cálculo da Venda Média Final
@@ -69,24 +71,16 @@ public class Cota {
 	public void setReparteCalculado(BigDecimal reparteCalculado) {
 		this.reparteCalculado = reparteCalculado;
 	}
-
-	public boolean isVendaMediaMaisN() {
-		return vendaMediaMaisN;
-	}
-
-	public void setVendaMediaMaisN(boolean vendaMediaMaisN) {
-		this.vendaMediaMaisN = vendaMediaMaisN;
-	}
 	/**
 	 * O AjusteReparte estará preenchido com o valor do parâmetro VendaMedia + n na tela de Ajuste de Reparte
 	 * @return BigDecimal
 	 */
-	public BigDecimal getAjusteReparte() {
-		return ajusteReparte;
+	public BigDecimal getVendaMediaMaisN() {
+		return vendaMediaMaisN;
 	}
 
-	public void setAjusteReparte(BigDecimal ajusteReparte) {
-		this.ajusteReparte = ajusteReparte;
+	public void setVendaMediaMaisN(BigDecimal vendaMediaMaisN) {
+		this.vendaMediaMaisN = vendaMediaMaisN;
 	}
 	/**
 	 * VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
@@ -160,5 +154,21 @@ public class Cota {
 
 	public void setEdicoesRecebidas(List<ProdutoEdicao> edicoesRecebidas) {
 		this.edicoesRecebidas = edicoesRecebidas;
+	}
+
+	public BigDecimal getSomaReparteEdicoesAbertas() {
+		return somaReparteEdicoesAbertas;
+	}
+
+	public void setSomaReparteEdicoesAbertas(BigDecimal somaReparteEdicoesAbertas) {
+		this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
+	}
+
+	public BigDecimal getPercentualEncalheMaximo() {
+		return percentualEncalheMaximo;
+	}
+
+	public void setPercentualEncalheMaximo(BigDecimal percentualEncalheMaximo) {
+		this.percentualEncalheMaximo = percentualEncalheMaximo;
 	}
 }

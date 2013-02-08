@@ -1,9 +1,9 @@
 package br.com.abril.nds.process.definicaobases;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-import br.com.abril.nds.dao.CotaDAO;
-import br.com.abril.nds.model.Estrategia;
+import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -23,20 +23,28 @@ import br.com.abril.nds.service.PreparaEstudoService;
  */
 public class DefinicaoBases extends ProcessoAbstrato {
 
+    private PreparaEstudoService estudoService = new PreparaEstudoService();
+    
     @Override
     public void executarProcesso() throws Exception {
 
 	// TODO Popular o estudo - Criar Logica para chamar subProcesso
 	// FIXME Retirar esse trecho
 	super.estudo = new Estudo();
-	PreparaEstudoService estudoService;
-	CotaDAO cotaDAO = new CotaDAO();
-	super.estudo.setCotas(cotaDAO.getCotas());
+	super.estudo.setCotas(estudoService.populaCotasParaEstudo());
 
 	// TODO: implementar método calcular do Processo DefinicaoBases
-	Estrategia estrategia = new Estrategia();
-//	estrategia.setEdicaoBases(cotaDAO.getListEdicaoBasePorCota(estudo.getCotas()));
-	// estrategia.getEdicaoBases();
+	List<Cota> cotas = super.estudo.getCotas();
+	List<ProdutoEdicao> edicoesBase = new ArrayList<>();
+	for (Cota cota : cotas) {
+	    List<ProdutoEdicao> edicoesRecebidas = cota.getEdicoesRecebidas();
+	    for (ProdutoEdicao produtoEdicao : edicoesRecebidas) {
+		//TODO implementar logica para separar as edições de base
+		if(produtoEdicao.isEdicaoAberta()) {
+		    edicoesBase.add(produtoEdicao);
+		}
+	    }
+	}
 	
 	BaseParaVeraneio baseParaVeraneio = new BaseParaVeraneio(super.estudo);
 	baseParaVeraneio.executar();
