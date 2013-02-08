@@ -1,10 +1,12 @@
 package br.com.abril.nds.process;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
@@ -42,34 +44,65 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
  */
 public class Principal {
 
-	private Estudo estudo = new Estudo();
-	
-	public void executar(Date data, Integer fornecedor) {
-		try {
-			RedutorAutomatico ra = new RedutorAutomatico(estudo);
-			ra.executar();
-			estudo = ra.getEstudo();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+    private Estudo estudo = new Estudo();
+
+    public void executar(Date data, Integer fornecedor) {
+	try {
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas();
+
+	    correcaoVendas.executar();
+	    /*
+	     * Medias medias = new Medias(correcaoVendas.getEstudo());
+	     * medias.executar();
+	     */
+	    Estudo estudoReturn = (Estudo) correcaoVendas.getGenericDTO();
+
+	    Iterator<Cota> itCota = estudoReturn.getCotas().iterator();
+
+	    while (itCota.hasNext()) {
+
+		Cota cota = itCota.next();
+
+		System.out.println();
+		System.out.println("<< Cota " + cota.getId() + " >> ");
+		System.out.println("\tIndiceCorrecaoTendencia : "
+			+ cota.getIndiceCorrecaoTendencia());
+
+		Iterator<EstoqueProdutoCota> itEstoqueProdutoCota = cota
+			.getEstoqueProdutoCotas().iterator();
+		while (itEstoqueProdutoCota.hasNext()) {
+
+		    System.out.println();
+
+		    EstoqueProdutoCota estoqueProdutoCota = itEstoqueProdutoCota
+			    .next();
+
+		    System.out.println("\t\t<< EstoqueProdutoCota "
+			    + estoqueProdutoCota.getId() + " >> ");
+		    System.out.println("\t\t\tIndiceCorrecao : "
+			    + estoqueProdutoCota.getIndiceCorrecao());
+
 		}
+	    }
+	} catch (Exception e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
+    }
 
-	public static void main(String args[]) {
-		new Principal().executar(new Date(), 1);
+    public static void main(String args[]) {
+	new Principal().executar(new Date(), 1);
+    }
+
+    public void loadCotas() {
+	estudo.setCotas(new CotaDAO().getCotas());
+	for (Cota cota : estudo.getCotas()) {
+	    ProdutoEdicaoDAO ped = new ProdutoEdicaoDAO();
+	    cota.setEdicoesRecebidas(ped.getEdicaoRecebidas(cota));
 	}
+    }
 
-	public void loadCotas() {
-		CotaDAO cotaDAO = new CotaDAO();
-		estudo.setCotas(cotaDAO.getCotas());
-		for (Cota cota : estudo.getCotas()) {
-			ProdutoEdicaoDAO ped = new ProdutoEdicaoDAO();
-			cota.setEdicoesRecebidas(ped.getEdicaoRecebidas(cota));
-			cota = cotaDAO.getAjustesReparteCota(cota);
-		}
-	}
+    public void carregarParametros() {
 
-	public void carregarParametros() {
-
-	}
+    }
 }

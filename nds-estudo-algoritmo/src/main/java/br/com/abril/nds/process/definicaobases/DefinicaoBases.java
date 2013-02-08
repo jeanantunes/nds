@@ -15,26 +15,28 @@ import br.com.abril.nds.service.PreparaEstudoService;
  * as cotas encontradas para o perfil definido no setup do estudo, levando em
  * consideração todas as variáveis também definidas no setup.
  * <p * style="white-space: pre-wrap;">
- * SubProcessos: - {@link BaseParaVeraneio} - {@link BaseParaSaidaVeraneio}
- * Processo Pai: - N/A
+ * SubProcessos: - {@link BaseParaVeraneio} - {@link BaseParaSaidaVeraneio} Processo Pai: - N/A
  * 
- * Processo Anterior: N/A Próximo Processo: {@link SomarFixacoes}
- * </p>
+ * Processo Anterior: N/A Próximo Processo: {@link SomarFixacoes} </p>
  */
 public class DefinicaoBases extends ProcessoAbstrato {
 
     private PreparaEstudoService estudoService = new PreparaEstudoService();
-    
+
+    public DefinicaoBases() {
+	super(new Estudo());
+    }
+
     @Override
     public void executarProcesso() throws Exception {
 
 	// TODO Popular o estudo - Criar Logica para chamar subProcesso
 	// FIXME Retirar esse trecho
-	super.estudo = new Estudo();
-	super.estudo.setCotas(estudoService.populaCotasParaEstudo());
+	Estudo estudo = (Estudo) super.genericDTO;
+	estudo.setCotas(estudoService.populaCotasParaEstudo());
 
 	// TODO: implementar método calcular do Processo DefinicaoBases
-	List<Cota> cotas = super.estudo.getCotas();
+	List<Cota> cotas = estudo.getCotas();
 	List<ProdutoEdicao> edicoesBase = new ArrayList<>();
 	for (Cota cota : cotas) {
 	    List<ProdutoEdicao> edicoesRecebidas = cota.getEdicoesRecebidas();
@@ -46,10 +48,12 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	    }
 	}
 	
-	BaseParaVeraneio baseParaVeraneio = new BaseParaVeraneio(super.estudo);
+	BaseParaVeraneio baseParaVeraneio = new BaseParaVeraneio(estudo);
 	baseParaVeraneio.executar();
 	BaseParaSaidaVeraneio baseParaSaidaVeraneio = new BaseParaSaidaVeraneio(
-		baseParaVeraneio.getEstudo());
+		(Estudo) baseParaVeraneio.getGenericDTO());
 	baseParaSaidaVeraneio.executar();
+	
+	super.genericDTO = baseParaSaidaVeraneio.getGenericDTO();
     }
 }
