@@ -31,21 +31,37 @@ public class DistribuicaoFornecedorRepositoryImpl extends AbstractRepositoryMode
 		super(DistribuicaoFornecedor.class);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public List<Integer> obterDiasSemanaDistribuicao(String codigoProduto, Long idProdutoEdicao) {
+		return obterDiasSemanaDistribuicao(codigoProduto, idProdutoEdicao,
+				null);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Integer> obterDiasSemanaDistribuicao(String codigoProduto, Long idProdutoEdicao, OperacaoDistribuidor operacaoDistribuidor) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select d.codigoDiaSemana from DistribuicaoFornecedor d, Produto p, ProdutoEdicao e ")
 		   .append("  join p.fornecedores fornecedor  ")
 		   .append("  where d.fornecedor.id = fornecedor.id ")
 		   .append("  and   e.produto.id    = p.id ")
 		   .append("  and   e.id            = :idProdutoEdicao ")
-		   .append("  and   p.codigo        = :codigoProduto ")
-		   .append("  order by d.codigoDiaSemana");
+		   .append("  and   p.codigo        = :codigoProduto ");
+		if(operacaoDistribuidor != null){
+			sql.append("  and   d.operacaoDistribuidor = :operacaoDistribuidor ");
+		}
+		
+		
+		   sql.append("  order by d.codigoDiaSemana");
+		
 		
 		Query query = this.getSession().createQuery(sql.toString());
 		query.setParameter("codigoProduto", codigoProduto);
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		if(operacaoDistribuidor != null){
+			query.setParameter("operacaoDistribuidor", operacaoDistribuidor);
+		}
 		
 		return query.list();
 	}
