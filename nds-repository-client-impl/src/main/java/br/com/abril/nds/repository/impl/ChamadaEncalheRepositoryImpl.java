@@ -58,21 +58,21 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ChamadaEncalhe> obterChamadasEncalhePor(Date dataOperacao, Long idCota) {
+	public List<ChamadaEncalhe> obterChamadasEncalhePor(Date dataOperacao, Long cotaID) {
 		
-		try {
+			StringBuilder hql = new StringBuilder();
 			
-			return super.getSession().createCriteria(ChamadaEncalhe.class, "chamadaEncalhe")
-					.createAlias("chamadaEncalhe.chamadaEncalheCotas", "chamadaEncalheCotas")
-					.setFetchMode("chamadaEncalheCotas", FetchMode.JOIN)
-					.setFetchMode("chamadaEncalhe.produtoEdicao", FetchMode.JOIN)
-					.setFetchMode("chamadaEncalheCotas.cota", FetchMode.JOIN)
-					.add(Restrictions.eq("chamadaEncalhe.dataRecolhimento", dataOperacao))
-					.add(Restrictions.eq("chamadaEncalheCotas.cota.id", idCota)).list();
+			hql.append(" select ce from ChamadaEncalhe ce ");
+			hql.append(" join ce.chamadaEncalheCotas cec ");
+			hql.append(" where cec.cota.id = :cotaID ");
+			hql.append(" and ce.dataRecolhimento = :dataRecolhimento ");
 			
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+			Query query = this.getSession().createQuery(hql.toString());
+			
+			query.setParameter("cotaID", cotaID);
+			query.setParameter("dataRecolhimento", dataOperacao);
+			
+			return query.list();
 	}
 	
 	public ChamadaEncalhe obterPorNumeroEdicaoEMaiorDataRecolhimento(ProdutoEdicao produtoEdicao,

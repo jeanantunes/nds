@@ -170,8 +170,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		validarDatasBalanceamentoMatriz(balanceamentoRecolhimento.getMatrizRecolhimento(), datasConfirmadas);
 		
-		validarBloqueioMatrizFechada(balanceamentoRecolhimento);
-		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
@@ -242,8 +240,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/balancearPorEditor")
 	public void balancearPorEditor() {
 		
-		this.validarBloqueioMatrizFechada(null);
-		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		this.validarDadosPesquisa(filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
@@ -266,9 +262,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Post
 	@Path("/balancearPorValor")
 	public void balancearPorValor() {
-		
-		this.validarBloqueioMatrizFechada(null);
-		
+
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		this.validarDadosPesquisa(filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
@@ -295,8 +289,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			(BalanceamentoRecolhimentoDTO)
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-		
-		this.validarBloqueioMatrizFechada(balanceamentoRecolhimento);
 		
 		recolhimentoService.salvarBalanceamentoRecolhimento(
 			balanceamentoRecolhimento.getMatrizRecolhimento(), getUsuarioLogado());
@@ -365,8 +357,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/voltarConfiguracaoOriginal")
 	public void voltarConfiguracaoOriginal() {
 		
-		this.validarBloqueioMatrizFechada(null);
-		
 		this.validarDataConfirmacaoConfiguracaoInicial();
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
@@ -394,8 +384,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	public void reprogramarSelecionados(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento,
 										String novaDataFormatada, String dataAntigaFormatada) {
 		
-		this.validarBloqueioMatrizFechada(null);
-		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		this.validarDadosReprogramar(novaDataFormatada, filtro.getNumeroSemana());
@@ -419,8 +407,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/reprogramarRecolhimentoUnico")
 	public void reprogramarRecolhimentoUnico(ProdutoRecolhimentoFormatadoVO produtoRecolhimento,
 										     String dataAntigaFormatada) {
-		
-		this.validarBloqueioMatrizFechada(null);
 		
 		String novaDataFormatada = produtoRecolhimento.getNovaData();
 		
@@ -572,29 +558,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		return filtro;
-	}
-	
-	/**
-	 * Verifica se a matriz está fechada para não permitir ações indevidas.
-	 * 
-	 * @param balanceamentoRecolhimento - objeto que contém informações do balanceamento
-	 */
-	private void validarBloqueioMatrizFechada(BalanceamentoRecolhimentoDTO balanceamentoRecolhimento) {
-		
-		if (balanceamentoRecolhimento == null) {
-			
-			balanceamentoRecolhimento = 
-				(BalanceamentoRecolhimentoDTO)
-					this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-		}
-		
-		if (balanceamentoRecolhimento == null
-				|| balanceamentoRecolhimento.isSemanaRecolhimento()) {
-			
-			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING,
-								"Ação não permitida! A semana de recolhimento já está iniciada!"));
-		}
 	}
 	
 	/**

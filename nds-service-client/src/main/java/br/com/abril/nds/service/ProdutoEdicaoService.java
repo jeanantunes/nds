@@ -157,5 +157,14 @@ public interface ProdutoEdicaoService {
 	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao);
 
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao);
+	
+	/**
+	 * Obtém a porcentagem de desconto de um produto edição, 
+	 * respeitando a regra de prioridade
+	 * 
+	 * @param produtoEdicao
+	 * @return
+	 */
+	public BigDecimal obterPorcentualDesconto(ProdutoEdicao produtoEdicao);
 
 }

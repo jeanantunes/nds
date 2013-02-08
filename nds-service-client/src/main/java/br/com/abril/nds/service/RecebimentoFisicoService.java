@@ -31,5 +31,7 @@ public interface RecebimentoFisicoService {
 	 RecebimentoFisico obterRecebimentoFisicoPorNotaFiscal(Long idNotaFiscal);
 	 
 	 public void validarExisteNotaFiscal(NotaFiscalEntradaFornecedor notaFiscal);
+
+	RecebimentoFisicoDTO obterRecebimentoFisicoDTO(String codigo, String edicao);
 	 
 }
