@@ -23,6 +23,8 @@ public class CotaBaseDTO implements Serializable {
 	
 	private String faturamentoFormatado;
 	
+	private String indiceAjuste;
+	
 	
 	public Long getIdCota() {
 		return idCota;
@@ -36,53 +38,88 @@ public class CotaBaseDTO implements Serializable {
 	public void setNomeCota(String nomeCota) {
 		this.nomeCota = nomeCota;
 	}
+	
 	public String getTipoPDV() {
 		return tipoPDV;
 	}
+	
 	public void setTipoPDV(String tipoPDV) {
-		this.tipoPDV = tipoPDV;
+		if(tipoPDV == null){
+			this.tipoPDV = "";
+		}else{
+			this.tipoPDV = tipoPDV;			
+		}
 	}
+	
 	public String getBairro() {
 		return bairro;
 	}
 	public void setBairro(String bairro) {
-		this.bairro = bairro;
+		if(bairro == null){
+			this.bairro = "";
+		}else{
+			this.bairro = bairro;		
+		}
 	}
+	
 	public String getCidade() {
 		return cidade;
 	}
 	public void setCidade(String cidade) {
-		this.cidade = cidade;
+		if(cidade == null){
+			this.cidade = "";
+		}else{
+			this.cidade = cidade;		
+		}
 	}
 	public String getGeradorDeFluxo() {
 		return geradorDeFluxo;
 	}
 	public void setGeradorDeFluxo(String geradorDeFluxo) {
-		this.geradorDeFluxo = geradorDeFluxo;
+		if(geradorDeFluxo == null){
+			this.geradorDeFluxo = "";
+		}else{
+			this.geradorDeFluxo = geradorDeFluxo;		
+		}
 	}
+	
 	public String getAreaInfluencia() {
 		return areaInfluencia;
 	}
 	public void setAreaInfluencia(String areaInfluencia) {
-		this.areaInfluencia = areaInfluencia;
+		if(areaInfluencia == null){
+			this.areaInfluencia = "";
+		}else{
+			this.areaInfluencia = areaInfluencia;		
+		}
 	}
 	public BigDecimal getFaturamentoMedio() {
 		return faturamentoMedio;
 	}
+	
 	public void setFaturamentoMedio(BigDecimal faturamentoMedio) {
 		this.faturamentoMedio = faturamentoMedio;
 		if(faturamentoMedio != null){
 			this.faturamentoFormatado = CurrencyUtil.formatarValor(faturamentoMedio);
-		}
+		}	
 	}
+	public String getFaturamentoFormatado() {
+		return faturamentoFormatado;
+	}
+	
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
-	public String getFaturamentoFormatado() {
-		return faturamentoFormatado;
+	
+	
+	public String getIndiceAjuste() {
+		return indiceAjuste;
+	}
+	public void setIndiceAjuste(BigDecimal indiceAjuste) {
+		this.indiceAjuste = CurrencyUtil.formatarValor(indiceAjuste);
 	}
 	
 	

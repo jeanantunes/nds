@@ -17,4 +17,12 @@ public interface CotaBaseCotaService {
 	 */	
 	boolean isCotaBaseAtiva(CotaBase cotaBase);
 
+	/*
+	 * Coloca um status pra false. Assim podemos ter um histórico
+	 * 
+	 */	
+	void desativarCotaBase(CotaBase cotaBase, Cota cotaParaDesativar);
+
+	Long quantidadesDeCotasAtivas(CotaBase cotaBase);
+	
 }

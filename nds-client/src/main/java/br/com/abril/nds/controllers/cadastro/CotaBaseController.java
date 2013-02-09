@@ -68,7 +68,7 @@ public class CotaBaseController {
 		FiltroCotaBaseDTO filtro = null;
 		
 		if(existeCotaBase){
-			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, false, false, numeroCota);
+			filtro = this.cotaBaseService.obterCotaDoFiltro(cotaBase);
 			calcularDiasRestantes(filtro);
 		}else{
 			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, false, true, numeroCota);
@@ -77,8 +77,7 @@ public class CotaBaseController {
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
 	}
 
-	private void calcularDiasRestantes(FiltroCotaBaseDTO filtro) {
-		
+	private void calcularDiasRestantes(FiltroCotaBaseDTO filtro) {		
 		
 		Calendar dtFinal = Calendar.getInstance();
 		dtFinal.setTime(filtro.getDataFinal());
@@ -104,6 +103,10 @@ public class CotaBaseController {
 		if (cota == null) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
+			
+		}else if(cota.getSituacaoCadastro() != SituacaoCadastro.ATIVO){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não está ativa!");
 			
 		}
 	}
@@ -157,7 +160,7 @@ public class CotaBaseController {
 		}else if(existeCotaBase){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" tem cota base ativa!");
 		}else{			
-			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, true, false, numeroCota);			
+			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, true, true, numeroCota);			
 		}
 		
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();
@@ -165,8 +168,22 @@ public class CotaBaseController {
 	}
 	@Post
 	@Path("/excluirCotaBase")
-	public void excluirCotaBase(Integer numeroCotaNova, Long idCotaBase){		
-		System.out.println(numeroCotaNova + idCotaBase);		
+	public void excluirCotaBase(Integer numeroCotaNova, Long idCotaBase){
+		
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCotaNova);
+		
+		Cota cotaParaDesativar = this.cotaService.obterPorId(idCotaBase);
+		
+		Long qtdDeCotasBaseAtivas = this.cotaBaseCotaService.quantidadesDeCotasAtivas(cotaBase);
+		
+		if(qtdDeCotasBaseAtivas >= 2){
+			cotaBaseCotaService.desativarCotaBase(cotaBase, cotaParaDesativar);			
+		}else{
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não pode deixar a cota principal sem cota base.");
+		}
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota excluida com sucesso."), "result").recursive().serialize();
+		
 	}
 	
 	@Post
@@ -184,28 +201,42 @@ public class CotaBaseController {
 			validarCotasDigitadas(numerosDeCotasBase, listaCotaBase, idCotaNova);
 		}
 		
-		salvar(numerosDeCotasBase, indiceAjuste, cotaNova);
+		salvar(numerosDeCotasBase, indiceAjuste, cotaNova, cotaBase);			
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "SOU FODA DEMAIS"), "result").recursive().serialize();
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota base cadastrada com sucesso!"), "result").recursive().serialize();
 		
 	}
 
-	private void salvar(Integer[] numerosDeCotasBase, BigDecimal indiceAjuste, Cota cotaNova) {
-		CotaBase cotaBase = new CotaBase();
-		cotaBase.setDataInicio(new Date());
-		cotaBase.setDataFim(DateUtil.adicionarDias(new Date(), 180));
-		cotaBase.setIndiceAjuste(indiceAjuste);
-		cotaBase.setCota(cotaNova);
-		this.cotaBaseService.salvar(cotaBase);
-		for(Integer cotabBase: numerosDeCotasBase){
-			CotaBaseCota cotaBaseCota = new CotaBaseCota();
-			Cota cotaBaseParaSalvar = this.cotaService.obterPorNumeroDaCota(cotabBase);
-			cotaBaseCota.setCota(cotaBaseParaSalvar);
-			cotaBaseCota.setCotaBase(cotaBase);
-			cotaBaseCota.setAtivo(true);
-			this.cotaBaseCotaService.salvar(cotaBaseCota);
+	private void salvar(Integer[] numerosDeCotasBase, BigDecimal indiceAjuste, Cota cotaNova, CotaBase cotaBaseJaSalva) {
+		if(cotaBaseJaSalva == null){
+			CotaBase cotaBase = new CotaBase();
+			cotaBase.setDataInicio(new Date());
+			cotaBase.setDataFim(DateUtil.adicionarDias(new Date(), 180));
+			cotaBase.setIndiceAjuste(indiceAjuste);
+			cotaBase.setCota(cotaNova);
+			this.cotaBaseService.salvar(cotaBase);
+			for(Integer cotabBase: numerosDeCotasBase){
+				CotaBaseCota cotaBaseCota = new CotaBaseCota();
+				Cota cotaBaseParaSalvar = this.cotaService.obterPorNumeroDaCota(cotabBase);
+				cotaBaseCota.setCota(cotaBaseParaSalvar);
+				cotaBaseCota.setCotaBase(cotaBase);
+				cotaBaseCota.setAtivo(true);
+				this.cotaBaseCotaService.salvar(cotaBaseCota);
+			}			
+		}else{			
+			cotaBaseJaSalva.setIndiceAjuste(indiceAjuste);			
+			this.cotaBaseService.atualizar(cotaBaseJaSalva);
+			for(Integer cotabBase: numerosDeCotasBase){
+				CotaBaseCota cotaBaseCota = new CotaBaseCota();
+				Cota cotaBaseParaSalvar = this.cotaService.obterPorNumeroDaCota(cotabBase);
+				cotaBaseCota.setCota(cotaBaseParaSalvar);
+				cotaBaseCota.setCotaBase(cotaBaseJaSalva);
+				cotaBaseCota.setAtivo(true);
+				this.cotaBaseCotaService.salvar(cotaBaseCota);
+			}		
+			
 		}
-		
 	}
 
 	private void validarCotasDigitadas(Integer[] numerosDeCotasBase, List<CotaBaseDTO> listaCotaBase, Integer idCotaNova) {

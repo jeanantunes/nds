@@ -239,7 +239,7 @@ $(function(){
             
             <span style="float:left; margin-top:5px; margin-bottom:5px; margin-left:10px;">
             	<strong>Informe o Indíce de Ajuste do Histórico:</strong> 
-            	<input name="indiceAjuste" id="indiceAjuste" type="text" style="width:40px; text-align:center;" value="1.0" />
+            	<input name="indiceAjuste" id="indiceAjuste" type="text" style="width:40px; text-align:center;" />
             </span>
             <br clear="all" />
 

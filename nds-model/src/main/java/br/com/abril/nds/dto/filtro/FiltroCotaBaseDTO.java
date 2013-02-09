@@ -62,7 +62,7 @@ public class FiltroCotaBaseDTO implements Serializable {
 
 
 	public String getTipoPDV() {
-		return tipoPDV;
+			return tipoPDV;
 	}
 
 

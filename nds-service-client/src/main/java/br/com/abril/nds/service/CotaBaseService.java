@@ -16,4 +16,8 @@ public interface CotaBaseService {
 
 	CotaBase obterCotaNova(Integer numeroCota);
 
+	FiltroCotaBaseDTO obterCotaDoFiltro(CotaBase cotaBase);
+
+	void atualizar(CotaBase cotaBaseJaSalva);
+
 }

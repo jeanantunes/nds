@@ -34,4 +34,19 @@ public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 		return this.cotaBaseCotaRepository.isCotaBaseAtiva(cotaBase);
 	}
 
+	@Override
+	@Transactional
+	public void desativarCotaBase(CotaBase cotaBase, Cota cotaParaDesativar) {
+		CotaBaseCota cotaBaseCotaParaAtualizar = this.cotaBaseCotaRepository.desativarCotaBase(cotaBase, cotaParaDesativar);
+		cotaBaseCotaParaAtualizar.setAtivo(false);
+		cotaBaseCotaRepository.alterar(cotaBaseCotaParaAtualizar);
+	}
+
+	@Override
+	@Transactional
+	public Long quantidadesDeCotasAtivas(CotaBase cotaBase) {
+		 
+		return this.cotaBaseCotaRepository.quantidadesDeCotasAtivas(cotaBase);
+	}
+
 }

@@ -15,4 +15,6 @@ public interface CotaBaseRepository extends Repository<CotaBase, Long> {
 
 	CotaBase obterCotaNova(Integer numeroCotaNova);
 
+	FiltroCotaBaseDTO obterCotaDoFiltro(CotaBase cotaBase);
+
 }

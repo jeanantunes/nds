@@ -42,4 +42,16 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 		return this.cotaBaseRepository.obterCotaNova(numeroCotaNova);
 	}
 
+	@Override
+	@Transactional
+	public FiltroCotaBaseDTO obterCotaDoFiltro(CotaBase cotaBase) {
+		return this.cotaBaseRepository.obterCotaDoFiltro(cotaBase);
+	}
+
+	@Override
+	@Transactional
+	public void atualizar(CotaBase cotaBaseJaSalva) {
+		 this.cotaBaseRepository.alterar(cotaBaseJaSalva);		
+	}
+
 }
