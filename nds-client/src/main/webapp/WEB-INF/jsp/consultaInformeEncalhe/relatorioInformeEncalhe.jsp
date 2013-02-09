@@ -32,9 +32,9 @@
 				white-space:nowrap; overflow: hidden;
 			}
 			
-			.relatorio{
+			.pulaFolha{
 				page-break-after: always;
-				table-layout: fixed;
+				
 			}
 		</style>
 		<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
@@ -48,7 +48,7 @@
 	</head>
 	<body>
 		<header>
-			<table align="center" width="1000" border="0" align="center" cellpadding="0" cellspacing="0">
+			<table name="tab1" align="center" width="1000" border="0" align="center" cellpadding="0" cellspacing="0">
 				
 				<tr>
 					<td>&nbsp;</td>
@@ -65,10 +65,8 @@
 			</table>
 		</header>
 		
-		<table align="center">
-			<tr>
-				<td>
-					<table width="1000" border="0" align="center" cellpadding="0" cellspacing="0" style="border: 1px solid #000;">
+		
+					<table name="tab3" width="1000" border="0" align="center" cellpadding="0" cellspacing="0" style="border: 1px solid #000;">
 						<tr>
 							<td width="794" align="center" valign="middle" rowspan="2"><h2>Informe de Recolhimento</h2></td>
 							<td height="23" colspan="2" align="center" style="border-left: 1px solid #000; border-bottom: 1px solid #000;">
@@ -103,14 +101,10 @@
 							<td align="center" style="border-left: 1px solid #000;font-size:14px!important;">${diaSemanaFimRecolhimento}</td>
 						</tr>
 					</table>
-				</td>
-			</tr>
 		
-			<tr>
-				<td>
 		
-					<table align="center" width="1000" border="0" align="center" cellpadding="2" cellspacing="0" 
-						style="border:1px solid #000; margin-top:5px;" class="relatorio">
+					<table name="tab4" class="relatorio pulaFolha" align="center" width="1000" border="0" align="center" cellpadding="2" cellspacing="0" 
+						style="border:1px solid #000; margin-top:5px;" >
 					<tr>
 						<c:forEach items="${colunas}" var="coluna_">
 							<td width="${coluna_.largura}%" height="31" align="center" class="relatorioHeader">
@@ -129,13 +123,13 @@
 			           			<c:if test="${tableImagemAberta && tableFechada}">
 				            		</tr>
 									</table>
-									<br/>
+								
 			            		</c:if>
 				           		
 				           		<c:if test="${dado != null && tableFechada}">
 				           			
-				           			<table align="left" width="1000" border="0" align="center" cellpadding="2" cellspacing="0" 
-					            		style="border:1px solid #000; margin-top:5px;" class="relatorio">
+				           			<table name="tab5"  class="relatorio pulaFolha" align="center" width="1000" border="0" align="center" cellpadding="2" cellspacing="0" 
+						style="border:1px solid #000; margin-top:5px;">
 									<tr>
 										<c:forEach items="${colunas}" var="coluna_">
 											<td width="${coluna_.largura}%" height="31" align="center" class="relatorioHeader">
@@ -157,6 +151,19 @@
 					            	<c:when test="${dado.idProdutoEdicao != null}">
 							            <tr class="${index.count % 2 == 0 ? 'class_linha_1' : 'class_linha_2'}">
 					           		
+					           				<c:set var="contains" value="false" />
+											<c:forEach var="coluna" items="${colunas}">
+											  <c:if test="${coluna.param eq 'sequenciaMatriz'}">
+											    <c:set var="contains" value="true" />
+											  </c:if>
+											</c:forEach>
+											
+											<c:if test="${contains}">
+												<td align="center">
+													${dado.sequenciaMatriz}
+												</td>
+											</c:if>					           		
+					           		
 							           		<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
 											  <c:if test="${coluna.param eq 'codigoProduto'}">
@@ -168,8 +175,7 @@
 												<td align="center">
 													${dado.codigoProduto}
 												</td>
-											</c:if>
-											
+											</c:if>											
 											
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
@@ -184,8 +190,7 @@
 														<strong>${dado.nomeProduto}</strong>
 													</div>
 												</td>
-											</c:if>
-											
+											</c:if>											
 											
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
@@ -213,8 +218,7 @@
 														<strong>${dado.chamadaCapa}</strong>
 													</div>
 												</td>
-											</c:if>
-											
+											</c:if>											
 											
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
@@ -227,8 +231,7 @@
 												<td>
 													${dado.codigoDeBarras}
 												</td>
-											</c:if>
-											
+											</c:if>											
 											
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
@@ -272,8 +275,7 @@
 												<td align="center">
 													${dado.brinde ? "Sim" : "Não"}
 												</td>
-											</c:if>
-											
+											</c:if>											
 											
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
@@ -286,8 +288,7 @@
 												<td align="center">
 													<fmt:formatDate value="${dado.dataLancamento}" pattern="dd/MM/yy"/>
 												</td>
-											</c:if>
-											
+											</c:if>											
 											
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
@@ -301,8 +302,7 @@
 													<fmt:formatDate value="${dado.dataRecolhimento}" pattern="dd/MM/yy"/>
 												</td>
 											</c:if>
-											
-											
+																						
 											<c:set var="contains" value="false" />
 											<c:forEach var="coluna" items="${colunas}">
 											  <c:if test="${coluna.param eq 'tipoLancamentoParcial'}">
@@ -329,13 +329,12 @@
 								<c:if test="${!tableFechada}">
 									</table>
 									
-									<br/>
 						           	<c:set var="tableFechada" value="true"></c:set>
 						           	
 						           	<c:if test="${dado.idProdutoEdicao != null}">
 						           	
-							           	<table style="page-break-after: always; border:1px solid #000; margin-top:5px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;" 
-							           			align="left" width="1000" border="0" align="center" cellpadding="2" 
+							           	<table name="tab6" class="pulaFolha" style="border:1px solid #000; margin-top:5px; border-left: 1px solid; border-right: 1px solid; border-bottom: 1px solid;" 
+							           			align="center" width="1000" border="0" align="center" cellpadding="2" 
 							           			cellspacing="0">
 							        	<tr>
 							        	
@@ -346,18 +345,19 @@
 				        		<c:if test="${dado.idProdutoEdicao != null}">
 									<td align="center">
 										<div align="center"><strong>${dado.sequenciaMatriz == null ? '-' : dado.sequenciaMatriz}</strong></div>
-										<img src="<c:url value='/capa/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
+										<img src="<c:url value='/capa/tratarNoImage/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
 									<td>
 								</c:if>
 								
 								<c:set var="indexImg" value="${indexImg + 1}"></c:set>
 								
-								<c:if test="${indexImg % 5 == 0}">
+								<c:if test="${indexImg % 5 == 0 && dado.idProdutoEdicao != null}">
 									</tr><tr>
 								</c:if>
 							</c:otherwise>
 						</c:choose>
 					</c:forEach>
+					
 					
 					<c:if test="!tableFechada">
 						</table>

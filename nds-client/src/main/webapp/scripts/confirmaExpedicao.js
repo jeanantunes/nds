@@ -106,8 +106,10 @@ var confirmaExpedicaoController = $.extend(true, {
 		
 	},
 	
-	gerarCheckbox : function(id,name,idLancamento,selecionado) {
+	gerarCheckbox : function(id,name,idLancamento,selecionado,desabilitado) {
+		
 		var html = "";
+		
 		html+= ' <input ';
 		html+= ' id="'+id+'"';
 		html+= ' name="'+name+'"';
@@ -119,9 +121,13 @@ var confirmaExpedicaoController = $.extend(true, {
 			html+= ' checked="checked" ' ;	
 		}
 		
-		html+= ' />';
-		return html;
+		if (desabilitado){
+			html+= ' disabled="disabled" title="Estoque insuficiente." ' ;
+		}
 		
+		html+= ' />';
+		
+		return html;
 	},
 	
 	adicionarSelecao : function(id, check) {
@@ -145,7 +151,8 @@ var confirmaExpedicaoController = $.extend(true, {
 				{selecionado:elementoCheck.checked});	
 		
 		$.each(selects, function(index, row) {
-			row.checked=elementoCheck.checked;
+			    
+			row.checked=!row.disabled?elementoCheck.checked:false;
 		});
 		
 	},
@@ -169,7 +176,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			var cell = grid.rows[i].cell;
 								
 			if(cell.estudo) {
-				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado);
+				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado,(cell.estoqueLancamentoPE < cell.estudo));
 			} else {
 				cell.estudo="";
 				cell.selecionado="";

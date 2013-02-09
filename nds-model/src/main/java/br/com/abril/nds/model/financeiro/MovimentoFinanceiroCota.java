@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -27,11 +26,8 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@ManyToMany
-	@JoinTable(name = "MVTO_FINANCEIRO_ESTOQUE_COTA",
-			   joinColumns = {@JoinColumn(name = "MVTO_FINANCEIRO_COTA_ID")}, 
-			   inverseJoinColumns = {@JoinColumn(name = "MVTO_ESTOQUE_COTA_ID", unique = true)})
-	private List<MovimentoEstoqueCota> movimentos = new ArrayList<MovimentoEstoqueCota>();
+	@OneToMany(mappedBy="movimentoFinanceiroCota")
+	private List<MovimentoEstoqueCota> movimentos;
 	
 	@Column(name = "OBSERVACAO")
 	private String observacao;

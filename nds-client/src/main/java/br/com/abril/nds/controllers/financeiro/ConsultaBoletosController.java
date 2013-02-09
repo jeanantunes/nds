@@ -21,8 +21,8 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO.OrdenacaoColunaBoletos;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -32,12 +32,12 @@ import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -179,7 +179,7 @@ public class ConsultaBoletosController extends BaseController {
 										  (boleto.getDataPagamento()!=null?DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"):""),
 										  (boleto.getEncargos()!=null?boleto.getEncargos().toString():""),
 										  (boleto.getValor()!=null?boleto.getValor().toString():""),
-										  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa():""),
+										  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():""),
 										  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():""),
 										  ""
                       					)
@@ -333,7 +333,7 @@ public class ConsultaBoletosController extends BaseController {
 			boletoVO.setDataPagamento(boleto.getDataPagamento());
 			boletoVO.setEncargos(MathUtil.defaultValue(boleto.getEncargos()));
 			boletoVO.setValor(MathUtil.defaultValue(boleto.getValor()));
-			boletoVO.setTipoBaixa(StringUtils.defaultString(boleto.getTipoBaixa()));
+			boletoVO.setTipoBaixa(boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():"");
 			boletoVO.setStatus(boleto.getStatusCobranca());
 			
 			listaBoletos.add(boletoVO);

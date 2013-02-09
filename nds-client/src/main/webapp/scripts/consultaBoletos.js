@@ -46,7 +46,7 @@ var consultaBoletosController = $.extend(true, {
 				name : 'tipoBaixa',
 				width : 100,
 				sortable : true,
-				align : 'left',
+				align : 'center',
 			}, {
 				display : 'Status',
 				name : 'status',

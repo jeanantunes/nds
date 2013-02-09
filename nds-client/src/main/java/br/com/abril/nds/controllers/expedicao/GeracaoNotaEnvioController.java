@@ -18,8 +18,8 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -33,9 +33,9 @@ import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.RoteirizacaoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -194,33 +194,37 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Post
 	public void gerarNotaEnvio(List<Long> listaIdCotas) {
 		
-		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
-		
-		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
+		try {
+			FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+			
+			List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
 
-		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
-	        
-        if (notasGeradas != null) {
-        	
-        	DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-        	
-        	this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+			byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
+			    
+			if (notasGeradas != null) {
+				
+				DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+				
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+				
+				OutputStream output;
+			
+					output = this.httpResponse.getOutputStream();
 
-        	OutputStream output;
-			try {
-				output = this.httpResponse.getOutputStream();
+			    	output.write(notasGeradas);
 
-	        	output.write(notasGeradas);
+			    	httpResponse.getOutputStream().close();
 
-	        	httpResponse.getOutputStream().close();
+			    	result.use(Results.nothing());
 
-	        	result.use(Results.nothing());
+				
 
-			} catch (IOException e) {
-				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 			}
-
-        }
+		} catch(ValidacaoException e ){
+			result.use(Results.json()).from(e.getValidacao(),Constantes.PARAM_MSGS).recursive().serialize();
+		} catch (Exception e) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
+		}
 	}
 	
 	/**

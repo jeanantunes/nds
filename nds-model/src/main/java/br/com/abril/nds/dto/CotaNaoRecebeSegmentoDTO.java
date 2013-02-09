@@ -4,6 +4,9 @@ import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 /**
  * @author InfoA2 - Samuel Mendes
@@ -13,17 +16,38 @@ import br.com.abril.nds.util.DateUtil;
  *         Recebido</h1>
  * 
  */
-
+@Exportable
 public class CotaNaoRecebeSegmentoDTO {
 
+	private Long segmentoNaoRecebidoId;
+	
+	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private Integer numeroCota;
+	
+	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private SituacaoCadastro statusCota;
+	
+	@Export(label = "Nome", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private String nomeCota;
+	
+	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private String nomeUsuario;
 
 	private Date dataAlteracao;
+	
+	@Export(label = "Data Alteração", alignment=Alignment.LEFT, exhibitionOrder = 5)
 	private String dataAlteracaoFormatada;
+	
+	@Export(label = "Hora Alteração", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private String horaAlteracaoFormatada;
+
+	public Long getSegmentoNaoRecebidoId() {
+		return segmentoNaoRecebidoId;
+	}
+
+	public void setSegmentoNaoRecebidoId(Long segmentoNaoRecebidoId) {
+		this.segmentoNaoRecebidoId = segmentoNaoRecebidoId;
+	}
 
 	public Integer getNumeroCota() {
 		return numeroCota;
@@ -64,8 +88,8 @@ public class CotaNaoRecebeSegmentoDTO {
 	public void setDataAlteracao(Date dataAlteracao) {
 		this.dataAlteracao = dataAlteracao;
 		
-		dataAlteracaoFormatada = DateUtil.formatarDataPTBR(dataAlteracao);
-		horaAlteracaoFormatada = DateUtil.formatarHoraMinuto(dataAlteracao);
+		this.dataAlteracaoFormatada = DateUtil.formatarDataPTBR(dataAlteracao);
+		this.horaAlteracaoFormatada = DateUtil.formatarHoraMinuto(dataAlteracao);
 	}
 
 	public String getDataAlteracaoFormatada() {

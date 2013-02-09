@@ -25,8 +25,8 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BalanceamentoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -35,11 +35,11 @@ import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.FileExporter;
@@ -620,7 +620,7 @@ public class MatrizLancamentoController extends BaseController {
 		//Adicionar no mapa		
 		for (ProdutoLancamentoDTO produtoLancamentoAdicionar : listaProdutoLancamentoAdicionar) {
 			
-			if (produtoLancamentoAdicionar.permiteReprogramacao()) {
+			if (!produtoLancamentoAdicionar.excedeNumeroReprogramacoes()) {
 			
 				List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(novaData);
 				
@@ -754,7 +754,7 @@ public class MatrizLancamentoController extends BaseController {
 			produtoBalanceamentoVO.setDistribuicao(produtoLancamentoDTO.getDistribuicao().toString());
 		}
 		
-		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.permiteReprogramacao());
+		produtoBalanceamentoVO.setBloquearData(produtoLancamentoDTO.excedeNumeroReprogramacoes());
 		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
 		

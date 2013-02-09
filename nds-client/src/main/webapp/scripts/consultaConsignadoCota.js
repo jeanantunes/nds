@@ -1,6 +1,7 @@
 var consultaConsignadoCotaController = $.extend(true, {
 
 	init : function() {
+		
 		$(".consignadosCotaDetalhesGrid", consultaConsignadoCotaController.workspace).flexigrid({
 			preProcess: consultaConsignadoCotaController.executarPreProcessamento,
 			dataType : 'json',

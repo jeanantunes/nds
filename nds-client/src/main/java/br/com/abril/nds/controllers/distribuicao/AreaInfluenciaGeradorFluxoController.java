@@ -14,6 +14,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroAreaInfluenciaGeradorFluxoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
@@ -22,7 +23,6 @@ import br.com.abril.nds.service.AreaInfluenciaGeradorFluxoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -40,7 +40,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroAreaInfluenciaGeradorFluxo";
 	
 	@Autowired
-	private PdvService pdfService;
+	private PdvService pdvService;
 
 	@Autowired
 	private HttpSession session;
@@ -161,7 +161,6 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 		FiltroAreaInfluenciaGeradorFluxoDTO filtroSession = (FiltroAreaInfluenciaGeradorFluxoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
-
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}else if(filtroSession != null) {
 			filtroAtual.getPaginacao().setQtdResultadosTotal(filtroSession.getPaginacao().getQtdResultadosTotal());
@@ -172,7 +171,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 	
 	private void carregarGeradorFluxo() {
 
-		List<TipoGeradorFluxoPDV> listaTipoGeradorFluxoPDV = pdfService.obterTipoGeradorDeFluxo();
+		List<TipoGeradorFluxoPDV> listaTipoGeradorFluxoPDV = pdvService.obterTipoGeradorDeFluxo();
 
 		List<ItemDTO<Long, String>> listaTipoGeradorFluxoPDVCombo = new ArrayList<ItemDTO<Long, String>>();
 
@@ -192,7 +191,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 
 	private void carregarComboAreaInfluencia() {
 
-		List<AreaInfluenciaPDV> listaAreaInfluenciaPDV = pdfService.obterTipoAreaInfluencia();
+		List<AreaInfluenciaPDV> listaAreaInfluenciaPDV = pdvService.obterTipoAreaInfluencia();
 
 		List<ItemDTO<Long, String>> listaAreaInfluenciaPDVCombo = new ArrayList<ItemDTO<Long, String>>();
 

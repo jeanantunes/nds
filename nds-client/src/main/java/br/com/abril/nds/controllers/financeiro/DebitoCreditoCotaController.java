@@ -23,13 +23,14 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -46,12 +47,12 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -917,32 +918,47 @@ public class DebitoCreditoCotaController extends BaseController{
 		}
 		
 		if (listaNovosDebitoCredito==null || listaNovosDebitoCredito.size()<=0){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há movimentos para serem lançados.");
 		}
 		
 		List<Long> linhasComErro = new ArrayList<Long>();
 		
+		String msgsErros = "";
+		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
+			
+			long linha = (debitoCredito.getId()+1l);
 			
 			Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
 			
 			if (debitoCredito.getNumeroCota() == null) {
 				
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nInforme o [número] da [Cota] na linha ["+linha+"] !");
 			}
+			
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			
+			Date dataDistrib = distribuidor.getDataOperacao();
 			
 			if (dataVencimento == null) {
 
 				linhasComErro.add(debitoCredito.getId());
 			
-			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(new Date()), dataVencimento)) {
+			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(DateUtil.adicionarDias(dataDistrib, 1)), dataVencimento)) {
 
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nO campo [Data] deve ser maior que a [Data de Operação: "+DateUtil.formatarDataPTBR(dataDistrib)+"] na linha ["+linha+"] !");
 			}
 
 			if (debitoCredito.getValor() == null) {
 				
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nInforme o [Valor] na linha ["+linha+"] !");
 			
 			} else {
 
@@ -953,14 +969,23 @@ public class DebitoCreditoCotaController extends BaseController{
 				} catch(NumberFormatException e) {
 
 					linhasComErro.add(debitoCredito.getId());
+					
+					msgsErros += ("\nInforme um [Valor] válido na linha ["+linha+"] !");
 				}
-			}			
+			}		
+			
+			if (debitoCredito.getDataVencimento()==null){
+				
+                linhasComErro.add(debitoCredito.getId());
+				
+                msgsErros += ("\nInforme a [Data] na linha ["+linha+"] !");
+			}
 		}
 
 		if (!linhasComErro.isEmpty()) {
 			
 			ValidacaoVO validacao = new ValidacaoVO(
-					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.");
+					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.\n"+msgsErros);
 					
 			validacao.setDados(linhasComErro);
 			
