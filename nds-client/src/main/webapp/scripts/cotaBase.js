@@ -2,6 +2,8 @@ var cotaBaseController = $.extend(true, {
 	
 	init : function(){
 		
+		$("#indiceAjuste").mask("9.9");
+
 		
 		$(".consultaSegmentosGrid").flexigrid({
 			url : '../xml/consultaSegmento-xml.xml',
@@ -461,7 +463,7 @@ var cotaBaseController = $.extend(true, {
 	},
 	
 	prepararGridPrincipal : function(resultado){
-		
+		var aux = 0;
 		$.each(resultado.rows, function(index, row) {
 			
 			if(row.cell.numeroCota == null ){								
@@ -474,32 +476,24 @@ var cotaBaseController = $.extend(true, {
 				row.cell.geradorDeFluxo = '<div style="text-align: left; width: 90px;" id="geradorDeFluxoGrid'+index+'" ></div>';
 				row.cell.areaInfluencia = '<div style="text-align: left; width: 90px;" id="areaInfluenciaGrid'+index+'" ></div>';
 				row.cell.faturamentoFormatado = '<div style="text-align: right; width: 120px;" id="faturamentoGrid'+index+'" ></div>';
+				row.cell.acao = '';
 			}else{
-				row.cell.acao = '<a href="javascript:;" style="margin-right: 5px;cursor:pointer"  onclick="cotaBaseController.exlcuirCota('+ row.cell.idCota +');">' +
+				aux++;
+				$("#indiceAjuste").val(row.cell.indiceAjuste);
+				$("#indiceAjuste").mask("9.9");
+				row.cell.acao = '<a href="javascript:;" style="margin-right: 5px;cursor:pointer"  onclick="cotaBaseController.excluirPeso('+ row.cell.idCota +');">' +
 				'<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Cota" />' +
-				'</a>';
-				
+				'</a>';				
 			}
-		
+			if(aux === 0){
+				$("#indiceAjuste").val("");
+				$("#indiceAjuste").mask("9.9");
+			}		
 		});
 			
 		return resultado;
-	},
+	},	
 	
-	exlcuirCota : function(idCota){
-		
-		var idCotaBase = $('#idCota').val();
-		alert(idCotaBase);
-		
-		var data = [
-		            {name:"numeroCotaNova", value:$('#idCota', cotaBaseController.workspace).val()},
-		            {name:"idCotaBase", value:idCota}];
-		
-		
-		$.postJSON(contextPath + "/cadastro/cotaBase/excluirCotaBase",
-				data);
-		
-	},
 	
 	gerarInputNumeroCota : function(resultado, index){
 		
@@ -598,13 +592,12 @@ var cotaBaseController = $.extend(true, {
 		});
 		
 		$("#cotasEquivalentesGrid", cotaBaseController.workspace).flexReload();
-
+		
 	},
 	
 	
 	
 	popup_novoEquivalente : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$( "#dialog-novo-equivale" ).dialog({
 			resizable: false,
@@ -624,7 +617,6 @@ var cotaBaseController = $.extend(true, {
 	},
 	
 	incluirSegmento : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
@@ -644,7 +636,6 @@ var cotaBaseController = $.extend(true, {
 	},		
 
 	cancelarPeso : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$( "#dialog-cancelar" ).dialog({
 			resizable: false,
@@ -662,8 +653,7 @@ var cotaBaseController = $.extend(true, {
 			}
 		});
 	},
-	excluirPeso : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	excluirPeso : function(idCota) {
 
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,
@@ -673,7 +663,29 @@ var cotaBaseController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					
+					var data = [
+					            {name:"numeroCotaNova", value:$('#idCota', cotaBaseController.workspace).val()},
+					            {name:"idCotaBase", value:idCota}];
+					
+					
+					$.postJSON(contextPath + "/cadastro/cotaBase/excluirCotaBase", data,
+							function(result){
+								if (result.tipoMensagem && result.listaMensagens) {
+									exibirMensagemDialog(
+											result.tipoMensagem, 
+											result.listaMensagens,""
+									);
+								}
+								cotaBaseController.mostrar_normal();
+			 				}, function(result){								
+			 					if (result.tipoMensagem && result.listaMensagens) {
+									exibirMensagemDialog(
+											result.tipoMensagem, 
+											result.listaMensagens,""
+									);
+								}
+							});
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -682,7 +694,15 @@ var cotaBaseController = $.extend(true, {
 		});
 	},		
 	
-	confirmarPeso : function () {
+	confirmarPeso : function (){
+		
+		var indiceAjuste = $("#indiceAjuste").val();
+		if(indiceAjuste < 0.5 || indiceAjuste > 1.5){		
+			var erros = new Array();
+			erros[0] = "O Índice deve estar entre 0.5 até 1.5.";
+			exibirMensagemDialog('WARNING',	erros,"");			
+			return;
+		}
 
 		$( "#dialog-confirm" ).dialog({
 			resizable: false,
@@ -690,35 +710,41 @@ var cotaBaseController = $.extend(true, {
 			width:380,
 			modal: true,
 			buttons: {
-				"Confirmar": function() {
+				"Confirmar": function() {					
 					$( this ).dialog( "close" );
 					var dto = [];
-					var input = $("#numeroCotaGrid0").val();
-					if(input){
-						dto.push({name:'numerosDeCotasBase', value: input});
+					var inputNumeroCota = $("#numeroCotaGrid0").val();
+					if(inputNumeroCota){
+						dto.push({name:'numerosDeCotasBase', value: inputNumeroCota});
 					}
-					input = $("#numeroCotaGrid1").val();
-					if(input){
-						dto.push({name:'numerosDeCotasBase', value: input});
+					inputNumeroCota = $("#numeroCotaGrid1").val();
+					if(inputNumeroCota){
+						dto.push({name:'numerosDeCotasBase', value: inputNumeroCota});
 					}
-					input = $("#numeroCotaGrid2").val();
-					if(input){
-						dto.push({name:'numerosDeCotasBase', value: input});
+					inputNumeroCota = $("#numeroCotaGrid2").val();
+					if(inputNumeroCota){
+						dto.push({name:'numerosDeCotasBase', value: inputNumeroCota});
 					}
 					dto.push({name : 'idCotaNova' , value : $("#idCota").val()});
 					dto.push({name : 'indiceAjuste' , value : $("#indiceAjuste").val()});
 					
-					
 					$.postJSON(contextPath + "/cadastro/cotaBase/confirmarCotasBase",
 							dto, 
 							function(result){
-								//função para sucess
-			 				}, function(result){
-								//Verifica mensagens de erro do retorno da chamada ao controller.
-								if (result.mensagens) {
+								if (result.tipoMensagem && result.listaMensagens) {
 									exibirMensagemDialog(
-											result.mensagens.tipoMensagem, 
-											result.mensagens.listaMensagens,""
+											result.tipoMensagem, 
+											result.listaMensagens,""
+									);
+								}
+								
+								cotaBaseController.mostrar_normal();
+								cotaBaseController.pesquisarPorNumeroCota('#idCota', '#nomeCota');
+			 				}, function(result){								
+			 					if (result.tipoMensagem && result.listaMensagens) {
+									exibirMensagemDialog(
+											result.tipoMensagem, 
+											result.listaMensagens,""
 									);
 								}
 							}, true,null
@@ -733,7 +759,6 @@ var cotaBaseController = $.extend(true, {
 	},	
 
 	informarPeso : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$( "#dialog-peso" ).dialog({
 			resizable: false,
@@ -754,7 +779,6 @@ var cotaBaseController = $.extend(true, {
 
 
 	fotoPdv : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$( "#dialog-foto-pdv" ).dialog({
 			resizable: false,
@@ -770,7 +794,6 @@ var cotaBaseController = $.extend(true, {
 	},
 
 	definicaoReparte : function(){
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$( "#dialog-defineReparte" ).dialog({
 			resizable: false,
@@ -790,7 +813,6 @@ var cotaBaseController = $.extend(true, {
 	},
 
 	detalhesEquivalente : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$( "#dialog-detail" ).dialog({
 			resizable: false,
@@ -806,7 +828,6 @@ var cotaBaseController = $.extend(true, {
 	},
 	
 	segmentosNaoRecebidos : function(){
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$( "#dialog-segmentos" ).dialog({
 			resizable: false,
@@ -830,12 +851,15 @@ var cotaBaseController = $.extend(true, {
 		
 		$(idCampoNomeCota, pesquisaCota.workspace).val("");
 		
+		cotaBaseController.limparDadosDoFiltro();
+		
 		if (numeroCota && numeroCota.length > 0) {
 			
 			$.postJSON(contextPath + "/cadastro/cotaBase/pesquisarCotaNova",
 					{numeroCota:numeroCota},
-				function(result) { 
-						cotaBaseController.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack); 
+				function(result) {						
+					cotaBaseController.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack);
+					$('.pesqCotasGrid' , cotaBaseController.workspace).hide();
 				},
 				function() {
 					cotaBaseController.pesquisarPorNumeroErrorCallBack(idCampoNumeroCota, errorCallBack);					
@@ -849,6 +873,7 @@ var cotaBaseController = $.extend(true, {
 				errorCallBack();
 			}
 		}
+		
 	},
 	
 	//Success callback para pesquisa por número da cota
@@ -864,13 +889,15 @@ var cotaBaseController = $.extend(true, {
 		
 		$("#cidade", cotaBaseController.workspace).val(result.cidade);
 		
+		$("#diasRestantes", cotaBaseController.workspace).val(result.diasRestantes);
+		
 		$("#geradorFluxo", cotaBaseController.workspace).val(result.geradorDeFluxo);
 		
 		$("#areaInfluencia", cotaBaseController.workspace).val(result.areaInfluencia);
 		
-		$("#periodoDe", cotaBaseController.workspace).val(result.dataInicial);
+		$("#periodoDe", cotaBaseController.workspace).val(result.dataInicialFormatado);
 		
-		$("#periodoAte", cotaBaseController.workspace).val(result.dataFinal);
+		$("#periodoAte", cotaBaseController.workspace).val(result.dataFinalFormatado);
 		
 		if (successCallBack) {
 			
@@ -889,6 +916,29 @@ var cotaBaseController = $.extend(true, {
 			
 			errorCallBack();
 		}
+	},
+	
+	limparDadosDoFiltro : function(){
+		
+		$("#tipoPDV", cotaBaseController.workspace).val("");
+		
+		$("#bairro", cotaBaseController.workspace).val("");
+		
+		$("#cidade", cotaBaseController.workspace).val("");
+		
+		$("#diasRestantes", cotaBaseController.workspace).val("");
+		
+		$("#diasRestantes", cotaBaseController.workspace).val("");
+		
+		$("#geradorFluxo", cotaBaseController.workspace).val("");
+		
+		$("#areaInfluencia", cotaBaseController.workspace).val("");
+		
+		$("#periodoDe", cotaBaseController.workspace).val("");
+		
+		$("#periodoAte", cotaBaseController.workspace).val("");
+		
+		
 	}
 	
 }, BaseController);

@@ -4,6 +4,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.model.cadastro.CotaBaseCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaBaseCotaRepository;
@@ -31,6 +32,71 @@ public class CotaBaseCotaRepositoryImpl extends AbstractRepositoryModel<CotaBase
         query.setParameter("numeroCota", cota.getNumeroCota());        
         
 		return (Long) query.uniqueResult();
+	}
+
+	@Override
+	public boolean isCotaBaseAtiva(CotaBase cotaBase) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+        hql.append(" SELECT count(cotaBaseCota) ");        
+        
+        hql.append(" FROM CotaBaseCota as cotaBaseCota ");       
+        
+        hql.append(" WHERE cotaBaseCota.cotaBase.id = :idCotaBase ");   
+        
+        hql.append(" AND  cotaBaseCota.ativo = true ");
+        
+        Query query =  getSession().createQuery(hql.toString());
+        
+        query.setParameter("idCotaBase", cotaBase.getId());
+        
+        Long isAtiva = (Long) query.uniqueResult();
+        
+		return isAtiva != null ? true : false;
+	}
+
+	@Override
+	public CotaBaseCota desativarCotaBase(CotaBase cotaBase,
+			Cota cotaParaDesativar) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+        hql.append(" SELECT cotaBaseCota ");        
+        
+        hql.append(" FROM CotaBaseCota as cotaBaseCota ");       
+        
+        hql.append(" WHERE cotaBaseCota.cotaBase.id = :idCotaBase ");   
+        
+        hql.append(" AND  cotaBaseCota.cota.id = :idCotaPataDesativar ");
+        
+        Query query =  getSession().createQuery(hql.toString());
+        
+        query.setParameter("idCotaBase", cotaBase.getId());
+        query.setParameter("idCotaPataDesativar", cotaParaDesativar.getId());
+        
+        return  (CotaBaseCota) query.uniqueResult();
+	}
+
+	@Override
+	public Long quantidadesDeCotasAtivas(CotaBase cotaBase) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+        hql.append(" SELECT count(cotaBaseCota) ");        
+        
+        hql.append(" FROM CotaBaseCota as cotaBaseCota ");       
+        
+        hql.append(" WHERE cotaBaseCota.cotaBase.id = :idCotaBase ");   
+        
+        hql.append(" AND  cotaBaseCota.ativo = true ");
+        
+        Query query =  getSession().createQuery(hql.toString());
+        
+        query.setParameter("idCotaBase", cotaBase.getId());
+        
+        return (Long) query.uniqueResult();
+        
 	}
 
 	

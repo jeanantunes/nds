@@ -193,7 +193,7 @@ $(function(){
 	               <td width="41">Cidade:</td>
 	               <td colspan="2"><input type="text" name="cidade" id="cidade" disabled="disabled" style="width:100px;"/></td>
 	               <td colspan="2">Dias Restantes:</td>
-	               <td width="105"><input name="textfield4" type="text" id="textfield4" style="width:40px; text-align:center;" value="180" disabled="disabled"/></td>
+	               <td width="105"><input name="diasRestantes" type="text" id="diasRestantes" style="width:40px; text-align:center;" disabled="disabled"/></td>
 	           </tr>
 	           <tr>
 	             <td colspan="3">Gerador de Fluxo: </td>
@@ -239,7 +239,7 @@ $(function(){
             
             <span style="float:left; margin-top:5px; margin-bottom:5px; margin-left:10px;">
             	<strong>Informe o Indíce de Ajuste do Histórico:</strong> 
-            	<input name="indiceAjuste" id="indiceAjuste" type="text" style="width:40px; text-align:center;" value="1.0" />
+            	<input name="indiceAjuste" id="indiceAjuste" type="text" style="width:40px; text-align:center;" />
             </span>
             <br clear="all" />
 
