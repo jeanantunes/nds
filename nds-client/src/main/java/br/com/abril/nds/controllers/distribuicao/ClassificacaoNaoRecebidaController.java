@@ -1,29 +1,46 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.ClassificacaoNaoRecebidaDTO;
 import br.com.abril.nds.dto.CotaQueNaoRecebeClassificacaoDTO;
 import br.com.abril.nds.dto.CotaQueRecebeClassificacaoDTO;
+import br.com.abril.nds.dto.CotaQueRecebeExcecaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ProdutoRecebidoDTO;
 import br.com.abril.nds.dto.filtro.FiltroClassificacaoNaoRecebidaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
+import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.distribuicao.ClassificacaoNaoRecebida;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.ClassificacaoNaoRecebidaService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -36,7 +53,7 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroClassificacaoNaoRecebidaDTO";
 	
-	private static final ValidacaoVO VALIDACAO_VO_SUCESSO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
+	private static final ValidacaoVO VALIDACAO_VO_MENSAGEM_SUCESSO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
 	
 	@Autowired
 	private Result result;
@@ -45,10 +62,16 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
 	
 	@Autowired
+	private CotaService cotaService;
+	
+	@Autowired
 	private ClassificacaoNaoRecebidaService classificacaoNaoRecebidaService; 
 	
 	@Autowired
 	private HttpSession session;
+
+	@Autowired
+	private HttpServletResponse httpResponse; 
 	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA)
 	public void index(){
@@ -89,12 +112,136 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	}
 	
 	@Post
+	public void inserirCotaNaClassificacaoNaoRecebida(Integer[] numerosCota, FiltroClassificacaoNaoRecebidaDTO filtro){
+		validarEntradaFiltroClassificacao(filtro);
+		
+		TipoClassificacaoProduto tipoClassificacaoProduto = this.tipoClassificacaoProdutoService.buscarPorId(filtro.getIdTipoClassificacaoProduto());
+		Usuario usuarioLogado = getUsuarioLogado();
+		
+		List<ClassificacaoNaoRecebida> listaClassificacaoNaoRecebida = new ArrayList<>();
+		for (Integer numeroCota : numerosCota) {
+			ClassificacaoNaoRecebida classificacaoNaoRecebida = new ClassificacaoNaoRecebida();
+			classificacaoNaoRecebida.setTipoClassificacaoProduto(tipoClassificacaoProduto);
+			classificacaoNaoRecebida.setCota(cotaService.obterPorNumeroDaCota(numeroCota));
+			classificacaoNaoRecebida.setUsuario(usuarioLogado);
+			classificacaoNaoRecebida.setDataAlteracao(new Date());
+			
+			listaClassificacaoNaoRecebida.add(classificacaoNaoRecebida);
+		}
+		
+		this.classificacaoNaoRecebidaService.inserirListaClassificacaoNaoRecebida(listaClassificacaoNaoRecebida);
+		
+		result.use(Results.json()).from(VALIDACAO_VO_MENSAGEM_SUCESSO,"result").recursive().serialize();
+	}
+	
+	@Post
+	public void inserirClassificacaoNaCota(Long[] idsTipoClassificacaoProduto, FiltroClassificacaoNaoRecebidaDTO filtro){
+		validarEntradaFiltroCota(filtro);
+
+		Cota cota = null;
+		Usuario usuarioLogado = getUsuarioLogado();
+		
+		if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
+			cota = (cotaService.obterPorNumeroDaCota(filtro.getCotaDto().getNumeroCota()));
+		}else {
+			cota =(cotaService.obterPorNome(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()))).get(0);
+		}
+		
+		List<ClassificacaoNaoRecebida> listaClassificacaoNaoRecebida = new ArrayList<>();
+		for (Long idTipoClassificacaoProduto : idsTipoClassificacaoProduto) {
+			ClassificacaoNaoRecebida classificacaoNaoRecebida = new ClassificacaoNaoRecebida();
+			classificacaoNaoRecebida.setTipoClassificacaoProduto(tipoClassificacaoProdutoService.buscarPorId(idTipoClassificacaoProduto));
+			classificacaoNaoRecebida.setCota(cota);
+			classificacaoNaoRecebida.setUsuario(usuarioLogado);
+			classificacaoNaoRecebida.setDataAlteracao(new Date());
+			
+			listaClassificacaoNaoRecebida.add(classificacaoNaoRecebida);
+		}
+		
+		this.classificacaoNaoRecebidaService.inserirListaClassificacaoNaoRecebida(listaClassificacaoNaoRecebida);
+		
+		result.use(Results.json()).from(VALIDACAO_VO_MENSAGEM_SUCESSO,"result").recursive().serialize();
+	}
+	
+	@Post
+	public void pesquisarClassificacoesNaoRecebidasPelaCota(FiltroClassificacaoNaoRecebidaDTO filtro, String sortorder, String sortname, int page, int rp ){
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+
+		validarEntradaFiltroCota(filtro);
+		
+		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
+		
+		List<ClassificacaoNaoRecebidaDTO> listaClassificacaoNaoRecebidaDTO = this.classificacaoNaoRecebidaService.obterClassificacoesNaoRecebidasPelaCota(filtro);
+
+		guardarFiltroNaSession(filtro);
+		
+		TableModel<CellModelKeyValue<CotaQueNaoRecebeClassificacaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueNaoRecebeClassificacaoDTO>>();
+		
+		configurarTableModelComPaginacao(listaClassificacaoNaoRecebidaDTO, tableModel, filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+
+	@Post
+	public void pesquisarClassificacoesRecebidasPelaCota(FiltroClassificacaoNaoRecebidaDTO filtro){
+		validarEntradaFiltroCota(filtro);
+		
+		List<TipoClassificacaoProduto> listaTipoClassificacaoProduto = this.classificacaoNaoRecebidaService.obterClassificacoesRecebidasPelaCota(filtro);
+
+		TableModel<CellModelKeyValue<CotaQueRecebeClassificacaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueRecebeClassificacaoDTO>>();
+		
+		configurarTableModelSemPaginacao(listaTipoClassificacaoProduto, tableModel);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
 	public void excluirClassificacaoNaoRecebida(Long id){
 		this.classificacaoNaoRecebidaService.excluirClassificacaoNaoRecebida(id);
 		
-		result.use(Results.json()).from(VALIDACAO_VO_SUCESSO,"result").recursive().serialize();
+		result.use(Results.json()).from(VALIDACAO_VO_MENSAGEM_SUCESSO,"result").recursive().serialize();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Get
+	public void exportar(FileType fileType, boolean porCota) throws IOException {
+		
+		List listaDto = null;
+		Class classDto = null;
+		String fileName = null;
+		
+		FiltroClassificacaoNaoRecebidaDTO filtro = (FiltroClassificacaoNaoRecebidaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (porCota) {
+			listaDto = this.classificacaoNaoRecebidaService.obterClassificacoesNaoRecebidasPelaCota(filtro);
+			classDto = ClassificacaoNaoRecebidaDTO.class;
+			fileName = "Classificações_não_recebidas";
+		}else {
+			listaDto = this.classificacaoNaoRecebidaService.obterCotasQueNaoRecebemClassificacao(filtro);
+			classDto = CotaQueNaoRecebeClassificacaoDTO.class;
+			fileName = "Cotas_que_não_recebem_classificação";
+		}
+		FileExporter.to(fileName, fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, listaDto,
+				classDto, this.httpResponse);
+		
+		result.nothing();
+	}
+	
+	@Post
+	public void autoCompletarPorNomeCotaQueRecebeClassificacao(FiltroClassificacaoNaoRecebidaDTO filtro){
+		List<CotaQueRecebeClassificacaoDTO> listaCotaQueRecebeClassificacaoDTO = this.classificacaoNaoRecebidaService.obterCotasQueRecebemClassificacao(filtro);
+		
+		List<ItemAutoComplete> listaCotaQueNaoRecebeClassificacaoDTOAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		if (listaCotaQueRecebeClassificacaoDTO != null && !listaCotaQueRecebeClassificacaoDTO.isEmpty()) {
+			
+			for (CotaQueRecebeClassificacaoDTO cotaQueRecebeClassificacaoDTO : listaCotaQueRecebeClassificacaoDTO) {
+				listaCotaQueNaoRecebeClassificacaoDTOAutoComplete.add(new ItemAutoComplete(cotaQueRecebeClassificacaoDTO.getNomePessoa(), null, cotaQueRecebeClassificacaoDTO));
+			}
+		}
+		
+		this.result.use(Results.json()).from(listaCotaQueNaoRecebeClassificacaoDTOAutoComplete, "result").include("value", "chave").serialize();
+	}
 	
 	private void validarEntradaFiltroCota(FiltroClassificacaoNaoRecebidaDTO filtro) {
 		if((filtro.getCotaDto().getNumeroCota() == null || filtro.getCotaDto().getNumeroCota() == 0) && 
