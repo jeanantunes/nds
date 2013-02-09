@@ -239,9 +239,11 @@ $(function(){
 					<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> 
 				</span>
 				
-				<span class="bt_novos"><a href="javascript:;">
+				<!-- 
+				<span class="bt_novos"><a href="javascript:;" >
 					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a> 
 				</span>
+				 -->
 		</fieldset>
 
 		<!-- REGIAO AUTOMÁTICA - POR N-MAIORES -->
@@ -433,12 +435,12 @@ $(function(){
 			
 			<fieldset class="classFieldset">
 				<legend> Pesquisar Região</legend>
-				<table width="950" border="0" cellpadding="2" cellspacing="1"class="filtro">
+				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 					<tr>
 						<td width="48">Região:</td>
 						<td width="752">
 							<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
-									onchange="$('.grids').toggle(); regiaoController.cotasDaRegiao()">
+									onchange="$('.grids').toggle(); regiaoController.carregarMotivo()">
 									<option selected="selected">Selecione...</option>
 									<c:forEach items="${listaRegiao}" var="regiao">
 										<option value="${regiao.key}">${regiao.value}</option>
@@ -505,7 +507,7 @@ $(function(){
 					</span> 
 					
 					<span class="bt_novos" title="Manutenção">
-						<a href="javascript:;" onclick="regiaoController.carregarRegiao();">
+						<a href="javascript:;" onclick="regiaoController.manutencaoRegiao();">
 							<img src="${pageContext.request.contextPath}/images/bt_administracao.png" hspace="5" border="0" />
 						
 						Manutenção

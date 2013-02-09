@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -13,7 +14,7 @@ import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
-public class RegiaoCotaDTO implements Serializable {
+public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 
 	private static final long serialVersionUID = 913156078576193397L;
 	

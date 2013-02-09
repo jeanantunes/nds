@@ -34,6 +34,7 @@ public enum Permissao
 	ROLE_LANCAMENTO_HELP("Help",																		   Permissao.ROLE_LANCAMENTO),
 	
 	ROLE_DISTRIBUICAO("Distribuição",																	   null),
+	ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE("Ajuste de reparte",	 										   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_REGIAO("Região", 				  													   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO("Segmento Não Recebido",					 				   Permissao.ROLE_DISTRIBUICAO),

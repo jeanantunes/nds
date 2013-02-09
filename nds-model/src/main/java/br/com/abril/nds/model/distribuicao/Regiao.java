@@ -28,7 +28,6 @@ public class Regiao implements Serializable {
 
 
 	@Id
-	
 	@GeneratedValue(generator = "REGIAO_SEQ")
 	@Column(name = "ID")
 	private Long id;
