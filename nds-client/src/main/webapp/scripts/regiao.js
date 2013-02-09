@@ -9,7 +9,7 @@ var regiaoController = $.extend(true, {
 			preProcess : regiaoController.executarPreProcessFaixaGrid,
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'Cï¿½digo',
 				name : 'numeroCota',
 				width : 60,
 				sortable : true,
@@ -85,13 +85,13 @@ var regiaoController = $.extend(true, {
 //			url : '../xml/nMaioresLst-xml.xml',
 //			dataType : 'xml',
 			colModel : [ {
-				display : 'Edição',
+				display : 'Ediï¿½ï¿½o',
 				name : 'edicao',
 				width : 80,
 				sortable : true,
 				align : 'left',
 			}, {
-				display : 'Data de Lançamento',
+				display : 'Data de Lanï¿½amento',
 				name : 'dtLancamento',
 				width : 130,
 				sortable : true,
@@ -103,8 +103,8 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Classificação',
-				name : 'classificação',
+				display : 'Classificaï¿½ï¿½o',
+				name : 'classificaï¿½ï¿½o',
 				width : 120,
 				sortable : true,
 				align : 'left'
@@ -135,7 +135,7 @@ var regiaoController = $.extend(true, {
 //			url : '../xml/nMaiores-xml.xml',
 //			dataType : 'xml',
 			colModel : [ {
-				display : 'Código',
+				display : 'Cï¿½digo',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -147,19 +147,19 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edição',
+				display : 'Ediï¿½ï¿½o',
 				name : 'edicao',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Classificação',
+				display : 'Classificaï¿½ï¿½o',
 				name : 'classificacao',
 				width : 115,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Ação',
+				display : 'Aï¿½ï¿½o',
 				name : 'acao',
 				width : 30,
 				sortable : true,
@@ -181,7 +181,7 @@ var regiaoController = $.extend(true, {
 			preProcess : regiaoController.executarPreProcessSegmentosGrid,
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'Cï¿½digo',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -251,7 +251,7 @@ var regiaoController = $.extend(true, {
 //			url : '../xml/addCotas-xml.xml',
 //			dataType : 'xml',
 			colModel : [ {
-				display : 'Região',
+				display : 'Regiï¿½o',
 				name : 'regiao',
 				width : 280,
 				sortable : true,
@@ -263,7 +263,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Ação',
+				display : 'Aï¿½ï¿½o',
 				name : 'acao',
 				width : 30,
 				sortable : true,
@@ -281,13 +281,13 @@ var regiaoController = $.extend(true, {
 			preProcess: regiaoController.executarPreProcessamentoTelaManutencao,
 			dataType : 'json',
 			colModel : [ {
-				display : 'Região',
+				display : 'Regiï¿½o',
 				name : 'nomeRegiao',
 				width : 210,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Usuário',
+				display : 'Usuï¿½rio',
 				name : 'nomeUsuario',
 				width : 150,
 				sortable : true,
@@ -305,7 +305,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Ação',
+				display : 'Aï¿½ï¿½o',
 				name : 'acao',
 				width : 30,
 				sortable : true,
@@ -363,7 +363,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Usuário',
+				display : 'Usuï¿½rio',
 				name : 'nomeUsuario',
 				width : 80,
 				sortable : true,
@@ -381,7 +381,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Ação',
+				display : 'Aï¿½ï¿½o',
 				name : 'acao',
 				width : 25,
 				sortable : true,
@@ -491,7 +491,7 @@ var regiaoController = $.extend(true, {
 		
 	},
 
-	// PREPROCESS REGIÃO AUTOMÁTICA - SEGMENTO
+	// PREPROCESS REGIï¿½O AUTOMï¿½TICA - SEGMENTO
 	
 	executarPreProcessSegmentosGrid : function (resultado){
 		if (resultado.mensagens) {
@@ -517,9 +517,9 @@ var regiaoController = $.extend(true, {
 	
 	
 
-	//	FUNCTIONS - REGIÃO
+	//	FUNCTIONS - REGIï¿½O
 
-	// FUNCTIONS - Manutenção Região
+	// FUNCTIONS - Manutenï¿½ï¿½o Regiï¿½o
 
 	manutencaoRegiao : function() {
 		
@@ -598,7 +598,7 @@ var regiaoController = $.extend(true, {
 	// FUNCTION - EDITAR REGIAO
 	
 	
-//	editarRegiao - ESTÁ EM DESUSO!!!
+//	editarRegiao - ESTï¿½ EM DESUSO!!!
 	
 	
 	editarRegiao : function(){
@@ -665,7 +665,7 @@ var regiaoController = $.extend(true, {
 	},
 	
 	
-	// FUNCTION - CARREGAR COMBO REGIÃO
+	// FUNCTION - CARREGAR COMBO REGIï¿½O
 	
 	cotasDaRegiao : function(){
 		var regiao = $("#comboRegioes option:selected").val();
@@ -741,7 +741,7 @@ var regiaoController = $.extend(true, {
 	
 
 	
-	// FUNCTION - EXCLUIR REGIÃO
+	// FUNCTION - EXCLUIR REGIï¿½O
 	
 	
 	excluirRegiao : function(id) {
@@ -796,7 +796,7 @@ var regiaoController = $.extend(true, {
 	},
 	
 	
-// FUNCTION - REGIAO AUTOMÁTICA - Dialog Principal
+// FUNCTION - REGIAO AUTOMï¿½TICA - Dialog Principal
 	
 	regiaoAutomatica : function() {
 		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -821,7 +821,7 @@ var regiaoController = $.extend(true, {
 
 	
 	
-	// FUNCTION - REGIÃO AUTOMÁTICA - GRID PRINCIPAL
+	// FUNCTION - REGIï¿½O AUTOMï¿½TICA - GRID PRINCIPAL
 	
 	addCotas : function() {
 		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -924,7 +924,7 @@ var regiaoController = $.extend(true, {
 
 	
 	
-	//FUNCTIONS ADD REGIÃO AUTOMÁTICA  
+	//FUNCTIONS ADD REGIï¿½O AUTOMï¿½TICA  
 	
 	
 	// FUNCTION - ADD EM LOTE
@@ -989,7 +989,7 @@ var regiaoController = $.extend(true, {
 							cotas.push({name:'cotas', value:this.value});
 					});
 
-					// adicionando a região
+					// adicionando a regiï¿½o
 					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
 					
 					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
@@ -1019,7 +1019,7 @@ var regiaoController = $.extend(true, {
 //	},
 	
 	
-	// FUNCTION - VERIFICA SE A REGIÃO É FIXA 	
+	// FUNCTION - VERIFICA SE A REGIï¿½O ï¿½ FIXA 	
 	
 	isFixa : function(campo) {
 		
@@ -1035,7 +1035,7 @@ var regiaoController = $.extend(true, {
 
 	
 	
-	// FILTROS REGIÃO AUTOMÁTICA
+	// FILTROS REGIï¿½O AUTOMï¿½TICA
 	
 	// FUNCTION - FILTRO POR CEP
 	
@@ -1073,7 +1073,7 @@ var regiaoController = $.extend(true, {
 
 	
 	
-	// REGIÃO AUTOMÁTICA GRID'S
+	// REGIï¿½O AUTOMï¿½TICA GRID'S
 	
 	
 	// FUNCTION - MOSTRAR POR CEP
@@ -1233,7 +1233,7 @@ var regiaoController = $.extend(true, {
 	 */
 	
 	
-	// FUNCTION - ADD COTAS NA REGIÃO [botão add Cotas]
+	// FUNCTION - ADD COTAS NA REGIï¿½O [botï¿½o add Cotas]
 	
 	popupAddCotaRegiao : function(evitarReset) {
 		
@@ -1249,7 +1249,7 @@ var regiaoController = $.extend(true, {
 			modal: true,
 			buttons: {
 
-				// CONFIRMAR ADIÇÃO DE COTA NA REGIAO
+				// CONFIRMAR ADIï¿½ï¿½O DE COTA NA REGIAO
 				
 				"Confirmar": function() {
 					$(this).dialog("close");
@@ -1489,7 +1489,7 @@ var regiaoController = $.extend(true, {
 			var cotaJaExiste = $("#idLinhaCota" + num , regiaoController.workspace).length>0;
 			
 			if( cotaJaExiste ) {				
-				exibirMensagemDialog("WARNING",["Cota já foi selecionada."]);
+				exibirMensagemDialog("WARNING",["Cota jï¿½ foi selecionada."]);
 				$('#idNumCota' + atual , regiaoController.workspace).val('');
 				$('#idNomeCota' + atual , regiaoController.workspace).val('');
 			}

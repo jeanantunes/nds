@@ -435,12 +435,12 @@ $(function(){
 			
 			<fieldset class="classFieldset">
 				<legend> Pesquisar Região</legend>
-				<table width="950" border="0" cellpadding="2" cellspacing="1"class="filtro">
+				<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 					<tr>
 						<td width="48">Região:</td>
 						<td width="752">
 							<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
-									onchange="$('.grids').toggle(); regiaoController.cotasDaRegiao()">
+									onchange="$('.grids').toggle(); regiaoController.carregarMotivo()">
 									<option selected="selected">Selecione...</option>
 									<c:forEach items="${listaRegiao}" var="regiao">
 										<option value="${regiao.key}">${regiao.value}</option>

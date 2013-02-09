@@ -42,8 +42,6 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/distribuicao/regiao")
 public class RegiaoController extends BaseController {
-	
-	
 	private Result result;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroCotasRegiao";

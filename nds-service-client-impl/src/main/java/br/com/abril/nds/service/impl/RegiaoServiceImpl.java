@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.RegiaoCotaDTO;
@@ -17,7 +18,7 @@ import br.com.abril.nds.repository.RegiaoRepository;
 import br.com.abril.nds.repository.RegistroCotaRegiaoRepository;
 import br.com.abril.nds.service.RegiaoService;
 
-
+@Service
 public class RegiaoServiceImpl implements RegiaoService  {
 	
 	@Autowired
