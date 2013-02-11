@@ -24,8 +24,8 @@ public class DefinicaoBases extends ProcessoAbstrato {
 
     private PreparaEstudoService estudoService = new PreparaEstudoService();
 
-    public DefinicaoBases() {
-	super(new Estudo());
+    public DefinicaoBases(Estudo estudo) {
+	super(estudo);
     }
 
     @Override
