@@ -1,5 +1,10 @@
 package br.com.abril.nds.process.correcaovendas;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -14,8 +19,17 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class VendaCrescente extends ProcessoAbstrato {
 
+    private List<ProdutoEdicao> listProdutoEdicaoFechada;
+
+    public VendaCrescente(Estudo estudo,
+	    List<ProdutoEdicao> listProdutoEdicaoFechada) {
+	super(estudo);
+	this.listProdutoEdicaoFechada = listProdutoEdicaoFechada;
+    }
+
     @Override
     protected void executarProcesso() {
+	BigDecimal indiceVendaCrescente = BigDecimal.ZERO;
     }
 
 }

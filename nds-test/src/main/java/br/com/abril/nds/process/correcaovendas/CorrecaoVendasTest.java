@@ -1,21 +1,22 @@
-package br.com.abril.nds.process;
+package br.com.abril.nds.process.correcaovendas;
 
 import java.util.Iterator;
+
 
 import org.testng.annotations.Test;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
-
+import static org.junit.Assert.*;
 public class CorrecaoVendasTest {
 
     @Test
-    public void main() {
+    public void executarProcesso() {
 
 	try {
-	    CorrecaoVendas correcaoVendas = new CorrecaoVendas();
+	    
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(new Estudo());
 
 	    correcaoVendas.executar();
 	    /*
@@ -52,7 +53,7 @@ public class CorrecaoVendasTest {
 		}
 	    }
 	} catch (Exception e) {
-	    // TODO Auto-generated catch block
+	    //fail(e.getMessage());
 	    e.printStackTrace();
 	}
 

@@ -17,8 +17,7 @@
   	<dependency>
   		<groupId>br.com.abril</groupId>
   		<artifactId>nds-estudo-algoritmo</artifactId>
-  		<version>1.0</version>
-  		<scope>provided</scope>
+  		<version>1.0.0</version>
   	</dependency>
   </dependencies>
   <packaging>pom</packaging>
