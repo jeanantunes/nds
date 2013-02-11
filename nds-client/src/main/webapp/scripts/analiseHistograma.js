@@ -157,8 +157,8 @@ var anaLiseHistogramaController = $.extend(true, {
 					value.cell.faixaVenda="<a href=\"javascript:alert('todo: [EMS 2028]');\">"+value.cell.faixaVenda+"</a>";
 				});
 				
-				var idArray=["cotasAtivasCell","repartTotalCell","repMedioCell","vdaMedioCell","cotasEsmagadasCell","vdaTotalCell","vendaEsmagadasCell","encalheMedioCell","cotasProdutoCell"];
-				var valueArray=["qtdeCotasAtivas","repTotal","repMedio","vdaMedio","cotasEsmagadas","vdaTotal","vendaEsmagadas","encalheMedio","qtdeCotas"];
+				var idArray=["cotasAtivasCell","repartTotalCell","repMedioCell","vdaMedioCell","cotasEsmagadasCell","vdaTotalCell","vendaEsmagadasCell","encalheMedioCell","cotasProdutoCell","reparteDistribuidoCell"];
+				var valueArray=["qtdeCotasAtivas","repTotal","repMedio","vdaMedio","cotasEsmagadas","vdaTotal","vendaEsmagadas","encalheMedio","qtdeCotas","reparteDistribuido"];
 				
 				for ( var i = 0; i < idArray.length; i++) {
 					$("#"+idArray[i]).text($(data.rows).last()[0].cell[valueArray[i]]);
@@ -168,13 +168,27 @@ var anaLiseHistogramaController = $.extend(true, {
 				var repTotal = parseInt($(data.rows).last()[0].cell.repTotal);
 				
 				var qtdeCotas = parseInt($(data.rows).last()[0].cell.qtdeCotas);
+				//cotas ativas da faixa de venda
 				var qtdeCotasAtivas = parseInt($(data.rows).last()[0].cell.qtdeCotasAtivas);
+				//total de cotas ativas 
+				var qtdeTotalCotasAtivas = parseInt($(data.rows).last()[0].cell.qtdeTotalCotasAtivas);
+				var qtdeCotasSemVenda = parseInt($(data.rows).last()[0].cell.qtdeCotasSemVenda);
+				
 				$("#eficienciaDeVendaCell").text((vdaTotal/repTotal*100)+"%");
 				
 				
-				var r = parseFloat(Math.round( (qtdeCotas/qtdeCotasAtivas)*100 )).toFixed(2);
+				var r = parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2);
 				console.log(r);
 				$("#abrangenciaDistribuicaoCell").text(r+"%");
+				/*
+				console.log("qtdeCotas::"+qtdeCotas);
+				console.log("qtdeCotasSemVenda::"+qtdeCotasSemVenda);
+				console.log("qtdeTotalCotasAtivas::"+qtdeTotalCotasAtivas);
+				console.log("qtdeCotas-qtdeCotasSemVenda/qtdeTotalCotasAtivas*100::"+(qtdeCotas-qtdeCotasSemVenda/qtdeTotalCotasAtivas*100));
+				*/
+				r = parseFloat(Math.round( (qtdeCotas-qtdeCotasSemVenda)/qtdeTotalCotasAtivas*100 )).toFixed(2);
+				console.log(r);
+				$("#abrangenciaVendaCell").text(r+"%");
 				
 				
 				return data;
@@ -256,7 +270,7 @@ var anaLiseHistogramaController = $.extend(true, {
 			sortorder : "asc",
 			showTableToggleBtn : true,
 			width : 960,
-			height : 150
+			height : 180
 		});
 		
 	},

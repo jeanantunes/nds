@@ -1,10 +1,16 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.io.Serializable;
+
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class FiltroHistogramaVendas extends FiltroDTO {
+public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 94932782630094290L;
 	private String filtroPor;
 	private String inserirComponentes;
 	private String componente;

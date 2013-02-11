@@ -95,11 +95,11 @@
   </legend>
   <table width="950" border="0" cellpadding="2" cellspacing="1">
     <tr>
-            <td width="20"><input name="filtroPor" type="radio" id="radio" value="1" checked="checked" onclick="filtroTodas();" /></td>
+            <td width="20"><input name="filtroPor" type="radio" id="radio" value="" checked="checked" onclick="filtroTodas();" /></td>
             <td width="103"><label for="radio"><strong>Todas as Cotas</strong></label></td>
-            <td width="20"><input type="radio" name="filtroPor" id="radio3" value="2" onclick="filtroSede();" /></td>
+            <td width="20"><input type="radio" name="filtroPor" id="radio3" value="0" onclick="filtroSede();" /></td>
             <td width="70"><label for="radio3"><strong>Praça Sede</strong></label></td>
-            <td width="20"><input type="radio" name="filtroPor" id="radio4" value="3" onclick="filtroAtendida();"  /></td>
+            <td width="20"><input type="radio" name="filtroPor" id="radio4" value="2" onclick="filtroAtendida();"  /></td>
             <td width="98"><label for="radio4"><strong>Praça Atendida</strong></label></td>
             <td width="20"><input id="inserirComponentes" name="inserirComponentes" type="checkbox" value="checked" onclick="$('.filtroComponentes').toggle();" /></td>
             <td width="558"><table width="552" border="0" cellpadding="2" cellspacing="1">
@@ -149,7 +149,7 @@
         <table class="edicaoProdCadastradosGrid" id="edicaoProdCadastradosGrid"></table>
         <span class="bt_novos" title="Analisar"><a href="javascript:histogramaVendasController.realizarAnalise();"><img src="images/ico_copia_distrib.gif" hspace="5" border="0" />Analisar</a></span>
         
-        <span class="bt_novos" title="Cancelar"><a href="javascript:;"><img src="images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a></span>
+        <span class="bt_novos" title="Cancelar"><a href="javascript:;" onclick="$('.ui-tabs-selected').children('.ui-icon-close').click();"><img src="images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a></span>
      </fieldset>
       
 

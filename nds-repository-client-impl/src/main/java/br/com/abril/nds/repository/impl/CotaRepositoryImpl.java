@@ -1288,7 +1288,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			query.setParameter("situacao", situacaoCadastro);
 		}
 		
-		return (Long) query.uniqueResult();
+		Object uniqueResult = query.uniqueResult();
+		return (Long) uniqueResult;
 	}
 	
 	@Override

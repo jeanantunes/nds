@@ -100,9 +100,9 @@
     <td style="border-bottom:1px solid #ccc;">Cotas Produto:</td>
     <td style="border-bottom:1px solid #ccc;" id="cotasProdutoCell"> </td>
     <td style="border-bottom:1px solid #ccc;">Reparte Distribuido:</td>
-    <td style="border-bottom:1px solid #ccc;"> </td>
+    <td style="border-bottom:1px solid #ccc;" id="reparteDistribuidoCell"> </td>
     <td width="130" style="border-bottom:1px solid #ccc;">Abrangência Venda:</td>
-    <td width="45" style="border-bottom:1px solid #ccc;"> </td>
+    <td width="45" style="border-bottom:1px solid #ccc;" id="abrangenciaVendaCell"> </td>
     </tr>
   <tr>
     <td style="border-bottom:1px solid #ccc;">Cotas Esmagadas:</td>

@@ -53,6 +53,9 @@ public class AnaliseHistogramaDTO implements Serializable {
 	
 	private BigDecimal qtdeCotasSemVenda=BigDecimal.ZERO;
 	
+	private BigDecimal reparteDistribuido=BigDecimal.ZERO;
+	
+	private Long qtdeTotalCotasAtivas=0l;
 	
 	public String getFaixaVenda() {
 		return faixaVenda;
@@ -141,6 +144,14 @@ public class AnaliseHistogramaDTO implements Serializable {
 	public void setQtdeCotasSemVenda(BigDecimal qtdeCotasSemVenda) {
 		this.qtdeCotasSemVenda = qtdeCotasSemVenda;
 	}
+	
+	public Long getQtdeTotalCotasAtivas() {
+		return qtdeTotalCotasAtivas;
+	}
+	public void setQtdeTotalCotasAtivas(Long qtdeTotalCotasAtivas) {
+		this.qtdeTotalCotasAtivas = qtdeTotalCotasAtivas;
+	}
+	
 	public void executeScaleValues(){
 		
 		repTotal = repTotal.setScale(2,BigDecimal.ROUND_FLOOR);
@@ -154,10 +165,17 @@ public class AnaliseHistogramaDTO implements Serializable {
 		cotasEsmagadas = cotasEsmagadas.setScale(2,BigDecimal.ROUND_FLOOR);
 		vendaEsmagadas = vendaEsmagadas.setScale(2,BigDecimal.ROUND_FLOOR);
 		qtdeCotasAtivas = qtdeCotasAtivas.setScale(2,BigDecimal.ROUND_FLOOR);
-		qtdeCotasSemVenda = qtdeCotasSemVenda.setScale(2,BigDecimal.ROUND_FLOOR);
-//			bd = bd.setScale(2,BigDecimal.ROUND_FLOOR);
+		reparteDistribuido = reparteDistribuido.setScale(2,BigDecimal.ROUND_FLOOR);
+		
+	}
+	public BigDecimal getReparteDistribuido() {
+		return reparteDistribuido;
+	}
+	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
+		this.reparteDistribuido = reparteDistribuido;
 	}
 	
+
 	
 }
 
