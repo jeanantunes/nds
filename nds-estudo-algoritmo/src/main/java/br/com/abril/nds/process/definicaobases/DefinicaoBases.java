@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -37,11 +38,21 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	List<Cota> cotas = super.estudo.getCotas();
 	List<ProdutoEdicao> edicoesBase = new ArrayList<>();
 	for (Cota cota : cotas) {
+	    List<EstoqueProdutoCota> estoqueProdutoCotas = cota.getEstoqueProdutoCotas();
+	    if(estoqueProdutoCotas != null) {
+		for (EstoqueProdutoCota estoqueProdutoCota : estoqueProdutoCotas) {
+		    edicoesBase.add(estoqueProdutoCota.getProdutoEdicao());
+		    cota.getEdicoesRecebidas().add(estoqueProdutoCota.getProdutoEdicao());
+		}
+	    }
+	    
 	    List<ProdutoEdicao> edicoesRecebidas = cota.getEdicoesRecebidas();
-	    for (ProdutoEdicao produtoEdicao : edicoesRecebidas) {
-		//TODO implementar logica para separar as edições de base
-		if(produtoEdicao.isEdicaoAberta()) {
-		    edicoesBase.add(produtoEdicao);
+	    if(edicoesRecebidas != null) {
+		for (ProdutoEdicao produtoEdicao : edicoesRecebidas) {
+		    //TODO implementar logica para separar as edições de base
+		    if(produtoEdicao.isEdicaoAberta()) {
+			edicoesBase.add(produtoEdicao);
+		    }
 		}
 	    }
 	}
