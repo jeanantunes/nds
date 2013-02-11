@@ -1,6 +1,9 @@
 package br.com.abril.nds.process.correcaovendas;
 
-import br.com.abril.nds.model.Estudo;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -15,13 +18,72 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class CorrecaoIndividual extends ProcessoAbstrato {
 
-    public CorrecaoIndividual(Estudo estudo) {
-	super(estudo);
+    public CorrecaoIndividual(EstoqueProdutoCota estoqueProdutoCota) {
+	super(estoqueProdutoCota);
     }
 
+    /**
+     * Sub Processo: Correção Individual
+     * 
+     * Aplicar para cada edição-base, cota a cota
+     * 
+     * %Venda = Venda / Reparte ÍndiceCorreção = 1
+     * 
+     * Se %Venda = 1 ÍndiceCorreção = 1,2 Senão Se %Venda >= 0,9 ÍndiceCorreção
+     * = 1,1 Endif Endif
+     * 
+     * VendaCorrigida = Venda * ÍndiceCorreção Gravar VendaCorrig para cada
+     * edição-base de cada cota.
+     */
     @Override
-    protected void executarProcesso() {
-	System.out.println("CorrecaoIndividual : " + this.getEstudo());
+    protected void executarProcesso() throws Exception {
+
+	EstoqueProdutoCota estoqueProdutoCota = (EstoqueProdutoCota) super.genericDTO;
+
+	BigDecimal indiceCorrecao = BigDecimal.ONE;
+
+	BigDecimal totalReparte = BigDecimal.ZERO;
+	BigDecimal totalVenda = BigDecimal.ZERO;
+
+	BigInteger quantidadeRecebida = estoqueProdutoCota
+		.getQuantidadeRecebida().toBigInteger();
+	BigInteger quantidadeDevolvida = estoqueProdutoCota
+		.getQuantidadeDevolvida().toBigInteger();
+
+	totalReparte = totalReparte.add(new BigDecimal(quantidadeRecebida));
+
+	BigInteger vendaEdicao = quantidadeRecebida
+		.subtract(quantidadeDevolvida);
+
+	totalVenda = totalVenda.add(new BigDecimal(vendaEdicao));
+
+	if (totalVenda.compareTo(BigDecimal.ZERO) != 0) {
+
+	    BigDecimal percentualVenda = totalVenda.divide(totalReparte, 1,
+		    BigDecimal.ROUND_FLOOR);
+
+	    BigDecimal oneCompare = BigDecimal.ONE;
+	    oneCompare = oneCompare.divide(new BigDecimal(1), 1,
+		    BigDecimal.ROUND_FLOOR);
+
+	    if (percentualVenda.compareTo(oneCompare) == 0) {
+		indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.2));
+	    } else {
+
+		BigDecimal decimalCompare = new BigDecimal(0.9);
+		decimalCompare = decimalCompare.divide(new BigDecimal(1), 1,
+			BigDecimal.ROUND_FLOOR);
+
+		if (percentualVenda.compareTo(decimalCompare) >= 0) {
+		    indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.1));
+		}
+	    }
+	}
+
+	indiceCorrecao = indiceCorrecao.divide(new BigDecimal(1), 1,
+		BigDecimal.ROUND_FLOOR);
+
+	estoqueProdutoCota.setIndiceCorrecao(indiceCorrecao);
     }
 
 }

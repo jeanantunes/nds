@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="NDS-EstudoAlgoritmoSuite" parallel="false">
+	<suite-files>
+		<suite-file path="./correcao-vendas.xml" />
+	</suite-files> <!-- Suite-Files -->
+</suite> <!-- Suite -->

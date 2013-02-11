@@ -3,6 +3,7 @@ package br.com.abril.nds.process.ajustereparte;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
@@ -23,6 +24,9 @@ public class AjusteReparte extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() {
+	
+	Estudo estudo = (Estudo) super.genericDTO;
+	
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	for (Cota cota : estudo.getParametro().getCotas()) {
     		if (cota.getVendaMediaMaisN().longValue() > 0) {

@@ -18,35 +18,39 @@ import br.com.abril.nds.process.definicaobases.DefinicaoBases;
  * </p>
  */
 public class CalcularReparte extends ProcessoAbstrato {
+    
+    public CalcularReparte() {
+	super(new Estudo());
+    }
 
     @Override
     public void executarProcesso() throws Exception {
 
 	// TODO Popular o estudo - Criar Logica para chamar subProcesso
 	// FIXME Retirar esse trecho
-	super.estudo = new Estudo();
-	super.estudo.setCotas(new CotaDAO().getCotas());
+	Estudo estudo = (Estudo) super.genericDTO;
+	estudo.setCotas(new CotaDAO().getCotas());
 
-	MinimoMaximo minimoMaximo = new MinimoMaximo(super.estudo);
+	MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
 	minimoMaximo.executar();
 
 	GravarReparteJuramentado gravarReparteJuramentado = new GravarReparteJuramentado(
-		minimoMaximo.getEstudo());
+		(Estudo) minimoMaximo.getGenericDTO());
 	gravarReparteJuramentado.executar();
 
 	AjusteFinalReparte ajusteFinalReparte = new AjusteFinalReparte(
-		gravarReparteJuramentado.getEstudo());
+		(Estudo) gravarReparteJuramentado.getGenericDTO());
 	ajusteFinalReparte.executar();
 
 	ReparteComplementarPorCota reparteComplementarPorCota = new ReparteComplementarPorCota(
-		ajusteFinalReparte.getEstudo());
+		(Estudo) ajusteFinalReparte.getGenericDTO());
 	reparteComplementarPorCota.executar();
 
 	GravarReparteFinalCota gravarReparteFinalCota = new GravarReparteFinalCota(
-		reparteComplementarPorCota.getEstudo());
+		(Estudo) reparteComplementarPorCota.getGenericDTO());
 	gravarReparteFinalCota.executar();
 
-	super.estudo = gravarReparteFinalCota.getEstudo();
+	super.genericDTO = gravarReparteFinalCota.getGenericDTO();
     }
 
 }

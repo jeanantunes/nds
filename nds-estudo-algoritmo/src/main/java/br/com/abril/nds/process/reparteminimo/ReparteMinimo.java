@@ -3,6 +3,7 @@ package br.com.abril.nds.process.reparteminimo;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
@@ -23,6 +24,9 @@ public class ReparteMinimo extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() throws Exception {
+	
+	Estudo estudo = (Estudo) super.genericDTO;
+	
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	if (estudo.getParametro().isDistribuicaoPorMultiplos()) {
     		BigDecimal somatoriaReparteMinimo = new BigDecimal(0);
@@ -45,5 +49,7 @@ public class ReparteMinimo extends ProcessoAbstrato {
     			// implementada.
     		}
     	}
+    	
+    	super.genericDTO = estudo;
     }
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Iterator;
 
 import br.com.abril.nds.dao.EstoqueProdutoCotaDAO;
@@ -16,9 +17,7 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * <p style="white-space: pre-wrap;">
  * SubProcessos: - N/A Processo Pai: - {@link CorrecaoVendas}
  * 
- * Processo Anterior: {@link CorrecaoIndividual} Próximo Processo:
- * {@link VendaCrescente}
- * </p>
+ * Processo Anterior: {@link CorrecaoIndividual} Próximo Processo: {@link VendaCrescente} </p>
  */
 public class CorrecaoTendencia extends ProcessoAbstrato {
 
@@ -26,10 +25,26 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 	super(estudo);
     }
 
-    
+    /**
+     * <h2>Sub Processo: Correção de Tendência</h2>
+     * <p>
+     * <b>Aplicar para cada cota</b>
+     * </p>
+     * <p>%Venda = TOTAL REP por cota / TOTAL VDA por cota</p>
+     * <p>ÍndiceCorrTendência = 1</p>
+     * <pre>Se %Venda = 1</pre>
+     * <pre><pre>ÍndiceCorrTendência = 1,2</pre></pre>
+     * <pre>Senão</pre>
+     * <pre><pre><pre>Se %Venda >= 0,9</pre></pre></pre>
+     * <pre><pre><pre><pre>ÍndiceCorrTendência = 1,1</pre></pre></pre></pre>
+     * <pre><pre><pre>Endif</pre></pre></pre>
+     * <pre>Endif</pre>
+     */
     @Override
-    protected void executarProcesso() {
-	Iterator<Cota> itCota = super.estudo.getCotas().iterator();
+    protected void executarProcesso() throws Exception {
+
+	Iterator<Cota> itCota = ((Estudo) super.genericDTO).getCotas()
+		.iterator();
 
 	while (itCota.hasNext()) {
 
@@ -44,19 +59,41 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 	    BigDecimal totalReparte = BigDecimal.ZERO;
 	    BigDecimal totalVenda = BigDecimal.ZERO;
 
-	    Iterator<EstoqueProdutoCota> itEdicaobase = cota
-		    .getEstoqueProdutoCotas().iterator();
-	    while (itEdicaobase.hasNext()) {
-		EstoqueProdutoCota estoqueProdutoCota = itEdicaobase.next();
-		totalReparte = totalReparte.add(estoqueProdutoCota
-			.getQuantidadeDevolvida());
-		totalVenda = totalVenda.add(estoqueProdutoCota
-			.getQuantidadeRecebida());
+	    int iEdicaoBase = 0;
+
+	    while (iEdicaoBase < cota.getEstoqueProdutoCotas().size()) {
+
+		EstoqueProdutoCota estoqueProdutoCota = cota
+			.getEstoqueProdutoCotas().get(iEdicaoBase);
+
+		BigInteger quantidadeRecebida = estoqueProdutoCota
+			.getQuantidadeRecebida().toBigInteger();
+		BigInteger quantidadeDevolvida = estoqueProdutoCota
+			.getQuantidadeDevolvida().toBigInteger();
+
+		totalReparte = totalReparte.add(new BigDecimal(
+			quantidadeRecebida));
+
+		BigInteger vendaEdicao = quantidadeRecebida
+			.subtract(quantidadeDevolvida);
+
+		totalVenda = totalVenda.add(new BigDecimal(vendaEdicao));
+
+		CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(
+			estoqueProdutoCota);
+		correcaoIndividual.executar();
+
+		cota.getEstoqueProdutoCotas()
+			.set(iEdicaoBase,
+				(EstoqueProdutoCota) correcaoIndividual
+					.getGenericDTO());
+
+		iEdicaoBase++;
 	    }
 
-	    if (!totalVenda.equals(BigDecimal.ZERO)) {
+	    if (totalVenda.compareTo(BigDecimal.ZERO) != 0) {
 
-		BigDecimal percentualVenda = totalReparte.divide(totalVenda, 1,
+		BigDecimal percentualVenda = totalVenda.divide(totalReparte, 1,
 			BigDecimal.ROUND_FLOOR);
 
 		BigDecimal oneCompare = BigDecimal.ONE;
@@ -82,8 +119,8 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 	    indiceCorrecaoTendencia = indiceCorrecaoTendencia.divide(
 		    new BigDecimal(1), 1, BigDecimal.ROUND_FLOOR);
 
-	    System.out.println("indiceCorrecaoTendencia :: "
-		    + indiceCorrecaoTendencia);
+	    cota.setIndiceCorrecaoTendencia(indiceCorrecaoTendencia);
+
 	}
     }
 
