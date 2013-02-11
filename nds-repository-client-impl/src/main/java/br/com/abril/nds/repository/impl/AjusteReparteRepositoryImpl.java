@@ -7,7 +7,6 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AjusteReparteDTO;
-import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.model.distribuicao.AjusteReparte;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AjusteReparteRepository;
@@ -27,9 +26,11 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT ");
+		hql.append(" ajuste.id as idAjusteReparte, ");
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" cota.situacaoCadastro as status, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota, ");
+		hql.append(" pdv.nome as nomePDV, ");
 		hql.append(" ajuste.formaAjuste as formaAjuste, ");
 		hql.append(" ajuste.ajusteAplicado as ajusteAplicado, ");
 		hql.append(" ajuste.dataInicio as dataInicio, ");
@@ -40,6 +41,7 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		
 		hql.append(" FROM AjusteReparte AS ajuste ");
 		hql.append(" LEFT JOIN ajuste.cota as cota ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN ajuste.usuario  as usuario ");
 		
@@ -49,10 +51,48 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				AjusteReparteDTO.class));
 		
-		configurarPaginacao(dto, query);
+		if (dto != null){
+			configurarPaginacao(dto, query);
+		}
 		
 		return query.list();
 		
+	}
+	
+	@Override
+	public AjusteReparteDTO buscarPorIdAjuste(Long id) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		hql.append(" ajuste.id as idAjusteReparte, ");
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" cota.situacaoCadastro as status, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota, ");
+		hql.append(" pdv.nome as nomePDV, ");
+		hql.append(" ajuste.formaAjuste as formaAjuste, ");
+		hql.append(" ajuste.ajusteAplicado as ajusteAplicado, ");
+		hql.append(" ajuste.dataInicio as dataInicio, ");
+		hql.append(" ajuste.dataFim as dataFim, ");
+		hql.append(" ajuste.motivo as motivoAjuste, ");
+		hql.append(" usuario.nome as nomeUsuario, ");
+		hql.append(" ajuste.dataAlteracao as dataAlteracao ");
+		
+		hql.append(" FROM AjusteReparte AS ajuste ");
+		hql.append(" LEFT JOIN ajuste.cota as cota ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN ajuste.usuario  as usuario ");
+		hql.append(" WHERE ajuste.id = :ID_AJUSTE ");
+
+		Query query = super.getSession().createQuery(hql.toString());
+
+		query.setParameter("ID_AJUSTE", id);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				AjusteReparteDTO.class));
+		
+		return (AjusteReparteDTO) query.uniqueResult();
 	}
 	
 	private void configurarPaginacao(AjusteReparteDTO dto, Query query) {
@@ -71,6 +111,7 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
 	}
+
 	
 //	private void configurarPaginacao(AjusteReparteDTO ajuste, Query query) {
 //

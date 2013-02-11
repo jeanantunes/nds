@@ -8,4 +8,6 @@ import br.com.abril.nds.model.distribuicao.AjusteReparte;
 public interface AjusteReparteRepository extends Repository<AjusteReparte, Long> {
 
 	List<AjusteReparteDTO> buscarTodasCotas (AjusteReparteDTO dto);
+	
+	AjusteReparteDTO buscarPorIdAjuste (Long id);
 }

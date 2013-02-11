@@ -153,5 +153,4 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	public void setCotaId(Long cotaId) {
 		this.cotaId = cotaId;
 	}
-	
 }

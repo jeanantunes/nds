@@ -103,21 +103,31 @@ $(function(){
 				<tr>
 					<td width="20"></td>
 					<td width="102"><span class="vlrPerc" style="display: none;">
-							<input name="input2" type="text" style="width: 60px;" />
+							<input name="ajusteHistorico" type="text" style="width: 60px;" />
+							 <!--  id="AJUSTE_HISTORICO_input" --> 
+							 
 					</span></td>
 					
 					<td width="20"></td>
-					<td width="88"><input type="text" class="vdaMedia"
-						style="width: 60px; text-align: center; display: none;" value="1" /></td>
-					
+					<td width="88">
+					<span class="vdaMedia" style="display: none;">
+							<input name="ajusteVendaMedia" value="1" type="text" style="width: 60px;" /> 
+							<!-- 
+							id="AJUSTE_VENDA_MEDIA_input" 
+							 -->
+					</span>
+					</td>
 					<td width="20"></td>
 					<td width="125"></td>
 					<td width="20"></td>
 					
 					<td width="139">
-						<span class="encalheMaximo"
-							style="display: none;"> <input name="input2" type="text"
-								style="width: 30px; text-align: center;" /> %
+						<span class="encalheMaximo"	style="display: none;"> 
+							<input name="ajusteEcalheMaximo" type="text" style="width: 30px; text-align: center;" />  
+							<!--  
+							id="AJUSTE_ENCALHE_MAX_input" 
+							-->
+							
 						</span>
 					</td>
 				</tr>
@@ -264,14 +274,14 @@ $(function(){
 						</span> 
 						
 						<span class="bt_novos" title="Gerar Arquivo">
-							<a href="javascript:;">
+								<a href="${pageContext.request.contextPath}/distribuicao/ajusteReparte/exportar?fileType=XLS">
 								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 									Arquivo
 							</a>
 						</span> 
 						
 						<span class="bt_novos" title="Imprimir">
-							<a href="javascript:;">
+								<a href="${pageContext.request.contextPath}/distribuicao/ajusteReparte/exportar?fileType=PDF">
 								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 									Imprimir
 							</a>
@@ -336,17 +346,17 @@ $(function(){
 
 						<table class="segmentosBGrid"></table>
 						<span class="bt_novos" title="Gerar Arquivo">
-							<a href="javascript:;">
+								<a href="${pageContext.request.contextPath}/distribuicao/ajusteReparte/exportar?fileType=XLS">
 								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 									Arquivo
 								</a>
 						</span> 
 						
 						<span class="bt_novos" title="Imprimir">
-							<a href="javascript:;">
+								<a href="${pageContext.request.contextPath}/distribuicao/ajusteReparte/exportar?fileType=PDF">
 								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 									Imprimir
-							</a>
+								</a>
 						</span>
 
 						<span class="bt_novos" title="Confirmar" style="float: right;">

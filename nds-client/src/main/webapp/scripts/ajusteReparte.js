@@ -14,17 +14,21 @@ var ajusteReparteController = $.extend(true, {
 		buttonImage: contextPath + "/images/calendar.gif",
 		buttonImageOnly: true
 	});
+	
+	$("#ajusteHistorico").mask("9999");
 		
+/*
 	$(".lstSegmentosGrid").flexigrid({		
-		preProcess : ajusteReparteController.ghomma,
+		preProcess : ajusteReparteController.executarPreProcessSegmento,
 		dataType : 'json',
 		colModel : [ {
 			display : 'Segmento',
-			name : 'segmento',
+			name : 'descricao',
 			width : 285,
 			sortable : true,
 			align : 'left'
-		}, {
+		}, 
+		{
 			display : '',
 			name : 'valor',
 			width : 70,
@@ -34,8 +38,7 @@ var ajusteReparteController = $.extend(true, {
 		width : 400,
 		height : 200
 	});
-	
-	
+	*/
 	$(".cotasAjusteGrid").flexigrid({
 		preProcess : ajusteReparteController.executarPreProcessCotasAjuste,
 		dataType : 'json',
@@ -131,8 +134,8 @@ var ajusteReparteController = $.extend(true, {
 	},
 	
 	
-	// PREPROCESS
-	
+	// PREPROCESS	
+
 	// Preprocess do faixaGrid
 	executarPreProcessCotasAjuste : function(resultado){
 		
@@ -142,7 +145,35 @@ var ajusteReparteController = $.extend(true, {
 					resultado.mensagens.listaMensagens
 			);
 			
-			$(".grids", ajusteReparteController.workspace).hide();
+			return resultado;
+		}
+
+		$.each(resultado.rows, function(index, row) {
+			
+			var editar = '<a href="javascript:;" onclick="ajusteReparteController.editarAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +
+							   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
+							   '</a>';
+			var excluir = '<a href="javascript:;" onclick="ajusteReparteController.excluirAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +
+		   	 			'<img title="Lançamentos da Edição" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
+		   	 			'</a>';
+			
+			row.cell.acao = editar + excluir;
+		});
+		
+		$(".grids", ajusteReparteController.workspace).show();
+		
+		return resultado;
+	},
+
+	/*
+	// Preprocess do Segmento
+	executarPreProcessSegmento : function(resultado){
+		
+		if (resultado.mensagens) {
+			exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+			);
 			
 			return resultado;
 		}
@@ -151,11 +182,12 @@ var ajusteReparteController = $.extend(true, {
 		
 		return resultado;
 	},
-	
+
+	*/
 
 	//FUNCTIONS
-	// FUNCTION NOVO AJUSTE
 	
+	// FUNCTION NOVO AJUSTE	
 	incluirAjuste : function() {
 
 		$("#dialog-novo").dialog({
@@ -170,6 +202,8 @@ var ajusteReparteController = $.extend(true, {
 					var data = ajusteReparteController.getDados();				
 					
 					$.postJSON(contextPath + "/distribuicao/ajusteReparte/novoAjuste", data);
+					
+					$(".cotasAjusteGrid").flexReload();
 				},
 				"Cancelar": function() {
 					$(this).dialog( "close" );
@@ -212,15 +246,28 @@ var ajusteReparteController = $.extend(true, {
 			  
 		 },
 		 
-//		 Pegar Valor Radio
+//	Pegar Valor Radio
 		 
 	getRadio : function (){
 		var valRadio = $('input:radio[name=formaAjuste]:checked').val();
 		return valRadio;
 	},
 	
-	editarAjuste : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	/*
+	 * 
+	getAjusteAplicado : function (){
+		var valElemento = $("#" + ajusteReparteController.getRadio()+"_input").val();
+		return valElemento;
+	},
+	 */
+	
+	editarAjuste : function(idAjusteReparte) {
+		
+		$.postJSON(contextPath + "/distribuicao/ajusteReparte/buscarAjustePorId", 
+				{id:idAjusteReparte},
+				function(result){
+					ajusteReparteController.popularPopUpEditar(result);						
+		});
 
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
@@ -230,13 +277,23 @@ var ajusteReparteController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
 			}
 		});
+	},
+
+// Function para popular o popUp de editar
+	
+	popularPopUpEditar : function(result){
+		$("#numeroCota").val(result.numeroCota).disable();
+		$("#nomeCota").val(result.nomeCota).disable();
+		//$("#formaAjuste").val(getRadio());
+		//$("#motivoAjuste").val(motivoAjuste);
+		//$("#dataInicio").val(dataInicioCadastro);
+		//$("#dataFim").val(dataFimCadastro);
 	},
 	
 	
@@ -252,10 +309,14 @@ var ajusteReparteController = $.extend(true, {
 		
 	},
 	
-	
 	mostrarSegmentos : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-
+		
+		$(".lstSegmentosGrid", this.workspace).flexOptions({
+			url: contextPath + "/distribuicao/ajusteReparte/carregarSegmento",
+			dataType : 'json'
+		});
+		$(".lstSegmentosGrid", this.workspace).flexReload();
+		
 		$( "#dialog-segmentos" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -273,8 +334,7 @@ var ajusteReparteController = $.extend(true, {
 		});
 	},
 	
-	excluirAjuste : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	excluirAjuste : function(idAjusteReparte) {
 
 		$( "#dialog-excluir" ).dialog({
 			resizable: false,
@@ -283,9 +343,23 @@ var ajusteReparteController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );
 					
-					$("#effect").show("highlight", {}, 1000, callback);
+					$.postJSON(contextPath + "/distribuicao/ajusteReparte/excluirAjuste", 
+							{id:idAjusteReparte},
+							function(result) {
+									var tipoMensagem = result.tipoMensagem;
+									var listaMensagens = result.listaMensagens;
+									
+									if (tipoMensagem && listaMensagens) {
+										exibirMensagem(tipoMensagem, listaMensagens);
+									}
+					                 
+					                 $(".cotasAjusteGrid").flexReload();
+							   },
+							   null,
+							   true
+					);
+					$("#dialog-excluir").dialog("close");
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
