@@ -17,9 +17,13 @@ public class Estudo extends GenericDTO<Estudo> {
     private List<ProdutoEdicao> edicoesBaseInsercaoManual;
     private List<Cota> cotas;
     private Parametro parametro; // parâmetros a serem carregados durante o estudo
+    private boolean distribuicaoPorMultiplos;
+    private Integer pacotePadrao; // Parâmetro definido na tela de distribuição (Configuração atrelada à Distribuição Por Múltiplo)
     private BigDecimal somatoriaVendaMedia; // Soma da Venda Média de todas as cotas (exceto as marcadas com 'FX', 'PR' e 'RD')
-    // TODO: verificar se essa somatória é do estudo total ou somente da cota (Processo: Reparte Proporcional)
+    // TODO: Verificar se essa somatória é do estudo total ou somente da cota (Processo: Reparte Proporcional)
     private BigDecimal somatoriaReparteEdicoesAbertas; // Soma de Reparte de todas as edições abertas
+    // TODO: Checar após a EMS 2027 estar pronta, onde deveremos consultar esse parâmetro
+    private boolean complementarAutomatico; // Variável que define se o estudo irá executar o processo Complementar Automático
 
     public void calculate() {
 	somatoriaVendaMedia = new BigDecimal(0);
@@ -80,10 +84,13 @@ public class Estudo extends GenericDTO<Estudo> {
 	return "\nEstudo{\n\t" + "id: " + id + ", \n\treparteCalculado: "
 		+ reparteDistribuir + "\n}";
     }
-
-    public BigDecimal getSomatoriaVendaMedia() {
-	return somatoriaVendaMedia;
-    }
+	/**
+	 * Soma da Venda Média de todas as cotas (exceto as marcadas com 'FX', 'PR' e 'RD')
+	 * @return {@link BigDecimal}
+	 */
+	public BigDecimal getSomatoriaVendaMedia() {
+		return somatoriaVendaMedia;
+	}
 
     public void setSomatoriaVendaMediaFinal(BigDecimal somatoriaVendaMedia) {
 	this.somatoriaVendaMedia = somatoriaVendaMedia;
@@ -101,8 +108,37 @@ public class Estudo extends GenericDTO<Estudo> {
 	return somatoriaReparteEdicoesAbertas;
     }
 
-    public void setSomatoriaReparteEdicoesAbertas(
-	    BigDecimal somatoriaReparteEdicoesAbertas) {
-	this.somatoriaReparteEdicoesAbertas = somatoriaReparteEdicoesAbertas;
-    }
+	public void setSomatoriaReparteEdicoesAbertas(BigDecimal somatoriaReparteEdicoesAbertas) {
+		this.somatoriaReparteEdicoesAbertas = somatoriaReparteEdicoesAbertas;
+	}
+
+	public boolean isComplementarAutomatico() {
+		return complementarAutomatico;
+	}
+
+	public void setComplementarAutomatico(boolean complementarAutomatico) {
+		this.complementarAutomatico = complementarAutomatico;
+	}
+	/**
+	 * Retorna verdadeiro se o método de distribuição utilizar múltiplos (semelhante ao conceito de Pacote Padrão). 
+	 * @return boolean
+	 */
+	public boolean isDistribuicaoPorMultiplos() {
+		return distribuicaoPorMultiplos;
+	}
+
+	public void setDistribuicaoPorMultiplos(boolean distribuicaoPorMultiplos) {
+		this.distribuicaoPorMultiplos = distribuicaoPorMultiplos;
+	}
+	/**
+	 * Retorna o pacote padrão definido para a distribuição por múltiplos na configuração de distribuição do estudo.
+	 * @return {@link Integer}
+	 */
+	public Integer getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(Integer pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
 }

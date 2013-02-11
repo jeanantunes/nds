@@ -13,6 +13,7 @@ public class ProdutoEdicao {
 	private boolean parcial;
 	private Integer pacotePadrao;
 	private boolean edicaoAberta;
+	private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
 
 	public Long getId() {
 		return id;
@@ -84,5 +85,13 @@ public class ProdutoEdicao {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public boolean isColecao() {
+		return colecao;
+	}
+
+	public void setColecao(boolean colecao) {
+		this.colecao = colecao;
 	}
 }

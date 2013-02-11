@@ -1,31 +1,36 @@
 package br.com.abril.nds.process;
 
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.GenericDTO;
 
 public abstract class ProcessoAbstrato {
 
-    protected GenericDTO<?> genericDTO;
+	protected GenericDTO<?> genericDTO;
 
-    protected ProcessoAbstrato() {
+	protected ProcessoAbstrato() {
 
-    }
+	}
 
-    protected ProcessoAbstrato(GenericDTO<?> genericDTO) {
-	this.genericDTO = genericDTO;
-    }
+	protected ProcessoAbstrato(GenericDTO<?> genericDTO) {
+		this.genericDTO = genericDTO;
+	}
 
-    /**
-     * Método utilizado apenas para dar sequencia no fluxo de execução do
-     * processo. Função semelhante a do método main. Implementa-lo para chamar o
-     * método calcular() do processo e eventuais subprocessos.
-     */
-    protected abstract void executarProcesso() throws Exception;
+	/**
+	 * Método utilizado apenas para dar sequencia no fluxo de execução do
+	 * processo. Função semelhante a do método main. Implementa-lo para chamar o
+	 * método calcular() do processo e eventuais subprocessos.
+	 */
+	protected abstract void executarProcesso() throws Exception;
 
-    public GenericDTO<?> getGenericDTO() {
-	return genericDTO;
-    }
+	public GenericDTO<?> getGenericDTO() {
+		return genericDTO;
+	}
+	
+	public Estudo getEstudo() {
+		return (Estudo) genericDTO;
+	}
 
-    public void executar() throws Exception {
-	executarProcesso();
-    }
+	public void executar() throws Exception {
+		executarProcesso();
+	}
 }
