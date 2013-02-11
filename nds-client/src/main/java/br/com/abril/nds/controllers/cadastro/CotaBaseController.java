@@ -24,6 +24,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -69,7 +70,7 @@ public class CotaBaseController {
 		
 		if(existeCotaBase){
 			filtro = this.cotaBaseService.obterCotaDoFiltro(cotaBase);
-			calcularDiasRestantes(filtro);
+			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataInicial(), filtro.getDataFinal()));
 		}else{
 			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, false, true, numeroCota);
 		}
@@ -77,20 +78,20 @@ public class CotaBaseController {
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
 	}
 
-	private void calcularDiasRestantes(FiltroCotaBaseDTO filtro) {		
+	private String calcularDiasRestantes(Date inicial, Date fina) {		
 		
 		Calendar dtFinal = Calendar.getInstance();
-		dtFinal.setTime(filtro.getDataFinal());
+		dtFinal.setTime(fina);
 		
 		Calendar dtInicial = Calendar.getInstance();
-		dtInicial.setTime(filtro.getDataInicial());
+		dtInicial.setTime(inicial);
 		
 		long m1 = dtFinal.getTimeInMillis();
 		long m2 = dtInicial.getTimeInMillis();
 		
 		Integer diasRestantes = (int) ((m1 - m2) / (24*60*60*1000));
-		filtro.setDiasRestantes(diasRestantes.toString());
 		
+		return diasRestantes.toString();
 	}
 
 	private void tratarFiltroPesquisaCota(Integer numeroCota) {
@@ -115,11 +116,7 @@ public class CotaBaseController {
 	@Path("/pesquisarCotasBase")
 	public void pesquisarCotasBase(Integer numeroCota){
 		
-		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota);
-		List<CotaBaseDTO> listaCotaBase = new ArrayList<CotaBaseDTO>();
-		if(cotaBase != null){
-			listaCotaBase = this.cotaBaseService.obterCotasBases(this.cotaBaseService.obterCotaNova(numeroCota));			
-		}
+		List<CotaBaseDTO> listaCotaBase = obterListaDeCotasBase(numeroCota, null);
 		
 		int qtdeInicialPadrao = 3;
 		
@@ -139,6 +136,49 @@ public class CotaBaseController {
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
+	}
+
+	
+	@Post
+	@Path("/pesquisarCotasBasePesquisaGeral")
+	public void pesquisarCotasBasePesquisaGeral(Integer numeroCota, String sortorder, String sortname, int page, int rp){
+		
+		CotaBaseDTO dto = new CotaBaseDTO();
+		dto.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		List<CotaBaseDTO> listaCotaBase = obterListaDeCotasBase(numeroCota, dto);
+		
+		if(listaCotaBase.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
+		}
+		List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
+		
+		for(CotaBaseDTO cotaBase : listaCotaBase){
+			cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtInicio(), cotaBase.getDtFinal()));
+			listaFormatada.add(cotaBase);
+		}
+		
+		
+		TableModel<CellModelKeyValue<CotaBaseDTO>> tableModel =
+				new TableModel<CellModelKeyValue<CotaBaseDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFormatada));
+		
+		tableModel.setPage(dto.getPaginacao().getPaginaAtual());
+
+		tableModel.setTotal(dto.getPaginacao().getQtdResultadosTotal());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	private List<CotaBaseDTO> obterListaDeCotasBase(Integer numeroCota, CotaBaseDTO dto) {
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota);
+		List<CotaBaseDTO> listaCotaBase = new ArrayList<CotaBaseDTO>();
+		if(cotaBase != null){
+			listaCotaBase = this.cotaBaseService.obterCotasBases(this.cotaBaseService.obterCotaNova(numeroCota),dto );			
+		}
+		return listaCotaBase;
 	}
 	
 	@Post
@@ -196,7 +236,7 @@ public class CotaBaseController {
 		
 		if(cotaBase != null){
 			
-			List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterCotasBases(cotaBase);		
+			List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterCotasBases(cotaBase, null);		
 			
 			validarCotasDigitadas(numerosDeCotasBase, listaCotaBase, idCotaNova);
 		}

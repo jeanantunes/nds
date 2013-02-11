@@ -10,7 +10,7 @@ public interface CotaBaseService {
 	
 	FiltroCotaBaseDTO obterDadosFiltro(CotaBase cotaBase, boolean obterFaturamento, boolean semCotaBase, Integer numeroCota);
 	
-	List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase);
+	List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase, CotaBaseDTO dto);
 
 	void salvar(CotaBase cotaBase);
 

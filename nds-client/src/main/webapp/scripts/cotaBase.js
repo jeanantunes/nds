@@ -214,23 +214,23 @@ var cotaBaseController = $.extend(true, {
 			height : 250
 		});
 	$(".consultaEquivalentesGrid").flexigrid({
-			url : '../xml/consultaEquivalentesA-xml.xml',
-			dataType : 'xml',
+		preProcess: cotaBaseController.executarPreProcessamentoGridPesquisaGeral,
+		dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'Nome',
+				name : 'nomeCota',
 				width : 205,
 				sortable : true,
 				align : 'left'
 			},  {
 				display : 'Tipo PDV',
-				name : 'tipoPdv',
+				name : 'tipoPDV',
 				width : 100,
 				sortable : true,
 				align : 'left'
@@ -242,19 +242,19 @@ var cotaBaseController = $.extend(true, {
 				align : 'left'
 			},  {
 				display : 'Início',
-				name : 'dtInicio',
+				name : 'dtInicioFormatado',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			},  {
 				display : 'Fim',
-				name : 'dtFim',
+				name : 'dtFinalFormatado',
 				width : 100,
 				sortable : true,
 				align : 'center'
 			},  {
 				display : 'Dias Faltantes',
-				name : 'diasFaltantes',
+				name : 'diasRestantes',
 				width : 100,
 				sortable : true,
 				align : 'center'
@@ -445,6 +445,26 @@ var cotaBaseController = $.extend(true, {
 		});
 	},
 	
+	executarPreProcessamentoGridPesquisaGeral : function(resultado){
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".grids", cotaBaseController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$(".grids", cotaBaseController.workspace).show();
+		
+		return resultado;
+		
+	},
+	
 	executarPreProcessamento : function(resultado) {
 		
 		if (resultado.mensagens) {
@@ -454,7 +474,7 @@ var cotaBaseController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			
-			$(".grids", vendaProdutoController.workspace).hide();
+			$(".grids", cotaBaseController.workspace).hide();
 
 			return resultado;
 		}
@@ -576,6 +596,16 @@ var cotaBaseController = $.extend(true, {
 		
 		$('.pesqGeralGrid').show();
 		$('.pesqCotasGrid').hide();
+		
+		var numeroCota = $('#idCota').val();
+		
+		$("#consultaEquivalentesGrid", cotaBaseController.workspace).flexOptions({
+			url: contextPath + "/cadastro/cotaBase/pesquisarCotasBasePesquisaGeral",
+			dataType : 'json',
+			params: [{name: 'numeroCota' , value: numeroCota}]
+		});
+		
+		$("#consultaEquivalentesGrid", cotaBaseController.workspace).flexReload();
 	},
 	
 	mostrar_normal : function (){

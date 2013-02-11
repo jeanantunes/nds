@@ -86,7 +86,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase) {
+	public List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase, CotaBaseDTO dto) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -102,6 +102,11 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
         hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio, "); // FATURAMENTO MENSAL
         hql.append(" cotaBase.indiceAjuste as indiceAjuste "); // ÍNDICE DE AJUSTE
+        if(dto != null){
+        	hql.append(" , cotaBase.dataInicio as dtInicio "); // DATA INICIO
+        	hql.append(" , cotaBase.dataFim as dtFinal "); // DATA FIM
+        	hql.append(" , cotaBaseCota.ativo as situacao "); // SITUAÇÃO
+        }
         
         // FROM
         hql.append(" FROM CotaBaseCota as cotaBaseCota ");        
@@ -121,7 +126,9 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
         hql.append(" and cotaEndereco.principal = true ");
-        hql.append(" and cotaBaseCota.ativo = true ");
+        if(dto == null){
+        	hql.append(" and cotaBaseCota.ativo = true ");        	
+        }
         hql.append(" and cotaBase.id = :idCotaBase ");
         
         
@@ -132,6 +139,10 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         query.setParameter("idCotaBase", cotaBase.getId());        
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseDTO.class));
+        
+        if(dto != null){
+        	configurandoPaginacao(dto, query);
+        }
         
 		return query.list();
 	}
@@ -201,6 +212,20 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         query.setResultTransformer(new AliasToBeanResultTransformer(FiltroCotaBaseDTO.class));
         
         return  (FiltroCotaBaseDTO) query.uniqueResult();
+	}
+	
+	private void configurandoPaginacao(CotaBaseDTO dto, Query query) {
+		
+		if (dto.getPaginacao().getPosicaoInicial() != null) {
+			query.setFirstResult(dto.getPaginacao().getPosicaoInicial());
+		}
+		
+		if (dto.getPaginacao().getQtdResultadosTotal().equals(0)) {
+			dto.getPaginacao().setQtdResultadosTotal(query.list().size());
+		}
+		
+		if(dto.getPaginacao().getQtdResultadosPorPagina() != null) 
+			query.setMaxResults(dto.getPaginacao().getQtdResultadosPorPagina());
 	}
 
 }

@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 
 <script type="text/javascript" src="scripts/cotaBase.js"></script>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
@@ -29,7 +29,7 @@ $(function(){
             <td width="42"><strong>Cota:</strong></td>
             <td width="92">1223</td>
             <td width="44"><strong>Nome:</strong></td>
-            <td width="155">Antonio José da Silva</td>
+            <td width="155">Antonio Jos� da Silva</td>
             <td width="151">&nbsp;</td>
           </tr>
         </table>
@@ -40,12 +40,12 @@ $(function(){
    		<legend>Dados do Produto</legend>
     	<table width="500" border="0" cellspacing="1" cellpadding="1">
           <tr>
-            <td width="42"><strong>Código:</strong></td>
+            <td width="42"><strong>C�digo:</strong></td>
             <td width="92">0564</td>
             <td width="44"><strong>Produto:</strong></td>
             <td width="155">Tauros</td>
-            <td width="44"><strong>Classificação:</strong></td>
-            <td width="155">Relançamento</td>
+            <td width="44"><strong>Classifica��o:</strong></td>
+            <td width="155">Relan�amento</td>
           </tr>
         </table>
 
@@ -106,7 +106,7 @@ $(function(){
             <td width="43"><strong>Cota:</strong></td>
             <td width="93">2222</td>
             <td width="45"><strong>Nome:</strong></td>
-            <td width="306">Antonio José da Silva</td>
+            <td width="306">Antonio Jos� da Silva</td>
           </tr>
         </table>
 
@@ -122,7 +122,7 @@ $(function(){
 
 </div>
 
-<div id="dialog-segmentos" title="Segmentos não recebidos" style="display:none;">
+<div id="dialog-segmentos" title="Segmentos n�o recebidos" style="display:none;">
     <fieldset style="width:250px!important; margin-top:10px;">
    		<legend>Segmentos</legend>
     	<table class="consultaSegmentosGrid"></table>
@@ -144,10 +144,10 @@ $(function(){
 </div>
 
 <div id="dialog-confirm" title="Confirmar Informe de Peso">
-	<p>Confirma o Peso Atribuído?</p>
+	<p>Confirma o Peso Atribu�do?</p>
 </div>
 <div id="dialog-excluir" title="Excluir Cota">
-	<p>Confirma a exclusão desta Cota?</p>
+	<p>Confirma a exclus�o desta Cota?</p>
 </div>
 <div id="dialog-peso" title="Novo Peso">
 
@@ -198,14 +198,14 @@ $(function(){
 	           <tr>
 	             <td colspan="3">Gerador de Fluxo: </td>
 	             <td width="139"><input type="text" name="geradorFluxo" id="geradorFluxo" disabled="disabled" style="width:130px;" /></td>
-	             <td width="65">Área Iinfluencia: </td>
+	             <td width="65">�rea Iinfluencia: </td>
 	             <td width="117"><input type="text" name="areaInfluencia" id="areaInfluencia" disabled="disabled" style="width:110px;"/></td>
-	             <td>Período:</td>
+	             <td>Per�odo:</td>
 	             <td><input type="text" name="periodoDe" disabled="disabled" id="periodoDe" style="width:60px;"/></td>
-	             <td>Até:
+	             <td>At�:
 	             </td>
 	             <td width="85"><input type="text" name="periodoAte" id="periodoAte" disabled="disabled" style="width:60px;"/></td>
-	             <td width="20"><input type="checkbox" name="isGeral" id="isGeral" onclick="mostraPesqGeral();" /></td>
+	             <td width="20"><input type="checkbox" name="isGeral" id="isGeral" onclick="cotaBaseController.mostraPesqGeral();" /></td>
 	             <td width="63">Pesquisa Geral?</td>
 	             <td colspan="2">
 	             
@@ -223,12 +223,16 @@ $(function(){
         	<div class="pesqGeralGrid" style="display:none;">
             <fieldset class="classFieldset">
                 <legend>Cotas Base Cadastradas</legend>
-                <table class="consultaEquivalentesGrid"></table>
+                <table class="consultaEquivalentesGrid" id="consultaEquivalentesGrid"></table>
                 <!--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_novoEquivalente();"><img src="../images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>-->
                 
-                <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+                <span class="bt_novos" title="Gerar Arquivo">
+                	<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+                </span>
                 
-                <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+                <span class="bt_novos" title="Imprimir">
+                	<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+                </span>
             
             </fieldset> 	
         </div>
@@ -238,7 +242,7 @@ $(function(){
         		<table class="cotasEquivalentesGrid" id="cotasEquivalentesGrid"></table>
             
             <span style="float:left; margin-top:5px; margin-bottom:5px; margin-left:10px;">
-            	<strong>Informe o Indíce de Ajuste do Histórico:</strong> 
+            	<strong>Informe o Ind�ce de Ajuste do Hist�rico:</strong> 
             	<input name="indiceAjuste" id="indiceAjuste" type="text" style="width:40px; text-align:center;" />
             </span>
             <br clear="all" />
@@ -251,9 +255,19 @@ $(function(){
             	Confirmar</a>
             </span>
 
-			<span class="bt_novos" title="Cancelar"><a href="javascript:;" onclick="cancelarPeso();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a></span>
+			<span class="bt_novos" title="Cancelar">
+				<a href="javascript:;" onclick="cancelarPeso();">
+					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />
+					Cancelar
+				</a>
+			</span>
             
-            <span class="bt_novos" title="Histórico"><a href="jornaleiros_equivalentes_historico.htm"><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0" />Histórico</a></span>
+            <span class="bt_novos" title="Hist�rico">
+            	<a href="jornaleiros_equivalentes_historico.htm">
+            		<img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0" />
+            		Hist�rico
+            	</a>
+            </span>
         
       </fieldset>
       </div>

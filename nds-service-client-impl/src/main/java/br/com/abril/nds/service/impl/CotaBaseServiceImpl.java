@@ -26,8 +26,8 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 
 	@Override
 	@Transactional
-	public List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase) {
-		return cotaBaseRepository.obterCotasBases(cotaBase);
+	public List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase, CotaBaseDTO dto) {
+		return cotaBaseRepository.obterCotasBases(cotaBase, dto);
 	}
 
 	@Override
