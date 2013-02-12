@@ -22,140 +22,107 @@ public class ProdutoEdicao {
     private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
     private BigDecimal reparteMinimo; // Reparte mínimo configurado na tela de Mix de Produto
     private BigDecimal reparteMaximo; // Reparte máximo configurado na tela de Mix de Produto
-
+    
     public Long getId() {
-	return id;
+        return id;
     }
-
     public void setId(Long id) {
-	this.id = id;
+        this.id = id;
     }
-
     public String getNome() {
-	return nome;
+        return nome;
     }
-
     public void setNome(String nome) {
-	this.nome = nome;
+        this.nome = nome;
     }
-
     public Long getNumeroEdicao() {
-	return numeroEdicao;
+        return numeroEdicao;
     }
-
     public void setNumeroEdicao(Long numeroEdicao) {
-	this.numeroEdicao = numeroEdicao;
+        this.numeroEdicao = numeroEdicao;
     }
-
     public Integer getPeso() {
-	return peso;
+        return peso;
     }
-
     public void setPeso(Integer peso) {
-	this.peso = peso;
+        this.peso = peso;
     }
-
     public BigDecimal getReparte() {
-	return reparte;
+        return reparte;
     }
-
     public void setReparte(BigDecimal reparte) {
-	this.reparte = reparte;
+        this.reparte = reparte;
     }
-
     public BigDecimal getVenda() {
-	return venda;
+        return venda;
     }
-
     public void setVenda(BigDecimal venda) {
-	this.venda = venda;
+        this.venda = venda;
     }
-
     public boolean isParcial() {
-	return parcial;
+        return parcial;
     }
-
     public void setParcial(boolean parcial) {
-	this.parcial = parcial;
+        this.parcial = parcial;
     }
-
     public Integer getPacotePadrao() {
-	return pacotePadrao;
+        return pacotePadrao;
     }
-
     public void setPacotePadrao(Integer pacotePadrao) {
-	this.pacotePadrao = pacotePadrao;
+        this.pacotePadrao = pacotePadrao;
     }
-
     public boolean isEdicaoAberta() {
-	return edicaoAberta;
+        return edicaoAberta;
     }
-
     public void setEdicaoAberta(boolean edicaoAberta) {
-	this.edicaoAberta = edicaoAberta;
+        this.edicaoAberta = edicaoAberta;
     }
-
     public Long getIdLancamento() {
-	return idLancamento;
+        return idLancamento;
     }
-
     public void setIdLancamento(Long idLancamento) {
-	this.idLancamento = idLancamento;
+        this.idLancamento = idLancamento;
     }
-
     public Long getIdCota() {
-	return idCota;
+        return idCota;
     }
-
     public void setIdCota(Long idCota) {
-	this.idCota = idCota;
+        this.idCota = idCota;
     }
-
     public Long getIdProduto() {
-	return idProduto;
+        return idProduto;
     }
-
     public void setIdProduto(Long idProduto) {
-	this.idProduto = idProduto;
+        this.idProduto = idProduto;
     }
-
     public boolean isColecionavel() {
-	return colecionavel;
+        return colecionavel;
     }
-
     public void setColecionavel(boolean colecionavel) {
-	this.colecionavel = colecionavel;
+        this.colecionavel = colecionavel;
     }
-
     public Date getDataLancamento() {
-	return dataLancamento;
+        return dataLancamento;
     }
-
     public void setDataLancamento(Date dataLancamento) {
-	this.dataLancamento = dataLancamento;
+        this.dataLancamento = dataLancamento;
     }
-
     public boolean isColecao() {
-	return colecao;
+        return colecao;
     }
-
     public void setColecao(boolean colecao) {
-	this.colecao = colecao;
+        this.colecao = colecao;
     }
-
     public BigDecimal getReparteMinimo() {
-	return reparteMinimo;
+        return reparteMinimo;
     }
-
     public void setReparteMinimo(BigDecimal reparteMinimo) {
-	this.reparteMinimo = reparteMinimo;
+        this.reparteMinimo = reparteMinimo;
     }
-
     public BigDecimal getReparteMaximo() {
-	return reparteMaximo;
+        return reparteMaximo;
     }
-
     public void setReparteMaximo(BigDecimal reparteMaximo) {
-	this.reparteMaximo = reparteMaximo;
+        this.reparteMaximo = reparteMaximo;
     }
 }

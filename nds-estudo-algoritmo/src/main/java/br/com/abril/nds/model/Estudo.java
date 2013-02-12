@@ -36,8 +36,8 @@ public class Estudo extends GenericDTO<Estudo> {
 		    .equals(ClassificacaoCota.ReparteFixado)
 		    || !cota.getClassificacao().equals(
 			    ClassificacaoCota.BancaSoComEdicaoBaseAberta)
-		    || !cota.getClassificacao().equals(
-			    ClassificacaoCota.RedutorAutomatico))
+			    || !cota.getClassificacao().equals(
+				    ClassificacaoCota.RedutorAutomatico))
 		somatoriaVendaMedia.add(cota.getVendaMedia());
 	}
     }
@@ -88,10 +88,11 @@ public class Estudo extends GenericDTO<Estudo> {
 	return "\nEstudo{\n\t" + "id: " + id + ", \n\treparteCalculado: "
 		+ reparteDistribuir + "\n}";
     }
-	/**
-	 * Soma da Venda Média de todas as cotas (exceto as marcadas com 'FX', 'PR' e 'RD')
-	 * @return {@link BigDecimal}
-	 */
+
+    /**
+     * Soma da Venda Média de todas as cotas (exceto as marcadas com 'FX', 'PR' e 'RD')
+     * @return {@link BigDecimal}
+     */
     public BigDecimal getSomatoriaVendaMedia() {
 	return somatoriaVendaMedia;
     }
@@ -112,61 +113,63 @@ public class Estudo extends GenericDTO<Estudo> {
 	return somatoriaReparteEdicoesAbertas;
     }
 
-	public void setSomatoriaReparteEdicoesAbertas(BigDecimal somatoriaReparteEdicoesAbertas) {
+    public void setSomatoriaReparteEdicoesAbertas(BigDecimal somatoriaReparteEdicoesAbertas) {
 	this.somatoriaReparteEdicoesAbertas = somatoriaReparteEdicoesAbertas;
     }
 
-	public boolean isComplementarAutomatico() {
-		return complementarAutomatico;
-	}
+    public boolean isComplementarAutomatico() {
+	return complementarAutomatico;
+    }
 
-	public void setComplementarAutomatico(boolean complementarAutomatico) {
-		this.complementarAutomatico = complementarAutomatico;
-	}
-	/**
-	 * Retorna verdadeiro se o método de distribuição utilizar múltiplos (semelhante ao conceito de Pacote Padrão). 
-	 * @return boolean
-	 */
-	public boolean isDistribuicaoPorMultiplos() {
-		return distribuicaoPorMultiplos;
-	}
+    public void setComplementarAutomatico(boolean complementarAutomatico) {
+	this.complementarAutomatico = complementarAutomatico;
+    }
+    
+    /**
+     * Retorna verdadeiro se o método de distribuição utilizar múltiplos (semelhante ao conceito de Pacote Padrão). 
+     * @return boolean
+     */
+    public boolean isDistribuicaoPorMultiplos() {
+	return distribuicaoPorMultiplos;
+    }
 
-	public void setDistribuicaoPorMultiplos(boolean distribuicaoPorMultiplos) {
-		this.distribuicaoPorMultiplos = distribuicaoPorMultiplos;
-	}
-	/**
-	 * Retorna o pacote padrão definido para a distribuição por múltiplos na configuração de distribuição do estudo.
-	 * @return {@link BigDecimal}
-	 */
-	public BigDecimal getPacotePadrao() {
-		return pacotePadrao;
-	}
+    public void setDistribuicaoPorMultiplos(boolean distribuicaoPorMultiplos) {
+	this.distribuicaoPorMultiplos = distribuicaoPorMultiplos;
+    }
+    
+    /**
+     * Retorna o pacote padrão definido para a distribuição por múltiplos na configuração de distribuição do estudo.
+     * @return {@link BigDecimal}
+     */
+    public BigDecimal getPacotePadrao() {
+	return pacotePadrao;
+    }
 
-	public void setPacotePadrao(BigDecimal pacotePadrao) {
-		this.pacotePadrao = pacotePadrao;
-	}
+    public void setPacotePadrao(BigDecimal pacotePadrao) {
+	this.pacotePadrao = pacotePadrao;
+    }
 
-	public BigDecimal getPercentualProporcaoExcedentePDV() {
-		return percentualProporcaoExcedentePDV;
-	}
+    public BigDecimal getPercentualProporcaoExcedentePDV() {
+	return percentualProporcaoExcedentePDV;
+    }
 
-	public void setPercentualProporcaoExcedentePDV(BigDecimal percentualProporcaoExcedentePDV) {
-		this.percentualProporcaoExcedentePDV = percentualProporcaoExcedentePDV;
-	}
+    public void setPercentualProporcaoExcedentePDV(BigDecimal percentualProporcaoExcedentePDV) {
+	this.percentualProporcaoExcedentePDV = percentualProporcaoExcedentePDV;
+    }
 
-	public BigDecimal getPercentualProporcaoExcedenteVenda() {
-		return percentualProporcaoExcedenteVenda;
-	}
+    public BigDecimal getPercentualProporcaoExcedenteVenda() {
+	return percentualProporcaoExcedenteVenda;
+    }
 
-	public void setPercentualProporcaoExcedenteVenda(BigDecimal percentualProporcaoExcedenteVenda) {
-		this.percentualProporcaoExcedenteVenda = percentualProporcaoExcedenteVenda;
-	}
+    public void setPercentualProporcaoExcedenteVenda(BigDecimal percentualProporcaoExcedenteVenda) {
+	this.percentualProporcaoExcedenteVenda = percentualProporcaoExcedenteVenda;
+    }
 
-	public BigDecimal getTotalPDVs() {
-		return totalPDVs;
-	}
+    public BigDecimal getTotalPDVs() {
+	return totalPDVs;
+    }
 
-	public void setTotalPDVs(BigDecimal totalPDVs) {
-		this.totalPDVs = totalPDVs;
-	}
+    public void setTotalPDVs(BigDecimal totalPDVs) {
+	this.totalPDVs = totalPDVs;
+    }
 }

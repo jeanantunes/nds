@@ -21,5 +21,4 @@ public class DefinicaoBasesTest {
 	bases.executarProcesso();
 	assertNotNull(((Estudo)bases.getGenericDTO()).getCotas());
     }
-
 }
