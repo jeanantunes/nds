@@ -17,7 +17,6 @@ public class ProdutoEdicao {
     private Long idLancamento;
     private Long idCota;
     private Long idProduto;
-    private boolean colecionavel;
     private Date dataLancamento;
     private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
     private BigDecimal reparteMinimo; // Reparte mínimo configurado na tela de Mix de Produto
@@ -94,12 +93,6 @@ public class ProdutoEdicao {
     }
     public void setIdProduto(Long idProduto) {
         this.idProduto = idProduto;
-    }
-    public boolean isColecionavel() {
-        return colecionavel;
-    }
-    public void setColecionavel(boolean colecionavel) {
-        this.colecionavel = colecionavel;
     }
     public Date getDataLancamento() {
         return dataLancamento;

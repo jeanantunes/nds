@@ -67,7 +67,7 @@ public class PreparaEstudoService {
 		produtoEdicao.setIdLancamento(rs.getLong("ID"));
 		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
 		produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_PREVISTA"));
-		produtoEdicao.setColecionavel(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
+		produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
 		produtoEdicao.setParcial(rs.getInt("PARCIAL") == 1);
 		
 		edicoes.add(produtoEdicao);
@@ -94,7 +94,7 @@ public class PreparaEstudoService {
 		produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
 		produtoEdicao.setVenda((produtoEdicao.getReparte().subtract(rs.getBigDecimal("QTDE_DEVOLVIDA"))));
 		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
-		produtoEdicao.setColecionavel(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
+		produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
 		produtoEdicao.setParcial(rs.getInt("PARCIAL") == 1);
 		
 		edicoes.add(produtoEdicao);
