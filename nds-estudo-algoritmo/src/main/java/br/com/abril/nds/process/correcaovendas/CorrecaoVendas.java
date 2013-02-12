@@ -22,8 +22,8 @@ import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
  */
 public class CorrecaoVendas extends ProcessoAbstrato {
 
-    public CorrecaoVendas(Estudo estudo) {
-	super(estudo);
+    public CorrecaoVendas(Cota cota) {
+	super(cota);
     }
 
     /**
@@ -47,47 +47,41 @@ public class CorrecaoVendas extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() throws Exception {
 
-	Estudo estudo = (Estudo) super.genericDTO;
-	ProdutoEdicao produtoEdicao = estudo.getProduto();
+	Cota cota = (Cota) super.genericDTO;
 
-	Iterator<Cota> itCota = estudo.getCotas().iterator();
+	List<ProdutoEdicao> listProdutoEdicaoFechada = new ArrayList<ProdutoEdicao>();
 
-	while (itCota.hasNext()) {
+	List<ProdutoEdicao> listEdicaoBase = cota.getEdicoesBase();
 
-	    Cota cota = itCota.next();
+	if (listEdicaoBase != null && listEdicaoBase.size() > 1) {
 
-	    List<ProdutoEdicao> listEdicaoBase = cota.getEdicoesBase();
+	    int iEdicaBase = 0;
+	    while (iEdicaBase < listEdicaoBase.size()) {
 
-	    if (listEdicaoBase != null && listEdicaoBase.size() > 1) {
+		ProdutoEdicao produtoEdicaoBase = listEdicaoBase
+			.get(iEdicaBase);
 
-		//TODO Se Edição = 1 ou Publicação <> Fascículos / Coleções
-		if(produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0) {
+		// TODO Se Edição = 1 ou Publicação <> Fascículos / Coleções
+		if (produtoEdicaoBase.getNumeroEdicao().compareTo(new Long(1)) == 0) {
 		    CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(
 			    cota);
-		    
 		    correcaoTendencia.executar();
 		}
-	    }
-	    
-	    List<ProdutoEdicao> listProdutoEdicaoFechada = new ArrayList<ProdutoEdicao>();
-	    
-	    int iEdicaBase = 0;
-	    while(iEdicaBase < listEdicaoBase.size()) {
-		
-		ProdutoEdicao produtoEdicaoBase = listEdicaoBase.get(iEdicaBase);
-		if(!produtoEdicaoBase.isEdicaoAberta()) {
+
+		if (!produtoEdicaoBase.isEdicaoAberta()) {
 		    listProdutoEdicaoFechada.add(produtoEdicaoBase);
 		}
-		
+
 		iEdicaBase++;
 	    }
-	    
-	    if(listProdutoEdicaoFechada.size() >= 4) {
-		VendaCrescente vendaCrescente = new VendaCrescente(estudo, listProdutoEdicaoFechada);
-		vendaCrescente.executarProcesso();
-		vendaCrescente.getGenericDTO();
-	    }
 
+	}
+
+	if (listProdutoEdicaoFechada.size() >= 4) {
+	    VendaCrescente vendaCrescente = new VendaCrescente(cota,
+		    listProdutoEdicaoFechada);
+	    vendaCrescente.executarProcesso();
+	    super.genericDTO = vendaCrescente.getGenericDTO();
 	}
 
     }

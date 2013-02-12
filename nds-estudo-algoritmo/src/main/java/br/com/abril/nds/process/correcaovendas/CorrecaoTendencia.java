@@ -107,8 +107,6 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 		new BigDecimal(1), 1, BigDecimal.ROUND_FLOOR);
 
 	cota.setIndiceCorrecaoTendencia(indiceCorrecaoTendencia);
-	
-	
 
     }
 
