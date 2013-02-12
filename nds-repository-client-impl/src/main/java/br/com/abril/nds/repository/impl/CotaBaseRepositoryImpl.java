@@ -7,6 +7,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaBaseDTO;
+import br.com.abril.nds.dto.CotaBaseHistoricoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -226,6 +227,58 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 		
 		if(dto.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setMaxResults(dto.getPaginacao().getQtdResultadosPorPagina());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaBaseHistoricoDTO> obterCotasHistorico(CotaBase cotaBase, CotaBaseDTO dto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		// RETURNING FIELDS
+        hql.append(" select ");
+        hql.append(" cota.id as idCota, "); // ID DA COTA
+        hql.append(" cota.numeroCota as numeroCota, "); // NÚMERO DA COTA        
+        hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,"); // NOME DA PESSOA
+        hql.append(" tipoPontoPDV.descricao as tipoPDV, "); // TIPO PDV
+        hql.append(" endereco.bairro as bairro, "); // BAIRRO
+        hql.append(" endereco.cidade as cidade, "); // CIDADE        
+        hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
+        hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL
+        
+        // FROM
+        hql.append(" FROM CotaBaseCota as cotaBaseCota ");        
+        hql.append(" left join cotaBaseCota.cota as cota ");
+        hql.append(" left join cotaBaseCota.cotaBase as cotaBase ");
+        hql.append(" left join cota.estoqueProdutoCotas as estoqueProdutoCota ");
+        hql.append(" left join estoqueProdutoCota.produtoEdicao as produtoEdicao ");        
+        hql.append(" left join cota.enderecos as cotaEndereco ");
+        hql.append(" left join cota.pessoa as pessoa ");
+        hql.append(" left join cotaEndereco.endereco as endereco ");
+        hql.append(" left join cota.pdvs as pdv ");
+        hql.append(" left join pdv.segmentacao as segmento ");
+        hql.append(" left join pdv.geradorFluxoPDV as geradorFluxoPrincipalPDV ");
+        hql.append(" left join geradorFluxoPrincipalPDV.principal as tipoGeradorFluxoPrincipal ");
+        
+        hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
+        hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
+        hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
+        hql.append(" and cotaEndereco.principal = true ");        
+        hql.append(" and cotaBase.id = :idCotaBase ");
+        
+        
+        hql.append(" GROUP BY cota.id");
+        
+        Query query =  getSession().createQuery(hql.toString());
+        
+        query.setParameter("idCotaBase", cotaBase.getId());        
+        
+        query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseHistoricoDTO.class));        
+        
+        configurandoPaginacao(dto, query);        
+        
+		return query.list();
 	}
 
 }

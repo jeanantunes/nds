@@ -1,15 +1,21 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaBaseDTO;
+import br.com.abril.nds.dto.CotaBaseHistoricoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -24,8 +30,11 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -34,7 +43,11 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/cotaBase")
-public class CotaBaseController {
+public class CotaBaseController extends BaseController {
+	
+	private static final String COTA_BASE_DTO = "cotaBaseDTO";
+	
+	private static final String COTA_BASE_HISTORICO = "cotaBaseHistorico";
 	
 	@Autowired
 	private CotaBaseService cotaBaseService;
@@ -47,6 +60,12 @@ public class CotaBaseController {
 	
 	@Autowired
 	private CotaBaseCotaService cotaBaseCotaService; 
+	
+	@Autowired
+	private HttpSession session;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_CADASTRO_COTA_BASE)
@@ -105,10 +124,6 @@ public class CotaBaseController {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
 			
-		}else if(cota.getSituacaoCadastro() != SituacaoCadastro.ATIVO){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não está ativa!");
-			
 		}
 	}
 	
@@ -145,6 +160,9 @@ public class CotaBaseController {
 		
 		CotaBaseDTO dto = new CotaBaseDTO();
 		dto.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		dto.setNumeroCota(numeroCota);
+		
+		tratarPaginacao(dto);
 		
 		List<CotaBaseDTO> listaCotaBase = obterListaDeCotasBase(numeroCota, dto);
 		
@@ -172,6 +190,38 @@ public class CotaBaseController {
 		
 	}
 	
+	private void tratarPaginacao(CotaBaseDTO dto) {
+
+		CotaBaseDTO cotaBaseSession = (CotaBaseDTO) session
+				.getAttribute(COTA_BASE_DTO);
+		
+		if (cotaBaseSession != null && !cotaBaseSession.equals(dto)) {
+
+			dto.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(COTA_BASE_DTO, dto);
+	
+		
+	}
+	
+	private void tratarPaginacaoHistorico(CotaBaseDTO dto) {
+
+		CotaBaseDTO cotaBaseSession = (CotaBaseDTO) session
+				.getAttribute(COTA_BASE_HISTORICO);
+		
+		if (cotaBaseSession != null && !cotaBaseSession.equals(dto)) {
+
+			dto.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(COTA_BASE_HISTORICO, dto);
+	
+		
+	}
+	
+	
+
 	private List<CotaBaseDTO> obterListaDeCotasBase(Integer numeroCota, CotaBaseDTO dto) {
 		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota);
 		List<CotaBaseDTO> listaCotaBase = new ArrayList<CotaBaseDTO>();
@@ -246,6 +296,75 @@ public class CotaBaseController {
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota base cadastrada com sucesso!"), "result").recursive().serialize();
 		
+	}
+	
+	@Post
+	@Path("/obterCotasDoHistorico")
+	public void obterCotasDoHistorico(Integer numeroCota, String sortorder, String sortname, int page, int rp){
+		
+		CotaBaseDTO dto = new CotaBaseDTO();
+		dto.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		dto.setNumeroCota(numeroCota);
+		
+		tratarPaginacaoHistorico(dto);
+		
+		List<CotaBaseHistoricoDTO> listaDeHistorico = this.cotaBaseService.obterCotasHistorico(this.cotaBaseService.obterCotaNova(numeroCota),  dto);
+		
+		if(listaDeHistorico.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
+		}
+		
+		TableModel<CellModelKeyValue<CotaBaseHistoricoDTO>> tableModel =
+				new TableModel<CellModelKeyValue<CotaBaseHistoricoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaDeHistorico));
+		
+		tableModel.setPage(dto.getPaginacao().getPaginaAtual());
+
+		tableModel.setTotal(dto.getPaginacao().getQtdResultadosTotal());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Get
+	public void exportar(FileType fileType, String tipoDeLista) throws IOException {
+		
+		if(tipoDeLista.equals("pesquisaGeral")){
+			CotaBaseDTO dto = (CotaBaseDTO) session.getAttribute(COTA_BASE_DTO);
+			
+			List<CotaBaseDTO> listaCotaBase = obterListaDeCotasBase(dto.getNumeroCota(), dto);
+			
+			List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
+			
+			for(CotaBaseDTO cotaBase : listaCotaBase){
+				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtInicio(), cotaBase.getDtFinal()));
+				listaFormatada.add(cotaBase);
+			}
+			
+			if(listaCotaBase.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
+			}
+			
+			FileExporter.to("PESQUISA_GERAL_COTA_BASE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaFormatada, CotaBaseDTO.class, this.httpResponse);
+			
+		}else if(tipoDeLista.equals("pesquisaHistorico")){
+			
+			CotaBaseDTO dto = (CotaBaseDTO) session.getAttribute(COTA_BASE_HISTORICO);
+			
+			List<CotaBaseHistoricoDTO> listaCotaBase = this.cotaBaseService.obterCotasHistorico(this.cotaBaseService.obterCotaNova(dto.getNumeroCota()),  dto);
+			
+			if(listaCotaBase.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
+			}
+			
+			FileExporter.to("PESQUISA_HISTORICO_COTA_BASE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					listaCotaBase, CotaBaseHistoricoDTO.class, this.httpResponse);			
+		}
+	
+		
+		result.nothing();
 	}
 
 	private void salvar(Integer[] numerosDeCotasBase, BigDecimal indiceAjuste, Cota cotaNova, CotaBase cotaBaseJaSalva) {

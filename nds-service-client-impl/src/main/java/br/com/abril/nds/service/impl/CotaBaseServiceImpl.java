@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaBaseDTO;
+import br.com.abril.nds.dto.CotaBaseHistoricoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.repository.CotaBaseRepository;
@@ -52,6 +53,12 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 	@Transactional
 	public void atualizar(CotaBase cotaBaseJaSalva) {
 		 this.cotaBaseRepository.alterar(cotaBaseJaSalva);		
+	}
+
+	@Override
+	@Transactional
+	public List<CotaBaseHistoricoDTO> obterCotasHistorico(CotaBase cotaBase, CotaBaseDTO dto) {
+		return this.cotaBaseRepository.obterCotasHistorico(cotaBase, dto);
 	}
 
 }

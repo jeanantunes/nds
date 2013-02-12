@@ -44,8 +44,7 @@ public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 
 	@Override
 	@Transactional
-	public Long quantidadesDeCotasAtivas(CotaBase cotaBase) {
-		 
+	public Long quantidadesDeCotasAtivas(CotaBase cotaBase) {		 
 		return this.cotaBaseCotaRepository.quantidadesDeCotasAtivas(cotaBase);
 	}
 

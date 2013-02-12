@@ -40,11 +40,11 @@ $(function(){
    		<legend>Dados do Produto</legend>
     	<table width="500" border="0" cellspacing="1" cellpadding="1">
           <tr>
-            <td width="42"><strong>C�digo:</strong></td>
+            <td width="42"><strong>Código:</strong></td>
             <td width="92">0564</td>
             <td width="44"><strong>Produto:</strong></td>
             <td width="155">Tauros</td>
-            <td width="44"><strong>Classifica��o:</strong></td>
+            <td width="44"><strong>Classificação:</strong></td>
             <td width="155">Relan�amento</td>
           </tr>
         </table>
@@ -106,7 +106,7 @@ $(function(){
             <td width="43"><strong>Cota:</strong></td>
             <td width="93">2222</td>
             <td width="45"><strong>Nome:</strong></td>
-            <td width="306">Antonio Jos� da Silva</td>
+            <td width="306">Antonio José da Silva</td>
           </tr>
         </table>
 
@@ -144,10 +144,10 @@ $(function(){
 </div>
 
 <div id="dialog-confirm" title="Confirmar Informe de Peso">
-	<p>Confirma o Peso Atribu�do?</p>
+	<p>Confirma o Peso Atribuído?</p>
 </div>
 <div id="dialog-excluir" title="Excluir Cota">
-	<p>Confirma a exclus�o desta Cota?</p>
+	<p>Confirma a exclusão desta Cota?</p>
 </div>
 <div id="dialog-peso" title="Novo Peso">
 
@@ -169,10 +169,6 @@ $(function(){
    
     <div class="container">
     
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
-				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
-				<b>Peso < evento > com < status >.</b></p>
-	</div>
     <form id="formDePesquisa" >	
 	     <fieldset class="classFieldset">
 	  	    <legend> Pesquisar Cotas</legend>
@@ -198,11 +194,11 @@ $(function(){
 	           <tr>
 	             <td colspan="3">Gerador de Fluxo: </td>
 	             <td width="139"><input type="text" name="geradorFluxo" id="geradorFluxo" disabled="disabled" style="width:130px;" /></td>
-	             <td width="65">�rea Iinfluencia: </td>
+	             <td width="65">Área Influencia: </td>
 	             <td width="117"><input type="text" name="areaInfluencia" id="areaInfluencia" disabled="disabled" style="width:110px;"/></td>
-	             <td>Per�odo:</td>
+	             <td>Período:</td>
 	             <td><input type="text" name="periodoDe" disabled="disabled" id="periodoDe" style="width:60px;"/></td>
-	             <td>At�:
+	             <td>Até:
 	             </td>
 	             <td width="85"><input type="text" name="periodoAte" id="periodoAte" disabled="disabled" style="width:60px;"/></td>
 	             <td width="20"><input type="checkbox" name="isGeral" id="isGeral" onclick="cotaBaseController.mostraPesqGeral();" /></td>
@@ -227,11 +223,13 @@ $(function(){
                 <!--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_novoEquivalente();"><img src="../images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>-->
                 
                 <span class="bt_novos" title="Gerar Arquivo">
-                	<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+                	<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=XLS&tipoDeLista=pesquisaGeral">
+                		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
                 </span>
                 
                 <span class="bt_novos" title="Imprimir">
-                	<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+                	<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=PDF&tipoDeLista=pesquisaGeral">
+                		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
                 </span>
             
             </fieldset> 	
@@ -242,7 +240,7 @@ $(function(){
         		<table class="cotasEquivalentesGrid" id="cotasEquivalentesGrid"></table>
             
             <span style="float:left; margin-top:5px; margin-bottom:5px; margin-left:10px;">
-            	<strong>Informe o Ind�ce de Ajuste do Hist�rico:</strong> 
+            	<strong>Informe o Indíce de Ajuste do Histórico:</strong> 
             	<input name="indiceAjuste" id="indiceAjuste" type="text" style="width:40px; text-align:center;" />
             </span>
             <br clear="all" />
@@ -262,17 +260,44 @@ $(function(){
 				</a>
 			</span>
             
-            <span class="bt_novos" title="Hist�rico">
-            	<a href="jornaleiros_equivalentes_historico.htm">
+            <span class="bt_novos" title="Histórico">
+            	<a href="javascript:;" onclick="cotaBaseController.mostrarHistorico();">
             		<img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0" />
-            		Hist�rico
+            		Histórico
             	</a>
             </span>
         
       </fieldset>
       </div>
-     </div>
-      <div class="linha_separa_fields">&nbsp;</div>
+     </div>     
+     <div class="linha_separa_fields">&nbsp;</div>
+	     <div class="historicoGrid" style="display:none;">
+		     <fieldset class="classFieldset">
+		       	  <legend>Cotas Base Cadastradas</legend>
+		        	<div class="grids" style="display:block;">
+			        	<table class="cotasEquivalentesBGrid" id="cotasEquivalentesBGrid"></table>
+			            
+						<span class="bt_novos" title="Voltar">
+							<a href="javascript:;" onclick="cotaBaseController.botaoVoltarHistoricio();">
+								<img src="${pageContext.request.contextPath}/images/seta_voltar.gif" hspace="5" border="0" />Voltar</a>
+						</span>
+			            
+			            <span class="bt_novos" title="Gerar Arquivo">
+			            	<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=XLS&tipoDeLista=pesquisaHistorico">
+			            		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+			            </span>
+			
+						<span class="bt_novos" title="Imprimir">
+							<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=PDF&tipoDeLista=pesquisaHistorico">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+						</span>
+		
+		        	</div>
+		        
+		      </fieldset>
+	      </div>
+	      
+	  <div class="linha_separa_fields">&nbsp;</div>      
     </div>
 </div>
 </body>
