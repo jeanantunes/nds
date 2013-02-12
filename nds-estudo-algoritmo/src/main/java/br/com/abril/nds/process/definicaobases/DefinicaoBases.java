@@ -56,8 +56,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	
 	BaseParaVeraneio baseParaVeraneio = new BaseParaVeraneio(estudo);
 	baseParaVeraneio.executar();
-	BaseParaSaidaVeraneio baseParaSaidaVeraneio = new BaseParaSaidaVeraneio(
-		(Estudo) baseParaVeraneio.getGenericDTO());
+	BaseParaSaidaVeraneio baseParaSaidaVeraneio = new BaseParaSaidaVeraneio((Estudo) baseParaVeraneio.getGenericDTO());
 	baseParaSaidaVeraneio.executar();
 	
 	super.genericDTO = baseParaSaidaVeraneio.getGenericDTO();

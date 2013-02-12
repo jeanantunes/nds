@@ -17,10 +17,17 @@ public class Estudo extends GenericDTO<Estudo> {
     private List<ProdutoEdicao> edicoesBaseInsercaoManual;
     private List<ProdutoEdicao> edicoesBase;
     private List<Cota> cotas;
-    private Parametro parametro; // parâmetros a serem carregados durante o estudo
+    private boolean distribuicaoPorMultiplos;
+    private BigDecimal pacotePadrao; // Parâmetro definido na tela de distribuição (Configuração atrelada à Distribuição Por Múltiplo)
     private BigDecimal somatoriaVendaMedia; // Soma da Venda Média de todas as cotas (exceto as marcadas com 'FX', 'PR' e 'RD')
-    // TODO: verificar se essa somatória é do estudo total ou somente da cota (Processo: Reparte Proporcional)
+    // TODO: Verificar se essa somatória é do estudo total ou somente da cota (Processo: Reparte Proporcional)
     private BigDecimal somatoriaReparteEdicoesAbertas; // Soma de Reparte de todas as edições abertas
+    // TODO: Checar após a EMS 2027 estar pronta, onde deveremos consultar esse parâmetro
+    private boolean complementarAutomatico; // Variável que define se o estudo irá executar o processo Complementar Automático
+    // TODO: Verificar se o correto é deixar esse percentual aqui no estudo
+    private BigDecimal percentualProporcaoExcedentePDV;
+    private BigDecimal percentualProporcaoExcedenteVenda;
+    private BigDecimal totalPDVs; // soma dos PDV's das cotas
 
     public void calculate() {
 	somatoriaVendaMedia = new BigDecimal(0);
@@ -76,20 +83,15 @@ public class Estudo extends GenericDTO<Estudo> {
 	this.cotas = cotas;
     }
 
-    public Parametro getParametro() {
-	return parametro;
-    }
-
-    public void setParametro(Parametro parametro) {
-	this.parametro = parametro;
-    }
-
     @Override
     public String toString() {
 	return "\nEstudo{\n\t" + "id: " + id + ", \n\treparteCalculado: "
 		+ reparteDistribuir + "\n}";
     }
-
+	/**
+	 * Soma da Venda Média de todas as cotas (exceto as marcadas com 'FX', 'PR' e 'RD')
+	 * @return {@link BigDecimal}
+	 */
     public BigDecimal getSomatoriaVendaMedia() {
 	return somatoriaVendaMedia;
     }
@@ -110,8 +112,61 @@ public class Estudo extends GenericDTO<Estudo> {
 	return somatoriaReparteEdicoesAbertas;
     }
 
-    public void setSomatoriaReparteEdicoesAbertas(
-	    BigDecimal somatoriaReparteEdicoesAbertas) {
+	public void setSomatoriaReparteEdicoesAbertas(BigDecimal somatoriaReparteEdicoesAbertas) {
 	this.somatoriaReparteEdicoesAbertas = somatoriaReparteEdicoesAbertas;
     }
+
+	public boolean isComplementarAutomatico() {
+		return complementarAutomatico;
+	}
+
+	public void setComplementarAutomatico(boolean complementarAutomatico) {
+		this.complementarAutomatico = complementarAutomatico;
+	}
+	/**
+	 * Retorna verdadeiro se o método de distribuição utilizar múltiplos (semelhante ao conceito de Pacote Padrão). 
+	 * @return boolean
+	 */
+	public boolean isDistribuicaoPorMultiplos() {
+		return distribuicaoPorMultiplos;
+	}
+
+	public void setDistribuicaoPorMultiplos(boolean distribuicaoPorMultiplos) {
+		this.distribuicaoPorMultiplos = distribuicaoPorMultiplos;
+	}
+	/**
+	 * Retorna o pacote padrão definido para a distribuição por múltiplos na configuração de distribuição do estudo.
+	 * @return {@link BigDecimal}
+	 */
+	public BigDecimal getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(BigDecimal pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	public BigDecimal getPercentualProporcaoExcedentePDV() {
+		return percentualProporcaoExcedentePDV;
+	}
+
+	public void setPercentualProporcaoExcedentePDV(BigDecimal percentualProporcaoExcedentePDV) {
+		this.percentualProporcaoExcedentePDV = percentualProporcaoExcedentePDV;
+	}
+
+	public BigDecimal getPercentualProporcaoExcedenteVenda() {
+		return percentualProporcaoExcedenteVenda;
+	}
+
+	public void setPercentualProporcaoExcedenteVenda(BigDecimal percentualProporcaoExcedenteVenda) {
+		this.percentualProporcaoExcedenteVenda = percentualProporcaoExcedenteVenda;
+	}
+
+	public BigDecimal getTotalPDVs() {
+		return totalPDVs;
+	}
+
+	public void setTotalPDVs(BigDecimal totalPDVs) {
+		this.totalPDVs = totalPDVs;
+	}
 }

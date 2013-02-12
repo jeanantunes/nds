@@ -1,7 +1,6 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -13,8 +12,7 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * <p style="white-space: pre-wrap;">
  * SubProcessos: - N/A Processo Pai: - {@link CorrecaoVendas}
  * 
- * Processo Anterior: N/A Próximo Processo: {@link CorrecaoTendencia}
- * </p>
+ * Processo Anterior: N/A Próximo Processo: {@link CorrecaoTendencia} </p>
  */
 public class CorrecaoIndividual extends ProcessoAbstrato {
 
@@ -42,25 +40,25 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
 
 	BigDecimal indiceCorrecao = BigDecimal.ONE;
 
-	BigDecimal totalReparte = BigDecimal.ZERO;
-	BigDecimal totalVenda = BigDecimal.ZERO;
+	// BigDecimal totalReparte = BigDecimal.ZERO;
+	// BigDecimal totalVenda = BigDecimal.ZERO;
 
-	BigInteger quantidadeRecebida = estoqueProdutoCota
-		.getQuantidadeRecebida().toBigInteger();
-	BigInteger quantidadeDevolvida = estoqueProdutoCota
-		.getQuantidadeDevolvida().toBigInteger();
+	BigDecimal quantidadeRecebida = estoqueProdutoCota
+		.getQuantidadeRecebida();
+	BigDecimal quantidadeDevolvida = estoqueProdutoCota
+		.getQuantidadeDevolvida();
 
-	totalReparte = totalReparte.add(new BigDecimal(quantidadeRecebida));
+	// totalReparte = totalReparte.add(quantidadeRecebida);
 
-	BigInteger vendaEdicao = quantidadeRecebida
+	BigDecimal vendaEdicao = quantidadeRecebida
 		.subtract(quantidadeDevolvida);
 
-	totalVenda = totalVenda.add(new BigDecimal(vendaEdicao));
+	// totalVenda = totalVenda.add(new BigDecimal(vendaEdicao));
 
-	if (totalVenda.compareTo(BigDecimal.ZERO) != 0) {
+	if (vendaEdicao.compareTo(BigDecimal.ZERO) != 0) {
 
-	    BigDecimal percentualVenda = totalVenda.divide(totalReparte, 1,
-		    BigDecimal.ROUND_FLOOR);
+	    BigDecimal percentualVenda = vendaEdicao.divide(quantidadeRecebida,
+		    1, BigDecimal.ROUND_FLOOR);
 
 	    BigDecimal oneCompare = BigDecimal.ONE;
 	    oneCompare = oneCompare.divide(new BigDecimal(1), 1,
@@ -84,6 +82,12 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
 		BigDecimal.ROUND_FLOOR);
 
 	estoqueProdutoCota.setIndiceCorrecao(indiceCorrecao);
+
+	BigDecimal vendaCorrigida = vendaEdicao.multiply(indiceCorrecao);
+	//TODO Gravar VendaCorrig para cada edição-base de cada cota.
+	//Verificar aonde será essa gravação e se é um insert ou update
+	
+	super.genericDTO = estoqueProdutoCota;
     }
 
 }

@@ -2,12 +2,10 @@ package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Iterator;
 
 import br.com.abril.nds.dao.EstoqueProdutoCotaDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -21,8 +19,8 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class CorrecaoTendencia extends ProcessoAbstrato {
 
-    public CorrecaoTendencia(Estudo estudo) {
-	super(estudo);
+    public CorrecaoTendencia(Cota cota) {
+	super(cota);
     }
 
     /**
@@ -43,85 +41,73 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() throws Exception {
 
-	Iterator<Cota> itCota = ((Estudo) super.genericDTO).getCotas()
-		.iterator();
+	BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
 
-	while (itCota.hasNext()) {
+	Cota cota = (Cota) super.genericDTO;
+	cota.setEstoqueProdutoCotas(new EstoqueProdutoCotaDAO()
+		.getByCotaId(cota.getId()));
 
-	    BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
+	BigDecimal totalReparte = BigDecimal.ZERO;
+	BigDecimal totalVenda = BigDecimal.ZERO;
 
-	    Cota cota = itCota.next();
-	    // TODO retirar esse trecho de código
-	    // FIXME Essa consulta no DAO é somente para teste.
-	    cota.setEstoqueProdutoCotas(new EstoqueProdutoCotaDAO()
-		    .getByCotaId(cota.getId()));
+	int iEdicaoBase = 0;
+	while (iEdicaoBase < cota.getEstoqueProdutoCotas().size()) {
 
-	    BigDecimal totalReparte = BigDecimal.ZERO;
-	    BigDecimal totalVenda = BigDecimal.ZERO;
+	    EstoqueProdutoCota estoqueProdutoCota = cota
+		    .getEstoqueProdutoCotas().get(iEdicaoBase);
 
-	    int iEdicaoBase = 0;
+	    BigInteger quantidadeRecebida = estoqueProdutoCota
+		    .getQuantidadeRecebida().toBigInteger();
+	    BigInteger quantidadeDevolvida = estoqueProdutoCota
+		    .getQuantidadeDevolvida().toBigInteger();
 
-	    while (iEdicaoBase < cota.getEstoqueProdutoCotas().size()) {
+	    totalReparte = totalReparte.add(new BigDecimal(quantidadeRecebida));
 
-		EstoqueProdutoCota estoqueProdutoCota = cota
-			.getEstoqueProdutoCotas().get(iEdicaoBase);
+	    BigInteger vendaCota = quantidadeRecebida
+		    .subtract(quantidadeDevolvida);
 
-		BigInteger quantidadeRecebida = estoqueProdutoCota
-			.getQuantidadeRecebida().toBigInteger();
-		BigInteger quantidadeDevolvida = estoqueProdutoCota
-			.getQuantidadeDevolvida().toBigInteger();
+	    totalVenda = totalVenda.add(new BigDecimal(vendaCota));
 
-		totalReparte = totalReparte.add(new BigDecimal(
-			quantidadeRecebida));
+	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(
+		    estoqueProdutoCota);
+	    correcaoIndividual.executar();
 
-		BigInteger vendaEdicao = quantidadeRecebida
-			.subtract(quantidadeDevolvida);
+	    cota.getEstoqueProdutoCotas().set(iEdicaoBase,
+		    (EstoqueProdutoCota) correcaoIndividual.getGenericDTO());
 
-		totalVenda = totalVenda.add(new BigDecimal(vendaEdicao));
+	    iEdicaoBase++;
+	}
 
-		CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(
-			estoqueProdutoCota);
-		correcaoIndividual.executar();
+	if (totalVenda.compareTo(BigDecimal.ZERO) != 0) {
 
-		cota.getEstoqueProdutoCotas()
-			.set(iEdicaoBase,
-				(EstoqueProdutoCota) correcaoIndividual
-					.getGenericDTO());
+	    BigDecimal percentualVenda = totalVenda.divide(totalReparte, 1,
+		    BigDecimal.ROUND_FLOOR);
 
-		iEdicaoBase++;
-	    }
+	    BigDecimal oneCompare = BigDecimal.ONE;
+	    oneCompare = oneCompare.divide(new BigDecimal(1), 1,
+		    BigDecimal.ROUND_FLOOR);
 
-	    if (totalVenda.compareTo(BigDecimal.ZERO) != 0) {
+	    if (percentualVenda.compareTo(oneCompare) == 0) {
+		indiceCorrecaoTendencia = indiceCorrecaoTendencia
+			.add(new BigDecimal(0.2));
+	    } else {
 
-		BigDecimal percentualVenda = totalVenda.divide(totalReparte, 1,
+		BigDecimal decimalCompare = new BigDecimal(0.9);
+		decimalCompare = decimalCompare.divide(new BigDecimal(1), 1,
 			BigDecimal.ROUND_FLOOR);
 
-		BigDecimal oneCompare = BigDecimal.ONE;
-		oneCompare = oneCompare.divide(new BigDecimal(1), 1,
-			BigDecimal.ROUND_FLOOR);
-
-		if (percentualVenda.compareTo(oneCompare) == 0) {
+		if (percentualVenda.compareTo(decimalCompare) >= 0) {
 		    indiceCorrecaoTendencia = indiceCorrecaoTendencia
-			    .add(new BigDecimal(0.2));
-		} else {
-
-		    BigDecimal decimalCompare = new BigDecimal(0.9);
-		    decimalCompare = decimalCompare.divide(new BigDecimal(1),
-			    1, BigDecimal.ROUND_FLOOR);
-
-		    if (percentualVenda.compareTo(decimalCompare) >= 0) {
-			indiceCorrecaoTendencia = indiceCorrecaoTendencia
-				.add(new BigDecimal(0.1));
-		    }
+			    .add(new BigDecimal(0.1));
 		}
 	    }
-
-	    indiceCorrecaoTendencia = indiceCorrecaoTendencia.divide(
-		    new BigDecimal(1), 1, BigDecimal.ROUND_FLOOR);
-
-	    cota.setIndiceCorrecaoTendencia(indiceCorrecaoTendencia);
-
 	}
+
+	indiceCorrecaoTendencia = indiceCorrecaoTendencia.divide(
+		new BigDecimal(1), 1, BigDecimal.ROUND_FLOOR);
+
+	cota.setIndiceCorrecaoTendencia(indiceCorrecaoTendencia);
+
     }
 
 }

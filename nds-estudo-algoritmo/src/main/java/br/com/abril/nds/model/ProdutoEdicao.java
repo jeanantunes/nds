@@ -19,6 +19,9 @@ public class ProdutoEdicao {
     private Long idProduto;
     private boolean colecionavel;
     private Date dataLancamento;
+    private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
+    private BigDecimal reparteMinimo; // Reparte mínimo configurado na tela de Mix de Produto
+    private BigDecimal reparteMaximo; // Reparte máximo configurado na tela de Mix de Produto
 
     public Long getId() {
 	return id;
@@ -130,5 +133,29 @@ public class ProdutoEdicao {
 
     public void setDataLancamento(Date dataLancamento) {
 	this.dataLancamento = dataLancamento;
+    }
+
+    public boolean isColecao() {
+	return colecao;
+    }
+
+    public void setColecao(boolean colecao) {
+	this.colecao = colecao;
+    }
+
+    public BigDecimal getReparteMinimo() {
+	return reparteMinimo;
+    }
+
+    public void setReparteMinimo(BigDecimal reparteMinimo) {
+	this.reparteMinimo = reparteMinimo;
+    }
+
+    public BigDecimal getReparteMaximo() {
+	return reparteMaximo;
+    }
+
+    public void setReparteMaximo(BigDecimal reparteMaximo) {
+	this.reparteMaximo = reparteMaximo;
     }
 }

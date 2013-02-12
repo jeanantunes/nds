@@ -20,7 +20,6 @@ public class DefinicaoBasesTest {
     public void testExecutarProcesso() throws Exception {
 	bases.executarProcesso();
 	assertNotNull(((Estudo)bases.getGenericDTO()).getCotas());
-//	fail("Not yet implemented");
     }
 
 }
