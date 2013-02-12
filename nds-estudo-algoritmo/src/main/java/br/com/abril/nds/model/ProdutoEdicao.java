@@ -1,88 +1,134 @@
 package br.com.abril.nds.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ProdutoEdicao {
 
-	private Long id;
-	private String nome;
-	private Long numeroEdicao;
-	private Integer peso;
-	private BigDecimal reparte;
-	private BigDecimal venda;
-	private boolean parcial;
-	private Integer pacotePadrao;
-	private boolean edicaoAberta;
+    private Long id;
+    private String nome;
+    private Long numeroEdicao;
+    private Integer peso;
+    private BigDecimal reparte;
+    private BigDecimal venda;
+    private boolean parcial;
+    private Integer pacotePadrao;
+    private boolean edicaoAberta;
+    private Long idLancamento;
+    private Long idCota;
+    private Long idProduto;
+    private boolean colecionavel;
+    private Date dataLancamento;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+	return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+	this.id = id;
+    }
 
-	public Long getNumeroEdicao() {
-		return numeroEdicao;
-	}
+    public String getNome() {
+	return nome;
+    }
 
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
-	}
+    public void setNome(String nome) {
+	this.nome = nome;
+    }
 
-	public Integer getPeso() {
-		return peso;
-	}
+    public Long getNumeroEdicao() {
+	return numeroEdicao;
+    }
 
-	public void setPeso(Integer peso) {
-		this.peso = peso;
-	}
+    public void setNumeroEdicao(Long numeroEdicao) {
+	this.numeroEdicao = numeroEdicao;
+    }
 
-	public BigDecimal getReparte() {
-		return reparte;
-	}
+    public Integer getPeso() {
+	return peso;
+    }
 
-	public void setReparte(BigDecimal reparte) {
-		this.reparte = reparte;
-	}
+    public void setPeso(Integer peso) {
+	this.peso = peso;
+    }
 
-	public BigDecimal getVenda() {
-		return venda;
-	}
+    public BigDecimal getReparte() {
+	return reparte;
+    }
 
-	public void setVenda(BigDecimal venda) {
-		this.venda = venda;
-	}
+    public void setReparte(BigDecimal reparte) {
+	this.reparte = reparte;
+    }
 
-	public boolean getParcial() {
-		return parcial;
-	}
+    public BigDecimal getVenda() {
+	return venda;
+    }
 
-	public void setParcial(boolean parcial) {
-		this.parcial = parcial;
-	}
+    public void setVenda(BigDecimal venda) {
+	this.venda = venda;
+    }
 
-	public Integer getPacotePadrao() {
-		return pacotePadrao;
-	}
+    public boolean isParcial() {
+	return parcial;
+    }
 
-	public void setPacotePadrao(Integer pacotePadrao) {
-		this.pacotePadrao = pacotePadrao;
-	}
+    public void setParcial(boolean parcial) {
+	this.parcial = parcial;
+    }
 
-	public boolean isEdicaoAberta() {
-		return edicaoAberta;
-	}
+    public Integer getPacotePadrao() {
+	return pacotePadrao;
+    }
 
-	public void setEdicaoAberta(boolean edicaoAberta) {
-		this.edicaoAberta = edicaoAberta;
-	}
+    public void setPacotePadrao(Integer pacotePadrao) {
+	this.pacotePadrao = pacotePadrao;
+    }
 
-	public String getNome() {
-		return nome;
-	}
+    public boolean isEdicaoAberta() {
+	return edicaoAberta;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public void setEdicaoAberta(boolean edicaoAberta) {
+	this.edicaoAberta = edicaoAberta;
+    }
+
+    public Long getIdLancamento() {
+	return idLancamento;
+    }
+
+    public void setIdLancamento(Long idLancamento) {
+	this.idLancamento = idLancamento;
+    }
+
+    public Long getIdCota() {
+	return idCota;
+    }
+
+    public void setIdCota(Long idCota) {
+	this.idCota = idCota;
+    }
+
+    public Long getIdProduto() {
+	return idProduto;
+    }
+
+    public void setIdProduto(Long idProduto) {
+	this.idProduto = idProduto;
+    }
+
+    public boolean isColecionavel() {
+	return colecionavel;
+    }
+
+    public void setColecionavel(boolean colecionavel) {
+	this.colecionavel = colecionavel;
+    }
+
+    public Date getDataLancamento() {
+	return dataLancamento;
+    }
+
+    public void setDataLancamento(Date dataLancamento) {
+	this.dataLancamento = dataLancamento;
+    }
 }

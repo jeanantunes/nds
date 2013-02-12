@@ -15,6 +15,7 @@ public class Estudo extends GenericDTO<Estudo> {
     private BigDecimal reparteDistribuirInicial; // Reparte Total a ser distribuído (valor não deverá ser alterado durante o processo)
     private ProdutoEdicao produto; // produto sobre o qual se trata o estudo
     private List<ProdutoEdicao> edicoesBaseInsercaoManual;
+    private List<ProdutoEdicao> edicoesBase;
     private List<Cota> cotas;
     private Parametro parametro; // parâmetros a serem carregados durante o estudo
     private BigDecimal somatoriaVendaMedia; // Soma da Venda Média de todas as cotas (exceto as marcadas com 'FX', 'PR' e 'RD')
@@ -57,6 +58,14 @@ public class Estudo extends GenericDTO<Estudo> {
     public void setEdicoesBaseInsercaoManual(
 	    List<ProdutoEdicao> edicoesBaseInsercaoManual) {
 	this.edicoesBaseInsercaoManual = edicoesBaseInsercaoManual;
+    }
+
+    public List<ProdutoEdicao> getEdicoesBase() {
+	return edicoesBase;
+    }
+
+    public void setEdicoesBase(List<ProdutoEdicao> edicoesBase) {
+	this.edicoesBase = edicoesBase;
     }
 
     public List<Cota> getCotas() {
