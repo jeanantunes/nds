@@ -33,9 +33,14 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
     			//reparteComplementar = excedenteAMais.multiply(multiplicand)
     		} else if (percentualExcedente.doubleValue() > new BigDecimal(0.6).doubleValue()) {
     			if (getEstudo().isDistribuicaoPorMultiplos()) {
-    				reparteComplementar = new BigDecimal(getEstudo().getPacotePadrao());
+    				reparteComplementar = getEstudo().getPacotePadrao();
     			} else {
-    				
+    				// RepComplementar = Excedente * 2%
+    				if (getEstudo().isDistribuicaoPorMultiplos()) {
+    					reparteComplementar = getEstudo().getPacotePadrao();
+    				} else {
+    				//	reparteComplementar = 
+    				}
     			}
     		}
     		getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(reparteComplementar));

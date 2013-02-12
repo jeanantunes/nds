@@ -13,6 +13,7 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal reparteCalculado;
     private BigDecimal vendaMediaMaisN; // parametro VendaMedia + n na tela de Ajuste de Reparte
     private BigDecimal reparteMinimo; // parametro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
+    private BigDecimal reparteMaximo;
     private BigDecimal vendaMedia; // VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
     private BigDecimal vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
@@ -23,6 +24,8 @@ public class Cota extends GenericDTO<Cota> {
     // TODO: verificar se essa somatória é de todas as edições da cota ou é somente a última (Processo: Reparte Proporcional)
     private BigDecimal somaReparteEdicoesAbertas; // Soma do Reparte de todas as edições que essa cota recebeu
     private BigDecimal indiceCorrecaoTendencia;
+    private BigDecimal quantidadePDVs; // Quantidade de PDV's que a cota possui
+    private boolean mix;
 
     public void calculate() {
     	// Cálculo da Venda Média Final
@@ -185,5 +188,29 @@ public class Cota extends GenericDTO<Cota> {
     public void setIndiceCorrecaoTendencia(BigDecimal indiceCorrecaoTendencia) {
     	this.indiceCorrecaoTendencia = indiceCorrecaoTendencia;
     }
+
+	public BigDecimal getQuantidadePDVs() {
+		return quantidadePDVs;
+	}
+
+	public void setQuantidadePDVs(BigDecimal quantidadePDVs) {
+		this.quantidadePDVs = quantidadePDVs;
+	}
+
+	public BigDecimal getReparteMaximo() {
+		return reparteMaximo;
+	}
+
+	public void setReparteMaximo(BigDecimal reparteMaximo) {
+		this.reparteMaximo = reparteMaximo;
+	}
+
+	public boolean isMix() {
+		return mix;
+	}
+
+	public void setMix(boolean mix) {
+		this.mix = mix;
+	}
 
 }
