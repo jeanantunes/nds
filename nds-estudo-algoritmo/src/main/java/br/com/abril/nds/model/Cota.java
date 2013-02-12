@@ -26,56 +26,58 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal indiceCorrecaoTendencia;
     private BigDecimal quantidadePDVs; // Quantidade de PDV's que a cota possui
     private boolean mix;
+    private BigDecimal indiceVendaCrescente;
 
     public void calculate() {
-    	// Cálculo da Venda Média Final
-    	BigDecimal soma = new BigDecimal(0);
-    	for (ProdutoEdicao edicao : edicoesRecebidas) {
-    	    soma.add(edicao.getVenda());
-    	}
-    	vendaMedia = soma.divide(new BigDecimal(edicoesRecebidas.size()), 2, BigDecimal.ROUND_FLOOR);
-    
-    	// Cálculo da Venda Média Nominal
+	// Cálculo da Venda Média Final
+	BigDecimal soma = new BigDecimal(0);
+	for (ProdutoEdicao edicao : edicoesRecebidas) {
+	    soma.add(edicao.getVenda());
+	}
+	vendaMedia = soma.divide(new BigDecimal(edicoesRecebidas.size()), 2,
+		BigDecimal.ROUND_FLOOR);
+
+	// Cálculo da Venda Média Nominal
     }
 
     public Long getId() {
-    	return id;
+	return id;
     }
 
     public void setId(Long id) {
-    	this.id = id;
+	this.id = id;
     }
 
     public String getNome() {
-    	return nome;
+	return nome;
     }
 
     public void setNome(String nome) {
-    	this.nome = nome;
+	this.nome = nome;
     }
 
     public List<ProdutoEdicao> getEdicoesBase() {
-    	return edicoesBase;
+	return edicoesBase;
     }
 
     public void setEdicoesBase(List<ProdutoEdicao> edicoesBase) {
-    	this.edicoesBase = edicoesBase;
+	this.edicoesBase = edicoesBase;
     }
 
     public ClassificacaoCota getClassificacao() {
-    	return classificacao;
+	return classificacao;
     }
 
     public void setClassificacao(ClassificacaoCota classificacao) {
-    	this.classificacao = classificacao;
+	this.classificacao = classificacao;
     }
 
     public BigDecimal getReparteCalculado() {
-    	return reparteCalculado;
+	return reparteCalculado;
     }
 
     public void setReparteCalculado(BigDecimal reparteCalculado) {
-    	this.reparteCalculado = reparteCalculado;
+	this.reparteCalculado = reparteCalculado;
     }
 
     /**
@@ -83,11 +85,11 @@ public class Cota extends GenericDTO<Cota> {
      * @return BigDecimal
      */
     public BigDecimal getVendaMediaMaisN() {
-    	return vendaMediaMaisN;
+	return vendaMediaMaisN;
     }
 
     public void setVendaMediaMaisN(BigDecimal vendaMediaMaisN) {
-    	this.vendaMediaMaisN = vendaMediaMaisN;
+	this.vendaMediaMaisN = vendaMediaMaisN;
     }
 
     /**
@@ -96,121 +98,133 @@ public class Cota extends GenericDTO<Cota> {
      * @return BigDecimal
      */
     public BigDecimal getVendaMedia() {
-    	return vendaMedia;
+	return vendaMedia;
     }
 
     public void setVendaMedia(BigDecimal vendaMedia) {
-    	this.vendaMedia = vendaMedia;
+	this.vendaMedia = vendaMedia;
     }
+
     /**
      * O ReparteMinimo estará preenchido com o valor parâmetro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
      * @return BigDecimal
      */
     public BigDecimal getReparteMinimo() {
-    	return reparteMinimo;
+	return reparteMinimo;
     }
 
     public void setReparteMinimo(BigDecimal reparteMinimo) {
-    	this.reparteMinimo = reparteMinimo;
+	this.reparteMinimo = reparteMinimo;
     }
 
     public BigDecimal getVendaEdicaoMaisRecenteFechada() {
-    	if (vendaEdicaoMaisRecenteFechada == null) {
-    	    // Busca para encontrar qual é a venda da edição mais recente fechada
-    	    for (int i = edicoesRecebidas.size() - 1; i >= 0; i--) {
-    		if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
-    		    vendaEdicaoMaisRecenteFechada = edicoesRecebidas.get(i)
-    			    .getVenda();
-    		    break;
-    		}
-    	    }
-    	}
-    	return vendaEdicaoMaisRecenteFechada;
+	if (vendaEdicaoMaisRecenteFechada == null) {
+	    // Busca para encontrar qual é a venda da edição mais recente fechada
+	    for (int i = edicoesRecebidas.size() - 1; i >= 0; i--) {
+		if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
+		    vendaEdicaoMaisRecenteFechada = edicoesRecebidas.get(i)
+			    .getVenda();
+		    break;
+		}
+	    }
+	}
+	return vendaEdicaoMaisRecenteFechada;
     }
 
-    public void setVendaEdicaoMaisRecenteFechada(BigDecimal vendaEdicaoMaisRecenteFechada) {
-    	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
+    public void setVendaEdicaoMaisRecenteFechada(
+	    BigDecimal vendaEdicaoMaisRecenteFechada) {
+	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
     }
 
     public boolean isCotaSoRecebeuEdicaoAberta() {
-    	// FIXME: verificar qual é o melhor momento para executar esse trecho de código (for)
-    	cotaSoRecebeuEdicaoAberta = true;
-    	// Busca para verificar se a cota só receber edições abertas
-    	for (int i = 0; i < edicoesRecebidas.size(); i++) {
-    	    if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
-    		cotaSoRecebeuEdicaoAberta = false;
-    		break;
-    	    }
-    	}
-    	return cotaSoRecebeuEdicaoAberta;
+	// FIXME: verificar qual é o melhor momento para executar esse trecho de código (for)
+	cotaSoRecebeuEdicaoAberta = true;
+	// Busca para verificar se a cota só receber edições abertas
+	for (int i = 0; i < edicoesRecebidas.size(); i++) {
+	    if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
+		cotaSoRecebeuEdicaoAberta = false;
+		break;
+	    }
+	}
+	return cotaSoRecebeuEdicaoAberta;
     }
 
     public void setCotaSoRecebeuEdicaoAberta(boolean cotaSoRecebeuEdicaoAberta) {
-    	this.cotaSoRecebeuEdicaoAberta = cotaSoRecebeuEdicaoAberta;
+	this.cotaSoRecebeuEdicaoAberta = cotaSoRecebeuEdicaoAberta;
     }
 
     public List<EstoqueProdutoCota> getEstoqueProdutoCotas() {
-    	return estoqueProdutoCotas;
+	return estoqueProdutoCotas;
     }
 
-    public void setEstoqueProdutoCotas(List<EstoqueProdutoCota> estoqueProdutoCotas) {
-    	this.estoqueProdutoCotas = estoqueProdutoCotas;
+    public void setEstoqueProdutoCotas(
+	    List<EstoqueProdutoCota> estoqueProdutoCotas) {
+	this.estoqueProdutoCotas = estoqueProdutoCotas;
     }
 
     public List<ProdutoEdicao> getEdicoesRecebidas() {
-    	return edicoesRecebidas;
+	return edicoesRecebidas;
     }
 
     public void setEdicoesRecebidas(List<ProdutoEdicao> edicoesRecebidas) {
-    	this.edicoesRecebidas = edicoesRecebidas;
+	this.edicoesRecebidas = edicoesRecebidas;
     }
 
     public BigDecimal getSomaReparteEdicoesAbertas() {
-    	return somaReparteEdicoesAbertas;
+	return somaReparteEdicoesAbertas;
     }
 
-    public void setSomaReparteEdicoesAbertas(BigDecimal somaReparteEdicoesAbertas) {
-    	this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
+    public void setSomaReparteEdicoesAbertas(
+	    BigDecimal somaReparteEdicoesAbertas) {
+	this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
     }
 
     public void setPercentualEncalheMaximo(BigDecimal percentualEncalheMaximo) {
-    	this.percentualEncalheMaximo = percentualEncalheMaximo;
+	this.percentualEncalheMaximo = percentualEncalheMaximo;
     }
 
     public BigDecimal getPercentualEncalheMaximo() {
-		return percentualEncalheMaximo;
+	return percentualEncalheMaximo;
     }
 
     public BigDecimal getIndiceCorrecaoTendencia() {
-		return indiceCorrecaoTendencia;
+	return indiceCorrecaoTendencia;
     }
 
     public void setIndiceCorrecaoTendencia(BigDecimal indiceCorrecaoTendencia) {
-    	this.indiceCorrecaoTendencia = indiceCorrecaoTendencia;
+	this.indiceCorrecaoTendencia = indiceCorrecaoTendencia;
     }
 
-	public BigDecimal getQuantidadePDVs() {
-		return quantidadePDVs;
-	}
+    public BigDecimal getQuantidadePDVs() {
+	return quantidadePDVs;
+    }
 
-	public void setQuantidadePDVs(BigDecimal quantidadePDVs) {
-		this.quantidadePDVs = quantidadePDVs;
-	}
+    public void setQuantidadePDVs(BigDecimal quantidadePDVs) {
+	this.quantidadePDVs = quantidadePDVs;
+    }
 
-	public BigDecimal getReparteMaximo() {
-		return reparteMaximo;
-	}
+    public BigDecimal getReparteMaximo() {
+	return reparteMaximo;
+    }
 
-	public void setReparteMaximo(BigDecimal reparteMaximo) {
-		this.reparteMaximo = reparteMaximo;
-	}
+    public void setReparteMaximo(BigDecimal reparteMaximo) {
+	this.reparteMaximo = reparteMaximo;
+    }
 
-	public boolean isMix() {
-		return mix;
-	}
+    public boolean isMix() {
+	return mix;
+    }
 
-	public void setMix(boolean mix) {
-		this.mix = mix;
-	}
+    public void setMix(boolean mix) {
+	this.mix = mix;
+    }
+
+    public BigDecimal getIndiceVendaCrescente() {
+	return indiceVendaCrescente;
+    }
+
+    public void setIndiceVendaCrescente(BigDecimal indiceVendaCrescente) {
+	this.indiceVendaCrescente = indiceVendaCrescente;
+    }
 
 }

@@ -1,60 +1,80 @@
 package br.com.abril.nds.process.correcaovendas;
 
-import java.util.Iterator;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
+import java.util.Iterator;
+import java.util.List;
 
 import org.testng.annotations.Test;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
-import br.com.abril.nds.model.Estudo;
-import static org.junit.Assert.*;
+
 public class CorrecaoVendasTest {
 
-    @Test
-    public void executarProcesso() {
+    @Test(dataProvider = "getCotaList", dataProviderClass = CorrecaoVendasDataProvider.class)
+    public void executarProcesso(List<Cota> listCota) {
 
 	try {
-	    
-	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(new Estudo());
 
-	    correcaoVendas.executar();
-	    /*
-	     * Medias medias = new Medias(correcaoVendas.getEstudo());
-	     * medias.executar();
-	     */
-	    Estudo estudoReturn = (Estudo) correcaoVendas.getGenericDTO();
+	    int iCota = 0;
+	    while (iCota < listCota.size()) {
 
-	    Iterator<Cota> itCota = estudoReturn.getCotas().iterator();
+		Cota cota = listCota.get(iCota);
 
-	    while (itCota.hasNext()) {
+		CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+		correcaoVendas.executar();
 
-		Cota cota = itCota.next();
+		Cota cotaReturn = (Cota) correcaoVendas.getGenericDTO();
 
-		System.out.println();
-		System.out.println("<< Cota " + cota.getId() + " >> ");
-		System.out.println("\tIndiceCorrecaoTendencia : "
-			+ cota.getIndiceCorrecaoTendencia());
+		BigDecimal one = BigDecimal.ONE;
+		BigDecimal oneDotOne = one.add(new BigDecimal(0.1));
+		BigDecimal oneDotTwo = one.add(new BigDecimal(0.2));
+
+		oneDotOne = oneDotOne.divide(one, 1, BigDecimal.ROUND_FLOOR);
+		oneDotTwo = oneDotTwo.divide(one, 1, BigDecimal.ROUND_FLOOR);
+
+		boolean assertIndiceCorrecaoTendencia = (cotaReturn
+			.getIndiceCorrecaoTendencia() != null && (cotaReturn
+			.getIndiceCorrecaoTendencia().compareTo(one) == 0
+			|| cotaReturn.getIndiceCorrecaoTendencia().compareTo(
+				oneDotOne) == 0 || cotaReturn
+			.getIndiceCorrecaoTendencia().compareTo(oneDotTwo) == 0));
+
+		assertTrue(assertIndiceCorrecaoTendencia);
 
 		Iterator<EstoqueProdutoCota> itEstoqueProdutoCota = cota
 			.getEstoqueProdutoCotas().iterator();
 		while (itEstoqueProdutoCota.hasNext()) {
 
-		    System.out.println();
-
 		    EstoqueProdutoCota estoqueProdutoCota = itEstoqueProdutoCota
 			    .next();
 
-		    System.out.println("\t\t<< EstoqueProdutoCota "
-			    + estoqueProdutoCota.getId() + " >> ");
-		    System.out.println("\t\t\tIndiceCorrecao : "
-			    + estoqueProdutoCota.getIndiceCorrecao());
+		    boolean assertIndiceCorrecao = (estoqueProdutoCota
+			    .getIndiceCorrecao() != null && (estoqueProdutoCota
+			    .getIndiceCorrecao().compareTo(one) == 0
+			    || estoqueProdutoCota.getIndiceCorrecao()
+				    .compareTo(oneDotOne) == 0 || estoqueProdutoCota
+			    .getIndiceCorrecao().compareTo(oneDotTwo) == 0));
+
+		    assertTrue(assertIndiceCorrecao);
 
 		}
+
+		boolean assertIndiceVendaCrescente = (cotaReturn
+			.getIndiceVendaCrescente() != null && (cotaReturn
+			.getIndiceVendaCrescente().compareTo(one) == 0 || cotaReturn
+			.getIndiceVendaCrescente().compareTo(oneDotOne) == 0));
+
+		assertTrue(assertIndiceVendaCrescente);
+
+		iCota++;
 	    }
+
 	} catch (Exception e) {
-	    //fail(e.getMessage());
-	    e.printStackTrace();
+	    fail(e.getMessage());
 	}
 
     }
