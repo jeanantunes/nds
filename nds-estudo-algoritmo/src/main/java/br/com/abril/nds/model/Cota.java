@@ -11,20 +11,20 @@ public class Cota extends GenericDTO<Cota> {
     private String nome;
     private ClassificacaoCota classificacao;
     private BigDecimal reparteCalculado;
-    private BigDecimal vendaMediaMaisN; // parametro VendaMedia + n na tela de Ajuste de Reparte
-    private BigDecimal reparteMinimo; // parametro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
+    private BigDecimal vendaMediaMaisN;
+    private BigDecimal reparteMinimo;
     private BigDecimal reparteMaximo;
-    private BigDecimal vendaMedia; // VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
+    private BigDecimal vendaMedia;
     private BigDecimal vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
-    private List<ProdutoEdicao> edicoesBase; // edições que servirão de base para o estudo
-    private List<ProdutoEdicao> edicoesRecebidas; // todas as edições que essa cota recebeu
+    private List<ProdutoEdicao> edicoesBase;
+    private List<ProdutoEdicao> edicoesRecebidas;
     private List<EstoqueProdutoCota> estoqueProdutoCotas;
-    private BigDecimal percentualEncalheMaximo; // Percentual de encalhe máximo definido na tela Ajuste de Reparte (por Cota)
+    private BigDecimal percentualEncalheMaximo;
     // TODO: verificar se essa somatória é de todas as edições da cota ou é somente a última (Processo: Reparte Proporcional)
-    private BigDecimal somaReparteEdicoesAbertas; // Soma do Reparte de todas as edições que essa cota recebeu
+    private BigDecimal somaReparteEdicoesAbertas;
     private BigDecimal indiceCorrecaoTendencia;
-    private BigDecimal quantidadePDVs; // Quantidade de PDV's que a cota possui
+    private BigDecimal quantidadePDVs;
     private boolean mix;
     private BigDecimal indiceVendaCrescente;
 
@@ -32,18 +32,17 @@ public class Cota extends GenericDTO<Cota> {
     	vendaMedia = BigDecimal.ZERO;
     	vendaMediaMaisN = BigDecimal.ZERO;
     	reparteCalculado = BigDecimal.ZERO;
+    	classificacao = ClassificacaoCota.SemClassificacao;
     }
     
     public void calculate() {
 	// Cálculo da Venda Média Final
-	BigDecimal soma = new BigDecimal(0);
+	BigDecimal soma = BigDecimal.ZERO;
 	for (ProdutoEdicao edicao : edicoesRecebidas) {
 	    soma.add(edicao.getVenda());
 	}
 	vendaMedia = soma.divide(new BigDecimal(edicoesRecebidas.size()), 2,
 		BigDecimal.ROUND_FLOOR);
-
-	// Cálculo da Venda Média Nominal
     }
 
     public Long getId() {
@@ -62,6 +61,10 @@ public class Cota extends GenericDTO<Cota> {
 	this.nome = nome;
     }
 
+    /**
+     * Edições que servirão de base para o estudo
+     * @return List<{@link ProdutoEdicao}>
+     */
     public List<ProdutoEdicao> getEdicoesBase() {
 	return edicoesBase;
     }
@@ -87,8 +90,8 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * O AjusteReparte estará preenchido com o valor do parâmetro VendaMedia + n na tela de Ajuste de Reparte
-     * @return BigDecimal
+     * Valor do parâmetro "VendaMedia + n" configurado na tela de Ajuste de Reparte
+     * @return {@link BigDecimal}
      */
     public BigDecimal getVendaMediaMaisN() {
 	return vendaMediaMaisN;
@@ -112,8 +115,8 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * O ReparteMinimo estará preenchido com o valor parâmetro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
-     * @return BigDecimal
+     * Valor do parâmetro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
+     * @return {@link BigDecimal}
      */
     public BigDecimal getReparteMinimo() {
 	return reparteMinimo;
@@ -168,6 +171,10 @@ public class Cota extends GenericDTO<Cota> {
 	this.estoqueProdutoCotas = estoqueProdutoCotas;
     }
 
+    /**
+     * Todas as edições que essa cota recebeu
+     * @return List<{@link ProdutoEdicao}>
+     */
     public List<ProdutoEdicao> getEdicoesRecebidas() {
 	return edicoesRecebidas;
     }
@@ -176,6 +183,10 @@ public class Cota extends GenericDTO<Cota> {
 	this.edicoesRecebidas = edicoesRecebidas;
     }
 
+    /**
+     * Soma do reparte de todas as edições que essa cota recebeu
+     * @return {@link BigDecimal}
+     */
     public BigDecimal getSomaReparteEdicoesAbertas() {
 	return somaReparteEdicoesAbertas;
     }
@@ -189,6 +200,10 @@ public class Cota extends GenericDTO<Cota> {
 	this.percentualEncalheMaximo = percentualEncalheMaximo;
     }
 
+    /**
+     * Percentual de encalhe máximo definido na tela Ajuste de Reparte (por Cota)
+     * @return {@link BigDecimal}
+     */
     public BigDecimal getPercentualEncalheMaximo() {
 	return percentualEncalheMaximo;
     }
@@ -201,6 +216,10 @@ public class Cota extends GenericDTO<Cota> {
 	this.indiceCorrecaoTendencia = indiceCorrecaoTendencia;
     }
 
+    /**
+     * Quantidade de PDV's que a cota possui
+     * @return {@link BigDecimal}
+     */
     public BigDecimal getQuantidadePDVs() {
 	return quantidadePDVs;
     }

@@ -34,6 +34,8 @@ public class Estudo extends GenericDTO<Estudo> {
 		cotas = new ArrayList<Cota>();
 		
 		pacotePadrao = BigDecimal.ZERO;
+		reparteDistribuir = BigDecimal.ZERO;
+		somatoriaVendaMedia = BigDecimal.ZERO;
 	}
 	
 	public void calculate() {

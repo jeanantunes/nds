@@ -18,7 +18,10 @@ public enum ClassificacaoCota {
 	BancaComTotalVendaZeraMinimoZeroCotaAntiga("VZ"),
 	CotaMix("MX"),
 	BancaEstudoComplementar("CP"),
-	BonificacaoParaCotas("TR");
+	BonificacaoParaCotas("TR"),
+	SemClassificacao("ZZ");
+	// TODO: verificar qual será a primeira classificação que a cota receberá
+	// enquanto isso não é definido, utilizaremos a classificação 'ZZ' - Sem Classificação
 	
 	private String codigo;
 	
