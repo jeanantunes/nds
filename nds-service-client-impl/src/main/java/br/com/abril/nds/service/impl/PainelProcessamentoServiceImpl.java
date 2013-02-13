@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,6 +104,12 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		return getInterfaceList(logExecucaoRepository.obterInterfaces(filtro));
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public BigInteger listarTotalInterfaces(FiltroInterfacesDTO filtro) {
+		return logExecucaoRepository.obterTotalInterfaces(filtro);
+	}
+	
 	/**
 	 * Popula a lista de DTO para exibir na Grid
 	 * @param listaLogExecucao
@@ -174,6 +181,13 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		return lista;
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public Long listarTotaldetalhesProcessamentoInterface(long codigoLogExecucao, FiltroDetalheProcessamentoDTO filtro) {
+		return logExecucaoRepository.obterTotalMensagensErroLogInterface(codigoLogExecucao, distribuidorService.obterDataOperacaoDistribuidor(), filtro);
+	}
+
+	
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.LogExecucaoMensagemService#listarProcessos()
 	 */
@@ -526,5 +540,5 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	    }
 	    return map;
 	}
-	
+
 }
