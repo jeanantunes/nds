@@ -31,7 +31,7 @@ public class ReparteProporcional extends ProcessoAbstrato {
         // TODO: concluir implementação do método calcular do Processo ReparteProporcional
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	boolean temEdicaoBaseAberta = false;
-    	for (ProdutoEdicao edicao : estudo.getEdicoesBaseInsercaoManual()) {
+    	for (ProdutoEdicao edicao : estudo.getEdicoesBase()) {
     		if (edicao.isEdicaoAberta()) {
     			temEdicaoBaseAberta = true;
     			break;

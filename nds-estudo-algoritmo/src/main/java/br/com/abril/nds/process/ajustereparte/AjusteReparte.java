@@ -9,9 +9,9 @@ import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 
 /**
- * Este processo apenas realiza um ajuste no reparte das cotas se a opção "Venda Média + n" estiver marcada na tela de Ajuste de Reparte
- * Se estiver, ele atribui ao ReparteCalculado da cota a soma da VendaMediaFinal ao valor informado na tela Ajuste de Reparte (se ele for
- * menor que o Pacote Padrão definido, será somado o Pacote Padrão ao invés desse valor). 
+ * Este processo apenas realiza um ajuste no reparte das cotas se a opção "Venda Média + n" estiver marcada na tela de Ajuste de Reparte.
+ * Se estiver, ele atribui ao ReparteCalculado da cota a soma da VendaMediaFinal ou o valor informado na tela Ajuste de Reparte (se ele for
+ * maior que o Pacote Padrão definido, caso contrário será atribuído o pacote padrão). 
  * <p style="white-space: pre-wrap;">SubProcessos:
  *      - N/A
  * Processo Pai:
@@ -22,19 +22,23 @@ import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
  */
 public class AjusteReparte extends ProcessoAbstrato {
 
+	public AjusteReparte(Estudo estudo) {
+		super(estudo);
+	}
+	
     @Override
-    protected void executarProcesso() {
-	
-	Estudo estudo = (Estudo) super.genericDTO;
-	
+    protected void executarProcesso() throws Exception {
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
-    	for (Cota cota : estudo.getCotas()) {
+    	if ((getEstudo() == null) || (getEstudo().getCotas() == null)) {
+    		throw new Exception("Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo.");
+    	}
+    	for (Cota cota : getEstudo().getCotas()) {
     		if (cota.getVendaMediaMaisN().longValue() > 0) {
-    			BigDecimal ajusteReparte = new BigDecimal(0);
-    			if (cota.getVendaMediaMaisN().longValue() > estudo.getPacotePadrao().longValue()) {
+    			BigDecimal ajusteReparte = BigDecimal.ZERO;
+    			if (cota.getVendaMediaMaisN().longValue() > getEstudo().getPacotePadrao().longValue()) {
     				ajusteReparte = cota.getVendaMediaMaisN();
     			} else {
-    				ajusteReparte = estudo.getPacotePadrao();
+    				ajusteReparte = getEstudo().getPacotePadrao();
     			}
     			cota.setReparteCalculado(cota.getVendaMedia().add(ajusteReparte));
     		}	
