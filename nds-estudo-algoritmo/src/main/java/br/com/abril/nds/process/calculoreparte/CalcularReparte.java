@@ -2,7 +2,6 @@ package br.com.abril.nds.process.calculoreparte;
 
 import java.math.BigDecimal;
 
-import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
@@ -42,7 +41,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 		if (getEstudo().getReparteDistribuir().doubleValue() > getEstudo().getSomatoriaVendaMedia().doubleValue()) {
 			excedenteDistribuir = getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia());
 			boolean temEdicaoBaseFechada = false;
-			for (ProdutoEdicao edicao : getEstudo().getEdicoesBaseInsercaoManual()) {
+			for (ProdutoEdicao edicao : getEstudo().getEdicoesBase()) {
 				if (!edicao.isEdicaoAberta()) {
 					temEdicaoBaseFechada = true;
 					break;

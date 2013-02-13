@@ -5,10 +5,15 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 
 public class ProdutoEdicaoDAO {
+
+    private static final Logger log = LoggerFactory.getLogger(ProdutoEdicaoDAO.class);
 
     public List<ProdutoEdicao> getEdicaoRecebidas(Cota cota) {
 	return getEdicaoRecebidas(cota, null);
@@ -50,8 +55,7 @@ public class ProdutoEdicaoDAO {
 		edicoes.add(edicao);
 	    }
 	} catch (Exception ex) {
-	    System.out
-		    .println("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota");
+	     log.error("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota", ex);
 	}
 	return edicoes;
     }

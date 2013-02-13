@@ -1,9 +1,11 @@
 package br.com.abril.nds.process.definicaobases;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.model.Cota;
+import org.joda.time.DateTime;
+
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -26,38 +28,75 @@ import br.com.abril.nds.service.PreparaEstudoService;
  */
 public class DefinicaoBases extends ProcessoAbstrato {
 
-	private PreparaEstudoService estudoService = new PreparaEstudoService();
+    private static final int INDEX_CORRECTION = 1;
+    private static final int TRES_EDICOES = 3;
+    private static final int QUATRO_COLECIONAVEIS = 4;
+    private static final int TWO_YEARS = 2;
+    private PreparaEstudoService estudoService = new PreparaEstudoService();
 
-	public DefinicaoBases() {
-		super(new Estudo());
+    public DefinicaoBases(Estudo estudo) {
+	super(estudo);
+    }
+
+    @Override
+    public void executarProcesso() throws Exception {
+	// TODO Popular o estudo - Criar Logica para chamar subProcesso
+	// FIXME Retirar esse trecho
+	Estudo estudo = (Estudo) super.genericDTO;
+
+	// TODO: implementar método calcular do Processo DefinicaoBases
+	//recebe edições da interface ou manualmente (é indiferente a origem, a principio)
+	List<ProdutoEdicao> edicoesRecebidasRaw = MockEdicoes.getEdicoesRandom();
+	
+	List<ProdutoEdicao> edicoesParaEstudo = new ArrayList<ProdutoEdicao>();
+	for (ProdutoEdicao produtoEdicao : edicoesRecebidasRaw) {
+	    List<ProdutoEdicao> objetoEdtudo = estudoService.listaEdicoesPorLancamento(produtoEdicao);
+	    validaApenasUmaEdicaoFechada(objetoEdtudo);
+	    excluiEdicoesComMaisDeDoisAnos(objetoEdtudo);
+	    excluiColecionaveisSeMaiorQueQuatro(objetoEdtudo);
+	    edicoesParaEstudo.addAll(objetoEdtudo);
 	}
+	
+	estudo.setEdicoesBase(edicoesParaEstudo);
+	
+	BaseParaVeraneio baseParaVeraneio = new BaseParaVeraneio(estudo);
+	baseParaVeraneio.executar();
+	BaseParaSaidaVeraneio baseParaSaidaVeraneio = new BaseParaSaidaVeraneio((Estudo) baseParaVeraneio.getGenericDTO());
+	baseParaSaidaVeraneio.executar();
+	
+	super.genericDTO = baseParaSaidaVeraneio.getGenericDTO();
+    }
 
-	@Override
-	public void executarProcesso() throws Exception {
-
-		// TODO Popular o estudo - Criar Logica para chamar subProcesso
-		// FIXME Retirar esse trecho
-		Estudo estudo = (Estudo) super.genericDTO;
-		estudo.setCotas(estudoService.populaCotasParaEstudo());
-
-		// TODO: implementar método calcular do Processo DefinicaoBases
-		List<Cota> cotas = estudo.getCotas();
-		List<ProdutoEdicao> edicoesBase = new ArrayList<>();
-		for (Cota cota : cotas) {
-			List<ProdutoEdicao> edicoesRecebidas = cota.getEdicoesRecebidas();
-			for (ProdutoEdicao produtoEdicao : edicoesRecebidas) {
-				// TODO implementar logica para separar as edições de base
-				if (produtoEdicao.isEdicaoAberta()) {
-					edicoesBase.add(produtoEdicao);
-				}
-			}
-		}
-
-		BaseParaVeraneio baseParaVeraneio = new BaseParaVeraneio(estudo);
-		baseParaVeraneio.executar();
-		BaseParaSaidaVeraneio baseParaSaidaVeraneio = new BaseParaSaidaVeraneio((Estudo) baseParaVeraneio.getGenericDTO());
-		baseParaSaidaVeraneio.executar();
-
-		super.genericDTO = baseParaSaidaVeraneio.getGenericDTO();
+    private void validaApenasUmaEdicaoFechada(List<ProdutoEdicao> objetoEdtudo) throws Exception {
+	if(objetoEdtudo.size() == 1 && !objetoEdtudo.get(0).isEdicaoAberta()) {
+	    //FIXME rever este throw
+	    throw new Exception("Existe apenas 1 edição fechada, favor incluir mais publicações na base.");
 	}
+    }
+
+    private void excluiEdicoesComMaisDeDoisAnos(List<ProdutoEdicao> objetoEdtudo) {
+	int count = TRES_EDICOES;
+	while(objetoEdtudo.size() > count-INDEX_CORRECTION) {
+	    if(isBeforeTwoYears(objetoEdtudo.get(count).getDataLancamento())) {
+		objetoEdtudo.remove(count);
+	    } else {
+		count++;
+	    }
+	}
+    }
+    
+    private void excluiColecionaveisSeMaiorQueQuatro(List<ProdutoEdicao> objetoEdtudo) {
+	if(objetoEdtudo.get(0).isColecao() && objetoEdtudo.size()>QUATRO_COLECIONAVEIS) {
+	    objetoEdtudo.subList(QUATRO_COLECIONAVEIS+INDEX_CORRECTION, objetoEdtudo.size()).clear();
+	}
+    }
+
+    private boolean isBeforeTwoYears(Date date) {
+	/*
+	long now = System.currentTimeMillis();
+	long twoYears = (long) 1000*60*60*24*365;
+	Date date = new Date(now - twoYears);
+	*/
+	return DateTime.now().minusYears(TWO_YEARS).isAfter(date.getTime());
+    }
 }

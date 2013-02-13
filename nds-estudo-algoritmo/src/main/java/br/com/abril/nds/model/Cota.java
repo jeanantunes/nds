@@ -28,6 +28,12 @@ public class Cota extends GenericDTO<Cota> {
     private boolean mix;
     private BigDecimal indiceVendaCrescente;
 
+    public Cota() {
+    	vendaMedia = BigDecimal.ZERO;
+    	vendaMediaMaisN = BigDecimal.ZERO;
+    	reparteCalculado = BigDecimal.ZERO;
+    }
+    
     public void calculate() {
 	// Cálculo da Venda Média Final
 	BigDecimal soma = new BigDecimal(0);
