@@ -2391,11 +2391,12 @@ public class Fixture {
 		return banco;
 	}
 	
-	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel, Banco banco) {
+	public static ControleBaixaBancaria controleBaixaBancaria(Date dataOperacao, Date dataPagamento, StatusControle status, Usuario responsavel, Banco banco) {
 	
 		ControleBaixaBancaria controleBaixaBancaria = new ControleBaixaBancaria();
 		
-		controleBaixaBancaria.setData(data);
+		controleBaixaBancaria.setDataOperacao(dataOperacao);
+		controleBaixaBancaria.setDataPagamento(dataPagamento);
 		controleBaixaBancaria.setStatus(status);
 		controleBaixaBancaria.setResponsavel(responsavel);
 		controleBaixaBancaria.setBanco(banco);

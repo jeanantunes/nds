@@ -34,7 +34,7 @@ public class ControleBaixaBancariaServiceImpl implements ControleBaixaBancariaSe
 	
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public void alterarControleBaixa(StatusControle statusControle, Date dataOperacao,
-									 Usuario usuario, Banco banco) {
+									 Date dataPagamento, Usuario usuario, Banco banco) {
 		
 		if (banco == null) {
 			
@@ -43,13 +43,14 @@ public class ControleBaixaBancariaServiceImpl implements ControleBaixaBancariaSe
 		}
 		
 		ControleBaixaBancaria controleBaixa =
-			this.controleBaixaRepository.obterControleBaixaBancaria(dataOperacao, banco);
+			this.controleBaixaRepository.obterControleBaixaBancaria(dataPagamento, banco);
 		
 		if (controleBaixa == null) {
 			
 			controleBaixa = new ControleBaixaBancaria();
 			
-			controleBaixa.setData(dataOperacao);
+			controleBaixa.setDataOperacao(dataOperacao);
+			controleBaixa.setDataPagamento(dataPagamento);
 			controleBaixa.setResponsavel(usuario);
 			controleBaixa.setBanco(banco);
 		}
