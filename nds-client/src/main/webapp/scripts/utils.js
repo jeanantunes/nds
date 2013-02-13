@@ -267,9 +267,13 @@ function priceToFloat(field) {
 function floatToPrice(field) {
 	
 	var price = String(field);
-	
+
 	if (price.indexOf(".") == -1) {
 		price = price + ".00";
+	}
+	
+	if(price.indexOf(",") > -1) {
+		price = price.replace(",", "");
 	}
 	
     var part = price.split(".");

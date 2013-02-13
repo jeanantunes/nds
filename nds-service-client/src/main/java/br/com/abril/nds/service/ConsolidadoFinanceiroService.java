@@ -1,14 +1,17 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 
 public interface ConsolidadoFinanceiroService {
@@ -25,4 +28,7 @@ public interface ConsolidadoFinanceiroService {
 	
 	Date buscarDiaUltimaDividaGerada();
 
+	List<ContaCorrenteCotaVO> obterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro);
+
+	BigInteger countObterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro);
 }

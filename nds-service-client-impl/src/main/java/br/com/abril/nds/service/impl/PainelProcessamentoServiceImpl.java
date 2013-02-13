@@ -16,6 +16,8 @@ import br.com.abril.nds.client.vo.DetalheProcessamentoVO;
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.model.StatusOperacional;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
@@ -97,8 +99,8 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 */
 	@Transactional(readOnly = true)
 	@Override
-	public List<InterfaceDTO> listarInterfaces() {
-		return getInterfaceList(logExecucaoRepository.obterInterfaces());
+	public List<InterfaceDTO> listarInterfaces(FiltroInterfacesDTO filtro) {
+		return getInterfaceList(logExecucaoRepository.obterInterfaces(filtro));
 	}
 
 	/**
@@ -144,10 +146,10 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 */
 	@Transactional(readOnly = true)
 	@Override
-	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(Long codigoLogExecucao) {
+	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(Long codigoLogExecucao, FiltroDetalheProcessamentoDTO filtro) {
 		List<DetalheProcessamentoVO> lista = new ArrayList<DetalheProcessamentoVO>();
 		DetalheProcessamentoVO detalheProcessamentoVO = null;
-		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensErroLogInterface(codigoLogExecucao, distribuidorService.obterDataOperacaoDistribuidor())) {
+		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensErroLogInterface(codigoLogExecucao, distribuidorService.obterDataOperacaoDistribuidor(), filtro)) {
 			String tipoErro = "";
 			detalheProcessamentoVO = new DetalheProcessamentoVO();
 			detalheProcessamentoVO.setMensagem(logExecucaoMensagem.getMensagem());

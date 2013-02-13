@@ -405,7 +405,9 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @param dataOperacao
 	 * @return ValoresAplicados
 	 */
-	public ValoresAplicados obterValoresAplicadosProdutoEdicao(Integer numeroCota,
-			Long idProdutoEdicao, Date dataOperacao);
+	public ValoresAplicados obterValoresAplicadosProdutoEdicao(Integer numeroCota, Long idProdutoEdicao, Date dataOperacao);
 	
+	
+	Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+
 }

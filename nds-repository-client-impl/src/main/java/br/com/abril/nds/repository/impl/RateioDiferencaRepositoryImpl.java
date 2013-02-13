@@ -169,7 +169,7 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		   .append(" rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto) as valorTotal ")
 		   .append(" from RateioDiferenca rateioDiferenca ")
 		   .append(" inner join rateioDiferenca.diferenca.produtoEdicao as produtoEdicao ")
-		   .append(" inner join rateioDiferenca.diferenca.lancamentoDiferenca.movimentoEstoqueCota as mec ")
+		   .append(" inner join rateioDiferenca.diferenca.lancamentoDiferenca.movimentosEstoqueCota as mec ")
 		   .append(" inner join produtoEdicao.produto.fornecedores as fornecedor ")
 		   .append(" inner join rateioDiferenca.diferenca as diferenca ")
 		   .append(" where rateioDiferenca.diferenca.id = :idDiferenca ");

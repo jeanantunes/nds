@@ -177,6 +177,33 @@
 </div>
 </form>
 
+<form id="form-debitos-creditos">
+	<div id="dialog-debitos-creditos" title="Detalhe Tipo de Movimento" style="display: none;">
+		<fieldset>
+			<legend id="msgFieldsetdebitosCreditos"></legend>
+			<table class="debitoCreditoCotaGrid"></table>
+			<div style="float:right; margin-right:30px;">Total:
+				<strong id="valorTotalDebitoCredito"></strong>
+			</div>
+        	<br clear="all" />
+        	<span class="bt_arquivo"><a href="javascript:contaCorrenteCotaController.exportarDebitoCredito('XLS');">Arquivo</a></span>
+            <span class="bt_imprimir"><a href="javascript:contaCorrenteCotaController.exportarDebitoCredito('PDF');">Imprimir</a></span>
+		</fieldset>
+	</div>
+</form>
+
+<form id="form-encargos">
+	<div id="dialog-encargos" title="Detalhes do Encargo" style="display: none;">
+		<fieldset>
+			<legend id="msgFieldsetEncargos"></legend>
+			<br />
+			<label><strong>Juros R$:</strong></label><label id="txtEncargosJuros"></label>
+			<br clear="all" />
+			<label><strong>Multa R$:</strong></label><label id="txtEncargosMulta"></label>
+		</fieldset>
+	</div>
+</form>
+
     
 		<div class="areaBts">
 			<div class="area">
@@ -251,9 +278,4 @@
 	       	  <table class="itemContaCorrenteCotaGrid"></table>
 	      </fieldset>
       </div>
-
-<script>
-
-</script>
 </body>
-</html>

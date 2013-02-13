@@ -128,7 +128,7 @@ var painelProcessamentoController = $.extend(true, {
 				display : 'Arquivo',
 				name : 'extensaoArquivo',
 				width : 180,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Status',
@@ -146,7 +146,7 @@ var painelProcessamentoController = $.extend(true, {
 				display : 'Hora Processamento',
 				name : 'horaProcessamento',
 				width : 140,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Reprocessar',
@@ -165,7 +165,10 @@ var painelProcessamentoController = $.extend(true, {
 			height : 'auto'
 		});
 	},
-	popup : function() {
+	popup : function(idLogProcessamento, dataProcessamento, horaProcessamento) {
+		$("#nomeInterface").html(idLogProcessamento);
+		$("#dataProcessamento").html(dataProcessamento);
+		$("#horaProcessamento").html(horaProcessamento);
 		$( "#dialog-novo", painelProcessamentoController.workspace ).dialog({
 			resizable: false,
 			height:430,
@@ -241,7 +244,7 @@ var painelProcessamentoController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {
 
 			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.nome + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
-			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 			row.cell.reprocessar = btReprocessamento + brDetalhes;
 
 			row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
@@ -298,7 +301,7 @@ var painelProcessamentoController = $.extend(true, {
 		
 		return resultado;
 	},
-	abrirPopUpDetalhesInterfaceProcessamento : function(idLogProcessamento) {
+	abrirPopUpDetalhesInterfaceProcessamento : function(idLogProcessamento, dataProcessamento, horaProcessamento) {
 		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
 			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterfaceProcessamento',
 			params: [
@@ -308,7 +311,7 @@ var painelProcessamentoController = $.extend(true, {
 		});
 		
 		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexReload();
-		painelProcessamentoController.popup();			
+		painelProcessamentoController.popup(idLogProcessamento, dataProcessamento, horaProcessamento);			
 	},
 	executarPreProcessamentoGrid : function(resultado) {
 		

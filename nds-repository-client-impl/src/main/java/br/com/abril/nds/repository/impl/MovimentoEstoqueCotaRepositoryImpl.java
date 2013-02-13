@@ -2739,5 +2739,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return (ValoresAplicados) query.setMaxResults(1).uniqueResult();
 		
 	}  
+	
+	@Override
+	public Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota){
 		
+		StringBuilder hql = new StringBuilder(" select produtoEdicao.id  ");
+		
+		hql.append(" from ConferenciaEncalhe conferenciaEncalhe ")
+		   .append(" join conferenciaEncalhe.movimentoEstoqueCota movimentoEstoqueCota ")
+		   .append(" join movimentoEstoqueCota.produtoEdicao produtoEdicao ")
+		   .append(" WHERE conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+		
+		return (Long) query.uniqueResult();
+	}
 }

@@ -65,7 +65,9 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		ConferenciaEncalheCont.criarComboBoxEncalhe();
 		
-		ConferenciaEncalheCont.atribuirAtalhos();	
+		ConferenciaEncalheCont.atribuirAtalhos();
+		
+		
 	},
 	
 	atribuirAtalhos: function(){
@@ -90,18 +92,19 @@ var ConferenciaEncalheCont = $.extend(true, {
 		shortcut.add("F8", function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
+				
+				ConferenciaEncalheCont.popup_salvarInfos();
+			}
+		});
+
+		shortcut.add("F9", function() {
+			
+			if (!ConferenciaEncalheCont.modalAberta){
 			
 				ConferenciaEncalheCont.veificarCobrancaGerada();
 			}
 		});
 		
-		shortcut.add("F9", function() {
-			
-			if (!ConferenciaEncalheCont.modalAberta){
-				
-				ConferenciaEncalheCont.popup_salvarInfos();
-			}
-		});
 	},
 	
 	pesquisarCota : function(){
@@ -342,6 +345,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		var modeloConferenciaEncalhe = result.listaConferenciaEncalhe;
 		
+		var totalExemplaresFooter = 0;
+		
 		ConferenciaEncalheCont.indDistribuidorAceitaJuramentado = result.indDistribuidorAceitaJuramentado;
 		
 		$("._dadosConfEncalhe", ConferenciaEncalheCont.workspace).remove();
@@ -362,6 +367,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 					}
 					
 					innerTable += "<tr class='" + _class + " _dados'>";
+					
+					innerTable += "<input type='hidden' id='idProdutoEdicaoGrid_"+index+"' value='" + value.idProdutoEdicao + "'/>";
 					
 					innerTable += "<td nowrap='nowrap'>" + value.codigo + "</td>";
 					
@@ -388,11 +395,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
 					
-					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
-					
 					var valorExemplares = parseInt(value.qtdExemplar);
 					
-					var inputExemplares = '<input id="qtdExemplaresGrid_' + index + '" maxlength="255" onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
+					totalExemplaresFooter += valorExemplares;
+					
+					innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + valorExemplares + "</td>";
+					
+					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
+					
+					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeypress="ConferenciaEncalheCont.nextInputExemplares('+index+','+valorExemplares+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.validarInputExemplares('+index+','+valorExemplares+');ConferenciaEncalheCont.atualizarValores('+ index +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
@@ -401,19 +412,23 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					var inputCheckBoxJuramentada = '';
 					
-					if(ConferenciaEncalheCont.indDistribuidorAceitaJuramentado == true && parcial == true) {
+					if (ConferenciaEncalheCont.indDistribuidorAceitaJuramentado == true) {
+
+						if(parcial == true) {
+							
+							inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
+							+ ' onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
+							
+							
+						} else {
+							
+							inputCheckBoxJuramentada = '<input type="checkbox" disabled="disabled" id="checkGroupJuramentada_' + index + '"/>';
+							
+						}
 						
-						inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
-						+ ' onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
-						
-						
-					} else {
-						
-						inputCheckBoxJuramentada = '<input type="checkbox" disabled="disabled" id="checkGroupJuramentada_' + index + '"/>';
-						
-					}
+						innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + inputCheckBoxJuramentada + "</td>";
 					
-					innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + inputCheckBoxJuramentada + "</td>";
+					} 
 					
 					innerTable += "</tr>";
 					
@@ -423,7 +438,14 @@ var ConferenciaEncalheCont = $.extend(true, {
 				}
 			);
 			
-			$('input[id*="qtdExemplaresGrid"]').numeric();
+			if (!ConferenciaEncalheCont.indDistribuidorAceitaJuramentado) {
+				
+				$("#colunaJuramentada", ConferenciaEncalheCont.workspace).hide();
+			}
+			
+			$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(totalExemplaresFooter);
+			
+			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalheCont.workspace).numericE();
 		}
 		
 		$(".outrosVlrsGrid", ConferenciaEncalheCont.workspace).flexAddData({
@@ -490,7 +512,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 									function(result2){
 									
 										if (result2){
-											
 											ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe = ui.item.chave.long;
 											$("#lstProdutos", ConferenciaEncalheCont.workspace).val(ui.item.chave.string);
 											$("#numEdicaoNovoEncalhe", ConferenciaEncalheCont.workspace).val(result2.numeroEdicao);
@@ -514,7 +535,26 @@ var ConferenciaEncalheCont = $.extend(true, {
 		}
 	},
 	
-	adicionarEncalhe: function(){
+	adicionarEncalhe: function(){	
+
+		var existeProduto = false;
+		
+		$("input[id*='idProdutoEdicaoGrid']", ConferenciaEncalheCont.workspace).each(function(){
+			
+			if (ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe == $(this).val()) {
+				
+				exibirMensagem("WARNING", ["Este produto já está sendo utilizado."]);
+				
+				existeProduto = true;
+				
+				return false;
+			}
+		});
+
+		if (existeProduto) {
+		
+			return;
+		}
 		
 		var data = [{name: "idProdutoEdicao", value: ConferenciaEncalheCont.idProdutoEdicaoNovoEncalhe}, 
 		            {name: "quantidade", value: $("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).val()},
@@ -527,6 +567,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
 				
 				ConferenciaEncalheCont.limparCamposNovoEncalhe();
+				
+				$("#dialog-encalhe", ConferenciaEncalheCont.workspace).dialog("close");
 				
 				$("#lstProdutos", ConferenciaEncalheCont.workspace).focus();
 				
@@ -672,7 +714,49 @@ var ConferenciaEncalheCont = $.extend(true, {
 			$("#divForChaveAcessoNFE", ConferenciaEncalheCont.workspace).hide();
 			
 		}
+	},
+	
+	redefinirValorTotalExemplaresFooter: function() {
 		
+		var totalAtualizado = 0;
+		
+		$("input[name='inputValorExemplares']", ConferenciaEncalheCont.workspace).each(function() {
+			
+			var parsedValue = parseInt($(this, ConferenciaEncalheCont.workspace).val());
+			
+			var valor = isNaN(parsedValue) ? 0 : parsedValue;
+
+			totalAtualizado += valor;
+		});
+		
+		$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(totalAtualizado);
+	},
+
+	validarInputExemplares :function(curIndex, valorRealExemplares) {
+		
+		var input = $('[tabindex='+ curIndex + ']');
+		
+		var valorInputado = input.val();
+
+		if (valorInputado > valorRealExemplares) {
+			
+			exibirMensagem('WARNING', [ "O valor digitado deve ser menor ou igual ao total do reparte." ]);
+			
+			input.val(valorRealExemplares);
+			
+			this.redefinirValorTotalExemplaresFooter();
+		}
+	},
+
+	nextInputExemplares : function(curIndex, valorRealExemplares, evt) {
+		
+		this.validarInputExemplares(curIndex, valorRealExemplares);
+	
+		if (evt.keyCode == 13) {
+			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
+			nextElement.select();
+			nextElement.focus();
+		}
 	},
 	
 	abrirDialogNotaFiscalDivergente: function(result){
@@ -781,6 +865,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	popup_novo_encalhe: function () {
 		
+		var _this = this;
+		
 		ConferenciaEncalheCont.modalAberta = true;
 		$(".message-dialog-encalhe > div", ConferenciaEncalheCont.workspace).hide();
 		$("#dialog-encalhe", ConferenciaEncalheCont.workspace).dialog({
@@ -791,7 +877,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
-					$(this).dialog("close");
+					_this.adicionarEncalhe();
 				},
 				"Cancelar" : function() {
 					

@@ -1152,7 +1152,8 @@ public class BoletoServiceImpl implements BoletoService {
 			email.enviar(assunto, 
 					     mensagem, 
 					     destinatarios, 
-					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF));
+					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF),
+					     true);
 		} catch(ValidacaoException e){
 			throw e;
 		}catch(Exception e){

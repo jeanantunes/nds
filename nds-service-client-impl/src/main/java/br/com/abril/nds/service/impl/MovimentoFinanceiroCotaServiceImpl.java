@@ -39,6 +39,7 @@ import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -73,6 +74,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Override
 	@Transactional
@@ -605,6 +609,18 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				movimentosEstoqueCotaOperacaoConferenciaEncalhe = 
 						movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
 				
+				for(MovimentoEstoqueCota mec : movimentosEstoqueCotaOperacaoConferenciaEncalhe) {
+					
+					if (mec.getProdutoEdicao() == null || mec.getProdutoEdicao().getProduto() == null){
+						
+						Long id = 
+								this.movimentoEstoqueCotaRepository.obterIdProdutoEdicaoPorControleConferenciaEncalhe(
+										idControleConferenciaEncalheCota);
+						
+						mec.setProdutoEdicao(this.produtoEdicaoRepository.buscarPorId(id));
+					}
+				}
+				
                 tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 				
 				this.gerarMovimentoFinanceiro(cota, 
@@ -766,7 +782,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
 		List<MovimentoFinanceiroCota> movs = 
 				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceirosCotaPorTipoMovimento(
-						idCota, tiposMovimentoPostergado);
+						idCota, null, tiposMovimentoPostergado, new Date());
 		
 		for (MovimentoFinanceiroCota mfc : movs){
 			
