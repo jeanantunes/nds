@@ -2,6 +2,7 @@ package br.com.abril.nds.process.ajustereparte;
 
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -41,6 +42,7 @@ public class AjusteReparte extends ProcessoAbstrato {
     				ajusteReparte = getEstudo().getPacotePadrao();
     			}
     			cota.setReparteCalculado(cota.getVendaMedia().add(ajusteReparte));
+    			cota.setClassificacao(ClassificacaoCota.ReparteFixado);
     		}	
     	}
     }

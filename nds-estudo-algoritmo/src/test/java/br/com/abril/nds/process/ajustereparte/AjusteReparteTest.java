@@ -1,11 +1,12 @@
 package br.com.abril.nds.process.ajustereparte;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 
 import org.junit.Test;
 
+import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 
@@ -122,6 +123,42 @@ public class AjusteReparteTest {
 		// Validação do teste
 		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
 			assertEquals(new BigDecimal(40), c.getReparteCalculado());
+		}
+	}
+	
+	@Test
+	public void testVerificaClassificacaoCotaComParametroConfigurado() throws Exception {
+		// Criação do ambiente
+		Estudo estudo = new Estudo();
+		Cota cota = new Cota();
+		cota.setVendaMediaMaisN(new BigDecimal(30));
+		cota.setVendaMedia(new BigDecimal(10));
+		estudo.getCotas().add(cota);
+
+		// Execução do processo
+		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
+		ajusteReparte.executarProcesso();
+		
+		// Validação do teste
+		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
+			assertEquals(ClassificacaoCota.ReparteFixado, c.getClassificacao());
+		}
+	}
+	
+	@Test
+	public void testVerificaClassificacaoCotaSemParametroConfigurado() throws Exception {
+		// Criação do ambiente
+		Estudo estudo = new Estudo();
+		Cota cota = new Cota();
+		estudo.getCotas().add(cota);
+
+		// Execução do processo
+		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
+		ajusteReparte.executarProcesso();
+		
+		// Validação do teste
+		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
+			assertNull(c.getClassificacao());
 		}
 	}
 }
