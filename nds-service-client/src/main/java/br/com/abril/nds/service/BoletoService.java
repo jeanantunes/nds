@@ -39,11 +39,12 @@ public interface BoletoService {
 	ResumoBaixaBoletosDTO obterResumoBaixaFinanceiraBoletos(Date data);
 	
 	void baixarBoletosAutomatico(ArquivoPagamentoBancoDTO arquivoPagamento,
-					   			 BigDecimal valorFinanceiro, Usuario usuario);
+					   			 BigDecimal valorFinanceiro, Usuario usuario, Date dataPagamento);
 	
 	void baixarBoleto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento, Usuario usuario,
 			 		  String nomeArquivo, Distribuidor distribuidor,
-			 		  Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco);
+			 		  Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos,
+			 		  Banco banco, Date dataPagamento);
 	
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException;
 
