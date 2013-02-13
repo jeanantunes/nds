@@ -272,8 +272,28 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.parcial = parcial;
 	}
 
-	
-	
-	
+	public BigInteger getQtdReparte() {
+		return qtdReparte;
+	}
+
+	public void setQtdReparte(BigInteger qtdReparte) {
+		this.qtdReparte = qtdReparte;
+	}
+
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
+	}
+
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
+	}
+
+	public Boolean getJuramentada() {
+		return juramentada;
+	}
+
+	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
 	
 }
