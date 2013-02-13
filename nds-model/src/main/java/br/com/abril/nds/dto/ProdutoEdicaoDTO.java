@@ -27,6 +27,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private Long numeroEdicao;
 	private BigDecimal precoVenda;
 	private BigDecimal desconto;
+	private BigDecimal precoComDesconto;
 	private int pacotePadrao;
 	private int peb;
 	private BigDecimal precoCusto;
@@ -690,4 +691,13 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setGrupoProduto(GrupoProduto grupoProduto) {
 		this.grupoProduto = grupoProduto;
 	}
+
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
+	}
+
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
+	}
+	
 }

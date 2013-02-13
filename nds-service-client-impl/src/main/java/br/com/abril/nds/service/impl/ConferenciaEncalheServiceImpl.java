@@ -65,6 +65,7 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
@@ -753,11 +754,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Integer posicaoDia = (qtde.intValue() + 1);
 		
 		return posicaoDia;
-		
+	
 	}
+	
+	
 	
 	@Transactional(readOnly = true)
 	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
+		
 		
 		if (numeroCota == null) {
 			
@@ -775,6 +779,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (produtoEdicao != null){
 		    
+			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+			
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
 		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
@@ -793,11 +799,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             produtoEdicaoDTO.setPrecoVenda(precoVenda);
-
-			BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
-
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			produtoEdicaoDTO.setDesconto(valorDesconto);
+			
+			carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, idProdutoEdicao, dataOperacao);
+			
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
 			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
@@ -834,7 +838,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.WARNING, "SM é obrigatório.");
 		}
 		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sm);
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sm, dataOperacao);
 		
 		ProdutoEdicaoDTO produtoEdicaoDTO = null;
 		
@@ -858,11 +864,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             produtoEdicaoDTO.setPrecoVenda(precoVenda);
-
-			BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
-
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			produtoEdicaoDTO.setDesconto(valorDesconto);
+			
+            carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, produtoEdicao.getId(), dataOperacao);
+			
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
 			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
@@ -885,6 +889,43 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return produtoEdicaoDTO;
 	}	
+	
+	/**
+	 * Carrega no objeto produtoEdicaoDTO os valores relativos
+	 * ao desconto aplicado no produtoEdicao.
+	 * 
+	 * @param produtoEdicaoDTO
+	 * @param numeroCota
+	 * @param idProdutoEdicao
+	 * @param dataOperacao
+	 */
+	private void carregarValoresAplicadosProdutoEdicao( ProdutoEdicaoDTO produtoEdicaoDTO, 
+														Integer numeroCota, 
+														Long idProdutoEdicao, 
+														Date dataOperacao) {
+
+		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, idProdutoEdicao, dataOperacao);
+		
+		BigDecimal valorDesconto 	= BigDecimal.ZERO;
+		BigDecimal precoComDesconto = produtoEdicaoDTO.getPrecoVenda();
+		BigDecimal precoVenda 		= produtoEdicaoDTO.getPrecoVenda();
+		
+		if(valoresAplicados != null) {
+		
+			valorDesconto = valoresAplicados.getValorDesconto() != null ? valoresAplicados.getValorDesconto() : BigDecimal.ZERO;
+			precoComDesconto = valoresAplicados.getPrecoComDesconto() != null ? valoresAplicados.getPrecoComDesconto() : produtoEdicaoDTO.getPrecoVenda();
+			precoVenda = valoresAplicados.getPrecoVenda() != null ? valoresAplicados.getPrecoVenda() : produtoEdicaoDTO.getPrecoVenda();
+		
+		} 
+		
+		produtoEdicaoDTO.setDesconto(valorDesconto);
+		produtoEdicaoDTO.setPrecoComDesconto(precoComDesconto);
+		produtoEdicaoDTO.setPrecoVenda(precoVenda);
+		
+		
+	}
+	
+	
 	
 	@Transactional(readOnly = true)
 	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
@@ -924,10 +965,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             produtoEdicaoDTO.setPrecoVenda(precoVenda);
 
-			BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
+            Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			produtoEdicaoDTO.setDesconto(valorDesconto);
+			carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, produtoEdicao.getId(), dataOperacao);
+			
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
 			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
@@ -1194,7 +1235,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		List<ConferenciaEncalhe> listaConferenciaEncalhe = controleConferenciaEncalheCota.getConferenciasEncalhe();
 		
 		if( listaConferenciaEncalhe==null || listaConferenciaEncalhe.isEmpty() ) {
-			throw new IllegalStateException("Nenhum registro de conferencia de encalhe, não foi possível fazer reabertura.");
+			
+			return;
+			
 		}
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = listaConferenciaEncalhe.get(0).getMovimentoEstoqueCota();

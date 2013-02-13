@@ -59,6 +59,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private BigDecimal desconto;
 	
+	private BigDecimal precoComDesconto;
+	
 	private BigDecimal valorTotal;
 	
 	private Integer dia;
@@ -264,8 +266,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 	public void setParcial(boolean parcial) {
 		this.parcial = parcial;
 	}
-	
-	
+
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
+	}
+
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
+	}
 	
 	
 }
