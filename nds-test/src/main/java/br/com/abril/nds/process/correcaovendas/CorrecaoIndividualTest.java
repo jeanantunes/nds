@@ -12,7 +12,7 @@ import br.com.abril.nds.model.EstoqueProdutoCota;
 
 public class CorrecaoIndividualTest {
 
-    @Test(dataProvider = "getEstoqueProdutoCota", dataProviderClass = CorrecaoVendasDataProvider.class)
+    @Test(dataProvider = "getEstoqueProdutoCotaList", dataProviderClass = CorrecaoVendasDataProvider.class)
     public void executarProcesso(EstoqueProdutoCota estoqueProdutoCota) {
 
 	try {
