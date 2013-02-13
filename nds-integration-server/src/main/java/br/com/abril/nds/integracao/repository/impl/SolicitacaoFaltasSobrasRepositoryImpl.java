@@ -10,11 +10,11 @@ import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.integracao.icd.model.DetalheFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.MotivoSituacaoFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.pks.DfsPK;
-import br.com.abril.nds.integracao.icd.model.pks.MfsPK;
+import br.com.abril.nds.integracao.model.icd.DetalheFaltaSobra;
+import br.com.abril.nds.integracao.model.icd.MotivoSituacaoFaltaSobra;
+import br.com.abril.nds.integracao.model.icd.SolicitacaoFaltaSobra;
+import br.com.abril.nds.integracao.model.icd.pks.DfsPK;
+import br.com.abril.nds.integracao.model.icd.pks.MfsPK;
 import br.com.abril.nds.integracao.repository.SolicitacaoFaltasSobrasRepository;
 
 @Repository

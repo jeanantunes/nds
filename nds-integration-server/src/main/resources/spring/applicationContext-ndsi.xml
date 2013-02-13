@@ -15,7 +15,7 @@
 	
 	<context:annotation-config/>
 	
-	<context:component-scan base-package="br.com.abril.nds.integracao"/>
+	<context:component-scan base-package="br.com.abril.nds"/>
 		
 	<task:annotation-driven/>
 	

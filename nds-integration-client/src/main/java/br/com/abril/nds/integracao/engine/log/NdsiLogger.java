@@ -13,14 +13,14 @@ import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
-import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepository;
 

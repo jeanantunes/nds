@@ -1,11 +1,11 @@
-package br.com.abril.nds.integracao.icd.model;
+package br.com.abril.nds.integracao.model.icd;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import br.com.abril.nds.integracao.icd.model.pks.MfsPK;
+import br.com.abril.nds.integracao.model.icd.pks.MfsPK;
 
 @Entity
 @Table(name = "MOTIVO_SITUACAO_FALTAS_SOBRAS")

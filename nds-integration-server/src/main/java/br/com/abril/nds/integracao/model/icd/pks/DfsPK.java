@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.icd.model.pks;
+package br.com.abril.nds.integracao.model.icd.pks;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -7,8 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class MfsPK implements Serializable {
-
+public class DfsPK implements Serializable {
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "COD_DISTRIBUIDOR")
@@ -78,6 +80,5 @@ public class MfsPK implements Serializable {
 	public void setNumeroSequencia(Integer numeroSequencia) {
 		this.numeroSequencia = numeroSequencia;
 	}
-			
-	
+
 }
