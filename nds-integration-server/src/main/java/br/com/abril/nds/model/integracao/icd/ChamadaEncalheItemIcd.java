@@ -1,12 +1,11 @@
-package br.com.abril.nds.integracao.model.icd;
+package br.com.abril.nds.model.integracao.icd;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.com.abril.nds.integracao.model.icd.pks.ItemCEPK;
+import br.com.abril.nds.model.integracao.icd.pks.ItemCEPK;
 
 @Entity
 @Table(name = "ITEM_CHAMADA_ENCALHE")

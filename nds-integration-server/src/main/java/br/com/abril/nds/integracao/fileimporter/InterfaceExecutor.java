@@ -36,8 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.integracao.model.InterfaceExecucao;
-import br.com.abril.nds.integracao.model.LogExecucao;
 import br.com.abril.nds.integracao.model.LogExecucaoArquivo;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
@@ -46,10 +44,6 @@ import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentDetail;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocumentMaster;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
-import br.com.abril.nds.integracao.model.enums.StatusExecucaoEnum;
-import br.com.abril.nds.integracao.model.icd.DetalheFaltaSobra;
-import br.com.abril.nds.integracao.model.icd.MotivoSituacaoFaltaSobra;
-import br.com.abril.nds.integracao.model.icd.SolicitacaoFaltaSobra;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
@@ -60,6 +54,12 @@ import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
+import br.com.abril.nds.model.integracao.LogExecucao;
+import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
+import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
+import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
+import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.healthmarketscience.jackcess.Database;
@@ -269,7 +269,7 @@ public class InterfaceExecutor {
 		
 		try {
 			
-			String classe = "br.com.abril.nds.integracao."+ interfaceName.toLowerCase() +".route";
+			String classe = "br.com.abril.nds.integracao."+ interfaceName.toLowerCase() +".route."+ interfaceName.toUpperCase() +"Route";
 			
 			return (RouteTemplate) applicationContext.getBean(Class.forName(classe));
 			

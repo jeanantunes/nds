@@ -12,14 +12,14 @@ public class DynamicRouterServer {
 	private DBImportDataRouter dbImportDataRouter;
 
 	@Autowired
-	private NdsServerLoggerFactory ndsiLoggerFactory;
+	private NdsServerLoggerFactory ndsServerLoggerFactory;
 
 	public void route(RouteTemplate route) {
 		
 		// LOG DE INICIALIZAÇÃO
 		if (!(route instanceof AbstractRoute)) {
-			ndsiLoggerFactory.resetLogger();
-			ndsiLoggerFactory.getLogger().logBeginning(route);
+			ndsServerLoggerFactory.resetLogger();
+			ndsServerLoggerFactory.getLogger().logBeginning(route);
 		}
 		
 		// START
@@ -37,7 +37,7 @@ public class DynamicRouterServer {
 		
 		// LOG DE FINALIZAÇÃO
 		if (!(route instanceof AbstractRoute)) {
-			ndsiLoggerFactory.getLogger().logEnd(route);
+			ndsServerLoggerFactory.getLogger().logEnd(route);
 		}
 	}	
 }

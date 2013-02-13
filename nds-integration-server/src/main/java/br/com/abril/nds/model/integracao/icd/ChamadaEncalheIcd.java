@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.model.icd;
+package br.com.abril.nds.model.integracao.icd;
 
 import java.util.Date;
 import java.util.List;
@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.abril.nds.integracao.model.icd.pks.CEPK;
+import br.com.abril.nds.model.integracao.icd.pks.CEPK;
 
 @Entity
 @Table(name = "CHAMADA_ENCALHE")
@@ -35,6 +35,9 @@ public class ChamadaEncalheIcd {
 	
 	@Column(name = "DATA_ANO_REFERENCIA_CHEN")
 	private Long dataAnoReferencia;
+	
+	@Column(name = "TIPO_STATUS_CHEN")
+	private String tipoStatus;
 	
 	@Column(name = "COD_TIPO_CHAMADA_ENC_TPCE")
 	private Long codigoTipoChamadaEncalhe;
@@ -86,6 +89,14 @@ public class ChamadaEncalheIcd {
 		this.dataAnoReferencia = dataAnoReferencia;
 	}
 	
+	public String getTipoStatus() {
+		return tipoStatus;
+	}
+
+	public void setTipoStatus(String tipoStatus) {
+		this.tipoStatus = tipoStatus;
+	}
+
 	public Long getCodigoTipoChamadaEncalhe() {
 		return codigoTipoChamadaEncalhe;
 	}

@@ -46,10 +46,10 @@ public class LogExecucao implements Serializable {
 	@Column(name = "DATA_FIM", nullable = true)
 	private Date dataFim;
 	
-	@Type(type = "br.com.abril.nds.integracao.hibernate.types.GenericEnumUserType", 
+	@Type(type = "br.com.abril.nds.integracao.persistence.GenericEnumUserType", 
 		parameters = {
 			@Parameter( name="enumClass", value="br.com.abril.nds.model.integracao.StatusExecucaoEnum" )
-			})
+		})
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = true, length = 1)
 	private StatusExecucaoEnum status;
@@ -60,7 +60,6 @@ public class LogExecucao implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "logExecucao")
 	private List<LogExecucaoMensagem> listLogExecucaoMensagem;
 	
-
 	public Long getId() {
 		return id;
 	}
@@ -108,7 +107,7 @@ public class LogExecucao implements Serializable {
 	public void setNomeLoginUsuario(String nomeLoginUsuario) {
 		this.nomeLoginUsuario = nomeLoginUsuario;
 	}
-
+	
 	public List<LogExecucaoMensagem> getListLogExecucaoMensagem() {
 		return listLogExecucaoMensagem;
 	}
@@ -117,4 +116,5 @@ public class LogExecucao implements Serializable {
 			List<LogExecucaoMensagem> listLogExecucaoMensagem) {
 		this.listLogExecucaoMensagem = listLogExecucaoMensagem;
 	}
+	
 }

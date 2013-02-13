@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.model.icd;
+package br.com.abril.nds.model.integracao.icd;
 
 import java.util.Date;
 
@@ -11,7 +11,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.com.abril.nds.integracao.model.icd.pks.DfsPK;
+import br.com.abril.nds.model.integracao.icd.pks.DfsPK;
 
 @Entity
 @Table(name = "DETALHE_FALTAS_SOBRAS")

@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.model.icd.pks;
+package br.com.abril.nds.model.integracao.icd.pks;
 
 import java.io.Serializable;
 

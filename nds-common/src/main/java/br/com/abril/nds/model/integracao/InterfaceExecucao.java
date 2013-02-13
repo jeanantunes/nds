@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "INTERFACE_EXECUCAO")
 public class InterfaceExecucao implements Serializable {
 
-	private static final long serialVersionUID = 1543068954906375787L;
+	private static final long serialVersionUID = 885046823449470989L;
 
 	@Id
 	@Column(name = "ID")
@@ -19,7 +19,11 @@ public class InterfaceExecucao implements Serializable {
 	
 	@Column(name = "NOME", nullable = false, length = 7, unique = true)
 	private String nome;
+	
+	@Column(name = "MASCARA_ARQUIVO", nullable = false, length = 50)
+	private String mascaraArquivo;
 
+	
 	public Long getId() {
 		return id;
 	}
@@ -34,5 +38,13 @@ public class InterfaceExecucao implements Serializable {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public String getMascaraArquivo() {
+		return mascaraArquivo;
+	}
+
+	public void setMascaraArquivo(String mascaraArquivo) {
+		this.mascaraArquivo = mascaraArquivo;
 	}
 }
