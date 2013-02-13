@@ -30,6 +30,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -50,6 +51,7 @@ import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -103,7 +105,8 @@ public class ConferenciaEncalheController extends BaseController {
 	 */
 	private static final String CONF_ENC_COTA_STATUS_NAO_INICIADA = "NAO_INICIADA";
 
-	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
@@ -126,6 +129,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
+		
+		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(distribuidorService.obter().getDataOperacao()));
+		
 		limparDadosSessao();
 		carregarComboBoxEncalhe();
 	}
@@ -1571,7 +1577,7 @@ public class ConferenciaEncalheController extends BaseController {
 			ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade) {
 		
 				
-		Long qtd = null;
+		Long qtd = conferenciaEncalheDTO.getQtdExemplar() == null ? 0L : conferenciaEncalheDTO.getQtdExemplar().longValue();
 		
 		Long pacotePadrao = (long) conferenciaEncalheDTO.getPacotePadrao();
 		
@@ -1587,9 +1593,14 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 			
 		try {
-			qtd = Long.parseLong(quantidade);
+			qtd += Long.parseLong(quantidade);
 		}catch(NumberFormatException e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
+		}
+		
+		if (qtd > conferenciaEncalheDTO.getQtdReparte().longValue()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "O valor digitado deve ser menor ou igual ao total do reparte.");
 		}
 		
 		if (GrupoProduto.CROMO.equals(grupoProduto)) {
