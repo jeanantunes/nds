@@ -47,11 +47,11 @@ public class ReparteProporcional extends ProcessoAbstrato {
     		if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta()) {
     			// RepCalculadoCota = ARRED(RepEdiçãoAbertaCota * ÍndiceRepAberta; 0)
     			BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);
-    			repCalculado = new BigDecimal(Math.floor(repCalculado.doubleValue()));
+    			repCalculado = repCalculado.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP);
     			cota.setReparteCalculado(repCalculado);
     			
     			cota.setClassificacao(ClassificacaoCota.BancaSoComEdicaoBaseAberta);
-    			somaReparteProporcional.add(cota.getReparteCalculado());
+    			somaReparteProporcional = somaReparteProporcional.add(cota.getReparteCalculado());
     		}
     	}
     	// RepDistribuir = RepDistribuir – ΣRepProporcional

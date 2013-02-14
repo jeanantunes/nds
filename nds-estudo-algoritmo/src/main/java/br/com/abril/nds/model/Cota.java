@@ -55,10 +55,10 @@ public class Cota extends GenericDTO<Cota> {
     	cotaSoRecebeuEdicaoAberta = true;
     	somaReparteEdicoesAbertas = BigDecimal.ZERO;
     	for (ProdutoEdicao edicao : edicoesRecebidas) {
-    		if (!edicao.isEdicaoAberta()) {
-    			cotaSoRecebeuEdicaoAberta = false;
-    		} else {
+    		if (edicao.isEdicaoAberta()) {
     			somaReparteEdicoesAbertas = somaReparteEdicoesAbertas.add(edicao.getReparte());
+    		} else {
+    			cotaSoRecebeuEdicaoAberta = false;
     		}
     	}
     }
@@ -161,16 +161,11 @@ public class Cota extends GenericDTO<Cota> {
     	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
     }
 
+    /**
+     * Busca para verificar se a cota só receber edições abertas
+     * @return boolean
+     */
     public boolean isCotaSoRecebeuEdicaoAberta() {
-    	// FIXME: verificar qual é o melhor momento para executar esse trecho de código (for)
-    	cotaSoRecebeuEdicaoAberta = true;
-    	// Busca para verificar se a cota só receber edições abertas
-    	for (int i = 0; i < edicoesRecebidas.size(); i++) {
-    	    if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
-        		cotaSoRecebeuEdicaoAberta = false;
-        		break;
-    	    }
-    	}
     	return cotaSoRecebeuEdicaoAberta;
     }
 
@@ -194,8 +189,7 @@ public class Cota extends GenericDTO<Cota> {
     	return somaReparteEdicoesAbertas;
     }
 
-    public void setSomaReparteEdicoesAbertas(
-	    BigDecimal somaReparteEdicoesAbertas) {
+    public void setSomaReparteEdicoesAbertas(BigDecimal somaReparteEdicoesAbertas) {
     	this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
     }
 
@@ -275,5 +269,4 @@ public class Cota extends GenericDTO<Cota> {
 	public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
 		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
 	}
-	
 }
