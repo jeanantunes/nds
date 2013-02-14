@@ -29,6 +29,11 @@ public class ProdutoEdicao extends GenericDTO<ProdutoEdicao> {
     private BigDecimal indiceCorrecao;
     private BigDecimal vendaCorrigida;
 
+    public ProdutoEdicao() {
+    	reparte = BigDecimal.ZERO;
+    	venda = BigDecimal.ZERO;
+    }
+    
     public Long getId() {
 	return id;
     }

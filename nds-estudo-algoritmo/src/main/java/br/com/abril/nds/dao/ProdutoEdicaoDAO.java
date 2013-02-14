@@ -60,4 +60,24 @@ public class ProdutoEdicaoDAO {
 	}
 	return edicoes;
     }
+
+	public int getQtdeVezesReenviadas(Cota cota, ProdutoEdicao produtoEdicao) {
+		try {
+			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
+					"" + "SELECT count(EPC.id) " + "  FROM ESTOQUE_PRODUTO_COTA EPC "
+							+ "  JOIN PRODUTO_EDICAO PE ON PE.ID = EPC.PRODUTO_EDICAO_ID " + " WHERE EPC.COTA_ID = ? AND " + " PE.ID = ?"
+							+ " and PE.parcial=1" + "");
+			psmt.setLong(1, cota.getId());
+			psmt.setLong(2, produtoEdicao.getId());
+
+			ResultSet rs = psmt.executeQuery();
+			rs.next();
+			return rs.getInt(0);
+
+		} catch (Exception ex) {
+			System.out.println("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota");
+		}
+
+		return 0;
+	}
 }

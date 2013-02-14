@@ -9,6 +9,7 @@ public class Estudo extends GenericDTO<Estudo> {
 	private static final long serialVersionUID = -8639160268952528714L;
 
 	private Integer id;
+	private String status;
 	private BigDecimal reparteDistribuir;
 	private BigDecimal reparteDistribuirInicial;
 	private ProdutoEdicao produto;
@@ -28,21 +29,32 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal percentualProporcaoExcedentePDV;
 	private BigDecimal percentualProporcaoExcedenteVenda;
 	private BigDecimal totalPDVs;
+	private BigDecimal reservaAjuste;
 
 	public Estudo() {
 		edicoesBase = new ArrayList<ProdutoEdicao>();
 		cotas = new ArrayList<Cota>();
 		
 		pacotePadrao = BigDecimal.ZERO;
+		reparteDistribuir = BigDecimal.ZERO;
+		reparteDistribuirInicial = BigDecimal.ZERO;
+		somatoriaVendaMedia = BigDecimal.ZERO;
+		somatoriaReparteEdicoesAbertas = BigDecimal.ZERO;
 	}
 	
 	public void calculate() {
-		somatoriaVendaMedia = new BigDecimal(0);
+		// Somatória da venda média de todas as cotas e
+		// Somatória de reparte das edições abertas de todas as cotas
+		somatoriaVendaMedia = BigDecimal.ZERO;
+		somatoriaReparteEdicoesAbertas = BigDecimal.ZERO;
 		for (Cota cota : cotas) {
+			cota.calculate();
 			if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
 					|| !cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
-					|| !cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico))
-				somatoriaVendaMedia.add(cota.getVendaMedia());
+					|| !cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico)) {
+				somatoriaVendaMedia = somatoriaVendaMedia.add(cota.getVendaMedia());
+			}
+			somatoriaReparteEdicoesAbertas = somatoriaReparteEdicoesAbertas.add(cota.getSomaReparteEdicoesAbertas());
 		}
 	}
 
@@ -204,5 +216,21 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setTotalPDVs(BigDecimal totalPDVs) {
 		this.totalPDVs = totalPDVs;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public BigDecimal getReservaAjuste() {
+		return reservaAjuste;
+	}
+
+	public void setReservaAjuste(BigDecimal reservaAjuste) {
+		this.reservaAjuste = reservaAjuste;
 	}
 }
