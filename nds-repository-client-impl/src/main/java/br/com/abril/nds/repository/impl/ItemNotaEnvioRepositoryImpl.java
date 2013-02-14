@@ -64,7 +64,7 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
 				   + " join produtoEdicao.produto produto "
 				   + " where notaEnvio.dataEmissao = :dataEmissao "
-				   + " and notaEnvio.numeroCota = :numeroCota "
+				   + " and notaEnvio.destinatario.numeroCota = :numeroCota "
 				   + " and produtoEdicao.id = :idProdutoEdicao "
 				   + " group by produtoEdicao.id ";
 		

@@ -844,7 +844,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void inserirMovimentoEstoque(
 			Usuario usuarioLogado,
 			RecebimentoFisicoDTO recebimentoFisicoDTO) {
-			
+					
 		// Implementado por Cesar Punk Pop
 		// Retirado o Else, já que o movimento sempre deve ser gerado (independente de ocorrer diferença ou não)
 		TipoMovimentoEstoque tipoMovimento = 
@@ -865,8 +865,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	private void gerarDiferenca(Usuario usuarioLogado,RecebimentoFisicoDTO recebimentoFisicoDTO) {
+		
 		Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
-		diferenca = diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, TipoEstoque.LANCAMENTO);
+		diferenca = diferencaEstoqueService.lancarDiferenca(diferenca, TipoEstoque.LANCAMENTO);
 		
 		ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 		itemRecebimento.setDiferenca(diferenca);
