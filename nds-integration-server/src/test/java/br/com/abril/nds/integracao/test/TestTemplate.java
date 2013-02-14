@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.test;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.junit.runner.RunWith;
