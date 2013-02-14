@@ -236,11 +236,19 @@ var ConferenciaEncalhe = $.extend(true, {
 		});
 		
 		ConferenciaEncalhe.popup_logado();
+
+		ConferenciaEncalhe.removerAtalhos();
 		
 		ConferenciaEncalhe.atribuirAtalhos();
 	},
-	
-	
+
+	removerAtalhos: function() {
+		shortcut.remove("f2");
+		shortcut.remove("f6");
+		shortcut.remove("f8");
+		shortcut.remove("f9");
+	},
+
 	/*
 	 * ALTERACAO INICIO
 	 */
