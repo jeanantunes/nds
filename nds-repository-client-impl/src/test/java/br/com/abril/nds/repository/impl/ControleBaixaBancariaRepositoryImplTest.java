@@ -38,7 +38,7 @@ public class ControleBaixaBancariaRepositoryImplTest extends AbstractRepositoryI
 		
 		ControleBaixaBancaria controleBaixaBancaria =
 			Fixture.controleBaixaBancaria(
-				new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao, bancoHSBC);
+				new Date(), new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao, bancoHSBC);
 		
 		save(controleBaixaBancaria);
 	}

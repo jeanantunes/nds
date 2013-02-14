@@ -51,13 +51,14 @@ public class GeradorBoleto {
         //SACADO
         Sacado sacado = new Sacado(corpoBoleto.getSacadoNome(), corpoBoleto.getSacadoDocumento());
         //ENDERECO DO SACADO
+        
         Endereco enderecoSac = new Endereco();
-        enderecoSac.setUF(UnidadeFederativa.valueOf(corpoBoleto.getEnderecoSacadoUf()));
-        enderecoSac.setLocalidade(corpoBoleto.getEnderecoSacadoLocalidade());
-        enderecoSac.setCep(new CEP(corpoBoleto.getEnderecoSacadoCep()));
-        enderecoSac.setBairro(corpoBoleto.getEnderecoSacadoBairro());
-        enderecoSac.setLogradouro(corpoBoleto.getEnderecoSacadoLogradouro());
-        enderecoSac.setNumero(corpoBoleto.getEnderecoSacadoNumero());
+        enderecoSac.setUF(UnidadeFederativa.valueOf(corpoBoleto.getEnderecoSacadorAvalistaUf()));
+        enderecoSac.setLocalidade(corpoBoleto.getEnderecoSacadorAvalistaBairro());
+        enderecoSac.setCep(new CEP(corpoBoleto.getEnderecoSacadorAvalistaCep()));
+        enderecoSac.setBairro(corpoBoleto.getEnderecoSacadorAvalistaLogradouro());
+        enderecoSac.setLogradouro(corpoBoleto.getEnderecoSacadorAvalistaLocalidade());
+        enderecoSac.setNumero(corpoBoleto.getEnderecoSacadorAvalistaNumero());
         sacado.addEndereco(enderecoSac);
         
         SacadorAvalista sacadorAvalista = null;
@@ -66,12 +67,12 @@ public class GeradorBoleto {
 	        sacadorAvalista = new SacadorAvalista(corpoBoleto.getSacadorAvalistaNome(), corpoBoleto.getSacadorAvalistaDocumento());
 	        //ENDERECO DO SACADO AVALISTA
 	        Endereco enderecoSacAval = new Endereco();
-	        enderecoSacAval.setUF(UnidadeFederativa.valueOf(corpoBoleto.getEnderecoSacadorAvalistaUf()));
-	        enderecoSacAval.setLocalidade(corpoBoleto.getEnderecoSacadorAvalistaLocalidade());
-	        enderecoSacAval.setCep(new CEP(corpoBoleto.getEnderecoSacadorAvalistaCep()));
-	        enderecoSacAval.setBairro(corpoBoleto.getEnderecoSacadorAvalistaBairro());
-	        enderecoSacAval.setLogradouro(corpoBoleto.getEnderecoSacadorAvalistaLogradouro());
-	        enderecoSacAval.setNumero(corpoBoleto.getEnderecoSacadorAvalistaNumero());
+	        enderecoSacAval.setUF(UnidadeFederativa.valueOf(corpoBoleto.getEnderecoSacadoUf()));
+	        enderecoSacAval.setLocalidade(corpoBoleto.getEnderecoSacadoLocalidade());
+	        enderecoSacAval.setCep(new CEP(corpoBoleto.getEnderecoSacadoCep()));
+	        enderecoSacAval.setBairro(corpoBoleto.getEnderecoSacadoBairro());
+	        enderecoSacAval.setLogradouro(corpoBoleto.getEnderecoSacadoLogradouro());
+	        enderecoSacAval.setNumero(corpoBoleto.getEnderecoSacadoNumero());
 	        sacadorAvalista.addEndereco(enderecoSacAval);
         }
         

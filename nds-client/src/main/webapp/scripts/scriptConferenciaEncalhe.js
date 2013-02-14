@@ -330,8 +330,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			if (!ConferenciaEncalhe.modalAberta){
 				
-				ConferenciaEncalhe.veificarCobrancaGerada();
-				
+				ConferenciaEncalhe.popup_salvarInfos();
 			}
 		});
 		
@@ -339,9 +338,11 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			if (!ConferenciaEncalhe.modalAberta){
 				
-				ConferenciaEncalhe.popup_salvarInfos();
+				ConferenciaEncalhe.veificarCobrancaGerada();
+				
 			}
 		});
+		
 	},
 	
 	
@@ -638,9 +639,11 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 					innerTable += "<tr class='" + _class + " _dados'><td nowrap='nowrap' style='text-align: center;'>";
 					
+					innerTable += "<input type='hidden' id='idProdutoEdicaoGrid_"+index+"' value='" + value.idProdutoEdicao + "'/>";
+					
 					var valorExemplares = parseInt(value.qtdExemplar);
 					
-					var inputExemplares = '<input id="qtdExemplaresGrid_' + index + '" onchange="ConferenciaEncalhe.atualizarValores('+ index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
+					var inputExemplares = '<input id="qtdExemplaresGrid_' + index + '" class="input-numericE" onchange="ConferenciaEncalhe.atualizarValores('+ index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
@@ -677,18 +680,22 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					var inputCheckBoxJuramentada = '';
 					
-					if(indDistribuidorAceitaJuramentado == true && parcial == true) {
-						
-						inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
-						+ ' onchange="ConferenciaEncalhe.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
-						
-					} else {
-						
-						inputCheckBoxJuramentada = '<input type="checkbox" disabled="disabled" id="checkGroupJuramentada_' + index + '"/>';
-						
-					}
+					if (indDistribuidorAceitaJuramentado == true) {
 					
-					innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + inputCheckBoxJuramentada + "</td>";
+						if(parcial == true) {
+							
+							inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
+							+ ' onchange="ConferenciaEncalhe.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
+							
+						} else {
+							
+							inputCheckBoxJuramentada = '<input type="checkbox" disabled="disabled" id="checkGroupJuramentada_' + index + '"/>';
+							
+						}
+						
+						innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + inputCheckBoxJuramentada + "</td>";
+					
+					} 
 					
 					var imgDetalhar = '<img src="' + contextPath + '/images/ico_detalhes.png" border="0" hspace="3"/>';
 					innerTable += '<td style="text-align: center;" nowrap="nowrap"><a href="javascript:;" onclick="ConferenciaEncalhe.exibirDetalhesConferencia(' + value.idConferenciaEncalhe + ');">' + imgDetalhar + '</a></td>';
@@ -704,7 +711,12 @@ var ConferenciaEncalhe = $.extend(true, {
 				}
 			);
 			
-			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numeric();
+			if (!indDistribuidorAceitaJuramentado) {
+				
+				$("#colunaJuramentada", ConferenciaEncalhe.workspace).hide();
+			}
+			
+			$('input[id*="qtdExemplaresGrid"]', ConferenciaEncalhe.workspace).numericE();
 			
 		}
 		
@@ -1082,7 +1094,9 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	adicionarProdutoConferido : function(){
 		
-		var data = [{name: "idProdutoEdicao", value: $("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val()}, 
+		var idProdutoEdicao = $("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val();
+		
+		var data = [{name: "idProdutoEdicao", value: idProdutoEdicao}, 
 		            {name: "quantidade", value: $("#qtdeExemplar", ConferenciaEncalhe.workspace).val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/adicionarProdutoConferido', data,

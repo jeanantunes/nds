@@ -28,6 +28,11 @@ public class ConferenciaEncalheDTO implements Serializable {
 	private boolean parcial;
 	
 	/**
+	 * Utilizado como referência para o valor do reparte.
+	 */
+	private BigInteger qtdReparte;
+	
+	/**
 	 * Quantidade apontada na conferência de encalhe
 	 */	
 	private BigInteger qtdExemplar;
@@ -58,6 +63,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	private BigDecimal precoCapa;
 	
 	private BigDecimal desconto;
+	
+	private BigDecimal precoComDesconto;
 	
 	private BigDecimal valorTotal;
 	
@@ -264,8 +271,29 @@ public class ConferenciaEncalheDTO implements Serializable {
 	public void setParcial(boolean parcial) {
 		this.parcial = parcial;
 	}
-	
-	
-	
+
+	public BigInteger getQtdReparte() {
+		return qtdReparte;
+	}
+
+	public void setQtdReparte(BigInteger qtdReparte) {
+		this.qtdReparte = qtdReparte;
+	}
+
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
+	}
+
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
+	}
+
+	public Boolean getJuramentada() {
+		return juramentada;
+	}
+
+	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
 	
 }

@@ -110,6 +110,10 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/pesquisar")
 	public void pesquisar(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
+		dataPesquisa = this.tratarData(numeroSemana, dataPesquisa);
+		
+		numeroSemana = this.tratarSemana(numeroSemana, dataPesquisa);
+		
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
@@ -129,6 +133,28 @@ public class MatrizRecolhimentoController extends BaseController {
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
+	
+	
+	private Integer tratarSemana(Integer numeroSemana, Date dataPesquisa) {
+
+		if(numeroSemana==null && dataPesquisa!=null) {
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			return DateUtil.obterNumeroSemanaNoAno(dataPesquisa, distribuidor.getInicioSemana().getCodigoDiaSemana());
+		}
+		
+		return numeroSemana;
+	}
+
+	private Date tratarData(Integer numeroSemana, Date dataPesquisa) {
+
+		if(numeroSemana!=null && dataPesquisa==null) {
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			return DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+		}
+		
+		return dataPesquisa;
+	}
+
 	@Post
 	@Path("/confirmar")
 	public void confirmar(List<Date> datasConfirmadas) {
@@ -923,7 +949,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			(produtoRecolhimento.getEncalheAlternativo() != null) ? produtoRecolhimento.getEncalheAlternativo().toString() : null);
 			
 		produtoRecolhimentoFormatado.setEncalhe(
-			(produtoRecolhimento.getEncalhe() != null) ? produtoRecolhimento.getEncalhe().toString() : null);
+			(produtoRecolhimento.getEncalhe() != null) ? Integer.toString(produtoRecolhimento.getEncalhe().intValue()) : null);
 		
 		if (produtoRecolhimento.getValorTotal() != null) {
 			produtoRecolhimentoFormatado.setValorTotal(CurrencyUtil.formatarValor(produtoRecolhimento.getValorTotal()));
