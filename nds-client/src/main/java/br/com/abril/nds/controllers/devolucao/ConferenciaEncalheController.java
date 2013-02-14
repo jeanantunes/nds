@@ -1598,10 +1598,16 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
 		}
 		
+//FIXME utilizar a validacao ja disponivel no service abaixo		
+//		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalhe, idCota, dataOperacao);
+		
+		
 		if (qtd > conferenciaEncalheDTO.getQtdReparte().longValue()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "O valor digitado deve ser menor ou igual ao total do reparte.");
 		}
+		
+		
 		
 		if (GrupoProduto.CROMO.equals(grupoProduto)) {
 			if (!quantidadeInformadaEmExemplares && conferenciaEncalheDTO.isParcial()) {
