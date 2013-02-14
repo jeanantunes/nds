@@ -142,11 +142,6 @@ public class Cota extends GenericDTO<Cota> {
 	return vendaEdicaoMaisRecenteFechada;
     }
 
-    public void setVendaEdicaoMaisRecenteFechada(
-	    BigDecimal vendaEdicaoMaisRecenteFechada) {
-	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
-    }
-
     public boolean isCotaSoRecebeuEdicaoAberta() {
 	// FIXME: verificar qual é o melhor momento para executar esse trecho de código (for)
 	cotaSoRecebeuEdicaoAberta = true;
@@ -162,27 +157,6 @@ public class Cota extends GenericDTO<Cota> {
 
     public void setCotaSoRecebeuEdicaoAberta(boolean cotaSoRecebeuEdicaoAberta) {
 	this.cotaSoRecebeuEdicaoAberta = cotaSoRecebeuEdicaoAberta;
-    }
-
-    public List<EstoqueProdutoCota> getEstoqueProdutoCotas() {
-	return estoqueProdutoCotas;
-    }
-
-    public void setEstoqueProdutoCotas(
-	    List<EstoqueProdutoCota> estoqueProdutoCotas) {
-	this.estoqueProdutoCotas = estoqueProdutoCotas;
-    }
-
-    /**
-     * Todas as edições que essa cota recebeu
-     * @return List<{@link ProdutoEdicao}>
-     */
-    public List<ProdutoEdicao> getEdicoesRecebidas() {
-	return edicoesRecebidas;
-    }
-
-    public void setEdicoesRecebidas(List<ProdutoEdicao> edicoesRecebidas) {
-	this.edicoesRecebidas = edicoesRecebidas;
     }
 
     /**
@@ -248,18 +222,45 @@ public class Cota extends GenericDTO<Cota> {
 
 	public BigDecimal getReparteJuramentadoAFaturar() {
 		return reparteJuramentadoAFaturar;
+		
 	}
+
+	public void setVendaEdicaoMaisRecenteFechada(
+	    BigDecimal vendaEdicaoMaisRecenteFechada) {
+	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
+    }
+
+    public List<EstoqueProdutoCota> getEstoqueProdutoCotas() {
+	return estoqueProdutoCotas;
+    }
+
+    public void setEstoqueProdutoCotas(
+	    List<EstoqueProdutoCota> estoqueProdutoCotas) {
+	this.estoqueProdutoCotas = estoqueProdutoCotas;
+    }
+
+    /**
+     * Todas as edições que essa cota recebeu
+     * @return List<{@link ProdutoEdicao}>
+     */
+    public List<ProdutoEdicao> getEdicoesRecebidas() {
+	return edicoesRecebidas;
+    }
+
+    public void setEdicoesRecebidas(List<ProdutoEdicao> edicoesRecebidas) {
+	this.edicoesRecebidas = edicoesRecebidas;
+    }
+
+    public BigDecimal getIndiceVendaCrescente() {
+	return indiceVendaCrescente;
+    }
+
+    public void setIndiceVendaCrescente(BigDecimal indiceVendaCrescente) {
+	this.indiceVendaCrescente = indiceVendaCrescente;
+    }
 
 	public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
 		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
 	}
 	
-    public BigDecimal getIndiceVendaCrescente() {
-    	return indiceVendaCrescente;
-    }
-
-    public void setIndiceVendaCrescente(BigDecimal indiceVendaCrescente) {
-    	this.indiceVendaCrescente = indiceVendaCrescente;
-    }
-
 }

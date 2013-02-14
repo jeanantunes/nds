@@ -67,6 +67,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 				// ExcedenteDistribuir = ExcedenteDistribuir - AjusteReparte
 				excedenteDistribuir = excedenteDistribuir.subtract(ajusteReparte);
 				getEstudo().setReservaAjuste(reservaAjuste);
+
 			}
 		}
 		

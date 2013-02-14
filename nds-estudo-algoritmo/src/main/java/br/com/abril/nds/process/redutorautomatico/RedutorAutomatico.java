@@ -10,48 +10,72 @@ import br.com.abril.nds.process.ajustereparte.AjusteReparte;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
 
 /**
- * Processo que efetua cálculos para definir um percentual de excedente que a cota está tendo e efetuar uma
- * redução no reparte dela de acordo com as vendas.
+ * Processo que efetua cálculos para definir um percentual de excedente que a
+ * cota está tendo e efetuar uma redução no reparte dela de acordo com as
+ * vendas.
  * <p style="white-space: pre-wrap;">SubProcessos:
- *      - N/A
+ * 		- N/A
  * Processo Pai:
- *      - N/A
+ * 		- N/A
  * 
  * Processo Anterior: {@link AjusteReparte}
- * Próximo Processo: {@link ReparteMinimo}</p>
+ * Próximo Processo: {@link ReparteMinimo}
+ * </p>
  */
 public class RedutorAutomatico extends ProcessoAbstrato {
 
+	private BigDecimal menorVenda = BigDecimal.ZERO;
+	
+	public BigDecimal getMenorVenda() {
+		return menorVenda;
+	}
+
+	public void setMenorVenda(BigDecimal menorVenda) {
+		this.menorVenda = menorVenda;
+	}
+
 	public RedutorAutomatico(Estudo estudo) {
-		this.estudo = estudo;
+		super(estudo);
+	}
+
+	@Override
+	protected void executarProcesso() {
+
+		// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o
+		// método
+		calcularMenorVenda();
+		calcularRedutorAutomatico();
 	}
 	
-    @Override
-    protected void executarProcesso() {
-    	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
-    	BigDecimal excedente = estudo.getReparteDistribuir().subtract(estudo.getSomatoriaVendaMediaFinal());
-    	BigDecimal percentualExcedente = excedente.divide(estudo.getSomatoriaVendaMediaFinal(), 2, BigDecimal.ROUND_FLOOR);
-    	BigDecimal menorVenda = new BigDecimal(0);
+	public void calcularRedutorAutomatico() {
+		for (Cota cota : getEstudo().getCotas()) {
+			if ((cota.getVendaMedia().doubleValue() <= menorVenda.doubleValue())
+					&& (cota.getVendaEdicaoMaisRecenteFechada().equals(BigDecimal.ZERO))) {
+				// TODO: verificar se na subtração abaixo deve remover o reparte calculado que
+				// já estiver registrado aqui ou se não será removido nenhum valor, pois aqui
+				// ele está sendo zerado.
+				cota.setReparteCalculado(BigDecimal.ZERO);
+				cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
+			}
+			if (cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
+					|| cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
+					|| cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico))
+				getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(cota.getReparteCalculado()));
+		}
+	}
 
-    	if ((percentualExcedente.doubleValue() > 0.4d) && (percentualExcedente.doubleValue() < 0.6d)) {
-    		menorVenda = new BigDecimal(0.25d);
-    	} else if (percentualExcedente.doubleValue() < 0.4d) {
-    		menorVenda = new BigDecimal(0.5d);
-    	}
-    	
-    	for (Cota cota : estudo.getCotas()) {
-    		if ((cota.getVendaMedia().doubleValue() <= menorVenda.doubleValue())
-    				&& (cota.getVendaEdicaoMaisRecenteFechada().equals(BigDecimal.ZERO))) {
-    			cota.setReparteCalculado(new BigDecimal(0));
-    		}
-    	}
-    	//TODO: verificar qual cota terá sua classificação alterada de acordo com o trac FAQF2-28
-    	//FIXME: checar de acordo com a resposta do trac FAQF2-28 se a conta abaixo está correta (se deve ser subtraído o valor do ReparteCalculado da cota mesmo ou se é outra informação)
-    	for (Cota cota : estudo.getCotas()) {
-    		if (cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-    				|| cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
-    				|| cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico))
-    		estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(cota.getReparteCalculado()));
-    	}
-    }
+	public void calcularMenorVenda() {
+		BigDecimal excedente = getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia());
+		BigDecimal percentualExcedente = BigDecimal.ZERO;
+		if (getEstudo().getSomatoriaVendaMedia().doubleValue() > 0) {
+			percentualExcedente = excedente.divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_FLOOR);
+		}
+
+		menorVenda = BigDecimal.ZERO;
+		if ((percentualExcedente.doubleValue() > 0.4d) && (percentualExcedente.doubleValue() < 0.6d)) {
+			menorVenda = new BigDecimal(0.25d);
+		} else if (percentualExcedente.doubleValue() < 0.4d) {
+			menorVenda = new BigDecimal(0.5d);
+		}
+	}
 }

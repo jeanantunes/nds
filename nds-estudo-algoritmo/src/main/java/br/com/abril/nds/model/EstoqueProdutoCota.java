@@ -2,61 +2,75 @@ package br.com.abril.nds.model;
 
 import java.math.BigDecimal;
 
-public class EstoqueProdutoCota {
+public class EstoqueProdutoCota extends GenericDTO<EstoqueProdutoCota> {
 
-	private Long id;
-	private BigDecimal quantidadeDevolvida;
-	private BigDecimal quantidadeRecebida;
-	private Integer versao;
-	private Cota cota;
-	private ProdutoEdicao produtoEdicao;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2130979892047102000L;
 
-	public Long getId() {
-		return id;
-	}
+    private Long id;
+    private BigDecimal quantidadeDevolvida;
+    private BigDecimal quantidadeRecebida;
+    private Integer versao;
+    private Cota cota;
+    private ProdutoEdicao produtoEdicao;
+    private BigDecimal indiceCorrecao;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+	return id;
+    }
 
-	public BigDecimal getQuantidadeDevolvida() {
-		return quantidadeDevolvida;
-	}
+    public void setId(Long id) {
+	this.id = id;
+    }
 
-	public void setQuantidadeDevolvida(BigDecimal quantidadeDevolvida) {
-		this.quantidadeDevolvida = quantidadeDevolvida;
-	}
+    public BigDecimal getQuantidadeDevolvida() {
+	return quantidadeDevolvida;
+    }
 
-	public BigDecimal getQuantidadeRecebida() {
-		return quantidadeRecebida;
-	}
+    public void setQuantidadeDevolvida(BigDecimal quantidadeDevolvida) {
+	this.quantidadeDevolvida = quantidadeDevolvida;
+    }
 
-	public void setQuantidadeRecebida(BigDecimal quantidadeRecebida) {
-		this.quantidadeRecebida = quantidadeRecebida;
-	}
+    public BigDecimal getQuantidadeRecebida() {
+	return quantidadeRecebida;
+    }
 
-	public Integer getVersao() {
-		return versao;
-	}
+    public void setQuantidadeRecebida(BigDecimal quantidadeRecebida) {
+	this.quantidadeRecebida = quantidadeRecebida;
+    }
 
-	public void setVersao(Integer versao) {
-		this.versao = versao;
-	}
+    public Integer getVersao() {
+	return versao;
+    }
 
-	public Cota getCota() {
-		return cota;
-	}
+    public void setVersao(Integer versao) {
+	this.versao = versao;
+    }
 
-	public void setCota(Cota cota) {
-		this.cota = cota;
-	}
+    public Cota getCota() {
+	return cota;
+    }
 
-	public ProdutoEdicao getProdutoEdicao() {
-		return produtoEdicao;
-	}
+    public void setCota(Cota cota) {
+	this.cota = cota;
+    }
 
-	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
-		this.produtoEdicao = produtoEdicao;
-	}
+    public ProdutoEdicao getProdutoEdicao() {
+	return produtoEdicao;
+    }
+
+    public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
+	this.produtoEdicao = produtoEdicao;
+    }
+
+    public BigDecimal getIndiceCorrecao() {
+	return indiceCorrecao;
+    }
+
+    public void setIndiceCorrecao(BigDecimal indiceCorrecao) {
+	this.indiceCorrecao = indiceCorrecao;
+    }
 
 }

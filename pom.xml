@@ -493,6 +493,14 @@
 				<module>nds-estudo-algoritmo</module>
 			</modules>
 		</profile>
+		
+		<profile>
+			<id>testProfile</id>
+			<modules>
+				<module>nds-estudo-algoritmo</module>
+				<module>nds-test</module>
+			</modules>
+		</profile>
 	</profiles>
 
 </project>

@@ -1,11 +1,5 @@
 package br.com.abril.nds.process;
 
-import java.util.Date;
-
-import br.com.abril.nds.dao.CotaDAO;
-import br.com.abril.nds.dao.ProdutoEdicaoDAO;
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
@@ -29,45 +23,74 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
  * as cotas encontradas para o perfil definido no setup do estudo, levando em
  * consideração todas as variáveis também definidas no setup.
  * <p style="white-space: pre-wrap;">
- * SubProcessos: - {@link DefinicaoBases} - {@link SomarFixacoes} -
- * {@link VerificarTotalFixacoes} - {@link MontaTabelaEstudos} -
- * {@link CorrecaoVendas} - {@link Medias} - {@link Bonificacoes} -
- * {@link AjusteCota} - {@link JornaleirosNovos} - {@link VendaMediaFinal} -
- * {@link AjusteReparte} - {@link RedutorAutomatico} - {@link ReparteMinimo} -
- * {@link ReparteProporcional} - {@link EncalheMaximo} -
- * {@link ComplementarAutomatico} - {@link CalcularReparte} Processo Pai: - N/A
+ * SubProcessos: - {@link DefinicaoBases} - {@link SomarFixacoes} - {@link VerificarTotalFixacoes} - {@link MontaTabelaEstudos} - {@link CorrecaoVendas} - {@link Medias} - {@link Bonificacoes} -
+ * {@link AjusteCota} - {@link JornaleirosNovos} - {@link VendaMediaFinal} - {@link AjusteReparte} - {@link RedutorAutomatico} - {@link ReparteMinimo} - {@link ReparteProporcional} -
+ * {@link EncalheMaximo} - {@link ComplementarAutomatico} - {@link CalcularReparte} Processo Pai: - N/A
  * 
  * Processo Anterior: N/A Próximo Processo: N/A
  * </p>
  */
 public class Principal {
 
-	private Estudo estudo = new Estudo();
-	
-	public void executar(Date data, Integer fornecedor) {
-		try {
-			RedutorAutomatico ra = new RedutorAutomatico(estudo);
-			ra.executar();
-			estudo = ra.getEstudo();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public static void main(String args[]) {
-		new Principal().executar(new Date(), 1);
-	}
-
-	public void loadCotas() {
-		estudo.setCotas(new CotaDAO().getCotas());
-		for (Cota cota : estudo.getCotas()) {
-			ProdutoEdicaoDAO ped = new ProdutoEdicaoDAO();
-			cota.setEdicoesRecebidas(ped.getEdicaoRecebidas(cota));
-		}
-	}
-
-	public void carregarParametros() {
-
-	}
+    // private Estudo estudo = new Estudo();
+    //
+    // public void executar(Date data, Integer fornecedor) {
+    // try {
+    // CorrecaoVendas correcaoVendas = new CorrecaoVendas();
+    //
+    // correcaoVendas.executar();
+    // /*
+    // * Medias medias = new Medias(correcaoVendas.getEstudo());
+    // * medias.executar();
+    // */
+    // Estudo estudoReturn = (Estudo) correcaoVendas.getGenericDTO();
+    //
+    // Iterator<Cota> itCota = estudoReturn.getCotas().iterator();
+    //
+    // while (itCota.hasNext()) {
+    //
+    // Cota cota = itCota.next();
+    //
+    // System.out.println();
+    // System.out.println("<< Cota " + cota.getId() + " >> ");
+    // System.out.println("\tIndiceCorrecaoTendencia : "
+    // + cota.getIndiceCorrecaoTendencia());
+    //
+    // Iterator<EstoqueProdutoCota> itEstoqueProdutoCota = cota
+    // .getEstoqueProdutoCotas().iterator();
+    // while (itEstoqueProdutoCota.hasNext()) {
+    //
+    // System.out.println();
+    //
+    // EstoqueProdutoCota estoqueProdutoCota = itEstoqueProdutoCota
+    // .next();
+    //
+    // System.out.println("\t\t<< EstoqueProdutoCota "
+    // + estoqueProdutoCota.getId() + " >> ");
+    // System.out.println("\t\t\tIndiceCorrecao : "
+    // + estoqueProdutoCota.getIndiceCorrecao());
+    //
+    // }
+    // }
+    // } catch (Exception e) {
+    // // TODO Auto-generated catch block
+    // e.printStackTrace();
+    // }
+    // }
+    //
+    // public static void main(String args[]) {
+    // new Principal().executar(new Date(), 1);
+    // }
+    //
+    // public void loadCotas() {
+    // estudo.setCotas(new CotaDAO().getCotas());
+    // for (Cota cota : estudo.getCotas()) {
+    // ProdutoEdicaoDAO ped = new ProdutoEdicaoDAO();
+    // cota.setEdicoesRecebidas(ped.getEdicaoRecebidas(cota));
+    // }
+    // }
+    //
+    // public void carregarParametros() {
+    //
+    // }
 }

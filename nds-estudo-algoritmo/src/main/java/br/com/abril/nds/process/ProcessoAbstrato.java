@@ -1,17 +1,18 @@
 package br.com.abril.nds.process;
 
 import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.model.GenericDTO;
 
 public abstract class ProcessoAbstrato {
 
-	protected Estudo estudo;
+	protected GenericDTO<?> genericDTO;
 
 	protected ProcessoAbstrato() {
 
 	}
 
-	protected ProcessoAbstrato(Estudo estudo) {
-		this.estudo = estudo;
+	protected ProcessoAbstrato(GenericDTO<?> genericDTO) {
+		this.genericDTO = genericDTO;
 	}
 
 	/**
@@ -21,18 +22,15 @@ public abstract class ProcessoAbstrato {
 	 */
 	protected abstract void executarProcesso() throws Exception;
 
-	/**
-	 * Get estudo.
-	 * 
-	 * @return
-	 */
+	public GenericDTO<?> getGenericDTO() {
+		return genericDTO;
+	}
+	
 	public Estudo getEstudo() {
-		return this.estudo;
+		return (Estudo) genericDTO;
 	}
 
 	public void executar() throws Exception {
-		System.out.println("Input: "+ estudo);
 		executarProcesso();
-		System.out.println("Output: "+ estudo);
 	}
 }
