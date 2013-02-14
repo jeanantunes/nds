@@ -17,9 +17,9 @@ public abstract class AbstractRepository extends CouchDBRepositoryImpl {
 	
 	@Autowired
 	private SessionFactory sessionFactory;
-		
+	
 	protected Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
-
+	
 }

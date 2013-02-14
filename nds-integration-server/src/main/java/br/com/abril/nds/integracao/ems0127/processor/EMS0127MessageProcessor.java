@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0127.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -9,22 +10,25 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.integracao.ems0127.outbound.EMS0127Detalhe;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.model.integracao.icd.ChamadaEncalheIcd;
-import br.com.abril.nds.model.integracao.icd.ChamadaEncalheItemIcd;
 import br.com.abril.nds.repository.AbstractRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
-
 public class EMS0127MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
 	@Autowired
 	private SessionFactory sessionFactoryIcd;
-		
+	
+	@Autowired
+	private FixedFormatManager fixedFormatManager;
+
 	protected Session getSessionIcd() {
+		
 		Session session = null;
 		try {
 			session = sessionFactoryIcd.getCurrentSession();
@@ -32,71 +36,51 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			
 		}
 		
-		if(session == null) {
+		if(session == null)
 			session = sessionFactoryIcd.openSession();
-		}
 		
 		return session;
 	}
 	
-	@Autowired
-	private FixedFormatManager fixedFormatManager;
-
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		List<ChamadaEncalheIcd> encalhes = obterChamadasEncalhe();
 		
-		tempVar.set(encalhes);
+		List<Object> list = new ArrayList<Object>();
+		list.add(new Object());
+		
+		tempVar.set(list);
 		
 	}
 
 	@Override
 	public void processMessage(Message message) {
 		
-		ChamadaEncalheIcd ce = (ChamadaEncalheIcd) message.getBody();
-		
-		System.out.println("==================== CE ===========================");
-		System.out.println(ce.getCePK().getNumeroChamadaEncalhe() +" - "+ ce.getCodigoDistribuidor());
-		
-		List<ChamadaEncalheItemIcd> itens = obterChamadasEncalheItens(ce);
-		
-		System.out.println("=================== Itens =========================");
-		
-		for(ChamadaEncalheItemIcd item : itens) {
-			System.out.println(ce.getCePK().getNumeroChamadaEncalhe() +" - "+ item.getItemCePK().getNumeroItem());
+		List<ChamadaEncalheIcd> chamadasEncalheIcd = obterEncalhe(null);
+
+		for(ChamadaEncalheIcd ceicd : chamadasEncalheIcd) {
+			System.out.println(ceicd.getDataEmissao());
 		}
 		
-		System.out.println("===================================================");
-		
 	}
 	
-	
-	@SuppressWarnings("unchecked")
-	private List<ChamadaEncalheIcd> obterChamadasEncalhe() {
+	private String getDetail(List<EMS0127Detalhe> detalhes) {
+		StringBuilder stringBuilder = new StringBuilder();
+				
+		for (EMS0127Detalhe ems0127Detalhe : detalhes) {
+			stringBuilder.append(fixedFormatManager.export(ems0127Detalhe));
+			stringBuilder.append("\n");
+		}
 		
-		StringBuilder hql = new StringBuilder();
-		hql.append(" select ce ")
-			.append("from ChamadaEncalheIcd ce ")
-			.append("where ce.tipoStatus = :status");
-		
-		Query query = this.getSessionIcd().createQuery(hql.toString());
-		
-		query.setParameter("status", "A");
-
-		return query.list();
+		return stringBuilder.toString();
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List<ChamadaEncalheItemIcd> obterChamadasEncalheItens(ChamadaEncalheIcd ce) {
+	private List<ChamadaEncalheIcd> obterEncalhe(List<EMS0127Detalhe> Encalhes) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select ceitem ")
-			.append("from ChamadaEncalheItemIcd ceitem ")
-			.append("where ceitem.itemCePK.numeroChamadaEncalhe = :numeroChamadaEncalhe");
+		hql.append(" select ce");
+		hql.append(" from ChamadaEncalheIcd ce ");
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
-		
-		query.setParameter("numeroChamadaEncalhe", ce.getCePK().getNumeroChamadaEncalhe());
 
 		return query.list();
 	}

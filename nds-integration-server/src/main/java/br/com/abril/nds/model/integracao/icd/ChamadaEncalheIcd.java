@@ -52,7 +52,7 @@ public class ChamadaEncalheIcd {
 	private Long nuemroControle;
 	
 	@OneToMany(mappedBy="itemCePK.numeroChamadaEncalhe")
-	List<ChamadaEncalheItemIcd> itensChamadaEncalhe;
+	List<ChamadaEncalheItemIcd> chamadaEncalheItens;
 
 	/**
 	 * Getters e Setters 
@@ -129,13 +129,12 @@ public class ChamadaEncalheIcd {
 		this.nuemroControle = nuemroControle;
 	}
 
-	public List<ChamadaEncalheItemIcd> getItensChamadaEncalhe() {
-		return itensChamadaEncalhe;
+	public List<ChamadaEncalheItemIcd> getChamadaEncalheItens() {
+		return chamadaEncalheItens;
 	}
 
-	public void setItensChamadaEncalhe(
-			List<ChamadaEncalheItemIcd> itensChamadaEncalhe) {
-		this.itensChamadaEncalhe = itensChamadaEncalhe;
+	public void setChamadaEncalheItens(List<ChamadaEncalheItemIcd> chamadaEncalheItens) {
+		this.chamadaEncalheItens = chamadaEncalheItens;
 	}
 	
 }

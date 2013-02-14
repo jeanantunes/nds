@@ -159,12 +159,12 @@
 			<groupId>br.com.abril</groupId>
 			<artifactId>nds-common</artifactId>
 			<version>1.0</version>
-		</dependency>			
+		</dependency>
 		<dependency>
 			<groupId>br.com.abril</groupId>
-			<artifactId>nds-integration-canonical</artifactId>
+			<artifactId>nds-integracao-canonical</artifactId>
 			<version>1.0</version>
-		</dependency>
+		</dependency>			
 		<dependency>
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>

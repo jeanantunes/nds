@@ -9,11 +9,9 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -22,11 +20,9 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
-import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LogExecucaoRepository;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecucao, Long>  implements LogExecucaoRepository {
@@ -206,7 +202,18 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		
 		return criteria.list();
 	}
-
+	
+	public LogExecucao inserir(LogExecucao logExecucao) {
+		getSession().persist(logExecucao);
+		getSession().flush();
+		return logExecucao;
+	}
+	
+	public void atualizar(LogExecucao logExecucao) {
+		getSession().merge(logExecucao);
+		getSession().flush();
+	}
+	
 	private Date getPeriodoInicialDia(Date dataOperacao) {
 		Calendar dataInicio = Calendar.getInstance();
 

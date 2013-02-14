@@ -47,7 +47,6 @@ import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
-import br.com.abril.nds.integracao.repository.ParametroSistemaRepository;
 import br.com.abril.nds.integracao.route.RouteTemplate;
 import br.com.abril.nds.integracao.service.IcdObjectService;
 import br.com.abril.nds.model.dne.Bairro;
@@ -60,6 +59,7 @@ import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
+import br.com.abril.nds.repository.ParametroSistemaRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 import com.healthmarketscience.jackcess.Database;
@@ -74,6 +74,7 @@ public class InterfaceExecutor {
 	
 	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
 
+	@SuppressWarnings("unused")
 	private static ApplicationContext applicationContext;
 	
 	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
@@ -248,7 +249,6 @@ public class InterfaceExecutor {
 		}
 		
 	}
-
 	
 	public List<String> recuperaDistribuidores(Long codigoDistribuidor) {
 		this.diretorio = parametroSistemaRepository.getParametro("INBOUND_DIR");
@@ -276,13 +276,12 @@ public class InterfaceExecutor {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		
+
 	}
 
 	/**
 	 * Executa uma interface de carga de arquivo.
 	 */
-	
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
 		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);

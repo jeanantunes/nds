@@ -4,40 +4,42 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.PersistenceException;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 
 @Repository
 public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<ParametroSistema, Long>
-		implements ParametroSistemaRepository {
+implements ParametroSistemaRepository {
 
 	public ParametroSistemaRepositoryImpl() {
 		super(ParametroSistema.class);
 	}
-	
+
 	@Override
 	public ParametroSistema buscarParametroPorTipoParametro(TipoParametroSistema tipoParametroSistema){
 		String hql = "from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema";
-		
+
 		Query query = this.getSession().createQuery(hql);
 		query.setParameter("tipoParametroSistema", tipoParametroSistema);
-		
+
 		query.setMaxResults(1);
-		
+
 		return (ParametroSistema) query.uniqueResult();
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ParametroSistema> buscarParametroSistemaGeral() {
-		
+
 		String hql = "from ParametroSistema p where p.tipoParametroSistema in (:listaTipoParametroSistema) ";
-		
+
 		List<TipoParametroSistema> lst = new ArrayList<TipoParametroSistema>();
 		lst.add(TipoParametroSistema.EMAIL_USUARIO);
 		lst.add(TipoParametroSistema.VERSAO_SISTEMA);
@@ -58,20 +60,20 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 		lst.add(TipoParametroSistema.PATH_IMAGENS_PDV);
 		lst.add(TipoParametroSistema.FREQUENCIA_EXPURGO);
 		lst.add(TipoParametroSistema.PATH_IMPORTACAO_CONTRATO);
-		
+
 		Query query = this.getSession().createQuery(hql);
 		query.setParameterList("listaTipoParametroSistema", lst);
-		
+
 		return query.list();
 	}
-	
+
 	@Override
 	public void salvar(Collection<ParametroSistema> parametrosSistema) {
 
 		String hql = "from ParametroSistema p where p.tipoParametroSistema = :tipoParametroSistema ";
 		Query query = this.getSession().createQuery(hql);
 		query.setMaxResults(1);
-		
+
 		for (ParametroSistema itemPS : parametrosSistema) {
 			if (!isInterface(itemPS)) {
 				query.setParameter("tipoParametroSistema",
@@ -93,6 +95,18 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 		}
 	}
 
+	public String getParametro(String tipoParametro) {
+
+		try {
+			String sql = "SELECT a.valor FROM ParametroSistema a WHERE a.tipoParametroSistema = :tipoParametro";
+			Query query = getSession().createQuery(sql);
+			query.setParameter("tipoParametro", tipoParametro);
+			return (String) query.uniqueResult();
+		} catch (PersistenceException e) {
+			return null;
+		}
+	}
+
 	/**
 	 * @param itemPS
 	 * @return
@@ -100,5 +114,5 @@ public class ParametroSistemaRepositoryImpl extends AbstractRepositoryModel<Para
 	private boolean isInterface(ParametroSistema itemPS) {
 		return TipoParametroSistema.TIPOS_INTERFACE.contains(itemPS.getTipoParametroSistema());
 	}
-	
+
 }
