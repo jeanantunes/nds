@@ -71,19 +71,19 @@ public class CalcularReparte extends ProcessoAbstrato {
 			}
 		}
 		
-		// %Excedente = Excedente / ΣVendaMédiaFinal
+		// %Excedente = Excedente / SVendaMédiaFinal
 		BigDecimal percentualExcedente = excedente.divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_FLOOR);
 		for (Cota cota : getEstudo().getCotas()) {
 			if (percentualExcedente.doubleValue() < 0) {
-				// RepCalculadoCota =  ((RepDistribuir / ΣVendaMédiaFinal) * VendaMédiaFinalCota) + ReparteMínimo
+				// RepCalculadoCota =  ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota) + ReparteMínimo
 				BigDecimal temp = getEstudo().getReparteDistribuir().divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_FLOOR);
 				cota.setReparteCalculado(temp.multiply(cota.getVendaMedia()).add(cota.getReparteMinimo()));
 			} else {
-				// ExcedentePDV = ((ExcedenteDistribuir * %PropPDV) / ΣPDVEstudo) * PDVCota
+				// ExcedentePDV = ((ExcedenteDistribuir * %PropPDV) / SPDVEstudo) * PDVCota
 				BigDecimal temp = excedenteDistribuir.multiply(getEstudo().getPercentualProporcaoExcedentePDV());
 				BigDecimal excedentePDV = temp.divide(getEstudo().getTotalPDVs(), 2, BigDecimal.ROUND_FLOOR).multiply(cota.getQuantidadePDVs());
 				
-				// ExcedenteVDA = ((ExcedenteDistribuir * %PropVenda) / ΣVendaMédiaFinal) * VendaMédiaFinalCota
+				// ExcedenteVDA = ((ExcedenteDistribuir * %PropVenda) / SVendaMédiaFinal) * VendaMédiaFinalCota
 				temp = excedenteDistribuir.multiply(getEstudo().getPercentualProporcaoExcedenteVenda());
 				temp = temp.divide(getEstudo().getPercentualProporcaoExcedenteVenda(), 2, BigDecimal.ROUND_FLOOR);
 				BigDecimal excedenteVenda = temp.multiply(cota.getVendaMedia());

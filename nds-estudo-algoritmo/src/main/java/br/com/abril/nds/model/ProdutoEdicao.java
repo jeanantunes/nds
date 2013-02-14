@@ -22,6 +22,11 @@ public class ProdutoEdicao {
     private BigDecimal reparteMinimo; // Reparte mínimo configurado na tela de Mix de Produto
     private BigDecimal reparteMaximo; // Reparte máximo configurado na tela de Mix de Produto
     
+    public ProdutoEdicao() {
+    	reparte = BigDecimal.ZERO;
+    	venda = BigDecimal.ZERO;
+    }
+    
     public Long getId() {
         return id;
     }
