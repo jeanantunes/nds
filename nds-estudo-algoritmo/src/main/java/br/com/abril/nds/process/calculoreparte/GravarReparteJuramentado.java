@@ -36,15 +36,15 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
     @Override
     public void executarProcesso() {
     	
-    	if(estudo.getProduto().getParcial() ){
-    		for(Cota cota:estudo.getCotas()){
+    	if(getEstudo().getProduto().isParcial() ){
+    		for(Cota cota:getEstudo().getCotas()){
 
-    			int qtdeVezesEnviada = produtoEdicaoDao.getQtdeVezesReenviadas(cota, estudo.getProduto());
+    			int qtdeVezesEnviada = produtoEdicaoDao.getQtdeVezesReenviadas(cota, getEstudo().getProduto());
     			
     			if(qtdeVezesEnviada>=2){
     				
     				//Verificar se tem reparte juramentado A SER FATURADO
-    				BigDecimal reparteJuramentadoAFaturar = movimentoEstoqueCotaDAO.retornarReparteJuramentadoAFaturar(cota, estudo.getProduto());
+    				BigDecimal reparteJuramentadoAFaturar = movimentoEstoqueCotaDAO.retornarReparteJuramentadoAFaturar(cota, getEstudo().getProduto());
     				
 					if (reparteJuramentadoAFaturar.compareTo(BigDecimal.ZERO) == 1) {
 						// Gravar ReparteJura Cota na tabela
@@ -60,11 +60,10 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
 									.subtract(cota.getReparteJuramentadoAFaturar()));
 
 							// Se Distribuição por Múltiplos = SIM
-							if (estudo.getParametro()
-									.isDistribuicaoPorMultiplos()) {
+							if (getEstudo().isDistribuicaoPorMultiplos()) {
 								// RepCalculado Cota = ARRED( RepCalculado Cota
 								// / Pacote-Padrão ; 0 )* Pacote-Padrão
-								BigDecimal pacotePadrao = new BigDecimal(estudo
+								BigDecimal pacotePadrao = new BigDecimal(getEstudo()
 										.getProduto().getPacotePadrao());
 								cota.setReparteCalculado(cota
 										.getReparteCalculado()
@@ -93,7 +92,7 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
 //    	Indice de Sobra ou Falta = ( 'sum'ReparteCalculado Cota / ReparteCalculado) * ReparteCalculado Cota (não
     	
     		BigDecimal sumReparteCalculadoCota = BigDecimal.ZERO;
-    		for(Cota cota:estudo.getCotas()){
+    		for(Cota cota:getEstudo().getCotas()){
     			sumReparteCalculadoCota = sumReparteCalculadoCota.add(cota.getReparteCalculado());
     		}
     			
@@ -104,15 +103,15 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
     				}
     			};
     			
-    			Collections.sort(estudo.getCotas(),orderCotaDesc);
+    			Collections.sort(getEstudo().getCotas(),orderCotaDesc);
 
-    			for (Cota cota : estudo.getCotas()) {
+    			for (Cota cota : getEstudo().getCotas()) {
 
 				if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
 						&& !cota.getClassificacao().equals(	ClassificacaoCota.MaximoMinimo)) {
 
 					BigDecimal indicedeSobraouFalta = sumReparteCalculadoCota
-							.divide(estudo.getReparteDistribuir()).multiply(
+							.divide(getEstudo().getReparteDistribuir()).multiply(
 									cota.getReparteCalculado());
 					
 					

@@ -69,7 +69,13 @@ public enum ClassificacaoCota {
 	/**
 	 * TR
 	 */
-	BonificacaoParaCotas("TR");
+	BonificacaoParaCotas("TR"),
+	/**
+	 * ZZ
+	 */
+	SemClassificacao("ZZ");
+	// TODO: verificar qual será a primeira classificação que a cota receberá
+	// enquanto isso não é definido, utilizaremos a classificação 'ZZ' - Sem Classificação
 	
 	private String codigo;
 	

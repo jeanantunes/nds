@@ -31,45 +31,56 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
     	
 
 //		Se ReservaAjuste > 0
+    	BigDecimal reservaAjuste = getEstudo().getReservaAjuste();
+		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
+			
 //			Verificar Cota a Cota
-		
-    	BigDecimal reservaAjuste = BigDecimal.ONE;
-		for(Cota cota:estudo.getCotas()){
+			for(Cota cota:getEstudo().getCotas()){
 //    		Se Repcalculado < Venda (última edição fechada, sem correção)
 //    				Se Cota <> FX / MM / MX / RD / PR
-    		if(cota.getReparteCalculado().compareTo(reservaAjuste)==-1 ||
-    				cota.getReparteCalculado().compareTo(reservaAjuste)==0 &&
-    				(!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-    				 && !cota.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)
-    				 && !cota.getClassificacao().equals(ClassificacaoCota.CotaMix)
-    				 && !cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico)
-    			     && !cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
-    				 )){
-    			
-    			cota.setReparteCalculado(cota.getReparteCalculado().subtract(reservaAjuste));
-//    			ReservaAjuste = ReservaAjuste – 1
-    			//TODO: Fazer essa linha:
-    			if(reservaAjuste.compareTo(BigDecimal.ZERO)==0) break;
-    		}
-    	}
-    	
-    	
-    	Comparator<Cota> orderCotaDesc = new Comparator<Cota>(){
-			@Override
-			public int compare(Cota c1, Cota c2) {
-				return c2.getReparteCalculado().compareTo(c1.getReparteCalculado());
+				if(cota.getReparteCalculado().compareTo(reservaAjuste)==-1 ||
+						cota.getReparteCalculado().compareTo(reservaAjuste)==0 &&
+						(!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
+								&& !cota.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)
+								&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix)
+								&& !cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico)
+								&& !cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
+								)){
+					
+//					RepCalculado Cota = RepCalculado Cota + 1
+					cota.setReparteCalculado(cota.getReparteCalculado().add(BigDecimal.ONE));
+//    				ReservaAjuste = ReservaAjuste – 1
+					reservaAjuste = reservaAjuste.subtract(BigDecimal.ONE);
+					
+					if(reservaAjuste.compareTo(BigDecimal.ZERO)==0) break;
+				}
 			}
-		};
-		
-		Collections.sort(estudo.getCotas(),orderCotaDesc);
-		
-		for(Cota cota:estudo.getCotas()){
-			if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-					&& !cota.getClassificacao().equals(	ClassificacaoCota.MaximoMinimo)
-					&& !cota.getClassificacao().equals(	ClassificacaoCota.CotaMix)) 
-				cota.setReparteCalculado(cota.getReparteCalculado().add(reservaAjuste));
+			
 		}
+		
     	
+    	
+		
+		
+		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
+			
+			Comparator<Cota> orderCotaDesc = new Comparator<Cota>(){
+				@Override
+				public int compare(Cota c1, Cota c2) {
+					return c2.getReparteCalculado().compareTo(c1.getReparteCalculado());
+				}
+			};
+			
+			Collections.sort(getEstudo().getCotas(),orderCotaDesc);
+			
+			for(Cota cota:getEstudo().getCotas()){
+				if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
+						&& !cota.getClassificacao().equals(	ClassificacaoCota.MaximoMinimo)
+						&& !cota.getClassificacao().equals(	ClassificacaoCota.CotaMix)) 
+					cota.setReparteCalculado(cota.getReparteCalculado().add(BigDecimal.ONE));
+			}
+			
+		}
     }
 
 }
