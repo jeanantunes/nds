@@ -234,7 +234,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return query.list();
 	}
 	
-	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(Integer sequenciaMatriz) {
+	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(Integer sequenciaMatriz, Date dataRecolhimentoDistribuidor) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -242,9 +242,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append(" where lancamento.sequenciaMatriz = :sequenciaMatriz ");
 		
+		hql.append(" and lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
+		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("sequenciaMatriz", sequenciaMatriz);
+		
+		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
 		
 		return (ProdutoEdicao) query.uniqueResult();
 	}

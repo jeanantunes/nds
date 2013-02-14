@@ -92,7 +92,6 @@ public class Diferenca implements Serializable {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_DIRECIONAMENTO", nullable = true)
 	private TipoDirecionamentoDiferenca tipoDirecionamento;
-
 	
 	public Diferenca() {
 		
@@ -218,8 +217,6 @@ public class Diferenca implements Serializable {
 		this.lancamentoDiferenca = lancamentoDiferenca;
 	}
 	
-	
-
 	/**
 	 * @return the dataMovimento
 	 */
@@ -311,10 +308,6 @@ public class Diferenca implements Serializable {
      * @return qtde da diferença em exemplares
      */
 	public BigInteger getQtdeExemplares() {
-	    if (tipoDiferenca.isDiferencaDe()) {
-	        BigInteger porPactote = BigInteger.valueOf(produtoEdicao.getPacotePadrao());
-	        return qtde.multiply(porPactote);
-	    }
 	    return qtde;
 	}
 	

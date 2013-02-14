@@ -265,7 +265,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
 		
 		}
-		movimentoEstoqueRepository.adicionar(movimentoEstoque);
+		movimentoEstoque = movimentoEstoqueRepository.merge(movimentoEstoque);
 		
 		return movimentoEstoque;
 	}
@@ -524,7 +524,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		}
 			
-		movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
+		movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 		
 		return movimentoEstoqueCota;
 	}

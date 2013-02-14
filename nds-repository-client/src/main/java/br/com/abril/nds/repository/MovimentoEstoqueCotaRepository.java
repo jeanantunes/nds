@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
@@ -397,5 +398,16 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 
 	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
 
+	/**
+	 * 
+	 * @param numeroCota
+	 * @param idProdutoEdicao
+	 * @param dataOperacao
+	 * @return ValoresAplicados
+	 */
+	public ValoresAplicados obterValoresAplicadosProdutoEdicao(Integer numeroCota, Long idProdutoEdicao, Date dataOperacao);
+	
+	
 	Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+
 }

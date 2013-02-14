@@ -30,6 +30,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -50,6 +51,7 @@ import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -103,7 +105,8 @@ public class ConferenciaEncalheController extends BaseController {
 	 */
 	private static final String CONF_ENC_COTA_STATUS_NAO_INICIADA = "NAO_INICIADA";
 
-	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
@@ -126,6 +129,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
+		
+		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(distribuidorService.obter().getDataOperacao()));
+		
 		limparDadosSessao();
 		carregarComboBoxEncalhe();
 	}
@@ -1457,6 +1463,9 @@ public class ConferenciaEncalheController extends BaseController {
 		BigDecimal valorEncalhe = BigDecimal.ZERO;
 		BigDecimal valorVendaDia = BigDecimal.ZERO;
 		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		BigDecimal valorEncalheAtualizado = BigDecimal.ZERO;
+		BigDecimal valorVendaDiaAtualizado = BigDecimal.ZERO;
 		
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
@@ -1470,13 +1479,20 @@ public class ConferenciaEncalheController extends BaseController {
 					
 					BigDecimal desconto = conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto();
 					
-					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar()); 
+					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
+					
+					valorTotal = precoCapa.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada()));
 					
 					valorEncalhe = valorEncalhe.add(precoCapa.subtract(desconto).multiply(qtdExemplar));
+					
+					valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(
+						new BigDecimal(conferenciaEncalheDTO.getQtdInformada()))
+					);
 				}
 			}
 			
 			valorVendaDia = valorVendaDia.add(info.getReparte().subtract(valorEncalhe));
+			valorVendaDiaAtualizado = valorVendaDiaAtualizado.add(info.getReparte().subtract(valorEncalheAtualizado));
 			
 			if (info.getListaDebitoCreditoCota() != null) {
 			
@@ -1489,7 +1505,7 @@ public class ConferenciaEncalheController extends BaseController {
 					if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 						valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
 					}
-					
+						
 					if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 						valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
 					}
@@ -1500,11 +1516,14 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		BigDecimal valorPagar = BigDecimal.ZERO;	
+		BigDecimal valorPagarAtualizado = BigDecimal.ZERO;
 		
 		if(BigDecimal.ZERO.compareTo(valorDebitoCredito)>0) {
 			valorPagar = valorVendaDia.add(valorDebitoCredito.abs());
+			valorPagarAtualizado = valorVendaDiaAtualizado.add(valorDebitoCredito.abs());
 		} else {
 			valorPagar = valorVendaDia.subtract(valorDebitoCredito.abs());
+			valorPagarAtualizado = valorVendaDiaAtualizado.subtract(valorDebitoCredito.abs());
 		}
 		
 		if (dados != null){
@@ -1513,6 +1532,8 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorVendaDia", valorVendaDia);
 			dados.put("valorDebitoCredito", valorDebitoCredito);
 			dados.put("valorPagar", valorPagar);
+			dados.put("valorTotal", valorTotal);
+			dados.put("valorPagarAtualizado", valorPagarAtualizado);
 		}
 		
 	}
@@ -1571,7 +1592,7 @@ public class ConferenciaEncalheController extends BaseController {
 			ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade) {
 		
 				
-		Long qtd = null;
+		Long qtd = conferenciaEncalheDTO.getQtdExemplar() == null ? 0L : conferenciaEncalheDTO.getQtdExemplar().longValue();
 		
 		Long pacotePadrao = (long) conferenciaEncalheDTO.getPacotePadrao();
 		
@@ -1587,9 +1608,14 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 			
 		try {
-			qtd = Long.parseLong(quantidade);
+			qtd += Long.parseLong(quantidade);
 		}catch(NumberFormatException e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
+		}
+		
+		if (qtd > conferenciaEncalheDTO.getQtdReparte().longValue()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "O valor digitado deve ser menor ou igual ao total do reparte.");
 		}
 		
 		if (GrupoProduto.CROMO.equals(grupoProduto)) {
@@ -1615,7 +1641,10 @@ public class ConferenciaEncalheController extends BaseController {
 		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 		
+		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
+		conferenciaEncalheDTO.setPrecoComDesconto(produtoEdicao.getPrecoComDesconto());
 		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
+		
 		conferenciaEncalheDTO.setPrecoCapaInformado(produtoEdicao.getPrecoVenda());
 		
 		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
@@ -1640,7 +1669,6 @@ public class ConferenciaEncalheController extends BaseController {
 
 		}
 		
-		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
 		
 		conferenciaEncalheDTO.setValorTotal(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(new BigDecimal( conferenciaEncalheDTO.getQtdExemplar()) ));
 		

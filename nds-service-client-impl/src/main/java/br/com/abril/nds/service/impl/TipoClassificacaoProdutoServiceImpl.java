@@ -11,8 +11,7 @@ import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 
 @Service
-public class TipoClassificacaoProdutoServiceImpl implements
-		TipoClassificacaoProdutoService {
+public class TipoClassificacaoProdutoServiceImpl implements	TipoClassificacaoProdutoService {
 
 	@Autowired
 	private TipoClassificacaoProdutoRepository repo;
@@ -21,6 +20,12 @@ public class TipoClassificacaoProdutoServiceImpl implements
 	@Override
 	public List<TipoClassificacaoProduto> obterTodos() {
 		return repo.buscarTodos();
+	}
+
+	@Transactional
+	@Override
+	public TipoClassificacaoProduto buscarPorId(Long id) {
+		return repo.buscarPorId(id);
 	}
 
 }

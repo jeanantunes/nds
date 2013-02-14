@@ -253,12 +253,16 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 	@Test
 	public void obterProdutoEdicaoPorSequenciaMatriz() {
 		
+		Date dataOperacao = new Date();
+		
 		Integer sequenciaMatriz = 1;
 		
-			ProdutoEdicao produtoEdicao =
-						produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sequenciaMatriz);
+		ProdutoEdicao produtoEdicao =
+						produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sequenciaMatriz, dataOperacao);
+		
+		Assert.assertNotNull(produtoEdicao);
 			
-		}
+	}
 	
 	@Test
 	public void obterCodigoMatrizPorProdutoEdicao() {
