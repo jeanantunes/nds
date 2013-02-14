@@ -9,6 +9,7 @@ public class Cota {
 	private String nome;
 	private ClassificacaoCota classificacao;
 	private BigDecimal reparteCalculado;
+	private BigDecimal reparteJuramentadoAFaturar;
 	private boolean vendaMediaMaisN;
 	private BigDecimal ajusteReparte; // parametro VendaMedia + n na tela de Ajuste de Reparte
 	private BigDecimal reparteMinimo; // parametro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
@@ -161,4 +162,14 @@ public class Cota {
 	public void setEdicoesRecebidas(List<ProdutoEdicao> edicoesRecebidas) {
 		this.edicoesRecebidas = edicoesRecebidas;
 	}
+
+	public BigDecimal getReparteJuramentadoAFaturar() {
+		return reparteJuramentadoAFaturar;
+	}
+
+	public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
+		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
+	}
+	
+	
 }
