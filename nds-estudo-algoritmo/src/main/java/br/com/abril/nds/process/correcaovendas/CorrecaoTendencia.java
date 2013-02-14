@@ -2,8 +2,8 @@ package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
-import br.com.abril.nds.dao.EstoqueProdutoCotaDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -44,17 +44,17 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 	BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
 
 	Cota cota = (Cota) super.genericDTO;
-	cota.setEstoqueProdutoCotas(new EstoqueProdutoCotaDAO()
-		.getByCotaId(cota.getId()));
+	List<EstoqueProdutoCota> listEstoqueProdutoCota = cota
+		.getEstoqueProdutoCotas();
 
 	BigDecimal totalReparte = BigDecimal.ZERO;
 	BigDecimal totalVenda = BigDecimal.ZERO;
 
 	int iEdicaoBase = 0;
-	while (iEdicaoBase < cota.getEstoqueProdutoCotas().size()) {
+	while (iEdicaoBase < listEstoqueProdutoCota.size()) {
 
-	    EstoqueProdutoCota estoqueProdutoCota = cota
-		    .getEstoqueProdutoCotas().get(iEdicaoBase);
+	    EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
+		    .get(iEdicaoBase);
 
 	    BigInteger quantidadeRecebida = estoqueProdutoCota
 		    .getQuantidadeRecebida().toBigInteger();
@@ -63,17 +63,9 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 
 	    totalReparte = totalReparte.add(new BigDecimal(quantidadeRecebida));
 
-	    BigInteger vendaCota = quantidadeRecebida
-		    .subtract(quantidadeDevolvida);
+	    BigInteger venda = quantidadeRecebida.subtract(quantidadeDevolvida);
 
-	    totalVenda = totalVenda.add(new BigDecimal(vendaCota));
-
-	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(
-		    estoqueProdutoCota);
-	    correcaoIndividual.executar();
-
-	    cota.getEstoqueProdutoCotas().set(iEdicaoBase,
-		    (EstoqueProdutoCota) correcaoIndividual.getGenericDTO());
+	    totalVenda = totalVenda.add(new BigDecimal(venda));
 
 	    iEdicaoBase++;
 	}

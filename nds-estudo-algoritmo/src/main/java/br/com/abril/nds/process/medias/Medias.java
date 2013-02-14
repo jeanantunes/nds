@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
@@ -29,17 +29,17 @@ public class Medias extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() {
 	
-	BigDecimal vendaMediaCorrigida = BigDecimal.ZERO;
-	
-	List<ProdutoEdicao> listEdicaoBase = ((Cota) super.genericDTO).getEdicoesBase();
-	
-	int qtdeEdicaoBase = listEdicaoBase.size();
-	
-	if(qtdeEdicaoBase < 3) {
-	    
-	} else {
-	    
-	}
+//	BigDecimal vendaMediaCorrigida = BigDecimal.ZERO;
+//	
+//	List<EstoqueProdutoCota> listEstoqueProdutoCota = ((Cota) super.genericDTO).getEstoqueProdutoCotas();
+//	
+//	int qtdeEdicaoBase = listEstoqueProdutoCota.size();
+//	
+//	if(qtdeEdicaoBase < 3) {
+//	    EstoqueProdutoCota estoqueProdutoCota = 
+//	} else {
+//	    
+//	}
     }
 
 }

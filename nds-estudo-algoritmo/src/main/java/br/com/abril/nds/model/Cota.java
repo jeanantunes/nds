@@ -8,7 +8,8 @@ public class Cota extends GenericDTO<Cota> {
     private static final long serialVersionUID = -2770873222155652560L;
 
     private Long id;
-    private String nome;
+    private String nomePessoa;
+    private Long numero;
     private ClassificacaoCota classificacao;
     private BigDecimal reparteCalculado;
     private BigDecimal vendaMediaMaisN; // parametro VendaMedia + n na tela de Ajuste de Reparte
@@ -29,11 +30,11 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal indiceVendaCrescente;
 
     public Cota() {
-    	vendaMedia = BigDecimal.ZERO;
-    	vendaMediaMaisN = BigDecimal.ZERO;
-    	reparteCalculado = BigDecimal.ZERO;
+	vendaMedia = BigDecimal.ZERO;
+	vendaMediaMaisN = BigDecimal.ZERO;
+	reparteCalculado = BigDecimal.ZERO;
     }
-    
+
     public void calculate() {
 	// Cálculo da Venda Média Final
 	BigDecimal soma = new BigDecimal(0);
@@ -54,12 +55,12 @@ public class Cota extends GenericDTO<Cota> {
 	this.id = id;
     }
 
-    public String getNome() {
-	return nome;
+    public String getNomePessoa() {
+	return nomePessoa;
     }
 
-    public void setNome(String nome) {
-	this.nome = nome;
+    public void setNomePessoa(String nomePessoa) {
+	this.nomePessoa = nomePessoa;
     }
 
     public List<ProdutoEdicao> getEdicoesBase() {
@@ -231,6 +232,14 @@ public class Cota extends GenericDTO<Cota> {
 
     public void setIndiceVendaCrescente(BigDecimal indiceVendaCrescente) {
 	this.indiceVendaCrescente = indiceVendaCrescente;
+    }
+
+    public Long getNumero() {
+	return numero;
+    }
+
+    public void setNumero(Long numero) {
+	this.numero = numero;
     }
 
 }

@@ -18,9 +18,9 @@ public abstract class CorrecaoVendasDataProvider {
 
     @SuppressWarnings("unchecked")
     @DataProvider(name = "getCotaList")
-    public static Iterator<List<Cota>[]> getCotaList() {
+    public static Iterator<Cota[]> getCotaList() {
 
-	List<List<Cota>[]> listCotaReturn = new ArrayList<List<Cota>[]>();
+	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
 	List<Cota> listCota = new CotaDAO().getCotas();
 
@@ -32,11 +32,10 @@ public abstract class CorrecaoVendasDataProvider {
 	    // TODO As edições base já deveriam vir preenchidas
 	    // FIXME Retirar a chamada para ProdutoEdicaoDAO
 	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
+	    listCotaReturn.add(new Cota[] { cota });
 
 	    iCota++;
 	}
-
-	listCotaReturn.add(new List[] { listCota });
 
 	return listCotaReturn.iterator();
     }
@@ -53,17 +52,19 @@ public abstract class CorrecaoVendasDataProvider {
 
 	    Cota cota = listCota.get(iCota);
 
-	    List<EstoqueProdutoCota> listEstoqueCota = new EstoqueProdutoCotaDAO()
-		    .getByCotaId(cota.getId());
+	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
-	    int iEst = 0;
-	    while (iEst < listEstoqueCota.size()) {
+	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO()
+		    .getByCotaIdProdutoEdicaoId(cota, cota.getEdicoesBase());
 
-		EstoqueProdutoCota estoqueProdutoCota = listEstoqueCota
-			.get(iEst);
+	    int iEstoqueProdutoCota = 0;
+	    while (iEstoqueProdutoCota < listEstoqueProdutoCota.size()) {
+
+		EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
+			.get(iEstoqueProdutoCota);
 		listEstoqueProdutoCotas
 			.add(new EstoqueProdutoCota[] { estoqueProdutoCota });
-		iEst++;
+		iEstoqueProdutoCota++;
 	    }
 
 	    iCota++;

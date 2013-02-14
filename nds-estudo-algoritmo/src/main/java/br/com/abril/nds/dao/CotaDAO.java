@@ -12,11 +12,13 @@ public class CotaDAO {
 	public List<Cota> getCotas() {
 		List<Cota> cotas = new ArrayList<Cota>();
 		try {
-			PreparedStatement psmt = Conexao.getConexao().prepareStatement("SELECT ID FROM COTA");
+			PreparedStatement psmt = Conexao.getConexao().prepareStatement("SELECT C.*, P.NOME FROM COTA C INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ORDER BY C.ID");
 			ResultSet rs = psmt.executeQuery();
 			while (rs.next()) {
 				Cota cota = new Cota();
 				cota.setId(rs.getLong("ID"));
+				cota.setNumero(rs.getLong("NUMERO_COTA"));
+				cota.setNomePessoa(rs.getString("NOME"));
 				
 				cotas.add(cota);
 			}
