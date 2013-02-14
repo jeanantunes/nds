@@ -13,16 +13,15 @@ public class ItemCEPK implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Column(name="NUM_CHAMADA_ENCALHE_CHEN", nullable = false)
+	@Column(name = "NUM_CHAMADA_ENCALHE_CHEN", nullable = false)
 	private Long numeroChamadaEncalhe;
 
-	@Column(name="NUM_ITEM_ITCE", nullable = false)
+	@Column(name = "NUM_ITEM_ITCE", nullable = false)
 	private Long numeroItem;
 	
 	/**
 	 * Getters e Setters
 	 */
-
 	public Long getNumeroChamadaEncalhe() {
 		return numeroChamadaEncalhe;
 	}

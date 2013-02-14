@@ -4,30 +4,39 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import br.com.abril.nds.model.integracao.icd.ChamadaEncalheIcd;
 
 @Embeddable
 public class CEItemPK implements Serializable {
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "NUM_CHAMADA_ENCALHE_CHEN")
-	private Long numeroChamadaEncalhe;
+	@ManyToOne
+	@JoinColumn(name = "NUM_CHAMADA_ENCALHE_CHEN", nullable = false)
+	ChamadaEncalheIcd chamadaEncalhe;
 	
-	@Column(name = "NUM_ITEM_ITCE")
+	@Column(name = "NUM_ITEM_ITCE", nullable = false)
 	private Long numeroItem;
 
-	public Long getNumeroChamadaEncalhe() {
-		return numeroChamadaEncalhe;
-	}
-
-	public void setNumeroChamadaEncalhe(Long numeroChamadaEncalhe) {
-		this.numeroChamadaEncalhe = numeroChamadaEncalhe;
-	}
-
+	/**
+	 * Getters e Setters
+	 */
 	public Long getNumeroItem() {
 		return numeroItem;
+	}
+
+	public ChamadaEncalheIcd getChamadaEncalhe() {
+		return chamadaEncalhe;
+	}
+
+	public void setChamadaEncalhe(ChamadaEncalheIcd chamadaEncalhe) {
+		this.chamadaEncalhe = chamadaEncalhe;
 	}
 
 	public void setNumeroItem(Long numeroItem) {

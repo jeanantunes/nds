@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -51,8 +52,8 @@ public class ChamadaEncalheIcd {
 	@Column(name = "NUM_CONTROLE_CHEN")
 	private Long nuemroControle;
 	
-	@OneToMany(mappedBy="itemCePK.numeroChamadaEncalhe")
-	List<ChamadaEncalheItemIcd> chamadaEncalheItens;
+	@OneToMany
+	List<ChamadaEncalheIcdItem> chamadaEncalheItens;
 
 	/**
 	 * Getters e Setters 
@@ -129,11 +130,11 @@ public class ChamadaEncalheIcd {
 		this.nuemroControle = nuemroControle;
 	}
 
-	public List<ChamadaEncalheItemIcd> getChamadaEncalheItens() {
+	public List<ChamadaEncalheIcdItem> getChamadaEncalheItens() {
 		return chamadaEncalheItens;
 	}
 
-	public void setChamadaEncalheItens(List<ChamadaEncalheItemIcd> chamadaEncalheItens) {
+	public void setChamadaEncalheItens(List<ChamadaEncalheIcdItem> chamadaEncalheItens) {
 		this.chamadaEncalheItens = chamadaEncalheItens;
 	}
 	

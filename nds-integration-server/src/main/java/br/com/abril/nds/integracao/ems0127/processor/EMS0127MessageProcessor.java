@@ -1,19 +1,19 @@
 package br.com.abril.nds.integracao.ems0127.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.lightcouch.CouchDbClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.ems0127.outbound.EMS0127Detalhe;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.model.integracao.icd.ChamadaEncalheIcd;
+import br.com.abril.nds.model.integracao.icd.ChamadaEncalheIcdItem;
 import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
@@ -40,18 +40,26 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		
-		List<ChamadaEncalheIcd> chamadasEncalheIcd = obterChamadasEncalhe();
+		//List<ChamadaEncalheIcd> chamadasEncalheIcd = obterChamadasEncalhe();
+		List<ChamadaEncalheIcdItem> chamadasEncalheIcdItens =  obterChamadasEncalheItens();
 		
-		tempVar.set(chamadasEncalheIcd);
+		tempVar.set(chamadasEncalheIcdItens);
+		
+		
 		
 	}
 
 	@Override
 	public void processMessage(Message message) {
 		
-		ChamadaEncalheIcd ce = (ChamadaEncalheIcd) message.getBody();
+		ChamadaEncalheIcdItem cei = (ChamadaEncalheIcdItem) message.getBody();
 
-		System.out.println(ce.getDataEmissao());
+		CouchDbClient cdbc = this.getCouchDBClient(cei.getCeItemPK().getNumeroItem().toString() );//.getCodigoDistribuidor().toString());
+				
+		cdbc.save(cei);
+		cdbc.shutdown();
+		
+		//System.out.println(cei.getDataEmissao());
 		
 		/*for(ChamadaEncalheIcd ceicd : chamadasEncalheIcd) {
 			System.out.println(ceicd.getDataEmissao());
@@ -65,11 +73,26 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select ce")
 			.append(" from ChamadaEncalheIcd ce ")
-			.append("where ce.tipoStatus = :status ");
+			.append("where ce.tipoStatus = :status "); //join fetch ce.chamadaEncalheItens cei 
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 		
 		query.setParameter("status", "A");
+
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ChamadaEncalheIcdItem> obterChamadasEncalheItens() {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select cei")
+			.append(" from ChamadaEncalheIcdItem cei "); //join fetch ce.chamadaEncalheItens cei 
+		
+		Query query = this.getSessionIcd().createQuery(hql.toString());
+		
+		//query.setParameter("status", "A");
+		query.setMaxResults(10);
 
 		return query.list();
 	}

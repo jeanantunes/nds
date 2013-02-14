@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.integracao.icd.pks.CEItemPK;
@@ -19,14 +18,10 @@ public class ChamadaEncalheIcdItem {
 	
 	@Column(name = "DATA_RECOLHIMENTO_ITCE", nullable = false)
 	private Date dataRecolhimento;
-	
-	@ManyToOne
-	ChamadaEncalheIcd chamadaEncalhe;
 
 	/**
 	 * 
 	 */
-
 	public CEItemPK getCeItemPK() {
 		return ceItemPK;
 	}
@@ -43,12 +38,4 @@ public class ChamadaEncalheIcdItem {
 		this.dataRecolhimento = dataRecolhimento;
 	}
 
-	public ChamadaEncalheIcd getChamadaEncalhe() {
-		return chamadaEncalhe;
-	}
-
-	public void setChamadaEncalhe(ChamadaEncalheIcd chamadaEncalhe) {
-		this.chamadaEncalhe = chamadaEncalhe;
-	}
-	
 }

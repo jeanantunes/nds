@@ -56,7 +56,8 @@ public class DBImportDataRouter extends AbstractRepository implements BaseRouter
 					
 					try {
 												
-							messageProcessor.processMessage(message);						
+						messageProcessor.processMessage(message);
+						
 					} catch(Throwable e) {
 						ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.ERRO_INFRA, e.getMessage());
 						e.printStackTrace();
