@@ -57,7 +57,20 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
-		hql.append(getOrderBy(filtro));
+		//hql.append(getOrderBy(filtro));
+		
+		
+		if (filtro.getPaginacao().getSortColumn() != null) {
+			hql.append(" ORDER BY ");
+			hql.append(filtro.getPaginacao().getSortColumn());		
+		
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append(" ");
+				hql.append( filtro.getPaginacao().getOrdenacao().toString());
+			}
+		}
+		
+		
 
 		Query query =  getSession().createQuery(hql.toString());
 				
@@ -108,7 +121,15 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(getGroupBy(filtro));
 
-		hql.append(getOrderBy(filtro));
+		if (filtro.getPaginacao().getSortColumn() != null) {
+			hql.append(" ORDER BY ");
+			hql.append(filtro.getPaginacao().getSortColumn());		
+		
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append(" ");
+				hql.append( filtro.getPaginacao().getOrdenacao().toString());
+			}
+		}
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -271,32 +292,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		return hql.toString();
 	}
 	
-	private String getOrderBy(FiltroConsultaConsignadoCotaDTO filtro){
-		
-		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
-			return "";
-		}
-		StringBuilder hql = new StringBuilder();
-		
-		boolean ordenar = false; 
-		
-		if(filtro.getIdCota() != null && !ordenar){
-			hql.append(" ORDER BY cota.numeroCota ");
-			ordenar = true;
-		}
-		
-		if(filtro.getIdFornecedor() != null && !ordenar){
-			hql.append(" ORDER BY cota.numeroCota ");
-			ordenar = true;
-		}
-		
-		
-		if (filtro.getPaginacao().getOrdenacao() != null && ordenar) {
-			hql.append( filtro.getPaginacao().getOrdenacao().toString());
-		}
-		
-		return hql.toString();
-	}
 
 	private String getGroupBy(FiltroConsultaConsignadoCotaDTO filtro){
 		StringBuilder hql = new StringBuilder();
