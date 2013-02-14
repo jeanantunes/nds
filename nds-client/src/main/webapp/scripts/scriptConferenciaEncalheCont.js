@@ -64,10 +64,17 @@ var ConferenciaEncalheCont = $.extend(true, {
 		});
 		
 		ConferenciaEncalheCont.criarComboBoxEncalhe();
+
+		ConferenciaEncalheCont.removerAtalhos();
 		
 		ConferenciaEncalheCont.atribuirAtalhos();
-		
-		
+	},
+
+	removerAtalhos: function() {
+		shortcut.remove("f2");
+		shortcut.remove("f6");
+		shortcut.remove("f8");
+		shortcut.remove("f9");
 	},
 	
 	atribuirAtalhos: function(){
@@ -169,7 +176,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				$("#somatorioQtdInformada", ConferenciaEncalheCont.workspace).text(parseFloat(result.qtdInformada).toFixed(2));
 				$("#somatorioQtdRecebida", ConferenciaEncalheCont.workspace).text(parseFloat(result.qtdRecebida).toFixed(2));
-				$("#somatorioTotal", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+				$("#somatorioTotal", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagarAtualizado).toFixed(2));
 			}
 		);
 	},
@@ -263,28 +270,26 @@ var ConferenciaEncalheCont = $.extend(true, {
 						
 						ConferenciaEncalheCont.carregarListaConferencia(data);
 						
-					}
-				
-					exibirMensagem(result.tipoMensagem, result.listaMensagens);
-				},
-				
-				function(){
-					
-					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
+					} else {
+
+						$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/carregarListaConferencia', 
 							null, 
 							function(result){
 								
 								ConferenciaEncalheCont.abrirDialogNotaFiscalDivergente(result);
 							}
-					);
-				}, true, "idModalDadosNotaFiscal"
+						);
+					}
+				
+					exibirMensagem(result.tipoMensagem, result.listaMensagens);
+				}, null , true, "idModalDadosNotaFiscal"
 		);
 		
 	},
 	
 	verificarValorTotalCE : function() {
 		
-		var data = [{name: "valorCEInformado", value: $("#vlrCE", ConferenciaEncalheCont.workspace).val()}];
+		var data = [{name: "valorCEInformado", value: parseFloat($("#vlrCE", ConferenciaEncalheCont.workspace).val())}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalCE', data, 
 		
@@ -769,7 +774,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		ConferenciaEncalheCont.modalAberta = true;
 		
-		$("#dialog-dadosNotaFiscal", ConferenciaEncalheCont.workspace).dialog({
+		$("#dialog-dadosNotaFiscalContingencia", ConferenciaEncalheCont.workspace).dialog({
 			resizable : false,
 			height : 'auto',
 			width : 877,
@@ -785,7 +790,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 						if(conteudo.tipoMensagem == 'SUCCESS') {
 							
-							$("#dialog-dadosNotaFiscal", ConferenciaEncalheCont.workspace).dialog("close");
+							$("#dialog-dadosNotaFiscalContingencia", ConferenciaEncalheCont.workspace).dialog("close");
 							
 							if(conteudo.indGeraDocumentoConfEncalheCota == true) {
 
@@ -830,7 +835,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				ConferenciaEncalheCont.modalAberta = false;
 			},
-			form: $("#dialog-dadosNotaFiscal", this.workspace).parents("form")			
+			form: $("#dialog-dadosNotaFiscalContingencia", this.workspace).parents("form")			
 		});
 		
 		var notaFiscal = result.notaFiscal;
