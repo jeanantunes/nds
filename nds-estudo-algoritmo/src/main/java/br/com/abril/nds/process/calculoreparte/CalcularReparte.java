@@ -106,16 +106,16 @@ public class CalcularReparte extends ProcessoAbstrato {
 			}
 		}
 		
-		GravarReparteJuramentado gravarReparteJuramentado = new GravarReparteJuramentado((Estudo) minimoMaximo.getGenericDTO());
+		GravarReparteJuramentado gravarReparteJuramentado = new GravarReparteJuramentado(getEstudo());
 		gravarReparteJuramentado.executar();
 
-		AjusteFinalReparte ajusteFinalReparte = new AjusteFinalReparte((Estudo) gravarReparteJuramentado.getGenericDTO());
+		AjusteFinalReparte ajusteFinalReparte = new AjusteFinalReparte(getEstudo());
 		ajusteFinalReparte.executar();
 
-		ReparteComplementarPorCota reparteComplementarPorCota = new ReparteComplementarPorCota((Estudo) ajusteFinalReparte.getGenericDTO());
+		ReparteComplementarPorCota reparteComplementarPorCota = new ReparteComplementarPorCota(getEstudo());
 		reparteComplementarPorCota.executar();
 
-		GravarReparteFinalCota gravarReparteFinalCota = new GravarReparteFinalCota((Estudo) reparteComplementarPorCota.getGenericDTO());
+		GravarReparteFinalCota gravarReparteFinalCota = new GravarReparteFinalCota(getEstudo());
 		gravarReparteFinalCota.executar();
 
 		super.genericDTO = gravarReparteFinalCota.getGenericDTO();
