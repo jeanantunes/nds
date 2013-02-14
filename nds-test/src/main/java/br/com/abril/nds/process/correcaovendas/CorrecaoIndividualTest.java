@@ -60,9 +60,9 @@ public class CorrecaoIndividualTest {
 	    BigDecimal vendaEdicao = quantidadeRecebida
 		    .subtract(quantidadeDevolvida);
 
-	    Reporter.log("Quantidade Recebida : " + quantidadeRecebida);
-	    Reporter.log("Quantidade Devolvida : " + quantidadeDevolvida);
-	    Reporter.log("Venda : " + vendaEdicao);
+	    Reporter.log("<p>Quantidade Recebida : " + quantidadeRecebida + "</p>");
+	    Reporter.log("<p>Quantidade Devolvida : " + quantidadeDevolvida + "</p>");
+	    Reporter.log("<p>Venda : " + vendaEdicao + "</p>");
 
 	} catch (Exception e) {
 	    fail(e.getMessage());

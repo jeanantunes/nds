@@ -82,6 +82,9 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 		    estoqueProdutoCota = (EstoqueProdutoCota) correcaoIndividual
 			    .getGenericDTO();
 
+		} else {
+		    System.out.println("Achei vc...... :"
+			    + estoqueProdutoCota.getId());
 		}
 
 		if (!estoqueProdutoCota.getProdutoEdicao().isEdicaoAberta()) {
@@ -99,12 +102,11 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 
 	cota.setEstoqueProdutoCotas(listEstoqueProdutoCota);
 
-	if (listProdutoEdicaoFechada.size() >= 4) {
-	    VendaCrescente vendaCrescente = new VendaCrescente(cota,
-		    listProdutoEdicaoFechada);
-	    vendaCrescente.executarProcesso();
-	    cota = (Cota) vendaCrescente.getGenericDTO();
-	}
+	VendaCrescente vendaCrescente = new VendaCrescente(cota,
+		listProdutoEdicaoFechada);
+	vendaCrescente.executarProcesso();
+
+	cota = (Cota) vendaCrescente.getGenericDTO();
 
 	super.genericDTO = cota;
     }

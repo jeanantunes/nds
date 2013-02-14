@@ -4,9 +4,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Iterator;
-import java.util.List;
 
+import org.testng.Reporter;
 import org.testng.annotations.Test;
 
 import br.com.abril.nds.model.Cota;
@@ -16,67 +17,103 @@ import br.com.abril.nds.model.ProdutoEdicao;
 public class CorrecaoVendasTest {
 
     @Test(dataProvider = "getCotaList", dataProviderClass = CorrecaoVendasDataProvider.class)
-    public void executarProcesso(List<Cota> listCota) {
+    public void executarProcesso(Cota cota) {
 
 	try {
 
-	    int iCota = 0;
-	    while (iCota < listCota.size()) {
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+	    correcaoVendas.executar();
 
-		Cota cota = listCota.get(iCota);
+	    cota = (Cota) correcaoVendas.getGenericDTO();
 
-		CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
-		correcaoVendas.executar();
+	    BigDecimal one = BigDecimal.ONE;
+	    BigDecimal oneDotOne = one.add(new BigDecimal(0.1));
+	    BigDecimal oneDotTwo = one.add(new BigDecimal(0.2));
 
-		cota = (Cota) correcaoVendas.getGenericDTO();
+	    oneDotOne = oneDotOne.divide(one, 1, BigDecimal.ROUND_FLOOR);
+	    oneDotTwo = oneDotTwo.divide(one, 1, BigDecimal.ROUND_FLOOR);
 
-		BigDecimal one = BigDecimal.ONE;
-		BigDecimal oneDotOne = one.add(new BigDecimal(0.1));
-		BigDecimal oneDotTwo = one.add(new BigDecimal(0.2));
+	    BigDecimal indiceCorrecaoTendencia = cota
+		    .getIndiceCorrecaoTendencia();
 
-		oneDotOne = oneDotOne.divide(one, 1, BigDecimal.ROUND_FLOOR);
-		oneDotTwo = oneDotTwo.divide(one, 1, BigDecimal.ROUND_FLOOR);
+	    boolean assertIndiceCorrecaoTendencia = (indiceCorrecaoTendencia != null && (indiceCorrecaoTendencia
+		    .compareTo(one) == 0
+		    || indiceCorrecaoTendencia.compareTo(oneDotOne) == 0 || indiceCorrecaoTendencia
+		    .compareTo(oneDotTwo) == 0));
 
-		boolean assertIndiceCorrecaoTendencia = (cota
-			.getIndiceCorrecaoTendencia() != null && (cota
-			.getIndiceCorrecaoTendencia().compareTo(one) == 0
-			|| cota.getIndiceCorrecaoTendencia().compareTo(
-				oneDotOne) == 0 || cota
-			.getIndiceCorrecaoTendencia().compareTo(oneDotTwo) == 0));
+	    assertTrue(assertIndiceCorrecaoTendencia);
 
-		assertTrue(assertIndiceCorrecaoTendencia);
+	    StringBuilder sbEstoqueLog = new StringBuilder();
 
-		Iterator<EstoqueProdutoCota> itEstoqueProdutoCota = cota
-			.getEstoqueProdutoCotas().iterator();
+	    Iterator<EstoqueProdutoCota> itEstoqueProdutoCota = cota
+		    .getEstoqueProdutoCotas().iterator();
 
-		while (itEstoqueProdutoCota.hasNext()) {
+	    while (itEstoqueProdutoCota.hasNext()) {
 
-		    EstoqueProdutoCota estoqueProdutoCota = itEstoqueProdutoCota
-			    .next();
+		EstoqueProdutoCota estoqueProdutoCota = itEstoqueProdutoCota
+			.next();
 
-		    ProdutoEdicao produtoEdicao = estoqueProdutoCota
-			    .getProdutoEdicao();
+		ProdutoEdicao produtoEdicao = estoqueProdutoCota
+			.getProdutoEdicao();
 
-		    boolean assertIndiceCorrecao = (produtoEdicao
-			    .getIndiceCorrecao() != null && (produtoEdicao
-			    .getIndiceCorrecao().compareTo(one) == 0
-			    || produtoEdicao.getIndiceCorrecao().compareTo(
-				    oneDotOne) == 0 || produtoEdicao
-			    .getIndiceCorrecao().compareTo(oneDotTwo) == 0));
+		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
-		    assertTrue(assertIndiceCorrecao);
+		boolean assertIndiceCorrecao = (indiceCorrecao != null && (indiceCorrecao
+			.compareTo(one) == 0
+			|| indiceCorrecao.compareTo(oneDotOne) == 0 || indiceCorrecao
+			.compareTo(oneDotTwo) == 0));
 
+		if(!assertIndiceCorrecao) {
+		    System.out.println(cota.getId() + " >>> " + estoqueProdutoCota.getId() + ">>" + indiceCorrecao);
 		}
+		
+		assertTrue(assertIndiceCorrecao);
 
-		boolean assertIndiceVendaCrescente = (cota
-			.getIndiceVendaCrescente() != null && (cota
-			.getIndiceVendaCrescente().compareTo(one) == 0 || cota
-			.getIndiceVendaCrescente().compareTo(oneDotOne) == 0));
+		BigInteger quantidadeRecebida = estoqueProdutoCota
+			.getQuantidadeRecebida().toBigInteger();
+		BigInteger quantidadeDevolvida = estoqueProdutoCota
+			.getQuantidadeDevolvida().toBigInteger();
 
-		assertTrue(assertIndiceVendaCrescente);
+		BigInteger venda = quantidadeRecebida
+			.subtract(quantidadeDevolvida);
 
-		iCota++;
+		sbEstoqueLog
+			.append("<p style='margin-left: 100px'>Estoque Produto Cota</p>");
+		sbEstoqueLog.append("<p style='margin-left: 150px'>ID : "
+			+ estoqueProdutoCota.getId() + "</p>");
+		sbEstoqueLog
+			.append("<p style='margin-left: 100px'>Produto Edicao</p>");
+		sbEstoqueLog.append("<p style='margin-left: 150px'>ID : "
+			+ produtoEdicao.getId() + "</p>");
+		sbEstoqueLog
+			.append("<p style='margin-left: 150px'>Quantidade Recebida : "
+				+ quantidadeRecebida + "</p>");
+		sbEstoqueLog
+			.append("<p style='margin-left: 150px'>Quantidade Devolvida : "
+				+ quantidadeDevolvida + "</p>");
+		sbEstoqueLog.append("<p style='margin-left: 150px'>Venda : "
+			+ venda + "</p>");
+
 	    }
+
+	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
+
+	    boolean assertIndiceVendaCrescente = (indiceVendaCrescente != null && (indiceVendaCrescente
+		    .compareTo(one) == 0 || indiceVendaCrescente
+		    .compareTo(oneDotOne) == 0));
+
+	    assertTrue(assertIndiceVendaCrescente);
+
+	    Reporter.log("<p>Cota " + cota.getNomePessoa() + "</p>");
+	    Reporter.log("<p style='margin-left: 50px'>ID : " + cota.getId()
+		    + "</p>");
+	    Reporter.log("<p style='margin-left: 50px'>Numero : "
+		    + cota.getNumero() + "</p>");
+	    Reporter.log("<p style='margin-left: 50px'>-> Indice Correcao Tendencia : "
+		    + indiceCorrecaoTendencia + "</p>");
+	    Reporter.log("<p style='margin-left: 50px'>-> Indice Venda Crescente : "
+		    + indiceVendaCrescente + "</p>");
+	    Reporter.log(sbEstoqueLog.toString());
 
 	} catch (Exception e) {
 	    fail(e.getMessage());

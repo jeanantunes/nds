@@ -34,20 +34,50 @@ public class VendaCrescente extends ProcessoAbstrato {
 
 	Cota cota = (Cota) super.getGenericDTO();
 
-	if (listProdutoEdicaoFechada != null
-		&& !listProdutoEdicaoFechada.isEmpty()) {
+	List<ProdutoEdicao> listEdicaoBase = cota.getEdicoesBase();
 
-	    if (listProdutoEdicaoFechada.size() >= 4) {
+	if (listEdicaoBase != null && listEdicaoBase.size() > 4) {
+
+	    String previousNome = "";
+	    BigDecimal previousNumeroEdicao = BigDecimal.ZERO;
+	    boolean calcular = false;
+
+	    int iEdicaoBase = 0;
+	    while (iEdicaoBase < listEdicaoBase.size()) {
+
+		ProdutoEdicao produtoEdicao = listEdicaoBase.get(iEdicaoBase);
+
+		if (previousNumeroEdicao.compareTo(BigDecimal.ZERO) == 1) {
+
+		    if (previousNome.equalsIgnoreCase(produtoEdicao.getNome())) {
+			calcular = true;
+		    } else {
+			calcular = false;
+			break;
+		    }
+
+		} else {
+		    calcular = false;
+		}
+		
+		previousNumeroEdicao = new BigDecimal(
+			produtoEdicao.getNumeroEdicao());
+
+		previousNome = produtoEdicao.getNome();
+
+		iEdicaoBase++;
+	    }
+
+	    if (listProdutoEdicaoFechada != null
+		    && !listProdutoEdicaoFechada.isEmpty() && calcular) {
 
 		boolean ajustarIndice = false;
-		String previousNome = "";
-		BigDecimal previousNumeroEdicao = BigDecimal.ZERO;
 
-		int iEdicaoBase = 0;
-		while (iEdicaoBase < listProdutoEdicaoFechada.size()) {
+		int iEdicaoBaseFechada = 0;
+		while (iEdicaoBaseFechada < listProdutoEdicaoFechada.size()) {
 
 		    ProdutoEdicao produtoEdicao = listProdutoEdicaoFechada
-			    .get(iEdicaoBase);
+			    .get(iEdicaoBaseFechada);
 
 		    if (previousNumeroEdicao.compareTo(BigDecimal.ZERO) == 1) {
 
@@ -72,12 +102,7 @@ public class VendaCrescente extends ProcessoAbstrato {
 			}
 		    }
 
-		    previousNumeroEdicao = new BigDecimal(
-			    produtoEdicao.getNumeroEdicao());
-
-		    previousNome = produtoEdicao.getNome();
-
-		    iEdicaoBase++;
+		    iEdicaoBaseFechada++;
 		}
 
 		if (ajustarIndice) {
@@ -85,14 +110,14 @@ public class VendaCrescente extends ProcessoAbstrato {
 			    .add(new BigDecimal(0.1));
 		}
 	    }
+
+	    indiceVendaCrescente = indiceVendaCrescente.divide(
+		    new BigDecimal(1), 2, BigDecimal.ROUND_FLOOR);
+
 	}
-	
-	
-	indiceVendaCrescente = indiceVendaCrescente.divide(
-		new BigDecimal(1), 2, BigDecimal.ROUND_FLOOR);
-	
+
 	cota.setIndiceVendaCrescente(indiceVendaCrescente);
-	
+
 	super.genericDTO = cota;
     }
 

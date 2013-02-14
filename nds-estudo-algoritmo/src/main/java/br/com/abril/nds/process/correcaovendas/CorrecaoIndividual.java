@@ -37,7 +37,7 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
     protected void executarProcesso() throws Exception {
 
 	EstoqueProdutoCota estoqueProdutoCota = (EstoqueProdutoCota) super.genericDTO;
-
+	
 	BigDecimal indiceCorrecao = BigDecimal.ONE;
 
 	// BigDecimal totalReparte = BigDecimal.ZERO;

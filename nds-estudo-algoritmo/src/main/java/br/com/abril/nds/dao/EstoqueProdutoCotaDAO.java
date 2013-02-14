@@ -102,8 +102,9 @@ public class EstoqueProdutoCotaDAO {
 	try {
 
 	    StringBuilder query = new StringBuilder(
-		    " SELECT EPC.*, PE.NUMERO_EDICAO FROM ESTOQUE_PRODUTO_COTA EPC ");
+		    " SELECT EPC.*, PE.NUMERO_EDICAO, P.NOME FROM ESTOQUE_PRODUTO_COTA EPC ");
 	    query.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = EPC.PRODUTO_EDICAO_ID) ");
+	    query.append(" INNER JOIN PRODUTO P ON (P.ID = PE.PRODUTO_ID) ");
 	    query.append(" INNER JOIN COTA C ON (C.ID = EPC.COTA_ID) ");
 	    query.append(" WHERE C.ID = ? ");
 
@@ -134,11 +135,13 @@ public class EstoqueProdutoCotaDAO {
 
 	    ResultSet rs = psmt.executeQuery();
 	    while (rs.next()) {
+		
 		EstoqueProdutoCota estoqueProdutoCota = new EstoqueProdutoCota();
 		estoqueProdutoCota.setId(rs.getLong("ID"));
 
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
+		produtoEdicao.setNome(rs.getString("NOME"));
 		produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 
