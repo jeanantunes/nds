@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="NDS-TestSuite" parallel="false">
 	<parameter name="selenium.host" value="localhost" />
@@ -10,16 +9,3 @@
 		<suite-file path="./nds-estudo-algoritmo.xml" />
 	</suite-files> <!-- Suite-Files -->
 </suite> <!-- Suite -->
-=======
-<?xml version="1.0" encoding="UTF-8"?>
-<suite name="NDS-TestSuite" parallel="false">
-	<parameter name="selenium.host" value="localhost" />
-	<parameter name="selenium.port" value="4444" />
-	<parameter name="selenium.browser" value="*firefox" />
-	<parameter name="selenium.url" value="http://localhost:8080" />
-
-	<suite-files>
-		<suite-file path="./nds-estudo-algoritmo.xml" />
-	</suite-files> <!-- Suite-Files -->
-</suite> <!-- Suite -->
->>>>>>> DGBtiBit/master
