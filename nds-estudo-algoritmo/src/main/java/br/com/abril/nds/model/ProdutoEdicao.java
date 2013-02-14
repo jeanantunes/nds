@@ -3,7 +3,12 @@ package br.com.abril.nds.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ProdutoEdicao {
+public class ProdutoEdicao extends GenericDTO<ProdutoEdicao> {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7621958461677915584L;
 
     private Long id;
     private String nome;
@@ -20,9 +25,13 @@ public class ProdutoEdicao {
     private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
     private BigDecimal reparteMinimo; // Reparte mínimo configurado na tela de Mix de Produto
     private BigDecimal reparteMaximo; // Reparte máximo configurado na tela de Mix de Produto
+    private BigDecimal indiceCorrecao;
+    private BigDecimal vendaCorrigida;
 
     public ProdutoEdicao() {
-	this.peso = 0;
+	this.reparte = BigDecimal.ZERO;
+	this.venda = BigDecimal.ZERO;
+    	this.peso = 0;
     }
 
     public Long getId() {
@@ -143,5 +152,21 @@ public class ProdutoEdicao {
 
     public void setReparteMaximo(BigDecimal reparteMaximo) {
 	this.reparteMaximo = reparteMaximo;
+    }
+
+    public BigDecimal getIndiceCorrecao() {
+	return indiceCorrecao;
+    }
+
+    public void setIndiceCorrecao(BigDecimal indiceCorrecao) {
+	this.indiceCorrecao = indiceCorrecao;
+    }
+
+    public BigDecimal getVendaCorrigida() {
+	return vendaCorrigida;
+    }
+
+    public void setVendaCorrigida(BigDecimal vendaCorrigida) {
+	this.vendaCorrigida = vendaCorrigida;
     }
 }

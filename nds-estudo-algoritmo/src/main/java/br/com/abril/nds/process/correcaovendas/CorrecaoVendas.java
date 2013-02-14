@@ -1,11 +1,11 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import br.com.abril.nds.dao.EstoqueProdutoCotaDAO;
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.medias.Medias;
@@ -47,43 +47,66 @@ public class CorrecaoVendas extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() throws Exception {
 
-	Cota cota = (Cota) super.genericDTO;
-
 	List<ProdutoEdicao> listProdutoEdicaoFechada = new ArrayList<ProdutoEdicao>();
+
+	Cota cota = (Cota) super.genericDTO;
 
 	List<ProdutoEdicao> listEdicaoBase = cota.getEdicoesBase();
 
+	List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO()
+		.getByCotaIdProdutoEdicaoId(cota, listEdicaoBase);
+
+	cota.setEstoqueProdutoCotas(listEstoqueProdutoCota);
+
+	CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(cota);
+	correcaoTendencia.executar();
+
+	cota = (Cota) correcaoTendencia.getGenericDTO();
+
 	if (listEdicaoBase != null && listEdicaoBase.size() > 1) {
 
-	    int iEdicaBase = 0;
-	    while (iEdicaBase < listEdicaoBase.size()) {
+	    int iEstoqueProdutoCota = 0;
+	    while (iEstoqueProdutoCota < listEstoqueProdutoCota.size()) {
 
-		ProdutoEdicao produtoEdicaoBase = listEdicaoBase
-			.get(iEdicaBase);
+		EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
+			.get(iEstoqueProdutoCota);
 
-		// TODO Se Edição = 1 ou Publicação <> Fascículos / Coleções
-		if (produtoEdicaoBase.getNumeroEdicao().compareTo(new Long(1)) == 0) {
-		    CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(
-			    cota);
-		    correcaoTendencia.executar();
+		if (estoqueProdutoCota.getProdutoEdicao().getNumeroEdicao()
+			.compareTo(new Long(1)) == 0
+			|| !estoqueProdutoCota.getProdutoEdicao().isColecao()) {
+
+		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(
+			    estoqueProdutoCota);
+		    correcaoIndividual.executar();
+
+		    estoqueProdutoCota = (EstoqueProdutoCota) correcaoIndividual
+			    .getGenericDTO();
+
 		}
 
-		if (!produtoEdicaoBase.isEdicaoAberta()) {
-		    listProdutoEdicaoFechada.add(produtoEdicaoBase);
+		if (!estoqueProdutoCota.getProdutoEdicao().isEdicaoAberta()) {
+		    listProdutoEdicaoFechada.add(estoqueProdutoCota
+			    .getProdutoEdicao());
 		}
 
-		iEdicaBase++;
+		listEstoqueProdutoCota.set(iEstoqueProdutoCota,
+			estoqueProdutoCota);
+
+		iEstoqueProdutoCota++;
 	    }
 
 	}
+
+	cota.setEstoqueProdutoCotas(listEstoqueProdutoCota);
 
 	if (listProdutoEdicaoFechada.size() >= 4) {
 	    VendaCrescente vendaCrescente = new VendaCrescente(cota,
 		    listProdutoEdicaoFechada);
 	    vendaCrescente.executarProcesso();
-	    super.genericDTO = vendaCrescente.getGenericDTO();
+	    cota = (Cota) vendaCrescente.getGenericDTO();
 	}
 
+	super.genericDTO = cota;
     }
 
 }

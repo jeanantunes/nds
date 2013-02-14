@@ -81,11 +81,10 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
 	indiceCorrecao = indiceCorrecao.divide(new BigDecimal(1), 1,
 		BigDecimal.ROUND_FLOOR);
 
-	estoqueProdutoCota.setIndiceCorrecao(indiceCorrecao);
+	estoqueProdutoCota.getProdutoEdicao().setIndiceCorrecao(indiceCorrecao);
 
 	BigDecimal vendaCorrigida = vendaEdicao.multiply(indiceCorrecao);
-	//TODO Gravar VendaCorrig para cada edição-base de cada cota.
-	//Verificar aonde será essa gravação e se é um insert ou update
+	estoqueProdutoCota.getProdutoEdicao().setVendaCorrigida(vendaCorrigida);
 	
 	super.genericDTO = estoqueProdutoCota;
     }

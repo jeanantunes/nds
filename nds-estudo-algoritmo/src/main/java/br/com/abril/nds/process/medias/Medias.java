@@ -1,5 +1,10 @@
 package br.com.abril.nds.process.medias;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
@@ -17,8 +22,24 @@ import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
  */
 public class Medias extends ProcessoAbstrato {
 
+    public Medias(Cota cota) {
+	super(cota);
+    }
+    
     @Override
     protected void executarProcesso() {
+	
+//	BigDecimal vendaMediaCorrigida = BigDecimal.ZERO;
+//	
+//	List<EstoqueProdutoCota> listEstoqueProdutoCota = ((Cota) super.genericDTO).getEstoqueProdutoCotas();
+//	
+//	int qtdeEdicaoBase = listEstoqueProdutoCota.size();
+//	
+//	if(qtdeEdicaoBase < 3) {
+//	    EstoqueProdutoCota estoqueProdutoCota = 
+//	} else {
+//	    
+//	}
     }
 
 }

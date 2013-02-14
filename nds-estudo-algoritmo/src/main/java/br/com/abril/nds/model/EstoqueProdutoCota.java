@@ -15,7 +15,6 @@ public class EstoqueProdutoCota extends GenericDTO<EstoqueProdutoCota> {
     private Integer versao;
     private Cota cota;
     private ProdutoEdicao produtoEdicao;
-    private BigDecimal indiceCorrecao;
 
     public Long getId() {
 	return id;
@@ -63,14 +62,6 @@ public class EstoqueProdutoCota extends GenericDTO<EstoqueProdutoCota> {
 
     public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 	this.produtoEdicao = produtoEdicao;
-    }
-
-    public BigDecimal getIndiceCorrecao() {
-	return indiceCorrecao;
-    }
-
-    public void setIndiceCorrecao(BigDecimal indiceCorrecao) {
-	this.indiceCorrecao = indiceCorrecao;
     }
 
 }

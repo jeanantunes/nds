@@ -23,33 +23,38 @@ import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
  */
 public class ReparteProporcional extends ProcessoAbstrato {
 
+	public ReparteProporcional(Estudo estudo) {
+		super(estudo);
+	}
+	
     @Override
     protected void executarProcesso() {
-	
-	Estudo estudo = (Estudo) super.genericDTO;
-	
-        // TODO: concluir implementação do método calcular do Processo ReparteProporcional
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	boolean temEdicaoBaseAberta = false;
-    	for (ProdutoEdicao edicao : estudo.getEdicoesBase()) {
+    	for (ProdutoEdicao edicao : getEstudo().getEdicoesBase()) {
     		if (edicao.isEdicaoAberta()) {
     			temEdicaoBaseAberta = true;
     			break;
     		}
     	}
-    	BigDecimal somaReparteProporcional = new BigDecimal(0);
-    	BigDecimal indiceReparteEdicoesAbertas = estudo.getReparteDistribuirInicial().divide(estudo.getSomatoriaReparteEdicoesAbertas());
-    	for (Cota cota : estudo.getCotas()) {
+    	BigDecimal somaReparteProporcional = BigDecimal.ZERO;
+    	BigDecimal indiceReparteEdicoesAbertas = BigDecimal.ZERO;
+    	if (!getEstudo().getSomatoriaReparteEdicoesAbertas().equals(BigDecimal.ZERO)) {
+    		// ÍndiceRepAberta =  RepDistribInicial / ΣRepEdiçãoAberta
+    		indiceReparteEdicoesAbertas = getEstudo().getReparteDistribuirInicial().divide(getEstudo().getSomatoriaReparteEdicoesAbertas(), 3, BigDecimal.ROUND_HALF_UP);
+    	} 
+    	for (Cota cota : getEstudo().getCotas()) {
     		if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta()) {
+    			// RepCalculadoCota = ARRED(RepEdiçãoAbertaCota * ÍndiceRepAberta; 0)
     			BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);
-    			// FIXME: checar se o arredondamento está correto (Processo: Reparte Proporcional)
-    			repCalculado = new BigDecimal(Math.floor(repCalculado.doubleValue()));
+    			repCalculado = repCalculado.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP);
     			cota.setReparteCalculado(repCalculado);
+    			
     			cota.setClassificacao(ClassificacaoCota.BancaSoComEdicaoBaseAberta);
-    			somaReparteProporcional.add(cota.getReparteCalculado());
+    			somaReparteProporcional = somaReparteProporcional.add(cota.getReparteCalculado());
     		}
     	}
-    	
-    	super.genericDTO = estudo;
+    	// RepDistribuir = RepDistribuir – ΣRepProporcional
+    	getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(somaReparteProporcional));
     }
 }

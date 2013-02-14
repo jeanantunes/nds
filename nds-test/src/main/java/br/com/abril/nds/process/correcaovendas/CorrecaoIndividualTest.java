@@ -6,13 +6,15 @@ import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 
+import org.testng.Reporter;
 import org.testng.annotations.Test;
 
 import br.com.abril.nds.model.EstoqueProdutoCota;
+import br.com.abril.nds.model.ProdutoEdicao;
 
 public class CorrecaoIndividualTest {
 
-    @Test(dataProvider = "getEstoqueProdutoCota", dataProviderClass = CorrecaoVendasDataProvider.class)
+    @Test(dataProvider = "getEstoqueProdutoCotaList", dataProviderClass = CorrecaoVendasDataProvider.class)
     public void executarProcesso(EstoqueProdutoCota estoqueProdutoCota) {
 
 	try {
@@ -22,11 +24,13 @@ public class CorrecaoIndividualTest {
 
 	    correcaoIndividual.executar();
 
-	    EstoqueProdutoCota estoqueProdutoCotaReturn = (EstoqueProdutoCota) correcaoIndividual
+	    estoqueProdutoCota = (EstoqueProdutoCota) correcaoIndividual
 		    .getGenericDTO();
 
-	    BigDecimal indiceCorrecao = estoqueProdutoCotaReturn
-		    .getIndiceCorrecao();
+	    ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
+
+	    BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
+
 	    assertNotNull(indiceCorrecao);
 
 	    BigDecimal one = BigDecimal.ONE;
@@ -42,6 +46,23 @@ public class CorrecaoIndividualTest {
 		    || indiceCorrecao.compareTo(oneDotTwo) == 0;
 
 	    assertTrue(assertIndice);
+
+	    Reporter.log("<p>Estoque Produto Cota</p>");
+	    Reporter.log("<p style='margin-left: 50px'>ID : "
+		    + estoqueProdutoCota.getId() + "</p>");
+	    Reporter.log("<p style='margin-left: 50px'>-> Indice Correcao : "
+		    + indiceCorrecao + "</p>");
+
+	    BigDecimal quantidadeRecebida = estoqueProdutoCota
+		    .getQuantidadeRecebida();
+	    BigDecimal quantidadeDevolvida = estoqueProdutoCota
+		    .getQuantidadeDevolvida();
+	    BigDecimal vendaEdicao = quantidadeRecebida
+		    .subtract(quantidadeDevolvida);
+
+	    Reporter.log("Quantidade Recebida : " + quantidadeRecebida);
+	    Reporter.log("Quantidade Devolvida : " + quantidadeDevolvida);
+	    Reporter.log("Venda : " + vendaEdicao);
 
 	} catch (Exception e) {
 	    fail(e.getMessage());
