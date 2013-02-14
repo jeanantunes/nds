@@ -82,9 +82,6 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 		    estoqueProdutoCota = (EstoqueProdutoCota) correcaoIndividual
 			    .getGenericDTO();
 
-		} else {
-		    System.out.println("Achei vc...... :"
-			    + estoqueProdutoCota.getId());
 		}
 
 		if (!estoqueProdutoCota.getProdutoEdicao().isEdicaoAberta()) {

@@ -64,7 +64,7 @@ public class CorrecaoVendasTest {
 			.compareTo(oneDotTwo) == 0));
 
 		if(!assertIndiceCorrecao) {
-		    System.out.println(cota.getId() + " >>> " + estoqueProdutoCota.getId() + ">>" + indiceCorrecao);
+		    System.out.println(cota.getId() + " >>> " + estoqueProdutoCota.getId() + ">>>" + indiceCorrecao);
 		}
 		
 		assertTrue(assertIndiceCorrecao);
