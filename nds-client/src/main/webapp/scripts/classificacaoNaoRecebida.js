@@ -27,27 +27,87 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 	init : function() {
 	
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####
-		
+
+		// ### POR COTA ###
 		$('#pesquisarPorCota').click(function (){
 			classificacaoNaoRecebidaController.porCota();
 		});
 		
+		$('#porCota_numeroCota').change(function (){
+			pesquisaCota.pesquisarPorNumeroCota('#porCota_numeroCota','#porCota_nomeCota');
+		});
+		
+		$('#porCota_nomeCota').keyup(function (){
+			pesquisaCota.autoCompletarPorNome('#porCota_nomeCota');
+		});
+		
+		// INCLUIR CLASSIFICAÇÃO NA COTA
+		$('#confirmarInclusaoDaClassificacaoNaCota').click(function (){
+			classificacaoNaoRecebidaController.inserirClassificacaoNaCota();
+		});
+		
+		// ### POR CLASSIFICAÇÃO ###
 		$('#pesquisarPorClassificacao').click(function (){
 			classificacaoNaoRecebidaController.porClassificacao();
 		});
 		
+		$('#cotasQueRecebem_numeroCota').change(function (){
+			pesquisaCota.pesquisarPorNumeroCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
+		});
+		
+		$('#cotasQueRecebem_nomeCota').keyup(function (){
+			classificacaoNaoRecebidaController.autoCompletarPorNomeCotaQueRecebeClassificacao('#cotasQueRecebem_nomeCota');
+		});
+		
+		// INCLUIR COTAS NA CLASSIFICAÇÃO NÃO RECEBIDA
+		$('#confirmarInclusaoDaCotaNaClassificacaoNaoRecebida').click(function (){
+			classificacaoNaoRecebidaController.inserirCotaNaClassificacaoNaoRecebida();
+		});
+		
+		$('#pesquisarCotaQueRecebeClassificacao').click(function (){
+			
+			var grids = classificacaoNaoRecebidaController.Grids,
+			params = [];
+		
+			params = classificacaoNaoRecebidaController.Util.getFiltroByForm('filtroPrincipalClassificacao');
+
+			params.push({
+				name : "filtro.cotaDto.numeroCota",
+				value : $('#cotasQueRecebem_numeroCota').val()
+			});
+			
+			params.push({
+				name : "filtro.cotaDto.nomePessoa",
+				value : $('#cotasQueRecebem_nomeCota').val()
+			});
+			
+			params.push({
+				name : "filtro.autoComplete",
+				value : false
+			});
+			
+			grids.ClassificacaoGrid.reload({
+				dataType : 'json',
+				params : params
+			});
+		});
+		
+		
 		// EXPORTAÇÃO
-//		$('#gerarPDFPorClassificacao').attr('href', contextPath + "/distribuicao/excecaoSegmentoParciais/exportar?fileType=PDF&porCota=false");
-//		
-//		$('#gerarXLSPorClassificacao').attr('href', contextPath + "/distribuicao/excecaoSegmentoParciais/exportar?fileType=XLS&porCota=false");
-//		
-//		$('#gerarPDFPorCota').attr('href', contextPath + "/distribuicao/excecaoSegmentoParciais/exportar?fileType=PDF&porCota=true");
-//		
-//		$('#gerarXLSPorCota').attr('href', contextPath + "/distribuicao/excecaoSegmentoParciais/exportar?fileType=XLS&porCota=true");
+		$('#porClassificacaoGerarPDF').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=PDF&porCota=false");
+		
+		$('#porClassificacaoGerarXLS').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=XLS&porCota=false");
+		
+		$('#porCotaGerarPDF').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=PDF&porCota=true");
+		
+		$('#porCotaGerarXLS').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=XLS&porCota=true");
 		
 		// URLs usadas para requisições post (Inserção e Deleção)
 		classificacaoNaoRecebidaController.Url = {
-				excluirClassificacaoNaoRecebida : contextPath + "/distribuicao/classificacaoNaoRecebida/excluirClassificacaoNaoRecebida"
+				excluirClassificacaoNaoRecebida : contextPath + "/distribuicao/classificacaoNaoRecebida/excluirClassificacaoNaoRecebida",
+				inserirCotaNaClassificacaoNaoRecebida : contextPath + "/distribuicao/classificacaoNaoRecebida/inserirCotaNaClassificacaoNaoRecebida",
+				inserirClassificacaoNaCota : contextPath + "/distribuicao/classificacaoNaoRecebida/inserirClassificacaoNaCota",
+				autoCompletarPorNomeCotaQueRecebeClassificacao : contextPath + "/distribuicao/classificacaoNaoRecebida/autoCompletarPorNomeCotaQueRecebeClassificacao"
 		},
 		
 		classificacaoNaoRecebidaController.Grids = {
@@ -103,7 +163,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 					reload : {},
 					lastParams : []
 				},
-				classificacaoBGrid : {
+				ClassificacaoBGrid : {
 					reload : {},
 					lastParams : []
 				}
@@ -154,7 +214,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 						}
 
 						$.each(result.rows, function(index, row) {
-							var link = '<a href="javascript:;" onclick="classificacaoNaoRecebidaController.excluirClassificacaoNaoRecebidaPorCota('+row.cell.idClassificacaoNaoRecebida+');" style="cursor:pointer">' +
+							var link = '<a href="javascript:;" onclick="classificacaoNaoRecebidaController.excluirCotaDaClassificacaoNaoRecebida('+row.cell.idClassificacaoNaoRecebida+');" style="cursor:pointer">' +
 					   	 				   '<img title="Excluir Classificação" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 					   	 				   '</a>';
 							
@@ -219,7 +279,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 
 						$.each(result.rows, function(index, row) {
 							
-							var checkBox = '<input type="checkbox" name="cotaQueRecebeClassificacaoProduto" value="' + row.cell.numeroCota + '" />';
+							var checkBox = '<input type="checkbox" name="cotaQueRecebeClassificacao" value="' + row.cell.numeroCota + '" />';
 							
 							row.cell.sel = checkBox;
 						});
@@ -257,7 +317,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 			ClassificaCotaGrid : {
 				gridName : "classificaCotaGrid",
 				Url : {
-					urlDefault : contextPath + "/distribuicao/excecaoSegmentoParciais/pesquisarCotasQueRecebemExcecao"
+					urlDefault : contextPath + "/distribuicao/classificacaoNaoRecebida/pesquisarClassificacoesNaoRecebidasPelaCota",
 				},
 				comments : "POR COTA - GRID ESQUERDA",
 				reload : classificacaoNaoRecebidaController.Grids.Util.reload,
@@ -276,8 +336,8 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 
 						$.each(result.rows, function(index, row) {
 							
-							var link = '<a href="javascript:;" onclick="excecaoSegmentoParciaisController.excluirExcecaoCota('+row.cell.idExcecaoProdutoCota+');" style="cursor:pointer">' +
-					   	 				   '<img title="Excluir Exceção" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
+							var link = '<a href="javascript:;" onclick="classificacaoNaoRecebidaController.excluirClassificacaoNaoRecebidaDaCota('+row.cell.idClassificacaoNaoRecebida+');" style="cursor:pointer">' +
+					   	 				   '<img title="Excluir Classificação" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 					   	 				   '</a>';
 							
 							row.cell.acao = link;
@@ -292,25 +352,25 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 					$(".classificaCotaGrid").flexigrid({
 						colModel : [ {
 							display : 'Classificação',
-							name : 'classificacao',
+							name : 'nomeClassificacao',
 							width : 260,
 							sortable : true,
 							align : 'left'
 						}, {
 							display : 'Usuário',
-							name : 'usuario',
+							name : 'nomeUsuario',
 							width : 100,
 							sortable : true,
 							align : 'left'
 						}, {
 							display : 'Data',
-							name : 'data',
+							name : 'dataAlteracaoFormatada',
 							width : 80,
 							sortable : true,
 							align : 'center'
 						}, {
 							display : 'Hora',
-							name : 'hora',
+							name : 'horaAlteracaoFormatada',
 							width : 80,
 							sortable : true,
 							align : 'center'
@@ -332,10 +392,10 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 					})
 				
 			},
-			classificacaoBGrid : {
+			ClassificacaoBGrid : {
 				gridName : "classificacaoBGrid",
 				Url : {
-					urlDefault : contextPath + "/distribuicao/excecaoSegmentoParciais/pesquisarCotasQueNaoRecebemExcecao",
+					urlDefault : contextPath + "/distribuicao/classificacaoNaoRecebida/pesquisarClassificacoesRecebidasPelaCota",
 				},
 				comments : "POR COTA - GRIDA DA DIREITA",
 				reload : classificacaoNaoRecebidaController.Grids.Util.reload,
@@ -354,7 +414,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 
 						$.each(result.rows, function(index, row) {
 							
-							var checkBox = '<input type="checkbox" name="cotaNaoRecebeExcecao" value="' + row.cell.numeroCota + '" />';
+							var checkBox = '<input type="checkbox" name="classificacaoRecebida" value="' + row.cell.id + '" />';
 							
 							row.cell.sel = checkBox;
 						});
@@ -368,7 +428,7 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 					$(".classificacaoBGrid").flexigrid({
 						colModel : [ {
 							display : 'Classificação',
-							name : 'classificacao',
+							name : 'descricao',
 							width : 225,
 							sortable : true,
 							align : 'left'
@@ -387,11 +447,11 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 		};
 	},
 	
-	excluirClassificacaoNaoRecebidaPorCota : function excluirClassificacaoNaoRecebidaPorCota(id){
+	excluirCotaDaClassificacaoNaoRecebida : function excluirCotaDaClassificacaoNaoRecebida(id){
 		
 		var grids = classificacaoNaoRecebidaController.Grids;
 		
-		$( "#dialog-excluirClassificacaoPorCota" ).dialog({
+		$( "#dialog-excluirCotaDaClassificacaoNaoRecebida" ).dialog({
 			resizable: false,
 			height:170,
 			width:380,
@@ -413,16 +473,156 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 							
 					         params =  classificacaoNaoRecebidaController.Util.getFiltroByForm("filtroPrincipalClassificacao");
 					         
-					         params.push({
-					        	 name : "filtro.reload",
-					        	 value : true
-					         });
-					         
 					         grids.ClassificaNaoRecebidaGrid.reload({
 					        	 params : params
 					         });
 				        	 
-					         //grids.ClassificacaoGrid.reload();
+					         grids.ClassificacaoGrid.reload();
+						}
+					);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	
+	},
+	
+	excluirClassificacaoNaoRecebidaDaCota : function excluirClassificacaoNaoRecebidaDaCota(id){
+		
+		var grids = classificacaoNaoRecebidaController.Grids;
+		
+		$( "#dialog-excluirCotaDaClassificacaoNaoRecebida" ).dialog({
+			resizable: false,
+			height:170,
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					$.postJSON(
+							classificacaoNaoRecebidaController.Url.excluirClassificacaoNaoRecebida,
+						[{name : "id" , value : id}],
+						function(result){
+							 tipoMensagem = result.tipoMensagem;
+					         listaMensagens = result.listaMensagens;
+					         
+					         if (tipoMensagem && listaMensagens) {
+					        	 exibirMensagem(tipoMensagem, listaMensagens);
+					         }
+							
+					         params =  classificacaoNaoRecebidaController.Util.getFiltroByForm("filtroPrincipalPorCota");
+					         
+					         grids.ClassificaCotaGrid.reload({
+					        	 params : params
+					         });
+				        	 
+					         grids.ClassificacaoBGrid.reload();
+						}
+					);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	
+	},
+	
+	inserirCotaNaClassificacaoNaoRecebida : function inserirCotaNaClassificacaoNaoRecebida(){
+		
+		var grids = classificacaoNaoRecebidaController.Grids;
+		
+		$( "#dialog-incluirCotaNaClassificacaoNaoRecebida" ).dialog({
+			resizable: false,
+			height:170,
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					var params = [];
+					
+					// obtendo o id da classificação escolhida pelo usuário
+					params =  classificacaoNaoRecebidaController.Util.getFiltroByForm("filtroPrincipalClassificacao");
+					
+					$("input[type=checkbox][name='cotaQueRecebeClassificacao']:checked").each(function(){
+						params.push({
+							name : "numerosCota",
+							value : this.value
+						});
+					});
+					
+					$.postJSON(
+							classificacaoNaoRecebidaController.Url.inserirCotaNaClassificacaoNaoRecebida,
+						params,
+						function(result){
+							 tipoMensagem = result.tipoMensagem;
+					         listaMensagens = result.listaMensagens;
+					         
+					         if (tipoMensagem && listaMensagens) {
+					        	 exibirMensagem(tipoMensagem, listaMensagens);
+					         }
+							
+					         grids.ClassificaNaoRecebidaGrid.reload({
+					        	 params : params
+					         });
+				        	 
+					         grids.ClassificacaoGrid.reload();
+						}
+					);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	
+	},
+	
+	inserirClassificacaoNaCota : function inserirClassificacaoNaCota(){
+		
+		var grids = classificacaoNaoRecebidaController.Grids;
+		
+		$( "#dialog-incluirClassificacaoNaCota" ).dialog({
+			resizable: false,
+			height:170,
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					var params = [];
+					
+					params =  classificacaoNaoRecebidaController.Util.getFiltroByForm("filtroPrincipalPorCota");
+					
+					$("input[type=checkbox][name='classificacaoRecebida']:checked").each(function(){
+						params.push({
+							name : "idsTipoClassificacaoProduto",
+							value : this.value
+						});
+					});
+					
+					$.postJSON(
+							classificacaoNaoRecebidaController.Url.inserirClassificacaoNaCota,
+						params,
+						function(result){
+							 tipoMensagem = result.tipoMensagem;
+					         listaMensagens = result.listaMensagens;
+					         
+					         if (tipoMensagem && listaMensagens) {
+					        	 exibirMensagem(tipoMensagem, listaMensagens);
+					         }
+							
+					         grids.ClassificaCotaGrid.reload({
+					        	 params : params
+					         });
+				        	 
+					         grids.ClassificacaoBGrid.reload();
 						}
 					);
 				},
@@ -438,6 +638,21 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 	porCota : function porCota(){
 		$('.porCota').show();
 		$('.porClassificacao').hide();
+		
+		var grids = classificacaoNaoRecebidaController.Grids,
+		params = [];
+	
+		params = classificacaoNaoRecebidaController.Util.getFiltroByForm('filtroPrincipalPorCota');
+	
+		grids.ClassificaCotaGrid.reload({
+			dataType : 'json',
+			params : params
+		});
+		
+		grids.ClassificacaoBGrid.reload({
+			dataType : 'json',
+			params : params
+		});
 	},
 	
 	porClassificacao : function porClassificacao(){
@@ -457,6 +672,63 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 		grids.ClassificacaoGrid.reload({
 			dataType : 'json',
 			params : params
+		});
+	},
+	
+	
+	// Autocomplete no nome da cota
+	autoCompletarPorNomeCotaQueRecebeClassificacao : function(idNomeCota) {
+		
+	classificacaoNaoRecebidaController.pesquisaRealizada = false;
+		
+		var util = classificacaoNaoRecebidaController.Util,
+			filtro = [],
+			nomePessoa = $(idNomeCota).val();
+		if (nomePessoa && nomePessoa.length > 2) {
+			
+			filtro = util.getFiltroByForm("filtroPrincipalClassificacao");
+			
+			filtro.push({
+				name : "filtro.cotaDto.nomePessoa", 
+				value : nomePessoa
+			});
+			
+			filtro.push({
+				 name : "filtro.autoComplete", 
+				 value : true
+			});
+			
+			$.postJSON(
+					classificacaoNaoRecebidaController.Url.autoCompletarPorNomeCotaQueRecebeClassificacao,
+				filtro,
+				function(result) { 
+					classificacaoNaoRecebidaController.exibirAutoComplete(result, idNomeCota);
+				}
+			);
+		}
+	},
+	
+	descricaoAtribuida : true,
+	
+	pesquisaRealizada : false,
+	
+	intervalo : null,
+	
+	exibirAutoComplete : function(result, idCaixaTexto) {
+		
+		$(idCaixaTexto, classificacaoNaoRecebidaController.workspace).autocomplete({
+			source : result,
+			focus : function(event, ui) {
+				classificacaoNaoRecebidaController.descricaoAtribuida = false;
+			},
+			close : function(event, ui) {
+				classificacaoNaoRecebidaController.descricaoAtribuida = true;
+			},
+			select : function(event, ui) {
+				classificacaoNaoRecebidaController.descricaoAtribuida = true;
+			},
+			minLength: 4,
+			delay : 0,
 		});
 	},
 	

@@ -1641,7 +1641,10 @@ public class ConferenciaEncalheController extends BaseController {
 		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 		
+		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
+		conferenciaEncalheDTO.setPrecoComDesconto(produtoEdicao.getPrecoComDesconto());
 		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
+		
 		conferenciaEncalheDTO.setPrecoCapaInformado(produtoEdicao.getPrecoVenda());
 		
 		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
@@ -1666,7 +1669,6 @@ public class ConferenciaEncalheController extends BaseController {
 
 		}
 		
-		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
 		
 		conferenciaEncalheDTO.setValorTotal(produtoEdicao.getPrecoVenda().subtract(produtoEdicao.getDesconto()).multiply(new BigDecimal( conferenciaEncalheDTO.getQtdExemplar()) ));
 		

@@ -36,6 +36,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -2702,6 +2703,42 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return query.list();
 	}
+
+	@Override
+	public ValoresAplicados obterValoresAplicadosProdutoEdicao(Integer numeroCota,
+			Long idProdutoEdicao, Date dataOperacao) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select mec.valoresAplicados ");
+		
+		hql.append(" from MovimentoEstoqueCota mec  ");
+		
+		hql.append(" where ");
+		
+		hql.append(" mec.cota.numeroCota = :numeroCota ");
+		
+		hql.append(" and mec.produtoEdicao.id = :idProdutoEdicao ");
+		
+		hql.append(" and mec.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		
+		hql.append(" and mec.data <= :dataOperacao   ");
+
+		hql.append(" order by mec.data desc ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		return (ValoresAplicados) query.setMaxResults(1).uniqueResult();
+		
+	}  
 	
 	@Override
 	public Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota){

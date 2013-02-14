@@ -779,13 +779,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(data);
-		
-		if (DateUtil.isSabadoDomingo(cal)) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
-		}
-		
+	
 		if (this.calendarioService.isFeriadoSemOperacao(data)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,

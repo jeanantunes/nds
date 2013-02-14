@@ -201,7 +201,6 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		result.use(Results.json()).from(VALIDACAO_VO_SUCESSO,"result").recursive().serialize();
 	}
 	
-	
 	@Post
 	public void inserirCotaNaExcecao(Integer[] listaNumeroCota, FiltroExcecaoSegmentoParciaisDTO filtro){
 		ExcecaoProdutoCota element = null;
@@ -244,7 +243,6 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		
 		result.use(Results.json()).from(VALIDACAO_VO_SUCESSO,"result").recursive().serialize();
 	}
-	
 	
 	@Post("autoCompletarPorNomeProdutoNaoRecebidoPelaCota")
 	public void autoCompletarPorNomeProdutoNaoRecebidoPelaCota(FiltroExcecaoSegmentoParciaisDTO filtro){
