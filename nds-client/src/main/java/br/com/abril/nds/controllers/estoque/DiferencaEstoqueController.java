@@ -1790,12 +1790,7 @@ public class DiferencaEstoqueController extends BaseController {
 		filtroAtual.setIdFornecedor(idFornecedor);
 		filtroAtual.setNumeroCota(numeroCota);
 		filtroAtual.setNomeCota(nomeCota);
-		
-		if (!dataInicial.trim().isEmpty() && dataFinal.isEmpty()) {
-			
-			dataFinal = DateUtil.formatarDataPTBR(new Date());
-		}
-		
+	
 		filtroAtual.setPeriodoVO(
 				new PeriodoVO(DateUtil.parseData(dataInicial, Constantes.DATE_PATTERN_PT_BR),
 							  DateUtil.parseData(dataFinal, Constantes.DATE_PATTERN_PT_BR)));
@@ -1903,38 +1898,24 @@ public class DiferencaEstoqueController extends BaseController {
 											 Long idFornecedor, String dataInicial,
 											 String dataFinal, TipoDiferenca tipoDiferenca) {
 			
-		if (dataInicial != null && !dataInicial.trim().isEmpty()
-				&& !DateUtil.isValidDatePTBR(dataInicial)) {
+		if ((dataInicial != null && !dataInicial.trim().isEmpty()
+				&& !DateUtil.isValidDatePTBR(dataInicial))) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data Inicial inválida");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data Lançamento Inicial inválida");
 		}
 		
-		if (dataFinal != null && !dataFinal.trim().isEmpty()
-				&& !DateUtil.isValidDatePTBR(dataFinal)) {
+		if ((dataFinal != null && !dataFinal.trim().isEmpty()
+				&& !DateUtil.isValidDatePTBR(dataFinal))) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data Final inválida");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Data Lançamento Final inválida");
 		}
 		
-		if (!dataFinal.trim().isEmpty() && dataInicial.isEmpty()) {
-			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O preenchimento do campo [Data Inicial] é obrigatório!");
-		}
-		
-		if (!dataInicial.trim().isEmpty() && dataFinal.isEmpty()) {
-			
-			if (DateUtil.parseDataPTBR(dataInicial).compareTo(new Date()) == 1) {
-				
-				throw new ValidacaoException(
-					TipoMensagem.WARNING, "O campo [Data Inicial] não deve ser maior que a data do dia!");
-			}
-		}
-		
-		if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
+		if (dataInicial!= null && dataFinal!= null 
+				&& DateUtil.isDataInicialMaiorDataFinal(DateUtil.parseDataPTBR(dataInicial),
 												 DateUtil.parseDataPTBR(dataFinal))) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O campo [Data Incial] não deve ser maior que o campo [Data Final]!");
+				TipoMensagem.WARNING, "O campo [Data Lançamento] não deve ser maior que o campo [Até]!");
 		}
 		
 		if ((codigoProduto == null || codigoProduto.trim().isEmpty())  
