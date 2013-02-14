@@ -1463,6 +1463,9 @@ public class ConferenciaEncalheController extends BaseController {
 		BigDecimal valorEncalhe = BigDecimal.ZERO;
 		BigDecimal valorVendaDia = BigDecimal.ZERO;
 		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
+		BigDecimal valorTotal = BigDecimal.ZERO;
+		BigDecimal valorEncalheAtualizado = BigDecimal.ZERO;
+		BigDecimal valorVendaDiaAtualizado = BigDecimal.ZERO;
 		
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
@@ -1476,13 +1479,20 @@ public class ConferenciaEncalheController extends BaseController {
 					
 					BigDecimal desconto = conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto();
 					
-					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar()); 
+					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
+					
+					valorTotal = precoCapa.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada()));
 					
 					valorEncalhe = valorEncalhe.add(precoCapa.subtract(desconto).multiply(qtdExemplar));
+					
+					valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(
+						new BigDecimal(conferenciaEncalheDTO.getQtdInformada()))
+					);
 				}
 			}
 			
 			valorVendaDia = valorVendaDia.add(info.getReparte().subtract(valorEncalhe));
+			valorVendaDiaAtualizado = valorVendaDiaAtualizado.add(info.getReparte().subtract(valorEncalheAtualizado));
 			
 			if (info.getListaDebitoCreditoCota() != null) {
 			
@@ -1495,7 +1505,7 @@ public class ConferenciaEncalheController extends BaseController {
 					if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 						valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
 					}
-					
+						
 					if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 						valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
 					}
@@ -1506,11 +1516,14 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		BigDecimal valorPagar = BigDecimal.ZERO;	
+		BigDecimal valorPagarAtualizado = BigDecimal.ZERO;
 		
 		if(BigDecimal.ZERO.compareTo(valorDebitoCredito)>0) {
 			valorPagar = valorVendaDia.add(valorDebitoCredito.abs());
+			valorPagarAtualizado = valorVendaDiaAtualizado.add(valorDebitoCredito.abs());
 		} else {
 			valorPagar = valorVendaDia.subtract(valorDebitoCredito.abs());
+			valorPagarAtualizado = valorVendaDiaAtualizado.subtract(valorDebitoCredito.abs());
 		}
 		
 		if (dados != null){
@@ -1519,6 +1532,8 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorVendaDia", valorVendaDia);
 			dados.put("valorDebitoCredito", valorDebitoCredito);
 			dados.put("valorPagar", valorPagar);
+			dados.put("valorTotal", valorTotal);
+			dados.put("valorPagarAtualizado", valorPagarAtualizado);
 		}
 		
 	}
