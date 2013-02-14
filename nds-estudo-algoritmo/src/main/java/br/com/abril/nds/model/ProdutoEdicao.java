@@ -20,7 +20,6 @@ public class ProdutoEdicao extends GenericDTO<ProdutoEdicao> {
     private Integer pacotePadrao;
     private boolean edicaoAberta;
     private Long idLancamento;
-    private Long idCota;
     private Long idProduto;
     private Date dataLancamento;
     private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
@@ -30,10 +29,11 @@ public class ProdutoEdicao extends GenericDTO<ProdutoEdicao> {
     private BigDecimal vendaCorrigida;
 
     public ProdutoEdicao() {
-    	reparte = BigDecimal.ZERO;
-    	venda = BigDecimal.ZERO;
+	this.reparte = BigDecimal.ZERO;
+	this.venda = BigDecimal.ZERO;
+    	this.peso = 0;
     }
-    
+
     public Long getId() {
 	return id;
     }
@@ -114,14 +114,6 @@ public class ProdutoEdicao extends GenericDTO<ProdutoEdicao> {
 	this.idLancamento = idLancamento;
     }
 
-    public Long getIdCota() {
-	return idCota;
-    }
-
-    public void setIdCota(Long idCota) {
-	this.idCota = idCota;
-    }
-
     public Long getIdProduto() {
 	return idProduto;
     }
@@ -177,5 +169,4 @@ public class ProdutoEdicao extends GenericDTO<ProdutoEdicao> {
     public void setVendaCorrigida(BigDecimal vendaCorrigida) {
 	this.vendaCorrigida = vendaCorrigida;
     }
-
 }

@@ -42,7 +42,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
     public void executarProcesso() throws Exception {
 	// TODO Popular o estudo - Criar Logica para chamar subProcesso
 	// FIXME Retirar esse trecho
-	Estudo estudo = (Estudo) super.genericDTO;
+	Estudo estudo = super.getEstudo();
 
 	// TODO: implementar método calcular do Processo DefinicaoBases
 	//recebe edições da interface ou manualmente (é indiferente a origem, a principio)
@@ -50,7 +50,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	
 	List<ProdutoEdicao> edicoesParaEstudo = new ArrayList<ProdutoEdicao>();
 	for (ProdutoEdicao produtoEdicao : edicoesRecebidasRaw) {
-	    List<ProdutoEdicao> objetoEdtudo = estudoService.listaEdicoesPorLancamento(produtoEdicao);
+	    List<ProdutoEdicao> objetoEdtudo = estudoService.buscaEdicoesPorLancamento(produtoEdicao);
 	    validaApenasUmaEdicaoFechada(objetoEdtudo);
 	    excluiEdicoesComMaisDeDoisAnos(objetoEdtudo);
 	    excluiColecionaveisSeMaiorQueQuatro(objetoEdtudo);
@@ -61,10 +61,11 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	
 	BaseParaVeraneio baseParaVeraneio = new BaseParaVeraneio(estudo);
 	baseParaVeraneio.executar();
-	BaseParaSaidaVeraneio baseParaSaidaVeraneio = new BaseParaSaidaVeraneio((Estudo) baseParaVeraneio.getGenericDTO());
+	
+	BaseParaSaidaVeraneio baseParaSaidaVeraneio = new BaseParaSaidaVeraneio(estudo);
 	baseParaSaidaVeraneio.executar();
 	
-	super.genericDTO = baseParaSaidaVeraneio.getGenericDTO();
+//	super.genericDTO = baseParaSaidaVeraneio.getGenericDTO();
     }
 
     private void validaApenasUmaEdicaoFechada(List<ProdutoEdicao> objetoEdtudo) throws Exception {
@@ -75,8 +76,8 @@ public class DefinicaoBases extends ProcessoAbstrato {
     }
 
     private void excluiEdicoesComMaisDeDoisAnos(List<ProdutoEdicao> objetoEdtudo) {
-	int count = TRES_EDICOES;
-	while(objetoEdtudo.size() > count-INDEX_CORRECTION) {
+	int count = TRES_EDICOES-INDEX_CORRECTION;
+	while(objetoEdtudo.size() > count) {
 	    if(isBeforeTwoYears(objetoEdtudo.get(count).getDataLancamento())) {
 		objetoEdtudo.remove(count);
 	    } else {
