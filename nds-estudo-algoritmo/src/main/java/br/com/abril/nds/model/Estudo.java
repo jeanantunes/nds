@@ -13,7 +13,7 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal reparteDistribuirInicial;
 	private ProdutoEdicao produto;
 	private List<ProdutoEdicao> edicoesBase;
-	private List<Cota> cotas;
+	private List<Cota> cotas; //Cotas que receberam as edições base.
 	private boolean distribuicaoPorMultiplos;
 	private BigDecimal pacotePadrao;
 	private BigDecimal somatoriaVendaMedia;
@@ -28,6 +28,8 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal percentualProporcaoExcedentePDV;
 	private BigDecimal percentualProporcaoExcedenteVenda;
 	private BigDecimal totalPDVs;
+	//TODO validar campo no DB e como recupera-lo
+	private boolean pracaVeraneio;
 
 	public Estudo() {
 		edicoesBase = new ArrayList<ProdutoEdicao>();
@@ -204,5 +206,13 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setTotalPDVs(BigDecimal totalPDVs) {
 		this.totalPDVs = totalPDVs;
+	}
+
+	public boolean isPracaVeraneio() {
+	    return pracaVeraneio;
+	}
+
+	public void setPracaVeraneio(boolean pracaVeraneio) {
+	    this.pracaVeraneio = pracaVeraneio;
 	}
 }
