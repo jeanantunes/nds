@@ -330,11 +330,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		if (totalizar) {
 			
-			hql = "select count(diferenca) ";
+			hql = "select count(distinct diferenca) ";
 			
 		} else {
 			
-			hql = " select diferenca, "
+			hql = " select distinct(diferenca), "
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
 				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
 				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
@@ -349,7 +349,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			 + " left join diferenca.produtoEdicao.produto.fornecedores fornecedor "
 			 + " left join itemRecebimentoFisico.itemNotaFiscal itemNotaFiscal "
 			 + " left join itemNotaFiscal.notaFiscal notaFiscal "
-			 + " join diferenca.lancamentoDiferenca.movimentoEstoque movimentoEstoque"; 
+			 + " left join diferenca.lancamentoDiferenca.movimentoEstoque movimentoEstoque"
+			 + " left join diferenca.lancamentoDiferenca.movimentosEstoqueCota movimentoEstoqueCota";
 		
 		if (filtro != null) {
 		
@@ -359,7 +360,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			hql += " where diferenca.lancamentoDiferenca is not null "
 				+ " and diferenca.statusConfirmacao = :statusConfirmacao "
-				+ " and movimentoEstoque.status=:statusAprovado";
+				+ " and (movimentoEstoque.status=:statusAprovado or movimentoEstoqueCota.status=:statusAprovado)";
 				
 			if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 				hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";

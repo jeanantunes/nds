@@ -117,4 +117,6 @@ public interface DiferencaEstoqueService {
 	
 	void lancarDiferencaAutomaticaContagemDevolucao(Diferenca diferenca);
 	
+	public Diferenca lancarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque);
+	
 }
