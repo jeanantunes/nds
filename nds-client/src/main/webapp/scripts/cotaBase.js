@@ -303,7 +303,7 @@ var cotaBaseController = $.extend(true, {
 				row.cell.acao = '';
 			}else{
 				row.cell.nomeCota = '<div style="text-align: left; width: 90px;" id="nomeCotaGrid'+index+'" >'+
-									'<a href="javascript:;" onClick="cotaBaseController.fotoPdv()">'+row.cell.nomeCota+'</a>'+
+									'<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+row.cell.numeroCota+')">'+row.cell.nomeCota+'</a>'+
 									'</div>';
 				aux++;
 				$("#indiceAjuste").val(row.cell.indiceAjuste);
@@ -364,7 +364,7 @@ var cotaBaseController = $.extend(true, {
 	
 	atribuirDadosCota:function(resultado, index){
 		
-		var linkFotoPDV = '<a href="javascript:;" onClick="cotaBaseController.fotoPdv()">'+resultado.nomeCota+'</a>';
+		var linkFotoPDV = '<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+resultado.numeroCota+')">'+resultado.nomeCota+'</a>';
 		$("#nomeCotaGrid"+index, cotaBaseController.workspace).html(linkFotoPDV);
 		
  		$("#tipoPDVGrid"+index, cotaBaseController.workspace).text(resultado.tipoPDV);
@@ -646,7 +646,28 @@ var cotaBaseController = $.extend(true, {
 	},		
 
 
-	fotoPdv : function() {
+	fotoPdv : function(numeroCota) {
+		
+		$.postJSON(contextPath + "/cadastro/cotaBase/obterIdPDVPrincipal",
+				{"numeroCota":numeroCota}, 
+				function(idPDVPrincipal){
+					
+					$.postJSON(contextPath + "/cadastro/pdv/editar",
+							[{name:"idPdv", value:idPDVPrincipal},
+							 {name:"idCota", value:null},
+							 {name:"modoTela", value: ModoTela.CADASTRO_COTA}], 
+							 function(result){						
+								if(result.pdvDTO.pathImagem) {
+				                    $("#idImagem", this.workspace).attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+				                }
+						
+					},null,true);
+					
+					
+ 				}, function(result){
+ 					
+				}, true,null
+		);
 		
 
 		$( "#dialog-foto-pdv" ).dialog({

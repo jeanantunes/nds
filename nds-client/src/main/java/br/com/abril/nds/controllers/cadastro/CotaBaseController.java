@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.model.cadastro.CotaBaseCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaBaseCotaService;
 import br.com.abril.nds.service.CotaBaseService;
@@ -365,6 +366,21 @@ public class CotaBaseController extends BaseController {
 	
 		
 		result.nothing();
+	}
+	
+	@Post
+	@Path("/obterIdPDVPrincipal")
+	public void obterIdPDVPrincipal(Integer numeroCota){
+		
+		Cota cota = this.cotaService.obterCotaPDVPorNumeroDaCota(numeroCota);
+		Long idPdvPrincipal = null;
+		for(PDV pdv : cota.getPdvs()){
+			if(pdv.getCaracteristicas().isPontoPrincipal()){
+				idPdvPrincipal = pdv.getId();
+			}
+		}
+		
+		result.use(Results.json()).withoutRoot().from(idPdvPrincipal).recursive().serialize();
 	}
 
 	private void salvar(Integer[] numerosDeCotasBase, BigDecimal indiceAjuste, Cota cotaNova, CotaBase cotaBaseJaSalva) {
