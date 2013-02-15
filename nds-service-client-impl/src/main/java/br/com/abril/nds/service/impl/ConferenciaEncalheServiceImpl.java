@@ -1341,7 +1341,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			validarQtdeEncalheExcedeQtdeReparte(
 					conferenciaEncalheDTO,
-					controleConferenciaEncalheCota.getCota().getId(), 
+					controleConferenciaEncalheCota.getCota().getNumeroCota(), 
 					dataOperacao);
 			
 			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
@@ -1858,167 +1858,50 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * de um produtoEdicao para determinada cota.
 	 * 
 	 * @param conferenciaEncalhe
-	 * @param idCota
+	 * @param numeroCota
 	 * @param dataOperacao
 	 */
+	@Transactional
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
-			Long idCota, 
+			Integer numeroCota, 
 			Date dataOperacao) {
 		
-		Long idProdutoEdicao 				= conferenciaEncalhe.getIdProdutoEdicao();
-		BigInteger qtdeExemplarEncalhe 		= conferenciaEncalhe.getQtdExemplar();
-		Date dataRecolhimentoDistribuidor 	= conferenciaEncalhe.getDataRecolhimento();		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		if(dataOperacao == null) {
+			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		}
 		
 		ConferenciaEncalhe conferenciaEncalheFromDB = null;
 		
-		if(conferenciaEncalhe.getIdConferenciaEncalhe()!=null){
+		boolean indNovoRegistroConfEncalheCota = conferenciaEncalhe.getIdConferenciaEncalhe() == null || 
+				(conferenciaEncalhe.getIdConferenciaEncalhe() < 0);
 
-			conferenciaEncalheFromDB = conferenciaEncalheRepository.buscarPorId(conferenciaEncalhe.getIdConferenciaEncalhe());
-			
-		}
+		BigInteger qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos = obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(cota.getId(), conferenciaEncalhe.getIdProdutoEdicao());
 		
-		BigInteger qtdeReparte = obterQtdeReparteParaProdutoEdicao(
-				idCota, 
-				idProdutoEdicao, 
-				dataOperacao, 
-				dataRecolhimentoDistribuidor);
-		
-		if( conferenciaEncalhe.getIdConferenciaEncalhe() == null ) {
+		if(indNovoRegistroConfEncalheCota) {
+
+			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
-			
-			if(qtdeExemplarEncalhe.compareTo(qtdeReparte)>0) {
+			if(qtdeNew.compareTo(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) > 0) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
 			}
 			
-			
 		} else {
+
+			conferenciaEncalheFromDB = conferenciaEncalheRepository.buscarPorId(conferenciaEncalhe.getIdConferenciaEncalhe());
 			
 			BigInteger qtdeOld = conferenciaEncalheFromDB.getQtde();
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
-			if(qtdeOld.compareTo(qtdeNew)>=0) {
-				
-				return;
-				
-			} else {
-				
-			      	
-				BigInteger qtdeAMais = qtdeNew.subtract(qtdeOld);
-				
-				if(qtdeAMais.compareTo(qtdeReparte) <= 0) {
-					
-					return;
-					
-				} else {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
-					
-				}
-				
+			if(qtdeNew.compareTo( qtdeOld.add(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) ) > 0) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
 			}
 			
 		}
 		
 	}
-	
-	/**
-	 * Obtém o reparte de um produtoEdicao para determinada cota.
-	 * 
-	 * @param idCota
-	 * @param idProdutoEdicao
-	 * @param dataOperacao
-	 * @param dataRecolhimentoDistribuidor
-	 * 
-	 * @return BigInteger
-	 */
-	private BigInteger obterQtdeReparteParaProdutoEdicao(
-			Long idCota, 
-			Long idProdutoEdicao, 
-			Date dataOperacao,
-			Date dataRecolhimentoDistribuidor) {
-		
-		ProdutoEdicao produtoEdicao 	= produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-		
-		boolean indParcialNaoFinal = false;
-		
-		if(produtoEdicao.isParcial()) {
-			
-			LancamentoParcial lancamentoParcialFinal =  lancamentoParcialRepository.obterLancamentoParcial(produtoEdicao.getId(), dataOperacao);
-			
-			indParcialNaoFinal = (lancamentoParcialFinal == null);
-		} 
-
-		if(indParcialNaoFinal) {
-			
-			Date dataLancamento = lancamentoRepository.obterDataUltimoLancamentoParcial(idProdutoEdicao, dataOperacao);
-			
-			if(dataLancamento == null) {
-				throw new IllegalStateException("Não foi possível validar a quantidade de " + 
-												"reparte para o produtoEdicao de id: " + idProdutoEdicao);
-			}
-			
-			BigInteger qtdeReparte = movimentoEstoqueCotaRepository.obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
-					idCota, 
-					idProdutoEdicao, 
-					dataLancamento, 
-					dataRecolhimentoDistribuidor, 
-					OperacaoEstoque.ENTRADA);
-
-			if(qtdeReparte == null) {
-				throw new IllegalStateException("Não foi possível validar a quantidade de " + 
-												"reparte para o produtoEdicao de id: " + idProdutoEdicao);
-			}
-			
-			return qtdeReparte;
-			
-		} else {
-
-			
-			BigInteger qtdeDevolvida = BigInteger.ZERO;
-			
-			BigInteger qtdeRecebida = BigInteger.ZERO;
-
-			EstoqueProdutoCota estoqueProdutoCota = estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(idProdutoEdicao, idCota);
-			
-			if(estoqueProdutoCota != null) {
-				
-				qtdeDevolvida 	= (estoqueProdutoCota.getQtdeDevolvida() == null) ? BigInteger.ZERO : estoqueProdutoCota.getQtdeDevolvida();
-				qtdeRecebida 	=  (estoqueProdutoCota.getQtdeRecebida() == null) ? BigInteger.ZERO : estoqueProdutoCota.getQtdeRecebida();
-
-			}
-			
-			return  qtdeRecebida.subtract(qtdeDevolvida);
-			
-		}
-		
-	}
-	
-//	/**
-//	 * Verifica se os itens da conferenciaEncalhe são todos referentes ao CHAMADÃO, do contrário,
-//	 * não será permitido salvar a conferência.
-//	 * 
-//	 * @param listaConferenciaEncalhe
-//	 */
-//	private void validarPermissaoSalvarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) throws EncalheSemPermissaoSalvarException {
-//		
-//		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
-//			return;
-//		}
-//		
-//		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
-//			
-//			if(!TipoChamadaEncalhe.CHAMADAO.equals(conferencia.getTipoChamadaEncalhe()))  {
-//				
-//				throw new EncalheSemPermissaoSalvarException("Não é possível salvar conferência de encalhe, o produto \"" + 
-//															 conferencia.getNomeProduto() +  
-//															"\" não pertence a um \"CHAMADÃO\"");
-//				
-//			}
-//			
-//		}
-//		
-//	}
 	
 	/**
 	 * Exclui um registros de ConferenciaEncalhe e movimentos relacionados como 
@@ -2742,11 +2625,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							idCota,
 							controleConferenciaEncalheCota.getId(),
 							produtoEdicaoSlip.getIdProdutoEdicao());
-//					obterQtdeReparteParaProdutoEdicao(
-//					idCota, 
-//					produtoEdicaoSlip.getIdProdutoEdicao(), 
-//					dataOperacao, 
-//					produtoEdicaoSlip.getDataRecolhimentoDistribuidor());
 			
 			produtoEdicaoSlip.setReparte(reparte);
 			
