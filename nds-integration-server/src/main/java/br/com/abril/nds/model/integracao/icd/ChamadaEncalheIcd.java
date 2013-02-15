@@ -8,6 +8,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.abril.nds.model.integracao.icd.pks.CEPK;
 
@@ -26,6 +27,9 @@ public class ChamadaEncalheIcd {
 	
 	@EmbeddedId
 	private CEPK cePK;
+	
+	@Transient
+	private String tipoDocumento;
 	
 	@Column(name = "COD_DISTRIBUIDOR", nullable = false)
 	private Long codigoDistribuidor;
@@ -65,6 +69,14 @@ public class ChamadaEncalheIcd {
 		this.cePK = cePK;
 	}
 	
+	public String getTipoDocumento() {
+		return tipoDocumento;
+	}
+
+	public void setTipoDocumento(String tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
+	}
+
 	public Long getCodigoDistribuidor() {
 		return codigoDistribuidor;
 	}

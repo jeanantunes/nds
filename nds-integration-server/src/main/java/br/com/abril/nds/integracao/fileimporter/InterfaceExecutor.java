@@ -74,7 +74,6 @@ public class InterfaceExecutor {
 	
 	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
 
-	@SuppressWarnings("unused")
 	private static ApplicationContext applicationContext;
 	
 	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
@@ -185,12 +184,11 @@ public class InterfaceExecutor {
 			this.logarFim(logExecucao);
 		}
 	}
+	
 	@Transactional
 	public void executarRetornosIcd(List<String> distribuidores) {		 
-		
 
 		for (String distribuidor: distribuidores) {
-			
 			
 			if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
 

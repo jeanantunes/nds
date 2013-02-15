@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0127.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -7,18 +8,21 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.lightcouch.CouchDbClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.model.integracao.icd.ChamadaEncalheIcd;
-import br.com.abril.nds.model.integracao.icd.ChamadaEncalheIcdItem;
 import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
 public class EMS0127MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0127MessageProcessor.class);
+	
 	@Autowired
 	private SessionFactory sessionFactoryIcd;
 	
@@ -28,42 +32,50 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		try {
 			session = sessionFactoryIcd.getCurrentSession();
 		} catch(Exception e) {
-			
+			LOGGER.error("Erro ao obter sessão do Hibernate.", e);
 		}
 		
-		if(session == null)
+		if(session == null) {
 			session = sessionFactoryIcd.openSession();
+		}
 		
 		return session;
+		
 	}
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		
-		List<ChamadaEncalheIcd> chamadasEncalheIcd = obterChamadasEncalhe();
-		//List<ChamadaEncalheIcdItem> chamadasEncalheIcdItens =  obterChamadasEncalheItens();
+		List<Object> objs = new ArrayList<>();
+		Object dummyObj = new Object();
+		objs.add(dummyObj);
 		
-		tempVar.set(chamadasEncalheIcd);
-		
-		
+		tempVar.set(objs);
 		
 	}
 
 	@Override
 	public void processMessage(Message message) {
 		
-		ChamadaEncalheIcd ce = (ChamadaEncalheIcd) message.getBody();
+		CouchDbClient cdbc = null;
+		
+		List<ChamadaEncalheIcd> chamadasEncalhe = obterChamadasEncalhe();
 
-		CouchDbClient cdbc = this.getCouchDBClient("chencicd");
-				
-		cdbc.save(ce);
-		cdbc.shutdown();
-		
-		//System.out.println(cei.getDataEmissao());
-		
-		/*for(ChamadaEncalheIcd ceicd : chamadasEncalheIcd) {
-			System.out.println(ceicd.getDataEmissao());
-		}*/
+		for(ChamadaEncalheIcd ce : chamadasEncalhe) {
+			
+			try {
+				ce.setTipoDocumento("EMS0127");
+				cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
+				cdbc.save(ce);
+			} catch(Exception e) {
+				LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
+			} finally {
+				if (cdbc != null) {
+					cdbc.shutdown();
+				}			
+			}
+			
+		}
 		
 	}
 	
@@ -71,9 +83,9 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	private List<ChamadaEncalheIcd> obterChamadasEncalhe() {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select ce")
-			.append(" from ChamadaEncalheIcd ce ")
-			.append("where ce.tipoStatus = :status "); //join fetch ce.chamadaEncalheItens cei 
+		hql.append(" select ce ")
+			.append("from ChamadaEncalheIcd ce join fetch ce.chamadaEncalheItens cei ")
+			.append("where ce.tipoStatus = :status ");
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 		
@@ -81,22 +93,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 
 		return query.list();
 	}
-	
-	@SuppressWarnings("unchecked")
-	private List<ChamadaEncalheIcdItem> obterChamadasEncalheItens() {
 		
-		StringBuilder hql = new StringBuilder();
-		hql.append(" select cei")
-			.append(" from ChamadaEncalheIcdItem cei "); //join fetch ce.chamadaEncalheItens cei 
-		
-		Query query = this.getSessionIcd().createQuery(hql.toString());
-		
-		//query.setParameter("status", "A");
-		query.setMaxResults(10);
-
-		return query.list();
-	}
-	
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
