@@ -32,11 +32,12 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal indiceVendaCrescente;
 
     public Cota() {
-	vendaMedia = BigDecimal.ZERO;
-	vendaMediaMaisN = BigDecimal.ZERO;
-	reparteCalculado = BigDecimal.ZERO;
+    	vendaMedia = BigDecimal.ZERO;
+    	vendaMediaMaisN = BigDecimal.ZERO;
+    	reparteCalculado = BigDecimal.ZERO;
     	reparteMinimo = BigDecimal.ZERO;
     	somaReparteEdicoesAbertas = BigDecimal.ZERO;
+    	percentualEncalheMaximo = BigDecimal.ZERO;
     	classificacao = ClassificacaoCota.SemClassificacao;
     	
     	edicoesBase = new ArrayList<ProdutoEdicao>();
@@ -44,12 +45,14 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     public void calculate() {
-	// Cálculo da Venda Média Final
+    	// Cálculo da Venda Média Final
     	BigDecimal soma = BigDecimal.ZERO;
-	for (ProdutoEdicao edicao : edicoesRecebidas) {
-	    soma.add(edicao.getVenda());
-	}
-    	vendaMedia = soma.divide(new BigDecimal(edicoesRecebidas.size()), 2, BigDecimal.ROUND_FLOOR);
+    	for (ProdutoEdicao edicao : edicoesRecebidas) {
+    	    soma.add(edicao.getVenda());
+    	}
+    	if (edicoesRecebidas.size() != 0) {
+    		vendaMedia = soma.divide(new BigDecimal(edicoesRecebidas.size()), 2, BigDecimal.ROUND_HALF_UP);
+    	}
 
     	// Verificação se a cota só recebeu edições abertas e somatória delas
     	// TODO: confirmar se é para verificar em todas as edições que a cota recebeu mesmo
