@@ -91,7 +91,4 @@ public class EncalheMaximoTest {
 			assertEquals(new BigDecimal(0), c.getReparteCalculado());
 		}
 	}
-//	indiceEncalheMaximo
-//	vendaMedia
-//	reparteDistribuir
 }
