@@ -39,15 +39,16 @@ public interface ConferenciaEncalheService {
 	 */
 	public boolean isCotaEmiteNfe(Integer numeroCota);
 	
+	
 	/**
 	 * 
 	 * @param conferenciaEncalhe
-	 * @param idCota
+	 * @param numeroCota
 	 * @param dataOperacao
 	 */
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
-			Long idCota, 
+			Integer numeroCota, 
 			Date dataOperacao);
 	
 	/**
