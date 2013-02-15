@@ -1016,20 +1016,24 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional(readOnly = true)
 	public BigDecimal obterComissaoCota(Integer numeroCota){
-
-		BigDecimal desc = BigDecimal.ZERO;
-
-		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
-		filtro.setNumeroCota(numeroCota);
-
-		List<TipoDescontoCotaDTO> descontos = this.descontoCotaRepository.obterDescontoCota(filtro);
-
-		for (TipoDescontoCotaDTO dto : descontos){
-
-			desc = desc.add(dto.getDesconto());
+		
+		DescontoCotaProdutoExcessao desconto = 
+				this.descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
+				TipoDesconto.ESPECIFICO, null, null, this.cotaRepository.obterPorNumerDaCota(numeroCota) , null, null);
+		
+		if (desconto != null){
+			
+			return desconto.getDesconto().getValor();
+		} else {
+			
+			return this.descontoRepository.obterMediaDescontosFornecedoresCota(numeroCota);
 		}
-
-		return desc.compareTo(BigDecimal.ZERO) > 0 ? desc.divide(new BigDecimal(descontos.size())) : BigDecimal.ZERO;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal obterComissaoParametroDistribuidor(){
 
+		return this.distribuidorRepository.obterDescontoCotaNegociacao();
+	}
 }
