@@ -67,11 +67,10 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GeradorArquivoCobrancaBancoService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
-import br.com.abril.nds.service.ParametroCobrancaCotaService;
-import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
@@ -120,13 +119,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private CobrancaService cobrancaService;
 	
 	@Autowired
-	private PoliticaCobrancaService politicaCobrancaService;
-	
-	@Autowired
 	private DistribuidorRepository distribuidorRepository;
-
-	@Autowired
-	private ParametroCobrancaCotaService financeiroService;
 	
 	@Autowired
 	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
@@ -151,6 +144,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	/**
 	 * Obtém a situação da cota
@@ -189,8 +186,22 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
 		this.cancelarDividaCobranca(null, idCota);
 
-		//Buscar politica de cobrança e forma de cobrança do distribuidor
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		
+		
+		
+		
+		
+		
+		FormaCobranca fc = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+			
+		PoliticaCobranca politicaPrincipal = fc.getPoliticaCobranca();
+		
+		
+		
+		
+		
+		
+		
 		
 		if (politicaPrincipal == null){
 			throw new GerarCobrancaValidacaoException(
@@ -492,8 +503,21 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	private boolean verificarCotaTemBanco(Cota cota, List<String> msgs){
 
-		FormaCobranca formaCobtancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
+		
+		
+		
+		
+		
+		
+		FormaCobranca formaCobtancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
 
+		
+		
+		
+		
+		
+		
+		
 		if (cota.getParametroCobranca() == null || formaCobtancaPrincipal == null ||
 				formaCobtancaPrincipal.getBanco() == null){	
 			
@@ -684,12 +708,36 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		
-		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
+		
+		
+		
+		
+		
+		
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
+		
+		
+		
+		
+		
+		
 		
 		if (formaCobrancaPrincipal == null){
 		
+			
+			
+			
+			
+			
+			
 			// Obtém a forma de cobrança principal
-			formaCobrancaPrincipal = financeiroService.obterFormaCobrancaPrincipal();
+			formaCobrancaPrincipal = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+			
+			
+			
+			
+			
+			
 			
 			if (formaCobrancaPrincipal == null) {
 				msgs.add("Forma de cobrança principal para cota de número: " + cota.getNumeroCota() + " não encontrada. Também não encontrada forma de cobrança padrão principal.");
