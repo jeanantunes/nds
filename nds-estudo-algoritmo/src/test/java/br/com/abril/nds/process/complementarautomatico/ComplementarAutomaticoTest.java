@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.abril.nds.model.Cota;
@@ -37,6 +38,7 @@ public class ComplementarAutomaticoTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testConfiguracao() {
 		// Criação do ambiente
 		Estudo estudo = new Estudo();
