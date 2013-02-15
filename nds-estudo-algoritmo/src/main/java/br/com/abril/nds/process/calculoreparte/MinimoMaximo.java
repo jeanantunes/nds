@@ -6,10 +6,8 @@ import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
- * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil
- * definido no setup do estudo, levando em consideração todas as variáveis também definidas no setup.
- * <p style="white-space: pre-wrap;">
- * SubProcessos:
+ * Processo que tem como objetivo ajustar o reparte definido na cota entre o mínimo e o máximo configurado 
+ * <p style="white-space: pre-wrap;">SubProcessos:
  * 		- N/A
  * Processo Pai:
  * 		- {@link CalcularReparte}
@@ -25,21 +23,29 @@ public class MinimoMaximo extends ProcessoAbstrato {
 	}
 
 	@Override
-	public void executarProcesso() {
+	public void executarProcesso() throws Exception {
 		
 		for (Cota cota : getEstudo().getCotas()) {
+			if (cota.getReparteMinimo().longValue() > cota.getReparteMaximo().longValue()) {
+				throw new Exception(String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId()));
+			}
 			if (cota.getReparteCalculado().longValue() < cota.getReparteMinimo().longValue()) {
 				cota.setReparteCalculado(cota.getReparteMinimo());
+				
+				if (cota.isMix()) {
+					cota.setClassificacao(ClassificacaoCota.CotaMix);
+				} else {
+					cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
+				}
 			} else if (cota.getReparteCalculado().longValue() > cota.getReparteMaximo().longValue()) {
 				cota.setReparteCalculado(cota.getReparteMaximo());
-			}
-			
-			if (cota.isMix()) {
-				cota.setClassificacao(ClassificacaoCota.CotaMix);
-			} else {
-				cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
+	
+				if (cota.isMix()) {
+					cota.setClassificacao(ClassificacaoCota.CotaMix);
+				} else {
+					cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
+				}
 			}
 		}
 	}
-
 }
