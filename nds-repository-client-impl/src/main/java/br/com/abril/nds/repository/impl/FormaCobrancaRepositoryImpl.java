@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -9,6 +10,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 
@@ -64,37 +66,207 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 
 	
 	/**
-	 * Obtém a forma de cobranca Principal da Cota
-	 * @param Cota
-	 * @return FormaCobranca principal
+	 * Obtem FormaCobranca da Cota
+	 * @param numeroCota
+	 * @param fornecedoresId
+	 * @param data
+	 * @param valor
+	 * @return FormaCobranca
 	 */
 	@Override
-	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
+	public FormaCobranca obterFormaCobranca(Integer numeroCota, List<Long> fornecedoresId, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor) {
+		
+		
 		StringBuilder hql = new StringBuilder();
+		
+		
 		hql.append(" select f from FormaCobranca f ");		
-		hql.append(" where f.principal = :principal ");
-		hql.append(" and f.ativa = :indAtiva ");
-		hql.append(" and f.parametroCobrancaCota.cota.id = :idCota ");
+
+		hql.append(" join f.parametroCobrancaCota pcc ");
+		
+		hql.append(" left join f.fornecedores fnc ");
+		
+		hql.append(" left join f.concentracaoCobrancaCota ccc ");
+		
+		hql.append(" where f.ativa = :indAtiva ");
+		
+		hql.append(" and pcc.cota.numeroCota = :numeroCota ");
+		
+		if (fornecedoresId!=null){
+		
+		    hql.append(" and fnc.id IN (:fornecedoresId) ");
+		}
+		
+		hql.append(" and pcc.valorMininoCobranca <= :valor ");
+		
+		hql.append(" and ( f.tipoFormaCobranca = :tipoFormaCobranca ");
+			
+	    hql.append("       or ( ( :diaMes IN ELEMENTS(f.diasDoMes) ) ");
+				
+		hql.append("             or ( ccc.codigoDiaSemana = :diaSemana ) ) )");
+		
+
 		Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("principal", true);
+		
+        
         query.setParameter("indAtiva", true);
-        query.setParameter("idCota", idCota);
+        
+        query.setParameter("numeroCota", numeroCota);
+        
+        if (fornecedoresId!=null){
+        	
+            query.setParameterList("fornecedoresId", fornecedoresId);
+        }
+        
+        query.setParameter("valor", valor);
+        
+        query.setParameter("diaMes", diaDoMes);
+        
+        query.setParameter("diaSemana", diaDaSemana);
+        
+        query.setParameter("tipoFormaCobranca", TipoFormaCobranca.DIARIA);
+        
+        
         query.setMaxResults(1);
+        
+        
         return (FormaCobranca) query.uniqueResult();
 	}
 
+	/**
+	 * Obtem FormaCobranca do Distribuidor
+	 * @param fornecedoresId
+	 * @param data
+	 * @param valor
+	 * @return FormaCobranca
+	 */
 	@Override
-	public FormaCobranca obterFormaCobrancaPrincipal() {
+	public FormaCobranca obterFormaCobranca(List<Long> fornecedoresId, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor) {
+		
+		
 		StringBuilder hql = new StringBuilder();
+		
+		
 		hql.append(" select f from PoliticaCobranca p ");		
+		
 		hql.append(" join p.formaCobranca f ");		
-		hql.append(" where p.principal = :principal ");
+		
+		hql.append(" left join f.fornecedores fnc ");
+		
+		hql.append(" left join f.concentracaoCobrancaCota ccc ");
+		
+		hql.append(" where p.ativo = :indAtivo ");
+
+		if (fornecedoresId!=null){
+		    
+			hql.append(" and fnc.id IN (:fornecedoresId) ");
+		}
+		
+        hql.append(" and f.valorMinimoEmissao <= :valor ");
+		
+        hql.append(" and ( f.tipoFormaCobranca = :tipoFormaCobranca ");
+		
+        hql.append("       or ( :diaMes IN ELEMENTS(f.diasDoMes) ");
+			
+		hql.append("             or ccc.codigoDiaSemana = :diaSemana ) )");
+		
+
 		Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("principal", true);
+		
+        
+        query.setParameter("indAtivo", true);
+        
+        if (fornecedoresId!=null){
+        	
+            query.setParameterList("fornecedoresId", fornecedoresId);
+        }
+        
+        query.setParameter("valor", valor);
+        
+        query.setParameter("diaMes", diaDoMes);
+        
+        query.setParameter("diaSemana", diaDaSemana);
+        
+        query.setParameter("tipoFormaCobranca", TipoFormaCobranca.DIARIA);
+        
+        
         query.setMaxResults(1);
+        
+        
 		return (FormaCobranca) query.uniqueResult();
 	}
 
+	/**
+	 * Obtem FormaCobranca principal da Cota
+	 * @param idCota
+	 * @return FormaCobranca
+	 */
+	@Override
+	public FormaCobranca obterFormaCobranca(Long idCota) {
+		
+		
+        StringBuilder hql = new StringBuilder();
+		
+		
+		hql.append(" select f from FormaCobranca f ");		
+
+		hql.append(" join f.parametroCobrancaCota pcc ");
+		
+		hql.append(" where f.ativa = :indAtiva ");
+		
+		hql.append(" and f.principal = :principal ");
+		
+		hql.append(" and pcc.cota.id = :idCota ");
+
+
+		Query query = super.getSession().createQuery(hql.toString());
+		
+        
+        query.setParameter("indAtiva", true);
+        
+        query.setParameter("principal", true);
+        
+        query.setParameter("idCota", idCota);
+             
+        
+        query.setMaxResults(1);
+        
+        
+        return (FormaCobranca) query.uniqueResult();
+	}
+
+	/**
+	 * Obtem FormaCobranca principal do Distribuidor
+	 * @return FormaCobranca
+	 */
+	@Override
+	public FormaCobranca obterFormaCobranca() {
+		
+		
+        StringBuilder hql = new StringBuilder();
+		
+		
+        hql.append(" select f from FormaCobranca f ");		
+		
+		hql.append(" join f.politicaCobranca p ");		
+		
+		hql.append(" where p.ativo = :indAtivo ");
+		
+		hql.append(" and p.principal = :principal ");
+
+		Query query = super.getSession().createQuery(hql.toString());
+		
+        
+        query.setParameter("indAtivo", true);
+        
+        query.setParameter("principal", true);
+        
+        
+        query.setMaxResults(1);
+        
+        
+		return (FormaCobranca) query.uniqueResult();
+	}
 	
 	/**
 	 * Obtém lista de forma de cobranca da Cota

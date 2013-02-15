@@ -807,6 +807,9 @@ public class Fixture {
 		cota.setSituacaoCadastro(situacaoCadastro);
 		cota.setBox(box);
 		cota.setInicioAtividade(new Date());
+		cota.setInicioTitularidade(new Date());
+		cota.setPossuiContrato(false);
+		cota.setSugereSuspensao(false);
 		cota.setClassificacaoEspectativaFaturamento(ClassificacaoEspectativaFaturamento.D);
 		return cota;
 	}
