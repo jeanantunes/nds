@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 
@@ -96,4 +97,6 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	List<NegociacaoDividaDetalheVO> obterDetalhesCobranca(Long idCobranca);
 
 	void atualizarVias(Boleto boleto);
+
+	List<TipoCobranca> obterTiposCobrancaCadastradas();
 }

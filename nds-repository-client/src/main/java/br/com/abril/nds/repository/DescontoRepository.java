@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Cota;
@@ -27,5 +28,6 @@ public interface DescontoRepository extends Repository<Desconto, Long> {
 	List<ProdutoEdicao> buscarProdutosEdicoesQueUsamDescontoProduto(Desconto desconto);
 	
 	Desconto buscarUltimoDescontoValido(Long idDesconto, Fornecedor fornecedor);
-	
+
+	BigDecimal obterMediaDescontosFornecedoresCota(Integer numeroCota);
 }
