@@ -1431,7 +1431,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if(movimentoEstoque!=null) {
 			
-				atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO, mapaTipoMovimentoEstoque);
+				atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO);
 			
 			} else {
 				
@@ -2490,12 +2490,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @param movimentoEstoque
 	 * @param conferenciaEncalheDTO
-	 * @param mapaTipoMovimentoEstoque
 	 */
-	private void atualizarMovimentoEstoque(
-			MovimentoEstoque movimentoEstoque, 
-			ConferenciaEncalheDTO conferenciaEncalheDTO, 
-			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque) {
+	private void atualizarMovimentoEstoque(MovimentoEstoque movimentoEstoque, 
+										   ConferenciaEncalheDTO conferenciaEncalheDTO) {
 		
 		BigInteger oldQtdeMovEstoque = movimentoEstoque.getQtde();
 		
@@ -2503,39 +2500,38 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		movimentoEstoque.setQtde(newQtdeMovEstoque);
 		
-		GrupoMovimentoEstoque grupoMovimentoEstoque = ((TipoMovimentoEstoque)movimentoEstoque.getTipoMovimento()).getGrupoMovimentoEstoque();
+		GrupoMovimentoEstoque grupoMovimentoEstoque = ((TipoMovimentoEstoque) movimentoEstoque.getTipoMovimento()).getGrupoMovimentoEstoque();
 		
-		movimentoEstoqueRepository.alterar(movimentoEstoque);
+		this.movimentoEstoqueRepository.alterar(movimentoEstoque);
 		
 		EstoqueProduto estoqueProduto =  movimentoEstoque.getEstoqueProduto();
 		
-		if(estoqueProduto != null) {
+		if (estoqueProduto != null) {
 			
-			if(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(grupoMovimentoEstoque)) {
+			if (GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(grupoMovimentoEstoque)) {
 
 				BigInteger qtdeOriginal = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
+				
 				estoqueProduto.setQtdeSuplementar(qtdeOriginal.subtract(oldQtdeMovEstoque));
 
 				estoqueProduto.setQtdeSuplementar(estoqueProduto.getQtdeSuplementar().add(newQtdeMovEstoque));
-				estoqueProdutoRepository.alterar(estoqueProduto);
-
 				
+				this.estoqueProdutoRepository.alterar(estoqueProduto);
+
 			} else {
 				
-				BigInteger qtdeOriginal = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
-				estoqueProduto.setQtde(qtdeOriginal.subtract(oldQtdeMovEstoque));
-
-				estoqueProduto.setQtde(estoqueProduto.getQtde().add(newQtdeMovEstoque));
-				estoqueProdutoRepository.alterar(estoqueProduto);
+				BigInteger qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
 				
+				estoqueProduto.setQtdeDevolucaoEncalhe(qtdeEncalhe.subtract(oldQtdeMovEstoque));
+
+				estoqueProduto.setQtdeDevolucaoEncalhe(estoqueProduto.getQtdeDevolucaoEncalhe().add(newQtdeMovEstoque));
+				
+				this.estoqueProdutoRepository.alterar(estoqueProduto);			
 			}
-			
 		}
 		
-		estoqueProdutoRepository.alterar(estoqueProduto);
-		
+		this.estoqueProdutoRepository.alterar(estoqueProduto);	
 	}
-	
 
 	/**
 	 * Apos finalizar conferencia de encalhe sera verificado        
