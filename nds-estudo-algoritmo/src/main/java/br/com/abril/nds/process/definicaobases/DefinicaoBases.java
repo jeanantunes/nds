@@ -32,6 +32,9 @@ public class DefinicaoBases extends ProcessoAbstrato {
     private static final int TRES_EDICOES = 3;
     private static final int QUATRO_COLECIONAVEIS = 4;
     private static final int TWO_YEARS = 2;
+    
+    private List<ProdutoEdicao> edicoesRecebidasParaEstudoRaw;
+    
     private PreparaEstudoService estudoService = new PreparaEstudoService();
 
     public DefinicaoBases(Estudo estudo) {
@@ -46,7 +49,8 @@ public class DefinicaoBases extends ProcessoAbstrato {
 
 	// TODO: implementar método calcular do Processo DefinicaoBases
 	//recebe edições da interface ou manualmente (é indiferente a origem, a principio)
-	List<ProdutoEdicao> edicoesRecebidasRaw = MockEdicoes.getEdicoesRandom();
+	
+	List<ProdutoEdicao> edicoesRecebidasRaw = getEdicoesRecebidasParaEstudoRaw();
 	
 	List<ProdutoEdicao> edicoesParaEstudo = new ArrayList<ProdutoEdicao>();
 	for (ProdutoEdicao produtoEdicao : edicoesRecebidasRaw) {
@@ -99,5 +103,14 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	Date date = new Date(now - twoYears);
 	*/
 	return DateTime.now().minusYears(TWO_YEARS).isAfter(date.getTime());
+    }
+
+    public List<ProdutoEdicao> getEdicoesRecebidasParaEstudoRaw() {
+	return edicoesRecebidasParaEstudoRaw;
+    }
+
+    public void setEdicoesRecebidasParaEstudoRaw(
+	    List<ProdutoEdicao> edicoesRecebidasParaEstudoRaw) {
+	this.edicoesRecebidasParaEstudoRaw = edicoesRecebidasParaEstudoRaw;
     }
 }

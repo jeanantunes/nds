@@ -1,6 +1,6 @@
 package br.com.abril.nds.process.ajustereparte;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
@@ -9,7 +9,6 @@ import org.junit.Test;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
-
 
 public class AjusteReparteTest {
 	

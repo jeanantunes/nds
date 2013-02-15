@@ -1,4 +1,4 @@
-package br.com.abril.nds.process.definicaobases;
+package br.com.abril.nds.mocks;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
