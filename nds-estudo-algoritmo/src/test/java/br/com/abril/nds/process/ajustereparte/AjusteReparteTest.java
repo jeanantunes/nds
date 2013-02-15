@@ -1,10 +1,9 @@
 package br.com.abril.nds.process.ajustereparte;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import br.com.abril.nds.model.ClassificacaoCota;
@@ -94,9 +93,7 @@ public class AjusteReparteTest {
 	@Test
 	public void testCotaSemConfiguracao() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		estudo.getCotas().add(cota);
+		Estudo estudo = getEstudo(true);
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -111,11 +108,7 @@ public class AjusteReparteTest {
 	@Test
 	public void testCotaSemPacotePadrao() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		cota.setVendaMediaMaisN(new BigDecimal(30));
-		cota.setVendaMedia(new BigDecimal(10));
-		estudo.getCotas().add(cota);
+		Estudo estudo = getEstudo(false);
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -126,15 +119,10 @@ public class AjusteReparteTest {
 			assertEquals(new BigDecimal(40), c.getReparteCalculado());
 		}
 	}
-	
+
 	@Test
 	public void testVerificaClassificacaoCotaComParametroConfigurado() throws Exception {
-		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		cota.setVendaMediaMaisN(new BigDecimal(30));
-		cota.setVendaMedia(new BigDecimal(10));
-		estudo.getCotas().add(cota);
+		Estudo estudo = getEstudo(false);
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -146,13 +134,10 @@ public class AjusteReparteTest {
 		}
 	}
 	
-	@Ignore
 	@Test
 	public void testVerificaClassificacaoCotaSemParametroConfigurado() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		estudo.getCotas().add(cota);
+		Estudo estudo = getEstudo(true);
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -160,7 +145,18 @@ public class AjusteReparteTest {
 		
 		// Validação do teste
 		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
-			assertNull(c.getClassificacao());
+		    assertEquals(ClassificacaoCota.SemClassificacao, c.getClassificacao());
 		}
+	}
+	
+	private Estudo getEstudo(boolean cotaVazia) {
+	    Estudo estudo = new Estudo();
+	    Cota cota = new Cota();
+	    if(!cotaVazia) {
+		cota.setVendaMediaMaisN(new BigDecimal(30));
+		cota.setVendaMedia(new BigDecimal(10));
+	    }
+	    estudo.getCotas().add(cota);
+	    return estudo;
 	}
 }
