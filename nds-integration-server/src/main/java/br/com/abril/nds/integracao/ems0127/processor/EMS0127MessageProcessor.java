@@ -64,8 +64,8 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		for(ChamadaEncalheIcd ce : chamadasEncalhe) {
 			
 			try {
-				ce.setTipoDocumento("EMS0127");
-				cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
+				ce.setTipoDocumento("EMS0137");
+				cdbc = this.getCouchDBClient("06248116"); //ce.getCodigoDistribuidor().toString());
 				cdbc.save(ce);
 			} catch(Exception e) {
 				LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);

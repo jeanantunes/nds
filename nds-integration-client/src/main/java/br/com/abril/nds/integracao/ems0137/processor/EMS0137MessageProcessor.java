@@ -5,9 +5,6 @@ import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.lightcouch.CouchDbClient;
-import org.lightcouch.View;
-import org.lightcouch.ViewResult;
-import org.lightcouch.ViewResult.Rows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +22,11 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0137MessageProcessor.class);
 
-	private EMS0137Input input;
-
 	@Autowired
 	private DistribuidorService distribuidorService;
 
-
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-
-		input = new EMS0137Input();
-
-		input.setCodigoDistribuidor(distribuidorService.obter().getCodigoDistribuidorDinap());
-
-		tempVar.set( null );
 
 	}
 
@@ -52,28 +40,19 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		try {	
 
 			String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
+			
+			EMS0137Input input = (EMS0137Input) message.getBody();
+			
 			dbClient = getCouchDBClient(codigoDistribuidor);
 
-			View view = dbClient.view("importacao/porTipoDocumento");
+			for (EMS0137InputItem item : input.getItems()) {						
 
-			view.key("EMS0127");
-			view.includeDocs(true);
-
-			ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0137Input.class);
-			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
-
-				EMS0137Input doc = (EMS0137Input) row.getDoc();
-
-
-				for ( EMS0137InputItem item : doc.getItens()) {
-
-					getSession().merge(null);
-					getSession().flush();
-				}						
-
-				dbClient.remove(doc);
+				getSession().merge(item);
+				getSession().flush();
 
 			}
+			
+			dbClient.remove(input);
 
 		}
 		catch (Exception e) {
