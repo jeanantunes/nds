@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,17 @@ public interface ConferenciaEncalheService {
 	 * @return boolean
 	 */
 	public boolean isCotaEmiteNfe(Integer numeroCota);
+	
+	/**
+	 * 
+	 * @param conferenciaEncalhe
+	 * @param idCota
+	 * @param dataOperacao
+	 */
+	public void validarQtdeEncalheExcedeQtdeReparte(
+			ConferenciaEncalheDTO conferenciaEncalhe,
+			Long idCota, 
+			Date dataOperacao);
 	
 	/**
 	 * Método faz seguintes verificações:

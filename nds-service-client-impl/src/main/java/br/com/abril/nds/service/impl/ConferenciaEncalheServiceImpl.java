@@ -1857,13 +1857,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * Valida se a quantidade da conferência de encalhe não excede o reparte 
 	 * de um produtoEdicao para determinada cota.
 	 * 
+	 * @param conferenciaEncalhe
 	 * @param idCota
-	 * @param idProdutoEdicao
 	 * @param dataOperacao
-	 * @param dataRecolhimentoDistribuidor
-	 * @param qtdeExemplarEncalhe
 	 */
-	private void validarQtdeEncalheExcedeQtdeReparte(
+	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Long idCota, 
 			Date dataOperacao) {
@@ -2202,6 +2200,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota);
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), dataOperacao);
+		
+		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
 		return movimentoEstoqueCota;
 		

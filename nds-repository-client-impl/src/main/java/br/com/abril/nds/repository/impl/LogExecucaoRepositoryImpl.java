@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -9,6 +10,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
@@ -44,7 +46,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	@Override
 	public List<ConsultaInterfacesDTO> obterInterfaces(FiltroInterfacesDTO filtro) {
 		
-		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro);
+		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro, false);
 		
 		Query query = (Query) getSession().createSQLQuery(sql.toString())
 				.addScalar("status", StandardBasicTypes.STRING)
@@ -69,11 +71,24 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		return query.list();
 	}
 
-	private String getConsultaObterInterfaces(Date dataOperacao, FiltroInterfacesDTO filtro) {
+	@Override
+	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro) {
+		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro, true);
+		Query query = (Query) getSession().createSQLQuery(sql.toString());
+		return (BigInteger) query.uniqueResult();
+	}
+	
+	private String getConsultaObterInterfaces(Date dataOperacao, FiltroInterfacesDTO filtro, boolean totalizar) {
 
 		StringBuffer sql = new StringBuffer("");
 
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+		
+		if (totalizar) {
+
+			sql.append(" SELECT COUNT(*) FROM ("); 
+
+		}
 		
 		sql.append(" SELECT "); 
 		sql.append(" LOG_EXECUCAO.STATUS AS status, ");
@@ -124,6 +139,10 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				sql.append(filtro.getPaginacao().getSortOrder());
 			}
 				
+		}
+		
+		if (totalizar) {
+			sql.append(") as total");
 		}
 		
 		return sql.toString();
@@ -246,6 +265,14 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		dataFim.set(Calendar.MILLISECOND, 999);
 		
 		return dataFim.getTime();
+	}
+
+	@Override
+	public Long obterTotalMensagensErroLogInterface(long codigoLogExecucao, Date dataOperacao, FiltroDetalheProcessamentoDTO filtro) {
+		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
+		criteria.add( Restrictions.between("logExecucao.dataInicio", this.getPeriodoInicialDia(dataOperacao), this.getPeriodoFinalDia(dataOperacao)) );
+		criteria.setProjection(Projections.rowCount());
+		return (Long) criteria.uniqueResult();
 	}
 
 }

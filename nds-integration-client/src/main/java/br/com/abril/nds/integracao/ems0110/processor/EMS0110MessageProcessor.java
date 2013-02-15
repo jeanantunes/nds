@@ -523,7 +523,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 							+ input.getDescBrinde());
 		}
 
-		if (null != edicao.getChamadaCapa() && !edicao.getChamadaCapa().equals(input.getChamadaCapa())) {
+		if (!"".equals(input.getChamadaCapa().trim()) && null != edicao.getChamadaCapa() && !edicao.getChamadaCapa().equals(input.getChamadaCapa())) {
 
 			edicao.setChamadaCapa(input.getChamadaCapa());
 			this.ndsiLoggerFactory.getLogger().logInfo(message,

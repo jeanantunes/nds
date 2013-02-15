@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -24,5 +25,9 @@ public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 	LogExecucao inserir(LogExecucao logExecucao);
 
 	void atualizar(LogExecucao logExecucao);
+
+	public Long obterTotalMensagensErroLogInterface(long codigoLogExecucao, Date obterDataOperacaoDistribuidor, FiltroDetalheProcessamentoDTO filtro);
+
+	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro);
 
 }

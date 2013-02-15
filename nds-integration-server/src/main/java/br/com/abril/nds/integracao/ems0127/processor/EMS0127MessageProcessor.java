@@ -40,10 +40,10 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		
-		//List<ChamadaEncalheIcd> chamadasEncalheIcd = obterChamadasEncalhe();
-		List<ChamadaEncalheIcdItem> chamadasEncalheIcdItens =  obterChamadasEncalheItens();
+		List<ChamadaEncalheIcd> chamadasEncalheIcd = obterChamadasEncalhe();
+		//List<ChamadaEncalheIcdItem> chamadasEncalheIcdItens =  obterChamadasEncalheItens();
 		
-		tempVar.set(chamadasEncalheIcdItens);
+		tempVar.set(chamadasEncalheIcd);
 		
 		
 		
@@ -52,11 +52,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void processMessage(Message message) {
 		
-		ChamadaEncalheIcdItem cei = (ChamadaEncalheIcdItem) message.getBody();
+		ChamadaEncalheIcd ce = (ChamadaEncalheIcd) message.getBody();
 
-		CouchDbClient cdbc = this.getCouchDBClient(cei.getCeItemPK().getNumeroItem().toString() );//.getCodigoDistribuidor().toString());
+		CouchDbClient cdbc = this.getCouchDBClient("chencicd");
 				
-		cdbc.save(cei);
+		cdbc.save(ce);
 		cdbc.shutdown();
 		
 		//System.out.println(cei.getDataEmissao());

@@ -192,10 +192,6 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.observacao = observacao;
 	}
 
-	public Boolean isJuramentada() {
-		return juramentada;
-	}
-
 	public void setJuramentada(Boolean juramentada) {
 		this.juramentada = juramentada;
 	}
@@ -288,12 +284,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.precoComDesconto = precoComDesconto;
 	}
 
-	public Boolean getJuramentada() {
+	public Boolean isJuramentada() {
 		return juramentada;
-	}
-
-	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
-		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
 	}
 	
 }
