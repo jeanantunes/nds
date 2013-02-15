@@ -102,13 +102,15 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	@Autowired
 	private DescontoService descontoService;
 	
+	private static final BigDecimal VALOR_CEM = new BigDecimal(100);
+	
 	@Override
 	@Transactional(readOnly = true)
 	public NegociacaoDividaPaginacaoDTO obterDividasPorCotaPaginado(FiltroConsultaNegociacaoDivida filtro) {
 		
 		NegociacaoDividaPaginacaoDTO retorno = new NegociacaoDividaPaginacaoDTO();
 		
-		retorno.setListaNegociacaoDividaDTO(this.negociacaoDividaRepository.obterCotaPorNumero(filtro));
+		retorno.setListaNegociacaoDividaDTO(this.obterDividasPorCota(filtro));
 		retorno.setQuantidadeRegistros(this.negociacaoDividaRepository.obterCotaPorNumeroCount(filtro));
 		
 		return retorno;
@@ -118,7 +120,27 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	@Transactional(readOnly = true)
 	public List<NegociacaoDividaDTO> obterDividasPorCota(FiltroConsultaNegociacaoDivida filtro) {
 		
-		return this.negociacaoDividaRepository.obterCotaPorNumero(filtro);
+		List<NegociacaoDividaDTO> dividas = this.negociacaoDividaRepository.obterCotaPorNumero(filtro);
+		
+		for (NegociacaoDividaDTO divida : dividas){
+			
+			Banco banco = this.bancoRepository.buscarBancoPorIdCobranca(divida.getIdCobranca());
+			BigDecimal encargo = BigDecimal.ZERO;
+			
+			if (banco.getVrMulta() != null){
+				
+				encargo = encargo.add(banco.getVrMulta());
+			} else {
+				
+				encargo = encargo.add(divida.getVlDivida().multiply(banco.getMulta()).divide(VALOR_CEM));
+			}
+			
+			encargo = encargo.add(divida.getVlDivida().multiply(banco.getJuros()).divide(VALOR_CEM));
+			
+			divida.setEncargos(encargo);
+		}
+		
+		return dividas;
 	}
 
 	@Override
@@ -400,7 +422,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 						case MENSAL:
 							if (formaCobranca.getDiasDoMes() == null || 
 									formaCobranca.getDiasDoMes().isEmpty() || 
-									formaCobranca.getDiasDoMes().size() != 2){
+									formaCobranca.getDiasDoMes().size() != 1){
 							
 								msgs.add("Parâmetro dias da cobrança inválidos.");
 							}
@@ -503,7 +525,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			}
 			
 			//campo Comissão da Cota
-			impressaoNegociacaoDTO.setComissaoAtualCota(comissaoAtual);
+			impressaoNegociacaoDTO.setComissaoAtualCota(comissaoAtual.setScale(2, RoundingMode.HALF_EVEN));
 			
 			//campo Comissão da Cota enquanto houver saldo de dívida
 			impressaoNegociacaoDTO.setComissaoCotaEnquantoHouverSaldo(

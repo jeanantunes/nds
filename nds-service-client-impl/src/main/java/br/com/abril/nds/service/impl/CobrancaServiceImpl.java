@@ -45,9 +45,8 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
-import br.com.abril.nds.service.ParametroCobrancaCotaService;
-import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -56,13 +55,6 @@ import br.com.abril.nds.util.TipoBaixaCobranca;
 
 @Service
 public class CobrancaServiceImpl implements CobrancaService {
-	
-
-	@Autowired
-	private ParametroCobrancaCotaService financeiroService;
-	
-	@Autowired
-	private PoliticaCobrancaService politicaCobrancaService;
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
@@ -87,6 +79,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Autowired
 	protected BaixaCobrancaRepository baixaCobrancaRepository;
+	
+	@Autowired
+	protected FormaCobrancaService formaCobrancaService;
 
 
 
@@ -95,27 +90,27 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public BigDecimal calcularJuros(Banco banco, Cota cota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
 
+		
+		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
+		FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
+		
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
+		PoliticaCobranca politicaPrincipal = formaCobrancaPrincipal.getPoliticaCobranca();
+		
+		
 		BigDecimal taxaJurosMensal = BigDecimal.ZERO;
 
 		BigDecimal valorCalculadoJuros = null;
-
-		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
-        
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
-		
-		
-		
-		
-		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
 		if (banco != null && banco.getJuros() != null ) {
 			
 			taxaJurosMensal = banco.getJuros();
 		
-		} else if (formaCobrancaPrincipal != null 
-					&& formaCobrancaPrincipal.getTaxaJurosMensal() != null) {
+		} else if (formaCobrancaPrincipalCota != null 
+					&& formaCobrancaPrincipalCota.getTaxaJurosMensal() != null) {
 
-			taxaJurosMensal = formaCobrancaPrincipal.getTaxaJurosMensal();
+			taxaJurosMensal = formaCobrancaPrincipalCota.getTaxaJurosMensal();
 			
 		} else if (politicaPrincipal != null
 					&& politicaPrincipal.getFormaCobranca() != null
@@ -123,10 +118,6 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 			taxaJurosMensal = politicaPrincipal.getFormaCobranca().getTaxaJurosMensal();
 		}
-		
-		
-		
-		
 
 		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
 
@@ -142,13 +133,18 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public BigDecimal calcularMulta(Banco banco, Cota cota,
 									Distribuidor distribuidor, BigDecimal valor) {
 		
-		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
 
+		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
+        FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
+		
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
+		PoliticaCobranca politicaPrincipal = formaCobrancaPrincipal.getPoliticaCobranca();
+		
+		
 		BigDecimal taxaMulta = BigDecimal.ZERO;
 
 		BigDecimal valorCalculadoMulta = null;
-
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		if (banco != null && banco.getVrMulta() != null) {
 		
@@ -160,10 +156,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 				taxaMulta = banco.getMulta();
 			
-			} else if (formaCobrancaPrincipal != null
-						&& formaCobrancaPrincipal.getTaxaMulta() != null) {
+			} else if (formaCobrancaPrincipalCota != null
+						&& formaCobrancaPrincipalCota.getTaxaMulta() != null) {
 	
-				taxaMulta = formaCobrancaPrincipal.getTaxaMulta();
+				taxaMulta = formaCobrancaPrincipalCota.getTaxaMulta();
 	
 			} else if (politicaPrincipal != null
 						&& politicaPrincipal.getFormaCobranca() != null
@@ -705,4 +701,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 		}
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public List<TipoCobranca> obterTiposCobrancaCadastradas() {
+		
+		return this.cobrancaRepository.obterTiposCobrancaCadastradas();
+	}
 }
