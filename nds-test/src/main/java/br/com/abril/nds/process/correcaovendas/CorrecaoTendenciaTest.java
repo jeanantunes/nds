@@ -16,15 +16,17 @@ import br.com.abril.nds.model.EstoqueProdutoCota;
 
 public class CorrecaoTendenciaTest {
 
-    @Test(dataProvider = "getCotaList", dataProviderClass = CorrecaoVendasDataProvider.class)
-    public void executarProcesso(Cota cota) {
+    @Test(dataProvider = "getCotaTotalReparteVendaList", dataProviderClass = CorrecaoVendasDataProvider.class)
+    public void executarProcesso(Cota cota, BigDecimal totalReparte,
+	    BigDecimal totalVenda) {
 
 	try {
 
 	    cota.setEstoqueProdutoCotas(new EstoqueProdutoCotaDAO()
 		    .getByCotaIdProdutoEdicaoId(cota, cota.getEdicoesBase()));
 
-	    CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(cota);
+	    CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(cota,
+		    totalReparte, totalVenda);
 
 	    correcaoTendencia.executar();
 
@@ -77,11 +79,13 @@ public class CorrecaoTendenciaTest {
 
 	    oneDotTwo = oneDotTwo.divide(one, 1, BigDecimal.ROUND_FLOOR);
 
-	    boolean assertIndice = indiceCorrecaoTendencia.compareTo(one) == 0
+	    boolean assertIndiceCorrecaoTendencia = indiceCorrecaoTendencia
+		    .compareTo(one) == 0
 		    || indiceCorrecaoTendencia.compareTo(oneDotOne) == 0
 		    || indiceCorrecaoTendencia.compareTo(oneDotTwo) == 0;
 
-	    assertTrue(assertIndice);
+	    assertTrue("Indice Correcao Tendencia : " + indiceCorrecaoTendencia
+		    + " Cota : " + cota.getId(), assertIndiceCorrecaoTendencia);
 
 	    Reporter.log("<p>Cota " + cota.getNomePessoa() + "</p>");
 	    Reporter.log("<p style='margin-left: 50px'>ID : " + cota.getId()

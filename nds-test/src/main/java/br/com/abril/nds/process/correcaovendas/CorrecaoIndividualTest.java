@@ -45,7 +45,9 @@ public class CorrecaoIndividualTest {
 		    || indiceCorrecao.compareTo(oneDotOne) == 0
 		    || indiceCorrecao.compareTo(oneDotTwo) == 0;
 
-	    assertTrue(assertIndice);
+	    assertTrue("Indice Correcao : " + indiceCorrecao
+		    + "Estoque Produto Cota : " + estoqueProdutoCota.getId(),
+		    assertIndice);
 
 	    Reporter.log("<p>Estoque Produto Cota</p>");
 	    Reporter.log("<p style='margin-left: 50px'>ID : "
@@ -60,8 +62,10 @@ public class CorrecaoIndividualTest {
 	    BigDecimal vendaEdicao = quantidadeRecebida
 		    .subtract(quantidadeDevolvida);
 
-	    Reporter.log("<p>Quantidade Recebida : " + quantidadeRecebida + "</p>");
-	    Reporter.log("<p>Quantidade Devolvida : " + quantidadeDevolvida + "</p>");
+	    Reporter.log("<p>Quantidade Recebida : " + quantidadeRecebida
+		    + "</p>");
+	    Reporter.log("<p>Quantidade Devolvida : " + quantidadeDevolvida
+		    + "</p>");
 	    Reporter.log("<p>Venda : " + vendaEdicao + "</p>");
 
 	} catch (Exception e) {

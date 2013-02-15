@@ -40,20 +40,13 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
 	
 	BigDecimal indiceCorrecao = BigDecimal.ONE;
 
-	// BigDecimal totalReparte = BigDecimal.ZERO;
-	// BigDecimal totalVenda = BigDecimal.ZERO;
-
 	BigDecimal quantidadeRecebida = estoqueProdutoCota
 		.getQuantidadeRecebida();
 	BigDecimal quantidadeDevolvida = estoqueProdutoCota
 		.getQuantidadeDevolvida();
 
-	// totalReparte = totalReparte.add(quantidadeRecebida);
-
 	BigDecimal vendaEdicao = quantidadeRecebida
 		.subtract(quantidadeDevolvida);
-
-	// totalVenda = totalVenda.add(new BigDecimal(vendaEdicao));
 
 	if (vendaEdicao.compareTo(BigDecimal.ZERO) != 0) {
 

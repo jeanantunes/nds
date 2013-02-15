@@ -1,6 +1,7 @@
 package br.com.abril.nds.process.correcaovendas;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dao.EstoqueProdutoCotaDAO;
@@ -47,8 +48,6 @@ public class CorrecaoVendas extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() throws Exception {
 
-	List<ProdutoEdicao> listProdutoEdicaoFechada = new ArrayList<ProdutoEdicao>();
-
 	Cota cota = (Cota) super.genericDTO;
 
 	List<ProdutoEdicao> listEdicaoBase = cota.getEdicoesBase();
@@ -58,12 +57,10 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 
 	cota.setEstoqueProdutoCotas(listEstoqueProdutoCota);
 
-	CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(cota);
-	correcaoTendencia.executar();
-
-	cota = (Cota) correcaoTendencia.getGenericDTO();
-
 	if (listEdicaoBase != null && listEdicaoBase.size() > 1) {
+
+	    BigDecimal totalReparte = BigDecimal.ZERO;
+	    BigDecimal totalVenda = BigDecimal.ZERO;
 
 	    int iEstoqueProdutoCota = 0;
 	    while (iEstoqueProdutoCota < listEstoqueProdutoCota.size()) {
@@ -82,11 +79,19 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 		    estoqueProdutoCota = (EstoqueProdutoCota) correcaoIndividual
 			    .getGenericDTO();
 
-		}
+		    BigInteger quantidadeRecebida = estoqueProdutoCota
+			    .getQuantidadeRecebida().toBigInteger();
+		    BigInteger quantidadeDevolvida = estoqueProdutoCota
+			    .getQuantidadeDevolvida().toBigInteger();
 
-		if (!estoqueProdutoCota.getProdutoEdicao().isEdicaoAberta()) {
-		    listProdutoEdicaoFechada.add(estoqueProdutoCota
-			    .getProdutoEdicao());
+		    totalReparte = totalReparte.add(new BigDecimal(
+			    quantidadeRecebida));
+
+		    BigInteger venda = quantidadeRecebida
+			    .subtract(quantidadeDevolvida);
+
+		    totalVenda = totalVenda.add(new BigDecimal(venda));
+
 		}
 
 		listEstoqueProdutoCota.set(iEstoqueProdutoCota,
@@ -95,12 +100,18 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 		iEstoqueProdutoCota++;
 	    }
 
+	    if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
+		CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(
+			cota, totalReparte, totalVenda);
+		correcaoTendencia.executar();
+		cota = (Cota) correcaoTendencia.getGenericDTO();
+	    }
+
 	}
 
 	cota.setEstoqueProdutoCotas(listEstoqueProdutoCota);
 
-	VendaCrescente vendaCrescente = new VendaCrescente(cota,
-		listProdutoEdicaoFechada);
+	VendaCrescente vendaCrescente = new VendaCrescente(cota);
 	vendaCrescente.executarProcesso();
 
 	cota = (Cota) vendaCrescente.getGenericDTO();
