@@ -2790,7 +2790,8 @@ public class DiferencaEstoqueController extends BaseController {
 
 		tableModel.setRows(lista);
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-		tableModel.setTotal(detalheDiferencaCota.getQuantidadeTotalRegistrosDiferencaCota());
+		tableModel.setTotal( detalheDiferencaCota!= null && detalheDiferencaCota.getQuantidadeTotalRegistrosDiferencaCota() != null 
+								? detalheDiferencaCota.getQuantidadeTotalRegistrosDiferencaCota().intValue():0);
 
 		detalheDiferencaCota.setTableModel(tableModel);
 
