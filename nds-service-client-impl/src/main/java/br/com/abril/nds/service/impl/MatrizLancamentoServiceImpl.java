@@ -689,7 +689,18 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private void processarProdutosLancamentoNaoBalanceaveis(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
 														    DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
 		
-		TreeSet<Date> datasDistribuicao = dadosLancamentoBalanceamento.getDatasDistribuicaoFornecedor();
+		List<ProdutoLancamentoDTO> produtosLancamentoNaoProcessados =
+			this.processarProdutosLancamentoConfirmados(matrizLancamento, dadosLancamentoBalanceamento);
+		
+		this.processarProdutosLancamentoComLimiteReprogramacoes(
+			matrizLancamento, dadosLancamentoBalanceamento, produtosLancamentoNaoProcessados);
+	}
+
+	private List<ProdutoLancamentoDTO> processarProdutosLancamentoConfirmados(
+											TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+											DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
+		
+		List<ProdutoLancamentoDTO> produtosLancamentoNaoProcessados = new ArrayList<>();
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
 			dadosLancamentoBalanceamento.getProdutosLancamento();
@@ -698,24 +709,51 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			Date dataLancamentoDistribuidor = produtoLancamento.getDataLancamentoDistribuidor();
 			
-			if (produtoLancamento.excedeNumeroReprogramacoes()
-					&& !produtoLancamento.isBalanceamentoConfirmado()
-					&& !datasDistribuicao.contains(dataLancamentoDistribuidor)) {
-				
-				Date dataEscolhida = this.obterDataDistribuicaoEscolhida(
-					matrizLancamento, datasDistribuicao, dataLancamentoDistribuidor);
-				
-				this.adicionarProdutoLancamentoNaMatriz(
-					matrizLancamento, produtoLancamento, dataEscolhida);
-				
-				return;
-			}
-			
-			if (!this.isProdutoBalanceavel(produtoLancamento,
-										   dadosLancamentoBalanceamento)) {
-				
+			if (produtoLancamento.isBalanceamentoConfirmado()) {
+
 				this.adicionarProdutoLancamentoNaMatriz(
 					matrizLancamento, produtoLancamento, dataLancamentoDistribuidor);
+			
+			} else {
+			
+				produtosLancamentoNaoProcessados.add(produtoLancamento);
+			}
+		}
+		
+		return produtosLancamentoNaoProcessados;
+	}
+	
+	private void processarProdutosLancamentoComLimiteReprogramacoes(
+											TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+											DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento,
+											List<ProdutoLancamentoDTO> produtosLancamentoNaoProcessados) {
+		
+		Set<Date> datasConfirmadas = this.obterDatasConfirmadas(matrizLancamento);
+		
+		TreeSet<Date> datasDistribuicao =
+			this.obterDatasDistribuicao(dadosLancamentoBalanceamento, datasConfirmadas);
+		
+		Date dataLancamentoEscolhida = null;
+		
+		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamentoNaoProcessados) {
+			
+			Date dataLancamentoDistribuidor = produtoLancamento.getDataLancamentoDistribuidor();
+		
+			if (produtoLancamento.excedeNumeroReprogramacoes()) {
+				
+				if (datasDistribuicao.contains(dataLancamentoDistribuidor)) {
+					
+					dataLancamentoEscolhida = dataLancamentoDistribuidor;
+				
+				} else {
+				
+					 dataLancamentoEscolhida =
+						 this.obterDataDistribuicaoEscolhida(
+							matrizLancamento, datasDistribuicao, dataLancamentoDistribuidor);
+				}
+				
+				this.adicionarProdutoLancamentoNaMatriz(
+					matrizLancamento, produtoLancamento, dataLancamentoEscolhida);
 			}
 		}
 	}
@@ -778,7 +816,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		if (datasDistribuicao.contains(dataLancamentoPrevista)) {
 			
 			dataLancamentoEscolhida = dataLancamentoPrevista;
-			
 		}
 		
 		if (dataLancamentoEscolhida == null) {
