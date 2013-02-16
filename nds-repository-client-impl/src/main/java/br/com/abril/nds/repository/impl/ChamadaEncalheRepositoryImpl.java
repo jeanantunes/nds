@@ -197,85 +197,64 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	
 	private void gerarFromWhere(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
-		hql.append(" from ChamadaEncalheCota chamEncCota ")
+		hql.append(" from ChamadaEncalheCota chamEncCota, Box box ")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
 		   .append(" join chamEncCota.cota cota ")
 		   .append(" join cota.pessoa pessoa ")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 		   .append(" join produtoEdicao.produto produto ")
 		   .append(" join produto.fornecedores fornecedores ")
-		   .append(" JOIN cota.box box ")
-		   .append(" JOIN cota.pdvs pdv ")
-		   .append(" JOIN pdv.rotas rotaPdv ")
-		   .append(" JOIN rotaPdv.rota rota ")
-		   .append(" JOIN rota.roteiro roteiro ");
-		   
-		boolean contemWhere = false;
-		
+		//   .append(" join cota.box box ")
+		   .append(" join cota.pdvs pdv ")
+		   .append(" join pdv.rotas rotaPdv ")
+		   .append(" join rotaPdv.rota rota ")
+		   .append(" join rota.roteiro roteiro ")
+		   .append(" where box.id = cota.box.id  ");
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
-			
-			hql.append(((contemWhere)?" and ":" where ")+" chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			hql.append(" and chamadaEncalhe.dataRecolhimento >= :dataDe ");
 			param.put("dataDe", filtro.getDtRecolhimentoDe());
-			contemWhere = true;
 		}
 		
 		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(((contemWhere)?" and ":" where ")+" chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			hql.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ");
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
-			contemWhere = true;
 		}
 		
 		if(filtro.getNumCotaDe() != null) {
-
-			hql.append(((contemWhere)?"and":"where")+" cota.numeroCota >=:cotaDe ");
+			hql.append(" and cota.numeroCota >= :cotaDe ");
 			param.put("cotaDe", filtro.getNumCotaDe());
-			contemWhere = true;
 		}
 		
 		if(filtro.getNumCotaAte() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" cota.numeroCota <=:cotaAte ");
+			hql.append(" and cota.numeroCota <= :cotaAte ");
 			param.put("cotaAte", filtro.getNumCotaAte());
-			contemWhere = true;
 		}
 		
 		if(filtro.getIdRoteiro() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" roteiro.id <=:idRoteiro ");
+			hql.append(" and roteiro.id <= :idRoteiro ");
 			param.put("idRoteiro", filtro.getIdRoteiro());
-			contemWhere = true;
 		}
 				
 		if(filtro.getIdRota() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" rota.id <=:idRota ");
+			hql.append(" and rota.id <= :idRota ");
 			param.put("idRota", filtro.getIdRota());
-			contemWhere = true;
 		}
 		
-		if(filtro.getIdBoxDe() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" box.codigo >=:codBox ");
-			param.put("codBox", filtro.getIdBoxDe());
-			contemWhere = true;
+		if(filtro.getCodigoBoxDe() != null) {
+			hql.append(" and box.codigo >= :codBoxDe ");
+			param.put("codBoxDe", filtro.getCodigoBoxDe());
 		}
 		
-		if(filtro.getIdBoxAte() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" box.codigo <=:codBox");
-			param.put("codBox", filtro.getIdBoxAte());
-			contemWhere = true;
+		if(filtro.getCodigoBoxAte() != null) {
+			hql.append(" and box.codigo <= :codBoxAte");
+			param.put("codBoxAte", filtro.getCodigoBoxAte());
 		}
 		
 		if(filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()) {
-			
-			hql.append(((contemWhere)?"and":"where")+" fornecedores.id in (:listaFornecedores) ");
+			hql.append(" and fornecedores.id in (:listaFornecedores) ");
 			param.put("listaFornecedores", filtro.getFornecedores());
-			contemWhere = true;
 		}
-		
-
 	}
 
 	private void gerarOrdenacao(FiltroEmissaoCE filtro, StringBuilder hql) {
