@@ -145,12 +145,12 @@ public interface ConferenciaEncalheService {
 	 * @param numeroCota
 	 * @param codigoDeBarras
 	 * 
-	 * @return ProdutoEdicaoDTO
+	 * @return List<ProdutoEdicaoDTO>
 	 * 
 	 * @throws ChamadaEncalheCotaInexistenteException
 	 * @throws EncalheRecolhimentoParcialException
 	 */
-	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
+	List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
 	
 	/**
 	 * Obtém dados do produtoEdicao através do código SM do mesmo se houver chamada de encalhe.

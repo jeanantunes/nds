@@ -241,18 +241,18 @@ public class VendaEncalheController extends BaseController {
 	@Post
 	public void pesquisarProdutoCodBarra(String codBarra){
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
+		List<ProdutoEdicao> produtosEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
 		
-		if(produtoEdicao== null){
+		if(produtosEdicao == null || produtosEdicao.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código de barras \""+codBarra+"\" não encontrado!");
 		}
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
 		
-		if (produtoEdicao.getProduto() != null) {
-			mapa.put("codigoProduto", produtoEdicao.getProduto().getCodigo());
-		}
-		mapa.put("nuemroEdicao", produtoEdicao.getNumeroEdicao());
+//		if (produtoEdicao.getProduto() != null) {
+//			mapa.put("codigoProduto", produtoEdicao.getProduto().getCodigo());
+//		}
+//		mapa.put("nuemroEdicao", produtoEdicao.getNumeroEdicao());
 		
 		result.use(CustomJson.class).from(mapa).serialize();
 	}

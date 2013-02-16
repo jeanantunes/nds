@@ -927,7 +927,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 	@Transactional(readOnly = true)
-	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
+	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
 		
 		if (numeroCota == null){
 			
@@ -939,56 +939,62 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de Barras é obrigatório.");
 		}
 		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoDeBarras);
+		List<ProdutoEdicao> produtosEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoDeBarras);
 		
-		ProdutoEdicaoDTO produtoEdicaoDTO = null;
+		List<ProdutoEdicaoDTO> produtosEdicaoDTO = null;
 		
-		if (produtoEdicao != null){
-		    
-			produtoEdicaoDTO = new ProdutoEdicaoDTO();
+		if (produtosEdicao != null && !produtosEdicao.isEmpty()) {
+
+			produtosEdicaoDTO = new ArrayList<>();
+			
+			ProdutoEdicaoDTO produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
 		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		    
-			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
-			
-			if( chamadaEncalhe != null) {
-				Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
-				produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
-				produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
-				produtoEdicaoDTO.setDia(dia);
-			}
-			
-			produtoEdicaoDTO.setId(produtoEdicao.getId());
-			produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
-			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-            produtoEdicaoDTO.setPrecoVenda(precoVenda);
-
-            Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-
-			carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, produtoEdicao.getId(), dataOperacao);
-			
-			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
-			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
-			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
-			produtoEdicaoDTO.setPeso(produtoEdicao.getPeso());
-			produtoEdicaoDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-			produtoEdicaoDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
-			produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
-			produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
-			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
-			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
-			
-			produtoEdicaoDTO.setNomeFornecedor(this.obterNomeFornecedor(produtoEdicao));
-			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
-			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
-			
-			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
-			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
-			
+		    for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+		    
+				ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+				
+				if( chamadaEncalhe != null) {
+					Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
+					produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
+					produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
+					produtoEdicaoDTO.setDia(dia);
+				}
+				
+				produtoEdicaoDTO.setId(produtoEdicao.getId());
+				produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
+				produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+	            produtoEdicaoDTO.setPrecoVenda(precoVenda);
+	
+	            Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+	
+				carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, produtoEdicao.getId(), dataOperacao);
+				
+				produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+				produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
+				produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
+				produtoEdicaoDTO.setPeso(produtoEdicao.getPeso());
+				produtoEdicaoDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+				produtoEdicaoDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
+				produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
+				produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
+				produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
+				produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
+				
+				produtoEdicaoDTO.setNomeFornecedor(this.obterNomeFornecedor(produtoEdicao));
+				produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
+				produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
+				
+				Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+				produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
+				
+				produtosEdicaoDTO.add(produtoEdicaoDTO);
+		    }
 		}
 		
-		return produtoEdicaoDTO;
+		return produtosEdicaoDTO;
 	}
 
 	private String obterEditor(ProdutoEdicao produtoEdicao) {
