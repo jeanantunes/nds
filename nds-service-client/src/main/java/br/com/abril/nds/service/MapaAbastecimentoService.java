@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
@@ -46,7 +47,7 @@ public interface MapaAbastecimentoService {
 	 * @param filtro
 	 * @return
 	 */
-	HashMap<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
+	TreeMap<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
 			FiltroMapaAbastecimentoDTO filtro);
 	
 	/**
