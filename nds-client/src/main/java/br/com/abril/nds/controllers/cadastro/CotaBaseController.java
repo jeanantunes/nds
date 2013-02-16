@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.model.cadastro.CotaBaseCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoAlteracao;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaBaseCotaService;
@@ -104,7 +105,7 @@ public class CotaBaseController extends BaseController {
 		dtFinal.setTime(fina);
 		
 		Calendar dtInicial = Calendar.getInstance();
-		dtInicial.setTime(inicial);
+		dtInicial.setTime(new Date());
 		
 		long m1 = dtFinal.getTimeInMillis();
 		long m2 = dtInicial.getTimeInMillis();
@@ -397,6 +398,9 @@ public class CotaBaseController extends BaseController {
 				cotaBaseCota.setCota(cotaBaseParaSalvar);
 				cotaBaseCota.setCotaBase(cotaBase);
 				cotaBaseCota.setAtivo(true);
+				cotaBaseCota.setDtInicioVigencia(cotaBase.getDataInicio());
+				cotaBaseCota.setDtFimVigencia(cotaBase.getDataFim());
+				cotaBaseCota.setTipoAlteracao(TipoAlteracao.INCLUSAO);
 				this.cotaBaseCotaService.salvar(cotaBaseCota);
 			}			
 		}else{			
@@ -408,6 +412,9 @@ public class CotaBaseController extends BaseController {
 				cotaBaseCota.setCota(cotaBaseParaSalvar);
 				cotaBaseCota.setCotaBase(cotaBaseJaSalva);
 				cotaBaseCota.setAtivo(true);
+				cotaBaseCota.setDtInicioVigencia(cotaBaseJaSalva.getDataInicio());
+				cotaBaseCota.setDtFimVigencia(cotaBaseJaSalva.getDataFim());
+				cotaBaseCota.setTipoAlteracao(TipoAlteracao.INCLUSAO);
 				this.cotaBaseCotaService.salvar(cotaBaseCota);
 			}		
 			

@@ -2,9 +2,11 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -135,8 +137,8 @@ public class CotaBaseHistoricoDTO extends FiltroDTO implements Serializable {
 	public String getDataAlteracao() {
 		return dataAlteracao;
 	}
-	public void setDataAlteracao(String dataAlteracao) {
-		this.dataAlteracao = dataAlteracao;
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = DateUtil.formatarDataPTBR(dataAlteracao);;
 	}
 	
 }

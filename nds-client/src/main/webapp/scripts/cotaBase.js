@@ -181,7 +181,7 @@ var cotaBaseController = $.extend(true, {
 		});
 	
 	$(".cotasEquivalentesBGrid").flexigrid({
-		preProcess : null,
+		preProcess : cotaBaseController.executarPreProcessamentoHistorico,
 		dataType : 'json',
 		colModel : [ {
 			display : 'Cota',
@@ -233,7 +233,7 @@ var cotaBaseController = $.extend(true, {
 			align : 'right'
 		},  {
 			display : 'Data Alteração',
-			name : 'dtAlteracao',
+			name : 'dataAlteracao',
 			width : 80,
 			sortable : true,
 			align : 'center'
@@ -268,6 +268,25 @@ var cotaBaseController = $.extend(true, {
 		return resultado;
 		
 	},
+	
+	executarPreProcessamentoHistorico : function(resultado){
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".grids", cotaBaseController.workspace).hide();
+
+			return resultado;
+		}
+		
+		return resultado;
+		
+	},
+	
 	
 	executarPreProcessamento : function(resultado) {
 		

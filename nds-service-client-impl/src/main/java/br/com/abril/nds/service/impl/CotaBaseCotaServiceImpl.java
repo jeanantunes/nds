@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.model.cadastro.CotaBaseCota;
+import br.com.abril.nds.model.cadastro.TipoAlteracao;
 import br.com.abril.nds.repository.CotaBaseCotaRepository;
 import br.com.abril.nds.service.CotaBaseCotaService;
 
@@ -39,6 +42,8 @@ public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 	public void desativarCotaBase(CotaBase cotaBase, Cota cotaParaDesativar) {
 		CotaBaseCota cotaBaseCotaParaAtualizar = this.cotaBaseCotaRepository.desativarCotaBase(cotaBase, cotaParaDesativar);
 		cotaBaseCotaParaAtualizar.setAtivo(false);
+		cotaBaseCotaParaAtualizar.setDtFimVigencia(new Date());
+		cotaBaseCotaParaAtualizar.setTipoAlteracao(TipoAlteracao.EXCLUSAO);
 		cotaBaseCotaRepository.alterar(cotaBaseCotaParaAtualizar);
 	}
 

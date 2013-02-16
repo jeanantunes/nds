@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.CotaBaseHistoricoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.model.cadastro.CotaBase;
+import br.com.abril.nds.model.cadastro.TipoAlteracao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaBaseRepository;
 
@@ -245,7 +246,10 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
         hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
-        hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL
+        hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio, "); // FATURAMENTO MENSAL
+        hql.append(" CASE cotaBaseCota.tipoAlteracao WHEN :inclusao THEN cotaBaseCota.dtInicioVigencia ELSE   "); 
+        hql.append(" CASE cotaBaseCota.tipoAlteracao WHEN :exclusao THEN cotaBaseCota.dtFimVigencia END END "); 
+        hql.append(" as dataAlteracao "); // DATA ALTERAÇÃO
         
         // FROM
         hql.append(" FROM CotaBaseCota as cotaBaseCota ");        
@@ -272,7 +276,10 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         
         Query query =  getSession().createQuery(hql.toString());
         
-        query.setParameter("idCotaBase", cotaBase.getId());        
+        query.setParameter("idCotaBase", cotaBase.getId());
+        
+        query.setParameter("inclusao", TipoAlteracao.INCLUSAO);   
+        query.setParameter("exclusao", TipoAlteracao.EXCLUSAO);   
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseHistoricoDTO.class));        
         
