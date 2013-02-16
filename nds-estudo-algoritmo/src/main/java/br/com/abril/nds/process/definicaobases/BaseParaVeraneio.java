@@ -37,9 +37,13 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>(estudo.getEdicoesBase());
 	
 	for (ProdutoEdicao produtoEdicao : edicoes) {
-	    if(estudo.isPracaVeraneio() && validaPeriodoVeranio(produtoEdicao.getDataLancamento())) {
-		produtoEdicao.setPeso(2);
-		adicionarEdicoesAnterioresAoEstudo(produtoEdicao);
+	    if(estudo.isPracaVeraneio()) {
+		if(validaPeriodoVeranio(produtoEdicao.getDataLancamento())) {
+		    produtoEdicao.setPeso(2);
+		    adicionarEdicoesAnterioresAoEstudo(produtoEdicao);
+		} else {
+		    //TODO: adicionar bases de saida de veraneio
+		}
 	    }
 	}
     }

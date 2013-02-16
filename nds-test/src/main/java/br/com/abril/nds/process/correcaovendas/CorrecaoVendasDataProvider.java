@@ -16,12 +16,14 @@ import br.com.abril.nds.model.ProdutoEdicao;
 
 public abstract class CorrecaoVendasDataProvider {
 
+    private static final int LIMITE_COTAS = 10;
+
     @DataProvider(name = "getCotaList")
     public static Iterator<Cota[]> getCotaList() {
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
-	List<Cota> listCota = new CotaDAO().getCotas();
+	List<Cota> listCota = new CotaDAO().getCotas(LIMITE_COTAS);
 
 	int iCota = 0;
 	while (iCota < listCota.size()) {
@@ -42,7 +44,7 @@ public abstract class CorrecaoVendasDataProvider {
     @DataProvider(name = "getEstoqueProdutoCotaList")
     public static Iterator<EstoqueProdutoCota[]> getEstoqueProdutoCotaList() {
 
-	List<Cota> listCota = new CotaDAO().getCotas();
+	List<Cota> listCota = new CotaDAO().getCotas(LIMITE_COTAS);
 
 	List<EstoqueProdutoCota[]> listEstoqueProdutoCotas = new ArrayList<EstoqueProdutoCota[]>();
 
@@ -78,7 +80,7 @@ public abstract class CorrecaoVendasDataProvider {
 	List<Object[]> listProdutoEdicaoFechadaReturn = new ArrayList<Object[]>();
 
 	Estudo estudo = new Estudo();
-	List<Cota> listCota = new CotaDAO().getCotas();
+	List<Cota> listCota = new CotaDAO().getCotas(LIMITE_COTAS);
 	estudo.setCotas(listCota);
 
 	Iterator<Cota> itCota = listCota.iterator();
