@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -641,6 +642,18 @@ public class ConferenciaEncalheController extends BaseController {
 			for (ConferenciaEncalheDTO dto : listaConferencia){
 				
 				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
+					
+					ConferenciaEncalheDTO conferenciaEncalheDTONaoValidado = null;
+					
+					try {
+						
+						conferenciaEncalheDTONaoValidado = (ConferenciaEncalheDTO)BeanUtils.cloneBean(dto);
+						
+					} catch (Exception e) {
+						throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao validar quantidade de itens de encalhe.");
+					} 
+					
+					conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTONaoValidado, getNumeroCotaFromSession(), null);
 					
 					dto.setQtdExemplar(BigInteger.valueOf(qtdExemplares));
 					
@@ -1585,8 +1598,8 @@ public class ConferenciaEncalheController extends BaseController {
 
 		if (conferenciaEncalheDTOSessao != null){
 			
-			Long qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTOSessao, quantidade);
-			conferenciaEncalheDTOSessao.setQtdExemplar(BigInteger.valueOf(qtde));
+			BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTOSessao, quantidade);
+			conferenciaEncalheDTOSessao.setQtdExemplar(qtde);
 			
 		} else {
 			
@@ -1611,7 +1624,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * 
 	 * @return quantidade
 	 */
-	private Long processarQtdeExemplar(Long idProdutoEdicao,
+	private BigInteger processarQtdeExemplar(Long idProdutoEdicao,
 			ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade) {
 		
 				
@@ -1636,24 +1649,17 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
 		}
 		
-//FIXME utilizar a validacao ja disponivel no service abaixo		
-//		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalhe, idCota, dataOperacao);
-		
-		
-		if (conferenciaEncalheDTO.getQtdReparte() != null && qtd > conferenciaEncalheDTO.getQtdReparte().longValue()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "O valor digitado deve ser menor ou igual ao total do reparte.");
-		}
-		
-		
-		
 		if (GrupoProduto.CROMO.equals(grupoProduto)) {
 			if (!quantidadeInformadaEmExemplares && conferenciaEncalheDTO.isParcial()) {
 				qtd = qtd/pacotePadrao;
 			}
 		}
 		
-		return qtd;
+		conferenciaEncalheDTO.setQtdExemplar(BigInteger.valueOf(qtd));
+		
+		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTO, getNumeroCotaFromSession(), null);
+		
+		return  BigInteger.valueOf(qtd);
 	}
 
 	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicaoDTO produtoEdicao, String quantidade, boolean adicionarGrid) {
@@ -1687,10 +1693,10 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (quantidade != null){
 			
-			Long qtd = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade);
+			BigInteger qtd = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade);
 			
-			conferenciaEncalheDTO.setQtdExemplar(BigInteger.valueOf(qtd));
-			conferenciaEncalheDTO.setQtdInformada(BigInteger.valueOf(qtd));
+			conferenciaEncalheDTO.setQtdExemplar(qtd);
+			conferenciaEncalheDTO.setQtdInformada(qtd);
 		} else {
 			
 			conferenciaEncalheDTO.setQtdExemplar(BigInteger.ONE);

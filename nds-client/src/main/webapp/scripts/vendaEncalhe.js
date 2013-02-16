@@ -512,7 +512,7 @@ var VENDA_PRODUTO = {
 		}
 		var parametroPesCodBarra ='\'#codBarras'+ index+ '\',' + index;
 		
-		return '<input type="text" id="codBarras'+index+'" name="codBarras" style="width:90px;" value="'+valor+'" onchange="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
+		return '<input type="text" id="codBarras'+index+'" name="codBarras" style="width:90px;" value="'+valor+'" onkeyup="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
 	},
 	
 	getInputCodigoProduto:function(index,result,parametroPesquisaProduto){
@@ -750,7 +750,7 @@ var VENDA_PRODUTO = {
  	
  	pesquisarProdutoCodBarra : function(idCodBarras,index){
  		
- 		if($(idCodBarras).val().length == 0){
+ 		if($(idCodBarras).val().length <= 5){
  			return;
  		}
  		
@@ -758,7 +758,21 @@ var VENDA_PRODUTO = {
 				{codBarra:$(idCodBarras).val()}, 
 				function(result){
 					
- 					VENDA_PRODUTO.obterDadosProduto(result.codigoProduto,result.nuemroEdicao,index);						
+					var codigoProduto = "";
+					var numeroEdicao = null;
+					
+					$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete({
+						source: result,
+						select: function(event, ui){
+							
+							codigoProduto = ui.item.chave.string;
+							
+							numeroEdicao = ui.item.chave.long;
+							
+		 					VENDA_PRODUTO.obterDadosProduto(codigoProduto,numeroEdicao,index);		
+						},
+						delay: 0
+					});				
  					
  				}, function(result){
 					

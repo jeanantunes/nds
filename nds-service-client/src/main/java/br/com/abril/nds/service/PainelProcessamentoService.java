@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.DetalheInterfaceVO;
@@ -55,5 +56,9 @@ public interface PainelProcessamentoService {
 	 * @return List<DetalheInterfaceVO>
 	 */
 	public List<DetalheInterfaceVO> listarDetalhesInterface(Long codigoLogExecucao);
+
+	public Long listarTotaldetalhesProcessamentoInterface(long parseLong, FiltroDetalheProcessamentoDTO filtro);
+
+	public BigInteger listarTotalInterfaces(FiltroInterfacesDTO filtro);
 	
 }
