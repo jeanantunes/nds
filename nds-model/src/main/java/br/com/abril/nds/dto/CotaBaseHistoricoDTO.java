@@ -8,11 +8,11 @@ import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class CotaBaseDTO extends FiltroDTO implements Serializable {
+public class CotaBaseHistoricoDTO extends FiltroDTO implements Serializable {
 
 	private static final long serialVersionUID = 7771337394074049477L;
 	
@@ -27,31 +27,25 @@ public class CotaBaseDTO extends FiltroDTO implements Serializable {
 	@Export(label = "Tipo PDV", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private String tipoPDV;
 	
-	@Export(label = "Situação", alignment=Alignment.LEFT, exhibitionOrder = 4)
-	private String situacao;
-
-	@Export(label = "Início", alignment=Alignment.CENTER, exhibitionOrder = 5)
-	private String dtInicioFormatado;
-	
-	@Export(label = "Fim", alignment=Alignment.CENTER, exhibitionOrder = 6)
-	private String dtFinalFormatado;
-	
-	@Export(label = "Dias Faltantes", alignment=Alignment.CENTER, exhibitionOrder = 7)
-	private String diasRestantes;
-	
+	@Export(label = "Bairro", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private String bairro;
-	private String cidade;
-	private String geradorDeFluxo;
-	private String areaInfluencia;
-	private BigDecimal faturamentoMedio;
 	
+	@Export(label = "Cidade", alignment=Alignment.LEFT, exhibitionOrder = 5)
+	private String cidade;
+	
+	@Export(label = "Gerador de Fluxo", alignment=Alignment.LEFT, exhibitionOrder = 6)
+	private String geradorDeFluxo;
+	
+	@Export(label = "Área Influencia", alignment=Alignment.LEFT, exhibitionOrder = 7)
+	private String areaInfluencia;
+	
+	@Export(label = "Faturamento Médio R$", alignment=Alignment.RIGHT, exhibitionOrder = 8)
 	private String faturamentoFormatado;
 	
-	private String indiceAjuste;
+	@Export(label = "Data Alteração", alignment=Alignment.CENTER, exhibitionOrder = 9)
+	private String dataAlteracao;
 	
-	private Date dtInicio;
-	private Date dtFinal;
-	
+	private BigDecimal faturamentoMedio;
 	
 	public Long getIdCota() {
 		return idCota;
@@ -140,67 +134,11 @@ public class CotaBaseDTO extends FiltroDTO implements Serializable {
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
-	
-	
-	public String getIndiceAjuste() {
-		return indiceAjuste;
+	public String getDataAlteracao() {
+		return dataAlteracao;
 	}
-	public void setIndiceAjuste(BigDecimal indiceAjuste) {
-		this.indiceAjuste = CurrencyUtil.formatarValor(indiceAjuste);
-	}
-	public String getSituacao() {
-		return situacao;
-	}
-	public void setSituacao(Boolean situacao) {
-		if(situacao){
-			this.situacao = "Ativo";
-		}else{
-			this.situacao = "Inativo";			
-		}
-	}
-	
-	public Date getDtInicio() {
-		return dtInicio;
-	}
-	public void setDtInicio(Date dtInicio) {
-		this.dtInicio = dtInicio;
-		if(dtInicio != null){
-			this.dtInicioFormatado =  DateUtil.formatarDataPTBR(dtInicio);
-		}		
-	}
-	
-	public Date getDtFinal() {
-		return dtFinal;
-	}
-	public void setDtFinal(Date dtFinal) {
-		this.dtFinal = dtFinal;
-		if(dtFinal != null){
-			this.dtFinalFormatado =  DateUtil.formatarDataPTBR(dtFinal);
-		}
-	}
-	
-	public String getDiasRestantes() {
-		return diasRestantes;
-	}
-	public void setDiasRestantes(String diasRestantes) {
-		if(diasRestantes == null){
-			this.diasRestantes = "";	
-		}else{
-			this.diasRestantes = diasRestantes;			
-		}
-	}
-	
-	public String getDtInicioFormatado() {
-		return dtInicioFormatado;
-	}
-	public void setDtInicioFormatado(String dtInicioFormatado) {
-		this.dtInicioFormatado = dtInicioFormatado;
-	}
-	public String getDtFinalFormatado() {
-		return dtFinalFormatado;
-	}
-	public void setDtFinalFormatado(String dtFinalFormatado) {
-		this.dtFinalFormatado = dtFinalFormatado;
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = DateUtil.formatarDataPTBR(dataAlteracao);;
 	}
 	
 }

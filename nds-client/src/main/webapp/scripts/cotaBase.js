@@ -5,9 +5,8 @@ var cotaBaseController = $.extend(true, {
 		$("#indiceAjuste").mask("9.9");
 
 		
-		$(".consultaSegmentosGrid").flexigrid({
-			url : '../xml/consultaSegmento-xml.xml',
-			dataType : 'xml',
+		$(".consultaSegmentosGrid").flexigrid({			
+			dataType : 'json',
 			colModel : [ {
 				display : 'Segmento',
 				name : 'segmento',
@@ -19,166 +18,8 @@ var cotaBaseController = $.extend(true, {
 			height : 200
 		});
 		
-		
-
-	$(".pdvCotaGrid").flexigrid({
-			url : '../xml/pdvCota-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 50,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome PDV',
-				name : 'nomePdv',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Endereço',
-				name : 'endereco',
-				width : 290,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			},  {
-				display : '',
-				name : 'sel',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 600,
-			height : 200
-		});
-
-
-	$(".novaEquivalenteGrid").flexigrid({
-			url : '../xml/novaEquivalente-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 30,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nome',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Tipo Pdv',
-				name : 'tipoPdv',
-				width : 75,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'Bairro',
-				name : 'bairro',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'Cidade',
-				name : 'cidade',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'G.Fluxo/Área Infl.',
-				name : 'geradorFluxoArea',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'Fat. Médio R$',
-				name : 'faturamentoMedio',
-				width : 70,
-				sortable : true,
-				align : 'right'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 600,
-			height : 200
-		});
-	$(".novaEquivalenteGrid").flexigrid({
-			url : '../xml/novaEquivalente-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 30,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nome',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Tipo Pdv',
-				name : 'tipoPdv',
-				width : 75,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'Bairro',
-				name : 'bairro',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'Cidade',
-				name : 'cidade',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'G.Fluxo/Área Infl.',
-				name : 'geradorFluxoArea',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'Fat. Médio R$',
-				name : 'faturamentoMedio',
-				width : 70,
-				sortable : true,
-				align : 'right'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 600,
-			height : 200
-		});
-	$(".consultaEquivalentesDetalheGrid").flexigrid({
-			url : '../xml/consultaEquivalentesDetalhe-xml.xml',
-			dataType : 'xml',
+	$(".consultaEquivalentesDetalheGrid").flexigrid({			
+			dataType : 'json',
 			colModel : [ {
 				display : 'Ajuste',
 				name : 'ajuste',
@@ -274,112 +115,7 @@ var cotaBaseController = $.extend(true, {
 			width : 960,
 			height : 240
 		});
-	$(".rankPublicacaoGrid").flexigrid({
-			url : '../xml/rankPublicacao-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 110,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Publicação',
-				name : 'publicacao',
-				width : 200,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Segmento',
-				name : 'segmento',
-				width : 190,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : '',
-				name : 'sel',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 600,
-			height : 200
-		});
 	
-	$(".rankSegmentoGrid").flexigrid({
-			url : '../xml/rankSegmento-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Ordem',
-				name : 'ordem',
-				width : 110,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Segmento',
-				name : 'segmento',
-				width : 340,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : '',
-				name : 'sel',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			},  {
-				display : 'Ajuste',
-				name : 'ajuste',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "ranking",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 600,
-			height : 200
-		});
-	$(".pesqBancasGrid").flexigrid({
-			url : '../xml/pesqBancas-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 110,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'Nome',
-				width : 400,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : '',
-				name : 'sel',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "codigo",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 600,
-			height : 200
-		});
 	$(".cotasEquivalentesGrid", cotaBaseController.workspace).flexigrid({
 		preProcess: cotaBaseController.executarPreProcessamento,
 		dataType : 'json',
@@ -443,6 +179,74 @@ var cotaBaseController = $.extend(true, {
 			width : 960,
 			height : 160
 		});
+	
+	$(".cotasEquivalentesBGrid").flexigrid({
+		preProcess : cotaBaseController.executarPreProcessamentoHistorico,
+		dataType : 'json',
+		colModel : [ {
+			display : 'Cota',
+			name : 'numeroCota',
+			width : 50,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Nome',
+			name : 'nomeCota',
+			width : 130,
+			sortable : true,
+			align : 'left'
+		},  {
+			display : 'Tipo PDV',
+			name : 'tipoPDV',
+			width : 90,
+			sortable : true,
+			align : 'left'
+		},  {
+			display : 'Bairro',
+			name : 'bairro',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},  {
+			display : 'Cidade',
+			name : 'cidade',
+			width : 90,
+			sortable : true,
+			align : 'left'
+		},  {
+			display : 'Gerador de Fluxo',
+			name : 'geradorDeFluxo',
+			width : 90,
+			sortable : true,
+			align : 'left'
+		},  {
+			display : 'Área Influencia',
+			name : 'areaInfluencia',
+			width : 80,
+			sortable : true,
+			align : 'left'
+		},  {
+			display : 'Faturamento Médio R$',
+			name : 'faturamentoFormatado',
+			width : 120,
+			sortable : true,
+			align : 'right'
+		},  {
+			display : 'Data Alteração',
+			name : 'dataAlteracao',
+			width : 80,
+			sortable : true,
+			align : 'center'
+		}],
+		sortname : "codigo",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 160
+	});
 	},
 	
 	executarPreProcessamentoGridPesquisaGeral : function(resultado){
@@ -464,6 +268,25 @@ var cotaBaseController = $.extend(true, {
 		return resultado;
 		
 	},
+	
+	executarPreProcessamentoHistorico : function(resultado){
+		
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".grids", cotaBaseController.workspace).hide();
+
+			return resultado;
+		}
+		
+		return resultado;
+		
+	},
+	
 	
 	executarPreProcessamento : function(resultado) {
 		
@@ -498,12 +321,15 @@ var cotaBaseController = $.extend(true, {
 				row.cell.faturamentoFormatado = '<div style="text-align: right; width: 120px;" id="faturamentoGrid'+index+'" ></div>';
 				row.cell.acao = '';
 			}else{
+				row.cell.nomeCota = '<div style="text-align: left; width: 90px;" id="nomeCotaGrid'+index+'" >'+
+									'<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+row.cell.numeroCota+')">'+row.cell.nomeCota+'</a>'+
+									'</div>';
 				aux++;
 				$("#indiceAjuste").val(row.cell.indiceAjuste);
 				$("#indiceAjuste").mask("9.9");
 				row.cell.acao = '<a href="javascript:;" style="margin-right: 5px;cursor:pointer"  onclick="cotaBaseController.excluirPeso('+ row.cell.idCota +');">' +
-				'<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Cota" />' +
-				'</a>';				
+								'<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Cota" />' +
+								'</a>';				
 			}
 			if(aux === 0){
 				$("#indiceAjuste").val("");
@@ -557,7 +383,8 @@ var cotaBaseController = $.extend(true, {
 	
 	atribuirDadosCota:function(resultado, index){
 		
-		$("#nomeCotaGrid"+index, cotaBaseController.workspace).text(resultado.nomeCota);
+		var linkFotoPDV = '<a href="javascript:;" onClick="cotaBaseController.fotoPdv('+resultado.numeroCota+')">'+resultado.nomeCota+'</a>';
+		$("#nomeCotaGrid"+index, cotaBaseController.workspace).html(linkFotoPDV);
 		
  		$("#tipoPDVGrid"+index, cotaBaseController.workspace).text(resultado.tipoPDV);
  		$("#bairroGrid"+index, cotaBaseController.workspace).text(resultado.bairro);
@@ -595,7 +422,8 @@ var cotaBaseController = $.extend(true, {
 	mostrar_geral : function (){
 		
 		$('.pesqGeralGrid').show();
-		$('.pesqCotasGrid').hide();
+		$('.pesqCotasGrid').hide();		
+		$('.historicoGrid').hide();
 		
 		var numeroCota = $('#idCota').val();
 		
@@ -611,7 +439,8 @@ var cotaBaseController = $.extend(true, {
 	mostrar_normal : function (){
 		
 		$('.pesqGeralGrid', cotaBaseController.workspace).hide();
-		$('.pesqCotasGrid' , cotaBaseController.workspace).show();
+		$('.pesqCotasGrid', cotaBaseController.workspace).show();
+		$('.historicoGrid', cotaBaseController.workspace).hide();
 		
 		var numeroCota = $('#idCota').val();
 		
@@ -786,7 +615,35 @@ var cotaBaseController = $.extend(true, {
 				}
 			}
 		});
-	},	
+	},
+	
+	mostrarHistorico : function(){
+		
+		$('.pesqGeralGrid', cotaBaseController.workspace).hide();
+		$('.pesqCotasGrid' , cotaBaseController.workspace).hide();
+		$('.historicoGrid' , cotaBaseController.workspace).show();
+		
+		var idCota = $("#idCota").val();
+		
+		$("#cotasEquivalentesBGrid", cotaBaseController.workspace).flexOptions({
+			url: contextPath + "/cadastro/cotaBase/obterCotasDoHistorico",
+			dataType : 'json',
+			params: [{name: 'numeroCota' , value: idCota}]
+		});
+		
+		$("#cotasEquivalentesBGrid", cotaBaseController.workspace).flexReload();		
+		
+		
+	},
+	
+	botaoVoltarHistoricio : function(){
+		
+		$('.pesqGeralGrid', cotaBaseController.workspace).hide();
+		$('.pesqCotasGrid' , cotaBaseController.workspace).show();
+		$('.historicoGrid' , cotaBaseController.workspace).hide();
+		
+		
+	},
 
 	informarPeso : function() {
 
@@ -808,7 +665,29 @@ var cotaBaseController = $.extend(true, {
 	},		
 
 
-	fotoPdv : function() {
+	fotoPdv : function(numeroCota) {
+		
+		$.postJSON(contextPath + "/cadastro/cotaBase/obterIdPDVPrincipal",
+				{"numeroCota":numeroCota}, 
+				function(idPDVPrincipal){
+					
+					$.postJSON(contextPath + "/cadastro/pdv/editar",
+							[{name:"idPdv", value:idPDVPrincipal},
+							 {name:"idCota", value:null},
+							 {name:"modoTela", value: ModoTela.CADASTRO_COTA}], 
+							 function(result){						
+								if(result.pdvDTO.pathImagem) {
+				                    $("#idImagem", this.workspace).attr("src",contextPath + "/" + result.pdvDTO.pathImagem);
+				                }
+						
+					},null,true);
+					
+					
+ 				}, function(result){
+ 					
+				}, true,null
+		);
+		
 
 		$( "#dialog-foto-pdv" ).dialog({
 			resizable: false,
