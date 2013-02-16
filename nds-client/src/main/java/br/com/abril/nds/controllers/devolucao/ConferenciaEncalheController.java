@@ -31,7 +31,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -474,6 +473,50 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		dados.put("qtdRecebida", qtdRecebida);
 	}
+	
+	@Post
+	public void autoCompleteProdutoEdicaoCodigoDeBarras(String codigoBarra) {
+		
+		if (codigoBarra == null || codigoBarra.trim().isEmpty()) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
+		}
+
+		Integer numeroCota = this.getNumeroCotaFromSession();
+
+		List<ProdutoEdicaoDTO> produtosEdicao = new ArrayList<ProdutoEdicaoDTO>();
+
+		try {
+
+			produtosEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorCodigoDeBarras(numeroCota, codigoBarra);
+			
+			if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+				
+				this.result.nothing();
+				
+				return;
+			}
+
+			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+
+			for (ProdutoEdicaoDTO produtoEdicao : produtosEdicao) {
+
+				listaProdutos.add(new ItemAutoComplete(
+						produtoEdicao.getCodigoDeBarras() + " - " + produtoEdicao.getNomeProduto() + " - Ed.:" + produtoEdicao.getNumeroEdicao(), 
+						null, new Object[]{produtoEdicao.getId()}));
+			}
+
+			this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
+
+		} catch(ChamadaEncalheCotaInexistenteException e){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
+		
+		} catch(EncalheRecolhimentoParcialException e) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
+		}
+	}
 
 	@Post
 	public void pesquisarProdutoEdicao(String codigoBarra, Integer sm, Long idProdutoEdicao, Long codigoAnterior, String quantidade){
@@ -489,21 +532,20 @@ public class ConferenciaEncalheController extends BaseController {
 		List<ConferenciaEncalheDTO> listaConfSessao = this.getListaConferenciaEncalheFromSession();
 		
 		try {
-			if (codigoBarra != null && !codigoBarra.trim().isEmpty()){
+
+			if (idProdutoEdicao != null){
 				
 				for (ConferenciaEncalheDTO dto : listaConfSessao){
 					
-					if (codigoBarra.equals(dto.getCodigoDeBarras())){
+					if (idProdutoEdicao.equals(dto.getIdProdutoEdicao())){
 						
 						conferenciaEncalheDTO = dto;
 						break;
 					}
 				}
 				
-				if (conferenciaEncalheDTO == null){
-				
-					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorCodigoDeBarras(numeroCota, codigoBarra);
-				}
+				produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, idProdutoEdicao);
+
 			} else if (sm != null){
 				
 				for (ConferenciaEncalheDTO dto : listaConfSessao){
@@ -515,25 +557,8 @@ public class ConferenciaEncalheController extends BaseController {
 					}
 				}
 				
-				if (conferenciaEncalheDTO == null){
+				produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorSM(numeroCota, sm);
 				
-					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorSM(numeroCota, sm);
-				}
-			} else if (idProdutoEdicao != null){
-				
-				for (ConferenciaEncalheDTO dto : listaConfSessao){
-					
-					if (idProdutoEdicao.equals(dto.getIdProdutoEdicao())){
-						
-						conferenciaEncalheDTO = dto;
-						break;
-					}
-				}
-				
-				if (conferenciaEncalheDTO == null){
-				
-					produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorId(numeroCota, idProdutoEdicao);
-				}
 			} else {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Informe código de barras, SM ou código.");
@@ -561,11 +586,9 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			conferenciaEncalheDTO = this.atualizarQuantidadeConferida(codigoAnterior, quantidade, produtoEdicao, null);
 		}
-		
-		
+
 		indicarStatusConferenciaEncalheCotaAlterado();
 
-		
 		this.result.use(Results.json()).from(conferenciaEncalheDTO, "result").serialize();
 	}
 	
@@ -1573,7 +1596,7 @@ public class ConferenciaEncalheController extends BaseController {
 				}
 			}
 		}
-		
+
 		if (conferenciaEncalheDTOSessao != null){
 			
 			BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTOSessao, quantidade);

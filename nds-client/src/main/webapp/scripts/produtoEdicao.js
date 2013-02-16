@@ -83,7 +83,7 @@ var produtoEdicaoController =$.extend(true,  {
 					null, isFromModal);
 		}
 	},
-
+	
 	descricaoAtribuida : true,
 
 	pesquisaRealizada : false,

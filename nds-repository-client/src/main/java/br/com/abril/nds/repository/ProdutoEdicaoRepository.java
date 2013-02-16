@@ -103,7 +103,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	List<TipoDescontoProdutoDTO> obterProdutosEdicoesPorCodigoProdutoComDesconto(String codigoProduto);
 	
-	ProdutoEdicao obterProdutoEdicaoPorCodigoBarra(String codigoBarra);
+	List<ProdutoEdicao> obterProdutoEdicaoPorCodigoBarra(String codigoBarra);
 
 	ProdutoEdicao obterProdutoEdicaoPorSM(Long sm);
 	
