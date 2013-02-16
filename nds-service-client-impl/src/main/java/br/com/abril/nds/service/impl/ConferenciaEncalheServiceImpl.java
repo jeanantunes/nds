@@ -62,7 +62,6 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -85,7 +84,6 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
-import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
@@ -910,19 +908,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, idProdutoEdicao, dataOperacao);
 		
-		BigDecimal valorDesconto 	= BigDecimal.ZERO;
 		BigDecimal precoComDesconto = produtoEdicaoDTO.getPrecoVenda();
 		BigDecimal precoVenda 		= produtoEdicaoDTO.getPrecoVenda();
 		
 		if(valoresAplicados != null) {
 		
-			valorDesconto = valoresAplicados.getValorDesconto() != null ? valoresAplicados.getValorDesconto() : BigDecimal.ZERO;
 			precoComDesconto = valoresAplicados.getPrecoComDesconto() != null ? valoresAplicados.getPrecoComDesconto() : produtoEdicaoDTO.getPrecoVenda();
 			precoVenda = valoresAplicados.getPrecoVenda() != null ? valoresAplicados.getPrecoVenda() : produtoEdicaoDTO.getPrecoVenda();
 		
 		} 
 		
-		produtoEdicaoDTO.setDesconto(valorDesconto);
+		if(precoComDesconto == null) {
+			precoComDesconto = BigDecimal.ZERO;
+		}
+		
+		if(precoVenda == null) {
+			precoVenda = BigDecimal.ZERO;
+		}
+		
+		produtoEdicaoDTO.setDesconto(precoVenda.subtract(precoComDesconto));
 		produtoEdicaoDTO.setPrecoComDesconto(precoComDesconto);
 		produtoEdicaoDTO.setPrecoVenda(precoVenda);
 		
@@ -1411,46 +1415,42 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		MovimentoEstoque movimentoEstoque = null;
+
+		movimentoEstoqueCota = conferenciaEncalheFromDB.getMovimentoEstoqueCota();
+
+		movimentoEstoque = conferenciaEncalheFromDB.getMovimentoEstoque();
+			
+		if(movimentoEstoqueCota!=null) {
 		
-		if(StatusOperacao.CONCLUIDO.equals(statusOperacao)) {
+			atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO);
+		
+		} else {
 			
-			movimentoEstoqueCota = conferenciaEncalheFromDB.getMovimentoEstoqueCota();
+			movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
+		}
 			
-			movimentoEstoque = conferenciaEncalheFromDB.getMovimentoEstoque();
+		if(movimentoEstoque!=null) {
+		
+			atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO);
 			
-			if(movimentoEstoqueCota!=null) {
-			
-				atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO);
-			
-			} else {
-				
-				movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-			}
-			
-			if(movimentoEstoque!=null) {
-			
-				atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO);
-			
-			} else {
-				
-				movimentoEstoque = criarNovoRegistroMovimentoEstoque(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-				
-			}
-			
+		} else {	
+		
+		movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+				controleConferenciaEncalheCota, 
+				conferenciaEncalheDTO, 
+				numeroCota, 
+				dataRecolhimentoReferencia, 
+				dataCriacao, 
+				mapaTipoMovimentoEstoque, 
+				usuario);
+		
 		}
 		
 		atualizarRegistroConferenciaEncalhe(
@@ -1458,7 +1458,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				conferenciaEncalheFromDB,
 				movimentoEstoqueCota,
 				movimentoEstoque);
-
 		
 	}
 	
@@ -1487,27 +1486,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		MovimentoEstoque movimentoEstoque = null;
-		
-		if(StatusOperacao.CONCLUIDO.equals(statusOperacao)) {
 			
-			 movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-			 
-			 movimentoEstoque = criarNovoRegistroMovimentoEstoque(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-		}
+		movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
+		 
+		 movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
 		
 		criarNovoRegistroConferenciaEncalhe(
 				controleConferenciaEncalheCota, 

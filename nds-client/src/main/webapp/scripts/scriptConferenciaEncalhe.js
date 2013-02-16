@@ -928,7 +928,17 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#valorVendaDia", ConferenciaEncalhe.workspace).text(parseFloat(result.valorVendaDia).toFixed(2));
 				$("#totalOutrosValores", ConferenciaEncalhe.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#valorAPagar", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+			}, function(){
+				
+				var data = [
+							  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
+							  {name: 'indObtemDadosFromBD', value : false},
+							  {name: 'indConferenciaContingencia', value: false}
+							 ];
+							
+				ConferenciaEncalhe.carregarListaConferencia(data);				
 			}
+		
 		);
 	},
 	
