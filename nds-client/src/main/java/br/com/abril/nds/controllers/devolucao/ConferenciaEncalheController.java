@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -482,40 +481,27 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
 		}
 
-		Integer numeroCota = this.getNumeroCotaFromSession();
+		List<ProdutoEdicao> produtosEdicao = new ArrayList<ProdutoEdicao>();
 
-		List<ProdutoEdicaoDTO> produtosEdicao = new ArrayList<ProdutoEdicaoDTO>();
-
-		try {
-
-			produtosEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorCodigoDeBarras(numeroCota, codigoBarra);
-			
-			if (produtosEdicao == null || produtosEdicao.isEmpty()) {
-				
-				this.result.nothing();
-				
-				return;
-			}
-
-			List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-
-			for (ProdutoEdicaoDTO produtoEdicao : produtosEdicao) {
-
-				listaProdutos.add(new ItemAutoComplete(
-						produtoEdicao.getCodigoDeBarras() + " - " + produtoEdicao.getNomeProduto() + " - Ed.:" + produtoEdicao.getNumeroEdicao(), 
-						null, new Object[]{produtoEdicao.getId()}));
-			}
-
-			this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
-
-		} catch(ChamadaEncalheCotaInexistenteException e){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
+		produtosEdicao = this.produtoEdicaoService.buscarProdutoPorCodigoBarras(codigoBarra);
 		
-		} catch(EncalheRecolhimentoParcialException e) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
+		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+			
+			this.result.nothing();
+			
+			return;
 		}
+
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+
+		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+
+			listaProdutos.add(new ItemAutoComplete(
+					produtoEdicao.getCodigoDeBarras() + " - " + produtoEdicao.getProduto().getNome() + " - Ed.:" + produtoEdicao.getNumeroEdicao(), 
+					null, new Object[]{produtoEdicao.getId()}));
+		}
+
+		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
 
 	@Post
