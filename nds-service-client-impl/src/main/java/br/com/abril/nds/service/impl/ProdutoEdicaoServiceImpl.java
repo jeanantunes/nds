@@ -659,11 +659,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		if(!indNovoProdutoEdicao && produtoEdicao.getLancamentoParcial() != null) {
 			
-			for(PeriodoLancamentoParcial periodo :produtoEdicao.getLancamentoParcial().getPeriodos()) {
-				periodoLancamentoParcialRepository.remover(periodo);
-				lancamentoRepository.remover(periodo.getLancamento());				
-			}
-			
 			lancamentoParcialRepository.remover(produtoEdicao.getLancamentoParcial());			
 		}
 		

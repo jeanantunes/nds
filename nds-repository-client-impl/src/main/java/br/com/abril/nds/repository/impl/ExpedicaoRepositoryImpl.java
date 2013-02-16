@@ -379,42 +379,42 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" ORDER BY box.ID ");
-		
 		if (filtro.getOrdenacaoColunaProduto() != null ){
+			
+			hql.append(" ORDER BY ");
 			
 			switch (filtro.getOrdenacaoColunaProduto()) {
 				
 				case CODIGO_PRODUTO:
-					hql.append(" , produto.CODIGO ");
+					hql.append(" produto.CODIGO ");
 					break;
 				case DESCRICAO_PRODUTO:
-					hql.append(" , produto.NOME ");
+					hql.append(" produto.NOME ");
 					break;
 				case NUMERO_EDICAO:
-					hql.append(" , produtoEdicao.NUMERO_EDICAO ");
+					hql.append(" produtoEdicao.NUMERO_EDICAO ");
 					break;
 				case PRECO_CAPA:
-					hql.append(" , produtoEdicao.PRECO_VENDA ");
+					hql.append(" produtoEdicao.PRECO_VENDA ");
 					break;
 				case REPARTE:
-					hql.append(" , estudo.QTDE_REPARTE ");
+					hql.append(" estudo.QTDE_REPARTE ");
 					break;
 				case DIFERENCA:
-					hql.append(" , ")
+					hql.append(" ")
 					.append(" sum( ( case ")
-						.append(" when (diferenca.TIPODIFERENCA = 'FALTA_DE') then (-(diferenca.QTDE * produtoEdicao.PACOTE_PADRAO))")
-						.append(" when (diferenca.TIPODIFERENCA = 'SOBRA_DE') then (diferenca.QTDE *  produtoEdicao.PACOTE_PADRAO)")
-						.append(" when (diferenca.TIPODIFERENCA = 'FALTA_EM') then (-diferenca.QTDE)")
-						.append(" when (diferenca.TIPODIFERENCA = 'SOBRA_EM') then (diferenca.QTDE)")
+						.append(" when (diferenca.TIPO_DIFERENCA = 'FALTA_DE') then (-(diferenca.QTDE * produtoEdicao.PACOTE_PADRAO))")
+						.append(" when (diferenca.TIPO_DIFERENCA = 'SOBRA_DE') then (diferenca.QTDE *  produtoEdicao.PACOTE_PADRAO)")
+						.append(" when (diferenca.TIPO_DIFERENCA = 'FALTA_EM') then (-diferenca.QTDE)")
+						.append(" when (diferenca.TIPO_DIFERENCA = 'SOBRA_EM') then (diferenca.QTDE)")
 						.append(" else 0")
 					.append(" end ) )");
 					break;
 				case VALOR_FATURADO:
-					hql.append(" ,  produtoEdicao.PRECO_VENDA*estudo.QTDE_REPARTE ");
+					hql.append("  produtoEdicao.PRECO_VENDA*estudo.QTDE_REPARTE ");
 					break;
 				default:
-					hql.append(" , produto.CODIGO ");
+					hql.append(" produto.CODIGO ");
 			}
 			
 			if (filtro.getPaginacao().getOrdenacao() != null) {
@@ -491,7 +491,6 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append(" and box.TIPO_BOX = :tipoBox ");
 		
 		hql.append(" group by ");
-		hql.append(" box.ID, ");
 		hql.append(" produtoEdicao.ID ");
 		
 		return hql.toString();

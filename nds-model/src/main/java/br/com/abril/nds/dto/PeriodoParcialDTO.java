@@ -44,11 +44,11 @@ public class PeriodoParcialDTO implements Serializable {
 	@Export(label = "Venda CE", alignment=Alignment.CENTER)
 	private String vendaCE;
 	
-	@Export(label = "% Venda Acum.", alignment=Alignment.CENTER)
-	private String percVendaAcumulada;
+	@Export(label = "Venda Acum.", alignment=Alignment.CENTER)
+	private String reparteAcum;
 	
 	@Export(label = "% Venda Acum.", alignment=Alignment.CENTER)
-	private String reparteAcum;
+	private String percVendaAcumulada;
 		
 	private Long idLancamento;
 	

@@ -831,11 +831,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			produtoRecolhimentoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
 			
-			produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
-				isSemanaRecolhimento
-				|| produtoRecolhimentoDTO.isPossuiChamada()
-				|| produtoRecolhimentoDTO.isBalanceamentoConfirmado());
-			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
 		}
 		

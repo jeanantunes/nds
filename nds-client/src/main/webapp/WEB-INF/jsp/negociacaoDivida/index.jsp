@@ -2,7 +2,7 @@
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/negociacaoDivida.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 </head>
 
 <body>
@@ -42,7 +42,7 @@
 					<td width="28">Cota:</td>
 					<td colspan="3"><input type="text" name="filtro.numeroCota"
 						id="negociacaoDivida_numCota"
-						onblur="negociacaoDividaController.pesquisarCota(this.value);"
+						onchange="negociacaoDividaController.pesquisarCota(this.value);"
 						style="width: 60px; float: left; margin-right: 5px;" /></td>
 					<td width="39">Nome:</td>
 					<td width="207"><span id="negociacaoDivida_nomeCota"></span></td>
@@ -219,10 +219,17 @@
 					class="quinzenal">
 					<tr>
 						<td width="68">Todo dia:</td>
-						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" id="diaInputQuinzenal1" onchange="negociacaoDividaController.calcularParcelasQuinzenal();" /></td>
+						<td width="66">
+							<input type="text" name="filtro.quinzenalDia1" style="width: 60px;" 
+								   id="diaInputQuinzenal1" maxlength="2"
+								   onchange="negociacaoDividaController.calcularParcelasQuinzenal();" />
+						</td>
 						<td id="textoDiaInputQuinzenal" width="21">&nbsp; e:</td>
-						<td width="522"><input type="text" name="filtro.quinzenalDia2"
-							id="diaInputQuinzenal2" style="width: 60px;" onchange="negociacaoDividaController.calcularParcelasQuinzenal();" /></td>
+						<td width="522">
+							<input type="text" name="filtro.quinzenalDia2"
+								   id="diaInputQuinzenal2" style="width: 60px;"
+								   readonly="readonly" />
+						</td>
 					</tr>
 				</table>
 				
@@ -230,7 +237,10 @@
 					class="mensal">
 					<tr>
 						<td width="68">Todo dia:</td>
-						<td width="66"><input type="text" name="filtro.quinzenalDia1" style="width: 60px;" id="mensalDia" onchange="negociacaoDividaController.calcularParcelasMensal();" /></td>
+						<td width="66">
+							<input type="text" name="filtro.quinzenalDia1" style="width: 60px;" maxlength="2"
+								   id="mensalDia" onchange="negociacaoDividaController.calcularParcelasMensal();" />
+						</td>
 						
 					</tr>
 				</table>
@@ -352,13 +362,13 @@
 					</tr>
 				</table>
 			</fieldset>
-			<span class="bt_novos" title="Imprimir" name="botoes">
+			<span class="bt_novos" title="Imprimir" name="botoes" id="botaoImprimirNegociacao">
 				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirNegociacao">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir Negocia&ccedil;&atilde;o
 				</a>
 			</span>
-			<span class="bt_novos" title="Imprimir Boletos" name="botoes">
+			<span class="bt_novos" title="Imprimir Boletos" name="botoes" id="botaoImprimirBoleto">
 				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirBoletos">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir Boletos
