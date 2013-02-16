@@ -917,7 +917,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		} 
 		
-		produtoEdicaoDTO.setDesconto(valorDesconto);
+		if(precoComDesconto == null) {
+			precoComDesconto = BigDecimal.ZERO;
+		}
+		
+		if(precoVenda == null) {
+			precoVenda = BigDecimal.ZERO;
+		}
+		
+		produtoEdicaoDTO.setDesconto(precoVenda.subtract(precoComDesconto));
 		produtoEdicaoDTO.setPrecoComDesconto(precoComDesconto);
 		produtoEdicaoDTO.setPrecoVenda(precoVenda);
 		
@@ -1406,45 +1414,41 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		MovimentoEstoque movimentoEstoque = null;
+			
+		movimentoEstoqueCota = conferenciaEncalheFromDB.getMovimentoEstoqueCota();
 		
-		if(StatusOperacao.CONCLUIDO.equals(statusOperacao)) {
+		movimentoEstoque = conferenciaEncalheFromDB.getMovimentoEstoque();
+		
+		if(movimentoEstoqueCota!=null) {
+		
+			atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO, mapaTipoMovimentoEstoque);
+		
+		} else {
 			
-			movimentoEstoqueCota = conferenciaEncalheFromDB.getMovimentoEstoqueCota();
+			movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
+		}
+		
+		if(movimentoEstoque!=null) {
+		
+			atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO, mapaTipoMovimentoEstoque);
+		
+		} else {
 			
-			movimentoEstoque = conferenciaEncalheFromDB.getMovimentoEstoque();
-			
-			if(movimentoEstoqueCota!=null) {
-			
-				atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO, mapaTipoMovimentoEstoque);
-			
-			} else {
-				
-				movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-			}
-			
-			if(movimentoEstoque!=null) {
-			
-				atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO, mapaTipoMovimentoEstoque);
-			
-			} else {
-				
-				movimentoEstoque = criarNovoRegistroMovimentoEstoque(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-				
-			}
+			movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
 			
 		}
 		
@@ -1482,27 +1486,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		MovimentoEstoque movimentoEstoque = null;
-		
-		if(StatusOperacao.CONCLUIDO.equals(statusOperacao)) {
 			
-			 movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-			 
-			 movimentoEstoque = criarNovoRegistroMovimentoEstoque(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-		}
+		movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
+		 
+		 movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
 		
 		criarNovoRegistroConferenciaEncalhe(
 				controleConferenciaEncalheCota, 

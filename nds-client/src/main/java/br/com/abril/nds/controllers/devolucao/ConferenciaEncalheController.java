@@ -625,6 +625,7 @@ public class ConferenciaEncalheController extends BaseController {
 					try {
 						
 						conferenciaEncalheDTONaoValidado = (ConferenciaEncalheDTO)BeanUtils.cloneBean(dto);
+						conferenciaEncalheDTONaoValidado.setQtdExemplar(BigInteger.valueOf(qtdExemplares));
 						
 					} catch (Exception e) {
 						throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao validar quantidade de itens de encalhe.");
