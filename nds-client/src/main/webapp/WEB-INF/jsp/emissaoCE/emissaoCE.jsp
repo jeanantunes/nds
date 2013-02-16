@@ -42,7 +42,7 @@
 			<div class="area">
 				<span class="bt_novos">
 					<!-- IMPRESSAO CE -->
-					<a href="${pageContext.request.contextPath}/emissaoCE/imprimirCE" target="blank" rel="tipsy" title="Imprimir CE">
+					<a href="#" id="imprimirCE" rel="tipsy" title="Imprimir CE">
 					<img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" /></a>
 				</span>
 				<span class="bt_arq">
