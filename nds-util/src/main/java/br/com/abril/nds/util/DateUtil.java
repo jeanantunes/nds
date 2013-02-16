@@ -393,6 +393,27 @@ public class DateUtil {
 	}
 	
 	/**
+	 * Retorna o dia do mês de uma determinada data.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return Dia do mês (verificar constantes da classe java.util.Calendar)
+	 */
+	public static int obterDiaDoMes(Date data) {
+		
+		if (data == null) {
+			
+			throw new IllegalArgumentException("Data inválida!");
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(data);
+		
+		return calendar.get(Calendar.DAY_OF_MONTH);
+	}
+
+	/**
 	 * Obtém um período filtrado de acordo com os dias da semana desejados. 
 	 * 
 	 * @param dataInicial - data inicial do período

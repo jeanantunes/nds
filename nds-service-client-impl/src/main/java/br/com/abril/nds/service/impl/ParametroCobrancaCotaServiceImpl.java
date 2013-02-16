@@ -69,6 +69,7 @@ import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.service.ContratoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
@@ -84,8 +85,6 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaService {
 	
-
-	
 	@Autowired
 	private CotaRepository cotaRepository;
 	
@@ -97,6 +96,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	
 	@Autowired
 	private FormaCobrancaRepository formaCobrancaRepository;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
 	private ParametroCobrancaCotaRepository parametroCobrancaCotaRepository;
@@ -460,9 +462,24 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}
 		
 		
-		FormaCobranca formaCobrancaPrincipal = this.obterFormaCobrancaPrincipalCota(formaCobrancaDTO.getIdCota());
+		
+		
+		
+		
+		
+		
+		
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(formaCobrancaDTO.getIdCota());
+		
 		formaCobranca.setPrincipal(formaCobrancaPrincipal==null);
 
+		
+		
+		
+		
+		
+		
+		
 		
 		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
 		concentracoesCobranca = new HashSet<ConcentracaoCobrancaCota>();
@@ -909,14 +926,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		return contratoVO;
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
-		return this.formaCobrancaRepository.obterFormaCobrancaPrincipalCota(idCota);
-	}
-
 	
-
 	@Override
 	@Transactional(readOnly = true)
 	public List<FormaCobranca> obterFormasCobrancaCota(Long idCota) {
@@ -1063,12 +1073,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	@Transactional(readOnly = true)
 	public List<BigDecimal> comboValoresMinimos(){
 		return this.parametroCobrancaCotaRepository.comboValoresMinimos();
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public FormaCobranca obterFormaCobrancaPrincipal() {
-		return this.formaCobrancaRepository.obterFormaCobrancaPrincipal();
 	}
 	
 }

@@ -63,9 +63,6 @@ public class PainelProcessamentoController extends BaseController {
 	private PainelProcessamentoService painelProcessamentoService;
 	
 	@Autowired
-	private DistribuidorService distribuidorService;
-
-	@Autowired
 	private InterfaceExecucaoService interfaceExecucaoService;
 
 	@Autowired
@@ -178,7 +175,7 @@ public class PainelProcessamentoController extends BaseController {
 			TableModel<CellModelKeyValue<InterfaceDTO>> tableModel = new TableModel<CellModelKeyValue<InterfaceDTO>>();
 			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-			tableModel.setTotal(resultado.size());
+			tableModel.setTotal(Integer.valueOf(painelProcessamentoService.listarTotalInterfaces(filtro).toString()));
 
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		}
@@ -201,7 +198,7 @@ public class PainelProcessamentoController extends BaseController {
 		int quantidade = 0;
 		try {
 			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro);
-			quantidade = lista.size();
+			quantidade = Integer.valueOf( painelProcessamentoService.listarTotaldetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro).toString() );
 			
 			if (lista == null || lista.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
