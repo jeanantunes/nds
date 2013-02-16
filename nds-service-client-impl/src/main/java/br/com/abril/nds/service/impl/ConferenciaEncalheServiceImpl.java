@@ -57,6 +57,7 @@ import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -95,6 +96,7 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
@@ -160,6 +162,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+	
+	@Autowired
+	private EstoqueProdutoCotaJuramentadoRepository estoqueProdutoCotaJuramentadoRepository;
 	
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
@@ -1415,7 +1420,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if(movimentoEstoqueCota!=null) {
 			
-				atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO, mapaTipoMovimentoEstoque);
+				atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO);
 			
 			} else {
 				
@@ -2338,12 +2343,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @param movimentoEstoqueCota
 	 * @param conferenciaEncalheDTO
-	 * @param mapaTipoMovimentoEstoque
 	 */
-	private void atualizarMovimentoEstoqueCota(
-			MovimentoEstoqueCota movimentoEstoqueCota, 
-			ConferenciaEncalheDTO conferenciaEncalheDTO, 
-			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque) {
+	private void atualizarMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota, 
+											   ConferenciaEncalheDTO conferenciaEncalheDTO) {
 		
 		BigInteger oldQtdeMovEstoqueCota = movimentoEstoqueCota.getQtde();
 		
@@ -2351,20 +2353,44 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		movimentoEstoqueCota.setQtde(newQtdeMovEstoquecota);
 		
-		movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
+		this.movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
+
+		GrupoMovimentoEstoque grupoMovimentoEstoque = 
+			((TipoMovimentoEstoque) movimentoEstoqueCota.getTipoMovimento())
+				.getGrupoMovimentoEstoque();
 		
-		EstoqueProdutoCota estoqueProdutoCota =  movimentoEstoqueCota.getEstoqueProdutoCota();
-		
-		BigInteger qtdDevolvida = 
+		if (GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO.equals(grupoMovimentoEstoque)) {
+			
+			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado =
+				movimentoEstoqueCota.getEstoqueProdutoCotaJuramentado();
+			
+			BigInteger qtdDevolvida = 
+				estoqueProdutoCotaJuramentado.getQtde() != null ? 
+					estoqueProdutoCotaJuramentado.getQtde() : BigInteger.ZERO;
+					
+			qtdDevolvida = 
+				qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
+						
+			estoqueProdutoCotaJuramentado.setQtde(qtdDevolvida);
+						
+			this.estoqueProdutoCotaJuramentadoRepository.alterar(estoqueProdutoCotaJuramentado);
+			
+		} else {
+			
+			EstoqueProdutoCota estoqueProdutoCota =  
+				movimentoEstoqueCota.getEstoqueProdutoCota();
+
+			BigInteger qtdDevolvida = 
 				estoqueProdutoCota.getQtdeDevolvida() != null ? 
 					estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
 					
-		qtdDevolvida = qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
-		
-		estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida);
-		
-		estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
-		
+			qtdDevolvida = 
+				qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
+						
+			estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida);
+						
+			this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+		}
 	}
 	
 	/**
