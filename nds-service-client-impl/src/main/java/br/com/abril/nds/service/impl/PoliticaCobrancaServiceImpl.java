@@ -209,12 +209,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		return this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
 	}
 
-	
-	
-	
-	
-	
-	
 	/**
 	 * Método responsável por obter os dados da politica de cobranca
 	 * @param idPolitica: ID da politica de cobranca
