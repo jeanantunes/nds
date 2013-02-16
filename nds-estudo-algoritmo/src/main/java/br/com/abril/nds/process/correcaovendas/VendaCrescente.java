@@ -1,10 +1,11 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -19,12 +20,8 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class VendaCrescente extends ProcessoAbstrato {
 
-    private List<ProdutoEdicao> listProdutoEdicaoFechada;
-
-    public VendaCrescente(Cota cota,
-	    List<ProdutoEdicao> listProdutoEdicaoFechada) {
+    public VendaCrescente(Cota cota) {
 	super(cota);
-	this.listProdutoEdicaoFechada = listProdutoEdicaoFechada;
     }
 
     @Override
@@ -34,81 +31,70 @@ public class VendaCrescente extends ProcessoAbstrato {
 
 	Cota cota = (Cota) super.getGenericDTO();
 
-	List<ProdutoEdicao> listEdicaoBase = cota.getEdicoesBase();
+	List<EstoqueProdutoCota> listEstoqueProdutoCota = cota
+		.getEstoqueProdutoCotas();
 
-	if (listEdicaoBase != null && listEdicaoBase.size() > 4) {
+	List<Boolean> listDivBoolean = new ArrayList<Boolean>();
 
-	    String previousNome = "";
-	    BigDecimal previousNumeroEdicao = BigDecimal.ZERO;
-	    boolean calcular = false;
+	if (listEstoqueProdutoCota != null
+		&& listEstoqueProdutoCota.size() >= 4) {
 
-	    int iEdicaoBase = 0;
-	    while (iEdicaoBase < listEdicaoBase.size()) {
+	    int iEstoqueProdutoCota = 0;
+	    while (iEstoqueProdutoCota < listEstoqueProdutoCota.size()) {
 
-		ProdutoEdicao produtoEdicao = listEdicaoBase.get(iEdicaoBase);
+		EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
+			.get(iEstoqueProdutoCota);
 
-		if (previousNumeroEdicao.compareTo(BigDecimal.ZERO) == 1) {
+		EstoqueProdutoCota previousEstoqueProdutoCota = null;
+		if (iEstoqueProdutoCota > 0) {
 
-		    if (previousNome.equalsIgnoreCase(produtoEdicao.getNome())) {
-			calcular = true;
-		    } else {
-			calcular = false;
-			break;
+		    previousEstoqueProdutoCota = listEstoqueProdutoCota
+			    .get(iEstoqueProdutoCota-1);
+
+		    BigDecimal quantidadeRecebida = estoqueProdutoCota
+			    .getQuantidadeRecebida();
+		    BigDecimal quantidadeDevolvida = estoqueProdutoCota
+			    .getQuantidadeDevolvida();
+
+		    BigDecimal vendaEdicao = quantidadeRecebida
+			    .subtract(quantidadeDevolvida);
+
+		    BigDecimal previousQuantidadeRecebida = previousEstoqueProdutoCota
+			    .getQuantidadeRecebida();
+		    BigDecimal previousQuantidadeDevolvida = previousEstoqueProdutoCota
+			    .getQuantidadeDevolvida();
+
+		    BigDecimal previousVendaEdicao = previousQuantidadeRecebida
+			    .subtract(previousQuantidadeDevolvida);
+
+		    if (previousEstoqueProdutoCota
+			    .getProdutoEdicao()
+			    .getNome()
+			    .equalsIgnoreCase(
+				    estoqueProdutoCota.getProdutoEdicao()
+					    .getNome())
+			    && !estoqueProdutoCota.getProdutoEdicao()
+				    .isEdicaoAberta()) {
+
+			if (previousVendaEdicao.compareTo(BigDecimal.ZERO) == 1) {
+			    BigDecimal divVendaEdicao = vendaEdicao.divide(
+				    previousVendaEdicao, 2,
+				    BigDecimal.ROUND_FLOOR);
+
+			    listDivBoolean.add(divVendaEdicao
+				    .compareTo(BigDecimal.ONE) == 1);
+			}
+
 		    }
-
-		} else {
-		    calcular = false;
 		}
-		
-		previousNumeroEdicao = new BigDecimal(
-			produtoEdicao.getNumeroEdicao());
 
-		previousNome = produtoEdicao.getNome();
-
-		iEdicaoBase++;
+		iEstoqueProdutoCota++;
 	    }
 
-	    if (listProdutoEdicaoFechada != null
-		    && !listProdutoEdicaoFechada.isEmpty() && calcular) {
-
-		boolean ajustarIndice = false;
-
-		int iEdicaoBaseFechada = 0;
-		while (iEdicaoBaseFechada < listProdutoEdicaoFechada.size()) {
-
-		    ProdutoEdicao produtoEdicao = listProdutoEdicaoFechada
-			    .get(iEdicaoBaseFechada);
-
-		    if (previousNumeroEdicao.compareTo(BigDecimal.ZERO) == 1) {
-
-			if (previousNome.equalsIgnoreCase(produtoEdicao
-				.getNome())) {
-
-			    BigDecimal divNumeroEdicao = previousNumeroEdicao
-				    .divide(new BigDecimal(produtoEdicao
-					    .getNumeroEdicao()), 4,
-					    BigDecimal.ROUND_FLOOR);
-
-			    if (divNumeroEdicao.compareTo(BigDecimal.ONE) == 1) {
-				ajustarIndice = true;
-			    } else {
-				ajustarIndice = false;
-				break;
-			    }
-
-			} else {
-			    ajustarIndice = false;
-			    break;
-			}
-		    }
-
-		    iEdicaoBaseFechada++;
-		}
-
-		if (ajustarIndice) {
-		    indiceVendaCrescente = indiceVendaCrescente
-			    .add(new BigDecimal(0.1));
-		}
+	    if (!listDivBoolean.isEmpty()
+		    && !listDivBoolean.contains(Boolean.FALSE)) {
+		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(
+			0.1));
 	    }
 
 	    indiceVendaCrescente = indiceVendaCrescente.divide(
@@ -120,5 +106,4 @@ public class VendaCrescente extends ProcessoAbstrato {
 
 	super.genericDTO = cota;
     }
-
 }

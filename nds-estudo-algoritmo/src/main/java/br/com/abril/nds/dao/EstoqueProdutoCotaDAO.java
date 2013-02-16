@@ -102,9 +102,10 @@ public class EstoqueProdutoCotaDAO {
 	try {
 
 	    StringBuilder query = new StringBuilder(
-		    " SELECT EPC.*, PE.NUMERO_EDICAO, P.NOME FROM ESTOQUE_PRODUTO_COTA EPC ");
+		    " SELECT EPC.*, PE.NUMERO_EDICAO, P.NOME, TP.GRUPO_PRODUTO FROM ESTOQUE_PRODUTO_COTA EPC ");
 	    query.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = EPC.PRODUTO_EDICAO_ID) ");
 	    query.append(" INNER JOIN PRODUTO P ON (P.ID = PE.PRODUTO_ID) ");
+	    query.append(" INNER JOIN TIPO_PRODUTO TP ON (TP.ID = P.TIPO_PRODUTO_ID) ");
 	    query.append(" INNER JOIN COTA C ON (C.ID = EPC.COTA_ID) ");
 	    query.append(" WHERE C.ID = ? ");
 
@@ -126,7 +127,7 @@ public class EstoqueProdutoCotaDAO {
 
 	    }
 
-	    query.append(" ORDER BY C.ID ");
+	    query.append(" ORDER BY C.ID, EPC.ID ");
 
 	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(
 		    query.toString());
@@ -143,6 +144,7 @@ public class EstoqueProdutoCotaDAO {
 		produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 		produtoEdicao.setNome(rs.getString("NOME"));
 		produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+		produtoEdicao.setColecao(rs.getString("GRUPO_PRODUTO").equalsIgnoreCase("COLECIONAVEL"));
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 
 		estoqueProdutoCota.setCota(cota);

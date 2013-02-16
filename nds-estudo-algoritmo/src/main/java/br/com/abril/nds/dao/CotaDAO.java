@@ -38,6 +38,33 @@ public class CotaDAO {
 	return this.getCotas(-1);
     }
 
+    public List<Cota> getCotaWithEstoqueProdutoCota() {
+	List<Cota> cotas = new ArrayList<Cota>();
+	try {
+	    StringBuilder query = new StringBuilder(
+		    "SELECT C.*, P.NOME FROM COTA C ");
+	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
+	    query.append(" WHERE EXISTS (SELECT EPC.* FROM ESTOQUE_PRODUTO_COTA EPC WHERE EPC.COTA_ID = C.ID) ");
+	    query.append(" ORDER BY C.ID ");
+
+	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(
+		    query.toString());
+	    ResultSet rs = psmt.executeQuery();
+	    while (rs.next()) {
+		Cota cota = new Cota();
+		cota.setId(rs.getLong("ID"));
+		cota.setNumero(rs.getLong("NUMERO_COTA"));
+		cota.setNomePessoa(rs.getString("NOME"));
+
+		cotas.add(cota);
+	    }
+	} catch (Exception ex) {
+	    System.out.println("Ocorreu um erro ao tentar consultar as cotas");
+	    ex.printStackTrace();
+	}
+	return cotas;
+    }
+    
     public Cota getAjustesReparteCota(Cota cota) {
 	try {
 	    PreparedStatement psmt = Conexao.getConexao().prepareStatement("SELECT AJUSTE_APLICADO, FORMA_AJUSTE FROM AJUSTE_REPARTE WHERE COTA_ID = ?");

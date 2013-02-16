@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
-import br.com.abril.nds.process.complementarautomatico.ComplementarAutomatico;
+import br.com.abril.nds.process.complementarautomatico.ComplementarAutomaticoTest;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 
 /**
@@ -17,7 +17,7 @@ import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
  * 		- N/A
  * 
  * Processo Anterior: {@link ReparteProporcional}
- * Próximo Processo: {@link ComplementarAutomatico}
+ * Próximo Processo: {@link ComplementarAutomaticoTest}
  * </p>
  */
 public class EncalheMaximo extends ProcessoAbstrato {

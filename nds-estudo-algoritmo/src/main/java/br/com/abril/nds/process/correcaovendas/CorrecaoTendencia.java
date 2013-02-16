@@ -1,11 +1,8 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.List;
 
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -19,8 +16,14 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class CorrecaoTendencia extends ProcessoAbstrato {
 
-    public CorrecaoTendencia(Cota cota) {
+    private BigDecimal totalReparte;
+    private BigDecimal totalVenda;
+
+    public CorrecaoTendencia(Cota cota, BigDecimal totalReparte,
+	    BigDecimal totalVenda) {
 	super(cota);
+	this.totalReparte = totalReparte;
+	this.totalVenda = totalVenda;
     }
 
     /**
@@ -44,36 +47,11 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 	BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
 
 	Cota cota = (Cota) super.genericDTO;
-	List<EstoqueProdutoCota> listEstoqueProdutoCota = cota
-		.getEstoqueProdutoCotas();
 
-	BigDecimal totalReparte = BigDecimal.ZERO;
-	BigDecimal totalVenda = BigDecimal.ZERO;
+	if (this.totalVenda.compareTo(BigDecimal.ZERO) != 0) {
 
-	int iEdicaoBase = 0;
-	while (iEdicaoBase < listEstoqueProdutoCota.size()) {
-
-	    EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
-		    .get(iEdicaoBase);
-
-	    BigInteger quantidadeRecebida = estoqueProdutoCota
-		    .getQuantidadeRecebida().toBigInteger();
-	    BigInteger quantidadeDevolvida = estoqueProdutoCota
-		    .getQuantidadeDevolvida().toBigInteger();
-
-	    totalReparte = totalReparte.add(new BigDecimal(quantidadeRecebida));
-
-	    BigInteger venda = quantidadeRecebida.subtract(quantidadeDevolvida);
-
-	    totalVenda = totalVenda.add(new BigDecimal(venda));
-
-	    iEdicaoBase++;
-	}
-
-	if (totalVenda.compareTo(BigDecimal.ZERO) != 0) {
-
-	    BigDecimal percentualVenda = totalVenda.divide(totalReparte, 1,
-		    BigDecimal.ROUND_FLOOR);
+	    BigDecimal percentualVenda = this.totalVenda.divide(
+		    this.totalReparte, 1, BigDecimal.ROUND_FLOOR);
 
 	    BigDecimal oneCompare = BigDecimal.ONE;
 	    oneCompare = oneCompare.divide(new BigDecimal(1), 1,
