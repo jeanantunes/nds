@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,18 @@ public interface ConferenciaEncalheService {
 	 * @return boolean
 	 */
 	public boolean isCotaEmiteNfe(Integer numeroCota);
+	
+	
+	/**
+	 * 
+	 * @param conferenciaEncalhe
+	 * @param numeroCota
+	 * @param dataOperacao
+	 */
+	public void validarQtdeEncalheExcedeQtdeReparte(
+			ConferenciaEncalheDTO conferenciaEncalhe,
+			Integer numeroCota, 
+			Date dataOperacao);
 	
 	/**
 	 * Método faz seguintes verificações:
@@ -133,12 +146,12 @@ public interface ConferenciaEncalheService {
 	 * @param numeroCota
 	 * @param codigoDeBarras
 	 * 
-	 * @return ProdutoEdicaoDTO
+	 * @return List<ProdutoEdicaoDTO>
 	 * 
 	 * @throws ChamadaEncalheCotaInexistenteException
 	 * @throws EncalheRecolhimentoParcialException
 	 */
-	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
+	List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
 	
 	/**
 	 * Obtém dados do produtoEdicao através do código SM do mesmo se houver chamada de encalhe.

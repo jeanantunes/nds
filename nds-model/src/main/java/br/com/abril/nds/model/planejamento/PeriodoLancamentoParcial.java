@@ -2,6 +2,7 @@ package br.com.abril.nds.model.planejamento;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -47,7 +48,7 @@ public class PeriodoLancamentoParcial {
 	@Column(name = "TIPO", nullable = false)
 	private TipoLancamentoParcial tipo;
 
-	@OneToOne(optional = false)
+	@OneToOne(optional = false, cascade=CascadeType.REMOVE)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
 	

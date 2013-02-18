@@ -1,8 +1,11 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.MapaAbastecimentoService;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
@@ -61,12 +65,15 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	 * Gera Mapa para Impressão por box
 	 */
 	@Transactional
-	public HashMap<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
+	public TreeMap<String, ProdutoMapaDTO> obterMapaDeImpressaoPorBox(
 			FiltroMapaAbastecimentoDTO filtro) {
 		
 		List<Integer> boxes =  new ArrayList<Integer>();
 		
-		HashMap<String, ProdutoMapaDTO> produtoMapa = new HashMap<String, ProdutoMapaDTO>();
+		
+		CompararProdutoMapaDTO comparator = new CompararProdutoMapaDTO();
+		TreeMap<String,ProdutoMapaDTO> produtoMapa = new TreeMap<String, ProdutoMapaDTO>();		
+		comparator.setProdutoMapa(produtoMapa);
 		
 		List<ProdutoAbastecimentoDTO> produtosPorBox = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
 		
@@ -98,9 +105,13 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			
 		}
 		
-		preencheBoxNaoUtilizado(boxes, produtoMapa);		
+		preencheBoxNaoUtilizado(boxes, produtoMapa);	
 		
-		return produtoMapa;
+		TreeMap<String,ProdutoMapaDTO> produtoMapaOrdenada = new TreeMap<String, ProdutoMapaDTO>(comparator);	
+		
+		produtoMapaOrdenada.putAll(produtoMapa);
+		
+		return produtoMapaOrdenada;
 	}
 		
 	/**
@@ -109,7 +120,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	 * @param boxes
 	 * @param produtos
 	 */
-	private void preencheBoxNaoUtilizado(List<Integer> boxes, HashMap<String, ProdutoMapaDTO> produtos) {
+	private void preencheBoxNaoUtilizado(List<Integer> boxes, TreeMap<String, ProdutoMapaDTO> produtos) {
 		for(Integer keyBox : boxes) {
 			
 			for(String keyProduto : produtos.keySet()) {
@@ -448,4 +459,31 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			FiltroMapaAbastecimentoDTO filtro) {
 		return movimentoEstoqueCotaRepository.countObterMapaDeAbastecimentoPorEntregador(filtro);
 	}
+	
+    private static class CompararProdutoMapaDTO implements Comparator<String> {
+        
+    	TreeMap<String,ProdutoMapaDTO> produtoMapa;
+		
+
+		@Override
+		public int compare(String o1, String o2) {
+			ProdutoMapaDTO p1 = produtoMapa.get(o1);
+			ProdutoMapaDTO p2 = produtoMapa.get(o2);
+			
+			
+			int result = p1.getNomeProduto().compareTo(p2.getNomeProduto());
+			if (result == 0)
+				result = p1.getNumeroEdicao().compareTo(p2.getNumeroEdicao());
+			return result;
+		}
+
+		
+
+		/**
+		 * @param produtoMapa the produtoMapa to set
+		 */
+		public void setProdutoMapa(TreeMap<String, ProdutoMapaDTO> produtoMapa) {
+			this.produtoMapa = produtoMapa;
+		}
+    }
 }

@@ -53,7 +53,7 @@
 						<strong>Pacote Padrão</strong>
 					</td>
 					<td bgcolor="#F5F5F5" align="center">
-						<strong>Reparte</strong>
+						<strong>Saldo</strong>
 					</td>
 					<td bgcolor="#F5F5F5" align="center">
 						<strong>Diferença</strong>

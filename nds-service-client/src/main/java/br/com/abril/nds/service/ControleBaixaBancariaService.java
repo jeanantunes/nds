@@ -19,10 +19,11 @@ public interface ControleBaixaBancariaService {
 	 * 
 	 * @param statusControle - status de controle da baixa
 	 * @param dataOperacao - data de operação
+	 * @param dataPagamento - data de pagamento
 	 * @param usuario - usuário
 	 * @param banco - banco
 	 */
 	void alterarControleBaixa(StatusControle statusControle, Date dataOperacao,
-			 				  Usuario usuario, Banco banco);
+							  Date dataPagamento, Usuario usuario, Banco banco);
 	
 }

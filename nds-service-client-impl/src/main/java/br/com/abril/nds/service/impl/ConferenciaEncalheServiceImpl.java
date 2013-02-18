@@ -57,13 +57,14 @@ import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
@@ -83,7 +84,6 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
-import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
@@ -94,6 +94,7 @@ import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
@@ -159,6 +160,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+	
+	@Autowired
+	private EstoqueProdutoCotaJuramentadoRepository estoqueProdutoCotaJuramentadoRepository;
 	
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
@@ -752,11 +756,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Integer posicaoDia = (qtde.intValue() + 1);
 		
 		return posicaoDia;
-		
+	
 	}
+	
+	
 	
 	@Transactional(readOnly = true)
 	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
+		
 		
 		if (numeroCota == null) {
 			
@@ -774,6 +781,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if (produtoEdicao != null){
 		    
+			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+			
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
 		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
@@ -792,11 +801,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             produtoEdicaoDTO.setPrecoVenda(precoVenda);
-
-			BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
-
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			produtoEdicaoDTO.setDesconto(valorDesconto);
+			
+			carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, idProdutoEdicao, dataOperacao);
+			
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
 			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
@@ -833,7 +840,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.WARNING, "SM é obrigatório.");
 		}
 		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sm);
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sm, dataOperacao);
 		
 		ProdutoEdicaoDTO produtoEdicaoDTO = null;
 		
@@ -857,11 +866,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
             produtoEdicaoDTO.setPrecoVenda(precoVenda);
-
-			BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
-
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			produtoEdicaoDTO.setDesconto(valorDesconto);
+			
+            carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, produtoEdicao.getId(), dataOperacao);
+			
 			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
 			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
 			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
@@ -885,8 +892,51 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return produtoEdicaoDTO;
 	}	
 	
+	/**
+	 * Carrega no objeto produtoEdicaoDTO os valores relativos
+	 * ao desconto aplicado no produtoEdicao.
+	 * 
+	 * @param produtoEdicaoDTO
+	 * @param numeroCota
+	 * @param idProdutoEdicao
+	 * @param dataOperacao
+	 */
+	private void carregarValoresAplicadosProdutoEdicao( ProdutoEdicaoDTO produtoEdicaoDTO, 
+														Integer numeroCota, 
+														Long idProdutoEdicao, 
+														Date dataOperacao) {
+
+		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, idProdutoEdicao, dataOperacao);
+		
+		BigDecimal precoComDesconto = produtoEdicaoDTO.getPrecoVenda();
+		BigDecimal precoVenda 		= produtoEdicaoDTO.getPrecoVenda();
+		
+		if(valoresAplicados != null) {
+		
+			precoComDesconto = valoresAplicados.getPrecoComDesconto() != null ? valoresAplicados.getPrecoComDesconto() : produtoEdicaoDTO.getPrecoVenda();
+			precoVenda = valoresAplicados.getPrecoVenda() != null ? valoresAplicados.getPrecoVenda() : produtoEdicaoDTO.getPrecoVenda();
+		
+		} 
+		
+		if(precoComDesconto == null) {
+			precoComDesconto = BigDecimal.ZERO;
+		}
+		
+		if(precoVenda == null) {
+			precoVenda = BigDecimal.ZERO;
+		}
+		
+		produtoEdicaoDTO.setDesconto(precoVenda.subtract(precoComDesconto));
+		produtoEdicaoDTO.setPrecoComDesconto(precoComDesconto);
+		produtoEdicaoDTO.setPrecoVenda(precoVenda);
+		
+		
+	}
+	
+	
+	
 	@Transactional(readOnly = true)
-	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
+	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
 		
 		if (numeroCota == null){
 			
@@ -898,56 +948,62 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de Barras é obrigatório.");
 		}
 		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoDeBarras);
+		List<ProdutoEdicao> produtosEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoDeBarras);
 		
-		ProdutoEdicaoDTO produtoEdicaoDTO = null;
+		List<ProdutoEdicaoDTO> produtosEdicaoDTO = null;
 		
-		if (produtoEdicao != null){
-		    
-			produtoEdicaoDTO = new ProdutoEdicaoDTO();
+		if (produtosEdicao != null && !produtosEdicao.isEmpty()) {
+
+			produtosEdicaoDTO = new ArrayList<>();
+			
+			ProdutoEdicaoDTO produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
 		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		    
-			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
-			
-			if( chamadaEncalhe != null) {
-				Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
-				produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
-				produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
-				produtoEdicaoDTO.setDia(dia);
-			}
-			
-			produtoEdicaoDTO.setId(produtoEdicao.getId());
-			produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
-			produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-            produtoEdicaoDTO.setPrecoVenda(precoVenda);
-
-			BigDecimal percentualDesconto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
-
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			produtoEdicaoDTO.setDesconto(valorDesconto);
-			produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
-			produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
-			produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
-			produtoEdicaoDTO.setPeso(produtoEdicao.getPeso());
-			produtoEdicaoDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-			produtoEdicaoDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
-			produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
-			produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
-			produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
-			produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
-			
-			produtoEdicaoDTO.setNomeFornecedor(this.obterNomeFornecedor(produtoEdicao));
-			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
-			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
-			
-			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
-			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
-			
+		    for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+		    
+				ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+				
+				if( chamadaEncalhe != null) {
+					Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
+					produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
+					produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
+					produtoEdicaoDTO.setDia(dia);
+				}
+				
+				produtoEdicaoDTO.setId(produtoEdicao.getId());
+				produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
+				produtoEdicaoDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+	            produtoEdicaoDTO.setPrecoVenda(precoVenda);
+	
+	            Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+	
+				carregarValoresAplicadosProdutoEdicao(produtoEdicaoDTO, numeroCota, produtoEdicao.getId(), dataOperacao);
+				
+				produtoEdicaoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+				produtoEdicaoDTO.setPeb(produtoEdicao.getPeb());
+				produtoEdicaoDTO.setPrecoCusto(produtoEdicao.getPrecoCusto());
+				produtoEdicaoDTO.setPeso(produtoEdicao.getPeso());
+				produtoEdicaoDTO.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+				produtoEdicaoDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
+				produtoEdicaoDTO.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
+				produtoEdicaoDTO.setExpectativaVenda(produtoEdicao.getExpectativaVenda());
+				produtoEdicaoDTO.setPermiteValeDesconto(produtoEdicao.isPermiteValeDesconto());
+				produtoEdicaoDTO.setParcial(produtoEdicao.isParcial());
+				
+				produtoEdicaoDTO.setNomeFornecedor(this.obterNomeFornecedor(produtoEdicao));
+				produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
+				produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
+				
+				Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+				produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
+				
+				produtosEdicaoDTO.add(produtoEdicaoDTO);
+		    }
 		}
 		
-		return produtoEdicaoDTO;
+		return produtosEdicaoDTO;
 	}
 
 	private String obterEditor(ProdutoEdicao produtoEdicao) {
@@ -1193,7 +1249,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		List<ConferenciaEncalhe> listaConferenciaEncalhe = controleConferenciaEncalheCota.getConferenciasEncalhe();
 		
 		if( listaConferenciaEncalhe==null || listaConferenciaEncalhe.isEmpty() ) {
-			throw new IllegalStateException("Nenhum registro de conferencia de encalhe, não foi possível fazer reabertura.");
+			
+			return;
+			
 		}
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = listaConferenciaEncalhe.get(0).getMovimentoEstoqueCota();
@@ -1298,7 +1356,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			validarQtdeEncalheExcedeQtdeReparte(
 					conferenciaEncalheDTO,
-					controleConferenciaEncalheCota.getCota().getId(), 
+					controleConferenciaEncalheCota.getCota().getNumeroCota(), 
 					dataOperacao);
 			
 			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
@@ -1363,46 +1421,42 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		MovimentoEstoque movimentoEstoque = null;
+
+		movimentoEstoqueCota = conferenciaEncalheFromDB.getMovimentoEstoqueCota();
+
+		movimentoEstoque = conferenciaEncalheFromDB.getMovimentoEstoque();
+			
+		if(movimentoEstoqueCota!=null) {
 		
-		if(StatusOperacao.CONCLUIDO.equals(statusOperacao)) {
+			atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO);
+		
+		} else {
 			
-			movimentoEstoqueCota = conferenciaEncalheFromDB.getMovimentoEstoqueCota();
+			movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
+		}
 			
-			movimentoEstoque = conferenciaEncalheFromDB.getMovimentoEstoque();
+		if(movimentoEstoque!=null) {
+		
+			atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO);
 			
-			if(movimentoEstoqueCota!=null) {
-			
-				atualizarMovimentoEstoqueCota(movimentoEstoqueCota, conferenciaEncalheDTO, mapaTipoMovimentoEstoque);
-			
-			} else {
-				
-				movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-			}
-			
-			if(movimentoEstoque!=null) {
-			
-				atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO, mapaTipoMovimentoEstoque);
-			
-			} else {
-				
-				movimentoEstoque = criarNovoRegistroMovimentoEstoque(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-				
-			}
-			
+		} else {	
+		
+		movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+				controleConferenciaEncalheCota, 
+				conferenciaEncalheDTO, 
+				numeroCota, 
+				dataRecolhimentoReferencia, 
+				dataCriacao, 
+				mapaTipoMovimentoEstoque, 
+				usuario);
+		
 		}
 		
 		atualizarRegistroConferenciaEncalhe(
@@ -1410,7 +1464,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				conferenciaEncalheFromDB,
 				movimentoEstoqueCota,
 				movimentoEstoque);
-
 		
 	}
 	
@@ -1439,27 +1492,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		MovimentoEstoque movimentoEstoque = null;
-		
-		if(StatusOperacao.CONCLUIDO.equals(statusOperacao)) {
 			
-			 movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-			 
-			 movimentoEstoque = criarNovoRegistroMovimentoEstoque(
-						controleConferenciaEncalheCota, 
-						conferenciaEncalheDTO, 
-						numeroCota, 
-						dataRecolhimentoReferencia, 
-						dataCriacao, 
-						mapaTipoMovimentoEstoque, 
-						usuario);
-		}
+		movimentoEstoqueCota = criarNovoRegistroMovimentoEstoqueCota(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
+		 
+		 movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario);
 		
 		criarNovoRegistroConferenciaEncalhe(
 				controleConferenciaEncalheCota, 
@@ -1814,170 +1864,51 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * Valida se a quantidade da conferência de encalhe não excede o reparte 
 	 * de um produtoEdicao para determinada cota.
 	 * 
-	 * @param idCota
-	 * @param idProdutoEdicao
+	 * @param conferenciaEncalhe
+	 * @param numeroCota
 	 * @param dataOperacao
-	 * @param dataRecolhimentoDistribuidor
-	 * @param qtdeExemplarEncalhe
 	 */
-	private void validarQtdeEncalheExcedeQtdeReparte(
+	@Transactional
+	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
-			Long idCota, 
+			Integer numeroCota, 
 			Date dataOperacao) {
 		
-		Long idProdutoEdicao 				= conferenciaEncalhe.getIdProdutoEdicao();
-		BigInteger qtdeExemplarEncalhe 		= conferenciaEncalhe.getQtdExemplar();
-		Date dataRecolhimentoDistribuidor 	= conferenciaEncalhe.getDataRecolhimento();		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		if(dataOperacao == null) {
+			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		}
 		
 		ConferenciaEncalhe conferenciaEncalheFromDB = null;
 		
-		if(conferenciaEncalhe.getIdConferenciaEncalhe()!=null){
+		boolean indNovoRegistroConfEncalheCota = conferenciaEncalhe.getIdConferenciaEncalhe() == null || 
+				(conferenciaEncalhe.getIdConferenciaEncalhe() < 0);
 
-			conferenciaEncalheFromDB = conferenciaEncalheRepository.buscarPorId(conferenciaEncalhe.getIdConferenciaEncalhe());
-			
-		}
+		BigInteger qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos = obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(cota.getId(), conferenciaEncalhe.getIdProdutoEdicao());
 		
-		BigInteger qtdeReparte = obterQtdeReparteParaProdutoEdicao(
-				idCota, 
-				idProdutoEdicao, 
-				dataOperacao, 
-				dataRecolhimentoDistribuidor);
-		
-		if( conferenciaEncalhe.getIdConferenciaEncalhe() == null ) {
+		if(indNovoRegistroConfEncalheCota) {
+
+			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
-			
-			if(qtdeExemplarEncalhe.compareTo(qtdeReparte)>0) {
+			if(qtdeNew.compareTo(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) > 0) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
 			}
 			
-			
 		} else {
+
+			conferenciaEncalheFromDB = conferenciaEncalheRepository.buscarPorId(conferenciaEncalhe.getIdConferenciaEncalhe());
 			
 			BigInteger qtdeOld = conferenciaEncalheFromDB.getQtde();
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
-			if(qtdeOld.compareTo(qtdeNew)>=0) {
-				
-				return;
-				
-			} else {
-				
-			      	
-				BigInteger qtdeAMais = qtdeNew.subtract(qtdeOld);
-				
-				if(qtdeAMais.compareTo(qtdeReparte) <= 0) {
-					
-					return;
-					
-				} else {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
-					
-				}
-				
+			if(qtdeNew.compareTo( qtdeOld.add(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos) ) > 0) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
 			}
 			
 		}
 		
 	}
-	
-	/**
-	 * Obtém o reparte de um produtoEdicao para determinada cota.
-	 * 
-	 * @param idCota
-	 * @param idProdutoEdicao
-	 * @param dataOperacao
-	 * @param dataRecolhimentoDistribuidor
-	 * 
-	 * @return BigInteger
-	 */
-	private BigInteger obterQtdeReparteParaProdutoEdicao(
-			Long idCota, 
-			Long idProdutoEdicao, 
-			Date dataOperacao,
-			Date dataRecolhimentoDistribuidor) {
-		
-		ProdutoEdicao produtoEdicao 	= produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-		
-		boolean indParcialNaoFinal = false;
-		
-		if(produtoEdicao.isParcial()) {
-			
-			LancamentoParcial lancamentoParcialFinal =  lancamentoParcialRepository.obterLancamentoParcial(produtoEdicao.getId(), dataOperacao);
-			
-			indParcialNaoFinal = (lancamentoParcialFinal == null);
-		} 
-
-		if(indParcialNaoFinal) {
-			
-			Date dataLancamento = lancamentoRepository.obterDataUltimoLancamentoParcial(idProdutoEdicao, dataOperacao);
-			
-			if(dataLancamento == null) {
-				throw new IllegalStateException("Não foi possível validar a quantidade de " + 
-												"reparte para o produtoEdicao de id: " + idProdutoEdicao);
-			}
-			
-			BigInteger qtdeReparte = movimentoEstoqueCotaRepository.obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
-					idCota, 
-					idProdutoEdicao, 
-					dataLancamento, 
-					dataRecolhimentoDistribuidor, 
-					OperacaoEstoque.ENTRADA);
-
-			if(qtdeReparte == null) {
-				throw new IllegalStateException("Não foi possível validar a quantidade de " + 
-												"reparte para o produtoEdicao de id: " + idProdutoEdicao);
-			}
-			
-			return qtdeReparte;
-			
-		} else {
-
-			
-			BigInteger qtdeDevolvida = BigInteger.ZERO;
-			
-			BigInteger qtdeRecebida = BigInteger.ZERO;
-
-			EstoqueProdutoCota estoqueProdutoCota = estoqueProdutoCotaRepository.buscarEstoquePorProdutEdicaoECota(idProdutoEdicao, idCota);
-			
-			if(estoqueProdutoCota != null) {
-				
-				qtdeDevolvida 	= (estoqueProdutoCota.getQtdeDevolvida() == null) ? BigInteger.ZERO : estoqueProdutoCota.getQtdeDevolvida();
-				qtdeRecebida 	=  (estoqueProdutoCota.getQtdeRecebida() == null) ? BigInteger.ZERO : estoqueProdutoCota.getQtdeRecebida();
-
-			}
-			
-			return  qtdeRecebida.subtract(qtdeDevolvida);
-			
-		}
-		
-	}
-	
-//	/**
-//	 * Verifica se os itens da conferenciaEncalhe são todos referentes ao CHAMADÃO, do contrário,
-//	 * não será permitido salvar a conferência.
-//	 * 
-//	 * @param listaConferenciaEncalhe
-//	 */
-//	private void validarPermissaoSalvarConferenciaEncalhe(List<ConferenciaEncalheDTO> listaConferenciaEncalhe) throws EncalheSemPermissaoSalvarException {
-//		
-//		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
-//			return;
-//		}
-//		
-//		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalhe) {
-//			
-//			if(!TipoChamadaEncalhe.CHAMADAO.equals(conferencia.getTipoChamadaEncalhe()))  {
-//				
-//				throw new EncalheSemPermissaoSalvarException("Não é possível salvar conferência de encalhe, o produto \"" + 
-//															 conferencia.getNomeProduto() +  
-//															"\" não pertence a um \"CHAMADÃO\"");
-//				
-//			}
-//			
-//		}
-//		
-//	}
 	
 	/**
 	 * Exclui um registros de ConferenciaEncalhe e movimentos relacionados como 
@@ -2159,6 +2090,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota);
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), dataOperacao);
+		
+		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
 		return movimentoEstoqueCota;
 		
@@ -2408,12 +2345,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @param movimentoEstoqueCota
 	 * @param conferenciaEncalheDTO
-	 * @param mapaTipoMovimentoEstoque
 	 */
-	private void atualizarMovimentoEstoqueCota(
-			MovimentoEstoqueCota movimentoEstoqueCota, 
-			ConferenciaEncalheDTO conferenciaEncalheDTO, 
-			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque) {
+	private void atualizarMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota, 
+											   ConferenciaEncalheDTO conferenciaEncalheDTO) {
 		
 		BigInteger oldQtdeMovEstoqueCota = movimentoEstoqueCota.getQtde();
 		
@@ -2421,20 +2355,44 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		movimentoEstoqueCota.setQtde(newQtdeMovEstoquecota);
 		
-		movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
+		this.movimentoEstoqueCotaRepository.alterar(movimentoEstoqueCota);
+
+		GrupoMovimentoEstoque grupoMovimentoEstoque = 
+			((TipoMovimentoEstoque) movimentoEstoqueCota.getTipoMovimento())
+				.getGrupoMovimentoEstoque();
 		
-		EstoqueProdutoCota estoqueProdutoCota =  movimentoEstoqueCota.getEstoqueProdutoCota();
-		
-		BigInteger qtdDevolvida = 
+		if (GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO.equals(grupoMovimentoEstoque)) {
+			
+			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado =
+				movimentoEstoqueCota.getEstoqueProdutoCotaJuramentado();
+			
+			BigInteger qtdDevolvida = 
+				estoqueProdutoCotaJuramentado.getQtde() != null ? 
+					estoqueProdutoCotaJuramentado.getQtde() : BigInteger.ZERO;
+					
+			qtdDevolvida = 
+				qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
+						
+			estoqueProdutoCotaJuramentado.setQtde(qtdDevolvida);
+						
+			this.estoqueProdutoCotaJuramentadoRepository.alterar(estoqueProdutoCotaJuramentado);
+			
+		} else {
+			
+			EstoqueProdutoCota estoqueProdutoCota =  
+				movimentoEstoqueCota.getEstoqueProdutoCota();
+
+			BigInteger qtdDevolvida = 
 				estoqueProdutoCota.getQtdeDevolvida() != null ? 
 					estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
 					
-		qtdDevolvida = qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
-		
-		estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida);
-		
-		estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
-		
+			qtdDevolvida = 
+				qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
+						
+			estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida);
+						
+			this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+		}
 	}
 	
 	/**
@@ -2443,12 +2401,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @param movimentoEstoque
 	 * @param conferenciaEncalheDTO
-	 * @param mapaTipoMovimentoEstoque
 	 */
-	private void atualizarMovimentoEstoque(
-			MovimentoEstoque movimentoEstoque, 
-			ConferenciaEncalheDTO conferenciaEncalheDTO, 
-			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque) {
+	private void atualizarMovimentoEstoque(MovimentoEstoque movimentoEstoque, 
+										   ConferenciaEncalheDTO conferenciaEncalheDTO) {
 		
 		BigInteger oldQtdeMovEstoque = movimentoEstoque.getQtde();
 		
@@ -2456,39 +2411,38 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		movimentoEstoque.setQtde(newQtdeMovEstoque);
 		
-		GrupoMovimentoEstoque grupoMovimentoEstoque = ((TipoMovimentoEstoque)movimentoEstoque.getTipoMovimento()).getGrupoMovimentoEstoque();
+		GrupoMovimentoEstoque grupoMovimentoEstoque = ((TipoMovimentoEstoque) movimentoEstoque.getTipoMovimento()).getGrupoMovimentoEstoque();
 		
-		movimentoEstoqueRepository.alterar(movimentoEstoque);
+		this.movimentoEstoqueRepository.alterar(movimentoEstoque);
 		
 		EstoqueProduto estoqueProduto =  movimentoEstoque.getEstoqueProduto();
 		
-		if(estoqueProduto != null) {
+		if (estoqueProduto != null) {
 			
-			if(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(grupoMovimentoEstoque)) {
+			if (GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.equals(grupoMovimentoEstoque)) {
 
 				BigInteger qtdeOriginal = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
+				
 				estoqueProduto.setQtdeSuplementar(qtdeOriginal.subtract(oldQtdeMovEstoque));
 
 				estoqueProduto.setQtdeSuplementar(estoqueProduto.getQtdeSuplementar().add(newQtdeMovEstoque));
-				estoqueProdutoRepository.alterar(estoqueProduto);
-
 				
+				this.estoqueProdutoRepository.alterar(estoqueProduto);
+
 			} else {
 				
-				BigInteger qtdeOriginal = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
-				estoqueProduto.setQtde(qtdeOriginal.subtract(oldQtdeMovEstoque));
-
-				estoqueProduto.setQtde(estoqueProduto.getQtde().add(newQtdeMovEstoque));
-				estoqueProdutoRepository.alterar(estoqueProduto);
+				BigInteger qtdeEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
 				
+				estoqueProduto.setQtdeDevolucaoEncalhe(qtdeEncalhe.subtract(oldQtdeMovEstoque));
+
+				estoqueProduto.setQtdeDevolucaoEncalhe(estoqueProduto.getQtdeDevolucaoEncalhe().add(newQtdeMovEstoque));
+				
+				this.estoqueProdutoRepository.alterar(estoqueProduto);			
 			}
-			
 		}
 		
-		estoqueProdutoRepository.alterar(estoqueProduto);
-		
+		this.estoqueProdutoRepository.alterar(estoqueProduto);	
 	}
-	
 
 	/**
 	 * Apos finalizar conferencia de encalhe sera verificado        
@@ -2695,11 +2649,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							idCota,
 							controleConferenciaEncalheCota.getId(),
 							produtoEdicaoSlip.getIdProdutoEdicao());
-//					obterQtdeReparteParaProdutoEdicao(
-//					idCota, 
-//					produtoEdicaoSlip.getIdProdutoEdicao(), 
-//					dataOperacao, 
-//					produtoEdicaoSlip.getDataRecolhimentoDistribuidor());
 			
 			produtoEdicaoSlip.setReparte(reparte);
 			

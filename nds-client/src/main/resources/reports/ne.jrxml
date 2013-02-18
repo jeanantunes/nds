@@ -589,9 +589,9 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					<textFieldExpression><![CDATA[$F{destinatarioUF}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="bdfbf760-9256-482f-8292-484de1689df0" x="481" y="38" width="81" height="16"/>
+					<reportElement uuid="bdfbf760-9256-482f-8292-484de1689df0" x="481" y="38" width="84" height="16"/>
 					<textElement verticalAlignment="Middle">
-						<font size="7"/>
+						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{destinatarioInscricaoEstadual}]]></textFieldExpression>
 				</textField>

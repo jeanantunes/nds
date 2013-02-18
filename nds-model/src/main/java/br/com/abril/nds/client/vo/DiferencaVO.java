@@ -77,8 +77,6 @@ public class DiferencaVO implements Serializable {
 	
 	private boolean existemRateios;
 	
-	private boolean redirecionarProdutosEstoque;
-	
 	private TipoDirecionamentoDiferenca tipoDirecionamento;
 	
 	private TipoDiferenca tipoDiferenca;
@@ -152,20 +150,6 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setTipoDirecionamento(TipoDirecionamentoDiferenca tipoDirecionamento) {
 		this.tipoDirecionamento = tipoDirecionamento;
-	}
-
-	/**
-	 * @return the redirecionarProdutosEstoque
-	 */
-	public boolean isRedirecionarProdutosEstoque() {
-		return redirecionarProdutosEstoque;
-	}
-
-	/**
-	 * @param redirecionarProdutosEstoque the redirecionarProdutosEstoque to set
-	 */
-	public void setRedirecionarProdutosEstoque(boolean redirecionarProdutosEstoque) {
-		this.redirecionarProdutosEstoque = redirecionarProdutosEstoque;
 	}
 
 	/**
@@ -581,5 +565,6 @@ public class DiferencaVO implements Serializable {
 	public void setExistemRateios(boolean existemRateios) {
 		this.existemRateios = existemRateios;
 	}
+
 
 }

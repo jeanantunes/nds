@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.financeiro;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -95,27 +96,28 @@ public class NegociacaoDividaController extends BaseController {
 		this.result = result;
 	}
 
-	
 	@Path("/")
 	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA)
 	public void index(){
 		
-		Integer qntdParcelas = distribuidorService.obter().getNegociacaoAteParcelas();
+		Integer qntdParcelas = this.distribuidorService.obter().getNegociacaoAteParcelas();
 		List<Integer> parcelas = new ArrayList<Integer>();
+		
 		for(int i = 1; i <= qntdParcelas; i++){
 			parcelas.add(i);
 		}
 		
-		
 		FiltroConsultaBancosDTO  filtro = new FiltroConsultaBancosDTO();
 		filtro.setAtivo(true);
-		List<Banco> bancos = bancoService.obterBancos(filtro);
 		
-	
+		List<Banco> bancos = this.bancoService.obterBancos(filtro);
 		
-		result.include("qntdParcelas", parcelas);
-		result.include("bancos", bancos);
-		result.include("tipoPagamento", TipoCobranca.values());
+		this.result.include("qntdParcelas", parcelas);
+		this.result.include("bancos", bancos);
+		
+		List<TipoCobranca> tiposCobranca = this.cobrancaService.obterTiposCobrancaCadastradas();
+		
+		this.result.include("tipoPagamento", tiposCobranca);
 		
 		this.session.setAttribute(ID_ULTIMA_NEGOCIACAO, null);
 	}
@@ -143,7 +145,7 @@ public class NegociacaoDividaController extends BaseController {
 			listDividas.add(new NegociacaoDividaVO(negociacao));
 		}
 		
-		result.use(
+		this.result.use(
 				FlexiGridJson.class).from(
 						listDividas).total(
 								dto.getQuantidadeRegistros().intValue()).page(page).serialize();
@@ -153,7 +155,7 @@ public class NegociacaoDividaController extends BaseController {
 	@Path("/pesquisarDetalhes.json")
 	public void pesquisarDetalhes(Long idCobranca) {
 		
-		List<NegociacaoDividaDetalheVO> listDividas = negociacaoDividaService.obterDetalhesCobranca(idCobranca);//new ArrayList<NegociacaoDividaDetalheVO>();
+		List<NegociacaoDividaDetalheVO> listDividas = negociacaoDividaService.obterDetalhesCobranca(idCobranca);
 		
 		result.use(FlexiGridJson.class).from(listDividas).total(listDividas.size()).page(1).serialize();
 	}
@@ -258,11 +260,11 @@ public class NegociacaoDividaController extends BaseController {
 												 "Dia(s) quinzenal(ais) inválido(s).");
 				}
 				
-				if (quinzenalDia1.compareTo(30) == 1
-						|| quinzenalDia2.compareTo(30) == 1) {
+				if (quinzenalDia1.compareTo(31) == 1
+						|| quinzenalDia2.compareTo(31) == 1) {
 					
 					throw new ValidacaoException(TipoMensagem.WARNING,
-												 "Dia(s) quinzenal(ais) não deve(m) ser maior do que 30.");
+												 "Dia(s) quinzenal(ais) não deve(m) ser maior do que 31.");
 				}
 				
 				if (quinzenalDia1.compareTo(quinzenalDia2) >= 0) {
@@ -273,11 +275,21 @@ public class NegociacaoDividaController extends BaseController {
 				
 				while (true) {
 					
+					if (quinzenalDia1 > proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH)){
+						
+						quinzenalDia1 = proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH);
+					}
+					
 					proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia1);
 					
 					if (proximoDia.getTime().compareTo(dataBase) == 1) {
 						
 						return proximoDia.getTime();
+					}
+					
+					if (quinzenalDia2 > proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH)){
+						
+						quinzenalDia2 = proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH);
 					}
 					
 					proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia2);
@@ -300,15 +312,21 @@ public class NegociacaoDividaController extends BaseController {
 												 "Dia do mês inválido.");
 				}
 				
-				if (diaMensal.compareTo(30) == 1) {
+				if (diaMensal.compareTo(31) == 1) {
 					
 					throw new ValidacaoException(TipoMensagem.WARNING,
-												 "Dia do mês não deve ser maior do que 30.");
+												 "Dia do mês não deve ser maior do que 31.");
 				}
 				
 				while (true) {
 					
-					proximoDia.set(Calendar.DAY_OF_MONTH, diaMensal);
+					if (diaMensal > proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH)){
+						
+						proximoDia.set(Calendar.DAY_OF_MONTH, proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH));
+					} else {
+						
+						proximoDia.set(Calendar.DAY_OF_MONTH, diaMensal);
+					}
 					
 					if (proximoDia.getTime().compareTo(dataBase) == 1) {
 						
@@ -317,6 +335,7 @@ public class NegociacaoDividaController extends BaseController {
 
 					mesBase++;
 					
+					proximoDia.set(Calendar.DAY_OF_MONTH, 1);
 					proximoDia.set(Calendar.MONTH, mesBase);
 				}
 		}
@@ -346,17 +365,11 @@ public class NegociacaoDividaController extends BaseController {
 			Integer ativarAposPagar, List<ParcelaNegociacao> parcelas, List<Long> idsCobrancas, Long idBanco,
 			BigDecimal valorDividaComissao,boolean recebeCobrancaPorEmail){
 		
-		/*if (!validarValorTotalNegociacao(parcelas, valorDividaComissao)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Valores das parcelas não conferem com o valor total da dívida.");
-		}*/
-		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
 		
 		if (idNegociacao != null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Negociação já efetuada.");
 			
-			/*this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Negociação já efetuada."), "result").recursive().serialize();
-			return;*/
+			throw new ValidacaoException(TipoMensagem.WARNING, "Negociação já efetuada.");
 		}
 		
 		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) 
@@ -368,7 +381,7 @@ public class NegociacaoDividaController extends BaseController {
 			
 			parcelas = null;
 		} else {
-			System.out.println("NAO COMISSAO");
+			
 			formaCobranca = new FormaCobranca();
 			formaCobranca.setTipoCobranca(tipoCobranca);
 			formaCobranca.setTipoFormaCobranca(tipoFormaCobranca);
@@ -388,6 +401,19 @@ public class NegociacaoDividaController extends BaseController {
 			
 			formaCobranca.setConcentracaoCobrancaCota(concentracaoCobrancaCota);
 			comissaoUtilizar = null;
+			
+			if (diaInicio != null){
+			
+				List<Integer> diasMes = new ArrayList<Integer>();
+				diasMes.add(diaInicio);
+				
+				if (diaFim != null){
+					
+					diasMes.add(diaFim);
+				}
+				
+				formaCobranca.setDiasDoMes(diasMes);
+			}
 		}
 		
 		idNegociacao = this.negociacaoDividaService.criarNegociacao(
@@ -407,25 +433,30 @@ public class NegociacaoDividaController extends BaseController {
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Negociação efetuada."), "result").recursive().serialize();
 	}
-	
-	private boolean validarValorTotalNegociacao(List<ParcelaNegociacao> parcelas, BigDecimal valorDivida) {
-		BigDecimal valorConferir = BigDecimal.ZERO;
-		for (ParcelaNegociacao parcela : parcelas) {
-			valorConferir.add(parcela.getMovimentoFinanceiroCota().getValor());
-		}
-		if (valorConferir.equals(valorDivida)) {
-			return true;
-		}
-		return false;
-	}
-
 
 	@Post
 	public void buscarComissaoCota(){
 		
-		FiltroConsultaNegociacaoDivida filtro = (FiltroConsultaNegociacaoDivida) this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA);
+		BigDecimal comissao = this.descontoService.obterComissaoParametroDistribuidor();
 		
-		this.result.use(Results.json()).from(this.descontoService.obterComissaoCota(filtro.getNumeroCota()), "result").serialize();
+		Integer numeroCota = 
+				((FiltroConsultaNegociacaoDivida)this.session.getAttribute(FILTRO_NEGOCIACAO_DIVIDA))
+				.getNumeroCota();
+		
+		BigDecimal comissaoCota = this.descontoService.obterComissaoCota(numeroCota);
+		
+		if (comissao == null || BigDecimal.ZERO.compareTo(comissao) == 0 ||
+				comissaoCota == null || BigDecimal.ZERO.compareTo(comissaoCota) == 0){
+			
+			this.result.use(Results.json()).from("", "result").serialize();
+		} else {
+			
+			List<BigDecimal> valoresDesconto = new ArrayList<BigDecimal>();
+			valoresDesconto.add(comissao);
+			valoresDesconto.add(comissaoCota.setScale(2, RoundingMode.HALF_EVEN));
+			
+			this.result.use(Results.json()).from(valoresDesconto, "result").recursive().serialize();
+		}
 	}
 	
 	public void imprimirNegociacao() throws Exception{

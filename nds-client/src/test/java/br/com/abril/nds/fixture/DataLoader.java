@@ -2932,7 +2932,7 @@ public class DataLoader {
 	
 
 	private static void criarControleBaixaBancaria(Session session) {
-		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao, bancoHSBC);
+		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao, bancoHSBC);
 		save(session, baixaBancaria);
 
 	}

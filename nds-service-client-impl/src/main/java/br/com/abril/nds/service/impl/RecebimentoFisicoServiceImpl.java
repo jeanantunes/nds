@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -47,10 +48,10 @@ import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
-import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
+import br.com.abril.nds.util.MathUtil;
 
 @Service
 public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
@@ -80,9 +81,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private CFOPRepository cFOPRepository;
 	
 	@Autowired
-	private FornecedorService fornecedorService;
-	
-	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
 	
 	@Autowired
@@ -99,6 +97,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoServiceImpl;
+
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
 	
 		
 	/**
@@ -843,7 +844,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void inserirMovimentoEstoque(
 			Usuario usuarioLogado,
 			RecebimentoFisicoDTO recebimentoFisicoDTO) {
-			
+					
 		// Implementado por Cesar Punk Pop
 		// Retirado o Else, já que o movimento sempre deve ser gerado (independente de ocorrer diferença ou não)
 		TipoMovimentoEstoque tipoMovimento = 
@@ -864,8 +865,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	private void gerarDiferenca(Usuario usuarioLogado,RecebimentoFisicoDTO recebimentoFisicoDTO) {
+		
 		Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
-		diferenca = diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, TipoEstoque.LANCAMENTO);
+		diferenca = diferencaEstoqueService.lancarDiferenca(diferenca, TipoEstoque.LANCAMENTO);
 		
 		ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 		itemRecebimento.setDiferenca(diferenca);
@@ -888,5 +890,31 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		}catch(Exception e){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Problema ao Excluir Itens da Nota.");
 		}
+	}
+
+	@Override
+	@Transactional
+	public RecebimentoFisicoDTO obterRecebimentoFisicoDTO(String codigo,
+			String edicao) {
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicao);
+		RecebimentoFisicoDTO recebimentoFisicoDTO = null;
+		
+		if(produtoEdicao!=null) {
+			
+			recebimentoFisicoDTO = new RecebimentoFisicoDTO();
+			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+			BigDecimal percentualDesconto = produtoEdicaoService.obterPorcentualDesconto(produtoEdicao);
+			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
+			valorDesconto = valorDesconto.setScale(2, RoundingMode.HALF_EVEN);
+			recebimentoFisicoDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));
+            recebimentoFisicoDTO.setRepartePrevisto(produtoEdicao.getReparteDistribuido());
+		
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Edição] informada não existe para este [Produto].");
+		}
+		
+		return recebimentoFisicoDTO;
 	}
 }

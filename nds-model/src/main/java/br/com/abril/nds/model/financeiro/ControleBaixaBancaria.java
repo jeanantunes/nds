@@ -22,7 +22,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "CONTROLE_BAIXA_BANCARIA",
-	   uniqueConstraints = {@UniqueConstraint(columnNames = {"DATA", "BANCO_ID"})})
+	   uniqueConstraints = {@UniqueConstraint(columnNames = {"DATA_PAGAMENTO", "BANCO_ID"})})
 @SequenceGenerator(name = "CTRL_BAIXA_BANCARIA_SEQ", initialValue = 1, allocationSize = 1)
 public class ControleBaixaBancaria {
 	
@@ -31,8 +31,11 @@ public class ControleBaixaBancaria {
 	@Column(name = "ID")
 	private Long id;
 	@Temporal(TemporalType.DATE)
-	@Column(name = "DATA", nullable = false)
-	private Date data;
+	@Column(name = "DATA_OPERACAO", nullable = false)
+	private Date dataOperacao;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_PAGAMENTO", nullable = false)
+	private Date dataPagamento;
 	@Enumerated(EnumType.STRING)
 	@Column(name = "STATUS", nullable = false)
 	private StatusControle status;
@@ -52,14 +55,34 @@ public class ControleBaixaBancaria {
 		this.id = id;
 	}
 	
-	public Date getData() {
-		return data;
+	/**
+	 * @return the dataOperacao
+	 */
+	public Date getDataOperacao() {
+		return dataOperacao;
 	}
-	
-	public void setData(Date data) {
-		this.data = data;
+
+	/**
+	 * @param dataOperacao the dataOperacao to set
+	 */
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
 	}
-	
+
+	/**
+	 * @return the dataPagamento
+	 */
+	public Date getDataPagamento() {
+		return dataPagamento;
+	}
+
+	/**
+	 * @param dataPagamento the dataPagamento to set
+	 */
+	public void setDataPagamento(Date dataPagamento) {
+		this.dataPagamento = dataPagamento;
+	}
+
 	public StatusControle getStatus() {
 		return status;
 	}

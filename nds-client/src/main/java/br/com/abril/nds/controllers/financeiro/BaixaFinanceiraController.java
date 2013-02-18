@@ -194,7 +194,7 @@ public class BaixaFinanceiraController extends BaseController {
 																    uploadedFile.getFileName());
 			
 			this.boletoService.baixarBoletosAutomatico(
-				arquivoPagamento, valorFinanceiroConvertido, getUsuarioLogado());
+				arquivoPagamento, valorFinanceiroConvertido, getUsuarioLogado(), data);
 		
 		} finally {
 			
@@ -381,13 +381,10 @@ public class BaixaFinanceiraController extends BaseController {
 				Util.getEnumByStringValue(OrdenacaoColunaDetalheBaixaBoleto.values(), sortname);
 
 		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
-
-		Date dataVencimento = this.calendarioService.subtrairDiasUteis(data, 1);
 		
 		filtro.setData(data);
 		filtro.setPaginacao(paginacao);
 		filtro.setOrdenacaoColuna(ordenacao);
-		filtro.setDataVencimento(dataVencimento);
 		
 		httpSession.setAttribute(FILTRO_DETALHE_BOLETO_SESSION_ATTRIBUTE, filtro);
 		
@@ -562,7 +559,7 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, getUsuarioLogado(),
 								   null, distribuidor,
-								   dataNovoMovimento, null, null);
+								   dataNovoMovimento, null, null, new Date());
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
@@ -1156,7 +1153,7 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
 			baixa.setValorPago(detalhe.getValorPago());
-			baixa.setDataVencimento(DateUtil.formatarDataPTBR(detalhe.getDataVencimento()));
+			baixa.setDataPagamento(DateUtil.formatarDataPTBR(detalhe.getDataVencimento()));
 			
 			lista.add(baixa);
 		}

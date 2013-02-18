@@ -207,6 +207,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" ) AS codigoSM, ");
 		
 		hql.append(" 0 AS qtdExemplar, 		");
+		hql.append(" 0 AS qtdReparte, 		");
 		hql.append(" 0 AS qtdInformada, 	");
 		hql.append(" 0 AS valorTotal, 		");
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapaInformado,          ");
@@ -221,7 +222,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
 		hql.append(" PROD_EDICAO.PRECO_VENDA AS precoCapa,                   ");		
 		
-		hql.append(" coalesce((SELECT min(mec.PRECO_COM_DESCONTO)  	 ");
+		hql.append(" coalesce((SELECT min(mec.PRECO_COM_DESCONTO)  	 		 ");
 		hql.append(" FROM movimento_estoque_cota mec 						 ");
 		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
 		hql.append(" 	, chamada_encalhe ce 								 ");
@@ -314,6 +315,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" SELECT                                             		");
 		hql.append(" CONF_ENCALHE.ID AS idConferenciaEncalhe,           		");
 		hql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
+		hql.append(" CONF_ENCALHE.QTDE AS qtdReparte,                  			");
 		hql.append(" CONF_ENCALHE.QTDE_INFORMADA AS qtdInformada,       		");
 		hql.append(" CONF_ENCALHE.PRECO_CAPA_INFORMADO AS precoCapaInformado,   ");
 		hql.append(" CONF_ENCALHE.PRODUTO_EDICAO_ID AS idProdutoEdicao, 		");
@@ -334,40 +336,11 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
 		hql.append(" PROD_EDICAO.PACOTE_PADRAO AS pacotePadrao,              ");
 		
-		
-		hql.append(" COALESCE( 												 ");
-		hql.append(" (SELECT min(mec.PRECO_COM_DESCONTO)  				 	 ");
-		hql.append(" FROM movimento_estoque_cota mec 						 ");
-		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
-		hql.append(" 	, chamada_encalhe ce 								 ");
-		hql.append(" 	, chamada_encalhe_cota cec					 		 ");
-		hql.append(" WHERE cel.LANCAMENTO_ID = mec.LANCAMENTO_ID  			 ");
-		hql.append(" AND cel.CHAMADA_ENCALHE_ID = ce.ID 				 	 ");
-		hql.append(" AND ce.ID = cec.CHAMADA_ENCALHE_ID 		 			 ");
-		hql.append(" AND mec.COTA_ID = cec.COTA_ID  						 ");
-		hql.append(" AND mec.PRODUTO_EDICAO_ID = CH_ENCALHE.PRODUTO_EDICAO_ID");
-		hql.append(" AND mec.COTA_ID = CH_ENCALHE_COTA.COTA_ID				 ");
-		hql.append(" AND CH_ENCALHE.ID = ce.ID								 ");
-		hql.append(" ), 0 ) AS desconto, 									 ");
+		hql.append(" (PROD_EDICAO.PRECO_VENDA - COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, 0 )) AS desconto, ");
 		
 		hql.append(" CONF_ENCALHE.QTDE * ( ");
-		
-		hql.append(" COALESCE( 												 ");
-		
-		hql.append(" (SELECT min(mec.PRECO_COM_DESCONTO)				     ");
-		hql.append(" FROM movimento_estoque_cota mec 						 ");
-		hql.append(" 	, chamada_encalhe_lancamento cel					 ");
-		hql.append(" 	, chamada_encalhe ce 								 ");
-		hql.append(" 	, chamada_encalhe_cota cec					 		 ");
-		hql.append(" WHERE cel.LANCAMENTO_ID = mec.LANCAMENTO_ID  			 ");
-		hql.append(" AND cel.CHAMADA_ENCALHE_ID = ce.ID 				 	 ");
-		hql.append(" AND ce.ID = cec.CHAMADA_ENCALHE_ID 		 			 ");
-		hql.append(" AND mec.COTA_ID = cec.COTA_ID  						 ");
-		hql.append(" AND mec.PRODUTO_EDICAO_ID = CH_ENCALHE.PRODUTO_EDICAO_ID");
-		hql.append(" AND mec.COTA_ID = CH_ENCALHE_COTA.COTA_ID				 ");
-		hql.append(" AND CH_ENCALHE.ID = ce.ID								 ");
-		
-		hql.append(" ), 0 ) ) AS valorTotal,	 		 					 ");
+		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, 0)  ");
+		hql.append(" ) AS valorTotal, ");
 		
 		hql.append(" TO_DAYS(CONTROLE_CONF_ENC_COTA.DATA_OPERACAO)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,  ");
 		hql.append(" CONF_ENCALHE.OBSERVACAO AS observacao, 	");
@@ -376,6 +349,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" FROM ");
 
 		hql.append(" CONFERENCIA_ENCALHE CONF_ENCALHE,     						");
+		hql.append(" MOVIMENTO_ESTOQUE_COTA MOV_ESTOQUE_COTA, 					");
 		hql.append(" PRODUTO_EDICAO PROD_EDICAO,           						");
 		hql.append(" PRODUTO PROD,                         						");
 		hql.append(" CHAMADA_ENCALHE_COTA CH_ENCALHE_COTA, 						");
@@ -386,12 +360,11 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" EDITOR EDITOR_0,			");
 		hql.append(" PESSOA PESSOA_FORNECEDOR, 	");
 		hql.append(" PESSOA PESSOA_EDITOR 		");
-		
-		
 
 		hql.append(" WHERE ");
 		
 		hql.append(" CONF_ENCALHE.PRODUTO_EDICAO_ID=PROD_EDICAO.ID           	 ");
+		hql.append(" AND MOV_ESTOQUE_COTA.ID = CONF_ENCALHE.MOVIMENTO_ESTOQUE_COTA_ID ");
 		hql.append(" AND PROD_EDICAO.PRODUTO_ID=PROD.ID                          ");
 		hql.append(" AND CONF_ENCALHE.CHAMADA_ENCALHE_COTA_ID=CH_ENCALHE_COTA.ID ");
 		hql.append(" AND CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID=CH_ENCALHE.ID        ");
@@ -411,6 +384,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery)query).addScalar("qtdReparte", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("juramentada");
 		((SQLQuery)query).addScalar("precoCapaInformado");

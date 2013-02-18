@@ -10,6 +10,8 @@
 	
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.justLetter.js'></script>
 	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produtoEdicao.js"></script>
+	
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/scriptConferenciaEncalhe.js'></script>
 	
 	
@@ -37,16 +39,29 @@
 
 	<jsp:include page="dialog.jsp" />
 		
-		<div class="areaBts">
+		<div class="areaBts" style="height:38px">
 			<div class="area">
-				<span class="bt_novos">
-							<a href="javascript:;" onclick="ConferenciaEncalhe.irParaContigencia()" rel="tipsy" title="Contingência">
-								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />
-							</a>
-						</span>
+				<fieldset class="classFieldset" style="height:25px">
+					<table width="950" border="0" cellspacing="1" cellpadding="1">
+						<tr>
+							<td width="126">
+								<span class="bt_novos">
+									<a href="javascript:;" onclick="ConferenciaEncalhe.irParaContigencia()" rel="tipsy" title="Contingência">
+										<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />
+									</a>
+								</span>
+							</td>
+							<td width="314">&nbsp;</td>
+							<td width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
+							<td width="102" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
+							<td width="119" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
+							<td width="62" bgcolor="#F8F8F8"><strong>F8</strong>-Salvar</td>
+							<td width="145" bgcolor="#F8F8F8"><strong>F9</strong>-Finalizar Conferência</td>
+						</tr>
+					</table>
+				</fieldset>
 			</div>
 		</div>
-		<div class="linha_separa_fields">&nbsp;</div>
 		<fieldset class="fieldFiltro">
 
 			<legend> Pesquisar Encalhe</legend>
@@ -78,26 +93,9 @@
 			
 		</fieldset>
 		
-		<div class="linha_separa_fields">&nbsp;</div>
 
-		<fieldset class="classFieldset">
 
-			<table width="950" border="0" cellspacing="1" cellpadding="1">
-				<tr>
-					<td width="126">
-						&nbsp;
-					</td>
-					<td width="314">&nbsp;</td>
-					<td width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
-					<td width="102" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
-					<td width="119" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
-					<td width="145" bgcolor="#F8F8F8"><strong>F8</strong>-Finalizar Conferência</td>
-					<td width="62" bgcolor="#F8F8F8"><strong>F9</strong>-Salvar</td>
-				</tr>
-			</table>
-		</fieldset>
 
-		<div class="linha_separa_fields">&nbsp;</div>
 
 		<fieldset class="fieldGrid">
 
@@ -121,7 +119,7 @@
 						<input name="qtdeExemplar" type="text" id="qtdeExemplar" class="input-numericE" style="width: 60px; text-align: center;" maxlength="255"/>
 					</td>
 					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666;">
-						<input name="cod_barras" type="text" id="cod_barras" style="width: 160px;" maxlength="255"/>
+						<input name="cod_barras" type="text" id="cod_barras_conf_encalhe" style="width: 160px;" maxlength="255"/>
 					</td>
 					<td class="class_linha_1" align="center" style="border-bottom: 1px solid #666;">
 						<input name="sm" type="text" id="sm" style="width: 40px;" maxlength="255"/>
@@ -160,7 +158,7 @@
 							<td style="width: 70px; text-align: right;" nowrap="nowrap">Desconto R$</td>
 							<td style="width: 50px; text-align: right;">Total R$</td>
 							<td style="width: 20px; text-align: center;">Dia</td>
-							<td style="width: 70px; text-align: center;">Juramentada</td>
+							<td style="width: 70px; text-align: center;" id="colunaJuramentada">Juramentada</td>
 							<td style="width: 45px; text-align: center;">Detalhe</td>
 							<td style="width: 30px; text-align: center;">Ação</td>
 						</tr>
@@ -191,5 +189,19 @@
 					</tr>
 				</table>
 			</div>
+		</fieldset>
+		
+		<div class="linha_separa_fields">&nbsp;</div>
+	
+		<fieldset class="classFieldset">
+			<table width="950" height="32" border="0" cellpadding="1" cellspacing="1">
+				<tr>
+					<td width="380">&nbsp;</td>
+					<td width="128" style="float:left">&nbsp;</td>
+					<td width="62" style="float:left">&nbsp;</td>
+					<td width="120" align="center" style="float:left"><strong>Data de Operação:</strong></td>
+					<td width="70" style="float:left">${dataOperacao}</td>
+				</tr>
+			</table>
 		</fieldset>
 </body>
