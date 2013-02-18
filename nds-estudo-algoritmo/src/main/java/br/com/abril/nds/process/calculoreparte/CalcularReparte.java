@@ -27,8 +27,8 @@ import br.com.abril.nds.process.definicaobases.DefinicaoBases;
  */
 public class CalcularReparte extends ProcessoAbstrato {
 
-	public CalcularReparte() {
-		super(new Estudo());
+	public CalcularReparte(Estudo estudo) {
+		super(estudo);
 	}
 
 	@Override
@@ -119,7 +119,5 @@ public class CalcularReparte extends ProcessoAbstrato {
 
 		GravarReparteFinalCota gravarReparteFinalCota = new GravarReparteFinalCota(getEstudo());
 		gravarReparteFinalCota.executar();
-
-		super.genericDTO = gravarReparteFinalCota.getGenericDTO();
 	}
 }

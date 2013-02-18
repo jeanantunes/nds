@@ -18,14 +18,10 @@ public class Estudo extends GenericDTO<Estudo> {
 	private boolean distribuicaoPorMultiplos;
 	private BigDecimal pacotePadrao;
 	private BigDecimal somatoriaVendaMedia;
-	// TODO: Verificar se essa somatória é do estudo total ou somente da cota
-	// (Processo: Reparte Proporcional)
 	private BigDecimal somatoriaReparteEdicoesAbertas;
-	// TODO: Checar após a EMS 2027 estar pronta, onde deveremos consultar esse
-	// parâmetro
+	// TODO: Checar após a EMS 2027 estar pronta, onde deveremos consultar esses
+	// parâmetros
 	private boolean complementarAutomatico;
-	// TODO: Verificar se o correto é deixar esse percentual aqui no estudo
-	// mesmo ou em outra entidade
 	private BigDecimal percentualProporcaoExcedentePDV;
 	private BigDecimal percentualProporcaoExcedenteVenda;
 	private BigDecimal totalPDVs;

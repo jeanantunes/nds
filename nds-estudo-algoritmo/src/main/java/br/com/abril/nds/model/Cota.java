@@ -55,7 +55,7 @@ public class Cota extends GenericDTO<Cota> {
     	}
 
     	// Verificação se a cota só recebeu edições abertas e somatória delas
-    	// TODO: confirmar se é para verificar em todas as edições que a cota recebeu mesmo
+    	// TODO: confirmar se é para verificar em todas as edições que a cota recebeu mesmo ou somente nas edições bases
     	cotaSoRecebeuEdicaoAberta = true;
     	somaReparteEdicoesAbertas = BigDecimal.ZERO;
     	for (ProdutoEdicao edicao : edicoesRecebidas) {
