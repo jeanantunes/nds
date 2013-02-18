@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
-import br.com.abril.nds.process.complementarautomatico.ComplementarAutomaticoTest;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 
 /**
@@ -28,12 +27,11 @@ public class EncalheMaximo extends ProcessoAbstrato {
 
 	@Override
 	protected void executarProcesso() {
-		// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o
-		// método
+		// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
 		for (Cota cota : getEstudo().getCotas()) {
 			BigDecimal encalhe = BigDecimal.ZERO;
 			if (!getEstudo().getReparteDistribuir().equals(BigDecimal.ZERO)) {
-				encalhe = getEstudo().getSomatoriaVendaMedia().divide(getEstudo().getReparteDistribuir(), 2, BigDecimal.ROUND_FLOOR).multiply(new BigDecimal(100));
+				encalhe = getEstudo().getSomatoriaVendaMedia().divide(getEstudo().getReparteDistribuir(), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
 			}
 			if ((cota.getPercentualEncalheMaximo().doubleValue() > 0)
 					&& (cota.getPercentualEncalheMaximo().doubleValue() < encalhe.doubleValue())) {

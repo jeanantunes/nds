@@ -10,17 +10,17 @@ import br.com.abril.nds.model.Estudo;
 
 public class DefinicaoBasesTest {
 
-    private DefinicaoBases bases;
+	private DefinicaoBases bases;
 
-    @Before
-    public void setUp() throws Exception {
-	bases = new DefinicaoBases(new Estudo());
-	bases.setEdicoesRecebidasParaEstudoRaw(MockEdicoes.getEdicoesRandom());
-    }
+	@Before
+	public void setUp() throws Exception {
+		bases = new DefinicaoBases(new Estudo());
+		bases.setEdicoesRecebidasParaEstudoRaw(MockEdicoes.getEdicoesRandom());
+	}
 
-    @Test
-    public void testExecutarProcesso() throws Exception {
-	bases.executarProcesso();
-	assertNotNull(bases.getEstudo().getEdicoesBase());
-    }
+	@Test
+	public void testExecutarProcesso() throws Exception {
+		bases.executarProcesso();
+		assertNotNull(bases.getEstudo().getEdicoesBase());
+	}
 }

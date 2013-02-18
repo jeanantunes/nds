@@ -12,7 +12,7 @@ import br.com.abril.nds.model.Estudo;
 
 public class CalcularReparteTest {
 
-	private Estudo criarAmbiente(boolean configurado) {
+	private Estudo criarAmbiente(boolean configurado, BigDecimal pacotePadrao, BigDecimal reparteCalculado) {
 		Estudo estudo = new Estudo();
 		Cota cota = new Cota();
 		if (configurado) {
@@ -26,11 +26,10 @@ public class CalcularReparteTest {
 	@Test
 	public void testSemConfiguracao() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(false);
+		Estudo estudo = criarAmbiente(false, null, null);
 
 		// Execução do Processo
 		CalcularReparte calcularReparte = new CalcularReparte(estudo);
-		
 		
 		// Validação do teste
 		assertEquals(BigDecimal.ZERO, calcularReparte.getEstudo().getReparteDistribuir());
@@ -40,13 +39,12 @@ public class CalcularReparteTest {
 	}
 	
 	@Test
-	public void testemConfiguracao() {
+	public void testAjustarReparteCalculadoComMultiplos() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true);
+		Estudo estudo = criarAmbiente(true, new BigDecimal(15), new BigDecimal(10));
 
 		// Execução do Processo
 		CalcularReparte calcularReparte = new CalcularReparte(estudo);
-		
 		
 		// Validação do teste
 		assertEquals(BigDecimal.ZERO, calcularReparte.getEstudo().getReparteDistribuir());
