@@ -137,8 +137,6 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		// TODO: checar se "É possível que o %Excedente seja igual a 0 (zero)?
-		// Se sim como agir nessa situação, qual será o valor da menorVenda?"
 		assertEquals(new BigDecimal(0.5), redutorAutomatico.getMenorVenda());
 	}
 	
@@ -154,8 +152,6 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		// TODO: checar se "É possível que o %Excedente seja igual a 0 (zero)?
-		// Se sim como agir nessa situação, qual será o valor da menorVenda?"
 		assertEquals(new BigDecimal(0.5), redutorAutomatico.getMenorVenda());
 	}
 	
@@ -171,8 +167,6 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		// TODO: checar se "É possível que o %Excedente seja igual a 0 (zero)?
-		// Se sim como agir nessa situação, qual será o valor da menorVenda?"
 		assertEquals(new BigDecimal(0.25), redutorAutomatico.getMenorVenda());
 	}
 	
@@ -218,8 +212,6 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		// TODO: verificar se é possível que a somatória de vendas seja maior que o reparte
-		// a distribuir? E caso isso aconteça, qual será o valor da menorVenda?
 		assertEquals(new BigDecimal(0.5), redutorAutomatico.getMenorVenda());
 	}
 	
@@ -234,8 +226,6 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		// TODO: verificar se é possível que a somatória de vendas seja maior que o reparte
-		// a distribuir? E caso isso aconteça, qual será o valor da menorVenda?
 		assertEquals(new BigDecimal(0.5), redutorAutomatico.getMenorVenda());
 	}
 }
