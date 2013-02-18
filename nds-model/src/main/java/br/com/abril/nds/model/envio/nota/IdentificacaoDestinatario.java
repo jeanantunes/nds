@@ -8,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -51,9 +50,7 @@ public class IdentificacaoDestinatario implements Serializable {
 	private String inscricaoEstadual;
 	
 	
-	@ManyToOne(optional= true)
-	@JoinColumn(name = "BOX_DESTINATARIO_ID_REFERENCIA")
-	private Box boxReferencia;
+	
 	@Column(name = "CODIGO_BOX")
 	private Integer codigoBox;
 	@Column(name = "NOME_BOX")
@@ -162,20 +159,7 @@ public class IdentificacaoDestinatario implements Serializable {
 		this.telefone = telefone;
 	}
 
-	/**
-	 * @return the boxReferencia
-	 */
-	public Box getBoxReferencia() {
-		return boxReferencia;
-	}
-
-	/**
-	 * @param boxReferencia the boxReferencia to set
-	 */
-	public void setBoxReferencia(Box boxReferencia) {
-		this.boxReferencia = boxReferencia;
-	}
-
+	
 	/**
 	 * @return the codigoBox
 	 */
