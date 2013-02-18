@@ -92,12 +92,17 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				return;
 			}
 		}
-		
-		notafiscalEntrada = obterNotaFiscal(
-				input.getNotaFiscal()
-				, input.getSerieNotaFiscal()
-				, input.getCnpjEmissor()
-				);		
+
+		if (input.getNotaFiscal() != null && !input.getNotaFiscal().equals(0L) &&
+			input.getSerieNotaFiscal() != null && !input.getSerieNotaFiscal().isEmpty() && !"0".equals(input.getSerieNotaFiscal()) &&
+			input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty() && !"0".equals(input.getChaveAcessoNF()) ) {
+
+			notafiscalEntrada = obterNotaFiscal(
+					input.getNotaFiscal()
+					, input.getSerieNotaFiscal()
+					, input.getCnpjEmissor()
+					);		
+		}
 		
 		if(notafiscalEntrada == null){
 			
@@ -128,10 +133,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private NotaFiscalEntradaFornecedor populaNotaFiscalEntrada(NotaFiscalEntradaFornecedor notafiscalEntrada, EMS0135Input input) {
 		
 		notafiscalEntrada.setDataEmissao(input.getDataEmissao());
-		notafiscalEntrada.setNumero(input.getNotaFiscal().longValue());
-		notafiscalEntrada.setSerie(input.getSerieNotaFiscal());		
+		notafiscalEntrada.setNumero( input.getNotaFiscal() != null ? input.getNotaFiscal().longValue() : 0L );
+		notafiscalEntrada.setSerie( input.getSerieNotaFiscal() != null && !input.getSerieNotaFiscal().isEmpty() && !"0".equals(input.getSerieNotaFiscal()) ? input.getSerieNotaFiscal() : "0" );		
 		notafiscalEntrada.setDataExpedicao(input.getDataEmissao());		
-		notafiscalEntrada.setChaveAcesso(input.getChaveAcessoNF());		
+		notafiscalEntrada.setChaveAcesso( input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty() && !"0".equals(input.getChaveAcessoNF()) ? input.getChaveAcessoNF() : "0" );		
 		notafiscalEntrada.setCfop(obterCFOP());
 		notafiscalEntrada.setOrigem(Origem.INTERFACE);
 		notafiscalEntrada.setStatusNotaFiscal(StatusNotaFiscalEntrada.NAO_RECEBIDA);
