@@ -204,7 +204,7 @@ function imprimir(){
   </tr>
 </table>
 
-
+<c:if test=" ${cotaEmissao.vlrComDesconto != '0.0' } ">
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
   <tr class="class_linha_3">
     <td colspan="6" align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-right:1px solid #000; border-top:1px solid #000;"><strong>OBSERVAÇÕES</strong></td>
@@ -247,7 +247,7 @@ function imprimir(){
     <td style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
   </tr>
 </table>
-
+</c:if>
 <br />
 <br />
 
