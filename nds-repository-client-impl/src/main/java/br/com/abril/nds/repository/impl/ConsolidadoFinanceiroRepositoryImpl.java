@@ -326,7 +326,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setParameter("dataConsolidado", filtro.getDataConsolidado());
 		query.setParameter("numeroCota", filtro.getNumeroCota());
 		query.setParameter("grupoMovimentoEstoque",	GrupoMovimentoEstoque.VENDA_ENCALHE);
-		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.COMPRA_ENCALHE);
+		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR);
 		
 		if(filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
