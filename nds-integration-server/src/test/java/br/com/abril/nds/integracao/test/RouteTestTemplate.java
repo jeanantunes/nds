@@ -2,7 +2,7 @@ package br.com.abril.nds.integracao.test;
 
 import org.junit.Test;
 
-import br.com.abril.nds.integracao.engine.data.RouteTemplate;
+import br.com.abril.nds.integracao.route.RouteTemplate;
 
 public abstract class RouteTestTemplate extends TestTemplate {
 	/**

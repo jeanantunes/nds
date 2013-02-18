@@ -7,17 +7,21 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class CEItemPK implements Serializable {
+	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "NUM_CHAMADA_ENCALHE_CHEN")
+	@Column(name="NUM_CHAMADA_ENCALHE_CHEN", nullable = false)
 	private Long numeroChamadaEncalhe;
 	
-	@Column(name = "NUM_ITEM_ITCE")
+	@Column(name = "NUM_ITEM_ITCE", nullable = false)
 	private Long numeroItem;
 
+	/**
+	 * Getters e Setters
+	 */
 	public Long getNumeroChamadaEncalhe() {
 		return numeroChamadaEncalhe;
 	}
@@ -25,7 +29,7 @@ public class CEItemPK implements Serializable {
 	public void setNumeroChamadaEncalhe(Long numeroChamadaEncalhe) {
 		this.numeroChamadaEncalhe = numeroChamadaEncalhe;
 	}
-
+	
 	public Long getNumeroItem() {
 		return numeroItem;
 	}

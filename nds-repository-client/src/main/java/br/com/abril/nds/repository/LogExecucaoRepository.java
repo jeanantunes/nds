@@ -16,21 +16,17 @@ import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
  */
 public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 
-	List<ConsultaInterfacesDTO> obterInterfaces();
+	List<LogExecucaoMensagem> obterMensagensLogInterface(Long codigoLogExecucao);
+
+	List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao, Date dataOperacao, FiltroDetalheProcessamentoDTO filtro);
+
+	List<ConsultaInterfacesDTO> obterInterfaces(FiltroInterfacesDTO filtro);
 
 	LogExecucao inserir(LogExecucao logExecucao);
 
 	void atualizar(LogExecucao logExecucao);
 
-	List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao, Date dataOperacao);
-	
-	public List<LogExecucaoMensagem> obterMensagensLogInterface(Long codigoLogExecucao);
-
-	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao, Date dataOperacao, FiltroDetalheProcessamentoDTO filtro);
-
 	public Long obterTotalMensagensErroLogInterface(long codigoLogExecucao, Date obterDataOperacaoDistribuidor, FiltroDetalheProcessamentoDTO filtro);
-
-	public List<ConsultaInterfacesDTO> obterInterfaces(FiltroInterfacesDTO filtro);
 
 	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro);
 

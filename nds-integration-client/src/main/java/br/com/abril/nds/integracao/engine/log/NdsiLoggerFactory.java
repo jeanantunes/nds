@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class NdsiLoggerFactory {
+	
 	@Autowired
 	private ApplicationContext applicationContext;
 	
@@ -38,4 +39,5 @@ public class NdsiLoggerFactory {
 	public void resetLogger() {
 		threadLocalNdsLogger = new ThreadLocalNdsLogger();
 	}
+	
 }

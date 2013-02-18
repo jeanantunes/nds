@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.integracao.icd.RouteTemplateIcd;
 import br.com.abril.nds.integracao.model.LogExecucaoArquivo;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
@@ -47,6 +46,8 @@ import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
 import br.com.abril.nds.integracao.repository.LogExecucaoArquivoRepository;
+import br.com.abril.nds.integracao.repository.LogExecucaoRepository;
+import br.com.abril.nds.integracao.route.RouteTemplate;
 import br.com.abril.nds.integracao.service.IcdObjectService;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
@@ -58,7 +59,6 @@ import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
-import br.com.abril.nds.repository.LogExecucaoRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -74,11 +74,9 @@ public class InterfaceExecutor {
 	
 	public static final String SPRING_FILE_LOCATION = "classpath:spring/applicationContext-ndsi-cli.xml"; 
 
-	@SuppressWarnings("unused")
 	private static ApplicationContext applicationContext;
 	
 	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
-//	private static String TAMANHO_LINHA = "Tamanho da linha é diferente do tamanho definido";
 	
 	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
 	
@@ -117,6 +115,7 @@ public class InterfaceExecutor {
 
 	
 	public CouchDbConnector initCouchDbClient(String dataBaseName) throws MalformedURLException {
+		
 		HttpClient authenticatedHttpClient = new StdHttpClient.Builder()
                 .url(
                 		new URL(
@@ -128,8 +127,11 @@ public class InterfaceExecutor {
                 .username(couchDbProperties.getUsername())
                 .password(couchDbProperties.getPassword())
                 .build();
+		
 		CouchDbInstance dbInstance = new StdCouchDbInstance(authenticatedHttpClient);
-		return dbInstance.createConnector(dataBaseName, true);				
+		
+		return dbInstance.createConnector(dataBaseName, true);
+		
 	}
 	
 	
@@ -182,12 +184,11 @@ public class InterfaceExecutor {
 			this.logarFim(logExecucao);
 		}
 	}
+	
 	@Transactional
 	public void executarRetornosIcd(List<String> distribuidores) {		 
-		
 
 		for (String distribuidor: distribuidores) {
-			
 			
 			if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
 
@@ -258,21 +259,22 @@ public class InterfaceExecutor {
 			InterfaceExecucao interfaceExecucao, LogExecucao logExecucao,
 			Long codigoDistribuidor, String nomeUsuario) {
 		
-		getRouteTemplate(interfaceExecucao.getNome()).execute("username");
+		getRouteTemplate(interfaceExecucao.getNome()).execute("user");
 		
 	}
 	
-	private static RouteTemplateIcd getRouteTemplate(String className) {
+	private RouteTemplate getRouteTemplate(String interfaceName) {
+		
 		try {
 			
-			String classACarregar = "br.com.abril.nds.integracao."+ className.toLowerCase()  +".route."+ className +"Route";
+			String classe = "br.com.abril.nds.integracao."+ interfaceName.toLowerCase() +".route."+ interfaceName.toUpperCase() +"Route";
 			
-			return (RouteTemplateIcd) applicationContext.getBean(Class.forName(classACarregar));
-			
+			return (RouteTemplate) applicationContext.getBean(Class.forName(classe));
 			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+
 	}
 
 	/**

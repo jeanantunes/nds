@@ -275,16 +275,4 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		return (Long) criteria.uniqueResult();
 	}
 
-	@Override
-	public List<ConsultaInterfacesDTO> obterInterfaces() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao, Date dataOperacao) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -8,6 +8,7 @@ import br.com.abril.nds.integracao.engine.data.DBImportRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.FixedLengthRouteTemplate;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.integracao.route.AbstractRoute;
 
 @Component
 public class DynamicRouter {

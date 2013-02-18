@@ -1,108 +1,99 @@
 package br.com.abril.nds.integracao.ems0127.processor;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.lightcouch.CouchDbClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.ems0120.outbound.EMS0120Header;
-import br.com.abril.nds.integracao.ems0127.outbound.EMS0127Detalhe;
-import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.model.integracao.Message;
+import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.model.integracao.icd.ChamadaEncalheIcd;
 import br.com.abril.nds.repository.AbstractRepository;
-import br.com.abril.nds.service.integracao.DistribuidorService;
-
-import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component
 public class EMS0127MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0127MessageProcessor.class);
+	
 	@Autowired
 	private SessionFactory sessionFactoryIcd;
 	
-	@Autowired
-	private FixedFormatManager fixedFormatManager;
-
-	@Autowired
-	private DistribuidorService distribuidorService;
-
 	protected Session getSessionIcd() {
 		
 		Session session = null;
 		try {
 			session = sessionFactoryIcd.getCurrentSession();
 		} catch(Exception e) {
-			
+			LOGGER.error("Erro ao obter sessão do Hibernate.", e);
 		}
 		
-		if(session == null)
+		if(session == null) {
 			session = sessionFactoryIcd.openSession();
+		}
 		
 		return session;
+		
 	}
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		
-		List<Object> list = new ArrayList<Object>();
-		list.add(new Object());
+		List<Object> objs = new ArrayList<>();
+		Object dummyObj = new Object();
+		objs.add(dummyObj);
 		
-		tempVar.set(list);
+		tempVar.set(objs);
 		
 	}
 
 	@Override
 	public void processMessage(Message message) {
 		
-		List<ChamadaEncalheIcd> chamadasEncalheIcd = obterEncalhe(null);
+		CouchDbClient cdbc = null;
+		
+		List<ChamadaEncalheIcd> chamadasEncalhe = obterChamadasEncalhe();
 
-		for(ChamadaEncalheIcd ceicd : chamadasEncalheIcd) {
-			System.out.println(ceicd.getDataEmissao());
+		for(ChamadaEncalheIcd ce : chamadasEncalhe) {
+			
+			try {
+				ce.setTipoDocumento("EMS0137");
+				cdbc = this.getCouchDBClient("06248116"); //ce.getCodigoDistribuidor().toString());
+				cdbc.save(ce);
+			} catch(Exception e) {
+				LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
+			} finally {
+				if (cdbc != null) {
+					cdbc.shutdown();
+				}			
+			}
+			
 		}
 		
 	}
 	
-	private String getDetail(List<EMS0127Detalhe> detalhes) {
-		StringBuilder stringBuilder = new StringBuilder();
-				
-		for (EMS0127Detalhe ems0127Detalhe : detalhes) {
-			stringBuilder.append(fixedFormatManager.export(ems0127Detalhe));
-			stringBuilder.append("\n");
-		}
-		
-		return stringBuilder.toString();
-	}
-	
-	private String getHeader(int detailCount) {
-		EMS0120Header outheader = new EMS0120Header();
-		
-		Date data = new Date();
-		outheader.setDataMovimento(data);
-		outheader.setHoraMovimento(data);
-		outheader.setQtdeRegistrosDetalhe(detailCount);
-		
-		return fixedFormatManager.export(outheader);
-	}
-	
-	
-	private List<ChamadaEncalheIcd> obterEncalhe(List<EMS0127Detalhe> Encalhes) {
+	@SuppressWarnings("unchecked")
+	private List<ChamadaEncalheIcd> obterChamadasEncalhe() {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select ce");
-		hql.append(" from ChamadaEncalheIcd ce ");
+		hql.append(" select ce ")
+			.append("from ChamadaEncalheIcd ce join fetch ce.chamadaEncalheItens cei ")
+			.append("where ce.tipoStatus = :status ");
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
+		
+		query.setParameter("status", "A");
 
 		return query.list();
 	}
-	
+		
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
