@@ -22,33 +22,27 @@ public class DefinicaoBasesDAO {
 
     private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
     private static final String STATUS_FECHADO = "FECHADO";
-
-    private static final String SQL_EDICOES_VS_LANCAMENTOS = " select l.ID, l.PRODUTO_EDICAO_ID, l.STATUS, l.DATA_LCTO_DISTRIBUIDOR, tp.GRUPO_PRODUTO, pe.PARCIAL " 
+    
+    private static final String CAMPOS_MODEL_PRODUTO_EDICAO = " select l.ID, l.PRODUTO_EDICAO_ID, l.STATUS, l.DATA_LCTO_DISTRIBUIDOR, tp.GRUPO_PRODUTO, pe.PARCIAL, " 
+	    + " pe.NUMERO_EDICAO, p.CODIGO "
 	    + " from lancamento l "
 	    + " left join produto_edicao pe on pe.ID = l.PRODUTO_EDICAO_ID "
 	    + " left outer join produto p on p.ID = pe.PRODUTO_ID "
 	    + " left outer join tipo_produto tp on tp.ID = p.TIPO_PRODUTO_ID "
-	    + " where pe.PRODUTO_ID = ( select PRODUTO_ID from produto_edicao where ID = ? ) "
+	    + " where pe.PRODUTO_ID = ( select ID from produto where CODIGO = ? ) ";
+//    	    + " where pe.PRODUTO_ID = ( select PRODUTO_ID from produto_edicao where ID = ? ) ";
+
+    private static final String SQL_EDICOES_VS_LANCAMENTOS = CAMPOS_MODEL_PRODUTO_EDICAO 
 	    //	    + " and l.DATA_LCTO_DISTRIBUIDOR > date_sub(curdate(),INTERVAL 2 YEAR) "
 	    + " order by l.DATA_LCTO_DISTRIBUIDOR desc "
 	    + " limit 6 ";
 
-    private static final String SQL_LANCAMENTOS_ANOS_ANTERIORES_MESMO_MES = " select l.ID, l.PRODUTO_EDICAO_ID, l.STATUS, l.DATA_LCTO_DISTRIBUIDOR, tp.GRUPO_PRODUTO, pe.PARCIAL " 
-	    + " from lancamento l "
-	    + " left join produto_edicao pe on pe.ID = l.PRODUTO_EDICAO_ID "
-	    + " left outer join produto p on p.ID = pe.PRODUTO_ID "
-	    + " left outer join tipo_produto tp on tp.ID = p.TIPO_PRODUTO_ID "
-	    + " where pe.PRODUTO_ID = (select PRODUTO_ID from produto_edicao where ID = ?) "
+    private static final String SQL_LANCAMENTOS_ANOS_ANTERIORES_MESMO_MES = CAMPOS_MODEL_PRODUTO_EDICAO
 	    + " and (l.DATA_LCTO_DISTRIBUIDOR like ? or l.DATA_LCTO_DISTRIBUIDOR like ?) "
 	    + " order by l.DATA_LCTO_DISTRIBUIDOR desc "
 	    + " limit 2 ";
 
-    private static final String SQL_LANCAMENTOS_ANOS_ANTERIORES_VERANEIO = " select l.ID, l.PRODUTO_EDICAO_ID, l.STATUS, l.DATA_LCTO_DISTRIBUIDOR, tp.GRUPO_PRODUTO, pe.PARCIAL " 
-	    + " from lancamento l "
-	    + " left join produto_edicao pe on pe.ID = l.PRODUTO_EDICAO_ID "
-	    + " left outer join produto p on p.ID = pe.PRODUTO_ID "
-	    + " left outer join tipo_produto tp on tp.ID = p.TIPO_PRODUTO_ID "
-	    + " where pe.PRODUTO_ID = (select PRODUTO_ID from produto_edicao where ID = ?) "
+    private static final String SQL_LANCAMENTOS_ANOS_ANTERIORES_VERANEIO = CAMPOS_MODEL_PRODUTO_EDICAO
 	    + " and (l.DATA_LCTO_DISTRIBUIDOR between ? and ? " 	//periodo de 20/12 a 28/02 um ano antes
 	    + "      or l.DATA_LCTO_DISTRIBUIDOR between ? and ?) "	//periodo de 20/12 a 28/02 dois anos antes
 	    + " order by l.DATA_LCTO_DISTRIBUIDOR desc "
@@ -83,7 +77,7 @@ public class DefinicaoBasesDAO {
 	List<ProdutoEdicao> edicoes = new ArrayList<>();
 	try {
 	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_EDICOES_VS_LANCAMENTOS);
-	    ps.setLong(1, edicao.getId());
+	    ps.setLong(1, edicao.getCodigoProduto());
 	    ResultSet rs = ps.executeQuery();
 	    while(rs.next()) {
 		edicoes.add(produtoEdicaoMapper(rs));
@@ -102,7 +96,7 @@ public class DefinicaoBasesDAO {
 			    SQL_LANCAMENTOS_ANOS_ANTERIORES_MESMO_MES:
 				SQL_LANCAMENTOS_ANOS_ANTERIORES_VERANEIO);
 	    int index = 0;
-	    ps.setLong(++index, edicao.getId());
+	    ps.setLong(++index, edicao.getCodigoProduto());
 	    if(mesmoMes) {
 		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), 1));
 		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), 2));
@@ -179,6 +173,8 @@ public class DefinicaoBasesDAO {
 	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 	produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
 	produtoEdicao.setParcial(rs.getInt("PARCIAL") == 1);
+	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
 	return produtoEdicao;
     }
 }

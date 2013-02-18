@@ -13,6 +13,7 @@ public class ProdutoEdicao extends GenericDTO<ProdutoEdicao> {
     private Long id;
     private String nome;
     private Long numeroEdicao;
+    private Long codigoProduto;
     private Integer peso;
     private BigDecimal reparte;
     private BigDecimal venda;
@@ -56,6 +57,14 @@ public class ProdutoEdicao extends GenericDTO<ProdutoEdicao> {
 
     public void setNumeroEdicao(Long numeroEdicao) {
 	this.numeroEdicao = numeroEdicao;
+    }
+
+    public Long getCodigoProduto() {
+	return codigoProduto;
+    }
+
+    public void setCodigoProduto(Long codigoProduto) {
+	this.codigoProduto = codigoProduto;
     }
 
     public Integer getPeso() {
