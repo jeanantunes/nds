@@ -1,14 +1,13 @@
 package br.com.abril.nds.process.definicaobases;
 
-import static org.junit.Assert.*;
+import static org.testng.AssertJUnit.assertNotNull;
 
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.LocalDate;
-import org.junit.Before;
-import org.junit.Test;
-
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 
@@ -16,7 +15,7 @@ public class BaseParaVeraneioTest {
 
     private BaseParaVeraneio baseParaVeraneio;
     
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	edicoes.add(getEdicao());

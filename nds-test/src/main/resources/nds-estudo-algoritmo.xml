@@ -2,6 +2,7 @@
 <suite name="NDS-EstudoAlgoritmoSuite" parallel="false">
 	<suite-files>
 		<suite-file path="./correcao-vendas.xml" />
+		<suite-file path="./definicao-bases.xml" />
 	</suite-files> <!-- Suite-Files -->
 </suite> <!-- Suite -->
 
