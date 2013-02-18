@@ -38,10 +38,10 @@ label {
 			<table width="626" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="105">Número Banco:</td>
-					<td width="214"><input type="text" name="newNumero" maxlength="4"
+					<td width="180"><input type="text" name="newNumero" maxlength="4"
 						id="newNumero" style="width: 143px;" />
 					</td>
-					<td width="67">Nome:</td>
+					<td width="87">Nome:</td>
 					<td width="219">
 						<input type="text" name="newNome" maxlength="100" id="newNome" style="width: 215px;"/>
 					</td>
@@ -51,15 +51,16 @@ label {
 					<td><input type="text" name="newCodigoCedente" id="newCodigoCedente" maxlength="17"
 						style="width: 143px;" />
 					</td>
-					<td>Agência:</td>
+					<td>Agência / Dígito:</td>
 					<td><input maxlength="10" type="text" name="newAgencia" id="newAgencia"
-						style="width: 215px;" />
+						style="width: 168px;" /> - <input maxlength="2" type="text" name="newDigitoAgencia"
+						id="newDigitoAgencia" style="width: 27px;" />
 					</td>
 				</tr>
 				<tr>
 					<td>Conta / Digito:</td>
 					<td><input maxlength="17" type="text" name="newConta" id="newConta"
-						style="width: 80px;" /> - <input maxlength="2" type="text" name="newDigito"
+						style="width: 93px;" /> - <input maxlength="2" type="text" name="newDigito"
 						id="newDigito" style="width: 30px;" />
 					</td>
 					<td>Apelido:</td>
@@ -118,10 +119,10 @@ label {
 			<table width="626" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="111">Número Banco:</td>
-					<td width="216"><input type="text" name="alterNumero" maxlength="4"
+					<td width="180"><input type="text" name="alterNumero" maxlength="4"
 						id="alterNumero" style="width: 143px;" />
 					</td>
-					<td width="73">Nome:</td>
+					<td width="93">Nome:</td>
 					<td width="205"><input type="text" name="alterNome" maxlength="100"
 						id="alterNome" style="width: 215px;" />
 					</td>
@@ -131,16 +132,17 @@ label {
 					<td><input type="text" name="alterCodigoCedente" id="alterCodigoCedente" maxlength="17"
 						style="width: 143px;" />
 					</td>
-					<td>Agência:</td>
+					<td>Agência / Dígito:</td>
 					<td><input maxlength="10" type="text" name="alterAgencia" id="alterAgencia"
-						style="width: 215px;" />
+						style="width: 165px;" /> - <input maxlength="2" type="text" name="alterDigitoAgencia"
+						id="alterDigitoAgencia" style="width: 30px;" />
 					</td>
 				</tr>
 				<tr>
 					<td>Conta / Digito:</td>
 					<td><input maxlength="17" type="text" name="alterConta" id="alterConta"
-						style="width: 97px;" /> - <input maxlength="1" type="text" name="alterDigito"
-						id="alterDigito" style="width: 30px;" />
+						style="width: 97px;" /> - <input maxlength="2" type="text" name="alterDigito"
+						id="alterDigito" style="width: 26px;" />
 					</td>
 					<td>Apelido:</td>
 					<td width="205"><input type="text" name="alterApelido" maxlength="100"
@@ -152,7 +154,7 @@ label {
 					<td>
 						
 						<input type="text" name="alterCarteira" maxlength="100"
-						id="alterCarteira" style="width: 215px;" />
+						id="alterCarteira" style="width: 143px;" />
 								                
 					</td>
 					<td>Juros %:</td>
@@ -234,3 +236,4 @@ label {
 		</fieldset>
 	</div>
 </body>
+	

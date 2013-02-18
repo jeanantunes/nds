@@ -123,6 +123,8 @@ var ParciaisController = $.extend(true, {
 	
 	processaRetornoPesquisaParciais : function(result) {
 		
+		$('#exportacaoPeriodos',this.workspace).hide();
+		
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 		
@@ -139,6 +141,8 @@ var ParciaisController = $.extend(true, {
 	
 	processaRetornoPeriodosParciais : function(result) {
 		
+		$("#exportacao",this.workspace).hide();
+		
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 			
@@ -147,13 +151,8 @@ var ParciaisController = $.extend(true, {
 			$('#exportacaoPeriodos',this.workspace).hide();
 		} else {
 			$('#exportacaoPeriodos',this.workspace).show();
-			this.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
+			ParciaisController.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
-		
-		if(result.rows.length > 0 && result.rows[0].cell.geradoPorInterface==true)
-			$("#btnIncluirPeriodos",this.workspace).hide();
-		else
-			$("#btnIncluirPeriodos",this.workspace).show();		
 		
 		$.each(result.rows, function(index,row){ParciaisController.gerarAcaoDetalhes(index,row);} );
 				
@@ -266,12 +265,16 @@ var ParciaisController = $.extend(true, {
 	},
 	
 	gerarAcaoDetalhes : function(index, row) {
-		row.cell.vendas = '<a href="javascript:;" onclick="ParciaisController.detalheVendas(\'' +
-		row.cell.dataLancamento +'\', \''+
-		row.cell.dataRecolhimento +'\', \''+
-		row.cell.idProdutoEdicao +'\', \''+
-		'\');">' + row.cell.vendas + '</a>';
 		
+		if(row.cell.vendas > 0){
+			
+			row.cell.vendas = '<a href="javascript:;" onclick="ParciaisController.detalheVendas(\'' +
+			row.cell.dataLancamento +'\', \''+
+			row.cell.dataRecolhimento +'\', \''+
+			row.cell.idProdutoEdicao +'\', \''+
+			'\');">' + row.cell.vendas + '</a>';
+		}
+	
 		row.cell.acao = 
 			'<a href="javascript:;" ' +
 			(row.cell.geradoPorInterface==true?'style="opacity: 0.5;"':'onclick="ParciaisController.carregarEdicaoDetalhes(\''+ 

@@ -39,6 +39,14 @@ public class ItemRecebimentoFisico implements Serializable {
 	@OneToOne(optional = false)
 	@JoinColumn(name = "ITEM_NF_ENTRADA_ID")
 	private ItemNotaFiscalEntrada itemNotaFiscal;
+	
+	public ItemRecebimentoFisico() {
+		
+	}
+	
+	public ItemRecebimentoFisico(Long id) {
+		this.id = id;
+	}
 	/**
 	 * @return the id
 	 */

@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Picture;
@@ -307,18 +308,24 @@ public class XLSExporter implements Exporter {
 				
 				Cell cell = row.createCell(cellNum++);
 				
-				
-				
-				if(ColumType.NUMBER == exportColumn.getColumnType()) {
+				if(ColumType.NUMBER.equals(exportColumn.getColumnType())
+						|| ColumType.INTEGER.equals(exportColumn.getColumnType())
+						|| ColumType.DECIMAL.equals(exportColumn.getColumnType())) {
+					
 					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-					cell.setCellValue(Double.parseDouble(columnString));
-				} else {
-					cell.setCellValue(columnString);
-				}
-				
+				}	
+				cell.setCellValue(columnString);
+								
 				CellStyle cellStyle = this.getRowColumnCellStyle(
 					sheet, ((rowNum % 2) != 0), (exportRow.getColumns().size() == cellNum),
 						exportColumn.getAlignment());
+				
+				if (ColumType.DECIMAL.equals(exportColumn.getColumnType())) {
+					
+					DataFormat df = sheet.getWorkbook().createDataFormat();
+					
+					cellStyle.setDataFormat(df.getFormat("0.00"));
+				}
 				
 				cell.setCellStyle(cellStyle);
 			}

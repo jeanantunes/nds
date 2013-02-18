@@ -4,8 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,7 @@ import br.com.abril.nds.client.vo.FooterTotalFornecedorVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.InfoTotalFornecedorDTO;
@@ -31,14 +35,12 @@ import br.com.abril.nds.dto.ResultadosContaCorrenteEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
-import br.com.abril.nds.model.financeiro.ViewContaCorrenteCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
@@ -46,18 +48,18 @@ import br.com.abril.nds.service.ContaCorrenteCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -98,8 +100,6 @@ public class ContaCorrenteCotaController extends BaseController {
 
 	@Autowired
 	private HttpServletRequest request;
-
-	private static final String ITENS_CONTA_CORRENTE = "itensContaCorrente";
 	
 	public ContaCorrenteCotaController() {
 	}
@@ -129,15 +129,14 @@ public class ContaCorrenteCotaController extends BaseController {
 
 		tratarFiltro(filtroViewContaCorrenteCotaDTO);
 		
-		Long total = contaCorrenteCotaService.getQuantidadeViewContaCorrenteCota(filtroViewContaCorrenteCotaDTO);
-		if (total == 0) {			
+		BigInteger total = this.consolidadoFinanceiroService.countObterContaCorrente(filtroViewContaCorrenteCotaDTO);
+		
+		if (total == null || BigInteger.ZERO.equals(total.equals(total))) {			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
 		}
 
-		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = 
-				contaCorrenteCotaService.obterListaConsolidadoPorCota(filtroViewContaCorrenteCotaDTO);	
-
-		request.getSession().setAttribute(ITENS_CONTA_CORRENTE,listaItensContaCorrenteCota);
+		List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = 
+				consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
 		
 		result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
 
@@ -152,19 +151,12 @@ public class ContaCorrenteCotaController extends BaseController {
 	 * @param rp
 	 * @param page
 	 */
-	public void consultarEncalheCota(
-			FiltroConsolidadoEncalheCotaDTO filtroConsolidadoEncalheDTO,
-			String sortname, String sortorder, int rp, int page) {
+	public void consultarEncalheCota(FiltroConsolidadoEncalheCotaDTO filtro) {
 
-		ViewContaCorrenteCota contaCorrente = obterListaContaCorrenteSessao(filtroConsolidadoEncalheDTO.getLineId());
-
-		filtroConsolidadoEncalheDTO.setDataConsolidado(contaCorrente
-				.getDataConsolidado());
-		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_ENCALHE,
-				filtroConsolidadoEncalheDTO);
+		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_ENCALHE,	filtro);
 
 		List<EncalheCotaDTO> listaEncalheCota = consolidadoFinanceiroService
-				.obterMovimentoEstoqueCotaEncalhe(filtroConsolidadoEncalheDTO);
+				.obterMovimentoEstoqueCotaEncalhe(filtro);
 
 		Collection<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedores(listaEncalheCota);
 
@@ -178,7 +170,7 @@ public class ContaCorrenteCotaController extends BaseController {
 
 			ResultadosContaCorrenteEncalheDTO resultado = new ResultadosContaCorrenteEncalheDTO(
 					tableModel,
-					contaCorrente.getDataConsolidado().toString(),
+					filtro.getDataConsolidado().toString(),
 					listaInfoTotalFornecedor );
 			
 			boolean temMaisQueUm = listaInfoTotalFornecedor.size() > 1;
@@ -203,18 +195,12 @@ public class ContaCorrenteCotaController extends BaseController {
 	 * @param page
 	 */
 	@SuppressWarnings("unused")
-	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtroConsolidadoConsignadoCotaDTO, String sortname, String sortorder, int rp, 
-			int page){
+	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtro){
 		
-		ViewContaCorrenteCota contaCorrente = obterListaContaCorrenteSessao(filtroConsolidadoConsignadoCotaDTO.getLineId());
-
-		filtroConsolidadoConsignadoCotaDTO.setDataConsolidado(contaCorrente
-				.getDataConsolidado());
-		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO,
-				filtroConsolidadoConsignadoCotaDTO);
+		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO, filtro);
 		
 		List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService
-				.obterMovimentoEstoqueCotaConsignado(filtroConsolidadoConsignadoCotaDTO);
+				.obterMovimentoEstoqueCotaConsignado(filtro);
 		
 		Collection<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
 		
@@ -229,7 +215,7 @@ public class ContaCorrenteCotaController extends BaseController {
 			
 			ResultadosContaCorrenteConsignadoDTO resultado = new ResultadosContaCorrenteConsignadoDTO(
 					tableModel,
-					contaCorrente.getDataConsolidado().toString(),
+					filtro.getDataConsolidado().toString(),
 					listaInfoTotalFornecedor );
 			
 			boolean temMaisQueUm = listaInfoTotalFornecedor.size() > 1;
@@ -243,14 +229,8 @@ public class ContaCorrenteCotaController extends BaseController {
 		} else{
 			throw new ValidacaoException(TipoMensagem.WARNING, "Dados do Consolidado não encontrado.");
 		}
-		
 	}
 	
-	
-	
-	
-	
-		
 	/**
 	 * Método que armazena informações para exibição do nome fornecedor e o total por fornecedor
 	 * @param listaEncalheCota
@@ -265,12 +245,12 @@ public class ContaCorrenteCotaController extends BaseController {
 
 		for (EncalheCotaDTO encalhe : listaEncalheCota) {
 			 key = encalhe.getNomeFornecedor();
-			 valor = encalhe.getTotal();
+			 valor = encalhe.getTotal() == null ? BigDecimal.ZERO : encalhe.getTotal();
 			if(mapFornecedores.containsKey(key)){				
 				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
 			}
 			
-			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor));
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
 			
 		}
 		
@@ -309,29 +289,6 @@ public class ContaCorrenteCotaController extends BaseController {
 		infoTotalFornecedorDTOs.addAll( mapFornecedores.values() );
 		
 		return infoTotalFornecedorDTOs;
-
-	}
-
-	/**
-	 * Obtém lista de conta corrente da sessão para localizar data selecionada
-	 * 
-	 * @param lineId
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	private ViewContaCorrenteCota obterListaContaCorrenteSessao(Long lineId) {
-		List<ViewContaCorrenteCota> listaContaCorrente = (List<ViewContaCorrenteCota>) request
-				.getSession().getAttribute(ITENS_CONTA_CORRENTE);
-
-		if (listaContaCorrente != null) {
-			for (ViewContaCorrenteCota contaCorrente : listaContaCorrente) {
-
-				if (contaCorrente.getId().equals(lineId)) {
-					return contaCorrente;
-				}
-			}
-		}
-		return null;
 
 	}
 	
@@ -389,40 +346,12 @@ public class ContaCorrenteCotaController extends BaseController {
 
 		FiltroViewContaCorrenteCotaDTO filtro = this.obterFiltroExportacao();
 
-		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = contaCorrenteCotaService
-				.obterListaConsolidadoPorCota(filtro);
-
-		List<ContaCorrenteCotaVO> listaItensContaCorrenteCotaVO = new ArrayList<ContaCorrenteCotaVO>();
-
-		for (ViewContaCorrenteCota contaCorrenteCota : listaItensContaCorrenteCota) {
-
-			ContaCorrenteCotaVO contaCorrenteCotaVO = new ContaCorrenteCotaVO();
-
-			contaCorrenteCotaVO.setConsignado(MathUtil
-					.defaultValue(contaCorrenteCota.getConsignado()));
-			contaCorrenteCotaVO.setDataConsolidado(contaCorrenteCota
-					.getDataConsolidado());
-			contaCorrenteCotaVO.setDebitoCredito(MathUtil
-					.defaultValue(contaCorrenteCota.getDebitoCredito()));
-			contaCorrenteCotaVO.setEncalhe(MathUtil
-					.defaultValue(contaCorrenteCota.getEncalhe()));
-			contaCorrenteCotaVO.setEncargos(MathUtil
-					.defaultValue(contaCorrenteCota.getEncargos()));
-			contaCorrenteCotaVO.setPendente(MathUtil
-					.defaultValue(contaCorrenteCota.getPendente()));
-			contaCorrenteCotaVO.setTotal(MathUtil
-					.defaultValue(contaCorrenteCota.getTotal()));
-			contaCorrenteCotaVO.setValorPostergado(MathUtil
-					.defaultValue(contaCorrenteCota.getValorPostergado()));
-			contaCorrenteCotaVO.setVendaEncalhe(MathUtil
-					.defaultValue(contaCorrenteCota.getVendaEncalhe()));
-
-			listaItensContaCorrenteCotaVO.add(contaCorrenteCotaVO);
-		}
-
+		List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = 
+				consolidadoFinanceiroService.obterContaCorrente(filtro);
+		
 		FileExporter.to("conta-corrente-cota", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), filtro, null,
-				listaItensContaCorrenteCotaVO, ContaCorrenteCotaVO.class,
+				listaItensContaCorrenteCota, ContaCorrenteCotaVO.class,
 				this.httpServletResponse);
 	}
 
@@ -521,12 +450,15 @@ public class ContaCorrenteCotaController extends BaseController {
 		}
 	}
 
-	public void obterMovimentoVendaEncalhe(Long idConsolidado, String sortname, String sortorder, int rp, int page) {
+	public void obterMovimentoVendaEncalhe(Long idConsolidado, Date dataEscolhida, Integer numeroCota, 
+			String sortname, String sortorder, int rp, int page) {
 		
 		
 		FiltroConsolidadoVendaCotaDTO filtro = new FiltroConsolidadoVendaCotaDTO();
 		
-		filtro.setIdConsolidado(idConsolidado);		
+		filtro.setIdConsolidado(idConsolidado);	
+		filtro.setDataConsolidado(dataEscolhida);
+		filtro.setNumeroCota(numeroCota);
 		
 		filtro.setOrdenacaoColuna(FiltroConsolidadoVendaCotaDTO.OrdenacaoColuna.valueOf(sortname));
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
@@ -545,14 +477,15 @@ public class ContaCorrenteCotaController extends BaseController {
 
 	}
 	
-	public void exportarVendaEncalhe(FileType fileType,Long idConsolidado) throws IOException{
+	public void exportarVendaEncalhe(FileType fileType,Long idConsolidado,Date dataEscolhida, Integer numeroCota) throws IOException{
 		
-		ConsolidadoFinanceiroCota  consolidado =  consolidadoFinanceiroService.buscarPorId(idConsolidado);
+		Cota cotaBanco = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		FiltroConsolidadoVendaCotaDTO filtro = new FiltroConsolidadoVendaCotaDTO();
-		filtro.setDataConsolidado(consolidado.getDataConsolidado());
+		filtro.setDataConsolidado(dataEscolhida);
+		filtro.setNumeroCota(numeroCota);
 		
 		filtro.setIdConsolidado(idConsolidado);			
-		String cota = consolidado.getCota().getNumeroCota() + " - " + PessoaUtil.obterNomeExibicaoPeloTipo(consolidado.getCota().getPessoa());
+		String cota = numeroCota + " - " + PessoaUtil.obterNomeExibicaoPeloTipo(cotaBanco.getPessoa());
 		filtro.setCota(cota);
 		
 		List<ConsultaVendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
@@ -660,43 +593,54 @@ public class ContaCorrenteCotaController extends BaseController {
 
 		FiltroViewContaCorrenteCotaDTO filtro = this.obterFiltroExportacao();
 
-		List<ViewContaCorrenteCota> listaItensContaCorrenteCota = contaCorrenteCotaService
-				.obterListaConsolidadoPorCota(filtro);
-
-		List<ContaCorrenteCotaVO> listaItensContaCorrenteCotaVO = new ArrayList<ContaCorrenteCotaVO>();
-
-		for (ViewContaCorrenteCota contaCorrenteCota : listaItensContaCorrenteCota) {
-
-			ContaCorrenteCotaVO contaCorrenteCotaVO = new ContaCorrenteCotaVO();
-
-			contaCorrenteCotaVO.setConsignado(MathUtil
-					.defaultValue(contaCorrenteCota.getConsignado()));
-			contaCorrenteCotaVO.setDataConsolidado(contaCorrenteCota
-					.getDataConsolidado());
-			contaCorrenteCotaVO.setDebitoCredito(MathUtil
-					.defaultValue(contaCorrenteCota.getDebitoCredito()));
-			contaCorrenteCotaVO.setEncalhe(MathUtil
-					.defaultValue(contaCorrenteCota.getEncalhe()));
-			contaCorrenteCotaVO.setEncargos(MathUtil
-					.defaultValue(contaCorrenteCota.getEncargos()));
-			contaCorrenteCotaVO.setPendente(MathUtil
-					.defaultValue(contaCorrenteCota.getPendente()));
-			contaCorrenteCotaVO.setTotal(MathUtil
-					.defaultValue(contaCorrenteCota.getTotal()));
-			contaCorrenteCotaVO.setValorPostergado(MathUtil
-					.defaultValue(contaCorrenteCota.getValorPostergado()));
-			contaCorrenteCotaVO.setVendaEncalhe(MathUtil
-					.defaultValue(contaCorrenteCota.getVendaEncalhe()));
-
-			listaItensContaCorrenteCotaVO.add(contaCorrenteCotaVO);
-		}
-		
+		List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = 
+				this.consolidadoFinanceiroService.obterContaCorrente(filtro);
 
 		FileExporter.to("conta-corrente-cota", fileType).inOutputStream(
 				this.getNDSFileHeader(), filtro, null,
-				listaItensContaCorrenteCotaVO, ContaCorrenteCotaVO.class,
+				listaItensContaCorrenteCota, ContaCorrenteCotaVO.class,
 				output);
 	}
 	
+	@Post
+	public void consultarDebitoCreditoCota(Long idConsolidado, Date data, Integer numeroCota,
+			String sortname, String sortorder){
 		
+		List<DebitoCreditoCotaDTO> movs = 
+				 this.contaCorrenteCotaService.consultarDebitoCreditoCota(
+						 idConsolidado, data, numeroCota, sortorder, sortname);
+		
+		this.result.use(FlexiGridJson.class).from(movs).page(1).total(movs.size()).serialize();
+	}
+	
+	public void exportarDebitoCreditoCota(FileType fileType, Long idConsolidado, Date data,
+			Integer numeroCota, String sortname, String sortorder) throws IOException{
+		
+		List<DebitoCreditoCotaDTO> movs = 
+				 this.contaCorrenteCotaService.consultarDebitoCreditoCota(
+						 idConsolidado, data, numeroCota, sortorder, sortname);
+		
+		FileExporter.to("debito-credito", fileType).inHTTPResponse(
+				this.getNDSFileHeader(), this.obterFiltroExportacao(), null,
+				movs, DebitoCreditoCotaDTO.class,
+				this.httpServletResponse);
+	}
+	
+	@Post
+	public void consultarEncargosCota(Long idConsolidado, Date data, Integer numeroCota){
+		
+		List<BigDecimal> dados = new ArrayList<BigDecimal>();
+		
+		BigDecimal valor = this.contaCorrenteCotaService.consultarJurosCota(idConsolidado, data, numeroCota);
+		dados.add(valor == null ? 
+				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
+				valor.setScale(2, RoundingMode.HALF_EVEN));
+		
+		valor = this.contaCorrenteCotaService.consultarMultaCota(idConsolidado, data, numeroCota);
+		dados.add(valor == null ? 
+				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
+				valor.setScale(2, RoundingMode.HALF_EVEN));
+		
+		this.result.use(Results.json()).from(dados, "result").recursive().serialize();
+	}
 }

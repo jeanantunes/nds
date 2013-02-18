@@ -1293,7 +1293,7 @@ var roteirizacao = $.extend(true, {
 
         $("#cepPesquisa", roteirizacao.workspace).mask("99999-999");
         $("#cotaPesquisaPdv", roteirizacao.workspace).val('');
-        $("#cotaPesquisaPdv", roteirizacao.workspace).numeric();
+        $("#cotaPesquisaPdv", roteirizacao.workspace).justInput(/[0-9]/);
         $("#nomeCotaPesquisaPdv", roteirizacao.workspace).val('');
 
         $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas',null,
@@ -2327,7 +2327,6 @@ var roteirizacao = $.extend(true, {
         roteirizacao.prepararPopupRoteirizacao();
         roteirizacao.modificada = false;
         
-        $('#cotaPesquisa', roteirizacao.workspace).numeric();
     },
 
     limparCamposPesquisaGrids : function() {
@@ -2362,22 +2361,22 @@ var roteirizacao = $.extend(true, {
             roteirizacao.desabilitaBotao('botaoExcluirRota');
 
         } else {
-            roteirizacao.habilitaBotao('botaoTransfereciaRota', function(){roteirizacao.popupTransferirRota()});
-            roteirizacao.habilitaBotao('botaoExcluirRota',function(){roteirizacao.popupExcluirRotaRoteiro()});
+            roteirizacao.habilitaBotao('botaoTransfereciaRota', function(){roteirizacao.popupTransferirRota();});
+            roteirizacao.habilitaBotao('botaoExcluirRota',function(){roteirizacao.popupExcluirRotaRoteiro();});
         }
     },
 
     habilitaBotoesRoteirizacao : function() {
 
-        listaRoteirizacao = roteirizacao.buscaRoteirizacaoSelecionadas()
+        listaRoteirizacao = roteirizacao.buscaRoteirizacaoSelecionadas();
 
         if (listaRoteirizacao.length == 0 ) {
             roteirizacao.desabilitaBotao('botaoTransferenciaRoteiro', roteirizacao.workspace);
             roteirizacao.desabilitaBotao('botaoExcluirRoteirizacao', roteirizacao.workspace);
 
         } else {
-            roteirizacao.habilitaBotao('botaoTransferenciaRoteiro', function(){roteirizacao.popupTransferirCota()});
-            roteirizacao.habilitaBotao('botaoExcluirRoteirizacao',function(){roteirizacao.popupExcluirRoteirizacao()});
+            roteirizacao.habilitaBotao('botaoTransferenciaRoteiro', function(){roteirizacao.popupTransferirCota();});
+            roteirizacao.habilitaBotao('botaoExcluirRoteirizacao',function(){roteirizacao.popupExcluirRoteirizacao();});
         }
     },
 
@@ -2387,7 +2386,7 @@ var roteirizacao = $.extend(true, {
         
     	if (roteirizacao.isNovo()) {
             $('#nomeBox', roteirizacao.workspace).prop('disabled', false);
-            $('#lnkPesquisarBox', roteirizacao.workspace).click(function() {roteirizacao.pesquisarBox()});
+            $('#lnkPesquisarBox', roteirizacao.workspace).click(function() {roteirizacao.pesquisarBox();});
         } else {
             $('#nomeBox', roteirizacao.workspace).prop('disabled', true);
             $('#lnkPesquisarBox', roteirizacao.workspace).unbind('click');

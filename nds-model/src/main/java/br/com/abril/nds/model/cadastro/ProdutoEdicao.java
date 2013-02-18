@@ -33,7 +33,9 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -174,6 +176,13 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao")
 	protected Set<FechamentoDiarioLancamentoReparte> historicoMovimentoRepartes;
 	
+	/**
+	 * Desconto aplicado no cadastro de Tipo Desconto Cota
+	 */
+	@OneToOne(optional = true)
+	@JoinColumn(name = "DESCONTO_ID")
+	private Desconto descontoProdutoEdicao;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "GRUPO_PRODUTO")
 	private GrupoProduto grupoProduto;
@@ -190,6 +199,16 @@ public class ProdutoEdicao implements Serializable {
 	@OneToOne(mappedBy = "produtoEdicao", optional=true,fetch=FetchType.LAZY)
 	private LancamentoParcial lancamentoParcial;
 	
+    @OneToOne(mappedBy = "produtoEdicao")
+    private EstoqueProduto estoqueProduto;
+
+	public ProdutoEdicao() {
+	}
+	
+	public ProdutoEdicao(Long id) {
+		this.id = id;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -527,12 +546,21 @@ public class ProdutoEdicao implements Serializable {
 		this.historicoMovimentoRepartes = historicoMovimentoRepartes;
 	}
 
+	public Desconto getDescontoProdutoEdicao() {
+		return descontoProdutoEdicao;
+	}
+
+	public void setDescontoProdutoEdicao(Desconto descontoProdutoEdicao) {
+		this.descontoProdutoEdicao = descontoProdutoEdicao;
+	}
+	
 	public SegmentacaoProduto getSegmentacao() {
 		return segmentacao;
 	}
 
 	public void setSegmentacao(SegmentacaoProduto segmentacao) {
 		this.segmentacao = segmentacao;
+
 	}
 
 	public GrupoProduto getGrupoProduto() {
@@ -578,6 +606,20 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setLancamentoParcial(LancamentoParcial lancamentoParcial) {
 		this.lancamentoParcial = lancamentoParcial;
+	}
+
+	/**
+	 * @return the estoqueProduto
+	 */
+	public EstoqueProduto getEstoqueProduto() {
+		return estoqueProduto;
+	}
+
+	/**
+	 * @param estoqueProduto the estoqueProduto to set
+	 */
+	public void setEstoqueProduto(EstoqueProduto estoqueProduto) {
+		this.estoqueProduto = estoqueProduto;
 	}
 
 	@Override

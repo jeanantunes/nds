@@ -1,6 +1,7 @@
 var consultaConsignadoCotaController = $.extend(true, {
 
 	init : function() {
+		
 		$(".consignadosCotaDetalhesGrid", consultaConsignadoCotaController.workspace).flexigrid({
 			preProcess: consultaConsignadoCotaController.executarPreProcessamento,
 			dataType : 'json',
@@ -36,13 +37,13 @@ var consultaConsignadoCotaController = $.extend(true, {
 					align : 'center'
 				},{
 					display : 'Preço Capa R$',
-					name : 'precoCapaFormatado',
+					name : 'precoCapa',
 					width : 70,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Preço Desc R$',
-					name : 'precoDescontoFormatado',
+					name : 'precoDesconto',
 					width : 70,
 					sortable : true,
 					align : 'right'
@@ -54,13 +55,13 @@ var consultaConsignadoCotaController = $.extend(true, {
 					align : 'center'
 				}, {
 					display : 'Total $',
-					name : 'totalFormatado',
+					name : 'total',
 					width : 40,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Total Desc. $',
-					name : 'totalDescontoFormatado',
+					name : 'totalDesconto',
 					width : 60,
 					sortable : true,
 					align : 'right'
@@ -110,13 +111,13 @@ var consultaConsignadoCotaController = $.extend(true, {
 					align : 'center'
 				},{
 					display : 'Preço Capa R$',
-					name : 'precoCapaFormatado',
+					name : 'precoCapa',
 					width : 80,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Preço Desc R$',
-					name : 'precoDescontoFormatado',
+					name : 'precoDesconto',
 					width : 80,
 					sortable : true,
 					align : 'right'
@@ -128,18 +129,18 @@ var consultaConsignadoCotaController = $.extend(true, {
 					align : 'center'
 				}, {
 					display : 'Total $',
-					name : 'totalFormatado',
+					name : 'total',
 					width : 70,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Total Desc. $',
-					name : 'totalDescontoFormatado',
+					name : 'totalDesconto',
 					width : 70,
 					sortable : true,
 					align : 'right'
 				}],
-				sortname : "cota",
+				sortname : "codigoProduto",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -172,13 +173,13 @@ var consultaConsignadoCotaController = $.extend(true, {
 					align : 'center'
 				}, {
 					display : 'Total R$',
-					name : 'totalFormatado',
+					name : 'total',
 					width : 120,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Total Desc. R$',
-					name : 'totalDescontoFormatado',
+					name : 'totalDesconto',
 					width : 100,
 					sortable : true,
 					align : 'right'
@@ -195,7 +196,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'center'
 				}],
-				sortname : "cota",
+				sortname : "numeroCota",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -354,6 +355,10 @@ var consultaConsignadoCotaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
+			beforeClose: function(){
+				
+				consultaConsignadoCotaController.pesquisar();
+			},
 			form: $("#dialog-detalhes", this.workspace).parents("form")
 		});
 	},
@@ -399,7 +404,12 @@ var consultaConsignadoCotaController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {				
 		   	var linkAcao = '<a href="javascript:;" onclick="consultaConsignadoCotaController.mostra_detalhes('+row.cell.numeroCota+','+row.cell.idFornecedor+');" style="cursor:pointer">' +
 						   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
-	                         '</a>';           
+	                         '</a>';   
+		   	
+		   	row.cell.precoCapa = row.cell.precoCapaFormatado;
+		   	row.cell.precoDesconto = row.cell.precoDescontoFormatado;
+		   	row.cell.total = row.cell.totalFormatado;
+			row.cell.totalDesconto = row.cell.totalDescontoFormatado;
 			
 			row.cell.acao = linkAcao;			
 		});

@@ -27,7 +27,7 @@
 		<p id="mensagemConsistenciaDados" ></p>
 	</div>
 	</form>
-
+	
 	<form id="form-postergar">
 	<div id="dialog-postergar" title="Postergar Encalhe" style="display:none;">
 	
@@ -92,9 +92,11 @@
 	</form>
 	<div class="areaBts">
 		<div class="area">
-			<div id="divBotoesPrincipais" style="display:none; float:left;">
+			<div class="divBotoesPrincipais" style="display:none; float:left;">
 	            <span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvar()" rel="tipsy" title="Salvar"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /> </a></span>
-				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe();" rel="tipsy" title="Cotas Ausentes"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" /></a></span>
+			</div>
+			<span class="bt_novos" style="display:none;" id="bt_cotas_ausentes" ><a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe(false);" rel="tipsy" title="Cotas Ausentes"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" /></a></span>
+			<div class="divBotoesPrincipais" style="display:none; float:left;">
 				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvarNoEncerrementoOperacao();" rel="tipsy" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" /></a></span>
 				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.analiticoEncalhe();" rel="tipsy" title="Anal&iacute;tico Encalhe"><img src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0" /></a></span>
 			</div>

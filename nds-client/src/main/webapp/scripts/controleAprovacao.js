@@ -271,3 +271,5 @@ var controleAprovacaoController = $.extend(true, {
 	}
 
 }, BaseController);
+
+//@ sourceURL=controleAprovacao.js

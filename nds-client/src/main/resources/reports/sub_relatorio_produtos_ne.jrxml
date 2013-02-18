@@ -33,7 +33,7 @@
 	<field name="sequencia" class="java.lang.Integer"/>
 	<variable name="SUM_PRECO_CAPA" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
 		<variableExpression><![CDATA[$F{valorTotalProduto}]]></variableExpression>
-		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
 	</variable>
 	<variable name="SUM_PRECO_DESCONTO" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
 		<variableExpression><![CDATA[$F{valorDescontoProduto}]]></variableExpression>

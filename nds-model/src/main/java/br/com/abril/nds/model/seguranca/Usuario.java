@@ -96,6 +96,14 @@ public class Usuario implements Serializable {
 	@OneToMany
 	private List<PerfilUsuario> perfilUsuario = new ArrayList<PerfilUsuario>();
 	
+	public Usuario() {
+		
+	}
+	
+	public Usuario(Long idUsuario) {
+		this.id = idUsuario;
+	}
+
 	public Long getId() {
 		return id;
 	}

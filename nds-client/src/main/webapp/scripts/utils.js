@@ -32,6 +32,8 @@ function exibirMensagem(tipoMensagem, mensagens) {
 
 	//clearMessageTimeout();
 	
+	
+	
 	var divSuccess = $("#effectSuccess");
 	var divWarning = $("#effectWarning");
 	var divError = $("#effectError");
@@ -44,6 +46,13 @@ function exibirMensagem(tipoMensagem, mensagens) {
 						   divSuccess, textSuccess,
 						   divWarning, textWarning,
 						   divError, textError, false);
+	
+	shortcut.add("ESC", function(){
+		esconde(false,divSuccess);
+		esconde(false,divWarning);
+		esconde(false,divError);
+	});
+
 }
 
 function exibirMensagemDialog(tipoMensagem, mensagens, idDialog) {
@@ -83,9 +92,7 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 		
 		montarTextoMensagem(campoTexto, mensagens);
 
-		$(divSuccess).show(0);
-
-		//$(divSuccess).show(0, esconde(isFromDialog, divSuccess));
+		$(divSuccess).show(0, esconteAutomatico(divSuccess));
 		
 	} else if (tipoMensagem == "WARNING") {
 		
@@ -130,27 +137,24 @@ function isNumeric(a){
 function esconde(isFromDialog, div) {
 
 	$(div).fadeOut("slow");
-
-	/*if (isFromDialog) {
-		
-		messageDialogTimeout =
-			setTimeout(function() {
-				$(div).fadeOut("slow");
-			}, 5000);
-		
-	} else {
-		
-		/*messageTimeout = 
-			setTimeout(function() {
-				$(div).fadeOut("slow");
-			}, 5000);	
-	}*/
-
+	
 	// Remove a div que deixa o fundo desabilitado e escuro 
 	while($("#disabledBackground").length != 0) {
 		$("#disabledBackground").remove();
 	}
 
+}
+
+function esconteAutomatico(div) {
+	messageTimeout = 
+		setTimeout(function() {
+			$(div).fadeOut("slow");
+		}, 3000);
+	
+	// Remove a div que deixa o fundo desabilitado e escuro 
+	while($("#disabledBackground").length != 0) {
+		$("#disabledBackground").remove();
+	}
 }
 
 function clearMessageTimeout() {
@@ -225,6 +229,29 @@ function carregarCombo(url, params, element, selected, idDialog ){
         },null,true, idDialog);
 }
 
+function doGet(url, params, target) {
+	
+	var element;
+	
+	var href = url;
+	
+	if (params && params.length > 0) href = href.concat("?");
+	
+	for(var index in params) {
+		
+		href = href.concat(params[index].name+"="+params[index].value);
+		
+		if(index+1 < params.length)
+			href = href.concat("&&");
+	}
+	
+	element = document.createElement("a");
+	
+	element.href   = href;
+	element.target = target;
+	
+	element.click();
+}
 
 function newOption(value, label) {
     return "<option value='" + value + "'>" + label + "</option>"
@@ -263,9 +290,13 @@ function priceToFloat(field) {
 function floatToPrice(field) {
 	
 	var price = String(field);
-	
+
 	if (price.indexOf(".") == -1) {
 		price = price + ".00";
+	}
+	
+	if(price.indexOf(",") > -1) {
+		price = price.replace(",", "");
 	}
 	
     var part = price.split(".");

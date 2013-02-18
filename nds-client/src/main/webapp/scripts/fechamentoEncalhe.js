@@ -3,6 +3,7 @@ var fechamentoEncalheController = $.extend(true, {
 	vDataEncalhe : '',
 	vFornecedorId : '',
 	vBoxId : '',
+	isFechamento : false,
 
 	init : function() {
 		$("#datepickerDe", fechamentoEncalheController.workspace).datepicker({
@@ -160,7 +161,8 @@ var fechamentoEncalheController = $.extend(true, {
 			aplicaRegraMudancaTipo = false;
 		}
 		
-		$('#divBotoesPrincipais', fechamentoEncalheController.workspace).show();
+		$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
+		$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).hide();
 		
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexOptions({
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
@@ -197,8 +199,12 @@ var fechamentoEncalheController = $.extend(true, {
             return;
         } 
 		
+		if (resultado.rows && resultado.rows.length > 0) {
+			$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).show();
+			$('.divBotoesPrincipais', fechamentoEncalheController.workspace).show();
+		}
+		
 		$.each(resultado.rows, function(index, row) {
-			
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
 			if ( ( row.cell.diferenca == "0" && valorFisico == '' ) ||  valorFisico == '' ) {
@@ -211,24 +217,42 @@ var fechamentoEncalheController = $.extend(true, {
 			row.cell.replicar = '<input type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
 			
 			if (fechado != '') {
-				$('#divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
+				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 			}
 		});
 		
 		return resultado;
 	},
 	
-	replicarTodos : function() {
+	replicarTodos : function(replicar) {
 	
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		for (i=0; i<tabela.rows.length; i++) {
-			fechamentoEncalheController.replicarItem(i);
+		for (i = 0; i<tabela.rows.length; i++) {
+			if (replicar){
+			
+				fechamentoEncalheController.replicarItem(i);
+			
+			} else {
+				
+				fechamentoEncalheController.limparInputsFisico(i);
+			}
 		}
 	},
 	
 	replicar:function(index){
 		$("#sel",this.workspace).attr("checked",false);
 		fechamentoEncalheController.replicarItem(index);
+	},
+	
+	limparInputsFisico: function(index) {
+		
+		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
+		var campo = tabela.rows[index].cells[7].firstChild.firstChild;
+		
+		if (!campo.disabled) {
+
+			campo.val("");
+		}
 	},
 	
 	replicarItem : function(index) {
@@ -250,9 +274,7 @@ var fechamentoEncalheController = $.extend(true, {
 			
 		checkAll(input,"checkgroupFechamento");
 		
-		if(input.checked == true){
-			fechamentoEncalheController.replicarTodos();
-		}
+		fechamentoEncalheController.replicarTodos(input.checked);
 	},
 	
 	onChangeFisico : function(campo, index) {
@@ -303,13 +325,13 @@ var fechamentoEncalheController = $.extend(true, {
 			
 	},
 	
-	popup_encerrarEncalhe : function() {
+	popup_encerrarEncalhe : function(isSomenteCotasSemAcao) {
 
 		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		$(".cotasGrid", fechamentoEncalheController.workspace).flexOptions({
 			url: contextPath + "/devolucao/fechamentoEncalhe/cotasAusentes",
-			params: [{name:'dataEncalhe', value: dataEncalhe }],
+			params: [{name:'dataEncalhe', value: dataEncalhe }, {name:'isSomenteCotasSemAcao', value: isSomenteCotasSemAcao}],
 			newp: 1,
 		});
 		
@@ -318,13 +340,18 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	verificarEncerrarOperacaoEncalhe : function() {
 
+		var dataEncalhe = $('#datepickerDe', fechamentoEncalheController.workspace).val();
+
+		var params = [
+			{name:"dataEncalhe", value:dataEncalhe}, 
+			{name:"operacao", value: "VERIFICACAO"}
+		];
+		
 		$.postJSON(
 			contextPath + "/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe",
-			{ 'dataEncalhe' : $('#datepickerDe', fechamentoEncalheController.workspace).val() , 
-			  'operacao' : 'VERIFICACAO' 
-		},
+			params,
 			function (result) {
-
+			
 				var tipoMensagem = result.tipoMensagem;
 				var listaMensagens = result.listaMensagens;
 				
@@ -332,13 +359,20 @@ var fechamentoEncalheController = $.extend(true, {
 					
 					exibirMensagem(tipoMensagem, listaMensagens);
 				}
-
+				
 				if (!result) {
 					
-					fechamentoEncalheController.popup_encerrarEncalhe();
-				} 
-				else{
+					fechamentoEncalheController.isFechamento = true;
 					
+					fechamentoEncalheController.popup_encerrarEncalhe(true);
+					
+				} else {
+					
+					if ($( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace).dialog("isOpen")) {
+
+						$( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace).dialog("destroy");
+					}
+
 					fechamentoEncalheController.popup_encerrar();
 				}			
 			},
@@ -359,14 +393,18 @@ var fechamentoEncalheController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 
+					var params = [
+					      {name: 'dataEncalhe', value: $('#datepickerDe', fechamentoEncalheController.workspace).val()}, 
+					      {name: 'operacao', value: 'CONFIRMACAO'}
+					];
+					
+					var _this = $(this);
+
 					$.postJSON(
 						contextPath + "/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe",
-						{ 'dataEncalhe' : $('#datepickerDe', fechamentoEncalheController.workspace).val() , 
-						  'operacao' : 'CONFIRMACAO' },
+						params,
 						function (result) {
 
-							$("#dialog-confirm", fechamentoEncalheController.workspace).dialog("close");
-							
 							var tipoMensagem = result.tipoMensagem;
 							var listaMensagens = result.listaMensagens;
 							
@@ -374,11 +412,16 @@ var fechamentoEncalheController = $.extend(true, {
 								exibirMensagem(tipoMensagem, listaMensagens);
 							}
 
-							if (result == 'NAO_ENCERRAR') {
-								fechamentoEncalheController.popup_encerrarEncalhe();
-							} else if (result == 'ENCERRAR'){
+							if (!result) {
+								fechamentoEncalheController.isFechamento = true;
+								fechamentoEncalheController.popup_encerrarEncalhe(true);
+							} else {
 								fechamentoEncalheController.popup_encerrar();
 							}
+							
+							fechamentoEncalheController.pesquisar();
+							
+							_this.dialog("destroy");
 						},
 					  	null,
 					   	false
@@ -459,9 +502,11 @@ var fechamentoEncalheController = $.extend(true, {
 			buttons: {
 				"Postergar": function() {
 					fechamentoEncalheController.postergarCotas();
+					
 				},
 				"Cobrar": function() {
 					fechamentoEncalheController.veificarCobrancaGerada();
+					
 				},
 				"Cancelar": function() {
 					$(this).dialog( "close" );
@@ -515,7 +560,7 @@ var fechamentoEncalheController = $.extend(true, {
 				{ 'dataEncalhe' : dataEncalhe},
 				function (result) {
 						
-			        $("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);   
+			        $("#dtPostergada", fechamentoEncalheController.workspace).val(result.resultado);
 				}
 		);
 		
@@ -551,6 +596,13 @@ var fechamentoEncalheController = $.extend(true, {
 										}
 
 										$(".cotasGrid", fechamentoEncalheController.workspace).flexReload();
+										
+								        if (fechamentoEncalheController.isFechamento) {
+
+								        	fechamentoEncalheController.isFechamento = false;
+								        	
+								        	fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
+								        }
 									},
 								  	null,
 								   	true,
@@ -718,10 +770,10 @@ var fechamentoEncalheController = $.extend(true, {
 				
 				if (tipoMensagem && listaMensagens) {
 					if (tipoMensagem == "ERROR"  ){
-						exibirMensagem(tipoMensagem, listaMensagens);
+						exibirMensagem("WARNING", listaMensagens);
 					//	fechamentoEncalheController.pesquisar(false);
 					} else {
-						$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0])
+						$('#mensagemConsistenciaDados', fechamentoEncalheController.workspace).html(listaMensagens[0]);
 						fechamentoEncalheController.popup_mensagem_consistencia_dados();
 					}
 				} else {
@@ -756,35 +808,22 @@ var fechamentoEncalheController = $.extend(true, {
 			form: $("#dialog-mensagem-consistencia-dados", this.workspace).parents("form")
 		});
 	},
-
+	
 	 populaParamentrosFechamentoEncalheInformados : function(){
-		var dados ="";
-		var index = 0;
-		$("input[type=text][name='fisico']").each(function(){
-			if (dados != ""){
-				dados+=",";
-			}
+		 
+		 var data = new Array();
+		 
+		 data.push({name:"dataEncalhe", value: $('#datepickerDe', fechamentoEncalheController.workspace).val()});
+		 data.push({name:"fornecedorId", value: $('#selectFornecedor', fechamentoEncalheController.workspace).val()});
+		 data.push({name:"boxId", value: $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val()});
 
-		    if ( $(this).val() != null &&  $(this).val() !=  "" ){
-				  var  qtd = parseInt($(this).val());
-		     	  dados+='{name:"listaFechamento['+index+'].produtoEdicao",value:'+$(this).attr('id')+'}, {name:"listaFechamento['+index+'].fisico",value:'+qtd+'}';
-		     	  index++;
-		    }
+		 $("input[type=text][name='fisico']").each(function(index, value){
 			
-		});
-		var fornecedorId = null;
-		if ($('#selectFornecedor', fechamentoEncalheController.workspace).val() !=""){
-		    fornecedorId = $('#selectFornecedor', fechamentoEncalheController.workspace).val();
-		}
-		
-		var boxId = null;
-		if ($('#selectBoxEncalhe', fechamentoEncalheController.workspace).val() !=""){
-		    boxId = $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val();
-		}
-		
-		dados+=',{name:"dataEncalhe",value:"'+$('#datepickerDe', fechamentoEncalheController.workspace).val()+'"},{name:"fornecedorId",value:'+fornecedorId+'},{name:"boxId",value:'+boxId+'}';
-		var params = '['+dados+ ']';
-		return eval(params);
+			 data.push({name: 'listaFechamento[' + index + '].produtoEdicao', value: $(value).attr('id')});
+			 data.push({name: 'listaFechamento[' + index + '].fisico', value: $(value).val()});
+		 });
+		 
+		return data;
 	},
 
 	 limpaGridPesquisa : function() {
@@ -792,30 +831,29 @@ var fechamentoEncalheController = $.extend(true, {
 		 $(".fechamentoGrid", fechamentoEncalheController.workspace).clear();
 		 $('#divFechamentoGrid', fechamentoEncalheController.workspace).css("display", "none");
 	},
-
-	 salvarNoEncerrementoOperacao : function() {
-		 
-			$.postJSON(
-				contextPath + "/devolucao/fechamentoEncalhe/salvarNoEncerrementoOperacao",
-				fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
-				function (result) {
+	
+	salvarNoEncerrementoOperacao : function() {
+		
+		$.postJSON(
+			contextPath + "/devolucao/fechamentoEncalhe/salvarNoEncerrementoOperacao",
+			fechamentoEncalheController.populaParamentrosFechamentoEncalheInformados(),
+			function (result) {
+				
+				var tipoMensagem = result.tipoMensagem;
+				
+				var listaMensagens = result.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
 					
-					var tipoMensagem = result.tipoMensagem;
+					exibirMensagem(tipoMensagem, listaMensagens);
+				} else {
 					
-					var listaMensagens = result.listaMensagens;
-					
-					if (tipoMensagem && listaMensagens) {
-						
-						exibirMensagem(tipoMensagem, listaMensagens);
-					} else {
-						
-						fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
-					}
-				},
-			  	null,
-			   	false
-			);
-			
+					fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
+				}
+			},
+		  	null,
+		   	false
+		);
 	},
 	
 	analiticoEncalhe : function() {

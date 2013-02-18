@@ -17,7 +17,8 @@ import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheDTO;
 import br.com.abril.nds.dto.VisaoEstoqueDetalheJuramentadoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
-import br.com.abril.nds.integracao.service.DistribuidorService;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -26,8 +27,8 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.VisaoEstoqueService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -124,7 +125,9 @@ public class VisaoEstoqueController extends BaseController {
 
 		this.visaoEstoqueService.transferirEstoque(filtro, this.getUsuarioLogado());
 		
-		this.pesquisar(filtro);
+		ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência realizada com sucesso.");
+		
+		this.result.use(Results.json()).from(validacao, "result").recursive().serialize();
 	}
 	
 	private GrupoMovimentoEstoque getGrupoMovimentoTransferencia(TipoEstoque tipoEstoque, boolean isEntrada) {
@@ -231,6 +234,11 @@ public class VisaoEstoqueController extends BaseController {
 	public void exportarConferenciaCega(FileType fileType) throws IOException {
 		
 		List<VisaoEstoqueConferenciaCegaVO> listaExport = (List<VisaoEstoqueConferenciaCegaVO>) this.session.getAttribute(LISTA_CONFERENCIA_CEGA);
+		
+		if (listaExport == null || listaExport.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
 		
 		FileExporter.to("visao-estoque-conferencia-cega", fileType).inHTTPResponse(
 				getNDSFileHeader(), null, null,

@@ -19,14 +19,14 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheInterfaceDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.dto.filtro.FiltroProcessosDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -62,9 +62,6 @@ public class PainelProcessamentoController extends BaseController {
 	@Autowired
 	private PainelProcessamentoService painelProcessamentoService;
 	
-	@Autowired
-	private DistribuidorService distribuidorService;
-
 	@Autowired
 	private InterfaceExecucaoService interfaceExecucaoService;
 
@@ -116,7 +113,7 @@ public class PainelProcessamentoController extends BaseController {
 			}
 		}
 		
-		List<InterfaceDTO> lista = painelProcessamentoService.listarInterfaces();
+		List<InterfaceDTO> lista = painelProcessamentoService.listarInterfaces(filtroSessao);
 		
 		String nomeArquivo = "relatorio-interfaces";
 		
@@ -159,7 +156,7 @@ public class PainelProcessamentoController extends BaseController {
 		
 		List<InterfaceDTO> resultado = null;
 		try {
-			resultado = painelProcessamentoService.listarInterfaces();
+			resultado = painelProcessamentoService.listarInterfaces(filtro);
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;
@@ -173,12 +170,12 @@ public class PainelProcessamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
 
-			List<InterfaceDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+			//List<InterfaceDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 
 			TableModel<CellModelKeyValue<InterfaceDTO>> tableModel = new TableModel<CellModelKeyValue<InterfaceDTO>>();
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-			tableModel.setTotal(resultado.size());
+			tableModel.setTotal(Integer.valueOf(painelProcessamentoService.listarTotalInterfaces(filtro).toString()));
 
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		}
@@ -200,8 +197,8 @@ public class PainelProcessamentoController extends BaseController {
 		List<DetalheProcessamentoVO> lista;
 		int quantidade = 0;
 		try {
-			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento));
-			quantidade = lista.size();
+			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro);
+			quantidade = Integer.valueOf( painelProcessamentoService.listarTotaldetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro).toString() );
 			
 			if (lista == null || lista.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -216,10 +213,10 @@ public class PainelProcessamentoController extends BaseController {
 			}
 		}
 
-		List<DetalheProcessamentoVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(lista, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+		//List<DetalheProcessamentoVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(lista, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 
 		TableModel<CellModelKeyValue<DetalheProcessamentoVO>> tableModel = new TableModel<CellModelKeyValue<DetalheProcessamentoVO>>();
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());		
 		tableModel.setTotal(quantidade);		
 		

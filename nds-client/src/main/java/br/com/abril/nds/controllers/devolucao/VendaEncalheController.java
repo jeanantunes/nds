@@ -21,8 +21,8 @@ import br.com.abril.nds.client.vo.VendaProdutoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.VendaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaEncalheDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -36,12 +36,13 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.VendaEncalheService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -241,20 +242,25 @@ public class VendaEncalheController extends BaseController {
 	@Post
 	public void pesquisarProdutoCodBarra(String codBarra){
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
-		
-		if(produtoEdicao== null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código de barras \""+codBarra+"\" não encontrado!");
+		List<ProdutoEdicao> produtosEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
+
+		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+			
+			this.result.nothing();
+			
+			return;
 		}
-		
-		Map<String, Object> mapa = new TreeMap<String, Object>();
-		
-		if (produtoEdicao.getProduto() != null) {
-			mapa.put("codigoProduto", produtoEdicao.getProduto().getCodigo());
+
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+
+		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+
+			listaProdutos.add(new ItemAutoComplete(
+					produtoEdicao.getCodigoDeBarras() + " - " + produtoEdicao.getProduto().getNome() + " - Ed.:" + produtoEdicao.getNumeroEdicao(), 
+					null, new Object[] { produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao() }));
 		}
-		mapa.put("nuemroEdicao", produtoEdicao.getNumeroEdicao());
-		
-		result.use(CustomJson.class).from(mapa).serialize();
+
+		result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -347,7 +353,7 @@ public class VendaEncalheController extends BaseController {
 				ProdutoEdicao produtoEdicao = 
 						produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(venda.getCodigoProduto(),venda.getNumeroEdicao().toString());
 				
-				BigDecimal descontoProduto = descontoService.obterDescontoPorCotaProdutoEdicao(cota, produtoEdicao);
+				BigDecimal descontoProduto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 				
 				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 	    
@@ -479,10 +485,6 @@ public class VendaEncalheController extends BaseController {
 	
 	private void validarParametrosVenda(List<VendaEncalheDTO> listaVendas,Long numeroCota, Date dataDebito){
 	
-		if(listaVendas == null || listaVendas.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um produto deve ser informado para venda!");
-		}
-		
 		validarFormatoData();
 		
 		List<String> mensagensValidacao = new ArrayList<String>();
@@ -491,8 +493,23 @@ public class VendaEncalheController extends BaseController {
 			mensagensValidacao.add("O preenchimento do campo [Cota] é obrigatório!");
 		}
 		
+		if(listaVendas == null || listaVendas.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Pelo menos um produto deve ser informado para venda!");
+		}
+		else{
+			validarItensVenda(listaVendas);
+		}
+		
 		if(dataDebito == null){
 			mensagensValidacao.add("O preenchimento do campo [Data Vencimento] é obrigatório!");
+		}
+		else{
+			
+			Distribuidor distribuidor = distribuidorService.obter();
+			
+			if(DateUtil.isDataInicialMaiorDataFinal(distribuidor.getDataOperacao(),dataDebito)){
+				mensagensValidacao.add("O campo [Data Vencimento] deve ser maior que a data de operação do sistema!");
+			}
 		}
 		
 		if (!mensagensValidacao.isEmpty()){
@@ -500,6 +517,39 @@ public class VendaEncalheController extends BaseController {
 		}
 	}
 	
+	private void validarItensVenda(List<VendaEncalheDTO> listaVendas) {
+		
+		List<String> mensagensValidacao = new ArrayList<String>();
+		
+		for(VendaEncalheDTO item : listaVendas){
+			
+			if(item.getQntProduto() == null || item.getQntProduto().compareTo(BigInteger.ZERO) == 0){
+				mensagensValidacao.add("O valor do campo [Qtde Solic.] do item [ "+ getInfoItem(item) +" ] deve ser maior que zero! ");
+			}
+			
+			if(item.getQntProduto() != null && item.getQntProduto().compareTo(item.getQntDisponivelProduto()) > 0){
+				mensagensValidacao.add("O valor do campo [Qtde Solic.] do item [ "+ getInfoItem(item) +" ] deve ser maior que a o valor do campo [Qtde Disp.]! ");
+			}
+		}
+		
+		if (!mensagensValidacao.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
+		}
+		
+	}
+	
+	private String getInfoItem(VendaEncalheDTO item ){
+		
+		StringBuilder retorno = new StringBuilder();
+		
+		retorno.append("Código:").append(item.getCodigoProduto()).append(", ")
+		.append("Produto:").append(item.getNomeProduto()).append(", ")
+		.append("Edição:").append(item.getNumeroEdicao());
+		
+		return retorno.toString();
+		
+	}
+
 	private void validarParametrosFiltro(FiltroVendaEncalheDTO filtro){
 		
 		validarFormatoData();

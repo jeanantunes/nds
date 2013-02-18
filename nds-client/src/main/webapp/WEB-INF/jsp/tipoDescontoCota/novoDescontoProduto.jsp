@@ -49,9 +49,14 @@
 		          			id="edicaoProduto" 
 		          			style="width:60px;"
 		          			onchange="pesquisaProdutoTipoDescontoCota.validarNumEdicao('#pCodigoProduto', '#edicaoProduto', true);"
+		          			onfocus="pesquisaProdutoTipoDescontoCota.validarCamposEdicoes(this.id);"
+		          			onkeyup="pesquisaProdutoTipoDescontoCota.validarCamposEdicoes(this.id);"
 		          />
 		          ou por
-		          <input type="text" name="quantidadeEdicoes" id="quantidadeEdicoes" style="width:60px;"/>
+		          <input 	type="text" name="quantidadeEdicoes" id="quantidadeEdicoes" style="width:60px;"
+		          			onfocus="pesquisaProdutoTipoDescontoCota.validarCamposEdicoes(this.id);"
+		          			onkeyup="pesquisaProdutoTipoDescontoCota.validarCamposEdicoes(this.id);"
+		          />
 		          Edições</td>
 
 			  </tr>

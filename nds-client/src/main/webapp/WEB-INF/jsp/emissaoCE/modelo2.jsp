@@ -18,7 +18,7 @@ td{padding-left:3px;padding-right:3px;}
 			table-layout: fixed;
 		}
 .capaImgBox {
-	display: none;
+	display: block;
 	width: 115px;
 	float: left;
 	border: solid 1px #000; 
@@ -44,9 +44,7 @@ function imprimir(){
 	$( "#btImpressao" ).hide();
 	window.print();
 }
-$(function(){$('img.capaImg').load(function() {
-	$(this).parent().parent().show();
-});});
+
 </script>
 </head>
 
@@ -108,7 +106,7 @@ $(function(){$('img.capaImg').load(function() {
   </tr>
   <tr>
     <td height="20" colspan="4" style="border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;">
-    	<span class="dadosNota" style="font-size:13px!important;"><strong>${cotaEmissao.numCota}</strong> - ${cotaEmissao.nomeCota.toUpperCase()}</span>
+    	<span class="dadosNota" style="font-size:13px!important;"><strong>${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()} </strong></span>
     </td>
     <td style=" border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.cnpj}</span></td>
   </tr>
@@ -134,7 +132,7 @@ $(function(){$('img.capaImg').load(function() {
     <td width="458" style="border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
   </tr>
   <tr>
-    <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataRecolhimento}</span></td>
+    <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota"><strong>${cotaEmissao.dataRecolhimento}</strong></span></td>
     <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
     <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.nomeBox} / Roteiro: ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.nomeRota}</span></td>
   </tr>
@@ -169,7 +167,7 @@ $(function(){$('img.capaImg').load(function() {
     <td width="58" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; height:30px ">${produto.codigoProduto}</td>
     <td width="230" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.nomeProduto}</strong></td>
     <td width="34" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.edicao}</strong></td>
-    <td width="34" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px;border-right:1px solid #000;  "><strong>${status.index+1}</strong></td>
+    <td width="34" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px;border-right:1px solid #000;  "><strong>${produto.sequencia}</strong></td>
     <td width="25" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
     <td width="70" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">0028</td>
     <td width="22" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
@@ -205,6 +203,8 @@ $(function(){$('img.capaImg').load(function() {
     </table></td>
   </tr>
 </table>
+
+<c:if test=" ${cotaEmissao.vlrComDesconto != '0.0' } ">
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
   <tr class="class_linha_3">
     <td colspan="6" align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-right:1px solid #000; border-top:1px solid #000;"><strong>OBSERVAÇÕES</strong></td>
@@ -247,6 +247,7 @@ $(function(){$('img.capaImg').load(function() {
     <td style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
   </tr>
 </table>
+</c:if>
 <br />
 <br />
 
@@ -262,13 +263,13 @@ $(function(){$('img.capaImg').load(function() {
 		</div>	
 	
 	
-	<c:if test="${personalizada}">
+	<c:if test="${!personalizada}">
 		
 		<c:forEach items="${capas}" var="capa" varStatus="status">	
 			
 			<div class="capaImgBox">			
 				<div style="width: inherit; text-align: center;">
-					<strong>${status.index+1}</strong>				
+					<strong>${capa.sequenciaMatriz}</strong>				
 				</div>			
 				<div style="width: inherit; text-align: center;">
 					<img class="capaImg" src="<c:url value='/capa/tratarNoImage/${capa.id}'></c:url>"/>
@@ -276,17 +277,16 @@ $(function(){$('img.capaImg').load(function() {
 			</div>	
 			
 	    </c:forEach>
-    
 		
 	</c:if>
 	
-	<c:if test="${!personalizada}">
+	<c:if test="${personalizada}">
 	
 		<c:forEach items="${cotaEmissao.produtos}" var="produto" varStatus="status">	
 			
 			<div class="capaImgBox">			
 				<div style="width: inherit; text-align: center;">
-					<strong>${status.index+1}</strong>				
+					<strong>${produto.sequencia}</strong>				
 				</div>			
 				<div style="width: inherit; text-align: center;">
 					<img class="capaImg" src="<c:url value='/capa/tratarNoImage/${produto.idProdutoEdicao}'></c:url>"/>

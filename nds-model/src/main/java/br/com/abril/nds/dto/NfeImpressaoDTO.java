@@ -160,6 +160,16 @@ public class NfeImpressaoDTO implements Serializable{
 	private List<ItemImpressaoNfe> itensImpressaoNfe;
 	
 	private List<Duplicata> faturas;
+	
+	private Integer numeroCota;
+	
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
+	}
 
 	public String getNaturezaOperacao() {
 		return naturezaOperacao;

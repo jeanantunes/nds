@@ -51,12 +51,13 @@ public class GeradorBoleto {
         //SACADO
         Sacado sacado = new Sacado(corpoBoleto.getSacadoNome(), corpoBoleto.getSacadoDocumento());
         //ENDERECO DO SACADO
+        
         Endereco enderecoSac = new Endereco();
         enderecoSac.setUF(UnidadeFederativa.valueOf(corpoBoleto.getEnderecoSacadoUf()));
-        enderecoSac.setLocalidade(corpoBoleto.getEnderecoSacadoLocalidade());
+        enderecoSac.setLocalidade(corpoBoleto.getEnderecoSacadoBairro());
         enderecoSac.setCep(new CEP(corpoBoleto.getEnderecoSacadoCep()));
-        enderecoSac.setBairro(corpoBoleto.getEnderecoSacadoBairro());
-        enderecoSac.setLogradouro(corpoBoleto.getEnderecoSacadoLogradouro());
+        enderecoSac.setBairro(corpoBoleto.getEnderecoSacadoLogradouro());
+        enderecoSac.setLogradouro(corpoBoleto.getEnderecoSacadoLocalidade());
         enderecoSac.setNumero(corpoBoleto.getEnderecoSacadoNumero());
         sacado.addEndereco(enderecoSac);
         
@@ -77,13 +78,13 @@ public class GeradorBoleto {
         
         //CONTA BANCARIA
         ContaBancaria contaBancaria = new ContaBancaria(getBancoByNumero(corpoBoleto.getContaNumeroBanco()).create());
-        contaBancaria.setNumeroDaConta(new NumeroDaConta(corpoBoleto.getContaNumero(), "0"));
+        contaBancaria.setNumeroDaConta(new NumeroDaConta(corpoBoleto.getCodigoCedente(), null));
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(corpoBoleto.getContaCarteira());
         //TIPO DE COBRANCA DA CARTEIRA DA CONTA BANCARIA  
-        carteira.setTipoCobranca(TipoDeCobranca.valueOf(corpoBoleto.getContaTipoDeCobranca()));   
+        carteira.setTipoCobranca(TipoDeCobranca.valueOf(corpoBoleto.getContaTipoDeCobranca())); 
         contaBancaria.setCarteira(carteira);
-        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia(), "1"));
+        contaBancaria.setAgencia(new Agencia(corpoBoleto.getContaAgencia(), corpoBoleto.getDigitoAgencia()));
         
         //TITULO
         Titulo titulo;

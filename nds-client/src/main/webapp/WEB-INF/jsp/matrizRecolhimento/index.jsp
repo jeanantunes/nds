@@ -20,7 +20,49 @@
 	
 	<body>
 		
-		<form id="form-confirm">
+		<div class="areaBts resumoPeriodo" style="display: none;">
+		<div class="area">
+			
+			<span class="bt_novos" >
+				<a id="linkConfirmar" href="javascript:;" title="Confirmar balanceamento">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+				</a>
+			</span>
+			
+			<span class="bt_novos" >
+				<a id="linkEditor" href="javascript:;" title="Balancear Editor">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif">
+				</a>
+			</span>
+			
+			<span class="bt_novos" >
+				<a id="linkValor" href="javascript:;" title="Balancear Volume / Valor">
+					<img style="width: 16px;height: 16px;" border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_financeiro.png">
+				</a>
+			</span>
+			<span class="bt_novos" >
+				<a id="linkSalvar" href="javascript:;" title="Salvar">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
+				</a>
+			</span>
+		
+			<span class="bt_arq" >
+				<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoRecolhimentoController.exibirMatrizFornecedor();">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_detalhes.png">
+				</a>
+			</span>
+		
+			<span class="bt_arq" >
+				<a id="linkConfiguracaoInicial" title="Voltar Configuração Inicial" href="javascript:;">
+					<img src="${pageContext.request.contextPath}/images/bt_devolucao.png" border="0" hspace="5" />
+				</a>
+			</span>
+			
+		</div>
+		</div>
+		<div class="linha_separa_fields">&nbsp;</div>
+		
+		<form id="form-confirm" >
 		<div id="dialog-confirm" title="Balanceamento da Matriz de Recolhimento">
 			
 			<jsp:include page="../messagesDialog.jsp" />
@@ -71,8 +113,8 @@
 		</form>
 		
 		<!-- Filtro de Pesquisa -->
-		
-		<fieldset class="classFieldset">
+		 
+		<fieldset class="fieldFiltro" style="margin-top: 0px;">
 		
 			<legend>Pesquisar Balanceamento da Matriz de Recolhimento </legend>
 			
@@ -83,12 +125,12 @@
 						<a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
 						<div class="menu_fornecedor" style="display:none;">
 		                	<span class="bt_sellAll">
-								<input type="checkbox" id="checkBoxSelecionarTodosFornecedores" name="checkBoxSelecionarTodosFornecedores" onclick="checkAll(this, 'checkGroupFornecedores');" style="float:left;"/>
+								<input type="checkbox" checked="checked" id="checkBoxSelecionarTodosFornecedores" name="checkBoxSelecionarTodosFornecedores" onclick="checkAll(this, 'checkGroupFornecedores');" style="float:left;"/>
 								<label for="checkBoxSelecionarTodosFornecedores">Selecionar Todos</label>
 							</span>
 		                    <br clear="all" />
 		                    <c:forEach items="${fornecedores}" var="fornecedor">
-		                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkGroupFornecedores" onclick="verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox"/>
+		                    	<input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}" name="checkGroupFornecedores" onclick="verifyCheck($('#checkBoxSelecionarTodosFornecedores'));" type="checkbox" checked="checked"/>
 		                      	<label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.razaoSocial}</label>
 		                     	<br clear="all" />
 		                	</c:forEach> 
@@ -123,7 +165,7 @@
 		
 		<!--  Resumo do Período -->
 		
-		<fieldset class="classFieldset" id="resumoPeriodo" style="display: none;">
+		<fieldset class="classFieldset resumoPeriodo" id="resumoPeriodo" style="display: none;">
 		
 			<legend>Resumo do Período</legend>
 			
@@ -137,48 +179,21 @@
 			<table width="950" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td width="115">
-						<span class="bt_confirmar_novo" title="Confirmar balanceamento">
-							<a id="linkConfirmar" href="javascript:;">
-								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Confirmar
-							</a>
-						</span>
+						
 					</td>
 					<td width="117">
-						<strong>Balanceamento por:</strong>
+						
 					</td>
 					<td width="296">
-						<span class="bt_confirmar_novo" title="Balancear Editor">
-							<a id="linkEditor" href="javascript:;">
-								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Editor
-							</a>
-						</span>
-						<span class="bt_confirmar_novo" title="Balancear Volume / Valor">
-							<a id="linkValor" href="javascript:;">
-								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Valor
-							</a>
-						</span>
-						<span class="bt_novos" title="Salvar">
-							<a id="linkSalvar" href="javascript:;">
-								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">Salvar
-							</a>
-						</span>
+						<!-- Removidos Botões Confirmar/Editor/Valor/Salvar -->
 					</td>
 					
 					<td width="207">
-						<span class="bt_novos" title="Matriz Fornecedor" style="float: right;">
-							<a id="linkMatrizFornecedor" href="javascript:;" onclick="balanceamentoRecolhimentoController.exibirMatrizFornecedor();">
-								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_detalhes.png">Matriz Fornecedor
-							</a>
-						</span>
+						
 					</td>
 					
 					<td width="215">
-						<span class="bt_configura_inicial" title="Voltar Configuração Inicial">
-							<a id="linkConfiguracaoInicial" href="javascript:;">
-								<img src="${pageContext.request.contextPath}/images/bt_devolucao.png" border="0" hspace="5" />
-								Voltar Configuração Inicial
-							</a>
-						</span>
+						
 					</td>
 				</tr>
 			</table>
@@ -186,7 +201,7 @@
 		
 		<!-- Balanceamento -->
 		
-		<fieldset id="fieldsetGrids" class="classFieldset">
+		<fieldset id="fieldsetGrids" class="classFieldset" style="width: 1073px!important;">
 		
 			<legend>Balanceamento da Matriz de Recolhimento </legend>
 			
@@ -211,7 +226,7 @@
 						<td width="152">
 							<span class="bt_novos" title="Reprogramar">
 								<a id="linkReprogramar" href="javascript:;">
-									<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />Reprogramar
+									<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
 								</a>
 							</span>
 						</td>

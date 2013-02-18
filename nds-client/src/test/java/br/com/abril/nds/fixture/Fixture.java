@@ -95,9 +95,10 @@ import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCota;
+import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoDistribuidor;
-import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
@@ -256,6 +257,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridi
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 
 public class Fixture {
@@ -852,6 +854,32 @@ public class Fixture {
 	}
 
 	
+	public static TipoMovimentoEstoque tipoMovimentoRecebimentoJornaleiroJuramentado() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		
+		tipoMovimento.setAprovacaoAutomatica(false);
+		tipoMovimento.setDescricao("Recebimento Jornaleiro Juramentado");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_JORNALEIRO_JURAMENTADO);
+		
+		return tipoMovimento;
+		
+	}
+	
+
+	public static TipoMovimentoEstoque tipoMovimentoEnvioJornaleiroJuramentado() {
+		
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		
+		tipoMovimento.setAprovacaoAutomatica(false);
+		tipoMovimento.setDescricao("Envio Jornaleiro Juramentado");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO);
+		
+		return tipoMovimento;
+		
+	}
 	
 	public static TipoMovimentoEstoque tipoMovimentoFaltaEm() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
@@ -1347,7 +1375,8 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.VENDA_TOTAL);
 		return tipoMovimento;		
 	}
-		
+	
+	
 	public static ItemNotaFiscalEntrada itemNotaFiscal(ProdutoEdicao produtoEdicao,
 			Usuario usuario, NotaFiscalEntrada notaFiscal, Date dataLancamento, Date dataRecolhimento, TipoLancamento tipoLancamento, BigInteger qtde) {
 		ItemNotaFiscalEntrada itemNotaFiscal = new ItemNotaFiscalEntrada();
@@ -2230,7 +2259,7 @@ public class Fixture {
 				                Date dataPagamento,
 				                BigDecimal encargos,
 				                BigDecimal valor,
-				                String tipoBaixa,
+				                TipoBaixaCobranca tipoBaixa,
 				                String acao,
 				                StatusCobranca status,
 				                Cota cota,
@@ -2271,20 +2300,11 @@ public class Fixture {
 
 	public static PoliticaCobranca criarPoliticaCobranca(
 			Distribuidor distribuidor, FormaCobranca formaCobranca, 
-			boolean aceitaBaixaPagamentoMaior, boolean aceitaBaixaPagamentoMenor,
-			boolean aceitaBaixaPagamentoVencido, int inadimplenciasSuspencao,
-			String assuntoEmailCobranca, String mensagemEmailCobranca, 
-			boolean principal,FormaEmissao formaEmissao) {
+			boolean principal, FormaEmissao formaEmissao) {
 		
 		PoliticaCobranca politicaCobranca = new PoliticaCobranca();
-		politicaCobranca.setAceitaBaixaPagamentoMaior(aceitaBaixaPagamentoMaior);
-		politicaCobranca.setAceitaBaixaPagamentoMenor(aceitaBaixaPagamentoMenor);
-		politicaCobranca.setAceitaBaixaPagamentoVencido(aceitaBaixaPagamentoVencido);
 		politicaCobranca.setDistribuidor(distribuidor);
-		politicaCobranca.setInadimplenciasSuspencao(inadimplenciasSuspencao);
 		politicaCobranca.setFormaCobranca(formaCobranca);
-		politicaCobranca.setAssuntoEmailCobranca(assuntoEmailCobranca);
-		politicaCobranca.setMensagemEmailCobranca(mensagemEmailCobranca);
 		politicaCobranca.setPrincipal(principal);
 		politicaCobranca.setFormaEmissao(formaEmissao);
 		politicaCobranca.setAtivo(true);
@@ -2371,11 +2391,12 @@ public class Fixture {
 		return banco;
 	}
 	
-	public static ControleBaixaBancaria controleBaixaBancaria(Date data, StatusControle status, Usuario responsavel, Banco banco) {
+	public static ControleBaixaBancaria controleBaixaBancaria(Date dataOperacao, Date dataPagamento, StatusControle status, Usuario responsavel, Banco banco) {
 	
 		ControleBaixaBancaria controleBaixaBancaria = new ControleBaixaBancaria();
 		
-		controleBaixaBancaria.setData(data);
+		controleBaixaBancaria.setDataOperacao(dataOperacao);
+		controleBaixaBancaria.setDataPagamento(dataPagamento);
 		controleBaixaBancaria.setStatus(status);
 		controleBaixaBancaria.setResponsavel(responsavel);
 		controleBaixaBancaria.setBanco(banco);
@@ -2627,7 +2648,7 @@ public class Fixture {
             Date dataPagamento,
             BigDecimal encargos,
             BigDecimal valor,
-            String tipoBaixa,
+            TipoBaixaCobranca tipoBaixa,
             String acao,
             StatusCobranca status,
             Cota cota,
@@ -2658,7 +2679,7 @@ public class Fixture {
             Date dataPagamento,
             BigDecimal encargos,
             BigDecimal valor,
-            String tipoBaixa,
+            TipoBaixaCobranca tipoBaixa,
             String acao,
             StatusCobranca status,
             Cota cota,
@@ -2689,7 +2710,7 @@ public class Fixture {
 									            Date dataPagamento,
 									            BigDecimal encargos,
 									            BigDecimal valor,
-									            String tipoBaixa,
+									            TipoBaixaCobranca tipoBaixa,
 									            String acao,
 									            StatusCobranca status,
 									            Cota cota,
@@ -2719,7 +2740,7 @@ public class Fixture {
 									            Date dataPagamento,
 									            BigDecimal encargos,
 									            BigDecimal valor,
-									            String tipoBaixa,
+									            TipoBaixaCobranca tipoBaixa,
 									            String acao,
 									            StatusCobranca status,
 									            Cota cota,
@@ -2752,7 +2773,7 @@ public class Fixture {
 										            Date dataPagamento,
 										            BigDecimal encargos,
 										            BigDecimal valor,
-										            String tipoBaixa,
+										            TipoBaixaCobranca tipoBaixa,
 										            String acao,
 										            StatusCobranca status,
 										            Cota cota,
@@ -2783,7 +2804,7 @@ public class Fixture {
 										            Date dataPagamento,
 										            BigDecimal encargos,
 										            BigDecimal valor,
-										            String tipoBaixa,
+										            TipoBaixaCobranca tipoBaixa,
 										            String acao,
 										            StatusCobranca status,
 										            Cota cota,
@@ -3618,19 +3639,49 @@ public class Fixture {
 		return grupo;
 	}
 	
-	public static DescontoProdutoEdicao descontoProdutoEdicao(Cota cota, BigDecimal desconto, Fornecedor fornecedor, ProdutoEdicao produtoEdicao, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
+	public static DescontoCotaProdutoExcessao descontoProdutoEdicao(Cota cota, Desconto desconto, Distribuidor distribuidor, Fornecedor fornecedor, ProdutoEdicao produtoEdicao, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
 		
-		DescontoProdutoEdicao descontoP = new DescontoProdutoEdicao();
+		DescontoCotaProdutoExcessao descontoP = new DescontoCotaProdutoExcessao();
 		descontoP.setCota(cota);
 		descontoP.setDesconto(desconto);
 		descontoP.setFornecedor(fornecedor);
+		descontoP.setDistribuidor(distribuidor);
+		descontoP.setProduto(produtoEdicao.getProduto());
 		descontoP.setProdutoEdicao(produtoEdicao);
 		descontoP.setTipoDesconto(tipoDesconto);
+		descontoP.setUsuario(desconto.getUsuario());
+		descontoP.setDescontoPredominante(false);
 		
 		return descontoP;
 	}
 	
-    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, Float percentualDesconto, Float percentualPrestacaoServico, Integer tipoDesconto, String descricao){
+	public static Desconto desconto(Usuario usuario, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
+		
+		Desconto desconto = new Desconto();
+		desconto.setId(1L);
+		desconto.setDataAlteracao(new Date());
+		desconto.setValor(new BigDecimal("10"));
+		desconto.setTipoDesconto(TipoDesconto.ESPECIFICO);
+		desconto.setUsado(false);
+		desconto.setUsuario(usuario);
+		
+		return desconto;
+	}
+	
+	public static Desconto descontoOne(Usuario usuario, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
+		
+		Desconto desconto = new Desconto();
+		desconto.setId(1L);
+		desconto.setDataAlteracao(new Date());
+		desconto.setValor(BigDecimal.ONE);
+		desconto.setTipoDesconto(TipoDesconto.ESPECIFICO);
+		desconto.setUsado(false);
+		desconto.setUsuario(usuario);
+		
+		return desconto;
+	}
+	
+    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, BigDecimal percentualDesconto, BigDecimal percentualPrestacaoServico, Integer tipoDesconto, String descricao) {
 		
     	DescontoLogistica descontoL = new DescontoLogistica();
 		descontoL.setDataInicioVigencia(dataInicioVigencia);
@@ -3642,7 +3693,7 @@ public class Fixture {
 		return descontoL;
 	}
     
-    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, Float percentualDesconto, Float percentualPrestacaoServico, Integer tipoDesconto, Set<Produto> produtos){
+    public static DescontoLogistica descontoLogistica(Date dataInicioVigencia, BigDecimal percentualDesconto, BigDecimal percentualPrestacaoServico, Integer tipoDesconto, Set<Produto> produtos){
 		
     	DescontoLogistica descontoL = new DescontoLogistica();
 		descontoL.setDataInicioVigencia(dataInicioVigencia);

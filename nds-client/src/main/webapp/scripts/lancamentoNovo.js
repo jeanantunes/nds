@@ -15,15 +15,40 @@ var lancamentoNovoController = $.extend(true, {
 		});
 		
 		$("#edicaoProdutoInput", lancamentoNovoController.workspace).numeric();
-		$("#diferencaProdutoInput", lancamentoNovoController.workspace).numeric();
+		$("#diferencaProdutoInput", lancamentoNovoController.workspace).justInput(/[0-9]/);
 		$("#cotaInput1", lancamentoNovoController.workspace).numeric();
-		$("#diferencaInput1", lancamentoNovoController.workspace).numeric();
+		$("#diferencaInput1", lancamentoNovoController.workspace).justInput(/[0-9]/);
 		$("#cotaInputNota", lancamentoNovoController.workspace).numeric();
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).mask("99/99/9999");
 		
+		$("#diferencaProdutoInput",lancamentoNovoController.workspace).keyup(function(e){
+		  if (!isNaN(parseInt(this.value)) && parseInt(this.value) == 0){ 
+			this.value = "";
+		  }else{
+			return;
+		  }
+		});
+		
+		$("#diferencaInput1",lancamentoNovoController.workspace).keyup(function(e){
+		  if (!isNaN(parseInt(this.value)) && parseInt(this.value) == 0){ 
+			this.value = "";
+		  }else{
+			return;
+		  }
+		});
+	
 		$(".lanctoFaltasSobrasCota_3Grid", lancamentoNovoController.workspace).flexigrid({
 			preProcess: lancamentoNovoController.executarPreProcessamentoNovo,
-			onSuccess: function(){$("[name=diferencaProduto]", lancamentoNovoController.workspace).numeric();},
+			onSuccess: function(){
+				$(".maskDiferencaProduto", lancamentoNovoController.workspace).justInput(/[0-9]/);
+				$(".maskDiferencaProduto",lancamentoNovoController.workspace ).keyup(function(e){
+				  if (!isNaN(parseInt(this.value)) && parseInt(this.value) == 0){ 
+					this.value = "";
+				  }else{
+					return;
+				  }
+				});
+			},
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -333,8 +358,8 @@ var lancamentoNovoController = $.extend(true, {
 							
 				$("#cotaInput"+ (linhaAtual+1), lancamentoNovoController.workspace).numeric();
 				
-				$("#diferencaInput" + (linhaAtual+1), lancamentoNovoController.workspace).numeric();
-					
+				$("#diferencaInput" + (linhaAtual+1), lancamentoNovoController.workspace).justInput(/[0-9]/);
+				
 				$("#cotaInput" + (linhaAtual+1), lancamentoNovoController.workspace).val(value.numeroCota);
 					
 				$("#nomeInput" + (linhaAtual+1), lancamentoNovoController.workspace).val(value.nomeCota);
@@ -347,6 +372,14 @@ var lancamentoNovoController = $.extend(true, {
 				
 				$("#rateioIDInputHidden" + (linhaAtual+1), lancamentoNovoController.workspace).val(value.idRateio);
 				
+			});
+			
+			$("input[name='diferencaInput']",lancamentoNovoController.workspace).keyup(function(e){
+			  if (!isNaN(parseInt(this.value)) && parseInt(this.value) == 0){ 
+				this.value = "";
+			  }else{
+				return;
+			  }
 			});
 			
 			$("#fieldCota", lancamentoNovoController.workspace).show();
@@ -430,17 +463,16 @@ var lancamentoNovoController = $.extend(true, {
 				valueEstoqueAtual = row.cell.qtdeEstoqueAtual;
 			}
 			
-			row.cell.codigoProduto = '<div name="codigoProdutoNota">'+ row.cell.codigoProduto +'</div>';
+			row.cell.codigoProduto = '<div name="codigoProdutoNota" id="codigoProdutoNota'+ index +'">'+ row.cell.codigoProduto +'</div>';
 			
 			row.cell.pacotePadrao = '<div id="pacotePadrao'+ index +'">'+ row.cell.pacotePadrao +'</div>';
 			row.cell.reparte = '<div id="reparte'+ index +'">'+ row.cell.qtdeEstoque +'</div>';
 			row.cell.qtdeEstoqueAtual = '<div id="qtdTotal'+ index +'">'+ valueEstoqueAtual +'</div>';
 			
 			row.cell.valorTotalDiferenca = 
-				'<input type="text" value="'+valueDiferenca+'" name="diferencaProduto" style="width:50px; value="0" text-align: center; margin-right:10px;" maxlenght="255" '+
+				'<input type="text" value="'+valueDiferenca+'" name="diferencaProduto" class="maskDiferencaProduto" style="width:50px; value="0" text-align: center; margin-right:10px;" maxlenght="255" '+
 				' id="inputDiferencaProduto'+ index +'" onchange="lancamentoNovoController.alterarReparteAtual('+ index +');" />';
 		});
-		
 		
 		return resultado;
 	},
@@ -482,7 +514,6 @@ var lancamentoNovoController = $.extend(true, {
 				 {name: "diferenca", value: diferenca},
 				 {name: "direcionadoParaEstoque", value: direcionadoParaEstoque},
 				 {name: "reparteAtual", value: reparteAtual},
-				 {name: "redirecionarProdutosEstoque", value: lancamentoNovoController.redirecionarProdutosEstoque},
 				 {name: "idDiferenca", value:lancamentoNovoController.idDiferenca},
 				 {name: "tipoEstoque", value:lancamentoNovoController.tipoEstoqueSelecionado},
 				 {name: "pacotePadrao", value:pacotePadrao}
@@ -779,7 +810,7 @@ var lancamentoNovoController = $.extend(true, {
 			
 			var idProdutoEdicao = $("#idProdutoEdicao", lancamentoNovoController.workspace).val();
 			
-			if(!idProdutoEdicao) {
+			if(!idProdutoEdicao && idProdutoEdicao.length > 0) {
 				exibirMensagemDialog('WARNING', ['Produto Edição não selecionado.'],'');			
 				$('#paraCota').attr('checked',false);
 				$("#fieldCota", lancamentoNovoController.workspace).hide();
@@ -829,7 +860,15 @@ var lancamentoNovoController = $.extend(true, {
 			$("#cotaInput" + (linhaAtual + 1), lancamentoNovoController.workspace).focus();
 			
 			$("#cotaInput"+ (linhaAtual + 1), lancamentoNovoController.workspace).numeric();
-			$("#diferencaInput" + (linhaAtual + 1), lancamentoNovoController.workspace).numeric();
+			$("#diferencaInput" + (linhaAtual + 1), lancamentoNovoController.workspace).justInput(/[0-9]/);
+			
+			$("#diferencaInput" + (linhaAtual + 1),lancamentoNovoController.workspace).keyup(function(e){
+			  if (!isNaN(parseInt(this.value)) && parseInt(this.value) == 0){ 
+				this.value = "";
+			  }else{
+				return;
+			  }
+			});
 		}
 	},
 	
@@ -972,56 +1011,18 @@ var lancamentoNovoController = $.extend(true, {
 		 $('#qtdeTipoDialog').val(qtde);
 	},
 	
-	calcularReparteAtual : function(idDiv){
+	calcularReparteAtual : function(index){
 		
-		var numeroCota = $("#cotaInput" + idDiv, lancamentoNovoController.workspace).val();
-		
-		if( numeroCota == undefined || numeroCota == '' ){	
-			return;
-		}
-		
-		if ($("#reparteText" + idDiv, lancamentoNovoController.workspace).text() == ""){
-			
-			$("#reparteText" + idDiv, lancamentoNovoController.workspace).text(0);
-		}
-	
-		if ($("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val() == ""){
-			
-			$("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val(0);
-		}
-		
-		var valorReparteAtual = 0;
-		
-		var valorReparteRateio = eval($("#reparteText" + idDiv, lancamentoNovoController.workspace).text());
-		
-		var valorDiferenca = eval($("#diferencaInput" + idDiv, lancamentoNovoController.workspace).val());
-		
-		var valorPacotePadrao = eval($("#pacotePadrao", lancamentoNovoController.workspace).text()) ;
-		
-		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
-		
-		if (tipoDiferenca == "SOBRA_DE" || tipoDiferenca == "SOBRA_EM"){
-			
-			if(tipoDiferenca == "SOBRA_DE"){
+		var valorReparte = lancamentoNovoController.obterValorReparteAtual(index);
 				
-				valorReparteAtual = valorReparteRateio + ( valorDiferenca * valorPacotePadrao);
-			}
-			else{
-				valorReparteAtual = valorReparteRateio +  valorDiferenca;
-			}
-			
-		} else {
-			
-			if(tipoDiferenca == "FALTA_DE"){
-				
-				valorReparteAtual = valorReparteRateio -  ( valorDiferenca * valorPacotePadrao);
-			}
-			else{
-				valorReparteAtual = valorReparteRateio -  valorDiferenca;
-			}
+		if(valorReparte<0){
+			var numeroCota = $("#cotaInput" + index, lancamentoNovoController.workspace).val();
+			$("#diferencaInput" + index, lancamentoNovoController.workspace).val("");
+			valorReparte = "";
+			exibirMensagemDialog('WARNING', ['O campo[Diferença não pode ser maior que o campo [Reparte] da Cota número['+numeroCota+']'],'');
 		}
 		
-		$("#reparteAtualText" + idDiv, lancamentoNovoController.workspace).text(valorReparteAtual);
+		$("#reparteAtualText" + index, lancamentoNovoController.workspace).text(valorReparte);
 	},
 	
 	carregarProdutoEdicaoNotaEnvio:function(diferenca){
@@ -1063,25 +1064,24 @@ var lancamentoNovoController = $.extend(true, {
 		
 		var valorReparte = parseInt($("#reparte" + indexDiv, lancamentoNovoController.workspace).text());
 		
-		var pacotePadrao = parseInt($("#pacotePadrao" + indexDiv, lancamentoNovoController.workspace).text());
-		
 		var valorReparteAtual;
 		
-		if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_DE") {
-			
-			valorReparteAtual = valorReparte + (valorDiferencaProduto * pacotePadrao);
-			
-		} else if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_EM") {
+		if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_DE"
+			|| $("#tipoDiferenca", lancamentoNovoController.workspace).val() == "SOBRA_EM") {
 			
 			valorReparteAtual = valorReparte + valorDiferencaProduto;
 			
-		} else if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_DE") {
-			
-			valorReparteAtual = valorReparte - (valorDiferencaProduto * pacotePadrao);
-		
-		} else if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_EM") {
+		} else if ($("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_DE"
+			|| $("#tipoDiferenca", lancamentoNovoController.workspace).val() == "FALTA_EM") {
 			
 			valorReparteAtual = valorReparte - valorDiferencaProduto;
+
+			if(valorReparteAtual<0){
+				$("#inputDiferencaProduto" + indexDiv, lancamentoNovoController.workspace).val("");
+				valorReparteAtual = "";
+				var codigoProduto = $("#codigoProdutoNota" + indexDiv, lancamentoNovoController.workspace).text();
+				exibirMensagemDialog('WARNING', ['O campo[Diferença não pode ser maior que o campo [Reparte Total] da Produro com código['+codigoProduto+']'],'');
+			}
 		}
 		
 		$("#qtdTotal" + indexDiv, lancamentoNovoController.workspace).text(valorReparteAtual);
@@ -1208,6 +1208,8 @@ var lancamentoNovoController = $.extend(true, {
 		
 		var linhasDaGrid = $('#grid_1 tr',this.workspace);
 		
+		var mensagens =[];
+		
 		$.each(linhasDaGrid, function(index, value) {
 			
 			var linha = $(value);
@@ -1222,49 +1224,101 @@ var lancamentoNovoController = $.extend(true, {
 				return;
 			}
 			
-			lancamentoNovoController.calcularReparteAtual(index);
+			var valorReparte = lancamentoNovoController.obterValorReparteAtual(index);
+			
+			if(valorReparte<0){
+				$("#diferencaInput" + index, lancamentoNovoController.workspace).val("");
+				valorReparte = "";
+				mensagens.push('O campo[Diferença não pode ser maior que o campo [Reparte] da Cota número['+numeroCota+']');
+			}
+			
+			$("#reparteAtualText" + index, lancamentoNovoController.workspace).text(valorReparte);
+			
 		});
+		
+		if(mensagens.length > 0){
+			exibirMensagemDialog('WARNING', mensagens,'');
+		}
+	},
+	
+	obterValorReparteAtual:function(index){
+		
+		var numeroCota = $("#cotaInput" + index, lancamentoNovoController.workspace).val();
+		
+		if( numeroCota == undefined || numeroCota == '' ){	
+			return;
+		}
+		
+		if ($("#reparteText" + index, lancamentoNovoController.workspace).text() == ""){
+			
+			$("#reparteText" + index, lancamentoNovoController.workspace).text(0);
+		}
+	
+		if ($("#diferencaInput" + index, lancamentoNovoController.workspace).val() == ""){
+			
+			$("#diferencaInput" + index, lancamentoNovoController.workspace).val(0);
+		}
+		
+		var valorReparteAtual = 0;
+		
+		var valorReparteRateio = eval($("#reparteText" + index, lancamentoNovoController.workspace).text());
+		
+		var valorDiferenca = eval($("#diferencaInput" + index, lancamentoNovoController.workspace).val());
+		
+		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+		
+		if (tipoDiferenca == "SOBRA_DE" || tipoDiferenca == "SOBRA_EM"){
+			
+			valorReparteAtual = valorReparteRateio +  valorDiferenca;
+			
+		} else {
+
+			valorReparteAtual = valorReparteRateio -  valorDiferenca;
+		}
+		
+		return valorReparteAtual;
 	},
 	
 	recalcularReparteAtualNotaEnvio:function(){
 		
 		var linhasDaGrid = $('.lanctoFaltasSobrasCota_3Grid tr',this.workspace);
 		
+		var mensagens =[];
+		
 		$.each(linhasDaGrid, function(index, value) {
 			
-			var valorReparteAtual = 0;
-			
-			var valorReparteProduto = eval($("#reparte" + index, lancamentoNovoController.workspace).text());
-			
-			var valorDiferenca = eval($("#inputDiferencaProduto" + index, lancamentoNovoController.workspace).val());
-			
-			var valorPacotePadrao = eval($("#pacotePadrao" + index, lancamentoNovoController.workspace).text()) ;
-			
-			var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
-			
-			if (tipoDiferenca == "SOBRA_DE" || tipoDiferenca == "SOBRA_EM"){
+			if($("#inputDiferencaProduto" + index, lancamentoNovoController.workspace).val()!=""){
 				
-				if(tipoDiferenca == "SOBRA_DE"){
-					
-					valorReparteAtual = valorReparteProduto + ( valorDiferenca * valorPacotePadrao);
-				}
-				else{
+				var valorReparteAtual = 0;
+				
+				var valorReparteProduto = eval($("#reparte" + index, lancamentoNovoController.workspace).text());
+				
+				var valorDiferenca = eval($("#inputDiferencaProduto" + index, lancamentoNovoController.workspace).val());
+				
+				var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+				
+				if (tipoDiferenca == "SOBRA_DE" || tipoDiferenca == "SOBRA_EM"){
 					valorReparteAtual = valorReparteProduto +  valorDiferenca;
-				}
-				
-			} else {
-				
-				if(tipoDiferenca == "FALTA_DE"){
+				} else {
 					
-					valorReparteAtual = valorReparteProduto -  ( valorDiferenca * valorPacotePadrao);
-				}
-				else{
 					valorReparteAtual = valorReparteProduto -  valorDiferenca;
+					
+					if(valorReparteAtual<0){
+						$("#inputDiferencaProduto" + index, lancamentoNovoController.workspace).val("");
+						valorReparteAtual = "";
+						var codigoProduto = $("#codigoProdutoNota" + index, lancamentoNovoController.workspace).text();
+						mensagens.push('O campo[Diferença não pode ser maior que o campo [Reparte Total] da Produro com código['+codigoProduto+']');
+					}
 				}
+				
+				$("#qtdTotal" + index, lancamentoNovoController.workspace).text(valorReparteAtual);
 			}
 			
-			$("#qtdTotal" + index, lancamentoNovoController.workspace).text(valorReparteAtual);
 		});
+		
+		if(mensagens.length > 0){
+			exibirMensagemDialog('WARNING', mensagens,'');
+		}
 	}
 	
 }, BaseController);

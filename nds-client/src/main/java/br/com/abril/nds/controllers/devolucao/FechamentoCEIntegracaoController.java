@@ -17,8 +17,8 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -26,10 +26,9 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -65,10 +64,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
-	@Autowired
-	private ProdutoEdicaoService produtoEdicaoService;
-	
+		
 	@Autowired
 	private PoliticaCobrancaService politicaCobrancaService;
 	

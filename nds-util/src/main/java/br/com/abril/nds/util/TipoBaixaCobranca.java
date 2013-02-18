@@ -7,7 +7,16 @@ package br.com.abril.nds.util;
  */
 public enum TipoBaixaCobranca {
 	
-	AUTOMATICA,
-	MANUAL;
+	AUTOMATICA("Automática"),
+	MANUAL("Manual");
 	
+	private String descricao;
+	
+	private TipoBaixaCobranca(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
 }

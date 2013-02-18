@@ -1,7 +1,7 @@
 
 <div id="tabNegociacao">
 	<br/>
-    	<fieldset style="width:400px!important; margin-bottom:5px; margin-left:10px;">
+    	<fieldset style="width:420px!important; margin-bottom:5px; margin-left:10px;">
         	<legend>Negociação de Dividas</legend>
              <table width="393" border="0" cellspacing="1" cellpadding="1">
                  <tr>
@@ -32,7 +32,6 @@
   
 <script type="text/javascript">
 function checkDescontoSelecionado() {
-	//debugger;
 	if( $('#utilizaDesconto').is(":checked") )
 		$('.percentualDesconto').show();
 	else
@@ -72,6 +71,73 @@ function checkDescontoSelecionado() {
 		
 		</td>
       </tr>
-  </table>
+
+			<tr>
+				<td>
+					<label>Aceita pagamento maior:</label>
+				</td>
+				<td colspan="3">
+					<input name="parametrosDistribuidor.aceitaBaixaPagamentoMaior"
+						   id="aceitaBaixaPagamentoMaior" type="checkbox"
+						   ${parametrosDistribuidor.aceitaBaixaPagamentoMaior?"checked":""}/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>Aceita pagamento menor:</label>
+				</td>
+				<td colspan="3">
+					<input name="parametrosDistribuidor.aceitaBaixaPagamentoMenor"
+						   id="aceitaBaixaPagamentoMenor" type="checkbox"
+						   ${parametrosDistribuidor.aceitaBaixaPagamentoMenor?"checked":""}/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>Aceita pagamento vencido:</label>
+				</td>
+				<td colspan="3">
+					<input name="parametrosDistribuidor.aceitaBaixaPagamentoVencido"
+						   id="aceitaBaixaPagamentoVencido" type="checkbox"
+						   ${parametrosDistribuidor.aceitaBaixaPagamentoVencido?"checked":""}/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>Número de dias nova cobrança:</label>
+				</td>
+				<td colspan="3">
+					<input name="parametrosDistribuidor.numeroDiasNovaCobranca"
+						   id="numeroDiasNovaCobranca" type="text" style="width: 40px;"
+						   value="${parametrosDistribuidor.numeroDiasNovaCobranca}"
+						   style="width:40px;" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>Assunto de e-mail de cobrança:</label>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					<input name="parametrosDistribuidor.assuntoEmailCobranca" 
+						   id="assuntoEmailCobranca" type="text" style="width: 400px;"
+						   style="width:40px;"  value="${parametrosDistribuidor.assuntoEmailCobranca}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label>Mensagem de e-mail de cobrança:</label>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="4">
+					<textarea name="parametrosDistribuidor.mensagemEmailCobranca"
+						   id="mensagemEmailCobranca" type="text" style="width: 40px;"
+						   style="width:40px;">${parametrosDistribuidor.mensagemEmailCobranca}</textarea>
+				</td>
+			</tr>
+			
+		</table>
  </fieldset>
 </div>

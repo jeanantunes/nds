@@ -8,6 +8,28 @@ var fiadorController = $.extend(true, {
 			fiadorController.alteracaoDadosBasicos = true;
 		},
 		
+		novoFiador: function (){
+			
+			$.getJSON(contextPath + '/cadastro/fiador/novoFiador', null);
+		},
+		
+		novoFiadorCPF:function (){
+			
+			fiadorController.novoFiador();
+			
+			$(".fiadorController-inicioAtividadeNovo").show();
+			$(".fiadorController-inicioAtividadeEdicao").hide();
+			
+			fiadorController.popupCadastroFiadorCPF();
+		},
+		
+		novoFiadorCNPJ:function (){
+			
+			fiadorController.novoFiador();
+			
+			fiadorController.popupCadastroFiadorCNPJ();
+		},
+		
 		popupCadastroFiadorCPF:function () {
 			
 			$("#fiadorController-tabSocio", fiadorController.workspace).hide();
@@ -1155,7 +1177,7 @@ var fiadorController = $.extend(true, {
 		
 		getActionCotaCadastrada:function (referencia){
 			return '<a href="javascript:;" onclick="fiadorController.removerAssociacaoCota(' + referencia + ')" ' +
-			' style="cursor:pointer;border:0px;margin:5px" title="Excluir AssociaÃ§Ã£o">' +
+			' style="cursor:pointer;border:0px;margin:5px" title="Excluir Associação">' +
 			'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 			'</a>';
 		},

@@ -159,7 +159,13 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirBoletos', value: $('#sugereSuspensaoQuandoAtingirBoletos', this.workspace).val()},
 			{name:'parametrosDistribuidor.sugereSuspensaoQuandoAtingirReais', value: $('#sugereSuspensaoQuandoAtingirReais', this.workspace).val()},
 			{name:'parametrosDistribuidor.parcelamentoDividas', value: $('#parcelamentoDividas', this.workspace).is(':checked')},
-			{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas', this.workspace).val()},		
+			{name:'parametrosDistribuidor.negociacaoAteParcelas', value: $('#negociacaoAteParcelas', this.workspace).val()},
+			{name:'parametrosDistribuidor.aceitaBaixaPagamentoMaior', value: $('#aceitaBaixaPagamentoMaior', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.aceitaBaixaPagamentoMenor', value: $('#aceitaBaixaPagamentoMenor', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.aceitaBaixaPagamentoVencido', value: $('#aceitaBaixaPagamentoVencido', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.numeroDiasNovaCobranca', value: $('#numeroDiasNovaCobranca', this.workspace).val()},
+			{name:'parametrosDistribuidor.assuntoEmailCobranca', value: $('#assuntoEmailCobranca', this.workspace).val()},
+			{name:'parametrosDistribuidor.mensagemEmailCobranca', value: $('#mensagemEmailCobranca', this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaDesconto', value: $('#utilizaDesconto', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.percentualDesconto', value: $('#percentualDesconto', this.workspace).val()},		
 			{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao', this.workspace).is(':checked')},
@@ -362,6 +368,14 @@ var parametrosDistribuidorController = $.extend(true, {
 		$('#complementoTermoAdesaoEntregaBancas', this.workspace).wysiwyg();
 		$('#complementoTermoAdesaoEntregaBancas', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
 		
+		
+		$('#mensagemEmailCobranca', this.workspace).wysiwyg({
+            initialContent: function() {return "<p><br></p>";},
+            controls: "bold,italic,underline,|,undo,redo"
+		});
+		
+		$("#numeroDiasNovaCobranca", this.workspace).numeric();
+		
 		var options = {
 			success: parametrosDistribuidorController.tratarRespostaSalvarLogo,
 	    };
@@ -450,7 +464,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:0
-		});	
+		});
 		
 		$("input[id^='prazoAvisoPrevioValidadeGarantia']", this.workspace).maskMoney({
 			 thousands:'.', 

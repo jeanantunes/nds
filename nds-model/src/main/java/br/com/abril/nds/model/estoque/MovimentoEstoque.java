@@ -19,7 +19,7 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 	@JoinColumn(name = "ITEM_REC_FISICO_ID")
 	private ItemRecebimentoFisico itemRecebimentoFisico;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTOQUE_PRODUTO_ID")
 	private EstoqueProduto estoqueProduto;
 	

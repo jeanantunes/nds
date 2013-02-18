@@ -6,6 +6,8 @@ var EmissaoCEController = $.extend(true, {
 	
 	init : function() {
 		
+		var _this = this;
+		
 		$("#dataDe", this.workspace).mask("99/99/9999");
 		
 		$( "#dataDe" , this.workspace).datepicker({
@@ -26,17 +28,43 @@ var EmissaoCEController = $.extend(true, {
 		
 		$("#cotaAte", this.workspace).numeric();
 		
+		$(".bt_novos", this.workspace).hide();
+		
+		$("#imprimirCE").click(function(){
+			_this.imprimirCE();
+		});
+		
 		this.inicializarGrids();
 	},
 	
+	imprimirCE : function() {
+		doGet("emissaoCE/imprimirCE", null, "_blank");
+	},
+	
 	cliquePesquisar : function() {
+		
+		var data = this.getFiltro();
+		
+		$(".ceEmissaoGrid", this.workspace).flexOptions({			
+			url : contextPath + "/emissaoCE/pesquisar",
+			dataType : 'json',
+			params:data,
+			preProcess: this.processaRetornoPesquisa,
+			onSuccess: function() {$(".bt_novos", this.workspace).show();}
+		});
+		
+		$(".ceEmissaoGrid", this.workspace).flexReload();
+		
+	},
+	
+	getFiltro : function() {
 		
 		var data = [];
 		
 		data.push({name:'filtro.dtRecolhimentoDe',		value: this.get("dataDe")});
 		data.push({name:'filtro.dtRecolhimentoAte',		value: this.get("dataAte")});
-		data.push({name:'filtro.idBoxDe',				value: this.get("boxDe")});
-		data.push({name:'filtro.idBoxAte',				value: this.get("boxAte")});
+		data.push({name:'filtro.codigoBoxDe',			value: this.get("boxDe")});
+		data.push({name:'filtro.codigoBoxAte',			value: this.get("boxAte")});
 		data.push({name:'filtro.numCotaDe',				value: this.get("cotaDe")});
 		data.push({name:'filtro.numCotaAte',			value: this.get("cotaAte")});
 		data.push({name:'filtro.idRoteiro',				value: this.get("roteiro")});
@@ -48,15 +76,7 @@ var EmissaoCEController = $.extend(true, {
 			data.push({name:'filtro.fornecedores[' + index + ']',	value: row.id});
 		});
 		
-		$(".ceEmissaoGrid", this.workspace).flexOptions({			
-			url : contextPath + "/emissaoCE/pesquisar",
-			dataType : 'json',
-			params:data,
-			preProcess: this.processaRetornoPesquisa
-		});
-		
-		$(".ceEmissaoGrid", this.workspace).flexReload();
-		
+		return data;
 	},
 	
 	processaRetornoPesquisa : function(result) {
@@ -157,10 +177,7 @@ var EmissaoCEController = $.extend(true, {
 	},
 	
 	ativarPersonalizada : function(elemento) {
-		if(elemento.checked==true)
-			$('.personalizada', this.workspace).show();
-		else
-			$('.personalizada', this.workspace).hide();
+		$('.personalizada', this.workspace).toggle(elemento.checked);
 	},
 	
 	popup_pesq_fornecedor : function() {
@@ -218,7 +235,7 @@ var EmissaoCEController = $.extend(true, {
 			}],
 				width : 960,
 				height : 400,
-				sortname : "nomeCota",
+				sortname : "numCota",
 				sortorder : "asc"
 			});
 			
@@ -230,3 +247,4 @@ $(function() {
 	EmissaoCEController.init();
 				
 });
+//@ sourceURL=emissaoCE.js

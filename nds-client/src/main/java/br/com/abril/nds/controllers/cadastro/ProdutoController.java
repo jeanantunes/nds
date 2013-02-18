@@ -17,8 +17,8 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
@@ -43,8 +43,8 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.ItemAutoComplete;
-import br.com.abril.nds.util.TipoMensagem;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -428,13 +428,13 @@ public class ProdutoController extends BaseController {
 	
 	    DescontoLogistica descontoLogistica = this.descontoLogisticaService.obterPorTipoDesconto(codigoTipoDesconto);
 			
-		Float porcentagem = 0f;
+		BigDecimal porcentagem = BigDecimal.ZERO;
 
 		if (descontoLogistica != null) {
 			porcentagem = descontoLogistica.getPercentualDesconto();
 		}
 		
-		this.result.use(Results.json()).from(new BigDecimal(porcentagem), "result").recursive().serialize();
+		this.result.use(Results.json()).from(porcentagem, "result").recursive().serialize();
 	}
 
 	/**

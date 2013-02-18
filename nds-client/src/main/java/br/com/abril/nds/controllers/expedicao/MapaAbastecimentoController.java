@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,8 +22,8 @@ import br.com.abril.nds.dto.ProdutoEdicaoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.service.DistribuidorService;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -39,8 +40,9 @@ import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
-import br.com.abril.nds.util.TipoMensagem;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -384,8 +386,9 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
-		
-		HashMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
+		filtro.getPaginacao().setSortColumn("nomeEdicao");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		TreeMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
 		setaNomeParaImpressao();
 		result.include("produtosMapa",produtosMapa.values());
 	}
