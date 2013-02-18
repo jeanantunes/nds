@@ -71,6 +71,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		// Atualização por chave de acesso NFE
 		if (input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty()) {
+			
+			if (input.getNumeroNotaEnvio() == null || input.getNumeroNotaEnvio().isEmpty()) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message, 
+						EventoExecucaoEnum.RELACIONAMENTO, 
+						String.format("Numero da nota de envio se encontra vazio para chave de acesso " + input.getChaveAcessoNF() + ". Nenhum registro será atualizado ou inserido!"));
+				return;
+			}
+			
 			notafiscalEntrada = obterNotaFiscalPorChaveAcesso(input.getNumeroNotaEnvio());
 			
 			// Caso encontre a nota fiscal de entrada, atualiza com a nova chave de acesso
@@ -334,7 +342,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			.append("where nf.numero = :numeroNotaEnvio ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
-		query.setParameter("numeroNotaEnvio", numeroNotaEnvio);
+		query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));
 		return (NotaFiscalEntradaFornecedor) query.uniqueResult();
 		
 	}
