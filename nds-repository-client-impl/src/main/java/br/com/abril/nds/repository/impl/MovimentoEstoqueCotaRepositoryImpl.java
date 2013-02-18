@@ -1702,6 +1702,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			case MATERIAL_PROMOCIONAL:
 				nome = " materialPromocional ";
 				break;
+				case NOME_EDICAO:
+					nome = " nomeProduto,numeroEdicao ";
+					break;
+		
 		}
 		hql.append( " order by " + nome + sortOrder + " ");
 	}

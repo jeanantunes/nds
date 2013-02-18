@@ -6,6 +6,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,6 +30,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
@@ -36,6 +39,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -121,6 +125,30 @@ public class ProdutoEdicaoController extends BaseController {
 		List<Brinde> brindes = brindeService.obterBrindes();
 		result.include("brindes", brindes);
     }
+
+	@Post
+	public void pesquisarProdutoCodBarra(String codBarra){
+		
+		List<ProdutoEdicao> produtosEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
+		
+		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+			
+			this.result.nothing();
+			
+			return;
+		}
+
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+
+		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+
+			listaProdutos.add(new ItemAutoComplete(
+					produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
+					null, produtoEdicao.getId()));
+		}
+
+		result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
+	}
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")

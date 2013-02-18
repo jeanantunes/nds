@@ -147,7 +147,7 @@ public interface ProdutoEdicaoService {
 	 * @param codigoBarras - código de barras
 	 * @return  ProdutoEdicao
 	 */
-	ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras);
+	List<ProdutoEdicao> buscarProdutoPorCodigoBarras(String codigoBarras);
 	
 	/**
 	 * Retorna o DTO produtoEdicao
