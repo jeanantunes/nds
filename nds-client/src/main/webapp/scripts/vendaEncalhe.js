@@ -881,6 +881,7 @@ var VENDA_PRODUTO = {
 	
 		$("input[name='codProduto']", VENDA_PRODUTO.workspace).numeric();
 		$("input[name='nmProduto']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
+		$("input[name='codBarras']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
 		$("input[name='qntSolicitada']", VENDA_PRODUTO.workspace).justInput(/[0-9]/);
 		$("input[name='numEdicao']", VENDA_PRODUTO.workspace).numeric();
 		

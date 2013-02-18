@@ -246,7 +246,15 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 				ConferenciaEncalhe.setarValoresPesquisados(result);
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
-			}, null, false, "idTelaConferenciaEncalhe"
+			
+			}, function() {
+				
+				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("");
+				$("#sm", ConferenciaEncalhe.workspace).val("");
+				$("#codProduto", ConferenciaEncalhe.workspace).val("");
+				
+			}, false, "idTelaConferenciaEncalhe"
 		);
 	},
 	
