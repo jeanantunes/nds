@@ -186,7 +186,7 @@ var cotaBaseController = $.extend(true, {
 		colModel : [ {
 			display : 'Cota',
 			name : 'numeroCota',
-			width : 50,
+			width : 30,
 			sortable : true,
 			align : 'left'
 		}, {
@@ -198,7 +198,7 @@ var cotaBaseController = $.extend(true, {
 		},  {
 			display : 'Tipo PDV',
 			name : 'tipoPDV',
-			width : 90,
+			width : 70,
 			sortable : true,
 			align : 'left'
 		},  {
@@ -222,7 +222,7 @@ var cotaBaseController = $.extend(true, {
 		},  {
 			display : 'Área Influencia',
 			name : 'areaInfluencia',
-			width : 80,
+			width : 50,
 			sortable : true,
 			align : 'left'
 		},  {
@@ -232,8 +232,14 @@ var cotaBaseController = $.extend(true, {
 			sortable : true,
 			align : 'right'
 		},  {
-			display : 'Data Alteração',
-			name : 'dataAlteracao',
+			display : 'Tipo Alteração',
+			name : 'tipoAlteracao',
+			width : 50,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Dt Alteração',
+			name : 'dataAlteracaoFormatado',
 			width : 80,
 			sortable : true,
 			align : 'center'

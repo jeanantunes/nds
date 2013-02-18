@@ -38,11 +38,11 @@ public class CotaBaseCota {
 	private Boolean ativo;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="DT_INICIO_VIGENCIA" , nullable = false)
+	@Column(name="DT_INICIO_VIGENCIA")
 	private Date dtInicioVigencia;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="DT_FIM_VIGENCIA", nullable = false)
+	@Column(name="DT_FIM_VIGENCIA")
 	private Date dtFimVigencia;
 	
 	@Enumerated(EnumType.STRING)

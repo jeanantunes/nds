@@ -151,12 +151,8 @@ public class CotaBaseDTO extends FiltroDTO implements Serializable {
 	public String getSituacao() {
 		return situacao;
 	}
-	public void setSituacao(Boolean situacao) {
-		if(situacao){
-			this.situacao = "Ativo";
-		}else{
-			this.situacao = "Inativo";			
-		}
+	public void setSituacao(String situacao) {		
+		this.situacao = situacao;
 	}
 	
 	public Date getDtInicio() {

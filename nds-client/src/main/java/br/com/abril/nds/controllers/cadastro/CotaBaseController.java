@@ -91,7 +91,7 @@ public class CotaBaseController extends BaseController {
 		
 		if(existeCotaBase){
 			filtro = this.cotaBaseService.obterCotaDoFiltro(cotaBase);
-			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataInicial(), filtro.getDataFinal()));
+			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataFinal()));
 		}else{
 			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, false, true, numeroCota);
 		}
@@ -99,10 +99,10 @@ public class CotaBaseController extends BaseController {
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
 	}
 
-	private String calcularDiasRestantes(Date inicial, Date fina) {		
+	private String calcularDiasRestantes(Date dataFinal) {		
 		
 		Calendar dtFinal = Calendar.getInstance();
-		dtFinal.setTime(fina);
+		dtFinal.setTime(dataFinal);
 		
 		Calendar dtInicial = Calendar.getInstance();
 		dtInicial.setTime(new Date());
@@ -174,7 +174,13 @@ public class CotaBaseController extends BaseController {
 		List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
 		
 		for(CotaBaseDTO cotaBase : listaCotaBase){
-			cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtInicio(), cotaBase.getDtFinal()));
+			cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal()));
+			if(cotaBase.getDtFinal().after(new Date())){
+				cotaBase.setSituacao("Ativo");
+			}else{
+				cotaBase.setSituacao("Inativo");
+			}
+			
 			listaFormatada.add(cotaBase);
 		}
 		
@@ -340,7 +346,7 @@ public class CotaBaseController extends BaseController {
 			List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
 			
 			for(CotaBaseDTO cotaBase : listaCotaBase){
-				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtInicio(), cotaBase.getDtFinal()));
+				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal()));
 				listaFormatada.add(cotaBase);
 			}
 			
@@ -412,7 +418,7 @@ public class CotaBaseController extends BaseController {
 				cotaBaseCota.setCota(cotaBaseParaSalvar);
 				cotaBaseCota.setCotaBase(cotaBaseJaSalva);
 				cotaBaseCota.setAtivo(true);
-				cotaBaseCota.setDtInicioVigencia(cotaBaseJaSalva.getDataInicio());
+				cotaBaseCota.setDtInicioVigencia(new Date());
 				cotaBaseCota.setDtFimVigencia(cotaBaseJaSalva.getDataFim());
 				cotaBaseCota.setTipoAlteracao(TipoAlteracao.INCLUSAO);
 				this.cotaBaseCotaService.salvar(cotaBaseCota);

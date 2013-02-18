@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
+import br.com.abril.nds.model.cadastro.TipoAlteracao;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
@@ -42,8 +43,13 @@ public class CotaBaseHistoricoDTO extends FiltroDTO implements Serializable {
 	@Export(label = "Faturamento Médio R$", alignment=Alignment.RIGHT, exhibitionOrder = 8)
 	private String faturamentoFormatado;
 	
-	@Export(label = "Data Alteração", alignment=Alignment.CENTER, exhibitionOrder = 9)
-	private String dataAlteracao;
+	@Export(label = "Tipo Alteração", alignment=Alignment.CENTER, exhibitionOrder = 9)
+	private String tipoAlteracao;
+	
+	@Export(label = "Data Alteração", alignment=Alignment.CENTER, exhibitionOrder = 10)
+	private String dataAlteracaoFormatado;
+	
+	private Date dataAlteracao;
 	
 	private BigDecimal faturamentoMedio;
 	
@@ -134,11 +140,31 @@ public class CotaBaseHistoricoDTO extends FiltroDTO implements Serializable {
 	public void setNumeroCota(Integer numeroCota) {
 		this.numeroCota = numeroCota;
 	}
-	public String getDataAlteracao() {
+	
+	public String getDataAlteracaoFormatado() {
+		return dataAlteracaoFormatado;
+	}
+	public void setDataAlteracaoFormatado(String dataAlteracaoFormatado) {
+		this.dataAlteracaoFormatado = dataAlteracaoFormatado;
+	}
+	
+	public Date getDataAlteracao() {
 		return dataAlteracao;
 	}
 	public void setDataAlteracao(Date dataAlteracao) {
-		this.dataAlteracao = DateUtil.formatarDataPTBR(dataAlteracao);;
+		this.dataAlteracao = dataAlteracao;
+		if(dataAlteracao != null){
+			this.dataAlteracaoFormatado = DateUtil.formatarDataPTBR(dataAlteracao);
+		}
 	}
+	public String getTipoAlteracao() {
+		return tipoAlteracao;
+	}
+	public void setTipoAlteracao(TipoAlteracao tipoAlteracao) {
+		this.tipoAlteracao = tipoAlteracao.getTipoAlteracao();
+	}
+	
+	
+	
 	
 }

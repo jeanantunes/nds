@@ -43,8 +43,17 @@ public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 		CotaBaseCota cotaBaseCotaParaAtualizar = this.cotaBaseCotaRepository.desativarCotaBase(cotaBase, cotaParaDesativar);
 		cotaBaseCotaParaAtualizar.setAtivo(false);
 		cotaBaseCotaParaAtualizar.setDtFimVigencia(new Date());
-		cotaBaseCotaParaAtualizar.setTipoAlteracao(TipoAlteracao.EXCLUSAO);
 		cotaBaseCotaRepository.alterar(cotaBaseCotaParaAtualizar);
+		
+		CotaBaseCota cotaBaseCotaExluida = new CotaBaseCota();
+		cotaBaseCotaExluida.setCota(cotaParaDesativar);
+		cotaBaseCotaExluida.setCotaBase(cotaBase);
+		cotaBaseCotaExluida.setDtFimVigencia(new Date());
+		cotaBaseCotaExluida.setCotaBase(cotaBase);
+		cotaBaseCotaExluida.setTipoAlteracao(TipoAlteracao.EXCLUSAO);
+		cotaBaseCotaRepository.adicionar(cotaBaseCotaExluida);
+		
+		
 	}
 
 	@Override

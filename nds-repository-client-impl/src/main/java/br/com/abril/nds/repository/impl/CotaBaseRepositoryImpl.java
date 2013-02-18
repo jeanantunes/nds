@@ -10,7 +10,6 @@ import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.CotaBaseHistoricoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.model.cadastro.CotaBase;
-import br.com.abril.nds.model.cadastro.TipoAlteracao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaBaseRepository;
 
@@ -107,13 +106,15 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         if(dto != null){
         	hql.append(" , cotaBase.dataInicio as dtInicio "); // DATA INICIO
         	hql.append(" , cotaBase.dataFim as dtFinal "); // DATA FIM
-        	hql.append(" , cotaBaseCota.ativo as situacao "); // SITUAÇÃO
+        	hql.append(" FROM CotaBase as cotaBase ");
+        	hql.append(" left join cotaBase.cota as cota ");
+        }else{
+        	hql.append(" FROM CotaBaseCota as cotaBaseCota ");
+        	hql.append(" left join cotaBaseCota.cota as cota ");
+        	hql.append(" left join cotaBaseCota.cotaBase as cotaBase ");
         }
         
         // FROM
-        hql.append(" FROM CotaBaseCota as cotaBaseCota ");        
-        hql.append(" left join cotaBaseCota.cota as cota ");
-        hql.append(" left join cotaBaseCota.cotaBase as cotaBase ");
         hql.append(" left join cota.estoqueProdutoCotas as estoqueProdutoCota ");
         hql.append(" left join estoqueProdutoCota.produtoEdicao as produtoEdicao ");        
         hql.append(" left join cota.enderecos as cotaEndereco ");
@@ -130,15 +131,20 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" and cotaEndereco.principal = true ");
         if(dto == null){
         	hql.append(" and cotaBaseCota.ativo = true ");        	
+        	hql.append(" and cotaBase.id = :idCotaBase ");        	
         }
-        hql.append(" and cotaBase.id = :idCotaBase ");
         
-        
-        hql.append(" GROUP BY cota.id");
+        if(dto != null){
+        	hql.append(" GROUP BY cotaBase.id");
+        }else{
+        	hql.append(" GROUP BY cota.id");        	
+        }
         
         Query query =  getSession().createQuery(hql.toString());
         
-        query.setParameter("idCotaBase", cotaBase.getId());        
+        if(dto == null){
+        	query.setParameter("idCotaBase", cotaBase.getId());
+        }
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseDTO.class));
         
@@ -247,14 +253,15 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
         hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
         hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio, "); // FATURAMENTO MENSAL
-        hql.append(" CASE cotaBaseCota.tipoAlteracao WHEN :inclusao THEN cotaBaseCota.dtInicioVigencia ELSE   "); 
-        hql.append(" CASE cotaBaseCota.tipoAlteracao WHEN :exclusao THEN cotaBaseCota.dtFimVigencia END END "); 
-        hql.append(" as dataAlteracao "); // DATA ALTERAÇÃO
+        hql.append(" CASE cotaBaseCota.tipoAlteracao WHEN 'INCLUSAO' THEN cotaBaseCota.dtInicioVigencia ELSE   "); 
+        hql.append(" CASE cotaBaseCota.tipoAlteracao WHEN 'EXCLUSAO' THEN cotaBaseCota.dtFimVigencia END END "); 
+        hql.append(" as dataAlteracao, "); // DATA ALTERAÇÃO
+        hql.append(" cotaBaseCota.tipoAlteracao as tipoAlteracao "); // TIPO DE ALTERAÇÃO
         
         // FROM
         hql.append(" FROM CotaBaseCota as cotaBaseCota ");        
-        hql.append(" left join cotaBaseCota.cota as cota ");
         hql.append(" left join cotaBaseCota.cotaBase as cotaBase ");
+        hql.append(" left join cotaBaseCota.cota as cota ");
         hql.append(" left join cota.estoqueProdutoCotas as estoqueProdutoCota ");
         hql.append(" left join estoqueProdutoCota.produtoEdicao as produtoEdicao ");        
         hql.append(" left join cota.enderecos as cotaEndereco ");
@@ -272,14 +279,11 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" and cotaBase.id = :idCotaBase ");
         
         
-        hql.append(" GROUP BY cota.id");
+        hql.append(" GROUP BY cotaBaseCota.id");
         
         Query query =  getSession().createQuery(hql.toString());
         
         query.setParameter("idCotaBase", cotaBase.getId());
-        
-        query.setParameter("inclusao", TipoAlteracao.INCLUSAO);   
-        query.setParameter("exclusao", TipoAlteracao.EXCLUSAO);   
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseHistoricoDTO.class));        
         
