@@ -667,7 +667,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 										movimentoFinanceiroCota.getValor().negate() : 
 											BigDecimal.ZERO);
 				break;
-				case COMPRA_ENCALHE:
+				case COMPRA_ENCALHE_SUPLEMENTAR:
 					vlMovFinanTotal = 
 						vlMovFinanTotal.add(
 							movimentoFinanceiroCota.getValor() != null ? 
