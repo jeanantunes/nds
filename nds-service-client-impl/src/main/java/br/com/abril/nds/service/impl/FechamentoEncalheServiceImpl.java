@@ -505,9 +505,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cotas ausentes existentes!");
 		}
 		
-		if (!this.validarEncerramentoOperacao(dataEncalhe)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Encalhe não totalmente fechado");
-		}
+//		Após rever funcionalidade junto a Cesar.Marracho concluímos que a validação abaixo não esta 
+//		fazendo sentido.		
+		
+//		if (!this.validarEncerramentoOperacao(dataEncalhe)) {
+//			throw new ValidacaoException(TipoMensagem.WARNING, "Encalhe não totalmente fechado");
+//		}
 		
 		try {
 			
