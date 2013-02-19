@@ -27,17 +27,17 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() {
     	if ((getEstudo().isComplementarAutomatico()) && (getEstudo().getEdicoesBase().size() == 1) && (getEstudo().getProduto().isColecao())) {
-    		BigDecimal excedente = getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia());
+    		getEstudo().setExcedente(getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia()));
     		BigDecimal percentualExcedente = BigDecimal.ZERO;
     		if (!getEstudo().getSomatoriaVendaMedia().equals(BigDecimal.ZERO)) {
-    			percentualExcedente = excedente.divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
+    			percentualExcedente = getEstudo().getExcedente().divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
     		}
     		BigDecimal reparteComplementar = BigDecimal.ZERO;
     		if (percentualExcedente.doubleValue() > BigDecimal.ONE.doubleValue()) {
     			// %Abrangência = (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) / TotalCotasAtivas + CotasSuspensasDaPraça ) * 100
     			// TODO: descobrir qual será a origem desses valores e efetuar o cálculo correto
     			BigDecimal percentualAbrangencia = BigDecimal.ZERO;
-    			BigDecimal excedenteAMais = excedente.subtract(getEstudo().getSomatoriaVendaMedia());
+    			BigDecimal excedenteAMais = getEstudo().getExcedente().subtract(getEstudo().getSomatoriaVendaMedia());
     			
     			// RepComplementar = ExcedenteAmais * (1 – (((0,6 * %Abrangência) + 40) / 100))
     			BigDecimal temp = new BigDecimal(0.6).multiply(percentualAbrangencia).add(new BigDecimal(40)).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
@@ -47,14 +47,14 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 				if (getEstudo().isDistribuicaoPorMultiplos()) {
 					reparteComplementar = getEstudo().getPacotePadrao();
 				} else {
-					if (new BigDecimal(200).divide(excedente, 2, BigDecimal.ROUND_FLOOR).doubleValue() < 10) {
-						if (2 > excedente.multiply(new BigDecimal(0.02)).doubleValue()) {
+					if (new BigDecimal(200).divide(getEstudo().getExcedente(), 2, BigDecimal.ROUND_FLOOR).doubleValue() < 10) {
+						if (2 > getEstudo().getExcedente().multiply(new BigDecimal(0.02)).doubleValue()) {
 							reparteComplementar = new BigDecimal(2);
 						} else {
-							reparteComplementar = excedente.multiply(new BigDecimal(0.02));
+							reparteComplementar = getEstudo().getExcedente().multiply(new BigDecimal(0.02));
 						}
 					} else {
-						reparteComplementar = excedente.multiply(new BigDecimal(0.02));
+						reparteComplementar = getEstudo().getExcedente().multiply(new BigDecimal(0.02));
 					}
 				}
     		} else if (percentualExcedente.doubleValue() > new BigDecimal(0.6).doubleValue()) {
@@ -62,14 +62,14 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
     				reparteComplementar = getEstudo().getPacotePadrao();
     			} else {
     				// RepComplementar = Excedente * 2%
-    				if (new BigDecimal(100).divide(excedente, 2, BigDecimal.ROUND_FLOOR).doubleValue() < 10) {
-						if (2 > excedente.multiply(new BigDecimal(0.02)).doubleValue()) {
+    				if (new BigDecimal(100).divide(getEstudo().getExcedente(), 2, BigDecimal.ROUND_FLOOR).doubleValue() < 10) {
+						if (2 > getEstudo().getExcedente().multiply(new BigDecimal(0.02)).doubleValue()) {
 							reparteComplementar = new BigDecimal(2);
 						} else {
-							reparteComplementar = excedente.multiply(new BigDecimal(0.02));
+							reparteComplementar = getEstudo().getExcedente().multiply(new BigDecimal(0.02));
 						}
 					} else {
-						reparteComplementar = excedente.multiply(new BigDecimal(0.02));
+						reparteComplementar = getEstudo().getExcedente().multiply(new BigDecimal(0.02));
 					}
     			}
     		}

@@ -27,18 +27,24 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal totalPDVs;
 	//TODO validar campo no DB e como recupera-lo
 	private boolean pracaVeraneio;
+	// variáveis utilizadas no algoritmo
 	private BigDecimal reservaAjuste;
+	private BigDecimal excedente;
 
 	public Estudo() {
 		edicoesBase = new ArrayList<ProdutoEdicao>();
 		cotas = new ArrayList<Cota>();
 		produto = new ProdutoEdicao();
 		
+		totalPDVs = BigDecimal.ZERO;
 		pacotePadrao = BigDecimal.ZERO;
+		reservaAjuste = BigDecimal.ZERO;
 		reparteDistribuir = BigDecimal.ZERO;
 		reparteDistribuirInicial = BigDecimal.ZERO;
 		somatoriaVendaMedia = BigDecimal.ZERO;
 		somatoriaReparteEdicoesAbertas = BigDecimal.ZERO;
+		percentualProporcaoExcedentePDV = BigDecimal.ZERO;
+		percentualProporcaoExcedenteVenda = BigDecimal.ZERO;
 	}
 	
 	public void calculate() {
@@ -97,11 +103,6 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setCotas(List<Cota> cotas) {
 		this.cotas = cotas;
-	}
-
-	@Override
-	public String toString() {
-		return "\nEstudo{\n\t" + "id: " + id + ", \n\treparteCalculado: " + reparteDistribuir + "\n}";
 	}
 
 	/**
@@ -239,5 +240,24 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setReservaAjuste(BigDecimal reservaAjuste) {
 		this.reservaAjuste = reservaAjuste;
+	}
+
+	public BigDecimal getExcedente() {
+		return excedente;
+	}
+
+	public void setExcedente(BigDecimal excedente) {
+		this.excedente = excedente;
+	}
+
+	@Override
+	public String toString() {
+		return "Estudo [id=" + id + "\n status=" + status + "\n reparteDistribuir=" + reparteDistribuir + "\n reparteDistribuirInicial="
+				+ reparteDistribuirInicial + "\n produto=" + produto + "\n edicoesBase=" + edicoesBase + "\n cotas=" + cotas
+				+ "\n distribuicaoPorMultiplos=" + distribuicaoPorMultiplos + "\n pacotePadrao=" + pacotePadrao + "\n somatoriaVendaMedia="
+				+ somatoriaVendaMedia + "\n somatoriaReparteEdicoesAbertas=" + somatoriaReparteEdicoesAbertas + "\n complementarAutomatico="
+				+ complementarAutomatico + "\n percentualProporcaoExcedentePDV=" + percentualProporcaoExcedentePDV
+				+ "\n percentualProporcaoExcedenteVenda=" + percentualProporcaoExcedenteVenda + "\n totalPDVs=" + totalPDVs
+				+ "\n pracaVeraneio=" + pracaVeraneio + "\n reservaAjuste=" + reservaAjuste + "]";
 	}
 }

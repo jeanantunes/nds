@@ -18,6 +18,7 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal reparteMinimo;
     private BigDecimal reparteMaximo;
     private BigDecimal vendaMedia;
+    private BigDecimal vendaMediaNominal;
     private BigDecimal vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
     private List<ProdutoEdicao> edicoesBase;
@@ -33,9 +34,11 @@ public class Cota extends GenericDTO<Cota> {
 
     public Cota() {
     	vendaMedia = BigDecimal.ZERO;
+    	vendaMediaNominal = BigDecimal.ZERO;
     	vendaMediaMaisN = BigDecimal.ZERO;
     	reparteCalculado = BigDecimal.ZERO;
     	reparteMinimo = BigDecimal.ZERO;
+    	reparteMaximo = BigDecimal.ZERO;
     	somaReparteEdicoesAbertas = BigDecimal.ZERO;
     	percentualEncalheMaximo = BigDecimal.ZERO;
     	classificacao = ClassificacaoCota.SemClassificacao;
@@ -47,12 +50,13 @@ public class Cota extends GenericDTO<Cota> {
     public void calculate() {
     	// Cálculo da Venda Média Final
     	BigDecimal soma = BigDecimal.ZERO;
-    	for (ProdutoEdicao edicao : edicoesRecebidas) {
+    	for (ProdutoEdicao edicao : edicoesBase) {
     	    soma.add(edicao.getVenda());
     	}
-    	if (edicoesRecebidas.size() != 0) {
-    		vendaMedia = soma.divide(new BigDecimal(edicoesRecebidas.size()), 2, BigDecimal.ROUND_HALF_UP);
+    	if (edicoesBase.size() != 0) {
+    		vendaMediaNominal = soma.divide(new BigDecimal(edicoesBase.size()), 2, BigDecimal.ROUND_HALF_UP);
     	}
+    	vendaMedia = vendaMediaNominal;
 
     	// Verificação se a cota só recebeu edições abertas e somatória delas
     	// TODO: confirmar se é para verificar em todas as edições que a cota recebeu mesmo ou somente nas edições bases
@@ -280,5 +284,31 @@ public class Cota extends GenericDTO<Cota> {
 
 	public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
 		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
+	}
+
+	/**
+	 * Método que possui o resultado da venda média pura da cota sem as alterações 
+	 * da correção de vendas e outros cálculos
+	 * @return {@link BigDecimal}
+	 */
+	public BigDecimal getVendaMediaNominal() {
+		return vendaMediaNominal;
+	}
+
+	public void setVendaMediaNominal(BigDecimal vendaMediaNominal) {
+		this.vendaMediaNominal = vendaMediaNominal;
+	}
+
+	@Override
+	public String toString() {
+		return "Cota [id=" + id + "\n nomePessoa=" + nomePessoa + "\n numero=" + numero + "\n classificacao=" + classificacao
+				+ "\n reparteCalculado=" + reparteCalculado + "\n reparteJuramentadoAFaturar=" + reparteJuramentadoAFaturar
+				+ "\n vendaMediaMaisN=" + vendaMediaMaisN + "\n reparteMinimo=" + reparteMinimo + "\n reparteMaximo=" + reparteMaximo
+				+ "\n vendaMedia=" + vendaMedia + "\n vendaMediaNominal=" + vendaMediaNominal + "\n vendaEdicaoMaisRecenteFechada="
+				+ vendaEdicaoMaisRecenteFechada + "\n cotaSoRecebeuEdicaoAberta=" + cotaSoRecebeuEdicaoAberta + "\n edicoesBase="
+				+ edicoesBase + "\n edicoesRecebidas=" + edicoesRecebidas + "\n estoqueProdutoCotas=" + estoqueProdutoCotas
+				+ "\n percentualEncalheMaximo=" + percentualEncalheMaximo + "\n somaReparteEdicoesAbertas=" + somaReparteEdicoesAbertas
+				+ "\n indiceCorrecaoTendencia=" + indiceCorrecaoTendencia + "\n quantidadePDVs=" + quantidadePDVs + "\n mix=" + mix
+				+ "\n indiceVendaCrescente=" + indiceVendaCrescente + "]";
 	}
 }

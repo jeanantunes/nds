@@ -12,14 +12,24 @@ import br.com.abril.nds.model.Estudo;
 
 public class AjusteReparteTest {
 	
+	private Estudo criarAmbiente(boolean configurado, BigDecimal pacotePadrao, BigDecimal vendaMediaMaisN, BigDecimal vendaMedia) {
+		Estudo estudo = new Estudo();
+		Cota cota = new Cota();
+		if (configurado) {
+			estudo.setPacotePadrao(pacotePadrao);
+			cota.setVendaMediaMaisN(vendaMediaMaisN);
+			cota.setVendaMedia(vendaMedia);
+		}
+		estudo.getCotas().add(cota);
+		// calculate() não esta sendo chamado porque a venda média já esta sendo informada
+		//estudo.calculate(); 
+		return estudo;
+	}
+	
 	@Test
 	public void testCotaComParametroZerado() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setPacotePadrao(BigDecimal.ZERO);
-		Cota cota = new Cota();
-		cota.setVendaMediaMaisN(BigDecimal.ZERO);
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -34,11 +44,7 @@ public class AjusteReparteTest {
 	@Test
 	public void testCotaComParametro100() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setPacotePadrao(new BigDecimal(10));
-		Cota cota = new Cota();
-		cota.setVendaMediaMaisN(new BigDecimal(100));
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, new BigDecimal(10), new BigDecimal(100), BigDecimal.ZERO);
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -53,12 +59,7 @@ public class AjusteReparteTest {
 	@Test
 	public void testCotaComParametro20EVendaMedia50() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setPacotePadrao(new BigDecimal(5));
-		Cota cota = new Cota();
-		cota.setVendaMediaMaisN(new BigDecimal(20));
-		cota.setVendaMedia(new BigDecimal(50));
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, new BigDecimal(5), new BigDecimal(20), new BigDecimal(50));
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -73,12 +74,7 @@ public class AjusteReparteTest {
 	@Test
 	public void testCotaComParametro20VendaMedia50EPacotePadrao25() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setPacotePadrao(new BigDecimal(25));
-		Cota cota = new Cota();
-		cota.setVendaMediaMaisN(new BigDecimal(20));
-		cota.setVendaMedia(new BigDecimal(50));
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, new BigDecimal(25), new BigDecimal(20), new BigDecimal(50));
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -93,10 +89,8 @@ public class AjusteReparteTest {
 	@Test
 	public void testCotaSemConfiguracao() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		estudo.getCotas().add(cota);
-
+		Estudo estudo = criarAmbiente(false, null, null, null);
+		
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
 		ajusteReparte.executarProcesso();
@@ -110,11 +104,7 @@ public class AjusteReparteTest {
 	@Test
 	public void testCotaSemPacotePadrao() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		cota.setVendaMediaMaisN(new BigDecimal(30));
-		cota.setVendaMedia(new BigDecimal(10));
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, new BigDecimal(30), new BigDecimal(10));
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -129,11 +119,7 @@ public class AjusteReparteTest {
 	@Test
 	public void testVerificaClassificacaoCotaComParametroConfigurado() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		cota.setVendaMediaMaisN(new BigDecimal(30));
-		cota.setVendaMedia(new BigDecimal(10));
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, new BigDecimal(30), new BigDecimal(10));
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -148,10 +134,8 @@ public class AjusteReparteTest {
 	@Test
 	public void testVerificaClassificacaoCotaSemParametroConfigurado() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		estudo.getCotas().add(cota);
-
+		Estudo estudo = criarAmbiente(false, null, null, null);
+		
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
 		ajusteReparte.executarProcesso();
