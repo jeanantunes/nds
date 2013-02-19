@@ -43,7 +43,6 @@ public class ProdutoEdicaoDAO {
 	    while (rs.next()) {
 		ProdutoEdicao edicao = new ProdutoEdicao();
 		edicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
-		edicao.setNome(rs.getString("NOME"));
 		edicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
 		edicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
 		edicao.setVenda(edicao.getReparte().subtract(

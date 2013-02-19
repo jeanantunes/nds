@@ -1,0 +1,90 @@
+package br.com.abril.nds.model;
+
+import java.util.Date;
+
+public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
+
+    private static final long serialVersionUID = 3298542950250981102L;
+
+    private Long id;
+    private Long numeroEdicao;
+    private Long idProduto;
+    private Long codigoProduto;
+    private boolean parcial;
+    private boolean edicaoAberta;
+    private Long idLancamento;
+    private Date dataLancamento;
+    private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
+
+    public Long getId() {
+	return id;
+    }
+
+    public void setId(Long id) {
+	this.id = id;
+    }
+
+    public Long getNumeroEdicao() {
+	return numeroEdicao;
+    }
+
+    public void setNumeroEdicao(Long numeroEdicao) {
+	this.numeroEdicao = numeroEdicao;
+    }
+
+    public Long getIdProduto() {
+	return idProduto;
+    }
+
+    public void setIdProduto(Long idProduto) {
+	this.idProduto = idProduto;
+    }
+
+    public Long getCodigoProduto() {
+	return codigoProduto;
+    }
+
+    public void setCodigoProduto(Long codigoProduto) {
+	this.codigoProduto = codigoProduto;
+    }
+
+    public boolean isParcial() {
+	return parcial;
+    }
+
+    public void setParcial(boolean parcial) {
+	this.parcial = parcial;
+    }
+
+    public boolean isEdicaoAberta() {
+	return edicaoAberta;
+    }
+
+    public void setEdicaoAberta(boolean edicaoAberta) {
+	this.edicaoAberta = edicaoAberta;
+    }
+
+    public Long getIdLancamento() {
+	return idLancamento;
+    }
+
+    public void setIdLancamento(Long idLancamento) {
+	this.idLancamento = idLancamento;
+    }
+
+    public Date getDataLancamento() {
+	return dataLancamento;
+    }
+
+    public void setDataLancamento(Date dataLancamento) {
+	this.dataLancamento = dataLancamento;
+    }
+
+    public boolean isColecao() {
+	return colecao;
+    }
+
+    public void setColecao(boolean colecao) {
+	this.colecao = colecao;
+    }
+}

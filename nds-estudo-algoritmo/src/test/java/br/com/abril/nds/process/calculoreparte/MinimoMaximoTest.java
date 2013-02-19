@@ -9,6 +9,7 @@ import org.junit.Test;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.service.EstudoService;
 
 public class MinimoMaximoTest {
 
@@ -21,7 +22,7 @@ public class MinimoMaximoTest {
 		cota.setReparteMaximo(new BigDecimal(10));
 		cota.setReparteCalculado(new BigDecimal(40));
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -46,7 +47,7 @@ public class MinimoMaximoTest {
 		cota.setReparteMaximo(new BigDecimal(50));
 		cota.setReparteCalculado(new BigDecimal(40));
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -68,7 +69,7 @@ public class MinimoMaximoTest {
 		cota.setReparteMaximo(new BigDecimal(50));
 		cota.setReparteCalculado(new BigDecimal(10));
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -91,7 +92,7 @@ public class MinimoMaximoTest {
 		cota.setReparteCalculado(new BigDecimal(60));
 		cota.setMix(true);
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);

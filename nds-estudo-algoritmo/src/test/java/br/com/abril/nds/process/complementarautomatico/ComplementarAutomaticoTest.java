@@ -10,6 +10,7 @@ import org.junit.Test;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.service.EstudoService;
 
 public class ComplementarAutomaticoTest {
 
@@ -55,7 +56,7 @@ public class ComplementarAutomaticoTest {
 		Cota cota = new Cota();
 		cota.setVendaMedia(new BigDecimal(20));
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 
 		// Execução do processo
 		ComplementarAutomatico complementarAutomatico = new ComplementarAutomatico(estudo);
