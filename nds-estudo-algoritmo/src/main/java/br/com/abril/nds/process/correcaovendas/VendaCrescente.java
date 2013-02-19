@@ -1,11 +1,13 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.EstoqueProdutoCota;
+import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -31,79 +33,43 @@ public class VendaCrescente extends ProcessoAbstrato {
 
 	Cota cota = (Cota) super.getGenericDTO();
 
-	List<EstoqueProdutoCota> listEstoqueProdutoCota = cota
-		.getEstoqueProdutoCotas();
+	List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
 
 	List<Boolean> listDivBoolean = new ArrayList<Boolean>();
 
-	if (listEstoqueProdutoCota != null
-		&& listEstoqueProdutoCota.size() >= 4) {
+	if (listProdutoEdicao != null && listProdutoEdicao.size() >= 4) {
 
-	    int iEstoqueProdutoCota = 0;
-	    while (iEstoqueProdutoCota < listEstoqueProdutoCota.size()) {
+	    int iProdutoEdicao = 0;
+	    while (iProdutoEdicao < listProdutoEdicao.size()) {
 
-		EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
-			.get(iEstoqueProdutoCota);
+		ProdutoEdicao produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
+		ProdutoEdicao previousProdutoEdicao = null;
+		
+		if (iProdutoEdicao > 0) {
 
-		EstoqueProdutoCota previousEstoqueProdutoCota = null;
-		if (iEstoqueProdutoCota > 0) {
+		    previousProdutoEdicao = listProdutoEdicao.get(iProdutoEdicao - 1);
 
-		    previousEstoqueProdutoCota = listEstoqueProdutoCota
-			    .get(iEstoqueProdutoCota-1);
+		    if (previousProdutoEdicao.getIdProduto().equals(produtoEdicao.getIdProduto())
+			    && !produtoEdicao.isEdicaoAberta()) {
 
-		    BigDecimal quantidadeRecebida = estoqueProdutoCota
-			    .getQuantidadeRecebida();
-		    BigDecimal quantidadeDevolvida = estoqueProdutoCota
-			    .getQuantidadeDevolvida();
+			if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
+			    BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 2, BigDecimal.ROUND_FLOOR);
 
-		    BigDecimal vendaEdicao = quantidadeRecebida
-			    .subtract(quantidadeDevolvida);
-
-		    BigDecimal previousQuantidadeRecebida = previousEstoqueProdutoCota
-			    .getQuantidadeRecebida();
-		    BigDecimal previousQuantidadeDevolvida = previousEstoqueProdutoCota
-			    .getQuantidadeDevolvida();
-
-		    BigDecimal previousVendaEdicao = previousQuantidadeRecebida
-			    .subtract(previousQuantidadeDevolvida);
-
-		    if (previousEstoqueProdutoCota
-			    .getProdutoEdicao()
-			    .getNome()
-			    .equalsIgnoreCase(
-				    estoqueProdutoCota.getProdutoEdicao()
-					    .getNome())
-			    && !estoqueProdutoCota.getProdutoEdicao()
-				    .isEdicaoAberta()) {
-
-			if (previousVendaEdicao.compareTo(BigDecimal.ZERO) == 1) {
-			    BigDecimal divVendaEdicao = vendaEdicao.divide(
-				    previousVendaEdicao, 2,
-				    BigDecimal.ROUND_FLOOR);
-
-			    listDivBoolean.add(divVendaEdicao
-				    .compareTo(BigDecimal.ONE) == 1);
+			    listDivBoolean.add(divVendaEdicao.compareTo(BigDecimal.ONE) == 1);
 			}
-
 		    }
 		}
 
-		iEstoqueProdutoCota++;
+		iProdutoEdicao++;
 	    }
 
-	    if (!listDivBoolean.isEmpty()
-		    && !listDivBoolean.contains(Boolean.FALSE)) {
-		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(
-			0.1));
+	    if (!listDivBoolean.isEmpty() && !listDivBoolean.contains(Boolean.FALSE)) {
+		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1));
 	    }
 
-	    indiceVendaCrescente = indiceVendaCrescente.divide(
-		    new BigDecimal(1), 2, BigDecimal.ROUND_FLOOR);
-
+	    MathContext mathContext = new MathContext(2, RoundingMode.HALF_UP);
+	    indiceVendaCrescente = indiceVendaCrescente.round(mathContext);
 	}
-
 	cota.setIndiceVendaCrescente(indiceVendaCrescente);
-
-	super.genericDTO = cota;
     }
 }

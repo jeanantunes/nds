@@ -9,6 +9,7 @@ import org.junit.Test;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.service.EstudoService;
 
 public class CalcularReparteTest {
 
@@ -19,7 +20,7 @@ public class CalcularReparteTest {
 			
 		}
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 		return estudo;
 	}
 	

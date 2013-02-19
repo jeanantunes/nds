@@ -1,7 +1,6 @@
 package br.com.abril.nds.model;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Estudo extends GenericDTO<Estudo> {
@@ -30,10 +29,6 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal reservaAjuste;
 
 	public Estudo() {
-		edicoesBase = new ArrayList<ProdutoEdicao>();
-		cotas = new ArrayList<Cota>();
-		produto = new ProdutoEdicao();
-		
 		pacotePadrao = BigDecimal.ZERO;
 		reparteDistribuir = BigDecimal.ZERO;
 		reparteDistribuirInicial = BigDecimal.ZERO;
@@ -41,22 +36,6 @@ public class Estudo extends GenericDTO<Estudo> {
 		somatoriaReparteEdicoesAbertas = BigDecimal.ZERO;
 	}
 	
-	public void calculate() {
-		// Somatória da venda média de todas as cotas e
-		// Somatória de reparte das edições abertas de todas as cotas
-		somatoriaVendaMedia = BigDecimal.ZERO;
-		somatoriaReparteEdicoesAbertas = BigDecimal.ZERO;
-		for (Cota cota : cotas) {
-			cota.calculate();
-			if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-					|| !cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
-					|| !cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico)) {
-				somatoriaVendaMedia = somatoriaVendaMedia.add(cota.getVendaMedia());
-			}
-			somatoriaReparteEdicoesAbertas = somatoriaReparteEdicoesAbertas.add(cota.getSomaReparteEdicoesAbertas());
-		}
-	}
-
 	/**
 	 * Reparte Total a ser distribuído
 	 * 

@@ -142,7 +142,6 @@ public class EstoqueProdutoCotaDAO {
 
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
-		produtoEdicao.setNome(rs.getString("NOME"));
 		produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
 		produtoEdicao.setColecao(rs.getString("GRUPO_PRODUTO").equalsIgnoreCase("COLECIONAVEL"));
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
