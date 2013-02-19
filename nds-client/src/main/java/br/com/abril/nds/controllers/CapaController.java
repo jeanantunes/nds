@@ -165,8 +165,6 @@ public class CapaController {
 		} finally {
 			this.result.use(PlainJSONSerialization.class).from(vo, "result").recursive().serialize();
 		}
-		
-		
 	}
 	
 	@Path("/getCapaEdicaoJson")
@@ -176,8 +174,6 @@ public class CapaController {
 	  File file = new File("temp"+CapaService.DEFAULT_EXTENSION);
 	  try {
 	   att = capaService.getCapaInputStream(codigoProduto,Long.parseLong(numeroEdicao));
-	//   att = capaService.getCapaInputStream("00000000",Long.parseLong("0114"));
-	   
 	     
 	     // write the inputStream to a FileOutputStream
 	     OutputStream out = new FileOutputStream(file);

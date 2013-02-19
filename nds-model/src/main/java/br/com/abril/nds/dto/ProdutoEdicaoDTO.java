@@ -100,6 +100,7 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private TemaProduto temaSecundario;
 
 	private String dataLancamentoFormatada;
+	private BigDecimal qtdeVendas;
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -706,5 +707,24 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
 		this.precoComDesconto = precoComDesconto;
 	}
-	
+
+	public String getDataLancamentoFormatada() {
+		return dataLancamentoFormatada;
+	}
+
+	public void setDataLancamentoFormatada(String dataLancamentoFormatada) {
+		this.dataLancamentoFormatada = dataLancamentoFormatada;
+	}
+
+	public BigDecimal getQtdeVendas() {
+		
+		if(qtdeVendas == null)
+			qtdeVendas = new BigDecimal(0);
+			
+		return qtdeVendas;
+	}
+
+	public void setQtdeVendas(BigDecimal qtdeVendas) {
+		this.qtdeVendas = qtdeVendas;
+	}
 }

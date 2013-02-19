@@ -811,26 +811,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 		
-		if (filtro != null) {
-			hql.append(" WHERE ");
-		
-			if (filtro.getProdutoDto() != null) {
-				if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
-					hql.append(" produto.codigo = :codigoProduto ");
-					parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
-				}
-				else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
-					hql.append(" produto.nome = :nomeProduto ");
-					parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
-				}
+		hql.append(" WHERE ");
+	
+		if (filtro.getTipoClassificacaoProdutoId() != null && filtro.getTipoClassificacaoProdutoId() > 0l) {
+			hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProdutoId ");
+			parameters.put("tipoClassificacaoProdutoId", filtro.getTipoClassificacaoProdutoId());
+		}else if(filtro.getNumeroEdicao() != null && filtro.getNumeroEdicao() > 0l) {
+			hql.append(" produtoEdicao.numeroEdicao = :numeroEdicao ");
+			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
+		} else if (filtro.getProdutoDto() != null) {
+			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
+				hql.append(" produto.codigo = :codigoProduto ");
+				parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 			}
-			else if (filtro.getTipoClassificacaoProdutoId() > 0) {
-				hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProdutoId ");
-				parameters.put("tipoClassificacaoProdutoId", filtro.getTipoClassificacaoProdutoId());
-			}
-			else {
-				hql.append(" produtoEdicao.numeroEdicao = :numeroEdicao ");
-				parameters.put("numeroEdicao", filtro.getNumeroEdicao());
+			else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
+				hql.append(" produto.nome = :nomeProduto ");
+				parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 			}
 		}
 		

@@ -81,22 +81,25 @@ var historicoVendaController = $.extend(true, {
 						attributeName : "edicaoSelecionada",
 						cellValue : "numeroEdicao",
 						columnName : "sel",
-						event : {
+						events : [{
 							type : "onchange",
 							functionName : "historicoVendaController.addSelectedRowToGrid",
 							parameter : "rowId"
-						}
+						}]
 					},
 					{
 						element : "img",
 						columnName : "chamadaCapa",
-						fileReference : "images/ico_excluir.gif",
+						fileReference : "images/ico_detalhes.png",
 						style : "cursor:pointer",
-						event : {
-							functionName : "historicoVendaController.popUpCapa",
+						events : [{
+							functionName : "historicoVendaController.popUpCapaOpen",
 							type : "onmouseover",
 							parameter : "codigoProduto,numeroEdicao"
-						}
+						},{
+							functionName : "historicoVendaController.popUpCapaClose",
+							type : "onmouseout",
+						}]
 					}
 				],
 				gridConfiguration : {
@@ -127,7 +130,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'right'
 					}, {
 						display : 'Venda',
-						name : 'venda',
+						name : 'qtdeVendas',
 						width : 35,
 						sortable : true,
 						align : 'right'
@@ -162,12 +165,12 @@ var historicoVendaController = $.extend(true, {
 						columnName : "acao",
 						fileReference : "images/ico_excluir.gif",
 						style : "cursor:pointer",
-						event : {
+						events : [{
 							functionName : "historicoVendaController.removeRowfromGrid",
 							type : "onclick",
 							parameter : "rowId"
 							
-						}
+						}]
 					}
 				],
 				gridConfiguration : {
@@ -204,7 +207,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'right'
 					}, {
 						display : 'Venda',
-						name : 'venda',
+						name : 'qtdeVendas',
 						width : 40,
 						sortable : true,
 						align : 'right'
@@ -216,7 +219,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'center'
 					}],
 					width : 480,
-					height : 110
+					height : 110,
 				}
 			})
 		};
@@ -274,12 +277,12 @@ var historicoVendaController = $.extend(true, {
 		}
 	},
 	
-	popUpCapa : function popUpCapa(codigoProduto, nomeProduto) {
+	popUpCapaOpen : function popUpCapaOpen(codigoProduto, numeroEdicao,event) {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		produto = {
 				codigoProduto : codigoProduto,
-				nomeProduto : nomeProduto
+				numeroEdicao : numeroEdicao
 		},
 		
 		$( "#dialog-detalhes" ).dialog({
@@ -287,18 +290,25 @@ var historicoVendaController = $.extend(true, {
 			height:'auto',
 			width:'auto',
 			modal: false,
-			open: historicoVendaController.open(event, ui, produto)
+			open: historicoVendaController.open(event, produto),
+			close : function(){
+				$( "#dialog-detalhes" ).dialog( "close" );
+			},
+			position: { my: "left", at: "right", of: event.target }
 		});
 	},
 	
-	open : function(event, ui, produto) {
+	popUpCapaClose : function popUpCapaClose() {
+		$( "#dialog-detalhes" ).dialog( "close" );
+	},
+	
+	open : function(event,produto) {
 	
 	   var randomnumber=Math.floor(Math.random()*11);
 	   
 	   $("#imagemCapaEdicao")
 	     .attr("src",contextPath
 	         + "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
-//		         + "/capas/revista-nautica-11.jpg?codigoProduto="
 	         + produto.codigoProduto
 	         + "&numeroEdicao="
 	         + produto.numeroEdicao);

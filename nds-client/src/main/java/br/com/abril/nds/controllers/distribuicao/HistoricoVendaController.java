@@ -81,8 +81,8 @@ public class HistoricoVendaController extends BaseController {
 	private void validarEntradaFiltroProduto(FiltroHistoricoVendaDTO filtro) {
 		if((filtro.getProdutoDto().getCodigoProduto() == null || filtro.getProdutoDto().getCodigoProduto().trim().isEmpty()) && 
 				(filtro.getProdutoDto().getNomeProduto() == null || filtro.getProdutoDto().getNomeProduto().trim().isEmpty()) &&
-				(filtro.getNumeroEdicao() == null || !filtro.getNumeroEdicao().equals(0)) &&
-				(filtro.getTipoClassificacaoProdutoId() == null || !filtro.getTipoClassificacaoProdutoId().equals(0)))
+				(filtro.getNumeroEdicao() == null || filtro.getNumeroEdicao().equals(0)) &&
+				(filtro.getTipoClassificacaoProdutoId() == null || filtro.getTipoClassificacaoProdutoId().equals(0)))
 			throw new ValidacaoException(TipoMensagem.WARNING, "Informe algum campo para filtrar a pesquisa por produto.");		
 	}
 	

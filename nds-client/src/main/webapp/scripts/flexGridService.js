@@ -11,6 +11,12 @@ function FlexGridService() {
 		loadingGrid = this;
 		
 		if (row) {
+			
+			if (loadingGrid.tableModel.rows.length > 0) {
+				lastId = loadingGrid.tableModel.rows[loadingGrid.tableModel.rows.length -1].id;
+				row.id =  lastId + 1;
+			}
+			
 			loadingGrid.tableModel.rows.push(row);
 
 			if (loadingGrid.tableModel.page == 0) {
@@ -39,7 +45,11 @@ function FlexGridService() {
 	
 	this.createInputOnPreProcess = function createInputOnPreProcess(result){
 		var input,
-			inputModel;
+			inputModel,
+			parameters,
+			parametersName = [],
+			event;
+			
 		
 		if (loadingGrid) {
 			inputModel = loadingGrid.inputModel;
@@ -69,14 +79,28 @@ function FlexGridService() {
 						input += " width='" + model.width + "'";
 						
 					}
-					if (model.event) {
-						event = model.event;
-						if (event.parameter == "rowId") {
-							input += " " + event.type+"='" + event.functionName + "(" + row.id + ", event)'";
-						}else{
-							parameter = event.parameter.
+					if (model.events) {
+						
+						for ( var eventIndex in model.events) {
+							event = model.events[eventIndex];
 							
-							input += " " + event.type+"='" + event.functionName + "(" + row.cell[event.parameter] + ", event)'";
+							if (!event.parameter) {
+								input += " " + event.type+"='" + event.functionName + "(event)'";
+							}else if (event.parameter == "rowId") {
+								input += " " + event.type+"='" + event.functionName + "(" + row.id + ", event)'";
+							}else{
+								parametersName = event.parameter.split(",");
+								parameters = "";
+								if (parametersName.length > 1) {
+									for ( var pIndex in parametersName) {
+										parameters += row.cell[parametersName[pIndex]] + ",";
+									}
+								}else {
+									parameters = event.paramter + ",";
+								}
+								
+								input += " " + event.type+"='" + event.functionName + "(" + parameters + " event)'";
+							}
 						}
 					}
 					
@@ -135,9 +159,6 @@ function FlexGridService() {
 		
 		// obtendo a url padrão caso o usuário não tenha informado
 		options.url = this.Url.urlDefault || options.url;
-		
-		// Caso o grid não possua um preProcess, inicializa um vazio
-//		this.inputModel = this.inputModel || [];
 		
 		options.preProcess = options.preProcess || this.preProcess; 
 		

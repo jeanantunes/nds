@@ -1,4 +1,6 @@
-<head>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="scripts/flexGridService.js"></script>
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
@@ -8,13 +10,6 @@
 $(function() {
 	historicoVendaController.init();
 });
-
-
-function popup_detalhes_close() {
-	  $( "#dialog-detalhes" ).dialog( "close" );
-	  
-	  
-	  }
 
 function filtroReparte(){
 	$('.filtroQtdeReparte').show();
@@ -57,18 +52,13 @@ function filtroPercVenda(){
 <style type="text/css">
 .filtroQtdeReparte, .filtroQtdeVenda, .filtroComponentes, .filtroCotas, .filtroPercVenda{display:none;}
 </style>
-</head> 
 
-<body>
+
 <div id="dialog-detalhes" title="Visualizando Produto" style="margin-right:0px!important; float:right!important;">
 	<img id="imagemCapaEdicao" width="235" height="314" />
 </div>
 
-
-
 <div class="corpo">
-   <br clear="all"/>
-    <br />
    
     <div class="container">
     
@@ -90,6 +80,15 @@ function filtroPercVenda(){
             <td width="60"><input type="text" name="filtro.produtoDto.codigoProduto" id="filtroCodigoProduto" style="width:60px;" /></td>
             <td width="47">Produto:</td>
             <td width="140"><input type="text" name="filtro.produtoDto.nomeProduto" id="filtroNomeProduto" style="width:140px;" /></td>
+           	<!-- <td width="76">Classificação:</td>
+             <td width="100">
+                 <select name="filtro.idTipoClassificacaoProduto" id="selectClassificacao" style="width:200px;">
+                  <option selected="selected">Selecione...</option>
+                  <c:forEach items="${listaTipoClassificacao}" var="tipoClassificacao">
+                  	<option value="${tipoClassificacao.key}">${tipoClassificacao.value}</option>
+                  </c:forEach>
+                 </select>
+                </td-->
             <td width="38">Edição:</td>
             <td width="60"><input type="text" name="filtro.numeroEdicao" id="filtroNumeroEdicao" style="width:60px;" /></td>
             <td width="16"><span class="classPesquisar"><a href="javascript:;" id="pesquisaFiltroProduto">&nbsp;</a></span></td>
@@ -429,4 +428,3 @@ $(".segmentoCotaGrid").flexigrid({
 			height : 250
 		});
 </script>
-</body>
