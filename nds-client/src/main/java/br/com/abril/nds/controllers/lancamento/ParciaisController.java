@@ -304,25 +304,35 @@ public class ParciaisController extends BaseController {
 	@Post
 	public void obterPebDoProduto(String codigoProduto, String edicaoProduto, Integer periodos) {
 		
+		Integer peb =obterPEB(codigoProduto,edicaoProduto,null);
+		
 		if(periodos == null){
-			result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+			
+			result.use(Results.json()).withoutRoot().from(peb).recursive().serialize();
 		}
 		else{
 			
-			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
-			
-			if(produtoEdicao == null) 
-				throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada.");
-			
-			if(periodos.compareTo(produtoEdicao.getPeb())>0){
-				throw new ValidacaoException(TipoMensagem.WARNING,"o campo [Qtde. Períodos] não pode ser maior que a PEB("+produtoEdicao.getPeb()+") cadastrada no prduto edição!");
-			}
-			
-			Integer pebProduto = (produtoEdicao.getPeb() / periodos);
+			Integer pebProduto = (peb / periodos);
 			
 			result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
-			
 		}
+	}
+	
+	private Integer obterPEB(String codigoProduto, String edicaoProduto, Long idEdicao){
+		
+		ProdutoEdicao produtoEdicao=null;
+		
+		if(idEdicao == null){
+			produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
+		}
+		else{
+			produtoEdicao = produtoEdicaoService.buscarPorID(idEdicao);
+		}
+		
+		if(produtoEdicao == null) 
+			throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada.");
+		
+		return produtoEdicao.getPeb();
 	}
 	
 	/**
