@@ -25,23 +25,23 @@ $(function(){
 
 
 	 <form>
-	 
+		 
         <div class="area">
         
-	        <span class="bt_novos" title="Novo">
-			    <a href="javascript:;" onclick="cotaAusenteController.popupNovaCotaAusente();">
+	        <span class="bt_novos">
+			    <a href="javascript:;" rel="tipsy" title="Incluir Nova Cota Ausente" onclick="cotaAusenteController.popupNovaCotaAusente();">
 			        <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
 			    </a>
 		    </span>
 	  
  		  	<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=XLS">
+				<a rel="tipsy" title="Gerar Arquivo" href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=XLS">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" border="0" />
 				</a>
 			</span>
 			
  		  	<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=PDF">
+				<a rel="tipsy" title="Imprimir" href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=PDF">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
 				</a>
 			</span>
