@@ -408,7 +408,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
 					
-					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeypress="ConferenciaEncalheCont.nextInputExemplares('+index+','+valorExemplares+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.validarInputExemplares('+index+','+valorExemplares+');ConferenciaEncalheCont.atualizarValores('+ index +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
+					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeypress="ConferenciaEncalheCont.nextInputExemplares('+index+','+valorExemplares+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.validarInputExemplares('+index+','+valorExemplares+');ConferenciaEncalheCont.atualizarValores('+ index +');" style="width:90px; text-align: center;" value="0"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
