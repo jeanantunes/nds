@@ -1464,17 +1464,19 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" 		 produtoEdicao.id as idProdEd, ");
 		
-		hql.append(" 		 produtoEdicao.codigo as codigoProd, ");
+		hql.append(" 		 produto.codigo as codigoProd, ");
 		
 		hql.append(" 		 produtoEdicao.numeroEdicao as edicaoProd, ");
 		
-		hql.append(" 		 produtoEdicao.nomeComercial as nomeProd, ");
+		hql.append(" 		 produto.nomeComercial as nomeProd, ");
 		
 		hql.append(" 		 sum(movimento.qtde) as qtdeReparte ");
 		
 		hql.append(" from MovimentoEstoqueCota movimento");	
 		
 		hql.append(" join movimento.produtoEdicao produtoEdicao ");
+		
+		hql.append(" join produtoEdicao.produto produto ");
 		
 		hql.append(" join movimento.cota cota ");
 		
