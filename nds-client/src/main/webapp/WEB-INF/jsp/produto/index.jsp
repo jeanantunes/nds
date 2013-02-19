@@ -48,7 +48,7 @@
 			<table width="800" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="135"><strong>C&oacute;digo:</strong></td>
-					<td width="260"><input type="text"  name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="8" /></td>
+					<td width="260"><input type="text"  name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>
 					<td width="142"><strong>Produto:</strong></td>
 					<td width="250"><input type="text" class="habilitarCampoInterface" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
 				</tr>
@@ -321,7 +321,7 @@
 				<td width="43">C&oacute;digo:</td>
 				<td width="123" >
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
-						   style="width: 80px; float: left; margin-right: 5px;" maxlength="8"
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="30"
 						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '', false,
 								   									   produtoController.pesquisarProdutosSuccessCallBack,
 								   									   produtoController.pesquisarProdutosErrorCallBack);" />
