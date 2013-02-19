@@ -27,7 +27,6 @@ function PesquisaCota(workspace) {
 			);
 
 		} else {
-			
 			if (errorCallBack) {
 				errorCallBack();
 			}
@@ -43,7 +42,7 @@ function PesquisaCota(workspace) {
 		
 		if (successCallBack) {
 			
-			successCallBack();
+			successCallBack(result);
 		}
 	},
 	
@@ -76,7 +75,7 @@ function PesquisaCota(workspace) {
 			$.postJSON(
 				contextPath + "/cadastro/cota/autoCompletarPorNome", {nomeCota:nomeCota},
 				function(result) { 
-					pesquisaCota.exibirAutoComplete(result, idCampoNomeCota, 3); 
+					pesquisaCota.exibirAutoComplete(result, idCampoNomeCota, 3);
 				},
 				null, 
 				isFromModal
@@ -188,7 +187,7 @@ function PesquisaCota(workspace) {
 			$(idCampoNomeCota, pesquisaCota.workspace).val(result.nome);
 			
 			if (successCallBack) {
-				successCallBack();
+				successCallBack(result);
 			}
 		}
 	},

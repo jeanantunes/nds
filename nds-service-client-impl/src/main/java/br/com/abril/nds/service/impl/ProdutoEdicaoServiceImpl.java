@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
@@ -950,6 +951,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		
 		return porcentagemDesconto;
+	}
+
+	@Override
+	@Transactional
+	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro) {
+		return this.produtoEdicaoRepository.obterEdicoesProduto(filtro);
 	}
 	
 }

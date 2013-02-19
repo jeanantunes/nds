@@ -7,6 +7,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
@@ -167,4 +168,13 @@ public interface ProdutoEdicaoService {
 	 */
 	public BigDecimal obterPorcentualDesconto(ProdutoEdicao produtoEdicao);
 
+	
+	/**
+	 * Obtém a lista de ProdutoEdicaoDTO de acordo com o FiltroHistoricoVendaDTO
+	 * @param filtro
+	 * @return List ProdutoEdicaoDTO
+	 * 
+	 */
+	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro);
+	
 }

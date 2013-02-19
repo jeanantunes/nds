@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.util.DateUtil;
 
 public class ProdutoEdicaoDTO implements Serializable {
 
@@ -97,6 +98,8 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private TemaProduto temaPrincipal;
 	private TemaProduto temaSecundario;
 
+	private String dataLancamentoFormatada;
+	
 	public ProdutoEdicaoDTO() {};
 	
 	public ProdutoEdicaoDTO(
@@ -252,6 +255,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
+		
+		if (dataLancamento != null) {
+			this.dataLancamentoFormatada = DateUtil.formatarDataPTBR(dataLancamento); 
+		}
 	}
 	
 	/**
