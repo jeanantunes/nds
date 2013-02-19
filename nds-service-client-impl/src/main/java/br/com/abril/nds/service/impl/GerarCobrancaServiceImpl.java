@@ -343,6 +343,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					
 					
 					
+					
 					BigDecimal valorMinimoEmissao = formaCobranca.getValorMinimoEmissao();
 					
 					boolean acumulaDivida = false;
