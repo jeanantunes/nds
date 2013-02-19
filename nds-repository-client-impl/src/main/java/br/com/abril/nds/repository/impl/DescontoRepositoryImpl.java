@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -221,4 +222,20 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		return sql;
 	}
 
+}
+	@Override
+	public BigDecimal obterMediaDescontosFornecedoresCota(Integer numeroCota) {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" (sum(d.valor) / count(d.id)) ")
+		   .append(" from Cota c ")
+		   .append(" join c.fornecedores f ")
+		   .append(" join f.desconto d ")
+		   .append(" where c.numeroCota = :numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

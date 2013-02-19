@@ -236,11 +236,15 @@ var impressaoBoletosController = $.extend(true, {
 	
 	renderizarArquivos:function(result){
 		
+		var file = contextPath + '/financeiro/impressaoBoletos/';
+		
 		if("BOLETO" == result){
-			window.open(contextPath + "/financeiro/impressaoBoletos/imprimirBoletosEmMassa",'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
+			
+			$('#download-iframe', impressaoBoletosController.workspace).attr('src', file + 'imprimirBoletosEmMassa');
 		}
 		else if ("DIVIDA" == result) {
-			window.open(contextPath + "/financeiro/impressaoBoletos/imprimirDividasEmMassa",'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
+			
+			$('#download-iframe', impressaoBoletosController.workspace).attr('src', file + 'imprimirDividasEmMassa');
 		}
 	},
 	
@@ -263,9 +267,9 @@ var impressaoBoletosController = $.extend(true, {
 	},
 	
 	renderizarArquivo: function (nossoNumero){
-
-		window.open(contextPath + "/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero +"'",'page','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1,height=1');
-
+		
+		var file = contextPath + "/financeiro/impressaoBoletos/imprimirDivida?nossoNumero="+ nossoNumero;
+		$('#download-iframe', impressaoBoletosController.workspace).attr('src', file);	
 	},
 	
 	recarregarComboRotas:function(idRoteiro){

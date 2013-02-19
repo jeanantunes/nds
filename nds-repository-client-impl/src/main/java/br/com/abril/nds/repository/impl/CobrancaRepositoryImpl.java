@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -380,5 +381,20 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			boleto.setVias(boleto.getVias()+1);
 			this.alterar(boleto);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoCobranca> obterTiposCobrancaCadastradas() {
+		
+		StringBuilder hql = new StringBuilder("select distinct f.tipoCobranca ");
+		hql.append(" from PoliticaCobranca p ")
+		   .append(" join p.formaCobranca f ")
+		   .append(" where p.ativo = :indAtivo ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("indAtivo", true);
+		
+		return query.list();
 	}
 }

@@ -189,19 +189,51 @@
 
 		<div class="areaBts">
 			<div class="area">
-				<span class="bt_arq">
-				<!-- ARQUIVO EXCEL -->
-				<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
-			</span>
-	
-			<span class="bt_arq">
-			<!-- IMPRIMIR PDF -->	
-				<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
-			</span>
-			</div>
+				
+				<span id="exportacao" style="display: none">
+				
+					<span class="bt_arq">
+					<!-- ARQUIVO EXCEL -->
+						<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+							<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+						</a>
+					</span>
+		
+					<span class="bt_arq">
+					<!-- IMPRIMIR PDF -->	
+						<a href="${pageContext.request.contextPath}/parciais/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						</a>
+					</span>
+		        
+	        	</span>
+				
+				<span id="exportacaoPeriodos" style="display: none">
+					
+					<span class="bt_arq" title="Gerar Arquivo">
+						<!-- ARQUIVO EXCEL -->
+						<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
+								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+						</a>
+					</span>
+				
+					<span class="bt_arq" title="Imprimir">
+						<!-- IMPRIMIR PDF -->	
+						<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
+							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+						</a>
+					</span>
+						
+				 	<span id="btnIncluirPeriodos" class="bt_novos" title="Novo">
+				 		<a href="javascript:;" onclick="ParciaisController.popup(false);">
+				 			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
+				 		</a>
+				 	</span>
+				 	
+				 </span>
 		</div>
+	</div>
+		
 		<div class="linha_separa_fields">&nbsp;</div>
       <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Parciais</legend>
@@ -278,12 +310,8 @@
 			     <legend>Parciais Cadastradas</legend>
 			        	
 			    <table class="parciaisGrid"></table>
-			            
-				<div id="exportacao">
-				            
-				</div>           
+		</fieldset>          
 		</div>  
-</fieldset>
 
 
 <!-- PESQUISA DE PERIODOS PARCIAIS -->
@@ -292,34 +320,7 @@
 	       	  <legend>Períodos Cadastrados</legend>
 	               	
 	        	<table class="periodosGrid"></table>
-	            
-	<div id="exportacaoPeriodos">
-	            
-		<span class="bt_novos" title="Gerar Arquivo">
-	            
-	<!-- ARQUIVO EXCEL -->
-	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=XLS">
-			
-			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a>
-			</span>
-	
-			<span class="bt_novos" title="Imprimir">
-	
-		
-	<!-- IMPRIMIR PDF -->	
-	<a href="${pageContext.request.contextPath}/parciais/exportarPeriodos?fileType=PDF">
-	
-			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a>
-			</span>
-			
-	
-	 <span id="btnIncluirPeriodos" class="bt_novos" title="Novo">
-	 		<a href="javascript:;" onclick="ParciaisController.popup(false);">
-	 		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" alt="Incluir Períodos" />
-	 		</a>
-	 </span>
-	        
-	           
+	                       
 </fieldset>
 
 <jsp:include page="parciaisDeVenda.jsp" />

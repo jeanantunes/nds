@@ -192,10 +192,6 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.observacao = observacao;
 	}
 
-	public Boolean isJuramentada() {
-		return juramentada;
-	}
-
 	public void setJuramentada(Boolean juramentada) {
 		this.juramentada = juramentada;
 	}
@@ -288,12 +284,35 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.precoComDesconto = precoComDesconto;
 	}
 
-	public Boolean getJuramentada() {
+	public Boolean isJuramentada() {
 		return juramentada;
 	}
 
-	public void setTipoChamadaEncalhe(TipoChamadaEncalhe tipoChamadaEncalhe) {
-		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((idProdutoEdicao == null) ? 0 : idProdutoEdicao.hashCode());
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConferenciaEncalheDTO other = (ConferenciaEncalheDTO) obj;
+		if (idProdutoEdicao == null) {
+			if (other.idProdutoEdicao != null)
+				return false;
+		} else if (!idProdutoEdicao.equals(other.idProdutoEdicao))
+			return false;
+		return true;
+	}
+	
 	
 }

@@ -38,7 +38,6 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
-import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -659,11 +658,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		if(!indNovoProdutoEdicao && produtoEdicao.getLancamentoParcial() != null) {
 			
-			for(PeriodoLancamentoParcial periodo :produtoEdicao.getLancamentoParcial().getPeriodos()) {
-				periodoLancamentoParcialRepository.remover(periodo);
-				lancamentoRepository.remover(periodo.getLancamento());				
-			}
-			
 			lancamentoParcialRepository.remover(produtoEdicao.getLancamentoParcial());			
 		}
 		
@@ -769,7 +763,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Transactional(readOnly = true)
 	@Override
-	public ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras){
+	public List<ProdutoEdicao> buscarProdutoPorCodigoBarras(String codigoBarras){
 		
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoBarras);
 	}

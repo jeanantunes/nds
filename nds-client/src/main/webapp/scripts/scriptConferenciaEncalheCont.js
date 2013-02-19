@@ -71,46 +71,52 @@ var ConferenciaEncalheCont = $.extend(true, {
 	},
 
 	removerAtalhos: function() {
-		shortcut.remove("f2");
-		shortcut.remove("f6");
-		shortcut.remove("f8");
-		shortcut.remove("f9");
+		
+		$(document.body).unbind('keydown.adicionarProduto');
+		$(document.body).unbind('keydown.popUpNotaFiscal');
+		$(document.body).unbind('keydown.salvarConferencia');
+		$(document.body).unbind('keydown.finalizarConferencia');
+		
 	},
 	
 	atribuirAtalhos: function(){
 		
-		shortcut.add("F2", function() {
+		$(document.body).bind('keydown.adicionarProduto', jwerty.event('F2',function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
 				
 				ConferenciaEncalheCont.limparCamposNovoEncalhe();
 				ConferenciaEncalheCont.popup_novo_encalhe();
 			}
-		});
+		}));
 		
-		shortcut.add("F6", function() {
+		$(document.body).bind('keydown.popUpNotaFiscal', jwerty.event('F6',function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
 				
 				ConferenciaEncalheCont.popup_notaFiscal();
 			}
-		});
+			
+		}));
 		
-		shortcut.add("F8", function() {
+		
+		$(document.body).bind('keydown.salvarConferencia', jwerty.event('F8',function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
 				
 				ConferenciaEncalheCont.popup_salvarInfos();
 			}
-		});
-
-		shortcut.add("F9", function() {
+			
+		}));
+		
+		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
-			
+				
 				ConferenciaEncalheCont.veificarCobrancaGerada();
 			}
-		});
+			
+		}));
 		
 	},
 	

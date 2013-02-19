@@ -148,5 +148,6 @@ public interface DescontoService {
 	List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(Cota cota,
 			String sortorder, String sortname);
 		
+
+	BigDecimal obterComissaoParametroDistribuidor();
 }
-	

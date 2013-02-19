@@ -807,6 +807,9 @@ public class Fixture {
 		cota.setSituacaoCadastro(situacaoCadastro);
 		cota.setBox(box);
 		cota.setInicioAtividade(new Date());
+		cota.setInicioTitularidade(new Date());
+		cota.setPossuiContrato(false);
+		cota.setSugereSuspensao(false);
 		cota.setClassificacaoEspectativaFaturamento(ClassificacaoEspectativaFaturamento.D);
 		return cota;
 	}
@@ -1058,7 +1061,7 @@ public class Fixture {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Compra do Encalhe");
-		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.COMPRA_ENCALHE);
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR);
 		return tipoMovimento;
 	}
 	

@@ -100,7 +100,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		
 		List<Long> tipoMovimentoVendaEncalhe = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.COMPRA_ENCALHE));
+						Arrays.asList(GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR));
 		
 		return this.consolidadoFinanceiroRepository.obterContaCorrente(filtro, 
 				tiposMovimentoCredito, tiposMovimentoDebito, tipoMovimentoEncalhe, 

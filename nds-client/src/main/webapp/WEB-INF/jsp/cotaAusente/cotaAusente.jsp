@@ -23,6 +23,34 @@ $(function(){
 
 <body>
 
+
+	 <form>
+	 
+        <div class="area">
+        
+	        <span class="bt_novos" title="Novo">
+			    <a href="javascript:;" onclick="cotaAusenteController.popupNovaCotaAusente();">
+			        <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
+			    </a>
+		    </span>
+	  
+ 		  	<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=XLS">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" border="0" />
+				</a>
+			</span>
+			
+ 		  	<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=PDF">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
+				</a>
+			</span>
+			
+	   	</div>
+	   	
+	 </form>
+
+
 <form id="form-confirm">
 <div id="dialog-confirm" title="Suplementar">
 	<p>Para onde deseja direcionar o reparte desta cota?</p>
@@ -125,35 +153,19 @@ $(function(){
 		</table>
 
       </fieldset>
+      
       <div class="linha_separa_fields">&nbsp;</div>
+      
       <fieldset class="classFieldset">
        	  <legend>Cotas Ausentes Cadastradas</legend>
         <div class="grids" style="display:none;">
        	  <table class="ausentesGrid"></table>
           <br />
-          <span class="bt_novos" title="Gerar Arquivo">
-<!-- ARQUIVO -->
-<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=XLS">
-	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-	Arquivo
-</a></span>
-
-	<span class="bt_novos" title="Imprimir">
-<!-- IMPRIMIR -->	
-<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=PDF">
-	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-	Imprimir
-</a></span>
-
         </div>
-        <span class="bt_novos" title="Novo">
-<!-- NOVO -->
-
-		<a href="javascript:;" onclick="cotaAusenteController.popupNovaCotaAusente();">
-		<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
-
       </fieldset>
+      
       <div class="linha_separa_fields">&nbsp;</div>
+      
     </div>
 </div> 
 

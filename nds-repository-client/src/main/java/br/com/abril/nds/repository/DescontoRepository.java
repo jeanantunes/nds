@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.TipoDescontoDTO;
@@ -30,5 +31,7 @@ public interface DescontoRepository extends Repository<Desconto, Long> {
 	Desconto buscarUltimoDescontoValido(Long idDesconto, Fornecedor fornecedor);
 
 	List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(Cota cota,String sortorder, String sortname);
+
+	BigDecimal obterMediaDescontosFornecedoresCota(Integer numeroCota);
 	
 }

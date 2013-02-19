@@ -983,9 +983,56 @@ public class DataLoader {
 
 	private static TipoPontoPDV tipoPontoPDVBanca;
 	private static TipoPontoPDV tipoPontoPDVRevistaria;
-	private static TipoPontoPDV tipoPontoPDVLivraria;
+	private static TipoPontoPDV tipoPontoPDVQuiosque;
 	private static TipoPontoPDV tipoPontoPDVEtc;
-	
+	private static TipoPontoPDV tipoPontoPDVSupermercado;
+	private static TipoPontoPDV tipoPontoPDVCooperativaSindicato;
+	private static TipoPontoPDV tipoPontoPDVPostoGasolina;
+	private static TipoPontoPDV tipoPontoPDVBazarPapelaria;
+	private static TipoPontoPDV tipoPontoPDVTabacaria;
+	private static TipoPontoPDV tipoPontoPDVFarmacia;
+	private static TipoPontoPDV tipoPontoPDVVideoLocadora;
+	private static TipoPontoPDV tipoPontoPDVLojaMusica;
+	private static TipoPontoPDV tipoPontoPDVEscolaFaculdade;
+	private static TipoPontoPDV tipoPontoPDVPadariaBar;
+	private static TipoPontoPDV tipoPontoPDVHotel;
+	private static TipoPontoPDV tipoPontoPDVBoutique;
+	private static TipoPontoPDV tipoPontoPDVAcademia;
+	private static TipoPontoPDV tipoPontoPDVLojaConveniencia;
+	private static TipoPontoPDV tipoPontoPDVOutroAlternativo;
+	private static TipoPontoPDV tipoPontoPDVHospital;
+	private static TipoPontoPDV tipoPontoPDVLivraria;
+	private static TipoPontoPDV tipoPontoPDVArmarinho;
+	private static TipoPontoPDV tipoPontoPDVCabeleireiro;
+	private static TipoPontoPDV tipoPontoPDVCentroEmpresarialEscritorios;
+	private static TipoPontoPDV tipoPontoPDVCoffeeShop;
+	private static TipoPontoPDV tipoPontoPDVColegio;
+	private static TipoPontoPDV tipoPontoPDVCorreio;
+	private static TipoPontoPDV tipoPontoPDVCursinho;
+	private static TipoPontoPDV tipoPontoPDVEmporio;
+	private static TipoPontoPDV tipoPontoPDVEstacionamentoValuesNoGuiche;
+	private static TipoPontoPDV tipoPontoPDVEmpresaGremio;
+	private static TipoPontoPDV tipoPontoPDVEscolaIdiomas;
+	private static TipoPontoPDV tipoPontoPDVEscolaArte;
+	private static TipoPontoPDV tipoPontoPDVEscolaMusica;
+	private static TipoPontoPDV tipoPontoPDVHeliporto;
+	private static TipoPontoPDV tipoPontoPDVHomeCenter;
+	private static TipoPontoPDV tipoPontoPDVLanHouseCiberCafe;
+	private static TipoPontoPDV tipoPontoPDVLojaBebes;
+	private static TipoPontoPDV tipoPontoPDVLojaBrinquedos;
+	private static TipoPontoPDV tipoPontoPDVLojaDecoracao;
+	private static TipoPontoPDV tipoPontoPDVLojaInformatica;
+	private static TipoPontoPDV tipoPontoPDVLojaMaterialEsportivo;
+	private static TipoPontoPDV tipoPontoPDVLojaMaterialConstrucao;
+	private static TipoPontoPDV tipoPontoPDVLojaUmNoventaNove;
+	private static TipoPontoPDV tipoPontoPDVMercado;
+	private static TipoPontoPDV tipoPontoPDVPetShop;
+	private static TipoPontoPDV tipoPontoPDVRestaurante;
+	private static TipoPontoPDV tipoPontoPDVTerminalTransporte;
+	private static TipoPontoPDV tipoPontoPDVVarejaoSacado;
+	private static TipoPontoPDV tipoPontoPDVExportador;
+	private static TipoPontoPDV tipoPontoPDVLoterica;
+
 	private static Lancamento lancamentoCanceladoSuper2;
 	private static Lancamento lancamentoCanceladoCapricho2;
 	private static ProdutoEdicao produtoEdicaoVeja5;
@@ -2601,12 +2648,109 @@ public class DataLoader {
 
 	private static void gerarTiposPontoPDV(Session session) {
 
-		 tipoPontoPDVBanca  = Fixture.criarTipoPontoPDV(1L, "Banca");
-		 tipoPontoPDVRevistaria  = Fixture.criarTipoPontoPDV(2L, "Revistaria");
-		 tipoPontoPDVLivraria  = Fixture.criarTipoPontoPDV(3L, "Livraria");
-		 tipoPontoPDVEtc = Fixture.criarTipoPontoPDV(4L, "Outros");
+		 tipoPontoPDVBanca= 					  Fixture.criarTipoPontoPDV(2L, "BANCA");
+		 tipoPontoPDVRevistaria= 				  Fixture.criarTipoPontoPDV(2L, "REVISTARIA");
+		 tipoPontoPDVQuiosque= 					  Fixture.criarTipoPontoPDV(3L, "QUIOSQUE");
+		 tipoPontoPDVEtc= 						  Fixture.criarTipoPontoPDV(4L, "OUTROS");
+		 tipoPontoPDVSupermercado=                Fixture.criarTipoPontoPDV(10L,"SUPERMERCADO");
+		 tipoPontoPDVCooperativaSindicato=        Fixture.criarTipoPontoPDV(11L,"COOPERATIVA SINDICATO");
+		 tipoPontoPDVPostoGasolina=               Fixture.criarTipoPontoPDV(12L,"POSTO DE GASOLINA");
+		 tipoPontoPDVBazarPapelaria=              Fixture.criarTipoPontoPDV(13L,"BAZAR/PAPELARIA");
+		 tipoPontoPDVTabacaria=                   Fixture.criarTipoPontoPDV(14L,"TABACARIA");
+		 tipoPontoPDVFarmacia=                    Fixture.criarTipoPontoPDV(15L,"FARMACIA");
+		 tipoPontoPDVVideoLocadora=               Fixture.criarTipoPontoPDV(16L,"VIDEO LOCADORA");
+		 tipoPontoPDVLojaMusica=                  Fixture.criarTipoPontoPDV(17L,"LOJA DE MUSICA");
+		 tipoPontoPDVEscolaFaculdade=             Fixture.criarTipoPontoPDV(18L,"ESCOLA/FACULDADE");
+		 tipoPontoPDVPadariaBar=                  Fixture.criarTipoPontoPDV(19L,"PADARIA/BAR");
+		 tipoPontoPDVHotel=                       Fixture.criarTipoPontoPDV(20L,"HOTEL");
+		 tipoPontoPDVBoutique=                    Fixture.criarTipoPontoPDV(21L,"BOUTIQUE");
+		 tipoPontoPDVAcademia=                    Fixture.criarTipoPontoPDV(22L,"ACADEMIA");
+		 tipoPontoPDVLojaConveniencia=            Fixture.criarTipoPontoPDV(23L,"LOJA DE CONVENIENCIA");
+		 tipoPontoPDVOutroAlternativo=            Fixture.criarTipoPontoPDV(24L,"OUTRO ALTERNATIVO");
+		 tipoPontoPDVHospital=                    Fixture.criarTipoPontoPDV(26L,"HOSPITAL");
+		 tipoPontoPDVLivraria=                    Fixture.criarTipoPontoPDV(27L,"LIVRARIA");
+		 tipoPontoPDVArmarinho=                   Fixture.criarTipoPontoPDV(28L,"ARMARINHO");
+		 tipoPontoPDVCabeleireiro=                Fixture.criarTipoPontoPDV(29L,"CABELEIREIRO");
+		 tipoPontoPDVCentroEmpresarialEscritorios=Fixture.criarTipoPontoPDV(30L,"CENTRO EMPRESARIAL/ESCRITORIOS");
+		 tipoPontoPDVCoffeeShop=                  Fixture.criarTipoPontoPDV(31L,"COFFEE-SHOP");
+		 tipoPontoPDVColegio=                     Fixture.criarTipoPontoPDV(32L,"COLEGIO");
+		 tipoPontoPDVCorreio=                     Fixture.criarTipoPontoPDV(33L,"CORREIO");
+		 tipoPontoPDVCursinho=                    Fixture.criarTipoPontoPDV(34L,"CURSINHO");
+		 tipoPontoPDVEmporio=                     Fixture.criarTipoPontoPDV(35L,"EMPORIO");
+		 tipoPontoPDVEstacionamentoValuesNoGuiche=Fixture.criarTipoPontoPDV(36L,"ESTACIONAMENTO(NO GUICHE)");
+		 tipoPontoPDVEmpresaGremio=               Fixture.criarTipoPontoPDV(37L,"EMPRESA/GREMIO");
+		 tipoPontoPDVEscolaIdiomas=               Fixture.criarTipoPontoPDV(38L,"ESCOLA DE IDIOMAS");
+		 tipoPontoPDVEscolaArte=                  Fixture.criarTipoPontoPDV(39L,"ESCOLA DE ARTE");
+		 tipoPontoPDVEscolaMusica=                Fixture.criarTipoPontoPDV(40L,"ESCOLA DE MUSICA");
+		 tipoPontoPDVHeliporto=                   Fixture.criarTipoPontoPDV(41L,"HELIPORTO");
+		 tipoPontoPDVHomeCenter=                  Fixture.criarTipoPontoPDV(42L,"HOMECENTER");
+		 tipoPontoPDVLanHouseCiberCafe=           Fixture.criarTipoPontoPDV(43L,"LAN HOUSE/CIBER CAFE");
+		 tipoPontoPDVLojaBebes=                   Fixture.criarTipoPontoPDV(44L,"LOJA DE BEBES");
+		 tipoPontoPDVLojaBrinquedos=              Fixture.criarTipoPontoPDV(45L,"LOJA DE BRINQUEDOS");
+		 tipoPontoPDVLojaDecoracao=               Fixture.criarTipoPontoPDV(46L,"LOJA DE DECORACAO");
+		 tipoPontoPDVLojaInformatica=             Fixture.criarTipoPontoPDV(47L,"LOJA DE INFORMATICA");
+		 tipoPontoPDVLojaMaterialEsportivo=       Fixture.criarTipoPontoPDV(48L,"LOJA DE MATERIAL ESPORTIVO");
+		 tipoPontoPDVLojaMaterialConstrucao=      Fixture.criarTipoPontoPDV(49L,"LOJA DE MATERIAL DE CONSTRUCAO");
+		 tipoPontoPDVLojaUmNoventaNove=           Fixture.criarTipoPontoPDV(50L,"LOJA DE 1,99");
+		 tipoPontoPDVMercado=                     Fixture.criarTipoPontoPDV(51L,"MERCADO");
+		 tipoPontoPDVPetShop=                     Fixture.criarTipoPontoPDV(52L,"PET SHOP");
+		 tipoPontoPDVRestaurante=                 Fixture.criarTipoPontoPDV(53L,"RESTAURANTE");
+		 tipoPontoPDVTerminalTransporte=          Fixture.criarTipoPontoPDV(54L,"TERMINAL DE TRANSPORTE");
+		 tipoPontoPDVVarejaoSacado=               Fixture.criarTipoPontoPDV(55L,"VAREJAO/SACOLAO");
+		 tipoPontoPDVExportador=                  Fixture.criarTipoPontoPDV(56L,"EXPORTADOR");
+		 tipoPontoPDVLoterica=                    Fixture.criarTipoPontoPDV(57L,"LOTERICA");
 		 
-		save(session, tipoPontoPDVBanca, tipoPontoPDVRevistaria, tipoPontoPDVLivraria, tipoPontoPDVEtc);
+		save(session, tipoPontoPDVBanca, 
+					  tipoPontoPDVRevistaria, 
+					  tipoPontoPDVQuiosque, 
+					  tipoPontoPDVEtc,
+					  tipoPontoPDVSupermercado,                
+					  tipoPontoPDVCooperativaSindicato,        
+					  tipoPontoPDVPostoGasolina,               
+					  tipoPontoPDVBazarPapelaria,              
+					  tipoPontoPDVTabacaria,                   
+					  tipoPontoPDVFarmacia,                    
+					  tipoPontoPDVVideoLocadora,               
+					  tipoPontoPDVLojaMusica,                  
+					  tipoPontoPDVEscolaFaculdade,             
+					  tipoPontoPDVPadariaBar,                  
+					  tipoPontoPDVHotel,                       
+					  tipoPontoPDVBoutique,                    
+					  tipoPontoPDVAcademia,                    
+					  tipoPontoPDVLojaConveniencia,            
+					  tipoPontoPDVOutroAlternativo,            
+					  tipoPontoPDVHospital,                    
+					  tipoPontoPDVLivraria,                    
+					  tipoPontoPDVArmarinho,                   
+					  tipoPontoPDVCabeleireiro,                
+					  tipoPontoPDVCentroEmpresarialEscritorios,
+					  tipoPontoPDVCoffeeShop,                  
+					  tipoPontoPDVColegio,                     
+					  tipoPontoPDVCorreio,                     
+					  tipoPontoPDVCursinho,                    
+					  tipoPontoPDVEmporio,                     
+					  tipoPontoPDVEstacionamentoValuesNoGuiche,
+					  tipoPontoPDVEmpresaGremio,               
+					  tipoPontoPDVEscolaIdiomas,               
+					  tipoPontoPDVEscolaArte,                  
+					  tipoPontoPDVEscolaMusica,                
+					  tipoPontoPDVHeliporto,                   
+					  tipoPontoPDVHomeCenter,                  
+					  tipoPontoPDVLanHouseCiberCafe,           
+					  tipoPontoPDVLojaBebes,                   
+					  tipoPontoPDVLojaBrinquedos,              
+					  tipoPontoPDVLojaDecoracao,               
+					  tipoPontoPDVLojaInformatica,             
+					  tipoPontoPDVLojaMaterialEsportivo,       
+					  tipoPontoPDVLojaMaterialConstrucao,      
+					  tipoPontoPDVLojaUmNoventaNove,           
+					  tipoPontoPDVMercado,                     
+					  tipoPontoPDVPetShop,                     
+					  tipoPontoPDVRestaurante,                 
+					  tipoPontoPDVTerminalTransporte,          
+					  tipoPontoPDVVarejaoSacado,               
+					  tipoPontoPDVExportador,                  
+					  tipoPontoPDVLoterica);
 	}
 
 	private static void gerarHistoricosAculoDivida(Session session) {
@@ -3669,7 +3813,7 @@ public class DataLoader {
         List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
         for (MovimentoFinanceiroCota movF : movimentosF) {
             if (((TipoMovimentoFinanceiro) movF.getTipoMovimento())
-                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE) {
+                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR) {
                 movimentosE = movF.getMovimentos();
                 for (MovimentoEstoqueCota movE : movimentosE) {
                     if (((TipoMovimentoEstoque) movE.getTipoMovimento())

@@ -298,7 +298,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		periodoLancamentoParcialRepository.remover(periodo);
 		
-		lancamentoRepository.remover(lancamento);
+		//lancamentoRepository.remover(lancamento);
 	}
 
 	/**
