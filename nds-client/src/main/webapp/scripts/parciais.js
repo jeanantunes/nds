@@ -108,6 +108,7 @@ var ParciaisController = $.extend(true, {
 		$.postJSON(contextPath + "/parciais/inserirPeriodos",
 				this.getDadosNovosPeriodo(),
 				function(result){
+					$( "#dialog-novo",this.workspace).dialog( "close" );
 					if(modal)
 						$(".parciaisPopGrid",this.workspace).flexReload();
 					else
@@ -464,7 +465,6 @@ var ParciaisController = $.extend(true, {
 					           text:"Confirmar", 
 					           click: function() {
 					        	   	ParciaisController.inserirPeriodos(modal);								
-									$( this ).dialog( "close" );
 					           }
 				           },
 				           {
