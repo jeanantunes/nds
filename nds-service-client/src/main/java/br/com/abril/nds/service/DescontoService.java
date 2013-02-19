@@ -137,6 +137,6 @@ public interface DescontoService {
 	Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
 
 	BigDecimal obterComissaoCota(Integer numeroCota);
-		
+
+	BigDecimal obterComissaoParametroDistribuidor();
 }
-	

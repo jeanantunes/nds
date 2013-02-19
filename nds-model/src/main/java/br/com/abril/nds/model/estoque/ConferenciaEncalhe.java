@@ -39,6 +39,8 @@ public class ConferenciaEncalhe implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	
+	
 	@Id
 	@GeneratedValue(generator = "CONFERENCIA_ENCALHE_SEQ")
 	private Long id;
@@ -298,5 +300,5 @@ public class ConferenciaEncalhe implements Serializable {
 	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
 		this.produtoEdicao = produtoEdicao;
 	}
-		
+
 }

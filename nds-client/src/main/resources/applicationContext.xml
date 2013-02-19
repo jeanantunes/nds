@@ -30,7 +30,6 @@
 	
 	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
 
-	
 	<task:annotation-driven />
 
 	<!-- Descomentar abaixo para ligar o bloqueador -->
@@ -67,5 +66,5 @@
 	</bean>
 	
 	<tx:annotation-driven transaction-manager="transactionManager" />
-	
+
 </beans>

@@ -37,7 +37,7 @@
 			
 			<span class="bt_novos" >
 				<a id="linkValor" href="javascript:;" title="Balancear Volume / Valor">
-					<img style="width: 16px;height: 16px;" border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_indicadores.gif">
+					<img style="width: 16px;height: 16px;" border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_financeiro.png">
 				</a>
 			</span>
 			<span class="bt_novos" >
@@ -201,7 +201,7 @@
 		
 		<!-- Balanceamento -->
 		
-		<fieldset id="fieldsetGrids" class="classFieldset">
+		<fieldset id="fieldsetGrids" class="classFieldset" style="width: 1073px!important;">
 		
 			<legend>Balanceamento da Matriz de Recolhimento </legend>
 			

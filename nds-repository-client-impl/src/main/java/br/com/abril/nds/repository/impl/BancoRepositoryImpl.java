@@ -228,5 +228,18 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 		criteria.add(Restrictions.eq("ativo", ativo));
 		return criteria.list();
 	}
-	
+
+	@Override
+	public Banco buscarBancoPorIdCobranca(Long idCobranca) {
+		
+		StringBuilder hql = new StringBuilder("select b ");
+		hql.append(" from Cobranca c ")
+		   .append(" join c.banco b ")
+		   .append(" where c.id = :idCobranca ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCobranca", idCobranca);
+		
+		return (Banco) query.uniqueResult();
+	}
 }

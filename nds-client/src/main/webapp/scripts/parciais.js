@@ -123,6 +123,8 @@ var ParciaisController = $.extend(true, {
 	
 	processaRetornoPesquisaParciais : function(result) {
 		
+		$('#exportacaoPeriodos',this.workspace).hide();
+		
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 		
@@ -139,6 +141,8 @@ var ParciaisController = $.extend(true, {
 	
 	processaRetornoPeriodosParciais : function(result) {
 		
+		$("#exportacao",this.workspace).hide();
+		
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 			
@@ -149,11 +153,6 @@ var ParciaisController = $.extend(true, {
 			$('#exportacaoPeriodos',this.workspace).show();
 			ParciaisController.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
-		
-		if(result.rows.length > 0 && result.rows[0].cell.geradoPorInterface==true)
-			$("#btnIncluirPeriodos",this.workspace).hide();
-		else
-			$("#btnIncluirPeriodos",this.workspace).show();		
 		
 		$.each(result.rows, function(index,row){ParciaisController.gerarAcaoDetalhes(index,row);} );
 				

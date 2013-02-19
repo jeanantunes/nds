@@ -671,7 +671,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	private List<MovimentoFinanceiroCota> gerarMovimentoFinanceiroCotaDebito(Date dataVencimentoDebito, VendaProduto vendaProduto) {
 
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
-				tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.DEBITO);
+				tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR);
 
 		if (tipoMovimentoFinanceiro == null) {
 			throw new ValidacaoException(

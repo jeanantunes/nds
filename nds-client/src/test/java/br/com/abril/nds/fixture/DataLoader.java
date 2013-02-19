@@ -2932,7 +2932,7 @@ public class DataLoader {
 	
 
 	private static void criarControleBaixaBancaria(Session session) {
-		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao, bancoHSBC);
+		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao, bancoHSBC);
 		save(session, baixaBancaria);
 
 	}
@@ -3669,7 +3669,7 @@ public class DataLoader {
         List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
         for (MovimentoFinanceiroCota movF : movimentosF) {
             if (((TipoMovimentoFinanceiro) movF.getTipoMovimento())
-                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE) {
+                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR) {
                 movimentosE = movF.getMovimentos();
                 for (MovimentoEstoqueCota movE : movimentosE) {
                     if (((TipoMovimentoEstoque) movE.getTipoMovimento())

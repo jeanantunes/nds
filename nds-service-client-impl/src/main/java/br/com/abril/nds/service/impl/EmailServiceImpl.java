@@ -70,6 +70,14 @@ public class EmailServiceImpl implements EmailService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public void enviar(String assunto, String mensagem, String[] destinatarios,AnexoEmail anexo, Boolean isHtml) throws AutenticacaoEmailException {
+		
+		this.enviarEmail(assunto, mensagem, destinatarios, Arrays.asList(anexo),isHtml);
+		
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public void enviar(String assunto,String[] destinatarios,TemplateNames template,HashMap<String,Object> parametros) throws AutenticacaoEmailException {
 		
 		String mensagem = TemplateManager.getTemplate(template, parametros);

@@ -56,6 +56,7 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
@@ -140,6 +141,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	private TipoMovimentoFinanceiro tipoMovimetnoFinanceiro;
 	private MovimentoFinanceiroCota movimentoFinanceiro;
 
+	private Date dataOperacao;
 	
 	@Before
 	public void setUpGeral() {
@@ -3345,6 +3347,19 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Date dataOperacao = Fixture.criarData(10, Calendar.JANUARY, 2012);
 		
 		movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaDevolucaoJuramentada(dataOperacao);
+		
+	}
+	
+	@Test
+	public void test_obter_desconto_produto_edicao() {
+		
+		Integer numeroCota = 1;
+		
+		Long idProdutoEdicao = 1L;
+		
+		Date dataOperacao = new Date();
+		
+		ValoresAplicados valoresAplicados = movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, idProdutoEdicao, dataOperacao);
 		
 	}
 	
