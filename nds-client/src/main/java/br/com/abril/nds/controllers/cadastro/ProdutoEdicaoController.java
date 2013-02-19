@@ -236,7 +236,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		dto.setId(idProdutoEdicao);
 		dto.setNomeComercialProduto(nomeComercialProduto);
-		dto.setPeb(peb);
+		dto.setPeb( (peb == null)?0:peb);
 		dto.setCaracteristicaProduto(descricaoProduto);
 		dto.setNumeroEdicao(numeroEdicao);
 		dto.setCodigoProduto(codigoProdutoEdicao);

@@ -302,16 +302,27 @@ public class ParciaisController extends BaseController {
 	}
 	
 	@Post
-	public void obterPebDoProduto(String codigoProduto, String edicaoProduto) {
+	public void obterPebDoProduto(String codigoProduto, String edicaoProduto, Integer periodos) {
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
-		
-		if(produtoEdicao == null) 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada.");
-		
-		Integer pebProduto = produtoEdicao.getPeb();
-		
-		result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
+		if(periodos == null){
+			result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+		}
+		else{
+			
+			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
+			
+			if(produtoEdicao == null) 
+				throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada.");
+			
+			if(periodos.compareTo(produtoEdicao.getPeb())>0){
+				throw new ValidacaoException(TipoMensagem.WARNING,"o campo [Qtde. Períodos] não pode ser maior que a PEB("+produtoEdicao.getPeb()+") cadastrada no prduto edição!");
+			}
+			
+			Integer pebProduto = (produtoEdicao.getPeb() / periodos);
+			
+			result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
+			
+		}
 	}
 	
 	/**

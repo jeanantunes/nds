@@ -2028,8 +2028,8 @@ public class DiferencaEstoqueController extends BaseController {
 		if (somaQtdeRateio.compareTo(diferencaVO.getQuantidade()) > 0) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "A somatória das quantidades do campo [Diferença] (" 
-					+ somaQtdeRateio + ") é maior que a quantidade do campo [Reparte Diferença] referente ao produto informado (" 
+				TipoMensagem.WARNING, "A somatória da quantidade do(s) campo(s) [Diferença] (" 
+					+ somaQtdeRateio + ") direcionada a(s) Cota(s) é maior que a quantidade do campo [Diferença] referente ao produto informado (" 
 					+ diferencaVO.getQuantidade() + ")!");
 		}
 	}
@@ -2383,8 +2383,7 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 		
 		DetalheItemNotaFiscalDTO detalheItemNota = 
-			this.itemNotaEnvioService.obterItemNotaEnvio(
-				dataEnvioNota, numeroCota, produtoEdicao.getId());
+			this.itemNotaEnvioService.obterItemNotaEnvioLancamentoProduto(dataEnvioNota, numeroCota, produtoEdicao.getId());
 		
 		quantidadeReparteNota = detalheItemNota.getQuantidadeExemplares();
 			
@@ -2622,7 +2621,7 @@ public class DiferencaEstoqueController extends BaseController {
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
 		List<DetalheItemNotaFiscalDTO> itensNotaEnvio = 
-			this.itemNotaEnvioService.obterItensNotaEnvio(dateNotaEnvio, numeroCota);
+			this.itemNotaEnvioService.obterItensNotaEnvioLancamentoProduto(dateNotaEnvio, numeroCota);
 		
 		List<DiferencaVO> prods = new ArrayList<DiferencaVO>();
 		
