@@ -220,7 +220,7 @@ var ParciaisController = $.extend(true, {
 		
 		data.push({name:'codigoProduto',		value: this.codigoProduto});
 		data.push({name:'edicaoProduto',		value: this.numEdicao});
-		
+		data.push({name:'periodos',				value: this.get("qtde")});
 		return data;
 	},
 	
@@ -235,10 +235,10 @@ var ParciaisController = $.extend(true, {
 		return data;
 	},
 	
-	carregaPeb : function() {
+	carregaPeb : function(periodos) {
 		
+		this.set('qtde',periodos);
 		this.set('peb','');
-		this.set('qtde','');
 		
 		$.postJSON(contextPath + "/parciais/obterPebDoProduto",
 				this.getDadosParaPeb(),
@@ -450,7 +450,7 @@ var ParciaisController = $.extend(true, {
 
 	popup : function(modal) {
 		
-			ParciaisController.carregaPeb();
+			ParciaisController.carregaPeb(null);
 		
 			$( "#dialog-novo",this.workspace).dialog({
 				resizable: false,
