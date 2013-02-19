@@ -18,13 +18,15 @@ import br.com.abril.nds.model.ProdutoEdicao;
 
 public class DefinicaoBasesDAO {
 
+    private static final String LANCAMENTO_PARCIAL = "PARCIAL";
+
     private static final Logger log = LoggerFactory.getLogger(DefinicaoBasesDAO.class);
 
     private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
     private static final String STATUS_FECHADO = "FECHADO";
     
-    private static final String CAMPOS_MODEL_PRODUTO_EDICAO = " select l.ID, l.PRODUTO_EDICAO_ID, l.STATUS, l.DATA_LCTO_DISTRIBUIDOR, tp.GRUPO_PRODUTO, pe.PARCIAL, " 
-	    + " pe.NUMERO_EDICAO, p.CODIGO "
+    private static final String CAMPOS_MODEL_PRODUTO_EDICAO = " select l.ID, l.PRODUTO_EDICAO_ID, l.STATUS, l.DATA_LCTO_DISTRIBUIDOR, tp.GRUPO_PRODUTO, " 
+	    + " l.TIPO_LANCAMENTO, pe.NUMERO_EDICAO, p.CODIGO "
 	    + " from lancamento l "
 	    + " left join produto_edicao pe on pe.ID = l.PRODUTO_EDICAO_ID "
 	    + " left outer join produto p on p.ID = pe.PRODUTO_ID "
@@ -88,7 +90,7 @@ public class DefinicaoBasesDAO {
 	return edicoes;
     }
 
-    public List<ProdutoEdicao> listaEdicoesAnosAnteriores(ProdutoEdicao edicao, boolean mesmoMes) {
+    public List<ProdutoEdicao> listaEdicoesAnosAnteriores(ProdutoEdicao edicao, boolean mesmoMes, List<LocalDate> dataReferencias) {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	try {
 	    PreparedStatement ps = Conexao.getConexao().prepareStatement(
@@ -101,6 +103,7 @@ public class DefinicaoBasesDAO {
 		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), 1));
 		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), 2));
 	    } else {
+		
 		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 2, DataReferencia.DEZEMBRO_20));
 		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 1, DataReferencia.FEVEREIRO_28));
 		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 4, DataReferencia.DEZEMBRO_20));
@@ -132,7 +135,7 @@ public class DefinicaoBasesDAO {
 		produtoEdicao.setVenda((produtoEdicao.getReparte().subtract(rs.getBigDecimal("QTDE_DEVOLVIDA"))));
 		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
 		produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
-		produtoEdicao.setParcial(rs.getInt("PARCIAL") == 1);
+		produtoEdicao.setParcial(rs.getInt(LANCAMENTO_PARCIAL) == 1);
 
 		edicoes.add(produtoEdicao);
 	    }
@@ -172,7 +175,7 @@ public class DefinicaoBasesDAO {
 	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
 	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 	produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
-	produtoEdicao.setParcial(rs.getInt("PARCIAL") == 1);
+	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
 	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
 	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
 	return produtoEdicao;

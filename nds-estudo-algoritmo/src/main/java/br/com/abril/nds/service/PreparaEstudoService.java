@@ -1,7 +1,9 @@
 package br.com.abril.nds.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +21,28 @@ public class PreparaEstudoService {
 	return definicaoBasesDAO.listaEdicoesPorLancamento(edicao);
     }
    
-    public List<ProdutoEdicao> buscaEdicoesAnosAnteriores(ProdutoEdicao edicao) {
-	List<ProdutoEdicao> listaEdicoesAnosAnterioresMesmoMes = definicaoBasesDAO.listaEdicoesAnosAnteriores(edicao, true);
+    public List<ProdutoEdicao> buscaEdicoesAnosAnterioresVeraneio(ProdutoEdicao edicao) {
+	List<ProdutoEdicao> listaEdicoesAnosAnterioresMesmoMes = definicaoBasesDAO.listaEdicoesAnosAnteriores(edicao, true, getDatasPeriodoVeraneio(edicao));
 	
 	if(!listaEdicoesAnosAnterioresMesmoMes.isEmpty()) {
 	    return listaEdicoesAnosAnterioresMesmoMes;
 	}
 	
-	return definicaoBasesDAO.listaEdicoesAnosAnteriores(edicao, false);
+	return definicaoBasesDAO.listaEdicoesAnosAnteriores(edicao, false, getDatasPeriodoVeraneio(edicao));
+    }
+    
+    public List<ProdutoEdicao> buscaEdicoesAnosAnterioresSaidaVeraneio(ProdutoEdicao edicao) {
+	return definicaoBasesDAO.listaEdicoesAnosAnteriores(edicao, false, getDatasPeriodoSaidaVeraneio(edicao));
+    }
+
+    private List<LocalDate> getDatasPeriodoSaidaVeraneio(ProdutoEdicao edicao) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    private List<LocalDate> getDatasPeriodoVeraneio(ProdutoEdicao edicao) {
+	List<LocalDate> periodoVeraneio = new ArrayList<>();
+	return null;
     }
    
 }

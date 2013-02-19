@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.service.EstudoService;
 
 public class EncalheMaximoTest {
 
@@ -35,7 +36,7 @@ public class EncalheMaximoTest {
 		cota.setPercentualEncalheMaximo(new BigDecimal(10));
 		cota.setVendaMedia(new BigDecimal(25));
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 
 		// Execução do Processo
 		EncalheMaximo encalheMaximo = new EncalheMaximo(estudo);
@@ -57,7 +58,7 @@ public class EncalheMaximoTest {
 		cota.setPercentualEncalheMaximo(new BigDecimal(40));
 		cota.setVendaMedia(new BigDecimal(20));
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 
 		// Execução do Processo
 		EncalheMaximo encalheMaximo = new EncalheMaximo(estudo);
@@ -79,7 +80,7 @@ public class EncalheMaximoTest {
 		cota.setPercentualEncalheMaximo(new BigDecimal(0));
 		cota.setVendaMedia(new BigDecimal(20));
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 
 		// Execução do Processo
 		EncalheMaximo encalheMaximo = new EncalheMaximo(estudo);

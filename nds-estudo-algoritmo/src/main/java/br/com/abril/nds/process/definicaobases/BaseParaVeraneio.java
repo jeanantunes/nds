@@ -49,7 +49,7 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
     }
 
     private void adicionarEdicoesAnterioresAoEstudo(ProdutoEdicao produtoEdicao) throws Exception {
-	List<ProdutoEdicao> edicoesAnosAnteriores = preparaEstudoService.buscaEdicoesAnosAnteriores(produtoEdicao);
+	List<ProdutoEdicao> edicoesAnosAnteriores = preparaEstudoService.buscaEdicoesAnosAnterioresVeraneio(produtoEdicao);
 	if(edicoesAnosAnteriores.isEmpty()) {
 	    throw new Exception("Não foram encontradas outras bases para veraneio, favor inserir bases manualmente.");
 	}

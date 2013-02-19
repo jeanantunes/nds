@@ -22,8 +22,8 @@ public class CotaDAO {
 	    while (rs.next()) {
 		Cota cota = new Cota();
 		cota.setId(rs.getLong("ID"));
-		cota.setNumero(rs.getLong("NUMERO_COTA"));
-		cota.setNomePessoa(rs.getString("NOME"));
+//		cota.setNumero(rs.getLong("NUMERO_COTA"));
+//		cota.setNomePessoa(rs.getString("NOME"));
 
 		cotas.add(cota);
 	    }
@@ -53,8 +53,8 @@ public class CotaDAO {
 	    while (rs.next()) {
 		Cota cota = new Cota();
 		cota.setId(rs.getLong("ID"));
-		cota.setNumero(rs.getLong("NUMERO_COTA"));
-		cota.setNomePessoa(rs.getString("NOME"));
+//		cota.setNumero(rs.getLong("NUMERO_COTA"));
+//		cota.setNomePessoa(rs.getString("NOME"));
 
 		cotas.add(cota);
 	    }

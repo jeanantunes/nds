@@ -9,6 +9,7 @@ import org.junit.Test;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.service.EstudoService;
 
 public class ReparteProporcionalTest {
 
@@ -61,7 +62,7 @@ public class ReparteProporcionalTest {
 		Cota cota = new Cota();
 		cota.getEdicoesRecebidas().add(edicao);
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
@@ -93,7 +94,7 @@ public class ReparteProporcionalTest {
 		cota = new Cota();
 		cota.getEdicoesRecebidas().add(edicao);
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
@@ -132,7 +133,7 @@ public class ReparteProporcionalTest {
 		cota.setId(new Long(2));
 		cota.getEdicoesRecebidas().add(edicao);
 		estudo.getCotas().add(cota);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
@@ -175,7 +176,7 @@ public class ReparteProporcionalTest {
 		cota2.setId(new Long(2));
 		cota2.getEdicoesRecebidas().add(edicao2);
 		estudo.getCotas().add(cota2);
-		estudo.calculate();
+		EstudoService.calculate(estudo);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
