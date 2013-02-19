@@ -64,6 +64,13 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		if (produtoEdicao != null) {
 		
 			criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		} else {
+			criteria.add(Restrictions.isNull("produtoEdicao"));
+		}
+		
+		if (produto != null) {
+			
+			criteria.add(Restrictions.eq("produto", produto));
 		}
 		
 		if (tipoDesconto != null) {

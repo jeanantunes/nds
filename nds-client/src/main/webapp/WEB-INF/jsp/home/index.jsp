@@ -163,7 +163,7 @@
 										$span = $($span).addClass("conferencia_encalhe");
 									}
 									
-									$('a:contains(' + title + ')', ulTabs).parent().prepend($span);
+									$('a:contains(' + title + ')', ulTabs).last().parent().prepend($span);
 									
 								}
 								

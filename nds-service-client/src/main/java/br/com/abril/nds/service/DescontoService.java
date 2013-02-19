@@ -137,6 +137,16 @@ public interface DescontoService {
 	Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento, Cota cota, ProdutoEdicao produtoEdicao);
 
 	BigDecimal obterComissaoCota(Integer numeroCota);
+
+	/**
+	 * Recupera descontos Gerais e Específicos da cota mesclados respeitando a hierarquia. (Especifico>Geral)
+	 * @param cota
+	 * @param sortorder
+	 * @param sortname
+	 * @return
+	 */
+	List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(Cota cota,
+			String sortorder, String sortname);
 		
 }
 	

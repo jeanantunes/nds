@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -27,5 +28,7 @@ public interface DescontoRepository extends Repository<Desconto, Long> {
 	List<ProdutoEdicao> buscarProdutosEdicoesQueUsamDescontoProduto(Desconto desconto);
 	
 	Desconto buscarUltimoDescontoValido(Long idDesconto, Fornecedor fornecedor);
+
+	List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(Cota cota,String sortorder, String sortname);
 	
 }

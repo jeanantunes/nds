@@ -1032,4 +1032,11 @@ public class DescontoServiceImpl implements DescontoService {
 		return desc.compareTo(BigDecimal.ZERO) > 0 ? desc.divide(new BigDecimal(descontos.size())) : BigDecimal.ZERO;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(
+			Cota cota, String sortorder, String sortname) {		
+		return descontoRepository.obterMergeDescontosEspecificosEGerais(cota, sortorder, sortname);
+	}
+
 }
