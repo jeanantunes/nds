@@ -220,7 +220,6 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 			return sql.append(" order by dataAlteracao " + sortorder + " ");
 		
 		return sql;
-	}
 
 }
 	@Override
