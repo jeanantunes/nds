@@ -3813,7 +3813,7 @@ public class DataLoader {
         List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
         for (MovimentoFinanceiroCota movF : movimentosF) {
             if (((TipoMovimentoFinanceiro) movF.getTipoMovimento())
-                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE) {
+                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR) {
                 movimentosE = movF.getMovimentos();
                 for (MovimentoEstoqueCota movE : movimentosE) {
                     if (((TipoMovimentoEstoque) movE.getTipoMovimento())
