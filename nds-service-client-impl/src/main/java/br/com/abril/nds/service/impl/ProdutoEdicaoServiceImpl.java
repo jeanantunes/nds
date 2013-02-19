@@ -24,9 +24,11 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -36,7 +38,6 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
-import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -204,7 +205,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			List<Integer> listaDiasSemana = 
 					this.distribuicaoFornecedorRepository.obterDiasSemanaDistribuicao(
 							furoProdutoDTO.getCodigoProduto(), 
-							furoProdutoDTO.getIdProdutoEdicao());
+							furoProdutoDTO.getIdProdutoEdicao(), OperacaoDistribuidor.DISTRIBUICAO);
 			
 			if (listaDiasSemana != null && !listaDiasSemana.isEmpty()){
 				int diaSemana = -1;
@@ -657,11 +658,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		if(!indNovoProdutoEdicao && produtoEdicao.getLancamentoParcial() != null) {
 			
-			for(PeriodoLancamentoParcial periodo :produtoEdicao.getLancamentoParcial().getPeriodos()) {
-				periodoLancamentoParcialRepository.remover(periodo);
-				lancamentoRepository.remover(periodo.getLancamento());				
-			}
-			
 			lancamentoParcialRepository.remover(produtoEdicao.getLancamentoParcial());			
 		}
 		
@@ -767,7 +763,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Transactional(readOnly = true)
 	@Override
-	public ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras){
+	public List<ProdutoEdicao> buscarProdutoPorCodigoBarras(String codigoBarras){
 		
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoBarras);
 	}
@@ -920,6 +916,35 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Override
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao) {
 		return produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+	}
+
+	@Override
+	@Transactional
+	public BigDecimal obterPorcentualDesconto(
+			ProdutoEdicao produtoEdicao) {
+		
+		BigDecimal porcentagemDesconto = null;
+		
+		switch (produtoEdicao.getOrigem()) {
+		
+		case MANUAL:
+			porcentagemDesconto = (produtoEdicao.getDesconto() != null) ? produtoEdicao.getDesconto() : produtoEdicao.getProduto().getDesconto() ;
+			break;
+		
+		case INTERFACE:
+			
+			DescontoLogistica descontoLogistica = (produtoEdicao.getDescontoLogistica() != null) ? produtoEdicao.getDescontoLogistica() : produtoEdicao.getProduto().getDescontoLogistica();
+			
+			porcentagemDesconto = descontoLogistica.getPercentualDesconto();
+			break;
+	
+		}
+		
+		if(porcentagemDesconto == null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O produto "+produtoEdicao.getProduto().getNome()+" não possui desconto! É necessario cadastrar um desconto para ele na tela de cadastro de produtos"));
+		}
+		
+		return porcentagemDesconto;
 	}
 	
 }

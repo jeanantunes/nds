@@ -86,18 +86,18 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * Verifica se o produto permite reprogramação ou não
+	 * Verifica se o produto excede o número de reprogramações
 	 */
-	public boolean permiteReprogramacao() {
+	public boolean excedeNumeroReprogramacoes() {
 		
 		if (this.possuiRecebimentoFisico
 				&& this.numeroReprogramacoes != null
 				&& this.numeroReprogramacoes >= Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
 			
-			return false;
+			return true;
 		}
 		
-		return true;
+		return false;
 	}
 	
 	/**

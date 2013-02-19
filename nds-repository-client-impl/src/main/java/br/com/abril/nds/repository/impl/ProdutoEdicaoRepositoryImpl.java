@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -170,14 +171,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 	
 	@Override
-	public ProdutoEdicao obterProdutoEdicaoPorCodigoBarra(String codigoBarra){
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoBarra(String codigoBarra) {
 		
 		Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
 		criteria.add(Restrictions.eq("codigoDeBarras", codigoBarra));
 		
-		criteria.setMaxResults(1);
-		
-		return (ProdutoEdicao) criteria.uniqueResult();
+		return criteria.list();
 	}
 	
 
@@ -234,7 +234,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return query.list();
 	}
 	
-	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(Integer sequenciaMatriz) {
+	public ProdutoEdicao obterProdutoEdicaoPorSequenciaMatriz(Integer sequenciaMatriz, Date dataRecolhimentoDistribuidor) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -242,9 +242,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append(" where lancamento.sequenciaMatriz = :sequenciaMatriz ");
 		
+		hql.append(" and lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
+		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("sequenciaMatriz", sequenciaMatriz);
+		
+		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
 		
 		return (ProdutoEdicao) query.uniqueResult();
 	}

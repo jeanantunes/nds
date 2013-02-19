@@ -1,14 +1,15 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -17,11 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
-import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
-import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LogExecucaoRepository;
@@ -44,50 +44,58 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	 */
 	@SuppressWarnings({"unchecked"})
 	@Override
-	public List<ConsultaInterfacesDTO> obterInterfaces() {
+	public List<ConsultaInterfacesDTO> obterInterfaces(FiltroInterfacesDTO filtro) {
 		
-		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor());
+		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro, false);
 		
 		Query query = (Query) getSession().createSQLQuery(sql.toString())
 				.addScalar("status", StandardBasicTypes.STRING)
 				.addScalar("nome", StandardBasicTypes.STRING)
-				.addScalar("id", StandardBasicTypes.BIG_DECIMAL)
+				.addScalar("id", StandardBasicTypes.LONG)
 				.addScalar("nomeArquivo", StandardBasicTypes.STRING)
-				.addScalar("dataInicio", StandardBasicTypes.DATE)
+				.addScalar("dataInicio", StandardBasicTypes.TIMESTAMP)
 				.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
-		
-		/*Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		Criteria criteria =  getSession().createCriteria(LogExecucaoMensagem.class, "logExecucaoMensagem");	
-		
-		criteria.createCriteria("logExecucao", "logExecucao", Criteria.LEFT_JOIN);
-		criteria.createCriteria("logExecucao.interfaceExecucao", "interfaceExecucao", Criteria.LEFT_JOIN);
-		
-		criteria.setProjection( Projections.projectionList()
-			    .add(Projections.groupProperty("logExecucao.status"), "status")  
-			    .add(Projections.groupProperty("interfaceExecucao.nome"), "nome")  
-			    .add(Projections.groupProperty("interfaceExecucao.id"), "id")  
-			    .add(Projections.groupProperty("logExecucao.dataInicio"), "dataInicio")
-			    .add(Projections.max("logExecucaoMensagem.nomeArquivo"), "nomeArquivo"))
-			    .setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));*/ 
 
-		//this.setPeriodoDia(distribuidor.getDataOperacao(), criteria);
-		
+		if(filtro.getPaginacao()!=null) {
+			
+			if(filtro.getPaginacao().getPosicaoInicial() != null) {
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+			
+		}
+
 		return query.list();
 	}
 
-	private String getConsultaObterInterfaces(Date dataOperacao) {
+	@Override
+	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro) {
+		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro, true);
+		Query query = (Query) getSession().createSQLQuery(sql.toString());
+		return (BigInteger) query.uniqueResult();
+	}
+	
+	private String getConsultaObterInterfaces(Date dataOperacao, FiltroInterfacesDTO filtro, boolean totalizar) {
 
 		StringBuffer sql = new StringBuffer("");
 
-		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+		
+		if (totalizar) {
+
+			sql.append(" SELECT COUNT(*) FROM ("); 
+
+		}
 		
 		sql.append(" SELECT "); 
 		sql.append(" LOG_EXECUCAO.STATUS AS status, ");
 		sql.append(" INTERFACE_EXECUCAO.NOME AS nome, ");
 		sql.append(" INTERFACE_EXECUCAO.ID AS id, ");
 		sql.append(" MAX(LOG_EXECUCAO_MENSAGEM.NOME_ARQUIVO) AS nomeArquivo, ");
-		sql.append(" DATE_FORMAT(LOG_EXECUCAO.DATA_INICIO, '%Y-%m-%d') AS dataInicio ");
+		sql.append(" MAX(LOG_EXECUCAO.DATA_INICIO) AS dataInicio ");
 
 		sql.append(" FROM ");
 		sql.append(" LOG_EXECUCAO_MENSAGEM ");
@@ -95,15 +103,48 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		sql.append(" INNER JOIN INTERFACE_EXECUCAO ON (LOG_EXECUCAO.INTERFACE_EXECUCAO_ID = INTERFACE_EXECUCAO.ID) ");
 
 		sql.append(" WHERE ");
-		sql.append(" LOG_EXECUCAO.DATA_INICIO BETWEEN " + sdf.format(this.getPeriodoInicialDia(dataOperacao)) + " AND " + sdf.format(this.getPeriodoFinalDia(dataOperacao)) + ") ");
+		sql.append(" LOG_EXECUCAO.DATA_INICIO BETWEEN '" + sdf.format(this.getPeriodoInicialDia(dataOperacao)) + " 00:00:00' AND '" + sdf.format(this.getPeriodoFinalDia(dataOperacao)) + " 23:59:59'");
 
 		sql.append(" GROUP BY ");
 		sql.append(" LOG_EXECUCAO.STATUS, ");
 		sql.append(" INTERFACE_EXECUCAO.NOME, ");
-		sql.append(" INTERFACE_EXECUCAO.ID, ");
-		sql.append(" MAX(LOG_EXECUCAO_MENSAGEM.NOME_ARQUIVO), ");
-		sql.append(" DATE_FORMAT(LOG_EXECUCAO.DATA_INICIO, '%Y-%m-%d') ");
+		sql.append(" INTERFACE_EXECUCAO.ID ");
+		//sql.append(" DATE_FORMAT(LOG_EXECUCAO.DATA_INICIO, '%Y-%m-%d') ");
 
+		if (filtro.getOrdenacaoColuna() != null) {
+
+			sql.append(" ORDER BY ");
+			
+			String orderByColumn = "";
+			
+				switch (filtro.getOrdenacaoColuna()) {
+				
+					case NOME:
+						orderByColumn = " INTERFACE_EXECUCAO.NOME ";
+						break;
+					case STATUS:
+						orderByColumn = " LOG_EXECUCAO.STATUS ";
+						break;
+					case DATA_PROCESSAMENTO:
+						orderByColumn = " LOG_EXECUCAO.DATA_INICIO ";
+						break;
+						
+					default:
+						break;
+				}
+			
+			sql.append(orderByColumn);
+
+			if (filtro.getPaginacao() != null && filtro.getPaginacao().getSortOrder() != null) {
+				sql.append(filtro.getPaginacao().getSortOrder());
+			}
+				
+		}
+		
+		if (totalizar) {
+			sql.append(") as total");
+		}
+		
 		return sql.toString();
 	}
 	
@@ -133,9 +174,51 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	}
 
 	@Override
-	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao, Date dataOperacao) {
+	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao, Date dataOperacao, FiltroDetalheProcessamentoDTO filtro) {
 		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
 		criteria.add( Restrictions.between("logExecucao.dataInicio", this.getPeriodoInicialDia(dataOperacao), this.getPeriodoFinalDia(dataOperacao)) );
+
+		boolean desc = true;
+		if (filtro.getPaginacao() != null && filtro.getPaginacao().getSortOrder() != null) {
+			desc = !filtro.getPaginacao().getSortOrder().equals("asc");
+		}
+		
+		if (filtro.getOrdenacaoColuna() != null) {
+			
+			switch (filtro.getOrdenacaoColuna()) {
+				case MENSAGEM:
+					if (desc)
+						criteria.addOrder(Order.desc("mensagem"));
+					else 
+						criteria.addOrder(Order.asc("mensagem"));
+					break;
+				case NUMERO_LINHA:
+					if (desc)
+						criteria.addOrder(Order.desc("numeroLinha"));
+					else
+						criteria.addOrder(Order.asc("numeroLinha"));
+					break;
+				case TIPO_ERRO:
+					if (desc)
+						criteria.addOrder(Order.desc("logExecucao.status"));
+					else
+						criteria.addOrder(Order.asc("logExecucao.status"));
+					break;
+			}
+		}
+		
+		if(filtro.getPaginacao()!=null) {
+			
+			if(filtro.getPaginacao().getPosicaoInicial() != null) {
+				criteria.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			}
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
+				criteria.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
+			
+		}		
+		
 		return criteria.list();
 	}
 
@@ -143,12 +226,16 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		Calendar dataInicio = Calendar.getInstance();
 
 		dataInicio.setTime(dataOperacao);
-		dataInicio.add(Calendar.DAY_OF_MONTH, -1);
+		/*dataInicio.add(Calendar.DAY_OF_MONTH, -1);
 		dataInicio.set(Calendar.HOUR_OF_DAY, 23);
 		dataInicio.set(Calendar.MINUTE, 59);
 		dataInicio.set(Calendar.SECOND, 59);
-		dataInicio.set(Calendar.MILLISECOND, 999);
-
+		dataInicio.set(Calendar.MILLISECOND, 999);*/
+		dataInicio.set(Calendar.HOUR_OF_DAY, 0);
+		dataInicio.set(Calendar.MINUTE, 0);
+		dataInicio.set(Calendar.SECOND, 0);
+		dataInicio.set(Calendar.MILLISECOND, 0);
+		
 		return dataInicio.getTime();
 	}
 
@@ -156,13 +243,25 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		Calendar dataFim = Calendar.getInstance();
 		
 		dataFim.setTime(dataOperacao);
-		dataFim.add(Calendar.DAY_OF_MONTH, 1);
+		/*dataFim.add(Calendar.DAY_OF_MONTH, 1);
 		dataFim.set(Calendar.HOUR_OF_DAY, 0);
 		dataFim.set(Calendar.MINUTE, 0);
 		dataFim.set(Calendar.SECOND, 0);
-		dataFim.set(Calendar.MILLISECOND, 0);
+		dataFim.set(Calendar.MILLISECOND, 0);*/
+		dataFim.set(Calendar.HOUR_OF_DAY, 23);
+		dataFim.set(Calendar.MINUTE, 59);
+		dataFim.set(Calendar.SECOND, 59);
+		dataFim.set(Calendar.MILLISECOND, 999);
 		
 		return dataFim.getTime();
+	}
+
+	@Override
+	public Long obterTotalMensagensErroLogInterface(long codigoLogExecucao, Date dataOperacao, FiltroDetalheProcessamentoDTO filtro) {
+		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
+		criteria.add( Restrictions.between("logExecucao.dataInicio", this.getPeriodoInicialDia(dataOperacao), this.getPeriodoFinalDia(dataOperacao)) );
+		criteria.setProjection(Projections.rowCount());
+		return (Long) criteria.uniqueResult();
 	}
 
 }

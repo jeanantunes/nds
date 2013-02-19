@@ -40,6 +40,10 @@ public abstract class BaixaCobranca {
 	@Column(name = "DATA_BAIXA", nullable = false)
 	private Date dataBaixa;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_PAGAMENTO", nullable = false)
+	private Date dataPagamento;
+	
 	@Column(name = "VALOR_PAGO", nullable = false)
 	private BigDecimal valorPago;
 	
@@ -72,6 +76,20 @@ public abstract class BaixaCobranca {
 
 	public void setDataBaixa(Date dataBaixa) {
 		this.dataBaixa = dataBaixa;
+	}
+
+	/**
+	 * @return the dataPagamento
+	 */
+	public Date getDataPagamento() {
+		return dataPagamento;
+	}
+
+	/**
+	 * @param dataPagamento the dataPagamento to set
+	 */
+	public void setDataPagamento(Date dataPagamento) {
+		this.dataPagamento = dataPagamento;
 	}
 
 	public BigDecimal getValorPago() {

@@ -564,7 +564,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID) ");
 		sql.append(" as expectativaEncalhe, ");
 		
-		sql.append(" (select sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(produtoEdicao.descontoLogistica, produtoEdicao.produto.descontoLogistica, 0)) / 100 ) )) ");
+		sql.append(" (select sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(produtoEdicao.DESCONTO_LOGISTICA_ID, produto.DESCONTO_LOGISTICA_ID, 0)) / 100 ) )) ");
 		sql.append(" from COTA cota, ESTOQUE_PRODUTO_COTA epc ");
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
 		sql.append(" and cota.ID = epc.COTA_ID) ");
@@ -577,7 +577,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" end as possuiChamada, ");
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
 		
-		sql.append(" ((coalesce(produtoEdicao.descontoLogistica, produtoEdicao.produto.descontoLogistica, 0))) as desconto, ");
+		sql.append(" ((coalesce(produtoEdicao.DESCONTO_LOGISTICA_ID, produto.DESCONTO_LOGISTICA_ID, 0))) as desconto, ");
 		
 		sql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
 		sql.append(" produtoEdicao.PESO as peso, ");
@@ -1509,7 +1509,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataFinal", periodoDistribuicao.getAte());
 		
 		query.setParameterList("statusLancamento",
-							   Arrays.asList(StatusLancamento.BALANCEADO));
+							   Arrays.asList(StatusLancamento.EM_BALANCEAMENTO));
 		
 		return query.list();
 	}
@@ -1532,7 +1532,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataFinal", periodoDistribuicao.getAte());
 		
 		query.setParameterList("statusLancamento",
-							   Arrays.asList(StatusLancamento.BALANCEADO));
+							   Arrays.asList(StatusLancamento.EM_BALANCEAMENTO));
 		
 		return query.list();
 	}
