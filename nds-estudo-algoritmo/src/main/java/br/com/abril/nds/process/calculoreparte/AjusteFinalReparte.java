@@ -44,7 +44,8 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 				BigDecimal ultimaEdicaoFechada = BigDecimal.ZERO;
 				
 				//	Se Cota <> FX / MM / MX / RD / PR
-				if(cota.getReparteCalculado().compareTo(ultimaEdicaoFechada)==-1 &&
+				if(cota.getReparteCalculado().compareTo(ultimaEdicaoFechada)==-1 ||
+						cota.getReparteCalculado().compareTo(ultimaEdicaoFechada)==0 &&
 						(!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix)
@@ -58,7 +59,7 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 					reservaAjuste = reservaAjuste.subtract(BigDecimal.ONE);
 					
 					if(reservaAjuste.compareTo(BigDecimal.ZERO)==0
-							| reservaAjuste.compareTo(BigDecimal.ZERO)==-1) break;
+							|| reservaAjuste.compareTo(BigDecimal.ZERO)==-1) break;
 				}
 			}
 			
