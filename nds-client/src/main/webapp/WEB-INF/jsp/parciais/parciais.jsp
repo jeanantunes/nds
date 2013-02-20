@@ -170,7 +170,7 @@
 	            <td>Qtde. Períodos:</td>
 	            <td>
 	<!-- QTDE -->
-	<input id="qtde" name="" type="text" style="width:80px;" /></td>
+	<input id="qtde" name="" type="text" style="width:80px;" onchange="ParciaisController.carregaPeb(this.value)" /></td>
 	          </tr>
 	          
 	          <tr>

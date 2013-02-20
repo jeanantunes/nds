@@ -543,7 +543,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				throw new ValidacaoException(TipoMensagem.ERROR,
 						"Rota não encontrada!");
 			}
-			destinatario.setRotaReferencia(rota);
 			destinatario.setCodigoRota(rota.getId().toString());
 			destinatario.setDescricaoRota(rota.getDescricaoRota());
 		}

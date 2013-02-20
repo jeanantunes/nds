@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 /**
  * 
@@ -36,8 +36,6 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT)
 	private BigDecimal precoComDesconto;
 
-	@Export(label = "Box", alignment = Alignment.CENTER)
-	private Integer box;
 	@Export(label = "Exemplares", alignment = Alignment.CENTER)
 	private BigInteger exemplares;
 	@Export(label = "Fornecedor")
@@ -104,14 +102,6 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 		this.total = total;
 	}
 
-	public Integer getBox() {
-		return box;
-	}
-
-	public void setBox(Integer box) {
-		this.box = box;
-	}
-
 	public BigInteger getExemplares() {
 		return exemplares;
 	}
@@ -127,5 +117,4 @@ public class ConsultaVendaEncalheDTO implements Serializable {
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
-
 }

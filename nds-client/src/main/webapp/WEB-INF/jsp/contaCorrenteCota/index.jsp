@@ -95,7 +95,7 @@
 				<table>
 					<tr>
 						<td><strong>Total R$:</strong></td>
-						<td> </td>
+						<td><label id="labelTotalGeral"></label> </td>
 					</tr>				
 					<tr>
 						<td></td>													

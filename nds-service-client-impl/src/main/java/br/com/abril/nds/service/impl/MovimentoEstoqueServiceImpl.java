@@ -239,11 +239,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 
-		if(dataLancamento!= null){
+		if (dataLancamento!= null) {
+			
 			Long idItemRecebimentoFisico =
-				itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
+				this.itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
 
-			movimentoEstoque.setItemRecebimentoFisico(new ItemRecebimentoFisico(idItemRecebimentoFisico));
+			if (idItemRecebimentoFisico != null) {
+			
+				movimentoEstoque.setItemRecebimentoFisico(new ItemRecebimentoFisico(idItemRecebimentoFisico));
+			}
 		}
 
 		movimentoEstoque.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));

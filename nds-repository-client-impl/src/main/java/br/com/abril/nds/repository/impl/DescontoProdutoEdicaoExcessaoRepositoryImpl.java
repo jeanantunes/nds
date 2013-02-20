@@ -71,7 +71,20 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 			hql.append(indWhere ? " and " : " where ")
 			   .append(" d.produtoEdicao = :produtoEdicao ");
 			indWhere = true;
+		} else {
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" d.produtoEdicao is null ");
+			indWhere = true;
+			
 		}
+	
+		if (produto != null) {
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" d.produto = :produto ");
+			indWhere = true;
+		}		
 		
 		if (tipoDesconto != null) {
 			
@@ -112,6 +125,11 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 		if (desconto != null) {
 			
 			query.setParameter("desconto", desconto);
+		}
+		
+		if (produto != null) {
+			
+			query.setParameter("produto", produto);
 		}
 		
 		query.setMaxResults(1);

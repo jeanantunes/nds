@@ -53,13 +53,13 @@ var lancamentoNovoController = $.extend(true, {
 			colModel : [ {
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 40,
+				width : 60,
 				sortable : false,
 				align : 'left'
 			},{
 				display : 'Produto',
 				name : 'descricaoProduto',
-				width : 70,
+				width : 100,
 				sortable : false,
 				align : 'left'
 			},{
@@ -71,7 +71,7 @@ var lancamentoNovoController = $.extend(true, {
 			}, {
 				display : 'Preço Venda R$',
 				name : 'precoVenda',
-				width : 75,
+				width : 80,
 				sortable : false,
 				align : 'right'
 			}, {
@@ -83,23 +83,23 @@ var lancamentoNovoController = $.extend(true, {
 			}, {
 				display : 'Reparte Total',
 				name : 'reparte',
-				width : 70,
+				width :70,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Diferença',
 				name : 'valorTotalDiferenca',
-				width : 55,
+				width : 60,
 				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Reparte Atual',
 				name : 'qtdeEstoqueAtual',
-				width : 65,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}],
-			width : 585,
+			width : 650,
 			height : 180,
 			disableSelect: true
 		});
@@ -341,7 +341,7 @@ var lancamentoNovoController = $.extend(true, {
 								+'<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden'+ (linhaAtual +1) +' " />'
 								+'</td>' +
 								'<td>'+
-								     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual+1) +'" style="width:180px;" '+
+								     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual+1) +'" style="width:300px;" '+
 								         ' onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput'+ (linhaAtual+1) +');" ' +
 								         ' onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput'+ (linhaAtual+1) +', nomeInput'+ (linhaAtual+1) +', lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual+1) +'),lancamentoNovoController.erroPesquisaCota('+(linhaAtual+1)+'));" ' +
 								     '/>'+
@@ -392,7 +392,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#dialogNovasDiferencas", lancamentoNovoController.workspace).dialog({
 			resizable: false,
 			height:570,
-			width:640,
+			width:690,
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
@@ -463,15 +463,18 @@ var lancamentoNovoController = $.extend(true, {
 				valueEstoqueAtual = row.cell.qtdeEstoqueAtual;
 			}
 			
+			row.cell.descricaoProduto = '<div>'+ row.cell.descricaoProduto +'</div>';
+			row.cell.precoVenda = '<div>'+ row.cell.precoVenda +'</div>';
 			row.cell.codigoProduto = '<div name="codigoProdutoNota" id="codigoProdutoNota'+ index +'">'+ row.cell.codigoProduto +'</div>';
-			
 			row.cell.pacotePadrao = '<div id="pacotePadrao'+ index +'">'+ row.cell.pacotePadrao +'</div>';
 			row.cell.reparte = '<div id="reparte'+ index +'">'+ row.cell.qtdeEstoque +'</div>';
 			row.cell.qtdeEstoqueAtual = '<div id="qtdTotal'+ index +'">'+ valueEstoqueAtual +'</div>';
-			
 			row.cell.valorTotalDiferenca = 
-				'<input type="text" value="'+valueDiferenca+'" name="diferencaProduto" class="maskDiferencaProduto" style="width:50px; value="0" text-align: center; margin-right:10px;" maxlenght="255" '+
+				'<input type="text" value="'+valueDiferenca+'" name="diferencaProduto" class="maskDiferencaProduto" style="width:45px; value="0" text-align: center; margin-right:10px;" maxlenght="255" '+
 				' id="inputDiferencaProduto'+ index +'" onchange="lancamentoNovoController.alterarReparteAtual('+ index +');" />';
+			row.cell.valorTotalDiferenca = '<div>'+ row.cell.valorTotalDiferenca +'</div>';
+			row.cell.numeroEdicao = '<div>'+ row.cell.numeroEdicao +'</div>';
+			
 		});
 		
 		return resultado;
@@ -606,15 +609,15 @@ var lancamentoNovoController = $.extend(true, {
 			
 			var codigoProduto = $(linha.find("td")[0],this.workspace).find("div").find("div").html();
 			
-			var nomeProduto = $(linha.find("td")[1],this.workspace).find("div").html();
+			var nomeProduto = $(linha.find("td")[1],this.workspace).find("div").find("div").html();
 			
-			var numeroEdicao = $(linha.find("td")[2],this.workspace).find("div").html();
+			var numeroEdicao = $(linha.find("td")[2],this.workspace).find("div").find("div").html();
 			
 			var pacotePadrao = $(linha.find("td")[4],this.workspace).find("div").find("div").html();
 			
 			var reparte = $(linha.find("td")[5],this.workspace).find("div").find("div").html();
 			
-			var diferenca = $(linha.find("td")[6],this.workspace).find('input[name="diferencaProduto"]').val();
+			var diferenca = $(linha.find("td")[6],this.workspace).find("div").find('input[name="diferencaProduto"]').val();
 			
 			var reparteAtual = $(linha.find("td")[7],this.workspace).find("div").find("div").html();
 			
@@ -843,7 +846,7 @@ var lancamentoNovoController = $.extend(true, {
 			var tr = $('<tr class="trCotas" id="trCota'+ (linhaAtual + 1) +'" style="'+ ((linhaAtual + 1) % 2 == 0 ? "background: #F5F5F5;" : "") +'">' +
 					'<td><input type="text" name="cotaInput" maxlength="255" id="cotaInput'+ (linhaAtual + 1) +'" onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', true, lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual + 1) +'),lancamentoNovoController.erroPesquisaCota('+(linhaAtual + 1)+'));" style="width:60px;" /></td>' +
 					'<td>'+
-					     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:180px;" '+
+					     '<input type="text" name="nomeInput" maxlength="255" id="nomeInput'+ (linhaAtual + 1) +'" style="width:300px;" '+
 					         ' onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput'+ (linhaAtual + 1) +');" ' +
 					         ' onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput'+ (linhaAtual + 1) +', nomeInput'+ (linhaAtual + 1) +', lancamentoNovoController.buscarReparteAtualCota('+ (linhaAtual + 1) +'),lancamentoNovoController.erroPesquisaCota('+(linhaAtual + 1)+'));" ' +
 					     '/>'+
