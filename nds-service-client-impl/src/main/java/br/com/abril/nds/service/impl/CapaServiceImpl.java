@@ -36,7 +36,6 @@ public class CapaServiceImpl implements CapaService {
 	@Autowired
 	private CouchDbProperties couchDbProperties;
 
-
 	private CouchDbClient couchDbClient;
 
 	@Autowired

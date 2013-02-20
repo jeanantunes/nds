@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
+import br.com.abril.nds.util.ComponentesPDV;
 
 public class FiltroHistoricoVendaDTO extends FiltroDTO {
 
@@ -20,7 +21,7 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	private Integer qtdVendaFinal;
 	private BigDecimal percentualVenda;
 	private CotaDTO cotaDto;
-	
+	private ComponentesPDV componentesPdf;
 	
 	public ProdutoDTO getProdutoDto() {
 		return produtoDto;
@@ -45,5 +46,62 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
+
+	public Integer getQtdRepartInicial() {
+		return qtdRepartInicial;
+	}
+
+	public void setQtdRepartInicial(Integer qtdRepartInicial) {
+		this.qtdRepartInicial = qtdRepartInicial;
+	}
+
+	public Integer getQtdRepartFinal() {
+		return qtdRepartFinal;
+	}
+
+	public void setQtdRepartFinal(Integer qtdRepartFinal) {
+		this.qtdRepartFinal = qtdRepartFinal;
+	}
+
+	public Integer getQtdVendaInicial() {
+		return qtdVendaInicial;
+	}
+
+	public void setQtdVendaInicial(Integer qtdVendaInicial) {
+		this.qtdVendaInicial = qtdVendaInicial;
+	}
+
+	public Integer getQtdVendaFinal() {
+		return qtdVendaFinal;
+	}
+
+	public void setQtdVendaFinal(Integer qtdVendaFinal) {
+		this.qtdVendaFinal = qtdVendaFinal;
+	}
+
+	public BigDecimal getPercentualVenda() {
+		return percentualVenda;
+	}
+
+	public void setPercentualVenda(BigDecimal percentualVenda) {
+		this.percentualVenda = percentualVenda;
+	}
+
+	public CotaDTO getCotaDto() {
+		return cotaDto;
+	}
+
+	public void setCotaDto(CotaDTO cotaDto) {
+		this.cotaDto = cotaDto;
+	}
+
+	public ComponentesPDV getComponentesPdf() {
+		return componentesPdf;
+	}
+
+	public void setComponentesPdf(ComponentesPDV componentesPdf) {
+		this.componentesPdf = componentesPdf;
+	}
+	
 
 }

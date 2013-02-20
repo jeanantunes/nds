@@ -19,7 +19,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 public interface CapaService {
 
 	public static final String DEFAULT_EXTENSION = ".jpg";
-	
 	/**
 	 * Verifica se a edição do produto possui uma capa.
 	 * 
