@@ -8,7 +8,7 @@
 
 	<jsp:include page="../messagesDialog.jsp" />
 	
-	<fieldset style="width:585px;">
+	<fieldset style="width:650px;">
    		<legend>Tipo de Diferença</legend>
 		
 		<table width="575" border="0" cellspacing="1" cellpadding="1">
@@ -29,13 +29,13 @@
 		</table>
 	</fieldset>
 	
-	<div class="linha_separa_fields" style="width:580px!important;">&nbsp;</div>
+	<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
 	
 	<div class="prodSemCota" style="display:block;">
     	
-    	<fieldset style="width:585px!important;">
+    	<fieldset style="width:650px!important;">
     		<legend>Produto</legend>
-    		<table class="lanctoFaltasSobras_2Grid" border="0" cellspacing="1" cellpadding="1" style="width:585px;">
+    		<table class="lanctoFaltasSobras_2Grid" border="0" cellspacing="1" cellpadding="1" style="width:650px;">
 	    		<tr>
 					<td width="55" bgcolor="#F5F5F5">
 						<strong>Código</strong>
@@ -70,21 +70,21 @@
 							onblur="pesquisaProdutoLancamentoFaltasSobras.pesquisarPorNomeProduto(codigoProdutoInput, nomeProdutoInput, edicaoProdutoInput, true);"/>
 					</td>
 					<td align="center">
-						<input type="text" id="edicaoProdutoInput" onblur="lancamentoNovoController.buscarPrecoProdutoEdicao();" style="width:50px;" maxlength="255" />
+						<input type="text" id="edicaoProdutoInput" onblur="lancamentoNovoController.buscarPrecoProdutoEdicao();" style="width:80px;" maxlength="255" />
 					</td>
 					<td align="right" id="precoCapaProduto"></td>
 					<td align="center" id="pacotePadrao"></td>
 					<td align="center" id="reparteProduto"></td>
-					<td>
-						<input id="diferencaProdutoInput" style="width: 40px; text-align: center;" maxlength="10" />
+					<td align="center">
+						<input id="diferencaProdutoInput" style="width: 60px; text-align: center;" maxlength="10" />
 					</td>
 				</tr>
     		</table>
     	</fieldset> 
     	
-    	<div class="linha_separa_fields" style="width:580px!important;">&nbsp;</div>
+    	<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
     	
-     	<fieldset style="width:585px!important;">
+     	<fieldset style="width:650px!important;">
     		<legend>Direcionar para:</legend>
         	
         	<table width="220" border="0" cellspacing="1" cellpadding="1">
@@ -97,19 +97,19 @@
 			</table>
      	</fieldset>
      	
-		<div class="linha_separa_fields" style="width:580px!important;">&nbsp;</div>
+		<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
 		
 		<div id="fieldCota" style="display:none;">
 			
-			<fieldset style="width:585px!important;">
+			<fieldset style="width:650px!important;">
 				<legend>Cotas</legend>
 				<div style="overflow: auto; height: 150px;">
-	    			<table border="0" cellspacing="1" cellpadding="1" style="width:565px;" id="grid_1">
+	    			<table border="0" cellspacing="1" cellpadding="1" style="width:650px;" id="grid_1">
 						<tr>
 							<td width="64" bgcolor="#F5F5F5">
 								<strong>Cota</strong>
 							</td>
-							<td width="180" bgcolor="#F5F5F5">
+							<td width="300" bgcolor="#F5F5F5">
 								<strong>Nome</strong>
 							</td>
 							<td width="96" align="center" bgcolor="#F5F5F5">
@@ -131,7 +131,7 @@
 								
 							</td>
 							<td>
-								<input type="text" name="nomeInput" id="nomeInput1" style="width:180px;" maxlength="255"
+								<input type="text" name="nomeInput" id="nomeInput1" style="width:300px;" maxlength="255"
 									onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput1);" 
 									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota(1));"/>
 							</td>
@@ -151,10 +151,10 @@
 
 	<div class="prodComCota" style="display:none;">
     	
-    	<fieldset style="width:585px!important;">
+    	<fieldset style="width:650px!important;">
    	  		<legend>Cota</legend>
    	  		
-    		<table width="579" border="0" cellspacing="1" cellpadding="1">
+    		<table width="650" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="73">Nota de Envio:</td>
 					<td width="124">
@@ -184,7 +184,7 @@
 
 	    <div class="linha_separa_fields" style="width:595px!important;">&nbsp;</div>
 	    
-	    <fieldset style="width:585px!important;">
+	    <fieldset style="width:650px!important;">
 			<legend>Produtos</legend>
 			
 			<div style="display: none;" id="divPesquisaProdutosNota">
@@ -192,7 +192,7 @@
 	    	</div>
 		</fieldset>
 		
-		<div class="linha_separa_fields" style="width:580px!important;">&nbsp;</div>
+		<div class="linha_separa_fields" style="width:650px!important;">&nbsp;</div>
 	</div>
 
 	<br />
