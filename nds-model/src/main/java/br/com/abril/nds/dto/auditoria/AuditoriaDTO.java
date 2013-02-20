@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.util.TipoOperacaoSQL;
+import br.com.abril.nds.enums.TipoOperacaoSQL;
 
 import com.google.gson.annotations.SerializedName;
 

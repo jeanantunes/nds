@@ -162,7 +162,7 @@
 		</dependency>
 		<dependency>
 			<groupId>br.com.abril</groupId>
-			<artifactId>nds-integracao-canonical</artifactId>
+			<artifactId>nds-integration-canonical</artifactId>
 			<version>1.0</version>
 		</dependency>			
 		<dependency>

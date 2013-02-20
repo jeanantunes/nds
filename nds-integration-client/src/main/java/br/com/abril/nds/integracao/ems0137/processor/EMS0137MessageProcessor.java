@@ -2,6 +2,7 @@ package br.com.abril.nds.integracao.ems0137.processor;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.lightcouch.CouchDbClient;
@@ -14,7 +15,10 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.model.canonic.EMS0137Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0137InputItem;
 import br.com.abril.nds.model.integracao.Message;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
@@ -24,6 +28,9 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ChamadaEncalheRepository chamadaEncalheRepository;
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -44,15 +51,13 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			EMS0137Input input = (EMS0137Input) message.getBody();
 			
 			dbClient = getCouchDBClient(codigoDistribuidor);
-
-			for (EMS0137InputItem item : input.getItems()) {						
-
-				getSession().merge(item);
-				getSession().flush();
-
-			}
 			
-			dbClient.remove(input);
+			ChamadaEncalheFornecedor ce = montarChamadaEncalheFornecedor(input);
+			
+			getSession().merge(ce);
+			getSession().flush();
+			
+			//dbClient.remove(input);
 
 		}
 		catch (Exception e) {
@@ -102,6 +107,65 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 				input, produtoEdicao);
 
 		this.gerarPeriodoLancamentoParcial(input, lancamentoParcial);*/
+	}
+
+	private ChamadaEncalheFornecedor montarChamadaEncalheFornecedor(EMS0137Input input) {
+		
+		ChamadaEncalheFornecedor ce = new ChamadaEncalheFornecedor();
+		
+		ce.setNumeroChamadaEncalhe(input.getCePK().getNumeroChamadaEncalhe());
+		ce.setAnoReferencia(input.getDataAnoReferencia());
+		ce.setCodigoDistribuidor(Long.parseLong(input.getCodigoDistribuidor()));
+		ce.setCodigoPreenchimento(input.getCodigoPreenchimento());
+		ce.setDataEmissao(input.getDataEmissao());
+		ce.setDataVencimento(input.getDataLimiteRecebimento()); //TODO: Sérgio: verificar se a data esta correta
+		ce.setDataLimiteRecebimento(input.getDataLimiteRecebimento());
+		ce.setNotaValoresDiversos(input.getValorNotaValoresDiversos());
+		ce.setNumeroSemana(input.getNuemroSemanaReferencia());
+		ce.setStatus(input.getTipoStatus());
+		ce.setTipoChamadaEncalhe(input.getCodigoTipoChamadaEncalhe());
+		ce.setTotalCreditoApurado(input.getValorTotalCreditoApurado());
+		ce.setTotalCreditoInformado(input.getValorTotalCreditoInformado());
+		ce.setTotalMargemApurado(input.getValorTotalMargemApurado());
+		ce.setTotalMargemInformado(input.getValorTotalMargemInformado());
+		ce.setTotalVendaApurada(input.getValorTotalVendaApurada());
+		ce.setTotalVendaInformada(input.getValorTotalVendaInformada());
+		
+		if(ce.getItens() == null && input.getItems().size() > 0) {
+			ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
+		}
+
+		montarItensChamadaEncalheFornecedor(input, ce);
+		
+		return ce;
+		
+	}
+
+	private void montarItensChamadaEncalheFornecedor(EMS0137Input input, ChamadaEncalheFornecedor ce) {
+		
+		for (EMS0137InputItem item : input.getItems()) {
+			
+			ItemChamadaEncalheFornecedor ice = new ItemChamadaEncalheFornecedor();
+
+			ice.setNumeroItem(item.getCeItemPK().getNumeroItem());
+			ice.setControle(item.getNumeroControle());
+			ice.setDataRecolhimento(item.getDataRecolhimento());
+			ice.setDataRecolhimento(item.getDataRecolhimento());
+			ice.setControle(item.getNumeroControle());
+			ice.setNumeroDocumento(item.getNumeroDocumento());
+			ice.setQtdeDevolucaoApurada(item.getQuantidadeDevolucaoApurada());
+			ice.setQtdeDevolucaoInformada(item.getQuantidadeDevolucaoInformada());
+			ice.setQtdeDevolucaoParcial(item.getQuantidadeDevolucaoParcial());
+			ice.setQtdeEnviada(item.getQuantidadeEnviada());
+			ice.setQtdeVendaApurada(item.getQuantidadeVendaApurada());
+			ice.setQtdeVendaInformada(item.getQuantidadeVendaInformada());
+			
+			//item.getCodigoLancamentoEdicao()
+
+			ce.getItens().add(ice);
+			
+		}
+		
 	}
 
 	@Override

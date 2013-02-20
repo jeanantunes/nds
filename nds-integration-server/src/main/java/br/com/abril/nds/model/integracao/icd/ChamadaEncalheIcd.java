@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.integracao.icd;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -15,15 +16,6 @@ import br.com.abril.nds.model.integracao.icd.pks.CEPK;
 @Entity
 @Table(name = "CHAMADA_ENCALHE")
 public class ChamadaEncalheIcd {
-	
-/*	COD_DISTRIBUIDOR
-	NUM_CHAMADA_ENCALHE_CHEN
-	para a chamada_encalhe
-	NUM_DOCUMENTO_DCEN
-	NUM_CHAMADA_ENCALHE_CHEN
-	NUM_ITEM_ITCE
-	para a item
-*/
 	
 	@EmbeddedId
 	private CEPK cePK;
@@ -54,6 +46,42 @@ public class ChamadaEncalheIcd {
 	
 	@Column(name = "NUM_CONTROLE_CHEN")
 	private Long nuemroControle;
+	
+	@Column(name = "DATA_LIMITE_RECEBIMENTO_CHEN")
+	private Date dataLimiteRecebimento;
+	
+	@Column(name = "VLR_TOTAL_VENDA_APURADA_CHEN")
+	private BigDecimal valorTotalVendaApurada;	
+	
+	@Column(name = "VLR_TOTAL_CREDITO_APURADO_CHEN")
+	private BigDecimal valorTotalCreditoApurado;
+	
+	@Column(name = "COD_PREENCHIMENTO_CHEN")
+	private String codigoPreenchimento;
+	
+	@Column(name = "VLR_TOTAL_VENDA_INFORMADA_CHEN")
+	private BigDecimal valorTotalVendaInformada;
+	
+	@Column(name = "VLR_TOTAL_CRED_INFORMADO_CHEN")
+	private BigDecimal valorTotalCreditoInformado;
+	
+	@Column(name = "VLR_TOT_MARGEM_INFORMADO_CHEN")
+	private BigDecimal valorTotalMargemInformado;
+	
+	@Column(name = "VLR_TOT_MARGEM_APURADO_CHEN")
+	private BigDecimal valorTotalMargemApurado;
+	
+	@Column(name = "VLR_NOTA_VALORES_DIVERSOS_CHEN")
+	private BigDecimal valorNotaValoresDiversos;
+	
+	@Column(name = "COD_STATUS_TRANSMISSAO_CHEN")
+	private String codigoStatusTransmissao;
+	
+	@Column(name = "IND_FECHTO_PARCIAL_CHEN")
+	private String indiceFechamentoParcial;
+	
+	@Column(name = "IND_CE_PROVISORIA_CHEN")
+	private String indiceCEProvisoria;
 	
 	@OneToMany(mappedBy="ceItemPK.numeroChamadaEncalhe")
 	List<ChamadaEncalheIcdItem> chamadaEncalheItens;
@@ -139,6 +167,102 @@ public class ChamadaEncalheIcd {
 
 	public void setNuemroControle(Long nuemroControle) {
 		this.nuemroControle = nuemroControle;
+	}
+
+	public Date getDataLimiteRecebimento() {
+		return dataLimiteRecebimento;
+	}
+
+	public void setDataLimiteRecebimento(Date dataLimiteRecebimento) {
+		this.dataLimiteRecebimento = dataLimiteRecebimento;
+	}
+
+	public BigDecimal getValorTotalVendaApurada() {
+		return valorTotalVendaApurada;
+	}
+
+	public void setValorTotalVendaApurada(BigDecimal valorTotalVendaApurada) {
+		this.valorTotalVendaApurada = valorTotalVendaApurada;
+	}
+
+	public BigDecimal getValorTotalCreditoApurado() {
+		return valorTotalCreditoApurado;
+	}
+
+	public void setValorTotalCreditoApurado(BigDecimal valorTotalCreditoApurado) {
+		this.valorTotalCreditoApurado = valorTotalCreditoApurado;
+	}
+
+	public String getCodigoPreenchimento() {
+		return codigoPreenchimento;
+	}
+
+	public void setCodigoPreenchimento(String codigoPreenchimento) {
+		this.codigoPreenchimento = codigoPreenchimento;
+	}
+
+	public BigDecimal getValorTotalVendaInformada() {
+		return valorTotalVendaInformada;
+	}
+
+	public void setValorTotalVendaInformada(BigDecimal valorTotalVendaInformada) {
+		this.valorTotalVendaInformada = valorTotalVendaInformada;
+	}
+
+	public BigDecimal getValorTotalCreditoInformado() {
+		return valorTotalCreditoInformado;
+	}
+
+	public void setValorTotalCreditoInformado(BigDecimal valorTotalCreditoInformado) {
+		this.valorTotalCreditoInformado = valorTotalCreditoInformado;
+	}
+
+	public BigDecimal getValorTotalMargemInformado() {
+		return valorTotalMargemInformado;
+	}
+
+	public void setValorTotalMargemInformado(BigDecimal valorTotalMargemInformado) {
+		this.valorTotalMargemInformado = valorTotalMargemInformado;
+	}
+
+	public BigDecimal getValorTotalMargemApurado() {
+		return valorTotalMargemApurado;
+	}
+
+	public void setValorTotalMargemApurado(BigDecimal valorTotalMargemApurado) {
+		this.valorTotalMargemApurado = valorTotalMargemApurado;
+	}
+
+	public BigDecimal getValorNotaValoresDiversos() {
+		return valorNotaValoresDiversos;
+	}
+
+	public void setValorNotaValoresDiversos(BigDecimal valorNotaValoresDiversos) {
+		this.valorNotaValoresDiversos = valorNotaValoresDiversos;
+	}
+
+	public String getCodigoStatusTransmissao() {
+		return codigoStatusTransmissao;
+	}
+
+	public void setCodigoStatusTransmissao(String codigoStatusTransmissao) {
+		this.codigoStatusTransmissao = codigoStatusTransmissao;
+	}
+
+	public String getIndiceFechamentoParcial() {
+		return indiceFechamentoParcial;
+	}
+
+	public void setIndiceFechamentoParcial(String indiceFechamentoParcial) {
+		this.indiceFechamentoParcial = indiceFechamentoParcial;
+	}
+
+	public String getIndiceCEProvisoria() {
+		return indiceCEProvisoria;
+	}
+
+	public void setIndiceCEProvisoria(String indiceCEProvisoria) {
+		this.indiceCEProvisoria = indiceCEProvisoria;
 	}
 
 	public List<ChamadaEncalheIcdItem> getChamadaEncalheItens() {

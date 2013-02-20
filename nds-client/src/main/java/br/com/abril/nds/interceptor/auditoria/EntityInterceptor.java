@@ -17,9 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.abril.nds.client.auditoria.AuditoriaUtil;
 import br.com.abril.nds.dto.auditoria.AuditoriaDTO;
+import br.com.abril.nds.enums.TipoOperacaoSQL;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.util.TipoOperacaoSQL;
 
 public class EntityInterceptor extends EmptyInterceptor {
 

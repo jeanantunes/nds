@@ -65,7 +65,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			
 			try {
 				ce.setTipoDocumento("EMS0137");
-				cdbc = this.getCouchDBClient("06248116"); //ce.getCodigoDistribuidor().toString());
+				cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
 				cdbc.save(ce);
 			} catch(Exception e) {
 				LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
@@ -89,7 +89,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 		
-		query.setParameter("status", "A");
+		query.setParameter("status", "F"); //FIXME: Sérgio: deve buscar status 'A'
 
 		return query.list();
 	}
