@@ -513,6 +513,7 @@ public class DescontoServiceImpl implements DescontoService {
 					hdcp.setDataAlteracao(dataAtual);
 					hdcp.setDesconto(desconto);
 					hdcp.setDistribuidor(distribuidor);
+					hdcp.setProdutoEdicao(produtoEdicao);
 					if(produtoEdicao != null) {
 						hdcp.setFornecedor(produtoEdicao.getProduto().getFornecedor());
 					}
