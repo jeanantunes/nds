@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,7 +59,7 @@ public class CotaAusenteController extends BaseController {
 	
 	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente nesta data.";
 	
-	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
+	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é superior a data de operação atual.";
 	
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
 	
@@ -155,9 +154,11 @@ public class CotaAusenteController extends BaseController {
 	 */
 	private void gerarDataLancamento() {
 		
-		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+		String data = 
+			DateUtil.formatarDataPTBR(
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 		
-		result.include("data",data);			
+		result.include("data", data);			
 	}
 	
 	/**
@@ -267,8 +268,13 @@ public class CotaAusenteController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_INFORMADA_INVALIDA);
 		}
 
-		if ( data.getTime() > (new Date().getTime()) )
-			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_MAIOR_OPERACAO_ATUAL );
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+				
+		if (data.compareTo(dataOperacao) > 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_MAIOR_OPERACAO_ATUAL);
+			
+		}
 		
 		return data;
 	}
