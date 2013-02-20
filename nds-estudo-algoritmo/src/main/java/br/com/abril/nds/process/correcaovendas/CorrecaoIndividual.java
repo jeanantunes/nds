@@ -14,8 +14,7 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * <p style="white-space: pre-wrap;">
  * SubProcessos: - N/A Processo Pai: - {@link CorrecaoVendas}
  * 
- * Processo Anterior: N/A Próximo Processo: {@link CorrecaoTendencia}
- * </p>
+ * Processo Anterior: N/A Próximo Processo: {@link CorrecaoTendencia} </p>
  */
 public class CorrecaoIndividual extends ProcessoAbstrato {
 
@@ -43,20 +42,29 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
 
 	BigDecimal indiceCorrecao = BigDecimal.ONE;
 
-	if(produtoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1 ) {
-	    BigDecimal percentualVenda = produtoEdicao.getVenda().divide(produtoEdicao.getReparte(), 1, BigDecimal.ROUND_FLOOR);
+	if (produtoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
+	    BigDecimal percentualVenda = produtoEdicao.getVenda().divide(
+		    produtoEdicao.getReparte(), 1, BigDecimal.ROUND_FLOOR);
 
 	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
-		indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.2));
-	    } else if (percentualVenda.compareTo(new BigDecimal(0.9)) >= 0) {
-		    indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.1));
+		indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.2).divide(
+			BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+	    } else {
+
+		BigDecimal decimalCompare = new BigDecimal(0.9).divide(
+			BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
+
+		if (percentualVenda.compareTo(decimalCompare) >= 0) {
+		    indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.1)
+			    .divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+		}
 	    }
 	}
-	
-	MathContext mathContext = new MathContext(1,RoundingMode.HALF_UP);
-	produtoEdicao.setIndiceCorrecao(indiceCorrecao.round(mathContext));
 
-	produtoEdicao.setVendaCorrigida(produtoEdicao.getVenda().multiply(indiceCorrecao));
+	produtoEdicao.setIndiceCorrecao(indiceCorrecao.setScale(1));
+
+	produtoEdicao.setVendaCorrigida(produtoEdicao.getVenda().multiply(
+		indiceCorrecao));
     }
 
 }
