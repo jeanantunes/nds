@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO.OrdenacaoColunaDetalhe;
@@ -923,9 +924,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
+		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
-		Assert.assertEquals(3, qtde.intValue());
+		Assert.assertEquals(3, totalizador.getQtdConsultaEncalhe().intValue());
 	}
 	
 	@Test
@@ -937,9 +938,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
+		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
-		Assert.assertEquals(3, qtde.intValue());
+		Assert.assertEquals(3, totalizador.getQtdConsultaEncalhe().intValue());
 	}
 	
 	@Test
@@ -953,7 +954,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdCota(1L);
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
+		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
 	}
 	
@@ -968,7 +969,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdFornecedor(1L);
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
+		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
 	}
 
