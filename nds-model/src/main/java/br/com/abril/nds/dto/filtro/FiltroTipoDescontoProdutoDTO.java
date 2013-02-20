@@ -28,8 +28,9 @@ public class FiltroTipoDescontoProdutoDTO extends FiltroDTO implements Serializa
 		EDICAO("numeroEdicao"),
 		DESCONTO("desconto"),
 		DATA_ALTERACAO("dataAlteracao"),
-		USUARIO("nomeUsuario");
-		
+		USUARIO("nomeUsuario"),
+		QTDE_COTAS("qtdeCotas");
+				
 		private String nomeColuna;
 		
 		private OrdenacaoColunaConsulta(String nomeColuna) {
