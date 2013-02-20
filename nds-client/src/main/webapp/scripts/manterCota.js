@@ -925,7 +925,7 @@ var COTA_DESCONTO = $.extend(true,
                 	debugger;
                 	 $.each(result.rows, function(index, value) {
                 		 
-                		 if(value.cell.qtdeProxLcmt != null) value.cell.numeroEdicao = 'por ' + value.cell.qtdeProxLcmt + ' ed(s)';
+                		 if(value.cell.qtdeProxLcmt != null) value.cell.numeroEdicao = 'por ' + value.cell.qtdeProxLcmt + ' edição(ões)';
                 		 
                 		 if(!value.cell.numeroEdicao)
                 			 value.cell.numeroEdicao='*';
