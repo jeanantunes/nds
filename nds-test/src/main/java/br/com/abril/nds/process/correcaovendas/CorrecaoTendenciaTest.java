@@ -5,69 +5,42 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
-import br.com.abril.nds.dao.EstoqueProdutoCotaDAO;
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.EstoqueProdutoCota;
+import br.com.abril.nds.model.ProdutoEdicao;
 
 public class CorrecaoTendenciaTest {
 
     @Test(dataProvider = "getCotaTotalReparteVendaList", dataProviderClass = CorrecaoVendasDataProvider.class)
-    public void executarProcesso(Cota cota, BigDecimal totalReparte,
-	    BigDecimal totalVenda) {
+    public void executarProcesso(Cota cota, BigDecimal totalReparte, BigDecimal totalVenda) {
 
 	try {
 
-	    cota.setEstoqueProdutoCotas(new EstoqueProdutoCotaDAO()
-		    .getByCotaIdProdutoEdicaoId(cota, cota.getEdicoesBase()));
+//	    cota.setEstoqueProdutoCotas(new EstoqueProdutoCotaDAO().getByCotaIdProdutoEdicaoId(cota, cota.getEdicoesBase()));
 
-	    CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(cota,
-		    totalReparte, totalVenda);
-
+	    CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(cota, totalReparte, totalVenda);
 	    correcaoTendencia.executar();
-
-	    cota = (Cota) correcaoTendencia.getGenericDTO();
-
-	    assertNotNull(cota);
 
 	    StringBuilder sbEstoqueLog = new StringBuilder();
 
 	    int iEdicaoBase = 0;
-	    while (iEdicaoBase < cota.getEstoqueProdutoCotas().size()) {
+	    while (iEdicaoBase < cota.getEdicoesRecebidas().size()) {
 
-		EstoqueProdutoCota estoqueProdutoCota = cota
-			.getEstoqueProdutoCotas().get(iEdicaoBase);
+		ProdutoEdicao produtoEdicao = cota.getEdicoesRecebidas().get(iEdicaoBase);
 
-		BigInteger quantidadeRecebida = estoqueProdutoCota
-			.getQuantidadeRecebida().toBigInteger();
-		BigInteger quantidadeDevolvida = estoqueProdutoCota
-			.getQuantidadeDevolvida().toBigInteger();
-
-		BigInteger venda = quantidadeRecebida
-			.subtract(quantidadeDevolvida);
-
-		sbEstoqueLog
-			.append("<p style='margin-left: 100px'>Estoque Produto Cota</p>");
-		sbEstoqueLog.append("<p style='margin-left: 150px'>ID : "
-			+ estoqueProdutoCota.getId() + "</p>");
-		sbEstoqueLog
-			.append("<p style='margin-left: 150px'>Quantidade Recebida : "
-				+ quantidadeRecebida + "</p>");
-		sbEstoqueLog
-			.append("<p style='margin-left: 150px'>Quantidade Devolvida : "
-				+ quantidadeDevolvida + "</p>");
-		sbEstoqueLog.append("<p style='margin-left: 150px'>Venda : "
-			+ venda + "</p>");
+		sbEstoqueLog.append("<p style='margin-left: 100px'>Estoque Produto Cota</p>");
+		sbEstoqueLog.append("<p style='margin-left: 150px'>ID : " + produtoEdicao.getId() + "</p>");
+		sbEstoqueLog.append("<p style='margin-left: 150px'>Quantidade Recebida : " + produtoEdicao.getReparte() + "</p>");
+		sbEstoqueLog.append("<p style='margin-left: 150px'>Quantidade Devolvida : " + produtoEdicao.getReparte().subtract(produtoEdicao.getReparte()) + "</p>");
+		sbEstoqueLog.append("<p style='margin-left: 150px'>Venda : " + produtoEdicao.getVenda() + "</p>");
 
 		iEdicaoBase++;
 	    }
 
-	    BigDecimal indiceCorrecaoTendencia = cota
-		    .getIndiceCorrecaoTendencia();
+	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
 
 	    assertNotNull(indiceCorrecaoTendencia);
 
@@ -79,21 +52,15 @@ public class CorrecaoTendenciaTest {
 
 	    oneDotTwo = oneDotTwo.divide(one, 1, BigDecimal.ROUND_FLOOR);
 
-	    boolean assertIndiceCorrecaoTendencia = indiceCorrecaoTendencia
-		    .compareTo(one) == 0
-		    || indiceCorrecaoTendencia.compareTo(oneDotOne) == 0
+	    boolean assertIndiceCorrecaoTendencia = indiceCorrecaoTendencia.compareTo(one) == 0 || indiceCorrecaoTendencia.compareTo(oneDotOne) == 0
 		    || indiceCorrecaoTendencia.compareTo(oneDotTwo) == 0;
 
-	    assertTrue("Indice Correcao Tendencia : " + indiceCorrecaoTendencia
-		    + " Cota : " + cota.getId(), assertIndiceCorrecaoTendencia);
+	    assertTrue("Indice Correcao Tendencia : " + indiceCorrecaoTendencia + " Cota : " + cota.getId(), assertIndiceCorrecaoTendencia);
 
-	    Reporter.log("<p>Cota " + cota.getNomePessoa() + "</p>");
-	    Reporter.log("<p style='margin-left: 50px'>ID : " + cota.getId()
-		    + "</p>");
-	    Reporter.log("<p style='margin-left: 50px'>Numero : "
-		    + cota.getNumero() + "</p>");
-	    Reporter.log("<p style='margin-left: 50px'>-> Indice Correcao Tendencia : "
-		    + indiceCorrecaoTendencia + "</p>");
+	    Reporter.log("<p>Cota " + cota.getId() + "</p>");
+//	    Reporter.log("<p style='margin-left: 50px'>ID : " + cota.getId() + "</p>");
+//	    Reporter.log("<p style='margin-left: 50px'>Numero : " + cota.getNumero() + "</p>");
+	    Reporter.log("<p style='margin-left: 50px'>-> Indice Correcao Tendencia : " + indiceCorrecaoTendencia + "</p>");
 	    Reporter.log(sbEstoqueLog.toString());
 
 	} catch (Exception e) {

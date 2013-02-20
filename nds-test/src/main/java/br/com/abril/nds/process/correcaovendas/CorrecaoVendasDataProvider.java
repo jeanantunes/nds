@@ -40,6 +40,7 @@ public abstract class CorrecaoVendasDataProvider {
 	return listCotaReturn.iterator();
     }
 
+    //FIXME deve devolver uma lista de ProdutoEdicao com os dados de Reparte e Venda para cada cota
     @DataProvider(name = "getEstoqueProdutoCotaList")
     public static Iterator<EstoqueProdutoCota[]> getEstoqueProdutoCotaList() {
 

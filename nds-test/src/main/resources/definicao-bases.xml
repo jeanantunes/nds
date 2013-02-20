@@ -3,9 +3,8 @@
 <suite name="DefinicaoBases" parallel="false">
   <parameter name="produtos" value="61310001,28514001" /><!-- CARAS, CARAS FASHION -->
   <test name="Definicao de bases">
-    <classes>
-      <class name="br.com.abril.nds.process.definicaobases.DefinicaoBasesTest"/>
-      <class name="br.com.abril.nds.process.definicaobases.BaseParaVeraneioTest"/>
-    </classes>
+  	<packages>
+  		<package name="br.com.abril.nds.process.definicaobases" />
+  	</packages>
   </test> <!-- Test -->
 </suite> <!-- DefinicaoBases -->

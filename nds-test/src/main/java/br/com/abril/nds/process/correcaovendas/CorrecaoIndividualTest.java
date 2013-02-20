@@ -9,25 +9,18 @@ import java.math.BigDecimal;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
-import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
 
 public class CorrecaoIndividualTest {
 
     @Test(dataProvider = "getEstoqueProdutoCotaList", dataProviderClass = CorrecaoVendasDataProvider.class)
-    public void executarProcesso(EstoqueProdutoCota estoqueProdutoCota) {
+    public void executarProcesso(ProdutoEdicao produtoEdicao) {
 
 	try {
 
-	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(
-		    estoqueProdutoCota);
+	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
 
 	    correcaoIndividual.executar();
-
-	    estoqueProdutoCota = (EstoqueProdutoCota) correcaoIndividual
-		    .getGenericDTO();
-
-	    ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
 
 	    BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
@@ -41,32 +34,18 @@ public class CorrecaoIndividualTest {
 
 	    oneDotTwo = oneDotTwo.divide(one, 1, BigDecimal.ROUND_FLOOR);
 
-	    boolean assertIndice = indiceCorrecao.compareTo(one) == 0
-		    || indiceCorrecao.compareTo(oneDotOne) == 0
+	    boolean assertIndice = indiceCorrecao.compareTo(one) == 0 || indiceCorrecao.compareTo(oneDotOne) == 0
 		    || indiceCorrecao.compareTo(oneDotTwo) == 0;
 
-	    assertTrue("Indice Correcao : " + indiceCorrecao
-		    + "Estoque Produto Cota : " + estoqueProdutoCota.getId(),
-		    assertIndice);
+	    assertTrue("Indice Correcao : " + indiceCorrecao + "Estoque Produto Cota : " + produtoEdicao.getId(), assertIndice);
 
 	    Reporter.log("<p>Estoque Produto Cota</p>");
-	    Reporter.log("<p style='margin-left: 50px'>ID : "
-		    + estoqueProdutoCota.getId() + "</p>");
-	    Reporter.log("<p style='margin-left: 50px'>-> Indice Correcao : "
-		    + indiceCorrecao + "</p>");
+	    Reporter.log("<p style='margin-left: 50px'>ID : " + produtoEdicao.getId() + "</p>");
+	    Reporter.log("<p style='margin-left: 50px'>-> Indice Correcao : " + indiceCorrecao + "</p>");
 
-	    BigDecimal quantidadeRecebida = estoqueProdutoCota
-		    .getQuantidadeRecebida();
-	    BigDecimal quantidadeDevolvida = estoqueProdutoCota
-		    .getQuantidadeDevolvida();
-	    BigDecimal vendaEdicao = quantidadeRecebida
-		    .subtract(quantidadeDevolvida);
-
-	    Reporter.log("<p>Quantidade Recebida : " + quantidadeRecebida
-		    + "</p>");
-	    Reporter.log("<p>Quantidade Devolvida : " + quantidadeDevolvida
-		    + "</p>");
-	    Reporter.log("<p>Venda : " + vendaEdicao + "</p>");
+	    Reporter.log("<p>Quantidade Recebida : " + produtoEdicao.getReparte() + "</p>");
+	    Reporter.log("<p>Quantidade Devolvida : " + produtoEdicao.getReparte().subtract(produtoEdicao.getVenda()) + "</p>");
+	    Reporter.log("<p>Venda : " + produtoEdicao.getVenda() + "</p>");
 
 	} catch (Exception e) {
 	    fail(e.getMessage());

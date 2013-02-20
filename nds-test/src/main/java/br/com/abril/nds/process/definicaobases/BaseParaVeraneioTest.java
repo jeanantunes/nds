@@ -19,6 +19,9 @@ public class BaseParaVeraneioTest {
     
     @BeforeMethod
     public void setUp() throws Exception {
+	Reporter.log("");
+	
+	
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	edicoes.add(getEdicao());
 	Estudo estudo = new Estudo();
@@ -29,7 +32,7 @@ public class BaseParaVeraneioTest {
 
     @Test
     public void testBasesParaVeraneio() throws Exception {
-	baseParaVeraneio.executarProcesso();
+	baseParaVeraneio.executar();
 	List<ProdutoEdicao> edicoesBase = baseParaVeraneio.getEstudo().getEdicoesBase();
 	assertNotNull(edicoesBase);
 	assertTrue(edicoesBase.size() > 0);
