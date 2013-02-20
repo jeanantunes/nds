@@ -1614,9 +1614,6 @@ public class ConferenciaEncalheController extends BaseController {
 	private BigInteger processarQtdeExemplar(Long idProdutoEdicao,
 			ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade) {
 		
-				
-		Long qtd = conferenciaEncalheDTO.getQtdExemplar() == null ? 0L : conferenciaEncalheDTO.getQtdExemplar().longValue();
-		
 		Long pacotePadrao = (long) conferenciaEncalheDTO.getPacotePadrao();
 		
 		boolean quantidadeInformadaEmExemplares = false; 
@@ -1629,24 +1626,32 @@ public class ConferenciaEncalheController extends BaseController {
 			quantidade = quantidade.replace("e", "");
 			quantidadeInformadaEmExemplares = true;
 		}
-			
+		
+		BigInteger qtd = BigInteger.ZERO;
+		
 		try {
-			qtd += Long.parseLong(quantidade);
-		}catch(NumberFormatException e) {
+			qtd = BigInteger.valueOf(Long.parseLong(quantidade));
+		}catch(Exception e) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
 		}
 		
 		if (GrupoProduto.CROMO.equals(grupoProduto)) {
 			if (!quantidadeInformadaEmExemplares && conferenciaEncalheDTO.isParcial()) {
-				qtd = qtd/pacotePadrao;
+				qtd = qtd.divide(BigInteger.valueOf(pacotePadrao));
 			}
 		}
 		
-		conferenciaEncalheDTO.setQtdExemplar(BigInteger.valueOf(qtd));
 		
-		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTO, getNumeroCotaFromSession(), null);
+		ConferenciaEncalheDTO conferenciaEncalheDTONaoValidado = null;
+		try {
+			conferenciaEncalheDTONaoValidado = (ConferenciaEncalheDTO)BeanUtils.cloneBean(conferenciaEncalheDTO);
+			conferenciaEncalheDTONaoValidado.setQtdExemplar(qtd);
+		} catch (Exception e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao validar quantidade de itens de encalhe.");
+		} 
+		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(conferenciaEncalheDTONaoValidado, getNumeroCotaFromSession(), null);
 		
-		return  BigInteger.valueOf(qtd);
+		return  qtd;
 	}
 
 	private ConferenciaEncalheDTO criarConferenciaEncalhe(ProdutoEdicaoDTO produtoEdicao, String quantidade, boolean adicionarGrid) {

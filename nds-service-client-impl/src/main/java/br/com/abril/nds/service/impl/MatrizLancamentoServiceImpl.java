@@ -751,8 +751,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 							matrizLancamento, datasDistribuicao, dataLancamentoDistribuidor);
 				}
 				
-				this.adicionarProdutoLancamentoNaMatriz(
-					matrizLancamento, produtoLancamento, dataLancamentoEscolhida);
+				if (dataLancamentoEscolhida != null) {
+					
+					this.adicionarProdutoLancamentoNaMatriz(
+						matrizLancamento, produtoLancamento, dataLancamentoEscolhida);
+				}
 			}
 		}
 	}

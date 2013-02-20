@@ -169,19 +169,22 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select produtoEdicao.produto.codigo as codigoProduto, ");
-		hql.append(" 	produtoEdicao.produto.nome as nomeProduto, ");
-		hql.append(" 	produtoEdicao.numeroEdicao as numeroEdicao, ");
-		hql.append(" 	descontoProduto.desconto as desconto, ");
-		hql.append(" 	descontoProduto.dataAlteracao as dataAlteracao, ");
-		hql.append(" 	usuario.nome as nomeUsuario ");
-		hql.append(" from DescontoProduto as descontoProduto ");
-		hql.append(" join descontoProduto.cotas as cota ");
-		hql.append(" join descontoProduto.usuario as usuario ");
-		hql.append(" join descontoProduto.produtoEdicao as produtoEdicao ");
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" CODIGO_PRODUTO as codigoProduto, ");
+		hql.append(" NOME_PRODUTO as nomeProduto, ");
+		hql.append(" NUMERO_EDICAO as numeroEdicao, ");
+		hql.append(" VALOR as desconto , ");
+		hql.append(" DATA_ALTERACAO as dataAlteracao, ");
+		hql.append(" NOME_USUARIO as nomeUsuario ");
+		
+		hql.append(" FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES ");
 
+		hql.append(" WHERE PRODUTO_ID is not null ");		
+		
 		if (idCota!=null){
-			hql.append(" where cota.id = :idCota ");
+			hql.append(" AND COTA_ID=:idCota ");
 		}
 
 		if (sortname != null && !sortname.isEmpty()) { 
@@ -192,7 +195,7 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 			hql.append(sortorder != null ? sortorder : "");
 		}
 
-		Query query = getSession().createQuery(hql.toString());
+		Query query = getSession().createSQLQuery(hql.toString());
 
 		if (idCota!=null){
 			query.setParameter("idCota", idCota);

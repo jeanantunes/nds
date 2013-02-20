@@ -175,8 +175,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
-
-		
+	
 	private void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -186,23 +185,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
 		this.cancelarDividaCobranca(null, idCota);
 
-		
-		
-		
-		
-		
-		
 		FormaCobranca fc = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 			
 		PoliticaCobranca politicaPrincipal = fc.getPoliticaCobranca();
-		
-		
-		
-		
-		
-		
-		
-		
+
 		if (politicaPrincipal == null){
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.ERROR, "Politica de cobrança não encontrada."));
@@ -210,7 +196,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.ERROR, "Forma de cobrança não encontrada."));
 		}
-		
+
 		//Caso o principal modo de cobrança seja boleto a baixa automática deve ter sido executada
 		if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
 			
@@ -503,20 +489,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	private boolean verificarCotaTemBanco(Cota cota, List<String> msgs){
 
-		
-		
-		
-		
-		
-		
+
 		FormaCobranca formaCobtancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
 
-		
-		
-		
-		
-		
-		
 		
 		if (cota.getParametroCobranca() == null || formaCobtancaPrincipal == null ||
 				formaCobtancaPrincipal.getBanco() == null){	
@@ -708,44 +683,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		
-		
-		
-		
-		
-		
-		
 		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
-		
-		
-		
-		
-		
-		
-		
+
 		if (formaCobrancaPrincipal == null){
-		
-			
-			
-			
-			
-			
-			
+
 			// Obtém a forma de cobrança principal
 			formaCobrancaPrincipal = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-			
-			
-			
-			
-			
-			
-			
+
 			if (formaCobrancaPrincipal == null) {
 				msgs.add("Forma de cobrança principal para cota de número: " + cota.getNumeroCota() + " não encontrada. Também não encontrada forma de cobrança padrão principal.");
 				return null;
 			}
 			
 		}
-		
+
 		Date dataVencimento = null;
 		
 		List<Integer> diasSemanaConcentracaoPagamento = null;
