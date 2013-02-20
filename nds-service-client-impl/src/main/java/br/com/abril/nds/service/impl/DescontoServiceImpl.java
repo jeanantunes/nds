@@ -149,7 +149,7 @@ public class DescontoServiceImpl implements DescontoService {
 		List<TipoDescontoProdutoDTO> historicoDesconto = descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
 		
 		Calendar dataOperacao = Calendar.getInstance();
-		dataOperacao.setTime(new Date());
+		dataOperacao.setTime(distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		dataOperacao.set(Calendar.AM_PM, 0);
 		dataOperacao.set(Calendar.HOUR, 0);
@@ -769,13 +769,16 @@ public class DescontoServiceImpl implements DescontoService {
 	 * 
 	 * @param dataUltimaAlteracao - data da última alteração
 	 */
-	private void validarExclusaoDesconto(Date dataUltimaAlteracao){
+	private void validarExclusaoDesconto(Desconto desconto){
 
 		Distribuidor distribuidor = distribuidorRepository.obter();
 
-		if(dataUltimaAlteracao.compareTo(distribuidor.getDataOperacao()) < 0){
+		if(desconto.getDataAlteracao().compareTo(distribuidor.getDataOperacao()) < 0)
 			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido fora da data vigente!");
-		}
+				
+		if(desconto.isUsado())
+			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido pois já está sendo utilizado!");
+			
 	}
 
 	/*
@@ -865,7 +868,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
 		
-		validarExclusaoDesconto(desconto.getDataAlteracao());
+		validarExclusaoDesconto(desconto);
 		
 		List<Fornecedor> fornecedores = descontoRepository.buscarFornecedoresQueUsamDescontoGeral(desconto);
 
@@ -877,8 +880,13 @@ public class DescontoServiceImpl implements DescontoService {
 			fornecedorRepository.merge(fornecedor);
 			
 			if(hdf != null)
-				historicoDescontoFornecedorRepository.remover(hdf);
-					
+				historicoDescontoFornecedorRepository.remover(hdf);	
+			
+			HistoricoDescontoFornecedor ultimoValido  = historicoDescontoFornecedorRepository.buscarUltimoDescontoValido(fornecedor);
+						
+			fornecedor.setDesconto(ultimoValido==null ? null : ultimoValido.getDesconto());
+			fornecedorRepository.merge(fornecedor);			
+							
 		}
 
 	}
@@ -893,7 +901,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
 
-		validarExclusaoDesconto(desconto.getDataAlteracao());
+		validarExclusaoDesconto(desconto);
 		
 		List<Cota> cotas = descontoRepository.buscarCotasQueUsamDescontoEspecifico(desconto);
 		
@@ -924,7 +932,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
 
-		validarExclusaoDesconto(desconto.getDataAlteracao());
+		validarExclusaoDesconto(desconto);
 		
 		List<ProdutoEdicao> produtosEdicoes = descontoRepository.buscarProdutosEdicoesQueUsamDescontoProduto(desconto);
 		
@@ -965,6 +973,8 @@ public class DescontoServiceImpl implements DescontoService {
             //Neste caso, o produto possui apenas um fornecedor
             //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
             desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, cota, produtoEdicao);
+            desconto.setUsado(true);
+            descontoRepository.alterar(desconto);
             
         } else {
         	

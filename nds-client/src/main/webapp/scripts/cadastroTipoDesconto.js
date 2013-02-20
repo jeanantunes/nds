@@ -159,12 +159,18 @@ var tipoDescontoController = $.extend(true,  {
 
 			if(tipoDescontoController.tipoDescontoSelecionado == "PRODUTO"){
 
-				var linkCotas = '<a href="javascript:;" onclick="descontoProdutoController.exibirDialogCotasProdutoEdicao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer">' +
-							    row.cell.nomeProduto +
-							    '</a>';
-							    
-				row.cell.nomeProduto = linkCotas;
+				var qtdeCotas = row.cell.qtdeCotas;
 				
+				if(qtdeCotas) {
+					
+					row.cell.nomeProduto = '<a href="javascript:;"  onclick="descontoProdutoController.exibirDialogCotasProdutoEdicao(' + row.cell.idTipoDesconto + ');" style="cursor:pointer" '
+									+ ' title="Desconto aplicado para ' + qtdeCotas +' cota(s)" > ' +
+								    row.cell.nomeProduto +
+								    '</a>';
+				} else {
+					row.cell.nomeProduto = '<a title="Desconto aplicado em todas as cotas."> ' + row.cell.nomeProduto + '</a>';
+				}	
+								
 			} else{
 				
 				if(row.cell.fornecedor=="Diversos"){
@@ -173,6 +179,8 @@ var tipoDescontoController = $.extend(true,  {
 					row.cell.fornecedor = linkFornecedores; 
 				}
 			}
+			
+			if(row.cell.qtdeProxLcmt != null) row.cell.numeroEdicao = 'por ' + row.cell.qtdeProxLcmt + ' ed(s)';
 			
 			if(row.cell.numeroEdicao == null) row.cell.numeroEdicao = '*';
 			
