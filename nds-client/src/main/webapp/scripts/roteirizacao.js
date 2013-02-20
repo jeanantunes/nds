@@ -495,7 +495,7 @@ var roteirizacao = $.extend(true, {
                 	
                     var id = rota.id ? rota.id : null;
                                                           
-                    var selecione = '<input type="radio" value="' + id +'" name="rotaRadio" ';
+                    var selecione = '<input id="rota'+id+'" type="radio" value="' + id +'" name="rotaRadio" ';
                     
                     if(!id && rota.pdvs.length < 1 ) {
                     	selecione += 'class = "entregador-rota"';
@@ -785,7 +785,7 @@ var roteirizacao = $.extend(true, {
             preProcess: function(data) {
                 $.each(data.rows, function(index, value) {
                     var id = value.cell.id;
-                    var selecione = '<input type="radio" value="' + id +'" name="roteirosRadio" ';
+                    var selecione = '<input id="roteiro'+value.cell.id+'" type="radio" value="' + id +'" name="roteirosRadio" ';
                     selecione += 'onclick="roteirizacao.roteiroSelecionadoListener(\'' +  id  + '\', \'' + value.cell.nome + '\', \''+value.cell.ordem+'\');"';
                     if (id == roteirizacao.idRoteiro) {
                         selecione += 'checked';
@@ -2166,15 +2166,15 @@ var roteirizacao = $.extend(true, {
 
         var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
 
-
+        
         $.each(data.rows, function(index, value) {
 
             var idRoteirizacao = value.cell.idRoteirizacao;
             var idRoteiro   = value.cell.idRoteiro;
             var idRota      = value.cell.idRota;
-
+        
             var parametros = idRoteirizacao + ',' + idRoteiro + ',' + idRota;
-
+            
             value.cell.acao =  '<a href="javascript:;" onclick="roteirizacao.editarRoteirizacao(' + parametros + ');">' + imgEdicao + '</a>';
 
 
@@ -2384,26 +2384,28 @@ var roteirizacao = $.extend(true, {
        
     	roteirizacao.iniciarGridBox();
         
+    	 var method = '';
+         
+         var param = [];
+         
+         var idRoteiro = roteirizacao.idRoteiro;
+         var idRota    = roteirizacao.idRota;
+         
     	if (roteirizacao.isNovo()) {
             $('#nomeBox', roteirizacao.workspace).prop('disabled', false);
             $('#lnkPesquisarBox', roteirizacao.workspace).click(function() {roteirizacao.pesquisarBox();});
+            method = 'novaRoteirizacao';
         } else {
             $('#nomeBox', roteirizacao.workspace).prop('disabled', true);
             $('#lnkPesquisarBox', roteirizacao.workspace).unbind('click');
+            method = 'editarRoteirizacao';
+            param.push({name: 'idRoteirizacao', value: roteirizacao.idRoteirizacao});
         }
 
         roteirizacao.iniciarGridRoteiros();
         roteirizacao.iniciarGridRotas();
         roteirizacao.iniciarGridCotasRota();
         
-        var method = '';
-        var param = [];
-        if (roteirizacao.isNovo()) {
-            method = 'novaRoteirizacao';
-        } else {
-            method = 'editarRoteirizacao';
-            param.push({name: 'idRoteirizacao', value: roteirizacao.idRoteirizacao});
-        }
         $.postJSON(contextPath + '/cadastro/roteirizacao/' + method,
             param,
             function(result) {
@@ -2414,10 +2416,15 @@ var roteirizacao = $.extend(true, {
                 } else {
                     if (roteirizacao.isNovo()) {
                         roteirizacao.popularGridBox(result.boxDisponiveis);
+                     
                     } else {
+                    	
                         roteirizacao.popularGrids(result);
+                        $("#roteiro"+idRoteiro).click();
+                        roteirizacao.idRota = idRota;
                     }
                 }
+                
                 $( "#dialog-roteirizacao", roteirizacao.workspace ).dialog({
                     resizable: false,
                     height:630,

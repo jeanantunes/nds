@@ -1288,7 +1288,7 @@ public class RoteirizacaoController extends BaseController {
 	@Post("/transferirPDVs")
     public void transferirPDVs(Long idRoteiro, Long idRotaAnterior, Long idRotaNova, Integer ordemRota, List<Long> pdvs){
 						        
-        RotaRoteirizacaoDTO rotaAnterior = this.getRotaDTOSessaoPeloID(idRoteiro, idRotaAnterior);
+        RotaRoteirizacaoDTO rotaAnterior = this.getRotaDTOSessaoPeloID(idRotaAnterior, idRoteiro);
         
         List<PdvRoteirizacaoDTO> pdvsTransferencia = new ArrayList<PdvRoteirizacaoDTO>(pdvs.size());
         
@@ -1298,18 +1298,22 @@ public class RoteirizacaoController extends BaseController {
             rotaAnterior.removerPdv(idPdv);
         }
         
-        RotaRoteirizacaoDTO rotaNovaDTO = this.getRotaDTOSessaoPeloID(idRotaNova, idRoteiro);
+        RotaRoteirizacaoDTO rotaNovaDTO;
         
-        if (rotaNovaDTO == null) {
+        try {
+        
+        	rotaNovaDTO = this.getRotaDTOSessaoPeloID(idRotaNova, idRoteiro);
+        
+        } catch (ValidacaoException ve) {
         	
         	Rota rota = this.roteirizacaoService.buscarRotaPorId(idRotaNova);
 
         	RoteirizacaoDTO roteirizacaoDTO = this.getRoteirizacaoDTOSessao();
         	
         	rotaNovaDTO = roteirizacaoDTO.obterRotaNovosPDVsTransferidos(rota);
-        	
-        }
         
+        }
+       
         rotaNovaDTO.addPdvsAposMaiorOrdem(pdvsTransferencia);
         
         ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.SUCCESS, "Transferência realizada com sucesso!");
