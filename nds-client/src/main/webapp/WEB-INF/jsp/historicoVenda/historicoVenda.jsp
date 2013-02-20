@@ -112,7 +112,7 @@ function filtroPercVenda(){
   </legend><table width="410" border="0" cellpadding="2" cellspacing="1">
           <tr>
             <td width="45"><strong>Status:</strong></td>
-            <td width="24"><input type="radio" name="status" id="radio" value="radio" /></td>
+            <td width="24"><input type="radio" name="status" id="radio" value="radio" checked /></td>
             <td width="101">Todas as Cotas</td>
             <td width="20"><input type="radio" name="status" id="radio2" value="radio" /></td>
             <td width="184">Cotas Ativas</td>
@@ -126,7 +126,7 @@ function filtroPercVenda(){
             <td width="62"><input type="text" name="textfield4" id="textfield4" style="width:40px; text-align:center;" class="filtroQtdeReparte"  /></td>
             <td width="35"><span class="filtroQtdeReparte">Final:</span></td>
             <td width="46"><input type="text" name="textfield" id="textfield" style="width:40px; text-align:center;" class="filtroQtdeReparte"  /></td>
-            <td width="76">&nbsp;</td>
+            <td width="15"><span class="classPesquisar filtroQtdeReparte"><a href="javascript:;"></a></span></td>
           </tr>
           <tr>
             <td><input type="radio" name="filtroPor" id="radio4" value="radio" onclick="filtroVenda();" /></td>
@@ -135,13 +135,15 @@ function filtroPercVenda(){
             <td><input type="text" name="textfield4" id="textfield4" style="width:40px; text-align:center;" class="filtroQtdeVenda"  /></td>
             <td><span class="filtroQtdeVenda">Final:</span></td>
             <td><input type="text" name="textfield" id="textfield" style="width:40px; text-align:center;" class="filtroQtdeVenda" /></td>
-            <td>&nbsp;</td>
+            <td width="15"><span class="classPesquisar filtroQtdeVenda"><a href="javascript:;"></a></span></td>
           </tr>
           <tr>
             <td><input type="radio" name="filtroPor" id="radio5" value="radio" onclick="filtroPercVenda();" /></td>
             <td><strong>% Venda:</strong></td>
-            <td><span class="filtroPercVenda"><input name="" type="text" style="width:30px;" />%</span></td>
-            <td>&nbsp;</td>
+            <td>
+            <span class="filtroPercVenda"><input name="" type="text" style="width:30px;" />%</span>
+            </td>
+            <td width="15"><span class="classPesquisar filtroPercVenda"><a href="javascript:;"></a></span></td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>

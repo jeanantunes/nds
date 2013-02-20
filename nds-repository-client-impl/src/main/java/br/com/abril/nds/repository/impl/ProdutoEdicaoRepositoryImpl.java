@@ -802,24 +802,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 //		hql.append(" CAMPO PERIODO DEPENDENDO DE JTRAC ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
 		hql.append(" lancamento.reparte as repartePrevisto, ");
-//		hql.append(" CAMPO VENDA DEPENDENDO DE JTRAC ");
+		hql.append(" (estoqueProduto.qtdeDevolucaoFornecedor - movimentos.qtde) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa ");
 		
-		hql.append(" FROM ProdutoEdicao produtoEdicao ");
+		hql.append(" FROM EstoqueProduto estoqueProduto");
+		hql.append(" LEFT JOIN estoqueProduto.movimentos as movimentos");
+		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
+		hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao");
 		hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
 		hql.append(" JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 		
 		hql.append(" WHERE ");
+//		hql.append(" tipoMovimento.id = 21 and ");
 	
-		if (filtro.getTipoClassificacaoProdutoId() != null && filtro.getTipoClassificacaoProdutoId() > 0l) {
-			hql.append(" tipoClassificacaoProduto.id = :tipoClassificacaoProdutoId ");
-			parameters.put("tipoClassificacaoProdutoId", filtro.getTipoClassificacaoProdutoId());
-		}else if(filtro.getNumeroEdicao() != null && filtro.getNumeroEdicao() > 0l) {
-			hql.append(" produtoEdicao.numeroEdicao = :numeroEdicao ");
-			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
-		} else if (filtro.getProdutoDto() != null) {
+		if (filtro.getProdutoDto() != null) {
 			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
 				hql.append(" produto.codigo = :codigoProduto ");
 				parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
@@ -829,6 +827,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 			}
 		}
+		
+		if (filtro.getTipoClassificacaoProdutoId() != null && filtro.getTipoClassificacaoProdutoId() > 0l) {
+			hql.append(" and tipoClassificacaoProduto.id = :tipoClassificacaoProdutoId ");
+			parameters.put("tipoClassificacaoProdutoId", filtro.getTipoClassificacaoProdutoId());
+		}
+		if (filtro.getNumeroEdicao() != null && filtro.getNumeroEdicao() > 0l) {
+			hql.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ");
+			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
+		} 
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
