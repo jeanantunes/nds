@@ -68,6 +68,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
 		
+		hql.append(" order by dataRecolhimento ");
+		
 		Query query =  this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoSlipDTO.class));
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);

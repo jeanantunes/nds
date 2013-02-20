@@ -923,7 +923,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		Integer qtde = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
 		Assert.assertEquals(3, qtde.intValue());
 	}
@@ -937,7 +937,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		Integer qtde = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
 		Assert.assertEquals(3, qtde.intValue());
 	}
@@ -953,7 +953,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdCota(1L);
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		Integer qtde = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
 	}
 	
@@ -968,7 +968,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdFornecedor(1L);
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		Integer qtde = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
 	}
 
