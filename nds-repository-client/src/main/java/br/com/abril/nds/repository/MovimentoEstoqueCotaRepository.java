@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -126,7 +127,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @return Qtde - Integer
 	 */
-	public Integer obterQtdConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
+	public TotalizadorConsultaEncalheDTO obterTotalizadorConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Pesquisa lista de ConsultaEncalhe.
