@@ -1,6 +1,7 @@
-<<<<<<< HEAD
 package br.com.abril.nds.process.correcaovendas;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,17 +14,15 @@ import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
 
 public abstract class CorrecaoVendasDataProvider {
 
-    @SuppressWarnings("unchecked")
     @DataProvider(name = "getCotaList")
-    public static Iterator<List<Cota>[]> getCotaList() {
+    public static Iterator<Cota[]> getCotaList() {
 
-	List<List<Cota>[]> listCotaReturn = new ArrayList<List<Cota>[]>();
+	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
-	List<Cota> listCota = new CotaDAO().getCotas();
+	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
 
 	int iCota = 0;
 	while (iCota < listCota.size()) {
@@ -33,11 +32,10 @@ public abstract class CorrecaoVendasDataProvider {
 	    // TODO As edições base já deveriam vir preenchidas
 	    // FIXME Retirar a chamada para ProdutoEdicaoDAO
 	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
+	    listCotaReturn.add(new Cota[] { cota });
 
 	    iCota++;
 	}
-
-	listCotaReturn.add(new List[] { listCota });
 
 	return listCotaReturn.iterator();
     }
@@ -45,7 +43,7 @@ public abstract class CorrecaoVendasDataProvider {
     @DataProvider(name = "getEstoqueProdutoCotaList")
     public static Iterator<EstoqueProdutoCota[]> getEstoqueProdutoCotaList() {
 
-	List<Cota> listCota = new CotaDAO().getCotas();
+	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
 
 	List<EstoqueProdutoCota[]> listEstoqueProdutoCotas = new ArrayList<EstoqueProdutoCota[]>();
 
@@ -54,17 +52,27 @@ public abstract class CorrecaoVendasDataProvider {
 
 	    Cota cota = listCota.get(iCota);
 
-	    List<EstoqueProdutoCota> listEstoqueCota = new EstoqueProdutoCotaDAO()
-		    .getByCotaId(cota.getId());
+	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
-	    int iEst = 0;
-	    while (iEst < listEstoqueCota.size()) {
+	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO()
+	    .getByCotaIdProdutoEdicaoId(cota, cota.getEdicoesBase());
 
-		EstoqueProdutoCota estoqueProdutoCota = listEstoqueCota
-			.get(iEst);
-		listEstoqueProdutoCotas
-			.add(new EstoqueProdutoCota[] { estoqueProdutoCota });
-		iEst++;
+	    int iEstoqueProdutoCota = 0;
+	    while (iEstoqueProdutoCota < listEstoqueProdutoCota.size()) {
+
+		EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
+			.get(iEstoqueProdutoCota);
+
+		if (estoqueProdutoCota.getProdutoEdicao().getNumeroEdicao()
+			.compareTo(new Long(1)) == 0
+			|| !estoqueProdutoCota.getProdutoEdicao().isColecao()) {
+
+		    listEstoqueProdutoCotas
+		    .add(new EstoqueProdutoCota[] { estoqueProdutoCota });
+		}
+
+		iEstoqueProdutoCota++;
+
 	    }
 
 	    iCota++;
@@ -72,99 +80,11 @@ public abstract class CorrecaoVendasDataProvider {
 
 	return listEstoqueProdutoCotas.iterator();
     }
+    
+    @DataProvider(name = "getEstoqueProdutoCotaParaPercentualVendaUmList")
+    public static Iterator<EstoqueProdutoCota[]> getEstoqueProdutoCotaParaPercentualVendaUmList() {
 
-    @DataProvider(name = "getEdicaoBaseFechadaList")
-    public static Iterator<Object[]> getEdicaoBaseFechadaList() {
-
-	List<Object[]> listProdutoEdicaoFechadaReturn = new ArrayList<Object[]>();
-
-	Estudo estudo = new Estudo();
-	List<Cota> listCota = new CotaDAO().getCotas();
-	estudo.setCotas(listCota);
-
-	Iterator<Cota> itCota = listCota.iterator();
-
-	while (itCota.hasNext()) {
-
-	    List<ProdutoEdicao> listProdutoEdicaoFechada = new ArrayList<ProdutoEdicao>();
-
-	    Cota cota = itCota.next();
-
-	    // TODO As edições base já deveriam vir preenchidas
-	    // FIXME Retirar a chamada para ProdutoEdicaoDAO
-	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
-
-	    List<ProdutoEdicao> listEdicaoBase = cota.getEdicoesBase();
-
-	    int iEdicaoBase = 0;
-	    while (iEdicaoBase < listEdicaoBase.size()) {
-
-		ProdutoEdicao produtoEdicaoBase = listEdicaoBase
-			.get(iEdicaoBase);
-		if (!produtoEdicaoBase.isEdicaoAberta()) {
-		    listProdutoEdicaoFechada.add(produtoEdicaoBase);
-		}
-
-		iEdicaoBase++;
-	    }
-
-	    listProdutoEdicaoFechadaReturn.add(new Object[] { cota,
-		    listProdutoEdicaoFechada });
-
-	}
-
-	return listProdutoEdicaoFechadaReturn.iterator();
-    }
-
-}
-=======
-package br.com.abril.nds.process.correcaovendas;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.testng.annotations.DataProvider;
-
-import br.com.abril.nds.dao.CotaDAO;
-import br.com.abril.nds.dao.EstoqueProdutoCotaDAO;
-import br.com.abril.nds.dao.ProdutoEdicaoDAO;
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.EstoqueProdutoCota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
-
-public abstract class CorrecaoVendasDataProvider {
-
-    @SuppressWarnings("unchecked")
-    @DataProvider(name = "getCotaList")
-    public static Iterator<List<Cota>[]> getCotaList() {
-
-	List<List<Cota>[]> listCotaReturn = new ArrayList<List<Cota>[]>();
-
-	List<Cota> listCota = new CotaDAO().getCotas();
-
-	int iCota = 0;
-	while (iCota < listCota.size()) {
-
-	    Cota cota = listCota.get(iCota);
-
-	    // TODO As edições base já deveriam vir preenchidas
-	    // FIXME Retirar a chamada para ProdutoEdicaoDAO
-	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
-
-	    iCota++;
-	}
-
-	listCotaReturn.add(new List[] { listCota });
-
-	return listCotaReturn.iterator();
-    }
-
-    @DataProvider(name = "getEstoqueProdutoCotaList")
-    public static Iterator<EstoqueProdutoCota[]> getEstoqueProdutoCotaList() {
-
-	List<Cota> listCota = new CotaDAO().getCotas();
+	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
 
 	List<EstoqueProdutoCota[]> listEstoqueProdutoCotas = new ArrayList<EstoqueProdutoCota[]>();
 
@@ -173,17 +93,30 @@ public abstract class CorrecaoVendasDataProvider {
 
 	    Cota cota = listCota.get(iCota);
 
-	    List<EstoqueProdutoCota> listEstoqueCota = new EstoqueProdutoCotaDAO()
-		    .getByCotaId(cota.getId());
+	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
-	    int iEst = 0;
-	    while (iEst < listEstoqueCota.size()) {
+	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO()
+	    .getByCotaIdProdutoEdicaoId(cota, cota.getEdicoesBase());
 
-		EstoqueProdutoCota estoqueProdutoCota = listEstoqueCota
-			.get(iEst);
-		listEstoqueProdutoCotas
-			.add(new EstoqueProdutoCota[] { estoqueProdutoCota });
-		iEst++;
+	    int iEstoqueProdutoCota = 0;
+	    while (iEstoqueProdutoCota < listEstoqueProdutoCota.size()) {
+
+		EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
+			.get(iEstoqueProdutoCota);
+		
+		//Esse ponto faz o valor do percentual ser 1. Pois, é a divisão pelo mesmo valor!
+		estoqueProdutoCota.setQuantidadeDevolvida(BigDecimal.ZERO);
+		
+		if (estoqueProdutoCota.getProdutoEdicao().getNumeroEdicao()
+			.compareTo(new Long(1)) == 0
+			|| !estoqueProdutoCota.getProdutoEdicao().isColecao()) {
+
+		    listEstoqueProdutoCotas
+		    .add(new EstoqueProdutoCota[] { estoqueProdutoCota });
+		}
+
+		iEstoqueProdutoCota++;
+
 	    }
 
 	    iCota++;
@@ -192,20 +125,88 @@ public abstract class CorrecaoVendasDataProvider {
 	return listEstoqueProdutoCotas.iterator();
     }
 
-    @DataProvider(name = "getEdicaoBaseFechadaList")
-    public static Iterator<Object[]> getEdicaoBaseFechadaList() {
+    @DataProvider(name = "getCotaTotalReparteVendaList")
+    public static Iterator<Object[]> getCotaTotalReparteVendaList() {
 
-	List<Object[]> listProdutoEdicaoFechadaReturn = new ArrayList<Object[]>();
+	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
+
+	List<Object[]> listEstoqueProdutoCotas = new ArrayList<Object[]>();
+
+	int iCota = 0;
+	while (iCota < listCota.size()) {
+
+	    Cota cota = listCota.get(iCota);
+
+	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
+
+	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO()
+	    .getByCotaIdProdutoEdicaoId(cota, cota.getEdicoesBase());
+
+	    BigDecimal totalReparte = BigDecimal.ZERO;
+	    BigDecimal totalVenda = BigDecimal.ZERO;
+
+	    boolean addCota = false;
+
+	    if (cota.getEdicoesBase() != null
+		    && cota.getEdicoesBase().size() > 1) {
+
+		int iEstoqueProdutoCota = 0;
+		while (iEstoqueProdutoCota < listEstoqueProdutoCota.size()) {
+
+		    EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
+			    .get(iEstoqueProdutoCota);
+
+		    if (estoqueProdutoCota.getProdutoEdicao().getNumeroEdicao()
+			    .compareTo(new Long(1)) == 0
+			    || !estoqueProdutoCota.getProdutoEdicao()
+			    .isColecao()) {
+
+			addCota = true;
+
+			BigInteger quantidadeRecebida = estoqueProdutoCota
+				.getQuantidadeRecebida().toBigInteger();
+			BigInteger quantidadeDevolvida = estoqueProdutoCota
+				.getQuantidadeDevolvida().toBigInteger();
+
+			totalReparte = totalReparte.add(new BigDecimal(
+				quantidadeRecebida));
+
+			BigInteger venda = quantidadeRecebida
+				.subtract(quantidadeDevolvida);
+
+			totalVenda = totalVenda.add(new BigDecimal(venda));
+
+		    }
+
+		    iEstoqueProdutoCota++;
+		}
+	    }
+
+	    if (addCota) {
+		listEstoqueProdutoCotas.add(new Object[] { cota, totalReparte,
+			totalVenda });
+	    }
+
+	    iCota++;
+	}
+
+	return listEstoqueProdutoCotas.iterator();
+    }
+
+    @DataProvider(name = "getCotaEdicaoBaseUnicaPublicacaoList")
+    public static Iterator<Cota[]> getCotaEdicaoBaseUnicaPublicacaoList() {
+
+	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
 	Estudo estudo = new Estudo();
-	List<Cota> listCota = new CotaDAO().getCotas();
+	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
 	estudo.setCotas(listCota);
 
 	Iterator<Cota> itCota = listCota.iterator();
 
 	while (itCota.hasNext()) {
 
-	    List<ProdutoEdicao> listProdutoEdicaoFechada = new ArrayList<ProdutoEdicao>();
+	    List<EstoqueProdutoCota> listEstoqueProdutoEdicaoUnicaPublicacao = new ArrayList<EstoqueProdutoCota>();
 
 	    Cota cota = itCota.next();
 
@@ -213,27 +214,30 @@ public abstract class CorrecaoVendasDataProvider {
 	    // FIXME Retirar a chamada para ProdutoEdicaoDAO
 	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
-	    List<ProdutoEdicao> listEdicaoBase = cota.getEdicoesBase();
+	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO()
+	    .getByCotaIdProdutoEdicaoId(cota, cota.getEdicoesBase());
 
 	    int iEdicaoBase = 0;
-	    while (iEdicaoBase < listEdicaoBase.size()) {
+	    while (iEdicaoBase < listEstoqueProdutoCota.size()) {
 
-		ProdutoEdicao produtoEdicaoBase = listEdicaoBase
+		EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
 			.get(iEdicaoBase);
-		if (!produtoEdicaoBase.isEdicaoAberta()) {
-		    listProdutoEdicaoFechada.add(produtoEdicaoBase);
+
+		if (estoqueProdutoCota.getProdutoEdicao().getNome()
+			.equalsIgnoreCase("MALU.")) {
+
+		    listEstoqueProdutoEdicaoUnicaPublicacao
+		    .add(estoqueProdutoCota);
 		}
 
 		iEdicaoBase++;
 	    }
 
-	    listProdutoEdicaoFechadaReturn.add(new Object[] { cota,
-		    listProdutoEdicaoFechada });
+	    cota.setEstoqueProdutoCotas(listEstoqueProdutoEdicaoUnicaPublicacao);
 
+	    listCotaReturn.add(new Cota[] { cota });
 	}
 
-	return listProdutoEdicaoFechadaReturn.iterator();
+	return listCotaReturn.iterator();
     }
-
 }
->>>>>>> DGBtiBit/master

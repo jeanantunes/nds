@@ -1,7 +1,6 @@
 package br.com.abril.nds.model;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Estudo extends GenericDTO<Estudo> {
@@ -9,46 +8,34 @@ public class Estudo extends GenericDTO<Estudo> {
 	private static final long serialVersionUID = -8639160268952528714L;
 
 	private Integer id;
+	private String status;
 	private BigDecimal reparteDistribuir;
 	private BigDecimal reparteDistribuirInicial;
 	private ProdutoEdicao produto;
 	private List<ProdutoEdicao> edicoesBase;
-	private List<Cota> cotas;
+	private List<Cota> cotas; //Cotas que receberam as edições base.
 	private boolean distribuicaoPorMultiplos;
 	private BigDecimal pacotePadrao;
 	private BigDecimal somatoriaVendaMedia;
-	// TODO: Verificar se essa somatória é do estudo total ou somente da cota
-	// (Processo: Reparte Proporcional)
 	private BigDecimal somatoriaReparteEdicoesAbertas;
-	// TODO: Checar após a EMS 2027 estar pronta, onde deveremos consultar esse
-	// parâmetro
+	// TODO: Checar após a EMS 2027 estar pronta, onde deveremos consultar esses
+	// parâmetros
 	private boolean complementarAutomatico;
-	// TODO: Verificar se o correto é deixar esse percentual aqui no estudo
-	// mesmo ou em outra entidade
 	private BigDecimal percentualProporcaoExcedentePDV;
 	private BigDecimal percentualProporcaoExcedenteVenda;
 	private BigDecimal totalPDVs;
+	//TODO validar campo no DB e como recupera-lo
+	private boolean pracaVeraneio;
 	private BigDecimal reservaAjuste;
 
 	public Estudo() {
-		edicoesBase = new ArrayList<ProdutoEdicao>();
-		cotas = new ArrayList<Cota>();
-		
 		pacotePadrao = BigDecimal.ZERO;
 		reparteDistribuir = BigDecimal.ZERO;
+		reparteDistribuirInicial = BigDecimal.ZERO;
 		somatoriaVendaMedia = BigDecimal.ZERO;
+		somatoriaReparteEdicoesAbertas = BigDecimal.ZERO;
 	}
 	
-	public void calculate() {
-		somatoriaVendaMedia = new BigDecimal(0);
-		for (Cota cota : cotas) {
-			if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-					|| !cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
-					|| !cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico))
-				somatoriaVendaMedia.add(cota.getVendaMedia());
-		}
-	}
-
 	/**
 	 * Reparte Total a ser distribuído
 	 * 
@@ -209,6 +196,22 @@ public class Estudo extends GenericDTO<Estudo> {
 		this.totalPDVs = totalPDVs;
 	}
 
+	public boolean isPracaVeraneio() {
+	    return pracaVeraneio;
+	}
+
+	public void setPracaVeraneio(boolean pracaVeraneio) {
+	    this.pracaVeraneio = pracaVeraneio;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	public BigDecimal getReservaAjuste() {
 		return reservaAjuste;
 	}
@@ -216,6 +219,4 @@ public class Estudo extends GenericDTO<Estudo> {
 	public void setReservaAjuste(BigDecimal reservaAjuste) {
 		this.reservaAjuste = reservaAjuste;
 	}
-	
-	
 }

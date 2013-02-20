@@ -1,6 +1,6 @@
 package br.com.abril.nds.process.ajustereparte;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
@@ -158,7 +158,7 @@ public class AjusteReparteTest {
 		
 		// Validação do teste
 		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
-			assertNull(c.getClassificacao());
+			assertEquals(ClassificacaoCota.SemClassificacao, c.getClassificacao());
 		}
 	}
 }

@@ -1,11 +1,8 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
-import br.com.abril.nds.dao.EstoqueProdutoCotaDAO;
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -19,8 +16,14 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class CorrecaoTendencia extends ProcessoAbstrato {
 
-    public CorrecaoTendencia(Cota cota) {
+    private BigDecimal totalReparte;
+    private BigDecimal totalVenda;
+
+    public CorrecaoTendencia(Cota cota, BigDecimal totalReparte,
+	    BigDecimal totalVenda) {
 	super(cota);
+	this.totalReparte = totalReparte;
+	this.totalVenda = totalVenda;
     }
 
     /**
@@ -44,44 +47,11 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 	BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
 
 	Cota cota = (Cota) super.genericDTO;
-	cota.setEstoqueProdutoCotas(new EstoqueProdutoCotaDAO()
-		.getByCotaId(cota.getId()));
 
-	BigDecimal totalReparte = BigDecimal.ZERO;
-	BigDecimal totalVenda = BigDecimal.ZERO;
+	if (this.totalVenda.compareTo(BigDecimal.ZERO) != 0) {
 
-	int iEdicaoBase = 0;
-	while (iEdicaoBase < cota.getEstoqueProdutoCotas().size()) {
-
-	    EstoqueProdutoCota estoqueProdutoCota = cota
-		    .getEstoqueProdutoCotas().get(iEdicaoBase);
-
-	    BigInteger quantidadeRecebida = estoqueProdutoCota
-		    .getQuantidadeRecebida().toBigInteger();
-	    BigInteger quantidadeDevolvida = estoqueProdutoCota
-		    .getQuantidadeDevolvida().toBigInteger();
-
-	    totalReparte = totalReparte.add(new BigDecimal(quantidadeRecebida));
-
-	    BigInteger vendaCota = quantidadeRecebida
-		    .subtract(quantidadeDevolvida);
-
-	    totalVenda = totalVenda.add(new BigDecimal(vendaCota));
-
-	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(
-		    estoqueProdutoCota);
-	    correcaoIndividual.executar();
-
-	    cota.getEstoqueProdutoCotas().set(iEdicaoBase,
-		    (EstoqueProdutoCota) correcaoIndividual.getGenericDTO());
-
-	    iEdicaoBase++;
-	}
-
-	if (totalVenda.compareTo(BigDecimal.ZERO) != 0) {
-
-	    BigDecimal percentualVenda = totalVenda.divide(totalReparte, 1,
-		    BigDecimal.ROUND_FLOOR);
+	    BigDecimal percentualVenda = this.totalVenda.divide(
+		    this.totalReparte, 1, BigDecimal.ROUND_FLOOR);
 
 	    BigDecimal oneCompare = BigDecimal.ONE;
 	    oneCompare = oneCompare.divide(new BigDecimal(1), 1,

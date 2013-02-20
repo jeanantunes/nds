@@ -36,18 +36,11 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
 			
 //			Verificar Cota a Cota
-//    		Se Repcalculado < Venda (última edição fechada, sem correção)
-			MovimentoEstoqueCotaDAO mecDAO = new MovimentoEstoqueCotaDAO();
-			BigDecimal ultimaEdicaoFechada = mecDAO.retornarUltimaVendaFechada(getEstudo().getProduto());
-			
 			for(Cota cota:getEstudo().getCotas()){
-				
-				// Aguardando email do diogenes sobre como recuperar ultima edicao fechada
-				
-				//	Se Cota <> FX / MM / MX / RD / PR
-				if(cota.getReparteCalculado().compareTo(ultimaEdicaoFechada)==-1 ||
-						cota.getReparteCalculado().compareTo(ultimaEdicaoFechada)==0 &&
-						
+//    		Se Repcalculado < Venda (ï¿½ltima ediï¿½ï¿½o fechada, sem correï¿½ï¿½o)
+//    				Se Cota <> FX / MM / MX / RD / PR
+				if(cota.getReparteCalculado().compareTo(reservaAjuste)==-1 ||
+						cota.getReparteCalculado().compareTo(reservaAjuste)==0 &&
 						(!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix)
@@ -57,7 +50,7 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 					
 //					RepCalculado Cota = RepCalculado Cota + 1
 					cota.setReparteCalculado(cota.getReparteCalculado().add(BigDecimal.ONE));
-//    				ReservaAjuste = ReservaAjuste – 1
+//    				ReservaAjuste = ReservaAjuste ï¿½ 1
 					reservaAjuste = reservaAjuste.subtract(BigDecimal.ONE);
 					
 					if(reservaAjuste.compareTo(BigDecimal.ZERO)==0

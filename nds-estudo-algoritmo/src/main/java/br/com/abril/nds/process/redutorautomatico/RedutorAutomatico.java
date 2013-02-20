@@ -41,8 +41,7 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 	@Override
 	protected void executarProcesso() {
 
-		// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o
-		// método
+		// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
 		calcularMenorVenda();
 		calcularRedutorAutomatico();
 	}
@@ -68,7 +67,7 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 		BigDecimal excedente = getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia());
 		BigDecimal percentualExcedente = BigDecimal.ZERO;
 		if (getEstudo().getSomatoriaVendaMedia().doubleValue() > 0) {
-			percentualExcedente = excedente.divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_FLOOR);
+			percentualExcedente = excedente.divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
 		}
 
 		menorVenda = BigDecimal.ZERO;

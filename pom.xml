@@ -473,6 +473,8 @@
 				<module>nds-integration-client</module>
 				<module>nds-client</module>
 				<module>nds-server</module>
+				<module>nds-estudo-algoritmo</module>
+				<module>nds-test</module>
 			</modules>
 		</profile>
 

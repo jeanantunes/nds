@@ -74,8 +74,7 @@ public enum ClassificacaoCota {
 	 * ZZ
 	 */
 	SemClassificacao("ZZ");
-	// TODO: verificar qual será a primeira classificação que a cota receberá
-	// enquanto isso não é definido, utilizaremos a classificação 'ZZ' - Sem Classificação
+	// valor utilizado apenas para evitar problemas com "null" na classificação das cotas
 	
 	private String codigo;
 	

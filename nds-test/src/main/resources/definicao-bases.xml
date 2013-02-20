@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="DefinicaoBases" parallel="false">
+  <parameter name="produtos" value="61310001,28514001" /><!-- CARAS, CARAS FASHION -->
+  <test name="Definicao de bases">
+    <classes>
+      <class name="br.com.abril.nds.process.definicaobases.DefinicaoBasesTest"/>
+      <class name="br.com.abril.nds.process.definicaobases.BaseParaVeraneioTest"/>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- DefinicaoBases -->

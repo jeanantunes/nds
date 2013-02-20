@@ -8,7 +8,7 @@ public class Cota extends GenericDTO<Cota> {
     private static final long serialVersionUID = -2770873222155652560L;
 
     private Long id;
-    private String nome;
+    private List<ProdutoEdicao> edicoesRecebidas;
     private ClassificacaoCota classificacao;
     private BigDecimal reparteCalculado;
     private BigDecimal reparteJuramentadoAFaturar;
@@ -19,34 +19,23 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal vendaMedia;
     private BigDecimal vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
-    private List<ProdutoEdicao> edicoesBase;
-    private List<ProdutoEdicao> edicoesRecebidas;
-    private List<EstoqueProdutoCota> estoqueProdutoCotas;
     private BigDecimal percentualEncalheMaximo;
-    // TODO: verificar se essa somatória é de todas as edições da cota ou é somente a última (Processo: Reparte Proporcional)
     private BigDecimal somaReparteEdicoesAbertas;
     private BigDecimal indiceCorrecaoTendencia;
     private BigDecimal quantidadePDVs;
+    //TODO o q é mix?
     private boolean mix;
     private BigDecimal indiceVendaCrescente;
     private boolean recebeReparteComplementar=false;
     
     public Cota() {
-    	vendaMedia = BigDecimal.ZERO;
-    	vendaMediaMaisN = BigDecimal.ZERO;
-    	reparteCalculado = BigDecimal.ZERO;
-    	reparteMinimo = BigDecimal.ZERO;
-    	classificacao = ClassificacaoCota.SemClassificacao;
-    }
-    
-    public void calculate() {
-	// Cálculo da Venda Média Final
-	BigDecimal soma = BigDecimal.ZERO;
-	for (ProdutoEdicao edicao : edicoesRecebidas) {
-	    soma.add(edicao.getVenda());
-	}
-	vendaMedia = soma.divide(new BigDecimal(edicoesRecebidas.size()), 2,
-		BigDecimal.ROUND_FLOOR);
+	vendaMedia = BigDecimal.ZERO;
+	vendaMediaMaisN = BigDecimal.ZERO;
+	reparteCalculado = BigDecimal.ZERO;
+	reparteMinimo = BigDecimal.ZERO;
+	somaReparteEdicoesAbertas = BigDecimal.ZERO;
+	percentualEncalheMaximo = BigDecimal.ZERO;
+	classificacao = ClassificacaoCota.SemClassificacao;
     }
 
     public Long getId() {
@@ -55,26 +44,6 @@ public class Cota extends GenericDTO<Cota> {
 
     public void setId(Long id) {
 	this.id = id;
-    }
-
-    public String getNome() {
-	return nome;
-    }
-
-    public void setNome(String nome) {
-	this.nome = nome;
-    }
-
-    /**
-     * Edições que servirão de base para o estudo
-     * @return List<{@link ProdutoEdicao}>
-     */
-    public List<ProdutoEdicao> getEdicoesBase() {
-	return edicoesBase;
-    }
-
-    public void setEdicoesBase(List<ProdutoEdicao> edicoesBase) {
-	this.edicoesBase = edicoesBase;
     }
 
     public ClassificacaoCota getClassificacao() {
@@ -135,8 +104,7 @@ public class Cota extends GenericDTO<Cota> {
 	    // Busca para encontrar qual é a venda da edição mais recente fechada
 	    for (int i = edicoesRecebidas.size() - 1; i >= 0; i--) {
 		if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
-		    vendaEdicaoMaisRecenteFechada = edicoesRecebidas.get(i)
-			    .getVenda();
+		    vendaEdicaoMaisRecenteFechada = edicoesRecebidas.get(i).getVenda();
 		    break;
 		}
 	    }
@@ -144,16 +112,15 @@ public class Cota extends GenericDTO<Cota> {
 	return vendaEdicaoMaisRecenteFechada;
     }
 
+    public void setVendaEdicaoMaisRecenteFechada(BigDecimal vendaEdicaoMaisRecenteFechada) {
+	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
+    }
+
+    /**
+     * Busca para verificar se a cota só receber edições abertas
+     * @return boolean
+     */
     public boolean isCotaSoRecebeuEdicaoAberta() {
-	// FIXME: verificar qual é o melhor momento para executar esse trecho de código (for)
-	cotaSoRecebeuEdicaoAberta = true;
-	// Busca para verificar se a cota só receber edições abertas
-	for (int i = 0; i < edicoesRecebidas.size(); i++) {
-	    if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
-		cotaSoRecebeuEdicaoAberta = false;
-		break;
-	    }
-	}
 	return cotaSoRecebeuEdicaoAberta;
     }
 
@@ -169,8 +136,7 @@ public class Cota extends GenericDTO<Cota> {
 	return somaReparteEdicoesAbertas;
     }
 
-    public void setSomaReparteEdicoesAbertas(
-	    BigDecimal somaReparteEdicoesAbertas) {
+    public void setSomaReparteEdicoesAbertas(BigDecimal somaReparteEdicoesAbertas) {
 	this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
     }
 
@@ -222,23 +188,9 @@ public class Cota extends GenericDTO<Cota> {
 	this.mix = mix;
     }
 
-	public BigDecimal getReparteJuramentadoAFaturar() {
-		return reparteJuramentadoAFaturar;
-		
-	}
+    public BigDecimal getReparteJuramentadoAFaturar() {
+	return reparteJuramentadoAFaturar;
 
-	public void setVendaEdicaoMaisRecenteFechada(
-	    BigDecimal vendaEdicaoMaisRecenteFechada) {
-	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
-    }
-
-    public List<EstoqueProdutoCota> getEstoqueProdutoCotas() {
-	return estoqueProdutoCotas;
-    }
-
-    public void setEstoqueProdutoCotas(
-	    List<EstoqueProdutoCota> estoqueProdutoCotas) {
-	this.estoqueProdutoCotas = estoqueProdutoCotas;
     }
 
     /**
@@ -280,7 +232,5 @@ public class Cota extends GenericDTO<Cota> {
 	public void setReparteFinalCota(BigDecimal reparteFinalCota) {
 		this.reparteFinalCota = reparteFinalCota;
 	}
-	
-	
-	
+
 }

@@ -1,8 +1,10 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
-import br.com.abril.nds.model.EstoqueProdutoCota;
+import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -12,12 +14,13 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * <p style="white-space: pre-wrap;">
  * SubProcessos: - N/A Processo Pai: - {@link CorrecaoVendas}
  * 
- * Processo Anterior: N/A Próximo Processo: {@link CorrecaoTendencia} </p>
+ * Processo Anterior: N/A Próximo Processo: {@link CorrecaoTendencia}
+ * </p>
  */
 public class CorrecaoIndividual extends ProcessoAbstrato {
 
-    public CorrecaoIndividual(EstoqueProdutoCota estoqueProdutoCota) {
-	super(estoqueProdutoCota);
+    public CorrecaoIndividual(ProdutoEdicao produtoEdicao) {
+	super(produtoEdicao);
     }
 
     /**
@@ -36,58 +39,24 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() throws Exception {
 
-	EstoqueProdutoCota estoqueProdutoCota = (EstoqueProdutoCota) super.genericDTO;
+	ProdutoEdicao produtoEdicao = (ProdutoEdicao) super.genericDTO;
 
 	BigDecimal indiceCorrecao = BigDecimal.ONE;
 
-	// BigDecimal totalReparte = BigDecimal.ZERO;
-	// BigDecimal totalVenda = BigDecimal.ZERO;
+	if(produtoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1 ) {
+	    BigDecimal percentualVenda = produtoEdicao.getVenda().divide(produtoEdicao.getReparte(), 1, BigDecimal.ROUND_FLOOR);
 
-	BigDecimal quantidadeRecebida = estoqueProdutoCota
-		.getQuantidadeRecebida();
-	BigDecimal quantidadeDevolvida = estoqueProdutoCota
-		.getQuantidadeDevolvida();
-
-	// totalReparte = totalReparte.add(quantidadeRecebida);
-
-	BigDecimal vendaEdicao = quantidadeRecebida
-		.subtract(quantidadeDevolvida);
-
-	// totalVenda = totalVenda.add(new BigDecimal(vendaEdicao));
-
-	if (vendaEdicao.compareTo(BigDecimal.ZERO) != 0) {
-
-	    BigDecimal percentualVenda = vendaEdicao.divide(quantidadeRecebida,
-		    1, BigDecimal.ROUND_FLOOR);
-
-	    BigDecimal oneCompare = BigDecimal.ONE;
-	    oneCompare = oneCompare.divide(new BigDecimal(1), 1,
-		    BigDecimal.ROUND_FLOOR);
-
-	    if (percentualVenda.compareTo(oneCompare) == 0) {
+	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
 		indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.2));
-	    } else {
-
-		BigDecimal decimalCompare = new BigDecimal(0.9);
-		decimalCompare = decimalCompare.divide(new BigDecimal(1), 1,
-			BigDecimal.ROUND_FLOOR);
-
-		if (percentualVenda.compareTo(decimalCompare) >= 0) {
+	    } else if (percentualVenda.compareTo(new BigDecimal(0.9)) >= 0) {
 		    indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.1));
-		}
 	    }
 	}
-
-	indiceCorrecao = indiceCorrecao.divide(new BigDecimal(1), 1,
-		BigDecimal.ROUND_FLOOR);
-
-	estoqueProdutoCota.setIndiceCorrecao(indiceCorrecao);
-
-	BigDecimal vendaCorrigida = vendaEdicao.multiply(indiceCorrecao);
-	//TODO Gravar VendaCorrig para cada edição-base de cada cota.
-	//Verificar aonde será essa gravação e se é um insert ou update
 	
-	super.genericDTO = estoqueProdutoCota;
+	MathContext mathContext = new MathContext(1,RoundingMode.HALF_UP);
+	produtoEdicao.setIndiceCorrecao(indiceCorrecao.round(mathContext));
+
+	produtoEdicao.setVendaCorrigida(produtoEdicao.getVenda().multiply(indiceCorrecao));
     }
 
 }
