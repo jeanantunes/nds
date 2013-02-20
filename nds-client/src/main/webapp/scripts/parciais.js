@@ -108,6 +108,7 @@ var ParciaisController = $.extend(true, {
 		$.postJSON(contextPath + "/parciais/inserirPeriodos",
 				this.getDadosNovosPeriodo(),
 				function(result){
+					$( "#dialog-novo",this.workspace).dialog( "close" );
 					if(modal)
 						$(".parciaisPopGrid",this.workspace).flexReload();
 					else
@@ -220,7 +221,7 @@ var ParciaisController = $.extend(true, {
 		
 		data.push({name:'codigoProduto',		value: this.codigoProduto});
 		data.push({name:'edicaoProduto',		value: this.numEdicao});
-		
+		data.push({name:'periodos',				value: this.get("qtde")});
 		return data;
 	},
 	
@@ -235,10 +236,10 @@ var ParciaisController = $.extend(true, {
 		return data;
 	},
 	
-	carregaPeb : function() {
+	carregaPeb : function(periodos) {
 		
+		this.set('qtde',periodos);
 		this.set('peb','');
-		this.set('qtde','');
 		
 		$.postJSON(contextPath + "/parciais/obterPebDoProduto",
 				this.getDadosParaPeb(),
@@ -450,7 +451,7 @@ var ParciaisController = $.extend(true, {
 
 	popup : function(modal) {
 		
-			ParciaisController.carregaPeb();
+			ParciaisController.carregaPeb(null);
 		
 			$( "#dialog-novo",this.workspace).dialog({
 				resizable: false,
@@ -464,7 +465,6 @@ var ParciaisController = $.extend(true, {
 					           text:"Confirmar", 
 					           click: function() {
 					        	   	ParciaisController.inserirPeriodos(modal);								
-									$( this ).dialog( "close" );
 					           }
 				           },
 				           {

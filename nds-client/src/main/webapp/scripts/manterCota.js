@@ -920,7 +920,19 @@ var COTA_DESCONTO = $.extend(true,
                 params: [{name:'idCota', value:MANTER_COTA.idCota},
                     {name:'modoTela', value:MANTER_COTA.modoTela.value},
                     {name:'idHistorico', value:MANTER_COTA.idHistorico}] ,
-                newp: 1
+                newp: 1,
+                preProcess:function(result) {
+                	debugger;
+                	 $.each(result.rows, function(index, value) {
+                		 
+                		 if(value.cell.qtdeProxLcmt != null) value.cell.numeroEdicao = 'por ' + value.cell.qtdeProxLcmt + ' edição(ões)';
+                		 
+                		 if(!value.cell.numeroEdicao)
+                			 value.cell.numeroEdicao='*';
+                	 });
+                	 
+                	return result;
+                }
             });
 
             $(".descProdutosGrid", this.workspace).flexReload();
@@ -1965,4 +1977,4 @@ function GridAntigosProprietarios(element, workspace) {
     };
 }
 
-//@ sourceURL=scriptManterCota.js
+//@ sourceURL=manterCota.js
