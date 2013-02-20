@@ -52,6 +52,10 @@ public class CotaBaseDTO extends FiltroDTO implements Serializable {
 	private Date dtInicio;
 	private Date dtFinal;
 	
+	private String equivalente01 = "";
+	private String equivalente02 = "";
+	private String equivalente03 = "";
+	
 	
 	public Long getIdCota() {
 		return idCota;
@@ -197,6 +201,24 @@ public class CotaBaseDTO extends FiltroDTO implements Serializable {
 	}
 	public void setDtFinalFormatado(String dtFinalFormatado) {
 		this.dtFinalFormatado = dtFinalFormatado;
+	}
+	public String getEquivalente01() {
+		return equivalente01;
+	}
+	public void setEquivalente01(String equivalente01) {
+		this.equivalente01 = equivalente01;
+	}
+	public String getEquivalente02() {
+		return equivalente02;
+	}
+	public void setEquivalente02(String equivalente02) {
+		this.equivalente02 = equivalente02;
+	}
+	public String getEquivalente03() {
+		return equivalente03;
+	}
+	public void setEquivalente03(String equivalente03) {		
+		this.equivalente03 = equivalente03;
 	}
 	
 }

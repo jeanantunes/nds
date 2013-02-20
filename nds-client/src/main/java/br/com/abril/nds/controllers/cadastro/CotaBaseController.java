@@ -16,6 +16,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.CotaBaseHistoricoDTO;
+import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -29,6 +30,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaBaseCotaService;
 import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.SegmentoNaoRecebidoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -61,7 +63,10 @@ public class CotaBaseController extends BaseController {
 	private Result result;
 	
 	@Autowired
-	private CotaBaseCotaService cotaBaseCotaService; 
+	private CotaBaseCotaService cotaBaseCotaService;
+	
+	@Autowired
+	private SegmentoNaoRecebidoService segmentoNaoRecebidoService;
 	
 	@Autowired
 	private HttpSession session;
@@ -133,7 +138,12 @@ public class CotaBaseController extends BaseController {
 	@Path("/pesquisarCotasBase")
 	public void pesquisarCotasBase(Integer numeroCota){
 		
+		if(numeroCota == null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"O Filtro deve ser preenchido.");
+		}
+		
 		List<CotaBaseDTO> listaCotaBase = obterListaDeCotasBase(numeroCota, null);
+		
 		
 		int qtdeInicialPadrao = 3;
 		
@@ -166,7 +176,7 @@ public class CotaBaseController extends BaseController {
 		
 		tratarPaginacao(dto);
 		
-		List<CotaBaseDTO> listaCotaBase = obterListaDeCotasBase(numeroCota, dto);
+		List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterListaCotaPesquisaGeral(dto);
 		
 		if(listaCotaBase.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
@@ -306,6 +316,8 @@ public class CotaBaseController extends BaseController {
 		
 	}
 	
+	
+
 	@Post
 	@Path("/obterCotasDoHistorico")
 	public void obterCotasDoHistorico(Integer numeroCota, String sortorder, String sortname, int page, int rp){
@@ -316,7 +328,12 @@ public class CotaBaseController extends BaseController {
 		
 		tratarPaginacaoHistorico(dto);
 		
-		List<CotaBaseHistoricoDTO> listaDeHistorico = this.cotaBaseService.obterCotasHistorico(this.cotaBaseService.obterCotaNova(numeroCota),  dto);
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota);
+		
+		if(cotaBase == null){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Essa cota ainda não possui histórico");
+		}
+		List<CotaBaseHistoricoDTO> listaDeHistorico = this.cotaBaseService.obterCotasHistorico(cotaBase,  dto);			
 		
 		if(listaDeHistorico.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
@@ -330,6 +347,68 @@ public class CotaBaseController extends BaseController {
 		tableModel.setPage(dto.getPaginacao().getPaginaAtual());
 
 		tableModel.setTotal(dto.getPaginacao().getQtdResultadosTotal());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("/segmentosRecebidos")
+	public void segmentosRecebidos(Long idCota){
+		
+		List<SegmentoNaoRecebeCotaDTO> listaSegmentosNaoRecebidos = this.segmentoNaoRecebidoService.
+				obterSegmentosNaoRecebidosCadastradosNaCota(this.cotaService.obterPorId(idCota));		
+		
+		if(listaSegmentosNaoRecebidos.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
+		}
+		
+		TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>> tableModel =
+				new TableModel<CellModelKeyValue<SegmentoNaoRecebeCotaDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaSegmentosNaoRecebidos));
+		
+		tableModel.setPage(1);
+
+		tableModel.setTotal(listaSegmentosNaoRecebidos.size());
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	@Post
+	@Path("/obterTelaDetalhes")
+	public void obterTelaDetalhes(Integer numeroCota){
+		
+		List<CotaBaseDTO> listaDetalheCota = this.cotaBaseService.obterListaTelaDetalhe(this.cotaBaseService.obterCotaNova(numeroCota));
+		
+		List<CotaBaseDTO> listaAuxiliar = new ArrayList<CotaBaseDTO>();
+		CotaBaseDTO dtoParaVisao = new CotaBaseDTO();
+		
+		int cont = 0;
+		for(CotaBaseDTO dto : listaDetalheCota){
+			Double indice = Double.parseDouble(dto.getIndiceAjuste().replace(',', '.') );
+			if(cont == 0){
+				dtoParaVisao.setEquivalente01(dto.getNumeroCota() + " - " + dto.getNomeCota());			
+			}else if(cont == 1){
+				dtoParaVisao.setEquivalente02(dto.getNumeroCota() + " - " + dto.getNomeCota());
+			}else if(cont == 2){
+				dtoParaVisao.setEquivalente03(dto.getNumeroCota() + " - " + dto.getNomeCota());
+			}
+			cont++;
+			dtoParaVisao.setIndiceAjuste(new BigDecimal(indice));
+		}
+		
+		listaAuxiliar.add(dtoParaVisao);
+		
+		TableModel<CellModelKeyValue<CotaBaseDTO>> tableModel =
+				new TableModel<CellModelKeyValue<CotaBaseDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaAuxiliar));
+		
+		tableModel.setPage(1);
+
+		tableModel.setTotal(listaAuxiliar.size());
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		

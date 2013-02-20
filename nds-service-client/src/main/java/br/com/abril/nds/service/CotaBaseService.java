@@ -22,5 +22,9 @@ public interface CotaBaseService {
 	void atualizar(CotaBase cotaBaseJaSalva);
 
 	List<CotaBaseHistoricoDTO> obterCotasHistorico(CotaBase cotaBase, CotaBaseDTO dto);
+	
+	List<CotaBaseDTO>  obterListaCotaPesquisaGeral(CotaBaseDTO dto);
+
+	List<CotaBaseDTO> obterListaTelaDetalhe(CotaBase cotaBase);
 
 }

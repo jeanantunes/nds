@@ -23,6 +23,6 @@ public interface CotaBaseCotaService {
 	 */	
 	void desativarCotaBase(CotaBase cotaBase, Cota cotaParaDesativar);
 
-	Long quantidadesDeCotasAtivas(CotaBase cotaBase);
+	Long quantidadesDeCotasAtivas(CotaBase cotaBase);	
 	
 }

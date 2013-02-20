@@ -13,6 +13,5 @@ public interface CotaBaseCotaRepository extends Repository<CotaBaseCota,Long>{
 	CotaBaseCota desativarCotaBase(CotaBase cotaBase, Cota cotaParaDesativar);
 
 	Long quantidadesDeCotasAtivas(CotaBase cotaBase);
-	 
 
 }

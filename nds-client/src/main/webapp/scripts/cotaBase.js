@@ -3,13 +3,15 @@ var cotaBaseController = $.extend(true, {
 	init : function(){
 		
 		$("#indiceAjuste").mask("9.9");
+		$("#idCota", cotaBaseController.workspace).focus();
 
 		
-		$(".consultaSegmentosGrid").flexigrid({			
+		$(".consultaSegmentosGrid").flexigrid({	
+			preProcess: cotaBaseController.executarPreProcessamentoSegmentos,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Segmento',
-				name : 'segmento',
+				name : 'nomeSegmento',
 				width : 210,
 				sortable : true,
 				align : 'left'
@@ -21,36 +23,30 @@ var cotaBaseController = $.extend(true, {
 	$(".consultaEquivalentesDetalheGrid").flexigrid({			
 			dataType : 'json',
 			colModel : [ {
-				display : 'Ajuste',
-				name : 'ajuste',
+				display : 'Indíce',
+				name : 'indiceAjuste',
 				width : 85,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Equivalente 1',
-				name : 'equiv1',
+				name : 'equivalente01',
 				width : 240,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Equivalente 2',
-				name : 'equiv2',
+				name : 'equivalente02',
 				width : 240,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Equivalente 3',
-				name : 'equiv3',
+				name : 'equivalente03',
 				width : 240,
 				sortable : true,
 				align : 'left'
-			}],
-			sortname : "ajuste",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
+			}],			
 			width : 875,
 			height : 250
 		});
@@ -101,7 +97,7 @@ var cotaBaseController = $.extend(true, {
 				align : 'center'
 			},  {
 				display : 'Ação',
-				name : '',
+				name : 'acao',
 				width : 75,
 				sortable : true,
 				align : 'center'
@@ -269,6 +265,19 @@ var cotaBaseController = $.extend(true, {
 			return resultado;
 		}
 		
+		$.each(resultado.rows, function(index, row) {
+			
+			var linkDetalhe = '<a href="javascript:;" onclick="cotaBaseController.detalhesEquivalente('+row.cell.numeroCota+', '+ "'" +row.cell.nomeCota+ "'"+ ');" style="cursor:pointer">' +
+		   	 					'<img title="Detalhes" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
+		   	 					'</a>';
+			
+			var linkSegmento = '<a href="javascript:;" onclick="cotaBaseController.segmentosNaoRecebidos('+row.cell.idCota+');" style="cursor:pointer">' +
+							   	 '<img title="Segmentos" src="' + contextPath + '/images/ico_distribuicao_bup.gif" hspace="5" border="0px" />' +
+							   '</a>';
+			
+			row.cell.acao = linkDetalhe + linkSegmento;
+		});
+		
 		$(".grids", cotaBaseController.workspace).show();
 		
 		return resultado;
@@ -284,7 +293,7 @@ var cotaBaseController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			
-			$(".grids", cotaBaseController.workspace).hide();
+			$(".historicoGrid", cotaBaseController.workspace).hide();
 
 			return resultado;
 		}
@@ -309,6 +318,25 @@ var cotaBaseController = $.extend(true, {
 		}
 		
 		return cotaBaseController.prepararGridPrincipal(resultado);
+	},
+	
+	executarPreProcessamentoSegmentos : function(resultado){
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			
+			$(".dialog-segmentos", cotaBaseController.workspace).hide();
+
+			return resultado;
+		}
+		
+		$(".grids", cotaBaseController.workspace).show();
+		
+		return resultado;
+		
 	},
 	
 	prepararGridPrincipal : function(resultado){
@@ -416,6 +444,7 @@ var cotaBaseController = $.extend(true, {
 	mostraPesqGeral : function (){
 		
 		if(document.getElementById('isGeral').checked){
+			cotaBaseController.limparDadosDoFiltro(true);
 			$('.pesqGeral').show();
 			$('.pesqNormal').hide();
 		}else{
@@ -481,25 +510,6 @@ var cotaBaseController = $.extend(true, {
 		});
 	},
 	
-	incluirSegmento : function() {
-
-		$( "#dialog-novo" ).dialog({
-			resizable: false,
-			height:500,
-			width:650,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	},		
-
 	cancelarPeso : function() {
 
 		$( "#dialog-cancelar" ).dialog({
@@ -510,7 +520,9 @@ var cotaBaseController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
+					$('.pesqGeralGrid', cotaBaseController.workspace).hide();
+					$('.pesqCotasGrid', cotaBaseController.workspace).hide();
+					$('.historicoGrid', cotaBaseController.workspace).hide();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -706,28 +718,20 @@ var cotaBaseController = $.extend(true, {
 				},
 			}
 		});
-	},
+	},	
 
-	definicaoReparte : function(){
-
-		$( "#dialog-defineReparte" ).dialog({
-			resizable: false,
-			height:590,
-			width:650,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
+	detalhesEquivalente : function(numeroCota, nomeCota) {
+		
+		$("#numeroCotaDetalhe").text(numeroCota);
+		$("#nomeCotaDetalhe").text(nomeCota);
+		
+		$("#consultaEquivalentesDetalheGrid").flexOptions({
+			url: contextPath + "/cadastro/cotaBase/obterTelaDetalhes",
+			dataType : 'json',
+			params: [{name: 'numeroCota' , value: numeroCota}]
 		});
-	},
-
-	detalhesEquivalente : function() {
+		
+		$("#consultaEquivalentesDetalheGrid").flexReload();
 
 		$( "#dialog-detail" ).dialog({
 			resizable: false,
@@ -742,7 +746,15 @@ var cotaBaseController = $.extend(true, {
 		});
 	},
 	
-	segmentosNaoRecebidos : function(){
+	segmentosNaoRecebidos : function(idCota){
+		
+		$("#consultaSegmentosGrid").flexOptions({
+			url: contextPath + "/cadastro/cotaBase/segmentosRecebidos",
+			dataType : 'json',
+			params: [{name: 'idCota' , value: idCota}]
+		});
+		
+		$("#consultaSegmentosGrid").flexReload();
 
 		$( "#dialog-segmentos" ).dialog({
 			resizable: false,
@@ -766,7 +778,7 @@ var cotaBaseController = $.extend(true, {
 		
 		$(idCampoNomeCota, pesquisaCota.workspace).val("");
 		
-		cotaBaseController.limparDadosDoFiltro();
+		cotaBaseController.limparDadosDoFiltro(false);
 		
 		if (numeroCota && numeroCota.length > 0) {
 			
@@ -833,7 +845,12 @@ var cotaBaseController = $.extend(true, {
 		}
 	},
 	
-	limparDadosDoFiltro : function(){
+	limparDadosDoFiltro : function(pesquisaGeral){
+		
+		if(pesquisaGeral){
+			$("#idCota", cotaBaseController.workspace).val("");
+			$("#nomeCota", cotaBaseController.workspace).val("");
+		}
 		
 		$("#tipoPDV", cotaBaseController.workspace).val("");
 		

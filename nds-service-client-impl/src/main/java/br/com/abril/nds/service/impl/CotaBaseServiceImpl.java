@@ -61,4 +61,16 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 		return this.cotaBaseRepository.obterCotasHistorico(cotaBase, dto);
 	}
 
+	@Override
+	@Transactional
+	public List<CotaBaseDTO> obterListaCotaPesquisaGeral(CotaBaseDTO dto){
+		return this.cotaBaseRepository.obterListaCotaPesquisaGeral(dto);
+	}
+
+	@Override
+	@Transactional
+	public List<CotaBaseDTO> obterListaTelaDetalhe(CotaBase cotaBase) {
+		return this.cotaBaseRepository.obterListaTelaDetalhe(cotaBase);
+	}
+
 }

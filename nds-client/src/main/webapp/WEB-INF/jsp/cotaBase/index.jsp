@@ -29,7 +29,7 @@ $(function(){
             <td width="42"><strong>Cota:</strong></td>
             <td width="92">1223</td>
             <td width="44"><strong>Nome:</strong></td>
-            <td width="155">Antonio Jos� da Silva</td>
+            <td width="155">Antonio José da Silva</td>
             <td width="151">&nbsp;</td>
           </tr>
         </table>
@@ -104,28 +104,25 @@ $(function(){
     	<table width="500" border="0" cellspacing="1" cellpadding="1">
           <tr>
             <td width="43"><strong>Cota:</strong></td>
-            <td width="93">2222</td>
+            <td width="93"><div id="numeroCotaDetalhe"></div> </td>
             <td width="45"><strong>Nome:</strong></td>
-            <td width="306">Antonio José da Silva</td>
+            <td width="306"><div id="nomeCotaDetalhe"></div> </td>
           </tr>
         </table>
 
 	</fieldset>
     <br clear="all" />
     <fieldset style="width:880px!important; margin-top:10px;">
-   		<legend>Nome: Banca da Vila</legend>
-    	<table class="consultaEquivalentesDetalheGrid"></table>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-<span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+   		<legend>Nome: <div id="nomeCotaDetalhe"></div></legend>
+    	<table class="consultaEquivalentesDetalheGrid" id="consultaEquivalentesDetalheGrid" ></table>
 	</fieldset>
 
 </div>
 
-<div id="dialog-segmentos" title="Segmentos n�o recebidos" style="display:none;">
+<div id="dialog-segmentos" title="Segmentos não recebidos" style="display:none;">
     <fieldset style="width:250px!important; margin-top:10px;">
    		<legend>Segmentos</legend>
-    	<table class="consultaSegmentosGrid"></table>
+    	<table class="consultaSegmentosGrid" id="consultaSegmentosGrid" ></table>
         
 	</fieldset>
 
@@ -217,23 +214,23 @@ $(function(){
       
         <div class="grids" style="display:block;">
         	<div class="pesqGeralGrid" style="display:none;">
-            <fieldset class="classFieldset">
-                <legend>Cotas Base Cadastradas</legend>
-                <table class="consultaEquivalentesGrid" id="consultaEquivalentesGrid"></table>
-                <!--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_novoEquivalente();"><img src="../images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>-->
-                
-                <span class="bt_novos" title="Gerar Arquivo">
-                	<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=XLS&tipoDeLista=pesquisaGeral">
-                		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
-                </span>
-                
-                <span class="bt_novos" title="Imprimir">
-                	<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=PDF&tipoDeLista=pesquisaGeral">
-                		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
-                </span>
-            
-            </fieldset> 	
-        </div>
+	            <fieldset class="classFieldset">
+	                <legend>Cotas Base Cadastradas</legend>
+	                <table class="consultaEquivalentesGrid" id="consultaEquivalentesGrid"></table>
+	                <!--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="popup_novoEquivalente();"><img src="../images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>-->
+	                
+	                <span class="bt_novos" title="Gerar Arquivo">
+	                	<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=XLS&tipoDeLista=pesquisaGeral">
+	                		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+	                </span>
+	                
+	                <span class="bt_novos" title="Imprimir">
+	                	<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=PDF&tipoDeLista=pesquisaGeral">
+	                		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a>
+	                </span>
+	            
+	            </fieldset> 	
+        	</div>
         <div class="pesqCotasGrid" style="display:none;">
         	<fieldset class="classFieldset">
                 <legend>Cotas Base Cadastradas</legend>
@@ -254,7 +251,7 @@ $(function(){
             </span>
 
 			<span class="bt_novos" title="Cancelar">
-				<a href="javascript:;" onclick="cancelarPeso();">
+				<a href="javascript:;" onclick="cotaBaseController.cancelarPeso();">
 					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />
 					Cancelar
 				</a>
@@ -271,7 +268,7 @@ $(function(){
       </div>
      </div>     
      <div class="linha_separa_fields">&nbsp;</div>
-	     <div class="historicoGrid" style="display:none;">
+	     <div class="historicoGrid" id="historicoGrid" style="display:none;">
 		     <fieldset class="classFieldset">
 		       	  <legend>Cotas Base Cadastradas</legend>
 		        	<div class="grids" style="display:block;">

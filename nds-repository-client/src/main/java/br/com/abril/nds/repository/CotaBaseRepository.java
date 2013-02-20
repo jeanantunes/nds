@@ -20,4 +20,8 @@ public interface CotaBaseRepository extends Repository<CotaBase, Long> {
 
 	List<CotaBaseHistoricoDTO> obterCotasHistorico(CotaBase cotaBase, CotaBaseDTO dto);
 
+	List<CotaBaseDTO> obterListaCotaPesquisaGeral(CotaBaseDTO dto);
+
+	List<CotaBaseDTO> obterListaTelaDetalhe(CotaBase cotaBase);
+
 }
