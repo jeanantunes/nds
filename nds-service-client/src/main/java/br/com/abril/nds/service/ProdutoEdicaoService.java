@@ -150,7 +150,7 @@ public interface ProdutoEdicaoService {
 	 * @param codigoBarras - código de barras
 	 * @return  ProdutoEdicao
 	 */
-	ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras);
+	List<ProdutoEdicao> buscarProdutoPorCodigoBarras(String codigoBarras);
 	
 	/**
 	 * Retorna o DTO produtoEdicao
@@ -160,6 +160,15 @@ public interface ProdutoEdicaoService {
 	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao);
 
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao);
+	
+	/**
+	 * Obtém a porcentagem de desconto de um produto edição, 
+	 * respeitando a regra de prioridade
+	 * 
+	 * @param produtoEdicao
+	 * @return
+	 */
+	public BigDecimal obterPorcentualDesconto(ProdutoEdicao produtoEdicao);
 
 	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(FiltroHistogramaVendas filtro);
 	

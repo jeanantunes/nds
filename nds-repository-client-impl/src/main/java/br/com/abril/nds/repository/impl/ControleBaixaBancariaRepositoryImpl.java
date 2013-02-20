@@ -32,11 +32,11 @@ public class ControleBaixaBancariaRepositoryImpl extends AbstractRepositoryModel
 	}
 	
 	@Override
-	public ControleBaixaBancaria obterControleBaixaBancaria(Date data, Banco banco) {
+	public ControleBaixaBancaria obterControleBaixaBancaria(Date dataPagamento, Banco banco) {
 
 		Criteria criteria = super.getSession().createCriteria(ControleBaixaBancaria.class);
 		
-		criteria.add(Restrictions.eq("data", data));
+		criteria.add(Restrictions.eq("dataPagamento", dataPagamento));
 		criteria.add(Restrictions.eq("banco", banco));
 		
 		criteria.setMaxResults(1);
@@ -46,12 +46,12 @@ public class ControleBaixaBancariaRepositoryImpl extends AbstractRepositoryModel
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ControleBaixaBancaria> obterListaControleBaixaBancaria(Date data,
+	public List<ControleBaixaBancaria> obterListaControleBaixaBancaria(Date dataOperacao,
 																	   StatusControle status) {
 
 		Criteria criteria = super.getSession().createCriteria(ControleBaixaBancaria.class);
 		
-		criteria.add(Restrictions.eq("data", data));
+		criteria.add(Restrictions.eq("dataOperacao", dataOperacao));
 		criteria.add(Restrictions.eq("status", status));
 		
 		return criteria.list();

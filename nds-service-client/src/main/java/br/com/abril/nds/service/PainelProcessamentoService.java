@@ -1,11 +1,14 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.DetalheInterfaceVO;
 import br.com.abril.nds.client.vo.DetalheProcessamentoVO;
 import br.com.abril.nds.dto.InterfaceDTO;
 import br.com.abril.nds.dto.ProcessoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 
 /**
  * Interface que define as regras de acesso a serviços referentes a entidade
@@ -16,9 +19,10 @@ public interface PainelProcessamentoService {
 
 	/**
 	 * Busca as interfaces
+	 * @param filtro 
 	 * @return List<LogExecucao>
 	 */
-	public List<InterfaceDTO> listarInterfaces();
+	public List<InterfaceDTO> listarInterfaces(FiltroInterfacesDTO filtro);
 
 	/**
 	 * Busca os processos
@@ -29,13 +33,14 @@ public interface PainelProcessamentoService {
 	/**
 	 * Retorna a lista de mensagens de processamento de interface
 	 * @param codigoLogExecucao
+	 * @param filtro 
 	 * @param orderBy
 	 * @param ordenacao
 	 * @param initialResult
 	 * @param maxResults
 	 * @return List<LogExecucaoMensagem>
 	 */
-	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(Long codigoLogExecucao);
+	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(Long codigoLogExecucao, FiltroDetalheProcessamentoDTO filtro);
 	
 	/**
 	 * Retorna o estado operacional do sistema, sendo:
@@ -51,5 +56,9 @@ public interface PainelProcessamentoService {
 	 * @return List<DetalheInterfaceVO>
 	 */
 	public List<DetalheInterfaceVO> listarDetalhesInterface(Long codigoLogExecucao);
+
+	public Long listarTotaldetalhesProcessamentoInterface(long parseLong, FiltroDetalheProcessamentoDTO filtro);
+
+	public BigInteger listarTotalInterfaces(FiltroInterfacesDTO filtro);
 	
 }

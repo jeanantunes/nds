@@ -459,4 +459,22 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return (Long) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ChamadaEncalheCota> obterListChamadaEncalheCota(
+			Long chamadaEncalheID, Long cotaID) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cec from ChamadaEncalheCota cec ");
+		hql.append(" where cec.chamadaEncalhe.id = :chamadaEncalheID ");
+		hql.append(" and cec.cota.id = :cotaID ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("chamadaEncalheID", chamadaEncalheID);
+		query.setParameter("cotaID", cotaID);
+		
+		return query.list();
+	}
+
 }

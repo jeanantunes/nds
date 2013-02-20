@@ -392,11 +392,14 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		int sequencia = 0;
 
 		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
+			if(itemNotaEnvio.getItemNotaEnvioPK() == null){
+				itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,
+						++sequencia));
 
-			itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,
-					++sequencia));
+				itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+			}
 
-			itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+			
 		}
 
 		notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
@@ -531,7 +534,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			destinatario.setTelefone(telefone);
 		}
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
-		destinatario.setBoxReferencia(cota.getBox());
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
 		destinatario.setNomeBox(cota.getBox().getNome());
 

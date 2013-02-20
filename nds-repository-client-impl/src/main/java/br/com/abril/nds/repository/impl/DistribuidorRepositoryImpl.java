@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -158,5 +159,13 @@ public class DistribuidorRepositoryImpl extends
 	public Date obterDataOperacaoDistribuidor() {
 		
 		return (Date) this.getSession().createQuery("select dataOperacao from Distribuidor").uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterDescontoCotaNegociacao(){
+		
+		return (BigDecimal) 
+				this.getSession().createQuery(
+						"select descontoCotaNegociacao from Distribuidor").uniqueResult();
 	}
 }

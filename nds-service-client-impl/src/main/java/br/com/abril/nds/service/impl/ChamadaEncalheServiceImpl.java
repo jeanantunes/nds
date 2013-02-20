@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -62,10 +61,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
 		
-		
-		List<CotaEmissaoDTO> chamadasEncalheCota = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
-		
-		return chamadasEncalheCota;
+		return chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
 	}
 
 
@@ -155,10 +151,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		}
 		
 		return lista;
-	}
-
-	private BigDecimal getZeroForNullValue(BigDecimal value) {
-		return (value == null) ? BigDecimal.ZERO : value;
 	}
 
 	@Override

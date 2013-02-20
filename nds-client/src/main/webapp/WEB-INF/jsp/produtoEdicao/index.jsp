@@ -131,7 +131,8 @@ fieldset {
 								<tr>
 									<td>Tipo de Lan&ccedil;amento:</td>
 									<td colspan="3">
-										<select name="tipoLancamento" id="produtoEdicaoController-tipoLancamento" style="width:160px;" >
+										<select name="tipoLancamento" id="produtoEdicaoController-tipoLancamento" style="width:160px;" 
+										onchange="produtoEdicaoController.processarVisualizacaoDataLancamentoParcial(this.value);" >
 											<option value="">Selecione...</option>
 											<option value="LANCAMENTO">Lan&ccedil;amento</option>
 											<option value="PARCIAL">Ed. Parcial</option>

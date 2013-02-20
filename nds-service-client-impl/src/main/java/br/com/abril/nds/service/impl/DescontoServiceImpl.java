@@ -982,7 +982,7 @@ public class DescontoServiceImpl implements DescontoService {
         if(produtoEdicao != null)
         	produtoEdicaoSemDesconto += " / Edição: "+ produtoEdicao.getNumeroEdicao();
         
-        ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Não existe desconto cadastrado para o Prdouto: "+ produtoEdicaoSemDesconto);
+        ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Não existe desconto cadastrado para o Produto: "+ produtoEdicaoSemDesconto);
         if(desconto == null) throw new ValidacaoException(validacaoVO);
         
         return desconto;
@@ -1016,20 +1016,31 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional(readOnly = true)
 	public BigDecimal obterComissaoCota(Integer numeroCota){
-
-		BigDecimal desc = BigDecimal.ZERO;
-
-		FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
-		filtro.setNumeroCota(numeroCota);
-
-		List<TipoDescontoCotaDTO> descontos = this.descontoCotaRepository.obterDescontoCota(filtro);
-
-		for (TipoDescontoCotaDTO dto : descontos){
-
-			desc = desc.add(dto.getDesconto());
+		
+		DescontoCotaProdutoExcessao desconto = 
+				this.descontoProdutoEdicaoExcessaoRepository.buscarDescontoCotaProdutoExcessao(
+				TipoDesconto.ESPECIFICO, null, null, this.cotaRepository.obterPorNumerDaCota(numeroCota) , null, null);
+		
+		if (desconto != null){
+			
+			return desconto.getDesconto().getValor();
+		} else {
+			
+			return this.descontoRepository.obterMediaDescontosFornecedoresCota(numeroCota);
 		}
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal obterComissaoParametroDistribuidor(){
 
-		return desc.compareTo(BigDecimal.ZERO) > 0 ? desc.divide(new BigDecimal(descontos.size())) : BigDecimal.ZERO;
+		return this.distribuidorRepository.obterDescontoCotaNegociacao();
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(
+			Cota cota, String sortorder, String sortname) {		
+		return descontoRepository.obterMergeDescontosEspecificosEGerais(cota, sortorder, sortname);
 	}
 
 }

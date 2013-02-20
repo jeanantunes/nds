@@ -11,7 +11,10 @@ public abstract class NdsiRunner {
 	
 	private static ApplicationContext applicationContext;
 	
-	static {
+	public static String USER_NAME = "ndsiMainUser";
+	
+	//static {
+	private static void carregarConfiguracoes() {
 		ClassPathXmlApplicationContext classPathXmlApplicationContext = 
 				new ClassPathXmlApplicationContext(SPRING_FILE_LOCATION);
 		
@@ -28,12 +31,14 @@ public abstract class NdsiRunner {
 			throw new RuntimeException("Informe o nome da rota a ser executada.");
 		}
 		
-		String username = "ndsiMainUser";
+		String username = USER_NAME;
 		
 		if (args.length > 1) {
 			username = args[1];
 		}
-		
+
+		carregarConfiguracoes();
+
 		getRouteTemplate(args[0]).execute(username);
 	}
 	

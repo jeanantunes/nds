@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -7,14 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ContaCorrenteCotaVO;
 import br.com.abril.nds.dto.ConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaVendaEncalheDTO;
 import br.com.abril.nds.dto.EncalheCotaDTO;
 import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.FornecedorService;
 
@@ -27,15 +33,17 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	@Autowired
 	FornecedorService fornecedorService;
 	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
 	@Transactional(readOnly=true)
-	public List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(FiltroConsolidadoEncalheCotaDTO filtro){		
+	public List<EncalheCotaDTO> obterMovimentoEstoqueCotaEncalhe(FiltroConsolidadoEncalheCotaDTO filtro){
+		
 		return consolidadoFinanceiroRepository.obterMovimentoEstoqueCotaEncalhe(filtro);		
 	}
 	@Transactional(readOnly=true)
-	public List<ConsultaVendaEncalheDTO> obterMovimentoVendaEncalhe(
-			FiltroConsolidadoVendaCotaDTO filtro) {
-		return consolidadoFinanceiroRepository
-				.obterMovimentoVendaEncalhe(filtro);
+	public List<ConsultaVendaEncalheDTO> obterMovimentoVendaEncalhe(FiltroConsolidadoVendaCotaDTO filtro) {
+		return consolidadoFinanceiroRepository.obterMovimentoVendaEncalhe(filtro);
 	}
 	@Override
 	@Transactional(readOnly=true)
@@ -60,5 +68,49 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	@Transactional(readOnly=true)
 	public Date buscarDiaUltimaDividaGerada() {
 		return consolidadoFinanceiroRepository.buscarDiaUltimaDividaGerada();
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<ContaCorrenteCotaVO> obterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro){
+		
+		List<Long> tiposMovimentoCredito = 
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+						Arrays.asList(GrupoMovimentoFinaceiro.CREDITO));
+		
+		List<Long> tiposMovimentoDebito =
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+						Arrays.asList(GrupoMovimentoFinaceiro.DEBITO));
+		
+		List<Long> tipoMovimentoEncalhe = 
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+						Arrays.asList(GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
+		
+		List<Long> tiposMovimentoEncargos =
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+						Arrays.asList(GrupoMovimentoFinaceiro.JUROS, GrupoMovimentoFinaceiro.MULTA));
+		
+		List<Long> tiposMovimentoPostergadoCredito =
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+						Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_CREDITO));
+		
+		List<Long> tiposMovimentoPostergadoDebito = 
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+						Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_DEBITO));
+		
+		List<Long> tipoMovimentoVendaEncalhe = 
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+						Arrays.asList(GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR));
+		
+		return this.consolidadoFinanceiroRepository.obterContaCorrente(filtro, 
+				tiposMovimentoCredito, tiposMovimentoDebito, tipoMovimentoEncalhe, 
+				tiposMovimentoEncargos, tiposMovimentoPostergadoCredito, 
+				tiposMovimentoPostergadoDebito, tipoMovimentoVendaEncalhe);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public BigInteger countObterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro){
+		return this.consolidadoFinanceiroRepository.countObterContaCorrente(filtro);
 	}
 }

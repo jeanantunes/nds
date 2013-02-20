@@ -21,7 +21,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -263,4 +262,19 @@ public class FormaCobranca implements Serializable {
 	public void setFormaCobrancaBoleto(FormaCobrancaBoleto formaCobrancaBoleto) {
 		this.formaCobrancaBoleto = formaCobrancaBoleto;
 	}
+
+	/**
+	 * @return the politicaCobranca
+	 */
+	public PoliticaCobranca getPoliticaCobranca() {
+		return politicaCobranca;
+	}
+
+	/**
+	 * @param politicaCobranca the politicaCobranca to set
+	 */
+	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
+		this.politicaCobranca = politicaCobranca;
+	}
+	
 }

@@ -14,29 +14,32 @@ var negociacaoDividaController = $.extend(true, {
 		    thousandsSeparator: '.'
 		});
 		
-		$('#diaInputQuinzenal1', negociacaoDividaController.workspace).mask("99");
+		$('#diaInputQuinzenal1', negociacaoDividaController.workspace).numeric();
 		
-		$('#diaInputQuinzenal2', negociacaoDividaController.workspace).mask("99");
+		$('#diaInputQuinzenal2', negociacaoDividaController.workspace).numeric();
 		
-		$('#mensalDia', negociacaoDividaController.workspace).mask("99");
+		$('#mensalDia', negociacaoDividaController.workspace).numeric();
+		
+		$("#negociacaoDivida_numCota", negociacaoDividaController.workspace).numeric();
 	},
 
 	pesquisarCota : function(numeroCota) {
-
-		negociacaoDividaController.esconderGridEBotoes();
 		
-		$.postJSON(contextPath + '/cadastro/cota/pesquisarPorNumero',
-				{numeroCota:numeroCota}, 
-				function(result) {
-					$('#negociacaoDivida_statusCota').html(result.status);
-					$('#negociacaoDivida_nomeCota').html(result.nome);
-				},
-				function() {
-					$('#negociacaoDivida_statusCota').html('');
-					$('#negociacaoDivida_nomeCota').html('');
-				}
-				
-		);
+		if (!numeroCota || numeroCota != ''){
+			negociacaoDividaController.esconderGridEBotoes();
+			
+			$.postJSON(contextPath + '/cadastro/cota/pesquisarPorNumero',
+					{numeroCota:numeroCota}, 
+					function(result) {
+						$('#negociacaoDivida_statusCota').html(result.status);
+						$('#negociacaoDivida_nomeCota').html(result.nome);
+					},
+					function() {
+						$('#negociacaoDivida_statusCota').html('');
+						$('#negociacaoDivida_nomeCota').html('');
+					}
+			);
+		}
 	},
 	
 	esconderGridEBotoes : function() {
@@ -97,14 +100,16 @@ var negociacaoDividaController = $.extend(true, {
 	utilizarAlterado : function() {
 		
 		var perc = priceToFloat( $('#comissaoUtilizar').val());
-		
-		
-		
 		var atual = priceToFloat( $('#comissaoAtualCota').val());
+		
+		if (parseFloat(perc) >= parseFloat(atual)){
+			perc = atual - 1;
+			$('#comissaoUtilizar').val(replaceAll(perc.toFixed(2), ".", ","));
+		}
 		
 		var vlrFinal = atual - perc;
 		
-		$('#comissaoComSaldo').val( replaceAll(  vlrFinal.toFixed(2) , ".", ","));
+		$('#comissaoComSaldo').val(replaceAll(vlrFinal.toFixed(2), ".", ","));
 	},
 	
 	montaColunaDetalhesAcao : function(data) {
@@ -149,13 +154,21 @@ var negociacaoDividaController = $.extend(true, {
 	
 	calcularParcelasQuinzenal : function() {
 		
-		var quinzenalDia1 = $('#diaInputQuinzenal1', negociacaoDividaController.workspace).val();
+		var quinzenalDia1 = parseInt($('#diaInputQuinzenal1', negociacaoDividaController.workspace).val());
 		
-		var quinzenalDia2 = $('#diaInputQuinzenal2', negociacaoDividaController.workspace).val();
-		
-		if ($.trim(quinzenalDia1) && $.trim(quinzenalDia2)) {
+		if (quinzenalDia1){
+			if (quinzenalDia1 > 17){
+				
+				$('#diaInputQuinzenal1', negociacaoDividaController.workspace).val("17");
+				$('#diaInputQuinzenal2', negociacaoDividaController.workspace).val("31");
+			} else {
+				
+				$('#diaInputQuinzenal2', negociacaoDividaController.workspace).val(quinzenalDia1 + 14);
+			}
 			
 			negociacaoDividaController.calcularParcelas();
+			
+			$('#mensalDia', negociacaoDividaController.workspace).val("");
 		}
 	},
 	
@@ -165,7 +178,15 @@ var negociacaoDividaController = $.extend(true, {
 		
 		if ($.trim(mensalDia)) {
 			
+			if (parseInt(mensalDia) > 31){
+				
+				 $('#mensalDia', negociacaoDividaController.workspace).val("31");
+			}
+			
 			negociacaoDividaController.calcularParcelas();
+			
+			$('#diaInputQuinzenal1', negociacaoDividaController.workspace).val("");
+			$('#diaInputQuinzenal2', negociacaoDividaController.workspace).val("");
 		}
 	},
 	
@@ -273,7 +294,7 @@ var negociacaoDividaController = $.extend(true, {
 	popup_formaPgto : function() {
 
 		if ($("#totalSelecionado", this.workspace).html() == "0,00") {
-			exibirMensagem("WARNING", ["Não foram selecionadas dívidas para negociação."], "")
+			exibirMensagem("WARNING", ["Não foram selecionadas dívidas para negociação."], "");
 			return;
 		}
 
@@ -287,7 +308,19 @@ var negociacaoDividaController = $.extend(true, {
 			null, 
 			function(result) {
 			
-				$("#comissaoAtualCota",negociacaoDividaController.workspace).val(floatToPrice(result));
+				if (isNaN(result[0])){
+					
+					$("#comissaoAtualCota",negociacaoDividaController.workspace).val("");
+					$("#negociacaoPorComissao",negociacaoDividaController.workspace).attr("disabled", true);
+				} else {
+					
+					$("#comissaoAtualCota",negociacaoDividaController.workspace).val(floatToPrice(result[1]));
+					$("#comissaoUtilizar",negociacaoDividaController.workspace).val(floatToPrice(result[0]));
+					
+					$("#negociacaoPorComissao",negociacaoDividaController.workspace).attr("disabled", false);
+					
+					negociacaoDividaController.utilizarAlterado();
+				}
 				
 				$('#formaPgto_numEnomeCota',negociacaoDividaController.workspace).html('<strong>Cota:</strong> ' + $('#negociacaoDivida_numCota',negociacaoDividaController.workspace).val() +' - <strong>Nome: </strong>'+ $('#negociacaoDivida_nomeCota').html()+' - <strong>Status: </strong>'+ $('#negociacaoDivida_statusCota').html());
 				$('#dividaSelecionada',negociacaoDividaController.workspace).html($('#totalSelecionado',negociacaoDividaController.workspace).html());
@@ -345,7 +378,9 @@ var negociacaoDividaController = $.extend(true, {
               },
               {
             	  name: "diaInicio",
-            	  value: $("#diaInputQuinzenal1", negociacaoDividaController.workspace).val()
+            	  value: $("#diaInputQuinzenal1", negociacaoDividaController.workspace).val() == "" ?
+            			  $("#mensalDia", negociacaoDividaController.workspace).val() : 
+            				   $("#diaInputQuinzenal1", negociacaoDividaController.workspace).val()
               },
               {
             	  name: "diaFim",
@@ -450,9 +485,18 @@ var negociacaoDividaController = $.extend(true, {
 	            }
 	            
 	            if(result.tipoMensagem=='SUCCESS') {
-	            	$('span[name$="botoes"]').show();
+	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).show();
+	            	
+	            	if (!$("#negociacaoPorComissao", negociacaoDividaController.workspace).is(":checked") &&
+	            			$("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked")){
+	            		
+	            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
+	            	}
+	            	
 	            } else {
-	            	$('span[name$="botoes"]').hide();
+	            	
+	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).hide();
+	            	$("#botaoImprimirBoleto", negociacaoDividaController.workspace).hide();
 	            }
 			}
 		

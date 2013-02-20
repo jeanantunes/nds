@@ -123,8 +123,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
 		fechamentoCEIntegracaoVO.setSemanaFechada(this.verificarStatusSemana(filtro));
 
-		// TODO: TOTAIS AQUI
-		
 		return fechamentoCEIntegracaoVO;
 	}
 

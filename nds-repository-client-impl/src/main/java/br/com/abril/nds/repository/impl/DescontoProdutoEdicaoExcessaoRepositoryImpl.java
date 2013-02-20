@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -48,38 +49,92 @@ public class DescontoProdutoEdicaoExcessaoRepositoryImpl extends AbstractReposit
 															 Fornecedor fornecedor,
 															 Cota cota, Produto produto, ProdutoEdicao produtoEdicao) {
 		
-		Criteria criteria = getSession().createCriteria(DescontoCotaProdutoExcessao.class);
-
-		if (fornecedor != null) {
+		boolean indWhere = false;
+		StringBuilder hql = new StringBuilder("select d ");
+		hql.append(" from DescontoCotaProdutoExcessao d ");
 		
-			criteria.add(Restrictions.eq("fornecedor", fornecedor));
+		if (fornecedor != null) {
 			
+			hql.append(" where d.fornecedor = :fornecedor ");
+			indWhere = true;
 		}
 
 		if (cota != null) {
-		
-			criteria.add(Restrictions.eq("cota", cota));
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" d.cota = :cota ");
+			indWhere = true;
 		}
 
 		if (produtoEdicao != null) {
-		
-			criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" d.produtoEdicao = :produtoEdicao ");
+			indWhere = true;
+		} else {
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" d.produtoEdicao is null ");
+			indWhere = true;
+			
 		}
+	
+		if (produto != null) {
+			
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" d.produto = :produto ");
+			indWhere = true;
+		}		
 		
 		if (tipoDesconto != null) {
 			
-			criteria.add(Restrictions.eq("tipoDesconto", tipoDesconto));
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" d.tipoDesconto = :tipoDesconto ");
+			indWhere = true;
 		}
 		
 		if (desconto != null) {
 			
-			criteria.add(Restrictions.eq("desconto", desconto));
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" d.desconto = :desconto ");
+			indWhere = true;
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (fornecedor != null) {
+			
+			query.setParameter("fornecedor", fornecedor);
 		}
 
+		if (cota != null) {
+			
+			query.setParameter("cota", cota);
+		}
+
+		if (produtoEdicao != null) {
+			
+			query.setParameter("produtoEdicao", produtoEdicao);
+		}
 		
-		criteria.setMaxResults(1);
+		if (tipoDesconto != null) {
+			
+			query.setParameter("tipoDesconto", tipoDesconto);
+		}
 		
-		return (DescontoCotaProdutoExcessao) criteria.uniqueResult();
+		if (desconto != null) {
+			
+			query.setParameter("desconto", desconto);
+		}
+		
+		if (produto != null) {
+			
+			query.setParameter("produto", produto);
+		}
+		
+		query.setMaxResults(1);
+		
+		return (DescontoCotaProdutoExcessao) query.uniqueResult();
 	}
 	
 	/**
