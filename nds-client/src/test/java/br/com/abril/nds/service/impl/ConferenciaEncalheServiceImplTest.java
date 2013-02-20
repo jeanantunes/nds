@@ -1,11 +1,6 @@
 package br.com.abril.nds.service.impl;
 
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.any;
-
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -19,7 +14,6 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -178,7 +172,8 @@ public class ConferenciaEncalheServiceImplTest {
 		
 		byte[] relatorioBytes = this.conferenciaEncalheServiceImpl.gerarSlip(1L, false);
 		
-		File relatorioSlip = new File(ondeGerarSlip + "relatorioSlip.pdf");
+		//File relatorioSlip = new File(ondeGerarSlip + "relatorioSlip.pdf");
+		File relatorioSlip = new File(ondeGerarSlip + "relatorioSlip.txt");
 		
 		System.out.println(ondeGerarSlip);
 		

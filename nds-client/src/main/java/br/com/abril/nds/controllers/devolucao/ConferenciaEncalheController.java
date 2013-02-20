@@ -55,6 +55,7 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.PDFUtil;
+import br.com.abril.nds.util.TXTUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -864,9 +865,8 @@ public class ConferenciaEncalheController extends BaseController {
 				
 			} 
 
-			
-			
-			byte[] retorno = PDFUtil.mergePDFs(arquivos);
+			//byte[] retorno = PDFUtil.mergePDFs(arquivos);
+			byte[] retorno = TXTUtil.mergeTXTs(arquivos);
 			
 			this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, retorno);
 			
@@ -1060,9 +1060,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
 		
-		this.httpResponse.setContentType("application/pdf");
+		this.httpResponse.setContentType("application/txt");
 		
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".pdf");
+		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".txt");
 
 		OutputStream output = this.httpResponse.getOutputStream();
 		
@@ -1071,6 +1071,8 @@ public class ConferenciaEncalheController extends BaseController {
 		httpResponse.getOutputStream().close();
 		
 		result.use(Results.nothing());
+		
+		//result.use(Results.json()).from(new String(arquivo), "resultado");
 		
 	}
 
