@@ -226,9 +226,13 @@ var cotaAusenteController = $.extend(true, {
 		
 		cotaAusenteController.numCotasAusente = cotas;
 		
+		var dataPesquisa = $('#idData', cotaAusenteController.workspace).attr('value');
+		
 		var parametros = [];
 		
-		$.each(cotas, function(index, num) {			
+		parametros.push({name:'dataPesquisa', value: dataPesquisa});
+		
+		$.each(cotas, function(index, num) {	
 			parametros.push({name:'numCotas['+ index +']', value: num});
 	  	});
 		
@@ -734,8 +738,10 @@ var cotaAusenteController = $.extend(true, {
 			
 		cotaAusenteController.gerarMovimentos(movimentos);
 		
-		var parametros = [];
+		var dataPesquisa = $('#idData', cotaAusenteController.workspace).attr('value');
 		
+		var parametros = [];
+	
 		$.each(cotaAusenteController.numCotasAusente, function(index, num) {			
 			parametros.push({name:'numCotas['+ index +']', value: num});
 	  	});
@@ -747,6 +753,9 @@ var cotaAusenteController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Suplementar": function() {
+					
+					parametros.push({name:'dataPesquisa', value: dataPesquisa});
+					
 					$.postJSON(contextPath + "/cotaAusente/enviarParaSuplementar", 
 							parametros, 
 							function(result){
@@ -775,6 +784,8 @@ var cotaAusenteController = $.extend(true, {
 					if(!parametros) {
 						return;
 					}
+					
+					parametros.push({name:'dataPesquisa', value: dataPesquisa});
 					
 					$.postJSON(contextPath + "/cotaAusente/realizarRateio", 
 							parametros,

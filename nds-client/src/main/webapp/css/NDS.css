@@ -622,8 +622,8 @@ input[type='text'], input[type='password'], textarea {
 #effectError, #effectWarning {
 	line-height:30px; 
 	position:absolute; 
-	left:35%; 
-	right:35%; 
+	left:30%; 
+	right:30%; 
 	top:35%;
 	min-width:320px;
 	max-width:560px;

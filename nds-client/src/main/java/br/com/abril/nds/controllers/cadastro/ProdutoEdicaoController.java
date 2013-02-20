@@ -6,8 +6,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,7 +28,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
@@ -239,7 +236,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		dto.setId(idProdutoEdicao);
 		dto.setNomeComercialProduto(nomeComercialProduto);
-		dto.setPeb(peb);
+		dto.setPeb( (peb == null)?0:peb);
 		dto.setCaracteristicaProduto(descricaoProduto);
 		dto.setNumeroEdicao(numeroEdicao);
 		dto.setCodigoProduto(codigoProdutoEdicao);

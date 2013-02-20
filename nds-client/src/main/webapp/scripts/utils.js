@@ -47,11 +47,13 @@ function exibirMensagem(tipoMensagem, mensagens) {
 						   divWarning, textWarning,
 						   divError, textError, false);
 	
-	shortcut.add("ESC", function(){
+	
+	$(document.body).bind('keydown.hideMessages', jwerty.event('ESC',
+	function(){
 		esconde(false,divSuccess);
 		esconde(false,divWarning);
 		esconde(false,divError);
-	});
+	}));
 
 }
 

@@ -534,7 +534,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			destinatario.setTelefone(telefone);
 		}
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
-		destinatario.setBoxReferencia(cota.getBox());
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
 		destinatario.setNomeBox(cota.getBox().getNome());
 

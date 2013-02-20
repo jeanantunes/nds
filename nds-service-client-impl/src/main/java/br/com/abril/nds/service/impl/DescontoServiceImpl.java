@@ -982,7 +982,7 @@ public class DescontoServiceImpl implements DescontoService {
         if(produtoEdicao != null)
         	produtoEdicaoSemDesconto += " / Edição: "+ produtoEdicao.getNumeroEdicao();
         
-        ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Não existe desconto cadastrado para o Prdouto: "+ produtoEdicaoSemDesconto);
+        ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Não existe desconto cadastrado para o Produto: "+ produtoEdicaoSemDesconto);
         if(desconto == null) throw new ValidacaoException(validacaoVO);
         
         return desconto;
@@ -1036,4 +1036,11 @@ public class DescontoServiceImpl implements DescontoService {
 
 		return this.distribuidorRepository.obterDescontoCotaNegociacao();
 	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(
+			Cota cota, String sortorder, String sortname) {		
+		return descontoRepository.obterMergeDescontosEspecificosEGerais(cota, sortorder, sortname);
+	}
+
 }
