@@ -2,10 +2,12 @@ package br.com.abril.nds.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.ProdutoEdicao;
 
 public class CotaDAO {
 
@@ -84,4 +86,106 @@ public class CotaDAO {
 	}
 	return cota;
     }
+
+    public List<Cota> getCotasComEdicoesBase(List<ProdutoEdicao> edicoesBase) {
+	List<Cota> returnListCota = new ArrayList<>();
+	try {
+	    List<Long> idsList = new ArrayList<Long>();
+	    for (ProdutoEdicao edicao : edicoesBase) {
+		idsList.add(edicao.getId());
+	    }
+	    String idsString = idsList.toString().replaceAll("\\]|\\[","");
+	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_PRODUTO_EDICAO_POR_COTA.replaceAll("\\?", idsString));
+	    ResultSet rs = ps.executeQuery();
+	    
+	    long prevIdCota = 0;
+	    while (rs.next()) {
+		long idCota = rs.getLong("COTA_ID");
+		
+		if(prevIdCota != idCota) {
+		    Cota cota = new Cota();
+		    cota.setId(idCota);
+		    cota.setEdicoesRecebidas(getEdicoes(rs));
+		    returnListCota.add(cota);
+		} else {
+		    Cota cota = returnListCota.get(returnListCota.size()-1);
+		    cota.getEdicoesRecebidas().addAll(getEdicoes(rs));
+		}
+		prevIdCota = idCota;
+	    }
+	    
+	} catch (ClassNotFoundException | SQLException e) {
+	    e.printStackTrace();
+	}
+	return returnListCota;
+    }
+    
+    private List<ProdutoEdicao> getEdicoes(ResultSet rs) throws SQLException {
+	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
+	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+	
+	produtoEdicao.setIdProduto(rs.getLong("PRODUTO_ID"));
+	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
+	produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
+	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
+	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
+	produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
+	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
+	produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
+	produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
+	produtoEdicao.setPacotePadrao(rs.getInt("PACOTE_PADRAO"));
+	
+	//dados do sistema legado
+//	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+//	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
+
+	edicoes.add(produtoEdicao);
+	return edicoes;
+    }
+    
+    private boolean traduzStatus(String status) {
+	if(status != null && !status.equalsIgnoreCase(STATUS_FECHADO)) {
+	    return true;
+	}
+	return false;
+    }
+    
+    private boolean traduzColecionavel(String grupoProduto) {
+	if(grupoProduto != null && grupoProduto.equalsIgnoreCase(PRODUTO_COLECIONAVEL)) {
+	    return true;
+	}
+	return false;
+    }
+    
+    private static final String LANCAMENTO_PARCIAL = "PARCIAL";
+    private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
+    private static final String STATUS_FECHADO = "FECHADO";
+
+    private static final String SQL_PRODUTO_EDICAO_POR_COTA = " select " 
+	    + " c.id as COTA_ID "
+	    + " ,p.id as PRODUTO_ID "
+	    + " ,pe.id as PRODUTO_EDICAO_ID "
+	    + " ,l.id as LANCAMENTO_ID "
+	    + " ,l.STATUS " // -- edicao aberta 
+	    + " ,l.TIPO_LANCAMENTO " // -- se parcial 
+	    + " ,tp.GRUPO_PRODUTO " // -- se colecionavel
+	    + " ,l.DATA_LCTO_DISTRIBUIDOR "
+	    + " ,epc.QTDE_RECEBIDA "
+	    + " ,(epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) as QTDE_VENDA "
+	    + " ,pe.PACOTE_PADRAO "
+	+ " from "
+	    + " produto_edicao pe "
+	    + " ,produto p "
+	    + " ,lancamento l "
+	    + " ,tipo_produto tp "
+	    + " ,cota c "
+	    + " ,estoque_produto_cota epc "
+	+ " where "
+	    + " pe.id in (?) "
+            + " and pe.PRODUTO_ID = p.id "
+            + " and pe.ID = l.PRODUTO_EDICAO_ID "
+            + " and tp.ID = p.TIPO_PRODUTO_ID "
+            + " and pe.ID = epc.PRODUTO_EDICAO_ID "
+            + " and c.ID = epc.COTA_ID "
+	+ " order by c.ID ";
 }

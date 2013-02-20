@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.verificartotalfixacoes;
 
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
 import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
@@ -17,9 +18,13 @@ import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
  */
 public class VerificarTotalFixacoes extends ProcessoAbstrato {
 
+    public VerificarTotalFixacoes(Estudo estudo) {
+	super(estudo);
+    }
+    
     @Override
     protected void executarProcesso() throws Exception {
-	SelecaoBancas selecaoBancas = new SelecaoBancas();
+	SelecaoBancas selecaoBancas = new SelecaoBancas(super.getEstudo());
 	selecaoBancas.executar();
     }
 
