@@ -42,7 +42,7 @@ public class PreparaEstudoService {
 
     private List<LocalDate> getDatasPeriodoVeraneio(ProdutoEdicao edicao) {
 	List<LocalDate> periodoVeraneio = new ArrayList<>();
-	return null;
+	return periodoVeraneio;
     }
    
 }
