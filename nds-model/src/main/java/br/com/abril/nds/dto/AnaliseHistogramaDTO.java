@@ -53,7 +53,7 @@ public class AnaliseHistogramaDTO implements Serializable {
 	
 	private BigDecimal qtdeCotasSemVenda=BigDecimal.ZERO;
 	
-	private BigDecimal reparteDistribuido=BigDecimal.ZERO;
+	private BigInteger reparteDistribuido=BigInteger.ZERO;
 	
 	private Long qtdeTotalCotasAtivas=0l;
 	
@@ -165,13 +165,13 @@ public class AnaliseHistogramaDTO implements Serializable {
 		cotasEsmagadas = cotasEsmagadas.setScale(2,BigDecimal.ROUND_FLOOR);
 		vendaEsmagadas = vendaEsmagadas.setScale(2,BigDecimal.ROUND_FLOOR);
 		qtdeCotasAtivas = qtdeCotasAtivas.setScale(2,BigDecimal.ROUND_FLOOR);
-		reparteDistribuido = reparteDistribuido.setScale(2,BigDecimal.ROUND_FLOOR);
+//		reparteDistribuido = reparteDistribuido.setScale(2,BigDecimal.ROUND_FLOOR);
 		
 	}
-	public BigDecimal getReparteDistribuido() {
+	public BigInteger getReparteDistribuido() {
 		return reparteDistribuido;
 	}
-	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
+	public void setReparteDistribuido(BigInteger reparteDistribuido) {
 		this.reparteDistribuido = reparteDistribuido;
 	}
 	

@@ -123,8 +123,10 @@ var histogramaVendasController = $.extend(true, {
 			}],
 			width : 960,
 			height : 160,
-			rp : 15,
+			rp : 10,
 			showTableToggleBtn : true,
+			usepager : true,
+			useRp : true
 		});
 	},
 	
@@ -228,7 +230,7 @@ function popup_detalhes(codigoProduto,numeroEdicao) {
 				  if(this.complete) $(this).load();
 				});
 			
-			var randomnumber=Math.floor(Math.random()*11)
+			var randomnumber=Math.floor(Math.random()*11);
 			
 			$("#imagemCapaEdicao")
 					.attr("src",contextPath

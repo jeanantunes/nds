@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -35,6 +36,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.StringUtil;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 
@@ -958,7 +960,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			query.setParameter(key, parameterMap.get(key));
 		}
 		query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
-
+		configurarPaginacao(filtro,query);
 		List<EdicoesProdutosDTO> resultado = query.list();
 		
 		return resultado;
@@ -1173,6 +1175,23 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return resultado;
 	}
+
+	private void configurarPaginacao(FiltroDTO dto, Query query) {
+
+        PaginacaoVO paginacao = dto.getPaginacao();
+
+        if (paginacao.getQtdResultadosTotal().equals(0)) {
+         paginacao.setQtdResultadosTotal(query.list().size());
+        }
+
+        if(paginacao.getQtdResultadosPorPagina() != null) {
+         query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+        }
+
+        if (paginacao.getPosicaoInicial() != null) {
+         query.setFirstResult(paginacao.getPosicaoInicial());
+        }
+}
 
 	/*@Override
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto) {
