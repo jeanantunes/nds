@@ -139,7 +139,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
 		.append(" join _chamEncCota.cota _cota 							")
 		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao")
-		.append(" where _cota.id = cota.id ");
+		.append(" where _cota.id = cota.id ")
+		.append(" and _chamEncCota.postergado = :isPostergado ");
 
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
@@ -255,6 +256,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			hql.append(" and fornecedores.id in (:listaFornecedores) ");
 			param.put("listaFornecedores", filtro.getFornecedores());
 		}
+
+		param.put("isPostergado", false);
 	}
 
 	private void gerarOrdenacao(FiltroEmissaoCE filtro, StringBuilder hql) {
