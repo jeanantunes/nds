@@ -157,7 +157,8 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 					+ " JOIN PESSOA p on (c.PESSOA_ID=p.ID) "
 					+ " LEFT OUTER JOIN HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe on (hdcpe.COTA_ID=c.ID) "
 					+ " LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc on(dlc.COTA_ID=c.ID) "
-					+ " WHERE hdcpe.DESCONTO_ID=:descontoID or dlc.DESCONTO_LANCAMENTO_ID=:descontoID ");
+					+ " WHERE hdcpe.DESCONTO_ID=:descontoID or dlc.DESCONTO_LANCAMENTO_ID=:descontoID "
+					+ " group by c.NUMERO_COTA ");
 
 		sql.append(" order by c.NUMERO_COTA " + ordenacao.name() + " ");
 		
@@ -179,23 +180,34 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		StringBuilder hql = new StringBuilder();
 
+		hql.append("SELECT p.CODIGO as codigoProduto, p.NOME as nomeProduto, pe.NUMERO_EDICAO as numeroEdicao, " 
+				+ "		d.VALOR as desconto, d.DATA_ALTERACAO as dataAlteracao, "
+				+ "		dados.QTDE_PROX_LANCAMENTOS as qtdeProxLcmt FROM ( "
+				
+				+ "	SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID,COTA_ID, null as QTDE_PROX_LANCAMENTOS "
+				+ "	FROM HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe  "
+				+ "	where produto_id is not null ");
 		
-		hql.append(" SELECT ");
-		
-		hql.append(" CODIGO_PRODUTO as codigoProduto, ");
-		hql.append(" NOME_PRODUTO as nomeProduto, ");
-		hql.append(" NUMERO_EDICAO as numeroEdicao, ");
-		hql.append(" VALOR as desconto , ");
-		hql.append(" DATA_ALTERACAO as dataAlteracao, ");
-		hql.append(" NOME_USUARIO as nomeUsuario ");
-		
-		hql.append(" FROM VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES ");
-
-		hql.append(" WHERE PRODUTO_ID is not null ");		
-		
-		if (idCota!=null){
+		if (idCota!=null)
 			hql.append(" AND COTA_ID=:idCota ");
-		}
+		
+		hql.append("	group by DESCONTO_ID	 "
+				+ "	UNION	 "
+				
+				+ "	SELECT dpl.DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID,dlc.COTA_ID, QUANTIDADE_PROXIMOS_LANCAMENTOS as QTDE_PROX_LANCAMENTOS "
+				+ "	FROM DESCONTO_PROXIMOS_LANCAMENTOS dpl "
+				+ "	LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc on (dlc.DESCONTO_LANCAMENTO_ID=dpl.ID) ");
+		
+		if (idCota!=null)
+			hql.append(" AND dlc.COTA_ID=:idCota ");
+		
+		hql.append("	group by dpl.ID "
+				+ "	) as dados "
+				
+				+ "JOIN DESCONTO d on (dados.DESCONTO_ID=d.ID) "
+				+ "LEFT OUTER JOIN PRODUTO p on (dados.PRODUTO_ID=p.ID) "
+				+ "LEFT OUTER JOIN PRODUTO_EDICAO pe on (dados.EDICAO_ID=pe.ID) ");
+		
 
 		if (sortname != null && !sortname.isEmpty()) { 
 

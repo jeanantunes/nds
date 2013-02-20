@@ -42,7 +42,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 			List<Long> tiposMovimentoCredito, List<Long> tiposMovimentoDebito,
 			List<Long> tipoMovimentoEncalhe, List<Long> tiposMovimentoEncargos,
 			List<Long> tiposMovimentoPostergadoCredito, List<Long> tiposMovimentoPostergadoDebito,
-			List<Long> tipoMovimentoVendaEncalhe);
+			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado);
 
 	BigInteger countObterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro);
 }

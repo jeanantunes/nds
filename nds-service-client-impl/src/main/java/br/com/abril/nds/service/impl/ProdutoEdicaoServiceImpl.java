@@ -733,23 +733,34 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			for (Lancamento lancamento : lancamentos){
 				
-				lancamento.setStatus(StatusLancamento.CANCELADO);
-				
-				if(lancamento.getPeriodoLancamentoParcial()!= null){
-					
-					lancamento.getPeriodoLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
-					periodoLancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial());
-					
-					lancamento.getPeriodoLancamentoParcial().getLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
-					lancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial().getLancamentoParcial());
+				if (Origem.MANUAL.equals(produtoEdicao.getOrigem())) {
+					this.lancamentoRepository.remover(lancamento);
+				}else{
+					lancamento.setStatus(StatusLancamento.CANCELADO);
+					if (lancamento.getPeriodoLancamentoParcial() != null) {
+
+						lancamento.getPeriodoLancamentoParcial().setStatus(
+								StatusLancamentoParcial.CANCELADO);
+						periodoLancamentoParcialRepository.alterar(lancamento
+								.getPeriodoLancamentoParcial());
+
+						lancamento.getPeriodoLancamentoParcial()
+								.getLancamentoParcial()
+								.setStatus(StatusLancamentoParcial.CANCELADO);
+						lancamentoParcialRepository.alterar(lancamento
+								.getPeriodoLancamentoParcial()
+								.getLancamentoParcial());
+					}
+					this.lancamentoRepository.alterar(lancamento);
 				}
-				
-				this.lancamentoRepository.alterar(lancamento);
 			}
 			
-			produtoEdicao.setAtivo(false);
-			
-			this.produtoEdicaoRepository.alterar(produtoEdicao);
+			if (Origem.MANUAL.equals(produtoEdicao.getOrigem())) {
+				this.produtoEdicaoRepository.remover(produtoEdicao);
+			}else{
+				produtoEdicao.setAtivo(false);
+				this.produtoEdicaoRepository.alterar(produtoEdicao);
+			}
 
 		} catch (DataIntegrityViolationException e) {
 			
@@ -788,9 +799,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		dto.setNomeFornecedor(nomeFornecedor);
 		
-		dto.setDesconto(produto.getDescontoLogistica() == null
-				? BigDecimal.ZERO 
-				: produto.getDescontoLogistica().getPercentualDesconto());
+		
+		if(produto.getOrigem().equals(Origem.INTERFACE)){
+			dto.setDesconto(produto.getDescontoLogistica() == null
+					? BigDecimal.ZERO 
+					: produto.getDescontoLogistica().getPercentualDesconto());
+		}else{
+			dto.setDesconto(produto.getDesconto() == null
+					? BigDecimal.ZERO 
+					: produto.getDesconto());
+		}
+		
+		
 		
 		if(produto.getDescontoLogistica()!= null){
 			dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());
@@ -898,17 +918,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			} else {
 				dto.setNumeroEdicao(ultimaEdicao + 1);
 			}
-		}
+			dto.setGrupoProduto(produto.getTipoProduto()!=null?produto.getTipoProduto().getGrupoProduto():null);
+		}	
 		
-		/* 
-		 * Regra: Se não houver edições já cadatradas para este produto, deve-se
-		 * obrigar a cadastrar o número 1. 
-		 */
-		
-		Long qtdEdicoes = this.countPesquisarEdicoes(codigoProduto, null, null, null, null, null, false);
-		if (qtdEdicoes == 0 || Long.valueOf(0).equals(qtdEdicoes)) {
-			dto.setNumeroEdicao(1L);
-		}
 		
 		return dto;
 	}
