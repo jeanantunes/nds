@@ -15,6 +15,7 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal vendaMediaMaisN;
     private BigDecimal reparteMinimo;
     private BigDecimal reparteMaximo;
+    private BigDecimal reparteFinalCota;
     private BigDecimal vendaMedia;
     private BigDecimal vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
@@ -28,7 +29,8 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal quantidadePDVs;
     private boolean mix;
     private BigDecimal indiceVendaCrescente;
-
+    private boolean recebeReparteComplementar=false;
+    
     public Cota() {
     	vendaMedia = BigDecimal.ZERO;
     	vendaMediaMaisN = BigDecimal.ZERO;
@@ -262,5 +264,23 @@ public class Cota extends GenericDTO<Cota> {
 	public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
 		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
 	}
+
+	public boolean isRecebeReparteComplementar() {
+		return recebeReparteComplementar;
+	}
+
+	public void setRecebeReparteComplementar(boolean recebeReparteComplementar) {
+		this.recebeReparteComplementar = recebeReparteComplementar;
+	}
+
+	public BigDecimal getReparteFinalCota() {
+		return reparteFinalCota;
+	}
+
+	public void setReparteFinalCota(BigDecimal reparteFinalCota) {
+		this.reparteFinalCota = reparteFinalCota;
+	}
+	
+	
 	
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 
+import br.com.abril.nds.dao.MovimentoEstoqueCotaDAO;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
@@ -35,11 +36,18 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
 			
 //			Verificar Cota a Cota
-			for(Cota cota:getEstudo().getCotas()){
 //    		Se Repcalculado < Venda (última edição fechada, sem correção)
-//    				Se Cota <> FX / MM / MX / RD / PR
-				if(cota.getReparteCalculado().compareTo(reservaAjuste)==-1 ||
-						cota.getReparteCalculado().compareTo(reservaAjuste)==0 &&
+			MovimentoEstoqueCotaDAO mecDAO = new MovimentoEstoqueCotaDAO();
+			BigDecimal ultimaEdicaoFechada = mecDAO.retornarUltimaVendaFechada(getEstudo().getProduto());
+			
+			for(Cota cota:getEstudo().getCotas()){
+				
+				// Aguardando email do diogenes sobre como recuperar ultima edicao fechada
+				
+				//	Se Cota <> FX / MM / MX / RD / PR
+				if(cota.getReparteCalculado().compareTo(ultimaEdicaoFechada)==-1 ||
+						cota.getReparteCalculado().compareTo(ultimaEdicaoFechada)==0 &&
+						
 						(!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix)
@@ -52,15 +60,12 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 //    				ReservaAjuste = ReservaAjuste – 1
 					reservaAjuste = reservaAjuste.subtract(BigDecimal.ONE);
 					
-					if(reservaAjuste.compareTo(BigDecimal.ZERO)==0) break;
+					if(reservaAjuste.compareTo(BigDecimal.ZERO)==0
+							|| reservaAjuste.compareTo(BigDecimal.ZERO)==-1) break;
 				}
 			}
 			
 		}
-		
-    	
-    	
-		
 		
 		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
 			
