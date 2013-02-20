@@ -81,6 +81,50 @@ public abstract class CorrecaoVendasDataProvider {
 
 	return listEstoqueProdutoCotas.iterator();
     }
+    
+    @DataProvider(name = "getEstoqueProdutoCotaParaPercentualVendaUmList")
+    public static Iterator<EstoqueProdutoCota[]> getEstoqueProdutoCotaParaPercentualVendaUmList() {
+
+	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
+
+	List<EstoqueProdutoCota[]> listEstoqueProdutoCotas = new ArrayList<EstoqueProdutoCota[]>();
+
+	int iCota = 0;
+	while (iCota < listCota.size()) {
+
+	    Cota cota = listCota.get(iCota);
+
+	    cota.setEdicoesBase(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
+
+	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO()
+	    .getByCotaIdProdutoEdicaoId(cota, cota.getEdicoesBase());
+
+	    int iEstoqueProdutoCota = 0;
+	    while (iEstoqueProdutoCota < listEstoqueProdutoCota.size()) {
+
+		EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota
+			.get(iEstoqueProdutoCota);
+		
+		//Esse ponto faz o valor do percentual ser 1. Pois, é a divisão pelo mesmo valor!
+		estoqueProdutoCota.setQuantidadeDevolvida(BigDecimal.ZERO);
+		
+		if (estoqueProdutoCota.getProdutoEdicao().getNumeroEdicao()
+			.compareTo(new Long(1)) == 0
+			|| !estoqueProdutoCota.getProdutoEdicao().isColecao()) {
+
+		    listEstoqueProdutoCotas
+		    .add(new EstoqueProdutoCota[] { estoqueProdutoCota });
+		}
+
+		iEstoqueProdutoCota++;
+
+	    }
+
+	    iCota++;
+	}
+
+	return listEstoqueProdutoCotas.iterator();
+    }
 
     @DataProvider(name = "getCotaTotalReparteVendaList")
     public static Iterator<Object[]> getCotaTotalReparteVendaList() {
