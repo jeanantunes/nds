@@ -458,7 +458,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return query.list();
 	}
-	//TODO Lupe
+
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
 			Long idCota) {
 
