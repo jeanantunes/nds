@@ -171,8 +171,8 @@ public class ConferenciaEncalheServiceImplTest {
 	}
 	
 	
-	@Ignore(" É necessario adicionar os arquivos de slip.jasper e " +
-			"slip_subreport.jasper para execução do teste com sucesso. ")
+	/*@Ignore(" É necessario adicionar os arquivos de slip.jasper e " +
+			"slip_subreport.jasper para execução do teste com sucesso. ")*/
 	@Test
 	public void test() throws IOException {
 		

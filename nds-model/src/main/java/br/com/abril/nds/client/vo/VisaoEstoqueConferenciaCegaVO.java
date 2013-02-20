@@ -12,29 +12,29 @@ public class VisaoEstoqueConferenciaCegaVO implements Serializable {
 
 	private static final long serialVersionUID = -9048402471089783027L;
 
-	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 1)
+	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 1, widthPercent=10)
 	private String codigo;
 	
-	@Export(label = "Produto", alignment=Alignment.LEFT, exhibitionOrder = 2)
+	@Export(label = "Produto", alignment=Alignment.LEFT, exhibitionOrder = 2,widthPercent=40)
 	private String produto;
 	
-	@Export(label = "Edição", alignment=Alignment.CENTER, exhibitionOrder = 3)
+	@Export(label = "Edição", alignment=Alignment.CENTER, exhibitionOrder = 3,widthPercent=10)
 	private String edicao;
 	
-	@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 4)
+	@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 4,widthPercent=10)
 	private String precoCapa;
 	
-	@Export(label = "Lançamento", alignment=Alignment.CENTER, exhibitionOrder = 5)
+	@Export(label = "Lançamento", alignment=Alignment.CENTER, exhibitionOrder = 5,widthPercent=10)
 	private String lcto;
 	
-	@Export(label = "Recolimento", alignment=Alignment.CENTER, exhibitionOrder = 6)
+	@Export(label = "Recolimento", alignment=Alignment.CENTER, exhibitionOrder = 6,widthPercent=10)
 	private String rclto;	
 	
 	private String qtde;	
 	
 	private String valor;
 	
-	@Export(label = "Estoque", alignment=Alignment.CENTER, exhibitionOrder = 7)
+	@Export(label = "Estoque", alignment=Alignment.CENTER, exhibitionOrder = 7,widthPercent=10)
 	private String estoque;
 
 	

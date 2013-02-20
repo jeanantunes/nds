@@ -19,7 +19,7 @@ public class ConsultaEncalheVO {
 	@Export(label="Código")
 	private String codigoProduto;
 	
-	@Export(label="Produto")
+	@Export(label="Produto", widthPercent=18)
 	private String nomeProduto;
 	
 	@Export(label="Edição")
