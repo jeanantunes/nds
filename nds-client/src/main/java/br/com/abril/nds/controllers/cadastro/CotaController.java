@@ -990,37 +990,15 @@ public class CotaController extends BaseController {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
 	        if (cota!=null){
+				
+	            List<TipoDescontoDTO> descontos =  descontoService.obterMergeDescontosEspecificosEGerais(cota,sortorder, sortname);
 			
-	            List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(cota, sortorder, sortname);
+	            if (descontos!=null && descontos.size() > 0){
 			
-	            if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
-			
-	                result.use(FlexiGridJson.class).from(descontosEspecificos).page(1).total(1).serialize();
+	                result.use(FlexiGridJson.class).from(descontos).page(1).total(1).serialize();
 			
 	            } else {
-				
-	                List<Long> idFornecedores = obterIdFornecedoresCota(cota.getId());
-				
-	                if(idFornecedores == null || idFornecedores.isEmpty()) {
-				
-	                    result.nothing();
-				
-	                } else {
-
-	                    List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor(sortorder, sortname, idFornecedores);
-					
-	                    if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
-
-	                        result.use(FlexiGridJson.class).from(descontosDistribuidor).page(1).total(1).serialize();
-				    
-	                    } else {
-					
-	                        result.nothing();
-				    
-	                    }
-
-	                }
-				
+	            	result.nothing();
 	            }
 			
 	        } else {

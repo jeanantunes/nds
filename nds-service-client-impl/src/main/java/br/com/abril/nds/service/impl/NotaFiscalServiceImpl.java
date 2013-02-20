@@ -103,6 +103,7 @@ import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -643,7 +644,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		return identificacaoEmitente;
 	}
-
+	
 	/**
 	 * Grupo de identificação do Destinatário da NF-e
 	 * 
@@ -676,8 +677,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		if (cota.getPessoa() instanceof PessoaJuridica) {
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
-			destinatario.setInscricaoEstadual(pessoaJuridica
-					.getInscricaoEstadual());
+			
+			String inscricaoEstadual = Util.truncarValor(Util.removerMascaraCnpj(pessoaJuridica.getInscricaoEstadual()), 14);
+			
+			destinatario.setInscricaoEstadual(inscricaoEstadual);
+			
 			destinatario.setNomeFantasia(pessoaJuridica.getNomeFantasia());
 		}
 		destinatario.setNome(cota.getPessoa().getNome());

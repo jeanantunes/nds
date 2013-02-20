@@ -177,6 +177,34 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	}
 
 		
+	
+	
+	
+	
+	
+	/**
+	 * Obtem Lista de ID's de Fornecedores relacionados com o MovimentoFinanceiroCota
+	 * @param movimentos
+	 * @return List<Long>
+	 */
+	private List<Long> obterIdFornecedoresMovimentoFinanceiro(MovimentoFinanceiroCota movimentos){
+		
+		List<Long> fornecedoresId = new ArrayList<Long>();
+		List<MovimentoEstoqueCota> mecs = movimentos.getMovimentos();
+		for (MovimentoEstoqueCota movimentoEstoqueCota : mecs){
+			
+			fornecedoresId.add(movimentoEstoqueCota.getProdutoEdicao().getProduto().getFornecedor().getId());
+		}
+
+		return fornecedoresId;
+	}
+	
+	
+	
+	
+	
+	
+	
 	private void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		
 		Distribuidor distribuidor = distribuidorService.obter();
@@ -195,14 +223,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		FormaCobranca fc = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 			
 		PoliticaCobranca politicaPrincipal = fc.getPoliticaCobranca();
-		
-		
-		
-		
-		
-		
-		
-		
+
 		if (politicaPrincipal == null){
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.ERROR, "Politica de cobrança não encontrada."));
@@ -210,6 +231,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.ERROR, "Forma de cobrança não encontrada."));
 		}
+		
+		
+		
+		
+		
 		
 		//Caso o principal modo de cobrança seja boleto a baixa automática deve ter sido executada
 		if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
@@ -302,6 +328,44 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
 						this.verificarCotaTemBanco(ultimaCota, msgs);
 					}
+					
+					
+					
+					
+
+					
+					
+	                List<Long> fornecedoresId = this.obterIdFornecedoresMovimentoFinanceiro(movimentoFinanceiroCota);
+					FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobranca(ultimaCota.getNumeroCota(), fornecedoresId, dataOperacao, movimentoFinanceiroCota.getValor());
+					
+					
+					
+					
+					
+					
+					
+					BigDecimal valorMinimoEmissao = formaCobranca.getValorMinimoEmissao();
+					
+					boolean acumulaDivida = false;
+					ParametroCobrancaCota parc = formaCobranca.getParametroCobrancaCota();
+					PoliticaCobranca polc = formaCobranca.getPoliticaCobranca();
+					if (parc!=null){
+						
+						acumulaDivida = parc.getPoliticaSuspensao()!=null?parc.getPoliticaSuspensao().getNumeroAcumuloDivida() > 0:false;
+					}
+					else if (polc!=null){
+						
+						acumulaDivida = polc.isAcumulaDivida();
+					}
+
+					//TipoCobranca tipoCobranca = formaCobranca.getTipoCobranca();
+					
+					
+					
+					
+					
+					
+					
 					
 					//Decide se gera movimento consolidado ou postergado para a cota
 					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
@@ -714,37 +778,30 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		
 		
+		
+		
+		
 		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
-		
-		
-		
-		
-		
-		
-		
+
 		if (formaCobrancaPrincipal == null){
-		
-			
-			
-			
-			
-			
-			
+
 			// Obtém a forma de cobrança principal
 			formaCobrancaPrincipal = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-			
-			
-			
-			
-			
-			
-			
+
 			if (formaCobrancaPrincipal == null) {
 				msgs.add("Forma de cobrança principal para cota de número: " + cota.getNumeroCota() + " não encontrada. Também não encontrada forma de cobrança padrão principal.");
 				return null;
 			}
 			
 		}
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		Date dataVencimento = null;
 		

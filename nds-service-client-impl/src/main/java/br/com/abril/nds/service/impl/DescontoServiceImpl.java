@@ -1036,4 +1036,11 @@ public class DescontoServiceImpl implements DescontoService {
 
 		return this.distribuidorRepository.obterDescontoCotaNegociacao();
 	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(
+			Cota cota, String sortorder, String sortname) {		
+		return descontoRepository.obterMergeDescontosEspecificosEGerais(cota, sortorder, sortname);
+	}
+
 }
