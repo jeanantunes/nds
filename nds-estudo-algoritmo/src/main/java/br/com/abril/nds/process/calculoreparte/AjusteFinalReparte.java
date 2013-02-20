@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 
-import br.com.abril.nds.dao.MovimentoEstoqueCotaDAO;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
@@ -36,11 +35,16 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
 			
 //			Verificar Cota a Cota
+//    		Se Repcalculado < Venda (última edição fechada, sem correção)
+			
+			
 			for(Cota cota:getEstudo().getCotas()){
-//    		Se Repcalculado < Venda (ï¿½ltima ediï¿½ï¿½o fechada, sem correï¿½ï¿½o)
-//    				Se Cota <> FX / MM / MX / RD / PR
-				if(cota.getReparteCalculado().compareTo(reservaAjuste)==-1 ||
-						cota.getReparteCalculado().compareTo(reservaAjuste)==0 &&
+				
+				// Aguardando email do diogenes sobre como recuperar ultima edicao fechada
+				BigDecimal ultimaEdicaoFechada = BigDecimal.ZERO;
+				
+				//	Se Cota <> FX / MM / MX / RD / PR
+				if(cota.getReparteCalculado().compareTo(ultimaEdicaoFechada)==-1 &&
 						(!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix)
@@ -50,11 +54,11 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 					
 //					RepCalculado Cota = RepCalculado Cota + 1
 					cota.setReparteCalculado(cota.getReparteCalculado().add(BigDecimal.ONE));
-//    				ReservaAjuste = ReservaAjuste ï¿½ 1
+//    				ReservaAjuste = ReservaAjuste – 1
 					reservaAjuste = reservaAjuste.subtract(BigDecimal.ONE);
 					
 					if(reservaAjuste.compareTo(BigDecimal.ZERO)==0
-							|| reservaAjuste.compareTo(BigDecimal.ZERO)==-1) break;
+							| reservaAjuste.compareTo(BigDecimal.ZERO)==-1) break;
 				}
 			}
 			
@@ -79,6 +83,10 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 			}
 			
 		}
+		
+		
+		getEstudo().setReservaAjuste(reservaAjuste);
     }
+    
 
 }
