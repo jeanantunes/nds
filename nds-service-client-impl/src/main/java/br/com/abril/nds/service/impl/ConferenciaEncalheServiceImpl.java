@@ -10,7 +10,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,14 +19,9 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRTextExporter;
-import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -484,13 +478,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigInteger qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos = obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(idCota, idProdutoEdicao);
 		
-		/*if(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos == null || qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos.compareTo(BigInteger.ZERO) <= 0 ) {
+		if(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos == null || qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos.compareTo(BigInteger.ZERO) <= 0 ) {
 			
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
 					"Não há itens do produto edição [" + nomeProdutoEdicao  + "] a serem devolvidos para a cota."   );
 		
-		}*/
+		}
 		
 	}
 	
@@ -1893,7 +1887,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		BigInteger qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos = obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(cota.getId(), conferenciaEncalhe.getIdProdutoEdicao());
 		
-		/*if(indNovoRegistroConfEncalheCota) {
+		if(indNovoRegistroConfEncalheCota) {
 
 			BigInteger qtdeNew = conferenciaEncalhe.getQtdExemplar();
 			
@@ -1912,7 +1906,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe está excedendo quantidade de reparte.");
 			}
 			
-		}*/
+		}
 		
 	}
 	
