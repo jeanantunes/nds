@@ -250,12 +250,12 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 		}	
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtroCotaAusenteDTO){
 		return cotaAusenteRepository.obterCotasAusentes(filtroCotaAusenteDTO);
 	}
 
-	@Override
+	@Transactional(readOnly = true)
 	public Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro) {
 		return cotaAusenteRepository.obterCountCotasAusentes(filtro);
 	}

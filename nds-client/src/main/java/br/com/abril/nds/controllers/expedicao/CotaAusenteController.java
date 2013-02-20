@@ -356,7 +356,7 @@ public class CotaAusenteController extends BaseController {
 	 * @param numCota - Número da Cota
 	 */
 	@Post
-	public void enviarParaSuplementar(List<Integer> numCotas) {
+	public void enviarParaSuplementar(Date dataPesquisa, List<Integer> numCotas) {
 	
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -367,7 +367,7 @@ public class CotaAusenteController extends BaseController {
 			if(numCotas == null) 
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 						
-			cotaAusenteService.declararCotaAusenteEnviarSuplementar(numCotas, new Date(), this.getUsuarioLogado().getId());
+			cotaAusenteService.declararCotaAusenteEnviarSuplementar(numCotas, dataPesquisa, this.getUsuarioLogado().getId());
 			
 			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
 			
@@ -404,10 +404,10 @@ public class CotaAusenteController extends BaseController {
 	 * @param numCota
 	 */
 	@Post
-	public void carregarDadosRateio(List<Integer> numCotas) {
+	public void carregarDadosRateio(Date dataPesquisa, List<Integer> numCotas) {
 		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
-				movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(new Date(), numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(dataPesquisa, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
@@ -419,7 +419,7 @@ public class CotaAusenteController extends BaseController {
 	 * @param numCota
 	 */
 	@Post
-	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, List<Integer> numCotas) {
+	public void realizarRateio(Date dataPesquisa, List<MovimentoEstoqueCotaDTO> movimentos, List<Integer> numCotas) {
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -430,7 +430,7 @@ public class CotaAusenteController extends BaseController {
 			if(numCotas == null) 
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 			
-			cotaAusenteService.declararCotaAusenteRatearReparte(numCotas, new Date(), this.getUsuarioLogado().getId() , movimentos);
+			cotaAusenteService.declararCotaAusenteRatearReparte(numCotas, dataPesquisa, this.getUsuarioLogado().getId() , movimentos);
 			
 			mensagens.add(SUCESSO_RATEIO);
 			
