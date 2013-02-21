@@ -304,6 +304,9 @@ public class Distribuidor {
 	@Column(name = "MENSAGEM_EMAIL_COBRANCA")
 	private String mensagemEmailCobranca;
 	
+	@Column(name = "PRACA_VERANEIO")
+	private boolean pracaVeraneio;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1068,6 +1071,14 @@ public class Distribuidor {
 	 */
 	public void setMensagemEmailCobranca(String mensagemEmailCobranca) {
 		this.mensagemEmailCobranca = mensagemEmailCobranca;
+	}
+
+	public boolean isPracaVeraneio() {
+	    return pracaVeraneio;
+	}
+
+	public void setPracaVeraneio(boolean pracaVeraneio) {
+	    this.pracaVeraneio = pracaVeraneio;
 	}
 	
 }
