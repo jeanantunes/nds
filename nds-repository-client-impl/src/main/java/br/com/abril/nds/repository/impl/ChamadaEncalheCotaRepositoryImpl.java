@@ -37,7 +37,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		subSqlWhereDesconto.append(" MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV	");
 		subSqlWhereDesconto.append(" WHERE  	");
 		subSqlWhereDesconto.append(" MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND 					");
-		subSqlWhereDesconto.append(" MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.PRODUTO_EDICAO_ID AND 	");
+		subSqlWhereDesconto.append(" MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND 				");
 		subSqlWhereDesconto.append(" MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND ");
 		subSqlWhereDesconto.append(" TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
 		subSqlWhereDesconto.append(" ORDER BY MEC.DATA DESC ");
@@ -73,7 +73,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameter("conferido", conferido);
 		query.setParameter("postergado", postergado);
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		query.setParameter("dataOperacao", dataOperacao);
 
 		return (BigDecimal) query.uniqueResult();
