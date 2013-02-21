@@ -50,7 +50,7 @@ public class ReparteMinimo extends ProcessoAbstrato {
 				somatoriaReparteMinimo = somatoriaReparteMinimo.add(cota.getReparteMinimo());
 			}
 			if (!getEstudo().getReparteDistribuir().equals(BigDecimal.ZERO)) {
-    			if (somatoriaReparteMinimo.divide(getEstudo().getReparteDistribuir(), 2, BigDecimal.ROUND_FLOOR).doubleValue() > new BigDecimal(
+    			if (somatoriaReparteMinimo.divide(getEstudo().getReparteDistribuir(), 2, BigDecimal.ROUND_FLOOR).doubleValue() > BigDecimal.valueOf(
     					0.75).doubleValue()) {
     				throw new Exception(
     						"O estudo não pode ser concluído pois o percentual do reparte mínimo é maior que 75% do reparte total à distribuir.\n"

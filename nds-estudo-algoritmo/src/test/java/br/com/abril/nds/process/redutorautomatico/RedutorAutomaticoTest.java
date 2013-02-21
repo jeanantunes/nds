@@ -35,8 +35,8 @@ public class RedutorAutomaticoTest {
 	@Test
 	public void testReparteDistribuir100VendaMediaCota3UltimaVenda10MenorVenda5() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(100), new BigDecimal(3), new BigDecimal(10),
-				BigDecimal.ZERO, new BigDecimal(5));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(100), BigDecimal.valueOf(3), BigDecimal.valueOf(10),
+				BigDecimal.ZERO, BigDecimal.valueOf(5));
 		
 		// Execução do método
 		RedutorAutomatico redutorAutomatico = new RedutorAutomatico(estudo);
@@ -44,7 +44,7 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularRedutorAutomatico();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(100), redutorAutomatico.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(100), redutorAutomatico.getEstudo().getReparteDistribuir());
 		for (Cota c : redutorAutomatico.getEstudo().getCotas()) {
 			assertEquals(BigDecimal.ZERO, c.getReparteCalculado());
 		}
@@ -53,8 +53,8 @@ public class RedutorAutomaticoTest {
 	@Test
 	public void testReparteDistribuir100VendaMediaCota3UltimaVenda0MenorVenda5RepCalculadoCota20() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(100), new BigDecimal(3), new BigDecimal(20),
-				BigDecimal.ZERO, new BigDecimal(5));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(100), BigDecimal.valueOf(3), BigDecimal.valueOf(20),
+				BigDecimal.ZERO, BigDecimal.valueOf(5));
 		
 		// Execução do método
 		RedutorAutomatico redutorAutomatico = new RedutorAutomatico(estudo);
@@ -62,7 +62,7 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularRedutorAutomatico();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(100), redutorAutomatico.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(100), redutorAutomatico.getEstudo().getReparteDistribuir());
 		for (Cota c : redutorAutomatico.getEstudo().getCotas()) {
 			assertEquals(BigDecimal.ZERO, c.getReparteCalculado());
 		}
@@ -71,8 +71,8 @@ public class RedutorAutomaticoTest {
 	@Test
 	public void testReparteDistribuir100VendaMediaCota10UltimaVenda0MenorVenda5RepCalculadoCota20() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(100), new BigDecimal(10), BigDecimal.ZERO,
-				new BigDecimal(20), new BigDecimal(5));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(100), BigDecimal.valueOf(10), BigDecimal.ZERO,
+				BigDecimal.valueOf(20), BigDecimal.valueOf(5));
 		
 		// Execução do método
 		RedutorAutomatico redutorAutomatico = new RedutorAutomatico(estudo);
@@ -80,17 +80,17 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularRedutorAutomatico();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(100), redutorAutomatico.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(100), redutorAutomatico.getEstudo().getReparteDistribuir());
 		for (Cota c : redutorAutomatico.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(20), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(20), c.getReparteCalculado());
 		}
 	}
 	
 	@Test
 	public void testReparteDistribuir110VendaMediaCota10UltimaVenda0MenorVendaMeio() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(110), new BigDecimal(10), BigDecimal.ZERO,
-				BigDecimal.ZERO, new BigDecimal(0.5));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(110), BigDecimal.valueOf(10), BigDecimal.ZERO,
+				BigDecimal.ZERO, BigDecimal.valueOf(0.5));
 		
 		// Execução do método
 		RedutorAutomatico redutorAutomatico = new RedutorAutomatico(estudo);
@@ -98,7 +98,7 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularRedutorAutomatico();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(110), redutorAutomatico.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(110), redutorAutomatico.getEstudo().getReparteDistribuir());
 		for (Cota c : redutorAutomatico.getEstudo().getCotas()) {
 			assertEquals(BigDecimal.ZERO, c.getReparteCalculado());
 		}
@@ -107,7 +107,7 @@ public class RedutorAutomaticoTest {
 	@Test
 	public void testReparteDistribuir0VendaMediaCota100MenorVenda0SemUltimaVenda() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, new BigDecimal(100), BigDecimal.ZERO,
+		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, BigDecimal.valueOf(100), BigDecimal.ZERO,
 				BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do método
@@ -132,13 +132,13 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(0.5), redutorAutomatico.getMenorVenda());
+		assertEquals(BigDecimal.valueOf(0.5), redutorAutomatico.getMenorVenda());
 	}
 	
 	@Test
 	public void testMenorVendaComReparte100ESomatoriaVendaMedia0() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(100), BigDecimal.ZERO, BigDecimal.ZERO,
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(100), BigDecimal.ZERO, BigDecimal.ZERO,
 				BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do método
@@ -146,13 +146,13 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(0.5), redutorAutomatico.getMenorVenda());
+		assertEquals(BigDecimal.valueOf(0.5), redutorAutomatico.getMenorVenda());
 	}
 	
 	@Test
 	public void testMenorVendaComReparte100ESomatoriaVendaMedia70() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(100), new BigDecimal(70), BigDecimal.ZERO,
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(100), BigDecimal.valueOf(70), BigDecimal.ZERO,
 				BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do método
@@ -160,13 +160,13 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(0.25), redutorAutomatico.getMenorVenda());
+		assertEquals(BigDecimal.valueOf(0.25), redutorAutomatico.getMenorVenda());
 	}
 	
 	@Test
 	public void testMenorVendaComReparte100ESomatoriaVendaMedia50() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(100), new BigDecimal(50), BigDecimal.ZERO,
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(100), BigDecimal.valueOf(50), BigDecimal.ZERO,
 				BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do método
@@ -180,7 +180,7 @@ public class RedutorAutomaticoTest {
 	@Test
 	public void testMenorVendaComReparte100ESomatoriaVendaMedia90() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(100), new BigDecimal(90), BigDecimal.ZERO,
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(100), BigDecimal.valueOf(90), BigDecimal.ZERO,
 				BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do método
@@ -188,13 +188,13 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(0.5), redutorAutomatico.getMenorVenda());
+		assertEquals(BigDecimal.valueOf(0.5), redutorAutomatico.getMenorVenda());
 	}
 	
 	@Test
 	public void testMenorVendaComReparte10ESomatoriaVendaMedia50() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(10), new BigDecimal(50), BigDecimal.ZERO,
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(10), BigDecimal.valueOf(50), BigDecimal.ZERO,
 				BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do método
@@ -202,13 +202,13 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(0.5), redutorAutomatico.getMenorVenda());
+		assertEquals(BigDecimal.valueOf(0.5), redutorAutomatico.getMenorVenda());
 	}
 	
 	@Test
 	public void testMenorVendaSemReparteESomatoriaVendaMedia50() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, new BigDecimal(50), BigDecimal.ZERO,
+		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, BigDecimal.valueOf(50), BigDecimal.ZERO,
 				BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do método
@@ -216,6 +216,6 @@ public class RedutorAutomaticoTest {
 		redutorAutomatico.calcularMenorVenda();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(0.5), redutorAutomatico.getMenorVenda());
+		assertEquals(BigDecimal.valueOf(0.5), redutorAutomatico.getMenorVenda());
 	}
 }

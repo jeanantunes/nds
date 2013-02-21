@@ -31,7 +31,7 @@ public class MinimoMaximoTest {
 	@Test
 	public void testReparteMinimoMaiorQueMaximo() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(40), new BigDecimal(10), new BigDecimal(40), false);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(40), BigDecimal.valueOf(10), BigDecimal.valueOf(40), false);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -42,7 +42,7 @@ public class MinimoMaximoTest {
 		
 		// Validação do teste
 		for (Cota c : minimoMaximo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(40), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(40), c.getReparteCalculado());
 			assertEquals(ClassificacaoCota.SemClassificacao, c.getClassificacao());
 		}
 	}
@@ -50,7 +50,7 @@ public class MinimoMaximoTest {
 	@Test
 	public void testRepCalculado40RepMinimo20RepMaximo50() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(20), new BigDecimal(50), new BigDecimal(40), false);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(20), BigDecimal.valueOf(50), BigDecimal.valueOf(40), false);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -58,7 +58,7 @@ public class MinimoMaximoTest {
 		
 		// Validação do teste
 		for (Cota c : minimoMaximo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(40), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(40), c.getReparteCalculado());
 			assertEquals(ClassificacaoCota.SemClassificacao, c.getClassificacao());
 		}
 	}
@@ -66,7 +66,7 @@ public class MinimoMaximoTest {
 	@Test
 	public void testRepCalculado10RepMinimo20RepMaximo50() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(20), new BigDecimal(50), new BigDecimal(10), false);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(20), BigDecimal.valueOf(50), BigDecimal.valueOf(10), false);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -74,7 +74,7 @@ public class MinimoMaximoTest {
 		
 		// Validação do teste
 		for (Cota c : minimoMaximo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(20), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(20), c.getReparteCalculado());
 			assertEquals(ClassificacaoCota.MaximoMinimo, c.getClassificacao());
 		}
 	}
@@ -82,7 +82,7 @@ public class MinimoMaximoTest {
 	@Test
 	public void testRepCalculado60RepMinimo20RepMaximo50() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(20), new BigDecimal(50), new BigDecimal(60), true);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(20), BigDecimal.valueOf(50), BigDecimal.valueOf(60), true);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -90,7 +90,7 @@ public class MinimoMaximoTest {
 		
 		// Validação do teste
 		for (Cota c : minimoMaximo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(50), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(50), c.getReparteCalculado());
 			assertEquals(ClassificacaoCota.CotaMix, c.getClassificacao());
 		}
 	}

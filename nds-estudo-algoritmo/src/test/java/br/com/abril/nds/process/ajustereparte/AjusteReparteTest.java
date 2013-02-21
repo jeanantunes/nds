@@ -46,7 +46,7 @@ public class AjusteReparteTest {
 	@Test
 	public void testCotaComParametro100() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(10), new BigDecimal(100), BigDecimal.ZERO);
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(10), BigDecimal.valueOf(100), BigDecimal.ZERO);
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -54,14 +54,14 @@ public class AjusteReparteTest {
 
 		// Validação do teste
 		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(100), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(100), c.getReparteCalculado());
 		}
 	}
 	
 	@Test
 	public void testCotaComParametro20EVendaMedia50() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(5), new BigDecimal(20), new BigDecimal(50));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(5), BigDecimal.valueOf(20), BigDecimal.valueOf(50));
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -69,14 +69,14 @@ public class AjusteReparteTest {
 		
 		// Validação do teste
 		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(70), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(70), c.getReparteCalculado());
 		}
 	}
 	
 	@Test
 	public void testCotaComParametro20VendaMedia50EPacotePadrao25() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(25), new BigDecimal(20), new BigDecimal(50));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(25), BigDecimal.valueOf(20), BigDecimal.valueOf(50));
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -84,7 +84,7 @@ public class AjusteReparteTest {
 		
 		// Validação do teste
 		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(75), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(75), c.getReparteCalculado());
 		}
 	}
 	
@@ -99,14 +99,14 @@ public class AjusteReparteTest {
 		
 		// Validação do teste
 		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(0), c.getReparteCalculado());
+			assertEquals(BigDecimal.ZERO, c.getReparteCalculado());
 		}
 	}
 	
 	@Test
 	public void testCotaSemPacotePadrao() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, new BigDecimal(30), new BigDecimal(10));
+		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, BigDecimal.valueOf(30), BigDecimal.valueOf(10));
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
@@ -114,14 +114,14 @@ public class AjusteReparteTest {
 		
 		// Validação do teste
 		for (Cota c : ajusteReparte.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(40), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(40), c.getReparteCalculado());
 		}
 	}
 	
 	@Test
 	public void testVerificaClassificacaoCotaComParametroConfigurado() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, new BigDecimal(30), new BigDecimal(10));
+		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, BigDecimal.valueOf(30), BigDecimal.valueOf(10));
 
 		// Execução do processo
 		AjusteReparte ajusteReparte = new AjusteReparte(estudo);

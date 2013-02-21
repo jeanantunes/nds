@@ -58,14 +58,14 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 
 	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
 		indiceCorrecaoTendencia = indiceCorrecaoTendencia
-			.add(new BigDecimal(0.2));
+			.add(BigDecimal.valueOf(0.2));
 	    } else {
 
 		BigDecimal decimalCompare = new BigDecimal(0.9, mathContext);
 
 		if (percentualVenda.compareTo(decimalCompare) >= 0) {
 		    indiceCorrecaoTendencia = indiceCorrecaoTendencia
-			    .add(new BigDecimal(0.1));
+			    .add(BigDecimal.valueOf(0.1));
 		}
 	    }
 	}
