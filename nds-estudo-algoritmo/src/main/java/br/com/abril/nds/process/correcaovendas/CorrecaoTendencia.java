@@ -70,3 +70,4 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
     }
 
 }
+

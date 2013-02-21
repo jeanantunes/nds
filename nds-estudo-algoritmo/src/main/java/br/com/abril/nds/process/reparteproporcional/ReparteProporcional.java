@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
@@ -31,8 +31,8 @@ public class ReparteProporcional extends ProcessoAbstrato {
     protected void executarProcesso() {
     	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	boolean temEdicaoBaseAberta = false;
-    	for (ProdutoEdicao edicao : getEstudo().getEdicoesBase()) {
-    		if (edicao.isEdicaoAberta()) {
+    	for (ProdutoEdicaoBase edicaoBase : getEstudo().getEdicoesBase()) {
+    		if (edicaoBase.isEdicaoAberta()) {
     			temEdicaoBaseAberta = true;
     			break;
     		}

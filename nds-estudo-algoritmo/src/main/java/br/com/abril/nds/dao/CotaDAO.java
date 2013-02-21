@@ -8,6 +8,7 @@ import java.util.List;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class CotaDAO {
 
@@ -87,11 +88,11 @@ public class CotaDAO {
 	return cota;
     }
 
-    public List<Cota> getCotasComEdicoesBase(List<ProdutoEdicao> edicoesBase) {
+    public List<Cota> getCotasComEdicoesBase(List<ProdutoEdicaoBase> edicoesBase) {
 	List<Cota> returnListCota = new ArrayList<>();
 	try {
 	    List<Long> idsList = new ArrayList<Long>();
-	    for (ProdutoEdicao edicao : edicoesBase) {
+	    for (ProdutoEdicaoBase edicao : edicoesBase) {
 		idsList.add(edicao.getId());
 	    }
 	    String idsString = idsList.toString().replaceAll("\\]|\\[","");

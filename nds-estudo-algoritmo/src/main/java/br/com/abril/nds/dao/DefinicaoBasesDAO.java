@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.enumerators.DataReferencia;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class DefinicaoBasesDAO {
 
@@ -89,7 +90,7 @@ public class DefinicaoBasesDAO {
 	return edicoes;
     }
 
-    public List<ProdutoEdicao> listaEdicoesAnosAnteriores(ProdutoEdicao edicao, boolean mesmoMes, List<LocalDate> dataReferencias) {
+    public List<ProdutoEdicao> listaEdicoesAnosAnteriores(ProdutoEdicaoBase edicaoBase, boolean mesmoMes, List<LocalDate> dataReferencias) {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	try {
 	    PreparedStatement ps = Conexao.getConexao().prepareStatement(
@@ -97,23 +98,23 @@ public class DefinicaoBasesDAO {
 			    SQL_LANCAMENTOS_ANOS_ANTERIORES_MESMO_MES:
 				SQL_LANCAMENTOS_ANOS_ANTERIORES_VERANEIO);
 	    int index = 0;
-	    ps.setLong(++index, edicao.getCodigoProduto());
+	    ps.setLong(++index, edicaoBase.getCodigoProduto());
 	    if(mesmoMes) {
-		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), 1));
-		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), 2));
+		ps.setString(++index, anoMesAnteriorSQL(edicaoBase.getDataLancamento(), 1));
+		ps.setString(++index, anoMesAnteriorSQL(edicaoBase.getDataLancamento(), 2));
 	    } else {
 		
-		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 2, DataReferencia.DEZEMBRO_20));
-		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 1, DataReferencia.FEVEREIRO_28));
-		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 4, DataReferencia.DEZEMBRO_20));
-		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 3, DataReferencia.FEVEREIRO_28));
+		ps.setString(++index, periodoVeraneio(edicaoBase.getDataLancamento(), 2, DataReferencia.DEZEMBRO_20));
+		ps.setString(++index, periodoVeraneio(edicaoBase.getDataLancamento(), 1, DataReferencia.FEVEREIRO_28));
+		ps.setString(++index, periodoVeraneio(edicaoBase.getDataLancamento(), 4, DataReferencia.DEZEMBRO_20));
+		ps.setString(++index, periodoVeraneio(edicaoBase.getDataLancamento(), 3, DataReferencia.FEVEREIRO_28));
 	    }
 	    ResultSet rs = ps.executeQuery();
 	    while (rs.next()) {
 		edicoes.add(produtoEdicaoMapper(rs));
 	    }
 	} catch (ClassNotFoundException | SQLException e) {
-	    LocalDate ld = new LocalDate(edicao.getDataLancamento());
+	    LocalDate ld = new LocalDate(edicaoBase.getDataLancamento());
 	    log.error("Erro ao obter edições de veraneio dos anos anteriores. Data lançamento base:" + ld.toString(), e);
 	}
 	return edicoes;

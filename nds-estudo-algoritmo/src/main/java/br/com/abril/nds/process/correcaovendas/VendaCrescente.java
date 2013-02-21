@@ -69,3 +69,4 @@ public class VendaCrescente extends ProcessoAbstrato {
 	cota.setIndiceVendaCrescente(indiceVendaCrescente);
     }
 }
+
