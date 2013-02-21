@@ -22,7 +22,7 @@ public class MovimentoEstoqueCotaDAO {
 					    " and mec.produto_edica_id=?" +
 					    "order by ID");
 			
-			int idx=0;        
+			int idx=1;        
 			psmt.setLong(idx++, 21);
 			psmt.setLong(idx++, cota.getId());
 			psmt.setLong(idx++, produtoEdicao.getId());
@@ -55,13 +55,13 @@ public class MovimentoEstoqueCotaDAO {
 							" where me.TIPO_MOVIMENTO_ID= 13 "+
 							" and ep.PRODUTO_EDICAO_ID = ? "+ 
 							" order by me.data desc limit 1");			
-			int idx=0;        
-			psmt.setLong(idx++, 21);
+			int idx=1;        
+			psmt.setLong(idx++, produtoEdicaoId.getId());
 			
 			ResultSet rs = psmt.executeQuery();
 			
 			while(rs.next()){
-				qtdeUltimaVenda = rs.getBigDecimal(1);
+				qtdeUltimaVenda = rs.getBigDecimal(2);
 			}
 			
 		} catch (ClassNotFoundException | SQLException e) {

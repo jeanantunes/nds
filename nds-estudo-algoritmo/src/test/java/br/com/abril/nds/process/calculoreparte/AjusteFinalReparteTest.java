@@ -1,6 +1,6 @@
 package br.com.abril.nds.process.calculoreparte;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,6 +43,32 @@ public class AjusteFinalReparteTest {
 		} catch (Exception e) {
 			fail("Exceção inválida.");
 		}
+	}
+	
+	@Test
+	public void testExecutarReservaAjusteZero() {
+		
+		estudo.setReservaAjuste(new BigDecimal(1));
+		try {
+			ajusteFinalReparte.executar();
+		} catch (Exception e) {
+			fail("Exceção inválida.");
+		}
+		
+		assertEquals(BigDecimal.ZERO, estudo.getReservaAjuste());
+	}
+	
+	@Test
+	public void testExecutarReparteCalculadoDois() {
+		
+		estudo.setReservaAjuste(new BigDecimal(2));
+		try {
+			ajusteFinalReparte.executar();
+		} catch (Exception e) {
+			fail("Exceção inválida.");
+		}
+		
+		assertEquals(new BigDecimal(2), estudo.getCotas().get(0).getReparteCalculado());
 	}
 
 }
