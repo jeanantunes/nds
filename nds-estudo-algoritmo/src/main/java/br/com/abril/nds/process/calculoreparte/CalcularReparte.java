@@ -76,16 +76,16 @@ public class CalcularReparte extends ProcessoAbstrato {
 				} else {
 					BigDecimal percentual = BigDecimal.ZERO;
 					if (!getEstudo().getExcedente().equals(BigDecimal.ZERO)) {
-						percentual = new BigDecimal(100).divide(getEstudo().getExcedente(), 2, BigDecimal.ROUND_HALF_UP);
+						percentual = BigDecimal.valueOf(100).divide(getEstudo().getExcedente(), 2, BigDecimal.ROUND_HALF_UP);
 					}
 					if (percentual.doubleValue() < 10) {
-						if (BigDecimal.ONE.doubleValue() > getEstudo().getExcedente().multiply(new BigDecimal(0.01)).doubleValue()) {
+						if (BigDecimal.ONE.doubleValue() > getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.01)).doubleValue()) {
 							ajusteReparte = BigDecimal.ONE;
 						} else {
-							ajusteReparte = getEstudo().getExcedente().multiply(new BigDecimal(0.01));
+							ajusteReparte = getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.01));
 						}
 					} else {
-						ajusteReparte = getEstudo().getExcedente().multiply(new BigDecimal(0.01));
+						ajusteReparte = getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.01));
 					}
 				}
 				// ExcedenteDistribuir = ExcedenteDistribuir - AjusteReparte

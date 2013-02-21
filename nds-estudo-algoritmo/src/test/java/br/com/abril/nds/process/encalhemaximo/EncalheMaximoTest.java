@@ -44,48 +44,48 @@ public class EncalheMaximoTest {
 	@Test
 	public void testReparte100IndiceEncalhe10VendaMedia25() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(100), new BigDecimal(10), new BigDecimal(25));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(100), BigDecimal.valueOf(10), BigDecimal.valueOf(25));
 
 		// Execução do Processo
 		EncalheMaximo encalheMaximo = new EncalheMaximo(estudo);
 		encalheMaximo.executarProcesso();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(72), encalheMaximo.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(72), encalheMaximo.getEstudo().getReparteDistribuir());
 		for (Cota c : encalheMaximo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(28), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(28), c.getReparteCalculado());
 		}
 	}
 	
 	@Test
 	public void testReparte50IndiceEncalhe40VendaMedia20() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(50), new BigDecimal(40), new BigDecimal(20));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(50), BigDecimal.valueOf(40), BigDecimal.valueOf(20));
 
 		// Execução do Processo
 		EncalheMaximo encalheMaximo = new EncalheMaximo(estudo);
 		encalheMaximo.executarProcesso();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(50), encalheMaximo.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(50), encalheMaximo.getEstudo().getReparteDistribuir());
 		for (Cota c : encalheMaximo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(0), c.getReparteCalculado());
+			assertEquals(BigDecimal.ZERO, c.getReparteCalculado());
 		}
 	}
 	
 	@Test
 	public void testReparte50IndiceEncalhe0VendaMedia20() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(50), BigDecimal.ZERO, new BigDecimal(20));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(50), BigDecimal.ZERO, BigDecimal.valueOf(20));
 
 		// Execução do Processo
 		EncalheMaximo encalheMaximo = new EncalheMaximo(estudo);
 		encalheMaximo.executarProcesso();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(50), encalheMaximo.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(50), encalheMaximo.getEstudo().getReparteDistribuir());
 		for (Cota c : encalheMaximo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(0), c.getReparteCalculado());
+			assertEquals(BigDecimal.ZERO, c.getReparteCalculado());
 		}
 	}
 }

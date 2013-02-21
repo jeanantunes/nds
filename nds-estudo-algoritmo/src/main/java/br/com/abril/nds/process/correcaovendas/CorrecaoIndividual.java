@@ -1,6 +1,8 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -45,15 +47,15 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
 		    produtoEdicao.getReparte(), 1, BigDecimal.ROUND_FLOOR);
 
 	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
-		indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.2).divide(
+		indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.2).divide(
 			BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
 	    } else {
 
-		BigDecimal decimalCompare = new BigDecimal(0.9).divide(
+		BigDecimal decimalCompare = BigDecimal.valueOf(0.9).divide(
 			BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
 
 		if (percentualVenda.compareTo(decimalCompare) >= 0) {
-		    indiceCorrecao = indiceCorrecao.add(new BigDecimal(0.1)
+		    indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.1)
 			    .divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
 		}
 	    }

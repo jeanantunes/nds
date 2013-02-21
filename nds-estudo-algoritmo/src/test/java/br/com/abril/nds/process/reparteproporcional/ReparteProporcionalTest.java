@@ -59,33 +59,33 @@ public class ReparteProporcionalTest {
 	@Test
 	public void testSemEdicaoBaseAberta() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(100), BigDecimal.ZERO, false, false, null, false);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(100), BigDecimal.ZERO, false, false, null, false);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
 		reparteProporcional.executarProcesso();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(100), reparteProporcional.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(100), reparteProporcional.getEstudo().getReparteDistribuir());
 	}
 	
 	@Test
 	public void testComEdicaoBaseAberta() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(100), BigDecimal.ZERO, true, false, null, false);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(100), BigDecimal.ZERO, true, false, null, false);
 
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
 		reparteProporcional.executarProcesso();
 		
 		// Validação do teste
-		assertEquals(new BigDecimal(100), reparteProporcional.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(100), reparteProporcional.getEstudo().getReparteDistribuir());
 	}
 	
 	@Test
 	public void testComEdicaoBaseAbertaECotaRecebeuEdicaoAberta() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(100), new BigDecimal(20), true, true, null, false);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(100), BigDecimal.valueOf(20), true, true, null, false);
 
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
@@ -94,14 +94,14 @@ public class ReparteProporcionalTest {
 		// Validação do teste
 		assertEquals(BigDecimal.ZERO, reparteProporcional.getEstudo().getReparteDistribuir());
 		for (Cota c : reparteProporcional.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(100), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(100), c.getReparteCalculado());
 		}
 	}
 	
 	@Test
 	public void testComEdicaoBaseAbertaECotaRecebeuEdicaoAbertaCom2Cotas() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(100), new BigDecimal(20), true, true, null, false);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(100), BigDecimal.valueOf(20), true, true, null, false);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
@@ -110,14 +110,14 @@ public class ReparteProporcionalTest {
 		// Validação do teste
 		assertEquals(BigDecimal.ZERO, reparteProporcional.getEstudo().getReparteDistribuir());
 		for (Cota c : reparteProporcional.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(50), c.getReparteCalculado());
+			assertEquals(BigDecimal.valueOf(50), c.getReparteCalculado());
 		}
 	}
 	
 	@Test
 	public void testComEdicaoBaseAbertaECotaRecebeuEdicaoAbertaCom2CotasDiferentes() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(100), new BigDecimal(20), true, false, new BigDecimal(30), true);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(100), BigDecimal.valueOf(20), true, false, BigDecimal.valueOf(30), true);
 
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
@@ -127,9 +127,9 @@ public class ReparteProporcionalTest {
 		assertEquals(BigDecimal.ZERO, reparteProporcional.getEstudo().getReparteDistribuir());
 		for (Cota c : reparteProporcional.getEstudo().getCotas()) {
 			if (c.getId().equals(new Long(1))) {
-				assertEquals(new BigDecimal(60), c.getReparteCalculado());
+				assertEquals(BigDecimal.valueOf(60), c.getReparteCalculado());
 			} else if (c.getId().equals(new Long(2))) {
-				assertEquals(new BigDecimal(40), c.getReparteCalculado());
+				assertEquals(BigDecimal.valueOf(40), c.getReparteCalculado());
 			}			
 		}
 	}
@@ -137,7 +137,7 @@ public class ReparteProporcionalTest {
 	@Test
 	public void testCom1EdicaoBaseAbertaE1Fechada() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(new BigDecimal(200), new BigDecimal(20), false, false, new BigDecimal(30), true);
+		Estudo estudo = criarAmbiente(BigDecimal.valueOf(200), BigDecimal.valueOf(20), false, false, BigDecimal.valueOf(30), true);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
@@ -149,7 +149,7 @@ public class ReparteProporcionalTest {
 			if (c.getId().equals(new Long(1))) {
 				assertEquals(BigDecimal.ZERO, c.getReparteCalculado());
 			} else if (c.getId().equals(new Long(2))) {
-				assertEquals(new BigDecimal(200), c.getReparteCalculado());
+				assertEquals(BigDecimal.valueOf(200), c.getReparteCalculado());
 			}			
 		}
 	}

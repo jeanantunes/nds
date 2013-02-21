@@ -64,7 +64,7 @@ public class VendaCrescente extends ProcessoAbstrato {
 	    }
 
 	    if (!listDivBoolean.isEmpty() && !listDivBoolean.contains(Boolean.FALSE)) {
-		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1));
+		indiceVendaCrescente = indiceVendaCrescente.add(BigDecimal.valueOf(0.1));
 	    }
 
 	    MathContext mathContext = new MathContext(2, RoundingMode.HALF_UP);

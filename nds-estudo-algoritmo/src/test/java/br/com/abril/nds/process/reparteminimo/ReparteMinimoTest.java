@@ -43,7 +43,7 @@ public class ReparteMinimoTest {
 	@Test
 	public void testPacotePadrao10ReparteMinimo0() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(10), BigDecimal.ZERO, BigDecimal.ZERO);
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(10), BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -51,14 +51,14 @@ public class ReparteMinimoTest {
 		
 		// Validação do teste
 		for (Cota c : reparteMinimo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(10), c.getReparteMinimo());
+			assertEquals(BigDecimal.valueOf(10), c.getReparteMinimo());
 		}
 	}
 	
 	@Test
 	public void testPacotePadrao10ReparteMinimo15() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(10), BigDecimal.ZERO, new BigDecimal(15));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(10), BigDecimal.ZERO, BigDecimal.valueOf(15));
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -66,14 +66,14 @@ public class ReparteMinimoTest {
 		
 		// Validação do teste
 		for (Cota c : reparteMinimo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(15), c.getReparteMinimo());
+			assertEquals(BigDecimal.valueOf(15), c.getReparteMinimo());
 		}
 	}
 	
 	@Test
 	public void testPacotePadrao10ReparteMinimo15RepDistribuir100() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(10), new BigDecimal(100), new BigDecimal(15));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(10), BigDecimal.valueOf(100), BigDecimal.valueOf(15));
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -81,15 +81,15 @@ public class ReparteMinimoTest {
 		
 		// Validação do teste
 		for (Cota c : reparteMinimo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(15), c.getReparteMinimo());
+			assertEquals(BigDecimal.valueOf(15), c.getReparteMinimo());
 		}
-		assertEquals(new BigDecimal(85), reparteMinimo.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(85), reparteMinimo.getEstudo().getReparteDistribuir());
 	}
 	
 	@Test
 	public void testPacotePadrao10ReparteMinimo15RepDistribuir10() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(10), new BigDecimal(10), new BigDecimal(15));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(10), BigDecimal.valueOf(10), BigDecimal.valueOf(15));
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -101,15 +101,15 @@ public class ReparteMinimoTest {
 		
 		// Validação do teste
 		for (Cota c : reparteMinimo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(15), c.getReparteMinimo());
+			assertEquals(BigDecimal.valueOf(15), c.getReparteMinimo());
 		}
-		assertEquals(new BigDecimal(10), reparteMinimo.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(10), reparteMinimo.getEstudo().getReparteDistribuir());
 	}
 	
 	@Test
 	public void testPacotePadrao8ReparteMinimo7RepDistribuir100() {
 		// Criação do ambiente
-		Estudo estudo = criarAmbiente(true, new BigDecimal(8), new BigDecimal(100), new BigDecimal(7));
+		Estudo estudo = criarAmbiente(true, BigDecimal.valueOf(8), BigDecimal.valueOf(100), BigDecimal.valueOf(7));
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -121,8 +121,8 @@ public class ReparteMinimoTest {
 		
 		// Validação do teste
 		for (Cota c : reparteMinimo.getEstudo().getCotas()) {
-			assertEquals(new BigDecimal(7), c.getReparteMinimo());
+			assertEquals(BigDecimal.valueOf(7), c.getReparteMinimo());
 		}
-		assertEquals(new BigDecimal(93), reparteMinimo.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(93), reparteMinimo.getEstudo().getReparteDistribuir());
 	}
 }

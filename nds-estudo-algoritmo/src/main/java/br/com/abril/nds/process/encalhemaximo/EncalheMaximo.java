@@ -31,11 +31,11 @@ public class EncalheMaximo extends ProcessoAbstrato {
 		for (Cota cota : getEstudo().getCotas()) {
 			BigDecimal encalhe = BigDecimal.ZERO;
 			if (!getEstudo().getReparteDistribuir().equals(BigDecimal.ZERO)) {
-				encalhe = getEstudo().getSomatoriaVendaMedia().divide(getEstudo().getReparteDistribuir(), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
+				encalhe = getEstudo().getSomatoriaVendaMedia().divide(getEstudo().getReparteDistribuir(), 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
 			}
 			if ((cota.getPercentualEncalheMaximo().doubleValue() > 0)
 					&& (cota.getPercentualEncalheMaximo().doubleValue() < encalhe.doubleValue())) {
-				BigDecimal percentual = new BigDecimal(100).subtract(cota.getPercentualEncalheMaximo()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
+				BigDecimal percentual = BigDecimal.valueOf(100).subtract(cota.getPercentualEncalheMaximo()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
 				cota.setReparteCalculado(cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP));
 				
 				getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(cota.getReparteCalculado()));
