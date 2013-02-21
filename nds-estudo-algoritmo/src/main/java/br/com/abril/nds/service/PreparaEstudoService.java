@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.dao.DefinicaoBasesDAO;
 import br.com.abril.nds.enumerators.DataReferencia;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class PreparaEstudoService {
     
@@ -20,13 +20,13 @@ public class PreparaEstudoService {
 
     private DefinicaoBasesDAO definicaoBasesDAO = new DefinicaoBasesDAO();
    
-    public List<ProdutoEdicao> buscaEdicoesPorLancamento(ProdutoEdicao edicao) {
+    public List<ProdutoEdicaoBase> buscaEdicoesPorLancamento(ProdutoEdicaoBase edicao) {
 	log.info("Buscando edições para estudo.");
 	return definicaoBasesDAO.listaEdicoesPorLancamento(edicao);
     }
    
-    public List<ProdutoEdicao> buscaEdicoesAnosAnterioresVeraneio(ProdutoEdicao edicao) {
-	List<ProdutoEdicao> listaEdicoesAnosAnterioresMesmoMes = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
+    public List<ProdutoEdicaoBase> buscaEdicoesAnosAnterioresVeraneio(ProdutoEdicaoBase edicao) {
+	List<ProdutoEdicaoBase> listaEdicoesAnosAnterioresMesmoMes = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
 	
 	if(!listaEdicoesAnosAnterioresMesmoMes.isEmpty()) {
 	    return listaEdicoesAnosAnterioresMesmoMes;
@@ -35,11 +35,11 @@ public class PreparaEstudoService {
 	return definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
     }
     
-    public List<ProdutoEdicao> buscaEdicoesAnosAnterioresSaidaVeraneio(ProdutoEdicao edicao) {
+    public List<ProdutoEdicaoBase> buscaEdicoesAnosAnterioresSaidaVeraneio(ProdutoEdicaoBase edicao) {
 	return definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoSaidaVeraneio(edicao));
     }
 
-    private List<LocalDate> getDatasPeriodoVeraneio(ProdutoEdicao edicao) {
+    private List<LocalDate> getDatasPeriodoVeraneio(ProdutoEdicaoBase edicao) {
 	List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
 	Date dataLancamento = edicao.getDataLancamento();
 	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_20));
@@ -49,7 +49,7 @@ public class PreparaEstudoService {
 	return periodoVeraneio;
     }
 
-    private List<LocalDate> getDatasPeriodoSaidaVeraneio(ProdutoEdicao edicao) {
+    private List<LocalDate> getDatasPeriodoSaidaVeraneio(ProdutoEdicaoBase edicao) {
 	List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
 	Date dataLancamento = edicao.getDataLancamento();
 	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_16));

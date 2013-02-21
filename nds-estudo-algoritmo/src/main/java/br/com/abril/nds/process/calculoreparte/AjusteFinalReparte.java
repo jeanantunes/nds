@@ -36,7 +36,7 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 			
 //			Verificar Cota a Cota
 			for(Cota cota:getEstudo().getCotas()){
-//    		Se Repcalculado < Venda (�ltima edi��o fechada, sem corre��o)
+//    		Se Repcalculado < Venda (Última edição fechada, sem correção)
 //    				Se Cota <> FX / MM / MX / RD / PR
 				if(cota.getReparteCalculado().compareTo(reservaAjuste)==-1 ||
 						cota.getReparteCalculado().compareTo(reservaAjuste)==0 &&

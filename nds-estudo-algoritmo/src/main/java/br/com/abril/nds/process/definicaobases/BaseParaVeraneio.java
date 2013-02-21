@@ -8,7 +8,7 @@ import org.joda.time.MonthDay;
 
 import br.com.abril.nds.enumerators.DataReferencia;
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.service.PreparaEstudoService;
 
@@ -34,9 +34,9 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
     protected void executarProcesso() throws Exception {
 	Estudo estudo = super.getEstudo();
 	//copia lista para não afetar o loop após modificações.
-	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>(estudo.getEdicoesBase());
+	List<ProdutoEdicaoBase> edicoes = new ArrayList<ProdutoEdicaoBase>(estudo.getEdicoesBase());
 	
-	for (ProdutoEdicao produtoEdicao : edicoes) {
+	for (ProdutoEdicaoBase produtoEdicao : edicoes) {	
 	    if(estudo.isPracaVeraneio()) {
 		if(validaPeriodoVeranio(produtoEdicao.getDataLancamento())) {
 		    produtoEdicao.setPeso(2);
@@ -48,19 +48,19 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 	}
     }
 
-    private void adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(ProdutoEdicao produtoEdicao) {
-	List<ProdutoEdicao> edicoesAnosAnterioresSaidaVeraneio = preparaEstudoService.buscaEdicoesAnosAnterioresSaidaVeraneio(produtoEdicao);
+    private void adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(ProdutoEdicaoBase produtoEdicao) {
+	List<ProdutoEdicaoBase> edicoesAnosAnterioresSaidaVeraneio = preparaEstudoService.buscaEdicoesAnosAnterioresSaidaVeraneio(produtoEdicao);
 	if(!edicoesAnosAnterioresSaidaVeraneio.isEmpty()) {
 	    super.getEstudo().getEdicoesBase().addAll(edicoesAnosAnterioresSaidaVeraneio);
 	}
     }
 
-    private void adicionarEdicoesAnterioresAoEstudo(ProdutoEdicao produtoEdicao) throws Exception {
-	List<ProdutoEdicao> edicoesAnosAnteriores = preparaEstudoService.buscaEdicoesAnosAnterioresVeraneio(produtoEdicao);
+	private void adicionarEdicoesAnterioresAoEstudo(ProdutoEdicaoBase produtoEdicaoBase) throws Exception {
+		List<ProdutoEdicaoBase> edicoesAnosAnteriores = preparaEstudoService.buscaEdicoesAnosAnterioresVeraneio(produtoEdicaoBase);
 	if(edicoesAnosAnteriores.isEmpty()) {
 	    throw new Exception("Não foram encontradas outras bases para veraneio, favor inserir bases manualmente.");
 	}
-	for (ProdutoEdicao edicao : edicoesAnosAnteriores) {
+	for (ProdutoEdicaoBase edicao : edicoesAnosAnteriores) {
 	    edicao.setPeso(2);
 	}
 	super.getEstudo().getEdicoesBase().addAll(edicoesAnosAnteriores);

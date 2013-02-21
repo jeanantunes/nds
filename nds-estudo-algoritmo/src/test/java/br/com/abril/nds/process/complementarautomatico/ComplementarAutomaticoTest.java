@@ -3,6 +3,7 @@ package br.com.abril.nds.process.complementarautomatico;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -14,6 +15,19 @@ import br.com.abril.nds.service.EstudoService;
 
 public class ComplementarAutomaticoTest {
 
+	private Estudo criarAmbiente() {
+		Estudo estudo = new Estudo();
+		estudo.setReparteDistribuir(new BigDecimal(20));
+		estudo.setComplementarAutomatico(true);
+		ProdutoEdicao edicao = new ProdutoEdicao();
+		estudo.getEdicoesBase().add(edicao);
+		Cota cota = new Cota();
+		estudo.setCotas(new ArrayList<Cota>());
+		estudo.getCotas().add(cota);
+		
+		return estudo;
+	}
+	
 	@Test
 	public void testSemConfiguracao() {
 		// Criação do ambiente

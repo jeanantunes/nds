@@ -3,6 +3,7 @@ package br.com.abril.nds.process.reparteminimo;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -11,15 +12,23 @@ import br.com.abril.nds.model.Estudo;
 
 public class ReparteMinimoTest {
 
+	private Estudo criarAmbiente(boolean distribuicaoPorMultiplos, BigDecimal pacotePadrao,
+			BigDecimal reparteDistribuir, BigDecimal reparteMinimo) {
+		Estudo estudo = new Estudo();
+		estudo.setDistribuicaoPorMultiplos(distribuicaoPorMultiplos);
+		estudo.setPacotePadrao(pacotePadrao);
+		estudo.setReparteDistribuir(reparteDistribuir);
+		Cota cota = new Cota();
+		cota.setReparteMinimo(reparteMinimo);
+		estudo.setCotas(new ArrayList<Cota>());
+		estudo.getCotas().add(cota);
+		return estudo;
+	}
+	
 	@Test
 	public void testPacotePadrao0ReparteMinimo0() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setDistribuicaoPorMultiplos(true);
-		estudo.setPacotePadrao(BigDecimal.ZERO);
-		Cota cota = new Cota();
-		cota.setReparteMinimo(BigDecimal.ZERO);
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -34,12 +43,7 @@ public class ReparteMinimoTest {
 	@Test
 	public void testPacotePadrao10ReparteMinimo0() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setDistribuicaoPorMultiplos(true);
-		estudo.setPacotePadrao(new BigDecimal(10));
-		Cota cota = new Cota();
-		cota.setReparteMinimo(BigDecimal.ZERO);
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, new BigDecimal(10), BigDecimal.ZERO, BigDecimal.ZERO);
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -54,12 +58,7 @@ public class ReparteMinimoTest {
 	@Test
 	public void testPacotePadrao10ReparteMinimo15() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setDistribuicaoPorMultiplos(true);
-		estudo.setPacotePadrao(new BigDecimal(10));
-		Cota cota = new Cota();
-		cota.setReparteMinimo(new BigDecimal(15));
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, new BigDecimal(10), BigDecimal.ZERO, new BigDecimal(15));
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -74,13 +73,7 @@ public class ReparteMinimoTest {
 	@Test
 	public void testPacotePadrao10ReparteMinimo15RepDistribuir100() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setDistribuicaoPorMultiplos(true);
-		estudo.setPacotePadrao(new BigDecimal(10));
-		estudo.setReparteDistribuir(new BigDecimal(100));
-		Cota cota = new Cota();
-		cota.setReparteMinimo(new BigDecimal(15));
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, new BigDecimal(10), new BigDecimal(100), new BigDecimal(15));
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -96,13 +89,7 @@ public class ReparteMinimoTest {
 	@Test
 	public void testPacotePadrao10ReparteMinimo15RepDistribuir10() {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setDistribuicaoPorMultiplos(true);
-		estudo.setPacotePadrao(new BigDecimal(10));
-		estudo.setReparteDistribuir(new BigDecimal(10));
-		Cota cota = new Cota();
-		cota.setReparteMinimo(new BigDecimal(15));
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, new BigDecimal(10), new BigDecimal(10), new BigDecimal(15));
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
@@ -122,13 +109,7 @@ public class ReparteMinimoTest {
 	@Test
 	public void testPacotePadrao8ReparteMinimo7RepDistribuir100() {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setDistribuicaoPorMultiplos(true);
-		estudo.setPacotePadrao(new BigDecimal(8));
-		estudo.setReparteDistribuir(new BigDecimal(100));
-		Cota cota = new Cota();
-		cota.setReparteMinimo(new BigDecimal(7));
-		estudo.getCotas().add(cota);
+		Estudo estudo = criarAmbiente(true, new BigDecimal(8), new BigDecimal(100), new BigDecimal(7));
 		
 		// Execução do Processo
 		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);

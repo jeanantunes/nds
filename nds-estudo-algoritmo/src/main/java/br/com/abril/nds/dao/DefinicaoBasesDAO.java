@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.enumerators.DataReferencia;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class DefinicaoBasesDAO {
 
@@ -50,8 +51,8 @@ public class DefinicaoBasesDAO {
 	    + " order by l.DATA_LCTO_DISTRIBUIDOR desc "
 	    + " limit 2 ";
 
-    public List<ProdutoEdicao> listaEdicoesPorLancamento(ProdutoEdicao edicao) {
-	List<ProdutoEdicao> edicoes = new ArrayList<>();
+    public List<ProdutoEdicaoBase> listaEdicoesPorLancamento(ProdutoEdicaoBase edicao) {
+	List<ProdutoEdicaoBase> edicoes = new ArrayList<>();
 	try {
 	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_EDICOES_VS_LANCAMENTOS);
 	    ps.setLong(1, edicao.getCodigoProduto());
@@ -65,16 +66,16 @@ public class DefinicaoBasesDAO {
 	return edicoes;
     }
 
-    public List<ProdutoEdicao> listaEdicoesAnosAnterioresMesmoMes(ProdutoEdicao edicao) {
+    public List<ProdutoEdicaoBase> listaEdicoesAnosAnterioresMesmoMes(ProdutoEdicaoBase edicao) {
 	return this.listaEdicoesAnosAnteriores(edicao, true, null);
     }
     
-    public List<ProdutoEdicao> listaEdicoesAnosAnterioresVeraneio(ProdutoEdicao edicao, List<LocalDate> periodoVeraneio) {
+    public List<ProdutoEdicaoBase> listaEdicoesAnosAnterioresVeraneio(ProdutoEdicaoBase edicao, List<LocalDate> periodoVeraneio) {
 	return this.listaEdicoesAnosAnteriores(edicao, false, periodoVeraneio);
     }
 
-    private List<ProdutoEdicao> listaEdicoesAnosAnteriores(ProdutoEdicao edicao, boolean mesmoMes, List<LocalDate> dataReferencias) {
-	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
+    private List<ProdutoEdicaoBase> listaEdicoesAnosAnteriores(ProdutoEdicaoBase edicao, boolean mesmoMes, List<LocalDate> dataReferencias) {
+	List<ProdutoEdicaoBase> edicoes = new ArrayList<ProdutoEdicaoBase>();
 	try {
 	    PreparedStatement ps = Conexao.getConexao().prepareStatement(
 		    mesmoMes?
