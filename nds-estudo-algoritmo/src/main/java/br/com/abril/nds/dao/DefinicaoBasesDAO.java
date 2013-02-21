@@ -10,6 +10,7 @@ import java.util.List;
 import org.joda.time.LocalDate;
 import org.joda.time.MonthDay;
 import org.joda.time.YearMonth;
+import org.joda.time.Years;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,31 +50,6 @@ public class DefinicaoBasesDAO {
 	    + " order by l.DATA_LCTO_DISTRIBUIDOR desc "
 	    + " limit 2 ";
 
-    private static final String SQL_COTA_VS_EDICAO = "select "
-	    + "    c.id as COTA_ID "
-	    + "    ,p.id as PRODUTO_ID "
-	    + "    ,pe.id as PRODUTO_EDICAO_ID "
-	    + "    ,pe.PARCIAL "
-	    + "    ,l.id as LANCAMENTO_ID "
-	    + "    ,l.STATUS "
-	    + "    ,tp.GRUPO_PRODUTO "
-	    + "    ,epc.QTDE_DEVOLVIDA "
-	    + "    ,epc.QTDE_RECEBIDA "
-	    + " from "
-	    + "    produto_edicao pe "
-	    + "    ,produto p "
-	    + "    ,lancamento l "
-	    + "    ,tipo_produto tp "
-	    + "    ,cota c "
-	    + "    ,estoque_produto_cota epc "
-	    + " where "
-	    + "    pe.id = ? "
-	    + "    and pe.PRODUTO_ID = p.id "
-	    + "    and pe.ID = l.PRODUTO_EDICAO_ID "
-	    + "    and tp.ID = p.TIPO_PRODUTO_ID "
-	    + "    and pe.ID = epc.PRODUTO_EDICAO_ID "
-	    + "    and c.ID = epc.COTA_ID ";
-
     public List<ProdutoEdicao> listaEdicoesPorLancamento(ProdutoEdicao edicao) {
 	List<ProdutoEdicao> edicoes = new ArrayList<>();
 	try {
@@ -89,7 +65,15 @@ public class DefinicaoBasesDAO {
 	return edicoes;
     }
 
-    public List<ProdutoEdicao> listaEdicoesAnosAnteriores(ProdutoEdicao edicao, boolean mesmoMes, List<LocalDate> dataReferencias) {
+    public List<ProdutoEdicao> listaEdicoesAnosAnterioresMesmoMes(ProdutoEdicao edicao) {
+	return this.listaEdicoesAnosAnteriores(edicao, true, null);
+    }
+    
+    public List<ProdutoEdicao> listaEdicoesAnosAnterioresVeraneio(ProdutoEdicao edicao, List<LocalDate> periodoVeraneio) {
+	return this.listaEdicoesAnosAnteriores(edicao, false, periodoVeraneio);
+    }
+
+    private List<ProdutoEdicao> listaEdicoesAnosAnteriores(ProdutoEdicao edicao, boolean mesmoMes, List<LocalDate> dataReferencias) {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	try {
 	    PreparedStatement ps = Conexao.getConexao().prepareStatement(
@@ -99,14 +83,17 @@ public class DefinicaoBasesDAO {
 	    int index = 0;
 	    ps.setLong(++index, edicao.getCodigoProduto());
 	    if(mesmoMes) {
-		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), 1));
-		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), 2));
+		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), Years.ONE));
+		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), Years.TWO));
 	    } else {
-		
-		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 2, DataReferencia.DEZEMBRO_20));
-		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 1, DataReferencia.FEVEREIRO_28));
-		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 4, DataReferencia.DEZEMBRO_20));
-		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 3, DataReferencia.FEVEREIRO_28));
+		for (LocalDate localDate : dataReferencias) {
+		    ps.setString(++index, localDate.toString());
+		}
+		//FIXME 
+//		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 2, DataReferencia.DEZEMBRO_20));
+//		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 1, DataReferencia.FEVEREIRO_15));
+//		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 4, DataReferencia.DEZEMBRO_20));
+//		ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 3, DataReferencia.FEVEREIRO_15));
 	    }
 	    ResultSet rs = ps.executeQuery();
 	    while (rs.next()) {
@@ -115,31 +102,6 @@ public class DefinicaoBasesDAO {
 	} catch (ClassNotFoundException | SQLException e) {
 	    LocalDate ld = new LocalDate(edicao.getDataLancamento());
 	    log.error("Erro ao obter edições de veraneio dos anos anteriores. Data lançamento base:" + ld.toString(), e);
-	}
-	return edicoes;
-    }
-
-    public List<ProdutoEdicao> listaEdicoesPorCota(ProdutoEdicao edicao) {
-	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
-	try {
-	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_COTA_VS_EDICAO);
-	    ps.setLong(1, edicao.getId());
-	    ResultSet rs = ps.executeQuery();
-	    while(rs.next()) {
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
-		produtoEdicao.setIdProduto(rs.getLong("PRODUTO_ID"));
-		produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-		produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
-		produtoEdicao.setVenda((produtoEdicao.getReparte().subtract(rs.getBigDecimal("QTDE_DEVOLVIDA"))));
-		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
-		produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
-		produtoEdicao.setParcial(rs.getInt(LANCAMENTO_PARCIAL) == 1);
-
-		edicoes.add(produtoEdicao);
-	    }
-	} catch (ClassNotFoundException | SQLException e) {
-	    log.error("Error fetching objects from DB.", e);
 	}
 	return edicoes;
     }
@@ -158,11 +120,12 @@ public class DefinicaoBasesDAO {
 	return false;
     }
 
-    private String anoMesAnteriorSQL(Date dataLancamento, int anosSubtrair) {
+    private String anoMesAnteriorSQL(Date dataLancamento, Years anosSubtrair) {
 	YearMonth ym = new YearMonth(dataLancamento);
-	return ym.minusYears(anosSubtrair).toString().concat("-%");
+	return ym.minus(anosSubtrair).toString().concat("-%");
     }
 
+    @SuppressWarnings("unused")
     private String periodoVeraneio(Date dataLancamento, int anosSubtrair, DataReferencia dataReferencia) {
 	return MonthDay.parse(dataReferencia.getData()).toLocalDate(LocalDate.fromDateFields(dataLancamento).minusYears(anosSubtrair).getYear()).toString();
     }

@@ -3,13 +3,14 @@ package br.com.abril.nds.process.definicaobases;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
-import org.testng.Reporter;
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.LocalDate;
+import org.testng.Reporter;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 
@@ -19,9 +20,6 @@ public class BaseParaVeraneioTest {
     
     @BeforeMethod
     public void setUp() throws Exception {
-	Reporter.log("");
-	
-	
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	edicoes.add(getEdicao());
 	Estudo estudo = new Estudo();

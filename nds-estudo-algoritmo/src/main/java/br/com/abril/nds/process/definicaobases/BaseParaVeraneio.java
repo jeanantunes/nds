@@ -42,9 +42,16 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 		    produtoEdicao.setPeso(2);
 		    adicionarEdicoesAnterioresAoEstudo(produtoEdicao);
 		} else {
-		    //TODO: adicionar bases de saida de veraneio
+		    adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(produtoEdicao);
 		}
 	    }
+	}
+    }
+
+    private void adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(ProdutoEdicao produtoEdicao) {
+	List<ProdutoEdicao> edicoesAnosAnterioresSaidaVeraneio = preparaEstudoService.buscaEdicoesAnosAnterioresSaidaVeraneio(produtoEdicao);
+	if(!edicoesAnosAnterioresSaidaVeraneio.isEmpty()) {
+	    super.getEstudo().getEdicoesBase().addAll(edicoesAnosAnterioresSaidaVeraneio);
 	}
     }
 
@@ -60,11 +67,11 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
     }
 
     private boolean validaPeriodoVeranio(Date dataLancamento) {
-	MonthDay md20Dezembro = MonthDay.parse(DataReferencia.DEZEMBRO_20.getData());
-	MonthDay md28Fevereiro = MonthDay.parse(DataReferencia.FEVEREIRO_28.getData());
+	MonthDay inicioVeraneio = MonthDay.parse(DataReferencia.DEZEMBRO_20.getData());
+	MonthDay fimVeraneio = MonthDay.parse(DataReferencia.FEVEREIRO_15.getData());
 	MonthDay dtLancamento = new MonthDay(dataLancamento);
 
-	return dtLancamento.isAfter(md20Dezembro) || dtLancamento.isBefore(md28Fevereiro);
+	return dtLancamento.isAfter(inicioVeraneio) || dtLancamento.isBefore(fimVeraneio);
     }
 
 }
