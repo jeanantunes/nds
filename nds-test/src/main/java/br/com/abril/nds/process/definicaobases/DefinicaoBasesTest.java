@@ -16,7 +16,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class DefinicaoBasesTest {
 
@@ -36,9 +36,9 @@ public class DefinicaoBasesTest {
     }
 
     @Test(enabled=false, dataProvider="getEdicoesInput", dataProviderClass=DefinicaoBasesDataProvider.class)
-    public void testExecutarProcesso(List<ProdutoEdicao> edicoes) throws Exception {
+    public void testExecutarProcesso(List<ProdutoEdicaoBase> edicoes) throws Exception {
 	Reporter.log("<p>Edi&ccedil;&otilde;es recebidas da interface:<ul>");
-	for (ProdutoEdicao edicao : edicoes) {
+	for (ProdutoEdicaoBase edicao : edicoes) {
 	    Reporter.log("<li>");
 	    Reporter.log(edicao.getCodigoProduto().toString());
 	    Reporter.log("</li>");
@@ -47,13 +47,13 @@ public class DefinicaoBasesTest {
 	
 	bases.setEdicoesRecebidasParaEstudoRaw(edicoes);
 	bases.executar();
-	List<ProdutoEdicao> edicoesBase = bases.getEstudo().getEdicoesBase();
+	List<ProdutoEdicaoBase> edicoesBase = bases.getEstudo().getEdicoesBase();
 	assertNotNull(edicoesBase);
 	assertTrue(bases.getEstudo().getEdicoesBase().size() > 0);
 	
 	Reporter.log("<p>Edi&ccedil;&otilde;es Base:<ul>");
 	Reporter.log("<li>p.CODIGO|l.ID|pe.NUMERO_EDICAO|l.DATA_LCTO_DISTRIBUIDOR</li>");
-	for (ProdutoEdicao edicao : edicoesBase) {
+	for (ProdutoEdicaoBase edicao : edicoesBase) {
 	    Reporter.log("<li>");
 	    Reporter.log(edicao.getCodigoProduto().toString());
 	    Reporter.log(edicao.getIdLancamento().toString());
@@ -81,13 +81,13 @@ public class DefinicaoBasesTest {
 	
 	bases.setEdicoesRecebidasParaEstudoRaw(montaListEdicoesPorProduto(produtos));
 	bases.executarProcesso();
-	List<ProdutoEdicao> edicoesBase = bases.getEstudo().getEdicoesBase();
+	List<ProdutoEdicaoBase> edicoesBase = bases.getEstudo().getEdicoesBase();
 	assertNotNull(edicoesBase);
 	assertTrue(bases.getEstudo().getEdicoesBase().size() > 0);
 	
 	Reporter.log("<p>Edi&ccedil;&otilde;es Base:<table border='1' cellspacing='0' cellpadding='2'>");
 	Reporter.log("<tr><td>p.CODIGO</td><td>l.ID</td><td>pe.NUMERO_EDICAO</td><td>l.DATA_LCTO_DISTRIBUIDOR</td><td>l.TIPO_LANCAMENTO</td></tr>");
-	for (ProdutoEdicao edicao : edicoesBase) {
+	for (ProdutoEdicaoBase edicao : edicoesBase) {
 	    Reporter.log("<tr>");
 	    logTD(edicao.getCodigoProduto());
 	    logTD(edicao.getIdLancamento());
@@ -109,11 +109,11 @@ public class DefinicaoBasesTest {
 	return "<td>".concat(String.valueOf(object)).concat("</td>");
     }
 
-    private List<ProdutoEdicao> montaListEdicoesPorProduto(String produtos) {
+    private List<ProdutoEdicaoBase> montaListEdicoesPorProduto(String produtos) {
 	String[] listProdutos = produtos.split(",");
-	List<ProdutoEdicao> edicoes = new ArrayList<>();
+	List<ProdutoEdicaoBase> edicoes = new ArrayList<>();
 	for (String codigoProduto : listProdutos) {
-	    ProdutoEdicao edicao = new ProdutoEdicao();
+	    ProdutoEdicaoBase edicao = new ProdutoEdicaoBase();
 	    edicao.setCodigoProduto(Long.parseLong(codigoProduto));
 	    edicoes.add(edicao);
 	}
