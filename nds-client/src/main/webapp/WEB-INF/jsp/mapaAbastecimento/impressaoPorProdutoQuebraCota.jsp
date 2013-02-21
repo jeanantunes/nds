@@ -29,9 +29,6 @@ function imprimir(){
 </head>
 
 <body>
-<c:set var="qtdMinima" value="4" />
-<c:set var="qtdColuna" value="${ ( (mapa.cotasQtdes.size()/4) > qtdMinima) ? mapa.cotasQtdes.size()/4 : qtdMinima }" />
-
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
     <td width="121" height="21" align="center">
@@ -84,21 +81,20 @@ function imprimir(){
 	        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${cota.key}</td>
 	        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${cota.value}</td>
 	      </tr>
+	      <c:if test="${(((statusCota.index+1) % (qtdMaxRow+1)) == 0) }">
 	      
-	      <c:if test="${statusCota.index+1 != mapa.cotasQtdes.size() and (((statusCota.index+1)%qtdColuna)==0 and statusCota.index != 0)}">
-	      	
-		    </table>
+	</table>
 		    
-		    </td>
-		    <td width="195" valign="top">
+	</td>
+	<td width="195" valign="top">
 		    
-		    <table width="195" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
-		    
-		    <tr class="class_linha_3">
-		        <td width="100" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
-		        <td width="95" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
-		      </tr>
-		    
+    <table width="195" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
+    
+    <tr class="class_linha_3">
+        <td width="100" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Cota</strong></td>
+        <td width="95" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
+     </tr>
+    
 	      </c:if>
 	      
       </c:forEach>

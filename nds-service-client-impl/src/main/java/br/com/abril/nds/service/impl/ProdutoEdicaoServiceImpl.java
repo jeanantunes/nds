@@ -731,8 +731,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		try {
 			
-			for (Lancamento lancamento : lancamentos){
-				
+			for (Lancamento lancamento : lancamentos){				
 				if (Origem.MANUAL.equals(produtoEdicao.getOrigem())) {
 					this.lancamentoRepository.remover(lancamento);
 				}else{
@@ -755,7 +754,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				}
 			}
 			
+			
+				
+			
+			
 			if (Origem.MANUAL.equals(produtoEdicao.getOrigem())) {
+				if (produtoEdicao.getLancamentoParcial() != null) {
+					this.lancamentoParcialRepository.remover(produtoEdicao
+							.getLancamentoParcial());
+				}
 				this.produtoEdicaoRepository.remover(produtoEdicao);
 			}else{
 				produtoEdicao.setAtivo(false);
