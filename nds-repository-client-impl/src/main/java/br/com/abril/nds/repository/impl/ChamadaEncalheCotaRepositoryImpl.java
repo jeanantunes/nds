@@ -46,7 +46,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		hql.append(" where ");
 		hql.append(" cota.numeroCota = :numeroCota ");
 		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
-		hql.append(" and chamadaEncalheCota.fechado = :postergado ");
+		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
 		hql.append(" and mec.tipoMovimento.grupoMovimentoEstoque = :grupoMovimento ");
 		
 		//hql.append(" and mec.lancamento in (chamadaEncalheCota.chamadaEncalhe.lancamentos) ");
