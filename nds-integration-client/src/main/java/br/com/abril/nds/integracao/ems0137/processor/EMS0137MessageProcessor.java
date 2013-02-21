@@ -11,10 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0137Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0137InputItem;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
@@ -38,6 +42,9 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
+	@Autowired
+	private NdsiLoggerFactory ndsiLoggerFactory; 
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 
@@ -45,6 +52,8 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 
 	@Override
 	public void processMessage(Message message) {
+		
+		message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "Oracle : Icd : TH152 : icd_user");
 
 		CouchDbClient dbClient = null;
 
@@ -56,13 +65,24 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			
 			EMS0137Input input = (EMS0137Input) message.getBody();
 			
+			// Validar código do distribuidor:
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			if(!distribuidor.getCodigoDistribuidorDinap().equals(
+					input.getCodigoDistribuidor())){			
+				this.ndsiLoggerFactory.getLogger().logWarning(message,
+						EventoExecucaoEnum.RELACIONAMENTO, 
+						"Código do distribuidor do arquivo não é o mesmo do Sistema.");
+				return;
+			}
+			
 			dbClient = getCouchDBClient(codigoDistribuidor);
 			
-			ChamadaEncalheFornecedor ce = montarChamadaEncalheFornecedor(input);
+			ChamadaEncalheFornecedor ce = montarChamadaEncalheFornecedor(message, input);
 			
 			getSession().merge(ce);
 			getSession().flush();
 			
+			int i = 0;
 			//dbClient.remove(input);
 
 		}
@@ -82,40 +102,9 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			}			
 		}
 
-
-		/*EMS0136Input input = (EMS0136Input) message.getBody();
-
-		// Validar código do distribuidor:
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		if(!distribuidor.getCodigoDistribuidorDinap().equals(
-				input.getCodigoDistribuidor())){			
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.RELACIONAMENTO, 
-					"Código do distribuidor do arquivo não é o mesmo do Sistema.");
-			return;
-		}
-
-		// Validar Produto/Edicao
-		final String codigoProduto = input.getCodigoProduto();
-		final Long numeroEdicao = input.getEdicaoCapa();
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
-				numeroEdicao);
-		if (produtoEdicao == null) {
-			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.RELACIONAMENTO,
-					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
-							+ codigoProduto + " e Edicao: " + numeroEdicao
-							+ " na tabela produto_edicao");
-			return;
-		}
-
-		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(
-				input, produtoEdicao);
-
-		this.gerarPeriodoLancamentoParcial(input, lancamentoParcial);*/
 	}
 
-	private ChamadaEncalheFornecedor montarChamadaEncalheFornecedor(EMS0137Input input) {
+	private ChamadaEncalheFornecedor montarChamadaEncalheFornecedor(Message message, EMS0137Input input) {
 		
 		ChamadaEncalheFornecedor ce = new ChamadaEncalheFornecedor();
 		
@@ -141,19 +130,54 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
 		}
 
-		montarItensChamadaEncalheFornecedor(input, ce);
+		montarItensChamadaEncalheFornecedor(message, input, ce);
 		
 		return ce;
 		
 	}
 
-	private void montarItensChamadaEncalheFornecedor(EMS0137Input input, ChamadaEncalheFornecedor ce) {
+	private void montarItensChamadaEncalheFornecedor(Message message, EMS0137Input input, ChamadaEncalheFornecedor ce) {
 		
 		for (EMS0137InputItem item : input.getItems()) {
 			
+			if(item.getLancamentoEdicaoPublicacao() == null || (item.getLancamentoEdicaoPublicacao() != null && item.getLancamentoEdicaoPublicacao().getCodigoPublicacao() == null)) {
+				
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.SEM_DOMINIO,
+						"Não foi possível incluir registro - Dados incompletos vindos do Icd - Codigo Produto: " +
+						"Chamada Encalhe: "+ item.getCeItemPK().getNumeroChamadaEncalhe() +
+						" Item Chamada Encalhe: "+ item.getCeItemPK().getNumeroItem());
+				continue;
+				
+			}
+			
+			if(item.getLancamentoEdicaoPublicacao() != null && item.getLancamentoEdicaoPublicacao().getNumeroEdicao() == null) {
+				
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.SEM_DOMINIO,
+						"Não foi possível incluir registro - Dados incompletos vindos do Icd - Numero edição: " +
+						"Chamada Encalhe: "+ item.getCeItemPK().getNumeroChamadaEncalhe() +
+						" Item Chamada Encalhe: "+ item.getCeItemPK().getNumeroItem());
+				continue;
+				
+			}
+			
+			String codigoProduto = item.getLancamentoEdicaoPublicacao().getCodigoPublicacao();
+			
+			Long numeroEdicao  = item.getLancamentoEdicaoPublicacao().getNumeroEdicao().longValue();
+			
 			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
-					item.getLancamentoEdicaoPublicacao().getCodigoPublicacao()
-					, item.getLancamentoEdicaoPublicacao().getNumeroEdicao().longValue());
+					codigoProduto
+					, numeroEdicao);
+			
+			if (produtoEdicao == null) {
+				this.ndsiLoggerFactory.getLogger().logError(message,
+						EventoExecucaoEnum.RELACIONAMENTO,
+						"Não foi possível incluir registro - Nenhum resultado encontrado para Produto/Edição: "
+						+ codigoProduto + " e Edicao: " + numeroEdicao
+						+ " no cadastro de edições do Novo Distrib");
+				continue;
+			}
 			
 			ItemChamadaEncalheFornecedor ice = new ItemChamadaEncalheFornecedor();
 			

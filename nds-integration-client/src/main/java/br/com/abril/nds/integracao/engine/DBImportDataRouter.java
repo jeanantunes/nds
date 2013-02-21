@@ -58,8 +58,8 @@ public class DBImportDataRouter extends AbstractRepository implements ContentBas
 			
 			@Override
 			public Void doInTransaction(TransactionStatus status) {
-				messageProcessor.preProcess(tempVar);
 				
+				messageProcessor.preProcess(tempVar);
 		
 				for (Object o : (List<Object>)tempVar.get() ) {
 						
