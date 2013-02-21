@@ -23,8 +23,12 @@ public interface FechamentoEncalheService {
 
 	void postergarCotas(Date dataEncalhe, Date dataPostergacao, List<Long> idsCotas);
 	
+	void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao);
+
 	void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas);
 	
+	void cobrarTodasCotas(Date dataOperacao, Usuario usuario);
+
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 	
 	void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento);
