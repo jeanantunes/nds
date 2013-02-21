@@ -787,7 +787,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					w.print();
 					w.close();
 				}
-		);	*/	
+		);*/
 		
 		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
 		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
