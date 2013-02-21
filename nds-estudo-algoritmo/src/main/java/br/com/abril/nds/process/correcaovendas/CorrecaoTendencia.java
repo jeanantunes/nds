@@ -1,8 +1,6 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -21,8 +19,7 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
     private BigDecimal totalReparte;
     private BigDecimal totalVenda;
 
-    public CorrecaoTendencia(Cota cota, BigDecimal totalReparte,
-	    BigDecimal totalVenda) {
+    public CorrecaoTendencia(Cota cota, BigDecimal totalReparte, BigDecimal totalVenda) {
 	super(cota);
 	this.totalReparte = totalReparte;
 	this.totalVenda = totalVenda;
@@ -47,31 +44,26 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
     protected void executarProcesso() throws Exception {
 
 	BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
-	MathContext mathContext = new MathContext(1, RoundingMode.HALF_UP);
 
 	Cota cota = (Cota) super.genericDTO;
 
 	if (this.totalVenda.compareTo(BigDecimal.ZERO) != 0) {
 
-	    BigDecimal percentualVenda = this.totalVenda.divide(
-		    this.totalReparte, 1, BigDecimal.ROUND_FLOOR);
+	    BigDecimal percentualVenda = this.totalVenda.divide(this.totalReparte, 1, BigDecimal.ROUND_FLOOR);
 
 	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
-		indiceCorrecaoTendencia = indiceCorrecaoTendencia
-			.add(new BigDecimal(0.2));
+		indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.2).divide(
+			BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
 	    } else {
 
-		BigDecimal decimalCompare = new BigDecimal(0.9, mathContext);
+		BigDecimal decimalCompare = new BigDecimal(0.9).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
 
 		if (percentualVenda.compareTo(decimalCompare) >= 0) {
-		    indiceCorrecaoTendencia = indiceCorrecaoTendencia
-			    .add(new BigDecimal(0.1));
+		    indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.1).divide(
+				BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
 		}
 	    }
 	}
-
-	indiceCorrecaoTendencia = indiceCorrecaoTendencia.divide(
-		BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
 
 	cota.setIndiceCorrecaoTendencia(indiceCorrecaoTendencia);
 

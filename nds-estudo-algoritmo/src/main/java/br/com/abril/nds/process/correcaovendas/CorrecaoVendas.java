@@ -14,12 +14,9 @@ import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
  * as cotas encontradas para o perfil definido no setup do estudo, levando em
  * consideração todas as variáveis também definidas no setup.
  * <p style="white-space: pre-wrap;">
- * SubProcessos: - {@link CorrecaoIndividual} - {@link CorrecaoTendencia} -
- * {@link VendaCrescente} Processo Pai: - N/A
+ * SubProcessos: - {@link CorrecaoIndividual} - {@link CorrecaoTendencia} - {@link VendaCrescente} Processo Pai: - N/A
  * 
- * Processo Anterior: {@link MontaTabelaEstudos} Próximo Processo:
- * {@link Medias}
- * </p>
+ * Processo Anterior: {@link MontaTabelaEstudos} Próximo Processo: {@link Medias} </p>
  */
 public class CorrecaoVendas extends ProcessoAbstrato {
 
@@ -29,56 +26,17 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 
     /**
      * <h2>Processo: Correção de Vendas</h2>
-     * 
-     * <p>
-     * <b>Recuperar as cotas armazenadas na tabela e para cada edição base por
-     * cota aplicar a regra abaixo e<br>
-     * depois armazenar os valores encontrados (vendaCorr) na mesma tabela.</b>
-     * </p>
-     * 
-     * <p>
-     * Se QtdeEdsBase > 1
-     * </p>
-     * 
-     * <p>
-     * <pre>
-     * Se Edição = 1 ou Publicação <> Fascículos / Coleções
-     * </pre>
-     * </p>
-     * 
-     * <p>
-     * <pre>
-     * Procedure CorreçãoIndividual
-     * </pre>
-     * </p>
-     * 
-     * <p>
-     * <pre>
-     * Procedure Correção Tendência
-     * </pre>
-     * </p>
-     * 
-     * <p>
-     * <pre>
-     * Endif
-     * </pre>
-     * </p>
-     * 
-     * <p>
-     * Endif
-     * </p>
-     * 
-     * <p>
-     * Se cota recebeu 4 ou mais edições-base fechadas
-     * </p>
-     * 
-     * <pre>
-     * Procedure VendaCrescente
-     * </pre>
-     * 
-     * <p>
-     * Endif
-     * </p>
+     * <p><b>Recuperar as cotas armazenadas na tabela e para cada edição base por cota aplicar a regra abaixo e<br>depois armazenar os valores encontrados (vendaCorr) na
+     * mesma tabela.</b></p>
+     * <p>Se QtdeEdsBase > 1</p>
+     * <p><pre>Se Edição = 1 ou Publicação <> Fascículos / Coleções</pre></p>
+     * <p><pre>Procedure CorreçãoIndividual</pre></p>
+     * <p><pre>Procedure Correção Tendência</pre></p>
+     * <p><pre>Endif</pre></p>
+     * <p>Endif</p>
+     * <p>Se cota recebeu 4 ou mais edições-base fechadas</p>
+     * <pre>Procedure VendaCrescente</pre>
+     * <p>Endif</p>
      */
     @Override
     protected void executarProcesso() throws Exception {
@@ -94,8 +52,7 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 
 	    for (ProdutoEdicao produtoEdicao : listEdicaoRecebida) {
 
-		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0
-			|| !produtoEdicao.isColecao()) {
+		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
 
 		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
 		    correcaoIndividual.executar();

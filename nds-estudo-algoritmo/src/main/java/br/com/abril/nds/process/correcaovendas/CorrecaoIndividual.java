@@ -1,8 +1,6 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -61,7 +59,7 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
 	    }
 	}
 
-	produtoEdicao.setIndiceCorrecao(indiceCorrecao.setScale(1));
+	produtoEdicao.setIndiceCorrecao(indiceCorrecao);
 
 	produtoEdicao.setVendaCorrigida(produtoEdicao.getVenda().multiply(
 		indiceCorrecao));

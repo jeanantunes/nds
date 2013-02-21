@@ -1,8 +1,6 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,12 +42,12 @@ public class VendaCrescente extends ProcessoAbstrato {
 
 		ProdutoEdicao produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
 		ProdutoEdicao previousProdutoEdicao = null;
-		
+
 		if (iProdutoEdicao > 0) {
 
 		    previousProdutoEdicao = listProdutoEdicao.get(iProdutoEdicao - 1);
 
-		    if (previousProdutoEdicao.getIdProduto().equals(produtoEdicao.getIdProduto())
+		    if (previousProdutoEdicao.getIdProduto().equals(produtoEdicao.getIdProduto()) && !previousProdutoEdicao.isEdicaoAberta()
 			    && !produtoEdicao.isEdicaoAberta()) {
 
 			if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
@@ -64,12 +62,10 @@ public class VendaCrescente extends ProcessoAbstrato {
 	    }
 
 	    if (!listDivBoolean.isEmpty() && !listDivBoolean.contains(Boolean.FALSE)) {
-		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1));
+		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
 	    }
-
-	    MathContext mathContext = new MathContext(2, RoundingMode.HALF_UP);
-	    indiceVendaCrescente = indiceVendaCrescente.round(mathContext);
 	}
+	
 	cota.setIndiceVendaCrescente(indiceVendaCrescente);
     }
 }
