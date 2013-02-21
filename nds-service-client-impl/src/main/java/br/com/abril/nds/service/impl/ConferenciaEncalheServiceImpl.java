@@ -1564,7 +1564,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return boolean
 	 */
 	private boolean isDataRecolhimentoDistribuidorMenorIgualDataConferenciaEncalhe(Date dataRecolhimentoDistribuidor, Date dataConferenciaEncalhe) {
+		
+		if (dataRecolhimentoDistribuidor == null){
 			
+			return false;
+		}
+		
 		dataRecolhimentoDistribuidor =  DateUtil.removerTimestamp(dataRecolhimentoDistribuidor);
 			
 		dataConferenciaEncalhe = DateUtil.removerTimestamp(dataConferenciaEncalhe);
