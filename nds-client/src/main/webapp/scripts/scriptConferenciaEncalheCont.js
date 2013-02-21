@@ -410,11 +410,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					totalExemplaresFooter += valorExemplares;
 					
-					innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + valorExemplares + "</td>";
+					innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.qtdReparte + "</td>";
 					
 					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
 					
-					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeypress="ConferenciaEncalheCont.nextInputExemplares('+index+','+valorExemplares+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.validarInputExemplares('+index+','+valorExemplares+');ConferenciaEncalheCont.atualizarValores('+ index +');" style="width:90px; text-align: center;" value="0"/>' +
+					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeypress="ConferenciaEncalheCont.nextInputExemplares('+index+','+valorExemplares+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
@@ -760,8 +760,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 	},
 
 	nextInputExemplares : function(curIndex, valorRealExemplares, evt) {
-		
-		this.validarInputExemplares(curIndex, valorRealExemplares);
 	
 		if (evt.keyCode == 13) {
 			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
@@ -1073,7 +1071,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 							var data = [
 										  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
 										  {name: 'indObtemDadosFromBD', value : false},
-										  {name: 'indConferenciaContingencia', value: false}
+										  {name: 'indConferenciaContingencia', value: true}
 										 ];
 										
 							ConferenciaEncalheCont.carregarListaConferencia(data);

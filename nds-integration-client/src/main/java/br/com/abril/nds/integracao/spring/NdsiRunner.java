@@ -13,8 +13,7 @@ public abstract class NdsiRunner {
 	
 	public static String USER_NAME = "ndsiMainUser";
 	
-	//static {
-	private static void carregarConfiguracoes() {
+	static {
 		ClassPathXmlApplicationContext classPathXmlApplicationContext = 
 				new ClassPathXmlApplicationContext(SPRING_FILE_LOCATION);
 		
@@ -36,8 +35,6 @@ public abstract class NdsiRunner {
 		if (args.length > 1) {
 			username = args[1];
 		}
-
-		carregarConfiguracoes();
 
 		getRouteTemplate(args[0]).execute(username);
 	}

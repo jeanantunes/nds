@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +23,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.MapaAbastecimentoService;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Service
 public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
@@ -36,9 +33,6 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Autowired
 	private CotaRepository cotaRepository;
-	
-	@Autowired
-	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Override
 	@Transactional
@@ -309,7 +303,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtosBoxRota.get(0).getNomeProduto(), 
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(), 
 				produtosBoxRota.get(0).getPrecoCapa(),  
-				new HashMap<Integer, Integer>());
+				new TreeMap<Integer, Integer>());
 		
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 			
@@ -320,7 +314,6 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			pcMapaDTO.getCotasQtdes().put(item.getCodigoCota(), qtdeAtual + item.getReparte());
 			
 		}
-		
 		
 		return pcMapaDTO;
 	}
