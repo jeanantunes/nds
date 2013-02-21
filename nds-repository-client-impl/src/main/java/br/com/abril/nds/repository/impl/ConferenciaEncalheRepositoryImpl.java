@@ -385,7 +385,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
 		hql.append(" PROD_EDICAO.PACOTE_PADRAO AS pacotePadrao,              ");
 		
-		hql.append(" (COALESCE(MOV_ESTOQUE_COTA.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA) - COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, 0 )) AS desconto, ");
+		hql.append(" COALESCE( ( COALESCE(MOV_ESTOQUE_COTA.PRECO_VENDA, 0) - COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, 0)), 0 ) AS desconto, ");
 		
 		hql.append(" CONF_ENCALHE.QTDE * ( ");
 		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA, 0)  ");
