@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 
@@ -143,7 +143,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	}
 
 	private boolean temEdicaoBaseFechada() {
-		for (ProdutoEdicao edicao : getEstudo().getEdicoesBase()) {
+		for (ProdutoEdicaoBase edicao : getEstudo().getEdicoesBase()) {
 			if (!edicao.isEdicaoAberta()) {
 				return true;
 			}

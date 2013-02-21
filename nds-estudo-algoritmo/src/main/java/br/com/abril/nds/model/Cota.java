@@ -24,7 +24,7 @@ public class Cota extends GenericDTO<Cota> {
 	private BigDecimal indiceCorrecaoTendencia;
 	private BigDecimal quantidadePDVs;
 	//TODO o q é mix?
-			private boolean mix;
+	private boolean mix;
 	private BigDecimal indiceVendaCrescente;
 
 	public Cota() {

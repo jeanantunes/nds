@@ -3,25 +3,63 @@ package br.com.abril.nds.process.reparteproporcional;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.service.EstudoService;
 
 public class ReparteProporcionalTest {
 
+	private Estudo criarAmbiente(BigDecimal reparteDistribuir, BigDecimal reparte1,
+			boolean edicaoAberta1, boolean replicaEdicaoPara2Cota, BigDecimal reparte2, boolean edicaoAberta2) {
+		Estudo estudo = new Estudo();
+		estudo.setReparteDistribuir(reparteDistribuir);
+		estudo.setReparteDistribuirInicial(reparteDistribuir);
+		
+		ProdutoEdicao edicao1 = new ProdutoEdicao();
+		edicao1.setEdicaoAberta(edicaoAberta1);
+		edicao1.setReparte(reparte1);
+		estudo.setEdicoesBase(new ArrayList<ProdutoEdicaoBase>());
+		estudo.getEdicoesBase().add(edicao1);
+		Cota cota = new Cota();
+		cota.setId(new Long(1));
+		cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicao>());
+		cota.getEdicoesRecebidas().add(edicao1);
+		estudo.setCotas(new ArrayList<Cota>());
+		estudo.getCotas().add(cota);
+		
+		if (replicaEdicaoPara2Cota) {
+			cota = new Cota();
+    		cota.setId(new Long(2));
+    		cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicao>());
+    		cota.getEdicoesRecebidas().add(edicao1);
+    		estudo.getCotas().add(cota);
+		}
+		
+		if (reparte2 != null) {
+    		ProdutoEdicao edicao2 = new ProdutoEdicao();
+    		edicao2.setEdicaoAberta(edicaoAberta2);
+    		edicao2.setReparte(reparte2);
+    		estudo.getEdicoesBase().add(edicao2);
+    		cota = new Cota();
+    		cota.setId(new Long(2));
+    		cota.getEdicoesRecebidas().add(edicao2);
+    		estudo.getCotas().add(cota);
+		}
+
+		EstudoService.calculate(estudo);
+		return estudo;
+	}
+	
 	@Test
 	public void testSemEdicaoBaseAberta() {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setReparteDistribuir(new BigDecimal(100));
-		estudo.setReparteDistribuirInicial(new BigDecimal(100));
-		ProdutoEdicao edicao = new ProdutoEdicao();
-		edicao.setEdicaoAberta(false);
-		estudo.getEdicoesBase().add(edicao);
+		Estudo estudo = criarAmbiente(new BigDecimal(100), BigDecimal.ZERO, false, false, null, false);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
@@ -34,13 +72,8 @@ public class ReparteProporcionalTest {
 	@Test
 	public void testComEdicaoBaseAberta() {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setReparteDistribuir(new BigDecimal(100));
-		estudo.setReparteDistribuirInicial(new BigDecimal(100));
-		ProdutoEdicao edicao = new ProdutoEdicao();
-		edicao.setEdicaoAberta(true);
-		estudo.getEdicoesBase().add(edicao);
-		
+		Estudo estudo = criarAmbiente(new BigDecimal(100), BigDecimal.ZERO, true, false, null, false);
+
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
 		reparteProporcional.executarProcesso();
@@ -52,18 +85,8 @@ public class ReparteProporcionalTest {
 	@Test
 	public void testComEdicaoBaseAbertaECotaRecebeuEdicaoAberta() {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setReparteDistribuir(new BigDecimal(100));
-		estudo.setReparteDistribuirInicial(new BigDecimal(100));
-		ProdutoEdicao edicao = new ProdutoEdicao();
-		edicao.setEdicaoAberta(true);
-		edicao.setReparte(new BigDecimal(20));
-		estudo.getEdicoesBase().add(edicao);
-		Cota cota = new Cota();
-		cota.getEdicoesRecebidas().add(edicao);
-		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
-		
+		Estudo estudo = criarAmbiente(new BigDecimal(100), new BigDecimal(20), true, true, null, false);
+
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
 		reparteProporcional.executarProcesso();
@@ -78,23 +101,7 @@ public class ReparteProporcionalTest {
 	@Test
 	public void testComEdicaoBaseAbertaECotaRecebeuEdicaoAbertaCom2Cotas() {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setReparteDistribuir(new BigDecimal(100));
-		estudo.setReparteDistribuirInicial(new BigDecimal(100));
-		
-		ProdutoEdicao edicao = new ProdutoEdicao();
-		edicao.setEdicaoAberta(true);
-		edicao.setReparte(new BigDecimal(20));
-		estudo.getEdicoesBase().add(edicao);
-		
-		Cota cota = new Cota();
-		cota.getEdicoesRecebidas().add(edicao);
-		estudo.getCotas().add(cota);
-		
-		cota = new Cota();
-		cota.getEdicoesRecebidas().add(edicao);
-		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
+		Estudo estudo = criarAmbiente(new BigDecimal(100), new BigDecimal(20), true, true, null, false);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
@@ -110,31 +117,8 @@ public class ReparteProporcionalTest {
 	@Test
 	public void testComEdicaoBaseAbertaECotaRecebeuEdicaoAbertaCom2CotasDiferentes() {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setReparteDistribuir(new BigDecimal(100));
-		estudo.setReparteDistribuirInicial(new BigDecimal(100));
-		
-		ProdutoEdicao edicao = new ProdutoEdicao();
-		edicao.setEdicaoAberta(true);
-		edicao.setReparte(new BigDecimal(20));
-		estudo.getEdicoesBase().add(edicao);
-		
-		ProdutoEdicao edicao2 = new ProdutoEdicao();
-		edicao2.setEdicaoAberta(true);
-		edicao2.setReparte(new BigDecimal(30));
-		estudo.getEdicoesBase().add(edicao2);
-		
-		Cota cota = new Cota();
-		cota.setId(new Long(1));
-		cota.getEdicoesRecebidas().add(edicao2);
-		estudo.getCotas().add(cota);
-		
-		cota = new Cota();
-		cota.setId(new Long(2));
-		cota.getEdicoesRecebidas().add(edicao);
-		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
-		
+		Estudo estudo = criarAmbiente(new BigDecimal(100), new BigDecimal(20), true, false, new BigDecimal(30), true);
+
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
 		reparteProporcional.executarProcesso();
@@ -153,30 +137,7 @@ public class ReparteProporcionalTest {
 	@Test
 	public void testCom1EdicaoBaseAbertaE1Fechada() {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		estudo.setReparteDistribuir(new BigDecimal(200));
-		estudo.setReparteDistribuirInicial(new BigDecimal(200));
-		
-		ProdutoEdicao edicao = new ProdutoEdicao();
-		edicao.setEdicaoAberta(false);
-		edicao.setReparte(new BigDecimal(20));
-		estudo.getEdicoesBase().add(edicao);
-		
-		Cota cota = new Cota();
-		cota.setId(new Long(1));
-		cota.getEdicoesRecebidas().add(edicao);
-		estudo.getCotas().add(cota);
-		
-		ProdutoEdicao edicao2 = new ProdutoEdicao();
-		edicao2.setEdicaoAberta(true);
-		edicao2.setReparte(new BigDecimal(30));
-		estudo.getEdicoesBase().add(edicao2);
-		
-		Cota cota2 = new Cota();
-		cota2.setId(new Long(2));
-		cota2.getEdicoesRecebidas().add(edicao2);
-		estudo.getCotas().add(cota2);
-		EstudoService.calculate(estudo);
+		Estudo estudo = criarAmbiente(new BigDecimal(200), new BigDecimal(20), false, false, new BigDecimal(30), true);
 		
 		// Execução do Processo
 		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);

@@ -3,6 +3,7 @@ package br.com.abril.nds.process.ajustereparte;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -20,6 +21,7 @@ public class AjusteReparteTest {
 			cota.setVendaMediaMaisN(vendaMediaMaisN);
 			cota.setVendaMedia(vendaMedia);
 		}
+		estudo.setCotas(new ArrayList<Cota>());
 		estudo.getCotas().add(cota);
 		// calculate() não esta sendo chamado porque a venda média já esta sendo informada
 		//estudo.calculate(); 

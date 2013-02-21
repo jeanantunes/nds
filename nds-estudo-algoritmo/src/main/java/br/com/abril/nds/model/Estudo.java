@@ -12,7 +12,7 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal reparteDistribuir;
 	private BigDecimal reparteDistribuirInicial;
 	private ProdutoEdicao produto;
-	private List<ProdutoEdicao> edicoesBase;
+	private List<ProdutoEdicaoBase> edicoesBase;
 	private List<Cota> cotas; //Cotas que receberam as edições base.
 	private boolean distribuicaoPorMultiplos;
 	private BigDecimal pacotePadrao;
@@ -68,11 +68,11 @@ public class Estudo extends GenericDTO<Estudo> {
 		this.produto = produto;
 	}
 
-	public List<ProdutoEdicao> getEdicoesBase() {
+	public List<ProdutoEdicaoBase> getEdicoesBase() {
 		return edicoesBase;
 	}
 
-	public void setEdicoesBase(List<ProdutoEdicao> edicoesBase) {
+	public void setEdicoesBase(List<ProdutoEdicaoBase> edicoesBase) {
 		this.edicoesBase = edicoesBase;
 	}
 

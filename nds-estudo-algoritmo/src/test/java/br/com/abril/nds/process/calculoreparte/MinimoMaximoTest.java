@@ -3,6 +3,7 @@ package br.com.abril.nds.process.calculoreparte;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -13,16 +14,24 @@ import br.com.abril.nds.service.EstudoService;
 
 public class MinimoMaximoTest {
 
+	private Estudo criarAmbiente(BigDecimal reparteMinimo, BigDecimal reparteMaximo,
+			BigDecimal reparteCalculado, boolean mix) {
+		Estudo estudo = new Estudo();
+		Cota cota = new Cota();
+		cota.setReparteMinimo(reparteMinimo);
+		cota.setReparteMaximo(reparteMaximo);
+		cota.setReparteCalculado(reparteCalculado);
+		cota.setMix(mix);
+		estudo.setCotas(new ArrayList<Cota>());
+		estudo.getCotas().add(cota);
+		EstudoService.calculate(estudo);
+		return estudo;
+	}
+	
 	@Test
 	public void testReparteMinimoMaiorQueMaximo() {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		cota.setReparteMinimo(new BigDecimal(40));
-		cota.setReparteMaximo(new BigDecimal(10));
-		cota.setReparteCalculado(new BigDecimal(40));
-		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
+		Estudo estudo = criarAmbiente(new BigDecimal(40), new BigDecimal(10), new BigDecimal(40), false);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -41,13 +50,7 @@ public class MinimoMaximoTest {
 	@Test
 	public void testRepCalculado40RepMinimo20RepMaximo50() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		cota.setReparteMinimo(new BigDecimal(20));
-		cota.setReparteMaximo(new BigDecimal(50));
-		cota.setReparteCalculado(new BigDecimal(40));
-		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
+		Estudo estudo = criarAmbiente(new BigDecimal(20), new BigDecimal(50), new BigDecimal(40), false);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -63,13 +66,7 @@ public class MinimoMaximoTest {
 	@Test
 	public void testRepCalculado10RepMinimo20RepMaximo50() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		cota.setReparteMinimo(new BigDecimal(20));
-		cota.setReparteMaximo(new BigDecimal(50));
-		cota.setReparteCalculado(new BigDecimal(10));
-		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
+		Estudo estudo = criarAmbiente(new BigDecimal(20), new BigDecimal(50), new BigDecimal(10), false);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);
@@ -85,14 +82,7 @@ public class MinimoMaximoTest {
 	@Test
 	public void testRepCalculado60RepMinimo20RepMaximo50() throws Exception {
 		// Criação do ambiente
-		Estudo estudo = new Estudo();
-		Cota cota = new Cota();
-		cota.setReparteMinimo(new BigDecimal(20));
-		cota.setReparteMaximo(new BigDecimal(50));
-		cota.setReparteCalculado(new BigDecimal(60));
-		cota.setMix(true);
-		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
+		Estudo estudo = criarAmbiente(new BigDecimal(20), new BigDecimal(50), new BigDecimal(60), true);
 
 		// Execução do Processo
 		MinimoMaximo minimoMaximo = new MinimoMaximo(estudo);

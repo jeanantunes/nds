@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
 import br.com.abril.nds.service.PreparaEstudoService;
@@ -52,7 +53,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	
 	List<ProdutoEdicao> edicoesRecebidasRaw = getEdicoesRecebidasParaEstudoRaw();
 	
-	List<ProdutoEdicao> edicoesParaEstudo = new ArrayList<ProdutoEdicao>();
+	List<ProdutoEdicaoBase> edicoesParaEstudo = new ArrayList<ProdutoEdicaoBase>();
 	for (ProdutoEdicao produtoEdicao : edicoesRecebidasRaw) {
 	    List<ProdutoEdicao> objetoEdtudo = estudoService.buscaEdicoesPorLancamento(produtoEdicao);
 	    validaApenasUmaEdicaoFechada(objetoEdtudo);

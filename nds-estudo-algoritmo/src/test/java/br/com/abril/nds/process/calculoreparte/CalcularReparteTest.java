@@ -3,6 +3,7 @@ package br.com.abril.nds.process.calculoreparte;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -10,6 +11,7 @@ import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.service.EstudoService;
 
 public class CalcularReparteTest {
@@ -17,6 +19,7 @@ public class CalcularReparteTest {
 	private Estudo criarAmbiente(boolean configurado, boolean distribuicaoPorMultiplos, BigDecimal pacotePadrao,
 			BigDecimal vendaMedia, BigDecimal reparteCalculado, BigDecimal reparteDistribuir, boolean temEdicaoBaseFechada) {
 		Estudo estudo = new Estudo();
+		estudo.setEdicoesBase(new ArrayList<ProdutoEdicaoBase>());
 		Cota cota = new Cota();
 		if (configurado) {
 			if (temEdicaoBaseFechada) {
@@ -29,9 +32,11 @@ public class CalcularReparteTest {
 			estudo.setReparteDistribuir(reparteDistribuir);
 			ProdutoEdicao base = new ProdutoEdicao();
 			base.setVenda(vendaMedia);
+			cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicao>());
 			cota.getEdicoesRecebidas().add(base);
 			cota.setReparteCalculado(reparteCalculado);
 		}
+		estudo.setCotas(new ArrayList<Cota>());
 		estudo.getCotas().add(cota);
 		EstudoService.calculate(estudo);
 		estudo.setExcedente(estudo.getReparteDistribuir().subtract(estudo.getSomatoriaVendaMedia()));
