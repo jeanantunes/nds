@@ -598,8 +598,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			throw new ValidacaoException(TipoMensagem.ERROR,
 					"Endereço principal do distribuidor não encontrada!");
 		}
-		identificacaoEmitente
-		.setDocumento(distribuidor.getJuridica().getCnpj());
+		
+		String cnpj = Util.removerMascaraCnpj(distribuidor.getJuridica().getCnpj());
+		
+		identificacaoEmitente.setDocumento(cnpj);
 		identificacaoEmitente.setInscricaoEstadual(distribuidor.getJuridica()
 				.getInscricaoEstadual());
 		identificacaoEmitente.setInscricaoMunicipal(distribuidor.getJuridica()
@@ -1026,7 +1028,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.setIdentificacaoDestinatario(carregaDestinatario(cota));
 		notaFiscal.setIdentificacaoEmitente(carregaEmitente());
 
-		String raizCNPJ = notaFiscal.getIdentificacaoEmitente().getDocumento()
+		String raizCNPJ = Util.removerMascaraCnpj(notaFiscal.getIdentificacaoEmitente().getDocumento())
 				.substring(0, 7);
 		String ufOrigem = notaFiscal.getIdentificacaoEmitente().getEndereco()
 				.getUf();
