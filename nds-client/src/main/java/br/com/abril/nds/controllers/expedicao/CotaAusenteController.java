@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,7 +59,7 @@ public class CotaAusenteController extends BaseController {
 	
 	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente nesta data.";
 	
-	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
+	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é superior a data de operação atual.";
 	
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
 	
@@ -155,9 +154,11 @@ public class CotaAusenteController extends BaseController {
 	 */
 	private void gerarDataLancamento() {
 		
-		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+		String data = 
+			DateUtil.formatarDataPTBR(
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 		
-		result.include("data",data);			
+		result.include("data", data);			
 	}
 	
 	/**
@@ -267,8 +268,13 @@ public class CotaAusenteController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_INFORMADA_INVALIDA);
 		}
 
-		if ( data.getTime() > (new Date().getTime()) )
-			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_MAIOR_OPERACAO_ATUAL );
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+				
+		if (data.compareTo(dataOperacao) > 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_MAIOR_OPERACAO_ATUAL);
+			
+		}
 		
 		return data;
 	}
@@ -356,7 +362,7 @@ public class CotaAusenteController extends BaseController {
 	 * @param numCota - Número da Cota
 	 */
 	@Post
-	public void enviarParaSuplementar(List<Integer> numCotas) {
+	public void enviarParaSuplementar(Date dataPesquisa, List<Integer> numCotas) {
 	
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -367,7 +373,7 @@ public class CotaAusenteController extends BaseController {
 			if(numCotas == null) 
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 						
-			cotaAusenteService.declararCotaAusenteEnviarSuplementar(numCotas, new Date(), this.getUsuarioLogado().getId());
+			cotaAusenteService.declararCotaAusenteEnviarSuplementar(numCotas, dataPesquisa, this.getUsuarioLogado().getId());
 			
 			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
 			
@@ -404,10 +410,10 @@ public class CotaAusenteController extends BaseController {
 	 * @param numCota
 	 */
 	@Post
-	public void carregarDadosRateio(List<Integer> numCotas) {
+	public void carregarDadosRateio(Date dataPesquisa, List<Integer> numCotas) {
 		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
-				movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(new Date(), numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(dataPesquisa, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
@@ -419,7 +425,7 @@ public class CotaAusenteController extends BaseController {
 	 * @param numCota
 	 */
 	@Post
-	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, List<Integer> numCotas) {
+	public void realizarRateio(Date dataPesquisa, List<MovimentoEstoqueCotaDTO> movimentos, List<Integer> numCotas) {
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -430,7 +436,7 @@ public class CotaAusenteController extends BaseController {
 			if(numCotas == null) 
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 			
-			cotaAusenteService.declararCotaAusenteRatearReparte(numCotas, new Date(), this.getUsuarioLogado().getId() , movimentos);
+			cotaAusenteService.declararCotaAusenteRatearReparte(numCotas, dataPesquisa, this.getUsuarioLogado().getId() , movimentos);
 			
 			mensagens.add(SUCESSO_RATEIO);
 			

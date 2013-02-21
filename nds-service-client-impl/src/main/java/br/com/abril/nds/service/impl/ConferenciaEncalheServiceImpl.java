@@ -1564,7 +1564,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return boolean
 	 */
 	private boolean isDataRecolhimentoDistribuidorMenorIgualDataConferenciaEncalhe(Date dataRecolhimentoDistribuidor, Date dataConferenciaEncalhe) {
+		
+		if (dataRecolhimentoDistribuidor == null){
 			
+			return false;
+		}
+		
 		dataRecolhimentoDistribuidor =  DateUtil.removerTimestamp(dataRecolhimentoDistribuidor);
 			
 		dataConferenciaEncalhe = DateUtil.removerTimestamp(dataConferenciaEncalhe);
@@ -2806,7 +2811,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		try {
-		
+			// TODO: Roger, tratar isto para aparecer ao usuário
+			/*JRTextExporter exporter = new JRTextExporter();  
+			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
+			exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "/home/roger/teste.txt");  
+			exporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Float(4));  
+			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));  
+			exporter.exportReport();*/
+			
 			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		
 		} catch (JRException e) {

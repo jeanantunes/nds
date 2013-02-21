@@ -900,7 +900,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         
 		Set<Long> roteirosExclusao = roteirizacaoDTO.getRoteirosExclusao();
         
-		roteirizacaoExistente.desassociarRoteiros(roteirosExclusao);
+		processarRoteirosExcluidos(roteirizacaoExistente, roteirosExclusao);
         
 		for (RoteiroRoteirizacaoDTO roteiroDTO : roteirizacaoDTO.getTodosRoteiros()) {
         
@@ -946,10 +946,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					
 						Entregador entregador = this.entregadorRepository.buscarPorId(rotaDTO.getEntregadorId());
 
-						rota.setEntregador(entregador);
-
 						entregador.setRota(rota);
+						
 						this.entregadorRepository.merge(entregador);
+						
+						rota.setEntregador(entregador);
 					}
 					
 				} else {
@@ -986,6 +987,47 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
        	
 		return roteirizacaoExistente;
     }
+
+	private void processarRoteirosExcluidos(Roteirizacao roteirizacaoExistente,
+			Set<Long> roteirosExclusao) {
+		
+		roteirizacaoExistente.desassociarRoteiros(roteirosExclusao);
+		
+		for (Long idRoteiroExclusao : roteirosExclusao) {
+			
+			Roteiro roteiro = this.roteiroRepository.buscarPorId(idRoteiroExclusao);
+			
+			if (roteiro != null) {
+			
+				for(Rota rota : roteiro.getRotas()) {
+					
+					Entregador entregador = rota.getEntregador();
+				
+					if(entregador != null){
+						entregador.setRota(null);
+					
+						this.entregadorRepository.merge(entregador);
+					}
+					
+					for(RotaPDV rotaPDV : rota.getRotaPDVs()){
+						
+						PDV pdv = rotaPDV.getPdv();
+						
+						if(pdv != null){
+							
+							Cota cota = pdv.getCota();
+							
+							if(cota != null) {
+								cota.setBox(null);
+								this.cotaRepository.merge(cota);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
 
 	/**
      * Processa as transferências de roteiro da roteirização

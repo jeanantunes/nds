@@ -63,6 +63,10 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	private BigDecimal saldo;
 	
+	private BigDecimal valorVendaDia;
+	
+	private String nomeBox;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -250,5 +254,21 @@ public class ContaCorrenteCotaVO implements Serializable {
 
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
+	}
+
+	public BigDecimal getValorVendaDia() {
+		return valorVendaDia;
+	}
+
+	public void setValorVendaDia(BigDecimal valorVendaDia) {
+		this.valorVendaDia = valorVendaDia;
+	}
+
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
 	}
 }
