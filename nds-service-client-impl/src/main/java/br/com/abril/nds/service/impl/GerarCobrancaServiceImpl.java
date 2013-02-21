@@ -191,10 +191,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 		if (politicaPrincipal == null){
 			throw new GerarCobrancaValidacaoException(
-					new ValidacaoException(TipoMensagem.ERROR, "Politica de cobrança não encontrada."));
+					new ValidacaoException(TipoMensagem.WARNING, "Politica de cobrança não encontrada."));
 		} else if (politicaPrincipal.getFormaCobranca() == null){
 			throw new GerarCobrancaValidacaoException(
-					new ValidacaoException(TipoMensagem.ERROR, "Forma de cobrança não encontrada."));
+					new ValidacaoException(TipoMensagem.WARNING, "Forma de cobrança não encontrada."));
 		}
 
 		//Caso o principal modo de cobrança seja boleto a baixa automática deve ter sido executada
@@ -207,7 +207,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (listaControleBaixaBancaria == null || listaControleBaixaBancaria.isEmpty()) {
 				
 				throw new GerarCobrancaValidacaoException(
-					new ValidacaoException(TipoMensagem.ERROR, "Baixa Automática ainda não executada."));
+					new ValidacaoException(TipoMensagem.WARNING, "Baixa Automática ainda não executada."));
 			}
 		}
 		
