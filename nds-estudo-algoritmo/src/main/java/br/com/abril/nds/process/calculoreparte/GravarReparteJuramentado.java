@@ -81,7 +81,7 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
     	}
     	
     	
-    	this.fimProcesso();
+//    	this.fimProcesso();
     	
     }
 

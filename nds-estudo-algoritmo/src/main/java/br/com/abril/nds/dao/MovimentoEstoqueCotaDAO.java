@@ -30,7 +30,7 @@ public class MovimentoEstoqueCotaDAO {
 			ResultSet rs = psmt.executeQuery();
 			
 			while(rs.next()){
-				valorJuramentado = rs.getBigDecimal(0);
+				valorJuramentado = rs.getBigDecimal(1);
 			}
 			
 		} catch (ClassNotFoundException | SQLException e) {

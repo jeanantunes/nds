@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 
+import br.com.abril.nds.dao.MovimentoEstoqueCotaDAO;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
@@ -41,7 +42,8 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 			for(Cota cota:getEstudo().getCotas()){
 				
 				// Aguardando email do diogenes sobre como recuperar ultima edicao fechada
-				BigDecimal ultimaEdicaoFechada = BigDecimal.ZERO;
+				MovimentoEstoqueCotaDAO mecDAO = new MovimentoEstoqueCotaDAO();
+				BigDecimal ultimaEdicaoFechada = mecDAO.retornarUltimaVendaFechada(getEstudo().getProduto());
 				
 				//	Se Cota <> FX / MM / MX / RD / PR
 				if(cota.getReparteCalculado().compareTo(ultimaEdicaoFechada)==-1 ||

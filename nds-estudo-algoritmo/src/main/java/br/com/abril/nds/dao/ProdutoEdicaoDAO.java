@@ -56,6 +56,7 @@ public class ProdutoEdicaoDAO {
 	    }
 	} catch (Exception ex) {
 	     log.error("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota", ex);
+	     ex.printStackTrace();
 	}
 	return edicoes;
     }
@@ -71,9 +72,10 @@ public class ProdutoEdicaoDAO {
 
 			ResultSet rs = psmt.executeQuery();
 			rs.next();
-			return rs.getInt(0);
+			return rs.getInt(1);
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			System.out.println("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota");
 		}
 
