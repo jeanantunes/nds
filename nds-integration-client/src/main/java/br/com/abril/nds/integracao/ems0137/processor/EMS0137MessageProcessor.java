@@ -14,11 +14,14 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.model.canonic.EMS0137Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0137InputItem;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
@@ -31,7 +34,10 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private ChamadaEncalheRepository chamadaEncalheRepository;
-
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 
@@ -145,20 +151,35 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		
 		for (EMS0137InputItem item : input.getItems()) {
 			
+			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
+					item.getLancamentoEdicaoPublicacao().getCodigoPublicacao()
+					, item.getLancamentoEdicaoPublicacao().getNumeroEdicao().longValue());
+			
 			ItemChamadaEncalheFornecedor ice = new ItemChamadaEncalheFornecedor();
-
+			
+			ice.setChamadaEncalheFornecedor(ce);
 			ice.setNumeroItem(item.getCeItemPK().getNumeroItem());
+			ice.setProdutoEdicao(produtoEdicao);
 			ice.setControle(item.getNumeroControle());
 			ice.setDataRecolhimento(item.getDataRecolhimento());
+			ice.setRegimeRecolhimento(RegimeRecolhimento.getByCodigo(item.getCodigoRegimeRecolhimento()));
 			ice.setDataRecolhimento(item.getDataRecolhimento());
 			ice.setControle(item.getNumeroControle());
 			ice.setNumeroDocumento(item.getNumeroDocumento());
+			ice.setNumeroNotaEnvio(item.getNumeroNotaEnvio());
+			ice.setPrecoUnitario(item.getValorPrecoUnitario());
 			ice.setQtdeDevolucaoApurada(item.getQuantidadeDevolucaoApurada());
 			ice.setQtdeDevolucaoInformada(item.getQuantidadeDevolucaoInformada());
 			ice.setQtdeDevolucaoParcial(item.getQuantidadeDevolucaoParcial());
 			ice.setQtdeEnviada(item.getQuantidadeEnviada());
 			ice.setQtdeVendaApurada(item.getQuantidadeVendaApurada());
 			ice.setQtdeVendaInformada(item.getQuantidadeVendaInformada());
+			ice.setTipoProduto(item.getTipoProduto());
+			ice.setStatus(item.getTipoStatus());
+			ice.setValorMargemApurado(item.getValorMargemApurado());
+			ice.setValorMargemInformado(item.getValorMargemInformado());
+			ice.setValorVendaApurado(item.getValorVendaApurada());
+			ice.setValorVendaInformado(item.getValorVendaInformada());
 			
 			//item.getCodigoLancamentoEdicao()
 

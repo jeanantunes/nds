@@ -6,13 +6,15 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.integracao.icd.pks.CEItemPK;
 
 @Entity
 @Table(name = "ITEM_CHAMADA_ENCALHE")
-public class ChamadaEncalheIcdItem {
+public class IcdChamadaEncalheItem {
 
 	@EmbeddedId
 	private CEItemPK ceItemPK;
@@ -23,8 +25,9 @@ public class ChamadaEncalheIcdItem {
 	@Column(name = "NUM_DOCUMENTO_DCEN")
 	private Long numeroDocumento;
 	
-	@Column(name = "COD_LANCTO_EDICAO")
-	private Long codigoLancamentoEdicao;
+	@JoinColumn(name = "COD_LANCTO_EDICAO")
+	@OneToOne
+	private IcdLancamentoEdicaoPublicacao lancamentoEdicaoPublicacao;
 
 	@Column(name = "COD_VALE_DESCONTO_VLDS")
 	private Long codigoValeDesconto;
@@ -128,12 +131,12 @@ public class ChamadaEncalheIcdItem {
 		this.numeroDocumento = numeroDocumento;
 	}
 
-	public Long getCodigoLancamentoEdicao() {
-		return codigoLancamentoEdicao;
+	public IcdLancamentoEdicaoPublicacao getLancamentoEdicaoPublicacao() {
+		return lancamentoEdicaoPublicacao;
 	}
 
-	public void setCodigoLancamentoEdicao(Long codigoLancamentoEdicao) {
-		this.codigoLancamentoEdicao = codigoLancamentoEdicao;
+	public void setLancamentoEdicaoPublicacao(IcdLancamentoEdicaoPublicacao lancamentoEdicaoPublicacao) {
+		this.lancamentoEdicaoPublicacao = lancamentoEdicaoPublicacao;
 	}
 
 	public Long getCodigoValeDesconto() {

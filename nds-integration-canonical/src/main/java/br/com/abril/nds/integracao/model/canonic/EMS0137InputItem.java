@@ -17,7 +17,7 @@ public class EMS0137InputItem extends IntegracaoDocumentDetail implements Serial
 
 	private ItemCEPKInput ceItemPK;
 	
-	private Long numeroItem;
+	private IcdLancamentoEdicaoPublicacaoInput lancamentoEdicaoPublicacao;
 	
 	private Date dataRecolhimento;
 	
@@ -83,12 +83,12 @@ public class EMS0137InputItem extends IntegracaoDocumentDetail implements Serial
 		this.ceItemPK = ceItemPK;
 	}
 
-	public Long getNumeroItem() {
-		return numeroItem;
+	public IcdLancamentoEdicaoPublicacaoInput getLancamentoEdicaoPublicacao() {
+		return lancamentoEdicaoPublicacao;
 	}
 
-	public void setNumeroItem(Long numeroItem) {
-		this.numeroItem = numeroItem;
+	public void setLancamentoEdicaoPublicacao(IcdLancamentoEdicaoPublicacaoInput lancamentoEdicaoPublicacao) {
+		this.lancamentoEdicaoPublicacao = lancamentoEdicaoPublicacao;
 	}
 
 	public Date getDataRecolhimento() {
@@ -335,6 +335,40 @@ public class EMS0137InputItem extends IntegracaoDocumentDetail implements Serial
 
 		public void setNumeroItem(Integer numeroItem) {
 			this.numeroItem = numeroItem;
+		}
+		
+	}
+	
+	public class IcdLancamentoEdicaoPublicacaoInput {
+		
+		private Long codigoLancamentoEdicao;
+		
+		private String codigoPublicacao;
+		
+		private Integer numeroEdicao;
+
+		public Long getCodigoLancamentoEdicao() {
+			return codigoLancamentoEdicao;
+		}
+
+		public void setCodigoLancamentoEdicao(Long codigoLancamentoEdicao) {
+			this.codigoLancamentoEdicao = codigoLancamentoEdicao;
+		}
+
+		public String getCodigoPublicacao() {
+			return codigoPublicacao;
+		}
+
+		public void setCodigoPublicacao(String codigoPublicacao) {
+			this.codigoPublicacao = codigoPublicacao;
+		}
+
+		public Integer getNumeroEdicao() {
+			return numeroEdicao;
+		}
+
+		public void setNumeroEdicao(Integer numeroEdicao) {
+			this.numeroEdicao = numeroEdicao;
 		}
 		
 	}

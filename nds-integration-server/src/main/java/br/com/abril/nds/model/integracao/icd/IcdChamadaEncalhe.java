@@ -15,7 +15,7 @@ import br.com.abril.nds.model.integracao.icd.pks.CEPK;
 
 @Entity
 @Table(name = "CHAMADA_ENCALHE")
-public class ChamadaEncalheIcd {
+public class IcdChamadaEncalhe {
 	
 	@EmbeddedId
 	private CEPK cePK;
@@ -84,7 +84,7 @@ public class ChamadaEncalheIcd {
 	private String indiceCEProvisoria;
 	
 	@OneToMany(mappedBy="ceItemPK.numeroChamadaEncalhe")
-	List<ChamadaEncalheIcdItem> chamadaEncalheItens;
+	List<IcdChamadaEncalheItem> chamadaEncalheItens;
 
 	/**
 	 * Getters e Setters 
@@ -265,11 +265,11 @@ public class ChamadaEncalheIcd {
 		this.indiceCEProvisoria = indiceCEProvisoria;
 	}
 
-	public List<ChamadaEncalheIcdItem> getChamadaEncalheItens() {
+	public List<IcdChamadaEncalheItem> getChamadaEncalheItens() {
 		return chamadaEncalheItens;
 	}
 
-	public void setChamadaEncalheItens(List<ChamadaEncalheIcdItem> chamadaEncalheItens) {
+	public void setChamadaEncalheItens(List<IcdChamadaEncalheItem> chamadaEncalheItens) {
 		this.chamadaEncalheItens = chamadaEncalheItens;
 	}
 	
