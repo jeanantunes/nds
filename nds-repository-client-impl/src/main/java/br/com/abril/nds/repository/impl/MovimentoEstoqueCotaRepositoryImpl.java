@@ -1909,6 +1909,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id, box.id ");
 		
+		if (filtro.getQuebraPorCota()) {
+			hql.append(" , cota.id ");
+		}
+		
 		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 
 			hql.append(" having sum(estudoCota.qtdeEfetiva) > 0 ");
