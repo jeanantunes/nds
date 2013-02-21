@@ -1,5 +1,7 @@
 package br.com.abril.nds.process.verificartotalfixacoes;
 
+import br.com.abril.nds.dao.CotaDAO;
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -14,8 +16,16 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class SelecaoBancas extends ProcessoAbstrato {
 
+    public SelecaoBancas(Estudo estudo) {
+	super(estudo);
+    }
+    
     @Override
     protected void executarProcesso() {
+	Estudo estudo = super.getEstudo();	
+
+	CotaDAO cotaDAO = new CotaDAO();
+	estudo.setCotas(cotaDAO.getCotasComEdicoesBase(estudo.getEdicoesBase()));
     }
 
 }

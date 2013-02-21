@@ -19,10 +19,9 @@ import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class DefinicaoBasesDAO {
 
-    private static final String LANCAMENTO_PARCIAL = "PARCIAL";
-
     private static final Logger log = LoggerFactory.getLogger(DefinicaoBasesDAO.class);
 
+    private static final String LANCAMENTO_PARCIAL = "PARCIAL";
     private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
     private static final String STATUS_FECHADO = "FECHADO";
     

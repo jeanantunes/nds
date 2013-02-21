@@ -3,7 +3,6 @@ package br.com.abril.nds.process.correcaovendas;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Iterator;
 
 import org.junit.Assert;
@@ -11,12 +10,12 @@ import org.testng.Reporter;
 import org.testng.annotations.Test;
 
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.EstoqueProdutoCota;
+import br.com.abril.nds.model.ProdutoEdicao;
 
 public class VendaCrescenteTest {
 
     @Test(dataProvider = "getCotaEdicaoBaseUnicaPublicacaoList", dataProviderClass = CorrecaoVendasDataProvider.class)
-    public void executarProcesso(Cota cota) {
+    public void primeiroCenario(Cota cota) {
 
 	try {
 
@@ -26,42 +25,25 @@ public class VendaCrescenteTest {
 
 	    StringBuilder sbEstoqueLog = new StringBuilder();
 
-	    Iterator<EstoqueProdutoCota> itEstoqueProdutoCota = cota
-		    .getEstoqueProdutoCotas().iterator();
+	    Iterator<ProdutoEdicao> itProdutoEdicao = cota
+		    .getEdicoesRecebidas().iterator();
 
-	    while (itEstoqueProdutoCota.hasNext()) {
+	    while (itProdutoEdicao.hasNext()) {
 
-		EstoqueProdutoCota estoqueProdutoCota = itEstoqueProdutoCota
-			.next();
-
-		BigInteger quantidadeRecebida = estoqueProdutoCota
-			.getQuantidadeRecebida().toBigInteger();
-		BigInteger quantidadeDevolvida = estoqueProdutoCota
-			.getQuantidadeDevolvida().toBigInteger();
-
-		BigInteger venda = quantidadeRecebida
-			.subtract(quantidadeDevolvida);
+		ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
 		sbEstoqueLog
-			.append("<p style='margin-left: 100px'>Estoque Produto Cota</p>");
+			.append("<p style='margin-left: 100px'>Produto Edicao</p>");
 		sbEstoqueLog.append("<p style='margin-left: 150px'>ID : "
-			+ estoqueProdutoCota.getId() + "</p>");
+			+ produtoEdicao.getId() + "</p>");
 		sbEstoqueLog
-			.append("<p style='margin-left: 150px'>Produto Edicao</p>");
-		sbEstoqueLog.append("<p style='margin-left: 200px'>ID : "
-			+ estoqueProdutoCota.getProdutoEdicao().getId()
-			+ "</p>");
-		sbEstoqueLog.append("<p style='margin-left: 200px'>Nome : "
-			+ estoqueProdutoCota.getProdutoEdicao().getNome()
-			+ "</p>");
+			.append("<p style='margin-left: 150px'>ID Produto : "
+				+ produtoEdicao.getIdProduto() + "</p>");
 		sbEstoqueLog
-			.append("<p style='margin-left: 200px'>Quantidade Recebida : "
-				+ quantidadeRecebida + "</p>");
-		sbEstoqueLog
-			.append("<p style='margin-left: 200px'>Quantidade Devolvida : "
-				+ quantidadeDevolvida + "</p>");
-		sbEstoqueLog.append("<p style='margin-left: 200px'>Venda : "
-			+ venda + "</p>");
+			.append("<p style='margin-left: 150px'>Quantidade Recebida : "
+				+ produtoEdicao.getReparte() + "</p>");
+		sbEstoqueLog.append("<p style='margin-left: 150px'>Venda : "
+			+ produtoEdicao.getVenda() + "</p>");
 	    }
 
 	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
@@ -78,11 +60,11 @@ public class VendaCrescenteTest {
 	    assertTrue("Indice Venda Crescente : " + indiceVendaCrescente
 		    + " Cota : " + cota.getId(), assertIndice);
 
-	    Reporter.log("<p>Cota " + cota.getNomePessoa() + "</p>");
+	    Reporter.log("<p>Cota</p>");
 	    Reporter.log("<p style='margin-left: 50px'>ID : " + cota.getId()
 		    + "</p>");
-	    Reporter.log("<p style='margin-left: 50px'>Numero : "
-		    + cota.getNumero() + "</p>");
+	    // Reporter.log("<p style='margin-left: 50px'>Numero : "
+	    // + cota.getNumero() + "</p>");
 	    Reporter.log("<p style='margin-left: 50px'>-> Indice Venda Crescente : "
 		    + indiceVendaCrescente + "</p>");
 	    Reporter.log(sbEstoqueLog.toString());

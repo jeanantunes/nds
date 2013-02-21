@@ -45,5 +45,4 @@ public class PreparaEstudoService {
 		List<LocalDate> periodoVeraneio = new ArrayList<>();
 		return null;
 	}
-
 }

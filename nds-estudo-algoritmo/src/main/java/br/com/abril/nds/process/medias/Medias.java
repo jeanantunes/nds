@@ -1,10 +1,6 @@
 package br.com.abril.nds.process.medias;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;

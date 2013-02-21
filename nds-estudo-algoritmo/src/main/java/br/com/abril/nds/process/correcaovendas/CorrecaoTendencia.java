@@ -1,6 +1,8 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -45,6 +47,7 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
     protected void executarProcesso() throws Exception {
 
 	BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
+	MathContext mathContext = new MathContext(1, RoundingMode.HALF_UP);
 
 	Cota cota = (Cota) super.genericDTO;
 
@@ -53,18 +56,12 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 	    BigDecimal percentualVenda = this.totalVenda.divide(
 		    this.totalReparte, 1, BigDecimal.ROUND_FLOOR);
 
-	    BigDecimal oneCompare = BigDecimal.ONE;
-	    oneCompare = oneCompare.divide(new BigDecimal(1), 1,
-		    BigDecimal.ROUND_FLOOR);
-
-	    if (percentualVenda.compareTo(oneCompare) == 0) {
+	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
 		indiceCorrecaoTendencia = indiceCorrecaoTendencia
 			.add(new BigDecimal(0.2));
 	    } else {
 
-		BigDecimal decimalCompare = new BigDecimal(0.9);
-		decimalCompare = decimalCompare.divide(new BigDecimal(1), 1,
-			BigDecimal.ROUND_FLOOR);
+		BigDecimal decimalCompare = new BigDecimal(0.9, mathContext);
 
 		if (percentualVenda.compareTo(decimalCompare) >= 0) {
 		    indiceCorrecaoTendencia = indiceCorrecaoTendencia
@@ -74,7 +71,7 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
 	}
 
 	indiceCorrecaoTendencia = indiceCorrecaoTendencia.divide(
-		new BigDecimal(1), 1, BigDecimal.ROUND_FLOOR);
+		BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
 
 	cota.setIndiceCorrecaoTendencia(indiceCorrecaoTendencia);
 
