@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0127.processor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -59,37 +60,65 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		
 		CouchDbClient cdbc = null;
 		
-		List<IcdChamadaEncalhe> chamadasEncalhe = obterChamadasEncalhe();
-
-		for(IcdChamadaEncalhe ce : chamadasEncalhe) {
-			
-			try {
-				ce.setTipoDocumento("EMS0137");
-				cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
-				cdbc.save(ce);
-			} catch(Exception e) {
-				LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
-			} finally {
-				if (cdbc != null) {
-					cdbc.shutdown();
-				}			
+		List<String> distribuidores = obterDistribuidores();
+		
+		for(String distribuidor : distribuidores) {
+		
+			List<IcdChamadaEncalhe> chamadasEncalhe = obterChamadasEncalhe(distribuidor);
+	
+			for(IcdChamadaEncalhe ce : chamadasEncalhe) {
+				
+				try {
+					ce.setTipoDocumento("EMS0137");
+					cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
+					cdbc.save(ce);
+				} catch(Exception e) {
+					LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
+				} finally {
+					if (cdbc != null) {
+						cdbc.shutdown();
+					}			
+				}
+				
 			}
-			
 		}
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<IcdChamadaEncalhe> obterChamadasEncalhe() {
+	private List<String> obterDistribuidores() {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select distinct cod_distribuidor ")
+			.append("from chamada_encalhe ")
+			.append("where cod_distribuidor = '6248116' "); //FIXME: remover esta condicao
+		
+		Query query = this.getSessionIcd().createSQLQuery(hql.toString());
+		
+		List<BigDecimal> codigos = query.list();
+		List<String> codigosConvertidos = new ArrayList<>();
+		
+		for(BigDecimal c : codigos) {
+			codigosConvertidos.add(c.toString());
+		}
+		
+		return codigosConvertidos;
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<IcdChamadaEncalhe> obterChamadasEncalhe(String distribuidor) {
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select ce ")
 			.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
-			.append("where ce.tipoStatus in (:status) ");
+			.append("where ce.tipoStatus in (:status) ")
+			.append("and ce.codigoDistribuidor = :distribuidor ");
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 		
-		query.setParameterList("status", new String[]{"F", "A"}); //FIXME: Sérgio: deve buscar status 'A'
+		query.setParameterList("status", new String[]{"A"}); //FIXME: Sérgio: deve buscar status 'A'
+		query.setParameter("distribuidor", Long.parseLong(distribuidor));
 
 		return query.list();
 	}

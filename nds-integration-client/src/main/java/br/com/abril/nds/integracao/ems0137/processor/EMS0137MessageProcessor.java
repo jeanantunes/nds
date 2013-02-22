@@ -24,7 +24,6 @@ import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.repository.AbstractRepository;
-import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -35,9 +34,6 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private ChamadaEncalheRepository chamadaEncalheRepository;
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -82,7 +78,6 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			getSession().merge(ce);
 			getSession().flush();
 			
-			int i = 0;
 			//dbClient.remove(input);
 
 		}
