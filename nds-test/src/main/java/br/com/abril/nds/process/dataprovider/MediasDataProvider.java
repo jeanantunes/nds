@@ -1,4 +1,4 @@
-package br.com.abril.nds.process.medias;
+package br.com.abril.nds.process.dataprovider;
 
 import java.util.ArrayList;
 import java.util.Iterator;

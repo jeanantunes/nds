@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.process.dataprovider.MediasDataProvider;
 
 public class MediasTest {
 
