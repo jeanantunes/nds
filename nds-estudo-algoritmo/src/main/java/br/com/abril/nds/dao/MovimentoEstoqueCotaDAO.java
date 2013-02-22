@@ -22,7 +22,7 @@ public class MovimentoEstoqueCotaDAO {
 					    " and mec.produto_edica_id=?" +
 					    "order by ID");
 			
-			int idx=0;        
+			int idx=1;        
 			psmt.setLong(idx++, 21);
 			psmt.setLong(idx++, cota.getId());
 			psmt.setLong(idx++, produtoEdicao.getId());
@@ -30,7 +30,7 @@ public class MovimentoEstoqueCotaDAO {
 			ResultSet rs = psmt.executeQuery();
 			
 			while(rs.next()){
-				valorJuramentado = rs.getBigDecimal(0);
+				valorJuramentado = rs.getBigDecimal(1);
 			}
 			
 		} catch (ClassNotFoundException | SQLException e) {
@@ -40,6 +40,34 @@ public class MovimentoEstoqueCotaDAO {
 		return valorJuramentado;
 		
 	}
-
+	
+	
+	public BigDecimal retornarUltimaVendaFechada(ProdutoEdicao produtoEdicaoId){
+		BigDecimal qtdeUltimaVenda = BigDecimal.ZERO;
+		
+		try {
+			PreparedStatement psmt = Conexao
+				    .getConexao()
+				    .prepareStatement(
+					    " select me.data,me.qtde-COALESCE(ep.QTDE_DEVOLUCAO_FORNECEDOR,0) AS QTDE_VENDA,ep.PRODUTO_EDICAO_ID  "+ 
+							" from movimento_estoque me "+
+							" join estoque_produto ep ON ep.ID = me.ESTOQUE_PRODUTO_ID "+
+							" where me.TIPO_MOVIMENTO_ID= 13 "+
+							" and ep.PRODUTO_EDICAO_ID = ? "+ 
+							" order by me.data desc limit 1");			
+			int idx=1;        
+			psmt.setLong(idx++, produtoEdicaoId.getId());
+			
+			ResultSet rs = psmt.executeQuery();
+			
+			while(rs.next()){
+				qtdeUltimaVenda = rs.getBigDecimal(2);
+			}
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return qtdeUltimaVenda;
+	}
 }
-

@@ -35,6 +35,9 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
 			
 //			Verificar Cota a Cota
+//    		Se Repcalculado < Venda (última edição fechada, sem correção)
+			
+			
 			for(Cota cota:getEstudo().getCotas()){
 //    		Se Repcalculado < Venda (Ãšltima ediÃ§Ã£o fechada, sem correÃ§Ã£o)
 //    				Se Cota <> FX / MM / MX / RD / PR
@@ -49,18 +52,15 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 					
 //					RepCalculado Cota = RepCalculado Cota + 1
 					cota.setReparteCalculado(cota.getReparteCalculado().add(BigDecimal.ONE));
-//    				ReservaAjuste = ReservaAjuste ï¿½ 1
+//    				ReservaAjuste = ReservaAjuste – 1
 					reservaAjuste = reservaAjuste.subtract(BigDecimal.ONE);
 					
-					if(reservaAjuste.compareTo(BigDecimal.ZERO)==0) break;
+					if(reservaAjuste.compareTo(BigDecimal.ZERO)==0
+							|| reservaAjuste.compareTo(BigDecimal.ZERO)==-1) break;
 				}
 			}
 			
 		}
-		
-    	
-    	
-		
 		
 		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
 			
@@ -81,6 +81,10 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 			}
 			
 		}
+		
+		
+		getEstudo().setReservaAjuste(reservaAjuste);
     }
+    
 
 }

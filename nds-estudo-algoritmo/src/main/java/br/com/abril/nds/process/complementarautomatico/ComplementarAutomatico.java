@@ -37,17 +37,15 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
         		}
         		getEstudo().setReparteComplementar(BigDecimal.ZERO);
         		if (percentualExcedente.doubleValue() > BigDecimal.ONE.doubleValue()) {
-        			// %Abrangência = (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) / TotalCotasAtivas + CotasSuspensasDaPraça) * 100'
-        			int contadorSuspensas = 0;
+        			// Este cálculo sofreu alterações no trac FAQF2-57
+        			// %Abrangência = (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) / TotalCotasAtivas) * 100'
         			int contadorAtivas = 0;
         			for (Cota cota : getEstudo().getCotas()) {
-        				if (cota.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
-        					contadorSuspensas++;
-        				} else {
+        				if (!cota.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
         					contadorAtivas++;
         				}
         			}
-        			BigDecimal percentualAbrangencia = BigDecimal.valueOf(getEstudo().getCotas().size() / contadorAtivas + contadorSuspensas);
+        			BigDecimal percentualAbrangencia = BigDecimal.valueOf(getEstudo().getCotas().size() / contadorAtivas);
         			BigDecimal excedenteAMais = getEstudo().getExcedente().subtract(getEstudo().getSomatoriaVendaMedia());
         			
         			// RepComplementar = ExcedenteAmais * (1 – (((0,6 * %Abrangência) + 40) / 100))

@@ -81,7 +81,7 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
     	}
     	
     	
-    	
+//    	this.fimProcesso();
     	
     }
 
@@ -105,15 +105,24 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
     			
     			Collections.sort(getEstudo().getCotas(),orderCotaDesc);
 
-    			for (Cota cota : getEstudo().getCotas()) {
+		if (getEstudo().getReparteDistribuir().compareTo(BigDecimal.ZERO) == -1
+				|| getEstudo().getReparteDistribuir()
+						.compareTo(BigDecimal.ZERO) == 0) {
+			return;
+		}
 
-				if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-						&& !cota.getClassificacao().equals(	ClassificacaoCota.MaximoMinimo)) {
+		Collections.sort(getEstudo().getCotas(), orderCotaDesc);
 
-					BigDecimal indicedeSobraouFalta = sumReparteCalculadoCota
-							.divide(getEstudo().getReparteDistribuir()).multiply(
-									cota.getReparteCalculado());
-					
+		for (Cota cota : getEstudo().getCotas()) {
+
+			if (!cota.getClassificacao()
+					.equals(ClassificacaoCota.ReparteFixado)
+					&& !cota.getClassificacao().equals(
+							ClassificacaoCota.MaximoMinimo)) {
+
+				BigDecimal indicedeSobraouFalta = sumReparteCalculadoCota
+						.divide(getEstudo().getReparteDistribuir()).multiply(
+								cota.getReparteCalculado());
 					
 //    	Se ainda houver saldo, subtrair ou somar 1 exemplar por cota do maior para o menor reparte 
 //    	(exceto repartes fixados (FX), quantidades M�XIMAS E M�NIMAS (MM) 
@@ -129,8 +138,12 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
 							cota.setReparteCalculado(cota.getReparteCalculado().subtract(BigDecimal.ONE));
 	    			}
 					
+					else if (indicedeSobraouFalta.compareTo(BigDecimal.ZERO) == -1)
+						cota.setReparteCalculado(cota.getReparteCalculado()
+								.add(BigDecimal.ONE));
 				}
-    			
-    		}
+
+			}
+
+		}
 	}
-}

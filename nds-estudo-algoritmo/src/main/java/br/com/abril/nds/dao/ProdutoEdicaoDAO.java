@@ -24,7 +24,7 @@ public class ProdutoEdicaoDAO {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 
 	StringBuilder sb = new StringBuilder();
-	sb.append(" SELECT PE.ID AS PRODUTO_EDICAO_ID, P.NOME, PE.NUMERO_EDICAO, EPC.QTDE_RECEBIDA, EPC.QTDE_DEVOLVIDA, PE.PARCIAL, PE.PACOTE_PADRAO, PE.PESO ");
+	sb.append(" SELECT P.NOME, PE.NUMERO_EDICAO, EPC.QTDE_RECEBIDA, EPC.QTDE_DEVOLVIDA, PE.PARCIAL, PE.PACOTE_PADRAO, PE.PESO, PE.ID as pedId ");
 	sb.append(" , (CASE WHEN EXISTS(SELECT '.' FROM TIPO_PRODUTO TP WHERE TP.ID = P.TIPO_PRODUTO_ID AND TP.GRUPO_PRODUTO = 'COLECIONAVEL') THEN 1 ELSE 0 END) IS_COLECAO ");
 	sb.append(" FROM ESTOQUE_PRODUTO_COTA EPC JOIN PRODUTO_EDICAO PE ON PE.ID = EPC.PRODUTO_EDICAO_ID JOIN PRODUTO P ON P.ID = PE.PRODUTO_ID ");
 	sb.append(" WHERE EPC.COTA_ID = ? ");
@@ -42,7 +42,7 @@ public class ProdutoEdicaoDAO {
 	    ResultSet rs = psmt.executeQuery();
 	    while (rs.next()) {
 		ProdutoEdicao edicao = new ProdutoEdicao();
-		edicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
+		edicao.setId(rs.getLong("pedId"));
 		edicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
 		edicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
 		edicao.setVenda(edicao.getReparte().subtract(
@@ -56,6 +56,7 @@ public class ProdutoEdicaoDAO {
 	    }
 	} catch (Exception ex) {
 	     log.error("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota", ex);
+	     ex.printStackTrace();
 	}
 	return edicoes;
     }
@@ -71,9 +72,10 @@ public class ProdutoEdicaoDAO {
 
 			ResultSet rs = psmt.executeQuery();
 			rs.next();
-			return rs.getInt(0);
+			return rs.getInt(1);
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			System.out.println("Ocorreu um erro ao tentar consultar as edições recebidas por essa cota");
 		}
 

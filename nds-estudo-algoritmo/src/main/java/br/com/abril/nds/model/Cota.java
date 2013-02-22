@@ -3,8 +3,6 @@ package br.com.abril.nds.model;
 import java.math.BigDecimal;
 import java.util.List;
 
-import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
-
 public class Cota extends GenericDTO<Cota> {
 
     private static final long serialVersionUID = -2770873222155652560L;
@@ -247,5 +245,4 @@ public class Cota extends GenericDTO<Cota> {
     public void setIndiceTratamentoRegional(BigDecimal indiceTratamentoRegional) {
 	this.indiceTratamentoRegional = indiceTratamentoRegional;
     }
-    
 }
