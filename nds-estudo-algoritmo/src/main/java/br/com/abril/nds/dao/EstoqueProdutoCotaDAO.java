@@ -127,7 +127,7 @@ public class EstoqueProdutoCotaDAO {
 
 	    }
 
-	    query.append(" ORDER BY C.ID, EPC.ID ");
+	    query.append(" ORDER BY EPC.PRODUTO_EDICAO_ID ");
 
 	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(
 		    query.toString());
