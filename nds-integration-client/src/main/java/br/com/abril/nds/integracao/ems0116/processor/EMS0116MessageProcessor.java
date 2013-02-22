@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0116.inbound.EMS0116Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -26,6 +25,7 @@ import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TelefonePDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 
