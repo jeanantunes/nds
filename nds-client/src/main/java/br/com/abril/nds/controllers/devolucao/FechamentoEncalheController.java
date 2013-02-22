@@ -189,7 +189,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("/postergarCotas")
-	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas) {
+	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas, boolean postergarTodasCotas) {//TODO
 		
 		if (dataEncalhe != null && dataEncalhe.after(dataPostergacao)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não pode ser realizada antes da data atual!");
@@ -199,7 +199,14 @@ public class FechamentoEncalheController extends BaseController {
 		
 		try {
 			
-			this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
+			if (postergarTodasCotas) {
+			
+				this.fechamentoEncalheService.postergarTodasCotas(dataEncalhe, dataPostergacao);
+			
+			} else {
+				
+				this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
+			}
 			
 		} catch (Exception e) {
 			this.result.use(Results.json()).from(
@@ -228,10 +235,10 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void veificarCobrancaGerada(List<Long> idsCotas){
+	public void veificarCobrancaGerada(List<Long> idsCotas, boolean cobrarTodasCotas){
 		
-		if (idsCotas == null || idsCotas.isEmpty()) {
-			
+		if (!cobrarTodasCotas && (idsCotas == null || idsCotas.isEmpty())) {
+
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"));
 		}
 		
@@ -248,9 +255,9 @@ public class FechamentoEncalheController extends BaseController {
 	}
 
 	@Path("/cobrarCotas")
-	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas) {
+	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas, boolean cobrarTodasCotas) {//TODO
 
-		if (idsCotas == null || idsCotas.isEmpty()) {
+		if (!cobrarTodasCotas && (idsCotas == null || idsCotas.isEmpty())) {
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.WARNING, "Selecine pelo menos uma Cota para cobrar!"), "result").recursive().serialize();
 			return;
@@ -258,7 +265,14 @@ public class FechamentoEncalheController extends BaseController {
 		
 		try {
 			
-			this.fechamentoEncalheService.cobrarCotas(dataOperacao, getUsuarioLogado(), idsCotas);
+			if (cobrarTodasCotas) {
+			
+				this.fechamentoEncalheService.cobrarTodasCotas(dataOperacao, getUsuarioLogado());
+				
+			} else {
+			
+				this.fechamentoEncalheService.cobrarCotas(dataOperacao, getUsuarioLogado(), idsCotas);
+			}
 
 		} catch (ValidacaoException e) {
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
