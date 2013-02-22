@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
-import br.com.abril.nds.model.integracao.icd.ChamadaEncalheIcd;
+import br.com.abril.nds.model.integracao.icd.IcdChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
@@ -59,13 +59,13 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		
 		CouchDbClient cdbc = null;
 		
-		List<ChamadaEncalheIcd> chamadasEncalhe = obterChamadasEncalhe();
+		List<IcdChamadaEncalhe> chamadasEncalhe = obterChamadasEncalhe();
 
-		for(ChamadaEncalheIcd ce : chamadasEncalhe) {
+		for(IcdChamadaEncalhe ce : chamadasEncalhe) {
 			
 			try {
 				ce.setTipoDocumento("EMS0137");
-				cdbc = this.getCouchDBClient("06248116"); //ce.getCodigoDistribuidor().toString());
+				cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
 				cdbc.save(ce);
 			} catch(Exception e) {
 				LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
@@ -80,16 +80,16 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ChamadaEncalheIcd> obterChamadasEncalhe() {
+	private List<IcdChamadaEncalhe> obterChamadasEncalhe() {
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select ce ")
-			.append("from ChamadaEncalheIcd ce join fetch ce.chamadaEncalheItens cei ")
-			.append("where ce.tipoStatus = :status ");
+			.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
+			.append("where ce.tipoStatus in (:status) ");
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 		
-		query.setParameter("status", "A");
+		query.setParameterList("status", new String[]{"F", "A"}); //FIXME: Sérgio: deve buscar status 'A'
 
 		return query.list();
 	}

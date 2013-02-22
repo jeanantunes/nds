@@ -19,7 +19,7 @@ import org.hibernate.annotations.ManyToAny;
 
 import br.com.abril.nds.dto.auditoria.AtributoDTO;
 import br.com.abril.nds.dto.auditoria.AuditoriaDTO;
-import br.com.abril.nds.util.TipoOperacaoSQL;
+import br.com.abril.nds.enums.TipoOperacaoSQL;
 import br.com.caelum.vraptor.Path;
 
 public class AuditoriaUtil {

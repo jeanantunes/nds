@@ -2,7 +2,6 @@ package br.com.abril.nds.integracao.model.canonic;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 import com.ancientprogramming.fixedformat4j.annotation.Record;
@@ -16,175 +15,362 @@ public class EMS0137InputItem extends IntegracaoDocumentDetail implements Serial
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private int numSequenciaDetalhe;
-	private int tipoAcerto;
-	private String codigoProduto;
-	private Long numeroEdicao;
-	private BigInteger qtd;
-	private BigDecimal precoCapa;
-	private BigDecimal percentualDesconto;
-	private String situacaoAcerto;
-	private Long numeroDocumentoAcerto;
-	private Date dataEmicaoDocumentoAcerto;
-	private String descricaoMotivo;
-	private String codigoOrigemMotivo;
-	private Long idMovimento;
+	private ItemCEPKInput ceItemPK;
 	
-	/**
-	 * @return the numSequenciaDetalhe
-	 */
-	public int getNumSequenciaDetalhe() {
-		return numSequenciaDetalhe;
+	private IcdLancamentoEdicaoPublicacaoInput lancamentoEdicaoPublicacao;
+	
+	private Date dataRecolhimento;
+	
+	private Long numeroDocumento;
+	
+	private Long codigoLancamentoEdicao;
+
+	private Long codigoValeDesconto;
+
+	private Long quantidadeEnviada;
+
+	private Long codigoFormaDevolucao;
+	
+	private Integer numeroControle;
+	
+	private String codigoRegimeRecolhimento;
+	
+	private BigDecimal valorPrecoUnitario;
+	
+	private Long quantidadeDevolucaoApurada;
+	
+	private Long quantidadeVendaApurada;
+	
+	private BigDecimal valorVendaApurada;
+
+	private Long quantidadeDevolucaoInformada;
+	
+	private Long quantidadeVendaInformada;
+	
+	private BigDecimal valorVendaInformada;
+
+	private Long numeroNotaEnvio;
+	
+	private String codigoNotaEnvioMultipla;
+	
+	private String tipoProduto;
+	
+	private String codigoPreenchimento;
+	
+	private String tipoStatus;
+	
+	private Long quantidadeDevolucaoParcial;
+	
+	private Long numeroEdicaoValeDesconto;
+	
+	private BigDecimal valorMargemInformado;
+
+	private BigDecimal valorMargemApurado;
+	
+	private String numeroAcessoNotaEnvio;
+	
+	private Date dataEmissaoNotaEnvio;
+	
+	private Long tipoModeloNotaEnvio;
+	
+	private Long codigoSerieNotaEnvio;
+
+	public ItemCEPKInput getCeItemPK() {
+		return ceItemPK;
 	}
-	/**
-	 * @param numSequenciaDetalhe the numSequenciaDetalhe to set
-	 */
-	public void setNumSequenciaDetalhe(int numSequenciaDetalhe) {
-		this.numSequenciaDetalhe = numSequenciaDetalhe;
+
+	public void setCeItemPK(ItemCEPKInput ceItemPK) {
+		this.ceItemPK = ceItemPK;
 	}
-	/**
-	 * @return the tipoAcerto
-	 */
-	public int getTipoAcerto() {
-		return tipoAcerto;
+
+	public IcdLancamentoEdicaoPublicacaoInput getLancamentoEdicaoPublicacao() {
+		return lancamentoEdicaoPublicacao;
 	}
-	/**
-	 * @param tipoAcerto the tipoAcerto to set
-	 */
-	public void setTipoAcerto(int tipoAcerto) {
-		this.tipoAcerto = tipoAcerto;
+
+	public void setLancamentoEdicaoPublicacao(IcdLancamentoEdicaoPublicacaoInput lancamentoEdicaoPublicacao) {
+		this.lancamentoEdicaoPublicacao = lancamentoEdicaoPublicacao;
 	}
-	/**
-	 * @return the codigoProduto
-	 */
-	public String getCodigoProduto() {
-		return codigoProduto;
+
+	public Date getDataRecolhimento() {
+		return dataRecolhimento;
 	}
-	/**
-	 * @param codigoProduto the codigoProduto to set
-	 */
-	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+
+	public void setDataRecolhimento(Date dataRecolhimento) {
+		this.dataRecolhimento = dataRecolhimento;
 	}
-	/**
-	 * @return the numeroEdicao
-	 */
-	public Long getNumeroEdicao() {
-		return numeroEdicao;
+
+	public Long getNumeroDocumento() {
+		return numeroDocumento;
 	}
-	/**
-	 * @param numeroEdicao the numeroEdicao to set
-	 */
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
+
+	public void setNumeroDocumento(Long numeroDocumento) {
+		this.numeroDocumento = numeroDocumento;
 	}
-	/**
-	 * @return the qtd
-	 */
-	public BigInteger getQtd() {
-		return qtd;
+
+	public Long getCodigoLancamentoEdicao() {
+		return codigoLancamentoEdicao;
 	}
-	/**
-	 * @param qtd the qtd to set
-	 */
-	public void setQtd(BigInteger qtd) {
-		this.qtd = qtd;
+
+	public void setCodigoLancamentoEdicao(Long codigoLancamentoEdicao) {
+		this.codigoLancamentoEdicao = codigoLancamentoEdicao;
 	}
-	/**
-	 * @return the precoCapa
-	 */
-	public BigDecimal getPrecoCapa() {
-		return precoCapa;
+
+	public Long getCodigoValeDesconto() {
+		return codigoValeDesconto;
 	}
-	/**
-	 * @param precoCapa the precoCapa to set
-	 */
-	public void setPrecoCapa(BigDecimal precoCapa) {
-		this.precoCapa = precoCapa;
+
+	public void setCodigoValeDesconto(Long codigoValeDesconto) {
+		this.codigoValeDesconto = codigoValeDesconto;
 	}
-	/**
-	 * @return the percentualDesconto
-	 */
-	public BigDecimal getPercentualDesconto() {
-		return percentualDesconto;
+
+	public Long getQuantidadeEnviada() {
+		return quantidadeEnviada;
 	}
-	/**
-	 * @param percentualDesconto the percentualDesconto to set
-	 */
-	public void setPercentualDesconto(BigDecimal percentualDesconto) {
-		this.percentualDesconto = percentualDesconto;
+
+	public void setQuantidadeEnviada(Long quantidadeEnviada) {
+		this.quantidadeEnviada = quantidadeEnviada;
 	}
-	/**
-	 * @return the situacaoAcerto
-	 */
-	public String getSituacaoAcerto() {
-		return situacaoAcerto;
+
+	public Long getCodigoFormaDevolucao() {
+		return codigoFormaDevolucao;
 	}
-	/**
-	 * @param situacaoAcerto the situacaoAcerto to set
-	 */
-	public void setSituacaoAcerto(String situacaoAcerto) {
-		this.situacaoAcerto = situacaoAcerto;
+
+	public void setCodigoFormaDevolucao(Long codigoFormaDevolucao) {
+		this.codigoFormaDevolucao = codigoFormaDevolucao;
 	}
-	/**
-	 * @return the numeroDocumentoAcerto
-	 */
-	public Long getNumeroDocumentoAcerto() {
-		return numeroDocumentoAcerto;
+
+	public Integer getNumeroControle() {
+		return numeroControle;
 	}
-	/**
-	 * @param numeroDocumentoAcerto the numeroDocumentoAcerto to set
-	 */
-	public void setNumeroDocumentoAcerto(Long numeroDocumentoAcerto) {
-		this.numeroDocumentoAcerto = numeroDocumentoAcerto;
+
+	public void setNumeroControle(Integer numeroControle) {
+		this.numeroControle = numeroControle;
 	}
-	/**
-	 * @return the dataEmicaoDocumentoAcerto
-	 */
-	public Date getDataEmicaoDocumentoAcerto() {
-		return dataEmicaoDocumentoAcerto;
+
+	public String getCodigoRegimeRecolhimento() {
+		return codigoRegimeRecolhimento;
 	}
-	/**
-	 * @param dataEmicaoDocumentoAcerto the dataEmicaoDocumentoAcerto to set
-	 */
-	public void setDataEmicaoDocumentoAcerto(Date dataEmicaoDocumentoAcerto) {
-		this.dataEmicaoDocumentoAcerto = dataEmicaoDocumentoAcerto;
+
+	public void setCodigoRegimeRecolhimento(String codigoRegimeRecolhimento) {
+		this.codigoRegimeRecolhimento = codigoRegimeRecolhimento;
 	}
-	/**
-	 * @return the descricaoMotivo
-	 */
-	public String getDescricaoMotivo() {
-		return descricaoMotivo;
+
+	public BigDecimal getValorPrecoUnitario() {
+		return valorPrecoUnitario;
 	}
-	/**
-	 * @param descricaoMotivo the descricaoMotivo to set
-	 */
-	public void setDescricaoMotivo(String descricaoMotivo) {
-		this.descricaoMotivo = descricaoMotivo;
+
+	public void setValorPrecoUnitario(BigDecimal valorPrecoUnitario) {
+		this.valorPrecoUnitario = valorPrecoUnitario;
 	}
-	/**
-	 * @return the codigoOrigemMotivo
-	 */
-	public String getCodigoOrigemMotivo() {
-		return codigoOrigemMotivo;
+
+	public Long getQuantidadeDevolucaoApurada() {
+		return quantidadeDevolucaoApurada;
 	}
-	/**
-	 * @param codigoOrigemMotivo the codigoOrigemMotivo to set
-	 */
-	public void setCodigoOrigemMotivo(String codigoOrigemMotivo) {
-		this.codigoOrigemMotivo = codigoOrigemMotivo;
+
+	public void setQuantidadeDevolucaoApurada(Long quantidadeDevolucaoApurada) {
+		this.quantidadeDevolucaoApurada = quantidadeDevolucaoApurada;
 	}
-	/**
-	 * @return the idMovimento
-	 */
-	public Long getIdMovimento() {
-		return idMovimento;
+
+	public Long getQuantidadeVendaApurada() {
+		return quantidadeVendaApurada;
 	}
-	/**
-	 * @param idMovimento the idMovimento to set
-	 */
-	public void setIdMovimento(Long idMovimento) {
-		this.idMovimento = idMovimento;
+
+	public void setQuantidadeVendaApurada(Long quantidadeVendaApurada) {
+		this.quantidadeVendaApurada = quantidadeVendaApurada;
 	}
-			
+
+	public BigDecimal getValorVendaApurada() {
+		return valorVendaApurada;
+	}
+
+	public void setValorVendaApurada(BigDecimal valorVendaApurada) {
+		this.valorVendaApurada = valorVendaApurada;
+	}
+
+	public Long getQuantidadeDevolucaoInformada() {
+		return quantidadeDevolucaoInformada;
+	}
+
+	public void setQuantidadeDevolucaoInformada(Long quantidadeDevolucaoInformada) {
+		this.quantidadeDevolucaoInformada = quantidadeDevolucaoInformada;
+	}
+
+	public Long getQuantidadeVendaInformada() {
+		return quantidadeVendaInformada;
+	}
+
+	public void setQuantidadeVendaInformada(Long quantidadeVendaInformada) {
+		this.quantidadeVendaInformada = quantidadeVendaInformada;
+	}
+
+	public BigDecimal getValorVendaInformada() {
+		return valorVendaInformada;
+	}
+
+	public void setValorVendaInformada(BigDecimal valorVendaInformada) {
+		this.valorVendaInformada = valorVendaInformada;
+	}
+
+	public Long getNumeroNotaEnvio() {
+		return numeroNotaEnvio;
+	}
+
+	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
+		this.numeroNotaEnvio = numeroNotaEnvio;
+	}
+
+	public String getCodigoNotaEnvioMultipla() {
+		return codigoNotaEnvioMultipla;
+	}
+
+	public void setCodigoNotaEnvioMultipla(String codigoNotaEnvioMultipla) {
+		this.codigoNotaEnvioMultipla = codigoNotaEnvioMultipla;
+	}
+
+	public String getTipoProduto() {
+		return tipoProduto;
+	}
+
+	public void setTipoProduto(String tipoProduto) {
+		this.tipoProduto = tipoProduto;
+	}
+
+	public String getCodigoPreenchimento() {
+		return codigoPreenchimento;
+	}
+
+	public void setCodigoPreenchimento(String codigoPreenchimento) {
+		this.codigoPreenchimento = codigoPreenchimento;
+	}
+
+	public String getTipoStatus() {
+		return tipoStatus;
+	}
+
+	public void setTipoStatus(String tipoStatus) {
+		this.tipoStatus = tipoStatus;
+	}
+
+	public Long getQuantidadeDevolucaoParcial() {
+		return quantidadeDevolucaoParcial;
+	}
+
+	public void setQuantidadeDevolucaoParcial(Long quantidadeDevolucaoParcial) {
+		this.quantidadeDevolucaoParcial = quantidadeDevolucaoParcial;
+	}
+
+	public Long getNumeroEdicaoValeDesconto() {
+		return numeroEdicaoValeDesconto;
+	}
+
+	public void setNumeroEdicaoValeDesconto(Long numeroEdicaoValeDesconto) {
+		this.numeroEdicaoValeDesconto = numeroEdicaoValeDesconto;
+	}
+
+	public BigDecimal getValorMargemInformado() {
+		return valorMargemInformado;
+	}
+
+	public void setValorMargemInformado(BigDecimal valorMargemInformado) {
+		this.valorMargemInformado = valorMargemInformado;
+	}
+
+	public BigDecimal getValorMargemApurado() {
+		return valorMargemApurado;
+	}
+
+	public void setValorMargemApurado(BigDecimal valorMargemApurado) {
+		this.valorMargemApurado = valorMargemApurado;
+	}
+
+	public String getNumeroAcessoNotaEnvio() {
+		return numeroAcessoNotaEnvio;
+	}
+
+	public void setNumeroAcessoNotaEnvio(String numeroAcessoNotaEnvio) {
+		this.numeroAcessoNotaEnvio = numeroAcessoNotaEnvio;
+	}
+
+	public Date getDataEmissaoNotaEnvio() {
+		return dataEmissaoNotaEnvio;
+	}
+
+	public void setDataEmissaoNotaEnvio(Date dataEmissaoNotaEnvio) {
+		this.dataEmissaoNotaEnvio = dataEmissaoNotaEnvio;
+	}
+
+	public Long getTipoModeloNotaEnvio() {
+		return tipoModeloNotaEnvio;
+	}
+
+	public void setTipoModeloNotaEnvio(Long tipoModeloNotaEnvio) {
+		this.tipoModeloNotaEnvio = tipoModeloNotaEnvio;
+	}
+
+	public Long getCodigoSerieNotaEnvio() {
+		return codigoSerieNotaEnvio;
+	}
+
+	public void setCodigoSerieNotaEnvio(Long codigoSerieNotaEnvio) {
+		this.codigoSerieNotaEnvio = codigoSerieNotaEnvio;
+	}
+	
+	public class ItemCEPKInput {
+		
+		private Long numeroChamadaEncalhe;
+		
+		private Integer numeroItem;
+
+		public Long getNumeroChamadaEncalhe() {
+			return numeroChamadaEncalhe;
+		}
+
+		public void setNumeroChamadaEncalhe(Long numeroChamadaEncalhe) {
+			this.numeroChamadaEncalhe = numeroChamadaEncalhe;
+		}
+
+		public Integer getNumeroItem() {
+			return numeroItem;
+		}
+
+		public void setNumeroItem(Integer numeroItem) {
+			this.numeroItem = numeroItem;
+		}
+		
+	}
+	
+	public class IcdLancamentoEdicaoPublicacaoInput {
+		
+		private Long codigoLancamentoEdicao;
+		
+		private String codigoPublicacao;
+		
+		private Integer numeroEdicao;
+
+		public Long getCodigoLancamentoEdicao() {
+			return codigoLancamentoEdicao;
+		}
+
+		public void setCodigoLancamentoEdicao(Long codigoLancamentoEdicao) {
+			this.codigoLancamentoEdicao = codigoLancamentoEdicao;
+		}
+
+		public String getCodigoPublicacao() {
+			return codigoPublicacao;
+		}
+
+		public void setCodigoPublicacao(String codigoPublicacao) {
+			this.codigoPublicacao = codigoPublicacao;
+		}
+
+		public Integer getNumeroEdicao() {
+			return numeroEdicao;
+		}
+
+		public void setNumeroEdicao(Integer numeroEdicao) {
+			this.numeroEdicao = numeroEdicao;
+		}
+		
+	}
+	
 }

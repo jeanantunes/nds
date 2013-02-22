@@ -156,6 +156,7 @@ public class NdsiLogger extends AbstractRepository {
 		logExecucaoMensagem.setMensagemInfo(mensagemInfo);
 		if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue()))
 			logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
+			
 		if (message.getHeader().containsKey(MessageHeaderProperties.LINE_NUMBER.getValue()))
 			logExecucaoMensagem.setNumeroLinha((Integer) message.getHeader().get(MessageHeaderProperties.LINE_NUMBER.getValue()));
 		
