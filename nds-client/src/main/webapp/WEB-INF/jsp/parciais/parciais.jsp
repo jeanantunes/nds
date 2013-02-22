@@ -87,7 +87,7 @@
 
 <form id="idParciaisExcluir">
 	<div id="dialog-excluir" title="Excluir Parcial">
-	  <p>Confirma a exclusão deste Per�odo?</p>
+	  <p>Confirma a exclusão deste Período?</p>
 	</div>
 </form>
 
