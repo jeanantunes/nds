@@ -120,6 +120,9 @@ var ConferenciaEncalhe = $.extend(true, {
 							: parseInt($("#qtdeExemplar", ConferenciaEncalhe.workspace).val());
 					
 					$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(qtd + 1);
+					
+					ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
+					
 				} else {
 					
 					ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
