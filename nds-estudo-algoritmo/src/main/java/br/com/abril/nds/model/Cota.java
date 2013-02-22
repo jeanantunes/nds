@@ -245,5 +245,5 @@ public class Cota extends GenericDTO<Cota> {
     public void setIndiceTratamentoRegional(BigDecimal indiceTratamentoRegional) {
 	this.indiceTratamentoRegional = indiceTratamentoRegional;
     }
-    
+
 }
