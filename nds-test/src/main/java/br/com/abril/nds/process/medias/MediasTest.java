@@ -31,8 +31,6 @@ public class MediasTest {
 
 	    cota = (Cota) medias.getGenericDTO();
 	    
-	    BigDecimal vendaMediaFinal = cota.getVendaMediaFinal();
-
 	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
 
 	    while (itProdutoEdicao.hasNext()) {
