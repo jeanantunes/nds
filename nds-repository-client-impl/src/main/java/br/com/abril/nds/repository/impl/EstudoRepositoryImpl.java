@@ -1,11 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoRepository;
 
@@ -46,5 +48,22 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		return (Estudo) query.uniqueResult();
 	}
+	
+	@Override
+	public void alterarStatusEstudos(List<Long> listIdEstudos, StatusEstudo status) {
+		
+		StringBuilder hql = new StringBuilder("update Estudo set");
+		hql.append(" status = :statusEstudo")
+		   .append(" where id in (:listIdEstudos)");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("statusEstudo", status);
+		
+		query.setParameterList("listIdEstudos", listIdEstudos);
+		
+		query.executeUpdate();
+	}
+	
 
 }

@@ -12,6 +12,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaNaoRecebeSegmentoDTO;
 import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroSegmentoNaoRecebidoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
@@ -27,6 +28,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 		super(SegmentoNaoRecebido.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaNaoRecebeSegmentoDTO> obterCotasNaoRecebemSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
 		
@@ -73,6 +75,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(FiltroSegmentoNaoRecebidoDTO filtro) {
 		
@@ -118,6 +121,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
 		parameters = new HashMap<String, Object>();
@@ -166,6 +170,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(FiltroSegmentoNaoRecebidoDTO filtro) {
 		parameters = new HashMap<String, Object>();
@@ -245,6 +250,36 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 		for (String key : parameters.keySet()) {
 			query.setParameter(key, parameters.get(key));
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(Cota cota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		// FIELDS
+		hql.append(" SELECT ");
+		hql.append(" segmentoNaoRecebido.id as segmentoNaoRecebidoId, "); // Id Segmento
+		hql.append(" tipoSegmentoProduto.descricao as nomeSegmento "); // Nome Segmento
+		
+		// FROM
+		hql.append(" FROM ");
+		hql.append(" SegmentoNaoRecebido as segmentoNaoRecebido ");
+		hql.append(" JOIN segmentoNaoRecebido.cota as cota ");		
+		hql.append(" JOIN segmentoNaoRecebido.tipoSegmentoProduto as tipoSegmentoProduto ");		
+
+		// WHERE
+		hql.append(" WHERE ");
+		hql.append(" cota.id = :idCota ");
+
+		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", cota.getId());
+
+		query.setResultTransformer(new AliasToBeanResultTransformer(SegmentoNaoRecebeCotaDTO.class));
+		
+		return query.list();
 	}
 
 }
