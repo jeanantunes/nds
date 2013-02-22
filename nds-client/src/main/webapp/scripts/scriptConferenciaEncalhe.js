@@ -120,6 +120,9 @@ var ConferenciaEncalhe = $.extend(true, {
 							: parseInt($("#qtdeExemplar", ConferenciaEncalhe.workspace).val());
 					
 					$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(qtd + 1);
+					
+					ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
+					
 				} else {
 					
 					ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
@@ -770,8 +773,26 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
 		
-		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
+		/*$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
+				null,
+				function(resultado){
+					var w = window.open();
+					self.focus();
+					w.document.open();
+					w.document.write('<html>');
+					w.document.write('<body>');
+					w.document.write('<pre>');
+					w.document.write(resultado);
+					w.document.write('</pre>');
+					w.document.write('</body>');
+					w.document.write('</html>');
+					w.document.close();
+					w.print();
+					w.close();
+				}
+		);	*/	
 		
+		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
 		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
 	},
 	

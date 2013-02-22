@@ -41,6 +41,7 @@ public enum Permissao
 	ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA("Classificação Não Recebida",						 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_DESENGLOBACAO("Desenglobação",												 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_HISTORICO_VENDA("Histórico de Vendas",										 	   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO("Matriz Distribuição"				 ,					 	   	   Permissao.ROLE_DISTRIBUICAO),
 	
 	ROLE_ESTOQUE("Estoque",																	  			   null),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),
