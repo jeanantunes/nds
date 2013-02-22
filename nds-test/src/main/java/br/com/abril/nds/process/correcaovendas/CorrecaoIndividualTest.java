@@ -11,118 +11,137 @@ import org.testng.annotations.Test;
 
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.process.dataprovider.CorrecaoIndividualDataProvider;
 
 public class CorrecaoIndividualTest {
 
-    @Test(dataProvider = "getEstoqueProdutoCotaList", dataProviderClass = CorrecaoVendasDataProvider.class)
-    public void primeiroCenario(EstoqueProdutoCota estoqueProdutoCota) {
+    /**
+     * Testar se o índice de correção será 1.
+     * 
+     * @param estoqueProdutoCota
+     */
+    @Test(dataProvider = "getEstoqueProdutoCotaParaPercentualVendaNaoIgualUmNaoIgualMaiorZeroVirgualNoveList", dataProviderClass = CorrecaoIndividualDataProvider.class)
+    public void percentualVendaNaoIgualUmNaoIgualMaiorZeroVirgualNove(EstoqueProdutoCota estoqueProdutoCota) {
 
 	try {
 
-	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(
-		    estoqueProdutoCota);
-
+	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(estoqueProdutoCota.getProdutoEdicao());
 	    correcaoIndividual.executar();
 
-	    estoqueProdutoCota = (EstoqueProdutoCota) correcaoIndividual
-		    .getGenericDTO();
-
-	    ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
+	    ProdutoEdicao produtoEdicao = (ProdutoEdicao) correcaoIndividual.getGenericDTO();
 
 	    BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
 	    assertNotNull(indiceCorrecao);
 
-	    BigDecimal one = BigDecimal.ONE;
-	    BigDecimal oneDotOne = one.add(new BigDecimal(0.1));
-	    BigDecimal oneDotTwo = one.add(new BigDecimal(0.2));
+	    boolean assertIndice = (indiceCorrecao.compareTo(BigDecimal.ONE) == 0);
 
-	    oneDotOne = oneDotOne.divide(one, 1, BigDecimal.ROUND_FLOOR);
+	    assertTrue(" Indice Correcao : " + indiceCorrecao + " Estoque Produto Cota : " + estoqueProdutoCota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+		    + " Produto : " + produtoEdicao.getIdProduto() + " Reparte : " + produtoEdicao.getReparte() + " Venda : " + produtoEdicao.getVenda(), assertIndice);
 
-	    oneDotTwo = oneDotTwo.divide(one, 1, BigDecimal.ROUND_FLOOR);
+	    assertNotNull(produtoEdicao.getVendaCorrigida());
 
-	    boolean assertIndice = indiceCorrecao.compareTo(one) == 0
-		    || indiceCorrecao.compareTo(oneDotOne) == 0
-		    || indiceCorrecao.compareTo(oneDotTwo) == 0;
-
-	    assertTrue("Indice Correcao : " + indiceCorrecao
-		    + "Estoque Produto Cota : " + estoqueProdutoCota.getId(),
-		    assertIndice);
-
-	    Reporter.log("<p>Estoque Produto Cota</p>");
-	    Reporter.log("<p style='margin-left: 50px'>ID : "
-		    + estoqueProdutoCota.getId() + "</p>");
-	    Reporter.log("<p style='margin-left: 50px'>-> Indice Correcao : "
-		    + indiceCorrecao + "</p>");
-
-	    BigDecimal quantidadeRecebida = estoqueProdutoCota
-		    .getQuantidadeRecebida();
-	    BigDecimal quantidadeDevolvida = estoqueProdutoCota
-		    .getQuantidadeDevolvida();
-	    BigDecimal vendaEdicao = quantidadeRecebida
-		    .subtract(quantidadeDevolvida);
-
-	    Reporter.log("<p>Quantidade Recebida : " + quantidadeRecebida
-		    + "</p>");
-	    Reporter.log("<p>Quantidade Devolvida : " + quantidadeDevolvida
-		    + "</p>");
-	    Reporter.log("<p>Venda : " + vendaEdicao + "</p>");
+	    this.gerarReporterLog(estoqueProdutoCota, produtoEdicao, indiceCorrecao);
 
 	} catch (Exception e) {
 	    fail(e.getMessage());
 	}
     }
 
-    @Test(dataProvider = "getEstoqueProdutoCotaParaPercentualVendaUmList", dataProviderClass = CorrecaoVendasDataProvider.class)
-    public void segundoCenario(EstoqueProdutoCota estoqueProdutoCota) {
+    /**
+     * Testar se o índice de correção será 1.2.
+     * 
+     * @param estoqueProdutoCota
+     */
+    @Test(dataProvider = "getEstoqueProdutoCotaParaPercentualVendaIgualUmList", dataProviderClass = CorrecaoIndividualDataProvider.class)
+    public void percentualVendaIgualUm(EstoqueProdutoCota estoqueProdutoCota) {
 
 	try {
 
-	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(
-		    estoqueProdutoCota);
-
+	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(estoqueProdutoCota.getProdutoEdicao());
 	    correcaoIndividual.executar();
 
-	    estoqueProdutoCota = (EstoqueProdutoCota) correcaoIndividual
-		    .getGenericDTO();
-
-	    ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
+	    ProdutoEdicao produtoEdicao = (ProdutoEdicao) correcaoIndividual.getGenericDTO();
 
 	    BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
 	    assertNotNull(indiceCorrecao);
 
-	    BigDecimal one = BigDecimal.ONE;
-	    BigDecimal oneDotTwo = one.add(new BigDecimal(0.2));
-	    oneDotTwo = oneDotTwo.divide(one, 1, BigDecimal.ROUND_FLOOR);
+	    BigDecimal oneDotTwo = BigDecimal.ONE.add(new BigDecimal(0.2)).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
 
-	    boolean assertIndice = indiceCorrecao.compareTo(oneDotTwo) == 0;
+	    boolean assertIndice = (indiceCorrecao.compareTo(oneDotTwo) == 0);
 
-	    assertTrue("Indice Correcao : " + indiceCorrecao
-		    + "Estoque Produto Cota : " + estoqueProdutoCota.getId(),
-		    assertIndice);
+	    assertTrue(" Indice Correcao : " + indiceCorrecao + " Estoque Produto Cota : " + estoqueProdutoCota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+		    + " Produto : " + produtoEdicao.getIdProduto() + " Reparte : " + produtoEdicao.getReparte() + " Venda : " + produtoEdicao.getVenda(), assertIndice);
 
-	    Reporter.log("<p>Estoque Produto Cota</p>");
-	    Reporter.log("<p style='margin-left: 50px'>ID : "
-		    + estoqueProdutoCota.getId() + "</p>");
-	    Reporter.log("<p style='margin-left: 50px'>-> Indice Correcao : "
-		    + indiceCorrecao + "</p>");
+	    assertNotNull(produtoEdicao.getVendaCorrigida());
 
-	    BigDecimal quantidadeRecebida = estoqueProdutoCota
-		    .getQuantidadeRecebida();
-	    BigDecimal quantidadeDevolvida = estoqueProdutoCota
-		    .getQuantidadeDevolvida();
-	    BigDecimal vendaEdicao = quantidadeRecebida
-		    .subtract(quantidadeDevolvida);
-
-	    Reporter.log("<p>Quantidade Recebida : " + quantidadeRecebida
-		    + "</p>");
-	    Reporter.log("<p>Quantidade Devolvida : " + quantidadeDevolvida
-		    + "</p>");
-	    Reporter.log("<p>Venda : " + vendaEdicao + "</p>");
+	    this.gerarReporterLog(estoqueProdutoCota, produtoEdicao, indiceCorrecao);
 
 	} catch (Exception e) {
 	    fail(e.getMessage());
 	}
     }
+
+    /**
+     * Testar se o índice de correção será 1.1
+     * 
+     * @param estoqueProdutoCota
+     */
+    @Test(dataProvider = "getEstoqueProdutoCotaParaPercentualVendaMaiorIgualZeroVirgulaNoveList", dataProviderClass = CorrecaoIndividualDataProvider.class)
+    public void percentualVendaMaiorIgualZeroVirgulaNove(EstoqueProdutoCota estoqueProdutoCota) {
+
+	try {
+
+	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(estoqueProdutoCota.getProdutoEdicao());
+	    correcaoIndividual.executar();
+
+	    ProdutoEdicao produtoEdicao = (ProdutoEdicao) correcaoIndividual.getGenericDTO();
+
+	    BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
+
+	    assertNotNull(indiceCorrecao);
+
+	    BigDecimal oneDotOne = BigDecimal.ONE.add(new BigDecimal(0.1)).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
+
+	    boolean assertIndice = (indiceCorrecao.compareTo(oneDotOne) == 0);
+
+	    assertTrue(" Indice Correcao : " + indiceCorrecao + " Estoque Produto Cota : " + estoqueProdutoCota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+		    + " Produto : " + produtoEdicao.getIdProduto() + " Reparte : " + produtoEdicao.getReparte() + " Venda : " + produtoEdicao.getVenda(), assertIndice);
+
+	    assertNotNull(produtoEdicao.getVendaCorrigida());
+
+	    this.gerarReporterLog(estoqueProdutoCota, produtoEdicao, indiceCorrecao);
+
+	} catch (Exception e) {
+	    fail(e.getMessage());
+	}
+    }
+
+    /**
+     * Gerar Reporter Log para o resultado.
+     * 
+     * @param estoqueProdutoCota
+     * @param produtoEdicao
+     * @param indiceCorrecao
+     */
+    private void gerarReporterLog(EstoqueProdutoCota estoqueProdutoCota, ProdutoEdicao produtoEdicao, BigDecimal indiceCorrecao) {
+
+	Reporter.log("<p>Estoque Produto Cota</p>");
+	Reporter.log("<p style='margin-left: 50px'>ID : " + estoqueProdutoCota.getId() + "</p>");
+	Reporter.log("<p style='margin-left: 100px'>Produto Edicao : " + produtoEdicao.getId() + "</p>");
+	Reporter.log("<p style='margin-left: 100px'>Produto : " + produtoEdicao.getIdProduto() + "</p>");
+
+	BigDecimal quantidadeRecebida = estoqueProdutoCota.getQuantidadeRecebida();
+	BigDecimal quantidadeDevolvida = estoqueProdutoCota.getQuantidadeDevolvida();
+	BigDecimal vendaEdicao = produtoEdicao.getVenda();
+
+	Reporter.log("<p style='margin-left: 100px'>Quantidade Recebida : " + quantidadeRecebida + "</p>");
+	Reporter.log("<p style='margin-left: 100px'>Quantidade Devolvida : " + quantidadeDevolvida + "</p>");
+	Reporter.log("<p style='margin-left: 100px'>Venda : " + vendaEdicao + "</p>");
+
+	Reporter.log("<p style='margin-left: 100px'>-> Indice Correcao : " + indiceCorrecao + "</p>");
+	Reporter.log("<p style='margin-left: 100px'>-> Venda Corrigida : " + produtoEdicao.getVendaCorrigida() + "</p>");
+    }
+
 }

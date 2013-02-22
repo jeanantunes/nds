@@ -18,11 +18,11 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class GravarReparteFinalCota extends ProcessoAbstrato {
 
-    public GravarReparteFinalCota(Estudo estudo) {
-	super(estudo);
-    }
+	public GravarReparteFinalCota(Estudo estudo) {
+		super(estudo);
+	}
 
-    @Override
+	@Override
     protected void executarProcesso() {
     	
 

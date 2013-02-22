@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.testng.annotations.DataProvider;
 
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public abstract class DefinicaoBasesDataProvider {
 
@@ -21,10 +21,10 @@ public abstract class DefinicaoBasesDataProvider {
 	    returnList.add(new Object[] {edicoesRandom});
 	}*/
 	
-	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+	ProdutoEdicaoBase produtoEdicao = new ProdutoEdicaoBase();
 	produtoEdicao.setCodigoProduto(61310001L);
 	
-	List<ProdutoEdicao> edicaos = new ArrayList<>();
+	List<ProdutoEdicaoBase> edicaos = new ArrayList<ProdutoEdicaoBase>();
 	edicaos.add(produtoEdicao);
 	returnList.add(new Object[] {Arrays.asList(produtoEdicao)});
 	

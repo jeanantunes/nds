@@ -12,7 +12,7 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal reparteDistribuir;
 	private BigDecimal reparteDistribuirInicial;
 	private ProdutoEdicao produto;
-	private List<ProdutoEdicao> edicoesBase;
+	private List<ProdutoEdicaoBase> edicoesBase;
 	private List<Cota> cotas; //Cotas que receberam as edições base.
 	private boolean distribuicaoPorMultiplos;
 	private BigDecimal pacotePadrao;
@@ -26,14 +26,21 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal totalPDVs;
 	//TODO validar campo no DB e como recupera-lo
 	private boolean pracaVeraneio;
+	// variáveis utilizadas no algoritmo
 	private BigDecimal reservaAjuste;
+	private BigDecimal excedente;
+	private BigDecimal reparteComplementar;
 
 	public Estudo() {
+		totalPDVs = BigDecimal.ZERO;
 		pacotePadrao = BigDecimal.ZERO;
+		reservaAjuste = BigDecimal.ZERO;
 		reparteDistribuir = BigDecimal.ZERO;
 		reparteDistribuirInicial = BigDecimal.ZERO;
 		somatoriaVendaMedia = BigDecimal.ZERO;
 		somatoriaReparteEdicoesAbertas = BigDecimal.ZERO;
+		percentualProporcaoExcedentePDV = BigDecimal.ZERO;
+		percentualProporcaoExcedenteVenda = BigDecimal.ZERO;
 	}
 	
 	/**
@@ -62,11 +69,11 @@ public class Estudo extends GenericDTO<Estudo> {
 		this.produto = produto;
 	}
 
-	public List<ProdutoEdicao> getEdicoesBase() {
+	public List<ProdutoEdicaoBase> getEdicoesBase() {
 		return edicoesBase;
 	}
 
-	public void setEdicoesBase(List<ProdutoEdicao> edicoesBase) {
+	public void setEdicoesBase(List<ProdutoEdicaoBase> edicoesBase) {
 		this.edicoesBase = edicoesBase;
 	}
 
@@ -76,11 +83,6 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setCotas(List<Cota> cotas) {
 		this.cotas = cotas;
-	}
-
-	@Override
-	public String toString() {
-		return "\nEstudo{\n\t" + "id: " + id + ", \n\treparteCalculado: " + reparteDistribuir + "\n}";
 	}
 
 	/**
@@ -218,5 +220,32 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setReservaAjuste(BigDecimal reservaAjuste) {
 		this.reservaAjuste = reservaAjuste;
+	}
+
+	public BigDecimal getExcedente() {
+		return excedente;
+	}
+
+	public void setExcedente(BigDecimal excedente) {
+		this.excedente = excedente;
+	}
+
+	public BigDecimal getReparteComplementar() {
+		return reparteComplementar;
+	}
+
+	public void setReparteComplementar(BigDecimal reparteComplementar) {
+		this.reparteComplementar = reparteComplementar;
+	}
+
+	@Override
+	public String toString() {
+		return "Estudo [id=" + id + "\n status=" + status + "\n reparteDistribuir=" + reparteDistribuir + "\n reparteDistribuirInicial="
+				+ reparteDistribuirInicial + "\n produto=" + produto + "\n edicoesBase=" + edicoesBase + "\n cotas=" + cotas
+				+ "\n distribuicaoPorMultiplos=" + distribuicaoPorMultiplos + "\n pacotePadrao=" + pacotePadrao + "\n somatoriaVendaMedia="
+				+ somatoriaVendaMedia + "\n somatoriaReparteEdicoesAbertas=" + somatoriaReparteEdicoesAbertas + "\n complementarAutomatico="
+				+ complementarAutomatico + "\n percentualProporcaoExcedentePDV=" + percentualProporcaoExcedentePDV
+				+ "\n percentualProporcaoExcedenteVenda=" + percentualProporcaoExcedenteVenda + "\n totalPDVs=" + totalPDVs
+				+ "\n pracaVeraneio=" + pracaVeraneio + "\n reservaAjuste=" + reservaAjuste + "]";
 	}
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
 import br.com.abril.nds.service.PreparaEstudoService;
@@ -33,7 +33,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
     private static final int QUATRO_COLECIONAVEIS = 4;
     private static final int TWO_YEARS = 2;
     
-    private List<ProdutoEdicao> edicoesRecebidasParaEstudoRaw;
+    private List<ProdutoEdicaoBase> edicoesRecebidasParaEstudoRaw;
     
     private PreparaEstudoService estudoService = new PreparaEstudoService();
 
@@ -50,11 +50,11 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	// TODO: implementar método calcular do Processo DefinicaoBases
 	//recebe edições da interface ou manualmente (é indiferente a origem, a principio)
 	
-	List<ProdutoEdicao> edicoesRecebidasRaw = getEdicoesRecebidasParaEstudoRaw();
+	List<ProdutoEdicaoBase> edicoesRecebidasRaw = getEdicoesRecebidasParaEstudoRaw();
 	
-	List<ProdutoEdicao> edicoesParaEstudo = new ArrayList<ProdutoEdicao>();
-	for (ProdutoEdicao produtoEdicao : edicoesRecebidasRaw) {
-	    List<ProdutoEdicao> objetoEdtudo = estudoService.buscaEdicoesPorLancamento(produtoEdicao);
+	List<ProdutoEdicaoBase> edicoesParaEstudo = new ArrayList<ProdutoEdicaoBase>();
+	for (ProdutoEdicaoBase produtoEdicao : edicoesRecebidasRaw) {
+	    List<ProdutoEdicaoBase> objetoEdtudo = estudoService.buscaEdicoesPorLancamento(produtoEdicao);
 	    validaApenasUmaEdicaoFechada(objetoEdtudo);
 	    excluiEdicoesComMaisDeDoisAnos(objetoEdtudo);
 	    excluiColecionaveisSeMaiorQueQuatro(objetoEdtudo);
@@ -72,14 +72,14 @@ public class DefinicaoBases extends ProcessoAbstrato {
 //	super.genericDTO = baseParaSaidaVeraneio.getGenericDTO();
     }
 
-    private void validaApenasUmaEdicaoFechada(List<ProdutoEdicao> objetoEdtudo) throws Exception {
+    private void validaApenasUmaEdicaoFechada(List<ProdutoEdicaoBase> objetoEdtudo) throws Exception {
 	if(objetoEdtudo.size() == 1 && !objetoEdtudo.get(0).isEdicaoAberta()) {
 	    //FIXME rever este throw
 	    throw new Exception("Existe apenas 1 edição fechada, favor incluir mais publicações na base.");
 	}
     }
 
-    private void excluiEdicoesComMaisDeDoisAnos(List<ProdutoEdicao> objetoEdtudo) {
+    private void excluiEdicoesComMaisDeDoisAnos(List<ProdutoEdicaoBase> objetoEdtudo) {
 	int count = TRES_EDICOES-INDEX_CORRECTION;
 	while(objetoEdtudo.size() > count) {
 	    if(isBeforeTwoYears(objetoEdtudo.get(count).getDataLancamento())) {
@@ -90,7 +90,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	}
     }
     
-    private void excluiColecionaveisSeMaiorQueQuatro(List<ProdutoEdicao> objetoEdtudo) {
+    private void excluiColecionaveisSeMaiorQueQuatro(List<ProdutoEdicaoBase> objetoEdtudo) {
 	if(objetoEdtudo.get(0).isColecao() && objetoEdtudo.size()>QUATRO_COLECIONAVEIS) {
 	    objetoEdtudo.subList(QUATRO_COLECIONAVEIS+INDEX_CORRECTION, objetoEdtudo.size()).clear();
 	}
@@ -105,12 +105,12 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	return DateTime.now().minusYears(TWO_YEARS).isAfter(date.getTime());
     }
 
-    public List<ProdutoEdicao> getEdicoesRecebidasParaEstudoRaw() {
+    public List<ProdutoEdicaoBase> getEdicoesRecebidasParaEstudoRaw() {
 	return edicoesRecebidasParaEstudoRaw;
     }
 
     public void setEdicoesRecebidasParaEstudoRaw(
-	    List<ProdutoEdicao> edicoesRecebidasParaEstudoRaw) {
+	    List<ProdutoEdicaoBase> edicoesRecebidasParaEstudoRaw) {
 	this.edicoesRecebidasParaEstudoRaw = edicoesRecebidasParaEstudoRaw;
     }
 }

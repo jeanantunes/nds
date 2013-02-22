@@ -72,9 +72,9 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 
 		menorVenda = BigDecimal.ZERO;
 		if ((percentualExcedente.doubleValue() > 0.4d) && (percentualExcedente.doubleValue() < 0.6d)) {
-			menorVenda = new BigDecimal(0.25d);
+			menorVenda = BigDecimal.valueOf(0.25d);
 		} else if (percentualExcedente.doubleValue() < 0.4d) {
-			menorVenda = new BigDecimal(0.5d);
+			menorVenda = BigDecimal.valueOf(0.5d);
 		}
 	}
 }

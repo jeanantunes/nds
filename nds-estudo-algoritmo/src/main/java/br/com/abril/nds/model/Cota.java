@@ -17,17 +17,24 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal reparteMaximo;
     private BigDecimal reparteFinalCota;
     private BigDecimal vendaMedia;
+    private BigDecimal vendaMediaNominal;
     private BigDecimal vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
     private BigDecimal percentualEncalheMaximo;
     private BigDecimal somaReparteEdicoesAbertas;
     private BigDecimal indiceCorrecaoTendencia;
     private BigDecimal quantidadePDVs;
-    //TODO o q é mix?
+    // TODO o q é mix?
     private boolean mix;
     private BigDecimal indiceVendaCrescente;
+<<<<<<< HEAD
     private boolean recebeReparteComplementar=false;
     
+=======
+    private BigDecimal indiceAjusteCota;
+    private BigDecimal indiceTratamentoRegional;
+
+>>>>>>> DGBtiBit/master
     public Cota() {
 	vendaMedia = BigDecimal.ZERO;
 	vendaMediaMaisN = BigDecimal.ZERO;
@@ -188,9 +195,12 @@ public class Cota extends GenericDTO<Cota> {
 	this.mix = mix;
     }
 
+    public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
+	this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
+    }
+
     public BigDecimal getReparteJuramentadoAFaturar() {
 	return reparteJuramentadoAFaturar;
-
     }
 
     /**
@@ -213,6 +223,7 @@ public class Cota extends GenericDTO<Cota> {
 	this.indiceVendaCrescente = indiceVendaCrescente;
     }
 
+<<<<<<< HEAD
 	public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
 		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
 	}
@@ -232,5 +243,35 @@ public class Cota extends GenericDTO<Cota> {
 	public void setReparteFinalCota(BigDecimal reparteFinalCota) {
 		this.reparteFinalCota = reparteFinalCota;
 	}
+=======
+    /**
+     * Método que possui o resultado da venda média pura da cota sem as alterações
+     * da correção de vendas e outros cálculos
+     * @return {@link BigDecimal}
+     */
+    public BigDecimal getVendaMediaNominal() {
+	return vendaMediaNominal;
+    }
+
+    public void setVendaMediaNominal(BigDecimal vendaMediaNominal) {
+	this.vendaMediaNominal = vendaMediaNominal;
+    }
+
+    public BigDecimal getIndiceAjusteCota() {
+	return indiceAjusteCota;
+    }
+
+    public void setIndiceAjusteCota(BigDecimal indiceAjusteCota) {
+	this.indiceAjusteCota = indiceAjusteCota;
+    }
+
+    public BigDecimal getIndiceTratamentoRegional() {
+	return indiceTratamentoRegional;
+    }
+
+    public void setIndiceTratamentoRegional(BigDecimal indiceTratamentoRegional) {
+	this.indiceTratamentoRegional = indiceTratamentoRegional;
+    }
+>>>>>>> DGBtiBit/master
 
 }
