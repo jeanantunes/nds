@@ -2,6 +2,8 @@ package br.com.abril.nds.process.complementarautomatico;
 
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.ClassificacaoCota;
+import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
@@ -35,8 +37,17 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
         		}
         		BigDecimal reparteComplementar = BigDecimal.ZERO;
         		if (percentualExcedente.doubleValue() > BigDecimal.ONE.doubleValue()) {
-        			// %Abrangência = (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) / TotalCotasAtivas + CotasSuspensasDaPraça) * 100
-        			BigDecimal percentualAbrangencia = BigDecimal.ZERO;//getEstudo().getCotas().size() / ;
+        			// %Abrangência = (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) / TotalCotasAtivas + CotasSuspensasDaPraça) * 100'
+        			int contadorSuspensas = 0;
+        			int contadorAtivas = 0;
+        			for (Cota cota : getEstudo().getCotas()) {
+        				if (cota.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
+        					contadorSuspensas++;
+        				} else {
+        					contadorAtivas++;
+        				}
+        			}
+        			BigDecimal percentualAbrangencia = BigDecimal.valueOf(getEstudo().getCotas().size() / contadorAtivas + contadorSuspensas);
         			BigDecimal excedenteAMais = getEstudo().getExcedente().subtract(getEstudo().getSomatoriaVendaMedia());
         			
         			// RepComplementar = ExcedenteAmais * (1 – (((0,6 * %Abrangência) + 40) / 100))

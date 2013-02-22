@@ -29,8 +29,6 @@ public class Estudo extends GenericDTO<Estudo> {
 	// variáveis utilizadas no algoritmo
 	private BigDecimal reservaAjuste;
 	private BigDecimal excedente;
-	private BigDecimal totalCotasAtivas;
-	private BigDecimal cotasSuspensasDaPraça;
 
 	public Estudo() {
 		totalPDVs = BigDecimal.ZERO;
