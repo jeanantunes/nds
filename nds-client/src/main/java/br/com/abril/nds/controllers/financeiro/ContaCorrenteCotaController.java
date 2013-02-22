@@ -124,14 +124,14 @@ public class ContaCorrenteCotaController extends BaseController {
 		this.validarDadosEntradaPesquisa(filtroViewContaCorrenteCotaDTO
 				.getNumeroCota());
 
-		prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname,
+		this.prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname,
 				page, rp);
 
-		tratarFiltro(filtroViewContaCorrenteCotaDTO);
+		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroViewContaCorrenteCotaDTO);
 		
 		BigInteger total = this.consolidadoFinanceiroService.countObterContaCorrente(filtroViewContaCorrenteCotaDTO);
 		
-		if (total == null || BigInteger.ZERO.equals(total.equals(total))) {			
+		if (total == null || BigInteger.ZERO.compareTo(total) == 0) {			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
 		}
 
@@ -291,7 +291,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
 			}
 			
-			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor));
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
 			
 		}
 		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();
@@ -414,19 +414,6 @@ public class ContaCorrenteCotaController extends BaseController {
 
 		filtroViewContaCorrenteCotaDTO
 				.setColunaOrdenacao(sortname);
-	}
-
-	/**
-	 * Executa tratamento de paginação em função de alteração do filtro de
-	 * pesquisa.
-	 * 
-	 * @param filtroResumoExpedicao
-	 */
-	private void tratarFiltro(
-			FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO) {
-
-		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE,
-				filtroViewContaCorrenteCotaDTO);
 	}
 	
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {

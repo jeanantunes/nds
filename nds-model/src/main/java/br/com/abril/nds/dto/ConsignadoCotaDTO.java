@@ -126,7 +126,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	}
 
 	public void setTotal(BigDecimal total) {
-		this.total = total;
+		this.total = total != null ? total.setScale(2, RoundingMode.HALF_EVEN) : null;
 	}
 
 	public TipoDiferenca getMotivo() {
