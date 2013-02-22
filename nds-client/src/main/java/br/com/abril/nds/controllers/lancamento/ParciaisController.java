@@ -395,6 +395,8 @@ public class ParciaisController extends BaseController {
 		
 		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION);
 		
+		filtro.setPaginacao(null);
+		
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 		
 		if(listaParciais.isEmpty()) {
@@ -418,7 +420,9 @@ public class ParciaisController extends BaseController {
 	public void exportarPeriodos(FileType fileType) throws IOException {
 		
 		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION_DETALHE);
-				
+		
+		filtro.setPaginacao(null);
+		
 		List<PeriodoParcialDTO> listaPeriodos = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
 		
 		if(listaPeriodos.isEmpty()) {

@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -139,7 +140,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
 		.append(" join _chamEncCota.cota _cota 							")
 		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao")
-		.append(" where _cota.id = cota.id ");
+		.append(" where _cota.id = cota.id ")
+		.append(" and _chamEncCota.postergado = :isPostergado ");
 
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
@@ -255,6 +257,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			hql.append(" and fornecedores.id in (:listaFornecedores) ");
 			param.put("listaFornecedores", filtro.getFornecedores());
 		}
+
+		param.put("isPostergado", false);
 	}
 
 	private void gerarOrdenacao(FiltroEmissaoCE filtro, StringBuilder hql) {
@@ -454,24 +458,28 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return query.list();
 	}
-	
+
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
 			Long idCota) {
 
 		hql.append(" from ChamadaEncalheCota chamEncCota 					")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe 		")
-		   .append(" left join chamEncCota.conferenciasEncalhe confEnc 		")
-		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota 	")
 		   .append(" join chamEncCota.cota cota 							")
 		   .append(" join cota.pessoa pessoa 								")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		")
 		   .append(" join produtoEdicao.produto produto 					")
 		   .append(" join produto.fornecedores fornecedores 				")
 		   .append(" join chamadaEncalhe.lancamentos lancamentos 			")
+		   .append(" join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
+		   .append(" join movimentoCota.tipoMovimento tipoMovimento         ")
 		   .append(" where cota.id=:idCota 									")
-		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	");
-		
+		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	")
+		   .append(" and movimentoCota.cota.id = cota.id                    ")
+		   .append(" and tipoMovimento.grupoMovimentoEstoque =:grupoMovimento   ")
+		   .append(" and movimentoCota.data = (select max(mv.data) from MovimentoEstoqueCota mv where mv.lancamento.id = lancamentos.id and mv.id = movimentoCota.id )");
+		   
 		param.put("idCota", idCota);
+		param.put("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			

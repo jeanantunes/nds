@@ -629,8 +629,8 @@ public class MatrizLancamentoController extends BaseController {
 		//Adicionar no mapa		
 		for (ProdutoLancamentoDTO produtoLancamentoAdicionar : listaProdutoLancamentoAdicionar) {
 			
-			if (!produtoLancamentoAdicionar.excedeNumeroReprogramacoes()) {
-			
+			if (this.matrizLancamentoService.isProdutoBalanceavel(produtoLancamentoAdicionar)) {
+				
 				List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(novaData);
 				
 				if (produtosLancamento == null) {
@@ -763,7 +763,8 @@ public class MatrizLancamentoController extends BaseController {
 			produtoBalanceamentoVO.setDistribuicao(produtoLancamentoDTO.getDistribuicao().toString());
 		}
 		
-		produtoBalanceamentoVO.setBloquearData(produtoLancamentoDTO.excedeNumeroReprogramacoes());
+		produtoBalanceamentoVO.setBloquearData(
+			!this.matrizLancamentoService.isProdutoBalanceavel(produtoLancamentoDTO));
 		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
 		

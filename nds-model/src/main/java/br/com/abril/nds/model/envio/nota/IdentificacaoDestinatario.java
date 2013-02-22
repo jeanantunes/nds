@@ -10,7 +10,6 @@ import javax.persistence.OneToOne;
 
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Telefone;
 @Embeddable
 public class IdentificacaoDestinatario implements Serializable {
@@ -55,10 +54,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	private Integer codigoBox;
 	@Column(name = "NOME_BOX")
 	private String nomeBox;
-	
-	@ManyToOne(optional= true)
-	@JoinColumn(name = "ROTA_DESTINATARIO_ID_REFERENCIA")
-	private Rota rotaReferencia;
 	
 	@Column(name = "CODIGO_ROTA")
 	private String codigoRota;
@@ -186,20 +181,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	public void setNomeBox(String nomeBox) {
 		this.nomeBox = nomeBox;
-	}
-
-	/**
-	 * @return the rotaReferencia
-	 */
-	public Rota getRotaReferencia() {
-		return rotaReferencia;
-	}
-
-	/**
-	 * @param rotaReferencia the rotaReferencia to set
-	 */
-	public void setRotaReferencia(Rota rotaReferencia) {
-		this.rotaReferencia = rotaReferencia;
 	}
 
 	/**

@@ -75,10 +75,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
     private static final Logger LOG = LoggerFactory.getLogger(CotaRepositoryImpl.class);
 
 	@Value("#{queries.suspensaoCota}")
-	protected String querySuspensaoCota;
+	public String querySuspensaoCota;
 
 	@Value("#{queries.countSuspensaoCota}")
-	protected String queryCountSuspensaoCota;
+	public String queryCountSuspensaoCota;
 	
 
 	/**

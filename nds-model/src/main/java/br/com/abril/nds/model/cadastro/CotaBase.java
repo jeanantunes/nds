@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -25,6 +27,10 @@ public class CotaBase implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
+	@ManyToOne
+	@JoinColumn(name = "COTA_ID")
+	private Cota cota;
+	
 	@Column(name = "DATA_INICIO")
 	@Temporal(TemporalType.DATE)
 	private Date dataInicio;
@@ -33,7 +39,9 @@ public class CotaBase implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataFim;
 	
+	@Column(name = "INDICE_AJUSTE")
 	private BigDecimal indiceAjuste;
+	
 	
 	public Long getId() {
 		return id;
@@ -41,6 +49,14 @@ public class CotaBase implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
 	}
 
 	public Date getDataInicio() {

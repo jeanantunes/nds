@@ -829,7 +829,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	processarReprogramacao : function() {
-		debugger;
 		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
 		
 		var listaProdutoRecolhimento = new Array();

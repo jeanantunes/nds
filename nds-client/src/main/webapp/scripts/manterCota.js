@@ -922,8 +922,10 @@ var COTA_DESCONTO = $.extend(true,
                     {name:'idHistorico', value:MANTER_COTA.idHistorico}] ,
                 newp: 1,
                 preProcess:function(result) {
-                	debugger;
                 	 $.each(result.rows, function(index, value) {
+                		 
+                		 if(value.cell.qtdeProxLcmt != null) value.cell.numeroEdicao = 'por ' + value.cell.qtdeProxLcmt + ' edição(ões)';
+                		 
                 		 if(!value.cell.numeroEdicao)
                 			 value.cell.numeroEdicao='*';
                 	 });
