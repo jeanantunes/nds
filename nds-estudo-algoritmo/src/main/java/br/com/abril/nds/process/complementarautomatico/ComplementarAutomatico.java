@@ -35,7 +35,7 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
         		if (!getEstudo().getSomatoriaVendaMedia().equals(BigDecimal.ZERO)) {
         			percentualExcedente = getEstudo().getExcedente().divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
         		}
-        		BigDecimal reparteComplementar = BigDecimal.ZERO;
+        		getEstudo().setReparteComplementar(BigDecimal.ZERO);
         		if (percentualExcedente.doubleValue() > BigDecimal.ONE.doubleValue()) {
         			// %Abrangência = (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) / TotalCotasAtivas + CotasSuspensasDaPraça) * 100'
         			int contadorSuspensas = 0;
@@ -56,35 +56,35 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
     
         			// RepComplementar = ExcedenteAmais * (1 – (((0,6 * %Abrangência) + 40) / 100))
     				if (getEstudo().isDistribuicaoPorMultiplos()) {
-    					reparteComplementar = getEstudo().getPacotePadrao();
+    					getEstudo().setReparteComplementar(getEstudo().getPacotePadrao());
     				} else {
     					if (BigDecimal.valueOf(200).divide(getEstudo().getExcedente(), 2, BigDecimal.ROUND_FLOOR).doubleValue() < 10) {
     						if (2 > getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02)).doubleValue()) {
-    							reparteComplementar = BigDecimal.valueOf(2);
+    							getEstudo().setReparteComplementar(BigDecimal.valueOf(2));
     						} else {
-    							reparteComplementar = getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02));
+    							getEstudo().setReparteComplementar(getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02)));
     						}
     					} else {
-    						reparteComplementar = getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02));
+    						getEstudo().setReparteComplementar(getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02)));
     					}
     				}
         		} else if (percentualExcedente.doubleValue() > BigDecimal.valueOf(0.6).doubleValue()) {
         			if (getEstudo().isDistribuicaoPorMultiplos()) {
-        				reparteComplementar = getEstudo().getPacotePadrao();
+        				getEstudo().setReparteComplementar(getEstudo().getPacotePadrao());
         			} else {
         				// RepComplementar = Excedente * 2%
         				if (BigDecimal.valueOf(100).divide(getEstudo().getExcedente(), 2, BigDecimal.ROUND_FLOOR).doubleValue() < 10) {
     						if (2 > getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02)).doubleValue()) {
-    							reparteComplementar = BigDecimal.valueOf(2);
+    							getEstudo().setReparteComplementar(BigDecimal.valueOf(2));
     						} else {
-    							reparteComplementar = getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02));
+    							getEstudo().setReparteComplementar(getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02)));
     						}
     					} else {
-    						reparteComplementar = getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02));
+    						getEstudo().setReparteComplementar(getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.02)));
     					}
         			}
         		}
-        		getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(reparteComplementar));
+        		getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(getEstudo().getReparteComplementar()));
         	}
     	}
     }

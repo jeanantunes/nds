@@ -62,7 +62,7 @@ public class ComplementarAutomaticoTest {
 		complementarAutomatico.executarProcesso();
 
 		// Validação do teste
-		assertEquals(BigDecimal.valueOf(20), complementarAutomatico.getEstudo().getReparteDistribuir());
+		assertEquals(BigDecimal.valueOf(98), complementarAutomatico.getEstudo().getReparteDistribuir());
 		for (Cota c : complementarAutomatico.getEstudo().getCotas()) {
 			assertEquals(BigDecimal.ZERO, c.getReparteCalculado());
 		}

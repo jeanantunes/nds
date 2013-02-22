@@ -29,6 +29,7 @@ public class Estudo extends GenericDTO<Estudo> {
 	// variáveis utilizadas no algoritmo
 	private BigDecimal reservaAjuste;
 	private BigDecimal excedente;
+	private BigDecimal reparteComplementar;
 
 	public Estudo() {
 		totalPDVs = BigDecimal.ZERO;
@@ -227,6 +228,14 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setExcedente(BigDecimal excedente) {
 		this.excedente = excedente;
+	}
+
+	public BigDecimal getReparteComplementar() {
+		return reparteComplementar;
+	}
+
+	public void setReparteComplementar(BigDecimal reparteComplementar) {
+		this.reparteComplementar = reparteComplementar;
 	}
 
 	@Override

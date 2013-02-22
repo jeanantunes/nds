@@ -8,7 +8,6 @@ import org.joda.time.MonthDay;
 
 import br.com.abril.nds.enumerators.DataReferencia;
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.service.PreparaEstudoService;
@@ -25,47 +24,54 @@ import br.com.abril.nds.service.PreparaEstudoService;
  */
 public class BaseParaVeraneio extends ProcessoAbstrato {
 
-	private PreparaEstudoService preparaEstudoService = new PreparaEstudoService();
+    private PreparaEstudoService preparaEstudoService = new PreparaEstudoService();
 
-	public BaseParaVeraneio(Estudo estudo) {
-		super(estudo);
-	}
+    public BaseParaVeraneio(Estudo estudo) {
+	super(estudo);
+    }
 
-	@Override
-	protected void executarProcesso() throws Exception {
-		Estudo estudo = super.getEstudo();
-		//copia lista para não afetar o loop após modificações.
-		List<ProdutoEdicaoBase> edicoes = new ArrayList<ProdutoEdicaoBase>(estudo.getEdicoesBase());
-
-		for (ProdutoEdicaoBase produtoEdicao : edicoes) {
-			if(estudo.isPracaVeraneio()) {
-				if(validaPeriodoVeranio(produtoEdicao.getDataLancamento())) {
-					produtoEdicao.setPeso(2);
-					adicionarEdicoesAnterioresAoEstudo(produtoEdicao);
-				} else {
-					//TODO: adicionar bases de saida de veraneio
-				}
-			}
+    @Override
+    protected void executarProcesso() throws Exception {
+	Estudo estudo = super.getEstudo();
+	//copia lista para não afetar o loop após modificações.
+	List<ProdutoEdicaoBase> edicoes = new ArrayList<ProdutoEdicaoBase>(estudo.getEdicoesBase());
+	
+	for (ProdutoEdicaoBase produtoEdicao : edicoes) {	
+	    if(estudo.isPracaVeraneio()) {
+		if(validaPeriodoVeranio(produtoEdicao.getDataLancamento())) {
+		    produtoEdicao.setPeso(2);
+		    adicionarEdicoesAnterioresAoEstudo(produtoEdicao);
+		} else {
+		    adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(produtoEdicao);
 		}
+	    }
 	}
+    }
+
+    private void adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(ProdutoEdicaoBase produtoEdicao) {
+	List<ProdutoEdicaoBase> edicoesAnosAnterioresSaidaVeraneio = preparaEstudoService.buscaEdicoesAnosAnterioresSaidaVeraneio(produtoEdicao);
+	if(!edicoesAnosAnterioresSaidaVeraneio.isEmpty()) {
+	    super.getEstudo().getEdicoesBase().addAll(edicoesAnosAnterioresSaidaVeraneio);
+	}
+    }
 
 	private void adicionarEdicoesAnterioresAoEstudo(ProdutoEdicaoBase produtoEdicaoBase) throws Exception {
-		List<ProdutoEdicao> edicoesAnosAnteriores = preparaEstudoService.buscaEdicoesAnosAnterioresVeraneio(produtoEdicaoBase);
-		if(edicoesAnosAnteriores.isEmpty()) {
-			throw new Exception("Não foram encontradas outras bases para veraneio, favor inserir bases manualmente.");
-		}
-		for (ProdutoEdicao edicao : edicoesAnosAnteriores) {
-			edicao.setPeso(2);
-		}
-		super.getEstudo().getEdicoesBase().addAll(edicoesAnosAnteriores);
+		List<ProdutoEdicaoBase> edicoesAnosAnteriores = preparaEstudoService.buscaEdicoesAnosAnterioresVeraneio(produtoEdicaoBase);
+	if(edicoesAnosAnteriores.isEmpty()) {
+	    throw new Exception("Não foram encontradas outras bases para veraneio, favor inserir bases manualmente.");
 	}
-
-	private boolean validaPeriodoVeranio(Date dataLancamento) {
-		MonthDay md20Dezembro = MonthDay.parse(DataReferencia.DEZEMBRO_20.getData());
-		MonthDay md28Fevereiro = MonthDay.parse(DataReferencia.FEVEREIRO_28.getData());
-		MonthDay dtLancamento = new MonthDay(dataLancamento);
-
-		return dtLancamento.isAfter(md20Dezembro) || dtLancamento.isBefore(md28Fevereiro);
+	for (ProdutoEdicaoBase edicao : edicoesAnosAnteriores) {
+	    edicao.setPeso(2);
 	}
+	super.getEstudo().getEdicoesBase().addAll(edicoesAnosAnteriores);
+    }
+
+    private boolean validaPeriodoVeranio(Date dataLancamento) {
+	MonthDay inicioVeraneio = MonthDay.parse(DataReferencia.DEZEMBRO_20.getData());
+	MonthDay fimVeraneio = MonthDay.parse(DataReferencia.FEVEREIRO_15.getData());
+	MonthDay dtLancamento = new MonthDay(dataLancamento);
+
+	return dtLancamento.isAfter(inicioVeraneio) || dtLancamento.isBefore(fimVeraneio);
+    }
 
 }

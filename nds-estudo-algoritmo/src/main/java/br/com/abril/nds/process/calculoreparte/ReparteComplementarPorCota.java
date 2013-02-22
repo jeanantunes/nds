@@ -16,12 +16,12 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
-    public ReparteComplementarPorCota(Estudo estudo) {
-	super(estudo);
-    }
+	public ReparteComplementarPorCota(Estudo estudo) {
+		super(estudo);
+	}
 
-    @Override
-    protected void executarProcesso() {
-    }
+	@Override
+	protected void executarProcesso() {
+	}
 
 }
