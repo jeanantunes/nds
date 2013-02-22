@@ -5,226 +5,245 @@ import java.util.List;
 
 public class Cota extends GenericDTO<Cota> {
 
-	private static final long serialVersionUID = -2770873222155652560L;
+    private static final long serialVersionUID = -2770873222155652560L;
 
-	private Long id;
-	private List<ProdutoEdicao> edicoesRecebidas;
-	private ClassificacaoCota classificacao;
-	private BigDecimal reparteCalculado;
-	private BigDecimal reparteJuramentadoAFaturar;
-	private BigDecimal vendaMediaMaisN;
-	private BigDecimal reparteMinimo;
-	private BigDecimal reparteMaximo;
-	private BigDecimal vendaMedia;
-	private BigDecimal vendaMediaNominal;
-	private BigDecimal vendaEdicaoMaisRecenteFechada;
-	private boolean cotaSoRecebeuEdicaoAberta;
-	private BigDecimal percentualEncalheMaximo;
-	private BigDecimal somaReparteEdicoesAbertas;
-	private BigDecimal indiceCorrecaoTendencia;
-	private BigDecimal quantidadePDVs;
-	//TODO o q é mix?
-	private boolean mix;
-	private BigDecimal indiceVendaCrescente;
+    private Long id;
+    private List<ProdutoEdicao> edicoesRecebidas;
+    private ClassificacaoCota classificacao;
+    private BigDecimal reparteCalculado;
+    private BigDecimal reparteJuramentadoAFaturar;
+    private BigDecimal vendaMediaMaisN;
+    private BigDecimal reparteMinimo;
+    private BigDecimal reparteMaximo;
+    private BigDecimal vendaMedia;
+    private BigDecimal vendaMediaNominal;
+    private BigDecimal vendaEdicaoMaisRecenteFechada;
+    private boolean cotaSoRecebeuEdicaoAberta;
+    private BigDecimal percentualEncalheMaximo;
+    private BigDecimal somaReparteEdicoesAbertas;
+    private BigDecimal indiceCorrecaoTendencia;
+    private BigDecimal quantidadePDVs;
+    // TODO o q é mix?
+    private boolean mix;
+    private BigDecimal indiceVendaCrescente;
+    private BigDecimal indiceAjusteCota;
+    private BigDecimal indiceTratamentoRegional;
 
-	public Cota() {
-		vendaMedia = BigDecimal.ZERO;
-		vendaMediaMaisN = BigDecimal.ZERO;
-		reparteCalculado = BigDecimal.ZERO;
-		reparteMinimo = BigDecimal.ZERO;
-		somaReparteEdicoesAbertas = BigDecimal.ZERO;
-		percentualEncalheMaximo = BigDecimal.ZERO;
-		classificacao = ClassificacaoCota.SemClassificacao;
-	}
+    public Cota() {
+	vendaMedia = BigDecimal.ZERO;
+	vendaMediaMaisN = BigDecimal.ZERO;
+	reparteCalculado = BigDecimal.ZERO;
+	reparteMinimo = BigDecimal.ZERO;
+	somaReparteEdicoesAbertas = BigDecimal.ZERO;
+	percentualEncalheMaximo = BigDecimal.ZERO;
+	classificacao = ClassificacaoCota.SemClassificacao;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+	return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+	this.id = id;
+    }
 
-	public ClassificacaoCota getClassificacao() {
-		return classificacao;
-	}
+    public ClassificacaoCota getClassificacao() {
+	return classificacao;
+    }
 
-	public void setClassificacao(ClassificacaoCota classificacao) {
-		this.classificacao = classificacao;
-	}
+    public void setClassificacao(ClassificacaoCota classificacao) {
+	this.classificacao = classificacao;
+    }
 
-	public BigDecimal getReparteCalculado() {
-		return reparteCalculado;
-	}
+    public BigDecimal getReparteCalculado() {
+	return reparteCalculado;
+    }
 
-	public void setReparteCalculado(BigDecimal reparteCalculado) {
-		this.reparteCalculado = reparteCalculado;
-	}
+    public void setReparteCalculado(BigDecimal reparteCalculado) {
+	this.reparteCalculado = reparteCalculado;
+    }
 
-	/**
-	 * Valor do parâmetro "VendaMedia + n" configurado na tela de Ajuste de Reparte
-	 * @return {@link BigDecimal}
-	 */
-	public BigDecimal getVendaMediaMaisN() {
-		return vendaMediaMaisN;
-	}
+    /**
+     * Valor do parâmetro "VendaMedia + n" configurado na tela de Ajuste de Reparte
+     * @return {@link BigDecimal}
+     */
+    public BigDecimal getVendaMediaMaisN() {
+	return vendaMediaMaisN;
+    }
 
-	public void setVendaMediaMaisN(BigDecimal vendaMediaMaisN) {
-		this.vendaMediaMaisN = vendaMediaMaisN;
-	}
+    public void setVendaMediaMaisN(BigDecimal vendaMediaMaisN) {
+	this.vendaMediaMaisN = vendaMediaMaisN;
+    }
 
-	/**
-	 * VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
-	 * É a somatória das Vendas da Cota dividido pela Quantidade de Edições Recebidas por esta Cota
-	 * @return BigDecimal
-	 */
-	public BigDecimal getVendaMedia() {
-		return vendaMedia;
-	}
+    /**
+     * VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
+     * É a somatória das Vendas da Cota dividido pela Quantidade de Edições Recebidas por esta Cota
+     * @return BigDecimal
+     */
+    public BigDecimal getVendaMedia() {
+	return vendaMedia;
+    }
 
-	public void setVendaMedia(BigDecimal vendaMedia) {
-		this.vendaMedia = vendaMedia;
-	}
+    public void setVendaMedia(BigDecimal vendaMedia) {
+	this.vendaMedia = vendaMedia;
+    }
 
-	/**
-	 * Valor do parâmetro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
-	 * @return {@link BigDecimal}
-	 */
-	public BigDecimal getReparteMinimo() {
-		return reparteMinimo;
-	}
+    /**
+     * Valor do parâmetro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
+     * @return {@link BigDecimal}
+     */
+    public BigDecimal getReparteMinimo() {
+	return reparteMinimo;
+    }
 
-	public void setReparteMinimo(BigDecimal reparteMinimo) {
-		this.reparteMinimo = reparteMinimo;
-	}
+    public void setReparteMinimo(BigDecimal reparteMinimo) {
+	this.reparteMinimo = reparteMinimo;
+    }
 
-	public BigDecimal getVendaEdicaoMaisRecenteFechada() {
-		if (vendaEdicaoMaisRecenteFechada == null) {
-			// Busca para encontrar qual é a venda da edição mais recente fechada
-			for (int i = edicoesRecebidas.size() - 1; i >= 0; i--) {
-				if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
-					vendaEdicaoMaisRecenteFechada = edicoesRecebidas.get(i).getVenda();
-					break;
-				}
-			}
+    public BigDecimal getVendaEdicaoMaisRecenteFechada() {
+	if (vendaEdicaoMaisRecenteFechada == null) {
+	    // Busca para encontrar qual é a venda da edição mais recente fechada
+	    for (int i = edicoesRecebidas.size() - 1; i >= 0; i--) {
+		if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
+		    vendaEdicaoMaisRecenteFechada = edicoesRecebidas.get(i).getVenda();
+		    break;
 		}
-		return vendaEdicaoMaisRecenteFechada;
+	    }
 	}
+	return vendaEdicaoMaisRecenteFechada;
+    }
 
-	public void setVendaEdicaoMaisRecenteFechada(BigDecimal vendaEdicaoMaisRecenteFechada) {
-		this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
-	}
+    public void setVendaEdicaoMaisRecenteFechada(BigDecimal vendaEdicaoMaisRecenteFechada) {
+	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
+    }
 
-	/**
-	 * Busca para verificar se a cota só receber edições abertas
-	 * @return boolean
-	 */
-	public boolean isCotaSoRecebeuEdicaoAberta() {
-		return cotaSoRecebeuEdicaoAberta;
-	}
+    /**
+     * Busca para verificar se a cota só receber edições abertas
+     * @return boolean
+     */
+    public boolean isCotaSoRecebeuEdicaoAberta() {
+	return cotaSoRecebeuEdicaoAberta;
+    }
 
-	public void setCotaSoRecebeuEdicaoAberta(boolean cotaSoRecebeuEdicaoAberta) {
-		this.cotaSoRecebeuEdicaoAberta = cotaSoRecebeuEdicaoAberta;
-	}
+    public void setCotaSoRecebeuEdicaoAberta(boolean cotaSoRecebeuEdicaoAberta) {
+	this.cotaSoRecebeuEdicaoAberta = cotaSoRecebeuEdicaoAberta;
+    }
 
-	/**
-	 * Soma do reparte de todas as edições que essa cota recebeu
-	 * @return {@link BigDecimal}
-	 */
-	public BigDecimal getSomaReparteEdicoesAbertas() {
-		return somaReparteEdicoesAbertas;
-	}
+    /**
+     * Soma do reparte de todas as edições que essa cota recebeu
+     * @return {@link BigDecimal}
+     */
+    public BigDecimal getSomaReparteEdicoesAbertas() {
+	return somaReparteEdicoesAbertas;
+    }
 
-	public void setSomaReparteEdicoesAbertas(BigDecimal somaReparteEdicoesAbertas) {
-		this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
-	}
+    public void setSomaReparteEdicoesAbertas(BigDecimal somaReparteEdicoesAbertas) {
+	this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
+    }
 
-	public void setPercentualEncalheMaximo(BigDecimal percentualEncalheMaximo) {
-		this.percentualEncalheMaximo = percentualEncalheMaximo;
-	}
+    public void setPercentualEncalheMaximo(BigDecimal percentualEncalheMaximo) {
+	this.percentualEncalheMaximo = percentualEncalheMaximo;
+    }
 
-	/**
-	 * Percentual de encalhe máximo definido na tela Ajuste de Reparte (por Cota)
-	 * @return {@link BigDecimal}
-	 */
-	public BigDecimal getPercentualEncalheMaximo() {
-		return percentualEncalheMaximo;
-	}
+    /**
+     * Percentual de encalhe máximo definido na tela Ajuste de Reparte (por Cota)
+     * @return {@link BigDecimal}
+     */
+    public BigDecimal getPercentualEncalheMaximo() {
+	return percentualEncalheMaximo;
+    }
 
-	public BigDecimal getIndiceCorrecaoTendencia() {
-		return indiceCorrecaoTendencia;
-	}
+    public BigDecimal getIndiceCorrecaoTendencia() {
+	return indiceCorrecaoTendencia;
+    }
 
-	public void setIndiceCorrecaoTendencia(BigDecimal indiceCorrecaoTendencia) {
-		this.indiceCorrecaoTendencia = indiceCorrecaoTendencia;
-	}
+    public void setIndiceCorrecaoTendencia(BigDecimal indiceCorrecaoTendencia) {
+	this.indiceCorrecaoTendencia = indiceCorrecaoTendencia;
+    }
 
-	/**
-	 * Quantidade de PDV's que a cota possui
-	 * @return {@link BigDecimal}
-	 */
-	public BigDecimal getQuantidadePDVs() {
-		return quantidadePDVs;
-	}
+    /**
+     * Quantidade de PDV's que a cota possui
+     * @return {@link BigDecimal}
+     */
+    public BigDecimal getQuantidadePDVs() {
+	return quantidadePDVs;
+    }
 
-	public void setQuantidadePDVs(BigDecimal quantidadePDVs) {
-		this.quantidadePDVs = quantidadePDVs;
-	}
+    public void setQuantidadePDVs(BigDecimal quantidadePDVs) {
+	this.quantidadePDVs = quantidadePDVs;
+    }
 
-	public BigDecimal getReparteMaximo() {
-		return reparteMaximo;
-	}
+    public BigDecimal getReparteMaximo() {
+	return reparteMaximo;
+    }
 
-	public void setReparteMaximo(BigDecimal reparteMaximo) {
-		this.reparteMaximo = reparteMaximo;
-	}
+    public void setReparteMaximo(BigDecimal reparteMaximo) {
+	this.reparteMaximo = reparteMaximo;
+    }
 
-	public boolean isMix() {
-		return mix;
-	}
+    public boolean isMix() {
+	return mix;
+    }
 
-	public void setMix(boolean mix) {
-		this.mix = mix;
-	}
+    public void setMix(boolean mix) {
+	this.mix = mix;
+    }
 
-	public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
-		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
-	}
+    public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
+	this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
+    }
 
-	public BigDecimal getReparteJuramentadoAFaturar() {
-		return reparteJuramentadoAFaturar;
-	}
+    public BigDecimal getReparteJuramentadoAFaturar() {
+	return reparteJuramentadoAFaturar;
+    }
 
-	/**
-	 * Todas as edições que essa cota recebeu
-	 * @return List<{@link ProdutoEdicao}>
-	 */
-	public List<ProdutoEdicao> getEdicoesRecebidas() {
-		return edicoesRecebidas;
-	}
+    /**
+     * Todas as edições que essa cota recebeu
+     * @return List<{@link ProdutoEdicao}>
+     */
+    public List<ProdutoEdicao> getEdicoesRecebidas() {
+	return edicoesRecebidas;
+    }
 
-	public void setEdicoesRecebidas(List<ProdutoEdicao> edicoesRecebidas) {
-		this.edicoesRecebidas = edicoesRecebidas;
-	}
+    public void setEdicoesRecebidas(List<ProdutoEdicao> edicoesRecebidas) {
+	this.edicoesRecebidas = edicoesRecebidas;
+    }
 
-	public BigDecimal getIndiceVendaCrescente() {
-		return indiceVendaCrescente;
-	}
+    public BigDecimal getIndiceVendaCrescente() {
+	return indiceVendaCrescente;
+    }
 
-	public void setIndiceVendaCrescente(BigDecimal indiceVendaCrescente) {
-		this.indiceVendaCrescente = indiceVendaCrescente;
-	}
+    public void setIndiceVendaCrescente(BigDecimal indiceVendaCrescente) {
+	this.indiceVendaCrescente = indiceVendaCrescente;
+    }
 
-	/**
-	 * Método que possui o resultado da venda média pura da cota sem as alterações 
-	 * da correção de vendas e outros cálculos
-	 * @return {@link BigDecimal}
-	 */
-	public BigDecimal getVendaMediaNominal() {
-		return vendaMediaNominal;
-	}
+    /**
+     * Método que possui o resultado da venda média pura da cota sem as alterações
+     * da correção de vendas e outros cálculos
+     * @return {@link BigDecimal}
+     */
+    public BigDecimal getVendaMediaNominal() {
+	return vendaMediaNominal;
+    }
 
-	public void setVendaMediaNominal(BigDecimal vendaMediaNominal) {
-		this.vendaMediaNominal = vendaMediaNominal;
-	}
+    public void setVendaMediaNominal(BigDecimal vendaMediaNominal) {
+	this.vendaMediaNominal = vendaMediaNominal;
+    }
+
+    public BigDecimal getIndiceAjusteCota() {
+	return indiceAjusteCota;
+    }
+
+    public void setIndiceAjusteCota(BigDecimal indiceAjusteCota) {
+	this.indiceAjusteCota = indiceAjusteCota;
+    }
+
+    public BigDecimal getIndiceTratamentoRegional() {
+	return indiceTratamentoRegional;
+    }
+
+    public void setIndiceTratamentoRegional(BigDecimal indiceTratamentoRegional) {
+	this.indiceTratamentoRegional = indiceTratamentoRegional;
+    }
+    
 }
