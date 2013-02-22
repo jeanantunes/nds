@@ -1,30 +1,36 @@
 package br.com.abril.nds.controllers.distribuicao;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.UfEnum;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -48,6 +54,12 @@ public class HistoricoVendaController extends BaseController {
 	
 	@Autowired
 	private CotaService cotaService;
+
+	@Autowired
+	private PdvService pdvService;
+	
+	@Autowired
+	private EnderecoService enderecoService;
 	
 	@Autowired
 	private Result result;
@@ -61,7 +73,7 @@ public class HistoricoVendaController extends BaseController {
 	@Path("/index")
 	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTORICO_VENDA)
 	public void historicoVenda(){
-		
+		result.include("componenteList", ComponentesPDV.values());
 	}
 	
 	@Post
@@ -73,10 +85,93 @@ public class HistoricoVendaController extends BaseController {
 		TableModel<CellModelKeyValue<ProdutoEdicaoDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoEdicaoDTO>>();
 		
 		this.configurarTableModelSemPaginacao(listEdicoesProdutoDto, tableModel);
-		//result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
+	
+	@Post
+	public void pesquisaCotaPorReparte(FiltroHistoricoVendaDTO filtro){
+		// Validando filtro para pesquisa com reparte
+		validarEntradaFiltroPesquisaReparte(filtro);
+		
+		List<CotaDTO> cotas = cotaService.buscarCotasQueInquadramNoRangeDeReparte(filtro.getQtdReparteInicial(), filtro.getQtdReparteFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
+		
+		TableModel<CellModelKeyValue<CotaDTO>> tableModel = new TableModel<CellModelKeyValue<CotaDTO>>();
+		
+		this.configurarTableModelSemPaginacao(cotas, tableModel);
+		//result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+
+	private void validarEntradaFiltroPesquisaReparte(
+			FiltroHistoricoVendaDTO filtro) {
+		if (filtro.getListProdutoEdicaoDTO() == null ||filtro.getListProdutoEdicaoDTO().size() == 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum produto foi selecionado.");
+		}
+		
+		if (filtro.getQtdReparteFinal() == null || filtro.getQtdReparteFinal().intValue() == 0 ) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de reparte final");
+		}
+		
+		if (filtro.getQtdReparteInicial() == null || filtro.getQtdReparteInicial().intValue() == 0 ) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de reparte inicial");
+		}
+		
+		if (filtro.getQtdReparteFinal().intValue() < filtro.getQtdReparteInicial().intValue()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "A quantidade de reparte final não pode ser inferior a quantidade de reparte inicial.");
+		}
+	}
+	
+	@Post
+	@Path("/carregarElementos")
+	public void carregarElementos(String componente){
+		List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
+		
+		switch (ComponentesPDV.values()[Integer.parseInt(componente)]) {
+		case TipoPontodeVenda:
+			for(TipoPontoPDV tipo:pdvService.obterTiposPontoPDVPrincipal()){
+				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
+			}
+			break;
+		case Area_de_Influência:
+			for(AreaInfluenciaPDV tipo:pdvService.obterAreasInfluenciaPDV()){
+				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
+			}
+			break;
+
+		case Bairro:
+			for(String tipo:enderecoService.obterBairrosCotas()){
+				resultList.add(new ItemDTO(tipo,tipo));
+			}
+			break;
+		case Distrito:
+			for(UfEnum tipo:UfEnum.values()){
+				resultList.add(new ItemDTO(tipo.getSigla(),tipo.getSigla()));
+			}
+			break;
+		case GeradorDeFluxo:
+			for(TipoGeradorFluxoPDV tipo:pdvService.obterTodosTiposGeradorFluxo()){
+				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
+			}
+			break;
+		case CotasAVista:
+			
+			break;
+		case CotasNovasRetivadas:
+			
+			break;
+		case Região:
+			//todo: EMS 2004
+			break;
+		default:
+			break;
+		}
+		
+		
+		result.use(Results.json()).from(resultList, "result").recursive().serialize();
+	}
+	
 	
 	private void validarEntradaFiltroProduto(FiltroHistoricoVendaDTO filtro) {
 		if((filtro.getProdutoDto().getCodigoProduto() == null || filtro.getProdutoDto().getCodigoProduto().trim().isEmpty()) && 

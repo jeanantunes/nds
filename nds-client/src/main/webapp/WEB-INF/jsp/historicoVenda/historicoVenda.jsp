@@ -109,12 +109,15 @@ function filtroPercVenda(){
      </div>
       <fieldset class="classFieldset" style="float:left; width:417px!important; margin-left:10px!important;">
   <legend> Pesquisar Histórico de Venda
-  </legend><table width="410" border="0" cellpadding="2" cellspacing="1">
+  </legend>
+  
+  <form id="filtroHistoricoVenda">
+ 	 <table width="410" border="0" cellpadding="2" cellspacing="1">
           <tr>
             <td width="45"><strong>Status:</strong></td>
-            <td width="24"><input type="radio" name="status" id="radio" value="radio" checked /></td>
+            <td width="24"><input type="radio" name="status" id="todas" value="radio" checked /></td>
             <td width="101">Todas as Cotas</td>
-            <td width="20"><input type="radio" name="status" id="radio2" value="radio" /></td>
+            <td width="20"><input type="radio" name="status" id="cotasAtivas" value="radio" /></td>
             <td width="184">Cotas Ativas</td>
           </tr>
         </table>
@@ -123,10 +126,10 @@ function filtroPercVenda(){
             <td width="20"><input type="radio" name="filtroPor" id="radio3" value="radio" onclick="filtroReparte();" /></td>
             <td width="87"><strong>Qtde Reparte:</strong></td>
             <td width="48"><span class="filtroQtdeReparte">Inicial:</span></td>
-            <td width="62"><input type="text" name="textfield4" id="textfield4" style="width:40px; text-align:center;" class="filtroQtdeReparte"  /></td>
+            <td width="62"><input type="text" onkeydown="onlyNumeric(event);" name="filtro.qtdReparteInicial" id="qtdReparteInicial" style="width:40px; text-align:center;" class="filtroQtdeReparte"  /></td>
             <td width="35"><span class="filtroQtdeReparte">Final:</span></td>
-            <td width="46"><input type="text" name="textfield" id="textfield" style="width:40px; text-align:center;" class="filtroQtdeReparte"  /></td>
-            <td width="15"><span class="classPesquisar filtroQtdeReparte"><a href="javascript:;"></a></span></td>
+            <td width="46"><input type="text" onkeydown="onlyNumeric(event);" name="filtro.qtdReparteFinal" id="qtdReparteFinal" style="width:40px; text-align:center;" class="filtroQtdeReparte"  /></td>
+            <td width="15"><span class="classPesquisar filtroQtdeReparte"><a href="javascript:;" id="pesquisaPorReparte"></a></span></td>
           </tr>
           <tr>
             <td><input type="radio" name="filtroPor" id="radio4" value="radio" onclick="filtroVenda();" /></td>
@@ -155,11 +158,14 @@ function filtroPercVenda(){
             <td width="69"><strong>Componentes:</strong></td>
             <td width="523" colspan="10"><table border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorSegmento" style="display:noneA;">
               <tr>
-                <td width="110"><select name="select3" id="select3" style="width:110px;" class="filtroComponentes">
+                <td width="110"><select name="filtro.componentePdv" id="componente"  style="width:110px;" class="filtroComponentes">
                   <option selected="selected">Selecione...</option>
+                  <c:forEach items="${componenteList}" var="componente" varStatus="idx">
+						<option value="${idx.count-1}">${componente.descricao}</option>
+					</c:forEach>
                 </select></td>
                 <td width="36"><span class="filtroComponentes">Elem.:</span></td>
-                <td width="110"><select name="select3" id="select4" style="width:110px;" class="filtroComponentes">
+                <td width="110"><select name="elemento" id="elemento" style="width:110px;" class="filtroComponentes">
                   <option selected="selected">Selecione...</option>
                 </select></td>
                 <td width="15"><span class="classPesquisar filtroComponentes"><a href="javascript:;">&nbsp;</a></span></td>
@@ -171,12 +177,13 @@ function filtroPercVenda(){
           <tr>
             <td width="20"><input type="radio" name="filtroPor" id="radio6" value="radio" onclick="filtroCotas();" /></td>
             <td width="27"><strong>Cota:</strong></td>
-            <td colspan="2"><input type="text" name="textfield2" id="textfield2" style="width:60px;" class="filtroCotas"  /></td>
+            <td colspan="2"><input type="text" name="filtro.cotaDto.numeroCota" id="numeroCota" style="width:60px;" class="filtroCotas"  /></td>
             <td width="30"><span class="filtroCotas"><strong>Nome:</strong></span></td>
-            <td width="207"><input type="text" name="textfield2" id="textfield3" style="width:200px;" class="filtroCotas"  /></td>
+            <td width="207"><input type="text" name="filtro.cotaDto.nomeCota" id="nomeCota" style="width:200px;" class="filtroCotas"  /></td>
             <td width="23"><span class="classPesquisar filtroCotas"><a href="javascript:;">&nbsp;</a></span></td>
           </tr>
-  </table>
+  	</table>
+  </form>
 </fieldset>
       <fieldset class="classFieldset" style="width:417px!important; margin-left:10px!important; margin-top:10px!important; ">
        	  <legend>Resultado da Pesquisa</legend>
@@ -324,30 +331,7 @@ $(".segmentoCotaGrid").flexigrid({
 			height : 200
 		});
 		
-		$(".pesqHistoricoGrid").flexigrid({
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'Nome',
-				name : 'nome',
-				width : 270,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 415,
-			height : 140
-		});
+		
 		$(".segmentosGrid").flexigrid({
 			dataType : 'xml',
 			colModel : [ {

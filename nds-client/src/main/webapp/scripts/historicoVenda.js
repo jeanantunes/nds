@@ -10,11 +10,16 @@ var historicoVendaController = $.extend(true, {
 	
 		var flexGridService = new FlexGridService(),
 			pesquisaCota = new PesquisaCota(),
-			pesquisaProduto = new PesquisaProduto(),
-			mapEdicaoProdutoDTO;
+			pesquisaProduto = new PesquisaProduto();
 		
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####
 
+		$("#componente").change(function(){
+			  carregarCombo(contextPath + "/distribuicao/historicoVenda/carregarElementos", 
+					  {"componente":$("#componente").val()},
+			            $("#elemento", this.workspace), null, null);
+		});
+		
 		// ### POR PRODUTO ###
 		$('#pesquisaFiltroProduto').click(function (){
 			
@@ -25,6 +30,18 @@ var historicoVendaController = $.extend(true, {
 				params : filtro
 			});
 		});
+
+		$('#numeroCota').change(function (){
+			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');
+		});
+		
+		$('#nomeCota').keyup(function (){
+			pesquisaCota.autoCompletarPorNome('#nomeCota');
+		});
+		
+//		$('#nomeCota').blur(function (){
+//			pesquisaCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');
+//		});
 		
 		$('#filtroCodigoProduto').change(function (){
 			pesquisaProduto.pesquisarPorCodigoProduto('#filtroCodigoProduto', '#filtroNomeProduto', {}, false, undefined, historicoVendaController.errorCallBack);
@@ -36,6 +53,15 @@ var historicoVendaController = $.extend(true, {
 		
 		$('#filtroNomeProduto').blur(function (){
 			pesquisaProduto.pesquisarPorNomeProduto('#filtroCodigoProduto', '#filtroNomeProduto', {}, false, undefined, historicoVendaController.errorCallBack);
+		});
+		
+		// PESQUISA POR REPARTE
+		
+		$('#pesquisaPorReparte').click(function (){
+
+			url = contextPath + "/distribuicao/historicoVenda/pesquisaCotaPorReparte";
+			
+			historicoVendaController.pesquisarCotasHistorico(url);
 		});
 		
 		// EXPORTAÇÃO
@@ -166,7 +192,7 @@ var historicoVendaController = $.extend(true, {
 						fileReference : "images/ico_excluir.gif",
 						style : "cursor:pointer",
 						events : [{
-							functionName : "historicoVendaController.removeRowfromGrid",
+							functionName : "historicoVendaController.removeRowfromGridProduto",
 							type : "onclick",
 							parameter : "rowId"
 							
@@ -221,11 +247,89 @@ var historicoVendaController = $.extend(true, {
 					width : 480,
 					height : 110,
 				}
+			}),
+			PesqHistoricoGrid : flexGridService.GridFactory.createGrid({
+				gridName : "pesqHistoricoGrid",
+				cached : true,
+				inputModel : [{
+						element : "img",
+						columnName : "acao",
+						fileReference : "images/ico_excluir.gif",
+						style : "cursor:pointer",
+						events : [{
+							functionName : "historicoVendaController.removeRowfromGridCota",
+							type : "onclick",
+							parameter : "rowId"
+						}]
+					}
+				],
+				gridConfiguration : {
+						dataType : 'json',
+						colModel : [ {
+							display : 'Cota',
+							name : 'numeroCota',
+							width : 60,
+							sortable : true,
+							align : 'left'
+						},  {
+							display : 'Nome',
+							name : 'nomePessoa',
+							width : 270,
+							sortable : true,
+							align : 'left'
+						},  {
+							display : 'Ação',
+							name : 'acao',
+							width : 30,
+							sortable : true,
+							align : 'center'
+						}],
+						width : 415,
+						height : 140
+					}
 			})
+			
 		};
 	},
 	
-	removeRowfromGrid : function removeRowfromGrid(rowId){
+	pesquisarCotasHistorico : function pesquisarCotasPorHistorio(url){
+		var filtro = [];
+			produtosSelecionados = [],
+			grids = historicoVendaController.Grids,
+			filtro = $('#filtroHistoricoVenda').serializeArray();
+	
+		filtro.push({
+			name : "filtro.cotasAtivas",
+			value : $('#cotasAtivas').is(':checked')
+		});
+		
+		for ( var i in grids.EdicaoSelecionadaGrid.tableModel.rows) {
+			row = grids.EdicaoSelecionadaGrid.tableModel.rows[i];
+			filtro.push({name : "filtro.listProdutoEdicaoDTO["+i+"].numeroEdicao", value :  row.cell.numeroEdicao});
+			filtro.push({name : "filtro.listProdutoEdicaoDTO["+i+"].codigoProduto", value :  row.cell.codigoProduto});
+		}
+		
+		grids.PesqHistoricoGrid.reload({
+			url : url,
+			params : filtro
+		});
+	},
+	
+	removeRowfromGridCota : function removeRowfromGrid(rowId){
+		var grids = historicoVendaController.Grids,
+			row;
+		
+		for ( var index in grids.PesqHistoricoGrid.tableModel.rows) {
+			if (grids.PesqHistoricoGrid.tableModel.rows[index].id == rowId) {
+				row =  grids.PesqHistoricoGrid.tableModel.rows[index];
+			}
+		}
+		
+		grids.PesqHistoricoGrid.removeRow(rowId);
+		
+	},
+	
+	removeRowfromGridProduto : function removeRowfromGrid(rowId){
 		var grids = historicoVendaController.Grids,
 			row;
 		

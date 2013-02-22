@@ -26,12 +26,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.AreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
@@ -1803,4 +1805,152 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return (Cota) query.uniqueResult();
     }
 
+	@Override
+	public List<CotaDTO> buscarCotasQuePossuemRangeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa");
+		
+		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+		hql.append(" LEFT JOIN produtoEdicao.lancamentos as lancamento ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		
+		hql.append(" WHERE ");
+		
+		if (cotasAtivas) {
+			hql.append(" cota.situacaoCadastro = :statusCota");
+			parameters.put("statusCota", SituacaoCadastro.ATIVO);
+		}
+		
+		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
+			
+			// Populando o in ('','') do código produto
+			hql.append(" and produto.codigo in ( ");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append( "'" + listProdutoEdicaoDto.get(i).getCodigoProduto() + "'");
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(","); 
+				}
+			}
+			
+			hql.append(" )");
+
+			// Populando o in ('','') do numero Edição
+			hql.append(" and produtoEdicao.numeroEdicao in (");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append(listProdutoEdicaoDto.get(i).getNumeroEdicao());
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(",");
+				}
+			}
+			
+			hql.append(")");
+		}
+		
+		hql.append(" GROUP BY cota.numeroCota ");
+		
+		if (qtdReparteInicial != null && qtdReparteInicial.intValue() > 0 && qtdReparteFinal != null && qtdReparteFinal.intValue() > 0 ) {
+			hql.append(" HAVING avg(lancamento.reparte) between :reparteInicial and :reparteFinal");
+			parameters.put("reparteInicial", qtdReparteInicial.doubleValue());
+			parameters.put("reparteFinal", qtdReparteFinal.doubleValue());
+		}
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		this.setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		
+		return query.list();
+	}
+
+	private void setParameters(Query query, Map<String, Object> parameters) {
+		for (String key : parameters.keySet()) {
+			query.setParameter(key, parameters.get(key));
+		}
+	}
+
+	@Override
+	public List<CotaDTO> buscarCotasQuePossuemRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal,List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa");
+		
+		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+		hql.append(" LEFT JOIN produtoEdicao.lancamentos as lancamento ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		
+		hql.append(" WHERE ");
+		
+		if (cotasAtivas) {
+			hql.append(" cota.situacaoCadastro = :statusCota");
+			parameters.put("statusCota", SituacaoCadastro.ATIVO);
+		}
+		
+		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
+			
+			// Populando o in ('','') do código produto
+			hql.append(" and produto.codigo in ( ");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append( "'" + listProdutoEdicaoDto.get(i).getCodigoProduto() + "'");
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(","); 
+				}
+			}
+			
+			hql.append(" )");
+
+			// Populando o in ('','') do numero Edição
+			hql.append(" and produtoEdicao.numeroEdicao in (");
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				
+				hql.append(listProdutoEdicaoDto.get(i).getNumeroEdicao());
+				
+				if (listProdutoEdicaoDto.size() != i + 1) {
+					hql.append(",");
+				}
+			}
+			
+			hql.append(")");
+		}
+		
+		hql.append(" GROUP BY cota.numeroCota ");
+		
+		if (qtdVendaInicial != null && qtdVendaInicial.intValue() > 0 && qtdVendaFinal != null && qtdVendaFinal.intValue() > 0 ) {
+			hql.append(" HAVING avg(lancamento.reparte) between :reparteInicial and :reparteFinal");
+			parameters.put("reparteInicial", qtdVendaInicial.doubleValue());
+			parameters.put("reparteFinal", qtdVendaFinal.doubleValue());
+		}
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		this.setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		
+		return query.list();
+	}
+	
 }

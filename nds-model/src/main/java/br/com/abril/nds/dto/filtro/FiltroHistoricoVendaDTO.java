@@ -1,9 +1,12 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.List;
 
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.util.ComponentesPDV;
 
 public class FiltroHistoricoVendaDTO extends FiltroDTO {
@@ -15,13 +18,15 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	private Long numeroEdicao;
 
 	// Filtro Pesquisa por Histórico venda
-	private Integer qtdRepartInicial;
-	private Integer qtdRepartFinal;
+	private boolean cotasAtivas;
+	private BigInteger qtdReparteInicial;
+	private BigInteger qtdReparteFinal;
 	private Integer qtdVendaInicial;
 	private Integer qtdVendaFinal;
 	private BigDecimal percentualVenda;
 	private CotaDTO cotaDto;
 	private ComponentesPDV componentesPdf;
+	private List<ProdutoEdicaoDTO> listProdutoEdicaoDTO;
 	
 	public ProdutoDTO getProdutoDto() {
 		return produtoDto;
@@ -35,8 +40,8 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 		return tipoClassificacaoProdutoId;
 	}
 
-	public void setTipoClassificacaoProdutoId(Long classificacaoProduto) {
-		this.tipoClassificacaoProdutoId = classificacaoProduto;
+	public void setTipoClassificacaoProdutoId(Long tipoClassificacaoProdutoId) {
+		this.tipoClassificacaoProdutoId = tipoClassificacaoProdutoId;
 	}
 
 	public Long getNumeroEdicao() {
@@ -47,20 +52,28 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 		this.numeroEdicao = numeroEdicao;
 	}
 
-	public Integer getQtdRepartInicial() {
-		return qtdRepartInicial;
+	public boolean isCotasAtivas() {
+		return cotasAtivas;
 	}
 
-	public void setQtdRepartInicial(Integer qtdRepartInicial) {
-		this.qtdRepartInicial = qtdRepartInicial;
+	public void setCotasAtivas(boolean cotasAtivas) {
+		this.cotasAtivas = cotasAtivas;
 	}
 
-	public Integer getQtdRepartFinal() {
-		return qtdRepartFinal;
+	public BigInteger getQtdReparteInicial() {
+		return qtdReparteInicial;
 	}
 
-	public void setQtdRepartFinal(Integer qtdRepartFinal) {
-		this.qtdRepartFinal = qtdRepartFinal;
+	public void setQtdReparteInicial(BigInteger qtdReparteInicial) {
+		this.qtdReparteInicial = qtdReparteInicial;
+	}
+
+	public BigInteger getQtdReparteFinal() {
+		return qtdReparteFinal;
+	}
+
+	public void setQtdReparteFinal(BigInteger qtdReparteFinal) {
+		this.qtdReparteFinal = qtdReparteFinal;
 	}
 
 	public Integer getQtdVendaInicial() {
@@ -102,6 +115,13 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	public void setComponentesPdf(ComponentesPDV componentesPdf) {
 		this.componentesPdf = componentesPdf;
 	}
-	
 
+	public List<ProdutoEdicaoDTO> getListProdutoEdicaoDTO() {
+		return listProdutoEdicaoDTO;
+	}
+
+	public void setListProdutoEdicaoDTO(List<ProdutoEdicaoDTO> listProdutoEdicaoDTO) {
+		this.listProdutoEdicaoDTO = listProdutoEdicaoDTO;
+	}
+	
 }
