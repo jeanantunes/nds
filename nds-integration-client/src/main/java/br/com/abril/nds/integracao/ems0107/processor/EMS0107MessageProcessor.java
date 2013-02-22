@@ -22,6 +22,7 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -78,6 +79,13 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				return;
 			}
 		}
+		
+		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo cota!");
+			return;
+		}		
 		
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo == null) {

@@ -212,11 +212,20 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	public void voltarConfiguracaoOriginal() {
 		
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		if (balanceamentoLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
+		
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
-		this.matrizLancamentoService.voltarConfiguracaoInicial(filtro.getData());
+		this.matrizLancamentoService.voltarConfiguracaoInicial(
+			filtro.getData(), balanceamentoLancamento.getMatrizLancamento());
 		
-		BalanceamentoLancamentoDTO balanceamentoLancamento =
+		balanceamentoLancamento =
 			this.obterBalanceamentoLancamento(filtro);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 

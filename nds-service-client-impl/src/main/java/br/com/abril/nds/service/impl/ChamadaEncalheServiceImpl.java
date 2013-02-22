@@ -61,10 +61,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
 		
-		
-		List<CotaEmissaoDTO> chamadasEncalheCota = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
-		
-		return chamadasEncalheCota;
+		return chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
 	}
 
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -34,13 +35,13 @@ import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.EntregadorService;
-import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -53,6 +54,8 @@ public class MapaAbastecimentoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMapaAbastecimento";
 	
+	private static final Integer QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA = 4;
+	
 	@Autowired
 	private HttpSession session;
 	
@@ -61,9 +64,6 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	@Autowired
 	private MapaAbastecimentoService mapaAbastecimentoService;
-	
-	@Autowired
-	private LancamentoService lancamentoService;
 	
 	@Autowired
 	private BoxService boxService;
@@ -200,14 +200,7 @@ public class MapaAbastecimentoController extends BaseController {
 	@Post
 	public void pesquisar(FiltroMapaAbastecimentoDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
 		
-		if(filtro.getTipoConsulta() == null)
-			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
-				
-		if(filtro.getDataDate() == null)
-			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
-		
-		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
-			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
+		validarFiltroPesquisa(filtro);
 			
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
@@ -238,6 +231,17 @@ public class MapaAbastecimentoController extends BaseController {
 		default:
 			break;
 		}
+	}
+
+	private void validarFiltroPesquisa(FiltroMapaAbastecimentoDTO filtro) {
+		if(filtro.getTipoConsulta() == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
+				
+		if(filtro.getDataDate() == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
+		
+		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
+			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
 	}
 
 	@Post
@@ -384,8 +388,9 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
-		
-		HashMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
+		filtro.getPaginacao().setSortColumn("nomeEdicao");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		TreeMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
 		setaNomeParaImpressao();
 		result.include("produtosMapa",produtosMapa.values());
 	}
@@ -444,8 +449,13 @@ public class MapaAbastecimentoController extends BaseController {
 
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 		setaNomeParaImpressao();
-		result.include("mapa",produtoCotaMapa);
 		
+		int qtdCotas = produtoCotaMapa.getCotasQtdes().size();
+		
+		Integer qtdMaxRow = (qtdCotas > QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA) ? (qtdCotas*(100/QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA) / 100) : 1 ;
+		
+		result.include("mapa",produtoCotaMapa);
+		result.include("qtdMaxRow", qtdMaxRow);
 	}
 	
 	private void setaNomeParaImpressao() {

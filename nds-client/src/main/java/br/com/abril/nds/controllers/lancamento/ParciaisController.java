@@ -302,16 +302,37 @@ public class ParciaisController extends BaseController {
 	}
 	
 	@Post
-	public void obterPebDoProduto(String codigoProduto, String edicaoProduto) {
+	public void obterPebDoProduto(String codigoProduto, String edicaoProduto, Integer periodos) {
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
+		Integer peb =obterPEB(codigoProduto,edicaoProduto,null);
+		
+		if(periodos == null){
+			
+			result.use(Results.json()).withoutRoot().from(peb).recursive().serialize();
+		}
+		else{
+			
+			Integer pebProduto = (peb / periodos);
+			
+			result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
+		}
+	}
+	
+	private Integer obterPEB(String codigoProduto, String edicaoProduto, Long idEdicao){
+		
+		ProdutoEdicao produtoEdicao=null;
+		
+		if(idEdicao == null){
+			produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
+		}
+		else{
+			produtoEdicao = produtoEdicaoService.buscarPorID(idEdicao);
+		}
 		
 		if(produtoEdicao == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada.");
 		
-		Integer pebProduto = produtoEdicao.getPeb();
-		
-		result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
+		return produtoEdicao.getPeb();
 	}
 	
 	/**

@@ -20,6 +20,7 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	private String serieNotaFiscal;
 	private String chaveAcessoNF;
 	private String cnpjEmissor;
+	private String numeroNotaEnvio;
 	private List<EMS0135InputItem> item = new ArrayList<EMS0135InputItem>();
 	
 	@Field(offset = 1, length = 7)
@@ -71,11 +72,24 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 	public String getCnpjEmissor() {
 		return cnpjEmissor;
 	}
+
 	/**
 	 * @param cnpjEmissor the cnpjEmissor to set
 	 */
 	public void setCnpjEmissor(String cnpjEmissor) {
 		this.cnpjEmissor = cnpjEmissor;
+	}
+
+	/**
+	 * @return the numeroNotaEnvio
+	 */
+	@Field(offset = 179, length = 6)
+	public String getNumeroNotaEnvio() {
+		return numeroNotaEnvio;
+	}
+
+	public void setNumeroNotaEnvio(String numeroNotaEnvio) {
+		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
 	@Override
 	public void addItem(IntegracaoDocumentDetail docD) {
@@ -93,6 +107,5 @@ public class EMS0135Input extends IntegracaoDocumentMaster<EMS0135InputItem> imp
 
 	
 }
-
 
 

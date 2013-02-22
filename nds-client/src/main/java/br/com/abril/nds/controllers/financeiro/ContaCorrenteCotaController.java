@@ -175,9 +175,18 @@ public class ContaCorrenteCotaController extends BaseController {
 			
 			boolean temMaisQueUm = listaInfoTotalFornecedor.size() > 1;
 					
-			Object[] dados = new Object[2];
+			Object[] dados = new Object[3];
 			dados[0] = temMaisQueUm;
-			dados[1] = resultado;		
+			dados[1] = resultado;
+			
+			BigDecimal totalGeral = BigDecimal.ZERO;
+			
+			for (InfoTotalFornecedorDTO dto : listaInfoTotalFornecedor){
+				
+				totalGeral = totalGeral.add(dto.getValorTotal());
+			}
+			
+			dados[2] = totalGeral;
 						
 			result.use(Results.json()).from(dados, "result").recursive().serialize();
 		}else{
@@ -416,17 +425,7 @@ public class ContaCorrenteCotaController extends BaseController {
 	private void tratarFiltro(
 			FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO) {
 
-		FiltroViewContaCorrenteCotaDTO filtroContaCorrenteSession = (FiltroViewContaCorrenteCotaDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-
-		if (filtroContaCorrenteSession != null
-				&& !filtroContaCorrenteSession
-						.equals(filtroViewContaCorrenteCotaDTO)) {
-
-			filtroViewContaCorrenteCotaDTO.getPaginacao().setPaginaAtual(1);
-		}
-
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE,
+		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE,
 				filtroViewContaCorrenteCotaDTO);
 	}
 	
@@ -546,7 +545,7 @@ public class ContaCorrenteCotaController extends BaseController {
 		anexos.add(anexoXLS);
 		anexos.add(anexoPDF);
 		
-		if(destinatarios[1] != ""){
+		if(destinatarios[1] != null && destinatarios[1] != ""){
 			String destinatario = destinatarios[0].trim();
 			String[] copiaPara = destinatarios[1].split("[;]");
 			destinatarios  = new String[copiaPara.length+1];

@@ -38,7 +38,6 @@ import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
-import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -732,25 +731,43 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		try {
 			
-			for (Lancamento lancamento : lancamentos){
-				
-				lancamento.setStatus(StatusLancamento.CANCELADO);
-				
-				if(lancamento.getPeriodoLancamentoParcial()!= null){
-					
-					lancamento.getPeriodoLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
-					periodoLancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial());
-					
-					lancamento.getPeriodoLancamentoParcial().getLancamentoParcial().setStatus(StatusLancamentoParcial.CANCELADO);
-					lancamentoParcialRepository.alterar(lancamento.getPeriodoLancamentoParcial().getLancamentoParcial());
+			for (Lancamento lancamento : lancamentos){				
+				if (Origem.MANUAL.equals(produtoEdicao.getOrigem())) {
+					this.lancamentoRepository.remover(lancamento);
+				}else{
+					lancamento.setStatus(StatusLancamento.CANCELADO);
+					if (lancamento.getPeriodoLancamentoParcial() != null) {
+
+						lancamento.getPeriodoLancamentoParcial().setStatus(
+								StatusLancamentoParcial.CANCELADO);
+						periodoLancamentoParcialRepository.alterar(lancamento
+								.getPeriodoLancamentoParcial());
+
+						lancamento.getPeriodoLancamentoParcial()
+								.getLancamentoParcial()
+								.setStatus(StatusLancamentoParcial.CANCELADO);
+						lancamentoParcialRepository.alterar(lancamento
+								.getPeriodoLancamentoParcial()
+								.getLancamentoParcial());
+					}
+					this.lancamentoRepository.alterar(lancamento);
 				}
-				
-				this.lancamentoRepository.alterar(lancamento);
 			}
 			
-			produtoEdicao.setAtivo(false);
 			
-			this.produtoEdicaoRepository.alterar(produtoEdicao);
+				
+			
+			
+			if (Origem.MANUAL.equals(produtoEdicao.getOrigem())) {
+				if (produtoEdicao.getLancamentoParcial() != null) {
+					this.lancamentoParcialRepository.remover(produtoEdicao
+							.getLancamentoParcial());
+				}
+				this.produtoEdicaoRepository.remover(produtoEdicao);
+			}else{
+				produtoEdicao.setAtivo(false);
+				this.produtoEdicaoRepository.alterar(produtoEdicao);
+			}
 
 		} catch (DataIntegrityViolationException e) {
 			
@@ -764,7 +781,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Transactional(readOnly = true)
 	@Override
-	public ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras){
+	public List<ProdutoEdicao> buscarProdutoPorCodigoBarras(String codigoBarras){
 		
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoBarras);
 	}
@@ -789,9 +806,18 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		dto.setNomeFornecedor(nomeFornecedor);
 		
-		dto.setDesconto(produto.getDescontoLogistica() == null
-				? BigDecimal.ZERO 
-				: produto.getDescontoLogistica().getPercentualDesconto());
+		
+		if(produto.getOrigem().equals(Origem.INTERFACE)){
+			dto.setDesconto(produto.getDescontoLogistica() == null
+					? BigDecimal.ZERO 
+					: produto.getDescontoLogistica().getPercentualDesconto());
+		}else{
+			dto.setDesconto(produto.getDesconto() == null
+					? BigDecimal.ZERO 
+					: produto.getDesconto());
+		}
+		
+		
 		
 		if(produto.getDescontoLogistica()!= null){
 			dto.setDescricaoDesconto(produto.getDescontoLogistica().getDescricao());
@@ -899,17 +925,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			} else {
 				dto.setNumeroEdicao(ultimaEdicao + 1);
 			}
-		}
+			dto.setGrupoProduto(produto.getTipoProduto()!=null?produto.getTipoProduto().getGrupoProduto():null);
+		}	
 		
-		/* 
-		 * Regra: Se não houver edições já cadatradas para este produto, deve-se
-		 * obrigar a cadastrar o número 1. 
-		 */
-		
-		Long qtdEdicoes = this.countPesquisarEdicoes(codigoProduto, null, null, null, null, null, false);
-		if (qtdEdicoes == 0 || Long.valueOf(0).equals(qtdEdicoes)) {
-			dto.setNumeroEdicao(1L);
-		}
 		
 		return dto;
 	}

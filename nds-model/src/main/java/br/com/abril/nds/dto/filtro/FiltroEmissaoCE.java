@@ -17,9 +17,9 @@ public class FiltroEmissaoCE implements Serializable {
 	@Export(label="Até:")
 	private Date dtRecolhimentoAte;
 	@Export(label=" Intervalor Box:")
-	private Integer idBoxDe;
+	private Integer codigoBoxDe;
 	@Export(label="Até:")
-	private Integer idBoxAte;
+	private Integer codigoBoxAte;
 	@Export(label="Cota:")
 	private Integer numCotaDe;
 	@Export(label="Até:")
@@ -86,30 +86,23 @@ public class FiltroEmissaoCE implements Serializable {
 	public void setDtRecolhimentoAte(Date dtRecolhimentoAte) {
 		this.dtRecolhimentoAte = dtRecolhimentoAte;
 	}
-	/**
-	 * @return the idBoxDe
-	 */
-	public Integer getIdBoxDe() {
-		return idBoxDe;
+
+	public Integer getCodigoBoxDe() {
+		return codigoBoxDe;
 	}
-	/**
-	 * @param idBoxDe the idBoxDe to set
-	 */
-	public void setIdBoxDe(Integer idBoxDe) {
-		this.idBoxDe = idBoxDe;
+	
+	public void setCodigoBoxDe(Integer codigoBoxDe) {
+		this.codigoBoxDe = codigoBoxDe;
 	}
-	/**
-	 * @return the idBoxAte
-	 */
-	public Integer getIdBoxAte() {
-		return idBoxAte;
+	
+	public Integer getCodigoBoxAte() {
+		return codigoBoxAte;
 	}
-	/**
-	 * @param idBoxAte the idBoxAte to set
-	 */
-	public void setIdBoxAte(Integer idBoxAte) {
-		this.idBoxAte = idBoxAte;
+	
+	public void setCodigoBoxAte(Integer codigoBoxAte) {
+		this.codigoBoxAte = codigoBoxAte;
 	}
+	
 	/**
 	 * @return the numCotaDe
 	 */

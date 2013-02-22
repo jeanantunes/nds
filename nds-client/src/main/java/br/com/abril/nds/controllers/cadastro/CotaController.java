@@ -39,8 +39,6 @@ import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroTipoDescontoCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroTipoDescontoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -917,53 +915,7 @@ public class CotaController extends BaseController {
 		
 		return descontos;
 	}
-	
-	/**
-	 * Descontos da cota: Obtem os tipos de desconto do distribuidor
-	 */
-	private List<TipoDescontoDTO> obterDescontosDistribuidor(String sortorder, String sortname, List<Long> idFornecedores){
-		
-        FiltroTipoDescontoDTO filtro = new FiltroTipoDescontoDTO();
-        
-        filtro.setIdFornecedores(idFornecedores);
-        
-        Integer totalDeRegistros = descontoService.buscarQntTipoDesconto(filtro);
-		
-		PaginacaoVO paginacao = new PaginacaoVO(1, totalDeRegistros, sortorder);
-		
-		filtro.setPaginacao(paginacao);
-	
-		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroTipoDescontoDTO.OrdenacaoColunaConsulta.values(), sortname));
-		
-		List<TipoDescontoDTO> descontos = descontoService.buscarTipoDesconto(filtro);
-		
-		return descontos;
-	}
-	
-	/** 
-	 * Descontos da Cota: Obtem os tipos de desconto especificos associados a cota informada
-	 * @param idCota -identificador da cota
-	 */
-	private List<TipoDescontoCotaDTO> obterDescontosEspecificos(Cota cota, String sortorder, String sortname){
-		
-        FiltroTipoDescontoCotaDTO filtro = new FiltroTipoDescontoCotaDTO();
-		
-		filtro.setNumeroCota(cota.getNumeroCota());
-		filtro.setNomeCota(cota.getPessoa().getNome());
-		
-		Integer totalRegistros  = descontoService.buscarQuantidadeTipoDescontoCota(filtro);
-		
-		PaginacaoVO paginacao = new PaginacaoVO(1, totalRegistros, sortorder);
-		
-		filtro.setPaginacao(paginacao);
-	
-		filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroTipoDescontoCotaDTO.OrdenacaoColunaConsulta.values(), sortname));
 
-		List<TipoDescontoCotaDTO> descontos = descontoService.buscarTipoDescontoCota(filtro);
-		
-		return descontos;
-	}
-	
 	@Post
 	@Path("/obterTiposDescontoProduto")
 	public void obterTiposDescontoProduto(Long idCota, ModoTela modoTela, Long idHistorico, String sortorder, String sortname){
@@ -990,37 +942,15 @@ public class CotaController extends BaseController {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
 	        if (cota!=null){
+				
+	            List<TipoDescontoDTO> descontos =  descontoService.obterMergeDescontosEspecificosEGerais(cota,sortorder, sortname);
 			
-	            List<TipoDescontoCotaDTO> descontosEspecificos = this.obterDescontosEspecificos(cota, sortorder, sortname);
+	            if (descontos!=null && descontos.size() > 0){
 			
-	            if (descontosEspecificos!=null && descontosEspecificos.size() > 0){
-			
-	                result.use(FlexiGridJson.class).from(descontosEspecificos).page(1).total(1).serialize();
+	                result.use(FlexiGridJson.class).from(descontos).page(1).total(1).serialize();
 			
 	            } else {
-				
-	                List<Long> idFornecedores = obterIdFornecedoresCota(cota.getId());
-				
-	                if(idFornecedores == null || idFornecedores.isEmpty()) {
-				
-	                    result.nothing();
-				
-	                } else {
-
-	                    List<TipoDescontoDTO> descontosDistribuidor = this.obterDescontosDistribuidor(sortorder, sortname, idFornecedores);
-					
-	                    if (descontosDistribuidor!=null && descontosDistribuidor.size() > 0){
-
-	                        result.use(FlexiGridJson.class).from(descontosDistribuidor).page(1).total(1).serialize();
-				    
-	                    } else {
-					
-	                        result.nothing();
-				    
-	                    }
-
-	                }
-				
+	            	result.nothing();
 	            }
 			
 	        } else {

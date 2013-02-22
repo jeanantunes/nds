@@ -534,7 +534,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			destinatario.setTelefone(telefone);
 		}
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
-		destinatario.setBoxReferencia(cota.getBox());
 		destinatario.setCodigoBox(cota.getBox().getCodigo());
 		destinatario.setNomeBox(cota.getBox().getNome());
 
@@ -544,7 +543,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				throw new ValidacaoException(TipoMensagem.ERROR,
 						"Rota não encontrada!");
 			}
-			destinatario.setRotaReferencia(rota);
 			destinatario.setCodigoRota(rota.getId().toString());
 			destinatario.setDescricaoRota(rota.getDescricaoRota());
 		}
