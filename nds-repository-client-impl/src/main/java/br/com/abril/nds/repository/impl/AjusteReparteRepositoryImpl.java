@@ -28,14 +28,14 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		hql.append(" SELECT ");
 		hql.append(" ajuste.id as idAjusteReparte, ");
 		hql.append(" cota.numeroCota as numeroCota, ");
-		hql.append(" cota.situacaoCadastro as status, ");
+		hql.append(" cota.situacaoCadastro as statusCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota, ");
 		hql.append(" pdv.nome as nomePDV, ");
-		hql.append(" ajuste.formaAjuste as formaAjuste, ");
+		hql.append(" ajuste.formaAjuste as formaAjusteAplicado, ");
 		hql.append(" ajuste.ajusteAplicado as ajusteAplicado, ");
 		hql.append(" ajuste.dataInicio as dataInicio, ");
 		hql.append(" ajuste.dataFim as dataFim, ");
-		hql.append(" ajuste.motivo as motivoAjuste, ");
+		hql.append(" ajuste.motivo as motivoAjusteAplicado, ");
 		hql.append(" usuario.nome as nomeUsuario, ");
 		hql.append(" ajuste.dataAlteracao as dataAlteracao ");
 		
@@ -111,23 +111,4 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
 	}
-
-	
-//	private void configurarPaginacao(AjusteReparteDTO ajuste, Query query) {
-//
-//		PaginacaoVO paginacao = ajuste.getPaginacao();
-//
-//		if (paginacao.getQtdResultadosTotal().equals(0)) {
-//			paginacao.setQtdResultadosTotal(query.list().size());
-//		}
-//
-//		if (paginacao.getQtdResultadosPorPagina() != null) {
-//			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-//		}
-//
-//		if (paginacao.getPosicaoInicial() != null) {
-//			query.setFirstResult(paginacao.getPosicaoInicial());
-//		}
-//	}
-	
 }
