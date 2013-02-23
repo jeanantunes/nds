@@ -1,5 +1,6 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript" src="scripts/ajusteReparte.js"></script>
@@ -95,6 +96,7 @@ $(function(){
 						<input name="numeroCota" id="numeroCota" type="text" style="width: 60px; float: left; margin-right: 5px;" 
 						 	   onkeydown='onlyNumeric(event);'
 						 	   onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');"/>
+						 	   
 						<span class="classPesquisar">
 							<a href="javascript:;">
 								&nbsp;

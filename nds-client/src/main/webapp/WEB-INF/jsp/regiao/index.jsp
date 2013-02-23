@@ -1,6 +1,7 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
+
 <script type="text/javascript" src="scripts/regiao.js"></script>
 
 <script language="javascript" type="text/javascript">

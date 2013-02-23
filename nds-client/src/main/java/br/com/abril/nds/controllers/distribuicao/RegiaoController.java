@@ -65,11 +65,13 @@ public class RegiaoController extends BaseController {
 		this.result = result;
 	}
 	
+	@Path("/")
 	@Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO)
 	public void index(){
 		this.carregarComboRegiao();
-		this.carregarComboSegmento();
+//		this.carregarComboSegmento();
 	}
+	
 	@Post
 	@Path("/salvarRegiao")
 	public void salvarRegiao (String nome, boolean isFixa){
@@ -180,6 +182,11 @@ public class RegiaoController extends BaseController {
 		for (RegiaoDTO itemRegiao : regioes) {
 			comboRegiao.add(new ItemDTO<Long,String>(itemRegiao.getIdRegiao() , itemRegiao.getNomeRegiao()));
 		}
+		
+		if (comboRegiao == null || comboRegiao.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
 		result.include("listaRegiao",comboRegiao );
 	}
 	
@@ -310,6 +317,11 @@ public class RegiaoController extends BaseController {
 		for (TipoSegmentoProduto itemSegmento : segmentos) {
 			comboSegmento.add(new ItemDTO<Long,String>(itemSegmento.getId(), itemSegmento.getDescricao()));
 		}
+		
+		if (comboSegmento == null || comboSegmento.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
 		result.include("listaSegmento",comboSegmento );
 	}
 	
