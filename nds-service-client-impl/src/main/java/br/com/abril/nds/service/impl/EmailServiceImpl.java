@@ -14,8 +14,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
@@ -65,6 +65,14 @@ public class EmailServiceImpl implements EmailService {
 	public void enviar(String assunto, String mensagem, String[] destinatarios,AnexoEmail anexo) throws AutenticacaoEmailException {
 		
 		this.enviarEmail(assunto, mensagem, destinatarios, Arrays.asList(anexo),false);
+		
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public void enviar(String assunto, String mensagem, String[] destinatarios,AnexoEmail anexo, Boolean isHtml) throws AutenticacaoEmailException {
+		
+		this.enviarEmail(assunto, mensagem, destinatarios, Arrays.asList(anexo),isHtml);
 		
 	}
 	

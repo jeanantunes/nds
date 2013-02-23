@@ -101,14 +101,6 @@ public interface ParametroCobrancaCotaService {
 	 * @return Array de bytes do contrato
 	 */
 	byte[] geraImpressaoContrato(Long idCota, Date dataInicio, Date dataTermino);
-	
-	
-	/**
-	 * Obtém a forma de cobranca principal da cota
-	 * @param idCota
-	 * @return FormaCobrança principal da cota
-	 */
-	 FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota);
 	 
 	 
 	 /**
@@ -231,6 +223,4 @@ public interface ParametroCobrancaCotaService {
 	void alterarParametro(ParametroCobrancaCota parametroCobrancaCota);
 	
 	List<BigDecimal> comboValoresMinimos();
-
-	FormaCobranca obterFormaCobrancaPrincipal();
 }

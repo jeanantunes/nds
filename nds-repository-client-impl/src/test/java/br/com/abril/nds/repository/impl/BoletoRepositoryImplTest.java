@@ -531,8 +531,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 
 		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
 
-		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 3, "asc");
-
 		filtro.setData(dataAtual);
 		
 
@@ -579,8 +577,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		
         FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
 		
-		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
-
 		filtro.setData(dataAtual);
 		
 		
@@ -613,8 +609,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 
 		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
 		
-		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, null);
-
 		filtro.setData(dataAtual);
 		
 		
@@ -654,8 +648,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	public void obterBoletosBaixadosComDivergenciaPaginacaoNulo() {
 		
 		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
-		
-		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
 
 		filtro.setData(dataAtual);
 		
@@ -681,7 +673,6 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
 
 		filtro.setData(dataAtual);
-		filtro.setDataVencimento(dataAtual);
 		filtro.setPaginacao(paginacaoVO);
 		filtro.setOrdenacaoColuna(OrdenacaoColunaDetalheBaixaBoleto.DATA_VENCIMENTO);
 		
@@ -695,12 +686,8 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	public void obterBoletosInadimplentesPaginacaoNulo() {
 		
         FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
-		
-		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 1, "desc");
 
-		filtro.setData(dataAtual);
-		filtro.setDataVencimento(dataAtual);
-		
+		filtro.setData(dataAtual);		
 		
 		List<DetalheBaixaBoletoDTO> boletosInadimplentes =
 			this.boletoRepository.obterBoletosInadimplentes(filtro);
@@ -732,10 +719,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 
 		FiltroDetalheBaixaBoletoDTO filtro = new FiltroDetalheBaixaBoletoDTO();
 		
-		PaginacaoVO paginacaoVO = new PaginacaoVO(1, 10, null);
-
 		filtro.setData(dataAtual);
-		
 		
 		List<DetalheBaixaBoletoDTO> detalheValorTotalBancario =
 			this.boletoRepository.obterTotalBancario(filtro);

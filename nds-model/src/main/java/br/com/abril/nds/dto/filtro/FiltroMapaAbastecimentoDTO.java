@@ -58,7 +58,8 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		NUMERO_EDICAO("numeroEdicao"),
 		TOTAL("total"),
 		MATERIAL_PROMOCIONAL("materialPromocional"),
-		CODIGO_COTA("codigoCota");	
+		CODIGO_COTA("codigoCota"),
+		NOME_EDICAO("nomeEdicao");	
 		
 		private String nomeColuna;
 		

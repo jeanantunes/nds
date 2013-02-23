@@ -69,7 +69,6 @@
 			    <td width="77">Fornecedor:</td>
 			    <td width="208">    	
 			    	<select id="idFornecedor" name="idFornecedor" style="width:200px;" onchange="consultaConsignadoCotaController.detalharTodos(this.value);">
-					    <option value="0" selected="selected">Selecione</option>
 					    <option value="-1">Todos</option>
 					    <c:forEach items="${listaFornecedores}" var="fornecedor">
 					      		<option value="${fornecedor.key}">${fornecedor.value}</option>	

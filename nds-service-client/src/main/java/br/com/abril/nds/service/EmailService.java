@@ -64,5 +64,16 @@ public interface EmailService {
 	 * @throws AutenticacaoEmailException
 	 */
 	void enviar(String assunto,String[] destinatarios,AnexoEmail[] anexo,TemplateNames template,HashMap<String,Object> parametros)throws AutenticacaoEmailException;
+
+	/**
+	 * Envia e-mail com mensagem e anexos
+	 * @param assunto
+	 * @param mensagem
+	 * @param destinatarios
+	 * @param anexo
+	 * @param isHtml
+	 * @throws AutenticacaoEmailException
+	 */
+	void enviar(String assunto, String mensagem, String[] destinatarios,AnexoEmail anexo, Boolean isHtml) throws AutenticacaoEmailException;
 	
 }

@@ -35,12 +35,16 @@ import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
+import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
@@ -49,8 +53,11 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
+import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.MathUtil;
 
 @Service
@@ -101,7 +108,18 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
-		
+	@Autowired
+	private LancamentoParcialRepository lancamentoParcialRepository;	
+	
+	@Autowired
+	private UsuarioService usuarioService;	
+	
+	@Autowired
+	private ParciaisService parciaisService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
 	/**
 	* Obtem lista com dados de itemRecebimento relativos ao id de uma nota fiscal.
 	* 
@@ -526,6 +544,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		//TODO : Por hora estamos usando somente a Data Lancamento como unica. Verificar se a do Distribuidor também será
 		Lancamento lancamento = lancamentoRepository.obterLancamentoPorItensRecebimentoFisico(recebimentoFisicoDTO.getDataLancamento(), null, recebimentoFisicoDTO.getIdProdutoEdicao());
 		
+		ProdutoEdicao produtoEdicao =  produtoEdicaoService.buscarPorID(recebimentoFisicoDTO.getIdProdutoEdicao());
+				
 		if(lancamento != null) {
 			
 			if(lancamento.getRecebimentos() == null) {
@@ -540,6 +560,33 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			lancamentoRepository.alterar(lancamento);
 		
+		} else if(lancamento==null && produtoEdicao.isParcial()) {
+			
+			LancamentoParcial lancamentoParcial  = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(recebimentoFisicoDTO.getIdProdutoEdicao());
+			
+			if ( lancamentoParcial == null ) {
+				lancamentoParcial = new LancamentoParcial();
+				lancamentoParcial.setProdutoEdicao(new ProdutoEdicao(recebimentoFisicoDTO.getIdProdutoEdicao()));
+				lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);		
+			}
+			
+			lancamentoParcial.setLancamentoInicial(recebimentoFisicoDTO.getDataLancamento());
+			lancamentoParcial.setRecolhimentoFinal(recebimentoFisicoDTO.getDataRecolhimento());
+			
+			lancamentoParcialRepository.merge(lancamentoParcial);
+			
+			Usuario usuario = usuarioService.getUsuarioLogado();
+						
+			if(lancamentoParcial.getPeriodos().isEmpty())
+				parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario , produtoEdicao.getPeb(), distribuidorService.obter());
+			
+			Lancamento periodo = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
+			
+			periodo.setReparte(recebimentoFisicoDTO.getRepartePrevisto());
+			periodo.setRepartePromocional(BigInteger.ZERO);
+			
+			lancamentoRepository.merge(periodo);
+			
 		} else {
 
 			lancamento = new Lancamento();
@@ -564,9 +611,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			itemRecebimentoFisico.setId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 			
 			lancamento.getRecebimentos().add(itemRecebimentoFisico);
-			
-			ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-			produtoEdicao.setId(recebimentoFisicoDTO.getIdProdutoEdicao());
 			
 			lancamento.setProdutoEdicao(produtoEdicao);
 			
@@ -844,7 +888,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void inserirMovimentoEstoque(
 			Usuario usuarioLogado,
 			RecebimentoFisicoDTO recebimentoFisicoDTO) {
-			
+					
 		// Implementado por Cesar Punk Pop
 		// Retirado o Else, já que o movimento sempre deve ser gerado (independente de ocorrer diferença ou não)
 		TipoMovimentoEstoque tipoMovimento = 
@@ -865,8 +909,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	}
 	
 	private void gerarDiferenca(Usuario usuarioLogado,RecebimentoFisicoDTO recebimentoFisicoDTO) {
+		
 		Diferenca diferenca = obterDiferencaDeItemRecebimentoFisico(usuarioLogado, recebimentoFisicoDTO);
-		diferenca = diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, TipoEstoque.LANCAMENTO);
+		diferenca = diferencaEstoqueService.lancarDiferenca(diferenca, TipoEstoque.LANCAMENTO);
 		
 		ItemRecebimentoFisico itemRecebimento = itemRecebimentoFisicoRepository.buscarPorId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 		itemRecebimento.setDiferenca(diferenca);

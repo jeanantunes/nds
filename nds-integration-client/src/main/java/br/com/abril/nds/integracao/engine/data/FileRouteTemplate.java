@@ -1,6 +1,6 @@
 package br.com.abril.nds.integracao.engine.data;
 
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.enums.TipoParametroSistema;
 
 public abstract class FileRouteTemplate extends RouteTemplate {
 	public final String getInboundFolder() {

@@ -65,7 +65,7 @@ public class EncalheCotaDTO implements Serializable {
 	}
 
 	public void setTotal(BigDecimal total) {
-		this.total = total;
+		this.total = total != null ? total.setScale(2, RoundingMode.HALF_EVEN) : null;
 	}
 
 	private static final long serialVersionUID = 2186060384671120600L;

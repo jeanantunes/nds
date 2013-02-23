@@ -1429,8 +1429,6 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		baixaFinanceiraController.limparCamposBaixaAutomatica();
 		
-		baixaFinanceiraController.habilitarBaixaAutomatica(true);
-
 		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
 			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
 		);
@@ -1557,31 +1555,10 @@ var baixaFinanceiraController = $.extend(true, {
 			$("#labelBanco", baixaFinanceiraController.workspace).hide();
 		}
 	},
-	alterarEstadoInputsBaixaAutomatica: function() {
-		
-		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).datepicker( "getDate" );
-		
-		baixaFinanceiraController.habilitarIntegracao();
-
-		if (dataSelecionada > baixaFinanceiraController.dataOperacaoDistribuidor ||
-				dataSelecionada < baixaFinanceiraController.dataOperacaoDistribuidor) {
-
-			baixaFinanceiraController.limparCamposBaixaAutomatica();
-			baixaFinanceiraController.habilitarBaixaAutomatica(false);
-		
-		} else {
-			
-			baixaFinanceiraController.resetarCamposBaixaAutomatica();
-		}
-		
-	},
 	
 	habilitarIntegracao: function() {
 		
-		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).datepicker( "getDate" );
-		
-		if (dataSelecionada > baixaFinanceiraController.dataOperacaoDistribuidor ||
-				dataSelecionada < baixaFinanceiraController.dataOperacaoDistribuidor) {
+		if ($("#uploadedFile").val() == "") {
 
 			$("#btnIntegrar", baixaFinanceiraController.workspace).hide();
 			$("#btnExibirResumos", baixaFinanceiraController.workspace).show();
@@ -1591,12 +1568,6 @@ var baixaFinanceiraController = $.extend(true, {
 			$("#btnIntegrar", baixaFinanceiraController.workspace).show();
 			$("#btnExibirResumos", baixaFinanceiraController.workspace).hide();
 		}
-	},
-	
-	habilitarBaixaAutomatica: function(habilitar) {
-		
-		$("#uploadedFile", baixaFinanceiraController.workspace).enable(habilitar);
-		$("#valorFinanceiro", baixaFinanceiraController.workspace).enable(habilitar);
 	},
 
 	obterResumoBaixaFinanceira: function() {

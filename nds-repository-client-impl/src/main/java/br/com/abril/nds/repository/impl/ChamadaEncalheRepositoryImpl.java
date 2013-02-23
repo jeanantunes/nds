@@ -4,9 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.hibernate.FetchMode;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
@@ -20,6 +18,7 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -141,7 +140,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
 		.append(" join _chamEncCota.cota _cota 							")
 		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao")
-		.append(" where _cota.id = cota.id ");
+		.append(" where _cota.id = cota.id ")
+		.append(" and _chamEncCota.postergado = :isPostergado ");
 
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
@@ -199,85 +199,66 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	
 	private void gerarFromWhere(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
-		hql.append(" from ChamadaEncalheCota chamEncCota ")
+		hql.append(" from ChamadaEncalheCota chamEncCota, Box box ")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
 		   .append(" join chamEncCota.cota cota ")
 		   .append(" join cota.pessoa pessoa ")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 		   .append(" join produtoEdicao.produto produto ")
 		   .append(" join produto.fornecedores fornecedores ")
-		   .append(" JOIN cota.box box ")
-		   .append(" JOIN cota.pdvs pdv ")
-		   .append(" JOIN pdv.rotas rotaPdv ")
-		   .append(" JOIN rotaPdv.rota rota ")
-		   .append(" JOIN rota.roteiro roteiro ");
-		   
-		boolean contemWhere = false;
-		
+		//   .append(" join cota.box box ")
+		   .append(" join cota.pdvs pdv ")
+		   .append(" join pdv.rotas rotaPdv ")
+		   .append(" join rotaPdv.rota rota ")
+		   .append(" join rota.roteiro roteiro ")
+		   .append(" where box.id = cota.box.id  ");
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
-			
-			hql.append(((contemWhere)?" and ":" where ")+" chamadaEncalhe.dataRecolhimento >=:dataDe ");
+			hql.append(" and chamadaEncalhe.dataRecolhimento >= :dataDe ");
 			param.put("dataDe", filtro.getDtRecolhimentoDe());
-			contemWhere = true;
 		}
 		
 		if(filtro.getDtRecolhimentoAte() != null) {
-			hql.append(((contemWhere)?" and ":" where ")+" chamadaEncalhe.dataRecolhimento <=:dataAte ");
+			hql.append(" and chamadaEncalhe.dataRecolhimento <= :dataAte ");
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
-			contemWhere = true;
 		}
 		
 		if(filtro.getNumCotaDe() != null) {
-
-			hql.append(((contemWhere)?"and":"where")+" cota.numeroCota >=:cotaDe ");
+			hql.append(" and cota.numeroCota >= :cotaDe ");
 			param.put("cotaDe", filtro.getNumCotaDe());
-			contemWhere = true;
 		}
 		
 		if(filtro.getNumCotaAte() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" cota.numeroCota <=:cotaAte ");
+			hql.append(" and cota.numeroCota <= :cotaAte ");
 			param.put("cotaAte", filtro.getNumCotaAte());
-			contemWhere = true;
 		}
 		
 		if(filtro.getIdRoteiro() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" roteiro.id <=:idRoteiro ");
+			hql.append(" and roteiro.id <= :idRoteiro ");
 			param.put("idRoteiro", filtro.getIdRoteiro());
-			contemWhere = true;
 		}
 				
 		if(filtro.getIdRota() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" rota.id <=:idRota ");
+			hql.append(" and rota.id <= :idRota ");
 			param.put("idRota", filtro.getIdRota());
-			contemWhere = true;
 		}
 		
-		if(filtro.getIdBoxDe() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" box.codigo >=:codBox ");
-			param.put("codBox", filtro.getIdBoxDe());
-			contemWhere = true;
+		if(filtro.getCodigoBoxDe() != null) {
+			hql.append(" and box.codigo >= :codBoxDe ");
+			param.put("codBoxDe", filtro.getCodigoBoxDe());
 		}
 		
-		if(filtro.getIdBoxAte() != null) {
-			
-			hql.append(((contemWhere)?"and":"where")+" box.codigo <=:codBox");
-			param.put("codBox", filtro.getIdBoxAte());
-			contemWhere = true;
+		if(filtro.getCodigoBoxAte() != null) {
+			hql.append(" and box.codigo <= :codBoxAte");
+			param.put("codBoxAte", filtro.getCodigoBoxAte());
 		}
 		
 		if(filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()) {
-			
-			hql.append(((contemWhere)?"and":"where")+" fornecedores.id in (:listaFornecedores) ");
+			hql.append(" and fornecedores.id in (:listaFornecedores) ");
 			param.put("listaFornecedores", filtro.getFornecedores());
-			contemWhere = true;
 		}
-		
 
+		param.put("isPostergado", false);
 	}
 
 	private void gerarOrdenacao(FiltroEmissaoCE filtro, StringBuilder hql) {
@@ -477,24 +458,28 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return query.list();
 	}
-	
+
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
 			Long idCota) {
 
 		hql.append(" from ChamadaEncalheCota chamEncCota 					")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe 		")
-		   .append(" left join chamEncCota.conferenciasEncalhe confEnc 		")
-		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota 	")
 		   .append(" join chamEncCota.cota cota 							")
 		   .append(" join cota.pessoa pessoa 								")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		")
 		   .append(" join produtoEdicao.produto produto 					")
 		   .append(" join produto.fornecedores fornecedores 				")
 		   .append(" join chamadaEncalhe.lancamentos lancamentos 			")
+		   .append(" join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
+		   .append(" join movimentoCota.tipoMovimento tipoMovimento         ")
 		   .append(" where cota.id=:idCota 									")
-		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	");
-		
+		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	")
+		   .append(" and movimentoCota.cota.id = cota.id                    ")
+		   .append(" and tipoMovimento.grupoMovimentoEstoque =:grupoMovimento   ")
+		   .append(" and movimentoCota.data = (select max(mv.data) from MovimentoEstoqueCota mv where mv.lancamento.id = lancamentos.id and mv.id = movimentoCota.id )");
+		   
 		param.put("idCota", idCota);
+		param.put("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			

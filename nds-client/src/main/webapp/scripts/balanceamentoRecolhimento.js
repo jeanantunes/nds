@@ -307,9 +307,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		retornoHTML += '<input type="text" name="novaData"'
 					 + 	     ' value="' + row.cell.novaData + '"'
-					 + 	     ' style="width:65px; margin-right:5px; float:left;" />';
+					 + 	     ' style="width:55px; margin-right:5px; float:left;margin-top: -3px;" />';
 		
-		retornoHTML += '<div class="bt_atualizarIco" title="Reprogramar">'
+		retornoHTML += '<div class="bt_atualizarIco" style="margin-top: -9px;" title="Reprogramar">'
 			  		 + '  <a href="javascript:;">&nbsp;</a>'
 			  		 + '</div>';
 			  		 
@@ -402,7 +402,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 			var checado = this.checked;
 			
-			balanceamentoRecolhimentoController.clickLineFlexigrid(this, checado);
+			clickLineFlexigrid(this, checado);
 			
 			if (!checado) {
 				
@@ -423,7 +423,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 			var checado = this.checked;
 			
-			balanceamentoRecolhimentoController.clickLineFlexigrid(this, checado);
+			clickLineFlexigrid(this, checado);
 		});
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
@@ -555,11 +555,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				name : 'sequencia',
 				width : 35,
 				sortable : true,
-				align : 'left'
+				align : 'left',
+				hide : true
 			}, {
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 40,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -575,15 +576,15 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Preço Venda R$',
+				display : 'Capa R$',
 				name : 'precoVenda',
-				width : 85,
+				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Preço Desconto R$',
+				display : 'Desc R$',
 				name : 'precoDesconto',
-				width : 103,
+				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -611,15 +612,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Lançamento',
+				display : 'Lçto',
 				name : 'dataLancamento',
-				width : 68,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Recolhimento',
-				name : 'dataRecolhimento',
-				width : 78,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -627,47 +622,49 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				name : 'encalheSede',
 				width : 60,
 				sortable : true,
-				align : 'center'
+				align : 'center',
+				hide : true
 			}, {
 				display : 'Atendida',
 				name : 'encalheAtendida',
 				width : 60,
 				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Alternativo',
-				name : 'encalheAlternativo',
-				width : 70,
-				sortable : true,
-				align : 'center'
+				align : 'center',
+				hide : true
 			}, {
 				display : 'Exemplar',
 				name : 'encalhe',
-				width : 60,
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotal',
-				width : 70,
+				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
+				display : 'Rcto',
+				name : 'dataRecolhimento',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Nova Data',
 				name : 'novaData',
-				width : 110,
+				width : 105,
 				sortable : false,
 				align : 'center'
 			},{
 				display : 'Reprog.',
 				name : 'reprogramar',
-				width : 45,
+				width : 33,
 				sortable : false,
 				align : 'center'
 			}, {
 				display: 'Ação',
 				name : 'acao',
-				width : 50,
+				width : 30,
 				sortable : false,
 				align : 'center'
 			}],
@@ -677,7 +674,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
+			width : 1066,
 			height : 180
 		});
 	},
@@ -832,7 +829,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	processarReprogramacao : function() {
-		
 		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
 		
 		var listaProdutoRecolhimento = new Array();
@@ -843,7 +839,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			var linha = $(value);
 			
-			var colunaCheck = linha.find("td")[18];
+			var colunaCheck = linha.find("td")[17];
 			
 			var inputCheck = $(colunaCheck).find("div").find('input[name="checkReprogramar"]');
 			
@@ -856,8 +852,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				var idLancamento = idLinha.replace("row", "");
 				
 				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
-				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "novaData");
-				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "hiddenIdFornecedor");
+				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
+				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "hiddenIdFornecedor");
 				
 				listaProdutoRecolhimento.push({idFornecedor:idFornecedor,idLancamento:idLancamento,sequencia:sequencia,novaData:novaData});
 			}
@@ -905,8 +901,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			if (idLancamento == idRow) {
 				
 				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
-				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "novaData");
-				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "hiddenIdFornecedor");
+				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
+				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "hiddenIdFornecedor");
 				
 				linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,sequencia:sequencia,novaData:novaData};
 			}

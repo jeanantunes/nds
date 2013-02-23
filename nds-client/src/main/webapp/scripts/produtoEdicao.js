@@ -1,5 +1,5 @@
 var produtoEdicaoController =$.extend(true,  {
-
+	
 	// Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
 		var codigoProduto = $(idCodigo,this.workspace).val();
@@ -83,7 +83,7 @@ var produtoEdicaoController =$.extend(true,  {
 					null, isFromModal);
 		}
 	},
-
+	
 	descricaoAtribuida : true,
 
 	pesquisaRealizada : false,
@@ -181,7 +181,7 @@ var produtoEdicaoController =$.extend(true,  {
 	},	
 
 	init : function(){
-
+		
 		window.addEventListener('blur', function() {
 
 			window.clearInterval(produtoEdicaoController.intervalo);
@@ -566,7 +566,7 @@ var produtoEdicaoController =$.extend(true,  {
 		produtoEdicaoController.popup("", "", "");
 	},
 
-	editarEdicao:			function (id, codigo, nome) {
+	editarEdicao:function (id, codigo, nome) {
 		if (id == undefined) {
 			id = "";
 		}
@@ -802,7 +802,7 @@ var produtoEdicaoController =$.extend(true,  {
 		$("#produtoEdicaoController-tabIdentificacao",this.workspace).click();
 	},
 	
-	popup:			function (id, codigo, nome) {
+	popup:function (id, codigo, nome) {
 
 		//$("#produtoEdicaoController-codigoProduto",this.workspace).val($("#produtoEdicaoController-pCodigoProduto",this.workspace).val());
 		

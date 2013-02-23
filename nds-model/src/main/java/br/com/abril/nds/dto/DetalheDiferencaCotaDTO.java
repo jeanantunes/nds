@@ -31,7 +31,7 @@ public class DetalheDiferencaCotaDTO implements Serializable {
 
 	private BigDecimal valorTotal;
 	
-	private Integer quantidadeTotalRegistrosDiferencaCota;
+	private Long quantidadeTotalRegistrosDiferencaCota;
 	
 	private List<RateioDiferencaCotaDTO> detalhesDiferenca;
 	
@@ -85,7 +85,7 @@ public class DetalheDiferencaCotaDTO implements Serializable {
 	/**
 	 * @return the quantidadeTotalRegistrosDiferencaCota
 	 */
-	public Integer getQuantidadeTotalRegistrosDiferencaCota() {
+	public Long getQuantidadeTotalRegistrosDiferencaCota() {
 		return quantidadeTotalRegistrosDiferencaCota;
 	}
 
@@ -94,7 +94,7 @@ public class DetalheDiferencaCotaDTO implements Serializable {
 	 */
 	public void setQuantidadeTotalRegistrosDiferencaCota(
 			Long quantidadeTotalRegistrosDiferencaCota) {
-		this.quantidadeTotalRegistrosDiferencaCota = quantidadeTotalRegistrosDiferencaCota.intValue();
+		this.quantidadeTotalRegistrosDiferencaCota = quantidadeTotalRegistrosDiferencaCota;
 	}
 
 	/**

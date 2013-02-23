@@ -95,7 +95,7 @@
 				<table>
 					<tr>
 						<td><strong>Total R$:</strong></td>
-						<td> </td>
+						<td><label id="labelTotalGeral"></label> </td>
 					</tr>				
 					<tr>
 						<td></td>													
@@ -208,7 +208,8 @@
 		<div class="areaBts">
 			<div class="area">
 				<span class="bt_novos">
-					<a href="javascript:;" rel="tipsy" title="Negociar Divida">
+					<a href="javascript:;" rel="tipsy" title="Negociar Divida"
+						onclick="contaCorrenteCotaController.irParaNegociacao();">
 						<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
 					</a>
 				</span>
