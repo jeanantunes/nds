@@ -1,7 +1,6 @@
 var ajusteReparteController = $.extend(true, {
 
-	
-	init : function() {
+init : function() {
 		
 	$("#dataInicio").datepicker({
 		showOn: "button",

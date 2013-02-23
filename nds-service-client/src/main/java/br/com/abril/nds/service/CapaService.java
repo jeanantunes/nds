@@ -192,5 +192,6 @@ public interface CapaService {
 	 */
 	public void deleteCapa(long idProdutoEdicao);
 	
+	public static final String DEFAULT_EXTENSION = ".jpg";
 }
 	

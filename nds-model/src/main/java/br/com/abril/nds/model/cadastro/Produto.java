@@ -24,9 +24,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
 
 
 /**
