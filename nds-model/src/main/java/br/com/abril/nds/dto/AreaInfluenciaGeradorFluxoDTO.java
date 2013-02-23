@@ -47,8 +47,9 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 	@Export(label = "Gerador 1", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private String geradorFluxoPrincipal;
 	
+	//TODO Retirar após o ajuste na EMS de geradorFluxoSecundario.
 	@Export(label = "Gerador 2", alignment=Alignment.LEFT, exhibitionOrder = 10)
-	private String geradorFluxoSecundario;
+	private String geradorFluxoSecundario = "";
 
 	public AreaInfluenciaGeradorFluxoDTO(){
 		
@@ -83,7 +84,11 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 	}
 
 	public void setTipoPdv(String tipoPdv) {
-		this.tipoPdv = tipoPdv;
+		if(tipoPdv == null){
+			this.tipoPdv = "";
+		}else{
+			this.tipoPdv = tipoPdv;			
+		}
 	}
 
 	public String getBairro() {
@@ -91,7 +96,11 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 	}
 
 	public void setBairro(String bairro) {
-		this.bairro = bairro;
+		if(bairro == null){
+			this.bairro = "";
+		}else{
+			this.bairro = bairro;			
+		}
 	}
 
 	public String getCidade() {
@@ -99,14 +108,18 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 	}
 
 	public void setCidade(String cidade) {
-		this.cidade = cidade;
+		if(cidade == null){
+			this.cidade = "";
+		}else{
+			this.cidade = cidade;						
+		}
 	}
 
 	public BigDecimal getFaturamento() {
 		return faturamento;
 	}
 
-	public void setFaturamento(BigDecimal faturamento) {
+	public void setFaturamento(BigDecimal faturamento) {		
 		this.faturamento = faturamento;
 		this.setFaturamentoFormatado(CurrencyUtil.formatarValor(faturamento));
 	}
@@ -116,7 +129,11 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 	}
 
 	public void setFaturamentoFormatado(String faturamentoFormatado) {
-		this.faturamentoFormatado = faturamentoFormatado;
+		if(faturamentoFormatado == null){
+			this.faturamentoFormatado = "";
+		}else{
+			this.faturamentoFormatado = faturamentoFormatado;			
+		}
 	}
 
 	public String getGeradorFluxoPrincipal() {
@@ -124,7 +141,11 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 	}
 
 	public void setGeradorFluxoPrincipal(String geradorFluxoPrincipal) {
-		this.geradorFluxoPrincipal = geradorFluxoPrincipal;
+		if(geradorFluxoPrincipal == null){
+			this.geradorFluxoPrincipal = "";
+		}else{
+			this.geradorFluxoPrincipal = geradorFluxoPrincipal;						
+		}
 	}
 
 	public String getGeradorFluxoSecundario() {
@@ -132,7 +153,11 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 	}
 
 	public void setGeradorFluxoSecundario(String geradorFluxoSecundario) {
-		this.geradorFluxoSecundario = geradorFluxoSecundario;
+		if(geradorFluxoSecundario == null){
+			this.geradorFluxoSecundario = "";
+		}else{
+			this.geradorFluxoSecundario = geradorFluxoSecundario;									
+		}
 	}
 
 	public String getAreaInfluencia() {
@@ -140,7 +165,11 @@ public class AreaInfluenciaGeradorFluxoDTO implements Serializable {
 	}
 
 	public void setAreaInfluencia(String areaInfluencia) {
-		this.areaInfluencia = areaInfluencia;
+		if(areaInfluencia == null){
+			this.areaInfluencia = "";
+		}else{
+			this.areaInfluencia = areaInfluencia;												
+		}
 	}
 
 	public static long getSerialversionuid() {
