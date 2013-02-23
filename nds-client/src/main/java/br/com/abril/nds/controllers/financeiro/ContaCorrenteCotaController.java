@@ -52,6 +52,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -451,6 +452,12 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		List<ConsultaVendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
 				.obterMovimentoVendaEncalhe(filtro);
+		
+		for(ConsultaVendaEncalheDTO eDTO : encalheDTOs){
+			
+			eDTO.setPrecoComDesconto(eDTO.getPrecoComDesconto().setScale(2,1));
+			eDTO.setTotal(eDTO.getTotal().setScale(2,1));
+		}
 
 		TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>>();
 
