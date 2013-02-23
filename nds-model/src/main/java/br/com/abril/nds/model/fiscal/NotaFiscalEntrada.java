@@ -59,7 +59,9 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	
 	@Column(name = "DATA_RECEBIMENTO")
 	protected Date dataRecebimento;
-	
+
+	@Column(name="NUMERO_NOTA_ENVIO")
+	protected Long numeroNotaEnvio;
 	
 	public Long getId() {
 		return id;
@@ -121,6 +123,14 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 
 	public void setDataRecebimento(Date dataRecebimento) {
 		this.dataRecebimento = dataRecebimento;
+	}
+
+	public Long getNumeroNotaEnvio() {
+		return numeroNotaEnvio;
+	}
+
+	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
+		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
 	
 }

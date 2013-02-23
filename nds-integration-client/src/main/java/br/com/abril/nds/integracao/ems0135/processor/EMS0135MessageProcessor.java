@@ -2,7 +2,6 @@ package br.com.abril.nds.integracao.ems0135.processor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
@@ -33,29 +31,20 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.service.integracao.ParametroSistemaService;
 
 @Component
 public class EMS0135MessageProcessor extends AbstractRepository implements MessageProcessor {
-	
-	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private ParametroSistemaService parametroSistemaService;
-	
-	@Autowired
-	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -77,14 +66,43 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 					"Código do distribuidor do arquivo não é o mesmo do arquivo.");
 			return;
 		}
-				
 
+		NotaFiscalEntradaFornecedor notafiscalEntrada = null;
 		
-		NotaFiscalEntradaFornecedor notafiscalEntrada = obterNotaFiscal(
-				input.getNotaFiscal()
-				, input.getSerieNotaFiscal()
-				, input.getCnpjEmissor()
-				);		
+		// Atualização por chave de acesso NFE
+		if (input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty()) {
+			
+			if (input.getNumeroNotaEnvio() == null || input.getNumeroNotaEnvio().isEmpty()) {
+				this.ndsiLoggerFactory.getLogger().logInfo(message, 
+						EventoExecucaoEnum.RELACIONAMENTO, 
+						String.format("Numero da nota de envio se encontra vazio para chave de acesso " + input.getChaveAcessoNF() + ". Nenhum registro será atualizado ou inserido!"));
+				return;
+			}
+			
+			notafiscalEntrada = obterNotaFiscalPorChaveAcesso(input.getNumeroNotaEnvio());
+			
+			// Caso encontre a nota fiscal de entrada, atualiza com a nova chave de acesso
+			if (notafiscalEntrada != null) {
+				String chaveAcessoAntiga = notafiscalEntrada.getChaveAcesso(); 
+				notafiscalEntrada.setChaveAcesso(input.getChaveAcessoNF());
+				this.getSession().merge(notafiscalEntrada);
+				this.ndsiLoggerFactory.getLogger().logInfo(message, 
+						EventoExecucaoEnum.INF_DADO_ALTERADO, 
+						String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio() + " atualizada com chave de acesso NFE de " + chaveAcessoAntiga + " para " + input.getChaveAcessoNF() + " com sucesso!"));
+				return;
+			}
+		}
+
+		if (input.getNotaFiscal() != null && !input.getNotaFiscal().equals(0L) &&
+			input.getSerieNotaFiscal() != null && !input.getSerieNotaFiscal().isEmpty() && !"0".equals(input.getSerieNotaFiscal()) &&
+			input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty() && !"0".equals(input.getChaveAcessoNF()) ) {
+
+			notafiscalEntrada = obterNotaFiscal(
+					input.getNotaFiscal()
+					, input.getSerieNotaFiscal()
+					, input.getCnpjEmissor()
+					);		
+		}
 		
 		if(notafiscalEntrada == null){
 			
@@ -115,13 +133,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private NotaFiscalEntradaFornecedor populaNotaFiscalEntrada(NotaFiscalEntradaFornecedor notafiscalEntrada, EMS0135Input input) {
 		
 		notafiscalEntrada.setDataEmissao(input.getDataEmissao());
-		notafiscalEntrada.setNumero(input.getNotaFiscal().longValue());
-		notafiscalEntrada.setSerie(input.getSerieNotaFiscal());		
+		notafiscalEntrada.setNumero( input.getNotaFiscal() != null ? input.getNotaFiscal().longValue() : 0L );
+		notafiscalEntrada.setSerie( input.getSerieNotaFiscal() != null && !input.getSerieNotaFiscal().isEmpty() && !"0".equals(input.getSerieNotaFiscal()) ? input.getSerieNotaFiscal() : "0" );		
 		notafiscalEntrada.setDataExpedicao(input.getDataEmissao());		
-		notafiscalEntrada.setChaveAcesso(input.getChaveAcessoNF());		
+		notafiscalEntrada.setChaveAcesso( input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty() && !"0".equals(input.getChaveAcessoNF()) ? input.getChaveAcessoNF() : "0" );		
 		notafiscalEntrada.setCfop(obterCFOP());
 		notafiscalEntrada.setOrigem(Origem.INTERFACE);
 		notafiscalEntrada.setStatusNotaFiscal(StatusNotaFiscalEntrada.NAO_RECEBIDA);
+		notafiscalEntrada.setNumeroNotaEnvio(Long.parseLong(input.getNumeroNotaEnvio()));
 		
 		notafiscalEntrada.setValorBruto(BigDecimal.ZERO);
 		notafiscalEntrada.setValorLiquido(BigDecimal.ZERO);
@@ -316,6 +335,23 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 
+	/**
+	 * Obtém a nota fiscal de entrada do fornecedor através do campo numeroNotaEnvio caso exista uma chaveAcesso
+	 * @param numeroNotaEnvio
+	 * @return
+	 */
+	private NotaFiscalEntradaFornecedor obterNotaFiscalPorChaveAcesso(String numeroNotaEnvio) {
+		StringBuilder hql = new StringBuilder();
+
+		hql.append("from NotaFiscalEntradaFornecedor nf ")
+			.append("where nf.numero = :numeroNotaEnvio ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));
+		return (NotaFiscalEntradaFornecedor) query.uniqueResult();
+		
+	}
+	
 	/**
 	 * Obtém o Produto Edição cadastrado previamente.
 	 * 

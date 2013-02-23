@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -33,7 +34,6 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -42,7 +42,6 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -79,6 +78,7 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EncargoFinanceiroRepository;
@@ -103,6 +103,7 @@ import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExporter;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -597,8 +598,10 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			throw new ValidacaoException(TipoMensagem.ERROR,
 					"Endereço principal do distribuidor não encontrada!");
 		}
-		identificacaoEmitente
-		.setDocumento(distribuidor.getJuridica().getCnpj());
+		
+		String cnpj = Util.removerMascaraCnpj(distribuidor.getJuridica().getCnpj());
+		
+		identificacaoEmitente.setDocumento(cnpj);
 		identificacaoEmitente.setInscricaoEstadual(distribuidor.getJuridica()
 				.getInscricaoEstadual());
 		identificacaoEmitente.setInscricaoMunicipal(distribuidor.getJuridica()
@@ -643,7 +646,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		return identificacaoEmitente;
 	}
-
+	
 	/**
 	 * Grupo de identificação do Destinatário da NF-e
 	 * 
@@ -676,8 +679,11 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		if (cota.getPessoa() instanceof PessoaJuridica) {
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
-			destinatario.setInscricaoEstadual(pessoaJuridica
-					.getInscricaoEstadual());
+			
+			String inscricaoEstadual = Util.truncarValor(Util.removerMascaraCnpj(pessoaJuridica.getInscricaoEstadual()), 14);
+			
+			destinatario.setInscricaoEstadual(inscricaoEstadual);
+			
 			destinatario.setNomeFantasia(pessoaJuridica.getNomeFantasia());
 		}
 		destinatario.setNome(cota.getPessoa().getNome());
@@ -1022,7 +1028,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		notaFiscal.setIdentificacaoDestinatario(carregaDestinatario(cota));
 		notaFiscal.setIdentificacaoEmitente(carregaEmitente());
 
-		String raizCNPJ = notaFiscal.getIdentificacaoEmitente().getDocumento()
+		String raizCNPJ = Util.removerMascaraCnpj(notaFiscal.getIdentificacaoEmitente().getDocumento())
 				.substring(0, 7);
 		String ufOrigem = notaFiscal.getIdentificacaoEmitente().getEndereco()
 				.getUf();

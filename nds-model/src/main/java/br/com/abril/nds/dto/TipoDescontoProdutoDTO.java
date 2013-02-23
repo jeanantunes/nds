@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
@@ -32,6 +33,10 @@ public class TipoDescontoProdutoDTO implements Serializable {
 	private String nomeUsuario;
 	
 	private Long idTipoDesconto;
+	
+	private Integer qtdeProxLcmt;
+	
+	private Integer qtdeCotas;
 	
 	private boolean excluivel;
 	
@@ -154,6 +159,22 @@ public class TipoDescontoProdutoDTO implements Serializable {
 
 	public void setExcluivel(boolean excluivel) {
 		this.excluivel = excluivel;
+	}
+
+	public Integer getQtdeProxLcmt() {
+		return qtdeProxLcmt;
+	}
+
+	public void setQtdeProxLcmt(Integer qtdeProxLcmt) {
+		this.qtdeProxLcmt = qtdeProxLcmt;
+	}
+
+	public Integer getQtdeCotas() {
+		return qtdeCotas;
+	}
+
+	public void setQtdeCotas(BigInteger qtdeCotas) {
+		this.qtdeCotas = (qtdeCotas == null) ? null : qtdeCotas.intValue();
 	}
 
 }

@@ -153,12 +153,20 @@ var ConsultaEncalhe = $.extend(true, {
 			
 			$(".grids", ConsultaEncalhe.workspace).show();
 			
-			$("#totalReparte",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorReparte).toFixed(2));
-			$("#totalEncalhe",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorEncalhe).toFixed(2));
 			$("#valorVendaDia",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorVendaDia).toFixed(2));
 			$("#totalOutrosValores",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorDebitoCredito).toFixed(2));
 			$("#valorAPagar",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorPagar).toFixed(2));
 			
+			if (resultado.valorReparte) {
+			
+				$("#totalReparte",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorReparte).toFixed(2));
+			}
+			
+			if (resultado.valorEncalhe) {
+
+				$("#totalEncalhe",ConsultaEncalhe.workspace).text(parseFloat(resultado.valorEncalhe).toFixed(2));
+			}
+
 			return resultado.tableModel;
 			
 		},

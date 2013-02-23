@@ -1509,7 +1509,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataFinal", periodoDistribuicao.getAte());
 		
 		query.setParameterList("statusLancamento",
-							   Arrays.asList(StatusLancamento.BALANCEADO));
+							   Arrays.asList(StatusLancamento.EM_BALANCEAMENTO));
 		
 		return query.list();
 	}
@@ -1532,7 +1532,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataFinal", periodoDistribuicao.getAte());
 		
 		query.setParameterList("statusLancamento",
-							   Arrays.asList(StatusLancamento.BALANCEADO));
+							   Arrays.asList(StatusLancamento.EM_BALANCEAMENTO));
 		
 		return query.list();
 	}

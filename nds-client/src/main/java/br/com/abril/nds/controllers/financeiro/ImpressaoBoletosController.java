@@ -535,13 +535,13 @@ public class ImpressaoBoletosController extends BaseController {
 
 		TipoCobranca tipoCobranca = filtro.getTipoCobranca();
 
-		String message = "Não foi encontrado Dividas para impressão.";
+		String message = "Não foi encontrada Divida para impressão.";
 
 		byte[] arquivo = null;
 
 		if ("BOLETO".equals(tipoImpressao)) {
 
-			message = "Não foi encontrado Boletos para impressão.";
+			message = "Não foi encontrado Boleto para impressão.";
 
 			if (tipoCobranca != null
 					&& !TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())) {
@@ -620,9 +620,9 @@ public class ImpressaoBoletosController extends BaseController {
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(arquivo);
 
-		httpResponse.getOutputStream().close();
+		this.httpResponse.getOutputStream().close();
 
-		result.use(Results.nothing());
+		this.result.use(Results.nothing());
 	}
 
 	@Post

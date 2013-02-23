@@ -19,22 +19,22 @@ public interface ControleBaixaBancariaRepository extends Repository<ControleBaix
 	/**
 	 * Obtém um controle de baixa bancária de acordo com os parâmetros informados.
 	 * 
-	 * @param data - data
+	 * @param dataPagamento - data de pagamento
 	 * @param banco - banco
 	 * 
 	 * @return controle de baixa bancária
 	 */
-	ControleBaixaBancaria obterControleBaixaBancaria(Date data, Banco banco);
+	ControleBaixaBancaria obterControleBaixaBancaria(Date dataPagamento, Banco banco);
 	
 	/**
 	 * Obtém uma lista de controle de baixa bancária de acordo com os parâmetros informados.
 	 * 
-	 * @param data - data
+	 * @param dataOperacao - data de operação
 	 * @param status - status de controle da baixa bancária
 	 * 
 	 * @return lista de controle de baixa bancária
 	 */
-	List<ControleBaixaBancaria> obterListaControleBaixaBancaria(Date data,
+	List<ControleBaixaBancaria> obterListaControleBaixaBancaria(Date dataOperacao,
 																StatusControle status);
 	
 }

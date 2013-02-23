@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,7 +14,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -22,11 +22,9 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
-import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.LogExecucaoRepository;
-import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 @Repository
 public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecucao, Long>  implements LogExecucaoRepository {
@@ -48,7 +46,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	@Override
 	public List<ConsultaInterfacesDTO> obterInterfaces(FiltroInterfacesDTO filtro) {
 		
-		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro);
+		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro, false);
 		
 		Query query = (Query) getSession().createSQLQuery(sql.toString())
 				.addScalar("status", StandardBasicTypes.STRING)
@@ -73,11 +71,24 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		return query.list();
 	}
 
-	private String getConsultaObterInterfaces(Date dataOperacao, FiltroInterfacesDTO filtro) {
+	@Override
+	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro) {
+		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro, true);
+		Query query = (Query) getSession().createSQLQuery(sql.toString());
+		return (BigInteger) query.uniqueResult();
+	}
+	
+	private String getConsultaObterInterfaces(Date dataOperacao, FiltroInterfacesDTO filtro, boolean totalizar) {
 
 		StringBuffer sql = new StringBuffer("");
 
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+		
+		if (totalizar) {
+
+			sql.append(" SELECT COUNT(*) FROM ("); 
+
+		}
 		
 		sql.append(" SELECT "); 
 		sql.append(" LOG_EXECUCAO.STATUS AS status, ");
@@ -128,6 +139,10 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				sql.append(filtro.getPaginacao().getSortOrder());
 			}
 				
+		}
+		
+		if (totalizar) {
+			sql.append(") as total");
 		}
 		
 		return sql.toString();
@@ -206,7 +221,18 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		
 		return criteria.list();
 	}
-
+	
+	public LogExecucao inserir(LogExecucao logExecucao) {
+		getSession().persist(logExecucao);
+		getSession().flush();
+		return logExecucao;
+	}
+	
+	public void atualizar(LogExecucao logExecucao) {
+		getSession().merge(logExecucao);
+		getSession().flush();
+	}
+	
 	private Date getPeriodoInicialDia(Date dataOperacao) {
 		Calendar dataInicio = Calendar.getInstance();
 
@@ -239,6 +265,14 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		dataFim.set(Calendar.MILLISECOND, 999);
 		
 		return dataFim.getTime();
+	}
+
+	@Override
+	public Long obterTotalMensagensErroLogInterface(long codigoLogExecucao, Date dataOperacao, FiltroDetalheProcessamentoDTO filtro) {
+		Criteria criteria = addMensagensLogInterfaceRestrictions(codigoLogExecucao);
+		criteria.add( Restrictions.between("logExecucao.dataInicio", this.getPeriodoInicialDia(dataOperacao), this.getPeriodoFinalDia(dataOperacao)) );
+		criteria.setProjection(Projections.rowCount());
+		return (Long) criteria.uniqueResult();
 	}
 
 }

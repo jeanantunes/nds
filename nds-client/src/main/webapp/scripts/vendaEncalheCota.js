@@ -55,7 +55,7 @@ var vendaEncalhe = {
 					      cell2.align="right";
 					      cell2.innerHTML=totalFonecedor[fornecedor];
 					 }
-					 $(gridId).flexToggleCol(7,count>1);
+					 //$(gridId).flexToggleCol(6,count>1);
 					
 					 return data;
 					}	
@@ -91,12 +91,6 @@ var vendaEncalhe = {
 					width : 60,
 					sortable : true,
 					align : 'right'
-				}, {
-					display : 'Box',
-					name : 'box',
-					width : 40,
-					sortable : true,
-					align : 'center'
 				}, {
 					display : 'Exemplares',
 					name : 'exemplares',
@@ -144,21 +138,23 @@ var vendaEncalhe = {
 			$(this.grid).flexReload();
 			
 		},
-		showDialog:function(idConsolidado,dataEscolhida,numeroCota){			
+		showDialog:function(idConsolidado,dataEscolhida,numeroCota,numeroBox){			
 			this.dialog(this.dialogId);
 			this.loadData(this.url, idConsolidado, dataEscolhida,numeroCota);
 			this.exportButtons(idConsolidado);
 			
 			
 			 $("#datacotanome-venda-encalhe").html(dataEscolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
+			 
+			 if (numeroBox){
+				 
+				 $("#datacotanome-venda-encalhe").html($("#datacotanome-venda-encalhe").html() + " - Box: " + numeroBox);
+			 }
 		},
 		exportButtons: function(idConsolidado,dataEscolhida,numeroCota) {
 			$("#dialog-venda-encalhe-export-pdf").attr('href', this.urlExport + "?fileType=PDF" + "&idConsolidado=" + idConsolidado + "&dataEscolhida=" + dataEscolhida + "&numeroCota=" + numeroCota);
 			$("#dialog-venda-encalhe-export-xls").attr('href', this.urlExport + "?fileType=XLS" + "&idConsolidado=" + idConsolidado + "&dataEscolhida=" + dataEscolhida + "&numeroCota=" + numeroCota);
-		}
-		
-		
-		
-		
+		}	
 		
 };
+//@ sourceURL=vendaEncalheCota.js

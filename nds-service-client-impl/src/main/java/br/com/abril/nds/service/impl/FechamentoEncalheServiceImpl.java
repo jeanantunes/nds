@@ -362,7 +362,27 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			throw new IllegalArgumentException("Data de encalhe não pode ser nula.");
 		}
 		
-		this.postergar(dataEncalhe, dataPostergacao, idsCotas);
+		for (Long idCota : idsCotas) {
+		
+			this.postergar(dataEncalhe, dataPostergacao, idCota);
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao) {
+	
+		if (dataEncalhe == null) {
+			throw new IllegalArgumentException("Data de encalhe não pode ser nula.");
+		}
+		
+		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+				this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0);
+		
+		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
+		
+			this.postergar(dataEncalhe, dataPostergacao, cotaAusente.getIdCota());
+		}
 	}
 
 	@Override
@@ -373,67 +393,88 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			throw new IllegalArgumentException("Lista de ids das cotas não pode ser nula e nem vazia.");
 		}
 		
+		List<Cota> listaCotas = 
+			this.cotaRepository.obterCotasPorIDS(idsCotas);
+
+		for (Cota cota : listaCotas) {
+
+			realizarCobrancaCotas(dataOperacao, usuario, cota);
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void cobrarTodasCotas(Date dataOperacao, Usuario usuario) {
+
+		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+				this.fechamentoEncalheRepository.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+
+		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
+
+			Cota cota = this.cotaRepository.buscarPorId(cotaAusente.getIdCota());
+
+			realizarCobrancaCotas(dataOperacao, usuario, cota);
+		}
+	}
+	
+	private void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, Cota cota) {
+
 		try {
 			
-			List<Cota> listaCotas = 
-				this.cotaRepository.obterCotasPorIDS(idsCotas);
+			Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.VENDA_TOTAL);
+			
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+			
+			movimentoFinanceiroCotaDTO.setCota(cota);
+			movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+			movimentoFinanceiroCotaDTO.setUsuario(usuario);
+			movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
+			movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacaoDistribuidor);
+			movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
+			movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacaoDistribuidor);
+			movimentoFinanceiroCotaDTO.setDataAprovacao(dataOperacaoDistribuidor);
+			movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacaoDistribuidor);
+			movimentoFinanceiroCotaDTO.setObservacao(null);
+			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+			movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
+			movimentoFinanceiroCotaDTO.setLancamentoManual(false);
+			
+			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	
-			for (Cota cota : listaCotas) {
-	
-				Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
+			this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>());
+			
+			List<ChamadaEncalhe> listaChamadaEncalhe = 
+				this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque =
+					this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+			
+			for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
 				
-				TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.VENDA_TOTAL);
+				chamadaEncalhe.setDataRecolhimento(dataOperacaoDistribuidor);
 				
-				MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+				List<ChamadaEncalheCota> listaChamadaEncalheCota = 
+						this.chamadaEncalheCotaRepository.obterListChamadaEncalheCota(chamadaEncalhe.getId(), cota.getId());
 				
-				movimentoFinanceiroCotaDTO.setCota(cota);
-				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
-				movimentoFinanceiroCotaDTO.setUsuario(usuario);
-				movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
-				movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacaoDistribuidor);
-				movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
-				movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacaoDistribuidor);
-				movimentoFinanceiroCotaDTO.setDataAprovacao(dataOperacaoDistribuidor);
-				movimentoFinanceiroCotaDTO.setDataCriacao(dataOperacaoDistribuidor);
-				movimentoFinanceiroCotaDTO.setObservacao(null);
-				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
-				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
-				movimentoFinanceiroCotaDTO.setLancamentoManual(false);
-				
-				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
-	
-				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>());
-				
-				List<ChamadaEncalhe> listaChamadaEncalhe = 
-					this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
-				
-				TipoMovimentoEstoque tipoMovimentoEstoque =
-						this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
-				
-				for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
+				for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
 					
-					chamadaEncalhe.setDataRecolhimento(dataOperacaoDistribuidor);
-					
-					List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-							this.chamadaEncalheCotaRepository.obterListChamadaEncalheCota(chamadaEncalhe.getId(), cota.getId());
-					
-					for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
-						
-						chamadaEncalheCota.setFechado(true);
-					}
-					
-					this.movimentoEstoqueService.gerarMovimentoCota(
-							new Date(), 
-							chamadaEncalhe.getProdutoEdicao().getId(), 
-							cota.getId(), 
-							usuario.getId(), 
-							BigInteger.ZERO, 
-							tipoMovimentoEstoque);
-
-					this.chamadaEncalheRepository.merge(chamadaEncalhe);
+					chamadaEncalheCota.setFechado(true);
 				}
+				
+				this.movimentoEstoqueService.gerarMovimentoCota(
+						new Date(), 
+						chamadaEncalhe.getProdutoEdicao().getId(), 
+						cota.getId(), 
+						usuario.getId(), 
+						BigInteger.ZERO, 
+						tipoMovimentoEstoque);
+	
+				this.chamadaEncalheRepository.merge(chamadaEncalhe);
 			}
+			
 			
 		} catch (ValidacaoException e) {
 			throw new ValidacaoException(e.getValidacao());
@@ -503,10 +544,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		if (totalCotasAusentes > 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cotas ausentes existentes!");
-		}
-		
-		if (!this.validarEncerramentoOperacao(dataEncalhe)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Encalhe não totalmente fechado");
 		}
 		
 		try {
@@ -623,42 +660,37 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 	
 	@Transactional
-	private void postergar(Date dataEncalhe, Date dataPostergacao, List<Long> cotas) {
+	private void postergar(Date dataEncalhe, Date dataPostergacao, Long idCota) {
 		
-		ChamadaEncalhe chamadaEncalhe = null;
-	
-		for (Long idCota : cotas) {
+		List<ChamadaEncalheCota> listChamadaEncalheCota = this.fechamentoEncalheRepository.buscarChamadaEncalheCota(dataEncalhe, idCota);
+
+		for (ChamadaEncalheCota chamadaEncalheCota : listChamadaEncalheCota) {
 			
-			List<ChamadaEncalheCota> listChamadaEncalheCota = this.fechamentoEncalheRepository.buscarChamadaEncalheCota(dataEncalhe, idCota);
+			// Atualizando para postergado
+			chamadaEncalheCota.setPostergado(true);
+			this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 			
-			for (ChamadaEncalheCota chamadaEncalheCota : listChamadaEncalheCota) {
+			// Criando chamada de encalhe
+			ChamadaEncalhe chamadaEncalhe = this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
+					chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao(), 
+					dataPostergacao, 
+					chamadaEncalheCota.getChamadaEncalhe().getTipoChamadaEncalhe());
+			
+			if (chamadaEncalhe == null) {
 				
-				// Atualizando para postergado
-				chamadaEncalheCota.setPostergado(true);
-				this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
-				
-				// Criando chamada de encalhe
-				chamadaEncalhe = this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
-						chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao(), 
-						dataPostergacao, 
-						chamadaEncalheCota.getChamadaEncalhe().getTipoChamadaEncalhe());
-				
-				if (chamadaEncalhe == null) {
-					
-					chamadaEncalhe = new ChamadaEncalhe();
-					chamadaEncalhe.setDataRecolhimento(dataPostergacao);
-					chamadaEncalhe.setProdutoEdicao(chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao());
-					chamadaEncalhe.setTipoChamadaEncalhe(chamadaEncalheCota.getChamadaEncalhe().getTipoChamadaEncalhe());
-					this.chamadaEncalheRepository.adicionar(chamadaEncalhe);
-				} 
-				
-				// Criando novo chamadaEncalheCota
-				ChamadaEncalheCota cce = new ChamadaEncalheCota();
-				cce.setChamadaEncalhe(chamadaEncalhe);
-				cce.setCota(chamadaEncalheCota.getCota());
-				cce.setQtdePrevista(chamadaEncalheCota.getQtdePrevista());
-				this.chamadaEncalheCotaRepository.adicionar(cce);
-			}
+				chamadaEncalhe = new ChamadaEncalhe();
+				chamadaEncalhe.setDataRecolhimento(dataPostergacao);
+				chamadaEncalhe.setProdutoEdicao(chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao());
+				chamadaEncalhe.setTipoChamadaEncalhe(chamadaEncalheCota.getChamadaEncalhe().getTipoChamadaEncalhe());
+				this.chamadaEncalheRepository.adicionar(chamadaEncalhe);
+			} 
+			
+			// Criando novo chamadaEncalheCota
+			ChamadaEncalheCota cce = new ChamadaEncalheCota();
+			cce.setChamadaEncalhe(chamadaEncalhe);
+			cce.setCota(chamadaEncalheCota.getCota());
+			cce.setQtdePrevista(chamadaEncalheCota.getQtdePrevista());
+			this.chamadaEncalheCotaRepository.adicionar(cce);
 		}
 	}
 

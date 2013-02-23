@@ -31,14 +31,12 @@ public class CotaQueRecebeExcecaoDTO extends UsuarioLogDTO {
 	@Export(label="Data", alignment=Alignment.LEFT,exhibitionOrder=4)
 	@Override
 	public String getDataAlteracaoFormatada() {
-		// TODO Auto-generated method stub
 		return super.getDataAlteracaoFormatada();
 	}
 	
 	@Export(label="Hora", alignment=Alignment.LEFT,exhibitionOrder=5)
 	@Override
 	public String getHoraAlteracaoFormatada() {
-		// TODO Auto-generated method stub
 		return super.getHoraAlteracaoFormatada();
 	}
 	

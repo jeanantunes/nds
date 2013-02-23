@@ -8,10 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
-import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Telefone;
 @Embeddable
 public class IdentificacaoDestinatario implements Serializable {
@@ -51,17 +49,11 @@ public class IdentificacaoDestinatario implements Serializable {
 	private String inscricaoEstadual;
 	
 	
-	@ManyToOne(optional= true)
-	@JoinColumn(name = "BOX_DESTINATARIO_ID_REFERENCIA")
-	private Box boxReferencia;
+	
 	@Column(name = "CODIGO_BOX")
 	private Integer codigoBox;
 	@Column(name = "NOME_BOX")
 	private String nomeBox;
-	
-	@ManyToOne(optional= true)
-	@JoinColumn(name = "ROTA_DESTINATARIO_ID_REFERENCIA")
-	private Rota rotaReferencia;
 	
 	@Column(name = "CODIGO_ROTA")
 	private String codigoRota;
@@ -162,20 +154,7 @@ public class IdentificacaoDestinatario implements Serializable {
 		this.telefone = telefone;
 	}
 
-	/**
-	 * @return the boxReferencia
-	 */
-	public Box getBoxReferencia() {
-		return boxReferencia;
-	}
-
-	/**
-	 * @param boxReferencia the boxReferencia to set
-	 */
-	public void setBoxReferencia(Box boxReferencia) {
-		this.boxReferencia = boxReferencia;
-	}
-
+	
 	/**
 	 * @return the codigoBox
 	 */
@@ -202,20 +181,6 @@ public class IdentificacaoDestinatario implements Serializable {
 	 */
 	public void setNomeBox(String nomeBox) {
 		this.nomeBox = nomeBox;
-	}
-
-	/**
-	 * @return the rotaReferencia
-	 */
-	public Rota getRotaReferencia() {
-		return rotaReferencia;
-	}
-
-	/**
-	 * @param rotaReferencia the rotaReferencia to set
-	 */
-	public void setRotaReferencia(Rota rotaReferencia) {
-		this.rotaReferencia = rotaReferencia;
 	}
 
 	/**

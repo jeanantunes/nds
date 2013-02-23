@@ -368,10 +368,6 @@ var parametrosDistribuidorController = $.extend(true, {
 		$('#complementoTermoAdesaoEntregaBancas', this.workspace).wysiwyg();
 		$('#complementoTermoAdesaoEntregaBancas', this.workspace).wysiwyg({controls:"font-family,italic,|,undo,redo"});
 		
-		$('#assuntoEmailCobranca', this.workspace).wysiwyg({
-            initialContent: function() {return "<p><br></p>";},
-            controls: "bold,italic,underline,|,undo,redo"
-		});
 		
 		$('#mensagemEmailCobranca', this.workspace).wysiwyg({
             initialContent: function() {return "<p><br></p>";},
