@@ -78,7 +78,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			getSession().merge(ce);
 			getSession().flush();
 			
-			//dbClient.remove(input);
+			dbClient.remove(input);
 
 		}
 		catch (Exception e) {
