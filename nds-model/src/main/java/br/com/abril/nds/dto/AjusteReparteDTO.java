@@ -38,10 +38,10 @@ public class AjusteReparteDTO implements Serializable {
 	private BigDecimal ajusteAplicado;
 
 	@Export(label = "Data Inicio", alignment=Alignment.LEFT, exhibitionOrder = 7)
-	private Date dataInicioCadastro;
+	private String dataInicio;
 	
 	@Export(label = "Data Fim", alignment=Alignment.LEFT, exhibitionOrder = 8)
-	private Date dataFimCadastro;
+	private String dataFim;
 	
 	@Export(label = "Motivo", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private MotivoAlteracaoSituacao motivoAjuste;	
@@ -55,10 +55,14 @@ public class AjusteReparteDTO implements Serializable {
 	@Export(label = "Hora", alignment=Alignment.LEFT, exhibitionOrder = 12)
 	private String hora;
 	
-	private String dataInicio;
 	private Usuario usuario;
 	private Long idAjusteReparte;
-	private String dataFim;
+	private Date dataInicioCadastro;
+	private Date dataFimCadastro;
+	private Date dataAlteracaoCadastro;
+	private String formaAjusteAplicado;
+	private String motivoAjusteAplicado;
+	private String statusCota;
 	private PaginacaoVO paginacao;
 	
 	public PaginacaoVO getPaginacao() {
@@ -164,5 +168,49 @@ public class AjusteReparteDTO implements Serializable {
 	}
 	public void setStatus(SituacaoCadastro status) {
 		this.status = status;
+	}
+	
+	public String getFormaAjusteAplicado() {
+		return formaAjusteAplicado;
+	}
+	
+	public void setFormaAjusteAplicado(TipoAjusteReparte formaAjuste) {
+		if(formaAjuste == null){
+			this.formaAjusteAplicado = "";
+		}else{
+			this.formaAjusteAplicado = formaAjuste.toString();
+		}
+	}
+	
+	public String getMotivoAjusteAplicado() {
+		return motivoAjusteAplicado;
+	}
+	
+	public void setMotivoAjusteAplicado(MotivoAlteracaoSituacao motivoAjuste) {
+		if(motivoAjuste == null){
+			this.motivoAjusteAplicado = "";
+		}else{
+			this.motivoAjusteAplicado = motivoAjuste.toString();
+		}
+	}
+	
+	public String getStatusCota() {
+		return statusCota;
+	}
+	
+	public void setStatusCota(SituacaoCadastro status) {
+		if(status == null){
+			this.statusCota = "";
+		}else{
+			this.statusCota = status.toString();
+		}
+	}
+	
+	public Date getDataAlteracaoCadastro() {
+		return dataAlteracaoCadastro;
+	}
+	
+	public void setDataAlteracaoCadastro(Date dataAlteracaoCadastro) {
+		this.dataAlteracaoCadastro = dataAlteracaoCadastro;
 	}
 }

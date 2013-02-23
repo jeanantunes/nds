@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +16,7 @@ import br.com.abril.nds.dto.AjusteReparteDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.distribuicao.AjusteReparte;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
@@ -64,6 +64,7 @@ public class AjusteReparteController extends BaseController {
 	@Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE)
 	public void index(){
 		this.carregarComboMotivoStatusCota();
+		this.carregarComboSegmento();
 	}
 	
 	@Post
@@ -72,9 +73,9 @@ public class AjusteReparteController extends BaseController {
 		
 		AjusteReparte ajuste = DTOParaModel(ajusteDTO);
 		
-		ajusteService.salvarAjuste(ajuste);
+		evitarCotaRepetida(ajusteDTO);
 		
-//		this.validarEntradaRegiao(nome);
+		ajusteService.salvarAjuste(ajuste);
 		
 		result.use(Results.json()).from(ajuste, "ajuste").recursive().serialize();
 	}
@@ -112,8 +113,11 @@ public class AjusteReparteController extends BaseController {
 	
 	@Post
 	@Path("/alterarAjuste")
-	public void alterarAjuste(AjusteReparteDTO ajusteDTO) {
+	public void alterarAjuste(AjusteReparteDTO ajusteDTO, Long id) {
+		ajusteDTO.setIdAjusteReparte(id);
 		
+		validarEntradaAjuste(ajusteDTO);
+
 		AjusteReparte ajuste = DTOParaModel(ajusteDTO);
 		
 		ajusteService.alterarAjuste(ajuste);
@@ -127,29 +131,18 @@ public class AjusteReparteController extends BaseController {
 		
 		Date dataEHora = new Date();
 		Timestamp data = new Timestamp(dataEHora.getTime());
+		
+		validarEntradaAjuste(ajusteDTO);
+		validarDiferencaData(ajusteDTO.getDataFimCadastro(), ajusteDTO.getDataInicioCadastro());
 
 		AjusteReparte ajuste = new AjusteReparte();
 		
+		ajuste.setId(ajusteDTO.getIdAjusteReparte());
 		ajuste.setCota(this.cotaService.obterPorNumeroDaCota(ajusteDTO.getNumeroCota()));
 		ajuste.setAjusteAplicado(ajusteDTO.getAjusteAplicado());
 		ajuste.setDataAlteracao(data);
 		ajuste.setDataInicio(ajusteDTO.getDataInicioCadastro());
 		ajuste.setDataFim(ajusteDTO.getDataFimCadastro());
-		
-		if (ajuste.getDataFim().before(ajuste.getDataInicio())){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data final não pode ser menor que data inicial.");
-		}
-		
-		
-		String dias = this.calcularDiasPeriodo(ajusteDTO.getDataInicioCadastro(), ajusteDTO.getDataFimCadastro());
-		
-		/*
-		int qtdDias = this.calcularDiasPeriodo(ajusteDTO.getDataInicioCadastro(), ajusteDTO.getDataFimCadastro());
-		if (qtdDias > 180){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Período não pode ser maior que 180 dias.");
-		}
-		*/
-		
 		ajuste.setFormaAjuste(ajusteDTO.getFormaAjuste());
 		ajuste.setMotivo(ajusteDTO.getMotivoAjuste());
 		ajuste.setUsuario(this.usuarioService.getUsuarioLogado());
@@ -177,28 +170,69 @@ public class AjusteReparteController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(ajuste).recursive().serialize();
 	}
 	
-	/*
-	private void validarEntradaRegiao(AjusteReparte ajuste) {
-//		if (nomeRegiao == null || (nomeRegiao.isEmpty())) {
-//			throw new ValidacaoException(TipoMensagem.WARNING,
-//					"Nome da regiao � obrigat�rio.");
-//		}
+	private void validarEntradaAjuste(AjusteReparteDTO ajusteDTO) {
+		
+		if (ajusteDTO.getNumeroCota() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Número da cota é obrigatório.");
+		}
+		
+		if (ajusteDTO.getNomeCota() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Nome da cota é obrigatório.");
+		}
+		
+		if (ajusteDTO.getFormaAjuste() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Selecione um tipo de ajuste.");
+		}
+		
+		if (ajusteDTO.getAjusteAplicado() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Selecione um tipo de ajuste.");
+		}
+		
+		if (ajusteDTO.getMotivoAjuste() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Selecione um motivo de ajuste.");
+		}
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(ajusteDTO.getNumeroCota());
+		ajusteDTO.setStatus(cota.getSituacaoCadastro());
+		
+		if((ajusteDTO.getStatus().toString()) != "Ativo"){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Esta cota não pode receber ajuste. (O seu Status não está como ATIVO)");
+		}
 
+		if (ajusteDTO.getDataInicioCadastro() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Data inicial é obrigatório.");
+		}
 		
-		
-////		List<RegiaoDTO> listaRegiaoDTO = regiaoService.buscarRegiao();
-//
-//		for (RegiaoDTO regiaoDTO : listaRegiaoDTO) {
-//			if (regiaoDTO.getNomeRegiao().equalsIgnoreCase(nomeRegiao)) {
-//				throw new ValidacaoException(TipoMensagem.WARNING, "Regi�o j� cadastrada.");
-//			}
-//		}
+		if (ajusteDTO.getDataFimCadastro() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Data final é obrigatório.");
+		}
+	}
+
+	private void evitarCotaRepetida(AjusteReparteDTO ajusteDTO) {
+		List<AjusteReparteDTO> ajustesJaCadastrados = ajusteService.buscarCotasEmAjuste(null);
+
+		for (AjusteReparteDTO ajusteJaCadastrado : ajustesJaCadastrados) {
+			if ((ajusteJaCadastrado.getNumeroCota()) == (ajusteDTO.getNumeroCota())) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Cota em Ajuste, já cadastrada.");
+			}
+		}
 	}
 	
-	*/
-	/*
-	 * Carrega o combo de status da cota. 
-	 */
+/*
+ * 
+	@Post
+	@Path("/carregarSegmento")
+	public void carregarSegmento (){
+		List<TipoSegmentoProduto> ListaSegmentos = ajusteService.buscarTodosSegmentos();		
+		result.use(Results.json()).from(ListaSegmentos, "ListaSegmentos").recursive().serialize();
+	}
+ */
+	private void carregarComboSegmento() {
+		List<TipoSegmentoProduto> ListaSegmentos = ajusteService.buscarTodosSegmentos();
+//		result.use(Results.json()).from(ListaSegmentos, "ListaSegmentos").recursive().serialize();
+		result.include("ListaSegmentos", ListaSegmentos);
+	}
+	
 	private void carregarComboMotivoStatusCota() {
 		
 		List<ItemDTO<MotivoAlteracaoSituacao, String>> listaMotivosStatusCota =
@@ -228,44 +262,51 @@ public class AjusteReparteController extends BaseController {
 		result.nothing();
 	}
 	
-	private String calcularDiasPeriodo (Date dataInicial, Date dataFinal){
-		
-		Calendar dtFinal = Calendar.getInstance();
-		dtFinal.setTime(dataFinal);
-		
-		Calendar dtInicial = Calendar.getInstance();
-		dtFinal.setTime(dataInicial);
-		
-		long m1 = dtFinal.getTimeInMillis();
-		long m2 = dtInicial.getTimeInMillis();
-		
-		Integer diasPeriodo = (int) ((m1 - m2) / (24*60*60*1000));
-		
-		return diasPeriodo.toString();
-		
-	}
+	private void validarDiferencaData(Date date1, Date date2) { 
+		long diferenca = ((date1.getTime()-date2.getTime())/86400000);
+			if (diferenca > 180){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Período não pode ser maior que 180 dias.");
+			}
+		}
 	
-	@Post
-	@Path("/carregarSegmento")
-	public void carregarSegmento (){
-		TableModel<CellModelKeyValue<TipoSegmentoProduto>> tableModel = montarSegmento();
-		
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
-	}
+//	@Post
+//	@Path("/carregarSegmento")
+//	public void carregarSegmento (){
+//		List<TipoSegmentoProduto> ListaSegmentos = ajusteService.buscarTodosSegmentos();		
+//		result.use(Results.json()).from(ListaSegmentos, "ListaSegmentos").recursive().serialize();
+//		
+////		TableModel<CellModelKeyValue<TipoSegmentoProduto>> tableModel = montarSegmento();
+////		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+//		
+//	}
 	
-		private TableModel<CellModelKeyValue<TipoSegmentoProduto>> montarSegmento() {
+//		private TableModel<CellModelKeyValue<TipoSegmentoProduto>> montarSegmento() {
+//		
+//		List<TipoSegmentoProduto> segmentos = ajusteService.buscarTodosSegmentos();
+//		
+//		TableModel<CellModelKeyValue<TipoSegmentoProduto>> tableModel = new TableModel<CellModelKeyValue<TipoSegmentoProduto>>();
+//
+//		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(segmentos));
+//		
+//		tableModel.setPage(1);
+//
+//		tableModel.setTotal(segmentos.size());
+//
+//		return tableModel;
+//	}
 		
-		List<TipoSegmentoProduto> segmentos = ajusteService.buscarTodosSegmentos();
-		
-		TableModel<CellModelKeyValue<TipoSegmentoProduto>> tableModel = new TableModel<CellModelKeyValue<TipoSegmentoProduto>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(segmentos));
-		
-		tableModel.setPage(1);
-
-		tableModel.setTotal(segmentos.size());
-
-		return tableModel;
-	}
+//		private void validarEntradaAjusteCota(Integer numeroCota) {
+//			if (numeroCota == null) {
+//				throw new ValidacaoException(TipoMensagem.WARNING,
+//						"Numero da cota é obrigatório.");
+//			}
+//			
+//			List<AjusteReparteDTO> listaAjusteDTO = ajusteService.buscarCotasEmAjuste(null);
+//
+//			for (AjusteReparteDTO ajusteReparteDTO : listaAjusteDTO) {
+//				if ((ajusteReparteDTO.getNumeroCota()) == (numeroCota)) {
+//					throw new ValidacaoException(TipoMensagem.WARNING, "Cota em Ajuste, já cadastrada.");
+//				}
+//			}
+//		}
 }

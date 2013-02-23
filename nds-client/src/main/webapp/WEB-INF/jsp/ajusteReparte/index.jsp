@@ -28,7 +28,7 @@ $(function(){
 		<p>Confirma a exclusão desta Ajuste de Reparte?</p>
 	</div>
 	
-	<form action="/regiao" id="excluir_form">
+	<form action="/ajuste" id="excluir_form">
 	<div id="dialog-confirmacao" title="Inserir cota" style="display: none;">
 		<p>Confirma a inserção desta cota para ajuste?</p>
 	</div>
@@ -38,18 +38,62 @@ $(function(){
 		style="display: none;">
 		<fieldset style="width: 400px !important;">
 			<legend>Lista de Segmentos</legend>
-			<table class="lstSegmentosGrid"></table>
+
+			<table class="lstSegmentosGrid">
+				<tr>
+				<td>
+				<select name="tipoSegmento" id="tipoSegmento1" style="width: 200px;" >
+					<option selected="selected">Selecione...</option>
+						<c:forEach items="${ListaSegmentos}" var="segmento">
+					<option value="${segmento.key}">${segmento.value}</option>
+						</c:forEach>	
+				</select>
+				</td>
+				<td>
+				<input name="Segmento" id="Segmento" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
+				</td>
+				</tr>
+
+				<tr>
+				<td>
+				<select name="tipoSegmento" id="tipoSegmento2" style="width: 200px;" >
+					<option selected="selected">Selecione...</option>
+						<c:forEach items="${listaMotivosStatusCota}" var="motivo">
+					<option value="${motivo.key}">${motivo.value}</option>
+						</c:forEach>	
+				</select>
+				</td>				
+				<td>
+				<input name="Segmento" id="Segmento" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
+				</td>				
+				</tr>
+
+				<tr>
+				<td>
+				<select name="tipoSegmento3" id="tipoSegmento3" style="width: 200px;" >
+					<option selected="selected">Selecione...</option>
+						<c:forEach items="${listaMotivosStatusCota}" var="motivo">
+					<option value="${motivo.key}">${motivo.value}</option>
+						</c:forEach>	
+				</select>
+				</td>
+				<td>
+				<input name="Segmento" id="Segmento" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
+				</td>
+				</tr>	
+			</table>
 		</fieldset>
 	</div>
 
-	<div id="dialog-novo" title="Novo Ajuste" style="display: none;">
+	<div id="dialog-novo" title="Ajuste" style="display: none;">
 		<fieldset style="width: 585px !important;">
 			<legend>Ajuste de Reparte</legend>
 			<table width="575" border="0" cellspacing="1" cellpadding="2">
 				<tr>
 					<td width="25">Cota:</td>
 					<td width="99">
-						<input name="numeroCota" id="numeroCota" type="text"	style="width: 60px; float: left; margin-right: 5px;" 
+						<input name="numeroCota" id="numeroCota" type="text" style="width: 60px; float: left; margin-right: 5px;" 
+						 	   onkeydown='onlyNumeric(event);'
 						 	   onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');"/>
 						<span class="classPesquisar">
 							<a href="javascript:;">
@@ -85,98 +129,49 @@ $(function(){
 					<td width="88">Venda Média +</td>
 					
 					<td width="20">
+						<input type="radio" name="formaAjuste" value="AJUSTE_ENCALHE_MAX" 
+							   onclick="$('.vdaMedia').hide();$('.encalheMaximo').toggle(); $('.ajusteSeg').hide(); $('.vlrPerc').hide();" />
+					</td>
+					<td width="139">% de Encalhe Máximo </td>
+					
+					<td width="20">
 						<input type="radio" name="formaAjuste" value="AJUSTE_SEGMENTO" 
 							   onclick="$('.vdaMedia').hide(); ajusteReparteController.mostrarSegmentos(); $('.vlrPerc').hide();$('.encalheMaximo').hide();" />
 					</td>
 					<td width="125">Ajuste por Segmento</td>
-					
-					<td width="20">
-						<input type="radio" name="formaAjuste" value="AJUSTE_ENCALHE_MAX" 
-							   onclick="$('.vdaMedia').hide();$('.encalheMaximo').toggle(); $('.ajusteSeg').hide(); $('.vlrPerc').hide();" />
-					</td>
-					<td width="139">% de Encalhe Máximo </td>	
+						
 				</tr>
 			</table>
 			
 			
-			<table width="575" border="0" cellspacing="1" cellpadding="2">
+			<table width="360" border="0" cellspacing="1" cellpadding="2">
 				<tr>
-					<td width="20"></td>
+					<!-- 
+					 -->
+					<td width="10"></td>
 					<td width="102"><span class="vlrPerc" style="display: none;">
-							<input name="ajusteHistorico" type="text" style="width: 60px;" />
-							 <!--  id="AJUSTE_HISTORICO_input" --> 
-							 
+							<input name="AJUSTE_HISTORICO_input" id="AJUSTE_HISTORICO_input" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
 					</span></td>
 					
-					<td width="20"></td>
-					<td width="88">
+					<!-- 
+					 -->
+					<td width="400"></td>
+					<td width="100">
 					<span class="vdaMedia" style="display: none;">
-							<input name="ajusteVendaMedia" value="1" type="text" style="width: 60px;" /> 
-							<!-- 
-							id="AJUSTE_VENDA_MEDIA_input" 
-							 -->
+							<input name="AJUSTE_VENDA_MEDIA_input" id="AJUSTE_VENDA_MEDIA_input" value="1" type="text" style="width: 50px;" /> 
 					</span>
 					</td>
-					<td width="20"></td>
-					<td width="125"></td>
-					<td width="20"></td>
-					
-					<td width="139">
+					<!-- 
+					 -->
+					<td width="350"></td>
+					<td width="250">
 						<span class="encalheMaximo"	style="display: none;"> 
-							<input name="ajusteEcalheMaximo" type="text" style="width: 30px; text-align: center;" />  
-							<!--  
-							id="AJUSTE_ENCALHE_MAX_input" 
-							-->
-							
+							<input name="AJUSTE_ENCALHE_MAX_input" id="AJUSTE_ENCALHE_MAX_input" value="1" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" />  
 						</span>
 					</td>
 				</tr>
 			</table>
-			
-			<!-- 
-			<table width="575" border="0" cellspacing="1" cellpadding="2"
-				class="ajusteSeg" style="display: none;">
 
-				<tr>
-					<td width="60"><strong>Segmento:</strong></td>
-					<td width="110">Segmento 1</td>
-					<td width="30">999</td>
-					<td width="20">
-						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
-							alt="Excluir" border="0" />
-					</td>
-					
-					<td width="110">Segmento2</td>
-					<td width="30">999</td>
-					<td width="15">
-						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
-							alt="Excluir" border="0" />
-					</td>
-					
-					<td width="104">Segmento 3</td>
-					<td width="30">999</td>
-					<td width="15">
-						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
-							alt="Excluir" border="0" />
-					</td>
-				</tr>
-				<tr>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-				</tr>
-
-			</table>
-			 -->
-			
-			
 			<table width="575" border="0" cellpadding="2" cellspacing="1">
 				 <tr>
 					<br>
@@ -207,8 +202,6 @@ $(function(){
 			</table>
 		</fieldset>
 	</div>
-
-
 
 		<br clear="all" /> <br />
 

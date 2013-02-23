@@ -37,7 +37,7 @@ public class AjusteReparteServiceImpl implements AjusteReparteService  {
 	@Override
 	@Transactional
 	public void alterarAjuste(AjusteReparte ajuste) {
-		ajusteRepository.merge(ajuste);
+		ajusteRepository.alterar(ajuste);
 	}
 
 	@Override

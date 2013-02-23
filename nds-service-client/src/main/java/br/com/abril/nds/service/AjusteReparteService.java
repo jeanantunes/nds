@@ -17,8 +17,8 @@ public interface AjusteReparteService {
 	
 	void excluirAjuste(Long id);
 	
-	AjusteReparteDTO buscarPorIdAjuste (Long id);
+	AjusteReparteDTO buscarPorIdAjuste(Long id);
 	
-	List<TipoSegmentoProduto> buscarTodosSegmentos ();
+	List<TipoSegmentoProduto> buscarTodosSegmentos();
 	
 }
