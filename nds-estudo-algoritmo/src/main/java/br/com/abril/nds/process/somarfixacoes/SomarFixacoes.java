@@ -17,16 +17,12 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
  * </p>
  */
 public class SomarFixacoes extends ProcessoAbstrato {
-    
+
     public SomarFixacoes(Estudo estudo) {
 	super(estudo);
     }
 
-    public SomarFixacoes(Estudo estudo) {
-		super(estudo);
-	}
-
-	@Override
+    @Override
     protected void executarProcesso() {
     }
 

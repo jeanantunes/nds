@@ -17,16 +17,12 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
  * </p>
  */
 public class MontaTabelaEstudos extends ProcessoAbstrato {
-    
+
     public MontaTabelaEstudos(Estudo estudo) {
 	super(estudo);
     }
 
-    public MontaTabelaEstudos(Estudo estudo) {
-		super(estudo);
-	}
-
-	@Override
+    @Override
     protected void executarProcesso() {
     }
 
