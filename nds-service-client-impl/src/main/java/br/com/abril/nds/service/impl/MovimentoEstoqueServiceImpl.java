@@ -445,13 +445,18 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, 
+			Long idProdutoEdicao, Long idCota, Long idUsuario, 
+			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+		
 		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null);
 	}
 	
 	@Override
 	@Transactional
-	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
+			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
+			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
 
 		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
 
