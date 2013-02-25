@@ -74,6 +74,12 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		List<TipoSegmentoProduto> listaTipoSegmentoProduto = segmentoNaoRecebidoService.obterTipoSegmentoProduto();
 		this.carregarComboSegmento(listaTipoSegmentoProduto, "listaTipoSegmentoProduto");
 	}
+	
+	@Get
+	@Path("/chamarTelaExcecaoSegmentoParcias")
+	public void chamarTelaExcecaoSegmentoParcias(){
+		result.forwardTo(ExcecaoSegmentoParciaisController.class).index();
+	}
 
 	@Post("/pesquisarCotasNaoRecebemSegmento")
 	public void pesquisarCotasNaoRecebemSegmento(FiltroSegmentoNaoRecebidoDTO filtro, String sortorder, String sortname, int page, int rp, boolean isReload){

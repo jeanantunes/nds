@@ -1,5 +1,6 @@
 <head>
 
+<script type="text/javascript" src="scripts/pesquisaCota.js"/>
 <script type="text/javascript" src="scripts/areaInfluenciaGeradorFluxo.js"/>
 <script language="javascript" type="text/javascript">
 

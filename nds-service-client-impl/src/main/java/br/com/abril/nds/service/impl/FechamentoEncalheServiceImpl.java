@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +71,9 @@ import br.com.abril.nds.util.DateUtil;
 
 @Service
 public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
-
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(FechamentoEncalheServiceImpl.class);
+	
 	@Autowired
 	private FechamentoEncalheRepository fechamentoEncalheRepository;
 	
@@ -538,7 +542,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario) throws Exception {
+	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario)  {
 
 		Integer totalCotasAusentes = this.buscarTotalCotasAusentes(dataEncalhe, true);
 		
@@ -546,39 +550,31 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cotas ausentes existentes!");
 		}
 		
-		try {
-			
-			ControleFechamentoEncalhe controleFechamentoEncalhe = new ControleFechamentoEncalhe();
-			controleFechamentoEncalhe.setDataEncalhe(dataEncalhe);
-			
-			this.fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
-			
-			gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario);
-			
-			this.gerarNotaFiscal(dataEncalhe);
-			
-		} catch (ValidacaoException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new Exception(e);
-		}
+		ControleFechamentoEncalhe controleFechamentoEncalhe = new ControleFechamentoEncalhe();
+		controleFechamentoEncalhe.setDataEncalhe(dataEncalhe);
+		
+		this.fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
+		
+		gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario);
+		
+		this.gerarNotaFiscal(dataEncalhe);
 	}
 	
-	public void gerarNotaFiscal(Date dataEncalhe) throws Exception {
+	@Transactional(rollbackFor=Exception.class)
+	public void gerarNotaFiscal(Date dataEncalhe)  {
 		
 		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
 			
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		List<Cota> cotas = fechamentoEncalheRepository.buscarCotaFechamentoChamadaEncalhe(dataEncalhe);
 		for (Cota cota : cotas) {
-			//TRY adicionado para em caso de erro em alguma nota, não parar o fluxo das demais nos testes.
-			//Remove-lo ou trata-lo com Logs
+		
 			try {
 
 				TipoNotaFiscal tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
 				
-				List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
-						cota, null, null, null, tipoNotaFiscal);
+				List<ItemNotaFiscalSaida> listItemNotaFiscal = 
+						this.notaFiscalService.obterItensNotaFiscalPor(distribuidor,cota, null, null, null, tipoNotaFiscal);
 				
 				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
 					continue;
@@ -598,7 +594,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
 				
 			} catch (Exception exception) {
-				throw exception;
+				LOGGER.warn(exception.getLocalizedMessage(), exception);
+				continue;
 			}
 		}
 	}
