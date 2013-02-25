@@ -983,10 +983,10 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
             }
         }
 		
+		roteirizacaoRepository.alterar(roteirizacaoExistente);
+		
 		if(roteirizacaoDTO.getRoteiros() == null || roteirizacaoDTO.getRoteiros().isEmpty()) {
 			roteirizacaoRepository.removerPorId(roteirizacaoDTO.getId());
-		} else {
-			roteirizacaoRepository.alterar(roteirizacaoExistente);
 		}
 		
 		return roteirizacaoExistente;

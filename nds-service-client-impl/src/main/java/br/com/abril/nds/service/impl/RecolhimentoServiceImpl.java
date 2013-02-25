@@ -159,7 +159,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		this.atualizarLancamentos(
 			idsLancamento, usuario, mapaRecolhimentos,
-			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null);
+			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null, null);
 	}
 	
 	/**
@@ -242,9 +242,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
+		Integer maiorSequenciaMatriz =
+			this.lancamentoRepository.obterMaiorSequenciaMatrizLancamento();
+		
 		this.atualizarLancamentos(
 			idsLancamento, usuario, mapaLancamentoRecolhimento,
-			StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada);
+			StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada, maiorSequenciaMatriz);
 		
 		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
@@ -297,11 +300,13 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * @param usuario - usuário
 	 * @param mapaLancamentoRecolhimento - mapa de lancamentos e produtos de recolhimento
 	 * @param statusLancamento - status do lançamento
+	 * @param maiorSequenciaMatriz
 	 */
 	private void atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
 									  Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento,
 									  StatusLancamento statusLancamento,
-									  TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada) {
+									  TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada,
+									  Integer maiorSequenciaMatriz) {
 		
 		if (!idsLancamento.isEmpty()) {
 		
@@ -335,7 +340,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				Date novaData = produtoRecolhimento.getNovaData();
 				
 				lancamento.setDataRecolhimentoDistribuidor(novaData);
-				lancamento.setSequenciaMatriz(produtoRecolhimento.getSequencia().intValue());
+				
+				if (lancamento.getSequenciaMatriz() == null) {
+					
+					lancamento.setSequenciaMatriz(++maiorSequenciaMatriz);
+				}
+				
 				lancamento.setStatus(statusLancamento);
 				lancamento.setDataStatus(new Date());
 				

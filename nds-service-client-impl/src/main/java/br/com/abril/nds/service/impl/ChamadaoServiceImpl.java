@@ -166,6 +166,8 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
+		Integer maiorSequenciaMatriz = this.lancamentoRepository.obterMaiorSequenciaMatrizLancamento();
+		
 		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaChamadao) {
 			
 			if (filtro.isChamadaEncalhe()) {
@@ -175,7 +177,8 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 				
 			} else {
 				
-				this.gerarChamadaEncalhe(consignadoCotaChamadao, dataChamadao, cota);
+				this.gerarChamadaEncalhe(
+					consignadoCotaChamadao, dataChamadao, cota, maiorSequenciaMatriz);
 			}
 		}
 		
@@ -223,9 +226,10 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 * @param consignadoCotaChamadao - DTO que contém os consignados da cota
 	 * @param dataChamadao - data do chamadão
 	 * @param cota - cota
+	 * @param maiorSequenciaMatriz
 	 */
 	private void gerarChamadaEncalhe(ConsignadoCotaChamadaoDTO consignadoCotaChamadao,
-									 Date dataChamadao, Cota cota) {
+									 Date dataChamadao, Cota cota, Integer maiorSequenciaMatriz) {
 		
 		ProdutoEdicao produtoEdicao =
 			this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
@@ -242,11 +246,18 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			chamadaEncalhe.setDataRecolhimento(dataChamadao);
 			chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 			chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.CHAMADAO);
-			
 		}
 		
 		Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
+		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(consignadoCotaChamadao.getIdLancamento());
+		
+		if (lancamento.getSequenciaMatriz() == null) {
+		
+			lancamento.setSequenciaMatriz(++maiorSequenciaMatriz);
+		}
+		
+		this.lancamentoRepository.merge(lancamento);
 		
 		if (lancamentos == null || lancamentos.isEmpty()) {
 			lancamentos = new HashSet<Lancamento>();

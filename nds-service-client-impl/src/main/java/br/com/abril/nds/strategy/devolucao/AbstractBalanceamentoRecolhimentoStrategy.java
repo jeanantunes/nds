@@ -399,8 +399,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	 */
 	private void configurarMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		
-		Integer sequencia = 1;
-		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento 
 				: matrizRecolhimento.entrySet()) {
 			
@@ -412,7 +410,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 				
 				produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 				produtoRecolhimento.setNovaData(dataRecolhimento);
-				produtoRecolhimento.setSequencia(sequencia++);
 			}
 		}
 	}
