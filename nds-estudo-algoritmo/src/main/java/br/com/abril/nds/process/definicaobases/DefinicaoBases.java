@@ -63,6 +63,9 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	
 	estudo.setEdicoesBase(edicoesParaEstudo);
 	
+	//TODO verificar como será iniciado o estudo e quais serão os valores passados na inicialização.
+	//TODO buscar ultimo produto edição do produto do estudo para gravar no estudo (atributo estudo.produto).
+	
 	BaseParaVeraneio baseParaVeraneio = new BaseParaVeraneio(estudo);
 	baseParaVeraneio.executar();
 	

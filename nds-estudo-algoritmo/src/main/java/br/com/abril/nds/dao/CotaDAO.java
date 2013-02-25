@@ -4,7 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
@@ -91,11 +93,11 @@ public class CotaDAO {
     public List<Cota> getCotasComEdicoesBase(List<ProdutoEdicaoBase> edicoesBase) {
 	List<Cota> returnListCota = new ArrayList<>();
 	try {
-	    List<Long> idsList = new ArrayList<Long>();
+	    Map<Long, Integer> idsPesos = new HashMap<Long, Integer>();
 	    for (ProdutoEdicaoBase edicao : edicoesBase) {
-		idsList.add(edicao.getId());
+		idsPesos.put(edicao.getId(), edicao.getPeso());
 	    }
-	    String idsString = idsList.toString().replaceAll("\\]|\\[","");
+	    String idsString = idsPesos.keySet().toString().replaceAll("\\]|\\[","");
 	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_PRODUTO_EDICAO_POR_COTA.replaceAll("\\?", idsString));
 	    ResultSet rs = ps.executeQuery();
 	    
@@ -106,11 +108,11 @@ public class CotaDAO {
 		if(prevIdCota != idCota) {
 		    Cota cota = new Cota();
 		    cota.setId(idCota);
-		    cota.setEdicoesRecebidas(getEdicoes(rs));
+		    cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos));
 		    returnListCota.add(cota);
 		} else {
 		    Cota cota = returnListCota.get(returnListCota.size()-1);
-		    cota.getEdicoesRecebidas().addAll(getEdicoes(rs));
+		    cota.getEdicoesRecebidas().addAll(getEdicoes(rs, idsPesos));
 		}
 		prevIdCota = idCota;
 	    }
@@ -121,7 +123,7 @@ public class CotaDAO {
 	return returnListCota;
     }
     
-    private List<ProdutoEdicao> getEdicoes(ResultSet rs) throws SQLException {
+    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, Integer> idsPesos) throws SQLException {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 	
@@ -135,6 +137,8 @@ public class CotaDAO {
 	produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
 	produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
 	produtoEdicao.setPacotePadrao(rs.getInt("PACOTE_PADRAO"));
+	
+	produtoEdicao.setPeso(idsPesos.get(produtoEdicao.getId()));
 	
 	//dados do sistema legado
 //	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
