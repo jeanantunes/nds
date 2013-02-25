@@ -1061,7 +1061,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (consolidados != null){
 			
 			for (ConsolidadoFinanceiroCota consolidado : consolidados){
-			
+				
+				//a cobrança (divida/cobranca/consolidado) não pode ser apagada caso pertença a uma negociação
 				Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
 				
 				if (divida != null){
@@ -1070,21 +1071,21 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							divida.getCobranca().getId());
 					this.cobrancaRepository.remover(divida.getCobranca());
 					this.dividaRepository.remover(divida);
+					
+					this.consolidadoFinanceiroRepository.remover(consolidado);
+					
+					List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
+								
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
+					);
+					
+					this.movimentoFinanceiroCotaService.removerPostergadosDia(
+							consolidado.getCota().getId(), 
+							listaPostergados);
 				}
-				
-				this.consolidadoFinanceiroRepository.remover(consolidado);
-				
-				List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
-							
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
-				);
-				
-				this.movimentoFinanceiroCotaService.removerPostergadosDia(
-						consolidado.getCota().getId(), 
-						listaPostergados);
 			}
 		}
 	}
