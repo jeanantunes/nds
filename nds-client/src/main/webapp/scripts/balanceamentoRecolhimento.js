@@ -650,7 +650,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "codigoProduto",
+			sortname : "nomeProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
