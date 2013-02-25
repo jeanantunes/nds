@@ -574,7 +574,7 @@ public class ConferenciaEncalheController extends BaseController {
 				BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade);
 				conferenciaEncalheDTO.setQtdExemplar(qtde);
 			} else {
-				conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, true);
+				conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false);
 			}
 		
 		}
