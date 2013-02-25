@@ -109,11 +109,11 @@ public class CotaDAO {
 		    Cota cota = new Cota();
 		    cota.setId(idCota);
 		    cota.setNumero(rs.getLong("NUMERO_COTA"));
-		    cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos));
+		    cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos, false));
 		    returnListCota.add(cota);
 		} else {
 		    Cota cota = returnListCota.get(returnListCota.size()-1);
-		    cota.getEdicoesRecebidas().addAll(getEdicoes(rs, idsPesos));
+		    cota.getEdicoesRecebidas().addAll(getEdicoes(rs, idsPesos, true));
 		}
 		prevIdCota = idCota;
 	    }
@@ -124,14 +124,21 @@ public class CotaDAO {
 	return returnListCota;
     }
     
-    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, Integer> idsPesos) throws SQLException {
+    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, Integer> idsPesos, boolean forceEdicaoFechada) throws SQLException {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 	
 	produtoEdicao.setIdProduto(rs.getLong("PRODUTO_ID"));
 	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 	produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
+	
+	//FIXME - gambeta loca remover!!!!!!!
+	if(forceEdicaoFechada) {
+	    produtoEdicao.setEdicaoAberta(false);
+	} else {
+	    produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
+	}
+	
 	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
 	produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
 	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
@@ -194,5 +201,5 @@ public class CotaDAO {
             + " and tp.ID = p.TIPO_PRODUTO_ID "
             + " and pe.ID = epc.PRODUTO_EDICAO_ID "
             + " and c.ID = epc.COTA_ID "
-	+ " order by c.ID ";
+	+ " order by c.ID, pe.NUMERO_EDICAO desc ";
 }

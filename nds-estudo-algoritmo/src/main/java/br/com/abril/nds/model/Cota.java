@@ -24,12 +24,12 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal indiceCorrecaoTendencia;
     private BigDecimal quantidadePDVs;
     private boolean recebeReparteComplementar;
-	// TODO: o q é mix?
+    // TODO: o q é mix?
     private boolean mix;
     private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceAjusteCota;
     private BigDecimal indiceTratamentoRegional;
-    
+
     private Long numero;
 
     public Cota() {
@@ -37,7 +37,6 @@ public class Cota extends GenericDTO<Cota> {
 	vendaMediaMaisN = BigDecimal.ZERO;
 	reparteCalculado = BigDecimal.ZERO;
 	reparteMinimo = BigDecimal.ZERO;
-	reparteMaximo = BigDecimal.ZERO;
 	somaReparteEdicoesAbertas = BigDecimal.ZERO;
 	percentualEncalheMaximo = BigDecimal.ZERO;
 	classificacao = ClassificacaoCota.SemClassificacao;
@@ -50,7 +49,7 @@ public class Cota extends GenericDTO<Cota> {
     public void setNumero(Long numero) {
 	this.numero = numero;
     }
-    
+
     public Long getId() {
 	return id;
     }
@@ -259,24 +258,16 @@ public class Cota extends GenericDTO<Cota> {
 	this.indiceTratamentoRegional = indiceTratamentoRegional;
     }
 
-	public boolean isRecebeReparteComplementar() {
-		return recebeReparteComplementar;
-	}
+    public boolean isRecebeReparteComplementar() {
+	return recebeReparteComplementar;
+    }
 
-	public void setRecebeReparteComplementar(boolean recebeReparteComplementar) {
-		this.recebeReparteComplementar = recebeReparteComplementar;
-	}
+    public void setRecebeReparteComplementar(boolean recebeReparteComplementar) {
+	this.recebeReparteComplementar = recebeReparteComplementar;
+    }
 
-	@Override
-	public String toString() {
-		return "Cota [id=" + id + ", edicoesRecebidas=" + edicoesRecebidas + ", classificacao=" + classificacao + ", reparteCalculado="
-				+ reparteCalculado + ", reparteJuramentadoAFaturar=" + reparteJuramentadoAFaturar + ", vendaMediaMaisN=" + vendaMediaMaisN
-				+ ", reparteMinimo=" + reparteMinimo + ", reparteMaximo=" + reparteMaximo + ", vendaMedia=" + vendaMedia
-				+ ", vendaMediaNominal=" + vendaMediaNominal + ", vendaEdicaoMaisRecenteFechada=" + vendaEdicaoMaisRecenteFechada
-				+ ", cotaSoRecebeuEdicaoAberta=" + cotaSoRecebeuEdicaoAberta + ", percentualEncalheMaximo=" + percentualEncalheMaximo
-				+ ", somaReparteEdicoesAbertas=" + somaReparteEdicoesAbertas + ", indiceCorrecaoTendencia=" + indiceCorrecaoTendencia
-				+ ", quantidadePDVs=" + quantidadePDVs + ", recebeReparteComplementar=" + recebeReparteComplementar + ", mix=" + mix
-				+ ", indiceVendaCrescente=" + indiceVendaCrescente + ", indiceAjusteCota=" + indiceAjusteCota
-				+ ", indiceTratamentoRegional=" + indiceTratamentoRegional + "]";
-	}
+    @Override
+    public String toString() {
+	return "Cota [id=" + id + ", numero=" + numero + "]";
+    }
 }

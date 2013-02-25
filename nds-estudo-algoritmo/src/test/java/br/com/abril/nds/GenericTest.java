@@ -5,17 +5,17 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class GenericTest {
 
     @Test
     public void test() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-	ProdutoEdicao edicao = new ProdutoEdicao();
+	ProdutoEdicaoBase edicao = new ProdutoEdicaoBase();
 	edicao.setCodigoProduto(123L);
 	edicao.setColecao(false);
 	
-	Class<? extends ProdutoEdicao> clazz = edicao.getClass();
+	Class<? extends ProdutoEdicaoBase> clazz = edicao.getClass();
 	
 	Method[] declaredMethods = clazz.getMethods();
 	

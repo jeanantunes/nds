@@ -41,8 +41,8 @@ public class ProcessTest {
     public void testAllProcess(String produtos) throws Exception {
 	Estudo estudo = new Estudo();
 	estudo.setPacotePadrao(BigDecimal.valueOf(10));
-	estudo.setReparteDistribuir(BigDecimal.valueOf(100));
-	estudo.setReparteDistribuirInicial(BigDecimal.valueOf(100));
+	estudo.setReparteDistribuir(BigDecimal.valueOf(1000));
+	estudo.setReparteDistribuirInicial(BigDecimal.valueOf(1000));
 	
 	DefinicaoBases definicaoBases = new DefinicaoBases(estudo);
 	definicaoBases.setEdicoesRecebidasParaEstudoRaw(montaListEdicoesPorProduto(produtos));
@@ -113,10 +113,10 @@ public class ProcessTest {
     private void imprimeResultadoFinalEstudo(Estudo estudo) {
 	imprimeEdicaoBase(estudo.getEdicoesBase());
 	
-	Reporter.log("Total de Cotas do Estudo: " + estudo.getCotas().size());
-	for(Cota cota : estudo.getCotas()) {
-	    Reporter.log("<br>Numero da cota: " + String.valueOf(cota.getNumero()));    
-	}
+	Reporter.log("<br>Total de Cotas do Estudo: " + estudo.getCotas().size());
+//	for(Cota cota : estudo.getCotas()) {
+//	    Reporter.log("<br>Numero da cota: " + String.valueOf(cota.getNumero()));    
+//	}
 	
 	for(Cota cota : estudo.getCotas()) {
 	    imprimeCota(cota);
@@ -141,7 +141,8 @@ public class ProcessTest {
 		    e.printStackTrace();
 		}
 	    }
-	}	
+	}
+	Reporter.log("</table>");
     }
 
     private void imprimeCabecalhoCota() {
@@ -160,13 +161,14 @@ public class ProcessTest {
 
     private void imprimeEdicaoBase(List<ProdutoEdicaoBase> edicoesBase) {
 	Reporter.log("<p>Edi&ccedil;&otilde;es Base:<table border='1' cellspacing='0' cellpadding='2'>");
-//	imprimeCabecalhoEdicaoBase();
-	imprimeCabecalhoEdicao();
+	imprimeCabecalhoEdicaoBase();
+//	imprimeCabecalhoEdicao();
 	for (ProdutoEdicaoBase produtoEdicaoBase : edicoesBase) {
 	    Reporter.log("<tr>");
 	    edicaoBaseToTD(produtoEdicaoBase);
 	    Reporter.log("</tr>");
 	}
+	Reporter.log("</table>");
     }
 
     private void imprimeCabecalhoEdicaoBase() {
@@ -227,9 +229,9 @@ public class ProcessTest {
 
     private void edicaoToTD(ProdutoEdicao edicao) {
 	Class<? extends ProdutoEdicao> clazz = edicao.getClass();
-	Method[] declaredMethods = clazz.getMethods();
+	Method[] methods = clazz.getMethods();
 
-	for (Method method : declaredMethods) {
+	for (Method method : methods) {
 	    String name = method.getName();
 	    if((name.startsWith("g") || name.startsWith("i")) && !name.equalsIgnoreCase("getClass")) {
 		try {
@@ -237,7 +239,6 @@ public class ProcessTest {
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		    e.printStackTrace();
 		}
-//		System.out.println(name + ": " + method.invoke(edicao));
 	    }
 	}
     }
