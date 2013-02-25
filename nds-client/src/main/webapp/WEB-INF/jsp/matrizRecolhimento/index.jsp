@@ -15,10 +15,13 @@
 			$(function() {
 				balanceamentoRecolhimentoController.inicializar(balanceamento);
 			});
+			
 		</script>
 	</head>
 	
 	<body>
+		
+		<input id="utilizaSedeAtendida" type="hidden" value="false">
 		
 		<div class="areaBts resumoPeriodo" style="display: none;">
 		<div class="area">

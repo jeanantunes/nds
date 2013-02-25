@@ -72,6 +72,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			function(result) {
 				
 				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+				$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
 			},
 			function() {
 				balanceamentoRecolhimentoController.showResumo(false);
@@ -80,7 +81,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	montarResumoPeriodoBalanceamento : function(result) {
-		
+				
 		var rows = '<tr>';
 
 		$.each(result.listaResumoPeriodoBalanceamento, function(index, resumo) {
@@ -148,6 +149,16 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	   
 	    
 	    	balanceamentoRecolhimentoController.showResumo(true);
+	    	 	
+	},
+	
+	defineUtilizacaoSedeAtendida : function() {
+		
+		var utilizaSedeAtendida = $('#utilizaSedeAtendida').val() == 'true';
+		
+		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexToggleCol(11,utilizaSedeAtendida);
+		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexToggleCol(12,utilizaSedeAtendida);
+		
 	},
 	
 	bloquearCheckAll : function() {
@@ -251,6 +262,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		$(".grids", balanceamentoRecolhimentoController.workspace).show();
 		
 		$("#fieldsetGrids", balanceamentoRecolhimentoController.workspace).show();
+		
+		balanceamentoRecolhimentoController.defineUtilizacaoSedeAtendida();	 
 		
 		return resultado;
 	},

@@ -86,6 +86,9 @@ public interface GrupoService {
 	 */
 	List<Long> obterCotasDoGrupo(Long idGrupo);
 
+	
+	Integer countTodosGrupos();
+
 
 
 }
