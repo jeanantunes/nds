@@ -16,6 +16,8 @@ public interface GrupoRepository extends Repository<GrupoCota,Long> {
 	 * Obtém todos os Grupos
 	 * @return List<GrupoCota> grupos
 	 */
-	public List<GrupoCota> obterTodosGrupos() ;
+	List<GrupoCota> obterTodosGrupos() ;
+
+	Integer countTodosGrupos();
 
 }

@@ -901,7 +901,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		Set<Long> roteirosExclusao = roteirizacaoDTO.getRoteirosExclusao();
         
 		processarRoteirosExcluidos(roteirizacaoExistente, roteirosExclusao);
-        
+       		
 		for (RoteiroRoteirizacaoDTO roteiroDTO : roteirizacaoDTO.getTodosRoteiros()) {
         
 			Roteiro roteiro;
@@ -984,7 +984,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         }
 		
 		roteirizacaoRepository.alterar(roteirizacaoExistente);
-       	
+		
+		if(roteirizacaoDTO.getRoteiros() == null || roteirizacaoDTO.getRoteiros().isEmpty()) {
+			roteirizacaoRepository.removerPorId(roteirizacaoDTO.getId());
+		}
+		
 		return roteirizacaoExistente;
     }
 

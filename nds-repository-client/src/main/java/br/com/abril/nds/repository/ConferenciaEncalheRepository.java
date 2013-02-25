@@ -32,8 +32,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * 
 	 * @param idDistribuidor
 	 * @param numeroCota
-	 * @param dataInicial
-	 * @param dataFinal
+	 * @param dataRecolhimento
 	 * @param indFechado
 	 * @param indPostergado
 	 * @param listaIdProdutoEdicao
@@ -43,8 +42,7 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
 			Long idDistribuidor,
 			Integer numeroCota,
-			Date dataInicial,
-			Date dataFinal,
+			Date dataRecolhimento,
 			boolean indFechado,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao);
