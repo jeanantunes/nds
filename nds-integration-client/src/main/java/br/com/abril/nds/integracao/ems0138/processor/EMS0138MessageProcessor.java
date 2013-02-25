@@ -1,0 +1,147 @@
+package br.com.abril.nds.integracao.ems0138.processor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.lightcouch.CouchDbClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheFornecedorDTO;
+import br.com.abril.nds.dto.chamadaencalhe.integracao.ChamadaEncalheFornecedorIntegracaoDTO;
+import br.com.abril.nds.dto.chamadaencalhe.integracao.ChamadaEncalheFornecedorIntegracaoItemDTO;
+import br.com.abril.nds.integracao.engine.MessageProcessor;
+import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
+import br.com.abril.nds.model.integracao.EMS0138NotasCEIntegracao;
+import br.com.abril.nds.model.integracao.Message;
+import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
+import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.service.integracao.DistribuidorService;
+
+@Component
+public class EMS0138MessageProcessor extends AbstractRepository implements MessageProcessor {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0138MessageProcessor.class);
+
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private NdsiLoggerFactory ndsiLoggerFactory; 
+	
+	@Override
+	public void preProcess(AtomicReference<Object> tempVar) {
+
+		List<Object> objs = new ArrayList<Object>();
+		Object obj = new Object();
+		objs.add(obj);
+		
+		tempVar.set(objs);
+		
+	}
+
+	@Override
+	public void processMessage(Message message) {
+		
+		EMS0138NotasCEIntegracao notasCEIntegracao = new EMS0138NotasCEIntegracao(); 
+		
+		List<NotaFiscalSaidaFornecedor> notasFiscais = obterNotasFiscais();
+		List<ChamadaEncalheFornecedorIntegracaoDTO> chamadasEncalhe = obterChamadasEncalhe();
+		
+		notasCEIntegracao.setTipoDocumento("EMS0139");
+		notasCEIntegracao.setNotasFiscaisSaida(notasFiscais);
+		notasCEIntegracao.setChamadasEncalhe(chamadasEncalhe);
+		
+		CouchDbClient cdbc = null;
+		
+		String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
+		
+		try {
+			
+			cdbc = this.getCouchDBClient(codigoDistribuidor);
+			cdbc.save(notasCEIntegracao);
+			
+		} catch(Exception e) {
+			LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
+		} finally {
+			if (cdbc != null) {
+				cdbc.shutdown();
+			}			
+		}
+				
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<ChamadaEncalheFornecedorIntegracaoDTO> obterChamadasEncalhe() {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select ce ")
+			.append("from ChamadaEncalheFornecedor ce ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ChamadaEncalheFornecedorIntegracaoDTO.class));
+		
+		List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor = query.list();
+		List<ChamadaEncalheFornecedorIntegracaoDTO> chamadasEncalheFornecedorDTO = new ArrayList<ChamadaEncalheFornecedorIntegracaoDTO>();
+		
+		for(ChamadaEncalheFornecedor cef : chamadasEncalheFornecedor) {
+			ChamadaEncalheFornecedorIntegracaoDTO cefDTO = new ChamadaEncalheFornecedorIntegracaoDTO();
+			cefDTO.setId(cef.getId());
+			cefDTO.setNumeroChamadaEncalhe(cef.getNumeroChamadaEncalhe());
+			
+			for(ItemChamadaEncalheFornecedor icef : cef.getItens()) {
+				ChamadaEncalheFornecedorIntegracaoItemDTO cei =  new ChamadaEncalheFornecedorIntegracaoItemDTO();
+				
+				cei.setNumeroChamadaEncalhe(icef.getChamadaEncalheFornecedor().getNumeroChamadaEncalhe());
+				cei.setNumeroItem(icef.getNumeroItem());
+				//cei.setDataEmissaoNotaenvio(icef.get)
+				
+				//cei.set
+								
+			}
+			
+			
+			/*cef.getAnoReferencia();
+			cef.getCfop();
+			cef.getCodigoDistribuidor();
+			cef.getCodigoPreenchimento();
+			cef.getControle();
+			cef.getDataEmissao();
+			cef.getDataLimiteRecebimento();*/
+			
+			
+			chamadasEncalheFornecedorDTO.add(cefDTO);
+		}
+		
+		return query.list();
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<NotaFiscalSaidaFornecedor> obterNotasFiscais() {
+
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select nf ")
+			.append("from NotaFiscalSaidaFornecedor nf ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		return query.list();
+		
+	}
+
+	@Override
+	public void posProcess(Object tempVar) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
