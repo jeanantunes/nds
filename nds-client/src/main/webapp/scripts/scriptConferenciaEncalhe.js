@@ -82,7 +82,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#vlrCE", this.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
-			 precision:2
+			 precision:2,
+			 defaultZero:false
 		});
 		
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).mask("99/99/9999");

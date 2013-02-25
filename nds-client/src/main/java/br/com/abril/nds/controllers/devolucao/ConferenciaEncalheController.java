@@ -667,7 +667,10 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				ceDTO.setQtdExemplar(ceDTO.getQtdInformada().add(qtd));
 				
-				ceDTO.setValorTotal(ceDTO.getPrecoComDesconto().multiply(new BigDecimal(ceDTO.getQtdExemplar().intValue())));
+				BigDecimal preco = (ceDTO.getPrecoComDesconto() != null) ? ceDTO.getPrecoComDesconto() : 
+					(ceDTO.getPrecoCapa() != null) ? ceDTO.getPrecoCapa() : BigDecimal.ZERO;  
+
+					ceDTO.setValorTotal(preco.multiply(new BigDecimal(ceDTO.getQtdExemplar().intValue())));
 			}
 		}
 		
@@ -768,6 +771,7 @@ public class ConferenciaEncalheController extends BaseController {
 					this.validarExcedeReparte(qtdExemplares, dto);
 					
 					dto.setQtdExemplar(BigInteger.valueOf(qtdExemplares));
+					dto.setQtdInformada(BigInteger.valueOf(qtdExemplares));
 					
 					if (juramentada != null){
 					
