@@ -37,7 +37,6 @@ public class Cota extends GenericDTO<Cota> {
 	vendaMediaMaisN = BigDecimal.ZERO;
 	reparteCalculado = BigDecimal.ZERO;
 	reparteMinimo = BigDecimal.ZERO;
-	reparteMaximo = BigDecimal.ZERO;
 	somaReparteEdicoesAbertas = BigDecimal.ZERO;
 	percentualEncalheMaximo = BigDecimal.ZERO;
 	classificacao = ClassificacaoCota.SemClassificacao;
