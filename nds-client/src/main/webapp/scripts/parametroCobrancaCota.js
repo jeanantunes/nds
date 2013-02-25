@@ -84,6 +84,12 @@ var parametroCobrancaCotaController = $.extend(true, {
         }
     },
 
+    carregarComboTipoCobranca : function(selected){
+
+    	carregarCombo(contextPath + "/cota/parametroCobrancaCota/obterTiposCobranca", null,
+                $("#tipoCobrancaParametroCobrancaCota", this.workspace), selected, null);
+    },
+
     isModoTelaCadastroCota : function() {
         return parametroCobrancaCotaController.modoTela == ModoTela.CADASTRO_COTA;
     },
@@ -112,8 +118,12 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    $(".dataInputMask").mask("99/99/9999");
 	    
 	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
+	    
 	    this.calcularDataTermino();
+	    
 	    this.carregarArquivoContrato();
+	    
+	    parametroCobrancaCotaController.carregarComboTipoCobranca("");
 	    
 	},
 	
@@ -480,18 +490,14 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#PSex", this.workspace).attr("checked", false);
 		$("#PSab", this.workspace).attr("checked", false);
 		$("#PDom", this.workspace).attr("checked", false);
+		
+		this.opcaoPagto();
+		
+		this.carregarFornecedoresRelacionados();
+		
+		parametroCobrancaCotaController.carregarComboTipoCobranca("");
 
-	    /*document.formularioDadosBoleto.recebeEmail.checked = false;
-		document.formularioFormaCobranca.PS.checked = false;
-		document.formularioFormaCobranca.PT.checked = false;
-		document.formularioFormaCobranca.PQ.checked = false;
-		document.formularioFormaCobranca.PQu.checked = false;
-		document.formularioFormaCobranca.PSex.checked = false;
-		document.formularioFormaCobranca.PSab.checked = false;
-		document.formularioFormaCobranca.PDom.checked = false;*/
-		
-		
-		parametroCobrancaCotaController.obterFormaCobrancaDefault();
+		//parametroCobrancaCotaController.obterFormaCobrancaDefault();
 	}, 
 
 	
@@ -592,7 +598,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		//hidden
 		$("#_idFormaCobranca", this.workspace).val(resultado.idFormaCobranca);
 		
-		$("#tipoCobrancaParametroCobrancaCota", this.workspace).val(resultado.tipoCobranca);
+		parametroCobrancaCotaController.carregarComboTipoCobranca(resultado.tipoCobranca);
+		
         $("#tipoFormaCobranca", this.workspace).val(resultado.tipoFormaCobranca);
 		if (parametroCobrancaCotaController.isModoTelaCadastroCota()) {
             parametroCobrancaCotaController.carregarBancos(resultado.idBanco);
@@ -791,6 +798,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 					   function(mensagens) {
 				           $("#dialog-unificacao", this.workspace).dialog("close");
 				           if (incluirSemFechar){
+				        	   
 				        	   parametroCobrancaCotaController.popup_nova_unificacao();
 				           }
 				           else{
@@ -815,6 +823,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 					   function(mensagens) {
 				           $("#dialog-unificacao", this.workspace).dialog("close");
 				           if (incluirSemFechar){
+				        	   
 				        	   parametroCobrancaCotaController.popup_nova_unificacao();
 				           }
 				           else{
