@@ -47,18 +47,28 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("        pe.numeroEdicao as numeroEdicao, ")
 		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
 		   .append("        CASE WHEN movimentoEstoqueCotaFuro is not null THEN movimento.dataLancamentoOriginal ")
-		   .append("			 ELSE (CASE WHEN tipoMovimento = :tipoMovimentoCotaFuro THEN movimento.dataCriacao ELSE lancamento.dataLancamentoDistribuidor END) END as dataLancamento, ")
-		   .append("        pe.precoVenda as precoCapa, ")
-		   .append("        movimento.valoresAplicados.valorDesconto as desconto, ")
-		   .append("        (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) as precoDesconto, ")
-		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.qtde) ELSE (movimento.qtde*-1) END as reparte, ")		
-		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.valoresAplicados.precoVenda * movimento.qtde) ELSE (movimento.valoresAplicados.precoVenda * movimento.qtde*-1) END as total, ")
-		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN ((movimento.valoresAplicados.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde) ELSE ((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde*-1) END as totalDesconto ");
-		
+		   .append("		ELSE (CASE WHEN tipoMovimento = :tipoMovimentoCotaFuro  ")
+		   
+		   .append(" THEN movimento.dataCriacao ELSE lancamento.dataLancamentoDistribuidor END) END as dataLancamento, ")
+		   
+		   .append(" pe.precoVenda as precoCapa, ")
+		   
+		   .append(" coalesce(movimento.valoresAplicados.valorDesconto, 0) as desconto, ")
+		   
+		   .append(" coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) as precoDesconto, ")
+		   
+		   .append(" CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada  ")		
+		   .append(" THEN (movimento.qtde) ELSE (movimento.qtde*-1) END as reparte, ")
+		   
+		   .append(" CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada  ")
+		   .append(" THEN ( coalesce(movimento.valoresAplicados.precoVenda, pe.precoVenda, 0)  * movimento.qtde)  ")
+		   .append(" ELSE ( coalesce(movimento.valoresAplicados.precoVenda, pe.precoVenda, 0)  * movimento.qtde*-1) END as total, ")
+		   
+		   .append(" CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada ")
+		   .append(" THEN ( coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * movimento.qtde ) ")
+		   .append(" ELSE ( coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * movimento.qtde*-1 ) END as totalDesconto ");
+		   
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
-		
-		//hql.append(getOrderBy(filtro));
-		
 		
 		if (filtro.getPaginacao().getSortColumn() != null) {
 			hql.append(" ORDER BY ");

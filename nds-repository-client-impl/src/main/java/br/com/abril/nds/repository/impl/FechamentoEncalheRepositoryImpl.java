@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;

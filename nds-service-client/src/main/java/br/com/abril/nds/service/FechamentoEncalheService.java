@@ -33,7 +33,7 @@ public interface FechamentoEncalheService {
 	
 	void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento);
 	
-	void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario) throws Exception;
+	void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario);
 	
 	Boolean existeFechamentoEncalheDetalhado(FiltroFechamentoEncalheDTO filtro);
 	
@@ -56,4 +56,6 @@ public interface FechamentoEncalheService {
 	Integer buscarTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 	
 	Date buscarUtimoDiaDaSemanaRecolhimento();
+	
+	void gerarNotaFiscal(Date dataEncalhe);
 }
