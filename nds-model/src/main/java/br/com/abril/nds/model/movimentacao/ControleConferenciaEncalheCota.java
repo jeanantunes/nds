@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
@@ -70,7 +71,10 @@ public class ControleConferenciaEncalheCota {
 
 	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
 	private List<NotaFiscalEntradaCota> notaFiscalEntradaCota = new ArrayList<NotaFiscalEntradaCota>();
-
+	
+	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
+	private List<CobrancaControleConferenciaEncalheCota> cobrancasControleConferenciaEncalheCota = new ArrayList<CobrancaControleConferenciaEncalheCota>();
+	
 	@OneToMany(mappedBy = "controleConferenciaEncalheCota")
 	private List<ConferenciaEncalhe> conferenciasEncalhe = new ArrayList<ConferenciaEncalhe>();
 
@@ -293,6 +297,15 @@ public class ControleConferenciaEncalheCota {
 	public void setNotaFiscalEntradaCota(
 			List<NotaFiscalEntradaCota> notaFiscalEntradaCota) {
 		this.notaFiscalEntradaCota = notaFiscalEntradaCota;
+	}
+	
+	public List<CobrancaControleConferenciaEncalheCota> getCobrancasControleConferenciaEncalheCota() {
+		return cobrancasControleConferenciaEncalheCota;
+	}
+
+	public void setCobrancasControleConferenciaEncalheCota(
+			List<CobrancaControleConferenciaEncalheCota> cobrancasControleConferenciaEncalheCota) {
+		this.cobrancasControleConferenciaEncalheCota = cobrancasControleConferenciaEncalheCota;
 	}
 
 	/**

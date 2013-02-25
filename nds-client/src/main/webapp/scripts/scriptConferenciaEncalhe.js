@@ -82,7 +82,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#vlrCE", this.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
-			 precision:2
+			 precision:2,
+			 defaultZero:false
 		});
 		
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).mask("99/99/9999");
@@ -749,7 +750,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
 		
-		/*$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
 				null,
 				function(resultado){
 					var w = window.open();
@@ -758,7 +759,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					w.document.write('<html>');
 					w.document.write('<body>');
 					w.document.write('<pre>');
-					w.document.write(resultado);
+					w.document.write(resultado.resultado);
 					w.document.write('</pre>');
 					w.document.write('</body>');
 					w.document.write('</html>');
@@ -766,10 +767,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					w.print();
 					w.close();
 				}
-		);	*/	
+		);
 		
-		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
-		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
+		/*var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
+		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);*/		
 	},
 	
 	carregarGridItensNotaFiscal : function (modeloConferenciaEncalhe) {

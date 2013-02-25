@@ -308,7 +308,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			lancamento.setDataStatus(dtAgora);
 			lancamento.setReparte(BigInteger.ZERO);
 			lancamento.setRepartePromocional(BigInteger.ZERO);
-			lancamento.setSequenciaMatriz(Integer.valueOf(0));
+			lancamento.setSequenciaMatriz(null);
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		}
 		

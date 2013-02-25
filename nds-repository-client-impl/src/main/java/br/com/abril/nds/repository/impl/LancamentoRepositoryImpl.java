@@ -509,7 +509,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" pessoaFornecedor.RAZAO_SOCIAL as nomeFornecedor, ");
 		sql.append(" periodoLancamentoParcial.TIPO as parcial, ");
 		sql.append(" lancamento.STATUS as statusLancamento, ");
-		sql.append(" lancamento.SEQUENCIA_MATRIZ as sequencia, ");
 		sql.append(" lancamento.ID as idLancamento, ");
 		sql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ");
 		sql.append(" lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, ");
@@ -714,7 +713,6 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 													  .addScalar("possuiBrinde", StandardBasicTypes.BOOLEAN)
 													  .addScalar("possuiChamada", StandardBasicTypes.BOOLEAN)
-													  .addScalar("sequencia", StandardBasicTypes.INTEGER)
 													  .addScalar("novaData");													  
 
 		List<String> statusParaBalanceamentoRecolhimento =
@@ -1622,6 +1620,16 @@ public class LancamentoRepositoryImpl extends
 		query.executeUpdate();
 		
 		
+	}
+	
+	@Override
+	public Integer obterMaiorSequenciaMatrizLancamento() {
+		
+		String hql = " select max(lancamento.sequenciaMatriz) from Lancamento lancamento ";
+				
+		Query query = super.getSession().createQuery(hql);
+		
+		return (Integer) query.uniqueResult();
 	}
 	
 }
