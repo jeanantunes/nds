@@ -111,25 +111,6 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			if (e.keyCode == 13) {
 				
-				if (ConferenciaEncalhe.ultimoCodeBar != "" && 
-						ConferenciaEncalhe.ultimoCodeBar == $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val()){
-					
-					var qtd = 
-						$("#qtdeExemplar", ConferenciaEncalhe.workspace).val() == "" 
-							? 0 
-							: parseInt($("#qtdeExemplar", ConferenciaEncalhe.workspace).val());
-					
-					$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(qtd + 1);
-					
-					ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
-					
-				} else {
-					
-					ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
-				}
-				
-			} else if (e.keyCode != 38 && e.keyCode != 40) {
-				
 				ConferenciaEncalhe.autoCompletarPorCodigoDeBarras();
 			}
 		});
@@ -240,6 +221,9 @@ var ConferenciaEncalhe = $.extend(true, {
 			function(result){
 			
 				ConferenciaEncalhe.setarValoresPesquisados(result);
+				
+				ConferenciaEncalhe.adicionarProdutoConferido();
+				
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
 			
 			}, function() {
@@ -1163,7 +1147,17 @@ var ConferenciaEncalhe = $.extend(true, {
 				ConferenciaEncalhe.limparDadosProduto();
 				
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
-			}
+				
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
+			},
+			function(){
+				
+				ConferenciaEncalhe.limparDadosProduto();
+				
+                $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
+				
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
+			}	
 		);
 	},
 	
@@ -1466,7 +1460,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 
 	autoCompletarPorCodigoDeBarras: function() {
-		
+
 		var codBarra = $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val().trim();
 
 		if (codBarra && codBarra.length > 5) {
@@ -1475,18 +1469,30 @@ var ConferenciaEncalhe = $.extend(true, {
 
 				function(result){
 				
-					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
-						source: result,
-						select: function(event, ui){
-							
-							ConferenciaEncalhe.ultimoIdProdutoEdicao = ui.item.chave.long;
-							
-							ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
-						},
-						delay : 0,
-					});
-					
-					$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete("search", codBarra);
+				    //EXIBE AUTOCOMPLETE SOMENTE SE HOUVER MAIS DE UM RESULTADO
+				    if (result.length > 1){
+				
+						$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({
+							source: result,
+							select: function(event, ui){
+
+								ConferenciaEncalhe.ultimoIdProdutoEdicao = ui.item.chave.long;
+								
+								ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
+							},
+							delay : 0,
+						});
+						
+						$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete("search", codBarra);
+				    }
+				    else{
+				    	
+				    	$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({});
+				    	
+				    	ConferenciaEncalhe.ultimoIdProdutoEdicao = result[0].chave.long;
+				    	
+            		    ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
+				    }    
 				}
 			);
 		}
