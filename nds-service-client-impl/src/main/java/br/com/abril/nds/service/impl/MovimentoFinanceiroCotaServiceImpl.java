@@ -138,37 +138,23 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			if (tipoMovimentoFinanceiro.isAprovacaoAutomatica()) {
 
 				movimentoFinanceiroCota.setAprovadoAutomaticamente(Boolean.TRUE);
-				movimentoFinanceiroCota.setAprovador(
-						movimentoFinanceiroCotaDTO.getUsuario());
-				movimentoFinanceiroCota.setDataAprovacao(
-						movimentoFinanceiroCotaDTO.getDataAprovacao());
-				movimentoFinanceiroCota.setStatus(
-						StatusAprovacao.APROVADO);
-
+				movimentoFinanceiroCota.setAprovador(movimentoFinanceiroCotaDTO.getUsuario());
+				movimentoFinanceiroCota.setDataAprovacao(movimentoFinanceiroCotaDTO.getDataAprovacao());
+				movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
 			} else {
 
 				movimentoFinanceiroCota.setStatus(StatusAprovacao.PENDENTE);
 			}
 
-			movimentoFinanceiroCota.setCota(
-					movimentoFinanceiroCotaDTO.getCota());
-			movimentoFinanceiroCota.setTipoMovimento(
-					tipoMovimentoFinanceiro);
-			movimentoFinanceiroCota.setData(
-					movimentoFinanceiroCotaDTO.getDataVencimento());
-			movimentoFinanceiroCota.setDataCriacao(
-					movimentoFinanceiroCotaDTO.getDataCriacao());
-			movimentoFinanceiroCota.setUsuario(
-					movimentoFinanceiroCotaDTO.getUsuario());
-			movimentoFinanceiroCota.setValor(
-					movimentoFinanceiroCotaDTO.getValor());
-			movimentoFinanceiroCota.setLancamentoManual(
-					movimentoFinanceiroCotaDTO.isLancamentoManual());
-			movimentoFinanceiroCota.setBaixaCobranca(
-					movimentoFinanceiroCotaDTO.getBaixaCobranca());
-			movimentoFinanceiroCota.setObservacao(
-					movimentoFinanceiroCotaDTO.getObservacao());
-			
+			movimentoFinanceiroCota.setCota(movimentoFinanceiroCotaDTO.getCota());
+			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
+			movimentoFinanceiroCota.setData(movimentoFinanceiroCotaDTO.getDataVencimento());
+			movimentoFinanceiroCota.setDataCriacao(movimentoFinanceiroCotaDTO.getDataCriacao());
+			movimentoFinanceiroCota.setUsuario(movimentoFinanceiroCotaDTO.getUsuario());
+			movimentoFinanceiroCota.setValor(movimentoFinanceiroCotaDTO.getValor());
+			movimentoFinanceiroCota.setLancamentoManual(movimentoFinanceiroCotaDTO.isLancamentoManual());
+			movimentoFinanceiroCota.setBaixaCobranca(movimentoFinanceiroCotaDTO.getBaixaCobranca());
+			movimentoFinanceiroCota.setObservacao(movimentoFinanceiroCotaDTO.getObservacao());
 			movimentoFinanceiroCota.setMovimentos(movimentosEstoqueCota);
 			
 			movimentoFinanceiroCotaMerged = 
