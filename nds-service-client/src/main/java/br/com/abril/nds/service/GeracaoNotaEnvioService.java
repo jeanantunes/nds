@@ -13,10 +13,7 @@ public interface GeracaoNotaEnvioService {
 	public abstract List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro);
 	
 	public abstract Integer buscaCotasNotasDeEnvioQtd(FiltroConsultaNotaEnvioDTO filtro);
-
-	public abstract NotaEnvio gerar(Long idCota, Long idRota, String chaveAcesso,
-			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao, Date dataEmissao, Intervalo<Date> periodo, List<Long> listaIdFornecedores);
-
+	
 	public abstract NotaEnvio visualizar(Integer numeroCota, Long idRota, String chaveAcesso,
 			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao, Date dataEmissao, Intervalo<Date> periodo, List<Long> listaIdFornecedores);
 	

@@ -2,6 +2,17 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 	
 					init : function() {
         
+						var pesquisaCota = new PesquisaCota();
+						// Associando eventos ao DOM
+						$("#numeroCota").change(function(){
+							pesquisaCota.pesquisarPorNumeroCota('#numeroCota','#nomeCota');
+						});
+						
+						$("#nomeCota").keyup(function(){
+							pesquisaCota.autoCompletarPorNome('#nomeCota');
+						});
+						
+						
 						$(".areaInfluenciaGrid", areaInfluenciaGeradorFluxoController.workspace).flexigrid(	{
 											preProcess : areaInfluenciaGeradorFluxoController.executarPreProcessamento,
 											dataType : 'json',

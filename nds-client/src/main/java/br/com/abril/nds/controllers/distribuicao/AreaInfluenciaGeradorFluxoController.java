@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -70,6 +71,8 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 
 		validarEntradaPorCota(filtro);
 		
+		filtro.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtro.getNomeCota()));
+		
 		this.tratarFiltro(filtro);
 		
 		TableModel<CellModelKeyValue<AreaInfluenciaGeradorFluxoDTO>> tableModel = efetuarConsultaAreaInfluenciaPorCota(filtro);
@@ -102,7 +105,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 			if(listaFiltroAreaInfluenciaGeradorFluxoDTO.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
-			
+			//TODO Alterar para dois filtros. Um para cada opção de filtro: Area Influencia ou Cota
 			FileExporter.to("areaInfluenciaGeradorFluxo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					listaFiltroAreaInfluenciaGeradorFluxoDTO, AreaInfluenciaGeradorFluxoDTO.class, this.httpResponse);
 			

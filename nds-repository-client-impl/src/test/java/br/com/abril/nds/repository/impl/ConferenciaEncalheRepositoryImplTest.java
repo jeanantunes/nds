@@ -414,8 +414,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 
 		Long idDistribuidor = 1L;
 		Integer numeroCota = 5637;
-		Date dataInicial = Fixture.criarData(1, Calendar.JANUARY, 2012);
-		Date dataFinal = Fixture.criarData(1, Calendar.DECEMBER, 2012);
+		Date dataRecolhimento = Fixture.criarData(1, Calendar.JANUARY, 2012);
 		boolean indFechado = false;
 		boolean indPostergado = false;
 
@@ -426,7 +425,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		@SuppressWarnings("unused")
 		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = conferenciaEncalheRepository
 				.obterListaConferenciaEncalheDTOContingencia(idDistribuidor,
-						numeroCota, dataInicial, dataFinal, indFechado,
+						numeroCota, dataRecolhimento, indFechado,
 						indPostergado, listaIdProdutoEdicao);
 
 	}
@@ -518,8 +517,9 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		Integer numeroCota = 1;
 
 		Calendar data = Calendar.getInstance();
-		Date dataInicial = data.getTime();
-		Date dataFinal = data.getTime();
+		
+		Date dataRecolhimento = data.getTime();
+		
 
 		boolean indFechado = false;
 		boolean indPostergado = false;
@@ -531,8 +531,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 				.obterListaConferenciaEncalheDTOContingencia(
 						idDistribuidor,
 						numeroCota, 
-						dataInicial, 
-						dataFinal, 
+						dataRecolhimento,
 						indFechado,
 						indPostergado, 
 						listaIdProdutoEdicao
@@ -552,9 +551,9 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		Integer numeroCota = 1;
 
 		Calendar data = Calendar.getInstance();
-		Date dataInicial = data.getTime();
-		Date dataFinal = data.getTime();
-
+		
+		Date dataRecolhimento = data.getTime();
+		
 		boolean indFechado = false;
 		boolean indPostergado = false;
 
@@ -568,8 +567,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 				.obterListaConferenciaEncalheDTOContingencia(
 						idDistribuidor,
 						numeroCota, 
-						dataInicial, 
-						dataFinal, 
+						dataRecolhimento, 
 						indFechado,
 						indPostergado, 
 						listaIdProdutoEdicao

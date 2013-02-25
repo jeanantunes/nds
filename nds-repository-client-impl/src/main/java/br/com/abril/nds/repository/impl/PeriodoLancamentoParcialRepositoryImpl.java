@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacaoPeriodo;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -451,4 +452,38 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		return (Lancamento) criteria.uniqueResult();
 	
 	}
+	
+	public PeriodoLancamentoParcial obterPrimeiroLancamentoParcial(Long idProdutoEdicao){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
+			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
+			.append(" where lancamento.dataLancamentoDistribuidor = ")
+			.append(" ( select max(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
+			.append(" and produtoEdicao.id =:idProdutoEdicao ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (PeriodoLancamentoParcial) query.uniqueResult();
+	}
+	
+	public PeriodoLancamentoParcial obterUltimoLancamentoParcial(Long idProdutoEdicao){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
+			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
+			.append(" where lancamento.dataLancamentoDistribuidor = ")
+			.append(" ( select min(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
+			.append(" and produtoEdicao.id =:idProdutoEdicao ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (PeriodoLancamentoParcial) query.uniqueResult();
+	
+	}
+	
 }

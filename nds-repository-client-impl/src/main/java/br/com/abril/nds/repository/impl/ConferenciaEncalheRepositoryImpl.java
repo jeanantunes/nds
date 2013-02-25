@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
-
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -193,8 +191,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
 			Long idDistribuidor,
 			Integer numeroCota,
-			Date dataInicial,
-			Date dataFinal,
+			Date dataRecolhimento,
 			boolean indFechado,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao) {
@@ -294,7 +291,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append("	WHERE   ");
 		
 		hql.append("	COTA.NUMERO_COTA = :numeroCota AND ");
-		hql.append("	(CH_ENCALHE.DATA_RECOLHIMENTO between :dataInicial AND :dataFinal) AND ");
+		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento AND ");
 		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
 		hql.append("	CH_ENCALHE_COTA.POSTERGADO = :indPostergado 	");
 		
@@ -330,8 +327,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("desconto");
 		
 		query.setParameter("numeroCota", numeroCota);
-		query.setParameter("dataInicial", dataInicial);
-		query.setParameter("dataFinal", dataFinal);
+		query.setParameter("dataRecolhimento", dataRecolhimento);
 		query.setParameter("indFechado", indFechado);
 		query.setParameter("indPostergado", indPostergado);
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
@@ -504,18 +500,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" ) ");
 		
 		hql.append(" from ConferenciaEncalhe conferencia  ");
-		
-		hql.append("  join conferencia.controleConferenciaEncalheCota controleConferenciaEncalheCota ");
-		
-		hql.append("  join controleConferenciaEncalheCota.cota cota ");
-		
-		hql.append("  join cota.movimentoEstoqueCotas mec ");
-		
-		hql.append("  join conferencia.produtoEdicao produtoEdicao ");
-		
-		hql.append("  join produtoEdicao.produto produto ");
-		
-		hql.append("  join produto.fornecedores fornecedor ");
+		hql.append(" join conferencia.movimentoEstoqueCota mec ");
 		
 		hql.append(" WHERE conferencia.controleConferenciaEncalheCota.id = :idControleConferenciaEncalhe  ");
 		
@@ -525,34 +510,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		
 		return (BigDecimal) query.uniqueResult();
-	}
-
-    private String obterHQLDesconto(String cota, String produto, String fornecedor){
-    	
-		String auxC = " where ";
-		StringBuilder hql = new StringBuilder("coalesce ((select view.desconto from ViewDesconto view ");
-		
-
-    	 if (cota!=null && !"".equals(cota)){
- 		    hql.append(auxC+" view.cotaId = "+cota);
- 		    auxC = " and ";
- 		 }
-
-
-		 if (produto!=null && !"".equals(produto)){
-	 	     hql.append(auxC+" view.produtoEdicaoId = "+produto);
-	 	     auxC = " and ";
-	     }
-
-
-		 if (fornecedor!=null && !"".equals(fornecedor)){
-	 	     hql.append(auxC+" view.fornecedorId = "+fornecedor);
-	 	     auxC = " and ";
-		 }
-		 
-		 hql.append("),0)");
-
-		return hql.toString();
 	}
 
 	@Override
