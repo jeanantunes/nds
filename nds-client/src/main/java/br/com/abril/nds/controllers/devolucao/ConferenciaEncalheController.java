@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1183,7 +1184,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
 		
-		this.httpResponse.setContentType("application/txt");
+		/*this.httpResponse.setContentType("application/txt");
 		
 		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".txt");
 
@@ -1193,9 +1194,8 @@ public class ConferenciaEncalheController extends BaseController {
 
 		httpResponse.getOutputStream().close();
 		
-		result.use(Results.nothing());
-		
-		//result.use(Results.json()).from(new String(arquivo), "resultado");
+		result.use(Results.nothing());*/
+		result.use(Results.json()).from(new String(arquivo, Charset.forName("UTF-8")), "resultado").serialize();
 		
 	}
 
