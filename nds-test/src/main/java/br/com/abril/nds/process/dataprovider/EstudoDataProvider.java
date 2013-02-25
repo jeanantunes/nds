@@ -1,4 +1,4 @@
-package br.com.abril.nds;
+package br.com.abril.nds.process.dataprovider;
 
 import org.testng.annotations.DataProvider;
 
