@@ -205,7 +205,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	private Long calcularDiferencao(FechamentoFisicoLogicoDTO conferencia) {
 		 
 		if (conferencia.getFisico() != null && conferencia.getExemplaresDevolucao() != null) {	
-			return conferencia.getExemplaresDevolucao().longValue() - conferencia.getFisico().longValue();
+			return conferencia.getFisico().longValue() - conferencia.getExemplaresDevolucao().longValue() ;
 		}
 		
 		return null;
