@@ -27,12 +27,12 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();
-	    
-	    assertNotNull(" Cota : " + cota.getId() + "nao contem edicao base ", cota.getEdicoesRecebidas());
 
 	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
 
@@ -73,12 +73,12 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();
-
-	    assertNotNull(" Cota : " + cota.getId() + "nao contem edicao base ", cota.getEdicoesRecebidas());
 
 	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
 
@@ -119,12 +119,12 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();
-	    
-	    assertNotNull(" Cota : " + cota.getId() + "nao contem edicao base ", cota.getEdicoesRecebidas());
 
 	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
 
@@ -165,12 +165,12 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();
-	    
-	    assertNotNull(" Cota : " + cota.getId() + "nao contem edicao base ", cota.getEdicoesRecebidas());
 
 	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
 
@@ -211,12 +211,12 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();
-	    
-	    assertNotNull(" Cota : " + cota.getId() + "nao contem edicao base ", cota.getEdicoesRecebidas());
 
 	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
 
