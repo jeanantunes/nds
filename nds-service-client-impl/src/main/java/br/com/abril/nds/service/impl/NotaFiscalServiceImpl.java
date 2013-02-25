@@ -1138,7 +1138,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * br.com.abril.nds.util.Intervalo, java.util.List, java.util.List)
 	 */
 	@Override
-	@Transactional(readOnly=true)
 	public List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(
 			Distribuidor distribuidor, Cota cota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
