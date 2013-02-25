@@ -28,16 +28,16 @@ public class RegiaoCotaDTO extends FiltroDTO  implements Serializable {
 	private String nomeCota;
 	
 	@Export(label = "Tipo PDV", alignment=Alignment.LEFT, exhibitionOrder = 3)
-	private String tipoPDV;
+	private String tipoPDV = "";
 	
 	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private SituacaoCadastro tipoStatus;
 	
 	@Export(label = "Bairro", alignment=Alignment.LEFT, exhibitionOrder = 5)
-	private String bairro;
+	private String bairro = "";
 	
 	@Export(label = "Cidade", alignment=Alignment.LEFT, exhibitionOrder = 6)
-	private String cidade;
+	private String cidade = "";
 	
 	@Export(label = "Faturamento", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private String faturamento;
