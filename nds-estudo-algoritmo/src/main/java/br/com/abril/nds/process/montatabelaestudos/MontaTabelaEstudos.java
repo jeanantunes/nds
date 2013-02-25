@@ -22,7 +22,11 @@ public class MontaTabelaEstudos extends ProcessoAbstrato {
 	super(estudo);
     }
 
-    @Override
+    public MontaTabelaEstudos(Estudo estudo) {
+		super(estudo);
+	}
+
+	@Override
     protected void executarProcesso() {
     }
 

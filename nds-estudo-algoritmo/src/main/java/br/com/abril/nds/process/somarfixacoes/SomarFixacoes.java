@@ -22,7 +22,11 @@ public class SomarFixacoes extends ProcessoAbstrato {
 	super(estudo);
     }
 
-    @Override
+    public SomarFixacoes(Estudo estudo) {
+		super(estudo);
+	}
+
+	@Override
     protected void executarProcesso() {
     }
 

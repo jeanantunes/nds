@@ -26,4 +26,5 @@ public class JornaleirosNovos extends ProcessoAbstrato {
     protected void executarProcesso() {
     }
 
+
 }

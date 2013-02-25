@@ -14,7 +14,7 @@ public class CotaService {
     	List<ProdutoEdicao> edicoesRecebidas = cota.getEdicoesRecebidas();
     	if (edicoesRecebidas != null) {
         	for (ProdutoEdicao edicao : edicoesRecebidas) {
-        	    soma.add(edicao.getVenda());
+        	    soma = soma.add(edicao.getVenda());
         	}
         	if (edicoesRecebidas.size() != 0) {
         	    cota.setVendaMedia(soma.divide(new BigDecimal(edicoesRecebidas.size()), 2, BigDecimal.ROUND_HALF_UP));

@@ -24,5 +24,6 @@ public class Bonificacoes extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() {
     }
+    
 
 }

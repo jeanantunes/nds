@@ -110,15 +110,15 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     	List<Cota> cotaListRecebeComplementar = new ArrayList<Cota>();
     	List<Cota> cotaListOrdenada = new ArrayList<Cota>();
     	
-//    	for(Cota cota:getEstudo().getCotas()){
-//    		if( cota.isRecebeReparteComplementar()==false && (
-//    				!cota.getClassificacao().equals(ClassificacaoCota.BancaSemClassificacaoDaPublicacao)
-//    				&& !cota.getClassificacao().equals(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento)
-//    				&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix))){
-//    			cotaListRecebeComplementar.add(cota);
-//    		}
-//    	}
-    	
+		for(Cota cota:getEstudo().getCotas()){
+			if( cota.isRecebeReparteComplementar()==false && (
+					!cota.getClassificacao().equals(ClassificacaoCota.BancaSemClassificacaoDaPublicacao)
+					&& !cota.getClassificacao().equals(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento)
+					&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix))){
+				cotaListRecebeComplementar.add(cota);
+			}
+		}
+   	
 //    	3)	Orden�-las na seguinte prioridade de recebimento de reparte:
     	for(Ordenador ordenador:this.ordenadorList){
     		for(Cota c:cotaListRecebeComplementar){

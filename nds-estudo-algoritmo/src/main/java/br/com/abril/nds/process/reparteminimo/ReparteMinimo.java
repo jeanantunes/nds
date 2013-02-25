@@ -36,12 +36,12 @@ public class ReparteMinimo extends ProcessoAbstrato {
 			BigDecimal somatoriaReparteMinimo = BigDecimal.ZERO;
 			BigDecimal reparteMinimo = BigDecimal.ZERO;
 			for (Cota cota : getEstudo().getCotas()) {
-				if (!getEstudo().getPacotePadrao().equals(BigDecimal.ZERO)) {
+				if (getEstudo().getPacotePadrao().compareTo(BigDecimal.ZERO) > 0) {
 					// TODO: verificar se o reparte mínimo usado na divisão será mesmo este
 					reparteMinimo = cota.getReparteMinimo().divide(getEstudo().getPacotePadrao(), 0, BigDecimal.ROUND_FLOOR)
 						.multiply(getEstudo().getPacotePadrao());
 				}
-				if (cota.getReparteMinimo().equals(BigDecimal.ZERO)) {
+				if (cota.getReparteMinimo().compareTo(BigDecimal.ZERO) == 0) {
 					reparteMinimo = getEstudo().getPacotePadrao();
 				}
 				if (cota.getReparteMinimo().doubleValue() < reparteMinimo.doubleValue()) {
@@ -49,7 +49,7 @@ public class ReparteMinimo extends ProcessoAbstrato {
 				}
 				somatoriaReparteMinimo = somatoriaReparteMinimo.add(cota.getReparteMinimo());
 			}
-			if (!getEstudo().getReparteDistribuir().equals(BigDecimal.ZERO)) {
+			if (getEstudo().getReparteDistribuir().compareTo(BigDecimal.ZERO) > 0) {
     			if (somatoriaReparteMinimo.divide(getEstudo().getReparteDistribuir(), 2, BigDecimal.ROUND_FLOOR).doubleValue() > BigDecimal.valueOf(
     					0.75).doubleValue()) {
     				throw new Exception(

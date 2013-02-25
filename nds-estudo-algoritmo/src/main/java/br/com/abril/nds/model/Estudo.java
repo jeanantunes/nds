@@ -27,14 +27,14 @@ public class Estudo extends GenericDTO<Estudo> {
 	//TODO validar campo no DB e como recupera-lo
 	private boolean pracaVeraneio;
 	// variáveis utilizadas no algoritmo
-	private BigDecimal reservaAjuste;
+	private BigDecimal ajusteReparte;
 	private BigDecimal excedente;
 	private BigDecimal reparteComplementar;
 
 	public Estudo() {
 		totalPDVs = BigDecimal.ZERO;
 		pacotePadrao = BigDecimal.ZERO;
-		reservaAjuste = BigDecimal.ZERO;
+		ajusteReparte = BigDecimal.ZERO;
 		reparteDistribuir = BigDecimal.ZERO;
 		reparteDistribuirInicial = BigDecimal.ZERO;
 		somatoriaVendaMedia = BigDecimal.ZERO;
@@ -215,14 +215,6 @@ public class Estudo extends GenericDTO<Estudo> {
 		this.status = status;
 	}
 
-	public BigDecimal getReservaAjuste() {
-		return reservaAjuste;
-	}
-
-	public void setReservaAjuste(BigDecimal reservaAjuste) {
-		this.reservaAjuste = reservaAjuste;
-	}
-
 	public BigDecimal getExcedente() {
 		return excedente;
 	}
@@ -239,14 +231,27 @@ public class Estudo extends GenericDTO<Estudo> {
 		this.reparteComplementar = reparteComplementar;
 	}
 
+	public BigDecimal getAjusteReparte() {
+		return ajusteReparte;
+	}
+
+	public void setAjusteReparte(BigDecimal ajusteReparte) {
+		this.ajusteReparte = ajusteReparte;
+	}
+
 	@Override
 	public String toString() {
-		return "Estudo [id=" + id + "\n status=" + status + "\n reparteDistribuir=" + reparteDistribuir + "\n reparteDistribuirInicial="
-				+ reparteDistribuirInicial + "\n produto=" + produto + "\n edicoesBase=" + edicoesBase + "\n cotas=" + cotas
-				+ "\n distribuicaoPorMultiplos=" + distribuicaoPorMultiplos + "\n pacotePadrao=" + pacotePadrao + "\n somatoriaVendaMedia="
-				+ somatoriaVendaMedia + "\n somatoriaReparteEdicoesAbertas=" + somatoriaReparteEdicoesAbertas + "\n complementarAutomatico="
-				+ complementarAutomatico + "\n percentualProporcaoExcedentePDV=" + percentualProporcaoExcedentePDV
-				+ "\n percentualProporcaoExcedenteVenda=" + percentualProporcaoExcedenteVenda + "\n totalPDVs=" + totalPDVs
-				+ "\n pracaVeraneio=" + pracaVeraneio + "\n reservaAjuste=" + reservaAjuste + "]";
+		String strcotas = "";
+		for (Cota cota : cotas) {
+			strcotas += cota.toString() +"\n";
+		}
+		return "Estudo [id=" + id + ", status=" + status + ", reparteDistribuir=" + reparteDistribuir + ", reparteDistribuirInicial="
+				+ reparteDistribuirInicial + ", produto=" + produto + ", edicoesBase=" + edicoesBase
+				+ ", distribuicaoPorMultiplos=" + distribuicaoPorMultiplos + ", pacotePadrao=" + pacotePadrao + ", somatoriaVendaMedia="
+				+ somatoriaVendaMedia + ", somatoriaReparteEdicoesAbertas=" + somatoriaReparteEdicoesAbertas + ", complementarAutomatico="
+				+ complementarAutomatico + ", percentualProporcaoExcedentePDV=" + percentualProporcaoExcedentePDV
+				+ ", percentualProporcaoExcedenteVenda=" + percentualProporcaoExcedenteVenda + ", totalPDVs=" + totalPDVs
+				+ ", pracaVeraneio=" + pracaVeraneio + ", ajusteReparte=" + ajusteReparte + ", excedente=" + excedente
+				+ ", reparteComplementar=" + reparteComplementar + "] \n"+ strcotas;
 	}
 }

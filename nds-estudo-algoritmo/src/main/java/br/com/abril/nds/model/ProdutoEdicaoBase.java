@@ -100,4 +100,11 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 	public void setColecao(boolean colecao) {
 		this.colecao = colecao;
 	}
+
+	@Override
+	public String toString() {
+		return "ProdutoEdicaoBase [id=" + id + ", numeroEdicao=" + numeroEdicao + ", idProduto=" + idProduto + ", codigoProduto="
+				+ codigoProduto + ", parcial=" + parcial + ", edicaoAberta=" + edicaoAberta + ", peso=" + peso + ", idLancamento="
+				+ idLancamento + ", dataLancamento=" + dataLancamento + ", colecao=" + colecao + "]";
+	}
 }

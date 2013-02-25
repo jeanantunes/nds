@@ -23,7 +23,8 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal somaReparteEdicoesAbertas;
     private BigDecimal indiceCorrecaoTendencia;
     private BigDecimal quantidadePDVs;
-    // TODO o q é mix?
+    private boolean recebeReparteComplementar;
+	// TODO: o q é mix?
     private boolean mix;
     private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceAjusteCota;
@@ -257,4 +258,25 @@ public class Cota extends GenericDTO<Cota> {
     public void setIndiceTratamentoRegional(BigDecimal indiceTratamentoRegional) {
 	this.indiceTratamentoRegional = indiceTratamentoRegional;
     }
+
+	public boolean isRecebeReparteComplementar() {
+		return recebeReparteComplementar;
+	}
+
+	public void setRecebeReparteComplementar(boolean recebeReparteComplementar) {
+		this.recebeReparteComplementar = recebeReparteComplementar;
+	}
+
+	@Override
+	public String toString() {
+		return "Cota [id=" + id + ", edicoesRecebidas=" + edicoesRecebidas + ", classificacao=" + classificacao + ", reparteCalculado="
+				+ reparteCalculado + ", reparteJuramentadoAFaturar=" + reparteJuramentadoAFaturar + ", vendaMediaMaisN=" + vendaMediaMaisN
+				+ ", reparteMinimo=" + reparteMinimo + ", reparteMaximo=" + reparteMaximo + ", vendaMedia=" + vendaMedia
+				+ ", vendaMediaNominal=" + vendaMediaNominal + ", vendaEdicaoMaisRecenteFechada=" + vendaEdicaoMaisRecenteFechada
+				+ ", cotaSoRecebeuEdicaoAberta=" + cotaSoRecebeuEdicaoAberta + ", percentualEncalheMaximo=" + percentualEncalheMaximo
+				+ ", somaReparteEdicoesAbertas=" + somaReparteEdicoesAbertas + ", indiceCorrecaoTendencia=" + indiceCorrecaoTendencia
+				+ ", quantidadePDVs=" + quantidadePDVs + ", recebeReparteComplementar=" + recebeReparteComplementar + ", mix=" + mix
+				+ ", indiceVendaCrescente=" + indiceVendaCrescente + ", indiceAjusteCota=" + indiceAjusteCota
+				+ ", indiceTratamentoRegional=" + indiceTratamentoRegional + "]";
+	}
 }

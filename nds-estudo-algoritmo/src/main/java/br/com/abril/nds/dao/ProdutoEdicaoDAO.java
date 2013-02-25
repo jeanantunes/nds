@@ -49,7 +49,6 @@ public class ProdutoEdicaoDAO {
 		edicao.setVenda(edicao.getReparte().subtract(
 			rs.getBigDecimal("QTDE_DEVOLVIDA")));
 		edicao.setParcial(rs.getInt("PARCIAL") == 1);
-		edicao.setPacotePadrao(rs.getInt("PACOTE_PADRAO"));
 		edicao.setPeso(rs.getInt("PESO"));
 		edicao.setColecao(rs.getInt("IS_COLECAO") == 1);
 

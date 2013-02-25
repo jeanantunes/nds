@@ -26,25 +26,27 @@ public class MinimoMaximo extends ProcessoAbstrato {
 	public void executarProcesso() throws Exception {
 		
 		for (Cota cota : getEstudo().getCotas()) {
-			if (cota.getReparteMinimo().longValue() > cota.getReparteMaximo().longValue()) {
-				throw new Exception(String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId()));
-			}
-			if (cota.getReparteCalculado().longValue() < cota.getReparteMinimo().longValue()) {
-				cota.setReparteCalculado(cota.getReparteMinimo());
-				
-				if (cota.isMix()) {
-					cota.setClassificacao(ClassificacaoCota.CotaMix);
-				} else {
-					cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
-				}
-			} else if (cota.getReparteCalculado().longValue() > cota.getReparteMaximo().longValue()) {
-				cota.setReparteCalculado(cota.getReparteMaximo());
-	
-				if (cota.isMix()) {
-					cota.setClassificacao(ClassificacaoCota.CotaMix);
-				} else {
-					cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
-				}
+			if ((cota.getReparteMinimo() != null) && (cota.getReparteMaximo() != null)) {
+    			if (cota.getReparteMinimo().compareTo(cota.getReparteMaximo()) > 0) {
+    				throw new Exception(String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId()));
+    			}
+    			if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
+    				cota.setReparteCalculado(cota.getReparteMinimo());
+    				
+    				if (cota.isMix()) {
+    					cota.setClassificacao(ClassificacaoCota.CotaMix);
+    				} else {
+    					cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
+    				}
+    			} else if (cota.getReparteCalculado().longValue() > cota.getReparteMaximo().longValue()) {
+    				cota.setReparteCalculado(cota.getReparteMaximo());
+    	
+    				if (cota.isMix()) {
+    					cota.setClassificacao(ClassificacaoCota.CotaMix);
+    				} else {
+    					cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
+    				}
+    			}
 			}
 		}
 	}

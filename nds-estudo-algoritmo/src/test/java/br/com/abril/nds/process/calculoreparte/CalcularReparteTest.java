@@ -19,6 +19,7 @@ public class CalcularReparteTest {
 	private Estudo criarAmbiente(boolean configurado, boolean distribuicaoPorMultiplos, BigDecimal pacotePadrao,
 			BigDecimal vendaMedia, BigDecimal reparteCalculado, BigDecimal reparteDistribuir, boolean temEdicaoBaseFechada) {
 		Estudo estudo = new Estudo();
+		estudo.setProduto(new ProdutoEdicao());
 		estudo.setEdicoesBase(new ArrayList<ProdutoEdicaoBase>());
 		Cota cota = new Cota();
 		if (configurado) {
@@ -66,11 +67,11 @@ public class CalcularReparteTest {
 
 		// Execução do Processo
 		CalcularReparte calcularReparte = new CalcularReparte(estudo);
-		calcularReparte.calcularReservaAjuste();
+		calcularReparte.calcularAjusteReparte();
 		
 		// Validação do teste
 		assertEquals(new BigDecimal(100), calcularReparte.getEstudo().getReparteDistribuir());
-		assertEquals(new BigDecimal(15), calcularReparte.getEstudo().getReservaAjuste());
+		assertEquals(new BigDecimal(15), calcularReparte.getEstudo().getAjusteReparte());
 		for (Cota cota : calcularReparte.getEstudo().getCotas()) {
 			assertEquals(new BigDecimal(10), cota.getReparteCalculado());
 			assertEquals(ClassificacaoCota.SemClassificacao, cota.getClassificacao());
@@ -84,11 +85,11 @@ public class CalcularReparteTest {
 
 		// Execução do Processo
 		CalcularReparte calcularReparte = new CalcularReparte(estudo);
-		calcularReparte.calcularReservaAjuste();
+		calcularReparte.calcularAjusteReparte();
 		
 		// Validação do teste
 		assertEquals(new BigDecimal(100), calcularReparte.getEstudo().getReparteDistribuir());
-		assertEquals(new BigDecimal(15), calcularReparte.getEstudo().getReservaAjuste());
+		assertEquals(new BigDecimal(15), calcularReparte.getEstudo().getAjusteReparte());
 		for (Cota cota : calcularReparte.getEstudo().getCotas()) {
 			assertEquals(new BigDecimal(10), cota.getReparteCalculado());
 			assertEquals(ClassificacaoCota.SemClassificacao, cota.getClassificacao());
