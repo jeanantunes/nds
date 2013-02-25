@@ -7,10 +7,11 @@ import java.sql.SQLException;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class MovimentoEstoqueCotaDAO {
 	
-	public BigDecimal retornarReparteJuramentadoAFaturar(Cota cota,ProdutoEdicao produtoEdicao){
+	public BigDecimal retornarReparteJuramentadoAFaturar(Cota cota, ProdutoEdicaoBase produtoEdicao){
 		BigDecimal valorJuramentado = BigDecimal.ZERO;
 		
 		try {

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class ProdutoEdicaoDAO {
 
@@ -61,7 +62,7 @@ public class ProdutoEdicaoDAO {
 	return edicoes;
     }
 
-	public int getQtdeVezesReenviadas(Cota cota, ProdutoEdicao produtoEdicao) {
+	public int getQtdeVezesReenviadas(Cota cota, ProdutoEdicaoBase produtoEdicao) {
 		try {
 			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
 					"" + "SELECT count(EPC.id) " + "  FROM ESTOQUE_PRODUTO_COTA EPC "

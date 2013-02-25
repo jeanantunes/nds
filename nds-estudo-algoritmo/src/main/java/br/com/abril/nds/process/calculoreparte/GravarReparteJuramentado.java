@@ -63,8 +63,7 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
 							if (getEstudo().isDistribuicaoPorMultiplos()) {
 								// RepCalculado Cota = ARRED( RepCalculado Cota
 								// / Pacote-Padr�o ; 0 )* Pacote-Padr�o
-								BigDecimal pacotePadrao = new BigDecimal(getEstudo()
-										.getProduto().getPacotePadrao());
+								BigDecimal pacotePadrao = getEstudo().getPacotePadrao();
 								cota.setReparteCalculado(cota
 										.getReparteCalculado()
 										.divide(pacotePadrao)

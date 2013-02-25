@@ -96,7 +96,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 
 	public void calcularPercentualExcedente() {
 		// %Excedente = Excedente / SVendaMédiaFinal
-		if (!getEstudo().getSomatoriaVendaMedia().equals(BigDecimal.ZERO)) {
+		if (getEstudo().getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
 			percentualExcedente = getEstudo().getExcedente().divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
 		}
 		for (Cota cota : getEstudo().getCotas()) {

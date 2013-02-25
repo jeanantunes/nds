@@ -29,8 +29,8 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 //	Prioridade de recebimento de reparte:
 	
 	/*
-	 * A: As que não receberam as edições-base, porém receberam a edição aberta, caso exista, 
-	 * da maior para menor no ranking de segmento da publicação(cotas SH);
+	 * A: As que nï¿½o receberam as ediï¿½ï¿½es-base, porï¿½m receberam a ediï¿½ï¿½o aberta, caso exista, 
+	 * da maior para menor no ranking de segmento da publicaï¿½ï¿½o(cotas SH);
 	 */
 	ordenadorList.add(new Ordenador("A"){
 		@Override
@@ -45,7 +45,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	});
 	
 	/*
-	 * B: As que não receberam as edições-base, da maior para a menor no ranking de segmento da publicação (cotas SH);
+	 * B: As que nï¿½o receberam as ediï¿½ï¿½es-base, da maior para a menor no ranking de segmento da publicaï¿½ï¿½o (cotas SH);
 	 */
 	ordenadorList.add(new Ordenador("B"){
 		@Override
@@ -59,7 +59,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	});
 	
 	/*
-	 * C: As que receberam 1 edição das edições-base, da maior para a menor no ranking de segmento da publicação (cotas VZ);
+	 * C: As que receberam 1 ediï¿½ï¿½o das ediï¿½ï¿½es-base, da maior para a menor no ranking de segmento da publicaï¿½ï¿½o (cotas VZ);
 	 */
 	ordenadorList.add(new Ordenador("C"){
 		@Override
@@ -73,7 +73,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	});
 	
 	/*
-	 * D: As que receberam 2 edições das edições-base, da maior para a menor no ranking de segmento da publicação (cotas VZ);
+	 * D: As que receberam 2 ediï¿½ï¿½es das ediï¿½ï¿½es-base, da maior para a menor no ranking de segmento da publicaï¿½ï¿½o (cotas VZ);
 	 */
 	ordenadorList.add(new Ordenador("D"){
 		@Override
@@ -87,7 +87,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	});
 	
 	/*
-	 * E: As que receberam 3 ou mais edições das edições-base, da maior para a menor no ranking de segmento da publicação (cotas VZ).
+	 * E: As que receberam 3 ou mais ediï¿½ï¿½es das ediï¿½ï¿½es-base, da maior para a menor no ranking de segmento da publicaï¿½ï¿½o (cotas VZ).
 	 */
 	ordenadorList.add(new Ordenador("E"){
 		@Override
@@ -105,21 +105,21 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() {
     	
-//    	1)	Listar todas as cotas ativas que não entraram no Estudo Normal, considerando-se as exclusões por CLASSIFICAÇÃO, SEGMENTO e MIX; 
-//    	2)	Excluir Cotas que não recebem Complementar ( marcado no Cadastro de Cotas )
+//    	1)	Listar todas as cotas ativas que nï¿½o entraram no Estudo Normal, considerando-se as exclusï¿½es por CLASSIFICAï¿½ï¿½O, SEGMENTO e MIX; 
+//    	2)	Excluir Cotas que nï¿½o recebem Complementar ( marcado no Cadastro de Cotas )
     	List<Cota> cotaListRecebeComplementar = new ArrayList<Cota>();
     	List<Cota> cotaListOrdenada = new ArrayList<Cota>();
     	
-    	for(Cota cota:getEstudo().getCotas()){
-    		if( cota.isRecebeReparteComplementar()==false && (
-    				!cota.getClassificacao().equals(ClassificacaoCota.BancaSemClassificacaoDaPublicacao)
-    				&& !cota.getClassificacao().equals(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento)
-    				&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix))){
-    			cotaListRecebeComplementar.add(cota);
-    		}
-    	}
+//    	for(Cota cota:getEstudo().getCotas()){
+//    		if( cota.isRecebeReparteComplementar()==false && (
+//    				!cota.getClassificacao().equals(ClassificacaoCota.BancaSemClassificacaoDaPublicacao)
+//    				&& !cota.getClassificacao().equals(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento)
+//    				&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix))){
+//    			cotaListRecebeComplementar.add(cota);
+//    		}
+//    	}
     	
-//    	3)	Ordená-las na seguinte prioridade de recebimento de reparte:
+//    	3)	Ordenï¿½-las na seguinte prioridade de recebimento de reparte:
     	for(Ordenador ordenador:this.ordenadorList){
     		for(Cota c:cotaListRecebeComplementar){
     			if(ordenador.filtrar(c)){
@@ -130,13 +130,13 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     	}
     	
     	/*
-    	 * 4)	As bancas receberão a quantidade de reparte por banca definido no estudo (default = 2 exemplares)
-    	 *  ou 1 pacote-padrão se a distribuição for por múltiplos 
-    	 * até acabar o reparte complementar, sempre considerando-se a priorização acima. 
-    	 * Caso haja saldo a distribuir e todas as bancas selecionadas já receberam, 
-    	 * enviar 1 exemplar ou 1 pacote-padrão se a distribuição for por múltiplos para as bancas do estudo normal, 
-    	 * da maior para a menor até finalizar o estoque. 
-    	 * Não incluir bancas marcadas com `FX` `MX` e `MM` nessa redistribuição;
+    	 * 4)	As bancas receberï¿½o a quantidade de reparte por banca definido no estudo (default = 2 exemplares)
+    	 *  ou 1 pacote-padrï¿½o se a distribuiï¿½ï¿½o for por mï¿½ltiplos 
+    	 * atï¿½ acabar o reparte complementar, sempre considerando-se a priorizaï¿½ï¿½o acima. 
+    	 * Caso haja saldo a distribuir e todas as bancas selecionadas jï¿½ receberam, 
+    	 * enviar 1 exemplar ou 1 pacote-padrï¿½o se a distribuiï¿½ï¿½o for por mï¿½ltiplos para as bancas do estudo normal, 
+    	 * da maior para a menor atï¿½ finalizar o estoque. 
+    	 * Nï¿½o incluir bancas marcadas com `FX` `MX` e `MM` nessa redistribuiï¿½ï¿½o;
     	 */
     	for(Cota c:cotaListOrdenada){
     		if(!c.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
@@ -144,7 +144,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     				&& !c.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)){
     			//TODO: FAZER REDISTRIBUICAO
     			
-//    			5)	Marcar cotas com ´CP´
+//    			5)	Marcar cotas com ï¿½CPï¿½
     			c.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
     		}
     	}
@@ -152,7 +152,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     }
     
     
-    
+   //FIXME talvez usar o Guava do google para ordenar? 
    private abstract class Ordenador{
 	   private String name;
 	   public Ordenador(String name){

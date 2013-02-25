@@ -1,8 +1,5 @@
 package br.com.abril.nds.process.calculoreparte;
 
-import java.math.BigDecimal;
-
-import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
@@ -26,10 +23,10 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
     protected void executarProcesso() {
     	
 
-    	for(Cota cota:getEstudo().getCotas()){
-    		//evitando referencia de objetos :p
-    		cota.setReparteFinalCota(BigDecimal.ZERO.add(cota.getReparteCalculado()));
-    	}
+//    	for(Cota cota:getEstudo().getCotas()){
+//    		//evitando referencia de objetos :p
+//    		cota.setReparteFinalCota(BigDecimal.ZERO.add(cota.getReparteCalculado()));
+//    	}
     }
 
 }

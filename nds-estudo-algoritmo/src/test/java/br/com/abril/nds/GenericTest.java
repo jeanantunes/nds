@@ -1,20 +1,29 @@
 package br.com.abril.nds;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.junit.Test;
+
+import br.com.abril.nds.model.ProdutoEdicao;
 
 public class GenericTest {
 
     @Test
-    public void test() {
-	List<Integer> list = new ArrayList<>();
-	System.out.println(list.size());
+    public void test() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	ProdutoEdicao edicao = new ProdutoEdicao();
+	edicao.setCodigoProduto(123L);
+	edicao.setColecao(false);
 	
-	list.add(1);
-	System.out.println(list.size());
+	Class<? extends ProdutoEdicao> clazz = edicao.getClass();
 	
-	list.get(list.size());
+	Method[] declaredMethods = clazz.getMethods();
+	
+	for (Method method : declaredMethods) {
+	    String name = method.getName();
+	    if((name.startsWith("g") || name.startsWith("i")) && !name.equalsIgnoreCase("getClass")) {
+		System.out.println(name + ": " + method.invoke(edicao));
+	    }
+	}
     }
 }

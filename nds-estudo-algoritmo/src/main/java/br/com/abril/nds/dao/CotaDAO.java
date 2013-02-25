@@ -108,6 +108,7 @@ public class CotaDAO {
 		if(prevIdCota != idCota) {
 		    Cota cota = new Cota();
 		    cota.setId(idCota);
+		    cota.setNumero(rs.getLong("NUMERO_COTA"));
 		    cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos));
 		    returnListCota.add(cota);
 		} else {
@@ -140,9 +141,8 @@ public class CotaDAO {
 	
 	produtoEdicao.setPeso(idsPesos.get(produtoEdicao.getId()));
 	
-	//dados do sistema legado
-//	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-//	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
+	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
 
 	edicoes.add(produtoEdicao);
 	return edicoes;
@@ -168,6 +168,7 @@ public class CotaDAO {
 
     private static final String SQL_PRODUTO_EDICAO_POR_COTA = " select " 
 	    + " c.id as COTA_ID "
+	    + " ,c.NUMERO_COTA "
 	    + " ,p.id as PRODUTO_ID "
 	    + " ,pe.id as PRODUTO_EDICAO_ID "
 	    + " ,l.id as LANCAMENTO_ID "
@@ -178,6 +179,8 @@ public class CotaDAO {
 	    + " ,epc.QTDE_RECEBIDA "
 	    + " ,(epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) as QTDE_VENDA "
 	    + " ,pe.PACOTE_PADRAO "
+	    + " ,pe.NUMERO_EDICAO "
+	    + " ,p.CODIGO "
 	+ " from "
 	    + " produto_edicao pe "
 	    + " ,produto p "

@@ -11,7 +11,7 @@ public class Estudo extends GenericDTO<Estudo> {
 	private String status;
 	private BigDecimal reparteDistribuir;
 	private BigDecimal reparteDistribuirInicial;
-	private ProdutoEdicao produto;
+	private ProdutoEdicaoBase produto;
 	private List<ProdutoEdicaoBase> edicoesBase;
 	private List<Cota> cotas; //Cotas que receberam as edições base.
 	private boolean distribuicaoPorMultiplos;
@@ -41,6 +41,7 @@ public class Estudo extends GenericDTO<Estudo> {
 		somatoriaReparteEdicoesAbertas = BigDecimal.ZERO;
 		percentualProporcaoExcedentePDV = BigDecimal.ZERO;
 		percentualProporcaoExcedenteVenda = BigDecimal.ZERO;
+		excedente = BigDecimal.ZERO;
 	}
 	
 	/**
@@ -61,11 +62,11 @@ public class Estudo extends GenericDTO<Estudo> {
 	 * 
 	 * @return {@link ProdutoEdicao}
 	 */
-	public ProdutoEdicao getProduto() {
+	public ProdutoEdicaoBase getProduto() {
 		return produto;
 	}
 
-	public void setProduto(ProdutoEdicao produto) {
+	public void setProduto(ProdutoEdicaoBase produto) {
 		this.produto = produto;
 	}
 

@@ -28,17 +28,28 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceAjusteCota;
     private BigDecimal indiceTratamentoRegional;
+    
+    private Long numero;
 
     public Cota() {
 	vendaMedia = BigDecimal.ZERO;
 	vendaMediaMaisN = BigDecimal.ZERO;
 	reparteCalculado = BigDecimal.ZERO;
 	reparteMinimo = BigDecimal.ZERO;
+	reparteMaximo = BigDecimal.ZERO;
 	somaReparteEdicoesAbertas = BigDecimal.ZERO;
 	percentualEncalheMaximo = BigDecimal.ZERO;
 	classificacao = ClassificacaoCota.SemClassificacao;
     }
 
+    public Long getNumero() {
+	return numero;
+    }
+
+    public void setNumero(Long numero) {
+	this.numero = numero;
+    }
+    
     public Long getId() {
 	return id;
     }
@@ -103,6 +114,7 @@ public class Cota extends GenericDTO<Cota> {
     public BigDecimal getVendaEdicaoMaisRecenteFechada() {
 	if (vendaEdicaoMaisRecenteFechada == null) {
 	    // Busca para encontrar qual é a venda da edição mais recente fechada
+	    vendaEdicaoMaisRecenteFechada = BigDecimal.ZERO;
 	    for (int i = edicoesRecebidas.size() - 1; i >= 0; i--) {
 		if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
 		    vendaEdicaoMaisRecenteFechada = edicoesRecebidas.get(i).getVenda();
