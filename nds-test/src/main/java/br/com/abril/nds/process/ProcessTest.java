@@ -107,7 +107,10 @@ public class ProcessTest {
 	AjusteFinalReparte ajusteFinalReparte = new AjusteFinalReparte(estudo);
 	ajusteFinalReparte.executar();
 	
+	Reporter.log("<div id='content' style='overflow:scroll;width: 910px;height: 490px;'>");
 	imprimeResultadoFinalEstudo(estudo);
+	Reporter.log("<script> $('#content').parent().on('click', function() { $('.navigator-root').hide();$('.wrapper').css({'position':'relative','left':'0'}); }).end().css({'width': '1300px'}); </script>");
+	Reporter.log("</div>");
     }
     
     private void imprimeResultadoFinalEstudo(Estudo estudo) {
