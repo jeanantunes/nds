@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpSession;
 
@@ -613,8 +612,6 @@ public class MatrizRecolhimentoController extends BaseController {
 							  listaProdutoRecolhimentoRemover,
 							  novaData);
 		
-		this.validarSequencia(matrizRecolhimento);
-		
 		balanceamentoRecolhimentoSessao.setMatrizRecolhimento(matrizRecolhimento);
 		
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
@@ -682,9 +679,6 @@ public class MatrizRecolhimentoController extends BaseController {
 						Long.valueOf(produtoRecolhimento.getIdLancamento()))) {
 					
 					listaProdutoRecolhimentoRemover.add(produtoRecolhimentoDTO);
-					
-					produtoRecolhimentoDTO.setSequencia(
-						Integer.valueOf(produtoRecolhimento.getSequencia()));
 					
 					listaProdutoRecolhimentoAdicionar.add(produtoRecolhimentoDTO);
 					
@@ -773,8 +767,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO = new ProdutoRecolhimentoVO();
 			
 			produtoRecolhimentoVO.setIdLancamento(produtoRecolhimentoDTO.getIdLancamento().toString());
-			
-			produtoRecolhimentoVO.setSequencia(produtoRecolhimentoDTO.getSequencia());
 			
 			produtoRecolhimentoVO.setIdProdutoEdicao(produtoRecolhimentoDTO.getIdProdutoEdicao());
 				
@@ -885,9 +877,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 		produtoRecolhimentoFormatado.setIdLancamento(
 			(produtoRecolhimento.getIdLancamento() != null) ? produtoRecolhimento.getIdLancamento().toString() : null);
-		
-		produtoRecolhimentoFormatado.setSequencia(
-			(produtoRecolhimento.getSequencia() != null) ? produtoRecolhimento.getSequencia().toString() : null);
 			
 		produtoRecolhimentoFormatado.setIdProdutoEdicao(
 			(produtoRecolhimento.getIdProdutoEdicao() != null) ? produtoRecolhimento.getIdProdutoEdicao().toString() : null);
@@ -1017,41 +1006,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			throw new ValidacaoException(
 				new ValidacaoVO(TipoMensagem.WARNING, "Semana inválida!"));
 		}
-	}
-	
-	/**
-	 * Valida a sequência dos produtos da matriz de recolhimento
-	 * 
-	 * @param matrizRecolhimento - matriz de recolhimento
-	 */
-	private void validarSequencia(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
-		
-		Set<Integer> sequenciasValidas = new TreeSet<Integer>();
-		
-		Set<Integer> sequenciasInvalidas = new TreeSet<Integer>();
-		
-		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
-			
-			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
-		
-			for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDTO) {
-				
-				boolean adicionada = sequenciasValidas.add(produtoRecolhimentoDTO.getSequencia());
-				
-				if (!adicionada) {
-					
-					sequenciasInvalidas.add(produtoRecolhimentoDTO.getSequencia());
-				}
-			}
-		}
-		
-		if (!sequenciasInvalidas.isEmpty()) {
-			
-			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING,
-					"O campo [SM] não pode ser duplicado! A(s) SM(s) duplicadas são: " + sequenciasInvalidas));
-		}
-		
 	}
 	
 	/**

@@ -242,7 +242,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			var nomeProduto = row.cell.nomeProduto;
 			
 			row.cell.nomeProduto = balanceamentoRecolhimentoController.balanceamento.getColunaProduto(idProdutoEdicao, nomeProduto);
-			row.cell.sequencia = balanceamentoRecolhimentoController.gerarInputSequencia(row);
 			row.cell.novaData = balanceamentoRecolhimentoController.gerarHTMLNovaData(row);
 			row.cell.reprogramar = balanceamentoRecolhimentoController.gerarCheckReprogramar(row);
 			row.cell.acao = balanceamentoRecolhimentoController.gerarBtnAcoes(row);
@@ -270,27 +269,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		}
 		
 		return btnExcluir;
-	},
-	
-	gerarInputSequencia : function(row) {
-		
-		var retornoHTML;
-		
-		if (row.cell.bloqueioAlteracaoBalanceamento) {
-			
-			retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
-					    + 	    ' value="' + row.cell.sequencia + '"'
-					    +	    ' style="width: 30px;" disabled="disabled"'
-					    +	    ' name="sequencia" maxlength="4" />';
-		} else {
-			
-			retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
-					    + 	    ' value="' + row.cell.sequencia + '"'
-					    +	    ' style="width: 30px;"'
-					    +	    ' name="sequencia" maxlength="4" />';
-		}
-		
-		return retornoHTML;
 	},
 	
 	gerarHTMLNovaData : function(row) {
@@ -345,8 +323,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		});
 		
 		$("input[name='novaData']", balanceamentoRecolhimentoController.workspace).mask("99/99/9999");
-		
-		$("input[name='sequencia']", balanceamentoRecolhimentoController.workspace).numeric(false);
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
 	},
@@ -551,13 +527,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {
-				display : 'SM',
-				name : 'sequencia',
-				width : 35,
-				sortable : true,
-				align : 'left',
-				hide : true
-			}, {
 				display : 'Código',
 				name : 'codigoProduto',
 				width : 50,
@@ -668,7 +637,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "sequencia",
+			sortname : "codigoProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -851,11 +820,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				var idLancamento = idLinha.replace("row", "");
 				
-				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
 				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
 				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "hiddenIdFornecedor");
 				
-				listaProdutoRecolhimento.push({idFornecedor:idFornecedor,idLancamento:idLancamento,sequencia:sequencia,novaData:novaData});
+				listaProdutoRecolhimento.push({idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData});
 			}
 		});
 		
@@ -900,11 +868,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			if (idLancamento == idRow) {
 				
-				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
 				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
 				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "hiddenIdFornecedor");
 				
-				linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,sequencia:sequencia,novaData:novaData};
+				linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData};
 			}
 		});
 		
