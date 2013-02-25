@@ -267,14 +267,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 						}
 						
-						var data = [
-						     
-						     {name: 'numeroCota', value : $("#numeroCota", ConferenciaEncalheCont.workspace).val()}, 
-						     {name: 'indObtemDadosFromBD', value : true},
-						     {name: 'indConferenciaContingencia', value: false}
-						];
-						
-						ConferenciaEncalheCont.carregarListaConferencia(data);
+						ConferenciaEncalheCont.limpaTela();
 						
 					} else {
 
@@ -802,13 +795,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 							}
 							
-							var data = [
-							  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalheCont.workspace).val()}, 
-							  {name: 'indObtemDadosFromBD', value : true},
-							  {name: 'indConferenciaContingencia', value: false}
-							 ];
 							
-							ConferenciaEncalheCont.carregarListaConferencia(data);
 							
 						}
 
@@ -817,13 +804,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						
 						}, function(conteudo) {
 							
-							var data = [
-										  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
-										  {name: 'indObtemDadosFromBD', value : false},
-										  {name: 'indConferenciaContingencia', value: false}
-										 ];
-										
-							ConferenciaEncalheCont.carregarListaConferencia(data);
+							ConferenciaEncalheCont.limpaTela();
 							
 							
 						}, true, "idModalDadosNotaFiscal"
@@ -1052,13 +1033,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 							if(result.tipoMensagem == 'SUCCESS') {
 								
-								var data = [
-								      {name : 'numeroCota', value : $("#numeroCota", ConferenciaEncalheCont.workspace).val()}, 
-								      {name: 'indObtemDadosFromBD', value : true},
-								      {name: 'indConferenciaContingencia', value: true}
-								];
-								
-								ConferenciaEncalheCont.carregarListaConferencia(data);
+								ConferenciaEncalheCont.limpaTela();
 								
 							}						
 							
@@ -1068,13 +1043,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 						}, function(conteudo) {
 							
-							var data = [
-										  {name: 'numeroCota', 			value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
-										  {name: 'indObtemDadosFromBD', value : false},
-										  {name: 'indConferenciaContingencia', value: true}
-										 ];
-										
-							ConferenciaEncalheCont.carregarListaConferencia(data);
+							ConferenciaEncalheCont.limpaTela();
 							
 							
 						}, true, "idModalConfirmarSalvarConf"
@@ -1130,6 +1099,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 			}, null, true, "dialog-confirmar-regerar-cobranca"
 		);
+	},
+	limpaTela:function(){
+		ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe({reparte:0,valorEncalhe:0,valorVendaDia:0,valorDebitoCredito:0,valorPagar:0, listaDebitoCredito:{page:0,total:0, rows:null}});
+		$(".dadosFiltro", ConferenciaEncalheCont.workspace).hide();
+		$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(0);
+		$("#numeroCota", ConferenciaEncalheCont.workspace).val('');
 	}
 }, BaseController);
 
