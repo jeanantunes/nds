@@ -32,7 +32,7 @@ public class CorrecaoTendenciaTest {
 
 	    cota = (Cota) correcaoTendencia.getGenericDTO();
 
-	    assertNotNull(cota);
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
 
 	    StringBuilder sbEstoqueLog = new StringBuilder();
 
@@ -74,7 +74,7 @@ public class CorrecaoTendenciaTest {
 
 	    cota = (Cota) correcaoTendencia.getGenericDTO();
 
-	    assertNotNull(cota);
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
 
 	    StringBuilder sbEstoqueLog = new StringBuilder();
 
@@ -120,7 +120,7 @@ public class CorrecaoTendenciaTest {
 
 	    cota = (Cota) correcaoTendencia.getGenericDTO();
 
-	    assertNotNull(cota);
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
 
 	    StringBuilder sbEstoqueLog = new StringBuilder();
 

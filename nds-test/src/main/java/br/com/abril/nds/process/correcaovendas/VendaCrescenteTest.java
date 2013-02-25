@@ -28,6 +28,8 @@ public class VendaCrescenteTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    
 	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
 	    vendaCrescente.executar();
 
@@ -65,6 +67,8 @@ public class VendaCrescenteTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    
 	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
 	    vendaCrescente.executar();
 
@@ -102,6 +106,8 @@ public class VendaCrescenteTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
+	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    
 	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
 	    vendaCrescente.executar();
 
