@@ -134,7 +134,6 @@ public class CotaDAO {
 	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 	produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
 	produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
-	produtoEdicao.setPacotePadrao(rs.getInt("PACOTE_PADRAO"));
 	
 	//dados do sistema legado
 //	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));

@@ -31,7 +31,7 @@ public class AjusteFinalReparteTest {
 		estudo.getCotas().add(cota);
 		estudo.setProduto(pe);
 		
-		estudo.setReservaAjuste(new BigDecimal(10));
+		estudo.setAjusteReparte(new BigDecimal(10));
 		
 		ajusteFinalReparte= new AjusteFinalReparte(estudo);
 	}
@@ -41,31 +41,31 @@ public class AjusteFinalReparteTest {
 		try {
 			ajusteFinalReparte.executar();
 		} catch (Exception e) {
-			fail("Exceção inválida.");
+			fail("Exceï¿½ï¿½o invï¿½lida.");
 		}
 	}
 	
 	@Test
 	public void testExecutarReservaAjusteZero() {
 		
-		estudo.setReservaAjuste(new BigDecimal(1));
+		estudo.setAjusteReparte(new BigDecimal(1));
 		try {
 			ajusteFinalReparte.executar();
 		} catch (Exception e) {
-			fail("Exceção inválida.");
+			fail("Exceï¿½ï¿½o invï¿½lida.");
 		}
 		
-		assertEquals(BigDecimal.ZERO, estudo.getReservaAjuste());
+		assertEquals(BigDecimal.ZERO, estudo.getAjusteReparte());
 	}
 	
 	@Test
 	public void testExecutarReparteCalculadoDois() {
 		
-		estudo.setReservaAjuste(new BigDecimal(2));
+		estudo.setAjusteReparte(new BigDecimal(2));
 		try {
 			ajusteFinalReparte.executar();
 		} catch (Exception e) {
-			fail("Exceção inválida.");
+			fail("Exceï¿½ï¿½o invï¿½lida.");
 		}
 		
 		assertEquals(new BigDecimal(2), estudo.getCotas().get(0).getReparteCalculado());

@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.ajustecota;
 
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
@@ -17,7 +18,11 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
  */
 public class AjusteCota extends ProcessoAbstrato {
 
-    @Override
+    public AjusteCota(Estudo estudo) {
+		super(estudo);
+	}
+
+	@Override
     protected void executarProcesso() {
     }
 

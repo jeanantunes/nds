@@ -7,10 +7,12 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
+import br.com.abril.nds.process.calculoreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
 
 /**
- * Este processo tem como objetivo
+ * Este processo tem como objetivo calcular o reparteComplementar que será distribuído posteriormente 
+ * no SubProcesso {@link ReparteComplementarPorCota}   
  * <p style="white-space: pre-wrap;">SubProcessos:
  * 		- N/A
  * Processo Pai:
@@ -32,11 +34,11 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
         	if ((getEstudo().isComplementarAutomatico()) && (getEstudo().getEdicoesBase().size() == 1) && (getEstudo().getProduto().isColecao())) {
         		getEstudo().setExcedente(getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia()));
         		BigDecimal percentualExcedente = BigDecimal.ZERO;
-        		if (!getEstudo().getSomatoriaVendaMedia().equals(BigDecimal.ZERO)) {
+        		if (getEstudo().getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
         			percentualExcedente = getEstudo().getExcedente().divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
         		}
         		getEstudo().setReparteComplementar(BigDecimal.ZERO);
-        		if (percentualExcedente.doubleValue() > BigDecimal.ONE.doubleValue()) {
+        		if (percentualExcedente.compareTo(BigDecimal.ONE) > 0) {
         			// Este cálculo sofreu alterações no trac FAQF2-57
         			// %Abrangência = (QtdeDeBancasDoEstudo(SemLegendaDeExclusão) / TotalCotasAtivas) * 100'
         			int contadorAtivas = 0;

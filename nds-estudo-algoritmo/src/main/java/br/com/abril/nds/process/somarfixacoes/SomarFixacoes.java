@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.somarfixacoes;
 
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
@@ -17,7 +18,11 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
  */
 public class SomarFixacoes extends ProcessoAbstrato {
 
-    @Override
+    public SomarFixacoes(Estudo estudo) {
+		super(estudo);
+	}
+
+	@Override
     protected void executarProcesso() {
     }
 

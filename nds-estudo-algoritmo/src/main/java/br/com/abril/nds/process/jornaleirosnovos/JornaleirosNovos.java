@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.jornaleirosnovos;
 
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
@@ -17,7 +18,11 @@ import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
  */
 public class JornaleirosNovos extends ProcessoAbstrato {
 
-    @Override
+    public JornaleirosNovos(Estudo estudo) {
+		super(estudo);
+	}
+
+	@Override
     protected void executarProcesso() {
     }
 

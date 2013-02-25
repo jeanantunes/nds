@@ -28,7 +28,7 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
 
     	for(Cota cota:getEstudo().getCotas()){
     		//evitando referencia de objetos :p
-    		cota.setReparteFinalCota(BigDecimal.ZERO.add(cota.getReparteCalculado()));
+    		cota.setReparteCalculado(BigDecimal.ZERO.add(cota.getReparteCalculado()));
     	}
     }
 

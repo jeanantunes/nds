@@ -30,7 +30,7 @@ public class EncalheMaximo extends ProcessoAbstrato {
 		// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
 		for (Cota cota : getEstudo().getCotas()) {
 			BigDecimal encalhe = BigDecimal.ZERO;
-			if (!getEstudo().getReparteDistribuir().equals(BigDecimal.ZERO)) {
+			if (getEstudo().getReparteDistribuir().compareTo(BigDecimal.ZERO) > 0) {
 				encalhe = getEstudo().getSomatoriaVendaMedia().divide(getEstudo().getReparteDistribuir(), 2, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
 			}
 			if ((cota.getPercentualEncalheMaximo().doubleValue() > 0)

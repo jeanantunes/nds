@@ -22,150 +22,148 @@ import br.com.abril.nds.process.ProcessoAbstrato;
 public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
 	private List<Ordenador> ordenadorList = new ArrayList<Ordenador>();
-	
-    public ReparteComplementarPorCota(Estudo estudo) {
-	super(estudo);
-	
-//	Prioridade de recebimento de reparte:
-	
-	/*
-	 * A: As que não receberam as edições-base, porém receberam a edição aberta, caso exista, 
-	 * da maior para menor no ranking de segmento da publicação(cotas SH);
-	 */
-	ordenadorList.add(new Ordenador("A"){
-		@Override
-		boolean filtrar(Cota cota) {
-			if(cota.getClassificacao().equals(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga)){
-				
-				return true;
-			}
-			
-			return false;
-		}
-	});
-	
-	/*
-	 * B: As que não receberam as edições-base, da maior para a menor no ranking de segmento da publicação (cotas SH);
-	 */
-	ordenadorList.add(new Ordenador("B"){
-		@Override
-		boolean filtrar(Cota cota) {
-			if(cota.getClassificacao().equals(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga)){
-				
-				return true;
-			}
-			return false;
-		}
-	});
-	
-	/*
-	 * C: As que receberam 1 edição das edições-base, da maior para a menor no ranking de segmento da publicação (cotas VZ);
-	 */
-	ordenadorList.add(new Ordenador("C"){
-		@Override
-		boolean filtrar(Cota cota) {
-			if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)){
-				
-				return true;
-			}
-			return false;
-		}
-	});
-	
-	/*
-	 * D: As que receberam 2 edições das edições-base, da maior para a menor no ranking de segmento da publicação (cotas VZ);
-	 */
-	ordenadorList.add(new Ordenador("D"){
-		@Override
-		boolean filtrar(Cota cota) {
-			if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)){
-				
-				return true;
-			}
-			return false;
-		}
-	});
-	
-	/*
-	 * E: As que receberam 3 ou mais edições das edições-base, da maior para a menor no ranking de segmento da publicação (cotas VZ).
-	 */
-	ordenadorList.add(new Ordenador("E"){
-		@Override
-		boolean filtrar(Cota cota) {
-			if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)){
-				
-				return true;
-			}
-			return false;
-		}
-	});
-	
-    }
 
-    @Override
-    protected void executarProcesso() {
-    	
-//    	1)	Listar todas as cotas ativas que não entraram no Estudo Normal, considerando-se as exclusões por CLASSIFICAÇÃO, SEGMENTO e MIX; 
-//    	2)	Excluir Cotas que não recebem Complementar ( marcado no Cadastro de Cotas )
-    	List<Cota> cotaListRecebeComplementar = new ArrayList<Cota>();
-    	List<Cota> cotaListOrdenada = new ArrayList<Cota>();
-    	
-    	for(Cota cota:getEstudo().getCotas()){
-    		if( cota.isRecebeReparteComplementar()==false && (
-    				!cota.getClassificacao().equals(ClassificacaoCota.BancaSemClassificacaoDaPublicacao)
-    				&& !cota.getClassificacao().equals(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento)
-    				&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix))){
-    			cotaListRecebeComplementar.add(cota);
-    		}
-    	}
-    	
-//    	3)	Ordená-las na seguinte prioridade de recebimento de reparte:
-    	for(Ordenador ordenador:this.ordenadorList){
-    		for(Cota c:cotaListRecebeComplementar){
-    			if(ordenador.filtrar(c)){
-    				//TODO: FAZER ORDENACAO
-    				cotaListOrdenada.add(c);
-    			}
-    		}
-    	}
-    	
-    	/*
-    	 * 4)	As bancas receberão a quantidade de reparte por banca definido no estudo (default = 2 exemplares)
-    	 *  ou 1 pacote-padrão se a distribuição for por múltiplos 
-    	 * até acabar o reparte complementar, sempre considerando-se a priorização acima. 
-    	 * Caso haja saldo a distribuir e todas as bancas selecionadas já receberam, 
-    	 * enviar 1 exemplar ou 1 pacote-padrão se a distribuição for por múltiplos para as bancas do estudo normal, 
-    	 * da maior para a menor até finalizar o estoque. 
-    	 * Não incluir bancas marcadas com `FX` `MX` e `MM` nessa redistribuição;
-    	 */
-    	for(Cota c:cotaListOrdenada){
-    		if(!c.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-    				&& !c.getClassificacao().equals(ClassificacaoCota.CotaMix)
-    				&& !c.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)){
-    			//TODO: FAZER REDISTRIBUICAO
-    			
-//    			5)	Marcar cotas com ´CP´
-    			c.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
-    		}
-    	}
-    	
-    }
-    
-    
-    
-   private abstract class Ordenador{
-	   private String name;
-	   public Ordenador(String name){
-		   this.name=name;
-	   }
-    	abstract boolean filtrar(Cota cota);
+	public ReparteComplementarPorCota(Estudo estudo) {
+		super(estudo);
+
+		//	Prioridade de recebimento de reparte:
+
+		/*
+		 * A: As que nï¿½o receberam as ediï¿½ï¿½es-base, porï¿½m receberam a ediï¿½ï¿½o aberta, caso exista, 
+		 * da maior para menor no ranking de segmento da publicaï¿½ï¿½o(cotas SH);
+		 */
+		ordenadorList.add(new Ordenador("A"){
+			@Override
+			boolean filtrar(Cota cota) {
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga)){
+
+					return true;
+				}
+
+				return false;
+			}
+		});
+
+		/*
+		 * B: As que nï¿½o receberam as ediï¿½ï¿½es-base, da maior para a menor no ranking de segmento da publicaï¿½ï¿½o (cotas SH);
+		 */
+		ordenadorList.add(new Ordenador("B"){
+			@Override
+			boolean filtrar(Cota cota) {
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga)){
+
+					return true;
+				}
+				return false;
+			}
+		});
+
+		/*
+		 * C: As que receberam 1 ediï¿½ï¿½o das ediï¿½ï¿½es-base, da maior para a menor no ranking de segmento da publicaï¿½ï¿½o (cotas VZ);
+		 */
+		ordenadorList.add(new Ordenador("C"){
+			@Override
+			boolean filtrar(Cota cota) {
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)){
+
+					return true;
+				}
+				return false;
+			}
+		});
+
+		/*
+		 * D: As que receberam 2 ediï¿½ï¿½es das ediï¿½ï¿½es-base, da maior para a menor no ranking de segmento da publicaï¿½ï¿½o (cotas VZ);
+		 */
+		ordenadorList.add(new Ordenador("D"){
+			@Override
+			boolean filtrar(Cota cota) {
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)){
+
+					return true;
+				}
+				return false;
+			}
+		});
+
+		/*
+		 * E: As que receberam 3 ou mais ediï¿½ï¿½es das ediï¿½ï¿½es-base, da maior para a menor no ranking de segmento da publicaï¿½ï¿½o (cotas VZ).
+		 */
+		ordenadorList.add(new Ordenador("E"){
+			@Override
+			boolean filtrar(Cota cota) {
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)){
+
+					return true;
+				}
+				return false;
+			}
+		});
+
+	}
+
+	@Override
+	protected void executarProcesso() {
+
+		//    	1)	Listar todas as cotas ativas que nï¿½o entraram no Estudo Normal, considerando-se as exclusï¿½es por CLASSIFICAï¿½ï¿½O, SEGMENTO e MIX; 
+		//    	2)	Excluir Cotas que nï¿½o recebem Complementar ( marcado no Cadastro de Cotas )
+		List<Cota> cotaListRecebeComplementar = new ArrayList<Cota>();
+		List<Cota> cotaListOrdenada = new ArrayList<Cota>();
+
+		for(Cota cota:getEstudo().getCotas()){
+			if( cota.isRecebeReparteComplementar()==false && (
+					!cota.getClassificacao().equals(ClassificacaoCota.BancaSemClassificacaoDaPublicacao)
+					&& !cota.getClassificacao().equals(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento)
+					&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix))){
+				cotaListRecebeComplementar.add(cota);
+			}
+		}
+
+		//    	3)	Ordenï¿½-las na seguinte prioridade de recebimento de reparte:
+		for(Ordenador ordenador:this.ordenadorList){
+			for(Cota c:cotaListRecebeComplementar){
+				if(ordenador.filtrar(c)){
+					//TODO: FAZER ORDENACAO
+					cotaListOrdenada.add(c);
+				}
+			}
+		}
+
+		/*
+		 * 4)	As bancas receberï¿½o a quantidade de reparte por banca definido no estudo (default = 2 exemplares)
+		 *  ou 1 pacote-padrï¿½o se a distribuiï¿½ï¿½o for por mï¿½ltiplos 
+		 * atï¿½ acabar o reparte complementar, sempre considerando-se a priorizaï¿½ï¿½o acima. 
+		 * Caso haja saldo a distribuir e todas as bancas selecionadas jï¿½ receberam, 
+		 * enviar 1 exemplar ou 1 pacote-padrï¿½o se a distribuiï¿½ï¿½o for por mï¿½ltiplos para as bancas do estudo normal, 
+		 * da maior para a menor atï¿½ finalizar o estoque. 
+		 * Nï¿½o incluir bancas marcadas com `FX` `MX` e `MM` nessa redistribuiï¿½ï¿½o;
+		 */
+		for(Cota c:cotaListOrdenada){
+			if(!c.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
+					&& !c.getClassificacao().equals(ClassificacaoCota.CotaMix)
+					&& !c.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)){
+				//TODO: FAZER REDISTRIBUICAO
+
+				//    			5)	Marcar cotas com ï¿½CPï¿½
+				c.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
+			}
+		}
+
+	}
+
+
+
+	private abstract class Ordenador{
+		private String name;
+		public Ordenador(String name){
+			this.name=name;
+		}
+		abstract boolean filtrar(Cota cota);
 		public String getName() {
 			return name;
 		}
 		public void setName(String name) {
 			this.name = name;
-		}
-    	
-    }
-    
+		}    	
+	}
 }
