@@ -37,6 +37,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -86,6 +87,9 @@ public class MatrizRecolhimentoController extends BaseController {
 	private DistribuicaoFornecedorService distribuicaoFornecedorService;
 	
 	@Autowired
+	private GrupoService grupoService;
+	
+	@Autowired
 	private LancamentoService lancamentoService;
 	
 	private static final String ATRIBUTO_SESSAO_FILTRO_PESQUISA_BALANCEAMENTO_RECOLHIMENTO = "filtroPesquisaBalanceamentoRecolhimento";
@@ -104,6 +108,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		removerAtributoAlteracaoSessao();
 		
 		this.result.include("fornecedores", fornecedores);
+				
 	}
 	
 	@Post
@@ -125,6 +130,10 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+		
+		boolean utilizaSedeAtendida = grupoService.countTodosGrupos() > 0;
+		
+		resultadoResumoBalanceamento.setUtilizaSedeAtendida(utilizaSedeAtendida);
 		
 		removerAtributoAlteracaoSessao();
 		
@@ -815,13 +824,13 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setDataRecolhimento(
 				produtoRecolhimentoDTO.getDataRecolhimentoPrevista());
 			
-			produtoRecolhimentoVO.setEncalheSede(
+			produtoRecolhimentoVO.setEncalheSede( produtoRecolhimentoDTO.getExpectativaEncalheSede()==null ? BigDecimal.ZERO :
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheSede(), 2));
 			
-			produtoRecolhimentoVO.setEncalheAtendida(
+			produtoRecolhimentoVO.setEncalheAtendida( produtoRecolhimentoDTO.getExpectativaEncalheAtendida()==null ? BigDecimal.ZERO :
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAtendida(), 2));
 				
-			produtoRecolhimentoVO.setEncalheAlternativo(
+			produtoRecolhimentoVO.setEncalheAlternativo( produtoRecolhimentoDTO.getExpectativaEncalheAlternativo()==null ? BigDecimal.ZERO :
 				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
 			
 			produtoRecolhimentoVO.setEncalhe(
@@ -863,7 +872,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		tableModel.setRows(listaCellModel);
-		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	

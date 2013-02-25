@@ -21,6 +21,8 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	
 	private List<ProdutoLancamentoCanceladoDTO> listaProdutosLancamentosCancelados;
 	
+	private boolean utilizaSedeAtendida;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -85,6 +87,14 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	public void setListaProdutosLancamentosCancelados(
 			List<ProdutoLancamentoCanceladoDTO> listaProdutosLancamentosCancelados) {
 		this.listaProdutosLancamentosCancelados = listaProdutosLancamentosCancelados;
+	}
+
+	public boolean isUtilizaSedeAtendida() {
+		return utilizaSedeAtendida;
+	}
+
+	public void setUtilizaSedeAtendida(boolean utilizaSedeAtendida) {
+		this.utilizaSedeAtendida = utilizaSedeAtendida;
 	}
 
 }
