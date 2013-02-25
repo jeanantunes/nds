@@ -196,7 +196,9 @@ public class AjusteReparteController extends BaseController {
 		ajusteDTO.setStatus(cota.getSituacaoCadastro());
 		
 		if((ajusteDTO.getStatus().toString()) != "Ativo"){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Esta cota não pode receber ajuste. (O seu Status não está como ATIVO)");
+			if(ajusteDTO.getStatus().toString() != "Suspenso"){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta cota não pode receber ajuste. (O seu Status não é ATIVO ou SUSPENSO)");
+			}
 		}
 
 		if (ajusteDTO.getDataInicioCadastro() == null) {
@@ -205,6 +207,10 @@ public class AjusteReparteController extends BaseController {
 		
 		if (ajusteDTO.getDataFimCadastro() == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING,	"Data final é obrigatório.");
+		}
+		
+		if (ajusteDTO.getDataFimCadastro().before(ajusteDTO.getDataInicioCadastro())){
+			throw new ValidacaoException(TipoMensagem.WARNING,	"A Data Final não pode ser antes que a Data Inicial.");
 		}
 	}
 
