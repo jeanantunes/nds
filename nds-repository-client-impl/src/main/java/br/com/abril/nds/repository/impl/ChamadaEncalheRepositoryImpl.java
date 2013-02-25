@@ -21,6 +21,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -438,14 +439,27 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" ) as reparte,	");
 		
 		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida, ");
-		hql.append("		lancamentos.sequenciaMatriz as sequencia ");
+		hql.append("		lancamentos.sequenciaMatriz as sequencia, ");
+		
+		hql.append(" case ");
+		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheMatriz AND produtoEdicao.parcial = false) then 1 ");
+		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheMatriz AND produtoEdicao.parcial = true AND periodoLancamentoParcial.tipo <> :tipoLancamentoParcialFinal) then 2 "); 
+		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheMatriz AND produtoEdicao.parcial = true AND periodoLancamentoParcial.tipo = :tipoLancamentoParcialFinal) then 3 ");
+		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheAntecipada) then 4 ");
+		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheChamadao) then 5 ");
+		hql.append(" else 6 end as ordem ");
+		
+		param.put("tipoChamdadaEncalheMatriz", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		param.put("tipoChamdadaEncalheAntecipada", TipoChamadaEncalhe.ANTECIPADA);
+		param.put("tipoChamdadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO);
+		param.put("tipoLancamentoParcialFinal", TipoLancamentoParcial.FINAL);
 		
 		gerarFromWhereProdutosCE(filtro, hql, param, idCota);
 		
 
 		hql.append(" group by chamadaEncalhe ");
 		
-		hql.append(" order by lancamentos.sequenciaMatriz ");
+		hql.append(" order by ordem, nomeProduto ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -472,6 +486,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join chamadaEncalhe.lancamentos lancamentos 			")
 		   .append(" join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
 		   .append(" join movimentoCota.tipoMovimento tipoMovimento         ")
+		   .append(" left join lancamentos.periodoLancamentoParcial  periodoLancamentoParcial ")
 		   .append(" where cota.id=:idCota 									")
 		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	")
 		   .append(" and movimentoCota.cota.id = cota.id                    ")

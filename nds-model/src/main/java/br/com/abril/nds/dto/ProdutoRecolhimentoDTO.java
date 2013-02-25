@@ -38,8 +38,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private String nomeProduto;
 	
 	private Long idLancamento;
-	
-	private Integer sequencia;
 
 	private Long idFornecedor;
 	
@@ -210,20 +208,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
-	}
-
-	/**
-	 * @return the sequencia
-	 */
-	public Integer getSequencia() {
-		return sequencia;
-	}
-
-	/**
-	 * @param sequencia the sequencia to set
-	 */
-	public void setSequencia(Integer sequencia) {
-		this.sequencia = sequencia;
 	}
 
 	/**

@@ -228,7 +228,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			chamadaEncalhe = new ChamadaEncalhe();
 		}
 		
-		chamadaEncalhe.setLancamentos(obterLancamentoPorId(infoEncalheDTO.getChamadasAntecipadaEncalhe()));
+		chamadaEncalhe.setLancamentos(atualizarEObterLancamentoPorId(infoEncalheDTO.getChamadasAntecipadaEncalhe()));
 		chamadaEncalhe.setDataRecolhimento(infoEncalheDTO.getDataAntecipacao());
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.ANTECIPADA);
@@ -393,7 +393,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		return new BigDecimal(valorExemplares);
 	}
 	
-	private Set<Lancamento> obterLancamentoPorId(List<ChamadaAntecipadaEncalheDTO> chamadasEncalhe){
+	private Set<Lancamento> atualizarEObterLancamentoPorId(List<ChamadaAntecipadaEncalheDTO> chamadasEncalhe){
 		
 		Set<Long> idsLancamento = new HashSet<Long>(); 
 		
@@ -402,6 +402,21 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		}
 		
 		Set<Lancamento> retorno = new HashSet<Lancamento>();
+		
+		Integer maiorSequenciaMatriz = this.lancamentoRepository.obterMaiorSequenciaMatrizLancamento();
+		
+		List<Lancamento> lancamentos = lancamentoRepository.obterLancamentosPorIdOrdenados(idsLancamento);
+		
+		for (Lancamento lancamento : lancamentos) {
+			
+			if (lancamento.getSequenciaMatriz() == null) {
+			
+				lancamento.setSequenciaMatriz(++maiorSequenciaMatriz);
+				
+				this.lancamentoRepository.merge(lancamento);
+			}
+		}
+			
 		retorno.addAll(lancamentoRepository.obterLancamentosPorIdOrdenados(idsLancamento));
 		
 		return retorno;
