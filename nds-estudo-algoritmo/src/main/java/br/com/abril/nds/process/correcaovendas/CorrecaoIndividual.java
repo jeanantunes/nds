@@ -62,7 +62,7 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
 	produtoEdicao.setIndiceCorrecao(indiceCorrecao);
 
 	produtoEdicao.setVendaCorrigida(produtoEdicao.getVenda().multiply(
-		indiceCorrecao));
+		indiceCorrecao).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_FLOOR));
     }
 
 }
