@@ -642,4 +642,15 @@ public class Produto implements Serializable {
 		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
 
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(
+			TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+	}
+	
+	
+
 }

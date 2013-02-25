@@ -1,18 +1,23 @@
 package br.com.abril.nds.model.distribuicao;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
@@ -37,15 +42,27 @@ public class FixacaoReparte {
 	@JoinColumn(name = "ID_USUARIO")
 	private Usuario usuario;
 	
+	@OneToMany(mappedBy="fixacaoReparte", cascade={CascadeType.REMOVE})
+	List<RepartePDV> repartesPDV;
+	
 	@Column(name="QTDE_EDICOES")
 	private Integer qtdeEdicoes;
 	
 	@Column(name="QTDE_EXEMPLARES")
 	private Integer qtdeExemplares;
 	
+	@Column(name="ED_INICIAL")
+	private Integer edicaoInicial;
+	
+	@Column(name="ED_FINAL")
+	private Integer edicaoFinal;
+	
+	@Column(name="ED_ATENDIDAS")
+	private Integer edicoesAtendidas;
+	
 	@Column(name="DATA_HORA")
 	private Date dataHora;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -102,6 +119,55 @@ public class FixacaoReparte {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+
+	public Integer getEdicaoInicial() {
+		return edicaoInicial;
+	}
+
+	public void setEdicaoInicial(Integer edicaoInicial) {
+		if(edicaoInicial==null){
+			this.edicaoInicial = 0;
+		}else{
+			this.edicaoInicial = edicaoInicial;	
+		}
+		
+	}
+
+	public Integer getEdicaoFinal() {
+		return edicaoFinal;
+	}
+
+	public void setEdicaoFinal(Integer edicaoFinal) {
+
+		if(edicaoFinal==null){
+			this.edicaoFinal=0;
+		}else{
+			this.edicaoFinal = edicaoFinal;	
+		}
+
+	}
+
+	public Integer getEdicoesAtendidas() {
+		return edicoesAtendidas;
+	}
+
+	public void setEdicoesAtendidas(Integer edicoesAtendidas) {
+		if(edicoesAtendidas==null){
+			this.edicoesAtendidas=0;
+		}else{
+			this.edicoesAtendidas = edicoesAtendidas;	
+		}
+		
+	}
+
+	public List<RepartePDV> getRepartesPDV() {
+		return repartesPDV;
+	}
+
+	public void setRepartesPDV(List<RepartePDV> repartesPDV) {
+		this.repartesPDV = repartesPDV;
+	}
+
 
 
 	

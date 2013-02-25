@@ -1,265 +1,429 @@
-var codigos =  new Array(),
-	repartes =  new Array(),
-	listaPDV = [];
 
-var fixacaoReparteController = $.extend(true, {
-//Grid de historico de edicoes 	
+var mixCotaProdutoController = $.extend(true, {
+//Grid de cota 	
 	init : function() {
-		$(".historicoGrid",fixacaoReparteController.workspace).flexigrid({
-			preProcess: fixacaoReparteController.preProcessHistoricoGrid,
+		$('.porProduto').hide();
+		$('.porCota').hide();
+		
+		$(".mixCotasGrid").flexigrid({
+			preProcess: function(data){return mixCotaProdutoController.executarPreprocessamentoGridCota(data);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Edição',
-				name : 'edicaoString',
-				width : 75,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Reparte',
-				name : 'reparteString',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			},{
-				display : 'Venda',
-				name : 'vendaString',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			},{
-				display : 'Lançamento',
-				name : 'dataLancamentoString',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			},{
-				display : 'Recolhimento',
-				name : 'dataRecolhimentoString',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			},  {
-				display : 'Status',
-				name : 'status',
-				width : 130,
-				sortable : true,
-				align : 'left'
-			}],
-			width : 600,
-			height : 100,
-			sortname : "produtoFixado",
-			sortorder : "asc",
-			usepager : false,
-			useRp : false,
-			rp : 6
-		});
-//Grid de fixacao por produto
-	$(".fixacaoProdutoGrid").flexigrid({
-			preProcess:function(data){return fixacaoReparteController.executarPreProcessamentoFixacaoProduto(data);}, 
-			dataType : 'json',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cotaFixada',
+				display : 'C�digo',
+				name : 'codigoProduto',
 				width : 50,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'nomeCota',
-				width : 170,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição Inicial',
-				name : 'edicaoInicial',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Edição Final',
-				name : 'edicaoFinal',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Ed. Atendidas',
-				name : 'edicoesAtendidas',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Qtde Edições',
-				name : 'qtdeEdicoes',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Exemplares',
-				name : 'qtdeExemplares',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Usuário',
-				name : 'usuario',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Data',
-				name : 'data',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Hora',
-				name : 'hora',
-				width : 45,
-				sortable : true,
-				align : 'center'
-			},  {
-				display : 'Ação',
-				name : 'acao',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cotaFixada",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 960,
-			height : 250
-		});
-	//Grid de repartes por pdv	
-	$(".pdvCotaGrid").flexigrid({
-		preProcess:function(data){return fixacaoReparteController.preProcessarListaPdv(data);},
-		dataType : 'json',
-		colModel : [ {
-			display : 'Código',
-			name : 'id',
-			width : 50,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Nome PDV',
-			name : 'nomePDV',
-			width : 120,
-			sortable : true,
-			align : 'left'
-		}, {
-			display : 'Endereço',
-			name : 'endereco',
-			width : 320,
-			sortable : true,
-			align : 'left'
-		},  {
-			display : 'Reparte',
-			name : 'reparte',
-			width : 40,
-			sortable : true,
-			align : 'center'
-		}],
-		sortname : "codigo",
-		sortorder : "asc",
-		usepager : false,
-		useRp : false,
-		rp : 15,
-		showTableToggleBtn : false,
-		width : 600,
-		height : 200
-	});
-	
-	
-	//Grid de fixacao por cota
-	$(".excessaoCotaGrid").flexigrid({
-			preProcess: function(data){return fixacaoReparteController.preProcessarResultadoConsultaFixacao(data);},			
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'produtoFixado',
-				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
+				width : 115,
+				sortable : true,
+				align : 'left'
+			},  {
+				display : 'Classifica��o',
+				name : 'classificacaoProduto',
 				width : 80,
 				sortable : true,
 				align : 'left'
-			}, {
-				display : 'Classificação',
-				name : 'classificacaoProduto',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição Inicial',
-				name : 'edicaoInicial',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição Final',
-				name : 'edicaoFinal',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ed. Atendidas',
-				name : 'edicoesAtendidas',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Qtde Ed.',
-				name : 'qtdeEdicoes',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Exemplares',
-				name : 'qtdeExemplares',
+			},  {
+				display : 'Rep. M�dio',
+				name : 'reparteMedio',
 				width : 60,
 				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Usuário',
+				align : 'right'
+			},  {
+				display : 'Vda. M�dia',
+				name : 'vendaMedia',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			},  {
+				display : '�lt. Rep.',
+				name : 'ultimoReparte',
+				width : 60,
+				sortable : true,
+				align : 'right'
+			},  {
+				display : 'Rep. Inf. M�n.',
+				name : 'reparteMinimo',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			},  {
+				display : 'Rep. Inf. Max.',
+				name : 'reparteMaximo',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			},  {
+				display : 'Usu�rio',
 				name : 'usuario',
 				width : 80,
 				sortable : true,
 				align : 'left'
-			}, {
-				display : 'Data',
+			},  {
+				display : 'Dt. Manut.',
 				name : 'data',
-				width : 75,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Hora',
-				name : 'hora',
 				width : 60,
 				sortable : true,
 				align : 'center'
 			},  {
-				display : 'Ação',
+				display : 'Hora',
+				name : 'hora',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			},  {
+				display : 'A��o',
 				name : 'acao',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "produtoFixado",
+			sortname : "codigo",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 960,
-			height : 250
+			height : 255
+		});
+		
+		//grid de produto
+		$(".mixProdutosGrid").flexigrid({
+			preProcess: function(data){return mixCotaProdutoController.executarPreprocessamentoGridProduto(data);},
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 40,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeCota',
+				width : 125,
+				sortable : true,
+				align : 'left'
+			},  {
+				display : 'Rep. M�dio',
+				name : 'reparteMedio',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			},  {
+				display : 'Vda. M�dia',
+				name : 'vendaMedia',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			},  {
+				display : '�lt. Rep.',
+				name : 'ultimoReparte',
+				width : 70,
+				sortable : true,
+				align : 'right'
+			},  {
+				display : 'Rep. Inf. M�n.',
+				name : 'reparteMinimo',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			},  {
+				display : 'Rep. Inf. Max.',
+				name : 'reparteMaximo',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			},  {
+				display : 'Usu�rio',
+				name : 'usuario',
+				width : 80,
+				sortable : true,
+				align : 'left'
+			},  {
+				display : 'Dt. Manut.',
+				name : 'data',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			},  {
+				display : 'Hora',
+				name : 'hora',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			},  {
+				display : 'A��o',
+				name : 'acao',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "numeroCota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 960,
+			height : 255
+		});
+		
+		$(".pdvCotaGrid").flexigrid({
+			dataType : 'json',
+			colModel : [ {
+				display : 'C�digo',
+				name : 'codigo',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome PDV',
+				name : 'nomePdv',
+				width : 120,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Endere�o',
+				name : 'endereco',
+				width : 320,
+				sortable : true,
+				align : 'left'
+			},  {
+				display : 'Reparte',
+				name : 'reparte',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			}],
+			sortname : "codigo",
+			sortorder : "asc",
+			usepager : false,
+			useRp : false,
+			rp : 15,
+			showTableToggleBtn : false,
+			width : 600,
+			height : 200
+		});
+		
+		
+		
+		},
+		
+	//funcao de pre-processamento do resultado da busca de fixacao por produto
+	//, exibindo/escondendo botoes de geracao de excel/pdf dependendo do resultado da pesquisa
+	executarPreprocessamentoGridCota:function(data){
+		
+		if (data.mensagens) {
+
+			exibirMensagem(
+				data.mensagens.tipoMensagem, 
+				data.mensagens.listaMensagens
+			);
+			$("#spanLegendCota").text(""); //limpa o titulo produto, evitando permanecer valores digitados em pesquisa anterior
+			$("#btNovoMixCota").show();
+			$("#btAddLoteMixCota").hide();
+			$("#btGerarArquivoMixCota").hide();
+			$("#btImprimirMixCota").hide();
+			return data;
+		}else{
+			$("#spanLegendCota").text($("#codigoCota").val() + "-" +$("#nomeCota").val());// preenche fieldset com os valores digitados no fitro
+			$("#btNovoMixCota").show();
+			$("#btAddLoteMixCota").show();
+			$("#btGerarArquivoMixCota").show();
+			$("#btImprimirMixCota").show();
+		}
+		
+		if (data.result){
+			data.rows = data.result[1].rows;
+		}
+		
+		var i;
+		for (i = 0 ; i < data.rows.length; i++) {
+
+			var lastIndex = data.rows[i].cell.length;
+			
+			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridCota(data.rows[i].cell["id"]);
+		}
+		
+		$('.mixCotasGrid').show();
+		if (data.result){
+			return data.result[1];
+		}
+		return data;
+	},	
+	
+	//retorna acoes de edicao e exclusao de fixacao por cota
+	getActionsGridCota: function (idMix){
+		
+		//Definir como sera recuperado o boolean que determina se possui ou nao pdvs
+//		$.postJSON(contextPath + '/distribuicao/fixacaoReparte/verificaCotaPossuiPdvs');
+		
+//		return '<a href="javascript:;" onclick="mixCotaProdutoController.excluirFixacaoCota(' + idMix + ')" '  +
+//		' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
+//		'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+//		'</a>';
+		
+		
+		return '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + idMix + ')" ' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
+				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
+				'</a>' +
+				'<a href="javascript:;" onclick="mixCotaProdutoController.excluirMixCota(' + idMix + ')" '  +
+				' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
+				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+				'</a>';
+	},
+	
+	
+	//exibe msg de confirmacao de fixação cota
+	excluirMixCota:function (idMix){
+		$("#dialog-excluir").dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$.postJSON(contextPath + '/distribuicao/mixCotaProduto/removerMixCotaProduto', mixCotaProdutoController.getIdExcluir(idMix) , mixCotaProdutoController.exclusaoMixCotaSucesso, mixCotaProdutoController.exclusaoMixCotaErro);
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			},
 		});
 	},
+	
+	//retorna msg de sucesso durante exclusao de mix por cota
+	exclusaoMixCotaSucesso:function(result){
+		$(".mixCotasGrid").flexReload();
+		
+	},
+	
+	//retorna msg de erro durante exclusao de mix por cota
+	exclusaoMixCotaErro:function(result){
+		exibirMensagem("ERROR", ["Houve um erro durante a exclusão "]);
+	},
+	
+	
+	//retorna o id da fixacao. Utilizada para exclusao de fixacao
+	getIdExcluir : function(idMix) {
+		
+		var data = [];
+		data.push({name:'filtro.id',	value: idMix});
+		
+		return data;
+	},
+	
+	
+	
+	//funcao de pre-processamento do resultado da busca de mix por produto
+	//, exibindo/escondendo botoes de geracao de excel/pdf dependendo do resultado da pesquisa
+	executarPreprocessamentoGridProduto:function(data){
+		// msg erro
+		if (data.mensagens) {
+			
+			exibirMensagem(
+				data.mensagens.tipoMensagem, 
+				data.mensagens.listaMensagens
+			);
+			
+			$("#spanLegendProduto").text(""); //limpa o titulo produto, evitando permanecer valores digitados em pesquisa anterior
+			$("#btNovoMixProduto").show();
+			$("#btAddLoteMixProduto").hide();
+			$("#btGerarArquivoMixProduto").hide();
+			$("#btImprimirMixProduto").hide();
+			return data;
+		}else{
+			// pesquisa achou resultado
+			$("#spanLegendProduto").text($("#codigoProduto").val() + "-" +$("#nomeProduto").val());// preenche fieldset com os valores digitados no fitro
+			$("#btNovoMixProduto").show();
+			$("#btAddLoteMixProduto").show();
+			$("#btGerarArquivoMixProduto").show();
+			$("#btImprimirMixProduto").show();
+		}
+		
+		if (data.result){
+			data.rows = data.result[1].rows;
+		}
+		
+		var i;
+		for (i = 0 ; i < data.rows.length; i++) {
+
+			var lastIndex = data.rows[i].cell.length;
+			
+			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridProduto(data.rows[i].cell["id"]);
+		}
+		
+		$('.mixProdutosGrid').show();
+		if (data.result){
+			return data.result[1];
+		}
+		return data;
+	},
+	
+	//retorna acoes de edicao e exclusao de fixacao por cota
+	getActionsGridProduto: function (idMix){
+		
+		//Definir como sera recuperado o boolean que determina se possui ou nao pdvs
+//		$.postJSON(contextPath + '/distribuicao/fixacaoReparte/verificaCotaPossuiPdvs');
+		
+//		return '<a href="javascript:;" onclick="mixCotaProdutoController.excluirFixacaoCota(' + idMix + ')" '  +
+//		' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
+//		'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+//		'</a>';
+		
+		return '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + idMix + ')" ' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
+				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
+				'</a>' +
+				'<a href="javascript:;" onclick="mixCotaProdutoController.excluirMixProduto(' + idMix + ')" '  +
+				' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
+				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+				'</a>';
+	},
+	
+	//exibe msg de confirmacao de fixação produto
+	excluirMixProduto:function (idMix){
+		$("#dialog-excluir").dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$.postJSON(contextPath + '/distribuicao/mixCotaProduto/removerMixCotaProduto', mixCotaProdutoController.getIdExcluir(idMix) , mixCotaProdutoController.exclusaoMixProdutoSucesso, mixCotaProdutoController.exclusaoMixProdutoErro);
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					$(this).dialog("close");
+				}
+			},
+		});
+	},
+	
+	
+	//retorna msg de sucesso durante exclusao de mix por produto
+	exclusaoMixProdutoSucesso:function(result){
+		$(".mixProdutosGrid").flexReload();
+		
+	},
+	
+	//retorna msg de erro durante exclusao de mix por produto
+	exclusaoMixProdutoaErro:function(result){
+		exibirMensagem("ERROR", ["Houve um erro durante a exclusão "]);
+	},
+	
+	
+	
+	
+	
+	
+	
 	
 	//funcao de pre-processamento do resultado da busca de fixacao por produto
 	//, exibindo/escondendo botoes de geracao de excel/pdf dependendo do resultado da pesquisa
@@ -286,7 +450,7 @@ var fixacaoReparteController = $.extend(true, {
 
 			var lastIndex = resultado.rows[i].cell.length;
 			
-			resultado.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoProduto(resultado.rows[i].cell);
+			resultado.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoProduto(resultado.rows[i].cell["id"]);
 		}
 		$('.fixacaoProdutoGrid').show();
 		if (resultado.result){
@@ -328,7 +492,7 @@ var fixacaoReparteController = $.extend(true, {
 
 			var lastIndex = data.rows[i].cell.length;
 			
-			data.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoCota(data.rows[i].cell);
+			data.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoCota(data.rows[i].cell["id"]);
 		}
 		
 		$('.excessaoCotaGrid').show();
@@ -337,53 +501,67 @@ var fixacaoReparteController = $.extend(true, {
 		}
 		return data;
 		
+		/*
+		 *  executarPreProcessCotasAjuste : function(resultado){
+  
+  if (resultado.mensagens) {
+   exibirMensagem(
+     resultado.mensagens.tipoMensagem, 
+     resultado.mensagens.listaMensagens
+   );
+   
+   return resultado;
+  }
+
+  $.each(resultado.rows, function(index, row) {
+   
+   var editar = '<a href="javascript:;" onclick="ajusteReparteController.editarAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +
+            '<img title="Lançamentos da Edição" src="' + contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />' +
+          '</a>';
+   var excluir = '<a href="javascript:;" onclick="ajusteReparteController.excluirAjuste('+row.cell.idAjusteReparte+');" style="cursor:pointer">' +
+          '<img title="Lançamentos da Edição" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
+          '</a>';
+   
+   row.cell.acao = editar + excluir;
+  });
+  
+  $(".grids", ajusteReparteController.workspace).show();
+  
+  return resultado;
+ },
+		 */
+
 	},
 	
 	//retorna acoes de edicao e exclusao de fixacao por produto
-	getActionsConsultaFixacaoProduto: function (cell){
+	getActionsConsultaFixacaoProduto: function (idFixacao){
 		
-		imgAlteracao = '<a href="javascript:;" id="editar" onclick="fixacaoReparteController.editarFixacao(' + cell.id + ','+cell.qtdeExemplares + ','+cell.cotaFixada+', \'' + cell.codigoProduto + '\')" ' +
+		return '<a href="javascript:;" id="editar" onclick="fixacaoReparteController.editarFixacao(' + idFixacao + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
 				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
-				'</a>' ;
-		imgExcluir =  '<a href="javascript:;" onclick="fixacaoReparteController.excluirFixacaoProduto(' + cell.id + ');" ' +
+				'</a>' +
+				'<a href="javascript:;" onclick="fixacaoReparteController.excluirFixacaoProduto(' + idFixacao + ');" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
 				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';
-		
-		components = "";
-		
-		//Checa quantidade de pdvs. Caso seja maior que 1 o retorna botoes editar/excluir senao apenas o botao excluir
-		if (cell.qtdPdv > 1) {
-			components = imgAlteracao;
-		}
-			components += imgExcluir;
-		
-		return  components;
-		
 	},
 	
 	//retorna acoes de edicao e exclusao de fixacao por cota
-	getActionsConsultaFixacaoCota: function (cell){
-		imgAlteracao ='<a href="javascript:;" id="editar" onclick="fixacaoReparteController.editarFixacao(' + cell.id + ','+cell.qtdeExemplares + ','+cell.cotaFixada+', \'' + cell.produtoFixado + '\')" ' +
-						' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
-						'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
-						'</a>';
-		imgExcluir = '<a href="javascript:;" onclick="fixacaoReparteController.excluirFixacaoCota(' + cell.id + ')" '  +
-						' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
-						'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
-						'</a>';
+	getActionsConsultaFixacaoCota: function (idFixacao){
+		
+		//Definir como sera recuperado o boolean que determina se possui ou nao pdvs
+		$.postJSON(contextPath + '/distribuicao/fixacaoReparte/verificaCotaPossuiPdvs');
 		
 		
-		components = "";
 		
-		//Checa quantidade de pdvs. Caso seja maior que 1 o retorna botoes editar/excluir senao apenas o botao excluir
-		if (cell.qtdPdv > 1) {
-			components = imgAlteracao;
-		}
-			components += imgExcluir;
-		
-		return  components;
+		return '<a href="javascript:;" id="editar" onclick="fixacaoReparteController.editarRepartePorPdv(' + idFixacao + ')" ' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
+				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
+				'</a>' +
+				'<a href="javascript:;" onclick="fixacaoReparteController.excluirFixacaoCota(' + idFixacao + ')" '  +
+				' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
+				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
+				'</a>';
 	},
 	
 	//exibe msg de confirmacao de fixação produto
@@ -445,127 +623,50 @@ var fixacaoReparteController = $.extend(true, {
 		exibirMensagem("ERROR", ["Houve um erro durante a exclusão "]);
 	},
 	
-	//retorna o id da fixacao. Utilizada para exclusao de fixacao
-	getIdExcluir : function(idFixacao) {
-		
-		var data = [];
-		data.push({name:'fixacaoReparteDTO.id',	value: idFixacao});
-		
-		return data;
-	},
-	
-	//funcao que executa chamada postJSON que busca dados da fixacao 
-	editarFixacao:function (idFixacao,qtdeReparte, numeroCota, codigoProduto){
-		var reparteTotal= qtdeReparte;
-		arrayPesquisa = [];
-		arrayPesquisa.push({
-			  name : "filtro.codigoProduto" , 
-			  value : codigoProduto
-			  });
-		arrayPesquisa.push({
-			  name : "filtro.codigoCota" , 
-			  value : numeroCota
-			  });
-		  
-		arrayPesquisa.push({
-			  name : "filtro.idFixacao" , 
-			  value : idFixacao
-			  });
-		$.postJSON(contextPath + '/distribuicao/fixacaoReparte/editarFixacao', fixacaoReparteController.getIdSelecionado(idFixacao)
+	//funcao que executa chamada postJSON que busca dados do mix 
+	editarRepartePorPdv:function (idMix){
+		$.postJSON(contextPath + '/distribuicao/mixCotaProduto/editarRepartePorPdv', mixCotaProdutoController.getIdSelecionado(idMix)
 		,		
 		function(result){
-			$("#codigoCotaModalReparte").text(result.cotaFixadaString);
-			$("#nomeCotaModalReparte").text(result.nomeCota);
-			$("#codigoProdutoModalReparte").text(result.produtoFixado);
-			$("#nomeProdutoModalReparte").text(result.nomeProduto);
-			$("#classificacaoModalReparte").text(result.classificacaoProduto);
-		}		
+			alert('passou');
+//			$("#codigoCotaModalReparte").text(result.cotaFixadaString);
+//			$("#nomeCotaModalReparte").text(result.nomeCota);
+//			$("#codigoProdutoModalReparte").text(result.produtoFixado);
+//			$("#nomeProdutoModalReparte").text(result.nomeProduto);
+//			$("#classificacaoModalReparte").text(result.classificacaoProduto);
+		},
+		function(result){
+			alert('deu zica');
+		}
 		
 		);
-	
+		//Funcao que abre o modal de repartes por pdv 
+//		mixCotaProdutoController.preencherGridPdv(idMix);
 		$( "#dialog-defineReparte" ).dialog({
 			resizable: false,
 			height:590,
 			width:650,
 			modal: true,
-			//Funcao que abre o modal de repartes por pdv
-			open: 	fixacaoReparteController.preencherGridPdv(arrayPesquisa),
 			buttons: {
 				"Confirmar": function() {
-					var somaReparte=0;
-					  $("#pdvCotaGrid .reparteGridinput").each(function(idx, linha){
+//					  var inputs =  new Array() ;
+//					  var repartes = new Array();
+//					  var codigos = new Array();
+					  $("#pdvCotaGrid .reparteGridinput").each(function(idx,linha){
 						  if(linha.name == 'undefined'){
 							  codigos.push(0);
 						  }else{
 							  codigos.push( $(linha).val());
-							  //adiciona a lista de parametros os valores diretamente ao dto definido no parametro do metodo da controller.
-							  //Para lista, deve-se informar obrigatoriamente o indice do elemento
-							  listaPDV.push({
-								  name : "listPDV["+idx+"].codigoPdv" , 
-								  value : linha.name
-								  });
-							  
-							
 						  }
 						 
-						  if(linha.value == 'undefined'){
+						  if(linha.value = 'undefined'){
 							  repartes.push(0);
 						  }else{
-							  if($(linha).val() !='undefined' || $(linha).val()!= ''){
-								  somaReparte += parseInt(linha.value);  
-							  }
-							  repartes.push($(linha).val());
-							  listaPDV.push({
-								  name : "listPDV["+idx+"].reparte" , 
-								  value : linha.value
-								  });
-							  
-							  
+							  repartes.push($(linha).val());  
 						  }
 						  
 					  });
-					  
-					  listaPDV.push({
-						  name : "codProduto" , 
-						  value : $("#codigoProdutoModalReparte").text()
-						  });
-					  listaPDV.push({
-						  name : "codCota" , 
-						  value : $("#codigoCotaModalReparte").text()
-						  });
-					  
-					  listaPDV.push({
-						  name : "idFixacao" , 
-						  value : idFixacao
-						  });
-					  
-					if(somaReparte > reparteTotal){
-						$("#dialog-confirma-reparte").dialog({
-							resizable: false,
-							height:'auto',
-							width:300,
-							modal: true,
-							buttons: {
-								"Confirmar": function() {
-									//parametros para salvar repartes pdvs
-									$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte',  listaPDV, 
-											function(result){
-														$(".excessaoCotaGrid").flexReload();
-														$("#dialog-defineReparte").dialog("close"); 
-											},
-											function(result){ });
-									$(this).dialog("close");
-								},
-								"Cancelar": function() {
-									$(this).dialog("close");
-								}
-							},
-						});
-						
-					}else{
-						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', listaPDV);
-						
-					}
+					$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', fixacaoReparteController.getValoresReparte(idMix));
 //					$( this ).dialog( "close" );
 //					$("#effect").show("highlight", {}, 1000, callback);
 				},
@@ -575,7 +676,7 @@ var fixacaoReparteController = $.extend(true, {
 			}
 		});
 		$('#dialog-defineReparte').bind('dialogclose', function(event) {
-//			fixacaoReparteController.limparCamposModalReparteAoFechar();
+			fixacaoReparteController.limparCamposModalReparteAoFechar();
 		 });
 		
 		
@@ -590,15 +691,14 @@ var fixacaoReparteController = $.extend(true, {
 	},
 	
 	//funcao que executa a chamada que preenche a grid de repartes por pdv
-	preencherGridPdv:function(params){
-		$(".pdvCotaGrid").flexOptions({
+	preencherGridPdv:function(idFixacao){
+		$(".pdvCotaGrid", fixacaoReparteController.workspace).flexOptions({
 			url: contextPath + "/distribuicao/fixacaoReparte/carregarGridPdv",
 			dataType : 'json',
-//			params: fixacaoReparteController.getIdSelecionado(idFixacao)
-			params: params
+			params: fixacaoReparteController.getIdSelecionado(idFixacao)
 		});
 		
-		$(".pdvCotaGrid").flexReload();
+		$(".pdvCotaGrid", fixacaoReparteController.workspace).flexReload();
 	},
 	//funcao que limpa os dados que foram carregados no modal de reparte ao fechar a tela
 	limparCamposModalReparteAoFechar:function(){
@@ -620,9 +720,9 @@ var fixacaoReparteController = $.extend(true, {
 
 			var lastIndex = data.rows[i].cell.length;
 			
-			data.rows[i].cell["reparte"]=fixacaoReparteController.getInputReparte(data.rows[i].cell);
+			data.rows[i].cell["reparte"]=fixacaoReparteController.getInputReparte(data.rows[i].cell["id"]);
 		}
-		//$('.excessaoCotaGrid').show();
+		$('.excessaoCotaGrid').show();
 		if (data.result){
 			return data.result[1];
 		}
@@ -633,26 +733,25 @@ var fixacaoReparteController = $.extend(true, {
 	//funcao que retorna id da fixação a lista de fixacoes
 	getIdSelecionado: function(idFixacao){
 		var data = [];
-		data.push({name:'filtro.idFixacao',	value: idFixacao});
-		data.push({name:'filtro.codigoCota', value: $("#codigoCota").val()});
+		data.push({name:'filtro.id',	value: idFixacao});
 		return data;
 	},
 	
 	//funcao que retorna input de reparte a grid de reparte por pdv
-	getInputReparte:function(cell){
-		return "<input type='text' class='reparteGridinput' name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+	getInputReparte:function(id){
+		return "<input type='text' class='reparteGridinput' name='"+id+"'/>";
 		
 	},
 	//funcao de exibicao de grid
 	exibeGridCota:function(){
-		$('.porCota').show();
-		$('.porExcessao').hide();
+		$('.pesqCota').show();
+		$('.pesqProduto').hide();
 	},
 	
 	//funcao de exibicao de grid
 	exibeGridProduto:function(){
-		$('.porExcessao').show();
-		$('.porCota').hide();
+		$('.pesqProduto').show();
+		$('.pesqCota').hide();
 	},
 	
 	//Funcao de pre-processamento da chamada postJSON que preenche a grid de historico
@@ -660,11 +759,7 @@ var fixacaoReparteController = $.extend(true, {
 		if(result.rows[0]){
 			$("#edicaoDestaque").text(result.rows[0].cell.edicaoString);
 			$("#statusDestaque").text(result.rows[0].cell.status);
-			$("#historicoXLS").show();
-			$("#historicoPDF").show();
 		}else{
-			$("#historicoXLS").hide();
-			$("#historicoPDF").hide();
 			$("#edicaoDestaque").text("");
 			$("#statusDestaque").text("");
 		}
@@ -673,27 +768,27 @@ var fixacaoReparteController = $.extend(true, {
 	
 	//Funcao que realiza pesquisa de fixações por produto
 	pesquisarPorProduto:function(){
-		fixacaoReparteController.exibeGridProduto();
-		$(".fixacaoProdutoGrid", fixacaoReparteController.workspace).flexOptions({
-			url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorProduto",
+		mixCotaProdutoController.exibeGridProduto();
+		$(".mixProdutosGrid").flexOptions({
+			url: contextPath + "/distribuicao/mixCotaProduto/pesquisarPorProduto",
 			dataType : 'json',
-			params: fixacaoReparteController.getDadosProduto()
+			params: mixCotaProdutoController.getDadosProduto()
 		});
 		
-		$(".fixacaoProdutoGrid", fixacaoReparteController.workspace).flexReload();
+		$(".mixProdutosGrid").flexReload();
 				
 	},
 	
 	//Funcao que realiza pesquisa de fixações por cota
 	pesquisarPorCota:function(){
-		fixacaoReparteController.exibeGridCota();
-		$(".excessaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
-			url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorCota",
+		mixCotaProdutoController.exibeGridCota();
+		$(".mixCotasGrid").flexOptions({
+			url: contextPath + "/distribuicao/mixCotaProduto/pesquisarPorCota",
 			dataType : 'json',
-			params: fixacaoReparteController.getDadosCota()
+			params: mixCotaProdutoController.getDadosCota()
 		});
 		
-		$(".excessaoCotaGrid", fixacaoReparteController.workspace).flexReload();
+		$(".mixCotasGrid").flexReload();
 				
 	},
 	
@@ -709,18 +804,18 @@ var fixacaoReparteController = $.extend(true, {
 			
 			
 		},
-		//Getter dos parametros necessarios para pesquisa de fixação  por produto
+		//Getter dos parametros necessarios para pesquisa de mix  por produto
 		getDadosProduto : function() {
 			
 			var data = [];
 			data.push({name:'filtro.codigoProduto',	value: $("#codigoProduto").val()});
 			data.push({name:'filtro.nomeProduto',	value: $("#nomeProduto").val()});
-			data.push({name:'filtro.classificacaoProduto',	value: $("select['select'] option:selected").html()});
+			data.push({name:'filtro.classificacaoProduto',	value: $("select['select'] option:selected").val()});
 			
 			return data;
 		},
 		
-		//Getter dos parametros necessarios para pesquisa de fixação  por cota
+		//Getter dos parametros necessarios para pesquisa de mix  por cota
 		getDadosCota : function() {
 			
 			var data = [];
@@ -769,7 +864,7 @@ var fixacaoReparteController = $.extend(true, {
 			data.push({name:'fixacaoReparteDTO.qtdeExemplares',	value: $("#qtdeFixadaModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoInicial',	value: $("#edInicialModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoFinal',	value: $("#edFinalModal").val()});
-			data.push({name:'fixacaoReparteDTO.qtdeEdicoesMarcado',	value: $("#radioQtdeEdicoes").is(":checked")});
+			data.push({name:'fixacaoReparteDTO.qtdeFixadaModal',	value: $("#edInicialModal").val()});
 			
 			return data;
 		},
@@ -837,7 +932,6 @@ var fixacaoReparteController = $.extend(true, {
 		//Limpa os campos preenchidos durante a fixa��o, apos finalizada a adi��o de fixa��o
 		limparCamposModalNovo:function(){
 			$("#qtdeEdicoesModal").val("");
-			$("#qtdeFixadaModal").val("");
 			$('#edInicialModal').val("");
 			$('#edFinalModal').val("");
 			$(".historicoGrid").html("");
@@ -845,7 +939,7 @@ var fixacaoReparteController = $.extend(true, {
 
 		//Executada em caso de erro durante tentativa de chamada postJSON para adicionar fixação
 		executarErrorCallBack:function(result){
-			//exibirMensagem("ERROR", ["Não foi possivel adicionar fixação "]);
+			exibirMensagem("ERROR", ["Não foi possivel adicionar fixação "]);
 		},
 		
 		// Função que valida campos obrigatorios no modal  de nova fixação
@@ -916,7 +1010,6 @@ var fixacaoReparteController = $.extend(true, {
 			$('#spanCodigoProduto').text("");
 			$('#spanNomeProduto').text("");
 			$(".historicoGrid").html("");
-			$('#qtdeFixadaModal').val("");
 			$('#qtdeEdicoesModal').val("");
 			$('#edInicialModal').val("");
 			$('#edFinalModal').val("");
@@ -948,4 +1041,4 @@ var fixacaoReparteController = $.extend(true, {
 		}
 	
 	}, BaseController);
-//@ sourceURL=fixacaoReparte.js
+//@ sourceURL=mixCotaProduto.js

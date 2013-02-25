@@ -10,71 +10,57 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
-
-
-
 @SuppressWarnings("serial")
 @Exportable
-public class FixacaoReparteDTO implements Serializable{
+public class FixacaoReparteHistoricoDTO implements Serializable{
 	
 	private Long id;
 	
-	@Export(label ="exemplares")
 	private Integer qtdeExemplares;
-	
 	private Date dataHora;
-	
-	@Export(label ="ed. inicial")
 	private Integer edicaoInicial;
-	
-	@Export(label ="ed. final")
 	private Integer edicaoFinal;
-	
-	@Export(label ="codigo")
 	private Integer cotaFixada;
-	
-	@Export(label ="codigo")
 	private String nomeCota;
-	
-	@Export(label ="classificacao")
 	private String classificacaoProduto;
-	
-	@Export(label ="usuario")
 	private String usuario;
-	
 	private String cotaFixadaString;
-	
-	@Export(label ="produto")
 	private String produtoFixado;
-	
-	@Export(label ="qtde ed")
 	private Integer qtdeEdicoes;
-	
-	@Export(label ="data")
 	private String data;
-	
-	@Export(label ="hora")
 	private String hora;
-	
 	private Long qtdPdv;
-	
-	@Export(label ="codigo")
 	private String nomeProduto;
-	
-	@Export(label ="ed. atendidas")
 	private Integer edicoesAtendidas;
 	
 	private BigInteger edicao;
+	
+	@Export(label ="Edição",exhibitionOrder=1)
 	private String edicaoString;
+	
 	private BigDecimal reparte;
+	
+	@Export(label ="Reparte",exhibitionOrder=2)
 	private String reparteString;
+	
 	private BigDecimal venda;
+	
+	@Export(label ="Venda",exhibitionOrder=3)
 	private String vendaString;
+	
 	private Date dataLancamento;
+	
+	@Export(label ="Lançamento",exhibitionOrder=4)
 	private String dataLancamentoString;
+	
 	private Date dataRecolhimento;
+	
+	@Export(label ="Recolhimento",exhibitionOrder=5)
 	private String dataRecolhimentoString;
+	
+	@Export(label ="Status",exhibitionOrder=6)
 	private String status;
+	
 	private PaginacaoVO paginacaoVO;
 	private boolean qtdeEdicoesMarcado;
 	private String codigoProduto;

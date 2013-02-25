@@ -15,55 +15,48 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 @SuppressWarnings("serial")
 @Exportable
-public class FixacaoReparteDTO implements Serializable{
+public class FixacaoReparteCotaDTO implements Serializable{
 	
 	private Long id;
 	
-	@Export(label ="exemplares")
-	private Integer qtdeExemplares;
-	
-	private Date dataHora;
-	
-	@Export(label ="ed. inicial")
-	private Integer edicaoInicial;
-	
-	@Export(label ="ed. final")
-	private Integer edicaoFinal;
-	
-	@Export(label ="codigo")
-	private Integer cotaFixada;
-	
-	@Export(label ="codigo")
-	private String nomeCota;
-	
-	@Export(label ="classificacao")
-	private String classificacaoProduto;
-	
-	@Export(label ="usuario")
-	private String usuario;
-	
-	private String cotaFixadaString;
-	
-	@Export(label ="produto")
+	@Export(label ="codigo",exhibitionOrder=1)
 	private String produtoFixado;
 	
-	@Export(label ="qtde ed")
-	private Integer qtdeEdicoes;
-	
-	@Export(label ="data")
-	private String data;
-	
-	@Export(label ="hora")
-	private String hora;
-	
-	private Long qtdPdv;
-	
-	@Export(label ="codigo")
+	@Export(label ="produto", exhibitionOrder=2)
 	private String nomeProduto;
 	
-	@Export(label ="ed. atendidas")
+	@Export(label ="classificacao",exhibitionOrder=3)
+	private String classificacaoProduto;
+	
+	@Export(label ="ed. inicial",exhibitionOrder=4)
+	private Integer edicaoInicial;
+	
+	@Export(label ="ed. final",exhibitionOrder=5)
+	private Integer edicaoFinal;
+	
+	@Export(label ="ed. atendidas",exhibitionOrder=6)
 	private Integer edicoesAtendidas;
 	
+	@Export(label ="qtde ed",exhibitionOrder=7)
+	private Integer qtdeEdicoes;
+	
+	@Export(label ="exemplares",exhibitionOrder=8)
+	private Integer qtdeExemplares;
+	
+	@Export(label ="usuario",exhibitionOrder=9)
+	private String usuario;
+	
+	@Export(label ="data",exhibitionOrder=10)
+	private String data;
+	
+	@Export(label ="hora",exhibitionOrder=11)
+	private String hora;
+	
+	private Date dataHora;
+	private Integer cotaFixada;
+	private String nomeCota;
+	private String cotaFixadaString;
+	private Long qtdPdv;
 	private BigInteger edicao;
 	private String edicaoString;
 	private BigDecimal reparte;
@@ -258,12 +251,7 @@ public class FixacaoReparteDTO implements Serializable{
 	}
 
 	public void setData(String data) {
-		if(data ==null){
-			this.data ="";
-		}else{
-			this.data = DateUtil.formatarData(this.getDataHora(),"dd/MM/yyyy");			
-		}
-		
+		this.data = data;			
 	}
 
 	public String getHora() {
@@ -271,7 +259,7 @@ public class FixacaoReparteDTO implements Serializable{
 	}
 
 	public void setHora(String hora) {
-		this.hora = DateUtil.formatarHoraMinuto(this.getDataHora());
+		this.hora = hora;
 	}
 
 	public Long getId() {
