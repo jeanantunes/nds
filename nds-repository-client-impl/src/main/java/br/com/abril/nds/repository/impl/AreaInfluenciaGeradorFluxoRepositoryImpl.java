@@ -47,6 +47,8 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		// Adicionando os valores dos parametros na query
 		setParameters(query);
 		
+		hql.append("ORDER BY cota.numeroCota asc");
+		
 		/* Transforma o resultado da query a partir dos alias
 		 * onde cada alias é igual ao nome do atributo no DTO 
          */
@@ -87,6 +89,8 @@ public class AreaInfluenciaGeradorFluxoRepositoryImpl extends AbstractRepository
 		
 		// Group by
 		setGroupBy(hql);
+		
+		hql.append("ORDER BY cota.numeroCota asc");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		

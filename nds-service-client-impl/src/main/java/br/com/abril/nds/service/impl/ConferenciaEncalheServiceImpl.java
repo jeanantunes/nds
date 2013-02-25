@@ -531,8 +531,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		Date dataInicial = obterDataRecolhimentoReferencia();
-		Date dataFinal = dataOperacao;
+		Date dataRecolhimento = distribuidorService.obterDataOperacaoDistribuidor();
+		
 		boolean indFechado = false;
 		boolean indPostergado = false;
 		
@@ -544,8 +544,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
 				idDistribuidor,
 				numeroCota, 
-				dataInicial, 
-				dataFinal, 
+				dataRecolhimento, 
 				indFechado, 
 				indPostergado, 
 				listaIdProdutoEdicao);

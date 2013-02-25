@@ -1,16 +1,28 @@
 package br.com.abril.nds.dto.filtro;
 
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
 public class FiltroAreaInfluenciaGeradorFluxoDTO {
 
+	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private Integer numeroCota;
+	
+	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private String nomeCota;
+	
+	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private Long areaInfluenciaId;
+	
+	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private Long geradorFluxoPrincipalId;
+	
+	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 5)
 	private Long geradorFluxoSecundarioId;
+	
 	private boolean cotasAtivas; // False = todas as cotas
 
 	private PaginacaoVO paginacao;

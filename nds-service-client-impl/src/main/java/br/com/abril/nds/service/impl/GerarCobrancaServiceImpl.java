@@ -204,11 +204,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				this.controleBaixaBancariaRepository.obterListaControleBaixaBancaria(
 					dataOperacao, StatusControle.CONCLUIDO_SUCESSO);
 			
+			
+			//TODO: VERIFICAR NECESSIDADE DESTA VALIDAÇÃO, POIS VOLTOU COMO ERRO NO TRAC 171
+			/*
 			if (listaControleBaixaBancaria == null || listaControleBaixaBancaria.isEmpty()) {
 				
 				throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.WARNING, "Baixa Automática ainda não executada."));
 			}
+			*/
+			
 		}
 		
 		List<String> msgs = new ArrayList<String>();

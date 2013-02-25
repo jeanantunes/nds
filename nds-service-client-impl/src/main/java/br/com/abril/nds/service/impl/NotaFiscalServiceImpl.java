@@ -1004,7 +1004,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
 			Cota cota, List<ItemNotaFiscalSaida> listItemNotaFiscal,
 			InformacaoTransporte transporte,
@@ -1138,7 +1138,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * br.com.abril.nds.util.Intervalo, java.util.List, java.util.List)
 	 */
 	@Override
-	@Transactional
 	public List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(
 			Distribuidor distribuidor, Cota cota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
@@ -1494,7 +1493,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * Long)
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public InformacaoTransporte obterTransporte(Long idCota) {
 		InformacaoTransporte transporte = new InformacaoTransporte();
 
