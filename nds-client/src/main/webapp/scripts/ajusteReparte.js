@@ -4,18 +4,16 @@ init : function() {
 		
 	$("#dataInicio").datepicker({
 		showOn: "button",
-		minDate      : new Date(),
 		buttonImage: contextPath + "/images/calendar.gif",
 		buttonImageOnly: true
 	});
 	
 	$("#dataFim").datepicker({
 		showOn: "button",
-		minDate      : new Date(),
 		buttonImage: contextPath + "/images/calendar.gif",
 		buttonImageOnly: true
 	});
-	
+
 	$("#AJUSTE_HISTORICO_input").mask("9.9"); 
 	$("#AJUSTE_ENCALHE_MAX_input").mask("99.9");
 	$("#AJUSTE_ENCALHE_MAX_input").val("50.0");
@@ -256,6 +254,7 @@ init : function() {
 		 
 	getRadio : function (){
 		var valRadio = $('input:radio[name=formaAjuste]:checked').val();
+		
 		return valRadio;
 	},
 	
@@ -309,11 +308,13 @@ init : function() {
 					ajusteReparteController.popularPopUpEditar(result);						
 		});
 
+		
 		$( "#dialog-novo" ).dialog({
 			resizable: false,
 			height:'auto',
 			width:630,
 			modal: true,
+			
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
@@ -323,9 +324,9 @@ init : function() {
 					
 					$.postJSON(contextPath + "/distribuicao/ajusteReparte/alterarAjuste", data);
 					
+					closest('.cotasAjusteGrid');
 					$(".cotasAjusteGrid", ajusteReparteController.workspace).flexReload();
 					
-					closest('.cotasAjusteGrid');
 					ajusteReparteController.limparPopUp();
 				},
 				"Cancelar": function() {
@@ -336,13 +337,13 @@ init : function() {
 			}
 		});
 	},
-
+	
+	
 // Function para popular o popUp de editar
 	
 	popularPopUpEditar : function(result){
 		$("#numeroCota").val(result.numeroCota).disable();
 		$("#nomeCota").val(result.nomeCota).disable();
-//		$("#formaAjuste").val(ajusteReparteController.getRadio());
 		$("#motivoAjuste").val(result.motivoAjuste);
 		$("#dataInicio").val(result.dataInicio);
 		$("#dataFim").val(result.dataFim);

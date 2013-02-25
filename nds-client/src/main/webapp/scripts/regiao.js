@@ -678,7 +678,7 @@ var regiaoController = $.extend(true, {
 			}]
 		});
 			
-		$(".cotasRegiaoGrid", this.workspace).flexReload();		
+		$(".cotasRegiaoGrid").flexReload();		
 	},
 	
 	
@@ -1415,21 +1415,21 @@ var regiaoController = $.extend(true, {
 	
 	// FUNCTION - CONFIRMAR AUSENCIA DA COTA
 	
-	popupConfirmaAusenciaCota : function(cotas) {
-		
-		regiaoController.numCotas = cotas;
-		
-		var parametros = [];
-		var numero;
-		var idRegicaoSelecionada;
-		
-		$.each(cotas, function(index, num) {			
-			//parametros.push({name:'numCotas['+ index +']', value: num});
-			numero = parametros.push({name : 'numeroCota', value : num});
-			idRegicaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
-	  	});
-		//JSON
-	},
+//	popupConfirmaAusenciaCota : function(cotas) {
+//		
+//		regiaoController.numCotas = cotas;
+//		
+//		var parametros = [];
+//		var numero;
+//		var idRegicaoSelecionada;
+//		
+//		$.each(cotas, function(index, num) {			
+//			//parametros.push({name:'numCotas['+ index +']', value: num});
+//			numero = parametros.push({name : 'numeroCota', value : num});
+//			idRegicaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
+//	  	});
+//		//JSON
+//	},
 	
 	getInput : function(value,id, width,textAlign,onblur,onchange,onkeyup, classe, onfocusin, attr, attrValue) {
 		
