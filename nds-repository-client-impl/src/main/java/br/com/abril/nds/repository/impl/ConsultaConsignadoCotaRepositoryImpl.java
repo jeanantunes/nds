@@ -48,7 +48,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append(" pe.numeroEdicao as numeroEdicao, 		")
 		   .append(" pessoa.razaoSocial as nomeFornecedor, 	")
 		   .append(" lancamento.dataLancamentoDistribuidor as dataLancamento,")
-		   .append(" pe.precoVenda as precoCapa, ")
+		   .append(" coalesce(movimento.valoresAplicados.precoVenda, pe.precoVenda, 0) as precoCapa, ")
 		   
 		   .append(" coalesce(movimento.valoresAplicados.valorDesconto, 0) as desconto, ")
 		   .append(" coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) as precoDesconto, ")
@@ -101,9 +101,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   
 		   .append(" SUM(movimento.qtde) as consignado, 				")
 		   
-		   .append(" SUM(pe.precoVenda * movimento.qtde) as total, 		")
+		   .append(" SUM( coalesce(movimento.valoresAplicados.precoVenda, pe.precoVenda, 0)  * movimento.qtde) as total, ")
 		   
-		   .append(" SUM((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde )  as totalDesconto, ")
+		   .append(" SUM( coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * movimento.qtde )  as totalDesconto, ")
 		   
 		   .append(" pessoa.razaoSocial as nomeFornecedor,  ")
 		   
@@ -186,7 +186,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT SUM(( (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde )) ");
+		hql.append(" SELECT SUM( coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0)  * movimento.qtde) ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
@@ -206,7 +206,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT SUM(( (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde )) as total, ");
+		hql.append("SELECT SUM(coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * movimento.qtde) as total, ");
 		
 		hql.append("pessoa.razaoSocial as nomeFornecedor");
 		
