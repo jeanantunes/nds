@@ -986,6 +986,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		roteirizacaoRepository.alterar(roteirizacaoExistente);
 		
 		if(roteirizacaoDTO.getRoteiros() == null || roteirizacaoDTO.getRoteiros().isEmpty()) {
+			
 			roteirizacaoRepository.removerPorId(roteirizacaoDTO.getId());
 		}
 		
@@ -1006,8 +1007,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 				for(Rota rota : roteiro.getRotas()) {
 					
 					Entregador entregador = rota.getEntregador();
+					
+					rota.setRoteiro(null);
+					
+					this.rotaRepository.merge(rota);
 				
 					if(entregador != null){
+						
 						entregador.setRota(null);
 					
 						this.entregadorRepository.merge(entregador);
@@ -1022,13 +1028,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 							Cota cota = pdv.getCota();
 							
 							if(cota != null) {
+								
 								cota.setBox(null);
+								
 								this.cotaRepository.merge(cota);
 							}
 						}
 					}
 				}
 			}
+			
+			this.roteiroRepository.removerPorId(idRoteiroExclusao);
 		}
 		
 	}
