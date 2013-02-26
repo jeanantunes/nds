@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -54,11 +53,10 @@ public class EstudoCota implements Serializable {
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	
 	@OneToMany(mappedBy = "estudoCota")
-
 	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
 	
-	@OneToOne(mappedBy = "estudoCota")
-	private ItemNotaEnvio itemNotaEnvio;
+	@OneToMany(mappedBy = "estudoCota")
+	private List<ItemNotaEnvio> itemNotaEnvios;
 	
 	public EstudoCota() {
 		
@@ -124,12 +122,17 @@ public class EstudoCota implements Serializable {
 		this.movimentosEstoqueCota = movimentosEstoqueCota;
 	}
 
-	public ItemNotaEnvio getItemNotaEnvio() {
-		return itemNotaEnvio;
+	/**
+	 * @return the itemNotaEnvios
+	 */
+	public List<ItemNotaEnvio> getItemNotaEnvios() {
+		return itemNotaEnvios;
 	}
 
-	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
-		this.itemNotaEnvio = itemNotaEnvio;
+	/**
+	 * @param itemNotaEnvios the itemNotaEnvios to set
+	 */
+	public void setItemNotaEnvios(List<ItemNotaEnvio> itemNotaEnvios) {
+		this.itemNotaEnvios = itemNotaEnvios;
 	}
-
 }

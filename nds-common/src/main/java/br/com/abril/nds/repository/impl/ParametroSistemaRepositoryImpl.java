@@ -100,7 +100,7 @@ implements ParametroSistemaRepository {
 		try {
 			String sql = "SELECT a.valor FROM ParametroSistema a WHERE a.tipoParametroSistema = :tipoParametro";
 			Query query = getSession().createQuery(sql);
-			query.setParameter("tipoParametro", tipoParametro);
+			query.setParameter("tipoParametro", TipoParametroSistema.valueOf(tipoParametro));
 			return (String) query.uniqueResult();
 		} catch (PersistenceException e) {
 			return null;

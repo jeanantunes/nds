@@ -250,11 +250,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select lancamento.produtoEdicao from Lancamento lancamento ");
+		hql.append(" select chamadaEncalhe.produtoEdicao from ChamadaEncalhe chamadaEncalhe ");
 		
-		hql.append(" where lancamento.sequenciaMatriz = :sequenciaMatriz ");
+		hql.append(" where chamadaEncalhe.sequencia = :sequenciaMatriz ");
 		
-		hql.append(" and lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
+		hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimentoDistribuidor ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -267,29 +267,40 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	/*
 	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterCodigoMatrizPorProdutoEdicao(java.lang.Long)
+	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterCodigoMatrizPorProdutoEdicao(java.lang.Long, java.util.Date)
 	 */
-	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao) {
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select lancamento.sequenciaMatriz from Lancamento lancamento ");
+		hql.append(" select chamadaEncalhe.sequencia from ChamadaEncalhe chamadaEncalhe ");
 		
-		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		hql.append(" where chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
 
-		hql.append(" and lancamento.dataLancamentoDistribuidor = ");
-
-		hql.append(" ( ");
-		
-		hql.append(" select max(lancamento.dataLancamentoDistribuidor) from Lancamento lancamento  ");
-		
-		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao   ");
-		
-		hql.append(" ) ");
+		if(dataRecolhimento != null) {
+			
+			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+					
+		} else {
+			
+			hql.append(" and chamadaEncalhe.dataRecolhimento = ");
+			
+			hql.append(" ( ");
+			
+			hql.append(" select max(ce.dataRecolhimento) from ChamadaEncalhe ce  ");
+			
+			hql.append(" where ce.produtoEdicao.id = :idProdutoEdicao   ");
+			
+			hql.append(" ) ");			
+		}
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		if(dataRecolhimento!=null) {
+			query.setParameter("dataRecolhimento", dataRecolhimento);
+		}
 		
 		return (Integer) query.uniqueResult();
 	}

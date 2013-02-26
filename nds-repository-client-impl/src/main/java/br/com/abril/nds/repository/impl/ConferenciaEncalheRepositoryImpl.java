@@ -246,9 +246,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" PROD_EDICAO.CODIGO_DE_BARRAS as codigoDeBarras, ");
 		
-		hql.append(" ( ");
-		hql.append( subSqlQuerySequenciaMatriz() );
-		hql.append(" ) AS codigoSM, ");
+		hql.append(" CH_ENCALHE.SEQUENCIA AS codigoSM, ");
 
 		hql.append(" 0 AS qtdExemplar, 		");
 		
@@ -368,7 +366,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PESSOA_EDITOR.RAZAO_SOCIAL AS nomeEditor,					");			
 		hql.append(" PESSOA_FORNECEDOR.RAZAO_SOCIAL AS nomeFornecedor,			");			
 		
-		hql.append(" ( ").append(subSqlQuerySequenciaMatriz()).append(" ) AS codigoSM, ");
+		hql.append(" CH_ENCALHE.SEQUENCIA AS codigoSM, ");
 		
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
 		hql.append(" CH_ENCALHE.TIPO_CHAMADA_ENCALHE AS tipoChamadaEncalhe,	 ");
@@ -376,10 +374,13 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD.NOME AS nomeProduto,                               ");
 		hql.append(" PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao,              ");
 		
-		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA) AS precoCapa, ");
+		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA, 0) AS precoCapa, ");
 		
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
 		hql.append(" PROD_EDICAO.PACOTE_PADRAO AS pacotePadrao,              ");
+		
+
+		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA, 0) AS precoComDesconto, ");
 		
 		hql.append(" COALESCE( ( COALESCE(MOV_ESTOQUE_COTA.PRECO_VENDA, 0) - COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, 0)), 0 ) AS desconto, ");
 		
@@ -449,6 +450,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("parcial");
 		((SQLQuery)query).addScalar("pacotePadrao");
 		((SQLQuery)query).addScalar("desconto");
+		((SQLQuery)query).addScalar("precoComDesconto");
 		((SQLQuery)query).addScalar("valorTotal");
 		((SQLQuery)query).addScalar("dia", StandardBasicTypes.INTEGER);
 
@@ -457,28 +459,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		return query.list();
 		        		
-	}
-	
-	/**
-	 * Obtém String de subSQL que retorna valor sequenciaMatriz
-	 * para determinado ProdutoEdicao para a dataRecolhimento mais atual.
-	 * 
-	 * @return String
-	 */
-	private String subSqlQuerySequenciaMatriz() {
-		
-		StringBuffer sql = new StringBuffer();
-		
-		sql.append(" SELECT LANCTO.SEQUENCIA_MATRIZ ");
-		sql.append(" FROM LANCAMENTO LANCTO 		");
-		sql.append(" WHERE LANCTO.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND ");
-		sql.append(" LANCTO.DATA_LCTO_DISTRIBUIDOR = ");
-		
-		sql.append(" ( SELECT MAX(LCTO.DATA_LCTO_DISTRIBUIDOR) FROM LANCAMENTO LCTO 	");
-		sql.append(" WHERE LCTO.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ) 			");
-		
-		return sql.toString();
-		
 	}
 
 	/**

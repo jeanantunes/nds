@@ -19,7 +19,6 @@ import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
-
 public class DBImportDataRouter extends AbstractRepository implements BaseRouter {
 	
 

@@ -1529,7 +1529,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		columnToSort.put("numeroCota", "numeroCota");
 		columnToSort.put("nomeCota", "pessoa.nome");
-		columnToSort.put("cotaSuspensa", "situacaoCadastro");
+		columnToSort.put("situacaoCadastro", "situacaoCadastro");
 		
 		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
 		
