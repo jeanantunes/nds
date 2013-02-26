@@ -595,7 +595,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		return res;
 	}
 	
-	@Autowired
+	@Override
 	@Transactional(readOnly = true)
 	public List<TipoCobranca> obterTiposCobrancaDistribuidor() {
 		
