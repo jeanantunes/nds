@@ -159,7 +159,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		this.atualizarLancamentos(
 			idsLancamento, usuario, mapaRecolhimentos,
-			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null, null);
+			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null);
 	}
 	
 	/**
@@ -242,12 +242,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			}
 		}
 		
-		Integer maiorSequenciaMatriz =
-			this.lancamentoRepository.obterMaiorSequenciaMatrizLancamento();
-		
 		this.atualizarLancamentos(
 			idsLancamento, usuario, mapaLancamentoRecolhimento,
-			StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada, maiorSequenciaMatriz);
+			StatusLancamento.BALANCEADO_RECOLHIMENTO, matrizConfirmada);
 		
 		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
@@ -300,13 +297,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * @param usuario - usuário
 	 * @param mapaLancamentoRecolhimento - mapa de lancamentos e produtos de recolhimento
 	 * @param statusLancamento - status do lançamento
-	 * @param maiorSequenciaMatriz
 	 */
 	private void atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
 									  Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento,
 									  StatusLancamento statusLancamento,
-									  TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada,
-									  Integer maiorSequenciaMatriz) {
+									  TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada) {
 		
 		if (!idsLancamento.isEmpty()) {
 		
@@ -340,12 +335,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				Date novaData = produtoRecolhimento.getNovaData();
 				
 				lancamento.setDataRecolhimentoDistribuidor(novaData);
-				
-				if (lancamento.getSequenciaMatriz() == null) {
-					
-					lancamento.setSequenciaMatriz(++maiorSequenciaMatriz);
-				}
-				
+				lancamento.setSequenciaMatriz(produtoRecolhimento.getSequencia().intValue());
 				lancamento.setStatus(statusLancamento);
 				lancamento.setDataStatus(new Date());
 				
@@ -431,13 +421,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 			
+			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataRecolhimento);
+			
 			for (Long idLancamento : idsLancamento) {
 
-				Lancamento lancamento = this.lancamentoRepository
-						.buscarPorId(idLancamento);
+				Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 
-				List<EstoqueProdutoCota> listaEstoqueProdutoCota = this.estoqueProdutoCotaRepository
-						.buscarListaEstoqueProdutoCota(idLancamento);
+				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
+					this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idLancamento);
 
 				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
 
@@ -456,13 +447,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					Cota cota = estoqueProdutoCota.getCota();
 
-					ChamadaEncalhe chamadaEncalhe = this.obterChamadaEncalheLista(listaChamadaEncalhe,
-									dataRecolhimento, produtoEdicao.getId());
+					ChamadaEncalhe chamadaEncalhe =
+						this.obterChamadaEncalheLista(
+							listaChamadaEncalhe, dataRecolhimento, produtoEdicao.getId());
 
 					indNovaChamadaEncalhe = (chamadaEncalhe == null);
 					
 					if (indNovaChamadaEncalhe) {
-						chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao);
+						chamadaEncalhe =
+							this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
 					}
 					
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
@@ -522,16 +515,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * 
 	 * @param dataRecolhimento - data de recolhimento
 	 * @param produtoEdicao - produto edição
+	 * @param sequencia
 	 * 
 	 * @return chamada de encalhe
 	 */
-	private ChamadaEncalhe criarChamadaEncalhe(Date dataRecolhimento, ProdutoEdicao produtoEdicao) {
+	private ChamadaEncalhe criarChamadaEncalhe(Date dataRecolhimento, ProdutoEdicao produtoEdicao, Integer sequencia) {
 		
 		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
 		
 		chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		chamadaEncalhe.setSequencia(sequencia);
 		
 		return chamadaEncalhe;
 	}
