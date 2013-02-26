@@ -449,6 +449,9 @@ public class MapaAbastecimentoController extends BaseController {
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		filtro.getPaginacao().setPaginaAtual(null);
 		
+		filtro.getPaginacao().setSortColumn("nomeEdicao");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);
