@@ -47,7 +47,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		
-		List<Object> objs = new ArrayList<>();
+		List<Object> objs = new ArrayList<Object>();
 		Object dummyObj = new Object();
 		objs.add(dummyObj);
 		
@@ -96,7 +96,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		Query query = this.getSessionIcd().createSQLQuery(hql.toString());
 		
 		List<BigDecimal> codigos = query.list();
-		List<String> codigosConvertidos = new ArrayList<>();
+		List<String> codigosConvertidos = new ArrayList<String>();
 		
 		for(BigDecimal c : codigos) {
 			codigosConvertidos.add(c.toString());

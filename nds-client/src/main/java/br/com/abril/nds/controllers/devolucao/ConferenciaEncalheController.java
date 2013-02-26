@@ -768,7 +768,7 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
 					
-					//this.validarExcedeReparte(qtdExemplares, dto);
+					this.validarExcedeReparte(qtdExemplares, dto);
 					
 					dto.setQtdExemplar(BigInteger.valueOf(qtdExemplares));
 					dto.setQtdInformada(BigInteger.valueOf(qtdExemplares));
@@ -782,7 +782,7 @@ public class ConferenciaEncalheController extends BaseController {
 						
 						dto.setPrecoCapa(valorCapa);
 					}
-					
+					 
 					BigDecimal precoCapa = dto.getPrecoCapa() == null ? BigDecimal.ZERO : dto.getPrecoCapa();
 					BigDecimal desconto = dto.getDesconto() == null ? BigDecimal.ZERO : dto.getDesconto();
 					BigDecimal qtdExemplar = dto.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(dto.getQtdExemplar()); 

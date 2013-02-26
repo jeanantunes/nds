@@ -3,10 +3,7 @@ package br.com.abril.nds.util.export;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -17,6 +14,8 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export.Alignment;
 
 public class ExportHandler {
+	
+	private static DecimalFormat FORMATO_MOEDA = new DecimalFormat("#,###,##0.00");
 	
 	public static <T, F, FT> ExportModel generateExportModel(F filter,
 														 	 FT footer,
@@ -439,9 +438,10 @@ public class ExportHandler {
 		if (value != null) {
 			
 			switch(columnType){
-				case DECIMAL:
-					exportValue = new DecimalFormat("#,###,##0.00").format(value);
+				case MOEDA:
+					exportValue = FORMATO_MOEDA.format(value);
 				break;
+				case DECIMAL:
 				case INTEGER:
 				case NUMBER:
 				case STRING:
