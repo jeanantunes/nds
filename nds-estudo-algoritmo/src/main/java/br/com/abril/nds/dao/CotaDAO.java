@@ -4,7 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
@@ -91,11 +93,11 @@ public class CotaDAO {
     public List<Cota> getCotasComEdicoesBase(List<ProdutoEdicaoBase> edicoesBase) {
 	List<Cota> returnListCota = new ArrayList<>();
 	try {
-	    List<Long> idsList = new ArrayList<Long>();
+	    Map<Long, Integer> idsPesos = new HashMap<Long, Integer>();
 	    for (ProdutoEdicaoBase edicao : edicoesBase) {
-		idsList.add(edicao.getId());
+		idsPesos.put(edicao.getId(), edicao.getPeso());
 	    }
-	    String idsString = idsList.toString().replaceAll("\\]|\\[","");
+	    String idsString = idsPesos.keySet().toString().replaceAll("\\]|\\[","");
 	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_PRODUTO_EDICAO_POR_COTA.replaceAll("\\?", idsString));
 	    ResultSet rs = ps.executeQuery();
 	    
@@ -106,11 +108,12 @@ public class CotaDAO {
 		if(prevIdCota != idCota) {
 		    Cota cota = new Cota();
 		    cota.setId(idCota);
-		    cota.setEdicoesRecebidas(getEdicoes(rs));
+		    cota.setNumero(rs.getLong("NUMERO_COTA"));
+		    cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos, false));
 		    returnListCota.add(cota);
 		} else {
 		    Cota cota = returnListCota.get(returnListCota.size()-1);
-		    cota.getEdicoesRecebidas().addAll(getEdicoes(rs));
+		    cota.getEdicoesRecebidas().addAll(getEdicoes(rs, idsPesos, true));
 		}
 		prevIdCota = idCota;
 	    }
@@ -121,24 +124,31 @@ public class CotaDAO {
 	return returnListCota;
     }
     
-    private List<ProdutoEdicao> getEdicoes(ResultSet rs) throws SQLException {
+    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, Integer> idsPesos, boolean forceEdicaoFechada) throws SQLException {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 	
 	produtoEdicao.setIdProduto(rs.getLong("PRODUTO_ID"));
 	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 	produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
+	
+	//FIXME - gambeta loca remover!!!!!!!
+	if(forceEdicaoFechada) {
+	    produtoEdicao.setEdicaoAberta(false);
+	} else {
+	    produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
+	}
+	
 	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
 	produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
 	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 	produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
 	produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
-	produtoEdicao.setPacotePadrao(rs.getInt("PACOTE_PADRAO"));
 	
-	//dados do sistema legado
-//	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-//	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
+	produtoEdicao.setPeso(idsPesos.get(produtoEdicao.getId()));
+	
+	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
 
 	edicoes.add(produtoEdicao);
 	return edicoes;
@@ -164,6 +174,7 @@ public class CotaDAO {
 
     private static final String SQL_PRODUTO_EDICAO_POR_COTA = " select " 
 	    + " c.id as COTA_ID "
+	    + " ,c.NUMERO_COTA "
 	    + " ,p.id as PRODUTO_ID "
 	    + " ,pe.id as PRODUTO_EDICAO_ID "
 	    + " ,l.id as LANCAMENTO_ID "
@@ -174,6 +185,8 @@ public class CotaDAO {
 	    + " ,epc.QTDE_RECEBIDA "
 	    + " ,(epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) as QTDE_VENDA "
 	    + " ,pe.PACOTE_PADRAO "
+	    + " ,pe.NUMERO_EDICAO "
+	    + " ,p.CODIGO "
 	+ " from "
 	    + " produto_edicao pe "
 	    + " ,produto p "
@@ -188,5 +201,5 @@ public class CotaDAO {
             + " and tp.ID = p.TIPO_PRODUTO_ID "
             + " and pe.ID = epc.PRODUTO_EDICAO_ID "
             + " and c.ID = epc.COTA_ID "
-	+ " order by c.ID ";
+	+ " order by c.ID, pe.NUMERO_EDICAO desc ";
 }

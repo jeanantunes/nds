@@ -39,7 +39,7 @@ public class ReparteProporcional extends ProcessoAbstrato {
     	}
     	BigDecimal somaReparteProporcional = BigDecimal.ZERO;
     	BigDecimal indiceReparteEdicoesAbertas = BigDecimal.ZERO;
-    	if (!getEstudo().getSomatoriaReparteEdicoesAbertas().equals(BigDecimal.ZERO)) {
+    	if (getEstudo().getSomatoriaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0) {
     		// ÍndiceRepAberta =  RepDistribInicial / ΣRepEdiçãoAberta
     		indiceReparteEdicoesAbertas = getEstudo().getReparteDistribuirInicial().divide(getEstudo().getSomatoriaReparteEdicoesAbertas(), 3, BigDecimal.ROUND_HALF_UP);
     	} 

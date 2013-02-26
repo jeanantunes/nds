@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class ProdutoEdicaoDAO {
 
@@ -48,7 +49,6 @@ public class ProdutoEdicaoDAO {
 		edicao.setVenda(edicao.getReparte().subtract(
 			rs.getBigDecimal("QTDE_DEVOLVIDA")));
 		edicao.setParcial(rs.getInt("PARCIAL") == 1);
-		edicao.setPacotePadrao(rs.getInt("PACOTE_PADRAO"));
 		edicao.setPeso(rs.getInt("PESO"));
 		edicao.setColecao(rs.getInt("IS_COLECAO") == 1);
 
@@ -61,7 +61,7 @@ public class ProdutoEdicaoDAO {
 	return edicoes;
     }
 
-	public int getQtdeVezesReenviadas(Cota cota, ProdutoEdicao produtoEdicao) {
+	public int getQtdeVezesReenviadas(Cota cota, ProdutoEdicaoBase produtoEdicao) {
 		try {
 			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
 					"" + "SELECT count(EPC.id) " + "  FROM ESTOQUE_PRODUTO_COTA EPC "
