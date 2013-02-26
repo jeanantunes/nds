@@ -349,10 +349,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.id as id, lancamento.sequenciaMatriz as sequenciaMatriz");
+		hql.append(" select produtoEdicao.id as id, chamadaEncalhe.sequencia as sequenciaMatriz");
 		
 		hql.append(" from ChamadaEncalhe chamadaEncalhe ")
-		    .append(" join chamadaEncalhe.lancamentos lancamento ")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ");		
 
 		
@@ -371,7 +370,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			param.put("dataAte", dataAte);
 		}
 				
-		hql.append(" order by lancamento.sequenciaMatriz ");
+		hql.append(" order by chamadaEncalhe.sequencia ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
