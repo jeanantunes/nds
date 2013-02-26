@@ -633,6 +633,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("numeroCota", numeroCota);
+		
+		query.setMaxResults(1);
 
 		return (Cota) query.uniqueResult();
 	}
