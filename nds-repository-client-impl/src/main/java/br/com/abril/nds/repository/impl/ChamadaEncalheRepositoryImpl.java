@@ -490,8 +490,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	")
 		   .append(" and movimentoCota.cota.id = cota.id                    ")
 		   .append(" and tipoMovimento.grupoMovimentoEstoque =:grupoMovimento   ")
-		   .append(" and movimentoCota.data = (select max(mv.data) from MovimentoEstoqueCota mv where mv.lancamento.id = lancamentos.id and mv.id = movimentoCota.id )");
-		   
+		   .append(" and movimentoCota.data = (select max(mv.data) from MovimentoEstoqueCota mv where mv.lancamento.id = lancamentos.id and mv.id = movimentoCota.id) ")
+		   .append(" and chamEncCota.qtdePrevista>0  ");
+		
 		param.put("idCota", idCota);
 		param.put("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
