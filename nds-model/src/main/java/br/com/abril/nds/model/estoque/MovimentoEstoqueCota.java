@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -60,7 +61,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	 * Estudo cota que originou o movimento, 
 	 * caso o movimento seja de reparte
 	 */
-	@ManyToOne(optional = true)
+	@ManyToOne(optional = true, fetch=FetchType.LAZY)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 	
