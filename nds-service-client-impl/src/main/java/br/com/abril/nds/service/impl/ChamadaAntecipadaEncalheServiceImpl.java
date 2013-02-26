@@ -204,12 +204,14 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 			throw new ValidacaoException(TipoMensagem.WARNING,"Não foi informado cotas para antecipação de recolhimento de encalhe");
 		}
 		
-		if(infoEncalheDTO.getDataAntecipacao().compareTo(new Date()) <= 0){
+		Date dataAntecipacao = infoEncalheDTO.getDataAntecipacao();
+		
+		if(dataAntecipacao.compareTo(new Date()) <= 0){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada deve ser maior que a data atual!");
 		}
 		
-		if(infoEncalheDTO.getDataAntecipacao().compareTo(infoEncalheDTO.getDataProgramada()) >= 0){
+		if(dataAntecipacao.compareTo(infoEncalheDTO.getDataProgramada()) >= 0){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data Antecipada deve ser menor que a Data Programada!");
 		}
@@ -221,15 +223,20 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		ChamadaEncalhe chamadaEncalhe = 
 				chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
 					produtoEdicao,
-					infoEncalheDTO.getDataAntecipacao(),
+					dataAntecipacao,
 					TipoChamadaEncalhe.ANTECIPADA);
 		
 		if(chamadaEncalhe == null){
+		
+			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataAntecipacao);
+			
 			chamadaEncalhe = new ChamadaEncalhe();
+			
+			chamadaEncalhe.setSequencia(++sequencia);
 		}
 		
-		chamadaEncalhe.setLancamentos(atualizarEObterLancamentoPorId(infoEncalheDTO.getChamadasAntecipadaEncalhe()));
-		chamadaEncalhe.setDataRecolhimento(infoEncalheDTO.getDataAntecipacao());
+		chamadaEncalhe.setLancamentos(obterLancamentoPorId(infoEncalheDTO.getChamadasAntecipadaEncalhe()));
+		chamadaEncalhe.setDataRecolhimento(dataAntecipacao);
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.ANTECIPADA);
 		
@@ -393,7 +400,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		return new BigDecimal(valorExemplares);
 	}
 	
-	private Set<Lancamento> atualizarEObterLancamentoPorId(List<ChamadaAntecipadaEncalheDTO> chamadasEncalhe){
+	private Set<Lancamento> obterLancamentoPorId(List<ChamadaAntecipadaEncalheDTO> chamadasEncalhe){
 		
 		Set<Long> idsLancamento = new HashSet<Long>(); 
 		
@@ -402,20 +409,6 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		}
 		
 		Set<Lancamento> retorno = new HashSet<Lancamento>();
-		
-		Integer maiorSequenciaMatriz = this.lancamentoRepository.obterMaiorSequenciaMatrizLancamento();
-		
-		List<Lancamento> lancamentos = lancamentoRepository.obterLancamentosPorIdOrdenados(idsLancamento);
-		
-		for (Lancamento lancamento : lancamentos) {
-			
-			if (lancamento.getSequenciaMatriz() == null) {
-			
-				lancamento.setSequenciaMatriz(++maiorSequenciaMatriz);
-				
-				this.lancamentoRepository.merge(lancamento);
-			}
-		}
 			
 		retorno.addAll(lancamentoRepository.obterLancamentosPorIdOrdenados(idsLancamento));
 		

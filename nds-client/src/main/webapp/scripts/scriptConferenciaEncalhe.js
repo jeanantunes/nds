@@ -663,6 +663,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					innerTable += "<td nowrap='nowrap'>" + value.codigoDeBarras + "</td>";
 					
+					if(typeof value.codigoSM == 'undefined' || value.codigoSM == null) {
+						value.codigoSM = '';
+					}
+					
 					innerTable += "<td nowrap='nowrap'>" + value.codigoSM + "</td>";
 					
 					innerTable += "<td nowrap='nowrap'>" + value.codigo + "</td>";
@@ -673,7 +677,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoCapa).toFixed(2) + "</td>";
 					
-					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
+					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoComDesconto).toFixed(2) + "</td>";
 					
 					innerTable += "<td align='right' nowrap='nowrap' id='valorTotalConferencia_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
 					
@@ -820,7 +824,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					innerTable +=
 						'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapaInformado).toFixed(2) + '"/></td>';
 					
-					innerTable += "<td style='text-align: right;'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
+					innerTable += "<td style='text-align: right;'>" + parseFloat(value.precoComDesconto).toFixed(2) + "</td>";
 					
 					innerTable += "<td style='text-align: right;' id='valorTotalConferenciaFinalizar_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
 					
