@@ -156,8 +156,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var utilizaSedeAtendida = $('#utilizaSedeAtendida').val() == 'true';
 		
+		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexToggleCol(10,utilizaSedeAtendida);
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexToggleCol(11,utilizaSedeAtendida);
-		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexToggleCol(12,utilizaSedeAtendida);
 		
 	},
 	
