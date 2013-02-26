@@ -112,7 +112,8 @@ public class NdsiLogger extends AbstractRepository {
 	public void logError(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
 		hasError = true;
-		message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), descricaoErro);
+		//message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), descricaoErro);
+		message.getHeader().put(descricaoErro, MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue());
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
