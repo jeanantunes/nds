@@ -65,7 +65,7 @@ public abstract class CorrecaoIndividualDataProvider {
 	List<EstoqueProdutoCota[]> listEstoqueProdutoCotas = new ArrayList<EstoqueProdutoCota[]>();
 
 	int iCota = 0;
-	while (iCota < 10) {
+	while (iCota < listCota.size()) {
 
 	    Cota cota = listCota.get(iCota);
 
