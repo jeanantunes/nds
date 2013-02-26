@@ -107,6 +107,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			cotaExemplares.setNumeroCota(cota.getNumeroCota());
 			cotaExemplares.setCotaSuspensa(cota.getSituacaoCadastro().equals(
 					SituacaoCadastro.SUSPENSO));
+			cotaExemplares.setSituacaoCadastro(cota.getSituacaoCadastro());
 
 			List<EstudoCota> listaEstudosCota = this.estudoCotaRepository
 					.obterEstudosCotaParaNotaEnvio(idCota,
