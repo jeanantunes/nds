@@ -1,14 +1,18 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -339,7 +343,7 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	
 		
-	public void imprimirMapaAbastecimento() {
+	public void imprimirMapaAbastecimento() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 
 		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
@@ -465,7 +469,7 @@ public class MapaAbastecimentoController extends BaseController {
 		
 	}
 	
-	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) {		
+	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {		
 
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		filtro.getPaginacao().setPaginaAtual(null);
@@ -473,12 +477,61 @@ public class MapaAbastecimentoController extends BaseController {
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 		setaNomeParaImpressao();
 		
-		int qtdCotas = produtoCotaMapa.getCotasQtdes().size();
-		
-		Integer qtdMaxRow = (qtdCotas > QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA) ? (qtdCotas*(100/QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA) / 100) : 1 ;
-		
-		result.include("mapa",produtoCotaMapa);
+		Integer qtdMaxRow = 35;
+
+		List<MapaProdutoCotasDTO> maps = getMapaProdutoCotasDTO(produtoCotaMapa);
+
+		result.include("maps",maps);
 		result.include("qtdMaxRow", qtdMaxRow);
+	}
+	
+	private List<MapaProdutoCotasDTO> getMapaProdutoCotasDTO(MapaProdutoCotasDTO produtoCotaMapa) 
+			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+
+		Integer maxPerPage = QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA * 35;
+		
+		int pageBreak = 0;
+		
+		Map<Integer, Integer> newMap = null;
+		
+		MapaProdutoCotasDTO mapaProdutoCotaDTO = null;
+		
+		List<MapaProdutoCotasDTO> maps = new ArrayList<MapaProdutoCotasDTO>();
+		
+		for (Entry<Integer, Integer> entry : produtoCotaMapa.getCotasQtdes().entrySet()) {
+			
+			if (pageBreak == 0 || pageBreak == maxPerPage) {
+
+				pageBreak = 0;
+
+				if(newMap != null) {
+					
+					mapaProdutoCotaDTO = (MapaProdutoCotasDTO) BeanUtils.cloneBean(produtoCotaMapa);
+					
+					mapaProdutoCotaDTO.setCotasQtdes(newMap);
+		
+					maps.add(mapaProdutoCotaDTO);
+				}
+				
+				newMap = new HashMap<Integer, Integer>();
+				
+				pageBreak++;
+		
+				continue;
+			}
+		
+			newMap.put(entry.getKey(), entry.getValue());
+			
+			pageBreak++;
+		}
+		
+		mapaProdutoCotaDTO = (MapaProdutoCotasDTO) BeanUtils.cloneBean(produtoCotaMapa);
+		
+		mapaProdutoCotaDTO.setCotasQtdes(newMap);
+		
+		maps.add(mapaProdutoCotaDTO);
+		
+		return maps;
 	}
 	
 	private void setaNomeParaImpressao() {
