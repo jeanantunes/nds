@@ -31,9 +31,11 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalheBox;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
@@ -57,10 +59,12 @@ import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -125,6 +129,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
 	
+	@Autowired
+	private DiferencaEstoqueService diferencaEstoqueService;
+	
+	@Autowired 
+	private ProdutoEdicaoRepository edicaoRepository;
+	
 	@Override
 	@Transactional
 	public List<FechamentoFisicoLogicoDTO> buscarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro,
@@ -135,7 +145,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			startSearch = page * rp - rp;
 		}
 		String sort = sortname;
-		if (sortname.equals("total")) {
+		if ("total".equals(sortname)) {
 			sort = null;
 		}
 		
@@ -192,7 +202,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		if (sort == null) {
-			if (sortorder.equals("asc")) {
+			if ("asc".equals(sortorder) ) {
 				Collections.sort(listaConferencia, new FechamentoAscComparator());
 			} else {
 				Collections.sort(listaConferencia, new FechamentoDescComparator());
@@ -542,7 +552,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario)  {
+	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario,FiltroFechamentoEncalheDTO filtroSessao)  {
 
 		Integer totalCotasAusentes = this.buscarTotalCotasAusentes(dataEncalhe, true);
 		
@@ -555,11 +565,61 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		this.fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
 		
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null,null, null, null);
+		
+		if(!listaEncalhe.isEmpty()){
+			
+			for(FechamentoFisicoLogicoDTO item : listaEncalhe){
+				
+				gerarMovimentoFaltasSobras(item,usuario);
+				
+				//TODO hoje está sendo atualizado na conferencia de encalhe, ver com cesar onde ficara a geração desses movimentos
+				//gerarMovimentoEstoqueEntradaDistribuidor(item,usuario);
+			}
+		}
+		
 		gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario);
 		
 		this.gerarNotaFiscal(dataEncalhe);
 	}
 	
+	private void gerarMovimentoEstoqueEntradaDistribuidor(FechamentoFisicoLogicoDTO item,Usuario usuario) {
+		
+		TipoMovimentoEstoque tipoMovEstoque = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+		tipoMovEstoque.setAprovacaoAutomatica(true);
+				
+		movimentoEstoqueService.gerarMovimentoEstoque(null, item.getProdutoEdicao(), usuario.getId(), item.getExemplaresDevolucao(), tipoMovEstoque);
+	}
+
+	private void gerarMovimentoFaltasSobras(FechamentoFisicoLogicoDTO item, Usuario usuarioLogado) {
+		
+		BigInteger qntDiferenca = new BigInteger(item.getDiferenca().toString());
+		
+		if(qntDiferenca.compareTo(BigInteger.ZERO) == 0){
+			return;
+		}
+		
+		ProdutoEdicao produtoEdicao = edicaoRepository.buscarPorId(item.getProdutoEdicao());
+		
+		Diferenca diferenca = new Diferenca();
+	
+		diferenca.setQtde(qntDiferenca.abs());
+		diferenca.setResponsavel(usuarioLogado);
+		diferenca.setProdutoEdicao(produtoEdicao);
+		
+		if( qntDiferenca.compareTo(BigInteger.ZERO ) < 0 ){
+		
+			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+			
+		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
+			
+			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
+			
+		}
+		
+		diferencaEstoqueService.lancarDiferenca(diferenca,TipoEstoque.RECOLHIMENTO);
+	}
+
 	@Transactional(rollbackFor=Exception.class)
 	public void gerarNotaFiscal(Date dataEncalhe)  {
 		
