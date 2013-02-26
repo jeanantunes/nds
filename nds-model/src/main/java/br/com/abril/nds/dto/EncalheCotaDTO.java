@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -79,10 +80,10 @@ public class EncalheCotaDTO implements Serializable {
 	@Export(label = "Edição")
 	private Long numeroEdicao;
 
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT)
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal precoCapa;
 
-	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT)
+	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal precoComDesconto;
 	
 	@Export(label = "Encalhe", alignment = Alignment.CENTER)
@@ -91,7 +92,7 @@ public class EncalheCotaDTO implements Serializable {
 	@Export(label = "Fornecedor")
 	private String nomeFornecedor;
 
-	@Export(label = "Toral R$", alignment = Alignment.RIGHT)
+	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal total;
 
 	private BigDecimal desconto;

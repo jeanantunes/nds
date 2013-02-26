@@ -392,14 +392,22 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
 		filtro.getPaginacao().setSortColumn("nomeEdicao");
 		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
 		TreeMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
 		setaNomeParaImpressao();
 		result.include("produtosMapa",produtosMapa.values());
+		
 	}
 	
 	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
 		
 		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
 		setaNomeParaImpressao();
@@ -408,6 +416,9 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	public void impressaoPorProduto(FiltroMapaAbastecimentoDTO filtro) {
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
 		
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 		setaNomeParaImpressao();
@@ -446,6 +457,9 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	public void impressaoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro) {		
 
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
 		ProdutoEdicaoMapaDTO produtoEdicaoMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 		setaNomeParaImpressao();
 		result.include("mapa",produtoEdicaoMapa);
@@ -454,6 +468,9 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {		
 
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 		setaNomeParaImpressao();
 		

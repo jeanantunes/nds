@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
-import br.com.abril.nds.integracao.model.LogExecucaoArquivo;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
@@ -55,6 +54,7 @@ import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.LogExecucao;
+import br.com.abril.nds.model.integracao.LogExecucaoArquivo;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.model.integracao.icd.DetalheFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;

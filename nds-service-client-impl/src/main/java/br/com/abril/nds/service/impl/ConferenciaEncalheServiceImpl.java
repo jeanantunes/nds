@@ -822,7 +822,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
-			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor());
+			
+			
 			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
 			
 		}
@@ -887,8 +889,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
-			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
-			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
+			produtoEdicaoDTO.setSequenciaMatriz(sm);
 			
 		}
 		
@@ -999,7 +1000,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 				produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 				
-				Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+				Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor());
+				
 				produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
 				
 				produtosEdicaoDTO.add(produtoEdicaoDTO);

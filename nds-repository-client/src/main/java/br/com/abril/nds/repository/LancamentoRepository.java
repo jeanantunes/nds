@@ -331,7 +331,5 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
 			Date data, Long idFornecedor);
-	
-	Integer obterMaiorSequenciaMatrizLancamento();
 
 }

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -82,6 +83,11 @@ public class FechamentoEncalheController extends BaseController {
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
 	
+	@Autowired
+	private HttpSession session;
+	
+	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaFechamentoEncalhe";
+	
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 	public void index() {
@@ -99,6 +105,21 @@ public class FechamentoEncalheController extends BaseController {
 	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId, Boolean aplicaRegraMudancaTipo,
 			String sortname, String sortorder, int rp, int page) {
 		
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = 
+				consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
+			
+		if (listaEncalhe.isEmpty()) {
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
+		} else {
+			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+		}
+	}
+
+	private List<FechamentoFisicoLogicoDTO> consultarItensFechamentoEncalhe(
+			String dataEncalhe, Long fornecedorId, Long boxId,
+			Boolean aplicaRegraMudancaTipo, String sortname, String sortorder,
+			int rp, int page) {
+		
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 		filtro.setFornecedorId(fornecedorId);
@@ -112,13 +133,11 @@ public class FechamentoEncalheController extends BaseController {
 			}
 		} 
 		
+		this.session.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE,filtro);
+		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
-			
-		if (listaEncalhe.isEmpty()) {
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
-		} else {
-			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
-		}
+		
+		return listaEncalhe;
 	}
 	
 	
@@ -351,7 +370,10 @@ public class FechamentoEncalheController extends BaseController {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 			}
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado());
+			FiltroFechamentoEncalheDTO filtroSessao = 
+					(FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+			
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(),filtroSessao);
 			
 		} catch (Exception e) {
 			
@@ -386,7 +408,10 @@ public class FechamentoEncalheController extends BaseController {
 			
 		try {
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado());
+			FiltroFechamentoEncalheDTO filtroSessao = 
+					(FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+			
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(),filtroSessao);
 		
 		} catch(ValidacaoException ve){
 			throw ve;
