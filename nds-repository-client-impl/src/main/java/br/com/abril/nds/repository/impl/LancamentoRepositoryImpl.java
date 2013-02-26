@@ -286,9 +286,8 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" lancamento.status=:statusBalanceado ");
 		
-		hql.append(" and ( (itemRecebido.id is null and produtoEdicao.parcial=true) or (itemRecebido.id is not null)) ");
+		//hql.append(" and ( (itemRecebido.id is null and produtoEdicao.parcial=true) or (itemRecebido.id is not null)) ");
 				
-		
 		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
 		
 		if (data != null) {
@@ -812,7 +811,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" lancamento.id as idLancamento, ");
 		hql.append(" lancamento.produtoEdicao.id as idProdutoEdicao, 		  	");
-		hql.append(" lancamento.sequenciaMatriz as sequenciaMatriz,			  	");
+		hql.append(" chamadaEncalhe.sequencia as sequenciaMatriz,			  	");
 		hql.append(" produto.codigo as codigoProduto, 	");
 		hql.append(" produto.nome as nomeProduto,		");
 		hql.append(" periodoLancamentoParcial.tipo as tipoLancamentoParcial, ");
@@ -892,6 +891,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" left join editor.pessoaJuridica as editorPessoaJuridica ");
 		hql.append(" left join lancamento.periodoLancamentoParcial as periodoLancamentoParcial 	");
 		hql.append(" left join periodoLancamentoParcial.lancamentoParcial as lancamentoParcial	");
+		hql.append(" join lancamento.chamadaEncalhe as chamadaEncalhe ");
 		
 		hql.append(" where ");
 		

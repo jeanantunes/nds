@@ -224,13 +224,17 @@ public class PDFExporter implements Exporter {
         	
     		document.add(new Paragraph("Filtro de Pesquisa", titleFont));
     		
-    		PdfPTable filterPdfTable = new PdfPTable(6);
+    		PdfPTable filterPdfTable = new PdfPTable(exportModel.getFilters().size());
     		
     		filterPdfTable.setSpacingBefore(10F);
     		
     		filterPdfTable.setSpacingAfter(10F);
     		
     		filterPdfTable.setWidthPercentage(100F);
+    		
+    		int headerSize = 0;
+            
+            Float[] exportWidths = new Float[exportModel.getFilters().size()];
 
         	for (ExportFilter exportFilter : exportFilters) {
         		
@@ -257,7 +261,23 @@ public class PDFExporter implements Exporter {
         		filterValuePdfCell.addElement(filterValueParagraph);
         		
         		filterPdfTable.addCell(filterValuePdfCell);
+        		
+        		exportWidths[headerSize] = exportFilter.getWidthPercent();
+
+        		headerSize++;
+        		
+        		if (headerSize == exportModel.getFilters().size()) {
+        		
+        			filterPdfTable.completeRow();
+        		}
         	}
+        	
+        	float[] widths = calculateWidths(exportWidths);
+
+            if (widths != null) {
+            	
+            	filterPdfTable.setWidths(widths);
+            }
         	
         	filterPdfTable.getDefaultCell().setBorder(0);
         	

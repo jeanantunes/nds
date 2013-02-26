@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -18,7 +19,7 @@ public class DebitoCreditoCotaDTO implements Serializable {
 	
 	private OperacaoFinaceira tipoLancamento;
 	
-	@Export(label = "Valor R$", exhibitionOrder = 2)
+	@Export(label = "Valor R$", exhibitionOrder = 2, columnType = ColumType.MOEDA)
 	private BigDecimal valor;
 	
 	@Export(label = "Data", exhibitionOrder = 0)

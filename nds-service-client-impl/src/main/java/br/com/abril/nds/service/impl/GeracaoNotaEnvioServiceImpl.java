@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -107,6 +108,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			cotaExemplares.setNumeroCota(cota.getNumeroCota());
 			cotaExemplares.setCotaSuspensa(cota.getSituacaoCadastro().equals(
 					SituacaoCadastro.SUSPENSO));
+			cotaExemplares.setSituacaoCadastro(cota.getSituacaoCadastro());
 
 			List<EstudoCota> listaEstudosCota = this.estudoCotaRepository
 					.obterEstudosCotaParaNotaEnvio(idCota,
@@ -197,9 +199,34 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 		}
 
+		sortItensByProdutoNome(listItemNotaEnvio);
+		
 		return listItemNotaEnvio;
 	}
 
+	private void sortItensByProdutoNome(List<ItemNotaEnvio> listItemNotaEnvio) {
+		Collections.sort(listItemNotaEnvio, new Comparator<ItemNotaEnvio>(){
+			@Override
+			public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
+				return getNomeProdutoEdicao(o1).compareTo(getNomeProdutoEdicao(o2));
+			}
+			
+		});
+	}
+
+	private String getNomeProdutoEdicao(ItemNotaEnvio itemNotaEnvio) {
+		
+		String nomeProduto = "";
+		
+		if (itemNotaEnvio.getProdutoEdicao() != null) {
+			if(itemNotaEnvio.getProdutoEdicao().getProduto() != null) {
+				nomeProduto = itemNotaEnvio.getProdutoEdicao().getProduto().getNome();
+			}
+		}
+		
+		return nomeProduto;
+	}
+	
 	private ItemNotaEnvio criarNovoItemNotaEnvio(EstudoCota estudoCota,
 			ProdutoEdicao produtoEdicao, BigDecimal precoVenda,
 			BigDecimal percentualDesconto, BigInteger quantidade) {
