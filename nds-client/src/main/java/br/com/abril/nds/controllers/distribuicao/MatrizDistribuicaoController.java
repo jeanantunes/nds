@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
+import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
@@ -101,6 +103,22 @@ public class MatrizDistribuicaoController extends BaseController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 		
 		processarDistribuicao(vo, filtro);
+	}
+	
+	@Post
+	public void carregarProdutoEdicaoPorEstudo(BigInteger estudo) {
+		
+		ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterProdutoDistribuicaoPorEstudo(estudo);
+		
+		result.use(Results.json()).from(produtoDistribuicaoVO,"result").recursive().serialize();
+	}
+	
+	@Post
+	public void confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO copiaProporcionalDeDistribuicaoVO) {
+		
+		Long idEstudo = matrizDistribuicaoService.confirmarCopiarProporcionalDeEstudo(copiaProporcionalDeDistribuicaoVO);
+		
+		result.use(Results.json()).from(idEstudo,"result").recursive().serialize();
 	}
 	
 	private void processarDistribuicao(TotalizadorProdutoDistribuicaoVO totProdDistVO, FiltroLancamentoDTO filtro) {

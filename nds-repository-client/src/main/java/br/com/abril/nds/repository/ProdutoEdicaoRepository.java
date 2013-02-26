@@ -287,4 +287,10 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto);*/
 	
+	/**
+	 * Retorna o produtoEdicao associado a um ID Lancamento
+	 * @param idLancamento
+	 * @return
+	 */
+	public ProdutoEdicao obterProdutoEdicaoPorIdLancamento(Long idLancamento);
 }

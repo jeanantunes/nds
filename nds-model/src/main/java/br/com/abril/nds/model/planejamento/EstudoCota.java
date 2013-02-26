@@ -49,12 +49,15 @@ public class EstudoCota implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	@Column(name = "CLASSIFICACAO")
+	private String classificacao;
+	@Column(name = "REPARTE")
+	private BigInteger reparte;
 	
 	@OneToMany(mappedBy = "estudoCota")
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	
 	@OneToMany(mappedBy = "estudoCota")
-
 	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
 	
 	@OneToOne(mappedBy = "estudoCota")
@@ -132,4 +135,20 @@ public class EstudoCota implements Serializable {
 		this.itemNotaEnvio = itemNotaEnvio;
 	}
 
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public BigInteger getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+	
 }

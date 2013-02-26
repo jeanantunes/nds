@@ -12,7 +12,7 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 	
-	private BigInteger id;
+	private BigInteger idLancamento;
 	
 	@Export(label="Codigo", exhibitionOrder = 0)
 	private String codigoProduto;
@@ -56,8 +56,17 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	@Export(label="Estudo", exhibitionOrder = 13)
 	private BigInteger idEstudo;
 	
-	public BigInteger getId() {
-		return id;
+	private String dataLancto;
+	
+	private BigDecimal reparte;
+	
+	
+	public BigInteger getIdLancamento() {
+		return idLancamento;
+	}
+
+	public void setIdLancamento(BigInteger idLancamento) {
+		this.idLancamento = idLancamento;
 	}
 
 	public String getLiberado() {
@@ -76,10 +85,7 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		this.classificacao = classificacao;
 	}
 
-	public void setId(BigInteger id) {
-		this.id = id;
-	}
-
+	
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -176,11 +182,27 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		this.nomeFornecedor = nomeFornecedor;
 	}
 	
+	public String getDataLancto() {
+		return dataLancto;
+	}
+
+	public void setDataLancto(String dataLancto) {
+		this.dataLancto = dataLancto;
+	}
+	
+	public BigDecimal getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigDecimal reparte) {
+		this.reparte = reparte;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((idLancamento == null) ? 0 : idLancamento.hashCode());
 		return result;
 	}
 
@@ -193,10 +215,10 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProdutoDistribuicaoVO other = (ProdutoDistribuicaoVO) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (idLancamento == null) {
+			if (other.idLancamento != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!idLancamento.equals(other.idLancamento))
 			return false;
 		return true;
 	}

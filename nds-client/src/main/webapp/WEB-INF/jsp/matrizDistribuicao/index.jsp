@@ -79,44 +79,7 @@ var lancamentosSelecionados = [];
 				<jsp:param value="dialog-novo" name="messageDialog"/>
 			</jsp:include>
 		     
-			  <div class="areaBts">
-			  		<div class="area">
-			  			<span class="bt_novos" style="display: none;">
-		        			<!-- Voltar Configuração Inicial -->
-		        			<a id="linkVoltarConfiguracaoInicial" href="javascript:;" onclick="balanceamentoLancamento.abrirAlertaVoltarConfiguracaoInicial();" rel="tipsy" title="Clique para Voltar Configuração Inicial"><img src="<c:url value='images/bt_devolucao.png'/>" title="Voltar Configuração Inicial" border="0" hspace="5" /></a>
-		        		</span>
-			  			
-			  			<span class="bt_novos" style="display: none;">
-			  				<!-- Reprogramar -->
-			  				<a id="linkReprogramar" href="javascript:;" onclick="balanceamentoLancamento.reprogramarSelecionados();" rel="tipsy" title="Clique para Reprogramar"><img src="<c:url value='images/ico_reprogramar.gif'/>"  hspace="5" border="0" /></a>                    
-		                </span>
-		                
-		                <span class="bt_novos" style="border-width: 2px; border-color: #00CD00; display: none;">
-		                    <!-- CONFIRMAR -->	
-		                    <a id="linkConfirmar" href="javascript:;" onclick="balanceamentoLancamento.obterConfirmacaoBalanceamento();" rel="tipsy" title="Confirmar Balanceamento">
-		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
-		                    </a>
-		                </span>
-			  			
-			  			
-			  			
-			  			 <span class="bt_arq">
-							<!-- ARQUIVO -->
-							<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-							    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-						    </a>
-						</span>
-		            
-					
-						<span class="bt_arq">
-							<!-- IMPRIMIR -->	
-							<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
-							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-						    </a>
-						</span>
-			  		</div> 
-			  </div>
-			  <div class="linha_separa_fields">&nbsp;</div>
+		    <div id="telaPesquisaMatriz"> 
 		      <fieldset class="fieldFiltro">
 		   	    <legend>Pesquisar Matriz de Distribuição
 		        </legend>
@@ -175,7 +138,7 @@ var lancamentosSelecionados = [];
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/somar_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/dividir_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/estudo_complementar.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
-								               <li><a href="${pageContext.request.contextPath}/Lancamento/copiar_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
+								               <li><a href="javascript:;" onclick="balanceamentoLancamento.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
 								           </ul>
           							 	</div>
        	  					</div>
@@ -232,7 +195,7 @@ var lancamentosSelecionados = [];
 							</td>
 							<td align="left">
 								<span class="bt_novos">
-									<a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />Duplicar Linha</a>
+									<a href="javascript:;" onclick="balanceamentoLancamento.duplicarLinha();"><img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />Duplicar Linha</a>
 								</span>
 							</td>
 							<td>
@@ -247,7 +210,8 @@ var lancamentosSelecionados = [];
 					</table>
 				</div>	
 		      </fieldset>
-
+			</div>
+				
 		<form id="form-confirm-exclusao">
 		<div id="dialog-confirm-exclusao" title="Excluir Estudo" style="display:none;">
 		    
@@ -277,6 +241,14 @@ var lancamentosSelecionados = [];
 					Confirmar a reabertura do(s) estudo(s) selecionado(s)?
 
 		    </fieldset>
+		</div>
+		</form>
+		
+		<form id="form-copiar-estudo">
+		<div id="dialog-copiar-estudo" title="Copia Proporcional de Estudo" style="display:none;">
+		    
+		    <jsp:include page="copiarEstudo.jsp" />
+			
 		</div>
 		</form>
 		
