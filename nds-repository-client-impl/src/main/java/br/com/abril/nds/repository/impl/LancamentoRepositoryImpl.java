@@ -811,7 +811,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" lancamento.id as idLancamento, ");
 		hql.append(" lancamento.produtoEdicao.id as idProdutoEdicao, 		  	");
-		hql.append(" lancamento.sequenciaMatriz as sequenciaMatriz,			  	");
+		hql.append(" chamadaEncalhe.sequencia as sequenciaMatriz,			  	");
 		hql.append(" produto.codigo as codigoProduto, 	");
 		hql.append(" produto.nome as nomeProduto,		");
 		hql.append(" periodoLancamentoParcial.tipo as tipoLancamentoParcial, ");
@@ -891,6 +891,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" left join editor.pessoaJuridica as editorPessoaJuridica ");
 		hql.append(" left join lancamento.periodoLancamentoParcial as periodoLancamentoParcial 	");
 		hql.append(" left join periodoLancamentoParcial.lancamentoParcial as lancamentoParcial	");
+		hql.append(" join lancamento.chamadaEncalhe as chamadaEncalhe ");
 		
 		hql.append(" where ");
 		

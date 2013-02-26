@@ -4,6 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -219,11 +222,13 @@ public class ExportHandler {
 
 		exportFilter.setLabel(getLabelValue(exportAnnotation, filter, clazz));
 		
-		exportFilter.setValue(getExportValue(value));
+		exportFilter.setValue(getExportValue(value, exportAnnotation.columnType()));
 		
 		exportFilter.setAlignment(exportAnnotation.alignment());
 		
 		exportFilter.setExhibitionOrder(exportAnnotation.exhibitionOrder());
+		
+		exportFilter.setWidthPercent(exportAnnotation.widthPercent() == 0f ? null : exportAnnotation.widthPercent());
 	
 		return exportFilter;
 	}
@@ -246,7 +251,7 @@ public class ExportHandler {
 			
 			Object dynamicFieldValue = dynamicField.get(object);
 			
-			String dynamicFieldValueToExport = getExportValue(dynamicFieldValue);
+			String dynamicFieldValueToExport = getExportValue(dynamicFieldValue, exportAnnotation.columnType());
 			
 			label = label.concat(dynamicFieldValueToExport);
 		}
@@ -364,7 +369,7 @@ public class ExportHandler {
 		
 		exportFooter.setLabel(label);
 		
-		exportFooter.setValue(getExportValue(value));
+		exportFooter.setValue(getExportValue(value, ColumType.STRING));
 		
 		exportFooter.setAlignment(alignment);
 		
@@ -393,7 +398,9 @@ public class ExportHandler {
 			Object methodReturn = method.invoke(exportable, new Object[]{});
 
 			return new ExportColumn(
-				getExportValue(methodReturn), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(),getExportValueType(methodReturn, exportAnnotation.columnType()));
+				getExportValue(methodReturn, exportAnnotation.columnType()), 
+					exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(),
+					getExportValueType(methodReturn, exportAnnotation.columnType()));
 		}
 		
 		return null;
@@ -417,29 +424,35 @@ public class ExportHandler {
 			Object fieldValue = field.get(exportable);
 
 			return new ExportColumn(
-				getExportValue(fieldValue), exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(), getExportValueType(fieldValue, exportAnnotation.columnType()));
+				getExportValue(fieldValue, exportAnnotation.columnType()), 
+					exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(), 
+					getExportValueType(fieldValue, exportAnnotation.columnType()));
 		}
 		
 		return null;
 	}
 	
-	private static String getExportValue(Object value) {
+	private static String getExportValue(Object value, ColumType columnType) {
 		
 		String exportValue = "";
 		
 		if (value != null) {
-
-			if (value instanceof BigDecimal) {
-				
-				exportValue = ((BigDecimal) value).toString();
-				
-			} else if (value instanceof Date) {
+			
+			switch(columnType){
+				case DECIMAL:
+					exportValue = new DecimalFormat("#,###,##0.00").format(value);
+				break;
+				case INTEGER:
+				case NUMBER:
+				case STRING:
+					exportValue = value.toString();
+				break;
+			}
+			
+			if (value instanceof Date) {
 				
 				exportValue = DateUtil.formatarDataPTBR((Date) value);
 				
-			} else {
-				
-				exportValue = value.toString();
 			}
 		}
 		
