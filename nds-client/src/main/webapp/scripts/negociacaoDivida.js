@@ -79,8 +79,7 @@ var negociacaoDividaController = $.extend(true, {
 			preProcess: negociacaoDividaController.retornoPesquisaDetalhes
 		});
 			
-		$(".negociacaoDetalhesGrid").flexReload();
-		
+		$(".negociacaoDetalheGrid", this.workspace).flexReload();
 		
 	},
 	
@@ -276,9 +275,8 @@ var negociacaoDividaController = $.extend(true, {
 	},
 	
 	popup_detalhe : function(idCobranca) {
-		negociacaoDividaController.pesquisarDetalhes(idCobranca);
-		$(".negociacaoDetalheGrid").flexReload();
-		$("#dialog-detalhe").dialog({
+		this.pesquisarDetalhes(idCobranca);
+		$("#dialog-detalhe", this.workspace).dialog({
 			resizable: false,
 			height:420,
 			width:700,
@@ -287,7 +285,8 @@ var negociacaoDividaController = $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-detalhe", this.workspace).parents("form")
 		});
 	},
 	

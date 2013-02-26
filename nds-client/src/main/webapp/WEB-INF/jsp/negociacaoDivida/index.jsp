@@ -93,15 +93,15 @@
 		
 
 		<%-- POPUPS --%>
-
-		<div id="dialog-detalhe" title="Detalhes da D&iacute;vida" style="display:none;">
-			<fieldset>
-				<legend>Dados da D&iacute;vida</legend>
-				<table class="negociacaoDetalheGrid"></table>
-				<br /> <table> <tr><td> <strong>Saldo R$: </strong> </td> <td> <div id="id_saldo"></div></td></tr> </table> <br />
-			</fieldset>
+		<form id="dialog-detalhe-form">
+			<div id="dialog-detalhe" title="Detalhes da D&iacute;vida" style="display:none;">
+				<fieldset>
+					<legend>Dados da D&iacute;vida</legend>
+					<table class="negociacaoDetalheGrid"></table>
+					<br /> <table> <tr><td> <strong>Saldo R$: </strong> </td> <td> <div id="id_saldo"></div></td></tr> </table> <br />
+				</fieldset>
 		</div>
-	
+		</form>
 	<form id="formaPgtoForm">
 		<div id="dialog-NegociacaoformaPgto" title="Negociar D&iacute;vida" style="display:none;">
 			
