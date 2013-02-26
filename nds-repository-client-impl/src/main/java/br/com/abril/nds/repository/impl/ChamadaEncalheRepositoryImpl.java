@@ -21,7 +21,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
-import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.util.Intervalo;
@@ -421,7 +420,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select produtoEdicao.codigoDeBarras as codigoBarras, 	");
-		hql.append(" 		chamadaEncalhe.sequenciaMatriz as sequencia, 	");
 		hql.append(" 	    produto.codigo as codigoProduto, 				");
 		hql.append(" 	    produto.nome as nomeProduto, 					");
 		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
@@ -438,27 +436,13 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" ) as reparte,	");
 		
 		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida, ");
-		hql.append("		chamadaEncalhe.sequencia as sequencia, ");
-		
-		hql.append(" case ");
-		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheMatriz AND produtoEdicao.parcial = false) then 1 ");
-		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheMatriz AND produtoEdicao.parcial = true AND periodoLancamentoParcial.tipo <> :tipoLancamentoParcialFinal) then 2 "); 
-		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheMatriz AND produtoEdicao.parcial = true AND periodoLancamentoParcial.tipo = :tipoLancamentoParcialFinal) then 3 ");
-		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheAntecipada) then 4 ");
-		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheChamadao) then 5 ");
-		hql.append(" else 6 end as ordem ");
-		
-		param.put("tipoChamdadaEncalheMatriz", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
-		param.put("tipoChamdadaEncalheAntecipada", TipoChamadaEncalhe.ANTECIPADA);
-		param.put("tipoChamdadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO);
-		param.put("tipoLancamentoParcialFinal", TipoLancamentoParcial.FINAL);
-		
+		hql.append("		chamadaEncalhe.sequencia as sequencia ");
+				
 		gerarFromWhereProdutosCE(filtro, hql, param, idCota);
 		
-
 		hql.append(" group by chamadaEncalhe ");
 		
-		hql.append(" order by ordem, nomeProduto ");
+		hql.append(" order by chamadaEncalhe.dataRecolhimento, sequencia ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
