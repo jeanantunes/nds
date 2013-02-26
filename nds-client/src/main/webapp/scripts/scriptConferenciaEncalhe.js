@@ -663,6 +663,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					innerTable += "<td nowrap='nowrap'>" + value.codigoDeBarras + "</td>";
 					
+					if(typeof value.codigoSM == 'undefined' || value.codigoSM == null) {
+						value.codigoSM = '';
+					}
+					
 					innerTable += "<td nowrap='nowrap'>" + value.codigoSM + "</td>";
 					
 					innerTable += "<td nowrap='nowrap'>" + value.codigo + "</td>";
