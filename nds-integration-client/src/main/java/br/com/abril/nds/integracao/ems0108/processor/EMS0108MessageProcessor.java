@@ -1,6 +1,8 @@
 package br.com.abril.nds.integracao.ems0108.processor;
 
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,7 +23,6 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
 public class EMS0108MessageProcessor extends AbstractRepository implements
@@ -31,9 +32,10 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
-	@Autowired
-	private DistribuidorService distribuidorService;
-	
+	private final static String DATA_ZEROS = "00000000";
+
+	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+
 	private EMS0108MessageProcessor() {
 
 	}
@@ -86,7 +88,16 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					);
 				return;
 			} else {
-				Lancamento lancamento = this.recuperarRecolhimento(produtoEdicaoRecolhimento, input.getDataLancamentoRecolhimentoProduto());
+				Lancamento lancamento = null;
+				try {
+					lancamento = this.recuperarRecolhimento(produtoEdicaoRecolhimento, DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
+				} catch (ParseException e1) {
+					ndsiLoggerFactory.getLogger().logError(
+							message,
+							EventoExecucaoEnum.ERRO_INFRA,
+							String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+					return;
+				}
 				if (null != lancamento) {
 					
 					if (!lancamento.getDataRecolhimentoDistribuidor().equals(input.getDataLancamentoRecolhimentoProduto() )) {
@@ -99,7 +110,17 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 								);
 							return ;
 						} else {							
-							lancamento.setDataRecolhimentoDistribuidor(input.getDataLancamentoRecolhimentoProduto());
+							if (input.getDataLancamentoRecolhimentoProduto() != null && input.getDataLancamentoRecolhimentoProduto().isEmpty() && !DATA_ZEROS.equals(input.getDataLancamentoRecolhimentoProduto())) {
+								try {
+									lancamento.setDataRecolhimentoDistribuidor(DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
+								} catch (ParseException e) {
+									ndsiLoggerFactory.getLogger().logError(
+											message,
+											EventoExecucaoEnum.ERRO_INFRA,
+											String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+									return;
+								}
+							}
 							this.getSession().merge(lancamento);
 						}
 					}
@@ -134,9 +155,25 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					);
 			}
 			
-			Lancamento lancamento = this.recuperarLancamento(produtoEdicaoLancamento, input.getDataLancamentoRecolhimentoProduto());
+			Lancamento lancamento;
+			try {
+				lancamento = this.recuperarLancamento(produtoEdicaoLancamento, DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
+			} catch (ParseException e1) {
+				ndsiLoggerFactory.getLogger().logError(
+						message,
+						EventoExecucaoEnum.ERRO_INFRA,
+						String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+				return;			}
 			if (null == lancamento) {
-				lancamento = inserirLancamento(produtoEdicaoLancamento, input);
+				try {
+					lancamento = inserirLancamento(produtoEdicaoLancamento, input);
+				} catch (ParseException e) {
+					ndsiLoggerFactory.getLogger().logError(
+							message,
+							EventoExecucaoEnum.ERRO_INFRA,
+							String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+					return;
+				}
 				
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
@@ -153,7 +190,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 							);	
 						return ;
 					} else {
-						lancamento.setDataLancamentoDistribuidor(input.getDataLancamentoRecolhimentoProduto());
+						lancamento.setDataLancamentoDistribuidor(input.getDataMovimento());
 						this.getSession().merge(lancamento);
 					}
 				}
@@ -162,21 +199,26 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	}
 
 	private Lancamento inserirLancamento(ProdutoEdicao produtoEdicaoLancamento,
-			EMS0108Input input) {
+			EMS0108Input input) throws ParseException {
 		Lancamento lancamento = new Lancamento();
 		
 		lancamento.setProdutoEdicao(produtoEdicaoLancamento);
 		lancamento.setDataCriacao(new Date());
-		lancamento.setDataLancamentoDistribuidor(input.getDataLancamentoRecolhimentoProduto());
-		lancamento.setDataLancamentoPrevista(input.getDataLancamentoRecolhimentoProduto());
+		
+		/*lancamento.setDataLancamentoDistribuidor(DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
+		lancamento.setDataLancamentoPrevista(DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));*/
+		lancamento.setDataLancamentoDistribuidor(input.getDataMovimento());
+		lancamento.setDataLancamentoPrevista(input.getDataMovimento());
 		lancamento.setAlteradoInteface(true);
 		lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
 
-				
+		int peb = produtoEdicaoLancamento.getPeb() == 0 ? produtoEdicaoLancamento.getPeb() : produtoEdicaoLancamento.getProduto().getPeb();
+		
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(input.getDataLancamentoRecolhimentoProduto());
-		cal.add(Calendar.DATE, produtoEdicaoLancamento.getProduto().getPeb()); 		
+		cal.setTime(input.getDataMovimento());
+		cal.add(Calendar.DATE, peb); 		
+		//cal.add(Calendar.DATE, produtoEdicaoLancamento.getProduto().getPeb()); 		
 		lancamento.setDataRecolhimentoDistribuidor(cal.getTime());
 		lancamento.setDataRecolhimentoPrevista(cal.getTime());		
 

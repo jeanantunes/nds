@@ -349,10 +349,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.id as id, lancamento.sequenciaMatriz as sequenciaMatriz");
+		hql.append(" select produtoEdicao.id as id, chamadaEncalhe.sequencia as sequenciaMatriz");
 		
 		hql.append(" from ChamadaEncalhe chamadaEncalhe ")
-		    .append(" join chamadaEncalhe.lancamentos lancamento ")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ");		
 
 		
@@ -371,7 +370,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			param.put("dataAte", dataAte);
 		}
 				
-		hql.append(" order by lancamento.sequenciaMatriz ");
+		hql.append(" order by chamadaEncalhe.sequencia ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -422,7 +421,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select produtoEdicao.codigoDeBarras as codigoBarras, 	");
-		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, 		");
+		hql.append(" 		chamadaEncalhe.sequenciaMatriz as sequencia, 	");
 		hql.append(" 	    produto.codigo as codigoProduto, 				");
 		hql.append(" 	    produto.nome as nomeProduto, 					");
 		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
@@ -439,7 +438,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" ) as reparte,	");
 		
 		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida, ");
-		hql.append("		lancamentos.sequenciaMatriz as sequencia, ");
+		hql.append("		chamadaEncalhe.sequencia as sequencia, ");
 		
 		hql.append(" case ");
 		hql.append(" when (chamadaEncalhe.tipoChamadaEncalhe = :tipoChamdadaEncalheMatriz AND produtoEdicao.parcial = false) then 1 ");
@@ -645,4 +644,25 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return query.list();
 	}
+	
+	@Override
+	public Integer obterMaiorSequenciaPorDia(Date dataRecolhimento) {
+		
+		String hql = " select max(chamadaEncalhe.sequencia) from ChamadaEncalhe chamadaEncalhe "
+			+ " where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ";
+				
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		
+		Integer maiorSequencia = (Integer) query.uniqueResult();
+		
+		if (maiorSequencia == null) {
+			
+			maiorSequencia = 0;
+		}
+		
+		return maiorSequencia;
+	}
+	
 }

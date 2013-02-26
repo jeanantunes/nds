@@ -778,8 +778,11 @@ var cotaAusenteController = $.extend(true, {
 					}
 					
 					$.postJSON(contextPath + "/cotaAusente/realizarRateio", 
-							parametros,
-							cotaAusenteController.retornoRateio);
+							   parametros,
+							   function(result) {
+							   		cotaAusenteController.retornoRateio(result)
+							   }
+					);
 					
 					$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
 				}

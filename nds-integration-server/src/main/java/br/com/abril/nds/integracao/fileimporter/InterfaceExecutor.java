@@ -77,7 +77,9 @@ public class InterfaceExecutor {
 	private static ApplicationContext applicationContext;
 	
 	private static String NAO_HA_ARQUIVOS = "Não há arquivos a serem processados para este distribuidor";
-	
+
+	private static String NAO_HA_IMAGENS = "Não há imagens a serem processados";
+
 	//private static Logger LOGGER = LoggerFactory.getLogger(InterfaceExecutor.class);
 	
 	@Autowired
@@ -357,8 +359,8 @@ public class InterfaceExecutor {
 					in = new FileInputStream(imagem);					
 					couchDbClient.saveAttachment(in, imagem.getName().replace(".jpeg", ".jpg"), "image/jpeg", doc.get_id(), doc.get_rev());
 				} catch (FileNotFoundException e1) {
-					//TODO: remover o printStackTrace e trocar por log
-					e1.printStackTrace();
+					this.logarArquivo(null, null, null, StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
+					//e1.printStackTrace();
 				} finally {
 					if (null != in) {
 						try {
@@ -370,8 +372,8 @@ public class InterfaceExecutor {
 				}
 				
 			} catch (Exception e) {
-				//TODO: remover o printStackTrace e trocar por log
-				e.printStackTrace();
+				this.logarArquivo(null, null, null, StatusExecucaoEnum.AVISO, NAO_HA_IMAGENS);
+				//e.printStackTrace();
 			}
 			
 		}
@@ -665,6 +667,7 @@ public class InterfaceExecutor {
 		if (status.equals(StatusExecucaoEnum.FALHA)) {
 			this.processadoComSucesso = false;
 		}
+		
 		
 		LogExecucaoArquivo logExecucaoArquivo = new LogExecucaoArquivo();
 		logExecucaoArquivo.setLogExecucao(logExecucao);

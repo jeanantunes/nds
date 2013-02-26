@@ -399,11 +399,16 @@ var geracaoNotaEnvioController = $.extend({
 						data.rows[index].cell["notaImpressa"] = "";
 					}
 					
-					if(data.rows[index].cell["cotaSuspensa"]) {
-						data.rows[index].cell["cotaSuspensa"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
+					if(data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
+						
+						data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
 			
-					}else {
-						data.rows[index].cell["cotaSuspensa"] = "";
+					} else if(data.rows[index].cell["situacaoCadastro"] == 'INATIVO') {
+						
+						data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_inativo.gif" border="0" />';
+						
+					} else {
+						data.rows[index].cell["situacaoCadastro"] = "";
 					}
 				}
 				return data;
@@ -503,7 +508,7 @@ var geracaoNotaEnvioController = $.extend({
 			align : 'center',
 		}, {
 			display : 'Suspensa',
-			name : 'cotaSuspensa',
+			name : 'situacaoCadastro',
 			width : 60,
 			sortable : true,
 			align : 'center',

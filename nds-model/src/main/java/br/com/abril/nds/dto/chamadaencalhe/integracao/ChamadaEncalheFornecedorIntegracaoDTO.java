@@ -1,9 +1,11 @@
-package br.com.abril.nds.dto.chamadaencalhe;
+package br.com.abril.nds.dto.chamadaencalhe.integracao;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import br.com.abril.nds.dto.chamadaencalhe.ItemChamadaEncalheFornecedorDTO;
 
 
 /**
@@ -13,7 +15,7 @@ import java.util.List;
  * @author francisco.garcia
  * 
  */
-public class ChamadaEncalheFornecedorDTO implements Serializable {
+public class ChamadaEncalheFornecedorIntegracaoDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
@@ -26,12 +28,6 @@ public class ChamadaEncalheFornecedorDTO implements Serializable {
     private Long numeroChamadaEncalhe;
     
     private Integer tipoChamadaEncalhe;
-    
-    private IdentificacaoChamadaEncalheFornecedorDTO identificacao;
-    
-    private PessoaJuridicaChamadaEncalheFornecedorDTO fornecedor;
-    
-    private PessoaJuridicaChamadaEncalheFornecedorDTO distribuidor;
     
     private Long totalQtdeDevolvido;
     
@@ -50,15 +46,6 @@ public class ChamadaEncalheFornecedorDTO implements Serializable {
     private BigDecimal totalMargemDistribuidor;
     
     private List<ItemChamadaEncalheFornecedorDTO> itens = new ArrayList<ItemChamadaEncalheFornecedorDTO>();
-
-    ChamadaEncalheFornecedorDTO(
-            PessoaJuridicaChamadaEncalheFornecedorDTO fornecedor,
-            PessoaJuridicaChamadaEncalheFornecedorDTO distribuidor,
-            IdentificacaoChamadaEncalheFornecedorDTO identificacao) {
-        this.fornecedor = fornecedor;
-        this.distribuidor = distribuidor;
-        this.identificacao = identificacao;
-    }
 
     /**
      * @return the id
@@ -110,27 +97,6 @@ public class ChamadaEncalheFornecedorDTO implements Serializable {
      */
     public void setNumeroDocumento(Long numeroDocumento) {
         this.numeroDocumento = numeroDocumento;
-    }
-    
-    /**
-     * @return the identificacao
-     */
-    public IdentificacaoChamadaEncalheFornecedorDTO getIdentificacao() {
-        return identificacao;
-    }
-
-    /**
-     * @return the fornecedor
-     */
-    public PessoaJuridicaChamadaEncalheFornecedorDTO getFornecedor() {
-        return fornecedor;
-    }
-
-    /**
-     * @return the distribuidor
-     */
-    public PessoaJuridicaChamadaEncalheFornecedorDTO getDistribuidor() {
-        return distribuidor;
     }
 
     /**

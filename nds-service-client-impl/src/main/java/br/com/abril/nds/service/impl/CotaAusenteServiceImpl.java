@@ -68,11 +68,9 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 			Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
 			
 			gerarCotaAusente(numCota, data, idUsuario, cota);
-					
-			/*List<MovimentoEstoqueCota> movimentosCota = 
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);*/
+
 			List<MovimentoEstoqueCota> movimentosCota = 
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 					
 			movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
 		}
@@ -107,14 +105,14 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 			cotaAusente = gerarCotaAusente(numCota, data, idUsuario, cota);
 					
 			List<MovimentoEstoqueCota> movimentosCota = 
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 					
 			movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
 					
 		}
 		
 		List<MovimentoEstoqueCotaDTO> movimentosCota = 
-				movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+				movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		for ( MovimentoEstoqueCotaDTO movimento : movimentosCota ) {
 			
@@ -159,7 +157,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	
 		alterarStatusCotaAusente(cotaAusente);
 		
-		List<MovimentoEstoqueCota> movimentosCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(dataAtual, cotaAusente.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		List<MovimentoEstoqueCota> movimentosCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(dataAtual, cotaAusente.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 			
 		for(MovimentoEstoqueCota movimento : movimentosCota) {
 			
