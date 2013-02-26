@@ -1618,18 +1618,6 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("expedicao", expedicao);
 		
 		query.executeUpdate();
-		
-		
-	}
-	
-	@Override
-	public Integer obterMaiorSequenciaMatrizLancamento() {
-		
-		String hql = " select max(lancamento.sequenciaMatriz) from Lancamento lancamento ";
-				
-		Query query = super.getSession().createQuery(hql);
-		
-		return (Integer) query.uniqueResult();
 	}
 	
 }
