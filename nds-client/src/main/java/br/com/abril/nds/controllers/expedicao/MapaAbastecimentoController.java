@@ -430,7 +430,10 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
-				
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);

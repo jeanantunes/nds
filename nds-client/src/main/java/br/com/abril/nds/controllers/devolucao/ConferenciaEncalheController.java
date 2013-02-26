@@ -768,7 +768,7 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
 					
-					this.validarExcedeReparte(qtdExemplares, dto);
+					//this.validarExcedeReparte(qtdExemplares, dto);
 					
 					dto.setQtdExemplar(BigInteger.valueOf(qtdExemplares));
 					dto.setQtdInformada(BigInteger.valueOf(qtdExemplares));

@@ -1138,8 +1138,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" PROD.CODIGO as codigoProduto,  				");		
 			sql.append(" PROD.NOME as nomeProduto, 						");
 			sql.append(" PROD_EDICAO.NUMERO_EDICAO as numeroEdicao, 	");
-			sql.append(" MOV_ESTOQUE_COTA.PRECO_VENDA as precoVenda, 	");
-			sql.append(" MOV_ESTOQUE_COTA.VALOR_DESCONTO as desconto 	");
+			sql.append(" CONFERENCIAS.PRECO_VENDA as precoVenda, 	");
+			sql.append(" CONFERENCIAS.VALOR_DESCONTO as desconto 	");
 			
 		}
 
@@ -1151,7 +1151,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 		sql.append(" SUM(MOV_ESTOQUE_COTA.QTDE) AS QTDE_ENCALHE, ");
 	
-		sql.append(" MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID ");
+		sql.append(" MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID, ");
+		
+		sql.append(" MOV_ESTOQUE_COTA.PRECO_VENDA, ");
+		
+		sql.append(" MOV_ESTOQUE_COTA.VALOR_DESCONTO  ");
 	
 		sql.append(" FROM ");
 
