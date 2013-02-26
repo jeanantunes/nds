@@ -61,7 +61,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	 * Estudo cota que originou o movimento, 
 	 * caso o movimento seja de reparte
 	 */
-	@ManyToOne(optional = true, fetch=FetchType.LAZY)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 	

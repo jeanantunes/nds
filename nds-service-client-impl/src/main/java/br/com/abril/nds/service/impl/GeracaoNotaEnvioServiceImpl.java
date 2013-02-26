@@ -179,20 +179,22 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			BigInteger quantidade = estudoCota.getQtdeEfetiva();
 
-			ItemNotaEnvio itemNotaEnvio = estudoCota.getItemNotaEnvio();
 
-			if (itemNotaEnvio == null) {
+			if (estudoCota.getItemNotaEnvios().isEmpty()) {
 
-				itemNotaEnvio = criarNovoItemNotaEnvio(
+				ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(
 						estudoCota,
 						produtoEdicao,
 						precoVenda,
 						((percentualDesconto != null && percentualDesconto
 								.getValor() != null) ? percentualDesconto
 								.getValor() : BigDecimal.ZERO), quantidade);
+				listItemNotaEnvio.add(itemNotaEnvio);
+			} else{
+				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
 			}
 
-			listItemNotaEnvio.add(itemNotaEnvio);
+			
 		}
 
 		return listItemNotaEnvio;
@@ -253,7 +255,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					valorDesconto).multiply(
 					new BigDecimal(qtdeEfetivaEstudoCota)));
 
-			if (estudoCota.getItemNotaEnvio() != null) {
+			if (estudoCota.getItemNotaEnvios() != null || !estudoCota.getItemNotaEnvios().isEmpty()) {
 
 				cotaExemplares.setNotaImpressa(true);
 			}
