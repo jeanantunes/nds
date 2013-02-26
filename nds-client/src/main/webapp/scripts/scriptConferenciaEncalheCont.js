@@ -795,8 +795,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 							}
 							
-							
-							
 						}
 
 						exibirMensagem(conteudo.tipoMensagem, conteudo.listaMensagens);
@@ -1104,7 +1102,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 		ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe({reparte:0,valorEncalhe:0,valorVendaDia:0,valorDebitoCredito:0,valorPagar:0, listaDebitoCredito:{page:0,total:0, rows:null}});
 		$(".dadosFiltro", ConferenciaEncalheCont.workspace).hide();
 		$("#totalExemplaresFooter", ConferenciaEncalheCont.workspace).html(0);
-		$("#numeroCota", ConferenciaEncalheCont.workspace).val('');
+		
+		$("#numeroCota", ConferenciaEncalheCont.workspace).val("");
+		
+		$("#numeroCota", ConferenciaEncalheCont.workspace).select();
+		
+		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 	}
 }, BaseController);
 

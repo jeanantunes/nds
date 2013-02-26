@@ -615,6 +615,12 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#statusCota", ConferenciaEncalhe.workspace).text("");
 		
+		$("#numeroCota", ConferenciaEncalhe.workspace).val("");
+		
+		$("#numeroCota", ConferenciaEncalhe.workspace).select();
+		
+		$("#numeroCota", ConferenciaEncalhe.workspace).focus();
+		
 	},
 	
 	preProcessarConsultaConferenciaEncalhe : function(result) {
