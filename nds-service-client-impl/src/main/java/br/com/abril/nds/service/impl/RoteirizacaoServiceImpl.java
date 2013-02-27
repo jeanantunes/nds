@@ -281,6 +281,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public List<Rota> obterRotasPorCota(Integer numeroCota) {
 		return rotaRepository.obterRotasPorCota(numeroCota);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQtdRotasPorCota(Integer numeroCota){
+		
+		return this.rotaRepository.obterQtdRotasPorCota(numeroCota);
+	}
 
 	@Override
 	@Transactional(readOnly=true)
