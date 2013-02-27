@@ -1074,11 +1074,13 @@ public class Distribuidor {
 	}
 
 	public boolean isPracaVeraneio() {
-	    return pracaVeraneio;
+		return pracaVeraneio;
 	}
 
 	public void setPracaVeraneio(boolean pracaVeraneio) {
-	    this.pracaVeraneio = pracaVeraneio;
+		this.pracaVeraneio = pracaVeraneio;
 	}
+	
+	
 	
 }
