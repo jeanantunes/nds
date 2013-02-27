@@ -4,19 +4,24 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -200,6 +205,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 			
+			this.ordenarProdutosRecolhimentoPorNome(produtosRecolhimento);
+			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
 				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
@@ -226,7 +233,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				if (idsLancamentoPorData == null) {
 					
-					idsLancamentoPorData = new TreeSet<Long>();
+					idsLancamentoPorData = new LinkedHashSet<Long>();
 				}
 				
 				idsLancamentoPorData.add(idLancamento);
@@ -253,6 +260,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return matrizConfirmada;
 	}
 
+	@SuppressWarnings("unchecked")
+	private void ordenarProdutosRecolhimentoPorNome(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		ComparatorChain comparatorChain = new ComparatorChain();
+		
+		comparatorChain.addComparator(new BeanComparator("nomeProduto"));
+		
+		Collections.sort(produtosRecolhimento, comparatorChain);
+	}
+	
 	@Override
 	@Transactional
 	public void excluiBalanceamento(Long idLancamento) {

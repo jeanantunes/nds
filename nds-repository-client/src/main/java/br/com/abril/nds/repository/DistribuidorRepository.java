@@ -52,4 +52,6 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	Date obterDataOperacaoDistribuidor();
 
 	BigDecimal obterDescontoCotaNegociacao();
+
+	boolean utilizaGarantiaPdv();
 }

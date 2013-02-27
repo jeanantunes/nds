@@ -168,4 +168,11 @@ public class DistribuidorRepositoryImpl extends
 				this.getSession().createQuery(
 						"select descontoCotaNegociacao from Distribuidor").uniqueResult();
 	}
+	
+	@Override
+	public boolean utilizaGarantiaPdv(){
+		
+		return (boolean)
+				this.getSession().createQuery("select utilizaGarantiaPdv from Distribuidor").uniqueResult();
+	}
 }

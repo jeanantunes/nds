@@ -266,6 +266,7 @@ public interface RoteirizacaoService {
 
 	List<RotaRoteirizacaoDTO> buscarRotasEspeciais();
 
-	List<RoteiroRoteirizacaoDTO> buscarRoteirosNaoAssociadosAoBox(Long idBox); 
+	List<RoteiroRoteirizacaoDTO> buscarRoteirosNaoAssociadosAoBox(Long idBox);
+
+	Long obterQtdRotasPorCota(Integer numeroCota);
 }
-	

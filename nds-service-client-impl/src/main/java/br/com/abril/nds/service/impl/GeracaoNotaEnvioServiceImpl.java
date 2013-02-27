@@ -618,6 +618,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			listaIdCotas.addAll(idCotasSuspensasAusentes);
 		}
 
+		validarRoteirizacaoCota(filtro, listaIdCotas);
+		
 		for (Long idCota : listaIdCotas) {
 
 			NotaEnvio notaEnvio = this.gerar(idCota, filtro.getIdRota(), null,
@@ -630,6 +632,50 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		}
 
 		return listaNotaEnvio;
+	}
+
+	private void validarRoteirizacaoCota(FiltroConsultaNotaEnvioDTO filtro,
+			Set<Long> listaIdCotas) {
+		List<String> cotasSemRoteirizacao = new ArrayList<String>();
+		
+		for (Long idCota : listaIdCotas) {
+			
+			Cota cota = cotaRepository.buscarPorId(idCota);
+
+			Long idRota = filtro.getIdRota();
+
+			if (idRota == null) {
+
+				Long idRoteiro = null;
+
+				List<Roteiro> roteiros = cota.getBox().getRoteirizacao()
+						.getRoteiros();
+
+				for (Roteiro r : roteiros) {
+
+					if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+
+						idRoteiro = r.getId();
+					}
+				}
+
+				try {
+					idRota = (Long) cota.getBox().getRoteirizacao()
+							.getRoteiro(idRoteiro).getRotas().get(0).getId();
+				} catch (Exception e) {
+					if(cotasSemRoteirizacao.size() == 0) {
+						cotasSemRoteirizacao.add("Cota(s) com problemas de Roteirização:");
+					}
+					StringBuilder cotaSemRoteirizacao = new StringBuilder("Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
+					cotasSemRoteirizacao.add(cotaSemRoteirizacao.toString());
+				}
+			}
+			
+		}
+		
+		if(cotasSemRoteirizacao.size() > 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, cotasSemRoteirizacao);
+		}
 	}
 
 }
