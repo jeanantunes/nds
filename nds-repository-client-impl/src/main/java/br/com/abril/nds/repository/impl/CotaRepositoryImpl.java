@@ -90,14 +90,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	}
 
 	public Cota obterPorNumerDaCota(Integer numeroCota) {
-
-		Criteria criteria = super.getSession().createCriteria(Cota.class);
-
-		criteria.add(Restrictions.eq("numeroCota", numeroCota));
-
-		criteria.setMaxResults(1);
-
-		return (Cota) criteria.uniqueResult();
+		
+		Query query = 
+				this.getSession().createQuery(
+						"select c from Cota c where c.numeroCota = :numeroCota");
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (Cota) query.uniqueResult();
 	}
 	
 	public Cota obterPorNumerDaCotaAtiva(Integer numeroCota) {
@@ -633,6 +633,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("numeroCota", numeroCota);
+		
+		query.setMaxResults(1);
 
 		return (Cota) query.uniqueResult();
 	}
@@ -1526,7 +1528,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		columnToSort.put("numeroCota", "numeroCota");
 		columnToSort.put("nomeCota", "pessoa.nome");
-		columnToSort.put("cotaSuspensa", "situacaoCadastro");
+		columnToSort.put("situacaoCadastro", "situacaoCadastro");
 		
 		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
 		

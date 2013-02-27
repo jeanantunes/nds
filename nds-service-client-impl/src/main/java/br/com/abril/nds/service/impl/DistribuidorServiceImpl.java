@@ -96,4 +96,11 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		return this.distribuidorRepository.obterDataOperacaoDistribuidor();
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean utilizaGarantiaPdv(){
+		
+		return this.distribuidorRepository.utilizaGarantiaPdv();
+	}
 }

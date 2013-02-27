@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -23,10 +24,10 @@ public class ConsignadoCotaDTO implements Serializable{
 	@Export(label="Edição")
 	private Long numeroEdicao;
 	
-	@Export(label="Preço Capa R$" , alignment= Alignment.RIGHT )
+	@Export(label="Preço Capa R$" , alignment= Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal precoCapa;
 	
-	@Export(label="Preço c/ Desc. R$" , alignment= Alignment.RIGHT )
+	@Export(label="Preço c/ Desc. R$" , alignment= Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal precoComDesconto;
 	
 	@Export(label="Reparte Sugerido")
@@ -44,7 +45,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	@Export(label="Fornecedor")
 	private String nomeFornecedor;
 	
-	@Export(label="Total")
+	@Export(label="Total", columnType = ColumType.MOEDA)
 	private BigDecimal total;
 	
 	private BigDecimal desconto;

@@ -30,7 +30,6 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public Double vlrDesconto;
 	public Integer vendido;
 	public String vlrVendido;
-	public Integer ordem;
 	
 	public String getVlrVendido() {
 		return vlrVendido;
@@ -245,20 +244,6 @@ public class ProdutoEmissaoDTO implements Serializable{
 	 */
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
-	}
-
-	/**
-	 * @return the ordem
-	 */
-	public Integer getOrdem() {
-		return ordem;
-	}
-
-	/**
-	 * @param ordem the ordem to set
-	 */
-	public void setOrdem(Integer ordem) {
-		this.ordem = ordem;
 	}
 	
 }

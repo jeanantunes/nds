@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -30,6 +31,8 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	private boolean notaImpressa;
 	
 	private boolean cotaSuspensa;
+	
+	private SituacaoCadastro situacaoCadastro;
 
 	/**
 	 * @return the idCota
@@ -135,6 +138,14 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 
 	public void setCotaSuspensa(boolean cotaSuspensa) {
 		this.cotaSuspensa = cotaSuspensa;
+	}
+
+	public SituacaoCadastro getSituacaoCadastro() {
+		return situacaoCadastro;
+	}
+
+	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
+		this.situacaoCadastro = situacaoCadastro;
 	}
 	
 }

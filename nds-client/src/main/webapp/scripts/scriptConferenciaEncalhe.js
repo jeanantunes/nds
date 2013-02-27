@@ -615,6 +615,12 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#statusCota", ConferenciaEncalhe.workspace).text("");
 		
+		$("#numeroCota", ConferenciaEncalhe.workspace).val("");
+		
+		$("#numeroCota", ConferenciaEncalhe.workspace).select();
+		
+		$("#numeroCota", ConferenciaEncalhe.workspace).focus();
+		
 	},
 	
 	preProcessarConsultaConferenciaEncalhe : function(result) {
@@ -662,6 +668,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					innerTable += inputExemplares + "</td>";
 					
 					innerTable += "<td nowrap='nowrap'>" + value.codigoDeBarras + "</td>";
+					
+					if(typeof value.codigoSM == 'undefined' || value.codigoSM == null) {
+						value.codigoSM = '';
+					}
 					
 					innerTable += "<td nowrap='nowrap'>" + value.codigoSM + "</td>";
 					
