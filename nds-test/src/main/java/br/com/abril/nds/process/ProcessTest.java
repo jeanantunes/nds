@@ -73,10 +73,9 @@ public class ProcessTest {
 	AjusteCota ajusteCota = new AjusteCota(estudo);
 	ajusteCota.executar();
 	
-	JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(estudo);
-	jornaleirosNovos.executar();
-	
 	for(Cota cota : estudo.getCotas()) {
+	    JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
+	    jornaleirosNovos.executar();
 	    VendaMediaFinal vendaMediaFinal = new VendaMediaFinal(cota);
 	    vendaMediaFinal.executar();
 	}
