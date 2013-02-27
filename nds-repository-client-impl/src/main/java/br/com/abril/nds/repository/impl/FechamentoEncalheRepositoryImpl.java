@@ -91,7 +91,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			hql.append(" order by ");
 			if (("asc").equalsIgnoreCase(sortorder)) {
 				hql.append(sortname+" asc ");	
-			} else if (("desc").equalsIgnoreCase(sortorder)) {
+			} else {
 				hql.append(sortname+" desc ");
 			}
 		}
