@@ -477,7 +477,7 @@ public class MapaAbastecimentoController extends BaseController {
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 		setaNomeParaImpressao();
 		
-		Integer qtdMaxRow = 35;
+		Integer qtdMaxRow = 30;
 
 		List<MapaProdutoCotasDTO> maps = getMapaProdutoCotasDTO(produtoCotaMapa);
 
@@ -488,7 +488,7 @@ public class MapaAbastecimentoController extends BaseController {
 	private List<MapaProdutoCotasDTO> getMapaProdutoCotasDTO(MapaProdutoCotasDTO produtoCotaMapa) 
 			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 
-		Integer maxPerPage = QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA * 35;
+		Integer maxPerPage = QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA * 30;
 		
 		int pageBreak = 0;
 		
@@ -513,11 +513,9 @@ public class MapaAbastecimentoController extends BaseController {
 					maps.add(mapaProdutoCotaDTO);
 				}
 				
-				newMap = new HashMap<Integer, Integer>();
+				newMap = new TreeMap<Integer, Integer>();
 				
 				pageBreak++;
-		
-				continue;
 			}
 		
 			newMap.put(entry.getKey(), entry.getValue());
