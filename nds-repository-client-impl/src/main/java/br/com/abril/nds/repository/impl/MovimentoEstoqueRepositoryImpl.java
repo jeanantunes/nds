@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -89,4 +90,24 @@ implements MovimentoEstoqueRepository {
 				
 	}
 	
+	@Override
+	public BigInteger obterReparteDistribuidoProduto(String codigoProduto){
+//		 select coalesce(sum(QTDE),0) from movimento_estoque where TIPO_MOVIMENTO_ID=13 and PRODUTO_EDICAO_ID=2350
+		
+		Query query = getSession().createQuery("select coalesce(sum(me.qtde),0) from MovimentoEstoque me " +
+				" join me.tipoMovimento tm " +
+				" join me.produtoEdicao " +
+				" join me.produtoEdicao.produto produto " +
+				"where produto.codigo = :produtoId " +
+				"and tm.id = :tipoMovimentoId");
+		
+		query.setParameter("produtoId", codigoProduto);
+		
+		final long ENVIO_AO_JORNALEIRO = 13l; //13:Envio ao jornaleiro tabela tipo_movimento 
+		query.setParameter("tipoMovimentoId", ENVIO_AO_JORNALEIRO);
+		
+		Object uniqueResult2 = query.uniqueResult();
+		BigInteger uniqueResult = (BigInteger)uniqueResult2;
+		return uniqueResult;
+	}
 }

@@ -13,6 +13,7 @@ import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.util.DateUtil;
 
 public class ProdutoEdicaoDTO implements Serializable {
 
@@ -98,6 +99,9 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private TemaProduto temaPrincipal;
 	private TemaProduto temaSecundario;
 
+	private String dataLancamentoFormatada;
+	private BigDecimal qtdeVendas;
+	
 	public ProdutoEdicaoDTO() {};
 	
 	public ProdutoEdicaoDTO(
@@ -253,6 +257,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 */
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
+		
+		if (dataLancamento != null) {
+			this.dataLancamentoFormatada = DateUtil.formatarDataPTBR(dataLancamento); 
+		}
 	}
 	
 	/**
@@ -699,5 +707,24 @@ public class ProdutoEdicaoDTO implements Serializable {
 	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
 		this.precoComDesconto = precoComDesconto;
 	}
-	
+
+	public String getDataLancamentoFormatada() {
+		return dataLancamentoFormatada;
+	}
+
+	public void setDataLancamentoFormatada(String dataLancamentoFormatada) {
+		this.dataLancamentoFormatada = dataLancamentoFormatada;
+	}
+
+	public BigDecimal getQtdeVendas() {
+		
+		if(qtdeVendas == null)
+			qtdeVendas = new BigDecimal(0);
+			
+		return qtdeVendas;
+	}
+
+	public void setQtdeVendas(BigDecimal qtdeVendas) {
+		this.qtdeVendas = qtdeVendas;
+	}
 }

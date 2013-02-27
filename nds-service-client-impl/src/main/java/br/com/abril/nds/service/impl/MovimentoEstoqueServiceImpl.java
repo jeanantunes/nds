@@ -828,4 +828,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null);
 		}
 	}
+	
+	@Override
+	public BigInteger obterReparteDistribuidoProduto(String produtoEdicaoId){
+		return this.movimentoEstoqueRepository.obterReparteDistribuidoProduto(produtoEdicaoId);
+	}
 }
