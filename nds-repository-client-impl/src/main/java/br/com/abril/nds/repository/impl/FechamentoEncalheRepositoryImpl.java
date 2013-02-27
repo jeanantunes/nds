@@ -26,6 +26,7 @@ import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -80,6 +81,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	
 		hql.append(" WHERE ccec.dataOperacao =:dataEncalhe ");
 
+		hql.append(" and ccec.status = :statusOperacaoFinalizada ");
+
+		
 		if (filtro.getBoxId() != null) {
 			hql.append("  and ccec.box.id = :boxId ");
 		}
@@ -111,6 +115,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setDate("dataEncalhe", filtro.getDataEncalhe());
 		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
 		query.setParameter("origemInterface", Origem.INTERFACE);
+		query.setParameter("statusOperacaoFinalizada", StatusOperacao.CONCLUIDO);
 
 		if (filtro.getBoxId() != null) {
 			query.setLong("boxId", filtro.getBoxId());
