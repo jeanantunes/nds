@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -53,6 +54,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
@@ -134,6 +136,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired 
 	private ProdutoEdicaoRepository edicaoRepository;
+	
+	@Autowired
+	private ConferenciaEncalheRepository conferenciaEncalheRepository;
 	
 	@Override
 	@Transactional
@@ -548,6 +553,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		}
 		
+	}
+
+	@Override
+	@Transactional
+	public List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao) {
+		return conferenciaEncalheRepository.obterListaCotaConferenciaNaoFinalizada(dataOperacao);
 	}
 	
 	@Override

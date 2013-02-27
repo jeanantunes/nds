@@ -358,9 +358,11 @@ var fechamentoEncalheController = $.extend(true, {
 				if (tipoMensagem && listaMensagens) {
 					
 					exibirMensagem(tipoMensagem, listaMensagens);
+					
+					return;
 				}
 				
-				if (!result) {
+				if (!result.isCotasAusentes) {
 					
 					fechamentoEncalheController.isFechamento = true;
 					
@@ -409,10 +411,16 @@ var fechamentoEncalheController = $.extend(true, {
 							var listaMensagens = result.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
+								
 								exibirMensagem(tipoMensagem, listaMensagens);
+								
+								_this.dialog("destroy");
+								
+								return;
+								
 							}
 
-							if (!result) {
+							if (!result.isCotasAusentes) {
 								fechamentoEncalheController.isFechamento = true;
 								fechamentoEncalheController.popup_encerrarEncalhe(true);
 							} else {
