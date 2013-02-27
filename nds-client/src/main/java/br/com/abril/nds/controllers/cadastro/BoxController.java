@@ -112,6 +112,9 @@ public class BoxController extends BaseController {
 		}*/
 
 		BoxVO box = new BoxVO(boxService.buscarPorId(id), boxService.hasAssociacao(id));
+
+		box.getBox().setRoteirizacao(null);
+		
 		result.use(CustomJson.class).from(box).serialize();
 
 	}

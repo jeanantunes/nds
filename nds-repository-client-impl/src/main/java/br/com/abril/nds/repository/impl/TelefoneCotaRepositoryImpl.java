@@ -84,4 +84,21 @@ public class TelefoneCotaRepositoryImpl extends AbstractRepositoryModel<Telefone
 		return (TelefoneCota) criteria.uniqueResult();
 		
 	}
+	
+	@Override
+	public Long obterQtdTelefoneAssociadoCota(Long idCota){
+		
+		StringBuilder hql = new StringBuilder("select distinct ");
+		hql.append(" count(telCota.id) + count(telPes.id) ")
+		   .append(" from Cota cota ")
+		   .append(" join cota.telefones telCota ")
+		   .append(" join cota.pessoa pesCota ")
+		   .append(" left join pesCota.telefones telPes ")
+		   .append(" where cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		return (Long) query.uniqueResult();
+	}
 }

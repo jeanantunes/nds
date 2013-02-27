@@ -25,28 +25,24 @@ import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.CotaGarantiaDTO;
-import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO.OrdenacaoColunasStatusCota;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
-import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
+import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.SituacaoCotaService;
+import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -97,6 +93,12 @@ public class ManutencaoStatusCotaController extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private EnderecoService enderecoService;
+	
+	@Autowired
+	private TelefoneService telefoneService;
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaManutencaoStatusCota";
 	
@@ -162,6 +164,13 @@ public class ManutencaoStatusCotaController extends BaseController {
 			
 			novoHistoricoSituacaoCota.setDataInicioValidade(new Date());
 		}
+		
+		//Objeto Cota removido, existe muita informação não usada nessa entidade nesse ponto
+		//do sistema, estava ocasionando erro no quartz por ser um objeto que ultrapassa
+		//o tamanho máximo pertmitido. O processo executado pelo quartz, até essa data,
+		//só o id da cota.
+		Long idCota = novoHistoricoSituacaoCota.getCota().getId();
+		novoHistoricoSituacaoCota.setCota(new Cota(idCota));
 		
 		this.criarJobAtualizacaoNovaSituacaoCota(novoHistoricoSituacaoCota);
 		
@@ -495,27 +504,42 @@ public class ManutencaoStatusCotaController extends BaseController {
 			
 			if (novoHistoricoSituacaoCota.getNovaSituacao()==SituacaoCadastro.ATIVO){
 				
-				List<EnderecoAssociacaoDTO> enderecosCota = this.cotaService.obterEnderecosPorIdCota(cota.getId());
-			    if (enderecosCota==null || enderecosCota.size()<=0){
-			    	throw new ValidacaoException(TipoMensagem.WARNING, "Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadatrado!");
+				Long qtde = this.enderecoService.obterQtdEnderecoAssociadoCota(cota.getId());
+				
+			    if (qtde == null || qtde == 0){
+			    	
+			    	throw new ValidacaoException(
+			    			TipoMensagem.WARNING, 
+			    			"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadatrado!");
 			    }
 			    
-			    List<TelefoneAssociacaoDTO> telefonesCota = this.cotaService.buscarTelefonesCota(cota.getId(), null);
-			    if (telefonesCota==null || telefonesCota.size()<=0){
-			    	throw new ValidacaoException(TipoMensagem.WARNING, "Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadatrado!");
+			    qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
+			    if (qtde == null || qtde == 0){
+			    	
+			    	throw new ValidacaoException(
+			    			TipoMensagem.WARNING, 
+			    			"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadatrado!");
 			    }
 			    
-			    Distribuidor distribuidor = this.distribuidorService.obter();
-				if (distribuidor.isUtilizaGarantiaPdv()){
-					CotaGarantiaDTO<CotaGarantia> cotaGarantiaDTO = this.cotaGarantiaService.getByCota(cota.getId());
-					if (cotaGarantiaDTO.getCotaGarantia()==null){
-						throw new ValidacaoException(TipoMensagem.WARNING, "Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
+				if (this.distribuidorService.utilizaGarantiaPdv()){
+					
+					qtde = this.cotaGarantiaService.getQtdCotaGarantiaByCota(cota.getId());
+					
+					if (qtde == null || qtde == 0){
+						
+						throw new ValidacaoException(
+								TipoMensagem.WARNING, 
+								"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
 					}
 				}
 				
-				List<Rota> rotasCota = this.roteirizacaoService.obterRotasPorCota(cota.getNumeroCota());
-				if (rotasCota==null || rotasCota.size()<=0){
-					throw new ValidacaoException(TipoMensagem.WARNING, "Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
+				qtde = this.roteirizacaoService.obterQtdRotasPorCota(cota.getNumeroCota());
+				
+				if (qtde == null || qtde == 0){
+					
+					throw new ValidacaoException(
+							TipoMensagem.WARNING, 
+							"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
 				}
 			}
 	

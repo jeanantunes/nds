@@ -53,7 +53,6 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 			
 			if (null != descontoLogistica ) {
 								
-				// Divisão por 100 Realizado em conjunto com Cesar Pop Punk
 				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().divide(CEM));
 				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().divide(CEM));
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
