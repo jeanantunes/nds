@@ -821,7 +821,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			var linha = $(value);
 			
-			var colunaCheck = linha.find("td")[17];
+			var colunaCheck = linha.find("td")[16];
 			
 			var inputCheck = $(colunaCheck).find("div").find('input[name="checkReprogramar"]');
 			
@@ -833,8 +833,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				var idLancamento = idLinha.replace("row", "");
 				
-				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
-				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "hiddenIdFornecedor");
+				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "novaData");
+				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "hiddenIdFornecedor");
 				
 				listaProdutoRecolhimento.push({idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData});
 			}
@@ -881,8 +881,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			if (idLancamento == idRow) {
 				
-				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "novaData");
-				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 16, "hiddenIdFornecedor");
+				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "novaData");
+				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "hiddenIdFornecedor");
 				
 				linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData};
 			}
