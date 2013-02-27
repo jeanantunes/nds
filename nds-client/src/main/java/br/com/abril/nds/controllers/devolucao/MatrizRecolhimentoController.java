@@ -817,14 +817,14 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setDataRecolhimento(
 				produtoRecolhimentoDTO.getDataRecolhimentoPrevista());
 			
-			produtoRecolhimentoVO.setEncalheSede( produtoRecolhimentoDTO.getExpectativaEncalheSede()==null ? BigDecimal.ZERO :
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheSede(), 2));
+			produtoRecolhimentoVO.setEncalheSede(
+				produtoRecolhimentoDTO.getExpectativaEncalheSede());
 			
-			produtoRecolhimentoVO.setEncalheAtendida( produtoRecolhimentoDTO.getExpectativaEncalheAtendida()==null ? BigDecimal.ZERO :
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAtendida(), 2));
+			produtoRecolhimentoVO.setEncalheAtendida(
+				produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
 				
-			produtoRecolhimentoVO.setEncalheAlternativo( produtoRecolhimentoDTO.getExpectativaEncalheAlternativo()==null ? BigDecimal.ZERO :
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
+			produtoRecolhimentoVO.setEncalheAlternativo(
+				produtoRecolhimentoDTO.getExpectativaEncalheAlternativo());
 			
 			produtoRecolhimentoVO.setEncalhe(
 				produtoRecolhimentoDTO.getExpectativaEncalhe());
@@ -933,16 +933,16 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		produtoRecolhimentoFormatado.setEncalheSede(
-			(produtoRecolhimento.getEncalheSede() != null) ? produtoRecolhimento.getEncalheSede().toString() : null);
+			(produtoRecolhimento.getEncalheSede() != null) ? MathUtil.round(produtoRecolhimento.getEncalheSede(), 0).toString() : null);
 		
 		produtoRecolhimentoFormatado.setEncalheAtendida(
-			(produtoRecolhimento.getEncalheAtendida() != null) ? produtoRecolhimento.getEncalheAtendida().toString() : null);
+			(produtoRecolhimento.getEncalheAtendida() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAtendida(), 0).toString() : null);
 		
 		produtoRecolhimentoFormatado.setEncalheAlternativo(
-			(produtoRecolhimento.getEncalheAlternativo() != null) ? produtoRecolhimento.getEncalheAlternativo().toString() : null);
+			(produtoRecolhimento.getEncalheAlternativo() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAlternativo(), 0).toString() : null);
 			
 		produtoRecolhimentoFormatado.setEncalhe(
-			(produtoRecolhimento.getEncalhe() != null) ? Integer.toString(produtoRecolhimento.getEncalhe().intValue()) : null);
+			(produtoRecolhimento.getEncalhe() != null) ? MathUtil.round(produtoRecolhimento.getEncalhe(), 0).toString() : null);
 		
 		if (produtoRecolhimento.getValorTotal() != null) {
 			produtoRecolhimentoFormatado.setValorTotal(CurrencyUtil.formatarValor(produtoRecolhimento.getValorTotal()));
