@@ -581,7 +581,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
             				cota.getId(),
             				controleConferenciaEncalheCota.getDataOperacao());
             
-            BigDecimal valorTotalEnvioReparte = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cota.getId()); 
+            BigDecimal valorTotalEnvioReparte = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cota.getId(), controleConferenciaEncalheCota.getDataOperacao()); 
 
             
 			BigDecimal valorConsignadoPagar = BigDecimal.ZERO;

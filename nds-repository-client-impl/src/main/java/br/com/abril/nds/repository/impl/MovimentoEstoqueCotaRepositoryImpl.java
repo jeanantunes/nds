@@ -155,7 +155,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" and cota.id = :idCota ");
 		
-		/*
 		hql.append(" and produtoEdicao.id in (");
 		
 		hql.append("     select pe.id ");
@@ -173,7 +172,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("     and cota.id = :idCota ");
 		
 		hql.append(")");
-		*/
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -184,7 +182,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
 		query.setParameter("idCota", idCota);
-		//query.setParameter("dataControleConferencia", dataControleConferencia);
+		query.setParameter("dataControleConferencia", dataControleConferencia);
 		
 		return query.list();
 		
@@ -232,7 +230,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 * @return List<MovimentoEstoqueCota>
 	 */
 	@Override
-	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota) {
+	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -254,6 +252,24 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		hql.append(" and cota.id = :idCota ");
 		
+        hql.append(" and pe.id in (");
+		
+		hql.append("     select pe.id ");
+		
+		hql.append("     from ChamadaEncalhe c ");
+		
+		hql.append("     join c.chamadaEncalheCotas cc ");
+		
+		hql.append("     join cc.cota cota ");
+		
+		hql.append("     join c.produtoEdicao pe ");
+		
+		hql.append("     where c.dataRecolhimento = :dataControleConferencia ");
+		
+		hql.append("     and cota.id = :idCota ");
+		
+		hql.append(")");
+		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
@@ -263,6 +279,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
 		query.setParameter("idCota", idCota);
+		query.setParameter("dataControleConferencia", dataControleConferencia);
 		
 		return (BigDecimal) query.uniqueResult();
 		
