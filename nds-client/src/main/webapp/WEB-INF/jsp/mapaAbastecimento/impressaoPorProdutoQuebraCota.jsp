@@ -82,7 +82,7 @@ function imprimir(){
 	        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${cota.key}</td>
 	        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${cota.value}</td>
 	      </tr>
-	      <c:if test="${(((statusCota.index+1) % (qtdMaxRow+1)) == 0) }">
+	      <c:if test="${(((statusCota.index+1) % (qtdMaxRow)) == 0) }">
 	      
 	</table>
 		    

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -87,6 +88,9 @@ public class VendaProduto implements Serializable {
 			inverseJoinColumns={@JoinColumn(name="ID_MOVIMENTO_FINANCEIRO")})
 	@OneToMany(orphanRemoval=true)
 	private Set<MovimentoFinanceiroCota> movimentoFinanceiro;
+	
+	@Embedded
+	private ValoresAplicados valoresAplicados;
 	
 	/**
 	 * @return the id
@@ -270,4 +274,14 @@ public class VendaProduto implements Serializable {
 			FormaComercializacao tipoComercializacaoVenda) {
 		this.tipoComercializacaoVenda = tipoComercializacaoVenda;
 	}
+
+	public ValoresAplicados getValoresAplicados() {
+		return valoresAplicados;
+	}
+
+	public void setValoresAplicados(ValoresAplicados valoresAplicados) {
+		this.valoresAplicados = valoresAplicados;
+	}
+	
+	
 }
