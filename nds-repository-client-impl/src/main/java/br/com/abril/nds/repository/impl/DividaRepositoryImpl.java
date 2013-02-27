@@ -592,10 +592,20 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@Override
 	public Divida obterDividaPorIdConsolidado(Long idConsolidado) {
 		
-		Criteria criteria = this.getSession().createCriteria(Divida.class);
-		criteria.add(Restrictions.eq("consolidado.id", idConsolidado));
+		StringBuilder hql = new StringBuilder("select d ");
+		hql.append(" from Divida d ")
+		   .append(" join d.consolidado cons ")
+		   .append(" join d.cobranca cob ")
+		   .append(" where cons.id = :idConsolidado ")
+		   .append(" and cob.id not in ( ")
+		   .append("     select c.id ")
+		   .append("     from Negociacao neg")
+		   .append("     join neg.cobrancasOriginarias c) ");
 		
-		return (Divida) criteria.uniqueResult();
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idConsolidado", idConsolidado);
+		
+		return (Divida) query.uniqueResult();
 	}
 
 	@Override

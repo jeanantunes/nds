@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -20,8 +21,11 @@ import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRTextExporter;
+import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -527,8 +531,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		Date dataInicial = obterDataRecolhimentoReferencia();
-		Date dataFinal = dataOperacao;
+		Date dataRecolhimento = distribuidorService.obterDataOperacaoDistribuidor();
+		
 		boolean indFechado = false;
 		boolean indPostergado = false;
 		
@@ -540,8 +544,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
 				idDistribuidor,
 				numeroCota, 
-				dataInicial, 
-				dataFinal, 
+				dataRecolhimento, 
 				indFechado, 
 				indPostergado, 
 				listaIdProdutoEdicao);
@@ -819,7 +822,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
-			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor());
+			
+			
 			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
 			
 		}
@@ -884,8 +889,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
-			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
-			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
+			produtoEdicaoDTO.setSequenciaMatriz(sm);
 			
 		}
 		
@@ -996,7 +1000,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 				produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 				
-				Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+				Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor());
+				
 				produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
 				
 				produtosEdicaoDTO.add(produtoEdicaoDTO);
@@ -1115,11 +1120,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		} 			
 		
-		controleConfEncalheCota = inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
-
+		controleConfEncalheCota = 
+				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, 
+						listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
 		
-		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = 
-				conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
+		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
+				//conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
+		
+		for (ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
+			
+			valorTotalEncalheOperacaoConferenciaEncalhe = valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getValorTotal());
+		}
 		
 		this.abaterNegociacaoPorComissao(controleConfEncalheCota.getCota().getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
 		
@@ -1564,7 +1575,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return boolean
 	 */
 	private boolean isDataRecolhimentoDistribuidorMenorIgualDataConferenciaEncalhe(Date dataRecolhimentoDistribuidor, Date dataConferenciaEncalhe) {
+		
+		if (dataRecolhimentoDistribuidor == null){
 			
+			return false;
+		}
+		
 		dataRecolhimentoDistribuidor =  DateUtil.removerTimestamp(dataRecolhimentoDistribuidor);
 			
 		dataConferenciaEncalhe = DateUtil.removerTimestamp(dataConferenciaEncalhe);
@@ -2073,9 +2089,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Long idCota = controleConferenciaEncalheCota.getCota().getId();
 		
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setId(conferenciaEncalheDTO.getIdProdutoEdicao());
-
+		ProdutoEdicao produtoEdicao = 
+				this.produtoEdicaoRepository.buscarPorId(conferenciaEncalheDTO.getIdProdutoEdicao());
+		
 		TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
@@ -2093,14 +2109,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
-		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), dataOperacao);
+		ValoresAplicados valoresAplicados =  
+				movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(
+						numeroCota, produtoEdicao.getId(), dataOperacao);
+		
+		if (valoresAplicados == null){
+			
+			if (produtoEdicao.getPrecoVenda() != null){
+				
+				valoresAplicados = new ValoresAplicados(null, produtoEdicao.getPrecoVenda(), null);
+			} else {
+			
+				throw new ValidacaoException(
+							TipoMensagem.ERROR, "Desconto para o produto edição de código de barras " + 
+												produtoEdicao.getCodigoDeBarras() + " não encontrado.");
+			}
+		}
 		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
 		return movimentoEstoqueCota;
-		
-		
-		
 	}
 	
 	/**
@@ -2806,8 +2834,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		try {
-		
-			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+			
+			//Retorna um byte array de um TXT
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			JRTextExporter exporter = new JRTextExporter();  
+			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
+			//exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "/home/roger/teste.txt");  
+			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);  
+			exporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Float(4));  
+			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
+			exporter.exportReport();
+
+			return out.toByteArray();
+			//return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		
 		} catch (JRException e) {
 		

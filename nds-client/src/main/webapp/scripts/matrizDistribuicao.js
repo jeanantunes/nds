@@ -321,8 +321,30 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		}
 		
 	 return selecionado;	
-  },	
+  },
+  
+  this.confirmarFinalizacaoDeMatriz = function() {
+		
+		$.postJSON(pathTela + "/matrizDistribuicao/finalizarMatrizDistribuicao",
+				function(){
+					T.checkUncheckLancamentos(false);
+					T.atualizarGrid();
+					T.exibirMensagemSucesso();
+				}
+			);
+  },
 	
+  this.confirmarReaberturaDeMatriz = function() {
+		
+		$.postJSON(pathTela + "/matrizDistribuicao/reabrirMatrizDistribuicao",
+				function(){
+					T.checkUncheckLancamentos(false);
+					T.atualizarGrid();
+					T.exibirMensagemSucesso();
+				}
+			);
+  },
+  
   this.confirmarExclusaoEstudos = function() {
 		
 		var data = [];
@@ -337,7 +359,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				function(){
 					T.checkUncheckLancamentos(false);
 					T.atualizarGrid();
-					exibirMensagemSucesso();
+					T.exibirMensagemSucesso();
 				}
 			);
 	},
@@ -356,12 +378,75 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				function(){
 					T.checkUncheckLancamentos(false);
 					T.atualizarGrid();
-					exibirMensagemSucesso();
+					T.exibirMensagemSucesso();
 				}
 			);
 				
 	},
 	
+	this.popup_confirmar_finalizacao_matriz = function() {
+		
+			$( "#dialog-confirm-finalizacao", _workspace ).dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: [
+				    {
+				    	id: "dialogConfirmarBtnConfirmar",
+				    	text: "Confirmar",
+				    	click: function() {
+				    		T.confirmarFinalizacaoDeMatriz();
+				    		$(this).dialog("close");
+				    	}
+				    },
+				    {
+				    	id: "dialogConfirmarBtnCancelar",
+				    	text: "Cancelar",
+				    	click: function() {
+				    
+				    		$(this).dialog("close");
+				    	}
+					}
+				],
+				form: $("#dialog-confirm-finalizacao", this.workspace).parents("form"),
+				beforeClose: function() {
+					clearMessageDialogTimeout("dialog-confirmar");
+			    }
+			});
+		},
+		
+		this.popup_confirmar_reabertura_matriz = function() {
+					
+					$( "#dialog-confirm-reabrir-matriz", _workspace ).dialog({
+						resizable: false,
+						height:'auto',
+						width:300,
+						modal: true,
+						buttons: [
+						    {
+						    	id: "dialogConfirmarBtnConfirmar",
+						    	text: "Confirmar",
+						    	click: function() {
+						    		T.confirmarReaberturaDeMatriz();
+						    		$(this).dialog("close");
+						    	}
+						    },
+						    {
+						    	id: "dialogConfirmarBtnCancelar",
+						    	text: "Cancelar",
+						    	click: function() {
+						    
+						    		$(this).dialog("close");
+						    	}
+							}
+						],
+						form: $("#dialog-confirm-reabrir-matriz", this.workspace).parents("form"),
+						beforeClose: function() {
+							clearMessageDialogTimeout("dialog-confirmar");
+					    }
+					});
+				},
 	
 	/**
 	 * Exibe popup de confirmação de exclusão de estudo

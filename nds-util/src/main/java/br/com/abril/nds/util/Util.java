@@ -552,6 +552,32 @@ public abstract class Util {
 		return cnpj.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 	}
 	
+	
+	/**
+	 * Retorna uma substring de parâmetro value 
+	 * quantidade de caracteres maxima igual ao 
+	 * a do parâmetro maxChar.
+	 * 
+	 * @param value
+	 * @param maxChar
+	 * @return String
+	 */
+	public static String truncarValor(String value, int maxChar) {
+		
+		if(value == null) {
+			return "";
+		}
+		
+		if(value.length()<=maxChar){
+			return value;
+		}
+		
+		return value.substring(0, maxChar);
+		
+		
+	}
+	
+	
 	/**
 	 * Remove a mascara do CPF
 	 * @param cpf

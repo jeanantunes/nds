@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -60,6 +61,7 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	
 	private BigDecimal reparte;
 	
+	private Date dataFinMatDistrib;
 	
 	public BigInteger getIdLancamento() {
 		return idLancamento;
@@ -196,6 +198,19 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 
 	public void setReparte(BigDecimal reparte) {
 		this.reparte = reparte;
+	}
+	
+	public boolean isItemFinalizado() {
+		
+		return (this.getDataFinMatDistrib() != null);
+	}
+
+	public Date getDataFinMatDistrib() {
+		return dataFinMatDistrib;
+	}
+
+	public void setDataFinMatDistrib(Date dataFinMatDistrib) {
+		this.dataFinMatDistrib = dataFinMatDistrib;
 	}
 
 	@Override

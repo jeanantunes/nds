@@ -212,7 +212,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			row.cell.fisico = '<input type="text" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
+			row.cell.fisico = '<input type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',window.event);" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 		
 			row.cell.replicar = '<input type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
 			
@@ -286,7 +286,7 @@ var fechamentoEncalheController = $.extend(true, {
 		if (campo.value == "") {
 			diferenca.innerHTML = "";
 		} else {
-			diferenca.innerHTML = devolucao - campo.value;			
+			diferenca.innerHTML =campo.value - devolucao ;			
 		}
 	},
 	
@@ -564,9 +564,11 @@ var fechamentoEncalheController = $.extend(true, {
 				}
 		);
 		
-		var cotasSelecionadas = fechamentoEncalheController.obterCotasMarcadas();
+		var postergarTodas = $("#checkTodasCotas").attr("checked") == "checked";
 
-		if (cotasSelecionadas.length > 0) {
+		var cotasSelecionadas = postergarTodas ? [] : fechamentoEncalheController.obterCotasMarcadas();
+
+		if (postergarTodas || cotasSelecionadas.length > 0) {
 			
 			$("#dialog-postergar", fechamentoEncalheController.workspace).dialog({
 				resizable: false,
@@ -583,7 +585,9 @@ var fechamentoEncalheController = $.extend(true, {
 						$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/postergarCotas",
 									{ 'dataPostergacao' : dataPostergacao, 
 									  'dataEncalhe' : dataEncalhe, 
-									  'idsCotas' : cotasSelecionadas },
+									  'idsCotas' : cotasSelecionadas,
+									  'postergarTodasCotas' : postergarTodas
+									},
 									function (result) {
 	
 										$("#dialog-postergar", fechamentoEncalheController.workspace).dialog("close");
@@ -662,8 +666,13 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	veificarCobrancaGerada: function(){
 		
+		var cobrarTodas  = $("#checkTodasCotas").attr("checked") == "checked";
+		
 		$.postJSON(contextPath + '/devolucao/fechamentoEncalhe/veificarCobrancaGerada',
-				{'idsCotas' : fechamentoEncalheController.obterCotasMarcadas() },
+				{
+					'idsCotas' : fechamentoEncalheController.obterCotasMarcadas(),
+					'cobrarTodasCotas': cobrarTodas
+				},
 		
 			function(conteudo){
 			
@@ -702,9 +711,16 @@ var fechamentoEncalheController = $.extend(true, {
 	cobrarCotas : function() {
 
 		var dataOperacao = $("#datepickerDe", fechamentoEncalheController.workspace).val();
-		
+		var cobrarTodas  = $("#checkTodasCotas").attr("checked") == "checked";
+
+		var idsCotas = cobrarTodas ? [] : fechamentoEncalheController.obterCotasMarcadas();
+
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/cobrarCotas",
-					{ 'dataOperacao' : dataOperacao, 'idsCotas' : fechamentoEncalheController.obterCotasMarcadas() },
+					{ 
+						'dataOperacao' : dataOperacao, 
+						'idsCotas' : idsCotas,
+						'cobrarTodasCotas': cobrarTodas
+					},
 					function (result) {
 						
 						var tipoMensagem = result.tipoMensagem;
@@ -859,6 +875,15 @@ var fechamentoEncalheController = $.extend(true, {
 	analiticoEncalhe : function() {
 		$('#workspace').tabs('addTab', "Anal&iacute;tico Encalhe", "/nds-client/devolucao/fechamentoEncalhe/analitico");
 	},
+	
+	nextInputExemplares : function(curIndex,evt) {
+		
+		if (evt.keyCode == 13) {
+			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
+			nextElement.select();
+			nextElement.focus();
+		}
+	}
 	
 }, BaseController);
 //@ sourceURL=fechamentoEncalhe.js

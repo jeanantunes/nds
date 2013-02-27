@@ -239,11 +239,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 
-		if(dataLancamento!= null){
+		if (dataLancamento!= null) {
+			
 			Long idItemRecebimentoFisico =
-				itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
+				this.itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
 
-			movimentoEstoque.setItemRecebimentoFisico(new ItemRecebimentoFisico(idItemRecebimentoFisico));
+			if (idItemRecebimentoFisico != null) {
+			
+				movimentoEstoque.setItemRecebimentoFisico(new ItemRecebimentoFisico(idItemRecebimentoFisico));
+			}
 		}
 
 		movimentoEstoque.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
@@ -441,13 +445,18 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, 
+			Long idProdutoEdicao, Long idCota, Long idUsuario, 
+			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+		
 		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null);
 	}
 	
 	@Override
 	@Transactional
-	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
+			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
+			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
 
 		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
 
@@ -818,5 +827,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					produtoServico.getProdutoEdicao().getId(),
 					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null);
 		}
+	}
+	
+	@Override
+	public BigInteger obterReparteDistribuidoProduto(String produtoEdicaoId){
+		return this.movimentoEstoqueRepository.obterReparteDistribuidoProduto(produtoEdicaoId);
 	}
 }

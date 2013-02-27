@@ -24,29 +24,30 @@ $(function(){
 <body>
 
 
-	 <form action="/cadastro/box/" id="cotas_associadas_box_form">
-		<div id="dialog-box" title="Detalhes do Box">
-	        <table class="boxCotaGrid"></table>
-	        
-	        <span class="bt_novos" title="Novo">
-			    <a href="javascript:;" onclick="cotaAusenteController.popupNovaCotaAusente();">
+	 <form>
+		 
+        <div class="area">
+        
+	        <span class="bt_novos">
+			    <a href="javascript:;" rel="tipsy" title="Incluir Nova Cota Ausente" onclick="cotaAusenteController.popupNovaCotaAusente();">
 			        <img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>
 			    </a>
 		    </span>
 	  
- 		  	<span class="bt_novos">
-				<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=XLS">
+ 		  	<span class="bt_arq">
+				<a rel="tipsy" title="Gerar Arquivo" href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=XLS">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" border="0" />
 				</a>
 			</span>
 			
- 		  	<span class="bt_novos">
-				<a href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=PDF">
+ 		  	<span class="bt_arq">
+				<a rel="tipsy" title="Imprimir" href="${pageContext.request.contextPath}/cotaAusente/exportar?fileType=PDF">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0" />
 				</a>
 			</span>
-		   	
-		</div>
+			
+	   	</div>
+	   	
 	 </form>
 
 

@@ -10,6 +10,8 @@ public class ExportHeader implements Comparable<ExportHeader> {
 	
 	private Float widthPercent;
 	
+	private ColumType columType;
+	
 	public ExportHeader() {
 		
 	}
@@ -116,6 +118,14 @@ public class ExportHeader implements Comparable<ExportHeader> {
 	public int compareTo(ExportHeader exportHeader) {
 		
 		return this.exhibitionOrder.compareTo(exportHeader.exhibitionOrder);
+	}
+
+	public ColumType getColumType() {
+		return columType;
+	}
+
+	public void setColumType(ColumType columType) {
+		this.columType = columType;
 	}
 
 }

@@ -74,6 +74,13 @@ public class GrupoServiceImpl implements GrupoService {
 
 	@Transactional
 	@Override
+	public Integer countTodosGrupos() {
+		
+		return grupoRepository.countTodosGrupos();
+	}
+	
+	@Transactional
+	@Override
 	public void excluirGrupo(Long idGrupo) {
 		
 		GrupoCota grupo = grupoRepository.buscarPorId(idGrupo);

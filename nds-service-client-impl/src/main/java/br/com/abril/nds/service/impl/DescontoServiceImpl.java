@@ -149,7 +149,7 @@ public class DescontoServiceImpl implements DescontoService {
 		List<TipoDescontoProdutoDTO> historicoDesconto = descontoProdutoRepository.buscarTipoDescontoProduto(filtro);
 		
 		Calendar dataOperacao = Calendar.getInstance();
-		dataOperacao.setTime(new Date());
+		dataOperacao.setTime(distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		dataOperacao.set(Calendar.AM_PM, 0);
 		dataOperacao.set(Calendar.HOUR, 0);
@@ -513,6 +513,7 @@ public class DescontoServiceImpl implements DescontoService {
 					hdcp.setDataAlteracao(dataAtual);
 					hdcp.setDesconto(desconto);
 					hdcp.setDistribuidor(distribuidor);
+					hdcp.setProdutoEdicao(produtoEdicao);
 					if(produtoEdicao != null) {
 						hdcp.setFornecedor(produtoEdicao.getProduto().getFornecedor());
 					}
@@ -769,13 +770,16 @@ public class DescontoServiceImpl implements DescontoService {
 	 * 
 	 * @param dataUltimaAlteracao - data da última alteração
 	 */
-	private void validarExclusaoDesconto(Date dataUltimaAlteracao){
+	private void validarExclusaoDesconto(Desconto desconto){
 
 		Distribuidor distribuidor = distribuidorRepository.obter();
 
-		if(dataUltimaAlteracao.compareTo(distribuidor.getDataOperacao()) < 0){
+		if(desconto.getDataAlteracao().compareTo(distribuidor.getDataOperacao()) < 0)
 			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido fora da data vigente!");
-		}
+				
+		if(desconto.isUsado())
+			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido pois já está sendo utilizado!");
+			
 	}
 
 	/*
@@ -865,7 +869,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
 		
-		validarExclusaoDesconto(desconto.getDataAlteracao());
+		validarExclusaoDesconto(desconto);
 		
 		List<Fornecedor> fornecedores = descontoRepository.buscarFornecedoresQueUsamDescontoGeral(desconto);
 
@@ -873,12 +877,14 @@ public class DescontoServiceImpl implements DescontoService {
 
 			HistoricoDescontoFornecedor hdf = historicoDescontoFornecedorRepository.buscarHistoricoDescontoFornecedorPor(desconto, fornecedor);
 			
-			fornecedor.setDesconto(null);
-			fornecedorRepository.merge(fornecedor);
-			
 			if(hdf != null)
-				historicoDescontoFornecedorRepository.remover(hdf);
-					
+				historicoDescontoFornecedorRepository.remover(hdf);	
+			
+			HistoricoDescontoFornecedor ultimoValido  = historicoDescontoFornecedorRepository.buscarUltimoDescontoValido(fornecedor);
+						
+			fornecedor.setDesconto(ultimoValido==null ? null : ultimoValido.getDesconto());
+			fornecedorRepository.merge(fornecedor);			
+							
 		}
 
 	}
@@ -893,7 +899,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
 
-		validarExclusaoDesconto(desconto.getDataAlteracao());
+		validarExclusaoDesconto(desconto);
 		
 		List<Cota> cotas = descontoRepository.buscarCotasQueUsamDescontoEspecifico(desconto);
 		
@@ -924,7 +930,7 @@ public class DescontoServiceImpl implements DescontoService {
 
 		Desconto desconto = descontoRepository.buscarPorId(idDesconto);
 
-		validarExclusaoDesconto(desconto.getDataAlteracao());
+		validarExclusaoDesconto(desconto);
 		
 		List<ProdutoEdicao> produtosEdicoes = descontoRepository.buscarProdutosEdicoesQueUsamDescontoProduto(desconto);
 		
@@ -956,37 +962,53 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional
     public Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento,
-            Cota cota, ProdutoEdicao produtoEdicao) {
+            										  Cota cota, 
+            										  ProdutoEdicao produtoEdicao) {
+		
         Validate.notNull(cota, "Cota não deve ser nula!");
         Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
+        
         Desconto desconto = null;
+        
         if (produtoEdicao.getProduto().isPublicacao()) {
-        	
-            //Neste caso, o produto possui apenas um fornecedor
-            //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
+
             desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, cota, produtoEdicao);
+
+            if (desconto == null) {
+            
+            	String produtoEdicaoSemDesconto = "";
+                
+                if (produtoEdicao != null && produtoEdicao.getProduto() != null) {
+                
+                	produtoEdicaoSemDesconto = produtoEdicao.getProduto().getNome();
+                }
+                
+                if (produtoEdicao != null) {
+                	
+                	produtoEdicaoSemDesconto += " / Edição: "+ produtoEdicao.getNumeroEdicao();
+                }
+            	
+            	ValidacaoVO validacaoVO = 
+                    new ValidacaoVO(
+                    	TipoMensagem.ERROR, 
+                    		"Não existe desconto cadastrado para o Produto: " 
+                    			+ produtoEdicaoSemDesconto);
+            	
+            	throw new ValidacaoException(validacaoVO);
+            }
+            
+            desconto.setUsado(true);
+            
+            descontoRepository.alterar(desconto);
             
         } else {
-        	
-            //Produto possivelmente com mais de um fornecedor, seguindo
-            // a instrução passada, utilizar o desconto do produto
+
         	desconto = new Desconto();
+        	
             desconto.setValor(produtoEdicao.getProduto().getDesconto());
-            
         }
         
-        String produtoEdicaoSemDesconto = "";
-        if(produtoEdicao != null && produtoEdicao.getProduto() != null)
-        	produtoEdicaoSemDesconto = produtoEdicao.getProduto().getNome();
-        
-        if(produtoEdicao != null)
-        	produtoEdicaoSemDesconto += " / Edição: "+ produtoEdicao.getNumeroEdicao();
-        
-        ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Não existe desconto cadastrado para o Prdouto: "+ produtoEdicaoSemDesconto);
-        if(desconto == null) throw new ValidacaoException(validacaoVO);
-        
         return desconto;
-        
     }
 	
 	@Override
@@ -1036,4 +1058,11 @@ public class DescontoServiceImpl implements DescontoService {
 
 		return this.distribuidorRepository.obterDescontoCotaNegociacao();
 	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(
+			Cota cota, String sortorder, String sortname) {		
+		return descontoRepository.obterMergeDescontosEspecificosEGerais(cota, sortorder, sortname);
+	}
+
 }

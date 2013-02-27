@@ -165,7 +165,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		    
 			.append(" join venda.produtoEdicao as produtoEdicao ")
 	        .append(" join venda.movimentoFinanceiro as movimentoFinanceiro  ")
-	        .append(" join movimentoFinanceiro.movimentos as mec ")
+	        .append(" left join movimentoFinanceiro.movimentos as mec ")
 		    .append(" join produtoEdicao.produto as produto ")
 		    .append(" join produto.fornecedores as fornecedores ")
 		    .append(" join venda.usuario as usuario ")

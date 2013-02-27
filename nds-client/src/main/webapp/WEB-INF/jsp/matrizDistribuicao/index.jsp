@@ -23,7 +23,6 @@ display: none;
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/balanceamento.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/matrizDistribuicao.js"></script>
 
-
 <script type="text/javascript">
 
 
@@ -144,9 +143,11 @@ var lancamentosSelecionados = [];
        	  					</div>
 						        	
 		         	  		<span class="bt_novos">
-		         	  			<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0">
-		         	  				Finalizar Matriz de Distribuição
-		         	  			</img>
+		         	  			<a href="javascript:;" onclick="balanceamentoLancamento.popup_confirmar_finalizacao_matriz();">
+			         	  			<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0">
+			         	  				Finalizar Matriz de Distribuição
+			         	  			</img>
+		         	  			</a>
 		         	  		</span>	
 		         	  		
 		         	  		<span class="bt_novos">
@@ -158,9 +159,11 @@ var lancamentosSelecionados = [];
 		         	  		</span>	
 		         	  		
 		         	  		<span class="bt_novos">
-		         	  			<img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0">
-		         	  				Reabrir Matriz
-		         	  			</img>
+		         	  			<a href="javascript:;" onclick="balanceamentoLancamento.popup_confirmar_reabertura_matriz();">
+			         	  			<img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0">
+			         	  				Reabrir Matriz
+			         	  			</img>
+		         	  			</a>
 		         	  		</span>
 		         	  		
 		         	  		<span class="bt_novos">
@@ -211,6 +214,38 @@ var lancamentosSelecionados = [];
 				</div>	
 		      </fieldset>
 			</div>
+		
+		<form id="form-confirm-finalizacao">
+		<div id="dialog-confirm-finalizacao" title="Finalizar Matriz" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-confirmar" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+		    	<legend>Confirmar Finalização de Matriz</legend>
+				
+					Confirma finalização da Matriz de Distribuição?
+
+		    </fieldset>
+		</div>
+		</form>
+		
+		<form id="form-confirm-reabrir-matriz">
+		<div id="dialog-confirm-reabrir-matriz" title="Reabrir Matriz" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-confirmar" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+		    	<legend>Confirmar Reabertura de Matriz</legend>
+				
+					Confirma reabertura da Matriz de Distribuição?
+
+		    </fieldset>
+		</div>
+		</form>
 				
 		<form id="form-confirm-exclusao">
 		<div id="dialog-confirm-exclusao" title="Excluir Estudo" style="display:none;">

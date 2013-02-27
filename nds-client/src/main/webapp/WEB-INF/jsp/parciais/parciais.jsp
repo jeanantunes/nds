@@ -87,7 +87,7 @@
 
 <form id="idParciaisExcluir">
 	<div id="dialog-excluir" title="Excluir Parcial">
-	  <p>Confirma a exclusão desta Parcial?</p>
+	  <p>Confirma a exclusão deste Período?</p>
 	</div>
 </form>
 
@@ -170,7 +170,7 @@
 	            <td>Qtde. Períodos:</td>
 	            <td>
 	<!-- QTDE -->
-	<input id="qtde" name="" type="text" style="width:80px;" /></td>
+	<input id="qtde" name="" type="text" style="width:80px;" onchange="ParciaisController.carregaPeb(this.value)" /></td>
 	          </tr>
 	          
 	          <tr>

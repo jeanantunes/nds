@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -139,7 +140,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		.append(" join _chamEncCota.chamadaEncalhe  _chamadaEncalhe 	")
 		.append(" join _chamEncCota.cota _cota 							")
 		.append(" join _chamadaEncalhe.produtoEdicao _produtoEdicao")
-		.append(" where _cota.id = cota.id ");
+		.append(" where _cota.id = cota.id ")
+		.append(" and _chamEncCota.postergado = :isPostergado ");
 
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
@@ -255,6 +257,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			hql.append(" and fornecedores.id in (:listaFornecedores) ");
 			param.put("listaFornecedores", filtro.getFornecedores());
 		}
+
+		param.put("isPostergado", false);
 	}
 
 	private void gerarOrdenacao(FiltroEmissaoCE filtro, StringBuilder hql) {
@@ -344,10 +348,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select produtoEdicao.id as id, lancamento.sequenciaMatriz as sequenciaMatriz");
+		hql.append(" select produtoEdicao.id as id, chamadaEncalhe.sequencia as sequenciaMatriz");
 		
 		hql.append(" from ChamadaEncalhe chamadaEncalhe ")
-		    .append(" join chamadaEncalhe.lancamentos lancamento ")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ");		
 
 		
@@ -366,7 +369,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			param.put("dataAte", dataAte);
 		}
 				
-		hql.append(" order by lancamento.sequenciaMatriz ");
+		hql.append(" order by chamadaEncalhe.sequencia ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -417,7 +420,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select produtoEdicao.codigoDeBarras as codigoBarras, 	");
-		hql.append(" 		lancamentos.sequenciaMatriz as sequencia, 		");
 		hql.append(" 	    produto.codigo as codigoProduto, 				");
 		hql.append(" 	    produto.nome as nomeProduto, 					");
 		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
@@ -434,14 +436,13 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" ) as reparte,	");
 		
 		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida, ");
-		hql.append("		lancamentos.sequenciaMatriz as sequencia ");
-		
+		hql.append("		chamadaEncalhe.sequencia as sequencia ");
+				
 		gerarFromWhereProdutosCE(filtro, hql, param, idCota);
 		
-
 		hql.append(" group by chamadaEncalhe ");
 		
-		hql.append(" order by lancamentos.sequenciaMatriz ");
+		hql.append(" order by chamadaEncalhe.dataRecolhimento, sequencia ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -454,24 +455,30 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return query.list();
 	}
-	
+
 	private void gerarFromWhereProdutosCE(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param, 
 			Long idCota) {
 
 		hql.append(" from ChamadaEncalheCota chamEncCota 					")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe 		")
-		   .append(" left join chamEncCota.conferenciasEncalhe confEnc 		")
-		   .append(" left join confEnc.movimentoEstoqueCota  movimentoCota 	")
 		   .append(" join chamEncCota.cota cota 							")
 		   .append(" join cota.pessoa pessoa 								")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		")
 		   .append(" join produtoEdicao.produto produto 					")
 		   .append(" join produto.fornecedores fornecedores 				")
 		   .append(" join chamadaEncalhe.lancamentos lancamentos 			")
+		   .append(" join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
+		   .append(" join movimentoCota.tipoMovimento tipoMovimento         ")
+		   .append(" left join lancamentos.periodoLancamentoParcial  periodoLancamentoParcial ")
 		   .append(" where cota.id=:idCota 									")
-		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	");
+		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	")
+		   .append(" and movimentoCota.cota.id = cota.id                    ")
+		   .append(" and tipoMovimento.grupoMovimentoEstoque =:grupoMovimento   ")
+		   .append(" and movimentoCota.data = (select max(mv.data) from MovimentoEstoqueCota mv where mv.lancamento.id = lancamentos.id and mv.id = movimentoCota.id) ")
+		   .append(" and chamEncCota.qtdePrevista>0  ");
 		
 		param.put("idCota", idCota);
+		param.put("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
@@ -621,4 +628,25 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		return query.list();
 	}
+	
+	@Override
+	public Integer obterMaiorSequenciaPorDia(Date dataRecolhimento) {
+		
+		String hql = " select max(chamadaEncalhe.sequencia) from ChamadaEncalhe chamadaEncalhe "
+			+ " where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ";
+				
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		
+		Integer maiorSequencia = (Integer) query.uniqueResult();
+		
+		if (maiorSequencia == null) {
+			
+			maiorSequencia = 0;
+		}
+		
+		return maiorSequencia;
+	}
+	
 }

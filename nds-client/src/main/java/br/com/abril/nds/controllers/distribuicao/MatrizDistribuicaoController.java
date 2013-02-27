@@ -146,10 +146,25 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 	
 	@Post
-	public void finalizarMatrizDistribuicao(List<Date> datasConfirmadas) {
+	public void finalizarMatrizDistribuicao() {
 		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		matrizDistribuicaoService.finalizarMatrizDistribuicao(filtro);
+		
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 
+	@Post
+	public void reabrirMatrizDistribuicao() {
+		
+		FiltroLancamentoDTO filtro = obterFiltroSessao();
+		
+		matrizDistribuicaoService.reabrirMatrizDistribuicao(filtro);
+		
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+	
 	
 	@Exportable
 	public class RodapeDTO {

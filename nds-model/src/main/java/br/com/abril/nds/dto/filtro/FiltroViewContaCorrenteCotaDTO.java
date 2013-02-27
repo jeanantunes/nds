@@ -12,7 +12,7 @@ public class FiltroViewContaCorrenteCotaDTO {
 	@Export(label = "Cota")
 	private Integer numeroCota;
 	
-	@Export(label = "Nome")
+	@Export(label = "Nome", widthPercent=80f)
 	private String nomeCota;
 	
 	private Date inicioPeriodo;

@@ -675,7 +675,6 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 		});
 	},
 	
-	
 	// Autocomplete no nome da cota
 	autoCompletarPorNomeCotaQueRecebeClassificacao : function(idNomeCota) {
 		

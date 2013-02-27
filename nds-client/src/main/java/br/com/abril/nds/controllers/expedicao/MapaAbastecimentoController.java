@@ -1,14 +1,18 @@
 package br.com.abril.nds.controllers.expedicao;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -35,7 +39,6 @@ import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.EntregadorService;
-import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RotaService;
@@ -55,6 +58,8 @@ public class MapaAbastecimentoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMapaAbastecimento";
 	
+	private static final Integer QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA = 4;
+	
 	@Autowired
 	private HttpSession session;
 	
@@ -63,9 +68,6 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	@Autowired
 	private MapaAbastecimentoService mapaAbastecimentoService;
-	
-	@Autowired
-	private LancamentoService lancamentoService;
 	
 	@Autowired
 	private BoxService boxService;
@@ -202,14 +204,7 @@ public class MapaAbastecimentoController extends BaseController {
 	@Post
 	public void pesquisar(FiltroMapaAbastecimentoDTO filtro, Integer page, Integer rp, String sortname, String sortorder) {
 		
-		if(filtro.getTipoConsulta() == null)
-			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
-				
-		if(filtro.getDataDate() == null)
-			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
-		
-		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
-			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
+		validarFiltroPesquisa(filtro);
 			
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
@@ -240,6 +235,17 @@ public class MapaAbastecimentoController extends BaseController {
 		default:
 			break;
 		}
+	}
+
+	private void validarFiltroPesquisa(FiltroMapaAbastecimentoDTO filtro) {
+		if(filtro.getTipoConsulta() == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
+				
+		if(filtro.getDataDate() == null)
+			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' não é válida.");
+		
+		if(filtro.getDataLancamento() == null || filtro.getDataLancamento().isEmpty())
+			throw new ValidacaoException(TipoMensagem.WARNING, "'Data de Lançamento' é obrigatória.");
 	}
 
 	@Post
@@ -337,7 +343,7 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	
 		
-	public void imprimirMapaAbastecimento() {
+	public void imprimirMapaAbastecimento() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 
 		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
@@ -386,14 +392,22 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
 		filtro.getPaginacao().setSortColumn("nomeEdicao");
 		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
 		TreeMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
 		setaNomeParaImpressao();
 		result.include("produtosMapa",produtosMapa.values());
+		
 	}
 	
 	public void impressaoPorRota(FiltroMapaAbastecimentoDTO filtro) {
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
 		
 		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
 		setaNomeParaImpressao();
@@ -402,6 +416,9 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	public void impressaoPorProduto(FiltroMapaAbastecimentoDTO filtro) {
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
 		
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 		setaNomeParaImpressao();
@@ -428,7 +445,10 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 
 	public void impressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
-				
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 		setaNomeParaImpressao();
 		result.include("mapa", mapaCota);
@@ -437,18 +457,78 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	public void impressaoPorProdutoEdicao(FiltroMapaAbastecimentoDTO filtro) {		
 
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
 		ProdutoEdicaoMapaDTO produtoEdicaoMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 		setaNomeParaImpressao();
 		result.include("mapa",produtoEdicaoMapa);
 		
 	}
 	
-	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) {		
+	public void impressaoPorProdutoQuebraCota(FiltroMapaAbastecimentoDTO filtro) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {		
 
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
+		
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 		setaNomeParaImpressao();
-		result.include("mapa",produtoCotaMapa);
 		
+		Integer qtdMaxRow = 35;
+
+		List<MapaProdutoCotasDTO> maps = getMapaProdutoCotasDTO(produtoCotaMapa);
+
+		result.include("maps",maps);
+		result.include("qtdMaxRow", qtdMaxRow);
+	}
+	
+	private List<MapaProdutoCotasDTO> getMapaProdutoCotasDTO(MapaProdutoCotasDTO produtoCotaMapa) 
+			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
+
+		Integer maxPerPage = QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA * 35;
+		
+		int pageBreak = 0;
+		
+		Map<Integer, Integer> newMap = null;
+		
+		MapaProdutoCotasDTO mapaProdutoCotaDTO = null;
+		
+		List<MapaProdutoCotasDTO> maps = new ArrayList<MapaProdutoCotasDTO>();
+		
+		for (Entry<Integer, Integer> entry : produtoCotaMapa.getCotasQtdes().entrySet()) {
+			
+			if (pageBreak == 0 || pageBreak == maxPerPage) {
+
+				pageBreak = 0;
+
+				if(newMap != null) {
+					
+					mapaProdutoCotaDTO = (MapaProdutoCotasDTO) BeanUtils.cloneBean(produtoCotaMapa);
+					
+					mapaProdutoCotaDTO.setCotasQtdes(newMap);
+		
+					maps.add(mapaProdutoCotaDTO);
+				}
+				
+				newMap = new HashMap<Integer, Integer>();
+				
+				pageBreak++;
+		
+				continue;
+			}
+		
+			newMap.put(entry.getKey(), entry.getValue());
+			
+			pageBreak++;
+		}
+		
+		mapaProdutoCotaDTO = (MapaProdutoCotasDTO) BeanUtils.cloneBean(produtoCotaMapa);
+		
+		mapaProdutoCotaDTO.setCotasQtdes(newMap);
+		
+		maps.add(mapaProdutoCotaDTO);
+		
+		return maps;
 	}
 	
 	private void setaNomeParaImpressao() {

@@ -1975,7 +1975,9 @@ var recebimentoFisicoController = $.extend(true, {
 		$.postJSON(url, formData, 
 				function(result) {
 				if(result.validacao) {
-						recebimentoFisicoController.showConfirmacaoValorTotalNotaFiscalDivergente();
+					recebimentoFisicoController.showConfirmacaoValorTotalNotaFiscalDivergente();
+				}else{
+					recebimentoFisicoController.incluirNota();
 				}
 		});		
 		

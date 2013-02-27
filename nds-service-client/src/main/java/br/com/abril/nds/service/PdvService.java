@@ -178,6 +178,9 @@ public interface PdvService {
      * @return PDV
      */
     public PDV obterPDVporId(Long idPdv);
+
+    List<AreaInfluenciaPDV> obterAreasInfluenciaPDV();
     
+    public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo();
 }
 
