@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -281,6 +282,9 @@ public class ConferenciaEncalheRepositoryImplTest extends
 						StatusOperacao.CONCLUIDO, usuarioJoao, box1);
 
 		save(controleConferenciaEncalheCota);
+		
+		
+		
 		/**
 		 * MOVIMENTOS DE ENVIO ENCALHE ABAIXO
 		 */
@@ -325,6 +329,17 @@ public class ConferenciaEncalheRepositoryImplTest extends
 				Fixture.criarData(2, Calendar.MARCH, 2012),
 				BigInteger.valueOf(45), BigInteger.valueOf(45), veja1);
 		save(conferenciaEncalhe);
+		
+		
+	
+		controleConferenciaEncalheCota = Fixture
+				.controleConferenciaEncalheCota(controleConferenciaEncalhe,
+						cotaManoel,
+						Fixture.criarData(1, Calendar.FEBRUARY, 2013),
+						Fixture.criarData(10, Calendar.FEBRUARY, 2013),
+						Fixture.criarData(1, Calendar.FEBRUARY, 2013),
+						StatusOperacao.EM_ANDAMENTO, usuarioJoao, box1);
+		save(controleConferenciaEncalheCota);
 
 	}
 
@@ -608,5 +623,17 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		
 		this.conferenciaEncalheRepository.obterReparteConferencia(1L, 1L, 1L);
 	}
+	
+	
+	
+	@Test
+	public void testarObterListaCotaConferenciaNaoFinalizada() {
+		
+		 List<CotaDTO> listaCota = this.conferenciaEncalheRepository.obterListaCotaConferenciaNaoFinalizada(Fixture.criarData(1, Calendar.FEBRUARY, 2013));
+		 
+		 Assert.assertEquals(1, listaCota.size());
+		 
+	}
+
 
 }
