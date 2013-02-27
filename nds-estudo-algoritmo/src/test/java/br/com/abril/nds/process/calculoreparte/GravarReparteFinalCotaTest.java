@@ -34,7 +34,7 @@ public class GravarReparteFinalCotaTest {
 		try {
 			gravarReparteFinalCota.executar();
 		} catch (Exception e) {
-			fail("Exce√ß√£o inv√°lida.");
+			fail("ExceÁ„o inv·lida.");
 		}
 	}
 

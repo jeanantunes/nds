@@ -14,11 +14,13 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
@@ -31,6 +33,44 @@ public class ConferenciaEncalheRepositoryImpl extends
 	public ConferenciaEncalheRepositoryImpl() {
 		super(ConferenciaEncalhe.class);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaCotaConferenciaNaoFinalizada(java.util.Date)
+	 */
+	@Override
+	public List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append("	select 	");
+		
+		hql.append("	coalesce(pessoa.nome, pessoa.razaoSocial) as nomePessoa, ");
+		
+		hql.append("	cota.numeroCota as numeroCota	");
+		
+		hql.append("	from ControleConferenciaEncalheCota ccec ");
+		
+		hql.append("	join ccec.cota cota		");
+
+		hql.append("	join cota.pessoa pessoa	");
+		
+		hql.append("	where ccec.status = :statusOperacao	");
+		
+		hql.append("	and ccec.dataOperacao = :dataOperacao ");
+		
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("statusOperacao", StatusOperacao.EM_ANDAMENTO); 
+		
+		query.setParameter("dataOperacao", dataOperacao); 
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		
+		return query.list();
+	}
+	
 	
 	/*
 	 * (non-Javadoc)

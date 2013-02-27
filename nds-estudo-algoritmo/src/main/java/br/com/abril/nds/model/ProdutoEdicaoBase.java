@@ -7,6 +7,7 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
     private static final long serialVersionUID = 3298542950250981102L;
 
     private Long id;
+    private Long idEstudo;
     private Long numeroEdicao;
     private Long idProduto;
     private Long codigoProduto;
@@ -99,6 +100,14 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 
     public void setColecao(boolean colecao) {
 	this.colecao = colecao;
+    }
+    
+    public Long getIdEstudo() {
+	return idEstudo;
+    }
+    
+    public void setIdEstudo(Long idEstudo) {
+	this.idEstudo = idEstudo;
     }
 
     @Override

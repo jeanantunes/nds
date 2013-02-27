@@ -29,7 +29,6 @@ public class ReparteProporcional extends ProcessoAbstrato {
 	
     @Override
     protected void executarProcesso() {
-    	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	boolean temEdicaoBaseAberta = false;
     	for (ProdutoEdicaoBase edicaoBase : getEstudo().getEdicoesBase()) {
     		if (edicaoBase.isEdicaoAberta()) {
