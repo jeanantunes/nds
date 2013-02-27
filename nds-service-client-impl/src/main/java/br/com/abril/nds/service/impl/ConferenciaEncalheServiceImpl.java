@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -56,6 +57,7 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -2106,26 +2108,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota);
+
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		
-		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda()
+				.subtract(produtoEdicao.getPrecoVenda()
+						.multiply(desconto.getValor()
+								.divide(new BigDecimal("100")
+								)
+							)
+						);
 		
-		ValoresAplicados valoresAplicados =  
-				movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(
-						numeroCota, produtoEdicao.getId(), dataOperacao);
-		
-		if (valoresAplicados == null){
-			
-			if (produtoEdicao.getPrecoVenda() != null){
-				
-				valoresAplicados = new ValoresAplicados(null, produtoEdicao.getPrecoVenda(), null);
-			} else {
-			
-				throw new ValidacaoException(
-							TipoMensagem.ERROR, "Desconto para o produto edição de código de barras " + 
-												produtoEdicao.getCodigoDeBarras() + " não encontrado.");
-			}
-		}
-		
+		ValoresAplicados valoresAplicados = new ValoresAplicados();
+		valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
+		valoresAplicados.setValorDesconto(desconto.getValor());
+		valoresAplicados.setPrecoComDesconto(precoComDesconto);
+
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
 		return movimentoEstoqueCota;
