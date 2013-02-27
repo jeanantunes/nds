@@ -25,7 +25,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 		cellspacing="0" style="margin-bottom: 10px; margin-top: 10px;">
 		<tr>
 			<td width="124" rowspan="8" valign="top"><span>
-				<img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" />
+				<img width="120" src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" />
 				</span></td>
 			<td colspan="4"
 				style="border-left: 1px solid #000; border-top: 1px solid #000;"><span

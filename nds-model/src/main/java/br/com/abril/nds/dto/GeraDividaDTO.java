@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -41,7 +42,7 @@ public class GeraDividaDTO implements Serializable{
 	@Export(label = "Emissão", alignment = Alignment.CENTER)
 	private Date dataEmissao;
 	
-	@Export(label = "Valor", alignment = Alignment.RIGHT)
+	@Export(label = "Valor", alignment = Alignment.RIGHT, columnType =ColumType.DECIMAL)
 	private BigDecimal valor;
 	
 	@Export(label = "Tipo")

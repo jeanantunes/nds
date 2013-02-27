@@ -321,7 +321,7 @@
 				<td width="43">C&oacute;digo:</td>
 				<td width="123" >
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
-						   style="width: 80px; float: left; margin-right: 5px;" maxlength="8"
+						   style="width: 80px; float: left; margin-right: 5px;" maxlength="30"
 						   onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '', false,
 								   									   produtoController.pesquisarProdutosSuccessCallBack,
 								   									   produtoController.pesquisarProdutosErrorCallBack);" />

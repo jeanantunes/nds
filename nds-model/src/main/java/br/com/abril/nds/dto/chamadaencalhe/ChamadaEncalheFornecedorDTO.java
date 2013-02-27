@@ -19,7 +19,13 @@ public class ChamadaEncalheFornecedorDTO implements Serializable {
     
     private Long id;
     
+    private Long codigoDistribuidor;
+    
     private Long numeroDocumento;
+    
+    private Long numeroChamadaEncalhe;
+    
+    private Integer tipoChamadaEncalhe;
     
     private IdentificacaoChamadaEncalheFornecedorDTO identificacao;
     
@@ -68,7 +74,31 @@ public class ChamadaEncalheFornecedorDTO implements Serializable {
         this.id = id;
     }
 
-    /**
+    public Long getCodigoDistribuidor() {
+		return codigoDistribuidor;
+	}
+
+	public void setCodigoDistribuidor(Long codigoDistribuidor) {
+		this.codigoDistribuidor = codigoDistribuidor;
+	}
+
+	public Long getNumeroChamadaEncalhe() {
+		return numeroChamadaEncalhe;
+	}
+
+	public void setNumeroChamadaEncalhe(Long numeroChamadaEncalhe) {
+		this.numeroChamadaEncalhe = numeroChamadaEncalhe;
+	}
+
+	public Integer getTipoChamadaEncalhe() {
+		return tipoChamadaEncalhe;
+	}
+
+	public void setTipoChamadaEncalhe(Integer tipoChamadaEncalhe) {
+		this.tipoChamadaEncalhe = tipoChamadaEncalhe;
+	}
+
+	/**
      * @return the numeroDocumento
      */
     public Long getNumeroDocumento() {

@@ -212,11 +212,20 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	public void voltarConfiguracaoOriginal() {
 		
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		if (balanceamentoLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
+		
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
-		this.matrizLancamentoService.voltarConfiguracaoInicial(filtro.getData());
+		this.matrizLancamentoService.voltarConfiguracaoInicial(
+			filtro.getData(), balanceamentoLancamento.getMatrizLancamento());
 		
-		BalanceamentoLancamentoDTO balanceamentoLancamento =
+		balanceamentoLancamento =
 			this.obterBalanceamentoLancamento(filtro);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
@@ -620,8 +629,8 @@ public class MatrizLancamentoController extends BaseController {
 		//Adicionar no mapa		
 		for (ProdutoLancamentoDTO produtoLancamentoAdicionar : listaProdutoLancamentoAdicionar) {
 			
-			if (produtoLancamentoAdicionar.permiteReprogramacao()) {
-			
+			if (this.matrizLancamentoService.isProdutoBalanceavel(produtoLancamentoAdicionar)) {
+				
 				List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(novaData);
 				
 				if (produtosLancamento == null) {
@@ -754,7 +763,8 @@ public class MatrizLancamentoController extends BaseController {
 			produtoBalanceamentoVO.setDistribuicao(produtoLancamentoDTO.getDistribuicao().toString());
 		}
 		
-		produtoBalanceamentoVO.setBloquearData(!produtoLancamentoDTO.permiteReprogramacao());
+		produtoBalanceamentoVO.setBloquearData(
+			!this.matrizLancamentoService.isProdutoBalanceavel(produtoLancamentoDTO));
 		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
 		

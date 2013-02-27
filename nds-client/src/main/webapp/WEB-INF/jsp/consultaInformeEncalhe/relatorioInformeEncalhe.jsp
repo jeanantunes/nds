@@ -345,7 +345,7 @@
 				        		<c:if test="${dado.idProdutoEdicao != null}">
 									<td align="center">
 										<div align="center"><strong>${dado.sequenciaMatriz == null ? '-' : dado.sequenciaMatriz}</strong></div>
-										<img src="<c:url value='/capa/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
+										<img src="<c:url value='/capa/tratarNoImage/${dado.idProdutoEdicao}'></c:url>" width="110" height="143"></img>
 									<td>
 								</c:if>
 								

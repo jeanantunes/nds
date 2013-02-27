@@ -245,4 +245,5 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
+	
 }

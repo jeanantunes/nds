@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpSession;
 
@@ -37,6 +36,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -86,6 +86,9 @@ public class MatrizRecolhimentoController extends BaseController {
 	private DistribuicaoFornecedorService distribuicaoFornecedorService;
 	
 	@Autowired
+	private GrupoService grupoService;
+	
+	@Autowired
 	private LancamentoService lancamentoService;
 	
 	private static final String ATRIBUTO_SESSAO_FILTRO_PESQUISA_BALANCEAMENTO_RECOLHIMENTO = "filtroPesquisaBalanceamentoRecolhimento";
@@ -104,11 +107,16 @@ public class MatrizRecolhimentoController extends BaseController {
 		removerAtributoAlteracaoSessao();
 		
 		this.result.include("fornecedores", fornecedores);
+				
 	}
 	
 	@Post
 	@Path("/pesquisar")
 	public void pesquisar(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
+		
+		dataPesquisa = this.tratarData(numeroSemana, dataPesquisa);
+		
+		numeroSemana = this.tratarSemana(numeroSemana, dataPesquisa);
 		
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
@@ -122,6 +130,10 @@ public class MatrizRecolhimentoController extends BaseController {
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
 		
+		boolean utilizaSedeAtendida = grupoService.countTodosGrupos() > 0;
+		
+		resultadoResumoBalanceamento.setUtilizaSedeAtendida(utilizaSedeAtendida);
+		
 		removerAtributoAlteracaoSessao();
 		
 		configurarFiltropesquisa(numeroSemana, dataPesquisa, listaIdsFornecedores);
@@ -129,6 +141,28 @@ public class MatrizRecolhimentoController extends BaseController {
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
+	
+	
+	private Integer tratarSemana(Integer numeroSemana, Date dataPesquisa) {
+
+		if(numeroSemana==null && dataPesquisa!=null) {
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			return DateUtil.obterNumeroSemanaNoAno(dataPesquisa, distribuidor.getInicioSemana().getCodigoDiaSemana());
+		}
+		
+		return numeroSemana;
+	}
+
+	private Date tratarData(Integer numeroSemana, Date dataPesquisa) {
+
+		if(numeroSemana!=null && dataPesquisa==null) {
+			Distribuidor distribuidor = this.distribuidorService.obter();
+			return DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+		}
+		
+		return dataPesquisa;
+	}
+
 	@Post
 	@Path("/confirmar")
 	public void confirmar(List<Date> datasConfirmadas) {
@@ -143,8 +177,6 @@ public class MatrizRecolhimentoController extends BaseController {
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
 		validarDatasBalanceamentoMatriz(balanceamentoRecolhimento.getMatrizRecolhimento(), datasConfirmadas);
-		
-		validarBloqueioMatrizFechada(balanceamentoRecolhimento);
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
@@ -216,8 +248,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/balancearPorEditor")
 	public void balancearPorEditor() {
 		
-		this.validarBloqueioMatrizFechada(null);
-		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		this.validarDadosPesquisa(filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
@@ -240,9 +270,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Post
 	@Path("/balancearPorValor")
 	public void balancearPorValor() {
-		
-		this.validarBloqueioMatrizFechada(null);
-		
+
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		this.validarDadosPesquisa(filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
@@ -269,8 +297,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			(BalanceamentoRecolhimentoDTO)
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-		
-		this.validarBloqueioMatrizFechada(balanceamentoRecolhimento);
 		
 		recolhimentoService.salvarBalanceamentoRecolhimento(
 			balanceamentoRecolhimento.getMatrizRecolhimento(), getUsuarioLogado());
@@ -339,8 +365,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/voltarConfiguracaoOriginal")
 	public void voltarConfiguracaoOriginal() {
 		
-		this.validarBloqueioMatrizFechada(null);
-		
 		this.validarDataConfirmacaoConfiguracaoInicial();
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
@@ -368,8 +392,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	public void reprogramarSelecionados(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento,
 										String novaDataFormatada, String dataAntigaFormatada) {
 		
-		this.validarBloqueioMatrizFechada(null);
-		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		this.validarDadosReprogramar(novaDataFormatada, filtro.getNumeroSemana());
@@ -393,8 +415,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/reprogramarRecolhimentoUnico")
 	public void reprogramarRecolhimentoUnico(ProdutoRecolhimentoFormatadoVO produtoRecolhimento,
 										     String dataAntigaFormatada) {
-		
-		this.validarBloqueioMatrizFechada(null);
 		
 		String novaDataFormatada = produtoRecolhimento.getNovaData();
 		
@@ -549,29 +569,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	}
 	
 	/**
-	 * Verifica se a matriz está fechada para não permitir ações indevidas.
-	 * 
-	 * @param balanceamentoRecolhimento - objeto que contém informações do balanceamento
-	 */
-	private void validarBloqueioMatrizFechada(BalanceamentoRecolhimentoDTO balanceamentoRecolhimento) {
-		
-		if (balanceamentoRecolhimento == null) {
-			
-			balanceamentoRecolhimento = 
-				(BalanceamentoRecolhimentoDTO)
-					this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-		}
-		
-		if (balanceamentoRecolhimento == null
-				|| balanceamentoRecolhimento.isSemanaRecolhimento()) {
-			
-			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING,
-								"Ação não permitida! A semana de recolhimento já está iniciada!"));
-		}
-	}
-	
-	/**
 	 * Adiciona um indicador, que informa se houve reprogramação de produtos, na sessão.
 	 */
 	private void adicionarAtributoAlteracaoSessao() {
@@ -623,8 +620,6 @@ public class MatrizRecolhimentoController extends BaseController {
 							  listaProdutoRecolhimentoAdicionar,
 							  listaProdutoRecolhimentoRemover,
 							  novaData);
-		
-		this.validarSequencia(matrizRecolhimento);
 		
 		balanceamentoRecolhimentoSessao.setMatrizRecolhimento(matrizRecolhimento);
 		
@@ -693,9 +688,6 @@ public class MatrizRecolhimentoController extends BaseController {
 						Long.valueOf(produtoRecolhimento.getIdLancamento()))) {
 					
 					listaProdutoRecolhimentoRemover.add(produtoRecolhimentoDTO);
-					
-					produtoRecolhimentoDTO.setSequencia(
-						Integer.valueOf(produtoRecolhimento.getSequencia()));
 					
 					listaProdutoRecolhimentoAdicionar.add(produtoRecolhimentoDTO);
 					
@@ -785,8 +777,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			produtoRecolhimentoVO.setIdLancamento(produtoRecolhimentoDTO.getIdLancamento().toString());
 			
-			produtoRecolhimentoVO.setSequencia(produtoRecolhimentoDTO.getSequencia());
-			
 			produtoRecolhimentoVO.setIdProdutoEdicao(produtoRecolhimentoDTO.getIdProdutoEdicao());
 				
 			produtoRecolhimentoVO.setCodigoProduto(produtoRecolhimentoDTO.getCodigoProduto());
@@ -801,7 +791,8 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			valorDesconto = produtoRecolhimentoDTO.getDesconto() != null ? produtoRecolhimentoDTO.getDesconto() : BigDecimal.ZERO;
 			
-			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100D))));
+			//precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100D))));
+			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto));
 			
 			
 			produtoRecolhimentoVO.setPrecoDesconto(precoDesconto);
@@ -827,13 +818,13 @@ public class MatrizRecolhimentoController extends BaseController {
 				produtoRecolhimentoDTO.getDataRecolhimentoPrevista());
 			
 			produtoRecolhimentoVO.setEncalheSede(
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheSede(), 2));
+				produtoRecolhimentoDTO.getExpectativaEncalheSede());
 			
 			produtoRecolhimentoVO.setEncalheAtendida(
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAtendida(), 2));
+				produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
 				
 			produtoRecolhimentoVO.setEncalheAlternativo(
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
+				produtoRecolhimentoDTO.getExpectativaEncalheAlternativo());
 			
 			produtoRecolhimentoVO.setEncalhe(
 				produtoRecolhimentoDTO.getExpectativaEncalhe());
@@ -841,11 +832,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
 			
 			produtoRecolhimentoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
-			
-			produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
-				isSemanaRecolhimento
-				|| produtoRecolhimentoDTO.isPossuiChamada()
-				|| produtoRecolhimentoDTO.isBalanceamentoConfirmado());
 			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
 		}
@@ -879,7 +865,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		tableModel.setRows(listaCellModel);
-		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
@@ -901,9 +886,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 		produtoRecolhimentoFormatado.setIdLancamento(
 			(produtoRecolhimento.getIdLancamento() != null) ? produtoRecolhimento.getIdLancamento().toString() : null);
-		
-		produtoRecolhimentoFormatado.setSequencia(
-			(produtoRecolhimento.getSequencia() != null) ? produtoRecolhimento.getSequencia().toString() : null);
 			
 		produtoRecolhimentoFormatado.setIdProdutoEdicao(
 			(produtoRecolhimento.getIdProdutoEdicao() != null) ? produtoRecolhimento.getIdProdutoEdicao().toString() : null);
@@ -951,16 +933,16 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		produtoRecolhimentoFormatado.setEncalheSede(
-			(produtoRecolhimento.getEncalheSede() != null) ? produtoRecolhimento.getEncalheSede().toString() : null);
+			(produtoRecolhimento.getEncalheSede() != null) ? MathUtil.round(produtoRecolhimento.getEncalheSede(), 0).toString() : null);
 		
 		produtoRecolhimentoFormatado.setEncalheAtendida(
-			(produtoRecolhimento.getEncalheAtendida() != null) ? produtoRecolhimento.getEncalheAtendida().toString() : null);
+			(produtoRecolhimento.getEncalheAtendida() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAtendida(), 0).toString() : null);
 		
 		produtoRecolhimentoFormatado.setEncalheAlternativo(
-			(produtoRecolhimento.getEncalheAlternativo() != null) ? produtoRecolhimento.getEncalheAlternativo().toString() : null);
+			(produtoRecolhimento.getEncalheAlternativo() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAlternativo(), 0).toString() : null);
 			
 		produtoRecolhimentoFormatado.setEncalhe(
-			(produtoRecolhimento.getEncalhe() != null) ? produtoRecolhimento.getEncalhe().toString() : null);
+			(produtoRecolhimento.getEncalhe() != null) ? MathUtil.round(produtoRecolhimento.getEncalhe(), 0).toString() : null);
 		
 		if (produtoRecolhimento.getValorTotal() != null) {
 			produtoRecolhimentoFormatado.setValorTotal(CurrencyUtil.formatarValor(produtoRecolhimento.getValorTotal()));
@@ -1033,41 +1015,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			throw new ValidacaoException(
 				new ValidacaoVO(TipoMensagem.WARNING, "Semana inválida!"));
 		}
-	}
-	
-	/**
-	 * Valida a sequência dos produtos da matriz de recolhimento
-	 * 
-	 * @param matrizRecolhimento - matriz de recolhimento
-	 */
-	private void validarSequencia(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
-		
-		Set<Integer> sequenciasValidas = new TreeSet<Integer>();
-		
-		Set<Integer> sequenciasInvalidas = new TreeSet<Integer>();
-		
-		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
-			
-			List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = entry.getValue();
-		
-			for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : listaProdutoRecolhimentoDTO) {
-				
-				boolean adicionada = sequenciasValidas.add(produtoRecolhimentoDTO.getSequencia());
-				
-				if (!adicionada) {
-					
-					sequenciasInvalidas.add(produtoRecolhimentoDTO.getSequencia());
-				}
-			}
-		}
-		
-		if (!sequenciasInvalidas.isEmpty()) {
-			
-			throw new ValidacaoException(
-				new ValidacaoVO(TipoMensagem.WARNING,
-					"O campo [SM] não pode ser duplicado! A(s) SM(s) duplicadas são: " + sequenciasInvalidas));
-		}
-		
 	}
 	
 	/**

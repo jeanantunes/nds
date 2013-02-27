@@ -115,6 +115,19 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
 		
+		boolean ultrapassouLimiteReprogramacoes =
+			lancamento.getNumeroReprogramacoes() != null
+				&& lancamento.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE;
+		
+		boolean possuiRecebimento =
+			lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty();
+		
+		if (ultrapassouLimiteReprogramacoes && possuiRecebimento) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "Produto não pode sofrer furo! Já ultrapassou o limite de reprogramações!");
+		}
+		
 		//verificar se existe distribuição nesse dia da semana
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(novaData);
@@ -190,6 +203,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(StatusLancamento.FURO);
+		lancamento.setNumeroReprogramacoes(this.atualizarNumeroReprogramacoes(lancamento));
 		
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(new Date());
@@ -213,6 +227,20 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		this.lancamentoRepository.alterar(lancamento);
 		
 		this.historicoLancamentoRepository.adicionar(historicoLancamento);
+	}
+	
+	private Integer atualizarNumeroReprogramacoes(Lancamento lancamento) {
+		
+		Integer numeroReprogramacoes = lancamento.getNumeroReprogramacoes();
+		
+		if (numeroReprogramacoes == null) {
+			
+			numeroReprogramacoes = 0;
+		}
+		
+		numeroReprogramacoes++;
+		
+		return numeroReprogramacoes;
 	}
 	
 }

@@ -24,7 +24,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+
 
 /**
  * @author francisco.garcia
@@ -162,6 +165,20 @@ public class Produto implements Serializable {
 	
 	@Column(name="DESCRICAO_DESCONTO")
 	private String descricaoDesconto;
+	
+	/**
+	 * Segmento do Produto
+	 */
+	@OneToOne(fetch=FetchType.EAGER, optional=true)
+	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
+	private TipoSegmentoProduto tipoSegmentoProduto;
+	
+	/**
+	 * Classificação do Produto
+	 */
+	@OneToOne(fetch=FetchType.EAGER, optional=true)
+	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
 	public Long getId() {
 		return id;
@@ -614,6 +631,14 @@ public class Produto implements Serializable {
      */
 	public boolean isPublicacao() {
 	    return !GrupoProduto.OUTROS.equals(tipoProduto.getGrupoProduto());
+	}
+
+	public TipoSegmentoProduto getTipoSegmentoProduto() {
+		return tipoSegmentoProduto;
+	}
+
+	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
+		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
 
 }

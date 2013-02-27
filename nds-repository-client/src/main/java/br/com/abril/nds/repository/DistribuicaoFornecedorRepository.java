@@ -16,6 +16,8 @@ import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 public interface DistribuicaoFornecedorRepository extends Repository<DistribuicaoFornecedor, Long>{
 
 	List<Integer> obterDiasSemanaDistribuicao(String codigoProduto, Long idProdutoEdicao);
+
+	List<Integer> obterDiasSemanaDistribuicao(String codigoProduto, Long idProdutoEdicao, OperacaoDistribuidor operacaoDistribuidor);
 	
 	boolean verificarDistribuicaoDiaSemana(String codigoProduto, Long idProdutoEdicao, DiaSemana diaSemana);
 	

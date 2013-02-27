@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -115,7 +116,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 		ResultadoConsultaEncalheVO resultadoPesquisa = new ResultadoConsultaEncalheVO();
 		
-		carregarResultadoConsultaEncalhe(resultadoPesquisa, infoConsultaEncalhe);
+		carregarResultadoConsultaEncalhe(resultadoPesquisa, infoConsultaEncalhe, filtroConsultaEncalhe);
 		
 		FileExporter.to("consulta-encalhe", fileType).inHTTPResponse(
 				this.getNDSFileHeader(), 
@@ -214,7 +215,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 		if (dataRecolhimento == null || dataRecolhimento.isEmpty()) {
 			
-			mensagens.add("O preenchimento do perído é obrigatório");
+			mensagens.add("O preenchimento do período é obrigatório");
 		} 
 		
 		return mensagens;
@@ -306,6 +307,10 @@ public class ConsultaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
+		ResultadoConsultaEncalheVO resultadoPesquisa = new ResultadoConsultaEncalheVO();
+		
+		carregarResultadoConsultaEncalhe(resultadoPesquisa, infoConsultaEncalhe, filtro);
+
 		Integer quantidadeRegistros = infoConsultaEncalhe.getQtdeConsultaEncalhe();
 		
 		List<ConsultaEncalheVO> listaResultadosVO = getListaConsultaEncalheVO(listaResultado);
@@ -318,11 +323,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		ResultadoConsultaEncalheVO resultadoPesquisa = new ResultadoConsultaEncalheVO();
-		
 		resultadoPesquisa.setTableModel(tableModel);
-		
-		carregarResultadoConsultaEncalhe(resultadoPesquisa, infoConsultaEncalhe);
 		
 		carregaListaDebitoCreditoCota(resultadoPesquisa, infoConsultaEncalhe.getListaDebitoCreditoCota());
 		
@@ -335,14 +336,24 @@ public class ConsultaEncalheController extends BaseController {
 	 * @param resultadoPesquisa
 	 * @param infoConsultaEncalhe
 	 */
-	private void carregarResultadoConsultaEncalhe(ResultadoConsultaEncalheVO resultadoPesquisa, InfoConsultaEncalheDTO infoConsultaEncalhe) {
+	private void carregarResultadoConsultaEncalhe(ResultadoConsultaEncalheVO resultadoPesquisa, 
+												  InfoConsultaEncalheDTO infoConsultaEncalhe, 
+												  FiltroConsultaEncalheDTO filtro) {
 		
-		String valorReparte = ( infoConsultaEncalhe.getValorReparte() != null ) ? infoConsultaEncalhe.getValorReparte().toString() : "0" ; 
-		String valorEncalhe = ( infoConsultaEncalhe.getValorEncalhe() != null ) ? infoConsultaEncalhe.getValorEncalhe().toString() : "0" ;
 		String valorVendaDia = ( infoConsultaEncalhe.getValorVendaDia() != null ) ? infoConsultaEncalhe.getValorVendaDia().toString() : "0" ;
 		String valorDebitoCredito = ( infoConsultaEncalhe.getValorDebitoCredito() != null ) ? infoConsultaEncalhe.getValorDebitoCredito().toString() : "0" ;
 		String valorPagar = ( infoConsultaEncalhe.getValorPagar() != null ) ? infoConsultaEncalhe.getValorPagar().toString() : "0" ;
 		
+		String valorReparte = null;
+		String valorEncalhe = null;
+		
+		TotalizadorConsultaEncalheDTO footer = this.consultaEncalheService.obterTotalizadorConsultaEncalhe(filtro);
+
+		valorReparte = (footer.getValorReparte() != null) ? footer.getValorReparte().toString() : "0";
+		valorEncalhe = (footer.getValorEncalhe() != null) ? footer.getValorEncalhe().toString() : "0";
+
+		infoConsultaEncalhe.setQtdeConsultaEncalhe(footer.getQtdConsultaEncalhe().intValue());
+
 		resultadoPesquisa.setValorReparte(valorReparte);
 		resultadoPesquisa.setValorEncalhe(valorEncalhe);
 		resultadoPesquisa.setValorVendaDia(valorVendaDia);

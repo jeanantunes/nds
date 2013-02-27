@@ -39,8 +39,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append("ca.DATA as data, 																	");
 		queryNative.append("box.NOME as box, 																	");
 		queryNative.append("cota.NUMERO_COTA as cota,															");
-		queryNative.append("pessoa.nome as nome,																");
-	    
+	    queryNative.append("(case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nome, ");
 		queryNative.append("( SELECT SUM(movEstoque.QTDE*pe.PRECO_CUSTO) FROM MOVIMENTO_ESTOQUE_COTA movEstoque ");
 		queryNative.append("JOIN PRODUTO_EDICAO pe ON (movEstoque.PRODUTO_EDICAO_ID=pe.ID)						");
 		queryNative.append("WHERE movEstoque.COTA_ID = cota.ID ) as valorNE 									");

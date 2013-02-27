@@ -5,7 +5,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
+@Exportable
 public class DebitoCreditoCotaDTO implements Serializable {
 
 	/**
@@ -14,12 +18,22 @@ public class DebitoCreditoCotaDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private OperacaoFinaceira tipoLancamento;
+	
+	@Export(label = "Valor R$", exhibitionOrder = 2, columnType = ColumType.MOEDA)
 	private BigDecimal valor;
+	
+	@Export(label = "Data", exhibitionOrder = 0)
 	private Date dataLancamento;
+	
 	private Date dataVencimento;
+	
 	private Integer numeroCota;
 	
+	@Export(label = "Observação", exhibitionOrder = 3)
 	private String observacoes;
+	
+	@Export(label = "Tipo Movimento", exhibitionOrder = 1)
+	private String tipoMovimento;
 	
 	public Date getDataLancamento() {
 		return dataLancamento;
@@ -57,14 +71,6 @@ public class DebitoCreditoCotaDTO implements Serializable {
 		this.tipoLancamento = tipoLancamento;
 	}
 
-	public BigDecimal getValor() {
-		return valor;
-	}
-
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
-	}
-
 	/**
 	 * @return the observacoes
 	 */
@@ -77,6 +83,22 @@ public class DebitoCreditoCotaDTO implements Serializable {
 	 */
 	public void setObservacoes(String observacoes) {
 		this.observacoes = observacoes;
+	}
+
+	public String getTipoMovimento() {
+		return tipoMovimento;
+	}
+
+	public void setTipoMovimento(String tipoMovimento) {
+		this.tipoMovimento = tipoMovimento;
+	}
+
+	public BigDecimal getValor() {
+		return valor;
+	}
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
 	}
 	
 	

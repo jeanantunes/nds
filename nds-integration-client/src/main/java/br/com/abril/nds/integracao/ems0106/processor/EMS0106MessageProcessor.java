@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0106.inbound.EMS0106Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -66,6 +66,13 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 						"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
 				return;
 			}
+		}
+		
+		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo!");
+			return;
 		}
 		
 		Estudo estudo = lancamento.getEstudo();

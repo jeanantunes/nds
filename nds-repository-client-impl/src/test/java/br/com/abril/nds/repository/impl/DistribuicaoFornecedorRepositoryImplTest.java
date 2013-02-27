@@ -62,7 +62,7 @@ public class DistribuicaoFornecedorRepositoryImplTest extends
 	public void testObterDiasSemanaDistribuicao(){
 		
 		
-		List<Integer> lista =  distribuicaoFornecedorRepository.obterDiasSemanaDistribuicao("1", 1L);
+		List<Integer> lista =  distribuicaoFornecedorRepository.obterDiasSemanaDistribuicao("1", 1L, null);
 		
 		Assert.assertNotNull(lista);
 	}

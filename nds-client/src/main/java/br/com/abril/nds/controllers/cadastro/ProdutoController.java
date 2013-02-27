@@ -215,13 +215,27 @@ public class ProdutoController extends BaseController {
 	}
 		
 	@Post
-	public void pesquisarPorNomeProduto(String nomeProduto) {
-		Produto produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+	public void pesquisarPorNomeProduto(String nomeProduto,String codigoProduto) {
+		
+		Produto produto = null;
+		
+		if(codigoProduto!= null){
+			
+			produto = this.produtoService.obterProdutoPorCodigo(codigoProduto);
+			
+			if(produto == null || !produto.getNome().equals(nomeProduto)){
+				
+				produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+			}
+		}
+		else{
+			
+			produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+		}
 		
 		if (produto == null) {
 		
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nomeProduto + "\" não encontrado!");
-		
 		}
 			
 		result.use(Results.json()).from(produto, "result").serialize();

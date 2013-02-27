@@ -48,6 +48,10 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 
 		TreeMap<Date, BigDecimal> mapaValorTotalProdutosRecolhimento = new TreeMap<Date, BigDecimal>();
 		
+		for(Date data:datasRecolhimento) {
+			mapaValorTotalProdutosRecolhimento.put(data, BigDecimal.ZERO);
+		}
+		
 		List<ProdutoRecolhimentoDTO> sobraProdutosRecolhimento =
 			this.alocarProdutosRecolhimento(matrizRecolhimentoBalanceada, mapaValorTotalProdutosRecolhimento, 
 				produtosRecolhimento, datasRecolhimento, mediaValorTotalProdutosRecolhimento);
@@ -141,7 +145,12 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 				
 				List<ProdutoRecolhimentoDTO> produtosNaDataRecolhimento = 
 					matrizRecolhimentoBalanceada.get(dataRecolhimento);
-					
+				
+				if(produtosNaDataRecolhimento==null) {
+					produtosNaDataRecolhimento = new ArrayList<ProdutoRecolhimentoDTO>();
+					matrizRecolhimentoBalanceada.put(dataRecolhimento, produtosNaDataRecolhimento);
+				}
+				
 				for (int indice = 0; indice < sobraProdutosRecolhimento.size(); indice++) {
 					
 					ProdutoRecolhimentoDTO sobraProdutoRecolhimento = sobraProdutosRecolhimento.get(indice);

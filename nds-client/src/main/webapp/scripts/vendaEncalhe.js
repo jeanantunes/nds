@@ -512,7 +512,7 @@ var VENDA_PRODUTO = {
 		}
 		var parametroPesCodBarra ='\'#codBarras'+ index+ '\',' + index;
 		
-		return '<input type="text" id="codBarras'+index+'" name="codBarras" style="width:90px;" value="'+valor+'" onchange="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
+		return '<input type="text" id="codBarras'+index+'" name="codBarras" style="width:90px;" value="'+valor+'" onkeyup="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
 	},
 	
 	getInputCodigoProduto:function(index,result,parametroPesquisaProduto){
@@ -694,7 +694,7 @@ var VENDA_PRODUTO = {
 			contextPath + "/devolucao/vendaEncalhe/obterDadosDoProduto", 
 			data,
 			function(resultado) {
-		
+				
 				VENDA_PRODUTO.atribuirDadosProduto(resultado, index);
 				
 				if(VENDA_PRODUTO.validaritemRepetido(index)== true){
@@ -710,6 +710,21 @@ var VENDA_PRODUTO = {
 				VENDA_PRODUTO.totalizarQntDisponivelGeral();
 			},
 			function(resultado){
+
+				if (resultado.mensagens) {
+
+					exibirMensagemDialog(
+							resultado.mensagens.tipoMensagem, 
+							resultado.mensagens.listaMensagens,""
+					);
+					
+					VENDA_PRODUTO.limparDadoVendaProduto(index);
+					
+					$("#codBarras"+index, VENDA_PRODUTO.workspace).focus();
+					
+					return;
+				}
+				
 				VENDA_PRODUTO.totalizarQntDisponivelGeral();
 				$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).val("");
 				$("#totalFormatado"+index, VENDA_PRODUTO.workspace).val("");
@@ -750,15 +765,33 @@ var VENDA_PRODUTO = {
  	
  	pesquisarProdutoCodBarra : function(idCodBarras,index){
  		
- 		if($(idCodBarras).val().length == 0){
+ 		if($(idCodBarras).val().length <= 5){
  			return;
  		}
  		
+ 		var codBarras = $(idCodBarras).val();
+ 		
  		$.postJSON(contextPath + "/devolucao/vendaEncalhe/pesquisarProdutoCodBarra",
-				{codBarra:$(idCodBarras).val()}, 
+				{codBarra:codBarras}, 
 				function(result){
+
+					var codigoProduto = "";
+					var numeroEdicao = null;
 					
- 					VENDA_PRODUTO.obterDadosProduto(result.codigoProduto,result.nuemroEdicao,index);						
+					$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete({
+						source: result,
+						select: function(event, ui){
+							
+							codigoProduto = ui.item.chave.string;
+							
+							numeroEdicao = ui.item.chave.long;
+							
+		 					VENDA_PRODUTO.obterDadosProduto(codigoProduto,numeroEdicao,index);		
+						},
+						delay: 0
+					});
+					
+					$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete("search", codBarras);
  					
  				}, function(result){
 					
@@ -780,7 +813,7 @@ var VENDA_PRODUTO = {
  	},
  
  	atribuirDadosProduto:function(resultado, index){
- 		
+
  		$("#codBarras"+index, VENDA_PRODUTO.workspace).val(resultado.codigoBarras);
  		$("#codProduto"+index, VENDA_PRODUTO.workspace).val(resultado.codigoProduto);
 		$("#nmProduto"+index, VENDA_PRODUTO.workspace).val(resultado.nomeProduto);
@@ -822,6 +855,7 @@ var VENDA_PRODUTO = {
 		$("#hiddenTipoVenda" + index, VENDA_PRODUTO.workspace).val("");
 		
 		$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("disabled","disabled");
+		$("#numEdicao"+index, VENDA_PRODUTO.workspace).attr("disabled","disabled");
 		
 		$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).removeAttr("class");
 		$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).removeAttr("class");
@@ -847,6 +881,7 @@ var VENDA_PRODUTO = {
 	
 		$("input[name='codProduto']", VENDA_PRODUTO.workspace).numeric();
 		$("input[name='nmProduto']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
+		$("input[name='codBarras']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
 		$("input[name='qntSolicitada']", VENDA_PRODUTO.workspace).justInput(/[0-9]/);
 		$("input[name='numEdicao']", VENDA_PRODUTO.workspace).numeric();
 		

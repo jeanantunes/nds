@@ -55,7 +55,7 @@ public enum GrupoMovimentoFinaceiro {
 	/**
 	 * Conta comprando encalhe.
 	 */
-	COMPRA_ENCALHE(OperacaoFinaceira.DEBITO),
+	COMPRA_ENCALHE_SUPLEMENTAR(OperacaoFinaceira.DEBITO),
 
 	/**
 	 * Postergação de dívida a pedido do jornaleiro.

@@ -40,6 +40,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -241,20 +242,25 @@ public class VendaEncalheController extends BaseController {
 	@Post
 	public void pesquisarProdutoCodBarra(String codBarra){
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
-		
-		if(produtoEdicao== null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código de barras \""+codBarra+"\" não encontrado!");
+		List<ProdutoEdicao> produtosEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
+
+		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+			
+			this.result.nothing();
+			
+			return;
 		}
-		
-		Map<String, Object> mapa = new TreeMap<String, Object>();
-		
-		if (produtoEdicao.getProduto() != null) {
-			mapa.put("codigoProduto", produtoEdicao.getProduto().getCodigo());
+
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+
+		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+
+			listaProdutos.add(new ItemAutoComplete(
+					produtoEdicao.getCodigoDeBarras() + " - " + produtoEdicao.getProduto().getNome() + " - Ed.:" + produtoEdicao.getNumeroEdicao(), 
+					null, new Object[] { produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao() }));
 		}
-		mapa.put("nuemroEdicao", produtoEdicao.getNumeroEdicao());
-		
-		result.use(CustomJson.class).from(mapa).serialize();
+
+		result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
 	
 	@Post

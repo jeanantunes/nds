@@ -36,6 +36,7 @@ import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO.TipoPessoa;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -50,13 +51,12 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
@@ -69,6 +69,7 @@ import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.service.ContratoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
@@ -84,8 +85,6 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaService {
 	
-
-	
 	@Autowired
 	private CotaRepository cotaRepository;
 	
@@ -97,6 +96,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	
 	@Autowired
 	private FormaCobrancaRepository formaCobrancaRepository;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
 	private ParametroCobrancaCotaRepository parametroCobrancaCotaRepository;
@@ -460,9 +462,24 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}
 		
 		
-		FormaCobranca formaCobrancaPrincipal = this.obterFormaCobrancaPrincipalCota(formaCobrancaDTO.getIdCota());
+		
+		
+		
+		
+		
+		
+		
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(formaCobrancaDTO.getIdCota());
+		
 		formaCobranca.setPrincipal(formaCobrancaPrincipal==null);
 
+		
+		
+		
+		
+		
+		
+		
 		
 		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
 		concentracoesCobranca = new HashSet<ConcentracaoCobrancaCota>();
@@ -909,14 +926,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		return contratoVO;
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
-		return this.formaCobrancaRepository.obterFormaCobrancaPrincipalCota(idCota);
-	}
-
 	
-
 	@Override
 	@Transactional(readOnly = true)
 	public List<FormaCobranca> obterFormasCobrancaCota(Long idCota) {
@@ -1063,12 +1073,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	@Transactional(readOnly = true)
 	public List<BigDecimal> comboValoresMinimos(){
 		return this.parametroCobrancaCotaRepository.comboValoresMinimos();
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public FormaCobranca obterFormaCobrancaPrincipal() {
-		return this.formaCobrancaRepository.obterFormaCobrancaPrincipal();
 	}
 	
 }

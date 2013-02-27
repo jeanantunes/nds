@@ -195,54 +195,33 @@ public abstract class Util {
 			Long contaCorrente,
 			Integer carteira){
 		
-		long n1;
-		long n2 = 4;
-		long n3;
-		
-		int[] pesos = {9, 8, 7, 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
-		long x = 0;
-		
 		String codSacado = Util.padLeft(numeroCota.toString(), "0", 4);
 		
-		for (int i = codSacado.length(); i > 0; i--){
-			x += Double.parseDouble(codSacado.substring(i - 1, i)) * pesos[codSacado.length() - i];
-		}
-		
-		n1 = (x % 11);
-		if ((n1 == 0) || (n1 == 10)){
-			n1 = 0;
-		}
-		
 		String auxData = DateUtil.formatarData(dtGeracao, "ddMMyy");
-		
-		n3 = (x % 11);
-		if ((n3 == 0) || (n3 == 10)){
-			n3 = 0;
-		}
 		
 		NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
 		
 		switch (nomeBanco) {
 			case BANCO_ABN_AMRO_REAL:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_BRADESCO:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 			
 			case BANCO_DO_BRASIL:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_DO_ESTADO_DO_ESPIRITO_SANTO:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 			
 			case BANCO_DO_ESTADO_DO_RIO_GRANDE_DO_SUL:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_DO_NORDESTE_DO_BRASIL:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_INTEMEDIUM:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_ITAU:
 				
@@ -285,22 +264,22 @@ public abstract class Util {
 				return Util.padLeft("" + carteira + nossoNumero + (10 - somatorio), "0", 8);
 				
 			case BANCO_RURAL:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_SAFRA:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_SANTANDER:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCO_SICREDI:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case BANCOOB:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case CAIXA_ECONOMICA_FEDERAL:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case HSBC:
 				
@@ -312,17 +291,93 @@ public abstract class Util {
 				return Util.padLeft(codSacado + idMovimentoFinanceiro, "0", 13);
 				
 			case MERCANTIL_DO_BRASIL:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case NOSSA_CAIXA:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 				
 			case UNIBANCO:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 	
 			default:
-				return codSacado + auxData + n1 + n2 + n3 + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
 		}
+	}
+	
+	public static String calcularDigitoVerificador(String nossoNumero,
+												   String codigoCedente,
+												   Date dataVencimento) {
+		
+		if (nossoNumero == null || codigoCedente == null || dataVencimento == null) {
+			
+			return null;
+		}
+		
+		long primeiroDigito = 0;
+		long segundoDigito = 4;
+		long terceiroDigito = 0;
+		
+		primeiroDigito = Util.calcularDigito(nossoNumero);
+		
+		nossoNumero = nossoNumero + primeiroDigito + segundoDigito;
+		
+		String dataVencimentoFormatada = DateUtil.formatarData(dataVencimento, "ddMMyy");
+		
+		String somaValores =
+			Util.obterSomaValores(nossoNumero, codigoCedente, dataVencimentoFormatada);
+		
+		somaValores = Util.padLeft(somaValores, "0", nossoNumero.length());
+		
+		terceiroDigito = Util.calcularDigito(somaValores);
+		
+		StringBuilder digitoVeficadorFinal = new StringBuilder();
+		
+		digitoVeficadorFinal.append(primeiroDigito);
+		digitoVeficadorFinal.append(segundoDigito);
+		digitoVeficadorFinal.append(terceiroDigito);
+		
+		return digitoVeficadorFinal.toString();
+	}
+
+	private static String obterSomaValores(String nossoNumero,
+										   String codigoSacado,
+										   String dataVencimentoFormatada) {
+					
+		BigInteger soma = new BigInteger(nossoNumero)
+			.add(new BigInteger(codigoSacado))
+			.add(new BigInteger(dataVencimentoFormatada));
+			
+		return soma.toString();
+	}
+
+	private static long calcularDigito(String valor) {
+		
+		int[] pesos = new int[valor.length()];
+		
+		int valorPeso = 9;
+		
+		for (int i = valor.length(); i > 0; i--) {
+			
+			pesos[i -1] = valorPeso--;
+			
+			if (valorPeso < 2) {
+				valorPeso = 9;
+			}
+		}
+		
+		int x = 0;
+		
+		for (int i = valor.length(); i > 0; i--) {
+			x += Integer.valueOf(valor.substring(i - 1, i)) * pesos[i - 1];
+		}
+		
+		long digito = (x % 11);
+		
+		if (digito == 10) {
+			digito = 0;
+		}
+		
+		return digito;
 	}
 	
 	private static String padLeft(String valor, String caractere, int tamanho){
@@ -496,6 +551,32 @@ public abstract class Util {
 		}		
 		return cnpj.replaceAll("\\.", "").replaceAll("-", "").replaceAll("/", "");
 	}
+	
+	
+	/**
+	 * Retorna uma substring de parâmetro value 
+	 * quantidade de caracteres maxima igual ao 
+	 * a do parâmetro maxChar.
+	 * 
+	 * @param value
+	 * @param maxChar
+	 * @return String
+	 */
+	public static String truncarValor(String value, int maxChar) {
+		
+		if(value == null) {
+			return "";
+		}
+		
+		if(value.length()<=maxChar){
+			return value;
+		}
+		
+		return value.substring(0, maxChar);
+		
+		
+	}
+	
 	
 	/**
 	 * Remove a mascara do CPF

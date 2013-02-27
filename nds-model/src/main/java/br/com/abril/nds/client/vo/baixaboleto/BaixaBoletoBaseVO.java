@@ -35,12 +35,12 @@ public class BaixaBoletoBaseVO implements Serializable {
 	@SuppressWarnings("rawtypes")
 	public enum TipoBaixaBoleto {
 
-		PREVISTOS(BaixaBoletoCotaVO.class, "baixa-boleto-previsto"),
-		BAIXADOS(BaixaBoletoCotaVO.class, "baixa-boleto-baixados"),
-		REJEITADOS(BaixaBoletoRejeitadoVO.class, "baixa-boleto-rejeitados"),
-		DIVERGENTES(BaixaBoletoDivergenteVO.class, "baixa-boleto-divergentes"),
-		INADIMPLENTES(BaixaBoletoCotaVO.class, "baixa-boleto-inadimplentes"),
-		TOTAL_BANCARIO(BaixaTotalBancarioVO.class, "baixa-total-bancario");
+		PREVISTOS(BaixaBoletoCotaVO.class, "previsao"),
+		BAIXADOS(BaixaBoletoCotaVO.class, "boletos-baixados"),
+		REJEITADOS(BaixaBoletoRejeitadoVO.class, "boletos-rejeitados"),
+		DIVERGENTES(BaixaBoletoDivergenteVO.class, "boletos-baixados-divergentes"),
+		INADIMPLENTES(BaixaBoletoCotaVO.class, "inadimplentes"),
+		TOTAL_BANCARIO(BaixaTotalBancarioVO.class, "total-bancario");
 		
 		private Class tipoImpressaoVO;
 		

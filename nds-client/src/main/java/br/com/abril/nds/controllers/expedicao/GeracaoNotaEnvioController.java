@@ -194,33 +194,40 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Post
 	public void gerarNotaEnvio(List<Long> listaIdCotas) {
 		
-		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
-		
-		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
+		try {
+			FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+			
+			List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
 
-		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
-	        
-        if (notasGeradas != null) {
-        	
-        	DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-        	
-        	this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
-        	
-        	OutputStream output;
-			try {
-				output = this.httpResponse.getOutputStream();
-
-	        	output.write(notasGeradas);
-
-	        	httpResponse.getOutputStream().close();
-
-	        	result.use(Results.nothing());
-
-			} catch (IOException e) {
-				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+			if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
 			}
+			
+			byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
+			    
+			if (notasGeradas != null) {
+				
+				DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+				
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+				
+				OutputStream output;
+			
+					output = this.httpResponse.getOutputStream();
 
-        }
+			    	output.write(notasGeradas);
+
+			    	httpResponse.getOutputStream().close();
+
+			    	result.use(Results.nothing());
+
+			}
+			
+		} catch(ValidacaoException e ){
+			result.use(Results.json()).from(e.getValidacao(),Constantes.PARAM_MSGS).recursive().serialize();
+		} catch (Exception e) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
+		}
 	}
 	
 	/**

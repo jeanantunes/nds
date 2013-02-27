@@ -225,10 +225,10 @@ var cotaAusenteController = $.extend(true, {
 	popupConfirmaAusenciaCota : function(cotas) {
 		
 		cotaAusenteController.numCotasAusente = cotas;
-		
+			
 		var parametros = [];
 		
-		$.each(cotas, function(index, num) {			
+		$.each(cotas, function(index, num) {	
 			parametros.push({name:'numCotas['+ index +']', value: num});
 	  	});
 		
@@ -735,7 +735,7 @@ var cotaAusenteController = $.extend(true, {
 		cotaAusenteController.gerarMovimentos(movimentos);
 		
 		var parametros = [];
-		
+	
 		$.each(cotaAusenteController.numCotasAusente, function(index, num) {			
 			parametros.push({name:'numCotas['+ index +']', value: num});
 	  	});
@@ -747,6 +747,7 @@ var cotaAusenteController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Suplementar": function() {
+					
 					$.postJSON(contextPath + "/cotaAusente/enviarParaSuplementar", 
 							parametros, 
 							function(result){
@@ -777,8 +778,11 @@ var cotaAusenteController = $.extend(true, {
 					}
 					
 					$.postJSON(contextPath + "/cotaAusente/realizarRateio", 
-							parametros,
-							cotaAusenteController.retornoRateio);
+							   parametros,
+							   function(result) {
+							   		cotaAusenteController.retornoRateio(result)
+							   }
+					);
 					
 					$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
 				}

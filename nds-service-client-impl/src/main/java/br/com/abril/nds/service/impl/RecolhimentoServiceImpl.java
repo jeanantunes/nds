@@ -4,19 +4,24 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -200,6 +205,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 			
+			this.ordenarProdutosRecolhimentoPorNome(produtosRecolhimento);
+			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
 				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
@@ -226,7 +233,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				if (idsLancamentoPorData == null) {
 					
-					idsLancamentoPorData = new TreeSet<Long>();
+					idsLancamentoPorData = new LinkedHashSet<Long>();
 				}
 				
 				idsLancamentoPorData.add(idLancamento);
@@ -253,6 +260,16 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return matrizConfirmada;
 	}
 
+	@SuppressWarnings("unchecked")
+	private void ordenarProdutosRecolhimentoPorNome(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		ComparatorChain comparatorChain = new ComparatorChain();
+		
+		comparatorChain.addComparator(new BeanComparator("nomeProduto"));
+		
+		Collections.sort(produtosRecolhimento, comparatorChain);
+	}
+	
 	@Override
 	@Transactional
 	public void excluiBalanceamento(Long idLancamento) {
@@ -421,13 +438,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 			
+			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataRecolhimento);
+			
 			for (Long idLancamento : idsLancamento) {
 
-				Lancamento lancamento = this.lancamentoRepository
-						.buscarPorId(idLancamento);
+				Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 
-				List<EstoqueProdutoCota> listaEstoqueProdutoCota = this.estoqueProdutoCotaRepository
-						.buscarListaEstoqueProdutoCota(idLancamento);
+				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
+					this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idLancamento);
 
 				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
 
@@ -446,13 +464,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					Cota cota = estoqueProdutoCota.getCota();
 
-					ChamadaEncalhe chamadaEncalhe = this.obterChamadaEncalheLista(listaChamadaEncalhe,
-									dataRecolhimento, produtoEdicao.getId());
+					ChamadaEncalhe chamadaEncalhe =
+						this.obterChamadaEncalheLista(
+							listaChamadaEncalhe, dataRecolhimento, produtoEdicao.getId());
 
 					indNovaChamadaEncalhe = (chamadaEncalhe == null);
 					
 					if (indNovaChamadaEncalhe) {
-						chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao);
+						chamadaEncalhe =
+							this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
 					}
 					
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
@@ -512,16 +532,18 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * 
 	 * @param dataRecolhimento - data de recolhimento
 	 * @param produtoEdicao - produto edição
+	 * @param sequencia
 	 * 
 	 * @return chamada de encalhe
 	 */
-	private ChamadaEncalhe criarChamadaEncalhe(Date dataRecolhimento, ProdutoEdicao produtoEdicao) {
+	private ChamadaEncalhe criarChamadaEncalhe(Date dataRecolhimento, ProdutoEdicao produtoEdicao, Integer sequencia) {
 		
 		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
 		
 		chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		chamadaEncalhe.setSequencia(sequencia);
 		
 		return chamadaEncalhe;
 	}
@@ -779,13 +801,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(data);
-		
-		if (DateUtil.isSabadoDomingo(cal)) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
-		}
-		
+	
 		if (this.calendarioService.isFeriadoSemOperacao(data)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,

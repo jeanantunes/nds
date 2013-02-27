@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
@@ -33,6 +32,7 @@ import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
@@ -68,13 +68,13 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		EMS0135Input input = (EMS0135Input) message.getBody();
 	
 		
-		// Validar código do distribuidor:
+		// Validar cÃ³digo do distribuidor:
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		if(!distribuidor.getCodigoDistribuidorDinap().equals(
 				input.getDistribuidor().toString())){			
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO, 
-					"Código do distribuidor do arquivo não é o mesmo do arquivo.");
+					"Codigo do distribuidor do arquivo nao e o mesmo do arquivo.");
 			return;
 		}
 				
@@ -96,7 +96,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				notafiscalEntrada = calcularValores(notafiscalEntrada);				
 				this.getSession().persist(notafiscalEntrada);
 			} else {
-				// Validar código do distribuidor:
+				// Validar cÃ³digo do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
 						String.format("Nota Fiscal Com Produtos nao encontrados no sistema:", input.getNotaFiscal()));
@@ -104,10 +104,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			}
 			
 		}else{
-			// Validar código do distribuidor:
+			// Validar cÃ³digo do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.REGISTRO_JA_EXISTENTE, 
-						String.format("Nota Fiscal %1$s já cadastrada", notafiscalEntrada.getNumero()));
+						String.format("Nota Fiscal %1$s ja cadastrada", notafiscalEntrada.getNumero()));
 				return;			
 		}		
 	}
@@ -156,10 +156,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 					edicao);
 			if (produtoEdicao == null) {
 				
-				// Validar código do distribuidor:
+				// Validar cÃ³digo do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.HIERARQUIA, 
-						String.format( "Produto %1$s / edicao %2$s não cadastrado. A nota  %3$s não será Inserida", codigoProduto , edicao.toString(), nfEntrada.getNumero().toString() )
+						String.format( "Produto %1$s / edicao %2$s nÃ£o cadastrado. A nota  %3$s nao sera Inserida", codigoProduto , edicao.toString(), nfEntrada.getNumero().toString() )
 						) ;
 				ItemNotFound = true;
 			}	else {					
@@ -201,7 +201,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	/**
-	 * Realiza os cálculos de valores da Nota Fiscal. Após os cálculos, salva
+	 * Realiza os cÃ¡lculos de valores da Nota Fiscal. ApÃ³s os cÃ¡lculos, salva
 	 * os novos valores. 
 	 * 
 	 * @param nfEntrada
@@ -222,7 +222,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	/**
-	 * Método que contém as regras para o cálculo do "Valor Bruto" de uma NF.
+	 * MÃ©todo que contÃ©m as regras para o cÃ¡lculo do "Valor Bruto" de uma NF.
 	 * 
 	 * @param nfEntrada
 	 * @param input
@@ -245,7 +245,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	}
 	
 	/**
-	 * Método que contém as regras para o cálculo do "Valor Líquido" de uma NF.
+	 * MÃ©todo que contÃ©m as regras para o cÃ¡lculo do "Valor LÃ­quido" de uma NF.
 	 * 
 	 * @param nfEntrada
 	 * @param input
@@ -317,10 +317,10 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	/**
-	 * Obtém o Produto Edição cadastrado previamente.
+	 * ObtÃ©m o Produto EdiÃ§Ã£o cadastrado previamente.
 	 * 
-	 * @param codigoPublicacao Código da Publicação.
-	 * @param edicao Número da Edição.
+	 * @param codigoPublicacao CÃ³digo da PublicaÃ§Ã£o.
+	 * @param edicao NÃºmero da EdiÃ§Ã£o.
 	 * 
 	 * @return
 	 */
@@ -382,7 +382,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 
 
 	/**
-	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
+	 * Normaliza uma data, para comparaÃ§Ãµes, zerando os valores de hora (hora,
 	 * minuto, segundo e milissendo).
 	 * 
 	 * @param dt

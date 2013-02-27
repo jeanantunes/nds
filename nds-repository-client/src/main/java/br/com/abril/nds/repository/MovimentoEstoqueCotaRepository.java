@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -21,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.util.Intervalo;
 
@@ -125,7 +127,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @return Qtde - Integer
 	 */
-	public Integer obterQtdConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
+	public TotalizadorConsultaEncalheDTO obterTotalizadorConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Pesquisa lista de ConsultaEncalhe.
@@ -396,5 +398,17 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public BigDecimal obterValorTotalMovimentosEstornados(Long idCota);
 
 	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
+
+	/**
+	 * 
+	 * @param numeroCota
+	 * @param idProdutoEdicao
+	 * @param dataOperacao
+	 * @return ValoresAplicados
+	 */
+	public ValoresAplicados obterValoresAplicadosProdutoEdicao(Integer numeroCota, Long idProdutoEdicao, Date dataOperacao);
 	
+	
+	Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+
 }
