@@ -199,7 +199,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 			
 			List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
 
-			if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
+			if(notasEnvio == null || notasEnvio.isEmpty()) {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
 			}
 			
