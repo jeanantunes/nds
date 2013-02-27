@@ -412,6 +412,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
         BigDecimal precoVendaItem = BigDecimal.ZERO;
 		BigInteger quantidadeItem = BigInteger.ZERO;
+		BigDecimal precoComDescontoItem = BigDecimal.ZERO;
 		BigDecimal totalItem = BigDecimal.ZERO;		
 		BigDecimal totalContaFirme = BigDecimal.ZERO;	
 		BigDecimal totalGeral = BigDecimal.ZERO;
@@ -422,7 +423,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 			ProdutoEdicao produtoEdicao = item.getProdutoEdicao();
 			
-			precoVendaItem = (produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
+			precoComDescontoItem = item.getValoresAplicados()!=null?item.getValoresAplicados().getPrecoComDesconto():null;
+			precoVendaItem = precoComDescontoItem!=null?precoComDescontoItem:(produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
 			quantidadeItem = (item.getQtde()!=null)?item.getQtde():BigInteger.ZERO;
 			totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
 					
