@@ -413,6 +413,8 @@ var VENDA_PRODUTO = {
 			
 			var inputFormaVenda='<input type="text" id="formaVenda0" name="formaVenda" value="'+row.cell.formaVenda+'" disabled="disabled" />';
 			
+			var inputHiddenTipoComercailizacao = '<input id="hiddenComercializacao'+index+'" name="hiddenComercializacao" type="hidden" value="'+row.cell.formaComercializacao+'">';
+			
 			$("#qntSolicitada0", VENDA_PRODUTO.workspace).keypress(function(e) {
 				if (e.keyCode == 13) {
 					VENDA_PRODUTO.totalizarValorProdutoSelecionado(0);
@@ -428,7 +430,7 @@ var VENDA_PRODUTO = {
 			row.cell.qntSolicitada = inputQntSolicitada;
 			row.cell.total =inputTotal + inputHiddenTotal;
 			row.cell.tipoVendaEncalhe = inputTipoVenda;
-			row.cell.formaVenda = inputFormaVenda;
+			row.cell.formaVenda = inputFormaVenda + inputHiddenTipoComercailizacao;
 			
 			$("#span_nome_box_venda", VENDA_PRODUTO.workspace).html(row.cell.codBox);
 			$("#dataVencimento", VENDA_PRODUTO.workspace).val(row.cell.dataVencimentoDebito);
@@ -881,7 +883,6 @@ var VENDA_PRODUTO = {
 	
 		$("input[name='codProduto']", VENDA_PRODUTO.workspace).numeric();
 		$("input[name='nmProduto']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
-		$("input[name='codBarras']", VENDA_PRODUTO.workspace).autocomplete({source: ""});
 		$("input[name='qntSolicitada']", VENDA_PRODUTO.workspace).justInput(/[0-9]/);
 		$("input[name='numEdicao']", VENDA_PRODUTO.workspace).numeric();
 		

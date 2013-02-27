@@ -165,6 +165,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		return this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(idsCota) > 0;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean verificarCobrancasGeradasNaDataVencimentoDebito(Date dataVencimentoDebito,Long... idsCota ){
+		
+		return this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(dataVencimentoDebito,idsCota) > 0;
+	}
 
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
