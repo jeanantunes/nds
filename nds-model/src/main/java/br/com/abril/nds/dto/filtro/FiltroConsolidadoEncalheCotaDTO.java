@@ -33,6 +33,8 @@ public class FiltroConsolidadoEncalheCotaDTO {
 	
 	private Long lineId;
 	
+	private Long idConsolidado;
+	
 	/**
 	 * Enum para ordenação das colunas do filtro.
 	 * 	
@@ -143,6 +145,14 @@ public class FiltroConsolidadoEncalheCotaDTO {
 		} else if (!paginacao.equals(other.paginacao))
 			return false;
 		return true;
+	}
+
+	public Long getIdConsolidado() {
+		return idConsolidado;
+	}
+
+	public void setIdConsolidado(Long idConsolidado) {
+		this.idConsolidado = idConsolidado;
 	}	
 
 }

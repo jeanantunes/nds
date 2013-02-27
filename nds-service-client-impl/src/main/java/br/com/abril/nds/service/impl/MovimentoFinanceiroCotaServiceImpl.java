@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
+import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
@@ -39,6 +40,7 @@ import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
@@ -73,6 +75,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Override
 	@Transactional
@@ -133,37 +138,23 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			if (tipoMovimentoFinanceiro.isAprovacaoAutomatica()) {
 
 				movimentoFinanceiroCota.setAprovadoAutomaticamente(Boolean.TRUE);
-				movimentoFinanceiroCota.setAprovador(
-						movimentoFinanceiroCotaDTO.getUsuario());
-				movimentoFinanceiroCota.setDataAprovacao(
-						movimentoFinanceiroCotaDTO.getDataAprovacao());
-				movimentoFinanceiroCota.setStatus(
-						StatusAprovacao.APROVADO);
-
+				movimentoFinanceiroCota.setAprovador(movimentoFinanceiroCotaDTO.getUsuario());
+				movimentoFinanceiroCota.setDataAprovacao(movimentoFinanceiroCotaDTO.getDataAprovacao());
+				movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
 			} else {
 
 				movimentoFinanceiroCota.setStatus(StatusAprovacao.PENDENTE);
 			}
 
-			movimentoFinanceiroCota.setCota(
-					movimentoFinanceiroCotaDTO.getCota());
-			movimentoFinanceiroCota.setTipoMovimento(
-					tipoMovimentoFinanceiro);
-			movimentoFinanceiroCota.setData(
-					movimentoFinanceiroCotaDTO.getDataVencimento());
-			movimentoFinanceiroCota.setDataCriacao(
-					movimentoFinanceiroCotaDTO.getDataCriacao());
-			movimentoFinanceiroCota.setUsuario(
-					movimentoFinanceiroCotaDTO.getUsuario());
-			movimentoFinanceiroCota.setValor(
-					movimentoFinanceiroCotaDTO.getValor());
-			movimentoFinanceiroCota.setLancamentoManual(
-					movimentoFinanceiroCotaDTO.isLancamentoManual());
-			movimentoFinanceiroCota.setBaixaCobranca(
-					movimentoFinanceiroCotaDTO.getBaixaCobranca());
-			movimentoFinanceiroCota.setObservacao(
-					movimentoFinanceiroCotaDTO.getObservacao());
-			
+			movimentoFinanceiroCota.setCota(movimentoFinanceiroCotaDTO.getCota());
+			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
+			movimentoFinanceiroCota.setData(movimentoFinanceiroCotaDTO.getDataVencimento());
+			movimentoFinanceiroCota.setDataCriacao(movimentoFinanceiroCotaDTO.getDataCriacao());
+			movimentoFinanceiroCota.setUsuario(movimentoFinanceiroCotaDTO.getUsuario());
+			movimentoFinanceiroCota.setValor(movimentoFinanceiroCotaDTO.getValor());
+			movimentoFinanceiroCota.setLancamentoManual(movimentoFinanceiroCotaDTO.isLancamentoManual());
+			movimentoFinanceiroCota.setBaixaCobranca(movimentoFinanceiroCotaDTO.getBaixaCobranca());
+			movimentoFinanceiroCota.setObservacao(movimentoFinanceiroCotaDTO.getObservacao());
 			movimentoFinanceiroCota.setMovimentos(movimentosEstoqueCota);
 			
 			movimentoFinanceiroCotaMerged = 
@@ -421,6 +412,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
         BigDecimal precoVendaItem = BigDecimal.ZERO;
 		BigInteger quantidadeItem = BigInteger.ZERO;
+		BigDecimal precoComDescontoItem = BigDecimal.ZERO;
 		BigDecimal totalItem = BigDecimal.ZERO;		
 		BigDecimal totalContaFirme = BigDecimal.ZERO;	
 		BigDecimal totalGeral = BigDecimal.ZERO;
@@ -431,7 +423,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 			ProdutoEdicao produtoEdicao = item.getProdutoEdicao();
 			
-			precoVendaItem = (produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
+			precoComDescontoItem = item.getValoresAplicados()!=null?item.getValoresAplicados().getPrecoComDesconto():null;
+			precoVendaItem = precoComDescontoItem!=null?precoComDescontoItem:(produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
 			quantidadeItem = (item.getQtde()!=null)?item.getQtde():BigInteger.ZERO;
 			totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
 					
@@ -447,7 +440,16 @@ public class MovimentoFinanceiroCotaServiceImpl implements
             Produto produto = produtoEdicao.getProduto();
 			FormaComercializacao formaComercializacao = produto.getFormaComercializacao();
 			
-			precoVendaItem = (produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
+			ValoresAplicados va = item.getValoresAplicados();
+			
+			if (va != null && va.getPrecoComDesconto() != null){
+				
+				precoVendaItem = va.getPrecoComDesconto();
+			} else {
+				
+				precoVendaItem = (produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
+			}
+			
 			quantidadeItem = (item.getQtde()!=null)?item.getQtde():BigInteger.ZERO;
 			totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
 					
@@ -485,7 +487,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		else if (tipoCota.equals(TipoCota.CONSIGNADO)){
 			
 			if ((movimentosProdutosContaFirme!=null && movimentosProdutosContaFirme.size()>0)&& 
-				(totalContaFirme!=null && totalContaFirme.floatValue() > 0)){
+				(totalContaFirme!=null && totalContaFirme.compareTo(BigDecimal.ZERO) > 0)){
 			    
 				this.gerarMovimentoFinanceiro(cota, 
 					                          movimentosProdutosContaFirme, 
@@ -604,6 +606,18 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				
 				movimentosEstoqueCotaOperacaoConferenciaEncalhe = 
 						movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
+				
+				for(MovimentoEstoqueCota mec : movimentosEstoqueCotaOperacaoConferenciaEncalhe) {
+					
+					if (mec.getProdutoEdicao() == null || mec.getProdutoEdicao().getProduto() == null){
+						
+						Long id = 
+								this.movimentoEstoqueCotaRepository.obterIdProdutoEdicaoPorControleConferenciaEncalhe(
+										idControleConferenciaEncalheCota);
+						
+						mec.setProdutoEdicao(this.produtoEdicaoRepository.buscarPorId(id));
+					}
+				}
 				
                 tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 				
@@ -766,7 +780,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
 		List<MovimentoFinanceiroCota> movs = 
 				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceirosCotaPorTipoMovimento(
-						idCota, tiposMovimentoPostergado);
+						idCota, null, tiposMovimentoPostergado, new Date());
 		
 		for (MovimentoFinanceiroCota mfc : movs){
 			

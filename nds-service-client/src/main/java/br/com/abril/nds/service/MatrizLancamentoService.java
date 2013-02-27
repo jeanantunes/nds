@@ -63,8 +63,10 @@ public interface MatrizLancamentoService {
 	 */
 	public List<ConfirmacaoVO> obterDatasConfirmacao(List<ProdutoLancamentoDTO> produtosLancamento);
 	
-	void voltarConfiguracaoInicial(Date dataLancamento);
+	void voltarConfiguracaoInicial(Date dataLancamento, TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento);
 	
 	void verificaDataOperacao(Date data);
+	
+	boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento);
 
 }

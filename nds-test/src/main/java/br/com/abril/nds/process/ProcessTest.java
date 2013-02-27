@@ -131,10 +131,8 @@ public class ProcessTest {
 	imprimeCabecalhoCota();
 	
 	Class<? extends Cota> clazz = cota.getClass();
-
-	Method[] declaredMethods = clazz.getMethods();
-
-	for (Method method : declaredMethods) {
+	Method[] methods = clazz.getMethods();
+	for (Method method : methods) {
 	    String name = method.getName();
 	    if((name.startsWith("g") || name.startsWith("i")) && !name.equalsIgnoreCase("getClass")) {
 		try {
@@ -154,7 +152,7 @@ public class ProcessTest {
 	    String name = method.getName();
 	    if((name.startsWith("g") || name.startsWith("i")) && !name.equalsIgnoreCase("getClass")) {
 		Reporter.log("<td>");
-		Reporter.log(name);
+		Reporter.log(name.replaceAll("is|get", ""));
 		Reporter.log("</td>");
 	    }
 	}
@@ -164,7 +162,6 @@ public class ProcessTest {
     private void imprimeEdicaoBase(List<ProdutoEdicaoBase> edicoesBase) {
 	Reporter.log("<p>Edi&ccedil;&otilde;es Base:<table border='1' cellspacing='0' cellpadding='2'>");
 	imprimeCabecalhoEdicaoBase();
-//	imprimeCabecalhoEdicao();
 	for (ProdutoEdicaoBase produtoEdicaoBase : edicoesBase) {
 	    Reporter.log("<tr>");
 	    edicaoBaseToTD(produtoEdicaoBase);
@@ -180,7 +177,7 @@ public class ProcessTest {
 	    String name = method.getName();
 	    if((name.startsWith("g") || name.startsWith("i")) && !name.equalsIgnoreCase("getClass")) {
 		Reporter.log("<td>");
-		Reporter.log(name);
+		Reporter.log(name.replaceAll("is|get", ""));
 		Reporter.log("</td>");
 	    }
 	}
@@ -189,9 +186,7 @@ public class ProcessTest {
 
     private void edicaoBaseToTD(ProdutoEdicaoBase produtoEdicaoBase) {
 	Class<? extends ProdutoEdicaoBase> clazz = produtoEdicaoBase.getClass();
-	
 	Method[] methods = clazz.getMethods();
-
 	for (Method method : methods) {
 	    String name = method.getName();
 	    if((name.startsWith("g") || name.startsWith("i")) && !name.equalsIgnoreCase("getClass")) {
@@ -222,7 +217,7 @@ public class ProcessTest {
 	    String name = method.getName();
 	    if((name.startsWith("g") || name.startsWith("i")) && !name.equalsIgnoreCase("getClass")) {
 		Reporter.log("<td>");
-		Reporter.log(name);
+		Reporter.log(name.replaceAll("is|get", ""));
 		Reporter.log("</td>");
 	    }
 	}
@@ -232,7 +227,6 @@ public class ProcessTest {
     private void edicaoToTD(ProdutoEdicao edicao) {
 	Class<? extends ProdutoEdicao> clazz = edicao.getClass();
 	Method[] methods = clazz.getMethods();
-
 	for (Method method : methods) {
 	    String name = method.getName();
 	    if((name.startsWith("g") || name.startsWith("i")) && !name.equalsIgnoreCase("getClass")) {

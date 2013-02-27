@@ -108,6 +108,7 @@ var ParciaisController = $.extend(true, {
 		$.postJSON(contextPath + "/parciais/inserirPeriodos",
 				this.getDadosNovosPeriodo(),
 				function(result){
+					$( "#dialog-novo",this.workspace).dialog( "close" );
 					if(modal)
 						$(".parciaisPopGrid",this.workspace).flexReload();
 					else
@@ -122,6 +123,8 @@ var ParciaisController = $.extend(true, {
 	
 	
 	processaRetornoPesquisaParciais : function(result) {
+		
+		$('#exportacaoPeriodos',this.workspace).hide();
 		
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
@@ -139,6 +142,8 @@ var ParciaisController = $.extend(true, {
 	
 	processaRetornoPeriodosParciais : function(result) {
 		
+		$("#exportacao",this.workspace).hide();
+		
 		if(result.mensagens) 
 			exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 			
@@ -149,11 +154,6 @@ var ParciaisController = $.extend(true, {
 			$('#exportacaoPeriodos',this.workspace).show();
 			ParciaisController.idProdutoEdicao = result.rows[0].cell.idProdutoEdicao;
 		}
-		
-		if(result.rows.length > 0 && result.rows[0].cell.geradoPorInterface==true)
-			$("#btnIncluirPeriodos",this.workspace).hide();
-		else
-			$("#btnIncluirPeriodos",this.workspace).show();		
 		
 		$.each(result.rows, function(index,row){ParciaisController.gerarAcaoDetalhes(index,row);} );
 				
@@ -221,7 +221,7 @@ var ParciaisController = $.extend(true, {
 		
 		data.push({name:'codigoProduto',		value: this.codigoProduto});
 		data.push({name:'edicaoProduto',		value: this.numEdicao});
-		
+		data.push({name:'periodos',				value: this.get("qtde")});
 		return data;
 	},
 	
@@ -236,10 +236,10 @@ var ParciaisController = $.extend(true, {
 		return data;
 	},
 	
-	carregaPeb : function() {
+	carregaPeb : function(periodos) {
 		
+		this.set('qtde',periodos);
 		this.set('peb','');
-		this.set('qtde','');
 		
 		$.postJSON(contextPath + "/parciais/obterPebDoProduto",
 				this.getDadosParaPeb(),
@@ -451,7 +451,7 @@ var ParciaisController = $.extend(true, {
 
 	popup : function(modal) {
 		
-			ParciaisController.carregaPeb();
+			ParciaisController.carregaPeb(null);
 		
 			$( "#dialog-novo",this.workspace).dialog({
 				resizable: false,
@@ -465,7 +465,6 @@ var ParciaisController = $.extend(true, {
 					           text:"Confirmar", 
 					           click: function() {
 					        	   	ParciaisController.inserirPeriodos(modal);								
-									$( this ).dialog( "close" );
 					           }
 				           },
 				           {

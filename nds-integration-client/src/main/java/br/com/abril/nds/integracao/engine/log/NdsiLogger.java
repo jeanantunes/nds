@@ -13,14 +13,14 @@ import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
-import br.com.abril.nds.integracao.engine.data.Message;
+import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.model.integracao.EventoExecucao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.InterfaceExecucao;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepository;
 
@@ -112,7 +112,8 @@ public class NdsiLogger extends AbstractRepository {
 	public void logError(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
 		hasError = true;
-		message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), descricaoErro);
+		//message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), descricaoErro);
+		message.getHeader().put(descricaoErro, MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue());
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
@@ -156,6 +157,7 @@ public class NdsiLogger extends AbstractRepository {
 		logExecucaoMensagem.setMensagemInfo(mensagemInfo);
 		if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue()))
 			logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
+			
 		if (message.getHeader().containsKey(MessageHeaderProperties.LINE_NUMBER.getValue()))
 			logExecucaoMensagem.setNumeroLinha((Integer) message.getHeader().get(MessageHeaderProperties.LINE_NUMBER.getValue()));
 		

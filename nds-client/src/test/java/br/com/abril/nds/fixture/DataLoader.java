@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.Origem;
@@ -111,7 +112,6 @@ import br.com.abril.nds.model.cadastro.TipoFeriado;
 import br.com.abril.nds.model.cadastro.TipoFornecedor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
@@ -2932,7 +2932,7 @@ public class DataLoader {
 	
 
 	private static void criarControleBaixaBancaria(Session session) {
-		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao, bancoHSBC);
+		baixaBancaria = Fixture.controleBaixaBancaria(new Date(), new Date(), StatusControle.CONCLUIDO_SUCESSO, usuarioJoao, bancoHSBC);
 		save(session, baixaBancaria);
 
 	}
@@ -3669,7 +3669,7 @@ public class DataLoader {
         List<MovimentoEstoqueCota> movimentosE = new ArrayList<MovimentoEstoqueCota>();
         for (MovimentoFinanceiroCota movF : movimentosF) {
             if (((TipoMovimentoFinanceiro) movF.getTipoMovimento())
-                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE) {
+                    .getGrupoMovimentoFinaceiro() == GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR) {
                 movimentosE = movF.getMovimentos();
                 for (MovimentoEstoqueCota movE : movimentosE) {
                     if (((TipoMovimentoEstoque) movE.getTipoMovimento())

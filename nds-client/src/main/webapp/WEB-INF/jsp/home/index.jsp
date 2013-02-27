@@ -15,7 +15,9 @@
 
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/shortcut.js"></script>
+
+<script language="javascript" type="text/javascript" src="scripts/jwerty/jwerty.js"></script>
+
 <script language="javascript" type="text/javascript" src="scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/utils.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
@@ -132,7 +134,7 @@
 												logout();
 											};
 											focarPrimeiroElemento();
-											//$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide) > *').wrap("<div id='conteudo' />");
+											$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide) > *').wrap("<div id='conteudo' />");
 										}
 									},
 									cache : true
@@ -163,7 +165,7 @@
 										$span = $($span).addClass("conferencia_encalhe");
 									}
 									
-									$('a:contains(' + title + ')', ulTabs).parent().prepend($span);
+									$('a:contains(' + title + ')', ulTabs).last().parent().prepend($span);
 									
 								}
 								

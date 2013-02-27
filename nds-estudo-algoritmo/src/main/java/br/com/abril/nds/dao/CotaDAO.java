@@ -148,6 +148,13 @@ public class CotaDAO {
 		    Cota cota = new Cota();
 		    cota.setId(idCota);
 		    cota.setNumero(rs.getLong("NUMERO_COTA"));
+		    if (rs.getString("FORMA_AJUSTE").equals("vendaMedia")) {
+			cota.setVendaMediaMaisN(rs.getBigDecimal("AJUSTE_APLICADO"));
+		    } else if (rs.getString("FORMA_AJUSTE").equals("encalheMaximo")) {
+			cota.setPercentualEncalheMaximo(rs.getBigDecimal("AJUSTE_APLICADO"));
+		    }
+		    // TODO: ainda faltam carregar os parâmetros para ajuste de segmento e histórico
+		    // (estarão gravados no banco respectivamente: 'segmento' e 'histórico')
 		    cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos, false));
 		    returnListCota.add(cota);
 		} else {
@@ -220,8 +227,10 @@ public class CotaDAO {
 	    + " ,l.STATUS " // -- edicao aberta
 	    + " ,l.TIPO_LANCAMENTO " // -- se parcial
 	    + " ,tp.GRUPO_PRODUTO " // -- se colecionavel
-	    + " ,l.DATA_LCTO_DISTRIBUIDOR " + " ,epc.QTDE_RECEBIDA " + " ,(epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) as QTDE_VENDA " + " ,pe.PACOTE_PADRAO "
-	    + " ,pe.NUMERO_EDICAO " + " ,p.CODIGO " + " from " + " produto_edicao pe " + " ,produto p " + " ,lancamento l " + " ,tipo_produto tp " + " ,cota c "
-	    + " ,estoque_produto_cota epc " + " where " + " pe.id in (?) " + " and pe.PRODUTO_ID = p.id " + " and pe.ID = l.PRODUTO_EDICAO_ID "
-	    + " and tp.ID = p.TIPO_PRODUTO_ID " + " and pe.ID = epc.PRODUTO_EDICAO_ID " + " and c.ID = epc.COTA_ID " + " order by c.ID, pe.NUMERO_EDICAO desc ";
+	    + " ,l.DATA_LCTO_DISTRIBUIDOR " + " ,epc.QTDE_RECEBIDA " + " ,(epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) as QTDE_VENDA "
+	    + " ,pe.PACOTE_PADRAO " + " ,pe.NUMERO_EDICAO " + " ,p.CODIGO " + " ,ar.ajuste_aplicado " + " ,ar.forma_ajuste " + " from "
+	    + " produto_edicao pe " + " ,produto p " + " ,lancamento l " + " ,tipo_produto tp " + " ,cota c " + " ,estoque_produto_cota epc "
+	    + " ,ajuste_reparte ar " + " where " + " pe.id in (?) " + " and pe.PRODUTO_ID = p.id " + " and pe.ID = l.PRODUTO_EDICAO_ID "
+	    + " and tp.ID = p.TIPO_PRODUTO_ID " + " and pe.ID = epc.PRODUTO_EDICAO_ID " + " and c.ID = epc.COTA_ID "
+	    + " order by c.ID, pe.NUMERO_EDICAO desc ";
 }

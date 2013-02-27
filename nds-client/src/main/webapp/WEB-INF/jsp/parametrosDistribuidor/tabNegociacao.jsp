@@ -120,9 +120,9 @@ function checkDescontoSelecionado() {
 			</tr>
 			<tr>
 				<td colspan="4">
-					<textarea name="parametrosDistribuidor.assuntoEmailCobranca"
-						   id="assuntoEmailCobranca" type="text" style="width: 40px;"
-						   style="width:40px;">${parametrosDistribuidor.assuntoEmailCobranca}</textarea>
+					<input name="parametrosDistribuidor.assuntoEmailCobranca" 
+						   id="assuntoEmailCobranca" type="text" style="width: 400px;"
+						   style="width:40px;"  value="${parametrosDistribuidor.assuntoEmailCobranca}"/>
 				</td>
 			</tr>
 			<tr>

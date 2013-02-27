@@ -1,7 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Map;
 
 public class MapaProdutoCotasDTO implements Serializable{
 	
@@ -11,17 +11,15 @@ public class MapaProdutoCotasDTO implements Serializable{
 	private String nomeProduto;
 	private Long numeroEdicao;
 	private String precoCapa;
-	private HashMap<Integer, Integer> cotasQtdes;
+	private Map<Integer, Integer> cotasQtdes;
 	
 	public MapaProdutoCotasDTO() {
 		
 	}
-	
-	
 
 	public MapaProdutoCotasDTO(String codigoProduto, String nomeProduto,
 			Long numeroEdicao, String precoCapa,
-			HashMap<Integer, Integer> cotasQtdes) {
+			Map<Integer, Integer> cotasQtdes) {
 		super();
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
@@ -29,8 +27,6 @@ public class MapaProdutoCotasDTO implements Serializable{
 		this.precoCapa = precoCapa;
 		this.setCotasQtdes(cotasQtdes);
 	}
-
-
 
 	/**
 	 * @return the codigoProduto
@@ -88,13 +84,13 @@ public class MapaProdutoCotasDTO implements Serializable{
 		this.precoCapa = precoCapa;
 	}
 
-	public HashMap<Integer, Integer> getCotasQtdes() {
+	public Map<Integer, Integer> getCotasQtdes() {
 		return cotasQtdes;
 	}
 
 
 
-	public void setCotasQtdes(HashMap<Integer, Integer> cotasQtdes) {
+	public void setCotasQtdes(Map<Integer, Integer> cotasQtdes) {
 		this.cotasQtdes = cotasQtdes;
 	}
 	

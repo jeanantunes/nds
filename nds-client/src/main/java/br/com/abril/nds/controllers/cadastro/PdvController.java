@@ -30,15 +30,15 @@ import br.com.abril.nds.dto.PeriodoFuncionamentoDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.PdvService;
@@ -122,7 +122,7 @@ public class PdvController extends BaseController {
 		
 		result.include("listaTipoPontoPDV",getListaDescricao(pdvService.obterTiposPontoPDV()));
 		result.include("listaCaracteristicaPDV",getListaCaracteristica());
-		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterAreasInfluenciaPDV()));
+		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterTipoAreaInfluencia()));
 		
 	}
 	
@@ -219,7 +219,7 @@ public class PdvController extends BaseController {
 	@Post
     @Path("/carregarAreasInfluenciaPdv")
     public void carregarAreasInfluenciaPdv() {
-        result.use(Results.json()).from(getListaDescricao(pdvService.obterAreasInfluenciaPDV()), "result").recursive().serialize();
+        result.use(Results.json()).from(getListaDescricao(pdvService.obterTipoAreaInfluencia()), "result").recursive().serialize();
     }
 
 	/**

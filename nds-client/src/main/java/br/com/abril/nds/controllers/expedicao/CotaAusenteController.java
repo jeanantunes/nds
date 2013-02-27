@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,7 +59,7 @@ public class CotaAusenteController extends BaseController {
 	
 	private static final String WARNING_COTA_AUSENTE_DUPLICADA =  "Esta cota já foi declarada como ausente nesta data.";
 	
-	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é inferior a data de operação atual.";
+	private static final String WARNING_DATA_MAIOR_OPERACAO_ATUAL = "A data informada é superior a data de operação atual.";
 	
 	private static final String WARNING_DATA_INFORMADA_INVALIDA = "A data informada é inválida.";
 	
@@ -155,9 +154,11 @@ public class CotaAusenteController extends BaseController {
 	 */
 	private void gerarDataLancamento() {
 		
-		String data = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+		String data = 
+			DateUtil.formatarDataPTBR(
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 		
-		result.include("data",data);			
+		result.include("data", data);			
 	}
 	
 	/**
@@ -227,20 +228,28 @@ public class CotaAusenteController extends BaseController {
 		
 		List<CotaAusenteDTO> listaCotasAusentes = null;
 		
-		listaCotasAusentes = cotaAusenteService.obterCotasAusentes(filtro) ;
+		listaCotasAusentes = this.cotaAusenteService.obterCotasAusentes(filtro) ;
 		
 		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_PESQUISA_SEM_RESULTADO);
 		}
 		
-		if(filtro.getData() != null) {
-			for(CotaAusenteDTO cotaAusenteDTO : listaCotasAusentes) {
-				if(!DateUtil.isHoje(DateUtil.parseDataPTBR(cotaAusenteDTO.getData())))
-						cotaAusenteDTO.setIdCotaAusente(null);
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		String dataOperacaoFormatada = DateUtil.formatarDataPTBR(dataOperacao);
+		
+		if (filtro.getData() != null) {
+			
+			for (CotaAusenteDTO cotaAusenteDTO : listaCotasAusentes) {
+				
+				if (!dataOperacaoFormatada.equals(cotaAusenteDTO.getData())) {
+					
+					cotaAusenteDTO.setIdCotaAusente(null);
+				}
 			}
 		}
 		
-		Long totalRegistros = cotaAusenteService.obterCountCotasAusentes(filtro);
+		Long totalRegistros = this.cotaAusenteService.obterCountCotasAusentes(filtro);
 		
 		TableModel<CellModelKeyValue<CotaAusenteDTO>> tableModel = new TableModel<CellModelKeyValue<CotaAusenteDTO>>();
 
@@ -267,8 +276,13 @@ public class CotaAusenteController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_INFORMADA_INVALIDA);
 		}
 
-		if ( data.getTime() > (new Date().getTime()) )
-			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_MAIOR_OPERACAO_ATUAL );
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+				
+		if (data.compareTo(dataOperacao) > 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, WARNING_DATA_MAIOR_OPERACAO_ATUAL);
+			
+		}
 		
 		return data;
 	}
@@ -364,10 +378,15 @@ public class CotaAusenteController extends BaseController {
 		
 		try {
 			
-			if(numCotas == null) 
+			if (numCotas == null) {
+				
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+			}
 						
-			cotaAusenteService.declararCotaAusenteEnviarSuplementar(numCotas, new Date(), this.getUsuarioLogado().getId());
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			
+			this.cotaAusenteService.declararCotaAusenteEnviarSuplementar(
+				numCotas, dataOperacao, this.getUsuarioLogado().getId());
 			
 			mensagens.add(SUCESSO_ENVIO_SUPLEMENTAR);
 			
@@ -406,8 +425,11 @@ public class CotaAusenteController extends BaseController {
 	@Post
 	public void carregarDadosRateio(List<Integer> numCotas) {
 		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
-				movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(new Date(), numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
+				dataOperacao, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
@@ -427,10 +449,15 @@ public class CotaAusenteController extends BaseController {
 		
 		try {
 			
-			if(numCotas == null) 
+			if (numCotas == null) { 
+				
 				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+			}
 			
-			cotaAusenteService.declararCotaAusenteRatearReparte(numCotas, new Date(), this.getUsuarioLogado().getId() , movimentos);
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			
+			this.cotaAusenteService.declararCotaAusenteRatearReparte(
+				numCotas, dataOperacao, this.getUsuarioLogado().getId() , movimentos);
 			
 			mensagens.add(SUCESSO_RATEIO);
 			

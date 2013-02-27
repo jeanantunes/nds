@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -54,7 +55,7 @@ public class LancamentoParcial {
 	@Column(name = "STATUS", nullable = false)
 	private StatusLancamentoParcial status;
 
-	@OneToMany(mappedBy = "lancamentoParcial")
+	@OneToMany(mappedBy = "lancamentoParcial", cascade={CascadeType.REMOVE})
 	private List<PeriodoLancamentoParcial> periodos = new ArrayList<PeriodoLancamentoParcial>();
 	
 	/**

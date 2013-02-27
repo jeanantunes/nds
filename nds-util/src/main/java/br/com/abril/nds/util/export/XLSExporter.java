@@ -31,7 +31,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.IOUtils;
 
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ImageUtil;
 import br.com.abril.nds.util.ImageUtil.FormatoImagem;
@@ -314,12 +313,9 @@ public class XLSExporter implements Exporter {
 						|| ColumType.DECIMAL.equals(exportColumn.getColumnType())) {
 					
 					cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-					cell.setCellValue(CurrencyUtil.getBigDecimal(columnString).doubleValue());
-					
-				} else {
-					cell.setCellValue(columnString);
-				}
-				
+				}	
+				cell.setCellValue(columnString);
+								
 				CellStyle cellStyle = this.getRowColumnCellStyle(
 					sheet, ((rowNum % 2) != 0), (exportRow.getColumns().size() == cellNum),
 						exportColumn.getAlignment());

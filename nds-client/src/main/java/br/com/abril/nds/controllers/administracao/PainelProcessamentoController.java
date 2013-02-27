@@ -63,9 +63,6 @@ public class PainelProcessamentoController extends BaseController {
 	private PainelProcessamentoService painelProcessamentoService;
 	
 	@Autowired
-	private DistribuidorService distribuidorService;
-
-	@Autowired
 	private InterfaceExecucaoService interfaceExecucaoService;
 
 	@Autowired
@@ -116,7 +113,7 @@ public class PainelProcessamentoController extends BaseController {
 			}
 		}
 		
-		List<InterfaceDTO> lista = painelProcessamentoService.listarInterfaces();
+		List<InterfaceDTO> lista = painelProcessamentoService.listarInterfaces(filtroSessao);
 		
 		String nomeArquivo = "relatorio-interfaces";
 		
@@ -159,7 +156,7 @@ public class PainelProcessamentoController extends BaseController {
 		
 		List<InterfaceDTO> resultado = null;
 		try {
-			resultado = painelProcessamentoService.listarInterfaces();
+			resultado = painelProcessamentoService.listarInterfaces(filtro);
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException) {
 				throw e;
@@ -173,12 +170,12 @@ public class PainelProcessamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} else {
 
-			List<InterfaceDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+			//List<InterfaceDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 
 			TableModel<CellModelKeyValue<InterfaceDTO>> tableModel = new TableModel<CellModelKeyValue<InterfaceDTO>>();
-			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultado));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-			tableModel.setTotal(resultado.size());
+			tableModel.setTotal(Integer.valueOf(painelProcessamentoService.listarTotalInterfaces(filtro).toString()));
 
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		}
@@ -200,8 +197,8 @@ public class PainelProcessamentoController extends BaseController {
 		List<DetalheProcessamentoVO> lista;
 		int quantidade = 0;
 		try {
-			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento));
-			quantidade = lista.size();
+			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro);
+			quantidade = Integer.valueOf( painelProcessamentoService.listarTotaldetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro).toString() );
 			
 			if (lista == null || lista.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
@@ -216,10 +213,10 @@ public class PainelProcessamentoController extends BaseController {
 			}
 		}
 
-		List<DetalheProcessamentoVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(lista, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+		//List<DetalheProcessamentoVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(lista, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 
 		TableModel<CellModelKeyValue<DetalheProcessamentoVO>> tableModel = new TableModel<CellModelKeyValue<DetalheProcessamentoVO>>();
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());		
 		tableModel.setTotal(quantidade);		
 		

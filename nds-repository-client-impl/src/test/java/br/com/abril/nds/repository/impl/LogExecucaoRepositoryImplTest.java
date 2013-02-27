@@ -38,7 +38,7 @@ public class LogExecucaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		List<ConsultaInterfacesDTO> listaInterfaces;
 		
-		listaInterfaces = logExecucaoRepositoryImpl.obterInterfaces();
+		listaInterfaces = logExecucaoRepositoryImpl.obterInterfaces(null);
 		
 		Assert.assertNotNull(listaInterfaces);
 		
@@ -64,7 +64,7 @@ public class LogExecucaoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Long codigoLogExecucao = 1L;
 		
-		listaMensagens = logExecucaoRepositoryImpl.obterMensagensErroLogInterface(codigoLogExecucao);
+		listaMensagens = logExecucaoRepositoryImpl.obterMensagensErroLogInterface(codigoLogExecucao, new Date(), null);
 		
 		Assert.assertNotNull(listaMensagens);
 		

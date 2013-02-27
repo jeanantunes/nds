@@ -281,6 +281,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public List<Rota> obterRotasPorCota(Integer numeroCota) {
 		return rotaRepository.obterRotasPorCota(numeroCota);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQtdRotasPorCota(Integer numeroCota){
+		
+		return this.rotaRepository.obterQtdRotasPorCota(numeroCota);
+	}
 
 	@Override
 	@Transactional(readOnly=true)
@@ -900,8 +907,8 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         
 		Set<Long> roteirosExclusao = roteirizacaoDTO.getRoteirosExclusao();
         
-		roteirizacaoExistente.desassociarRoteiros(roteirosExclusao);
-        
+		processarRoteirosExcluidos(roteirizacaoExistente, roteirosExclusao);
+       		
 		for (RoteiroRoteirizacaoDTO roteiroDTO : roteirizacaoDTO.getTodosRoteiros()) {
         
 			Roteiro roteiro;
@@ -946,10 +953,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 					
 						Entregador entregador = this.entregadorRepository.buscarPorId(rotaDTO.getEntregadorId());
 
-						rota.setEntregador(entregador);
-
 						entregador.setRota(rota);
+						
 						this.entregadorRepository.merge(entregador);
+						
+						rota.setEntregador(entregador);
 					}
 					
 				} else {
@@ -983,9 +991,64 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         }
 		
 		roteirizacaoRepository.alterar(roteirizacaoExistente);
-       	
+		
+		if(roteirizacaoDTO.getRoteiros() == null || roteirizacaoDTO.getRoteiros().isEmpty()) {
+			
+			roteirizacaoRepository.removerPorId(roteirizacaoDTO.getId());
+		}
+		
 		return roteirizacaoExistente;
     }
+
+	private void processarRoteirosExcluidos(Roteirizacao roteirizacaoExistente,
+			Set<Long> roteirosExclusao) {
+		
+		roteirizacaoExistente.desassociarRoteiros(roteirosExclusao);
+		
+		for (Long idRoteiroExclusao : roteirosExclusao) {
+			
+			Roteiro roteiro = this.roteiroRepository.buscarPorId(idRoteiroExclusao);
+			
+			if (roteiro != null) {
+			
+				for(Rota rota : roteiro.getRotas()) {
+					
+					Entregador entregador = rota.getEntregador();
+					
+					rota.setRoteiro(null);
+					
+					this.rotaRepository.merge(rota);
+				
+					if(entregador != null){
+						
+						entregador.setRota(null);
+					
+						this.entregadorRepository.merge(entregador);
+					}
+					
+					for(RotaPDV rotaPDV : rota.getRotaPDVs()){
+						
+						PDV pdv = rotaPDV.getPdv();
+						
+						if(pdv != null){
+							
+							Cota cota = pdv.getCota();
+							
+							if(cota != null) {
+								
+								cota.setBox(null);
+								
+								this.cotaRepository.merge(cota);
+							}
+						}
+					}
+				}
+			}
+			
+			this.roteiroRepository.removerPorId(idRoteiroExclusao);
+		}
+		
+	}
 
 	/**
      * Processa as transferências de roteiro da roteirização

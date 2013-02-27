@@ -72,7 +72,7 @@
 	            <br />
 	            <p>
 	            	<strong>Nova Data:</strong>
-	            	<input type="text" name="novaData" id="novaData" style="width:70px; margin-left:5px;" maxlength="10"/>
+	            	<input type="text" name="novaData" id="novaData" style="width:80px; margin-left:5px;" maxlength="10"/>
 	            </p>
 	            <br />
 	            

@@ -3,8 +3,10 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -22,10 +24,10 @@ public class ConsignadoCotaDTO implements Serializable{
 	@Export(label="Edição")
 	private Long numeroEdicao;
 	
-	@Export(label="Preço Capa R$" , alignment= Alignment.RIGHT )
+	@Export(label="Preço Capa R$" , alignment= Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal precoCapa;
 	
-	@Export(label="Preço c/ Desc. R$" , alignment= Alignment.RIGHT )
+	@Export(label="Preço c/ Desc. R$" , alignment= Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal precoComDesconto;
 	
 	@Export(label="Reparte Sugerido")
@@ -43,7 +45,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	@Export(label="Fornecedor")
 	private String nomeFornecedor;
 	
-	@Export(label="Total")
+	@Export(label="Total", columnType = ColumType.MOEDA)
 	private BigDecimal total;
 	
 	private BigDecimal desconto;
@@ -85,7 +87,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	}
 
 	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
-		this.precoComDesconto = precoComDesconto;
+		this.precoComDesconto = precoComDesconto != null ? precoComDesconto.setScale(2, RoundingMode.HALF_EVEN) : null;
 	}
 
 	public BigInteger getReparteSugerido() {
@@ -125,7 +127,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	}
 
 	public void setTotal(BigDecimal total) {
-		this.total = total;
+		this.total = total != null ? total.setScale(2, RoundingMode.HALF_EVEN) : null;
 	}
 
 	public TipoDiferenca getMotivo() {

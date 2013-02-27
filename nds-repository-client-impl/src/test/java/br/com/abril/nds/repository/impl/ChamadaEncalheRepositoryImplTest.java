@@ -280,7 +280,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		FiltroEmissaoCE filtro = new FiltroEmissaoCE();
 		filtro.setColunaOrdenacao("numCota");
 		filtro.setOrdenacao("asc");
-		filtro.setIdBoxAte(1);
+		filtro.setCodigoBoxAte(1);
 
 		List<CotaEmissaoDTO> lista = chamadaEncalheRepository
 				.obterDadosEmissaoChamadasEncalhe(filtro);
@@ -295,7 +295,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		FiltroEmissaoCE filtro = new FiltroEmissaoCE();
 		filtro.setColunaOrdenacao("numCota");
 		filtro.setOrdenacao("asc");
-		filtro.setIdBoxDe(2);
+		filtro.setCodigoBoxDe(2);
 
 		List<CotaEmissaoDTO> lista = chamadaEncalheRepository
 				.obterDadosEmissaoChamadasEncalhe(filtro);

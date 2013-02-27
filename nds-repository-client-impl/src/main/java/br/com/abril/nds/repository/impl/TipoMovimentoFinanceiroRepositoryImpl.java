@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -40,6 +41,21 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		criteria.add(Restrictions.in("grupoMovimentoFinaceiro", gruposMovimentoFinanceiro));
 		
 		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> buscarIdsTiposMovimentoFinanceiro(List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro){
+		
+		StringBuilder hql = new StringBuilder("select t.id ");
+		hql.append(" from TipoMovimentoFinanceiro t ")
+		   .append(" where t.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiro)");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameterList("gruposMovimentoFinanceiro", gruposMovimentoFinanceiro);
+		query.setMaxResults(1);
+		
+		return query.list();
 	}
 
 	@Override

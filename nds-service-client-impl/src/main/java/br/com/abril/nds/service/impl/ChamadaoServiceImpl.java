@@ -175,7 +175,8 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 				
 			} else {
 				
-				this.gerarChamadaEncalhe(consignadoCotaChamadao, dataChamadao, cota);
+				this.gerarChamadaEncalhe(
+					consignadoCotaChamadao, dataChamadao, cota);
 			}
 		}
 		
@@ -237,15 +238,18 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		if (chamadaEncalhe == null) {
 			
+			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataChamadao);
+			
 			chamadaEncalhe = new ChamadaEncalhe();
 		
 			chamadaEncalhe.setDataRecolhimento(dataChamadao);
 			chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 			chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.CHAMADAO);
-			
+			chamadaEncalhe.setSequencia(++sequencia);
 		}
 		
 		Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
+		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(consignadoCotaChamadao.getIdLancamento());
 		
 		if (lancamentos == null || lancamentos.isEmpty()) {

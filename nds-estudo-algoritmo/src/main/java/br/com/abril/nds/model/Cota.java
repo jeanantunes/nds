@@ -8,6 +8,7 @@ public class Cota extends GenericDTO<Cota> {
     private static final long serialVersionUID = -2770873222155652560L;
 
     private Long id;
+    private Long idEstudo;
     private List<ProdutoEdicao> edicoesRecebidas;
     private ClassificacaoCota classificacao;
     private BigDecimal reparteCalculado;
@@ -262,6 +263,14 @@ public class Cota extends GenericDTO<Cota> {
 
     public boolean isRecebeReparteComplementar() {
 	return recebeReparteComplementar;
+    }
+
+    public Long getIdEstudo() {
+	return idEstudo;
+    }
+
+    public void setIdEstudo(Long idEstudo) {
+	this.idEstudo = idEstudo;
     }
 
     public void setRecebeReparteComplementar(boolean recebeReparteComplementar) {
