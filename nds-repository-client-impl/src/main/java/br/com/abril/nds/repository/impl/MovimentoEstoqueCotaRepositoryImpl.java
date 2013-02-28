@@ -137,24 +137,41 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select mec ")			
-		   .append(" from MovimentoEstoqueCota mec ")
-		   .append(" join mec.tipoMovimento tipoMovimento ")
-		   .append(" join mec.cota cota ")
-		   .append(" join mec.produtoEdicao produtoEdicao ")
-		   .append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ")
-		   .append(" and ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusFinanceiro )) ")
-		   .append(" and mec.status = :statusAprovacao ")
-		   .append(" and cota.id = :idCota ")
-		   .append(" and produtoEdicao.id in (")
-		   .append("     select pe.id ")
-		   .append("     from ChamadaEncalhe c ")
-		   .append("     join c.chamadaEncalheCotas cc ")
-		   .append("     join cc.cota cota ")
-		   .append("     join c.produtoEdicao pe ")
-		   .append("     where c.dataRecolhimento = :dataControleConferencia ")
-		   .append("     and cota.id = :idCota ")
-		   .append(")");
+		hql.append(" select mec ");
+		
+		hql.append(" from MovimentoEstoqueCota mec ");
+		
+		hql.append(" join mec.tipoMovimento tipoMovimento ");
+		
+		hql.append(" join mec.cota cota ");
+		
+		hql.append(" join mec.produtoEdicao produtoEdicao ");
+		
+		hql.append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ");
+		
+		hql.append(" and ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusFinanceiro )) ");
+		
+		hql.append(" and mec.status = :statusAprovacao ");
+		
+		hql.append(" and cota.id = :idCota ");
+		
+		hql.append(" and produtoEdicao.id in (");
+		
+		hql.append("     select pe.id ");
+		
+		hql.append("     from ChamadaEncalhe c ");
+		
+		hql.append("     join c.chamadaEncalheCotas cc ");
+		
+		hql.append("     join cc.cota cota ");
+		
+		hql.append("     join c.produtoEdicao pe ");
+		
+		hql.append("     where c.dataRecolhimento = :dataControleConferencia ");
+		
+		hql.append("     and cota.id = :idCota ");
+		
+		hql.append(")");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -213,11 +230,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 * @return List<MovimentoEstoqueCota>
 	 */
 	@Override
-	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota) {
+	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum(COALESCE(mec.qtde * pe.precoVenda,0))  ");			
+		hql.append(" select sum(COALESCE(mec.qtde * coalesce(mec.valoresAplicados.precoComDesconto, pe.precoVenda),0))  ");			
 		
 		hql.append(" from MovimentoEstoqueCota mec ");
 		
@@ -235,6 +252,24 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		hql.append(" and cota.id = :idCota ");
 		
+        hql.append(" and pe.id in (");
+		
+		hql.append("     select pe.id ");
+		
+		hql.append("     from ChamadaEncalhe c ");
+		
+		hql.append("     join c.chamadaEncalheCotas cc ");
+		
+		hql.append("     join cc.cota cota ");
+		
+		hql.append("     join c.produtoEdicao pe ");
+		
+		hql.append("     where c.dataRecolhimento = :dataControleConferencia ");
+		
+		hql.append("     and cota.id = :idCota ");
+		
+		hql.append(")");
+		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
@@ -244,6 +279,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
 		query.setParameter("idCota", idCota);
+		query.setParameter("dataControleConferencia", dataControleConferencia);
 		
 		return (BigDecimal) query.uniqueResult();
 		
@@ -260,7 +296,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum(COALESCE(mec.qtde * pe.precoVenda,0))  ");			
+		hql.append(" select sum(COALESCE(mec.qtde * coalesce(mec.valoresAplicados.precoComDesconto, pe.precoVenda),0))  ");			
 		
 		hql.append(" from MovimentoEstoqueCota mec ");
 		

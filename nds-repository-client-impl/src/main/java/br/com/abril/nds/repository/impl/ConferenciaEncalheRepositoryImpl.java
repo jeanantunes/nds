@@ -229,7 +229,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
-			Long idDistribuidor,
 			Integer numeroCota,
 			Date dataRecolhimento,
 			boolean indFechado,
@@ -388,7 +387,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTO(java.lang.Long, java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
+	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota) {
 		
 		StringBuilder hql = new StringBuilder();
 		

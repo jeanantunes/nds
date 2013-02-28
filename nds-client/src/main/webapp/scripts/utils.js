@@ -304,7 +304,7 @@ function floatToPrice(field) {
     var part = price.split(".");
     return part[0].split("").reverse().reduce(function(acc, price, i, orig) {
         return  price + (i && !(i % 3) ? "." : "") + acc;
-    }, "") + "," + part[1];
+    }, "") + "," + (part[1]+"0").substr(0, 2);
     
 }
 
@@ -362,5 +362,27 @@ function Cnpj(v){
 	v=v.replace(/\.(\d{3})(\d)/,".$1/$2")     ;         
 	v=v.replace(/(\d{4})(\d)/,"$1-$2")     ;                   
 	return v;
+}
+
+
+/*Permite apenas número no campo input[type=text] 
+ * Adicionar no onkeydown do input()
+ * */
+function onlyNumeric(event){
+        // Allow: backspace, delete, tab, escape, and enter
+        if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || 
+             // Allow: Ctrl+A
+            (event.keyCode == 65 && event.ctrlKey === true) || 
+             // Allow: home, end, left, right
+            (event.keyCode >= 35 && event.keyCode <= 39)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        else {
+            // Ensure that it is a number and stop the keypress
+            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+                event.preventDefault(); 
+            }   
+        }
 }
 
