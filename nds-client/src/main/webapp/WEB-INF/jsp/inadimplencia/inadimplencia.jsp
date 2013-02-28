@@ -113,7 +113,7 @@ $(function(){
 				
 				<td>
 					<span class="bt_sellAll">
-<input type="checkbox" id="idSelecaoTodos" name="Todos2" onclick="selecionarTodos(this);" style="float:left;"/>
+<input type="checkbox" id="idSelecaoTodos" name="Todos2" onclick="inadimplenciaController.selecionarTodos(this);" style="float:left;"/>
 					</span>
 				</td>
 				<td>
@@ -127,7 +127,7 @@ $(function(){
 				
 <!-- SITUACAO DIVIDA - ABERTAS -->
 				<td>
-<input id="idDividaEmAberto" name="checkgroup_menu_divida" onclick="verifyCheck_2()" type="checkbox"/>
+<input id="idDividaEmAberto" name="checkgroup_menu_divida" onclick="verifyCheck($('#idSelecaoTodos'));" type="checkbox"/>
                 </td>
                 <td>
                 <label for="emaberto">Em Aberto</label>
@@ -138,7 +138,7 @@ $(function(){
                 
                 <td>
 <!-- SITUACAO DIVIDA - NEGOCIADA -->
-<input id="idDividaNegociada" name="checkgroup_menu_divida" onclick="verifyCheck_2()" type="checkbox"/>
+<input id="idDividaNegociada" name="checkgroup_menu_divida" onclick="verifyCheck($('#idSelecaoTodos'));" type="checkbox"/>
 				</td>
 				<td>
                 <label for="negociada">Negociada</label>
@@ -149,7 +149,7 @@ $(function(){
                 
                 <td>
 <!-- SITUACAO DIVIDA - PAGA -->
-<input id="idDividaPaga" name="checkgroup_menu_divida" onclick="verifyCheck_2()" type="checkbox"/>
+<input id="idDividaPaga" name="checkgroup_menu_divida" onclick="verifyCheck($('#idSelecaoTodos'));" type="checkbox"/>
 				</td>
 				<td>
                 <label for="paga">Paga</label>
