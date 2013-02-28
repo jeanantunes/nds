@@ -1,4 +1,4 @@
-var vendaEncalhe = {
+var vendaEncalhe = $.extend(true, {
 		url:null,
 		urlExport:null,
 		grid:null,
@@ -154,10 +154,7 @@ var vendaEncalhe = {
 		exportButtons: function(idConsolidado,dataEscolhida,numeroCota) {
 			$("#dialog-venda-encalhe-export-pdf").attr('href', this.urlExport + "?fileType=PDF" + "&idConsolidado=" + idConsolidado + "&dataEscolhida=" + dataEscolhida + "&numeroCota=" + numeroCota);
 			$("#dialog-venda-encalhe-export-xls").attr('href', this.urlExport + "?fileType=XLS" + "&idConsolidado=" + idConsolidado + "&dataEscolhida=" + dataEscolhida + "&numeroCota=" + numeroCota);
-		}
+		}	
 		
-		
-		
-		
-		
-};
+}, BaseController);
+//@ sourceURL=vendaEncalheCota.js

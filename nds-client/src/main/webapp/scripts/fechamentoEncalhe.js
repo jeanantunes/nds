@@ -212,7 +212,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			row.cell.fisico = '<input type="text" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
+			row.cell.fisico = '<input type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',window.event);" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 		
 			row.cell.replicar = '<input type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
 			
@@ -286,7 +286,7 @@ var fechamentoEncalheController = $.extend(true, {
 		if (campo.value == "") {
 			diferenca.innerHTML = "";
 		} else {
-			diferenca.innerHTML = devolucao - campo.value;			
+			diferenca.innerHTML =campo.value - devolucao ;			
 		}
 	},
 	
@@ -358,9 +358,11 @@ var fechamentoEncalheController = $.extend(true, {
 				if (tipoMensagem && listaMensagens) {
 					
 					exibirMensagem(tipoMensagem, listaMensagens);
+					
+					return;
 				}
 				
-				if (!result) {
+				if (!result.isCotasAusentes) {
 					
 					fechamentoEncalheController.isFechamento = true;
 					
@@ -409,10 +411,16 @@ var fechamentoEncalheController = $.extend(true, {
 							var listaMensagens = result.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
+								
 								exibirMensagem(tipoMensagem, listaMensagens);
+								
+								_this.dialog("destroy");
+								
+								return;
+								
 							}
 
-							if (!result) {
+							if (!result.isCotasAusentes) {
 								fechamentoEncalheController.isFechamento = true;
 								fechamentoEncalheController.popup_encerrarEncalhe(true);
 							} else {
@@ -875,6 +883,15 @@ var fechamentoEncalheController = $.extend(true, {
 	analiticoEncalhe : function() {
 		$('#workspace').tabs('addTab', "Anal&iacute;tico Encalhe", "/nds-client/devolucao/fechamentoEncalhe/analitico");
 	},
+	
+	nextInputExemplares : function(curIndex,evt) {
+		
+		if (evt.keyCode == 13) {
+			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
+			nextElement.select();
+			nextElement.focus();
+		}
+	}
 	
 }, BaseController);
 //@ sourceURL=fechamentoEncalhe.js

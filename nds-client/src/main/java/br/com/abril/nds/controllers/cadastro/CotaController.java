@@ -40,6 +40,7 @@ import br.com.abril.nds.dto.TipoDescontoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
@@ -47,11 +48,10 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
@@ -364,6 +364,10 @@ public class CotaController extends BaseController {
 				String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
 					
 				CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
+				
+				if (cota.getSituacaoCadastro() != null) {
+					cotaVO.setStatus(cota.getSituacaoCadastro().toString());
+				}
 	
 				listaCotasAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, cotaVO));
 			}
@@ -413,8 +417,13 @@ public class CotaController extends BaseController {
 		for (Cota cota : cotas){
 		
 		    String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
-				
-		    cotasVO.add( new CotaVO(cota.getNumeroCota(), nomeExibicao) );
+		    
+		    CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
+		    if (cota.getSituacaoCadastro() != null) {
+		    	cotaVO.setStatus(cota.getSituacaoCadastro().toString());	
+			}
+		    
+		    cotasVO.add(cotaVO);
 		}
 		
 		if (cotasVO.size() > 1){

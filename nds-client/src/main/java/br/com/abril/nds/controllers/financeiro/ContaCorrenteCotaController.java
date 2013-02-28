@@ -451,6 +451,12 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		List<ConsultaVendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
 				.obterMovimentoVendaEncalhe(filtro);
+		
+		for(ConsultaVendaEncalheDTO eDTO : encalheDTOs){
+			
+			eDTO.setPrecoComDesconto( (eDTO.getPrecoComDesconto()==null)?BigDecimal.ZERO:eDTO.getPrecoComDesconto().setScale(2,1));
+			eDTO.setTotal( (eDTO.getTotal()==null)?BigDecimal.ZERO:eDTO.getTotal().setScale(2,1));
+		}
 
 		TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>>();
 

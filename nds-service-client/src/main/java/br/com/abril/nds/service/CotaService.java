@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -361,5 +363,7 @@ public interface CotaService {
 	List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
 	
 	List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
+
+	List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
 }

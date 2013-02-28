@@ -61,4 +61,21 @@ public class EnderecoCotaRepositoryImpl extends AbstractRepositoryModel<Endereco
 		
 		return (EnderecoCota) criteria.uniqueResult();
 	}
+	
+	@Override
+	public Long obterQtdEnderecoAssociadoCota(Long idCota){
+		
+		StringBuilder hql = new StringBuilder("select distinct ");
+		hql.append(" count(endCota.id) + count(endPes.id) ")
+		   .append(" from Cota cota ")
+		   .append(" join cota.enderecos endCota ")
+		   .append(" join cota.pessoa pesCota ")
+		   .append(" left join pesCota.enderecos endPes ")
+		   .append(" where cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		return (Long) query.uniqueResult();
+	}
 }

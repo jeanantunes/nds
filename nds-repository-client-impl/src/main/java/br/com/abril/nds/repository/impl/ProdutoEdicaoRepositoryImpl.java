@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,6 +25,7 @@ import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
+import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -248,11 +250,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select lancamento.produtoEdicao from Lancamento lancamento ");
+		hql.append(" select chamadaEncalhe.produtoEdicao from ChamadaEncalhe chamadaEncalhe ");
 		
-		hql.append(" where lancamento.sequenciaMatriz = :sequenciaMatriz ");
+		hql.append(" where chamadaEncalhe.sequencia = :sequenciaMatriz ");
 		
-		hql.append(" and lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
+		hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimentoDistribuidor ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -265,29 +267,40 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 	/*
 	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterCodigoMatrizPorProdutoEdicao(java.lang.Long)
+	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterCodigoMatrizPorProdutoEdicao(java.lang.Long, java.util.Date)
 	 */
-	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao) {
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select lancamento.sequenciaMatriz from Lancamento lancamento ");
+		hql.append(" select chamadaEncalhe.sequencia from ChamadaEncalhe chamadaEncalhe ");
 		
-		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		hql.append(" where chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
 
-		hql.append(" and lancamento.dataLancamentoDistribuidor = ");
-
-		hql.append(" ( ");
-		
-		hql.append(" select max(lancamento.dataLancamentoDistribuidor) from Lancamento lancamento  ");
-		
-		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao   ");
-		
-		hql.append(" ) ");
+		if(dataRecolhimento != null) {
+			
+			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+					
+		} else {
+			
+			hql.append(" and chamadaEncalhe.dataRecolhimento = ");
+			
+			hql.append(" ( ");
+			
+			hql.append(" select max(ce.dataRecolhimento) from ChamadaEncalhe ce  ");
+			
+			hql.append(" where ce.produtoEdicao.id = :idProdutoEdicao   ");
+			
+			hql.append(" ) ");			
+		}
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		if(dataRecolhimento!=null) {
+			query.setParameter("dataRecolhimento", dataRecolhimento);
+		}
 		
 		return (Integer) query.uniqueResult();
 	}
@@ -1196,6 +1209,72 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
         }
 }
 
+
+	@Override
+	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro) {
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		hql.append(" produto.codigo as codigoProduto, ");
+		hql.append(" produto.nome as nomeProduto, ");
+		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
+//		hql.append(" CAMPO PERIODO DEPENDENDO DE JTRAC ");
+		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
+		hql.append(" lancamento.reparte as repartePrevisto, ");
+		hql.append(" (estoqueProduto.qtdeDevolucaoFornecedor - movimentos.qtde) as qtdeVendas,");
+		hql.append(" lancamento.status as situacaoLancamento, ");
+		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa ");
+		
+		hql.append(" FROM EstoqueProduto estoqueProduto");
+		hql.append(" LEFT JOIN estoqueProduto.movimentos as movimentos");
+		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
+		hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao");
+		hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
+		hql.append(" JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
+		
+		hql.append(" WHERE ");
+//		hql.append(" tipoMovimento.id = 21 and ");
+	
+		if (filtro.getProdutoDto() != null) {
+			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
+				hql.append(" produto.codigo = :codigoProduto ");
+				parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
+			}
+			else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
+				hql.append(" produto.nome = :nomeProduto ");
+				parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
+			}
+		}
+		
+		if (filtro.getTipoClassificacaoProdutoId() != null && filtro.getTipoClassificacaoProdutoId() > 0l) {
+			hql.append(" and tipoClassificacaoProduto.id = :tipoClassificacaoProdutoId ");
+			parameters.put("tipoClassificacaoProdutoId", filtro.getTipoClassificacaoProdutoId());
+		}
+		if (filtro.getNumeroEdicao() != null && filtro.getNumeroEdicao() > 0l) {
+			hql.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ");
+			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
+		} 
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
+		
+		this.setParameters(query, parameters);
+		
+		return query.list();
+	}
+
+	
+	private void setParameters(Query query, Map<String, Object> parameters) {
+		for (String key : parameters.keySet()) {
+			query.setParameter(key, parameters.get(key));
+		}
+	}
+	
 	/*@Override
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto) {
 		String queryString = "SELECT "
@@ -1233,4 +1312,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			return new HashSet<ProdutoEdicao>(query.list());
 	}*/
 
+	
+	
 }

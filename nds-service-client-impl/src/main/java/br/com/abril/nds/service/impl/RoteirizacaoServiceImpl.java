@@ -281,6 +281,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	public List<Rota> obterRotasPorCota(Integer numeroCota) {
 		return rotaRepository.obterRotasPorCota(numeroCota);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQtdRotasPorCota(Integer numeroCota){
+		
+		return this.rotaRepository.obterQtdRotasPorCota(numeroCota);
+	}
 
 	@Override
 	@Transactional(readOnly=true)
@@ -901,7 +908,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		Set<Long> roteirosExclusao = roteirizacaoDTO.getRoteirosExclusao();
         
 		processarRoteirosExcluidos(roteirizacaoExistente, roteirosExclusao);
-        
+       		
 		for (RoteiroRoteirizacaoDTO roteiroDTO : roteirizacaoDTO.getTodosRoteiros()) {
         
 			Roteiro roteiro;
@@ -984,7 +991,12 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
         }
 		
 		roteirizacaoRepository.alterar(roteirizacaoExistente);
-       	
+		
+		if(roteirizacaoDTO.getRoteiros() == null || roteirizacaoDTO.getRoteiros().isEmpty()) {
+			
+			roteirizacaoRepository.removerPorId(roteirizacaoDTO.getId());
+		}
+		
 		return roteirizacaoExistente;
     }
 
@@ -1002,8 +1014,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 				for(Rota rota : roteiro.getRotas()) {
 					
 					Entregador entregador = rota.getEntregador();
+					
+					rota.setRoteiro(null);
+					
+					this.rotaRepository.merge(rota);
 				
 					if(entregador != null){
+						
 						entregador.setRota(null);
 					
 						this.entregadorRepository.merge(entregador);
@@ -1018,13 +1035,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 							Cota cota = pdv.getCota();
 							
 							if(cota != null) {
+								
 								cota.setBox(null);
+								
 								this.cotaRepository.merge(cota);
 							}
 						}
 					}
 				}
 			}
+			
+			this.roteiroRepository.removerPorId(idRoteiroExclusao);
 		}
 		
 	}

@@ -143,6 +143,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("	cota1_.NUMERO_COTA = :numeroCota ")
            .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
            .append("	and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
+           .append("    and movimentos4_.QTDE != 0 ")
            .append("group by ")
            .append("	produto8_.CODIGO , ")
            .append("	produto8_.NOME , ")
@@ -211,6 +212,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("					on movimentos11_.MVTO_FINANCEIRO_COTA_ID=movimentof12_.ID ")
            .append("			) ")
            .append("		)  ")
+           .append("    and movimentos2_.QTDE != 0 ")
            .append("group by ")
            .append("	produto6_.CODIGO , ")
            .append("	produto6_.NOME , ")
@@ -347,8 +349,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	TIPO_MOVIMENTO tipomovime13_ ") 
 		   .append("where ")
 		   .append("	movimentof4_.TIPO_MOVIMENTO_ID=tipomovime13_.ID ")
-		   .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
 		   .append("	and cota1_.NUMERO_COTA = :numeroCota ")
+		   .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
 		   .append("	and tipomovime13_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ") 
 		   .append("group by ")
 		   .append("	produto9_.CODIGO , ")
@@ -366,35 +368,53 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	produtoedi6_.NUMERO_EDICAO as numeroEdicao, ")
 		   .append("	produtoedi6_.PRECO_VENDA as precoCapa, ")
 		   .append("	movimentos3_.VALOR_DESCONTO as desconto, ")
-		   .append("	produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*movimentos3_.VALOR_DESCONTO/100) as precoComDesconto, ")
-		   .append("	sum(movimentos3_.QTDE*(produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*movimentos3_.VALOR_DESCONTO/100))) as total, ")
-		   .append("	movimentos3_.QTDE as exemplares  ")
+		   .append("	CASE WHEN (produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*movimentos3_.VALOR_DESCONTO/100)) IS NOT NULL THEN (produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*movimentos3_.VALOR_DESCONTO/100)) ELSE (vendaProduto.VALOR_TOTAL_VENDA / vendaProduto.QNT_PRODUTO) END as precoComDesconto, ")
+		   .append("	sum(CASE WHEN movimentos3_.QTDE*(produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*movimentos3_.VALOR_DESCONTO/100)) IS NOT NULL THEN movimentos3_.QTDE*(produtoedi6_.PRECO_VENDA-(produtoedi6_.PRECO_VENDA*movimentos3_.VALOR_DESCONTO/100)) ELSE vendaProduto.VALOR_TOTAL_VENDA END) as total, ")
+		   .append("	CASE WHEN movimentos3_.QTDE IS NOT NULL THEN movimentos3_.QTDE ELSE vendaProduto.QNT_PRODUTO END as exemplares  ")
+		   
 		   .append("from ")
 		   .append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
+		   
 		   .append("left outer join ")
 		   .append("	COTA cota1_  ")
 		   .append("		on movimentof0_.COTA_ID=cota1_.ID  ")
+		   
 		   .append("left outer join ")
 		   .append("	MOVIMENTO_ESTOQUE_COTA movimentos3_  ")
 		   .append("		on movimentof0_.ID=movimentos3_.MOVIMENTO_FINANCEIRO_COTA_ID  ")
+		   
+		   .append("left outer join ")
+		   .append("	VENDA_PRODUTO_MOVIMENTO_FINANCEIRO vendaProdutoMF  ")
+		   .append("		on movimentof0_.ID=vendaProdutoMF.ID_MOVIMENTO_FINANCEIRO ")
+		   
+		   .append("left outer join ")
+		   .append("	VENDA_PRODUTO vendaProduto  ")
+		   .append("		on vendaProdutoMF.ID_VENDA_PRODUTO=vendaProduto.ID ")
+		   
+		   .append("left outer join ")
+		   .append("	PRODUTO_EDICAO produtoedi6_  ")
+		   .append("		on vendaProduto.ID_PRODUTO_EDICAO=produtoedi6_.ID  ")
+
 		   .append("left outer join ")
 		   .append("	TIPO_MOVIMENTO tipomovime4_  ")
 		   .append("		on movimentos3_.TIPO_MOVIMENTO_ID=tipomovime4_.ID  ")
+		   
 		   .append("left outer join ")
 		   .append("	ESTOQUE_PRODUTO_COTA estoquepro5_  ")
 		   .append("		on movimentos3_.ESTOQUE_PROD_COTA_ID=estoquepro5_.ID  ")
-		   .append("left outer join ")
-		   .append("	PRODUTO_EDICAO produtoedi6_  ")
-		   .append("		on estoquepro5_.PRODUTO_EDICAO_ID=produtoedi6_.ID  ")
+		   
 		   .append("left outer join ")
 		   .append("	PRODUTO produto7_  ")
 		   .append("		on produtoedi6_.PRODUTO_ID=produto7_.ID  ")
+		   
 		   .append("left outer join ")
 		   .append("	PRODUTO_FORNECEDOR fornecedor8_  ")
 		   .append("		on produto7_.ID=fornecedor8_.PRODUTO_ID  ")
+		   
 		   .append("left outer join ")
 		   .append("	FORNECEDOR fornecedor9_  ")
 		   .append("		on fornecedor8_.fornecedores_ID=fornecedor9_.ID  ")
+		   
 		   .append("left outer join ")
 		   .append("	PESSOA pessoajuri10_  ")
 		   .append("		on fornecedor9_.JURIDICA_ID=pessoajuri10_.ID ")
@@ -450,9 +470,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ConsultaVendaEncalheDTO.class));
 		
-		query.setParameter("dataConsolidado", filtro.getDataConsolidado());
 		query.setParameter("numeroCota", filtro.getNumeroCota());
-		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR.toString());
+		query.setParameter("dataConsolidado", filtro.getDataConsolidado());
+		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR.name());
 		
 		if(filtro.getPaginacao() != null && 
 				filtro.getPaginacao().getPosicaoInicial() != null && 
@@ -763,6 +783,32 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			
 			query.setParameterList("idsCota", idsCota);
 		}
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeDividasGeradasData(Date dataVencimentoDebito, Long... idsCota) {
+		
+		StringBuilder hql = new StringBuilder("select count(c.id) ");
+		hql.append(" from ConsolidadoFinanceiroCota c, Divida divida ")
+		   .append(" where c.dataConsolidado = :dataVencimentoDebito ")
+		   .append(" and c.id = divida.consolidado.id ")
+		   .append(" and divida.data = :dataVencimentoDebito ");
+		
+		if (idsCota != null) {
+			
+			hql.append("and c.cota.id in (:idsCota)");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (idsCota != null) {
+			
+			query.setParameterList("idsCota", idsCota);
+		}
+		
+		query.setParameter("dataVencimentoDebito", dataVencimentoDebito);
 		
 		return (Long) query.uniqueResult();
 	}

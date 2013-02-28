@@ -31,12 +31,10 @@ import com.google.gson.JsonObject;
  */
 @Service
 public class CapaServiceImpl implements CapaService {	
-	
 	private static final String DB_NAME  =  "capas";
 
 	@Autowired
 	private CouchDbProperties couchDbProperties;
-
 
 	private CouchDbClient couchDbClient;
 

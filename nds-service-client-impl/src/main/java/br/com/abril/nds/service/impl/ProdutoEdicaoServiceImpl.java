@@ -22,7 +22,9 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
+import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
@@ -32,14 +34,13 @@ import br.com.abril.nds.model.cadastro.Dimensao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SegmentacaoProduto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
@@ -1101,6 +1102,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		
 		return porcentagemDesconto;
+	}
+
+	@Override
+	@Transactional
+	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro) {
+		return this.produtoEdicaoRepository.obterEdicoesProduto(filtro);
 	}
 	
 }
