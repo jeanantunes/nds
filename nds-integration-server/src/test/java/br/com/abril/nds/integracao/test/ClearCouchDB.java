@@ -32,7 +32,7 @@ public class ClearCouchDB {
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
 		
-		view.key("EMS0137");
+		view.key("EMS0135");
 		view.limit(couchDbProperties.getBachSize());
 		view.includeDocs(true);
 		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, null);
