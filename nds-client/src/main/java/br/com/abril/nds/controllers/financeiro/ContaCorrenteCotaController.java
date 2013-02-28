@@ -287,8 +287,13 @@ public class ContaCorrenteCotaController extends BaseController {
 		for (ConsignadoCotaDTO consignado : listaConsignadoCota) {
 			 key = consignado.getNomeFornecedor();
 			 valor = consignado.getTotal();
-			if(mapFornecedores.containsKey(key)){				
-				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
+			if(mapFornecedores.containsKey(key) && valor != null){
+				valor = mapFornecedores.get(key).getValorTotal().add(valor);
+			}
+			
+			if (valor == null){
+				
+				valor = BigDecimal.ZERO;
 			}
 			
 			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
