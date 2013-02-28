@@ -3,7 +3,7 @@ package br.com.abril.nds.integracao.ems0136.processor;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -214,6 +214,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 
 		// Resgata todos os itens recebimentos fisicos para armazenar no novo lancamento
+		List<ItemRecebimentoFisico> itens = obtemItensRecebimentosFisicos(
+				lancamentoParcial, dataOperacao);
+		
+		/*getSession().flush();
+		getSession().clear();
 		Set<ItemRecebimentoFisico> itens = new HashSet<ItemRecebimentoFisico>();
 		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
 			if (periodo.getLancamento() != null) {
@@ -221,8 +226,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 					itens.add(item);
 				}
 			}
-		}
-	
+		}*/
+
 		/* 
 		 * Exclui todos os Períodos que não foram gerados hoje (== DataOperacao)
 		 */
@@ -240,7 +245,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Executa as exclusões e limpa a sessão.
 		getSession().flush();
 		getSession().clear();
-		
+
 		
 		Integer numeroPeriodo = input.getNumeroPeriodo();
 		Criteria criteria = getSession().createCriteria(
@@ -254,10 +259,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			pParcial.setNumeroPeriodo(numeroPeriodo);
 			pParcial.setLancamentoParcial(lancamentoParcial);
 		}
-		
+
 		Lancamento lancamento = this.obterLancamento(input, 
 				lancamentoParcial.getProdutoEdicao());
-		lancamento.setRecebimentos(itens);
+		lancamento.setRecebimentos(new HashSet(itens));
 		pParcial.setLancamento(lancamento);
 		pParcial.setDataCriacao(dataOperacao);
 		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
@@ -273,6 +278,22 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		}
 		
 		return pParcial;
+	}
+
+	private List<ItemRecebimentoFisico> obtemItensRecebimentosFisicos(
+			LancamentoParcial lancamentoParcial, Date dataOperacao) {
+		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT l.recebimentos ");
+		hql.append("	FROM  PeriodoLancamentoParcial p ");
+		hql.append("	JOIN  p.lancamento l ");
+		hql.append(" WHERE p.lancamentoParcial = :lancamentoParcial ");
+		hql.append("   AND (p.dataCriacao <> :dataOperacao ");
+		hql.append("    OR p.dataCriacao IS NULL)");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setDate("dataOperacao", dataOperacao);
+		query.setParameter("lancamentoParcial", lancamentoParcial);
+		return (List<ItemRecebimentoFisico>) query.list();
 	}
 	
 	/**
