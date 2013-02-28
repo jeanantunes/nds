@@ -42,8 +42,8 @@ public class AjusteReparteServiceImpl implements AjusteReparteService  {
 
 	@Override
 	@Transactional
-	public void excluirAjuste(Long id) {
-		ajusteRepository.removerPorId(id);
+	public void excluirAjuste(Long idAjuste) {
+		ajusteRepository.removerPorId(idAjuste);
 		
 	}
 
@@ -58,4 +58,10 @@ public class AjusteReparteServiceImpl implements AjusteReparteService  {
 	public List<TipoSegmentoProduto> buscarTodosSegmentos() {
 		return tipoSegProdRepo.buscarTodos(); 
 	}
+
+//	@Override
+//	public void excluirAjustePorCota(Cota cota) {
+//		ajusteRepository.removerPorCota(cota);
+//		
+//	}
 }

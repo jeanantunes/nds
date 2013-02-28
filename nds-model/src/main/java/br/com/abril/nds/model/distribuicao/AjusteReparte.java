@@ -58,6 +58,9 @@ public class AjusteReparte implements Serializable {
 	@Column (name = "DATA_ALTERACAO")
 	private Date dataAlteracao;
 	
+	//@Column (name = "AJUSTE_POR_SEGMENTO")
+	//private TipoSegmentoProduto segmento;
+	
 	public AjusteReparte() {
 		this.dataAlteracao = new Date();
 	}

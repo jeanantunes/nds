@@ -13,32 +13,16 @@ init : function() {
 		buttonImage: contextPath + "/images/calendar.gif",
 		buttonImageOnly: true
 	});
+	
+	var isAjusteSegmento;
 
 	$("#AJUSTE_HISTORICO_input").mask("9.9"); 
 	$("#AJUSTE_ENCALHE_MAX_input").mask("99.9");
 	$("#AJUSTE_ENCALHE_MAX_input").val("50.0");
-/*
-	$(".lstSegmentosGrid").flexigrid({		
-		preProcess : ajusteReparteController.executarPreProcessSegmento,
-		dataType : 'json',
-		colModel : [ {
-			display : 'Segmento',
-			name : 'descricao',
-			width : 285,
-			sortable : true,
-			align : 'left'
-		}, 
-		{
-			display : '',
-			name : 'valor',
-			width : 70,
-			sortable : true,
-			align : 'center'
-		}],
-		width : 400,
-		height : 200
-	});
-	*/
+	$("#segmento1").mask("9.9");
+	$("#segmento2").mask("9.9");
+	$("#segmento3").mask("9.9");
+	
 	$(".cotasAjusteGrid").flexigrid({
 		preProcess : ajusteReparteController.executarPreProcessCotasAjuste,
 		dataType : 'json',
@@ -135,7 +119,6 @@ init : function() {
 	
 	
 	// PREPROCESS	
-
 	// Preprocess do faixaGrid
 	executarPreProcessCotasAjuste : function(resultado){
 		
@@ -165,25 +148,6 @@ init : function() {
 		return resultado;
 	},
 
-	/*
-	// Preprocess do Segmento
-	executarPreProcessSegmento : function(resultado){
-		
-		if (resultado.mensagens) {
-			exibirMensagem(
-					resultado.mensagens.tipoMensagem, 
-					resultado.mensagens.listaMensagens
-			);
-			
-			return resultado;
-		}
-		
-		$(".grids", ajusteReparteController.workspace).show();
-		
-		return resultado;
-	},
-
-	*/
 
 	//FUNCTIONS
 	
@@ -199,14 +163,9 @@ init : function() {
 			buttons: {
 				"Confirmar": function() {
 					$(this).dialog( "close" );
+
+					ajusteReparteController.tipoIncluir();
 					
-					var data = ajusteReparteController.getDados();				
-					
-					$.postJSON(contextPath + "/distribuicao/ajusteReparte/novoAjuste", data);
-					
-					$(".cotasAjusteGrid").flexReload();
-					
-					ajusteReparteController.limparPopUp();
 				},
 				"Cancelar": function() {
 					$(this).dialog( "close" );
@@ -217,6 +176,33 @@ init : function() {
 		});
 	},
 	
+	
+	tipoIncluir : function () {
+		
+		var data = ajusteReparteController.getDados();
+
+		
+		if (this.isAjusteSegmento == true){
+			data.push({name:"ajustes", value: ajusteReparteController.get("segmento1")});
+			data.push({name:"ajustes", value: ajusteReparteController.get("segmento2")});
+			data.push({name:"ajustes", value: ajusteReparteController.get("segmento3")});
+			
+			$.postJSON(contextPath + "/distribuicao/ajusteReparte/novoAjusteSegmento", data);
+			
+			$(".cotasAjusteGrid").flexReload();
+			
+			ajusteReparteController.limparPopUp();
+		}else{
+			var data = ajusteReparteController.getDados();				
+			
+			$.postJSON(contextPath + "/distribuicao/ajusteReparte/novoAjuste", data);
+			
+			$(".cotasAjusteGrid").flexReload();
+			
+			ajusteReparteController.limparPopUp();
+		}
+		
+	},
 	
 	
 //	ARRAY DE PARAMETROS	 
@@ -235,6 +221,7 @@ init : function() {
 		  
 		  return data;
 		 },
+		 
 	
 //	PEGANDO O VALOR DOS CAMPOS	 
 		 
@@ -254,6 +241,10 @@ init : function() {
 		 
 	getRadio : function (){
 		var valRadio = $('input:radio[name=formaAjuste]:checked').val();
+		
+		if (valRadio == "AJUSTE_SEGMENTO"){
+			this.isAjusteSegmento = true;
+		}
 		
 		return valRadio;
 	},
@@ -298,6 +289,42 @@ init : function() {
            return;
     }
 },
+
+	formatarAjusteAplicadoSegmento1 : function (){
+		var indiceAjuste1 = $("#segmento1").val();
+	    
+		if(indiceAjuste1 < 0.5 || indiceAjuste1 > 1.5){        
+	           var erros = new Array();
+	           erros[0] = "O Índice deve estar entre 0.5 e 1.5.";
+	           exibirMensagemDialog('WARNING',   erros,"");                
+	           $("#Segmento1").val("");
+	           return;
+	    }
+	},
+	
+	formatarAjusteAplicadoSegmento2 : function (){
+		var indiceAjuste2 = $("#segmento2").val();
+	    
+		if(indiceAjuste2 < 0.5 || indiceAjuste2 > 1.5){        
+	           var erros = new Array();
+	           erros[0] = "O Índice deve estar entre 0.5 e 1.5.";
+	           exibirMensagemDialog('WARNING',   erros,"");                
+	           $("#Segmento2").val("");
+	           return;
+	    }
+	},
+	
+	formatarAjusteAplicadoSegmento3 : function (){
+		var indiceAjuste3 = $("#segmento3").val();
+	    
+		if(indiceAjuste3 < 0.5 || indiceAjuste3 > 1.5){        
+	           var erros = new Array();
+	           erros[0] = "O Índice deve estar entre 0.5 e 1.5.";
+	           exibirMensagemDialog('WARNING',   erros,"");                
+	           $("#Segmento3").val("");
+	           return;
+	    }
+	},
 	
 	
 	editarAjuste : function(idAjusteReparte) {
@@ -347,6 +374,14 @@ init : function() {
 		$("#motivoAjuste").val(result.motivoAjuste);
 		$("#dataInicio").val(result.dataInicio);
 		$("#dataFim").val(result.dataFim);
+		$("#segmento1").val(result.ajusteAplicado);
+		
+		$("#segmento2").hide();
+		$("#tipoSegmento2").hide();
+		$("#segmento3").hide();
+		$("#tipoSegmento3").hide();
+		
+//		$("#segmento1").val(result.motivoAjuste);
 	},
 	
 	

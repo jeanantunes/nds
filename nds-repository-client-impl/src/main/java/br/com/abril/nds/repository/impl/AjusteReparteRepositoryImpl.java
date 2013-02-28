@@ -7,6 +7,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AjusteReparteDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.AjusteReparte;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AjusteReparteRepository;
@@ -111,4 +112,32 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
 	}
+
+//	@Override
+//	public void removerPorIdCota(Long idCota) {
+//
+//		StringBuilder hql = new StringBuilder();
+//		
+//		hql.append(" DELETE FROM AjusteReparte ");
+//		hql.append(" WHERE cota_ID = :ID_COTA ");
+//
+//		Query query = super.getSession().createQuery(hql.toString());
+//
+//		query.setParameter("ID_COTA", idCota);
+//		
+//		
+//	}
+//
+//	@Override
+//	public void removerPorCota(Cota cota) {
+//
+//	StringBuilder hql = new StringBuilder();
+//		
+//		hql.append(" DELETE FROM AjusteReparte ");
+//		hql.append(" WHERE cota = :COTA ");
+//
+//		Query query = super.getSession().createQuery(hql.toString());
+//
+//		query.setParameter("COTA", cota);
+//	}
 }

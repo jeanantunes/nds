@@ -43,29 +43,29 @@ $(function(){
 			<table class="lstSegmentosGrid">
 				<tr>
 				<td>
-				<select name="tipoSegmento" id="tipoSegmento1" style="width: 200px;" >
+				<select name="tipoSegmento1" id="tipoSegmento1" style="width: 200px;" >
 					<option selected="selected">Selecione...</option>
-						<c:forEach items="${ListaSegmentos}" var="segmento">
-					<option value="${segmento.key}">${segmento.value}</option>
+						<c:forEach items="${listaSegmentos}" var="segmento">
+					<option value="${segmento.id}">${segmento.descricao}</option>
 						</c:forEach>	
 				</select>
 				</td>
 				<td>
-				<input name="Segmento" id="Segmento" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
+				<input name="segmento1" id="segmento1" onblur="ajusteReparteController.formatarAjusteAplicadoSegmento1();" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
 				</td>
 				</tr>
 
 				<tr>
 				<td>
-				<select name="tipoSegmento" id="tipoSegmento2" style="width: 200px;" >
+				<select name="tipoSegmento2" id="tipoSegmento2" style="width: 200px;" >
 					<option selected="selected">Selecione...</option>
-						<c:forEach items="${listaMotivosStatusCota}" var="motivo">
-					<option value="${motivo.key}">${motivo.value}</option>
+						<c:forEach items="${listaSegmentos}" var="segmento">
+					<option value="${segmento.id}">${segmento.descricao}</option>
 						</c:forEach>	
 				</select>
 				</td>				
 				<td>
-				<input name="Segmento" id="Segmento" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
+				<input name="segmento2" id="segmento2" onblur="ajusteReparteController.formatarAjusteAplicadoSegmento2();" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
 				</td>				
 				</tr>
 
@@ -73,13 +73,13 @@ $(function(){
 				<td>
 				<select name="tipoSegmento3" id="tipoSegmento3" style="width: 200px;" >
 					<option selected="selected">Selecione...</option>
-						<c:forEach items="${listaMotivosStatusCota}" var="motivo">
-					<option value="${motivo.key}">${motivo.value}</option>
+						<c:forEach items="${listaSegmentos}" var="segmento">
+					<option value="${segmento.id}">${segmento.descricao}</option>
 						</c:forEach>	
 				</select>
 				</td>
 				<td>
-				<input name="Segmento" id="Segmento" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
+				<input name="segmento3" id="segmento3" onblur="ajusteReparteController.formatarAjusteAplicadoSegmento3();" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
 				</td>
 				</tr>	
 			</table>

@@ -215,8 +215,6 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		height : 80
 	});
 
-//informacoesProdutoController.carregarProdutosCadastrados();
-
 },
 
 
@@ -244,7 +242,6 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			
 			
 			var capa = '<a href="javascript:;" onmouseover="informacoesProdutoController.popUpCapaOpen('+"'"+row.cell.codProduto+"'"+','+row.cell.numeroEdicao+', event);" onmouseout="informacoesProdutoController.popUpCapaClose(event);" style="cursor:pointer">'+row.cell.numeroEdicao+'</a>'; 
-//						<img onmouseover="historicoVendaController.popUpCapaOpen("",2410, event);" onmouseout="historicoVendaController.popUpCapaClose(event);" style="cursor:pointer" src="images/ico_detalhes.png">
 			
 			row.cell.numeroEdicao = capa;
 			
@@ -299,8 +296,6 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 
 	filtroPrincipal : function(){
 		var codigo = $("#idCodigo").val();
-//		var nomeProduto = $("# ").val();
-//		var classificacao = $("# ").val();
 		
 		$(".produtosInfosGrid", this.workspace).flexOptions({
 			url: contextPath + "/distribuicao/informacoesProduto/buscarProduto",
@@ -314,8 +309,6 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	},
 	
 	pop_detalhes : function (codProd, numeroEdicao){
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-		
 	
 		$( "#dialog-detalhe" ).dialog({
 			resizable: false,
@@ -374,57 +367,16 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 	},
 	
-	/*
-	 * pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo,this.workspace).val();
-
-		codigoProduto = $.trim(codigoProduto);
-
-		$(idCodigo,this.workspace).val(codigoProduto);
-
-		$(idProduto,this.workspace).val("");
-
-		if (codigoProduto && codigoProduto.length > 0) {
-
-			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					{codigoProduto:codigoProduto},
-					function(result) { vendaProdutoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, successCallBack); },
-					function() { vendaProdutoController.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
-
-		} else {
-
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-	 */
-	
 	caracteristicasProd : function(result){
-		
 		$("#precoCapa").val(result.precoVenda).disable();;
 		$("#pctPadrao").val(result.pacotePadrao).disable();;
 		$("#chamadaCapa").val(result.chamadaCapa).disable();;
 		$("#boletimInfor").val(result.boletimInformativo).disable();;
 		$("#nomeComercial").val(result.nomeComercial).disable();;
 		
-		
-		/*
-		 * 
-		$(".editorBaseApuradaGrid").flexOptions({
-			url: contextPath + "/distribuicao/informacoesProduto/buscarCaracteristicas",
-			dataType : 'json',
-			params:[{
-				name : 'codProd', value:codProd
-			}]
-		});
-		
-		$("#chamadaCapa").val('listaCaracteristicas.chamadaCapa');
-		 */
 	},
 	
 	pop_capa : function(){
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-capa" ).dialog({
 			resizable: false,
@@ -436,7 +388,6 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 
 	  
 	  popUpCapaOpen : function popUpCapaOpen(codigoProduto, numeroEdicao, event) {
-		  //$( "#dialog:ui-dialog" ).dialog( "destroy" );
 		 
 		  produto = {
 		    codigoProduto : codigoProduto,
@@ -489,14 +440,6 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			          + numeroEd);
 			   },
 		   
-		   
-	  /*
-	   * 
-$(function() {
-		$( "#tabsRanking" ).tabs();
-	}
-),
-	   */
 }, BaseController);
 //@ sourceURL=informacoesProduto.js
 

@@ -49,11 +49,4 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 		return infoProdutosRepo.buscarCaracteristicas(codProduto, numEdicao);
 	}
 
-	/*
-	@Override
-	@Transactional
-	public AjusteReparteDTO buscarPorIdAjuste(Long id) {
-		return ajusteRepository.buscarPorIdAjuste(id);
-	}
-	*/
 }

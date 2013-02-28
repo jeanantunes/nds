@@ -20,9 +20,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.InformacoesProdutoService;
-import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
@@ -43,9 +41,6 @@ public class InformacoesProdutoController extends BaseController {
 	private Result result;
 	
 	@Autowired
-	private CotaService cotaService;
-	
-	@Autowired
 	private InformacoesProdutoService infoProdService;
 	
 	@Autowired
@@ -55,9 +50,6 @@ public class InformacoesProdutoController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
-	@Autowired
-	private UsuarioService usuarioService;
 	
 	public InformacoesProdutoController(Result result) {
 		this.result = result;

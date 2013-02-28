@@ -36,13 +36,15 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" prodEdicao.precoVenda AS preco, ");
 		hql.append(" lancamento.tipoLancamento AS status, ");
 		hql.append(" prodEdicao.reparteDistribuido AS reparteDistribuido, ");
-		hql.append(" prodEdicao.reparteDistribuido AS venda, "); // DADO INCONSISTENTE...
 		hql.append(" produto.percentualAbrangencia AS percentualAbrangencia, ");
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
+
+		hql.append(" prodEdicao.reparteDistribuido AS venda, "); // DADO INCONSISTENTE...
 		hql.append(" prodEdicao.reparteDistribuido AS tipoDistribuicaoGhoma, "); // DADO INCONSISTENTE...
-		hql.append(" algortm.descricao AS algoritmo, "); 
 		hql.append(" prodEdicao.reparteDistribuido AS reparteMinimoGhoma, "); // DADO INCONSISTENTE...
+		
+		hql.append(" algortm.descricao AS algoritmo, "); 
 		hql.append(" estudoG.id AS estudo "); 
 
 		hql.append(" FROM ProdutoEdicao AS prodEdicao ");
@@ -50,19 +52,19 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" left join prodEdicao.produto AS produto ");
 		hql.append(" left join prodEdicao.lancamentos AS lancamento ");
 		hql.append(" left join produto.algoritmo AS algortm ");
-		hql.append(" left join lancamento.estudo AS estudoG ");
+		hql.append(" INNER join lancamento.estudo AS estudoG ");
 		
 //		hql.append(" group by prodEdicao.numeroEdicao ");
 
 		hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
-//		hql.append(" AND produto.nome = :NOME_PRODUTO ");
+		hql.append(" OR produto.nome = :NOME_PRODUTO ");
 		
 		hql.append(" ORDER BY numeroEdicao ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 
 		query.setParameter("COD_PRODUTO", filtro.getCodProduto());
-//		query.setParameter("NOME_PRODUTO", filtro.getNomeProduto());
+		query.setParameter("NOME_PRODUTO", filtro.getNomeProduto());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
 		

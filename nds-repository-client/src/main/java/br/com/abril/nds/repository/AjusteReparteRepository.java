@@ -10,4 +10,8 @@ public interface AjusteReparteRepository extends Repository<AjusteReparte, Long>
 	List<AjusteReparteDTO> buscarTodasCotas (AjusteReparteDTO dto);
 	
 	AjusteReparteDTO buscarPorIdAjuste (Long id);
+	
+//	void removerPorIdCota (Long numCota);
+//	
+//	void removerPorCota (Cota cota);
 }

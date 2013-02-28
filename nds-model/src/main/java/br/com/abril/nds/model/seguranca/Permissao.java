@@ -42,6 +42,8 @@ public enum Permissao
 	ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS("Exceção de Segmentos e Parciais",					 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO("Matriz Distribuição"				 ,					 	   	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA("Classificação Não Recebida",						 	   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS("Analise de Estudos", 				  							   Permissao.ROLE_DISTRIBUICAO),
+	
 	ROLE_ESTOQUE("Estoque",																	  			   null),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS("Lançamento Faltas e Sobras",									   Permissao.ROLE_ESTOQUE),
