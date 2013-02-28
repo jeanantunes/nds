@@ -133,14 +133,14 @@ var negociacaoDividaController = $.extend(true, {
 			value.cell.detalhes = detalhes;
 			value.cell.acao = acao;
 
-			total += floatValue(value.cell.total);
+			total += parseFloat( formatMoneyValue(value.cell.total) ); 
 			
-			value.cell.total = floatToPrice(floatValue(value.cell.total));
-			value.cell.vlDivida = floatToPrice(floatValue(value.cell.vlDivida));
+			value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
+			value.cell.vlDivida = floatToPrice(formatMoneyValue(value.cell.vlDivida));
 			
 		});
 
-		$('#total', this.workspace).html(floatToPrice(total));
+		$('#total', this.workspace).html(floatToPrice(total.toFixed(2)));
 
 		return data;
 	},
