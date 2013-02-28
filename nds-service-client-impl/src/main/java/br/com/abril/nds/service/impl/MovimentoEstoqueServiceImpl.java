@@ -262,7 +262,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 			movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
 			movimentoEstoque.setAprovador(new Usuario(idUsuario));
-			movimentoEstoque.setDataAprovacao(this.distribuidorService.obter().getDataOperacao());
+			movimentoEstoque.setDataAprovacao(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
 			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque,movimentoEstoque);			
 			
@@ -826,5 +826,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					produtoServico.getProdutoEdicao().getId(),
 					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null);
 		}
+	}
+	
+	@Override
+	public BigInteger obterReparteDistribuidoProduto(String produtoEdicaoId){
+		return this.movimentoEstoqueRepository.obterReparteDistribuidoProduto(produtoEdicaoId);
 	}
 }

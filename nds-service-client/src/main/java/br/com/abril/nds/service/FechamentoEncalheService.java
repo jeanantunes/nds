@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
@@ -58,4 +59,6 @@ public interface FechamentoEncalheService {
 	Date buscarUtimoDiaDaSemanaRecolhimento();
 	
 	void gerarNotaFiscal(Date dataEncalhe);
+
+	List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 }

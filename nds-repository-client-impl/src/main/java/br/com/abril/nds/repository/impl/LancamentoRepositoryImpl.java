@@ -562,7 +562,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID) ");
 		sql.append(" as expectativaEncalhe, ");
 		
-		sql.append(" (select sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(produtoEdicao.DESCONTO_LOGISTICA_ID, produto.DESCONTO_LOGISTICA_ID, 0)) / 100 ) )) ");
+		sql.append(" (select sum(((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) - ((epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO, descontoLogisticaProduto.PERCENTUAL_DESCONTO, 0)) ) )) ");
 		sql.append(" from COTA cota, ESTOQUE_PRODUTO_COTA epc ");
 		sql.append(" where epc.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
 		sql.append(" and cota.ID = epc.COTA_ID) ");
@@ -575,7 +575,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" end as possuiChamada, ");
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
 		
-		sql.append(" ((coalesce(produtoEdicao.DESCONTO_LOGISTICA_ID, produto.DESCONTO_LOGISTICA_ID, 0))) as desconto, ");
+		sql.append(" ((coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO, descontoLogisticaProduto.PERCENTUAL_DESCONTO, 0))) as desconto, ");
 		
 		sql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
 		sql.append(" produtoEdicao.PESO as peso, ");
@@ -628,13 +628,20 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" inner join ");
 		sql.append(" EDITOR editor ");
 		sql.append(" on produto.EDITOR_ID = editor.ID ");
+		
+		sql.append(" left join ");
+		sql.append(" DESCONTO_LOGISTICA descontoLogisticaProdutoEdicao ");
+		sql.append(" on descontoLogisticaProdutoEdicao.ID = produtoEdicao.DESCONTO_LOGISTICA_ID ");
+		sql.append(" left join ");
+		sql.append(" DESCONTO_LOGISTICA descontoLogisticaProduto ");
+		sql.append(" on descontoLogisticaProduto.ID = produto.DESCONTO_LOGISTICA_ID ");
+
 		sql.append(" inner join ");
 		sql.append(" PESSOA pessoa ");
 		sql.append(" on editor.JURIDICA_ID = pessoa.ID, ");
-		
 		sql.append(" PESSOA pessoaFornecedor, ");
 		sql.append(" TIPO_PRODUTO tipoProduto ");
-
+		
 		sql.append(" where ");
 		sql.append(" fornecedor.JURIDICA_ID=pessoaFornecedor.ID ");
 		sql.append(" and lancamento.STATUS in (:statusParaBalanceamentoRecolhimento) ");
@@ -701,8 +708,8 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("expectativaEncalheSede")
 													  .addScalar("expectativaEncalheAtendida")
 													  .addScalar("expectativaEncalheAlternativo")
-													  .addScalar("valorTotal")
-													  .addScalar("desconto",StandardBasicTypes.BIG_DECIMAL)
+													  .addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL)
+													  .addScalar("desconto", StandardBasicTypes.BIG_DECIMAL)
 													  .addScalar("parcial")
 													  .addScalar("peso", StandardBasicTypes.LONG)
 													  .addScalar("idEditor", StandardBasicTypes.LONG)
@@ -1062,9 +1069,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.NUMERO_REPROGRAMACOES as numeroReprogramacoes, ");
 		
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
-		sql.append(" (lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - coalesce(produto.DESCONTO_ID, 0, (select VALOR from DESCONTO where ID = produto.DESCONTO_ID))) ");
+		sql.append(" (lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * produtoEdicao.PRECO_VENDA ");
 		sql.append(" else ");
-		sql.append(" lancamento.REPARTE * (produtoEdicao.PRECO_VENDA - coalesce(produto.DESCONTO_ID, 0, (select VALOR from DESCONTO where ID = produto.DESCONTO_ID))) ");
+		sql.append(" lancamento.REPARTE * produtoEdicao.PRECO_VENDA ");
 		sql.append(" end as valorTotal, ");
 		
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");

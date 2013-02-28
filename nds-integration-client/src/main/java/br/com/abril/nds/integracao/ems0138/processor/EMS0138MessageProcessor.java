@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.dto.chamadaencalhe.ChamadaEncalheFornecedorDTO;
 import br.com.abril.nds.dto.chamadaencalhe.integracao.ChamadaEncalheFornecedorIntegracaoDTO;
 import br.com.abril.nds.dto.chamadaencalhe.integracao.ChamadaEncalheFornecedorIntegracaoItemDTO;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -56,7 +55,6 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 		List<ChamadaEncalheFornecedorIntegracaoDTO> chamadasEncalhe = obterChamadasEncalhe();
 		
 		notasCEIntegracao.setTipoDocumento("EMS0139");
-		notasCEIntegracao.setNotasFiscaisSaida(notasFiscais);
 		notasCEIntegracao.setChamadasEncalhe(chamadasEncalhe);
 		
 		CouchDbClient cdbc = null;
@@ -79,6 +77,17 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@SuppressWarnings("unchecked")
+	private List<NotaFiscalSaidaFornecedor> obterNotasFiscais() {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select nf ")
+			.append("from NotaFiscalSaidaFornecedor nf ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
 	private List<ChamadaEncalheFornecedorIntegracaoDTO> obterChamadasEncalhe() {
 		
 		StringBuilder hql = new StringBuilder();
@@ -90,6 +99,7 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 		query.setResultTransformer(new AliasToBeanResultTransformer(ChamadaEncalheFornecedorIntegracaoDTO.class));
 		
 		List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor = query.list();
+		
 		List<ChamadaEncalheFornecedorIntegracaoDTO> chamadasEncalheFornecedorDTO = new ArrayList<ChamadaEncalheFornecedorIntegracaoDTO>();
 		
 		for(ChamadaEncalheFornecedor cef : chamadasEncalheFornecedor) {
@@ -100,41 +110,40 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 			for(ItemChamadaEncalheFornecedor icef : cef.getItens()) {
 				ChamadaEncalheFornecedorIntegracaoItemDTO cei =  new ChamadaEncalheFornecedorIntegracaoItemDTO();
 				
+				NotaFiscalSaidaFornecedor nfsf = obterNotaFiscal(icef.getNumeroNotaEnvio());
+				
 				cei.setNumeroChamadaEncalhe(icef.getChamadaEncalheFornecedor().getNumeroChamadaEncalhe());
 				cei.setNumeroItem(icef.getNumeroItem());
-				//cei.setDataEmissaoNotaenvio(icef.get)
+				cei.setDataEmissaoNotaEnvio(nfsf.getDataEmissao());
+				cei.setNumeroAcessoNotaEnvio(nfsf.getChaveAcesso());
+				cei.setSerieNotaEnvio(nfsf.getTipoNotaFiscal().getSerieNotaFiscal());
+				//cei.setTipoModeloNotaEnvio(nfsf.getTipoNotaFiscal().getNopCodigo()); FIXME: Verificar o valor do tipomodelo
+				cei.setQuantidadeDevolucaoInformada(icef.getQtdeDevolucaoInformada());
+				cei.setQuantidadeEnviada(icef.getQtdeEnviada());
+				cei.setQuantidadeVendaInformada(icef.getQtdeVendaInformada());
 				
-				//cei.set
-								
 			}
 			
-			
-			/*cef.getAnoReferencia();
-			cef.getCfop();
-			cef.getCodigoDistribuidor();
-			cef.getCodigoPreenchimento();
-			cef.getControle();
-			cef.getDataEmissao();
-			cef.getDataLimiteRecebimento();*/
-			
-			
 			chamadasEncalheFornecedorDTO.add(cefDTO);
+			
 		}
 		
-		return query.list();
+		return chamadasEncalheFornecedorDTO;
 		
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<NotaFiscalSaidaFornecedor> obterNotasFiscais() {
-
+	private NotaFiscalSaidaFornecedor obterNotaFiscal(Long numeroNotaEnvio) {
+		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select nf ")
-			.append("from NotaFiscalSaidaFornecedor nf ");
+			.append("from NotaFiscalSaidaFornecedor nf ")
+			.append(" where nf.numero = :numeroNota");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
-		return query.list();
+		query.setParameter("numeroNota", numeroNotaEnvio);
+		
+		return (NotaFiscalSaidaFornecedor) query.uniqueResult();
 		
 	}
 

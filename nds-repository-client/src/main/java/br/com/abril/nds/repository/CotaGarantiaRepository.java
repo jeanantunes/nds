@@ -85,4 +85,5 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	 */
 	Long obterCountDetalheGarantiaCadastrada(FiltroRelatorioGarantiasDTO filtro);
 
+	Long getQtdCotaGarantiaByCota(Long idCota);
 }

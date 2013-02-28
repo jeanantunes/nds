@@ -3,12 +3,15 @@ package br.com.abril.nds.controllers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.persistence.NoResultException;
 import javax.servlet.ServletContext;
 
+import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -162,8 +165,38 @@ public class CapaController {
 		} finally {
 			this.result.use(PlainJSONSerialization.class).from(vo, "result").recursive().serialize();
 		}
-		
-		
 	}
+	
+	@Path("/getCapaEdicaoJson")
+	 public File getCapaEdicaoJson(String codigoProduto,String numeroEdicao){
+	  
+	  InputStream att = null;
+	  File file = new File("temp"+CapaService.DEFAULT_EXTENSION);
+	  try {
+	   att = capaService.getCapaInputStream(codigoProduto,Long.parseLong(numeroEdicao));
+	     
+	     // write the inputStream to a FileOutputStream
+	     OutputStream out = new FileOutputStream(file);
+	     
+	     int read = 0;
+	     byte[] bytes = new byte[1024];
+	     
+	     while ((read = att.read(bytes)) != -1) {
+	      out.write(bytes, 0, read);
+	     }
+	     
+	     att.close();
+	     out.flush();
+	     out.close();
+	    
+	  } catch (NumberFormatException e) {
+		  e.printStackTrace();
+	  }
+	  catch (Exception e) {
+		  file = new File((servletContext.getRealPath("") + "/images/no_image.jpeg"));
+	  }
+	  
+	  return file;
+	 }
 	
 }

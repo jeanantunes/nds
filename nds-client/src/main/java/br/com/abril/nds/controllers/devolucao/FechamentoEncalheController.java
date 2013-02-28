@@ -16,6 +16,7 @@ import br.com.abril.nds.client.vo.AnaliticoEncalheVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -368,6 +369,13 @@ public class FechamentoEncalheController extends BaseController {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 			}
 			
+			ValidacaoVO validacaoCotaConferenciaNaoFinalizada = getValidacaoCotaConferenciaNaoFinalizada(dataEncalhe);
+			
+			if(validacaoCotaConferenciaNaoFinalizada != null) {
+				this.result.use(Results.json()).withoutRoot().from(validacaoCotaConferenciaNaoFinalizada).recursive().serialize();
+				return;
+			}
+			
 			FiltroFechamentoEncalheDTO filtroSessao = 
 					(FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 			
@@ -381,6 +389,40 @@ public class FechamentoEncalheController extends BaseController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação de encalhe encerrada com sucesso!"), "result").recursive().serialize();
 	}
 	
+	/**
+	 * Cria um objeto {@link ValidacaoVO} com informações das cotas
+	 * que possuem conferencia de encalhe não finalizada.
+	 * 
+	 * @param dataEncalhe
+	 */
+	private ValidacaoVO getValidacaoCotaConferenciaNaoFinalizada(Date dataEncalhe) {
+		
+		ValidacaoVO validacao = null;
+		
+		List<CotaDTO> listaCotaConferenciaNaoFinalizada = fechamentoEncalheService.obterListaCotaConferenciaNaoFinalizada(dataEncalhe);
+		
+		if(listaCotaConferenciaNaoFinalizada!=null && !listaCotaConferenciaNaoFinalizada.isEmpty()) {
+			
+			StringBuffer msg = new StringBuffer();
+			msg.append("A seguintes cotas possuem conferencia de encalhe não confirmada: ");
+			
+			for(CotaDTO cota : listaCotaConferenciaNaoFinalizada) {
+				
+				msg.append("<br/>");
+				msg.append(" [").
+				append(cota.getNumeroCota())
+				.append("] ")
+				.append(" - ")
+				.append(cota.getNomePessoa());
+				
+			}
+			
+			validacao = new ValidacaoVO(TipoMensagem.WARNING, msg.toString());
+		}
+		
+		return validacao;
+	}
+	
 	@Path("/verificarEncerrarOperacaoEncalhe")
 	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe, String operacao) {
 		
@@ -389,17 +431,25 @@ public class FechamentoEncalheController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Data de encalhe inválida!"));
 		}
 		
+		
+		ValidacaoVO validacaoCotaConferenciaNaoFinalizada = getValidacaoCotaConferenciaNaoFinalizada(dataEncalhe);
+		
+		if(validacaoCotaConferenciaNaoFinalizada != null) {
+			this.result.use(Results.json()).withoutRoot().from(validacaoCotaConferenciaNaoFinalizada).recursive().serialize();
+			return;
+		}
+		
 		int totalCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, true);
 		
 		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
-			this.result.use(Results.json()).withoutRoot().from(Boolean.FALSE).recursive().serialize();
+			this.result.use(Results.json()).from(Boolean.FALSE.toString(), "isNenhumaCotaAusente").recursive().serialize();
 			
 			return;
 		
 		} else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
-			this.result.use(Results.json()).withoutRoot().from(Boolean.TRUE).recursive().serialize();
+			this.result.use(Results.json()).from(Boolean.TRUE.toString(), "isNenhumaCotaAusente").recursive().serialize();
 			
 			return;
 		}
