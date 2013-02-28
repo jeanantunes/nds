@@ -2093,13 +2093,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 		Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		
-		BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda()
-				.subtract(produtoEdicao.getPrecoVenda()
-						.multiply(desconto.getValor()
-								.divide(new BigDecimal("100")
-								)
-							)
-						);
+		BigDecimal precoComDesconto = 
+				produtoEdicao.getPrecoVenda().subtract(
+						MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto.getValor()));
 		
 		ValoresAplicados valoresAplicados = new ValoresAplicados();
 		valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());

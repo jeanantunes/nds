@@ -443,13 +443,13 @@ public class FechamentoEncalheController extends BaseController {
 		
 		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
-			this.result.use(Results.json()).from(Boolean.FALSE, "isCotasAusentes").recursive().serialize();
+			this.result.use(Results.json()).from(Boolean.FALSE.toString(), "isNenhumaCotaAusente").recursive().serialize();
 			
 			return;
 		
 		} else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
-			this.result.use(Results.json()).from(Boolean.TRUE, "isCotasAusentes").recursive().serialize();
+			this.result.use(Results.json()).from(Boolean.TRUE.toString(), "isNenhumaCotaAusente").recursive().serialize();
 			
 			return;
 		}

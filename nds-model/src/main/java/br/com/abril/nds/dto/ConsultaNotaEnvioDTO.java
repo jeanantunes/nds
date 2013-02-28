@@ -2,8 +2,10 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -23,9 +25,8 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	private Long exemplares;
 	
 	@Export(label="Total R$", alignment=Alignment.RIGHT)
-	private BigDecimal total;
+	private String total;
 	
-	@Export(label="Total Desconto R$", alignment=Alignment.RIGHT)
 	private BigDecimal totalDesconto;
 	
 	private boolean notaImpressa;
@@ -44,8 +45,8 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	/**
 	 * @param idCota the idCota to set
 	 */
-	public void setIdCota(Long idCota) {
-		this.idCota = idCota;
+	public void setIdCota(BigInteger idCota) {
+		this.idCota = idCota.longValue();
 	}
 
 	/**
@@ -86,14 +87,14 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	/**
 	 * @param exemplares the exemplares to set
 	 */
-	public void setExemplares(Long exemplares) {
-		this.exemplares = exemplares;
+	public void setExemplares(BigDecimal exemplares) {
+		this.exemplares = exemplares.longValue();
 	}
 
 	/**
 	 * @return the total
 	 */
-	public BigDecimal getTotal() {
+	public String getTotal() {
 		return total;
 	}
 
@@ -101,7 +102,7 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	 * @param total the total to set
 	 */
 	public void setTotal(BigDecimal total) {
-		this.total = total;
+		this.total =  CurrencyUtil.formatarValor(total);
 	}
 
 	/**
@@ -128,8 +129,8 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	/**
 	 * @param notaImpressa the notaImpressa to set
 	 */
-	public void setNotaImpressa(boolean notaImpressa) {
-		this.notaImpressa = notaImpressa;
+	public void setNotaImpressa(BigInteger notaImpressa) {
+		this.notaImpressa = (notaImpressa.equals(BigInteger.ONE));
 	}
 
 	public boolean isCotaSuspensa() {
@@ -144,8 +145,8 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 		return situacaoCadastro;
 	}
 
-	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
-		this.situacaoCadastro = situacaoCadastro;
+	public void setSituacaoCadastro(String situacaoCadastro) {
+		this.situacaoCadastro = SituacaoCadastro.valueOf(situacaoCadastro);
 	}
 	
 }

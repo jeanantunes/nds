@@ -362,20 +362,17 @@ var fechamentoEncalheController = $.extend(true, {
 					return;
 				}
 				
-				if (!result.isCotasAusentes) {
-					
-					fechamentoEncalheController.isFechamento = true;
-					
-					fechamentoEncalheController.popup_encerrarEncalhe(true);
-					
-				} else {
+				if (result.isNenhumaCotaAusente == 'true') {
 					
 					if ($( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace).dialog("isOpen")) {
-
 						$( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace).dialog("destroy");
 					}
 
 					fechamentoEncalheController.popup_encerrar();
+					
+				} else {
+					fechamentoEncalheController.isFechamento = true;
+					fechamentoEncalheController.popup_encerrarEncalhe(true);
 				}			
 			},
 		  	null,
@@ -420,11 +417,15 @@ var fechamentoEncalheController = $.extend(true, {
 								
 							}
 
-							if (!result.isCotasAusentes) {
+							if (result.isNenhumaCotaAusente == 'true') {
+								
+								fechamentoEncalheController.popup_encerrar();
+								
+							} else {
+								
 								fechamentoEncalheController.isFechamento = true;
 								fechamentoEncalheController.popup_encerrarEncalhe(true);
-							} else {
-								fechamentoEncalheController.popup_encerrar();
+								
 							}
 							
 							fechamentoEncalheController.pesquisar();
