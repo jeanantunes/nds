@@ -18,7 +18,7 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel im
 	public void executeJobGerarRankingFaturamento() {
 		StringBuilder hql = new StringBuilder();
 		hql.append(" INSERT INTO ranking_faturamento ( DATA_GERACAO_RANK, COTA_ID, FATURAMENTO) ")
-		.append(" (select now() as data_geracao, cota_id, sum(fat) as faturamento ")
+		.append(" (select now() as data_geracao, cota_id, sum(fat) as faturamento from ")
 		.append(" (select mec.data, mec.cota_id, ")
 		.append(" case when mec.tipo_movimento_id=21 then (mec.qtde*pe.preco_venda) ")
 		.append(" when mec.tipo_movimento_id=26 then (mec.qtde*pe.preco_venda*-1)  ")
@@ -27,7 +27,6 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel im
 		.append(" join estoque_produto_cota EPC ON EPC.ID = mec.ESTOQUE_PROD_COTA_ID   ")
 		.append(" join produto_edicao PE ON pe.ID = EPC.PRODUTO_EDICAO_ID   ")
 		.append(" join produto ON produto.ID = PE.PRODUTO_ID   ")
-		.append(" join TIPO_PRODUTO TP on TP.id=produto.tipo_produto_id   ")
 		.append(" join TIPO_PRODUTO TP on TP.id=produto.tipo_produto_id   ")
 		.append(" where   ")
 		.append(" (mec.tipo_movimento_id=21 or mec.tipo_movimento_id=26) and ")
