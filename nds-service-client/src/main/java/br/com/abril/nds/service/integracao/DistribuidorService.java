@@ -28,4 +28,8 @@ public interface DistribuidorService {
 	Date obterDataOperacaoDistribuidor();
 
 	boolean utilizaGarantiaPdv();
+
+	boolean aceitaJuramentado();
+
+	int qtdDiasEncalheAtrasadoAceitavel();
 }
