@@ -134,6 +134,10 @@ var negociacaoDividaController = $.extend(true, {
 			value.cell.acao = acao;
 
 			total += floatValue(value.cell.total);
+			
+			value.cell.total = floatToPrice(floatValue(value.cell.total));
+			value.cell.vlDivida = floatToPrice(floatValue(value.cell.vlDivida));
+			
 		});
 
 		$('#total', this.workspace).html(floatToPrice(total));

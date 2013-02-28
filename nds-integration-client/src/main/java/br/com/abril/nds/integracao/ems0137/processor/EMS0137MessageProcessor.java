@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			getSession().merge(ce);
 			getSession().flush();
 
-			dbClient.remove(input);
+			//dbClient.remove(input);
 			
 		}
 		catch (Exception e) {
