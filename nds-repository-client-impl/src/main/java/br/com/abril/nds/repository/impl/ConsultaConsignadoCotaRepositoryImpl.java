@@ -246,6 +246,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" AND parametroCobranca.tipoCota = :tipoCota ");
 		
+		hql.append(" AND movimentoEstoqueCotaFuro.id is null ");
+		
 		if(filtro.getIdCota() != null ) { 
 			hql.append("   AND cota.id = :numeroCota");			
 		}
