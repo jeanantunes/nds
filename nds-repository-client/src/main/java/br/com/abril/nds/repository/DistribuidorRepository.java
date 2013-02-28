@@ -54,4 +54,10 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	BigDecimal obterDescontoCotaNegociacao();
 
 	boolean utilizaGarantiaPdv();
+
+	boolean aceitaJuramentado();
+
+	int qtdDiasEncalheAtrasadoAceitavel();
+
+	Integer obterNumeroDiasNovaCobranca();
 }
