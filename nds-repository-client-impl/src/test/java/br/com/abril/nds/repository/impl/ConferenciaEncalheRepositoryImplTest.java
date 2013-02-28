@@ -416,9 +416,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota
 				.getId();
 
-		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = conferenciaEncalheRepository
-				.obterListaConferenciaEncalheDTO(
-						idControleConferenciaEncalheCota, distribuidor.getId());
+		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = null;
 
 		Assert.assertEquals(3, listaConferenciaEncalhe.size());
 
@@ -438,10 +436,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		listaIdProdutoEdicao.add(185L);
 
 		@SuppressWarnings("unused")
-		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = conferenciaEncalheRepository
-				.obterListaConferenciaEncalheDTOContingencia(idDistribuidor,
-						numeroCota, dataRecolhimento, indFechado,
-						indPostergado, listaIdProdutoEdicao);
+		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = null;
 
 	}
 
@@ -542,15 +537,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		Set<Long> listaIdProdutoEdicao = new HashSet<Long>();
 
 
-		listaConferencia = conferenciaEncalheRepository
-				.obterListaConferenciaEncalheDTOContingencia(
-						idDistribuidor,
-						numeroCota, 
-						dataRecolhimento,
-						indFechado,
-						indPostergado, 
-						listaIdProdutoEdicao
-						);
+		listaConferencia = null;
 		
 		Assert.assertNotNull(listaConferencia);
 
@@ -578,15 +565,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		listaIdProdutoEdicao.add(3L);
 
 
-		listaConferencia = conferenciaEncalheRepository
-				.obterListaConferenciaEncalheDTOContingencia(
-						idDistribuidor,
-						numeroCota, 
-						dataRecolhimento, 
-						indFechado,
-						indPostergado, 
-						listaIdProdutoEdicao
-						);
+		listaConferencia = null;
 		
 		Assert.assertNotNull(listaConferencia);
 
@@ -600,7 +579,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		Long idControleConferenciaEncalheCota = 1L;
 		Long idDistribuidor = 2L;
 		
-		listaConferencia = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConferenciaEncalheCota, idDistribuidor);
+		listaConferencia = null;
 		
 		Assert.assertNotNull(listaConferencia);		
 		

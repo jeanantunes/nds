@@ -353,7 +353,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 			
-			processarBalanceamento(listaProdutoRecolhimento, balanceamentoRecolhimento.isSemanaRecolhimento(),
+			processarBalanceamento(listaProdutoRecolhimento,
 								   paginacao, sortname);
 		} else {
 			
@@ -752,13 +752,12 @@ public class MatrizRecolhimentoController extends BaseController {
 	/**
 	 * Método que processa os balanceamentos para exibição no grid.
 	 * 
-	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento 
-	 * @param isSemanaRecolhimento - flag que indica se a semana atual é a semana de recolhimento
+	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento
 	 * @param paginacao - paginação
 	 * @param sortname - nome da coluna para ordenação
 	 */
 	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento,
-										boolean isSemanaRecolhimento, PaginacaoVO paginacao, String sortname) {
+										PaginacaoVO paginacao, String sortname) {
 		
 		
 		
@@ -832,6 +831,10 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
 			
 			produtoRecolhimentoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
+			
+			produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
+				produtoRecolhimentoDTO.isPossuiChamada()
+				|| produtoRecolhimentoDTO.isBalanceamentoConfirmado());
 			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
 		}
@@ -1242,9 +1245,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = new ResultadoResumoBalanceamentoVO();
-		
-		resultadoResumoBalanceamento.setBloquearBotoes(
-			balanceamentoRecolhimento.isSemanaRecolhimento());
 		
 		resultadoResumoBalanceamento.setListaResumoPeriodoBalanceamento(resumoPeriodoBalanceamento);
 		
