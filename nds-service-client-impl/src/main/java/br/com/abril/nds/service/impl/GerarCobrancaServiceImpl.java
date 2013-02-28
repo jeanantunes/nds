@@ -165,6 +165,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		return this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(idsCota) > 0;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean verificarCobrancasGeradasNaDataVencimentoDebito(Date dataVencimentoDebito,Long... idsCota ){
+		
+		return this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(dataVencimentoDebito,idsCota) > 0;
+	}
 
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
@@ -178,9 +185,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	private void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
 		
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
 		this.cancelarDividaCobranca(null, idCota);
@@ -204,11 +211,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				this.controleBaixaBancariaRepository.obterListaControleBaixaBancaria(
 					dataOperacao, StatusControle.CONCLUIDO_SUCESSO);
 			
+			
+			//TODO: VERIFICAR NECESSIDADE DESTA VALIDAÇÃO, POIS VOLTOU COMO ERRO NO TRAC 171
+			/*
 			if (listaControleBaixaBancaria == null || listaControleBaixaBancaria.isEmpty()) {
 				
 				throw new GerarCobrancaValidacaoException(
 					new ValidacaoException(TipoMensagem.WARNING, "Baixa Automática ainda não executada."));
 			}
+			*/
+			
 		}
 		
 		List<String> msgs = new ArrayList<String>();
@@ -285,15 +297,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					movimentos.add(movimentoFinanceiroCota);
 				} else {
 					
-					if (TipoCobranca.BOLETO.equals(politicaPrincipal.getFormaCobranca().getTipoCobranca())){
-						this.verificarCotaTemBanco(ultimaCota, msgs);
-					}
-					
 					//Decide se gera movimento consolidado ou postergado para a cota
 					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
 							politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(), politicaPrincipal.isAcumulaDivida(), idUsuario, 
 							tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-							distribuidor.getNumeroDiasNovaCobranca(),
+							numeroDiasNovaCobranca,
 							dataOperacao, msgs, ultimoFornecedor);
 					
 					if (nossoNumero != null){
@@ -321,16 +329,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				}
 			}
 			
-
-			if (TipoCobranca.BOLETO.equals(tipoCobranca)){
-				this.verificarCotaTemBanco(ultimaCota, msgs);
-			}
-			
 			//Decide se gera movimento consolidado ou postergado para a ultima cota
 			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
 					politicaPrincipal.isAcumulaDivida(), idUsuario, 
 					tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-						distribuidor.getNumeroDiasNovaCobranca(), dataOperacao, msgs, ultimoFornecedor);
+							numeroDiasNovaCobranca, dataOperacao, msgs, ultimoFornecedor);
 			
 			if (nossoNumero != null){
 				
@@ -483,31 +486,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return listaBoletoDistribuidor;
 		
 
-	}
-	
-	
-	
-	private boolean verificarCotaTemBanco(Cota cota, List<String> msgs){
-
-
-		FormaCobranca formaCobtancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
-
-		
-		if (cota.getParametroCobranca() == null || formaCobtancaPrincipal == null ||
-				formaCobtancaPrincipal.getBanco() == null){	
-			
-			String msg = "Para pagamento por boleto é necessário que a cota tenha um banco cadastrado. Número da cota sem banco: " + 
-					cota.getNumeroCota();
-			
-			if (!msgs.contains(msg)){
-				
-				msgs.add(msg);
-			}
-			
-			return false;
-		}
-		
-		return true;
 	}
 	
 	private BigDecimal obterValorMinino(Cota cota, BigDecimal valorMininoDistribuidor){
@@ -1056,7 +1034,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (consolidados != null){
 			
 			for (ConsolidadoFinanceiroCota consolidado : consolidados){
-			
+				
+				//a cobrança (divida/cobranca/consolidado) não pode ser apagada caso pertença a uma negociação
 				Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
 				
 				if (divida != null){
@@ -1065,21 +1044,21 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							divida.getCobranca().getId());
 					this.cobrancaRepository.remover(divida.getCobranca());
 					this.dividaRepository.remover(divida);
+					
+					this.consolidadoFinanceiroRepository.remover(consolidado);
+					
+					List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
+								
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
+					);
+					
+					this.movimentoFinanceiroCotaService.removerPostergadosDia(
+							consolidado.getCota().getId(), 
+							listaPostergados);
 				}
-				
-				this.consolidadoFinanceiroRepository.remover(consolidado);
-				
-				List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
-							
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
-				);
-				
-				this.movimentoFinanceiroCotaService.removerPostergadosDia(
-						consolidado.getCota().getId(), 
-						listaPostergados);
 			}
 		}
 	}

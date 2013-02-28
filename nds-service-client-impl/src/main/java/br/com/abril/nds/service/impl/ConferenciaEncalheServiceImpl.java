@@ -56,6 +56,7 @@ import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -336,9 +337,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public void validarFechamentoEncalheRealizado() throws FechamentoEncalheRealizadoException {
 	
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		boolean indFechamentoEncalhe = fechamentoEncalheRepository.buscaControleFechamentoEncalhe(dataOperacao);
 		
@@ -404,9 +403,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		boolean indPesquisaCEFutura = false;
 		boolean postergado = false;
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		if(produtoEdicao.isParcial()) {
 
@@ -514,7 +511,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param listaConferenciaEncalhe
 	 */
 	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheContingencia(
-			Long idDistribuidor, 
 			Integer numeroCota,
 			Date dataOperacao,
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
@@ -531,8 +527,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		Date dataInicial = obterDataRecolhimentoReferencia();
-		Date dataFinal = dataOperacao;
+		Date dataRecolhimento = distribuidorService.obterDataOperacaoDistribuidor();
+		
 		boolean indFechado = false;
 		boolean indPostergado = false;
 		
@@ -542,10 +538,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
 			conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
-				idDistribuidor,
 				numeroCota, 
-				dataInicial, 
-				dataFinal, 
+				dataRecolhimento, 
 				indFechado, 
 				indPostergado, 
 				listaIdProdutoEdicao);
@@ -588,11 +582,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		boolean aceitaJuramentado = this.distribuidorService.aceitaJuramentado();
 		
-		boolean aceitaJuramentado = distribuidor.isAceitaJuramentado();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
@@ -604,8 +596,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(controleConferenciaEncalheCota!=null) {
 			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
-							controleConferenciaEncalheCota.getId(), 
-							distribuidor.getId());
+							controleConferenciaEncalheCota.getId());
 			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 			
@@ -625,7 +616,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
 					obterListaConferenciaEncalheContingencia(
-							distribuidor.getId(), 
 							numeroCota, 
 							dataOperacao,
 							infoConfereciaEncalheCota.getListaConferenciaEncalhe());
@@ -747,9 +737,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Integer obterQtdeDiaAposDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		if(dataOperacao.compareTo(dataRecolhimentoDistribuidor) < 0 ) {
 			return null;
@@ -760,10 +748,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Integer posicaoDia = (qtde.intValue() + 1);
 		
 		return posicaoDia;
-	
 	}
-	
-	
 	
 	@Transactional(readOnly = true)
 	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
@@ -823,7 +808,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
-			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor());
+			
+			
 			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
 			
 		}
@@ -888,8 +875,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
-			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
-			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
+			produtoEdicaoDTO.setSequenciaMatriz(sm);
 			
 		}
 		
@@ -1000,7 +986,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 				produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 				
-				Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId());
+				Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor());
+				
 				produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
 				
 				produtosEdicaoDTO.add(produtoEdicaoDTO);
@@ -1046,16 +1033,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Date obterDataRecolhimentoReferencia() {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		Date dataOperacao = distribuidor.getDataOperacao();
-		
-		int qtdDiasEncalheAtrasadoAceitavel = distribuidor.getQtdDiasEncalheAtrasadoAceitavel();
+		int qtdDiasEncalheAtrasadoAceitavel = this.distribuidorService.qtdDiasEncalheAtrasadoAceitavel();
 		
 		Date dataRecolhimentoReferencia = DateUtil.subtrairDias(dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
 		
 		return dataRecolhimentoReferencia;
-		
 	}
 	
 	
@@ -1119,11 +1103,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		} 			
 		
-		controleConfEncalheCota = inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
-
+		controleConfEncalheCota = 
+				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, 
+						listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
 		
-		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = 
-				conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
+		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
+				//conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
+		
+		for (ConferenciaEncalheDTO dto : listaConferenciaEncalhe){
+			
+			valorTotalEncalheOperacaoConferenciaEncalhe = valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getValorTotal());
+		}
 		
 		this.abaterNegociacaoPorComissao(controleConfEncalheCota.getCota().getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
 		
@@ -2082,9 +2072,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Long idCota = controleConferenciaEncalheCota.getCota().getId();
 		
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		produtoEdicao.setId(conferenciaEncalheDTO.getIdProdutoEdicao());
-
+		ProdutoEdicao produtoEdicao = 
+				this.produtoEdicaoRepository.buscarPorId(conferenciaEncalheDTO.getIdProdutoEdicao());
+		
 		TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
@@ -2099,17 +2089,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota);
+
+		Cota cota = this.cotaRepository.buscarPorId(idCota);
+		Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		
-		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda()
+				.subtract(produtoEdicao.getPrecoVenda()
+						.multiply(desconto.getValor()
+								.divide(new BigDecimal("100")
+								)
+							)
+						);
 		
-		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), dataOperacao);
-		
+		ValoresAplicados valoresAplicados = new ValoresAplicados();
+		valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
+		valoresAplicados.setValorDesconto(desconto.getValor());
+		valoresAplicados.setPrecoComDesconto(precoComDesconto);
+
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
 		return movimentoEstoqueCota;
-		
-		
-		
 	}
 	
 	/**
@@ -2285,7 +2284,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			StatusOperacao statusOperacao, 
 			Usuario usuario) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(ctrlConfEncalheCota.getCota().getNumeroCota());
 		
@@ -2308,15 +2307,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 			ctrlConfEncalheCota.setUsuario(usuario);
 			ctrlConfEncalheCota.setCota(cota);
-			ctrlConfEncalheCota.setDataOperacao(distribuidor.getDataOperacao());
+			ctrlConfEncalheCota.setDataOperacao(dataOperacaoDistribuidor);
 			ctrlConfEncalheCota.setStatus(statusOperacao);
-			ctrlConfEncalheCota.setControleConferenciaEncalhe(obterControleConferenciaEncalhe(distribuidor.getDataOperacao()));
+			ctrlConfEncalheCota.setControleConferenciaEncalhe(obterControleConferenciaEncalhe(dataOperacaoDistribuidor));
 			ctrlConfEncalheCota.setDataFim(dataFinalizacao);
 			
 			controleConferenciaEncalheCotaRepository.adicionar(ctrlConfEncalheCota);
 			
 			return ctrlConfEncalheCota;
-			
 		}
 		
 	}

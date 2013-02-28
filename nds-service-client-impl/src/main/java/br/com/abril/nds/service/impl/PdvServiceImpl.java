@@ -1572,5 +1572,19 @@ public class PdvServiceImpl implements PdvService {
         HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
         return pdv.getImagem();
     }
+    
+    @Transactional(readOnly = true)
+    @Override
+    public List<AreaInfluenciaPDV> obterAreasInfluenciaPDV() {
+
+        return areaInfluenciaPDVRepository.buscarTodos();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo() {
+
+            return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+    }
 
 }

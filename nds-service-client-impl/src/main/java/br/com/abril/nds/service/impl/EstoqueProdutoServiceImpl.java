@@ -45,7 +45,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 			Date data, Long idCota) {
 		
 		List<MovimentoEstoqueCota> movimentosEstoqueReparteCotaAusente = this.movimentoEstoqueCotaService.obterMovimentoCotaPorTipoMovimento(data, idCota, 
-				GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+				GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoSuplementarDTO = new ArrayList<ProdutoEdicaoSuplementarDTO>();
 		

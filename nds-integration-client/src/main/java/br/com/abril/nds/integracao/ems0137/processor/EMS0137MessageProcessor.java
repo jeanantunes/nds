@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.lightcouch.CouchDbClient;
+import org.lightcouch.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,12 +55,12 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		CouchDbClient dbClient = null;
 
 		Connection connection = null;
+		
+		EMS0137Input input = (EMS0137Input) message.getBody();
 
 		try {	
 
 			String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
-			
-			EMS0137Input input = (EMS0137Input) message.getBody();
 			
 			// Validar código do distribuidor:
 			Distribuidor distribuidor = this.distribuidorService.obter();
@@ -77,14 +78,15 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			
 			getSession().merge(ce);
 			getSession().flush();
-			
-			//dbClient.remove(input);
 
+			//dbClient.remove(input);
+			
 		}
 		catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		finally {
+			
 			if (connection != null) {
 				try {
 					connection.close();

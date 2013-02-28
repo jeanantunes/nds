@@ -5,9 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
+import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -24,13 +28,15 @@ import br.com.abril.nds.util.Intervalo;
 public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long> {
 	
 	/**
-	 * Obtém o codigoSM a partir do idProdutoEdicao
+	 * Obtém o codigoSM a partir do idProdutoEdicao e 
+	 * dataRecolhimento
 	 * 
-	 * @param sequenciaMatriz
+	 * @param idProdutoEdicao
+	 * @param dataRecolhimento
 	 * 
 	 * @return Integer
 	 */
-	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao);
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento);
 	
 	/**
 	 * Obtém o produtoEdicao através do código SM do mesmo produtoEdicao que esta amarrado a seu lancamento.
@@ -281,10 +287,15 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorCota(Cota cota, Set<Fornecedor> fornecedores);
 
+	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro);
+
 	/**
 	 * Retorna os produtoEdicao de produtos que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
 	 * @param fornecedores
 	 * @return
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorProduto(Produto produto);*/
+
+	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(FiltroHistogramaVendas filtro);
 	
+	public AnaliseHistogramaDTO obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,Integer de,Integer ate, String[] edicoes);
 }

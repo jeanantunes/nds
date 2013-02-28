@@ -143,6 +143,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("	cota1_.NUMERO_COTA = :numeroCota ")
            .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
            .append("	and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
+           .append("    and movimentos4_.QTDE != 0 ")
            .append("group by ")
            .append("	produto8_.CODIGO , ")
            .append("	produto8_.NOME , ")
@@ -211,6 +212,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("					on movimentos11_.MVTO_FINANCEIRO_COTA_ID=movimentof12_.ID ")
            .append("			) ")
            .append("		)  ")
+           .append("    and movimentos2_.QTDE != 0 ")
            .append("group by ")
            .append("	produto6_.CODIGO , ")
            .append("	produto6_.NOME , ")
@@ -470,7 +472,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		query.setParameter("numeroCota", filtro.getNumeroCota());
 		query.setParameter("dataConsolidado", filtro.getDataConsolidado());
-		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR.toString());
+		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR.name());
 		
 		if(filtro.getPaginacao() != null && 
 				filtro.getPaginacao().getPosicaoInicial() != null && 
@@ -781,6 +783,32 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			
 			query.setParameterList("idsCota", idsCota);
 		}
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	@Override
+	public Long obterQuantidadeDividasGeradasData(Date dataVencimentoDebito, Long... idsCota) {
+		
+		StringBuilder hql = new StringBuilder("select count(c.id) ");
+		hql.append(" from ConsolidadoFinanceiroCota c, Divida divida ")
+		   .append(" where c.dataConsolidado = :dataVencimentoDebito ")
+		   .append(" and c.id = divida.consolidado.id ")
+		   .append(" and divida.data = :dataVencimentoDebito ");
+		
+		if (idsCota != null) {
+			
+			hql.append("and c.cota.id in (:idsCota)");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (idsCota != null) {
+			
+			query.setParameterList("idsCota", idsCota);
+		}
+		
+		query.setParameter("dataVencimentoDebito", dataVencimentoDebito);
 		
 		return (Long) query.uniqueResult();
 	}

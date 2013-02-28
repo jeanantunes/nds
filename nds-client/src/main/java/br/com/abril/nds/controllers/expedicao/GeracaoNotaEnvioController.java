@@ -199,6 +199,10 @@ public class GeracaoNotaEnvioController extends BaseController {
 			
 			List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
 
+			if(notasEnvio == null || notasEnvio.isEmpty()) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
+			}
+			
 			byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
 			    
 			if (notasGeradas != null) {
@@ -217,9 +221,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 
 			    	result.use(Results.nothing());
 
-				
-
 			}
+			
 		} catch(ValidacaoException e ){
 			result.use(Results.json()).from(e.getValidacao(),Constantes.PARAM_MSGS).recursive().serialize();
 		} catch (Exception e) {

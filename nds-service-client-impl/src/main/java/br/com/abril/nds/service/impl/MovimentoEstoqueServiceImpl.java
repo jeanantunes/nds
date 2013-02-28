@@ -262,7 +262,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 			movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
 			movimentoEstoque.setAprovador(new Usuario(idUsuario));
-			movimentoEstoque.setDataAprovacao(this.distribuidorService.obter().getDataOperacao());
+			movimentoEstoque.setDataAprovacao(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
 			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque,movimentoEstoque);			
 			
@@ -445,13 +445,18 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, 
+			Long idProdutoEdicao, Long idCota, Long idUsuario, 
+			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+		
 		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null);
 	}
 	
 	@Override
 	@Transactional
-	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
+			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
+			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
 
 		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
 
@@ -822,5 +827,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					produtoServico.getProdutoEdicao().getId(),
 					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null);
 		}
+	}
+	
+	@Override
+	public BigInteger obterReparteDistribuidoProduto(String produtoEdicaoId){
+		return this.movimentoEstoqueRepository.obterReparteDistribuidoProduto(produtoEdicaoId);
 	}
 }

@@ -25,7 +25,7 @@ var negociacaoDividaController = $.extend(true, {
 
 	pesquisarCota : function(numeroCota) {
 		
-		if (!numeroCota || numeroCota != ''){
+		if (numeroCota || numeroCota != ''){
 			negociacaoDividaController.esconderGridEBotoes();
 			
 			$.postJSON(contextPath + '/cadastro/cota/pesquisarPorNumero',
@@ -123,22 +123,25 @@ var negociacaoDividaController = $.extend(true, {
 			
 			return data;
 		}
-		
-		var total = '0,00';
-		
+
+		var total = 0;
+
 		$.each(data.rows, function(index, value) {
 			
 			var detalhes = '<a href="javascript:;" onclick="negociacaoDividaController.popup_detalhe('+value.cell.idCobranca+');" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
 			var acao = '<input name="checkDividasSelecionadas" value="'+ value.cell.idCobranca +'" type="checkbox" class="negociacaoCheck" onclick="negociacaoDividaController.verificarCheck()"></input> ';
 			value.cell.detalhes = detalhes;
 			value.cell.acao = acao;
+
+			total += floatValue(value.cell.total);
 			
-			total = sumPrice(value.cell.total, total);
+			value.cell.total = floatToPrice(floatValue(value.cell.total));
+			value.cell.vlDivida = floatToPrice(floatValue(value.cell.vlDivida));
+			
 		});
 
-		$('#total', this.workspace).html(total);
-		
-		
+		$('#total', this.workspace).html(floatToPrice(total));
+
 		return data;
 	},
 	

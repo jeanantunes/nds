@@ -108,9 +108,6 @@
             
             <span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=cotas_nao_recebem_segmento"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
             
-            <span class="bt_novos" title="Exceções Segmentos e Parciais"><a href="tratamento_excessao.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" hspace="5" border="0" />Exceções Segmentos e Parciais</a></span>
-      
-        
       </fieldset>
 
 	<!-- GRID COTA PARA SELEÇÃO E INCLUSÃO NO SEGMENTO NÃO RECEBIDO -->
@@ -152,8 +149,10 @@
 
 			<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=segmentos_nao_recebem_cota"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 	
-			<span class="bt_novos" title="Exceções Segmentos e Parciais"><a href="tratamento_excessao.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" hspace="5" border="0" />Exceções Segmentos e Parciais</a></span>
-      
+      		 <span class="bt_novos" title="Exceções Segmentos e Parciais">            	
+            	<a href="javascript:;" onclick="$('#workspace').tabs('addTab', 'Exceção de Segmentos e Parciais', '${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/chamarTelaExcecaoSegmentoParcias')"> 
+            		<img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" hspace="5" border="0" />Exceções Segmentos e Parciais</a>
+            </span>
         
       </fieldset>
       <fieldset class="classFieldset" style="float:left; width:300px!important;">

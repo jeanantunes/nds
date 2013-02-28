@@ -138,37 +138,23 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			if (tipoMovimentoFinanceiro.isAprovacaoAutomatica()) {
 
 				movimentoFinanceiroCota.setAprovadoAutomaticamente(Boolean.TRUE);
-				movimentoFinanceiroCota.setAprovador(
-						movimentoFinanceiroCotaDTO.getUsuario());
-				movimentoFinanceiroCota.setDataAprovacao(
-						movimentoFinanceiroCotaDTO.getDataAprovacao());
-				movimentoFinanceiroCota.setStatus(
-						StatusAprovacao.APROVADO);
-
+				movimentoFinanceiroCota.setAprovador(movimentoFinanceiroCotaDTO.getUsuario());
+				movimentoFinanceiroCota.setDataAprovacao(movimentoFinanceiroCotaDTO.getDataAprovacao());
+				movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
 			} else {
 
 				movimentoFinanceiroCota.setStatus(StatusAprovacao.PENDENTE);
 			}
 
-			movimentoFinanceiroCota.setCota(
-					movimentoFinanceiroCotaDTO.getCota());
-			movimentoFinanceiroCota.setTipoMovimento(
-					tipoMovimentoFinanceiro);
-			movimentoFinanceiroCota.setData(
-					movimentoFinanceiroCotaDTO.getDataVencimento());
-			movimentoFinanceiroCota.setDataCriacao(
-					movimentoFinanceiroCotaDTO.getDataCriacao());
-			movimentoFinanceiroCota.setUsuario(
-					movimentoFinanceiroCotaDTO.getUsuario());
-			movimentoFinanceiroCota.setValor(
-					movimentoFinanceiroCotaDTO.getValor());
-			movimentoFinanceiroCota.setLancamentoManual(
-					movimentoFinanceiroCotaDTO.isLancamentoManual());
-			movimentoFinanceiroCota.setBaixaCobranca(
-					movimentoFinanceiroCotaDTO.getBaixaCobranca());
-			movimentoFinanceiroCota.setObservacao(
-					movimentoFinanceiroCotaDTO.getObservacao());
-			
+			movimentoFinanceiroCota.setCota(movimentoFinanceiroCotaDTO.getCota());
+			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
+			movimentoFinanceiroCota.setData(movimentoFinanceiroCotaDTO.getDataVencimento());
+			movimentoFinanceiroCota.setDataCriacao(movimentoFinanceiroCotaDTO.getDataCriacao());
+			movimentoFinanceiroCota.setUsuario(movimentoFinanceiroCotaDTO.getUsuario());
+			movimentoFinanceiroCota.setValor(movimentoFinanceiroCotaDTO.getValor());
+			movimentoFinanceiroCota.setLancamentoManual(movimentoFinanceiroCotaDTO.isLancamentoManual());
+			movimentoFinanceiroCota.setBaixaCobranca(movimentoFinanceiroCotaDTO.getBaixaCobranca());
+			movimentoFinanceiroCota.setObservacao(movimentoFinanceiroCotaDTO.getObservacao());
 			movimentoFinanceiroCota.setMovimentos(movimentosEstoqueCota);
 			
 			movimentoFinanceiroCotaMerged = 
@@ -426,6 +412,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
         BigDecimal precoVendaItem = BigDecimal.ZERO;
 		BigInteger quantidadeItem = BigInteger.ZERO;
+		BigDecimal precoComDescontoItem = BigDecimal.ZERO;
 		BigDecimal totalItem = BigDecimal.ZERO;		
 		BigDecimal totalContaFirme = BigDecimal.ZERO;	
 		BigDecimal totalGeral = BigDecimal.ZERO;
@@ -436,7 +423,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 			ProdutoEdicao produtoEdicao = item.getProdutoEdicao();
 			
-			precoVendaItem = (produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
+			precoComDescontoItem = item.getValoresAplicados()!=null?item.getValoresAplicados().getPrecoComDesconto():null;
+			precoVendaItem = precoComDescontoItem!=null?precoComDescontoItem:(produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
 			quantidadeItem = (item.getQtde()!=null)?item.getQtde():BigInteger.ZERO;
 			totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
 					
@@ -593,7 +581,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
             				cota.getId(),
             				controleConferenciaEncalheCota.getDataOperacao());
             
-            BigDecimal valorTotalEnvioReparte = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cota.getId()); 
+            BigDecimal valorTotalEnvioReparte = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cota.getId(), controleConferenciaEncalheCota.getDataOperacao()); 
 
             
 			BigDecimal valorConsignadoPagar = BigDecimal.ZERO;
