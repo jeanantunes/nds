@@ -89,75 +89,17 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	private EstudoCotaRepository estudoCotaRepository;
 
 	@Transactional
-	@SuppressWarnings("unchecked")
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
 
-		Set<Long> idsCotasDestinatarias = this.cotaRepository
-				.obterIdsCotasComNotaEnvioEntre(filtro);
+		return cotaRepository
+				.obterDadosCotasComNotaEnvio(filtro);
 
-		List<ConsultaNotaEnvioDTO> listaCotaExemplares = new ArrayList<ConsultaNotaEnvioDTO>();
-
-		for (Long idCota : idsCotasDestinatarias) {
-
-			Cota cota = this.cotaRepository.buscarPorId(idCota);
-
-			ConsultaNotaEnvioDTO cotaExemplares = new ConsultaNotaEnvioDTO();
-
-			cotaExemplares.setIdCota(cota.getId());
-			cotaExemplares.setNomeCota(cota.getPessoa().getNome());
-			cotaExemplares.setNumeroCota(cota.getNumeroCota());
-			cotaExemplares.setCotaSuspensa(cota.getSituacaoCadastro().equals(
-					SituacaoCadastro.SUSPENSO));
-			cotaExemplares.setSituacaoCadastro(cota.getSituacaoCadastro());
-
-			List<EstudoCota> listaEstudosCota = this.estudoCotaRepository
-					.obterEstudosCotaParaNotaEnvio(idCota,
-							filtro.getIntervaloMovimento(),
-							filtro.getIdFornecedores());
-
-			if (listaEstudosCota != null && !listaEstudosCota.isEmpty()) {
-
-				this.sumarizarTotalItensNota(listaEstudosCota, cotaExemplares,
-						cota);
-
-				listaCotaExemplares.add(cotaExemplares);
-			}
-		}
-
-		String sortname = filtro.getPaginacaoVO().getSortColumn();
-		String sortorder = filtro.getPaginacaoVO().getSortOrder();
-
-		if (sortname == null || "".equals(sortname)) {
-
-			sortname = "numeroCota";
-		}
-
-		BeanComparator beanComparator = null;
-
-		if (sortorder != null && !sortorder.isEmpty()
-				&& "desc".equals(sortorder)) {
-
-			beanComparator = new BeanComparator(sortname,
-					new ReverseComparator(new ComparableComparator()));
-
-		} else {
-
-			beanComparator = new BeanComparator(sortname);
-		}
-
-		Collections.sort(listaCotaExemplares, beanComparator);
-
-		return listaCotaExemplares;
 	}
 
 	@Override
 	@Transactional
 	public Integer buscaCotasNotasDeEnvioQtd(FiltroConsultaNotaEnvioDTO filtro) {
-
-		Set<Long> idsCotasDestinatarias = this.cotaRepository
-				.obterIdsCotasComNotaEnvioEntre(filtro);
-
-		return idsCotasDestinatarias.size();
+		return cotaRepository.obterCountCotasComNotaEnvioEntre(filtro);
 	}
 
 	private List<ItemNotaEnvio> gerarItensNotaEnvio(
@@ -245,56 +187,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return itemNotaEnvio;
 	}
 
-	private void sumarizarTotalItensNota(List<EstudoCota> listaEstudosCota,
-			ConsultaNotaEnvioDTO cotaExemplares, Cota cota) {
-
-		BigInteger quantidade = BigInteger.ZERO;
-		BigDecimal preco = BigDecimal.ZERO;
-		BigDecimal precoComDesconto = BigDecimal.ZERO;
-
-		cotaExemplares.setNotaImpressa(false);
-
-		for (EstudoCota estudoCota : listaEstudosCota) {
-
-			ProdutoEdicao produtoEdicao = estudoCota.getEstudo()
-					.getProdutoEdicao();
-
-			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-
-			Desconto percentualDesconto = descontoService
-					.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo()
-							.getLancamento(), cota, produtoEdicao);
-
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(
-					precoVenda,
-					((percentualDesconto != null && percentualDesconto
-							.getValor() != null) ? percentualDesconto
-							.getValor() : BigDecimal.ZERO));
-
-			BigInteger qtdeEfetivaEstudoCota = estudoCota.getQtdeEfetiva();
-
-			quantidade = quantidade.add(qtdeEfetivaEstudoCota);
-
-			preco = preco.add(precoVenda.multiply(new BigDecimal(
-					qtdeEfetivaEstudoCota)));
-
-			precoComDesconto = precoComDesconto.add(precoVenda.subtract(
-					valorDesconto).multiply(
-					new BigDecimal(qtdeEfetivaEstudoCota)));
-
-			if (estudoCota.getItemNotaEnvios() != null || !estudoCota.getItemNotaEnvios().isEmpty()) {
-
-				cotaExemplares.setNotaImpressa(true);
-			}
-		}
-
-		cotaExemplares.setTotal(preco);
-		cotaExemplares.setTotalDesconto(precoComDesconto.setScale(2,
-				BigDecimal.ROUND_HALF_UP));
-		cotaExemplares.setExemplares(quantidade.longValue());
-
-	}
-
+	
 	@Override
 	@Transactional(readOnly = false)
 	public NotaEnvio visualizar(Integer numeroCota, Long idRota,

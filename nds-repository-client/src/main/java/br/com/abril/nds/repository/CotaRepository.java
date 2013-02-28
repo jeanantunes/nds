@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
@@ -237,23 +238,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
     Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota,
             Intervalo<Integer> intervaloBox, List<SituacaoCadastro> situacoesCadastro, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page);
     
-    /**
-     * Retorna todos os ids das cotas que estão entre o itervalo de cotas e possuam Notas de Envio
-     * 
-     * @param intervaloCota
-     * @param intervaloBox
-     * @param listIdsFornecedores TODO
-     * @param situacao
-     * @param idRoteiro
-     * @param idRota
-     * @param sortName
-     * @param sortOrder
-     * @param maxResults
-     * @param page
-     * @return
-     */
-    Set<Long> obterIdsCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro);
-
     Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
     
     List<Cota> obterCotas(SituacaoCadastro situacaoCadastro);
@@ -342,5 +326,10 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	Cota obterPorPDV(Long idPDV);
 	
 	Cota buscarCotaPorID(Long id);
+
+	List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvio(FiltroConsultaNotaEnvioDTO filtro);
+
+	Integer obterCountCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro);
+	
 
 }
