@@ -1,8 +1,8 @@
 package br.com.abril.nds.process.correcaovendas;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -28,8 +28,8 @@ public class VendaCrescenteTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
-	    
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
 	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
 	    vendaCrescente.executar();
 
@@ -47,7 +47,7 @@ public class VendaCrescenteTest {
 
 	    boolean assertIndiceVendaCrescente = (indiceVendaCrescente != null && (indiceVendaCrescente.compareTo(BigDecimal.ONE) == 0));
 
-	    assertTrue("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), assertIndiceVendaCrescente);
+	    assertTrue(assertIndiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
 	    gerarReporterLog(cota, sbReporterLog, indiceVendaCrescente);
 
 	} catch (Exception e) {
@@ -67,8 +67,8 @@ public class VendaCrescenteTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
-	    
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
 	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
 	    vendaCrescente.executar();
 
@@ -86,14 +86,14 @@ public class VendaCrescenteTest {
 
 	    boolean assertIndiceVendaCrescente = (indiceVendaCrescente != null && (indiceVendaCrescente.compareTo(BigDecimal.ONE) == 0));
 
-	    assertTrue("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), assertIndiceVendaCrescente);
+	    assertTrue(assertIndiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
 	    gerarReporterLog(cota, sbReporterLog, indiceVendaCrescente);
 
 	} catch (Exception e) {
 	    fail(e.getMessage());
 	}
     }
-    
+
     /**
      * Testar se o índice de venda crescente será 1.1 com uma única publicacão, quatro edições e com edições fechadas.
      * 
@@ -106,8 +106,8 @@ public class VendaCrescenteTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
-	    
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
 	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
 	    vendaCrescente.executar();
 
@@ -124,12 +124,12 @@ public class VendaCrescenteTest {
 	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
 
 	    assertNotNull(indiceVendaCrescente);
-	    
+
 	    BigDecimal oneDotOne = BigDecimal.ONE.add(new BigDecimal(0.1)).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
 
 	    boolean assertIndiceVendaCrescente = (indiceVendaCrescente.compareTo(oneDotOne) == 0);
 
-	    assertTrue("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), assertIndiceVendaCrescente);
+	    assertTrue(assertIndiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
 	    gerarReporterLog(cota, sbReporterLog, indiceVendaCrescente);
 
 	} catch (Exception e) {

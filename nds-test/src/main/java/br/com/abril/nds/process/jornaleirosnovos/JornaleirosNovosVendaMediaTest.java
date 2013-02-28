@@ -1,7 +1,7 @@
 package br.com.abril.nds.process.jornaleirosnovos;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -26,7 +26,7 @@ public class JornaleirosNovosVendaMediaTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem cota base equivalente ", cota.getEquivalente());
+	    assertNotNull(cota.getEquivalente(), " Cota : " + cota.getId() + " nao contem cota base equivalente ");
 
 	    JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
 	    jornaleirosNovos.executar();
@@ -36,8 +36,8 @@ public class JornaleirosNovosVendaMediaTest {
 	    BigDecimal indiceAjusteEquivalente = cota.getIndiceAjusteEquivalente();
 	    BigDecimal vendaMediaCorrigidaNovo = cota.getVendaMedia();
 
-	    assertNotNull("Indice Ajuste Equivalente : " + indiceAjusteEquivalente + " Cota : " + cota.getId(), indiceAjusteEquivalente);
-	    assertNotNull("Venda Media Corrigida Novo : " + vendaMediaCorrigidaNovo + " Cota : " + cota.getId(), vendaMediaCorrigidaNovo);
+	    assertNotNull(indiceAjusteEquivalente, "Indice Ajuste Equivalente : " + indiceAjusteEquivalente + " Cota : " + cota.getId());
+	    assertNotNull(vendaMediaCorrigidaNovo, "Venda Media Corrigida Novo : " + vendaMediaCorrigidaNovo + " Cota : " + cota.getId());
 
 	    Iterator<Cota> itEquivalente = cota.getEquivalente().iterator();
 
@@ -45,7 +45,7 @@ public class JornaleirosNovosVendaMediaTest {
 
 		Cota cotaEquivalente = itEquivalente.next();
 
-		assertNotNull("Cota Equivalente : " + cotaEquivalente + " Cota : " + cota.getId(), cotaEquivalente);
+		assertNotNull(cotaEquivalente, "Cota Equivalente : " + cotaEquivalente + " Cota : " + cota.getId());
 
 		gerarCotaEquivalenteLog(sbReporterLog, cotaEquivalente);
 	    }
