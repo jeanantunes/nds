@@ -8,6 +8,7 @@ public class Cota extends GenericDTO<Cota> {
     private static final long serialVersionUID = -2770873222155652560L;
 
     private Long id;
+    private Long idEstudo;
     private List<ProdutoEdicao> edicoesRecebidas;
     private ClassificacaoCota classificacao;
     private BigDecimal reparteCalculado;
@@ -15,7 +16,6 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal vendaMediaMaisN;
     private BigDecimal reparteMinimo;
     private BigDecimal reparteMaximo;
-    private BigDecimal reparteFinalCota;
     private BigDecimal vendaMedia;
     private BigDecimal vendaMediaNominal;
     private BigDecimal vendaEdicaoMaisRecenteFechada;
@@ -24,17 +24,17 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal somaReparteEdicoesAbertas;
     private BigDecimal indiceCorrecaoTendencia;
     private BigDecimal quantidadePDVs;
-    // TODO o q Ã© mix?
+    private boolean recebeReparteComplementar;
+    // TODO: o q é mix?
     private boolean mix;
     private BigDecimal indiceVendaCrescente;
-<<<<<<< HEAD
-    private boolean recebeReparteComplementar=false;
-    
-=======
     private BigDecimal indiceAjusteCota;
     private BigDecimal indiceTratamentoRegional;
+    private List<Cota> equivalente;
+    private BigDecimal indiceAjusteEquivalente;
 
->>>>>>> DGBtiBit/master
+    private Long numero;
+
     public Cota() {
 	vendaMedia = BigDecimal.ZERO;
 	vendaMediaMaisN = BigDecimal.ZERO;
@@ -43,6 +43,14 @@ public class Cota extends GenericDTO<Cota> {
 	somaReparteEdicoesAbertas = BigDecimal.ZERO;
 	percentualEncalheMaximo = BigDecimal.ZERO;
 	classificacao = ClassificacaoCota.SemClassificacao;
+    }
+
+    public Long getNumero() {
+	return numero;
+    }
+
+    public void setNumero(Long numero) {
+	this.numero = numero;
     }
 
     public Long getId() {
@@ -70,7 +78,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Valor do parÃ¢metro "VendaMedia + n" configurado na tela de Ajuste de Reparte
+     * Valor do parâmetro "VendaMedia + n" configurado na tela de Ajuste de Reparte
      * @return {@link BigDecimal}
      */
     public BigDecimal getVendaMediaMaisN() {
@@ -83,7 +91,7 @@ public class Cota extends GenericDTO<Cota> {
 
     /**
      * VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
-     * Ã‰ a somatÃ³ria das Vendas da Cota dividido pela Quantidade de EdiÃ§Ãµes Recebidas por esta Cota
+     * É a somatória das Vendas da Cota dividido pela Quantidade de Edições Recebidas por esta Cota
      * @return BigDecimal
      */
     public BigDecimal getVendaMedia() {
@@ -95,7 +103,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Valor do parÃ¢metro ReparteMinimo na tela de bonificaÃ§Ãµes ou na tela Mix de Produto
+     * Valor do parâmetro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
      * @return {@link BigDecimal}
      */
     public BigDecimal getReparteMinimo() {
@@ -108,7 +116,8 @@ public class Cota extends GenericDTO<Cota> {
 
     public BigDecimal getVendaEdicaoMaisRecenteFechada() {
 	if (vendaEdicaoMaisRecenteFechada == null) {
-	    // Busca para encontrar qual Ã© a venda da ediÃ§Ã£o mais recente fechada
+	    // Busca para encontrar qual é a venda da edição mais recente fechada
+	    vendaEdicaoMaisRecenteFechada = BigDecimal.ZERO;
 	    for (int i = edicoesRecebidas.size() - 1; i >= 0; i--) {
 		if (!edicoesRecebidas.get(i).isEdicaoAberta()) {
 		    vendaEdicaoMaisRecenteFechada = edicoesRecebidas.get(i).getVenda();
@@ -124,7 +133,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Busca para verificar se a cota sÃ³ receber ediÃ§Ãµes abertas
+     * Busca para verificar se a cota só receber edições abertas
      * @return boolean
      */
     public boolean isCotaSoRecebeuEdicaoAberta() {
@@ -136,7 +145,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Soma do reparte de todas as ediÃ§Ãµes que essa cota recebeu
+     * Soma do reparte de todas as edições que essa cota recebeu
      * @return {@link BigDecimal}
      */
     public BigDecimal getSomaReparteEdicoesAbertas() {
@@ -152,7 +161,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Percentual de encalhe mÃ¡ximo definido na tela Ajuste de Reparte (por Cota)
+     * Percentual de encalhe máximo definido na tela Ajuste de Reparte (por Cota)
      * @return {@link BigDecimal}
      */
     public BigDecimal getPercentualEncalheMaximo() {
@@ -204,7 +213,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Todas as ediÃ§Ãµes que essa cota recebeu
+     * Todas as edições que essa cota recebeu
      * @return List<{@link ProdutoEdicao}>
      */
     public List<ProdutoEdicao> getEdicoesRecebidas() {
@@ -223,30 +232,9 @@ public class Cota extends GenericDTO<Cota> {
 	this.indiceVendaCrescente = indiceVendaCrescente;
     }
 
-<<<<<<< HEAD
-	public void setReparteJuramentadoAFaturar(BigDecimal reparteJuramentadoAFaturar) {
-		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
-	}
-
-	public boolean isRecebeReparteComplementar() {
-		return recebeReparteComplementar;
-	}
-
-	public void setRecebeReparteComplementar(boolean recebeReparteComplementar) {
-		this.recebeReparteComplementar = recebeReparteComplementar;
-	}
-
-	public BigDecimal getReparteFinalCota() {
-		return reparteFinalCota;
-	}
-
-	public void setReparteFinalCota(BigDecimal reparteFinalCota) {
-		this.reparteFinalCota = reparteFinalCota;
-	}
-=======
     /**
-     * MÃ©todo que possui o resultado da venda mÃ©dia pura da cota sem as alteraÃ§Ãµes
-     * da correÃ§Ã£o de vendas e outros cÃ¡lculos
+     * Método que possui o resultado da venda média pura da cota sem as alterações
+     * da correção de vendas e outros cálculos
      * @return {@link BigDecimal}
      */
     public BigDecimal getVendaMediaNominal() {
@@ -272,6 +260,45 @@ public class Cota extends GenericDTO<Cota> {
     public void setIndiceTratamentoRegional(BigDecimal indiceTratamentoRegional) {
 	this.indiceTratamentoRegional = indiceTratamentoRegional;
     }
->>>>>>> DGBtiBit/master
 
+    public boolean isRecebeReparteComplementar() {
+	return recebeReparteComplementar;
+    }
+
+    public Long getIdEstudo() {
+	return idEstudo;
+    }
+
+    public void setIdEstudo(Long idEstudo) {
+	this.idEstudo = idEstudo;
+    }
+
+    public void setRecebeReparteComplementar(boolean recebeReparteComplementar) {
+	this.recebeReparteComplementar = recebeReparteComplementar;
+    }
+
+    public List<Cota> getEquivalente() {
+	return equivalente;
+    }
+
+    public void setEquivalente(List<Cota> equivalente) {
+	this.equivalente = equivalente;
+    }
+
+    public boolean isNova() {
+	return (this.equivalente != null && !this.equivalente.isEmpty());
+    }
+
+    public BigDecimal getIndiceAjusteEquivalente() {
+	return indiceAjusteEquivalente;
+    }
+
+    public void setIndiceAjusteEquivalente(BigDecimal indiceAjusteEquivalente) {
+	this.indiceAjusteEquivalente = indiceAjusteEquivalente;
+    }
+
+    @Override
+    public String toString() {
+	return "Cota [id=" + id + ", numero=" + numero + "]";
+    }
 }
