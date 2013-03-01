@@ -30,8 +30,9 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	
 	/*
 	 * A: As que nao receberam as edicoes-base, porem receberam a edicao aberta, caso exista, 
-	 * da maior para menor no ranking de segmento da publica��o(cotas SH);
+	 * da maior para menor no ranking de segmento da publicação(cotas SH);
 	 */
+	
 	ordenadorList.add(new Ordenador("A"){
 		@Override
 		boolean filtrar(Cota cota) {
