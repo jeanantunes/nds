@@ -163,6 +163,7 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 		$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).hide();
+		$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).hide();
 		
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexOptions({
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
@@ -202,6 +203,7 @@ var fechamentoEncalheController = $.extend(true, {
 		if (resultado.rows && resultado.rows.length > 0) {
 			$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).show();
 			$('.divBotoesPrincipais', fechamentoEncalheController.workspace).show();
+			$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).show();
 		}
 		
 		$.each(resultado.rows, function(index, row) {
