@@ -78,7 +78,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Valor do parâmetro "VendaMedia + n" configurado na tela de Ajuste de Reparte
+     * Valor do parÃ¢metro "VendaMedia + n" configurado na tela de Ajuste de Reparte
      * @return {@link BigDecimal}
      */
     public BigDecimal getVendaMediaMaisN() {
@@ -91,7 +91,7 @@ public class Cota extends GenericDTO<Cota> {
 
     /**
      * VendaMediaNominalCota = SomatoriaVendasCota / QtdeEdicoesRecebidasCota
-     * É a somatória das Vendas da Cota dividido pela Quantidade de Edições Recebidas por esta Cota
+     * Ã‰ a somatÃ³ria das Vendas da Cota dividido pela Quantidade de EdiÃ§Ãµes Recebidas por esta Cota
      * @return BigDecimal
      */
     public BigDecimal getVendaMedia() {
@@ -103,7 +103,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Valor do parâmetro ReparteMinimo na tela de bonificações ou na tela Mix de Produto
+     * Valor do parÃ¢metro ReparteMinimo na tela de bonificaÃ§Ãµes ou na tela Mix de Produto
      * @return {@link BigDecimal}
      */
     public BigDecimal getReparteMinimo() {
@@ -133,7 +133,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Busca para verificar se a cota só receber edições abertas
+     * Busca para verificar se a cota sÃ³ receber ediÃ§Ãµes abertas
      * @return boolean
      */
     public boolean isCotaSoRecebeuEdicaoAberta() {
@@ -145,7 +145,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Soma do reparte de todas as edições que essa cota recebeu
+     * Soma do reparte de todas as ediÃ§Ãµes que essa cota recebeu
      * @return {@link BigDecimal}
      */
     public BigDecimal getSomaReparteEdicoesAbertas() {
@@ -161,7 +161,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Percentual de encalhe máximo definido na tela Ajuste de Reparte (por Cota)
+     * Percentual de encalhe mÃ¡ximo definido na tela Ajuste de Reparte (por Cota)
      * @return {@link BigDecimal}
      */
     public BigDecimal getPercentualEncalheMaximo() {
@@ -213,7 +213,7 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Todas as edições que essa cota recebeu
+     * Todas as ediÃ§Ãµes que essa cota recebeu
      * @return List<{@link ProdutoEdicao}>
      */
     public List<ProdutoEdicao> getEdicoesRecebidas() {
@@ -233,8 +233,8 @@ public class Cota extends GenericDTO<Cota> {
     }
 
     /**
-     * Método que possui o resultado da venda média pura da cota sem as alterações
-     * da correção de vendas e outros cálculos
+     * MÃ©todo que possui o resultado da venda mÃ©dia pura da cota sem as alteraÃ§Ãµes
+     * da correÃ§Ã£o de vendas e outros cÃ¡lculos
      * @return {@link BigDecimal}
      */
     public BigDecimal getVendaMediaNominal() {
