@@ -26,6 +26,20 @@ $(document).ready(function(){
 	        });
 	    }
 	});
+	
+	$(document.body).keypress(function(e) {
+		var keycode = e.which;
+		if (window.event) {
+			keycode = window.event.keyCode;
+		}
+		
+		if (keycode == 32 && ($("#effectWarning").css("display") == "block" || $("#effectError").css("display") == "block"
+				|| $("#effectSuccess").css("display") == "block")) {
+			esconde(false, $('#effectWarning'));
+			esconde(false, $('#effectError'));
+			esconde(false, $('#effectSuccess'));
+		}
+	});
 });
 
 function exibirMensagem(tipoMensagem, mensagens) {
