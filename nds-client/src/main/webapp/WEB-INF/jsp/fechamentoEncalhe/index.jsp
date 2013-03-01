@@ -68,9 +68,14 @@
 	            <span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvar()" rel="tipsy" title="Salvar"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /> </a></span>
 			</div>
 			<span class="bt_novos" style="display:none;" id="bt_cotas_ausentes" ><a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe(false);" rel="tipsy" title="Cotas Ausentes"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" /></a></span>
+			<span id="btAnaliticoEncalhe" class="bt_novos" style="display: none;">
+				<a href="javascript:;" onclick="fechamentoEncalheController.analiticoEncalhe();" 
+				   rel="tipsy" title="Anal&iacute;tico Encalhe">
+					<img src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0" />
+				</a>
+			</span>
 			<div class="divBotoesPrincipais" style="display:none; float:left;">
 				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvarNoEncerrementoOperacao();" rel="tipsy" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" /></a></span>
-				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.analiticoEncalhe();" rel="tipsy" title="Anal&iacute;tico Encalhe"><img src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0" /></a></span>
 			</div>
 			
 			<span class="bt_arq"><a href="javascript:;" onclick="fechamentoEncalheController.imprimirArquivo('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
