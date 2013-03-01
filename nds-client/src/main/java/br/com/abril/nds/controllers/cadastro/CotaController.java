@@ -193,6 +193,13 @@ public class CotaController extends BaseController {
 	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
+	
+	public void verificarTipoConvencional(Long idCota) {
+		
+		boolean isTipoConvencional = cotaService.isTipoCaracteristicaSegmentacaoConvencional(idCota);
+		
+		result.use(Results.json()).from(isTipoConvencional, "result").recursive().serialize();
+	}
 
     private void carregarEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {
         List<EnderecoAssociacaoDTO> enderecos = cotaService.obterEnderecosHistoricoTitularidade(idCota, idHistorico);
