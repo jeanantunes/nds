@@ -183,10 +183,23 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	@Transactional
 	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
-
+		
+		filtroDebitoCreditoDTO.setGrupoMovimentosFinanceirosDebitosCreditos(this.getGrupoMovimentosFinanceirosDebitosCreditos());
+		
 		return this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(
 					filtroDebitoCreditoDTO
 				);
+	}
+	
+	public List<GrupoMovimentoFinaceiro> getGrupoMovimentosFinanceirosDebitosCreditos() {
+		List<GrupoMovimentoFinaceiro> gruposMovimentosFinanceiros = new ArrayList<GrupoMovimentoFinaceiro>();
+		
+		gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.CREDITO);
+		gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.DEBITO);
+		gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO);
+		gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO);
+		gruposMovimentosFinanceiros.add(GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS);
+		return gruposMovimentosFinanceiros;
 	}
 
 	/**
