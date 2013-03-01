@@ -312,7 +312,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
-		String hql = getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO) +
+		String hql = " select  movimentoFinanceiroCota "+getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO) +
 					 getOrderByObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO); 
 
 		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
@@ -334,36 +334,28 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 		hql.append(" from MovimentoFinanceiroCota movimentoFinanceiroCota ");
 
-		String conditions = "";
+		String conditions = " where movimentoFinanceiroCota.tipoMovimento.id in ( " + getTipoMovimentoPorGrupoFinanceiros()+" ) ";
 
 		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
 
-			conditions += conditions == "" ? " where " : " and ";
-
-			conditions += " movimentoFinanceiroCota.tipoMovimento.id = :idTipoMovimento ";
+			conditions += " and movimentoFinanceiroCota.tipoMovimento.id = :idTipoMovimento ";
 		}
 
 		if (filtroDebitoCreditoDTO.getDataLancamentoInicio() != null && 
 				filtroDebitoCreditoDTO.getDataLancamentoFim() != null) {
 			
-			conditions += conditions == "" ? " where " : " and ";
-
-			conditions += " movimentoFinanceiroCota.dataCriacao between :dataLancamentoInicio and :dataLancamentoFim ";
+			conditions += " and movimentoFinanceiroCota.dataCriacao between :dataLancamentoInicio and :dataLancamentoFim ";
 		}
 		
 		if (filtroDebitoCreditoDTO.getDataVencimentoInicio() != null && 
 				filtroDebitoCreditoDTO.getDataVencimentoFim() != null) {
 			
-			conditions += conditions == "" ? " where " : " and ";
-
-			conditions += " movimentoFinanceiroCota.data between :dataVencimentoInicio and :dataVencimentoFim ";
+			conditions += " and movimentoFinanceiroCota.data between :dataVencimentoInicio and :dataVencimentoFim ";
 		}
 
 		if (filtroDebitoCreditoDTO.getNumeroCota() != null) {
 
-			conditions += conditions == "" ? " where " : " and ";
-
-			conditions += " movimentoFinanceiroCota.cota.numeroCota = :numeroCota ";
+			conditions += " and movimentoFinanceiroCota.cota.numeroCota = :numeroCota ";
 		}
 
 		hql.append(conditions);
@@ -371,10 +363,21 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return hql.toString();
 	}
 
+	private StringBuilder getTipoMovimentoPorGrupoFinanceiros() {
+		
+		StringBuilder hql = new StringBuilder("select t.id ");
+		hql.append(" from TipoMovimentoFinanceiro t ")
+		   .append(" where t.grupoMovimentoFinaceiro in (:grupoMovimentosFinanceiros)");
+	
+		return hql;
+	}
+
 	private Query criarQueryObterMovimentosFinanceiroCota(String hql, FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
 		Query query = getSession().createQuery(hql);
-
+		
+		query.setParameterList("grupoMovimentosFinanceiros", filtroDebitoCreditoDTO.getGrupoMovimentosFinanceirosDebitosCreditos());
+		
 		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
 
 			query.setParameter("idTipoMovimento", filtroDebitoCreditoDTO.getIdTipoMovimento());
