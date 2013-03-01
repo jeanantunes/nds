@@ -1,7 +1,7 @@
 package br.com.abril.nds.process.correcaovendas;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -12,21 +12,22 @@ import org.testng.annotations.Test;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.dataprovider.CorrecaoVendasDataProvider;
-import br.com.abril.nds.process.dataprovider.VendasCrescenteDataProvider;
 
 public class CorrecaoVendasTest {
 
     /**
-     * Testar se o índice de venda crescente será 1 com uma única publicacão e com menos de quatro edições.
+     * Testar os índices de correção de venda de quantidade edicao base maior do que um e nao primeira edicao.
      * 
      * @param cota
      */
-    @Test(dataProvider = "getCotaUnicaPublicacaoMenosDeQuatroEdicoesList", dataProviderClass = CorrecaoVendasDataProvider.class)
-    public void unicaPublicacaoMenosDeQuatroEdicoes(Cota cota) {
+    @Test(dataProvider = "getCotaEdicaoNaoPrimeiraEdicaoList", dataProviderClass = CorrecaoVendasDataProvider.class)
+    public void quantidadeEdicaoBaseMaiorUmNaoPrimeiraEdicao(Cota cota) {
 
 	try {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
+
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
@@ -38,99 +39,217 @@ public class CorrecaoVendasTest {
 	    while (itProdutoEdicao.hasNext()) {
 
 		ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
-		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
-	    }
 
-	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
+		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
-	    boolean assertIndiceVendaCrescente = (indiceVendaCrescente != null && (indiceVendaCrescente.compareTo(BigDecimal.ONE) == 0));
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
 
-	    assertTrue("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), assertIndiceVendaCrescente);
-	    gerarReporterLog(cota, sbReporterLog, indiceVendaCrescente);
-
-	} catch (Exception e) {
-	    fail(e.getMessage());
-	}
-    }
-
-    /**
-     * Testar se o índice de venda crescente será 1 com uma única publicacão, quatro edições e sem edições fechadas.
-     * 
-     * @param cota
-     */
-    @Test(dataProvider = "getCotaUnicaPublicacaoQuatroEdicoesSemEdicoesFechadaList", dataProviderClass = VendasCrescenteDataProvider.class)
-    public void unicaPublicacaoQuatroEdicoesSemEdicoesFechada(Cota cota) {
-
-	try {
-
-	    StringBuilder sbReporterLog = new StringBuilder();
-
-	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
-	    correcaoVendas.executar();
-
-	    cota = (Cota) correcaoVendas.getGenericDTO();
-
-	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
-
-	    while (itProdutoEdicao.hasNext()) {
-
-		ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
-		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
-	    }
-
-	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
-
-	    boolean assertIndiceVendaCrescente = (indiceVendaCrescente != null && (indiceVendaCrescente.compareTo(BigDecimal.ONE) == 0));
-
-	    assertTrue("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), assertIndiceVendaCrescente);
-	    gerarReporterLog(cota, sbReporterLog, indiceVendaCrescente);
-
-	} catch (Exception e) {
-	    fail(e.getMessage());
-	}
-    }
-
-    /**
-     * Testar se o índice de correção de tendêncida será 1.
-     * 
-     * @param cota
-     */
-    @Test(dataProvider = "getCotaUnicaPublicacaoQuatroEdicoesSemEdicoesFechadaList", dataProviderClass = VendasCrescenteDataProvider.class)
-    public void percentualVendaNaoIgualUmNaoIgualMaiorZeroVirgualNove(Cota cota) {
-
-	try {
-
-	    StringBuilder sbReporterLog = new StringBuilder();
-
-	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
-	    correcaoVendas.executar();
-
-	    cota = (Cota) correcaoVendas.getGenericDTO();
-
-	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
-
-	    while (itProdutoEdicao.hasNext()) {
-
-		ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
 	    }
 
 	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
+	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
 
-	    boolean assertIndiceCorrecaoTendencia = (indiceCorrecaoTendencia != null && (indiceCorrecaoTendencia.compareTo(BigDecimal.ONE) == 0));
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
 
-	    assertTrue("Indice Venda Crescente : " + indiceCorrecaoTendencia + " Cota : " + cota.getId(), assertIndiceCorrecaoTendencia);
-	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia);
+	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
 
 	} catch (Exception e) {
 	    fail(e.getMessage());
 	}
     }
 
-    private void gerarReporterLog(Cota cota, StringBuilder sbReporterLog, BigDecimal indiceVendaCrescente) {
+    /**
+     * Testar os índices de correção de venda de quantidade edicao base maior do que um e primeira edicao.
+     * 
+     * @param cota
+     */
+    @Test(dataProvider = "getCotaEdicaoPrimeiraEdicaoList", dataProviderClass = CorrecaoVendasDataProvider.class)
+    public void quantidadeEdicaoBaseMaiorUmPrimeiraEdicao(Cota cota) {
+
+	try {
+
+	    StringBuilder sbReporterLog = new StringBuilder();
+
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+	    correcaoVendas.executar();
+
+	    cota = (Cota) correcaoVendas.getGenericDTO();
+
+	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
+
+	    while (itProdutoEdicao.hasNext()) {
+
+		ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
+
+		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
+
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
+
+		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
+	    }
+
+	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
+	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
+
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
+
+	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
+
+	} catch (Exception e) {
+	    fail(e.getMessage());
+	}
+    }
+
+    /**
+     * Testar os índices de correção de venda de quantidade edicao base maior do que um e primeira edicao e coleção.
+     * 
+     * @param cota
+     */
+    @Test(dataProvider = "getCotaEdicaoPrimeiraEdicaoColecaoList", dataProviderClass = CorrecaoVendasDataProvider.class)
+    public void quantidadeEdicaoBaseMaiorUmPrimeiraEdicaoColecao(Cota cota) {
+
+	try {
+
+	    StringBuilder sbReporterLog = new StringBuilder();
+
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+	    correcaoVendas.executar();
+
+	    cota = (Cota) correcaoVendas.getGenericDTO();
+
+	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
+
+	    while (itProdutoEdicao.hasNext()) {
+
+		ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
+
+		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
+
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
+
+		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
+	    }
+
+	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
+	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
+
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
+
+	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
+
+	} catch (Exception e) {
+	    fail(e.getMessage());
+	}
+    }
+
+    /**
+     * Testar os índices de correção de venda de quantidade edicao base maior do que um e primeira edicao e não coleção.
+     * 
+     * @param cota
+     */
+    @Test(dataProvider = "getCotaEdicaoNaoPrimeiraEdicaoNaoColecaoList", dataProviderClass = CorrecaoVendasDataProvider.class)
+    public void quantidadeEdicaoBaseMaiorUmNaoPrimeiraEdicaoNaoColecao(Cota cota) {
+
+	try {
+
+	    StringBuilder sbReporterLog = new StringBuilder();
+
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+	    correcaoVendas.executar();
+
+	    cota = (Cota) correcaoVendas.getGenericDTO();
+
+	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
+
+	    while (itProdutoEdicao.hasNext()) {
+
+		ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
+
+		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
+
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
+
+		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
+	    }
+
+	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
+	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
+
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
+
+	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
+
+	} catch (Exception e) {
+	    fail(e.getMessage());
+	}
+    }
+
+    /**
+     * Testar os índices de correção de venda com quantidade de edicoes fechadas maior ou igual a quatro.
+     * 
+     * @param cota
+     */
+    @Test(dataProvider = "getCotaEdicaoFechadasList", dataProviderClass = CorrecaoVendasDataProvider.class)
+    public void quatroOuMaisEdicoesFechadasList(Cota cota) {
+
+	try {
+
+	    StringBuilder sbReporterLog = new StringBuilder();
+
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+	    correcaoVendas.executar();
+
+	    cota = (Cota) correcaoVendas.getGenericDTO();
+
+	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
+
+	    while (itProdutoEdicao.hasNext()) {
+
+		ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
+
+		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
+
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
+
+		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
+	    }
+
+	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
+	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
+
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
+
+	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
+
+	} catch (Exception e) {
+	    fail(e.getMessage());
+	}
+    }
+
+    private void gerarReporterLog(Cota cota, StringBuilder sbReporterLog, BigDecimal indiceCorrecaoTendencia, BigDecimal indiceVendaCrescente) {
 	Reporter.log("<p>Cota </p>");
 	Reporter.log("<p style='margin-left: 50px'>ID : " + cota.getId() + "</p>");
 	Reporter.log("<p style='margin-left: 50px'>-> Indice Venda Crescente : " + indiceVendaCrescente + "</p>");
+	Reporter.log("<p style='margin-left: 50px'>-> Indice Correcao Tendencia : " + indiceCorrecaoTendencia + "</p>");
 	Reporter.log(sbReporterLog.toString());
     }
 
@@ -140,6 +259,7 @@ public class CorrecaoVendasTest {
 	sbReporterLog.append("<p style='margin-left: 150px'>Aberta : " + produtoEdicao.isEdicaoAberta() + "</p>");
 	sbReporterLog.append("<p style='margin-left: 150px'>Reparte : " + produtoEdicao.getReparte() + "</p>");
 	sbReporterLog.append("<p style='margin-left: 150px'>Venda : " + produtoEdicao.getVenda() + "</p>");
+	sbReporterLog.append("<p style='margin-left: 150px'>-> Indice de Correcao : " + produtoEdicao.getIndiceCorrecao() + "</p>");
     }
 
 }

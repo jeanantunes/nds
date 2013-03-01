@@ -30,6 +30,8 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
     		//evitando referencia de objetos :p
     		cota.setReparteCalculado(BigDecimal.ZERO.add(cota.getReparteCalculado()));
     	}
+
     }
+
 
 }

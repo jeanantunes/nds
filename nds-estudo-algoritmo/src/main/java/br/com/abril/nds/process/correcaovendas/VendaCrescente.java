@@ -51,9 +51,9 @@ public class VendaCrescente extends ProcessoAbstrato {
 			    && !produtoEdicao.isEdicaoAberta()) {
 
 			if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
-			    BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 2, BigDecimal.ROUND_FLOOR);
-
-			    listDivBoolean.add(divVendaEdicao.compareTo(BigDecimal.ONE) == 1);
+			    BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 15, BigDecimal.ROUND_FLOOR);
+			    Boolean boo = divVendaEdicao.compareTo(BigDecimal.ONE) == 1;
+			    listDivBoolean.add(boo);
 			}
 		    }
 		}
@@ -65,8 +65,7 @@ public class VendaCrescente extends ProcessoAbstrato {
 		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
 	    }
 	}
-	
+
 	cota.setIndiceVendaCrescente(indiceVendaCrescente);
     }
 }
-

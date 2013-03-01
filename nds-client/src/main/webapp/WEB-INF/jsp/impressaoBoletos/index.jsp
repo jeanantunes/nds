@@ -164,4 +164,6 @@
      	</fieldset>
 		
 	<div class="linha_separa_fields">&nbsp;</div>
+	
+	<iframe src="" id="download-iframe" style="display:none;"></iframe>
 </body>

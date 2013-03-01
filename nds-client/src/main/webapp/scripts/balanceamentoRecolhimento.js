@@ -72,16 +72,16 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			function(result) {
 				
 				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+				$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
 			},
 			function() {
-
-				$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+				balanceamentoRecolhimentoController.showResumo(false);
 			}
 		);
 	},
 	
 	montarResumoPeriodoBalanceamento : function(result) {
-		
+				
 		var rows = '<tr>';
 
 		$.each(result.listaResumoPeriodoBalanceamento, function(index, resumo) {
@@ -148,7 +148,17 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	    	});
 	   
 	    
-	    $("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).show();
+	    	balanceamentoRecolhimentoController.showResumo(true);
+	    	 	
+	},
+	
+	defineUtilizacaoSedeAtendida : function() {
+		
+		var utilizaSedeAtendida = $('#utilizaSedeAtendida').val() == 'true';
+		
+		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexToggleCol(10,utilizaSedeAtendida);
+		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexToggleCol(11,utilizaSedeAtendida);
+		
 	},
 	
 	bloquearCheckAll : function() {
@@ -243,7 +253,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			var nomeProduto = row.cell.nomeProduto;
 			
 			row.cell.nomeProduto = balanceamentoRecolhimentoController.balanceamento.getColunaProduto(idProdutoEdicao, nomeProduto);
-			row.cell.sequencia = balanceamentoRecolhimentoController.gerarInputSequencia(row);
 			row.cell.novaData = balanceamentoRecolhimentoController.gerarHTMLNovaData(row);
 			row.cell.reprogramar = balanceamentoRecolhimentoController.gerarCheckReprogramar(row);
 			row.cell.acao = balanceamentoRecolhimentoController.gerarBtnAcoes(row);
@@ -252,6 +261,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		$(".grids", balanceamentoRecolhimentoController.workspace).show();
 		
 		$("#fieldsetGrids", balanceamentoRecolhimentoController.workspace).show();
+		
+		balanceamentoRecolhimentoController.defineUtilizacaoSedeAtendida();	 
 		
 		return resultado;
 	},
@@ -273,27 +284,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		return btnExcluir;
 	},
 	
-	gerarInputSequencia : function(row) {
-		
-		var retornoHTML;
-		
-		if (row.cell.bloqueioAlteracaoBalanceamento) {
-			
-			retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
-					    + 	    ' value="' + row.cell.sequencia + '"'
-					    +	    ' style="width: 30px;" disabled="disabled"'
-					    +	    ' name="sequencia" maxlength="4" />';
-		} else {
-			
-			retornoHTML = '<input type="text" id="sequencia' + row.id + '"'
-					    + 	    ' value="' + row.cell.sequencia + '"'
-					    +	    ' style="width: 30px;"'
-					    +	    ' name="sequencia" maxlength="4" />';
-		}
-		
-		return retornoHTML;
-	},
-	
 	gerarHTMLNovaData : function(row) {
 		
 		var retornoHTML;
@@ -308,9 +298,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		retornoHTML += '<input type="text" name="novaData"'
 					 + 	     ' value="' + row.cell.novaData + '"'
-					 + 	     ' style="width:65px; margin-right:5px; float:left;" />';
+					 + 	     ' style="width:55px; margin-right:5px; float:left;margin-top: -3px;" />';
 		
-		retornoHTML += '<div class="bt_atualizarIco" title="Reprogramar">'
+		retornoHTML += '<div class="bt_atualizarIco" style="margin-top: -9px;" title="Reprogramar">'
 			  		 + '  <a href="javascript:;">&nbsp;</a>'
 			  		 + '</div>';
 			  		 
@@ -346,8 +336,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		});
 		
 		$("input[name='novaData']", balanceamentoRecolhimentoController.workspace).mask("99/99/9999");
-		
-		$("input[name='sequencia']", balanceamentoRecolhimentoController.workspace).numeric(false);
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
 	},
@@ -403,7 +391,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 			var checado = this.checked;
 			
-			balanceamentoRecolhimentoController.clickLineFlexigrid(this, checado);
+			clickLineFlexigrid(this, checado);
 			
 			if (!checado) {
 				
@@ -424,7 +412,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 			var checado = this.checked;
 			
-			balanceamentoRecolhimentoController.clickLineFlexigrid(this, checado);
+			clickLineFlexigrid(this, checado);
 		});
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
@@ -552,15 +540,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {
-				display : 'SM',
-				name : 'sequencia',
-				width : 35,
-				sortable : true,
-				align : 'left'
-			}, {
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 40,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -576,15 +558,15 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Preço Venda R$',
+				display : 'Capa R$',
 				name : 'precoVenda',
-				width : 85,
+				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Preço Desconto R$',
+				display : 'Desc R$',
 				name : 'precoDesconto',
-				width : 103,
+				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
@@ -612,15 +594,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Lançamento',
+				display : 'Lçto',
 				name : 'dataLancamento',
-				width : 68,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Recolhimento',
-				name : 'dataRecolhimento',
-				width : 78,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -628,57 +604,59 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				name : 'encalheSede',
 				width : 60,
 				sortable : true,
-				align : 'center'
+				align : 'center',
+				hide : true
 			}, {
 				display : 'Atendida',
 				name : 'encalheAtendida',
 				width : 60,
 				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Alternativo',
-				name : 'encalheAlternativo',
-				width : 70,
-				sortable : true,
-				align : 'center'
+				align : 'center',
+				hide : true
 			}, {
 				display : 'Exemplar',
 				name : 'encalhe',
-				width : 60,
+				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Total R$',
 				name : 'valorTotal',
-				width : 70,
+				width : 60,
 				sortable : true,
 				align : 'right'
 			}, {
+				display : 'Rcto',
+				name : 'dataRecolhimento',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Nova Data',
 				name : 'novaData',
-				width : 110,
+				width : 105,
 				sortable : false,
 				align : 'center'
 			},{
 				display : 'Reprog.',
 				name : 'reprogramar',
-				width : 45,
+				width : 33,
 				sortable : false,
 				align : 'center'
 			}, {
 				display: 'Ação',
 				name : 'acao',
-				width : 50,
+				width : 30,
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "sequencia",
+			sortname : "nomeProduto",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
+			width : 1066,
 			height : 180
 		});
 	},
@@ -729,7 +707,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			},
 			function(result) {
 				
-				$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+				balanceamentoRecolhimentoController.showResumo(false);
 			}
 		);
 	},
@@ -752,7 +730,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			},
 			function() {
 				
-				$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+				balanceamentoRecolhimentoController.showResumo(false);
 			}
 		);
 	},
@@ -799,7 +777,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				if(result && result.mensagem && result.mensagem.tratarValidacao == false){
 
-					$("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+					balanceamentoRecolhimentoController.showResumo(false);
 				}
 			}
 		);
@@ -833,7 +811,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	processarReprogramacao : function() {
-		
 		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
 		
 		var listaProdutoRecolhimento = new Array();
@@ -844,7 +821,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			var linha = $(value);
 			
-			var colunaCheck = linha.find("td")[18];
+			var colunaCheck = linha.find("td")[16];
 			
 			var inputCheck = $(colunaCheck).find("div").find('input[name="checkReprogramar"]');
 			
@@ -856,11 +833,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				var idLancamento = idLinha.replace("row", "");
 				
-				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
-				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "novaData");
-				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "hiddenIdFornecedor");
+				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "novaData");
+				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "hiddenIdFornecedor");
 				
-				listaProdutoRecolhimento.push({idFornecedor:idFornecedor,idLancamento:idLancamento,sequencia:sequencia,novaData:novaData});
+				listaProdutoRecolhimento.push({idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData});
 			}
 		});
 		
@@ -905,11 +881,10 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			if (idLancamento == idRow) {
 				
-				var sequencia = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 0, "sequencia");
-				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "novaData");
-				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 17, "hiddenIdFornecedor");
+				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "novaData");
+				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "hiddenIdFornecedor");
 				
-				linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,sequencia:sequencia,novaData:novaData};
+				linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData};
 			}
 		});
 		
@@ -957,7 +932,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				   
 					   balanceamentoRecolhimentoController.fecharGridBalanceamento();
 					   
-					   $("#resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+					   balanceamentoRecolhimentoController.showResumo(false);
 				   }
 		);
 	},
@@ -1036,9 +1011,19 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			balanceamentoRecolhimentoController.deselectCheckAll();
 		});
 		
+	},
+	
+	showResumo : function(ativo) {
+		
+		if(ativo===false) {
+			$(".resumoPeriodo", balanceamentoRecolhimentoController.workspace).hide();
+			$('.fieldFiltro').css('margin-top','0px');
+		} else {
+			$(".resumoPeriodo", balanceamentoRecolhimentoController.workspace).show();
+			$('.fieldFiltro').css('margin-top','27px');
+		}
+		
 	}
-	
-	
 
 }, BaseController);
 

@@ -7,10 +7,10 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -39,7 +39,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTOQUE_PROD_COTA_ID")
 	private EstoqueProdutoCota estoqueProdutoCota;
 	
@@ -68,9 +68,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
 	private List<ProdutoServico> listaProdutoServicos;
 	
-	@OneToMany(mappedBy = "movimentoEstoqueCota")
-	private List<ConferenciaEncalhe> listaConferenciasEncalhe;
-	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
@@ -95,7 +92,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 		mec.setEstoqueProdutoCota(this.getEstoqueProdutoCota());
 		mec.setEstoqueProdutoCotaJuramentado(this.getEstoqueProdutoCotaJuramentado());
 		mec.setLancamento(this.getLancamento());
-		mec.setListaConferenciasEncalhe(this.getListaConferenciasEncalhe());
 		mec.setListaProdutoServicos(this.getListaProdutoServicos());
 		mec.setMotivo(this.getMotivo());
 		mec.setProdutoEdicao(this.getProdutoEdicao());
@@ -167,21 +163,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	 */
 	public void setListaProdutoServicos(List<ProdutoServico> listaProdutoServicos) {
 		this.listaProdutoServicos = listaProdutoServicos;
-	}
-
-	/**
-	 * @return the listaConferenciasEncalhe
-	 */
-	public List<ConferenciaEncalhe> getListaConferenciasEncalhe() {
-		return listaConferenciasEncalhe;
-	}
-
-	/**
-	 * @param listaConferenciasEncalhe the listaConferenciasEncalhe to set
-	 */
-	public void setListaConferenciasEncalhe(
-			List<ConferenciaEncalhe> listaConferenciasEncalhe) {
-		this.listaConferenciasEncalhe = listaConferenciasEncalhe;
 	}
 
 	/**

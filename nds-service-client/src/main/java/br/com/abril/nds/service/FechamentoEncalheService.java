@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
@@ -23,13 +24,17 @@ public interface FechamentoEncalheService {
 
 	void postergarCotas(Date dataEncalhe, Date dataPostergacao, List<Long> idsCotas);
 	
+	void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao);
+
 	void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas);
 	
+	void cobrarTodasCotas(Date dataOperacao, Usuario usuario);
+
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 	
 	void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento);
 	
-	void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario) throws Exception;
+	void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao);
 	
 	Boolean existeFechamentoEncalheDetalhado(FiltroFechamentoEncalheDTO filtro);
 	
@@ -52,4 +57,8 @@ public interface FechamentoEncalheService {
 	Integer buscarTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 	
 	Date buscarUtimoDiaDaSemanaRecolhimento();
+	
+	void gerarNotaFiscal(Date dataEncalhe);
+
+	List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 }

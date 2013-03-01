@@ -48,8 +48,8 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 	
 	public void calcularRedutorAutomatico() {
 		for (Cota cota : getEstudo().getCotas()) {
-			if ((cota.getVendaMedia().doubleValue() <= menorVenda.doubleValue())
-					&& (cota.getVendaEdicaoMaisRecenteFechada().equals(BigDecimal.ZERO))) {
+			if ((cota.getVendaMedia().compareTo(menorVenda) <= 0)
+					&& (cota.getVendaEdicaoMaisRecenteFechada().compareTo(BigDecimal.ZERO) == 0)) {
 				// TODO: verificar se na subtração abaixo deve remover o reparte calculado que
 				// já estiver registrado aqui ou se não será removido nenhum valor, pois aqui
 				// ele está sendo zerado.
@@ -64,10 +64,10 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 	}
 
 	public void calcularMenorVenda() {
-		BigDecimal excedente = getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia());
+		getEstudo().setExcedente(getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia()));
 		BigDecimal percentualExcedente = BigDecimal.ZERO;
 		if (getEstudo().getSomatoriaVendaMedia().doubleValue() > 0) {
-			percentualExcedente = excedente.divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
+			percentualExcedente = getEstudo().getExcedente().divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
 		}
 
 		menorVenda = BigDecimal.ZERO;

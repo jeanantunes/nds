@@ -1,8 +1,12 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -73,7 +77,7 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 				hql += " rateioDiferenca.cota.numeroCota ";
 				break;
 			case DATA:
-				hql += " rateioDiferenca.diferenca.lancamentoDiferenca.movimentoEstoque.data ";
+				hql += " mec.data ";
 				break;
 			case EXEMPLARES:
 				hql += " rateioDiferenca.qtde ";
@@ -154,27 +158,42 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select ")
-		   .append(" rateioDiferenca.diferenca.lancamentoDiferenca.movimentoEstoque.data as data, ")
+		   .append(" mec.data as data, ")
 		   .append(" rateioDiferenca.cota.numeroCota as numeroCota, ")
-		   .append(" rateioDiferenca.cota.pessoa.nome as nomeCota, ")
+		   .append(" case rateioDiferenca.cota.pessoa.class ")
+		   .append("       when 'F' then rateioDiferenca.cota.pessoa.nome ")
+		   .append("       when 'J' then rateioDiferenca.cota.pessoa.razaoSocial end  as nomeCota,")
 		   .append(" rateioDiferenca.cota.box.codigo as codigoBox, ")
 		   .append(" rateioDiferenca.qtde as exemplares, ")
-		   .append(" mec.valoresAplicados.precoComDesconto as precoDesconto, ")
+		   .append(" coalesce(mec.valoresAplicados.precoComDesconto,0) as precoDesconto, ")
 		   .append(" case when diferenca.statusConfirmacao = :statusConfirmado then ")
-		   .append(" (rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto)) ")
+		   .append(" (coalesce(rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto),0)) ")
 		   .append(" else 0 end as totalAprovadas, ")
 		   .append(" case when diferenca.statusConfirmacao = :statusPendente then ")
 		   .append(" (rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto)) ")
 		   .append(" else 0 end as totalRejeitadas, ")
-		   .append(" rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto) as valorTotal ")
+		   .append(" coalesce(rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto),0) as valorTotal ")
 		   .append(" from RateioDiferenca rateioDiferenca ")
 		   .append(" inner join rateioDiferenca.diferenca.produtoEdicao as produtoEdicao ")
-		   .append(" inner join rateioDiferenca.diferenca.lancamentoDiferenca.movimentoEstoqueCota as mec ")
+		   .append(" inner join rateioDiferenca.diferenca.lancamentoDiferenca.movimentosEstoqueCota as mec ")
 		   .append(" inner join produtoEdicao.produto.fornecedores as fornecedor ")
 		   .append(" inner join rateioDiferenca.diferenca as diferenca ")
-		   .append(" where rateioDiferenca.diferenca.id = :idDiferenca ");
+		   .append(" where rateioDiferenca.diferenca.id = :idDiferenca ")
+		   .append(" group by rateioDiferenca.id ");
 
 		return hql.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<RateioDiferenca> obterRateiosPorDiferenca(Long id) {
+		
+		String hql = "select r from RateioDiferenca r where r.diferenca.id = :idDiferenca";
+		
+		Query query = getSession().createQuery(hql);
+		query.setParameter("idDiferenca", id);
+		
+		return query.list();
 	}
 
 }

@@ -25,7 +25,7 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal indiceCorrecaoTendencia;
     private BigDecimal quantidadePDVs;
     private boolean recebeReparteComplementar;
-    // TODO: o q é mix?
+    // TODO: o q Ã© mix?
     private boolean mix;
     private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceAjusteCota;
@@ -116,7 +116,7 @@ public class Cota extends GenericDTO<Cota> {
 
     public BigDecimal getVendaEdicaoMaisRecenteFechada() {
 	if (vendaEdicaoMaisRecenteFechada == null) {
-	    // Busca para encontrar qual é a venda da edição mais recente fechada
+	    // Busca para encontrar qual Ã© a venda da ediÃ§Ã£o mais recente fechada
 	    vendaEdicaoMaisRecenteFechada = BigDecimal.ZERO;
 	    for (int i = edicoesRecebidas.size() - 1; i >= 0; i--) {
 		if (!edicoesRecebidas.get(i).isEdicaoAberta()) {

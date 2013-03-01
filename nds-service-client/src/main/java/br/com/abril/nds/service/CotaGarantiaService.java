@@ -292,4 +292,5 @@ public interface CotaGarantiaService {
      */
 	byte[] getImagemChequeCaucaoHistoricoTitularidade(Long idCota, Long idHistorico);
 
+	Long getQtdCotaGarantiaByCota(Long idCota);
 }

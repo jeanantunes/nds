@@ -158,7 +158,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataLancamentoDistribuidor(dtLancamento);
 		lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
 		lancamento.setReparte(BigInteger.ZERO);
-		lancamento.setSequenciaMatriz(0);
+		lancamento.setSequenciaMatriz(null);
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataStatus(new Date());
 		lancamento.setStatus(StatusLancamento.PLANEJADO);
@@ -298,7 +298,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		periodoLancamentoParcialRepository.remover(periodo);
 		
-		lancamentoRepository.remover(lancamento);
+		//lancamentoRepository.remover(lancamento);
 	}
 
 	/**

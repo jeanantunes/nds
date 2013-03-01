@@ -63,6 +63,9 @@ public class ChamadaEncalhe implements Serializable {
 	inverseJoinColumns = {@JoinColumn(name = "LANCAMENTO_ID")})
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
+	@Column(name = "SEQUENCIA", nullable = true)
+	private Integer sequencia;
+	
 	/**
 	 * @return the id
 	 */
@@ -139,6 +142,20 @@ public class ChamadaEncalhe implements Serializable {
 	 */
 	public void setLancamentos(Set<Lancamento> lancamentos) {
 		this.lancamentos = lancamentos;
+	}
+
+	/**
+	 * @return the sequencia
+	 */
+	public Integer getSequencia() {
+		return sequencia;
+	}
+
+	/**
+	 * @param sequencia the sequencia to set
+	 */
+	public void setSequencia(Integer sequencia) {
+		this.sequencia = sequencia;
 	}
 
 }

@@ -32,9 +32,9 @@ public class Medias extends ProcessoAbstrato {
 
 	Cota cota = (Cota) super.genericDTO;
 
-	List<ProdutoEdicao> listProdutoEdicoa = cota.getEdicoesRecebidas();
+	List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
 
-	int qtdeEdicaoBase = listProdutoEdicoa.size();
+	int qtdeEdicaoBase = listProdutoEdicao.size();
 
 	BigDecimal totalPeso = BigDecimal.ZERO;
 	BigDecimal totalVendaMultiplyPeso = BigDecimal.ZERO;
@@ -44,31 +44,33 @@ public class Medias extends ProcessoAbstrato {
 	int iProdutoEdicao = 0;
 	while (iProdutoEdicao < qtdeEdicaoBase) {
 
-	    ProdutoEdicao produtoEdicao = listProdutoEdicoa.get(iProdutoEdicao);
+	    ProdutoEdicao produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
 
 	    BigDecimal peso = new BigDecimal(produtoEdicao.getPeso());
 	    BigDecimal vendaCorrigida = produtoEdicao.getVendaCorrigida();
 
-	    treeVendaPeso.put(vendaCorrigida, peso);
+	    if (vendaCorrigida != null && peso != null) {
 
-	    totalPeso = totalPeso.add(peso);
-	    totalVendaMultiplyPeso = totalVendaMultiplyPeso.add(vendaCorrigida.multiply(peso));
+		treeVendaPeso.put(vendaCorrigida, peso);
+
+		totalPeso = totalPeso.add(peso);
+		totalVendaMultiplyPeso = totalVendaMultiplyPeso.add(vendaCorrigida.multiply(peso));
+	    }
 
 	    iProdutoEdicao++;
 	}
 
-	if (qtdeEdicaoBase < 3) {
-	    
-	    vendaMediaCorrigida = totalVendaMultiplyPeso.divide(totalPeso, 2, BigDecimal.ROUND_FLOOR);
-	    
-	} else {
-	    
-	    BigDecimal menorValor = treeVendaPeso.firstEntry().getKey();
-	    BigDecimal menorPeso = treeVendaPeso.firstEntry().getValue();
-	    BigDecimal menorMultiply = menorValor.multiply(menorPeso);
-	    
-	    vendaMediaCorrigida = totalVendaMultiplyPeso.subtract(menorMultiply).divide(totalPeso.subtract(menorPeso), 2, BigDecimal.ROUND_FLOOR);
-	    
+	if (totalPeso.compareTo(BigDecimal.ONE) == 1) {
+	    if (qtdeEdicaoBase < 3) {
+		vendaMediaCorrigida = totalVendaMultiplyPeso.divide(totalPeso, 2, BigDecimal.ROUND_FLOOR);
+	    } else {
+
+		BigDecimal menorValor = treeVendaPeso.firstEntry().getKey();
+		BigDecimal menorPeso = treeVendaPeso.firstEntry().getValue();
+		BigDecimal menorMultiply = menorValor.multiply(menorPeso);
+
+		vendaMediaCorrigida = totalVendaMultiplyPeso.subtract(menorMultiply).divide(totalPeso.subtract(menorPeso), 2, BigDecimal.ROUND_FLOOR);
+	    }
 	}
 
 	cota.setVendaMedia(vendaMediaCorrigida);

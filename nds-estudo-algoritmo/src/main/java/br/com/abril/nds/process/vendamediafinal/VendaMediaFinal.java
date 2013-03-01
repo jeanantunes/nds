@@ -18,7 +18,7 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
  */
 public class VendaMediaFinal extends ProcessoAbstrato {
 
-    private BigDecimal value;
+    private BigDecimal value = BigDecimal.ZERO;
 
     public VendaMediaFinal(Cota cota) {
 	super(cota);
@@ -26,15 +26,15 @@ public class VendaMediaFinal extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() {
-	
+
 	Cota cota = (Cota) super.genericDTO;
-	
+
 	BigDecimal vendaMedia = cota.getVendaMedia();
 	BigDecimal indiceAjusteCota = cota.getIndiceAjusteCota();
 	BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
 	BigDecimal indiceTratamentoReginal = cota.getIndiceTratamentoRegional();
-	
-	if(vendaMedia != null && indiceAjusteCota != null && indiceVendaCrescente != null && indiceTratamentoReginal != null) {
+
+	if (vendaMedia != null && indiceAjusteCota != null && indiceVendaCrescente != null && indiceTratamentoReginal != null) {
 	    value = cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()).multiply(cota.getIndiceVendaCrescente()).multiply(cota.getIndiceTratamentoRegional());
 	}
     }

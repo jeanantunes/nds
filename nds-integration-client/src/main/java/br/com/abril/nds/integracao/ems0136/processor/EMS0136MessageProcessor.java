@@ -2,6 +2,8 @@ package br.com.abril.nds.integracao.ems0136.processor;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -13,12 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0136Input;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
@@ -209,7 +212,17 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			EMS0136Input input, LancamentoParcial lancamentoParcial) {
 		
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
-		
+
+		// Resgata todos os itens recebimentos fisicos para armazenar no novo lancamento
+		Set<ItemRecebimentoFisico> itens = new HashSet<ItemRecebimentoFisico>();
+		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
+			if (periodo.getLancamento() != null) {
+				for (ItemRecebimentoFisico item : periodo.getLancamento().getRecebimentos()) {
+					itens.add(item);
+				}
+			}
+		}
+	
 		/* 
 		 * Exclui todos os Períodos que não foram gerados hoje (== DataOperacao)
 		 */
@@ -244,6 +257,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		Lancamento lancamento = this.obterLancamento(input, 
 				lancamentoParcial.getProdutoEdicao());
+		lancamento.setRecebimentos(itens);
 		pParcial.setLancamento(lancamento);
 		pParcial.setDataCriacao(dataOperacao);
 		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
@@ -308,7 +322,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			lancamento.setDataStatus(dtAgora);
 			lancamento.setReparte(BigInteger.ZERO);
 			lancamento.setRepartePromocional(BigInteger.ZERO);
-			lancamento.setSequenciaMatriz(Integer.valueOf(0));
+			lancamento.setSequenciaMatriz(null);
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		}
 		

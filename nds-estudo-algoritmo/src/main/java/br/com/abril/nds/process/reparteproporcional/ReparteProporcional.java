@@ -29,7 +29,6 @@ public class ReparteProporcional extends ProcessoAbstrato {
 	
     @Override
     protected void executarProcesso() {
-    	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
     	boolean temEdicaoBaseAberta = false;
     	for (ProdutoEdicaoBase edicaoBase : getEstudo().getEdicoesBase()) {
     		if (edicaoBase.isEdicaoAberta()) {
@@ -39,7 +38,7 @@ public class ReparteProporcional extends ProcessoAbstrato {
     	}
     	BigDecimal somaReparteProporcional = BigDecimal.ZERO;
     	BigDecimal indiceReparteEdicoesAbertas = BigDecimal.ZERO;
-    	if (!getEstudo().getSomatoriaReparteEdicoesAbertas().equals(BigDecimal.ZERO)) {
+    	if (getEstudo().getSomatoriaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0) {
     		// ÍndiceRepAberta =  RepDistribInicial / ΣRepEdiçãoAberta
     		indiceReparteEdicoesAbertas = getEstudo().getReparteDistribuirInicial().divide(getEstudo().getSomatoriaReparteEdicoesAbertas(), 3, BigDecimal.ROUND_HALF_UP);
     	} 

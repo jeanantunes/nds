@@ -109,7 +109,7 @@ public class Rota implements Serializable {
         return rotaPDVs;
     }
 
-    /**
+	/**
      * @param rotaPDVs
      *            the rotaPDVs to set
      */
@@ -261,5 +261,5 @@ public class Rota implements Serializable {
 			List<AssociacaoVeiculoMotoristaRota> associacoesVeiculoMotoristaRota) {
 		this.associacoesVeiculoMotoristaRota = associacoesVeiculoMotoristaRota;
 	}
-
+	
 }

@@ -29,20 +29,19 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() {
     	
-
-//		Se ReservaAjuste > 0
-    	BigDecimal reservaAjuste = getEstudo().getReservaAjuste();
-		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
+    	// VariÃ¡vel AjusteReparte modificada no faq FAQF2-53
+    	// Se ReservaAjuste > 0
+		if (getEstudo().getAjusteReparte().compareTo(BigDecimal.ZERO) == 1){
 			
 //			Verificar Cota a Cota
-//    		Se Repcalculado < Venda (última edição fechada, sem correção)
+//    		Se Repcalculado < Venda (ï¿½ltima ediï¿½ï¿½o fechada, sem correï¿½ï¿½o)
 			
 			
 			for(Cota cota:getEstudo().getCotas()){
 //    		Se Repcalculado < Venda (Ãšltima ediÃ§Ã£o fechada, sem correÃ§Ã£o)
 //    				Se Cota <> FX / MM / MX / RD / PR
-				if(cota.getReparteCalculado().compareTo(reservaAjuste)==-1 ||
-						cota.getReparteCalculado().compareTo(reservaAjuste)==0 &&
+				if(cota.getReparteCalculado().compareTo(getEstudo().getAjusteReparte())==-1 ||
+						cota.getReparteCalculado().compareTo(getEstudo().getAjusteReparte())==0 &&
 						(!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)
 								&& !cota.getClassificacao().equals(ClassificacaoCota.CotaMix)
@@ -52,17 +51,17 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 					
 //					RepCalculado Cota = RepCalculado Cota + 1
 					cota.setReparteCalculado(cota.getReparteCalculado().add(BigDecimal.ONE));
-//    				ReservaAjuste = ReservaAjuste – 1
-					reservaAjuste = reservaAjuste.subtract(BigDecimal.ONE);
+//    				ReservaAjuste = ReservaAjuste ï¿½ 1
+					getEstudo().setAjusteReparte(getEstudo().getAjusteReparte().subtract(BigDecimal.ONE));
 					
-					if(reservaAjuste.compareTo(BigDecimal.ZERO)==0
-							|| reservaAjuste.compareTo(BigDecimal.ZERO)==-1) break;
+					if(getEstudo().getAjusteReparte().compareTo(BigDecimal.ZERO)==0
+							|| getEstudo().getAjusteReparte().compareTo(BigDecimal.ZERO)==-1) break;
 				}
 			}
 			
 		}
 		
-		if(reservaAjuste.compareTo(BigDecimal.ZERO)==1){
+		if(getEstudo().getAjusteReparte().compareTo(BigDecimal.ZERO)==1){
 			
 			Comparator<Cota> orderCotaDesc = new Comparator<Cota>(){
 				@Override
@@ -83,7 +82,7 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		}
 		
 		
-		getEstudo().setReservaAjuste(reservaAjuste);
+		getEstudo().setAjusteReparte(getEstudo().getAjusteReparte());
     }
     
 

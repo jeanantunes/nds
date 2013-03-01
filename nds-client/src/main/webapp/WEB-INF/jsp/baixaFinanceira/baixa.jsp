@@ -80,7 +80,7 @@
 
 	<fieldset class="fieldFiltro">
 		
-		<legend> Baixa Financeira</legend>
+		<legend>Baixa Financeira</legend>
 		
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
@@ -114,10 +114,9 @@
 				   class="filtro" id="tableBaixaAuto">
 				
 					<tr>
-						<td width="100">Data:</td>
+						<td width="140">Data Pagamento:</td>
 						<td width="200">
-							<input type="text" name="data" id="dataBaixa" 
-								   onchange="baixaFinanceiraController.alterarEstadoInputsBaixaAutomatica();"
+							<input type="text" name="data" id="dataBaixa"
 								   style="width: 90px; text-align: right;" value="${dataOperacao}" />
 						</td>
 						<td width="65">Arquivo:</td>
@@ -153,14 +152,14 @@
 				<td width="20">Cota:</td>
                 
                 <td>
-              
-                <input name="filtroNumCota" 
-             	    id="filtroNumCota" 
-             		type="text"
-             		maxlength="11"
-             		style="width:60px; 
-             		float:left; margin-right:5px;"
-             		onchange="pesquisaCotaBaixaFinanceira.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
+	                <input name="filtroNumCota" 
+	             	       id="filtroNumCota" 
+	             		   type="text"
+	             		   maxlength="11"
+	             		   style="width:60px; 
+	             		   float:left; 
+	             		   margin-right:5px;"
+	             		   onchange="pesquisaCotaBaixaFinanceira.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
 				</td>
 				
 				<td width="30">Nome:</td>

@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.montatabelaestudos;
 
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
@@ -16,6 +17,10 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
  * </p>
  */
 public class MontaTabelaEstudos extends ProcessoAbstrato {
+
+    public MontaTabelaEstudos(Estudo estudo) {
+	super(estudo);
+    }
 
     @Override
     protected void executarProcesso() {

@@ -161,5 +161,79 @@ public abstract class VendasCrescenteDataProvider {
 
 	return listCotaReturn.iterator();
     }
+    
+    @DataProvider(name = "getCotaParaUnicaPublicacaoQuatroEdicoesComEdicoesFechadaList")
+    public static Iterator<Cota[]> getCotaParaUnicaPublicacaoQuatroEdicoesComEdicoesFechadaList() {
+
+	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
+
+	Estudo estudo = new Estudo();
+	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
+	estudo.setCotas(listCota);
+
+	Iterator<Cota> itCota = listCota.iterator();
+
+	while (itCota.hasNext()) {
+
+	    List<ProdutoEdicao> edicoesRecebidas = new ArrayList<ProdutoEdicao>();
+
+	    Cota cota = itCota.next();
+
+	    // TODO As edições base já deveriam vir preenchidas
+	    // FIXME Retirar a chamada para ProdutoEdicaoDAO
+	    List<ProdutoEdicao> produtoEdicaoList = new ProdutoEdicaoDAO().getEdicaoRecebidas(cota);
+
+	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO().getByCotaIdProdutoEdicaoId(cota, produtoEdicaoList);
+
+	    Map<Long, List<Integer>> mapIdRepeticao = new HashMap<Long, List<Integer>>();
+
+	    int iEdicaoBase = 0;
+	    while (iEdicaoBase < listEstoqueProdutoCota.size()) {
+
+		EstoqueProdutoCota estoqueProdutoCota = listEstoqueProdutoCota.get(iEdicaoBase);
+
+		ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
+
+		produtoEdicao.setReparte(estoqueProdutoCota.getQuantidadeRecebida());
+		produtoEdicao.setVenda(estoqueProdutoCota.getQuantidadeRecebida().subtract(estoqueProdutoCota.getQuantidadeDevolvida()));
+		//TODO Essa propriedade deveria vir setada
+		//FIXME Verificar
+		produtoEdicao.setEdicaoAberta(false);
+
+		if (mapIdRepeticao.containsKey(produtoEdicao.getIdProduto())) {
+		    List<Integer> listIndex = mapIdRepeticao.get(produtoEdicao.getIdProduto());
+		    listIndex.add(iEdicaoBase);
+		    mapIdRepeticao.put(produtoEdicao.getIdProduto(), listIndex);
+		} else {
+		    List<Integer> listIndex = new ArrayList<Integer>();
+		    listIndex.add(iEdicaoBase);
+		    mapIdRepeticao.put(produtoEdicao.getIdProduto(), listIndex);
+		}
+
+		iEdicaoBase++;
+	    }
+
+	    if (mapIdRepeticao.size() == 1) {
+		Iterator<Long> itMap = mapIdRepeticao.keySet().iterator();
+		while (itMap.hasNext()) {
+		    List<Integer> listIndex = mapIdRepeticao.get(itMap.next());
+		    if (listIndex.size() >= 4) {
+			int iIndex = 0;
+			while (iIndex < listIndex.size()) {
+			    edicoesRecebidas.add(listEstoqueProdutoCota.get(listIndex.get(iIndex)).getProdutoEdicao());
+			    iIndex++;
+			}
+		    }
+		}
+	    }
+
+	    if (edicoesRecebidas != null && !edicoesRecebidas.isEmpty()) {
+		cota.setEdicoesRecebidas(edicoesRecebidas);
+		listCotaReturn.add(new Cota[] { cota });
+	    }
+	}
+
+	return listCotaReturn.iterator();
+    }
 
 }

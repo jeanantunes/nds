@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.abril.nds.enumerators.DataReferencia;
-import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class DefinicaoBasesDAO {
@@ -37,18 +36,18 @@ public class DefinicaoBasesDAO {
 
     private static final String SQL_EDICOES_VS_LANCAMENTOS = CAMPOS_MODEL_PRODUTO_EDICAO 
 	    //	    + " and l.DATA_LCTO_DISTRIBUIDOR > date_sub(curdate(),INTERVAL 2 YEAR) "
-	    + " order by l.DATA_LCTO_DISTRIBUIDOR desc "
+	    + " order by pe.NUMERO_EDICAO desc "
 	    + " limit 6 ";
 
     private static final String SQL_LANCAMENTOS_ANOS_ANTERIORES_MESMO_MES = CAMPOS_MODEL_PRODUTO_EDICAO
 	    + " and (l.DATA_LCTO_DISTRIBUIDOR like ? or l.DATA_LCTO_DISTRIBUIDOR like ?) "
-	    + " order by l.DATA_LCTO_DISTRIBUIDOR desc "
+	    + " order by pe.NUMERO_EDICAO desc "
 	    + " limit 2 ";
 
     private static final String SQL_LANCAMENTOS_ANOS_ANTERIORES_VERANEIO = CAMPOS_MODEL_PRODUTO_EDICAO
 	    + " and (l.DATA_LCTO_DISTRIBUIDOR between ? and ? " 	//periodo de 20/12 a 28/02 um ano antes
 	    + "      or l.DATA_LCTO_DISTRIBUIDOR between ? and ?) "	//periodo de 20/12 a 28/02 dois anos antes
-	    + " order by l.DATA_LCTO_DISTRIBUIDOR desc "
+	    + " order by pe.NUMERO_EDICAO desc "
 	    + " limit 2 ";
 
     public List<ProdutoEdicaoBase> listaEdicoesPorLancamento(ProdutoEdicaoBase edicao) {
@@ -131,8 +130,10 @@ public class DefinicaoBasesDAO {
 	return MonthDay.parse(dataReferencia.getData()).toLocalDate(LocalDate.fromDateFields(dataLancamento).minusYears(anosSubtrair).getYear()).toString();
     }
 
-    private ProdutoEdicao produtoEdicaoMapper(ResultSet rs) throws SQLException {
-	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+    private ProdutoEdicaoBase produtoEdicaoMapper(ResultSet rs) throws SQLException {
+	
+	ProdutoEdicaoBase produtoEdicao = new ProdutoEdicaoBase();
+	
 	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 	produtoEdicao.setIdLancamento(rs.getLong("ID"));
 	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
@@ -141,6 +142,7 @@ public class DefinicaoBasesDAO {
 	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
 	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
 	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
+	
 	return produtoEdicao;
     }
 }

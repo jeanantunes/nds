@@ -10,7 +10,6 @@ import org.junit.Test;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.service.EstudoService;
 
 public class GravarReparteJuramentadoTest {
 
@@ -42,7 +41,7 @@ public class GravarReparteJuramentadoTest {
 			gravarReparteJuramentado.executarProcesso();
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail("Exceção inválida.");
+			fail("Exceï¿½ï¿½o invï¿½lida.");
 		}
 		
 	
@@ -56,7 +55,7 @@ public class GravarReparteJuramentadoTest {
 			gravarReparteJuramentado.executarProcesso();
 		} catch (Exception e) {
 			e.printStackTrace();
-			fail("Exceção inválida.");
+			fail("Exceï¿½ï¿½o invï¿½lida.");
 		}
 		
 	
@@ -69,7 +68,7 @@ public class GravarReparteJuramentadoTest {
 			gravarReparteJuramentado.executarProcesso();
 			gravarReparteJuramentado.fimProcesso();
 		} catch (Exception e) {
-			fail("Exceção inválida.");
+			fail("Exceï¿½ï¿½o invï¿½lida.");
 		}
 	
 	}

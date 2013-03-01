@@ -45,7 +45,6 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.BigIntegerUtil;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.ConfirmacaoVO;
@@ -425,7 +424,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	private void alterararLancamento(ProdutoLancamentoDTO produtoLancamento,
 									 Lancamento lancamento, Date novaData) {
 		
-		lancamento.setNumeroReprogramacoes(atualizarNumeroReprogramacoes(lancamento));
+		if (lancamento.getDataLancamentoDistribuidor().compareTo(novaData) != 0) {
+			lancamento.setNumeroReprogramacoes(atualizarNumeroReprogramacoes(lancamento));
+		}
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(StatusLancamento.BALANCEADO);
@@ -573,8 +574,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		List<ProdutoLancamentoDTO> produtosLancamentoNaoBalanceadosTotal = 
 			new ArrayList<ProdutoLancamentoDTO>();
 		
-		this.processarProdutosLancamentoNaoBalanceaveis(matrizLancamento,
-														dadosBalanceamentoLancamento);
+		List<ProdutoLancamentoDTO> produtosLancamentoBalancear =
+			this.processarProdutosLancamentoNaoBalanceaveis(matrizLancamento,
+															dadosBalanceamentoLancamento);
 		
 		Set<Date> datasConfirmadas = this.obterDatasConfirmadas(matrizLancamento);
 		
@@ -594,7 +596,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				this.processarProdutosLancamentoBalanceaveis(matrizLancamento,
 															 datasDistribuicao,
 															 dataLancamentoPrevista,
-															 dadosBalanceamentoLancamento);
+															 dadosBalanceamentoLancamento,
+															 produtosLancamentoBalancear);
 			
 			if (produtosLancamentoNaoBalanceados != null
 					&& !produtosLancamentoNaoBalanceados.isEmpty()) {
@@ -686,8 +689,24 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	 * Processa os produtos para lançamento que não devem ser balanceados
 	 * e adiciona os mesmos no mapa da matriz de balanceamento.
 	 */
-	private void processarProdutosLancamentoNaoBalanceaveis(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+	private List<ProdutoLancamentoDTO> processarProdutosLancamentoNaoBalanceaveis(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
 														    DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
+		
+		List<ProdutoLancamentoDTO> produtosLancamentoNaoProcessados =
+			this.processarProdutosLancamentoConfirmados(matrizLancamento, dadosLancamentoBalanceamento);
+		
+		produtosLancamentoNaoProcessados =
+			this.processarProdutosLancamentoComLimiteReprogramacoes(
+				matrizLancamento, dadosLancamentoBalanceamento, produtosLancamentoNaoProcessados);
+		
+		return produtosLancamentoNaoProcessados;
+	}
+
+	private List<ProdutoLancamentoDTO> processarProdutosLancamentoConfirmados(
+											TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+											DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
+		
+		List<ProdutoLancamentoDTO> produtosLancamentoNaoProcessados = new ArrayList<>();
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
 			dadosLancamentoBalanceamento.getProdutosLancamento();
@@ -696,14 +715,64 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			Date dataLancamentoDistribuidor = produtoLancamento.getDataLancamentoDistribuidor();
 			
-			if (!this.isProdutoBalanceavel(produtoLancamento,
-										   dadosLancamentoBalanceamento)) {
-				
-				this.adicionarProdutoLancamentoNaMatriz(matrizLancamento,
-														produtoLancamento,
-				   										dataLancamentoDistribuidor);
+			if (produtoLancamento.isBalanceamentoConfirmado()) {
+
+				this.adicionarProdutoLancamentoNaMatriz(
+					matrizLancamento, produtoLancamento, dataLancamentoDistribuidor);
+			
+			} else {
+			
+				produtosLancamentoNaoProcessados.add(produtoLancamento);
 			}
 		}
+		
+		return produtosLancamentoNaoProcessados;
+	}
+	
+	private List<ProdutoLancamentoDTO> processarProdutosLancamentoComLimiteReprogramacoes(
+											TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+											DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento,
+											List<ProdutoLancamentoDTO> produtosLancamento) {
+		
+		List<ProdutoLancamentoDTO> produtosLancamentoNaoProcessados = new ArrayList<>();
+		
+		Set<Date> datasConfirmadas = this.obterDatasConfirmadas(matrizLancamento);
+		
+		TreeSet<Date> datasDistribuicao =
+			this.obterDatasDistribuicao(dadosLancamentoBalanceamento, datasConfirmadas);
+		
+		Date dataLancamentoEscolhida = null;
+		
+		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+			
+			Date dataLancamentoDistribuidor = produtoLancamento.getDataLancamentoDistribuidor();
+		
+			if (produtoLancamento.excedeNumeroReprogramacoes()) {
+				
+				if (datasDistribuicao.contains(dataLancamentoDistribuidor)) {
+					
+					dataLancamentoEscolhida = dataLancamentoDistribuidor;
+				
+				} else {
+				
+					 dataLancamentoEscolhida =
+						 this.obterDataDistribuicaoEscolhida(
+							matrizLancamento, datasDistribuicao, dataLancamentoDistribuidor);
+				}
+				
+				if (dataLancamentoEscolhida != null) {
+					
+					this.adicionarProdutoLancamentoNaMatriz(
+						matrizLancamento, produtoLancamento, dataLancamentoEscolhida);
+					
+					continue;
+				}
+			}
+			
+			produtosLancamentoNaoProcessados.add(produtoLancamento);
+		}
+		
+		return produtosLancamentoNaoProcessados;
 	}
 
 	/**
@@ -714,7 +783,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											    TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
 												TreeSet<Date> datasDistribuicao,
 												Date dataLancamentoPrevista,
-												DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento) {
+												DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
+												List<ProdutoLancamentoDTO> produtosLancamento) {
 		
 		Date dataLancamentoEscolhida =
 			this.obterDataDistribuicaoEscolhida(matrizLancamento,
@@ -733,7 +803,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			new ArrayList<ProdutoLancamentoDTO>();
 		
 		List<ProdutoLancamentoDTO> produtosLancamentoBalanceaveisDataPrevista = 
-			this.obterProdutosLancamentoBalanceaveisPorData(dadosBalanceamentoLancamento,
+			this.obterProdutosLancamentoBalanceaveisPorData(produtosLancamento,
 															dataLancamentoPrevista);
 		
 		BigInteger expectativaReparteDataEscolhida =
@@ -764,7 +834,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		if (datasDistribuicao.contains(dataLancamentoPrevista)) {
 			
 			dataLancamentoEscolhida = dataLancamentoPrevista;
-			
 		}
 		
 		if (dataLancamentoEscolhida == null) {
@@ -811,14 +880,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	 * Obtém os produtos balanceáveis de uma determinada data.
 	 */
 	private List<ProdutoLancamentoDTO> obterProdutosLancamentoBalanceaveisPorData(
-													DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento, 
+													List<ProdutoLancamentoDTO> produtosLancamento,
 													Date dataLancamento) {
 		
 		List<ProdutoLancamentoDTO> produtosLancamentoFiltrados = new ArrayList<ProdutoLancamentoDTO>();
-		
-		List<ProdutoLancamentoDTO> produtosLancamento =
-			dadosBalanceamentoLancamento.getProdutosLancamento();
-		
+				
 		if (produtosLancamento == null 
 				|| produtosLancamento.isEmpty()
 				|| dataLancamento == null) {
@@ -827,14 +893,10 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		
 		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
-			
-			if (this.isProdutoBalanceavel(produtoLancamento,
-										  dadosBalanceamentoLancamento)) {
 				
-				if (produtoLancamento.getDataLancamentoDistribuidor().equals(dataLancamento)) {
-					
-					produtosLancamentoFiltrados.add(produtoLancamento);
-				}
+			if (produtoLancamento.getDataLancamentoDistribuidor().equals(dataLancamento)) {
+				
+				produtosLancamentoFiltrados.add(produtoLancamento);
 			}
 		}
 		
@@ -1104,6 +1166,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		
 		produtoLancamento.setNovaDataLancamento(dataLancamento);
+		produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
 		
 		this.tratarAgrupamentoPorProdutoDataLcto(produtoLancamento, produtosLancamentoMatriz);
 		
@@ -1189,10 +1252,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	/**
 	 * Verifica se o produto é balanceável ou não.
 	 */
-	private boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento,
-										 DadosBalanceamentoLancamentoDTO dadosLancamentoBalanceamento) {
+	public boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento) {
 		
-		if (!produtoLancamento.permiteReprogramacao()) {
+		if (produtoLancamento.excedeNumeroReprogramacoes()) {
 			
 			return false;
 		}
@@ -1401,7 +1463,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 	
 	@Transactional
-	public void voltarConfiguracaoInicial(Date dataLancamento) {
+	public void voltarConfiguracaoInicial(Date dataLancamento, TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
 		
 		if (dataLancamento == null) {
 			
@@ -1417,40 +1479,54 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		Intervalo<Date> periodoDistribuicao = 
 			this.getPeriodoDistribuicao(distribuidor, dataLancamento, numeroSemana);
 		
-		this.voltarConfiguracaoInicialLancamentosPrevistos(periodoDistribuicao);
+		Set<Date> datasConfirmadas = this.obterDatasConfirmadas(matrizLancamento);
 		
-		this.voltarConfiguracaoInicialLancamentosDistribuidor(periodoDistribuicao);
+		this.voltarConfiguracaoInicialLancamentosPrevistos(periodoDistribuicao, datasConfirmadas);
+		
+		this.voltarConfiguracaoInicialLancamentosDistribuidor(periodoDistribuicao, datasConfirmadas);
 	}
 	
-	private void voltarConfiguracaoInicialLancamentosPrevistos(Intervalo<Date> periodoDistribuicao) {
+	private void voltarConfiguracaoInicialLancamentosPrevistos(Intervalo<Date> periodoDistribuicao,
+															   Set<Date> datasConfirmadas) {
 		
 		List<Lancamento> lancamentos =
 			this.lancamentoRepository.obterLancamentosPrevistosPorPeriodo(periodoDistribuicao);
 		
 		for (Lancamento lancamento : lancamentos) {
 			
-			if (lancamento.getNumeroReprogramacoes() == null
-					|| lancamento.getNumeroReprogramacoes() < Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
+			//TODO: o trecho abaixo será retirado no momento da CR para inclusão de botão de salva na matriz.
 			
+//			if (lancamento.getNumeroReprogramacoes() == null
+//					|| lancamento.getNumeroReprogramacoes() < Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
+//			
+//				lancamento.setDataLancamentoDistribuidor(lancamento.getDataLancamentoPrevista());
+//			}
+			
+			if (!datasConfirmadas.contains(lancamento.getDataLancamentoPrevista())) {
+				
 				lancamento.setDataLancamentoDistribuidor(lancamento.getDataLancamentoPrevista());
+				
+				lancamento.setStatus(StatusLancamento.CONFIRMADO);
+				
+				lancamentoRepository.merge(lancamento);
 			}
-			
-			lancamento.setStatus(StatusLancamento.CONFIRMADO);
-			
-			lancamentoRepository.merge(lancamento);
 		}
 	}
 	
-	private void voltarConfiguracaoInicialLancamentosDistribuidor(Intervalo<Date> periodoDistribuicao) {
+	private void voltarConfiguracaoInicialLancamentosDistribuidor(Intervalo<Date> periodoDistribuicao,
+		   														  Set<Date> datasConfirmadas) {
 		
 		List<Lancamento> lancamentos =
 			this.lancamentoRepository.obterLancamentosDistribuidorPorPeriodo(periodoDistribuicao);
 		
 		for (Lancamento lancamento : lancamentos) {
 			
-			lancamento.setStatus(StatusLancamento.CONFIRMADO);
-			
-			lancamentoRepository.merge(lancamento);
+			if (!datasConfirmadas.contains(lancamento.getDataLancamentoPrevista())) {
+				
+				lancamento.setStatus(StatusLancamento.CONFIRMADO);
+				
+				lancamentoRepository.merge(lancamento);
+			}
 		}
 	}
 

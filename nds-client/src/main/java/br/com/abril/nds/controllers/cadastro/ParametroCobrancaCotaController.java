@@ -30,15 +30,15 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BancoService;
@@ -150,13 +150,53 @@ public class ParametroCobrancaCotaController extends BaseController {
 	 * Método de Pré-carregamento de itens da pagina com informações default.
 	 */
 	public void preCarregamento(){
-		listaTiposCobranca = this.parametroCobrancaCotaService.getComboTiposCobranca();
+		
+		listaTiposCobranca = this.carregaTiposCobrancaDistribuidor();
+		
 		listaTiposCota = this.cotaService.getComboTiposCota();
+		
 		result.include("listaBancos", bancoService.getComboBancos(true));
+		
 		result.include("listaTiposCobranca",listaTiposCobranca);
+		
 		result.include("listaTiposCota",listaTiposCota);
 	}
 
+	/**
+	 * Carrega somente os tipos de cobrança configurados nas formas de cobrança do distribuidor
+	 */
+	private List<ItemDTO<TipoCobranca,String>> carregaTiposCobrancaDistribuidor(){
+		
+		List<TipoCobranca> tcs = this.politicaCobrancaService.obterTiposCobrancaDistribuidor();
+		
+		if (tcs == null){
+			
+			return null;
+		}
+		
+		List<ItemDTO<TipoCobranca,String>> comboTiposCobranca =  new ArrayList<ItemDTO<TipoCobranca,String>>();
+		
+		for (TipoCobranca tc : tcs){
+				
+			ItemDTO<TipoCobranca, String> itemDTO = new ItemDTO<TipoCobranca,String>(tc, tc.getDescTipoCobranca());
+				
+			comboTiposCobranca.add(itemDTO);	
+		}
+		
+		return comboTiposCobranca;
+	}
+	
+	/**
+	 * Obter tipos de cobrança das formas de cobrança utilizadas pelo distribuidor para carregar combo
+	 */
+	@Post
+	@Path("/obterTiposCobranca")
+	public void obterTiposCobranca(){
+		
+		List<ItemDTO<TipoCobranca,String>> comboTiposCobranca = this.carregaTiposCobrancaDistribuidor();
+		
+		result.use(Results.json()).from(comboTiposCobranca, "result").recursive().serialize();
+	}
 	
 	/**
 	 * Método de Pré-carregamento de fornecedores relacionados com a Cota.

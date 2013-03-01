@@ -103,7 +103,7 @@ public class FechamentoFisicoLogicoDTO {
 		return precoCapa;
 	}
 	public void setPrecoCapa(BigDecimal precoCapa) {
-		this.precoCapa = precoCapa;
+		this.precoCapa = precoCapa == null ? BigDecimal.ZERO : precoCapa;
 		this.precoCapaFormatado = CurrencyUtil.formatarValor(this.precoCapa); 
 	}
 	public BigInteger getExemplaresDevolucao() {

@@ -564,6 +564,10 @@ var baixaFinanceiraController = $.extend(true, {
 		$('#porNossoNumero', baixaFinanceiraController.workspace).hide();
 		$('#extratoBaixaManual', baixaFinanceiraController.workspace).show();
 		$('#porCota', baixaFinanceiraController.workspace).show();
+        $("#totalDividasSelecionadas", baixaFinanceiraController.workspace).html("0,00");
+		$("#totalDividasSelecionadasHidden", baixaFinanceiraController.workspace).val("0,00");
+		$("#totalDividas", baixaFinanceiraController.workspace).html("0,00");
+		$("#totalDividasHidden", baixaFinanceiraController.workspace).val("0,00");
 	},
 	
 	limparCamposBaixaManual : function() {
@@ -812,7 +816,6 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		return resultado;
 	},
-
 	
 	//EFETUA BUSCA DE DIVIDAS(POR COTA) OU COBRANCA(POR NOSSO NUMERO)
 	buscaManual : function() {
@@ -820,14 +823,17 @@ var baixaFinanceiraController = $.extend(true, {
 		dataHolder.clearAction('baixaManual', baixaFinanceiraController.workspace);
 
 		var nossoNumero = $("#filtroNossoNumero", baixaFinanceiraController.workspace).val();
+		
 		var numCota = $("#filtroNumCota", baixaFinanceiraController.workspace).val();
 		
 		var botoesDividasNaoPagas = $("#botoesDividasNaoPagas");
+		
 		var botoesDividasPagas = $("#botoesDividasPagas");
 	
 		if($("#checkCobrancasBaixadas", baixaFinanceiraController.workspace).is(':checked')){
 			
 			botoesDividasPagas.show();
+			
 			botoesDividasNaoPagas.hide();
 			
 			/*BAIXA MANUAL DE DIVIDAS BAIXADAS*/
@@ -1132,11 +1138,10 @@ var baixaFinanceiraController = $.extend(true, {
     			observacoes : $("#observacoesDividas", baixaFinanceiraController.workspace).val(),
     			idBanco : $("#bancoDividas", baixaFinanceiraController.workspace).val(),
     			manterPendente:manterPendente};
-    	
-    	
 
     	param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(), param);
-		$.postJSON(contextPath + "/financeiro/baixaManualDividas",param,
+		
+    	$.postJSON(contextPath + "/financeiro/baixaManualDividas",param,
 				   function(mensagens) {
 					   
 			           $("#dialog-baixa-dividas", baixaFinanceiraController.workspace).dialog("close");
@@ -1424,8 +1429,6 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		baixaFinanceiraController.limparCamposBaixaAutomatica();
 		
-		baixaFinanceiraController.habilitarBaixaAutomatica(true);
-
 		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
 			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
 		);
@@ -1552,31 +1555,10 @@ var baixaFinanceiraController = $.extend(true, {
 			$("#labelBanco", baixaFinanceiraController.workspace).hide();
 		}
 	},
-	alterarEstadoInputsBaixaAutomatica: function() {
-		
-		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).datepicker( "getDate" );
-		
-		baixaFinanceiraController.habilitarIntegracao();
-
-		if (dataSelecionada > baixaFinanceiraController.dataOperacaoDistribuidor ||
-				dataSelecionada < baixaFinanceiraController.dataOperacaoDistribuidor) {
-
-			baixaFinanceiraController.limparCamposBaixaAutomatica();
-			baixaFinanceiraController.habilitarBaixaAutomatica(false);
-		
-		} else {
-			
-			baixaFinanceiraController.resetarCamposBaixaAutomatica();
-		}
-		
-	},
 	
 	habilitarIntegracao: function() {
 		
-		var dataSelecionada = $("#dataBaixa", baixaFinanceiraController.workspace).datepicker( "getDate" );
-		
-		if (dataSelecionada > baixaFinanceiraController.dataOperacaoDistribuidor ||
-				dataSelecionada < baixaFinanceiraController.dataOperacaoDistribuidor) {
+		if ($("#uploadedFile").val() == "") {
 
 			$("#btnIntegrar", baixaFinanceiraController.workspace).hide();
 			$("#btnExibirResumos", baixaFinanceiraController.workspace).show();
@@ -1586,12 +1568,6 @@ var baixaFinanceiraController = $.extend(true, {
 			$("#btnIntegrar", baixaFinanceiraController.workspace).show();
 			$("#btnExibirResumos", baixaFinanceiraController.workspace).hide();
 		}
-	},
-	
-	habilitarBaixaAutomatica: function(habilitar) {
-		
-		$("#uploadedFile", baixaFinanceiraController.workspace).enable(habilitar);
-		$("#valorFinanceiro", baixaFinanceiraController.workspace).enable(habilitar);
 	},
 
 	obterResumoBaixaFinanceira: function() {
