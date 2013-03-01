@@ -1,8 +1,8 @@
 package br.com.abril.nds.process.correcaovendas;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 
@@ -36,8 +36,9 @@ public class CorrecaoIndividualTest {
 
 	    boolean assertIndice = (indiceCorrecao.compareTo(BigDecimal.ONE) == 0);
 
-	    assertTrue(" Indice Correcao : " + indiceCorrecao + " Estoque Produto Cota : " + estoqueProdutoCota.getId() + " Produto Edicao : " + produtoEdicao.getId()
-		    + " Produto : " + produtoEdicao.getIdProduto() + " Reparte : " + produtoEdicao.getReparte() + " Venda : " + produtoEdicao.getVenda(), assertIndice);
+	    assertTrue(assertIndice,
+		    " Indice Correcao : " + indiceCorrecao + " Estoque Produto Cota : " + estoqueProdutoCota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			    + " Produto : " + produtoEdicao.getIdProduto() + " Reparte : " + produtoEdicao.getReparte() + " Venda : " + produtoEdicao.getVenda());
 
 	    assertNotNull(produtoEdicao.getVendaCorrigida());
 
@@ -71,8 +72,9 @@ public class CorrecaoIndividualTest {
 
 	    boolean assertIndice = (indiceCorrecao.compareTo(oneDotTwo) == 0);
 
-	    assertTrue(" Indice Correcao : " + indiceCorrecao + " Estoque Produto Cota : " + estoqueProdutoCota.getId() + " Produto Edicao : " + produtoEdicao.getId()
-		    + " Produto : " + produtoEdicao.getIdProduto() + " Reparte : " + produtoEdicao.getReparte() + " Venda : " + produtoEdicao.getVenda(), assertIndice);
+	    assertTrue(assertIndice,
+		    " Indice Correcao : " + indiceCorrecao + " Estoque Produto Cota : " + estoqueProdutoCota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			    + " Produto : " + produtoEdicao.getIdProduto() + " Reparte : " + produtoEdicao.getReparte() + " Venda : " + produtoEdicao.getVenda());
 
 	    assertNotNull(produtoEdicao.getVendaCorrigida());
 
@@ -106,8 +108,9 @@ public class CorrecaoIndividualTest {
 
 	    boolean assertIndice = (indiceCorrecao.compareTo(oneDotOne) == 0);
 
-	    assertTrue(" Indice Correcao : " + indiceCorrecao + " Estoque Produto Cota : " + estoqueProdutoCota.getId() + " Produto Edicao : " + produtoEdicao.getId()
-		    + " Produto : " + produtoEdicao.getIdProduto() + " Reparte : " + produtoEdicao.getReparte() + " Venda : " + produtoEdicao.getVenda(), assertIndice);
+	    assertTrue(assertIndice,
+		    " Indice Correcao : " + indiceCorrecao + " Estoque Produto Cota : " + estoqueProdutoCota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			    + " Produto : " + produtoEdicao.getIdProduto() + " Reparte : " + produtoEdicao.getReparte() + " Venda : " + produtoEdicao.getVenda());
 
 	    assertNotNull(produtoEdicao.getVendaCorrigida());
 

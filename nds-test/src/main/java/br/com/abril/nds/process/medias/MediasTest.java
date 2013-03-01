@@ -1,7 +1,7 @@
 package br.com.abril.nds.process.medias;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -31,7 +31,7 @@ public class MediasTest {
 	    medias.executar();
 
 	    cota = (Cota) medias.getGenericDTO();
-	    
+
 	    Iterator<ProdutoEdicao> itProdutoEdicao = cota.getEdicoesRecebidas().iterator();
 
 	    while (itProdutoEdicao.hasNext()) {
@@ -44,14 +44,14 @@ public class MediasTest {
 
 	    boolean assertVendaMedia = (vendaMedia != null && (vendaMedia.compareTo(BigDecimal.ZERO) == 1));
 
-	    assertTrue("Venda Media : " + assertVendaMedia + " Cota : " + cota.getId(), assertVendaMedia);
+	    assertTrue(assertVendaMedia, "Venda Media : " + assertVendaMedia + " Cota : " + cota.getId());
 	    gerarReporterLog(cota, sbReporterLog, vendaMedia);
 
 	} catch (Exception e) {
 	    fail(e.getMessage());
 	}
     }
-    
+
     /**
      * Testar se a venda médias é calculada conforme a quantidade de edições menor que três.
      * 
@@ -81,7 +81,7 @@ public class MediasTest {
 
 	    boolean assertVendaMedia = (vendaMedia != null && (vendaMedia.compareTo(BigDecimal.ZERO) == 1));
 
-	    assertTrue("Venda Media : " + assertVendaMedia + " Cota : " + cota.getId(), assertVendaMedia);
+	    assertTrue(assertVendaMedia, "Venda Media : " + assertVendaMedia + " Cota : " + cota.getId());
 	    gerarReporterLog(cota, sbReporterLog, vendaMedia);
 
 	} catch (Exception e) {

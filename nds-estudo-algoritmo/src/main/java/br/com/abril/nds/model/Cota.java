@@ -30,6 +30,8 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceAjusteCota;
     private BigDecimal indiceTratamentoRegional;
+    private List<Cota> equivalente;
+    private BigDecimal indiceAjusteEquivalente;
 
     private Long numero;
 
@@ -273,6 +275,26 @@ public class Cota extends GenericDTO<Cota> {
 
     public void setRecebeReparteComplementar(boolean recebeReparteComplementar) {
 	this.recebeReparteComplementar = recebeReparteComplementar;
+    }
+
+    public List<Cota> getEquivalente() {
+	return equivalente;
+    }
+
+    public void setEquivalente(List<Cota> equivalente) {
+	this.equivalente = equivalente;
+    }
+
+    public boolean isNova() {
+	return (this.equivalente != null && !this.equivalente.isEmpty());
+    }
+
+    public BigDecimal getIndiceAjusteEquivalente() {
+	return indiceAjusteEquivalente;
+    }
+
+    public void setIndiceAjusteEquivalente(BigDecimal indiceAjusteEquivalente) {
+	this.indiceAjusteEquivalente = indiceAjusteEquivalente;
     }
 
     @Override

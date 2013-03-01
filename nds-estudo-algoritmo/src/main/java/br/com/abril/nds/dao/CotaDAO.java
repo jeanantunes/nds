@@ -14,6 +14,45 @@ import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class CotaDAO {
 
+    public Cota getCotaEquivalenteByCota(Cota cota) {
+
+	List<Cota> listEquivalente = new ArrayList<Cota>();
+
+	try {
+
+	    StringBuilder query = new StringBuilder(" SELECT CB.INDICE_AJUSTE, C.* FROM COTA_BASE_COTA CBC ");
+	    query.append(" INNER JOIN COTA_BASE CB ON (CB.ID = CBC.COTA_BASE_ID) ");
+	    query.append(" INNER JOIN COTA C ON (C.ID = CBC.COTA_ID) ");
+	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
+	    query.append(" WHERE CB.COTA_ID = ? ");
+	    query.append(" AND CB.DATA_INICIO >= ? AND CB.DATA_FIM <= ? ");
+
+	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
+	    psmt.setLong(1, cota.getId());
+	    psmt.setString(2, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+	    psmt.setString(3, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+
+	    ResultSet rs = psmt.executeQuery();
+	    while (rs.next()) {
+
+		if (rs.isFirst()) {
+		    cota.setIndiceAjusteEquivalente(rs.getBigDecimal("INDICE_AJUSTE"));
+		}
+
+		Cota cotaEquivalente = new Cota();
+		cotaEquivalente.setId(rs.getLong("ID"));
+		listEquivalente.add(cotaEquivalente);
+	    }
+
+	    cota.setEquivalente(listEquivalente);
+
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	}
+
+	return cota;
+    }
+
     public List<Cota> getCotas(int limit) {
 	List<Cota> cotas = new ArrayList<Cota>();
 	try {

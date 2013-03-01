@@ -32,9 +32,9 @@ public class Medias extends ProcessoAbstrato {
 
 	Cota cota = (Cota) super.genericDTO;
 
-	List<ProdutoEdicao> listProdutoEdicoa = cota.getEdicoesRecebidas();
+	List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
 
-	int qtdeEdicaoBase = listProdutoEdicoa.size();
+	int qtdeEdicaoBase = listProdutoEdicao.size();
 
 	BigDecimal totalPeso = BigDecimal.ZERO;
 	BigDecimal totalVendaMultiplyPeso = BigDecimal.ZERO;
@@ -44,7 +44,7 @@ public class Medias extends ProcessoAbstrato {
 	int iProdutoEdicao = 0;
 	while (iProdutoEdicao < qtdeEdicaoBase) {
 
-	    ProdutoEdicao produtoEdicao = listProdutoEdicoa.get(iProdutoEdicao);
+	    ProdutoEdicao produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
 
 	    BigDecimal peso = new BigDecimal(produtoEdicao.getPeso());
 	    BigDecimal vendaCorrigida = produtoEdicao.getVendaCorrigida();
