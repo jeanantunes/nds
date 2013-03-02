@@ -94,37 +94,44 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	}
 	
 	@Transactional 
-	public void declararCotaAusenteRatearReparte(List<Integer> numCotas, Date data, Long idUsuario,
-			List<MovimentoEstoqueCotaDTO> movimentosRateio) throws TipoMovimentoEstoqueInexistenteException{
+	public void declararCotaAusenteRatearReparte(List<Integer> numCotas, 
+												 Date data, 
+												 Long idUsuario,
+												 List<MovimentoEstoqueCotaDTO> movimentosRateio) 
+												 throws TipoMovimentoEstoqueInexistenteException{
 		
 		CotaAusente cotaAusente = null;
 		
-		for(Integer numCota : numCotas) {
+		for (Integer numCota : numCotas) {
 				
-			Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
 									
 			cotaAusente = gerarCotaAusente(numCota, data, idUsuario, cota);
 					
 			List<MovimentoEstoqueCota> movimentosCota = 
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				this.movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
+					data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 					
-			movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
-					
+			this.movimentoEstoqueService.enviarSuplementarCotaAusente(
+				data, cota.getId(), movimentosCota);
 		}
 		
 		List<MovimentoEstoqueCotaDTO> movimentosCota = 
-				movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+			this.movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(
+				data, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
-		for ( MovimentoEstoqueCotaDTO movimento : movimentosCota ) {
+		for (MovimentoEstoqueCotaDTO movimento : movimentosCota) {
 			
-			for ( MovimentoEstoqueCotaDTO movimentoRateioDTO : movimentosRateio ) {
+			for (MovimentoEstoqueCotaDTO movimentoRateioDTO : movimentosRateio) {
 				
-				if ( movimento.getIdProdEd() == movimentoRateioDTO.getIdProdEd() ) {
+				if (movimento.getIdProdEd() == movimentoRateioDTO.getIdProdEd()) {
 					
-					ProdutoEdicao edicao = produtoEdicaoRepository.buscarPorId(movimento.getIdProdEd());
+					ProdutoEdicao produtoEdicao = 
+						this.produtoEdicaoRepository.buscarPorId(movimento.getIdProdEd());
 					
-					gerarRateios(movimento.getQtdeReparte(), movimentoRateioDTO, 
-							data, idUsuario, edicao, cotaAusente);					
+					gerarRateios(
+						movimento.getQtdeReparte(), movimentoRateioDTO, 
+							data, idUsuario, produtoEdicao, cotaAusente);					
 				}
 			}
 		}	
