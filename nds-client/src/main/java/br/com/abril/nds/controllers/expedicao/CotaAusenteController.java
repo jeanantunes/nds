@@ -427,6 +427,31 @@ public class CotaAusenteController extends BaseController {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
+		for (Integer numeroCota : numCotas) {
+			
+			try {
+				
+				this.cotaAusenteService.verificarExistenciaReparteCota(dataOperacao, numeroCota);
+				
+			} catch (ValidacaoException e) {
+				
+				List<String> mensagens = new ArrayList<String>();
+				
+				mensagens.addAll(e.getValidacao().getListaMensagens());
+				
+				TipoMensagem tipoMensagem = TipoMensagem.WARNING;
+				
+				Object[] retorno = new Object[2];
+				
+				retorno[0] = mensagens;
+				retorno[1] = tipoMensagem;
+				
+				result.use(Results.json()).from(retorno, "result").serialize();
+				
+				return;
+			}
+		}
+		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
 				dataOperacao, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
@@ -518,4 +543,5 @@ public class CotaAusenteController extends BaseController {
 		
 		return filtro;
 	}
+
 }

@@ -257,7 +257,23 @@ var cotaAusenteController = $.extend(true, {
 					
 					$.postJSON(contextPath + "/cotaAusente/carregarDadosRateio", 
 							parametros, 
-							cotaAusenteController.popupRateio);
+							function(result) {
+								
+								var mensagens = result[0];
+								var status = result[1];
+								
+								if (status == "SUCCESS") {
+						
+									cotaAusenteController.popupRateio;
+									
+								} else {
+									
+									exibirMensagemDialog(status, mensagens);
+									
+									cotaAusenteController.popupNovaCotaAusente(true);
+								}
+							}
+					);
 					
 					$( "#dialog-confirm", cotaAusenteController.workspace ).dialog("close");
 				}				
