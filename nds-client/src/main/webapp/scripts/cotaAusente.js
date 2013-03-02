@@ -259,18 +259,24 @@ var cotaAusenteController = $.extend(true, {
 							parametros, 
 							function(result) {
 								
-								var mensagens = result[0];
+								if (result == null) {
+									
+									return;
+								}
+						
 								var status = result[1];
 								
-								if (status == "SUCCESS") {
-						
-									cotaAusenteController.popupRateio;
+								if (status == "WARNING") {
 									
-								} else {
+									var mensagens = result[0];
 									
 									exibirMensagemDialog(status, mensagens);
 									
 									cotaAusenteController.popupNovaCotaAusente(true);
+									
+								} else {
+									
+									cotaAusenteController.popupRateio(result);
 								}
 							}
 					);
