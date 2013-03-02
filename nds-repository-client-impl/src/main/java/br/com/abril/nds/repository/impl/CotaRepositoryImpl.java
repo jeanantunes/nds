@@ -1461,8 +1461,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		+ "	        cota_.NUMERO_COTA as numeroCota, "
 		+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 		+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
-		+ "	        SUM(nei.reparte) as exemplares, "
-		+ "	        SUM(nei.reparte*pe_.PRECO_VENDA) as total, "
+		+ "	        SUM(coalesce(nei.reparte, 0)) as exemplares, "
+		+ "	        SUM(coalesce(nei.reparte, 0) * pe_.PRECO_VENDA) as total, "
 		+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	");
 		
 		Query query = queryCotasComNotaEnvioEntre(filtro, sql, false);		
@@ -1644,7 +1644,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 				+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
-				+ "	        SUM(ec_.QTDE_EFETIVA*pe_.PRECO_VENDA) as total, "
+				+ "	        SUM(ec_.QTDE_EFETIVA * pe_.PRECO_VENDA) as total, "
 				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	"); 
 		}
 		sql.append( "   from "
