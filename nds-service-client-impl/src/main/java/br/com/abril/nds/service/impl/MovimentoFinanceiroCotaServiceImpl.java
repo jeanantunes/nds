@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -409,6 +410,76 @@ public class MovimentoFinanceiroCotaServiceImpl implements
     }
     
     /**
+     * Obtem todos os Fornecedores de todos os movimentos de estoque passados como parametro
+     * @param movimentosReparte
+     * @param movimentosConferenciaEncalhe
+     * @param movimentosEstorno
+     * @return List<Fornecedor>
+     */
+    private List<Fornecedor> obtemFornecedoresEnvolvidos(List<List<MovimentoEstoqueCota>> movimentos){
+    	
+    	List<Fornecedor> fornecedores = new ArrayList<Fornecedor>();
+    	
+    	List<MovimentoEstoqueCota> mecs = new ArrayList<MovimentoEstoqueCota>();
+    	
+    	for (List<MovimentoEstoqueCota> m:movimentos){
+    		
+	    	mecs.addAll(m);
+        }
+
+        for (MovimentoEstoqueCota mec:mecs){
+    		
+        	Fornecedor fornecedor = mec.getProdutoEdicao().getProduto().getFornecedor();
+    		
+    		if (fornecedores.isEmpty() || !fornecedores.contains(fornecedor)){
+    			
+    		    fornecedores.add(fornecedor);
+    		}
+
+    	}
+    	
+    	return fornecedores;
+    }
+    
+    /**
+     * Distingue Movimentos de Estoque da Cota por Fornecedor; 
+     * Separa a lista de Movimentos de Estoque em outras listas;
+     * Cada lista separada possui Movimentos de Estoque de um único Fornecedor.
+     * @param movimentosEstoqueCota
+     * @return Map<Fornecedor,List<MovimentoEstoqueCota>>
+     */
+    private Map<Fornecedor,List<MovimentoEstoqueCota>> agrupaMovimentosEstoqueCotaPorFornecedor(List<MovimentoEstoqueCota> movimentosEstoqueCota){
+    	
+    	Map<Fornecedor,List<MovimentoEstoqueCota>> movEstAgrup = new HashMap<Fornecedor,List<MovimentoEstoqueCota>>();
+
+    	List<MovimentoEstoqueCota> mecs = new ArrayList<MovimentoEstoqueCota>();
+    	
+    	for (MovimentoEstoqueCota mec:movimentosEstoqueCota){
+    		
+    		Fornecedor fornecedor = mec.getProdutoEdicao().getProduto().getFornecedor();
+    		
+    		if (movEstAgrup.isEmpty() || !movEstAgrup.containsKey(fornecedor)){
+    			
+    			if (!movEstAgrup.containsKey(fornecedor)){
+    				
+    				mecs.clear();
+    			}
+    			
+    			mecs.add(mec);
+
+    			movEstAgrup.put(fornecedor, mecs);
+    		}
+    		else{
+
+        		movEstAgrup.get(fornecedor).add(mec);
+    		}
+    		
+    	}
+    	
+    	return movEstAgrup;
+    }
+    
+    /**
 	 * Gera Financeiro para Movimentos de Estoque da Cota.
 	 * @param cota
 	 * @param movimentosEstoqueCota - movimentos
@@ -430,53 +501,71 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		BigDecimal totalContaFirme = BigDecimal.ZERO;	
 		BigDecimal totalGeral = BigDecimal.ZERO;
 		BigDecimal totalEstorno = BigDecimal.ZERO;
-		
-		
-		for(MovimentoEstoqueCota item : movimentosEstorno){
 
-			ProdutoEdicao produtoEdicao = item.getProdutoEdicao();
+		
+		if (movimentosEstorno!=null){
 			
-			precoComDescontoItem = item.getValoresAplicados()!=null?item.getValoresAplicados().getPrecoComDesconto():null;
-			precoVendaItem = precoComDescontoItem!=null?precoComDescontoItem:(produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
-			quantidadeItem = (item.getQtde()!=null)?item.getQtde():BigInteger.ZERO;
-			totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
-					
-			totalEstorno = totalEstorno.add(totalItem);
+			
+			
+		
+			for(MovimentoEstoqueCota item : movimentosEstorno){
+	
+				ProdutoEdicao produtoEdicao = item.getProdutoEdicao();
+				
+				precoComDescontoItem = item.getValoresAplicados()!=null?item.getValoresAplicados().getPrecoComDesconto():null;
+				precoVendaItem = precoComDescontoItem!=null?precoComDescontoItem:(produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
+				quantidadeItem = (item.getQtde()!=null)?item.getQtde():BigInteger.ZERO;
+				totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
+						
+				totalEstorno = totalEstorno.add(totalItem);
+			}
+			
+			
+			
 		}
 		
 		
 		List<MovimentoEstoqueCota> movimentosProdutosContaFirme = new ArrayList<MovimentoEstoqueCota>();
 		
-		for (MovimentoEstoqueCota item : movimentosEstoqueCota){
-			
-			ProdutoEdicao produtoEdicao = item.getProdutoEdicao();
-            Produto produto = produtoEdicao.getProduto();
-			FormaComercializacao formaComercializacao = produto.getFormaComercializacao();
-			
-			ValoresAplicados va = item.getValoresAplicados();
-			
-			if (va != null && va.getPrecoComDesconto() != null){
-				
-				precoVendaItem = va.getPrecoComDesconto();
-			} else {
-				
-				precoVendaItem = (produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
-			}
-			
-			quantidadeItem = (item.getQtde()!=null)?item.getQtde():BigInteger.ZERO;
-			totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
-					
-			totalGeral = totalGeral.add(totalItem);
-			
-			if ((formaComercializacao == null ) || formaComercializacao.equals(formaComercializacaoProduto)){
-
-				totalContaFirme = totalContaFirme.add(totalItem);
-				
-				movimentosProdutosContaFirme.add(item);
-			}
-			
-		}
 		
+		if(movimentosEstoqueCota!=null){
+			
+			
+			
+		
+			for (MovimentoEstoqueCota item : movimentosEstoqueCota){
+				
+				ProdutoEdicao produtoEdicao = item.getProdutoEdicao();
+	            Produto produto = produtoEdicao.getProduto();
+				FormaComercializacao formaComercializacao = produto.getFormaComercializacao();
+				
+				ValoresAplicados va = item.getValoresAplicados();
+				
+				if (va != null && va.getPrecoComDesconto() != null){
+					
+					precoVendaItem = va.getPrecoComDesconto();
+				} else {
+					
+					precoVendaItem = (produtoEdicao!=null && produtoEdicao.getPrecoVenda()!=null)?produtoEdicao.getPrecoVenda():BigDecimal.ZERO;
+				}
+				
+				quantidadeItem = (item.getQtde()!=null)?item.getQtde():BigInteger.ZERO;
+				totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
+						
+				totalGeral = totalGeral.add(totalItem);
+				
+				if ((formaComercializacao == null ) || formaComercializacao.equals(formaComercializacaoProduto)){
+	
+					totalContaFirme = totalContaFirme.add(totalItem);
+					
+					movimentosProdutosContaFirme.add(item);
+				}
+				
+			}
+			
+			
+		
+		}
 		
         ParametroCobrancaCota parametro = cota.getParametroCobranca();
         
@@ -514,30 +603,28 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	}
 	
 	/**
-	 * Gera movimento financeiro para cota na Conferencia de Encalhe
-	 * @param controleConferenciaEncalheCota
+	 * Gera movimentos financeiros Cota x Fornecedor
+	 * @param cota
+	 * @param fornecedor
+	 * @param idControleConferenciaEncalheCota
 	 * @param formaComercializacaoProduto
+	 * @param controleConferenciaEncalheCota
+	 * @param movimentosEstoqueCotaOperacaoEnvioReparte
+	 * @param movimentosEstoqueCotaOperacaoConferenciaEncalhe
+	 * @param movimentosEstoqueCotaOperacaoEstorno
 	 */
-	@Transactional
-	@Override
-    public void gerarMovimentoFinanceiroCotaRecolhimento(ControleConferenciaEncalheCota controleConferenciaEncalheCota,
-    		FormaComercializacao formaComercializacaoProduto){
-
-		Cota  cota = controleConferenciaEncalheCota.getCota();
+	private void gerarMovimentoFinanceiroCotaRecolhimentoPorFornecedor(Cota cota,
+			                                                           Fornecedor fornecedor,
+															           Long idControleConferenciaEncalheCota,
+			                                                           FormaComercializacao formaComercializacaoProduto,
+			                                                           ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+			                                                           List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte,
+			                                                           List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe,
+			                                                           List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno
+			                                                           ){
+		
 		ParametroCobrancaCota parametro = cota.getParametroCobranca();
 		TipoCota tipoCota = parametro!=null?parametro.getTipoCota():null;
-		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
-		
-		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe;
-		
-		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = 
-				movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
-						cota.getId(), 
-						controleConferenciaEncalheCota.getDataOperacao());
-		
-		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno = 
-				movimentoEstoqueCotaRepository.obterMovimentosEstornados(cota.getId());
-
 		
 		//GERA MOVIMENTOS FINANCEIROS PARA A COTA A VISTA E PRODUTOS CONTA FIRME
 		if(movimentosEstoqueCotaOperacaoEnvioReparte!=null && movimentosEstoqueCotaOperacaoEnvioReparte.size()>0){
@@ -558,9 +645,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		if ((tipoCota==null) || tipoCota.equals(TipoCota.A_VISTA)){
 			
 			//GERA CREDITOS
-			
-			movimentosEstoqueCotaOperacaoConferenciaEncalhe = 
-					movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
 			
 			valorTotalEncalheOperacaoConferenciaEncalhe = this.conferenciaEncalheService.obterValorTotalConferenciaEncalhe(idControleConferenciaEncalheCota);
 			
@@ -617,9 +701,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				
 				valorCredito = valorTotalEncalheOperacaoConferenciaEncalhe.subtract(valorConsignadoPagar);
 				
-				movimentosEstoqueCotaOperacaoConferenciaEncalhe = 
-						movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
-				
 				for(MovimentoEstoqueCota mec : movimentosEstoqueCotaOperacaoConferenciaEncalhe) {
 					
 					if (mec.getProdutoEdicao() == null || mec.getProdutoEdicao().getProduto() == null){
@@ -662,8 +743,65 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				}
 			}
 		}
-    	
+		
 	}
+	
+	/**
+	 * Gera movimento financeiro para cota na Conferencia de Encalhe
+	 * @param controleConferenciaEncalheCota
+	 * @param formaComercializacaoProduto
+	 */
+	@Transactional
+	@Override
+    public void gerarMovimentoFinanceiroCotaRecolhimento(ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+    													 FormaComercializacao formaComercializacaoProduto){
+
+		
+		Cota  cota = controleConferenciaEncalheCota.getCota();
+		Long idControleConferenciaEncalheCota = controleConferenciaEncalheCota.getId();
+	
+		
+		//MOVIMENTOS DA CONFERENCIA DE ENCALHE
+		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe = 
+				movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
+		
+		//MOVIMENTOS DE ENVIO DE REPARTE À COTA QUE AINDA NÃO GERARAM FINANCEIRO
+		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = 
+				movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiro(
+						cota.getId(), 
+						controleConferenciaEncalheCota.getDataOperacao());
+		
+		//MOVIMENTOS ESTORNADOS QUE ENTRAM COMO CREDITO À COTA
+		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno = 
+				movimentoEstoqueCotaRepository.obterMovimentosEstornados(cota.getId());
+		
+		
+		Map<Fornecedor,List<MovimentoEstoqueCota>> movimentosEncalheAgrupadosPorFornecedor = this.agrupaMovimentosEstoqueCotaPorFornecedor(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
+		
+		Map<Fornecedor,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this.agrupaMovimentosEstoqueCotaPorFornecedor(movimentosEstoqueCotaOperacaoEnvioReparte);
+
+		Map<Fornecedor,List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this.agrupaMovimentosEstoqueCotaPorFornecedor(movimentosEstoqueCotaOperacaoEstorno);
+
+		
+		List<Fornecedor> fornecedores = this.obtemFornecedoresEnvolvidos(Arrays.asList(movimentosEstoqueCotaOperacaoEnvioReparte, 
+				                                                                       movimentosEstoqueCotaOperacaoConferenciaEncalhe, 
+				                                                                       movimentosEstoqueCotaOperacaoEstorno));
+		
+		
+		for (Fornecedor fornecedor:fornecedores){
+			
+	        this.gerarMovimentoFinanceiroCotaRecolhimentoPorFornecedor(cota, 
+	        		                                                   fornecedor, 
+	        		                                                   idControleConferenciaEncalheCota, 
+	        		                                                   formaComercializacaoProduto, 
+	        		                                                   controleConferenciaEncalheCota, 
+	        		                                                   movimentosReparteAgrupadosPorFornecedor.get(fornecedor), 
+	        		                                                   movimentosEncalheAgrupadosPorFornecedor.get(fornecedor), 
+	        		                                                   movimentosEstornoAgrupadosPorFornecedor.get(fornecedor));
+		}
+	}
+	
+
 
 	@Override
 	public void processarRegistrohistoricoFinanceiro(
