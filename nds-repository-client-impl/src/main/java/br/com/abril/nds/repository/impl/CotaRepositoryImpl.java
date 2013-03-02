@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.AreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaDTO;
@@ -1462,8 +1461,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		+ "	        cota_.NUMERO_COTA as numeroCota, "
 		+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 		+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
-		+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
-		+ "	        SUM(ec_.QTDE_EFETIVA*pe_.PRECO_VENDA) as total, "
+		+ "	        SUM(nei.reparte) as exemplares, "
+		+ "	        SUM(nei.reparte*pe_.PRECO_VENDA) as total, "
 		+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	");
 		
 		Query query = queryCotasComNotaEnvioEntre(filtro, sql, false);		
@@ -1577,13 +1576,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		sql.append(
 		  "	    group by cota_.ID ");
 		
+		montarQueryNotasEnvioNaoEmitidas(filtro, sql, isCount);
+		
 		if(isCount) 
 			sql.append(" ) as dados ");
 		else
 			orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
 					filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
-		 
-		
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
@@ -1632,11 +1631,122 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		return 	query;
 	}
 		
+	private void montarQueryNotasEnvioNaoEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
+		
+		sql.append( " union all ");
+		
+		if(isCount) {
+			sql.append( " select cota_.ID ");
+		} else {
+			sql.append( " select "
+				+ "	        cota_.ID as idCota, "
+				+ "	        cota_.NUMERO_COTA as numeroCota, "
+				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
+				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
+				+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
+				+ "	        SUM(ec_.QTDE_EFETIVA*pe_.PRECO_VENDA) as total, "
+				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	"); 
+		}
+		sql.append( "   from "
+				+ "	        COTA cota_ " 
+				+ "	    inner join "
+				+ "	        BOX box1_  "
+				+ "	            on cota_.BOX_ID=box1_.ID  "
+				+ "	    inner join "
+				+ "	        ESTUDO_COTA ec_  "
+				+ "	            on cota_.ID=ec_.COTA_ID  "
+				+ "	    inner join "
+				+ "	        ESTUDO e_  "
+				+ "	            on ec_.ESTUDO_ID=e_.ID  "
+				+ "	    inner join "
+				+ "	        LANCAMENTO lancamento_  "
+				+ "	            on e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID  "
+				+ "	            and e_.DATA_LANCAMENTO=lancamento_.DATA_LCTO_PREVISTA  "
+				+ "	    inner join "
+				+ "	        PRODUTO_EDICAO pe_  "
+				+ "	            on e_.PRODUTO_EDICAO_ID=pe_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO p_  "
+				+ "	            on pe_.PRODUTO_ID=p_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO_FORNECEDOR pf_  "
+				+ "	            on p_.ID=pf_.PRODUTO_ID  "
+				+ "	    inner join "
+				+ "	        FORNECEDOR f_  "
+				+ "	            on pf_.fornecedores_ID=f_.ID  "
+				+ "	    inner join "
+				+ "	        PDV pdv_  "
+				+ "	            on cota_.ID=pdv_.COTA_ID  "
+				+ "	     inner join "
+				+ "        ROTA_PDV rota_pdv_  "
+				+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
+				+ "	    inner join "
+				+ "	        ROTA rota_  "
+				+ "	            on rota_pdv_.rota_ID=rota_.ID  "
+				+ "	    inner join "
+				+ "	        ROTEIRO roteiro_  "
+				+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
+				+ "	    inner join "
+				+ "	        PESSOA pessoa_cota_  "
+				+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  "
+				+ "		left outer join NOTA_ENVIO_ITEM nei " 
+		        + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
+				+ "	   where "
+				+ "	        lancamento_.STATUS in (:status)  "
+				+ " and ec_.id not in ( "
+				+ " 	select distinct estudo_cota_id from nota_envio_item "
+				+ " ) ");
+				
+				if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
+					sql.append(
+					  "	        and ( "
+					+ "	            f_.ID is null  "
+					+ "	            or f_.ID in (:idFornecedores) "
+					+ "	        )  ");
+				}
+				
+				if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
+					if (filtro.getIntervaloCota().getAte() != null) {
+						
+						sql.append("   and cota_.NUMERO_COTA between :numeroCotaDe and :numeroCotaAte  ");
+						
+					} else {
+						
+						sql.append("   and cota_.NUMERO_COTA=:numeroCota ");
+					}
+			
+				}
+				
+				if (filtro.getIntervaloBox() != null 
+						&& filtro.getIntervaloBox().getDe() != null 
+						&&  filtro.getIntervaloBox().getAte() != null) {
+					sql.append(" and box1_.CODIGO between :boxDe and :boxAte  ");
+				}
+				
+				if (filtro.getIdRoteiro() != null){
+					sql.append(" and roteiro_.ID=:idRoteiro  ");
+				}
+				
+				if (filtro.getIdRota() != null){
+					sql.append(" and rota_.ID=:idRota  ");
+				}
+				
+				if (filtro.getIntervaloMovimento() != null 
+						&& filtro.getIntervaloMovimento().getDe() != null 
+						&& filtro.getIntervaloMovimento().getAte() != null) {
+					sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+				}
+				
+				sql.append(
+				  "	    group by cota_.ID ");
+		
+	}
+
 	private void orderByCotasComNotaEnvioEntre(StringBuilder sql,
 			String sortName, String sortOrder) {
 		
 		if("numeroCota".equals(sortName)) {
-			sql.append(" order by  cota_.NUMERO_COTA " + sortOrder);
+			sql.append(" order by numeroCota " + sortOrder);
 		}
 		
 		if("nomeCota".equals(sortName)) {

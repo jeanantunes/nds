@@ -131,8 +131,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
 						listaIdFornecedores, idRoteiro, idRota, sortname, sortorder, rp, page);
 		
-		List<ConsultaNotaEnvioDTO> listaCotaExemplares = 
-				this.geracaoNotaEnvioService.busca(filtro);
+		List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
 		
 		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 		
