@@ -59,7 +59,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 			
 			produtoEdicaoSuplementar.setIdProdutoEdicao(produtoEdicao.getId());
 			produtoEdicaoSuplementar.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-			produtoEdicaoSuplementar.setNomeProdutoEdicao(produtoEdicao.getNomeComercial());
+			produtoEdicaoSuplementar.setNomeProdutoEdicao(produtoEdicao.getProduto().getNome());
 			produtoEdicaoSuplementar.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			produtoEdicaoSuplementar.setReparte(movimentoEstoqueCota.getQtde());
 			produtoEdicaoSuplementar.setQuantidadeDisponivel(estoqueProduto.getQtde());
