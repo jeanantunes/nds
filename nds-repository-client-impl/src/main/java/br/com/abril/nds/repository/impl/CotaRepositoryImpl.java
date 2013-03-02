@@ -1531,7 +1531,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		+ "		left outer join NOTA_ENVIO_ITEM nei " 
         + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
 		+ "	   where "
-		+ "	        lancamento_.STATUS in (:status)  ");
+		+ "	        lancamento_.STATUS in (:status)  "
+		+ "			and coalesce(nei.reparte, 0) > 0 ");
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			sql.append(
@@ -1746,7 +1747,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			String sortName, String sortOrder) {
 		
 		if("numeroCota".equals(sortName)) {
-			sql.append(" order by numeroCota " + sortOrder);
+			sql.append(" order by numeroCota " + sortOrder +", notaImpressa ");
 		}
 		
 		if("nomeCota".equals(sortName)) {
