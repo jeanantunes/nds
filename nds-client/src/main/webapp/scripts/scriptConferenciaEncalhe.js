@@ -14,14 +14,7 @@ function disableEnterKey(e) {
           return true;
 }
 
-function confirmarBoxDeEncalheModal(){
-	$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/salvarIdBoxSessao", "idBox=" + $("#boxLogado", ConferenciaEncalhe.workspace).val(), 
-			function(){
-				$("#dialog-logado", ConferenciaEncalhe.workspace).dialog("close");
-				$('#numeroCota', ConferenciaEncalhe.workspace).focus();
-			}, null, true, "idModalBoxRecolhimento"
-		);
-}
+
 
 var ConferenciaEncalhe = $.extend(true, {
 	
@@ -67,8 +60,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).autocomplete({source: []}); 
 		
-		$('#qtdeExemplar', ConferenciaEncalhe.workspace).focus();
-	
+		$("#qtdeExemplar", ConferenciaEncalhe.workspace).focus();
+		
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -86,7 +79,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).numeric();
 		                                           
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numericE();
+		$("#qtdeExemplar", ConferenciaEncalhe.workspace).numeric();
 		
 		
 		$("#vlrCE", this.workspace).maskMoney({
@@ -218,18 +211,16 @@ var ConferenciaEncalhe = $.extend(true, {
 		    	confirmarBoxDeEncalheModal();
 		    }
 		});
+
+
+		$("#dialog-notaFiscal").keypress(function (event) {
+		    if (event.keyCode == 13) {
+		    	confirmarBoxDeNotaFiscalModal();
+		    }
+		});
 		
 		ConferenciaEncalhe.popup_logado();
 		
-		$("#dialog-logado").ready(function (){
-//			$("#dialog-logado", ConferenciaEncalhe.workspace).find('select').focus();
-//			$("#idTesteBlabla", ConferenciaEncalhe.workspace).focus();
-//			document.getElementById("boxLogado").focus();
-//			$('#dialog-logado').on('shown', function () {$('#boxLogado').focus();});
-//			$("#dialog-logado", ConferenciaEncalhe.workspace).find("select").focus();
-//			document.forms["form-logado"].boxes.focus;
-		});
-
 		ConferenciaEncalhe.removerAtalhos();
 		
 		ConferenciaEncalhe.atribuirAtalhos();
@@ -1124,22 +1115,12 @@ var ConferenciaEncalhe = $.extend(true, {
 			form: $("#dialog-logado", this.workspace).parents("form"),
 			
 			open : function(){
-//				$("#dialog-logado", ConferenciaEncalhe.workspace).find("select").focus();
-//				$('#boxLogado').trigger('focus');
+				setTimeout (function () {$("#boxLogado").focus();}, 1);
 			},
 			
 			close : function(){
 				ConferenciaEncalhe.modalAberta = false;
 			}
-		});
-		
-		$("#dialog-logado").ready(function (){
-//			alert("Passou")
-//			$("#dialog-logado", ConferenciaEncalhe.workspace).find('select').focus();
-//			$("#idTesteBlabla", ConferenciaEncalhe.workspace).focus();
-//			document.getElementById("boxLogado").focus();
-//			$('#dialog-logado').on('shown', function () {$('#boxLogado').focus();});
-			$("#dialog-logado", ConferenciaEncalhe.workspace).find("select").focus();
 		});
 	},
 	
@@ -1293,39 +1274,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
-					
-					var data = []; 
-					
-					if($('input:radio[name=radioNFE]:checked').val() == 'S') {
-						
-						data = [
-								{name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
-								{name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
-								{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-								{name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()},
-								{name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalhe.workspace).val()}
-						];
-						
-					} else {
-						
-						data = [
-								{name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
-								{name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
-								{name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-								{name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()}
-						];
-						
-					}
-					
-					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, 
-						function(result){
-							
-							$("#dialog-notaFiscal", ConferenciaEncalhe.workspace).dialog("close");
-							
-							$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
-							
-						}, null, true, "dialog-notaFiscal"
-					);
+					confirmarBoxDeNotaFiscalModal();
 				},
 				"Cancelar" : function() {
 					
@@ -1334,7 +1283,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				}
 			}, open : function(){
 				
-				$("#numNotaFiscal", ConferenciaEncalhe.workspace).focus();
+				setTimeout (function () {$("#numNotaFiscal").focus();}, 1);
 			}, close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
@@ -1362,7 +1311,11 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$(this).dialog("close");
 				}
-			}, close : function(){
+			}, 
+			open : function (){
+				setTimeout (function () {$("#pesq_prod").focus();}, 1);
+			},
+			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
 			},
@@ -1636,5 +1589,50 @@ var ConferenciaEncalhe = $.extend(true, {
 	}
 
 }, BaseController);
+
+function confirmarBoxDeEncalheModal(){
+	$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/salvarIdBoxSessao", "idBox=" + $("#boxLogado", ConferenciaEncalhe.workspace).val(), 
+			function(){
+				$("#dialog-logado", ConferenciaEncalhe.workspace).dialog("close");
+				$('#numeroCota', ConferenciaEncalhe.workspace).focus();
+			}, null, true, "idModalBoxRecolhimento"
+		);
+}
+
+function confirmarBoxDeNotaFiscalModal(){
+	var data = []; 
+	
+	if($('input:radio[name=radioNFE]:checked').val() == 'S') {
+		
+		data = [
+		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
+		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
+		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
+		        {name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()},
+		        {name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalhe.workspace).val()}
+		        ];
+		
+	} else {
+		
+		data = [
+		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
+		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
+		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
+		        {name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()}
+		        ];
+		
+	}
+
+
+	$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarNotaFiscal', data, 
+			function(result){
+		
+		$("#dialog-notaFiscal", ConferenciaEncalhe.workspace).dialog("close");
+		
+		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
+		
+	}, null, true, "dialog-notaFiscal"
+	);
+}
 
 //@ sourceURL=scriptConferenciaEncalhe.js
