@@ -25,29 +25,30 @@ public class DefinicaoBasesDAO {
     private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
     private static final String STATUS_FECHADO = "FECHADO";
     
-    private static final String CAMPOS_MODEL_PRODUTO_EDICAO = " select l.ID, l.PRODUTO_EDICAO_ID, l.STATUS, l.DATA_LCTO_DISTRIBUIDOR, tp.GRUPO_PRODUTO, " 
-	    + " l.TIPO_LANCAMENTO, pe.NUMERO_EDICAO, p.CODIGO "
+    private static final String CAMPOS_MODEL_PRODUTO_EDICAO = " select l.ID, l.PRODUTO_EDICAO_ID, l.STATUS, l.DATA_LCTO_PREVISTA, l.DATA_LCTO_DISTRIBUIDOR, " 
+	    + " tp.GRUPO_PRODUTO, l.TIPO_LANCAMENTO, pe.NUMERO_EDICAO, p.CODIGO, plp.NUMERO_PERIODO, plp.TIPO "
 	    + " from lancamento l "
 	    + " left join produto_edicao pe on pe.ID = l.PRODUTO_EDICAO_ID "
-	    + " left outer join produto p on p.ID = pe.PRODUTO_ID "
-	    + " left outer join tipo_produto tp on tp.ID = p.TIPO_PRODUTO_ID "
+	    + " left join produto p on p.ID = pe.PRODUTO_ID "
+	    + " left join tipo_produto tp on tp.ID = p.TIPO_PRODUTO_ID " 
+	    + " left join periodo_lancamento_parcial plp on plp.LANCAMENTO_ID = l.ID "
 	    + " where pe.PRODUTO_ID = ( select ID from produto where CODIGO = ? ) ";
 //    	    + " where pe.PRODUTO_ID = ( select PRODUTO_ID from produto_edicao where ID = ? ) ";
 
     private static final String SQL_EDICOES_VS_LANCAMENTOS = CAMPOS_MODEL_PRODUTO_EDICAO 
 	    //	    + " and l.DATA_LCTO_DISTRIBUIDOR > date_sub(curdate(),INTERVAL 2 YEAR) "
-	    + " order by pe.NUMERO_EDICAO desc "
-	    + " limit 6 ";
+	    + " order by pe.NUMERO_EDICAO desc, plp.NUMERO_PERIODO desc "
+	    + " limit 50 ";
 
     private static final String SQL_LANCAMENTOS_ANOS_ANTERIORES_MESMO_MES = CAMPOS_MODEL_PRODUTO_EDICAO
 	    + " and (l.DATA_LCTO_DISTRIBUIDOR like ? or l.DATA_LCTO_DISTRIBUIDOR like ?) "
-	    + " order by pe.NUMERO_EDICAO desc "
+	    + " order by pe.NUMERO_EDICAO desc, plp.NUMERO_PERIODO desc "
 	    + " limit 2 ";
 
     private static final String SQL_LANCAMENTOS_ANOS_ANTERIORES_VERANEIO = CAMPOS_MODEL_PRODUTO_EDICAO
 	    + " and (l.DATA_LCTO_DISTRIBUIDOR between ? and ? " 	//periodo de 20/12 a 28/02 um ano antes
 	    + "      or l.DATA_LCTO_DISTRIBUIDOR between ? and ?) "	//periodo de 20/12 a 28/02 dois anos antes
-	    + " order by pe.NUMERO_EDICAO desc "
+	    + " order by pe.NUMERO_EDICAO desc, plp.NUMERO_PERIODO desc "
 	    + " limit 2 ";
 
     public List<ProdutoEdicaoBase> listaEdicoesPorLancamento(ProdutoEdicaoBase edicao) {

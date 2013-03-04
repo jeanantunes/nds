@@ -25,7 +25,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	Estudo estudo = super.getEstudo();	
 
 	CotaDAO cotaDAO = new CotaDAO();
-	estudo.setCotas(cotaDAO.getCotasComEdicoesBase(estudo.getEdicoesBase()));
+	estudo.setCotas(cotaDAO.getCotasComEdicoesBase(estudo));
     }
 
 }

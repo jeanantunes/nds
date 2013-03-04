@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="TodosProcessos" parallel="false">
-  <parameter name="produtos" value="00000114" /><!-- CARAS, CARAS FASHION (61310001,28514001) 00000114 contigo-->
+  <parameter name="produto" value="00000114" /><!-- CARAS, CARAS FASHION (61310001,28514001) 00000114 contigo-->
   <test name="Teste Integrado">
   	<classes>
 		<class name="br.com.abril.nds.process.ProcessTest" />	
