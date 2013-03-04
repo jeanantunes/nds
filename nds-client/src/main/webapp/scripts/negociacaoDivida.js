@@ -344,8 +344,11 @@ var negociacaoDividaController = $.extend(true, {
 							 $("#dialog-NegociacaoformaPgto", negociacaoDividaController.workspace).dialog("close");
 						}
 					},
-					 form: $("#formaPgtoForm", negociacaoDividaController.workspace)
-	
+					form: $("#formaPgtoForm", negociacaoDividaController.workspace),
+					close: function(event, ui) {
+						
+						negociacaoDividaController.pesquisar();
+					}
 				});
 			} ,
 			null
@@ -453,7 +456,7 @@ var negociacaoDividaController = $.extend(true, {
 					},
 					{
 						name: "parcelas["+ index +"].numeroCheque",
-						value: priceToFloat($("[name=numCheque]", negociacaoDividaController.workspace)[index].value)
+						value: $("[name=numCheque]", negociacaoDividaController.workspace)[index].value
 					},
 					{
 						name: "parcelas["+ index +"].movimentoFinanceiroCota.valor",
@@ -491,7 +494,8 @@ var negociacaoDividaController = $.extend(true, {
 	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).show();
 	            	
 	            	if (!$("#negociacaoPorComissao", negociacaoDividaController.workspace).is(":checked") &&
-	            			$("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked")){
+	            			$("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked") &&
+	            			(tipoPgto == 'BOLETO' || tipoPgto == 'BOLETO_EM_BRANCO')){
 	            		
 	            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
 	            	}
@@ -535,9 +539,9 @@ var negociacaoDividaController = $.extend(true, {
 					tabela.rows[i].cells[j].style.textAlign = "center";
 				}
 				
-				coluna1.innerHTML = '<td><input value="'+row.dataVencimento+'" type="text" name="vencimentoCheque" id="vencimentoCheque'+i+'"style="width:100px;" readonly="readonly"/></td>';
+				coluna1.innerHTML = '<td><input value="'+row.dataVencimento+'" type="text" name="vencimentoCheque" id="vencimentoCheque'+i+'"style="width:100px;"/></td>';
 				coluna2.innerHTML = '<td><input value="'+row.parcela+'" type="text" name="valorCheque" id="valor'+i+'" style="width:100px; text-align:right;" onchange="negociacaoDividaController.recalcularTotalCheque()"/></td>';
-				coluna3.innerHTML = '<td><input value="'+i+'" type="text" name="numCheque" id="numCheque'+i+'"  style="width:100px;" readonly="readonly"/></td>';
+				coluna3.innerHTML = '<td><input value="'+i+'" type="text" name="numCheque" id="numCheque'+i+'"  style="width:100px;"/></td>';
 				coluna4.innerHTML = '<td align="center"><a onclick="negociacaoDividaController.excluirCheque('+i+')" href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" border="0" align="Excluir Linha" /></a></td>';
 			
 				totalParcela += parseFloat( formatMoneyValue(result[i-1].parcela) );
