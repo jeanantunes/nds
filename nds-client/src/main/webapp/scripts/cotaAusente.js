@@ -834,6 +834,11 @@ var cotaAusenteController = $.extend(true, {
 		
 		$.each(cotaAusenteController.mov, function(index, movimento) {
 			
+			if ($("input[name='checkgroup'][indice='" + index + "']:checked").size() == 0) {
+				
+				return;
+			}
+			
 			parametros.push({name:'movimentos['+ index +'].idCota', value: movimento.idCota});
 			parametros.push({name:'movimentos['+ index +'].idProdEd', value: movimento.idProdEd});
 			parametros.push({name:'movimentos['+ index +'].codigoProd', value: movimento.codigoProd});
@@ -841,7 +846,7 @@ var cotaAusenteController = $.extend(true, {
 			parametros.push({name:'movimentos['+ index +'].nomeProd', value: movimento.nomeProd});
 			parametros.push({name:'movimentos['+ index +'].qtdeReparte', value: movimento.qtdeReparte});
 			
-			if(movimento.rateios) {
+			if (movimento.rateios) {
 							
 				$.each(movimento.rateios, function(indexR, rateio) {
 					parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].numCota', value: rateio.numCota});
