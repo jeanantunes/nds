@@ -131,7 +131,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularMulta(Banco banco, Cota cota,
-									Distribuidor distribuidor, BigDecimal valor) {
+									BigDecimal valor) {
 		
 
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
@@ -258,8 +258,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Transactional(readOnly=true)
 	public CobrancaVO obterDadosCobranca(Long idCobranca) {
 		//PARAMETROS PARA CALCULO DE JUROS E MULTA
-		Distribuidor distribuidor = distribuidorService.obter();
-        Date dataOperacao = distribuidor.getDataOperacao();
+		
+        Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		CobrancaVO cobranca=null;
 		
@@ -311,7 +311,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 									   dataOperacao);
 				//CALCULA MULTA
 				valorMultaCalculado =
-					this.calcularMulta(cob.getBanco(), cob.getCota(), distribuidor,
+					this.calcularMulta(cob.getBanco(), cob.getCota(),
 							           cob.getValor().subtract(saldoDivida));
 			}
 			
