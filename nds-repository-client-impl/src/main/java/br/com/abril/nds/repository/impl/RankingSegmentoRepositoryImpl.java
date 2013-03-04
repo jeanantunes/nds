@@ -1,25 +1,25 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
+
 import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RankingSegmentoRepository;
 
 @Repository
-public class RankingSegmentoRepositoryImpl extends AbstractRepositoryModel implements RankingSegmentoRepository {
+public class RankingSegmentoRepositoryImpl extends RankingAbstract implements RankingSegmentoRepository {
 
-	public RankingSegmentoRepositoryImpl() {
-		super(Object.class);
-	}
 	
 	@Override
 	public void executeJobGerarRankingSegmento() {
 		StringBuilder hql = new StringBuilder();
 
+		BigInteger novoId = criarNovoIDRanking();
+		
 		hql.append(
-				" insert into ranking_segmento (DATA_GERACAO_RANK,COTA_ID,TIPO_SEGMENTO_PRODUTO_ID,SEGMENTO_DESCRICAO,PRODUTO_EDICAO_ID,QTDE)( ")
-				.append(" select now() as data_geracao_rank,cota_id,tipo_segmento_produto_id,segmento_descricao,produto_edicao_id,sum(qtde) as qtde from ")
+				" insert into ranking_segmento (COTA_ID,TIPO_SEGMENTO_PRODUTO_ID,SEGMENTO_DESCRICAO,PRODUTO_EDICAO_ID,QTDE,RANKING_SEGMENTO_GERADOS_ID)( ")
+				.append(" select cota_id,tipo_segmento_produto_id,segmento_descricao,produto_edicao_id,sum(qtde) as qtde,").append(novoId).append(" from ")
 				.append(" (select mec.cota_id,tsp.id as tipo_segmento_produto_id,	tsp.descricao segmento_descricao, pe.id produto_edicao_id, mec.tipo_movimento_id, ")
 				.append(" case when mec.tipo_movimento_id=21 then (mec.qtde) ")
 				.append(" when mec.tipo_movimento_id=26 then (mec.qtde*-1) ")
@@ -42,6 +42,11 @@ public class RankingSegmentoRepositoryImpl extends AbstractRepositoryModel imple
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		query.executeUpdate();
 
+	}
+
+	@Override
+	String getTipoRanking() {
+		return "segmento";
 	}
 
 
