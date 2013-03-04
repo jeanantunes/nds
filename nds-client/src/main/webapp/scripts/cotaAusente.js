@@ -799,12 +799,35 @@ var cotaAusenteController = $.extend(true, {
 				},				
 				"Cancelar" : function() {
 					
-					$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
+					cotaAusenteController.popupConfirmaCancelamentoRedistribuicao();
 				}
 			},form: $( "#dialog-suplementar", cotaAusenteController.workspace ).parents("form")
 		});
 	},
 
+	popupConfirmaCancelamentoRedistribuicao: function() {
+		
+		$("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			buttons: {
+				
+				"Confirmar": function() {
+			
+					$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
+					$("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+				},					
+				"Cancelar": function() {
+
+					$("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+				}
+
+			}, form: $("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).parents("form") 
+		});
+	},
+	
 	getParametrosFromMovimentos : function() {
 		
 		var parametros = [];
