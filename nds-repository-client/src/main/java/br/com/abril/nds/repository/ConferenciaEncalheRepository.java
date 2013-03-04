@@ -8,12 +8,24 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 public interface ConferenciaEncalheRepository extends Repository<ConferenciaEncalhe, Long> { 
+	
+	/**
+	 * Obtem uma lista com numeroCota e razao social das cotas que
+	 * possuem conferencia de encalhe salvo mas não finalizado na 
+	 * data pesquisada.
+	 * 
+	 * @param dataOperacao
+	 * 
+	 * @return List - CotaDTO
+	 */
+	public List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 	
 	/**
 	 * Obtém uma lista de conferenciaEncalheDTO específicos de uma cota
