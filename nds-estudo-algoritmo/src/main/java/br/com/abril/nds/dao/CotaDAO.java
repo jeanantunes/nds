@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 
@@ -108,15 +109,21 @@ public class CotaDAO {
 	return cotas;
     }
 
-    public List<Cota> getCotasComEdicoesBase(List<ProdutoEdicaoBase> edicoesBase) {
+    public List<Cota> getCotasComEdicoesBase(Estudo estudo) {
 	List<Cota> returnListCota = new ArrayList<>();
 	try {
 	    Map<Long, Integer> idsPesos = new HashMap<Long, Integer>();
-	    for (ProdutoEdicaoBase edicao : edicoesBase) {
+	    for (ProdutoEdicaoBase edicao : estudo.getEdicoesBase()) {
 		idsPesos.put(edicao.getId(), edicao.getPeso());
 	    }
 	    String idsString = idsPesos.keySet().toString().replaceAll("\\]|\\[", "");
-	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_PRODUTO_EDICAO_POR_COTA.replaceAll("\\#?", idsString));
+	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_PRODUTO_EDICAO_POR_COTA.replaceAll("\\#", idsString));
+	    
+	    int param = 0;
+	    ps.setLong(++param, estudo.getProduto().getIdProduto());
+	    ps.setLong(++param, estudo.getProduto().getIdProduto());
+	    ps.setLong(++param, estudo.getProduto().getNumeroEdicao());
+	    
 	    ResultSet rs = ps.executeQuery();
 
 	    long prevIdCota = 0;
@@ -230,7 +237,7 @@ public class CotaDAO {
 		+ "join cota c on c.ID = epc.COTA_ID "
 		+ "left join ajuste_reparte ar ON ar.COTA_ID = epc.COTA_ID "
 		+ "left join mix_cota_produto mcp on mcp.id_cota = c.id and mcp.id_produto = ? "
-		+ "left join fixacao_reparte fr on fr.id_cota = c.id and fr.id_produto = ? and ? between fr.edicao_inicial and fr.edicao_final "
-		+ "where pe.id in (#?) "
+		+ "left join fixacao_reparte fr on fr.id_cota = c.id and fr.id_produto = ? and ? between fr.ed_inicial and fr.ed_final "
+		+ "where pe.id in (#) "
 		+ "order by c.ID , pe.NUMERO_EDICAO desc ";
 }

@@ -30,7 +30,7 @@ public class HTMLTableUtil {
 			String name = method.getName();
 			if ((name.startsWith("get") || name.startsWith("is"))
 					&& !name.equalsIgnoreCase("getClass")) {
-				sortedMethods.put(name.replaceAll("is|get", ""), method);
+				sortedMethods.put(name.replaceFirst("is|get", ""), method);
 			}
 		}
 

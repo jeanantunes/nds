@@ -45,7 +45,7 @@ public class DefinicaoBasesTest {
 	}
 	Reporter.log("</ul>");
 	
-	bases.setEdicoesRecebidasParaEstudoRaw(edicoes);
+//	bases.setEdicoesRecebidasParaEstudoRaw(edicoes);
 	bases.executar();
 	List<ProdutoEdicaoBase> edicoesBase = bases.getEstudo().getEdicoesBase();
 	assertNotNull(edicoesBase);
@@ -79,7 +79,7 @@ public class DefinicaoBasesTest {
 	Reporter.log("<p>Produtos recebidas da interface:");
 	Reporter.log(produtos);
 	
-	bases.setEdicoesRecebidasParaEstudoRaw(montaListEdicoesPorProduto(produtos));
+//	bases.setEdicoesRecebidasParaEstudoRaw(montaListEdicoesPorProduto(produtos));
 	bases.executarProcesso();
 	List<ProdutoEdicaoBase> edicoesBase = bases.getEstudo().getEdicoesBase();
 	assertNotNull(edicoesBase);

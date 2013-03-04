@@ -1,13 +1,13 @@
 package br.com.abril.nds.process;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.testng.Reporter;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
@@ -36,15 +36,15 @@ import br.com.abril.nds.util.HTMLTableUtil;
 public class ProcessTest {
 
 	@Test
-	@Parameters({"produtos"})
-	public void testAllProcess(String produtos) throws Exception {
+	@Parameters({"produto"})
+	public void testAllProcess(String produto) throws Exception {
 		Estudo estudo = new Estudo();
 		estudo.setPacotePadrao(BigDecimal.valueOf(10));
 		estudo.setReparteDistribuir(BigDecimal.valueOf(1000));
 		estudo.setReparteDistribuirInicial(BigDecimal.valueOf(1000));
+		estudo.setProduto(montaProduto(produto));
 
 		DefinicaoBases definicaoBases = new DefinicaoBases(estudo);
-		definicaoBases.setEdicoesRecebidasParaEstudoRaw(montaListEdicoesPorProduto(produtos));
 		definicaoBases.executar();
 
 		SomarFixacoes somarFixacoes = new SomarFixacoes(estudo);
@@ -141,14 +141,12 @@ public class ProcessTest {
 		Reporter.log(HTMLTableUtil.buildHTMLTable(edicoes));
 	}
 
-	private List<ProdutoEdicaoBase> montaListEdicoesPorProduto(String produtos) {
-		String[] listProdutos = produtos.split(",");
-		List<ProdutoEdicaoBase> edicoes = new ArrayList<>();
-		for (String codigoProduto : listProdutos) {
-			ProdutoEdicaoBase edicao = new ProdutoEdicaoBase();
-			edicao.setCodigoProduto(Long.parseLong(codigoProduto));
-			edicoes.add(edicao);
-		}
-		return edicoes;
+	private ProdutoEdicaoBase montaProduto(String produto) {
+		long idProduto = Long.parseLong(produto);
+		
+		ProdutoEdicaoDAO produtoEdicaoDAO = new ProdutoEdicaoDAO();
+		ProdutoEdicaoBase edicao = produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(idProduto);
+		
+		return edicao;
 	}
 }
