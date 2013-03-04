@@ -58,6 +58,7 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.NegociacaoDividaService;
@@ -102,7 +103,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	@Autowired
 	private DescontoService descontoService;
 	
-	private static final BigDecimal VALOR_CEM = new BigDecimal(100);
+	@Autowired
+	private CobrancaService cobrancaService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -120,27 +122,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 	@Transactional(readOnly = true)
 	public List<NegociacaoDividaDTO> obterDividasPorCota(FiltroConsultaNegociacaoDivida filtro) {
 		
-		List<NegociacaoDividaDTO> dividas = this.negociacaoDividaRepository.obterCotaPorNumero(filtro);
-		
-		for (NegociacaoDividaDTO divida : dividas){
-			
-			Banco banco = this.bancoRepository.buscarBancoPorIdCobranca(divida.getIdCobranca());
-			BigDecimal encargo = BigDecimal.ZERO;
-			
-			if (banco.getVrMulta() != null){
-				
-				encargo = encargo.add(banco.getVrMulta());
-			} else {
-				
-				encargo = encargo.add(divida.getVlDivida().multiply(banco.getMulta()).divide(VALOR_CEM));
-			}
-			
-			encargo = encargo.add(divida.getVlDivida().multiply(banco.getJuros()).divide(VALOR_CEM));
-			
-			divida.setEncargos(encargo);
-		}
-		
-		return dividas;
+		return this.negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
 	}
 
 	@Override
@@ -211,8 +193,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 		}
 		
 		//caso a negociacão seja feita em parcelas
-		if (parcelas != null){
+		if (parcelas != null && !parcelas.isEmpty()){
 			
+			Banco banco = formaCobranca.getBanco();
 			BigDecimal totalNegociacao = BigDecimal.ZERO;
 			//Popula o movimento financeiro de cada parcela
 			//Caso seja uma negociação avulsa o movimento financeiro servirá
@@ -238,15 +221,82 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 			//os movimentos financeiros das parcelas
 			if (negociacaoAvulsa){
 				
+				ConsolidadoFinanceiroCota consolidado = null;
 				for (ParcelaNegociacao parcelaNegociacao : parcelas){
 					
-					ConsolidadoFinanceiroCota consolidado = new ConsolidadoFinanceiroCota();
+					BigDecimal valorTotalParcela = 
+							parcelaNegociacao.getMovimentoFinanceiroCota().getValor();
+					
+					consolidado = new ConsolidadoFinanceiroCota();
 					consolidado.setCota(cota);
 					consolidado.setDataConsolidado(dataAtual);
 					List<MovimentoFinanceiroCota> movs = new ArrayList<MovimentoFinanceiroCota>();
 					movs.add(parcelaNegociacao.getMovimentoFinanceiroCota());
 					consolidado.setMovimentos(movs);
-					consolidado.setTotal(totalNegociacao);
+					
+					consolidado.setEncalhe(BigDecimal.ZERO);
+					consolidado.setVendaEncalhe(BigDecimal.ZERO);
+					consolidado.setDebitoCredito(BigDecimal.ZERO);
+					consolidado.setPendente(BigDecimal.ZERO);
+					consolidado.setEncargos(parcelaNegociacao.getEncargos());
+					
+					BigDecimal juros = cobrancaService.calcularJuros(banco, cota, 
+							valorTotalParcela, 
+							parcelaNegociacao.getDataVencimento(), new Date());
+					
+					if (juros != null && BigDecimal.ZERO.compareTo(juros) != 0){
+						
+						MovimentoFinanceiroCota movimentoFinanceiroCota = new MovimentoFinanceiroCota();
+						movimentoFinanceiroCota.setAprovadoAutomaticamente(true);
+						movimentoFinanceiroCota.setAprovador(usuarioResponsavel);
+						movimentoFinanceiroCota.setCota(cota);
+						movimentoFinanceiroCota.setData(dataAtual);
+						movimentoFinanceiroCota.setDataAprovacao(dataAtual);
+						movimentoFinanceiroCota.setDataCriacao(dataAtual);
+						movimentoFinanceiroCota.setLancamentoManual(false);
+						movimentoFinanceiroCota.setMotivo("Juros provenientes de negociação");
+						movimentoFinanceiroCota.setParcelaNegociacao(parcelaNegociacao);
+						movimentoFinanceiroCota.setTipoMovimento(
+								this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+										GrupoMovimentoFinaceiro.JUROS));
+						movimentoFinanceiroCota.setUsuario(usuarioResponsavel);
+						movimentoFinanceiroCota.setValor(juros);
+						
+						movs.add(movimentoFinanceiroCota);
+						
+						this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
+					}
+					
+					BigDecimal multas = cobrancaService.calcularMulta(banco, cota,
+							valorTotalParcela);
+					
+					if (multas != null && BigDecimal.ZERO.compareTo(multas) != 0){
+						
+						MovimentoFinanceiroCota movimentoFinanceiroCota = new MovimentoFinanceiroCota();
+						movimentoFinanceiroCota.setAprovadoAutomaticamente(true);
+						movimentoFinanceiroCota.setAprovador(usuarioResponsavel);
+						movimentoFinanceiroCota.setCota(cota);
+						movimentoFinanceiroCota.setData(dataAtual);
+						movimentoFinanceiroCota.setDataAprovacao(dataAtual);
+						movimentoFinanceiroCota.setDataCriacao(dataAtual);
+						movimentoFinanceiroCota.setLancamentoManual(false);
+						movimentoFinanceiroCota.setMotivo("Multa proveniente de negociação");
+						movimentoFinanceiroCota.setParcelaNegociacao(parcelaNegociacao);
+						movimentoFinanceiroCota.setTipoMovimento(
+								this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+										GrupoMovimentoFinaceiro.MULTA));
+						movimentoFinanceiroCota.setUsuario(usuarioResponsavel);
+						movimentoFinanceiroCota.setValor(multas);
+						
+						movs.add(movimentoFinanceiroCota);
+						
+						this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
+					}
+					
+					valorTotalParcela = valorTotalParcela.add(multas);
+					valorTotalParcela = valorTotalParcela.add(juros);
+					
+					consolidado.setTotal(valorTotalParcela);
 					
 					this.consolidadoFinanceiroRepository.adicionar(consolidado);
 					
@@ -290,9 +340,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService{
 					cobranca.setDataEmissao(dataAtual);
 					cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
 					cobranca.setDataVencimento(parcelaNegociacao.getDataVencimento());
-					cobranca.setValor(totalNegociacao);
-					
-					Banco banco = formaCobranca.getBanco();
+					cobranca.setValor(valorTotalParcela);
+					cobranca.setEncargos(parcelaNegociacao.getEncargos());
 					
 					cobranca.setNossoNumero(
 							Util.gerarNossoNumero(

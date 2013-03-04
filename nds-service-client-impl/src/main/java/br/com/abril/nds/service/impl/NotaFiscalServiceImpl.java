@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -33,7 +34,6 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -42,7 +42,6 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -79,6 +78,7 @@ import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.pk.NotaFiscalReferenciadaPK;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EncargoFinanceiroRepository;
@@ -1004,7 +1004,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public Long emitiNotaFiscal(long idTipoNotaFiscal, Date dataEmissao,
 			Cota cota, List<ItemNotaFiscalSaida> listItemNotaFiscal,
 			InformacaoTransporte transporte,
@@ -1138,7 +1138,6 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * br.com.abril.nds.util.Intervalo, java.util.List, java.util.List)
 	 */
 	@Override
-	@Transactional
 	public List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(
 			Distribuidor distribuidor, Cota cota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
@@ -1494,7 +1493,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * Long)
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public InformacaoTransporte obterTransporte(Long idCota) {
 		InformacaoTransporte transporte = new InformacaoTransporte();
 

@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,10 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
@@ -44,30 +40,7 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	public List<ProdutoEdicaoSuplementarDTO> obterProdutosEdicaoSuplementarDisponivel(
 			Date data, Long idCota) {
 		
-		List<MovimentoEstoqueCota> movimentosEstoqueReparteCotaAusente = this.movimentoEstoqueCotaService.obterMovimentoCotaPorTipoMovimento(data, idCota, 
-				GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-		
-		List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoSuplementarDTO = new ArrayList<ProdutoEdicaoSuplementarDTO>();
-		
-		for (MovimentoEstoqueCota movimentoEstoqueCota : movimentosEstoqueReparteCotaAusente) {
-			
-			ProdutoEdicao produtoEdicao = movimentoEstoqueCota.getProdutoEdicao(); 
-			
-			EstoqueProduto estoqueProduto = this.buscarEstoquePorProduto(produtoEdicao.getId());
-			
-			ProdutoEdicaoSuplementarDTO produtoEdicaoSuplementar = new ProdutoEdicaoSuplementarDTO();
-			
-			produtoEdicaoSuplementar.setIdProdutoEdicao(produtoEdicao.getId());
-			produtoEdicaoSuplementar.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-			produtoEdicaoSuplementar.setNomeProdutoEdicao(produtoEdicao.getNomeComercial());
-			produtoEdicaoSuplementar.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-			produtoEdicaoSuplementar.setReparte(movimentoEstoqueCota.getQtde());
-			produtoEdicaoSuplementar.setQuantidadeDisponivel(estoqueProduto.getQtde());
-			
-			listaProdutosEdicaoSuplementarDTO.add(produtoEdicaoSuplementar);
-		}
-		
-		return listaProdutosEdicaoSuplementarDTO;
+		return this.estoqueProdutoRespository.obterProdutosEdicaoSuplementarNaoDisponivel(idCota, data);
 	}
 
 }

@@ -165,7 +165,8 @@ public class NegociacaoDividaController extends BaseController {
 		
 		List<CalculaParcelasVO> listParcelas = new ArrayList<CalculaParcelasVO>();
 		
-		Double valorParcela = filtro.getValorSelecionado() / filtro.getQntdParcelas();
+		BigDecimal valorParcela = 
+				filtro.getValorSelecionado().divide(new BigDecimal(filtro.getQntdParcelas()), RoundingMode.HALF_EVEN);
 		
 		Date dataBase = new Date();
 		
@@ -187,14 +188,21 @@ public class NegociacaoDividaController extends BaseController {
 			
 			Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
 			
-			Double encargos = 0.0;
+			BigDecimal encargos = BigDecimal.ZERO;
 			
-			if( !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE) && (filtro.getIsentaEncargos()!= null && !filtro.getIsentaEncargos()) )
-				encargos = calcularEncargos(valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()),filtro.getNumeroCota(), banco);
-						
-			parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
+			if(!filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE) && 
+					(filtro.getIsentaEncargos()!= null && 
+					!filtro.getIsentaEncargos())){
+				
+				encargos = calcularEncargos(valorParcela, 
+						DateUtil.parseDataPTBR(parcela.getDataVencimento()),filtro.getNumeroCota(), banco);
+			}
 			
-			parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela + encargos));
+			parcela.setEncargos(
+					CurrencyUtil.formatarValor(encargos.setScale(2, RoundingMode.HALF_EVEN)));
+			
+			parcela.setParcTotal(
+					CurrencyUtil.formatarValor(valorParcela.add(encargos).setScale(2, RoundingMode.HALF_EVEN)));
 				
 			listParcelas.add(parcela);	
 		}
@@ -203,17 +211,18 @@ public class NegociacaoDividaController extends BaseController {
 		this.result.use(Results.json()).from(listParcelas, "result").recursive().serialize();
 	}
 	
-	private Double calcularEncargos(Double valorParcela, Date dataVencimento, Integer numeroCota, Banco banco) {
+	private BigDecimal calcularEncargos(BigDecimal valorParcela, Date dataVencimento, Integer numeroCota, Banco banco) {
 		
-		Double encargos = 0.0;
+		BigDecimal encargos = BigDecimal.ZERO;
 		
-		BigDecimal juros = cobrancaService.calcularJuros(banco, cotaService.obterPorNumeroDaCota(numeroCota), 
-				BigDecimal.valueOf(valorParcela), dataVencimento, new Date());
+		BigDecimal juros = 
+				cobrancaService.calcularJuros(banco, cotaService.obterPorNumeroDaCota(numeroCota), 
+				valorParcela, dataVencimento, new Date());
 		
-		BigDecimal multas = cobrancaService.calcularMulta(banco, cotaService.obterPorNumeroDaCota(numeroCota), 
-					distribuidorService.obter(), BigDecimal.valueOf(valorParcela));
+		BigDecimal multas = 
+				cobrancaService.calcularMulta(banco, cotaService.obterPorNumeroDaCota(numeroCota), valorParcela);
 		
-		encargos = juros.add(multas).doubleValue();
+		encargos = juros.add(multas);
 				
 		return encargos;
 	}

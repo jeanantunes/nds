@@ -115,10 +115,17 @@ public class RelatorioTiposProdutosController extends BaseController {
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(null);
 		filtro.getPaginacaoVO().setQtdResultadosTotal(null);
 		
+		if(filtro.getTipoProduto()!= null){
+
+			TipoProduto tipoProduto = tipoProdutoService.buscaPorId(filtro.getTipoProduto());
+			
+			filtro.setNomeTipoProduto(tipoProduto.getDescricao());
+		}
+		
 		List<RelatorioTiposProdutosVO> list = this.convertList(service.gerarRelatorio(filtro));
 		
 		FileExporter.to("relatorio-tipos-produtos", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null,
+				this.getNDSFileHeader(), filtro, null,
 				list, RelatorioTiposProdutosVO.class,
 				this.httpServletResponse);
 		

@@ -168,4 +168,32 @@ public class DistribuidorRepositoryImpl extends
 				this.getSession().createQuery(
 						"select descontoCotaNegociacao from Distribuidor").uniqueResult();
 	}
+	
+	@Override
+	public boolean utilizaGarantiaPdv(){
+		
+		return (boolean)
+				this.getSession().createQuery("select utilizaGarantiaPdv from Distribuidor").uniqueResult();
+	}
+	
+	@Override
+	public boolean aceitaJuramentado(){
+		
+		return (boolean)
+				this.getSession().createQuery("select aceitaJuramentado from Distribuidor").uniqueResult();
+	}
+	
+	@Override
+	public int qtdDiasEncalheAtrasadoAceitavel(){
+		
+		return (int)
+				this.getSession().createQuery("select qtdDiasEncalheAtrasadoAceitavel from Distribuidor").uniqueResult();
+	}
+
+	@Override
+	public Integer obterNumeroDiasNovaCobranca() {
+		
+		return (Integer)
+				this.getSession().createQuery("select numeroDiasNovaCobranca from Distribuidor").uniqueResult();
+	}
 }

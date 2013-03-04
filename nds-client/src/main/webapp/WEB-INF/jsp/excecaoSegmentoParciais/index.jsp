@@ -102,8 +102,8 @@ function filtroPorProduto(){
    	    
 	        <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
 	          <tr>
-	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento"/></td>
-	            <td width="188">Por Exceção Segmento Cota</td>
+	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" checked="checked" /></td>
+	            <td width="188">Por Exceção Segmento Cota</td> 
 	            <td width="20"><input type="radio" name="tipoExcecao" id="radio3" /></td>
 	            <td width="696">Por Exceção de Parciais</td>
 	          </tr>

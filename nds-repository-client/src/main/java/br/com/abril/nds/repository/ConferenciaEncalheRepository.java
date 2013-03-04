@@ -8,6 +8,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -16,24 +17,32 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 public interface ConferenciaEncalheRepository extends Repository<ConferenciaEncalhe, Long> { 
 	
 	/**
+	 * Obtem uma lista com numeroCota e razao social das cotas que
+	 * possuem conferencia de encalhe salvo mas não finalizado na 
+	 * data pesquisada.
+	 * 
+	 * @param dataOperacao
+	 * 
+	 * @return List - CotaDTO
+	 */
+	public List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
+	
+	/**
 	 * Obtém uma lista de conferenciaEncalheDTO específicos de uma cota
 	 * e relacionados a um registro de ControleConferenciaEncalheCota.
 	 * 
 	 * @param idControleConferenciaEncalheCota
-	 * @param idDistribuidor
 	 * 
 	 * @return List- ConferenciaEncalheDTO
 	 */
-	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Long idDistribuidor);
+	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota);
 
 	
 	/**
 	 * Obtém lista de conferenciaEncalhe em contingência.
 	 * 
-	 * @param idDistribuidor
 	 * @param numeroCota
-	 * @param dataInicial
-	 * @param dataFinal
+	 * @param dataRecolhimento
 	 * @param indFechado
 	 * @param indPostergado
 	 * @param listaIdProdutoEdicao
@@ -41,10 +50,8 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * @return List - ConferenciaEncalheDTO
 	 */
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
-			Long idDistribuidor,
 			Integer numeroCota,
-			Date dataInicial,
-			Date dataFinal,
+			Date dataRecolhimento,
 			boolean indFechado,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao);

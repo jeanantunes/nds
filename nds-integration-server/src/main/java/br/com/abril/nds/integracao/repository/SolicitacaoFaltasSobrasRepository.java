@@ -3,9 +3,9 @@ package br.com.abril.nds.integracao.repository;
 import java.util.Date;
 import java.util.Set;
 
-import br.com.abril.nds.integracao.icd.model.MotivoSituacaoFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.SolicitacaoFaltaSobra;
-import br.com.abril.nds.integracao.icd.model.pks.DfsPK;
+import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
+import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
+import br.com.abril.nds.model.integracao.icd.pks.DfsPK;
 
 public interface SolicitacaoFaltasSobrasRepository  extends Repository<SolicitacaoFaltaSobra, Long> {
 

@@ -28,13 +28,15 @@ import br.com.abril.nds.util.Intervalo;
 public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long> {
 	
 	/**
-	 * Obtém o codigoSM a partir do idProdutoEdicao
+	 * Obtém o codigoSM a partir do idProdutoEdicao e 
+	 * dataRecolhimento
 	 * 
-	 * @param sequenciaMatriz
+	 * @param idProdutoEdicao
+	 * @param dataRecolhimento
 	 * 
 	 * @return Integer
 	 */
-	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao);
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento);
 	
 	/**
 	 * Obtém o produtoEdicao através do código SM do mesmo produtoEdicao que esta amarrado a seu lancamento.
