@@ -364,7 +364,6 @@ function Cnpj(v){
 	return v;
 }
 
-
 /*Permite apenas número no campo input[type=text] 
  * Adicionar no onkeydown do input()
  * */
@@ -385,4 +384,3 @@ function onlyNumeric(event){
             }   
         }
 }
-
