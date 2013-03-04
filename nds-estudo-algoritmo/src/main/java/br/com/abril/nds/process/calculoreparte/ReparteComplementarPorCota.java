@@ -29,9 +29,10 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 //	Prioridade de recebimento de reparte:
 	
 	/*
-	 * A: As que n�o receberam as edi��es-base, por�m receberam a edi��o aberta, caso exista, 
-	 * da maior para menor no ranking de segmento da publica��o(cotas SH);
+	 * A: As que nao receberam as edicoes-base, porem receberam a edicao aberta, caso exista, 
+	 * da maior para menor no ranking de segmento da publicação(cotas SH);
 	 */
+	
 	ordenadorList.add(new Ordenador("A"){
 		@Override
 		boolean filtrar(Cota cota) {
@@ -148,6 +149,8 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     			c.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
     		}
     	}
+    	
+    	getEstudo().setCotas(cotaListOrdenada);
     	
     }
     
