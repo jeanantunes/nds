@@ -92,7 +92,7 @@ var cotaAusenteController = $.extend(true, {
 			dataType : 'json',
 			colModel : [{
 				display : 'Código',
-				name : 'codigoProdutoEdicao',
+				name : 'codigoProduto',
 				width : 100,
 				sortable : false,
 				align : 'left' 
