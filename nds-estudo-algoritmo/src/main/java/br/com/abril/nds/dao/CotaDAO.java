@@ -21,7 +21,6 @@ public class CotaDAO {
 	List<Cota> listEquivalente = new ArrayList<Cota>();
 
 	try {
-
 	    StringBuilder query = new StringBuilder(" SELECT CB.INDICE_AJUSTE, C.* FROM COTA_BASE_COTA CBC ");
 	    query.append(" INNER JOIN COTA_BASE CB ON (CB.ID = CBC.COTA_BASE_ID) ");
 	    query.append(" INNER JOIN COTA C ON (C.ID = CBC.COTA_ID) ");

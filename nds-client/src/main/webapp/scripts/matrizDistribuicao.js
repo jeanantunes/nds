@@ -790,7 +790,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.mostrarOpcoes = function() {
 		opcoesAberto = !opcoesAberto;
-		$( '.opcoesEstudos' ).toggle(opcoesAberto);
+		$('.opcoesEstudos').toggle(opcoesAberto);
 		$('.setaMuda').attr('src',(opcoesAberto)? contextPath + '/images/p7PM_dark_south_1.gif': contextPath + '/images/p7PM_dark_south.gif');
 	},
 	
@@ -798,6 +798,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		setTimeout( function(){
             $( '.opcoesEstudos' ).hide();
              }, 2000);
+	},
+	
+	this.gerarEstudoAutomatico = function() {
+		
 	};
 	
 }

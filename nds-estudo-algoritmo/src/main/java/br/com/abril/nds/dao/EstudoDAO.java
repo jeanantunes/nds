@@ -1,5 +1,6 @@
 package br.com.abril.nds.dao;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,4 +66,14 @@ public class EstudoDAO {
 		+ " VALUES (:idEstudo, :id, :numero_edicao, :idProduto, :idLancamento, :colecao, :parcial, :edicaoAberta, :peso) ";
 	new NamedParameterJdbcTemplate(dataSource).batchUpdate(sql, batch);
     }
+    
+    public void carregarParametros(Estudo estudo) {
+//	PreparedStatement psmt = Conexao.getConexao().prepareStatement(SQL_CONSULTA_EDICOES_BASE);
+//	psmt.setBigDecimal(1, estudo.getId());
+    }
+    
+    private final static String SQL_CONSULTA_EDICOES_BASE = ""
+	    + "select * "
+	    + "  from produto_edicao_base "
+	    + " where estudo = ? ";
 }
