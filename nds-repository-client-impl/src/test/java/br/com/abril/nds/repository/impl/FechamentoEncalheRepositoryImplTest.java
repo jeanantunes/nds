@@ -100,36 +100,46 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 	}
 	
 	@Test
-	public void testarBuscarCotasAusentesSucesso() {
-		
+	public void testObterCotasAusentes() {
+
 		Calendar dataEncalhe = Calendar.getInstance();
 		
 		dataEncalhe.set(2012, 5, 20);
 		
 		List<CotaAusenteEncalheDTO> listaCotasAusentes = 
-			this.fechamentoEncalheRepository.buscarCotasAusentes(
+			this.fechamentoEncalheRepository.obterCotasAusentes(
 				dataEncalhe.getTime(), false, "asc", "numeroCota", 0, 20);
 		
 		Assert.assertNotNull(listaCotasAusentes);
 		
 		listaCotasAusentes = 
-			this.fechamentoEncalheRepository.buscarCotasAusentes(
+			this.fechamentoEncalheRepository.obterCotasAusentes(
 				dataEncalhe.getTime(), false, "desc", "numeroCota", 20, 20);
 
 		Assert.assertNotNull(listaCotasAusentes);
-	}
 
-	@Test
-	public void testarBuscarTotalCotasAusentes() {
 		
+	}
+	
+	@Test
+	public void testObterTotalCotasAusentes() {
+
 		Calendar dataEncalhe = Calendar.getInstance();
 		
 		dataEncalhe.set(2012, 5, 20);
 		
-		int total = 
-			this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe.getTime(), false);
+		Integer totalCotasAusentes =  
+			this.fechamentoEncalheRepository.obterTotalCotasAusentes(
+				dataEncalhe.getTime(), false, "asc", "numeroCota", 0, 20);
 		
-		Assert.assertNotNull(total);
+		Assert.assertNotNull(totalCotasAusentes);
+		
+		totalCotasAusentes = 
+			this.fechamentoEncalheRepository.obterTotalCotasAusentes(
+				dataEncalhe.getTime(), false, "desc", "numeroCota", 20, 20);
+
+		Assert.assertNotNull(totalCotasAusentes);
+
 		
 	}
 	

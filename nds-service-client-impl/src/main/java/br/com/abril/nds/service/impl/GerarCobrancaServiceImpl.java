@@ -165,6 +165,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		return this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(idsCota) > 0;
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean verificarCobrancasGeradasNaDataVencimentoDebito(Date dataVencimentoDebito,Long... idsCota ){
+		
+		return this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(dataVencimentoDebito,idsCota) > 0;
+	}
 
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
@@ -178,9 +185,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	private void gerarCobrancaCota(Long idCota, Long idUsuario, Set<String> setNossoNumero) throws GerarCobrancaValidacaoException {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
 		
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
 		this.cancelarDividaCobranca(null, idCota);
@@ -294,7 +301,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos,
 							politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(), politicaPrincipal.isAcumulaDivida(), idUsuario, 
 							tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-							distribuidor.getNumeroDiasNovaCobranca(),
+							numeroDiasNovaCobranca,
 							dataOperacao, msgs, ultimoFornecedor);
 					
 					if (nossoNumero != null){
@@ -326,7 +333,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, movimentos, politicaPrincipal.getFormaCobranca().getValorMinimoEmissao(),
 					politicaPrincipal.isAcumulaDivida(), idUsuario, 
 					tipoCobranca != null ? tipoCobranca : politicaPrincipal.getFormaCobranca().getTipoCobranca(),
-						distribuidor.getNumeroDiasNovaCobranca(), dataOperacao, msgs, ultimoFornecedor);
+							numeroDiasNovaCobranca, dataOperacao, msgs, ultimoFornecedor);
 			
 			if (nossoNumero != null){
 				

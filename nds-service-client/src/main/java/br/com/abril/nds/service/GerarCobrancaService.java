@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -24,5 +25,7 @@ public interface GerarCobrancaService {
 	List<BoletoDistribuidor> gerarCobrancaBoletoDistribuidor(
 			List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor, 
 			TipoCobranca tipoCobranca, int semana);
+	
+	boolean verificarCobrancasGeradasNaDataVencimentoDebito(Date dataVencimentoDebito,Long... idsCota );
 	
 }

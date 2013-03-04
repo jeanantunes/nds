@@ -417,8 +417,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 				.getId();
 
 		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = conferenciaEncalheRepository
-				.obterListaConferenciaEncalheDTO(
-						idControleConferenciaEncalheCota, distribuidor.getId());
+				.obterListaConferenciaEncalheDTO(idControleConferenciaEncalheCota);
 
 		Assert.assertEquals(3, listaConferenciaEncalhe.size());
 
@@ -439,7 +438,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 
 		@SuppressWarnings("unused")
 		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = conferenciaEncalheRepository
-				.obterListaConferenciaEncalheDTOContingencia(idDistribuidor,
+				.obterListaConferenciaEncalheDTOContingencia(
 						numeroCota, dataRecolhimento, indFechado,
 						indPostergado, listaIdProdutoEdicao);
 
@@ -544,7 +543,6 @@ public class ConferenciaEncalheRepositoryImplTest extends
 
 		listaConferencia = conferenciaEncalheRepository
 				.obterListaConferenciaEncalheDTOContingencia(
-						idDistribuidor,
 						numeroCota, 
 						dataRecolhimento,
 						indFechado,
@@ -580,7 +578,6 @@ public class ConferenciaEncalheRepositoryImplTest extends
 
 		listaConferencia = conferenciaEncalheRepository
 				.obterListaConferenciaEncalheDTOContingencia(
-						idDistribuidor,
 						numeroCota, 
 						dataRecolhimento, 
 						indFechado,
@@ -598,9 +595,8 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		List<ConferenciaEncalheDTO> listaConferencia;
 		
 		Long idControleConferenciaEncalheCota = 1L;
-		Long idDistribuidor = 2L;
 		
-		listaConferencia = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConferenciaEncalheCota, idDistribuidor);
+		listaConferencia = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConferenciaEncalheCota);
 		
 		Assert.assertNotNull(listaConferencia);		
 		

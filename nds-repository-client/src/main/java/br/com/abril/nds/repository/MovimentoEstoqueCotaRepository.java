@@ -385,9 +385,10 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * Obtém o Valor Total dos movimentos de estoque da cota que ainda não geraram movimento financeiro
 	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
 	 * @param idCota
-	 * @return List<MovimentoEstoqueCota>
+	 * @param dataControleConferencia
+	 * @return BigDecimal
 	 */
-	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota);
+	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia);
 	
 	/**
 	 * Obtém o Valor Total dos movimentos de estoque da cota que forão estornados
