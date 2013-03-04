@@ -529,8 +529,7 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 		
 		BigDecimal valorMultaCalculado = 
-				cobrancaService.calcularMulta(null, boleto.getCota(), distribuidor,
-											  boleto.getValor());
+				cobrancaService.calcularMulta(null, boleto.getCota(), boleto.getValor());
 		
 		if (valorMultaCalculado.compareTo(BigDecimal.ZERO) == 1) {
 			

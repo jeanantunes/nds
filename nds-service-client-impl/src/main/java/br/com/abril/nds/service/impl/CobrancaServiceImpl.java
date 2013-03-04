@@ -85,16 +85,28 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 
 
+	/**
+	 * @deprecated Use {@link #calcularJuros(Banco,Long,BigDecimal,Date,Date)} instead
+	 */
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularJuros(Banco banco, Cota cota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
+										return calcularJuros(banco, cota.getId(),
+												valor, dataVencimento,
+												dataCalculoJuros);
+									}
+
+	@Override
+	@Transactional(propagation=Propagation.SUPPORTS)
+	public BigDecimal calcularJuros(Banco banco, Long idCota,
+									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
 
 		
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
-		FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
+		FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(idCota);
 		
-		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();		
 		
 		PoliticaCobranca politicaPrincipal = formaCobrancaPrincipal.getPoliticaCobranca();
 		
@@ -131,7 +143,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularMulta(Banco banco, Cota cota,
-									Distribuidor distribuidor, BigDecimal valor) {
+									BigDecimal valor) {
 		
 
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
@@ -311,8 +323,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 									   dataOperacao);
 				//CALCULA MULTA
 				valorMultaCalculado =
-					this.calcularMulta(cob.getBanco(), cob.getCota(), distribuidor,
-							           cob.getValor().subtract(saldoDivida));
+					this.calcularMulta(cob.getBanco(), cob.getCota(), cob.getValor().subtract(saldoDivida));
 			}
 			
 			cobranca.setDataPagamento( DateUtil.formatarDataPTBR(dataOperacao) );

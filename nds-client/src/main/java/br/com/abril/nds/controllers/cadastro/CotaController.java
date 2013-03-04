@@ -333,6 +333,7 @@ public class CotaController extends BaseController {
 				cotaVO.setCodigoBox(cota.getBox().getCodigo() + " - "+cota.getBox().getNome());
 			}
 			
+			cotaVO.setSituacaoCadastro(cota.getSituacaoCadastro());
 			if (cota.getSituacaoCadastro() != null) {
 
 				cotaVO.setStatus(cota.getSituacaoCadastro().toString());

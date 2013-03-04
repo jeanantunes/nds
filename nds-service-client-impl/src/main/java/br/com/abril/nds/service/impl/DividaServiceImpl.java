@@ -225,8 +225,7 @@ public class DividaServiceImpl implements DividaService {
 					this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 					
 					BigDecimal multa = this.cobrancaService.calcularMulta(
-						cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(), distribuidor, 
-						cobrancaAtualizada.getValor());
+						cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(), cobrancaAtualizada.getValor());
 					
 					movimentoFinanceiro =
 						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
@@ -267,7 +266,7 @@ public class DividaServiceImpl implements DividaService {
 			BigDecimal multa = 
 				this.cobrancaService.calcularMulta(
 					cobranca.getBanco(), cobranca.getCota(), 
-					distribuidor, cobranca.getValor());
+					cobranca.getValor());
 			
 			encargos = encargos.add(juros).add(multa);
 		}
