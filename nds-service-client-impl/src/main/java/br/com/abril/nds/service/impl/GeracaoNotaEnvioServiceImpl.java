@@ -87,8 +87,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
 
-		return cotaRepository
-				.obterDadosCotasComNotaEnvio(filtro);
+		return cotaRepository.obterDadosCotasComNotaEnvio(filtro);
 
 	}
 

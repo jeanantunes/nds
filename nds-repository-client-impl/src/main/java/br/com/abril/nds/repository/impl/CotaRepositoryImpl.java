@@ -1528,11 +1528,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		+ "	    inner join "
 		+ "	        PESSOA pessoa_cota_  "
 		+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  "
-		+ "		left outer join NOTA_ENVIO_ITEM nei " 
+		+ "		inner join NOTA_ENVIO_ITEM nei " 
         + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
 		+ "	   where "
-		+ "	        lancamento_.STATUS in (:status)  "
-		+ "			and coalesce(nei.reparte, 0) > 0 ");
+		+ "	        lancamento_.STATUS in (:status) ");
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			sql.append(
@@ -1629,7 +1628,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			query.setParameter("dataAte",filtro.getIntervaloMovimento().getAte());
 		}
 		
-		return 	query;
+		return query;
 	}
 		
 	private void montarQueryNotasEnvioNaoEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
