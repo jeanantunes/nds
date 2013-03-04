@@ -1,6 +1,13 @@
 package br.com.abril.nds.process.ajustecota;
 
-import br.com.abril.nds.model.Estudo;
+import java.math.BigDecimal;
+import java.util.List;
+
+import br.com.abril.nds.dao.CotaDAO;
+import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.Segmento;
+import br.com.abril.nds.model.TipoSegmentoProduto;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
@@ -12,18 +19,47 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
  * <p style="white-space: pre-wrap;">
  * SubProcessos: - N/A Processo Pai: - N/A
  * 
- * Processo Anterior: {@link Bonificacoes} Próximo Processo:
- * {@link JornaleirosNovos}
- * </p>
+ * Processo Anterior: {@link Bonificacoes} Próximo Processo: {@link JornaleirosNovos} </p>
  */
 public class AjusteCota extends ProcessoAbstrato {
 
-    public AjusteCota(Estudo estudo) {
-	super(estudo);
+    public AjusteCota(Cota cota) {
+	super(cota);
     }
 
     @Override
     protected void executarProcesso() {
+
+	BigDecimal indiceAjusteCota = BigDecimal.ONE;
+
+	Cota cota = (Cota) super.genericDTO;
+
+	BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCota(cota);
+
+	if (ajusteAplicado != null && ajusteAplicado.compareTo(indiceAjusteCota) == 1)
+	    indiceAjusteCota = ajusteAplicado;
+
+	List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
+
+	if (listProdutoEdicao != null && !listProdutoEdicao.isEmpty()) {
+
+	    // O Tipo de Segmento é por produto(publicação) e o produto tem várias edições.
+	    // Assim, a lista de edição do produto deve vir com o mesmo tipo de segmento e o mesmo produto!
+	    TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
+
+	    Segmento segmento = new CotaDAO().getSegmentoByCotaAndTipoSegmentoProduto(cota, tipoSegmentoProduto);
+
+	    if (segmento != null) {
+
+		BigDecimal ajusteSegmento = segmento.getAjuste();
+
+		if (ajusteSegmento != null && ajusteSegmento.compareTo(indiceAjusteCota) == 1)
+		    indiceAjusteCota = ajusteSegmento;
+	    }
+	}
+
+	cota.setIndiceAjusteCota(indiceAjusteCota);
+
     }
-   
+
 }
