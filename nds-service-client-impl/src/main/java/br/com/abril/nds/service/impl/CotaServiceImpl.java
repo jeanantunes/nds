@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
+import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -34,6 +35,7 @@ import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -106,6 +108,7 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
@@ -123,6 +126,7 @@ import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -236,6 +240,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private PessoaService pessoaService;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -2375,5 +2382,116 @@ public class CotaServiceImpl implements CotaService {
 		return cotaRepository.buscarCotasQuePossuemRangeReparte(qtdReparteInicial, qtdReparteFinal, listProdutoEdicaoDto, cotasAtivas);
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasQueInquadramNoRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		return cotaRepository.buscarCotasQuePossuemRangeVenda(qtdVendaInicial, qtdVendaFinal, listProdutoEdicaoDto, cotasAtivas);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasQuePossuemPercentualVendaSuperior(BigDecimal percentVenda, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		return cotaRepository.buscarCotasQuePossuemPercentualVendaSuperior(percentVenda, listProdutoEdicaoDto, cotasAtivas);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasPorNomeOuNumero(CotaDTO cotaDto, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		 return cotaRepository.buscarCotasPorNomeOuNumero(cotaDto, listProdutoEdicaoDto, cotasAtivas);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		return cotaRepository.buscarCotasPorComponentes(componente, elemento, listProdutoEdicaoDto, cotasAtivas);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
+		Collections.sort(listProdutoEdicaoDto);
+		
+		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);  
+		
+		for (AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
+			
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				ProdutoEdicaoDTO produtoEdicaoDTO = listProdutoEdicaoDto.get(i);
+				
+				ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
+				
+				if (dto != null) {
+					if (i == 0) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd1Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd1Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 1) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd2Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd2Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 2) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd3Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd3Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 3) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd4Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd4Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 4) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd5Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd5Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 5) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd6Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd6Venda(dto.getQtdeVendas().toString());
+						}
+					}
+				}
+			}
+		}
+		
+		return listAnaliseHistoricoDTO;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public HistoricoVendaPopUpCotaDto buscarCota(Integer numero) {
+		return cotaRepository.buscarCota(numero);
+	}
+	
 }
 

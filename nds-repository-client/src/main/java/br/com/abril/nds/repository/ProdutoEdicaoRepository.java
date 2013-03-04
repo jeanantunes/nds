@@ -286,6 +286,8 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	public Set<ProdutoEdicao> filtrarDescontoProdutoEdicaoPorCota(Cota cota, Set<Fornecedor> fornecedores);
 
 	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro);
+	
+	public ProdutoEdicaoDTO obterHistoricoProdutoEdicao(String codigoProduto, Long numeroEdicao, Integer numeroCota);
 
 	/**
 	 * Retorna os produtoEdicao de produtos que não estão sendo utilizados no sistema (e consequentemente podem ser alterados)
