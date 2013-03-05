@@ -1,18 +1,18 @@
 package br.com.abril.nds.model.cadastro;
 
-public enum TipoCota {
+public enum TipoDistribuicaoCota {
 	
-	CONSIGNADO("Consignado"),
-	A_VISTA("À vista");
+	CONVENCIONAL("Convencional"),
+	ALTERNATIVO("Alternativo");
 	
 	
 	private String descricao;
 	
-	private TipoCota(String descricao) {
+	private TipoDistribuicaoCota(String descricao) {
 		this.descricao = descricao;
 	}
 	
-	public String getDescTipoCota(){
+	public String getDescTipoDistribuicaoCota(){
 		return this.descricao;
 	}
 	
