@@ -247,8 +247,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				// Cobrança original deve ter seu status modificado para pago
 				// e sua divida deve ter seus status modificado para negociada
 				cobrancaOriginaria.setStatusCobranca(StatusCobranca.PAGO);
-				cobrancaOriginaria.getDivida()
-						.setStatus(StatusDivida.NEGOCIADA);
+				
+				cobrancaOriginaria.setDataPagamento(dataAtual);
+				
+				cobrancaOriginaria.getDivida().setStatus(StatusDivida.NEGOCIADA);
+				
 				this.dividaRepository.merge(cobrancaOriginaria.getDivida());
 				this.cobrancaRepository.merge(cobrancaOriginaria);
 
