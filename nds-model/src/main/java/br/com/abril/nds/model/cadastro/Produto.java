@@ -603,11 +603,6 @@ public class Produto implements Serializable {
 	}
 
 	/**
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	 * @return the descricaoDesconto
 	 */
 	public String getDescricaoDesconto() {
@@ -622,10 +617,6 @@ public class Produto implements Serializable {
 	}
 
 	/**
-<<<<<<< HEAD
->>>>>>> DGBti/master
-=======
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
      * Verifica se o produto é um publicação
      * 
      * @return true se o produto é uma publicação, false caso contrário

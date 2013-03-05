@@ -21,9 +21,9 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.util.SqlScriptRunner;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
@@ -34,7 +34,7 @@ public class EMS0185MessageProcessor extends AbstractRepository implements Messa
 	private CouchDbProperties couchDbProperties;
 
 	@Autowired
-	private DataSource dataSource;
+	private DataSource dataSourceIcd;
 
 	
 	@Override
@@ -51,7 +51,7 @@ public class EMS0185MessageProcessor extends AbstractRepository implements Messa
 		try {			
 			dbClient = getCouchDBClient();
 			
-			connection = dataSource.getConnection();
+			connection = dataSourceIcd.getConnection();
 			
 			// VERIFICA SE EXISTE ATUALIZACAO DE CEP NO COUCHDB
 			if (dbClient.contains("AtualizacaoCep")) {

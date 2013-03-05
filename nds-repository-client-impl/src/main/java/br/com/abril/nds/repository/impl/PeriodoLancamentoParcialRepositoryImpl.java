@@ -42,14 +42,15 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		hql.append("		sum(lancamento.reparte) as reparte,  ");
 		
-		hql.append(" 		(select coalesce(sum(lancamentoSupl.reparte),0) " );
+		//TODO Cesar está definindo regra para obter Suplementação dos Periodos, foi solicitado que retoene Zero até a definição dessa regra
+		/*hql.append(" 		(select coalesce(sum(lancamentoSupl.reparte),0) " );
 		hql.append("           from Lancamento lancamentoSupl ");
 		hql.append("		   join lancamentoSupl.produtoEdicao pe ");
 		hql.append("		  where pe.id = produtoEdicao.id ");
 		hql.append("		    and lancamentoSupl.tipoLancamento = 'PARCIAL' ");
 		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor >= lancamento.dataLancamentoDistribuidor ");
-		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		
-		hql.append(" 		as suplementacao, ");
+		hql.append("			and lancamentoSupl.dataLancamentoDistribuidor <= lancamento.dataRecolhimentoDistribuidor) ");		*/
+		hql.append(" 	0	as suplementacao, ");
 		
 		hql.append("		(select CASE ");
 		hql.append("		        WHEN (count(eProduto) > 0) ");
@@ -450,4 +451,62 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		return (Lancamento) criteria.uniqueResult();
 	
 	}
+	
+	public PeriodoLancamentoParcial obterPrimeiroLancamentoParcial(Long idProdutoEdicao){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
+			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
+			.append(" where lancamento.dataLancamentoDistribuidor = ")
+			.append(" ( select max(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
+			.append(" and produtoEdicao.id =:idProdutoEdicao ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (PeriodoLancamentoParcial) query.uniqueResult();
+	}
+	
+	public PeriodoLancamentoParcial obterUltimoLancamentoParcial(Long idProdutoEdicao){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
+			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
+			.append(" where lancamento.dataLancamentoDistribuidor = ")
+			.append(" ( select min(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
+			.append(" and produtoEdicao.id =:idProdutoEdicao ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (PeriodoLancamentoParcial) query.uniqueResult();
+	
+	}
+	
+	public List<PeriodoLancamentoParcial> obterPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial){
+		   
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
+
+		.append(" join periodo.lancamento lancamento ")
+
+		.append(" join periodo.lancamentoParcial lancamentoParcial ")
+
+		.append(" where lancamento.status not in (:satatusLancamento) ")
+
+		.append(" and lancamentoParcial.id =:idLancamentoParcial ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idLancamentoParcial", idLancamentoParcial);
+
+		query.setParameterList("satatusLancamento", new StatusLancamento[] {
+				StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO });
+
+		return query.list();
+	}
+
 }

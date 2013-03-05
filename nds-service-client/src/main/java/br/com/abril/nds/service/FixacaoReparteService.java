@@ -37,8 +37,6 @@ public interface FixacaoReparteService {
 	
 	public List<PdvDTO> obterListaPdvPorFixacao(Long id);
 	
-//	public void salvarGridPdvReparte(String[] repartes,String[] codigos ,Long idCota);
-	
 	public FixacaoReparte buscarFixacaoCadastrada(FixacaoReparte fixacaoReparte);
 	
 	public boolean isCotaPossuiVariosPdvs(Long idCota);

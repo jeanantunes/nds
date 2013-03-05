@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.GrupoCota;
@@ -23,6 +24,14 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 		Criteria criteria = super.getSession().createCriteria(GrupoCota.class);
 
 		return criteria.list();
+	}
+	
+	@Override
+	public Integer countTodosGrupos() {
+
+		Criteria criteria = super.getSession().createCriteria(GrupoCota.class); 
+		criteria.setProjection(Projections.rowCount());
+		return ((Long)criteria.list().get(0)).intValue();
 	}
 	
 }

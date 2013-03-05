@@ -75,7 +75,22 @@ public class HistoricoDescontoFornecedorRepositoryImpl extends AbstractRepositor
 	@Override
 	public HistoricoDescontoFornecedor buscarUltimoDescontoValido(Fornecedor fornecedor) {
 
-		return this.obterUltimoDescontoValido(fornecedor);
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select hdf ")
+			.append("from HistoricoDescontoFornecedor hdf ")
+			.append("where hdf.dataAlteracao=(select max(hdfSub.dataAlteracao) from HistoricoDescontoFornecedor hdfSub where  hdfSub.fornecedor.id = :fornecedorId) ")
+			.append("and hdf.fornecedor.id = :fornecedorId ");
+		
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		query.setParameter("fornecedorId", fornecedor.getId());
+		
+		Object resultado = query.uniqueResult();
+		
+		return resultado==null? null : (HistoricoDescontoFornecedor) query.uniqueResult();
+		
 	}
 	
 	private String getOrdenacao(FiltroTipoDescontoDTO filtro){
@@ -122,12 +137,7 @@ public class HistoricoDescontoFornecedorRepositoryImpl extends AbstractRepositor
 
 		return hql.toString();
 	}
-	
-	private HistoricoDescontoFornecedor obterUltimoDescontoValido(Fornecedor fornecedor){
-			
-		return null;
-	}
-
+		
 	@Override
 	public HistoricoDescontoFornecedor buscarHistoricoDescontoFornecedorPor(Desconto desconto, Fornecedor fornecedor) {
 		

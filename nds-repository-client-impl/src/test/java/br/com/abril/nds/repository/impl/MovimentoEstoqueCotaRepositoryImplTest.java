@@ -21,6 +21,7 @@ import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO.OrdenacaoColunaDetalhe;
@@ -923,9 +924,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
-		Assert.assertEquals(3, qtde.intValue());
+		Assert.assertEquals(3, totalizador.getQtdConsultaEncalhe().intValue());
 	}
 	
 	@Test
@@ -937,9 +938,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
-		Assert.assertEquals(3, qtde.intValue());
+		Assert.assertEquals(3, totalizador.getQtdConsultaEncalhe().intValue());
 	}
 	
 	@Test
@@ -953,7 +954,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdCota(1L);
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
 	}
 	
@@ -968,7 +969,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdFornecedor(1L);
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 		
 	}
 
@@ -1241,7 +1242,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Date dataFinal = Fixture.criarData(31, Calendar.NOVEMBER, 2012);
 		OperacaoEstoque operacaoEstoque = OperacaoEstoque.SAIDA;
 		
-		BigDecimal QtdeMovimentoEstoqueCota = movimentoEstoqueCotaRepository.obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(idCota, idProdutoEdicao, dataInicial, dataFinal, operacaoEstoque);		
+		BigDecimal QtdeMovimentoEstoqueCota = movimentoEstoqueCotaRepository.obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(idCota, this.fornecedorDinap.getId(), idProdutoEdicao, dataInicial, dataFinal, operacaoEstoque);		
 		
 	}
 
@@ -3315,32 +3316,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
         Assert.assertEquals(2, movimentos.size());
 	}
-	
-	@Test
-	public void obterValorTotalMovimentosPendentesGerarFinanceiro(){
 		
-		this.setupFinanceiroReparteEncalhe();
-
-		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId());
-		
-		Assert.assertNotNull(total);
-		
-		Assert.assertEquals(0,total.compareTo(new BigDecimal(600)));
-	}
-	
-	@Test
-	public void obterValorTotalMovimentosEstornados(){
-		
-		this.setupFinanceiroReparteEncalhe();
-		
-		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosEstornados(cotaValdomiro.getId());
-				
-        Assert.assertNotNull(total);
-		
-        Assert.assertEquals(0,total.compareTo(new BigDecimal(300)));
-	}
-	
-	
 	@Test
 	public void testObterListaMovimentoEstoqueCotaDevolucaoJuramentada() {
 		

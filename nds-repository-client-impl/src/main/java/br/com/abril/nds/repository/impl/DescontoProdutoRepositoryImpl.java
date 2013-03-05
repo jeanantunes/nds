@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroTipoDescontoProdutoDTO.OrdenacaoColunaConsulta;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProduto;
@@ -44,40 +45,23 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	public List<TipoDescontoProdutoDTO> buscarTipoDescontoProduto(FiltroTipoDescontoProdutoDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
+				
+		hql.append(" SELECT dados.DESCONTO_ID as idTipoDesconto,p.CODIGO as codigoProduto, p.NOME as nomeProduto, "
+				+"	 	pe.NUMERO_EDICAO as numeroEdicao, d.VALOR as desconto, u.NOME as nomeUsuario, "
+				+"	 	d.DATA_ALTERACAO as dataAlteracao, dados.QTDE_PROX_LANCAMENTOS as qtdeProxLcmt, dados.QTDE_COTAS as qtdeCotas");
 		
-		hql.append("SELECT ")
-		.append("	coalesce(d.id, vdpe.desconto_id, 0) as idTipoDesconto ")
-		.append("	, vdpe.codigo_produto as codigoProduto ")
-		.append("	, vdpe.nome_produto as nomeProduto ")
-		.append("	, vdpe.numero_edicao as numeroEdicao ")
-		.append("	, coalesce(d.valor, vdpe.valor, 0) as desconto ")
-		.append("	, coalesce(d.data_alteracao, vdpe.data_alteracao, null) as dataAlteracao ")
-		.append("	, vdpe.nome_usuario as nomeUsuario ")
-		.append("FROM VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
-		.append("LEFT OUTER JOIN HISTORICO_DESCONTO_PRODUTO_EDICOES hdpe ON vdpe.produto_edicao_id = hdpe.produto_edicao_id ") 
-		.append("LEFT OUTER JOIN DESCONTO d ON hdpe.desconto_id = d.id ")
-		.append("WHERE vdpe.codigo_produto = :codigoProduto ")
-		.append("UNION ")
-		.append("SELECT ")
-		.append("    coalesce(d.id, vdpe.desconto_id, 0) as idTipoDesconto, ")
-		.append("    vdpe.codigo_produto as codigoProduto, ")
-		.append("    vdpe.nome_produto as nomeProduto, ")
-		.append("    null as numeroEdicao, ")
-		.append("    coalesce(d.valor, vdpe.valor, 0) as desconto, ")
-		.append("    coalesce(d.data_alteracao, ")
-		.append("            vdpe.data_alteracao, ")
-		.append("            null) as dataAlteracao, ")
-		.append("    vdpe.nome_usuario as nomeUsuario ")
-		.append("FROM VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
-		.append("INNER JOIN HISTORICO_DESCONTO_PRODUTOS hdp ON vdpe.produto_id = hdp.produto_id AND vdpe.PRODUTO_EDICAO_ID is null ")
-		.append("INNER JOIN DESCONTO d ON hdp.desconto_id = d.id ")
-		.append("WHERE vdpe.codigo_produto = :codigoProduto ");
+		addQueryTipoDescontoProduto(hql);
 		
-		hql.append("order by numeroEdicao, dataAlteracao desc");
+		if(filtro.getCodigoProduto()!=null)
+			hql.append("WHERE p.CODIGO = :codigoProduto ");
+		
+		addOrderByrTipoDescontoProduto(hql, filtro);
+		
 		
 		Query q = getSession().createSQLQuery(hql.toString());
 
-		q.setParameter("codigoProduto", filtro.getCodigoProduto());
+		if(filtro.getCodigoProduto()!=null)
+			q.setParameter("codigoProduto", filtro.getCodigoProduto());
 
 		if (filtro.getPaginacao() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 			q.setFirstResult( filtro.getPaginacao().getQtdResultadosPorPagina() * ( (filtro.getPaginacao().getPaginaAtual() - 1 )))
@@ -89,6 +73,51 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		return (List<TipoDescontoProdutoDTO>) q.list();
 		
 	}
+	
+	private StringBuilder addQueryTipoDescontoProduto(StringBuilder sql) {
+			
+		sql.append(" FROM (SELECT DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_COTAS "  
+					+"	 FROM HISTORICO_DESCONTO_PRODUTOS hdp "	
+					+"	 UNION "	
+					
+					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, count(COTA_ID) as QTDE_COTAS "
+					+"	 FROM HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe " 
+					+"	 where produto_id is not null " 
+					+"	 group by DESCONTO_ID "	
+					+"	 UNION "	
+					
+					+"	 SELECT DESCONTO_ID, PRODUTO_ID, PRODUTO_EDICAO_ID as EDICAO_ID, USUARIO_ID, null as QTDE_PROX_LANCAMENTOS, null as QTDE_COTAS "
+					+"	 FROM HISTORICO_DESCONTO_PRODUTO_EDICOES hdpe "	
+					+"	 UNION "	
+					
+					+"	 SELECT dpl.DESCONTO_ID, PRODUTO_ID, null as EDICAO_ID, USUARIO_ID, QUANTIDADE_PROXIMOS_LANCAMENTOS as QTDE_PROX_LANCAMENTOS, " 
+					+"	 CASE WHEN dpl.APLICADO_A_TODAS_AS_COTAS=1 THEN null ELSE count(dlc.DESCONTO_LANCAMENTO_ID) END as QTDE_COTAS " 
+					+"	 FROM DESCONTO_PROXIMOS_LANCAMENTOS dpl "
+					+"	 LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc on (dlc.DESCONTO_LANCAMENTO_ID=dpl.ID) "
+					+"	 group by dpl.ID "
+					+"	 ) as dados "
+					
+					+" JOIN DESCONTO d on (dados.DESCONTO_ID=d.ID) "
+					+" JOIN USUARIO u on (dados.USUARIO_ID=u.ID) "
+					+" LEFT OUTER JOIN PRODUTO p on (dados.PRODUTO_ID=p.ID) "
+					+" LEFT OUTER JOIN PRODUTO_EDICAO pe on (dados.EDICAO_ID=pe.ID) ");
+			
+		return sql;
+	}
+
+	private void addOrderByrTipoDescontoProduto(StringBuilder hql,
+			FiltroTipoDescontoProdutoDTO filtro) {
+		
+		OrdenacaoColunaConsulta sortColum = filtro.getOrdenacaoColuna();
+		
+		String sortOrder = filtro.getPaginacao().getOrdenacao().name();
+		
+		if(sortColum != null && sortOrder != null)
+			hql.append(" order by " + sortColum + " " + sortOrder);
+		else
+			hql.append(" order by nomeProduto, dataAlteracao desc ");
+		
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -98,20 +127,17 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select ")
-		.append("count(*) ")
-		.append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
-		.append("where vdpe.codigo_produto = :codigoProduto ");
+		hql.append(" SELECT count(dados.DESCONTO_ID) ");
 		
+		addQueryTipoDescontoProduto(hql);
+		
+		if(filtro.getCodigoProduto()!=null)
+			hql.append("WHERE p.CODIGO = :codigoProduto ");
+				
 		Query q = getSession().createSQLQuery(hql.toString());
 
-		q.setParameter("codigoProduto", filtro.getCodigoProduto());
-
-		if (filtro.getPaginacao() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
-			q.setFirstResult( filtro.getPaginacao().getQtdResultadosPorPagina() * ( (filtro.getPaginacao().getPaginaAtual() - 1 )))
-			.setMaxResults( filtro.getPaginacao().getQtdResultadosPorPagina() );
-		}
-
+		if(filtro.getCodigoProduto()!=null)
+			q.setParameter("codigoProduto", filtro.getCodigoProduto());
 		
 		return ((BigInteger) q.uniqueResult()).intValue();
 
@@ -123,37 +149,22 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<CotaDescontoProdutoDTO> obterCotasDoTipoDescontoProduto(Long idDescontoProduto, Ordenacao ordenacao) {
+		
+		StringBuilder sql = new StringBuilder();
+			
+		sql = new StringBuilder();
+		sql.append(" SELECT c.NUMERO_COTA as numeroCota, coalesce(p.NOME, p.RAZAO_SOCIAL) as nome FROM COTA c "
+					+ " JOIN PESSOA p on (c.PESSOA_ID=p.ID) "
+					+ " LEFT OUTER JOIN HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe on (hdcpe.COTA_ID=c.ID) "
+					+ " LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc on(dlc.COTA_ID=c.ID) "
+					+ " WHERE hdcpe.DESCONTO_ID=:descontoID or dlc.DESCONTO_LANCAMENTO_ID=:descontoID "
+					+ " group by c.NUMERO_COTA ");
 
-		StringBuilder hql = new StringBuilder();
+		sql.append(" order by c.NUMERO_COTA " + ordenacao.name() + " ");
 		
-		hql.append("SELECT PRODUTO_ID ")
-			.append("FROM VIEW_DESCONTO_PRODUTOS_EDICOES AS vdpe ")
-			.append("WHERE vdpe.DESCONTO_ID = :idDesconto");
-		
-		Query q1 = getSession().createSQLQuery(hql.toString());
-		
-		q1.setParameter("idDesconto", idDescontoProduto);
-		
-		Long produtoId = ((BigInteger) q1.uniqueResult()).longValue();
-		
-		hql = new StringBuilder();
-		hql.append(" select cota.numeroCota as numeroCota, ");
-		hql.append(" case when cota.pessoa.nome is not null then ");
-		hql.append(" cota.pessoa.nome ");
-		hql.append(" else ");
-		hql.append(" cota.pessoa.razaoSocial ");
-		hql.append(" end ");
-		hql.append(" as nome ");
-		hql.append(" from Produto as p ");
-		hql.append(" inner join p.fornecedores as f ");
-		hql.append(" inner join f.cotas as cota ");
-		hql.append(" where p.id = :idProduto ");
-		hql.append(" order by cota.numeroCota ");
-		hql.append(ordenacao.getOrdenacao() == null ? "" : ordenacao.getOrdenacao());
+		Query query = getSession().createSQLQuery(sql.toString());
 
-		Query query = getSession().createQuery(hql.toString());
-
-		query.setParameter("idProduto", produtoId);
+		query.setParameter("descontoID", idDescontoProduto);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDescontoProdutoDTO.class));
 
@@ -167,32 +178,88 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 	@SuppressWarnings("unchecked")
 	public List<TipoDescontoProdutoDTO> obterTiposDescontoProdutoPorCota(Long idCota, String sortorder, String sortname) {
 
-		StringBuilder hql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 
-		hql.append(" select produtoEdicao.produto.codigo as codigoProduto, ");
-		hql.append(" 	produtoEdicao.produto.nome as nomeProduto, ");
-		hql.append(" 	produtoEdicao.numeroEdicao as numeroEdicao, ");
-		hql.append(" 	descontoProduto.desconto as desconto, ");
-		hql.append(" 	descontoProduto.dataAlteracao as dataAlteracao, ");
-		hql.append(" 	usuario.nome as nomeUsuario ");
-		hql.append(" from DescontoProduto as descontoProduto ");
-		hql.append(" join descontoProduto.cotas as cota ");
-		hql.append(" join descontoProduto.usuario as usuario ");
-		hql.append(" join descontoProduto.produtoEdicao as produtoEdicao ");
+		sql.append(" SELECT dadosCompletos.* " +
+		" FROM " +
+		"  (SELECT dados.DESCONTO_ID AS idTipoDesconto, " +
+		"          p.CODIGO AS codigoProduto, " +
+		"          p.NOME AS nomeProduto, " +
+		"          pe.NUMERO_EDICAO AS numeroEdicao, " +
+		"          d.VALOR AS desconto, " +
+		"          u.NOME AS nomeUsuario, " +
+		"          d.DATA_ALTERACAO AS dataAlteracao, " +
+		"          dados.QTDE_PROX_LANCAMENTOS AS qtdeProxLcmt, " +
+		"          dados.QTDE_COTAS AS qtdeCotas " +
+		"   FROM " +
+		"     (" + getSubSelectDesconto(idCota) + ") AS dados " +
+		"   JOIN DESCONTO d ON (dados.DESCONTO_ID = d.ID) " +
+		"   JOIN USUARIO u ON (dados.USUARIO_ID = u.ID) " +
+		"   LEFT OUTER JOIN PRODUTO p ON (dados.PRODUTO_ID = p.ID) " +
+		"   LEFT OUTER JOIN PRODUTO_EDICAO pe ON (dados.EDICAO_ID = pe.ID) " +
+		"   ORDER BY codigoProduto DESC) AS dadosCompletos " +
 
-		if (idCota!=null){
-			hql.append(" where cota.id = :idCota ");
-		}
+		" JOIN " +
+		" (SELECT " +     
+		"          max(d.DATA_ALTERACAO) AS dataAlteracao " +
+		"   FROM " +
+		"     (" + getSubSelectDesconto(idCota) + ") AS dados " +
+		"   JOIN DESCONTO d ON (dados.DESCONTO_ID = d.ID) " +
+		   
+		"   GROUP BY dados.PRODUTO_ID, " +
+		"            dados.EDICAO_ID, " +
+		"            dados.QTDE_COTAS " +
+		"             ) AS maiorData ON (dadosCompletos.dataAlteracao = maiorData.dataAlteracao) " +
+		 
+		"  where dadosCompletos.qtdeCotas>0  " +
+		"  or CONCAT(coalesce(codigoProduto,''),'-', coalesce(numeroEdicao,'')) not in ( " +
+		  
+		"  SELECT CONCAT(coalesce(codigoProduto,''),'-', coalesce(numeroEdicao,'')) " +
+		" FROM " +
+		"  (SELECT dados.DESCONTO_ID AS idTipoDesconto, " +
+		"          p.NOME AS nomeProduto, " +
+		"          p.CODIGO AS codigoProduto, " +
+		"          pe.NUMERO_EDICAO AS numeroEdicao, " +
+		"          d.VALOR AS desconto, " +
+		"          u.NOME AS nomeUsuario, " +
+		"          d.DATA_ALTERACAO AS dataAlteracao, " +
+		"          dados.QTDE_PROX_LANCAMENTOS AS qtdeProxLcmt, " +
+		"          dados.QTDE_COTAS AS qtdeCotas " +
+		"  FROM " +
+		"     (" + getSubSelectDesconto(idCota) + ") AS dados " +
+		"   JOIN DESCONTO d ON (dados.DESCONTO_ID = d.ID) " +
+		"   JOIN USUARIO u ON (dados.USUARIO_ID = u.ID) " +
+		"  LEFT OUTER JOIN PRODUTO p ON (dados.PRODUTO_ID = p.ID) " +
+		"   LEFT OUTER JOIN PRODUTO_EDICAO pe ON (dados.EDICAO_ID = pe.ID) " +
+		"   ORDER BY codigoProduto DESC) AS dadosCompletos " +
+
+		" JOIN " +
+		"(SELECT " +     
+		"          max(d.DATA_ALTERACAO) AS dataAlteracao " +
+		"   FROM " +
+		"     (" + getSubSelectDesconto(idCota) + ") AS dados " +
+		"   JOIN DESCONTO d ON (dados.DESCONTO_ID = d.ID) " +
+		  
+		"   GROUP BY dados.PRODUTO_ID, " +
+		"            dados.EDICAO_ID, " +
+		"            dados.QTDE_COTAS " +
+		"             ) AS maiorData ON (dadosCompletos.dataAlteracao = maiorData.dataAlteracao) " +
+		
+		"  where dadosCompletos.qtdeCotas>0 " + 
+		"  ) ");
+		         
+		    
+		
 
 		if (sortname != null && !sortname.isEmpty()) { 
 
-			hql.append(" order by ");
-			hql.append(sortname);
-			hql.append(" ");
-			hql.append(sortorder != null ? sortorder : "");
+			sql.append(" order by ");
+			sql.append(sortname);
+			sql.append(" ");
+			sql.append(sortorder != null ? sortorder : "");
 		}
 
-		Query query = getSession().createQuery(hql.toString());
+		Query query = getSession().createSQLQuery(sql.toString());
 
 		if (idCota!=null){
 			query.setParameter("idCota", idCota);
@@ -201,6 +268,51 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		query.setResultTransformer(new AliasToBeanResultTransformer(TipoDescontoProdutoDTO.class));
 
 		return query.list();
+	}
+	
+	private String getSubSelectDesconto(Long idCota) {
+		
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" SELECT DESCONTO_ID, "
+				+"        PRODUTO_ID, "
+				+"        NULL AS EDICAO_ID, "
+				+"        USUARIO_ID, "
+				+"        NULL AS QTDE_PROX_LANCAMENTOS, "
+				+"        0 AS QTDE_COTAS "
+				+" FROM HISTORICO_DESCONTO_PRODUTOS hdp "
+				+" UNION SELECT DESCONTO_ID, "
+				+"              PRODUTO_ID, "
+				+"              PRODUTO_EDICAO_ID AS EDICAO_ID, "
+				+"              USUARIO_ID, "
+				+"              NULL AS QTDE_PROX_LANCAMENTOS, "
+				+"              count(COTA_ID) AS QTDE_COTAS "
+				+" FROM HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe "
+				+" WHERE produto_id IS NOT NULL ");
+				
+		if(idCota != null)
+			sql.append(" AND COTA_ID=:idCota ");
+						
+			sql.append(" GROUP BY DESCONTO_ID "
+				+" UNION SELECT DESCONTO_ID, "
+				+"              PRODUTO_ID, "
+				+"              PRODUTO_EDICAO_ID AS EDICAO_ID, "
+				+"              USUARIO_ID, "
+				+"              NULL AS QTDE_PROX_LANCAMENTOS, "
+				+"              0 AS QTDE_COTAS "
+				+" FROM HISTORICO_DESCONTO_PRODUTO_EDICOES hdpe "
+				+" UNION SELECT dpl.DESCONTO_ID, PRODUTO_ID, NULL AS EDICAO_ID, USUARIO_ID, QUANTIDADE_PROXIMOS_LANCAMENTOS AS QTDE_PROX_LANCAMENTOS, " 
+				+" CASE WHEN dpl.APLICADO_A_TODAS_AS_COTAS = 1 THEN 0 ELSE count(dlc.DESCONTO_LANCAMENTO_ID) END AS QTDE_COTAS "
+				+" FROM DESCONTO_PROXIMOS_LANCAMENTOS dpl "
+				+" LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc ON (dlc.DESCONTO_LANCAMENTO_ID = dpl.ID) ");
+				
+		if(idCota != null)
+			sql.append(" WHERE dlc.COTA_ID=:idCota ");
+				
+		sql.append(" GROUP BY dpl.ID ");
+		
+		return sql.toString();
+
 	}
 
 	@Override

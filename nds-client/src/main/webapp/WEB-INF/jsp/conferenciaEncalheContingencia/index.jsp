@@ -5,8 +5,6 @@
 	<title>Conferencia Encalhe Contingência</title>
 
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
-
-	<script type="text/javascript" src='<c:url value="/"/>/scripts/shortcut.js'></script>
 	
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/scriptConferenciaEncalheCont.js'></script>
 	

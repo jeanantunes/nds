@@ -302,16 +302,37 @@ public class ParciaisController extends BaseController {
 	}
 	
 	@Post
-	public void obterPebDoProduto(String codigoProduto, String edicaoProduto) {
+	public void obterPebDoProduto(String codigoProduto, String edicaoProduto, Integer periodos) {
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
+		Integer peb =obterPEB(codigoProduto,edicaoProduto,null);
+		
+		if(periodos == null){
+			
+			result.use(Results.json()).withoutRoot().from(peb).recursive().serialize();
+		}
+		else{
+			
+			Integer pebProduto = (peb / periodos);
+			
+			result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
+		}
+	}
+	
+	private Integer obterPEB(String codigoProduto, String edicaoProduto, Long idEdicao){
+		
+		ProdutoEdicao produtoEdicao=null;
+		
+		if(idEdicao == null){
+			produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
+		}
+		else{
+			produtoEdicao = produtoEdicaoService.buscarPorID(idEdicao);
+		}
 		
 		if(produtoEdicao == null) 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada.");
 		
-		Integer pebProduto = produtoEdicao.getPeb();
-		
-		result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
+		return produtoEdicao.getPeb();
 	}
 	
 	/**
@@ -320,7 +341,7 @@ public class ParciaisController extends BaseController {
 	@Post
 	public void inserirPeriodos(Integer peb, Integer qtde, Long idProdutoEdicao) {
 		
-		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuarioLogado(), peb);
+		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuarioLogado());
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
@@ -374,6 +395,8 @@ public class ParciaisController extends BaseController {
 		
 		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION);
 		
+		filtro.setPaginacao(null);
+		
 		List<ParcialDTO> listaParciais = lancamentoParcialService.buscarLancamentosParciais(filtro);
 		
 		if(listaParciais.isEmpty()) {
@@ -397,7 +420,9 @@ public class ParciaisController extends BaseController {
 	public void exportarPeriodos(FileType fileType) throws IOException {
 		
 		FiltroParciaisDTO filtro = (FiltroParciaisDTO) session.getAttribute(FILTRO_SESSION_DETALHE);
-				
+		
+		filtro.setPaginacao(null);
+		
 		List<PeriodoParcialDTO> listaPeriodos = periodoLancamentoParcialService.obterPeriodosParciais(filtro);
 		
 		if(listaPeriodos.isEmpty()) {

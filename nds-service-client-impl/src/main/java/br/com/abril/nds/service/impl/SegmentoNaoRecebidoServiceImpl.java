@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaNaoRecebeSegmentoDTO;
 import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroSegmentoNaoRecebidoDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.repository.SegmentoNaoRecebidoRepository;
@@ -79,6 +80,13 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 			FiltroSegmentoNaoRecebidoDTO filtro) {
 		// TODO Auto-generated method stub
 		return segmentoNaoRecebidoRepo.obterSegmentosElegiveisParaInclusaoNaCota(filtro);
+	}
+
+	@Override
+	@Transactional
+	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(
+			Cota cota) {
+		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCota(cota);
 	}
 
 }

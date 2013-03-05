@@ -209,35 +209,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	}
 	
 	
-	/*@Override
-	@Transactional
-	public void salvarGridPdvReparte(String[] repartes, String[] codigos,
-			Long idCota) {
-		int[] repartesInt = new int[repartes.length];
-		int[] codigosInt = new int[codigos.length];
-		for (int i = 0; i < codigos.length; i++) {
-			codigosInt[i]= Integer.parseInt(codigos[i]);
-		} 
-		for (int i = 0; i < repartes.length; i++) {
-			repartesInt[i]= Integer.parseInt(repartes[i]);
-		}
-		
-		FixacaoReparte fixacaoReparte= fixacaoReparteRepository.buscarPorId(idCota);
-		FixacaoRepartePdv fixacaoRepartePdv = new FixacaoRepartePdv();
-		fixacaoRepartePdv.setFixacaoReparte(fixacaoReparte);
-		for (int i = 0; i < codigosInt.length; i++) {
-			PDV pdv = pdvRepository.buscarPorId(new Long(codigosInt[i]));
-			fixacaoRepartePdv.setPdv(pdv);
-			fixacaoRepartePdv.setRepartePdv(repartesInt[i]);
-			fixacaoRepartePdvRepository.adicionar(fixacaoRepartePdv);
-		}
-		
-		
-		
-	}*/
-	
-	
-	
 	
 	
 	private FixacaoReparteDTO getFixacaoRepartePorDTO(FixacaoReparte fixacaoReparte) {

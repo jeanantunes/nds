@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,38 +35,81 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		return hql;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<VendaProdutoDTO> buscarVendaPorProduto(FiltroVendaProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select ");
-		hql.append(" estoqueProduto.produtoEdicao.numeroEdicao as numEdicao, ");
+		hql.append(" produtoEdicao.numeroEdicao as numEdicao, ");
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
 		
-		hql.append(" ( ");
-		hql.append( this.getMovimentosReparte() );
-		hql.append(" ) as reparte, ");				
+		hql.append(" sum(case when (tipoMovimento.operacaoEstoque = 'ENTRADA') ");
+		hql.append(" then movimentoEstoqueCota.qtde else 0 end) as reparte, ");
 		
-		hql.append(" COALESCE((("+this.getMovimentosReparte()+") - estoqueProduto.qtdeDevolucaoEncalhe), 0)  as venda, ");
-		hql.append(" COALESCE(ROUND((("+this.getMovimentosReparte()+") - estoqueProduto.qtdeDevolucaoEncalhe) / ("+this.getMovimentosReparte()+")), 0) as percentagemVenda, ");
+		hql.append(" sum(case when (tipoMovimento.operacaoEstoque = 'ENTRADA') ");
+		hql.append(" then movimentoEstoqueCota.qtde else - movimentoEstoqueCota.qtde end) as venda, ");
+
+		hql.append(" cast (sum(case when (tipoMovimento.operacaoEstoque = 'ENTRADA') ");
+		hql.append(" then movimentoEstoqueCota.qtde else - movimentoEstoqueCota.qtde end) as big_decimal ) ");
+		hql.append(" * 100 / cast(sum(case when (tipoMovimento.operacaoEstoque = 'ENTRADA') ");
+		hql.append(" then movimentoEstoqueCota.qtde else 0 end) as big_decimal ) as percentagemVenda, ");
+		
 		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
-		hql.append(" COALESCE((("+this.getMovimentosReparte()+") - estoqueProduto.qtdeDevolucaoEncalhe) * produtoEdicao.precoVenda, 0)  as total ");
 		
+		hql.append(" sum(case when (tipoMovimento.operacaoEstoque = 'ENTRADA') ");
+		hql.append(" then movimentoEstoqueCota.qtde else - movimentoEstoqueCota.qtde end) ");
+		hql.append(" * produtoEdicao.precoVenda as total ");
 		
-		hql.append(getSqlFromEWhereVendaPorProduto(filtro));
+//		hql.append(" SELECT ");
+//		hql.append(" produtoEdicao.NUMERO_EDICAO AS numEdicao, ");
+//		hql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ");
+//		hql.append(" lancamento.DATA_REC_DISTRIB AS dataRecolhimento, ");
+//		  
+//		hql.append(" SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') ");
+//		hql.append(" THEN movimentoEstoqueCota.QTDE ELSE 0 END) as reparte, ");
+//        
+//		hql.append(" SUM(CASE WHEN (chamadaEncalheCota.ID IS NOT NULL) ");
+//		hql.append(" THEN (CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') THEN movimentoEstoqueCota.QTDE ELSE - movimentoEstoqueCota.QTDE END) ");
+//		hql.append(" ELSE 0 END) AS venda, ");
+//        
+//		hql.append(" SUM( ");
+//		hql.append(" (CASE WHEN (chamadaEncalheCota.ID IS NOT NULL) ");
+//		hql.append(" THEN (CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') THEN movimentoEstoqueCota.QTDE ELSE - movimentoEstoqueCota.QTDE END) ");
+//		hql.append(" ELSE 0 END) * 100 / ");
+//		hql.append(" (CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') THEN movimentoEstoqueCota.QTDE ELSE 0 END) ");
+//		hql.append(" ) / count(*) AS percentualVenda, ");
+//        
+//		hql.append(" produtoEdicao.PRECO_VENDA AS precoCapa, ");
+//		hql.append(" produtoEdicao.CHAMADA_CAPA AS chamadaCapa, ");
+//        
+//		hql.append(" SUM(CASE WHEN (chamadaEncalheCota.ID IS NOT NULL) ");
+//		hql.append(" THEN (CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') THEN movimentoEstoqueCota.QTDE ELSE - movimentoEstoqueCota.QTDE END) ");
+//		hql.append(" ELSE 0 END) * produtoEdicao.PRECO_VENDA AS total, ");
+//		  
+//		hql.append(" produtoEdicao.PARCIAL AS isParcial, ");
 		
-		hql.append(getOrderByPorEdicoes(filtro));
+		hql.append(this.getSqlFromEWhereVendaPorProduto(filtro));
+		
+		//hql.append(getOrderByPorEdicoes(filtro));
+		
+		hql.append(" group by produtoEdicao ");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = buscarParametrosVendaProduto(filtro);
+		HashMap<String, Object> param = this.buscarParametrosVendaProduto(filtro);
+		
+		HashMap<String, Object> paramList = this.buscarParametrosListVendaProduto(filtro);
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
+		}
+		
+		for(String key : paramList.keySet()){
+			query.setParameterList(key, (List) paramList.get(key));
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
@@ -84,17 +128,48 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		
 		StringBuilder hql = new StringBuilder();
 	
-		hql.append(" from EstoqueProduto estoqueProduto ");
-		hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao ");
-		hql.append(" JOIN estoqueProduto.produtoEdicao.lancamentos as lancamento ");		
-		hql.append(" JOIN estoqueProduto.produtoEdicao.produto.fornecedores as fornecedor ");
-		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movEstCota ");
-		hql.append(" JOIN movEstCota.tipoMovimento tipoMovimento ");
+		hql.append(" from MovimentoEstoqueCota movimentoEstoqueCota ");
+		hql.append(" JOIN movimentoEstoqueCota.produtoEdicao as produtoEdicao ");
+		hql.append(" JOIN produtoEdicao.produto as produto ");
+		hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
+		hql.append(" JOIN movimentoEstoqueCota.tipoMovimento as tipoMovimento ");
+		
+//		hql.append(" FROM  MOVIMENTO_ESTOQUE_COTA movimentoEstoqueCota ");
+//	    
+//		hql.append(" INNER JOIN ");
+//		hql.append("     PRODUTO_EDICAO produtoEdicao ");
+//		hql.append("         ON movimentoEstoqueCota.PRODUTO_EDICAO_ID=produtoEdicao.ID "); 
+//		hql.append(" LEFT JOIN ");
+//		hql.append("     LANCAMENTO lancamento "); 
+//		hql.append("         ON movimentoEstoqueCota.LANCAMENTO_ID=lancamento.ID "); 
+//		hql.append(" INNER JOIN ");
+//		hql.append("     TIPO_MOVIMENTO tipoMovimento "); 
+//		hql.append("         ON movimentoEstoqueCota.TIPO_MOVIMENTO_ID=tipoMovimento.ID "); 
+//		hql.append(" INNER JOIN ");
+//		hql.append("     PRODUTO produto "); 
+//		hql.append("         ON produtoEdicao.PRODUTO_ID=produto.ID "); 
+//		hql.append(" INNER JOIN ");
+//		hql.append("     PRODUTO_FORNECEDOR produtoFornecedor "); 
+//		hql.append("         ON produto.ID=produtoFornecedor.PRODUTO_ID "); 
+//		hql.append(" INNER JOIN ");
+//		hql.append("     FORNECEDOR fornecedor "); 
+//		hql.append("         ON produtoFornecedor.fornecedores_ID=fornecedor.ID ");
+//		hql.append(" left JOIN CHAMADA_ENCALHE chamadaEncalhe ");
+//		hql.append("  		ON chamadaEncalhe.ID = ");
+//		hql.append(" 			 (SELECT ID FROM CHAMADA_ENCALHE WHERE PRODUTO_EDICAO_ID = produtoEdicao.ID LIMIT 1) ");
+//		hql.append(" left JOIN CHAMADA_ENCALHE_COTA chamadaEncalheCota ");
+//		hql.append("  		ON (chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID ");
+//		hql.append(" 			 	AND chamadaEncalheCota.COTA_ID = movimentoEstoqueCota.COTA_ID ");
+//		hql.append(" 				AND chamadaEncalheCota.FECHADO=TRUE) ");
+//		
+//		hql.append(" WHERE produto.CODIGO='19359001' ");
+//		hql.append("     AND produtoEdicao.NUMERO_EDICAO=35 ");
+//		hql.append("     AND tipoMovimento.GRUPO_MOVIMENTO_ESTOQUE in ('RECEBIMENTO_REPARTE', 'ENVIO_ENCALHE') ");
 		
 		boolean usarAnd = false;
 		
 		if(filtro.getCodigo() != null && !filtro.getCodigo().isEmpty()) { 
-			hql.append( (usarAnd ? " and ":" where ") + "produtoEdicao.produto.codigo = :codigo ");
+			hql.append( (usarAnd ? " and ":" where ") + "produto.codigo = :codigo ");
 			usarAnd = true;
 		}
 		if(filtro.getEdicao() !=null){
@@ -102,13 +177,13 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			usarAnd = true;
 		}
 		if(filtro.getIdFornecedor() !=null && filtro.getIdFornecedor() != -1){
-			hql.append( (usarAnd ? " and ":" where ") + " fornecedor.id = :idFornecedor ");
+			hql.append( (usarAnd ? " and ":" where ") + " produto.fornecedor.id = :idFornecedor ");
 			usarAnd = true;
 		}
 		
-		hql.append("  AND movEstCota.movimentoEstoqueCotaFuro is null ");
+		hql.append("  AND movimentoEstoqueCota.movimentoEstoqueCotaFuro is null ");
 		
-		hql.append("  AND tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		hql.append("  AND tipoMovimento.grupoMovimentoEstoque in :gruposMovimentoEstoque ");
 		
 		return hql.toString();
 	}
@@ -157,7 +232,15 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
 		
-		param.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		return param;
+	}
+	
+	private HashMap<String,Object> buscarParametrosListVendaProduto(FiltroVendaProdutoDTO filtro){
+		
+		HashMap<String,Object> param = new HashMap<String, Object>();
+				
+		param.put("gruposMovimentoEstoque", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
+														  GrupoMovimentoEstoque.ENVIO_ENCALHE));
 		
 		return param;
 	}
@@ -203,7 +286,7 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 	
 		hql.append(" from Lancamento lancamento ");
 		hql.append(" JOIN lancamento.produtoEdicao as produtoEdicao ");
-		hql.append(" JOIN lancamento.produtoEdicao.produto as produto ");
+		hql.append(" JOIN produtoEdicao.produto as produto ");
 		hql.append(" JOIN lancamento.produtoEdicao.movimentoEstoques as movimentoEstoque ");
 		hql.append(" JOIN movimentoEstoque.estoqueProduto as estoqueProduto ");
 		hql.append(" JOIN lancamento.movimentoEstoqueCotas as movEstCota ");

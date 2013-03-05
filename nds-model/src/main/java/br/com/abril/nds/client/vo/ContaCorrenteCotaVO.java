@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -33,28 +34,28 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	private Date dataRaiz;
 	
-	@Export(label = "Vlr. Postergado", alignment = Alignment.RIGHT)
+	@Export(label = "Vlr. Postergado", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal valorPostergado;
 		
-	@Export(label = "Consignado", alignment = Alignment.RIGHT)
+	@Export(label = "Consignado", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal consignado;
 	
-	@Export(label = "Encalhe", alignment = Alignment.RIGHT)
+	@Export(label = "Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal encalhe;
 	
-	@Export(label = "Venda Encalhe", alignment = Alignment.RIGHT)
+	@Export(label = "Venda Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal vendaEncalhe;
 	
-	@Export(label = "Déb/Cred.", alignment = Alignment.RIGHT)
+	@Export(label = "Déb/Cred.", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal debitoCredito;
 	
-	@Export(label = "Encargos", alignment = Alignment.RIGHT)
+	@Export(label = "Encargos", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal encargos;
 	
-	@Export(label = "Pendente", alignment = Alignment.RIGHT)
+	@Export(label = "Pendente", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal pendente;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal total;
 	
 	private BigDecimal valorPago;
@@ -62,6 +63,10 @@ public class ContaCorrenteCotaVO implements Serializable {
 	private String tipo;
 	
 	private BigDecimal saldo;
+	
+	private BigDecimal valorVendaDia;
+	
+	private String nomeBox;
 	
 	/**
 	 * Construtor padrão.
@@ -250,5 +255,21 @@ public class ContaCorrenteCotaVO implements Serializable {
 
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
+	}
+
+	public BigDecimal getValorVendaDia() {
+		return valorVendaDia;
+	}
+
+	public void setValorVendaDia(BigDecimal valorVendaDia) {
+		this.valorVendaDia = valorVendaDia;
+	}
+
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
 	}
 }

@@ -1,9 +1,11 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,11 +70,9 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 			Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
 			
 			gerarCotaAusente(numCota, data, idUsuario, cota);
-					
-			/*List<MovimentoEstoqueCota> movimentosCota = 
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);*/
+
 			List<MovimentoEstoqueCota> movimentosCota = 
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 					
 			movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
 		}
@@ -95,37 +95,46 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	}
 	
 	@Transactional 
-	public void declararCotaAusenteRatearReparte(List<Integer> numCotas, Date data, Long idUsuario,
-			List<MovimentoEstoqueCotaDTO> movimentosRateio) throws TipoMovimentoEstoqueInexistenteException{
+	public void declararCotaAusenteRatearReparte(List<Integer> numCotas, 
+												 Date data, 
+												 Long idUsuario,
+												 List<MovimentoEstoqueCotaDTO> movimentosRateio) 
+												 throws TipoMovimentoEstoqueInexistenteException{
 		
-		CotaAusente cotaAusente = null;
+		List<CotaAusente> cotasAusentes = new ArrayList<CotaAusente>();
 		
-		for(Integer numCota : numCotas) {
+		for (Integer numCota : numCotas) {
 				
-			Cota cota = cotaRepository.obterPorNumerDaCota(numCota);
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
 									
-			cotaAusente = gerarCotaAusente(numCota, data, idUsuario, cota);
+			cotasAusentes.add(gerarCotaAusente(numCota, data, idUsuario, cota));
 					
 			List<MovimentoEstoqueCota> movimentosCota = 
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(data, cota.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+				this.movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
+					data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 					
-			movimentoEstoqueService.enviarSuplementarCotaAusente(data, cota.getId(), movimentosCota);
-					
+			this.movimentoEstoqueService.enviarSuplementarCotaAusente(
+				data, cota.getId(), movimentosCota);
 		}
 		
 		List<MovimentoEstoqueCotaDTO> movimentosCota = 
-				movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+			this.movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(
+				data, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
-		for ( MovimentoEstoqueCotaDTO movimento : movimentosCota ) {
+		for (MovimentoEstoqueCotaDTO movimentoEstoqueCota : movimentosCota) {
 			
-			for ( MovimentoEstoqueCotaDTO movimentoRateioDTO : movimentosRateio ) {
+			for (MovimentoEstoqueCotaDTO movimentoRateioDTO : movimentosRateio) {
 				
-				if ( movimento.getIdProdEd() == movimentoRateioDTO.getIdProdEd() ) {
+				if (movimentoEstoqueCota.getIdProdEd().equals(
+						movimentoRateioDTO.getIdProdEd())) {
 					
-					ProdutoEdicao edicao = produtoEdicaoRepository.buscarPorId(movimento.getIdProdEd());
+					ProdutoEdicao produtoEdicao = 
+						this.produtoEdicaoRepository.buscarPorId(
+							movimentoEstoqueCota.getIdProdEd());
 					
-					gerarRateios(movimento.getQtdeReparte(), movimentoRateioDTO, 
-							data, idUsuario, edicao, cotaAusente);					
+					gerarRateios(
+						movimentoEstoqueCota.getQtdeReparte(), movimentoRateioDTO, 
+							data, idUsuario, produtoEdicao, cotasAusentes);					
 				}
 			}
 		}	
@@ -159,7 +168,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	
 		alterarStatusCotaAusente(cotaAusente);
 		
-		List<MovimentoEstoqueCota> movimentosCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(dataAtual, cotaAusente.getId(), GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+		List<MovimentoEstoqueCota> movimentosCota = movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(dataAtual, cotaAusente.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 			
 		for(MovimentoEstoqueCota movimento : movimentosCota) {
 			
@@ -213,50 +222,90 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 	}
 	
 	private void gerarRateios(Integer qtdeDisponivel,
-			MovimentoEstoqueCotaDTO movimentoRateioDTO, Date data,
-			Long idUsuario, ProdutoEdicao produtoEdicao, CotaAusente cotaAusente) {
-		 		
+							  MovimentoEstoqueCotaDTO movimentoRateioDTO, 
+							  Date data, Long idUsuario, 
+							  ProdutoEdicao produtoEdicao, 
+							  List<CotaAusente> cotasAusentes) {
+		 
+		if (movimentoRateioDTO == null
+				|| movimentoRateioDTO.getRateios() == null
+				|| movimentoRateioDTO.getRateios().isEmpty()) {
+			
+			return;
+		}
 		
 		int total = 0;
 	
-		for(RateioDTO rateioDTO : movimentoRateioDTO.getRateios()) {
+		for (RateioDTO rateioDTO : movimentoRateioDTO.getRateios()) {
 			
-				total += rateioDTO.getQtde();
+			total += rateioDTO.getQtde();
 			
-				Cota cota = cotaRepository.obterPorNumerDaCota(rateioDTO.getNumCota());
-				
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioDTO.getNumCota());
+			
+			BigInteger qtdeRateio = BigInteger.valueOf(rateioDTO.getQtde());
+			
+			for (CotaAusente cotaAusente : cotasAusentes) {
+			
 				RateioCotaAusente rateio = new RateioCotaAusente();
+				
 				rateio.setCota(cota);
 				rateio.setCotaAusente(cotaAusente);
 				rateio.setProdutoEdicao(produtoEdicao);
-				rateio.setQtde(BigInteger.valueOf( rateioDTO.getQtde() ));
+				rateio.setQtde(BigInteger.valueOf(rateioDTO.getQtde()));
 				
-				rateioCotaAusenteRepository.adicionar(rateio);
-				
-				TipoMovimentoEstoque tipoMovimento = 
-						tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
-					
-				TipoMovimentoEstoque tipoMovimentoCota =
-					tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				this.rateioCotaAusenteRepository.adicionar(rateio);
+			}
 			
-				movimentoEstoqueService.gerarMovimentoEstoque(data, rateio.getProdutoEdicao().getProduto().getId(), idUsuario, rateio.getQtde(),tipoMovimento);
-				movimentoEstoqueService.gerarMovimentoCota(data, rateio.getProdutoEdicao().getProduto().getId(), cota.getId(), idUsuario, rateio.getQtde(), tipoMovimentoCota);
+			TipoMovimentoEstoque tipoMovimento = 
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE);
 				
+			TipoMovimentoEstoque tipoMovimentoCota =
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+			this.movimentoEstoqueService.gerarMovimentoEstoque(
+				data, produtoEdicao.getId(), 
+					idUsuario, qtdeRateio, tipoMovimento);
+			
+			this.movimentoEstoqueService.gerarMovimentoCota(
+				data, produtoEdicao.getId(), cota.getId(), 
+					idUsuario, qtdeRateio, tipoMovimentoCota);
 		}
 		
-		if(total > qtdeDisponivel) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "A Quantidade Ultrapassou o Reparte.");				
+		if (total > qtdeDisponivel) {
 			
-		}	
+			throw new ValidacaoException(TipoMensagem.ERROR, "A quantidade ultrapassou o reparte.");
+		}
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CotaAusenteDTO> obterCotasAusentes(FiltroCotaAusenteDTO filtroCotaAusenteDTO){
 		return cotaAusenteRepository.obterCotasAusentes(filtroCotaAusenteDTO);
 	}
 
-	@Override
+	@Transactional(readOnly = true)
 	public Long obterCountCotasAusentes(FiltroCotaAusenteDTO filtro) {
 		return cotaAusenteRepository.obterCountCotasAusentes(filtro);
 	}
+	
+	@Transactional(readOnly = true)
+	public void verificarExistenciaReparteCota(Date data, Integer numeroCota) {
+		
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		
+		Validate.notNull(cota, "Cota inexistente");
+		
+		List<MovimentoEstoqueCota> movimentosEstoqueCota = 
+			this.movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
+				data, cota.getId(), GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		if (movimentosEstoqueCota == null 
+				|| movimentosEstoqueCota.isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Cota '" + cota.getNumeroCota() + "' não possui reparte na data.");
+		}
+	}
+	
 }

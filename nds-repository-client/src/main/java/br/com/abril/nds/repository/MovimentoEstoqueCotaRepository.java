@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
+import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -126,7 +127,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @return Qtde - Integer
 	 */
-	public Integer obterQtdConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
+	public TotalizadorConsultaEncalheDTO obterTotalizadorConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Pesquisa lista de ConsultaEncalhe.
@@ -164,6 +165,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * acordo com o range de data informado.
 	 * 
 	 * @param idCota
+	 * @param idFornecedor
 	 * @param idProdutoEdicao
 	 * @param dataInicial
 	 * @param dataFinal
@@ -172,7 +174,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return BigInteger
 	 */
 	public BigDecimal obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
-			Long idCota,
+			Long idCota, 
+			Long idFornecedor,
 			Long idProdutoEdicao,
 			Date dataInicial, 
 			Date dataFinal,
@@ -379,22 +382,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return List<MovimentoEstoqueCota>
 	 */
 	public List<MovimentoEstoqueCota> obterMovimentosEstornados(Long idCota);
-	
-	/**
-	 * Obtém o Valor Total dos movimentos de estoque da cota que ainda não geraram movimento financeiro
-	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
-	 * @param idCota
-	 * @return List<MovimentoEstoqueCota>
-	 */
-	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota);
-	
-	/**
-	 * Obtém o Valor Total dos movimentos de estoque da cota que forão estornados
-	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
-	 * @param idCota
-	 * @return List<MovimentoEstoqueCota>
-	 */
-	public BigDecimal obterValorTotalMovimentosEstornados(Long idCota);
 
 	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
 

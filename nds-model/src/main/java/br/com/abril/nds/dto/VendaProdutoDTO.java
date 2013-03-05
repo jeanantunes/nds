@@ -30,7 +30,7 @@ public class VendaProdutoDTO implements Serializable {
 	
 	private BigInteger venda;
 
-	private BigInteger percentagemVenda;
+	private BigDecimal percentagemVenda;
 	
 	private BigDecimal precoCapa;
 	
@@ -96,11 +96,11 @@ public class VendaProdutoDTO implements Serializable {
 		this.valorVendaFormatado = CurrencyUtil.formatarValor(venda);
 	}
 
-	public BigInteger getPercentagemVenda() {
+	public BigDecimal getPercentagemVenda() {
 		return percentagemVenda;
 	}
 
-	public void setPercentagemVenda(BigInteger percentagemVenda) {
+	public void setPercentagemVenda(BigDecimal percentagemVenda) {
 		this.percentagemVenda = percentagemVenda;
 		this.percentagemVendaFormatado = CurrencyUtil.formatarValor(percentagemVenda);
 	}

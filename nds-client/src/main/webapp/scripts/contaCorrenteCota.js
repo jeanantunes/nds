@@ -84,45 +84,32 @@ var contaCorrenteCotaController = $.extend(true, {
 		                         {name:'filtro.idConsolidado', value:idConsolidado}];
 		
 		$.postJSON(
-				contextPath + '/financeiro/contaCorrenteCota/consultarEncalheCota', 
-				parametroPesquisa,
-				function(result){
-					
-					$(".encalheCotaGrid", contaCorrenteCotaController.workspace).flexToggleCol(7,result[0]);			
-					
-					$(".encalheCotaGrid", contaCorrenteCotaController.workspace).flexAddData({
-						page: 1, total: 1, rows: result[1].tableModelEncalhe.rows
-					});
-					
-					
-					/////////////////////////////////////
-					
-					var data = result[1];
-					
-					$("#datacotanome", contaCorrenteCotaController.workspace).html(dataConsolidado+" - Cota: "+$("#cota", contaCorrenteCotaController.workspace).val()+" - "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
-			
-					var conteudoSpan = $("#listaInfoEncalhe", contaCorrenteCotaController.workspace).html("");
-					
-					$.each(data.listaInfoFornecedores, function(index, value) {
-				 	 	
-				      conteudoSpan = $("#listaInfoEncalhe", contaCorrenteCotaController.workspace).html();
-				 	 	
+			contextPath + '/financeiro/contaCorrenteCota/consultarEncalheCota', 
+			parametroPesquisa,
+			function(result){
 				
-				      $("#listaInfoEncalhe", contaCorrenteCotaController.workspace).html(conteudoSpan + value.nomeFornecedor+":      "+value.valorTotal+"<br><br>");
-				    });
-					
-					
-					////////////////////////////////////
-					
-					$(".encalheCotaGrid", contaCorrenteCotaController.workspace).show();
-					
-								
-					$(".gridsEncalhe", contaCorrenteCotaController.workspace).show();
-					
-				});	
+				$(".encalheCotaGrid", contaCorrenteCotaController.workspace).flexAddData({
+					page: 1, total: 1, rows: result[1].tableModelEncalhe.rows
+				});
 				
-		contaCorrenteCotaController.popup_encalhe();
+				var data = result[1];
+				
+				$("#datacotanome", contaCorrenteCotaController.workspace).html(dataConsolidado+" - Cota: "+
+						$("#cota", contaCorrenteCotaController.workspace).val()+" - "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
 		
+				var conteudoSpan = $("#listaInfoEncalhe", contaCorrenteCotaController.workspace).html("");
+				
+				$.each(data.listaInfoFornecedores, function(index, value) {
+					conteudoSpan = $("#listaInfoEncalhe", contaCorrenteCotaController.workspace).html();
+					$("#listaInfoEncalhe", contaCorrenteCotaController.workspace).html(conteudoSpan + 
+							value.nomeFornecedor+":      " + floatToPrice(value.valorTotal) + "<br><br>");
+			    });
+				
+				$(".encalheCotaGrid", contaCorrenteCotaController.workspace).show();
+				$(".gridsEncalhe", contaCorrenteCotaController.workspace).show();
+				$("#labelTotalGeral", contaCorrenteCotaController.workspace).text(floatToPrice(result[2]));
+			});
+		contaCorrenteCotaController.popup_encalhe();
 	},
 
 	/**
@@ -137,45 +124,33 @@ var contaCorrenteCotaController = $.extend(true, {
 		                         {name:'filtro.dataConsolidado', value:dataConsolidado}];
 		
 		$.postJSON(
-				contextPath + '/financeiro/contaCorrenteCota/consultarConsignadoCota', 
-				parametroPesquisa,
-				function(result){
-					
-					
-					$(".consignadoCotaGrid", contaCorrenteCotaController.workspace).flexToggleCol(10,result[0]);
-								
-					$(".consignadoCotaGrid", contaCorrenteCotaController.workspace).flexAddData({
-						page: 1, total: 1, rows: result[1].tableModelConsignado.rows
-					});
-					
-					
-					/////////////////////////////////////
-					
-					var data = result[1];
-					
-					$("#datacotanome_consignado", contaCorrenteCotaController.workspace).html(dataConsolidado+" - Cota: "+$("#cota", contaCorrenteCotaController.workspace).val()+" - "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
-			
-					var conteudoSpan = $("#listaInfoConsignado", contaCorrenteCotaController.workspace).html("");
-					
-					$.each(data.listaInfoFornecedores, function(index, value) {
-				 	 	
-				      conteudoSpan = $("#listaInfoConsignado", contaCorrenteCotaController.workspace).html();
-				 	 	
-				      $("#listaInfoConsignado", contaCorrenteCotaController.workspace).html(conteudoSpan + value.nomeFornecedor+":      "+value.valorTotal+"<br><br>");
-				    });
-					
-					
-					////////////////////////////////////
-					
-					$(".consignadoCotaGrid", contaCorrenteCotaController.workspace).show();
-					
-								
-					$(".gridsConsignado", contaCorrenteCotaController.workspace).show();
-					
-				});	
+			contextPath + '/financeiro/contaCorrenteCota/consultarConsignadoCota',
+			parametroPesquisa,
+			function(result){
 				
+				$(".consignadoCotaGrid", contaCorrenteCotaController.workspace).flexAddData({
+					page: 1, total: 1, rows: result[1].tableModelConsignado.rows
+				});
+				
+				var data = result[1];
+				
+				$("#datacotanome_consignado", contaCorrenteCotaController.workspace).html(dataConsolidado+" - Cota: "+
+						$("#cota", contaCorrenteCotaController.workspace).val()+" - "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
+				
+				var conteudoSpan = $("#listaInfoConsignado", contaCorrenteCotaController.workspace).html("");
+				
+				$.each(data.listaInfoFornecedores, function(index, value) {
+			 	 	
+			      conteudoSpan = $("#listaInfoConsignado", contaCorrenteCotaController.workspace).html();
+			 	 	
+			      $("#listaInfoConsignado", contaCorrenteCotaController.workspace).html(conteudoSpan + 
+			    		  value.nomeFornecedor+":      " + floatToPrice(value.valorTotal) + "<br><br>");
+			    });
+				
+				$(".consignadoCotaGrid", contaCorrenteCotaController.workspace).show();
+				$(".gridsConsignado", contaCorrenteCotaController.workspace).show();
+			});
 		contaCorrenteCotaController.popup_consignado();
-		
 	},
 
 	/**
@@ -199,26 +174,38 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				if(!dataRaizPendente){
 					dataRaizPendente = value.cell.dataConsolidado;
-				}			
-									
+				}
+				
 				value.cell.consignado = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>'+(value.cell.consignado != null?value.cell.consignado:'0.00')+'</a>';
+					[value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>'+
+					(value.cell.consignado != null ? floatToPrice(value.cell.consignado) : '0,00')+'</a>';
 				
 				value.cell.encalhe = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarEncalheCota('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>'+value.cell.encalhe+'</a>';
+					[value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>' + 
+					floatToPrice(value.cell.encalhe) + '</a>';
+				
+				value.cell.valorVendaDia = floatToPrice(value.cell.valorVendaDia);
 				
 				value.cell.vendaEncalhe = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cota", contaCorrenteCotaController.workspace).val() +');"/>'+value.cell.vendaEncalhe+'</a>';
+					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cota", contaCorrenteCotaController.workspace).val() +
+					',\''+value.cell.nomeBox+'\');"/>' + floatToPrice(value.cell.vendaEncalhe) + '</a>';
 				
 				value.cell.debitoCredito = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito +'\');"/>'+value.cell.debitoCredito+'</a>';
+					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito +'\');"/>' +
+					floatToPrice(value.cell.debitoCredito) +'</a>';
 				
 				value.cell.encargos = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>'+value.cell.encargos+'</a>';
+					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + floatToPrice(value.cell.encargos) +'</a>';
 					
-				value.cell.valorPostergado = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'" href="javascript:;">' +(value.cell.valorPostergado != null?value.cell.valorPostergado:'0.00')+'</a></span>';
+				value.cell.valorPostergado = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'">' +
+					(value.cell.valorPostergado != null ? floatToPrice(value.cell.valorPostergado) : '0,00') + '</a></span>';
 				
-				value.cell.pendente = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'" href="javascript:;">' +value.cell.pendente +'</a></span>';
+				value.cell.pendente = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'">' +
+					floatToPrice(value.cell.pendente) +'</a></span>';
+				
+				value.cell.total = floatToPrice(value.cell.total);
+				value.cell.valorPago = floatToPrice(value.cell.valorPago);
+				value.cell.saldo = floatToPrice(value.cell.saldo);
 				
 				if (value.cell.tipo == 'CONSOLIDADO'){
 					
@@ -230,7 +217,8 @@ var contaCorrenteCotaController = $.extend(true, {
 			});
 			
 		
-			$("#cotanome", contaCorrenteCotaController.workspace).html($("#cota", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
+			$("#cotanome", contaCorrenteCotaController.workspace).html($("#cota", contaCorrenteCotaController.workspace).val()+" "+
+					$("#nomeCota", contaCorrenteCotaController.workspace).val());
 			
 			$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).
 				text("Cota: " + $("#cota", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
@@ -241,8 +229,28 @@ var contaCorrenteCotaController = $.extend(true, {
 			$(".grids", contaCorrenteCotaController.workspace).show();
 			
 			return data;
-		}	
+		}
 
+	},
+	
+	preProcessEncalheCota : function (data){
+		
+		if(typeof data.mensagens == "object") {
+			
+			$(".grids", contaCorrenteCotaController.workspace).hide();
+		
+			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+			
+		}else{			
+			$.each(data.rows, function(index, value) {
+				
+				value.cell.precoCapa = floatToPrice(value.cell.precoCapa);
+				value.cell.precoComDesconto = floatToPrice(value.cell.precoComDesconto);
+				value.cell.total = floatToPrice(value.cell.total);
+			});
+			
+			return data;
+		}
 	},
 	
 	/**
@@ -337,6 +345,12 @@ var contaCorrenteCotaController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
+				display : 'Valor Venda Dia', 
+				name : 'valorVendaDia',
+				width : 80,
+				sortable : true,
+				align : 'right'
+			}, {
 				display : 'Vlr. Postergado R$', 
 				name : 'valorPostergado',
 				width : 105,
@@ -392,12 +406,12 @@ var contaCorrenteCotaController = $.extend(true, {
 				align : 'center'
 			}],
 			sortname : "dataConsolidado",
-			sortorder : "asc",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
+			width : 1050,
 			height : 255,
 			onSuccess : function () {
 				$('.itemContaCorrenteCotaGrid tr td', contaCorrenteCotaController.workspace).each( function(){ 
@@ -414,6 +428,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		$(".encalheCotaGrid", contaCorrenteCotaController.workspace).flexigrid({		
 			dataType : 'json',
+			preProcess: contaCorrenteCotaController.preProcessEncalheCota,
 			colModel : [ {
 				display : 'Código',
 				name : 'codigoProduto',
@@ -474,13 +489,17 @@ var contaCorrenteCotaController = $.extend(true, {
 
 	$(".consignadoCotaGrid", contaCorrenteCotaController.workspace).flexigrid({
 		preProcess : function(data) {
-			$.each(data.rows, function(index, value) {			
+			$.each(data.rows, function(index, value) {
 				if(!value.cell.motivo){
 					value.cell.motivo = "";
-				}				
-				});
-				return data;
+				}
+				
+				value.cell.precoCapa = floatToPrice(value.cell.precoCapa);
+				value.cell.precoComDesconto = floatToPrice(value.cell.precoComDesconto);
+				value.cell.total = floatToPrice(value.cell.total);
+			});
 			
+			return data;
 		},
 		dataType : 'json',	
 		colModel : [ {
@@ -552,19 +571,18 @@ var contaCorrenteCotaController = $.extend(true, {
 		}],
 		sortname : "codigo",
 		sortorder : "asc",
-		width : 820,
+		width : 860,
 		height : 200
 	});
 
 	},
 
 	popup_consignado : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+		
 		$( "#dialog-consignado", contaCorrenteCotaController.workspace ).dialog({
 			resizable: false,
 			height:490,
-			width:860,
+			width:900,
 			modal: true,
 			buttons: {
 				"Fechar": function() {
@@ -580,8 +598,7 @@ var contaCorrenteCotaController = $.extend(true, {
 	},
 		
 	popup_encalhe : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
+		
 		$( "#dialog-encalhe", contaCorrenteCotaController.workspace ).dialog({
 			resizable: false,
 			height:460,
@@ -596,26 +613,6 @@ var contaCorrenteCotaController = $.extend(true, {
 				}
 			},
 			form: $("#dialog-encalhe", this.workspace).parents("form")
-		});
-	},
-
-	popup_encalhe_2 : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-encalhe_2", contaCorrenteCotaController.workspace ).dialog({
-			resizable: false,
-			height:460,
-			width:860,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-					$(".grids", contaCorrenteCotaController.workspace).show();
-					
-				}
-			},
-			form: $("#dialog-encalhe_2", this.workspace).parents("form")
 		});
 	},
 			
@@ -658,7 +655,7 @@ var contaCorrenteCotaController = $.extend(true, {
 	},
 	
 	popup_email : function() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+		
 		contaCorrenteCotaController.carregarDadosEmail();
 		$("#dialog-email", contaCorrenteCotaController.workspace ).dialog({
 			resizable: false,
@@ -669,14 +666,10 @@ var contaCorrenteCotaController = $.extend(true, {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
 					contaCorrenteCotaController.enviarEmail();
-					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
-
 				}
-				
-				
 			},
 			form: $("#dialog-email", this.workspace).parents("form")
 		});	
@@ -693,6 +686,7 @@ var contaCorrenteCotaController = $.extend(true, {
 					
 					value.cell.dataCriacao = value.cell.dataLancamento;
 					value.cell.observacao = value.cell.observacoes;
+					value.cell.valor = floatToPrice(value.cell.valor);
 				});
 				
 				return data;
@@ -761,9 +755,7 @@ var contaCorrenteCotaController = $.extend(true, {
 							$( this ).dialog( "close" );
 							
 							$(".debitoCreditoGrid", contaCorrenteCotaController.workspace).show();
-							
 						},
-						
 					},
 					form: $("#dialog-debitos-creditos", this.workspace).parents("form")
 				});
@@ -828,8 +820,13 @@ var contaCorrenteCotaController = $.extend(true, {
 				});
 			}
 		);
-	}
+	},
 	
+	irParaNegociacao : function(){
+		
+		$('#workspace').tabs('addTab', "Negociação de Divida",
+				contextPath + "/financeiro/negociacaoDivida" + "?random=" + Math.random());
+	}
 }, BaseController);
 
 //@ sourceURL=contaCorrente.js

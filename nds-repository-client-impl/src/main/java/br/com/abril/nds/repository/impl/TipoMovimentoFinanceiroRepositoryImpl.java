@@ -53,6 +53,7 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("gruposMovimentoFinanceiro", gruposMovimentoFinanceiro);
+		query.setMaxResults(1);
 		
 		return query.list();
 	}

@@ -128,10 +128,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVendido() * produtoDTO.getVlrPrecoComDesconto()));
 				
 				vlrReparte += produtoDTO.getPrecoVenda() * produtoDTO.getReparte();
+
+				vlrDesconto +=  produtoDTO.getPrecoVenda() * produtoDTO.getReparte() * (produtoDTO.getVlrDesconto() / 100);
 				
-				vlrDesconto +=  produtoDTO.getVlrDesconto() / 100 * produtoDTO.getReparte();
-				
-				vlrEncalhe += produtoDTO.getQuantidadeDevolvida() * (produtoDTO.getPrecoVenda() - produtoDTO.getVlrDesconto());
+				vlrEncalhe += produtoDTO.getQuantidadeDevolvida() * vlrDesconto;
 				
 			}
 			
