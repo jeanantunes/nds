@@ -3,19 +3,30 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigInteger;
 
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.distribuicao.RankingFaturamento;
+import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.RankingFaturamentoIdRepository;
 import br.com.abril.nds.repository.RankingFaturamentoRepository;
 
 @Repository
-public class RankingFaturamentoRepositoryImpl extends RankingAbstract implements
+public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<RankingFaturamento, Long> implements
 		RankingFaturamentoRepository {
+	
+	@Autowired
+	private RankingFaturamentoIdRepository faturamentoIdRepository;
+	
+	public RankingFaturamentoRepositoryImpl(){
+		super(RankingFaturamento.class);
+	}
 
 	@Override
 	public void executeJobGerarRankingFaturamento() {
 		StringBuilder hql = new StringBuilder();
 		
-		BigInteger novoId = criarNovoIDRanking();
+		BigInteger novoId = faturamentoIdRepository.criarNovoIDRanking();
 		
 		hql = new StringBuilder();
 		hql.append(" INSERT INTO ranking_faturamento ( COTA_ID, FATURAMENTO,RANKING_FATURAMENTO_GERADOS_ID) ")
@@ -38,17 +49,9 @@ public class RankingFaturamentoRepositoryImpl extends RankingAbstract implements
 		.append(" group by cota_id ")
 		.append(" order by faturamento desc) ");
 		
-		
-		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		query.executeUpdate();
 		
-	}
-
-	@Override
-	String getTipoRanking() {
-		
-		return "faturamento";
 	}
 
 }

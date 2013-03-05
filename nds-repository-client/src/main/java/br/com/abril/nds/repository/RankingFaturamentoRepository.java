@@ -1,6 +1,8 @@
 package br.com.abril.nds.repository;
 
-public interface RankingFaturamentoRepository {
+import br.com.abril.nds.model.distribuicao.RankingFaturamento;
+
+public interface RankingFaturamentoRepository extends Repository<RankingFaturamento, Long> {
 
 	void executeJobGerarRankingFaturamento();
 }

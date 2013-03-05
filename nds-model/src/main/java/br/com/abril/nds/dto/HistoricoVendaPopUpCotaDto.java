@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -10,8 +11,8 @@ public class HistoricoVendaPopUpCotaDto {
 
 	private Integer numeroCota;
 	private String nomePessoa;
-	// TIPO COTA EMS 169
-	// RANKING EMS 2017
+	private TipoCota tipoCota;
+	private Long rankId;
 	private BigDecimal faturamento;
 	private String faturamentoFormatado;
 	private String data;
