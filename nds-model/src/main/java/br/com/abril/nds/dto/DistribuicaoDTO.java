@@ -29,6 +29,7 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean repPorPontoVenda;
 	private Boolean solNumAtras;
 	private Boolean recebeRecolhe;
+	private boolean recebeComplementar;
 	private Boolean neImpresso;
 	private Boolean neEmail;
 	private Boolean ceImpresso;
@@ -550,4 +551,22 @@ public class DistribuicaoDTO implements Serializable  {
 	    }
 	    basesCalculo.add(new ItemDTO<BaseCalculo, String>(baseCalculo, baseCalculo.getValue()));
 	}
+	
+	/**
+	 * Obtém recebeComplementar
+	 * @return
+	 */
+	public boolean getRecebeComplementar() {
+		return recebeComplementar;
+	}
+	
+	/**
+	 * Atribui recebeComplementar
+	 * @param recebeComplementar
+	 */
+	public void setRecebeComplementar(boolean recebeComplementar) {
+		this.recebeComplementar = recebeComplementar;
+	}
+	
+	
 }

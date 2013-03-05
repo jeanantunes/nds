@@ -15,7 +15,7 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private long idFornecedor;
 	
-	private Long semana;
+	private String semana;
 	
 	private PaginacaoVO paginacao;
 	
@@ -64,11 +64,11 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		this.idFornecedor = idFornecedor;
 	}
 
-	public Long getSemana() {
+	public String getSemana() {
 		return semana;
 	}
 
-	public void setSemana(Long semana) {
+	public void setSemana(String semana) {
 		this.semana = semana;
 	}
 
