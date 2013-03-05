@@ -258,14 +258,14 @@ var produtoController = $.extend(true, {
 		
 		$(".habilitarCampoInterface", produtoController.workspace).attr('disabled',!habilitar);
 		
-		if(!habilitar){
+		if(habilitar){
 			$("#fieldSegmentacao", produtoController.workspace).show();
 		}
 		else{
 			$("#fieldSegmentacao", produtoController.workspace).hide();
 		}
 		
-		$(".habilitarCampoInterfaceSegmentacao", produtoController.workspace).attr('disabled',habilitar);
+		$(".habilitarCampoInterfaceSegmentacao", produtoController.workspace).attr('disabled',!habilitar);
 	},
 	
 	carregarProdutoEditado : function(id) {
