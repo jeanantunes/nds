@@ -1,46 +1,73 @@
 package br.com.abril.nds.dto;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.export.Export.Alignment;
 
 @Exportable
 public class AnaliseHistoricoDTO {
 
+	@Export(label = "Cota", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private Integer numeroCota = 0;
+	
+	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 2)
 	private SituacaoCadastro statusCota;
+	
 	private String statusCotaFormatado = "";
+	
+	@Export(label = "Nome", alignment=Alignment.LEFT, exhibitionOrder = 3)
 	private String nomePessoa = "";
+	
+	@Export(label = "NPDV", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private Long qtdPdv = 0l;
+	
+	@Export(label = "REP Cota", alignment=Alignment.LEFT, exhibitionOrder = 5)
 	private Double reparteMedio;
+	
+	@Export(label = "VDA Cota", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private Double vendaMedia;
-	//private List<ProdutoEdicaoDTO> edicoes = new ArrayList<>();
 
 	// Edição 1
+	@Export(label = "REP 1", alignment=Alignment.LEFT, exhibitionOrder = 7)
 	private String ed1Reparte = "0";
+	
+	@Export(label = "VDA 1", alignment=Alignment.LEFT, exhibitionOrder = 8)
 	private String ed1Venda = "0";
 
 	// Edição 2
+	@Export(label = "REP 2", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private String ed2Reparte = "0";
+	
+	@Export(label = "VDA 2", alignment=Alignment.LEFT, exhibitionOrder = 10)
 	private String ed2Venda = "0";
 
 	// Edição 3
+	@Export(label = "REP 3", alignment=Alignment.LEFT, exhibitionOrder = 11)
 	private String ed3Reparte = "0";
+	
+	@Export(label = "VDA 3", alignment=Alignment.LEFT, exhibitionOrder = 12)
 	private String ed3Venda = "0";
 
 	// Edição 4
+	@Export(label = "REP 4", alignment=Alignment.LEFT, exhibitionOrder = 13)
 	private String ed4Reparte = "0";
+	
+	@Export(label = "VDA 4", alignment=Alignment.LEFT, exhibitionOrder = 14)
 	private String ed4Venda = "0";
 
 	// Edição 5
+	@Export(label = "REP 5", alignment=Alignment.LEFT, exhibitionOrder = 15)
 	private String ed5Reparte = "0";
+	
+	@Export(label = "VDA 5", alignment=Alignment.LEFT, exhibitionOrder = 16)
 	private String ed5Venda = "0";
 
 	// Edição 6
+	@Export(label = "REP 6", alignment=Alignment.LEFT, exhibitionOrder = 17)
 	private String ed6Reparte = "0";
+	
+	@Export(label = "VDA 6", alignment=Alignment.LEFT, exhibitionOrder = 18)
 	private String ed6Venda = "0";
 
 	public Integer getNumeroCota() {

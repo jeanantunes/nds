@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,12 +15,15 @@ import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaQueRecebeExcecaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.HistoricoVendaPopUpDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.ProdutoRecebidoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
+import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -37,6 +41,8 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -215,21 +221,21 @@ public class HistoricoVendaController extends BaseController {
 		
 		result.include("listProdutoEdicao", listProdutoEdicaoDto);
 		
-		List<AnaliseHistoricoDTO> listAnaliseHistorico = cotaService.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);
-		
-		validarLista(listAnaliseHistorico);
-		
-		TableModel<CellModelKeyValue<AnaliseHistoricoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseHistoricoDTO>>();
-		
-		this.configurarTableModelSemPaginacao(listAnaliseHistorico, tableModel);
-		
-		session.setAttribute("analiseHistoricoTableModel", tableModel);
-		
+		session.setAttribute("listProdutoEdicao", listProdutoEdicaoDto);
+		session.setAttribute("listCotas", cotas);
 	}
 	
 	@Post
 	public void carregarGridAnaliseHistorico(){
-		TableModel<CellModelKeyValue<AnaliseHistoricoDTO>> tableModel = (TableModel<CellModelKeyValue<AnaliseHistoricoDTO>>) session.getAttribute("analiseHistoricoTableModel");
+		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
+		
+		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
+		
+		List<AnaliseHistoricoDTO> listAnaliseHistorico = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota);
+		
+		TableModel<CellModelKeyValue<AnaliseHistoricoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseHistoricoDTO>>();
+		
+		this.configurarTableModelSemPaginacao(listAnaliseHistorico, tableModel);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
@@ -243,7 +249,6 @@ public class HistoricoVendaController extends BaseController {
 
 		historicoVendaPopUpDTO.setTableModel(new TableModel<CellModelKeyValue<PdvDTO>>());
 		configurarTableModelSemPaginacao(list, historicoVendaPopUpDTO.getTableModel());
-		
 
 		historicoVendaPopUpDTO.setCotaDto(popUpDto);
 		
@@ -301,6 +306,21 @@ public class HistoricoVendaController extends BaseController {
 		}
 	
 			result.use(Results.json()).from(resultList, "result").recursive().serialize();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+		
+		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
+		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
+		
+		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota);
+		
+		FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,
+				AnaliseHistoricoDTO.class, this.httpResponse);
+		
+		result.nothing();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

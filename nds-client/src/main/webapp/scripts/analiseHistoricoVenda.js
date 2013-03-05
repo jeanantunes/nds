@@ -4,6 +4,11 @@ var analiseHistoricoVendaController = $.extend(true, {
 		
 		var flexGridService = new FlexGridService();
 		
+		// EXPORTAÇÃO
+		$('#analiseHistoricoVendaXLS').attr('href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=XLS");
+		
+		$('#analiseHistoricoVendaPDF').attr('href', contextPath + "/distribuicao/historicoVenda/exportar?fileType=PDF");
+		
 		analiseHistoricoVendaController.Grids = {
 				BaseHistoricoGrid : flexGridService.GridFactory.createGrid({
 					gridName : "baseHistoricoGrid",

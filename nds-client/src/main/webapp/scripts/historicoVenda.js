@@ -46,10 +46,6 @@ var historicoVendaController = $.extend(true, {
 			pesquisaCota.autoCompletarPorNome('#nomePessoa');
 		});
 		
-//		$('#nomeCota').blur(function (){
-//			pesquisaCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');
-//		});
-		
 		$('#filtroCodigoProduto').change(function (){
 			pesquisaProduto.pesquisarPorCodigoProduto('#filtroCodigoProduto', '#filtroNomeProduto', {}, false, undefined, historicoVendaController.errorCallBack);
 		});
@@ -103,6 +99,13 @@ var historicoVendaController = $.extend(true, {
 			var grids = historicoVendaController.Grids,
 				params = [];
 
+			if (!grids.PesqHistoricoGrid.tableModel.rows || grids.PesqHistoricoGrid.tableModel.rows.length == 0) {
+				
+				exibirMensagem("WARNING", ["Nenhuma cota foi informada"]);
+				
+				return;
+			}
+			
 			url = contextPath + "/distribuicao/historicoVenda/analiseHistorico";
 			
 			for ( var index in grids.PesqHistoricoGrid.tableModel.rows) {
@@ -154,24 +157,21 @@ var historicoVendaController = $.extend(true, {
 			    	      $('#analiseHistoricoPopUpDatalancamento').append('<td width="130" align="center" class="class_linha_2">' + row.cell.dataLancamentoFormatada + '</td>');
 			    	      $('#analiseHistoricoPopUpReparte').append('<td align="right" class="class_linha_1">' + row.cell.repartePrevisto +'</td>');
 			    	      $('#analiseHistoricoPopUpVenda').append('<td align="right" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
-			    	      
+			    	  }
+			    	  
+			    	  qtdEdicoesSelecionadas = 6 - grids.EdicaoSelecionadaGrid.tableModel.rows.length; 
+
+			    	  // por estética de layout, insiro elementos td vazios
+			    	  for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
+			    		  $('#analiseHistoricoPopUpNomeProduto').append('<td class="class_linha_1"></td>');
+			    	      $('#analiseHistoricoPopUpNumeroEdicao').append('<td class="class_linha_1"></td>');
+			    	      $('#analiseHistoricoPopUpDatalancamento').append('<td width="130" align="center" class="class_linha_2"></td>');
+			    	      $('#analiseHistoricoPopUpReparte').append('<td align="right" class="class_linha_1"></td>');
+			    	      $('#analiseHistoricoPopUpVenda').append('<td align="right" class="class_linha_1"></td>');
 			    	  }
 			      };
 			    });
 		});
-
-		
-		
-		
-		// EXPORTAÇÃO
-//		$('#porCotaGerarPDF').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=PDF&porCota=true");
-//		
-//		$('#porCotaGerarXLS').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=XLS&porCota=true");
-		
-		// URLs usadas para requisições post (Inserção e Deleção)
-		historicoVendaController.Url = {
-				// URLs aqui
-		},
 		
 		historicoVendaController.Util = {
 			getFiltroByForm : function(idForm){

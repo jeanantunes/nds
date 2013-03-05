@@ -127,8 +127,8 @@ function escondeDados(){
           </tr>
           </table>
         <span class="bt_novos"><a href="javascript:;" id="voltarBaseAnalise"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span></div>
-        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-    <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+        <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"  id="analiseHistoricoVendaXLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+    <span class="bt_novos" title="Imprimir"><a href="javascript:;" id="analiseHistoricoVendaPDF" ><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
       </fieldset>
        </div>
      </div>
