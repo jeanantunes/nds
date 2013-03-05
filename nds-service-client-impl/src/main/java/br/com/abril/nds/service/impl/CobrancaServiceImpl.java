@@ -85,16 +85,28 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 
 
+	/**
+	 * @deprecated Use {@link #calcularJuros(Banco,Long,BigDecimal,Date,Date)} instead
+	 */
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularJuros(Banco banco, Cota cota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
+										return calcularJuros(banco, cota.getId(),
+												valor, dataVencimento,
+												dataCalculoJuros);
+									}
+
+	@Override
+	@Transactional(propagation=Propagation.SUPPORTS)
+	public BigDecimal calcularJuros(Banco banco, Long idCota,
+									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
 
 		
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
-		FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
+		FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(idCota);
 		
-		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();		
 		
 		PoliticaCobranca politicaPrincipal = formaCobrancaPrincipal.getPoliticaCobranca();
 		
