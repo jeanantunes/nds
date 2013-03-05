@@ -1,18 +1,22 @@
 package br.com.abril.nds.model.distribuicao;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
@@ -54,6 +58,9 @@ public class MixCotaProduto {
 	
 	@Column(name = "REPARTE_MAX")
 	private Long reparteMaximo;
+	
+	@OneToMany(mappedBy="mixCotaProduto", cascade={CascadeType.REMOVE})
+	List<RepartePDV> repartesPDV;
 	
 	
 	public Long getId() {
@@ -134,6 +141,14 @@ public class MixCotaProduto {
 
 	public void setReparteMaximo(Long reparteMaximo) {
 		this.reparteMaximo = reparteMaximo;
+	}
+
+	public List<RepartePDV> getRepartesPDV() {
+		return repartesPDV;
+	}
+
+	public void setRepartesPDV(List<RepartePDV> repartesPDV) {
+		this.repartesPDV = repartesPDV;
 	}
 	
 	

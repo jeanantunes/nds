@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 
 
 @Entity
@@ -38,6 +39,10 @@ public class RepartePDV {
 	@ManyToOne
     @JoinColumn(name="FIXACAO_REPARTE_ID")
     private FixacaoReparte fixacaoReparte;
+	
+	@ManyToOne
+    @JoinColumn(name="MIX_COTA_PRODUTO_ID")
+    private MixCotaProduto mixCotaProduto;
 	
 	public Long getId() {
 		return id;
@@ -77,6 +82,14 @@ public class RepartePDV {
 
 	public void setFixacaoReparte(FixacaoReparte fixacaoReparte) {
 		this.fixacaoReparte = fixacaoReparte;
+	}
+
+	public MixCotaProduto getMixCotaProduto() {
+		return mixCotaProduto;
+	}
+
+	public void setMixCotaProduto(MixCotaProduto mixCotaProduto) {
+		this.mixCotaProduto = mixCotaProduto;
 	}
 	
 	

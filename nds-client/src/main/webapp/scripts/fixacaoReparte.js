@@ -594,7 +594,6 @@ var fixacaoReparteController = $.extend(true, {
 		$(".pdvCotaGrid").flexOptions({
 			url: contextPath + "/distribuicao/fixacaoReparte/carregarGridPdv",
 			dataType : 'json',
-//			params: fixacaoReparteController.getIdSelecionado(idFixacao)
 			params: params
 		});
 		
@@ -631,7 +630,7 @@ var fixacaoReparteController = $.extend(true, {
 	},
 	
 	//funcao que retorna id da fixação a lista de fixacoes
-	getIdSelecionado: function(idFixacao){
+	getIdSelecionado: function(cell){
 		var data = [];
 		data.push({name:'filtro.idFixacao',	value: idFixacao});
 		data.push({name:'filtro.codigoCota', value: $("#codigoCota").val()});

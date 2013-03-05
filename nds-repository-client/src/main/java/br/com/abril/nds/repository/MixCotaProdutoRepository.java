@@ -16,5 +16,9 @@ public interface MixCotaProdutoRepository extends
 	
 	public List<MixProdutoDTO> pesquisarPorProduto(
 			FiltroConsultaMixPorProdutoDTO filtroConsultaMixProdutoDTO);
+	
+	public void  excluirTodos();
+	
+	public boolean existeMixCotaProdutoCadastrado(Long idProduto, Long idCota);
 
 }

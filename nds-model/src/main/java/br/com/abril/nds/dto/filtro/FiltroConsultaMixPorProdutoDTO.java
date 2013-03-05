@@ -9,9 +9,11 @@ import br.com.abril.nds.util.export.Exportable;
 public class FiltroConsultaMixPorProdutoDTO extends FiltroDTO implements Serializable{
  
 	private Long id;
-	private Integer codigoProduto;
+	private String codigoProduto;
 	private String classificacaoProduto;
 	private String nomeProduto;
+	
+	
 	
 	public Long getId() {
 		return id;
@@ -19,10 +21,10 @@ public class FiltroConsultaMixPorProdutoDTO extends FiltroDTO implements Seriali
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Integer getCodigoProduto() {
+	public String getCodigoProduto() {
 		return codigoProduto;
 	}
-	public void setCodigoProduto(Integer codigoProduto) {
+	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
 	public String getClassificacaoProduto() {

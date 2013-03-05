@@ -13,9 +13,9 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.MixCotaDTO;
+import br.com.abril.nds.dto.MixCotaProdutoDTO;
 import br.com.abril.nds.dto.MixProdutoDTO;
 import br.com.abril.nds.dto.PdvDTO;
-import br.com.abril.nds.dto.QuantidadePdvCotaDTO;
 import br.com.abril.nds.dto.RepartePDVDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
@@ -23,12 +23,17 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.MixCotaProdutoService;
+import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.TipoProdutoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
@@ -45,8 +50,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/distribuicao/mixCotaProduto")
 public class MixCotaProdutoController extends BaseController {
 
-	private static final String FILTRO_PRODUTO_SESSION_ATTRIBUTE = "filtroPorProduto";
-	private static final String FILTRO_COTA_SESSION_ATTRIBUTE = "filtroPorCota";
+	private static final String FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE = "filtroMixPorProduto";
+	private static final String FILTRO_MIX_COTA_SESSION_ATTRIBUTE = "filtroMixPorCota";
 
 	@Autowired
 	private Result result;
@@ -62,13 +67,19 @@ public class MixCotaProdutoController extends BaseController {
 
 	@Autowired
 	MixCotaProdutoService mixCotaProdutoService;
-
+	
 	@Autowired
-	PdvRepository pdvRepository;
+	PdvService pdvService;
+	
+	@Autowired
+	UsuarioService usuarioService;
+	
+	@Autowired
+	RepartePdvService repartePdvService;
 
-	FiltroConsultaMixPorCotaDTO filtroPorCota;
+	FiltroConsultaMixPorCotaDTO filtroMixPorCota;
 
-	FiltroConsultaFixacaoProdutoDTO filtroPorProduto;
+	FiltroConsultaFixacaoProdutoDTO filtroMixPorProduto;
 
 	FixacaoReparteDTO fixacaoReparteDTO;
 
@@ -93,8 +104,8 @@ public class MixCotaProdutoController extends BaseController {
 	public void pesquisarPorProduto(FiltroConsultaMixPorProdutoDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
 
-		if (session.getAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE) == null) {
-			this.session.setAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE, filtro);
+		if (session.getAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE) == null) {
+			this.session.setAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE, filtro);
 		}
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
@@ -119,8 +130,8 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/pesquisarPorCota")
 	public void pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtro,
 			String sortorder, String sortname, int page, int rp) {
-		if (session.getAttribute(FILTRO_COTA_SESSION_ATTRIBUTE) == null) {
-			this.session.setAttribute(FILTRO_COTA_SESSION_ATTRIBUTE, filtro);
+		if (session.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE) == null) {
+			this.session.setAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE, filtro);
 		}
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
@@ -182,38 +193,13 @@ public class MixCotaProdutoController extends BaseController {
 		return tableModel;
 	}
 
-	/*
-	 * @Post
-	 * 
-	 * @Path("/carregarGridHistoricoProduto") public void
-	 * carregarGridHistoricoProduto(FiltroConsultaFixacaoProdutoDTO filtro ,
-	 * String sortorder, String sortname, int page, int rp){
-	 * if(session.getAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE)==null){
-	 * this.session.setAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE, filtro); }
-	 * filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
-	 * tratarFiltroPorProduto(filtro); List<FixacaoReparteDTO> resultadoPesquisa
-	 * = fixacaoReparteService.obterHistoricoLancamentoPorProduto(filtro);
-	 * 
-	 * 
-	 * 
-	 * 
-	 * TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModel = new
-	 * TableModel<CellModelKeyValue<FixacaoReparteDTO>>();
-	 * 
-	 * tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPesquisa
-	 * )); tableModel.setPage(filtro.getPaginacao().getPosicaoInicial());
-	 * tableModel.setTotal(resultadoPesquisa.size());
-	 * result.use(Results.json()).
-	 * withoutRoot().from(tableModel).recursive().serialize(); }
-	 */
-
 	@Post
 	@Path("/carregarGridHistoricoCota")
 	public void carregarGridHistoricoCota(FiltroConsultaFixacaoCotaDTO filtro,
 			String codigoProduto, String sortorder, String sortname, int page,
 			int rp) {
-		if (session.getAttribute(FILTRO_COTA_SESSION_ATTRIBUTE) == null) {
-			this.session.setAttribute(FILTRO_COTA_SESSION_ATTRIBUTE, filtro);
+		if (session.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE) == null) {
+			this.session.setAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE, filtro);
 		}
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		List<FixacaoReparteDTO> resultadoPesquisa = fixacaoReparteService
@@ -233,32 +219,7 @@ public class MixCotaProdutoController extends BaseController {
 				.serialize();
 	}
 
-	@Post
-	@Path("/adicionarFixacaoReparte")
-	public void adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
-
-	}
-
-	@Post
-	@Path("/removerFixacaoReparte")
-	public void removerFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
-
-	}
-
-	@Post
-	@Path("/carregarGridPdv")
-	public void carregarGridPdv(FiltroConsultaFixacaoProdutoDTO filtro,
-			String sortorder, String sortname, int page, int rp) {
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
-		List<PdvDTO> listaPdv = fixacaoReparteService
-				.obterListaPdvPorFixacao(filtro.getIdFixacao());
-		TableModel<CellModelKeyValue<PdvDTO>> tableModel = new TableModel<CellModelKeyValue<PdvDTO>>();
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPdv));
-		tableModel.setPage(filtro.getPaginacao().getPosicaoInicial());
-		tableModel.setTotal(listaPdv.size());
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive()
-				.serialize();
-	}
+	
 
 	@Post
 	@Path("/editarRepartePorPdv")
@@ -266,36 +227,72 @@ public class MixCotaProdutoController extends BaseController {
 			String sortorder, String sortname, int page, int rp) {
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
-		List<RepartePDVDTO> resultadoPesquisa = mixCotaProdutoService
-				.obterRepartePdv(filtro);
+		MixCotaProdutoDTO resultadoPesquisa = mixCotaProdutoService.obterPorId(filtro.getId());
 		result.use(Results.json()).withoutRoot().from(resultadoPesquisa)
 				.recursive().serialize();
+	}
+	
+	@Post
+	@Path("/carregarGridPdv")
+	public void carregarGridPdv(FiltroConsultaMixPorCotaDTO filtro , String sortorder, String sortname, int page, int rp){
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		List<PdvDTO> listaPDVDTO = mixCotaProdutoService.obterListaPdvPorMix(filtro.getId());
+		Produto produto = produtoService.obterProdutoPorID(filtro.getProdutoId());
+		
+		for (PdvDTO pdvDTO : listaPDVDTO) {
+			RepartePDV reparteEncontrado = repartePdvService.obterRepartePorPdvMix(filtro.getId(), produto.getId(), pdvDTO.getId());
+			if(reparteEncontrado !=null)
+				pdvDTO.setReparte( reparteEncontrado.getReparte());
+			}
+		
+ 		TableModel<CellModelKeyValue<PdvDTO>> tableModel = new TableModel<CellModelKeyValue<PdvDTO>>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPDVDTO));
+		tableModel.setPage(filtro.getPaginacao().getPosicaoInicial());
+		tableModel.setTotal(listaPDVDTO.size());
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 
 	@Post
 	@Path("/salvarGridPdvReparte")
-	public void salvarGridPdvReparte(String repartes, String codigos,
-			Long idFixacao) {
-//		fixacaoReparteService.salvarGridPdvReparte(repartes.split(","),
-//				codigos.split(","), idFixacao);
+	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idMix){
+		repartePdvService.salvarRepartesPDVMix(listPDV,codProduto, codCota, idMix);
+		throw new ValidacaoException(TipoMensagem.SUCCESS,"Operação realizada com sucesso!");
 	}
-
+	
 	@Post
-	@Path("/verificaCotaPossuiPdvs")
-	public void verificaCotaPossuiPdvs(Long idFixacao) {
-		QuantidadePdvCotaDTO quantidadePdvCotaDTO = new QuantidadePdvCotaDTO();
-		quantidadePdvCotaDTO.setCotaPossuiVariosPdvs(fixacaoReparteService
-				.isCotaPossuiVariosPdvs(idFixacao));
-		result.use(Results.json()).withoutRoot().from(quantidadePdvCotaDTO)
-				.recursive().serialize();
+	@Path("/excluirTodos")
+	public void excluirTodos(){
+		mixCotaProdutoService.excluirTodos();
+		throw new ValidacaoException(TipoMensagem.SUCCESS,
+				"Operação realizada com sucesso!");
+	}
+	
+	
+	@Post
+	@Path("/adicionarMixProduto")
+	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto,String produtoId ){
+		
+		mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto,produtoId);
+		throw new ValidacaoException(TipoMensagem.SUCCESS,
+				"Operação realizada com sucesso!");
+	}
+	
+	@Post
+	@Path("/adicionarMixCota")
+	public void adicionarMixCota(List<MixCotaProdutoDTO>listaNovosMixCota, Integer cotaId){
+		mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);
+		throw new ValidacaoException(TipoMensagem.SUCCESS,
+				"Operação realizada com sucesso!");
 	}
 
+	
 	@Get
 	public void exportarGridCota(FileType fileType, String tipoExportacao)
 			throws IOException {
 
 		FiltroConsultaMixPorCotaDTO filtroPorCota = (FiltroConsultaMixPorCotaDTO) session
-				.getAttribute(FILTRO_COTA_SESSION_ATTRIBUTE);
+				.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE);
 
 		List<MixCotaDTO> resultadoPesquisa = mixCotaProdutoService
 				.pesquisarPorCota(filtroPorCota);
@@ -317,7 +314,7 @@ public class MixCotaProdutoController extends BaseController {
 			throws IOException {
 
 		FiltroConsultaMixPorProdutoDTO filtroPorProduto = (FiltroConsultaMixPorProdutoDTO) session
-				.getAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE);
+				.getAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE);
 
 		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService
 				.pesquisarPorProduto(filtroPorProduto);
@@ -337,28 +334,28 @@ public class MixCotaProdutoController extends BaseController {
 	private void tratarFiltroPorCota(FiltroConsultaMixPorCotaDTO filtroAtual) {
 
 		FiltroConsultaMixPorCotaDTO filtroSession = (FiltroConsultaMixPorCotaDTO) session
-				.getAttribute(FILTRO_COTA_SESSION_ATTRIBUTE);
+				.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE);
 
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
 
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 
-		session.setAttribute(FILTRO_COTA_SESSION_ATTRIBUTE, filtroAtual);
+		session.setAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE, filtroAtual);
 	}
 
 	private void tratarFiltroPorProduto(
 			FiltroConsultaMixPorProdutoDTO filtroAtual) {
 
 		FiltroConsultaMixPorProdutoDTO filtroSession = (FiltroConsultaMixPorProdutoDTO) session
-				.getAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE);
+				.getAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE);
 
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
 
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 
-		session.setAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE, filtroAtual);
+		session.setAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 
 	private boolean isRangeRepartesValido(FixacaoReparteDTO fixacaoReparteDTO) {

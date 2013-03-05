@@ -70,23 +70,21 @@ public class RepartePDVRepositoryImpl extends  AbstractRepositoryModel<RepartePD
 	        		
 	}
 	
-	public RepartePDV obterRepartePdv(Long idFixacao, Long idProduto, Long idPdv){
+	public RepartePDV obterRepartePdvMix(Long idMix, Long idProduto, Long idPdv){
 		 StringBuilder hql = new StringBuilder();
 
 			hql.append(" from RepartePDV rep " )
 				.append(" WHERE rep.pdv.id = :idPdv ")
 				.append(" and  rep.produto.id = :idProduto ")
-				.append(" and  rep.fixacaoReparte.id = :idFixacao ");
+				.append(" and  rep.mixCotaProduto.id = :idMix ");
 		        	
 			Query q = getSession().createQuery(hql.toString());
-	        q.setParameter("idFixacao", idFixacao);
+	        q.setParameter("idMix", idMix);
 	        q.setParameter("idProduto", idProduto);
 	        q.setParameter("idPdv", idPdv);
 	        return (RepartePDV) q.uniqueResult();
 		
 	}
-
-	 
 	
 	
 }

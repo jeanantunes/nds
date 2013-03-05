@@ -1,6 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.DateUtil;
@@ -12,7 +14,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Exportable
 public class MixCotaDTO implements Serializable{
 	
-	private Long id;
+	private BigInteger id;
 	
 	@Export(label="codigo",exhibitionOrder = 1)
 	private String codigoProduto;
@@ -24,19 +26,19 @@ public class MixCotaDTO implements Serializable{
 	private String classificacaoProduto;
 	
 	@Export(label="reparte médio", exhibitionOrder = 4)
-	private Long reparteMedio;
+	private BigDecimal reparteMedio;
 	
 	@Export(label="venda média",exhibitionOrder = 5)
-	private Long vendaMedia;
+	private BigDecimal vendaMedia;
 	
 	@Export(label="último reparte",exhibitionOrder = 6)
-	private Long ultimoReparte;
+	private BigDecimal ultimoReparte;
 	
 	@Export(label="reparte mínimo" ,exhibitionOrder = 7)
-	private Long reparteMinimo;
+	private BigInteger reparteMinimo;
 	
 	@Export(label="reparte máximo" ,exhibitionOrder = 8)
-	private Long reparteMaximo;
+	private BigInteger reparteMaximo;
 	
 	@Export(label="usuário",exhibitionOrder = 9)
 	private String usuario;
@@ -48,7 +50,14 @@ public class MixCotaDTO implements Serializable{
 	@Export(label="hora",exhibitionOrder = 11)
 	private String hora;
 	
+//	necessario para modal reparte por pdv
+	private BigInteger qtdPdv;
 	private Date dataHora;
+	private BigInteger idCota;
+	private BigInteger idProduto;
+	
+//	necessario para modal adicionar mix 
+	private Integer numeroCota;
 	
 	private PaginacaoVO paginacaoVO;
 	
@@ -82,52 +91,51 @@ public class MixCotaDTO implements Serializable{
 			this.classificacaoProduto = classificacaoProduto;
 		}
 	}
-	public Long getReparteMedio() {
+	public BigDecimal getReparteMedio() {
 		return reparteMedio;
 	}
-	public void setReparteMedio(Long reparteMedio) {
+	public void setReparteMedio(BigDecimal reparteMedio) {
 		if(reparteMedio==null){
-			this.reparteMedio=0L;
+			this.reparteMedio=new BigDecimal(0);
 		}else{
 			this.reparteMedio = reparteMedio;
 		}
 	}
-	public Long getVendaMedia() {
+	public BigDecimal getVendaMedia() {
 		return vendaMedia;
 	}
-	public void setVendaMedia(Long vendaMedia) {
+	public void setVendaMedia(BigDecimal vendaMedia) {
 		if(vendaMedia==null){
-			this.vendaMedia=0L;
+			this.vendaMedia=new BigDecimal(0);
 		}else{
 			this.vendaMedia = vendaMedia;
 		}
 	}
-	public Long getUltimoReparte() {
+	public BigDecimal getUltimoReparte() {
 		return ultimoReparte;
 	}
-	public void setUltimoReparte(Long ultimoReparte) {
+	public void setUltimoReparte(BigDecimal ultimoReparte) {
 		if(ultimoReparte==null){
-			this.ultimoReparte=0L;
+			this.ultimoReparte=BigDecimal.ZERO;
 		}else{
 			this.ultimoReparte = ultimoReparte;
 		}
 	}
-	public Long getReparteMinimo() {
+	public BigInteger getReparteMinimo() {
 		return reparteMinimo;
 	}
-	public void setReparteMinimo(Long reparteMinimo) {
+	public void setReparteMinimo(BigInteger reparteMinimo) {
 		if(reparteMinimo==null){
-			this.reparteMinimo=0L;
+			this.reparteMinimo=BigInteger.ZERO;
 		}else{
 			this.reparteMinimo = reparteMinimo;
 		}
 	}
-	public Long getReparteMaximo() {
+	public BigInteger getReparteMaximo() {
 		return reparteMaximo;
 	}
-	public void setReparteMaximo(Long reparteMaximo) {
+	public void setReparteMaximo(BigInteger reparteMaximo) {
 		if(reparteMaximo==null){
-			this.reparteMaximo =0L;
 		}else{
 			this.reparteMaximo = reparteMaximo;
 		}
@@ -173,11 +181,35 @@ public class MixCotaDTO implements Serializable{
 		}
 		this.dataHora = dataHora;
 	}
-	public Long getId() {
+	public BigInteger getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(BigInteger id) {
 		this.id = id;
+	}
+	public BigInteger getQtdPdv() {
+		return qtdPdv;
+	}
+	public void setQtdPdv(BigInteger qtdPdv) {
+		this.qtdPdv = qtdPdv;
+	}
+	public BigInteger getIdCota() {
+		return idCota;
+	}
+	public void setIdCota(BigInteger idCota) {
+		this.idCota = idCota;
+	}
+	public BigInteger getIdProduto() {
+		return idProduto;
+	}
+	public void setIdProduto(BigInteger idProduto) {
+		this.idProduto = idProduto;
+	}
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 	
 	

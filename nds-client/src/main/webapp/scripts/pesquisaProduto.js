@@ -12,6 +12,7 @@ function PesquisaProduto(workspace) {
 	
 	//Pesquisa por código de produto
 	this.pesquisarPorCodigoProduto = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
+		
 		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).val();
 		
 		codigoProduto = $.trim(codigoProduto);

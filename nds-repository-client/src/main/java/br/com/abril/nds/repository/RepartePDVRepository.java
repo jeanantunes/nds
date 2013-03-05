@@ -13,5 +13,5 @@ public interface RepartePDVRepository  extends Repository<RepartePDV, Long> {
 	
 	public List<RepartePDVDTO> obterRepartePdvMixPorCota(Long idCota);
 	
-	public RepartePDV obterRepartePdv(Long idFixacao, Long idProduto, Long idPdv);
+	public RepartePDV obterRepartePdvMix(Long idMix, Long idProduto, Long idPdv);
 }

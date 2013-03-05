@@ -11,6 +11,9 @@ public class FiltroConsultaMixPorCotaDTO extends FiltroDTO implements Serializab
 	private Long id;
 	private Integer cota;
 	private String nomeCota;
+	//pesquisa repartes pdv
+	private Long produtoId;
+	private Long cotaId;
 	
 	public Integer getCota() {
 		return cota;
@@ -29,6 +32,18 @@ public class FiltroConsultaMixPorCotaDTO extends FiltroDTO implements Serializab
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public Long getProdutoId() {
+		return produtoId;
+	}
+	public void setProdutoId(Long produtoId) {
+		this.produtoId = produtoId;
+	}
+	public Long getCotaId() {
+		return cotaId;
+	}
+	public void setCotaId(Long cotaId) {
+		this.cotaId = cotaId;
 	}
 	
 	

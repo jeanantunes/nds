@@ -12,8 +12,10 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
+import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RepartePDVRepository;
@@ -26,6 +28,9 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 	
 	@Autowired
 	FixacaoReparteRepository fixacaoReparteRepository;
+	
+	@Autowired
+	MixCotaProdutoRepository mixCotaProdutoRepository;
 	
 	@Autowired
 	CotaRepository  cotaRepository;
@@ -41,6 +46,13 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 	public RepartePDV obterRepartePorPdv(Long idFixacao, Long idProduto, Long idPdv) {
 		return repartePDVRepository.obterRepartePorPdv(idFixacao, idProduto, idPdv);
 	}
+	
+	@Override
+	@Transactional
+	public RepartePDV obterRepartePorPdvMix(Long idMix, Long idProduto,
+			Long idPdv) {
+		return repartePDVRepository.obterRepartePdvMix(idMix, idProduto, idPdv);
+	}
 
 	@Override
 	@Transactional
@@ -55,7 +67,7 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			if(repartePDVDTO.getCodigoPdv() !=null){
 				pdv= pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
 			}
-			RepartePDV repartePDV =  repartePDVRepository.obterRepartePdv(idFixacao, produto.getId(), pdv.getId());
+			RepartePDV repartePDV =  repartePDVRepository.obterRepartePorPdv(idFixacao, produto.getId(), pdv.getId());
 			if(repartePDV == null){
 				repartePDV = new RepartePDV();
 			}	
@@ -71,7 +83,37 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 		fixacaoReparteRepository.alterar(fixacaoReparte);
 		
 	}
-	
+
+
+	@Override
+	@Transactional
+	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idMix) {
+		int soma = 0;
+		Cota cota=  cotaRepository.obterPorNumerDaCota(new Integer(codCota));
+		Produto produto= produtoRepository.obterProdutoPorCodigo(codProduto);
+		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(idMix);
+		PDV pdv = null;
+		
+		for (RepartePDVDTO repartePDVDTO : listaRepartes) {
+			if(repartePDVDTO.getCodigoPdv() !=null){
+				pdv= pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
+			}
+			RepartePDV repartePDV =  repartePDVRepository.obterRepartePdvMix(idMix, produto.getId(), pdv.getId());
+			if(repartePDV == null){
+				repartePDV = new RepartePDV();
+			}	
+			repartePDV.setMixCotaProduto(mixCotaProduto);
+			repartePDV.setPdv(pdv);
+			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
+			repartePDV.setProduto(produto);
+			
+			soma += repartePDV.getReparte();
+			repartePDVRepository.merge(repartePDV);
+		}
+		mixCotaProduto.setReparteMaximo(new Long(soma));
+		mixCotaProdutoRepository.alterar(mixCotaProduto);
+		
+	}
 	
 	
 }

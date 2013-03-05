@@ -6,7 +6,7 @@ import java.io.Serializable;
 public class RepartePDVDTO implements Serializable{
 	
 	private Long id;
-	private Long reparte;
+	private Integer reparte;
 	private Long  codigoPdv;
 	private String nomePDV;
 	private String nomeCota;
@@ -28,10 +28,10 @@ public class RepartePDVDTO implements Serializable{
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Long getReparte() {
+	public Integer getReparte() {
 		return reparte;
 	}
-	public void setReparte(Long reparte) {
+	public void setReparte(Integer reparte) {
 		this.reparte = reparte;
 	}
 	public Long getCodigoPdv() {
