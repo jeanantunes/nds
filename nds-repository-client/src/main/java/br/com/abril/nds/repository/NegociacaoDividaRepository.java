@@ -10,7 +10,7 @@ import br.com.abril.nds.model.financeiro.Negociacao;
 
 public interface NegociacaoDividaRepository extends Repository<Negociacao, Long> {
 
-	List<NegociacaoDividaDTO> obterCotaPorNumero(FiltroConsultaNegociacaoDivida filtro);
+	List<NegociacaoDividaDTO> obterNegociacaoPorCota(FiltroConsultaNegociacaoDivida filtro);
 
 	Long obterCotaPorNumeroCount(FiltroConsultaNegociacaoDivida filtro);
 

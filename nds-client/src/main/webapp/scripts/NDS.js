@@ -189,7 +189,6 @@ function floatValue(value) {
         	
     if (!val) return; 
     
-    
     val = val.replace(".", "");
     
     val = val.replace(",", ".");
@@ -197,6 +196,53 @@ function floatValue(value) {
     val = parseFloat(val);
             
     return val;
+}
+
+function formatMoneyValue(value) {
+	
+	var val = value;
+        	
+    if (!val) return; 
+    
+    if(getLocale(value) == "PT-BR") {
+        val = val.replace(".", "");
+    }
+    
+    val = val.replace(",", ".");
+    		
+    val = parseFloat(val);
+            
+    return val;
+}
+
+function getLocale(value) {
+	var dots = occurrencyIndexes(value, ".");
+	var commas = occurrencyIndexes(value, ",");
+	
+	if(commas.length > 0 && dots.length > 0) {
+		if(dots[0] < commas[0] ) {
+			return "PT-BR"
+		} else {
+			return "EN-US"
+		}
+	} else if (commas.length > 0 && dots.length == 0) {
+		return "PT-BR"
+	} else {
+		return "EN-US"
+	}
+	
+}
+
+function occurrencyIndexes(source, find) {
+	var result = [];
+	for(i=0;i<source.length; ++i) {
+		// If you want to search case insensitive use 
+		// if (source.substring(i, i + find.length).toLowerCase() == find) {
+		if (source.substring(i, i + find.length) == find) {
+			result.push(i);
+		}
+	}
+	return result;
 }
 
 function serializeParamsToFlexiGridPost(params){
@@ -739,6 +785,17 @@ function redimensionarWorkspace() {
 		$('.areaBts').addClass('navbar-fixed-top');
 	}*/
 	
+}
+
+function cloneObject(source) {
+    for (i in source) {
+        if (typeof source[i] == 'source') {
+            this[i] = new cloneObject(source[i]);
+        }
+        else{
+            this[i] = source[i];
+	}
+    }
 }
 
 //@ sourceURL=NDS.js

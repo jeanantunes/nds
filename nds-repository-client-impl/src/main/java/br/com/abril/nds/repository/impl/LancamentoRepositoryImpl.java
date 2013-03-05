@@ -708,8 +708,8 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("expectativaEncalheSede")
 													  .addScalar("expectativaEncalheAtendida")
 													  .addScalar("expectativaEncalheAlternativo")
-													  .addScalar("valorTotal")
-													  .addScalar("desconto",StandardBasicTypes.BIG_DECIMAL)
+													  .addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL)
+													  .addScalar("desconto", StandardBasicTypes.BIG_DECIMAL)
 													  .addScalar("parcial")
 													  .addScalar("peso", StandardBasicTypes.LONG)
 													  .addScalar("idEditor", StandardBasicTypes.LONG)
@@ -1069,9 +1069,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.NUMERO_REPROGRAMACOES as numeroReprogramacoes, ");
 		
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
-		sql.append(" (lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * (produtoEdicao.PRECO_VENDA - coalesce(produto.DESCONTO_ID, 0, (select VALOR from DESCONTO where ID = produto.DESCONTO_ID))) ");
+		sql.append(" (lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * produtoEdicao.PRECO_VENDA ");
 		sql.append(" else ");
-		sql.append(" lancamento.REPARTE * (produtoEdicao.PRECO_VENDA - coalesce(produto.DESCONTO_ID, 0, (select VALOR from DESCONTO where ID = produto.DESCONTO_ID))) ");
+		sql.append(" lancamento.REPARTE * produtoEdicao.PRECO_VENDA ");
 		sql.append(" end as valorTotal, ");
 		
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");

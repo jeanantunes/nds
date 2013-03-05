@@ -270,8 +270,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Transactional(readOnly=true)
 	public CobrancaVO obterDadosCobranca(Long idCobranca) {
 		//PARAMETROS PARA CALCULO DE JUROS E MULTA
-		Distribuidor distribuidor = distribuidorService.obter();
-        Date dataOperacao = distribuidor.getDataOperacao();
+		
+        Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		CobrancaVO cobranca=null;
 		
@@ -323,7 +323,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 									   dataOperacao);
 				//CALCULA MULTA
 				valorMultaCalculado =
-					this.calcularMulta(cob.getBanco(), cob.getCota(), cob.getValor().subtract(saldoDivida));
+					this.calcularMulta(cob.getBanco(), cob.getCota(),
+							           cob.getValor().subtract(saldoDivida));
 			}
 			
 			cobranca.setDataPagamento( DateUtil.formatarDataPTBR(dataOperacao) );

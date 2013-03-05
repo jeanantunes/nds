@@ -365,6 +365,10 @@ public class CotaController extends BaseController {
 				String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
 					
 				CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
+				
+				if (cota.getSituacaoCadastro() != null) {
+					cotaVO.setStatus(cota.getSituacaoCadastro().toString());
+				}
 	
 				listaCotasAutoComplete.add(new ItemAutoComplete(nomeExibicao, null, cotaVO));
 			}
@@ -414,8 +418,13 @@ public class CotaController extends BaseController {
 		for (Cota cota : cotas){
 		
 		    String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
-				
-		    cotasVO.add( new CotaVO(cota.getNumeroCota(), nomeExibicao) );
+		    
+		    CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
+		    if (cota.getSituacaoCadastro() != null) {
+		    	cotaVO.setStatus(cota.getSituacaoCadastro().toString());	
+			}
+		    
+		    cotasVO.add(cotaVO);
 		}
 		
 		if (cotasVO.size() > 1){

@@ -426,10 +426,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			");
 
 		hql.append(" 	    (movimentoCota.valoresAplicados.valorDesconto) as desconto, 	");
-		hql.append(" 	    movimentoCota.valoresAplicados.precoVenda as precoVenda, 		");
+		hql.append("		produtoEdicao.precoVenda as precoVenda,    		");
 		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append(" 	    (movimentoCota.valoresAplicados.precoComDesconto) as precoComDesconto, ");
+		hql.append("    	(produtoEdicao.precoVenda - ");
+		hql.append(" 			(produtoEdicao.precoVenda * coalesce((movimentoCota.valoresAplicados.valorDesconto) / 100, 0)) ");
+		hql.append(" 		) as precoComDesconto, ");
 		
 		hql.append(" ( ");
 		hql.append(obterSubHqlQtdeReparte(filtro));

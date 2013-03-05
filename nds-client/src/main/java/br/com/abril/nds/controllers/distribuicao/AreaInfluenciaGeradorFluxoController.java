@@ -106,7 +106,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			//TODO Alterar para dois filtros. Um para cada opção de filtro: Area Influencia ou Cota
-			FileExporter.to("areaInfluenciaGeradorFluxo", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("areaInfluenciaGeradorFluxo", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaFiltroAreaInfluenciaGeradorFluxoDTO, AreaInfluenciaGeradorFluxoDTO.class, this.httpResponse);
 			
 		result.nothing();

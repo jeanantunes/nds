@@ -163,6 +163,7 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 		$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).hide();
+		$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).hide();
 		
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexOptions({
 			"url" : contextPath + '/devolucao/fechamentoEncalhe/pesquisar',
@@ -202,6 +203,7 @@ var fechamentoEncalheController = $.extend(true, {
 		if (resultado.rows && resultado.rows.length > 0) {
 			$('#bt_cotas_ausentes', fechamentoEncalheController.workspace).show();
 			$('.divBotoesPrincipais', fechamentoEncalheController.workspace).show();
+			$('#btAnaliticoEncalhe', fechamentoEncalheController.workspace).show();
 		}
 		
 		$.each(resultado.rows, function(index, row) {
@@ -358,22 +360,21 @@ var fechamentoEncalheController = $.extend(true, {
 				if (tipoMensagem && listaMensagens) {
 					
 					exibirMensagem(tipoMensagem, listaMensagens);
+					
+					return;
 				}
 				
-				if (!result) {
-					
-					fechamentoEncalheController.isFechamento = true;
-					
-					fechamentoEncalheController.popup_encerrarEncalhe(true);
-					
-				} else {
+				if (result.isNenhumaCotaAusente == 'true') {
 					
 					if ($( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace).dialog("isOpen")) {
-
 						$( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace).dialog("destroy");
 					}
 
 					fechamentoEncalheController.popup_encerrar();
+					
+				} else {
+					fechamentoEncalheController.isFechamento = true;
+					fechamentoEncalheController.popup_encerrarEncalhe(true);
 				}			
 			},
 		  	null,
@@ -409,14 +410,24 @@ var fechamentoEncalheController = $.extend(true, {
 							var listaMensagens = result.listaMensagens;
 							
 							if (tipoMensagem && listaMensagens) {
+								
 								exibirMensagem(tipoMensagem, listaMensagens);
+								
+								_this.dialog("destroy");
+								
+								return;
+								
 							}
 
-							if (!result) {
+							if (result.isNenhumaCotaAusente == 'true') {
+								
+								fechamentoEncalheController.popup_encerrar();
+								
+							} else {
+								
 								fechamentoEncalheController.isFechamento = true;
 								fechamentoEncalheController.popup_encerrarEncalhe(true);
-							} else {
-								fechamentoEncalheController.popup_encerrar();
+								
 							}
 							
 							fechamentoEncalheController.pesquisar();

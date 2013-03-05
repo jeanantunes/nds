@@ -28,7 +28,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<NegociacaoDividaDTO> obterCotaPorNumero(FiltroConsultaNegociacaoDivida filtro) {
+	public List<NegociacaoDividaDTO> obterNegociacaoPorCota(FiltroConsultaNegociacaoDivida filtro) {
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT cobranca.dataEmissao as dtEmissao, ");
@@ -38,9 +38,9 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		hql.append(" THEN 0 ELSE datediff(current_date(), cobranca.dataVencimento) END  as prazo, ");
 		hql.append(" (COALESCE(cobranca.encargos, 0) + cobranca.valor) as total, ");
 		hql.append(" cobranca.id as idCobranca, ");
-		hql.append(" cobranca.encargos as encargos ");
+		hql.append(" coalesce(cobranca.encargos, 0) as encargos ");
 		
-		this.getObterCotaPorNumeroFrom(hql, filtro);
+		this.obterNegociacaoPorCotaFrom(hql, filtro);
 		
 		if (filtro.getPaginacaoVO() != null &&
 				filtro.getPaginacaoVO().getSortColumn() != null){
@@ -59,7 +59,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 			query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
 		}
 		
-		this.setParametrosObterCotaPorNumero(query, filtro);
+		this.setParametrosObterNegociacaoPorCota(query, filtro);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(NegociacaoDividaDTO.class));
 		
@@ -70,16 +70,16 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 	public Long obterCotaPorNumeroCount(FiltroConsultaNegociacaoDivida filtro){
 		
 		StringBuilder hql = new StringBuilder(" select count (cobranca.id) ");
-		this.getObterCotaPorNumeroFrom(hql, filtro);
+		this.obterNegociacaoPorCotaFrom(hql, filtro);
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		this.setParametrosObterCotaPorNumero(query, filtro);
+		this.setParametrosObterNegociacaoPorCota(query, filtro);
 		
 		return (Long) query.uniqueResult();
 	}
 	
-	private void getObterCotaPorNumeroFrom(StringBuilder hql, FiltroConsultaNegociacaoDivida filtro){
+	private void obterNegociacaoPorCotaFrom(StringBuilder hql, FiltroConsultaNegociacaoDivida filtro){
 		
 		hql.append(" FROM Cobranca cobranca ");
 		hql.append(" JOIN cobranca.cota ");
@@ -91,7 +91,7 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		}
 	}
 	
-	private void setParametrosObterCotaPorNumero(Query query, FiltroConsultaNegociacaoDivida filtro){
+	private void setParametrosObterNegociacaoPorCota(Query query, FiltroConsultaNegociacaoDivida filtro){
 		
 		query.setParameter("numCota", filtro.getNumeroCota());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);

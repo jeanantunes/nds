@@ -353,7 +353,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 			
-			processarBalanceamento(listaProdutoRecolhimento, balanceamentoRecolhimento.isSemanaRecolhimento(),
+			processarBalanceamento(listaProdutoRecolhimento,
 								   paginacao, sortname);
 		} else {
 			
@@ -752,13 +752,12 @@ public class MatrizRecolhimentoController extends BaseController {
 	/**
 	 * Método que processa os balanceamentos para exibição no grid.
 	 * 
-	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento 
-	 * @param isSemanaRecolhimento - flag que indica se a semana atual é a semana de recolhimento
+	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento
 	 * @param paginacao - paginação
 	 * @param sortname - nome da coluna para ordenação
 	 */
 	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento,
-										boolean isSemanaRecolhimento, PaginacaoVO paginacao, String sortname) {
+										PaginacaoVO paginacao, String sortname) {
 		
 		
 		
@@ -817,14 +816,14 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setDataRecolhimento(
 				produtoRecolhimentoDTO.getDataRecolhimentoPrevista());
 			
-			produtoRecolhimentoVO.setEncalheSede( produtoRecolhimentoDTO.getExpectativaEncalheSede()==null ? BigDecimal.ZERO :
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheSede(), 2));
+			produtoRecolhimentoVO.setEncalheSede(
+				produtoRecolhimentoDTO.getExpectativaEncalheSede());
 			
-			produtoRecolhimentoVO.setEncalheAtendida( produtoRecolhimentoDTO.getExpectativaEncalheAtendida()==null ? BigDecimal.ZERO :
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAtendida(), 2));
+			produtoRecolhimentoVO.setEncalheAtendida(
+				produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
 				
-			produtoRecolhimentoVO.setEncalheAlternativo( produtoRecolhimentoDTO.getExpectativaEncalheAlternativo()==null ? BigDecimal.ZERO :
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
+			produtoRecolhimentoVO.setEncalheAlternativo(
+				produtoRecolhimentoDTO.getExpectativaEncalheAlternativo());
 			
 			produtoRecolhimentoVO.setEncalhe(
 				produtoRecolhimentoDTO.getExpectativaEncalhe());
@@ -832,6 +831,10 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
 			
 			produtoRecolhimentoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
+			
+			produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
+				produtoRecolhimentoDTO.isPossuiChamada()
+				|| produtoRecolhimentoDTO.isBalanceamentoConfirmado());
 			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
 		}
@@ -933,16 +936,16 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		produtoRecolhimentoFormatado.setEncalheSede(
-			(produtoRecolhimento.getEncalheSede() != null) ? produtoRecolhimento.getEncalheSede().toString() : null);
+			(produtoRecolhimento.getEncalheSede() != null) ? MathUtil.round(produtoRecolhimento.getEncalheSede(), 0).toString() : null);
 		
 		produtoRecolhimentoFormatado.setEncalheAtendida(
-			(produtoRecolhimento.getEncalheAtendida() != null) ? produtoRecolhimento.getEncalheAtendida().toString() : null);
+			(produtoRecolhimento.getEncalheAtendida() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAtendida(), 0).toString() : null);
 		
 		produtoRecolhimentoFormatado.setEncalheAlternativo(
-			(produtoRecolhimento.getEncalheAlternativo() != null) ? produtoRecolhimento.getEncalheAlternativo().toString() : null);
+			(produtoRecolhimento.getEncalheAlternativo() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAlternativo(), 0).toString() : null);
 			
 		produtoRecolhimentoFormatado.setEncalhe(
-			(produtoRecolhimento.getEncalhe() != null) ? Integer.toString(produtoRecolhimento.getEncalhe().intValue()) : null);
+			(produtoRecolhimento.getEncalhe() != null) ? MathUtil.round(produtoRecolhimento.getEncalhe(), 0).toString() : null);
 		
 		if (produtoRecolhimento.getValorTotal() != null) {
 			produtoRecolhimentoFormatado.setValorTotal(CurrencyUtil.formatarValor(produtoRecolhimento.getValorTotal()));
@@ -1242,9 +1245,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = new ResultadoResumoBalanceamentoVO();
-		
-		resultadoResumoBalanceamento.setBloquearBotoes(
-			balanceamentoRecolhimento.isSemanaRecolhimento());
 		
 		resultadoResumoBalanceamento.setListaResumoPeriodoBalanceamento(resumoPeriodoBalanceamento);
 		

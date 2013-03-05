@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
@@ -53,6 +54,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
@@ -134,6 +136,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired 
 	private ProdutoEdicaoRepository edicaoRepository;
+	
+	@Autowired
+	private ConferenciaEncalheRepository conferenciaEncalheRepository;
 	
 	@Override
 	@Transactional
@@ -297,7 +302,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		} 
 		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
+			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
 		
 		if (isSomenteCotasSemAcao) {
 			
@@ -327,7 +332,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao) {
 		
-		return this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		return this.fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
 	}
 
 	@Override
@@ -335,7 +340,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public int buscarQuantidadeCotasAusentes(Date dataEncalhe) {
 		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, false, "asc", "numeroCota", 0, 0);
+			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, false, "asc", "numeroCota", 0, 0);
 		
 		int total = 0;
 		
@@ -391,7 +396,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-				this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0);
+				this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, true, null, null, 0, 0);
 		
 		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
 		
@@ -421,7 +426,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public void cobrarTodasCotas(Date dataOperacao, Usuario usuario) {
 
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-				this.fechamentoEncalheRepository.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+				this.fechamentoEncalheRepository.obterCotasAusentes(dataOperacao, true, null, null, 0, 0);
 
 		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
 
@@ -548,6 +553,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		}
 		
+	}
+
+	@Override
+	@Transactional
+	public List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao) {
+		return conferenciaEncalheRepository.obterListaCotaConferenciaNaoFinalizada(dataOperacao);
 	}
 	
 	@Override
