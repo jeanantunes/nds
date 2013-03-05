@@ -117,6 +117,9 @@ public class Fornecedor implements Serializable {
 	@Column(name="MARGEM_DISTRIBUIDOR")
 	private BigDecimal margemDistribuidor;
 	
+	@Column(name = "FORNECEDOR_PADRAO")
+	private boolean padrao;
+	
 	public BigDecimal getMargemDistribuidor() {
 		return margemDistribuidor;
 	}
@@ -288,6 +291,20 @@ public class Fornecedor implements Serializable {
 
 	public void setBanco(Banco banco) {
 		this.banco = banco;
+	}
+
+	/**
+	 * @return the padrao
+	 */
+	public boolean isPadrao() {
+		return padrao;
+	}
+
+	/**
+	 * @param padrao the padrao to set
+	 */
+	public void setPadrao(boolean padrao) {
+		this.padrao = padrao;
 	}
 
 	@Override

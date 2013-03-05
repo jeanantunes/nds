@@ -193,6 +193,13 @@ public class CotaController extends BaseController {
 	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
+	
+	public void verificarTipoConvencional(Long idCota) {
+		
+		boolean isTipoConvencional = cotaService.isTipoCaracteristicaSegmentacaoConvencional(idCota);
+		
+		result.use(Results.json()).from(isTipoConvencional, "result").recursive().serialize();
+	}
 
     private void carregarEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {
         List<EnderecoAssociacaoDTO> enderecos = cotaService.obterEnderecosHistoricoTitularidade(idCota, idHistorico);
@@ -313,7 +320,7 @@ public class CotaController extends BaseController {
 	public void pesquisarPorNumero(Integer numeroCota) {
 		
 		if(numeroCota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota inválido!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota deve ser informado!");
 		}
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
@@ -333,6 +340,7 @@ public class CotaController extends BaseController {
 				cotaVO.setCodigoBox(cota.getBox().getCodigo() + " - "+cota.getBox().getNome());
 			}
 			
+			cotaVO.setSituacaoCadastro(cota.getSituacaoCadastro());
 			if (cota.getSituacaoCadastro() != null) {
 
 				cotaVO.setStatus(cota.getSituacaoCadastro().toString());

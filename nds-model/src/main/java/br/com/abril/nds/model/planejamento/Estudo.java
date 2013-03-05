@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.planejamento;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
@@ -74,6 +75,23 @@ public class Estudo implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataAlteracao;
 	
+	@Column(name = "LIBERADO")
+	private Integer liberado;
+	
+	@Column(name = "REPARTE_DISTRIBUIR")
+	private BigInteger reparteDistribuir;
+	
+	@Column(name = "DISTRIBUICAO_POR_MULTIPLOS")
+	private Integer distribuicaoPorMultiplos;
+	
+	@Column(name = "PACOTE_PADRAO")
+	private BigInteger pacotePadrao;
+	
+	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_PDV")
+	private BigDecimal percentualProporcaoExcedentePDV;
+	
+	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_VENDA")
+	private BigDecimal percentualProporcaoExcedenteVenda;
 	
 	public Long getId() {
 		return id;
@@ -149,4 +167,62 @@ public class Estudo implements Serializable {
 		this.dataAlteracao = dataAlteracao;
 	}
 
+	public Integer getLiberado() {
+		return liberado;
+	}
+
+	public void setLiberado(Integer liberado) {
+		this.liberado = liberado;
+	}
+
+	public Set<Lancamento> getLancamentos() {
+		return lancamentos;
+	}
+
+	public void setLancamentos(Set<Lancamento> lancamentos) {
+		this.lancamentos = lancamentos;
+	}
+
+	public BigInteger getReparteDistribuir() {
+		return reparteDistribuir;
+	}
+
+	public void setReparteDistribuir(BigInteger reparteDistribuir) {
+		this.reparteDistribuir = reparteDistribuir;
+	}
+
+	public Integer getDistribuicaoPorMultiplos() {
+		return distribuicaoPorMultiplos;
+	}
+
+	public void setDistribuicaoPorMultiplos(Integer distribuicaoPorMultiplos) {
+		this.distribuicaoPorMultiplos = distribuicaoPorMultiplos;
+	}
+
+	public BigInteger getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(BigInteger pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	public BigDecimal getPercentualProporcaoExcedentePDV() {
+		return percentualProporcaoExcedentePDV;
+	}
+
+	public void setPercentualProporcaoExcedentePDV(
+			BigDecimal percentualProporcaoExcedentePDV) {
+		this.percentualProporcaoExcedentePDV = percentualProporcaoExcedentePDV;
+	}
+
+	public BigDecimal getPercentualProporcaoExcedenteVenda() {
+		return percentualProporcaoExcedenteVenda;
+	}
+
+	public void setPercentualProporcaoExcedenteVenda(
+			BigDecimal percentualProporcaoExcedenteVenda) {
+		this.percentualProporcaoExcedenteVenda = percentualProporcaoExcedenteVenda;
+	}
+	
 }

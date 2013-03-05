@@ -177,6 +177,11 @@ public interface FornecedorService {
 	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor);
 
 	List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia);
-
+	
+	/**
+	 * Obtem Fornecedor Padrao, utilizado para em Movimentos Financeiros sem definição de Distribuidor
+	 * @return Fornecedor
+	 */
+	public Fornecedor obterFornecedorPadrao();
 
 }
