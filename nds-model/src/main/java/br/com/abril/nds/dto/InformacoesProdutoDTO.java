@@ -49,25 +49,22 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	@Export(label = "Data Rcto", alignment=Alignment.LEFT, exhibitionOrder = 10)
 	private String dataRcto;	
 	
-	@Export(label = "Tipo Distrib", alignment=Alignment.LEFT, exhibitionOrder = 11)
-	private String tipoDistribuicaoGhoma;
-	
-	@Export(label = "Algoritmo", alignment=Alignment.LEFT, exhibitionOrder = 12)
+	@Export(label = "Algoritmo", alignment=Alignment.LEFT, exhibitionOrder = 11)
 	private String algoritmo;	
 	
-	@Export(label = "Rep. Min.", alignment=Alignment.LEFT, exhibitionOrder = 13)
+	@Export(label = "Rep. Min.", alignment=Alignment.LEFT, exhibitionOrder = 12)
 	private String reparteMinimoGhoma;
 	
-	@Export(label = "Estudo", alignment=Alignment.LEFT, exhibitionOrder = 14)
+	@Export(label = "Estudo", alignment=Alignment.LEFT, exhibitionOrder = 13)
 	private Long estudo;
 	
-	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 15)
+	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 14)
 	private String nomeUsuario;
 	
-	@Export(label = "Data", alignment=Alignment.LEFT, exhibitionOrder = 16)
+	@Export(label = "Data", alignment=Alignment.LEFT, exhibitionOrder = 15)
 	private Date dataInsercao;
 	
-	@Export(label = "Hora", alignment=Alignment.LEFT, exhibitionOrder = 17)
+	@Export(label = "Hora", alignment=Alignment.LEFT, exhibitionOrder = 16)
 	private String hora;
 	
 	private String datalanc;
@@ -176,16 +173,6 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	}
 	public void setDataInser(String dataInser) {
 		this.dataInser = dataInser;
-	}
-	public String getTipoDistribuicaoGhoma() {
-		return tipoDistribuicaoGhoma;
-	}
-	public void setTipoDistribuicaoGhoma(String tipoDistribuicaoGhoma) {
-		if ((tipoDistribuicaoGhoma == null) || (tipoDistribuicaoGhoma.equals(""))){
-			this.tipoDistribuicaoGhoma = ("");
-		}else{
-			this.tipoDistribuicaoGhoma = tipoDistribuicaoGhoma;
-		}
 	}
 	public String getReparteMinimoGhoma() {
 		return reparteMinimoGhoma;

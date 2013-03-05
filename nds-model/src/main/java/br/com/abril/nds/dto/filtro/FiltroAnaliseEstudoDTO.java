@@ -1,30 +1,38 @@
 package br.com.abril.nds.dto.filtro;
 
-import br.com.abril.nds.dto.ProdutoDTO;
 
 public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 
 	private static final long serialVersionUID = -7460175679601254408L;
 
-	private Integer numeroEstudo;
-	private ProdutoDTO produtoDto;
+	private Long numeroEstudo;
 	private Long numeroEdicao;
 	private Long idTipoClassificacaoProduto;
-
-	public Integer getNumeroEstudo() {
+	private String codigoProduto;
+	private String nome;
+	
+	public Long getNumeroEstudo() {
 		return numeroEstudo;
 	}
 
-	public void setNumeroEstudo(Integer numeroEstudo) {
+	public void setNumeroEstudo(Long numeroEstudo) {
 		this.numeroEstudo = numeroEstudo;
 	}
 
-	public ProdutoDTO getProdutoDto() {
-		return produtoDto;
+	public String getCodigoProduto() {
+		return codigoProduto;
 	}
 
-	public void setProdutoDto(ProdutoDTO produtoDto) {
-		this.produtoDto = produtoDto;
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public Long getNumeroEdicao() {
@@ -43,4 +51,5 @@ public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 		this.idTipoClassificacaoProduto = idTipoClassificacaoProduto;
 	}
 
+	
 }

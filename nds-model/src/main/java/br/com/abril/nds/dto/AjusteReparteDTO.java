@@ -7,11 +7,12 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoAjusteReparte;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Exportable
@@ -55,6 +56,7 @@ public class AjusteReparteDTO implements Serializable {
 	@Export(label = "Hora", alignment=Alignment.LEFT, exhibitionOrder = 12)
 	private String hora;
 	
+	private TipoSegmentoProduto tipoSegmento_Ajuste;
 	private Usuario usuario;
 	private Long idAjusteReparte;
 	private Date dataInicioCadastro;
@@ -63,6 +65,7 @@ public class AjusteReparteDTO implements Serializable {
 	private String formaAjusteAplicado;
 	private String motivoAjusteAplicado;
 	private String statusCota;
+	private Long idSegmento;
 	private PaginacaoVO paginacao;
 	
 	public PaginacaoVO getPaginacao() {
@@ -213,4 +216,26 @@ public class AjusteReparteDTO implements Serializable {
 	public void setDataAlteracaoCadastro(Date dataAlteracaoCadastro) {
 		this.dataAlteracaoCadastro = dataAlteracaoCadastro;
 	}
+	public TipoSegmentoProduto getTipoSegmento_Ajuste() {
+		return tipoSegmento_Ajuste;
+	}
+	public void setTipoSegmento_Ajuste(TipoSegmentoProduto tipoSegmento_Ajuste) {
+		
+		if(tipoSegmento_Ajuste != null){
+			this.tipoSegmento_Ajuste = tipoSegmento_Ajuste;
+		}else{
+			TipoSegmentoProduto segmento = new TipoSegmentoProduto();
+			segmento.setId((long) 0);
+			this.tipoSegmento_Ajuste = segmento;
+		}
+		
+		
+	}
+	public Long getIdSegmento() {
+		return idSegmento;
+	}
+	public void setIdSegmento(Long idSegmento) {
+		this.idSegmento = idSegmento;
+	}
+	
 }

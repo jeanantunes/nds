@@ -13,14 +13,20 @@ public interface AjusteReparteService {
 
 	List<AjusteReparteDTO> buscarCotasEmAjuste(AjusteReparteDTO dto);
 	
+	List<AjusteReparteDTO> buscarPorIdCota(Long numCota);
+	
 	void alterarAjuste(AjusteReparte ajuste);
 	
 	void excluirAjuste(Long idAjuste);
 	
 //	void excluirAjustePorCota(Cota cota);
 	
+	int qtdAjusteSegmento (Long idCota);
+	
 	AjusteReparteDTO buscarPorIdAjuste(Long id);
 	
 	List<TipoSegmentoProduto> buscarTodosSegmentos();
+	
+	TipoSegmentoProduto buscarSegmentoPorID (Long id);
 	
 }

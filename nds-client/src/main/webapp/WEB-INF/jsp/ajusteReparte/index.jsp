@@ -1,6 +1,4 @@
 <head>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="text/javascript" src="scripts/ajusteReparte.js"></script>
@@ -51,8 +49,10 @@ $(function(){
 				</select>
 				</td>
 				<td>
-				<input name="segmento1" id="segmento1" onblur="ajusteReparteController.formatarAjusteAplicadoSegmento1();" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
-				</td>
+				<input name="segmento1" id="segmento1"
+						onblur="ajusteReparteController.formatarAjusteAplicadoSegmento1();"
+						type="text" style="width: 60px; float: left; margin-right: 5px;" />
+					</td>
 				</tr>
 
 				<tr>
@@ -120,28 +120,26 @@ $(function(){
 				<tr>
 					<td width="20">
 						<input type="radio" name="formaAjuste" value="AJUSTE_HISTORICO" 
-							   onclick="$('.vdaMedia').hide();$('.vlrPerc').toggle();$('.ajusteSeg').hide();$('.encalheMaximo').hide();" />
+							   onclick = "ajusteReparteController.filtroPorHistorico();" />
 					</td>
 					<td width="102">Ajuste Histórico</td>
 					
 					<td width="20">
 						<input type="radio" name="formaAjuste" value="AJUSTE_VENDA_MEDIA" 
-							   onclick="$('.vdaMedia').show();$('.vlrPerc').hide();$('.ajusteSeg').hide();$('.encalheMaximo').hide();" />
+							   onclick = "ajusteReparteController.filtroPorVenda();" />
 					</td>
 					<td width="88">Venda Média +</td>
 					
 					<td width="20">
 						<input type="radio" name="formaAjuste" value="AJUSTE_ENCALHE_MAX" 
-							   onclick="$('.vdaMedia').hide();$('.encalheMaximo').toggle(); $('.ajusteSeg').hide(); $('.vlrPerc').hide();" />
+							   onclick = "ajusteReparteController.filtroPorEncalhe();" />
 					</td>
 					<td width="139">% de Encalhe Máximo </td>
 					
 					<td width="20">
-						<input type="radio" name="formaAjuste" value="AJUSTE_SEGMENTO" 
-							   onclick="$('.vdaMedia').hide(); ajusteReparteController.mostrarSegmentos(); $('.vlrPerc').hide();$('.encalheMaximo').hide();" />
+						<input type="radio" name="formaAjuste" id="formaAjusteAjusteSegmento" value="AJUSTE_SEGMENTO" />
 					</td>
 					<td width="125">Ajuste por Segmento</td>
-						
 				</tr>
 			</table>
 			
@@ -151,24 +149,24 @@ $(function(){
 					<!-- 
 					 -->
 					<td width="10"></td>
-					<td width="102"><span class="vlrPerc" style="display: none;">
-							<input name="AJUSTE_HISTORICO_input" id="AJUSTE_HISTORICO_input" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
+					<td width="102"><span class="vlrPerc" >
+							<input name="AJUSTE_HISTORICO_input" id="AJUSTE_HISTORICO_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
 					</span></td>
 					
 					<!-- 
 					 -->
 					<td width="400"></td>
 					<td width="100">
-					<span class="vdaMedia" style="display: none;">
-							<input name="AJUSTE_VENDA_MEDIA_input" id="AJUSTE_VENDA_MEDIA_input" value="1" type="text" style="width: 50px;" /> 
+					<span class="vdaMedia" >
+							<input name="AJUSTE_VENDA_MEDIA_input" id="AJUSTE_VENDA_MEDIA_input" value="1" style="display: none;" type="text" style="width: 50px;" /> 
 					</span>
 					</td>
 					<!-- 
 					 -->
 					<td width="350"></td>
 					<td width="250">
-						<span class="encalheMaximo"	style="display: none;"> 
-							<input name="AJUSTE_ENCALHE_MAX_input" id="AJUSTE_ENCALHE_MAX_input" value="1" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" />  
+						<span class="encalheMaximo"	> 
+							<input name="AJUSTE_ENCALHE_MAX_input" id="AJUSTE_ENCALHE_MAX_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" />  
 						</span>
 					</td>
 				</tr>
@@ -204,54 +202,122 @@ $(function(){
 			</table>
 		</fieldset>
 	</div>
+	
+		<div id="dialog-editar" title="Ajuste" style="display: none;">
+		<fieldset style="width: 585px !important;">
+			<legend>Editar Ajuste de Reparte</legend>
+			<table width="575" border="0" cellspacing="1" cellpadding="2">
+				<tr>
+					<td width="25">Cota:</td>
+					<td width="99">
+						<input name="numeroCota" id="numeroCotaEditar" type="text" style="width: 60px; float: left; margin-right: 5px;"/>
+						<span class="classPesquisar">
+							<a href="javascript:;">
+								&nbsp;
+							</a>
+						</span>
+					</td>
+					<td width="30">Nome:</td>
+					<td width="398"><input name="nomeCota" id="nomeCotaEditar" type="text" style="width: 160px;" 
+					</td>
+				</tr>
+			</table>
+			
+			<table width="575" border="0" cellspacing="1" cellpadding="2">
+				<tr>
+					<br>
+					<br>
+					<td colspan="8"><strong>Formas de Ajuste</strong></td>
+				</tr>
+				<tr>
+					<td width="20">
+						<input type="radio" name="formaAjusteEditar" value="AJUSTE_HISTORICO" 
+							   onclick = "ajusteReparteController.filtroPorHistoricoEditar();" />
+					</td>
+					<td width="102">Ajuste Histórico</td>
+					
+					<td width="20">
+						<input type="radio" name="formaAjusteEditar" value="AJUSTE_VENDA_MEDIA" 
+							   onclick = "ajusteReparteController.filtroPorVendaEditar();" />
+					</td>
+					<td width="88">Venda Média +</td>
+					
+					<td width="20">
+						<input type="radio" name="formaAjusteEditar" value="AJUSTE_ENCALHE_MAX" 
+							   onclick = "ajusteReparteController.filtroPorEncalheEditar();" />
+					</td>
+					<td width="139">% de Encalhe Máximo </td>
+					
+					<td width="20">
+						<input type="radio" name="formaAjusteEditar" value="AJUSTE_SEGMENTO"   
+							   onclick = "ajusteReparteController.filtroPorSegmentoEditar();" />
+					</td>
+					<td width="125">Ajuste por Segmento</td>
+				</tr>
+			</table>
+			
+			
+			<table width="360" border="0" cellspacing="1" cellpadding="2">
+				<tr>
+					<!-- 
+					 -->
+					<td width="10"></td>
+					<td width="102"><span class="vlrPerc" >
+							<input name="AJUSTE_HISTORICO_input" id="AJUSTE_HISTORICO_input_editar" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
+					</span></td>
+					
+					<!-- 
+					 -->
+					<td width="400"></td>
+					<td width="100">
+					<span class="vdaMedia" >
+							<input name="AJUSTE_VENDA_MEDIA_input" id="AJUSTE_VENDA_MEDIA_input_editar" value="1" style="display: none;" type="text" style="width: 50px;" /> 
+					</span>
+					</td>
+					<!-- 
+					 -->
+					<td width="350"></td>
+					<td width="250">
+						<span class="encalheMaximo"	> 
+							<input name="AJUSTE_ENCALHE_MAX_input" id="AJUSTE_ENCALHE_MAX_input_editar" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" />  
+						</span>
+					</td>
+				</tr>
+			</table>
 
-		<br clear="all" /> <br />
+			<table width="575" border="0" cellpadding="2" cellspacing="1">
+				 <tr>
+					<br>
+					<br>
+					<td width="89">Motivo do Ajuste:</td>
+					<td width="466">
+						<select name="motivoAjuste" id="motivoAjusteEditar" style="width: 200px;" >
+							<option selected="selected">Selecione...</option>
+								<c:forEach items="${listaMotivosStatusCota}" var="motivo">
+									<option value="${motivo.key}">${motivo.value}</option>
+								</c:forEach>	
+						</select>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>Período:</td>
+							 <tr>
+								<td width="100">
+									<input name="periodo1" id="dataInicioEditar" type="text" value="${dataAtual}" style="width: 60px;"/>
+								<td width="100">
+									Até: 
+									<input name="periodo2" id="dataFimEditar" type="text" value="${dataAtual}" style="width: 60px;"/>
+								</td>
+							</tr>
+				</tr>
+				
+			</table>
+		</fieldset>
+	</div>
 
-		<div class="container">
 
-			<div id="effect" style="padding: 0 .7em;"
-				class="ui-state-highlight ui-corner-all">
-				<p>
-					<span style="float: left; margin-right: .3em;"
-						class="ui-icon ui-icon-info"></span> <b>Ajuste de Reparte Cota
-						< evento > com < status >.</b>
-				</p>
-			</div>
-
-			<!--<fieldset class="classFieldset">
-   	    <legend> Pesquisar Segmento</legend>
-        <table width="778" border="0" cellpadding="2" cellspacing="1" class="filtro">
-          <tr>
-            <td width="772">
-            	<table width="756" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorSegmento" style="display:none;">
-          <tr>
-            <td width="65">Segmento:</td>
-            <td width="571"><select name="select2" id="select2" style="width:200px;">
-              <option selected="selected">Selecione...</option>
-            </select></td>
-            <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="mostrar(); porSegmento();">Pesquisar</a></span></td>
-          </tr>
-        </table>
-        
-        
-        
-        <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" style="display:none;">
-            <tr>
-           	  <td width="31">Cota:</td>
-                <td width="91"><input type="text" name="textfield" id="textfield" style="width:80px;"/></td>
-                <td width="40">Nome:</td>
-                <td width="480"><input type="text" name="textfield2" id="textfield2" style="width:200px;"/></td>
-              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="porCota();">Pesquisar</a></span></td>
-            </tr>
-          </table>
-            </td>
-          </tr>
-        </table>
-        
-        
-
-      </fieldset>
-      <div class="linha_separa_fields">&nbsp;</div>-->
+	
 			<div class="grids" style="display: block;">
 
 				<div class="porSegmento" style="display: block;">
@@ -301,6 +367,7 @@ $(function(){
       </fieldset>-->
 				</div>
 
+			<!-- 
 				<div class="porCota" style="display: none;">
 					<fieldset class="classFieldset"
 						style="float: left; width: 631px !important; margin-right: 10px !important;">
@@ -353,7 +420,7 @@ $(function(){
 									Imprimir
 								</a>
 						</span>
-
+						
 						<span class="bt_novos" title="Confirmar" style="float: right;">
 							<a href="javascript:;">
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
@@ -364,9 +431,8 @@ $(function(){
 					</fieldset>
 				</div>
 
+		 -->
 			</div>
 			<div class="linha_separa_fields">&nbsp;</div>
-
-		</div>
 
 </body>

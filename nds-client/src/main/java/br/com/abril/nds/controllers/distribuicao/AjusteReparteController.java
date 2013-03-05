@@ -78,21 +78,32 @@ public class AjusteReparteController extends BaseController {
 		
 		ajusteService.salvarAjuste(ajuste);
 		
-		result.use(Results.json()).from(ajuste, "ajuste").recursive().serialize();
+//		result.use(Results.json()).from(ajuste, "ajuste").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."),	"result").recursive().serialize();
 	}
 	
 	@Post
-	@Path("/novoAjusteSegmento")
-	public void salvarAjusteSegmento (AjusteReparteDTO ajusteDTO, BigDecimal [] ajustes){
+	@Path("/incluirAjusteSegmento")
+	public void salvarAjusteSegmento (AjusteReparteDTO ajusteDTO, BigDecimal [] ajustes, Long [] segmentos){
 		
-		for (BigDecimal ajuste : ajustes) {
-			ajusteDTO.setAjusteAplicado(ajuste);
-//			this.salvarAjuste(ajusteDTO);
-			AjusteReparte ajusteModel = DTOParaModel(ajusteDTO);
-			ajusteService.salvarAjuste(ajusteModel);
-		}
-		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."), 
+		Cota cota = cotaService.obterPorNumeroDaCota(ajusteDTO.getNumeroCota());
+		
+		Long idCota = cota.getId();
+		
+		evitarCotaRepetidaSegmento(ajusteDTO);
+		
+		int qtdAjustesCadastrados = ajusteService.qtdAjusteSegmento(idCota);
+		
+		 for (int i = qtdAjustesCadastrados; i < 3; i++) {
+			 		TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[i]);
+					ajusteDTO.setAjusteAplicado(ajustes[i]);
+					ajusteDTO.setTipoSegmento_Ajuste(segmento);
+					evitarSegmentosRepetidos(ajusteDTO, segmento);
+					AjusteReparte ajusteModel = DTOParaModel(ajusteDTO);
+					ajusteService.salvarAjuste(ajusteModel);
+		 }
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."), 
 				"result").recursive().serialize();
 	}
 	
@@ -142,6 +153,27 @@ public class AjusteReparteController extends BaseController {
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste alterado com sucesso."), 
 				"result").recursive().serialize();
 	}
+	
+	@Post
+	@Path("/alterarAjusteSegmento")
+	public void alterarAjusteSegmento(AjusteReparteDTO ajusteDTO, Long id, BigDecimal ajuste, Long [] segmentos) {
+		
+		TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[0]);
+		ajusteDTO.setAjusteAplicado(ajuste);
+		ajusteDTO.setTipoSegmento_Ajuste(segmento);
+		ajusteDTO.setIdAjusteReparte(id);
+
+		validarEntradaAjuste(ajusteDTO);
+		evitarSegmentosRepetidos(ajusteDTO, segmento);
+		
+		AjusteReparte ajusteModel = DTOParaModel(ajusteDTO);
+		
+		ajusteService.alterarAjuste(ajusteModel);
+		
+		this.result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste alterado com sucesso."), 
+				"result").recursive().serialize();
+	}
 
 	private AjusteReparte DTOParaModel(AjusteReparteDTO ajusteDTO) {
 		
@@ -162,6 +194,7 @@ public class AjusteReparteController extends BaseController {
 		ajuste.setFormaAjuste(ajusteDTO.getFormaAjuste());
 		ajuste.setMotivo(ajusteDTO.getMotivoAjuste());
 		ajuste.setUsuario(this.usuarioService.getUsuarioLogado());
+		ajuste.setTipoSegmentoAjuste(ajusteDTO.getTipoSegmento_Ajuste());
 		
 		return ajuste;
 	}
@@ -184,6 +217,29 @@ public class AjusteReparteController extends BaseController {
 		AjusteReparteDTO ajuste = ajusteService.buscarPorIdAjuste(id);
 		
 		result.use(Results.json()).withoutRoot().from(ajuste).recursive().serialize();
+	}
+	
+	@Post
+	@Path("/qtdAjustesSegmento")
+	public void qtdAjustesSegmento (Integer nmCota){
+
+		if (nmCota == null){
+			nmCota = 0;
+			throw new ValidacaoException(TipoMensagem.WARNING, "Insira o número da cota.");
+		}else{
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(nmCota );
+		
+		Long idCota = cota.getId();
+		
+		int qtdAjustesCadastrados = ajusteService.qtdAjusteSegmento(idCota);
+		
+		
+		result.use(Results.json()).withoutRoot().from(qtdAjustesCadastrados).recursive().serialize();
+//		AjusteReparteDTO ajuste = ajusteService.buscarPorIdAjuste(id);
+		
+//		result.use(Results.json()).withoutRoot().from(ajuste).recursive().serialize();
+		}
 	}
 	
 	private void validarEntradaAjuste(AjusteReparteDTO ajusteDTO) {
@@ -235,7 +291,31 @@ public class AjusteReparteController extends BaseController {
 
 		for (AjusteReparteDTO ajusteJaCadastrado : ajustesJaCadastrados) {
 			if ((ajusteJaCadastrado.getNumeroCota()) == (ajusteDTO.getNumeroCota())) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Cota em Ajuste, já cadastrada.");
+				throw new ValidacaoException(TipoMensagem.ERROR, "Cota em Ajuste, já cadastrada.");
+			}
+		}
+	}
+	
+	private void evitarCotaRepetidaSegmento(AjusteReparteDTO ajusteDTO) {
+		List<AjusteReparteDTO> ajustesJaCadastrados = ajusteService.buscarCotasEmAjuste(null);
+
+		for (AjusteReparteDTO ajusteJaCadastrado : ajustesJaCadastrados) {
+			if (((ajusteJaCadastrado.getNumeroCota()) == (ajusteDTO.getNumeroCota())) && ((ajusteJaCadastrado.getFormaAjusteAplicado()) != (ajusteDTO.getFormaAjuste().toString())) ) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Cota em Ajuste, já cadastrada.");
+			}
+		}
+	}
+	
+	private void evitarSegmentosRepetidos(AjusteReparteDTO ajusteDTO, TipoSegmentoProduto segmento) {
+		Cota cota = cotaService.obterPorNumeroDaCota(ajusteDTO.getNumeroCota());
+		Long idCota = cota.getId();
+		
+		List<AjusteReparteDTO> cotaEmAjuste = ajusteService.buscarPorIdCota(idCota);
+		
+		
+		for (AjusteReparteDTO ajusteReparteDTO : cotaEmAjuste) {
+			if ((ajusteReparteDTO.getIdSegmento()) == (segmento.getId())){
+				throw new ValidacaoException(TipoMensagem.ERROR, "Ajuste por segmento já cadastrado.");
 			}
 		}
 	}
@@ -265,7 +345,7 @@ public class AjusteReparteController extends BaseController {
 		List<AjusteReparteDTO> listaAjustes = ajusteService.buscarCotasEmAjuste (null);
 			
 			if(listaAjustes.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada n�o obteve resultado.");
+				throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada não obteve resultado.");
 			}
 			
 			FileExporter.to("AJUSTE_REPARTE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
