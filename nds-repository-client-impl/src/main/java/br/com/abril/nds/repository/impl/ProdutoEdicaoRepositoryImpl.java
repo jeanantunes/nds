@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,16 +9,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
-
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
@@ -1344,9 +1344,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				+                 "AND descontoProdutoEdicao.tipoDesconto = ('ESPECIFICO'))"
 				+ 	"AND produtoEdicao.id NOT IN (SELECT "
 				+             "produtoEdicao.id "
-				+         "FROM "
-				+             "DescontoProdutoEdicao descontoProdutoEdicao "
-				+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
+					+         "FROM "
+					+             "DescontoProdutoEdicao descontoProdutoEdicao "
+					+         "JOIN descontoProdutoEdicao.produtoEdicao produtoEdicao "
 				+         "JOIN descontoProdutoEdicao.cota cota "
 				+         "JOIN descontoProdutoEdicao.fornecedor fornecedor "
 				+         "WHERE "
@@ -1361,6 +1361,21 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			return new HashSet<ProdutoEdicao>(query.list());
 	}*/
 
-	
-	
+	@Override
+	public ProdutoEdicao obterProdutoEdicaoPorIdLancamento(Long idLancamento) {
+		
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select lancamento.produtoEdicao from Lancamento lancamento");
+		sql.append(" where lancamento.id = :idLancamento");
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("idLancamento", idLancamento);
+		
+		ProdutoEdicao produtoEdicao = (ProdutoEdicao)query.uniqueResult();
+		
+		return produtoEdicao;
+	}
+
 }

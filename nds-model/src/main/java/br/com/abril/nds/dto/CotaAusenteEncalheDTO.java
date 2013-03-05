@@ -14,13 +14,13 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	
 	private Long idCota;
 
-	@Export(label = "Cota", alignment = Alignment.CENTER, exhibitionOrder = 1)
+	@Export(label = "Cota", alignment = Alignment.CENTER, exhibitionOrder = 1, widthPercent=10)
 	private Integer numeroCota;
 
-	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 2)
+	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 2, widthPercent=30)
 	private String colaboradorName = "";
 
-	@Export(label = "Box", alignment = Alignment.CENTER, exhibitionOrder = 3)
+	@Export(label = "Box", alignment = Alignment.CENTER, exhibitionOrder = 3, widthPercent=10)
 	private String boxName = "";
 
 	@Export(label = "Roteiro", alignment = Alignment.CENTER, exhibitionOrder = 4)
@@ -29,7 +29,7 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	@Export(label = "Rota", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	private String rotaName = "";
 
-	@Export(label = "Ação", alignment = Alignment.CENTER, exhibitionOrder = 6)
+	@Export(label = "Ação", alignment = Alignment.CENTER, exhibitionOrder = 6, widthPercent=15)
 	private String acao = "";
 
 	private Boolean fechado;

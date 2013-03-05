@@ -380,4 +380,11 @@ public interface CotaService {
 	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
+	
+	/**
+	 * 
+	 * @param idCota
+	 * @return
+	 */
+	boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota);
 }

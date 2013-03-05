@@ -299,5 +299,21 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(FiltroHistogramaVendas filtro);
 	
+	/**
+	 * Retorna o produtoEdicao associado a um ID Lancamento
+	 * @param idLancamento
+	 * @return
+	 */
+	public ProdutoEdicao obterProdutoEdicaoPorIdLancamento(Long idLancamento);
+	
+	/**
+	 * 
+	 * @param filtro
+	 * @param codigoProduto
+	 * @param de
+	 * @param ate
+	 * @param edicoes
+	 * @return
+	 */
 	public AnaliseHistogramaDTO obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,Integer de,Integer ate, String[] edicoes);
 }

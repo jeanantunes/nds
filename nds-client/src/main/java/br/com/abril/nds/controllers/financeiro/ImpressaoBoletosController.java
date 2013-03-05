@@ -260,22 +260,6 @@ public class ImpressaoBoletosController extends BaseController {
 
 		result.use(CustomJson.class).from(mapa).serialize();
 	}
-
-	@Post
-	public void gerarDivida() throws IOException {
-
-		try {
-			this.gerarCobrancaService.gerarCobranca(null, this.getUsuarioLogado()
-					.getId(), new HashSet<String>());
-		} catch (GerarCobrancaValidacaoException e) {
-
-			throw e.getValidacaoException();
-		}
-
-		throw new ValidacaoException(TipoMensagem.SUCCESS,
-			"As dividas para a data de operação [" + this.getDataOperacaoDistribuidor()
-				+ "] foram geradas com sucesso!");
-	}
 	
 	private String getDataOperacaoDistribuidor() {
 
@@ -673,36 +657,6 @@ public class ImpressaoBoletosController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida.");
 		}
 	}
-
-	@Post
-	public void habilitarAcaoGeracaoDivida(Date dataPesquisa) {
-
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		boolean isAcaoGeraDivida = true;
-
-		if (dataPesquisa == null) {
-			isAcaoGeraDivida = false;
-		} else if (dataPesquisa.before(distribuidor.getDataOperacao())) {
-			isAcaoGeraDivida = false;
-		}
-
-		result.use(CustomJson.class).from(isAcaoGeraDivida).serialize();
-	}
 	
-	@Post
-	public void veificarCobrancaGerada(){
-		
-		if (this.gerarCobrancaService.verificarCobrancasGeradas(null)){
-			
-			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, 
-							"Já existe(m) cobrança(s) gerada(s) para a data de operação atual, continuar irá sobrescreve-la(s). Deseja continuar?"), 
-							"result").recursive().serialize();
-			return;
-		}
-		
-		this.result.use(Results.json()).from("").serialize();
-	}
 
 }
