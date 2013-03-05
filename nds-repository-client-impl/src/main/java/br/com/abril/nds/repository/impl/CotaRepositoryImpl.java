@@ -69,8 +69,7 @@ import br.com.abril.nds.util.Intervalo;
  * 
  */
 @Repository
-public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
-		implements CotaRepository {
+public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> implements CotaRepository {
 	
     private static final Logger LOG = LoggerFactory.getLogger(CotaRepositoryImpl.class);
 
@@ -1436,55 +1435,144 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		return listaIdCotas;
 	}
-	
+
 	@Override
-	public Integer obterCountCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro) {
-		
+	public Integer obterDadosCotasComNotaEnvioEmitidasCount(FiltroConsultaNotaEnvioDTO filtro) {
+
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append( " select count(*) from ( select cota_.ID ");
+		sql.append( " select count(*) from ( ");
 		
-		Query query = queryCotasComNotaEnvioEntre(filtro, sql, true);	 	
+		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, true);
+		
+		sql.append(" ) rs1 ");
+		
+		Query query = getSession().createSQLQuery(sql.toString()); 	 	
+		
+		montarParametrosFiltroNotasEnvio(filtro, query);	
 		
 		return ((BigInteger) query.uniqueResult()).intValue();
-	}
-	
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvio(FiltroConsultaNotaEnvioDTO filtro) {
 		
+	}
+
+	@Override
+	public Integer obterDadosCotasComNotaEnvioAEmitirCount(FiltroConsultaNotaEnvioDTO filtro) {
+
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append( " select "
-		+ "	        cota_.ID as idCota, "
-		+ "	        cota_.NUMERO_COTA as numeroCota, "
-		+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
-		+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
-		+ "	        SUM(coalesce(nei.reparte, 0)) as exemplares, "
-		+ "	        SUM(coalesce(nei.reparte, 0) * pe_.PRECO_VENDA) as total, "
-		+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	");
+		sql.append( " select count(*) from ( ");
 		
-		Query query = queryCotasComNotaEnvioEntre(filtro, sql, false);		
+		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, true);
 		
-		if (filtro.getPaginacaoVO().getPosicaoInicial()!= null){
-			query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
-		}
+		sql.append(" ) rs1 ");
 		
-		if (filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
+		Query query = getSession().createSQLQuery(sql.toString()); 	 	
+		
+		montarParametrosFiltroNotasEnvio(filtro, query);	
+		
+		return ((BigInteger) query.uniqueResult()).intValue();
+		
+	}
 
-			query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+	@Override
+	public Integer obterDadosCotasComNotaEnvioEmitidasEAEmitirCount(FiltroConsultaNotaEnvioDTO filtro) {
 
-		}	
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append( " select count(*) from ( ");
+		
+		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, true);
+		sql.append(" union all ");
+		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, true);
+		
+		sql.append(" ) rs1 ");
+		
+		Query query = getSession().createSQLQuery(sql.toString()); 	 	
+		
+		montarParametrosFiltroNotasEnvio(filtro, query);	
+		
+		return ((BigInteger) query.uniqueResult()).intValue();
+		
+	}
+
 	
+	@Override
+	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro) {
+
+		StringBuilder sql = new StringBuilder();
+
+		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, false);
+		
+		orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
+				filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		montarParametrosFiltroNotasEnvio(filtro, query);	
+		
 		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
 		
 		return query.list();
+		
 	}
 	
-	private Query queryCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
+	@Override
+	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioAEmitir(FiltroConsultaNotaEnvioDTO filtro) {
 		
+		StringBuilder sql = new StringBuilder();
+
+		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, false);
 		
+		orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
+				filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		montarParametrosFiltroNotasEnvio(filtro, query);	
+		
+		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
+		
+		return query.list();
+		
+	}
+
+	@Override
+	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidasEAEmitir(
+			FiltroConsultaNotaEnvioDTO filtro) {
+
+		StringBuilder sql = new StringBuilder();
+
+		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, false);
+		sql.append( " union all ");
+		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, false);
+		
+		orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
+				filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		montarParametrosFiltroNotasEnvio(filtro, query);	
+		
+		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
+		
+		return query.list();
+		
+	}
+	
+	private void montarQueryCotasComNotasEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
+		
+		if(isCount) {
+			sql.append( " select cota_.ID ");
+		} else {
+			sql.append( " select "
+			+ "	        cota_.ID as idCota, "
+			+ "	        cota_.NUMERO_COTA as numeroCota, "
+			+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
+			+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
+			+ "	        SUM(coalesce(nei.reparte, 0)) as exemplares, "
+			+ "	        SUM(coalesce(nei.reparte, 0) * pe_.PRECO_VENDA) as total, "
+			+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	");
+		}
 		sql.append( 
 		  "	    from "
 		+ "	        COTA cota_ " 
@@ -1576,64 +1664,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		sql.append(
 		  "	    group by cota_.ID ");
 		
-		montarQueryNotasEnvioNaoEmitidas(filtro, sql, isCount);
 		
-		if(isCount) 
-			sql.append(" ) as dados ");
-		else
-			orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
-					filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
-		
-		Query query = getSession().createSQLQuery(sql.toString());
-		
-		query.setParameterList("status", new String[]{StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()});
-		
-		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
-			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
-		}
-		
-		
-		if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
-			
-			if (filtro.getIntervaloCota().getAte() != null) {
-				query.setParameter("numeroCotaDe", filtro.getIntervaloCota().getDe());
-				query.setParameter("numeroCotaAte", filtro.getIntervaloCota().getAte());
-			} else {
-				query.setParameter("numeroCota", filtro.getIntervaloCota().getDe());
-			}
-		}
-		
-		if (filtro.getIntervaloBox() != null 
-				&& filtro.getIntervaloBox().getDe() != null 
-				&&  filtro.getIntervaloBox().getAte() != null) {
-			
-			query.setParameter("boxDe", filtro.getIntervaloBox().getDe());
-			query.setParameter("boxAte", filtro.getIntervaloBox().getAte());
-		}
-	
-		if (filtro.getIdRoteiro() != null){
-			
-			query.setParameter("idRoteiro", filtro.getIdRoteiro());
-		}
-		
-		if (filtro.getIdRota() != null){
-			
-			query.setParameter("idRota", filtro.getIdRota());
-		}
-		
-		if (filtro.getIntervaloMovimento() != null 
-				&& filtro.getIntervaloMovimento().getDe() != null 
-				&& filtro.getIntervaloMovimento().getAte() != null) {
-			query.setParameter("dataDe", filtro.getIntervaloMovimento().getDe());
-			query.setParameter("dataAte",filtro.getIntervaloMovimento().getAte());
-		}
-		
-		return query;
 	}
 		
-	private void montarQueryNotasEnvioNaoEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
-		
-		sql.append( " union all ");
+	private void montarQueryCotasComNotasEnvioNaoEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
 		
 		if(isCount) {
 			sql.append( " select cota_.ID ");
@@ -1742,6 +1776,61 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 	}
 
+	private void montarParametrosFiltroNotasEnvio(
+			FiltroConsultaNotaEnvioDTO filtro, Query query) {
+		query.setParameterList("status", new String[]{StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()});
+		
+		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
+			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
+		}
+		
+		
+		if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
+			
+			if (filtro.getIntervaloCota().getAte() != null) {
+				query.setParameter("numeroCotaDe", filtro.getIntervaloCota().getDe());
+				query.setParameter("numeroCotaAte", filtro.getIntervaloCota().getAte());
+			} else {
+				query.setParameter("numeroCota", filtro.getIntervaloCota().getDe());
+			}
+		}
+		
+		if (filtro.getIntervaloBox() != null 
+				&& filtro.getIntervaloBox().getDe() != null 
+				&&  filtro.getIntervaloBox().getAte() != null) {
+			
+			query.setParameter("boxDe", filtro.getIntervaloBox().getDe());
+			query.setParameter("boxAte", filtro.getIntervaloBox().getAte());
+		}
+	
+		if (filtro.getIdRoteiro() != null){
+			
+			query.setParameter("idRoteiro", filtro.getIdRoteiro());
+		}
+		
+		if (filtro.getIdRota() != null){
+			
+			query.setParameter("idRota", filtro.getIdRota());
+		}
+		
+		if (filtro.getIntervaloMovimento() != null 
+				&& filtro.getIntervaloMovimento().getDe() != null 
+				&& filtro.getIntervaloMovimento().getAte() != null) {
+			query.setParameter("dataDe", filtro.getIntervaloMovimento().getDe());
+			query.setParameter("dataAte",filtro.getIntervaloMovimento().getAte());
+		}
+		
+		if (filtro.getPaginacaoVO().getPosicaoInicial()!= null){
+			query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+		}
+		
+		if (filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
+
+			query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+
+		}
+	}
+	
 	private void orderByCotasComNotaEnvioEntre(StringBuilder sql,
 			String sortName, String sortOrder) {
 		
@@ -1750,7 +1839,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 		
 		if("nomeCota".equals(sortName)) {
-			sql.append(" order by  coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) " + sortOrder);
+			sql.append(" order by  nomeCota " + sortOrder);
 		}
 				
 		if("exemplares".equals(sortName)) {
@@ -2160,5 +2249,5 @@ Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		return query.list();
 	}
-	
+
 }

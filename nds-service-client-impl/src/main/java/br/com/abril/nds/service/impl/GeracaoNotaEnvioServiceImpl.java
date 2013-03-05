@@ -87,14 +87,28 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
 
-		return cotaRepository.obterDadosCotasComNotaEnvio(filtro);
+		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
+			return cotaRepository.obterDadosCotasComNotaEnvioEmitidas(filtro);
+		} else if("AEMITIR".equals(filtro.getExibirNotasEnvio())) {
+			return cotaRepository.obterDadosCotasComNotaEnvioAEmitir(filtro);
+		} else {
+			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasEAEmitir(filtro);
+		}
 
 	}
 
 	@Override
 	@Transactional
 	public Integer buscaCotasNotasDeEnvioQtd(FiltroConsultaNotaEnvioDTO filtro) {
-		return cotaRepository.obterCountCotasComNotaEnvioEntre(filtro);
+		
+		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
+			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasCount(filtro);
+		} else if("AEMITIR".equals(filtro.getExibirNotasEnvio())) {
+			return cotaRepository.obterDadosCotasComNotaEnvioAEmitirCount(filtro);
+		} else {
+			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasEAEmitirCount(filtro);
+		}
+		
 	}
 
 	private List<ItemNotaEnvio> gerarItensNotaEnvio(
@@ -105,8 +119,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		for (EstudoCota estudoCota : listaEstudoCota) {
 
-			ProdutoEdicao produtoEdicao = estudoCota.getEstudo()
-					.getProdutoEdicao();
+			if (!estudoCota.getItemNotaEnvios().isEmpty()) {
+				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
+				continue;
+			}
+			
+			ProdutoEdicao produtoEdicao = estudoCota.getEstudo().getProdutoEdicao();
 
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 
@@ -116,21 +134,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			BigInteger quantidade = estudoCota.getQtdeEfetiva();
 
-
-			if (estudoCota.getItemNotaEnvios().isEmpty()) {
-
-				ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(
-						estudoCota,
-						produtoEdicao,
-						precoVenda,
-						((percentualDesconto != null && percentualDesconto
-								.getValor() != null) ? percentualDesconto
-								.getValor() : BigDecimal.ZERO), 
-						quantidade);
-				listItemNotaEnvio.add(itemNotaEnvio);
-			} else{
-				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
-			}
+			ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(
+					estudoCota,
+					produtoEdicao,
+					precoVenda,
+					((percentualDesconto != null && percentualDesconto
+							.getValor() != null) ? percentualDesconto
+							.getValor() : BigDecimal.ZERO), 
+					quantidade);
+			listItemNotaEnvio.add(itemNotaEnvio);
 			
 		}
 

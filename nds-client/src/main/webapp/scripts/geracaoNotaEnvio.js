@@ -15,7 +15,8 @@ var geracaoNotaEnvioController = $.extend({
 			intervaloCotaDe:null, 
 			intervaloCotaAte:null,
 			intervaloBoxDe:null, 
-			intervaloBoxAte:null
+			intervaloBoxAte:null,
+			exibirNotasEnvio:null
 		},
 	
 		/**
@@ -218,8 +219,11 @@ var geracaoNotaEnvioController = $.extend({
 			},{
 				name : "intervaloMovimentoAte",
 				value : this.filtroPesquisa.intervaloMovimentoAte	
+			},{
+				name : "exibirNotasEnvio",
+				value : this.filtroPesquisa.exibirNotasEnvio	
 			}];
-						
+			
 			if (this.filtroPesquisa.listaFornecedores) {
 				$.each(this.filtroPesquisa.listaFornecedores, function(index, value) {
 					params.push({
@@ -378,6 +382,9 @@ var geracaoNotaEnvioController = $.extend({
 			
 			this.filtroPesquisa.intervaloMovimentoDe = $("#geracaoNotaEnvio-filtro-movimentoDe").val();
 			this.filtroPesquisa.intervaloMovimentoAte = $("#geracaoNotaEnvio-filtro-movimentoAte").val();
+			
+			this.filtroPesquisa.exibirNotasEnvio = $("#geracaoNotaEnvio-filtro-exibirNotasEnvio").val();
+			
 		},
 		
 		/**

@@ -120,7 +120,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	public void pesquisar(Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
-			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota,
+			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
 			String sortname, String sortorder, int rp, int page) {
 				
 		if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
@@ -129,7 +129,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		FiltroConsultaNotaEnvioDTO filtro = 
 				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
 						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
-						listaIdFornecedores, idRoteiro, idRota, sortname, sortorder, rp, page);
+						listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, rp, page);
 		
 		List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
 		
@@ -263,7 +263,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	private FiltroConsultaNotaEnvioDTO setFiltroNotaEnvioSessao(Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
-			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota,
+			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
 			String sortname, String sortorder, int rp, int page) {
 		
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
@@ -289,6 +289,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		filtroConsultaNotaEnvioDTO.setIntervaloBox(intervaloBox);
 		filtroConsultaNotaEnvioDTO.setIntervaloCota(intervaloCota);
 		filtroConsultaNotaEnvioDTO.setIntervaloMovimento(intervaloDateMovimento);
+		filtroConsultaNotaEnvioDTO.setExibirNotasEnvio(exibirNotasEnvio);
 		filtroConsultaNotaEnvioDTO.setPaginacaoVO(paginacao);
 		
 		session.setAttribute(FILTRO_CONSULTA_NOTA_ENVIO, filtroConsultaNotaEnvioDTO);
