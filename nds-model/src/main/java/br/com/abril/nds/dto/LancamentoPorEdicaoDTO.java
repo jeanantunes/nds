@@ -121,7 +121,7 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 	}
 
 	public void setPercentualVenda(Number percentualVenda) {
-		this.percentualVenda = new BigDecimal(percentualVenda != null ? percentualVenda.longValue() : 0);
+		this.percentualVenda = new BigDecimal(percentualVenda != null ? percentualVenda.doubleValue() : 0);
 		this.percentualVendaFormatado = CurrencyUtil.formatarValor(this.percentualVenda);
 	}
 	

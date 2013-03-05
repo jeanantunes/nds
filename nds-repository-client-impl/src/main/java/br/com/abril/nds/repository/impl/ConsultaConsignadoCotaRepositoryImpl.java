@@ -242,6 +242,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) " );
 		
+		hql.append(" AND " + getSubQueryEstoquesCotasAusentes(filtro.getIdCota() != null) + " = 0 " );
+		
 		hql.append(" AND movimento.tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
 		
 		hql.append(" AND parametroCobranca.tipoCota = :tipoCota ");
@@ -249,7 +251,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" AND movimentoEstoqueCotaFuro.id is null ");
 		
 		if(filtro.getIdCota() != null ) { 
-			hql.append("   AND cota.id = :numeroCota");			
+			hql.append("   AND cota.id = :idCota");			
 		}
 		if(filtro.getIdFornecedor() != null) { 
 			hql.append("   AND fornecedor.id = :idFornecedor");
@@ -257,7 +259,24 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		return hql.toString();
 	}
-	
+
+	private String getSubQueryEstoquesCotasAusentes(boolean usaCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" ( ");
+		hql.append("	select count(m.id) from MovimentoEstoqueCota m ");
+		hql.append("	where m.tipoMovimento.grupoMovimentoEstoque in (:gruposEstorno) ");
+		
+		if (usaCota){
+			
+			hql.append("	and m.cota.id = :idCota ");
+		}
+		
+		hql.append(" ) ");
+		
+		return hql.toString();
+	}
 
 	private String getGroupBy(FiltroConsultaConsignadoCotaDTO filtro){
 		StringBuilder hql = new StringBuilder();
@@ -314,11 +333,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("tipoOperacaoEntrada", OperacaoEstoque.ENTRADA);
 		
 		query.setParameterList("tipoMovimentoEntrada", listaGrupoMovimentoEstoquesEntrada);
+
+		query.setParameterList("gruposEstorno", new GrupoMovimentoEstoque[] { 
+			GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE, 
+			GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE
+		});
 		
 		query.setParameter("tipoCota", TipoCota.CONSIGNADO);
 		
 		if(filtro.getIdCota() != null ) { 
-			query.setParameter("numeroCota", filtro.getIdCota());
+			query.setParameter("idCota", filtro.getIdCota());
 		}
 		
 		if(filtro.getIdFornecedor() != null ) { 

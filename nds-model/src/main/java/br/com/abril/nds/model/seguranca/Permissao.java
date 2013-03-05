@@ -38,6 +38,7 @@ public enum Permissao
 	ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS("Histograma de Vendas", 				   						   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO("Segmento Não Recebido",					 				   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS("Exceção de Segmentos e Parciais",					 	   Permissao.ROLE_DISTRIBUICAO),
+
 	ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA("Classificação Não Recebida",						 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_DESENGLOBACAO("Desenglobação",												 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_HISTORICO_VENDA("Histórico de Vendas",										 	   Permissao.ROLE_DISTRIBUICAO),
@@ -102,6 +103,9 @@ public enum Permissao
 	ROLE_FINANCEIRO_HELP("Help",           															 	   Permissao.ROLE_FINANCEIRO),
 	
 	ROLE_ADMINISTRACAO("Administração",														  			   null),
+	ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração Cota", 												   Permissao.ROLE_ADMINISTRACAO),
+	ROLE_ADMINISTRACAO_INICIAR_DIA("Inicio Diario", 												       Permissao.ROLE_ADMINISTRACAO),
+	ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE("Ajuste de reparte", 											   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_FECHAR_DIA("Fechamento Diário",												  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_CONTROLE_APROVACAO("Controle Aprovação",									  		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO("Painel Processamento	",							  		   Permissao.ROLE_ADMINISTRACAO),

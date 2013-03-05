@@ -9,9 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.comparators.ComparableComparator;
-import org.apache.commons.collections.comparators.ReverseComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +50,6 @@ import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.util.MathUtil;
 
 @Service
 public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
@@ -103,12 +99,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 
 	private List<ItemNotaEnvio> gerarItensNotaEnvio(
-			List<EstudoCota> listaEstudoCota, Long idCota) {
+			List<EstudoCota> listaEstudoCota, Cota cota) {
 
 		List<ItemNotaEnvio> listItemNotaEnvio = new ArrayList<ItemNotaEnvio>(
 				listaEstudoCota.size());
-
-		Cota cota = this.cotaRepository.buscarPorId(idCota);
 
 		for (EstudoCota estudoCota : listaEstudoCota) {
 
@@ -132,12 +126,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 						precoVenda,
 						((percentualDesconto != null && percentualDesconto
 								.getValor() != null) ? percentualDesconto
-								.getValor() : BigDecimal.ZERO), quantidade);
+								.getValor() : BigDecimal.ZERO), 
+						quantidade);
 				listItemNotaEnvio.add(itemNotaEnvio);
 			} else{
 				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
 			}
-
 			
 		}
 
@@ -230,7 +224,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 						listaIdFornecedores);
 
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(
-				listaEstudosCota, idCota);
+				listaEstudosCota, cota);
 
 		if (listaItemNotaEnvio.isEmpty()) {
 
@@ -268,7 +262,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 						listaIdFornecedores);
 
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(
-				listaEstudosCota, idCota);
+				listaEstudosCota, cota);
 
 		if (listaItemNotaEnvio.isEmpty()) {
 

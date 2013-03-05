@@ -165,6 +165,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * acordo com o range de data informado.
 	 * 
 	 * @param idCota
+	 * @param idFornecedor
 	 * @param idProdutoEdicao
 	 * @param dataInicial
 	 * @param dataFinal
@@ -173,7 +174,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return BigInteger
 	 */
 	public BigDecimal obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
-			Long idCota,
+			Long idCota, 
+			Long idFornecedor,
 			Long idProdutoEdicao,
 			Date dataInicial, 
 			Date dataFinal,
@@ -380,23 +382,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return List<MovimentoEstoqueCota>
 	 */
 	public List<MovimentoEstoqueCota> obterMovimentosEstornados(Long idCota);
-	
-	/**
-	 * Obtém o Valor Total dos movimentos de estoque da cota que ainda não geraram movimento financeiro
-	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
-	 * @param idCota
-	 * @param dataControleConferencia
-	 * @return BigDecimal
-	 */
-	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia);
-	
-	/**
-	 * Obtém o Valor Total dos movimentos de estoque da cota que forão estornados
-	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
-	 * @param idCota
-	 * @return List<MovimentoEstoqueCota>
-	 */
-	public BigDecimal obterValorTotalMovimentosEstornados(Long idCota);
 
 	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
 

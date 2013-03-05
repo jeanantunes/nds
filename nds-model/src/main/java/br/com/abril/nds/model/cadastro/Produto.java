@@ -24,9 +24,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
 
 
 /**
@@ -602,11 +602,6 @@ public class Produto implements Serializable {
 	}
 
 	/**
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	 * @return the descricaoDesconto
 	 */
 	public String getDescricaoDesconto() {
@@ -621,10 +616,6 @@ public class Produto implements Serializable {
 	}
 
 	/**
-<<<<<<< HEAD
->>>>>>> DGBti/master
-=======
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
      * Verifica se o produto é um publicação
      * 
      * @return true se o produto é uma publicação, false caso contrário

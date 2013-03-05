@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -1687,10 +1688,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select cota.id as idCota, ");
-		hql.append(" 		cota.numeroCota as numCota, ");
-		hql.append(" 		pessoa.nome as nome, ");
-		hql.append(" 		endereco.cidade as municipio, ");
-		hql.append(" 		endereco.logradouro || ', ' || endereco.numero || ' - ' || endereco.bairro || ' / ' || endereco.uf as endereco ");
+		hql.append(" cota.numeroCota as numCota, ");
+		hql.append(" case pessoa.class ");
+		hql.append(" when 'F' then pessoa.nome ");
+		hql.append(" when 'J' then pessoa.razaoSocial end as nome,");
+		hql.append(" endereco.cidade as municipio, ");
+		hql.append(" endereco.logradouro || ', ' || endereco.numero || ' - ' || endereco.bairro || ' / ' || endereco.uf as endereco ");
 		
 		gerarWhereFromObterCotaPorTipo(hql);
 		

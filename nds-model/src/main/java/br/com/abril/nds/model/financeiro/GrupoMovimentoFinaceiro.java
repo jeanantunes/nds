@@ -66,7 +66,11 @@ public enum GrupoMovimentoFinaceiro {
 	 * Débito calculado sobre faturamento da cota.
 	 */
 	DEBITO_SOBRE_FATURAMENTO(OperacaoFinaceira.DEBITO),
-	
+
+	/**
+	 * Débito calculado sobre faturamento da cota.
+	 */
+	CREDITO_SOBRE_FATURAMENTO(OperacaoFinaceira.CREDITO),
 	
 	/**
 	 * Compra de Numeros Atrazados(NA)
