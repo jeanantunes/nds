@@ -30,10 +30,10 @@ public class AjusteReparteDTO implements Serializable {
 	private String nomePDV;
 	
 	@Export(label = "Status", alignment=Alignment.LEFT, exhibitionOrder = 4)
-	private SituacaoCadastro status;
+	private String statusCota;
 
 	@Export(label = "Forma de Ajuste", alignment=Alignment.LEFT, exhibitionOrder = 5)
-	private TipoAjusteReparte formaAjuste;
+	private String formaAjusteAplicado;
 	
 	@Export(label = "Ajuste Aplicado", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private BigDecimal ajusteAplicado;
@@ -45,7 +45,7 @@ public class AjusteReparteDTO implements Serializable {
 	private String dataFim;
 	
 	@Export(label = "Motivo", alignment=Alignment.LEFT, exhibitionOrder = 9)
-	private MotivoAlteracaoSituacao motivoAjuste;	
+	private String motivoAjusteAplicado;
 	
 	@Export(label = "Usuário", alignment=Alignment.LEFT, exhibitionOrder = 10)
 	private String nomeUsuario;
@@ -62,9 +62,9 @@ public class AjusteReparteDTO implements Serializable {
 	private Date dataInicioCadastro;
 	private Date dataFimCadastro;
 	private Date dataAlteracaoCadastro;
-	private String formaAjusteAplicado;
-	private String motivoAjusteAplicado;
-	private String statusCota;
+	private TipoAjusteReparte formaAjuste;
+	private MotivoAlteracaoSituacao motivoAjuste; 
+	private SituacaoCadastro status;
 	private Long idSegmento;
 	private PaginacaoVO paginacao;
 	
