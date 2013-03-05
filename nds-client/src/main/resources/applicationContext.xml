@@ -38,13 +38,14 @@
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="br.com.abril.nds.model" />
+		
+		
 		<property name="hibernateProperties">
 			<props>			
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.format_sql">true</prop>		
+				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
-				<prop key="hibernate.connection.zeroDateTimeBehavior">convertToNull</prop>
 				<!-- prop key="hibernate.hbm2ddl.auto">update</prop -->
 				<prop key="hibernate.c3p0.min_size">5</prop>	
 				<prop key="hibernate.c3p0.max_size">20</prop>	
