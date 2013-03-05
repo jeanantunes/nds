@@ -79,7 +79,7 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 	
 	@Post
-	public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
+	public void obterMatrizDistribuicao(Date dataLancamento, List<Long> idsFornecedores) {
 				
 		validarDadosPesquisa(dataLancamento, idsFornecedores);
 		
@@ -88,9 +88,8 @@ public class MatrizDistribuicaoController extends BaseController {
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
-	
 	@Post
-	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
+	public void obterGridMatrizDistribuicao(String sortorder, String sortname, int page, int rp) {
 		
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		

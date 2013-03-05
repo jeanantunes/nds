@@ -1,4 +1,4 @@
-function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspace) {
+function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	var _workspace = workspace;
 	
@@ -6,8 +6,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	var opcoesAberto = false;
 	
-	this.tiposMovimento = []; 
-	this.tipoMovimento = null;
 	this.instancia = descInstancia;
 	this.linhasDestacadas = [];
 	this.lancamentos = [];
@@ -36,7 +34,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		});
 				
 		$.postJSON(
-			pathTela + "/matrizDistribuicao/obterMatrizLancamento", 
+			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
 			data,
 			function(result) {
 				
@@ -62,7 +60,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		T.isCliquePesquisar = true;
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
-			url : pathTela + "/matrizDistribuicao/obterGridMatrizLancamento",
+			url : pathTela + "/matrizDistribuicao/obterGridMatrizDistribuicao",
 			dataType : 'json',
 			autoload: false,
 			singleSelect: true,
@@ -288,25 +286,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$("#selTodos", _workspace).uncheck();
 	},
 	
-	
-    /**
-     * Obtém tela de confirmação de Balanceamento
-     * OBS: Específico para matrizDistribuicao\index.jsp
-     * @param codigoProduto
-     */
-	this.obterConfirmacaoBalanceamento = function (){
-		$.postJSON(
-			pathTela + "/matrizDistribuicao/obterAgrupamentoDiarioBalanceamento", 
-			null,
-			function(result) {
-				balanceamento.popularConfirmacaoBalanceamento(result,_workspace);
-				T.popup_confirmar_balanceamento();
-			},
-			function() {
-				$("#dialog-confirm-balanceamento", _workspace).hide();
-			}
-		);
-	},
 
   this.obterUnicoItemMarcado = function() {
 		
@@ -658,7 +637,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		T.isCliquePesquisar = true;
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
-			url : pathTela + "/matrizDistribuicao/obterGridMatrizLancamento",
+			url : pathTela + "/matrizDistribuicao/obterGridMatrizDistribuicao",
 			dataType : 'json',
 			autoload: false,
 			singleSelect: true,
