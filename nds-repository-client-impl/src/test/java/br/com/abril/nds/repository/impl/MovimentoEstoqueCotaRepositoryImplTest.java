@@ -1242,7 +1242,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Date dataFinal = Fixture.criarData(31, Calendar.NOVEMBER, 2012);
 		OperacaoEstoque operacaoEstoque = OperacaoEstoque.SAIDA;
 		
-		BigDecimal QtdeMovimentoEstoqueCota = movimentoEstoqueCotaRepository.obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(idCota, idProdutoEdicao, dataInicial, dataFinal, operacaoEstoque);		
+		BigDecimal QtdeMovimentoEstoqueCota = movimentoEstoqueCotaRepository.obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(idCota, this.fornecedorDinap.getId(), idProdutoEdicao, dataInicial, dataFinal, operacaoEstoque);		
 		
 	}
 
@@ -3316,32 +3316,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
         Assert.assertEquals(2, movimentos.size());
 	}
-	
-	@Test
-	public void obterValorTotalMovimentosPendentesGerarFinanceiro(){
 		
-		this.setupFinanceiroReparteEncalhe();
-
-		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId(), Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		Assert.assertNotNull(total);
-		
-		Assert.assertEquals(0,total.compareTo(new BigDecimal(600)));
-	}
-	
-	@Test
-	public void obterValorTotalMovimentosEstornados(){
-		
-		this.setupFinanceiroReparteEncalhe();
-		
-		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosEstornados(cotaValdomiro.getId());
-				
-        Assert.assertNotNull(total);
-		
-        Assert.assertEquals(0,total.compareTo(new BigDecimal(300)));
-	}
-	
-	
 	@Test
 	public void testObterListaMovimentoEstoqueCotaDevolucaoJuramentada() {
 		

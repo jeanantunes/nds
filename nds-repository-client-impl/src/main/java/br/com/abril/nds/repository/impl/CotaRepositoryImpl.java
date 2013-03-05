@@ -13,7 +13,6 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -28,6 +27,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
@@ -61,7 +61,6 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.Intervalo;
-import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -1440,49 +1439,168 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 	}
 	
 	@Override
+	public Integer obterCountCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append( " select count(*) from ( select cota_.ID ");
+		
+		Query query = queryCotasComNotaEnvioEntre(filtro, sql, true);	 	
+		
+		return ((BigInteger) query.uniqueResult()).intValue();
+	}
+	
+	
+	@Override
 	@SuppressWarnings("unchecked")
-	public Set<Long> obterIdsCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro) {
+	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvio(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		Set<Long> listaIdCotas = new HashSet<Long>();
+		StringBuilder sql = new StringBuilder();
 		
-		Criteria criteria = super.getSession().createCriteria(Cota.class);
+		sql.append( " select "
+		+ "	        cota_.ID as idCota, "
+		+ "	        cota_.NUMERO_COTA as numeroCota, "
+		+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
+		+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
+		+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
+		+ "	        SUM(ec_.QTDE_EFETIVA*pe_.PRECO_VENDA) as total, "
+		+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	");
 		
-		criteria.createAlias("box", "box");
-		criteria.createAlias("pdvs", "pdvs");
+		Query query = queryCotasComNotaEnvioEntre(filtro, sql, false);		
+		
+		if (filtro.getPaginacaoVO().getPosicaoInicial()!= null){
+			query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+		}
+		
+		if (filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
 
-		criteria.createAlias("estudoCotas", "estudoCotas");
+			query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
 
-		criteria.createAlias("estudoCotas.estudo", "estudo");
-		criteria.createAlias("estudo.lancamentos", "lancamento");
+		}	
+	
+		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
 		
-		criteria.add(
-			Restrictions.in("lancamento.status", 
-				new StatusLancamento[]{StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO}));
+		return query.list();
+	}
+	
+	private Query queryCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
 		
-		criteria.createAlias("pessoa", "pessoa");
 		
-		criteria.setProjection(Projections.distinct(Projections.property("id")));
+		sql.append( 
+		  "	    from "
+		+ "	        COTA cota_ " 
+		+ "	    inner join "
+		+ "	        BOX box1_  "
+		+ "	            on cota_.BOX_ID=box1_.ID  "
+		+ "	    inner join "
+		+ "	        ESTUDO_COTA ec_  "
+		+ "	            on cota_.ID=ec_.COTA_ID  "
+		+ "	    inner join "
+		+ "	        ESTUDO e_  "
+		+ "	            on ec_.ESTUDO_ID=e_.ID  "
+		+ "	    inner join "
+		+ "	        LANCAMENTO lancamento_  "
+		+ "	            on e_.PRODUTO_EDICAO_ID=lancamento_.PRODUTO_EDICAO_ID  "
+		+ "	            and e_.DATA_LANCAMENTO=lancamento_.DATA_LCTO_PREVISTA  "
+		+ "	    inner join "
+		+ "	        PRODUTO_EDICAO pe_  "
+		+ "	            on e_.PRODUTO_EDICAO_ID=pe_.ID  "
+		+ "	    inner join "
+		+ "	        PRODUTO p_  "
+		+ "	            on pe_.PRODUTO_ID=p_.ID  "
+		+ "	    inner join "
+		+ "	        PRODUTO_FORNECEDOR pf_  "
+		+ "	            on p_.ID=pf_.PRODUTO_ID  "
+		+ "	    inner join "
+		+ "	        FORNECEDOR f_  "
+		+ "	            on pf_.fornecedores_ID=f_.ID  "
+		+ "	    inner join "
+		+ "	        PDV pdv_  "
+		+ "	            on cota_.ID=pdv_.COTA_ID  "
+		+ "	     inner join "
+		+ "        ROTA_PDV rota_pdv_  "
+		+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
+		+ "	    inner join "
+		+ "	        ROTA rota_  "
+		+ "	            on rota_pdv_.rota_ID=rota_.ID  "
+		+ "	    inner join "
+		+ "	        ROTEIRO roteiro_  "
+		+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
+		+ "	    inner join "
+		+ "	        PESSOA pessoa_cota_  "
+		+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  "
+		+ "		left outer join NOTA_ENVIO_ITEM nei " 
+        + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
+		+ "	   where "
+		+ "	        lancamento_.STATUS in (:status)  ");
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
-			
-			criteria.createAlias("estudo.produtoEdicao", "produtoEdicao");
-			criteria.createAlias("produtoEdicao.produto", "produto");
-			criteria.createAlias("produto.fornecedores", "fornecedor");
-			
-			criteria.add(Restrictions.or(Restrictions.isNull("fornecedor.id"), Restrictions.in("fornecedor.id", filtro.getIdFornecedores())));
-		}		
+			sql.append(
+			  "	        and ( "
+			+ "	            f_.ID is null  "
+			+ "	            or f_.ID in (:idFornecedores) "
+			+ "	        )  ");
+		}
+		
+		if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
+			if (filtro.getIntervaloCota().getAte() != null) {
+				
+				sql.append("   and cota_.NUMERO_COTA between :numeroCotaDe and :numeroCotaAte  ");
+				
+			} else {
+				
+				sql.append("   and cota_.NUMERO_COTA=:numeroCota ");
+			}
+	
+		}
+		
+		if (filtro.getIntervaloBox() != null 
+				&& filtro.getIntervaloBox().getDe() != null 
+				&&  filtro.getIntervaloBox().getAte() != null) {
+			sql.append(" and box1_.CODIGO between :boxDe and :boxAte  ");
+		}
+		
+		if (filtro.getIdRoteiro() != null){
+			sql.append(" and roteiro_.ID=:idRoteiro  ");
+		}
+		
+		if (filtro.getIdRota() != null){
+			sql.append(" and rota_.ID=:idRota  ");
+		}
+		
+		if (filtro.getIntervaloMovimento() != null 
+				&& filtro.getIntervaloMovimento().getDe() != null 
+				&& filtro.getIntervaloMovimento().getAte() != null) {
+			sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+		}
+		
+		sql.append(
+		  "	    group by cota_.ID ");
+		
+		if(isCount) 
+			sql.append(" ) as dados ");
+		else
+			orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
+					filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
+		 
+		
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameterList("status", new String[]{StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()});
+		
+		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
+			query.setParameterList("idFornecedores", filtro.getIdFornecedores());
+		}
+		
 		
 		if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
 			
 			if (filtro.getIntervaloCota().getAte() != null) {
-				
-				criteria.add(
-					Restrictions.between(
-						"numeroCota", filtro.getIntervaloCota().getDe(), filtro.getIntervaloCota().getAte()));
-				
+				query.setParameter("numeroCotaDe", filtro.getIntervaloCota().getDe());
+				query.setParameter("numeroCotaAte", filtro.getIntervaloCota().getAte());
 			} else {
-				
-				criteria.add(Restrictions.eq("numeroCota", filtro.getIntervaloCota().getDe()));
+				query.setParameter("numeroCota", filtro.getIntervaloCota().getDe());
 			}
 		}
 		
@@ -1490,81 +1608,59 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 				&& filtro.getIntervaloBox().getDe() != null 
 				&&  filtro.getIntervaloBox().getAte() != null) {
 			
-			criteria.add(
-				Restrictions.between(
-					"box.codigo", filtro.getIntervaloBox().getDe(), filtro.getIntervaloBox().getAte()));
+			query.setParameter("boxDe", filtro.getIntervaloBox().getDe());
+			query.setParameter("boxAte", filtro.getIntervaloBox().getAte());
 		}
-		
-		if (filtro.getCadastro() != null) {
-			
-			criteria.add(Restrictions.eq("situacaoCadastro", filtro.getCadastro()));
-		}
-		
-		if (filtro.getIdRoteiro() != null || filtro.getIdRota() != null) {
-			
-			criteria.createAlias("pdvs.rotas", "rotaPdv");
-		    criteria.createAlias("rotaPdv.rota", "rota");
-			criteria.createAlias("rota.roteiro", "roteiro");
-		}		
-		
+	
 		if (filtro.getIdRoteiro() != null){
 			
-			criteria.add(Restrictions.eq("roteiro.id", filtro.getIdRoteiro()));
+			query.setParameter("idRoteiro", filtro.getIdRoteiro());
 		}
 		
 		if (filtro.getIdRota() != null){
 			
-			criteria.add(Restrictions.eq("rota.id", filtro.getIdRota()));
+			query.setParameter("idRota", filtro.getIdRota());
 		}
 		
 		if (filtro.getIntervaloMovimento() != null 
 				&& filtro.getIntervaloMovimento().getDe() != null 
 				&& filtro.getIntervaloMovimento().getAte() != null) {
-			
-			criteria.add(
-				Restrictions.between(
-					"lancamento.dataLancamentoDistribuidor", 
-						filtro.getIntervaloMovimento().getDe(), filtro.getIntervaloMovimento().getAte()));
-		}
-				
-		Map<String, String> columnToSort = new HashMap<String, String>();
-		
-		columnToSort.put("numeroCota", "numeroCota");
-		columnToSort.put("nomeCota", "pessoa.nome");
-		columnToSort.put("situacaoCadastro", "situacaoCadastro");
-		
-		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
-		
-		String sortName = columnToSort.get(paginacaoVO.getSortColumn());
-
-		if (sortName != null && !sortName.isEmpty() && !sortName.matches("[a-zA-Z0-9\\._]*")) {
-			
-			sortName = columnToSort.get("numeroCota");
-        }
-				
-		if ((sortName != null && !sortName.isEmpty()) 
-				&& (paginacaoVO.getSortOrder() != null 
-				&& !paginacaoVO.getSortOrder().isEmpty())) {
-			
-			criteria.addOrder(
-				paginacaoVO.getSortOrder().equals("asc") ? Order.asc(sortName) : Order.desc(sortName));
+			query.setParameter("dataDe", filtro.getIntervaloMovimento().getDe());
+			query.setParameter("dataAte",filtro.getIntervaloMovimento().getAte());
 		}
 		
-		if (filtro.getPaginacaoVO().getPosicaoInicial()!= null){
-
-			criteria.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
-		}
-		
-		if (filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
-
-			criteria.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
-
-		}	
-		
-		listaIdCotas.addAll(criteria.list());
-		
-		return listaIdCotas;
+		return 	query;
 	}
+		
+	private void orderByCotasComNotaEnvioEntre(StringBuilder sql,
+			String sortName, String sortOrder) {
+		
+		if("numeroCota".equals(sortName)) {
+			sql.append(" order by  cota_.NUMERO_COTA " + sortOrder);
+		}
+		
+		if("nomeCota".equals(sortName)) {
+			sql.append(" order by  coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) " + sortOrder);
+		}
+				
+		if("exemplares".equals(sortName)) {
+			sql.append(" order by  exemplares " + sortOrder);
+		}
+		
+		if("total".equals(sortName)) {
+			sql.append(" order by  total " + sortOrder);
+		}
+		
+		if("situacaoCadastro".equals(sortName)) {
+			sql.append(" order by  cota_.SITUACAO_CADASTRO " + sortOrder);
+		}
+		
+		if("notaImpressa".equals(sortName)) {
+			sql.append(" order by  notaImpressa " + sortOrder);
+		}
+		
+	}
+
 	
 	/**
 	 * {@inheritDoc}
@@ -1592,10 +1688,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select cota.id as idCota, ");
-		hql.append(" 		cota.numeroCota as numCota, ");
-		hql.append(" 		pessoa.nome as nome, ");
-		hql.append(" 		endereco.cidade as municipio, ");
-		hql.append(" 		endereco.logradouro || ', ' || endereco.numero || ' - ' || endereco.bairro || ' / ' || endereco.uf as endereco ");
+		hql.append(" cota.numeroCota as numCota, ");
+		hql.append(" case pessoa.class ");
+		hql.append(" when 'F' then pessoa.nome ");
+		hql.append(" when 'J' then pessoa.razaoSocial end as nome,");
+		hql.append(" endereco.cidade as municipio, ");
+		hql.append(" endereco.logradouro || ', ' || endereco.numero || ' - ' || endereco.bairro || ' / ' || endereco.uf as endereco ");
 		
 		gerarWhereFromObterCotaPorTipo(hql);
 		

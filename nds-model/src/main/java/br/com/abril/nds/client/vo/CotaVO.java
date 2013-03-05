@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -51,6 +52,9 @@ public class CotaVO implements Serializable {
 	
 	@Export(label = "Box", exhibitionOrder = 3)
 	private String descricaoBox;
+	
+	
+	private SituacaoCadastro situacaoCadastro;
 	
 	/**
 	 * Construtor padrão.
@@ -253,6 +257,24 @@ public class CotaVO implements Serializable {
 		} else if (!qtdeReparte.equals(other.qtdeReparte))
 			return false;
 		return true;
+	}
+
+
+
+	/**
+	 * @return the situacaoCadastro
+	 */
+	public SituacaoCadastro getSituacaoCadastro() {
+		return situacaoCadastro;
+	}
+
+
+
+	/**
+	 * @param situacaoCadastro the situacaoCadastro to set
+	 */
+	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
+		this.situacaoCadastro = situacaoCadastro;
 	}
 	
 }

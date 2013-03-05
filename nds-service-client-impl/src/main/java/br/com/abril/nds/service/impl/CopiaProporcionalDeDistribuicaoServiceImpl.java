@@ -13,41 +13,27 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
-import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.model.planejamento.TipoClassificacaoEstudoCota;
 import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
-import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.service.CalendarioService;
-import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.CopiaProporcionalDeDistribuicaoService;
 import br.com.abril.nds.util.StringUtil;
-import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
-public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService {
-	
-	@Autowired
-	protected CalendarioService calendarioService;
-	
-	@Autowired
-	protected DistribuicaoRepository distribuicaoRepository;
+public class CopiaProporcionalDeDistribuicaoServiceImpl implements CopiaProporcionalDeDistribuicaoService {
 	
 	@Autowired
 	private EstudoRepository estudoRepository;
@@ -57,220 +43,20 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
-	
-	@Autowired
-	private LancamentoRepository lancamentoRepository;
-	
-	@Override
-	@Transactional(readOnly = true)
-	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroLancamentoDTO filtro) {
-	
-		this.validarFiltro(filtro);
-		
-		List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs = distribuicaoRepository.obterMatrizDistribuicao(filtro);
-		
-		if (isMatrizFinalizada(produtoDistribuicaoVOs)) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Matriz Finalizada!");
-		}
-		
-		return getProdutoDistribuicaoVOTotalizado(produtoDistribuicaoVOs);
-	}
-	
-	private boolean isMatrizFinalizada(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
-		
-		for (ProdutoDistribuicaoVO produtoDistribuicaoVO: produtoDistribuicaoVOs) {
-			
-			if (!produtoDistribuicaoVO.isItemFinalizado()) {
-				
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	@Override
-	@Transactional
-	public void duplicarLinhas(Long idLancamento) {
-		
-		 Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
-		 
-		 Lancamento lancamentoCopy = new Lancamento();
-		 BeanUtils.copyProperties(lancamento, lancamentoCopy);
-		 lancamentoCopy.setId(null);
-		 
-		 ProdutoEdicao produtoEdicao = lancamentoCopy.getProdutoEdicao();
-		 ProdutoEdicao produtoEdicaoCopy = new ProdutoEdicao();
-		 BeanUtils.copyProperties(produtoEdicao, produtoEdicaoCopy);
-		 produtoEdicaoCopy.setId(null);
-		 
-		 Long id = produtoEdicaoRepository.adicionar(produtoEdicaoCopy);
-		 produtoEdicaoCopy = (ProdutoEdicao)produtoEdicaoRepository.buscarPorId(id);
-		 
-		 lancamentoCopy.setProdutoEdicao(produtoEdicaoCopy);
-		 lancamentoRepository.adicionar(lancamentoCopy);
-	}
 
+	@Autowired
+	private DistribuicaoRepository distribuicaoRepository;
+	
 	
 	@Override
 	@Transactional(readOnly = true)
 	public ProdutoDistribuicaoVO obterProdutoDistribuicaoPorEstudo(BigInteger idEstudo) {
 	
 		if (idEstudo == null || idEstudo.intValue() == 0) {
-			
 			throw new ValidacaoException(TipoMensagem.WARNING,"O código do estudo deve ser informado!");
 		}
 		
 		return distribuicaoRepository.obterProdutoDistribuicaoPorEstudo(idEstudo);
-	}
-	
-	private TotalizadorProdutoDistribuicaoVO getProdutoDistribuicaoVOTotalizado(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
-		
-		Integer totalEstudoGerado = 0;
-		Integer totalEstudoLiberado = 0;
-		
-		for (ProdutoDistribuicaoVO prodDistVO:produtoDistribuicaoVOs) {
-			if (prodDistVO.getIdEstudo() != null) {
-				if (prodDistVO.getLiberado().equals(StatusEstudo.LIBERADO.name())) {
-					totalEstudoLiberado++;
-				}
-				else {
-					totalEstudoGerado++;
-				}
-			}
-		}
-		
-		TotalizadorProdutoDistribuicaoVO totProdDistVO = new TotalizadorProdutoDistribuicaoVO();
-		totProdDistVO.setListProdutoDistribuicao(produtoDistribuicaoVOs);
-		totProdDistVO.setTotalEstudosGerados(totalEstudoGerado);
-		totProdDistVO.setTotalEstudosLiberados(totalEstudoLiberado);
-		
-		return totProdDistVO;
-	}
-	
-	
-	/**
-	 * Valida o filtro informado.
-	 */
-	private void validarFiltro(FiltroLancamentoDTO filtro) {
-		
-		if (filtro == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Os dados do filtro devem ser informados!");
-			
-		} else {
-		
-			List<String> mensagens = new ArrayList<String>();
-			
-			if (filtro.getData() == null) {
-				
-				mensagens.add("Os dados do filtro da tela devem ser informados!");
-			}
-			
-			if (filtro.getIdsFornecedores() == null
-					|| filtro.getIdsFornecedores().isEmpty()) {
-				
-				mensagens.add("Os dados do filtro da tela devem ser informados!");
-			}
-			
-			if (!mensagens.isEmpty()) {
-				
-				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING, mensagens);
-				
-				throw new ValidacaoException(validacaoVO);
-			}
-		}
-	}
-	
-	
-	@Override
-	@Transactional
-	public void reabrirEstudos(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
-		
-		List<Long> idsEstudos = new ArrayList<Long>();
-		
-		for (ProdutoDistribuicaoVO vo:produtosDistribuicao) {
-			if (vo.getIdEstudo() != null) {
-				idsEstudos.add(vo.getIdEstudo().longValue());
-			}
-		}
-		
-		estudoRepository.liberarEstudo(idsEstudos, false);
-	}
-	
-	@Override
-	@Transactional
-	public void excluirEstudos(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
-		
-		for (ProdutoDistribuicaoVO vo:produtosDistribuicao) {
-			
-			if (vo.getIdEstudo() != null) {
-				Estudo estudo = estudoRepository.buscarPorId(vo.getIdEstudo().longValue());
-				estudoRepository.remover(estudo);
-			}
-		}
-	}
-	
-	@Override
-	@Transactional
-	public void finalizarMatrizDistribuicao(FiltroLancamentoDTO filtro) {
-		
-		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
-		
-		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO.getListProdutoDistribuicao();
-		
-		for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
-			
-//			if (prodDistribVO.getLiberado() == null || !prodDistribVO.getLiberado().equals(StatusEstudo.LIBERADO.name())) {
-//				
-//				throw new ValidacaoException(TipoMensagem.WARNING, "Os estudos devem estar todos liberados para a finalização da matriz.");
-//			}
-			
-			if (!prodDistribVO.isItemFinalizado()) {
-				
-				finalizaItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
-			}
-			
-		}
-	}
-	
-	@Override
-	@Transactional
-	public void reabrirMatrizDistribuicao(FiltroLancamentoDTO filtro) {
-		
-		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
-		
-		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO.getListProdutoDistribuicao();
-		
-		if (!isMatrizFinalizada(listDistrib)) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz ainda não finalizada.");
-		}
-		
-		for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
-			
-			if (prodDistribVO.isItemFinalizado()) {
-				
-				reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
-			}
-			
-		}
-	}
-	
-	private void finalizaItemDistribuicao(Long idLancamento) {
-		
-		Lancamento lanc = (Lancamento)distribuicaoRepository.buscarPorId(idLancamento);
-		lanc.setDataFinMatDistrib(new Date());
-		distribuicaoRepository.alterar(lanc);
-	}
-	
-	private void reabrirItemDistribuicao(Long idLancamento) {
-		
-		Lancamento lanc = (Lancamento)distribuicaoRepository.buscarPorId(idLancamento);
-		lanc.setDataFinMatDistrib(null);
-		distribuicaoRepository.alterar(lanc);
 	}
 	
 	private void validarCopiaProporcionalDeDistribuicao(CopiaProporcionalDeDistribuicaoVO vo) {
@@ -561,8 +347,6 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		return obterSomaReparteFinal(mapReparte, false, null);
 	}
-
-	
 	
 	
 }

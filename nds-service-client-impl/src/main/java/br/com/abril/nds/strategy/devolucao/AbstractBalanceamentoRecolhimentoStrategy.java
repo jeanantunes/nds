@@ -49,8 +49,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
 			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
 		
-		balanceamentoRecolhimento.setSemanaRecolhimento(dadosRecolhimento.isSemanaRecolhimento());
-		
 		return balanceamentoRecolhimento;
 	}
 	

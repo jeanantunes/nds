@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.lightcouch.CouchDbClient;
-import org.lightcouch.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

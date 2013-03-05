@@ -26,7 +26,6 @@ import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -144,7 +143,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		param.put("data",filtro.getDataMovimento());
 		param.put("acumulaDivida", Boolean.FALSE);
 		param.put("statusCobranca",StatusCobranca.NAO_PAGO);
-		param.put("tipoRoteiro", TipoRoteiro.NORMAL);
 		
 		if(!isBoleto){
 			param.put("tipoCobrancaBoleto",TipoCobranca.BOLETO);
@@ -243,10 +241,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		.append(" divida.data =:data ")
 		.append(" AND divida.acumulada =:acumulaDivida ")
-		.append(" AND cobranca.statusCobranca=:statusCobranca ")
-		.append(" AND pdv.caracteristicas.pontoPrincipal = true ")
-		.append(" AND (roteiro.tipoRoteiro is null OR roteiro.tipoRoteiro=:tipoRoteiro) ")
-		.append(" and rotaPdv.ordem = (select max(rotaPdvAux.ordem) from RotaPDV rotaPdvAux where rotaPdvAux.pdv.cota.id = cota.id)");
+		.append(" AND cobranca.statusCobranca=:statusCobranca ");
 		
 		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");

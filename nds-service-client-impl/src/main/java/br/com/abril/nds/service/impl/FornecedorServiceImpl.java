@@ -739,5 +739,16 @@ public class FornecedorServiceImpl implements FornecedorService {
 	public Fornecedor obterPorId(Long idFornecedor) {
 		return this.fornecedorRepository.buscarPorId(idFornecedor);
 	}
+
+	/**
+	 * Obtem Fornecedor Padrao, utilizado para em Movimentos Financeiros sem definição de Distribuidor
+	 * @return Fornecedor
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public Fornecedor obterFornecedorPadrao() {
+		Fornecedor fornecedor = this.fornecedorRepository.obterFornecedorPadrao();
+		return fornecedor;
+	}
 }
 

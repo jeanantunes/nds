@@ -341,7 +341,7 @@ public class ParciaisController extends BaseController {
 	@Post
 	public void inserirPeriodos(Integer peb, Integer qtde, Long idProdutoEdicao) {
 		
-		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuarioLogado(), peb);
+		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuarioLogado());
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
