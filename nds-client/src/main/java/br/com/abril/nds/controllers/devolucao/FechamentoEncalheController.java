@@ -311,7 +311,7 @@ public class FechamentoEncalheController extends BaseController {
 			int rp, int page, FileType fileType) {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, false, sortorder, sortname, page, rp);
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, false, sortorder, sortname, 0, 0);
 
 		if (listaCotasAusenteEncalhe != null && !listaCotasAusenteEncalhe.isEmpty()) {
 		
