@@ -60,6 +60,9 @@ public class EstudoCota implements Serializable {
 	@OneToOne(mappedBy = "estudoCota")
 	private ItemNotaEnvio itemNotaEnvio;
 	
+	@Column(name = "CLASSIFICACAO")
+	private String classificacao;
+	
 	public EstudoCota() {
 		
 	}
@@ -130,6 +133,14 @@ public class EstudoCota implements Serializable {
 
 	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
 		this.itemNotaEnvio = itemNotaEnvio;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
 	}
 
 }
