@@ -106,5 +106,7 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	void removeCotaPDVbyPDV(Long idPdv);
 	
 	public List<PdvDTO> obterPDVs(Integer numeroCota);
+
+	public List<PdvDTO> obterPdvPorCotaComEndereco(Long idCota);
 	
 }
