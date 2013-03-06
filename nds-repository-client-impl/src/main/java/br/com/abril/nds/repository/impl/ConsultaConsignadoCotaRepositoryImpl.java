@@ -13,11 +13,11 @@ import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
 import br.com.abril.nds.dto.TotalConsultaConsignadoCotaDetalhado;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
-import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -242,11 +242,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) " );
 		
-		hql.append(" AND " + getSubQueryEstoquesCotasAusentes(filtro.getIdCota() != null) + " = 0 " );
+		hql.append(" AND (movimento.statusEstoqueFinanceiro is null ");
+		hql.append(" or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) " );
 		
 		hql.append(" AND movimento.tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
-		
-		hql.append(" AND parametroCobranca.tipoCota = :tipoCota ");
 		
 		hql.append(" AND movimentoEstoqueCotaFuro.id is null ");
 		
@@ -257,24 +256,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			hql.append("   AND fornecedor.id = :idFornecedor");
 		}
 
-		return hql.toString();
-	}
-
-	private String getSubQueryEstoquesCotasAusentes(boolean usaCota) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" ( ");
-		hql.append("	select count(m.id) from MovimentoEstoqueCota m ");
-		hql.append("	where m.tipoMovimento.grupoMovimentoEstoque in (:gruposEstorno) ");
-		
-		if (usaCota){
-			
-			hql.append("	and m.cota.id = :idCota ");
-		}
-		
-		hql.append(" ) ");
-		
 		return hql.toString();
 	}
 
@@ -333,13 +314,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("tipoOperacaoEntrada", OperacaoEstoque.ENTRADA);
 		
 		query.setParameterList("tipoMovimentoEntrada", listaGrupoMovimentoEstoquesEntrada);
-
-		query.setParameterList("gruposEstorno", new GrupoMovimentoEstoque[] { 
-			GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE, 
-			GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE
-		});
 		
-		query.setParameter("tipoCota", TipoCota.CONSIGNADO);
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		
 		if(filtro.getIdCota() != null ) { 
 			query.setParameter("idCota", filtro.getIdCota());
