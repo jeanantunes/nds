@@ -114,26 +114,6 @@ public class AnaliseEstudoController extends BaseController {
 		if(filtro == null){
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Preencha pelo menos 1 campo."),"result").recursive().serialize();
 		}
-		
-//		if(StringUtils.isEmpty(filtro.getCodigoProduto())){
-//			filtro.setCodigoProduto("");
-//		}
-//		
-//		if(filtro.getIdTipoClassificacaoProduto() == null){
-//			filtro.setIdTipoClassificacaoProduto(new Long(0));
-//		}
-//		
-//		if(StringUtils.isEmpty(filtro.getNome())){
-//			filtro.setNome("");
-//		}
-//		
-//		if (filtro.getNumeroEdicao() == null){
-//			filtro.setNumeroEdicao(new Long(0));
-//		}
-//		
-//		if (filtro.getNumEstudo() == null){
-//			filtro.setNumEstudo(new Long(0));
-//		}
 		return filtro;
 	}
 	
@@ -158,5 +138,4 @@ public class AnaliseEstudoController extends BaseController {
 			}		
 		return estudos;
 	}
-
 }

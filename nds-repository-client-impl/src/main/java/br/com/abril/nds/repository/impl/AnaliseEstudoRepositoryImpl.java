@@ -76,17 +76,6 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		
 	}
 	
-//		hql.append(" WHEN lancamento.status = ");
-//		hql.append(" RECOLHIDO ");
-//		hql.append(" OR lancamento.status = "); 
-//		hql.append(" EXPEDIDO ");
-//		hql.append(" THEN lancamento.status ");
-//		
-//		hql.append(" WHEN estudo.status = ");
-//		hql.append(" LIBERADO ");
-//		hql.append(" OR estudo.status = "); 
-//		hql.append(" GERADO ");
-//		hql.append(" THEN estudo.status ");
 	private void configurarPaginacao(FiltroAnaliseEstudoDTO filtro, Query query) {
 
 		PaginacaoVO paginacao = filtro.getPaginacao();

@@ -82,7 +82,6 @@ init : function() {
 		row.cell.telaAnalise = analise;
 	});
 	
-
 	$(".grids", analiseEstudoController.workspace).show();
 	
 	return resultado;
@@ -97,28 +96,10 @@ init : function() {
 				{name : 'filtro.idTipoClassificacaoProduto', value : $("#comboClassificacao").val() }
 			 ];
 		
-		$(".estudosGrid").flexOptions({url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
-			params: data 
-		});
-		$(".estudosGrid").flexReload();	
-		
-		analiseEstudoController.carregarEstudos();
-		
-		
-//		$.postJSON(contextPath + "/distribuicao/analiseEstudo/buscarEstudos", data,
-//				function(result) {
-//						var tipoMensagem = result.tipoMensagem;
-//						var listaMensagens = result.listaMensagens;
-//						
-//						if (tipoMensagem && listaMensagens) {
-//							exibirMensagem(tipoMensagem, listaMensagens);
-//						}
-//						$(".estudosGrid").flexReload();	
-//				   },
-//				   null,
-//				   true
-//		);
-	},
+		$(".estudosGrid", this.workspace).flexOptions({url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
+			params: data});
+		$(".estudosGrid", this.workspace).flexReload();	
+	}
 	
 	}, BaseController);
 //@ sourceURL=analiseEstudo.js
