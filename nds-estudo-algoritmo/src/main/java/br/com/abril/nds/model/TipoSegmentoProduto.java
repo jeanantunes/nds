@@ -4,6 +4,11 @@ public class TipoSegmentoProduto {
 
     private Long id;
     private String descricao;
+    
+    public TipoSegmentoProduto(Long id, String descricao) {
+	this.id = id;
+	this.descricao = descricao;
+    }
 
     public Long getId() {
 	return id;

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.TipoSegmentoProduto;
 
 @Repository
 public class ProdutoEdicaoDAO {
@@ -33,9 +34,10 @@ public class ProdutoEdicaoDAO {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 
 	StringBuilder sb = new StringBuilder();
-	sb.append(" SELECT P.NOME, PE.NUMERO_EDICAO, EPC.QTDE_RECEBIDA, EPC.QTDE_DEVOLVIDA, PE.PARCIAL, PE.PACOTE_PADRAO, PE.PESO, PE.ID as pedId ");
+	sb.append(" SELECT P.NOME, PE.NUMERO_EDICAO, EPC.QTDE_RECEBIDA, EPC.QTDE_DEVOLVIDA, PE.PARCIAL, PE.PACOTE_PADRAO, PE.PESO, PE.ID as pedId, TSP.ID AS TIPO_SEGMENTO_PRODUTO_ID, TSP.DESCRICAO AS TIPO_SEGMENTO_PRODUTO_DESC ");
 	sb.append(" , (CASE WHEN EXISTS(SELECT '.' FROM TIPO_PRODUTO TP WHERE TP.ID = P.TIPO_PRODUTO_ID AND TP.GRUPO_PRODUTO = 'COLECIONAVEL') THEN 1 ELSE 0 END) IS_COLECAO ");
 	sb.append(" FROM ESTOQUE_PRODUTO_COTA EPC JOIN PRODUTO_EDICAO PE ON PE.ID = EPC.PRODUTO_EDICAO_ID JOIN PRODUTO P ON P.ID = PE.PRODUTO_ID ");
+	sb.append(" INNER JOIN TIPO_SEGMENTO_PRODUTO TSP ON (TSP.ID = P.TIPO_SEGMENTO_PRODUTO_ID) ");
 	sb.append(" WHERE EPC.COTA_ID = ? ");
 	if (produto != null) {
 	    sb.append(" AND PE.ID = ? ");
@@ -60,6 +62,8 @@ public class ProdutoEdicaoDAO {
 		edicao.setPeso(rs.getInt("PESO"));
 		edicao.setColecao(rs.getInt("IS_COLECAO") == 1);
 
+		edicao.setTipoSegmentoProduto(new TipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID"), rs.getString("TIPO_SEGMENTO_PRODUTO_DESC")));
+		
 		edicoes.add(edicao);
 	    }
 	} catch (Exception ex) {
