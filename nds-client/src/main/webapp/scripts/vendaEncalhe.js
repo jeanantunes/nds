@@ -801,7 +801,9 @@ var VENDA_PRODUTO = {
 						
 						$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete({});
 						
-						numeroEdicao = ui.item.chave.long;
+						codigoProduto = result[0].chave.string;
+						
+						numeroEdicao = result[0].chave.long;
 						
 	 					VENDA_PRODUTO.obterDadosProduto(codigoProduto,numeroEdicao,index);			
 					}

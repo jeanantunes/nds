@@ -44,7 +44,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -163,14 +162,8 @@ public class BaixaFinanceiraController extends BaseController {
 	
 	private String getDataOperacaoDistribuidor() {
 
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		if (distribuidor != null) {
-
-			return DateUtil.formatarDataPTBR(distribuidor.getDataOperacao());
-		}
-
-		return null;
+		return DateUtil.formatarDataPTBR(
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 	}
 	
 	@Post
@@ -531,10 +524,9 @@ public class BaixaFinanceiraController extends BaseController {
 					              String juros,
 					              String multa) {        
         
-		Distribuidor distribuidor = distribuidorService.obter();
-		
 		Date dataNovoMovimento =
-			calendarioService.adicionarDiasUteis(distribuidor.getDataOperacao(), 1);
+			calendarioService.adicionarDiasUteis(
+					this.distribuidorService.obterDataOperacaoDistribuidor(), 1);
 		
         BigDecimal valorConvertido = CurrencyUtil.converterValor(valor);
         BigDecimal jurosConvertido = CurrencyUtil.converterValor(juros);
@@ -558,7 +550,7 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setValorDesconto(descontoConvertido);
 		
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, getUsuarioLogado(),
-								   null, distribuidor,
+								   null, 
 								   dataNovoMovimento, null, null, new Date());
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
@@ -585,11 +577,10 @@ public class BaixaFinanceiraController extends BaseController {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
 
-		//OBTER DISTRIBUIDOR PARA BUSCAR DATA DE OPERAÇÃO
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-        //CONFIGURAR PAGINA DE PESQUISA
-		FiltroConsultaDividasCotaDTO filtroAtual = new FiltroConsultaDividasCotaDTO(numCota, distribuidor.getDataOperacao(),StatusCobranca.NAO_PAGO);
+		//CONFIGURAR PAGINA DE PESQUISA
+		FiltroConsultaDividasCotaDTO filtroAtual = 
+				new FiltroConsultaDividasCotaDTO(
+						numCota, this.distribuidorService.obterDataOperacaoDistribuidor(),StatusCobranca.NAO_PAGO);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setSomenteBaixadas(false);
 		filtroAtual.setPaginacao(paginacao);
@@ -648,11 +639,10 @@ public class BaixaFinanceiraController extends BaseController {
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
 
-		//OBTER DISTRIBUIDOR PARA BUSCAR DATA DE OPERAÇÃO
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-        //CONFIGURAR PAGINA DE PESQUISA
-		FiltroConsultaDividasCotaDTO filtroAtual = new FiltroConsultaDividasCotaDTO(numCota, distribuidor.getDataOperacao(),StatusCobranca.PAGO);
+		//CONFIGURAR PAGINA DE PESQUISA
+		FiltroConsultaDividasCotaDTO filtroAtual = 
+				new FiltroConsultaDividasCotaDTO(
+						numCota, this.distribuidorService.obterDataOperacaoDistribuidor() ,StatusCobranca.PAGO);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setNossoNumero(nossoNumero);
 		filtroAtual.setSomenteBaixadas(true);
@@ -797,7 +787,7 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setValorPagamento(valorPagamentoConvertido);
 		pagamento.setTipoPagamento(tipoPagamento);
 		pagamento.setObservacoes(observacoes);
-		pagamento.setDataPagamento(this.distribuidorService.obter().getDataOperacao());
+		pagamento.setDataPagamento(this.distribuidorService.obterDataOperacaoDistribuidor());
 		pagamento.setUsuario(getUsuarioLogado());
 		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
 		

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_cheque" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_cheque" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="00bd9838-8a79-4be1-9f73-c801ec3d99b6">
 	<property name="ireport.zoom" value="1.6105100000000032"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="TOTAL_PARCELAS" class="java.lang.String"/>
+    <parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -56,125 +57,125 @@
 	<title>
 		<band height="79" splitType="Stretch">
 			<rectangle>
-				<reportElement mode="Transparent" x="0" y="0" width="555" height="79"/>
+				<reportElement uuid="061cf729-915e-4bf4-a3fe-ef4f3d1cb02f" mode="Transparent" x="3" y="0" width="555" height="79"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="131" y="18" width="164" height="38"/>
+				<reportElement uuid="376b5d4d-34ec-4573-acdc-f8e2a379a1bb" x="131" y="18" width="164" height="38"/>
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[TREELOG S/A
 LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 			</staticText>
-			<image>
-				<reportElement x="2" y="2" width="127" height="77"/>
-				<imageExpression><![CDATA[$P{SUBREPORT_DIR} + "logo_2.jpg"]]></imageExpression>
-			</image>
 			<staticText>
-				<reportElement x="331" y="15" width="204" height="41"/>
+				<reportElement uuid="4251fcfc-7d9d-430b-9385-2f7fd888fc5d" x="331" y="15" width="204" height="41"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Negociação de Dívida]]></text>
 			</staticText>
+			<image scaleImage="RealSize" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
+				<reportElement uuid="3e3b3112-9474-4fbb-9c93-ee36abec5c64" x="3" y="1" width="115" height="78"/>
+				<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="80" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="555" height="20"/>
+				<reportElement uuid="a906f6b9-1c0d-4c52-a472-8e4b2de242ec" x="0" y="0" width="555" height="20"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="3" y="0" width="36" height="20"/>
+				<reportElement uuid="1fc625b8-e8eb-406e-8b69-e37b42b749f4" x="3" y="0" width="36" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cota:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="131" y="0" width="37" height="20"/>
+				<reportElement uuid="8d227b35-b1c6-480a-bd10-7a796c134c94" x="131" y="0" width="37" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="358" y="0" width="121" height="20"/>
+				<reportElement uuid="5c214795-0ab1-46e7-b202-b9174059dee4" x="358" y="0" width="121" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dívida Selecionada R$:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="20" width="106" height="20"/>
+				<reportElement uuid="170ae97b-f261-4db8-becb-66f64e54b823" x="3" y="20" width="106" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Forma de Pagamento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="40" width="155" height="20"/>
+				<reportElement uuid="b638e1b7-7966-41ef-a690-0585d356c9f3" x="3" y="40" width="155" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tipo de Pagamento:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="158" y="40" width="100" height="20"/>
+				<reportElement uuid="aacab25e-1123-49c8-b1b3-a0a53205b797" x="158" y="40" width="100" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Cheque]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="39" y="0" width="90" height="20"/>
+				<reportElement uuid="19b62a1c-1c50-4b6f-8ac7-aa42eb248fc6" x="39" y="0" width="90" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="168" y="0" width="190" height="20"/>
+				<reportElement uuid="aba994da-c8d4-4011-9c25-9797fd8a4514" x="168" y="0" width="190" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{nomeCota}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="479" y="0" width="76" height="20"/>
+				<reportElement uuid="012334e3-dd88-4090-bfa7-f46217ae86db" x="479" y="0" width="76" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{totalDividaSelecionada}.setScale(2, RoundingMode.HALF_EVEN)]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="3" y="60" width="155" height="20"/>
+				<reportElement uuid="d8e35580-791d-40a6-b536-bfe34761a5b0" x="3" y="60" width="155" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Negociação Avulsa:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="258" y="40" width="37" height="20"/>
+				<reportElement uuid="c50ce1be-2271-4be5-8f88-c5930f6fc45f" x="258" y="40" width="37" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Banco:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="258" y="60" width="100" height="20"/>
+				<reportElement uuid="8b7c710e-0a0b-4fde-9874-0b09ce6b5991" x="258" y="60" width="100" height="20"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Isenta de Encargos:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="158" y="60" width="82" height="20"/>
+				<reportElement uuid="d937b827-d995-4552-9af3-3f40f1f1e7a2" x="158" y="60" width="82" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{negociacaoAvulsa} ? "Sim" : "Não"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="358" y="60" width="100" height="20"/>
+				<reportElement uuid="5350f962-3129-452f-87cd-24f61a620a41" x="358" y="60" width="100" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{isentaEncargos} ? "Sim" : "Não"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="295" y="40" width="260" height="20"/>
+				<reportElement uuid="8bb5278a-9301-47ea-b0a0-bf6135394f34" x="295" y="40" width="260" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{numeroBanco} + " - " + $F{nomeBanco} + " Ag. " + $F{agenciaBanco} + " C/C: " + $F{contaBanco}]]></textFieldExpression>
 			</textField>
@@ -183,7 +184,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<subreport>
-				<reportElement x="0" y="0" width="555" height="20"/>
+				<reportElement uuid="ca9ab741-29dd-4c56-963b-1a814722ba48" x="0" y="0" width="555" height="20"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{parcelasCheques})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "negociacao_divida_cheque_subreport.jasper"]]></subreportExpression>
 			</subreport>
@@ -193,7 +194,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 		<band height="28">
 			<printWhenExpression><![CDATA[$F{parcelasCheques} != null && !$F{parcelasCheques}.isEmpty()]]></printWhenExpression>
 			<textField>
-				<reportElement mode="Opaque" x="185" y="8" width="185" height="20" backcolor="#F0F0F0"/>
+				<reportElement uuid="5353a90e-f9a5-449d-bce8-8d0f7738d5c5" mode="Opaque" x="185" y="8" width="185" height="20" backcolor="#F0F0F0"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -204,7 +205,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 				<textFieldExpression><![CDATA[$P{TOTAL_PARCELAS}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="8" width="185" height="20" backcolor="#F0F0F0"/>
+				<reportElement uuid="4ecfe49c-f857-4cb1-9452-ca984ff60347" mode="Opaque" x="0" y="8" width="185" height="20" backcolor="#F0F0F0"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>

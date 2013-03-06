@@ -16,7 +16,6 @@ import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -528,7 +527,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Distribuidor distribuidor,TipoCobranca tipoCobranca,
+	public boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, TipoCobranca tipoCobranca,
 			List<Long> idFornecedores, Integer diaDoMes) {
 		
 		Long idFormaCobrancaExcept = null;
@@ -538,7 +537,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		    idFormaCobrancaExcept = politica.getFormaCobranca().getId();
 		}    
 		
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(distribuidor.getId(), tipoCobranca, idFormaCobrancaExcept);
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(tipoCobranca, idFormaCobrancaExcept);
 		for (FormaCobranca itemFormaCobranca:formas){
 			for (int i=0; i<idFornecedores.size();i++){
 				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
@@ -556,7 +555,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, Distribuidor distribuidor, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
+	public boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
 			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
 		
 		boolean res=true;
@@ -567,7 +566,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			idFormaCobrancaExcept = politica.getFormaCobranca().getId();
 		}	
 		
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(distribuidor.getId(), tipoCobranca, idFormaCobrancaExcept);
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(tipoCobranca, idFormaCobrancaExcept);
 		for (FormaCobranca itemFormaCobranca:formas){
 			for (Long idFornecedor : idFornecedores){
 				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedor);

@@ -50,7 +50,7 @@ public interface ProdutoService {
 			String fornecedor, String editor, Long codigoTipoProduto,
 			String sortorder, String sortname, int page, int rp);
 
-	void removerProduto(Long id) throws UniqueConstraintViolationException;
+	void removerProduto(Long id);
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto);

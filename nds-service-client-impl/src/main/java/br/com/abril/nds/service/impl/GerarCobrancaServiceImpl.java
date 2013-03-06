@@ -363,9 +363,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 */
 	private Date obterDataVencimentoBoletoDistribuidor(int semana) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		Date dataFechamentoSemana = DateUtil.obterDataDaSemanaNoAno(semana, DiaSemana.TERCA_FEIRA.getCodigoDiaSemana(), distribuidor.getDataOperacao());
+		Date dataFechamentoSemana = 
+				DateUtil.obterDataDaSemanaNoAno(
+						semana, DiaSemana.TERCA_FEIRA.getCodigoDiaSemana(), 
+						this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		Date dataVencimento = this.calendarioService.adicionarDiasUteis(dataFechamentoSemana, 2);
 				
@@ -646,6 +647,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						vlMovFinanTotal.add(
 							movimentoFinanceiroCota.getValor() != null ? 
 									movimentoFinanceiroCota.getValor().negate() : 
+										BigDecimal.ZERO);
+				break;
+				case CREDITO_SOBRE_FATURAMENTO:
+					vlMovFinanTotal =
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ?
+									movimentoFinanceiroCota.getValor():
 										BigDecimal.ZERO);
 				break;
 			}

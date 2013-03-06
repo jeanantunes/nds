@@ -22,7 +22,6 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -85,16 +84,28 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 
 
+	/**
+	 * @deprecated Use {@link #calcularJuros(Banco,Long,BigDecimal,Date,Date)} instead
+	 */
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularJuros(Banco banco, Cota cota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
+										return calcularJuros(banco, cota.getId(),
+												valor, dataVencimento,
+												dataCalculoJuros);
+									}
+
+	@Override
+	@Transactional(propagation=Propagation.SUPPORTS)
+	public BigDecimal calcularJuros(Banco banco, Long idCota,
+									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
 
 		
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
-		FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
+		FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(idCota);
 		
-		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();		
 		
 		PoliticaCobranca politicaPrincipal = formaCobrancaPrincipal.getPoliticaCobranca();
 		
@@ -668,15 +679,16 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public boolean validaNegociacaoDividas(List<Long> idCobrancas) {
 		
 		boolean res=true;
-		Distribuidor distribuidor = distribuidorService.obter();
-		Integer diasNegociacao = (distribuidor.getParametroCobrancaDistribuidor()!=null?distribuidor.getParametroCobrancaDistribuidor().getDiasNegociacao():null);
+		
+		Integer diasNegociacao = this.distribuidorService.diasNegociacao();
 		
 		if (diasNegociacao!=null){
 			
 			for (Long id:idCobrancas){
 				Cobranca cobranca = this.cobrancaRepository.buscarPorId(id);
 				
-				if (  distribuidor.getDataOperacao().getTime() >  DateUtil.adicionarDias(cobranca.getDataVencimento(), diasNegociacao).getTime()){
+				if (this.distribuidorService.obterDataOperacaoDistribuidor().getTime() > 
+						DateUtil.adicionarDias(cobranca.getDataVencimento(), diasNegociacao).getTime()){
 					res=false;
 					break;
 				}

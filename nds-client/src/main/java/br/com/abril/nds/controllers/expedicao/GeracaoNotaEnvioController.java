@@ -20,7 +20,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -180,11 +180,12 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Post
 	public void transferirSuplementar(List<Long> listaIdCotas) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor =
+				this.distribuidorService.parametrosRecolhimentoDistribuidor();
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		this.movimentoEstoqueCotaService.transferirReparteParaSuplementar(distribuidor, listaIdCotas, 
+		this.movimentoEstoqueCotaService.transferirReparteParaSuplementar(parametrosRecolhimentoDistribuidor, listaIdCotas, 
 				filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), null, null);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 

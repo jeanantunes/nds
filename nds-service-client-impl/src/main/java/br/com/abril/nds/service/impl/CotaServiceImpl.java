@@ -83,6 +83,8 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -877,7 +879,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		ParametroDistribuicaoCota parametro = cota.getParametroDistribuicao();
 		
-		boolean qtdePDVAutomatico = distribuidorService.obter().isPreenchimentoAutomaticoPDV();
+		boolean qtdePDVAutomatico = this.distribuidorService.preenchimentoAutomaticoPDV();
 				
 		DistribuicaoDTO dto = new DistribuicaoDTO();
 		
@@ -960,6 +962,7 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
 		parametros.setRecebeRecolheParciais(dto.getRecebeRecolhe());
+		parametros.setRecebeComplementar(dto.getRecebeComplementar());
 		parametros.setNotaEnvioImpresso(dto.getNeImpresso());
 		parametros.setNotaEnvioEmail(dto.getNeEmail());
 		parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
@@ -1849,11 +1852,9 @@ public class CotaServiceImpl implements CotaService {
 			return true;
 		}
 		
-	    Distribuidor distribuidor = distribuidorService.obter();
-	    
 	    Long qntDiasInativo =  DateUtil.obterDiferencaDias(histCota.getDataInicioValidade(), new Date());
 	    
-	    Long qntDiasDistribuidor =  (distribuidor.getQntDiasReutilizacaoCodigoCota() == null)?0:distribuidor.getQntDiasReutilizacaoCodigoCota();
+	    Long qntDiasDistribuidor = this.distribuidorService.qntDiasReutilizacaoCodigoCota();
 	    
 		return (qntDiasInativo > qntDiasDistribuidor );
 	}
@@ -2373,6 +2374,39 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	public List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas){
 		return cotaRepository.buscarCotasQuePossuemRangeReparte(qtdReparteInicial, qtdReparteFinal, listProdutoEdicaoDto, cotasAtivas);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota) {
+		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		for (PDV pdv: cota.getPdvs()) {
+			
+			if (pdv != null) {
+				
+				CaracteristicasPDV caracteristicasPDV = pdv.getCaracteristicas();
+				
+				if (caracteristicasPDV != null && caracteristicasPDV.isPontoPrincipal()) {
+					
+					SegmentacaoPDV segmentacaoPDV = pdv.getSegmentacao();
+					
+					if (segmentacaoPDV != null) {
+						
+						if (segmentacaoPDV.getTipoCaracteristica() != null &&
+								segmentacaoPDV.getTipoCaracteristica().equals(TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL)) {
+							
+							return true;
+						}
+					}
+				}
+			}
+			
+		}
+		
+		
+		return false;
 	}
 
 }
