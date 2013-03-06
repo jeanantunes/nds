@@ -402,6 +402,37 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
         
 		q.executeUpdate();
 	}
+
+	/**
+	 * Preenche o PdvDTO com os atributos para o popUp do AnaliseHistórico
+	 */
+	@Override
+	public List<PdvDTO> obterPDVs(Integer numeroCota) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("SELECT pdv.id as id, pdv.nome as nomePDV, " )
+				.append("  tipoPontoPDV.descricao as descricaoTipoPontoPDV ,")
+				.append("  ifnull(endereco.logradouro,' ') || ',' || ifnull(endereco.numero,' ') || '-' || ifnull(endereco.bairro,' ') || '-' || ifnull(endereco.cidade, ' ') as  endereco , ")
+				.append("  pdv.caracteristicas.pontoPrincipal as principal,")
+				.append("  pdv.status as statusPDV ,")
+				.append("  pdv.porcentagemFaturamento as porcentagemFaturamento")
+		.append(" FROM PDV pdv ")
+		.append(" JOIN pdv.cota cota ")
+		.append(" LEFT JOIN pdv.enderecos enderecoPdv ")
+		.append(" LEFT JOIN enderecoPdv.endereco endereco ")
+		.append(" LEFT JOIN pdv.segmentacao.tipoPontoPDV tipoPontoPDV ")
+		.append(" WHERE cota.numeroCota = :numeroCota ")
+		
+		.append(" group by pdv.id");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(PdvDTO.class));
+		
+		return query.list();
+	}
 	
 	@Override
 	@Transactional

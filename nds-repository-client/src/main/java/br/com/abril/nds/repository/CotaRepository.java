@@ -1,16 +1,19 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
@@ -28,6 +31,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
+import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -355,4 +359,15 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	Integer obterDadosCotasComNotaEnvioAEmitirCount(FiltroConsultaNotaEnvioDTO filtro);
 
 	Integer obterDadosCotasComNotaEnvioEmitidasEAEmitirCount(FiltroConsultaNotaEnvioDTO filtro);
+
+	List<CotaDTO> buscarCotasQuePossuemPercentualVendaSuperior(BigDecimal percentVenda, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+
+	List<CotaDTO> buscarCotasPorNomeOuNumero(CotaDTO cotaDto, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+
+	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	
+	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
+	
+	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
+	
 }
