@@ -12,7 +12,6 @@ import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -62,14 +61,12 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		gerarPeriodosParcias(produtoEdicao, qtdePeriodos, usuario, distribuidor);
+		gerarPeriodosParcias(produtoEdicao, qtdePeriodos, usuario);
 	}
 	
 	@Override
 	@Transactional
-	public void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario,Distribuidor distribuidor) {
+	public void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario) {
 		
 		validarProdutoEdicao(produtoEdicao);
 		
@@ -103,7 +100,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			throw new ValidacaoException(TipoMensagem.WARNING,"Quantidade de períodos é menor que a quantidade já programada para lançamento");
 		}
 
-		Integer fatorRelancamentoParcial = distribuidor.getFatorRelancamentoParcial();
+		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
 		
 		Lancamento ultimoLancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
 		
