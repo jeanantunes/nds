@@ -110,33 +110,30 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 	@Transactional
 	public List<? extends VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
 		
-		List<? extends VisaoEstoqueDetalheDTO> list = null;
+		List<? extends VisaoEstoqueDetalheDTO> detalhesVisaoEstoque = null;
 		
 		if (filtro.getTipoEstoque().equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
-			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
+			
+			detalhesVisaoEstoque = 
+				this.visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
+			
 		} else {
 			
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			
-			Date dataOperacao = distribuidor.getDataOperacao();
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
 			if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
-				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
-			} else {
-				list = visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);
-			}
-		}
-		
-		for (VisaoEstoqueDetalheDTO dto: list) {
-			
-			if (dto.getPrecoCapa() == null || dto.getQtde() == null) {
 				
-				continue;
+				detalhesVisaoEstoque = 
+					this.visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
+				
+			} else {
+				
+				detalhesVisaoEstoque = 
+					this.visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);
 			}
-			
 		}
-		
-		return list;
+
+		return detalhesVisaoEstoque;
 	}
 	
 	@Override
