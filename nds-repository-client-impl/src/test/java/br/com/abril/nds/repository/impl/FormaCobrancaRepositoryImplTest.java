@@ -620,10 +620,10 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		List<FormaCobranca> listaFormaCobranca;
 		
-		Long idDistribuidor = distribuidor.getId();
 		Long idFormaCobranca = formaCobranca1.getId();
 		
-		listaFormaCobranca = formaCobrancaRepositoryImpl.obterPorDistribuidorETipoCobranca(idDistribuidor, TipoCobranca.BOLETO, idFormaCobranca);
+		listaFormaCobranca = 
+				formaCobrancaRepositoryImpl.obterPorDistribuidorETipoCobranca(TipoCobranca.BOLETO, idFormaCobranca);
 		
 		Assert.assertNotNull(listaFormaCobranca);
 		
