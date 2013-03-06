@@ -149,8 +149,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					, GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE)
 				);
 			
-			
-			
 			for(MovimentoEstoqueCota movimentoEstoqueCota : movimentos) {
 				quantidadeResultante = quantidadeResultante.add(movimentoEstoqueCota.getQtde());
 			}
