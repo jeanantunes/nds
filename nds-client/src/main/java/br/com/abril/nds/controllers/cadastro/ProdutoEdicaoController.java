@@ -157,19 +157,19 @@ public class ProdutoEdicaoController extends BaseController {
 		Intervalo<Date> intervaloLancamento = null;
 		// Validar:
 		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
 		}else if(dataLancamentoDe != null && dataLancamentoAte != null){
 			if(dataLancamentoDe.after(dataLancamentoAte)){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
 			}
 			
 			intervaloLancamento = new Intervalo<Date>(dataLancamentoDe, dataLancamentoAte);		
 		}
 		if(precoDe == null ^ precoAte == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 		}else if(precoDe != null && precoAte != null ){
 			if(precoDe.compareTo(precoAte) > 0){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 			}
 			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
 		}		
