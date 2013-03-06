@@ -15,62 +15,59 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
-import br.com.abril.nds.model.Segmento;
+import br.com.abril.nds.model.TipoAjusteReparte;
 import br.com.abril.nds.model.TipoSegmentoProduto;
 
 public class CotaDAO {
-    
-    public Segmento getSegmentoByCotaAndTipoSegmentoProduto(Cota cota, TipoSegmentoProduto tipoSegmentoProduto) {
 
-	Segmento segmento = null;
-
-	try {
-
-	    StringBuilder query = new StringBuilder(" SELECT SNR.*, TSP.DESCRICAO AS TIPO_SEGMENTO_PRODUTO_DESC FROM SEGMENTO_NAO_RECEBIDO SNR ");
-	    query.append(" INNER JOIN TIPO_SEGMENTO_PRODUTO TSP ON (TSP.ID = SNR.TIPO_SEGMENTO_PRODUTO_ID) ");
-	    query.append(" INNER JOIN COTA C ON (C.ID = SNR.COTA_ID) ");
-	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
-	    query.append(" WHERE SNR.COTA_ID = ? AND SNR.TIPO_SEGMENTO_PRODUTO_ID = ? ");
-
-	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
-	    psmt.setLong(1, cota.getId());
-	    psmt.setLong(2, tipoSegmentoProduto.getId());
-
-	    ResultSet rs = psmt.executeQuery();
-
-	    if (rs.next()) {
-		segmento = new Segmento();
-		segmento.setCota(cota);
-		segmento.setId(rs.getLong("ID"));
-		//TODO Setar o Ajuste
-		//segmento.setAjuste(rs.getBigDecimal(""));
-		tipoSegmentoProduto.setDescricao(rs.getString("TIPO_SEGMENTO_PRODUTO_DESC"));
-		segmento.setTipoSegmentoProduto(tipoSegmentoProduto);
-	    }
-
-	} catch (Exception ex) {
-	    ex.printStackTrace();
-	}
-
-	return segmento;
-    }
-
-    public BigDecimal getAjusteAplicadoByCota(Cota cota) {
+    public BigDecimal getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(Cota cota, TipoSegmentoProduto tipoSegmentoProduto, TipoAjusteReparte[] tipoAjusteReparte) {
 
 	BigDecimal ajusteAplicado = null;
 
 	try {
 
 	    StringBuilder query = new StringBuilder(" SELECT AR.AJUSTE_APLICADO FROM AJUSTE_REPARTE AR ");
+
+	    if (tipoSegmentoProduto != null) {
+		query.append(" INNER JOIN TIPO_SEGMENTO_PRODUTO TSP ON (TSP.ID = AR.TIPO_SEGMENTO_AJUSTE_ID AND TSP.ID = ?) ");
+	    }
+
 	    query.append(" INNER JOIN COTA C ON (C.ID = AR.COTA_ID) ");
 	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
 	    query.append(" WHERE AR.COTA_ID = ? ");
 	    query.append(" AND AR.DATA_INICIO >= ? AND AR.DATA_FIM <= ? ");
 
+	    if (tipoAjusteReparte != null && tipoAjusteReparte.length > 0) {
+
+		query.append(" AND AR.FORMA_AJUSTE IN ( ");
+
+		int i = 0;
+		while (i < tipoAjusteReparte.length) {
+
+		    query.append("\"");
+		    query.append(tipoAjusteReparte[i].toString());
+		    query.append("\"");
+		    query.append(",");
+		    i++;
+		}
+
+		query.delete(query.length() - 1, query.length());
+
+		query.append(" ) ");
+
+	    }
+
 	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
-	    psmt.setLong(1, cota.getId());
-	    psmt.setString(2, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
-	    psmt.setString(3, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+
+	    int i = 1;
+
+	    if (tipoSegmentoProduto != null) {
+		psmt.setLong(i++, tipoSegmentoProduto.getId());
+	    }
+
+	    psmt.setLong(i++, cota.getId());
+	    psmt.setString(i++, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+	    psmt.setString(i++, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
 
 	    ResultSet rs = psmt.executeQuery();
 	    if (rs.next()) {
