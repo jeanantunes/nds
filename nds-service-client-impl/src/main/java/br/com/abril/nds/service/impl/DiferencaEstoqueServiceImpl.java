@@ -816,9 +816,22 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			tipoMovimentoEstoque.setAprovacaoAutomatica(true);
 		}
 	   	
+		Long estudoCotaId = 0L;
+		for(RateioDiferenca rd : diferenca.getRateios()) {
+			if(rd.getEstudoCota().getCota().getId() == cota.getId()) {
+				estudoCotaId = rd.getEstudoCota().getId();
+				break;
+			}
+		}
+		
 		return this.movimentoEstoqueService.gerarMovimentoCota(
+				null, diferenca.getProdutoEdicao().getId(), cota.getId()
+				, idUsuario, quantidade, tipoMovimentoEstoque
+				, new Date(), null, null, estudoCotaId);
+		
+		/*return this.movimentoEstoqueService.gerarMovimentoCota(
 			null, diferenca.getProdutoEdicao().getId(),
-				cota.getId(), idUsuario, quantidade, tipoMovimentoEstoque);
+				cota.getId(), idUsuario, quantidade, tipoMovimentoEstoque);*/
 	}
 	
 	/*

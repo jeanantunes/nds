@@ -1556,8 +1556,11 @@ var ConferenciaEncalhe = $.extend(true, {
 	irParaContigencia: function(){
 		$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
 		$(".tipsy").hide();
-		$('#workspace').tabs('addTab', "Conferência Encalhe Cota Contingência",
-				contextPath + "/devolucao/conferenciaEncalheContingencia" + "?random=" + Math.random());
+		$('#workspace').tabs('addTab', 										
+				"Conferência Encalhe Cota Contingência"
+				, contextPath + "/devolucao/conferenciaEncalheContingencia" + "?random=" + Math.random()
+				, 'classROLE_RECOLHIMENTO'
+		);
 	},
 	
 	veificarCobrancaGerada: function(){

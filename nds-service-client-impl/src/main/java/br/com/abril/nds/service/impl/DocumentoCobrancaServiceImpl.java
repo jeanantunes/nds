@@ -162,13 +162,13 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 		
 		Cobranca cobranca = null;
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		String razaoSocial = this.distribuidorService.obterRazaoSocialDistribuidor();
 		
 		for(String nossoNumero : listNossoNumero) {
 			
 			cobranca = this.cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
 			
-			cobrancas.add( obterCobrancaImpressaoDTO(cobranca, distribuidor));
+			cobrancas.add(obterCobrancaImpressaoDTO(cobranca, razaoSocial));
 		}
 		
 		byte[] arquivo = gerarDocumentoIreport(cobrancas);
@@ -200,13 +200,9 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 */
 	private void enviarDocumentoPorEmail(Cobranca cobranca) throws AutenticacaoEmailException, Exception {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		String assunto = this.distribuidorService.assuntoEmailCobranca();
 		
-		String assunto=(distribuidor.getAssuntoEmailCobranca()!=null
-						? distribuidor.getAssuntoEmailCobranca():"");
-		
-		String mensagem=(distribuidor.getMensagemEmailCobranca()!=null
-						? distribuidor.getMensagemEmailCobranca():"");
+		String mensagem = this.distribuidorService.mensagemEmailCobranca();
 		
 		String emailCota = cobranca.getCota().getPessoa().getEmail();
 		String[] destinatarios = new String[]{emailCota};
@@ -229,12 +225,12 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 */
 	private byte[] getDocumentoCobranca(Cobranca... cobrancas) throws Exception{
 		
-		Distribuidor distribuidor  = distribuidorService.obter();
+		String razaoSocial = this.distribuidorService.obterRazaoSocialDistribuidor();
 		
 		List<CobrancaImpressaoDTO> list = new ArrayList<CobrancaImpressaoDTO>();
 		
 		for(Cobranca cobranca : cobrancas){
-			list.add(obterCobrancaImpressaoDTO(cobranca,distribuidor));
+			list.add(obterCobrancaImpressaoDTO(cobranca, razaoSocial));
 		}
 		
 		return gerarDocumentoIreport(list);
@@ -296,7 +292,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 	 * @param distribuidor
 	 * @return CobrancaImpressaoDTO
 	 */
-	private CobrancaImpressaoDTO obterCobrancaImpressaoDTO(Cobranca cobranca,Distribuidor distribuidor){
+	private CobrancaImpressaoDTO obterCobrancaImpressaoDTO(Cobranca cobranca, String razaoSocialDistribuidor){
 		
 		CobrancaImpressaoDTO impressaoDTO = new CobrancaImpressaoDTO();
 		
@@ -321,7 +317,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 				impressaoDTO.setNomeCota(((PessoaJuridica) pessoa).getRazaoSocial()); 
 			}
 			
-			impressaoDTO.setNomeFavorecido(distribuidor.getJuridica().getRazaoSocial());
+			impressaoDTO.setNomeFavorecido(razaoSocialDistribuidor);
 			impressaoDTO.setNumeroCota(cota.getNumeroCota());
 			
 			impressaoDTO.setBox((cota.getBox()!= null)?cota.getBox().getCodigo() + " - " + cota.getBox().getNome():"");

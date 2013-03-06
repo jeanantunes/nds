@@ -95,7 +95,10 @@ public class NegociacaoDividaController extends BaseController {
 	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA)
 	public void index(){
 		
-		Integer qntdParcelas = this.distribuidorService.obter().getNegociacaoAteParcelas();
+		Integer qntdParcelas = this.distribuidorService.negociacaoAteParcelas();
+		
+		qntdParcelas = (qntdParcelas == null ? 0 : qntdParcelas);
+		
 		List<Integer> parcelas = new ArrayList<Integer>();
 		
 		for(int i = 1; i <= qntdParcelas; i++){

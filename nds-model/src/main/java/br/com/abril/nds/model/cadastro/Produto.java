@@ -1,3 +1,4 @@
+
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
@@ -631,5 +632,16 @@ public class Produto implements Serializable {
 	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
 		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
+
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(
+			TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+	}
+	
+	
 
 }

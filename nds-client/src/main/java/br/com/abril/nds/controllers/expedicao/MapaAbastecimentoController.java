@@ -432,7 +432,7 @@ public class MapaAbastecimentoController extends BaseController {
 		
 		Entregador entregador = entregadorService.buscarPorId(filtro.getIdEntregador());
 				
-		result.include("distribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+		result.include("distribuidor", distribuidorService.obterRazaoSocialDistribuidor());
 		
 		result.include("entregador", entregador);
 		
@@ -533,7 +533,7 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	private void setaNomeParaImpressao() {
-		result.include("nomeDistribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+		result.include("nomeDistribuidor", distribuidorService.obterRazaoSocialDistribuidor());
 	}
 	
 	public void impressaoFalha(String mensagemErro){

@@ -18,7 +18,6 @@ import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -352,11 +351,8 @@ public class ParametroCobrancaController extends BaseController {
 			}
 		}
 		
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		if (parametros.isEnvioEmail()){
-			if (distribuidor.getJuridica().getEmail()==null){
+			if (this.distribuidorService.getEmail() == null){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre um e-mail para o distribuidor ou desmarque a opção de envio de email.");
 			}
 		}
@@ -365,14 +361,14 @@ public class ParametroCobrancaController extends BaseController {
 		
 			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO MENSAL
 			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-				if (!this.politicaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), parametros.getDiasDoMes().get(0))){
+				if (!this.politicaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),parametros.getTipoCobranca(), parametros.getFornecedoresId(), parametros.getDiasDoMes().get(0))){
 					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
 				}
 			}
 			
 			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO SEMANAL
 			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-				if (!this.politicaCobrancaService.validarFormaCobrancaSemanal(parametros.getIdPolitica(),distribuidor,parametros.getTipoCobranca(), parametros.getFornecedoresId(), 
+				if (!this.politicaCobrancaService.validarFormaCobrancaSemanal(parametros.getIdPolitica(),parametros.getTipoCobranca(), parametros.getFornecedoresId(), 
 																		parametros.isDomingo(),
 																		parametros.isSegunda(),
 																		parametros.isTerca(),

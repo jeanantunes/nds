@@ -5,7 +5,6 @@ import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -86,7 +85,7 @@ public interface PoliticaCobrancaService {
 	 * @param diaDoMes
 	 * @return Boolean
 	 */
-	boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Distribuidor distribuidor,TipoCobranca tipoCobranca,
+	boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, TipoCobranca tipoCobranca,
 			List<Long> idFornecedores, Integer diaDoMes);
 	
 
@@ -103,7 +102,7 @@ public interface PoliticaCobrancaService {
 	 * @param sabado
 	 * @return Boolean
 	 */
-	boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, Distribuidor distribuidor,TipoCobranca tipoCobranca,
+	boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, TipoCobranca tipoCobranca,
 			List<Long> idFornecedores, Boolean domingo, Boolean segunda,
 			Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta,
 			Boolean sabado);

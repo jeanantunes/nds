@@ -18,18 +18,18 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
-import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -55,10 +55,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
 	
 	@Autowired
-	private EstudoRepository estudoRepository;
-
-	@Autowired
-	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	private EstudoCotaRepository estudoCotaRepository;
 
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
@@ -193,7 +190,13 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			
 			// Geração de movimentação de estoque por cota / movimentação de estoque / estoque / estoque cota
 			movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, idUsuario);
+			
+		}
 		
+		// Ao furar um produto com nota de envio emitida, o item da nota eh removido
+		for(EstudoCota ec : lancamento.getEstudo().getEstudoCotas()) {
+			ec.setItemNotaEnvios(null);
+			estudoCotaRepository.merge(ec);
 		}
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
