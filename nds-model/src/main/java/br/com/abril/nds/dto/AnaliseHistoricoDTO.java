@@ -1,6 +1,11 @@
 package br.com.abril.nds.dto;
 
+import org.eclipse.jdt.internal.compiler.util.FloatUtil;
+import org.springframework.format.annotation.NumberFormat;
+
+import antlr.StringUtils;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -22,11 +27,15 @@ public class AnaliseHistoricoDTO {
 	@Export(label = "NPDV", alignment=Alignment.LEFT, exhibitionOrder = 4)
 	private Long qtdPdv = 0l;
 	
-	@Export(label = "REP Cota", alignment=Alignment.LEFT, exhibitionOrder = 5)
 	private Double reparteMedio;
 	
-	@Export(label = "VDA Cota", alignment=Alignment.LEFT, exhibitionOrder = 6)
+	@Export(label = "REP Cota", alignment=Alignment.LEFT, exhibitionOrder = 5)
+	private String reparteMedioFormat;
+	
 	private Double vendaMedia;
+	
+	@Export(label = "VDA Cota", alignment=Alignment.LEFT, exhibitionOrder = 6)
+	private String vendaMediaFormat;
 
 	// Edição 1
 	@Export(label = "REP 1", alignment=Alignment.LEFT, exhibitionOrder = 7)
@@ -110,20 +119,14 @@ public class AnaliseHistoricoDTO {
 		this.qtdPdv = qtdPdv;
 	}
 
-	public Double getReparteMedio() {
-		return reparteMedio;
-	}
-
 	public void setReparteMedio(Double reparteMedio) {
 		this.reparteMedio = reparteMedio;
-	}
-
-	public Double getVendaMedia() {
-		return vendaMedia;
+		this.reparteMedioFormat = CurrencyUtil.formatarValor(reparteMedio);
 	}
 
 	public void setVendaMedia(Double vendaMedia) {
 		this.vendaMedia = vendaMedia;
+		this.vendaMediaFormat = CurrencyUtil.formatarValor(vendaMedia);
 	}
 
 	public String getEd1Reparte() {
@@ -174,14 +177,6 @@ public class AnaliseHistoricoDTO {
 		return ed6Venda;
 	}
 
-//	public List<ProdutoEdicaoDTO> getEdicoes() {
-//		return edicoes;
-//	}
-//
-//	public void setEdicoes(List<ProdutoEdicaoDTO> edicoes) {
-//		this.edicoes = edicoes;
-//	}
-
 	public void setEd1Reparte(String ed1Reparte) {
 		this.ed1Reparte = ed1Reparte;
 	}
@@ -229,7 +224,13 @@ public class AnaliseHistoricoDTO {
 	public void setEd6Venda(String ed6Venda) {
 		this.ed6Venda = ed6Venda;
 	}
-	
-	
+
+	public String getReparteMedioFormat() {
+		return reparteMedioFormat;
+	}
+
+	public String getVendaMediaFormat() {
+		return vendaMediaFormat;
+	}
 
 }

@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoRecebidoDTO;
+import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
@@ -31,12 +32,14 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
@@ -64,6 +67,9 @@ public class HistoricoVendaController extends BaseController {
 	
 	@Autowired
 	private CapaService capaService;
+	
+	@Autowired
+	private RegiaoService regiaoService;
 	
 	@Autowired
 	private XStreamJSONSerialization jsonSerializer;
@@ -295,11 +301,13 @@ public class HistoricoVendaController extends BaseController {
 		case CotasAVista:
 			
 			break;
-		case CotasNovasRetivadas:
+		case CotasNovasRetivadas :
 			
 			break;
 		case Região:
-			//TODO: EMS 2004
+			for (RegiaoDTO regiao : regiaoService.buscarRegiao()) {
+				resultList.add(new ItemDTO(regiao.getIdRegiao(), regiao.getNomeRegiao()));
+			}
 			break;
 		default:
 			break;

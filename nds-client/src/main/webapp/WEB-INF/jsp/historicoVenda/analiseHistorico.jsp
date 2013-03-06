@@ -51,15 +51,15 @@ function escondeDados(){
           <td width="78"><strong>Nome:</strong></td>
           <td width="289" id="popUpNomePessoa"></td>
           <td width="58"><strong>Tipo:</strong></td>
-          <td width="137" id="popUpTipoCota">Alterantivo</td>
+          <td width="137" id="popUpTipoCota"></td>
         </tr>
         <tr>
           <td><strong>Ranking:</strong></td>
-          <td id="popUpRanking">10</td>
+          <td id="popUpRanking"></td>
           <td><strong>Faturamento:</strong></td>
           <td id="popUpFaturamentoCota"></td>
           <td><strong>Mês/Ano:</strong></td>
-          <td id="popUpData">09/2012</td>
+          <td id="popUpData"></td>
         </tr>
     </table>
 

@@ -1225,7 +1225,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
 		hql.append(" sum(lancamento.reparte) as repartePrevisto, ");
-		hql.append(" (estoqueProduto.qtdeDevolucaoFornecedor - movimentos.qtde) as qtdeVendas,");
+		hql.append(" sum(ifnull(estoqueProduto.qtdeDevolucaoFornecedor,0)  - movimentos.qtde) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa ");
 		
@@ -1238,7 +1238,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" LEFT JOIN produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 		
 		hql.append(" WHERE ");
-//		hql.append(" tipoMovimento.id = 21 and ");
+		hql.append(" tipoMovimento.id = 13 and ");
 	
 		if (filtro.getProdutoDto() != null) {
 			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
@@ -1292,17 +1292,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append(" SELECT ");
 		
-		hql.append(" sum(lancamento.reparte) as reparte, ");
+		hql.append(" sum(movimentos.qtde) as reparte, ");
 		hql.append(" sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as qtdeVendas ");
 		
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN produtoEdicao.lancamentos as lancamento ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
+//		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		hql.append(" WHERE ");
+		hql.append(" movimentos.tipoMovimento.id = 21 and ");
 		
 		hql.append(" produto.codigo = :codigoProduto ");
 		parameters.put("codigoProduto", codigoProduto);
@@ -1313,7 +1315,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" and cota.numeroCota = :numeroCota ");
 		parameters.put("numeroCota", numeroCota);
 		
-		hql.append(" GROUP BY cota.numeroCota ");
+		hql.append(" GROUP BY estoqueProdutoCota.cota ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		

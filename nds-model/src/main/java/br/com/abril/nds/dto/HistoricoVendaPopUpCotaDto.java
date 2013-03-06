@@ -1,9 +1,11 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 
 public class HistoricoVendaPopUpCotaDto {
 
@@ -13,7 +15,8 @@ public class HistoricoVendaPopUpCotaDto {
 	private Long rankId;
 	private BigDecimal faturamento;
 	private String faturamentoFormatado;
-	private String dataGeracao;
+	private Date dataGeracao;
+	private String dataGeracaoFormat;
 
 	public String getFaturamentoFormatado() {
 		return faturamentoFormatado;
@@ -40,12 +43,13 @@ public class HistoricoVendaPopUpCotaDto {
 		this.nomePessoa = nomePessoa;
 	}
 
-	public String getDataGeracao() {
-		return dataGeracao;
+	public String getDataGeracaoFormat() {
+		return dataGeracaoFormat;
 	}
 
-	public void setDataGeracao(String dataGeracao) {
+	public void setDataGeracao(Date dataGeracao) {
 		this.dataGeracao = dataGeracao;
+		this.dataGeracaoFormat = DateUtil.formatarData(dataGeracao, "MM/yyyy");
 	}
 
 	public TipoDistribuicaoCota getTipoDistribuicaoCota() {

@@ -2275,10 +2275,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			
 			break;
 		case CotasNovasRetivadas:
-
+			whereParameter.append(" cota.id in (SELECT cotaBase.cota.id FROM CotaBase as cotaBase) AND ");
+			
 			break;
 		case Região:
-			// todo: EMS 2004
+			whereParameter.append(" cota.id in (SELECT registro.cota.id FROM RegistroCotaRegiao as registro WHERE regiao.id = :regiaoId) AND ");
+			parameters.put("regiaoId",Long.parseLong(elemento));
+			
 			break;
 		default:
 			break;
@@ -2346,18 +2349,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append(" cota.situacaoCadastro as statusCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
 		hql.append(" count(DISTINCT pdvs) as qtdPdv, ");
-		hql.append(" avg(lancamento.reparte) as reparteMedio, ");
+		hql.append(" avg(movimentos.qtde) as reparteMedio, ");
 		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia ");
 		
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN produtoEdicao.lancamentos as lancamento ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
+		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pdvs as pdvs ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		hql.append(" WHERE ");
+		hql.append(" tipoMovimento.id = 21 and ");
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
@@ -2422,11 +2427,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT ");
+		hql.append(" rankingFaturamento.id as rankId, ");
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
-//		hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
+		hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
 		hql.append(" rankingFaturamento.faturamento as faturamento, ");
-		hql.append(" max(rankingFaturamentoGerado.dataGeracao) as dataGeracao ");
+		hql.append(" max(rankingFaturamentoGerado.dataGeracao) as  dataGeracao ");
 		
 		hql.append(" FROM RankingFaturamento rankingFaturamento ");
 		hql.append(" INNER JOIN rankingFaturamento.rankingFaturamentoGerado as rankingFaturamentoGerado ");
