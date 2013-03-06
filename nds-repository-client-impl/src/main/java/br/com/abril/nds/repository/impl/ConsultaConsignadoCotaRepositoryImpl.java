@@ -242,7 +242,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) " );
 		
-		hql.append(" AND " + getSubQueryEstoquesCotasAusentes() + " = 0 " );
+		hql.append(" AND " + getSubQueryEstoquesCotasAusentes(filtro.getIdCota() != null) + " = 0 " );
 		
 		hql.append(" AND movimento.tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
 		
@@ -260,14 +260,19 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		return hql.toString();
 	}
 
-	private String getSubQueryEstoquesCotasAusentes() {
+	private String getSubQueryEstoquesCotasAusentes(boolean usaCota) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" ( ");
 		hql.append("	select count(m.id) from MovimentoEstoqueCota m ");
 		hql.append("	where m.tipoMovimento.grupoMovimentoEstoque in (:gruposEstorno) ");
-		hql.append("	and m.cota.id = :idCota ");
+		
+		if (usaCota){
+			
+			hql.append("	and m.cota.id = :idCota ");
+		}
+		
 		hql.append(" ) ");
 		
 		return hql.toString();

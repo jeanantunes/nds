@@ -815,13 +815,16 @@ var MANTER_COTA = $.extend(true, {
 
                         $("#cotaTemEntregador").hide();
                     }
+                    
+                    DISTRIB_COTA.verificarTipoConvencional(MANTER_COTA.idCota);
                 },
                 null,
                 true,
                 "dialog-cota"
             );
         }
-    }
+    },
+    
 
 }, BaseController);
 
