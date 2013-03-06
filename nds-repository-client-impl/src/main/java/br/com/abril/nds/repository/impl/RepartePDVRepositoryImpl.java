@@ -12,7 +12,7 @@ import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RepartePDVRepository;
 /**
- * Classe de implementação referente ao acesso a dados da entidade
+ * Classe de implementaÃ§Ã£o referente ao acesso a dados da entidade
  *
  * FixacaoReparte
  */

@@ -10,6 +10,7 @@ import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
+
 @SuppressWarnings("serial")
 @Exportable
 public class MixProdutoDTO implements Serializable{
@@ -22,22 +23,22 @@ public class MixProdutoDTO implements Serializable{
 	@Export(label="nome",exhibitionOrder = 2)
 	private String nomeCota;
 	
-	@Export(label="reparte médio", exhibitionOrder = 3)
+	@Export(label="reparte mï¿½dio", exhibitionOrder = 3)
 	private BigDecimal reparteMedio;
 	
-	@Export(label="venda média",exhibitionOrder = 4)
+	@Export(label="venda mï¿½dia",exhibitionOrder = 4)
 	private BigDecimal vendaMedia;
 	
-	@Export(label="último reparte",exhibitionOrder = 5)
+	@Export(label="ï¿½ltimo reparte",exhibitionOrder = 5)
 	private BigDecimal ultimoReparte;
 	
-	@Export(label="reparte mínimo" ,exhibitionOrder = 6)
+	@Export(label="reparte mï¿½nimo" ,exhibitionOrder = 6)
 	private BigInteger reparteMinimo;
 	
-	@Export(label="reparte máximo" ,exhibitionOrder = 7)
+	@Export(label="reparte mï¿½ximo" ,exhibitionOrder = 7)
 	private BigInteger reparteMaximo;
 
-	@Export(label="usuário",exhibitionOrder = 8)
+	@Export(label="usuï¿½rio",exhibitionOrder = 8)
 	private String usuario;
 	
 	@Export(label="data" ,exhibitionOrder = 10)

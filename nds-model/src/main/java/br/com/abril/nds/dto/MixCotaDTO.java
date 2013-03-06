@@ -22,28 +22,28 @@ public class MixCotaDTO implements Serializable{
 	@Export(label="nome",exhibitionOrder = 2)
 	private String nomeProduto;
 	
-	@Export(label="classificação",exhibitionOrder = 3)
+	@Export(label="classificaÃ§Ã£o",exhibitionOrder = 3)
 	private String classificacaoProduto;
 	
-	@Export(label="reparte médio", exhibitionOrder = 4)
+	@Export(label="Reparte MÃ©dio", exhibitionOrder = 4)
 	private BigDecimal reparteMedio;
 	
-	@Export(label="venda média",exhibitionOrder = 5)
+	@Export(label="Venda MÃ©dia",exhibitionOrder = 5)
 	private BigDecimal vendaMedia;
 	
-	@Export(label="último reparte",exhibitionOrder = 6)
+	@Export(label="Ãšltimo Reparte",exhibitionOrder = 6)
 	private BigDecimal ultimoReparte;
 	
-	@Export(label="reparte mínimo" ,exhibitionOrder = 7)
+	@Export(label="Reparte MÃ­nimo" ,exhibitionOrder = 7)
 	private BigInteger reparteMinimo;
 	
-	@Export(label="reparte máximo" ,exhibitionOrder = 8)
+	@Export(label="Reparte MÃ¡ximo" ,exhibitionOrder = 8)
 	private BigInteger reparteMaximo;
 	
-	@Export(label="usuário",exhibitionOrder = 9)
+	@Export(label="UsuÃ¡rio",exhibitionOrder = 9)
 	private String usuario;
 	
-	@Export(label="data" ,exhibitionOrder = 10)
+	@Export(label="Data" ,exhibitionOrder = 10)
 	private String data;
 	
 	
