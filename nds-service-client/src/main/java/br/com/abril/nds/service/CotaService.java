@@ -366,4 +366,11 @@ public interface CotaService {
 
 	List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
+	
+	/**
+	 * 
+	 * @param idCota
+	 * @return
+	 */
+	boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota);
 }

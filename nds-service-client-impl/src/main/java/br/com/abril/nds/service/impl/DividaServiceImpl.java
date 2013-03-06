@@ -31,7 +31,6 @@ import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.Negociacao;
-import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -142,107 +141,88 @@ public class DividaServiceImpl implements DividaService {
 	@Transactional
 	public void postergarCobrancaCota(List<Long> listaIdsCobranca, Date dataPostergacao, Long idUsuario, boolean isIsento) {
 		
-		validarDataPostergacao(dataPostergacao);
+		this.validarDataPostergacao(dataPostergacao);
 		
-		try {
-			
-			List<Cobranca> listaCobranca = 
-				this.cobrancaRepository.obterCobrancasPorIDS(listaIdsCobranca);
-	
-			Date dataAtual = Calendar.getInstance().getTime();
+		List<Cobranca> listaCobranca = 
+			this.cobrancaRepository.obterCobrancasPorIDS(listaIdsCobranca);
 
-			Usuario currentUser = this.usuarioRepository.buscarPorId(idUsuario);
-			
-			for (Cobranca cobranca : listaCobranca) {
-				
-				Date backupDataVencimento = cobranca.getDataVencimento();
-				
-				cobranca.getDivida().setStatus(StatusDivida.POSTERGADA);
-				cobranca.setDataPagamento(dataAtual);
-				cobranca.setDataVencimento(dataPostergacao);
-	
-				BaixaCobranca baixaCobranca = new BaixaManual();
-				
-				baixaCobranca.setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
-				baixaCobranca.setDataBaixa(dataAtual);
-				baixaCobranca.setValorPago(cobranca.getValor());
-				baixaCobranca.setCobranca(cobranca);
-				
-				baixaCobranca = this.baixaCobrancaRepository.merge(baixaCobranca);
-				
-				Cobranca cobrancaAtualizada = this.cobrancaRepository.merge(cobranca);
-				
-				MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
-				
-				movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(false);
-				movimentoFinanceiroCotaDTO.setCota(cobrancaAtualizada.getCota());
-				movimentoFinanceiroCotaDTO.setBaixaCobranca(baixaCobranca);
-				movimentoFinanceiroCotaDTO.setDataCriacao(dataAtual);
-				movimentoFinanceiroCotaDTO.setDataVencimento(dataPostergacao);
-				movimentoFinanceiroCotaDTO.setValor(cobrancaAtualizada.getValor());
-				movimentoFinanceiroCotaDTO.setUsuario(currentUser);
-				
-				movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+		Date dataAtual = Calendar.getInstance().getTime();
 
-				TipoMovimentoFinanceiro movimentoFinanceiro =
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+		Usuario currentUser = this.usuarioRepository.buscarPorId(idUsuario);
+		
+		TipoMovimentoFinanceiro postergadoNegociacao =
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+					GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
+			
+		if (postergadoNegociacao == null) {
+			
+			throw new ValidacaoException(
+					TipoMensagem.ERROR, 
+					"Tipo de Movimento " + GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO + " não encontrado.");
+		}
+		
+		TipoMovimentoFinanceiro tipoMovimentoJuros =
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+					GrupoMovimentoFinaceiro.JUROS);
+		
+		TipoMovimentoFinanceiro tipoMovimentoMulta =
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+					GrupoMovimentoFinaceiro.MULTA);
+		
+		for (Cobranca cobranca : listaCobranca) {
+			
+			Date backupDataVencimento = cobranca.getDataVencimento();
+			
+			cobranca.getDivida().setStatus(StatusDivida.POSTERGADA);
+			cobranca.setDataPagamento(dataAtual);
+			cobranca.setDataVencimento(dataPostergacao);
+
+			BaixaCobranca baixaCobranca = new BaixaManual();
+			baixaCobranca.setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
+			baixaCobranca.setDataBaixa(dataAtual);
+			baixaCobranca.setValorPago(cobranca.getValor());
+			baixaCobranca.setCobranca(cobranca);
+			
+			baixaCobranca = this.baixaCobrancaRepository.merge(baixaCobranca);
+			
+			Cobranca cobrancaAtualizada = this.cobrancaRepository.merge(cobranca);
+			
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = new MovimentoFinanceiroCotaDTO();
+			movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(false);
+			movimentoFinanceiroCotaDTO.setCota(cobrancaAtualizada.getCota());
+			movimentoFinanceiroCotaDTO.setBaixaCobranca(baixaCobranca);
+			movimentoFinanceiroCotaDTO.setDataCriacao(dataAtual);
+			movimentoFinanceiroCotaDTO.setDataVencimento(dataPostergacao);
+			movimentoFinanceiroCotaDTO.setValor(cobrancaAtualizada.getValor());
+			movimentoFinanceiroCotaDTO.setUsuario(currentUser);
+			
+			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+			movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(postergadoNegociacao);
+			movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+			
+			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 				
-				if (movimentoFinanceiro == null) {
+			if (!isIsento) {
+			
+				BigDecimal juros = this.cobrancaService.calcularJuros(
+					cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(), 
+					cobrancaAtualizada.getValor(), backupDataVencimento, dataPostergacao);
 					
-					movimentoFinanceiro = new TipoMovimentoFinanceiro();
-					
-					movimentoFinanceiro.setAprovacaoAutomatica(true);
-					movimentoFinanceiro.setDescricao("POSTERGAÇÃO");
-					movimentoFinanceiro.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
-					movimentoFinanceiro.setOperacaoFinaceira(OperacaoFinaceira.CREDITO);
-					
-					movimentoFinanceiro = 
-						this.tipoMovimentoFinanceiroRepository.merge(movimentoFinanceiro);
-				}
-				
-				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(movimentoFinanceiro);
-				movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+				movimentoFinanceiroCotaDTO.setValor(juros);
+				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoJuros);
 				
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
-					
-				if (!isIsento) {
 				
-					Distribuidor distribuidor = this.distribuidorService.obter();
-					
-					BigDecimal juros = this.cobrancaService.calcularJuros(
-						cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(), 
-						cobrancaAtualizada.getValor(), backupDataVencimento, dataPostergacao);
-						
-					movimentoFinanceiro =
-						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.JUROS);
-
-					movimentoFinanceiroCotaDTO.setValor(juros);
-					
-					movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(movimentoFinanceiro);
-					
-					this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
-					
-					BigDecimal multa = this.cobrancaService.calcularMulta(
-						cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(), distribuidor, 
-						cobrancaAtualizada.getValor());
-					
-					movimentoFinanceiro =
-						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.MULTA);
-
-					movimentoFinanceiroCotaDTO.setValor(multa);
-					
-					movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(movimentoFinanceiro);
-					
-					this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
-					
-				}
+				BigDecimal multa = this.cobrancaService.calcularMulta(
+					cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(),
+					cobrancaAtualizada.getValor());
+				
+				movimentoFinanceiroCotaDTO.setValor(multa);
+				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoMulta);
+				
+				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
+				
 			}
-			
-		} catch(Exception e) {
-			throw new RuntimeException(e);
 		}
 	}
 
@@ -255,8 +235,6 @@ public class DividaServiceImpl implements DividaService {
 		
 		BigDecimal encargos = BigDecimal.ZERO;
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		for (Cobranca cobranca : listaCobrancas) {
 			
 			BigDecimal juros = 
@@ -267,7 +245,7 @@ public class DividaServiceImpl implements DividaService {
 			BigDecimal multa = 
 				this.cobrancaService.calcularMulta(
 					cobranca.getBanco(), cobranca.getCota(), 
-					distribuidor, cobranca.getValor());
+					cobranca.getValor());
 			
 			encargos = encargos.add(juros).add(multa);
 		}
