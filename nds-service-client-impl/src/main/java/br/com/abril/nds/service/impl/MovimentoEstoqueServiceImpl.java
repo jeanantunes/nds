@@ -479,6 +479,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setUsuario(new Usuario(idUsuario));
 		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 
+		if (idEstudoCota != null) {
+			
+			movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));
+		}
+		
 		if (dataLancamento != null && idProdutoEdicao != null) {
 			
 			if (idLancamento==null) {
@@ -511,10 +516,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 			}			
 			
-			if (idEstudoCota != null) {
-				
-				movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));
-			}
 		}
 		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {

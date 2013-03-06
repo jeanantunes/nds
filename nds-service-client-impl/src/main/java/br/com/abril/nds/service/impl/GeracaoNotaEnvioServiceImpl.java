@@ -37,12 +37,17 @@ import br.com.abril.nds.model.envio.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.RateioDiferenca;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
@@ -83,6 +88,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
+	
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 
 	@Transactional
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
@@ -110,13 +118,48 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					.getProdutoEdicao();
 
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-
+			
+			BigInteger quantidadeResultante = BigInteger.ZERO;
+			
+			for(RateioDiferenca rateioDiferenca : estudoCota.getRateiosDiferenca()) {
+				
+				for(MovimentoEstoqueCota mec : estudoCota.getMovimentosEstoqueCota()) {
+					
+					if(mec.getEstudoCota().getId() == rateioDiferenca.getEstudoCota().getId()) {
+						
+						if(rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)
+								|| rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_EM)) {
+							
+							quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde().negate());
+							
+						} else {
+							
+							quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde());
+							
+						}
+					}
+				}
+			}
+			
+			List<MovimentoEstoqueCota> movimentos = new ArrayList<>();			
+			movimentos.addAll(
+					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
+					estudoCota.getEstudo().getLancamento().getDataLancamentoDistribuidor()
+					, cota.getId()
+					, GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE)
+				);
+			
+			
+			
+			for(MovimentoEstoqueCota movimentoEstoqueCota : movimentos) {
+				quantidadeResultante = quantidadeResultante.add(movimentoEstoqueCota.getQtde());
+			}
+			
 			Desconto percentualDesconto = this.descontoService
 					.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo()
 							.getLancamento(), cota, produtoEdicao);
 
-			BigInteger quantidade = estudoCota.getQtdeEfetiva();
-
+			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva());
 
 			if (estudoCota.getItemNotaEnvios().isEmpty()) {
 
