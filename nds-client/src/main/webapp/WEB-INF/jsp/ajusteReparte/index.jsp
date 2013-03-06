@@ -146,23 +146,17 @@ $(function(){
 			
 			<table width="360" border="0" cellspacing="1" cellpadding="2">
 				<tr>
-					<!-- 
-					 -->
 					<td width="10"></td>
 					<td width="102"><span class="vlrPerc" >
 							<input name="AJUSTE_HISTORICO_input" id="AJUSTE_HISTORICO_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
 					</span></td>
 					
-					<!-- 
-					 -->
 					<td width="400"></td>
 					<td width="100">
 					<span class="vdaMedia" >
 							<input name="AJUSTE_VENDA_MEDIA_input" id="AJUSTE_VENDA_MEDIA_input" value="1" style="display: none;" type="text" style="width: 50px;" /> 
 					</span>
 					</td>
-					<!-- 
-					 -->
 					<td width="350"></td>
 					<td width="250">
 						<span class="encalheMaximo"	> 
@@ -259,23 +253,17 @@ $(function(){
 			
 			<table width="360" border="0" cellspacing="1" cellpadding="2">
 				<tr>
-					<!-- 
-					 -->
 					<td width="10"></td>
 					<td width="102"><span class="vlrPerc" >
 							<input name="AJUSTE_HISTORICO_input" id="AJUSTE_HISTORICO_input_editar" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
 					</span></td>
 					
-					<!-- 
-					 -->
 					<td width="400"></td>
 					<td width="100">
 					<span class="vdaMedia" >
 							<input name="AJUSTE_VENDA_MEDIA_input" id="AJUSTE_VENDA_MEDIA_input_editar" value="1" style="display: none;" type="text" style="width: 50px;" /> 
 					</span>
 					</td>
-					<!-- 
-					 -->
 					<td width="350"></td>
 					<td width="250">
 						<span class="encalheMaximo"	> 
@@ -349,89 +337,8 @@ $(function(){
 						</span>
 
 					</fieldset>
-
-					<!--<fieldset class="classFieldset" style="float:left; width:300px!important;">
-       	  <legend>Cota</legend>
-       	  <table width="270" border="0" cellpadding="2" cellspacing="1" class="filtro">
-       	    <tr>
-       	      <td width="30">Cota:</td>
-       	      <td width="229"><input type="text" name="lstCotas" id="lstCotas" style="width:260px;"/></td>
-   	        </tr>
-   	      </table>
-       	  <br />
-
-       	<table class="segmentosGrid"></table>
-            
-      <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;"><img src="../images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
-        
-      </fieldset>-->
 				</div>
 
-			<!-- 
-				<div class="porCota" style="display: none;">
-					<fieldset class="classFieldset"
-						style="float: left; width: 631px !important; margin-right: 10px !important;">
-						<legend>Segmentos que Não Recebem Cota</legend>
-
-						<table class="segmentoCotaGrid"></table>
-
-						<span class="bt_novos" title="Gerar Arquivo">
-							<a href="javascript:;">
-								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-									Arquivo
-							</a>
-						</span> 
-						
-						<span class="bt_novos" title="Imprimir">
-							<a href="javascript:;">
-								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-									Imprimir
-							</a>
-						</span>
-
-
-					</fieldset>
-					<fieldset class="classFieldset"
-						style="float: left; width: 300px !important;">
-						<legend>Segmentos</legend>
-						<table width="271" border="0" cellpadding="2" cellspacing="1"
-							class="filtro">
-							<tr>
-								<td width="60">Segmento:</td>
-								<td width="210"><select name="select" id="select"
-									style="width: 200px;">
-										<option selected="selected">Selecione...</option>
-								</select></td>
-							</tr>
-						</table>
-						<br />
-
-						<table class="segmentosBGrid"></table>
-						<span class="bt_novos" title="Gerar Arquivo">
-								<a href="${pageContext.request.contextPath}/distribuicao/ajusteReparte/exportar?fileType=XLS">
-								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-									Arquivo
-								</a>
-						</span> 
-						
-						<span class="bt_novos" title="Imprimir">
-								<a href="${pageContext.request.contextPath}/distribuicao/ajusteReparte/exportar?fileType=PDF">
-								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-									Imprimir
-								</a>
-						</span>
-						
-						<span class="bt_novos" title="Confirmar" style="float: right;">
-							<a href="javascript:;">
-								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
-									Confirmar
-							</a>
-						</span>
-
-					</fieldset>
-				</div>
-
-		 -->
 			</div>
 			<div class="linha_separa_fields">&nbsp;</div>
 

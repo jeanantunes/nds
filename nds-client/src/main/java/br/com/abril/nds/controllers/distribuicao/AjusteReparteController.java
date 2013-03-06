@@ -78,7 +78,6 @@ public class AjusteReparteController extends BaseController {
 		
 		ajusteService.salvarAjuste(ajuste);
 		
-//		result.use(Results.json()).from(ajuste, "ajuste").recursive().serialize();
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."),	"result").recursive().serialize();
 	}
 	
@@ -236,9 +235,6 @@ public class AjusteReparteController extends BaseController {
 		
 		
 		result.use(Results.json()).withoutRoot().from(qtdAjustesCadastrados).recursive().serialize();
-//		AjusteReparteDTO ajuste = ajusteService.buscarPorIdAjuste(id);
-		
-//		result.use(Results.json()).withoutRoot().from(ajuste).recursive().serialize();
 		}
 	}
 	
