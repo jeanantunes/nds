@@ -157,7 +157,7 @@ public class PdvServiceImpl implements PdvService {
         return enderecoPDVRepository
                 .buscarMunicipioPdvPrincipal(codigoCidadeIBGE);
     }
-
+    
     @Transactional(readOnly = true)
     @Override
     public List<AreaInfluenciaPDV> obterTipoAreaInfluencia() {

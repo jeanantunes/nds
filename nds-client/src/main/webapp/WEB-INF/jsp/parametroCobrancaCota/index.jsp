@@ -527,10 +527,10 @@ $(function(){
 </form>
 
 <form id="form-excluir-unificacao">
-	<div id="dialog-excluir-unificacao" title="Unificação de Boletos">
+	<div id="dialog-excluir-unificacao" title="Forma de Pagamento">
 		<fieldset>
-			<legend>Exclusão de Unificalção de Boletos</legend>
-			<p>Confirma a exclusão desta Unificação de Boleto</p>
+			<legend>Exclusão de Forma de Pagamento</legend>
+			<p>Confirma a exclusão da Forma de Pagamento.</p>
 		</fieldset>
 	</div>
 </form>

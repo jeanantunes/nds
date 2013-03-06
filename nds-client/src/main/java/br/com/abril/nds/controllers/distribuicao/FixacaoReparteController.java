@@ -110,7 +110,7 @@ public class FixacaoReparteController extends BaseController {
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "N„o foram encontrados resultados para a pesquisa");	
+			throw new ValidacaoException(TipoMensagem.WARNING, "NÔøΩo foram encontrados resultados para a pesquisa");	
 		}
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelProduto = montarTableModelProduto(filtro);
@@ -131,7 +131,7 @@ public class FixacaoReparteController extends BaseController {
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorCota(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "N„o Foram encontrados resultados para a pesquisa");	
+			throw new ValidacaoException(TipoMensagem.WARNING, "NÔøΩo Foram encontrados resultados para a pesquisa");	
 		}
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelCota = montarTableModelCota(filtro);
@@ -221,33 +221,33 @@ public class FixacaoReparteController extends BaseController {
 	public void adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO){
 		
 		if(!isStatusEdicaoValido(fixacaoReparteDTO)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O status da ediÁ„o n„o permite fixaÁ„o!");
+			throw new ValidacaoException(TipoMensagem.WARNING,"O status da edi√ß√£o n√£o permite fixa√ß√£o!");
 		} else {
 			if(fixacaoReparteDTO.isQtdeEdicoesMarcado()){
 				if(fixacaoReparteDTO.getQtdeEdicoes() != null ){
 					if(fixacaoReparteDTO.getQtdeEdicoes() > MAX_EDICOES){
-						throw new ValidacaoException(TipoMensagem.WARNING,"O numero de ediÁıes fixadas n„o pode ser maior que 6");
+						throw new ValidacaoException(TipoMensagem.WARNING,"O numero de edi√ß√µes fixadas n√£o pode ser maior que 6");
 					}else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() == 0){
-						throw new ValidacaoException(TipoMensagem.WARNING,"Quantidade de exemplares n„o pode ser vazia ou 0.");
+						throw new ValidacaoException(TipoMensagem.WARNING,"Quantidade de exemplares n√£o pode ser vazia ou 0.");
 					}
 				}
 			} else {
 				if( fixacaoReparteDTO.getEdicaoInicial() ==null ||  fixacaoReparteDTO.getEdicaoInicial() == 0){
-					throw new ValidacaoException(TipoMensagem.WARNING,"EdiÁ„o inicial n„o pode ser vazia ou 0.");
+					throw new ValidacaoException(TipoMensagem.WARNING,"Edi√ß√£o inicial n√£o pode ser vazia ou 0.");
 				}else if( fixacaoReparteDTO.getEdicaoFinal() ==null ||  fixacaoReparteDTO.getEdicaoFinal() == 0){
-					throw new ValidacaoException(TipoMensagem.WARNING,"EdiÁ„o final n„o pode ser vazia ou 0.");
+					throw new ValidacaoException(TipoMensagem.WARNING,"Edi√ß√£o final n√£o pode ser vazia ou 0.");
 				}else if( fixacaoReparteDTO.getEdicaoFinal() < fixacaoReparteDTO.getEdicaoInicial()){
-					throw new ValidacaoException(TipoMensagem.WARNING,"EdiÁ„o final n„o pode ser inferior a inicial.");
+					throw new ValidacaoException(TipoMensagem.WARNING,"Edi√ß√£o final n√£o pode ser inferior a inicial.");
 				}else if(fixacaoReparteDTO.getEdicaoFinal() - fixacaoReparteDTO.getEdicaoInicial() > MAX_EDICOES){
-					throw new ValidacaoException(TipoMensagem.WARNING,"O intervalo n„o deve ultrapassar 6 ediÁıes!");
+					throw new ValidacaoException(TipoMensagem.WARNING,"O intervalo n√£o deve ultrapassar 6 edi√ß√µes!");
 				}else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() == 0){
-					throw new ValidacaoException(TipoMensagem.WARNING,"Quantidade de exemplares n„o pode ser vazia ou 0.");
+					throw new ValidacaoException(TipoMensagem.WARNING,"Quantidade de exemplares n√£o pode ser vazia ou 0.");
 				}
 			}
 		}
 		
 		fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,"OperaÁ„o realizada com sucesso!");
+		throw new ValidacaoException(TipoMensagem.SUCCESS,"Opera√ß√£o realizada com sucesso!");
 	}
 	
 	
@@ -255,7 +255,7 @@ public class FixacaoReparteController extends BaseController {
 	@Path("/removerFixacaoReparte")
 	public void removerFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO){
 		fixacaoReparteService.removerFixacaoReparte(fixacaoReparteDTO);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,"OperaÁ„o realizada com sucesso!"); 
+		throw new ValidacaoException(TipoMensagem.SUCCESS,"Opera√£o realizada com sucesso!"); 
 	}
 	
 	@Post
@@ -291,7 +291,7 @@ public class FixacaoReparteController extends BaseController {
 	@Path("/salvarGridPdvReparte")
 	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idFixacao){
 		repartePdvService.salvarRepartesPDV(listPDV,codProduto, codCota, idFixacao);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,"OperaÁ„o realizada com sucesso!");
+		throw new ValidacaoException(TipoMensagem.SUCCESS,"Opera√ß√£o realizada com sucesso!");
 	}
 	
 	@Post
@@ -421,7 +421,7 @@ public class FixacaoReparteController extends BaseController {
 	
 	private boolean isStatusEdicaoValido(FixacaoReparteDTO fixacaoReparteDTO) {
 		List<String>edicoesInvalidas =new ArrayList<String>();
-		edicoesInvalidas.add("lanÁada");
+		edicoesInvalidas.add("lan√ßada");
 		edicoesInvalidas.add("gerada");
 		edicoesInvalidas.add("liberada");
 		edicoesInvalidas.add("liberada");

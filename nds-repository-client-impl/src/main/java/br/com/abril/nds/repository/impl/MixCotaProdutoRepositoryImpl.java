@@ -19,7 +19,7 @@ import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
- * Classe de implementação referente ao acesso a dados da entidade
+ * Classe de implementaÃ§Ã£o referente ao acesso a dados da entidade
  * 
  * MixCotaProduto
  */
@@ -55,7 +55,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" avg(lancamento.reparte) as reparteMedio, avg(venda_produto.valor_total_venda) as vendaMedia, ")
-		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
+		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANï¿½ADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		.append(" FROM lancamento ") 
 		.append(" LEFT join produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID ")
 		.append(" LEFT join produto on produto_edicao.ID = produto.ID ") 
@@ -131,7 +131,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" coalesce(avg(lancamento.reparte),0) as reparteMedio, coalesce(avg(venda_produto.valor_total_venda),0) as vendaMedia, ")
-		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
+		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANï¿½ADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		.append(" FROM lancamento ") 
 		.append(" LEFT join produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID ")
 		.append(" LEFT join produto on produto_edicao.ID = produto.ID ") 
