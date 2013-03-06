@@ -17,6 +17,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
@@ -48,7 +51,8 @@ public class GrupoCota implements Serializable {
 	@ElementCollection(targetClass = String.class) 
 	@CollectionTable(name = "GRUPO_MUNICIPIO",
 	    joinColumns = @JoinColumn(name = "GRUPO_COTA_ID"))
-	@Column(name = "LOCALIDADE")	
+	@Column(name = "LOCALIDADE")
+	@Cascade(value=CascadeType.ALL)
 	private Set<String> municipios;
 	
 	@ElementCollection(targetClass = DiaSemana.class) 

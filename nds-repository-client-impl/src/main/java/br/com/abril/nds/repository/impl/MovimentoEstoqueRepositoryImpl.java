@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -49,9 +52,12 @@ implements MovimentoEstoqueRepository {
 
 		hql.append(" where m.produtoEdicao.numeroEdicao = :numeroEdicao and ");		
 
-		hql.append(" m.produtoEdicao.produto.codigo = :codigoProduto ");		
-
+		hql.append(" m.produtoEdicao.produto.codigo = :codigoProduto ");
 		
+		if (filtro != null && filtro.getGruposExcluidos() != null) {
+			hql.append(" and m.tipoMovimento.grupoMovimentoEstoque not in (:gruposExcluidos) ");
+		}
+
 		if(statusAprovacao != null) {
 			hql.append(" and m.status = :statusAprovacao  ");
 		}
@@ -74,6 +80,11 @@ implements MovimentoEstoqueRepository {
 		
 		query.setParameter("numeroEdicao", numeroEdicao);
 		
+		if (filtro != null && filtro.getGruposExcluidos() != null) {
+
+			query.setParameterList("gruposExcluidos", filtro.getGruposExcluidos());
+		}
+		
 		if (filtro != null && filtro.getPaginacao() != null) {
 			
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
@@ -86,7 +97,26 @@ implements MovimentoEstoqueRepository {
 		}
 		
 		return query.list();
-				
 	}
-	
+
+	@Override
+	public BigInteger obterReparteDistribuidoProduto(String codigoProduto){
+//		 select coalesce(sum(QTDE),0) from movimento_estoque where TIPO_MOVIMENTO_ID=13 and PRODUTO_EDICAO_ID=2350
+		
+		Query query = getSession().createQuery("select coalesce(sum(me.qtde),0) from MovimentoEstoque me " +
+				" join me.tipoMovimento tm " +
+				" join me.produtoEdicao " +
+				" join me.produtoEdicao.produto produto " +
+				"where produto.codigo = :produtoId " +
+				"and tm.id = :tipoMovimentoId");
+		
+		query.setParameter("produtoId", codigoProduto);
+		
+		final long ENVIO_AO_JORNALEIRO = 13l; //13:Envio ao jornaleiro tabela tipo_movimento 
+		query.setParameter("tipoMovimentoId", ENVIO_AO_JORNALEIRO);
+		
+		Object uniqueResult2 = query.uniqueResult();
+		BigInteger uniqueResult = (BigInteger)uniqueResult2;
+		return uniqueResult;
+	}
 }

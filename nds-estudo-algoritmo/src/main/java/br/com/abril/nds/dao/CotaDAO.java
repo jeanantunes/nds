@@ -1,5 +1,6 @@
 package br.com.abril.nds.dao;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,8 +15,71 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.TipoAjusteReparte;
+import br.com.abril.nds.model.TipoSegmentoProduto;
 
 public class CotaDAO {
+
+    public BigDecimal getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(Cota cota, TipoSegmentoProduto tipoSegmentoProduto, TipoAjusteReparte[] tipoAjusteReparte) {
+
+	BigDecimal ajusteAplicado = null;
+
+	try {
+
+	    StringBuilder query = new StringBuilder(" SELECT AR.AJUSTE_APLICADO FROM AJUSTE_REPARTE AR ");
+
+	    if (tipoSegmentoProduto != null) {
+		query.append(" INNER JOIN TIPO_SEGMENTO_PRODUTO TSP ON (TSP.ID = AR.TIPO_SEGMENTO_AJUSTE_ID AND TSP.ID = ?) ");
+	    }
+
+	    query.append(" INNER JOIN COTA C ON (C.ID = AR.COTA_ID) ");
+	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
+	    query.append(" WHERE AR.COTA_ID = ? ");
+	    query.append(" AND AR.DATA_INICIO >= ? AND AR.DATA_FIM <= ? ");
+
+	    if (tipoAjusteReparte != null && tipoAjusteReparte.length > 0) {
+
+		query.append(" AND AR.FORMA_AJUSTE IN ( ");
+
+		int i = 0;
+		while (i < tipoAjusteReparte.length) {
+
+		    query.append("\"");
+		    query.append(tipoAjusteReparte[i].toString());
+		    query.append("\"");
+		    query.append(",");
+		    i++;
+		}
+
+		query.delete(query.length() - 1, query.length());
+
+		query.append(" ) ");
+
+	    }
+
+	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
+
+	    int i = 1;
+
+	    if (tipoSegmentoProduto != null) {
+		psmt.setLong(i++, tipoSegmentoProduto.getId());
+	    }
+
+	    psmt.setLong(i++, cota.getId());
+	    psmt.setString(i++, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+	    psmt.setString(i++, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+
+	    ResultSet rs = psmt.executeQuery();
+	    if (rs.next()) {
+		ajusteAplicado = rs.getBigDecimal("AJUSTE_APLICADO");
+	    }
+
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	}
+
+	return ajusteAplicado;
+    }
 
     public Cota getCotaEquivalenteByCota(Cota cota) {
 
@@ -118,12 +182,12 @@ public class CotaDAO {
 	    }
 	    String idsString = idsPesos.keySet().toString().replaceAll("\\]|\\[", "");
 	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_PRODUTO_EDICAO_POR_COTA.replaceAll("\\#", idsString));
-	    
+
 	    int param = 0;
 	    ps.setLong(++param, estudo.getProduto().getIdProduto());
 	    ps.setLong(++param, estudo.getProduto().getIdProduto());
 	    ps.setLong(++param, estudo.getProduto().getNumeroEdicao());
-	    
+
 	    ResultSet rs = ps.executeQuery();
 
 	    long prevIdCota = 0;
@@ -209,35 +273,14 @@ public class CotaDAO {
     private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
     private static final String STATUS_FECHADO = "FECHADO";
 
-    private static final String SQL_PRODUTO_EDICAO_POR_COTA = "select "
-		+ "    c.id as COTA_ID, "
-		+ "    c.NUMERO_COTA, "
-		+ "    p.id as PRODUTO_ID, "
-		+ "    pe.id as PRODUTO_EDICAO_ID, "
-		+ "    l.id as LANCAMENTO_ID, "
-		+ "    l.STATUS, "
-		+ "    l.TIPO_LANCAMENTO, "
-		+ "    tp.GRUPO_PRODUTO, "
-		+ "    l.DATA_LCTO_DISTRIBUIDOR, "
-		+ "    epc.QTDE_RECEBIDA, "
-		+ "    (epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) as QTDE_VENDA, "
-		+ "    pe.PACOTE_PADRAO, "
-		+ "    pe.NUMERO_EDICAO, "
-		+ "    p.CODIGO, "
-		+ "    ar.AJUSTE_APLICADO, "
-		+ "    ar.FORMA_AJUSTE, "
-		+ "	mcp.REPARTE_MAX, "
-		+ "	mcp.REPARTE_MIN, "
-		+ "	fr.QTDE_EXEMPLARES "
-		+ "from produto_edicao pe "
-		+ "join produto p on pe.PRODUTO_ID = p.id "
-		+ "join lancamento l on pe.ID = l.PRODUTO_EDICAO_ID "
-		+ "join tipo_produto tp on tp.ID = p.TIPO_PRODUTO_ID "
-		+ "join estoque_produto_cota epc on pe.ID = epc.PRODUTO_EDICAO_ID "
-		+ "join cota c on c.ID = epc.COTA_ID "
-		+ "left join ajuste_reparte ar ON ar.COTA_ID = epc.COTA_ID "
-		+ "left join mix_cota_produto mcp on mcp.id_cota = c.id and mcp.id_produto = ? "
-		+ "left join fixacao_reparte fr on fr.id_cota = c.id and fr.id_produto = ? and ? between fr.ed_inicial and fr.ed_final "
-		+ "where pe.id in (#) "
-		+ "order by c.ID , pe.NUMERO_EDICAO desc ";
+    private static final String SQL_PRODUTO_EDICAO_POR_COTA = "select " + "    c.id as COTA_ID, " + "    c.NUMERO_COTA, " + "    p.id as PRODUTO_ID, "
+	    + "    pe.id as PRODUTO_EDICAO_ID, " + "    l.id as LANCAMENTO_ID, " + "    l.STATUS, " + "    l.TIPO_LANCAMENTO, " + "    tp.GRUPO_PRODUTO, "
+	    + "    l.DATA_LCTO_DISTRIBUIDOR, " + "    epc.QTDE_RECEBIDA, " + "    (epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) as QTDE_VENDA, " + "    pe.PACOTE_PADRAO, "
+	    + "    pe.NUMERO_EDICAO, " + "    p.CODIGO, " + "    ar.AJUSTE_APLICADO, " + "    ar.FORMA_AJUSTE, " + "	mcp.REPARTE_MAX, " + "	mcp.REPARTE_MIN, "
+	    + "	fr.QTDE_EXEMPLARES " + "from produto_edicao pe " + "join produto p on pe.PRODUTO_ID = p.id " + "join lancamento l on pe.ID = l.PRODUTO_EDICAO_ID "
+	    + "join tipo_produto tp on tp.ID = p.TIPO_PRODUTO_ID " + "join estoque_produto_cota epc on pe.ID = epc.PRODUTO_EDICAO_ID "
+	    + "join cota c on c.ID = epc.COTA_ID " + "left join ajuste_reparte ar ON ar.COTA_ID = epc.COTA_ID "
+	    + "left join mix_cota_produto mcp on mcp.id_cota = c.id and mcp.id_produto = ? "
+	    + "left join fixacao_reparte fr on fr.id_cota = c.id and fr.id_produto = ? and ? between fr.ed_inicial and fr.ed_final " + "where pe.id in (#) "
+	    + "order by c.ID , pe.NUMERO_EDICAO desc ";
 }

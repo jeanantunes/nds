@@ -337,9 +337,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public void validarFechamentoEncalheRealizado() throws FechamentoEncalheRealizadoException {
 	
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		boolean indFechamentoEncalhe = fechamentoEncalheRepository.buscaControleFechamentoEncalhe(dataOperacao);
 		
@@ -405,9 +403,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		boolean indPesquisaCEFutura = false;
 		boolean postergado = false;
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		if(produtoEdicao.isParcial()) {
 
@@ -515,7 +511,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param listaConferenciaEncalhe
 	 */
 	private List<ConferenciaEncalheDTO> obterListaConferenciaEncalheContingencia(
-			Long idDistribuidor, 
 			Integer numeroCota,
 			Date dataOperacao,
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe) {
@@ -543,7 +538,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
 			conferenciaEncalheRepository.obterListaConferenciaEncalheDTOContingencia(
-				idDistribuidor,
 				numeroCota, 
 				dataRecolhimento, 
 				indFechado, 
@@ -588,11 +582,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		boolean aceitaJuramentado = this.distribuidorService.aceitaJuramentado();
 		
-		boolean aceitaJuramentado = distribuidor.isAceitaJuramentado();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
@@ -604,8 +596,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(controleConferenciaEncalheCota!=null) {
 			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
-							controleConferenciaEncalheCota.getId(), 
-							distribuidor.getId());
+							controleConferenciaEncalheCota.getId());
 			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 			
@@ -625,7 +616,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			List<ConferenciaEncalheDTO> listaConferenciaEncalheContingencia = 
 					obterListaConferenciaEncalheContingencia(
-							distribuidor.getId(), 
 							numeroCota, 
 							dataOperacao,
 							infoConfereciaEncalheCota.getListaConferenciaEncalhe());
@@ -747,9 +737,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Integer obterQtdeDiaAposDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		if(dataOperacao.compareTo(dataRecolhimentoDistribuidor) < 0 ) {
 			return null;
@@ -760,10 +748,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Integer posicaoDia = (qtde.intValue() + 1);
 		
 		return posicaoDia;
-	
 	}
-	
-	
 	
 	@Transactional(readOnly = true)
 	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
@@ -1048,16 +1033,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Date obterDataRecolhimentoReferencia() {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		Date dataOperacao = distribuidor.getDataOperacao();
-		
-		int qtdDiasEncalheAtrasadoAceitavel = distribuidor.getQtdDiasEncalheAtrasadoAceitavel();
+		int qtdDiasEncalheAtrasadoAceitavel = this.distribuidorService.qtdDiasEncalheAtrasadoAceitavel();
 		
 		Date dataRecolhimentoReferencia = DateUtil.subtrairDias(dataOperacao, qtdDiasEncalheAtrasadoAceitavel);
 		
 		return dataRecolhimentoReferencia;
-		
 	}
 	
 	
@@ -2111,13 +2093,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Cota cota = this.cotaRepository.buscarPorId(idCota);
 		Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		
-		BigDecimal precoComDesconto = produtoEdicao.getPrecoVenda()
-				.subtract(produtoEdicao.getPrecoVenda()
-						.multiply(desconto.getValor()
-								.divide(new BigDecimal("100")
-								)
-							)
-						);
+		BigDecimal precoComDesconto = 
+				produtoEdicao.getPrecoVenda().subtract(
+						MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto.getValor()));
 		
 		ValoresAplicados valoresAplicados = new ValoresAplicados();
 		valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
@@ -2302,7 +2280,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			StatusOperacao statusOperacao, 
 			Usuario usuario) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(ctrlConfEncalheCota.getCota().getNumeroCota());
 		
@@ -2325,15 +2303,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 			ctrlConfEncalheCota.setUsuario(usuario);
 			ctrlConfEncalheCota.setCota(cota);
-			ctrlConfEncalheCota.setDataOperacao(distribuidor.getDataOperacao());
+			ctrlConfEncalheCota.setDataOperacao(dataOperacaoDistribuidor);
 			ctrlConfEncalheCota.setStatus(statusOperacao);
-			ctrlConfEncalheCota.setControleConferenciaEncalhe(obterControleConferenciaEncalhe(distribuidor.getDataOperacao()));
+			ctrlConfEncalheCota.setControleConferenciaEncalhe(obterControleConferenciaEncalhe(dataOperacaoDistribuidor));
 			ctrlConfEncalheCota.setDataFim(dataFinalizacao);
 			
 			controleConferenciaEncalheCotaRepository.adicionar(ctrlConfEncalheCota);
 			
 			return ctrlConfEncalheCota;
-			
 		}
 		
 	}

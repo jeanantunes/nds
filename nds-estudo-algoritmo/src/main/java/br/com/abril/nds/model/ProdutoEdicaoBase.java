@@ -4,127 +4,138 @@ import java.util.Date;
 
 public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 
-	private static final long serialVersionUID = 3298542950250981102L;
+    private static final long serialVersionUID = 3298542950250981102L;
 
-	private Long id;
-	private Long idEstudo;
-	private Long numeroEdicao;
-	private Long idProduto;
-	private String codigoProduto;
-	private boolean parcial;
-	private boolean edicaoAberta;
-	private Integer peso;
-	private Long idLancamento;
-	private Date dataLancamento;
-	private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
-	private Integer periodo;
+    private Long id;
+    private Long idEstudo;
+    private Long numeroEdicao;
+    private Long idProduto;
+    private String codigoProduto;
+    private boolean parcial;
+    private boolean edicaoAberta;
+    private Integer peso;
+    private Long idLancamento;
+    private Date dataLancamento;
+    private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
+    private Integer periodo;
+    private TipoSegmentoProduto tipoSegmentoProduto;
 
-	public ProdutoEdicaoBase() {
-	    peso = 1;
-	}
-	public ProdutoEdicaoBase(String codigoProduto) {
-	    this();
-	    this.codigoProduto = codigoProduto;
-	}
-	
-	public Long getId() {
-		return id;
-	}
+    public ProdutoEdicaoBase() {
+	peso = 1;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public ProdutoEdicaoBase(String codigoProduto) {
+	this();
+	this.codigoProduto = codigoProduto;
+    }
 
-	public Long getNumeroEdicao() {
-		return numeroEdicao;
-	}
+    public Long getId() {
+	return id;
+    }
 
-	public void setNumeroEdicao(Long numeroEdicao) {
-		this.numeroEdicao = numeroEdicao;
-	}
+    public void setId(Long id) {
+	this.id = id;
+    }
 
-	public Integer getPeso() {
-		return peso;
-	}
+    public Long getNumeroEdicao() {
+	return numeroEdicao;
+    }
 
-	public void setPeso(Integer peso) {
-		this.peso = peso;
-	}
+    public void setNumeroEdicao(Long numeroEdicao) {
+	this.numeroEdicao = numeroEdicao;
+    }
 
-	public Long getIdProduto() {
-		return idProduto;
-	}
+    public Integer getPeso() {
+	return peso;
+    }
 
-	public void setIdProduto(Long idProduto) {
-		this.idProduto = idProduto;
-	}
+    public void setPeso(Integer peso) {
+	this.peso = peso;
+    }
 
-	public String getCodigoProduto() {
-		return codigoProduto;
-	}
+    public Long getIdProduto() {
+	return idProduto;
+    }
 
-	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
-	}
+    public void setIdProduto(Long idProduto) {
+	this.idProduto = idProduto;
+    }
 
-	public boolean isParcial() {
-		return parcial;
-	}
+    public String getCodigoProduto() {
+	return codigoProduto;
+    }
 
-	public void setParcial(boolean parcial) {
-		this.parcial = parcial;
-	}
+    public void setCodigoProduto(String codigoProduto) {
+	this.codigoProduto = codigoProduto;
+    }
 
-	public boolean isEdicaoAberta() {
-		return edicaoAberta;
-	}
+    public boolean isParcial() {
+	return parcial;
+    }
 
-	public void setEdicaoAberta(boolean edicaoAberta) {
-		this.edicaoAberta = edicaoAberta;
-	}
+    public void setParcial(boolean parcial) {
+	this.parcial = parcial;
+    }
 
-	public Long getIdLancamento() {
-		return idLancamento;
-	}
+    public boolean isEdicaoAberta() {
+	return edicaoAberta;
+    }
 
-	public void setIdLancamento(Long idLancamento) {
-		this.idLancamento = idLancamento;
-	}
+    public void setEdicaoAberta(boolean edicaoAberta) {
+	this.edicaoAberta = edicaoAberta;
+    }
 
-	public Date getDataLancamento() {
-		return dataLancamento;
-	}
+    public Long getIdLancamento() {
+	return idLancamento;
+    }
 
-	public void setDataLancamento(Date dataLancamento) {
-		this.dataLancamento = dataLancamento;
-	}
+    public void setIdLancamento(Long idLancamento) {
+	this.idLancamento = idLancamento;
+    }
 
-	public boolean isColecao() {
-		return colecao;
-	}
+    public Date getDataLancamento() {
+	return dataLancamento;
+    }
 
-	public void setColecao(boolean colecao) {
-		this.colecao = colecao;
-	}
+    public void setDataLancamento(Date dataLancamento) {
+	this.dataLancamento = dataLancamento;
+    }
 
-	public Long getIdEstudo() {
-		return idEstudo;
-	}
+    public boolean isColecao() {
+	return colecao;
+    }
 
-	public void setIdEstudo(Long idEstudo) {
-		this.idEstudo = idEstudo;
-	}
+    public void setColecao(boolean colecao) {
+	this.colecao = colecao;
+    }
 
-	@Override
-	public String toString() {
-		return String.valueOf(numeroEdicao);
-	}
+    public Long getIdEstudo() {
+	return idEstudo;
+    }
 
-	public Integer getPeriodo() {
-		return periodo;
-	}
+    public void setIdEstudo(Long idEstudo) {
+	this.idEstudo = idEstudo;
+    }
 
-	public void setPeriodo(Integer periodo) {
-		this.periodo = periodo;
-	}
+    @Override
+    public String toString() {
+	return String.valueOf(numeroEdicao);
+    }
+
+    public Integer getPeriodo() {
+	return periodo;
+    }
+
+    public void setPeriodo(Integer periodo) {
+	this.periodo = periodo;
+    }
+
+    public TipoSegmentoProduto getTipoSegmentoProduto() {
+	return tipoSegmentoProduto;
+    }
+
+    public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
+	this.tipoSegmentoProduto = tipoSegmentoProduto;
+    }
+
 }

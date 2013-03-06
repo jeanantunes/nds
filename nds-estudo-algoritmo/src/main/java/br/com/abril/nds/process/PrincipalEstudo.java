@@ -92,26 +92,25 @@ public class PrincipalEstudo {
 	MontaTabelaEstudos montaTabelaEstudos = new MontaTabelaEstudos(estudo);
 	montaTabelaEstudos.executar();
 
-	for(Cota cota : estudo.getCotas()) {
+	for (Cota cota : estudo.getCotas()) {
+
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    Medias medias = new Medias(cota);
 	    medias.executar();
-	}
-
-	Bonificacoes bonificacoes = new Bonificacoes(estudo);
-	bonificacoes.executar();
-
-	AjusteCota ajusteCota = new AjusteCota(estudo);
-	ajusteCota.executar();
-
-	for(Cota cota : estudo.getCotas()) {
-	    JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
-	    jornaleirosNovos.executar();
 
 	    VendaMediaFinal vendaMediaFinal = new VendaMediaFinal(cota);
 	    vendaMediaFinal.executar();
+
+	    Bonificacoes bonificacoes = new Bonificacoes(estudo);
+	    bonificacoes.executar();
+
+	    AjusteCota ajusteCota = new AjusteCota(cota);
+	    ajusteCota.executar();
+
+	    JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
+	    jornaleirosNovos.executar();
 	}
 
 	AjusteReparte ajusteReparte = new AjusteReparte(estudo);

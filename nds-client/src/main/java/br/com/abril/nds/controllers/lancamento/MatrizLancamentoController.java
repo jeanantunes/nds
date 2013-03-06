@@ -384,27 +384,11 @@ public class MatrizLancamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 		
-		int numeroSemana = balanceamentoLancamento.getNumeroSemana();
-		Date dataLancamento = balanceamentoLancamento.getDataLancamento();
-		
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
 		if (distribuidor == null) {
 			
 			throw new RuntimeException("Dados do distribuidor inexistentes!");
-		}
-		
-		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataLancamento);
-		
-		boolean dataInicioSemanaMaior =
-			DateUtil.isDataInicialMaiorDataFinal(dataInicioSemana, novaData);
-		
-		if (dataInicioSemanaMaior) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A nova data de lançamento deve ser maior ou igual à data de início da semana ["
-				+ DateUtil.formatarDataPTBR(dataInicioSemana) + "]");
 		}
 		
 		this.matrizLancamentoService.verificaDataOperacao(novaData);

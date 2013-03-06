@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.TipoSegmentoProduto;
 import br.com.abril.nds.util.PropertyLoader;
 
 public class ProdutoEdicaoDAO {
@@ -54,6 +55,8 @@ public class ProdutoEdicaoDAO {
 		edicao.setPeso(rs.getInt("PESO"));
 		edicao.setColecao(rs.getInt("IS_COLECAO") == 1);
 
+		edicao.setTipoSegmentoProduto(new TipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID"), rs.getString("TIPO_SEGMENTO_PRODUTO_DESC")));
+		
 		edicoes.add(edicao);
 	    }
 	} catch (Exception ex) {

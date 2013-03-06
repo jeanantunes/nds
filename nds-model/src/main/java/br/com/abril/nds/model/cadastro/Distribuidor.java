@@ -1080,5 +1080,5 @@ public class Distribuidor {
 	public void setPracaVeraneio(boolean pracaVeraneio) {
 	    this.pracaVeraneio = pracaVeraneio;
 	}
-	
+
 }

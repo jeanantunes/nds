@@ -30,123 +30,118 @@ import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
-import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.EstudoServiceEstudo;
 import br.com.abril.nds.util.HTMLTableUtil;
 
 public class ProcessTest {
 
-	@Test
-	@Parameters({"produto"})
-	public void testAllProcess(String produto) throws Exception {
-		Estudo estudo = new Estudo();
-		estudo.setPacotePadrao(BigDecimal.valueOf(10));
-		estudo.setReparteDistribuir(BigDecimal.valueOf(1000));
-		estudo.setReparteDistribuirInicial(BigDecimal.valueOf(1000));
-		estudo.setProduto(montaProduto(produto));
+    @Test
+    @Parameters({ "produto" })
+    public void testAllProcess(String produto) throws Exception {
+	Estudo estudo = new Estudo();
+	estudo.setPacotePadrao(BigDecimal.valueOf(10));
+	estudo.setReparteDistribuir(BigDecimal.valueOf(1000));
+	estudo.setReparteDistribuirInicial(BigDecimal.valueOf(1000));
+	estudo.setProduto(montaProduto(produto));
 
-		DefinicaoBases definicaoBases = new DefinicaoBases(estudo);
-		definicaoBases.executar();
+	DefinicaoBases definicaoBases = new DefinicaoBases(estudo);
+	definicaoBases.executar();
 
-		SomarFixacoes somarFixacoes = new SomarFixacoes(estudo);
-		somarFixacoes.executar();
+	SomarFixacoes somarFixacoes = new SomarFixacoes(estudo);
+	somarFixacoes.executar();
 
-		VerificarTotalFixacoes verificarTotalFixacoes = new VerificarTotalFixacoes(estudo);
-		verificarTotalFixacoes.executar();
+	VerificarTotalFixacoes verificarTotalFixacoes = new VerificarTotalFixacoes(estudo);
+	verificarTotalFixacoes.executar();
 
-		EstudoService.calculate(estudo);
+	EstudoServiceEstudo.calculate(estudo);
 
-		MontaTabelaEstudos montaTabelaEstudos = new MontaTabelaEstudos(estudo);
-		montaTabelaEstudos.executar();
+	MontaTabelaEstudos montaTabelaEstudos = new MontaTabelaEstudos(estudo);
+	montaTabelaEstudos.executar();
 
-		for(Cota cota : estudo.getCotas()) {
-			CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
-			correcaoVendas.executar();
+	for (Cota cota : estudo.getCotas()) {
 
-			Medias medias = new Medias(cota);
-			medias.executar();
-		}
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+	    correcaoVendas.executar();
 
-		Bonificacoes bonificacoes = new Bonificacoes(estudo);
-		bonificacoes.executar();
+	    Medias medias = new Medias(cota);
+	    medias.executar();
 
-		AjusteCota ajusteCota = new AjusteCota(estudo);
-		ajusteCota.executar();
+	    VendaMediaFinal vendaMediaFinal = new VendaMediaFinal(cota);
+	    vendaMediaFinal.executar();
 
+	    Bonificacoes bonificacoes = new Bonificacoes(estudo);
+	    bonificacoes.executar();
 
-		for(Cota cota : estudo.getCotas()) {
-			VendaMediaFinal vendaMediaFinal = new VendaMediaFinal(cota);
-			vendaMediaFinal.executar();
-			JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
-			jornaleirosNovos.executar();
-		}
+	    AjusteCota ajusteCota = new AjusteCota(cota);
+	    ajusteCota.executar();
 
-		AjusteReparte ajusteReparte = new AjusteReparte(estudo);
-		ajusteReparte.executar();
-
-		EstudoService.calculate(estudo);
-
-		RedutorAutomatico redutorAutomatico = new RedutorAutomatico(estudo);
-		redutorAutomatico.executar();
-
-		ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
-		reparteMinimo.executar();
-
-		ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
-		reparteProporcional.executar();
-
-		EncalheMaximo encalheMaximo = new EncalheMaximo(estudo);
-		encalheMaximo.executar();
-
-		ComplementarAutomatico complementarAutomatico = new ComplementarAutomatico(estudo);
-		complementarAutomatico.executar();
-
-		CalcularReparte calcularReparte = new CalcularReparte(estudo);
-		calcularReparte.executar();
-
-		AjusteFinalReparte ajusteFinalReparte = new AjusteFinalReparte(estudo);
-		ajusteFinalReparte.executar();
-
-		Reporter.log("<div id='content' style='overflow:scroll;width: 910px;height: 490px;'>");
-		imprimeResultadoFinalEstudo(estudo);
-		Reporter.log("<script> $('#content').parent().on('click', function() { $('.navigator-root').hide();$('.wrapper').css({'position':'relative','left':'0'}); }).end().css({'width': '1300px'}); </script>");
-		Reporter.log("</div>");
+	    JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
+	    jornaleirosNovos.executar();
 	}
 
-	private void imprimeResultadoFinalEstudo(Estudo estudo) {
-		imprimeEdicaoBase(estudo.getEdicoesBase());
+	AjusteReparte ajusteReparte = new AjusteReparte(estudo);
+	ajusteReparte.executar();
 
-		Reporter.log("<br>Total de Cotas do Estudo: " + estudo.getCotas().size());
-		//	for(Cota cota : estudo.getCotas()) {
-		//	    Reporter.log("<br>Numero da cota: " + String.valueOf(cota.getNumero()));    
-		//	}
+	RedutorAutomatico redutorAutomatico = new RedutorAutomatico(estudo);
+	redutorAutomatico.executar();
 
-		for(Cota cota : estudo.getCotas()) {
-			imprimeCota(cota);
-			imprimeEdicaoDaCota(cota.getEdicoesRecebidas());
-		}
+	ReparteMinimo reparteMinimo = new ReparteMinimo(estudo);
+	reparteMinimo.executar();
+
+	ReparteProporcional reparteProporcional = new ReparteProporcional(estudo);
+	reparteProporcional.executar();
+
+	EncalheMaximo encalheMaximo = new EncalheMaximo(estudo);
+	encalheMaximo.executar();
+
+	ComplementarAutomatico complementarAutomatico = new ComplementarAutomatico(estudo);
+	complementarAutomatico.executar();
+
+	CalcularReparte calcularReparte = new CalcularReparte(estudo);
+	calcularReparte.executar();
+
+	AjusteFinalReparte ajusteFinalReparte = new AjusteFinalReparte(estudo);
+	ajusteFinalReparte.executar();
+
+	Reporter.log("<div id='content' style='overflow:scroll;width: 910px;height: 490px;'>");
+	imprimeResultadoFinalEstudo(estudo);
+	Reporter.log("<script> $('#content').parent().on('click', function() { $('.navigator-root').hide();$('.wrapper').css({'position':'relative','left':'0'}); }).end().css({'width': '1300px'}); </script>");
+	Reporter.log("</div>");
+    }
+
+    private void imprimeResultadoFinalEstudo(Estudo estudo) {
+	imprimeEdicaoBase(estudo.getEdicoesBase());
+
+	Reporter.log("<br>Total de Cotas do Estudo: " + estudo.getCotas().size());
+	// for(Cota cota : estudo.getCotas()) {
+	// Reporter.log("<br>Numero da cota: " + String.valueOf(cota.getNumero()));
+	// }
+
+	for (Cota cota : estudo.getCotas()) {
+	    imprimeCota(cota);
+	    imprimeEdicaoDaCota(cota.getEdicoesRecebidas());
 	}
+    }
 
-	private void imprimeCota(Cota cota) {
-		Reporter.log("<p>Cota:");
-		Reporter.log(HTMLTableUtil.buildHTMLTable(cota));
-	}
+    private void imprimeCota(Cota cota) {
+	Reporter.log("<p>Cota:");
+	Reporter.log(HTMLTableUtil.buildHTMLTable(cota));
+    }
 
-	private void imprimeEdicaoBase(List<ProdutoEdicaoBase> edicoesBase) {
-		Reporter.log("<p>Edi&ccedil;&otilde;es Base:");
-		Reporter.log(HTMLTableUtil.buildHTMLTable(edicoesBase));
-	}
+    private void imprimeEdicaoBase(List<ProdutoEdicaoBase> edicoesBase) {
+	Reporter.log("<p>Edi&ccedil;&otilde;es Base:");
+	Reporter.log(HTMLTableUtil.buildHTMLTable(edicoesBase));
+    }
 
-	private void imprimeEdicaoDaCota(List<ProdutoEdicao> edicoes) {
-		Reporter.log("<p>Edi&ccedil;&otilde;es da Cota:");
-		Reporter.log(HTMLTableUtil.buildHTMLTable(edicoes));
-	}
+    private void imprimeEdicaoDaCota(List<ProdutoEdicao> edicoes) {
+	Reporter.log("<p>Edi&ccedil;&otilde;es da Cota:");
+	Reporter.log(HTMLTableUtil.buildHTMLTable(edicoes));
+    }
 
-	private ProdutoEdicaoBase montaProduto(String produto) {
-		long idProduto = Long.parseLong(produto);
-		
-		ProdutoEdicaoDAO produtoEdicaoDAO = new ProdutoEdicaoDAO();
-		ProdutoEdicaoBase edicao = produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(idProduto);
-		
-		return edicao;
-	}
+    private ProdutoEdicaoBase montaProduto(String produto) {
+	ProdutoEdicaoDAO produtoEdicaoDAO = new ProdutoEdicaoDAO();
+	ProdutoEdicaoBase edicao = produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(produto);
+
+	return edicao;
+    }
 }

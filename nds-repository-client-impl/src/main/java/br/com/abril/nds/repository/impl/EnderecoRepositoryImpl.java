@@ -2,9 +2,12 @@ package br.com.abril.nds.repository.impl;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -12,17 +15,23 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ektorp.ComplexKey;
 import org.ektorp.CouchDbConnector;
+import org.ektorp.CouchDbInstance;
 import org.ektorp.ViewQuery;
+import org.ektorp.http.HttpClient;
+import org.ektorp.http.StdHttpClient;
+import org.ektorp.impl.StdCouchDbInstance;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.dne.Bairro;
@@ -51,7 +60,28 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		super(Endereco.class);
 	}
 	
+	@Autowired
+	private CouchDbProperties couchDbProperties;
+	
 	private CouchDbConnector couchDbConnector;
+	
+	@PostConstruct
+	public void initCouchDbClient() throws MalformedURLException {
+		HttpClient authenticatedHttpClient = new StdHttpClient.Builder()
+                .url(
+                		new URL(
+                		couchDbProperties.getProtocol(), 
+                		couchDbProperties.getHost(), 
+                		couchDbProperties.getPort(), 
+                		"")
+                	)
+                .username(couchDbProperties.getUsername())
+                .password(couchDbProperties.getPassword())
+                .build();
+		CouchDbInstance dbInstance = new StdCouchDbInstance(authenticatedHttpClient);
+		this.couchDbConnector = dbInstance.createConnector(DB_NAME, true);
+				
+	}	
 	
 	/**
 	 * @see br.com.abril.nds.repository.EnderecoRepository#removerEnderecos(Collection)
@@ -328,7 +358,7 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		} catch (MalformedURLException e1) {
 			throw new ValidacaoException();
 		}
-		
+
 		List<JsonNode> list = couchDbConnector.queryView(query, JsonNode.class);
 		EnderecoVO ret = null;
 		if (!list.isEmpty()) {

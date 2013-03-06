@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
-import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -581,7 +580,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 		
 			parciaisService.gerarPeriodosParcias(produtoEdicao, QTDE_PERIODOS_PARCIAIS,
-												 usuario, null, distribuidor);
+												 usuario, distribuidor);
 		}
 	}
 	
@@ -661,32 +660,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
 		
-		boolean semanaRecolhimento = 
-			this.isSemanaRecolhimento(distribuidor.getDataOperacao(), periodoRecolhimento);
-		
-		dadosRecolhimento.setSemanaRecolhimento(semanaRecolhimento);
-		
 		dadosRecolhimento.setForcarBalanceamento(forcarBalanceamento);
 		
 		return dadosRecolhimento;
-	}
-	
-	/**
-	 * Retorna uma flag que indica se a semana atual é a semana de recolhimento.
-	 * 
-	 * @param dataOperacao - data de operação
-	 * @param periodoRecolhimento - período de recolhimento
-	 * 
-	 * @return boolean
-	 */
-	private boolean isSemanaRecolhimento(Date dataOperacao, Intervalo<Date> periodoRecolhimento) {
-		
-		boolean isSemanaRecolhimento =
-			DateUtil.validarDataEntrePeriodo(dataOperacao,
-											 periodoRecolhimento.getDe(),
-											 periodoRecolhimento.getAte());
-		
-		return isSemanaRecolhimento;
 	}
 
 	/**
