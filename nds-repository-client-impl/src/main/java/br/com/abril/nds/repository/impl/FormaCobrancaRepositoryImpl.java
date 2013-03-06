@@ -354,20 +354,20 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FormaCobranca> obterPorDistribuidorETipoCobranca(Long idDistribuidor, TipoCobranca tipoCobranca, Long idFormaCobranca) {
+	public List<FormaCobranca> obterPorDistribuidorETipoCobranca(TipoCobranca tipoCobranca, Long idFormaCobranca) {
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select p.formaCobranca from PoliticaCobranca p");		
 		hql.append(" where p.formaCobranca.tipoCobranca = :pTipoCobranca ");
 		hql.append(" and p.formaCobranca.ativa = :pAtiva ");
-		hql.append(" and p.distribuidor.id = :pIdDistribuidor ");
+		hql.append(" and p.distribuidor.id is not null ");
 		if (idFormaCobranca!=null){
 		    hql.append(" and p.formaCobranca.id <> :pIdFormaCobranca ");
 		}
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("pTipoCobranca", tipoCobranca);
         query.setParameter("pAtiva", true);
-        query.setParameter("pIdDistribuidor", idDistribuidor);
+        
         if (idFormaCobranca!=null){
         	query.setParameter("pIdFormaCobranca", idFormaCobranca);
         }

@@ -27,7 +27,6 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -178,10 +177,8 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		Intervalo<Date> periodo = null;	
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(semanaConferenciaEncalhe, 
-				distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+				this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -476,7 +473,10 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			contagemDevolucaoDTO.setCodigoProduto(vo.getCodigoProduto());
 			contagemDevolucaoDTO.setNumeroEdicao(Long.parseLong(vo.getNumeroEdicao()));
 			contagemDevolucaoDTO.setQtdNota(new BigInteger(vo.getQtdNota()));
-			contagemDevolucaoDTO.setDataMovimento( ( vo.getDataRecolhimentoDistribuidor() == null ) ? distribuidorService.obter().getDataOperacao() : DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
+			contagemDevolucaoDTO.setDataMovimento( 
+					( vo.getDataRecolhimentoDistribuidor() == null ) 
+					? distribuidorService.obterDataOperacaoDistribuidor() 
+					: DateUtil.parseData(vo.getDataRecolhimentoDistribuidor(),"dd/MM/yyyy"));
 			contagemDevolucaoDTO.setDiferenca(StringUtil.isEmpty(vo.getDiferenca()) ? null : new BigInteger(vo.getDiferenca()));
 			contagemDevolucaoDTO.setPrecoVenda(vo.getPrecoVenda() == null || vo.getPrecoVenda().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getPrecoVenda()));
 			contagemDevolucaoDTO.setTotalComDesconto(vo.getValorTotalComDesconto() == null || vo.getValorTotalComDesconto().isEmpty() ? null : CurrencyUtil.getBigDecimal(vo.getValorTotalComDesconto()));

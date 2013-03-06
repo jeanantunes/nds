@@ -12,8 +12,8 @@ import br.com.abril.nds.dto.ConsultaLoteNotaFiscalDTO;
 import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.dto.RetornoNFEDTO;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -104,7 +104,7 @@ public interface NotaFiscalService {
 	 * @param Cota cota
 	 * @return lista de itens para nota fiscal
 	 */
-	List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(Distribuidor distribuidor, 
+	List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
 			Cota cota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<Long> listaIdProdutos, TipoNotaFiscal tipoNotaFiscal);
 	
 	/**

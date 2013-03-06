@@ -22,7 +22,6 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -680,15 +679,16 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public boolean validaNegociacaoDividas(List<Long> idCobrancas) {
 		
 		boolean res=true;
-		Distribuidor distribuidor = distribuidorService.obter();
-		Integer diasNegociacao = (distribuidor.getParametroCobrancaDistribuidor()!=null?distribuidor.getParametroCobrancaDistribuidor().getDiasNegociacao():null);
+		
+		Integer diasNegociacao = this.distribuidorService.diasNegociacao();
 		
 		if (diasNegociacao!=null){
 			
 			for (Long id:idCobrancas){
 				Cobranca cobranca = this.cobrancaRepository.buscarPorId(id);
 				
-				if (  distribuidor.getDataOperacao().getTime() >  DateUtil.adicionarDias(cobranca.getDataVencimento(), diasNegociacao).getTime()){
+				if (this.distribuidorService.obterDataOperacaoDistribuidor().getTime() > 
+						DateUtil.adicionarDias(cobranca.getDataVencimento(), diasNegociacao).getTime()){
 					res=false;
 					break;
 				}
