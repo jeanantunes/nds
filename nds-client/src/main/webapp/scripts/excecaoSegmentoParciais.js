@@ -27,7 +27,6 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	init : function() {
 	
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####
-		
 		// PESQUISAS PRINCIPAIS
 		$('#pesquisaPorCota').click(function (){
 			excecaoSegmentoParciaisController.porCota();

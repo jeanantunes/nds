@@ -304,28 +304,12 @@ var geracaoNotaEnvioController = $.extend({
 			
 		},
 		
-		/**
-		 * Gera Notas de Envio para resultados da pesquisa e para cotas ausentes selecionadas
-		 */
-		gerarNotaEnvio : function() {
+		getArquivoNotaEnvio : function(data) {
 			
-			var cotasSelecionadas = [];
-			var _this = this;
-			var cotasAusentes = $(".checkboxCheckCotasAusentes");
-			
-			for (var index in cotasAusentes) {
-				if (cotasAusentes[index].checked) {
-					cotasSelecionadas.push(cotasAusentes[index].value);
-				}
-			}
-			
-			var params = serializeArrayToPost("listaIdCotas", cotasSelecionadas);
-
-            var path = this.path + 'gerarNotaEnvio';
+			var path = geracaoNotaEnvioController.path + 'getArquivoNotaEnvio';
 
             $.fileDownload(path, {
                 httpMethod : "POST",
-                data : params,
                 failCallback : function(responseHtml, url) {
                 	if(responseHtml){
                 		var data =  $.parseJSON($(responseHtml).html());                   	 
@@ -336,10 +320,30 @@ var geracaoNotaEnvioController = $.extend({
                     
                 },
                 successCallback : function() {
-                    exibirMensagem("SUCCESS", ["Geração de NE realizada com sucesso!"]);
                     _this.pesquisar();
                 }
             });
+		},
+		
+		/**
+		 * Gera Notas de Envio para resultados da pesquisa e para cotas ausentes selecionadas
+		 */
+		gerarNotaEnvio : function() {
+			
+			var cotasSelecionadas = [];
+			var cotasAusentes = $(".checkboxCheckCotasAusentes");
+			
+			for (var index in cotasAusentes) {
+				if (cotasAusentes[index].checked) {
+					cotasSelecionadas.push(cotasAusentes[index].value);
+				}
+			}
+			
+			var params = serializeArrayToPost("listaIdCotas", cotasSelecionadas);
+
+        	$.postJSON(geracaoNotaEnvioController.path + 'gerarNotaEnvio', params, 
+        			geracaoNotaEnvioController.getArquivoNotaEnvio 
+			);
            
 		},
 		
@@ -486,30 +490,24 @@ var geracaoNotaEnvioController = $.extend({
 			display : 'Total Exemplares',
 			name : 'exemplares',
 			width : 110,
-			sortable : false,
+			sortable : true,
 			align : 'center',
 		}, {
 			display : 'Total R$',
 			name : 'total',
-			width : 70,
-			sortable : false,
-			align : 'right',
-		}, {
-			display : 'Total Desconto R$',
-			name : 'totalDesconto',
 			width : 120,
-			sortable : false,
+			sortable : true,
 			align : 'right',
-		}, {
+		},  {
 			display : 'Status',
 			name : 'notaImpressa',
-			width : 50,
-			sortable : false,
+			width : 100,
+			sortable : true,
 			align : 'center',
 		}, {
 			display : 'Suspensa',
 			name : 'situacaoCadastro',
-			width : 60,
+			width : 100,
 			sortable : true,
 			align : 'center',
 		}],

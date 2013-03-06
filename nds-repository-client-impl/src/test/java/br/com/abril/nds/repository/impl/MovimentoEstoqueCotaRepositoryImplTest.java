@@ -3322,7 +3322,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		this.setupFinanceiroReparteEncalhe();
 
-		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId());
+		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId(), Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		
 		Assert.assertNotNull(total);
 		

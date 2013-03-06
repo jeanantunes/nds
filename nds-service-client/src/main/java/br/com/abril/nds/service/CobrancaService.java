@@ -11,7 +11,6 @@ import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
 
@@ -46,7 +45,7 @@ public interface CobrancaService {
 	 * @return valor calculado com a multa
 	 */
 	public BigDecimal calcularMulta(Banco banco, Cota cota,
-									Distribuidor distribuidor, BigDecimal valor);
+									BigDecimal valor);
 
 	
 	/**

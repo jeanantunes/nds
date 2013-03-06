@@ -1,10 +1,10 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.DiaSemanaDTO;
-import br.com.abril.nds.model.cadastro.PeriodicidadeCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
@@ -26,7 +26,7 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 	
 	private Integer qntdParcelas;
 	
-	private Double valorSelecionado;
+	private BigDecimal valorSelecionado;
 	
 	private List<String> listDividas;
 	
@@ -82,11 +82,11 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 		this.qntdParcelas = qntdParcelas;
 	}
 
-	public Double getValorSelecionado() {
+	public BigDecimal getValorSelecionado() {
 		return valorSelecionado;
 	}
 
-	public void setValorSelecionado(Double valorSelecionado) {
+	public void setValorSelecionado(BigDecimal valorSelecionado) {
 		this.valorSelecionado = valorSelecionado;
 	}
 

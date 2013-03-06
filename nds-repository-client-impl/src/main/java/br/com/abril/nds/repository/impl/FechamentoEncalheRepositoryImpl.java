@@ -1,11 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
@@ -13,7 +15,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
@@ -66,7 +67,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append(" , pe.id as produtoEdicao ");
 		hql.append(" ,  case when  pe.parcial  = true  then 'P' else 'N' end  as tipo ");
 		hql.append(" , che.dataRecolhimento as dataRecolhimento ");
-		hql.append(" ,   sum (mec.qtde - ("+ subquery.toString()  +") )   as exemplaresDevolucao ");
+		hql.append(" ,   sum (mec.qtde) - ( "+ subquery.toString()  +" )    as exemplaresDevolucao ");
 		hql.append(" from ConferenciaEncalhe as ce ");
 		hql.append("  JOIN ce.movimentoEstoqueCota as mec ");
 		hql.append("  JOIN ce.controleConferenciaEncalheCota as ccec ");
@@ -105,7 +106,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			hql.append(" order by ");
 			if (("asc").equalsIgnoreCase(sortorder)) {
 				hql.append(sortname+" asc ");	
-			} else if (("desc").equalsIgnoreCase(sortorder)) {
+			} else {
 				hql.append(sortname+" desc ");
 			}
 		}
@@ -157,37 +158,92 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		return criteria.list();
 	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<CotaAusenteEncalheDTO> buscarCotasAusentes(Date dataEncalhe, 
+	
+	
+	public Integer obterTotalCotasAusentes(Date dataEncalhe, 
 			boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
 		
-		Query query = this.criarQueryCotasAusentesEncalhe(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname);
+		StringBuilder sql = new StringBuilder();
 		
+		sql.append(" select count(*) from  ");
+		
+		
+		sql.append("	( select cota.ID as idCota ")
+		
+		.append( getClausulaFromWhereQueryCotaAusentes(isSomenteCotasSemAcao) )
+		 
+		.append("	) as ausentes	");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataEncalhe", dataEncalhe);
+		
+		query.setParameter("principal", true);
+
+		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
+		
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return ( qtde != null ) ? qtde.intValue() : 0;
+		
+	}
+	
+	public List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, 
+			boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
+	
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("	 select  ")
+		.append("	        cota.ID as idCota,                                          ")
+		.append("	        cota.NUMERO_COTA as numeroCota,                             ")
+		.append("	        coalesce(pessoa.NOME,                                       ")
+		.append("	        pessoa.RAZAO_SOCIAL) as colaboradorName,                    ")
+		.append("	        box.NOME as boxName,                                        ")
+		.append("	        roteiro.DESCRICAO_ROTEIRO as roteiroName,                   ")
+		.append("	        rota.DESCRICAO_ROTA as rotaName,                            ")
+		.append("	        coalesce(chamadaEncalheCota.FECHADO, 0)  as fechado,		")
+		.append("	        coalesce(chamadaEncalheCota.POSTERGADO, 0) as postergado, 	")
+		.append("	        coalesce(chamadaEncalhe.DATA_RECOLHIMENTO, :dataEncalhe) as dataEncalhe ")
+		
+		.append( getClausulaFromWhereQueryCotaAusentes(isSomenteCotasSemAcao) );
+		 
+		 
+		 
+		if (sortname != null && sortorder != null) {
+			sql.append("  ORDER BY " + sortname + " " + sortorder);
+		}
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		
+		
+		query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
+		
+		((SQLQuery) query).addScalar("idCota");
+		((SQLQuery) query).addScalar("numeroCota");
+		((SQLQuery) query).addScalar("colaboradorName");
+		((SQLQuery) query).addScalar("boxName");
+		((SQLQuery) query).addScalar("roteiroName");
+		((SQLQuery) query).addScalar("rotaName");
+		((SQLQuery) query).addScalar("fechado");
+		((SQLQuery) query).addScalar("postergado");
+		((SQLQuery) query).addScalar("dataEncalhe");
+		
+		query.setParameter("dataEncalhe", dataEncalhe);
+		
+		query.setParameter("principal", true);
+		
+		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
+
 		query.setFirstResult(page);
+
 		if (rp >= 0) {
 			query.setMaxResults(rp);
 		}
 		
 		return query.list();
+		
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao) {
-		
-		Query query = this.criarQueryCotasAusentesEncalhe(dataEncalhe, isSomenteCotasSemAcao, null, null);
-		
-		List<CotaAusenteEncalheDTO> listaCotasAusentes = query.list();
-		
-		if (listaCotasAusentes == null || listaCotasAusentes.isEmpty()) {
-			return 0;
-		}
-		
-		return listaCotasAusentes.size();		
-	}
-	
 	
 	private Query criarQueryCotasAusentesEncalhe(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname) {
 		
@@ -226,13 +282,82 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return query;
 	}
 	
+	
+	
+	
+	private String getClausulaFromWhereQueryCotaAusentes(boolean isSomenteCotasSemAcao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("	from Cota cota	")
+		
+		.append("	    left join                                                               ")
+		.append("	        CHAMADA_ENCALHE_COTA chamadaEncalheCota								")
+		.append("	            on chamadaEncalheCota.COTA_ID=cota.ID                           ")
+
+		.append("	    left join                                                               ")
+		.append("	        CHAMADA_ENCALHE chamadaEncalhe 										")
+		.append("	            on chamadaEncalheCota.CHAMADA_ENCALHE_ID=chamadaEncalhe.ID      ")
+		
+		.append("	    inner join                                                              ")
+		.append("	        PESSOA pessoa                                                       ")
+		.append("	            on cota.PESSOA_ID=pessoa.ID                                     ")
+
+		.append("	    inner join                                                              ")
+		.append("	        BOX box                                                             ")
+		.append("	            on cota.BOX_ID=box.ID                                           ")
+		
+		.append("	    inner join                                                              ")
+		.append("	        PDV pdv                                                             ")
+		.append("	            on cota.ID=pdv.COTA_ID                                          ")
+		
+		.append("	    inner join                                                              ")
+		.append("	        ROTA_PDV rotaPdv                                                    ")
+		.append("	            on pdv.ID=rotaPdv.PDV_ID,                                       ")
+		
+		.append("	        ROTA rota,                                                          ")
+		
+		.append("	        ROTEIRO roteiro                                                     ")
+		
+		.append("	     where                                                                  ")
+		
+		.append("	        rotaPdv.ROTA_ID=rota.ID                                             ")
+		
+		.append("	        and rota.ROTEIRO_ID=roteiro.ID                                      ")
+
+		.append("	        and ( chamadaEncalhe.DATA_RECOLHIMENTO is null         				")
+		.append("	        or chamadaEncalhe.DATA_RECOLHIMENTO=:dataEncalhe )                  ")
+		
+		.append("   and cota.ID not in  ( select                    ")
+        .append("      distinct( cec.COTA_ID )                      ") 
+        .append("  from                                             ")
+        .append("      controle_conferencia_encalhe_cota cec        ")
+        .append("  where                                            ")
+        .append("      cec.data_operacao = :dataEncalhe and         ")
+        .append("      cec.status = :statusConcluido                ")
+		.append("   )												")
+		.append("	                                                ")
+		.append("	and pdv.PONTO_PRINCIPAL=:principal  ");
+		
+		if (isSomenteCotasSemAcao) {
+			sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		")
+			   .append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");			
+		}
+		
+		sql.append(" group by ")
+		   .append(" cota.ID  ");
+		
+		return sql.toString();
+		
+	}
+	
 	private String getClausulaWhereQueryCotasAusentesEncalhe(boolean isSomenteCotasSemAcao) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("     WHERE cec.chamadaEncalhe.dataRecolhimento = :dataEncalhe");
 		hql.append("       AND cec.cota.id NOT IN (");
-		hql.append("           select cc.cota.id   ");
+		hql.append("           select distinct cc.cota.id   ");
 		hql.append("		   from ConferenciaEncalhe ce, ChamadaEncalheCota cc ");
 		hql.append("            ");
 		hql.append("           where cc.chamadaEncalhe.dataRecolhimento = :dataEncalhe and ce.chamadaEncalheCota.id = cc.id ");
