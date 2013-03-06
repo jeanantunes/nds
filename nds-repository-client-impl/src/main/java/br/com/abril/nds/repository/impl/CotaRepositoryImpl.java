@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
-import br.com.abril.nds.dto.AreaInfluenciaGeradorFluxoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaDTO;
@@ -1501,6 +1500,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro) {
 
@@ -1521,6 +1521,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioAEmitir(FiltroConsultaNotaEnvioDTO filtro) {
 		
@@ -1541,6 +1542,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidasEAEmitir(
 			FiltroConsultaNotaEnvioDTO filtro) {
@@ -2109,6 +2111,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (Cota) query.uniqueResult();
     }
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> buscarCotasQuePossuemRangeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -2186,6 +2189,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> buscarCotasQuePossuemRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal,List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -2256,6 +2260,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> buscarCotasQuePossuemPercentualVendaSuperior(BigDecimal percentualVenda, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -2325,6 +2330,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> buscarCotasPorNomeOuNumero(CotaDTO cotaDto, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -2400,6 +2406,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto,	boolean cotasAtivas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -2538,6 +2545,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
