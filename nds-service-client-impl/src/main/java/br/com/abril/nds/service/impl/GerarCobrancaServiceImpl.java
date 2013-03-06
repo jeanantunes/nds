@@ -648,6 +648,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 									movimentoFinanceiroCota.getValor().negate() : 
 										BigDecimal.ZERO);
 				break;
+				case CREDITO_SOBRE_FATURAMENTO:
+					vlMovFinanTotal =
+						vlMovFinanTotal.add(
+							movimentoFinanceiroCota.getValor() != null ?
+									movimentoFinanceiroCota.getValor():
+										BigDecimal.ZERO);
+				break;
 			}
 		}
 		

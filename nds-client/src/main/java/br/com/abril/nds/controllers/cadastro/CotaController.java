@@ -1069,8 +1069,7 @@ public class CotaController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		filtro.setPaginacao(null);
-		
+				
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		
 		List<CotaDTO> listaCotas = null;

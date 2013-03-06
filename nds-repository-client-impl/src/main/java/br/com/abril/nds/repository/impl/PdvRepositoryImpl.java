@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
@@ -402,4 +403,31 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		q.executeUpdate();
 	}
 	
+	@Override
+	@Transactional
+	public List<PdvDTO> obterPdvPorCotaComEndereco(Long idCota){
+		 StringBuilder hql = new StringBuilder();
+
+			hql.append("SELECT distinct pdv.id as id, pdv.nome as nomePDV, " )
+			.append("  endereco.logradouro  as  endereco , ")
+			.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
+			.append("  pdv.status as statusPDV ,")
+			.append("  cota.id as idCota ")
+			.append(" FROM PDV pdv ")
+			.append(" JOIN pdv.cota cota ")
+			.append("LEFT JOIN pdv.enderecos enderecoPdv ")
+			.append("LEFT JOIN enderecoPdv.endereco endereco ")
+			.append("LEFT JOIN pdv.telefones telefonePdv ")
+			.append("LEFT JOIN telefonePdv.telefone telefone ")
+			.append(" WHERE pdv.cota.id = :idCota ")
+			.append(" and enderecoPdv.principal = true");
+	        	
+		Query q = getSession().createQuery(hql.toString());
+        q.setParameter("idCota", idCota);
+        q.setResultTransformer(new AliasToBeanResultTransformer(PdvDTO.class));
+        return q.list();
+	        		
+	}
+	
 }
+
