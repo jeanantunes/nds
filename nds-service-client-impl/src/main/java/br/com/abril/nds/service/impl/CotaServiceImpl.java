@@ -879,7 +879,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		ParametroDistribuicaoCota parametro = cota.getParametroDistribuicao();
 		
-		boolean qtdePDVAutomatico = distribuidorService.obter().isPreenchimentoAutomaticoPDV();
+		boolean qtdePDVAutomatico = this.distribuidorService.preenchimentoAutomaticoPDV();
 				
 		DistribuicaoDTO dto = new DistribuicaoDTO();
 		
@@ -1852,11 +1852,9 @@ public class CotaServiceImpl implements CotaService {
 			return true;
 		}
 		
-	    Distribuidor distribuidor = distribuidorService.obter();
-	    
 	    Long qntDiasInativo =  DateUtil.obterDiferencaDias(histCota.getDataInicioValidade(), new Date());
 	    
-	    Long qntDiasDistribuidor =  (distribuidor.getQntDiasReutilizacaoCodigoCota() == null)?0:distribuidor.getQntDiasReutilizacaoCodigoCota();
+	    Long qntDiasDistribuidor = this.distribuidorService.qntDiasReutilizacaoCodigoCota();
 	    
 		return (qntDiasInativo > qntDiasDistribuidor );
 	}

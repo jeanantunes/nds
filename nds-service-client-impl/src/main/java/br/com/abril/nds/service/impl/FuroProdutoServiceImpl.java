@@ -14,7 +14,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -135,9 +134,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(novaData));
 		}
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (!distribuidor.isRegimeEspecial()) {
+		if (!this.distribuidorService.regimeEspecial()) {
 
 			boolean produtoExpedido = this.verificarProdutoExpedido(idLancamento);
 			
@@ -172,9 +169,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor.isRegimeEspecial()) {
+		if (this.distribuidorService.regimeEspecial()) {
 			
 			List<ItemNotaEnvio> itensNotaEnvio = 
 				this.itemNovaEnvioRepository.obterItemNotaEnvio(idLancamento);

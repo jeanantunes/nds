@@ -28,7 +28,6 @@ import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -146,8 +145,10 @@ public class MatrizRecolhimentoController extends BaseController {
 	private Integer tratarSemana(Integer numeroSemana, Date dataPesquisa) {
 
 		if(numeroSemana==null && dataPesquisa!=null) {
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			return DateUtil.obterNumeroSemanaNoAno(dataPesquisa, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			
+			return DateUtil.obterNumeroSemanaNoAno(
+					dataPesquisa, 
+					this.distribuidorService.inicioSemana().getCodigoDiaSemana());
 		}
 		
 		return numeroSemana;
@@ -156,8 +157,10 @@ public class MatrizRecolhimentoController extends BaseController {
 	private Date tratarData(Integer numeroSemana, Date dataPesquisa) {
 
 		if(numeroSemana!=null && dataPesquisa==null) {
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			return DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+			
+			return DateUtil.obterDataDaSemanaNoAno(
+					numeroSemana, 
+					this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
 		}
 		
 		return dataPesquisa;
@@ -1045,15 +1048,8 @@ public class MatrizRecolhimentoController extends BaseController {
 			}
 		}
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor == null) {
-			
-			throw new RuntimeException("Dados do distribuidor inexistentes!");
-		}
-		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataBalanceamento);
+			numeroSemana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), dataBalanceamento);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,6 @@ import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -130,10 +130,10 @@ public class DividaServiceImpl implements DividaService {
 	 */
 	private void validarDataPostergacao(Date dataPostergacao){
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		if(dataPostergacao.compareTo(distribuidor.getDataOperacao()) < 1){
-			throw new ValidacaoException(TipoMensagem.WARNING,"A nova data para postergação da dívida tem que ser no mínimo a data da operação seguinte (D+1)");
+		if(dataPostergacao.compareTo(this.distribuidorService.obterDataOperacaoDistribuidor()) < 1){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"A nova data para postergação da dívida tem que ser no mínimo a data da operação seguinte (D+1)");
 		}
 	}
 
@@ -365,8 +365,8 @@ public class DividaServiceImpl implements DividaService {
     private Map<TipoCobranca, SumarizacaoDividasDTO> criarMapaTiposCobrancaDistribuidor(Date data, TipoDivida tipoDivida,
             Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao) {
         Map<TipoCobranca, SumarizacaoDividasDTO> novaSumarizacao = new EnumMap<TipoCobranca, SumarizacaoDividasDTO>(sumarizacao);
-        Distribuidor distribuidor = distribuidorService.obter();
-        for (PoliticaCobranca pc : distribuidor.getPoliticasCobranca()) {
+        Set<PoliticaCobranca> pcs = this.distribuidorService.politicasCobranca();
+        for (PoliticaCobranca pc : pcs) {
             FormaCobranca formaCobranca = pc.getFormaCobranca();
             if (formaCobranca.isAtiva()) {
                 TipoCobranca tipoCobranca = formaCobranca.getTipoCobranca();

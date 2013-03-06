@@ -100,7 +100,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
-		TipoAtividade tipoAtividade = this.distribuidorService.obter().getTipoAtividade();
+		TipoAtividade tipoAtividade = this.distribuidorService.tipoAtividade();
 
 		GrupoNotaFiscal grupoNotaFiscal = GrupoNotaFiscal.NF_TERCEIRO;
 		
