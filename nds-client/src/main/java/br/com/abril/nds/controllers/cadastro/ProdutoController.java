@@ -42,7 +42,6 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
-import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.export.FileExporter;
@@ -415,17 +414,7 @@ public class ProdutoController extends BaseController {
 	@Post
 	public void removerProduto(Long id) {
 		
-		try {
-			
-			this.produtoService.removerProduto(id);
-			
-		} catch (UniqueConstraintViolationException e) {
-			
-			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()), 
-					"result").recursive().serialize();
-			throw new ValidacaoException();
-		}
+		this.produtoService.removerProduto(id);
 			
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"), 
