@@ -185,7 +185,7 @@ public class CotaDAO {
 	produtoEdicao.setPeso(idsPesos.get(produtoEdicao.getId()));
 
 	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
+	produtoEdicao.setCodigoProduto(rs.getString("CODIGO"));
 
 	edicoes.add(produtoEdicao);
 	return edicoes;

@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,10 +19,13 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.process.PrincipalEstudo;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -61,6 +65,9 @@ public class MatrizDistribuicaoController extends BaseController {
 
     @Autowired
     private CalendarioService calendarioService;
+    
+    @Autowired
+    private EstudoService estudoService;
 
     private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
 
@@ -304,8 +311,13 @@ public class MatrizDistribuicaoController extends BaseController {
     }
 
     @Post
-    public void gerarEstudoAutomatico() {
-
+    public void gerarEstudoAutomatico(String codigoProduto, BigDecimal reparte) {
 	
+	try {
+	    new PrincipalEstudo().gerarEstudoAutomatico(new ProdutoEdicaoBase(codigoProduto), reparte);
+	} catch (Exception e) {
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+	}
+	result.nothing();
     }
 }

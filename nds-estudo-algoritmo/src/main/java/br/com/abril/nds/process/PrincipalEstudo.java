@@ -1,9 +1,12 @@
 package br.com.abril.nds.process;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import br.com.abril.nds.dao.EstudoDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
@@ -12,7 +15,6 @@ import br.com.abril.nds.process.ajustereparte.AjusteReparte;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.calculoreparte.AjusteFinalReparte;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
-import br.com.abril.nds.process.calculoreparte.GravarReparteFinalCota;
 import br.com.abril.nds.process.complementarautomatico.ComplementarAutomatico;
 import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
@@ -26,7 +28,7 @@ import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
-import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.EstudoServiceEstudo;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o
@@ -56,19 +58,25 @@ import br.com.abril.nds.service.EstudoService;
  * Próximo Processo: N/A
  * </p>
  */
-public class Principal {
+public class PrincipalEstudo {
 
-    @Autowired
-    private EstudoService estudoService;
+    private static final Logger log = LoggerFactory.getLogger(EstudoDAO.class);
+    
+    private EstudoServiceEstudo estudoServiceEstudo = new EstudoServiceEstudo();
     
     public void gerarEstudoAutomatico(ProdutoEdicaoBase produto, BigDecimal reparte) throws Exception {
+	gerarEstudoAutomatico(null, produto, reparte);
+    }
+    
+    public void gerarEstudoAutomatico(List<ProdutoEdicaoBase> edicoesBase, ProdutoEdicaoBase produto, BigDecimal reparte) throws Exception {
+	log.debug("Iniciando execução do estudo.");
 	Estudo estudo = new Estudo();
 	estudo.setProduto(produto);
 	estudo.setReparteDistribuir(reparte);
 	estudo.setReparteDistribuirInicial(reparte);
-	
+
 	// carregando parâmetros do banco de dados
-	estudoService.carregarParametros(estudo);
+	estudoServiceEstudo.carregarParametros(estudo);
 
 	DefinicaoBases definicaoBases = new DefinicaoBases(estudo);
 	definicaoBases.executar();
@@ -79,17 +87,17 @@ public class Principal {
 	VerificarTotalFixacoes verificarTotalFixacoes = new VerificarTotalFixacoes(estudo);
 	verificarTotalFixacoes.executar();
 
-	EstudoService.calculate(estudo);
+	EstudoServiceEstudo.calculate(estudo);
 
 	MontaTabelaEstudos montaTabelaEstudos = new MontaTabelaEstudos(estudo);
 	montaTabelaEstudos.executar();
 
 	for(Cota cota : estudo.getCotas()) {
-		CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
-		correcaoVendas.executar();
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+	    correcaoVendas.executar();
 
-		Medias medias = new Medias(cota);
-		medias.executar();
+	    Medias medias = new Medias(cota);
+	    medias.executar();
 	}
 
 	Bonificacoes bonificacoes = new Bonificacoes(estudo);
@@ -99,16 +107,15 @@ public class Principal {
 	ajusteCota.executar();
 
 	for(Cota cota : estudo.getCotas()) {
-		VendaMediaFinal vendaMediaFinal = new VendaMediaFinal(cota);
-		vendaMediaFinal.executar();
-		JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
-		jornaleirosNovos.executar();
+	    JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
+	    jornaleirosNovos.executar();
+
+	    VendaMediaFinal vendaMediaFinal = new VendaMediaFinal(cota);
+	    vendaMediaFinal.executar();
 	}
 
 	AjusteReparte ajusteReparte = new AjusteReparte(estudo);
 	ajusteReparte.executar();
-
-	EstudoService.calculate(estudo);
 
 	RedutorAutomatico redutorAutomatico = new RedutorAutomatico(estudo);
 	redutorAutomatico.executar();
@@ -128,10 +135,9 @@ public class Principal {
 	CalcularReparte calcularReparte = new CalcularReparte(estudo);
 	calcularReparte.executar();
 
+	// processo que faz os ajustes finais e grava as informações no banco de dados
 	AjusteFinalReparte ajusteFinalReparte = new AjusteFinalReparte(estudo);
 	ajusteFinalReparte.executar();
-	
-	GravarReparteFinalCota gravarReparteFinalCota = new GravarReparteFinalCota(estudo);
-	gravarReparteFinalCota.executar();
+	log.debug("Execução do estudo concluída");
     }
 }

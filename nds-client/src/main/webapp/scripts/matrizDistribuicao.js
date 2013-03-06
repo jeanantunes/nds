@@ -197,7 +197,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i);
 		
 		T.lancamentos.push({
-			id:							row.cell.id, 
+			id:							row.cell.id,
+			codigoProduto:              row.cell.codigoProduto,
 			estudo:                     row.cell.idEstudo,
 			lancto:                     row.cell.lancto,
 			promo:                      row.cell.promo,
@@ -801,7 +802,21 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	},
 	
 	this.gerarEstudoAutomatico = function() {
-		
+		$.each(T.lancamentos, function(index, row){
+			if (row.selecionado) {
+				var data = [];
+				data.push({name:'codigoProduto', value: row.codigoProduto});
+				data.push({name:'reparte', value: row.repDistrib});
+				
+				$.postJSON(
+					pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", 
+					data,
+					function(result) {
+						alert('teste');
+					}
+				);
+			}
+		});
 	};
 	
 }

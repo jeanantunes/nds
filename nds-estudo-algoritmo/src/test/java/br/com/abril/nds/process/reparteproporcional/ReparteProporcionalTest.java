@@ -11,7 +11,7 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
-import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.EstudoServiceEstudo;
 
 public class ReparteProporcionalTest {
 
@@ -52,7 +52,7 @@ public class ReparteProporcionalTest {
     		estudo.getCotas().add(cota);
 		}
 
-		EstudoService.calculate(estudo);
+		EstudoServiceEstudo.calculate(estudo);
 		return estudo;
 	}
 	

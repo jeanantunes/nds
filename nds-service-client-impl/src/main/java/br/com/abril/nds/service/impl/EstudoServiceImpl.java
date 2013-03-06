@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.service.EstudoService;
 
@@ -22,11 +24,13 @@ public class EstudoServiceImpl implements EstudoService {
 	
 	@Autowired
 	private EstudoRepository estudoRepository;
+	
+	@Autowired
+	private EstudoCotaRepository estudoCotaRepository;
 
 	@Transactional(readOnly = true)
 	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
 		
 		return this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(dataReferencia, idProdutoEdicao);
 	}
-
 }

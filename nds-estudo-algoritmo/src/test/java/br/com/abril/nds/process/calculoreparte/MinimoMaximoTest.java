@@ -10,7 +10,7 @@ import org.junit.Test;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.EstudoServiceEstudo;
 
 public class MinimoMaximoTest {
 
@@ -24,7 +24,7 @@ public class MinimoMaximoTest {
 		cota.setMix(mix);
 		estudo.setCotas(new ArrayList<Cota>());
 		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
+		EstudoServiceEstudo.calculate(estudo);
 		return estudo;
 	}
 	

@@ -10,7 +10,7 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 	private Long idEstudo;
 	private Long numeroEdicao;
 	private Long idProduto;
-	private Long codigoProduto;
+	private String codigoProduto;
 	private boolean parcial;
 	private boolean edicaoAberta;
 	private Integer peso;
@@ -20,9 +20,13 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 	private Integer periodo;
 
 	public ProdutoEdicaoBase() {
-		this.peso = 0;
+	    peso = 1;
 	}
-
+	public ProdutoEdicaoBase(String codigoProduto) {
+	    this();
+	    this.codigoProduto = codigoProduto;
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -55,11 +59,11 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 		this.idProduto = idProduto;
 	}
 
-	public Long getCodigoProduto() {
+	public String getCodigoProduto() {
 		return codigoProduto;
 	}
 
-	public void setCodigoProduto(Long codigoProduto) {
+	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
 	}
 

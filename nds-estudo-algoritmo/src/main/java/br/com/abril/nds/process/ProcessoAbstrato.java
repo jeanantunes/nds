@@ -29,6 +29,10 @@ public abstract class ProcessoAbstrato {
 	public Estudo getEstudo() {
 		return (Estudo) genericDTO;
 	}
+	
+	public void setEstudo(Estudo estudo) {
+	    genericDTO = estudo;
+	}
 
 	public void executar() throws Exception {
 		executarProcesso();

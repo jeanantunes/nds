@@ -1,6 +1,7 @@
 package br.com.abril.nds.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public class Estudo extends GenericDTO<Estudo> {
@@ -30,18 +31,12 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal ajusteReparte;
 	private BigDecimal excedente;
 	private BigDecimal reparteComplementar;
-
+	// atributos utilizados 
+	private Date dataCadastro;
+	
 	public Estudo() {
-		totalPDVs = BigDecimal.ZERO;
-		pacotePadrao = BigDecimal.ZERO;
-		ajusteReparte = BigDecimal.ZERO;
-		reparteDistribuir = BigDecimal.ZERO;
-		reparteDistribuirInicial = BigDecimal.ZERO;
-		somatoriaVendaMedia = BigDecimal.ZERO;
-		somatoriaReparteEdicoesAbertas = BigDecimal.ZERO;
-		percentualProporcaoExcedentePDV = BigDecimal.ZERO;
-		percentualProporcaoExcedenteVenda = BigDecimal.ZERO;
-		excedente = BigDecimal.ZERO;
+	    dataCadastro = new Date();
+	    status = "ESTUDO_FECHADO";
 	}
 	
 	/**
@@ -237,6 +232,14 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setAjusteReparte(BigDecimal ajusteReparte) {
 		this.ajusteReparte = ajusteReparte;
+	}
+
+	public Date getDataCadastro() {
+	    return dataCadastro;
+	}
+
+	public void setDataCadastro(Date dataCadastro) {
+	    this.dataCadastro = dataCadastro;
 	}
 
 	@Override

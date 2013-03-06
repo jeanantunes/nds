@@ -37,7 +37,7 @@ public class AjusteReparte extends ProcessoAbstrato {
 	    throw new Exception("Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo.");
 	}
 	for (Cota cota : getEstudo().getCotas()) {
-	    if (cota.getVendaMediaMaisN().longValue() > 0) {
+	    if ((cota.getVendaMediaMaisN() != null) && (getEstudo().getPacotePadrao() != null) && (cota.getVendaMediaMaisN().longValue() > 0)) {
 		BigDecimal ajusteReparte = BigDecimal.ZERO;
 		if (cota.getVendaMediaMaisN().longValue() > getEstudo().getPacotePadrao().longValue()) {
 		    ajusteReparte = cota.getVendaMediaMaisN();

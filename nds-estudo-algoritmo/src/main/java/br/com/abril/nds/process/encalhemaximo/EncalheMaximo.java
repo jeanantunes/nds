@@ -28,17 +28,19 @@ public class EncalheMaximo extends ProcessoAbstrato {
     @Override
     protected void executarProcesso() {
 	for (Cota cota : getEstudo().getCotas()) {
-	    BigDecimal encalhe = BigDecimal.ZERO;
+	    BigDecimal encalhe = null;
 	    if (getEstudo().getReparteDistribuir().compareTo(BigDecimal.ZERO) > 0) {
 		encalhe = getEstudo().getSomatoriaVendaMedia().divide(getEstudo().getReparteDistribuir(), 2, BigDecimal.ROUND_HALF_UP)
 			.multiply(BigDecimal.valueOf(100));
 	    }
-	    if ((cota.getPercentualEncalheMaximo().doubleValue() > 0) && (cota.getPercentualEncalheMaximo().doubleValue() < encalhe.doubleValue())) {
-		BigDecimal percentual = BigDecimal.valueOf(100).subtract(cota.getPercentualEncalheMaximo())
-			.divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-		cota.setReparteCalculado(cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP));
+	    if ((cota.getPercentualEncalheMaximo() != null) && (encalhe != null)) {
+		if ((cota.getPercentualEncalheMaximo().compareTo(BigDecimal.ZERO) > 0) && (cota.getPercentualEncalheMaximo().compareTo(encalhe) < 0)) {
+		    BigDecimal percentual = BigDecimal.valueOf(100).subtract(cota.getPercentualEncalheMaximo())
+			    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+		    cota.setReparteCalculado(cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP));
 
-		getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(cota.getReparteCalculado()));
+		    getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(cota.getReparteCalculado()));
+		}
 	    }
 	}
     }

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 
-public class CotaService {
+public class CotaServiceEstudo {
 
     public static void calculate(Cota cota) {
 	// Cálculo da Venda Média Final

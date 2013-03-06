@@ -1,10 +1,8 @@
 package br.com.abril.nds.process.calculoreparte;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import br.com.abril.nds.dao.EstudoDAO;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.service.EstudoServiceEstudo;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o
@@ -20,16 +18,12 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  */
 public class GravarReparteFinalCota extends ProcessoAbstrato {
 
-    @Autowired
-    private EstudoDAO estudoDAO;
-    
     public GravarReparteFinalCota(Estudo estudo) {
 	super(estudo);
     }
 
     @Override
     protected void executarProcesso() {
-	estudoDAO.gravarEstudo(getEstudo());
+	new EstudoServiceEstudo().gravarEstudo(getEstudo());
     }
-
 }
