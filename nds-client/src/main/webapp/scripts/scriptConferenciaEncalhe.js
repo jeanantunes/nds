@@ -86,6 +86,9 @@ var ConferenciaEncalhe = $.extend(true, {
 			 defaultZero:false
 		});
 		
+		$("#qtdCE", ConferenciaEncalhe.workspace).numeric();
+		
+		
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).mask("99/99/9999");
 		
 		$("#valorNotaFiscal", ConferenciaEncalhe.workspace).numeric();
@@ -107,6 +110,15 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
 			}
 		});
+
+		$("#qtdCE", ConferenciaEncalhe.workspace).keypress(function(e) {
+			
+			if (e.keyCode == 13) {
+				
+				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
+			}
+		});
+
 		
 		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).keyup(function(e) {
 			
@@ -543,7 +555,8 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	verificarValorTotalCE : function() {
 		
-		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())}];
+		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())},
+		            {name: "qtdCEInformado", value: ConferenciaEncalhe.preparaValor($("#qtdCE", ConferenciaEncalhe.workspace).val())}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalCE', data, 
 		
@@ -1185,6 +1198,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#desconto", ConferenciaEncalhe.workspace).text("");
 		$("#valorTotal", ConferenciaEncalhe.workspace).text("");
 		$("#vlrCE", ConferenciaEncalhe.workspace).val("");
+		$("#qtdCE", ConferenciaEncalhe.workspace).val("");
 		
 		ConferenciaEncalhe.ultimoCodeBar = "";
 		ConferenciaEncalhe.ultimoSM = "";
@@ -1226,6 +1240,8 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$("#dialog-alert", ConferenciaEncalhe.workspace).dialog("close");
 					$("#vlrCE", ConferenciaEncalhe.workspace).focus();
+					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
+					
 				}
 			}, open : function(){
 				
@@ -1303,6 +1319,8 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$(this).dialog("close");
 					$("#vlrCE", ConferenciaEncalhe.workspace).focus();
+					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
+					
 				}
 			}, open : function(){
 				

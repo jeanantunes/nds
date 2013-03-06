@@ -43,11 +43,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#numeroCota", ConferenciaEncalheCont.workspace).numeric();
 		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 		$("#exemplaresNovoEncalhe", ConferenciaEncalheCont.workspace).numeric();
+		
 		$("#vlrCE", ConferenciaEncalheCont.workspace).maskMoney({
 			 thousands:'.', 
 			 decimal:',', 
 			 precision:2
 		});
+		
+		$("#qtdCE", ConferenciaEncalheCont.workspace).numeric();
+		
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
 		
 		$("#numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
@@ -288,7 +292,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	verificarValorTotalCE : function() {
 		
-		var data = [{name: "valorCEInformado", value: parseFloat($("#vlrCE", ConferenciaEncalheCont.workspace).val())}];
+		var data = [{name: "valorCEInformado", value: parseFloat($("#vlrCE", ConferenciaEncalheCont.workspace).val())},
+		            {name: "qtdCEInformado", value: parseFloat($("#qtdCE", ConferenciaEncalheCont.workspace).val())}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalCE', data, 
 		
@@ -921,7 +926,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 				"Não" : function() {
 					
 					$("#dialog-alert", ConferenciaEncalheCont.workspace).dialog("close");
+					
 					$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
+					
+					$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
+					
 				}
 			}, open : function(){
 				
@@ -980,12 +989,17 @@ var ConferenciaEncalheCont = $.extend(true, {
 							$("#vlrCE", ConferenciaEncalheCont.workspace).val(parseFloat($("#valorNotaFiscal", ConferenciaEncalheCont.workspace).val()).toFixed(2));
 							
 							$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
-						}, null, true, "dialog-notaFiscal"
+
+							$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
+
+							
+					}, null, true, "dialog-notaFiscal"
 					);
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
 					$("#vlrCE", ConferenciaEncalheCont.workspace).focus();
+					$("#qtdCE", ConferenciaEncalheCont.workspace).focus();
 				}
 			}, close : function(){
 				

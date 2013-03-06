@@ -133,6 +133,14 @@ public class ConferenciaEncalheController extends BaseController {
 				"dataOperacao", 
 				DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
+		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+		
+		if(tipoContabilizacaoCE!=null) {
+			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
+		}
+		
+		
+		
 		limparDadosSessao();
 		carregarComboBoxEncalhe();
 	}
@@ -1400,35 +1408,51 @@ public class ConferenciaEncalheController extends BaseController {
 	 * ao valor de encalhe conferido na operação. 
 	 * 
 	 * @param valorCEInformado
+	 * @param qtdCEInformado
 	 */
 	@Post
-	public void verificarValorTotalCE(BigDecimal valorCEInformado) {
-		
+	public void verificarValorTotalCE(BigDecimal valorCEInformado, BigInteger qtdCEInformado) {
+
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
-		if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
-			
-			resultadoValidacao.put("valorCEInformadoValido", false);
-			
-			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido. Deseja continuar?");
-			
+		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+		
+		if(tipoContabilizacaoCE == null) {
+			resultadoValidacao.put("valorCEInformadoValido", true);
 			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
-
-		} else {
-
-			TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+			return;
+		}
+		
+		if(TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
 			
-			if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
+			if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
+				resultadoValidacao.put("valorCEInformadoValido", false);
+				resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido. Deseja continuar?");
+				this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
+				return;
+			} 
+			
+		} else {
+			
+			if (qtdCEInformado == null || BigInteger.ZERO.compareTo(qtdCEInformado) >= 0 ){
 				
-				this.comparValorTotalCEMonetario(valorCEInformado);
-				
-			} else {
-				
-				this.comparValorTotalCEQuantidade(valorCEInformado);
-				
-			}
+				resultadoValidacao.put("valorCEInformadoValido", false);
+				resultadoValidacao.put("mensagemConfirmacao", "Qtde CE jornaleiro informada inválido. Deseja continuar?");
+				this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
+				return;
+
+			} 
 			
 		}
+
+			
+		if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
+			this.comparValorTotalCEMonetario(valorCEInformado);
+		} else {
+			this.comparValorTotalCEQuantidade(qtdCEInformado);
+		}
+			
+		
 		
 	}
 	
@@ -1439,15 +1463,13 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @param valorTotalCEQuantidade
 	 */
 
-	private void comparValorTotalCEQuantidade(BigDecimal valorTotalCEQuantidade) {
+	private void comparValorTotalCEQuantidade(BigInteger valorTotalCEQuantidade) {
 		
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
-		BigInteger qtde = BigInteger.valueOf(valorTotalCEQuantidade.longValue());
-		
 		BigInteger qtdeItensConferenciaEncalhe = obterQtdeItensConferenciaEncalhe();
 
-		if (qtdeItensConferenciaEncalhe.compareTo(qtde)!=0){
+		if (qtdeItensConferenciaEncalhe.compareTo(valorTotalCEQuantidade)!=0){
 
 			resultadoValidacao.put("valorCEInformadoValido", false);
 			
