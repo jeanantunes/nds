@@ -31,7 +31,7 @@ public class RankingFaturamento {
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "RANKING_FATURAMENTO_GERADOS_ID")
-	private RankingFaturamentoGerado rankingFaturamento;
+	private RankingFaturamentoGerado rankingFaturamentoGerado;
 
 	public Long getId() {
 		return id;
@@ -57,13 +57,14 @@ public class RankingFaturamento {
 		this.faturamento = faturamento;
 	}
 
-	public RankingFaturamentoGerado getRankingFaturamento() {
-		return rankingFaturamento;
+	public RankingFaturamentoGerado getRankingFaturamentoGerado() {
+		return rankingFaturamentoGerado;
 	}
 
-	public void setRankingFaturamento(
-			RankingFaturamentoGerado rankingFaturamento) {
-		this.rankingFaturamento = rankingFaturamento;
+	public void setRankingFaturamentoGerado(
+			RankingFaturamentoGerado rankingFaturamentoGerado) {
+		this.rankingFaturamentoGerado = rankingFaturamentoGerado;
 	}
+
 
 }

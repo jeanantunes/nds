@@ -2424,21 +2424,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		hql.append(" SELECT ");
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
-		hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamento");
-		// TIPO
-		// RANKING
-		// MÊS/ANO
+//		hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
+		hql.append(" rankingFaturamento.faturamento as faturamento, ");
+		hql.append(" max(rankingFaturamentoGerado.dataGeracao) as dataGeracao ");
 		
-		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
-		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+		hql.append(" FROM RankingFaturamento rankingFaturamento ");
+		hql.append(" INNER JOIN rankingFaturamento.rankingFaturamentoGerado as rankingFaturamentoGerado ");
+		hql.append(" LEFT JOIN rankingFaturamento.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		hql.append(" WHERE ");
 		hql.append(" cota.numeroCota = ");
 		hql.append(numero);
 		
-		hql.append(" GROUP BY cota.numeroCota ");
+		hql.append(" GROUP BY rankingFaturamento.cota ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		

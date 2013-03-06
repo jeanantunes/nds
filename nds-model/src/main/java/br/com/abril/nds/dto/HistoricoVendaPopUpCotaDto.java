@@ -2,20 +2,18 @@ package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
 
-import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Export.Alignment;
 
 public class HistoricoVendaPopUpCotaDto {
 
 	private Integer numeroCota;
 	private String nomePessoa;
-	private TipoCota tipoCota;
+	private TipoDistribuicaoCota tipoDistribuicaoCota;
 	private Long rankId;
 	private BigDecimal faturamento;
 	private String faturamentoFormatado;
-	private String data;
+	private String dataGeracao;
 
 	public String getFaturamentoFormatado() {
 		return faturamentoFormatado;
@@ -42,12 +40,29 @@ public class HistoricoVendaPopUpCotaDto {
 		this.nomePessoa = nomePessoa;
 	}
 
-	public String getData() {
-		return data;
+	public String getDataGeracao() {
+		return dataGeracao;
 	}
 
-	public void setData(String data) {
-		this.data = data;
+	public void setDataGeracao(String dataGeracao) {
+		this.dataGeracao = dataGeracao;
+	}
+
+	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
+		return tipoDistribuicaoCota;
+	}
+
+	public void setTipoDistribuicaoCota(
+			TipoDistribuicaoCota tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	}
+
+	public Long getRankId() {
+		return rankId;
+	}
+
+	public void setRankId(Long rankId) {
+		this.rankId = rankId;
 	}
 
 }
