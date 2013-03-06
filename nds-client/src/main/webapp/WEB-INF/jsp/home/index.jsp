@@ -161,6 +161,9 @@
 									
 									$span = $("<span>").addClass(className);					
 									
+									if (url.indexOf("/devolucao/conferenciaEncalhe/") >= 0) {
+										$span = $($span).addClass("conferencia_encalhe");
+									}
 									
 									$('a:contains(' + title + ')', ulTabs).last().parent().prepend($span);
 									
