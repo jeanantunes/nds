@@ -301,7 +301,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return notaEnvio;
 	}
 
-	private NotaEnvio gerar(Long idCota, Long idRota, String chaveAcesso,
+	private List<NotaEnvio> gerar(Long idCota, Long idRota, String chaveAcesso,
 			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao,
 			Date dataEmissao, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores) {
@@ -341,39 +341,55 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					.getRoteiro(idRoteiro).getRotas().get(0).getId();
 		}
 
-		ItemNotaEnvioPK itemNotaEnvioPK = listaItemNotaEnvio.get(0)
-				.getItemNotaEnvioPK();
+		List<NotaEnvio> notasEnvio = new ArrayList<>();
+		List<ItemNotaEnvio> itensNotasEnvioExistentes = new ArrayList<>();
+		
+		for(ItemNotaEnvio ine : listaItemNotaEnvio) {
+			
+			ItemNotaEnvioPK itemNotaEnvioPK = ine.getItemNotaEnvioPK();
 
-		NotaEnvio notaEnvio = (itemNotaEnvioPK == null) ? null
-				: itemNotaEnvioPK.getNotaEnvio();
-
-		if (notaEnvio != null)
-			return notaEnvio;
-
-		notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
-				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
-				distribuidor, cota);
-
-		notaEnvioRepository.adicionar(notaEnvio);
-
-		int sequencia = 0;
-
-		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
-			if(itemNotaEnvio.getItemNotaEnvioPK() == null){
-				itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,
-						++sequencia));
-
-				itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+			NotaEnvio notaEnvio = (itemNotaEnvioPK == null) ? null : itemNotaEnvioPK.getNotaEnvio();
+						
+			if (notaEnvio != null && !notasEnvio.contains(notaEnvio)) {
+				notasEnvio.add(notaEnvio);
 			}
-
+			
+			if (notaEnvio != null && notasEnvio.contains(notaEnvio)) {
+				itensNotasEnvioExistentes.add(ine);
+			}
 			
 		}
-
-		notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
-
-		notaEnvio = notaEnvioRepository.merge(notaEnvio);
-
-		return notaEnvio;
+		
+		listaItemNotaEnvio.removeAll(itensNotasEnvioExistentes);
+		
+		if(listaItemNotaEnvio != null && listaItemNotaEnvio.size() > 0) {
+			
+			NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
+					codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+					distribuidor, cota);
+	
+			notaEnvioRepository.adicionar(notaEnvio);
+			
+			int sequencia = 0;
+	
+			for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
+				
+				if(itemNotaEnvio.getItemNotaEnvioPK() == null) {
+					itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio, ++sequencia));
+					itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+				}
+				
+			}
+	
+			notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
+	
+			notaEnvio = notaEnvioRepository.merge(notaEnvio);
+			
+			notasEnvio.add(notaEnvio);
+			
+		}
+		
+		return notasEnvio;
 	}
 
 	/**
@@ -562,15 +578,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		for (Long idCota : listaIdCotas) {
 
-			NotaEnvio notaEnvio = this.gerar(idCota, filtro.getIdRota(), null,
+			List<NotaEnvio> notaEnvio = this.gerar(idCota, filtro.getIdRota(), null,
 					null, null, filtro.getDataEmissao(),
 					filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
 
 			if (notaEnvio != null) {
-				listaNotaEnvio.add(notaEnvio);
+				listaNotaEnvio.addAll(notaEnvio);
 			}
 		}
-
+		
 		return listaNotaEnvio;
 	}
 

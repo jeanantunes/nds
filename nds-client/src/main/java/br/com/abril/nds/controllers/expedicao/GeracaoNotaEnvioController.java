@@ -299,7 +299,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	}
 	
 	@Get
-	public void visualizarNE(){
+	public void visualizarNE() {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
