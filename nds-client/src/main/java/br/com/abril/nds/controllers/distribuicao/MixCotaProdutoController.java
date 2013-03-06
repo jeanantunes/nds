@@ -117,7 +117,7 @@ public class MixCotaProdutoController extends BaseController {
 
 		if (resultadoPesquisa.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Não foram encontrados resultados para a pesquisa");
+					"NÃ£o foram encontrados resultados para a pesquisa.");
 		}
 
 		TableModel<CellModelKeyValue<MixProdutoDTO>> tableModelProduto = montarTableModelProduto(filtro);
@@ -142,7 +142,7 @@ public class MixCotaProdutoController extends BaseController {
 
 		if (resultadoPesquisa.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Não Foram encontrados resultados para a pesquisa");
+					"NÃ£o foram encontrados resultados para a pesquisa.");
 		}
 
 		TableModel<CellModelKeyValue<MixCotaDTO>> tableModelCota = montarTableModelCota(filtro);
@@ -156,7 +156,7 @@ public class MixCotaProdutoController extends BaseController {
 	public void removerMixCotaProduto(FiltroConsultaMixPorCotaDTO filtro) {
 		mixCotaProdutoService.removerMixCotaProduto(filtro);
 		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+				"OperaÃ§Ã£o realizada com sucesso!");
 	}
 
 	private TableModel<CellModelKeyValue<MixCotaDTO>> montarTableModelCota(
@@ -257,7 +257,7 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/salvarGridPdvReparte")
 	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idMix){
 		repartePdvService.salvarRepartesPDVMix(listPDV,codProduto, codCota, idMix);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,"Operação realizada com sucesso!");
+		throw new ValidacaoException(TipoMensagem.SUCCESS,"OperaÃ§Ã£o realizada com sucesso!");
 	}
 	
 	@Post
@@ -265,7 +265,7 @@ public class MixCotaProdutoController extends BaseController {
 	public void excluirTodos(){
 		mixCotaProdutoService.excluirTodos();
 		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+				"OperaÃ§Ã£o realizada com sucesso!");
 	}
 	
 	
@@ -275,7 +275,7 @@ public class MixCotaProdutoController extends BaseController {
 		
 		mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto,produtoId);
 		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+				"OperaÃ§Ã£o realizada com sucesso!");
 	}
 	
 	@Post
@@ -283,7 +283,7 @@ public class MixCotaProdutoController extends BaseController {
 	public void adicionarMixCota(List<MixCotaProdutoDTO>listaNovosMixCota, Integer cotaId){
 		mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);
 		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+				"OperaÃ§Ã£o realizada com sucesso!");
 	}
 
 	
@@ -298,7 +298,7 @@ public class MixCotaProdutoController extends BaseController {
 				.pesquisarPorCota(filtroPorCota);
 		if (resultadoPesquisa.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
-					"A última pesquisa realizada não obteve resultado.");
+					"A Ãºltima pesquisa realizada nÃ£o obteve resultado.");
 		} else {
 
 			FileExporter.to("mix", fileType).inHTTPResponse(
@@ -320,7 +320,7 @@ public class MixCotaProdutoController extends BaseController {
 				.pesquisarPorProduto(filtroPorProduto);
 		if (resultadoPesquisa.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
-					"A última pesquisa realizada não obteve resultado.");
+					"A Ãºltima pesquisa realizada nÃ£o obteve resultado.");
 		} else {
 
 			FileExporter.to("mix", fileType).inHTTPResponse(
