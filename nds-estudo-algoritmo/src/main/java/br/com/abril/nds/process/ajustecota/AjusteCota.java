@@ -6,7 +6,7 @@ import java.util.List;
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.model.Segmento;
+import br.com.abril.nds.model.TipoAjusteReparte;
 import br.com.abril.nds.model.TipoSegmentoProduto;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
@@ -34,7 +34,8 @@ public class AjusteCota extends ProcessoAbstrato {
 
 	Cota cota = (Cota) super.genericDTO;
 
-	BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCota(cota);
+	BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
+		TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
 
 	if (ajusteAplicado != null && ajusteAplicado.compareTo(indiceAjusteCota) == 1)
 	    indiceAjusteCota = ajusteAplicado;
@@ -47,14 +48,11 @@ public class AjusteCota extends ProcessoAbstrato {
 	    // Assim, a lista de edição do produto deve vir com o mesmo tipo de segmento e o mesmo produto!
 	    TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
 
-	    Segmento segmento = new CotaDAO().getSegmentoByCotaAndTipoSegmentoProduto(cota, tipoSegmentoProduto);
+	    BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
+		    new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
 
-	    if (segmento != null) {
-
-		BigDecimal ajusteSegmento = segmento.getAjuste();
-
-		if (ajusteSegmento != null && ajusteSegmento.compareTo(indiceAjusteCota) == 1)
-		    indiceAjusteCota = ajusteSegmento;
+	    if (ajusteAplicadoSegmento != null && ajusteAplicadoSegmento.compareTo(indiceAjusteCota) == 1) {
+		indiceAjusteCota = ajusteAplicadoSegmento;
 	    }
 	}
 
