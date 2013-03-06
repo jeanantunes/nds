@@ -16,7 +16,6 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -190,9 +189,10 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	public List<ItemDTO<Long, String>> carregarTipoNotaFiscal() {
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		
 		List<ItemDTO<Long, String>> listaTipoNotaFiscal = 
-				this.tipoNotaFiscalService.carregarComboTiposNotasFiscais(distribuidor.getTipoAtividade());
+				this.tipoNotaFiscalService.carregarComboTiposNotasFiscais(
+						this.distribuidorService.tipoAtividade());
 		
 		return listaTipoNotaFiscal;
 	}

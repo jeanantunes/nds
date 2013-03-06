@@ -3,8 +3,10 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -957,9 +959,14 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		Map<Long,List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this.obterMovimentosEstoqueEstorno(cota.getId());
 
 		
-		Set<Long> fornecedores = movimentosReparteAgrupadosPorFornecedor.keySet();
+		//TODOS OS FORNECEDORES ENVOLVIDOS
+		Set<Long> fornecedoresId = new HashSet<Long>();
+		fornecedoresId.addAll(movimentosReparteAgrupadosPorFornecedor.keySet());
+		fornecedoresId.addAll(movimentosEncalheAgrupadosPorFornecedor.keySet());
+		fornecedoresId.addAll(movimentosEstornoAgrupadosPorFornecedor.keySet());
+		
 
-		for (Long fornecedorId:fornecedores){
+		for (Long fornecedorId:fornecedoresId){
 			
 			Fornecedor fornecedor = this.fornecedorRepository.buscarPorId(fornecedorId);
 			

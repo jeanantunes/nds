@@ -968,7 +968,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			boolean isUtilizaBoleto = dtoDoc.isUtilizaSlipBoleto();
 			
-			boolean isUtilizaSlip = true;//TODO: voltar apos testes...dtoDoc.isUtilizaSlip();
+			boolean isUtilizaSlip = dtoDoc.isUtilizaSlip();
 			
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			

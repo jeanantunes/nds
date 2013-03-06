@@ -15,7 +15,6 @@ import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -61,9 +60,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 		
 		List<VisaoEstoqueDTO> list = new ArrayList<VisaoEstoqueDTO>();
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
 
@@ -116,9 +113,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
 		} else {
 			
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			
-			Date dataOperacao = distribuidor.getDataOperacao();
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
 			if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
 				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
@@ -147,9 +142,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			qtd = visaoEstoqueRepository.obterQuantidadeEstoqueJuramentado(idProdutoEdicao);
 		} else {
 		
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			
-			Date dataOperacao = distribuidor.getDataOperacao();
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
 			if (dataMovimentacao.compareTo(dataOperacao) == 0) {			
 				qtd = visaoEstoqueRepository.obterQuantidadeEstoque(idProdutoEdicao, tipoEstoque);

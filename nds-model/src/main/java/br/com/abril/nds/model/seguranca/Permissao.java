@@ -2,7 +2,7 @@ package br.com.abril.nds.model.seguranca;
 
 /**
  * Enumerated de tipos de permissões
- * A ordem dos enums define a ordem que aparecerá nos menus.
+ * A ordem dos enums define a ordem que aparecerão nos menus.
  * As permissões pais devem sempre vir antes de qualquer outra permissão Filho. 
  * @author InfoA2
  */
@@ -18,7 +18,7 @@ public enum Permissao
 	ROLE_CADASTRO_ENTREGADOR("Entregador", 															  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_TRANSPORTADOR("Transportador", 						                        	 	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_FORNECEDOR("Fornecedor", 															  	   Permissao.ROLE_CADASTRO),
-	ROLE_CADASTRO_ROTEIRIZACAO("Roteirização", 														  	   Permissao.ROLE_CADASTRO),
+	ROLE_CADASTRO_ROTEIRIZACAO("Roteirização", 														       Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_BOX("Box", 												 						  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_BANCO("Banco", 											 						  	   Permissao.ROLE_CADASTRO),
 	ROLE_CADASTRO_ALTERACAO_COTA("Alteração / Cota",			          					 		       Permissao.ROLE_CADASTRO),
@@ -37,14 +37,20 @@ public enum Permissao
 	ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE("Ajuste de reparte",	 										   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO("Informações do Produto",	 									   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
+
 	ROLE_DISTRIBUICAO_REGIAO("Região", 				  													   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO("Segmento Não Recebido",					 				   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS("Exceção de Segmentos e Parciais",					 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS("Histograma de Vendas", 				   						   Permissao.ROLE_DISTRIBUICAO),
+
+	ROLE_DISTRIBUICAO_FIXACAO_REPARTE("Fixação de Reparte", 				   							   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO("Mix por Cota/Publicação", 				   						   Permissao.ROLE_DISTRIBUICAO),
+
+	ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA("Classificação Não Recebida",						 	   Permissao.ROLE_DISTRIBUICAO),
+
 	ROLE_DISTRIBUICAO_DESENGLOBACAO("Desenglobação",												 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_HISTORICO_VENDA("Histórico de Vendas",										 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO("Matriz Distribuição"				 ,					 	   	   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA("Classificação Não Recebida",						 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS("Analise de Estudos", 				  							   Permissao.ROLE_DISTRIBUICAO),
 	
 	ROLE_ESTOQUE("Estoque",																	  			   null),
@@ -127,9 +133,9 @@ public enum Permissao
 	private Permissao permissaoPai;
 
 	/**
-	 * @param descricao - A descrição que aparecerá no menu
-	 * @param classeExibicao - a class (css) definida no menu principal (null, caso não seja o menu principal)
-	 * @param permissaoPai - a Permissao pai da Permissao (que será o menu pai do submenu)
+	 * @param descricao - A descriÃ§Ã£o que aparecerÃ¡ no menu
+	 * @param classeExibicao - a class (css) definida no menu principal (null, caso nÃ£o seja o menu principal)
+	 * @param permissaoPai - a Permissao pai da Permissao (que serÃ¡ o menu pai do submenu)
 	 */
 	private Permissao(String descricao, Permissao permissaoPai) {
 		this.descricao = descricao;

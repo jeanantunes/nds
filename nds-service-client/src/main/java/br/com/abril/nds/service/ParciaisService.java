@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -42,7 +41,7 @@ public interface ParciaisService {
 	 *            - Distribuídor
 	 */
 	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao,
-			Integer qtdePeriodos, Usuario usuario,Distribuidor distribuidor);
+			Integer qtdePeriodos, Usuario usuario);
 
 	/**
 	 * Altera data de Período de Lancamento Parcial

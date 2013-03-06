@@ -46,7 +46,6 @@ import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -1069,8 +1068,7 @@ public class CotaController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		filtro.setPaginacao(null);
-		
+				
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		
 		List<CotaDTO> listaCotas = null;
@@ -1688,11 +1686,7 @@ public class CotaController extends BaseController {
 	@Post
 	public void distribuidorUtilizaTermoAdesao(){
 		
-		Boolean utilizaTermo = false;
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.getParametroEntregaBanca().isUtilizaTermoAdesao():false;
+		Boolean utilizaTermo = this.distribuidorService.utilizaTermoAdesao();
 	
 		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
 	}
@@ -1700,11 +1694,7 @@ public class CotaController extends BaseController {
 	@Post
 	public void distribuidorUtilizaProcuracao(){
 		
-		Boolean utilizaTermo = false;
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.isUtilizaProcuracaoEntregadores():false;
+		Boolean utilizaTermo = this.distribuidorService.utilizaProcuracaoEntregadores();
 	
 		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
 	}
