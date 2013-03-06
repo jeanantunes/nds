@@ -525,6 +525,12 @@ public class FecharDiaController extends BaseController {
 	}
 	
 	@Post
+	public void obterDataOperacao() { 
+		String data = DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor());
+        result.use(Results.json()).from(data).recursive().serialize();
+	}
+	
+	@Post
 	public void confirmar() {
 		//Unlock na base de dados
 		this.fecharDiaService.setLockBancoDeDados(false);

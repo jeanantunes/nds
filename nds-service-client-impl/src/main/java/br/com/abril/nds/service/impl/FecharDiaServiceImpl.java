@@ -75,6 +75,7 @@ import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoCotaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoDividaRepository;
@@ -99,6 +100,8 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
@@ -205,6 +208,12 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private DiferencaEstoqueRepository diferencaRepository;
+	
+	@Autowired 
+	private CalendarioService calendarioService;
+	
+	@Autowired
+	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
 	
 	@Override
 	@Transactional
@@ -478,9 +487,29 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     }
 
     private void liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
+    	
 		Distribuidor distribuidor = distribuidorRepository.obter();		
-		distribuidor.setDataOperacao(DateUtil.adicionarDias(dataFechamento, 1));
+		
+		List<Integer> dias = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null, null);
+		
+		Date novaData = obterDataValida(distribuidor.getDataOperacao(), dias);
+				
+		distribuidor.setDataOperacao(novaData);
+		
 		distribuidorRepository.alterar(distribuidor);
+		
+	}
+		
+	public Date obterDataValida(Date dataAtual, List<Integer> dias) {
+		
+		Date novaData = DateUtil.adicionarDias(dataAtual, 1);
+		
+		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
+
+		if (dias.contains(codigoDiaCorrente))
+			return novaData;
+		else
+			return obterDataValida(novaData, dias);
 		
 	}
 

@@ -646,12 +646,26 @@ var fecharDiaController =  $.extend(true, {
 		});
 	},
 	
+	atualizarDataOperacao : function() {
+		
+		$.postJSON(
+				contextPath + "/administracao/fecharDia/obterDataOperacao",
+				null, 
+				function(result){
+					$('#dataDaOperacao').html(result.string);
+					$('.grids').find('legend').html('Confirmação de Valores em: ' + result.string);
+				});
+				
+		
+	},
+	
 	confirmarFechamento:function(){
 		
 		$.postJSON(
 				contextPath + "/administracao/fecharDia/confirmar",
 				null, 
 				function(){
+					fecharDiaController.atualizarDataOperacao();
 				    $.fileDownload(contextPath + "/administracao/fecharDia/gerarRelatorioFechamentoDiario", {
                         httpMethod : "POST",
                         cookiePath : contextPath,
@@ -662,7 +676,10 @@ var fecharDiaController =  $.extend(true, {
                             exibirMensagem("ERROR", ["Erro na geração do Relatório de Fechamento Diário!"]);
                         }
                     });
-		        }
+				    
+				    $(".grids").hide();
+				}
+				
 			);
 	},
 	
@@ -917,7 +934,8 @@ var fecharDiaController =  $.extend(true, {
 	
 	iniciarValidacoes : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
-				function(result){					
+				function(result){	
+					$('#tabela-validacao').clear();
 					fecharDiaController.validacaoBaixaBancaria(result);
 					fecharDiaController.validacaoGeracaoCobranca(result);
 					fecharDiaController.validacaoRecebimentoFisico(result);
@@ -1417,3 +1435,4 @@ var fecharDiaController =  $.extend(true, {
 	}
 
 }, BaseController);
+//@ sourceURL=fecharDia.js
