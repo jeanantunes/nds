@@ -5,7 +5,7 @@ import java.util.List;
 import br.com.abril.nds.dto.AnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 
-public interface AnaliseEstudoRepository extends Repository<AnaliseEstudoDTO, Long> {
+public interface AnaliseEstudoRepository {
 
 	List<AnaliseEstudoDTO> buscarEstudos (FiltroAnaliseEstudoDTO filtro);
 

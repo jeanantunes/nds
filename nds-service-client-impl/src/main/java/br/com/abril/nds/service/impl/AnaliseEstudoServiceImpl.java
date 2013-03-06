@@ -19,7 +19,7 @@ public class AnaliseEstudoServiceImpl implements AnaliseEstudoService  {
 
 	@Override
 	@Transactional
-	public List<AnaliseEstudoDTO> buscarEstudos(FiltroAnaliseEstudoDTO filtro) {
+	public List<AnaliseEstudoDTO> buscarTodosEstudos(FiltroAnaliseEstudoDTO filtro) {
 		return analiseEstudoRepository.buscarEstudos(filtro);
 	}
 	

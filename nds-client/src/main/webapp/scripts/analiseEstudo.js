@@ -48,7 +48,7 @@ init : function() {
 			align : 'left'
 		}, {
 			display : 'Status',
-			name : 'status',
+			name : 'statusEstudo',
 			width : 100,
 			sortable : true,
 			align : 'left'
@@ -74,6 +74,14 @@ init : function() {
 		
 		return resultado;
 	}
+	
+	$.each(resultado.rows, function(index, row) {
+		
+		var analise = '<select name="select" id="select" style="width:140px;"> <option selected="selected">Selecione...</option> <option>Normal</option> <option>Parcial</option>';
+		
+		row.cell.telaAnalise = analise;
+	});
+	
 
 	$(".grids", analiseEstudoController.workspace).show();
 	
@@ -82,20 +90,34 @@ init : function() {
 
 	carregarEstudos : function() {
 		var data = [ 
-			    {name : 'filtro.numeroEstudo', value : $("#idEstudo").val() }, 
+			    {name : 'filtro.numEstudo', value : $("#idEstudo").val() }, 
 			    {name : 'filtro.codigoProduto', value : $("#codProduto").val() }, 
 				{name : 'filtro.nome', value : $("#produto").val() }, 
 				{name : 'filtro.numeroEdicao', value : $("#edicaoProd").val() }, 
 				{name : 'filtro.idTipoClassificacaoProduto', value : $("#comboClassificacao").val() }
 			 ];
 		
-		$(".estudosGrid", this.workspace).flexOptions({
-			url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
+		$(".estudosGrid").flexOptions({url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
 			params: data 
 		});
+		$(".estudosGrid").flexReload();	
 		
-		$(".estudosGrid", this.workspace).flexReload();		
+		analiseEstudoController.carregarEstudos();
 		
+		
+//		$.postJSON(contextPath + "/distribuicao/analiseEstudo/buscarEstudos", data,
+//				function(result) {
+//						var tipoMensagem = result.tipoMensagem;
+//						var listaMensagens = result.listaMensagens;
+//						
+//						if (tipoMensagem && listaMensagens) {
+//							exibirMensagem(tipoMensagem, listaMensagens);
+//						}
+//						$(".estudosGrid").flexReload();	
+//				   },
+//				   null,
+//				   true
+//		);
 	},
 	
 	}, BaseController);

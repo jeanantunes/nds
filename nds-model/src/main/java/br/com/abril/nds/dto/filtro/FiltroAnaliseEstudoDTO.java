@@ -5,18 +5,18 @@ public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 
 	private static final long serialVersionUID = -7460175679601254408L;
 
-	private Long numeroEstudo;
+	private Long numEstudo;
 	private Long numeroEdicao;
 	private Long idTipoClassificacaoProduto;
 	private String codigoProduto;
 	private String nome;
 	
-	public Long getNumeroEstudo() {
-		return numeroEstudo;
+	public Long getNumEstudo() {
+		return numEstudo;
 	}
 
-	public void setNumeroEstudo(Long numeroEstudo) {
-		this.numeroEstudo = numeroEstudo;
+	public void setNumEstudo(Long numEstudo) {
+		this.numEstudo = numEstudo;
 	}
 
 	public String getCodigoProduto() {

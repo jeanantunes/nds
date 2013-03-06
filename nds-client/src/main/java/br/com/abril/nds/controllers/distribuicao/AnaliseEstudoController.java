@@ -19,6 +19,7 @@ import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -67,6 +68,7 @@ public class AnaliseEstudoController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		this.tratarFiltro(filtro);
+		tratarAtributosFiltro(filtro);
 		
 		TableModel<CellModelKeyValue<AnaliseEstudoDTO>> tableModel = efetuarConsultaEstudos(filtro);
 		
@@ -76,8 +78,10 @@ public class AnaliseEstudoController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<AnaliseEstudoDTO>> efetuarConsultaEstudos(FiltroAnaliseEstudoDTO filtro) {
 
-		List<AnaliseEstudoDTO> listaEstudos = analiseEstudoService.buscarEstudos(filtro);
-
+		List<AnaliseEstudoDTO> listaEstudos = analiseEstudoService.buscarTodosEstudos(filtro);
+		
+		popularPeriodoEStatus(listaEstudos);
+		
 		if (listaEstudos == null || listaEstudos.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
@@ -103,6 +107,56 @@ public class AnaliseEstudoController extends BaseController {
 		}
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+	}
+	
+	private FiltroAnaliseEstudoDTO tratarAtributosFiltro (FiltroAnaliseEstudoDTO filtro){
+		
+		if(filtro == null){
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Preencha pelo menos 1 campo."),"result").recursive().serialize();
+		}
+		
+//		if(StringUtils.isEmpty(filtro.getCodigoProduto())){
+//			filtro.setCodigoProduto("");
+//		}
+//		
+//		if(filtro.getIdTipoClassificacaoProduto() == null){
+//			filtro.setIdTipoClassificacaoProduto(new Long(0));
+//		}
+//		
+//		if(StringUtils.isEmpty(filtro.getNome())){
+//			filtro.setNome("");
+//		}
+//		
+//		if (filtro.getNumeroEdicao() == null){
+//			filtro.setNumeroEdicao(new Long(0));
+//		}
+//		
+//		if (filtro.getNumEstudo() == null){
+//			filtro.setNumEstudo(new Long(0));
+//		}
+		return filtro;
+	}
+	
+	private List<AnaliseEstudoDTO> popularPeriodoEStatus (List<AnaliseEstudoDTO> estudos){
+		for (AnaliseEstudoDTO analiseEstudoDTO : estudos) {
+			Integer periodo = analiseEstudoDTO.getPeriodoProduto().getOrdem();
+			analiseEstudoDTO.setCodPeriodoProd(periodo);
+			
+				if ((analiseEstudoDTO.getStatusRecolhiOuExpedido() == null)) {
+					if (analiseEstudoDTO.getStatusLiberadoOuGerado() == 1) {
+						analiseEstudoDTO.setStatusEstudo("Liberado");
+					} else {
+						analiseEstudoDTO.setStatusEstudo("Gerado");
+					}
+				} else {
+					if (analiseEstudoDTO.getStatusRecolhiOuExpedido().toString().equalsIgnoreCase("RECOLHIDO")) {
+						analiseEstudoDTO.setStatusEstudo("Recolhido");
+					} else {
+						analiseEstudoDTO.setStatusEstudo("Expedido");
+					}
+				}
+			}		
+		return estudos;
 	}
 
 }
