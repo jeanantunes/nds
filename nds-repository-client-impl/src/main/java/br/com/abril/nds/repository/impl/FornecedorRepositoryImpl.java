@@ -483,4 +483,22 @@ public class FornecedorRepositoryImpl extends
 		
 		return query.list();
 	}
+
+	/**
+	 * Obtem Fornecedor Padrao, utilizado para em Movimentos Financeiros sem definição de Distribuidor
+	 * @return Fornecedor
+	 */
+	@Override
+	public Fornecedor obterFornecedorPadrao() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select f from Fornecedor f ");
+
+	    hql.append(" where f.padrao = true ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		return (Fornecedor) query.uniqueResult();
+	}
 }

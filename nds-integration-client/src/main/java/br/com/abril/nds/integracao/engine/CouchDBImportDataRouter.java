@@ -23,14 +23,15 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
 import br.com.abril.nds.integracao.model.canonic.TipoInterfaceEnum;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
@@ -49,14 +50,11 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 
 	private Long codDistribuidor = null;
 	
-	
 	private void setCodDistribuidor(Long codDistribuidor) {
 		this.codDistribuidor = codDistribuidor;
 	}
 	
-	
 	@Override
-	
 	public <T extends RouteTemplate> void routeData(T inputModel) {
 
 		final MessageProcessor messageProcessor = inputModel.getMessageProcessor();
@@ -84,7 +82,6 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 		messageProcessor.preProcess(tempVar);
 
 		do {	
-			
 			
 			for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
 				

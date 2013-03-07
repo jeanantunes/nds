@@ -180,7 +180,7 @@ var tipoDescontoController = $.extend(true,  {
 				}
 			}
 			
-			if(row.cell.qtdeProxLcmt != null) row.cell.numeroEdicao = 'por ' + row.cell.qtdeProxLcmt + ' ed(s)';
+			if(row.cell.qtdeProxLcmt != null) row.cell.numeroEdicao = 'por ' + row.cell.qtdeProxLcmt + ' edição(ões)';
 			
 			if(row.cell.numeroEdicao == null) row.cell.numeroEdicao = '*';
 			

@@ -9,4 +9,5 @@ public abstract class DBImportRouteTemplate extends RouteTemplate {
 	@Override
 	public void setupTypeMapping() {
 	}
+	
 }

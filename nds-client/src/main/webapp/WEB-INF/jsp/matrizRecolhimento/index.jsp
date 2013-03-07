@@ -15,19 +15,24 @@
 			$(function() {
 				balanceamentoRecolhimentoController.inicializar(balanceamento);
 			});
+			
 		</script>
 	</head>
 	
 	<body>
 		
+		<input id="utilizaSedeAtendida" type="hidden" value="false">
+		
 		<div class="areaBts resumoPeriodo" style="display: none;">
 		<div class="area">
 			
 			<span class="bt_novos" >
-				<a id="linkConfirmar" href="javascript:;" title="Confirmar balanceamento">
-					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+				<a id="linkConfiguracaoInicial" title="Voltar Configuração Inicial" href="javascript:;">
+					<img src="${pageContext.request.contextPath}/images/bt_devolucao.png" border="0" hspace="5" />
 				</a>
 			</span>
+			
+			
 			
 			<span class="bt_novos" >
 				<a id="linkEditor" href="javascript:;" title="Balancear Editor">
@@ -45,18 +50,20 @@
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 				</a>
 			</span>
+			
+			<span class="bt_novos" >
+				<a id="linkConfirmar" href="javascript:;" title="Confirmar balanceamento">
+					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+				</a>
+			</span>
 		
-			<span class="bt_arq" >
+			<span class="bt_novos" >
 				<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoRecolhimentoController.exibirMatrizFornecedor();">
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_detalhes.png">
 				</a>
 			</span>
 		
-			<span class="bt_arq" >
-				<a id="linkConfiguracaoInicial" title="Voltar Configuração Inicial" href="javascript:;">
-					<img src="${pageContext.request.contextPath}/images/bt_devolucao.png" border="0" hspace="5" />
-				</a>
-			</span>
+			
 			
 		</div>
 		</div>

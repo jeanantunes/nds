@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -237,15 +238,13 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	private void setParametersQueryResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-		query.setParameter("status", StatusLancamento.EXPEDIDO.name());
-		query.setParameter("tipoBox", TipoBox.LANCAMENTO.name());
+		query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
 	}
 	
 	private void setParametersQueryResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-		query.setParameter("status", StatusLancamento.EXPEDIDO.name());
-		query.setParameter("tipoBox", TipoBox.LANCAMENTO.name());
+		query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
 		query.setParameter("codigoBox", filtro.getCodigoBox());
 	}
 	
@@ -284,6 +283,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append(" on lancamento.PRODUTO_EDICAO_ID=estudo.PRODUTO_EDICAO_ID ");
 		hql.append(" and lancamento.DATA_LCTO_PREVISTA=estudo.DATA_LANCAMENTO ");
 		hql.append(" inner join ");
+		hql.append(" EXPEDICAO espedicao on espedicao.ID = lancamento.EXPEDICAO_ID ");
+		hql.append(" inner join ");
 		hql.append(" PRODUTO_EDICAO produtoEdicao ");
 		hql.append(" on estudo.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		hql.append(" inner join ");
@@ -316,8 +317,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		hql.append(" where ");
 		hql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ");
-		hql.append(" and lancamento.STATUS = :status ");
-		hql.append(" and box.TIPO_BOX = :tipoBox ");
+		hql.append(" and box.TIPO_BOX in (:tiposBox) ");
 		hql.append(" and box.CODIGO = :codigoBox ");
 		
 		hql.append(" group by ");
@@ -432,6 +432,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append(" on lancamento.PRODUTO_EDICAO_ID=estudo.PRODUTO_EDICAO_ID ");
 		hql.append(" and lancamento.DATA_LCTO_PREVISTA=estudo.DATA_LANCAMENTO ");
 		hql.append(" inner join ");
+		hql.append(" EXPEDICAO espedicao on espedicao.ID = lancamento.EXPEDICAO_ID ");
+		hql.append(" inner join ");
 		hql.append(" PRODUTO_EDICAO produtoEdicao ");
 		hql.append(" on estudo.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		hql.append(" inner join ");
@@ -455,8 +457,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		hql.append(" where ");
 		hql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ");
-		hql.append(" and lancamento.STATUS = :status ");
-		hql.append(" and box.TIPO_BOX = :tipoBox ");
+		hql.append(" and box.TIPO_BOX in (:tiposBox) ");
 		
 		return hql.toString();
 	}

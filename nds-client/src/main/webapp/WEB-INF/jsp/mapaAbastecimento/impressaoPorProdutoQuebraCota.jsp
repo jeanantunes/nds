@@ -29,6 +29,7 @@ function imprimir(){
 </head>
 
 <body>
+<c:forEach items="${maps}" var="mapa">
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
     <td width="121" height="21" align="center">
@@ -63,7 +64,7 @@ function imprimir(){
     </table></td>
   </tr>
 </table>
-<table width="800" border="0" align="center" id="wrapper" cellpadding="0" cellspacing="0" >
+<table width="800" border="0" align="center" id="wrapper" cellpadding="0" cellspacing="0" style="border-spacing:5px;page-break-after:always">
  
   <tr>
     <td width="195" align="left" valign="top">
@@ -81,7 +82,7 @@ function imprimir(){
 	        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${cota.key}</td>
 	        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${cota.value}</td>
 	      </tr>
-	      <c:if test="${(((statusCota.index+1) % (qtdMaxRow+1)) == 0) }">
+	      <c:if test="${(((statusCota.index+1) % (qtdMaxRow)) == 0) }">
 	      
 	</table>
 		    
@@ -107,5 +108,6 @@ function imprimir(){
  
   <tr><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td></tr>
 </table>
+</c:forEach>
 </body>
 </html>

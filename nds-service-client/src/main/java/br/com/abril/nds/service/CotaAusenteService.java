@@ -50,5 +50,14 @@ public interface CotaAusenteService {
 	 * @throws TipoMovimentoEstoqueInexistenteException
 	 */
 	void cancelarCotaAusente(Long idCotaAusente, Long idUsuario) throws TipoMovimentoEstoqueInexistenteException;
+	
+	/**
+	 * Verifica se existe movimentação de expedição de reparte
+	 * para a cota na data.
+	 * 
+	 * @param data - data para pesquisa
+	 * @param numeroCota - número da cota
+	 */
+	void verificarExistenciaReparteCota(Date data, Integer numeroCota);
 
 }

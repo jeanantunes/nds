@@ -167,6 +167,13 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return new CotaGarantiaDTO<CotaGarantia>(tipo, cotaGarantia);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long getQtdCotaGarantiaByCota(Long idCota){
+		
+		return this.cotaGarantiaRepository.getQtdCotaGarantiaByCota(idCota);
+	}
 
 	/*
 	 * (non-Javadoc)

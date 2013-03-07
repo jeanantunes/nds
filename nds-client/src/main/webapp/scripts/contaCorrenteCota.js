@@ -820,6 +820,12 @@ var contaCorrenteCotaController = $.extend(true, {
 				});
 			}
 		);
+	},
+	
+	irParaNegociacao : function(){
+		
+		$('#workspace').tabs('addTab', "Negociação de Divida",
+				contextPath + "/financeiro/negociacaoDivida" + "?random=" + Math.random());
 	}
 }, BaseController);
 

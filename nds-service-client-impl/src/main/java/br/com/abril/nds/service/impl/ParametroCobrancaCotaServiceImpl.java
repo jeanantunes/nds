@@ -36,6 +36,7 @@ import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO.TipoPessoa;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -50,13 +51,12 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
@@ -218,7 +218,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
 				parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
 			}
-					
+			
+			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);					
 		}
 
 		return parametroCobrancaDTO;
@@ -393,6 +394,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			politicaSuspensao.setValor((parametroCobrancaDTO.getVrDividasAberto()!=null?parametroCobrancaDTO.getVrDividasAberto():BigDecimal.ZERO));
 			
 			parametroCobranca.setPoliticaSuspensao(politicaSuspensao);
+			
+			
+			Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedor());
+			parametroCobranca.setFornecedorPadrao(fornecedor);
 			
 			
 			if (novo){
@@ -950,64 +955,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	public void excluirFormaCobranca(Long idFormaCobranca) {
 		this.formaCobrancaRepository.desativarFormaCobranca(idFormaCobranca);
 	}
-
-
-
-	@Override
-	@Transactional
-	public boolean validarFormaCobrancaMensal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca,
-			List<Long> idFornecedores, Integer diaDoMes) {
-		boolean res=true;
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca, idFormaCobranca);
-		for (FormaCobranca itemFormaCobranca:formas){
-			for (int i=0; i<idFornecedores.size();i++){
-				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
-				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
-					if (itemFormaCobranca.getDiasDoMes() !=null && itemFormaCobranca.getDiasDoMes().contains(diaDoMes)){
-						res=false;
-					}
-				}
-			}
-		}
-		return res;
-	}
-
-
-
-	@Override
-	@Transactional
-	public boolean validarFormaCobrancaSemanal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
-			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
-		
-		boolean res=true;
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca,idFormaCobranca);
-		for (FormaCobranca itemFormaCobranca:formas){
-			for (int i=0; i<idFornecedores.size();i++){
-				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
-				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
-					
-					for(ConcentracaoCobrancaCota itemConcentracao:itemFormaCobranca.getConcentracaoCobrancaCota()){
-						
-						if (
-								(domingo && (itemConcentracao.getDiaSemana()==DiaSemana.DOMINGO))||
-								(segunda && (itemConcentracao.getDiaSemana()==DiaSemana.SEGUNDA_FEIRA))||
-								(terca && (itemConcentracao.getDiaSemana()==DiaSemana.TERCA_FEIRA))||
-								(quarta && (itemConcentracao.getDiaSemana()==DiaSemana.QUARTA_FEIRA))||
-								(quinta && (itemConcentracao.getDiaSemana()==DiaSemana.QUINTA_FEIRA))||
-								(sexta && (itemConcentracao.getDiaSemana()==DiaSemana.SEXTA_FEIRA))||
-								(sabado && (itemConcentracao.getDiaSemana()==DiaSemana.SABADO))
-						    ){
-							res=false;
-						}
-	
-					}
-	
-				}
-			}
-		}
-		return res;
-	}
-
 
     /**
      * {@inheritDoc}

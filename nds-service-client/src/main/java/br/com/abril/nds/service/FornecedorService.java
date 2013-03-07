@@ -177,6 +177,4 @@ public interface FornecedorService {
 	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor);
 
 	List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia);
-
-
 }

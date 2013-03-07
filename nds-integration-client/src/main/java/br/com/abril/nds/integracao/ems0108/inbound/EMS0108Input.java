@@ -19,7 +19,7 @@ public class EMS0108Input implements Serializable {
 	private String codigoPublicacao;
 	private Long edicaoLancamento;
 	private Long edicaoRecolhimento;
-	private Date dataLancamentoRecolhimentoProduto;
+	private String dataLancamentoRecolhimentoProduto;
 	private String condRelancamento;
 	private String condImprimeBoleto;
 	private String condEncalheRetido;
@@ -67,13 +67,13 @@ public class EMS0108Input implements Serializable {
 	}
 
 	@Field(offset = 25, length = 8)
-	@FixedFormatPattern("yyyyMMdd")
-	public Date getDataLancamentoRecolhimentoProduto() {
+	//@FixedFormatPattern("yyyyMMdd")
+	public String getDataLancamentoRecolhimentoProduto() {
 		return dataLancamentoRecolhimentoProduto;
 	}
 
 	public void setDataLancamentoRecolhimentoProduto(
-			Date dataLancamentoRecolhimentoProduto) {
+			String dataLancamentoRecolhimentoProduto) {
 		this.dataLancamentoRecolhimentoProduto = dataLancamentoRecolhimentoProduto;
 	}
 

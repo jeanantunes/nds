@@ -12,6 +12,7 @@ function PesquisaProduto(workspace) {
 	
 	//Pesquisa por código de produto
 	this.pesquisarPorCodigoProduto = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
+		
 		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).val();
 		
 		codigoProduto = $.trim(codigoProduto);
@@ -164,16 +165,32 @@ function PesquisaProduto(workspace) {
 		
 		var nomeProduto = $(idProduto, pesquisaProduto.workspace).val();
 		
-		nomeProduto = $.trim(nomeProduto);
+		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).val();
 		
-		$(idCodigo, pesquisaProduto.workspace).val("");
+		nomeProduto = $.trim(nomeProduto);
+		codigoProduto = $.trim(codigoProduto);
+		
+		//$(idCodigo, pesquisaProduto.workspace).val("");
 		$(idEdicao, pesquisaProduto.workspace).val("");
 		$(idEdicao, pesquisaProduto.workspace).attr("disabled", "disabled");
 		
+		 var data = [{name:"nomeProduto",  value:nomeProduto},
+        			 {name:"codigoProduto",value:codigoProduto}
+					];
+		
 		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {nomeProduto:nomeProduto},
-					   function(result) { pesquisaProduto.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, idEdicao, successCallBack); },
-					   function() { pesquisaProduto.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, idEdicao, errorCallBack); }, isFromModal);
+			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto",data,
+					   function(result) { 
+							
+							pesquisaProduto.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, idEdicao, successCallBack); 
+						},
+					   function() { 
+							
+							$(idCodigo, pesquisaProduto.workspace).val("");
+							
+							pesquisaProduto.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, idEdicao, errorCallBack);
+							
+					   }, isFromModal);
 		} else {
 			
 			if (errorCallBack) {

@@ -27,7 +27,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -261,14 +260,8 @@ public class FornecedorController extends BaseController {
 
 		limparDadosSessao();
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		boolean utilizaSugestaoIncrementoCodigo = false;
-		
-		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
-			
-			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
-		}
+		boolean utilizaSugestaoIncrementoCodigo = 
+				this.distribuidorService.utilizaSugestaoIncrementoCodigo();
 		
 		Integer novoCodigoInterface = null;
 		

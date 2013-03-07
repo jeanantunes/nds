@@ -2,7 +2,9 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -33,6 +35,8 @@ public class FiltroDebitoCreditoDTO implements Serializable {
 
 	@Export(label="Data Vencimento Final")
 	private Date dataVencimentoFim;
+
+	private List<GrupoMovimentoFinaceiro> grupoMovimentosFinanceirosDebitosCreditos;
 	
 	private PaginacaoVO paginacao;
 	
@@ -210,6 +214,15 @@ public class FiltroDebitoCreditoDTO implements Serializable {
 	 */
 	public void setDescricaoTipoMovimento(String descricaoTipoMovimento) {
 		this.descricaoTipoMovimento = descricaoTipoMovimento;
+	}
+
+	public List<GrupoMovimentoFinaceiro> getGrupoMovimentosFinanceirosDebitosCreditos() {
+		return grupoMovimentosFinanceirosDebitosCreditos;
+	}
+
+	public void setGrupoMovimentosFinanceirosDebitosCreditos(
+			List<GrupoMovimentoFinaceiro> grupoMovimentosFinanceirosDebitosCreditos) {
+		this.grupoMovimentosFinanceirosDebitosCreditos = grupoMovimentosFinanceirosDebitosCreditos;
 	}
 	
 }

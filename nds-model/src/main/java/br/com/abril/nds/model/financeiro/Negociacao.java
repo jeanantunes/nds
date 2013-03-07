@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -33,6 +34,7 @@ public class Negociacao {
 	private List<Cobranca> cobrancasOriginarias;
 	
 	@OneToMany(mappedBy="negociacao")
+	@OrderBy("dataVencimento asc")
 	private List<ParcelaNegociacao> parcelas;
 	
 	@Column(name = "COMISSAO_PARA_SALDO_DIVIDA")

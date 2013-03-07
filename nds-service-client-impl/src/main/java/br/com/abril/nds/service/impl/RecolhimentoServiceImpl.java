@@ -4,14 +4,18 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +29,6 @@ import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -36,6 +39,7 @@ import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -91,8 +95,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	protected CalendarioService calendarioService;
-	
-	private static final Integer QTDE_PERIODOS_PARCIAIS = 1;
 	
 	/**
 	 * {@inheritDoc}
@@ -200,6 +202,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 			
+			this.ordenarProdutosRecolhimentoPorNome(produtosRecolhimento);
+			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
 				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
@@ -226,7 +230,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				if (idsLancamentoPorData == null) {
 					
-					idsLancamentoPorData = new TreeSet<Long>();
+					idsLancamentoPorData = new LinkedHashSet<Long>();
 				}
 				
 				idsLancamentoPorData.add(idLancamento);
@@ -248,11 +252,19 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
-		this.gerarPeriodosParciais(idsProdutoEdicaoParcial, usuario);
-		
 		return matrizConfirmada;
 	}
 
+	@SuppressWarnings("unchecked")
+	private void ordenarProdutosRecolhimentoPorNome(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		ComparatorChain comparatorChain = new ComparatorChain();
+		
+		comparatorChain.addComparator(new BeanComparator("nomeProduto"));
+		
+		Collections.sort(produtosRecolhimento, comparatorChain);
+	}
+	
 	@Override
 	@Transactional
 	public void excluiBalanceamento(Long idLancamento) {
@@ -341,6 +353,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				
 				this.lancamentoRepository.merge(lancamento);
 				
+				if(TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento())){
+					parciaisService.atualizarReparteDoProximoLancamentoParcial(lancamento);
+				}
+				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
 												   		lancamento, novaData);
 				
@@ -421,13 +437,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				continue;
 			}
 			
+			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataRecolhimento);
+			
 			for (Long idLancamento : idsLancamento) {
 
-				Lancamento lancamento = this.lancamentoRepository
-						.buscarPorId(idLancamento);
+				Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 
-				List<EstoqueProdutoCota> listaEstoqueProdutoCota = this.estoqueProdutoCotaRepository
-						.buscarListaEstoqueProdutoCota(idLancamento);
+				List<EstoqueProdutoCota> listaEstoqueProdutoCota =
+					this.estoqueProdutoCotaRepository.buscarListaEstoqueProdutoCota(idLancamento);
 
 				if (listaEstoqueProdutoCota == null	|| listaEstoqueProdutoCota.isEmpty()) {
 
@@ -446,13 +463,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					Cota cota = estoqueProdutoCota.getCota();
 
-					ChamadaEncalhe chamadaEncalhe = this.obterChamadaEncalheLista(listaChamadaEncalhe,
-									dataRecolhimento, produtoEdicao.getId());
+					ChamadaEncalhe chamadaEncalhe =
+						this.obterChamadaEncalheLista(
+							listaChamadaEncalhe, dataRecolhimento, produtoEdicao.getId());
 
 					indNovaChamadaEncalhe = (chamadaEncalhe == null);
 					
 					if (indNovaChamadaEncalhe) {
-						chamadaEncalhe = this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao);
+						chamadaEncalhe =
+							this.criarChamadaEncalhe(dataRecolhimento, produtoEdicao, ++sequencia);
 					}
 					
 					Set<Lancamento> lancamentos = chamadaEncalhe.getLancamentos();
@@ -512,55 +531,20 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * 
 	 * @param dataRecolhimento - data de recolhimento
 	 * @param produtoEdicao - produto edição
+	 * @param sequencia
 	 * 
 	 * @return chamada de encalhe
 	 */
-	private ChamadaEncalhe criarChamadaEncalhe(Date dataRecolhimento, ProdutoEdicao produtoEdicao) {
+	private ChamadaEncalhe criarChamadaEncalhe(Date dataRecolhimento, ProdutoEdicao produtoEdicao, Integer sequencia) {
 		
 		ChamadaEncalhe chamadaEncalhe = new ChamadaEncalhe();
 		
 		chamadaEncalhe.setDataRecolhimento(dataRecolhimento);
 		chamadaEncalhe.setProdutoEdicao(produtoEdicao);
 		chamadaEncalhe.setTipoChamadaEncalhe(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		chamadaEncalhe.setSequencia(sequencia);
 		
 		return chamadaEncalhe;
-	}
-	
-	/**
-	 * Gera os períodos de parciais
-	 * 
-	 * @param idsProdutoEdicaoParcial - identificadores dos produtos de edição
-	 * @param usuario - usuário
-	 */
-	private void gerarPeriodosParciais(Set<Long> idsProdutoEdicaoParcial, Usuario usuario) {
-		
-		if (idsProdutoEdicaoParcial == null || idsProdutoEdicaoParcial.isEmpty()) {
-			
-			return;
-		}
-		
-		List<ProdutoEdicao> listaProdutoEdicao =
-			produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicaoParcial);
-		
-		if (listaProdutoEdicao == null || listaProdutoEdicao.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Produto edição não encontrado!");
-		}
-		
-		if (listaProdutoEdicao.size() != idsProdutoEdicaoParcial.size()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Produto edição não encontrado!");
-		}
-		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-		
-		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
-		
-			parciaisService.gerarPeriodosParcias(produtoEdicao, QTDE_PERIODOS_PARCIAIS,
-												 usuario, null, distribuidor);
-		}
 	}
 	
 	/**
@@ -600,10 +584,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		Intervalo<Date> periodoRecolhimento =
-			getPeriodoRecolhimento(distribuidor, numeroSemana, dataBalanceamento);
+			getPeriodoRecolhimento(numeroSemana, dataBalanceamento);
 		
 		TreeSet<Date> datasRecolhimentoFornecedor = 
 			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
@@ -637,47 +619,23 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
-		
-		boolean semanaRecolhimento = 
-			this.isSemanaRecolhimento(distribuidor.getDataOperacao(), periodoRecolhimento);
-		
-		dadosRecolhimento.setSemanaRecolhimento(semanaRecolhimento);
+		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(
+				this.distribuidorRepository.capacidadeRecolhimento());
 		
 		dadosRecolhimento.setForcarBalanceamento(forcarBalanceamento);
 		
 		return dadosRecolhimento;
-	}
-	
-	/**
-	 * Retorna uma flag que indica se a semana atual é a semana de recolhimento.
-	 * 
-	 * @param dataOperacao - data de operação
-	 * @param periodoRecolhimento - período de recolhimento
-	 * 
-	 * @return boolean
-	 */
-	private boolean isSemanaRecolhimento(Date dataOperacao, Intervalo<Date> periodoRecolhimento) {
-		
-		boolean isSemanaRecolhimento =
-			DateUtil.validarDataEntrePeriodo(dataOperacao,
-											 periodoRecolhimento.getDe(),
-											 periodoRecolhimento.getAte());
-		
-		return isSemanaRecolhimento;
 	}
 
 	/**
 	 * Monta o perídodo de recolhimento de acordo com a semana informada.
 	 */
 	@Override
-	public Intervalo<Date> getPeriodoRecolhimento(Distribuidor distribuidor,
-												   Integer numeroSemana,
+	public Intervalo<Date> getPeriodoRecolhimento(Integer numeroSemana,
 												   Date dataBalanceamento) {
 		
 		int codigoInicioSemana = 
-				distribuidor != null ? distribuidor.getInicioSemana().getCodigoDiaSemana()
-						: this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+				this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
 		
 		Date dataInicioSemana = 
 			DateUtil.obterDataDaSemanaNoAno(
@@ -755,10 +713,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Transactional
 	public void voltarConfiguracaoOriginal(Integer numeroSemana, Date anoBase, List<Long> fornecedores) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		Intervalo<Date> periodoRecolhimento =
-			getPeriodoRecolhimento(distribuidor, numeroSemana, anoBase);
+			getPeriodoRecolhimento(numeroSemana, anoBase);
 		
 		List<Lancamento> lancamentos =  lancamentoRepository.obterLancamentosARecolherNaSemana(periodoRecolhimento, fornecedores);
 		

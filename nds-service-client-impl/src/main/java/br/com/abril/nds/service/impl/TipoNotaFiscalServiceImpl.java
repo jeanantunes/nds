@@ -110,17 +110,10 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	 */
 	@Override
 	@Transactional
-	public List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(Long idDistribuidor) {
-
-		Distribuidor distribuidor = this.distribuidorRepository.buscarPorId(idDistribuidor);
-
-		if (distribuidor == null) {
-
-			return null;
-		}
+	public List<TipoNotaFiscal> obterTiposNotasFiscaisPorTipoAtividadeDistribuidor() {
 
 		return tipoNotaFiscalRepository.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(
-				distribuidor.getTipoAtividade());
+				this.distribuidorRepository.tipoAtividade());
 	}
 
 	@Transactional

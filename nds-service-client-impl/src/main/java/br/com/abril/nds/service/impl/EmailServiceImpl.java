@@ -14,8 +14,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
@@ -125,9 +125,9 @@ public class EmailServiceImpl implements EmailService {
 		try {
 			
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true,"UTF-8");
-			mimeMessageHelper.setSubject(assunto);
+			mimeMessageHelper.setSubject(assunto == null ? "" : assunto);
 			mimeMessageHelper.setTo(destinatarios);
-			mimeMessageHelper.setText(mensagem,isHtml);
+			mimeMessageHelper.setText(mensagem == null ? "" : mensagem, isHtml);
 			mimeMessageHelper.setFrom(mailSender.getUsername());
 			
 			if(anexos!= null && !anexos.isEmpty()){

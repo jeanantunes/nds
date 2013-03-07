@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0113Input;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.DescontoLogisticaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -35,8 +35,6 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DescontoLogisticaService descontoLogisticaService;
 	
-	private static final BigDecimal CEM = new BigDecimal(100);
-	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
@@ -53,9 +51,8 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 			
 			if (null != descontoLogistica ) {
 								
-				// Divisão por 100 Realizado em conjunto com Cesar Pop Punk
-				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().divide(CEM));
-				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().divide(CEM));
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto());
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico());
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().merge(descontoLogistica);
@@ -65,8 +62,9 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 				descontoLogistica.setId(null);//auto increment
 				descontoLogistica.setTipoDesconto(input.getTipoDesconto());
 				// Divisão por 100 Realizado em conjunto com Cesar Pop Punk
-				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().divide(CEM));
-				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().divide(CEM));
+				// Divisão por 100 retirada em conjunto com Cesar 06/03/2013
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto());
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico());
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().persist(descontoLogistica);

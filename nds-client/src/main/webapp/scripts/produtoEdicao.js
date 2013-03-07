@@ -1,9 +1,5 @@
 var produtoEdicaoController =$.extend(true,  {
 	
-	dataLancamentoParcial:null,
-	dataRecolhimetoParcial:null,
-	tipoLancamentoParcial:false,
-	
 	// Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
 		var codigoProduto = $(idCodigo,this.workspace).val();
@@ -185,10 +181,6 @@ var produtoEdicaoController =$.extend(true,  {
 	},	
 
 	init : function(){
-		
-		produtoEdicaoController.dataLancamentoParcial = null;
-		produtoEdicaoController.dataRecolhimetoParcial = null;
-		produtoEdicaoController.tipoLancamentoParcial = false;
 		
 		window.addEventListener('blur', function() {
 
@@ -767,19 +759,6 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-descricaoBrinde").attr("readonly", false);
 							$("#produtoEdicaoController-peso").attr("readonly", false);
 							
-							//Se tipo do lançamento for Parcial Bloqueia campos de Data de Inicio e Fim de recolhimento
-							var isParcial  = (result.tipoLancamento == "PARCIAL");
-							$("#produtoEdicaoController-dataLancamentoPrevisto").attr("disabled", isParcial); 
-							$("#produtoEdicaoController-dataRecolhimentoPrevisto").attr("disabled", isParcial);
-							
-							produtoEdicaoController.dataLancamentoParcial = null;
-							produtoEdicaoController.dataRecolhimetoParcial = null;
-							produtoEdicaoController.tipoLancamentoParcial = isParcial;
-							if(isParcial){
-								produtoEdicaoController.dataLancamentoParcial = $('#produtoEdicaoController-dataRecolhimentoPrevisto').val() ;
-								produtoEdicaoController.dataRecolhimetoParcial = $("#produtoEdicaoController-dataRecolhimentoPrevisto").val() ;
-							}
-							
 							if(result.id){
 								produtoEdicaoController.carregarLancamentosPeriodo(result.id);
 							}
@@ -800,24 +779,6 @@ var produtoEdicaoController =$.extend(true,  {
 					true
 		);
 
-	},
-	
-	processarVisualizacaoDataLancamentoParcial:function(value){
-		
-		var isParcial  = (value == "PARCIAL");
-	
-		if(isParcial && produtoEdicaoController.tipoLancamentoParcial){
-			
-			$("#produtoEdicaoController-dataLancamentoPrevisto").attr("disabled",isParcial); 
-			$("#produtoEdicaoController-dataRecolhimentoPrevisto").attr("disabled",isParcial);
-			
-			$('#produtoEdicaoController-dataRecolhimentoPrevisto').val(produtoEdicaoController.dataLancamentoParcial);
-			$("#produtoEdicaoController-dataRecolhimentoPrevisto").val(produtoEdicaoController.dataRecolhimetoParcial);
-		}
-		else{
-			$("#produtoEdicaoController-dataLancamentoPrevisto").attr("disabled",false); 
-			$("#produtoEdicaoController-dataRecolhimentoPrevisto").attr("disabled",false);
-		}
 	},
 	
 	carregarLancamentosPeriodo : function (produtoEdicaoId) {

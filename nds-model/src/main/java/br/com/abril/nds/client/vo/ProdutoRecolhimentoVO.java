@@ -12,8 +12,6 @@ public class ProdutoRecolhimentoVO {
 
 	private String idLancamento;
 	
-	private Integer sequencia;
-	
 	private Long idProdutoEdicao;
 	
 	private String codigoProduto;
@@ -66,20 +64,6 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setIdLancamento(String idLancamento) {
 		this.idLancamento = idLancamento;
-	}
-
-	/**
-	 * @return the sequencia
-	 */
-	public Integer getSequencia() {
-		return sequencia;
-	}
-
-	/**
-	 * @param sequencia the sequencia to set
-	 */
-	public void setSequencia(Integer sequencia) {
-		this.sequencia = sequencia;
 	}
 
 	/**

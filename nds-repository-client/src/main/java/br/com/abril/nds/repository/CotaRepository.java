@@ -1,16 +1,21 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
+import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
@@ -26,6 +31,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
+import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -237,23 +243,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
     Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota,
             Intervalo<Integer> intervaloBox, List<SituacaoCadastro> situacoesCadastro, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page);
     
-    /**
-     * Retorna todos os ids das cotas que estão entre o itervalo de cotas e possuam Notas de Envio
-     * 
-     * @param intervaloCota
-     * @param intervaloBox
-     * @param listIdsFornecedores TODO
-     * @param situacao
-     * @param idRoteiro
-     * @param idRota
-     * @param sortName
-     * @param sortOrder
-     * @param maxResults
-     * @param page
-     * @return
-     */
-    Set<Long> obterIdsCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro);
-
     Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
     
     List<Cota> obterCotas(SituacaoCadastro situacaoCadastro);
@@ -343,4 +332,35 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	Cota buscarCotaPorID(Long id);
 
+	List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvio(FiltroConsultaNotaEnvioDTO filtro);
+
+	Integer obterCountCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro);
+	
+
+	/**
+	 * 
+	 * Obtém todas as cotas que possuem a média de reparte dentro do range inicial + final. 
+	 * Se for informado a lista de ProdutoEdicaoDTO, será considerado somente esses produtos e edições
+	 * MÁXIMO 6 PRODUTOS
+	 * 
+	 * @param qtdReparteInicial
+	 * @param qtdReparteFinal
+	 * @param produtoEdicaoDto
+	 * @param cotasAtivas
+	 * @return
+	 */
+	List<CotaDTO> buscarCotasQuePossuemRangeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	
+	List<CotaDTO> buscarCotasQuePossuemRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+
+	List<CotaDTO> buscarCotasQuePossuemPercentualVendaSuperior(BigDecimal percentVenda, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+
+	List<CotaDTO> buscarCotasPorNomeOuNumero(CotaDTO cotaDto,	List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+
+	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto,	boolean cotasAtivas);
+	
+	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
+	
+	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
+	
 }

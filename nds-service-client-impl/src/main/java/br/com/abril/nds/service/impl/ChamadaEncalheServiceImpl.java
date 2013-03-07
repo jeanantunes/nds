@@ -17,7 +17,6 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -128,10 +127,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVendido() * produtoDTO.getVlrPrecoComDesconto()));
 				
 				vlrReparte += produtoDTO.getPrecoVenda() * produtoDTO.getReparte();
+
+				vlrDesconto +=  produtoDTO.getPrecoVenda() * produtoDTO.getReparte() * (produtoDTO.getVlrDesconto() / 100);
 				
-				vlrDesconto +=  produtoDTO.getVlrDesconto() / 100 * produtoDTO.getReparte();
-				
-				vlrEncalhe += produtoDTO.getQuantidadeDevolvida() * (produtoDTO.getPrecoVenda() - produtoDTO.getVlrDesconto());
+				vlrEncalhe += produtoDTO.getQuantidadeDevolvida() * vlrDesconto;
 				
 			}
 			
@@ -165,12 +164,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public List<BandeirasDTO> obterBandeirasDaSemana(Integer semana, PaginacaoVO paginacaoVO) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
 		Intervalo<Date> periodoRecolhimento = null;
 		
 		try {
-			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(distribuidor, semana, new Date());
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana, new Date());
 		} catch (IllegalArgumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
@@ -182,12 +179,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public Long countObterBandeirasDaSemana(Integer semana) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
 		Intervalo<Date> periodoRecolhimento = null;
 		
 		try {
-			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(distribuidor, semana, new Date());
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana, new Date());
 		} catch (IllegalArgumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
@@ -199,12 +194,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public List<FornecedoresBandeiraDTO> obterDadosFornecedoresParaImpressaoBandeira(Integer semana) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
 		Intervalo<Date> periodoRecolhimento = null;
 		
 		try {
-			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(distribuidor, semana, new Date());
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana, new Date());
 		} catch (IllegalArgumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
@@ -213,18 +206,17 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		for(FornecedoresBandeiraDTO dto: fornecedores) {
 			
-			dto.setPraca(distribuidor.getEnderecoDistribuidor().getEndereco().getCidade());
+			dto.setPraca(this.distribuidorService.cidadeDistribuidor());
 			
 			if(dto.getCodigoInterface().equals(CODIGO_DINAP_INTERFACE))
-				dto.setCodigoPracaNoProdin(distribuidor.getCodigoDistribuidorDinap());
+				dto.setCodigoPracaNoProdin(this.distribuidorService.codigoDistribuidorDinap());
 			
 			else if(dto.getCodigoInterface().equals(CODIGO_FC_INTERFACE))				
-				dto.setCodigoPracaNoProdin(distribuidor.getCodigoDistribuidorFC());
+				dto.setCodigoPracaNoProdin(this.distribuidorService.codigoDistribuidorFC());
 			
 			dto.setSemana(semana);
 		}
 		
 		return fornecedores;
 	}
-	
 }

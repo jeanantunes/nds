@@ -21,7 +21,7 @@ import br.com.abril.nds.dto.QuantidadePrecoItemNotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -127,7 +127,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		List<NotaFiscal> listaNotaFiscal = new ArrayList<NotaFiscal>();
 		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = 
+				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		
 		for (Long idCota : listaIdCota) {
 			//TRY adicionado para em caso de erro em alguma nota, não parar o fluxo das demais nos testes.
@@ -147,7 +148,8 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 					}
 				}
 				
-				List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(distribuidor, 
+				List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
+						parametrosRecolhimentoDistribuidor, 
 						cota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNotaFiscal);
 				
 				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 

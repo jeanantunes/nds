@@ -1,8 +1,11 @@
 package br.com.abril.nds.dto;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class ProdutoEdicaoSuplementarDTO {
+public class ProdutoEdicaoSuplementarDTO implements Serializable {
+
+	private static final long serialVersionUID = -2222673946429796619L;
 
 	private String codigoProduto;
 	

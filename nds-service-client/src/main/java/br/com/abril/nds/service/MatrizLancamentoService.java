@@ -66,5 +66,7 @@ public interface MatrizLancamentoService {
 	void voltarConfiguracaoInicial(Date dataLancamento, TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento);
 	
 	void verificaDataOperacao(Date data);
+	
+	boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento);
 
 }

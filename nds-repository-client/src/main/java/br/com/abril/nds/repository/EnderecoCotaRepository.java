@@ -19,5 +19,6 @@ public interface EnderecoCotaRepository extends Repository<EnderecoCota, Long> {
 
 	EnderecoCota obterEnderecoPorTipoEndereco(Long idCota,
 			TipoEndereco tipoEndereco);
-	
+
+	Long obterQtdEnderecoAssociadoCota(Long idCota);
 }

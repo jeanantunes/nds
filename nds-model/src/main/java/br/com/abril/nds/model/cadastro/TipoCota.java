@@ -5,6 +5,7 @@ public enum TipoCota {
 	CONSIGNADO("Consignado"),
 	A_VISTA("À vista");
 	
+	
 	private String descricao;
 	
 	private TipoCota(String descricao) {

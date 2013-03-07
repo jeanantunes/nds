@@ -58,4 +58,5 @@ public interface EnderecoService {
 	
 	List<String> obterUnidadeFederativaAssociadaComEndereco();
 	
+	Long obterQtdEnderecoAssociadoCota(Long idCota);
 }

@@ -46,14 +46,6 @@ public class FiltroConsolidadoVendaCotaDTO {
 		exemplares,
 		nomeFornecedor,
 		total;	
-		
-		private String nomeColuna;
-		
-		@Override
-		public String toString() {
-			return this.nomeColuna;
-		}
-		
 	}	
 	
 	public Date getDataConsolidado() {

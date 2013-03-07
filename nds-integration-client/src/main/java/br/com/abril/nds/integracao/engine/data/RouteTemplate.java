@@ -10,12 +10,13 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.engine.DynamicRouter;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.RouteInterface;
-import br.com.abril.nds.integracao.engine.RouteParameterProvider;
+import br.com.abril.nds.integracao.route.RouteParameterProvider;
 import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
 @Scope("prototype")
 public abstract class RouteTemplate extends AbstractRepository {
+	
 	@Autowired
 	private RouteParameterProvider parameterProvider;
 
@@ -101,4 +102,5 @@ public abstract class RouteTemplate extends AbstractRepository {
 	public abstract MessageProcessor getMessageProcessor();
 	
 	public abstract RouteInterface getRouteInterface();
+	
 }

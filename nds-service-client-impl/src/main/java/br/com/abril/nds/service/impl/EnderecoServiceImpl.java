@@ -38,6 +38,7 @@ import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.model.dne.UnidadeFederacao;
+import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.vo.EnderecoVO;
@@ -48,7 +49,9 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 	@Autowired
 	private EnderecoRepository enderecoRepository;
-		
+	
+	@Autowired
+	private EnderecoCotaRepository enderecoCotaRepository;
 	
 	private static final String DB_NAME  =  "correios";
 
@@ -429,5 +432,12 @@ public class EnderecoServiceImpl implements EnderecoService {
 	public List<String> obterBairrosCotas() {
 		return enderecoRepository.obterBairrosCotas();
 	}
-	
+
+
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQtdEnderecoAssociadoCota(Long idCota) {
+		
+		return this.enderecoCotaRepository.obterQtdEnderecoAssociadoCota(idCota);
+	}
 }

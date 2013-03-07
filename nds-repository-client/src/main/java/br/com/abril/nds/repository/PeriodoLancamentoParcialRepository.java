@@ -82,5 +82,33 @@ public interface PeriodoLancamentoParcialRepository extends
 	 */
 	Lancamento obterLancamentoAnterior(Long idProdutoEdicao,
 			Date dataLancamento);
+	
+	/**
+	 * Retorna o primeiro período de um lançamento parcial de um produto edição. 
+	 *
+	 * @param idProdutoEdicao - identificador do produto edição
+	 *
+	 * @return LancamentoParcial
+	 */
+	PeriodoLancamentoParcial obterPrimeiroLancamentoParcial(Long idProdutoEdicao);
+	
+	/**
+	 * Retorna o último período de um lançamento parcial de um produto edição. 
+	 *
+	 * @param idProdutoEdicao - identificador do produto edição
+	 *
+	 * @return LancamentoParcial
+	 */
+	PeriodoLancamentoParcial obterUltimoLancamentoParcial(Long idProdutoEdicao);
+	
+
+	/**
+	 * Retorna lançamentos parciais após seu balanceamento.
+	 * 
+	 * @param idLancamentoParcial
+	 * 
+	 * @return Long
+	 */
+	Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial);
 
 }

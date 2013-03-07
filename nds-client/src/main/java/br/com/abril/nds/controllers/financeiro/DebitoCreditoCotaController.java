@@ -30,7 +30,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -125,7 +124,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	private void preencherComboTipoMovimento() {
 
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiro = 
-				this.tipoMovimentoFinanceiroService.obterTodosTiposMovimento();
+				this.tipoMovimentoFinanceiroService.obterTipoMovimentosFinanceirosCombo();
 
 		this.result.include("tiposMovimentoFinanceiro", tiposMovimentoFinanceiro);
 	}
@@ -790,7 +789,7 @@ public class DebitoCreditoCotaController extends BaseController{
 			movimentoEditavel = false;
 		}
 		
-		Date dataOperacao = this.distribuidorService.obter().getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		dataOperacao = DateUtil.removerTimestamp(dataOperacao);
 		
@@ -876,7 +875,9 @@ public class DebitoCreditoCotaController extends BaseController{
 
 			listaMensagens.add("O preenchimento do campo [Data de Vencimento] é obrigatório.");
 		
-		} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.adicionarDias(this.distribuidorService.obter().getDataOperacao(),1), dataVencimento)) {
+		} else if (DateUtil.isDataInicialMaiorDataFinal(
+				DateUtil.adicionarDias(
+						this.distribuidorService.obterDataOperacaoDistribuidor() ,1), dataVencimento)) {
 
 			listaMensagens.add("A data de vencimento deve suceder a data de operação atual.");
 		}
@@ -939,9 +940,7 @@ public class DebitoCreditoCotaController extends BaseController{
 				msgsErros += ("\nInforme o [número] da [Cota] na linha ["+linha+"] !");
 			}
 			
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			
-			Date dataDistrib = distribuidor.getDataOperacao();
+			Date dataDistrib = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
 			if (dataVencimento == null) {
 
@@ -1022,6 +1021,7 @@ public class DebitoCreditoCotaController extends BaseController{
 			filtroDebitoCredito.setDataVencimentoFim(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
 			filtroDebitoCredito.setNumeroCota(debitoCredito.getNumeroCota());
 			filtroDebitoCredito.setIdTipoMovimento(idTipoMovimento);
+			filtroDebitoCredito.setGrupoMovimentosFinanceirosDebitosCreditos(this.movimentoFinanceiroCotaService.getGrupoMovimentosFinanceirosDebitosCreditos());
 			
 			Integer contagem = this.movimentoFinanceiroCotaService.obterContagemMovimentosFinanceiroCota(filtroDebitoCredito);
 			

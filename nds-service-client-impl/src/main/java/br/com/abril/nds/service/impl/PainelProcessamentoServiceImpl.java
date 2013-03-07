@@ -194,7 +194,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	@Override
 	public List<ProcessoDTO> listarProcessos() {
 		
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		Date dataOperacao = this. distribuidorService.obterDataOperacaoDistribuidor();
 		
 		List<ProcessoDTO> processos = new ArrayList<ProcessoDTO>();
 		
@@ -483,7 +483,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 */
 	@Override
 	public String obterEstadoOperacional() {
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 
 		ControleFechamentoEncalhe controleFechamentoEncalhe = fechamentoEncalheService.buscaControleFechamentoEncalhePorData(dataOperacao);
 		// Se existe um controle de fechamento, significa que o dia já foi encerrado

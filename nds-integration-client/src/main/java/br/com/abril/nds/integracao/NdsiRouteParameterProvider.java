@@ -8,7 +8,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.integracao.engine.RouteParameterProvider;
+import br.com.abril.nds.integracao.route.RouteParameterProvider;
 import br.com.abril.nds.repository.AbstractRepository;
 
 

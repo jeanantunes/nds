@@ -1005,7 +1005,10 @@
 				g.changePage('last')
 			});
 			$('.pcontrol input', g.pDiv).keydown(function (e) {
-				if (e.keyCode == 13) g.changePage('input')
+				if (e.keyCode == 13) {
+					e.preventDefault();
+					g.changePage('input');
+				}
 			});
 			if ($.browser.msie && $.browser.version < 7) $('.pButton', g.pDiv).hover(function () {
 				$(this).addClass('pBtnOver');

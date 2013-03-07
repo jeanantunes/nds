@@ -11,6 +11,8 @@ public class ExportFilter implements Comparable<ExportFilter> {
 	
 	private Integer exhibitionOrder;
 	
+	private Float widthPercent;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -78,6 +80,14 @@ public class ExportFilter implements Comparable<ExportFilter> {
 	public int compareTo(ExportFilter exportFilter) {
 		
 		return this.exhibitionOrder.compareTo(exportFilter.exhibitionOrder);
+	}
+
+	public Float getWidthPercent() {
+		return widthPercent;
+	}
+
+	public void setWidthPercent(Float widthPercent) {
+		this.widthPercent = widthPercent;
 	}
 
 }

@@ -42,7 +42,6 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
-import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.export.FileExporter;
@@ -215,13 +214,27 @@ public class ProdutoController extends BaseController {
 	}
 		
 	@Post
-	public void pesquisarPorNomeProduto(String nomeProduto) {
-		Produto produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+	public void pesquisarPorNomeProduto(String nomeProduto,String codigoProduto) {
+		
+		Produto produto = null;
+		
+		if(codigoProduto!= null){
+			
+			produto = this.produtoService.obterProdutoPorCodigo(codigoProduto);
+			
+			if(produto == null || !produto.getNome().equals(nomeProduto)){
+				
+				produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+			}
+		}
+		else{
+			
+			produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+		}
 		
 		if (produto == null) {
 		
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nomeProduto + "\" não encontrado!");
-		
 		}
 			
 		result.use(Results.json()).from(produto, "result").serialize();
@@ -401,17 +414,7 @@ public class ProdutoController extends BaseController {
 	@Post
 	public void removerProduto(Long id) {
 		
-		try {
-			
-			this.produtoService.removerProduto(id);
-			
-		} catch (UniqueConstraintViolationException e) {
-			
-			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, e.getMessage()), 
-					"result").recursive().serialize();
-			throw new ValidacaoException();
-		}
+		this.produtoService.removerProduto(id);
 			
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Produto excluído com sucesso!"), 
@@ -549,6 +552,12 @@ public class ProdutoController extends BaseController {
 			
 			if (produto.getDesconto() == null){
 				listaMensagens.add("O preenchimento do campo [% Desconto] é obrigatório!");
+			}
+			
+			if (produto.getDesconto() != null && 
+					(produto.getDesconto().compareTo(new BigDecimal(100)) > 0 ||
+					produto.getDesconto().compareTo(BigDecimal.ZERO) < 0)){
+				listaMensagens.add("Preenchimento do campo [% Desconto] inválido!");
 			}
 			
 			if (codigoTipoProduto == null || codigoTipoProduto.intValue() == 0) {

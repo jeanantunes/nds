@@ -9,9 +9,8 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.engine.MessageHeaderProperties;
+import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0110Input;
 import br.com.abril.nds.model.Origem;
@@ -31,6 +30,7 @@ import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DescontoProdutoEdicaoRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
@@ -362,6 +362,14 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setChamadaCapa(input.getChamadaCapa());
 		edicao.setOrigem(Origem.INTERFACE);
 		edicao.setNomeComercial(input.getNomeComercial());
+		
+		boolean isParcial = false;
+		
+		if(input.getRegimeRecolhimento()!= null){
+			isParcial = ("P".equals(input.getRegimeRecolhimento().toUpperCase()));
+		}
+		
+		edicao.setParcial(isParcial);
 
 		this.getSession().persist(edicao);
 		

@@ -20,7 +20,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -84,6 +84,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 
 	private static final String FILTRO_CONSULTA_NOTA_ENVIO = "filtroConsultaNotaEnvio";
 	
+	private static final String ARQUIVO_NE = "notaEnvioSession";
+	
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO)
@@ -132,8 +134,6 @@ public class GeracaoNotaEnvioController extends BaseController {
 		List<ConsultaNotaEnvioDTO> listaCotaExemplares = 
 				this.geracaoNotaEnvioService.busca(filtro);
 		
-		filtro.setPaginacaoVO(new PaginacaoVO());
-		
 		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 		
 		result.use(FlexiGridJson.class).from(listaCotaExemplares).page(page).total(qtdResult).serialize();
@@ -163,7 +163,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		filtro.setPaginacaoVO(new PaginacaoVO());
+		filtro.getPaginacaoVO().setPaginaAtual(null);
+		filtro.getPaginacaoVO().setQtdResultadosPorPagina(null);
 		
 		List<ConsultaNotaEnvioDTO> consultaNotaEnvioDTO =	
 				geracaoNotaEnvioService.busca(filtro);
@@ -179,11 +180,12 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Post
 	public void transferirSuplementar(List<Long> listaIdCotas) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor =
+				this.distribuidorService.parametrosRecolhimentoDistribuidor();
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		this.movimentoEstoqueCotaService.transferirReparteParaSuplementar(distribuidor, listaIdCotas, 
+		this.movimentoEstoqueCotaService.transferirReparteParaSuplementar(parametrosRecolhimentoDistribuidor, listaIdCotas, 
 				filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), null, null);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
@@ -192,15 +194,12 @@ public class GeracaoNotaEnvioController extends BaseController {
 	}
 	
 	@Post
-	public void gerarNotaEnvio(List<Long> listaIdCotas) {
+	public void getArquivoNotaEnvio() {
+		
+		byte[] notasGeradas = (byte[]) session.getAttribute(ARQUIVO_NE);
 		
 		try {
-			FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
-			
-			List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
-
-			byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
-			    
+		
 			if (notasGeradas != null) {
 				
 				DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
@@ -209,22 +208,40 @@ public class GeracaoNotaEnvioController extends BaseController {
 				
 				OutputStream output;
 			
-					output = this.httpResponse.getOutputStream();
+				output = this.httpResponse.getOutputStream();
 
-			    	output.write(notasGeradas);
+		    	output.write(notasGeradas);
 
-			    	httpResponse.getOutputStream().close();
+		    	httpResponse.getOutputStream().close();
 
-			    	result.use(Results.nothing());
-
-				
-
+		    	session.setAttribute(ARQUIVO_NE, null);
+		    	
+		    	result.use(Results.nothing());
+	
 			}
-		} catch(ValidacaoException e ){
-			result.use(Results.json()).from(e.getValidacao(),Constantes.PARAM_MSGS).recursive().serialize();
 		} catch (Exception e) {
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
 		}
+	}
+	
+	@Post
+	public void gerarNotaEnvio(List<Long> listaIdCotas) {
+		
+			FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+			
+			List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
+
+			if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
+			}
+			
+			byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
+			    
+			session.setAttribute(ARQUIVO_NE, notasGeradas);
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
+					"Geração de NE realizada com sucesso!"),
+								Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	/**

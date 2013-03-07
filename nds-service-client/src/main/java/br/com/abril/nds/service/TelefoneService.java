@@ -41,5 +41,6 @@ public interface TelefoneService {
 	Telefone buscarTelefonePorId(Long longValue);
 	
 	void validarTelefone(TelefoneDTO telefone, TipoTelefone tipoTelefone);
-	
+
+	Long obterQtdTelefoneAssociadoCota(Long idCota);
 }

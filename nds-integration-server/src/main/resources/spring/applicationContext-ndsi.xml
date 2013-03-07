@@ -15,7 +15,9 @@
 	
 	<context:annotation-config/>
 	
-	<context:component-scan base-package="br.com.abril.nds.integracao"/>
+	<!-- <util:properties id="queries" location="classpath:query.properties" /> -->
+	
+	<context:component-scan base-package="br.com.abril.nds"/>
 		
 	<task:annotation-driven/>
 	

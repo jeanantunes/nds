@@ -3,6 +3,7 @@
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/vendaEncalheCota.js'></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/contaCorrenteCota.js'></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/tooltip/jquery.tipsy.js"></script>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy.css" />
@@ -208,7 +209,8 @@
 		<div class="areaBts">
 			<div class="area">
 				<span class="bt_novos">
-					<a href="javascript:;" rel="tipsy" title="Negociar Divida">
+					<a href="javascript:;" rel="tipsy" title="Negociar Divida"
+						onclick="contaCorrenteCotaController.irParaNegociacao();">
 						<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
 					</a>
 				</span>

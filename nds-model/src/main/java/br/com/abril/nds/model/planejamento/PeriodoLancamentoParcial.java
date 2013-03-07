@@ -60,7 +60,9 @@ public class PeriodoLancamentoParcial {
 	@Column(name = "DATA_CRIACAO")
 	private Date dataCriacao;
 
-	
+	public PeriodoLancamentoParcial() {
+		
+	}
 
 	/**
 	 * @return the id

@@ -44,7 +44,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -797,9 +796,7 @@ public class DiferencaEstoqueController extends BaseController {
 		diferencaVO.setCadastrado(true);
 		diferencaVO.setPacotePadrao(pacotePadrao);
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		diferencaVO.setDataLancamento(DateUtil.formatarDataPTBR( distribuidor.getDataOperacao() ));
+		diferencaVO.setDataLancamento(DateUtil.formatarDataPTBR( this.distribuidorService.obterDataOperacaoDistribuidor() ));
 		
 		return diferencaVO;
 	}
@@ -960,9 +957,7 @@ public class DiferencaEstoqueController extends BaseController {
 	
 	private Date dataMovimentacaoDiferenca(){
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		return distribuidor.getDataOperacao();
+		return this.distribuidorService.obterDataOperacaoDistribuidor();
 	}
 
 	private void validarDiferencaProduto(List<DiferencaVO> diferencasProdutos) {

@@ -50,10 +50,15 @@ $(function(){
 	   	
 	 </form>
 
-
 <form id="form-confirm">
 <div id="dialog-confirm" title="Suplementar">
 	<p>Para onde deseja direcionar o reparte desta cota?</p>
+</div>
+</form>
+
+<form id="form-cancelar-redistribuicao">
+<div id="dialog-cancelar-redistribuicao" title="Cancelar Redistribuição" style="display:none">
+	<p>Deseja realmente cancelar a redistribuição? Isso anulará a ausência da cota.</p>
 </div>
 </form>
 

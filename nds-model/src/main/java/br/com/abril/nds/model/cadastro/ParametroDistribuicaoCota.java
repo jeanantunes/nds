@@ -41,6 +41,9 @@ public class ParametroDistribuicaoCota implements Serializable {
 	@Column(name = "RECEBE_RECOLHE_PARCIAIS", nullable = true)
 	private Boolean recebeRecolheParciais;
 	
+	@Column(name = "RECEBE_COMPLEMENTAR", nullable = true)
+	private Boolean recebeComplementar;
+	
 	@Column(name = "NOTA_ENVIO_IMPRESSO", nullable = true)
 	private Boolean notaEnvioImpresso;
 	
@@ -500,6 +503,22 @@ public class ParametroDistribuicaoCota implements Serializable {
 	 */
 	public void setDescricaoTipoEntrega(DescricaoTipoEntrega descricaoTipoEntrega) {
 		this.descricaoTipoEntrega = descricaoTipoEntrega;
+	}
+	
+	/**
+	 * Obtém recebeComplementar
+	 * @return
+	 */
+	public Boolean getRecebeComplementar() {
+		return recebeComplementar;
+	}
+	
+	/**
+	 * Atribuí recebeComplementar
+	 * @param recebeComplementar
+	 */
+	public void setRecebeComplementar(Boolean recebeComplementar) {
+		this.recebeComplementar = recebeComplementar;
 	}
 	
 	

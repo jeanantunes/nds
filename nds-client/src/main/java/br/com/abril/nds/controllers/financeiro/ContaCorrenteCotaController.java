@@ -124,14 +124,14 @@ public class ContaCorrenteCotaController extends BaseController {
 		this.validarDadosEntradaPesquisa(filtroViewContaCorrenteCotaDTO
 				.getNumeroCota());
 
-		prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname,
+		this.prepararFiltro(filtroViewContaCorrenteCotaDTO, sortorder, sortname,
 				page, rp);
 
-		tratarFiltro(filtroViewContaCorrenteCotaDTO);
+		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroViewContaCorrenteCotaDTO);
 		
 		BigInteger total = this.consolidadoFinanceiroService.countObterContaCorrente(filtroViewContaCorrenteCotaDTO);
 		
-		if (total == null || BigInteger.ZERO.equals(total.equals(total))) {			
+		if (total == null || BigInteger.ZERO.compareTo(total) == 0) {			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
 		}
 
@@ -287,11 +287,16 @@ public class ContaCorrenteCotaController extends BaseController {
 		for (ConsignadoCotaDTO consignado : listaConsignadoCota) {
 			 key = consignado.getNomeFornecedor();
 			 valor = consignado.getTotal();
-			if(mapFornecedores.containsKey(key)){				
-				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
+			if(mapFornecedores.containsKey(key) && valor != null){
+				valor = mapFornecedores.get(key).getValorTotal().add(valor);
 			}
 			
-			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor));
+			if (valor == null){
+				
+				valor = BigDecimal.ZERO;
+			}
+			
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
 			
 		}
 		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();
@@ -415,19 +420,6 @@ public class ContaCorrenteCotaController extends BaseController {
 		filtroViewContaCorrenteCotaDTO
 				.setColunaOrdenacao(sortname);
 	}
-
-	/**
-	 * Executa tratamento de paginação em função de alteração do filtro de
-	 * pesquisa.
-	 * 
-	 * @param filtroResumoExpedicao
-	 */
-	private void tratarFiltro(
-			FiltroViewContaCorrenteCotaDTO filtroViewContaCorrenteCotaDTO) {
-
-		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE,
-				filtroViewContaCorrenteCotaDTO);
-	}
 	
 	private void validarDadosEntradaPesquisa(Integer numeroCota) {
 		List<String> listaMensagemValidacao = new ArrayList<String>();
@@ -464,6 +456,12 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		List<ConsultaVendaEncalheDTO> encalheDTOs = consolidadoFinanceiroService
 				.obterMovimentoVendaEncalhe(filtro);
+		
+		for(ConsultaVendaEncalheDTO eDTO : encalheDTOs){
+			
+			eDTO.setPrecoComDesconto( (eDTO.getPrecoComDesconto()==null)?BigDecimal.ZERO:eDTO.getPrecoComDesconto().setScale(2,1));
+			eDTO.setTotal( (eDTO.getTotal()==null)?BigDecimal.ZERO:eDTO.getTotal().setScale(2,1));
+		}
 
 		TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>>();
 

@@ -12,8 +12,6 @@ public class ProdutoRecolhimentoFormatadoVO {
 	
 	private String idLancamento;
 	
-	private String sequencia;
-	
 	private String idProdutoEdicao;
 	
 	private String codigoProduto;
@@ -78,20 +76,6 @@ public class ProdutoRecolhimentoFormatadoVO {
 	 */
 	public void setIdLancamento(String idLancamento) {
 		this.idLancamento = (idLancamento != null) ? idLancamento : "";
-	}
-
-	/**
-	 * @return the sequencia
-	 */
-	public String getSequencia() {
-		return sequencia;
-	}
-
-	/**
-	 * @param sequencia the sequencia to set
-	 */
-	public void setSequencia(String sequencia) {
-		this.sequencia = (sequencia != null) ? sequencia : "";
 	}
 
 	/**

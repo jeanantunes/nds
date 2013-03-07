@@ -4,8 +4,8 @@ import java.io.InputStream;
 import java.util.Collection;
 
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.enums.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 
 public interface ParametroSistemaService {
 

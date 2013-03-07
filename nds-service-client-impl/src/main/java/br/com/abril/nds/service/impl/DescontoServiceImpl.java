@@ -877,9 +877,6 @@ public class DescontoServiceImpl implements DescontoService {
 
 			HistoricoDescontoFornecedor hdf = historicoDescontoFornecedorRepository.buscarHistoricoDescontoFornecedorPor(desconto, fornecedor);
 			
-			fornecedor.setDesconto(null);
-			fornecedorRepository.merge(fornecedor);
-			
 			if(hdf != null)
 				historicoDescontoFornecedorRepository.remover(hdf);	
 			
@@ -965,39 +962,53 @@ public class DescontoServiceImpl implements DescontoService {
 	@Override
 	@Transactional
     public Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento,
-            Cota cota, ProdutoEdicao produtoEdicao) {
+            										  Cota cota, 
+            										  ProdutoEdicao produtoEdicao) {
+		
         Validate.notNull(cota, "Cota não deve ser nula!");
         Validate.notNull(produtoEdicao, "Edição do produto não deve ser nula!");
+        
         Desconto desconto = null;
+        
         if (produtoEdicao.getProduto().isPublicacao()) {
-        	
-            //Neste caso, o produto possui apenas um fornecedor
-            //Recuperar o desconto utilizando a cota, o produto edição e o fornecedor
+
             desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, cota, produtoEdicao);
+
+            if (desconto == null) {
+            
+            	String produtoEdicaoSemDesconto = "";
+                
+                if (produtoEdicao != null && produtoEdicao.getProduto() != null) {
+                
+                	produtoEdicaoSemDesconto = produtoEdicao.getProduto().getNome();
+                }
+                
+                if (produtoEdicao != null) {
+                	
+                	produtoEdicaoSemDesconto += " / Edição: "+ produtoEdicao.getNumeroEdicao();
+                }
+            	
+            	ValidacaoVO validacaoVO = 
+                    new ValidacaoVO(
+                    	TipoMensagem.ERROR, 
+                    		"Não existe desconto cadastrado para o Produto: " 
+                    			+ produtoEdicaoSemDesconto);
+            	
+            	throw new ValidacaoException(validacaoVO);
+            }
+            
             desconto.setUsado(true);
+            
             descontoRepository.alterar(desconto);
             
         } else {
-        	
-            //Produto possivelmente com mais de um fornecedor, seguindo
-            // a instrução passada, utilizar o desconto do produto
+
         	desconto = new Desconto();
+        	
             desconto.setValor(produtoEdicao.getProduto().getDesconto());
-            
         }
         
-        String produtoEdicaoSemDesconto = "";
-        if(produtoEdicao != null && produtoEdicao.getProduto() != null)
-        	produtoEdicaoSemDesconto = produtoEdicao.getProduto().getNome();
-        
-        if(produtoEdicao != null)
-        	produtoEdicaoSemDesconto += " / Edição: "+ produtoEdicao.getNumeroEdicao();
-        
-        ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, "Não existe desconto cadastrado para o Produto: "+ produtoEdicaoSemDesconto);
-        if(desconto == null) throw new ValidacaoException(validacaoVO);
-        
         return desconto;
-        
     }
 	
 	@Override

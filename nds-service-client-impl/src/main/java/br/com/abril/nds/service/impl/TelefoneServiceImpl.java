@@ -16,6 +16,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneEntregador;
 import br.com.abril.nds.model.cadastro.TipoTelefone;
+import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneEntregadorRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.TelefoneService;
@@ -29,6 +30,9 @@ public class TelefoneServiceImpl implements TelefoneService {
 	
 	@Autowired
 	private TelefoneRepository telefoneRepository;
+	
+	@Autowired
+	private TelefoneCotaRepository telefoneCotaRepository;
 	
 	public void validarTelefone(TelefoneDTO telefone, TipoTelefone tipoTelefone) {
 		
@@ -177,6 +181,13 @@ public class TelefoneServiceImpl implements TelefoneService {
 	public Telefone buscarTelefonePorId(Long longValue) {
 		
 		return this.telefoneRepository.buscarPorId(longValue);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQtdTelefoneAssociadoCota(Long idCota){
+		
+		return this.telefoneCotaRepository.obterQtdTelefoneAssociadoCota(idCota);
 	}
 	
 }

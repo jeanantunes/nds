@@ -178,11 +178,16 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	processaMunicipios : function(result) {
 		
 		$.each(result.rows, function(index, row) {
-			row.cell.selecionado='<input type="checkbox" name="selecao" ' +
-			'id="'+row.cell.id+'"' +
-			(row.cell.selecionado == true ? 'checked="checked"' : '') +
-			'onclick="OperacaoDiferenciadaController.adicionarSelecaoMunicipio('+row.cell.id+',this);"' +
-			'>';
+			
+			var municipio = row.cell.municipio;
+			
+			if(!municipio || municipio.length < 1)
+				municipio = " null ";
+			
+			row.cell.selecionado="<input type='checkbox' name='selecao' " +
+			"id='municipio["+municipio+"]' " +
+			(row.cell.selecionado == true ? " checked='checked' " : "") +
+			" onclick='OperacaoDiferenciadaController.adicionarSelecaoMunicipio( \""+municipio+"\" ,this);' />";
 		});
 				
 		return result;
@@ -190,22 +195,20 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	
 	adicionarSelecaoMunicipio : function(id, check) {
 		
-		if(check.checked==false) {
+		if(!check.checked) {
 			$("#selecionarTodosID", OperacaoDiferenciadaController.workspace).attr("checked",false);
 		}
 		
 		var dados = [];		
-		dados.push({ name : 'idMunicipio', value: id});		
+		dados.push({ name : 'municipio', value: id});		
 		dados.push({ name : 'selecionado', value: check.checked });
 		
-		
-		$.postJSON(contextPath + '/administracao/parametrosDistribuidor/selecionarMunicipio', 
-				dados);		
+		$.postJSON(contextPath + '/administracao/parametrosDistribuidor/selecionarMunicipio',dados);		
 	},
 	
 	adicionarSelecaoCota : function(id, check) {
 		
-		if(check.checked==false) {
+		if(!check.checked) {
 			$("#selecionarTodosID", OperacaoDiferenciadaController.workspace).attr("checked",false);
 		}
 		
@@ -300,6 +303,32 @@ var OperacaoDiferenciadaController = $.extend(true, {
 		
 	},
 	
+	confirmarOperacao : function() {
+		var data = [];
+		
+		data.push({name: "nome", value: $("#nomeDiferenca", OperacaoDiferenciadaController.workspace ).val()});
+		
+		if(OperacaoDiferenciadaController.grupoSelecionado)
+			data.push({name: "idGrupo", value: OperacaoDiferenciadaController.grupoSelecionado.idGrupo});
+		
+		$.each($("#diaSemana", OperacaoDiferenciadaController.workspace ).val(), 
+			function(index, val) {							
+				data.push({name: "diasSemana", value: val});
+			}
+		);
+							
+		$.postJSON(contextPath + "/administracao/parametrosDistribuidor/cadastrarOperacaoDiferenciada", data,
+			function(result){
+				
+			$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexReload();
+			$( "#dialog-novo-grupo", OperacaoDiferenciadaController.workspace ).dialog( "close" );
+			$( "#dialog-salvar", OperacaoDiferenciadaController.workspace ).dialog( "close" );
+
+			exibirMensagem('SUCCESS', ['Grupo salvo com sucesso.']);	
+			}, null, true
+		);
+	},
+	
 	dialogConfirmarGrupo : function() {
 		
 		$( "#dialog-salvar", OperacaoDiferenciadaController.workspace  ).dialog({
@@ -309,29 +338,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					var data = [];
-					
-					data.push({name: "nome", value: $("#nomeDiferenca", OperacaoDiferenciadaController.workspace ).val()});
-					
-					if(OperacaoDiferenciadaController.grupoSelecionado)
-						data.push({name: "idGrupo", value: OperacaoDiferenciadaController.grupoSelecionado.idGrupo});
-					
-					$.each($("#diaSemana", OperacaoDiferenciadaController.workspace ).val(), 
-						function(index, val) {							
-							data.push({name: "diasSemana", value: val});
-						}
-					);
-										
-					$.postJSON(contextPath + "/administracao/parametrosDistribuidor/cadastrarOperacaoDiferenciada", data,
-						function(result){
-							
-						$(".gruposGrid", OperacaoDiferenciadaController.workspace).flexReload();
-						$( "#dialog-novo-grupo", OperacaoDiferenciadaController.workspace ).dialog( "close" );
-						$( "#dialog-salvar", OperacaoDiferenciadaController.workspace ).dialog( "close" );
-
-						exibirMensagem('SUCCESS', ['Grupo salvo com sucesso.']);	
-						}, null, true
-					);
+					OperacaoDiferenciadaController.confirmarOperacao();
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -496,3 +503,4 @@ $(function() {
 	OperacaoDiferenciadaController.init();
 				
 });
+//@ sourceURL=operacaoDiferenciada.js

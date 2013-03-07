@@ -5,8 +5,8 @@ import javax.persistence.PersistenceException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.integracao.model.InterfaceExecucao;
 import br.com.abril.nds.integracao.repository.InterfaceExecucaoRepository;
+import br.com.abril.nds.model.integracao.InterfaceExecucao;
 
 
 @Repository

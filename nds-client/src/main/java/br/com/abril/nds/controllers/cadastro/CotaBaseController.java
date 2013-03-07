@@ -101,6 +101,10 @@ public class CotaBaseController extends BaseController {
 			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, false, true, numeroCota);
 		}
 		
+		if(filtro == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
+		}
+		
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
 	}
 

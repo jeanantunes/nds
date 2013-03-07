@@ -187,5 +187,220 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void buscarInicioSemana(){
 		DiaSemana diaSemana = distribuidorRepository.buscarInicioSemana();
 	}
+
+	@Test
+	public void obterDataOperacaoDistribuidor() {
+		
+		this.distribuidorRepository.obterDataOperacaoDistribuidor();
+	}
 	
+	@Test
+	public void obterDescontoCotaNegociacao(){
+		
+		this.distribuidorRepository.obterDescontoCotaNegociacao();
+	}
+	
+	@Test
+	public void utilizaGarantiaPdv(){
+		
+		this.distribuidorRepository.utilizaGarantiaPdv();
+	}
+	
+	@Test
+	public void aceitaJuramentado(){
+		
+		this.distribuidorRepository.aceitaJuramentado();
+	}
+	
+	@Test
+	public void qtdDiasEncalheAtrasadoAceitavel(){
+		
+		this.distribuidorRepository.qtdDiasEncalheAtrasadoAceitavel();
+	}
+
+	@Test
+	public void obterNumeroDiasNovaCobranca() {
+		
+		this.distribuidorRepository.obterNumeroDiasNovaCobranca();
+	}
+
+	@Test
+	public void utilizaControleAprovacao() {
+		
+		this.distribuidorRepository.utilizaControleAprovacao();
+	}
+
+	@Test
+	public void utilizaTermoAdesao() {
+		
+		this.distribuidorRepository.utilizaTermoAdesao();
+	}
+
+	@Test
+	public void utilizaProcuracaoEntregadores() {
+		
+		this.distribuidorRepository.utilizaProcuracaoEntregadores();
+	}
+
+	@Test
+	public void utilizaSugestaoIncrementoCodigo() {
+		
+		this.distribuidorRepository.utilizaSugestaoIncrementoCodigo();
+	}
+
+	@Test
+	public void getEmail() {
+		
+		this.distribuidorRepository.getEmail();
+	}
+
+	@Test
+	public void parametrosRecolhimentoDistribuidor() {
+		
+		this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+	}
+
+	@Test
+	public void tipoImpressaoCE() {
+		
+		this.distribuidorRepository.tipoImpressaoCE();
+	}
+
+	@Test
+	public void qntDiasVencinemtoVendaEncalhe() {
+		
+		this.distribuidorRepository.qntDiasVencinemtoVendaEncalhe();
+	}
+
+	@Test
+	public void aceitaBaixaPagamentoVencido() {
+		
+		this.distribuidorRepository.aceitaBaixaPagamentoVencido();
+	}
+
+	@Test
+	public void aceitaBaixaPagamentoMaior() {
+		
+		this.distribuidorRepository.aceitaBaixaPagamentoMaior();
+	}
+
+	@Test
+	public void aceitaBaixaPagamentoMenor() {
+
+		this.distribuidorRepository.aceitaBaixaPagamentoMenor();
+	}
+
+	@Test
+	public void negociacaoAteParcelas() {
+		
+		this.distribuidorRepository.negociacaoAteParcelas();
+	}
+
+	@Test
+	public void qtdDiasLimiteParaReprogLancamento() {
+		
+		this.distribuidorRepository.qtdDiasLimiteParaReprogLancamento();
+	}
+
+	@Test
+	public void obrigacaoFiscal() {
+		
+		this.distribuidorRepository.obrigacaoFiscal();
+	}
+
+	@Test
+	public void tipoImpressaoNENECADANFE() {
+		
+		this.distribuidorRepository.tipoImpressaoNENECADANFE();
+	}
+
+	@Test
+	public void capacidadeRecolhimento() {
+		
+		this.distribuidorRepository.capacidadeRecolhimento();
+	}
+
+	@Test
+	public void cidadeDistribuidor() {
+		
+		this.distribuidorRepository.cidadeDistribuidor();
+	}
+
+	@Test
+	public void codigoDistribuidorDinap() {
+		
+		this.distribuidorRepository.codigoDistribuidorDinap();
+	}
+
+	@Test
+	public void codigoDistribuidorFC() {
+		
+		this.distribuidorRepository.codigoDistribuidorFC();
+	}
+
+	@Test
+	public void diasNegociacao() {
+		
+		this.distribuidorRepository.diasNegociacao();
+	}
+
+	@Test
+	public void tipoContabilizacaoCE() {
+		
+		this.distribuidorRepository.tipoContabilizacaoCE();
+	}
+
+	@Test
+	public void preenchimentoAutomaticoPDV() {
+		
+		this.distribuidorRepository.preenchimentoAutomaticoPDV();
+	}
+
+	@Test
+	public void qntDiasReutilizacaoCodigoCota() {
+		
+		this.distribuidorRepository.qntDiasReutilizacaoCodigoCota();
+	}
+
+	@Test
+	public void politicasCobranca() {
+		
+		this.distribuidorRepository.politicasCobranca();
+	}
+
+	@Test
+	public void assuntoEmailCobranca() {
+		
+		this.distribuidorRepository.assuntoEmailCobranca();
+	}
+
+	@Test
+	public void mensagemEmailCobranca() {
+		
+		this.distribuidorRepository.mensagemEmailCobranca();
+	}
+
+	@Test
+	public void regimeEspecial() {
+		
+		this.distribuidorRepository.regimeEspecial();
+	}
+
+	@Test
+	public void tipoAtividade() {
+		
+		this.distribuidorRepository.tipoAtividade();
+	}
+
+	@Test
+	public void fatorRelancamentoParcial() {
+		
+		this.distribuidorRepository.fatorRelancamentoParcial();
+	}
+
+	@Test
+	public void obterId() {
+		
+		this.distribuidorRepository.obterId();
+	}
 }

@@ -18,12 +18,12 @@ Servidor:
 
 - Copiar o arquivo "dnecom.mdb" para a pasta "data" criada no passo acima
 
-- Fazer build do projeto ndsi-couchdbinterface, ele irá gerar um arquivo tar.gz contendo:
+- Fazer build do projeto nds-integration-server, ele irá gerar um arquivo tar.gz contendo:
   - conf: arquivos de configurações
   - lib: dependencias
-  - ndsi-couchdbinterface<VERSAO>.jar
+  - nds-integration-server<VERSAO>.jar
 
-- Copiar ndsi-couchdbinterface<VERSAO>.jar para a pasta "bin" criada primeiro passo
+- Copiar nds-integration-server<VERSAO>.jar para a pasta "bin" criada primeiro passo
 
-- Executar o comando "java -jar ndsi-couchdbinterface-0.0.1-SNAPSHOT.jar <NOME USUARIO> 185
+- Executar o comando "java -jar nds-integration-server-0.0.1-SNAPSHOT.jar <NOME USUARIO> 185
   para gerar o arquivo de atualizacao de CEPs e enviar para os distribuidores

@@ -178,6 +178,14 @@ public interface PdvService {
      * @return PDV
      */
     public PDV obterPDVporId(Long idPdv);
+
+    List<AreaInfluenciaPDV> obterAreasInfluenciaPDV();
     
+    public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo();
+    
+    /**
+	 * Preenche o PdvDTO com os atributos para o popUp do AnaliseHistórico
+	 */
+	List<PdvDTO> obterPDVs(Integer numeroCota);
 }
 
