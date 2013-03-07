@@ -58,8 +58,9 @@ public class AjusteReparte implements Serializable {
 	@Column (name = "DATA_ALTERACAO")
 	private Date dataAlteracao;
 	
-	//@Column (name = "AJUSTE_POR_SEGMENTO")
-	//private TipoSegmentoProduto segmento;
+	@ManyToOne
+	@JoinColumn (name = "TIPO_SEGMENTO_AJUSTE_ID")
+	private TipoSegmentoProduto tipoSegmentoAjuste;
 	
 	public AjusteReparte() {
 		this.dataAlteracao = new Date();
@@ -136,4 +137,13 @@ public class AjusteReparte implements Serializable {
 	public void setMotivo(MotivoAlteracaoSituacao motivo) {
 		this.motivo = motivo;
 	}
+
+	public TipoSegmentoProduto getTipoSegmentoAjuste() {
+		return tipoSegmentoAjuste;
+	}
+
+	public void setTipoSegmentoAjuste(TipoSegmentoProduto tipoSegmentoAjuste) {
+		this.tipoSegmentoAjuste = tipoSegmentoAjuste;
+	}
+
 }
