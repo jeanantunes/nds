@@ -20,7 +20,19 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 </style>
 </head>
 <body>
+<c:if test="${errorMessage != null}">
+	<table width="760" border="0" align="center" cellpadding="0"
+		cellspacing="0" style="margin-bottom: 10px; margin-top: 10px;">
+		<tr>
+			<td width="124" rowspan="8" valign="top"><span>
+				<c:out value="${errorMessage}" />
+				</span>
+			</td>
+		</tr>
+	</table>
+</c:if>
 
+<c:if test="${notaEnvio != null}">
 	<table width="760" border="0" align="center" cellpadding="0"
 		cellspacing="0" style="margin-bottom: 10px; margin-top: 10px;">
 		<tr>
@@ -233,6 +245,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 				Exemplares</td>
 		</tr>
 	</table>
+</c:if>
 
 </body>
 </html>

@@ -186,7 +186,16 @@ var geracaoNotaEnvioController = $.extend({
 			
 			var uri = "pesquisar";
 			
-			this.gridReaload(grid, uri);
+			mensagens = this.validarDataMovimento(); 
+			if(mensagens[0]['value']) {
+				
+				this.gridReaload(grid, uri);
+				
+			} else {
+				
+				exibirMensagem('WARNING', mensagens);
+				
+			}
 		
 		},
 		
@@ -447,6 +456,29 @@ var geracaoNotaEnvioController = $.extend({
 				
 				return data;
 			}
+		},
+		
+		/**
+		 * Metodo de pre-processamento dos dados inseridos na grid Cotas Ausentes
+		 * 
+		 * @returns intervalo de datas validos (true) ou invalidos (false)
+		 */
+		validarDataMovimento : function() {
+			
+			messages = [];
+			
+			if($('#geracaoNotaEnvio-filtro-movimentoDe').val() == ''
+				|| $('#geracaoNotaEnvio-filtro-movimentoAte').val() == '') {
+				
+				messages.push({name: 'isValid', value: false});
+				messages.push('Os campos de Data de Movimento não podem estar vazios');
+				
+				return messages;
+			}
+			
+			messages.push({name: 'isValid', value: true});
+			return messages;
+			
 		},
 		
 		/**

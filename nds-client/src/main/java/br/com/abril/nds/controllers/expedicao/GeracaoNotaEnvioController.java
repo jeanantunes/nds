@@ -303,10 +303,15 @@ public class GeracaoNotaEnvioController extends BaseController {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		NotaEnvio notaEnvio = geracaoNotaEnvioService.visualizar(filtro.getIntervaloCota().getDe(), 
-				filtro.getIdRota(), null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
-		
-		result.include("notaEnvio",notaEnvio);
+		NotaEnvio notaEnvio = null;
+		if(filtro.getIntervaloCota().getDe() != null) {
+			notaEnvio = geracaoNotaEnvioService.visualizar(filtro.getIntervaloCota().getDe(), 
+					filtro.getIdRota(), null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
+			
+		} else {
+			result.include("errorMessage", "É necessário informar o número da Cota.");
+		}
+		result.include("notaEnvio", notaEnvio);
 		
 	}
 	
