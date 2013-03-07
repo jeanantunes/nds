@@ -73,6 +73,8 @@ public class ProdutoEdicaoController extends BaseController {
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
 
 	private static List<ItemDTO<GrupoProduto,String>> listaGrupoProduto =  new ArrayList<ItemDTO<GrupoProduto,String>>();
+	
+	private static List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
 
 	
 	/** Traz a página inicial. */
@@ -118,6 +120,17 @@ public class ProdutoEdicaoController extends BaseController {
 			listaGrupoProduto.add(new ItemDTO<GrupoProduto,String>(item,item.getNome()));
 		}
 		result.include("listaGrupoProduto",listaGrupoProduto);
+		
+		listaStatusLancamento.clear();
+		
+		for (StatusLancamento statusLancamento : StatusLancamento.values()) {
+			
+			listaStatusLancamento.add(
+				new ItemDTO<StatusLancamento, String>(
+					statusLancamento, statusLancamento.getDescricao()));
+		}
+		
+		result.include("listaStatusLancamento", listaStatusLancamento);
 		
 		List<Brinde> brindes = brindeService.obterBrindes();
 		result.include("brindes", brindes);
@@ -176,7 +189,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		StatusLancamento statusLancamento = null;
 		for (StatusLancamento status : StatusLancamento.values()) {
-			if (status.getDescricao().equals(situacaoLancamento)) {
+			if (status.name().equals(situacaoLancamento)) {
 				statusLancamento = status;
 			}
 		}		
