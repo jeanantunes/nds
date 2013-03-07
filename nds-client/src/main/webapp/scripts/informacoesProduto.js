@@ -67,12 +67,6 @@ $(".produtosInfosGrid").flexigrid({
 			sortable : true,
 			align : 'center'
 		},{
-			display : 'Tipo Distrib.',
-			name : 'tipoDistribuicaoGhoma',
-			width : 60,
-			sortable : true,
-			align : 'left'
-		},{
 			display : 'Algoritmo',
 			name : 'algoritmo',
 			width : 50,

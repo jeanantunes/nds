@@ -485,11 +485,11 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	
 	}
 	
-	public List<PeriodoLancamentoParcial> obterPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial){
+	public Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial){
 		   
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
+		hql.append(" select count( periodo.id ) from PeriodoLancamentoParcial periodo  ")
 
 		.append(" join periodo.lancamento lancamento ")
 
@@ -506,7 +506,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		query.setParameterList("satatusLancamento", new StatusLancamento[] {
 				StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO });
 
-		return query.list();
+		return (Long) query.uniqueResult();
 	}
 
 }

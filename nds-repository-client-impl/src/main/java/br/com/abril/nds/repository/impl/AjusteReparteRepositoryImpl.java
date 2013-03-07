@@ -3,11 +3,11 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AjusteReparteDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.AjusteReparte;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AjusteReparteRepository;
@@ -38,13 +38,17 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		hql.append(" ajuste.dataFim as dataFim, ");
 		hql.append(" ajuste.motivo as motivoAjusteAplicado, ");
 		hql.append(" usuario.nome as nomeUsuario, ");
-		hql.append(" ajuste.dataAlteracao as dataAlteracao ");
+		hql.append(" ajuste.dataAlteracao as dataAlteracao, ");
+		hql.append(" tipoSegmento.id as idSegmento ");
 		
 		hql.append(" FROM AjusteReparte AS ajuste ");
-		hql.append(" LEFT JOIN ajuste.cota as cota ");
-		hql.append(" LEFT JOIN cota.pdvs as pdv ");
-		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
-		hql.append(" LEFT JOIN ajuste.usuario  as usuario ");
+		hql.append(" LEFT JOIN ajuste.cota AS cota ");
+		hql.append(" LEFT JOIN cota.pdvs AS pdv ");
+		hql.append(" LEFT JOIN cota.pessoa AS pessoa ");
+		hql.append(" LEFT JOIN ajuste.usuario  AS usuario ");
+		hql.append(" LEFT JOIN ajuste.tipoSegmentoAjuste AS tipoSegmento ");
+		
+		hql.append(" ORDER BY numeroCota ");
 		
 
 		Query query = super.getSession().createQuery(hql.toString());
@@ -77,13 +81,15 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		hql.append(" ajuste.dataFim as dataFim, ");
 		hql.append(" ajuste.motivo as motivoAjuste, ");
 		hql.append(" usuario.nome as nomeUsuario, ");
-		hql.append(" ajuste.dataAlteracao as dataAlteracao ");
+		hql.append(" ajuste.dataAlteracao as dataAlteracao, ");
+		hql.append(" tipoSegmento.id as idSegmento ");
 		
 		hql.append(" FROM AjusteReparte AS ajuste ");
 		hql.append(" LEFT JOIN ajuste.cota as cota ");
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN ajuste.usuario  as usuario ");
+		hql.append(" LEFT JOIN ajuste.tipoSegmentoAjuste AS tipoSegmento ");
 		hql.append(" WHERE ajuste.id = :ID_AJUSTE ");
 
 		Query query = super.getSession().createQuery(hql.toString());
@@ -94,6 +100,46 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 				AjusteReparteDTO.class));
 		
 		return (AjusteReparteDTO) query.uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AjusteReparteDTO>  buscarPorIdCota(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		hql.append(" ajuste.id as idAjusteReparte, ");
+		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" cota.situacaoCadastro as status, ");
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota, ");
+		hql.append(" pdv.nome as nomePDV, ");
+		hql.append(" ajuste.formaAjuste as formaAjuste, ");
+		hql.append(" ajuste.ajusteAplicado as ajusteAplicado, ");
+		hql.append(" ajuste.dataInicio as dataInicio, ");
+		hql.append(" ajuste.dataFim as dataFim, ");
+		hql.append(" ajuste.motivo as motivoAjuste, ");
+		hql.append(" usuario.nome as nomeUsuario, ");
+		hql.append(" ajuste.dataAlteracao as dataAlteracao, ");
+		hql.append(" tipoSegmento.id as idSegmento ");
+		
+		hql.append(" FROM AjusteReparte AS ajuste ");
+		hql.append(" LEFT JOIN ajuste.cota as cota ");
+		hql.append(" LEFT JOIN cota.pdvs as pdv ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		hql.append(" LEFT JOIN ajuste.usuario  as usuario ");
+		hql.append(" LEFT JOIN ajuste.tipoSegmentoAjuste AS tipoSegmento ");
+		
+		hql.append(" WHERE cota.id = :ID_COTA ");
+
+		Query query = super.getSession().createQuery(hql.toString());
+
+		query.setParameter("ID_COTA", idCota);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(
+				AjusteReparteDTO.class));
+		
+		return query.list();
 	}
 	
 	private void configurarPaginacao(AjusteReparteDTO dto, Query query) {
@@ -112,32 +158,34 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
 	}
+	
+	@Override
+	public void execucaoQuartz (){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" delete from ajuste_reparte WHERE datediff(data_fim,data_inicio)>180;");
+		SQLQuery createSQLQuery = this.getSession().createSQLQuery(hql.toString());
+		
+		createSQLQuery.executeUpdate();
+		
+	}
 
-//	@Override
-//	public void removerPorIdCota(Long idCota) {
-//
-//		StringBuilder hql = new StringBuilder();
-//		
-//		hql.append(" DELETE FROM AjusteReparte ");
-//		hql.append(" WHERE cota_ID = :ID_COTA ");
-//
-//		Query query = super.getSession().createQuery(hql.toString());
-//
-//		query.setParameter("ID_COTA", idCota);
-//		
-//		
-//	}
-//
-//	@Override
-//	public void removerPorCota(Cota cota) {
-//
-//	StringBuilder hql = new StringBuilder();
-//		
-//		hql.append(" DELETE FROM AjusteReparte ");
-//		hql.append(" WHERE cota = :COTA ");
-//
-//		Query query = super.getSession().createQuery(hql.toString());
-//
-//		query.setParameter("COTA", cota);
-//	}
+	@Override
+	public int qtdAjusteSegmento(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT COUNT(*) ");
+		hql.append(" FROM AjusteReparte AS ajuste ");
+		hql.append(" LEFT JOIN ajuste.cota AS cota ");
+		hql.append(" WHERE cota.id = :ID_COTA ");
+		hql.append(" AND ajuste.tipoSegmentoAjuste > 0 ");
+
+		Query query = super.getSession().createQuery(hql.toString());
+
+		query.setParameter("ID_COTA", idCota);
+		
+		return ((Long)query.uniqueResult()).intValue();
+	}
 }

@@ -1021,6 +1021,7 @@ public class DebitoCreditoCotaController extends BaseController{
 			filtroDebitoCredito.setDataVencimentoFim(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
 			filtroDebitoCredito.setNumeroCota(debitoCredito.getNumeroCota());
 			filtroDebitoCredito.setIdTipoMovimento(idTipoMovimento);
+			filtroDebitoCredito.setGrupoMovimentosFinanceirosDebitosCreditos(this.movimentoFinanceiroCotaService.getGrupoMovimentosFinanceirosDebitosCreditos());
 			
 			Integer contagem = this.movimentoFinanceiroCotaService.obterContagemMovimentosFinanceiroCota(filtroDebitoCredito);
 			
