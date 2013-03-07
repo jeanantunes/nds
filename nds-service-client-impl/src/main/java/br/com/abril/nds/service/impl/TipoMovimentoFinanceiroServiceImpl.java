@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
 
 @Service
@@ -16,12 +17,17 @@ public class TipoMovimentoFinanceiroServiceImpl implements TipoMovimentoFinancei
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
 	@Override
 	@Transactional
-	public List<TipoMovimentoFinanceiro> obterTodosTiposMovimento() {
-
-		return this.tipoMovimentoFinanceiroRepository.buscarTodos();
+	public List<TipoMovimentoFinanceiro> obterTipoMovimentosFinanceirosCombo() {
+		
+		return this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+				this.movimentoFinanceiroCotaService.getGrupoMovimentosFinanceirosDebitosCreditos());
 	}
+
 
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.TipoMovimentoFinanceiroService#obterTipoMovimentoFincanceiroPorId(java.lang.Long)

@@ -103,7 +103,7 @@
 					<td><strong>% Desconto:</strong></td>
 					<td>
 						<input type="text" name="percentualDesconto" id="percentualDesconto" 
-						style="width:80px;" maxlength="4" />
+						style="width:80px;" maxlength="3" />
 					</td>
 				</tr>
 			</table>

@@ -8,6 +8,7 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -15,7 +16,7 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.DateUtil;
 
-public class ProdutoEdicaoDTO implements Serializable {
+public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
 
 	/**
 	 * serialVersionUID
@@ -34,6 +35,8 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private BigDecimal precoCusto;
 	private Long peso;
 	private String codigoProduto;
+	private PeriodicidadeProduto periodicidade;
+	private Integer numeroPeriodicidade;
 	
 	private String nomeProduto;
 	private String nomeComercial;
@@ -100,7 +103,9 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private TemaProduto temaSecundario;
 
 	private String dataLancamentoFormatada;
-	private BigDecimal qtdeVendas;
+	private BigInteger qtdeVendas;
+	private BigInteger reparte;
+	private String qtdVendasFormatada = "0";
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -716,15 +721,54 @@ public class ProdutoEdicaoDTO implements Serializable {
 		this.dataLancamentoFormatada = dataLancamentoFormatada;
 	}
 
-	public BigDecimal getQtdeVendas() {
-		
-		if(qtdeVendas == null)
-			qtdeVendas = new BigDecimal(0);
-			
+	public BigInteger getQtdeVendas() {
 		return qtdeVendas;
 	}
 
-	public void setQtdeVendas(BigDecimal qtdeVendas) {
+	public void setQtdeVendas(BigInteger qtdeVendas) {
 		this.qtdeVendas = qtdeVendas;
+		
+		if (qtdeVendas != null) {
+			this.qtdVendasFormatada = qtdeVendas.toString();
+		}
 	}
+
+	public BigInteger getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+
+	@Override
+    public int compareTo(ProdutoEdicaoDTO o) {  
+        if (o.getNumeroEdicao() > this.getNumeroEdicao()) {  
+            return -1;  
+        } else if (o.getNumeroEdicao() < this.getNumeroEdicao()){  
+            return 1;  
+        } else {  
+            return 0;  
+        }  
+    }
+
+	public PeriodicidadeProduto getPeriodicidade() {
+		return periodicidade;
+	}
+
+	public void setPeriodicidade(PeriodicidadeProduto periodicidade) {
+		this.periodicidade = periodicidade;
+		this.numeroPeriodicidade = periodicidade.getOrdem();
+	}
+
+	public Integer getNumeroPeriodicidade() {
+		return numeroPeriodicidade;
+	}
+
+	public String getQtdVendasFormatada() {
+		return qtdVendasFormatada;
+	}  
+	
+	
+	
 }

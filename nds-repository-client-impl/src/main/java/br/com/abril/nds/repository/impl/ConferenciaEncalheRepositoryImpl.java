@@ -229,7 +229,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
-			Long idDistribuidor,
 			Integer numeroCota,
 			Date dataRecolhimento,
 			boolean indFechado,
@@ -388,7 +387,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTO(java.lang.Long, java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
+	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -419,8 +418,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
 		hql.append(" PROD_EDICAO.PACOTE_PADRAO AS pacotePadrao,              ");
 		
-
-		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA, 0) AS precoComDesconto, ");
+		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, 0) AS precoComDesconto, ");
 		
 		hql.append(" COALESCE( ( COALESCE(MOV_ESTOQUE_COTA.PRECO_VENDA, 0) - COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, 0)), 0 ) AS desconto, ");
 		

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaAusenteRepository;
@@ -40,9 +41,13 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append("box.NOME as box, 																	");
 		queryNative.append("cota.NUMERO_COTA as cota,															");
 	    queryNative.append("(case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nome, ");
-		queryNative.append("( SELECT SUM(movEstoque.QTDE*pe.PRECO_CUSTO) FROM MOVIMENTO_ESTOQUE_COTA movEstoque ");
+		queryNative.append("( SELECT SUM(movEstoque.QTDE*pe.PRECO_VENDA) FROM MOVIMENTO_ESTOQUE_COTA movEstoque ");
 		queryNative.append("JOIN PRODUTO_EDICAO pe ON (movEstoque.PRODUTO_EDICAO_ID=pe.ID)						");
-		queryNative.append("WHERE movEstoque.COTA_ID = cota.ID ) as valorNE 									");
+		queryNative.append("JOIN TIPO_MOVIMENTO tm ON (movEstoque.TIPO_MOVIMENTO_ID=tm.ID)						");
+		queryNative.append("WHERE movEstoque.COTA_ID = cota.ID 									");
+		queryNative.append("AND tm.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
+		queryNative.append("AND movEstoque.DATA = ca.DATA ");
+		queryNative.append(") as valorNE 									");
 		
 		queryNative.append("FROM COTA cota																		");
 
@@ -120,7 +125,9 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 				.addScalar("valorNe").setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));
 		
 		query.setParameter("ativo", true);
-				
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name());
+		
 		if(filtro.getData() != null){			
 			query.setParameter("data", filtro.getData());
 		}

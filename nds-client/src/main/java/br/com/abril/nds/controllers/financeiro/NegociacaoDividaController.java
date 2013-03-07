@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +19,6 @@ import br.com.abril.nds.client.vo.CalculaParcelasVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.client.vo.NegociacaoDividaVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.DiaSemanaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaDTO;
 import br.com.abril.nds.dto.NegociacaoDividaPaginacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCalculaParcelas;
@@ -44,8 +41,6 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.NegociacaoDividaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -100,7 +95,10 @@ public class NegociacaoDividaController extends BaseController {
 	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA)
 	public void index(){
 		
-		Integer qntdParcelas = this.distribuidorService.obter().getNegociacaoAteParcelas();
+		Integer qntdParcelas = this.distribuidorService.negociacaoAteParcelas();
+		
+		qntdParcelas = (qntdParcelas == null ? 0 : qntdParcelas);
+		
 		List<Integer> parcelas = new ArrayList<Integer>();
 		
 		for(int i = 1; i <= qntdParcelas; i++){
@@ -161,187 +159,15 @@ public class NegociacaoDividaController extends BaseController {
 	}
 	
 	@Path("/calcularParcelas.json")
-	public void calcularParcelas(FiltroCalculaParcelas filtro) {
-		
-		List<CalculaParcelasVO> listParcelas = new ArrayList<CalculaParcelasVO>();
-		
-		Double valorParcela = filtro.getValorSelecionado() / filtro.getQntdParcelas();
-		
-		Date dataBase = new Date();
-		
-		Date dataParcela = null;
-		
-		for (int i = 0; i < filtro.getQntdParcelas(); i++) {
-			CalculaParcelasVO parcela = new CalculaParcelasVO();
-			
-			parcela.setNumParcela(Integer.toString(i+1));
-			parcela.setParcela(CurrencyUtil.formatarValor(valorParcela));
-			
-			dataParcela =
-				getDataParcela(dataBase, filtro.getPeriodicidade(), filtro.getSemanalDias(),
-							   filtro.getQuinzenalDia1(), filtro.getQuinzenalDia2(), filtro.getMensalDia());
-			
-			parcela.setDataVencimento(DateUtil.formatarDataPTBR(dataParcela));
-			
-			dataBase = dataParcela;
-			
-			Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
-			
-			Double encargos = 0.0;
-			
-			if( !filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE) && (filtro.getIsentaEncargos()!= null && !filtro.getIsentaEncargos()) )
-				encargos = calcularEncargos(valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()),filtro.getNumeroCota(), banco);
-						
-			parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
-			
-			parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela + encargos));
-				
-			listParcelas.add(parcela);	
-		}
-			
-		
-		this.result.use(Results.json()).from(listParcelas, "result").recursive().serialize();
+	public void calcularParcelas(FiltroCalculaParcelas filtro) {		
+		this.result.use(Results.json()).from(negociacaoDividaService.calcularParcelas(filtro), "result").recursive().serialize();
 	}
 	
-	private Double calcularEncargos(Double valorParcela, Date dataVencimento, Integer numeroCota, Banco banco) {
-		
-		Double encargos = 0.0;
-		
-		BigDecimal juros = cobrancaService.calcularJuros(banco, cotaService.obterPorNumeroDaCota(numeroCota), 
-				BigDecimal.valueOf(valorParcela), dataVencimento, new Date());
-		
-		BigDecimal multas = cobrancaService.calcularMulta(banco, cotaService.obterPorNumeroDaCota(numeroCota), 
-					distribuidorService.obter(), BigDecimal.valueOf(valorParcela));
-		
-		encargos = juros.add(multas).doubleValue();
-				
-		return encargos;
+	@Path("/recalcularParcelas.json")
+	public void recalcularParcelas(FiltroCalculaParcelas filtro, List<CalculaParcelasVO> parcelas) {		
+		this.result.use(Results.json()).from(negociacaoDividaService.recalcularParcelas(filtro,parcelas), "result").recursive().serialize();
 	}
-
-
-	private Date getDataParcela(Date dataBase, TipoFormaCobranca periodicidade, List<DiaSemanaDTO>semanalDias,
-								Integer quinzenalDia1, Integer quinzenalDia2, Integer diaMensal) {
-		
-		Calendar proximoDia = DateUtil.toCalendar(dataBase);
-		
-		int mesBase = proximoDia.get(Calendar.MONTH);
-		
-		switch(periodicidade) {
-			
-			case DIARIA:
-				return DateUtil.adicionarDias(dataBase, 1);
-				
-			case SEMANAL:
-				
-				if(semanalDias == null || semanalDias.isEmpty()) {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING,
-												 "Dia(s) da semana não selecionado(s).");
-				}
-				
-				while(true) {
-					
-					proximoDia = DateUtil.adicionarDias(proximoDia, 1);
-					
-					for(DiaSemanaDTO dia : semanalDias) {
-						
-						if(proximoDia.get(Calendar.DAY_OF_WEEK) == dia.getNumDia()) 
-							
-							return proximoDia.getTime();												
-					}
-				}
-			
-			case QUINZENAL:
-				
-				if(quinzenalDia1 == null || quinzenalDia1.compareTo(0) == 0
-						|| quinzenalDia2 == null || quinzenalDia2.compareTo(0) == 0) {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING,
-												 "Dia(s) quinzenal(ais) inválido(s).");
-				}
-				
-				if (quinzenalDia1.compareTo(31) == 1
-						|| quinzenalDia2.compareTo(31) == 1) {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING,
-												 "Dia(s) quinzenal(ais) não deve(m) ser maior do que 31.");
-				}
-				
-				if (quinzenalDia1.compareTo(quinzenalDia2) >= 0) {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING,
-						 "O 1º dia deve ser menor que o 2º.");
-				}
-				
-				while (true) {
-					
-					if (quinzenalDia1 > proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH)){
-						
-						quinzenalDia1 = proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH);
-					}
-					
-					proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia1);
-					
-					if (proximoDia.getTime().compareTo(dataBase) == 1) {
-						
-						return proximoDia.getTime();
-					}
-					
-					if (quinzenalDia2 > proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH)){
-						
-						quinzenalDia2 = proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH);
-					}
-					
-					proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia2);
-					
-					if (proximoDia.getTime().compareTo(dataBase) == 1) {
-						
-						return proximoDia.getTime();
-					}
-
-					mesBase++;
-					
-					proximoDia.set(Calendar.MONTH, mesBase);
-				}
-			
-			case MENSAL:
-				
-				if(diaMensal == null || diaMensal.compareTo(0) == 0) {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING,
-												 "Dia do mês inválido.");
-				}
-				
-				if (diaMensal.compareTo(31) == 1) {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING,
-												 "Dia do mês não deve ser maior do que 31.");
-				}
-				
-				while (true) {
-					
-					if (diaMensal > proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH)){
-						
-						proximoDia.set(Calendar.DAY_OF_MONTH, proximoDia.getActualMaximum(Calendar.DAY_OF_MONTH));
-					} else {
-						
-						proximoDia.set(Calendar.DAY_OF_MONTH, diaMensal);
-					}
-					
-					if (proximoDia.getTime().compareTo(dataBase) == 1) {
-						
-						return proximoDia.getTime();
-					}
-
-					mesBase++;
-					
-					proximoDia.set(Calendar.DAY_OF_MONTH, 1);
-					proximoDia.set(Calendar.MONTH, mesBase);
-				}
-		}
-		
-		return null;
-	}
+	
 	
 	@Path("/exportar")
 	public void exportar(FileType fileType) throws IOException {
@@ -472,7 +298,7 @@ public class NegociacaoDividaController extends BaseController {
 		byte[] arquivo = this.negociacaoDividaService.imprimirNegociacao(idNegociacao);
 		
 		this.httpServletResponse.setContentType("application/pdf");
-		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=negociacao.pdf");
+		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=negociacao_"+idNegociacao+".pdf");
 		this.httpServletResponse.getOutputStream().write(arquivo);
 		this.httpServletResponse.getOutputStream().close();
 		

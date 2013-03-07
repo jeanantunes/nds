@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -55,7 +54,6 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
-import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TXTUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -131,7 +129,9 @@ public class ConferenciaEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
 		
-		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(distribuidorService.obter().getDataOperacao()));
+		this.result.include(
+				"dataOperacao", 
+				DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 		
 		limparDadosSessao();
 		carregarComboBoxEncalhe();
@@ -968,7 +968,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			boolean isUtilizaBoleto = dtoDoc.isUtilizaSlipBoleto();
 			
-			boolean isUtilizaSlip = true;//TODO: voltar apos testes...dtoDoc.isUtilizaSlip();
+			boolean isUtilizaSlip = dtoDoc.isUtilizaSlip();
 			
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			

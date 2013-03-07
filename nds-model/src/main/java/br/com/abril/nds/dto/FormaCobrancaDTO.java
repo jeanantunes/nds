@@ -34,6 +34,7 @@ public class FormaCobrancaDTO {
 	Integer diaDoMes;
 	Integer primeiroDiaQuinzenal;
 	Integer segundoDiaQuinzenal;
+	
 	boolean domingo;
 	boolean segunda;
 	boolean terca;

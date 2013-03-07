@@ -1,8 +1,10 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,7 @@ public class GrupoServiceImpl implements GrupoService {
 	private CotaRepository cotaRepository;
 	
 	@Autowired
-	private EnderecoService enderecoServcie;
+	private EnderecoService enderecoService;
 	
 	@Override
 	@Transactional
@@ -48,17 +50,7 @@ public class GrupoServiceImpl implements GrupoService {
 			
 			dto.setDiasSemana(new ArrayList<DiaSemana>());
 			
-			StringBuilder dias = null;
-						
-			for(DiaSemana dia :  grupo.getDiasRecolhimento()){
-				if(dias == null)
-					dias = new StringBuilder();					
-				else
-					dias.append(" - ");
-				
-				dto.getDiasSemana().add(dia);
-				dias.append(dia.getDescricaoDiaSemana());
-			}
+			StringBuilder dias = montarStringDiasRecolhimento(grupo.getDiasRecolhimento(), dto);
 						
 			dto.setIdGrupo(grupo.getId());
 			dto.setNome(grupo.getNome()==null? "":grupo.getNome());
@@ -70,6 +62,27 @@ public class GrupoServiceImpl implements GrupoService {
 		}
 		
 		return gruposDTO;
+	}
+
+	private StringBuilder montarStringDiasRecolhimento(Set<DiaSemana> diasRecolhimento, GrupoCotaDTO dto) {
+		
+		StringBuilder dias = null;
+		
+		List<DiaSemana> diasOrdenados = new ArrayList<DiaSemana>(diasRecolhimento);
+		
+		Collections.sort(diasOrdenados);
+		
+		for(DiaSemana dia : diasOrdenados){
+			if(dias == null)
+				dias = new StringBuilder();					
+			else
+				dias.append(" - ");
+			
+			dto.getDiasSemana().add(dia);
+			dias.append(dia.getDescricaoDiaSemana());
+		}
+		
+		return dias;
 	}
 
 	@Transactional
@@ -144,14 +157,8 @@ public class GrupoServiceImpl implements GrupoService {
 
 	@Override
 	@Transactional
-	public void salvarGrupoMunicipios(Long idGrupo, List<String> idMunicipios,
+	public void salvarGrupoMunicipios(Long idGrupo, List<String> municipios,
 			String nome, List<DiaSemana> diasSemana) {
-		
-		HashSet<String> municipios = new HashSet<String>();
-		
-		for(String id : idMunicipios) {
-			municipios.add(enderecoServcie.buscarLocalidadePorIbge(id));
-		}
 		
 		GrupoCota grupo;
 		
@@ -164,23 +171,18 @@ public class GrupoServiceImpl implements GrupoService {
 		grupo.setNome(nome);
 		grupo.setDiasRecolhimento(new HashSet<DiaSemana>(diasSemana));
 		grupo.setTipoGrupo(TipoGrupo.MUNICIPIO);
-		//grupo.setMunicipios(municipios);
+		grupo.setMunicipios(new HashSet<String>(municipios));
 		
 		grupoRepository.merge(grupo);
 	}
 
 	@Override
 	@Transactional
-	public List<Long> obterMunicipiosDoGrupo(Long idGrupo) {
+	public List<String> obterMunicipiosDoGrupo(Long idGrupo) {
 
 		GrupoCota grupo = grupoRepository.buscarPorId(idGrupo);
-		
-		List<Long> ids = new ArrayList<Long>();
-		/*		
-		for(Localidade local : grupo.getMunicipios())
-			ids.add(local.get_id());
-			*/	
-		return ids;
+	
+		return new ArrayList<String>(grupo.getMunicipios());
 	}
 
 	@Override

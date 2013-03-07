@@ -221,7 +221,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
 
-		int peb = produtoEdicaoLancamento.getPeb() == 0 ? produtoEdicaoLancamento.getPeb() : produtoEdicaoLancamento.getProduto().getPeb();
+		int peb = produtoEdicaoLancamento.getPeb() == 0 ? produtoEdicaoLancamento.getProduto().getPeb() : produtoEdicaoLancamento.getPeb();
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(input.getDataMovimento());
