@@ -14,12 +14,14 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.VendaProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -40,6 +42,8 @@ public class VendaProdutoController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroVendaProduto";
 	
+	private static final String FILTRO_DETALHE_SESSION_ATTRIBUTE = "filtroDetalheVendaProduto";
+	
 	private Result result;
 	
 	@Autowired
@@ -47,6 +51,9 @@ public class VendaProdutoController extends BaseController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@Autowired
 	private VendaProdutoService vendaProdutoService;
@@ -105,11 +112,9 @@ public class VendaProdutoController extends BaseController {
 	
 	@Post
 	@Path("/pesquisarLancamentoEdicao")
-	public void pesquisarLancamentoEdicao(FiltroVendaProdutoDTO filtro,String sortorder, String sortname, int page, int rp){
+	public void pesquisarLancamentoEdicao(FiltroDetalheVendaProdutoDTO filtro,String sortorder, String sortname, int page, int rp){
 		
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
-		
-		this.tratarFiltro(filtro);
+		this.tratarFiltroDetalhe(filtro);
 		
 		TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> tableModel = efetuarConsultaLancamentoEdicao(filtro);
 		
@@ -121,36 +126,19 @@ public class VendaProdutoController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
-	private TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> efetuarConsultaLancamentoEdicao(FiltroVendaProdutoDTO filtro) {
+	private TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> efetuarConsultaLancamentoEdicao(FiltroDetalheVendaProdutoDTO filtro) {
 		 
-		List<LancamentoPorEdicaoDTO> listaAux =  this.vendaProdutoService.buscaLancamentoPorEdicao(filtro);		
-		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao = obterListaComPeriodos(listaAux);
+		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao =  this.vendaProdutoService.buscaLancamentoPorEdicao(filtro);
 		
 		TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>> tableModel = new TableModel<CellModelKeyValue<LancamentoPorEdicaoDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaLancamentoPorEdicao));
 		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		tableModel.setPage(1);
 		
 		tableModel.setTotal(listaLancamentoPorEdicao.size());
 		
 		return tableModel;
-	}
-
-	private List<LancamentoPorEdicaoDTO> obterListaComPeriodos(List<LancamentoPorEdicaoDTO> listaAux) {
-		
-		List<LancamentoPorEdicaoDTO> listaLancamentoPorEdicao = new ArrayList<LancamentoPorEdicaoDTO>();
-		
-		int cont = 1;
-		if(!listaAux.isEmpty()){
-			for(LancamentoPorEdicaoDTO dto: listaAux){
-				dto.setPeriodo(cont+"º");
-				listaLancamentoPorEdicao.add(dto);
-				cont++;
-			}			
-		}
-		
-		return listaLancamentoPorEdicao; 
 	}
 
 	private void validarEntrada(FiltroVendaProdutoDTO filtro) {
@@ -165,31 +153,71 @@ public class VendaProdutoController extends BaseController {
 	@Get
 	public void exportar(FileType fileType, String tipoExportacao) throws IOException {
 		
-		FiltroVendaProdutoDTO filtro = (FiltroVendaProdutoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroVendaProdutoDTO filtroVenda = (FiltroVendaProdutoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		FiltroDetalheVendaProdutoDTO filtroDetalhe = (FiltroDetalheVendaProdutoDTO) session.getAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE);
 		
 		if(tipoExportacao.equals("principal")){
-			List<VendaProdutoDTO> listaDTOParaExportacao = vendaProdutoService.buscaVendaPorProduto(filtro);
+			List<VendaProdutoDTO> listaDTOParaExportacao = this.vendaProdutoService.buscaVendaPorProduto(filtroVenda);
 			
 			if(listaDTOParaExportacao.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("venda_produto", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("venda_produto", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroVenda, null, 
 					listaDTOParaExportacao, VendaProdutoDTO.class, this.httpResponse);
 			
 		}else if(tipoExportacao.equals("popup")){
-			List<LancamentoPorEdicaoDTO> listaAux = this.vendaProdutoService.buscaLancamentoPorEdicao(filtro);
-			List<LancamentoPorEdicaoDTO> lista = obterListaComPeriodos(listaAux);
+			List<LancamentoPorEdicaoDTO> lista = this.vendaProdutoService.buscaLancamentoPorEdicao(filtroDetalhe);
 			
 			if(lista.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
 			}
 			
-			FileExporter.to("lancamento_edicao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+			FileExporter.to("lancamento_edicao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroDetalhe, null, 
 					lista, LancamentoPorEdicaoDTO.class, this.httpResponse);
 		}
 		
 		result.nothing();
+	}
+	
+	private void montarFiltroVendaProduto(FiltroVendaProdutoDTO filtro) {
+		
+		if (filtro != null) {
+			
+			if (filtro.getIdFornecedor() != null) {
+				
+				Fornecedor fornecedor =
+					this.fornecedorService.obterFornecedorPorId(filtro.getIdFornecedor());
+				
+				if (fornecedor != null) {
+					
+					filtro.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
+				}
+			}
+
+			if (filtro.getCodigo() != null) {
+				
+				String nomeProduto =
+					this.produtoService.obterNomeProdutoPorCodigo(filtro.getCodigo());
+				
+				filtro.setNomeProduto(nomeProduto);
+			}
+		}
+	}
+	
+	private void montarFiltroDetalheVendaProduto(FiltroDetalheVendaProdutoDTO filtro) {
+		
+		if (filtro != null) {
+			
+			if (filtro.getCodigo() != null) {
+				
+				String nomeProduto =
+					this.produtoService.obterNomeProdutoPorCodigo(filtro.getCodigo());
+				
+				filtro.setNomeProduto(nomeProduto);
+			}
+		}
 	}
 	
 	private void carregarComboFornecedores() {
@@ -215,7 +243,16 @@ public class VendaProdutoController extends BaseController {
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 		
+		this.montarFiltroVendaProduto(filtroAtual);
+		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+	}
+	
+	private void tratarFiltroDetalhe(FiltroDetalheVendaProdutoDTO filtroAtual) {
+		
+		this.montarFiltroDetalheVendaProduto(filtroAtual);
+		
+		session.setAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE, filtroAtual);
 	}
 
 }
