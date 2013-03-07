@@ -14,6 +14,7 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
@@ -214,26 +215,22 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		}
 		
 		Query query = this.getSession().createSQLQuery(sql.toString());
-		
-		
-		
-		query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
-		
-		((SQLQuery) query).addScalar("idCota");
-		((SQLQuery) query).addScalar("numeroCota");
-		((SQLQuery) query).addScalar("colaboradorName");
-		((SQLQuery) query).addScalar("boxName");
-		((SQLQuery) query).addScalar("roteiroName");
-		((SQLQuery) query).addScalar("rotaName");
-		((SQLQuery) query).addScalar("fechado");
-		((SQLQuery) query).addScalar("postergado");
-		((SQLQuery) query).addScalar("dataEncalhe");
-		
+
+		((SQLQuery) query).addScalar("idCota", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		((SQLQuery) query).addScalar("colaboradorName", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("boxName", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("roteiroName", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("rotaName", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("fechado", StandardBasicTypes.BOOLEAN);
+		((SQLQuery) query).addScalar("postergado", StandardBasicTypes.BOOLEAN);
+		((SQLQuery) query).addScalar("dataEncalhe", StandardBasicTypes.DATE);
+
 		query.setParameter("dataEncalhe", dataEncalhe);
-		
 		query.setParameter("principal", true);
-		
 		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
+
+		query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
 
 		query.setFirstResult(page);
 
