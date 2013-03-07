@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
@@ -25,12 +25,8 @@ public interface ParciaisService {
 	 *            - Quantidade de períodos
 	 * @param usuario
 	 *            - Usuário
-	 * @param peb
-	 *            - Período em banca (dias) - caso nulo, será obtido do
-	 *            ProdutoEdicao
 	 */
-	void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos,
-			Usuario usuario, Integer peb);
+	void gerarPeriodosParcias(Long idProdutoEdicao, Integer qtdePeriodos,Usuario usuario);
 
 	/**
 	 * Cria novos período parcial para determinada edição de um produto
@@ -41,15 +37,11 @@ public interface ParciaisService {
 	 *            - Quantidade de períodos
 	 * @param usuario
 	 *            - Usuário
-	 * @param peb
-	 *            - Período em banca (dias) - caso nulo, será obtido do
-	 *            ProdutoEdicao
+	 *            
 	 * @param distribuidor
 	 *            - Distribuídor
 	 */
-	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao,
-			Integer qtdePeriodos, Usuario usuario, Integer peb,
-			Distribuidor distribuidor);
+	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao,Integer qtdePeriodos, Usuario usuario);
 
 	/**
 	 * Altera data de Período de Lancamento Parcial
@@ -79,5 +71,12 @@ public interface ParciaisService {
 	 */
 	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento,
 			Date dataRecolhimento, Long idProdutoEdicao);
+	
+	/**
+	 * Atualiza a quantidade de reparte do próximo lançamento parcial
+	 * 
+	 * @param lancamento
+	 */
+	void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento);
 
 }

@@ -287,8 +287,13 @@ public class ContaCorrenteCotaController extends BaseController {
 		for (ConsignadoCotaDTO consignado : listaConsignadoCota) {
 			 key = consignado.getNomeFornecedor();
 			 valor = consignado.getTotal();
-			if(mapFornecedores.containsKey(key)){				
-				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
+			if(mapFornecedores.containsKey(key) && valor != null){
+				valor = mapFornecedores.get(key).getValorTotal().add(valor);
+			}
+			
+			if (valor == null){
+				
+				valor = BigDecimal.ZERO;
 			}
 			
 			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
@@ -454,8 +459,8 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		for(ConsultaVendaEncalheDTO eDTO : encalheDTOs){
 			
-			eDTO.setPrecoComDesconto(eDTO.getPrecoComDesconto().setScale(2,1));
-			eDTO.setTotal(eDTO.getTotal().setScale(2,1));
+			eDTO.setPrecoComDesconto( (eDTO.getPrecoComDesconto()==null)?BigDecimal.ZERO:eDTO.getPrecoComDesconto().setScale(2,1));
+			eDTO.setTotal( (eDTO.getTotal()==null)?BigDecimal.ZERO:eDTO.getTotal().setScale(2,1));
 		}
 
 		TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaVendaEncalheDTO>>();

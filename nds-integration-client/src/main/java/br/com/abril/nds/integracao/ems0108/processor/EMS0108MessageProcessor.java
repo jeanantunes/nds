@@ -100,6 +100,14 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 				}
 				if (null != lancamento) {
 					
+					if (lancamento.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO || lancamento.getStatus() == StatusLancamento.BALANCEADO_RECOLHIMENTO) {
+						ndsiLoggerFactory.getLogger().logWarning(
+								message,
+								EventoExecucaoEnum.ERRO_INFRA,
+								String.format( "Registro não será atualizado pois já está em balanceamento / balanceado. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+						return;
+					}
+					
 					if (!lancamento.getDataRecolhimentoDistribuidor().equals(input.getDataLancamentoRecolhimentoProduto() )) {
 					
 						if (lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO)) {
@@ -213,7 +221,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
 
-		int peb = produtoEdicaoLancamento.getPeb() == 0 ? produtoEdicaoLancamento.getPeb() : produtoEdicaoLancamento.getProduto().getPeb();
+		int peb = produtoEdicaoLancamento.getPeb() == 0 ? produtoEdicaoLancamento.getProduto().getPeb() : produtoEdicaoLancamento.getPeb();
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(input.getDataMovimento());

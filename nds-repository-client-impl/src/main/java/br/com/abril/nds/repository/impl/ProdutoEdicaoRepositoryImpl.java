@@ -19,6 +19,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -1221,10 +1222,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produto.codigo as codigoProduto, ");
 		hql.append(" produto.nome as nomeProduto, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
-//		hql.append(" CAMPO PERIODO DEPENDENDO DE JTRAC ");
+		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
-		hql.append(" lancamento.reparte as repartePrevisto, ");
-		hql.append(" (estoqueProduto.qtdeDevolucaoFornecedor - movimentos.qtde) as qtdeVendas,");
+		hql.append(" sum(lancamento.reparte) as repartePrevisto, ");
+		hql.append(" sum(ifnull(estoqueProduto.qtdeDevolucaoFornecedor,0)  - movimentos.qtde) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa ");
 		
@@ -1237,7 +1238,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" LEFT JOIN produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 		
 		hql.append(" WHERE ");
-//		hql.append(" tipoMovimento.id = 21 and ");
+		hql.append(" tipoMovimento.id = 13 and ");
 	
 		if (filtro.getProdutoDto() != null) {
 			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
@@ -1259,6 +1260,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
 		} 
 		
+		hql.append("GROUP BY produtoEdicao.numeroEdicao");
+		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
@@ -1273,6 +1276,54 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		for (String key : parameters.keySet()) {
 			query.setParameter(key, parameters.get(key));
 		}
+	}
+
+
+	@Override
+	public ProdutoEdicaoDTO obterHistoricoProdutoEdicao(String codigoProduto, Long numeroEdicao, Integer numeroCota) {
+		
+		if (codigoProduto.isEmpty() || numeroEdicao == 0 || numeroCota == 0) {
+			return null;
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" sum(movimentos.qtde) as reparte, ");
+		hql.append(" sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as qtdeVendas ");
+		
+		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
+//		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		
+		hql.append(" WHERE ");
+		hql.append(" movimentos.tipoMovimento.id = 21 and ");
+		
+		hql.append(" produto.codigo = :codigoProduto ");
+		parameters.put("codigoProduto", codigoProduto);
+		
+		hql.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ");
+		parameters.put("numeroEdicao", numeroEdicao);
+	
+		hql.append(" and cota.numeroCota = :numeroCota ");
+		parameters.put("numeroCota", numeroCota);
+		
+		hql.append(" GROUP BY estoqueProdutoCota.cota ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		this.setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
+		
+		return (ProdutoEdicaoDTO) query.uniqueResult();
 	}
 	
 	/*@Override

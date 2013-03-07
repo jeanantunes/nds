@@ -28,7 +28,6 @@ import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -146,8 +145,10 @@ public class MatrizRecolhimentoController extends BaseController {
 	private Integer tratarSemana(Integer numeroSemana, Date dataPesquisa) {
 
 		if(numeroSemana==null && dataPesquisa!=null) {
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			return DateUtil.obterNumeroSemanaNoAno(dataPesquisa, distribuidor.getInicioSemana().getCodigoDiaSemana());
+			
+			return DateUtil.obterNumeroSemanaNoAno(
+					dataPesquisa, 
+					this.distribuidorService.inicioSemana().getCodigoDiaSemana());
 		}
 		
 		return numeroSemana;
@@ -156,8 +157,10 @@ public class MatrizRecolhimentoController extends BaseController {
 	private Date tratarData(Integer numeroSemana, Date dataPesquisa) {
 
 		if(numeroSemana!=null && dataPesquisa==null) {
-			Distribuidor distribuidor = this.distribuidorService.obter();
-			return DateUtil.obterDataDaSemanaNoAno(numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+			
+			return DateUtil.obterDataDaSemanaNoAno(
+					numeroSemana, 
+					this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
 		}
 		
 		return dataPesquisa;
@@ -353,7 +356,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 			
-			processarBalanceamento(listaProdutoRecolhimento, balanceamentoRecolhimento.isSemanaRecolhimento(),
+			processarBalanceamento(listaProdutoRecolhimento,
 								   paginacao, sortname);
 		} else {
 			
@@ -752,13 +755,12 @@ public class MatrizRecolhimentoController extends BaseController {
 	/**
 	 * Método que processa os balanceamentos para exibição no grid.
 	 * 
-	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento 
-	 * @param isSemanaRecolhimento - flag que indica se a semana atual é a semana de recolhimento
+	 * @param listaProdutoRecolhimento - lista de produtos de recolhimento
 	 * @param paginacao - paginação
 	 * @param sortname - nome da coluna para ordenação
 	 */
 	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento,
-										boolean isSemanaRecolhimento, PaginacaoVO paginacao, String sortname) {
+										PaginacaoVO paginacao, String sortname) {
 		
 		
 		
@@ -791,7 +793,8 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			valorDesconto = produtoRecolhimentoDTO.getDesconto() != null ? produtoRecolhimentoDTO.getDesconto() : BigDecimal.ZERO;
 			
-			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100D))));
+			//precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100D))));
+			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto));
 			
 			
 			produtoRecolhimentoVO.setPrecoDesconto(precoDesconto);
@@ -816,14 +819,14 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setDataRecolhimento(
 				produtoRecolhimentoDTO.getDataRecolhimentoPrevista());
 			
-			produtoRecolhimentoVO.setEncalheSede( produtoRecolhimentoDTO.getExpectativaEncalheSede()==null ? BigDecimal.ZERO :
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheSede(), 2));
+			produtoRecolhimentoVO.setEncalheSede(
+				produtoRecolhimentoDTO.getExpectativaEncalheSede());
 			
-			produtoRecolhimentoVO.setEncalheAtendida( produtoRecolhimentoDTO.getExpectativaEncalheAtendida()==null ? BigDecimal.ZERO :
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAtendida(), 2));
+			produtoRecolhimentoVO.setEncalheAtendida(
+				produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
 				
-			produtoRecolhimentoVO.setEncalheAlternativo( produtoRecolhimentoDTO.getExpectativaEncalheAlternativo()==null ? BigDecimal.ZERO :
-				MathUtil.round(produtoRecolhimentoDTO.getExpectativaEncalheAlternativo(), 2));
+			produtoRecolhimentoVO.setEncalheAlternativo(
+				produtoRecolhimentoDTO.getExpectativaEncalheAlternativo());
 			
 			produtoRecolhimentoVO.setEncalhe(
 				produtoRecolhimentoDTO.getExpectativaEncalhe());
@@ -831,6 +834,10 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setValorTotal(produtoRecolhimentoDTO.getValorTotal());
 			
 			produtoRecolhimentoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
+			
+			produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
+				produtoRecolhimentoDTO.isPossuiChamada()
+				|| produtoRecolhimentoDTO.isBalanceamentoConfirmado());
 			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
 		}
@@ -932,16 +939,16 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		produtoRecolhimentoFormatado.setEncalheSede(
-			(produtoRecolhimento.getEncalheSede() != null) ? produtoRecolhimento.getEncalheSede().toString() : null);
+			(produtoRecolhimento.getEncalheSede() != null) ? MathUtil.round(produtoRecolhimento.getEncalheSede(), 0).toString() : null);
 		
 		produtoRecolhimentoFormatado.setEncalheAtendida(
-			(produtoRecolhimento.getEncalheAtendida() != null) ? produtoRecolhimento.getEncalheAtendida().toString() : null);
+			(produtoRecolhimento.getEncalheAtendida() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAtendida(), 0).toString() : null);
 		
 		produtoRecolhimentoFormatado.setEncalheAlternativo(
-			(produtoRecolhimento.getEncalheAlternativo() != null) ? produtoRecolhimento.getEncalheAlternativo().toString() : null);
+			(produtoRecolhimento.getEncalheAlternativo() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAlternativo(), 0).toString() : null);
 			
 		produtoRecolhimentoFormatado.setEncalhe(
-			(produtoRecolhimento.getEncalhe() != null) ? Integer.toString(produtoRecolhimento.getEncalhe().intValue()) : null);
+			(produtoRecolhimento.getEncalhe() != null) ? MathUtil.round(produtoRecolhimento.getEncalhe(), 0).toString() : null);
 		
 		if (produtoRecolhimento.getValorTotal() != null) {
 			produtoRecolhimentoFormatado.setValorTotal(CurrencyUtil.formatarValor(produtoRecolhimento.getValorTotal()));
@@ -1041,15 +1048,8 @@ public class MatrizRecolhimentoController extends BaseController {
 			}
 		}
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor == null) {
-			
-			throw new RuntimeException("Dados do distribuidor inexistentes!");
-		}
-		
 		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
-			numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataBalanceamento);
+			numeroSemana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), dataBalanceamento);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -1241,9 +1241,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		}
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = new ResultadoResumoBalanceamentoVO();
-		
-		resultadoResumoBalanceamento.setBloquearBotoes(
-			balanceamentoRecolhimento.isSemanaRecolhimento());
 		
 		resultadoResumoBalanceamento.setListaResumoPeriodoBalanceamento(resumoPeriodoBalanceamento);
 		

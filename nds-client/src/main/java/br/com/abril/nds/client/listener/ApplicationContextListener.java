@@ -19,7 +19,10 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
+import br.com.abril.nds.client.job.AjusteReparteJob;
 import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
+import br.com.abril.nds.client.job.RankingFaturamentoJob;
+import br.com.abril.nds.client.job.RankingSegmentoJob;
 import br.com.abril.nds.util.PropertiesUtil;
 import br.com.abril.nds.util.QuartzUtil;
 
@@ -62,7 +65,10 @@ public class ApplicationContextListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 
 		this.agendarIntegracaoOperacionalDistribuidor();
-
+		this.agendaExeclusaoAjusteReparte();
+		this.agendarExclusaoDeEstudos();
+		this.agendarGeracaoRankings();
+		
 		try {
 			StdSchedulerFactory.getDefaultScheduler().start();
 		} catch (SchedulerException e) {
@@ -116,10 +122,6 @@ public class ApplicationContextListener implements ServletContextListener {
 	}
 	
 	
-	/*
-	 * Efetua o agendamento do serviço de integração operacional do
-	 * distribuidor.
-	 */
 	private void agendarExclusaoDeEstudos() {
 
 		try {
@@ -157,4 +159,95 @@ public class ApplicationContextListener implements ServletContextListener {
 		}
 	}
 
+	
+	private void agendarGeracaoRankings(){
+		final String groupName = "gerarRankingGroup";
+		
+		QuartzUtil.removeJobsFromGroup(groupName);
+		
+		PropertiesUtil propertiesUtil = new PropertiesUtil(
+				"integracao-distribuidor.properties");
+		
+		
+		String intervaloExecucaoGeracaoRanking = propertiesUtil
+				.getPropertyValue("intervalo.execucao.geracao.ranking");
+		
+		JobDetail jobRankingFaturamento = newJob(RankingFaturamentoJob.class)
+				.withIdentity(RankingFaturamentoJob.class.getName(), groupName)
+				.build();
+		
+		JobDetail jobRankingSegmento= newJob(RankingSegmentoJob.class)
+				.withIdentity(RankingSegmentoJob.class.getName(), groupName)
+				.build();
+		
+		
+		CronTrigger cronTriggerRankingFaturamento = newTrigger()
+				.withIdentity("gerarRankingFaturamentoTrigger", groupName)
+				.withSchedule(
+						cronSchedule(intervaloExecucaoGeracaoRanking))
+				.build();
+		
+		CronTrigger cronTriggerRankingSegmento = newTrigger()
+				.withIdentity("gerarRankingSegmentoTrigger", groupName)
+				.withSchedule(
+						cronSchedule(intervaloExecucaoGeracaoRanking))
+				.build();
+		
+		Scheduler scheduler = null;
+		try {
+			scheduler = StdSchedulerFactory.getDefaultScheduler();
+			scheduler.scheduleJob(jobRankingFaturamento, cronTriggerRankingFaturamento);
+			scheduler.scheduleJob(jobRankingSegmento, cronTriggerRankingSegmento);
+		} catch (SchedulerException e) {
+			logger.fatal("Falha ao inicializar agendador do Quartz", e);
+
+			throw new RuntimeException(e);
+		}
+		
+		
+	}
+
+	
+	/*
+	 * Efetua o agendamento do serviço de exclusão de ajuste de reparte.
+	 * 
+	 */
+	private void agendaExeclusaoAjusteReparte() {
+
+		try {
+
+			String groupName = "integracaoGroup";
+
+			QuartzUtil.removeJobsFromGroup(groupName);
+
+			PropertiesUtil propertiesUtil = new PropertiesUtil(
+					"integracao-distribuidor.properties");
+
+			String intervaloExecucao = propertiesUtil
+					.getPropertyValue("intervalo.execucao.ajuste.reparte");
+
+			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+
+			JobDetail job = newJob(AjusteReparteJob.class)
+					.withIdentity(AjusteReparteJob.class.getName(), groupName)
+					.build();
+
+			CronTrigger cronTrigger = newTrigger()
+					.withIdentity("ajusteReparteTrigger", groupName)
+					.withSchedule(
+							cronSchedule(intervaloExecucao))
+					.build();
+
+			scheduler.scheduleJob(job, cronTrigger);
+
+			scheduler.start();
+
+		} catch (SchedulerException se) {
+
+			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+
+			throw new RuntimeException(se);
+		}
+	}
+	
 }

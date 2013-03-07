@@ -304,7 +304,7 @@ function floatToPrice(field) {
     var part = price.split(".");
     return part[0].split("").reverse().reduce(function(acc, price, i, orig) {
         return  price + (i && !(i % 3) ? "." : "") + acc;
-    }, "") + "," + part[1];
+    }, "") + "," + (part[1]+"0").substr(0, 2);
     
 }
 
@@ -364,7 +364,6 @@ function Cnpj(v){
 	return v;
 }
 
-
 /*Permite apenas número no campo input[type=text] 
  * Adicionar no onkeydown do input()
  * */
@@ -385,4 +384,3 @@ function onlyNumeric(event){
             }   
         }
 }
-

@@ -12,8 +12,6 @@ var produtoController = $.extend(true, {
 		this.iniciarGrid();
 		$( "#tabProduto", this.workspace).tabs();
 		
-		$("#fieldSegmentacao", produtoController.workspace).hide();
-		
 		$(".bt_arq", this.workspace).hide();
 
 	},
@@ -258,14 +256,7 @@ var produtoController = $.extend(true, {
 		
 		$(".habilitarCampoInterface", produtoController.workspace).attr('disabled',!habilitar);
 		
-		if(!habilitar){
-			$("#fieldSegmentacao", produtoController.workspace).show();
-		}
-		else{
-			$("#fieldSegmentacao", produtoController.workspace).hide();
-		}
-		
-		$(".habilitarCampoInterfaceSegmentacao", produtoController.workspace).attr('disabled',habilitar);
+		$(".habilitarCampoInterfaceSegmentacao", produtoController.workspace).attr('disabled',!habilitar);
 	},
 	
 	carregarProdutoEditado : function(id) {

@@ -432,7 +432,7 @@ public class MapaAbastecimentoController extends BaseController {
 		
 		Entregador entregador = entregadorService.buscarPorId(filtro.getIdEntregador());
 				
-		result.include("distribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+		result.include("distribuidor", distribuidorService.obterRazaoSocialDistribuidor());
 		
 		result.include("entregador", entregador);
 		
@@ -448,6 +448,9 @@ public class MapaAbastecimentoController extends BaseController {
 		
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		filtro.getPaginacao().setPaginaAtual(null);
+		
+		filtro.getPaginacao().setSortColumn("nomeEdicao");
+		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
 		
 		MapaCotaDTO mapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorCota(filtro);
 		setaNomeParaImpressao();
@@ -474,7 +477,7 @@ public class MapaAbastecimentoController extends BaseController {
 		MapaProdutoCotasDTO produtoCotaMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 		setaNomeParaImpressao();
 		
-		Integer qtdMaxRow = 35;
+		Integer qtdMaxRow = 30;
 
 		List<MapaProdutoCotasDTO> maps = getMapaProdutoCotasDTO(produtoCotaMapa);
 
@@ -485,7 +488,7 @@ public class MapaAbastecimentoController extends BaseController {
 	private List<MapaProdutoCotasDTO> getMapaProdutoCotasDTO(MapaProdutoCotasDTO produtoCotaMapa) 
 			throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 
-		Integer maxPerPage = QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA * 35;
+		Integer maxPerPage = QTD_MAX_COLUMN_IMPRESSAO_PRODUTO_X_COTA * 30;
 		
 		int pageBreak = 0;
 		
@@ -510,11 +513,9 @@ public class MapaAbastecimentoController extends BaseController {
 					maps.add(mapaProdutoCotaDTO);
 				}
 				
-				newMap = new HashMap<Integer, Integer>();
+				newMap = new TreeMap<Integer, Integer>();
 				
 				pageBreak++;
-		
-				continue;
 			}
 		
 			newMap.put(entry.getKey(), entry.getValue());
@@ -532,7 +533,7 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	private void setaNomeParaImpressao() {
-		result.include("nomeDistribuidor", distribuidorService.obter().getJuridica().getRazaoSocial());
+		result.include("nomeDistribuidor", distribuidorService.obterRazaoSocialDistribuidor());
 	}
 	
 	public void impressaoFalha(String mensagemErro){

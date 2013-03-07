@@ -1,6 +1,8 @@
 var negociacaoDividaController = $.extend(true, {
 
 	path : contextPath + '/financeiro/negociacaoDivida/',
+	
+	situacaoCota: null,
 
 	init : function() {
 		negociacaoDividaController.initGridNegociacao();
@@ -21,11 +23,12 @@ var negociacaoDividaController = $.extend(true, {
 		$('#mensalDia', negociacaoDividaController.workspace).numeric();
 		
 		$("#negociacaoDivida_numCota", negociacaoDividaController.workspace).numeric();
+		this.situacaoCota = null;
 	},
 
 	pesquisarCota : function(numeroCota) {
-		
-		if (!numeroCota || numeroCota != ''){
+		var self =  this;
+		if (numeroCota || numeroCota != ''){
 			negociacaoDividaController.esconderGridEBotoes();
 			
 			$.postJSON(contextPath + '/cadastro/cota/pesquisarPorNumero',
@@ -33,6 +36,7 @@ var negociacaoDividaController = $.extend(true, {
 					function(result) {
 						$('#negociacaoDivida_statusCota').html(result.status);
 						$('#negociacaoDivida_nomeCota').html(result.nome);
+						self.situacaoCota =  result.situacaoCadastro;
 					},
 					function() {
 						$('#negociacaoDivida_statusCota').html('');
@@ -79,8 +83,7 @@ var negociacaoDividaController = $.extend(true, {
 			preProcess: negociacaoDividaController.retornoPesquisaDetalhes
 		});
 			
-		$(".negociacaoDetalhesGrid").flexReload();
-		
+		$(".negociacaoDetalheGrid", this.workspace).flexReload();
 		
 	},
 	
@@ -123,22 +126,25 @@ var negociacaoDividaController = $.extend(true, {
 			
 			return data;
 		}
-		
-		var total = '0,00';
-		
+
+		var total = 0;
+
 		$.each(data.rows, function(index, value) {
 			
 			var detalhes = '<a href="javascript:;" onclick="negociacaoDividaController.popup_detalhe('+value.cell.idCobranca+');" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
 			var acao = '<input name="checkDividasSelecionadas" value="'+ value.cell.idCobranca +'" type="checkbox" class="negociacaoCheck" onclick="negociacaoDividaController.verificarCheck()"></input> ';
 			value.cell.detalhes = detalhes;
 			value.cell.acao = acao;
+
+			total += parseFloat( formatMoneyValue(value.cell.total) ); 
 			
-			total = sumPrice(value.cell.total, total);
+			value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
+			value.cell.vlDivida = floatToPrice(formatMoneyValue(value.cell.vlDivida));
+			
 		});
 
-		$('#total', this.workspace).html(total);
-		
-		
+		$('#total', this.workspace).html(floatToPrice(total.toFixed(2)));
+
 		return data;
 	},
 	
@@ -271,14 +277,19 @@ var negociacaoDividaController = $.extend(true, {
             name: "filtro.numeroCota",
             value: $('#negociacaoDivida_numCota').val()
         });
+		
+		params.push({
+            name: "filtro.numeroCota",
+            value: $('#negociacaoDivida_numCota').val()
+        });
+		
 				
 		return params;
 	},
 	
 	popup_detalhe : function(idCobranca) {
-		negociacaoDividaController.pesquisarDetalhes(idCobranca);
-		$(".negociacaoDetalheGrid").flexReload();
-		$("#dialog-detalhe").dialog({
+		this.pesquisarDetalhes(idCobranca);
+		$("#dialog-detalhe", this.workspace).dialog({
 			resizable: false,
 			height:420,
 			width:700,
@@ -287,7 +298,8 @@ var negociacaoDividaController = $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-detalhe", this.workspace).parents("form")
 		});
 	},
 	
@@ -312,12 +324,15 @@ var negociacaoDividaController = $.extend(true, {
 					
 					$("#comissaoAtualCota",negociacaoDividaController.workspace).val("");
 					$("#negociacaoPorComissao",negociacaoDividaController.workspace).attr("disabled", true);
+					$("#negociacaoPorComissao-tr",negociacaoDividaController.workspace).hide();
+					
 				} else {
 					
 					$("#comissaoAtualCota",negociacaoDividaController.workspace).val(floatToPrice(result[1]));
 					$("#comissaoUtilizar",negociacaoDividaController.workspace).val(floatToPrice(result[0]));
 					
 					$("#negociacaoPorComissao",negociacaoDividaController.workspace).attr("disabled", false);
+					$("#negociacaoPorComissao-tr",negociacaoDividaController.workspace).show();
 					
 					negociacaoDividaController.utilizarAlterado();
 				}
@@ -341,8 +356,11 @@ var negociacaoDividaController = $.extend(true, {
 							 $("#dialog-NegociacaoformaPgto", negociacaoDividaController.workspace).dialog("close");
 						}
 					},
-					 form: $("#formaPgtoForm", negociacaoDividaController.workspace)
-	
+					form: $("#formaPgtoForm", negociacaoDividaController.workspace),
+					close: function(event, ui) {
+						
+						negociacaoDividaController.pesquisar();
+					}
 				});
 			} ,
 			null
@@ -450,7 +468,7 @@ var negociacaoDividaController = $.extend(true, {
 					},
 					{
 						name: "parcelas["+ index +"].numeroCheque",
-						value: priceToFloat($("[name=numCheque]", negociacaoDividaController.workspace)[index].value)
+						value: $("[name=numCheque]", negociacaoDividaController.workspace)[index].value
 					},
 					{
 						name: "parcelas["+ index +"].movimentoFinanceiroCota.valor",
@@ -488,7 +506,8 @@ var negociacaoDividaController = $.extend(true, {
 	            	$("#botaoImprimirNegociacao", negociacaoDividaController.workspace).show();
 	            	
 	            	if (!$("#negociacaoPorComissao", negociacaoDividaController.workspace).is(":checked") &&
-	            			$("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked")){
+	            			$("#checknegociacaoAvulsa", negociacaoDividaController.workspace).is(":checked") &&
+	            			(tipoPgto == 'BOLETO' || tipoPgto == 'BOLETO_EM_BRANCO')){
 	            		
 	            		$("#botaoImprimirBoleto", negociacaoDividaController.workspace).show();
 	            	}
@@ -511,7 +530,7 @@ var negociacaoDividaController = $.extend(true, {
 			
 			var tabela = $('#tabelaCheque').get(0);
 			
-			var totalParcela = '0,00';
+			var totalParcela = 0;
 			
 			while(tabela.rows.length > 1){
 				tabela.deleteRow(1);
@@ -532,12 +551,12 @@ var negociacaoDividaController = $.extend(true, {
 					tabela.rows[i].cells[j].style.textAlign = "center";
 				}
 				
-				coluna1.innerHTML = '<td><input value="'+row.dataVencimento+'" type="text" name="vencimentoCheque" id="vencimentoCheque'+i+'"style="width:100px;" readonly="readonly"/></td>';
+				coluna1.innerHTML = '<td><input value="'+row.dataVencimento+'" type="text" name="vencimentoCheque" id="vencimentoCheque'+i+'"style="width:100px;"/></td>';
 				coluna2.innerHTML = '<td><input value="'+row.parcela+'" type="text" name="valorCheque" id="valor'+i+'" style="width:100px; text-align:right;" onchange="negociacaoDividaController.recalcularTotalCheque()"/></td>';
-				coluna3.innerHTML = '<td><input value="'+i+'" type="text" name="numCheque" id="numCheque'+i+'"  style="width:100px;" readonly="readonly"/></td>';
+				coluna3.innerHTML = '<td><input value="'+i+'" type="text" name="numCheque" id="numCheque'+i+'"  style="width:100px;"/></td>';
 				coluna4.innerHTML = '<td align="center"><a onclick="negociacaoDividaController.excluirCheque('+i+')" href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" border="0" align="Excluir Linha" /></a></td>';
 			
-				totalParcela = sumPrice(result[i-1].parcela, totalParcela);
+				totalParcela += parseFloat( formatMoneyValue(result[i-1].parcela) );
 				
 			});
 			
@@ -550,7 +569,7 @@ var negociacaoDividaController = $.extend(true, {
 			linha.insertCell(3);
 			
 			colunaParcela.style.textAlign = "RIGHT";
-			colunaParcela.innerHTML = '<div id="totalCheque"> ' + 'R$ '+totalParcela + '</div>';
+			colunaParcela.innerHTML = '<div id="totalCheque"> ' + 'R$ '+ floatToPrice(totalParcela.toFixed(2)) +'</div>';
 			
 		}
 	},
@@ -573,13 +592,22 @@ var negociacaoDividaController = $.extend(true, {
 	
 	geraLinhasParcelas : function(result) {
 		
+		negociacaoDividaController.parcelas = result;
+		
 		$('#encargos').show();
 		
 		if($('#selectPagamento').val() != ""){
 			var tabela = $('#tabelaParcelas').get(0);
-			var totalParcela = '0,00';
-			var totalEncargos = '0,00';
-			var totalParcTotal = '0,00';
+			var totalParcela = 0;
+			var totalEncargos = 0;
+			var totalParcTotal = 0;
+			
+			
+			if(this.situacaoCota == 'ATIVO'){				
+				$('#header_table_Ativar', negociacaoDividaController.workspace).hide();
+			}else{
+				$('#header_table_Ativar', negociacaoDividaController.workspace).show();
+			}
 			
 			while(tabela.rows.length > 2){
 				tabela.deleteRow(2);
@@ -591,18 +619,24 @@ var negociacaoDividaController = $.extend(true, {
 				var coluna3 = linha.insertCell(2);
 				var coluna4 = linha.insertCell(3);
 				var coluna5 = linha.insertCell(4);
-				var coluna6 = linha.insertCell(5);
 				
+				if(this.situacaoCota != 'ATIVO'){
+					var coluna6 = linha.insertCell(5);
+				}
 				for (var j=0; j < tabela.rows[i+1].cells.length; j++){
 					tabela.rows[i+1].cells[j].style.textAlign = "center";
 				}
 
 				coluna1.innerHTML = result[i-1].numParcela+'&ordf;';
-				coluna2.innerHTML = '<input type="text" name="vencimentoParcela" id="vencimentoParcela'+i+'" style="width: 70px;" value="'+result[i-1].dataVencimento+'"/>';
-				coluna3.innerHTML = '<input type="text" name="valorParcela" id="parcela'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcela+'" disabled="disabled" />';
+				coluna2.innerHTML = '<input type="text" name="vencimentoParcela" id="vencimentoParcela'+i+'" style="width: 70px;" value="'+result[i-1].dataVencimento+'" onchange="negociacaoDividaController.recalcularParcelas('+(i-1)+',this,true)"/>';
+				coluna3.innerHTML = '<input type="text" name="valorParcela" id="parcela'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcela+'" onchange="negociacaoDividaController.recalcularParcelas('+(i-1)+',this, false)" />';
 				coluna4.innerHTML = '<input type="text" name="encargoParcela" id="encargos'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].encargos+'" disabled="disabled"/>';
 				coluna5.innerHTML = '<input type="text" name="parcTotal" id="parcTotal'+i+'" style="width: 60px; text-align: right;" value="'+result[i-1].parcTotal+'"/ disabled="disabled">';
-				coluna6.innerHTML = '<input type="radio" name="radioAtivarApos" id="ativarAoPagar'+i+'" value="'+ i +'" />';
+				
+				if(this.situacaoCota != 'ATIVO'){
+					coluna6.innerHTML = '<input type="radio" name="radioAtivarApos" id="ativarAoPagar'+i+'" value="'+ i +'" onchange="negociacaoDividaController.ativarAoPagarOnchange('+(i-1)+',this)" />';
+				}
+				
 				
 				totalParcela = sumPrice(result[i-1].parcela, totalParcela);
 				totalEncargos = sumPrice(result[i-1].encargos, totalEncargos);
@@ -619,13 +653,67 @@ var negociacaoDividaController = $.extend(true, {
 			linha.insertCell(5);
 			
 			colunaParcela.style.textAlign = "center";
-			colunaParcela.innerHTML = 'R$ '+totalParcela;
+			colunaParcela.innerHTML = 'R$ '+ totalParcela;
 			colunaEncargos.style.textAlign = "center";
-			colunaEncargos.innerHTML = 'R$ '+totalEncargos;
+			colunaEncargos.innerHTML = 'R$ '+ totalEncargos;
 			colunaParcTotal.style.textAlign = "center";
-			colunaParcTotal.innerHTML = 'R$ '+totalParcTotal;
+			colunaParcTotal.innerHTML = 'R$ ' + totalParcTotal;
+			this.totalParcelas = totalParcTotal;
 			
 		}
+	},
+	ativarAoPagarOnchange:function(idParcela,input){		
+		var parcela = negociacaoDividaController.parcelas[idParcela];
+		parcela.ativarAoPagar = $(input).val();
+	},
+	
+	recalcularParcelas:function(idParcela,input,porData){
+		var parcela = negociacaoDividaController.parcelas[idParcela];
+		if(!porData){			
+			parcela.modificada = true;
+			parcela.parcela = $(input).val();
+		}else{
+			parcela.dataVencimento = $(input).val();
+		}
+		var params = negociacaoDividaController.getParamsCalcularParcelas();
+		$.each(negociacaoDividaController.parcelas, function(index, value){
+			if(!value.ativarAoPagar){
+				value.ativarAoPagar = "";
+			}
+			
+			params.push(
+				{
+					name: "parcelas["+ index +"].dataVencimento",
+					value: value.dataVencimento
+				},
+				{
+					name: "parcelas["+ index +"].parcela",
+					value: value.parcela
+				},
+				{
+					name: "parcelas["+ index +"].ativarAoPagar",
+					value: value.ativarAoPagar
+				},
+				{
+					name: "parcelas["+ index +"].modificada",
+					value: value.modificada
+				},
+				{
+					name: "parcelas["+ index +"].numParcela",
+					value: value.numParcela
+				}
+			);
+		});
+		$.postJSON(contextPath + '/financeiro/negociacaoDivida/recalcularParcelas.json',
+				params,
+				function(result) {
+					if($('#selectPagamento',negociacaoDividaController.workspace).val() == 'CHEQUE'){
+						negociacaoDividaController.geraLinhasCheque(result);
+					}else{
+						negociacaoDividaController.geraLinhasParcelas(result);
+					}
+				}
+		);		
 	},
 
 	limparPopupFormaPgto : function() {
