@@ -59,6 +59,24 @@ public class AjusteReparteServiceImpl implements AjusteReparteService  {
 		return tipoSegProdRepo.buscarTodos(); 
 	}
 
+	@Override
+	@Transactional
+	public TipoSegmentoProduto buscarSegmentoPorID(Long id) {
+		return tipoSegProdRepo.buscarPorId(id);
+	}
+
+	@Override
+	@Transactional
+	public int qtdAjusteSegmento(Long idCota) {
+		return this.ajusteRepository.qtdAjusteSegmento(idCota);
+	}
+
+	@Override
+	@Transactional
+	public List<AjusteReparteDTO> buscarPorIdCota(Long numCota) {
+		return this.ajusteRepository.buscarPorIdCota(numCota);
+	}
+
 //	@Override
 //	public void excluirAjustePorCota(Cota cota) {
 //		ajusteRepository.removerPorCota(cota);
