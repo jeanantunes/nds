@@ -716,6 +716,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 			}
 		}
 		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(Integer.valueOf(numeroCota));
+		
+		contrato.setIdCota(cota.getId());
 		contrato.setTempFile(arquivo);
 		contrato.setRecebido(true);
 		this.session.setAttribute(CONTRATO_UPLOADED, contrato);

@@ -854,7 +854,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		contrato.setDataTermino(contratoDTO.getTermino());
 		contrato.setExigeDocumentacaoSuspencao(cota.isSugereSuspensao());
 		contrato.setCota(cota);
-		contrato.setPrazo(Integer.parseInt(contratoDTO.getPrazo()));
+		contrato.setPrazo((contratoDTO.getPrazo() != null) ? Integer.parseInt(contratoDTO.getPrazo()) : null);
 		contrato.setRecebido(isRecebido);
 		
 		this.contratoService.salvarContrato(contrato);
