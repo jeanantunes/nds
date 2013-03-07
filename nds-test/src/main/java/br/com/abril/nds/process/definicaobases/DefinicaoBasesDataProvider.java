@@ -22,7 +22,7 @@ public abstract class DefinicaoBasesDataProvider {
 	}*/
 	
 	ProdutoEdicaoBase produtoEdicao = new ProdutoEdicaoBase();
-	produtoEdicao.setCodigoProduto(61310001L);
+	produtoEdicao.setCodigoProduto("61310001");
 	
 	List<ProdutoEdicaoBase> edicaos = new ArrayList<ProdutoEdicaoBase>();
 	edicaos.add(produtoEdicao);

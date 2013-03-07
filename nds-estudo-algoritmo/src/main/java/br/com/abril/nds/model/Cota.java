@@ -8,6 +8,7 @@ public class Cota extends GenericDTO<Cota> {
     private static final long serialVersionUID = -2770873222155652560L;
 
     private Long id;
+    private Long idEstudo;
     private List<ProdutoEdicao> edicoesRecebidas;
     private ClassificacaoCota classificacao;
     private BigDecimal reparteCalculado;
@@ -29,16 +30,13 @@ public class Cota extends GenericDTO<Cota> {
     private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceAjusteCota;
     private BigDecimal indiceTratamentoRegional;
+    private List<Cota> equivalente;
+    private BigDecimal indiceAjusteEquivalente;
 
     private Long numero;
 
     public Cota() {
-	vendaMedia = BigDecimal.ZERO;
-	vendaMediaMaisN = BigDecimal.ZERO;
 	reparteCalculado = BigDecimal.ZERO;
-	reparteMinimo = BigDecimal.ZERO;
-	somaReparteEdicoesAbertas = BigDecimal.ZERO;
-	percentualEncalheMaximo = BigDecimal.ZERO;
 	classificacao = ClassificacaoCota.SemClassificacao;
     }
 
@@ -111,6 +109,10 @@ public class Cota extends GenericDTO<Cota> {
 	this.reparteMinimo = reparteMinimo;
     }
 
+    /**
+     * Venda da edição mais recente fechada da cota.
+     * @return {@link BigDecimal}
+     */
     public BigDecimal getVendaEdicaoMaisRecenteFechada() {
 	if (vendaEdicaoMaisRecenteFechada == null) {
 	    // Busca para encontrar qual é a venda da edição mais recente fechada
@@ -124,7 +126,7 @@ public class Cota extends GenericDTO<Cota> {
 	}
 	return vendaEdicaoMaisRecenteFechada;
     }
-
+    
     public void setVendaEdicaoMaisRecenteFechada(BigDecimal vendaEdicaoMaisRecenteFechada) {
 	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
     }
@@ -262,8 +264,36 @@ public class Cota extends GenericDTO<Cota> {
 	return recebeReparteComplementar;
     }
 
+    public Long getIdEstudo() {
+	return idEstudo;
+    }
+
+    public void setIdEstudo(Long idEstudo) {
+	this.idEstudo = idEstudo;
+    }
+
     public void setRecebeReparteComplementar(boolean recebeReparteComplementar) {
 	this.recebeReparteComplementar = recebeReparteComplementar;
+    }
+
+    public List<Cota> getEquivalente() {
+	return equivalente;
+    }
+
+    public void setEquivalente(List<Cota> equivalente) {
+	this.equivalente = equivalente;
+    }
+
+    public boolean isNova() {
+	return (this.equivalente != null && !this.equivalente.isEmpty());
+    }
+
+    public BigDecimal getIndiceAjusteEquivalente() {
+	return indiceAjusteEquivalente;
+    }
+
+    public void setIndiceAjusteEquivalente(BigDecimal indiceAjusteEquivalente) {
+	this.indiceAjusteEquivalente = indiceAjusteEquivalente;
     }
 
     @Override

@@ -5,6 +5,7 @@
 bin
 target
 META-INF/
+Servers/
 .svn*
 /NDS_replica.eap
 .DS_Store

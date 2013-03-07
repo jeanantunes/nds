@@ -573,6 +573,5 @@ public class FechamentoEncalheController extends BaseController {
 		}
 		
 		this.result.use(Results.nothing());
-	}
-		
+	}		
 }

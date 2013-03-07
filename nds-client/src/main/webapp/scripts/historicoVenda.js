@@ -15,16 +15,9 @@ var historicoVendaController = $.extend(true, {
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####
 
 		$("#componente").change(function(){
-			selectedItem = $("#componente").val();
-			
-			if(selectedItem != 'Selecione...'){
-				carregarCombo(contextPath + "/distribuicao/historicoVenda/carregarElementos", 
-					  {"componente":selectedItem},
+			  carregarCombo(contextPath + "/distribuicao/historicoVenda/carregarElementos", 
+					  {"componente":$("#componente").val()},
 			            $("#elemento", this.workspace), null, null);
-			} else {
-				$('#elemento').html('');
-				$('#elemento').append("<option value='-1'>Selecione...</option>");
-			}
 		});
 		
 		// ### POR PRODUTO ###
@@ -39,12 +32,16 @@ var historicoVendaController = $.extend(true, {
 		});
 
 		$('#numeroCota').change(function (){
-			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomePessoa');
+			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');
 		});
 		
-		$('#nomePessoa').keyup(function (){
-			pesquisaCota.autoCompletarPorNome('#nomePessoa');
+		$('#nomeCota').keyup(function (){
+			pesquisaCota.autoCompletarPorNome('#nomeCota');
 		});
+		
+//		$('#nomeCota').blur(function (){
+//			pesquisaCota.pesquisarPorNomeCota('#numeroCota', '#nomeCota');
+//		});
 		
 		$('#filtroCodigoProduto').change(function (){
 			pesquisaProduto.pesquisarPorCodigoProduto('#filtroCodigoProduto', '#filtroNomeProduto', {}, false, undefined, historicoVendaController.errorCallBack);
@@ -60,118 +57,22 @@ var historicoVendaController = $.extend(true, {
 		
 		// PESQUISA POR REPARTE
 		
-		$('#pesquisaPorQtdReparte').click(function (){
+		$('#pesquisaPorReparte').click(function (){
 
-			url = contextPath + "/distribuicao/historicoVenda/pesquisaCotaPorQtdReparte";
+			url = contextPath + "/distribuicao/historicoVenda/pesquisaCotaPorReparte";
 			
 			historicoVendaController.pesquisarCotasHistorico(url);
 		});
 		
-		$('#pesquisaPorQtdVenda').click(function (){
-
-			url = contextPath + "/distribuicao/historicoVenda/pesquisaCotaPorQtdVenda";
-			
-			historicoVendaController.pesquisarCotasHistorico(url);
-		});
+		// EXPORTAÇÃO
+//		$('#porCotaGerarPDF').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=PDF&porCota=true");
+//		
+//		$('#porCotaGerarXLS').attr('href', contextPath + "/distribuicao/classificacaoNaoRecebida/exportar?fileType=XLS&porCota=true");
 		
-		$('#pesquisaPorPercentualVenda').click(function (){
-
-			url = contextPath + "/distribuicao/historicoVenda/pesquisaCotaPorPercentualVenda";
-			
-			historicoVendaController.pesquisarCotasHistorico(url);
-		});
-
-		$('#pesquisaPorComponenentes').click(function (){
-			
-			url = contextPath + "/distribuicao/historicoVenda/pesquisaCotaPorComponentes";
-			
-			historicoVendaController.pesquisarCotasHistorico(url);
-		});
-		
-		$('#pesquisaCotaPorNumeroOuNome').click(function (){
-
-			url = contextPath + "/distribuicao/historicoVenda/pesquisaCotaPorNumeroOuNome";
-			
-			historicoVendaController.pesquisarCotasHistorico(url);
-		});
-		
-		$('#analiseHistorico').click(function (){
-			var grids = historicoVendaController.Grids,
-				params = [];
-
-			if (!grids.PesqHistoricoGrid.tableModel.rows || grids.PesqHistoricoGrid.tableModel.rows.length == 0) {
-				
-				exibirMensagem("WARNING", ["Nenhuma cota foi informada"]);
-				
-				return;
-			}
-			
-			url = contextPath + "/distribuicao/historicoVenda/analiseHistorico";
-			
-			for ( var index in grids.PesqHistoricoGrid.tableModel.rows) {
-				row = grids.PesqHistoricoGrid.tableModel.rows[index];
-				params.push({name : "cotas["+index+"].numeroCota", value :  row.cell.numeroCota});
-			}
-			
-			for ( var i in grids.EdicaoSelecionadaGrid.tableModel.rows) {
-				row = grids.EdicaoSelecionadaGrid.tableModel.rows[i];
-				params.push({name : "listProdutoEdicaoDto["+i+"].numeroEdicao", value :  row.cell.numeroEdicao});
-				params.push({name : "listProdutoEdicaoDto["+i+"].codigoProduto", value :  row.cell.codigoProduto});
-			}
-			
-			$.get(url, params, function(data){
-			      if(data){ 
-			    	  $("#baseAnalise").hide();
-			    	  $('#analiseHistoricoContent').html(data);
-			    	  $('#analiseHistoricoContent').show();
-			    	  
-			    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload();
-			    	  
-			    	  // limpando conteúdo
-			    	  // tr produto
-			    	  $('#analiseHistoricoPopUpNomeProduto').html('');
-			    	  $('#analiseHistoricoPopUpNomeProduto').append('<td class="class_linha_1"><strong>Produto:</strong></td>');
-			    	  
-			    	  // tr numeroEdicao
-			    	  $('#analiseHistoricoPopUpNumeroEdicao').html('');
-			    	  $('#analiseHistoricoPopUpNumeroEdicao').append('<td class="class_linha_1"><strong>Edição:</strong></td>');
-			    	  
-			    	  // tr dataLancamento
-			    	  $('#analiseHistoricoPopUpDatalancamento').html('');
-			    	  $('#analiseHistoricoPopUpDatalancamento').append('<td width="136" class="class_linha_2"><strong>Data Lançamento:</strong></td>');
-			    	  
-			    	  // tr reparte
-			    	  $('#analiseHistoricoPopUpReparte').html('');
-			    	  $('#analiseHistoricoPopUpReparte').append('<td class="class_linha_1"><strong>Reparte:</strong></td>');
-			    	  
-			    	  // tr venda
-			    	  $('#analiseHistoricoPopUpVenda').html('');
-			    	  $('#analiseHistoricoPopUpVenda').append('<td class="class_linha_2"><strong>Venda:</strong></td>');
-			    	  
-			    	  // carregando popUp_analiseHistoricoVenda
-			    	  for ( var i in grids.EdicaoSelecionadaGrid.tableModel.rows) {
-			    		  row = grids.EdicaoSelecionadaGrid.tableModel.rows[i];
-			    		  
-			    	      $('#analiseHistoricoPopUpNomeProduto').append('<td class="class_linha_1">'+row.cell.nomeProduto+'</td>');
-			    	      $('#analiseHistoricoPopUpNumeroEdicao').append('<td class="class_linha_1">'+row.cell.numeroEdicao+'</td>');
-			    	      $('#analiseHistoricoPopUpDatalancamento').append('<td width="130" align="center" class="class_linha_2">' + row.cell.dataLancamentoFormatada + '</td>');
-			    	      $('#analiseHistoricoPopUpReparte').append('<td align="right" class="class_linha_1">' + row.cell.repartePrevisto +'</td>');
-			    	      $('#analiseHistoricoPopUpVenda').append('<td align="right" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
-			    	  }
-			    	  
-			    	  qtdEdicoesSelecionadas = 6 - grids.EdicaoSelecionadaGrid.tableModel.rows.length; 
-
-			    	  // por estética de layout, insiro elementos td vazios
-			    	  for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
-			    		  $('#analiseHistoricoPopUpNomeProduto').append('<td class="class_linha_1"></td>');
-			    	      $('#analiseHistoricoPopUpNumeroEdicao').append('<td class="class_linha_1"></td>');
-			    	      $('#analiseHistoricoPopUpDatalancamento').append('<td width="130" align="center" class="class_linha_2"></td>');
-			    	      $('#analiseHistoricoPopUpReparte').append('<td align="right" class="class_linha_1"></td>');
-			    	      $('#analiseHistoricoPopUpVenda').append('<td align="right" class="class_linha_1"></td>');
-			    	  }
-			      };
-			    });
-		});
+		// URLs usadas para requisições post (Inserção e Deleção)
+		historicoVendaController.Url = {
+				// URLs aqui
+		},
 		
 		historicoVendaController.Util = {
 			getFiltroByForm : function(idForm){
@@ -209,9 +110,7 @@ var historicoVendaController = $.extend(true, {
 						events : [{
 							type : "onchange",
 							functionName : "historicoVendaController.addSelectedRowToGrid",
-							parameters : [{
-								name : "rowId"
-							}]
+							parameter : "rowId"
 						}]
 					},
 					{
@@ -222,14 +121,7 @@ var historicoVendaController = $.extend(true, {
 						events : [{
 							functionName : "historicoVendaController.popUpCapaOpen",
 							type : "onmouseover",
-							parameters : [{
-								name : "codigoProduto",
-								type : "string"
-							},
-							{
-								name : "numeroEdicao",
-								type : "number"
-							}]
+							parameter : "codigoProduto,numeroEdicao"
 						},{
 							functionName : "historicoVendaController.popUpCapaClose",
 							type : "onmouseout",
@@ -246,7 +138,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'left'
 					},{
 						display : 'Período',
-						name : 'numeroPeriodicidade',
+						name : 'periodo',
 						width : 40,
 						sortable : true,
 						align : 'center'
@@ -264,7 +156,7 @@ var historicoVendaController = $.extend(true, {
 						align : 'right'
 					}, {
 						display : 'Venda',
-						name : 'qtdVendasFormatada',
+						name : 'qtdeVendas',
 						width : 35,
 						sortable : true,
 						align : 'right'
@@ -302,9 +194,8 @@ var historicoVendaController = $.extend(true, {
 						events : [{
 							functionName : "historicoVendaController.removeRowfromGridProduto",
 							type : "onclick",
-							parameters : [{
-								name : "rowId"
-							}]
+							parameter : "rowId"
+							
 						}]
 					}
 				],
@@ -330,19 +221,19 @@ var historicoVendaController = $.extend(true, {
 						align : 'left'
 					},{
 						display : 'Período',
-						name : 'numeroPeriodicidade',
+						name : 'periodo',
 						width : 40,
 						sortable : true,
 						align : 'center'
 					}, {
 						display : 'Reparte',
-						name : 'repartePrevisto',
+						name : 'reparte',
 						width : 40,
 						sortable : true,
 						align : 'right'
 					}, {
 						display : 'Venda',
-						name : 'qtdVendasFormatada',
+						name : 'qtdeVendas',
 						width : 40,
 						sortable : true,
 						align : 'right'
@@ -368,9 +259,7 @@ var historicoVendaController = $.extend(true, {
 						events : [{
 							functionName : "historicoVendaController.removeRowfromGridCota",
 							type : "onclick",
-							parameters : [{
-								name : "rowId"
-							}]
+							parameter : "rowId"
 						}]
 					}
 				],

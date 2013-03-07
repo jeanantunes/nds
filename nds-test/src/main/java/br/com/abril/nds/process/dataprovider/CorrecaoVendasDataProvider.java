@@ -59,8 +59,6 @@ public abstract class CorrecaoVendasDataProvider {
 		listCotaReturn.add(new Cota[] { cota });
 	    }
 
-	    listCotaReturn.add(new Cota[] { cota });
-
 	}
 
 	return listCotaReturn.iterator();
@@ -109,8 +107,6 @@ public abstract class CorrecaoVendasDataProvider {
 		listCotaReturn.add(new Cota[] { cota });
 	    }
 
-	    listCotaReturn.add(new Cota[] { cota });
-
 	}
 
 	return listCotaReturn.iterator();
@@ -158,8 +154,6 @@ public abstract class CorrecaoVendasDataProvider {
 		cota.setEdicoesRecebidas(edicoesRecebidas);
 		listCotaReturn.add(new Cota[] { cota });
 	    }
-
-	    listCotaReturn.add(new Cota[] { cota });
 
 	}
 

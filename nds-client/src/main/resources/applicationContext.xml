@@ -18,15 +18,16 @@
 	<context:component-scan base-package="br.com.abril.nds" />
 			
 	<util:properties id="properties" location="classpath:/nds-client.properties" />
-	
 	<util:properties id="queries" location="classpath:/query.properties" />
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 		
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 
+	<bean id="applicationContextProvider" class="br.com.abril.nds.util.ApplicationContextProvider"></bean>
+
 	<!-- TOMCAT -->
-	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}"/>
+	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}" />
 	
 	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
 
@@ -66,5 +67,4 @@
 	</bean>
 	
 	<tx:annotation-driven transaction-manager="transactionManager" />
-
 </beans>

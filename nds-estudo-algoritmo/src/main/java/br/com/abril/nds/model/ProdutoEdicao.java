@@ -6,17 +6,13 @@ public class ProdutoEdicao extends ProdutoEdicaoBase {
 
     private static final long serialVersionUID = 733461221142668493L;
 
+    private Long idCota;
     private BigDecimal reparte;
     private BigDecimal venda;
     private BigDecimal reparteMinimo; // Reparte mínimo configurado na tela de Mix de Produto
     private BigDecimal reparteMaximo; // Reparte máximo configurado na tela de Mix de Produto
     private BigDecimal indiceCorrecao;
     private BigDecimal vendaCorrigida;
-
-    public ProdutoEdicao() {
-	this.reparte = BigDecimal.ZERO;
-	this.venda = BigDecimal.ZERO;
-    }
 
     public BigDecimal getReparte() {
 	return reparte;
@@ -64,5 +60,13 @@ public class ProdutoEdicao extends ProdutoEdicaoBase {
 
     public void setVendaCorrigida(BigDecimal vendaCorrigida) {
 	this.vendaCorrigida = vendaCorrigida;
+    }
+
+    public Long getIdCota() {
+	return idCota;
+    }
+
+    public void setIdCota(Long idCota) {
+	this.idCota = idCota;
     }
 }

@@ -1,7 +1,7 @@
 package br.com.abril.nds.process.correcaovendas;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -27,8 +27,8 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
-	    
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
@@ -42,8 +42,8 @@ public class CorrecaoVendasTest {
 
 		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
-		assertNotNull("Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId() + " Produto : "
-			+ produtoEdicao.getIdProduto(), indiceCorrecao);
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
 
 		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
 	    }
@@ -51,8 +51,8 @@ public class CorrecaoVendasTest {
 	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
 	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
 
-	    assertNotNull("Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceCorrecaoTendencia);
-	    assertNotNull("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceVendaCrescente);
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
 
 	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
 
@@ -73,8 +73,8 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
-	    
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
@@ -88,8 +88,8 @@ public class CorrecaoVendasTest {
 
 		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
-		assertNotNull("Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId() + " Produto : "
-			+ produtoEdicao.getIdProduto(), indiceCorrecao);
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
 
 		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
 	    }
@@ -97,8 +97,8 @@ public class CorrecaoVendasTest {
 	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
 	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
 
-	    assertNotNull("Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceCorrecaoTendencia);
-	    assertNotNull("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceVendaCrescente);
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
 
 	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
 
@@ -119,8 +119,8 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
-	    
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
@@ -134,8 +134,8 @@ public class CorrecaoVendasTest {
 
 		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
-		assertNotNull("Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId() + " Produto : "
-			+ produtoEdicao.getIdProduto(), indiceCorrecao);
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
 
 		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
 	    }
@@ -143,8 +143,8 @@ public class CorrecaoVendasTest {
 	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
 	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
 
-	    assertNotNull("Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceCorrecaoTendencia);
-	    assertNotNull("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceVendaCrescente);
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
 
 	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
 
@@ -165,8 +165,8 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
-	    
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
@@ -180,8 +180,8 @@ public class CorrecaoVendasTest {
 
 		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
-		assertNotNull("Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId() + " Produto : "
-			+ produtoEdicao.getIdProduto(), indiceCorrecao);
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
 
 		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
 	    }
@@ -189,8 +189,8 @@ public class CorrecaoVendasTest {
 	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
 	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
 
-	    assertNotNull("Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceCorrecaoTendencia);
-	    assertNotNull("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceVendaCrescente);
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
 
 	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
 
@@ -211,8 +211,8 @@ public class CorrecaoVendasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
-	    
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
+
 	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
@@ -226,8 +226,8 @@ public class CorrecaoVendasTest {
 
 		BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
 
-		assertNotNull("Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId() + " Produto : "
-			+ produtoEdicao.getIdProduto(), indiceCorrecao);
+		assertNotNull(indiceCorrecao, "Indice Correcao : " + indiceCorrecao + " Cota : " + cota.getId() + " Produto Edicao : " + produtoEdicao.getId()
+			+ " Produto : " + produtoEdicao.getIdProduto());
 
 		gerarProdutoEdicaoLog(sbReporterLog, produtoEdicao);
 	    }
@@ -235,8 +235,8 @@ public class CorrecaoVendasTest {
 	    BigDecimal indiceCorrecaoTendencia = cota.getIndiceCorrecaoTendencia();
 	    BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
 
-	    assertNotNull("Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceCorrecaoTendencia);
-	    assertNotNull("Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId(), indiceVendaCrescente);
+	    assertNotNull(indiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceVendaCrescente + " Cota : " + cota.getId());
+	    assertNotNull(indiceVendaCrescente, "Indice Venda Crescente : " + indiceVendaCrescente + " Cota : " + cota.getId());
 
 	    gerarReporterLog(cota, sbReporterLog, indiceCorrecaoTendencia, indiceVendaCrescente);
 

@@ -3,7 +3,6 @@ package br.com.abril.nds.process.definicaobases;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -45,7 +44,7 @@ public class DefinicaoBasesTest {
 	}
 	Reporter.log("</ul>");
 	
-	bases.setEdicoesRecebidasParaEstudoRaw(edicoes);
+//	bases.setEdicoesRecebidasParaEstudoRaw(edicoes);
 	bases.executar();
 	List<ProdutoEdicaoBase> edicoesBase = bases.getEstudo().getEdicoesBase();
 	assertNotNull(edicoesBase);
@@ -79,7 +78,7 @@ public class DefinicaoBasesTest {
 	Reporter.log("<p>Produtos recebidas da interface:");
 	Reporter.log(produtos);
 	
-	bases.setEdicoesRecebidasParaEstudoRaw(montaListEdicoesPorProduto(produtos));
+//	bases.setEdicoesRecebidasParaEstudoRaw(montaListEdicoesPorProduto(produtos));
 	bases.executarProcesso();
 	List<ProdutoEdicaoBase> edicoesBase = bases.getEstudo().getEdicoesBase();
 	assertNotNull(edicoesBase);
@@ -109,14 +108,14 @@ public class DefinicaoBasesTest {
 	return "<td>".concat(String.valueOf(object)).concat("</td>");
     }
 
-    private List<ProdutoEdicaoBase> montaListEdicoesPorProduto(String produtos) {
-	String[] listProdutos = produtos.split(",");
-	List<ProdutoEdicaoBase> edicoes = new ArrayList<>();
-	for (String codigoProduto : listProdutos) {
-	    ProdutoEdicaoBase edicao = new ProdutoEdicaoBase();
-	    edicao.setCodigoProduto(Long.parseLong(codigoProduto));
-	    edicoes.add(edicao);
-	}
-	return edicoes;
-    }
+//    private List<ProdutoEdicaoBase> montaListEdicoesPorProduto(String produtos) {
+//	String[] listProdutos = produtos.split(",");
+//	List<ProdutoEdicaoBase> edicoes = new ArrayList<>();
+//	for (String codigoProduto : listProdutos) {
+//	    ProdutoEdicaoBase edicao = new ProdutoEdicaoBase();
+//	    edicao.setCodigoProduto(Long.parseLong(codigoProduto));
+//	    edicoes.add(edicao);
+//	}
+//	return edicoes;
+//    }
 }

@@ -48,8 +48,7 @@ function FlexGridService() {
 			inputModel,
 			parameters,
 			parametersName = [],
-			event,
-			eventObject = ", event";
+			event;
 			
 		
 		if (loadingGrid) {
@@ -84,35 +83,23 @@ function FlexGridService() {
 						
 						for ( var eventIndex in model.events) {
 							event = model.events[eventIndex];
-							parameters = "";
 							
-							if (!event.parameters) {
-								input += " " + event.type+"='" + event.functionName + "(event);'";
-							} else if(event.parameters){
-								
-								for ( var paramIndex in event.parameters) {
-									parameter = event.parameters[paramIndex];
-									
-									if (parameter.name == "rowId") {
-										parameters = row.id;
-									} else {
-										
-										if (parameter.type == "string") {
-											parameters += '"'+row.cell[parameter.name]+ '"';
-										} else {
-											parameters += row.cell[parameter.name];
-										}
-										
-										if (event.parameters.length - 1 != paramIndex) {
-											parameters += ",";
-										}
-										
+							if (!event.parameter) {
+								input += " " + event.type+"='" + event.functionName + "(event)'";
+							}else if (event.parameter == "rowId") {
+								input += " " + event.type+"='" + event.functionName + "(" + row.id + ", event)'";
+							}else{
+								parametersName = event.parameter.split(",");
+								parameters = "";
+								if (parametersName.length > 1) {
+									for ( var pIndex in parametersName) {
+										parameters += row.cell[parametersName[pIndex]] + ",";
 									}
+								}else {
+									parameters = event.paramter + ",";
 								}
 								
-								input += " " + event.type+"='" + event.functionName + "(" + parameters + eventObject + ");'";
-								
-								a = "bla";
+								input += " " + event.type+"='" + event.functionName + "(" + parameters + " event)'";
 							}
 						}
 					}

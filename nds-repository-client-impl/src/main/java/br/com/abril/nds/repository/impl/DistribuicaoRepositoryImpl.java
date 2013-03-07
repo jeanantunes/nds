@@ -68,6 +68,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		}
 	*/
 		sql.append(" order by liberado");
+		sql.append(" limit 100");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		

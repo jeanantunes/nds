@@ -10,40 +10,43 @@ import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 
 /**
- * Este processo apenas realiza um ajuste no reparte das cotas se a opção "Venda Média + n" estiver marcada na tela de Ajuste de Reparte.
- * Se estiver, ele atribui ao ReparteCalculado da cota a soma da VendaMediaFinal ou o valor informado na tela Ajuste de Reparte (se ele for
- * maior que o Pacote Padrão definido, caso contrário será atribuído o pacote padrão). 
+ * Este processo apenas realiza um ajuste no reparte das cotas se a opção
+ * "Venda Média + n" estiver marcada na tela de Ajuste de Reparte. Se estiver,
+ * ele atribui ao ReparteCalculado da cota a soma da VendaMediaFinal ou o valor
+ * informado na tela Ajuste de Reparte (se ele for maior que o Pacote Padrão
+ * definido, caso contrário será atribuído o pacote padrão).
  * <p style="white-space: pre-wrap;">SubProcessos:
- *      - N/A
+ * 	- N/A
  * Processo Pai:
- *      - N/A
+ * 	- N/A
  * 
  * Processo Anterior: {@link VendaMediaFinal}
- * Próximo Processo: {@link RedutorAutomatico}</p>
+ * Próximo Processo: {@link RedutorAutomatico}
+ * </p>
  */
 public class AjusteReparte extends ProcessoAbstrato {
 
-	public AjusteReparte(Estudo estudo) {
-		super(estudo);
-	}
-	
+    public AjusteReparte(Estudo estudo) {
+	super(estudo);
+    }
+
     @Override
     protected void executarProcesso() throws Exception {
-    	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
-    	if ((getEstudo() == null) || (getEstudo().getCotas() == null)) {
-    		throw new Exception("Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo.");
-    	}
-    	for (Cota cota : getEstudo().getCotas()) {
-    		if (cota.getVendaMediaMaisN().longValue() > 0) {
-    			BigDecimal ajusteReparte = BigDecimal.ZERO;
-    			if (cota.getVendaMediaMaisN().longValue() > getEstudo().getPacotePadrao().longValue()) {
-    				ajusteReparte = cota.getVendaMediaMaisN();
-    			} else {
-    				ajusteReparte = getEstudo().getPacotePadrao();
-    			}
-    			cota.setReparteCalculado(cota.getVendaMedia().add(ajusteReparte));
-    			cota.setClassificacao(ClassificacaoCota.ReparteFixado);
-    		}	
-    	}
+	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
+	if ((getEstudo() == null) || (getEstudo().getCotas() == null)) {
+	    throw new Exception("Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo.");
+	}
+	for (Cota cota : getEstudo().getCotas()) {
+	    if ((cota.getVendaMediaMaisN() != null) && (getEstudo().getPacotePadrao() != null) && (cota.getVendaMediaMaisN().longValue() > 0)) {
+		BigDecimal ajusteReparte = BigDecimal.ZERO;
+		if (cota.getVendaMediaMaisN().longValue() > getEstudo().getPacotePadrao().longValue()) {
+		    ajusteReparte = cota.getVendaMediaMaisN();
+		} else {
+		    ajusteReparte = getEstudo().getPacotePadrao();
+		}
+		cota.setReparteCalculado(cota.getVendaMedia().add(ajusteReparte));
+		cota.setClassificacao(ClassificacaoCota.ReparteFixado);
+	    }
+	}
     }
 }

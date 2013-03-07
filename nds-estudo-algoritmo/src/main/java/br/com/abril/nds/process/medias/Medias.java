@@ -32,9 +32,9 @@ public class Medias extends ProcessoAbstrato {
 
 	Cota cota = (Cota) super.genericDTO;
 
-	List<ProdutoEdicao> listProdutoEdicoa = cota.getEdicoesRecebidas();
+	List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
 
-	int qtdeEdicaoBase = listProdutoEdicoa.size();
+	int qtdeEdicaoBase = listProdutoEdicao.size();
 
 	BigDecimal totalPeso = BigDecimal.ZERO;
 	BigDecimal totalVendaMultiplyPeso = BigDecimal.ZERO;
@@ -44,9 +44,12 @@ public class Medias extends ProcessoAbstrato {
 	int iProdutoEdicao = 0;
 	while (iProdutoEdicao < qtdeEdicaoBase) {
 
-	    ProdutoEdicao produtoEdicao = listProdutoEdicoa.get(iProdutoEdicao);
+	    ProdutoEdicao produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
 
-	    BigDecimal peso = new BigDecimal(produtoEdicao.getPeso());
+	    BigDecimal peso = null;
+	    if (produtoEdicao.getPeso() != null) {
+		peso = new BigDecimal(produtoEdicao.getPeso());
+	    }
 	    BigDecimal vendaCorrigida = produtoEdicao.getVendaCorrigida();
 
 	    if (vendaCorrigida != null && peso != null) {
@@ -56,7 +59,6 @@ public class Medias extends ProcessoAbstrato {
 		totalPeso = totalPeso.add(peso);
 		totalVendaMultiplyPeso = totalVendaMultiplyPeso.add(vendaCorrigida.multiply(peso));
 	    }
-
 	    iProdutoEdicao++;
 	}
 
@@ -64,7 +66,6 @@ public class Medias extends ProcessoAbstrato {
 	    if (qtdeEdicaoBase < 3) {
 		vendaMediaCorrigida = totalVendaMultiplyPeso.divide(totalPeso, 2, BigDecimal.ROUND_FLOOR);
 	    } else {
-
 		BigDecimal menorValor = treeVendaPeso.firstEntry().getKey();
 		BigDecimal menorPeso = treeVendaPeso.firstEntry().getValue();
 		BigDecimal menorMultiply = menorValor.multiply(menorPeso);

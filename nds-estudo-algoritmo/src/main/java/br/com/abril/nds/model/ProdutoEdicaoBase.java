@@ -7,18 +7,26 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
     private static final long serialVersionUID = 3298542950250981102L;
 
     private Long id;
+    private Long idEstudo;
     private Long numeroEdicao;
     private Long idProduto;
-    private Long codigoProduto;
+    private String codigoProduto;
     private boolean parcial;
     private boolean edicaoAberta;
     private Integer peso;
     private Long idLancamento;
     private Date dataLancamento;
     private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
+    private Integer periodo;
+    private TipoSegmentoProduto tipoSegmentoProduto;
 
     public ProdutoEdicaoBase() {
-	this.peso = 0;
+	peso = 1;
+    }
+
+    public ProdutoEdicaoBase(String codigoProduto) {
+	this();
+	this.codigoProduto = codigoProduto;
     }
 
     public Long getId() {
@@ -53,11 +61,11 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 	this.idProduto = idProduto;
     }
 
-    public Long getCodigoProduto() {
+    public String getCodigoProduto() {
 	return codigoProduto;
     }
 
-    public void setCodigoProduto(Long codigoProduto) {
+    public void setCodigoProduto(String codigoProduto) {
 	this.codigoProduto = codigoProduto;
     }
 
@@ -101,8 +109,33 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 	this.colecao = colecao;
     }
 
+    public Long getIdEstudo() {
+	return idEstudo;
+    }
+
+    public void setIdEstudo(Long idEstudo) {
+	this.idEstudo = idEstudo;
+    }
+
     @Override
     public String toString() {
 	return String.valueOf(numeroEdicao);
     }
+
+    public Integer getPeriodo() {
+	return periodo;
+    }
+
+    public void setPeriodo(Integer periodo) {
+	this.periodo = periodo;
+    }
+
+    public TipoSegmentoProduto getTipoSegmentoProduto() {
+	return tipoSegmentoProduto;
+    }
+
+    public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
+	this.tipoSegmentoProduto = tipoSegmentoProduto;
+    }
+
 }

@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.EstudoServiceEstudo;
 
 public class EncalheMaximoTest {
 
@@ -24,7 +24,7 @@ public class EncalheMaximoTest {
 		}
 		estudo.setCotas(new ArrayList<Cota>());
 		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
+		EstudoServiceEstudo.calculate(estudo);
 		return estudo;
 	}
 	

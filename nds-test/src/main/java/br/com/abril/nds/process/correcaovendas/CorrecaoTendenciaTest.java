@@ -1,8 +1,8 @@
 package br.com.abril.nds.process.correcaovendas;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 
@@ -32,7 +32,7 @@ public class CorrecaoTendenciaTest {
 
 	    cota = (Cota) correcaoTendencia.getGenericDTO();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
 	    StringBuilder sbEstoqueLog = new StringBuilder();
 
@@ -48,7 +48,7 @@ public class CorrecaoTendenciaTest {
 	    assertNotNull(indiceCorrecaoTendencia);
 
 	    boolean assertIndiceCorrecaoTendencia = (indiceCorrecaoTendencia.compareTo(BigDecimal.ONE) == 0);
-	    assertTrue("Indice Correcao Tendencia : " + indiceCorrecaoTendencia + " Cota : " + cota.getId(), assertIndiceCorrecaoTendencia);
+	    assertTrue(assertIndiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceCorrecaoTendencia + " Cota : " + cota.getId());
 
 	    gerarCotaReporterLog(cota, sbEstoqueLog, indiceCorrecaoTendencia);
 
@@ -74,7 +74,7 @@ public class CorrecaoTendenciaTest {
 
 	    cota = (Cota) correcaoTendencia.getGenericDTO();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
 	    StringBuilder sbEstoqueLog = new StringBuilder();
 
@@ -94,7 +94,7 @@ public class CorrecaoTendenciaTest {
 
 	    boolean assertIndiceCorrecaoTendencia = (indiceCorrecaoTendencia.compareTo(oneDotTwo) == 0);
 
-	    assertTrue("Indice Correcao Tendencia : " + indiceCorrecaoTendencia + " Cota : " + cota.getId(), assertIndiceCorrecaoTendencia);
+	    assertTrue(assertIndiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceCorrecaoTendencia + " Cota : " + cota.getId());
 
 	    gerarCotaReporterLog(cota, sbEstoqueLog, indiceCorrecaoTendencia);
 
@@ -120,7 +120,7 @@ public class CorrecaoTendenciaTest {
 
 	    cota = (Cota) correcaoTendencia.getGenericDTO();
 
-	    assertNotNull(" Cota : " + cota.getId() + " nao contem edicao base ", cota.getEdicoesRecebidas());
+	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
 	    StringBuilder sbEstoqueLog = new StringBuilder();
 
@@ -140,7 +140,7 @@ public class CorrecaoTendenciaTest {
 
 	    boolean assertIndiceCorrecaoTendencia = (indiceCorrecaoTendencia.compareTo(oneDotOne) == 0);
 
-	    assertTrue("Indice Correcao Tendencia : " + indiceCorrecaoTendencia + " Cota : " + cota.getId(), assertIndiceCorrecaoTendencia);
+	    assertTrue(assertIndiceCorrecaoTendencia, "Indice Correcao Tendencia : " + indiceCorrecaoTendencia + " Cota : " + cota.getId());
 
 	    gerarCotaReporterLog(cota, sbEstoqueLog, indiceCorrecaoTendencia);
 
@@ -148,14 +148,14 @@ public class CorrecaoTendenciaTest {
 	    fail(e.getMessage());
 	}
     }
-    
+
     private void gerarProdutoEdicaoLog(StringBuilder sbEstoqueLog, ProdutoEdicao produtoEdicao) {
 	sbEstoqueLog.append("<p style='margin-left: 100px'>Produto Edicao </p>");
 	sbEstoqueLog.append("<p style='margin-left: 150px'>ID : " + produtoEdicao.getId() + "</p>");
 	sbEstoqueLog.append("<p style='margin-left: 150px'>Quantidade Recebida : " + produtoEdicao.getReparte() + "</p>");
 	sbEstoqueLog.append("<p style='margin-left: 150px'>Venda : " + produtoEdicao.getVenda() + "</p>");
     }
-    
+
     private void gerarCotaReporterLog(Cota cota, StringBuilder sbEstoqueLog, BigDecimal indiceCorrecaoTendencia) {
 	Reporter.log("<p>Cota </p>");
 	Reporter.log("<p style='margin-left: 50px'>ID : " + cota.getId() + "</p>");

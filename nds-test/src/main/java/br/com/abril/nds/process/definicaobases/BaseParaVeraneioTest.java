@@ -53,7 +53,7 @@ public class BaseParaVeraneioTest {
 	produtoEdicao.setDataLancamento(LocalDate.parse("2013-02-11").toDate());
 	produtoEdicao.setColecao(false);
 	produtoEdicao.setParcial(false);
-	produtoEdicao.setCodigoProduto(61310001L);
+	produtoEdicao.setCodigoProduto("61310001");
 	
 	return produtoEdicao;
     }

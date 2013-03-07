@@ -21,116 +21,12 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	private boolean cotasAtivas;
 	private BigInteger qtdReparteInicial;
 	private BigInteger qtdReparteFinal;
-	private BigInteger qtdVendaInicial;
-	private BigInteger qtdVendaFinal;
+	private Integer qtdVendaInicial;
+	private Integer qtdVendaFinal;
 	private BigDecimal percentualVenda;
 	private CotaDTO cotaDto;
-	private ComponentesPDV componentesPdv;
+	private ComponentesPDV componentesPdf;
 	private List<ProdutoEdicaoDTO> listProdutoEdicaoDTO;
-	private String elemento;
-	
-	
-	// utilizado para retorno de mensagem
-	private String validationMsg;
-	
-	/**
-	 * Validação de dados
-	 * 
-	 */
-	
-	public boolean validarEntradaFiltroProduto() {
-		boolean isValid = true;
-		
-		if((produtoDto.getCodigoProduto() == null || produtoDto.getCodigoProduto().trim().isEmpty()) && 
-				(produtoDto.getNomeProduto() == null || produtoDto.getNomeProduto().trim().isEmpty())) {
-			validationMsg = "Código ou nome do produto é obrigatório.";
-			isValid = false;
-		}
-		
-//		(numeroEdicao == null || numeroEdicao.equals(0)) &&
-//		(tipoClassificacaoProdutoId == null || tipoClassificacaoProdutoId.equals(0)))
-		
-		return isValid;
-	}
-	
-	public boolean validarPorQtdReparte() {
-		boolean isValid = true;
-		if (qtdReparteInicial == null || qtdReparteInicial.intValue() < 0 ) {
-			validationMsg = "Informe a quantidade de reparte inicial.";
-			isValid = false;
-		}
-		
-		else if (qtdReparteFinal == null || qtdReparteFinal.intValue() < 0 ) {
-			validationMsg = "Informe a quantidade de reparte final.";
-			isValid = false;
-		}
-		
-		else if (qtdReparteFinal.intValue() < qtdReparteInicial.intValue()) {
-			validationMsg = "A quantidade de reparte final não pode ser inferior a quantidade inicial.";
-			isValid = false;
-		}
-		
-		return isValid;
-	}
-	
-	public boolean validarPorComponentes() {
-		boolean isValid = true;
-		if (componentesPdv == null) {
-			validationMsg = "Nenhum componente foi selecionado.";			
-			isValid = false;
-		}
-		return isValid;	
-	}
-	
-	public boolean validarPorCota(){
-		boolean isValid = true;
-		if((cotaDto.getNumeroCota() == null || cotaDto.getNumeroCota() == 0) &&
-				(cotaDto.getNomePessoa() == null || cotaDto.getNomePessoa().trim().isEmpty())){
-			validationMsg = "Código ou nome da cota é obrigatório.";
-			isValid = false;
-		}
-		return isValid;
-	}
-	
-	public boolean validarListaProduto(){
-		boolean isValid = true;
-		
-		if (listProdutoEdicaoDTO == null || listProdutoEdicaoDTO.size() == 0) {
-			validationMsg = "Nenhum produto foi selecionado.";
-			isValid = false;
-		}
-		
-		return isValid;
-	}
-	
-	public boolean validarPorQtdVenda() {
-		boolean isValid = true;
-		
-		if (qtdVendaInicial == null || qtdVendaInicial.intValue() < 0 ) {
-			validationMsg = "Informe a quantidade de venda inicial.";
-			isValid = false;
-		}
-		else if (qtdVendaFinal == null || qtdVendaFinal.intValue() < 0 ) {
-			validationMsg = "Informe a quantidade de venda final.";
-			isValid = false;
-		}
-		else if (qtdVendaFinal.intValue() < qtdVendaInicial.intValue()) {
-			validationMsg = "A quantidade de venda final não pode ser inferior a quantidade inicial.";
-			isValid = false;
-		}
-		
-		return isValid;
-	}
-	
-	public boolean validarPorPercentualVenda(){
-		boolean isValid = true;
-		
-		if (percentualVenda == null || percentualVenda.doubleValue() == 0) {
-			validationMsg = "Informe um percentual de vendas.";
-			isValid = false;
-		}
-		return isValid;
-	}
 	
 	public ProdutoDTO getProdutoDto() {
 		return produtoDto;
@@ -180,19 +76,19 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 		this.qtdReparteFinal = qtdReparteFinal;
 	}
 
-	public BigInteger getQtdVendaInicial() {
+	public Integer getQtdVendaInicial() {
 		return qtdVendaInicial;
 	}
 
-	public void setQtdVendaInicial(BigInteger qtdVendaInicial) {
+	public void setQtdVendaInicial(Integer qtdVendaInicial) {
 		this.qtdVendaInicial = qtdVendaInicial;
 	}
 
-	public BigInteger getQtdVendaFinal() {
+	public Integer getQtdVendaFinal() {
 		return qtdVendaFinal;
 	}
 
-	public void setQtdVendaFinal(BigInteger qtdVendaFinal) {
+	public void setQtdVendaFinal(Integer qtdVendaFinal) {
 		this.qtdVendaFinal = qtdVendaFinal;
 	}
 
@@ -212,12 +108,12 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 		this.cotaDto = cotaDto;
 	}
 
-	public ComponentesPDV getComponentesPdv() {
-		return componentesPdv;
+	public ComponentesPDV getComponentesPdf() {
+		return componentesPdf;
 	}
 
-	public void setComponentesPdv(ComponentesPDV componentesPdf) {
-		this.componentesPdv = componentesPdf;
+	public void setComponentesPdf(ComponentesPDV componentesPdf) {
+		this.componentesPdf = componentesPdf;
 	}
 
 	public List<ProdutoEdicaoDTO> getListProdutoEdicaoDTO() {
@@ -227,22 +123,5 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	public void setListProdutoEdicaoDTO(List<ProdutoEdicaoDTO> listProdutoEdicaoDTO) {
 		this.listProdutoEdicaoDTO = listProdutoEdicaoDTO;
 	}
-
-	public String getValidationMsg() {
-		return validationMsg;
-	}
-
-	public void setValidationMsg(String validationMsg) {
-		this.validationMsg = validationMsg;
-	}
-
-	public String getElemento() {
-		return elemento;
-	}
-
-	public void setElemento(String elemento) {
-		this.elemento = elemento;
-	}
-	
 	
 }
