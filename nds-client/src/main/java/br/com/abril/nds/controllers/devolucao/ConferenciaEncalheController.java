@@ -225,8 +225,8 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	/**
-	 * Verifica se a cota cuja conferência esta sendo realizada esta salva ou com 
-	 * dados em session alterados pelo usuário
+	 * Verifica se o usuario esta iniciando (ou reiniciando) a conferência de uma cota 
+	 * sem ter salvo (ou finalizado) os dados de uma conferência em andamento.
 	 * 
 	 * @param numeroCota
 	 */
@@ -301,9 +301,11 @@ public class ConferenciaEncalheController extends BaseController {
 			this.conferenciaEncalheService.verificarChamadaEncalheCota(numeroCota);
 			
 		} catch (ConferenciaEncalheExistenteException e) {
-			
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "REABERTURA"), "result").recursive().serialize();
-		
+
+			this.result.use(CustomMapJson.class)
+			.put("IND_COTA_RECOLHE_NA_DATA", "S")
+			.put("IND_REABERTURA", "S").serialize();
+
 			return;
 		
 		} catch (ChamadaEncalheCotaInexistenteException e) {
@@ -311,9 +313,22 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para essa cota.");
 		}
 		
+		boolean indCotaComRecolhimento = conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota);
+
 		this.session.setAttribute(NUMERO_COTA, numeroCota);
 		
-		this.result.use(Results.json()).from("").serialize();
+		if(!indCotaComRecolhimento) {
+			
+			this.result.use(CustomMapJson.class)
+			.put("IND_COTA_RECOLHE_NA_DATA", "N")
+			.put("msg", "Cota não possui recolhimento planejado para a data de operação atual.").serialize();
+			
+		} else {
+			
+			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();
+			
+		}
+		
 	}
 	
 	/**

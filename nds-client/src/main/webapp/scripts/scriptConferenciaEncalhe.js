@@ -392,7 +392,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 		function(result){
 			
-			if (result.listaMensagens && result.listaMensagens[0] == "REABERTURA"){
+			if (typeof result.IND_REABERTURA != 'undefined' && result.IND_REABERTURA == 'S'){
 				
 				ConferenciaEncalhe.modalAberta = true;
 				
@@ -425,6 +425,12 @@ var ConferenciaEncalhe = $.extend(true, {
 				});
 				
 			} else {
+				
+				if(typeof result.IND_COTA_RECOLHE_NA_DATA != undefined && result.IND_COTA_RECOLHE_NA_DATA == 'N' ) {
+					
+					exibirMensagem('WARNING', [result.msg]);
+					
+				} 
 				
 				ConferenciaEncalhe.carregarListaConferencia(data);
 				

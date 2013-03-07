@@ -135,7 +135,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarReabertura", data,
 			function(result){
 				
-				if (result.listaMensagens && result.listaMensagens[0] == "REABERTURA"){
+				if (typeof result.IND_REABERTURA != 'undefined' && result.IND_REABERTURA == 'S'){
 					
 					ConferenciaEncalheCont.modalAberta = true;
 					
@@ -162,8 +162,16 @@ var ConferenciaEncalheCont = $.extend(true, {
 					});
 				} else {
 					
+					if(typeof result.IND_COTA_RECOLHE_NA_DATA != undefined && result.IND_COTA_RECOLHE_NA_DATA == 'N' ) {
+						
+						exibirMensagem('WARNING', [result.msg]);
+						
+					} 
+					
 					ConferenciaEncalheCont.carregarListaConferencia(data);
+					
 					$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
+					
 					ConferenciaEncalheCont.popup_alert();
 				}
 			}

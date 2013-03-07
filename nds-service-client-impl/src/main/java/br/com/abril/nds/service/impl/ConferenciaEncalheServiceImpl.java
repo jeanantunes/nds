@@ -579,6 +579,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return reparte;
 	}
 	
+	public boolean isCotaComReparteARecolherNaDataOperacao(Integer numeroCota) {
+		
+		BigDecimal valorTotal = obterValorTotalReparte(numeroCota, distribuidorService.obterDataOperacaoDistribuidor());
+		
+		if(BigDecimal.ZERO.compareTo(valorTotal) < 0) {
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
 	@Transactional(readOnly = true)
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
 		
