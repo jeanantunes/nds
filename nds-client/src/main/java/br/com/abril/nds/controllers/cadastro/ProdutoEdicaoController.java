@@ -73,6 +73,8 @@ public class ProdutoEdicaoController extends BaseController {
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
 
 	private static List<ItemDTO<GrupoProduto,String>> listaGrupoProduto =  new ArrayList<ItemDTO<GrupoProduto,String>>();
+	
+	private static List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
 
 	
 	/** Traz a página inicial. */
@@ -119,6 +121,17 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		result.include("listaGrupoProduto",listaGrupoProduto);
 		
+		listaStatusLancamento.clear();
+		
+		for (StatusLancamento statusLancamento : StatusLancamento.values()) {
+			
+			listaStatusLancamento.add(
+				new ItemDTO<StatusLancamento, String>(
+					statusLancamento, statusLancamento.getDescricao()));
+		}
+		
+		result.include("listaStatusLancamento", listaStatusLancamento);
+		
 		List<Brinde> brindes = brindeService.obterBrindes();
 		result.include("brindes", brindes);
     }
@@ -150,7 +163,8 @@ public class ProdutoEdicaoController extends BaseController {
 	@Post
 	@Path("/pesquisarEdicoes.json")
 	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
+			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,
+			BigDecimal precoAte , StatusLancamento situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
 		Intervalo<BigDecimal> intervaloPreco = null;
@@ -172,19 +186,19 @@ public class ProdutoEdicaoController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 			}
 			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
-		}		
-		
-		StatusLancamento statusLancamento = null;
-		for (StatusLancamento status : StatusLancamento.values()) {
-			if (status.getDescricao().equals(situacaoLancamento)) {
-				statusLancamento = status;
-			}
-		}		
+		}	
 	
 		// Pesquisar:
-		Long qtd = produtoEdicaoService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
-		if(qtd > 0){			
-			List<ProdutoEdicaoDTO> lst = produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+		Long qtd = produtoEdicaoService.countPesquisarEdicoes(
+				codigoProduto, nomeProduto, intervaloLancamento, 
+				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde);
+		
+		if(qtd > 0){		
+			
+			List<ProdutoEdicaoDTO> lst = 
+					produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, 
+							intervaloLancamento, intervaloPreco, situacaoLancamento, codigoDeBarras, 
+							brinde, sortorder, sortname, page, rp);
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		}else{
