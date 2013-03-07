@@ -17,13 +17,15 @@ import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -560,6 +562,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		BaixaManual baixaManual = new BaixaManual();
 		
 		baixaManual.setDataBaixa(pagamento.getDataPagamento());
+		baixaManual.setDataPagamento(pagamento.getDataPagamento());
 		baixaManual.setValorPago(valor);
 		baixaManual.setCobranca(cobrancaParcial);
 		baixaManual.setResponsavel(pagamento.getUsuario());
@@ -579,7 +582,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 			gerarMovimentoFinanceiroCota(
 				baixaManual, cobrancaParcial.getCota(), pagamento.getUsuario(), valor, 
 				cobrancaParcial.getDataVencimento(), pagamento.getDataPagamento(), 
-				pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO
+				pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO,
+				cobrancaParcial.getFornecedor()
 			);
 		}
 	}
@@ -625,14 +629,16 @@ public class CobrancaServiceImpl implements CobrancaService {
 				movimentoFinanceiroCota.getBaixaCobranca(), movimentoFinanceiroCota.getCota(), 
 				movimentoFinanceiroCota.getUsuario(), movimentoFinanceiroCota.getValor(), 
 				movimentoFinanceiroCota.getData(), null, 
-				movimentoFinanceiroCota.getObservacao(), GrupoMovimentoFinaceiro.DEBITO
+				movimentoFinanceiroCota.getObservacao(), GrupoMovimentoFinaceiro.DEBITO,
+				movimentoFinanceiroCota.getFornecedor()
 			);
 		}
 	}
 
 	private void gerarMovimentoFinanceiroCota(BaixaCobranca baixaCobranca, Cota cota, Usuario usuario,
 											  BigDecimal valor, Date dataVencimento, Date dataPagamento,
-											  String observacoes, GrupoMovimentoFinaceiro grupoMovimentoFinaceiro) {
+											  String observacoes, GrupoMovimentoFinaceiro grupoMovimentoFinaceiro,
+											  Fornecedor fornecedor) {
 
 		TipoMovimentoFinanceiro tipoMovimento = 
 				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
@@ -648,6 +654,15 @@ public class CobrancaServiceImpl implements CobrancaService {
 		movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
 		movimento.setDataVencimento(dataVencimento);
 		movimento.setObservacao(observacoes);
+		
+		fornecedor = fornecedor!=null?fornecedor:cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null;
+	
+        if (fornecedor == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
+		}
+
+		movimento.setFornecedor(fornecedor);
 		
 		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimento);
 	}
@@ -680,15 +695,16 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public boolean validaNegociacaoDividas(List<Long> idCobrancas) {
 		
 		boolean res=true;
-		Distribuidor distribuidor = distribuidorService.obter();
-		Integer diasNegociacao = (distribuidor.getParametroCobrancaDistribuidor()!=null?distribuidor.getParametroCobrancaDistribuidor().getDiasNegociacao():null);
+		
+		Integer diasNegociacao = this.distribuidorService.diasNegociacao();
 		
 		if (diasNegociacao!=null){
 			
 			for (Long id:idCobrancas){
 				Cobranca cobranca = this.cobrancaRepository.buscarPorId(id);
 				
-				if (  distribuidor.getDataOperacao().getTime() >  DateUtil.adicionarDias(cobranca.getDataVencimento(), diasNegociacao).getTime()){
+				if (this.distribuidorService.obterDataOperacaoDistribuidor().getTime() > 
+						DateUtil.adicionarDias(cobranca.getDataVencimento(), diasNegociacao).getTime()){
 					res=false;
 					break;
 				}

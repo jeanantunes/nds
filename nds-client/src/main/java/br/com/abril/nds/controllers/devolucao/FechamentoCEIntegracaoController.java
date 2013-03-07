@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.FechamentoCEIntegracaoVO;
 import br.com.abril.nds.controllers.BaseController;
@@ -20,7 +21,6 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -135,15 +135,13 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	private Intervalo<Date> obterDataDaSemana(String anoSemana) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		Date data = obterDataBase(anoSemana, distribuidor.getDataOperacao()); 
+		Date data = obterDataBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
 		
 		Integer semana = Integer.parseInt(anoSemana.substring(4));
 		
 		Date dataInicioSemana = 
 				DateUtil.obterDataDaSemanaNoAno(
-					semana, distribuidor.getInicioSemana().getCodigoDiaSemana(), data);
+					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
 			
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		

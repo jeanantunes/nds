@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -62,32 +63,44 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		gerarPeriodosParcias(produtoEdicao, qtdePeriodos, usuario, distribuidor);
+		gerarPeriodosParcias(produtoEdicao, qtdePeriodos, usuario);
 	}
 	
 	@Override
+	public void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento) {
+		
+		Lancamento proximoLancamento = 
+				periodoLancamentoParcialRepository.obterLancamentoPosterior(lancamento.getProdutoEdicao().getId(), 
+																			lancamento.getDataRecolhimentoDistribuidor());
+		
+		if(proximoLancamento!= null){
+			
+			proximoLancamento.setReparte(lancamento.getReparte());
+			
+			lancamentoRepository.alterar(proximoLancamento);
+		}
+	}
+
+	@Override
 	@Transactional
-	public void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario,Distribuidor distribuidor) {
+	public void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario) {
 		
 		validarProdutoEdicao(produtoEdicao);
 		
 		LancamentoParcial lancamentoParcial = obterLancamentoParcialValidado(produtoEdicao, qtdePeriodos);		
 		
-		List<PeriodoLancamentoParcial> periodosBalanceados = 
-				periodoLancamentoParcialRepository.obterPeriodosAposBalanceamentoRealizado(lancamentoParcial.getId());
-		
-		Integer qntPeriodosNaoBalanceados = (periodosBalanceados.isEmpty())?0:periodosBalanceados.size();
+		Long qntPeriodosNaoBalanceados = periodoLancamentoParcialRepository.obterQntPeriodosAposBalanceamentoRealizado(lancamentoParcial.getId());
 		
 		Integer peb = produtoEdicao.getPeb();
 		
-		if(this.isLimparPeriodos(qtdePeriodos, lancamentoParcial, periodosBalanceados, qntPeriodosNaoBalanceados)){
+		if(this.isLimparPeriodos(qtdePeriodos, lancamentoParcial,qntPeriodosNaoBalanceados)){
 			
 			peb = (produtoEdicao.getPeb() / (qtdePeriodos));
 		
 			qtdePeriodos = qtdePeriodos - qntPeriodosNaoBalanceados.intValue();
 		}
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
 		
 		Integer fatorRelancamentoParcial = distribuidor.getFatorRelancamentoParcial();
 		
@@ -189,8 +202,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		return null;
 	}
 	
-	private boolean isLimparPeriodos(int qtdePeriodos, LancamentoParcial lancamentoParcial, 
-									 List<PeriodoLancamentoParcial> periodosBalanceados, int qntPeriodosNaoBalanceados){
+	private boolean isLimparPeriodos(int qtdePeriodos, LancamentoParcial lancamentoParcial,long qntPeriodosNaoBalanceados){
 		
 		if (qntPeriodosNaoBalanceados <= qtdePeriodos) {
 
@@ -198,8 +210,10 @@ public class ParciaisServiceImpl implements ParciaisService{
 
 				for (PeriodoLancamentoParcial item : lancamentoParcial.getPeriodos()) {
 
-					if (!periodosBalanceados.contains(item)) {
-
+					if( Arrays.asList(StatusLancamento.PLANEJADO, 
+									  StatusLancamento.CONFIRMADO)
+									  .contains(item.getLancamento().getStatus())){
+						
 						periodoLancamentoParcialRepository.remover(item);
 					}
 				}
