@@ -29,7 +29,6 @@ import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -575,12 +574,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				"Produto edição não encontrado!");
 		}
 		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-		
 		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
 		
 			parciaisService.gerarPeriodosParcias(produtoEdicao, QTDE_PERIODOS_PARCIAIS,
-												 usuario, distribuidor);
+												 usuario);
 		}
 	}
 	
@@ -621,10 +618,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		Intervalo<Date> periodoRecolhimento =
-			getPeriodoRecolhimento(distribuidor, numeroSemana, dataBalanceamento);
+			getPeriodoRecolhimento(numeroSemana, dataBalanceamento);
 		
 		TreeSet<Date> datasRecolhimentoFornecedor = 
 			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
@@ -658,7 +653,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
 		
-		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(distribuidor.getCapacidadeRecolhimento());
+		dadosRecolhimento.setCapacidadeRecolhimentoDistribuidor(
+				this.distribuidorRepository.capacidadeRecolhimento());
 		
 		dadosRecolhimento.setForcarBalanceamento(forcarBalanceamento);
 		
@@ -669,13 +665,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * Monta o perídodo de recolhimento de acordo com a semana informada.
 	 */
 	@Override
-	public Intervalo<Date> getPeriodoRecolhimento(Distribuidor distribuidor,
-												   Integer numeroSemana,
+	public Intervalo<Date> getPeriodoRecolhimento(Integer numeroSemana,
 												   Date dataBalanceamento) {
 		
 		int codigoInicioSemana = 
-				distribuidor != null ? distribuidor.getInicioSemana().getCodigoDiaSemana()
-						: this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+				this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
 		
 		Date dataInicioSemana = 
 			DateUtil.obterDataDaSemanaNoAno(
@@ -753,10 +747,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	@Transactional
 	public void voltarConfiguracaoOriginal(Integer numeroSemana, Date anoBase, List<Long> fornecedores) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		Intervalo<Date> periodoRecolhimento =
-			getPeriodoRecolhimento(distribuidor, numeroSemana, anoBase);
+			getPeriodoRecolhimento(numeroSemana, anoBase);
 		
 		List<Lancamento> lancamentos =  lancamentoRepository.obterLancamentosARecolherNaSemana(periodoRecolhimento, fornecedores);
 		

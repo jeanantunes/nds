@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCota;
 
 public class ParametroCobrancaCotaDTO implements Serializable {
@@ -35,6 +36,8 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	private BigDecimal vrDividasAberto = BigDecimal.ZERO;
 	
 	private TipoCota tipoCota;
+	
+	private Long idFornecedor;
 	
 	
 	public Long getIdParametroCobranca() {
@@ -161,7 +164,17 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 		this.tipoCota = tipoCota;
 	}
 
-    /* (non-Javadoc)
+	
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override

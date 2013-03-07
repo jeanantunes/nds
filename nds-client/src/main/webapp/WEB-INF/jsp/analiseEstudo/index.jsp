@@ -29,16 +29,16 @@ $(function(){
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="44">Estudo:</td>
-              <td width="90"><input type="text" name="textfield5" id="textfield5"  style="width:80px;" /></td>
+              <td width="90"><input type="text" name="idEstudo" id="idEstudo"  style="width:80px;" /></td>
               <td width="46">Código:</td>
-              <td width="71"><input type="text" name="textfield4" id="textfield4"  style="width:60px;" /></td>
+              <td width="71"><input type="text" name="codProduto" id="codProduto"  style="width:60px;" /></td>
               
               <td width="55">Produto:</td>
               <td width="138"><input type="text" name="produto" id="produto"  style="width:130px;" 
               					onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produto');"/></td>
               
               <td width="46">Edição:</td>
-              <td width="70"><input type="text" name="textfield7" id="textfield7"  style="width:60px;" /></td>
+              <td width="70"><input type="text" name="edicaoProd" id="edicaoProd"  style="width:60px;" /></td>
               <td width="78">Classificação:</td>
               
               <td width="152"><select name="comboClassificacao" id="comboClassificacao" style="width:140px;">
@@ -52,7 +52,7 @@ $(function(){
             </td>
               <td width="104">
               	<span class="bt_pesquisar">
-              		<a href="javascript:;" onclick="mostrar();">
+              		<a href="javascript:;" onclick="analiseEstudoController.carregarEstudos();">
               			Pesquisar
               		</a>
               	</span>
@@ -74,5 +74,6 @@ $(function(){
       
       </div>
      </div>
+     
  </form>
 </body>

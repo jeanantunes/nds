@@ -2,40 +2,41 @@ var analiseEstudoController = $.extend(true, {
 
 init : function() {
 	 $(".estudosGrid").flexigrid({
-		dataType : 'xml',
+		preProcess : analiseEstudoController.executarPreProcessEstudosGrid,
+		dataType : 'json',
 		colModel : [ {
 			display : 'Estudo',
-			name : 'estudo',
+			name : 'numeroEstudo',
 			width : 80,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Código',
-			name : 'codigo',
+			name : 'codigoProduto',
 			width : 60,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Produto',
-			name : 'produto',
+			name : 'nomeProduto',
 			width : 180,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Edição',
-			name : 'edicao',
+			name : 'numeroEdicaoProduto',
 			width : 50,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Classificação',
-			name : 'classificacao',
+			name : 'descicaoTpClassifProd',
 			width : 150,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Período',
-			name : 'periodo',
+			name : 'codPeriodoProd',
 			width : 50,
 			sortable : true,
 			align : 'center'
@@ -47,7 +48,7 @@ init : function() {
 			align : 'left'
 		}, {
 			display : 'Status',
-			name : 'status',
+			name : 'statusEstudo',
 			width : 100,
 			sortable : true,
 			align : 'left'
@@ -62,7 +63,43 @@ init : function() {
 		height : 200
 	});
 },
+
+	executarPreProcessEstudosGrid : function(resultado){
 	
+	if (resultado.mensagens) {
+		exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+		);
+		
+		return resultado;
+	}
+	
+	$.each(resultado.rows, function(index, row) {
+		
+		var analise = '<select name="select" id="select" style="width:140px;"> <option selected="selected">Selecione...</option> <option>Normal</option> <option>Parcial</option>';
+		
+		row.cell.telaAnalise = analise;
+	});
+	
+	$(".grids", analiseEstudoController.workspace).show();
+	
+	return resultado;
+},
+
+	carregarEstudos : function() {
+		var data = [ 
+			    {name : 'filtro.numEstudo', value : $("#idEstudo").val() }, 
+			    {name : 'filtro.codigoProduto', value : $("#codProduto").val() }, 
+				{name : 'filtro.nome', value : $("#produto").val() }, 
+				{name : 'filtro.numeroEdicao', value : $("#edicaoProd").val() }, 
+				{name : 'filtro.idTipoClassificacaoProduto', value : $("#comboClassificacao").val() }
+			 ];
+		
+		$(".estudosGrid", this.workspace).flexOptions({url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
+			params: data});
+		$(".estudosGrid", this.workspace).flexReload();	
+	}
 	
 	}, BaseController);
 //@ sourceURL=analiseEstudo.js
