@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.LancamentoPorEdicaoDTO;
 import br.com.abril.nds.dto.VendaProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDetalheVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -92,7 +93,7 @@ public class VendaProdutoRepositoryImplTest extends AbstractRepositoryImplTest{
 	
 	@Test
 	public void buscarLancamentoPorEdicaoCodigo(){
-		FiltroVendaProdutoDTO filtro = new FiltroVendaProdutoDTO();
+		FiltroDetalheVendaProdutoDTO filtro = new FiltroDetalheVendaProdutoDTO();
 		filtro.setCodigo("2");
 		
 		List<LancamentoPorEdicaoDTO> lancamentoPorEdicaoDTOs = vendaProdutoRepository.buscarLancamentoPorEdicao(filtro);
@@ -102,7 +103,7 @@ public class VendaProdutoRepositoryImplTest extends AbstractRepositoryImplTest{
 	
 	@Test
 	public void buscarLancamentoPorEdicaoEdicao(){
-		FiltroVendaProdutoDTO filtro = new FiltroVendaProdutoDTO();
+		FiltroDetalheVendaProdutoDTO filtro = new FiltroDetalheVendaProdutoDTO();
 		filtro.setEdicao(1L);
 		
 		List<LancamentoPorEdicaoDTO> lancamentoPorEdicaoDTOs = vendaProdutoRepository.buscarLancamentoPorEdicao(filtro);
