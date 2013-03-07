@@ -194,18 +194,7 @@ public class ProdutoEdicaoController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 			}
 			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
-<<<<<<< HEAD
 		}	
-=======
-		}		
-		
-		StatusLancamento statusLancamento = null;
-		for (StatusLancamento status : StatusLancamento.values()) {
-			if (status.name().equals(situacaoLancamento)) {
-				statusLancamento = status;
-			}
-		}		
->>>>>>> remotes/origin/master
 	
 		// Pesquisar:
 		Long qtd = produtoEdicaoService.countPesquisarEdicoes(
