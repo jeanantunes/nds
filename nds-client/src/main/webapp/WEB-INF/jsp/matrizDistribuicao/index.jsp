@@ -77,29 +77,28 @@ matrizDistribuicao.inicializar();
 		        </legend>
 		   	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		   	      <tr>
-		   	        <td width="68">Fornecedor:&nbsp;</td>
-		   	        <td width="228">
-		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a>
-		              <div class="menu_fornecedor" style="display:none;">
-		                	<span class="bt_sellAll">
+<!-- 		   	        <td width="68">Fornecedor:&nbsp;</td> -->
+<!-- 		   	        <td width="228"> -->
+<!-- 		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a> -->
+<!-- 		              <div class="menu_fornecedor" style="display:none;"> -->
+<!-- 		                	<span class="bt_sellAll"> -->
 
-							<input type="checkbox" id="selTodos1" checked="checked" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/>
+<!-- 							<input type="checkbox" id="selTodos1" checked="checked" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/> -->
 
-							<label for="selTodos1">Selecionar Todos</label></span>
-		                    <br clear="all" />
-		                    <c:forEach items="${fornecedores}" var="fornecedor">
-		                      <input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}"  name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox" checked="checked"/>
-		                      <label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label>
-		                      <br clear="all" />
-		                   </c:forEach> 
-		              </div>
+<!-- 							<label for="selTodos1">Selecionar Todos</label></span> -->
+<!-- 		                    <br clear="all" /> -->
+<%-- 		                    <c:forEach items="${fornecedores}" var="fornecedor"> --%>
+<%-- 		                      <input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}"  name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox" checked="checked"/> --%>
+<%-- 		                      <label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label> --%>
+<!-- 		                      <br clear="all" /> -->
+<%-- 		                   </c:forEach>  --%>
+<!-- 		              </div> -->
 		            
-		            </td>
-		   	        <td width="103">Data de Lançamento:</td>
+<!-- 		            </td> -->
+		   	        <td width="120">Data de Lançamento:</td>
 		   	        <td width="109"><input class="campoDePesquisa" type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
-		   	        <td width="47" align="center">&nbsp;</td>
-		   	        <td width="112">&nbsp;</td>
-		   	        <td width="104"><span class="bt_novos" title="Pesquisar">   
+		   	        <td width="30" align="center">&nbsp;</td>
+		   	        <td ><span class="bt_novos" title="Pesquisar">   
 						<!-- Pesquisar -->
 						<a id="linkPesquisar" href="javascript:;" onclick="matrizDistribuicao.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
 					</td>
@@ -109,9 +108,10 @@ matrizDistribuicao.inicializar();
 		      <div class="linha_separa_fields">&nbsp;</div>
 		      <fieldset class="fieldGrid">
 		       	  <legend>Matriz de Distribuição</legend>
+		       
 		        <div class="grids" style="display:none;">
 		        
-		       	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
+		       	   	<table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
 		         	  		
 		         	  		<span class="bt_novos">
 		         	  			<a id="linkExcluir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_exclusao_estudo();" rel="tipsy" title="Excluir Estudo"> 
@@ -152,14 +152,6 @@ matrizDistribuicao.inicializar();
 		         	  		</span>	
 		         	  		
 		         	  		<span class="bt_novos">
-		         	  			<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();">
-			         	  			<img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0">
-			         	  				Reabrir Matriz
-			         	  			</img>
-		         	  			</a>
-		         	  		</span>
-		         	  		
-		         	  		<span class="bt_novos">
 		         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0">
 		         	  				Análise
 		         	  			</img>
@@ -172,43 +164,57 @@ matrizDistribuicao.inicializar();
 		         	  		</span>
 				 </br>	
 					
-				<div>
-					<table width="650" border="0" align="left">
-						<tr>
-							<td align="left">
-								<span class="bt_novos" style="float:left;">
-									<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-								    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" >Arquivo</img>
-							   	 	</a>
-							   	</span>
-							</td>
-							<td>
-								<span class="bt_novos" title="Imprimir">
-									<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
-								    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" >Imprimir</img>
-							    	</a>
-								</span>
-							</td>
-							<td align="left">
-								<span class="bt_novos">
-									<a href="javascript:;" onclick="matrizDistribuicao.duplicarLinha();"><img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />Duplicar Linha</a>
-								</span>
-							</td>
-							<td>
-								<span class="bt_novos"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Geração Automática</a></span>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="4">
-								<b>Total previsto na matriz para estudos gerados:</b> &nbsp;<span id="totalGerado"></span>, &nbsp;<b>liberados:&nbsp;</b> <span id="totalLiberado"></span>
-							</td>
-						</tr>
-					</table>
-				</div>	
+					<div>
+						<table width="650" border="0" align="left">
+							<tr>
+								<td align="left">
+									<span class="bt_novos" style="float:left;">
+										<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+									    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" >Arquivo</img>
+								   	 	</a>
+								   	</span>
+								</td>
+								<td>
+									<span class="bt_novos" title="Imprimir">
+										<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+									    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" >Imprimir</img>
+								    	</a>
+									</span>
+								</td>
+								<td align="left">
+									<span class="bt_novos">
+										<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_duplicarLinha();"><img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />Duplicar Linha</a>
+									</span>
+								</td>
+								<td>
+									<span class="bt_novos"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Geração Automática</a></span>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4">
+									<b>Total previsto na matriz para estudos gerados:</b> &nbsp;<span id="totalGerado"></span>, &nbsp;<b>liberados:&nbsp;</b> <span id="totalLiberado"></span>
+								</td>
+							</tr>
+						</table>
+					</div>	
+		      	
+		      	</div>
+		      	
+		      	<div class="matrizFinalizada" style="display: none;">
+		       	   	<span align="center"><h3>MATRIZ FINALIZADA</h3></span>
+					<br clear="all" />
+					<span class="bt_novos">
+			         	<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();">
+					        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0">
+					         	 Reabrir Matriz
+					        </img>
+			         	</a>
+			     	</span>		    
+		    	</div> 
+		      
 		      </fieldset>
-			</div>
-		
-		<form id="form-confirm-finalizacao">
+			
+			  <form id="form-confirm-finalizacao">
 		<div id="dialog-confirm-finalizacao" title="Finalizar Matriz" style="display:none;">
 		    
 		    <jsp:include page="../messagesDialog.jsp">
@@ -270,7 +276,26 @@ matrizDistribuicao.inicializar();
 
 		    </fieldset>
 		</div>
-		</form>
+		</form> 	
+		
+		<form id="form-confirm-duplicar">
+		<div id="dialog-confirm-duplicar" title="Duplicar Linha" style="display:none;">
+		    
+		    <jsp:include page="../messagesDialog.jsp">
+				<jsp:param value="dialog-confirmar" name="messageDialog"/>
+			</jsp:include>
+			
+		    <fieldset style="width:250px!important;">
+		    	<legend>Duplicação Registro</legend>
+				
+					Confirmar a duplicação do registro selecionado?
+
+		    </fieldset>
+		</div>
+		</form> 	
+			
+	</div>
+			
 		
 		<form id="form-copiar-estudo">
 		<div id="dialog-copiar-estudo" title="Copia Proporcional de Estudo" style="display:none;">

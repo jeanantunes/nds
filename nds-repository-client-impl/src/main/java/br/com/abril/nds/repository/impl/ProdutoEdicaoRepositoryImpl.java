@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,15 +8,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
@@ -1327,6 +1327,40 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		ProdutoEdicao produtoEdicao = (ProdutoEdicao)query.uniqueResult();
 		
 		return produtoEdicao;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicao> obterProdutoEdicaoCopiados(ProdutoEdicao produtoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from ProdutoEdicao ");
+		hql.append(" where numeroEdicao     = :numeroEdicao");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroEdicao", 	 produtoEdicao.getNumeroEdicao());
+		
+		return (List<ProdutoEdicao>)query.list();
+	}
+	
+	
+	@Override
+	public Long obterQuantidadeProdutoEdicaoCopiados(ProdutoEdicao produtoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(id) from ProdutoEdicao ");
+		hql.append(" where numeroEdicao = :numeroEdicao");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("numeroEdicao", 	 produtoEdicao.getNumeroEdicao());
+		
+		Long qtd = (Long)query.uniqueResult();
+		
+		return qtd;
 	}
 
 }
