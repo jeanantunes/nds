@@ -1441,19 +1441,10 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		notaFiscal.setValorBruto(totalItem);
 		
-		try{
-			
-			recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
-		    
-			recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date(), true);
-		}
-		catch(Exception e){
-			if (e instanceof ValidacaoException) {
-				//throw e;
-			}
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao incluir nota: "+e.getMessage());
-		}
-		
+		recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
+	    
+		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date(), true);
+
 		List<String> listaMensagens = new ArrayList<String>();
 		listaMensagens.add("Nota fiscal cadastrada com sucesso.");
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
