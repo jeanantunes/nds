@@ -47,135 +47,98 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		if (estudoComplementarVO.getTipoSelecao()==1){
 			
-			sqlTipoSelecao.append( "select ranking_segmento.COTA_ID from ranking_segmento ");
-			sqlTipoSelecao.append( "                 where ranking_segmento.DATA_GERACAO_RANK = (select max(DATA_GERACAO_RANK) from  ranking_segmento) ");
-			sqlTipoSelecao.append( "                   and ranking_segmento.PRODUTO_EDICAO_ID = b.PRODUTO_EDICAO_ID ");
-			sqlTipoSelecao.append( "                   and ranking_segmento.TIPO_SEGMENTO_PRODUTO_ID = prod.TIPO_SEGMENTO_PRODUTO_ID ");
+			sqlTipoSelecao.append( "Select ranking_segmento.COTA_ID FROM ranking_segmento ");
+			sqlTipoSelecao.append( "                  where ranking_segmento.RANKING_SEGMENTO_GERADOS_ID = (select max(ranking_segmento_gerados.id)  from ranking_segmento_gerados) ");
 			
 			
 		}
 		
 		if (estudoComplementarVO.getTipoSelecao()==2){
-			sqlTipoSelecao.append( "select ranking_faturamento.COTA_ID from ranking_faturamento ");
-			sqlTipoSelecao.append( "                 where ranking_faturamento.DATA_GERACAO_RANK = (select max(DATA_GERACAO_RANK) from  ranking_faturamento) ");
+			sqlTipoSelecao.append( "Select ranking_faturamento.COTA_ID FROM ranking_faturamento ");
+			sqlTipoSelecao.append( "                  where ranking_faturamento.RANKING_FATURAMENTO_GERADOS_ID = (select max(ranking_faturamento_gerados.id)  from ranking_faturamento_gerados) ");
+			
 			
 		}
 		
 		//-- SELEÇÃO DAS BANCAS E DISTRIBUIÇÃO DO ESTUDO COMPLEMENTAR
 
-		sqlStmt.append( "select distinct ec.* from estudo, ");
-		sqlStmt.append( "             produto_edicao b, "); 
-		sqlStmt.append( "		        produto prod, ");
-		sqlStmt.append( "              fornecedor fornec, "); 
-		sqlStmt.append( "              produto_fornecedor prod_for, ");
-		sqlStmt.append( "              cota_fornecedor cot_for, ");
-		sqlStmt.append( "		      cota, ");
-		sqlStmt.append( "			  estudo_cota ec ");
+		sqlStmt.append( "select distinct ec.* from ");
+		sqlStmt.append( "             produto_edicao     pe, "); 
+		sqlStmt.append( "		      estudo_cota        ec, ");
+		sqlStmt.append( "             produto_fornecedor pf, "); 
+		sqlStmt.append( "             cota_fornecedor    cf, ");
+		sqlStmt.append( "             cota               co  ");
 
-		sqlStmt.append( " where estudo.PRODUTO_EDICAO_ID = b.ID "); 
-		sqlStmt.append( "  and  b.PRODUTO_ID            = prod.ID ");
-		sqlStmt.append( "  and prod.ID                  = prod_for.PRODUTO_ID ");
-		sqlStmt.append( "  and prod_for.fornecedores_ID = fornec.ID ");
-		sqlStmt.append( "  and fornec.id                = cot_for.FORNECEDOR_ID ");
-		sqlStmt.append( "  and cot_for.COTA_ID          = cota.ID ");
-		  
-		sqlStmt.append( "  and cota.id in (:tipoSelecao ) ");
-		
-		                 
-		
-		sqlStmt.append( "  and estudo.id = ec.ESTUDO_ID ");
-		sqlStmt.append( "  and cota.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and estudo.ID                = :estudoId ");
+		sqlStmt.append( " where  "); 
+		sqlStmt.append( "      pe.PRODUTO_ID = pf.PRODUTO_ID ");
+		sqlStmt.append( "  and ec.COTA_ID    = cf.COTA_ID ");
+		sqlStmt.append( "  and ec.COTA_ID    = co.ID      ");
+		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
+		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
+		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
+		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
 		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','SH') ");
-		sqlStmt.append( "  and 0 = (select sum(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao epe where epe.PRODUTO_EDICAO_ID  = b.id ) "); 
-		sqlStmt.append( "  and cota.RECEBE_RECOLHE_PARCIAIS = true ");
+		sqlStmt.append( "  and 0 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
 		
 		sqlStmt.append( " union ");
 
-		sqlStmt.append( "select distinct ec.* from estudo, ");
-		sqlStmt.append( "             produto_edicao b, "); 
-		sqlStmt.append( "		        produto prod, ");
-		sqlStmt.append( "              fornecedor fornec, "); 
-		sqlStmt.append( "              produto_fornecedor prod_for, ");
-		sqlStmt.append( "              cota_fornecedor cot_for, ");
-		sqlStmt.append( "		      cota, ");
-		sqlStmt.append( "			  estudo_cota ec ");
+		sqlStmt.append( "select distinct ec.* from ");
+		sqlStmt.append( "             produto_edicao     pe, "); 
+		sqlStmt.append( "		      estudo_cota        ec, ");
+		sqlStmt.append( "             produto_fornecedor pf, "); 
+		sqlStmt.append( "             cota_fornecedor    cf, ");
+		sqlStmt.append( "             cota               co  ");
 
-		sqlStmt.append( " where estudo.PRODUTO_EDICAO_ID = b.ID "); 
-		sqlStmt.append( "  and  b.PRODUTO_ID            = prod.ID ");
-		sqlStmt.append( "  and prod.ID                  = prod_for.PRODUTO_ID ");
-		sqlStmt.append( "  and prod_for.fornecedores_ID = fornec.ID ");
-		sqlStmt.append( "  and fornec.id                = cot_for.FORNECEDOR_ID ");
-		sqlStmt.append( "  and cot_for.COTA_ID          = cota.ID ");
-		  
-		sqlStmt.append( "  and cota.id in (:tipoSelecao ) ");
-		
-		                 
-		
-		sqlStmt.append( "  and estudo.id = ec.ESTUDO_ID ");
-		sqlStmt.append( "  and cota.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and estudo.ID                = :estudoId ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','VZ') ");
-		sqlStmt.append( "  and 1 = (select sum(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao epe where epe.PRODUTO_EDICAO_ID  = b.id ) "); 
-		sqlStmt.append( "  and cota.RECEBE_RECOLHE_PARCIAIS = true ");
+		sqlStmt.append( " where  "); 
+		sqlStmt.append( "      pe.PRODUTO_ID = pf.PRODUTO_ID ");
+		sqlStmt.append( "  and ec.COTA_ID    = cf.COTA_ID ");
+		sqlStmt.append( "  and ec.COTA_ID    = co.ID      ");
+		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
+		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
+		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
+		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
+		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','SH') ");
+		sqlStmt.append( "  and 1 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
 		    
 		sqlStmt.append( " union ");
-		
-		sqlStmt.append( "select distinct ec.* from estudo, ");
-		sqlStmt.append( "             produto_edicao b, "); 
-		sqlStmt.append( "		        produto prod, ");
-		sqlStmt.append( "              fornecedor fornec, "); 
-		sqlStmt.append( "              produto_fornecedor prod_for, ");
-		sqlStmt.append( "              cota_fornecedor cot_for, ");
-		sqlStmt.append( "		      cota, ");
-		sqlStmt.append( "			  estudo_cota ec ");
+		sqlStmt.append( "select distinct ec.* from ");
+		sqlStmt.append( "             produto_edicao     pe, "); 
+		sqlStmt.append( "		      estudo_cota        ec, ");
+		sqlStmt.append( "             produto_fornecedor pf, "); 
+		sqlStmt.append( "             cota_fornecedor    cf, ");
+		sqlStmt.append( "             cota               co  ");
 
-		sqlStmt.append( " where estudo.PRODUTO_EDICAO_ID = b.ID " ); 
-		sqlStmt.append( "  and  b.PRODUTO_ID            = prod.ID ");
-		sqlStmt.append( "  and prod.ID                  = prod_for.PRODUTO_ID ");
-		sqlStmt.append( "  and prod_for.fornecedores_ID = fornec.ID ");
-		sqlStmt.append( "  and fornec.id                = cot_for.FORNECEDOR_ID ");
-		sqlStmt.append( "  and cot_for.COTA_ID          = cota.ID ");
-		  
-		sqlStmt.append( "  and cota.id in (:tipoSelecao ) ");
+		sqlStmt.append( " where  "); 
+		sqlStmt.append( "      pe.PRODUTO_ID = pf.PRODUTO_ID ");
+		sqlStmt.append( "  and ec.COTA_ID    = cf.COTA_ID ");
+		sqlStmt.append( "  and ec.COTA_ID    = co.ID      ");
+		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
+		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
+		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
+		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
+		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','SH') ");
+		sqlStmt.append( "  and 2 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
 		
-		                 
-		
-		sqlStmt.append( "  and estudo.id = ec.ESTUDO_ID ");
-		sqlStmt.append( "  and cota.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and estudo.ID                = :estudoId ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','VZ') ");
-		sqlStmt.append( "  and 2 = (select sum(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao epe where epe.PRODUTO_EDICAO_ID  = b.id ) "); 
-		sqlStmt.append( "  and cota.RECEBE_RECOLHE_PARCIAIS = true ");
 		    
 		sqlStmt.append( " union ");
 
-		sqlStmt.append( "select distinct ec.* from estudo, ");
-		sqlStmt.append( "             produto_edicao b, "); 
-		sqlStmt.append( "		        produto prod, ");
-		sqlStmt.append( "              fornecedor fornec, "); 
-		sqlStmt.append( "              produto_fornecedor prod_for, ");
-		sqlStmt.append( "              cota_fornecedor cot_for, ");
-		sqlStmt.append( "		      cota, ");
-		sqlStmt.append( "			  estudo_cota ec ");
+		sqlStmt.append( "select distinct ec.* from ");
+		sqlStmt.append( "             produto_edicao     pe, "); 
+		sqlStmt.append( "		      estudo_cota        ec, ");
+		sqlStmt.append( "             produto_fornecedor pf, "); 
+		sqlStmt.append( "             cota_fornecedor    cf, ");
+		sqlStmt.append( "             cota               co  ");
 
-		sqlStmt.append( " where estudo.PRODUTO_EDICAO_ID = b.ID "); 
-		sqlStmt.append( "  and  b.PRODUTO_ID            = prod.ID ");
-		sqlStmt.append( "  and prod.ID                  = prod_for.PRODUTO_ID ");
-		sqlStmt.append( "  and prod_for.fornecedores_ID = fornec.ID ");
-		sqlStmt.append( "  and fornec.id                = cot_for.FORNECEDOR_ID ");
-		sqlStmt.append( "  and cot_for.COTA_ID          = cota.ID ");
-		  
-		sqlStmt.append( "  and cota.id in (:tipoSelecao ) ");
-		
-		                 
-		
-		sqlStmt.append( "  and estudo.id = ec.ESTUDO_ID ");
-		sqlStmt.append( "  and cota.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and estudo.ID                = :estudoId ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','VZ') ");
-		sqlStmt.append( "  and 3 = (select sum(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao epe where epe.PRODUTO_EDICAO_ID  = b.id ) "); 
-		sqlStmt.append( "  and cota.RECEBE_RECOLHE_PARCIAIS = true ");
+		sqlStmt.append( " where  "); 
+		sqlStmt.append( "      pe.PRODUTO_ID = pf.PRODUTO_ID ");
+		sqlStmt.append( "  and ec.COTA_ID    = cf.COTA_ID ");
+		sqlStmt.append( "  and ec.COTA_ID    = co.ID      ");
+		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
+		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
+		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
+		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
+		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','SH') ");
+		sqlStmt.append( "  and 3 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
 		
 		
 		System.out.println("--------->>" + sqlStmt.toString().replaceAll(":tipoSelecao", sqlTipoSelecao.toString()));

@@ -18,4 +18,5 @@ public interface EstudoRepository extends Repository<Estudo, Long> {
 	Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao);
 	
 	void alterarStatusEstudos(List<Long> listIdEstudos, StatusEstudo status);
+
 }

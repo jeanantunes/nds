@@ -726,6 +726,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		Query query = getSession().createQuery(hql.toString());
 
+		query.setParameter("status", filtro.getStatus());
+		
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
@@ -855,6 +857,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		
 		boolean indAnd = false;
 
+		
+		
 		if (filtro.getNumeroCota() != null) {
 			
 			hql.append(" cota.numeroCota =:numeroCota ");
@@ -862,6 +866,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			indAnd = true;
 		}
 
+		
+		if(!filtro.getStatus().equals("T")){
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+
+			hql.append(" cota.situacaoCadastro = upper(:status)");
+			indAnd = true;
+		}
+		
+		
 		if (filtro.getNumeroCpfCnpj() != null
 				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
 			

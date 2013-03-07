@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.EstudoComplementarVO;
@@ -28,6 +30,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
+
 
 @Service
 public class EstudoComplementarServiceImpl implements EstudoComplementarService {
@@ -56,9 +59,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		// TODO Auto-generated method stub
 		
 		Estudo estudo = estudoRepository.buscarPorId(idEstudoBase);
-		estudo.getDataLancamento();
-		estudo.getLancamento();
-		estudo.getProdutoEdicao();
+
 		
 		ProdutoEdicao  pe = produtoEdicaoRepository.buscarPorId(estudo.getProdutoEdicao().getId());
 		
@@ -88,17 +89,15 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		String dataLancamento = new SimpleDateFormat("dd/MM/yyyy").format(estudo.getDataLancamento());  
 		estudoComplDto.setDataLncto(dataLancamento);
 		
-		estudoComplDto.setDataRclto(estudo.getLancamento().getDataRecolhimentoDistribuidor().toString());
+		//estudoComplDto.setDataRclto(estudo.getLancamento().getDataRecolhimentoDistribuidor().toString());
 
 		
 		return estudoComplDto;
 	}
 
-	@SuppressWarnings("unchecked")
+	@Transactional
 	@Override
 	public boolean gerarEstudoComplementar(EstudoComplementarVO estudoComplementarVO) {
-		
-		
 		
 		
 		List<EstudoCota> estudoCotas =  selecionarBancas(estudoComplementarVO);
@@ -111,33 +110,52 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		BigInteger qtdReparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
 		BigInteger qtdDistribuido = BigInteger.valueOf(estudoComplementarVO.getReparteDistribuicao());
 
-		//gerar Numero de estudo
-		Estudo estudo = new Estudo();
+		
+		Estudo estudo = estudoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
+		
+		Estudo estudo1 = new Estudo();
+		estudo1.setDataAlteracao(estudo.getDataAlteracao());
+		estudo1.setDataCadastro(estudo.getDataCadastro());
+		estudo1.setDataLancamento(estudo.getDataLancamento());
+		estudo1.setProdutoEdicao(estudo.getProdutoEdicao());
+		estudo1.setQtdeReparte(estudo.getQtdeReparte());
+		estudo1.setStatus(estudo.getStatus());
+
+		// Gera Novo Estudo
+		long NumeroEstudo = estudoRepository.adicionar(estudo1);
+		estudo1.setId(NumeroEstudo);
+		
+		List<EstudoCota> estudoCotaNovo = new ArrayList<EstudoCota>();
+		for(EstudoCota estudoCota: estudoCotas){
+			EstudoCota ec = new EstudoCota();
+			ec.setClassificacao(estudoCota.getClassificacao());
+			ec.setCota(estudoCota.getCota());
+			ec.setQtdeEfetiva(estudoCota.getQtdeEfetiva());
+			ec.setQtdePrevista(estudoCota.getQtdeEfetiva());
+			estudoCotaNovo.add(ec);
+			
+		}
 		
 		
 		
-		//Estudo estudo = gerarNumeroEstudo(estudoComplementarVO.getCodigoEstudo());
+		
+		
+		
+		
 		
 		boolean primeiraVez=true;
 		while (qtdDistribuido.compareTo(BigInteger.ZERO)>0 ){
-			for(int i=0; i<estudoCotas.size();i++ ){
+			for(int i=0; i<estudoCotaNovo.size();i++ ){
 				
-				
-				
-				EstudoCota estudoCota = estudoCotas.get(i);
+				EstudoCota estudoCota = estudoCotaNovo.get(i);
 				if(primeiraVez){
 					estudoCota.setQtdeEfetiva(BigInteger.ZERO);
-					estudoCota.setEstudo(null);
-					estudoCota.setId(null);
-					
-					
 				}
 				
-				estudoCota.setQtdeEfetiva(qtdReparte.and(estudoCota.getQtdeEfetiva()));
-				estudoCota.setClassificacao("CP");
-				estudoCota.setEstudo(estudo);
+				estudoCota.setQtdeEfetiva(qtdReparte.add(estudoCota.getQtdeEfetiva()));
 				
-				estudoCotas.set(i, estudoCota);
+				estudoCota.setClassificacao("CP");
+				estudoCotaNovo.set(i, estudoCota);
 				qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
 				
 				if(qtdDistribuido.compareTo(BigInteger.ZERO)<=0 ){
@@ -148,10 +166,20 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 			primeiraVez=false;
 		}
 		
-		estudo.setEstudoCotas((Set<EstudoCota>) estudoCotas);
-		estudo.setId(null);
-		estudoRepository.adicionar(estudo);
-		return false;
+		for(EstudoCota estcota: estudoCotaNovo){
+			EstudoCota ec1 =new EstudoCota();
+			String classificacao = estcota.getClassificacao();
+			ec1.setClassificacao(classificacao);
+			ec1.setCota(estcota.getCota());
+			ec1.setEstudo(estudo1);
+			ec1.setQtdeEfetiva(estcota.getQtdeEfetiva());
+			ec1.setQtdePrevista(BigInteger.TEN);
+			
+			estudoCotaRepository.adicionar(ec1);	
+		}
+		
+		return true;
+				
 	}
 
 	private List<EstudoCota> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {

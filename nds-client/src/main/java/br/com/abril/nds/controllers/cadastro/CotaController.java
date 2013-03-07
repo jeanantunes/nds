@@ -1028,7 +1028,7 @@ public class CotaController extends BaseController {
 	@Post
 	@Path("/pesquisarCotas")
 	public void pesquisarCotas(BigInteger numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
-							   String logradouro, String bairro, String municipio,
+							   String logradouro, String bairro, String municipio,String status,
 			 				   String sortname, int page, int rp){
 		
 		if (numeroCpfCnpj != null) {
@@ -1039,7 +1039,7 @@ public class CotaController extends BaseController {
 		
 		Integer numeroCota = (numCota!= null)?numCota.intValue():null;
 		    
-		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
+		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio, status);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
