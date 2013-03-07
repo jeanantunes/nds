@@ -163,7 +163,8 @@ public class ProdutoEdicaoController extends BaseController {
 	@Post
 	@Path("/pesquisarEdicoes.json")
 	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
+			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,
+			BigDecimal precoAte , StatusLancamento situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
 		Intervalo<BigDecimal> intervaloPreco = null;
@@ -185,19 +186,19 @@ public class ProdutoEdicaoController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 			}
 			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
-		}		
-		
-		StatusLancamento statusLancamento = null;
-		for (StatusLancamento status : StatusLancamento.values()) {
-			if (status.name().equals(situacaoLancamento)) {
-				statusLancamento = status;
-			}
-		}		
+		}	
 	
 		// Pesquisar:
-		Long qtd = produtoEdicaoService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
-		if(qtd > 0){			
-			List<ProdutoEdicaoDTO> lst = produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+		Long qtd = produtoEdicaoService.countPesquisarEdicoes(
+				codigoProduto, nomeProduto, intervaloLancamento, 
+				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde);
+		
+		if(qtd > 0){		
+			
+			List<ProdutoEdicaoDTO> lst = 
+					produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, 
+							intervaloLancamento, intervaloPreco, situacaoLancamento, codigoDeBarras, 
+							brinde, sortorder, sortname, page, rp);
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		}else{

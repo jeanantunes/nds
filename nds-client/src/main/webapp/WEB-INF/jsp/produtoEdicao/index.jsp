@@ -492,6 +492,7 @@ fieldset {
 					<td width="22">&nbsp;</td>
 					<td width="57">Situa&ccedil;&atilde;o:</td>
 					<td width="113">
+					
 						<select name="pSituacaoLancamento" id="produtoEdicaoController-pSituacaoLancamento" style="width:130px;" >
 							<option value="" selected="selected">Selecione...</option>
 	                        <c:forEach items="${listaStatusLancamento}" var="statusLancamento">
