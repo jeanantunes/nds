@@ -25,7 +25,6 @@ display: none;
 
 <script type="text/javascript">
 
-
 var pathTela = "${pageContext.request.contextPath}";
 
 var balanceamento = new Balanceamento(pathTela, "balanceamento");
@@ -65,6 +64,8 @@ var lancamentosSelecionados = [];
 </style>
 
 </head>
+
+<div id="matrizDistribuicaoContent">
 
 <body>
 
@@ -167,9 +168,11 @@ var lancamentosSelecionados = [];
 		         	  		</span>
 		         	  		
 		         	  		<span class="bt_novos">
-		         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0">
-		         	  				Análise
-		         	  			</img>
+			         	  		<a href="javascript:;" onclick="balanceamentoLancamento.analise();">
+			         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0" >
+			         	  				Análise
+			         	  			</img>
+			         	  		</a>	
 		         	  		</span>
 		         	  		
 		         	  		<span class="bt_novos">
@@ -286,5 +289,7 @@ var lancamentosSelecionados = [];
 			
 		</div>
 		</form>
-		
-</body>
+	</body>
+</div>
+
+<div id="histogramaPosEstudoContent" />

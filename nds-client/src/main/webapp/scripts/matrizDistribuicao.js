@@ -608,6 +608,40 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$('#copiarEstudo-idLancamento').text('copiarEstudo-reparte');
 		T.cancelarCopiaProporcionalDeEstudo();
 	},
+	
+	this.analise= function(){
+		//testa se registro foi selecionado
+		if (T.validarMarcacaoUnicoItem()) {
+			$.each(T.lancamentos, function(index, lancamento){
+				if(lancamento.selecionado) {
+					selecionado = lancamento;
+				}
+			});
+			
+			//testa se registro selecionado possui estudo gerado
+			if (selecionado.estudo == null || selecionado.estudo == "") {
+				exibirMensagem("WARNING",["Selecione um produto que tenha um estudo gerado."]);
+				return;
+			}else{
+				$.get(
+					pathTela + '/matrizDistribuicao/histogramaPosEstudo', //url
+					null, // parametros
+					function(html){ // onSucessCallBack
+						$('#matrizDistribuicaoContent').hide();
+						$('#histogramaPosEstudoContent').html(html);
+						$('#histogramaPosEstudoContent').show();
+				
+						histogramaPosEstudoController.carregarGridHistogramaPosEstudo(selecionado);
+					
+				});
+			}
+			
+		}else{
+			exibirMensagem("WARNING", ["Selecione um item."]);
+			return false;
+		}
+		
+	},
 
 	this.copiarProporcionalDeEstudo = function() {
 		

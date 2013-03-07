@@ -6,9 +6,9 @@ public enum ComponentesPDV {
 	GeradorDeFluxo("Gerador de Fluxo"),
 	Bairro("Bairro"),     
 	Região("Região"),       
-	CotasAVista("Cota À Vista"),
+	CotasAVista("Cota Ã€ Vista"),
 	CotasNovasRetivadas("Cotas Novas/Reativadas"),
-	Area_de_Influência("Área de Influência"),
+	Area_de_Influência("Ã�rea de InfluÃªncia"),
 	Distrito("Distrito");   
 	
 	private String descricao;
