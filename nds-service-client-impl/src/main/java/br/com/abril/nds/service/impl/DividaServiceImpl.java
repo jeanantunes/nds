@@ -220,6 +220,8 @@ public class DividaServiceImpl implements DividaService {
 				movimentoFinanceiroCotaDTO.setValor(multa);
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoMulta);
 				
+				movimentoFinanceiroCotaDTO.setFornecedor(cobrancaAtualizada.getCota().getParametroCobranca()!=null?cobrancaAtualizada.getCota().getParametroCobranca().getFornecedorPadrao():null);
+
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 				
 			}
