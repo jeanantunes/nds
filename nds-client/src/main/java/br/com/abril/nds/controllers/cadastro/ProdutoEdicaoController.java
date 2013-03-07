@@ -134,14 +134,6 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		List<Brinde> brindes = brindeService.obterBrindes();
 		result.include("brindes", brindes);
-		
-		List<ItemDTO<StatusLancamento,String>> listaStatusLancamento = 
-				new ArrayList<ItemDTO<StatusLancamento,String>>();
-		for (StatusLancamento status : StatusLancamento.values()){
-			listaStatusLancamento.add(new ItemDTO<StatusLancamento, String>(status, status.getDescricao()));
-		}
-		
-		this.result.include("listaStatusLancamento", listaStatusLancamento);
     }
 
 	@Post
