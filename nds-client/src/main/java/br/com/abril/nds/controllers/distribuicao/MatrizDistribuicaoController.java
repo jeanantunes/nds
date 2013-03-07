@@ -44,6 +44,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
+@Path("/matrizDistribuicao")
 public class MatrizDistribuicaoController extends BaseController {
 
 	@Autowired
@@ -334,6 +335,12 @@ public class MatrizDistribuicaoController extends BaseController {
 		matrizDistribuicaoService.reabrirEstudos(produtosDistribuicao);
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+	
+	@Get
+	@Path("/histogramaPosEstudo")
+	public void histogramaPosEstudo(){
+		result.forwardTo(HistogramaPosEstudoController.class).index();
 	}
 	
 }
