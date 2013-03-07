@@ -492,10 +492,17 @@ fieldset {
 					<td width="22">&nbsp;</td>
 					<td width="57">Situa&ccedil;&atilde;o:</td>
 					<td width="113">
+<<<<<<< HEAD
 						<select name="select" id="produtoEdicaoController-pSituacaoLancamento" name="pSituacaoLancamento" style="width:130px;">
 							<option value="">Selecione...</option>
 							<c:forEach items="${listaStatusLancamento}" var="status">
 								<option value="${status.key}" >${status.value}</option>
+=======
+						<select name="pSituacaoLancamento" id="produtoEdicaoController-pSituacaoLancamento" style="width:130px;" >
+							<option value="" selected="selected">Selecione...</option>
+	                        <c:forEach items="${listaStatusLancamento}" var="statusLancamento">
+								<option value="${statusLancamento.key}" >${statusLancamento.value}</option>
+>>>>>>> remotes/origin/master
 							</c:forEach>
 						</select>
 					</td>
