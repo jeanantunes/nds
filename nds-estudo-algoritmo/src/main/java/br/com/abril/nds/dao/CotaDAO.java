@@ -35,7 +35,7 @@ public class CotaDAO {
 	    query.append(" INNER JOIN COTA C ON (C.ID = AR.COTA_ID) ");
 	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
 	    query.append(" WHERE AR.COTA_ID = ? ");
-	    query.append(" AND AR.DATA_INICIO >= ? AND AR.DATA_FIM <= ? ");
+	    query.append(" AND ? >= AR.DATA_INICIO AND ? <= AR.DATA_FIM ");
 
 	    if (tipoAjusteReparte != null && tipoAjusteReparte.length > 0) {
 
@@ -81,7 +81,7 @@ public class CotaDAO {
 	return ajusteAplicado;
     }
 
-    public Cota getCotaEquivalenteByCota(Cota cota) {
+    public Cota getIndiceAjusteCotaEquivalenteByCota(Cota cota) {
 
 	List<Cota> listEquivalente = new ArrayList<Cota>();
 
@@ -91,7 +91,7 @@ public class CotaDAO {
 	    query.append(" INNER JOIN COTA C ON (C.ID = CBC.COTA_ID) ");
 	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
 	    query.append(" WHERE CB.COTA_ID = ? ");
-	    query.append(" AND CB.DATA_INICIO >= ? AND CB.DATA_FIM <= ? ");
+	    query.append(" AND ? >= CB.DATA_INICIO AND ? <= CB.DATA_FIM ");
 
 	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
 	    psmt.setLong(1, cota.getId());
