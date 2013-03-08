@@ -47,4 +47,11 @@ public class ParametrosDistribuidorEmissaoDocumentoRepositoryImplTest extends
 		parametrosDistribuidorEmissaoDocumentoRepositoryImpl
 				.alterarOuCriar(parametros);
 	}
+	
+	@Test
+	public void testIsUtilizaImpressaoSLIP(){
+		
+		parametrosDistribuidorEmissaoDocumentoRepositoryImpl.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
+		
+	}
 }

@@ -630,6 +630,13 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		 Assert.assertEquals(1, listaCota.size());
 		 
 	}
-
+	
+	
+	@Test
+	public void testarObterQtdeEncalhe() {
+		
+		this.conferenciaEncalheRepository.obterQtdeEncalhe(1L);
+		
+	}
 
 }
