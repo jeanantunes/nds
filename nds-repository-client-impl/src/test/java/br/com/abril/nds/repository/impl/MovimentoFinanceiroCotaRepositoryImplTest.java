@@ -852,4 +852,13 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		
 	}
 	
+	@Test
+	public void testObterMovimentoFinanceiroDaConferenciaEncalhe() {
+		
+		Long idConferenciaEncalhe = 1L;
+		
+		movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idConferenciaEncalhe);
+		
+	}
+	
 }

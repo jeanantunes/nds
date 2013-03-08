@@ -549,6 +549,10 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	preparaValor : function(vr){
 		
+		if( typeof vr == 'undefined' || vr == '' || vr == null ) {
+			return null;
+		}
+		
 		if(vr.substr(vr.length-3,1)==","){
 			vr = this.replaceAll(vr,".","");
 			vr = this.replaceAll(vr,",",".");
@@ -562,7 +566,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	verificarValorTotalCE : function() {
 		
 		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())},
-		            {name: "qtdCEInformado", value: ConferenciaEncalhe.preparaValor($("#qtdCE", ConferenciaEncalhe.workspace).val())}];
+		            {name: "qtdCEInformado", value: $("#qtdCE", ConferenciaEncalhe.workspace).val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalCE', data, 
 		
