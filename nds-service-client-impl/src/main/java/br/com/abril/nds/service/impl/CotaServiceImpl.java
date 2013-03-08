@@ -56,7 +56,6 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -812,9 +811,8 @@ public class CotaServiceImpl implements CotaService {
 	 */
 	private DistribuicaoDTO setDistribuicaoDefault(DistribuicaoDTO distribuicao){
 		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-		
-		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = distribuidor.getParametrosDistribuidorEmissaoDocumentos();
+		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = 
+				this.distribuidorRepository.parametrosDistribuidorEmissaoDocumentos();
 		
 		if (listaParametrosDistribuidorEmissaoDocumentos!=null && listaParametrosDistribuidorEmissaoDocumentos.size() > 0){
 		
@@ -2197,9 +2195,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		this.obterPercentualFaturamentoTaxaFixa(cota.getId(), dto);
 		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-		
-		dto.setUtilizaTermoAdesao(distribuidor.getParametroEntregaBanca()!=null?distribuidor.getParametroEntregaBanca().isUtilizaTermoAdesao():false);
+		dto.setUtilizaTermoAdesao(this.distribuidorRepository.utilizaTermoAdesao());
 		
 		return dto;
 	}
