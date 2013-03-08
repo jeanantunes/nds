@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -65,6 +67,21 @@ public class ParciaisServiceImpl implements ParciaisService{
 	}
 	
 	@Override
+	public void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento) {
+		
+		Lancamento proximoLancamento = 
+				periodoLancamentoParcialRepository.obterLancamentoPosterior(lancamento.getProdutoEdicao().getId(), 
+																			lancamento.getDataRecolhimentoDistribuidor());
+		
+		if(proximoLancamento!= null){
+			
+			proximoLancamento.setReparte(lancamento.getReparte());
+			
+			lancamentoRepository.alterar(proximoLancamento);
+		}
+	}
+
+	@Override
 	@Transactional
 	public void gerarPeriodosParcias(ProdutoEdicao produtoEdicao, Integer qtdePeriodos, Usuario usuario) {
 		
@@ -72,42 +89,44 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		LancamentoParcial lancamentoParcial = obterLancamentoParcialValidado(produtoEdicao, qtdePeriodos);		
 		
+		Long qntPeriodosNaoBalanceados = periodoLancamentoParcialRepository.obterQntPeriodosAposBalanceamentoRealizado(lancamentoParcial.getId());
+		
 		Integer peb = produtoEdicao.getPeb();
 		
-		List<PeriodoLancamentoParcial> periodosBalanceados = periodoLancamentoParcialRepository.obterPeriodosAposBalanceamentoRealizado(lancamentoParcial.getId());
-		
-		Integer qntPeriodosNaoBalanceados = (periodosBalanceados.isEmpty())?0:periodosBalanceados.size();
-		
-		if (qntPeriodosNaoBalanceados <= qtdePeriodos) {
-
+		if(this.isLimparPeriodos(qtdePeriodos, lancamentoParcial,qntPeriodosNaoBalanceados)){
+			
 			peb = (produtoEdicao.getPeb() / (qtdePeriodos));
+		
+			qtdePeriodos = qtdePeriodos - qntPeriodosNaoBalanceados.intValue();
+		}
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		Integer fatorRelancamentoParcial = distribuidor.getFatorRelancamentoParcial();
+		
+		Integer qntDiasUltrapassaPEB = this.qntDiasQueUltrapassamPEB(qtdePeriodos, fatorRelancamentoParcial, 
+																	  lancamentoParcial.getRecolhimentoFinal(), 
+																	  lancamentoParcial.getLancamentoInicial(),peb);
+		if(qntDiasUltrapassaPEB!= null){
+			
+			if(qntDiasUltrapassaPEB < ( peb / 2 )){
 
-			if (lancamentoParcial.getPeriodos() != null && lancamentoParcial.getPeriodos().size() > 0) {
-
-				for (PeriodoLancamentoParcial item : lancamentoParcial.getPeriodos()) {
-
-					if (!periodosBalanceados.contains(item)) {
-
-						periodoLancamentoParcialRepository.remover(item);
-
-					}
-				}
+				peb = peb + (qntDiasUltrapassaPEB / qtdePeriodos);
 			}
 		}
-
-		else {
-
-			throw new ValidacaoException(TipoMensagem.WARNING,"Quantidade de períodos é menor que a quantidade já programada para lançamento");
-		}
-
-		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
 		
-		Lancamento ultimoLancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
-		
+		this.processarDadosLancamentoParcial(produtoEdicao, qtdePeriodos, usuario,
+											 lancamentoParcial, peb, fatorRelancamentoParcial);
+	}
+
+	private void processarDadosLancamentoParcial(ProdutoEdicao produtoEdicao,
+												 Integer qtdePeriodos, Usuario usuario,
+												 LancamentoParcial lancamentoParcial, 
+												 Integer peb,Integer fatorRelancamentoParcial) {
 		Date dtLancamento = null;
 		Date dtRecolhimento = null;
 		
-		qtdePeriodos = qtdePeriodos - qntPeriodosNaoBalanceados.intValue();
+		Lancamento ultimoLancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
 		
 		for(int i=0; i<qtdePeriodos; i++) {
 		
@@ -124,7 +143,14 @@ public class ParciaisServiceImpl implements ParciaisService{
 			dtRecolhimento =  calendarioService.adicionarDiasRetornarDiaUtil(dtLancamento,peb); 
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
-				i = qtdePeriodos;
+				
+				Long qntDiasRestante = DateUtil.obterDiferencaDias(dtLancamento,lancamentoParcial.getRecolhimentoFinal());
+				
+				if(qntDiasRestante < (peb/2)){
+					break;
+				}
+				
+				i = qtdePeriodos;	
 				dtRecolhimento = lancamentoParcial.getRecolhimentoFinal();
 			}
 			
@@ -135,10 +161,71 @@ public class ParciaisServiceImpl implements ParciaisService{
 			PeriodoLancamentoParcial novoPeriodo = gerarPeriodoParcial(novoLancamento, lancamentoParcial);
 			
 			lancamentoRepository.adicionar(novoLancamento);
+			
 			historicoLancamentoRepository.adicionar(novoHistorico);
+			
 			periodoLancamentoParcialRepository.adicionar(novoPeriodo);
 			
 			ultimoLancamento = novoLancamento;
+		}
+	}
+	
+	private Integer qntDiasQueUltrapassamPEB(Integer qtdePeriodos,Integer fatorRelancamentoParcial, 
+										     Date dataLancamentoFinal,Date dataLancamentoInicial,
+										     Integer peb){
+		Date dtLancamento = null;
+		Date dtRecolhimento = null;
+		
+		for(int i=0; i<qtdePeriodos; i++) {
+			
+			if(dtLancamento == null){
+				
+				dtLancamento = dataLancamentoInicial;
+			}
+			else{
+				
+				dtLancamento = calendarioService.adicionarDiasRetornarDiaUtil(dtRecolhimento, fatorRelancamentoParcial) ;
+			}
+			
+			if(DateUtil.obterDiferencaDias(dataLancamentoFinal, dtLancamento) > 0) {
+				break;
+			}			
+			
+			dtRecolhimento =  calendarioService.adicionarDiasRetornarDiaUtil(dtLancamento,peb); 
+			
+			if(DateUtil.obterDiferencaDias(dataLancamentoFinal, dtRecolhimento) > 0) {
+				
+				return  (int) DateUtil.obterDiferencaDias(dtLancamento, dataLancamentoFinal);
+			}
+		}
+		
+		return null;
+	}
+	
+	private boolean isLimparPeriodos(int qtdePeriodos, LancamentoParcial lancamentoParcial,long qntPeriodosNaoBalanceados){
+		
+		if (qntPeriodosNaoBalanceados <= qtdePeriodos) {
+
+			if (lancamentoParcial.getPeriodos() != null && lancamentoParcial.getPeriodos().size() > 0) {
+
+				for (PeriodoLancamentoParcial item : lancamentoParcial.getPeriodos()) {
+
+					if( Arrays.asList(StatusLancamento.PLANEJADO, 
+									  StatusLancamento.CONFIRMADO)
+									  .contains(item.getLancamento().getStatus())){
+						
+						periodoLancamentoParcialRepository.remover(item);
+					}
+				}
+				
+				return true;
+			}
+			
+			return false;
+		}
+		else {
+
+			throw new ValidacaoException(TipoMensagem.WARNING,"Quantidade de períodos é menor que a quantidade já programada para lançamento");
 		}
 	}
 

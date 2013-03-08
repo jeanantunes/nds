@@ -29,28 +29,28 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	
 	void desativarFormaCobranca(long idFormaCobranca);
 
-	List<FormaCobranca> obterPorCotaETipoCobranca(Long idCota,TipoCobranca tipoCobranca, Long idFormaCobranca);
+	List<FormaCobranca> obterPorCota(Long idCota, Long idFormaCobranca);
 	
-	List<FormaCobranca> obterPorDistribuidorETipoCobranca(TipoCobranca tipoCobranca, Long idFormaCobranca);
+	List<FormaCobranca> obterPorDistribuidor(Long idDistribuidor, Long idFormaCobranca);
 
 	/**
 	 * Obtem FormaCobranca da Cota
-	 * @param numeroCota
-	 * @param fornecedoresId
+	 * @param idCota
+	 * @param idFornecedor
 	 * @param data
 	 * @param valor
 	 * @return FormaCobranca
 	 */
-	FormaCobranca obterFormaCobranca(Integer numeroCota, List<Long> fornecedoresId, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor);
+	FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor);
 	
 	/**
 	 * Obtem FormaCobranca do Distribuidor
-	 * @param fornecedoresId
+	 * @param idFornecedor
 	 * @param data
 	 * @param valor
 	 * @return FormaCobranca
 	 */
-	FormaCobranca obterFormaCobranca(List<Long> fornecedoresId, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor);
+	FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor);
 	
 	/**
 	 * Obtem FormaCobranca principal da Cota

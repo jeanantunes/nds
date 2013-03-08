@@ -682,7 +682,7 @@ public class CotaServiceImpl implements CotaService {
 			String nome = pessoa instanceof PessoaFisica ? 
 					((PessoaFisica)pessoa).getNome() : ((PessoaJuridica)pessoa).getRazaoSocial();
 			
-			if(cota.getContratoCota().isExigeDocumentacaoSuspencao()) {
+			if(cota.getContratoCota() != null && cota.getContratoCota().isExigeDocumentacaoSuspencao()) {
 				
 				cotasDTO.add(new CotaSuspensaoDTO(
 					cota.getId(), 
@@ -736,7 +736,7 @@ public class CotaServiceImpl implements CotaService {
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historico.setDataInicioValidade(new Date());
 		
-		historicoSituacaoCotaRepository.adicionar(historico);
+		historicoSituacaoCotaRepository.merge(historico);
 		
 		cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
 		

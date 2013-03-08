@@ -666,7 +666,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	}
    
     /**
-     * Retorna o somatório dos valores dos movimentos financeiros
+     * Retorna o somatório dos valores dos Movimentos de Estoque
      * @param movimentos
      * @return BigDecimal
      */

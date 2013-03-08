@@ -55,7 +55,7 @@
         <table width="347" border="0" cellspacing="2" cellpadding="2" >
           <tr>
             <td width="107"><strong>Estudo:</strong></td>
-            <td colspan="3" ><input id="copiarEstudo-estudoPesquisa" type="text" onchange="balanceamentoLancamento.carregarProdutoPorEstudo()" name="textfield5" id="textfield5" style="width:100px; margin-right:5px; float:left;" />
+            <td colspan="3" ><input id="copiarEstudo-estudoPesquisa" type="text" onchange="matrizDistribuicao.carregarProdutoPorEstudo()" name="textfield5" id="textfield5" style="width:100px; margin-right:5px; float:left;" />
               <span title="Pesquisar" class="classPesquisar"><a href="../Distribuicao/informacoes_produtos_copiar.htm">&nbsp;</a></span></td>
           </tr>
           <tr>
@@ -106,9 +106,9 @@
       
       <div class="linha_separa_fields">&nbsp;</div>
       
-      <span class="bt_novos"><a href="javascript:;" onclick="balanceamentoLancamento.mostraTelaMatrizDistribuicao()"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                     <span class="bt_novos"><a href="javascript:;" onclick="balanceamentoLancamento.cancelarCopiaProporcionalDeEstudo()"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
-                     <span class="bt_novos"><a href="javascript:;" onclick="balanceamentoLancamento.confirmarCopiarProporcionalDeEstudo()" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" hspace="5" border="0" />Confirmar</a></span>
+      <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.mostraTelaMatrizDistribuicao()"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.cancelarCopiaProporcionalDeEstudo()"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.confirmarCopiarProporcionalDeEstudo()" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" hspace="5" border="0" />Confirmar</a></span>
                      <span class="bt_novos"><a href="analise_2.htm"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
         </fieldset>
 

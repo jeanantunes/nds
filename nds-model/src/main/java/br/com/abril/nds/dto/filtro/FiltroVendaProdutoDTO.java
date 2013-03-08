@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -11,10 +12,18 @@ public class FiltroVendaProdutoDTO implements Serializable {
 
 	private static final long serialVersionUID = 2433782322485644813L;
 	
+	@Export(label = "Código")
 	private String codigo;
+	
+	@Export(label = "Produto")
 	private String nomeProduto;
+	
+	@Export(label = "Edição")
 	private Long edicao;
+	
 	private Long idFornecedor;
+	
+	@Export(label = "Fornecedor")
 	private String nomeFornecedor;
 	private TipoClassificacaoProduto classifProduto;
 	private Integer numeroCota;
@@ -26,8 +35,15 @@ public class FiltroVendaProdutoDTO implements Serializable {
 	
 	public enum ColunaOrdenacao {
 
-		EDICAO("edicao"),
-		CHAMADA_CAPA("chamadaCapa");
+		EDICAO("numEdicao"),
+		DATA_LANCAMENTO("dataLancamento"),
+		DATA_RECOLHIMENTO("dataRecolhimento"),
+		REPARTE("reparte"),
+		VENDA("venda"),
+		PERCENTUAL_VENDA("percentualVenda"),
+		PRECO_CAPA("precoCapa"),
+		CHAMADA_CAPA("chamadaCapa"),
+		TOTAL("total");
 		
 		private String nomeColuna;
 		

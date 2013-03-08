@@ -29,9 +29,10 @@ public class VendaProdutoDTO implements Serializable {
 	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private BigInteger reparte;
 	
+	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private BigInteger venda;
 
-	private BigDecimal percentagemVenda;
+	private BigDecimal percentualVenda;
 	
 	private BigDecimal precoCapa;
 	
@@ -39,11 +40,8 @@ public class VendaProdutoDTO implements Serializable {
 	
 	private BigDecimal encalhe;
 	
-	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 5)
-	private String valorVendaFormatado;
-	
 	@Export(label = "% Venda", alignment=Alignment.RIGHT, exhibitionOrder = 6)
-	private String percentagemVendaFormatado;
+	private String percentualVendaFormatado;
 	
 	@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 7)
 	private String valorPrecoCapaFormatado;
@@ -58,6 +56,9 @@ public class VendaProdutoDTO implements Serializable {
 	private PeriodicidadeProduto periodo;
 	private Integer periodoFormatado = 1;
 	
+	private Boolean parcial;
+
+	private String codigoProduto;
 	
 	public VendaProdutoDTO() {
 		
@@ -99,16 +100,15 @@ public class VendaProdutoDTO implements Serializable {
 
 	public void setVenda(BigInteger venda) {
 		this.venda = venda;
-		this.valorVendaFormatado = CurrencyUtil.formatarValor(venda);
 	}
 
-	public BigDecimal getPercentagemVenda() {
-		return percentagemVenda;
+	public BigDecimal getPercentualVenda() {
+		return percentualVenda;
 	}
 
-	public void setPercentagemVenda(BigDecimal percentagemVenda) {
-		this.percentagemVenda = percentagemVenda;
-		this.percentagemVendaFormatado = CurrencyUtil.formatarValor(percentagemVenda);
+	public void setPercentualVenda(BigDecimal percentualVenda) {
+		this.percentualVenda = percentualVenda;
+		this.percentualVendaFormatado = CurrencyUtil.formatarValor(percentualVenda);
 	}
 
 	public BigDecimal getPrecoCapa() {
@@ -137,14 +137,6 @@ public class VendaProdutoDTO implements Serializable {
 		this.encalhe = encalhe;
 	}
 
-	public String getValorVendaFormatado() {
-		return this.valorVendaFormatado;
-	}
-
-	public void setValorVendaFormatado(String valorVendaFormatado) {
-		this.valorVendaFormatado = valorVendaFormatado;
-	}
-
 	public String getValorPrecoCapaFormatado() {
 		return this.valorPrecoCapaFormatado;
 	}
@@ -161,12 +153,12 @@ public class VendaProdutoDTO implements Serializable {
 		this.valorTotalFormatado = valorTotalFormatado;
 	}
 
-	public String getPercentagemVendaFormatado() {
-		return this.percentagemVendaFormatado;
+	public String getPercentualVendaFormatado() {
+		return this.percentualVendaFormatado;
 	}
 
-	public void setPercentagemVendaFormatado(String percentagemVendaFormatado) {
-		this.percentagemVendaFormatado = percentagemVendaFormatado;
+	public void setPercentualVendaFormatado(String percentualVendaFormatado) {
+		this.percentualVendaFormatado = percentualVendaFormatado;
 	}
 
 	public String getDataLancamento() {
@@ -205,4 +197,32 @@ public class VendaProdutoDTO implements Serializable {
 	public Integer getPeriodoFormatado() {
 		return periodoFormatado;
 	}
+	/**
+	 * @return the parcial
+	 */
+	public Boolean getParcial() {
+		return parcial;
+	}
+
+	/**
+	 * @param parcial the parcial to set
+	 */
+	public void setParcial(Boolean parcial) {
+		this.parcial = parcial;
+	}
+
+	/**
+	 * @return the codigoProduto
+	 */
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	/**
+	 * @param codigoProduto the codigoProduto to set
+	 */
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
 }

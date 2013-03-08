@@ -95,15 +95,28 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
 
-		return cotaRepository
-				.obterDadosCotasComNotaEnvio(filtro);
+		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
+			return cotaRepository.obterDadosCotasComNotaEnvioEmitidas(filtro);
+		} else if("AEMITIR".equals(filtro.getExibirNotasEnvio())) {
+			return cotaRepository.obterDadosCotasComNotaEnvioAEmitir(filtro);
+		} else {
+			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasEAEmitir(filtro);
+		}
 
 	}
 
 	@Override
 	@Transactional
 	public Integer buscaCotasNotasDeEnvioQtd(FiltroConsultaNotaEnvioDTO filtro) {
-		return cotaRepository.obterCountCotasComNotaEnvioEntre(filtro);
+		
+		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
+			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasCount(filtro);
+		} else if("AEMITIR".equals(filtro.getExibirNotasEnvio())) {
+			return cotaRepository.obterDadosCotasComNotaEnvioAEmitirCount(filtro);
+		} else {
+			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasEAEmitirCount(filtro);
+		}
+		
 	}
 
 	private List<ItemNotaEnvio> gerarItensNotaEnvio(
@@ -114,8 +127,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		for (EstudoCota estudoCota : listaEstudoCota) {
 
-			ProdutoEdicao produtoEdicao = estudoCota.getEstudo()
-					.getProdutoEdicao();
+			if (!estudoCota.getItemNotaEnvios().isEmpty()) {
+				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
+				continue;
+			}
+			
+			ProdutoEdicao produtoEdicao = estudoCota.getEstudo().getProdutoEdicao();
 
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
@@ -159,20 +176,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva());
 
-			if (estudoCota.getItemNotaEnvios().isEmpty()) {
-
-				ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(
-						estudoCota,
-						produtoEdicao,
-						precoVenda,
-						((percentualDesconto != null && percentualDesconto
-								.getValor() != null) ? percentualDesconto
-								.getValor() : BigDecimal.ZERO), 
-						quantidade);
-				listItemNotaEnvio.add(itemNotaEnvio);
-			} else{
-				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
-			}
+			ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(
+					estudoCota,
+					produtoEdicao,
+					precoVenda,
+					((percentualDesconto != null && percentualDesconto
+							.getValor() != null) ? percentualDesconto
+							.getValor() : BigDecimal.ZERO), 
+					quantidade);
+			listItemNotaEnvio.add(itemNotaEnvio);
 			
 		}
 
@@ -289,7 +301,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return notaEnvio;
 	}
 
-	private NotaEnvio gerar(Long idCota, Long idRota, String chaveAcesso,
+	private List<NotaEnvio> gerar(Long idCota, Long idRota, String chaveAcesso,
 			Integer codigoNaturezaOperacao, String descricaoNaturezaOperacao,
 			Date dataEmissao, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores) {
@@ -329,39 +341,55 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					.getRoteiro(idRoteiro).getRotas().get(0).getId();
 		}
 
-		ItemNotaEnvioPK itemNotaEnvioPK = listaItemNotaEnvio.get(0)
-				.getItemNotaEnvioPK();
+		List<NotaEnvio> notasEnvio = new ArrayList<>();
+		List<ItemNotaEnvio> itensNotasEnvioExistentes = new ArrayList<>();
+		
+		for(ItemNotaEnvio ine : listaItemNotaEnvio) {
+			
+			ItemNotaEnvioPK itemNotaEnvioPK = ine.getItemNotaEnvioPK();
 
-		NotaEnvio notaEnvio = (itemNotaEnvioPK == null) ? null
-				: itemNotaEnvioPK.getNotaEnvio();
-
-		if (notaEnvio != null)
-			return notaEnvio;
-
-		notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
-				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
-				distribuidor, cota);
-
-		notaEnvioRepository.adicionar(notaEnvio);
-
-		int sequencia = 0;
-
-		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
-			if(itemNotaEnvio.getItemNotaEnvioPK() == null){
-				itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,
-						++sequencia));
-
-				itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+			NotaEnvio notaEnvio = (itemNotaEnvioPK == null) ? null : itemNotaEnvioPK.getNotaEnvio();
+						
+			if (notaEnvio != null && !notasEnvio.contains(notaEnvio)) {
+				notasEnvio.add(notaEnvio);
 			}
-
+			
+			if (notaEnvio != null && notasEnvio.contains(notaEnvio)) {
+				itensNotasEnvioExistentes.add(ine);
+			}
 			
 		}
-
-		notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
-
-		notaEnvio = notaEnvioRepository.merge(notaEnvio);
-
-		return notaEnvio;
+		
+		listaItemNotaEnvio.removeAll(itensNotasEnvioExistentes);
+		
+		if(listaItemNotaEnvio != null && listaItemNotaEnvio.size() > 0) {
+			
+			NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
+					codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+					distribuidor, cota);
+	
+			notaEnvioRepository.adicionar(notaEnvio);
+			
+			int sequencia = 0;
+	
+			for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
+				
+				if(itemNotaEnvio.getItemNotaEnvioPK() == null) {
+					itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio, ++sequencia));
+					itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+				}
+				
+			}
+	
+			notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
+	
+			notaEnvio = notaEnvioRepository.merge(notaEnvio);
+			
+			notasEnvio.add(notaEnvio);
+			
+		}
+		
+		return notasEnvio;
 	}
 
 	/**
@@ -550,15 +578,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		for (Long idCota : listaIdCotas) {
 
-			NotaEnvio notaEnvio = this.gerar(idCota, filtro.getIdRota(), null,
+			List<NotaEnvio> notaEnvio = this.gerar(idCota, filtro.getIdRota(), null,
 					null, null, filtro.getDataEmissao(),
 					filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
 
 			if (notaEnvio != null) {
-				listaNotaEnvio.add(notaEnvio);
+				listaNotaEnvio.addAll(notaEnvio);
 			}
 		}
-
+		
 		return listaNotaEnvio;
 	}
 
