@@ -362,23 +362,29 @@ public class LancamentoRepositoryImpl extends
 		return (Long) query.uniqueResult();
 	}
 	
-	public Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista, TipoLancamento tipoLancamento, Long idProdutoEdicao){
+	public Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataLancamento, TipoLancamento tipoLancamento, Long idProdutoEdicao){
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from Lancamento lancamento ");
 		
-		hql.append(" where lancamento.dataLancamentoPrevista = :dataPrevista ");
+		hql.append(" where (lancamento.dataLancamentoPrevista >= :dataLancamento ");
+		
+		hql.append(" or lancamento.dataLancamentoDistribuidor >= :dataLancamento) ");
 		
 		if (tipoLancamento != null) {
 			hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
 		}
 		
-		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao");
+		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
+
+		hql.append(" order by lancamento.dataLancamentoPrevista, lancamento.dataLancamentoDistribuidor ");
 		
 		Query query = getSession().createQuery(hql.toString());
+
+		query.setDate("dataLancamento", dataLancamento);
 		
-		query.setDate("dataPrevista", dataPrevista);
+		query.setMaxResults(1);
 		
 		if(tipoLancamento != null){	
 			query.setParameter("tipoLancamento", tipoLancamento);

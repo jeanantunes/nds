@@ -33,6 +33,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDet
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -223,104 +224,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 	}
 	
-	/**
-	 * Obtém o Valor Total dos movimentos de estoque da cota que ainda não geraram movimento financeiro
-	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
-	 * @param idCota
-	 * @return List<MovimentoEstoqueCota>
-	 */
-	@Override
-	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select sum(COALESCE(mec.qtde * coalesce(mec.valoresAplicados.precoComDesconto, pe.precoVenda),0))  ");			
-		
-		hql.append(" from MovimentoEstoqueCota mec ");
-		
-		hql.append(" join mec.tipoMovimento tipoMovimento ");
-		
-		hql.append(" join mec.cota cota ");
-		
-        hql.append(" join mec.produtoEdicao pe ");
-		
-		hql.append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ");
-		
-		hql.append(" and ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusFinanceiro )) ");
-		
-		hql.append(" and mec.status = :statusAprovacao ");
-
-		hql.append(" and cota.id = :idCota ");
-		
-        hql.append(" and pe.id in (");
-		
-		hql.append("     select pe.id ");
-		
-		hql.append("     from ChamadaEncalhe c ");
-		
-		hql.append("     join c.chamadaEncalheCotas cc ");
-		
-		hql.append("     join cc.cota cota ");
-		
-		hql.append("     join c.produtoEdicao pe ");
-		
-		hql.append("     where c.dataRecolhimento = :dataControleConferencia ");
-		
-		hql.append("     and cota.id = :idCota ");
-		
-		hql.append(")");
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
-				                                                GrupoMovimentoEstoque.COMPRA_ENCALHE, 
-				                                                GrupoMovimentoEstoque.ENVIO_JORNALEIRO));
-		
-		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
-		query.setParameter("idCota", idCota);
-		query.setParameter("dataControleConferencia", dataControleConferencia);
-		
-		return (BigDecimal) query.uniqueResult();
-		
-	}
-	
-	/**
-	 * Obtém o Valor Total dos movimentos de estoque da cota que forão estornados
-	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
-	 * @param idCota
-	 * @return List<MovimentoEstoqueCota>
-	 */
-	@Override
-	public BigDecimal obterValorTotalMovimentosEstornados(Long idCota) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select sum(COALESCE(mec.qtde * coalesce(mec.valoresAplicados.precoComDesconto, pe.precoVenda),0))  ");			
-		
-		hql.append(" from MovimentoEstoqueCota mec ");
-		
-		hql.append(" join mec.tipoMovimento tipoMovimento ");
-		
-		hql.append(" join mec.cota cota ");
-		
-		hql.append(" join mec.produtoEdicao pe ");
-		
-		hql.append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ");
-
-		hql.append(" and cota.id = :idCota ");
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
-				                                                GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
-		
-		query.setParameter("idCota", idCota);
-		
-		return (BigDecimal) query.uniqueResult();
-		
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdeMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(java.lang.Long, java.lang.Long, java.util.Date, java.util.Date, br.com.abril.nds.model.estoque.OperacaoEstoque)
@@ -365,6 +268,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	@Override
 	public BigDecimal obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
 			Long idCota,
+			Long idFornecedor,
 			Long idProdutoEdicao,
 			Date dataInicial, 
 			Date dataFinal,
@@ -378,9 +282,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" join movimentoEstoqueCota.produtoEdicao produtoEdicao  ");
 		
+		hql.append(" join produtoEdicao.produto produto  ");
+		
+		hql.append(" join produto.fornecedores fornecedor  ");
+		
 		hql.append(" where movimentoEstoqueCota.data between :dataInicial and :dataFinal and ");
 
 		hql.append(" movimentoEstoqueCota.cota.id = :idCota and ");
+		
+		hql.append(" fornecedor.id = :idFornecedor and ");
 		
 		hql.append(" movimentoEstoqueCota.produtoEdicao.id = :idProdutoEdicao and ");
 		
@@ -391,6 +301,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("dataInicial", dataInicial);
 		query.setParameter("dataFinal", dataFinal);
 		query.setParameter("idCota", idCota);
+		query.setParameter("idFornecedor", idFornecedor);
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		query.setParameter("operacaoEstoque", operacaoEstoque);
 		
@@ -2392,7 +2303,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
+			Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
+			Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
 		List<MovimentoEstoqueCota> result = new ArrayList<MovimentoEstoqueCota>();
 		
@@ -2463,13 +2376,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 			if (i == 1 || GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal)) {
 				double diasAMais;
-				if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuinto()) {
+				if (parametrosRecolhimentoDistribuidor.isDiaRecolhimentoQuinto()) {
 					diasAMais = 4;
-				} else if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuarto()) {
+				} else if (parametrosRecolhimentoDistribuidor.isDiaRecolhimentoQuarto()) {
 					diasAMais = 3;
-				} else if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro()) {
+				} else if (parametrosRecolhimentoDistribuidor.isDiaRecolhimentoTerceiro()) {
 					diasAMais = 2;
-				} else if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo()) {
+				} else if (parametrosRecolhimentoDistribuidor.isDiaRecolhimentoSegundo()) {
 					diasAMais = 1;
 				} else {
 					diasAMais = 0;

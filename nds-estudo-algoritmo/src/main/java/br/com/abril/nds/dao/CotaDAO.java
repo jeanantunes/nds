@@ -92,14 +92,13 @@ public class CotaDAO {
 	return ajusteAplicado;
     }
 
-    public Cota getCotaEquivalenteByCota(Cota cota) {
+    public Cota getIndiceAjusteCotaEquivalenteByCota(Cota cota) {
 
 	List<Cota> listEquivalente = new ArrayList<Cota>();
 	try {
 	    Map<String, Object> params = new HashMap<>();
 	    params.put("COTA_ID", cota.getId());
-	    params.put("DATA_INICIO", new java.sql.Date(new Date().getTime()));
-	    params.put("DATA_FIM", new java.sql.Date(new Date().getTime()));
+	    params.put("DATA", new java.sql.Date(new Date().getTime()));
 
 	    listEquivalente = jdbcTemplate.query(queryCotaEquivalente, params, new RowMapper<Cota>() {
 		@Override

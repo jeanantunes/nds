@@ -15,6 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.AbstractMovimentoFinanceiro;
 
@@ -47,6 +48,9 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	
 	@ManyToMany(mappedBy="movimentos", fetch=FetchType.EAGER)
 	private List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota;
+	
+	@ManyToOne
+	private Fornecedor fornecedor;
 	
 	public Cota getCota() {
 		return cota;
@@ -115,6 +119,20 @@ public class MovimentoFinanceiroCota extends AbstractMovimentoFinanceiro {
 	public void setConsolidadoFinanceiroCota(
 		List<ConsolidadoFinanceiroCota> consolidadoFinanceiroCota) {
 		this.consolidadoFinanceiroCota = consolidadoFinanceiroCota;
+	}
+
+	/**
+	 * @return the fornecedor
+	 */
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
 	}
 	
 }

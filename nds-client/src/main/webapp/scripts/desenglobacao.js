@@ -1,3 +1,5 @@
+var indexInput = 0;
+
 var desenglobacaoController = $.extend(true, {
 	
 	/**
@@ -28,6 +30,9 @@ var desenglobacaoController = $.extend(true, {
 		$('#statusCota').val('');
 		$('#filtroPrincipalNumeroCota').val('');
 		$('#filtroPrincipalNomePessoa').val('');
+		
+		$('#filtroDesenglobaNumeroCota').val('');
+		$('#filtroDesenglobaNomePessoa').val('');
 	},
 	
 	sucessCallBack : function errorCallBack(result){
@@ -37,13 +42,8 @@ var desenglobacaoController = $.extend(true, {
 	},
 	
 	init : function() {
-	
-		// #### ASSOCIANDO OS EVENTOS NO DOM ####
 		
-		// PESQUISAS PRINCIPAIS
-		$('#pesquisaPorCota').click(function (){
-			desenglobacaoController.porCota();
-		});
+		// ###### INICIO FILTRO DA TELA PRINCIPAL ######
 		
 		// FILTRO PRINCIPAL - POR COTA
 		$('#filtroPrincipalNumeroCota').change(function (){
@@ -53,11 +53,88 @@ var desenglobacaoController = $.extend(true, {
 		$('#filtroPrincipalNomePessoa').keyup(function (){
 			pesquisaCota.autoCompletarPorNome('#filtroPrincipalNomePessoa');
 		});
-		//pesquisarPorNomeCota
 		
+		//pesquisarPorNomeCota
 		$('#filtroPrincipalNomePessoa').blur(function (){
 			pesquisaCota.pesquisarPorNomeCota('#filtroPrincipalNumeroCota','#filtroPrincipalNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
 		});
+		
+		//###### FIM FILTRO DA TELA PRINCIPAL ######
+		
+		
+		
+		
+		//###### INICIO FILTRO DA POPUP INSERT ######
+		
+		//FILTRO DA TELA DE DESENGLOBACAO
+		// FILTRO POR COTA
+		$('#filtroDesenglobaNumeroCota').change(function (){
+			pesquisaCota.pesquisarPorNumeroCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+		});
+		
+		$('#filtroDesenglobaNomePessoa').keyup(function (){
+			pesquisaCota.autoCompletarPorNome('#filtroDesenglobaNomePessoa');
+		});
+		
+		//FILTRO POR NOME
+		$('#filtroDesenglobaNomePessoa').blur(function (){
+			pesquisaCota.pesquisarPorNomeCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+		});
+		
+		
+		
+		//FILTRO POPUP INSERIR COTA
+		// FILTRO POR COTA
+		$('#inserirEnglobadaNumeroCota').change(function (){
+			pesquisaCota.pesquisarPorNumeroCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+		});
+		
+		$('#inserirEnglobadaNomePessoa').keyup(function (){
+			pesquisaCota.autoCompletarPorNome('#inserirEnglobadaNomePessoa');
+		});
+		
+		//FILTRO POR NOME
+		$('#inserirEnglobadaNomePessoa').blur(function (){
+			pesquisaCota.pesquisarPorNomeCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+		});
+		
+		//###### FIM FILTRO DA POPUP INSERT ######
+		
+		
+		
+		//###### AÇÕES DOS BOTÕES DA TELA ######
+		
+		//PESQUISAR DA TELA PRINCIPAL
+		$('#pesquisaPorCota').click(function (){
+			desenglobacaoController.porCota();
+		});
+		
+		$('#btnInserirCotaEnglobada').click(function(e){
+			e.preventDefault();
+			
+			var html = '<tr>';
+			html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNumeroCota' value='' style='width: 30px;'></td>";
+			html+= "<td style='width: 450px;'><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNomePessoa' value='' style='width: 400px;'></td>";
+			html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaPorcentagemCota' value='' style='width: 30px;'></td>";
+			html+= '</tr>';
+			
+			if (indexInput != 0) {
+				html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].desenglobaNumeroCota' value='"+$('#filtroDesenglobaNumeroCota').val()+"'>";
+				html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].desenglobaNomePessoa' value='"+$('#filtroDesenglobaNomePessoa').val()+"'>";
+			}
+			
+			$('#tableCotasEnglobadas').append(html);
+			
+			clearFormEnglobada();
+			indexInput++;
+		});
+		
+		function clearFormEnglobada() {
+			$('#inserirEnglobadaNumeroCota').val('');
+			$('#inserirEnglobadaNomePessoa').val('');
+			$('#inserirEnglobadaPorcentagemCota').val('');
+		}
+		
 		
 		// EXPORTAÇÃO
 		//$('#gerarPDFPorCota').attr('href', contextPath + "/distribuicao/excecaoSegmentoParciais/exportar?fileType=PDF&porCota=true");
@@ -66,6 +143,7 @@ var desenglobacaoController = $.extend(true, {
 		
 		// URLs usadas para requisições post (Inserção e Deleção)
 		desenglobacaoController.Url = {
+				
 		},
 		
 		desenglobacaoController.Grids = {
@@ -81,17 +159,12 @@ var desenglobacaoController = $.extend(true, {
 						options.preProcess = options.preProcess || this.PreProcess._default  || function(result){
 							
 							if (result.mensagens) {
-
-								exibirMensagem(result.mensagens.tipoMensagem,
-										result.mensagens.listaMensagens);
-
+								exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 								$(".grids").hide();
-
 								return result;
 							}
 
 							$(".grids").show();
-
 							return result;
 						};
 						
@@ -153,12 +226,8 @@ var desenglobacaoController = $.extend(true, {
 					_default : function(result){
 						
 						if (result.mensagens) {
-
-							exibirMensagem(result.mensagens.tipoMensagem,
-									result.mensagens.listaMensagens);
-
+							exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
 							$(".grids").hide();
-
 							return result;
 						}
 
@@ -197,6 +266,12 @@ var desenglobacaoController = $.extend(true, {
 							sortable : true,
 							align : 'left'
 						},{
+							display : '% da Cota',
+							name : 'percDaCota',
+							width : 65,
+							sortable : true,
+							align : 'center'
+						},{
 							display : 'Usuário',
 							name : 'usuario',
 							width : 160,
@@ -212,12 +287,6 @@ var desenglobacaoController = $.extend(true, {
 							display : 'Hora',
 							name : 'hora',
 							width : 50,
-							sortable : true,
-							align : 'center'
-						},{
-							display : 'Ação',
-							name : 'acao',
-							width : 40,
 							sortable : true,
 							align : 'center'
 						}],
@@ -276,18 +345,6 @@ var desenglobacaoController = $.extend(true, {
 							width : 85,
 							sortable : true,
 							align : 'center'
-						}, {
-							display : 'Data Início',
-							name : 'dtInicio',
-							width : 85,
-							sortable : true,
-							align : 'center'
-						}, {
-							display : 'Data Final',
-							name : 'dtFinal',
-							width : 85,
-							sortable : true,
-							align : 'center'
 						}],
 						width : 600,
 						height : 240
@@ -310,6 +367,34 @@ var desenglobacaoController = $.extend(true, {
 		
 	},
 	
+	novaEnglobacao : function(listaEnglobadas){
+		var formData = $("#formInserirEnglobada").serialize();		
+        $.post(contextPath + "/distribuicao/desenglobacao/inserirEnglobacao", formData, function(response) {  
+            //faz alguma coisa com o response  
+        });
+    },
+    
+    popup: function popup() {
+		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
+	
+		$( "#dialog-novo" ).dialog({
+			resizable: false,
+			height:500,
+			width:650,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$("#effect").show("highlight", {}, 1000, callback);
+					$(".grids").show();
+					desenglobacaoController.novaEnglobacao();
+					$(this).dialog("destroy");
+				},
+				"Cancelar": function() {
+					$(this).dialog("destroy");
+				}
+			}
+		});
+	},
 	
 }, BaseController);
 //@ sourceURL=desenglobacaoController.js

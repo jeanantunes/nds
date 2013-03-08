@@ -37,8 +37,8 @@ public class JornaleirosNovos extends ProcessoAbstrato {
     protected void executarProcesso() throws Exception {
 
 	Cota cota = (Cota) super.genericDTO;
-	cota = cotaDAO.getCotaEquivalenteByCota(cota);
-
+	cota = cotaDAO.getIndiceAjusteCotaEquivalenteByCota(cota);
+	
 	if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
 
 	    BigDecimal totalVendaMediaCorrigidaEquivalente = BigDecimal.ZERO;
@@ -74,9 +74,9 @@ public class JornaleirosNovos extends ProcessoAbstrato {
 
 			    if (vendaMediaCorrigidaEquivalente.compareTo(BigDecimal.ZERO) == 1)
 				totalVendaMediaCorrigidaEquivalente = totalVendaMediaCorrigidaEquivalente.add(vendaMediaCorrigidaEquivalente);
-
-			    iEquivalente++;
 			}
+			
+			iEquivalente++;
 		    }
 		}
 	    }
