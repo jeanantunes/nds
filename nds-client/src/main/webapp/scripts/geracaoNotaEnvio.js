@@ -15,7 +15,8 @@ var geracaoNotaEnvioController = $.extend({
 			intervaloCotaDe:null, 
 			intervaloCotaAte:null,
 			intervaloBoxDe:null, 
-			intervaloBoxAte:null
+			intervaloBoxAte:null,
+			exibirNotasEnvio:null
 		},
 	
 		/**
@@ -185,7 +186,16 @@ var geracaoNotaEnvioController = $.extend({
 			
 			var uri = "pesquisar";
 			
-			this.gridReaload(grid, uri);
+			mensagens = this.validarDataMovimento(); 
+			if(mensagens[0]['value']) {
+				
+				this.gridReaload(grid, uri);
+				
+			} else {
+				
+				exibirMensagem('WARNING', mensagens);
+				
+			}
 		
 		},
 		
@@ -218,8 +228,11 @@ var geracaoNotaEnvioController = $.extend({
 			},{
 				name : "intervaloMovimentoAte",
 				value : this.filtroPesquisa.intervaloMovimentoAte	
+			},{
+				name : "exibirNotasEnvio",
+				value : this.filtroPesquisa.exibirNotasEnvio	
 			}];
-						
+			
 			if (this.filtroPesquisa.listaFornecedores) {
 				$.each(this.filtroPesquisa.listaFornecedores, function(index, value) {
 					params.push({
@@ -378,6 +391,9 @@ var geracaoNotaEnvioController = $.extend({
 			
 			this.filtroPesquisa.intervaloMovimentoDe = $("#geracaoNotaEnvio-filtro-movimentoDe").val();
 			this.filtroPesquisa.intervaloMovimentoAte = $("#geracaoNotaEnvio-filtro-movimentoAte").val();
+			
+			this.filtroPesquisa.exibirNotasEnvio = $("#geracaoNotaEnvio-filtro-exibirNotasEnvio").val();
+			
 		},
 		
 		/**
@@ -440,6 +456,29 @@ var geracaoNotaEnvioController = $.extend({
 				
 				return data;
 			}
+		},
+		
+		/**
+		 * Metodo de pre-processamento dos dados inseridos na grid Cotas Ausentes
+		 * 
+		 * @returns intervalo de datas validos (true) ou invalidos (false)
+		 */
+		validarDataMovimento : function() {
+			
+			messages = [];
+			
+			if($('#geracaoNotaEnvio-filtro-movimentoDe').val() == ''
+				|| $('#geracaoNotaEnvio-filtro-movimentoAte').val() == '') {
+				
+				messages.push({name: 'isValid', value: false});
+				messages.push('Os campos de Data de Movimento não podem estar vazios');
+				
+				return messages;
+			}
+			
+			messages.push({name: 'isValid', value: true});
+			return messages;
+			
 		},
 		
 		/**

@@ -5,9 +5,11 @@ import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 
 /**
@@ -76,37 +78,6 @@ public interface PoliticaCobrancaService {
 	 * @param idPolitica
 	 */
 	void dasativarPoliticaCobranca(long idPolitica);
-
-	
-	 /**
-	 * Verifica se ja existe a Forma Cobranca Mensal que o usuário deseja cadastrar(Valida por Fornecedor, Concentração e Tipo)
-	 * @param tipoCobranca
-	 * @param idFornecedor
-	 * @param diaDoMes
-	 * @return Boolean
-	 */
-	boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, TipoCobranca tipoCobranca,
-			List<Long> idFornecedores, Integer diaDoMes);
-	
-
-	 /**
-	 * Verifica se ja existe a Forma Cobranca Semanal que o usuário deseja cadastrar(Valida por Fornecedor, Concentração e Tipo)
-	 * @param TipoCobranca
-	 * @param idFornecedor
-	 * @param domingo
-	 * @param segunda
-	 * @param terca
-	 * @param quarta
-	 * @param quinta
-	 * @param sexta
-	 * @param sabado
-	 * @return Boolean
-	 */
-	boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, TipoCobranca tipoCobranca,
-			List<Long> idFornecedores, Boolean domingo, Boolean segunda,
-			Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta,
-			Boolean sabado);
 	
 	List<TipoCobranca> obterTiposCobrancaDistribuidor();
-
 }

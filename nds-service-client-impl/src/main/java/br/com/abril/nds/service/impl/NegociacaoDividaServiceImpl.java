@@ -40,6 +40,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -79,6 +80,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
@@ -290,6 +292,15 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				parcelaNegociacao.getMovimentoFinanceiroCota()
 						.setTipoMovimento(tipoMovimentoFinanceiro);
 
+				Fornecedor fornecedor = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null;
+				
+				if (fornecedor == null){
+
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !"));
+				}
+				
+				parcelaNegociacao.getMovimentoFinanceiroCota().setFornecedor(fornecedor);
+				
 				totalNegociacao = totalNegociacao.add(parcelaNegociacao
 						.getMovimentoFinanceiroCota().getValor());
 
@@ -343,7 +354,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 										GrupoMovimentoFinaceiro.JUROS));
 						movimentoFinanceiroCota.setUsuario(usuarioResponsavel);
 						movimentoFinanceiroCota.setValor(juros);
-						
+												
+						movimentoFinanceiroCota.setFornecedor(cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null);												
+												
 						movs.add(movimentoFinanceiroCota);
 						
 						this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
@@ -369,6 +382,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 										GrupoMovimentoFinaceiro.MULTA));
 						movimentoFinanceiroCota.setUsuario(usuarioResponsavel);
 						movimentoFinanceiroCota.setValor(multas);
+
+						movimentoFinanceiroCota.setFornecedor(cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null);
 						
 						movs.add(movimentoFinanceiroCota);
 						

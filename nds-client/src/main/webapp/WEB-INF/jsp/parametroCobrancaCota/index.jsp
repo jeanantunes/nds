@@ -197,6 +197,16 @@ $(function(){
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
 			</tr>
+			
+			<tr>
+			    <td>Fornecedor Padrão:</td>
+				<td>
+					<div id="fornecedoresPadrao" />
+				</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			
 		</tbody>
 	</table>
 	
@@ -318,7 +328,7 @@ $(function(){
 						     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
 						         <tr>
 						             <td width="68">Todo dia:</td>
-						             <td width="156"><input maxlength="2" type="text" name="diaDoMes" id="diaDoMes" style="width:60px;"/></td>
+						             <td width="156"><input maxlength="2" type="text" name="diaDoMesCota" id="diaDoMesCota" style="width:60px;"/></td>
 						         </tr>
 						     </table>
 					     
