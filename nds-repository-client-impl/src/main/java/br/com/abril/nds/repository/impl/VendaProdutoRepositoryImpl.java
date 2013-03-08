@@ -58,6 +58,9 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		hql.append(" then movimentoEstoqueCota.qtde else 0 end) as big_decimal ) as percentagemVenda, ");
 		
 		hql.append(" produtoEdicao.precoVenda  as precoCapa, ");
+		hql.append(" estudo.id  as numeroEstudo, ");
+		hql.append(" produto.periodicidade  as periodo, ");
+		
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
 		
 		hql.append(" sum(case when (tipoMovimento.operacaoEstoque = 'ENTRADA') ");
@@ -133,6 +136,9 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		hql.append(" JOIN produtoEdicao.produto as produto ");
 		hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
 		hql.append(" JOIN movimentoEstoqueCota.tipoMovimento as tipoMovimento ");
+		hql.append(" JOIN movimentoEstoqueCota.cota as cota ");
+		hql.append(" JOIN movimentoEstoqueCota.estudoCota as estudoCota ");
+		hql.append(" JOIN estudoCota.estudo as estudo ");
 		
 //		hql.append(" FROM  MOVIMENTO_ESTOQUE_COTA movimentoEstoqueCota ");
 //	    
@@ -178,6 +184,14 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		}
 		if(filtro.getIdFornecedor() !=null && filtro.getIdFornecedor() != -1){
 			hql.append( (usarAnd ? " and ":" where ") + " produto.fornecedor.id = :idFornecedor ");
+			usarAnd = true;
+		}
+		if(filtro.getNumeroCota() !=null && filtro.getNumeroCota() != -1){
+			hql.append( (usarAnd ? " and ":" where ") + "cota.numeroCota = :numeroCota ");
+			usarAnd = true;
+		}
+		if(filtro.getIdClassificacaoProduto() !=null && filtro.getIdClassificacaoProduto() != -1){
+			hql.append( (usarAnd ? " and ":" where ") + "produto.tipoClassificacaoProduto.id = :tpClassifProduto ");
 			usarAnd = true;
 		}
 		
@@ -231,7 +245,12 @@ public class VendaProdutoRepositoryImpl extends AbstractRepositoryModel<Moviment
 		if(filtro.getIdFornecedor() != null && filtro.getIdFornecedor() != -1){ 
 			param.put("idFornecedor", filtro.getIdFornecedor());
 		}
-		
+		if(filtro.getNumeroCota() != null && filtro.getNumeroCota() != -1){ 
+			param.put("numeroCota", filtro.getNumeroCota());
+		}
+		if(filtro.getIdClassificacaoProduto() != null && filtro.getIdClassificacaoProduto() != -1){ 
+			param.put("tpClassifProduto", filtro.getIdClassificacaoProduto());
+		}
 		return param;
 	}
 	

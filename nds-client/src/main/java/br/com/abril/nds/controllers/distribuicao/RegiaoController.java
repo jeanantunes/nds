@@ -69,7 +69,7 @@ public class RegiaoController extends BaseController {
 	@Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO)
 	public void index(){
 		this.carregarComboRegiao();
-//		this.carregarComboSegmento();
+	//	this.carregarComboSegmento();
 	}
 	
 	@Post
@@ -182,10 +182,12 @@ public class RegiaoController extends BaseController {
 		for (RegiaoDTO itemRegiao : regioes) {
 			comboRegiao.add(new ItemDTO<Long,String>(itemRegiao.getIdRegiao() , itemRegiao.getNomeRegiao()));
 		}
-		
+		/*
+		 * 
 		if (comboRegiao == null || comboRegiao.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		 */
 		
 		result.include("listaRegiao",comboRegiao );
 	}

@@ -2,7 +2,6 @@ var regiaoController = $.extend(true, {
 	cotaAtual : '',
 	numCotas : null,
 	
-	
 	init : function() {
 	
 		$("#faixaGrid", regiaoController.workspace).flexigrid({
@@ -396,6 +395,7 @@ var regiaoController = $.extend(true, {
 			width : 960,
 			height : 255
 		});
+		$("#index").show();
 	},
 
 	
@@ -514,7 +514,6 @@ var regiaoController = $.extend(true, {
 	
 	
 	// -- FUNCTIONS --
-	
 	
 
 	//	FUNCTIONS - REGI�O

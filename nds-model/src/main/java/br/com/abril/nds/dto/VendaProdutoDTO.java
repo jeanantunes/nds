@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
@@ -52,6 +53,11 @@ public class VendaProdutoDTO implements Serializable {
 	
 	@Export(label = "Chamada Capa", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private String chamadaCapa;
+	
+	private Long numeroEstudo = new Long(0);
+	private PeriodicidadeProduto periodo;
+	private Integer periodoFormatado = 1;
+	
 	
 	public VendaProdutoDTO() {
 		
@@ -179,4 +185,24 @@ public class VendaProdutoDTO implements Serializable {
 		this.dataRecolhimento = DateUtil.formatarDataPTBR(dataRecolhimento);
 	}
 
+	public Long getNumeroEstudo() {
+		return numeroEstudo;
+	}
+
+	public void setNumeroEstudo(Long numeroEstudo) {
+		this.numeroEstudo = numeroEstudo;
+	}
+
+	public PeriodicidadeProduto getPeriodo() {
+		return periodo;
+	}
+
+	public void setPeriodo(PeriodicidadeProduto periodo) {
+		this.periodo = periodo;
+		this.periodoFormatado = periodo.getOrdem();
+	}
+
+	public Integer getPeriodoFormatado() {
+		return periodoFormatado;
+	}
 }

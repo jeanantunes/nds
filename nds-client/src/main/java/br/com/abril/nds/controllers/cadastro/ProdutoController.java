@@ -212,6 +212,25 @@ public class ProdutoController extends BaseController {
 		
 		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 	}
+	
+	@Post
+	public void autoCompletarPorCodProduto(String codigoProduto) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeCodigo(codigoProduto);
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProduto != null && !listaProduto.isEmpty()){
+			
+			for (Produto produto : listaProduto) {
+				ItemAutoComplete itemAutoComplete =
+						new ItemAutoComplete(produto.getCodigo(), produto.getCodigo(), produto.getId().intValue());
+
+				listaProdutos.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
 		
 	@Post
 	public void pesquisarPorNomeProduto(String nomeProduto,String codigoProduto) {
@@ -696,4 +715,5 @@ public class ProdutoController extends BaseController {
 		
 		result.nothing();
 	}
+	
 }

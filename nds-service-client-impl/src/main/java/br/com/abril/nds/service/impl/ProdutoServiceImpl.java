@@ -303,6 +303,15 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 		return produtoRepository.buscarProdutosBalanceadosOrdenadosNome(dataLancamento);
 	}
-	
-	
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Produto> obterProdutoLikeCodigo(String codigo) {
+			if (codigo == null || codigo.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
+			}
+			
+			return produtoRepository.obterProdutoLikeCodigo(codigo);
+	}
+
 }

@@ -441,7 +441,7 @@ $(function(){
 						<td width="48">Região:</td>
 						<td width="752">
 							<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
-									onchange="$('.grids').toggle(); regiaoController.carregarMotivo()">
+									onchange="$('.grids').toggle();">
 									<option selected="selected">Selecione...</option>
 									<c:forEach items="${listaRegiao}" var="regiao">
 										<option value="${regiao.key}">${regiao.value}</option>
