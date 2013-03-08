@@ -1,5 +1,6 @@
 package br.com.abril.nds.model;
 
+
 public enum ClassificacaoCota {
 	
 	/**
@@ -84,5 +85,23 @@ public enum ClassificacaoCota {
 	
 	public String getCodigo() {
 		return codigo;
+	}
+	
+	public boolean notIn(ClassificacaoCota ... lista) {
+	    for (int i = 0; i < lista.length; i++) {
+		if (this.equals(lista[i])) {
+		    return false;
+		}
+	    }
+	    return true;
+	}
+	
+	public boolean in(ClassificacaoCota ... lista) {
+	    for (int i = 0; i < lista.length; i++) {
+		if (this.equals(lista[i])) {
+		    return true;
+		}
+	    }
+	    return false;
 	}
 }

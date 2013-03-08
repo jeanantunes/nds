@@ -30,7 +30,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -228,10 +227,8 @@ public class ConsultaNotasController extends BaseController {
 
 		List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresAtivos();
 
-		Distribuidor distribuidor = distribuidorService.obter();
-
 		List<TipoNotaFiscal> tiposNotaFiscal = 
-				this.tipoNotaFiscalService.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor(distribuidor.getId());
+				this.tipoNotaFiscalService.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor();
 
 		this.result.include("fornecedores", fornecedores);
 		this.result.include("tiposNotaFiscal", tiposNotaFiscal);
@@ -420,9 +417,9 @@ public class ConsultaNotasController extends BaseController {
 		
 		filtroConsultaNotaFiscal.setPeriodo(periodo);
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		Long idDistribuidor = this.distribuidorService.obterId();
 		
-		filtroConsultaNotaFiscal.setIdDistribuidor(distribuidor.getId());
+		filtroConsultaNotaFiscal.setIdDistribuidor(idDistribuidor);
 		
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder,sortname);
 

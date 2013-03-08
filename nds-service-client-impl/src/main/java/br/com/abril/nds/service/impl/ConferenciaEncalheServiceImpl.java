@@ -48,7 +48,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -2042,9 +2041,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional
 	public TipoContabilizacaoCE obterTipoContabilizacaoCE() {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		return distribuidor.getTipoContabilizacaoCE();
+		return this.distribuidorService.tipoContabilizacaoCE();
 		
 	}
 	

@@ -19,7 +19,7 @@ public class TipoPontoPDV extends CodigoDescricao {
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(generator = "TIPO_PONTO_PDV_SEQ")
-	private Long id; 
+	private Long id;
 	
 	public Long getId() {
 		return id;
@@ -28,6 +28,4 @@ public class TipoPontoPDV extends CodigoDescricao {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-	
 }

@@ -197,7 +197,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i);
 		
 		T.lancamentos.push({
-			id:							row.cell.id, 
+			id:							row.cell.id,
+			codigoProduto:              row.cell.codigoProduto,
 			estudo:                     row.cell.idEstudo,
 			lancto:                     row.cell.lancto,
 			promo:                      row.cell.promo,
@@ -790,7 +791,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.mostrarOpcoes = function() {
 		opcoesAberto = !opcoesAberto;
-		$( '.opcoesEstudos' ).toggle(opcoesAberto);
+		$('.opcoesEstudos').toggle(opcoesAberto);
 		$('.setaMuda').attr('src',(opcoesAberto)? contextPath + '/images/p7PM_dark_south_1.gif': contextPath + '/images/p7PM_dark_south.gif');
 	},
 	
@@ -798,6 +799,24 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		setTimeout( function(){
             $( '.opcoesEstudos' ).hide();
              }, 2000);
+	},
+	
+	this.gerarEstudoAutomatico = function() {
+		$.each(T.lancamentos, function(index, row){
+			if (row.selecionado) {
+				var data = [];
+				data.push({name:'codigoProduto', value: row.codigoProduto});
+				data.push({name:'reparte', value: row.repDistrib});
+				
+				$.postJSON(
+					pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", 
+					data,
+					function(result) {
+						alert('teste');
+					}
+				);
+			}
+		});
 	};
 	
 }

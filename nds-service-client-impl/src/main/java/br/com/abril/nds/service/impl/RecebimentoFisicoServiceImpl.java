@@ -577,7 +577,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			Usuario usuario = usuarioService.getUsuarioLogado();
 						
 			if(lancamentoParcial.getPeriodos().isEmpty())
-				parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario , distribuidorService.obter());
+				parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario);
 			
 			Lancamento periodo = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
 			

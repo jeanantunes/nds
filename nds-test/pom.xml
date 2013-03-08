@@ -9,7 +9,6 @@
 	</parent>
 
 	<artifactId>nds-test</artifactId>
-	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<name>NDS - Test</name>
 
@@ -44,7 +43,7 @@
 		<dependency>
 			<groupId>br.com.abril</groupId>
 			<artifactId>nds-estudo-algoritmo</artifactId>
-			<version>1.0.0</version>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
 

@@ -35,7 +35,7 @@ public class CotaDAO {
 	    query.append(" INNER JOIN COTA C ON (C.ID = AR.COTA_ID) ");
 	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
 	    query.append(" WHERE AR.COTA_ID = ? ");
-	    query.append(" AND AR.DATA_INICIO >= ? AND AR.DATA_FIM <= ? ");
+	    query.append(" AND ? >= AR.DATA_INICIO AND ? <= AR.DATA_FIM ");
 
 	    if (tipoAjusteReparte != null && tipoAjusteReparte.length > 0) {
 
@@ -81,18 +81,17 @@ public class CotaDAO {
 	return ajusteAplicado;
     }
 
-    public Cota getCotaEquivalenteByCota(Cota cota) {
+    public Cota getIndiceAjusteCotaEquivalenteByCota(Cota cota) {
 
 	List<Cota> listEquivalente = new ArrayList<Cota>();
 
 	try {
-
 	    StringBuilder query = new StringBuilder(" SELECT CB.INDICE_AJUSTE, C.* FROM COTA_BASE_COTA CBC ");
 	    query.append(" INNER JOIN COTA_BASE CB ON (CB.ID = CBC.COTA_BASE_ID) ");
 	    query.append(" INNER JOIN COTA C ON (C.ID = CBC.COTA_ID) ");
 	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
 	    query.append(" WHERE CB.COTA_ID = ? ");
-	    query.append(" AND CB.DATA_INICIO >= ? AND CB.DATA_FIM <= ? ");
+	    query.append(" AND ? >= CB.DATA_INICIO AND ? <= CB.DATA_FIM ");
 
 	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
 	    psmt.setLong(1, cota.getId());
@@ -250,7 +249,7 @@ public class CotaDAO {
 	produtoEdicao.setPeso(idsPesos.get(produtoEdicao.getId()));
 
 	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-	produtoEdicao.setCodigoProduto(rs.getLong("CODIGO"));
+	produtoEdicao.setCodigoProduto(rs.getString("CODIGO"));
 
 	edicoes.add(produtoEdicao);
 	return edicoes;

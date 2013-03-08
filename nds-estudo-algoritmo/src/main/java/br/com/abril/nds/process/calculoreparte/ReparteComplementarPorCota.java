@@ -132,6 +132,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     	List<Cota> cotaListRecebeComplementar = new ArrayList<Cota>();
     	List<Cota> cotaListOrdenada = new ArrayList<Cota>();
     	
+    	
 		for(Cota cota:getEstudo().getCotas()){
 			if( cota.isRecebeReparteComplementar()==false && (
 					!cota.getClassificacao().equals(ClassificacaoCota.BancaSemClassificacaoDaPublicacao)
@@ -168,6 +169,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     	
     	
     }
+    
     
    //FIXME talvez usar o Guava do google para ordenar? 
    private abstract class Ordenador{

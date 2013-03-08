@@ -113,6 +113,11 @@ public class Cota implements Serializable {
 
 	@OneToMany(mappedBy = "cota", fetch=FetchType.LAZY)
 	private Set<MovimentoEstoqueCota> movimentoEstoqueCotas = new HashSet<MovimentoEstoqueCota>();
+	
+	@Column(name = "TIPO_DISTRIBUICAO_COTA", columnDefinition = "VARCHAR(255)")
+	@Enumerated(EnumType.STRING)
+	private TipoDistribuicaoCota tipoDistribuicaoCota;
+	
 
 	/**
 	 * Data de início de atividade da cota
@@ -169,7 +174,7 @@ public class Cota implements Serializable {
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
-		
+	
 	public Cota() {
         this.inicioAtividade = new Date();
         this.inicioTitularidade = new Date();
@@ -342,8 +347,16 @@ public class Cota implements Serializable {
     public void setInicioTitularidade(Date inicioTitularidade) {
         this.inicioTitularidade = inicioTitularidade;
     }
+    
+	public List<ChamadaEncalheCota> getChamadaEncalheCotas() {
+		return chamadaEncalheCotas;
+	}
 
-    public Set<Fornecedor> getFornecedores() {
+	public void setChamadaEncalheCotas(List<ChamadaEncalheCota> chamadaEncalheCotas) {
+		this.chamadaEncalheCotas = chamadaEncalheCotas;
+	}
+	
+	public Set<Fornecedor> getFornecedores() {
 		return fornecedores;
 	}
 	
@@ -543,5 +556,20 @@ public class Cota implements Serializable {
 		}
 		return null;
 	}
+
+
+	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
+		return tipoDistribuicaoCota;
+	}
+
+
+	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	}
+
+
+	
+	
+	
 
 }

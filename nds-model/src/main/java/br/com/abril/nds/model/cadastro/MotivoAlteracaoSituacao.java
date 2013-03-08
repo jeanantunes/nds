@@ -4,7 +4,7 @@ public enum MotivoAlteracaoSituacao {
 	
 	INADIMPLENCIA("Inadimplência"),
 	REFORMA("Reforma"),
-	VENDA_PDF("Venda do PDV"),
+	VENDA_PDV("Venda do PDV"),
 	DOENCA("Doença"),
 	INCIDENTES("Incidentes"),
 	RECESSO_ESTUDANTIL("Recesso Estudantil"),

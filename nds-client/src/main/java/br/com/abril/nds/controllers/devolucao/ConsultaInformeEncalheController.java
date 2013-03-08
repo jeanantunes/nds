@@ -20,7 +20,6 @@ import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -73,7 +72,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 	
 	
 	private ConsultaInformeEncalheController(DistribuidorService distribuidorService){
-		inicioDaSemana = distribuidorService.obter().getInicioSemana();
+		inicioDaSemana = distribuidorService.inicioSemana();
 	}
 
 	@Get("/")
@@ -155,9 +154,9 @@ public class ConsultaInformeEncalheController extends BaseController {
 					"Informe [Semana] ou [Data Recolhimento]"));
 		}
 			
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		ParametrosRecolhimentoDistribuidor parametros = this.distribuidorService.parametrosRecolhimentoDistribuidor();
 
-		int maxDiaSemanaRecolhimento = obterMaxDiaRecolhimentoDistribuidor(distribuidor.getParametrosRecolhimentoDistribuidor());
+		int maxDiaSemanaRecolhimento = obterMaxDiaRecolhimentoDistribuidor(parametros);
 		
 		if (semanaRecolhimento != null) {
 			dataInicioRecolhimento = Calendar.getInstance();
@@ -284,7 +283,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 			}
 		}
 		
-		String nomeDistribuidor = distribuidor.getJuridica().getRazaoSocial();
+		String nomeDistribuidor = this.distribuidorService.obterRazaoSocialDistribuidor();
 		
 		this.result.include("nomeDistribuidor", nomeDistribuidor);
 		

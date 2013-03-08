@@ -14,11 +14,6 @@ public class ProdutoEdicao extends ProdutoEdicaoBase {
     private BigDecimal indiceCorrecao;
     private BigDecimal vendaCorrigida;
 
-    public ProdutoEdicao() {
-	this.reparte = BigDecimal.ZERO;
-	this.venda = BigDecimal.ZERO;
-    }
-
     public BigDecimal getReparte() {
 	return reparte;
     }

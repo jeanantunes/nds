@@ -12,7 +12,7 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
-import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.EstudoServiceEstudo;
 
 public class CalcularReparteTest {
 
@@ -39,7 +39,7 @@ public class CalcularReparteTest {
 		}
 		estudo.setCotas(new ArrayList<Cota>());
 		estudo.getCotas().add(cota);
-		EstudoService.calculate(estudo);
+		EstudoServiceEstudo.calculate(estudo);
 		estudo.setExcedente(estudo.getReparteDistribuir().subtract(estudo.getSomatoriaVendaMedia()));
 		return estudo;
 	}
