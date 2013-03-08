@@ -29,10 +29,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
 		
-//		$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
-//			data.push({name:'idsFornecedores', value: $(this).val()});
-//		});
-				
 		$.postJSON(
 			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
 			data,
@@ -586,35 +582,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		return i;
 	},
-	
-//	this.duplicarLinha = function() {
-//		
-//		if(!T.validarMarcacaoUnicoItem()) {
-//			return;
-//		}
-//		
-//		var index = T.obterUnicoIndiceSelecionado() + 1;
-//		var idTR = 'row'+index;
-//		var idCloneTR = 'row'+index+'clone';
-//		var cloneCheckBox =  'checkDistribuicao' + (index - 1);
-//		var checkBox =  'checkDistribuicao' + (index - 1);
-//		
-//		
-//		if ($('#'+idCloneTR + '2') > 0) {
-//			return;
-//		}
-//		
-//		if ($('#'+idCloneTR + '1') > 0) {
-//			idCloneTR = idCloneTR + '1';
-//		}
-//		
-//		$('#'+idTR).clone().insertAfter('#'+idTR).attr('id',idCloneTR);
-//		$($('#'+idCloneTR).find('td')[14]).find('div').text('');
-//		$($('#'+idCloneTR).find('td')[15]).find('div').text('');
-//		$($('#'+idCloneTR).find('td')[16]).find('input').attr('id',cloneCheckBox);
-//		$('#'+checkBox).uncheck();
-//		
-//	},
 	
 	this.confirmaDuplicaoLinha = function() {
 		

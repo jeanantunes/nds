@@ -25,13 +25,11 @@ public class MatrizDistribuicaoServiceImplTest  {
 		distribuicaoVO.setCodigoProduto("26218001");
 		distribuicaoVO.setNumeroEdicao(new BigInteger("15"));
 		
-		matrizDistribuicaoService.duplicarLinhas(distribuicaoVO);
-//		
-//		List<ProdutoDistribuicaoVO> list = new ArrayList<ProdutoDistribuicaoVO>();
-// 		
-//		list.add(distribuicaoVO);
+		List<ProdutoDistribuicaoVO> list = new ArrayList<ProdutoDistribuicaoVO>();
+ 		
+		list.add(distribuicaoVO);
 		
-		//matrizDistribuicaoService.excluirEstudos(list);
+		matrizDistribuicaoService.excluirEstudos(list);
 		
 	}
 }
