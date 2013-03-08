@@ -3,14 +3,12 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuicaoRepository;
@@ -60,23 +58,14 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" where prod.ATIVO = true")
 		.append(" and prodEdic.ATIVO = true")
 		.append(" and lanc.status = 'BALANCEADO'")
-		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'");
-	 /*	.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev");
-		
-		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
-			sql.append(" and forn.ID in (:idsFornecedores)");
-		}
-	*/
-		sql.append(" order by liberado");
-		sql.append(" limit 10");
-		
+		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
+		.append(" and lanc.EXPEDICAO_ID is null")
+	 	.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev")
+	 	.append(" order by liberado");
+	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
-//		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
-//			query.setParameterList("idsFornecedores", filtro.getIdsFornecedores());
-//		}
-//		
-//		query.setParameter("dataLanctoPrev", filtro.getData());
+		query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
 		

@@ -13,6 +13,8 @@ public class TotalizadorProdutoDistribuicaoVO  implements Serializable {
 	
 	private Integer totalEstudosGerados;
 	
+	private boolean matrizFinalizada;
+	
 	public List<ProdutoDistribuicaoVO> getListProdutoDistribuicao() {
 		return listProdutoDistribuicao;
 	}
@@ -37,6 +39,13 @@ public class TotalizadorProdutoDistribuicaoVO  implements Serializable {
 	public void setTotalEstudosGerados(Integer totalEstudosGerados) {
 		this.totalEstudosGerados = totalEstudosGerados;
 	}
-	
+
+	public boolean isMatrizFinalizada() {
+		return matrizFinalizada;
+	}
+
+	public void setMatrizFinalizada(boolean matrizFinalizada) {
+		this.matrizFinalizada = matrizFinalizada;
+	}
 	
 }
