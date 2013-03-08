@@ -32,7 +32,6 @@ import br.com.abril.nds.dto.CalendarioFeriadoWrapper;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.Feriado;
 import br.com.abril.nds.model.cadastro.TipoFeriado;
@@ -549,9 +548,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		String path = diretorioReports.toURI().getPath()
 				+ "/relatorio_calendario_feriado.jasper";
 
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		String nomeDistribuidor = ( distribuidor!= null && distribuidor.getJuridica()!= null)? distribuidor.getJuridica().getRazaoSocial():"";
+		String nomeDistribuidor = this.distribuidorRepository.obterRazaoSocialDistribuidor();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -591,9 +588,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		String path = diretorioReports.toURI().getPath()
 				+ "/relatorio_calendario_feriado.jasper";
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		String nomeDistribuidor = ( distribuidor!= null && distribuidor.getJuridica()!= null)? distribuidor.getJuridica().getRazaoSocial():"";
+		String nomeDistribuidor = this.distribuidorRepository.obterRazaoSocialDistribuidor();
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -786,15 +781,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		
 		if (!feriados.isEmpty()) {
 		
-			Distribuidor distribuidor = this.distribuidorRepository.obter();
-			
-			String localidadeDistribuidor = null;
-			
-			if (distribuidor != null && distribuidor.getEnderecoDistribuidor() != null
-					&& distribuidor.getEnderecoDistribuidor().getEndereco() != null) {
-				
-				localidadeDistribuidor = distribuidor.getEnderecoDistribuidor().getEndereco().getCidade();
-			}
+			String localidadeDistribuidor = this.distribuidorRepository.cidadeDistribuidor();
 			
 			for (Feriado feriado : feriados) {
 				

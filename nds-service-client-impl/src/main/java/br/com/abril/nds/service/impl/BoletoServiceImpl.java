@@ -27,7 +27,6 @@ import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
@@ -885,7 +884,7 @@ public class BoletoServiceImpl implements BoletoService {
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
-		Pessoa pessoaCedente = distribuidorRepository.obter().getJuridica(); 
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
 		Pessoa pessoaSacado = boleto.getCota().getPessoa();
 		
 		Endereco endereco = null;
@@ -924,7 +923,7 @@ public class BoletoServiceImpl implements BoletoService {
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
-		Pessoa pessoaCedente = distribuidorRepository.obter().getJuridica(); 
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica();
 		Pessoa pessoaSacado = boleto.getFornecedor().getJuridica();
 		
 		Endereco endereco = null;
@@ -1152,12 +1151,11 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			String[] destinatarios = new String[]{boleto.getCota().getPessoa().getEmail()};
 						
-			Distribuidor distribuidor = this.distribuidorRepository.obter();
+			String assunto = this.distribuidorRepository.assuntoEmailCobranca();
+			String mensagem = this.distribuidorRepository.mensagemEmailCobranca();
 			
-			String assunto=(distribuidor.getAssuntoEmailCobranca()!=null?distribuidor.getAssuntoEmailCobranca():"");
-			String mensagem=(distribuidor.getMensagemEmailCobranca()!=null?distribuidor.getMensagemEmailCobranca():"");
-			email.enviar(assunto, 
-					     mensagem, 
+			email.enviar(assunto == null ? "" : assunto, 
+					     mensagem == null ? "" : mensagem, 
 					     destinatarios, 
 					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF),
 					     true);
