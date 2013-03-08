@@ -167,6 +167,32 @@ public class ParciaisServiceImpl implements ParciaisService{
 		}
 	}
 	
+	@Transactional(readOnly = true)
+	public void exibirAlertaDePeriodosNaoGerados(Long idProdutoEdicao, Integer qtdePeriodos){
+		
+		LancamentoParcial lancamentoParcial = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(idProdutoEdicao);
+		
+		if (lancamentoParcial.getPeriodos() != null && lancamentoParcial.getPeriodos().size() > 0) {
+			
+			int qntPeriodosGeradoSemBalanceamento = 0;
+			
+			for (PeriodoLancamentoParcial item : lancamentoParcial.getPeriodos()) {
+
+				if( Arrays.asList(StatusLancamento.PLANEJADO, 
+								  StatusLancamento.CONFIRMADO)
+								  .contains(item.getLancamento().getStatus())){
+					
+					qntPeriodosGeradoSemBalanceamento += 1;
+				}
+			}
+			
+			if(qtdePeriodos > qntPeriodosGeradoSemBalanceamento){
+				throw new ValidacaoException(TipoMensagem.WARNING,
+											"Não foi possível inserir "+ qtdePeriodos+ " períodos pois o ultimo ficaria com uma PEB menor que os demais.");
+			}
+		}
+	}
+	
 	private Integer qntDiasQueUltrapassamPEB(Integer qtdePeriodos,Integer fatorRelancamentoParcial, 
 										     Date dataLancamentoFinal,Date dataLancamentoInicial,
 										     Integer peb){
