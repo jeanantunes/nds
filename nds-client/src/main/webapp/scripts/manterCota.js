@@ -315,7 +315,7 @@ var MANTER_COTA = $.extend(true, {
                     }
                     else {
                     	
-                    	$("#numeroCota", this.workspace).attr("disabled", "disabled");
+                    	$("#numeroCotaCNPJ", this.workspace).attr("disabled", "disabled");
                     	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         
@@ -722,7 +722,7 @@ var MANTER_COTA = $.extend(true, {
 
         if (MANTER_COTA.tipoCotaSelecionada == MANTER_COTA.tipoCota_CNPJ){
 
-            numeroCota = $("#numeroCota", this.workspace).val();
+            numeroCota = $("#numeroCotaCNPJ", this.workspace).val();
 
         } else {
 
@@ -737,7 +737,7 @@ var MANTER_COTA = $.extend(true, {
 
         } else {
 
-            campoNumeroCota = $("#numeroCota", this.workspace);
+            campoNumeroCota = $("#numeroCotaCNPJ", this.workspace);
 
             COTA_CNPJ.novoCNPJ();
         }
@@ -830,13 +830,16 @@ var MANTER_COTA = $.extend(true, {
 
                         $("#cotaTemEntregador").hide();
                     }
+                    
+                    DISTRIB_COTA.verificarTipoConvencional(MANTER_COTA.idCota);
                 },
                 null,
                 true,
                 "dialog-cota"
             );
         }
-    }
+    },
+    
 
 }, BaseController);
 
@@ -1101,7 +1104,7 @@ var COTA_CNPJ = $.extend(true, {
 
                 if (!MANTER_COTA.isAlteracaoTitularidade) {
 
-                    $("#numeroCota", this.workspace).val(dados.numeroSugestaoCota);
+                    $("#numeroCotaCNPJ", this.workspace).val(dados.numeroSugestaoCota);
                 }
 
                 MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionada");
@@ -1109,7 +1112,7 @@ var COTA_CNPJ = $.extend(true, {
                 MANTER_COTA.popupCota(true);
             }
         );
-        MANTER_COTA.numeroCota = $("#numeroCota", this.workspace).val();
+        MANTER_COTA.numeroCota = $("#numeroCotaCNPJ", this.workspace).val();
     },
 
     editarCNPJ:function(result){
@@ -1130,7 +1133,7 @@ var COTA_CNPJ = $.extend(true, {
         $( "#tabCota", this.workspace ).tabs({ selected:0 });
         TAB_COTA.possuiDadosObrigatorios = true;
 
-        $("#numeroCota", this.workspace).val(result.numeroCota);
+        $("#numeroCotaCNPJ", this.workspace).val(result.numeroCota);
         $("#email", this.workspace).val(result.email);
         $("#status", this.workspace).val(result.status);
         $("#dataInclusao", this.workspace).html(result.dataInclusao.$);

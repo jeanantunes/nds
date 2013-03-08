@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +27,6 @@ import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -148,21 +146,24 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public void removerProduto(Long id) throws UniqueConstraintViolationException {
+	@Transactional
+	public void removerProduto(Long id) {
 		
 		try {	
 			
 			Produto produto = this.produtoRepository.buscarPorId(id);
 			
-			if (produto != null) {
-				this.produtoRepository.remover(produto);	
+			if (produto != null){
+				
+				produto.setFornecedores(null);
+				
+				this.produtoRepository.merge(produto);
+				this.produtoRepository.remover(produto);
 			}
-			
-		} catch (DataIntegrityViolationException e) {
-			throw new UniqueConstraintViolationException("Impossível excluir o registro. Já foram gerados movimentos.");
 		} catch (Exception e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Ocorreu um erro ao tentar excluir o produto.");
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, 
+					"Impossível excluir o produto. Existem associações que não podem ser excluídas.");
 		}
 	}
 

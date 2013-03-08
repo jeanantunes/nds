@@ -3,12 +3,14 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -19,7 +21,6 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -109,13 +110,13 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	@Path("/pesquisaPrincipal")
 	public void pesquisaPrincipal(FiltroFechamentoCEIntegracaoDTO filtro, String sortorder, String sortname, int page, int rp){
 		
+		validarAnoSemana(filtro.getSemana());
+		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
 		this.tratarFiltro(filtro);
 
-		if(filtro.getSemana() != null){
-			filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro.getSemana().intValue()));
-		}
+		filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro.getSemana()));
 
 		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = fechamentoCEIntegracaoService.construirFechamentoCEIntegracaoVO(filtro); 
 		
@@ -123,12 +124,24 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 	}
 	
-	private Intervalo<Date> obterDataDaSemana(int semana) {
+	private void validarAnoSemana(String anoSemana) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		if(StringUtils.isEmpty(anoSemana) || !StringUtils.isNumeric(anoSemana) || 
+				StringUtils.isBlank(anoSemana) || anoSemana.length() != 6) { 
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Digite um ano e semana valido (AAAASS). Ex: 201309");
+		}
+	}
+	
+	private Intervalo<Date> obterDataDaSemana(String anoSemana) {
+		
+		Date data = obterDataBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
+		
+		Integer semana = Integer.parseInt(anoSemana.substring(4));
+		
 		Date dataInicioSemana = 
 				DateUtil.obterDataDaSemanaNoAno(
-					semana, distribuidor.getInicioSemana().getCodigoDiaSemana(), distribuidor.getDataOperacao());
+					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
 			
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -136,6 +149,16 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		return periodoRecolhimento;
 		
+	}
+	
+	private Date obterDataBase(String anoSemana, Date data) {
+		
+		String ano = anoSemana.substring(0,4);
+		Calendar c = Calendar.getInstance();
+		c.setTime(data);
+		c.set(Calendar.YEAR, Integer.parseInt(ano));
+		
+		return c.getTime();
 	}
 
 	@Post

@@ -13,11 +13,11 @@ import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
 import br.com.abril.nds.dto.TotalConsultaConsignadoCotaDetalhado;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
-import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -242,14 +242,15 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) " );
 		
-		hql.append(" AND movimento.tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
+		hql.append(" AND (movimento.statusEstoqueFinanceiro is null ");
+		hql.append(" or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) " );
 		
-		hql.append(" AND parametroCobranca.tipoCota = :tipoCota ");
+		hql.append(" AND movimento.tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
 		
 		hql.append(" AND movimentoEstoqueCotaFuro.id is null ");
 		
 		if(filtro.getIdCota() != null ) { 
-			hql.append("   AND cota.id = :numeroCota");			
+			hql.append("   AND cota.id = :idCota");			
 		}
 		if(filtro.getIdFornecedor() != null) { 
 			hql.append("   AND fornecedor.id = :idFornecedor");
@@ -257,7 +258,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		return hql.toString();
 	}
-	
 
 	private String getGroupBy(FiltroConsultaConsignadoCotaDTO filtro){
 		StringBuilder hql = new StringBuilder();
@@ -315,10 +315,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		query.setParameterList("tipoMovimentoEntrada", listaGrupoMovimentoEstoquesEntrada);
 		
-		query.setParameter("tipoCota", TipoCota.CONSIGNADO);
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		
 		if(filtro.getIdCota() != null ) { 
-			query.setParameter("numeroCota", filtro.getIdCota());
+			query.setParameter("idCota", filtro.getIdCota());
 		}
 		
 		if(filtro.getIdFornecedor() != null ) { 

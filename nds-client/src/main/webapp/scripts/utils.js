@@ -467,9 +467,3 @@ function keyEventEnterAux(e){
 	
 	return false;
 }
-
-
-
-
-
-

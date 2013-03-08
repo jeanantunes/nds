@@ -1,4 +1,3 @@
-
 function disableEnterKey(e) {
 	
 	var key;
@@ -60,7 +59,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).autocomplete({source: []}); 
 		
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).focus();
+		$('#qtdeExemplar', ConferenciaEncalhe.workspace).focus();
 
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).datepicker({
 			showOn : "button",
@@ -200,8 +199,6 @@ var ConferenciaEncalhe = $.extend(true, {
 			ConferenciaEncalhe.popup_pesquisar();
 		});
 		
-		
-		//Tratamento usuário pressionar tecla enter
 		$('#observacao', ConferenciaEncalhe.workspace).keypress(function(e) {
 			if (e.keyCode == 13) {
 				ConferenciaEncalhe.gravaObs();
@@ -1571,8 +1568,11 @@ var ConferenciaEncalhe = $.extend(true, {
 	irParaContigencia: function(){
 		$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
 		$(".tipsy").hide();
-		$('#workspace').tabs('addTab', "Conferência Encalhe Cota Contingência",
-				contextPath + "/devolucao/conferenciaEncalheContingencia" + "?random=" + Math.random());
+		$('#workspace').tabs('addTab', 										
+				"Conferência Encalhe Cota Contingência"
+				, contextPath + "/devolucao/conferenciaEncalheContingencia" + "?random=" + Math.random()
+				, 'classROLE_RECOLHIMENTO'
+		);
 	},
 	
 	veificarCobrancaGerada: function(){

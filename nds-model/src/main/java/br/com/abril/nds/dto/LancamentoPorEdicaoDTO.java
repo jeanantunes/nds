@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
@@ -27,21 +28,20 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 	private String dataRecolhimento;
 	
 	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 4)
-	private BigDecimal reparte;
+	private BigInteger reparte;
 	
 	@Export(label = "Encalhe", alignment=Alignment.CENTER, exhibitionOrder = 5)
-	private BigDecimal encalhe;
+	private BigInteger encalhe;
 	
-	private BigDecimal venda;
+	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 6)
+	private BigInteger venda;
 	
-	private BigDecimal vendaAcumulada;
+	@Export(label = "Venda Acumulada", alignment=Alignment.CENTER, exhibitionOrder = 7)
+	private BigInteger vendaAcumulada;
 	
 	private BigDecimal percentualVenda;
 	
-	private String vendaFormatado;
-	
-	private String vendaAcumuladaFormatado;
-	
+	@Export(label = "% Venda", alignment=Alignment.CENTER, exhibitionOrder = 8)
 	private String percentualVendaFormatado;
 	
 	public LancamentoPorEdicaoDTO() {
@@ -72,60 +72,47 @@ public class LancamentoPorEdicaoDTO implements Serializable  {
 		this.dataRecolhimento = DateUtil.formatarData(dataRecolhimento, Constantes.DATE_PATTERN_PT_BR);
 	}
 
-	public BigDecimal getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
 
-	public void setReparte(Number reparte) {
-		this.reparte = new BigDecimal(reparte != null ? reparte.longValue() : 0);
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
 	}
 	
-	public BigDecimal getEncalhe() {
+	public BigInteger getEncalhe() {
 		return encalhe;
 	}
 
-	public void setEncalhe(Number encalhe) {
-		this.encalhe = new BigDecimal(encalhe != null ? encalhe.longValue() : 0);
+	public void setEncalhe(BigInteger encalhe) {
+		this.encalhe = encalhe;
 	}
 
-	public BigDecimal getVenda() {
+	public BigInteger getVenda() {
 		return venda;
 	}
 
-	public void setVenda(Number venda) {
-		this.venda = new BigDecimal(venda != null ? venda.longValue() : 0);
-		this.vendaFormatado = CurrencyUtil.formatarValor(this.venda);
+	public void setVenda(BigInteger venda) {
+		this.venda = venda;
 	}
 	
-	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 6)
-	public String getVendaFormatado() {
-		return vendaFormatado;
-	}
-	
-	public BigDecimal getVendaAcumulada() {
+	public BigInteger getVendaAcumulada() {
 		return vendaAcumulada;
 	}
 
-	public void setVendaAcumulada(Number vendaAcumulada) {
-		this.vendaAcumulada = new BigDecimal(vendaAcumulada != null ? vendaAcumulada.longValue() : 0);
-		this.vendaAcumuladaFormatado = CurrencyUtil.formatarValor(this.vendaAcumulada);
-	}
-	
-	@Export(label = "Venda Acumulada", alignment=Alignment.CENTER, exhibitionOrder = 7)
-	public String getVendaAcumuladaFormatado() {
-		return vendaAcumuladaFormatado;
+	public void setVendaAcumulada(BigInteger vendaAcumulada) {
+		this.vendaAcumulada = vendaAcumulada;
 	}
 
 	public BigDecimal getPercentualVenda() {
 		return percentualVenda;
 	}
 
-	public void setPercentualVenda(Number percentualVenda) {
-		this.percentualVenda = new BigDecimal(percentualVenda != null ? percentualVenda.longValue() : 0);
+	public void setPercentualVenda(BigDecimal percentualVenda) {
+		this.percentualVenda = percentualVenda;
 		this.percentualVendaFormatado = CurrencyUtil.formatarValor(this.percentualVenda);
 	}
 	
-	@Export(label = "% Venda", alignment=Alignment.CENTER, exhibitionOrder = 8)
 	public String getPercentualVendaFormatado() {
 		return percentualVendaFormatado;
 	}
