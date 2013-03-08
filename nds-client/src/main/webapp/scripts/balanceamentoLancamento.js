@@ -723,6 +723,19 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		this.carregarGridLancamentosCancelados();
 		
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#datepickerDe"));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);
+				}
+				
+				return true;
+			});
+		});
 	},
 
 	this.carregarGridLancamentosCancelados = function(){
