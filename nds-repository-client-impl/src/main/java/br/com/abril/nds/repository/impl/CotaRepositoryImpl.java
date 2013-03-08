@@ -679,6 +679,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 
+		if (!filtro.getStatus().equalsIgnoreCase("TODOS")) {
+			query.setParameter("status", filtro.getStatus());
+		}
+
+		
 		if (filtro.getNumeroCpfCnpj() != null
 				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
 			query.setParameter("numeroCpfCnpj", filtro.getNumeroCpfCnpj() + "%");
@@ -733,8 +738,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 
 		Query query = getSession().createQuery(hql.toString());
 
-		query.setParameter("status", filtro.getStatus());
-		
+		if(! filtro.getStatus().equalsIgnoreCase("TODOS")){
+			query.setParameter("status", filtro.getStatus());
+		}
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
@@ -856,6 +862,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 			(filtro.getNomeCota() != null && !filtro.getNomeCota().trim().isEmpty()) ||
 			(filtro.getLogradouro() != null && !filtro.getLogradouro().trim().isEmpty()) ||
 			(filtro.getBairro() != null && !filtro.getBairro().trim().isEmpty()) ||
+			((!filtro.getStatus().equalsIgnoreCase("TODOS") ) && !filtro.getStatus().trim().isEmpty()) ||
 			(filtro.getMunicipio() != null && !filtro.getMunicipio().trim().isEmpty())) {
 			
 			hql.append(" WHERE ");
@@ -874,12 +881,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long>
 		}
 
 		
-		if(!filtro.getStatus().equals("T")){
+		if(!filtro.getStatus().equals("TODOS")){
 			if(indAnd) {
 				hql.append(" AND ");
 			}
 
-			hql.append(" cota.situacaoCadastro = upper(:status)");
+			hql.append(" cota.situacaoCadastro = upper(:status) ");
 			indAnd = true;
 		}
 		

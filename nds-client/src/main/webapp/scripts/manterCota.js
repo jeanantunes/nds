@@ -113,6 +113,9 @@ var MANTER_COTA = $.extend(true, {
             {name:"numeroCpfCnpj",value:$("#txtCPF_CNPJ", this.workspace).val()},
             {name:"logradouro",value:$("#logradouroPesquisa", this.workspace).val()},
             {name:"bairro",value:$("#bairroPesquisa", this.workspace).val()},
+            
+            {name:"status",value:$("#selectStatus", this.workspace).val()},
+            
             {name:"municipio",value:$("#municipioPesquisa", this.workspace).val()}
         ];
         return formData;
