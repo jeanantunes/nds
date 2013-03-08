@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -43,7 +42,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 */
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Distribuidor distribuidor, TipoFormaCobranca tipoFormaCobranca,
+	public boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Long idDistribuidor, TipoFormaCobranca tipoFormaCobranca,
 			List<Long> idFornecedores, List<Integer> diasDoMes) {
 		
 		Long idFormaCobrancaExcept = null;
@@ -55,7 +54,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 		    idFormaCobrancaExcept = politica.getFormaCobranca().getId();
 		}    
 		
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidor(distribuidor.getId(), idFormaCobrancaExcept);
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidor(idDistribuidor, idFormaCobrancaExcept);
 		
 		for (FormaCobranca itemFormaCobranca:formas){
 			
@@ -104,7 +103,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 */
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, Distribuidor distribuidor, TipoFormaCobranca tipoFormaCobranca, List<Long> idFornecedores, 
+	public boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, Long idDistribuidor, TipoFormaCobranca tipoFormaCobranca, List<Long> idFornecedores, 
 			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
 		
         Long idFormaCobrancaExcept = null;
@@ -116,7 +115,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 			idFormaCobrancaExcept = politica.getFormaCobranca().getId();
 		}	
 		
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidor(distribuidor.getId(), idFormaCobrancaExcept);
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidor(idDistribuidor, idFormaCobrancaExcept);
 		
 		for (FormaCobranca itemFormaCobranca:formas){
 			

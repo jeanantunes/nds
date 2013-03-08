@@ -78,5 +78,13 @@ public interface ParciaisService {
 	 * @param lancamento
 	 */
 	void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento);
+	
+	/**
+	 * Verifica a necessidade de exibição de mensagem de alerta ao usuario referente a quantidade de periodos não gerados
+	 * 
+	 * @param idProdutoEdicao
+	 * @param qtdePeriodos
+	 */
+	void exibirAlertaDePeriodosNaoGerados(Long idProdutoEdicao, Integer qtdePeriodos);
 
 }

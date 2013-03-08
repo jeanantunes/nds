@@ -20,4 +20,6 @@ public interface EstudoRepository extends Repository<Estudo, Long> {
 	void liberarEstudo(List<Long> listIdEstudos, boolean liberado);
 	
 	public Estudo obterEstudoECotasPorIdEstudo(Long idEstudo);
+	
+	public List<Estudo> obterEstudosPorIntervaloData(Date dataStart, Date dataEnd);
 }

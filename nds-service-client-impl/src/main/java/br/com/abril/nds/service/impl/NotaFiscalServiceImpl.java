@@ -28,7 +28,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
@@ -596,24 +595,16 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	private IdentificacaoEmitente carregaEmitente() {
 		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
 
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		if (distribuidor == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço principal do distribuidor não encontrada!");
-		}
+		PessoaJuridica pessoaJuridica = this.distribuidorRepository.juridica();
 		
-		String cnpj = Util.removerMascaraCnpj(distribuidor.getJuridica().getCnpj());
+		String cnpj = Util.removerMascaraCnpj(pessoaJuridica.getCnpj());
 		
 		identificacaoEmitente.setDocumento(cnpj);
-		identificacaoEmitente.setInscricaoEstadual(distribuidor.getJuridica()
-				.getInscricaoEstadual());
-		identificacaoEmitente.setInscricaoMunicipal(distribuidor.getJuridica()
-				.getInscricaoMunicipal());
-		identificacaoEmitente.setNome(distribuidor.getJuridica().getNome());
-		identificacaoEmitente.setNomeFantasia(distribuidor.getJuridica()
-				.getNomeFantasia());
-		identificacaoEmitente.setPessoaEmitenteReferencia(distribuidor
-				.getJuridica());
+		identificacaoEmitente.setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
+		identificacaoEmitente.setInscricaoMunicipal(pessoaJuridica.getInscricaoMunicipal());
+		identificacaoEmitente.setNome(pessoaJuridica.getNome());
+		identificacaoEmitente.setNomeFantasia(pessoaJuridica.getNomeFantasia());
+		identificacaoEmitente.setPessoaEmitenteReferencia(pessoaJuridica);
 
 		EnderecoDistribuidor enderecoDistribuidor = distribuidorRepository
 				.obterEnderecoPrincipal();

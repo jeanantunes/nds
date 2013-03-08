@@ -557,7 +557,7 @@ public class ProdutoController extends BaseController {
 			if (produto.getDesconto() != null && 
 					(produto.getDesconto().compareTo(new BigDecimal(100)) > 0 ||
 					produto.getDesconto().compareTo(BigDecimal.ZERO) < 0)){
-				listaMensagens.add("Preenchimento do campo [% Desconto] inválido!");
+				listaMensagens.add("O percentual de desconto deve estar entre 0% e 100%.");
 			}
 			
 			if (codigoTipoProduto == null || codigoTipoProduto.intValue() == 0) {
