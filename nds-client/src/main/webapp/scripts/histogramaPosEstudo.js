@@ -165,10 +165,32 @@ init:function(){
 		});
 	},
 
-	carregarGridHistogramaPosEstudo : function carregarGridHistogramaPosEstudo(selecionado){
+	popularFieldsetHistogramaPreAnalise : function popularFieldsetHistogramaPreAnalise(selecionado){
 		
-		$.postJSON();
+		url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldsetHistogramaPreAnalise";
 		
+		$.postJSON(
+			 url,
+			 selecionado,
+			 function onSucessCallBack(jsonData){
+				 if (jsonData) {
+					 $('#codigoProdutoFs').html(jsonData.codigoProduto);
+					 $('#nomeProdutoFs').html(jsonData.nomeProduto);
+					 $('#edicaoProdutoFs').html(jsonData.edicao);
+					 $('#classificacaoProdutoFs').html(jsonData.classificacao);
+					 $('#segmentoFs').html(jsonData.tipoSegmentoProduto.descricao);
+					 $('#codigoEstudoFs').html(jsonData.estudo);
+					 $('#periodoFs').html(jsonData.periodicidadeProduto);
+
+					 if (jsonData.estudoLiberado) {
+						 $('#estudoLiberadoFs').show();
+						 $('#estudoLiberadoFs').attr('src', "images/ico_check.gif");
+					 }else {
+						 $('#estudoLiberadoFs').hide();
+					}
+				 }
+			 }
+		);
 	}
 		
 

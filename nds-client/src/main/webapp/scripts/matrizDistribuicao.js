@@ -631,7 +631,15 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 						$('#histogramaPosEstudoContent').html(html);
 						$('#histogramaPosEstudoContent').show();
 				
-						histogramaPosEstudoController.carregarGridHistogramaPosEstudo(selecionado);
+						params = [];
+						
+						for(var prop in selecionado){
+							params.push({
+								name : "selecionado." + prop, value : selecionado[prop]
+							});
+						}
+						
+						histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(params);
 					
 				});
 			}

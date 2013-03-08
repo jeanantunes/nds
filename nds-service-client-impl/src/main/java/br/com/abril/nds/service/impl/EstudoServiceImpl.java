@@ -29,4 +29,10 @@ public class EstudoServiceImpl implements EstudoService {
 		return this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(dataReferencia, idProdutoEdicao);
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public Estudo obterEstudo(Long id) {
+		return this.estudoRepository.buscarPorId(id);
+	}
+
 }

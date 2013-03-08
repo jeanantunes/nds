@@ -338,9 +338,8 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 	
 	@Get
-	@Path("/histogramaPosEstudo")
 	public void histogramaPosEstudo(){
-		result.forwardTo(HistogramaPosEstudoController.class).index();
+		result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo();
 	}
 	
 }

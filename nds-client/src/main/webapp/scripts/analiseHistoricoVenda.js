@@ -176,13 +176,14 @@ var analiseHistoricoVendaController = $.extend(true, {
 	},
 	
 	popularPopUpInformacoesCota : function(cotaDto){
-		
-      $('#popUpNumeroCota').text(cotaDto.numeroCota);
-      $('#popUpNomePessoa').text(cotaDto.nomePessoa);
-      $('#popUpTipoCota').text(cotaDto.tipoDistribuicaoCota);
-      $('#popUpRanking').text(cotaDto.rankId);
-      $('#popUpFaturamentoCota').text(cotaDto.faturamentoFormatado);
-      $('#popUpData').text(cotaDto.dataGeracaoFormat);
+		if(cotaDto){
+	      $('#popUpNumeroCota').text(cotaDto.numeroCota);
+	      $('#popUpNomePessoa').text(cotaDto.nomePessoa);
+	      $('#popUpTipoCota').text(cotaDto.tipoDistribuicaoCota);
+	      $('#popUpRanking').text(cotaDto.rankId);
+	      $('#popUpFaturamentoCota').text(cotaDto.faturamentoFormatado);
+	      $('#popUpData').text(cotaDto.dataGeracaoFormat);
+		}
 	},
 	
 	preProcessPopUpGrid : function preProcessPopUpGrid(response){

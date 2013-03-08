@@ -37,9 +37,9 @@
               <td width="45"><strong>Código:</strong></td>
               <td width="60"><span id="codigoProdutoFs"></span></td>
               <td width="56"><strong>Produto:</strong></td>
-              <td width="178">Veja</td>
+              <td width="178" id="nomeProdutoFs"/>
               <td width="40"><strong>Edição:</strong></td>
-              <td width="50"><span id="edicaoProdutoFs"></td>
+              <td width="50"><span id="edicaoProdutoFs" /></td>
               <td width="80"><strong>Classificação:</strong></td>
               <td width="98"><span id="classificacaoProdutoFs"></td>
               <td width="61"><strong>Segmento:</strong></td>
@@ -51,7 +51,7 @@
               <td><strong>Período:</strong></td>
               <td><span id="periodoFs"></td>
               <td><strong>Liberado:</strong></td>
-              <td><img src="images/ico_check.gif" width="16" height="16" alt="Liberado" /></td>
+              <td><img id="estudoLiberadoFs" width="16" height="16" alt="Liberado" /></td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>

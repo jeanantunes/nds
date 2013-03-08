@@ -15,4 +15,6 @@ public interface EstudoService {
 	
 	Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao);
 
+	Estudo obterEstudo(Long id);
+
 }
