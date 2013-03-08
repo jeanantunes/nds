@@ -149,32 +149,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoLancamentoRepository.adicionar(historico);
 		
+		System.out.println("Linha 154 - IN: movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao");
+		long t1 = System.nanoTime();
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
 				lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
-		
-		// TODO: Sergio, vc poderia corrigir este trecho após finalizar a implementação do DescontoCota fzd favor? Obrigado.
-		/*DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
-		obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
-				lancamento.getDataLancamentoPrevista());
-				
-		if (desconto != null) {	
-		
-			Integer quantidade = desconto.getQuantidadeProximosLancamaentos();
-						
-			DescontoProduto descontoProduto = new DescontoProduto();
-			
-			descontoProduto.setCotas(desconto.getCotas());
-			descontoProduto.setDataAlteracao(new Date());
-			descontoProduto.setDesconto(desconto.getValorDesconto());
-			descontoProduto.setProdutoEdicao(lancamento.getProdutoEdicao());
-			descontoProduto.setDistribuidor(desconto.getDistribuidor());
-			descontoProduto.setUsuario(usuario);
-			
-			this.descontoProdutoRepository.adicionar(descontoProduto);
-			
-			desconto.setQuantidadeProximosLancamaentos(--quantidade);
-			this.descontoProximosLancamentosRepository.alterar(desconto);
-		}*/
+		long t2 = System.nanoTime();
+		System.out.println("Linha 154 - OUT: movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao: "+ ((t2 - t1) * 1e-6) +" milliseconds");
 		
 		return true;
 	}
