@@ -2,6 +2,7 @@ var messageTimeout;
 var messageDialogTimeout;
 
 $(document).ready(function(){
+	
 	jQuery(":input[maxlength]").keyup(function () {
 	    var focus = jQuery(this);
 	    var valFocus;
@@ -27,10 +28,12 @@ $(document).ready(function(){
 	    }
 	});
 	
-	$(document.body).keypress(function(e) {
+	$(document.body).keydown(function(e) {
+		var eventoJs= e;
 		var keycode = e.which;
 		if (window.event) {
-			keycode = window.event.keyCode;
+			eventoJs = window.event;
+			keycode = eventoJs.keyCode;
 		}
 		
 		if (keycode == 32 && ($("#effectWarning").css("display") == "block" || $("#effectError").css("display") == "block"
@@ -38,8 +41,44 @@ $(document).ready(function(){
 			esconde(false, $('#effectWarning'));
 			esconde(false, $('#effectError'));
 			esconde(false, $('#effectSuccess'));
+
+			focusFirstContentView(this);
+			
+		}else if( keycode == $.ui.keyCode.ENTER ) {
+			
+			//Confirmação genérica para modais por tec ENTER
+			
+			var refButtonsDialog = $(".ui-dialog:visible").find("button");
+			
+			//Considerar apenas bts Confirmação/Desistência pela abrangência sobre sistema.
+			if( refButtonsDialog.size()==2 ) {
+
+				//Verifica se o segundo botão está selecionado / Caso sim não acionará Confirmação por ser Desistência selecionado
+				if(eventoJs.target!=refButtonsDialog[1]){
+					refButtonsDialog.first().click(); /* Assuming the first one is the action button */
+				}
+				return true;
+		    }
 		}
+		
 	});
+	
+	//Move foco para primeiro campo do modal ao abrir modal
+	$(document).bind("dialogopen", function() {
+		focusFirstContentModal();
+	});
+	
+	//Move foco para primeiro campo ao fechar modal
+	$(document).bind("dialogclose", function() {
+		focusFirstContentView(this);
+	});	
+	
+	
+	//Foco primeiro campo ao carregar aba 
+//	$("#workspace").bind('focus',function(){
+//		alert("Passou")
+//		focusFirstContentView(document);
+//	});
 });
 
 function exibirMensagem(tipoMensagem, mensagens) {
@@ -399,4 +438,38 @@ function onlyNumeric(event){
             }   
         }
 }
+
+function focusSelectRefField(objectField){
+	setTimeout (function () {objectField.focus();objectField.select();}, 1);
+}
+
+function focusFirstContentView(context){
+	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus();}, 1);
+}
+
+function focusFirstContentModal(){
+	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus()}, 1);
+}
+
+function keyEventEnterAux(e){
+	var eventoJs= e;
+	var keycode = e.which;
+	if (window.event) {
+		eventoJs = window.event;
+		keycode = eventoJs.keyCode;
+	}
+	
+	if( keycode == $.ui.keyCode.ENTER ) {
+		if(eventoJs.target!=":input"){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+
+
+
+
 

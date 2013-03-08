@@ -1,6 +1,7 @@
 <head>
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 	<script type="text/javascript" src="scripts/transportador.js"></script>
+	<script type="text/javascript" src="scripts/pessoa.js"></script>
 
 	<style>
 		.diasFunc label,.finceiro label {

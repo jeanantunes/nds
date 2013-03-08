@@ -539,6 +539,20 @@ var entregadorController = $.extend(true, {
 		this.initTabs();
 		this.bindButtonActions();
 		this.setMascaras();
+		
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#filtroEntregador-nomeRazaoSocial"));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					entregadorController.pesquisarEntregadores();
+				}
+				
+				return true;
+			});
+		});		
 	},
 	
 	initGridPrincipal: function() {

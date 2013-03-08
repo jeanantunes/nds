@@ -33,6 +33,21 @@ var MANTER_COTA = $.extend(true, {
         SOCIO_COTA.initGridSocioCota();
 
         this.initCotaGridPrincipal();
+        
+        
+        $(document).ready(function(){
+        	
+        	focusSelectRefField($("#numCota"));
+        	
+        	$(document.body).keydown(function(e) {
+        		
+        		if(keyEventEnterAux(e)){
+        			MANTER_COTA.pesquisar();
+        		}
+        		
+        		return true;
+        	});
+        });
     },
     
     initCotaGridPrincipal: function() {
