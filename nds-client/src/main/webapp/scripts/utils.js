@@ -386,3 +386,10 @@ function onlyNumeric(event){
         }
 }
 
+
+function getCurrentTabContainer(){
+	var currentTabId = $(".ui-tabs-selected").find("a").attr("href");
+	var currentTab = $(currentTabId);
+	
+	return currentTab;
+}
