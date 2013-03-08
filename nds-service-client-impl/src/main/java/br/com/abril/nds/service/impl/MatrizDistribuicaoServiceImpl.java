@@ -228,12 +228,6 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				mensagens.add("Os dados do filtro da tela devem ser informados!");
 			}
 			
-//			if (filtro.getIdsFornecedores() == null
-//					|| filtro.getIdsFornecedores().isEmpty()) {
-//				
-//				mensagens.add("Os dados do filtro da tela devem ser informados!");
-//			}
-			
 			if (!mensagens.isEmpty()) {
 				
 				ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING, mensagens);

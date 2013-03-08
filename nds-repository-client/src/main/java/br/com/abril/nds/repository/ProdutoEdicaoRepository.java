@@ -325,10 +325,4 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	public List<ProdutoEdicao> obterProdutoEdicaoCopiados(ProdutoEdicao produtoEdicao);
 
-	/**
-	 * 
-	 * @param produtoEdicao
-	 * @return
-	 */
-	public Long obterQuantidadeProdutoEdicaoCopiados(ProdutoEdicao produtoEdicao);
 }

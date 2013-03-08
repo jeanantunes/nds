@@ -19,7 +19,6 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
-import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
@@ -1396,22 +1395,5 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return (List<ProdutoEdicao>)query.list();
 	}
 	
-	
-	@Override
-	public Long obterQuantidadeProdutoEdicaoCopiados(ProdutoEdicao produtoEdicao) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select count(id) from ProdutoEdicao ");
-		hql.append(" where numeroEdicao = :numeroEdicao");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("numeroEdicao", 	 produtoEdicao.getNumeroEdicao());
-		
-		Long qtd = (Long)query.uniqueResult();
-		
-		return qtd;
-	}
 
 }

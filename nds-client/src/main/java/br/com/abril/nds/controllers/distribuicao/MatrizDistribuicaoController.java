@@ -219,28 +219,6 @@ public class MatrizDistribuicaoController extends BaseController {
 		result.nothing();
 	}
 	
-//	private String montarNomeFornecedores(List<Long> idsFornecedores) {
-//		
-//		String nomeFornecedores = "";
-//		
-//		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresPorId(idsFornecedores);
-//		
-//		if (listaFornecedor != null && !listaFornecedor.isEmpty()) {
-//			
-//			for (Fornecedor fornecedor : listaFornecedor) {
-//				
-//				if (!nomeFornecedores.isEmpty()) {
-//					
-//					nomeFornecedores += " / ";
-//				}
-//				
-//				nomeFornecedores += fornecedor.getJuridica().getRazaoSocial();
-//			}
-//		}
-//		
-//		return nomeFornecedores;
-//	}
-	
 	
 	/**
 	 * Configura o filtro informado na tela e o armazena na sessão.
@@ -277,11 +255,6 @@ public class MatrizDistribuicaoController extends BaseController {
 			listaMensagens.add("O preenchimento do campo [Data] é obrigatório!");
 			
 		}
-		
-//		if (listaIdsFornecedores == null || listaIdsFornecedores.isEmpty()) {
-//			
-//			listaMensagens.add("O preenchimento do campo [Fornecedor] é obrigatório!");
-//		}
 		
 		if (!listaMensagens.isEmpty()) {
 			
