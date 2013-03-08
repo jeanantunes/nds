@@ -554,6 +554,12 @@ public class ProdutoController extends BaseController {
 				listaMensagens.add("O preenchimento do campo [% Desconto] é obrigatório!");
 			}
 			
+			if (produto.getDesconto() != null && 
+					(produto.getDesconto().compareTo(new BigDecimal(100)) > 0 ||
+					produto.getDesconto().compareTo(BigDecimal.ZERO) < 0)){
+				listaMensagens.add("O percentual de desconto deve estar entre 0% e 100%.");
+			}
+			
 			if (codigoTipoProduto == null || codigoTipoProduto.intValue() == 0) {
 				listaMensagens.add("O preenchimento do campo [Tipo de Produto] é obrigatório!");
 			}

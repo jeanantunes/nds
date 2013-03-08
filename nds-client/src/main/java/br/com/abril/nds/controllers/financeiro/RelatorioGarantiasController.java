@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.financeiro;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -97,7 +98,7 @@ public class RelatorioGarantiasController extends BaseController {
 		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		filtro.setPaginacao(paginacaoVO);
-		filtro.setDataBaseCalculo(distribuidorService.obter().getDataOperacao());
+		filtro.setDataBaseCalculo(this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
@@ -130,14 +131,16 @@ public class RelatorioGarantiasController extends BaseController {
 	@Path("/pesquisarGarantia.json")
 	public void pesquisarGarantia(FiltroRelatorioGarantiasDTO filtro, String sortname, String sortorder, int rp, int page){
 		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		PaginacaoVO paginacaoVO = new PaginacaoVO(page, rp, sortorder, sortname);
 		filtro.setPaginacao(paginacaoVO);
-		filtro.setDataBaseCalculo(distribuidorService.obter().getDataOperacao());
+		filtro.setDataBaseCalculo(dataOperacao);
 		
 		this.session.setAttribute(FILTRO_RELATORIO_GARANTIAS, filtro);
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM/yy",new Locale("pt", "BR"));
-		String data = sdf.format(distribuidorService.obter().getDataOperacao());
+		String data = sdf.format(dataOperacao);
 		
 		if (filtro.getTipoGarantia().equalsIgnoreCase("Selecione...")) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O tipo de garantia deve ser informado."));
@@ -191,7 +194,7 @@ public class RelatorioGarantiasController extends BaseController {
 		List<RelatorioDetalheGarantiaVO> garantiasVO = new ArrayList<RelatorioDetalheGarantiaVO>();
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM/yy",new Locale("pt", "BR"));
-		String data = sdf.format(distribuidorService.obter().getDataOperacao());
+		String data = sdf.format(this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> flexDTO = relatorioGarantiasService.gerarPorTipoGarantia(filtro);
 		

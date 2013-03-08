@@ -33,6 +33,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDet
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -2303,7 +2304,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
+			Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 
+			Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProdutos) {
 		
 		List<MovimentoEstoqueCota> result = new ArrayList<MovimentoEstoqueCota>();
 		
@@ -2374,13 +2377,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 			if (i == 1 || GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO.equals(grupoNotaFiscal)) {
 				double diasAMais;
-				if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuinto()) {
+				if (parametrosRecolhimentoDistribuidor.isDiaRecolhimentoQuinto()) {
 					diasAMais = 4;
-				} else if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuarto()) {
+				} else if (parametrosRecolhimentoDistribuidor.isDiaRecolhimentoQuarto()) {
 					diasAMais = 3;
-				} else if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro()) {
+				} else if (parametrosRecolhimentoDistribuidor.isDiaRecolhimentoTerceiro()) {
 					diasAMais = 2;
-				} else if (distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo()) {
+				} else if (parametrosRecolhimentoDistribuidor.isDiaRecolhimentoSegundo()) {
 					diasAMais = 1;
 				} else {
 					diasAMais = 0;

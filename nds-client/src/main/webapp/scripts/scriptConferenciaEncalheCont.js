@@ -149,7 +149,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								ConferenciaEncalheCont.carregarListaConferencia(data);
-								ConferenciaEncalheCont.popup_alert();
+								ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
 							},
 							"Não" : function() {
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
@@ -171,11 +171,19 @@ var ConferenciaEncalheCont = $.extend(true, {
 					ConferenciaEncalheCont.carregarListaConferencia(data);
 					
 					$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
+					ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
 					
-					ConferenciaEncalheCont.popup_alert();
 				}
 			}
 		);
+	},
+	ifCotaEmiteNfe :  function(data, fnCotaEmiteNfe) {
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarCotaEmiteNFe", data, 
+		function(result){
+			if(result.IND_COTA_EMITE_NFE) {
+				fnCotaEmiteNfe();
+			} 
+		});
 	},
 	
 	recalcularValoresFinalizar : function(index){

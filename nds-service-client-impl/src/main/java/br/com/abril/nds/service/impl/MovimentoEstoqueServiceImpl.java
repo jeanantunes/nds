@@ -194,9 +194,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					&& movimentoCota.getUsuario() != null
 					&&  movimentoCota.getQtde() != null ){
 
-				gerarMovimentoEstoque(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
+				gerarMovimentoEstoque(data, movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
 
-				gerarMovimentoCota(movimentoCota.getData(), movimentoCota.getProdutoEdicao().getId(), movimentoCota.getCota().getId(),movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimentoCota);
+				gerarMovimentoCota(data, movimentoCota.getProdutoEdicao().getId(), movimentoCota.getCota().getId(),movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimentoCota);
 
 			}
 		}
@@ -479,6 +479,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setUsuario(new Usuario(idUsuario));
 		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 
+		if (idEstudoCota != null) {
+			
+			movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));
+		}
+		
 		if (dataLancamento != null && idProdutoEdicao != null) {
 			
 			if (idLancamento==null) {
@@ -511,10 +516,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 			}			
 			
-			if (idEstudoCota != null) {
-				
-				movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));
-			}
 		}
 		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {

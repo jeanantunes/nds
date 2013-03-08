@@ -215,19 +215,13 @@ public class VendaEncalheController extends BaseController {
 	@Post
 	public void obterDatavenda(){
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
 		Date dataVencimentoDebito = new Date();
 		
-		if(distribuidor!= null){
-			
-			Integer qntDias = distribuidor.getQntDiasVencinemtoVendaEncalhe();
-			
-			qntDias = (qntDias == null)?0: qntDias;
-			
-			dataVencimentoDebito = DateUtil.adicionarDias(dataVencimentoDebito,qntDias);
-			
-		} 
+		Integer qntDias = this.distribuidorService.qntDiasVencinemtoVendaEncalhe();
+		
+		qntDias = (qntDias == null)?0: qntDias;
+		
+		dataVencimentoDebito = DateUtil.adicionarDias(dataVencimentoDebito,qntDias);
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
 		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
@@ -438,13 +432,12 @@ public class VendaEncalheController extends BaseController {
 		
 		VendaEncalheVO vendaEncalheVO = null;
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
 		for(VendaEncalheDTO dto : vendas){
 			
 			vendaEncalheVO = getVendaEncalheVO(dto);
 			
-			if( distribuidor.getDataOperacao().compareTo(DateUtil.removerTimestamp(dto.getDataVenda())) <= 0){
+			if( this.distribuidorService.obterDataOperacaoDistribuidor().compareTo(
+					DateUtil.removerTimestamp(dto.getDataVenda())) <= 0){
 				vendaEncalheVO.setEdicaoExclusaoItem(true);
 			}
 			else{
@@ -519,9 +512,7 @@ public class VendaEncalheController extends BaseController {
 		}
 		else{
 			
-			Distribuidor distribuidor = distribuidorService.obter();
-			
-			if(DateUtil.isDataInicialMaiorDataFinal(distribuidor.getDataOperacao(),dataDebito)){
+			if(DateUtil.isDataInicialMaiorDataFinal(this.distribuidorService.obterDataOperacaoDistribuidor(), dataDebito)){
 				mensagensValidacao.add("O campo [Data Vencimento] deve ser maior que a data de operação do sistema!");
 			}
 			

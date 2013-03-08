@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -666,7 +665,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	}
    
     /**
-     * Retorna o somatório dos valores dos movimentos financeiros
+     * Retorna o somatório dos valores dos Movimentos de Estoque
      * @param movimentos
      * @return BigDecimal
      */

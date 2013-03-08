@@ -35,7 +35,7 @@ public class FixacaoReparteHistoricoDTO implements Serializable{
 	
 	private BigInteger edicao;
 	
-	@Export(label ="Edição",exhibitionOrder=1)
+	@Export(label ="EdiÃ§Ã£o",exhibitionOrder=1)
 	private String edicaoString;
 	
 	private BigDecimal reparte;
@@ -50,7 +50,7 @@ public class FixacaoReparteHistoricoDTO implements Serializable{
 	
 	private Date dataLancamento;
 	
-	@Export(label ="Lançamento",exhibitionOrder=4)
+	@Export(label ="LanÃ§amento",exhibitionOrder=4)
 	private String dataLancamentoString;
 	
 	private Date dataRecolhimento;

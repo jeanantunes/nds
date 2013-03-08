@@ -280,7 +280,9 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		
 		Map<Banco, List<DetalheSegmentoP>> inputDados = new HashMap<Banco, List<DetalheSegmentoP>>();
 		
-		List<Boleto> cobrancas = boletoRepository.obterBoletosGeradosNaDataOperacaoDistribuidor(distribuidorRepository.obterDataOperacaoDistribuidor());
+		List<Boleto> cobrancas = 
+				boletoRepository.obterBoletosGeradosNaDataOperacaoDistribuidor(
+						this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		for(Boleto cobranca : cobrancas){
 			
