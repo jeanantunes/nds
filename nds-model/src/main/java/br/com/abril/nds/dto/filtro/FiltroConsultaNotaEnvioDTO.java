@@ -29,6 +29,8 @@ public class FiltroConsultaNotaEnvioDTO {
 	
 	private PaginacaoVO paginacaoVO;
 	
+	private String exibirNotasEnvio;
+	
 	/**
 	 * @return the dataEmissao
 	 */
@@ -147,6 +149,14 @@ public class FiltroConsultaNotaEnvioDTO {
 
 	public void setCadastro(SituacaoCadastro cadastro) {
 		this.cadastro = cadastro;
+	}
+
+	public String getExibirNotasEnvio() {
+		return exibirNotasEnvio;
+	}
+
+	public void setExibirNotasEnvio(String exibirNotasEnvio) {
+		this.exibirNotasEnvio = exibirNotasEnvio;
 	}
 	
 }

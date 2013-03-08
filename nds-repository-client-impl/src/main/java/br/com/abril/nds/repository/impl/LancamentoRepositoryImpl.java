@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -23,6 +24,7 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
@@ -362,23 +364,29 @@ public class LancamentoRepositoryImpl extends
 		return (Long) query.uniqueResult();
 	}
 	
-	public Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista, TipoLancamento tipoLancamento, Long idProdutoEdicao){
+	public Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataLancamento, TipoLancamento tipoLancamento, Long idProdutoEdicao){
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from Lancamento lancamento ");
 		
-		hql.append(" where lancamento.dataLancamentoPrevista = :dataPrevista ");
+		hql.append(" where (lancamento.dataLancamentoPrevista >= :dataLancamento ");
+		
+		hql.append(" or lancamento.dataLancamentoDistribuidor >= :dataLancamento) ");
 		
 		if (tipoLancamento != null) {
 			hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
 		}
 		
-		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao");
+		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
+
+		hql.append(" order by lancamento.dataLancamentoPrevista, lancamento.dataLancamentoDistribuidor ");
 		
 		Query query = getSession().createQuery(hql.toString());
+
+		query.setDate("dataLancamento", dataLancamento);
 		
-		query.setDate("dataPrevista", dataPrevista);
+		query.setMaxResults(1);
 		
 		if(tipoLancamento != null){	
 			query.setParameter("tipoLancamento", tipoLancamento);
@@ -1626,5 +1634,33 @@ public class LancamentoRepositoryImpl extends
 		
 		query.executeUpdate();
 	}
+	
+	@Override
+	public BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO) {
+		
+		Lancamento lancamentoBase = buscarPorId(produtoDistribuicaoVO.getIdLancamento().longValue());
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select count(*) from lancamento lanc ");
+		sql.append(" join produto_edicao prodEdit ON prodEdit.ID = lanc.PRODUTO_EDICAO_ID ");
+		sql.append(" join produto prod ON prod.ID =  prodEdit.produto_id ");
+		sql.append(" where lanc.DATA_LCTO_DISTRIBUIDOR = :dataLctoDistribuido");
+		sql.append(" and   lanc.DATA_LCTO_PREVISTA  = :dataLctoPrevista");
+		sql.append(" and   prodEdit.numero_edicao = :numeroEdicao"); 
+		sql.append(" and   prod.CODIGO = :codigoProduto"); 
+				
+		Query query = super.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataLctoDistribuido", 	lancamentoBase.getDataLancamentoDistribuidor());
+		query.setParameter("dataLctoPrevista", 		lancamentoBase.getDataLancamentoPrevista());
+		query.setParameter("numeroEdicao", 			produtoDistribuicaoVO.getNumeroEdicao());
+		query.setParameter("codigoProduto", 		produtoDistribuicaoVO.getCodigoProduto());
+		
+		BigInteger count = (BigInteger)query.uniqueResult();
+		
+		return count;
+	}
+	
 	
 }

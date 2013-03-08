@@ -1,4 +1,4 @@
-function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspace) {
+function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	var _workspace = workspace;
 	
@@ -6,8 +6,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	var opcoesAberto = false;
 	
-	this.tiposMovimento = []; 
-	this.tipoMovimento = null;
 	this.instancia = descInstancia;
 	this.linhasDestacadas = [];
 	this.lancamentos = [];
@@ -31,12 +29,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
 		
-		$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
-			data.push({name:'idsFornecedores', value: $(this).val()});
-		});
-				
 		$.postJSON(
-			pathTela + "/matrizDistribuicao/obterMatrizLancamento", 
+			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
 			data,
 			function(result) {
 				
@@ -49,6 +43,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.escondeGrid = function() { 
 		$(".grids", _workspace).hide();
+		
 	} ,
 
 	this.carregarGrid = function() {		
@@ -62,7 +57,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		T.isCliquePesquisar = true;
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
-			url : pathTela + "/matrizDistribuicao/obterGridMatrizLancamento",
+			url : pathTela + "/matrizDistribuicao/obterGridMatrizDistribuicao",
 			dataType : 'json',
 			autoload: false,
 			singleSelect: true,
@@ -131,22 +126,20 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
-		if(resultadoPesquisa.mensagens) {
-			
-			exibirMensagem(resultadoPesquisa.mensagens.tipoMensagem, resultadoPesquisa.mensagens.listaMensagens);
-			return resultadoPesquisa.rows;
+		if (resultadoPesquisa[3]) {
+			$(".matrizFinalizada").show();
+		}
+		else {
+			$(".matrizFinalizada").hide();
 		}
 		
 		$("#totalGerado", _workspace).clear();
 		$("#totalLiberado", _workspace).clear();
 		
-		T.linhasDestacadas = [];
-		
 		T.lancamentos = [];
 		
-		if (resultadoPesquisa[0].rows.lenght == 0) {
-			escondeGrid();
-			return;
+		if (resultadoPesquisa[0].rows.length == 0) {
+			T.escondeGrid();
 		}
 		
 		$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
@@ -271,6 +264,13 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	},
 	
 	this.alterarReparte = function(input, index) {
+		
+		if (!$.isNumeric(input.value)) {
+			
+			exibirMensagem("WARNING", ["Digite um número valido!"]);
+			return;
+		}
+		
 		T.lancamentos[index].repDistrib = input.value;
 		var vlr = (T.lancamentos[index].lancto - T.lancamentos[index].promo - T.lancamentos[index].repDistrib); 
 		$("#sobra" + index, _workspace).text(vlr);
@@ -288,25 +288,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$("#selTodos", _workspace).uncheck();
 	},
 	
-	
-    /**
-     * Obtém tela de confirmação de Balanceamento
-     * OBS: Específico para matrizDistribuicao\index.jsp
-     * @param codigoProduto
-     */
-	this.obterConfirmacaoBalanceamento = function (){
-		$.postJSON(
-			pathTela + "/matrizDistribuicao/obterAgrupamentoDiarioBalanceamento", 
-			null,
-			function(result) {
-				balanceamento.popularConfirmacaoBalanceamento(result,_workspace);
-				T.popup_confirmar_balanceamento();
-			},
-			function() {
-				$("#dialog-confirm-balanceamento", _workspace).hide();
-			}
-		);
-	},
 
   this.obterUnicoItemMarcado = function() {
 		
@@ -325,10 +306,17 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
   
   this.confirmarFinalizacaoDeMatriz = function() {
 		
-		$.postJSON(pathTela + "/matrizDistribuicao/finalizarMatrizDistribuicao",
-				function(){
+		var data = [];
+		
+		$.each(T.lancamentos, function(index, lancamento){
+			data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  	  value: lancamento.estudo});
+			data.push({name: 'produtosDistribuicao[' + index + '].repDistrib',    value: lancamento.repDistrib});
+		});
+
+		$.postJSON(pathTela + "/matrizDistribuicao/finalizarMatrizDistribuicao", data,
+				function(result){
 					T.checkUncheckLancamentos(false);
-					T.atualizarGrid();
+					T.carregarGrid();
 					T.exibirMensagemSucesso();
 				}
 			);
@@ -336,10 +324,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
   this.confirmarReaberturaDeMatriz = function() {
 		
-		$.postJSON(pathTela + "/matrizDistribuicao/reabrirMatrizDistribuicao",
+		$.postJSON(pathTela + "/matrizDistribuicao/reabrirMatrizDistribuicao", null, 
 				function(){
 					T.checkUncheckLancamentos(false);
-					T.atualizarGrid();
+					T.carregarGrid();
 					T.exibirMensagemSucesso();
 				}
 			);
@@ -351,7 +339,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$.each(T.lancamentos, function(index, lancamento){
 			if(lancamento.selecionado) {
-				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  value: lancamento.estudo});
+				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  		  value: lancamento.estudo});
+				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  	  value: lancamento.idLancamento});
+				data.push({name: 'produtosDistribuicao[' + index + '].numeroEdicao',  	  value: lancamento.edicao});
+				data.push({name: 'produtosDistribuicao[' + index + '].codigoProduto',  	  value: lancamento.codigoProduto});
 			}
 		});
 		
@@ -382,6 +373,38 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				}
 			);
 				
+	},
+	
+	this.popup_confirmar_duplicarLinha = function() {
+		
+		$( "#dialog-confirm-duplicar", _workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: [
+			    {
+			    	id: "dialogConfirmarBtnConfirmar",
+			    	text: "Confirmar",
+			    	click: function() {
+			    		T.confirmaDuplicaoLinha(); 
+			    		$(this).dialog("close");
+			    	}
+			    },
+			    {
+			    	id: "dialogConfirmarBtnCancelar",
+			    	text: "Cancelar",
+			    	click: function() {
+			    
+			    		$(this).dialog("close");
+			    	}
+				}
+			],
+			form: $("#dialog-confirm-duplicar", this.workspace).parents("form"),
+			beforeClose: function() {
+				clearMessageDialogTimeout("dialog-confirmar");
+		    }
+		});
 	},
 	
 	this.popup_confirmar_finalizacao_matriz = function() {
@@ -560,32 +583,28 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		return i;
 	},
 	
-	this.duplicarLinha = function() {
+	this.confirmaDuplicaoLinha = function() {
 		
 		if(!T.validarMarcacaoUnicoItem()) {
 			return;
 		}
 		
-		var index = T.obterUnicoIndiceSelecionado() + 1;
-		var idTR = 'row'+index;
-		var idCloneTR = 'row'+index+'clone';
-		var cloneCheckBox =  'checkDistribuicao' + (index - 1);
-		var checkBox =  'checkDistribuicao' + (index - 1);
+		var selecionado = T.obterUnicoItemMarcado();
 		
+		var data = [];
 		
-		if ($('#'+idCloneTR + '2') > 0) {
-			return;
-		}
+		data.push({name: 'produtoDistribuicao.idLancamento',  	  value: selecionado.idLancamento});
+		data.push({name: 'produtoDistribuicao.numeroEdicao',  	  value: selecionado.edicao});
+		data.push({name: 'produtoDistribuicao.codigoProduto',  	  value: selecionado.codigoProduto});
 		
-		if ($('#'+idCloneTR + '1') > 0) {
-			idCloneTR = idCloneTR + '1';
-		}
-		
-		$('#'+idTR).clone().insertAfter('#'+idTR).attr('id',idCloneTR);
-		$($('#'+idCloneTR).find('td')[14]).find('div').text('');
-		$($('#'+idCloneTR).find('td')[15]).find('div').text('');
-		$($('#'+idCloneTR).find('td')[16]).find('input').attr('id',cloneCheckBox);
-		$('#'+checkBox).uncheck();
+
+		$.postJSON(pathTela + "/matrizDistribuicao/duplicarLinha", data,
+				function(result){
+					T.checkUncheckLancamentos(false);
+					T.carregarGrid();
+					T.exibirMensagemSucesso();
+				}
+			);
 		
 	},
 	
@@ -700,7 +719,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		T.isCliquePesquisar = true;
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
-			url : pathTela + "/matrizDistribuicao/obterGridMatrizLancamento",
+			url : pathTela + "/matrizDistribuicao/obterGridMatrizDistribuicao",
 			dataType : 'json',
 			autoload: false,
 			singleSelect: true,

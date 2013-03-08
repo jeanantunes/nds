@@ -17,4 +17,6 @@ public interface EstudoService {
 
 	Estudo obterEstudo(Long id);
 
+	public abstract void excluirEstudosAnoPassado();
+
 }
