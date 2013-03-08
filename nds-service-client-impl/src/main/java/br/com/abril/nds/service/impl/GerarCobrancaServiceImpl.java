@@ -1155,6 +1155,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					this.movimentoFinanceiroCotaService.removerPostergadosDia(
 							consolidado.getCota().getId(), 
 							listaPostergados);
+				} else {
+					
+					this.consolidadoFinanceiroRepository.remover(consolidado);
 				}
 			}
 		}
