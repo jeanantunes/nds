@@ -12,6 +12,10 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 							pesquisaCota.autoCompletarPorNome('#nomeCota');
 						});
 						
+						$("#nomeCota").change(function(){
+							pesquisaCota.pesquisarPorNomeCota('#numeroCota','#nomeCota');
+						});
+						
 						
 						$(".areaInfluenciaGrid", areaInfluenciaGeradorFluxoController.workspace).flexigrid(	{
 							preProcess : areaInfluenciaGeradorFluxoController.executarPreProcessamento,
