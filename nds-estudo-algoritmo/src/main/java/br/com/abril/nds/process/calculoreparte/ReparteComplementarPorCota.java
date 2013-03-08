@@ -24,11 +24,13 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
 	private List<Ordenador> ordenadorList = new ArrayList<Ordenador>();
 	private RankingSegmentoDAO rankingSegmentoDAO; 
-	
+	private List<Long> cotasIdList;
     public ReparteComplementarPorCota(Estudo estudo) {
 	super(estudo);
 
 	this.rankingSegmentoDAO = new RankingSegmentoDAO();
+	cotasIdList = rankingSegmentoDAO.getCotasOrdenadasMaiorMenor(getEstudo().getCotas(),getEstudo().getProduto());
+	
 //	Prioridade de recebimento de reparte:
 	
 	/*
@@ -48,7 +50,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 				}
 			}
 			
-//			rankingSegmentoDAO.getCotasOrdenadaPorSegmentoEdicaoAberta(cList, getEstudo().getEdicoesBase());
+			rankingSegmentoDAO.getCotasOrdenadaPorSegmentoEdicaoAberta(cList, cotasIdList);
 			
 		}
 	});

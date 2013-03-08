@@ -63,7 +63,7 @@ public class RankingSegmentoDAO {
 		
 	}
 
-	public List<Long> getCotasOrdenadaPorSegmentoEdicaoAberta(List<Cota> cotaList,ProdutoEdicao produtoEdicao,List<Long>idEdicoesBase) {
+	public List<Long> getCotasOrdenadaPorSegmentoEdicaoAberta(List<Cota> cotaList,List<Long>idEdicoesBase) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(" SELECT distinct COTA_ID FROM RANKING_SEGMENTO WHERE RANKING_SEGMENTO_GERADOS_ID = (select max(id) from ranking_segmento_gerados) and COTA_ID in (?) ");
@@ -169,4 +169,40 @@ public class RankingSegmentoDAO {
 		return idList;
 	}
 
+	
+	public List<Long> getCotasOrdenadasMaiorMenor(List<Cota> cotaList, ProdutoEdicaoBase produtoEdicaoBase) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(" SELECT distinct COTA_ID FROM RANKING_SEGMENTO WHERE RANKING_SEGMENTO.produto_edicao_id = ? ")
+		.append(" and RANKING_SEGMENTO_GERADOS_ID = (select max(id) from ranking_segmento_gerados) and COTA_ID in (?)  ");
+		
+		List<Long> idList = new ArrayList<Long>();
+		for (Cota c : cotaList) {
+			idList.add(c.getId());
+		}
+		
+		try {
+			
+			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
+					sb.toString());
+			
+			int idx = 1;
+			psmt.setLong(idx++, produtoEdicaoBase.getId());
+			psmt.setString(idx++, StringUtils.join(idList,","));
+			
+			idList.clear();
+			
+			ResultSet rs = psmt.executeQuery();
+			while (rs.next()) {
+				idList.add(rs.getLong(idx));
+			}
+			
+			
+		} catch (Exception ex) {
+			System.out.println("Ocorreu um erro ao tentar consultar as cotas");
+			ex.printStackTrace();
+		}
+		
+		return idList;
+	}
 }
