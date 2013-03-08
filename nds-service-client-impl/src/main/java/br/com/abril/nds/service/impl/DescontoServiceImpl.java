@@ -774,9 +774,7 @@ public class DescontoServiceImpl implements DescontoService {
 	 */
 	private void validarExclusaoDesconto(Desconto desconto){
 
-		Distribuidor distribuidor = distribuidorRepository.obter();
-
-		if(desconto.getDataAlteracao().compareTo(distribuidor.getDataOperacao()) < 0)
+		if(desconto.getDataAlteracao().compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) < 0)
 			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido fora da data vigente!");
 				
 		if(desconto.isUsado())

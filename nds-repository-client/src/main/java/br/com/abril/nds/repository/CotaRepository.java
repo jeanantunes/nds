@@ -332,11 +332,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	Cota buscarCotaPorID(Long id);
 
-	List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvio(FiltroConsultaNotaEnvioDTO filtro);
-
-	Integer obterCountCotasComNotaEnvioEntre(FiltroConsultaNotaEnvioDTO filtro);
-	
-
 	/**
 	 * 
 	 * Obtém todas as cotas que possuem a média de reparte dentro do range inicial + final. 
@@ -353,11 +348,23 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	List<CotaDTO> buscarCotasQuePossuemRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 
+	List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioAEmitir(FiltroConsultaNotaEnvioDTO filtro);
+
+	List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidasEAEmitir(FiltroConsultaNotaEnvioDTO filtro);
+
+	List<ConsultaNotaEnvioDTO> obterDadosCotasComNotaEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro);
+
+	Integer obterDadosCotasComNotaEnvioEmitidasCount(FiltroConsultaNotaEnvioDTO filtro);
+
+	Integer obterDadosCotasComNotaEnvioAEmitirCount(FiltroConsultaNotaEnvioDTO filtro);
+
+	Integer obterDadosCotasComNotaEnvioEmitidasEAEmitirCount(FiltroConsultaNotaEnvioDTO filtro);
+
 	List<CotaDTO> buscarCotasQuePossuemPercentualVendaSuperior(BigDecimal percentVenda, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 
-	List<CotaDTO> buscarCotasPorNomeOuNumero(CotaDTO cotaDto,	List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	List<CotaDTO> buscarCotasPorNomeOuNumero(CotaDTO cotaDto, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 
-	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto,	boolean cotasAtivas);
+	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
 	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
 	
