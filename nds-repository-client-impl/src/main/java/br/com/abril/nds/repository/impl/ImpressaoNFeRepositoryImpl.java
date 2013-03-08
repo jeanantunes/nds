@@ -13,7 +13,7 @@ import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
@@ -104,7 +104,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	//Torna reaproveitavel a parte de filtro da query
 	private Query montarFiltroConsultaNfeParaImpressao(FiltroImpressaoNFEDTO filtro, StringBuilder sql, PaginacaoVO paginacao) {
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
+		ObrigacaoFiscal obrigacaoFiscal = this.distribuidorRepository.obrigacaoFiscal();
 		
 		if(filtro == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "O filtro não pode ser nulo ou estar vazio.");
@@ -136,7 +136,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			sql.append("and nf.identificacao.dataEmissao = :dataEmissao ");
 		}
 		
-		if(distribuidor.getObrigacaoFiscal() != null) {
+		if(obrigacaoFiscal != null) {
 			sql.append("and nf.informacaoEletronica.retornoComunicacaoEletronica.status = :statusNFe ");
 		}
 		
@@ -234,7 +234,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			q.setParameter("tipoNotaFiscal", Long.parseLong(filtro.getTipoNFe()) );
 		}
 		
-		if(distribuidor.getObrigacaoFiscal() != null) {
+		if(obrigacaoFiscal != null) {
 			q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.Status.AUTORIZADO );
 		}
 		
@@ -299,7 +299,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	//Torna reaproveitavel a parte de filtro da query
 		private Query montarFiltroConsultaNotaEnvioParaImpressao(FiltroImpressaoNFEDTO filtro, StringBuilder sql, PaginacaoVO paginacao) {
 			
-			Distribuidor distribuidor = distribuidorRepository.obter();
+			ObrigacaoFiscal obrigacaoFiscal = this.distribuidorRepository.obrigacaoFiscal();
 			
 			if(filtro == null) {
 				throw new ValidacaoException(TipoMensagem.ERROR, "O filtro não pode ser nulo ou estar vazio.");
@@ -413,7 +413,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			
 			q.setParameter("dataEmissao", new java.sql.Date(filtro.getDataEmissao().getTime()));
 			
-			if(distribuidor.getObrigacaoFiscal() != null) {
+			if(obrigacaoFiscal != null) {
 				q.setParameter("statusNFe", br.com.abril.nds.model.fiscal.nota.Status.AUTORIZADO );
 			}
 			

@@ -44,7 +44,6 @@ import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -694,9 +693,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		ContratoTransporteDTO contrato = new ContratoTransporteDTO();
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();	
-		
-		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();		
+		PessoaJuridica pessoaJuridica = this.distribuidorRepository.juridica();		
 		PessoaContratoDTO contratante = new PessoaContratoDTO();		
 		
 		contratante.setNome((pessoaJuridica.getNome()!=null?pessoaJuridica.getNome():""));
@@ -721,7 +718,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		
 		String descTelefones = "";
-		for (Telefone itemTelefone:distribuidor.getJuridica().getTelefones()){
+		for (Telefone itemTelefone: pessoaJuridica.getTelefones()){
 			descTelefones=descTelefones+"("+itemTelefone.getDdd()+")"+itemTelefone.getNumero()+"    ";
 		}
 		contratante.setDescTelefones(descTelefones);
@@ -780,10 +777,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				contrato.setPrazo(cota.getContratoCota().getPrazo()!=null?cota.getContratoCota().getPrazo().toString():"");
 			}
 			
-			ParametroContratoCota parametroContrato= distribuidor.getParametroContratoCota();
+			ParametroContratoCota parametroContrato = this.distribuidorRepository.parametroContratoCota();
 			if (parametroContrato!=null){
 				contrato.setAvisoPrevio( Integer.toString(parametroContrato.getDiasAvisoRescisao()));
-			    contrato.setComplemento(distribuidor.getParametroContratoCota().getComplementoContrato());
+			    contrato.setComplemento(parametroContrato.getComplementoContrato());
 			    contrato.setCondicoes(parametroContrato.getCondicoesContratacao());
 			}
 			

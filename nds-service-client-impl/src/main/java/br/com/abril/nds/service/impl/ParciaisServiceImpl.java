@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -100,9 +99,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 			qtdePeriodos = qtdePeriodos - qntPeriodosNaoBalanceados.intValue();
 		}
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		Integer fatorRelancamentoParcial = distribuidor.getFatorRelancamentoParcial();
+		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
 		
 		Integer qntDiasUltrapassaPEB = this.qntDiasQueUltrapassamPEB(qtdePeriodos, fatorRelancamentoParcial, 
 																	  lancamentoParcial.getRecolhimentoFinal(), 
