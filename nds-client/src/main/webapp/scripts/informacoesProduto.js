@@ -80,7 +80,7 @@ $(".produtosInfosGrid").flexigrid({
 			align : 'center'
 		},{
 			display : 'Estudo',
-			name : 'estudo',
+			name : 'estudo' ,
 			width : 40,
 			sortable : true,
 			align : 'left'
@@ -239,6 +239,8 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			
 			row.cell.numeroEdicao = capa;
 			
+			var numeroEstudo = '<a href="javascript:;" onclick="informacoesProdutoController.recuperarNumeroEstudo(' + row.cell.estudo + ')">' + row.cell.estudo +'</a>'
+			row.cell.estudo = numeroEstudo;
 			
 		});
 		
@@ -279,15 +281,18 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		return resultado;
 	},
 
-//	carregarProdutosCadastrados : function() {
-//		
-//		$(".produtosInfosGrid", this.workspace).flexOptions({
-//			url: contextPath + "/distribuicao/informacoesProduto/buscarProduto",
-//			dataType : 'json'
-//		});
-//		$(".produtosInfosGrid", this.workspace).flexReload();		
-//	},
 
+	recuperarNumeroEstudo: function(numeroEstudo){
+		if($("#codigoEstudo").val()==undefined){
+			alert("A aba de Estudo Complementar foi fechada");
+		    return;
+		}
+		$("#codigoEstudo").val(numeroEstudo);
+		
+		$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+		$("#codigoEstudo").focus();
+	}
+	,
 	filtroPrincipal : function(){
 		var codigo = $("#idCodigo").val();
 		
