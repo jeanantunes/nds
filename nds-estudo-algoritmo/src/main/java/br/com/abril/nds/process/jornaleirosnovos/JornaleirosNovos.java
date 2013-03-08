@@ -31,6 +31,9 @@ public class JornaleirosNovos extends ProcessoAbstrato {
     private CotaDAO cotaDAO;
     
     @Autowired
+    private ProdutoEdicaoDAO produtoEdicaoDAO;
+    
+    @Autowired
     private Medias medias;
     
     @Override
@@ -52,7 +55,7 @@ public class JornaleirosNovos extends ProcessoAbstrato {
 
 			Cota cotaEquivalente = cota.getEquivalente().get(iEquivalente);
 
-			cotaEquivalente.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
+			cotaEquivalente.setEdicoesRecebidas(produtoEdicaoDAO.getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
 
 			if (cotaEquivalente.getEdicoesRecebidas() != null && !cotaEquivalente.getEdicoesRecebidas().isEmpty()) {
 

@@ -18,7 +18,7 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
     private Date dataLancamento;
     private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
     private Integer periodo;
-    private TipoSegmentoProduto tipoSegmentoProduto;
+    private Long tipoSegmentoProduto;
 
     public ProdutoEdicaoBase() {
 	peso = 1;
@@ -130,11 +130,11 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 	this.periodo = periodo;
     }
 
-    public TipoSegmentoProduto getTipoSegmentoProduto() {
+    public Long getTipoSegmentoProduto() {
 	return tipoSegmentoProduto;
     }
 
-    public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
+    public void setTipoSegmentoProduto(Long tipoSegmentoProduto) {
 	this.tipoSegmentoProduto = tipoSegmentoProduto;
     }
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -16,12 +17,15 @@ import br.com.abril.nds.model.TipoSegmentoProduto;
 
 public abstract class AjusteCotaDataProvider {
 
+    @Autowired
+    private static CotaDAO cotaDAO;
+    
     @DataProvider(name = "getCotaSemIndiceAjusteSegmentoList")
     public static Iterator<Cota[]> getCotaSemIndiceAjusteSegmentoList() {
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
-	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
+	List<Cota> listCota = cotaDAO.getCotaWithEstoqueProdutoCota();
 
 	Iterator<Cota> itCota = listCota.iterator();
 
@@ -30,8 +34,9 @@ public abstract class AjusteCotaDataProvider {
 	    Cota cota = itCota.next();
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
-	    BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
-		    TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
+	    BigDecimal ajusteAplicado = BigDecimal.ONE;
+//	    BigDecimal ajusteAplicado = cotaDAO.getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
+//		    TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
 
 	    if (ajusteAplicado != null && ajusteAplicado.compareTo(BigDecimal.ZERO) == 1) {
 		listCotaReturn.add(new Cota[] { cota });

@@ -5,6 +5,7 @@ import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -13,6 +14,9 @@ import br.com.abril.nds.process.dataprovider.AjusteCotaDataProvider;
 
 public class AjusteCotaTest {
 
+    @Autowired
+    private AjusteCota ajusteCota;
+    
     /**
      * Testar índice de ajuste de cota sem segmento.
      * 
@@ -27,7 +31,7 @@ public class AjusteCotaTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edições ");
 
-	    AjusteCota ajusteCota = new AjusteCota(cota);
+	    ajusteCota.setGenericDTO(cota);
 	    ajusteCota.executar();
 
 	    cota = (Cota) ajusteCota.getGenericDTO();
@@ -57,7 +61,7 @@ public class AjusteCotaTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edições ");
 
-	    AjusteCota ajusteCota = new AjusteCota(cota);
+	    ajusteCota.setGenericDTO(cota);
 	    ajusteCota.executar();
 
 	    cota = (Cota) ajusteCota.getGenericDTO();
@@ -87,7 +91,7 @@ public class AjusteCotaTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edições ");
 
-	    AjusteCota ajusteCota = new AjusteCota(cota);
+	    ajusteCota.setGenericDTO(cota);
 	    ajusteCota.executar();
 
 	    cota = (Cota) ajusteCota.getGenericDTO();
@@ -117,7 +121,7 @@ public class AjusteCotaTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edições ");
 
-	    AjusteCota ajusteCota = new AjusteCota(cota);
+	    ajusteCota.setGenericDTO(cota);
 	    ajusteCota.executar();
 
 	    cota = (Cota) ajusteCota.getGenericDTO();

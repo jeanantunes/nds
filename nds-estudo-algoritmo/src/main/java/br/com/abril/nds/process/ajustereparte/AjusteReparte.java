@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
@@ -31,14 +30,13 @@ public class AjusteReparte extends ProcessoAbstrato {
 
     @Override
     protected void executarProcesso() throws Exception {
-	// TODO: ainda resta efetuar a consulta dos parâmetros que alimentam o método
 	if ((getEstudo() == null) || (getEstudo().getCotas() == null)) {
 	    throw new Exception("Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo.");
 	}
 	for (Cota cota : getEstudo().getCotas()) {
-	    if ((cota.getVendaMediaMaisN() != null) && (getEstudo().getPacotePadrao() != null) && (cota.getVendaMediaMaisN().longValue() > 0)) {
+	    if ((cota.getVendaMediaMaisN() != null) && (getEstudo().getPacotePadrao() != null) && (cota.getVendaMediaMaisN().compareTo(BigDecimal.ZERO) > 0)) {
 		BigDecimal ajusteReparte = BigDecimal.ZERO;
-		if (cota.getVendaMediaMaisN().longValue() > getEstudo().getPacotePadrao().longValue()) {
+		if (cota.getVendaMediaMaisN().compareTo(getEstudo().getPacotePadrao()) > 0) {
 		    ajusteReparte = cota.getVendaMediaMaisN();
 		} else {
 		    ajusteReparte = getEstudo().getPacotePadrao();

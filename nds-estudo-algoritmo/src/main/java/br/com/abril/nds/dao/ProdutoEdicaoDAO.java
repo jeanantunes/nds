@@ -17,7 +17,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
-import br.com.abril.nds.model.TipoSegmentoProduto;
 
 @Repository
 public class ProdutoEdicaoDAO {
@@ -63,9 +62,6 @@ public class ProdutoEdicaoDAO {
 		edicao.setParcial(rs.getInt("PARCIAL") == 1);
 		edicao.setPeso(rs.getInt("PESO"));
 		edicao.setColecao(rs.getInt("IS_COLECAO") == 1);
-
-		edicao.setTipoSegmentoProduto(new TipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID"), rs.getString("TIPO_SEGMENTO_PRODUTO_DESC")));
-		
 		edicoes.add(edicao);
 	    }
 	} catch (Exception ex) {

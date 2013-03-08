@@ -195,11 +195,11 @@ public class EstudoServiceEstudo {
 	estudoDAO.gravarEstudo(estudo);
     }
 
-    public void gerarEstudoAutomatico(ProdutoEdicaoBase produto, BigDecimal reparte) throws Exception {
-	gerarEstudoAutomatico(null, produto, reparte);
+    public Estudo gerarEstudoAutomatico(ProdutoEdicaoBase produto, BigDecimal reparte) throws Exception {
+	return gerarEstudoAutomatico(null, produto, reparte);
     }
 
-    public void gerarEstudoAutomatico(List<ProdutoEdicaoBase> edicoesBase, ProdutoEdicaoBase produto, BigDecimal reparte) throws Exception {
+    public Estudo gerarEstudoAutomatico(List<ProdutoEdicaoBase> edicoesBase, ProdutoEdicaoBase produto, BigDecimal reparte) throws Exception {
 	log.debug("Iniciando execução do estudo.");
 	Estudo estudo = new Estudo();
 	estudo.setProduto(produto);
@@ -268,5 +268,6 @@ public class EstudoServiceEstudo {
 	ajusteFinalReparte.setEstudo(estudo);
 	ajusteFinalReparte.executar();
 	log.debug("Execução do estudo concluída");
+	return estudo;
     }
 }

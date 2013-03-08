@@ -1,6 +1,5 @@
 package br.com.abril.nds.dao;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,8 +19,6 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
-import br.com.abril.nds.model.TipoAjusteReparte;
-import br.com.abril.nds.model.TipoSegmentoProduto;
 
 @Repository
 public class CotaDAO {
@@ -32,15 +29,6 @@ public class CotaDAO {
     @Value("#{query_estudo.queryProdutoEdicaoPorCota}")
     private String queryProdutoEdicaoPorCota;
 
-    @Value("#{query_estudo.queryAjusteReparte}")
-    private String queryAjusteReparte;
-
-    @Value("#{query_estudo.queryAjusteReparteTipoSegmento}")
-    private String queryAjusteReparteTipoSegmento;
-
-    @Value("#{query_estudo.queryAjusteReparteFormaReajuste}")
-    private String queryAjusteReparteFormaReajuste;
-
     @Value("#{query_estudo.queryCotaEquivalente}")
     private String queryCotaEquivalente;
     
@@ -48,49 +36,6 @@ public class CotaDAO {
     private String queryCotaWithEstoqueProdutoCota;
 
     private Map<Long, Integer> idsPesos = new HashMap<Long, Integer>();
-
-    public BigDecimal getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(Cota cota, TipoSegmentoProduto tipoSegmentoProduto,
-	    TipoAjusteReparte[] tipoAjusteReparte) {
-
-	BigDecimal ajusteAplicado = null;
-
-	String query = null;
-	try {
-	    if (tipoSegmentoProduto != null) {
-		query = queryAjusteReparteTipoSegmento;
-	    } else {
-		query = queryAjusteReparte;
-	    }
-	    if (tipoAjusteReparte != null && tipoAjusteReparte.length > 0) {
-		
-		for (int i = 0; i < tipoAjusteReparte.length; i++) {
-//		    valores += "\"" + tipoAjusteReparte[i].toString() + "\",";
-		}
-		query = queryAjusteReparteFormaReajuste;
-	    }
-	    
-	    Map<String, Object> params = new HashMap<>();
-//	    params.put("", );
-
-	    int i = 1;
-//	    jdbcTemplate.query(query, params);
-//	    PreparedStatement psmt = dataSource.getConnection().prepareStatement(queryAjusteReparte);
-//	    if (tipoSegmentoProduto != null) {
-//		psmt.setLong(i++, tipoSegmentoProduto.getId());
-//	    }
-//	    psmt.setLong(i++, cota.getId());
-//	    psmt.setDate(i++, new java.sql.Date(new Date().getTime()));
-//	    psmt.setDate(i++, new java.sql.Date(new Date().getTime()));
-//
-//	    ResultSet rs = psmt.executeQuery();
-//	    if (rs.next()) {
-//		ajusteAplicado = rs.getBigDecimal("AJUSTE_APLICADO");
-//	    }
-	} catch (Exception ex) {
-	    ex.printStackTrace();
-	}
-	return ajusteAplicado;
-    }
 
     public Cota getIndiceAjusteCotaEquivalenteByCota(Cota cota) {
 
@@ -153,7 +98,7 @@ public class CotaDAO {
 		Cota cota = new Cota();
 		cota.setId(rs.getLong("COTA_ID"));
 		cota.setNumero(rs.getLong("NUMERO_COTA"));
-		traduzFormaAjuste(rs, cota);
+		cota.setAjusteReparte(rs.getBigDecimal("AJUSTE_APLICADO"));
 		cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos, false));
 		return cota;
 	    }
@@ -175,17 +120,6 @@ public class CotaDAO {
 	    }
 	}
 	return novaLista;
-    }
-
-    private void traduzFormaAjuste(ResultSet rs, Cota cota) throws SQLException {
-	// TODO: ainda faltam carregar os parâmetros para ajuste de segmento e histórico
-	// (estarão gravados no banco respectivamente: 'segmento' e 'histórico')
-	String formaAjuste = rs.getString("FORMA_AJUSTE");
-	if ("vendaMedia".equals(formaAjuste)) {
-	    cota.setVendaMediaMaisN(rs.getBigDecimal("AJUSTE_APLICADO"));
-	} else if ("encalheMaximo".equals(formaAjuste)) {
-	    cota.setPercentualEncalheMaximo(rs.getBigDecimal("AJUSTE_APLICADO"));
-	}
     }
 
     private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, Integer> idsPesos, boolean forceEdicaoFechada) throws SQLException {

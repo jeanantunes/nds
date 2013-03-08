@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -17,6 +18,12 @@ import br.com.abril.nds.process.medias.Medias;
 
 public abstract class VendaMediaFinalDataProvider {
 
+    @Autowired
+    private static CorrecaoVendas correcaoVendas;
+    
+    @Autowired
+    private static Medias medias;
+    
     @DataProvider(name = "getCotaParaCalculoList")
     public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList() throws Exception {
 
@@ -51,10 +58,10 @@ public abstract class VendaMediaFinalDataProvider {
 
 	    cota.setEdicoesRecebidas(edicoesRecebidas);
 
-	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+	    correcaoVendas.setGenericDTO(cota);
 	    correcaoVendas.executar();
 
-	    Medias medias = new Medias(cota);
+	    medias.setGenericDTO(cota);
 	    medias.executar();
 
 	    listCotaReturn.add(new Cota[] { cota });

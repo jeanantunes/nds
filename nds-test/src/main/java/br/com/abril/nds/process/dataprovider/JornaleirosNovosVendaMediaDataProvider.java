@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -17,6 +18,9 @@ import br.com.abril.nds.process.medias.Medias;
 
 public abstract class JornaleirosNovosVendaMediaDataProvider {
 
+    @Autowired
+    private static Medias medias;
+    
     @DataProvider(name = "getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList")
     public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList() throws Exception {
 
@@ -68,7 +72,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    Medias medias = new Medias(cotaEquivalente);
+			    medias.setGenericDTO(cotaEquivalente);
 			    medias.executar();
 
 			}
@@ -87,7 +91,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 		    }
 		}
 
-		Medias medias = new Medias(cota);
+		medias.setGenericDTO(cota);
 		medias.executar();
 	    }
 	}
@@ -144,7 +148,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    Medias medias = new Medias(cotaEquivalente);
+			    medias.setGenericDTO(cotaEquivalente);
 			    medias.executar();
 
 			}
@@ -153,7 +157,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 		    }
 		}
 
-		Medias medias = new Medias(cota);
+		medias.setGenericDTO(cota);
 		medias.executar();
 
 		listCotaReturn.add(new Cota[] { cota });
@@ -212,7 +216,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    Medias medias = new Medias(cotaEquivalente);
+			    medias.setGenericDTO(cotaEquivalente);
 			    medias.executar();
 
 			}
@@ -225,7 +229,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 		    }
 		}
 
-		Medias medias = new Medias(cota);
+		medias.setGenericDTO(cota);
 		medias.executar();
 
 		if (!hasVendaMediaMaiorZero.contains(Boolean.TRUE)) {

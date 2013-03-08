@@ -5,6 +5,7 @@ import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -13,6 +14,9 @@ import br.com.abril.nds.process.dataprovider.VendaMediaFinalDataProvider;
 
 public class VendaMediaFinalTest {
 
+    @Autowired
+    private VendaMediaFinal vendaMediaFinal;
+    
     /**
      * Testar se a venda médias final é calculada conforme a cota.
      * 
@@ -25,7 +29,7 @@ public class VendaMediaFinalTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    VendaMediaFinal vendaMediaFinal = new VendaMediaFinal(cota);
+	    vendaMediaFinal.setGenericDTO(cota);
 	    vendaMediaFinal.executar();
 
 	    BigDecimal vendaMediaFinalValue = vendaMediaFinal.getValue();

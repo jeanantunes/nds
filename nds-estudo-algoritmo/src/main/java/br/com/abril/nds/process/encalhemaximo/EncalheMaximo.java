@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.process.complementarautomatico.ComplementarAutomaticoTest;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 
 /**
