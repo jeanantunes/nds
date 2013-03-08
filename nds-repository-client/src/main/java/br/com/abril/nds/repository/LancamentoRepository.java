@@ -1,12 +1,14 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
@@ -331,5 +333,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
 			Date data, Long idFornecedor);
+
+	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
 
 }
