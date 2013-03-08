@@ -3,6 +3,8 @@ package br.com.abril.nds.process.correcaovendas;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -18,11 +20,8 @@ import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
  * 
  * Processo Anterior: {@link MontaTabelaEstudos} Próximo Processo: {@link Medias} </p>
  */
+@Component
 public class CorrecaoVendas extends ProcessoAbstrato {
-
-    public CorrecaoVendas(Cota cota) {
-	super(cota);
-    }
 
     /**
      * <h2>Processo: Correção de Vendas</h2>

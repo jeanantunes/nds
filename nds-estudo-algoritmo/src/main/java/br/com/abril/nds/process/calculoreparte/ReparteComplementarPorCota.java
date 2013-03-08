@@ -3,9 +3,10 @@ package br.com.abril.nds.process.calculoreparte;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -21,12 +22,12 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * Próximo Processo: {@link GravarReparteFinalCota}
  * </p>
  */
+@Component
 public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
     private List<Ordenador> ordenadorList = new ArrayList<Ordenador>();
 
-    public ReparteComplementarPorCota(Estudo estudo) {
-	super(estudo);
+    public ReparteComplementarPorCota() {
 
 	//	Prioridade de recebimento de reparte:
 

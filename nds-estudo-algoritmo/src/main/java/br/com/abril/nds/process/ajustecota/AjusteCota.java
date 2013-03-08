@@ -3,6 +3,9 @@ package br.com.abril.nds.process.ajustecota;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
@@ -25,12 +28,12 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
  * Próximo Processo: {@link JornaleirosNovos}
  * </p>
  */
+@Component
 public class AjusteCota extends ProcessoAbstrato {
 
-    public AjusteCota(Cota cota) {
-	super(cota);
-    }
-
+    @Autowired
+    private CotaDAO cotaDAO;
+    
     @Override
     protected void executarProcesso() {
 
@@ -38,7 +41,7 @@ public class AjusteCota extends ProcessoAbstrato {
 
 	Cota cota = (Cota) super.genericDTO;
 
-	BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
+	BigDecimal ajusteAplicado = cotaDAO.getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
 		TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
 
 	if (ajusteAplicado != null && ajusteAplicado.compareTo(indiceAjusteCota) == 1)
@@ -52,16 +55,13 @@ public class AjusteCota extends ProcessoAbstrato {
 	    // Assim, a lista de edição do produto deve vir com o mesmo tipo de segmento e o mesmo produto!
 	    TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
 
-	    BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
+	    BigDecimal ajusteAplicadoSegmento = cotaDAO.getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
 		    new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
 
 	    if (ajusteAplicadoSegmento != null && ajusteAplicadoSegmento.compareTo(indiceAjusteCota) == 1) {
 		indiceAjusteCota = ajusteAplicadoSegmento;
 	    }
 	}
-
 	cota.setIndiceAjusteCota(indiceAjusteCota);
-
     }
-
 }

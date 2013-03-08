@@ -6,27 +6,36 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.model.TipoSegmentoProduto;
-import br.com.abril.nds.util.PropertyLoader;
 
+@Repository
 public class ProdutoEdicaoDAO {
 
+    @Autowired
+    private DataSource dataSource;
+    
+    @Value("#{query_estudo.queryUltimoProdutoEdicao}")
+    private String queryUltimoProdutoEdicao;
+    
+    @Value("#{query_estudo.queryEdicoesRecebidas}")
+    private String queryEdicoesRecebidas;
+    
+    @Value("#{query_estudo.queryQtdeVezesReenviadas}")
+    private String queryQtdeVezesReenviadas;
+    
     private static final Logger log = LoggerFactory.getLogger(ProdutoEdicaoDAO.class);
-
-    private String queryUltimoProdutoEdicao, queryEdicoesRecebidas, queryQtdeVezesReenviadas;
-
-    public ProdutoEdicaoDAO() {
-	queryUltimoProdutoEdicao = PropertyLoader.getProperty("queryUltimoProdutoEdicao");
-	queryEdicoesRecebidas = PropertyLoader.getProperty("queryEdicoesRecebidas");
-	queryQtdeVezesReenviadas = PropertyLoader.getProperty("queryQtdeVezesReenviadas");
-    }
-
+    
     public List<ProdutoEdicao> getEdicaoRecebidas(Cota cota) {
 	return getEdicaoRecebidas(cota, null);
     }
@@ -39,7 +48,7 @@ public class ProdutoEdicaoDAO {
 	}
 
 	try {
-	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(queryEdicoesRecebidas);
+	    PreparedStatement psmt = dataSource.getConnection().prepareStatement(queryEdicoesRecebidas);
 	    psmt.setLong(1, cota.getId());
 	    if (produto != null) {
 		psmt.setLong(2, produto.getId());
@@ -68,7 +77,7 @@ public class ProdutoEdicaoDAO {
 
     public int getQtdeVezesReenviadas(Cota cota, ProdutoEdicaoBase produtoEdicao) {
 	try {
-	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(queryQtdeVezesReenviadas);
+	    PreparedStatement psmt = dataSource.getConnection().prepareStatement(queryQtdeVezesReenviadas);
 	    psmt.setLong(1, cota.getId());
 	    psmt.setLong(2, produtoEdicao.getId());
 
@@ -86,7 +95,7 @@ public class ProdutoEdicaoDAO {
     public ProdutoEdicaoBase getLastProdutoEdicaoByIdProduto(String codigoProduto) {
 	ProdutoEdicaoBase produtoEdicaoBase = new ProdutoEdicaoBase();
 	try {
-	    PreparedStatement ps = Conexao.getConexao().prepareStatement(queryUltimoProdutoEdicao);
+	    PreparedStatement ps = dataSource.getConnection().prepareStatement(queryUltimoProdutoEdicao);
 	    ps.setString(1, codigoProduto);
 	    ResultSet rs = ps.executeQuery();
 	    while (rs.next()) {
@@ -97,7 +106,7 @@ public class ProdutoEdicaoDAO {
 		produtoEdicaoBase.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 		produtoEdicaoBase.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
 	    }
-	} catch (ClassNotFoundException | SQLException e) {
+	} catch (SQLException e) {
 	    e.printStackTrace();
 	}
 	return produtoEdicaoBase;

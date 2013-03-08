@@ -2,6 +2,8 @@ package br.com.abril.nds.process.redutorautomatico;
 
 import java.math.BigDecimal;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
@@ -21,6 +23,7 @@ import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
  * Próximo Processo: {@link ReparteMinimo}
  * </p>
  */
+@Component
 public class RedutorAutomatico extends ProcessoAbstrato {
 
     private BigDecimal menorVenda = BigDecimal.ZERO;
@@ -31,10 +34,6 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 
     public void setMenorVenda(BigDecimal menorVenda) {
 	this.menorVenda = menorVenda;
-    }
-
-    public RedutorAutomatico(Estudo estudo) {
-	super(estudo);
     }
 
     @Override

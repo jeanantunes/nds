@@ -2,6 +2,9 @@ package br.com.abril.nds.process.jornaleirosnovos;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.Cota;
@@ -21,17 +24,20 @@ import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
  * 
  * Processo Anterior: {@link AjusteCota} Próximo Processo: {@link VendaMediaFinal} </p>
  */
+@Component
 public class JornaleirosNovos extends ProcessoAbstrato {
 
-    public JornaleirosNovos(Cota cota) {
-	super(cota);
-    }
-
+    @Autowired
+    private CotaDAO cotaDAO;
+    
+    @Autowired
+    private Medias medias;
+    
     @Override
     protected void executarProcesso() throws Exception {
 
 	Cota cota = (Cota) super.genericDTO;
-	cota = new CotaDAO().getCotaEquivalenteByCota(cota);
+	cota = cotaDAO.getCotaEquivalenteByCota(cota);
 
 	if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
 
@@ -61,7 +67,7 @@ public class JornaleirosNovos extends ProcessoAbstrato {
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    Medias medias = new Medias(cotaEquivalente);
+			    medias.setGenericDTO(cotaEquivalente);
 			    medias.executar();
 
 			    BigDecimal vendaMediaCorrigidaEquivalente = cotaEquivalente.getVendaMedia();

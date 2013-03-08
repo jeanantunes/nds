@@ -2,8 +2,10 @@ package br.com.abril.nds.process.calculoreparte;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
@@ -25,14 +27,17 @@ import br.com.abril.nds.process.definicaobases.DefinicaoBases;
  * Próximo Processo: N/A
  * </p>
  */
+@Component
 public class CalcularReparte extends ProcessoAbstrato {
 
+    @Autowired
+    private MinimoMaximo minimoMaximo;
+    
+    @Autowired
+    private GravarReparteJuramentado gravarReparteJuramentado;
+    
     BigDecimal excedenteDistribuir = BigDecimal.ZERO;
     BigDecimal percentualExcedente = BigDecimal.ZERO;
-
-    public CalcularReparte(Estudo estudo) {
-	super(estudo);
-    }
 
     @Override
     public void executarProcesso() throws Exception {
@@ -42,13 +47,13 @@ public class CalcularReparte extends ProcessoAbstrato {
 	// Cálculos do percentual de excedente
 	calcularPercentualExcedente();
 
-	MinimoMaximo minimoMaximo = new MinimoMaximo(getEstudo());
+	minimoMaximo.setEstudo(getEstudo());
 	minimoMaximo.executar();
 
 	// Ajustar reparte calculado ao pacote padrão ou simplesmente arredondar reparte calculado
 	ajustarReparteCalculado();
 
-	GravarReparteJuramentado gravarReparteJuramentado = new GravarReparteJuramentado(getEstudo());
+	gravarReparteJuramentado.setEstudo(getEstudo());
 	gravarReparteJuramentado.executar();
     }
 

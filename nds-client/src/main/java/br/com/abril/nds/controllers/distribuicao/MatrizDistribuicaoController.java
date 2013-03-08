@@ -23,9 +23,9 @@ import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.process.PrincipalEstudo;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.EstudoServiceEstudo;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -68,6 +68,9 @@ public class MatrizDistribuicaoController extends BaseController {
     
     @Autowired
     private EstudoService estudoService;
+    
+    @Autowired
+    private EstudoServiceEstudo estudoServiceEstudo;
 
     private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
 
@@ -314,7 +317,7 @@ public class MatrizDistribuicaoController extends BaseController {
     public void gerarEstudoAutomatico(String codigoProduto, BigDecimal reparte) {
 	
 	try {
-	    new PrincipalEstudo().gerarEstudoAutomatico(new ProdutoEdicaoBase(codigoProduto), reparte);
+	    estudoServiceEstudo.gerarEstudoAutomatico(new ProdutoEdicaoBase(codigoProduto), reparte);
 	} catch (Exception e) {
 	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 	}

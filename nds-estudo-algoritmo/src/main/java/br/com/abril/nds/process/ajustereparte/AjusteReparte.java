@@ -2,6 +2,8 @@ package br.com.abril.nds.process.ajustereparte;
 
 import java.math.BigDecimal;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
@@ -24,11 +26,8 @@ import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
  * Próximo Processo: {@link RedutorAutomatico}
  * </p>
  */
+@Component
 public class AjusteReparte extends ProcessoAbstrato {
-
-    public AjusteReparte(Estudo estudo) {
-	super(estudo);
-    }
 
     @Override
     protected void executarProcesso() throws Exception {

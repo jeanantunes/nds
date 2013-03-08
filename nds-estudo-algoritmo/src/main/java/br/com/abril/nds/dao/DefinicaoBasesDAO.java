@@ -1,58 +1,52 @@
 package br.com.abril.nds.dao;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.LocalDate;
-import org.joda.time.MonthDay;
-import org.joda.time.YearMonth;
-import org.joda.time.Years;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.enumerators.DataReferencia;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
-import br.com.abril.nds.util.PropertyLoader;
 
+@Repository
 public class DefinicaoBasesDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(DefinicaoBasesDAO.class);
+    @Autowired
+    private NamedParameterJdbcTemplate jdbcTemplate;
+
+    @Value("#{query_estudo.queryEdicoesLancamentos}")
+    private String queryEdicoesLancamentos;
+
+    @Value("#{query_estudo.queryLancamentosAnosAnterioresMesmoMes}")
+    private String queryLancamentosAnosAnterioresMesmoMes;
+
+    @Value("#{query_estudo.queryLancamentosAnosAnterioresVeraneio}")
+    private String queryLancamentosAnosAnterioresVeraneio;
 
     private static final String LANCAMENTO_PARCIAL = "PARCIAL";
     private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
     private static final String STATUS_FECHADO = "FECHADO";
 
-    private String queryModelProdutoEdicao, queryEdicoesLancamentos, queryLancamentosAnosAnterioresMesmoMes, queryLancamentosAnosAnterioresVeraneio;
+    public LinkedList<ProdutoEdicaoBase> listaEdicoesPorLancamento(ProdutoEdicaoBase edicao) {
 
-    public DefinicaoBasesDAO() {
-	queryModelProdutoEdicao = PropertyLoader.getProperty("queryModelProdutoEdicao");
-	queryEdicoesLancamentos = queryModelProdutoEdicao + " order by pe.NUMERO_EDICAO desc, plp.NUMERO_PERIODO desc limit 50 ";
-	queryLancamentosAnosAnterioresMesmoMes = queryModelProdutoEdicao
-		+ " and (l.DATA_LCTO_DISTRIBUIDOR like ? or l.DATA_LCTO_DISTRIBUIDOR like ?) "
-		+ " order by pe.NUMERO_EDICAO desc, plp.NUMERO_PERIODO desc limit 2 ";
-	queryLancamentosAnosAnterioresVeraneio = queryModelProdutoEdicao
-		+ " and (l.DATA_LCTO_DISTRIBUIDOR between ? and ? " // periodo de 20/12 a 28/02 um ano antes
-		+ "      or l.DATA_LCTO_DISTRIBUIDOR between ? and ?) " // periodo de 20/12 a 28/02 dois anos antes
-		+ " order by pe.NUMERO_EDICAO desc, plp.NUMERO_PERIODO desc limit 2 ";
-    }
+	Map<String, Object> params = new HashMap<>();
+	params.put("CODIGO_PRODUTO", edicao.getCodigoProduto());
 
-    public List<ProdutoEdicaoBase> listaEdicoesPorLancamento(ProdutoEdicaoBase edicao) {
-	List<ProdutoEdicaoBase> edicoes = new ArrayList<>();
-	try {
-	    PreparedStatement ps = Conexao.getConexao().prepareStatement(queryEdicoesLancamentos);
-	    ps.setString(1, edicao.getCodigoProduto());
-	    ResultSet rs = ps.executeQuery();
-	    while (rs.next()) {
-		edicoes.add(produtoEdicaoMapper(rs));
+	List<ProdutoEdicaoBase> listaProdutoEdicao = jdbcTemplate.query(queryEdicoesLancamentos, params, new RowMapper<ProdutoEdicaoBase>() {
+	    @Override
+	    public ProdutoEdicaoBase mapRow(ResultSet rs, int rowNum) throws SQLException {
+		return produtoEdicaoMapper(rs);
 	    }
-	} catch (ClassNotFoundException | SQLException e) {
-	    log.error("Erro os listar edições por lançamento.", e);
-	}
-	return edicoes;
+	});
+	return new LinkedList<>(listaProdutoEdicao); 
     }
 
     public List<ProdutoEdicaoBase> listaEdicoesAnosAnterioresMesmoMes(ProdutoEdicaoBase edicao) {
@@ -64,34 +58,37 @@ public class DefinicaoBasesDAO {
     }
 
     private List<ProdutoEdicaoBase> listaEdicoesAnosAnteriores(ProdutoEdicaoBase edicao, boolean mesmoMes, List<LocalDate> dataReferencias) {
-	List<ProdutoEdicaoBase> edicoes = new ArrayList<ProdutoEdicaoBase>();
-	try {
-	    PreparedStatement ps = Conexao.getConexao().prepareStatement(
-		    mesmoMes ? queryLancamentosAnosAnterioresMesmoMes : queryLancamentosAnosAnterioresVeraneio);
-	    int index = 0;
-	    ps.setString(++index, edicao.getCodigoProduto());
-	    if (mesmoMes) {
-		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), Years.ONE));
-		ps.setString(++index, anoMesAnteriorSQL(edicao.getDataLancamento(), Years.TWO));
-	    } else {
-		for (LocalDate localDate : dataReferencias) {
-		    ps.setString(++index, localDate.toString());
-		}
-		// FIXME
-		// ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 2, DataReferencia.DEZEMBRO_20));
-		// ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 1, DataReferencia.FEVEREIRO_15));
-		// ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 4, DataReferencia.DEZEMBRO_20));
-		// ps.setString(++index, periodoVeraneio(edicao.getDataLancamento(), 3, DataReferencia.FEVEREIRO_15));
+	Map<String, Object> params = new HashMap<>();
+	params.put("CODIGO_PRODUTO", edicao.getCodigoProduto());
+	if (mesmoMes) {
+	    params.put("DATA_LANCAMENTO", edicao.getDataLancamento());
+	} else {
+	    for (int i = 0; i < dataReferencias.size(); i++) {
+		params.put("DATA" + i, dataReferencias.get(i).toString());
 	    }
-	    ResultSet rs = ps.executeQuery();
-	    while (rs.next()) {
-		edicoes.add(produtoEdicaoMapper(rs));
-	    }
-	} catch (ClassNotFoundException | SQLException e) {
-	    LocalDate ld = new LocalDate(edicao.getDataLancamento());
-	    log.error("Erro ao obter edições de veraneio dos anos anteriores. Data lançamento base:" + ld.toString(), e);
 	}
-	return edicoes;
+	return jdbcTemplate.query(mesmoMes ? queryLancamentosAnosAnterioresMesmoMes : queryLancamentosAnosAnterioresVeraneio, params,
+		new RowMapper<ProdutoEdicaoBase>() {
+		    @Override
+		    public ProdutoEdicaoBase mapRow(ResultSet rs, int rowNum) throws SQLException {
+			return produtoEdicaoMapper(rs);
+		    }
+		});
+    }
+
+    private ProdutoEdicaoBase produtoEdicaoMapper(ResultSet rs) throws SQLException {
+
+	ProdutoEdicaoBase produtoEdicao = new ProdutoEdicaoBase();
+	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
+	produtoEdicao.setIdLancamento(rs.getLong("ID"));
+	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
+	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
+	produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
+	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
+	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+	produtoEdicao.setCodigoProduto(rs.getString("CODIGO"));
+
+	return produtoEdicao;
     }
 
     private boolean traduzColecionavel(String grupoProduto) {
@@ -106,32 +103,5 @@ public class DefinicaoBasesDAO {
 	    return true;
 	}
 	return false;
-    }
-
-    private String anoMesAnteriorSQL(Date dataLancamento, Years anosSubtrair) {
-	YearMonth ym = new YearMonth(dataLancamento);
-	return ym.minus(anosSubtrair).toString().concat("-%");
-    }
-
-    @SuppressWarnings("unused")
-    private String periodoVeraneio(Date dataLancamento, int anosSubtrair, DataReferencia dataReferencia) {
-	return MonthDay.parse(dataReferencia.getData()).toLocalDate(LocalDate.fromDateFields(dataLancamento).minusYears(anosSubtrair).getYear())
-		.toString();
-    }
-
-    private ProdutoEdicaoBase produtoEdicaoMapper(ResultSet rs) throws SQLException {
-
-	ProdutoEdicaoBase produtoEdicao = new ProdutoEdicaoBase();
-
-	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
-	produtoEdicao.setIdLancamento(rs.getLong("ID"));
-	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
-	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
-	produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
-	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
-	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-	produtoEdicao.setCodigoProduto(rs.getString("CODIGO"));
-
-	return produtoEdicao;
     }
 }

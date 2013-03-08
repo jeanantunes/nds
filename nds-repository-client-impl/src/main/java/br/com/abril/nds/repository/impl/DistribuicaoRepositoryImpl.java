@@ -1671,7 +1671,7 @@ public class DistribuicaoRepositoryImpl extends
 		}
 	*/
 		sql.append(" order by liberado");
-		sql.append(" limit 100");
+		sql.append(" limit 10");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		

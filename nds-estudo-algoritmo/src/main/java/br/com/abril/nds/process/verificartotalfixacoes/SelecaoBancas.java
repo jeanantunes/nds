@@ -1,7 +1,9 @@
 package br.com.abril.nds.process.verificartotalfixacoes;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.dao.CotaDAO;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -14,18 +16,15 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * Processo Anterior: N/A Próximo Processo: N/A
  * </p>
  */
+@Component
 public class SelecaoBancas extends ProcessoAbstrato {
 
-    public SelecaoBancas(Estudo estudo) {
-	super(estudo);
-    }
+    @Autowired
+    private CotaDAO cotaDAO;
     
     @Override
     protected void executarProcesso() {
-	Estudo estudo = super.getEstudo();	
-
-	CotaDAO cotaDAO = new CotaDAO();
-	estudo.setCotas(cotaDAO.getCotasComEdicoesBase(estudo));
+	getEstudo().setCotas(cotaDAO.getCotasComEdicoesBase(getEstudo()));
     }
 
 }

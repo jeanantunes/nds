@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.TreeMap;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -19,11 +21,8 @@ import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
  * 
  * Processo Anterior: {@link CorrecaoVendas} Próximo Processo: {@link Bonificacoes} </p>
  */
+@Component
 public class Medias extends ProcessoAbstrato {
-
-    public Medias(Cota cota) {
-	super(cota);
-    }
 
     @Override
     protected void executarProcesso() {
