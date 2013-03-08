@@ -346,6 +346,14 @@ public class ParciaisController extends BaseController {
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}
 	
+	@Post
+	public void exibirAlertaDePeriodosNaoGerados(Integer qtde, Long idProdutoEdicao){
+		
+		parciaisService.exibirAlertaDePeriodosNaoGerados(idProdutoEdicao,qtde);
+		
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
+	}
+	
 	/**
 	 * Excluir PeriodoLancamentoParcial por id do Lancamento
 	 * 
