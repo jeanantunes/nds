@@ -780,8 +780,12 @@ var cotaAusenteController = $.extend(true, {
 						return;
 					} else if(qtdeProdutoSeleciodo > 1) {
 						
-						if( !cotaAusenteController.atualizarRateiosProdutos() || !cotaAusenteController.verificarRedistribuicaoReparte())
+						if( !cotaAusenteController.atualizarRateiosProdutos())
 							return;
+					}
+					
+					if (!cotaAusenteController.verificarRedistribuicaoReparte()) {
+						return;
 					}
 					
 					cotaAusenteController.realizarRateio();
@@ -860,6 +864,8 @@ var cotaAusenteController = $.extend(true, {
 
 			}, form: $("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).parents("form") 
 		});
+		
+		return false;
 	},
 
 	popupConfirmaCancelamentoRedistribuicao: function() {
