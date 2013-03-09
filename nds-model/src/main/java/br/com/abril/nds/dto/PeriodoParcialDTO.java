@@ -17,10 +17,10 @@ public class PeriodoParcialDTO implements Serializable {
 	
 	private Long idProdutoEdicao;
 		
-	@Export(label = "Data Lancamento", alignment=Alignment.CENTER,widthPercent=15)
+	@Export(label = "Data Lancamento", alignment=Alignment.CENTER,widthPercent=10)
 	private String dataLancamento;
 	
-	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER,widthPercent=15)
+	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER,widthPercent=10)
 	private String dataRecolhimento;
 	
 	@Export(label = "Reparte", alignment=Alignment.CENTER)
@@ -50,10 +50,10 @@ public class PeriodoParcialDTO implements Serializable {
 	@Export(label = "% Venda Acum.", alignment=Alignment.CENTER)
 	private String percVendaAcumulada;
 	
-	@Export(label = "Data Lancamento Prevista", alignment=Alignment.CENTER,widthPercent=15)
+	@Export(label = "Data Lancamento Prevista", alignment=Alignment.CENTER,widthPercent=10)
 	private String dataLancamentoPrevista;
 	
-	@Export(label = "Data Recolhimento Prevista", alignment=Alignment.CENTER,widthPercent=15)
+	@Export(label = "Data Recolhimento Prevista", alignment=Alignment.CENTER,widthPercent=10)
 	private String dataRecolhimentoPrevista;
 	
 	private Long idLancamento;
