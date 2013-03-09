@@ -206,7 +206,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 				gerarMovimentoEstoque(data, movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
 
-				gerarMovimentoCota(data, movimentoCota.getProdutoEdicao().getId(), movimentoCota.getCota().getId(),movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimentoCota);
+				gerarMovimentoCota(
+					data, movimentoCota.getProdutoEdicao().getId(), 
+						movimentoCota.getCota().getId(), movimentoCota.getUsuario().getId(),
+							movimentoCota.getQtde(), tipoMovimentoCota, data, null, null, null);
 
 			}
 		}

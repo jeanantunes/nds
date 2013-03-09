@@ -451,6 +451,8 @@ public class CotaAusenteController extends BaseController {
 				return;
 			}
 		}
+
+		//TODO: Alterar para não trazer dados já rateados
 		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
