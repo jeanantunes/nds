@@ -1734,9 +1734,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		        + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
 				+ "	   where "
 				+ "	        lancamento_.STATUS in (:status)  "
-				+ " and ec_.id not in ( "
-				+ " 	select distinct estudo_cota_id from nota_envio_item "
-				+ " ) ");
+				+ "    and  nei.estudo_cota_id is null ");
 				
 				if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 					sql.append(
