@@ -39,7 +39,7 @@
 	            <tr>
 	              	<td>Tipo Produto:</td>
 	              	<td>
-	              		<select name="filtro.tipoProduto" style="width:120px;">
+	              		<select id="tipoProduto" name="filtro.tipoProduto" style="width:120px;">
 	                		<option selected="selected" value="-1"></option>
 							<c:forEach items="${listTipoProduto}" var="tipoProduto">
 								<option value="${tipoProduto.id}">${tipoProduto.descricao}</option>

@@ -391,7 +391,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						_class = "class_linha_2 _dadosConfEncalhe";
 					}
 					
-					innerTable += "<tr class='" + _class + " _dados'>";
+					innerTable += "<tr class='" + _class + " _dados' name='linhaConfEncalhe'>";
 					
 					innerTable += "<input type='hidden' id='idProdutoEdicaoGrid_"+index+"' value='" + value.idProdutoEdicao + "'/>";
 					
@@ -783,9 +783,10 @@ var ConferenciaEncalheCont = $.extend(true, {
 	nextInputExemplares : function(curIndex, evt) {
 	
 		if (evt.keyCode == 13) {
+
 			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
-			nextElement.select();
 			nextElement.focus();
+			nextElement.select();
 		}
 	},
 	

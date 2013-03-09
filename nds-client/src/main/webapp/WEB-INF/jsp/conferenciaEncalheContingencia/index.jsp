@@ -103,7 +103,7 @@
 			
 				<table class="conferenciaEncalheContGrid"></table>
 				
-				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;">
+				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;" id="divEncalhesCadastrados">
 					<table class="conferenciaEncalheGrid" style="width: 941px;" id="dadosGridConferenciaEncalheContingencia">
 						<tr class="header_table">
 							<td style="width: 70px; text-align: left;">Código</td>

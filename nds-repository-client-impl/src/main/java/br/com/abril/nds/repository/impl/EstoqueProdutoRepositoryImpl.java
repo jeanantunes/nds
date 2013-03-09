@@ -66,7 +66,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		sql.append(" 		   pe.ID AS idProdutoEdicao, 						");
 		sql.append(" 		   pe.NUMERO_EDICAO AS numeroEdicao, 				");
 		sql.append(" 		   mec.QTDE AS reparte, 							");
-		sql.append(" 		   ep.QTDE AS quantidadeDisponivel	 				");
+		sql.append(" 		   ep.QTDE_SUPLEMENTAR AS quantidadeDisponivel	 				");
 		sql.append(" 	FROM MOVIMENTO_ESTOQUE_COTA mec 						");
 		sql.append("	JOIN TIPO_MOVIMENTO tm ON tm.ID = mec.TIPO_MOVIMENTO_ID ");
 		sql.append("	JOIN PRODUTO_EDICAO pe ON pe.ID = mec.PRODUTO_EDICAO_ID ");
@@ -76,7 +76,7 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		sql.append("	WHERE ca.ID = :idCotaAusente 							");
 		sql.append("	AND mec.DATA = :dataMovimento 							");
 		sql.append("	AND tm.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimento		");
-		sql.append("	AND mec.QTDE >= ep.QTDE 								");
+		sql.append("	AND mec.QTDE >= ep.QTDE_SUPLEMENTAR 								");
 
 		Query query = getSession().createSQLQuery(sql.toString())
 							.addScalar("codigoProduto", StandardBasicTypes.STRING)
