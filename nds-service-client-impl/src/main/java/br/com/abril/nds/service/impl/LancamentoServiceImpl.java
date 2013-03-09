@@ -132,16 +132,16 @@ public class LancamentoServiceImpl implements LancamentoService {
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
 
 		Expedicao expedicao = new Expedicao();
-		expedicao.setDataExpedicao(new Date());
+		expedicao.setDataExpedicao(dataOperacao);
 		expedicao.setResponsavel(new Usuario(idUsuario));
 		Long idExpedicao = expedicaoRepository.adicionar(expedicao);
 		
 		expedicao.setId(idExpedicao);
 		
-		lancamentoRepository.alterarLancamento(idLancamento, new Date(), StatusLancamento.EXPEDIDO, expedicao);
+		lancamentoRepository.alterarLancamento(idLancamento, dataOperacao, StatusLancamento.EXPEDIDO, expedicao);
 				
 		HistoricoLancamento historico = new HistoricoLancamento();
-		historico.setDataEdicao(new Date());
+		historico.setDataEdicao(dataOperacao);
 		historico.setLancamento(new Lancamento(idLancamento));
 		
 		historico.setResponsavel(new Usuario(idUsuario));

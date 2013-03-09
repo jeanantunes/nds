@@ -1444,10 +1444,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" join movimento.cota cota ");
 		
 		hql.append(" join movimento.tipoMovimento tipoMovimento ");
+		
+		hql.append(" join movimento.lancamento lancamento ");
 				
 		hql.append(" where cota.numeroCota in (:numCotas) ");
 		
 		hql.append(" and movimento.data = :data ");
+		
+		hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
 		
 		hql.append(" and tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
 		
