@@ -80,11 +80,13 @@ public interface ParciaisService {
 	void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento);
 	
 	/**
-	 * Verifica a necessidade de exibição de mensagem de alerta ao usuario referente a quantidade de periodos não gerados
+	 * Retorna a peb calculada de uma parcial referente a um produto edição
 	 * 
-	 * @param idProdutoEdicao
+	 * @param codigoProduto
+	 * @param edicaoProduto
 	 * @param qtdePeriodos
+	 * @return Integer
 	 */
-	void exibirAlertaDePeriodosNaoGerados(Long idProdutoEdicao, Integer qtdePeriodos);
+	Integer calcularPebParcial(String codigoProduto, Long edicaoProduto, Integer qtdePeriodos);
 
 }
