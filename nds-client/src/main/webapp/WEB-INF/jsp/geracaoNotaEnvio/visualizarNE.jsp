@@ -226,12 +226,12 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 			<td width="430">&nbsp;</td>
 			<td width="203" align="right"><strong>TOTAL PREÇO CAPA
 					R$</strong></td>
-			<td width="117" align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${totalPrecoCapa}" type="NUMBER"  minFractionDigits="2"  /></td>
+			<td width="117" align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${totalPrecoCapa}" type="NUMBER"  minFractionDigits="2" maxFractionDigits="2" /></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
 			<td align="right"><strong>TOTAL PREÇO COM DESCONTO R$</strong></td>
-			<td align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${totalComDesconto}" type="NUMBER"  minFractionDigits="2"  /></td>
+			<td align="right" style="border-bottom: 1px solid #000;"><fmt:formatNumber value="${totalComDesconto}" type="NUMBER"  minFractionDigits="2" maxFractionDigits="2"  /></td>
 		</tr>
 		<tr>
 			<td>&nbsp;</td>
