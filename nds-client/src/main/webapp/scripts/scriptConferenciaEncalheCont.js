@@ -784,7 +784,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 		if (evt.keyCode == 13) {
 			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
-			debugger;
 			nextElement.select();
 			nextElement.focus();
 		}
