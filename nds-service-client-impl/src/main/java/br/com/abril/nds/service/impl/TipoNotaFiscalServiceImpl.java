@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroCadastroTipoNotaDTO;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
@@ -83,10 +82,9 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 	@Transactional
 	public List<ItemDTO<Long, String>> carregarComboTiposNotasFiscais(TipoOperacao tipoOperacao) {//, TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente, GrupoNotaFiscal[] grupoNotaFiscal) {
 
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-
-		if(distribuidor.getObrigacaoFiscal() == null)
+		if(this.distribuidorRepository.obrigacaoFiscal() == null){
 			return null;
+		}
 
 		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao);
 
@@ -130,10 +128,9 @@ public class TipoNotaFiscalServiceImpl implements TipoNotaFiscalService {
 			TipoUsuarioNotaFiscal tipoDestinatario, TipoUsuarioNotaFiscal tipoEmitente,
 			GrupoNotaFiscal[] grupoNotaFiscal) {
 
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-
-		if(distribuidor.getObrigacaoFiscal() == null)
+		if(this.distribuidorRepository.obrigacaoFiscal() == null){
 			return null;
+		}
 
 		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotasFiscais(tipoOperacao, tipoDestinatario, tipoEmitente, grupoNotaFiscal);
 

@@ -23,7 +23,6 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
@@ -502,13 +501,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		List<BoletoDistribuidor> listaBoletoDistribuidor = new ArrayList<BoletoDistribuidor>();
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
 		Date dataAtual = new Date();
 		
-		Integer codigoDistribuidor = distribuidor.getCodigo();
+		Integer codigoDistribuidor = this.distribuidorRepository.codigo();
 		
 		for(ChamadaEncalheFornecedor chamadaEncalheFornecedor : listaChamadaEncalheFornecedor) {
 			
@@ -1091,9 +1088,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Override
 	public Boolean validarDividaGeradaDataOperacao() {
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		Long quantidadeRegistro = movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroDataOperacao(distribuidor.getDataOperacao()); 
+		Long quantidadeRegistro = 
+				movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroDataOperacao(
+						this.distribuidorRepository.obterDataOperacaoDistribuidor()); 
 		
 		return (quantidadeRegistro == null || quantidadeRegistro == 0) ? Boolean.FALSE : Boolean.TRUE;
 	}
@@ -1155,6 +1152,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					this.movimentoFinanceiroCotaService.removerPostergadosDia(
 							consolidado.getCota().getId(), 
 							listaPostergados);
+				} else {
+					
+					this.consolidadoFinanceiroRepository.remover(consolidado);
 				}
 			}
 		}

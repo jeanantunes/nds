@@ -66,7 +66,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 		this.agendarIntegracaoOperacionalDistribuidor();
 		this.agendaExeclusaoAjusteReparte();
-
+		this.agendarExclusaoDeEstudos();
 		this.agendarGeracaoRankings();
 		
 		try {
@@ -120,6 +120,45 @@ public class ApplicationContextListener implements ServletContextListener {
 			throw new RuntimeException(se);
 		}
 	}
+	
+	
+	private void agendarExclusaoDeEstudos() {
+
+		try {
+
+			String groupName = "exclusaoEstudoGroup";
+
+			QuartzUtil.removeJobsFromGroup(groupName);
+
+			PropertiesUtil propertiesUtil = new PropertiesUtil("exclusao-estudos.properties");
+
+			String intervaloExecucaoIntegracaoOperacionalDistribuidor = propertiesUtil
+					.getPropertyValue("intervalo.execucao.exclusao.estudos");
+			 
+			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+
+			JobDetail job = newJob(IntegracaoOperacionalDistribuidorJob.class)
+					.withIdentity("exclusaoEstudosJob", groupName)
+					.build();
+
+			CronTrigger cronTrigger = newTrigger()
+					.withIdentity("exclusaoEstudosTrigger", groupName)
+					.withSchedule(
+							cronSchedule(intervaloExecucaoIntegracaoOperacionalDistribuidor))
+					.build();
+
+			scheduler.scheduleJob(job, cronTrigger);
+
+			scheduler.start();
+
+		} catch (SchedulerException se) {
+
+			logger.fatal("Falha ao inicializar agendador do Quartz", se);
+
+			throw new RuntimeException(se);
+		}
+	}
+
 	
 	private void agendarGeracaoRankings(){
 		final String groupName = "gerarRankingGroup";
@@ -210,6 +249,5 @@ public class ApplicationContextListener implements ServletContextListener {
 			throw new RuntimeException(se);
 		}
 	}
-	
 	
 }
