@@ -852,6 +852,8 @@ var cotaAusenteController = $.extend(true, {
 		if (qtdeProdutosSelecionados == 1) {
 		
 			reparteNaoSelecionado = reparteTotal - intValue($("#qtdeTotal").html());
+			
+			reparteSelecionado = intValue($("#qtdeTotal").html());
 		}
 		
 		if (reparteSelecionado == reparteTotal) {
