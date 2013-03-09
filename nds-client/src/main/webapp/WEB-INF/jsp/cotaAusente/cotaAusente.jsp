@@ -62,6 +62,12 @@ $(function(){
 </div>
 </form>
 
+<form id="form-confirmar-redistribuicao">
+<div id="dialog-confirmar-redistribuicao" title="Confirmar Redistribuição" style="display:none">
+	<p></p>
+</div>
+</form>
+
 <form id="form-excluir">
 <div id="dialog-excluir" title="Cota Ausente">
 	<fieldset class="classFieldset" style="width:520px !important;">
