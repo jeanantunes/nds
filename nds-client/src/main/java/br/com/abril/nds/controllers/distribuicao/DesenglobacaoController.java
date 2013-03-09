@@ -25,6 +25,7 @@ public class DesenglobacaoController extends BaseController {
 	@Autowired
 	private Result result;
 	
+	@Autowired
 	private DesenglobacaoService service;
 	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_DESENGLOBACAO)
@@ -49,7 +50,7 @@ public class DesenglobacaoController extends BaseController {
 	@Post
 	@Path("/inserirEnglobacao")
 	public void inserirEnglobacao(List<DesenglobaDTO> desenglobaDTO) {
-		service.inserirDesenglobacao(null);
+		service.inserirDesenglobacao(desenglobaDTO);
 		result.nothing();
 	}
 }

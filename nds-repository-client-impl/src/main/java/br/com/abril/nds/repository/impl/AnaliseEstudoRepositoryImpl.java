@@ -59,9 +59,9 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("NUM_ESTUDO", filtro.getNumEstudo());
-		query.setParameter("COD_PRODUTO", filtro.getCodigoProduto());
-		query.setParameter("NOME_PRODUTO", filtro.getNome());
+//		query.setParameter("NUM_ESTUDO", filtro.getNumEstudo());
+//		query.setParameter("COD_PRODUTO", filtro.getCodigoProduto());
+//		query.setParameter("NOME_PRODUTO", filtro.getNome());
 		query.setParameter("NUM_EDICAO_PRODUTO", filtro.getNumeroEdicao());
 		query.setParameter("ID_TIPO_CLASS_PRODUTO", filtro.getIdTipoClassificacaoProduto());
 		query.setParameter("RECOLHIDO", StatusLancamento.RECOLHIDO);

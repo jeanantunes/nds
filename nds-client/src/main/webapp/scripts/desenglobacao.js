@@ -85,17 +85,17 @@ var desenglobacaoController = $.extend(true, {
 		
 		//FILTRO POPUP INSERIR COTA
 		// FILTRO POR COTA
-		$('#inserirEnglobadaNumeroCota').change(function (){
-			pesquisaCota.pesquisarPorNumeroCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+		$('.filtroDefaultCota').change(function (){
+			pesquisaCota.pesquisarPorNumeroCota('.filtroDefaultCota','.filtroDefaultPessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
 		});
 		
-		$('#inserirEnglobadaNomePessoa').keyup(function (){
-			pesquisaCota.autoCompletarPorNome('#inserirEnglobadaNomePessoa');
+		$('.filtroDefaultPessoa').keyup(function (){
+			pesquisaCota.autoCompletarPorNome('.filtroDefaultPessoa');
 		});
 		
 		//FILTRO POR NOME
-		$('#inserirEnglobadaNomePessoa').blur(function (){
-			pesquisaCota.pesquisarPorNomeCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+		$('.filtroDefaultPessoa').blur(function (){
+			pesquisaCota.pesquisarPorNomeCota('.filtroDefaultCota','.filtroDefaultPessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
 		});
 		
 		//###### FIM FILTRO DA POPUP INSERT ######
@@ -113,8 +113,8 @@ var desenglobacaoController = $.extend(true, {
 			e.preventDefault();
 			
 			var html = '<tr>';
-			html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNumeroCota' value='' style='width: 30px;'></td>";
-			html+= "<td style='width: 450px;'><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNomePessoa' value='' style='width: 400px;'></td>";
+			html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNumeroCota' value='' style='width: 30px;' class='filtroDefaultCota'></td>";
+			html+= "<td style='width: 450px;'><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNomePessoa' value='' style='width: 400px;' class='filtroDefaultPessoa'></td>";
 			html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaPorcentagemCota' value='' style='width: 30px;'></td>";
 			html+= '</tr>';
 			

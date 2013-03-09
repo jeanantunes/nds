@@ -1,11 +1,13 @@
 package br.com.abril.nds.service;
 
-import br.com.abril.nds.model.distribuicao.Desenglobacao;
+import java.util.List;
+
+import br.com.abril.nds.dto.DesenglobaDTO;
 
 public interface DesenglobacaoService {
 	
 	void obterDesenglobacaoPorCota();
 	
-	void inserirDesenglobacao(Desenglobacao desenglobacao);
+	void inserirDesenglobacao(List<DesenglobaDTO> desenglobaDTO);
 
 }
