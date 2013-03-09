@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 
 public interface ControleConferenciaEncalheCotaRepository  extends Repository<ControleConferenciaEncalheCota,Long> {
 	
@@ -26,4 +27,15 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 * @return List<ControleConferenciaEncalheCota>
 	 */
 	public List<ControleConferenciaEncalheCota> obterControleConferenciaEncalheCotaPorFiltro(FiltroConsultaEncalheDTO filtro);	
+	
+	
+	/**
+	 * Obtém o status do registro de controleConferenciaEncalheCota.
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * 
+	 * @return StatusOperacao
+	 */
+	public StatusOperacao obterStatusControleConferenciaEncalheCota(Long idControleConferenciaEncalheCota);
+	
 }
