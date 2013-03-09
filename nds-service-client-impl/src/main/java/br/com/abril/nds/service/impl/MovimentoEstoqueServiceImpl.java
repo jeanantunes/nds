@@ -543,7 +543,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		}
 		
-		return movimentoEstoqueCota;
+		return movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 	}
 
 	@Override

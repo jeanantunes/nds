@@ -331,7 +331,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
 				data, produtoEdicao.getId(), cota.getId(), 
-					idUsuario, qtdeRateio, tipoMovimentoCota);
+					idUsuario, qtdeRateio, tipoMovimentoCota, data, null, null, null);
 		}
 		
 		if (total > qtdeDisponivel) {
