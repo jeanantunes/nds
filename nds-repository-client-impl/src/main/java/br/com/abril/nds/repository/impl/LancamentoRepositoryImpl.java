@@ -1316,8 +1316,8 @@ public class LancamentoRepositoryImpl extends
 		
 		StringBuilder sql = new StringBuilder();
 	
-		sql.append(" select l.id ");
-		sql.append(" from Lancamento l ");
+		sql.append(" select lancamento.id ");
+		sql.append(" from Lancamento lancamento ");
 		sql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		
 		sql.append(" where produtoEdicao.id =:produtoEdicao ");
