@@ -31,7 +31,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 
 	Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual);
 
-
+	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
 	/**
@@ -127,6 +127,15 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro);
 	
 	Long obterCountResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro);
+	
+	/**
+	 * Obtém o movimento financeiro relativo a uma operação de conferencia de encalhe.
+	 * 
+	 * @param idControleConfEncalheCota
+	 * 
+	 * @return MovimentoFinanceiroCota
+	 */
+	MovimentoFinanceiroCota obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota);
 	
 	BigDecimal obterSaldoDistribuidor(Date data, 
 							 	      TipoCota tipoCota, 

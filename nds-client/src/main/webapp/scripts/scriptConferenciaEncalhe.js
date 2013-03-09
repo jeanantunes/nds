@@ -86,6 +86,9 @@ var ConferenciaEncalhe = $.extend(true, {
 			 defaultZero:false
 		});
 		
+		$("#qtdCE", ConferenciaEncalhe.workspace).numeric();
+		
+		
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).mask("99/99/9999");
 		
 		$("#valorNotaFiscal", ConferenciaEncalhe.workspace).numeric();
@@ -107,6 +110,15 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
 			}
 		});
+
+		$("#qtdCE", ConferenciaEncalhe.workspace).keypress(function(e) {
+			
+			if (e.keyCode == 13) {
+				
+				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
+			}
+		});
+
 		
 		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).keyup(function(e) {
 			
@@ -380,7 +392,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 		function(result){
 			
-			if (result.listaMensagens && result.listaMensagens[0] == "REABERTURA"){
+			if (typeof result.IND_REABERTURA != 'undefined' && result.IND_REABERTURA == 'S'){
 				
 				ConferenciaEncalhe.modalAberta = true;
 				
@@ -413,6 +425,12 @@ var ConferenciaEncalhe = $.extend(true, {
 				});
 				
 			} else {
+				
+				if(typeof result.IND_COTA_RECOLHE_NA_DATA != undefined && result.IND_COTA_RECOLHE_NA_DATA == 'N' ) {
+					
+					exibirMensagem('WARNING', [result.msg]);
+					
+				} 
 				
 				ConferenciaEncalhe.carregarListaConferencia(data);
 				
@@ -531,6 +549,10 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	preparaValor : function(vr){
 		
+		if( typeof vr == 'undefined' || vr == '' || vr == null ) {
+			return null;
+		}
+		
 		if(vr.substr(vr.length-3,1)==","){
 			vr = this.replaceAll(vr,".","");
 			vr = this.replaceAll(vr,",",".");
@@ -543,7 +565,8 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	verificarValorTotalCE : function() {
 		
-		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())}];
+		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())},
+		            {name: "qtdCEInformado", value: $("#qtdCE", ConferenciaEncalhe.workspace).val()}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalCE', data, 
 		
@@ -1185,6 +1208,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#desconto", ConferenciaEncalhe.workspace).text("");
 		$("#valorTotal", ConferenciaEncalhe.workspace).text("");
 		$("#vlrCE", ConferenciaEncalhe.workspace).val("");
+		$("#qtdCE", ConferenciaEncalhe.workspace).val("");
 		
 		ConferenciaEncalhe.ultimoCodeBar = "";
 		ConferenciaEncalhe.ultimoSM = "";
@@ -1226,6 +1250,8 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$("#dialog-alert", ConferenciaEncalhe.workspace).dialog("close");
 					$("#vlrCE", ConferenciaEncalhe.workspace).focus();
+					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
+					
 				}
 			}, open : function(){
 				
@@ -1303,6 +1329,8 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					$(this).dialog("close");
 					$("#vlrCE", ConferenciaEncalhe.workspace).focus();
+					$("#qtdCE", ConferenciaEncalhe.workspace).focus();
+					
 				}
 			}, open : function(){
 				

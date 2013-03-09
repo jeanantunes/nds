@@ -329,12 +329,14 @@ var cotaAusenteController = $.extend(true, {
 		
 		$.each(movimentos, function(index, movimento) {
 			var novaLinha = $(document.createElement("TR"));
+			novaLinha.attr('name', 'linhaMovimentos');
 			
 			var codigo = document.createElement("TD");
 			var produto = document.createElement("TD");
 			var edicao = document.createElement("TD");
 			var reparte = document.createElement("TD");
 			var botao = document.createElement("TD");
+			reparte.setAttribute('name', 'reparteMovimento'); 
 			botao.setAttribute('align','center');
 					
 			codigo.innerHTML = movimento.codigoProd;
@@ -778,30 +780,85 @@ var cotaAusenteController = $.extend(true, {
 						return;
 					} else if(qtdeProdutoSeleciodo > 1) {
 						
-						if( !cotaAusenteController.atualizarRateiosProdutos() )
+						if( !cotaAusenteController.atualizarRateiosProdutos() || !cotaAusenteController.verificarRedistribuicaoReparte())
 							return;
 					}
 					
-					var parametros = cotaAusenteController.getParametrosFromMovimentos();
-					
-					if(!parametros) {
-						return;
-					}
-
-					$.postJSON(contextPath + "/cotaAusente/realizarRateio", 
-							   parametros,
-							   function(result) {
-							   		cotaAusenteController.retornoRateio(result);
-							   		$(".ausentesGrid", cotaAusenteController.workspace).flexReload();
-							   		$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
-							   }
-					);
+					cotaAusenteController.realizarRateio();
 				},				
 				"Cancelar" : function() {
 					
 					cotaAusenteController.popupConfirmaCancelamentoRedistribuicao();
 				}
 			},form: $( "#dialog-suplementar", cotaAusenteController.workspace ).parents("form")
+		});
+	},
+	
+	realizarRateio: function() {
+	
+		var parametros = cotaAusenteController.getParametrosFromMovimentos();
+		
+		if(!parametros) {
+			return;
+		}
+
+		$.postJSON(contextPath + "/cotaAusente/realizarRateio", 
+		    parametros,
+		    function(result) {
+				cotaAusenteController.retornoRateio(result);
+				$(".ausentesGrid", cotaAusenteController.workspace).flexReload();
+				$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
+		    }
+		);
+	},
+	
+	
+	verificarRedistribuicaoReparte: function() {
+		
+		var qtdeTotal = $("input[name='checkgroup'] ").length;
+		var qtdeSelecionada = $("input[name='checkgroup']:checked ").length;
+		
+		if (qtdeSelecionada == qtdeTotal) {
+			
+			return true;
+		}
+		
+		var reparteSuplementar = 0;
+
+		$("input[name='checkgroup']:not(:checked)", cotaAusenteController.workspace).parents("tr[name='linhaMovimentos']").each(
+			
+			function(index, value) {
+
+				var reparte = $(value).children("[name='reparteMovimento']");
+
+				reparteSuplementar += intValue($(reparte).html()); 
+			}
+		);
+		
+		var mensagem = "Os " + reparteSuplementar + " itens, não redistribuidos, "
+					 + "serão direcionados ao estoque suplementar. Deseja continuar?";
+		
+		$("#dialog-confirmar-redistribuicao p", cotaAusenteController.workspace ).html(mensagem);
+		
+		$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			buttons: {
+				
+				"Confirmar": function() {
+			
+					$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+					
+					cotaAusenteController.realizarRateio();
+				},					
+				"Cancelar": function() {
+
+					$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+				}
+
+			}, form: $("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).parents("form") 
 		});
 	},
 
