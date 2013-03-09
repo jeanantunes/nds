@@ -818,32 +818,59 @@ var cotaAusenteController = $.extend(true, {
 	
 	
 	verificarRedistribuicaoReparte: function() {
+	
+		var reparteTotal = 0;
+		var reparteSelecionado = 0;
+		var reparteNaoSelecionado = 0;
 		
-		var qtdeTotal = $("input[name='checkgroup'] ").length;
-		var qtdeSelecionada = $("input[name='checkgroup']:checked ").length;
-		
-		if (qtdeSelecionada == qtdeTotal) {
-			
-			return true;
-		}
-		
-		var reparteSuplementar = 0;
+		var qtMovimentos = $("tr[name='linhaMovimentos']", cotaAusenteController.workspace).length;
+		var qtdeProdutosSelecionados =  $("input[name='checkgroup']:checked ").length;
 
-		$("input[name='checkgroup']:not(:checked)", cotaAusenteController.workspace).parents("tr[name='linhaMovimentos']").each(
-			
+		$("tr[name='linhaMovimentos']", cotaAusenteController.workspace).each(
+				
 			function(index, value) {
 
 				var reparte = $(value).children("[name='reparteMovimento']");
 
-				reparteSuplementar += intValue($(reparte).html()); 
+				reparteTotal += intValue($(reparte).html()); 
+
+				if ($(value).children("td").children("input[type='checkbox']").attr('checked') == 'checked') {
+					
+					reparteSelecionado += intValue($(reparte).html());
+				
+				} else if (qtMovimentos > 1) {
+					
+					reparteNaoSelecionado += intValue($(reparte).html());
+					
+				} else {
+				
+					reparteNaoSelecionado = intValue($(reparte).html()) - intValue($("#qtdeTotal").html());
+				}
 			}
 		);
+
+		if (qtdeProdutosSelecionados == 1) {
 		
-		var mensagem = "Os " + reparteSuplementar + " itens, não redistribuidos, "
+			reparteNaoSelecionado = reparteTotal - intValue($("#qtdeTotal").html());
+		}
+		
+		if (reparteSelecionado == reparteTotal) {
+		
+			return true;
+		}
+
+		var mensagem = "O(s) " + reparteNaoSelecionado + " item(ns), não redistribuidos, "
 					 + "serão direcionados ao estoque suplementar. Deseja continuar?";
 		
-		$("#dialog-confirmar-redistribuicao p", cotaAusenteController.workspace ).html(mensagem);
+		cotaAusenteController.openDialogConfirmarRedistribuicao(mensagem);
 		
+		return false;
+	},
+	
+	openDialogConfirmarRedistribuicao: function(mensagem) {
+
+		$("#dialog-confirmar-redistribuicao p", cotaAusenteController.workspace ).html(mensagem);
+
 		$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
@@ -864,10 +891,8 @@ var cotaAusenteController = $.extend(true, {
 
 			}, form: $("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).parents("form") 
 		});
-		
-		return false;
 	},
-
+	
 	popupConfirmaCancelamentoRedistribuicao: function() {
 		
 		$("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).dialog({
