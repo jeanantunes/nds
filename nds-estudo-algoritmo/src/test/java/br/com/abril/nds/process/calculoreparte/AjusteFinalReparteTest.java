@@ -52,6 +52,7 @@ public class AjusteFinalReparteTest {
 		try {
 			ajusteFinalReparte.executar();
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Exce��o inv�lida.");
 		}
 		

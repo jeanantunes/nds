@@ -15,13 +15,13 @@ public class MovimentoEstoqueCotaDAO {
 		BigDecimal valorJuramentado = BigDecimal.ZERO;
 		
 		try {
-			PreparedStatement psmt = Conexao
-				    .getConexao()
-				    .prepareStatement(
-					    "select  sum(QTDE) from movimento_estoque_cota mec where TIPO_MOVIMENTO_ID=? " +
-					    " and mec.cota_id=?" +
-					    " and mec.produto_edica_id=?" +
-					    "order by ID");
+			StringBuilder string = new StringBuilder("select  sum(QTDE) from movimento_estoque_cota mec where TIPO_MOVIMENTO_ID=? ") 
+			.append("  and mec.cota_id=? ")  
+			.append("  and mec.produto_edicao_id=? ") 
+			.append(" order by mec.ID ");
+			
+			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
+					string.toString());
 			
 			int idx=1;        
 			psmt.setLong(idx++, 21);
