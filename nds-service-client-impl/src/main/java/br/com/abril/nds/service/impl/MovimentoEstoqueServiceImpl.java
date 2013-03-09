@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -151,12 +152,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		BigInteger total = BigInteger.ZERO;		
 
-		for( EstudoCotaDTO estudoCota:listaEstudoCota ) {
-				gerarMovimentoCota(dataPrevista,idProdutoEdicao,estudoCota.getIdCota(),
-						idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota, dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId());
+		List<MovimentoEstoqueCota> movimentos = new ArrayList<>();
+		for( EstudoCotaDTO estudoCota : listaEstudoCota ) {
+			
+			movimentos.add(
+						gerarMovimentoCota(dataPrevista,idProdutoEdicao,estudoCota.getIdCota(),
+								idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota
+								, dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId())
+						);
 
 			total = total.add(estudoCota.getQtdeEfetiva());
 			
+		}
+
+		for(MovimentoEstoqueCota mec : movimentos) {
+			movimentoEstoqueCotaRepository.merge(mec);
 		}
 
 		gerarMovimentoEstoque(dataPrevista, idProdutoEdicao, idUsuario, total, tipoMovimento);
@@ -459,21 +469,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
 
-		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
-
-		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
-		movimentoEstoqueCota.setCota(new Cota(idCota));
-		
 		if (dataOperacao == null) {
 			
 			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
 		
-		movimentoEstoqueCota.setData(dataOperacao);
+		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
+
+		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
+		movimentoEstoqueCota.setCota(new Cota(idCota));
+		
+		movimentoEstoqueCota.setData(dataMovimento);
 
 		movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
 		
-		movimentoEstoqueCota.setDataCriacao(new Date());
+		movimentoEstoqueCota.setDataCriacao(dataOperacao);
 		movimentoEstoqueCota.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
 		movimentoEstoqueCota.setQtde(quantidade);
 		movimentoEstoqueCota.setUsuario(new Usuario(idUsuario));
@@ -502,11 +512,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 				
 				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
-								
+
 				BigDecimal precoComDesconto = 
 						produtoEdicao.getPrecoVenda().subtract(
 								MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto.getValor()));
-				
+
 				ValoresAplicados valoresAplicados = new ValoresAplicados();
 				valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
 				valoresAplicados.setValorDesconto(desconto.getValor());
@@ -529,8 +539,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoqueCota.setEstoqueProdutoCota(new EstoqueProdutoCota(idEstoqueCota));
 
 		}
-			
-		movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 		
 		return movimentoEstoqueCota;
 	}
@@ -830,4 +838,5 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	public BigInteger obterReparteDistribuidoProduto(String produtoEdicaoId){
 		return this.movimentoEstoqueRepository.obterReparteDistribuidoProduto(produtoEdicaoId);
 	}
+
 }

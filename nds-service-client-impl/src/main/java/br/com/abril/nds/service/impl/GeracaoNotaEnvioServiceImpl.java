@@ -157,15 +157,25 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				}
 			}
 			
-			List<MovimentoEstoqueCota> movimentos = new ArrayList<>();			
-			movimentos.addAll(
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
+			List<MovimentoEstoqueCota> movimentos = 
+				movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
 					estudoCota.getEstudo().getLancamento().getDataLancamentoDistribuidor()
 					, cota.getId()
-					, GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE)
-				);
+					, GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 			
-			for(MovimentoEstoqueCota movimentoEstoqueCota : movimentos) {
+			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentos) {
+				
+				quantidadeResultante = quantidadeResultante.subtract(movimentoEstoqueCota.getQtde());
+			}
+			
+			movimentos = 
+				movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
+					estudoCota.getEstudo().getLancamento().getDataLancamentoDistribuidor()
+					, cota.getId()
+					, GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+			
+			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentos) {
+				
 				quantidadeResultante = quantidadeResultante.add(movimentoEstoqueCota.getQtde());
 			}
 			

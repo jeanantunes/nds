@@ -781,12 +781,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 	},
 
 	nextInputExemplares : function(curIndex, evt) {
-
+	
 		if (evt.keyCode == 13) {
 
 			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
-
 			nextElement.focus();
+			nextElement.select();
 		}
 	},
 	
