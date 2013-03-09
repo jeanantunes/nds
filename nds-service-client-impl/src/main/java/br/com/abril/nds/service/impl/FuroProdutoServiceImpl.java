@@ -204,6 +204,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(StatusLancamento.FURO);
 		lancamento.setNumeroReprogramacoes(this.atualizarNumeroReprogramacoes(lancamento));
+		lancamento.setExpedicao(null);
 		
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(new Date());
