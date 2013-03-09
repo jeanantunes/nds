@@ -542,8 +542,8 @@ var ParciaisController = $.extend(true, {
 		
 			$( "#dialog-detalhes", this.workspace).dialog({
 				resizable: false,
-				height:480,
-				width:935,
+				height:510,
+				width:950,
 				modal: true,
 				buttons: {
 					"Fechar": function() {
@@ -645,13 +645,13 @@ var ParciaisController = $.extend(true, {
 				colModel : [ {
 					display : 'Lcto',
 					name : 'dataLancamento',
-					width : 100,
+					width : 50,
 					sortable : true,
 					align : 'center'
-				}, {
+				},{
 					display : 'Rcto',
 					name : 'dataRecolhimento',
-					width : 100,
+					width : 50,
 					sortable : true,
 					align : 'center'
 				}, {
@@ -708,10 +708,22 @@ var ParciaisController = $.extend(true, {
 					width : 80,
 					sortable : true,
 					align : 'center'
+				},{
+					display : 'Lct Prodin',
+					name : 'dataLancamentoPrevista',
+					width : 55,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Rct Prodin',
+					name : 'dataRecolhimentoPrevista',
+					width : 55,
+					sortable : true,
+					align : 'center'
 				}, {
 					display : 'Ação',
 					name : 'acao',
-					width : 60,
+					width : 45,
 					sortable : false,
 					align : 'center'
 				}],
@@ -722,7 +734,7 @@ var ParciaisController = $.extend(true, {
 				useRp : true,
 				rp : 15,
 				showTableToggleBtn : true,
-				width : 960,
+				width : 980,
 				height : 255
 			}); 
 
@@ -733,13 +745,13 @@ var ParciaisController = $.extend(true, {
 					width : 55,
 					sortable : true,
 					align : 'center'
-				}, {
+				},{
 					display : 'Rcto',
 					name : 'dataRecolhimento',
 					width : 55,
 					sortable : true,
 					align : 'center'
-				}, {
+				},{
 					display : 'Reparte',
 					name : 'reparte',
 					width : 50,
@@ -793,10 +805,22 @@ var ParciaisController = $.extend(true, {
 					width : 80,
 					sortable : true,
 					align : 'center'
+				},{
+					display : 'Lct Prodin',
+					name : 'dataLancamentoPrevista',
+					width : 55,
+					sortable : true,
+					align : 'center'
+				}, {
+					display : 'Rct Prodin',
+					name : 'dataRecolhimentoPrevista',
+					width : 55,
+					sortable : true,
+					align : 'center'
 				}, {
 					display : 'Ação',
 					name : 'acao',
-					width : 60,
+					width : 45,
 					sortable : false,
 					align : 'center'
 				}],
@@ -806,7 +830,7 @@ var ParciaisController = $.extend(true, {
 				useRp : true,
 				rp : 15,
 				showTableToggleBtn : true,
-				width : 880,
+				width : 950,
 				height : 200
 			}); 
 			
