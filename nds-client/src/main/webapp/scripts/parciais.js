@@ -113,6 +113,8 @@ var ParciaisController = $.extend(true, {
 						$(".parciaisPopGrid",this.workspace).flexReload();
 					else
 						$(".periodosGrid",this.workspace).flexReload();
+					
+					ParciaisController.exibirAlertaDePeriodosNaoGerados();
 				},
 				null, 
 				true,
@@ -120,6 +122,13 @@ var ParciaisController = $.extend(true, {
 		
 		
 	},	
+	
+	exibirAlertaDePeriodosNaoGerados:function (){
+		
+		$.postJSON(contextPath + "/parciais/exibirAlertaDePeriodosNaoGerados",
+				this.getDadosNovosPeriodo(),
+				function(result){},null,true,"");
+	},
 	
 	
 	processaRetornoPesquisaParciais : function(result) {

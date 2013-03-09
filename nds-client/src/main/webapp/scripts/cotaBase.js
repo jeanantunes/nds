@@ -249,6 +249,19 @@ var cotaBaseController = $.extend(true, {
 		width : 960,
 		height : 160
 	});
+	
+	$(document).ready(function(){
+		
+		focusSelectRefField($("#idCota", this.workspace));
+		
+		$(document.body).keydown(function(e) {
+			if(keyEventEnterAux(e)){
+				cotaBaseController.mostrar_normal();
+			}
+			
+			return true;
+		});
+	});
 	},
 	
 	executarPreProcessamentoGridPesquisaGeral : function(resultado){
@@ -391,12 +404,12 @@ var cotaBaseController = $.extend(true, {
 	
 	pesquisarCota : function(numeroCota, index) {
 		
-		if($(numeroCota).val().length == 0){
+		if($(numeroCota).val().trim().length == 0){
  			return;
  		}
  		
  		$.postJSON(contextPath + "/cadastro/cotaBase/obterCota",
-				{numeroCota:$(numeroCota).val()}, 
+				{numeroCota:$(numeroCota).val().trim()}, 
 				function(result){
 					
 					cotaBaseController.atribuirDadosCota(result,index);						
@@ -460,7 +473,7 @@ var cotaBaseController = $.extend(true, {
 		$('.pesqCotasGrid').hide();		
 		$('.historicoGrid').hide();
 		
-		var numeroCota = $('#idCota').val();
+		var numeroCota = $('#idCota').val().trim();
 		
 		$("#consultaEquivalentesGrid", cotaBaseController.workspace).flexOptions({
 			url: contextPath + "/cadastro/cotaBase/pesquisarCotasBasePesquisaGeral",
@@ -477,7 +490,7 @@ var cotaBaseController = $.extend(true, {
 		$('.pesqCotasGrid', cotaBaseController.workspace).show();
 		$('.historicoGrid', cotaBaseController.workspace).hide();
 		
-		var numeroCota = $('#idCota').val();
+		var numeroCota = $('#idCota').val().trim();
 		
 		$("#cotasEquivalentesGrid", cotaBaseController.workspace).flexOptions({
 			url: contextPath + "/cadastro/cotaBase/pesquisarCotasBase",
@@ -542,7 +555,7 @@ var cotaBaseController = $.extend(true, {
 					$( this ).dialog( "close" );
 					
 					var data = [
-					            {name:"numeroCotaNova", value:$('#idCota', cotaBaseController.workspace).val()},
+					            {name:"numeroCotaNova", value:$('#idCota', cotaBaseController.workspace).val().trim()},
 					            {name:"idCotaBase", value:idCota}];
 					
 					
@@ -573,7 +586,7 @@ var cotaBaseController = $.extend(true, {
 	
 	confirmarPeso : function (){
 		
-		var indiceAjuste = $("#indiceAjuste").val();
+		var indiceAjuste = $("#indiceAjuste").val().trim();
 		if(indiceAjuste < 0.5 || indiceAjuste > 1.5){		
 			var erros = new Array();
 			erros[0] = "O Índice deve estar entre 0.5 até 1.5.";
@@ -590,20 +603,20 @@ var cotaBaseController = $.extend(true, {
 				"Confirmar": function() {					
 					$( this ).dialog( "close" );
 					var dto = [];
-					var inputNumeroCota = $("#numeroCotaGrid0").val();
+					var inputNumeroCota = $("#numeroCotaGrid0").val().trim();
 					if(inputNumeroCota){
 						dto.push({name:'numerosDeCotasBase', value: inputNumeroCota});
 					}
-					inputNumeroCota = $("#numeroCotaGrid1").val();
+					inputNumeroCota = $("#numeroCotaGrid1").val().trim();
 					if(inputNumeroCota){
 						dto.push({name:'numerosDeCotasBase', value: inputNumeroCota});
 					}
-					inputNumeroCota = $("#numeroCotaGrid2").val();
+					inputNumeroCota = $("#numeroCotaGrid2").val().trim();
 					if(inputNumeroCota){
 						dto.push({name:'numerosDeCotasBase', value: inputNumeroCota});
 					}
-					dto.push({name : 'idCotaNova' , value : $("#idCota").val()});
-					dto.push({name : 'indiceAjuste' , value : $("#indiceAjuste").val()});
+					dto.push({name : 'idCotaNova' , value : $("#idCota").val().trim()});
+					dto.push({name : 'indiceAjuste' , value : $("#indiceAjuste").val().trim()});
 					
 					$.postJSON(contextPath + "/cadastro/cotaBase/confirmarCotasBase",
 							dto, 
@@ -641,7 +654,7 @@ var cotaBaseController = $.extend(true, {
 		$('.pesqCotasGrid' , cotaBaseController.workspace).hide();
 		$('.historicoGrid' , cotaBaseController.workspace).show();
 		
-		var idCota = $("#idCota").val();
+		var idCota = $("#idCota").val().trim();
 		
 		$("#cotasEquivalentesBGrid", cotaBaseController.workspace).flexOptions({
 			url: contextPath + "/cadastro/cotaBase/obterCotasDoHistorico",
@@ -772,7 +785,7 @@ var cotaBaseController = $.extend(true, {
 	//Pesquisa por número da cota
 	pesquisarPorNumeroCota : function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
 		
-		var numeroCota = $(idCampoNumeroCota, pesquisaCota.workspace).val();
+		var numeroCota = $(idCampoNumeroCota, pesquisaCota.workspace).val().trim();
 
 		numeroCota = $.trim(numeroCota);
 		
