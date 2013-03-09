@@ -474,16 +474,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
 		
-<<<<<<< HEAD
 		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
 
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(new Cota(idCota));
 		
-		movimentoEstoqueCota.setData(dataOperacao);
-=======
 		movimentoEstoqueCota.setData(dataMovimento);
->>>>>>> DGBti/master
 
 		movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
 		

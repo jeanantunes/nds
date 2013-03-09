@@ -149,12 +149,8 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoLancamentoRepository.adicionar(historico);
 		
-		System.out.println("Linha 154 - IN: movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao");
-		long t1 = System.nanoTime();
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
 				lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
-		long t2 = System.nanoTime();
-		System.out.println("Linha 154 - OUT: movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao: "+ ((t2 - t1) * 1e-6) +" milliseconds");
 		
 		return true;
 	}
