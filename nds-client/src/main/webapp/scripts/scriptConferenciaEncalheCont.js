@@ -782,22 +782,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 	nextInputExemplares : function(curIndex, evt) {
 	
-		var divHeight = $("#divEncalhesCadastrados").height();
-		
-		var lineHeight = $("tr[name=linhaConfEncalhe]").height();
-
-		var maxLinhasExibicaoGrid = (divHeight / lineHeight) - 1;
-
 		if (evt.keyCode == 13) {
 
 			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
-			nextElement.select();
 			nextElement.focus();
-
-			if (((curIndex + 1) % maxLinhasExibicaoGrid) == 0) {
-
-				$("#divEncalhesCadastrados").scrollTop(divHeight * (curIndex/maxLinhasExibicaoGrid));
-			}
+			nextElement.select();
 		}
 	},
 	
