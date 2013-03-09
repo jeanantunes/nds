@@ -456,6 +456,24 @@ public class CotaAusenteController extends BaseController {
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
 				dataOperacao, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
+		if (movimentos == null || movimentos.isEmpty()) {
+			
+			List<String> mensagens = new ArrayList<String>();
+			
+			mensagens.add("Não ha reparte para as cotas nesta data.");
+			
+			TipoMensagem tipoMensagem = TipoMensagem.WARNING;
+			
+			Object[] retorno = new Object[2];
+			
+			retorno[0] = mensagens;
+			retorno[1] = tipoMensagem;
+			
+			result.use(Results.json()).from(retorno, "result").serialize();
+			
+			return;
+		}
+		
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
 	
