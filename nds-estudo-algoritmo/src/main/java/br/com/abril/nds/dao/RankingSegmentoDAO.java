@@ -63,10 +63,21 @@ public class RankingSegmentoDAO {
 		
 	}
 
-	public List<Long> getCotasOrdenadaPorSegmentoEdicaoAberta(List<Cota> cotaList,List<Long>idEdicoesBase) {
+	public List<Long> getCotasOrdenadaPorSegmentoEdicaoAberta(List<Cota> cotaList,ProdutoEdicaoBase edicaoBase) {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(" SELECT distinct COTA_ID FROM RANKING_SEGMENTO WHERE RANKING_SEGMENTO_GERADOS_ID = (select max(id) from ranking_segmento_gerados) and COTA_ID in (?) ");
+		StringBuilder sb = new StringBuilder()
+		.append(" select distinct mec.COTA_ID from movimento_estoque_cota mec ") 
+		.append(" join produto_edicao pe ON pe.ID = mec.PRODUTO_EDICAO_ID ")
+		.append(" join produto on produto.ID = pe.PRODUTO_ID ")
+		.append(" where mec.TIPO_MOVIMENTO_ID=21 ")
+		.append(" and mec.COTA_ID in (?) ")
+		.append(" and pe.id in ") 
+		.append(" (-- SQL para ver se recebeu a edicao aberta do produto ")
+		.append(" select distinct produto_edicao.id from lancamento l ") 
+		.append(" join produto_edicao ON produto_edicao.ID = l.PRODUTO_EDICAO_ID ")
+		.append(" join produto on produto.ID = produto_edicao.PRODUTO_ID ")
+		.append(" where l.STATUS<>'FECHADO' ")
+		.append(" and produto_edicao.id=? 		) ");
 		
 		List<Long> idList = new ArrayList<Long>();
 		for (Cota c : cotaList) {
@@ -78,7 +89,10 @@ public class RankingSegmentoDAO {
 			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
 					sb.toString());
 			
-			psmt.setString(1, StringUtils.join(idList,","));
+			int idx = 1;
+			String join = StringUtils.join(idList,",");
+			psmt.setString(idx++, join);
+			psmt.setLong(idx++, edicaoBase.getId());
 			
 			idList.clear();
 			

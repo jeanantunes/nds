@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.calculoreparte;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,8 @@ import br.com.abril.nds.dao.RankingSegmentoDAO;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -45,12 +48,25 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
 			List<Cota> cList = new ArrayList<Cota>();
 			for (Cota cota : cotaListRecebeComplementar) {
-				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga)){
-					cList.add(cota);
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga)
+						&& cota.isCotaSoRecebeuEdicaoAberta()){
+
+					/*
+					 * Se idProduto das recebidas é igual ao idProduto das edicoes-base
+					 * então recebeu edicaoAberta
+					 */
+					for(ProdutoEdicaoBase pe:cota.getEdicoesRecebidas()){
+						for(ProdutoEdicaoBase edBase:getEstudo().getEdicoesBase()){
+							if(pe.getIdProduto().equals(edBase.getIdProduto())){
+								cList.add(cota);
+							}
+						}
+					}
+					
 				}
 			}
 			
-			rankingSegmentoDAO.getCotasOrdenadaPorSegmentoEdicaoAberta(cList, cotasIdList);
+			realizarReparteComplementar(cList);
 			
 		}
 	});
@@ -64,12 +80,22 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 			
 			List<Cota> cList = new ArrayList<Cota>();
 			for (Cota cota : cotaListRecebeComplementar) {
-				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga)){
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga)
+						&& cota.isCotaSoRecebeuEdicaoAberta()){
+					
+					for(ProdutoEdicaoBase pe:cota.getEdicoesRecebidas()){
+						for(ProdutoEdicaoBase edBase:getEstudo().getEdicoesBase()){
+							if(pe.getIdProduto().equals(edBase.getIdProduto())){
+								continue;
+							}
+						}
+					}
+					
 					cList.add(cota);
 				}
 			}
-			
-			List<Long> cotasOrdenadaPorSegmentoSemEdicaoBase = rankingSegmentoDAO.getCotasOrdenadaPorSegmentoSemEdicaoBase(cList, getEstudo().getEdicoesBase());
+
+			realizarReparteComplementar(cList);
 		}
 	});
 	
@@ -81,12 +107,13 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		void filtrar(List<Cota> cotaListRecebeComplementar) {
 			List<Cota> cList = new ArrayList<Cota>();
 			for (Cota cota : cotaListRecebeComplementar) {
-				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)){
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)
+						&& getQtdeEdicoesBaseRecebida(cota)==1){
 					cList.add(cota);
 				}
 			}
 			
-			List<Long> cotasOrdenadaPorSegmento = rankingSegmentoDAO.getCotasOrdenadaPorSegmento(cList, getEstudo().getEdicoesBase(),1);
+			realizarReparteComplementar(cList);
 		}
 	});
 	
@@ -98,12 +125,13 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		void filtrar(List<Cota> cotaListRecebeComplementar) {
 			List<Cota> cList = new ArrayList<Cota>();
 			for (Cota cota : cotaListRecebeComplementar) {
-				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)){
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)
+						&& getQtdeEdicoesBaseRecebida(cota)==2){
 					cList.add(cota);
 				}
 			}
 			
-			List<Long> cotasOrdenadaPorSegmento = rankingSegmentoDAO.getCotasOrdenadaPorSegmento(cList, getEstudo().getEdicoesBase(),2);
+			realizarReparteComplementar(cList);
 		}
 	});
 	
@@ -115,12 +143,13 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		void filtrar(List<Cota> cotaListRecebeComplementar) {
 			List<Cota> cList = new ArrayList<Cota>();
 			for (Cota cota : cotaListRecebeComplementar) {
-				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)){
+				if(cota.getClassificacao().equals(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga)
+						&& getQtdeEdicoesBaseRecebida(cota)>=3){
 					cList.add(cota);
 				}
 			}
-			
-			List<Long> cotasOrdenadaPorSegmento = rankingSegmentoDAO.getCotasOrdenadaPorSegmento(cList, getEstudo().getEdicoesBase(),3);
+
+			realizarReparteComplementar(cList);
 		}
 	});
 	
@@ -144,36 +173,92 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 			}
 		}
    	
+    	
 //    	3)	Orden�-las na seguinte prioridade de recebimento de reparte:
-    	for(Ordenador ordenador:this.ordenadorList){
-    		ordenador.filtrar(cotaListRecebeComplementar);
-    	}
+		loop:while(getEstudo().getReparteComplementar().compareTo(BigDecimal.ZERO)==1){
+			for(Ordenador ordenador:this.ordenadorList){
+				ordenador.filtrar(cotaListRecebeComplementar);
+				if(getEstudo().getReparteComplementar().compareTo(BigDecimal.ZERO)<=0){
+					break loop;
+				}
+			}
+		}
     	
     	/*
     	 * 4)	As bancas receberao a quantidade de reparte por banca definido no estudo (default = 2 exemplares)
     	 *  ou 1 pacote-padr�o se a distribuicao for por multiplos 
     	 * ate acabar o reparte complementar, sempre considerando-se a prioriza��o acima. 
+    	 * 
     	 * Caso haja saldo a distribuir e todas as bancas selecionadas j� receberam, 
     	 * enviar 1 exemplar ou 1 pacote-padr�o se a distribui��o for por m�ltiplos para as bancas do estudo normal, 
     	 * da maior para a menor at� finalizar o estoque. 
     	 * N�o incluir bancas marcadas com `FX` `MX` e `MM` nessa redistribui��o;
     	 */
-    	for(Cota c:cotaListOrdenada){
-    		if(!c.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-    				&& !c.getClassificacao().equals(ClassificacaoCota.CotaMix)
-    				&& !c.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)){
-    			//TODO: FAZER REDISTRIBUICAO
-    			
-//    			5)	Marcar cotas com 'CP'
-    			c.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
+    	
+    		
+    		while(getEstudo().getReparteDistribuir().compareTo(BigDecimal.ZERO) == 1){
+    			for(Cota c:getEstudo().getCotas()){
+    				if(!c.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
+    						&& !c.getClassificacao().equals(ClassificacaoCota.CotaMix)
+    						&& !c.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)){
+    					
+    					//TODO: FAZER REDISTRIBUICAO
+//    			5)	Marcar cotas com 'CP'    					
+    					c.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
+    					c.setReparteCalculado(c.getReparteCalculado().add(BigDecimal.ONE));
+    					getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(BigDecimal.ONE));
+    				}
+    			}
     		}
-    	}
-    	
-    	
+    		
     }
     
+    public int getQtdeEdicoesBaseRecebida(Cota cota){
+    	
+    	List<ProdutoEdicao> edicoesRecebidas = cota.getEdicoesRecebidas();
+    	List<ProdutoEdicaoBase> edicoesBase = getEstudo().getEdicoesBase();
+    	
+    	int qtdeEdicoesBaseRecebidas=0;
+    	
+    	for (ProdutoEdicaoBase produtoEdicaoBase : edicoesBase) {
+			for (ProdutoEdicaoBase edRec : edicoesRecebidas) {
+				if(edRec.getId().equals(produtoEdicaoBase.getId())){
+					qtdeEdicoesBaseRecebidas++;
+				}
+			}
+		}
+    	return qtdeEdicoesBaseRecebidas;
+    }
+   
     
-   //FIXME talvez usar o Guava do google para ordenar? 
+    
+    
+    private void realizarReparteComplementar(List<Cota> cList) {
+		/*
+		 4)	As bancas receberão 
+		 	a quantidade de reparte por banca definido no estudo (default = 2 exemplares) 
+		 	ou 1 pacote-padrão se a distribuição for por múltiplos até acabar o reparte complementar, 
+		 	sempre considerando-se a priorização acima.
+		 */
+    	for(Long id:cotasIdList){
+			for (Cota c : cList) {
+				if(c.getId().equals(id)){
+					if(getEstudo().isDistribuicaoPorMultiplos()){
+						c.setReparteCalculado(c.getReparteCalculado().add(getEstudo().getPacotePadrao()));
+					}else{
+						
+					}
+					getEstudo().setReparteComplementar(getEstudo().getReparteComplementar().subtract(BigDecimal.ONE));
+
+					if(getEstudo().getReparteComplementar().compareTo(BigDecimal.ZERO)<=0){
+						return;
+					}
+				}
+			}
+		}
+	}
+   
+//FIXME talvez usar o Guava do google para ordenar? 
    private abstract class Ordenador{
 	   private String name;
 	   public Ordenador(String name){
