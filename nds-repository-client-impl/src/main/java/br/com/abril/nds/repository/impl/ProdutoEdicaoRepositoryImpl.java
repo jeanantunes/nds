@@ -18,6 +18,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
@@ -1379,21 +1380,30 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return produtoEdicao;
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@Override
-	public List<ProdutoEdicao> obterProdutoEdicaoCopiados(ProdutoEdicao produtoEdicao) {
+	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" from ProdutoEdicao ");
-		hql.append(" where numeroEdicao     = :numeroEdicao");
+		hql.append(" select count(*) from Estudo estudo");
+		hql.append(" where estudo.produtoEdicao.codigoDeBarras = :codigoBarra");
+		hql.append(" and   estudo.produtoEdicao.numeroEdicao    	   = :numeroEdicao");
+		hql.append(" and   estudo.produtoEdicao.produto.codigo  	   = :codigoProduto");
+		hql.append(" and   estudo.produtoEdicao.produto.tipoProduto.id = :tipoProduto");
+		hql.append(" and   estudo.id    				   = :idEstudo");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
+		query.setParameter("codigoBarra", 	 produtoEdicao.getCodigoDeBarras());
 		query.setParameter("numeroEdicao", 	 produtoEdicao.getNumeroEdicao());
+		query.setParameter("codigoProduto",  produtoEdicao.getProduto().getCodigo());
+		query.setParameter("tipoProduto", 	 produtoEdicao.getProduto().getTipoProduto().getId());
+		query.setParameter("idEstudo", 	 	 idEstudoBase);
 		
-		return (List<ProdutoEdicao>)query.list();
+		return ((Long)query.uniqueResult() > 0);
 	}
+
 	
 
 }
