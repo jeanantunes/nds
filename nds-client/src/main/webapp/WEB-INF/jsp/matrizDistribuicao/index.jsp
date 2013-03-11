@@ -127,7 +127,7 @@ matrizDistribuicao.inicializar();
 								           <ul>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/distribuicao.htm"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>Distribuição Venda Média</a></li>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/estudo_manual.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribuição Manual</a></li>
-								               <li><a href="${pageContext.request.contextPath}/Lancamento/somar_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
+								               <li><a href="javascript:;" onclick="matrizDistribuicao.somarEstudos();"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/dividir_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/estudo_complementar.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
 								               <li><a href="javascript:;" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
@@ -297,12 +297,16 @@ matrizDistribuicao.inicializar();
 	</div>
 			
 		
-		<form id="form-copiar-estudo">
+	<form id="form-copiar-estudo">
 		<div id="dialog-copiar-estudo" title="Copia Proporcional de Estudo" style="display:none;">
-		    
 		    <jsp:include page="copiarEstudo.jsp" />
-			
 		</div>
-		</form>
+	</form>
+	
+	<form id="form-somar-estudo">
+		<div id="dialog-somar-estudo" title="Somar Estudos" style="display:none;">
+		    <jsp:include page="somarEstudo.jsp" />
+		</div>
+	</form>
 		
 </body>
