@@ -35,8 +35,6 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DescontoLogisticaService descontoLogisticaService;
 	
-	private static final BigDecimal CEM = new BigDecimal(100);
-	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
@@ -53,8 +51,8 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 			
 			if (null != descontoLogistica ) {
 								
-				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().divide(CEM));
-				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().divide(CEM));
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto());
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico());
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().merge(descontoLogistica);
@@ -64,8 +62,9 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 				descontoLogistica.setId(null);//auto increment
 				descontoLogistica.setTipoDesconto(input.getTipoDesconto());
 				// Divisão por 100 Realizado em conjunto com Cesar Pop Punk
-				descontoLogistica.setPercentualDesconto(input.getPercentDesconto().divide(CEM));
-				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico().divide(CEM));
+				// Divisão por 100 retirada em conjunto com Cesar 06/03/2013
+				descontoLogistica.setPercentualDesconto(input.getPercentDesconto());
+				descontoLogistica.setPercentualPrestacaoServico(input.getPercentPrestServico());
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().persist(descontoLogistica);

@@ -25,6 +25,7 @@ import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -61,6 +62,9 @@ public class ParametroCobrancaController extends BaseController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
 	private ParametroCobrancaCotaService parametroCobrancaCotaService;
@@ -315,7 +319,6 @@ public class ParametroCobrancaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo Impressão.");
 		}
 		
-		
 		if (parametros.getIdBanco()==null){
 		    if ((parametros.getTipoCobranca()==TipoCobranca.BOLETO)||
 		    	(parametros.getTipoCobranca()==TipoCobranca.BOLETO_EM_BRANCO)||
@@ -325,8 +328,7 @@ public class ParametroCobrancaController extends BaseController {
 		    }
 		}
 		
-		
-		if(parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
+		if(parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL || parametros.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
 			if (parametros.getDiasDoMes()==null || parametros.getDiasDoMes().isEmpty() || parametros.getDiasDoMes().get(0)==null){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Mensal é necessário informar o dia do mês.");
 			}
@@ -335,9 +337,18 @@ public class ParametroCobrancaController extends BaseController {
 					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
 				}
 			}
-			
 		}
 		
+		if(parametros.getTipoFormaCobranca()==TipoFormaCobranca.QUINZENAL){
+			if ((parametros.getDiasDoMes().get(0)==null) || (parametros.getDiasDoMes().get(1)==null)){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Para o tipo de cobrança Quinzenal é necessário informar dois dias do mês.");
+			}
+			else{
+				if ((parametros.getDiasDoMes().get(0)>31)||(parametros.getDiasDoMes().get(0)<1)||(parametros.getDiasDoMes().get(1)>31)||(parametros.getDiasDoMes().get(1)<1)){
+					throw new ValidacaoException(TipoMensagem.WARNING, "Dia do mês inválido.");
+				}
+			}
+		}
 		
 		if(parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 			if((!parametros.isDomingo())&&
@@ -351,6 +362,8 @@ public class ParametroCobrancaController extends BaseController {
 			}
 		}
 		
+		Long idDistribuidor = this.distribuidorService.obterId();
+		
 		if (parametros.isEnvioEmail()){
 			if (this.distribuidorService.getEmail() == null){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre um e-mail para o distribuidor ou desmarque a opção de envio de email.");
@@ -359,29 +372,40 @@ public class ParametroCobrancaController extends BaseController {
 		
 		if ((parametros.getFornecedoresId()!=null)&&(parametros.getFornecedoresId().size()>0)){
 		
-			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO MENSAL
-			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.MENSAL){
-				if (!this.politicaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),parametros.getTipoCobranca(), parametros.getFornecedoresId(), parametros.getDiasDoMes().get(0))){
-					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
-				}
-			}
-			
-			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR, TIPO E DIA DA CONCENTRAÇÃO SEMANAL
+			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO SEMANAL
 			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
-				if (!this.politicaCobrancaService.validarFormaCobrancaSemanal(parametros.getIdPolitica(),parametros.getTipoCobranca(), parametros.getFornecedoresId(), 
-																		parametros.isDomingo(),
-																		parametros.isSegunda(),
-																		parametros.isTerca(),
-																		parametros.isQuarta(),
-																		parametros.isQuinta(),
-																		parametros.isSexta(),
-																		parametros.isSabado())){
+				
+				if (!this.formaCobrancaService.validarFormaCobrancaSemanal(parametros.getIdPolitica(),
+					                                                       idDistribuidor,
+					                                                       parametros.getTipoFormaCobranca(), 
+					                                                       parametros.getFornecedoresId(), 
+																		   parametros.isDomingo(),
+																	       parametros.isSegunda(),
+																	       parametros.isTerca(),
+																	       parametros.isQuarta(),
+																	       parametros.isQuinta(),
+																	       parametros.isSexta(),
+																	       parametros.isSabado())){
+					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
 				}
 				
 			}	
 			
+			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO MENSAL
+			else{
+				
+				if (!this.formaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),
+					                                                      idDistribuidor,
+					                                                      parametros.getTipoFormaCobranca(), 
+					                                                      parametros.getFornecedoresId(), 
+					                                                      parametros.getDiasDoMes())){
+					
+					throw new ValidacaoException(TipoMensagem.WARNING, "Este parâmetro de cobrança já está configurado para o Distribuidor.");
+				}
+			}
 		}	
-
 	}
+	
+	
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
@@ -40,8 +41,7 @@ public interface ParciaisService {
 	 * @param distribuidor
 	 *            - Distribuídor
 	 */
-	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao,
-			Integer qtdePeriodos, Usuario usuario);
+	void gerarPeriodosParcias(ProdutoEdicao produtoEdicao,Integer qtdePeriodos, Usuario usuario);
 
 	/**
 	 * Altera data de Período de Lancamento Parcial
@@ -71,5 +71,22 @@ public interface ParciaisService {
 	 */
 	List<ParcialVendaDTO> obterDetalhesVenda(Date dataLancamento,
 			Date dataRecolhimento, Long idProdutoEdicao);
+	
+	/**
+	 * Atualiza a quantidade de reparte do próximo lançamento parcial
+	 * 
+	 * @param lancamento
+	 */
+	void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento);
+	
+	/**
+	 * Retorna a peb calculada de uma parcial referente a um produto edição
+	 * 
+	 * @param codigoProduto
+	 * @param edicaoProduto
+	 * @param qtdePeriodos
+	 * @return Integer
+	 */
+	Integer calcularPebParcial(String codigoProduto, Long edicaoProduto, Integer qtdePeriodos);
 
 }

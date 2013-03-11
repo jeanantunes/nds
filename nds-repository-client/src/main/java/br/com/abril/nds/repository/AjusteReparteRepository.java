@@ -11,6 +11,12 @@ public interface AjusteReparteRepository extends Repository<AjusteReparte, Long>
 	
 	AjusteReparteDTO buscarPorIdAjuste (Long id);
 	
+	List<AjusteReparteDTO> buscarPorIdCota (Long numCota);
+	
+	void execucaoQuartz();
+	
+	int qtdAjusteSegmento (Long idCota);
+	
 //	void removerPorIdCota (Long numCota);
 //	
 //	void removerPorCota (Cota cota);

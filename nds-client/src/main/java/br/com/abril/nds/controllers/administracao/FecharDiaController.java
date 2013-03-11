@@ -125,7 +125,6 @@ public class FecharDiaController extends BaseController {
 		result.include("dataOperacao", DateUtil.formatarData(dataOperacao, Constantes.DATE_PATTERN_PT_BR));
 	}
 	
-	@SuppressWarnings("static-access")
 	@Post
 	public void inicializarValidacoes(){		
 		

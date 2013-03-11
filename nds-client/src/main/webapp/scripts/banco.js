@@ -97,6 +97,19 @@ var bancoController = $.extend(true, {
 			$("#nome", this.workspace).autocomplete({source: ""});
 			
 			bancoController.formatarValores();
+			
+			$(document).ready(function(){
+				
+				focusSelectRefField($("#nome", this.workspace));
+				
+				$(document.body).keydown(function(e) {
+					if(keyEventEnterAux(e)){
+						bancoController.mostrarGridConsulta();
+					}
+					
+					return true;
+				});
+			});
 		},
 		
 		formatarValores : function(){
@@ -481,7 +494,7 @@ var bancoController = $.extend(true, {
 				$.postJSON(
 					contextPath + "/banco/autoCompletarPorNomeBanco", {nomeBanco:nomeBanco},
 					function(result) { 
-						bancoController.exibirAutoComplete(result, idCampoNome); 
+						bancoController.exibirAutoComplete(result, idCampoNome, this.workspace); 
 					},
 					null
 				);

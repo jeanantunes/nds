@@ -25,9 +25,9 @@ public interface MatrizDistribuicaoService {
 	
 	public Long confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO vo);
 	
-	public void finalizarMatrizDistribuicao(FiltroLancamentoDTO filtroLancamentoDTO);
+	public void finalizarMatrizDistribuicao(FiltroLancamentoDTO filtroLancamentoDTO, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs);
 	
 	public void reabrirMatrizDistribuicao(FiltroLancamentoDTO filtro); 
 	
-	public void duplicarLinhas(Long idLancamento);
+	public void duplicarLinhas(ProdutoDistribuicaoVO prodDistribVO);
 }

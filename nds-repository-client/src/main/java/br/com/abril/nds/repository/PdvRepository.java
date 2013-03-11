@@ -2,6 +2,9 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -102,8 +105,8 @@ public interface PdvRepository extends Repository<PDV, Long> {
 	 */
 	void removeCotaPDVbyPDV(Long idPdv);
 	
+	public List<PdvDTO> obterPDVs(Integer numeroCota);
+
 	public List<PdvDTO> obterPdvPorCotaComEndereco(Long idCota);
-	
-	
 	
 }

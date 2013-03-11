@@ -67,14 +67,14 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	
 	/**
 	 * Obtem FormaCobranca da Cota
-	 * @param numeroCota
-	 * @param fornecedoresId
+	 * @param idCota
+	 * @param idFornecedor
 	 * @param data
 	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
-	public FormaCobranca obterFormaCobranca(Integer numeroCota, List<Long> fornecedoresId, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor) {
+	public FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor) {
 		
 		
 		StringBuilder hql = new StringBuilder();
@@ -90,11 +90,11 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		
 		hql.append(" where f.ativa = :indAtiva ");
 		
-		hql.append(" and pcc.cota.numeroCota = :numeroCota ");
+		hql.append(" and pcc.cota.id = :idCota ");
 		
-		if (fornecedoresId!=null){
+		if (idFornecedor!=null){
 		
-		    hql.append(" and fnc.id IN (:fornecedoresId) ");
+		    hql.append(" and fnc.id = :idFornecedor ");
 		}
 		
 		hql.append(" and pcc.valorMininoCobranca <= :valor ");
@@ -111,11 +111,11 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         
         query.setParameter("indAtiva", true);
         
-        query.setParameter("numeroCota", numeroCota);
+        query.setParameter("idCota", idCota);
         
-        if (fornecedoresId!=null){
+        if (idFornecedor!=null){
         	
-            query.setParameterList("fornecedoresId", fornecedoresId);
+            query.setParameter("idFornecedor", idFornecedor);
         }
         
         query.setParameter("valor", valor);
@@ -135,13 +135,13 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 
 	/**
 	 * Obtem FormaCobranca do Distribuidor
-	 * @param fornecedoresId
+	 * @param idFornecedor
 	 * @param data
 	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
-	public FormaCobranca obterFormaCobranca(List<Long> fornecedoresId, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor) {
+	public FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor) {
 		
 		
 		StringBuilder hql = new StringBuilder();
@@ -157,9 +157,9 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		
 		hql.append(" where p.ativo = :indAtivo ");
 
-		if (fornecedoresId!=null){
+		if (idFornecedor!=null){
 		    
-			hql.append(" and fnc.id IN (:fornecedoresId) ");
+			hql.append(" and fnc.id = :idFornecedor ");
 		}
 		
         hql.append(" and f.valorMinimoEmissao <= :valor ");
@@ -176,9 +176,9 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         
         query.setParameter("indAtivo", true);
         
-        if (fornecedoresId!=null){
+        if (idFornecedor!=null){
         	
-            query.setParameterList("fornecedoresId", fornecedoresId);
+            query.setParameter("idFornecedor", idFornecedor);
         }
         
         query.setParameter("valor", valor);
@@ -319,60 +319,65 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	}
 
 	/**
-	 * Obtem lista de Formas de Cobrança por Cota e Tipo de Cobrança
+	 * Obtem lista de Formas de Cobrança por Cota
 	 * @param idCota
-	 * @param tipoCobranca
+	 * @param idFormaCobranca
 	 * @return List<formaCobranca>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FormaCobranca> obterPorCotaETipoCobranca(Long idCota,TipoCobranca tipoCobranca, Long idFormaCobranca) {
+	public List<FormaCobranca> obterPorCota(Long idCota, Long idFormaCobranca) {
 		
 		StringBuilder hql = new StringBuilder();
+		
 		hql.append(" select f from FormaCobranca f");		
 		hql.append(" where f.parametroCobrancaCota.cota.id = :pIdCota ");
-		hql.append(" and f.tipoCobranca = :pTipoCobranca ");
 		hql.append(" and f.ativa = :pAtiva ");
+		
 		if (idFormaCobranca!=null){
 		    hql.append(" and f.id <> :pIdFormaCobranca ");
 		}
+		
         Query query = super.getSession().createQuery(hql.toString());
         query.setParameter("pIdCota", idCota);
-        query.setParameter("pTipoCobranca", tipoCobranca);
         query.setParameter("pAtiva", true);
+        
         if (idFormaCobranca!=null){
         	query.setParameter("pIdFormaCobranca", idFormaCobranca);
         }
-        return query.list();
         
+        return query.list();
 	}
 	
 	/**
-	 * Obtem lista de Formas de Cobrança por Tipo de Cobrança
-	 * @param tipoCobranca
+	 * Obtem lista de Formas de Cobrança
+	 * @param idDistribuidor
+	 * @param idFormaCobranca
 	 * @return List<formaCobranca>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FormaCobranca> obterPorDistribuidorETipoCobranca(TipoCobranca tipoCobranca, Long idFormaCobranca) {
+	public List<FormaCobranca> obterPorDistribuidor(Long idDistribuidor, Long idFormaCobranca) {
 		
 		StringBuilder hql = new StringBuilder();
+		
 		hql.append(" select p.formaCobranca from PoliticaCobranca p");		
-		hql.append(" where p.formaCobranca.tipoCobranca = :pTipoCobranca ");
-		hql.append(" and p.formaCobranca.ativa = :pAtiva ");
-		hql.append(" and p.distribuidor.id is not null ");
+		hql.append(" where p.ativo = :pAtivo ");
+		hql.append(" and p.distribuidor.id = :pIdDistribuidor ");
+		
 		if (idFormaCobranca!=null){
 		    hql.append(" and p.formaCobranca.id <> :pIdFormaCobranca ");
 		}
+		
         Query query = super.getSession().createQuery(hql.toString());
-        query.setParameter("pTipoCobranca", tipoCobranca);
-        query.setParameter("pAtiva", true);
-        
+        query.setParameter("pAtivo", true);
+        query.setParameter("pIdDistribuidor", idDistribuidor);
+
         if (idFormaCobranca!=null){
         	query.setParameter("pIdFormaCobranca", idFormaCobranca);
         }
-        return query.list();
         
+        return query.list();
 	}
 
 }

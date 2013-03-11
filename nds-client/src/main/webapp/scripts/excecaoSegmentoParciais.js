@@ -545,6 +545,23 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 				
 			},
 		};
+		
+		$(document).ready(function(){
+			
+			filtroPorCota();
+			focusSelectRefField($("#radio", excecaoSegmentoParciaisController.workspace));
+			$("#radio", excecaoSegmentoParciaisController.workspace).attr("checked", true);
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					excecaoSegmentoParciaisController.porCota();
+				}
+				
+				return true;
+			});
+		});
+		
 	},
 	
 	excluirExcecaoProduto : function excluirExcecaoProduto(excecaoId){

@@ -61,7 +61,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#agenciaDigito", this.workspace).numeric();
 		$("#conta", this.workspace).numeric();
 	    $("#contaDigito", this.workspace).numeric();
-	    $("#diaDoMes", this.workspace).numeric();
+	    $("#diaDoMesCota", this.workspace).numeric();
 	    $(".dataInputMask", this.workspace).mask("99/99/9999");
 	    $("#parametroCobrancaDateInicio", this.workspace).val(formatDateToString(new Date()));
 	    $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).numeric();
@@ -123,8 +123,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    
 	    this.carregarArquivoContrato();
 	    
-	    parametroCobrancaCotaController.carregarComboTipoCobranca("");
-	    
+	    parametroCobrancaCotaController.carregarComboTipoCobranca("");   
 	},
 	
 	montarTrRadioBox : function(result,name,nameItemIdent) {
@@ -162,9 +161,47 @@ var parametroCobrancaCotaController = $.extend(true, {
         //Desabilita os checkboxes gerados dinamicamente, caso seja necessário
         if(parametroCobrancaCotaController.isReadOnly()) {
             $("#fornecedoresCota", this.workspace).find(':input:not(:disabled)').prop('disabled', true);
-        }
+        }       
+	},
+
+    montarComboBox : function(result,name,onChange,selected) {
+		
+		var options = "";
+		
+		options += "<select name='"+name+"' id='"+name+"' style='width:220px;' onchange='"+onChange+"'>";
+		options += "<option value=''>Selecione</option>";
+		$.each(result, function(index, row) {
+			if (selected == row.key.$){
+			    options += "<option selected='true' value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
+			}
+			else{
+				options += "<option value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
+			}
+		});
+		options += "</select>";
+		
+		return options;
 	},
 	
+	carregarFornecedoresPadrao : function(selected){
+		var data = [{name: 'idCota', value: parametroCobrancaCotaController.idCota},
+            {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value},
+            {name: 'idFormaPagto', value: parametroCobrancaCotaController.idFormaPagto}];
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/fornecedoresCota",
+				   data,
+				   function(resultado){
+				       
+			           parametroCobrancaCotaController.sucessCallbackCarregarFornecedoresPadrao(resultado,selected);
+		           },
+				   null,
+				   true);
+	},
+	
+	sucessCallbackCarregarFornecedoresPadrao : function(result,selected) {
+		var comboFornecedoresPadrao =  parametroCobrancaCotaController.montarComboBox(result,"fornecedorPadrao","",selected);
+	    $("#fornecedoresPadrao", this.workspace).html(comboFornecedoresPadrao);
+	},
+
     mostrarGrid : function(idCota) {
     	
 		/*PASSAGEM DE PARAMETROS*/
@@ -372,6 +409,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto", this.workspace).val(resultado.vrDividasAberto);
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
+		
+		$("#unificaCobranca", this.workspace).val(resultado.unificaCobranca?0:1);
 
         if (resultado.inicioContrato) {
             $("#parametroCobrancaDateInicio", this.workspace).val(resultado.inicioContrato.$);
@@ -383,6 +422,8 @@ var parametroCobrancaCotaController = $.extend(true, {
         if (parametroCobrancaCotaController.isModoTelaCadastroCota()) {
             parametroCobrancaCotaController.carregarFornecedoresRelacionados();
         }
+        
+        parametroCobrancaCotaController.carregarFornecedoresPadrao(resultado.idFornecedor);
 	},
 
 	postarParametroCobranca : function() {
@@ -412,6 +453,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var qtdDividasAberto = $("#qtdDividasAberto", this.workspace).val();
 		var vrDividasAberto = $("#vrDividasAberto", this.workspace).val();
 		var tipoCota = $("#tipoCota", this.workspace).val();
+		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
+		var unificaCobranca = $("#unificaCobranca", this.workspace).val()==0?1:0;
 		
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
 				{"parametroCobranca.idParametroCobranca":idParametroCobranca,
@@ -423,7 +466,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 			"parametroCobranca.valorMinimo":valorMinimo,   
 			"parametroCobranca.qtdDividasAberto":qtdDividasAberto,  
 			"parametroCobranca.vrDividasAberto":vrDividasAberto,
-			"parametroCobranca.tipoCota":tipoCota},
+			"parametroCobranca.tipoCota":tipoCota,
+			"parametroCobranca.idFornecedor":fornecedorPadrao,
+			"parametroCobranca.unificaCobranca":unificaCobranca},
 				   function(){
 			           return true;
 				   },
@@ -478,7 +523,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#agenciaDigito", this.workspace).val("");
 		$("#conta", this.workspace).val("");
 	    $("#contaDigito", this.workspace).val("");
-	    $("#diaDoMes", this.workspace).val("");
+	    $("#diaDoMesCota", this.workspace).val("");
 	    $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val("");
 	    $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val("");
 
@@ -621,7 +666,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#agenciaDigito", this.workspace).val(resultado.agenciaDigito);
 		$("#conta", this.workspace).val(resultado.conta);
 	    $("#contaDigito", this.workspace).val(resultado.contaDigito);
-	    $("#diaDoMes", this.workspace).val(resultado.diaDoMes);
+	    $("#diaDoMesCota", this.workspace).val(resultado.diaDoMes);
 	    $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.primeiroDiaQuinzenal);
 	    $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.segundoDiaQuinzenal);
 	    
@@ -659,7 +704,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				   $("#tipoCobrancaParametroCobrancaCota", this.workspace).val(resultado.tipoCobranca);
 				   $("#tipoFormaCobranca", this.workspace).val(resultado.tipoFormaCobranca);
 				   if (resultado.diasDoMes.length == 1){
-				       $("#diaDoMes", this.workspace).val(resultado.diasDoMes[0]);
+				       $("#diaDoMesCota", this.workspace).val(resultado.diasDoMes[0]);
 				   }
 				   else if (resultado.diasDoMes.length > 1){
 					   $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.diasDoMes[0]);
@@ -708,7 +753,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var agenciaDigito       = $("#agenciaDigito", this.workspace).val();
 		var conta               = $("#conta", this.workspace).val();
 		var contaDigito         = $("#contaDigito", this.workspace).val();
-		var diaDoMes            = $("#diaDoMes", this.workspace).val();
+		var diaDoMes            = $("#diaDoMesCota", this.workspace).val();
 		var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val();
 		var segundoDiaQuinzenal = $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val();
 
