@@ -8,6 +8,7 @@ import java.util.Date;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -44,7 +45,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	private BigDecimal precoDesconto;
 	private BigDecimal desconto;
 	
-	@Export(label = "Reparte" , alignment= Alignment.CENTER, exhibitionOrder = 8)
+	@Export(label = "Reparte" , alignment= Alignment.CENTER, exhibitionOrder = 8, columnType = ColumType.INTEGER)
 	private BigInteger reparte;
 	private BigDecimal total;
 	private BigDecimal totalDesconto;
@@ -145,6 +146,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		this.dataLancamento = DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR);		
 	}
 
+	@Export(label = "Preço Capa R$", alignment= Alignment.RIGHT, exhibitionOrder = 6, columnType = ColumType.MOEDA)
 	public BigDecimal getPrecoCapa() {
 		return precoCapa;
 	}
@@ -156,11 +158,12 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		}
 	}
 	
-	@Export(label = "Preço Capa R$", alignment= Alignment.RIGHT, exhibitionOrder = 6)
+	
 	public String getPrecoCapaFormatado(){
 		return precoCapaFormatado;
 	}
 
+	@Export(label = "Preço Desc R$", alignment= Alignment.RIGHT, exhibitionOrder = 7, columnType = ColumType.MOEDA)
 	public BigDecimal getPrecoDesconto() {
 		return precoDesconto;
 	}
@@ -172,11 +175,12 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		}
 	}
 	
-	@Export(label = "Preço Desc R$", alignment= Alignment.RIGHT, exhibitionOrder = 7)
+	
 	public String getPrecoDescontoFormatado(){
 		return precoDescontoFormatado;
 	}
 
+	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 9, columnType = ColumType.MOEDA)
 	public BigDecimal getTotal() {
 		return total;
 	}
@@ -188,11 +192,12 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		}
 	}
 	
-	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 9)
+	
 	public String getTotalFormatado(){
 		return totalFormatado;
 	}
 
+	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 10, columnType = ColumType.MOEDA)
 	public BigDecimal getTotalDesconto() {
 		return totalDesconto;
 	}
@@ -204,7 +209,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		}
 	}
 	
-	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 10)
+	
 	public String getTotalDescontoFormatado(){
 		return totalDescontoFormatado;
 	}
