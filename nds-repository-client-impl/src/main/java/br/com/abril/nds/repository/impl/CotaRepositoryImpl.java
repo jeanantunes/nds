@@ -13,6 +13,8 @@ import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -1390,15 +1392,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, List<SituacaoCadastro> situacoesCadastro
+	public List<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota, Intervalo<Integer> intervaloBox, List<SituacaoCadastro> situacoesCadastro
 										, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page) {
-		
-		Set<Long> listaIdCotas = new HashSet<Long>();
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
 		criteria.createAlias("box", "box");
 		criteria.createAlias("pdvs", "pdvs");
-		criteria.setProjection(Projections.id());
+		criteria.setProjection(Projections.distinct(Projections.id()));
 		
 		if (intervaloCota != null && intervaloCota.getDe() != null) {
 			
@@ -1419,11 +1419,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			criteria.add(Restrictions.in("situacaoCadastro", situacoesCadastro));
 		}
 		
-		if(idRoteiro != null || idRota != null){
-			criteria.createAlias("pdvs.rotas", "rotaPdv");
-		    criteria.createAlias("rotaPdv.rota", "rota");
-			criteria.createAlias("rota.roteiro", "roteiro");
-		}		
+	
+		criteria.createAlias("pdvs.rotas", "rotaPdv");
+	    criteria.createAlias("rotaPdv.rota", "rota");
+		criteria.createAlias("rota.roteiro", "roteiro");
+				
 		
 		if (idRoteiro != null){
 			
@@ -1434,10 +1434,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			
 			criteria.add(Restrictions.eq("rota.id", idRota));
 		}
-				
-		listaIdCotas.addAll(criteria.list());
 		
-		return listaIdCotas;
+		criteria.addOrder(Order.asc("box.codigo"));
+		criteria.addOrder(Order.asc("roteiro.ordem"));
+		criteria.addOrder(Order.asc("roteiro.descricaoRoteiro"));
+		criteria.addOrder(Order.asc("rota.ordem"));
+		criteria.addOrder(Order.asc("rota.descricaoRota"));
+		criteria.addOrder(Order.asc("numeroCota"));
+		
+		return criteria.list();
 	}
 
 	@Override

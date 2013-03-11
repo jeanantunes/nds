@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -573,7 +575,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		situacoesCadastro.add(SituacaoCadastro.ATIVO);
 		situacoesCadastro.add(SituacaoCadastro.SUSPENSO);
 
-		Set<Long> listaIdCotas = this.cotaRepository.obterIdCotasEntre(
+		List<Long> listaIdCotas = this.cotaRepository.obterIdCotasEntre(
 				filtro.getIntervaloCota(), filtro.getIntervaloBox(),
 				situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
 				null, null, null, null);
@@ -599,7 +601,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 
 	private void validarRoteirizacaoCota(FiltroConsultaNotaEnvioDTO filtro,
-			Set<Long> listaIdCotas) {
+			List<Long> listaIdCotas) {
 		List<String> cotasSemRoteirizacao = new ArrayList<String>();
 		
 		for (Long idCota : listaIdCotas) {
