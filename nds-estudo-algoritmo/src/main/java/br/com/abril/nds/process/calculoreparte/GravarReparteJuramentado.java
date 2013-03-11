@@ -11,6 +11,7 @@ import br.com.abril.nds.dao.MovimentoEstoqueCotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -37,7 +38,12 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
 	if (getEstudo().getProduto().isParcial()) {
 	    for (Cota cota : getEstudo().getCotas()) {
 
-		int qtdeVezesEnviada = produtoEdicaoDao.getQtdeVezesReenviadas(cota, getEstudo().getProduto());
+    			int qtdeVezesEnviada = 0;
+    			for(ProdutoEdicao pe :cota.getEdicoesRecebidas()){
+    				if(getEstudo().getProduto().getId().equals(pe.getId())){
+    					qtdeVezesEnviada++;
+    				}
+    			}
 
 		if (qtdeVezesEnviada >= 2) {
 

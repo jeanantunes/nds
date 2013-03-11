@@ -54,7 +54,8 @@ public class AjusteFinalReparteTest {
 	try {
 	    ajusteFinalReparte.executar();
 	} catch (Exception e) {
-	    fail("Exceção inválida.");
+	    e.printStackTrace();
+	    fail("Exce��o inv�lida.");
 	}
 
 	assertEquals(BigDecimal.ZERO, estudo.getAjusteReparte());
@@ -67,10 +68,9 @@ public class AjusteFinalReparteTest {
 	try {
 	    ajusteFinalReparte.executar();
 	} catch (Exception e) {
-	    fail("Exceção inválida.");
+	    fail("Exce��o inv�lida.");
 	}
 
 	assertEquals(new BigDecimal(2), estudo.getCotas().get(0).getReparteCalculado());
     }
-
 }
