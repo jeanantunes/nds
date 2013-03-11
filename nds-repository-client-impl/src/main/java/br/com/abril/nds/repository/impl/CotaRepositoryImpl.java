@@ -1458,7 +1458,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		Query query = getSession().createSQLQuery(sql.toString()); 	 	
 		
-		montarParametrosFiltroNotasEnvio(filtro, query);	
+		montarParametrosFiltroNotasEnvio(filtro, query, true);	
 		
 		return ((BigInteger) query.uniqueResult()).intValue();
 		
@@ -1477,7 +1477,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		Query query = getSession().createSQLQuery(sql.toString()); 	 	
 		
-		montarParametrosFiltroNotasEnvio(filtro, query);	
+		montarParametrosFiltroNotasEnvio(filtro, query, true);	
 		
 		return ((BigInteger) query.uniqueResult()).intValue();
 		
@@ -1498,7 +1498,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		Query query = getSession().createSQLQuery(sql.toString()); 	 	
 		
-		montarParametrosFiltroNotasEnvio(filtro, query);	
+		montarParametrosFiltroNotasEnvio(filtro, query, true);	
 		
 		return ((BigInteger) query.uniqueResult()).intValue();
 		
@@ -1518,7 +1518,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
-		montarParametrosFiltroNotasEnvio(filtro, query);	
+		montarParametrosFiltroNotasEnvio(filtro, query, false);	
 		
 		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
 		
@@ -1539,7 +1539,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
-		montarParametrosFiltroNotasEnvio(filtro, query);	
+		montarParametrosFiltroNotasEnvio(filtro, query, false);	
 		
 		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
 		
@@ -1563,7 +1563,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
-		montarParametrosFiltroNotasEnvio(filtro, query);	
+		montarParametrosFiltroNotasEnvio(filtro, query, false);	
 		
 		query.setResultTransformer(Transformers.aliasToBean(ConsultaNotaEnvioDTO.class));
 		
@@ -1787,7 +1787,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 
 	private void montarParametrosFiltroNotasEnvio(
-			FiltroConsultaNotaEnvioDTO filtro, Query query) {
+			FiltroConsultaNotaEnvioDTO filtro, Query query, boolean isCount) {
 		query.setParameterList("status", new String[]{StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()});
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
@@ -1830,15 +1830,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			query.setParameter("dataAte",filtro.getIntervaloMovimento().getAte());
 		}
 		
-		if (filtro.getPaginacaoVO().getPosicaoInicial()!= null){
-			query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+		if(!isCount) {
+			
+			if (filtro.getPaginacaoVO().getPosicaoInicial()!= null){
+				query.setFirstResult(filtro.getPaginacaoVO().getPosicaoInicial());
+			}
+			
+			if (filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
+				query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
+			}
+			
 		}
 		
-		if (filtro.getPaginacaoVO().getQtdResultadosPorPagina()!= null){				
-
-			query.setMaxResults(filtro.getPaginacaoVO().getQtdResultadosPorPagina());
-
-		}
 	}
 	
 	private void orderByCotasComNotaEnvioEntre(StringBuilder sql,
