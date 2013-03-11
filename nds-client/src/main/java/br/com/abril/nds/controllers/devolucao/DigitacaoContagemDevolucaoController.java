@@ -6,12 +6,14 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -93,6 +95,8 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	private static final int NUMERO_MESES_PESQUISA_DESATIVACAO = 6;
 	
+	private static final int NUMERO_DIGITOS_CE = 6;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
 	
 	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
@@ -135,19 +139,25 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, String semanaConferenciaEncalhe, Long idDestinatario,  String sortorder, String sortname, int page, int rp){
 		
 		Intervalo<Date> periodo = null;
+		Integer semana = null;
 						
 		if ( realizarPesquisaPorSemanaCE(dataDe, dataAte, semanaConferenciaEncalhe) ) {
-			periodo = obterPeriodoSemanaConferenciaEncalhe(semanaConferenciaEncalhe);
+			
+			periodo= obterPeriodoSemanaConferenciaEncalhe(semanaConferenciaEncalhe.toString());
+			
 		
 		} else {
 			periodo =  obterPeriodoValidado(dataDe, dataAte);
 		}
-
+		
+		if(semanaConferenciaEncalhe!=null && semanaConferenciaEncalhe.length() == NUMERO_DIGITOS_CE){
+			semana = Integer.parseInt(semanaConferenciaEncalhe.substring(4));
+		}
 		FiltroDigitacaoContagemDevolucaoDTO filtro = 
-				new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe);
+				new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semana);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -158,7 +168,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	
 	private boolean realizarPesquisaPorSemanaCE(String dataDe, String dataAte,
-			Integer semanaConferenciaEncalhe) {
+			String semanaConferenciaEncalhe) {
 		
 		if (semanaConferenciaEncalhe != null) {
 			
@@ -167,28 +177,55 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 						"A pesquisa não pode ser realizada pelo perído e pela Chamada de Encalhe ao mesmo tempo"));
 			}
 			
+			if(semanaConferenciaEncalhe.length()!=6){
+				throw new ValidacaoException(new  ValidacaoVO(TipoMensagem.ERROR, 
+						"O campo CE deve possuir 6 digitos"));
+			}
+			
 			return true;
 		}
 		
 		return false;
 	}
 
+	
 
-	private Intervalo<Date> obterPeriodoSemanaConferenciaEncalhe(Integer semanaConferenciaEncalhe) {
-		
+	private Intervalo<Date> obterPeriodoSemanaConferenciaEncalhe(String semanaConferenciaEncalhe) {
 		Intervalo<Date> periodo = null;	
-		
+		String ano="";
+		String semana="";
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		
-		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(semanaConferenciaEncalhe, 
-				distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
-		
+		ano = semanaConferenciaEncalhe.substring(0,4);
+		semana = semanaConferenciaEncalhe.substring(4);
+		Calendar anoInformado = Calendar.getInstance();
+		anoInformado.set(Calendar.YEAR, Integer.parseInt(ano));
+		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(new Integer(semana), distribuidor.getInicioSemana().getCodigoDiaSemana(), anoInformado.getTime());
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
 		periodo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
 		
 		return periodo;
+	
 	}
+	
+//	private Intervalo<Date> obterPeriodoSemanaConferenciaEncalhePorSemanaAno(String semanaConferenciaEncalhe){
+//	
+//		Intervalo<Date> periodo = null;	
+//		
+//		Distribuidor distribuidor = this.distribuidorService.obter();
+//		
+//		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(semanaConferenciaEncalhe, 
+//				distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+//		
+//		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+//		
+//		periodo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+//		
+//		return periodo;
+//
+//	}
+	
 	
 	/*
 	 * Obtém o filtro para exportação.
