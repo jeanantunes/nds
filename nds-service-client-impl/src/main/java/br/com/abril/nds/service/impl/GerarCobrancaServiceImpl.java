@@ -8,11 +8,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -69,6 +67,7 @@ import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -193,21 +192,24 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (listaMovimentoFinanceiroCota != null && !listaMovimentoFinanceiroCota.isEmpty()){
 			
 			
-			
 			//Varre todos os movimentos encontrados, agrupando por cota e por fornecedor
 			Cota ultimaCota = listaMovimentoFinanceiroCota.get(0).getCota();
 			
 			Fornecedor ultimoFornecedor = listaMovimentoFinanceiroCota.get(0).getFornecedor();
 			
+			if (ultimoFornecedor == null){
+		    	
+		    	throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor não encontrado para o [Movimento Financeiro "+listaMovimentoFinanceiroCota.get(0).getId()+"] [Cota "+ultimaCota.getNumeroCota()+"].");
+		    }
+			
 			BigDecimal valorMovimentos = listaMovimentoFinanceiroCota.get(0).getValor();
 			
-			FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobranca(ultimaCota.getId(), ultimoFornecedor.getId(), dataOperacao, valorMovimentos);
+			FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobranca(ultimaCota!=null?ultimaCota.getId():null, ultimoFornecedor!=null?ultimoFornecedor.getId():null, dataOperacao, valorMovimentos);
 
 		    boolean unificaCobranca = formaCobranca.getPoliticaCobranca()!=null?formaCobranca.getPoliticaCobranca().isUnificaCobranca():formaCobranca.getParametroCobrancaCota().isUnificaCobranca();
 	  
 		    boolean acumulaDivida = formaCobranca.getPoliticaCobranca()!=null?formaCobranca.getPoliticaCobranca().isAcumulaDivida():formaCobranca.getParametroCobrancaCota()!=null?formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao()!=null?(formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida()!=null && formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida()>0):false:false;
 
-		    
 			
 			if (unificaCobranca){
 				
@@ -220,6 +222,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			String nossoNumero = null;
 
+			Fornecedor fornecedorProdutoMovimento = null;
+			
+			Cota cotaAtual = null;
 			
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
 				
@@ -238,10 +243,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				}
 
 				
-				Cota cotaAtual = movimentoFinanceiroCota.getCota();
+				cotaAtual = movimentoFinanceiroCota.getCota();
 			    
-				Fornecedor fornecedorProdutoMovimento = movimentoFinanceiroCota.getFornecedor();
+				fornecedorProdutoMovimento = movimentoFinanceiroCota.getFornecedor();
 
+				if (fornecedorProdutoMovimento == null){
+			    	
+			    	throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor não encontrado para o [Movimento Financeiro "+movimentoFinanceiroCota.getId()+"] [Cota "+cotaAtual.getNumeroCota()+"].");
+			    }
 				
 				if (unificaCobranca || 
 				   (movimentoFinanceiroCota.getCota().equals(ultimaCota) &&
@@ -254,11 +263,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				} else {
 					
 					
+					//Busca Forma de Cobranca quando os parametros da iteração atual divergem dos da anterior
 					if ( (valorMovimentos.compareTo(formaCobranca.getValorMinimoEmissao())<0) || 
-						 (!movimentoFinanceiroCota.getCota().getId().equals(ultimaCota.getId()) ||
-					     (!fornecedorProdutoMovimento.getId().equals(ultimoFornecedor.getId())) ) ){
+						 (!cotaAtual.equals(ultimaCota) ||
+					     ((ultimoFornecedor==null) || (fornecedorProdutoMovimento==null) || 
+					      !fornecedorProdutoMovimento.equals(ultimoFornecedor) || 
+					      (fornecedorProdutoMovimento != ultimoFornecedor) ) ) ){
 					
-						formaCobranca = formaCobrancaService.obterFormaCobranca(cotaAtual.getId(), fornecedorProdutoMovimento.getId(), dataOperacao, valorMovimentos);
+						formaCobranca = formaCobrancaService.obterFormaCobranca(cotaAtual!=null?cotaAtual.getId():null, fornecedorProdutoMovimento!=null?fornecedorProdutoMovimento.getId():null, dataOperacao, valorMovimentos);
 						
 					    unificaCobranca = formaCobranca.getPoliticaCobranca()!=null?formaCobranca.getPoliticaCobranca().isUnificaCobranca():formaCobranca.getParametroCobrancaCota().isUnificaCobranca();
 				  
@@ -276,7 +288,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 																	numeroDiasNovaCobranca,
 																	dataOperacao, 
 																	msgs, 
-																	ultimoFornecedor,
+																	fornecedorProdutoMovimento,
 																	formaCobranca);
 					
 					if (nossoNumero != null){
@@ -313,7 +325,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 															numeroDiasNovaCobranca, 
 															dataOperacao, 
 															msgs, 
-															ultimoFornecedor, 
+															fornecedorProdutoMovimento, 
 															formaCobranca);
 			
 			if (nossoNumero != null){
@@ -913,6 +925,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					banco.getConta(),
 					banco.getCarteira());
 			
+			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);
 			
 			String digitoVerificador =

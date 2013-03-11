@@ -317,17 +317,21 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Date data, BigDecimal valor) {
 		
-		if (idFornecedor == null && idCota!=null){
-			
-			Cota cota = this.cotaRepository.buscarPorId(idCota);
+		Cota cota = null;
+		
+		if (idCota!=null){
+		    
+			cota = this.cotaRepository.buscarPorId(idCota);
+		}
+		
+		if (idFornecedor == null && cota!=null){
 			
 			idFornecedor = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao()!=null?cota.getParametroCobranca().getFornecedorPadrao().getId():null:null;
 		}
 		
 		if (idFornecedor==null){
 			
-			throw new ValidacaoException(
-					TipoMensagem.WARNING, "Para a obtenção de uma Forma de Cobrança é necessário que seja informado um [Fornecedor] ou que haja [Fornecedor Padrão] definido nos parâmetros financeiros da [Cota]!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Para a obtenção de uma Forma de Cobrança é necessário que seja informado um [Fornecedor] ou que haja [Fornecedor Padrão] definido nos parâmetros financeiros da [Cota]!");
 		}
 		
 		Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(idFornecedor);
@@ -341,7 +345,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 		
 		if (formaCobranca == null){
 	    	
-	    	throw new ValidacaoException(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor "+CurrencyUtil.formatarValorComSimbolo(valor)+"].");
+	    	throw new ValidacaoException(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor "+CurrencyUtil.formatarValorComSimbolo(valor)+"]"+(cota!=null?" [Cota "+cota.getNumeroCota()+"].":"."));
 	    }
 		
 		return formaCobranca;
