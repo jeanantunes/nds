@@ -34,6 +34,7 @@ public class GravarReparteFinalCotaTest {
 		try {
 			gravarReparteFinalCota.executar();
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail("Exceção inválida.");
 		}
 	}

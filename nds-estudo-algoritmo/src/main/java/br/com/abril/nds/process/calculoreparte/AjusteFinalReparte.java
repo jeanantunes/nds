@@ -75,6 +75,8 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		}
 	    }
 	}
+	
+	
 	ReparteComplementarPorCota reparteComplementarPorCota = new ReparteComplementarPorCota(getEstudo());
 	reparteComplementarPorCota.executar();
 
