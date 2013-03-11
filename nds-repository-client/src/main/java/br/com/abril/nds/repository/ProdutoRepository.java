@@ -24,6 +24,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 */
 	List<Produto> obterProdutoLikeNome(String nome);
 	
+	List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxRegRetorno);
 	/**
 	 * Obtém um produto de acordo com o número do produto.
 	 * 
