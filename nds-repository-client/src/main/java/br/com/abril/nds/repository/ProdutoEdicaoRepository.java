@@ -320,9 +320,10 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	
 	/**
 	 * 
+	 * @param idEstudoBase
 	 * @param produtoEdicao
 	 * @return
 	 */
-	public List<ProdutoEdicao> obterProdutoEdicaoCopiados(ProdutoEdicao produtoEdicao);
+	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao);
 
 }
