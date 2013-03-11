@@ -38,12 +38,16 @@ public class JornaleirosNovos extends ProcessoAbstrato {
     
     @Autowired
     private CorrecaoIndividual correcaoIndividual;
-    
+     
     @Override
     protected void executarProcesso() throws Exception {
 
 	Cota cota = (Cota) super.genericDTO;
 	cota = cotaDAO.getIndiceAjusteCotaEquivalenteByCota(cota);
+	
+	if ((cota.getEquivalente() != null) && (cota.getEquivalente().size() > 0)) {
+	    cota.setIndiceAjusteEquivalente(cota.getEquivalente().get(0).getIndiceAjusteEquivalente());
+	} 
 	
 	if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
 

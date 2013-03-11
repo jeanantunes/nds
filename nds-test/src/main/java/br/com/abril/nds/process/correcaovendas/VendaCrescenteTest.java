@@ -7,6 +7,7 @@ import static org.testng.Assert.fail;
 import java.math.BigDecimal;
 import java.util.Iterator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -16,6 +17,9 @@ import br.com.abril.nds.process.dataprovider.VendasCrescenteDataProvider;
 
 public class VendaCrescenteTest {
 
+    @Autowired
+    private VendaCrescente vendaCrescente;
+    
     /**
      * Testar se o índice de venda crescente será 1 com uma única publicacão e com menos de quatro edições.
      * 
@@ -30,7 +34,7 @@ public class VendaCrescenteTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
-	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
+	    vendaCrescente.setGenericDTO(cota);
 	    vendaCrescente.executar();
 
 	    cota = (Cota) vendaCrescente.getGenericDTO();
@@ -69,7 +73,7 @@ public class VendaCrescenteTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
-	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
+	    vendaCrescente.setGenericDTO(cota);
 	    vendaCrescente.executar();
 
 	    cota = (Cota) vendaCrescente.getGenericDTO();
@@ -108,7 +112,7 @@ public class VendaCrescenteTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
-	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
+	    vendaCrescente.setGenericDTO(cota);
 	    vendaCrescente.executar();
 
 	    cota = (Cota) vendaCrescente.getGenericDTO();

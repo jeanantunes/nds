@@ -21,6 +21,9 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
     @Autowired
     private static Medias medias;
     
+    @Autowired
+    private static CorrecaoIndividual correcaoIndividual;
+    
     @DataProvider(name = "getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList")
     public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList() throws Exception {
 
@@ -49,7 +52,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 
 		    ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
-		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
+		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    int iCotaEquivalente = 0;
@@ -66,8 +69,8 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				CorrecaoIndividual correcaoIndividualEquivalente = new CorrecaoIndividual(produtoEdicaoEquivalente);
-				correcaoIndividualEquivalente.executar();
+				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
+				correcaoIndividual.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
@@ -125,7 +128,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 
 		    ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
-		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
+		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    int iCotaEquivalente = 0;
@@ -142,8 +145,8 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				CorrecaoIndividual correcaoIndividualEquivalente = new CorrecaoIndividual(produtoEdicaoEquivalente);
-				correcaoIndividualEquivalente.executar();
+				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
+				correcaoIndividual.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
@@ -193,7 +196,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 
 		    ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
-		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
+		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    int iCotaEquivalente = 0;
@@ -210,8 +213,8 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				CorrecaoIndividual correcaoIndividualEquivalente = new CorrecaoIndividual(produtoEdicaoEquivalente);
-				correcaoIndividualEquivalente.executar();
+				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
+				correcaoIndividual.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }

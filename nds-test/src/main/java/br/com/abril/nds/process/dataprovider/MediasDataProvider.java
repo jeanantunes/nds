@@ -1,9 +1,11 @@
 package br.com.abril.nds.process.dataprovider;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -16,6 +18,9 @@ import br.com.abril.nds.process.correcaovendas.CorrecaoIndividual;
 
 public abstract class MediasDataProvider {
 
+    @Autowired
+    private static CorrecaoIndividual correcaoIndividual;
+    
     @DataProvider(name = "getCotaQuantidadeEdicoesMenorTresList")
     public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList() throws Exception {
 
@@ -42,9 +47,9 @@ public abstract class MediasDataProvider {
 		    ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
 		    produtoEdicao.setReparte(estoqueProdutoCota.getQuantidadeRecebida());
 		    produtoEdicao.setVenda(estoqueProdutoCota.getQuantidadeRecebida().subtract(estoqueProdutoCota.getQuantidadeDevolvida()));
-		    produtoEdicao.setPeso(new Integer(1));
+		    produtoEdicao.setPeso(BigDecimal.ONE);
 
-		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
+		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    edicoesRecebidas.add(produtoEdicao);
@@ -86,9 +91,9 @@ public abstract class MediasDataProvider {
 		    ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
 		    produtoEdicao.setReparte(estoqueProdutoCota.getQuantidadeRecebida());
 		    produtoEdicao.setVenda(estoqueProdutoCota.getQuantidadeRecebida().subtract(estoqueProdutoCota.getQuantidadeDevolvida()));
-		    produtoEdicao.setPeso(new Integer(1));
+		    produtoEdicao.setPeso(BigDecimal.ONE);
 
-		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
+		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    edicoesRecebidas.add(produtoEdicao);

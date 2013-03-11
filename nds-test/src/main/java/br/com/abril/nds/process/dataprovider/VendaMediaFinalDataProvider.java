@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.dataprovider;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,7 +50,7 @@ public abstract class VendaMediaFinalDataProvider {
 		ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
 		produtoEdicao.setReparte(estoqueProdutoCota.getQuantidadeRecebida());
 		produtoEdicao.setVenda(estoqueProdutoCota.getQuantidadeRecebida().subtract(estoqueProdutoCota.getQuantidadeDevolvida()));
-		produtoEdicao.setPeso(new Integer(1));
+		produtoEdicao.setPeso(BigDecimal.ONE);
 
 		edicoesRecebidas.add(produtoEdicao);
 

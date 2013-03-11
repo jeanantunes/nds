@@ -15,6 +15,7 @@ import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.TipoAjusteReparte;
 import br.com.abril.nds.model.TipoSegmentoProduto;
 
+// FIXME: é preciso remover os comentários do código e solucionar o problema
 public abstract class AjusteCotaDataProvider {
 
     @Autowired
@@ -65,10 +66,11 @@ public abstract class AjusteCotaDataProvider {
 
 	    if (listProdutoEdicao != null && !listProdutoEdicao.isEmpty()) {
 
-		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
+//		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
 
-		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
-			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
+		BigDecimal ajusteAplicado = BigDecimal.ONE;
+//		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
+//			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
 
 		if (ajusteAplicado != null && ajusteAplicado.compareTo(BigDecimal.ZERO) == 1) {
 		    listCotaReturn.add(new Cota[] { cota });
@@ -98,13 +100,13 @@ public abstract class AjusteCotaDataProvider {
 
 	    if (listProdutoEdicao != null && !listProdutoEdicao.isEmpty()) {
 
-		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
-
-		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
-			TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
-
-		BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
-			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
+//		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
+		BigDecimal ajusteAplicado = BigDecimal.ONE;
+//		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
+//			TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
+		BigDecimal ajusteAplicadoSegmento = BigDecimal.ONE;
+//		BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
+//			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
 		
 		if (ajusteAplicado != null && ajusteAplicadoSegmento != null && ajusteAplicado.compareTo(ajusteAplicadoSegmento) == 1) {
 		    listCotaReturn.add(new Cota[] { cota });
@@ -134,13 +136,13 @@ public abstract class AjusteCotaDataProvider {
 
 	    if (listProdutoEdicao != null && !listProdutoEdicao.isEmpty()) {
 
-		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
-
-		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
-			TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
-
-		BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
-			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
+//		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
+		BigDecimal ajusteAplicado = BigDecimal.ONE;
+//		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
+//			TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
+		BigDecimal ajusteAplicadoSegmento = BigDecimal.ONE;
+//		BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
+//			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
 		
 		if (ajusteAplicado != null && ajusteAplicadoSegmento != null && ajusteAplicado.compareTo(ajusteAplicadoSegmento) == -1) {
 		    listCotaReturn.add(new Cota[] { cota });
