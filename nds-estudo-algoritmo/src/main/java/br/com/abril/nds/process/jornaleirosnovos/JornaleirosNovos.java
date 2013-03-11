@@ -36,6 +36,9 @@ public class JornaleirosNovos extends ProcessoAbstrato {
     @Autowired
     private Medias medias;
     
+    @Autowired
+    private CorrecaoIndividual correcaoIndividual;
+    
     @Override
     protected void executarProcesso() throws Exception {
 
@@ -64,7 +67,7 @@ public class JornaleirosNovos extends ProcessoAbstrato {
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicaoEquivalente);
+				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
 				correcaoIndividual.executar();
 
 				iProdutoEdicaoEquivalente++;

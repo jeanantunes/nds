@@ -19,6 +19,7 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.TipoAjusteReparte;
 
 @Repository
 public class CotaDAO {
@@ -31,7 +32,7 @@ public class CotaDAO {
 
     @Value("#{query_estudo.queryCotaEquivalente}")
     private String queryCotaEquivalente;
-    
+
     @Value("#{query_estudo.queryCotaWithEstoqueProdutoCota}")
     private String queryCotaWithEstoqueProdutoCota;
 
@@ -85,21 +86,23 @@ public class CotaDAO {
 	for (ProdutoEdicaoBase edicao : estudo.getEdicoesBase()) {
 	    idsPesos.put(edicao.getId(), edicao.getPeso());
 	}
-	
+
 	Map<String, Object> params = new HashMap<>();
 	params.put("ID_PRODUTO", estudo.getProduto().getIdProduto());
 	params.put("NUMERO_EDICAO", estudo.getProduto().getNumeroEdicao());
+	params.put("TIPO_SEGMENTO", estudo.getProduto().getTipoSegmentoProduto());
 	params.put("IDS_PRODUTOS", idsPesos.keySet());
 
 	returnListCota = jdbcTemplate.query(queryProdutoEdicaoPorCota, params, new RowMapper<Cota>() {
-
 	    @Override
 	    public Cota mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Cota cota = new Cota();
 		cota.setId(rs.getLong("COTA_ID"));
 		cota.setNumero(rs.getLong("NUMERO_COTA"));
-		cota.setAjusteReparte(rs.getBigDecimal("AJUSTE_APLICADO"));
-		cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos, false));
+		cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
+		cota.setMix(rs.getInt("MIX") == 1);
+		traduzAjusteReparte(rs, cota);
+		cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos));
 		return cota;
 	    }
 	});
@@ -108,35 +111,45 @@ public class CotaDAO {
 	return returnListCota;
     }
 
-    private List<Cota> agrupaCotas(List<Cota> lista) {
-	List<Cota> novaLista = new ArrayList<Cota>();
-	Cota temp = lista.get(0);
-	for (int i = 1; i < lista.size(); i++) {
-	    if (temp.equals(lista.get(i))) {
-		temp.getEdicoesRecebidas().addAll(lista.get(i).getEdicoesRecebidas());
+    private void traduzAjusteReparte(ResultSet rs, Cota cota) throws SQLException {
+	String formaAjuste = rs.getString("FORMA_AJUSTE");
+	if ((formaAjuste != null) && (!formaAjuste.isEmpty())) {
+	    if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_VENDA_MEDIA)) {
+		cota.setVendaMediaMaisN(rs.getBigDecimal("AJUSTE_APLICADO"));
+	    } else if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_ENCALHE_MAX)) {
+		cota.setPercentualEncalheMaximo(rs.getBigDecimal("AJUSTE_APLICADO"));
 	    } else {
-		novaLista.add(temp);
-		temp = lista.get(i);
+		cota.setAjusteReparte(rs.getBigDecimal("AJUSTE_APLICADO"));
 	    }
 	}
-	return novaLista;
     }
 
-    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, Integer> idsPesos, boolean forceEdicaoFechada) throws SQLException {
+    private List<Cota> agrupaCotas(List<Cota> lista) {
+	if (lista.size() > 0) {
+	    List<Cota> novaLista = new ArrayList<Cota>();
+	    Cota temp = lista.get(0);
+	    for (int i = 1; i < lista.size(); i++) {
+		if (temp.equals(lista.get(i))) {
+		    temp.getEdicoesRecebidas().addAll(lista.get(i).getEdicoesRecebidas());
+		} else {
+		    novaLista.add(temp);
+		    temp = lista.get(i);
+		}
+	    }
+	    return novaLista;
+	} else {
+	    return lista;
+	}
+    }
+
+    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, Integer> idsPesos) throws SQLException {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 
 	produtoEdicao.setIdProduto(rs.getLong("PRODUTO_ID"));
 	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 	produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-
-	// FIXME - gambeta loca remover!!!!!!!
-	if (forceEdicaoFechada) {
-	    produtoEdicao.setEdicaoAberta(false);
-	} else {
-	    produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
-	}
-
+	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
 	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
 	produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
 	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));

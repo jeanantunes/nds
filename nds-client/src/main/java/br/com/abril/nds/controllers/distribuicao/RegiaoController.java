@@ -82,7 +82,7 @@ public class RegiaoController extends BaseController {
 		Regiao regiao = new Regiao();
 		regiao.setNomeRegiao(nome);
 		regiao.setRegiaoIsFixa(isFixa);
-		regiao.setIdUsuario(this.usuarioService.getUsuarioLogado());
+//		regiao.setIdUsuario(this.usuarioService.getUsuarioLogado());
 		
 		Date dataEHora = new Date();
 		Timestamp data = new Timestamp(dataEHora.getTime());

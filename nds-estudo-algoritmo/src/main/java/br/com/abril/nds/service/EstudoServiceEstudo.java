@@ -67,58 +67,58 @@ public class EstudoServiceEstudo {
 
     @Autowired
     private ProdutoEdicaoDAO produtoEdicaoDAO;
-    
+
     @Autowired
     private DefinicaoBases definicaoBases;
-    
+
     @Autowired
     private SomarFixacoes somarFixacoes;
-    
+
     @Autowired
     private VerificarTotalFixacoes verificarTotalFixacoes;
-    
+
     @Autowired
     private MontaTabelaEstudos montaTabelaEstudos;
-    
+
     @Autowired
     private AjusteReparte ajusteReparte;
-    
+
     @Autowired
     private RedutorAutomatico redutorAutomatico;
-    
+
     @Autowired
     private ReparteMinimo reparteMinimo;
-    
+
     @Autowired
     private ReparteProporcional reparteProporcional;
-    
+
     @Autowired
     private EncalheMaximo encalheMaximo;
-    
+
     @Autowired
     private ComplementarAutomatico complementarAutomatico;
-    
+
     @Autowired
     private CalcularReparte calcularReparte;
-    
+
     @Autowired
     private AjusteFinalReparte ajusteFinalReparte;
-    
+
     @Autowired
     private CorrecaoVendas correcaoVendas;
-    
+
     @Autowired
     private Medias medias;
-    
+
     @Autowired
     private VendaMediaFinal vendaMediaFinal;
-    
+
     @Autowired
     private Bonificacoes bonificacoes;
-    
+
     @Autowired
     private AjusteCota ajusteCota;
-    
+
     @Autowired
     private JornaleirosNovos jornaleirosNovos;
 
@@ -129,9 +129,8 @@ public class EstudoServiceEstudo {
 	estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
 	for (Cota cota : estudo.getCotas()) {
 	    CotaServiceEstudo.calculate(cota);
-	    if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-		    || !cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
-		    || !cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico)) {
+	    if (!cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
+		    ClassificacaoCota.RedutorAutomatico)) {
 		estudo.setSomatoriaVendaMediaFinal(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
 	    }
 	    estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));

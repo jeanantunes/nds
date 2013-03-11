@@ -51,25 +51,27 @@ public class DefinicaoBases extends ProcessoAbstrato {
 
     private LinkedList<ProdutoEdicaoBase> limitarEdicoesApenasSeis(List<ProdutoEdicaoBase> edicoesBase) {
 	LinkedList<ProdutoEdicaoBase> nova = new LinkedList<>();
-	if (!edicoesBase.isEmpty()) {
-	    edicoesBase.remove(0);
-	}
 	int qtdeParciais = 0;
 	for (ProdutoEdicaoBase base : edicoesBase) {
 	    if (base.isEdicaoAberta()) {
-		if (nova.size() == 0) {
-		    nova.add(base);
-		} else {
-		    continue;
-		}
-	    }
-	    if (nova.size() < 6) {
-		if (base.isParcial() && (qtdeParciais < 4)) {
-		    qtdeParciais++;
-		} else {
+		if (nova.size() != 0) {
 		    continue;
 		}
 		nova.add(base);
+	    } else {
+		if (nova.size() < 6) {
+		    if (base.isParcial()) {
+			if (qtdeParciais < 4) {
+			    qtdeParciais++;
+			} else {
+			    continue;
+			}
+		    }
+		    nova.add(base);
+		}
+	    }
+	    if (nova.size() == 6) {
+		break;
 	    }
 	}
 	return nova;
