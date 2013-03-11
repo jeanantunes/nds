@@ -65,26 +65,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ) ) ")
 		   .append(" ) as totalDesconto ");
 		   
-		hql.append(" FROM MovimentoEstoqueCota movimento, ProdutoEdicao pe ");
-		hql.append("  LEFT JOIN movimento.lancamento lancamento ");
-		hql.append("  JOIN movimento.cota as cota ");
-		hql.append("  JOIN movimento.tipoMovimento as tipoMovimento ");
-		hql.append("  JOIN pe.produto as produto ");
-		hql.append("  JOIN cota.parametroCobranca parametroCobranca ");
-		hql.append("  JOIN produto.fornecedores as fornecedor ");
-		hql.append("  JOIN fornecedor.juridica as pessoa ");		
-		hql.append("  JOIN cota.pessoa as pessoaCota ");
-		
-		hql.append(" WHERE movimento.produtoEdicao.id = pe.id " );
-		
-		if(filtro.getIdCota() != null ) { 
-			hql.append("   AND cota.id = :idCota");			
-		}
-		if(filtro.getIdFornecedor() != null) { 
-			hql.append("   AND fornecedor.id = :idFornecedor");
-		}
-		
-		hql.append(" GROUP BY case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end ");
+		hql.append(createFromConsultaConsignadoCota(filtro));
 		
 		if (filtro.getPaginacao().getSortColumn() != null) {
 			hql.append(" ORDER BY ");
@@ -117,6 +98,33 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		return query.list();
 				
+	}
+
+	private String createFromConsultaConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" FROM MovimentoEstoqueCota movimento, ProdutoEdicao pe ");
+		hql.append("  LEFT JOIN movimento.lancamento lancamento ");
+		hql.append("  JOIN movimento.cota as cota ");
+		hql.append("  JOIN movimento.tipoMovimento as tipoMovimento ");
+		hql.append("  JOIN pe.produto as produto ");
+		hql.append("  JOIN cota.parametroCobranca parametroCobranca ");
+		hql.append("  JOIN produto.fornecedores as fornecedor ");
+		hql.append("  JOIN fornecedor.juridica as pessoa ");		
+		hql.append("  JOIN cota.pessoa as pessoaCota ");
+		
+		hql.append(" WHERE movimento.produtoEdicao.id = pe.id " );
+		
+		if(filtro.getIdCota() != null ) { 
+			hql.append("   AND cota.id = :idCota");			
+		}
+		if(filtro.getIdFornecedor() != null) { 
+			hql.append("   AND fornecedor.id = :idFornecedor");
+		}
+		
+		hql.append(" GROUP BY case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end ");
+		
+		return hql.toString();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -174,6 +182,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Long buscarTodasMovimentacoesPorCota(
 			FiltroConsultaConsignadoCotaDTO filtro) {
@@ -182,13 +191,22 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" SELECT count(movimento)  ");
 		
-		hql.append(getHQLFromEWhereConsignadoCota(filtro));
-
+		hql.append(createFromConsultaConsignadoCota(filtro));
+		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		buscarParametrosConsignadoCota(query, filtro);
+		if(filtro.getIdCota() != null ) { 
+			query.setParameter("idCota", filtro.getIdCota());
+		}
 		
-		return (Long) query.uniqueResult();
+		if(filtro.getIdFornecedor() != null ) { 
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		List<Long> totalRegistros = query.list();
+		
+		return (totalRegistros == null) ? 0L : totalRegistros.size();
+
 	}
 	
 	@SuppressWarnings("unchecked")
