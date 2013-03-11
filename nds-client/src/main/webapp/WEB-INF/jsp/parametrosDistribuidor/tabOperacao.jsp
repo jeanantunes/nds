@@ -153,35 +153,56 @@
                    <tr>
                       <td>Na CE, deseja utilizar:</td>
                       <td>
-                       <c:if test="${parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR'}">
-          <input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
-               id="radioTipoContabilizacaoCEValor" 
-               checked="checked"
-                                 value="VALOR" />
-        </c:if>   
-        <c:if test="${empty parametrosDistribuidor.tipoContabilizacaoCE or 
-          (not (parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR'))}">
-          <input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
-               id="radioTipoContabilizacaoCEValor" 
-                                 value="VALOR" />
-        </c:if>                 
+			                <c:choose>
+				                <c:when test="${parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR'}">
+				                	<input	type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+							               	id="radioTipoContabilizacaoCEValor" 
+							               	checked="checked" 
+							               	value="VALOR" />
+				                </c:when>
+				                <c:otherwise>
+				                	<input	type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+							               	id="radioTipoContabilizacaoCEValor" 
+							               	value="VALOR" />
+								</c:otherwise>				                 
+			                </c:choose>
                       </td>
-                      <td colspan="3">Valor</td>
+                      <td colspan="2">Valor</td>
+                      
                       <td>
-          <c:if test="${parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES'}">
-          <input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
-                               id="radioTipoContabilizacaoCEExemplares" 
-             checked="checked"  
-                               value="EXEMPLARES" />
-          </c:if>
-          <c:if test="${empty parametrosDistribuidor.tipoContabilizacaoCE or 
-            (not (parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES'))}">
-            <input type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
-                               id="radioTipoContabilizacaoCEExamplares" 
-                         value="EXEMPLARES" />
-          </c:if>
-         </td>
-                      <td colspan="6">Exemplares</td>
+							<c:choose>
+				                <c:when test="${parametrosDistribuidor.tipoContabilizacaoCE eq 'EXEMPLARES'}">
+				                	<input	type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+							               	id="radioTipoContabilizacaoCEExemplares" 
+							               	checked="checked" 
+							               	value="EXEMPLARES" />
+				                </c:when>
+				                <c:otherwise>
+				                	<input	type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+							               	id="radioTipoContabilizacaoCEExemplares" 
+							               	value="EXEMPLARES" />
+								</c:otherwise>				                 
+			                </c:choose>
+         				</td>
+                    	<td colspan="3">Exemplares</td>
+
+                      <td>
+							<c:choose>
+				                <c:when test="${empty parametrosDistribuidor.tipoContabilizacaoCE}">
+				                	<input	type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+							               	id="radioTipoContabilizacaoCENenhuma" 
+							               	checked="checked" 
+							               	value="" />
+				                </c:when>
+				                <c:otherwise>
+				                	<input	type="radio" name="parametrosDistribuidor.tipoContabilizacaoCE" 
+							               	id="radioTipoContabilizacaoCENenhuma" 
+							               	value="" />
+								</c:otherwise>				                 
+			                </c:choose>
+         				</td>
+                    	<td colspan="2">Nenhuma</td>
+                    
                     </tr>
               
                    <tr>

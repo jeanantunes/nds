@@ -34,6 +34,23 @@ public class ConferenciaEncalheRepositoryImpl extends
 		super(ConferenciaEncalhe.class);
 	}
 	
+	public BigInteger obterQtdeEncalhe(Long idConferenciaEncalhe) {
+		
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select conf.qtde from ConferenciaEncalhe conf ")
+			.append(" where conf.id = :idConferenciaEncalhe ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idConferenciaEncalhe", idConferenciaEncalhe);
+		
+	
+		return (BigInteger) query.uniqueResult();
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaCotaConferenciaNaoFinalizada(java.util.Date)
