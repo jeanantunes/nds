@@ -434,8 +434,22 @@ public class EntregadorServiceImpl implements EntregadorService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public List<Pessoa> obterEntregadorPorApelido(String apelidoEntregador, Integer qtdMaxResult) {
+		
+		return entregadorRepository.obterEntregadorPorApelido(apelidoEntregador, qtdMaxResult);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public List<Pessoa> obterEntregadorPorNome(String nomeEntregador) {
 		
 		return entregadorRepository.obterEntregadorPorNome(nomeEntregador);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterEntregadorPorNome(String nomeEntregador, Integer qtdMaxResult) {
+		
+		return entregadorRepository.obterEntregadorPorNome(nomeEntregador, qtdMaxResult);
 	}
 }
