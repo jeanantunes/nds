@@ -2,7 +2,6 @@ package br.com.abril.nds.process.somarfixacoes;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;

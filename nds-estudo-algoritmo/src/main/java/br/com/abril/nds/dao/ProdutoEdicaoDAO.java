@@ -63,7 +63,7 @@ public class ProdutoEdicaoDAO {
 		edicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
 		edicao.setVenda(edicao.getReparte().subtract(rs.getBigDecimal("QTDE_DEVOLVIDA")));
 		edicao.setParcial(rs.getInt("PARCIAL") == 1);
-		edicao.setPeso(rs.getInt("PESO"));
+		edicao.setPeso(rs.getBigDecimal("PESO"));
 		edicao.setColecao(rs.getInt("IS_COLECAO") == 1);
 		edicoes.add(edicao);
 	    }
@@ -102,6 +102,7 @@ public class ProdutoEdicaoDAO {
 		produtoEdicaoBase.setId(rs.getLong("ID"));
 		produtoEdicaoBase.setIdProduto(rs.getLong("PRODUTO_ID"));
 		produtoEdicaoBase.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+		produtoEdicaoBase.setPacotePadrao(rs.getBigDecimal("PACOTE_PADRAO"));
 		produtoEdicaoBase.setCodigoProduto(rs.getString("CODIGO"));
 		produtoEdicaoBase.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 		produtoEdicaoBase.setIdLancamento(rs.getLong("LANCAMENTO_ID"));

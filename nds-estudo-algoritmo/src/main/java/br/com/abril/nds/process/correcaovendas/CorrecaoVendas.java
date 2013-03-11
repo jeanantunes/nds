@@ -1,7 +1,6 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,14 +50,13 @@ public class CorrecaoVendas extends ProcessoAbstrato {
     protected void executarProcesso() throws Exception {
 
 	Cota cota = (Cota) super.genericDTO;
-	List<ProdutoEdicao> listEdicaoRecebida = cota.getEdicoesRecebidas();
 	
-	if (listEdicaoRecebida != null && listEdicaoRecebida.size() > 1) {
+	if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() > 1) {
 
 	    BigDecimal totalReparte = BigDecimal.ZERO;
 	    BigDecimal totalVenda = BigDecimal.ZERO;
 
-	    for (ProdutoEdicao produtoEdicao : listEdicaoRecebida) {
+	    for (ProdutoEdicao produtoEdicao : cota.getEdicoesRecebidas()) {
 		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
 		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();

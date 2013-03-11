@@ -23,9 +23,9 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
+import br.com.abril.nds.process.ajustefinalreparte.AjusteFinalReparte;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
-import br.com.abril.nds.process.calculoreparte.AjusteFinalReparte;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
 import br.com.abril.nds.process.complementarautomatico.ComplementarAutomatico;
 import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
@@ -125,22 +125,24 @@ public class EstudoServiceEstudo {
     public static void calculate(Estudo estudo) {
 	// Somatória da venda média de todas as cotas e
 	// Somatória de reparte das edições abertas de todas as cotas
-	estudo.setSomatoriaVendaMediaFinal(BigDecimal.ZERO);
+	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
 	estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
 	for (Cota cota : estudo.getCotas()) {
 	    CotaServiceEstudo.calculate(cota);
-	    if (!cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
+	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
 		    ClassificacaoCota.RedutorAutomatico)) {
-		estudo.setSomatoriaVendaMediaFinal(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
+		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
 	    }
 	    estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
 	}
     }
 
     public void carregarParametros(Estudo estudo) {
-	estudoDAO.carregarParametros(estudo);
-
 	estudo.setProduto(produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(estudo.getProduto().getCodigoProduto()));
+	if (estudo.getPacotePadrao() == null) {
+	    estudo.setPacotePadrao(estudo.getProduto().getPacotePadrao());
+	}
+	estudo.getProduto().setPacotePadrao(null);
     }
 
     public LinkedList<ProdutoEdicaoBase> buscaEdicoesPorLancamento(ProdutoEdicaoBase edicao) {
@@ -195,15 +197,20 @@ public class EstudoServiceEstudo {
     }
 
     public Estudo gerarEstudoAutomatico(ProdutoEdicaoBase produto, BigDecimal reparte) throws Exception {
-	return gerarEstudoAutomatico(null, produto, reparte);
+	return gerarEstudoAutomatico(null, false, null, null, produto, reparte);
     }
 
-    public Estudo gerarEstudoAutomatico(List<ProdutoEdicaoBase> edicoesBase, ProdutoEdicaoBase produto, BigDecimal reparte) throws Exception {
+    public Estudo gerarEstudoAutomatico(List<ProdutoEdicaoBase> edicoesBase, boolean distribuicaoPorMultiplos, BigDecimal _reparteMinimo,
+	    BigDecimal pacotePadrao, ProdutoEdicaoBase produto, BigDecimal reparte) throws Exception {
 	log.debug("Iniciando execução do estudo.");
 	Estudo estudo = new Estudo();
 	estudo.setProduto(produto);
 	estudo.setReparteDistribuir(reparte);
 	estudo.setReparteDistribuirInicial(reparte);
+
+	estudo.setDistribuicaoPorMultiplos(distribuicaoPorMultiplos);
+	estudo.setReparteMinimo(_reparteMinimo);
+	estudo.setPacotePadrao(pacotePadrao);
 
 	// carregando parâmetros do banco de dados
 	carregarParametros(estudo);
@@ -218,9 +225,6 @@ public class EstudoServiceEstudo {
 	verificarTotalFixacoes.executar();
 
 	calculate(estudo);
-
-	montaTabelaEstudos.setEstudo(estudo);
-	montaTabelaEstudos.executar();
 
 	for (Cota cota : estudo.getCotas()) {
 	    correcaoVendas.setGenericDTO(cota);

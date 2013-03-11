@@ -87,22 +87,7 @@ public class EstudoDAO {
 	new NamedParameterJdbcTemplate(dataSource).batchUpdate(insertProdutoEdicaoBase, batch);
     }
 
-    public void carregarParametros(Estudo estudo) {
-	// TODO: carregar edições base do estudo
-	//	PreparedStatement psmt = Conexao.getConexao().prepareStatement(SQL_CONSULTA_EDICOES_BASE);
-	//	psmt.setBigDecimal(1, estudo.getId());
-
-	// TODO: carregar parâmetros do estudo
-	//	PreparedStatement psmt = Conexao.getConexao().prepareStatement(SQL_CONSULTA_EDICOES_BASE);
-	//	psmt.setBigDecimal(1, estudo.getId());
+    public void carregarPercentuaisProporcao(Estudo estudo) {
+	// TODO: implementar método para carregar percentuais de venda e pdv da tela de parâmetros do distribuidor (EMS 188)
     }
-
-    //    private final static String SQL_CONSULTA_PARAMETROS = ""
-    //	    + "select distribuicao_por_multiplos "
-    //	    + "  from tela_parametros "
-    //	    + " where estudo = ? ";
-    //    private final static String SQL_CONSULTA_EDICOES_BASE = ""
-    //	    + "select * "
-    //	    + "  from produto_edicao_base "
-    //	    + " where estudo = ? ";
 }

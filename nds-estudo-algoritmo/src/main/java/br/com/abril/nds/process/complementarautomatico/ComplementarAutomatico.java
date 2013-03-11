@@ -6,10 +6,9 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.process.ajustefinalreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
-import br.com.abril.nds.process.calculoreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
 
 /**

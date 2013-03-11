@@ -1,4 +1,4 @@
-package br.com.abril.nds.process.calculoreparte;
+package br.com.abril.nds.process.ajustefinalreparte;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.process.calculoreparte.CalcularReparte;
+import br.com.abril.nds.process.calculoreparte.GravarReparteJuramentado;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
@@ -27,8 +29,8 @@ import br.com.abril.nds.process.ProcessoAbstrato;
 @Component
 public class AjusteFinalReparte extends ProcessoAbstrato {
 
-    @Autowired
-    private ReparteComplementarPorCota reparteComplementarPorCota;
+//    @Autowired
+//    private ReparteComplementarPorCota reparteComplementarPorCota;
     
     @Autowired
     private GravarReparteFinalCota gravarReparteFinalCota;
@@ -80,8 +82,8 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		}
 	    }
 	}
-	reparteComplementarPorCota.setEstudo(getEstudo());
-	reparteComplementarPorCota.executar();
+//	reparteComplementarPorCota.setEstudo(getEstudo());
+//	reparteComplementarPorCota.executar();
 
 	gravarReparteFinalCota.setEstudo(getEstudo());
 	gravarReparteFinalCota.executar();

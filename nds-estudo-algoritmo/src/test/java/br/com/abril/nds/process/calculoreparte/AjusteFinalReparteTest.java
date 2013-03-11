@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.process.ajustefinalreparte.AjusteFinalReparte;
 
 public class AjusteFinalReparteTest {
 

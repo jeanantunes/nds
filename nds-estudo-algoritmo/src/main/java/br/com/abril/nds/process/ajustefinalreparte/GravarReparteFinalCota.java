@@ -1,9 +1,10 @@
-package br.com.abril.nds.process.calculoreparte;
+package br.com.abril.nds.process.ajustefinalreparte;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.process.calculoreparte.CalcularReparte;
 import br.com.abril.nds.service.EstudoServiceEstudo;
 
 /**

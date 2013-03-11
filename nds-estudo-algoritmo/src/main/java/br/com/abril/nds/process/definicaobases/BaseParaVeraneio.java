@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.definicaobases;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +39,7 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 	for (ProdutoEdicaoBase produtoEdicao : edicoes) {
 	    if (estudo.isPracaVeraneio()) {
 		if (validaPeriodoVeranio(produtoEdicao.getDataLancamento())) {
-		    produtoEdicao.setPeso(2);
+		    produtoEdicao.setPeso(BigDecimal.valueOf(2));
 		    adicionarEdicoesAnterioresAoEstudo(produtoEdicao);
 		} else {
 		    adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(produtoEdicao);
@@ -60,7 +61,7 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 	    throw new Exception("Não foram encontradas outras bases para veraneio, favor inserir bases manualmente.");
 	}
 	for (ProdutoEdicaoBase edicao : edicoesAnosAnteriores) {
-	    edicao.setPeso(2);
+	    edicao.setPeso(BigDecimal.valueOf(2));
 	}
 	super.getEstudo().getEdicoesBase().addAll(edicoesAnosAnteriores);
     }

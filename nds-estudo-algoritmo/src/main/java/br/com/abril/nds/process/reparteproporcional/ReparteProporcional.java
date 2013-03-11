@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;

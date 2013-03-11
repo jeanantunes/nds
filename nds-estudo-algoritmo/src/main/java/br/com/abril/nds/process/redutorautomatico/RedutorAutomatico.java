@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
@@ -58,14 +57,14 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     public void calcularMenorVenda() {
 	getEstudo().setExcedente(getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia()));
 	BigDecimal percentualExcedente = BigDecimal.ZERO;
-	if (getEstudo().getSomatoriaVendaMedia().doubleValue() > 0) {
+	if (getEstudo().getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
 	    percentualExcedente = getEstudo().getExcedente().divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
 	}
 
 	menorVenda = BigDecimal.ZERO;
-	if ((percentualExcedente.doubleValue() > 0.4d) && (percentualExcedente.doubleValue() < 0.6d)) {
+	if ((percentualExcedente.compareTo(BigDecimal.valueOf(0.4)) > 0) && (percentualExcedente.compareTo(BigDecimal.valueOf(0.6)) < 0)) {
 	    menorVenda = BigDecimal.valueOf(0.25d);
-	} else if (percentualExcedente.doubleValue() < 0.4d) {
+	} else if (percentualExcedente.compareTo(BigDecimal.valueOf(0.4)) < 0) {
 	    menorVenda = BigDecimal.valueOf(0.5d);
 	}
     }

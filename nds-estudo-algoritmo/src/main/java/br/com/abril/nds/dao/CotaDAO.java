@@ -1,5 +1,6 @@
 package br.com.abril.nds.dao;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class CotaDAO {
     @Value("#{query_estudo.queryCotaWithEstoqueProdutoCota}")
     private String queryCotaWithEstoqueProdutoCota;
 
-    private Map<Long, Integer> idsPesos = new HashMap<Long, Integer>();
+    private Map<Long, BigDecimal> idsPesos = new HashMap<>();
 
     public Cota getIndiceAjusteCotaEquivalenteByCota(Cota cota) {
 
@@ -142,7 +143,7 @@ public class CotaDAO {
 	}
     }
 
-    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, Integer> idsPesos) throws SQLException {
+    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, BigDecimal> idsPesos) throws SQLException {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 
