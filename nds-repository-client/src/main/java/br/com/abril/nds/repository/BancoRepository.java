@@ -75,6 +75,8 @@ public interface BancoRepository extends Repository<Banco,Long>{
 	boolean verificarPedencias(long idBanco);
 
 	List<Banco> obterBancosPorNome(String nomeBanco);
+	
+	List<Banco> obterBancosPorNome(String nomeBanco, Integer qtdMaxResult);
 
 	/**
 	 * Obtém bancos por status de atividade

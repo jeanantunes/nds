@@ -13,6 +13,7 @@ import br.com.abril.nds.service.FiadorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.TransportadorService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -50,7 +51,7 @@ public class PessoaController extends BaseController {
 		
 		nomePessoa = PessoaUtil.removerSufixoDeTipo(nomePessoa);
 		
-		List<Pessoa> listaPessoa = pessoaService.obterPessoasPorNome(nomePessoa);
+		List<Pessoa> listaPessoa = pessoaService.obterPessoasPorNome(nomePessoa, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		processarDadosAutoComplete(listaPessoa,false);
 	}
@@ -60,7 +61,7 @@ public class PessoaController extends BaseController {
 		
 		nomeFiador = PessoaUtil.removerSufixoDeTipo(nomeFiador);
 		
-		List<Pessoa> listaPessoa = fiadorService.obterFiadorPorNome(nomeFiador);
+		List<Pessoa> listaPessoa = fiadorService.obterFiadorPorNome(nomeFiador, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		processarDadosAutoComplete(listaPessoa,false);
 	}
@@ -70,7 +71,7 @@ public class PessoaController extends BaseController {
 		
 		nomeEntregador = PessoaUtil.removerSufixoDeTipo(nomeEntregador);
 		
-		List<Pessoa> listaPessoa = entregadorService.obterEntregadorPorNome(nomeEntregador);
+		List<Pessoa> listaPessoa = entregadorService.obterEntregadorPorNome(nomeEntregador, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		processarDadosAutoComplete(listaPessoa,false);
 	}
@@ -80,7 +81,7 @@ public class PessoaController extends BaseController {
 		
 		apelidoEntregador = PessoaUtil.removerSufixoDeTipo(apelidoEntregador);
 		
-		List<Pessoa> listaPessoa = entregadorService.obterEntregadorPorApelido(apelidoEntregador);
+		List<Pessoa> listaPessoa = entregadorService.obterEntregadorPorApelido(apelidoEntregador, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		processarDadosAutoComplete(listaPessoa,true);
 	}
@@ -90,7 +91,7 @@ public class PessoaController extends BaseController {
 		
 		nomeTransportador = PessoaUtil.removerSufixoDeTipo(nomeTransportador);
 		
-		List<Pessoa> listaPessoa = transportadorService.obterTransportadorPorNome(nomeTransportador);
+		List<Pessoa> listaPessoa = transportadorService.obterTransportadorPorNome(nomeTransportador, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		processarDadosAutoComplete(listaPessoa,false);
 	}
@@ -100,7 +101,7 @@ public class PessoaController extends BaseController {
 		
 		nomeFantasia = PessoaUtil.removerSufixoDeTipo(nomeFantasia);
 		
-		List<Pessoa> listaPessoa = transportadorService.obterTransportadorPorNomeFantasia(nomeFantasia);
+		List<Pessoa> listaPessoa = transportadorService.obterTransportadorPorNomeFantasia(nomeFantasia, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		processarDadosAutoComplete(listaPessoa,true);
 	}
@@ -110,7 +111,7 @@ public class PessoaController extends BaseController {
 		
 		nomeFornecedor = PessoaUtil.removerSufixoDeTipo(nomeFornecedor);
 		
-		List<Pessoa> listaPessoa = fornecedorService.obterFornecedorPorNome(nomeFornecedor);
+		List<Pessoa> listaPessoa = fornecedorService.obterFornecedorPorNome(nomeFornecedor, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		processarDadosAutoComplete(listaPessoa,false);
 	}

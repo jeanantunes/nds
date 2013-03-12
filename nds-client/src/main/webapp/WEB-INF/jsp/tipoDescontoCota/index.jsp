@@ -116,14 +116,14 @@ $(function() {
 	                <label style="width:auto!important;">Código:</label>
 	                <input type="text" name="codigoPesquisa" id="codigoPesquisa" maxlength="255" 
 					   	   style="width:80px; float:left;"
-					       onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
+					       onchange="pesquisaProdutoTipoDescontoCota.pesquisarPorCodigoProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);"/>
 	                <label style="width:auto!important;">Produto:</label>
 	                <input type="text" name="produtoPesquisa" id="produtoPesquisa" maxlength="255" 
 						   style="width:160px; float:left;"
-						   onkeyup="pesquisaProdutoTipoDescontoCota.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
-						   onblur="pesquisaProdutoTipoDescontoCota.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
+						   onkeydown="pesquisaProdutoTipoDescontoCota.autoCompletarPorNomeProduto('#produtoPesquisa', false);"
+						   onchange="pesquisaProdutoTipoDescontoCota.pesquisarPorNomeProduto('#codigoPesquisa', '#produtoPesquisa', false,
 								   undefined,
 								   undefined);" />
 	                
