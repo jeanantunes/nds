@@ -4,6 +4,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="PACOTE_PADRAO" class="java.lang.Long"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -255,7 +256,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{pacote}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[java.lang.Math.round($F{reparteTotal}.doubleValue() / $P{PACOTE_PADRAO})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="470" y="0" width="50" height="30"/>
@@ -266,7 +267,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
-				<textFieldExpression><![CDATA[$F{quebra}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("0.##").format($F{reparteTotal}.doubleValue() % $P{PACOTE_PADRAO}) ]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="520" y="0" width="50" height="30"/>
