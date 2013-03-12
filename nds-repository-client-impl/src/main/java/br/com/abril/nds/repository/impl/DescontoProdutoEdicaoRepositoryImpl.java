@@ -307,11 +307,11 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdcfpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
-		    .append("where 1 = 1 ")
-		    .append("and vdcfpe.fornecedor_id = :idFornecedor ")
-		    .append("and vdcfpe.cota_id = :idCota ")
-		    .append("and vdcfpe.produto_id = :idProduto ")
-		    .append("and vdcfpe.produto_edicao_id = :idProdutoEdicao ");
+		    .append("where ")
+		    .append(" vdcfpe.fornecedor_id = :idFornecedor ")
+		    .append(" and vdcfpe.cota_id = :idCota ")
+		    .append(" and vdcfpe.produto_id = :idProduto ")
+		    .append(" and vdcfpe.produto_edicao_id = :idProdutoEdicao ");
 		
 		Query query = getSession().createSQLQuery(hql.toString());
 		//TODO: Validar nulos
@@ -328,10 +328,11 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdcfpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
-		    .append("where 1 = 1 ")
-		    .append("and vdcfpe.fornecedor_id = :idFornecedor ")
-		    .append("and vdcfpe.cota_id = :idCota ")
-		    .append("and vdcfpe.produto_id = :idProduto ");
+		    .append("where ")
+		    .append(" vdcfpe.fornecedor_id = :idFornecedor ")
+		    .append(" and vdcfpe.cota_id = :idCota ")
+		    .append(" and vdcfpe.produto_id = :idProduto ")
+		    .append("and vdcfpe.produto_edicao_id is null ");
 		
 		Query query = getSession().createSQLQuery(hql.toString());
 		//TODO: Validar nulos
@@ -347,11 +348,11 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdcfpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
-		    .append("where 1 = 1 ")
-		    .append("and vdcfpe.fornecedor_id = :idFornecedor ")
-		    .append("and vdcfpe.cota_id = :idCota ")
-			.append("and vdcfpe.produto_id is null ")
-			.append("and vdcfpe.produto_edicao_id is null ");
+		    .append("where ")
+		    .append(" vdcfpe.fornecedor_id = :idFornecedor ")
+		    .append(" and vdcfpe.cota_id = :idCota ")
+			.append(" and vdcfpe.produto_id is null ")
+			.append(" and vdcfpe.produto_edicao_id is null ");
 		
 		Query query = getSession().createSQLQuery(hql.toString());
 		//TODO: Validar nulos
@@ -380,9 +381,9 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ") 
-		    .append("where 1 = 1 ")
-		    .append("and vdpe.codigo_produto = :codigoProduto ")
-		    .append("and vdpe.numero_edicao = :numeroEdicao ");
+		    .append("where ")
+		    .append(" vdpe.codigo_produto = :codigoProduto ")
+		    .append(" and vdpe.numero_edicao = :numeroEdicao ");
 		
 		//TODO: Validar nulos
 		Query query = getSession().createSQLQuery(hql.toString());
@@ -397,8 +398,8 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ") 
-		    .append("where 1 = 1 ")
-		    .append("and vdpe.codigo_produto = :codigoProduto ")
+		    .append("where ")
+		    .append("vdpe.codigo_produto = :codigoProduto ")
 		    .append("and vdpe.numero_edicao is null ");
 		
 		//TODO: Validar nulos
