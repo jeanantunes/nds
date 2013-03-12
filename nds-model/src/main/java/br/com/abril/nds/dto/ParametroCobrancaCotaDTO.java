@@ -39,6 +39,8 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private Long idFornecedor;
 	
+	private boolean unificaCobranca;
+	
 	
 	public Long getIdParametroCobranca() {
 		return idParametroCobranca;
@@ -173,7 +175,18 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
 	}
+	
 
+	public boolean isUnificaCobranca() {
+		return unificaCobranca;
+	}
+
+
+	public void setUnificaCobranca(boolean unificaCobranca) {
+		this.unificaCobranca = unificaCobranca;
+	}
+
+	
 	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */

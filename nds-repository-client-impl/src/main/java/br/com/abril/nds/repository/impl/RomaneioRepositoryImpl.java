@@ -230,7 +230,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				hql.insert(0, ", ");
 			}
 			
-			hql.insert(0, "roteiro.roteirizacao asc, roteiro.ordem asc, roteiro.descricaoRoteiro asc, rota.ordem asc, rota.descricaoRota asc, box.codigo asc");
+			hql.insert(0, "roteiro.id, roteiro.ordem asc, rota.ordem asc, rota.descricaoRota asc, roteiro.roteirizacao asc, box.codigo asc");
 		}
 		
 		if (hql.length() > 0) {

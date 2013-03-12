@@ -6,10 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+
+import com.ancientprogramming.fixedformat4j.format.impl.StringFormatter;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
@@ -189,6 +192,35 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		return query.list();
 	}
+								   
+	public MovimentoFinanceiroCota obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota) {
+
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select mfc from ");
+		
+		hql.append(" ControleConferenciaEncalheCota ccec ");
+
+		hql.append(" inner join ccec.conferenciasEncalhe confEncalhe	");
+
+		hql.append(" inner join confEncalhe.movimentoEstoqueCota mec	");
+		
+		hql.append(" inner join mec.movimentoFinanceiroCota mfc			");
+		
+		hql.append(" where	");
+		
+		hql.append(" ccec.id = :idControleConfEncalheCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConfEncalheCota", idControleConfEncalheCota);
+		
+		query.setMaxResults(1);
+		
+		return (MovimentoFinanceiroCota) query.uniqueResult();
+		
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override

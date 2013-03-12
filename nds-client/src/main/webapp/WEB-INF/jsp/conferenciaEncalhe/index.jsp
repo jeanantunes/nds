@@ -79,13 +79,41 @@
 					</td>
 					
 					<td width="44"><span class="dadosFiltro">Status:</span></td>
+					
 					<td width="91"><span class="dadosFiltro" id="statusCota"></span></td>
-					<td width="144"><span class="dadosFiltro">Valor CE Jornaleiro R$:</span></td>
-					<td width="100">
+					
+					<td width="144">
+
 						<span class="dadosFiltro">
-							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+							<c:choose>
+								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
+									Valor CE Jornaleiro R$:
+								</c:when>
+								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
+									Qtde CE Jornaleiro:
+								</c:when>
+							</c:choose>
 						</span>
+						
 					</td>
+					
+					<td width="100">
+						
+						<span class="dadosFiltro">
+
+							<c:choose>
+								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
+							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+								</c:when>
+								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
+							<input type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
+								</c:when>
+							</c:choose>
+							
+						</span>
+						
+					</td>
+					
 				</tr>
 			</table>
 			

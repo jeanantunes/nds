@@ -504,7 +504,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append("   SELECT cota.numeroCota as numeroCota ");
 		hql.append("       , coalesce(pess.nome, '') as nomeCota");
 		hql.append("       , box.nome as boxEncalhe");
-		hql.append("       , sum(mfc.valor) as total ");
+		hql.append("       , sum(mec.qtde*pe.precoVenda) as total ");
 		hql.append("       , coalesce(div.status, 'EM_ABERTO') as statusCobranca ");
 		
 		getQueryAnalitico(filtro, hql);	

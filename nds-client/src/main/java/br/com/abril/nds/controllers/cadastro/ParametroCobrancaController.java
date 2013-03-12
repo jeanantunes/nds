@@ -18,7 +18,6 @@ import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -363,7 +362,7 @@ public class ParametroCobrancaController extends BaseController {
 			}
 		}
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		Long idDistribuidor = this.distribuidorService.obterId();
 		
 		if (parametros.isEnvioEmail()){
 			if (this.distribuidorService.getEmail() == null){
@@ -377,7 +376,7 @@ public class ParametroCobrancaController extends BaseController {
 			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 				
 				if (!this.formaCobrancaService.validarFormaCobrancaSemanal(parametros.getIdPolitica(),
-					                                                       distribuidor,
+					                                                       idDistribuidor,
 					                                                       parametros.getTipoFormaCobranca(), 
 					                                                       parametros.getFornecedoresId(), 
 																		   parametros.isDomingo(),
@@ -397,7 +396,7 @@ public class ParametroCobrancaController extends BaseController {
 			else{
 				
 				if (!this.formaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),
-					                                                      distribuidor,
+					                                                      idDistribuidor,
 					                                                      parametros.getTipoFormaCobranca(), 
 					                                                      parametros.getFornecedoresId(), 
 					                                                      parametros.getDiasDoMes())){

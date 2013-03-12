@@ -54,7 +54,7 @@ public class ItemNotaEnvio implements Serializable {
 	@Column(name="DESCONTO",precision=21, scale=2 , nullable=false)
 	private BigDecimal desconto;
 	
-	@ManyToOne
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 

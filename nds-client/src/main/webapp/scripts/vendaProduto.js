@@ -146,6 +146,19 @@ var vendaProdutoController = $.extend(true, {
 			height : 200
 		});
 
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#codigo", vendaProdutoController.workspace));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					vendaProdutoController.cliquePesquisar();
+				}
+				
+				return true;
+			});
+		});
 	},
 	
 	popup_detalhes : function(codigoProduto, numEdicao) {

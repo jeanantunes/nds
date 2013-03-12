@@ -73,6 +73,7 @@ $(function(){
 				<td width="195">Fator Vencimento de Cobrança em D+:</td>
 				<td width="157"><select id="fatorVencimento"
 					name="fatorVencimento" size="1" style="width: 50px; height: 19px;">
+					    <option>0</option>
 						<option>1</option>
 						<option>2</option>
 						<option>3</option>
@@ -189,10 +190,9 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Unifica Cobrança?</td>
-				<td><select name="select3" id="select2">
-						<option selected="selected" value=""></option>
-						<option value="1">Sim</option>
-						<option value="2">Não</option>
+				<td><select name="unificaCobranca" id="unificaCobranca">
+						<option value="0">Sim</option>
+						<option value="1">Não</option>
 				</select></td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>

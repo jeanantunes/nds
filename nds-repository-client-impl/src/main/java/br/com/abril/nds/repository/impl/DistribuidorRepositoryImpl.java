@@ -20,7 +20,10 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametroContratoCota;
+import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
@@ -474,5 +477,49 @@ public class DistribuidorRepositoryImpl extends
 		return (Long)
 				this.getSession().
 				createQuery("select id from Distribuidor").uniqueResult();
+	}
+	
+	@Override
+	public String cnpj(){
+		
+		return (String)
+				this.getSession().
+				createQuery("select d.juridica.cnpj from Distribuidor d").uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ParametrosDistribuidorEmissaoDocumento> parametrosDistribuidorEmissaoDocumentos(){
+		
+		return (List<ParametrosDistribuidorEmissaoDocumento>)
+				this.getSession().createQuery("select parametrosDistribuidorEmissaoDocumentos from Distribuidor").list();
+	}
+	
+	@Override
+	public Integer codigo(){
+		
+		return (Integer)
+				this.getSession().createQuery("select codigo from Distribuidor").uniqueResult();
+	}
+
+	@Override
+	public BigInteger capacidadeDistribuicao() {
+		
+		return (BigInteger)
+				this.getSession().createQuery("select capacidadeDistribuicao from Distribuidor").uniqueResult();
+	}
+	
+	@Override
+	public PessoaJuridica juridica(){
+		
+		return (PessoaJuridica)
+				this.getSession().createQuery("select juridica from Distribuidor").uniqueResult();
+	}
+
+	@Override
+	public ParametroContratoCota parametroContratoCota() {
+		
+		return (ParametroContratoCota)
+				this.getSession().createQuery("select parametroContratoCota from Distribuidor").uniqueResult();
 	}
 }

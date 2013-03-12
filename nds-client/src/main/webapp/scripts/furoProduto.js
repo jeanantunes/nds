@@ -1,3 +1,4 @@
+var isPesquisarPorNomeProdutoRequestCallBack = false;
 var furoProdutoController = $.extend(true, {
 	init : function() {
 		$("#dataLancamento", furoProdutoController.workspace).datepicker({
@@ -17,6 +18,20 @@ var furoProdutoController = $.extend(true, {
 		$("#dataLancamento", furoProdutoController.workspace).mask("99/99/9999");
 		$("#novaData", furoProdutoController.workspace).mask("99/99/9999");
 		$("#edicao", furoProdutoController.workspace).mask("?99999999999999999999", {placeholder:""});
+		
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#codigo"));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					furoProdutoController.pesquisar();
+				}
+				
+				return true;
+			});
+		});
 	},
 	
 	popup : function() {
@@ -75,19 +90,24 @@ var furoProdutoController = $.extend(true, {
 	},
 	
 	pesquisarPorNomeProduto : function(){
-		var produto = $("#produto", furoProdutoController.workspace).val();
-		
-		if (produto && produto.length > 0){
-			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, furoProdutoController.exibirAutoComplete);
+		if(!isPesquisarPorNomeProdutoRequestCallBack){
+			isPesquisarPorNomeProdutoRequestCallBack = true;
+			var produto = $("#produto", furoProdutoController.workspace).val().trim();
+			
+			if (produto && produto.length > 2){
+				$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, furoProdutoController.exibirAutoComplete);
+			}
 		}
 	},
 	
 	exibirAutoComplete : function(result){
+		isPesquisarPorNomeProdutoRequestCallBack = false;
 		$("#produto", furoProdutoController.workspace).autocomplete({
 			source: result,
 			select: function(event, ui){
 				furoProdutoController.completarPesquisa(ui.item.chave);
-			}
+			},
+			delay : 0
 		});
 	},
 	

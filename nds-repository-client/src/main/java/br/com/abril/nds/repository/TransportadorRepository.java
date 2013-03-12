@@ -19,6 +19,10 @@ public interface TransportadorRepository extends
 			Long idTransportador, String sortorder, String sortname);
 
 	List<Pessoa> obterTransportadorPorNome(String nomeTransportador);
+	
+	List<Pessoa> obterTransportadorPorNome(String nomeTransportador, Integer qtdMaxResult);
 
 	List<Pessoa> obterTransportadorPorNomeFantasia(String razaoSocial);
+	
+	List<Pessoa> obterTransportadorPorNomeFantasia(String razaoSocial, Integer qtdMaxResult);
 }

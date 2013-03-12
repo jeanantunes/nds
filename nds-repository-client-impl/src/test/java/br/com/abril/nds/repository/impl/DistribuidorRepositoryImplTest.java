@@ -403,4 +403,40 @@ public class DistribuidorRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		this.distribuidorRepository.obterId();
 	}
+	
+	@Test
+	public void cnpj(){
+		
+		this.distribuidorRepository.cnpj();
+	}
+	
+	@Test
+	public void parametrosDistribuidorEmissaoDocumentos(){
+		
+		this.distribuidorRepository.parametrosDistribuidorEmissaoDocumentos();
+	}
+	
+	@Test
+	public void codigo(){
+		
+		this.distribuidorRepository.codigo();
+	}
+
+	@Test
+	public void capacidadeDistribuicao() {
+		
+		this.distribuidorRepository.capacidadeDistribuicao();
+	}
+	
+	@Test
+	public void juridica(){
+		
+		this.distribuidorRepository.juridica();
+	}
+
+	@Test
+	public void parametroContratoCota() {
+		
+		this.distribuidorRepository.parametroContratoCota();
+	}
 }
