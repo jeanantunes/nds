@@ -6,6 +6,7 @@ import static org.testng.Assert.fail;
 import java.math.BigDecimal;
 import java.util.Iterator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -14,6 +15,9 @@ import br.com.abril.nds.process.dataprovider.JornaleirosNovosVendaMediaDataProvi
 
 public class JornaleirosNovosVendaMediaTest {
 
+    @Autowired
+    private JornaleirosNovos jornaleirosNovos;
+    
     /**
      * Testar venda média corrigida com Cota Nova com a quantidade de Edição Base menor ou igual a três e se existe Equivalente com a Venda Média Corrigida maior do que
      * zero.
@@ -34,7 +38,7 @@ public class JornaleirosNovosVendaMediaTest {
 
 	    StringBuilder sbReporterLog = gerarReporterLog(new StringBuilder(), cota, vendaMediaCorrigida);
 
-	    JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
+	    jornaleirosNovos.setGenericDTO(cota);
 	    jornaleirosNovos.executar();
 
 	    cota = (Cota) jornaleirosNovos.getGenericDTO();
@@ -85,7 +89,7 @@ public class JornaleirosNovosVendaMediaTest {
 
 	    StringBuilder sbReporterLog = gerarReporterLog(new StringBuilder(), cota, vendaMediaCorrigida);
 
-	    JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
+	    cota = (Cota) jornaleirosNovos.getGenericDTO();
 	    jornaleirosNovos.executar();
 
 	    cota = (Cota) jornaleirosNovos.getGenericDTO();
@@ -134,7 +138,7 @@ public class JornaleirosNovosVendaMediaTest {
 
 	    StringBuilder sbReporterLog = gerarReporterLog(new StringBuilder(), cota, vendaMediaCorrigida);
 
-	    JornaleirosNovos jornaleirosNovos = new JornaleirosNovos(cota);
+	    cota = (Cota) jornaleirosNovos.getGenericDTO();
 	    jornaleirosNovos.executar();
 
 	    cota = (Cota) jornaleirosNovos.getGenericDTO();

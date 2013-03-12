@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
@@ -42,11 +41,11 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" DATE_FORMAT(lanc.DATA_LCTO_DISTRIBUIDOR,'%d/%m/%Y') as dataLancto,")
 		.append(" case estudo.liberado when 1 then 'LIBERADO'")
 		.append(" else ''")
-	    .append(" end as liberado,")
-	    .append(" estudo.ID as idEstudo,")
-	    .append(" prodEdic.REPARTE_DISTRIBUIDO as reparte,")
-	    .append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib")
-	    .append(" from produto prod")
+    	    	.append(" end as liberado,")
+    	    	.append(" estudo.ID as idEstudo,")
+    	    	.append(" prodEdic.REPARTE_DISTRIBUIDO as reparte,")
+    	    	.append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib")
+    	    	.append(" from produto prod")
 		.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
 		.append(" left join estoque_produto estoqueProd on estoqueProd.PRODUTO_EDICAO_ID = prodEdic.ID ")
 		.append(" left join estoque_produto_cota_juramentado estoqueProdJuram on estoqueProdJuram.PRODUTO_EDICAO_ID = prodEdic.ID ")
@@ -63,7 +62,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" and lanc.EXPEDICAO_ID is null")
 	 	.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev")
 	 	.append(" order by liberado");
-		
+	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));

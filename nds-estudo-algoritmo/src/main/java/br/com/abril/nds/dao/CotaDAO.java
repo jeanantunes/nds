@@ -1,169 +1,78 @@
 package br.com.abril.nds.dao;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.model.TipoAjusteReparte;
-import br.com.abril.nds.model.TipoSegmentoProduto;
 
+@Repository
 public class CotaDAO {
 
-    public BigDecimal getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(Cota cota, TipoSegmentoProduto tipoSegmentoProduto, TipoAjusteReparte[] tipoAjusteReparte) {
+    @Autowired
+    private NamedParameterJdbcTemplate jdbcTemplate;
 
-	BigDecimal ajusteAplicado = null;
+    @Value("#{query_estudo.queryProdutoEdicaoPorCota}")
+    private String queryProdutoEdicaoPorCota;
 
-	try {
+    @Value("#{query_estudo.queryCotaEquivalente}")
+    private String queryCotaEquivalente;
 
-	    StringBuilder query = new StringBuilder(" SELECT AR.AJUSTE_APLICADO FROM AJUSTE_REPARTE AR ");
+    @Value("#{query_estudo.queryCotaWithEstoqueProdutoCota}")
+    private String queryCotaWithEstoqueProdutoCota;
 
-	    if (tipoSegmentoProduto != null) {
-		query.append(" INNER JOIN TIPO_SEGMENTO_PRODUTO TSP ON (TSP.ID = AR.TIPO_SEGMENTO_AJUSTE_ID AND TSP.ID = ?) ");
-	    }
-
-	    query.append(" INNER JOIN COTA C ON (C.ID = AR.COTA_ID) ");
-	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
-	    query.append(" WHERE AR.COTA_ID = ? ");
-	    query.append(" AND ? >= AR.DATA_INICIO AND ? <= AR.DATA_FIM ");
-
-	    if (tipoAjusteReparte != null && tipoAjusteReparte.length > 0) {
-
-		query.append(" AND AR.FORMA_AJUSTE IN ( ");
-
-		int i = 0;
-		while (i < tipoAjusteReparte.length) {
-
-		    query.append("\"");
-		    query.append(tipoAjusteReparte[i].toString());
-		    query.append("\"");
-		    query.append(",");
-		    i++;
-		}
-
-		query.delete(query.length() - 1, query.length());
-
-		query.append(" ) ");
-
-	    }
-
-	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
-
-	    int i = 1;
-
-	    if (tipoSegmentoProduto != null) {
-		psmt.setLong(i++, tipoSegmentoProduto.getId());
-	    }
-
-	    psmt.setLong(i++, cota.getId());
-	    psmt.setString(i++, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
-	    psmt.setString(i++, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
-
-	    ResultSet rs = psmt.executeQuery();
-	    if (rs.next()) {
-		ajusteAplicado = rs.getBigDecimal("AJUSTE_APLICADO");
-	    }
-
-	} catch (Exception ex) {
-	    ex.printStackTrace();
-	}
-
-	return ajusteAplicado;
-    }
+    private Map<Long, BigDecimal> idsPesos = new HashMap<>();
 
     public Cota getIndiceAjusteCotaEquivalenteByCota(Cota cota) {
 
 	List<Cota> listEquivalente = new ArrayList<Cota>();
-
 	try {
-	    StringBuilder query = new StringBuilder(" SELECT CB.INDICE_AJUSTE, C.* FROM COTA_BASE_COTA CBC ");
-	    query.append(" INNER JOIN COTA_BASE CB ON (CB.ID = CBC.COTA_BASE_ID) ");
-	    query.append(" INNER JOIN COTA C ON (C.ID = CBC.COTA_ID) ");
-	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
-	    query.append(" WHERE CB.COTA_ID = ? ");
-	    query.append(" AND ? >= CB.DATA_INICIO AND ? <= CB.DATA_FIM ");
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("COTA_ID", cota.getId());
+	    params.put("DATA", new java.sql.Date(new Date().getTime()));
 
-	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
-	    psmt.setLong(1, cota.getId());
-	    psmt.setString(2, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
-	    psmt.setString(3, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
-
-	    ResultSet rs = psmt.executeQuery();
-	    while (rs.next()) {
-
-		if (rs.isFirst()) {
-		    cota.setIndiceAjusteEquivalente(rs.getBigDecimal("INDICE_AJUSTE"));
+	    listEquivalente = jdbcTemplate.query(queryCotaEquivalente, params, new RowMapper<Cota>() {
+		@Override
+		public Cota mapRow(ResultSet rs, int rowNum) throws SQLException {
+		    Cota temp = new Cota();
+		    temp.setId(rs.getLong("ID"));
+		    temp.setNumero(rs.getLong("NUMERO_COTA"));
+		    temp.setIndiceAjusteEquivalente(rs.getBigDecimal("INDICE_AJUSTE"));
+		    return temp;
 		}
-
-		Cota cotaEquivalente = new Cota();
-		cotaEquivalente.setId(rs.getLong("ID"));
-		listEquivalente.add(cotaEquivalente);
-	    }
-
+	    });
 	    cota.setEquivalente(listEquivalente);
-
 	} catch (Exception ex) {
 	    ex.printStackTrace();
 	}
-
 	return cota;
-    }
-
-    public List<Cota> getCotas(int limit) {
-	List<Cota> cotas = new ArrayList<Cota>();
-	try {
-	    StringBuffer sb = new StringBuffer("SELECT C.*, P.NOME FROM COTA C INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ORDER BY C.ID");
-	    if (limit > 0) {
-		sb.append(" limit ");
-		sb.append(limit);
-	    }
-	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(sb.toString());
-	    ResultSet rs = psmt.executeQuery();
-	    while (rs.next()) {
-		Cota cota = new Cota();
-		cota.setId(rs.getLong("ID"));
-		// cota.setNumero(rs.getLong("NUMERO_COTA"));
-		// cota.setNomePessoa(rs.getString("NOME"));
-
-		cotas.add(cota);
-	    }
-	} catch (Exception ex) {
-	    System.out.println("Ocorreu um erro ao tentar consultar as cotas");
-	    ex.printStackTrace();
-	}
-	return cotas;
-    }
-
-    public List<Cota> getCotas() {
-	return this.getCotas(-1);
     }
 
     public List<Cota> getCotaWithEstoqueProdutoCota() {
 	List<Cota> cotas = new ArrayList<Cota>();
 	try {
-	    StringBuilder query = new StringBuilder("SELECT C.*, P.NOME FROM COTA C ");
-	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
-	    query.append(" WHERE EXISTS (SELECT EPC.* FROM ESTOQUE_PRODUTO_COTA EPC WHERE EPC.COTA_ID = C.ID) ");
-	    query.append(" ORDER BY C.ID ");
-
-	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
-	    ResultSet rs = psmt.executeQuery();
+	    SqlRowSet rs = jdbcTemplate.queryForRowSet(queryCotaWithEstoqueProdutoCota, new HashMap<String, Object>());
 	    while (rs.next()) {
 		Cota cota = new Cota();
 		cota.setId(rs.getLong("ID"));
 		// cota.setNumero(rs.getLong("NUMERO_COTA"));
 		// cota.setNomePessoa(rs.getString("NOME"));
-
 		cotas.add(cota);
 	    }
 	} catch (Exception ex) {
@@ -175,71 +84,73 @@ public class CotaDAO {
 
     public List<Cota> getCotasComEdicoesBase(Estudo estudo) {
 	List<Cota> returnListCota = new ArrayList<>();
-	try {
-	    Map<Long, Integer> idsPesos = new HashMap<Long, Integer>();
-	    for (ProdutoEdicaoBase edicao : estudo.getEdicoesBase()) {
-		idsPesos.put(edicao.getId(), edicao.getPeso());
-	    }
-	    String idsString = idsPesos.keySet().toString().replaceAll("\\]|\\[", "");
-	    PreparedStatement ps = Conexao.getConexao().prepareStatement(SQL_PRODUTO_EDICAO_POR_COTA.replaceAll("\\#", idsString));
-
-	    int param = 0;
-	    ps.setLong(++param, estudo.getProduto().getIdProduto());
-	    ps.setLong(++param, estudo.getProduto().getIdProduto());
-	    ps.setLong(++param, estudo.getProduto().getNumeroEdicao());
-
-	    ResultSet rs = ps.executeQuery();
-
-	    long prevIdCota = 0;
-	    while (rs.next()) {
-		long idCota = rs.getLong("COTA_ID");
-
-		if (prevIdCota != idCota) {
-		    Cota cota = new Cota();
-		    cota.setId(idCota);
-		    cota.setNumero(rs.getLong("NUMERO_COTA"));
-		    traduzFormaAjuste(rs, cota);
-		    // TODO: ainda faltam carregar os parâmetros para ajuste de segmento e histórico
-		    // (estarão gravados no banco respectivamente: 'segmento' e 'histórico')
-		    cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos, false));
-		    returnListCota.add(cota);
-		} else {
-		    Cota cota = returnListCota.get(returnListCota.size() - 1);
-		    cota.getEdicoesRecebidas().addAll(getEdicoes(rs, idsPesos, true));
-		}
-		prevIdCota = idCota;
-	    }
-
-	} catch (ClassNotFoundException | SQLException e) {
-	    e.printStackTrace();
+	for (ProdutoEdicaoBase edicao : estudo.getEdicoesBase()) {
+	    idsPesos.put(edicao.getId(), edicao.getPeso());
 	}
+
+	Map<String, Object> params = new HashMap<>();
+	params.put("ID_PRODUTO", estudo.getProduto().getIdProduto());
+	params.put("NUMERO_EDICAO", estudo.getProduto().getNumeroEdicao());
+	params.put("TIPO_SEGMENTO", estudo.getProduto().getTipoSegmentoProduto());
+	params.put("IDS_PRODUTOS", idsPesos.keySet());
+
+	returnListCota = jdbcTemplate.query(queryProdutoEdicaoPorCota, params, new RowMapper<Cota>() {
+	    @Override
+	    public Cota mapRow(ResultSet rs, int rowNum) throws SQLException {
+		Cota cota = new Cota();
+		cota.setId(rs.getLong("COTA_ID"));
+		cota.setNumero(rs.getLong("NUMERO_COTA"));
+		cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
+		cota.setMix(rs.getInt("MIX") == 1);
+		traduzAjusteReparte(rs, cota);
+		cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos));
+		return cota;
+	    }
+	});
+
+	returnListCota = agrupaCotas(returnListCota);
 	return returnListCota;
     }
 
-    private void traduzFormaAjuste(ResultSet rs, Cota cota) throws SQLException {
+    private void traduzAjusteReparte(ResultSet rs, Cota cota) throws SQLException {
 	String formaAjuste = rs.getString("FORMA_AJUSTE");
-	if ("vendaMedia".equals(formaAjuste)) {
-	    cota.setVendaMediaMaisN(rs.getBigDecimal("AJUSTE_APLICADO"));
-	} else if ("encalheMaximo".equals(formaAjuste)) {
-	    cota.setPercentualEncalheMaximo(rs.getBigDecimal("AJUSTE_APLICADO"));
+	if ((formaAjuste != null) && (!formaAjuste.isEmpty())) {
+	    if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_VENDA_MEDIA)) {
+		cota.setVendaMediaMaisN(rs.getBigDecimal("AJUSTE_APLICADO"));
+	    } else if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_ENCALHE_MAX)) {
+		cota.setPercentualEncalheMaximo(rs.getBigDecimal("AJUSTE_APLICADO"));
+	    } else {
+		cota.setAjusteReparte(rs.getBigDecimal("AJUSTE_APLICADO"));
+	    }
 	}
     }
 
-    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, Integer> idsPesos, boolean forceEdicaoFechada) throws SQLException {
+    private List<Cota> agrupaCotas(List<Cota> lista) {
+	if (lista.size() > 0) {
+	    List<Cota> novaLista = new ArrayList<Cota>();
+	    Cota temp = lista.get(0);
+	    for (int i = 1; i < lista.size(); i++) {
+		if (temp.equals(lista.get(i))) {
+		    temp.getEdicoesRecebidas().addAll(lista.get(i).getEdicoesRecebidas());
+		} else {
+		    novaLista.add(temp);
+		    temp = lista.get(i);
+		}
+	    }
+	    return novaLista;
+	} else {
+	    return lista;
+	}
+    }
+
+    private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, BigDecimal> idsPesos) throws SQLException {
 	List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
 	ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 
 	produtoEdicao.setIdProduto(rs.getLong("PRODUTO_ID"));
 	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 	produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-
-	// FIXME - gambeta loca remover!!!!!!!
-	if (forceEdicaoFechada) {
-	    produtoEdicao.setEdicaoAberta(false);
-	} else {
-	    produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
-	}
-
+	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
 	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
 	produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
 	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
@@ -272,15 +183,4 @@ public class CotaDAO {
     private static final String LANCAMENTO_PARCIAL = "PARCIAL";
     private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
     private static final String STATUS_FECHADO = "FECHADO";
-
-    private static final String SQL_PRODUTO_EDICAO_POR_COTA = "select " + "    c.id as COTA_ID, " + "    c.NUMERO_COTA, " + "    p.id as PRODUTO_ID, "
-	    + "    pe.id as PRODUTO_EDICAO_ID, " + "    l.id as LANCAMENTO_ID, " + "    l.STATUS, " + "    l.TIPO_LANCAMENTO, " + "    tp.GRUPO_PRODUTO, "
-	    + "    l.DATA_LCTO_DISTRIBUIDOR, " + "    epc.QTDE_RECEBIDA, " + "    (epc.QTDE_RECEBIDA - epc.QTDE_DEVOLVIDA) as QTDE_VENDA, " + "    pe.PACOTE_PADRAO, "
-	    + "    pe.NUMERO_EDICAO, " + "    p.CODIGO, " + "    ar.AJUSTE_APLICADO, " + "    ar.FORMA_AJUSTE, " + "	mcp.REPARTE_MAX, " + "	mcp.REPARTE_MIN, "
-	    + "	fr.QTDE_EXEMPLARES " + "from produto_edicao pe " + "join produto p on pe.PRODUTO_ID = p.id " + "join lancamento l on pe.ID = l.PRODUTO_EDICAO_ID "
-	    + "join tipo_produto tp on tp.ID = p.TIPO_PRODUTO_ID " + "join estoque_produto_cota epc on pe.ID = epc.PRODUTO_EDICAO_ID "
-	    + "join cota c on c.ID = epc.COTA_ID " + "left join ajuste_reparte ar ON ar.COTA_ID = epc.COTA_ID "
-	    + "left join mix_cota_produto mcp on mcp.id_cota = c.id and mcp.id_produto = ? "
-	    + "left join fixacao_reparte fr on fr.id_cota = c.id and fr.id_produto = ? and ? between fr.ed_inicial and fr.ed_final " + "where pe.id in (#) "
-	    + "order by c.ID , pe.NUMERO_EDICAO desc ";
 }

@@ -953,8 +953,25 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
             $( '.opcoesEstudos' ).hide();
             $('.setaMuda').attr('src', contextPath + '/images/p7PM_dark_south.gif');
          }, 2000);
-	};
+	},
 	
+	this.gerarEstudoAutomatico = function() {
+		$.each(T.lancamentos, function(index, row){
+			if (row.selecionado) {
+				var data = [];
+				data.push({name:'codigoProduto', value: row.codigoProduto});
+				data.push({name:'reparte', value: row.repDistrib});
+				
+				$.postJSON(
+					pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", 
+					data,
+					function(result) {
+						alert('teste');
+					}
+				);
+			}
+		});
+	};
 }
 
 //@ sourceURL=matrizDistribuicao.js

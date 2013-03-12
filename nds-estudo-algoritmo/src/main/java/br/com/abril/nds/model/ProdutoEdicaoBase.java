@@ -1,5 +1,6 @@
 package br.com.abril.nds.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
@@ -13,15 +14,16 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
     private String codigoProduto;
     private boolean parcial;
     private boolean edicaoAberta;
-    private Integer peso;
+    private BigDecimal peso;
     private Long idLancamento;
     private Date dataLancamento;
     private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
     private Integer periodo;
-    private TipoSegmentoProduto tipoSegmentoProduto;
+    private Long tipoSegmentoProduto;
+    private BigDecimal pacotePadrao;
 
     public ProdutoEdicaoBase() {
-	peso = 1;
+	peso = BigDecimal.ONE;
     }
 
     public ProdutoEdicaoBase(String codigoProduto) {
@@ -45,11 +47,11 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 	this.numeroEdicao = numeroEdicao;
     }
 
-    public Integer getPeso() {
+    public BigDecimal getPeso() {
 	return peso;
     }
 
-    public void setPeso(Integer peso) {
+    public void setPeso(BigDecimal peso) {
 	this.peso = peso;
     }
 
@@ -130,12 +132,24 @@ public class ProdutoEdicaoBase extends GenericDTO<ProdutoEdicao> {
 	this.periodo = periodo;
     }
 
-    public TipoSegmentoProduto getTipoSegmentoProduto() {
+    public Long getTipoSegmentoProduto() {
 	return tipoSegmentoProduto;
     }
 
-    public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
+    public void setTipoSegmentoProduto(Long tipoSegmentoProduto) {
 	this.tipoSegmentoProduto = tipoSegmentoProduto;
+    }
+
+    /**
+     * Atributo utilizado apenas para transferir este valor ao estudo após carregado pelo método getLastProdutoEdicaoByIdProduto
+     * @return {@link BigDecimal}
+     */
+    public BigDecimal getPacotePadrao() {
+	return pacotePadrao;
+    }
+
+    public void setPacotePadrao(BigDecimal pacotePadrao) {
+	this.pacotePadrao = pacotePadrao;
     }
 
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.process.bonificacoes;
 
-import br.com.abril.nds.model.Estudo;
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.medias.Medias;
@@ -15,11 +16,8 @@ import br.com.abril.nds.process.medias.Medias;
  * Processo Anterior: {@link Medias} Próximo Processo: {@link AjusteCota}
  * </p>
  */
+@Component
 public class Bonificacoes extends ProcessoAbstrato {
-
-    public Bonificacoes(Estudo estudo) {
-	super(estudo);
-    }
 
     @Override
     protected void executarProcesso() {

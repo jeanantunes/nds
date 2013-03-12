@@ -2,6 +2,8 @@ package br.com.abril.nds.process.vendamediafinal;
 
 import java.math.BigDecimal;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
@@ -16,13 +18,10 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
  * 
  * Processo Anterior: {@link JornaleirosNovos} Próximo Processo: {@link AjusteReparte} </p>
  */
+@Component
 public class VendaMediaFinal extends ProcessoAbstrato {
 
     private BigDecimal value = BigDecimal.ZERO;
-
-    public VendaMediaFinal(Cota cota) {
-	super(cota);
-    }
 
     @Override
     protected void executarProcesso() {
