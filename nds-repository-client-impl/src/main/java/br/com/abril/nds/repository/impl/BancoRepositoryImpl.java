@@ -223,6 +223,22 @@ public class BancoRepositoryImpl extends AbstractRepositoryModel<Banco,Long> imp
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Banco> obterBancosPorNome(String nomeBanco, Integer qtdMaxResult) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from Banco b ");		
+		hql.append(" where lower(b.nome) like :nome or lower(b.apelido) like :nome ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+			
+	    query.setParameter("nome", "%" + nomeBanco.toLowerCase() + "%");
+	    query.setMaxResults(qtdMaxResult);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Banco> obterBancosPorStatus(Boolean ativo) {
 		Criteria criteria = getSession().createCriteria(Banco.class);
 		criteria.add(Restrictions.eq("ativo", ativo));

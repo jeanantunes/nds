@@ -197,6 +197,20 @@ public class TransportadorRepositoryImpl extends
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Pessoa> obterTransportadorPorNome(String nomeTransportador, Integer qtdMaxResult) {
+		
+		StringBuilder hql = new StringBuilder("select pessoa ");
+		hql.append(" from Transportador t join t.pessoaJuridica pessoa ")
+		   .append(" where lower(pessoa.razaoSocial) like :nomeTransportador  ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("nomeTransportador", "%" + nomeTransportador.toLowerCase() + "%");
+		query.setMaxResults(qtdMaxResult);
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Pessoa> obterTransportadorPorNomeFantasia(String nomeFantasia) {
 		
 		StringBuilder hql = new StringBuilder("select pessoa ");
@@ -205,6 +219,21 @@ public class TransportadorRepositoryImpl extends
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("nomeFantasia", "%" + nomeFantasia.toLowerCase() + "%");
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterTransportadorPorNomeFantasia(String nomeFantasia, Integer qtdMaxResult) {
+		
+		StringBuilder hql = new StringBuilder("select pessoa ");
+		hql.append(" from Transportador t join t.pessoaJuridica pessoa ")
+		   .append(" where lower(pessoa.nomeFantasia) like :nomeFantasia  ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("nomeFantasia", "%" + nomeFantasia.toLowerCase() + "%");
+		query.setMaxResults(qtdMaxResult);
 		
 		return query.list();
 	}
