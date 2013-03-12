@@ -61,11 +61,11 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					String.format( "Produto %1$s não encontrado.", input.getCodigoPublicacao() )
 				);
 			return ;
-		} else {
+		} /*else {
 			if (!produto.getOrigem().equals(Origem.MANUAL)) {
 				return;
 			}
-		}
+		}*/
 		
 		
 		// regra para Registro de Lancamento 		

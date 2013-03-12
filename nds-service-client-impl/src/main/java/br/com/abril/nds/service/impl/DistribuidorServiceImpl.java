@@ -331,4 +331,20 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		return this.distribuidorRepository.obterId();
 	}
+	
+	public int obterOrdinalUltimoDiaRecolhimento() {
+		
+		ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
+				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+		
+		int ordinal = 0;
+		
+		ordinal = parametroRecolhimento.isDiaRecolhimentoPrimeiro() ? 1 : ordinal;
+		ordinal = parametroRecolhimento.isDiaRecolhimentoSegundo()  ? 2 : ordinal;
+		ordinal = parametroRecolhimento.isDiaRecolhimentoTerceiro() ? 3 : ordinal;
+		ordinal = parametroRecolhimento.isDiaRecolhimentoQuarto()   ? 4 : ordinal;
+		ordinal = parametroRecolhimento.isDiaRecolhimentoQuinto()   ? 5 : ordinal;
+		
+		return ordinal;
+	}
 }
