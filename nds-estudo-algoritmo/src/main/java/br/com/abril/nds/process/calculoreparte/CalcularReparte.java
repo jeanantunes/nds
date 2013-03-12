@@ -2,10 +2,16 @@ package br.com.abril.nds.process.calculoreparte;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import br.com.abril.nds.dao.EstudoDAO;
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.process.ajustefinalreparte.AjusteFinalReparte;
+import br.com.abril.nds.process.ajustefinalreparte.GravarReparteFinalCota;
+import br.com.abril.nds.process.ajustefinalreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 
 /**
@@ -25,14 +31,20 @@ import br.com.abril.nds.process.definicaobases.DefinicaoBases;
  * Próximo Processo: N/A
  * </p>
  */
+@Component
 public class CalcularReparte extends ProcessoAbstrato {
 
+    @Autowired
+    private MinimoMaximo minimoMaximo;
+    
+    @Autowired
+    private EstudoDAO estudoDAO;
+    
+    @Autowired
+    private GravarReparteJuramentado gravarReparteJuramentado;
+    
     BigDecimal excedenteDistribuir = BigDecimal.ZERO;
     BigDecimal percentualExcedente = BigDecimal.ZERO;
-
-    public CalcularReparte(Estudo estudo) {
-	super(estudo);
-    }
 
     @Override
     public void executarProcesso() throws Exception {
@@ -42,18 +54,18 @@ public class CalcularReparte extends ProcessoAbstrato {
 	// Cálculos do percentual de excedente
 	calcularPercentualExcedente();
 
-	MinimoMaximo minimoMaximo = new MinimoMaximo(getEstudo());
+	minimoMaximo.setEstudo(getEstudo());
 	minimoMaximo.executar();
 
 	// Ajustar reparte calculado ao pacote padrão ou simplesmente arredondar reparte calculado
 	ajustarReparteCalculado();
 
-	GravarReparteJuramentado gravarReparteJuramentado = new GravarReparteJuramentado(getEstudo());
+	gravarReparteJuramentado.setEstudo(getEstudo());
 	gravarReparteJuramentado.executar();
     }
 
     public void calcularAjusteReparte() {
-	if (getEstudo().getReparteDistribuir().doubleValue() > getEstudo().getSomatoriaVendaMedia().doubleValue()) {
+	if (getEstudo().getReparteDistribuir().compareTo(getEstudo().getSomatoriaVendaMedia()) > 0) {
 	    excedenteDistribuir = getEstudo().getReparteDistribuir().subtract(getEstudo().getSomatoriaVendaMedia());
 	    boolean temEdicaoBaseFechada = temEdicaoBaseFechada();
 
@@ -70,8 +82,8 @@ public class CalcularReparte extends ProcessoAbstrato {
 		    if (getEstudo().getExcedente().compareTo(BigDecimal.ZERO) > 0) {
 			percentual = BigDecimal.valueOf(100).divide(getEstudo().getExcedente(), 2, BigDecimal.ROUND_HALF_UP);
 		    }
-		    if (percentual.doubleValue() < 10) {
-			if (BigDecimal.ONE.doubleValue() > getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.01)).doubleValue()) {
+		    if (percentual.compareTo(BigDecimal.valueOf(10)) < 0) {
+			if (BigDecimal.ONE.compareTo(getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.01))) > 0) {
 			    ajusteReparte = BigDecimal.ONE;
 			} else {
 			    ajusteReparte = getEstudo().getExcedente().multiply(BigDecimal.valueOf(0.01));
@@ -91,13 +103,21 @@ public class CalcularReparte extends ProcessoAbstrato {
 	if (getEstudo().getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
 	    percentualExcedente = getEstudo().getExcedente().divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
 	}
+	
 	for (Cota cota : getEstudo().getCotas()) {
-	    if ((cota.getReparteMinimo() != null) && (percentualExcedente.doubleValue() < 0)) {
+	    if (percentualExcedente.compareTo(BigDecimal.ZERO) < 0) {
 		// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota) + ReparteMínimo
 		BigDecimal temp = getEstudo().getReparteDistribuir()
 			.divide(getEstudo().getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
-		cota.setReparteCalculado(temp.multiply(cota.getVendaMedia()).add(cota.getReparteMinimo()));
+		cota.setReparteCalculado(temp.multiply(cota.getVendaMedia()));
+		// se o reparte mínimo for nulo, simplesmente não o adiciona deixando o cálculo conforme abaixo
+		// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota)
+		if (cota.getReparteMinimo() != null) {
+		    cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()));
+		}
 	    } else {
+		estudoDAO.carregarPercentuaisProporcao(getEstudo());
+		
 		if ((getEstudo().getPercentualProporcaoExcedentePDV() != null) && 
 			(getEstudo().getPercentualProporcaoExcedenteVenda() != null)) {
 		    // ExcedentePDV = ((ExcedenteDistribuir * %PropPDV) / SPDVEstudo) * PDVCota

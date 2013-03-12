@@ -1,4 +1,4 @@
-package src.main.java.br.com.abril.nds.util;
+package br.com.abril.nds.util;
 
 public class TesteBlocks {
 	

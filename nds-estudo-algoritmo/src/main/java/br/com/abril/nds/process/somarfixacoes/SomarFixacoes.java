@@ -1,6 +1,7 @@
 package br.com.abril.nds.process.somarfixacoes;
 
-import br.com.abril.nds.model.Estudo;
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
@@ -16,11 +17,8 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
  * {@link VerificarTotalFixacoes}
  * </p>
  */
+@Component
 public class SomarFixacoes extends ProcessoAbstrato {
-
-    public SomarFixacoes(Estudo estudo) {
-	super(estudo);
-    }
 
     @Override
     protected void executarProcesso() {

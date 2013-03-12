@@ -6,37 +6,35 @@ import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
+import br.com.abril.nds.process.ajustefinalreparte.GravarReparteFinalCota;
 
 public class GravarReparteFinalCotaTest {
 
-	Estudo estudo = null;
-	GravarReparteFinalCota gravarReparteFinalCota=null;
-	
-	
-	@Before
-	public void setUp() throws Exception {
-		estudo = new Estudo();
-		estudo.setCotas(new ArrayList<Cota>());
-		
-		Cota cota = new Cota();
-		
-		estudo.getCotas().add(cota);
-		
-		this.gravarReparteFinalCota=new GravarReparteFinalCota(estudo);
-	}
-	
+    Estudo estudo = null;
 
-	@Test
-	public void testExecutar() {
-		try {
-			gravarReparteFinalCota.executar();
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail("Exceção inválida.");
-		}
+    @Autowired
+    private GravarReparteFinalCota gravarReparteFinalCota;
+
+    @Before
+    public void setUp() throws Exception {
+	estudo = new Estudo();
+	estudo.setCotas(new ArrayList<Cota>());
+	Cota cota = new Cota();
+	estudo.getCotas().add(cota);
+	gravarReparteFinalCota.setEstudo(estudo);
+    }
+
+    @Test
+    public void testExecutar() {
+	try {
+	    gravarReparteFinalCota.executar();
+	} catch (Exception e) {
+	    fail("Exceção inválida.");
 	}
+    }
 
 }

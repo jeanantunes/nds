@@ -1,8 +1,8 @@
-package br.com.abril.nds.dto;
+package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
-public class DesenglobaDTO implements Serializable {
+public class DesenglobaVO implements Serializable {
 
 	/**
 	 * 

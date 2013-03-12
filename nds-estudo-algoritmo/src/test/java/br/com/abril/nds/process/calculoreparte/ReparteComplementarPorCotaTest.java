@@ -1,12 +1,12 @@
 package br.com.abril.nds.process.calculoreparte;
 
-import static org.junit.Assert.fail;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
@@ -30,7 +30,7 @@ public class ReparteComplementarPorCotaTest {
 		ProdutoEdicaoBase peb = new ProdutoEdicaoBase();
 		peb.setId(91956l);
 		estudo.setProduto(peb);
-		estudo.setEdicoesBase(new ArrayList<ProdutoEdicaoBase>());
+		estudo.setEdicoesBase(new LinkedList<ProdutoEdicaoBase>());
 	
 		ProdutoEdicaoBase p = new ProdutoEdicaoBase();
 		p.setIdProduto(1l);

@@ -1,222 +1,123 @@
 package br.com.abril.nds.dao;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 
+@Repository
 public class RankingSegmentoDAO {
-	
-	/*final String SQL_RETURN_ULTIMO_ID_RANKING_GERADO = "SELECT max(id) from ranking_segmento_gerados";
-	
-	public Long getUltimoIDRankingSegmentoGerado(){
-		
-		Long d = null;
-		try {
-			StringBuffer sb = new StringBuffer(SQL_RETURN_ULTIMO_ID_RANKING_GERADO);
-			
-			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
-					sb.toString());
-			ResultSet rs = psmt.executeQuery();
-			while (rs.next()) {
-				d = rs.getLong(1);
-			}
-		} catch (Exception ex) {
-			System.out.println("Ocorreu um erro ao tentar consultar");
-			ex.printStackTrace();
-		}
-		
-		return d;
-	}
-	
-*/	
-	private String sqlRankingSegmentoEdicoesBase(int qtde){
-		
-		StringBuilder SQL_RANKING_SEGMENTO_EDICOES_BASE = new StringBuilder()
-				.append(" ( select cota_id,produto_edicao_id from ranking_segmento rs ") 
-				.append(" where rs.RANKING_SEGMENTO_GERADOS_ID=(select max(rsg.id) from ranking_segmento_gerados rsg) ")
-				.append(" and rs.produto_edicao_id in (:idBase1) ")
-				.append(" ) ")
-				.append(" union ")
-				.append(" ( ")
-				.append(" select ") 
-				.append(" COTA_ID,produto_edicao_id ")
-				.append(" from  movimento_estoque_cota mec ")
-				.append(" where ") 
-				.append(" mec.tipo_movimento_id=21 ")
-				.append(" and mec.produto_edicao_id in (:idBase2) ");
-		
-		if(qtde>=3){
-			SQL_RANKING_SEGMENTO_EDICOES_BASE.append(" and mec.qtde >= ").append(qtde).append(")");
-			
-		}else{
-			SQL_RANKING_SEGMENTO_EDICOES_BASE.append(" and and mec.qtde = ").append(qtde).append(")");
-			
-		}
-		return SQL_RANKING_SEGMENTO_EDICOES_BASE.toString();
-		
-	}
 
-	public List<Long> getCotasOrdenadaPorSegmentoEdicaoAberta(List<Cota> cotaList,ProdutoEdicaoBase edicaoBase) {
+    @Autowired
+    private NamedParameterJdbcTemplate jdbcTemplate;
 
-		StringBuilder sb = new StringBuilder()
-		.append(" select distinct mec.COTA_ID from movimento_estoque_cota mec ") 
-		.append(" join produto_edicao pe ON pe.ID = mec.PRODUTO_EDICAO_ID ")
-		.append(" join produto on produto.ID = pe.PRODUTO_ID ")
-		.append(" where mec.TIPO_MOVIMENTO_ID=21 ")
-		.append(" and mec.COTA_ID in (?) ")
-		.append(" and pe.id in ") 
-		.append(" (-- SQL para ver se recebeu a edicao aberta do produto ")
-		.append(" select distinct produto_edicao.id from lancamento l ") 
-		.append(" join produto_edicao ON produto_edicao.ID = l.PRODUTO_EDICAO_ID ")
-		.append(" join produto on produto.ID = produto_edicao.PRODUTO_ID ")
-		.append(" where l.STATUS<>'FECHADO' ")
-		.append(" and produto_edicao.id=? 		) ");
-		
-		List<Long> idList = new ArrayList<Long>();
-		for (Cota c : cotaList) {
-			idList.add(c.getId());
-		}
-		
-		try {
-			
-			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
-					sb.toString());
-			
-			int idx = 1;
-			String join = StringUtils.join(idList,",");
-			psmt.setString(idx++, join);
-			psmt.setLong(idx++, edicaoBase.getId());
-			
-			idList.clear();
-			
-			ResultSet rs = psmt.executeQuery();
-			while (rs.next()) {
-				idList.add(rs.getLong(1));
-			}
-			
-			
-		} catch (Exception ex) {
-			System.out.println("Ocorreu um erro ao tentar consultar as cotas");
-			ex.printStackTrace();
-		}
-		
-		return idList;
+    @Value("#{query_estudo.queryCotasOrdenadasPorSegmentoSemEdicaoBase}")
+    private String queryCotasOrdenadasPorSegmentoSemEdicaoBase;
+
+    @Value("#{query_estudo.queryCotasOrdenadasMaiorMenor}")
+    private String queryCotasOrdenadasMaiorMenor;
+    
+    @Value("#{query_estudo.queryRankingSegmentoEdicoesBase}")
+    private String queryRankingSegmentoEdicoesBase;
+    
+    @Value("#{query_estudo.queryCotasOrdenadasPorSegmentoEdicaoAberta}")
+    private String queryCotasOrdenadasPorSegmentoEdicaoAberta;
+
+    /*
+     * final String SQL_RETURN_ULTIMO_ID_RANKING_GERADO = "SELECT max(id) from ranking_segmento_gerados";
+     * 
+     * public Long getUltimoIDRankingSegmentoGerado(){
+     * 
+     * Long d = null; try { StringBuffer sb = new StringBuffer(SQL_RETURN_ULTIMO_ID_RANKING_GERADO);
+     * 
+     * PreparedStatement psmt = Conexao.getConexao().prepareStatement( sb.toString()); ResultSet rs = psmt.executeQuery(); while
+     * (rs.next()) { d = rs.getLong(1); } } catch (Exception ex) { System.out.println("Ocorreu um erro ao tentar consultar");
+     * ex.printStackTrace(); }
+     * 
+     * return d; }
+     */
+
+    public List<Long> getCotasOrdenadaPorSegmentoEdicaoAberta(List<Cota> cotaList, List<Long> idEdicoesBase) {
+
+	List<Long> retorno = new ArrayList<>();
+	List<Long> idList = new ArrayList<>();
+	for (Cota c : cotaList) {
+	    idList.add(c.getId());
 	}
+	Map<String, Object> params = new HashMap<>();
+	params.put("COTA_IDS", idList);
+	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryCotasOrdenadasPorSegmentoEdicaoAberta, params);
 
-	public List<Long> getCotasOrdenadaPorSegmentoSemEdicaoBase(List<Cota> cotaList,List<ProdutoEdicaoBase> edicoesBase) {
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(" SELECT distinct COTA_ID FROM RANKING_SEGMENTO WHERE RANKING_SEGMENTO_GERADOS_ID = (select max(id) from ranking_segmento_gerados) and COTA_ID in (?)")
-		.append("and produto_edicao_id not in(?) ");
-		
-		List<Long> idList = new ArrayList<Long>();
-		List<Long> idListEdicoesBase = new ArrayList<Long>();
-		
-		for (Cota c : cotaList) {
-			idList.add(c.getId());
-		}
-		
-		for (ProdutoEdicaoBase c : edicoesBase) {
-			idListEdicoesBase.add(c.getId());
-		}
-		
-		try {
-			
-			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
-					sb.toString());
-			
-			psmt.setString(1, StringUtils.join(idList,","));
-			psmt.setString(1, StringUtils.join(idListEdicoesBase,","));
-			
-			idList.clear();
-			
-			ResultSet rs = psmt.executeQuery();
-			while (rs.next()) {
-				idList.add(rs.getLong(1));
-			}
-			
-			
-		} catch (Exception ex) {
-			System.out.println("Ocorreu um erro ao tentar consultar as cotas");
-			ex.printStackTrace();
-		}
-		
-		return idList;
+	while (rs.next()) {
+	    retorno.add(rs.getLong(1));
 	}
-	
-	public List<Long> getCotasOrdenadaPorSegmento(List<Cota> cList,List<ProdutoEdicaoBase> edicoesBase,int qtde) {
-		
-		List<Long> idList = new ArrayList<Long>();
-		for (ProdutoEdicaoBase c : edicoesBase) {
-			idList.add(c.getId());
-		}
-		
-		try {
-			
-			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
-					sqlRankingSegmentoEdicoesBase(qtde));
-			
-			int idx = 1;
-			String join = StringUtils.join(idList,",");
-			psmt.setString(idx++, join);
-			psmt.setString(idx++, join);
-			
-			
-			ResultSet rs = psmt.executeQuery();
-			idList.clear();
-			
-			while (rs.next()) {
-				idList.add(rs.getLong(idx));
-			}
-		} catch (Exception ex) {
-			System.out.println("Ocorreu um erro ao tentar consultar");
-			ex.printStackTrace();
-		}
-		
-		return idList;
-	}
+	return retorno;
+    }
 
-	
-	public List<Long> getCotasOrdenadasMaiorMenor(List<Cota> cotaList, ProdutoEdicaoBase produtoEdicaoBase) {
+    public List<Long> getCotasOrdenadaPorSegmentoSemEdicaoBase(List<Cota> cotaList, List<ProdutoEdicaoBase> edicoesBase) {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(" SELECT distinct COTA_ID FROM RANKING_SEGMENTO WHERE RANKING_SEGMENTO.produto_edicao_id = ? ")
-		.append(" and RANKING_SEGMENTO_GERADOS_ID = (select max(id) from ranking_segmento_gerados) and COTA_ID in (?)  ");
-		
-		List<Long> idList = new ArrayList<Long>();
-		for (Cota c : cotaList) {
-			idList.add(c.getId());
-		}
-		
-		try {
-			
-			PreparedStatement psmt = Conexao.getConexao().prepareStatement(
-					sb.toString());
-			
-			int idx = 1;
-			psmt.setLong(idx++, produtoEdicaoBase.getId());
-			psmt.setString(idx++, StringUtils.join(idList,","));
-			
-			idList.clear();
-			
-			ResultSet rs = psmt.executeQuery();
-			while (rs.next()) {
-				idList.add(rs.getLong(1));
-			}
-			
-			
-		} catch (Exception ex) {
-			System.out.println("Ocorreu um erro ao tentar consultar as cotas");
-			ex.printStackTrace();
-		}
-		
-		return idList;
+	List<Long> idList = new ArrayList<>();
+	List<Long> idListEdicoesBase = new ArrayList<>();
+	for (Cota c : cotaList) {
+	    idList.add(c.getId());
 	}
+	for (ProdutoEdicaoBase c : edicoesBase) {
+	    idListEdicoesBase.add(c.getId());
+	}
+	Map<String, Object> params = new HashMap<>();
+	params.put("IDS_COTA", idList);
+	params.put("IDS_PRODUTO_EDICAO", idListEdicoesBase);
+	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryCotasOrdenadasPorSegmentoSemEdicaoBase, params);
+
+	List<Long> retorno = new ArrayList<>();
+	while (rs.next()) {
+	    retorno.add(rs.getLong(1));
+	}
+	return retorno;
+    }
+
+    public List<Long> getCotasOrdenadaPorSegmento(List<Cota> cList, List<ProdutoEdicaoBase> edicoesBase, int qtde) {
+
+	List<Long> listaProdutoEdicao = new ArrayList<>();
+	for (ProdutoEdicaoBase edicao : edicoesBase) {
+	    listaProdutoEdicao.add(edicao.getId());
+	}
+	Map<String, Object> params = new HashMap<>();
+	params.put("IDS_BASE", listaProdutoEdicao);
+	params.put("QTDE", qtde);
+
+	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryRankingSegmentoEdicoesBase.replace("#", qtde >= 3 ? ">=" : "="), params);
+	List<Long> retorno = new ArrayList<>();
+	while (rs.next()) {
+	    retorno.add(rs.getLong(1));
+	}
+	return retorno;
+    }
+
+    public List<Long> getCotasOrdenadasMaiorMenor(List<Cota> cotaList, ProdutoEdicaoBase produtoEdicaoBase) {
+	List<Long> listaCotas = new ArrayList<>();
+	for (Cota cota : cotaList) {
+	    listaCotas.add(cota.getId());
+	}
+	Map<String, Object> params = new HashMap<>();
+	params.put("PRODUTO_EDICAO_ID", produtoEdicaoBase.getId());
+	params.put("IDS_COTA", listaCotas);
+	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryCotasOrdenadasMaiorMenor, params);
+
+
+	List<Long> retorno = new ArrayList<>();
+	while (rs.next()) {
+	    retorno.add(rs.getLong(1));
+	}
+	return retorno;
+    }
 }
