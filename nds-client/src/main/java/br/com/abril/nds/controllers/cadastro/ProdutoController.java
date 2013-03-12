@@ -134,6 +134,10 @@ public class ProdutoController extends BaseController {
 	
 	@Post
 	public void pesquisarPorCodigoProduto(String codigoProduto) throws ValidacaoException{
+		
+		if(codigoProduto == null || "".equals(codigoProduto.trim()))
+				throw new ValidacaoException(TipoMensagem.WARNING, "Código vazio!");
+		
 		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto == null) {
@@ -207,6 +211,25 @@ public class ProdutoController extends BaseController {
 				ItemAutoComplete itemAutoComplete =
 					new ItemAutoComplete(produtoEd.getNumeroEdicao().toString(), produtoEd.getNumeroEdicao().toString(), produtoEd.getId().intValue());
 				
+				listaProdutos.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
+	
+	@Post
+	public void autoCompletarPorCodProduto(String codigoProduto) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeCodigo(codigoProduto);
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProduto != null && !listaProduto.isEmpty()){
+			
+			for (Produto produto : listaProduto) {
+				ItemAutoComplete itemAutoComplete =
+						new ItemAutoComplete(produto.getCodigo(), produto.getCodigo(), produto.getId().intValue());
+
 				listaProdutos.add(itemAutoComplete);
 			}
 		}
@@ -703,4 +726,5 @@ public class ProdutoController extends BaseController {
 		
 		result.nothing();
 	}
+	
 }

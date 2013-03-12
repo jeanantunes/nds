@@ -8,9 +8,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -37,6 +39,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -67,7 +70,6 @@ import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -183,14 +185,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		this.cancelarDividaCobranca(null, idCota);
 		
 		// buscar movimentos financeiros da cota, se informada, caso contrario de todas as cotas
-		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota);
-
+		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
+				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota);
 		
 		List<String> msgs = new ArrayList<String>();
 		
-		
 		if (listaMovimentoFinanceiroCota != null && !listaMovimentoFinanceiroCota.isEmpty()){
-			
 			
 			//Varre todos os movimentos encontrados, agrupando por cota e por fornecedor
 			Cota ultimaCota = listaMovimentoFinanceiroCota.get(0).getCota();
@@ -199,24 +199,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if (ultimoFornecedor == null){
 		    	
-		    	throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor não encontrado para o [Movimento Financeiro "+listaMovimentoFinanceiroCota.get(0).getId()+"] [Cota "+ultimaCota.getNumeroCota()+"].");
+		    	throw new ValidacaoException(
+		    			TipoMensagem.WARNING, 
+		    			"Fornecedor não encontrado para o [Movimento Financeiro " + 
+		    					listaMovimentoFinanceiroCota.get(0).getId() + "] [Cota " + ultimaCota.getNumeroCota() + "].");
 		    }
 			
-			BigDecimal valorMovimentos = listaMovimentoFinanceiroCota.get(0).getValor();
-			
-			FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobranca(ultimaCota!=null?ultimaCota.getId():null, ultimoFornecedor!=null?ultimoFornecedor.getId():null, dataOperacao, valorMovimentos);
-
-		    boolean unificaCobranca = formaCobranca.getPoliticaCobranca()!=null?formaCobranca.getPoliticaCobranca().isUnificaCobranca():formaCobranca.getParametroCobrancaCota().isUnificaCobranca();
-	  
-		    boolean acumulaDivida = formaCobranca.getPoliticaCobranca()!=null?formaCobranca.getPoliticaCobranca().isAcumulaDivida():formaCobranca.getParametroCobrancaCota()!=null?formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao()!=null?(formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida()!=null && formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida()>0):false:false;
-
-			
-			if (unificaCobranca){
-				
-				ultimoFornecedor = null;
-			}
-			
-			TipoCobranca tipoCobranca = formaCobranca.getTipoCobranca();
+			BigDecimal valorMovimentos = BigDecimal.ZERO;
 			
 			List<MovimentoFinanceiroCota> movimentos = new ArrayList<MovimentoFinanceiroCota>();
 			
@@ -226,8 +215,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			Cota cotaAtual = null;
 			
+			FormaCobranca formaCobranca = null;
+			
+			boolean unificaCobranca = false;
+			
+			boolean acumulaDivida = false;
+			
+			TipoCobranca tipoCobranca = null;
+			
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
-				
 				
 				//verifica se cota esta suspensa, se estiver verifica se existe chamada de encalhe na data de operação
 				if (SituacaoCadastro.SUSPENSO.equals(ultimaCota.getSituacaoCadastro())){
@@ -241,7 +237,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						}
 					}
 				}
-
 				
 				cotaAtual = movimentoFinanceiroCota.getCota();
 			    
@@ -249,7 +244,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 				if (fornecedorProdutoMovimento == null){
 			    	
-			    	throw new ValidacaoException(TipoMensagem.WARNING, "Fornecedor não encontrado para o [Movimento Financeiro "+movimentoFinanceiroCota.getId()+"] [Cota "+cotaAtual.getNumeroCota()+"].");
+			    	throw new ValidacaoException(
+			    			TipoMensagem.WARNING, 
+			    			"Fornecedor não encontrado para o [Movimento Financeiro " + 
+			    			movimentoFinanceiroCota.getId() + "] [Cota " + cotaAtual.getNumeroCota() + "].");
 			    }
 				
 				if (unificaCobranca || 
@@ -259,24 +257,43 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					
 					movimentos.add(movimentoFinanceiroCota);
 					
-					valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor());
+					TipoMovimentoFinanceiro tipo = 
+							(TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
+					
+					if (tipo.getOperacaoFinaceira().equals(OperacaoFinaceira.CREDITO)){
+						
+						valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor().negate());
+					} else {
+						
+						valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor());
+					}
 				} else {
 					
-					
-					//Busca Forma de Cobranca quando os parametros da iteração atual divergem dos da anterior
-					if ( (valorMovimentos.compareTo(formaCobranca.getValorMinimoEmissao())<0) || 
-						 (!cotaAtual.equals(ultimaCota) ||
-					     ((ultimoFornecedor==null) || (fornecedorProdutoMovimento==null) || 
-					      !fornecedorProdutoMovimento.equals(ultimoFornecedor) || 
-					      (fornecedorProdutoMovimento != ultimoFornecedor) ) ) ){
-					
-						formaCobranca = formaCobrancaService.obterFormaCobranca(cotaAtual!=null?cotaAtual.getId():null, fornecedorProdutoMovimento!=null?fornecedorProdutoMovimento.getId():null, dataOperacao, valorMovimentos);
-						
-					    unificaCobranca = formaCobranca.getPoliticaCobranca()!=null?formaCobranca.getPoliticaCobranca().isUnificaCobranca():formaCobranca.getParametroCobrancaCota().isUnificaCobranca();
-				  
-					    acumulaDivida = formaCobranca.getPoliticaCobranca()!=null?formaCobranca.getPoliticaCobranca().isAcumulaDivida():formaCobranca.getParametroCobrancaCota()!=null?formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao()!=null?(formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida()!=null && formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida()>0):false:false;
-					}
-					
+					formaCobranca = 
+							formaCobrancaService.obterFormaCobranca(
+									ultimaCota != null ? ultimaCota.getId() : null, 
+									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
+									dataOperacao, valorMovimentos);
+
+					if (formaCobranca.getPoliticaCobranca() != null){
+				    	
+				    	unificaCobranca = formaCobranca.getPoliticaCobranca().isUnificaCobranca();
+				    } else if (formaCobranca.getParametroCobrancaCota() != null){
+				    	
+				    	unificaCobranca = formaCobranca.getParametroCobrancaCota().isUnificaCobranca();
+				    }
+				    
+				    if (formaCobranca.getPoliticaCobranca() != null){
+				    	
+				    	acumulaDivida = formaCobranca.getPoliticaCobranca().isAcumulaDivida();
+				    } else if (formaCobranca.getParametroCobrancaCota() != null 
+				    		&& formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao() != null
+				    		&& formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
+				    	
+				    	acumulaDivida = formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida() > 0;
+				    }
+				    
+				    tipoCobranca = formaCobranca.getTipoCobranca();
 					
 					//Decide se gera movimento consolidado ou postergado para a cota
 					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, 
@@ -313,6 +330,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					
 					valorMovimentos = movimentoFinanceiroCota.getValor();
 				}
+			}
+			
+			if (formaCobranca == null){
+				
+				formaCobranca = 
+						formaCobrancaService.obterFormaCobranca(
+								ultimaCota != null ? ultimaCota.getId() : null, 
+								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
+								dataOperacao, valorMovimentos);
 			}
 			
 			//Decide se gera movimento consolidado ou postergado para a ultima cota
