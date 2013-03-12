@@ -1,4 +1,5 @@
 //#workspace div.ui-tabs-panel:not(.ui-tabs-hide)
+
 var produtoController = $.extend(true, {
 	
 	pesquisaProduto:null,
@@ -12,10 +13,21 @@ var produtoController = $.extend(true, {
 		this.iniciarGrid();
 		$( "#tabProduto", this.workspace).tabs();
 		
-		$("#fieldSegmentacao", produtoController.workspace).hide();
-		
 		$(".bt_arq", this.workspace).hide();
 
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#codigoProduto"));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					produtoController.pesquisar();
+				}
+				
+				return true;
+			});
+		});
 	},
 
 	aplicarMascaras : function () {
@@ -27,7 +39,7 @@ var produtoController = $.extend(true, {
 		    }
 		);
 		
-		$("#percentualDesconto", produtoController.workspace).numeric();
+		$("#percentualDesconto", produtoController.workspace).mask("999,99"); 
 	},
 
 	buscarValueRadio:function(radioName) {
@@ -96,13 +108,9 @@ var produtoController = $.extend(true, {
 		
 		$.postJSON(contextPath + "/produto/carregarPercentualDesconto",
 					{codigoTipoDesconto:codigoTipoDesconto}, 
-					function(result) {
+					function(result) {					
 
-						if (result == 0) {
-							result = "";
-						}
-
-						$("#percentualDesconto", this.workspace).val(result);
+						$("#percentualDesconto", this.workspace).val($.formatNumber(result, {format:"###,##000.00", locale:"br"}));
 				});
 
 	},
@@ -258,13 +266,6 @@ var produtoController = $.extend(true, {
 		
 		$(".habilitarCampoInterface", produtoController.workspace).attr('disabled',!habilitar);
 		
-		if(habilitar){
-			$("#fieldSegmentacao", produtoController.workspace).show();
-		}
-		else{
-			$("#fieldSegmentacao", produtoController.workspace).hide();
-		}
-		
 		$(".habilitarCampoInterfaceSegmentacao", produtoController.workspace).attr('disabled',!habilitar);
 	},
 	
@@ -297,7 +298,8 @@ var produtoController = $.extend(true, {
 						$("#segmentacaoTipoLancamento", produtoController.workspace).val(result.tipoLancamento);
 						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
 						$("#segmentacaoTemaSecundario", produtoController.workspace).val(result.temaSecundario);
-						$("#percentualDesconto", produtoController.workspace).val(result.desconto);
+						
+						$("#percentualDesconto", produtoController.workspace).val($.formatNumber(result.desconto, {format:"###,##000.00", locale:"br"}));
 
 						if (result.formaComercializacao == 'CONTA_FIRME') {
 							$("#formaComercializacaoContaFirme", this.workspace).attr('checked', true);
@@ -492,7 +494,7 @@ var produtoController = $.extend(true, {
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
         			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", produtoController.workspace).val()},
         			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()},
-        			   {name:"produto.desconto",value:$("#percentualDesconto", produtoController.workspace).val()},
+        			   {name:"produto.desconto",value:floatValue( $("#percentualDesconto", produtoController.workspace).val())},
         			   {name:"produto.descricaoDesconto",value:$("#tipoDescontoManual", produtoController.workspace).val()}];
  
 		$.postJSON(contextPath + "/produto/salvarProduto",  

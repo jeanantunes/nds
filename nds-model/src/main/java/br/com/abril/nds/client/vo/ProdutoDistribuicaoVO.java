@@ -61,7 +61,13 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	
 	private BigDecimal reparte;
 	
+	private BigInteger repDistrib;
+	
 	private Date dataFinMatDistrib;
+	
+	private Long idUsuario;
+	
+	private String codigoBarraProduto;
 	
 	public BigInteger getIdLancamento() {
 		return idLancamento;
@@ -211,6 +217,30 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 
 	public void setDataFinMatDistrib(Date dataFinMatDistrib) {
 		this.dataFinMatDistrib = dataFinMatDistrib;
+	}
+
+	public BigInteger getRepDistrib() {
+		return repDistrib;
+	}
+
+	public void setRepDistrib(BigInteger repDistrib) {
+		this.repDistrib = repDistrib;
+	}
+	
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+	
+	public String getCodigoBarraProduto() {
+		return codigoBarraProduto;
+	}
+
+	public void setCodigoBarraProduto(String codigoBarraProduto) {
+		this.codigoBarraProduto = codigoBarraProduto;
 	}
 
 	@Override

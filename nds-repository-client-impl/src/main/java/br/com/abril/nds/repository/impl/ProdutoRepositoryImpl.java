@@ -43,6 +43,18 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("nome", "%" + nome + "%");
+		return query.list();
+	}
+	
+	@Override
+	public List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxRegRetorno) {
+		String hql = "from Produto produto "
+				   + " where upper(produto.nome) like upper(:nome) order by produto.nome";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("nome", "%" + nome + "%");
+		query.setMaxResults(qtdMaxRegRetorno);
 		
 		return query.list();
 	}
@@ -335,6 +347,5 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return query.list();
 	}
-	
 	
 }

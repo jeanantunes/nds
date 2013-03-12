@@ -726,6 +726,13 @@ public class FornecedorServiceImpl implements FornecedorService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public List<Pessoa> obterFornecedorPorNome(String nomeFornecedor, Integer qtdMaxResult) {
+		
+		return fornecedorRepository.obterFornecedorPorNome(nomeFornecedor, qtdMaxResult);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia) {
 		
 		return fornecedorRepository.obterFornecedorPorNomeFantasia(nomeFantasia);

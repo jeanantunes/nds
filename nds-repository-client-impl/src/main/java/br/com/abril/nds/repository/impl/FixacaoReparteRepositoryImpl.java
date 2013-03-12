@@ -17,7 +17,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 /**
- * Classe de implementação referente ao acesso a dados da entidade
+ * Classe de implementaÃ§Ã£o referente ao acesso a dados da entidade
  *
  * FixacaoReparte
  */

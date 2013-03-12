@@ -65,6 +65,7 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 				   + " join produtoEdicao.lancamentos lancamento "
 				   + " where lancamento.dataLancamentoDistribuidor = :dataEmissao "
 				   + " and notaEnvio.destinatario.numeroCota = :numeroCota "
+				   + " and itemNotaEnvio.estudoCota is not null" // Condicao para ignorar itens provenientes de furo
 				   + " group by produtoEdicao.id ";
 		
 		Query query = super.getSession().createQuery(hql);
@@ -154,7 +155,7 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 			+ " from Lancamento lancamento "
 			+ " join lancamento.estudo estudo "
 			+ " join estudo.estudoCotas estudoCotas "
-			+ " join estudoCotas.itemNotaEnvio itemNotaEnvio "
+			+ " join estudoCotas.itemNotaEnvios itemNotaEnvio "
 			+ " where lancamento.id = :idLancamento ";
 
 		Query query = this.getSession().createQuery(hql);

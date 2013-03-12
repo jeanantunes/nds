@@ -90,6 +90,15 @@ public interface ConferenciaEncalheService {
 	 */
 	public boolean isLancamentoParcialProdutoEdicao(String codigo, Long numeroEdicao);
 
+	/**
+	 * Verifica se a cota cota possui reparte a recolher na data em questão.
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return boolean
+	 */
+	public boolean isCotaComReparteARecolherNaDataOperacao(Integer numeroCota);
+	
 	
 	/**
 	 * Obtém o TipoContabilizacaoCE.

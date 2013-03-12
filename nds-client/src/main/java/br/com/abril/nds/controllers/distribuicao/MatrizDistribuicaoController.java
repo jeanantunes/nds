@@ -80,7 +80,7 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 	
 	@Post
-	public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
+	public void obterMatrizDistribuicao(Date dataLancamento, List<Long> idsFornecedores) {
 				
 		validarDadosPesquisa(dataLancamento, idsFornecedores);
 		
@@ -89,9 +89,8 @@ public class MatrizDistribuicaoController extends BaseController {
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
-	
 	@Post
-	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
+	public void obterGridMatrizDistribuicao(String sortorder, String sortname, int page, int rp) {
 		
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
@@ -126,7 +125,8 @@ public class MatrizDistribuicaoController extends BaseController {
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		
-		List<ProdutoDistribuicaoVO> listProdutosDistrib = totProdDistVO.getListProdutoDistribuicao();
+		List<ProdutoDistribuicaoVO> listProdutosDistrib = (totProdDistVO.isMatrizFinalizada())? new ArrayList<ProdutoDistribuicaoVO>():
+			totProdDistVO.getListProdutoDistribuicao();
 		
 		listProdutosDistrib = PaginacaoUtil.paginarEOrdenarEmMemoria(listProdutosDistrib, paginacao, paginacao.getSortColumn());
 
@@ -142,18 +142,19 @@ public class MatrizDistribuicaoController extends BaseController {
 		
 		resultado.add(totProdDistVO.getTotalEstudosGerados());
 		resultado.add(totProdDistVO.getTotalEstudosLiberados());
+		resultado.add(totProdDistVO.isMatrizFinalizada());
 		
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 	}
 	
 	@Post
-	public void finalizarMatrizDistribuicao() {
+	public void finalizarMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
 		
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
-		matrizDistribuicaoService.finalizarMatrizDistribuicao(filtro);
+		matrizDistribuicaoService.finalizarMatrizDistribuicao(filtro, produtosDistribuicao);
 		
-		this.result.use(Results.json()).from(Results.nothing()).serialize();
+		result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 
 	@Post
@@ -163,7 +164,7 @@ public class MatrizDistribuicaoController extends BaseController {
 		
 		matrizDistribuicaoService.reabrirMatrizDistribuicao(filtro);
 		
-		this.result.use(Results.json()).from(Results.nothing()).serialize();
+		result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
 	
@@ -219,28 +220,6 @@ public class MatrizDistribuicaoController extends BaseController {
 		result.nothing();
 	}
 	
-	private String montarNomeFornecedores(List<Long> idsFornecedores) {
-		
-		String nomeFornecedores = "";
-		
-		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresPorId(idsFornecedores);
-		
-		if (listaFornecedor != null && !listaFornecedor.isEmpty()) {
-			
-			for (Fornecedor fornecedor : listaFornecedor) {
-				
-				if (!nomeFornecedores.isEmpty()) {
-					
-					nomeFornecedores += " / ";
-				}
-				
-				nomeFornecedores += fornecedor.getJuridica().getRazaoSocial();
-			}
-		}
-		
-		return nomeFornecedores;
-	}
-	
 	
 	/**
 	 * Configura o filtro informado na tela e o armazena na sessão.
@@ -253,7 +232,7 @@ public class MatrizDistribuicaoController extends BaseController {
 		FiltroLancamentoDTO filtro =
 			new FiltroLancamentoDTO(dataPesquisa, listaIdsFornecedores);
 		
-		filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
+		//filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
 		
 		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE,filtro);
 		
@@ -278,11 +257,6 @@ public class MatrizDistribuicaoController extends BaseController {
 			
 		}
 		
-		if (listaIdsFornecedores == null || listaIdsFornecedores.isEmpty()) {
-			
-			listaMensagens.add("O preenchimento do campo [Fornecedor] é obrigatório!");
-		}
-		
 		if (!listaMensagens.isEmpty()) {
 			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
@@ -305,6 +279,16 @@ public class MatrizDistribuicaoController extends BaseController {
 		
 		return filtro;
 	}
+	
+	@Post
+	public void duplicarLinha(ProdutoDistribuicaoVO produtoDistribuicao) {
+				
+		produtoDistribuicao.setIdUsuario(getUsuarioLogado().getId()) ;
+		
+		matrizDistribuicaoService.duplicarLinhas(produtoDistribuicao);
+		
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
 
 	@Post
 	public void excluirEstudosSelecionados(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
@@ -313,10 +297,7 @@ public class MatrizDistribuicaoController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Selecione um estudo para excluir!"));
 		}
 		else if (produtosDistribuicao.size() > 1) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Apenas um estudo pode ser selecionado para exclusão!"));
-		}
-		else if(produtosDistribuicao.get(0).getIdEstudo() == null || produtosDistribuicao.get(0).getIdEstudo().intValue() == 0) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não existe estudo para o produto selecionado!"));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Apenas um estudo/linha pode ser selecionado para exclusão!"));
 		}
 		
 		matrizDistribuicaoService.excluirEstudos(produtosDistribuicao);

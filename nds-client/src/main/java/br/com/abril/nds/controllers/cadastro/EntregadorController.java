@@ -41,7 +41,6 @@ import br.com.abril.nds.dto.filtro.FiltroEntregadorDTO.OrdenacaoColunaEntregador
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -528,14 +527,8 @@ public class EntregadorController extends BaseController {
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
 		this.session.removeAttribute(LISTA_TELEFONES_REMOVER_SESSAO);
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		boolean utilizaSugestaoIncrementoCodigo = false;
-		
-		if (distribuidor.getUtilizaSugestaoIncrementoCodigo() != null) {
-			
-			utilizaSugestaoIncrementoCodigo = distribuidor.getUtilizaSugestaoIncrementoCodigo();
-		}
+		boolean utilizaSugestaoIncrementoCodigo = 
+				this.distribuidorService.utilizaSugestaoIncrementoCodigo();
 		
 		Long novoCodigoEntregador = null;
 		

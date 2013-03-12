@@ -5,6 +5,27 @@
 </head>
 <body>
 
+
+<div class="areaBts">
+    <div class="area">
+
+		<span class="bt_arq">
+			<a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			</a>
+		</span>
+		
+		<span class="bt_arq">
+		    <a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=PDF" rel="tipsy" title="Imprimir">
+			    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+			</a>
+		</span>
+	</div>
+</div>
+<br/>
+<br/>
+<br/>
+
 <fieldset class="classFieldset">
 	<legend> Pesquisar Contas a Pagar</legend>
 	<form id="contasAPagarForm">
@@ -44,7 +65,7 @@
 		            
 	            </td>
 	            <td width="46">Per&iacute;odo:</td>
-	            <td width="102"><input type="text" name="filtro.dataDe" id="contasAPagar_Filtro_De" style="width:80px;"/></td>
+	            <td width="107"><input type="text" name="filtro.dataDe" id="contasAPagar_Filtro_De" style="width:80px;"/></td>
 	            <td width="28">At&eacute;:</td>
 	            <td width="107"><input type="text" name="filtro.dataAte" id="contasAPagar_Filtro_Ate" style="width:80px;"/></td>
 	            <td width="67">Semana CE:</td>
@@ -63,19 +84,16 @@
   
 <fieldset class="classFieldset">
 	<legend>Contas a Pagar </legend>
+
 		<div class="gridDistrib" style="display:none;">
           <div class="distrFornecedor">
        	  	<table class="porDistrFornecedorGrid"></table>
             <table width="950" border="0" cellspacing="1" cellpadding="1">
 				<tr>
-	                <td width="277">
-	                	<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=XLS">Arquivo</a></span>
-						<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/financeiro/contasAPagar/exportPesquisarPorDistribuidor?fileType=PDF">Imprimir</a></span>
-					</td>
 	                <td width="220" align="right"><strong>Total Bruto R$: <span id="contasAPagar_gridFornecedorTotalBruto"></span></strong></td>
 	                <td width="243" align="right"><strong>Total Desconto R$: <span id="contasAPagar_gridFornecedorTotalDesconto"></span></strong></td>
 	                <td width="197" align="right"><strong>Saldo a Pagar R$: <span id="contasAPagar_gridFornecedorSaldo"></span></strong></td>
-              </tr>
+                </tr>
             </table>
           </div>
  

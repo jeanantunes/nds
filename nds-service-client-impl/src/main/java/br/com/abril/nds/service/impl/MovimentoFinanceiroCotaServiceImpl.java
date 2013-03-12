@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -583,7 +582,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
     		if (fornecedor==null){
     			
     			throw new ValidacaoException(
-    					TipoMensagem.WARNING, "Fornecedor não encontrado na geração de Movimento Financeiro para o Movimentos de Estoque ["+mec.getId()+"] !");
+    					TipoMensagem.WARNING, "Fornecedor não encontrado na geração de Movimento Financeiro para o Movimentos de Estoque ["+mec.getId()+"] [Cota "+mec.getCota().getNumeroCota()+"] !");
     		}
     		
     		mecs = movEstAgrup.get(fornecedor.getId());
@@ -666,7 +665,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	}
    
     /**
-     * Retorna o somatório dos valores dos movimentos financeiros
+     * Retorna o somatório dos valores dos Movimentos de Estoque
      * @param movimentos
      * @return BigDecimal
      */
@@ -866,7 +865,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			
 			//GERA DEBITOS DO CONSIGNADO
 
-			
             valorTotalEstorno = this.obterValorMovimentosEstoqueCota(movimentosEstoqueCotaOperacaoEstorno);
 
             valorTotalEncalheOperacaoConferenciaEncalhe = this.obterValorMovimentosEstoqueCota(movimentosEstoqueCotaOperacaoConferenciaEncalhe);

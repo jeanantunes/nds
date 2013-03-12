@@ -1,17 +1,26 @@
 package br.com.abril.nds.service.impl;
 
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.FormaCobrancaService;
+import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
 @Service
@@ -19,66 +28,325 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 	@Autowired
 	private FormaCobrancaRepository formaCobrancaRepository;
+	
+	@Autowired
+	private PoliticaCobrancaRepository politicaCobrancaRepository;
+	
+	@Autowired
+	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
+	
+	/**
+	 * Verifica se ja existe a Forma Cobranca Mensal que o usuário deseja cadastrar(Valida por Fornecedor e Concentração)
+	 * @param idPoliticaCobranca
+	 * @param distribuidor
+	 * @param idFornecedores
+	 * @param diasDoMes
+	 * @return Boolean
+	 */
+	@Override
+	@Transactional
+	public boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Long idDistribuidor, TipoFormaCobranca tipoFormaCobranca,
+			List<Long> idFornecedores, List<Integer> diasDoMes) {
+		
+		Long idFormaCobrancaExcept = null;
+		
+		if (idPoliticaCobranca!=null){
+			
+		    PoliticaCobranca politica = this.politicaCobrancaRepository.buscarPorId(idPoliticaCobranca);
+		    
+		    idFormaCobrancaExcept = politica.getFormaCobranca().getId();
+		}    
+		
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidor(idDistribuidor, idFormaCobrancaExcept);
+		
+		for (FormaCobranca itemFormaCobranca:formas){
+			
+			for (int i=0; i<idFornecedores.size();i++){
+				
+				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
+				
+				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
+					
+                    if (tipoFormaCobranca.equals(TipoFormaCobranca.DIARIA) || itemFormaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA)){
+						
+						return false;
+					}
+					
+                    if (itemFormaCobranca.getDiasDoMes() !=null){
+                    	
+	                    for (Integer d:diasDoMes){
+	                    	
+							if (itemFormaCobranca.getDiasDoMes().contains(d)){
+								
+								return false;
+							}
+	                    }
+                    }
+				}
+			}
+		}
+		
+		return true;
+	}
 
 	/**
+	 * Verifica se ja existe a Forma Cobranca Semanal que o usuário deseja cadastrar(Valida por Fornecedor e Concentração)
+	 * @param idPoliticaCobranca
+	 * @param distribuidor
+	 * @param tipoFormaCobranca
+	 * @param idFornecedores
+	 * @param domingo
+	 * @param segunda
+	 * @param terca
+	 * @param quarta
+	 * @param quinta
+	 * @param sexta
+	 * @param sabado
+	 * @return Boolean
+	 */
+	@Override
+	@Transactional
+	public boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, Long idDistribuidor, TipoFormaCobranca tipoFormaCobranca, List<Long> idFornecedores, 
+			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
+		
+        Long idFormaCobrancaExcept = null;
+		
+		if (idPoliticaCobranca!=null){
+			
+			PoliticaCobranca politica = this.politicaCobrancaRepository.buscarPorId(idPoliticaCobranca);
+			
+			idFormaCobrancaExcept = politica.getFormaCobranca().getId();
+		}	
+		
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidor(idDistribuidor, idFormaCobrancaExcept);
+		
+		for (FormaCobranca itemFormaCobranca:formas){
+			
+			for (Long idFornecedor : idFornecedores){
+				
+				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedor);
+				
+				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
+					
+					if (tipoFormaCobranca.equals(TipoFormaCobranca.DIARIA) || itemFormaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA)){
+						
+						return false;
+					}
+					
+					for(ConcentracaoCobrancaCota itemConcentracao:itemFormaCobranca.getConcentracaoCobrancaCota()){
+						
+						if (
+								(domingo && (itemConcentracao.getDiaSemana()==DiaSemana.DOMINGO))||
+								(segunda && (itemConcentracao.getDiaSemana()==DiaSemana.SEGUNDA_FEIRA))||
+								(terca && (itemConcentracao.getDiaSemana()==DiaSemana.TERCA_FEIRA))||
+								(quarta && (itemConcentracao.getDiaSemana()==DiaSemana.QUARTA_FEIRA))||
+								(quinta && (itemConcentracao.getDiaSemana()==DiaSemana.QUINTA_FEIRA))||
+								(sexta && (itemConcentracao.getDiaSemana()==DiaSemana.SEXTA_FEIRA))||
+								(sabado && (itemConcentracao.getDiaSemana()==DiaSemana.SABADO))
+						    ){
+							
+							return false;
+						}
+	
+					}
+	
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * Verifica se ja existe a Forma Cobranca Mensal que o usuário deseja cadastrar(Valida por Fornecedor e Concentração)
+	 * @param idFormaCobranca
+	 * @param idCota
+	 * @param idFornecedores
+	 * @param tipoFormaCobranca
+	 * @param diasDoMes
+	 * @return Boolean
+	 */
+	@Override
+	@Transactional
+	public boolean validarFormaCobrancaMensal(Long idFormaCobranca, Long idCota, List<Long> idFornecedores, TipoFormaCobranca tipoFormaCobranca, List<Integer> diasDoMes) {
+		
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCota(idCota, idFormaCobranca);
+		
+		for (FormaCobranca itemFormaCobranca:formas){
+			
+			for (int i=0; i<idFornecedores.size();i++){
+				
+				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
+				
+				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
+					
+                    if (tipoFormaCobranca.equals(TipoFormaCobranca.DIARIA) || itemFormaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA)){
+						
+						return false;
+					}
+					
+                    if (itemFormaCobranca.getDiasDoMes() !=null){
+                    	
+	                    for (Integer d:diasDoMes){
+	                    	
+							if (itemFormaCobranca.getDiasDoMes().contains(d)){
+								
+								return false;
+							}
+	                    }
+                    }
+				}
+			}
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Verifica se ja existe a Forma Cobranca Semanal que o usuário deseja cadastrar(Valida por Fornecedor e Concentração)
+	 * @param idFormaCobranca
+	 * @param idCota
+	 * @param idFornecedores
+	 * @param tipoFormaCobranca
+	 * @param domingo
+	 * @param segunda
+	 * @param terca
+	 * @param quarta
+	 * @param quinta
+	 * @param sexta
+	 * @param sabado
+	 * @return Boolean
+	 */
+	@Override
+	@Transactional
+	public boolean validarFormaCobrancaSemanal(Long idFormaCobranca, Long idCota, List<Long> idFornecedores, TipoFormaCobranca tipoFormaCobranca,
+			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
+		
+		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCota(idCota, idFormaCobranca);
+		
+		for (FormaCobranca itemFormaCobranca:formas){
+			
+			for (int i=0; i<idFornecedores.size();i++){
+				
+				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
+				
+				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
+					
+					if (tipoFormaCobranca.equals(TipoFormaCobranca.DIARIA) || itemFormaCobranca.getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA)){
+						
+						return false;
+					}
+					
+					for(ConcentracaoCobrancaCota itemConcentracao:itemFormaCobranca.getConcentracaoCobrancaCota()){
+						
+						if (
+								(domingo && (itemConcentracao.getDiaSemana()==DiaSemana.DOMINGO))||
+								(segunda && (itemConcentracao.getDiaSemana()==DiaSemana.SEGUNDA_FEIRA))||
+								(terca && (itemConcentracao.getDiaSemana()==DiaSemana.TERCA_FEIRA))||
+								(quarta && (itemConcentracao.getDiaSemana()==DiaSemana.QUARTA_FEIRA))||
+								(quinta && (itemConcentracao.getDiaSemana()==DiaSemana.QUINTA_FEIRA))||
+								(sexta && (itemConcentracao.getDiaSemana()==DiaSemana.SEXTA_FEIRA))||
+								(sabado && (itemConcentracao.getDiaSemana()==DiaSemana.SABADO))
+						    ){
+							
+							return false;
+						}
+	
+					}
+	
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
 	 * Obtem FormaCobranca da Cota com os Parâmetros passados
-	 * @param numeroCota
-	 * @param fornecedoresId
+	 * @param idCota
+	 * @param idFornecedor
 	 * @param data
 	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public FormaCobranca obterFormaCobrancaCota(Integer numeroCota, List<Long> fornecedoresId, Date data, BigDecimal valor) {
+	public FormaCobranca obterFormaCobrancaCota(Long idCota, Long idFornecedor, Date data, BigDecimal valor) {
 		
 		Integer diaDoMes = DateUtil.obterDiaDoMes(data);
 		
 		Integer diaDaSemana = DateUtil.obterDiaDaSemana(data);
 		
-		FormaCobranca formaCobranca = this.formaCobrancaRepository.obterFormaCobranca(numeroCota, fornecedoresId, diaDoMes, diaDaSemana, valor);
+		FormaCobranca formaCobranca = this.formaCobrancaRepository.obterFormaCobranca(idCota, idFornecedor, diaDoMes, diaDaSemana, valor);
 
 		return formaCobranca;
 	}
 	
 	/**
 	 * Obtem FormaCobranca do Distribuidor com os Parâmetros passados
-	 * @param fornecedoresId
+	 * @param idFornecedor
 	 * @param data
 	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public FormaCobranca obterFormaCobrancaDistribuidor(List<Long> fornecedoresId, Date data, BigDecimal valor) {
+	public FormaCobranca obterFormaCobrancaDistribuidor(Long idFornecedor, Date data, BigDecimal valor) {
 		
 		Integer diaDoMes = DateUtil.obterDiaDoMes(data);
 		
 		Integer diaDaSemana = DateUtil.obterDiaDaSemana(data);
 		
-		FormaCobranca formaCobranca = this.formaCobrancaRepository.obterFormaCobranca(fornecedoresId, diaDoMes, diaDaSemana, valor);
+		FormaCobranca formaCobranca = this.formaCobrancaRepository.obterFormaCobranca(idFornecedor, diaDoMes, diaDaSemana, valor);
 
 		return formaCobranca;
 	}
 	
 	/**
 	 * Obtem FormaCobranca da Cota com os Parâmetros passados, caso não encontre, busca FormaCobranca do Distribuidor 
-	 * @param numeroCota
-	 * @param fornecedoresId
+	 * @param idCota
+	 * @param idFornecedor
 	 * @param data
 	 * @param valor
 	 * @return FormaCobranca
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public FormaCobranca obterFormaCobranca(Integer numeroCota, List<Long> fornecedoresId, Date data, BigDecimal valor) {
+	public FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Date data, BigDecimal valor) {
 		
-		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(numeroCota, fornecedoresId, data, valor);
+		Cota cota = null;
+		
+		if (idCota!=null){
+		    
+			cota = this.cotaRepository.buscarPorId(idCota);
+		}
+		
+		if (idFornecedor == null && cota!=null){
+			
+			idFornecedor = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao()!=null?cota.getParametroCobranca().getFornecedorPadrao().getId():null:null;
+		}
+		
+		if (idFornecedor==null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Para a obtenção de uma Forma de Cobrança é necessário que seja informado um [Fornecedor] ou que haja [Fornecedor Padrão] definido nos parâmetros financeiros da [Cota]!");
+		}
+		
+		Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(idFornecedor);
+		
+		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota, idFornecedor, data, valor);
 
 		if (formaCobranca == null){
 			
-			formaCobranca = this.obterFormaCobrancaDistribuidor(fornecedoresId, data, valor);
+			formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor, data, valor);
 		}
+		
+		if (formaCobranca == null){
+	    	
+	    	throw new ValidacaoException(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor "+CurrencyUtil.formatarValorComSimbolo(valor)+"]"+(cota!=null?" [Cota "+cota.getNumeroCota()+"].":"."));
+	    }
 		
 		return formaCobranca;
 	}

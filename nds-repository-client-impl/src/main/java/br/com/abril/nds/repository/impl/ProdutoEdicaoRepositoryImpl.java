@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,15 +8,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
@@ -106,12 +107,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		// Corrigido para obter o saldo real do produto. Implementado em conjunto com Eduardo Punk Rock.
 		hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
-		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, estoqueProduto.qtde, ")
+		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, ")
+		   .append("coalesce((select ep.qtde from EstoqueProduto ep where ep.produtoEdicao.id = produtoEdicao.id),0) as qtde, ")
 		   .append("   lancamento.dataLancamentoDistribuidor, lancamento.id, produtoEdicao.id)")
-		   .append(" from Produto produto, ProdutoEdicao produtoEdicao, ")
-		   .append("      Lancamento lancamento, EstoqueProduto estoqueProduto ")
+		   .append(" from Produto produto, Lancamento lancamento, ProdutoEdicao produtoEdicao ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
-		   .append(" and   estoqueProduto.produtoEdicao.id       = lancamento.produtoEdicao.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
@@ -1221,10 +1221,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produto.codigo as codigoProduto, ");
 		hql.append(" produto.nome as nomeProduto, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
-//		hql.append(" CAMPO PERIODO DEPENDENDO DE JTRAC ");
+		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
-		hql.append(" lancamento.reparte as repartePrevisto, ");
-		hql.append(" (estoqueProduto.qtdeDevolucaoFornecedor - movimentos.qtde) as qtdeVendas,");
+		hql.append(" sum(lancamento.reparte) as repartePrevisto, ");
+		hql.append(" sum(ifnull(estoqueProduto.qtdeDevolucaoFornecedor,0)  - movimentos.qtde) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa ");
 		
@@ -1237,7 +1237,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" LEFT JOIN produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 		
 		hql.append(" WHERE ");
-//		hql.append(" tipoMovimento.id = 21 and ");
+		hql.append(" tipoMovimento.id = 13 and ");
 	
 		if (filtro.getProdutoDto() != null) {
 			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
@@ -1259,6 +1259,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
 		} 
 		
+		hql.append("GROUP BY produtoEdicao.numeroEdicao");
+		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
@@ -1273,6 +1275,54 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		for (String key : parameters.keySet()) {
 			query.setParameter(key, parameters.get(key));
 		}
+	}
+
+
+	@Override
+	public ProdutoEdicaoDTO obterHistoricoProdutoEdicao(String codigoProduto, Long numeroEdicao, Integer numeroCota) {
+		
+		if (codigoProduto.isEmpty() || numeroEdicao == 0 || numeroCota == 0) {
+			return null;
+		}
+		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT ");
+		
+		hql.append(" sum(movimentos.qtde) as reparte, ");
+		hql.append(" sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as qtdeVendas ");
+		
+		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
+//		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento ");
+		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+		
+		hql.append(" WHERE ");
+		hql.append(" movimentos.tipoMovimento.id = 21 and ");
+		
+		hql.append(" produto.codigo = :codigoProduto ");
+		parameters.put("codigoProduto", codigoProduto);
+		
+		hql.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ");
+		parameters.put("numeroEdicao", numeroEdicao);
+	
+		hql.append(" and cota.numeroCota = :numeroCota ");
+		parameters.put("numeroCota", numeroCota);
+		
+		hql.append(" GROUP BY estoqueProdutoCota.cota ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		this.setParameters(query, parameters);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoEdicaoDTO.class));
+		
+		return (ProdutoEdicaoDTO) query.uniqueResult();
 	}
 	
 	/*@Override
@@ -1328,5 +1378,31 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return produtoEdicao;
 	}
+	
+	
+	@Override
+	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(*) from Estudo estudo");
+		hql.append(" where estudo.produtoEdicao.codigoDeBarras = :codigoBarra");
+		hql.append(" and   estudo.produtoEdicao.numeroEdicao    	   = :numeroEdicao");
+		hql.append(" and   estudo.produtoEdicao.produto.codigo  	   = :codigoProduto");
+		hql.append(" and   estudo.produtoEdicao.produto.tipoProduto.id = :tipoProduto");
+		hql.append(" and   estudo.id    				   = :idEstudo");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("codigoBarra", 	 produtoEdicao.getCodigoDeBarras());
+		query.setParameter("numeroEdicao", 	 produtoEdicao.getNumeroEdicao());
+		query.setParameter("codigoProduto",  produtoEdicao.getProduto().getCodigo());
+		query.setParameter("tipoProduto", 	 produtoEdicao.getProduto().getTipoProduto().getId());
+		query.setParameter("idEstudo", 	 	 idEstudoBase);
+		
+		return ((Long)query.uniqueResult() > 0);
+	}
+
+	
 
 }

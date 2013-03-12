@@ -85,7 +85,9 @@ public class SuspensaoCotaController extends BaseController {
 
 	private void verificarBaixaBancariaNaData() {
 		
-		boolean existeBaixa = baixaBancariaSerivice.verificarBaixaBancariaNaData(distribuidorService.obter().getDataOperacao());
+		boolean existeBaixa = 
+				this.baixaBancariaSerivice.verificarBaixaBancariaNaData(
+						this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		if ( !existeBaixa ) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, SEM_BAIXA_NA_DATA));

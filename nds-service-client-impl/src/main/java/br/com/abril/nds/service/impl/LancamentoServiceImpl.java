@@ -132,16 +132,16 @@ public class LancamentoServiceImpl implements LancamentoService {
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
 
 		Expedicao expedicao = new Expedicao();
-		expedicao.setDataExpedicao(new Date());
+		expedicao.setDataExpedicao(dataOperacao);
 		expedicao.setResponsavel(new Usuario(idUsuario));
 		Long idExpedicao = expedicaoRepository.adicionar(expedicao);
 		
 		expedicao.setId(idExpedicao);
 		
-		lancamentoRepository.alterarLancamento(idLancamento, new Date(), StatusLancamento.EXPEDIDO, expedicao);
+		lancamentoRepository.alterarLancamento(idLancamento, dataOperacao, StatusLancamento.EXPEDIDO, expedicao);
 				
 		HistoricoLancamento historico = new HistoricoLancamento();
-		historico.setDataEdicao(new Date());
+		historico.setDataEdicao(dataOperacao);
 		historico.setLancamento(new Lancamento(idLancamento));
 		
 		historico.setResponsavel(new Usuario(idUsuario));
@@ -151,30 +151,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
 				lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
-		
-		// TODO: Sergio, vc poderia corrigir este trecho após finalizar a implementação do DescontoCota fzd favor? Obrigado.
-		/*DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
-		obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
-				lancamento.getDataLancamentoPrevista());
-				
-		if (desconto != null) {	
-		
-			Integer quantidade = desconto.getQuantidadeProximosLancamaentos();
-						
-			DescontoProduto descontoProduto = new DescontoProduto();
-			
-			descontoProduto.setCotas(desconto.getCotas());
-			descontoProduto.setDataAlteracao(new Date());
-			descontoProduto.setDesconto(desconto.getValorDesconto());
-			descontoProduto.setProdutoEdicao(lancamento.getProdutoEdicao());
-			descontoProduto.setDistribuidor(desconto.getDistribuidor());
-			descontoProduto.setUsuario(usuario);
-			
-			this.descontoProdutoRepository.adicionar(descontoProduto);
-			
-			desconto.setQuantidadeProximosLancamaentos(--quantidade);
-			this.descontoProximosLancamentosRepository.alterar(desconto);
-		}*/
 		
 		return true;
 	}

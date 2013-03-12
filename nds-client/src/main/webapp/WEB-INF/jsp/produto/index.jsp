@@ -2,6 +2,7 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.min.js"></script>
 	<script type="text/javascript">
 	
 	var pesquisaProdutoCadastroProduto = new PesquisaProduto(produtoController.workspace);
@@ -103,7 +104,7 @@
 					<td><strong>% Desconto:</strong></td>
 					<td>
 						<input type="text" name="percentualDesconto" id="percentualDesconto" 
-						style="width:80px;" maxlength="4" />
+						style="width:80px;" maxlength="3" />
 					</td>
 				</tr>
 			</table>

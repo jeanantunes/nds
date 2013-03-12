@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
@@ -130,10 +131,10 @@ public class DividaServiceImpl implements DividaService {
 	 */
 	private void validarDataPostergacao(Date dataPostergacao){
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		if(dataPostergacao.compareTo(distribuidor.getDataOperacao()) < 1){
-			throw new ValidacaoException(TipoMensagem.WARNING,"A nova data para postergação da dívida tem que ser no mínimo a data da operação seguinte (D+1)");
+		if(dataPostergacao.compareTo(this.distribuidorService.obterDataOperacaoDistribuidor()) < 1){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"A nova data para postergação da dívida tem que ser no mínimo a data da operação seguinte (D+1)");
 		}
 	}
 
@@ -180,6 +181,7 @@ public class DividaServiceImpl implements DividaService {
 			BaixaCobranca baixaCobranca = new BaixaManual();
 			baixaCobranca.setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
 			baixaCobranca.setDataBaixa(dataAtual);
+			baixaCobranca.setDataPagamento(dataAtual);
 			baixaCobranca.setValorPago(cobranca.getValor());
 			baixaCobranca.setCobranca(cobranca);
 			
@@ -199,6 +201,17 @@ public class DividaServiceImpl implements DividaService {
 			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 			movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(postergadoNegociacao);
 			movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+			
+			
+			Fornecedor fornecedor = cobranca.getFornecedor()!=null?cobranca.getFornecedor():cobranca.getCota().getParametroCobranca()!=null?cobranca.getCota().getParametroCobranca().getFornecedorPadrao():null;
+			
+			if (fornecedor == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota "+cobranca.getCota().getNumeroCota()+"] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
+			}
+			
+			movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
+			
 			
 			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 				
@@ -220,6 +233,8 @@ public class DividaServiceImpl implements DividaService {
 				movimentoFinanceiroCotaDTO.setValor(multa);
 				movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoMulta);
 				
+				movimentoFinanceiroCotaDTO.setFornecedor(cobrancaAtualizada.getCota().getParametroCobranca()!=null?cobrancaAtualizada.getCota().getParametroCobranca().getFornecedorPadrao():null);
+
 				this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 				
 			}
@@ -365,8 +380,8 @@ public class DividaServiceImpl implements DividaService {
     private Map<TipoCobranca, SumarizacaoDividasDTO> criarMapaTiposCobrancaDistribuidor(Date data, TipoDivida tipoDivida,
             Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao) {
         Map<TipoCobranca, SumarizacaoDividasDTO> novaSumarizacao = new EnumMap<TipoCobranca, SumarizacaoDividasDTO>(sumarizacao);
-        Distribuidor distribuidor = distribuidorService.obter();
-        for (PoliticaCobranca pc : distribuidor.getPoliticasCobranca()) {
+        Set<PoliticaCobranca> pcs = this.distribuidorService.politicasCobranca();
+        for (PoliticaCobranca pc : pcs) {
             FormaCobranca formaCobranca = pc.getFormaCobranca();
             if (formaCobranca.isAtiva()) {
                 TipoCobranca tipoCobranca = formaCobranca.getTipoCobranca();

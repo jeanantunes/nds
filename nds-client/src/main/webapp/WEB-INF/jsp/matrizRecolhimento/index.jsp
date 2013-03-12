@@ -143,11 +143,11 @@
 		                	</c:forEach> 
 		            	</div>
 					</td>
-					<td width="53">Semana:</td>
+					<td width="53">Semana :</td>
 					<td width="107">
 						<input type="text" 
 							   name="numeroSemana" 
-							   id="numeroSemana" value="${numeroSemana}" style="width: 50px;"
+							   id="numeroSemana" value="${numeroSemana}${ano}" style="width: 50px;" maxlength="6"
 							   onchange="balanceamentoRecolhimentoController.carregarDataSemana();" />
 					</td>
 					<td width="33">Data:</td>
