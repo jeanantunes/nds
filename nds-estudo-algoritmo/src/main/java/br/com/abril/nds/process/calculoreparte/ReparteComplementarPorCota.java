@@ -2,6 +2,8 @@ package br.com.abril.nds.process.calculoreparte;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import br.com.abril.nds.dao.RankingSegmentoDAO;
@@ -72,7 +74,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	});
 	
 	/*
-	 * B: As que n�o receberam as edi��es-base, da maior para a menor no ranking de segmento da publica��o (cotas SH);
+	 * B: As que nao receberam as edi��es-base, da maior para a menor no ranking de segmento da publica��o (cotas SH);
 	 */
 	ordenadorList.add(new Ordenador("B"){
 		@Override
@@ -85,7 +87,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 					
 					for(ProdutoEdicaoBase pe:cota.getEdicoesRecebidas()){
 						for(ProdutoEdicaoBase edBase:getEstudo().getEdicoesBase()){
-							if(pe.getIdProduto().equals(edBase.getIdProduto())){
+							if(!pe.getIdProduto().equals(edBase.getIdProduto())){
 								continue;
 							}
 						}
@@ -194,6 +196,16 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     	 * da maior para a menor at� finalizar o estoque. 
     	 * N�o incluir bancas marcadas com `FX` `MX` e `MM` nessa redistribui��o;
     	 */
+		
+		
+			Comparator<Cota> orderCotaDesc = new Comparator<Cota>(){
+				@Override
+				public int compare(Cota c1, Cota c2) {
+					return c1.getReparteCalculado().compareTo(c2.getReparteCalculado());
+				}
+			};
+			
+			Collections.sort(getEstudo().getCotas(),orderCotaDesc);
     	
     		
     		while(getEstudo().getReparteDistribuir().compareTo(BigDecimal.ZERO) == 1){
@@ -233,7 +245,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     
     
     
-    private void realizarReparteComplementar(List<Cota> cList) {
+    protected void realizarReparteComplementar(List<Cota> cList) {
 		/*
 		 4)	As bancas receberão 
 		 	a quantidade de reparte por banca definido no estudo (default = 2 exemplares) 
@@ -245,10 +257,11 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 				if(c.getId().equals(id)){
 					if(getEstudo().isDistribuicaoPorMultiplos()){
 						c.setReparteCalculado(c.getReparteCalculado().add(getEstudo().getPacotePadrao()));
+						getEstudo().setReparteComplementar(getEstudo().getReparteComplementar().subtract(getEstudo().getPacotePadrao()));
 					}else{
-						
+						c.setReparteCalculado(c.getReparteCalculado().add(c.getReparteMinimo()));
+						getEstudo().setReparteComplementar(getEstudo().getReparteComplementar().subtract(c.getReparteMinimo()));
 					}
-					getEstudo().setReparteComplementar(getEstudo().getReparteComplementar().subtract(BigDecimal.ONE));
 
 					if(getEstudo().getReparteComplementar().compareTo(BigDecimal.ZERO)<=0){
 						return;
@@ -273,5 +286,14 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		}
     	
     }
-    
+
+public List<Long> getCotasIdList() {
+	return cotasIdList;
+}
+
+public void setCotasIdList(List<Long> cotasIdList) {
+	this.cotasIdList = cotasIdList;
+}
+
+   
 }

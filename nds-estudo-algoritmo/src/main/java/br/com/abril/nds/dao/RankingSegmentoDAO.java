@@ -208,7 +208,7 @@ public class RankingSegmentoDAO {
 			
 			ResultSet rs = psmt.executeQuery();
 			while (rs.next()) {
-				idList.add(rs.getLong(idx));
+				idList.add(rs.getLong(1));
 			}
 			
 			
