@@ -25,6 +25,12 @@ public class RankingSegmentoDAO {
 
     @Value("#{query_estudo.queryCotasOrdenadasMaiorMenor}")
     private String queryCotasOrdenadasMaiorMenor;
+    
+    @Value("#{query_estudo.queryRankingSegmentoEdicoesBase}")
+    private String queryRankingSegmentoEdicoesBase;
+    
+    @Value("#{query_estudo.queryCotasOrdenadasPorSegmentoEdicaoAberta}")
+    private String queryCotasOrdenadasPorSegmentoEdicaoAberta;
 
     /*
      * final String SQL_RETURN_ULTIMO_ID_RANKING_GERADO = "SELECT max(id) from ranking_segmento_gerados";
@@ -39,47 +45,20 @@ public class RankingSegmentoDAO {
      * 
      * return d; }
      */
-    private String sqlRankingSegmentoEdicoesBase(int qtde) {
-
-	StringBuilder SQL_RANKING_SEGMENTO_EDICOES_BASE = new StringBuilder().append("(select cota_id,produto_edicao_id from ranking_segmento rs ")
-		.append(" where rs.RANKING_SEGMENTO_GERADOS_ID=(select max(rsg.id) from ranking_segmento_gerados rsg) ")
-		.append(" and rs.produto_edicao_id in (:IDS_BASE)) union ")
-		.append("(select COTA_ID, produto_edicao_id from  movimento_estoque_cota mec where mec.tipo_movimento_id=21 ")
-		.append(" and mec.produto_edicao_id in (:IDS_BASE) ");
-
-	if (qtde >= 3) {
-	    SQL_RANKING_SEGMENTO_EDICOES_BASE.append(" and mec.qtde >= ").append(qtde).append(")");
-
-	} else {
-	    SQL_RANKING_SEGMENTO_EDICOES_BASE.append(" and and mec.qtde = ").append(qtde).append(")");
-
-	}
-	return SQL_RANKING_SEGMENTO_EDICOES_BASE.toString();
-
-    }
 
     public List<Long> getCotasOrdenadaPorSegmentoEdicaoAberta(List<Cota> cotaList, List<Long> idEdicoesBase) {
-
-	StringBuilder sb = new StringBuilder();
-	sb.append(" SELECT distinct COTA_ID FROM RANKING_SEGMENTO WHERE RANKING_SEGMENTO_GERADOS_ID = (select max(id) from ranking_segmento_gerados) and COTA_ID in (:COTA_IDS) ");
 
 	List<Long> retorno = new ArrayList<>();
 	List<Long> idList = new ArrayList<>();
 	for (Cota c : cotaList) {
 	    idList.add(c.getId());
 	}
+	Map<String, Object> params = new HashMap<>();
+	params.put("COTA_IDS", idList);
+	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryCotasOrdenadasPorSegmentoEdicaoAberta, params);
 
-	try {
-	    Map<String, Object> params = new HashMap<>();
-	    params.put("COTA_IDS", idList);
-	    SqlRowSet rs = jdbcTemplate.queryForRowSet(sb.toString(), params);
-
-	    while (rs.next()) {
-		retorno.add(rs.getLong(1));
-	    }
-	} catch (Exception ex) {
-	    System.out.println("Ocorreu um erro ao tentar consultar as cotas");
-	    ex.printStackTrace();
+	while (rs.next()) {
+	    retorno.add(rs.getLong(1));
 	}
 	return retorno;
     }
@@ -114,8 +93,9 @@ public class RankingSegmentoDAO {
 	}
 	Map<String, Object> params = new HashMap<>();
 	params.put("IDS_BASE", listaProdutoEdicao);
+	params.put("QTDE", qtde);
 
-	SqlRowSet rs = jdbcTemplate.queryForRowSet(sqlRankingSegmentoEdicoesBase(qtde), params);
+	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryRankingSegmentoEdicoesBase.replace("#", qtde >= 3 ? ">=" : "="), params);
 	List<Long> retorno = new ArrayList<>();
 	while (rs.next()) {
 	    retorno.add(rs.getLong(1));
@@ -128,7 +108,6 @@ public class RankingSegmentoDAO {
 	for (Cota cota : cotaList) {
 	    listaCotas.add(cota.getId());
 	}
-
 	Map<String, Object> params = new HashMap<>();
 	params.put("PRODUTO_EDICAO_ID", produtoEdicaoBase.getId());
 	params.put("IDS_COTA", listaCotas);

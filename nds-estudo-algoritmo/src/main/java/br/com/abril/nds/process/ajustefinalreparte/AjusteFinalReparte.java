@@ -29,8 +29,8 @@ import br.com.abril.nds.process.calculoreparte.GravarReparteJuramentado;
 @Component
 public class AjusteFinalReparte extends ProcessoAbstrato {
 
-//    @Autowired
-//    private ReparteComplementarPorCota reparteComplementarPorCota;
+    @Autowired
+    private ReparteComplementarPorCota reparteComplementarPorCota;
     
     @Autowired
     private GravarReparteFinalCota gravarReparteFinalCota;
@@ -82,8 +82,8 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		}
 	    }
 	}
-//	reparteComplementarPorCota.setEstudo(getEstudo());
-//	reparteComplementarPorCota.executar();
+	reparteComplementarPorCota.setEstudo(getEstudo());
+	reparteComplementarPorCota.executar();
 
 	gravarReparteFinalCota.setEstudo(getEstudo());
 	gravarReparteFinalCota.executar();
