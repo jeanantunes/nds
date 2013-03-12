@@ -27,6 +27,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
@@ -62,6 +63,9 @@ public class HistoricoVendaController extends BaseController {
 	private EnderecoService enderecoService;
 	
 	@Autowired
+	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
+	
+	@Autowired
 	private Result result;
 
 	@Autowired
@@ -74,6 +78,8 @@ public class HistoricoVendaController extends BaseController {
 	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTORICO_VENDA)
 	public void historicoVenda(){
 		result.include("componenteList", ComponentesPDV.values());
+		result.include("classificacaoProduto",tipoClassificacaoProdutoService.obterTodos());
+		
 	}
 	
 	@Post
