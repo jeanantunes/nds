@@ -2,12 +2,13 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
-import br.com.abril.nds.dto.DesenglobaDTO;
+import br.com.abril.nds.client.vo.DesenglobaVO;
+import br.com.abril.nds.dto.DesenglobacaoDTO;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface DesenglobacaoService {
 	
-	void obterDesenglobacaoPorCota();
+	List<DesenglobacaoDTO> obterDesenglobacaoPorCota(Long cotaId);
 	
-	void inserirDesenglobacao(List<DesenglobaDTO> desenglobaDTO);
-
+	boolean inserirDesenglobacao(List<DesenglobaVO> desenglobaDTO, Usuario usuario);
 }

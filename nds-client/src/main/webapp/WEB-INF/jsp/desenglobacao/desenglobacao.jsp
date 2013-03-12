@@ -29,6 +29,8 @@
 
 #btnInserirCotaEnglobada {
 	float: right;
+	margin-right: 15px;
+	margin-top: 10px;
 }
 
 
@@ -74,13 +76,13 @@
 					<table class="englobadosGrid"></table>
 
 					<span class="bt_novos" title="Gerar Arquivo">
-						<a href="javascript:;">
+						<a href="${pageContext.request.contextPath}/distribuicao/desenglobacao/exportar?fileType=XLS">
 							<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 								Arquivo
 						</a>
 					</span>
 					<span class="bt_novos" title="Imprimir">
-						<a href="javascript:;">
+						<a href="${pageContext.request.contextPath}/distribuicao/desenglobacao/exportar?fileType=PDF">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 								Imprimir
 						</a>
@@ -124,6 +126,27 @@
 				</table>
 			</fieldset>
 			
+			<fieldset style="float: left; width: 600px !important; margin-top: 10px;">
+				<legend>Cotas englobadas:</legend>
+				<div>
+					<table id="tbInsertCotaEnglobada" style="width: 100%;">
+						<thead>
+							<tr>
+								<th>Cota:</th>
+								<th>Nome:</th>
+								<th>% Cota</th>
+							</tr>	
+						</thead>
+						<tbody>
+							<tr>
+								<td><input type="text" style="width: 30px;" id="inserirEnglobadaNumeroCota"></td>
+								<td><input type="text" style="width: 400px;" id="inserirEnglobadaNomePessoa"></td>
+								<td><input type="text" style="width: 30px;" id="inserirEnglobadaPorcentagemCota"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
 			<div>
 				<button id="btnInserirCotaEnglobada">Inserir</button>
 			</div>
