@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,7 +164,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			Long numeroEdicao  = item.getLancamentoEdicaoPublicacao().getNumeroEdicao().longValue();
 			
 			ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
-					codigoProduto
+					StringUtils.leftPad(codigoProduto, 8, "0") 
 					, numeroEdicao);
 			
 			if (produtoEdicao == null) {
