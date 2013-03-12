@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 
@@ -48,6 +49,23 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		query.setParameter("dataOperacao", dataOperacao);
 		
 		return (ControleConferenciaEncalheCota) query.uniqueResult();
+		
+	}
+	
+	public StatusOperacao obterStatusControleConferenciaEncalheCota(Long idControleConferenciaEncalheCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ccec.status ");
+		hql.append(" from ControleConferenciaEncalheCota ccec ");
+		hql.append(" where  ");
+		hql.append(" ccec.id = :idControleConferenciaEncalheCota  ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+		
+		return (StatusOperacao) query.uniqueResult();
 		
 	}
 	

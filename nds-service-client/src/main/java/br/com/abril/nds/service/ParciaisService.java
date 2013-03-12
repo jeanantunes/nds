@@ -78,5 +78,15 @@ public interface ParciaisService {
 	 * @param lancamento
 	 */
 	void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento);
+	
+	/**
+	 * Retorna a peb calculada de uma parcial referente a um produto edição
+	 * 
+	 * @param codigoProduto
+	 * @param edicaoProduto
+	 * @param qtdePeriodos
+	 * @return Integer
+	 */
+	Integer calcularPebParcial(String codigoProduto, Long edicaoProduto, Integer qtdePeriodos);
 
 }

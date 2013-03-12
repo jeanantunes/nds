@@ -33,6 +33,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		super(ChamadaEncalhe.class);
 	}
 	
+	
+	
+	
 	public ChamadaEncalhe obterPorNumeroEdicaoEDataRecolhimento(ProdutoEdicao produtoEdicao,
 																Date dataRecolhimento,
 																TipoChamadaEncalhe tipoChamadaEncalhe) {

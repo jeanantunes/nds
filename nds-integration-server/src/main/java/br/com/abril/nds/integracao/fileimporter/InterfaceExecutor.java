@@ -285,7 +285,7 @@ public class InterfaceExecutor {
 	private void executarInterfaceArquivo(InterfaceEnum interfaceEnum, InterfaceExecucao interfaceExecucao, LogExecucao logExecucao, Long codigoDistribuidor, String nomeUsuario) {
 		
 		List<String> distribuidores = recuperaDistribuidores(codigoDistribuidor);
-		
+
 		// Processa arquivos do distribuidor
 		for (String distribuidor: distribuidores) {
 		
@@ -608,7 +608,7 @@ public class InterfaceExecutor {
 	 * @return lista de arquivos a serem processados
 	 */
 	private List<File> recuperaArquivosProcessar(String diretorio, String pastaInterna, InterfaceExecucao interfaceExecucao, String codigoDistribuidor) {
-		
+
 		List<File> listaArquivos = new ArrayList<File>();
 		
 		File dir = new File(diretorio + codigoDistribuidor + File.separator + pastaInterna + File.separator);

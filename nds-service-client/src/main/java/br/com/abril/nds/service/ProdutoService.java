@@ -32,6 +32,7 @@ public interface ProdutoService {
 	 */
 	List<Produto> obterProdutoLikeNome(String nome);
 	
+	List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxResult);
 	/**
 	 * Obtém produtos cujo código começa com o código informado.
 	 * 

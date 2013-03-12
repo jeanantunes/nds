@@ -944,12 +944,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	private void processarControleDeAprovacao() {
 
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = obterGruposMovimentoFinaceiro();
 
 		List<Movimento> movimentosPendentes = this.fecharDiaRepository.obterMovimentosPorStatusData(
-				null, gruposMovimentoFinanceiro, distribuidor.getDataOperacao(), StatusAprovacao.PENDENTE);
+				null, gruposMovimentoFinanceiro, this.distribuidorRepository.obterDataOperacaoDistribuidor(), 
+				StatusAprovacao.PENDENTE);
 
 		for (Movimento movimento : movimentosPendentes) {
 

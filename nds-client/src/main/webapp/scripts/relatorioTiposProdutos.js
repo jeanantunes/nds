@@ -35,6 +35,20 @@ var relatorioTiposProdutosController = $.extend(true, {
 		$("#dateRecoltoAte", this.workspace).mask("99/99/9999");
 		
 		this.initGrid();
+		
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#tipoProduto", this.workspace));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					relatorioTiposProdutosController.pesquisar();
+				}
+				
+				return true;
+			});
+		});
 	},
 	
 	

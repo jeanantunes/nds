@@ -143,4 +143,7 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 	 * @return Fornecedor
 	 */
 	public Fornecedor obterFornecedorPadrao();
+
+	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor,
+			Integer qtdMaxResult);
 }

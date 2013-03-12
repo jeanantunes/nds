@@ -13,7 +13,7 @@ function PesquisaProduto(workspace) {
 	//Pesquisa por código de produto
 	this.pesquisarPorCodigoProduto = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
 		
-		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).val();
+		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).attr("value");
 		
 		codigoProduto = $.trim(codigoProduto);
 		
@@ -42,8 +42,7 @@ function PesquisaProduto(workspace) {
 	this.autoCompletarPorNomeProduto = function(idProduto, isFromModal) {
 		
 		pesquisaProduto.pesquisaRealizada = false;
-		
-		var nomeProduto = $(idProduto, pesquisaProduto.workspace).val();
+		var nomeProduto = $(idProduto, pesquisaProduto.workspace).attr("value");
 		
 		if (nomeProduto && nomeProduto.length > 2) {
 			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {nomeProduto:nomeProduto},

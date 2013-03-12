@@ -980,8 +980,22 @@ public class TransportadorServiceImpl implements TransportadorService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public List<Pessoa> obterTransportadorPorNome(String nomeTransportador, Integer qtdMaxResult) {
+		
+		return transportadorRepository.obterTransportadorPorNome(nomeTransportador, qtdMaxResult);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public List<Pessoa> obterTransportadorPorNomeFantasia(String nomeFantasia) {
 		
 		return transportadorRepository.obterTransportadorPorNomeFantasia(nomeFantasia);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Pessoa> obterTransportadorPorNomeFantasia(String nomeFantasia, Integer qtdMaxResult) {
+		
+		return transportadorRepository.obterTransportadorPorNomeFantasia(nomeFantasia, qtdMaxResult);
 	}
 }
