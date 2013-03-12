@@ -11,6 +11,8 @@ public interface PessoaRepository extends Repository<Pessoa, Long> {
 	
 	List<Pessoa> buscarPorNome(String nome);
 	
+	List<Pessoa> buscarPorNome(String nome, Integer qtdMaxResult);
+	
 	List<PessoaJuridica> buscarPorCnpj(String cnpj);
 
 	List<PessoaFisica> obterSociosPorFiador(Long idFiador,  Set<Long> idsIgnorar, Set<String> cpfsIgnorar);

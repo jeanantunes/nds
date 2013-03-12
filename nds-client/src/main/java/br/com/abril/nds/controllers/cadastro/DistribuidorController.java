@@ -57,7 +57,7 @@ public class DistribuidorController extends BaseController {
 	
 	@Get
 	@Path("/obterDataDaSemana")
-	public void obterDataDaSemanaNoAno(Integer numeroSemana) {
+	public void obterDataDaSemanaNoAno(Integer numeroSemana,Date dataBase) {
 		
 		DiaSemana diaSemana = this.distribuidorService.inicioSemana();
 		
@@ -67,7 +67,7 @@ public class DistribuidorController extends BaseController {
 		}
 		
 		Date data = 
-			DateUtil.obterDataDaSemanaNoAno(numeroSemana, diaSemana.getCodigoDiaSemana(), null);
+			DateUtil.obterDataDaSemanaNoAno(numeroSemana, diaSemana.getCodigoDiaSemana(), dataBase);
 		
 		String dataFormatada = "";
 		

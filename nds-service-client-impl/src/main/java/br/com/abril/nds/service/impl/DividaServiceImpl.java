@@ -23,6 +23,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
@@ -180,6 +181,7 @@ public class DividaServiceImpl implements DividaService {
 			BaixaCobranca baixaCobranca = new BaixaManual();
 			baixaCobranca.setStatus(StatusBaixa.NAO_PAGO_POSTERGADO);
 			baixaCobranca.setDataBaixa(dataAtual);
+			baixaCobranca.setDataPagamento(dataAtual);
 			baixaCobranca.setValorPago(cobranca.getValor());
 			baixaCobranca.setCobranca(cobranca);
 			
@@ -199,6 +201,17 @@ public class DividaServiceImpl implements DividaService {
 			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 			movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(postergadoNegociacao);
 			movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+			
+			
+			Fornecedor fornecedor = cobranca.getFornecedor()!=null?cobranca.getFornecedor():cobranca.getCota().getParametroCobranca()!=null?cobranca.getCota().getParametroCobranca().getFornecedorPadrao():null;
+			
+			if (fornecedor == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota "+cobranca.getCota().getNumeroCota()+"] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
+			}
+			
+			movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
+			
 			
 			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 				

@@ -213,5 +213,12 @@ public class BancoServiceImpl implements BancoService {
 		
 		return bancoRepository.obterBancosPorNome(nomeBanco);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Banco> obterBancosPorNome(String nomeBanco, Integer qtdMaxResult) {
+		
+		return bancoRepository.obterBancosPorNome(nomeBanco, qtdMaxResult);
+	}
 
 }
