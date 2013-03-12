@@ -12,9 +12,10 @@ public interface VendaProdutoService {
 	
 	List<VendaProdutoDTO> buscaVendaPorProduto(FiltroVendaProdutoDTO filtro);
 	
-	List<LancamentoPorEdicaoDTO> buscaLancamentoPorEdicao(FiltroVendaProdutoDTO filtro);
+//	List<LancamentoPorEdicaoDTO> buscaLancamentoPorEdicao(FiltroVendaProdutoDTO filtro);
 	
 	List<TipoClassificacaoProduto> buscarClassificacaoProduto();
 	List<LancamentoPorEdicaoDTO> buscaLancamentoPorEdicao(FiltroDetalheVendaProdutoDTO filtro);
+	
 
 }

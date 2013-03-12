@@ -87,9 +87,11 @@ $(function(){
 		
 	</div>
 
+	<!-- 
 	<div id="dialog-detalhes" title="Visualizando Produto">
 		<img src="../capas/revista-nautica-11.jpg" width="235" height="314" />
 	</div>
+	 -->
 	
 	<!-- ADD POR N-MAIORES -->
 	
@@ -189,18 +191,13 @@ $(function(){
 					<tr>
 						<td width="51">Segmento:</td>
 						<td width="205">
+													
 							<!-- 
-							<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
-									onchange="$('.grids').toggle(); regiaoController.cotasDaRegiao()">
-									<option selected="selected">Selecione...</option>
-									<c:forEach items="${listaRegiao}" var="regiao">
-										<option value="${regiao.key}">${regiao.value}</option>
-									</c:forEach>
-							</select>
+							onchange="$('.grids').toggle(); regiaoController.carregarSegmento()">
 							 -->
 													
 							<select name="comboSegmento" id="comboSegmento" style="width: 180px;"
-									onchange="$('.grids').toggle(); regiaoController.carregarSegmento()">
+									onchange="$('.grids').toggle();">
 									<option option selected="selected">Selecione...</option>
 										<c:forEach items="${listaSegmento}" var="segmento">
 											<option value="${segmento.key}">${segmento.value}</option>
@@ -210,8 +207,8 @@ $(function(){
 							
 						</td>
 						<td width="92">Qtde de Cotas:</td>
-						<td width="83"><input type="text" name="textfield2"
-							id="textfield2" style="width: 80px;" />
+						<td width="83"><input type="text" name="qtdCotas"
+							id="qtdCotas" style="width: 80px;" />
 						</td>
 						<td width="87"><span class="bt_pesquisar"><a
 								href="javascript:;"
@@ -441,7 +438,7 @@ $(function(){
 						<td width="48">Região:</td>
 						<td width="752">
 							<select name="comboRegioes" id="comboRegioes" style="width: 250px;"
-									onchange="$('.grids').toggle();">
+									onchange="$('.grids').toggle(); regiaoController.carregarRegiao()">
 									<option selected="selected">Selecione...</option>
 									<c:forEach items="${listaRegiao}" var="regiao">
 										<option value="${regiao.key}">${regiao.value}</option>
@@ -490,7 +487,7 @@ $(function(){
 					<!--<span class="bt_novos"><a href="javascript:;" onclick="addCotas();"><img src="../images/ico_add.gif" alt="Adicionar Cotas" hspace="5" border="0" />Adicionar Cotas</a></span>-->
 					
 					<span class="bt_novos" title="Região Automática">
-						<a href="javascript:;" onclick="regiaoController.addCotas();">
+						<a href="javascript:;" onclick="regiaoController.addCotasRegAutomatica();">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
 						
 						Região	Automática
