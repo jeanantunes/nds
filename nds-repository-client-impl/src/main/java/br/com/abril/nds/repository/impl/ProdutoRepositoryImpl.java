@@ -347,5 +347,18 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return query.list();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Produto> obterProdutoLikeCodigo(String codigo) {
+		String hql = "from Produto produto "
+				   + " where upper(produto.codigo) like upper(:codigo) order by produto.codigo";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("codigo", "%" + codigo + "%");
+		
+		return query.list();
+	}
 	
 }

@@ -16,6 +16,7 @@
             <ul>
                 <li><a href="#tabNegocia">Negociação</a></li>
                 <li><a href="#tabChamadao">Chamadão</a></li>
+                <li><a href="#tabDistribuicao">Distribuição</a></li>
                 <li><a href="#tabAlteracao">Alteração de Status Cota</a></li>
                 <li><a href="#tabAtualizacao">Atualização Cadastral</a></li>
                 <li><a href="#tabPendencia">Pend&ecirc;ncias NF-e Encalhe</a></li>
@@ -61,6 +62,26 @@
 						</a>
                   </span>  
                   </div>              
+               </fieldset>
+            </div>
+            <div id="tabDistribuicao">
+               <fieldset style="width:880px!important;">
+               	<legend>Distribuição</legend>
+                <table class="distribuicaoGrid"></table>
+                <div id="botoesArquivoDistribuicao">
+                  <span class="bt_novos" title="Gerar Arquivo">                      
+						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=distribuicao">
+         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         				Arquivo
+						</a>
+                  </span>
+                  <span class="bt_novos" title="Imprimir">                      
+                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=distribuicao">
+         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+         				Imprimir
+						</a>
+                  </span> 
+                  </div>   
                </fieldset>
             </div>
             <div id="tabAlteracao">

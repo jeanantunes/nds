@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -41,25 +42,16 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		
 		return query.list();
 	}
-	
-//
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<TipoSegmentoProduto> carregarSegmentos() {
-//
-//		StringBuilder hql = new StringBuilder();
-//		
-//		hql.append("SELECT");
-//		hql.append(" segmento.id,");
-//		hql.append(" segmento.descricao");
-//		hql.append(" FROM TIPO_SEGMENTO_PRODUTO as segmento ");
-//		
-//		Query query =  getSession().createQuery(hql.toString());
-//		
-//		query.setResultTransformer(new AliasToBeanResultTransformer(
-//				TipoSegmentoProduto.class));
-//		
-//		return query.list();		
-//	}
 
+	@Override
+	public void execucaoQuartz() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" delete from regiao WHERE datediff(now(),data_regiao)>90 and REGIAO_IS_FIXA = 0; ");
+		SQLQuery createSQLQuery = this.getSession().createSQLQuery(hql.toString());
+		
+		createSQLQuery.executeUpdate();
+	}
+	
 }
