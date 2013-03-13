@@ -1460,7 +1460,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		montarParametrosFiltroNotasEnvio(filtro, query, true);	
 		
-		return ((BigInteger) query.uniqueResult()).intValue();
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return (qtde == null) ? 0 : qtde.intValue();
 		
 	}
 
@@ -1479,7 +1481,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		montarParametrosFiltroNotasEnvio(filtro, query, true);	
 		
-		return ((BigInteger) query.uniqueResult()).intValue();
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return (qtde == null) ? 0 : qtde.intValue();
 		
 	}
 
@@ -1500,7 +1504,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		montarParametrosFiltroNotasEnvio(filtro, query, true);	
 		
-		return ((BigInteger) query.uniqueResult()).intValue();
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return (qtde == null) ? 0 : qtde.intValue();
+		
 		
 	}
 
