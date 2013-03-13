@@ -304,9 +304,15 @@ public class Distribuidor {
 	@Column(name = "MENSAGEM_EMAIL_COBRANCA")
 	private String mensagemEmailCobranca;
 	
-	@Column(name = "PRACA_VERANEIO")
-	private boolean pracaVeraneio;
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DistribuidorClassificacaoCota> listClassificacaoCota;
 	
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DistribuidorGridDistribuicao> listGridDistribuicao;
+	
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DistribuidorPercentualExcedente> listPercentualExcedente;
+
 	public Long getId() {
 		return id;
 	}
@@ -1073,14 +1079,30 @@ public class Distribuidor {
 		this.mensagemEmailCobranca = mensagemEmailCobranca;
 	}
 
-	public boolean isPracaVeraneio() {
-		return pracaVeraneio;
+	public List<DistribuidorClassificacaoCota> getListClassificacaoCota() {
+		return listClassificacaoCota;
 	}
 
-	public void setPracaVeraneio(boolean pracaVeraneio) {
-		this.pracaVeraneio = pracaVeraneio;
+	public void setListClassificacaoCota(
+			List<DistribuidorClassificacaoCota> listClassificacaoCota) {
+		this.listClassificacaoCota = listClassificacaoCota;
 	}
-	
-	
-	
+
+	public List<DistribuidorGridDistribuicao> getListGridDistribuicao() {
+		return listGridDistribuicao;
+	}
+
+	public void setListGridDistribuicao(
+			List<DistribuidorGridDistribuicao> listGridDistribuicao) {
+		this.listGridDistribuicao = listGridDistribuicao;
+	}
+
+	public List<DistribuidorPercentualExcedente> getListPercentualExcedente() {
+		return listPercentualExcedente;
+	}
+
+	public void setListPercentualExcedente(
+			List<DistribuidorPercentualExcedente> listPercentualExcedente) {
+		this.listPercentualExcedente = listPercentualExcedente;
+	}
 }
