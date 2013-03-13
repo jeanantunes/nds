@@ -82,7 +82,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		boolean matrizFinalizada = isMatrizFinalizada(produtoDistribuicaoVOs);
 		
 		TotalizadorProdutoDistribuicaoVO totalizadorProdutoDistribuicaoVO = getProdutoDistribuicaoVOTotalizado(produtoDistribuicaoVOs);
-		
+			
 		totalizadorProdutoDistribuicaoVO.setMatrizFinalizada(matrizFinalizada);
 		
 		return totalizadorProdutoDistribuicaoVO;
@@ -116,7 +116,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		 }
 		 
 		 Long idLancamento = prodDistribVO.getIdLancamento().longValue();
-		 
+		
 		 Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 		 
 		 Lancamento lancamentoCopy = cloneLancamento(lancamento);
@@ -145,7 +145,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	}
 	
 	private ProdutoEdicao cloneProdutoEdicao(ProdutoEdicao produtoEdicao) {
-		
+		 
 		 ProdutoEdicao produtoEdicaoCopy = new ProdutoEdicao();
 		 BeanUtils.copyProperties(produtoEdicao, produtoEdicaoCopy);
 		 produtoEdicaoCopy.setId(null);
@@ -161,7 +161,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	}
 	
 	private void gravarHistoricoLancamento(Long idUsuario,  Lancamento lancamento) {
-		
+		 
 		 HistoricoLancamento historicoLancamento = new HistoricoLancamento();
 		 historicoLancamento.setDataEdicao(new Date());
 		 historicoLancamento.setLancamento(lancamento);
@@ -314,14 +314,14 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		if (prodDistribVO.getLiberado() == null || !prodDistribVO.getLiberado().equals(StatusEstudo.LIBERADO.name())) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Os estudos devem estar todos liberados para a finalização da matriz.");
-		}
-		
+			}
+			
 		if (obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(prodDistribVO) > 1) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido mais de uma edição por produto.");
 		}
 	}
-
+	
 	private Integer obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(ProdutoDistribuicaoVO produtoDistribuicaoVO) {
 		
 		BigInteger count = lancamentoRepository.obterQtdLancamentoProdutoEdicaoCopiados(produtoDistribuicaoVO);

@@ -294,12 +294,56 @@ function PesquisaProduto(workspace) {
 		
 	},
 	
+	//Mostrar auto complete por código do produto
+	//Auto complete após a 5° posição 
+	this.autoCompletarPorCodigoProduto = function(idCampoCodProduto, isFromModal) {
+		
+		pesquisaProduto.pesquisaRealizada = false;
+		
+		var codProduto = $(idCampoCodProduto, pesquisaProduto.workspace).val();
+		
+		if (codProduto && codProduto.length >= 5) {
+			$.postJSON(contextPath + "/produto/autoCompletarPorCodProduto", {codigoProduto:codProduto},
+					   function(result) { pesquisaProduto.exibirAutoComplete(result, idCampoCodProduto,5); },
+					   null, isFromModal);
+		}
+	},
+	
+	/*
+	 * 	this.autoCompletarPorNome = function(idCampoNomeCota, isFromModal) {
+		
+		pesquisaCota.pesquisaRealizada = false;
+		
+		var nomeCota = $(idCampoNomeCota, pesquisaCota.workspace).val();
+		
+		nomeCota = $.trim(nomeCota);
+		
+		$(idCampoNomeCota, pesquisaCota.workspace).autocomplete({source: [""]});
+		
+		if (nomeCota && nomeCota.length > 2) {
+			
+			$.postJSON(
+				contextPath + "/cadastro/cota/autoCompletarPorNome", {nomeCota:nomeCota},
+				function(result) { 
+					pesquisaCota.exibirAutoComplete(result, idCampoNomeCota, 3);
+				},
+				null, 
+				isFromModal
+			);
+		}
+	},
+	 */
+	
+	
 	this.exibirAutoCompleteEdicao = function(result, idEdicao) {
 		
 		$(idEdicao, pesquisaProduto.workspace).autocomplete({
 			source : result
 		});
 	};
+	
+	
+	
 	
 }
 

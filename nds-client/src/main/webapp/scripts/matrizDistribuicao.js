@@ -47,7 +47,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.escondeGrid = function() { 
 		$(".grids", _workspace).hide();
-		
 	} ,
 
 	this.carregarGrid = function() {		
@@ -292,7 +291,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#selTodos", _workspace).uncheck();
 	},
 	
-
+	
   this.obterUnicoItemMarcado = function() {
 		
 		var selecionado = null;
@@ -343,7 +342,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		$.each(T.lancamentos, function(index, lancamento){
 			if(lancamento.selecionado) {
-				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  		  value: lancamento.estudo});
+				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  value: lancamento.estudo});
 				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  	  value: lancamento.idLancamento});
 				data.push({name: 'produtosDistribuicao[' + index + '].numeroEdicao',  	  value: lancamento.edicao});
 				data.push({name: 'produtosDistribuicao[' + index + '].codigoProduto',  	  value: lancamento.codigoProduto});
@@ -630,14 +629,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		data.push({name: 'produtoDistribuicao.numeroEdicao',  	  value: selecionado.edicao});
 		data.push({name: 'produtoDistribuicao.codigoProduto',  	  value: selecionado.codigoProduto});
 		
-
+		
 		$.postJSON(pathTela + "/matrizDistribuicao/duplicarLinha", data,
 				function(result){
 					T.checkUncheckLancamentos(false);
 					T.carregarGrid();
 					T.exibirMensagemSucesso();
-				}
+		}
 			);
+
 		
 	},
 	
@@ -744,6 +744,80 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		T.isCliquePesquisar = true;
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
+
+		
+		},
+	
+	this.mostraTelaMatrizDistribuicao = function() {
+		$("#telaPesquisaMatriz", _workspace ).show();
+		$("#dialog-copiar-estudo", _workspace ).hide();
+	},
+	
+	this.mostraTelaCopiarProporcionalDeEstudo = function() {
+		T.mostrarOpcoes();
+		$("#telaPesquisaMatriz", _workspace ).hide();
+		$("#dialog-copiar-estudo", _workspace ).show();
+		T.inicializarTelaCopiaProporcional();
+	},
+	
+	this.inicializarTelaCopiaProporcional = function() {
+		$('#copiarEstudo-estudo').text('');
+		$('#copiarEstudo-reparteDistribuido').text('');
+		$('#copiarEstudo-idLancamento').text('');
+		$('#copiarEstudo-idLancamento').text('copiarEstudo-reparte');
+		T.cancelarCopiaProporcionalDeEstudo();
+	},
+
+	this.copiarProporcionalDeEstudo = function() {
+		
+		T.esconderOpcoes();
+		
+		if (!T.validarMarcacaoUnicoItem()) {
+			return;
+		}
+		
+		$.each(T.lancamentos, function(index, lancamento){
+			if(lancamento.selecionado) {
+				selecionado = lancamento;
+			}
+		});
+		
+		if (selecionado.estudo != null && selecionado.estudo != "") {
+			exibirMensagem("WARNING",["Selecione um produto que não tenha um estudo gerado."]);
+			return;
+		}
+		
+		T.mostraTelaCopiarProporcionalDeEstudo();
+		
+		T.populaEdicaoSelecionada(selecionado);
+	},
+	
+	this.populaEdicaoSelecionada = function(selecionado) {
+		
+		$("#copiarEstudo-codigoProduto").text(selecionado.codigoProduto);
+		$("#copiarEstudo-edicao").text(selecionado.edicao);
+		$("#copiarEstudo-nomeProduto").text(selecionado.nomeProduto);
+		$("#copiarEstudo-classificacao").text(selecionado.classificacao);
+		$("#copiarEstudo-dataLancto").text(selecionado.dataLancto);
+		$("#copiarEstudo-reparte").text(selecionado.reparte);
+		$("#copiarEstudo-reparteDistribuido").text(selecionado.repDistrib);
+		$("#copiarEstudo-pctPadrao").val(selecionado.pctPadrao);
+		$("#copiarEstudo-idLancamento").text(selecionado.idLancamento);
+		
+	},
+	
+	this.atualizarGrid = function() {		
+		
+		T.mostrarGridEBotoesAcao();
+		
+		T.linhasDestacadas = [];		
+		lancamentosSelecionados = [];		
+		$('#selTodos', _workspace).uncheck();	
+		
+		T.isCliquePesquisar = true;
+		
+		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
+
 			url : pathTela + "/matrizDistribuicao/obterGridMatrizDistribuicao",
 			dataType : 'json',
 			autoload: false,
@@ -1020,8 +1094,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
             $( '.opcoesEstudos' ).hide();
             $('.setaMuda').attr('src', contextPath + '/images/p7PM_dark_south.gif');
          }, 2000);
-	};
+	});
 	
-}
+
+	};
+};
 
 //@ sourceURL=matrizDistribuicao.js
