@@ -513,9 +513,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-				
-				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
 
+				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
+				
 				BigDecimal precoComDesconto = 
 						produtoEdicao.getPrecoVenda().subtract(
 								MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto.getValor()));
@@ -543,7 +543,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		}
 		
-		return movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
+		return movimentoEstoqueCota;
 	}
 
 	@Override
