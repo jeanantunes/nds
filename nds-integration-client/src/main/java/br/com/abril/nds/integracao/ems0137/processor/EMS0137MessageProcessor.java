@@ -79,13 +79,9 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 			getSession().merge(ce);
 			getSession().flush();
 
-			//dbClient.remove(input);
-			
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-		}
-		finally {
+		} finally {
 			
 			if (connection != null) {
 				try {
@@ -113,7 +109,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		ce.setDataVencimento(input.getDataLimiteRecebimento()); //TODO: Sérgio: verificar se a data esta correta
 		ce.setDataLimiteRecebimento(input.getDataLimiteRecebimento());
 		ce.setNotaValoresDiversos(input.getValorNotaValoresDiversos());
-		ce.setNumeroSemana(input.getNuemroSemanaReferencia());
+		ce.setNumeroSemana(input.getNumeroSemanaReferencia());
 		ce.setStatus(input.getTipoStatus());
 		ce.setTipoChamadaEncalhe(input.getCodigoTipoChamadaEncalhe());
 		ce.setTotalCreditoApurado(input.getValorTotalCreditoApurado());

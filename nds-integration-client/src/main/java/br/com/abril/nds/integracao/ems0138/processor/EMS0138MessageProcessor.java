@@ -116,7 +116,7 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 				NotaFiscalSaidaFornecedor nfsf = obterNotaFiscal(icef.getNumeroNotaEnvio());
 				
 				if(nfsf == null) {
-					ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Nota Fiscal Inexistente para a chamada de encalhe: "+ cefDTO.getNumeroChamadaEncalhe());
+					ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Nota Fiscal Inexistente para a chamada de encalhe: "+ cefDTO.getNumeroChamadaEncalhe() +" / Item: "+ icef.getNumeroItem());
 					continue;
 				}
 				
@@ -132,7 +132,8 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 				
 			}
 			
-			chamadasEncalheFornecedorDTO.add(cefDTO);
+			if(cefDTO.getItens() != null && cefDTO.getItens().size() > 0)
+				chamadasEncalheFornecedorDTO.add(cefDTO);
 			
 		}
 		
