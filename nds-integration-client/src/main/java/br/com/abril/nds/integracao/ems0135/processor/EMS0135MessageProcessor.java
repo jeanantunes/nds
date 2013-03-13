@@ -79,7 +79,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				return;
 			}
 			
-			notafiscalEntrada = obterNotaFiscalPorChaveAcesso(input.getNumeroNotaEnvio());
+			notafiscalEntrada = obterNotaFiscalPorNumeroNotaEnvio(input.getNumeroNotaEnvio());
 			
 			// Caso encontre a nota fiscal de entrada, atualiza com a nova chave de acesso
 			if (notafiscalEntrada != null) {
@@ -90,6 +90,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 						EventoExecucaoEnum.INF_DADO_ALTERADO, 
 						String.format("Nota Fiscal de Entrada " + input.getNumeroNotaEnvio() + " atualizada com chave de acesso NFE de " + chaveAcessoAntiga + " para " + input.getChaveAcessoNF() + " com sucesso!"));
 				return;
+			} else {
+				
 			}
 		}
 
@@ -340,7 +342,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	 * @param numeroNotaEnvio
 	 * @return
 	 */
-	private NotaFiscalEntradaFornecedor obterNotaFiscalPorChaveAcesso(String numeroNotaEnvio) {
+	private NotaFiscalEntradaFornecedor obterNotaFiscalPorNumeroNotaEnvio(String numeroNotaEnvio) {
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("from NotaFiscalEntradaFornecedor nf ")
