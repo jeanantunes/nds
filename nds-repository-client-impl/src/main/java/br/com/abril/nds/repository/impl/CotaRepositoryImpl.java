@@ -14,7 +14,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -1460,7 +1459,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		montarParametrosFiltroNotasEnvio(filtro, query, true);	
 		
-		return ((BigInteger) query.uniqueResult()).intValue();
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return (qtde == null) ? 0 : qtde.intValue();
 		
 	}
 
@@ -1479,7 +1480,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		montarParametrosFiltroNotasEnvio(filtro, query, true);	
 		
-		return ((BigInteger) query.uniqueResult()).intValue();
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return (qtde == null) ? 0 : qtde.intValue();
 		
 	}
 
@@ -1500,7 +1503,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		montarParametrosFiltroNotasEnvio(filtro, query, true);	
 		
-		return ((BigInteger) query.uniqueResult()).intValue();
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return (qtde == null) ? 0 : qtde.intValue();
+		
 		
 	}
 
