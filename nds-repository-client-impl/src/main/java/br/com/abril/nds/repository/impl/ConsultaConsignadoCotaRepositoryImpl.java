@@ -78,7 +78,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 
 		Query query =  getSession().createQuery(hql.toString());
-				
+		
+		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+		
 		if(filtro.getIdCota() != null ) { 
 			query.setParameter("idCota", filtro.getIdCota());
 		}
@@ -114,6 +116,10 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append("  JOIN cota.pessoa as pessoaCota ");
 		
 		hql.append(" WHERE movimento.produtoEdicao.id = pe.id " );
+		
+		hql.append(" AND movimento.movimentoEstoqueCotaFuro is null " );
+		
+		hql.append(" AND movimento.tipoMovimento.grupoMovimentoEstoque not in (:tipoMovimentoEstorno) " );
 		
 		if(filtro.getIdCota() != null ) { 
 			hql.append("   AND cota.id = :idCota");			
@@ -202,6 +208,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		if(filtro.getIdFornecedor() != null ) { 
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
+		
+		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
 		
 		List<Long> totalRegistros = query.list();
 		
