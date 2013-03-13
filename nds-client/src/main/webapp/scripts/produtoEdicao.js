@@ -1,4 +1,3 @@
-
 var produtoEdicaoController =$.extend(true,  {
 	
 	// Pesquisa por código de produto
@@ -182,7 +181,7 @@ var produtoEdicaoController =$.extend(true,  {
 	},	
 
 	init : function(){
-
+		
 		$(document).ready(function(){
 			
 			focusSelectRefField($("#produtoEdicaoController-pCodigoProduto", produtoEdicaoController.workspace));

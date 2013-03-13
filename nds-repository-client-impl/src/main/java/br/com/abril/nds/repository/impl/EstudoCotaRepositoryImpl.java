@@ -172,5 +172,6 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
 		return query.list();
 	}
+
 	
 }

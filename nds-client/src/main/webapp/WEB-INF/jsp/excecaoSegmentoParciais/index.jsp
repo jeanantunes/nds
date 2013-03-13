@@ -158,7 +158,7 @@ function filtroPorProduto(){
       
       <div class="porExcessao" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:600px!important; margin-right:10px!important;">
-       	  <legend>Cotas que Recebem</legend>
+       	  <legend>Cotas que Recebem a Publicação</legend>
         
         	<table class="excessaoNaoRecebidaGrid"></table>
              <span class="bt_novos" title="Gerar Arquivo"><a id="gerarXLSPorExcecao"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -167,7 +167,7 @@ function filtroPorProduto(){
         
       </fieldset>
        <fieldset class="classFieldset" style="float:left; width:333px!important;">
-       	  <legend>Cotas que Não Recebem</legend>
+       	  <legend>Cotas que Não Recebem o Segmento</legend>
        	  <table width="276" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="33">Cota:</td>
@@ -188,7 +188,7 @@ function filtroPorProduto(){
       
       <div class="porCota" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:600px!important; margin-right:10px!important;">
-       	  <legend>Produtos Recebidos</legend>
+       	  <legend>Produtos Parciais Recebidos</legend>
         
         	<table class="excessaoCotaGrid"></table>
              <span class="bt_novos" title="Gerar Arquivo"><a id="gerarXLSPorCota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -198,7 +198,7 @@ function filtroPorProduto(){
       </fieldset>
       
       <fieldset class="classFieldset" style="float:left; width:333px!important;">
-       	  <legend>Produtos Não Recebidos</legend>
+       	  <legend>Produtos Parciais Não Recebidos</legend>
        	  <table width="312" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="45">
