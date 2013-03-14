@@ -21,6 +21,8 @@ var visaoEstoqueController = $.extend(true, {
 		visaoEstoqueController.initGridVisaoEstoqueDetalheJuramentado();
 		visaoEstoqueController.initGridVisaoEstoqueTransferencia();
 		visaoEstoqueController.initGridVisaoEstoqueInventario();
+		
+		$(".areaBts", this.workspace).hide();
 	},
 	
 	
@@ -35,6 +37,8 @@ var visaoEstoqueController = $.extend(true, {
 		});
 		
 		$(".visaoEstoqueGrid", this.workspace).flexReload();
+		
+		$(".areaBts", this.workspace).show();
 	},
 	
 	
