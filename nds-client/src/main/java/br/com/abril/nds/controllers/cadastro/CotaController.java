@@ -46,6 +46,7 @@ import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -107,6 +108,9 @@ public class CotaController extends BaseController {
 	
 	@Autowired
 	private Result result;
+	
+	//@Autowired
+	//private DistribuidorClassificacaoCotaService  distribuidorClassificacaoCotaService;
 	
 	@Autowired
 	private br.com.caelum.vraptor.Validator validator;
@@ -574,12 +578,18 @@ public class CotaController extends BaseController {
 		
 		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
 		
-		for(ClassificacaoEspectativaFaturamento clazz : ClassificacaoEspectativaFaturamento.values()){
-			
-			listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
+		
+		//TODO Almir ----> aqui se carrega a Classificação 
+		
+		
+		if (listaClassificacao==null || listaClassificacao.isEmpty()){
+			for(ClassificacaoEspectativaFaturamento clazz : ClassificacaoEspectativaFaturamento.values()){
+				
+				listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
+			}
 		}
 		
-		Collections.reverse(listaClassificacao);
+		//Collections.reverse(listaClassificacao);
 		
 		return listaClassificacao;
 	}
@@ -795,6 +805,20 @@ public class CotaController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
+	
+	@Post
+	public void apagarTipoCota(Long idCota, String tipoCota){
+		
+
+		
+		cotaService.apagarTipoCota(idCota,  tipoCota);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Mix da Cota Apagados com sucesso!!"),
+				Constantes.PARAM_MSGS).recursive().serialize();
+	
+		
+	}
+	
 	
 	/**
 	 * Salva os dados dos fornecedores, associa os fornecedores a cota informada.

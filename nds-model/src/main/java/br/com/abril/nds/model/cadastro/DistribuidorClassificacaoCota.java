@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.abril.nds.model.ClassificacaoCotaDistribuidor;
+import br.com.abril.nds.model.ClassificacaoCotaDistribuidorEnum;
 
 @Entity
 @Table(name = "DISTRIBUIDOR_CLASSIFICACAO_COTA")
@@ -33,13 +34,13 @@ public class DistribuidorClassificacaoCota implements Serializable {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "COD_CLASSIFICACAO")
-	private ClassificacaoCotaDistribuidor codigoClassificacaoCota;
+	private ClassificacaoCotaDistribuidorEnum codigoClassificacaoCota;
 
 	@Column(name = "VALOR_DE")
-	private Integer valorDe;
+	private BigDecimal valorDe;
 
 	@Column(name = "VALOR_ATE")
-	private Integer valorAte;
+	private BigDecimal valorAte;
 
 	public Long getId() {
 		return id;
@@ -57,28 +58,28 @@ public class DistribuidorClassificacaoCota implements Serializable {
 		this.distribuidor = distribuidor;
 	}
 
-	public ClassificacaoCotaDistribuidor getCodigoClassificacaoCota() {
+	public ClassificacaoCotaDistribuidorEnum getCodigoClassificacaoCota() {
 		return codigoClassificacaoCota;
 	}
 
 	public void setCodigoClassificacaoCota(
-			ClassificacaoCotaDistribuidor codigoClassificacaoCota) {
+			ClassificacaoCotaDistribuidorEnum codigoClassificacaoCota) {
 		this.codigoClassificacaoCota = codigoClassificacaoCota;
 	}
 
-	public Integer getValorDe() {
+	public BigDecimal getValorDe() {
 		return valorDe;
 	}
 
-	public void setValorDe(Integer valorDe) {
+	public void setValorDe(BigDecimal valorDe) {
 		this.valorDe = valorDe;
 	}
 
-	public Integer getValorAte() {
+	public BigDecimal getValorAte() {
 		return valorAte;
 	}
 
-	public void setValorAte(Integer valorAte) {
+	public void setValorAte(BigDecimal valorAte) {
 		this.valorAte = valorAte;
 	}
 

@@ -387,4 +387,6 @@ public interface CotaService {
 	 * @return
 	 */
 	boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota);
+	
+	public void apagarTipoCota(Long idCota, String TipoCota);
 }
