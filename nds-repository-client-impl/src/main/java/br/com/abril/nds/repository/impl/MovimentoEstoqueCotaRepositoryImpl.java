@@ -572,12 +572,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	PRODUTO_EDICAO.ID,                  ");
 		sql.append("	PRODUTO_EDICAO.NUMERO_EDICAO,       ");
 		sql.append("	PRODUTO_EDICAO.PRECO_VENDA,         ");
-		sql.append(" 	precoComDesconto,					");
 		sql.append("	FORNECEDOR.ID, 						");
 		sql.append("	PESSOA.RAZAO_SOCIAL, 				");
 		sql.append("    MOVIMENTO_ESTOQUE_COTA.DATA,		");
 		sql.append("	recolhimento, 						");
-		sql.append("	valorDesconto 						");
 
 		return sql;
 		
