@@ -430,6 +430,8 @@ public class CotaAusenteController extends BaseController {
 				
 				this.cotaAusenteService.verificarExistenciaReparteCota(dataOperacao, numeroCota);
 				
+				this.cotaAusenteService.validarCotaAusenteNaData(numeroCota, dataOperacao);
+				
 			} catch (ValidacaoException e) {
 				
 				List<String> mensagens = new ArrayList<String>();
@@ -449,8 +451,6 @@ public class CotaAusenteController extends BaseController {
 			}
 		}
 
-		//TODO: Alterar para não trazer dados já rateados
-		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
 				dataOperacao, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);

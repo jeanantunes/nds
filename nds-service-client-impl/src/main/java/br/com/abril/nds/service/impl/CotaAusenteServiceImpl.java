@@ -38,7 +38,7 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
  
 @Service 
-public class CotaAusenteServiceImpl implements CotaAusenteService{
+public class CotaAusenteServiceImpl implements CotaAusenteService {
 	
 	@Autowired
 	CotaAusenteRepository cotaAusenteRepository;
@@ -74,7 +74,9 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 													 throws TipoMovimentoEstoqueInexistenteException {
 		
 		for (Integer numCota : numCotas) {
-		
+			
+			this.validarCotaAusenteNaData(numCota, data);
+			
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
 
 			List<MovimentoEstoqueCota> movimentosCota = 
@@ -98,13 +100,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 										 Cota cota,
 										 List<MovimentoEstoqueCota> movimentosEstoqueCota) 
 										 throws TipoMovimentoEstoqueInexistenteException {
-				
-		if (isCotaAusenteNaData(numCota, data)) {
-			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Cota de número '" + numCota + "' já está declarada como ausente.");
-		}
-				
+
 		CotaAusente cotaAusente = new CotaAusente();
 		
 		cotaAusente.setCota(cota);
@@ -167,19 +163,20 @@ public class CotaAusenteServiceImpl implements CotaAusenteService{
 		}
 	}
 	
-	private boolean isCotaAusenteNaData(Integer numCota, Date data) {
+	public void validarCotaAusenteNaData(Integer numCota, Date data) {
 		
 		FiltroCotaAusenteDTO filtro = new FiltroCotaAusenteDTO();
+		
 		filtro.setData(data);
 		filtro.setNumCota(numCota);
 		
-		if(cotaAusenteRepository.obterCountCotasAusentes(filtro) > 0) {
-			return true;
+		if (this.cotaAusenteRepository.obterCountCotasAusentes(filtro) > 0) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Cota de número '" 
+					+ numCota + "' já está declarada como ausente.");
 		}
-		return false;
 	}
-
-
 
 	/**
 	 * Método que cancela uma Cota Ausente e reajusta os movimentos
