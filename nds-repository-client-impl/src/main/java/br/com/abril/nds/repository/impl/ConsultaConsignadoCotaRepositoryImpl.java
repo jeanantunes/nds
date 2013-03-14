@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
@@ -20,14 +19,10 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
-import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 
 @Repository
 public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements
 		ConsultaConsignadoCotaRepository {
-
-	@Autowired
-	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 
 	public ConsultaConsignadoCotaRepositoryImpl() {
 		super(MovimentoEstoqueCota.class);
@@ -128,7 +123,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			hql.append("   AND fornecedor.id = :idFornecedor");
 		}
 		
-		hql.append(" GROUP BY case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end ");
+		hql.append(" GROUP BY case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end, ");
+		hql.append(" movimento.produtoEdicao ");
 		
 		return hql.toString();
 	}
