@@ -175,7 +175,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException{
+	public List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data,
+																  Long idCota,
+																  List<MovimentoEstoqueCota> listaMovimentoCota) 
+																  throws TipoMovimentoEstoqueInexistenteException {
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
 
@@ -184,7 +187,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 
 		TipoMovimentoEstoque tipoMovimento =
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 
 		TipoMovimentoEstoque tipoMovimentoCota =
 			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
@@ -196,23 +199,32 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		if ( tipoMovimentoCota == null ) {
 			throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 		}
+		
+		List<MovimentoEstoqueCota> listaMovimentoCotaEnvio = 
+			new ArrayList<MovimentoEstoqueCota>();
 
+		for (MovimentoEstoqueCota movimentoCota : listaMovimentoCota) {
 
-		for(MovimentoEstoqueCota movimentoCota : listaMovimentoCota){
-
-			if(movimentoCota.getData() != null &&  movimentoCota.getProdutoEdicao()!=null
+			if (movimentoCota.getData() != null 
+					&& movimentoCota.getProdutoEdicao() != null
 					&& movimentoCota.getUsuario() != null
-					&&  movimentoCota.getQtde() != null ){
+					&& movimentoCota.getQtde() != null ) {
 
-				gerarMovimentoEstoque(data, movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
+				gerarMovimentoEstoque(
+					data, movimentoCota.getProdutoEdicao().getId(),
+						movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), 
+							tipoMovimento);
 
-				gerarMovimentoCota(
-					data, movimentoCota.getProdutoEdicao().getId(), 
-						movimentoCota.getCota().getId(), movimentoCota.getUsuario().getId(),
-							movimentoCota.getQtde(), tipoMovimentoCota, data, null, null, null);
+				listaMovimentoCotaEnvio.add(
+					gerarMovimentoCota(
+						data, movimentoCota.getProdutoEdicao().getId(), 
+							movimentoCota.getCota().getId(), movimentoCota.getUsuario().getId(),
+								movimentoCota.getQtde(), tipoMovimentoCota, data, null, null, null));
 
 			}
 		}
+		
+		return listaMovimentoCotaEnvio;
 	}
 
 	public MovimentoEstoque gerarMovimentoEstoqueJuramentado(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {

@@ -471,6 +471,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 			movimentoFinanceiroCotaDTO.setAprovacaoAutomatica(true);
 			movimentoFinanceiroCotaDTO.setLancamentoManual(false);
+			movimentoFinanceiroCotaDTO.setFornecedor( (cota.getParametroCobranca()!= null)? cota.getParametroCobranca().getFornecedorPadrao():null);
 			
 			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 	

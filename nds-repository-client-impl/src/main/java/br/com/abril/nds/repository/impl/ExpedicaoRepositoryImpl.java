@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
-import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ExpedicaoRepository;
@@ -143,7 +141,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(gerarQueryResumoExpedicaoProdutosDoBox());
+		hql.append(gerarQueryResumoExpedicaoProdutosDoBox(filtro));
 					
 		hql.append(getOrderBy(filtro));
 		
@@ -179,7 +177,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	@SuppressWarnings("unchecked")
 	public Long obterQuantidadeResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro) {
 		
-		Query query = getSession().createSQLQuery(gerarQueryResumoExpedicaoProdutosDoBox());
+		Query query = getSession().createSQLQuery(gerarQueryResumoExpedicaoProdutosDoBox(filtro));
 		
 		this.setParametersQueryResumoExpedicaoProdutosDoBox(filtro, query);
 		
@@ -192,7 +190,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
-		String hqlResumoExpedicaoProdutoDoBox = gerarQueryResumoExpedicaoProdutosDoBox();
+		String hqlResumoExpedicaoProdutoDoBox = gerarQueryResumoExpedicaoProdutosDoBox(filtro);
 		
 		String from =
 			hqlResumoExpedicaoProdutoDoBox.substring(hqlResumoExpedicaoProdutoDoBox.lastIndexOf("from"));
@@ -243,15 +241,17 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	private void setParametersQueryResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-		query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
-		query.setParameter("codigoBox", filtro.getCodigoBox());
+		//query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
+		if(filtro != null && filtro.getCodigoBox() != null)
+			query.setParameter("codigoBox", filtro.getCodigoBox());
 	}
 	
 	/**
 	 * Retorna o sql referente a consulta de Reusumo de produtos expedidos
+	 * @param filtro TODO
 	 * @return String
 	 */
-	private String gerarQueryResumoExpedicaoProdutosDoBox(){
+	private String gerarQueryResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro){
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -317,9 +317,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		hql.append(" where ");
 		hql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ");
-		hql.append(" and box.TIPO_BOX in (:tiposBox) ");
-		hql.append(" and box.CODIGO = :codigoBox ");
-		
+		//hql.append(" and box.TIPO_BOX in (:tiposBox) ");
+		if(filtro != null && filtro.getCodigoBox() != null)
+			hql.append(" and box.CODIGO = :codigoBox ");
+		else
+			hql.append(" and box.CODIGO is null ");
 		hql.append(" group by ");
 		hql.append(" produtoEdicao.ID ");
 
@@ -409,7 +411,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append(" produto.CODIGO as codigoProduto, ");
 		hql.append(" produto.NOME as nomeProduto, ");
 		hql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
-		hql.append(" count(produtoEdicao.ID) as qntProduto ");
+		hql.append(" count(distinct produtoEdicao.ID) as qntProduto ");
 		
 		hql.append(" from ");
 		hql.append(" EXPEDICAO expedicao ");

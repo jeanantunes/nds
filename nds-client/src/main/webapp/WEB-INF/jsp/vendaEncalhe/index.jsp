@@ -34,39 +34,39 @@ $(function(){
    			</a>
    		</span>
               
-         	<span style="display: none" id="infosRodape" class="infosRodape" >
-         
-			   <span id="divImprimirSuplementar" style="display: none">		            
-				   <span id="btSuplementar" class="bt_novos">
-						<a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()" rel="tipsy" title="Imprimir Slip de Suplementar">
-							<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
-						</a>
-				   </span>
-				</span>
-			</span>
-          
-          <span id="divImprimirEncalhe" style="display: none">
-			   <span style="" id="btEncalhe" class="bt_novos">
-					<a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()" rel="tipsy" title="Imprimir Slip de Encalhe">
+        <span style="display: none" id="infosRodape" class="infosRodape" >
+		   <span id="divImprimirSuplementar" style="display: none">		            
+			   <span id="btSuplementar" class="bt_novos">
+					<a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()" rel="tipsy" title="Imprimir Slip de Suplementar">
 						<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
 					</a>
 			   </span>
-		   </span>
-       </div>
-       <span class="bt_arq">
-          		<a href="javascript:;" onclick="VENDA_PRODUTO.exportar('XLS')" rel="tipsy" title="Gerar Arquivo">
-          			<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_excel.png">
-           		</a>
-           	</span>
+			</span>
+		</span>
+          
+        <span id="divImprimirEncalhe" style="display: none">
+			 <span style="" id="btEncalhe" class="bt_novos">
+			     <a  href="javascript:;" onclick="VENDA_PRODUTO.imprimirSlipVenda()" rel="tipsy" title="Imprimir Slip de Encalhe">
+					<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
+				 </a>
+			 </span>
+		</span>
+       
+        <span class="bt_arq">
+         		<a href="javascript:;" onclick="VENDA_PRODUTO.exportar('XLS')" rel="tipsy" title="Gerar Arquivo">
+         			<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_excel.png">
+          		</a>
+        </span>
 
-			<span class="bt_arq">
+	    <span class="bt_arq">
 				<a href="javascript:;" onclick="VENDA_PRODUTO.exportar('PDF')" rel="tipsy" title="Imprimir">
 				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_impressora.gif">
 				</a>
-			</span>
-         </div>
-	</div>
+	    </span>
+	    
+    </div>
 </div>
+
 <div class="linha_separa_fields">&nbsp;</div>
 <fieldset class="fieldFiltro">
    	   

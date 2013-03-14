@@ -1147,6 +1147,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		movimentoFinanceiroCotaDTO.setObservacao("Venda de Encalhe");
 		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+		movimentoFinanceiroCotaDTO.setFornecedor( (cota.getParametroCobranca()!= null)? cota.getParametroCobranca().getFornecedorPadrao():null);
 
 		return movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
