@@ -20,8 +20,18 @@
 
 <body>
 
-	
-
+	<div class="areaBts">
+		<div class="area">
+			<span class="bt_arq">
+				<a href="javascript:confirmaExpedicaoController.popupConfirmar();" rel="tipsy"  title="Confirmar">
+					<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
+				</a> 
+			</span> 
+		</div>
+	</div>
+    </br>
+    </br>
+    
 	<form action="" method="get" id="form1" name="form1">
 		
 		<div id="dialog-confirmar" title="Matriz de Expedição" style="display: none">
@@ -93,11 +103,6 @@
 					<legend>Expedi&ccedil;&otilde;es Cadastradas</legend>
 					
 						<table class="confirmaExpedicaoGrid"></table>
-	
-						<span class="bt_confirmar">
-	<!-- CONFIRMAR -->						
-							<a href="javascript:confirmaExpedicaoController.popupConfirmar();">Confirmar</a> 
-						</span> 
 						
 						<span class="bt_sellAll" style="float: right;">
 						<label for="sel">Selecionar Todos</label>					
