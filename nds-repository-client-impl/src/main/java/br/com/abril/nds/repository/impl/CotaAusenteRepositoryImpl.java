@@ -12,6 +12,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CotaAusenteDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -48,7 +49,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append("AND tm.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
 		queryNative.append("AND movEstoque.DATA = ca.DATA ");
 		queryNative.append(") as valorNE 									");
-		
+
 		queryNative.append(getFromWhereBuscaCotaAusente(filtro));
 		
 		ColunaOrdenacao colunaOrdenacao = filtro.getColunaOrdenacao();
@@ -86,7 +87,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 				.addScalar("cota")
 				.addScalar("nome")
 				.addScalar("valorNe").setResultTransformer(Transformers.aliasToBean(CotaAusenteDTO.class));
-		
+
 		setParametersBuscaCotaAusente(filtro, query);
 		
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name());
@@ -97,11 +98,9 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		}
 				
 		return query.list();
-		
 	}
-	private void setParametersBuscaCotaAusente(FiltroCotaAusenteDTO filtro,
-			Query query) {
-		query.setParameter("ativo", true);
+	
+	private void setParametersBuscaCotaAusente(FiltroCotaAusenteDTO filtro, Query query) {
 		
 		if(filtro.getData() != null){			
 			query.setParameter("data", filtro.getData());
@@ -123,6 +122,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 			query.setParameter("idRota", filtro.getIdRota());
 		}
 	}
+	
 	private StringBuilder getFromWhereBuscaCotaAusente(FiltroCotaAusenteDTO filtro) {
 		
 		StringBuilder queryNative = new StringBuilder();
@@ -135,9 +135,8 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append("LEFT JOIN ROTEIRO roteiro ON (roteirizacao.ID = roteiro.ROTEIRIZACAO_ID)            ");
 		queryNative.append("LEFT JOIN ROTA rota ON (roteiro.ID = rota.ROTEIRO_ID)					            ");
 		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID)								");
-		
-		queryNative.append("WHERE ca.ativo =:ativo 											 					");
-				
+		queryNative.append("WHERE 1 = 1 																		");
+
 		if(filtro.getData() != null){	
 			queryNative.append("AND ca.DATA = :data  											");
 		}
@@ -171,12 +170,12 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 	
 	
 	public CotaAusente obterCotaAusentePor(Long idCota, Date data) {
-		
+
 		Criteria criteria = this.getSession().createCriteria(CotaAusente.class);
 		
 		criteria.add(Restrictions.eq("cota.id", idCota));
 		criteria.add(Restrictions.eq("data", data));
-		
+
 		CotaAusente cotaAusente = null;
 		
 		try {
@@ -204,4 +203,35 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		
 		return (long) result.size();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicaoSuplementarDTO> obterDadosExclusaoCotaAusente(Long idCotaAusente) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select produto.codigo as codigoProduto, ");
+		hql.append(" produto.nome as nomeProdutoEdicao, ");
+		hql.append(" produtoEdicao.id as idProdutoEdicao, ");
+		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
+		hql.append(" sum(movimentosEstoqueCota.qtde) as reparte, ");
+		hql.append(" estoqueProduto.qtdeSuplementar as quantidadeDisponivel ");
+		hql.append(" from CotaAusente cotaAusente ");
+		hql.append(" inner join cotaAusente.movimentosEstoqueCota movimentosEstoqueCota ");
+		hql.append(" inner join movimentosEstoqueCota.produtoEdicao produtoEdicao ");
+		hql.append(" inner join produtoEdicao.estoqueProduto estoqueProduto ");
+		hql.append(" inner join produtoEdicao.produto produto ");
+		hql.append(" where cotaAusente.id = :idCotaAusente ");
+		hql.append(" group by produtoEdicao.id ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCotaAusente", idCotaAusente);
+		
+		query.setResultTransformer(
+			Transformers.aliasToBean(ProdutoEdicaoSuplementarDTO.class));
+		
+		return query.list();
+	}
+	
 }
