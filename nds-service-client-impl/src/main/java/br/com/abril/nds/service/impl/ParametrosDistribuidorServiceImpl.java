@@ -15,12 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.DistribuidorClassificacaoCotaVO;
+import br.com.abril.nds.client.vo.DistribuidorPercentualExcedenteVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
+import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
+import br.com.abril.nds.model.cadastro.DistribuidorPercentualExcedente;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
@@ -43,6 +48,8 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
+import br.com.abril.nds.repository.DistribuidorPercentualExcedenteRepository;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
@@ -73,6 +80,12 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	private static final String ATTACHMENT_LOGOTIPO = "imagem_logotipo";
 	
 	private static final String DB_NAME = "db_parametro_distribuidor";
+	
+	@Autowired
+	DistribuidorClassificacaoCotaRepository classificacaoCotaRepository;
+	
+	@Autowired
+	DistribuidorPercentualExcedenteRepository percentualExcedenteRepository;
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -355,6 +368,38 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				parametrosDistribuidor.setAprovacaoFaltaEm(verificaCheckString(parametrosDistribuidorFaltasSobras.isSobraEm()));
 			}
 		}
+		
+		// Aba Distribuição - Grid Distribuição
+		DistribuidorGridDistribuicao gridDistribuicao = distribuidor.getGridDistribuicao();
+		parametrosDistribuidor.setGeracaoAutomaticaEstudo(gridDistribuicao.isGeracaoAutomaticaEstudo());
+		parametrosDistribuidor.setVendaMediaMais(gridDistribuicao.getVendaMediaMais());
+		parametrosDistribuidor.setPracaVeraneio(gridDistribuicao.isPracaVeraneio());
+		parametrosDistribuidor.setComplementarAutomatico(gridDistribuicao.isComplementarAutomatico());
+		parametrosDistribuidor.setPercentualMaximoFixacao(gridDistribuicao.getPercentualMaximoFixacao());
+		
+		// Aba Distribuição - Grid Classificação Cota
+		List<DistribuidorClassificacaoCotaVO> listClassificacaoCota = new ArrayList<>();
+		for (DistribuidorClassificacaoCota classificacaoCota : distribuidor.getListClassificacaoCota()) {
+			DistribuidorClassificacaoCotaVO classificacaoCotaVO = new DistribuidorClassificacaoCotaVO();
+			classificacaoCotaVO.setId(classificacaoCota.getId());
+			classificacaoCotaVO.setCodigoClassificacaoCota(classificacaoCota.getCodigoClassificacaoCota());
+			classificacaoCotaVO.setValorDe(classificacaoCota.getValorDe());
+			classificacaoCotaVO.setValorAte(classificacaoCota.getValorAte());
+			listClassificacaoCota.add(classificacaoCotaVO);
+		}
+		parametrosDistribuidor.setListClassificacaoCota(listClassificacaoCota);
+		
+		// Aba Distribuição - Grid Percentual de Excedente
+		List<DistribuidorPercentualExcedenteVO> listPercentualExcedente = new ArrayList<>();
+		for (DistribuidorPercentualExcedente percentualExcedente : distribuidor.getListPercentualExcedente()) {
+			DistribuidorPercentualExcedenteVO percentualExcedenteVO = new DistribuidorPercentualExcedenteVO();
+			percentualExcedenteVO.setId(percentualExcedente.getId());
+			percentualExcedenteVO.setEficiencia(percentualExcedente.getEficiencia());
+			percentualExcedenteVO.setVenda(percentualExcedente.getVenda());
+			percentualExcedenteVO.setPdv(percentualExcedente.getPdv());
+			listPercentualExcedente.add(percentualExcedenteVO);
+		}
+		parametrosDistribuidor.setListPercentualExcedente(listPercentualExcedente);
 		
 		return parametrosDistribuidor;
 	}
@@ -782,6 +827,32 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			distribuidor.setParametrosDistribuidorFaltasSobras(null);
 		}
 		
+		// Aba Distribuição - Grid Distribuição
+		DistribuidorGridDistribuicao gridDistribuicao = distribuidor.getGridDistribuicao();
+		gridDistribuicao.setGeracaoAutomaticaEstudo(parametrosDistribuidor.isGeracaoAutomaticaEstudo());
+		gridDistribuicao.setVendaMediaMais(parametrosDistribuidor.getVendaMediaMais());
+		gridDistribuicao.setPracaVeraneio(parametrosDistribuidor.isPracaVeraneio());
+		gridDistribuicao.setComplementarAutomatico(parametrosDistribuidor.isComplementarAutomatico());
+		gridDistribuicao.setPercentualMaximoFixacao(parametrosDistribuidor.getPercentualMaximoFixacao());
+		
+		distribuidor.setGridDistribuicao(gridDistribuicao); //talvez n precise pois obj deveria estar linkado...
+		
+		
+		// Aba Distribuição - Grid Classificação Cota
+		distribuidor.setListClassificacaoCota(this.gravarClassificacaoCota(distribuidor, parametrosDistribuidor.getListClassificacaoCota()));
+		
+		// Aba Distribuição - Grid Percentual de Excedente
+		distribuidor.setListPercentualExcedente(this.gravarPercentualExcedente(distribuidor, parametrosDistribuidor.getListPercentualExcedente()));
+//		List<DistribuidorPercentualExcedenteVO> listPercentualExcedente = new ArrayList<>();
+//		for (DistribuidorPercentualExcedente percentualExcedente : distribuidor.getListPercentualExcedente()) {
+//			DistribuidorPercentualExcedenteVO percentualExcedenteVO = new DistribuidorPercentualExcedenteVO();
+//			percentualExcedenteVO.setEficiencia(percentualExcedente.getEficiencia());
+//			percentualExcedenteVO.setVenda(percentualExcedente.getVenda());
+//			percentualExcedenteVO.setPdv(percentualExcedente.getPdv());
+//			listPercentualExcedente.add(percentualExcedenteVO);
+//		}
+//		parametrosDistribuidor.setListPercentualExcedente(listPercentualExcedente);
+		
 		distribuidorService.alterar(distribuidor);
 		
 		distribuidor.setEnderecoDistribuidor(
@@ -790,6 +861,54 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		this.salvarLogo(imgLogotipo, imgContentType);
 	}
 	
+	private List<DistribuidorPercentualExcedente> gravarPercentualExcedente(
+			Distribuidor distribuidor,
+			List<DistribuidorPercentualExcedenteVO> listPercentualExcedenteVO) {
+		
+		List<DistribuidorPercentualExcedente> listPercentualExcedente = new ArrayList<>();
+		
+		for (DistribuidorPercentualExcedenteVO percentualExcedenteVO : listPercentualExcedenteVO) {
+			DistribuidorPercentualExcedente percentualExcedente = percentualExcedenteRepository.buscarPorId(percentualExcedenteVO.getId());
+			if (percentualExcedente == null) {
+				percentualExcedente = new DistribuidorPercentualExcedente();
+				percentualExcedente.setDistribuidor(distribuidor);
+			}
+			percentualExcedente.setEficiencia(percentualExcedenteVO.getEficiencia());
+			percentualExcedente.setPdv(percentualExcedenteVO.getPdv());
+			percentualExcedente.setVenda(percentualExcedenteVO.getVenda());
+			
+			percentualExcedenteRepository.merge(percentualExcedente);
+			
+			listPercentualExcedente.add(percentualExcedente);
+		}
+		
+		return listPercentualExcedente;
+	}
+
+	private List<DistribuidorClassificacaoCota> gravarClassificacaoCota(
+			Distribuidor distribuidor,
+			List<DistribuidorClassificacaoCotaVO> listClassificacaoCotaVO) {
+		
+		List<DistribuidorClassificacaoCota> listClassificacaoCota = new ArrayList<>();
+		
+		for (DistribuidorClassificacaoCotaVO classificacaoCotaVO : listClassificacaoCotaVO) {
+			DistribuidorClassificacaoCota classificacaoCota = classificacaoCotaRepository.buscarPorId(classificacaoCotaVO.getId());
+			if (classificacaoCota == null) {
+				classificacaoCota = new DistribuidorClassificacaoCota();
+				classificacaoCota.setDistribuidor(distribuidor);
+			}
+			classificacaoCota.setCodigoClassificacaoCota(classificacaoCotaVO.getCodigoClassificacaoCota());
+			classificacaoCota.setValorDe(classificacaoCotaVO.getValorDe());
+			classificacaoCota.setValorAte(classificacaoCotaVO.getValorAte());
+			
+			classificacaoCotaRepository.merge(classificacaoCota);
+			
+			listClassificacaoCota.add(classificacaoCota);
+		}
+		
+		return listClassificacaoCota;
+	}
+
 	private void validarUtilizacaoControleAprovacao(ParametrosDistribuidorVO parametrosDistribuidor) {
 		
 		List<String> mensagens = new ArrayList<>();

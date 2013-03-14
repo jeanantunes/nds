@@ -1,6 +1,6 @@
 package br.com.abril.nds.model;
 
-public enum ClassificacaoCotaDistribuidor {
+public enum ClassificacaoCotaDistribuidorEnum {
 
 	AA,A,B,C,D;
 	
