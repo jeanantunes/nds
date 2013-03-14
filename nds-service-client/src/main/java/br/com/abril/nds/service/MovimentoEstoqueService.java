@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -24,7 +23,7 @@ public interface MovimentoEstoqueService {
 
 	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota);
 
-	void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
+	List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data, Long idCota, List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
 
 	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
 							 	 MovimentoEstoque movimentoEstoque);

@@ -397,5 +397,9 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
 	
 	Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+	
+	List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
+																			Long idCota, 
+																			GrupoMovimentoEstoque grupoMovimentoEstoque);
 
 }

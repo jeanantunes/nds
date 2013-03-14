@@ -39,7 +39,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
-import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -1399,6 +1398,37 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		
+		return query.list();
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
+																				   Long idCota, 
+																				   GrupoMovimentoEstoque grupoMovimentoEstoque) {
+		
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" select movimento from MovimentoEstoqueCota movimento ");			
+		
+		hql.append(" inner join movimento.lancamento lancamento ");
+		
+		hql.append(" where movimento.cota.id = :idCota ");
+		
+		hql.append(" and movimento.data = :data ");
+		
+		hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
+		
+		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", dataLancamento);
 		
 		query.setParameter("idCota", idCota);
 		
