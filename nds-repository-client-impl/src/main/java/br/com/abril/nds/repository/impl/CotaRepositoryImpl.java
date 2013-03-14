@@ -14,10 +14,10 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -1396,7 +1396,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 										, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page) {
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
-		criteria.createAlias("box", "box");
+		criteria.createAlias("box", "box", JoinType.LEFT_OUTER_JOIN);
 		criteria.createAlias("pdvs", "pdvs");
 		criteria.setProjection(Projections.distinct(Projections.id()));
 		
@@ -1420,9 +1420,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		}
 		
 	
-		criteria.createAlias("pdvs.rotas", "rotaPdv");
-	    criteria.createAlias("rotaPdv.rota", "rota");
-		criteria.createAlias("rota.roteiro", "roteiro");
+		criteria.createAlias("pdvs.rotas", "rotaPdv", JoinType.LEFT_OUTER_JOIN);
+	    criteria.createAlias("rotaPdv.rota", "rota", JoinType.LEFT_OUTER_JOIN);
+		criteria.createAlias("rota.roteiro", "roteiro", JoinType.LEFT_OUTER_JOIN);
 				
 		
 		if (idRoteiro != null){
@@ -1595,7 +1595,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append( 
 		  "	    from "
 		+ "	        COTA cota_ " 
-		+ "	    inner join "
+		+ "	    left outer join "
 		+ "	        BOX box1_  "
 		+ "	            on cota_.BOX_ID=box1_.ID  "
 		+ "	    inner join "
@@ -1623,13 +1623,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		+ "	    inner join "
 		+ "	        PDV pdv_  "
 		+ "	            on cota_.ID=pdv_.COTA_ID  "
-		+ "	     inner join "
+		+ "	    left outer join "
 		+ "        ROTA_PDV rota_pdv_  "
 		+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
-		+ "	    inner join "
+		+ "	    left outer join "
 		+ "	        ROTA rota_  "
 		+ "	            on rota_pdv_.rota_ID=rota_.ID  "
-		+ "	    inner join "
+		+ "	    left outer join "
 		+ "	        ROTEIRO roteiro_  "
 		+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
 		+ "	    inner join "
@@ -1702,7 +1702,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		}
 		sql.append( "   from "
 				+ "	        COTA cota_ " 
-				+ "	    inner join "
+				+ "	    left outer join "
 				+ "	        BOX box1_  "
 				+ "	            on cota_.BOX_ID=box1_.ID  "
 				+ "	    inner join "
@@ -1730,13 +1730,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				+ "	    inner join "
 				+ "	        PDV pdv_  "
 				+ "	            on cota_.ID=pdv_.COTA_ID  "
-				+ "	     inner join "
+				+ "	    left outer join "
 				+ "        ROTA_PDV rota_pdv_  "
 				+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
-				+ "	    inner join "
+				+ "	    left outer join "
 				+ "	        ROTA rota_  "
 				+ "	            on rota_pdv_.rota_ID=rota_.ID  "
-				+ "	    inner join "
+				+ "	    left outer join "
 				+ "	        ROTEIRO roteiro_  "
 				+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
 				+ "	    inner join "

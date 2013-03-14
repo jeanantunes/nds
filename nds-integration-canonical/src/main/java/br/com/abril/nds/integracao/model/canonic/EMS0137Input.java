@@ -32,7 +32,7 @@ public class EMS0137Input extends IntegracaoDocumentMaster<EMS0137InputItem> imp
 	
 	private Long codigoNaturezaOperacao;
 	
-	private Integer nuemroSemanaReferencia;
+	private Integer numeroSemanaReferencia;
 	
 	private Long nuemroControle;
 	
@@ -126,12 +126,12 @@ public class EMS0137Input extends IntegracaoDocumentMaster<EMS0137InputItem> imp
 		this.codigoNaturezaOperacao = codigoNaturezaOperacao;
 	}
 
-	public Integer getNuemroSemanaReferencia() {
-		return nuemroSemanaReferencia;
+	public Integer getNumeroSemanaReferencia() {
+		return numeroSemanaReferencia;
 	}
 
-	public void setNuemroSemanaReferencia(Integer nuemroSemanaReferencia) {
-		this.nuemroSemanaReferencia = nuemroSemanaReferencia;
+	public void setNumeroSemanaReferencia(Integer numeroSemanaReferencia) {
+		this.numeroSemanaReferencia = numeroSemanaReferencia;
 	}
 
 	public Long getNuemroControle() {
