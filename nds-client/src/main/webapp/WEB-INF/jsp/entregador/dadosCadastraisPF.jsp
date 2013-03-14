@@ -17,7 +17,7 @@
            <td width="118">Nome:</td>
            <td width="237"><input type="text"  id="nomeEntregador" style="width:230px " /></td>
            <td width="134">Apelido:</td>
-           <td colspan="3"><input type="text"  id="apelido" style="width:230px" /></td>
+           <td colspan="3"><input maxlength="25" type="text"  id="apelido" style="width:230px" /></td>
        </tr>
        <tr>
          <td>CPF:</td>
