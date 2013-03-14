@@ -42,7 +42,7 @@ public class CotaAusente {
 	@OneToMany(mappedBy = "cotaAusente", cascade = CascadeType.ALL)
 	private List<RateioCotaAusente> rateios = new ArrayList<RateioCotaAusente>(); 
 	
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "COTA_AUSENTE_MOVIMENTO_ESTOQUE_COTA",
 			   joinColumns = {@JoinColumn(name = "COTA_AUSENTE_ID")}, 
 			   inverseJoinColumns = {@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")})
