@@ -123,8 +123,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			hql.append("   AND fornecedor.id = :idFornecedor");
 		}
 		
-		hql.append(" GROUP BY case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end, ");
-		hql.append(" movimento.produtoEdicao ");
+		hql.append(" GROUP BY pe.id, case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end ");
 		
 		return hql.toString();
 	}

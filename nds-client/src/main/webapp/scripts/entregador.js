@@ -374,7 +374,7 @@ var entregadorController = $.extend(true, {
 
 	confirmarExclusaoEntregador: function(idEntregador) {
 
-		$( "#dialog-excluir-entregador", this.workspace ).dialog({
+		$( "#dialog-excluir-entregador").dialog({
 			resizable: false,
 			height:170,
 			width:380,
