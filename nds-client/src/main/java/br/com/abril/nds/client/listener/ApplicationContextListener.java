@@ -64,7 +64,7 @@ public class ApplicationContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 
-		this.agendarIntegracaoOperacionalDistribuidor();
+		/*this.agendarIntegracaoOperacionalDistribuidor();
 		this.agendaExeclusaoAjusteReparte();
 		this.agendarExclusaoDeEstudos();
 		this.agendarGeracaoRankings();
@@ -75,7 +75,7 @@ public class ApplicationContextListener implements ServletContextListener {
 			logger.fatal("Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
-		}
+		}*/
 
 	}
 

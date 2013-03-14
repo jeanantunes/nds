@@ -217,6 +217,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		return listaConferencia;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro){
+		
+		int quantidade = 0;
+		
+		quantidade = this.fechamentoEncalheRepository.buscarQuantidadeConferenciaEncalhe(filtro);
+				
+		return quantidade;
+	}
+	
 	private Long calcularDiferencao(FechamentoFisicoLogicoDTO conferencia) {
 		 
 		if (conferencia.getFisico() != null && conferencia.getExemplaresDevolucao() != null) {	
