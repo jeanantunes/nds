@@ -658,8 +658,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 							});
 						}
 						
+						histogramaPosEstudoController.matrizSelecionado = selecionado;
 						histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(params);
-					
 				});
 			}
 			

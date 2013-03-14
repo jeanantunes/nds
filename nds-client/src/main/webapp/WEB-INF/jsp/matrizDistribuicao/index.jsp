@@ -163,7 +163,7 @@ matrizDistribuicao.inicializar();
 		         	  		</span>
 		         	  		
 		         	  		<span class="bt_novos">
-			         	  		<a href="javascript:;" onclick="balanceamentoLancamento.analise();">
+			         	  		<a href="javascript:;" onclick="matrizDistribuicao.analise();">
 			         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0" >
 			         	  				Análise
 			         	  			</img>
