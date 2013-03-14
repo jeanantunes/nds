@@ -348,5 +348,4 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return query.list();
 	}
 	
-	
 }

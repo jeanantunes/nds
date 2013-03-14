@@ -38,6 +38,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
 		hql.append("		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
+		hql.append("		lancamento.dataLancamentoPrevista as dataLancamentoPrevista, ");
+		hql.append(" 		lancamento.dataRecolhimentoPrevista as dataRecolhimentoPrevista, ");
+
 		hql.append("		produtoEdicao.origem as origem, ");
 		
 		hql.append("		sum(lancamento.reparte) as reparte,  ");

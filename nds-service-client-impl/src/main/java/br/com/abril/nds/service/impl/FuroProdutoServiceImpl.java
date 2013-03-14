@@ -194,10 +194,19 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		}
 		
 		// Ao furar um produto com nota de envio emitida, o item da nota eh removido
-		for(EstudoCota ec : lancamento.getEstudo().getEstudoCotas()) {
-			for(ItemNotaEnvio item : ec.getItemNotaEnvios()){
-				item.setEstudoCota(null);
-				itemNovaEnvioRepository.alterar(item);
+		if (lancamento.getEstudo()!=null){
+			
+			for(EstudoCota ec : lancamento.getEstudo().getEstudoCotas()) {
+				
+				if (lancamento.getEstudo().getEstudoCotas()!=null && !lancamento.getEstudo().getEstudoCotas().isEmpty()){
+					
+					for(ItemNotaEnvio item : ec.getItemNotaEnvios()){
+						
+						item.setEstudoCota(null);
+						
+						itemNovaEnvioRepository.alterar(item);
+					}
+				}
 			}
 		}
 		
