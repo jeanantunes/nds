@@ -39,7 +39,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
-import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
@@ -572,10 +571,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	PRODUTO_EDICAO.ID,                  ");
 		sql.append("	PRODUTO_EDICAO.NUMERO_EDICAO,       ");
 		sql.append("	PRODUTO_EDICAO.PRECO_VENDA,         ");
+		sql.append(" 	precoComDesconto,					");
 		sql.append("	FORNECEDOR.ID, 						");
 		sql.append("	PESSOA.RAZAO_SOCIAL, 				");
 		sql.append("    MOVIMENTO_ESTOQUE_COTA.DATA,		");
 		sql.append("	recolhimento, 						");
+		sql.append("	valorDesconto 						");
 
 		return sql;
 		
