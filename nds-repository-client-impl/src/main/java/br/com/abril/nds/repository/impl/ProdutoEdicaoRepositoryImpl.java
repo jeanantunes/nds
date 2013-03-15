@@ -1226,8 +1226,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" sum(lancamento.reparte) as repartePrevisto, ");
 		hql.append(" sum(ifnull(estoqueProduto.qtdeDevolucaoFornecedor,0)  - movimentos.qtde) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
-		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa ");
-		
+		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
+		hql.append(" produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 		hql.append(" FROM EstoqueProduto estoqueProduto");
 		hql.append(" LEFT JOIN estoqueProduto.movimentos as movimentos");
 		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");

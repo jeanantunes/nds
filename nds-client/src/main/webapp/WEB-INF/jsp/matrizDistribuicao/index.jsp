@@ -160,7 +160,7 @@ matrizDistribuicao.inicializar();
 		         	  		</span>	
 		         	  		
 		         	  		<span class="bt_novos">
-<<<<<<< HEAD
+
 		         	  			<a href="javascript:;" onclick="balanceamentoLancamento.popup_confirmar_reabertura_matriz();">
 			         	  			<img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0">
 			         	  				Reabrir Matriz
@@ -174,11 +174,7 @@ matrizDistribuicao.inicializar();
 			         	  				Análise
 			         	  			</img>
 			         	  		</a>	
-=======
-		         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0">
-		         	  				Análise
-		         	  			</img>
->>>>>>> DGBti/master
+
 		         	  		</span>
 		         	  		
 		         	  		<span class="bt_novos">
@@ -315,31 +311,24 @@ matrizDistribuicao.inicializar();
 					Confirmar a duplicação do registro selecionado?
 
 		    </fieldset>
-		</div>
-<<<<<<< HEAD
+
 		</form>
+	
+		<div id="histogramaPosEstudoContent" />
+	
+		<form id="form-copiar-estudo">
+			<div id="dialog-copiar-estudo" title="Copia Proporcional de Estudo" style="display:none;">
+			    
+			    <jsp:include page="copiarEstudo.jsp" />
+			</div>
+		</form>
+			
+		<form id="form-somar-estudo">
+			<div id="dialog-somar-estudo" title="Somar Estudos" style="display:none;">
+			    <jsp:include page="somarEstudo.jsp" />
+			</div>
+		</form>		
+		
 	</body>
 </div>
 
-<div id="histogramaPosEstudoContent" />
-=======
-		</form> 	
-			
-	</div>
-			
-		
-		<form id="form-copiar-estudo">
-		<div id="dialog-copiar-estudo" title="Copia Proporcional de Estudo" style="display:none;">
-		    
-		    <jsp:include page="copiarEstudo.jsp" />
-		</div>
-	</form>
-			
-	<form id="form-somar-estudo">
-		<div id="dialog-somar-estudo" title="Somar Estudos" style="display:none;">
-		    <jsp:include page="somarEstudo.jsp" />
-		</div>
-		</form>
-		
-</body>
->>>>>>> DGBti/master

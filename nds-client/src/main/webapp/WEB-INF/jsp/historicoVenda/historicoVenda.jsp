@@ -91,7 +91,7 @@ function filtroPercVenda(){
                 </td-->
               <td width="75">Classificação:</td>
             <td width="65">
-            	<select name="select" id="select" style="width:90px;">
+            	<select name="filtro.tipoClassificacaoProdutoId" id="selectClassificacao" style="width:90px;">
 			            <c:forEach items="${classificacaoProduto}" var="tipoClassificacao">
 							<option value="<c:out value="${tipoClassificacao.id}"/>"><c:out value="${tipoClassificacao.descricao}"/></option>
 						</c:forEach>
