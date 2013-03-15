@@ -20,8 +20,8 @@ $(function(){
 
     <div class="areaBts">
 		<div class="area">
-		    <span class="bt_arq"
-			    title="Confirmar"><a id="btnGerar" href="javascript:;" onclick="mostrar();"><img
+		    <span class="bt_novos"
+			    title="Confirmar"><a id="btnGerar" href="javascript:;" onclick="mostrar();" rel="tipsy"><img
 					border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
 			</span>
 		</div>

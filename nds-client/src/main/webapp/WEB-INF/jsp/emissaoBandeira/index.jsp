@@ -22,19 +22,19 @@
     <div class="areaBts">
 		<div class="area">
 			<span class="bt_arq">
-			    <a href="javascript:;" onclick="emissaoBandeiraController.imprimirBandeira();" rel="bandeira">
+			    <a title="Imprimir Bandeira" href="javascript:;" onclick="emissaoBandeiraController.imprimirBandeira();" rel="bandeira">
 			        <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
                 </a>
 			</span> 
 			
 			<span class="bt_arq"> 
-				<a href="javascript:;" onclick="emissaoBandeiraController.imprimirArquivo('PDF')">
+				<a title="Imprimir Relatório"  href="javascript:;" onclick="emissaoBandeiraController.imprimirArquivo('PDF')">
 				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 			</span>
 
-			<span class="bt_arq"> 
-				<a href="javascript:;" onclick="emissaoBandeiraController.bandeiraManual()"  >
+			<span class="bt_novos"> 
+				<a title="Bandeira Manual"  href="javascript:;" onclick="emissaoBandeiraController.bandeiraManual()"  >
 				    <img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" />
                 </a>
 			</span>
