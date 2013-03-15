@@ -493,8 +493,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		destinatario.setNumeroCota(cota.getNumeroCota());
 		destinatario.setDocumento(cota.getPessoa().getDocumento());
 
-		EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota
-				.getId());
+		EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota.getId());
 
 		if (enderecoCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
