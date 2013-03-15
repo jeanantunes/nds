@@ -673,7 +673,7 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		for (Entregador entregador : entregadores) {
 		
-			String nome = entregador.getPessoa().getNome();
+			String nome = entregador.getCodigo() + " - " + entregador.getPessoa().getNome();
 										
 			ordem++;
 				
