@@ -315,14 +315,11 @@ public class CotaAusenteController extends BaseController {
 	@Post
 	public void exibirProdutosSuplementaresDisponiveis(Long idCotaAusente) {
 		
-		FiltroCotaAusenteDTO filtro = this.getFiltroSessao();
-		
 		List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoDisponíveis = 
-				this.estoqueProdutoService.obterProdutosEdicaoSuplementarDisponivel(filtro.getData(), idCotaAusente);
+			this.cotaAusenteService.obterDadosExclusaoCotaAusente(idCotaAusente);
 		
 		result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1).total(listaProdutosEdicaoDisponíveis.size()).serialize();
 	}
-	
 	
 	/**
 	 * 
@@ -433,6 +430,8 @@ public class CotaAusenteController extends BaseController {
 				
 				this.cotaAusenteService.verificarExistenciaReparteCota(dataOperacao, numeroCota);
 				
+				this.cotaAusenteService.validarCotaAusenteNaData(numeroCota, dataOperacao);
+				
 			} catch (ValidacaoException e) {
 				
 				List<String> mensagens = new ArrayList<String>();
@@ -451,10 +450,28 @@ public class CotaAusenteController extends BaseController {
 				return;
 			}
 		}
-		
+
 		List<MovimentoEstoqueCotaDTO> movimentos = 
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
 				dataOperacao, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		if (movimentos == null || movimentos.isEmpty()) {
+			
+			List<String> mensagens = new ArrayList<String>();
+			
+			mensagens.add("Não ha reparte para as cotas nesta data.");
+			
+			TipoMensagem tipoMensagem = TipoMensagem.WARNING;
+			
+			Object[] retorno = new Object[2];
+			
+			retorno[0] = mensagens;
+			retorno[1] = tipoMensagem;
+			
+			result.use(Results.json()).from(retorno, "result").serialize();
+			
+			return;
+		}
 		
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}

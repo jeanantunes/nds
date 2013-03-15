@@ -791,13 +791,8 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setUsuario(getUsuarioLogado());
 		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
 		
-		try{
-		    this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
-		}
-		catch(Exception e){
-			throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao efetuar a baixa manual de [Dívida]!("+e.getMessage()+")");
-		}
-		
+		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."), "result").recursive().serialize();
 	}
 		

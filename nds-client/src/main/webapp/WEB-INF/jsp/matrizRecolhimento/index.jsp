@@ -143,11 +143,11 @@
 		                	</c:forEach> 
 		            	</div>
 					</td>
-					<td width="53">Semana:</td>
+					<td width="53">Semana :</td>
 					<td width="107">
 						<input type="text" 
 							   name="numeroSemana" 
-							   id="numeroSemana" value="${numeroSemana}" style="width: 50px;"
+							   id="numeroSemana" value="${numeroSemana}${ano}" style="width: 50px;" maxlength="6"
 							   onchange="balanceamentoRecolhimentoController.carregarDataSemana();" />
 					</td>
 					<td width="33">Data:</td>
@@ -214,13 +214,29 @@
 			
 			<div class="grids" style="display: none;">
 	
-				<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
-					<a id="linkFechar" href="javascript:;" onclick="balanceamentoRecolhimentoController.fecharGridBalanceamento();">
-						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
-							 hspace="5" border="0" />Fechar
-					</a>
-				</span>
 	
+	            <table width="950" border="0" cellspacing="2" cellpadding="2">
+					<tr>
+			            <td width="152">
+							<span class="bt_novos" title="Reprogramar">
+								<a id="linkReprogramar" href="javascript:;">
+									<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
+								</a>
+							</span>
+						</td>
+	                    <td width="46">&nbsp;</td>
+						<td width="443">&nbsp;</td>
+						<td width="150">
+						    <span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
+							    <a id="linkFechar" href="javascript:;" onclick="balanceamentoRecolhimentoController.fecharGridBalanceamento();">
+								    <img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
+									     hspace="5" border="0" />Fechar
+							    </a>
+						    </span>
+						</td>
+					</tr>
+				</table>
+						
 				<br clear="all" />
 				
 				<input type="hidden" id="dataBalanceamentoHidden" />
@@ -230,13 +246,7 @@
 				
 				<table width="950" border="0" cellspacing="2" cellpadding="2">
 					<tr>
-						<td width="152">
-							<span class="bt_novos" title="Reprogramar">
-								<a id="linkReprogramar" href="javascript:;">
-									<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
-								</a>
-							</span>
-						</td>
+						<td width="152"></td>
 						<td width="46">&nbsp;</td>
 						<td width="443">&nbsp;</td>
 						<td width="150">

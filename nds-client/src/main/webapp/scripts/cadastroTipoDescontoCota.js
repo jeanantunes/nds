@@ -162,5 +162,5 @@ var descontoCotaController = $.extend(true,{
 		});		
 	}
 }, BaseController);
-
+//@ sourceURL=tipoDescontoCota.js
 	

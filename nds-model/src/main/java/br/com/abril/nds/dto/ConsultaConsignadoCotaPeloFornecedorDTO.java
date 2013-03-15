@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -14,19 +15,19 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 
 	private static final long serialVersionUID = -6080837731839488665L;
 	
-	@Export(label = "Cota" , alignment= Alignment.LEFT, exhibitionOrder = 1)
+	@Export(label = "Cota" , alignment= Alignment.LEFT, exhibitionOrder = 1, columnType = ColumType.INTEGER, widthPercent = 9f)
 	private Integer numeroCota;
 	
-	@Export(label = "Nome" , alignment= Alignment.LEFT, exhibitionOrder = 2)
+	@Export(label = "Nome" , alignment= Alignment.LEFT, exhibitionOrder = 2, widthPercent = 41f)
 	private String nomeCota;
 	
-	@Export(label = "Consignado Total" , alignment= Alignment.CENTER, exhibitionOrder = 3)
+	@Export(label = "Consignado Total" , alignment= Alignment.CENTER, exhibitionOrder = 3, columnType = ColumType.INTEGER, widthPercent = 12.5f)
 	private BigInteger consignado;
 	
 	private BigDecimal total;
 	private BigDecimal totalDesconto;
 	
-	@Export(label = "Fornecedor" , alignment= Alignment.CENTER, exhibitionOrder = 7)
+	@Export(label = "Fornecedor" , alignment= Alignment.CENTER, exhibitionOrder = 7, widthPercent = 12.5f)
 	private String nomeFornecedor;
 	private Long idFornecedor;
 	
@@ -75,6 +76,7 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 		this.consignado = consignado;
 	}
 
+	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 5, widthPercent = 12.5f, columnType = ColumType.MOEDA)
 	public BigDecimal getTotal() {
 		return total;
 	}
@@ -86,11 +88,11 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 		}
 	}
 	
-	@Export(label = "Total $", alignment= Alignment.RIGHT, exhibitionOrder = 5)
 	public String getTotalFormatado(){
 		return totalFormatado;
 	}
 
+	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 6, widthPercent = 12.5f, columnType = ColumType.MOEDA)
 	public BigDecimal getTotalDesconto() {
 		return totalDesconto;
 	}
@@ -102,7 +104,6 @@ public class ConsultaConsignadoCotaPeloFornecedorDTO implements Serializable {
 		}
 	}
 	
-	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 6)
 	public String getTotalDescontoFormatado(){
 		return totalDescontoFormatado;
 	}

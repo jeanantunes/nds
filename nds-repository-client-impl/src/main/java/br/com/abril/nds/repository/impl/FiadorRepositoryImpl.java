@@ -301,4 +301,20 @@ public class FiadorRepositoryImpl extends AbstractRepositoryModel<Fiador, Long> 
 		
 		return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> obterFiadorPorNome(String nomeFiador, Integer qtdMaxResul) {
+	
+		StringBuilder hql = new StringBuilder("select p from Fiador f, Pessoa p ");
+		hql.append(" where f.pessoa.id = p.id ")
+		   .append(" and lower(p.nome) like :nomeFiador or lower(p.razaoSocial) like :nomeFiador or lower(p.nomeFantasia) like :nomeFiador ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("nomeFiador", "%" + nomeFiador.toLowerCase() + "%");
+		
+		query.setMaxResults(qtdMaxResul);
+		
+		return query.list();
+	}
 }

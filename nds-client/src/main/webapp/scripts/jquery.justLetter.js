@@ -47,7 +47,12 @@
 	
 			var key = e.charCode ? e.charCode : e.keyCode ? e.keyCode : 0;
 		
-			if(key == 13 && this.nodeName.toLowerCase() == "input")
+			//tab
+			if(key == 9)
+			{
+				return true;
+			}
+			else if(key == 13 && this.nodeName.toLowerCase() == "input")
 			{
 				return true;
 			}

@@ -47,6 +47,9 @@ public class ParametroCobrancaCota implements Serializable {
 	@Column(name = "FATOR_VENCIMENTO")
 	private Integer fatorVencimento;
 	
+	@Column(name = "UNIFICA_COBRANCA")
+	private boolean unificaCobranca;
+	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
 	
@@ -120,5 +123,13 @@ public class ParametroCobrancaCota implements Serializable {
 	
 	public void setFornecedorPadrao(Fornecedor fornecedorPadrao) {
 		this.fornecedorPadrao = fornecedorPadrao;
+	}
+
+	public boolean isUnificaCobranca() {
+		return unificaCobranca;
+	}
+
+	public void setUnificaCobranca(boolean unificaCobranca) {
+		this.unificaCobranca = unificaCobranca;
 	}
 }

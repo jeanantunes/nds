@@ -17,10 +17,10 @@ public class PeriodoParcialDTO implements Serializable {
 	
 	private Long idProdutoEdicao;
 		
-	@Export(label = "Data Lancamento", alignment=Alignment.CENTER)
+	@Export(label = "Data Lancamento", alignment=Alignment.CENTER,widthPercent=10)
 	private String dataLancamento;
 	
-	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER)
+	@Export(label = "Data Recolhimento", alignment=Alignment.CENTER,widthPercent=10)
 	private String dataRecolhimento;
 	
 	@Export(label = "Reparte", alignment=Alignment.CENTER)
@@ -49,13 +49,31 @@ public class PeriodoParcialDTO implements Serializable {
 	
 	@Export(label = "% Venda Acum.", alignment=Alignment.CENTER)
 	private String percVendaAcumulada;
-		
+	
+	@Export(label = "Data Lancamento Prevista", alignment=Alignment.CENTER,widthPercent=10)
+	private String dataLancamentoPrevista;
+	
+	@Export(label = "Data Recolhimento Prevista", alignment=Alignment.CENTER,widthPercent=10)
+	private String dataRecolhimentoPrevista;
+	
 	private Long idLancamento;
 	
 	private boolean geradoPorInterface;
 	
 	private Origem origem;
 	
+	public String getDataLancamentoPrevista() {
+		return dataLancamentoPrevista;
+	}
+	public void setDataLancamentoPrevista(Date dataLancamentoPrevista) {
+		this.dataLancamentoPrevista = DateUtil.formatarData(dataLancamentoPrevista, Constantes.DATE_PATTERN_PT_BR);
+	}
+	public String getDataRecolhimentoPrevista() {
+		return dataRecolhimentoPrevista;
+	}
+	public void setDataRecolhimentoPrevista(Date dataRecolhimentoPrevista) {
+		this.dataRecolhimentoPrevista = DateUtil.formatarData(dataRecolhimentoPrevista, Constantes.DATE_PATTERN_PT_BR);
+	}
 	public String getDataLancamento() {
 		return dataLancamento;
 	}
