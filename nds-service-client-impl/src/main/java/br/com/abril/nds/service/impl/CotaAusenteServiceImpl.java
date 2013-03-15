@@ -131,8 +131,12 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 				this.movimentoEstoqueService.enviarSuplementarCotaAusente(
 					data, cota.getId(), movimentosCota);
 			
-			cotasAusentes.add(
-				gerarCotaAusente(numCota, data, idUsuario, cota, movimentosCotaEnvio));
+			CotaAusente cotaAusente = 
+				gerarCotaAusente(numCota, data, idUsuario, cota, movimentosCotaEnvio);
+			
+			cotasAusentes.add(cotaAusente);
+			
+			this.cotaAusenteRepository.adicionar(cotaAusente);
 		}
 		
 		List<MovimentoEstoqueCotaDTO> movimentosCota = 
@@ -155,11 +159,6 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 							data, idUsuario, produtoEdicao, cotasAusentes);					
 				}
 			}
-		}
-		
-		for (CotaAusente cotaAusente : cotasAusentes) {
-			
-			this.cotaAusenteRepository.adicionar(cotaAusente);
 		}
 	}
 	

@@ -41,7 +41,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append(" box.NOME as box, ");
 		queryNative.append(" cota.NUMERO_COTA as cota, ");
 	    queryNative.append(" (case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nome, ");
-	    queryNative.append(" SUM(mec.QTDE * pe.PRECO_VENDA) as valorNE ");
+	    queryNative.append(" SUM(ec.QTDE_EFETIVA * pe.PRECO_VENDA) as valorNE ");
 		
 		queryNative.append(getFromWhereBuscaCotaAusente(filtro));
 		
@@ -119,10 +119,15 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		StringBuilder queryNative = new StringBuilder();
 		
 		queryNative.append(" FROM COTA_AUSENTE ca ");
+		
 		queryNative.append(" JOIN COTA cota on (cota.ID = ca.COTA_ID) ");
 		queryNative.append(" JOIN cota_ausente_movimento_estoque_cota camec ON (camec.COTA_AUSENTE_ID = ca.ID) ");
 		queryNative.append(" JOIN movimento_estoque_cota mec on (camec.MOVIMENTO_ESTOQUE_COTA_ID = mec.id) ");
 		queryNative.append(" JOIN produto_edicao pe on (pe.ID = mec.PRODUTO_EDICAO_ID) ");
+		queryNative.append(" JOIN estudo_cota ec on (ec.cota_id = cota.id) ");
+		queryNative.append(" JOIN estudo estudo on (ec.estudo_id = estudo.id) ");
+		queryNative.append(" JOIN LANCAMENTO lancamento on (lancamento.id = mec.lancamento_id and estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
+
 		queryNative.append(" LEFT JOIN BOX box ON (cota.BOX_ID=box.ID) ");
 		queryNative.append(" LEFT JOIN ROTEIRIZACAO roteirizacao ON (box.ID = roteirizacao.BOX_ID) ");
 		queryNative.append(" LEFT JOIN ROTEIRO roteiro ON (roteirizacao.ID = roteiro.ROTEIRIZACAO_ID) ");
@@ -209,7 +214,13 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		hql.append(" produtoEdicao.id as idProdutoEdicao, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" sum(movimentosEstoqueCota.qtde) as reparte, ");
-		hql.append(" estoqueProduto.qtdeSuplementar as quantidadeDisponivel ");
+		hql.append(" estoqueProduto.qtdeSuplementar + ");
+		hql.append(" (select coalesce(sum(rateioCotaAusente.qtde), 0) ");
+		hql.append(" from RateioCotaAusente rateioCotaAusente ");
+		hql.append(" inner join rateioCotaAusente.cotaAusente cotaAusenteSub ");
+		hql.append(" where cotaAusente.id = cotaAusenteSub.id ");
+		hql.append(" and rateioCotaAusente.produtoEdicao = estoqueProduto.produtoEdicao) ");
+		hql.append(" as quantidadeDisponivel ");
 		hql.append(" from CotaAusente cotaAusente ");
 		hql.append(" inner join cotaAusente.movimentosEstoqueCota movimentosEstoqueCota ");
 		hql.append(" inner join movimentosEstoqueCota.produtoEdicao produtoEdicao ");
