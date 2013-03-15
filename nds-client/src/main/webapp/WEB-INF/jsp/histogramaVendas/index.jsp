@@ -9,8 +9,7 @@
 
 <script language="javascript" type="text/javascript">
 
-	var pesquisaProduto=null;
-		pesquisaProduto = new PesquisaProduto(histogramaVendasController.workspace);
+	var pesquisaProduto= new PesquisaProduto(histogramaVendasController.workspace);
 	$(function(){
 		histogramaVendasController.init();
 	});
@@ -130,7 +129,9 @@
         <table width="440" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
             <td width="42">Código:</td>
-            <td width="60"><input type="text" name="codigo" id="codigo" style="width:60px;" class="not-empty"/></td>
+            <td width="60"><input type="text" name="codigo" id="codigo" style="width:60px;" class="not-empty"
+		            onblur="pesquisaProduto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao' , false);"
+		            /></td>
             <td width="47">Produto:</td>
             <td width="140"><input type="text" name="produto" id="produto" style="width:140px;" class="not-empty" /></td>
             <td width="38">Edição:</td>
