@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_subreport" pageWidth="496" pageHeight="802" columnWidth="496" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_subreport" pageWidth="100" pageHeight="802" columnWidth="100" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="f009f971-b201-4705-9101-03a0f9192655">
+	<property name="ireport.zoom" value="8.339875970238358"/>
+	<property name="ireport.x" value="93"/>
 	<property name="ireport.y" value="0"/>
 	<queryString>
 		<![CDATA[]]>
@@ -19,25 +19,31 @@
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="28">
+		<band height="5">
 			<textField>
-				<reportElement mode="Opaque" x="0" y="0" width="208" height="28" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<reportElement uuid="7ae1744c-5ee7-4517-9e30-572b68ccbd88" mode="Opaque" x="0" y="0" width="24" height="5" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="1"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Opaque" x="208" y="0" width="127" height="28" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<reportElement uuid="f95c66d8-bee1-4400-b918-be4782caed8a" mode="Opaque" x="24" y="0" width="33" height="5" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="1"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{operacaoFinanceira}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement mode="Opaque" x="334" y="0" width="162" height="28" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<reportElement uuid="937c2fae-2fac-4e35-b020-e633cb544682" mode="Opaque" x="57" y="0" width="43" height="5" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="1"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="1"/>
+		<band/>
 	</pageFooter>
 </jasperReport>
