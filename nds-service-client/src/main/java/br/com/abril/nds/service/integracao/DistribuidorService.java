@@ -29,6 +29,8 @@ public interface DistribuidorService {
 	public DistribuidorDTO obterDadosEmissao();
 
 	List<String> obterNomeCNPJDistribuidor();
+
+	int obterOrdinalUltimoDiaRecolhimento();
 	
 	List<ItemDTO<TipoGarantia, String>> getComboTiposGarantia();
 	

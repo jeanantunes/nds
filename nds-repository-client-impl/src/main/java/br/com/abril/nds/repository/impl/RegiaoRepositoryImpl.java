@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RegiaoRepository;
-import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> implements RegiaoRepository {
