@@ -174,7 +174,9 @@ var anaLiseHistogramaController = $.extend(true, {
 				var qtdeTotalCotasAtivas = parseInt($(data.rows).last()[0].cell.qtdeTotalCotasAtivas);
 				var qtdeCotasSemVenda = parseInt($(data.rows).last()[0].cell.qtdeCotasSemVenda);
 				
-				$("#eficienciaDeVendaCell").text((vdaTotal/repTotal*100)+"%");
+				
+				var eficVenda = parseFloat(vdaTotal/repTotal*100).toFixed(2);
+				$("#eficienciaDeVendaCell").text(eficVenda+"%");
 				
 				
 				var r = parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2);

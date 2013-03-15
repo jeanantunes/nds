@@ -129,7 +129,7 @@
         <table width="440" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
             <td width="42">Código:</td>
-            <td width="60"><input type="text" name="codigo" id="codigo" style="width:60px;" class="not-empty"
+            <td width="60"><input type="text" name="codigo" id="codigo" style="width:60px;" class="not-empty" maxlength="8"
 		            onblur="pesquisaProduto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao' , false);"
 		            /></td>
             <td width="47">Produto:</td>
