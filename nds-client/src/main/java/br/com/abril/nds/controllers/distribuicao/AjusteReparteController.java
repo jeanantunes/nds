@@ -253,7 +253,7 @@ public class AjusteReparteController extends BaseController {
 		}
 		
 		if (ajusteDTO.getAjusteAplicado() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING,	"Selecione um tipo de ajuste.");
+			throw new ValidacaoException(TipoMensagem.WARNING,	"Informe um indice para ajuste.");
 		}
 		
 		if (ajusteDTO.getMotivoAjuste() == null) {

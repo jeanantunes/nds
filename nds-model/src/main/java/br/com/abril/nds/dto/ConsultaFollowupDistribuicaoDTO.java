@@ -19,7 +19,7 @@ public class ConsultaFollowupDistribuicaoDTO implements Serializable {
 	private String nomeJornaleiro;
 	
 	@Export(label = "Mensagem", alignment=Alignment.CENTER, exhibitionOrder = 3)
-	private String mensagem;
+	private String mensagem = "Ajuste prestes a expirar.";
 	
 	@Export(label = "Dias restantes", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private Integer qtdDiasRestantes;
@@ -57,13 +57,9 @@ public class ConsultaFollowupDistribuicaoDTO implements Serializable {
 		return mensagem;
 	}
 
-	public void setMensagem(String mensagem) {
-		if (mensagem == null){
-			this.mensagem = " ";
-		}else{
-			this.mensagem = mensagem;
-		}
-	}
+//	public void setMensagem(String mensagem) {
+//		this.mensagem = mensagem;
+//	}
 
 	public Integer getQtdDiasRestantes() {
 		return qtdDiasRestantes;
