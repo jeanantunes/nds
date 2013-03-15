@@ -50,30 +50,34 @@ public class ClassificacaoCotaServiceImpl implements ClassificacaoCotaService {
 		  Cota cota = new Cota();
 		  cota.setId(cotaDTO.getIdCota());
 		  String tipoClassificacao = new String();
+		  // BUSCA O ULTIMO FATURAMENTO GERARDO DA COTA PELA ROTINA executeJobGerarRankingFaturamento
 		  List<RankingFaturamento> rf = rankingFaturamentoService.buscarPorCota(cota);
-		  
-		  BigDecimal valorFaturamento = rf.get(0).getFaturamento();
-		  
-		  for(DistribuidorClassificacaoCota dCC: distribuidorClassificacaoCotas ){
-			  if(dCC.getValorDe().compareTo(valorFaturamento)==-1 && 
-				 dCC.getValorAte().compareTo(valorFaturamento)==1)
+		  if(!rf.isEmpty()){
+			  BigDecimal valorFaturamento = rf.get(0).getFaturamento();
 			  
-			  {
-				  tipoClassificacao = dCC.getCodigoClassificacaoCota().toString(); 
-				 break;
+			  for(DistribuidorClassificacaoCota dCC: distribuidorClassificacaoCotas ){
+				  if(dCC.getValorDe().compareTo(valorFaturamento)==-1 && 
+					 dCC.getValorAte().compareTo(valorFaturamento)==1)
+				  
+				  {
+					  tipoClassificacao = dCC.getCodigoClassificacaoCota().toString(); 
+					 break;
+				  }
+			  }
+			  
+			  if(  tipoClassificacao !=null && tipoClassificacao.isEmpty()){
+				  cota =cotaRepository.buscarCotaPorID(cota.getId());
+				  int quantidadePDV =cota.getPdvs().size();
+				  if( tipoClassificacao.equals(ClassificacaoCotaDistribuidorEnum.A) && quantidadePDV>1){
+					  tipoClassificacao = ClassificacaoCotaDistribuidorEnum.AA.toString();
+				  }
+				  else if (tipoClassificacao.equals(ClassificacaoCotaDistribuidorEnum.A) && quantidadePDV==1){
+					  tipoClassificacao = ClassificacaoCotaDistribuidorEnum.A.toString();
+				  }
+				  //TODO ALMIR - VERIFICAR ONDE VAI COLOCAR.
+				  cotaRepository.alterar(cota);
 			  }
 		  }
-		  
-		  cota =cotaRepository.buscarCotaPorID(cota.getId());
-		  int quantidadePDV =cota.getPdvs().size();
-		  if( tipoClassificacao.equals(ClassificacaoCotaDistribuidorEnum.A) && quantidadePDV>1){
-			  tipoClassificacao = ClassificacaoCotaDistribuidorEnum.AA.toString();
-		  }
-		  else if (tipoClassificacao.equals(ClassificacaoCotaDistribuidorEnum.A) && quantidadePDV==1){
-			  tipoClassificacao = ClassificacaoCotaDistribuidorEnum.A.toString();
-		  }
-		  //TODO ALMIR - VERIFICAR ONDE VAI COLOCAR.
-		  cotaRepository.alterar(cota);
 	  }
 
 	}
