@@ -23,7 +23,7 @@ $(function(){
 </head>
 
 <body>
-	<div id="dialog-excluir" title="Excluir Segmento Não Recebida">
+	<div id="dialog-excluir" title="Excluir Segmento Não Recebido">
 		<p>Confirma a exclusão desta Ajuste de Reparte?</p>
 	</div>
 	
@@ -119,19 +119,19 @@ $(function(){
 				</tr>
 				<tr>
 					<td width="20">
-						<input type="radio" name="formaAjuste" value="AJUSTE_HISTORICO" 
+						<input type="radio" name="formaAjuste" value="AJUSTE_HISTORICO" id="AJUSTE_HISTORICO"
 							   onclick = "ajusteReparteController.filtroPorHistorico();" />
 					</td>
 					<td width="102">Ajuste Histórico</td>
 					
 					<td width="20">
-						<input type="radio" name="formaAjuste" value="AJUSTE_VENDA_MEDIA" 
+						<input type="radio" name="formaAjuste" value="AJUSTE_VENDA_MEDIA" id="AJUSTE_VENDA_MEDIA"
 							   onclick = "ajusteReparteController.filtroPorVenda();" />
 					</td>
 					<td width="88">Venda Média +</td>
 					
 					<td width="20">
-						<input type="radio" name="formaAjuste" value="AJUSTE_ENCALHE_MAX" 
+						<input type="radio" name="formaAjuste" value="AJUSTE_ENCALHE_MAX" id="AJUSTE_ENCALHE_MAX"
 							   onclick = "ajusteReparteController.filtroPorEncalhe();" />
 					</td>
 					<td width="139">% de Encalhe Máximo </td>
@@ -148,19 +148,19 @@ $(function(){
 				<tr>
 					<td width="10"></td>
 					<td width="102"><span class="vlrPerc" >
-							<input name="AJUSTE_HISTORICO_input" id="AJUSTE_HISTORICO_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
+							<input name="ajuste_historico_input" id="AJUSTE_HISTORICO_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
 					</span></td>
 					
 					<td width="400"></td>
 					<td width="100">
 					<span class="vdaMedia" >
-							<input name="AJUSTE_VENDA_MEDIA_input" id="AJUSTE_VENDA_MEDIA_input" value="1" style="display: none;" type="text" style="width: 50px;" /> 
+							<input name="ajuste_venda_media_input" id="AJUSTE_VENDA_MEDIA_input" value="1" style="display: none;"  onblur="ajusteReparteController.formatarAjusteAplicadoVendaMedia();" type="text" style="width: 50px;" /> 
 					</span>
 					</td>
 					<td width="350"></td>
 					<td width="250">
 						<span class="encalheMaximo"	> 
-							<input name="AJUSTE_ENCALHE_MAX_input" id="AJUSTE_ENCALHE_MAX_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" />  
+							<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" />  
 						</span>
 					</td>
 				</tr>
@@ -225,25 +225,25 @@ $(function(){
 				</tr>
 				<tr>
 					<td width="20">
-						<input type="radio" name="formaAjusteEditar" value="AJUSTE_HISTORICO" 
+						<input type="radio" name="formaAjusteEditar" value="AJUSTE_HISTORICO" id="AJUSTE_HISTORICO_editar" 
 							   onclick = "ajusteReparteController.filtroPorHistoricoEditar();" />
 					</td>
 					<td width="102">Ajuste Histórico</td>
 					
 					<td width="20">
-						<input type="radio" name="formaAjusteEditar" value="AJUSTE_VENDA_MEDIA" 
+						<input type="radio" name="formaAjusteEditar" value="AJUSTE_VENDA_MEDIA" id="AJUSTE_VENDA_MEDIA_editar" 
 							   onclick = "ajusteReparteController.filtroPorVendaEditar();" />
 					</td>
 					<td width="88">Venda Média +</td>
 					
 					<td width="20">
-						<input type="radio" name="formaAjusteEditar" value="AJUSTE_ENCALHE_MAX" 
+						<input type="radio" name="formaAjusteEditar" value="AJUSTE_ENCALHE_MAX" id="AJUSTE_ENCALHE_MAX_editar" 
 							   onclick = "ajusteReparteController.filtroPorEncalheEditar();" />
 					</td>
 					<td width="139">% de Encalhe Máximo </td>
 					
 					<td width="20">
-						<input type="radio" name="formaAjusteEditar" value="AJUSTE_SEGMENTO"   
+						<input type="radio" name="formaAjusteEditar" value="AJUSTE_SEGMENTO" id="formaAjusteAjusteSegmento_editar" 
 							   onclick = "ajusteReparteController.filtroPorSegmentoEditar();" />
 					</td>
 					<td width="125">Ajuste por Segmento</td>
@@ -255,19 +255,19 @@ $(function(){
 				<tr>
 					<td width="10"></td>
 					<td width="102"><span class="vlrPerc" >
-							<input name="AJUSTE_HISTORICO_input" id="AJUSTE_HISTORICO_input_editar" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 50px;" />
+							<input name="ajuste_historico_input" id="AJUSTE_HISTORICO_editar_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 25px;" />
 					</span></td>
 					
 					<td width="400"></td>
 					<td width="100">
 					<span class="vdaMedia" >
-							<input name="AJUSTE_VENDA_MEDIA_input" id="AJUSTE_VENDA_MEDIA_input_editar" value="1" style="display: none;" type="text" style="width: 50px;" /> 
+							<input name="ajuste_venda_media_input" id="AJUSTE_VENDA_MEDIA_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoVendaMediaEditar();" type="text" style="width: 25px;" /> 
 					</span>
 					</td>
 					<td width="350"></td>
 					<td width="250">
 						<span class="encalheMaximo"	> 
-							<input name="AJUSTE_ENCALHE_MAX_input" id="AJUSTE_ENCALHE_MAX_input_editar" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" />  
+							<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalheEditar();" type="text" style="width: 25px;" />  
 						</span>
 					</td>
 				</tr>
