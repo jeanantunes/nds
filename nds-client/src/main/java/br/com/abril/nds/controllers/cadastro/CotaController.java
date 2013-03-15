@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -42,6 +43,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.ClassificacaoCotaDistribuidorEnum;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -109,8 +111,7 @@ public class CotaController extends BaseController {
 	@Autowired
 	private Result result;
 	
-	//@Autowired
-	//private DistribuidorClassificacaoCotaService  distribuidorClassificacaoCotaService;
+	
 	
 	@Autowired
 	private br.com.caelum.vraptor.Validator validator;
@@ -579,7 +580,28 @@ public class CotaController extends BaseController {
 		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
 		
 		
-		//TODO Almir ----> aqui se carrega a Classificação 
+		
+		List<DistribuidorClassificacaoCota> distribuidorClassificacaoCotas = cotaService.obterListaClassificacao();
+		for(DistribuidorClassificacaoCota dCC:distribuidorClassificacaoCotas ){
+			
+			DecimalFormat df = new DecimalFormat(",##0.00");
+
+            String valorDe = df.format(dCC.getValorDe());
+            String valorAte = df.format(dCC.getValorAte());
+
+
+
+			
+			String maisDeUmPDV= dCC.getCodigoClassificacaoCota().toString().equals(ClassificacaoCotaDistribuidorEnum.AA) ? " (mais de 1 PDV)": "";
+			String descricao =  dCC.getCodigoClassificacaoCota().toString() + " - ("+
+							    dCC.getCodigoClassificacaoCota().toString() + " - " +
+					            " R$ " + valorDe + " a " +
+					            " R$ " + valorAte+
+					            maisDeUmPDV +
+					            ")";
+			listaClassificacao.add(new ItemDTO<String, String>(dCC.getCodigoClassificacaoCota().toString(), descricao));
+		}
+		
 		
 		
 		if (listaClassificacao==null || listaClassificacao.isEmpty()){
@@ -589,7 +611,7 @@ public class CotaController extends BaseController {
 			}
 		}
 		
-		//Collections.reverse(listaClassificacao);
+		Collections.reverse(listaClassificacao);
 		
 		return listaClassificacao;
 	}

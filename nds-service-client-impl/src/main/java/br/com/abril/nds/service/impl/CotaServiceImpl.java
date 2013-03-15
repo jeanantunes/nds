@@ -56,6 +56,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -86,7 +87,6 @@ import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
-import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -98,6 +98,7 @@ import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
@@ -254,6 +255,8 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	FixacaoReparteService fixacaoReparteService;
 	
+	@Autowired
+	DistribuidorClassificacaoCotaRepository distribuidorClassificacaoCotaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -2573,6 +2576,12 @@ public class CotaServiceImpl implements CotaService {
 			
 		
 		
+	}
+
+	@Override
+	public List<DistribuidorClassificacaoCota> obterListaClassificacao() {
+		
+		return distribuidorClassificacaoCotaRepository.buscarTodos();
 	}
 	
 }
