@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
@@ -17,6 +17,20 @@
 	<name>NDS - Client</name>
 
 	<dependencies>
+		<dependency>
+			<groupId>javax.servlet.jsp.jstl</groupId>
+			<artifactId>jstl-api</artifactId>
+			<version>1.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>jstl-impl</artifactId>
+			<version>1.2</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
@@ -162,11 +176,25 @@
 			<artifactId>nds-common</artifactId>
 			<version>1.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-estudo-algoritmo</artifactId>
+			<version>1.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>br.com.abril</groupId>
 			<artifactId>nds-integration-client</artifactId>
 			<version>1.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-util</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>br.com.abril</groupId>
 			<artifactId>nds-service-client-impl</artifactId>
