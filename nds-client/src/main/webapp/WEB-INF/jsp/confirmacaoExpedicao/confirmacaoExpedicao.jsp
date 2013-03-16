@@ -22,7 +22,7 @@
 
 	<div class="areaBts">
 		<div class="area">
-			<span class="bt_arq">
+			<span class="bt_novos">
 				<a href="javascript:confirmaExpedicaoController.popupConfirmar();" rel="tipsy"  title="Confirmar">
 					<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
 				</a> 

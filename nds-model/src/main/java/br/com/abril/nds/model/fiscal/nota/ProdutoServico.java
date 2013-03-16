@@ -16,6 +16,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fiscal.nota.pk.ProdutoServicoPK;
@@ -155,6 +158,7 @@ public class ProdutoServico implements Serializable {
 			inverseJoinColumns = {
 			@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID", referencedColumnName="ID")
 	})
+	@Cascade(value = {CascadeType.ALL})
 	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
 	
 	/**
