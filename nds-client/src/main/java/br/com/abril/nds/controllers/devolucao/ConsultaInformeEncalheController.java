@@ -111,7 +111,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 
 		} else if (dataRecolhimento != null) {
 			dataInicioRecolhimento = dataRecolhimento;
-			dataFimRecolhimento = obterDataFimRecolhimento(dataInicioRecolhimento);
+			dataFimRecolhimento = dataInicioRecolhimento;
 			
 		}
 			
