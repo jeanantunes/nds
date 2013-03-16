@@ -112,11 +112,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		hql.append(" , p.nome as produto ");
 		hql.append(" , pe.numeroEdicao as edicao");
 		
-		hql.append(" , coalesce(pe.precoVenda, 0)  -  ( coalesce(pe.precoVenda, 0)  * ( ");
+		hql.append(" , coalesce(pe.precoVenda, 0) - (coalesce(pe.precoVenda, 0)  * ( ");
 		hql.append("   CASE WHEN pe.origem = :origemInterface ");
-		hql.append("   THEN ( coalesce(descLogProdEdicao.percentualDesconto, descLogProd.percentualDesconto, 0 ) ) ");
-		hql.append("   ELSE ( coalesce(pe.desconto, p.desconto, 0) / 100) END ");
-		hql.append("   ) ) as precoCapaDesconto ");
+		hql.append("   THEN (coalesce(descLogProdEdicao.percentualDesconto, descLogProd.percentualDesconto, 0 ) /100 ) ");
+		hql.append("   ELSE (coalesce(pe.desconto, p.desconto, 0) / 100) END ");
+		hql.append("   )) as precoCapaDesconto ");
 		
 		hql.append(" , coalesce(pe.precoVenda, 0) as precoCapa ");
 		
