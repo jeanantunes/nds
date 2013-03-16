@@ -1,15 +1,24 @@
 package br.com.abril.nds.repository.impl;
 
+<<<<<<< HEAD
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+=======
+>>>>>>> 4b791b352d5d30b3e972dd169f27cfd320b87c60
 import java.util.List;
 
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< HEAD
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+=======
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+>>>>>>> 4b791b352d5d30b3e972dd169f27cfd320b87c60
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.distribuicao.Desenglobacao;
@@ -19,7 +28,11 @@ import br.com.abril.nds.repository.DesenglobacaoRepository;
 @Repository
 public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desenglobacao, Long> implements DesenglobacaoRepository {
 
+<<<<<<< HEAD
 	@Autowired JdbcTemplate jdbcTemplate;
+=======
+	@Autowired NamedParameterJdbcTemplate jdbcTemplate;
+>>>>>>> 4b791b352d5d30b3e972dd169f27cfd320b87c60
 	
 	public DesenglobacaoRepositoryImpl() {
 		super(Desenglobacao.class);
@@ -46,6 +59,7 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 		String sql = "INSERT INTO DESENGLOBACAO " +
 				"(COTA_ID_DESENGLOBADA, NOME_COTA_DESENGLOBADA, TIPO_PDV_ID, USUARIO_ID, " +
 				"COTA_ID_ENGLOBADA, NOME_COTA_ENGLOBADA, PORCENTAGEM_COTA_ENGLOBADA, DATA_ALTERACAO)" +
+<<<<<<< HEAD
 				" VALUES(?,?,?,?,?,?,?,?)";
 		
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -68,5 +82,11 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 				return cotasDesenglobadas.size();
 			}
 		});
+=======
+				" VALUES(:desenglobaNumeroCota,:desenglobaNomePessoa,:tipoPDV.id,:responsavel.id,:englobadaNumeroCota,:englobadaNomePessoa,:englobadaPorcentagemCota,:dataAlteracao)";
+		
+		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(cotasDesenglobadas.toArray());
+		jdbcTemplate.batchUpdate(sql, params);
+>>>>>>> 4b791b352d5d30b3e972dd169f27cfd320b87c60
 	}
 }

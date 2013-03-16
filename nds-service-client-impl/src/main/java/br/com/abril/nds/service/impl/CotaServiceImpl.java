@@ -2439,7 +2439,7 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
-//		Collections.sort(listProdutoEdicaoDto);
+		Collections.sort(listProdutoEdicaoDto);
 		
 		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);  
 		
@@ -2451,65 +2451,65 @@ public class CotaServiceImpl implements CotaService {
 				ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
 				
 				if (dto != null) {
-//					if (i == 0) {
-//						if(dto.getReparte() != null){
-//							analiseHistoricoDTO.setEd1Reparte(dto.getReparte().toString());
-//						}
-//						
-//						if(dto.getQtdeVendas() != null){
-//							analiseHistoricoDTO.setEd1Venda(dto.getQtdeVendas().toString());
-//						}
-//					}
-//					
-//					if (i == 1) {
-//						if(dto.getReparte() != null){
-//							analiseHistoricoDTO.setEd2Reparte(dto.getReparte().toString());
-//						}
-//						
-//						if(dto.getQtdeVendas() != null){
-//							analiseHistoricoDTO.setEd2Venda(dto.getQtdeVendas().toString());
-//						}
-//					}
-//					
-//					if (i == 2) {
-//						if(dto.getReparte() != null){
-//							analiseHistoricoDTO.setEd3Reparte(dto.getReparte().toString());
-//						}
-//						
-//						if(dto.getQtdeVendas() != null){
-//							analiseHistoricoDTO.setEd3Venda(dto.getQtdeVendas().toString());
-//						}
-//					}
-//					
-//					if (i == 3) {
-//						if(dto.getReparte() != null){
-//							analiseHistoricoDTO.setEd4Reparte(dto.getReparte().toString());
-//						}
-//						
-//						if(dto.getQtdeVendas() != null){
-//							analiseHistoricoDTO.setEd4Venda(dto.getQtdeVendas().toString());
-//						}
-//					}
-//					
-//					if (i == 4) {
-//						if(dto.getReparte() != null){
-//							analiseHistoricoDTO.setEd5Reparte(dto.getReparte().toString());
-//						}
-//						
-//						if(dto.getQtdeVendas() != null){
-//							analiseHistoricoDTO.setEd5Venda(dto.getQtdeVendas().toString());
-//						}
-//					}
-//					
-//					if (i == 5) {
-//						if(dto.getReparte() != null){
-//							analiseHistoricoDTO.setEd6Reparte(dto.getReparte().toString());
-//						}
-//						
-//						if(dto.getQtdeVendas() != null){
-//							analiseHistoricoDTO.setEd6Venda(dto.getQtdeVendas().toString());
-//						}
-//					}
+					if (i == 0) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd1Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd1Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 1) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd2Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd2Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 2) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd3Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd3Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 3) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd4Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd4Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 4) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd5Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd5Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 5) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd6Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd6Venda(dto.getQtdeVendas().toString());
+						}
+					}
 				}
 			}
 		}

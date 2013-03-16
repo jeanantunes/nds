@@ -9,5 +9,5 @@ import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
 public interface RegistroCotaRegiaoRepository extends Repository<RegistroCotaRegiao, Long> {
 	List<RegiaoCotaDTO> carregarCotasRegiao (FiltroCotasRegiaoDTO filtro);
 	List<RegiaoCotaDTO> buscarPorCEP (FiltroCotasRegiaoDTO filtro);
-	
+	List<Integer> buscarNumeroCotasPorIdRegiao (Long idRegiao);
 }

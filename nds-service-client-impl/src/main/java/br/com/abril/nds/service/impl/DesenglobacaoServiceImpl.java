@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.DesenglobaVO;
 import br.com.abril.nds.dto.DesenglobacaoDTO;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+<<<<<<< HEAD
+=======
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+>>>>>>> 4b791b352d5d30b3e972dd169f27cfd320b87c60
 import br.com.abril.nds.model.distribuicao.Desenglobacao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DesenglobacaoRepository;
@@ -73,7 +77,19 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 
 	private void trataEnglobacao(Desenglobacao destino, Usuario usuario) {
 		PDV pdv = this.pdvRepository.obterPDVPrincipal(destino.getEnglobadaNumeroCota());
+<<<<<<< HEAD
 		destino.setTipoPDV(pdv.getSegmentacao().getTipoPontoPDV());
+=======
+		if (pdv.getSegmentacao().getTipoPontoPDV() == null) {
+			TipoPontoPDV pontoPDV = new TipoPontoPDV();
+			pontoPDV.setId(4L);
+			pontoPDV.setCodigo(4L);
+			destino.setTipoPDV(pontoPDV);
+		} else {
+			destino.setTipoPDV(pdv.getSegmentacao().getTipoPontoPDV());
+		}
+		
+>>>>>>> 4b791b352d5d30b3e972dd169f27cfd320b87c60
 		destino.setResponsavel(usuario);
 		destino.setDataAlteracao(new Date());
 	}

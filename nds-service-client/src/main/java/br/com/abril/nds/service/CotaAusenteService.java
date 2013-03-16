@@ -5,7 +5,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
-import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
 
@@ -60,9 +59,5 @@ public interface CotaAusenteService {
 	 * @param numeroCota - número da cota
 	 */
 	void verificarExistenciaReparteCota(Date data, Integer numeroCota);
-	
-	List<ProdutoEdicaoSuplementarDTO> obterDadosExclusaoCotaAusente(Long idCotaAusente);
-	
-	void validarCotaAusenteNaData(Integer numCota, Date data);
 
 }

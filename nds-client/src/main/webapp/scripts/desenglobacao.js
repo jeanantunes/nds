@@ -86,7 +86,7 @@ var desenglobacaoController = $.extend(true, {
 		$('#btnInserirCotaEnglobada').click(function(e){
 			e.preventDefault();
 			
-			var indexInput = 0;
+			var indexInput = $('#tableCotasEnglobadas tr').length;
 			
 			var html = '<tr>';
 			html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNumeroCota' value='"+ $('#inserirEnglobadaNumeroCota').val() +"' style='width: 30px;' class='filtroDefaultCota'></td>";
