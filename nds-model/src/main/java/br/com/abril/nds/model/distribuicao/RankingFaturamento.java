@@ -26,7 +26,7 @@ public class RankingFaturamento {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@Column
+	@Column(precision=18, scale=4)
 	private BigDecimal faturamento;
 	
 	@ManyToOne(optional = false)

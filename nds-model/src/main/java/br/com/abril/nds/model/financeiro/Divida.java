@@ -48,7 +48,7 @@ public class Divida implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@Column(name = "VALOR", nullable = false)
+	@Column(name = "VALOR", nullable = false, precision=18, scale=4)
 	private BigDecimal valor;
 	
 	@Enumerated(EnumType.STRING)

@@ -10,11 +10,11 @@ import javax.persistence.Embeddable;
 @Embeddable
 @AttributeOverrides({
     @AttributeOverride(name="cst", column=@Column(name="CST_COFINS", length = 2)),
-    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_COFINS",  scale = 2,precision = 15)),
-    @AttributeOverride(name="percentualAliquota", column=@Column(name="PER_ALIQ_COFINS", scale = 2, precision = 5)),
-    @AttributeOverride(name="quantidadeVendida", column=@Column(name="QTD_VENDIDA_COFINS", scale = 4,  precision= 16)),
-    @AttributeOverride(name="valorAliquota", column=@Column(name="VLR_ALIQ_COFINS", scale = 4, precision = 15)),
-    @AttributeOverride(name="valor", column=@Column(name="VLR_COFINS", scale = 2, precision = 15))
+    @AttributeOverride(name="valorBaseCalculo", column=@Column(name="VLR_BASE_CALC_COFINS", precision=18, scale=4)),
+    @AttributeOverride(name="percentualAliquota", column=@Column(name="PER_ALIQ_COFINS", precision=18, scale=4)),
+    @AttributeOverride(name="quantidadeVendida", column=@Column(name="QTD_VENDIDA_COFINS", precision=18, scale=4)),
+    @AttributeOverride(name="valorAliquota", column=@Column(name="VLR_ALIQ_COFINS", precision=18, scale=4)),
+    @AttributeOverride(name="valor", column=@Column(name="VLR_COFINS", precision=18, scale=4))
 })
 public class COFINS extends COFINSBase implements Serializable {
 

@@ -70,7 +70,7 @@ public class HistoricoTitularidadeCotaChequeCaucao extends HistoricoTitularidade
     /**
      * Valor do cheque
      */
-    @Column(name="CHEQUE_CAUCAO_VALOR")
+    @Column(name="CHEQUE_CAUCAO_VALOR", precision=18, scale=4)
     private BigDecimal valor;
     
     /**
