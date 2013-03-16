@@ -57,7 +57,7 @@ public class HistoricoTitularidadeCotaPagamentoCaucaoLiquida implements Serializ
     /**
      * Valor das parcelas do boleto
      */
-    @Column(name = "VALOR_PARCELAS_BOLETO")
+    @Column(name = "VALOR_PARCELAS_BOLETO", precision=18, scale=4)
     private BigDecimal valorParcelaBoleto;
     
     /**
@@ -88,19 +88,19 @@ public class HistoricoTitularidadeCotaPagamentoCaucaoLiquida implements Serializ
     /**
      * Desconto normal da cota
      */
-    @Column(name = "DESCONTO_NORMAL_COTA")
+    @Column(name = "DESCONTO_NORMAL_COTA", precision=18, scale=4)
     private BigDecimal descontoNormal;
     
     /**
      * Desconto reduzido da cota
      */
-    @Column(name = "DESCONTO_REDUZIDO_COTA")
+    @Column(name = "DESCONTO_REDUZIDO_COTA", precision=18, scale=4)
     private BigDecimal descontoReduzido;
     
     /**
      * Percentual utilizado do desconto da cota
      */
-    @Column(name = "PERCENTUAL_UTILIZADO_DESCONTO")
+    @Column(name = "PERCENTUAL_UTILIZADO_DESCONTO", precision=18, scale=4)
     private BigDecimal porcentagemUtilizada;
 
     /**

@@ -70,7 +70,7 @@ public class VendaProduto implements Serializable {
 	@Column(name="QNT_PRODUTO")
 	private BigInteger qntProduto;
 	
-	@Column(name="VALOR_TOTAL_VENDA")
+	@Column(name="VALOR_TOTAL_VENDA", precision=18, scale=4)
 	private BigDecimal valorTotalVenda;
 	
 	@ManyToOne(optional = false)

@@ -42,28 +42,28 @@ public class ConsolidadoFinanceiroCota implements Serializable {
 	@Column(name = "DT_CONSOLIDADO", nullable = false)
 	private Date dataConsolidado;
 	
-	@Column(name = "VALOR_POSTERGADO")
+	@Column(name = "VALOR_POSTERGADO", precision=18, scale=4)
 	private BigDecimal valorPostergado;
 	
-	@Column(name = "CONSIGNADO")
+	@Column(name = "CONSIGNADO", precision=18, scale=4)
 	private BigDecimal consignado;
 
-	@Column(name = "ENCALHE")
+	@Column(name = "ENCALHE", precision=18, scale=4)
 	private BigDecimal encalhe;
 	
-	@Column(name = "VENDA_ENCALHE")
+	@Column(name = "VENDA_ENCALHE", precision=18, scale=4)
 	private BigDecimal vendaEncalhe;
 	
-	@Column(name = "DEBITO_CREDITO")
+	@Column(name = "DEBITO_CREDITO", precision=18, scale=4)
 	private BigDecimal debitoCredito;
 	
-	@Column(name = "ENCARGOS")
+	@Column(name = "ENCARGOS", precision=18, scale=4)
 	private BigDecimal encargos;
 	
-	@Column(name = "PENDENTE")
+	@Column(name = "PENDENTE", precision=18, scale=4)
 	private BigDecimal pendente;
 	
-	@Column(name = "TOTAL", nullable = false)
+	@Column(name = "TOTAL", nullable = false, precision=18, scale=4)
 	private BigDecimal total;
 	
 	@ManyToOne(optional = false)
