@@ -38,6 +38,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
+import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
@@ -557,7 +558,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	as precoComDesconto,  ");
 
 		sql.append("	SUM(CHAMADA_ENCALHE_COTA.QTDE_PREVISTA) as reparte,  		");
-		sql.append("	SUM(MOVIMENTO_ESTOQUE_COTA.QTDE) 	as encalhe,     		");
+		
+		sql.append("	SUM(MOVIMENTO_ESTOQUE_COTA.QTDE) - ( "+ this.getQueryVendaProduto()  +" )  	as encalhe,     		");
+		
 		sql.append("	FORNECEDOR.ID						as idFornecedor,		");
 		sql.append("	COTA.ID								as idCota,      		");
 		sql.append(" 	PESSOA.RAZAO_SOCIAL 				as fornecedor,  		");
@@ -667,6 +670,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sqlquery.setParameter("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
 		sqlquery.setParameter("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
 		sqlquery.setParameter("isPostergado", false);
+		sqlquery.setParameter("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
 
 		if(filtro.getPaginacao()!=null) {
 			
@@ -682,7 +686,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return sqlquery.list();
 		
-	}	
+	}
+	
+	private StringBuilder getQueryVendaProduto(){
+		
+        StringBuilder subquery = new StringBuilder();
+		
+		subquery.append(" select COALESCE(sum( vp.QNT_PRODUTO ),0) ");
+		subquery.append(" from venda_produto vp ");
+		subquery.append(" where vp.ID_PRODUTO_EDICAO = PRODUTO_EDICAO.ID ");
+		subquery.append(" and vp.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+		subquery.append(" and vp.TIPO_VENDA_ENCALHE = :tipoVendaProduto");
+		
+		return subquery;
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	public List<ConsultaEncalheDetalheDTO> obterListaConsultaEncalheDetalhe(FiltroConsultaEncalheDetalheDTO filtro) {
