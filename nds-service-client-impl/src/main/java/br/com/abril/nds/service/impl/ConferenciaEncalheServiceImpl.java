@@ -1892,7 +1892,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos de encalhe de ser maior que zero.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos deve encalhe de ser maior que zero.");
 			
 		}
 		

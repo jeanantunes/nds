@@ -67,7 +67,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		subquery.append(" select COALESCE(sum( vp.qntProduto ),0) ");
 		subquery.append(" from VendaProduto vp ");
 		subquery.append(" where vp.produtoEdicao = pe ");
-		subquery.append(" and vp.dataVenda = :dataEncalhe ");
+		subquery.append(" and vp.dataOperacao = :dataEncalhe ");
 		subquery.append(" and vp.tipoVenda = :tipoVenda ");
 		
 		return subquery;
