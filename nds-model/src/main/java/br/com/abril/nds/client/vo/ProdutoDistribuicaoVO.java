@@ -67,6 +67,8 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	
 	private Long idUsuario;
 	
+	private String codigoBarraProduto;
+	
 	public BigInteger getIdLancamento() {
 		return idLancamento;
 	}
@@ -231,6 +233,14 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 
 	public void setIdUsuario(Long idUsuario) {
 		this.idUsuario = idUsuario;
+	}
+	
+	public String getCodigoBarraProduto() {
+		return codigoBarraProduto;
+	}
+
+	public void setCodigoBarraProduto(String codigoBarraProduto) {
+		this.codigoBarraProduto = codigoBarraProduto;
 	}
 
 	@Override

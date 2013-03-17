@@ -896,6 +896,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		
 		ValoresAplicados valoresAplicados = this.obterValoresAplicados(cota, produtoEdicao);
 		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
 		VendaProduto venda = new VendaProduto();
 
 		venda.setCota(cota);
@@ -908,6 +910,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		venda.setTipoVenda(vendaDTO.getTipoVendaEncalhe());
 		venda.setValorTotalVenda(valoresAplicados.getPrecoComDesconto().multiply(new BigDecimal(vendaDTO.getQntProduto())));
 		venda.setValoresAplicados(valoresAplicados);
+		venda.setDataOperacao(dataOperacao);
 		
 		return venda;
 	}
@@ -1147,6 +1150,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		movimentoFinanceiroCotaDTO.setObservacao("Venda de Encalhe");
 		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
+		movimentoFinanceiroCotaDTO.setFornecedor( (cota.getParametroCobranca()!= null)? cota.getParametroCobranca().getFornecedorPadrao():null);
 
 		return movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);

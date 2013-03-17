@@ -48,10 +48,10 @@ public class ItemNotaEnvio implements Serializable {
 	@Column(name="REPARTE", precision=15, scale=2 , nullable=false)
 	private BigInteger reparte;
 	
-	@Column(name="PRECO_CAPA",precision=21, scale=2 , nullable=false)
+	@Column(name="PRECO_CAPA", precision=18, scale=4, nullable=false)
 	private BigDecimal precoCapa;
 	
-	@Column(name="DESCONTO",precision=21, scale=2 , nullable=false)
+	@Column(name="DESCONTO", precision=18, scale=4, nullable=false)
 	private BigDecimal desconto;
 	
 	@ManyToOne(optional = true)

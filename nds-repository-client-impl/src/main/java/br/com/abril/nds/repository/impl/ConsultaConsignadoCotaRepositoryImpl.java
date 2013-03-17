@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
@@ -20,14 +19,10 @@ import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
-import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 
 @Repository
 public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements
 		ConsultaConsignadoCotaRepository {
-
-	@Autowired
-	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 
 	public ConsultaConsignadoCotaRepositoryImpl() {
 		super(MovimentoEstoqueCota.class);
@@ -52,13 +47,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   
 		   .append(" coalesce(movimento.valoresAplicados.valorDesconto, 0) as desconto, ")
 		   .append(" coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) as precoDesconto, ")
+		   
 		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA'  then movimento.qtde else 0 end) ")
 		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) )) as reparte, ")
+		   
 		   .append(" ( coalesce( ")
 		   .append("		movimento.valoresAplicados.precoVenda, pe.precoVenda, 0) * ")
 		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA' then movimento.qtde else 0 end) ")
 		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ))  ")
 		   .append(" ) as total, ")
+		   
 		   .append(" ( coalesce( ")
 		   .append("        movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * ")
 		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA' then movimento.qtde else 0 end) ")
@@ -78,7 +76,9 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 
 		Query query =  getSession().createQuery(hql.toString());
-				
+		
+		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+		
 		if(filtro.getIdCota() != null ) { 
 			query.setParameter("idCota", filtro.getIdCota());
 		}
@@ -115,14 +115,22 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" WHERE movimento.produtoEdicao.id = pe.id " );
 		
-		if(filtro.getIdCota() != null ) { 
-			hql.append("   AND cota.id = :idCota");			
+		hql.append(" AND movimento.movimentoEstoqueCotaFuro is null " );
+		
+		hql.append(" AND movimento.tipoMovimento.grupoMovimentoEstoque not in (:tipoMovimentoEstorno) " );
+		
+		 if(filtro.getIdCota() != null ) { 
+			hql.append(" AND cota.id = :idCota ");			
 		}
 		if(filtro.getIdFornecedor() != null) { 
-			hql.append("   AND fornecedor.id = :idFornecedor");
+			hql.append(" AND fornecedor.id = :idFornecedor ");
 		}
 		
-		hql.append(" GROUP BY case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end ");
+		hql.append(" GROUP BY pe.id, case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end ");
+		
+		hql.append(" HAVING sum( (case when tipoMovimento.operacaoEstoque = 'ENTRADA'  then movimento.qtde else 0 end)  ");
+		hql.append("	-  (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ) <> 0 ");
+		  
 		
 		return hql.toString();
 	}
@@ -202,6 +210,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		if(filtro.getIdFornecedor() != null ) { 
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
+		
+		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
 		
 		List<Long> totalRegistros = query.list();
 		

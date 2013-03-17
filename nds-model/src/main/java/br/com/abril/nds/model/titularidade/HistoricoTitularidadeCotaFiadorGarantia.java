@@ -20,7 +20,7 @@ public class HistoricoTitularidadeCotaFiadorGarantia implements Serializable {
     /**
      * Valor da garantia
      */
-    @Column(name = "GARANTIA_VALOR")
+    @Column(name = "GARANTIA_VALOR", precision=18, scale=4)
     private BigDecimal valor;
     
     /**

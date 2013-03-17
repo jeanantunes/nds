@@ -42,7 +42,7 @@ public class Imovel implements Serializable {
 	@Column(name="NUMERO_REGISTRO", nullable=false)
 	private String numeroRegistro;
 	
-	@Column(name="VALOR", nullable=false)
+	@Column(name="VALOR", nullable=false, precision=18, scale=4)
 	private BigDecimal valor;
 	
 	@Column(name="OBSERVACAO", nullable=false)

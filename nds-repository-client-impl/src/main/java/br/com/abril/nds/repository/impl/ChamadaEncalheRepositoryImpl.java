@@ -418,6 +418,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			FiltroEmissaoCE filtro, Long idCota) {
 
 		
+		StringBuffer hqlQtdeEncalhe = new StringBuffer();
+		hqlQtdeEncalhe.append(" ( select sum(conf.qtde) 				");
+		hqlQtdeEncalhe.append(" from ConferenciaEncalhe conf 			");
+		hqlQtdeEncalhe.append("	inner join conf.chamadaEncalheCota cec  ");
+		hqlQtdeEncalhe.append("	where cec.id = chamEncCota.id )			");
+		
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
@@ -427,20 +433,17 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 	    produto.nome as nomeProduto, 					");
 		hql.append(" 	    produtoEdicao.id as idProdutoEdicao, 			");
 		hql.append(" 	    produtoEdicao.numeroEdicao as edicao, 			");
-
-		hql.append(" 	    (movimentoCota.valoresAplicados.valorDesconto) as desconto, 	");
-		hql.append("		produtoEdicao.precoVenda as precoVenda,    		");
+		hql.append(" 	    coalesce(movimentoCota.valoresAplicados.valorDesconto, 0) as desconto, ");
+		hql.append("		coalesce(movimentoCota.valoresAplicados.precoVenda, produtoEdicao.precoVenda, 0)  as precoVenda,    		");
 		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append("    	(produtoEdicao.precoVenda - ");
-		hql.append(" 			(produtoEdicao.precoVenda * coalesce((movimentoCota.valoresAplicados.valorDesconto) / 100, 0)) ");
-		hql.append(" 		) as precoComDesconto, ");
+		hql.append("    	coalesce( movimentoCota.valoresAplicados.precoComDesconto, movimentoCota.valoresAplicados.precoVenda, 0 ) as precoComDesconto, ");
 		
 		hql.append(" ( ");
 		hql.append(obterSubHqlQtdeReparte(filtro));
 		hql.append(" ) as reparte,	");
 		
-		hql.append(" 	    sum(movimentoCota.qtde) as quantidadeDevolvida, ");
+		hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
 		hql.append("		chamadaEncalhe.sequencia as sequencia ");
 				
 		gerarFromWhereProdutosCE(filtro, hql, param, idCota);

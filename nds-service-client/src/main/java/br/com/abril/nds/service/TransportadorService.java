@@ -114,7 +114,11 @@ public interface TransportadorService {
 	List<MovimentoFinanceiroDTO> obterDetalhesTrasportadorPorCota(FiltroRelatorioServicosEntregaDTO filtro);
 
 	List<Pessoa> obterTransportadorPorNome(String nomeTransportador);
+	
+	List<Pessoa> obterTransportadorPorNome(String nomeTransportador, Integer qtdMaxResult);
 
 	List<Pessoa> obterTransportadorPorNomeFantasia(String razaoSocial);
+	
+	List<Pessoa> obterTransportadorPorNomeFantasia(String razaoSocial, Integer qtdMaxResult);
 	
 }

@@ -336,7 +336,9 @@ var cotaAusenteController = $.extend(true, {
 			var edicao = document.createElement("TD");
 			var reparte = document.createElement("TD");
 			var botao = document.createElement("TD");
-			reparte.setAttribute('name', 'reparteMovimento'); 
+			reparte.setAttribute('name', 'reparteMovimento');
+			reparte.setAttribute('align', 'center');
+			edicao.setAttribute('align', 'center');
 			botao.setAttribute('align','center');
 					
 			codigo.innerHTML = movimento.codigoProd;
@@ -447,7 +449,6 @@ var cotaAusenteController = $.extend(true, {
 			proxIndice = movimento.rateios.length;
 			
 			$.each(movimento.rateios, function(index, rateio) {
-				
 				cotaAusenteController.gerarLinhaNova(index,rateio.numCota,rateio.nomeCota,rateio.qtde);
 			});
 			
@@ -469,21 +470,21 @@ var cotaAusenteController = $.extend(true, {
 		var qtde = $("#idQtde" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
 					
 		var totalRateado = 0;
-		$.each(cotaAusenteController.movAtual.rateios, function(index, rateio) {		
-			totalRateado = totalRateado*1 + rateio.qtde*1;
+		$.each(cotaAusenteController.movAtual.rateios, function(index, rateio) {
+			if(rateio.numCota != numCota)
+				totalRateado = totalRateado*1 + rateio.qtde*1;
 		});
 		
 		var soma = totalRateado*1 + qtde*1; 
 		
 		if( soma > cotaAusenteController.movAtual.qtdeReparte) {
 			exibirMensagemDialog("WARNING",["Não há reparte suficiente."]);	
-			
-			alterarEvento(
+
+			this.alterarEvento(
 					"idQtde"+indiceLinhaAlterada,
 					'idQtde'+ indiceLinhaAlterada, 
 					"onblur");
 			
-			$("#idQtde" + indiceLinhaAlterada).attr("value","");
 			return;
 		}
 		
@@ -529,7 +530,7 @@ var cotaAusenteController = $.extend(true, {
 		
 		var valorEvento = elemAtual.getAttribute(evento);
 		
-		elemAtual.setAttribute(evento,null);
+		elemAtual.setAttribute(evento, null);
 			
 		elemNovoFoco.focus();
 		
@@ -610,30 +611,28 @@ var cotaAusenteController = $.extend(true, {
 		var num = $('#idNumCotaOrigem' + atual).val();
 		var nome = $('#idNomeCotaOrigem' + atual).val();
 		
-		var isNew = atual.length === 0;
+		var isNew = atual.length == 0;
 		
-		var nomePreenchido = nome.length != 0;
+		var isEdicao = nome.length != 0;
 		
-		if( nomePreenchido ) {
+		if( isEdicao ) {
 			
-			$("#idLinhaCota" + atual).remove();
-			
-			var cotaJaExiste = $( "#idLinhaCota" + num ).length>0;
+			var cotaJaExiste = $( "#idLinhaCota" + num ).length > 0;
 			
 			if( cotaJaExiste ) {				
 				exibirMensagemDialog("WARNING",["Cota já foi selecionada."]);
 				$('#idNumCotaOrigem' + atual).val('');
 				$('#idNomeCotaOrigem' + atual).val('');
+				return;
 			}
 			
-			cotaAusenteController.gerarLinhaCota(num,nome);
+			$("#idLinhaCota" + atual).before(cotaAusenteController.getNovaLinhaCota(num, nome));
 			
-			var existeNovo = $( '#idNumCotaOrigem').length > 0;
+			$("#idLinhaCota" + atual).remove();
 			
-			if ( existeNovo)
-				$( '#idNumCotaOrigem').focus();
-			else 			
-				cotaAusenteController.gerarLinhaCota('','');
+			$( '#idLinhaCota').remove();
+			
+			cotaAusenteController.gerarLinhaCota('','');
 						
 		} else {
 			
@@ -796,6 +795,8 @@ var cotaAusenteController = $.extend(true, {
 				}
 			},form: $( "#dialog-suplementar", cotaAusenteController.workspace ).parents("form")
 		});
+		
+		this.tratarSelecaoProduto();
 	},
 	
 	realizarRateio: function() {

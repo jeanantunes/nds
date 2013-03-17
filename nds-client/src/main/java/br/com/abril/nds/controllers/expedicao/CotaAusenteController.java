@@ -315,14 +315,11 @@ public class CotaAusenteController extends BaseController {
 	@Post
 	public void exibirProdutosSuplementaresDisponiveis(Long idCotaAusente) {
 		
-		FiltroCotaAusenteDTO filtro = this.getFiltroSessao();
-		
 		List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoDisponíveis = 
-				this.estoqueProdutoService.obterProdutosEdicaoSuplementarDisponivel(filtro.getData(), idCotaAusente);
+			this.cotaAusenteService.obterDadosExclusaoCotaAusente(idCotaAusente);
 		
 		result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1).total(listaProdutosEdicaoDisponíveis.size()).serialize();
 	}
-	
 	
 	/**
 	 * 
@@ -433,6 +430,8 @@ public class CotaAusenteController extends BaseController {
 				
 				this.cotaAusenteService.verificarExistenciaReparteCota(dataOperacao, numeroCota);
 				
+				this.cotaAusenteService.validarCotaAusenteNaData(numeroCota, dataOperacao);
+				
 			} catch (ValidacaoException e) {
 				
 				List<String> mensagens = new ArrayList<String>();
@@ -452,8 +451,6 @@ public class CotaAusenteController extends BaseController {
 			}
 		}
 
-		//TODO: Alterar para não trazer dados já rateados
-		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
 				dataOperacao, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
