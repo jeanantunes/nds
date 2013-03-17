@@ -1150,6 +1150,13 @@ var ConferenciaEncalhe = $.extend(true, {
 				"Cancelar" : function() {
 					$(this).dialog("close");
 					$('#pesq_cota', ConferenciaEncalhe.workspace).focus();
+					
+					var indexAbaConferenciaEnc = $("li", $('.ui-tabs-nav')).index($(".ui-tabs-nav").find('.conferencia_encalhe').parent());
+					if(indexAbaConferenciaEnc > -1){
+						//Aba conferencia aberta
+						
+						$("#workspace").tabs("remove", indexAbaConferenciaEnc);
+					}
 				}
 			},
 			form: $("#dialog-logado", this.workspace).parents("form"),
