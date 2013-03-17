@@ -1038,11 +1038,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 		sql.append(" SUM(MOV_ESTOQUE_COTA.QTDE) AS QTDE_ENCALHE, ");
 	
-		sql.append(" MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID, ");
-		
-		sql.append(" MOV_ESTOQUE_COTA.PRECO_VENDA, ");
-		
-		sql.append(" MOV_ESTOQUE_COTA.VALOR_DESCONTO  ");
+		sql.append(" MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID ");
 	
 		sql.append(" FROM ");
 
@@ -1072,7 +1068,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(" ) ");
 		
 		sql.append(" INNER JOIN PRODUTO_EDICAO PROD_EDICAO ON ( 					");
-		sql.append(" 	ITEM_CH_ENC_FORNECEDOR.PRODUTO_EDICAO_ID = PROD_EDICAO.ID 	");
+		sql.append(" 	CONFERENCIAS.PRODUTO_EDICAO_ID = PROD_EDICAO.ID 	");
 		sql.append(" ) 	");
 		
 		sql.append("  LEFT JOIN  ");
@@ -1102,12 +1098,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		if(!indBuscaQtd){
     	
     		sql.append(" GROUP BY ");
-    		sql.append(" PROD_EDICAO.ID,			");		
-    		sql.append(" PROD.CODIGO,  				");		
-    		sql.append(" PROD.NOME, 				");
-    		sql.append(" PROD_EDICAO.NUMERO_EDICAO, ");
-    		sql.append(" PROD_EDICAO.PRECO_VENDA, 	");
-    		sql.append(" PROD_EDICAO.DESCONTO       ");
+    		sql.append(" PROD_EDICAO.ID ");
     		
         }
 		
