@@ -815,8 +815,8 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		}
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("TOTAL_PARCELAS",
-				totalParcelas.setScale(2, RoundingMode.HALF_EVEN).toString());
+		parameters.put("TOTAL_PARCELAS",CurrencyUtil.formatarValor(
+				totalParcelas.setScale(2, RoundingMode.HALF_EVEN)));
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);

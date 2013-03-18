@@ -859,8 +859,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		sql.append(" where ACUMULADAS_.DIVIDA_RAIZ_ID = divida_.DIVIDA_RAIZ_ID ");
 		sql.append(" or ACUMULADAS_.id = DIVIDA_.DIVIDA_RAIZ_ID) ");
 		sql.append(" END as dividaAcumulada, ");
-		sql.append(" CASE WHEN DATEDIFF((select DATA_OPERACAO from DISTRIBUIDOR), COBRANCA_.DT_VENCIMENTO)<0 THEN 0 ");
-		sql.append(" ELSE DATEDIFF((select DATA_OPERACAO from DISTRIBUIDOR), COBRANCA_.DT_VENCIMENTO) ");
+		sql.append(" CASE WHEN DATEDIFF(CURRENT_DATE, COBRANCA_.DT_VENCIMENTO)<0 THEN 0 ");
+		sql.append(" ELSE DATEDIFF(CURRENT_DATE, COBRANCA_.DT_VENCIMENTO) ");
 		sql.append(" END as diasAtraso, ");
 		sql.append(" DIVIDA_.ID as idDivida, ");
 		sql.append(" COTA_.ID AS idCota, ");
