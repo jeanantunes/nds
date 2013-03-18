@@ -765,7 +765,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		hql.append(" from ConsolidadoFinanceiroCota c, Distribuidor d, Divida divida ")
 		   .append(" where c.dataConsolidado = d.dataOperacao ")
 		   .append(" and c.id = divida.consolidado.id ")
-		   .append(" and divida.data = d.dataOperacao ");
+		   .append(" and divida.data = d.dataOperacao ")
+		   .append(" and divida.origemNegociacao = false ");
 		
 		if (idsCota != null) {
 			
