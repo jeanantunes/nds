@@ -148,7 +148,7 @@ public class RegiaoController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
-		this.tratarFiltro(filtro);
+		this.tratarFiltroCotasRegiao(filtro);
 		
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = efetuarConsultaCotasDaRegiao(filtro);
 		
@@ -201,7 +201,7 @@ public class RegiaoController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
-		this.tratarFiltro(filtro);
+		this.tratarFiltroCotasRegiao(filtro);
 		
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = montarTableModelBuscaCep(filtro);
 		
@@ -224,6 +224,45 @@ public class RegiaoController extends BaseController {
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 
 		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
+
+		return tableModel;
+	}
+	
+	@Post
+	@Path("/buscarPorSegmento")
+	public void buscarPorSegmento(FiltroCotasRegiaoDTO filtro){
+		
+//		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+//		this.tratarFiltroCotasRegiao(filtro);
+		
+		tratarFiltroSegmento(filtro);
+		
+		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = montarTableModelBuscaSegmento(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+
+	private TableModel<CellModelKeyValue<RegiaoCotaDTO>> montarTableModelBuscaSegmento (FiltroCotasRegiaoDTO filtro) {
+		
+		List<RegiaoCotaDTO> listaCotasSegmento = regiaoService.buscarPorSegmento(filtro);
+		
+		if (listaCotasSegmento == null || listaCotasSegmento.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+
+		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoCotaDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasSegmento));
+
+		tableModel.setPage(1);
+		
+		tableModel.setTotal(listaCotasSegmento.size());
+		
+//		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+//
+//		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 
 		return tableModel;
 	}
@@ -349,6 +388,18 @@ public class RegiaoController extends BaseController {
 		result.include("listaSegmento",comboSegmento );
 	}
 	
+	private void tratarFiltroSegmento(FiltroCotasRegiaoDTO filtro) {
+		
+		if(filtro.getLimiteBuscaPorSegmento() == null || filtro.getLimiteBuscaPorSegmento() == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de Cotas.");
+		}
+		
+		if(filtro.getLimiteBuscaPorSegmento() > 4) {
+			filtro.setLimiteBuscaPorSegmento(filtro.getLimiteBuscaPorSegmento() + 1);
+		}
+		
+	}
+	
 	private void validarEntradaRegiao(String nomeRegiao) {
 		if (nomeRegiao == null || (nomeRegiao.isEmpty())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nome da regiao é obrigatório.");
@@ -363,12 +414,11 @@ public class RegiaoController extends BaseController {
 		}
 	}
 	
-	private void tratarFiltro(FiltroCotasRegiaoDTO filtroAtual) {
+	private void tratarFiltroCotasRegiao (FiltroCotasRegiaoDTO filtroAtual) {
 		
 		FiltroCotasRegiaoDTO filtroSession = (FiltroCotasRegiaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
-			
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 		

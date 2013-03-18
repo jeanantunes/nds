@@ -610,30 +610,28 @@ var cotaAusenteController = $.extend(true, {
 		var num = $('#idNumCotaOrigem' + atual).val();
 		var nome = $('#idNomeCotaOrigem' + atual).val();
 		
-		var isNew = atual.length === 0;
+		var isNew = atual.length == 0;
 		
-		var nomePreenchido = nome.length != 0;
+		var isEdicao = nome.length != 0;
 		
-		if( nomePreenchido ) {
+		if( isEdicao ) {
 			
-			$("#idLinhaCota" + atual).remove();
-			
-			var cotaJaExiste = $( "#idLinhaCota" + num ).length>0;
+			var cotaJaExiste = $( "#idLinhaCota" + num ).length > 0;
 			
 			if( cotaJaExiste ) {				
 				exibirMensagemDialog("WARNING",["Cota já foi selecionada."]);
 				$('#idNumCotaOrigem' + atual).val('');
 				$('#idNomeCotaOrigem' + atual).val('');
+				return;
 			}
 			
-			cotaAusenteController.gerarLinhaCota(num,nome);
+			$("#idLinhaCota" + atual).before(cotaAusenteController.getNovaLinhaCota(num, nome));
 			
-			var existeNovo = $( '#idNumCotaOrigem').length > 0;
+			$("#idLinhaCota" + atual).remove();
 			
-			if ( existeNovo)
-				$( '#idNumCotaOrigem').focus();
-			else 			
-				cotaAusenteController.gerarLinhaCota('','');
+			$( '#idLinhaCota').remove();
+			
+			cotaAusenteController.gerarLinhaCota('','');
 						
 		} else {
 			
