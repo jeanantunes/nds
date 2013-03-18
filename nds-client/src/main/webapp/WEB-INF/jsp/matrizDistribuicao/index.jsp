@@ -1,4 +1,3 @@
-
 <head>
 
 <style>
@@ -21,6 +20,14 @@ display: none;
 
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/matrizDistribuicao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicaoVendaMedia.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+
+<script type="text/javascript">
+function estudoComplementarShow(link){
+	$('#workspace').tabs('addTab', 'Estudo Complementar', link);
+}
+</script>
 <script type="text/javascript">
 
 var pathTela = "${pageContext.request.contextPath}";
@@ -28,6 +35,10 @@ var pathTela = "${pageContext.request.contextPath}";
 var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
 
 matrizDistribuicao.inicializar();
+
+var distribuicaoVendaMedia = new DistribuicaoVendaMedia(pathTela, BaseController.workspace);
+
+var lancamentosSelecionados = [];
 
 </script>
 
@@ -125,9 +136,9 @@ matrizDistribuicao.inicializar();
 						        		<a href="javascript:;" onclick="matrizDistribuicao.mostrarOpcoes();"><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0"/>Opções<img src="${pageContext.request.contextPath}/images/p7PM_dark_south.gif" width="14" height="8" border="0" class="setaMuda" /></a>
 						        		<div class="opcoesEstudos">
 								           <ul>
-								               <li><a href="${pageContext.request.contextPath}/Lancamento/distribuicao.htm"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>Distribuição Venda Média</a></li>
+								               <li><a onclick="matrizDistribuicao.abrirDistribuicaoVendaMedia()" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>Distribuição Venda Média</a></li>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/estudo_manual.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribuição Manual</a></li>
-								               <li><a href="${pageContext.request.contextPath}/Lancamento/somar_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
+								               <li><a href="javascript:;" onclick="matrizDistribuicao.somarEstudos();"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/dividir_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/estudo_complementar.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
 								               <li><a href="javascript:;" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
@@ -297,12 +308,16 @@ matrizDistribuicao.inicializar();
 	</div>
 			
 		
-		<form id="form-copiar-estudo">
+	<form id="form-copiar-estudo">
 		<div id="dialog-copiar-estudo" title="Copia Proporcional de Estudo" style="display:none;">
-		    
 		    <jsp:include page="copiarEstudo.jsp" />
-			
 		</div>
-		</form>
+	</form>
+	
+	<form id="form-somar-estudo">
+		<div id="dialog-somar-estudo" title="Somar Estudos" style="display:none;">
+		    <jsp:include page="somarEstudo.jsp" />
+		</div>
+	</form>
 		
 </body>

@@ -29,6 +29,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
 		
+//		$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
+//			data.push({name:'idsFornecedores', value: $(this).val()});
+//		});
+				
 		$.postJSON(
 			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
 			data,
@@ -43,7 +47,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.escondeGrid = function() { 
 		$(".grids", _workspace).hide();
-		
 	} ,
 
 	this.carregarGrid = function() {		
@@ -181,6 +184,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			sobra:                      repDist,
 			codigoProduto:              row.cell.codigoProduto,
 			edicao:                     row.cell.numeroEdicao,
+			juram:                      row.cell.juram,
+			suplem:                      row.cell.suplem,
 			nomeProduto:                row.cell.nomeProduto,
 			classificacao:              row.cell.classificacao,
 			dataLancto:                 row.cell.dataLancto,
@@ -217,7 +222,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}
 		
 		if (row.cell.lancto == null) {
-			row.cell.lancto = 50;
+			row.cell.lancto = 0;
 		}
 		
 		if (row.cell.promo == null) {
@@ -288,7 +293,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#selTodos", _workspace).uncheck();
 	},
 	
-
+	
   this.obterUnicoItemMarcado = function() {
 		
 		var selecionado = null;
@@ -339,7 +344,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		$.each(T.lancamentos, function(index, lancamento){
 			if(lancamento.selecionado) {
-				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  		  value: lancamento.estudo});
+				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  value: lancamento.estudo});
 				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  	  value: lancamento.idLancamento});
 				data.push({name: 'produtosDistribuicao[' + index + '].numeroEdicao',  	  value: lancamento.edicao});
 				data.push({name: 'produtosDistribuicao[' + index + '].codigoProduto',  	  value: lancamento.codigoProduto});
@@ -583,6 +588,35 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		return i;
 	},
 	
+//	this.duplicarLinha = function() {
+//		
+//		if(!T.validarMarcacaoUnicoItem()) {
+//			return;
+//		}
+//		
+//		var index = T.obterUnicoIndiceSelecionado() + 1;
+//		var idTR = 'row'+index;
+//		var idCloneTR = 'row'+index+'clone';
+//		var cloneCheckBox =  'checkDistribuicao' + (index - 1);
+//		var checkBox =  'checkDistribuicao' + (index - 1);
+//		
+//		
+//		if ($('#'+idCloneTR + '2') > 0) {
+//			return;
+//		}
+//		
+//		if ($('#'+idCloneTR + '1') > 0) {
+//			idCloneTR = idCloneTR + '1';
+//		}
+//		
+//		$('#'+idTR).clone().insertAfter('#'+idTR).attr('id',idCloneTR);
+//		$($('#'+idCloneTR).find('td')[14]).find('div').text('');
+//		$($('#'+idCloneTR).find('td')[15]).find('div').text('');
+//		$($('#'+idCloneTR).find('td')[16]).find('input').attr('id',cloneCheckBox);
+//		$('#'+checkBox).uncheck();
+//		
+//	},
+	
 	this.confirmaDuplicaoLinha = function() {
 		
 		if(!T.validarMarcacaoUnicoItem()) {
@@ -597,13 +631,13 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		data.push({name: 'produtoDistribuicao.numeroEdicao',  	  value: selecionado.edicao});
 		data.push({name: 'produtoDistribuicao.codigoProduto',  	  value: selecionado.codigoProduto});
 		
-
+		
 		$.postJSON(pathTela + "/matrizDistribuicao/duplicarLinha", data,
 				function(result){
 					T.checkUncheckLancamentos(false);
 					T.carregarGrid();
 					T.exibirMensagemSucesso();
-				}
+		}
 			);
 		
 	},
@@ -972,6 +1006,41 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			}
 		});
 	};
+
+	this.abrirDistribuicaoVendaMedia = function(){
+		var selecionado = null;
+		$.each(T.lancamentos, function(index, lancamento){
+			if(lancamento.selecionado){
+				if(selecionado != null){
+					selecionado = null;
+					return;
+				}
+				selecionado = lancamento;
+			}
+		});
+		if(selecionado == null){
+			exibirMensagem("ERROR", ["Deve haver exatamente um item selecionado para esta opção."]);
+			return;
+		}
+		var data = [];
+		data.push({name: "edicao", value: selecionado.edicao});
+		data.push({name: "estudoId", value: selecionado.estudo});
+		data.push({name: "lancamentoId", value: selecionado.idLancamento});
+		data.push({name: "codigoProduto", value: selecionado.codigoProduto});
+		
+		data.push({name: "juramentado", value: selecionado.juram});
+		data.push({name: "suplementar", value: selecionado.suplem});
+		data.push({name: "lancado", value: selecionado.lancto});
+		data.push({name: "promocional", value: selecionado.promo});
+		data.push({name: "sobra", value: selecionado.sobra});
+		$.post(pathTela + "/distribuicaoVendaMedia/", data, function(response) {
+			var currentTab = getCurrentTabContainer();
+			currentTab.html(response);
+			currentTab.innerHeight(650);
+			redimensionarWorkspace();
+		});
+	};
+	
 }
 
 //@ sourceURL=matrizDistribuicao.js
