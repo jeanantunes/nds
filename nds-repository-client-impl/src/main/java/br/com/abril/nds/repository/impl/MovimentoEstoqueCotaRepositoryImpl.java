@@ -23,7 +23,6 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -1002,8 +1001,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" PROD.CODIGO as codigoProduto,  				");		
 			sql.append(" PROD.NOME as nomeProduto, 						");
 			sql.append(" PROD_EDICAO.NUMERO_EDICAO as numeroEdicao, 	");
-			sql.append(" CONFERENCIAS.PRECO_VENDA as precoVenda, 	");
-			sql.append(" CONFERENCIAS.VALOR_DESCONTO as desconto 	");
+			sql.append(" PROD_EDICAO.PRECO_VENDA as precoVenda, 	");
+			sql.append(" (SELECT PERCENTUAL_DESCONTO FROM DESCONTO_LOGISTICA dl WHERE dl.ID = PROD.DESCONTO_LOGISTICA_ID) as desconto 	");
 			
 		}
 

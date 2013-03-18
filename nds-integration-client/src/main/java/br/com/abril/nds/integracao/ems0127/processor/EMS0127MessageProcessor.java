@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.ems0137.processor;
+package br.com.abril.nds.integracao.ems0127.processor;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.integracao.model.canonic.EMS0137Input;
-import br.com.abril.nds.integracao.model.canonic.EMS0137InputItem;
+import br.com.abril.nds.integracao.model.canonic.EMS0127Input;
+import br.com.abril.nds.integracao.model.canonic.EMS0127InputItem;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
@@ -29,9 +29,9 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
-public class EMS0137MessageProcessor extends AbstractRepository implements MessageProcessor {
+public class EMS0127MessageProcessor extends AbstractRepository implements MessageProcessor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0137MessageProcessor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0127MessageProcessor.class);
 
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -56,7 +56,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 
 		Connection connection = null;
 		
-		EMS0137Input input = (EMS0137Input) message.getBody();
+		EMS0127Input input = (EMS0127Input) message.getBody();
 
 		try {	
 
@@ -81,6 +81,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
+			message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), "Erro ao processar registro. "+ e.getMessage());
 		} finally {
 			
 			if (connection != null) {
@@ -97,7 +98,7 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
-	private ChamadaEncalheFornecedor montarChamadaEncalheFornecedor(Message message, EMS0137Input input) {
+	private ChamadaEncalheFornecedor montarChamadaEncalheFornecedor(Message message, EMS0127Input input) {
 		
 		ChamadaEncalheFornecedor ce = new ChamadaEncalheFornecedor();
 		
@@ -129,9 +130,9 @@ public class EMS0137MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 
-	private void montarItensChamadaEncalheFornecedor(Message message, EMS0137Input input, ChamadaEncalheFornecedor ce) {
+	private void montarItensChamadaEncalheFornecedor(Message message, EMS0127Input input, ChamadaEncalheFornecedor ce) {
 		
-		for (EMS0137InputItem item : input.getItems()) {
+		for (EMS0127InputItem item : input.getItems()) {
 			
 			if(item.getLancamentoEdicaoPublicacao() == null || (item.getLancamentoEdicaoPublicacao() != null && item.getLancamentoEdicaoPublicacao().getCodigoPublicacao() == null)) {
 				
