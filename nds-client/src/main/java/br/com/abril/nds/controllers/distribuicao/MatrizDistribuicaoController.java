@@ -318,10 +318,6 @@ public class MatrizDistribuicaoController extends BaseController {
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
-	@Get
-	@Path("/histogramaPosEstudo")
-	public void histogramaPosEstudo(){
-		result.forwardTo(HistogramaPosEstudoController.class).index();
-	}
+	
 	
 }

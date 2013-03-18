@@ -8,7 +8,7 @@ var mixCotaProdutoController = $.extend(true, {
 			preProcess: function(data){return mixCotaProdutoController.executarPreprocessamentoGridCota(data);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'codigoProduto',
 				width : 50,
 				sortable : true,
@@ -20,31 +20,31 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Classificação',
+				display : 'ClassificaÃ§Ã£o',
 				name : 'classificacaoProduto',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Rep. Médio',
+				display : 'Rep. mÃ©dio',
 				name : 'reparteMedio',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Vda. Média',
+				display : 'Vda. mÃ©dia',
 				name : 'vendaMedia',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Últ. Rep.',
+				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Rep. Inf. Mín.',
+				display : 'Rep. Inf. Min.',
 				name : 'reparteMinimo',
 				width : 70,
 				sortable : true,
@@ -56,7 +56,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Usuário',
+				display : 'UsuÃ¡rio',
 				name : 'usuario',
 				width : 80,
 				sortable : true,
@@ -74,7 +74,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},  {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'acao',
 				width : 50,
 				sortable : true,
@@ -107,25 +107,25 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Rep. Médio',
+				display : 'Rep. MÃ©dio',
 				name : 'reparteMedio',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Vda. Média',
+				display : 'Vda. MÃ©dia',
 				name : 'vendaMedia',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Últ. Rep.',
+				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Rep. Inf. Mín.',
+				display : 'Rep. Inf. Min.',
 				name : 'reparteMinimo',
 				width : 80,
 				sortable : true,
@@ -137,7 +137,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Usuário',
+				display : 'UsuÃ¡rio',
 				name : 'usuario',
 				width : 80,
 				sortable : true,
@@ -155,7 +155,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},  {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'acao',
 				width : 50,
 				sortable : true,
@@ -175,7 +175,7 @@ var mixCotaProdutoController = $.extend(true, {
 			preProcess: function(data){return mixCotaProdutoController.preProcessarListaPdv(data);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'id',
 				width : 50,
 				sortable : true,
@@ -187,7 +187,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Endereço',
+				display : 'EndereÃ§o',
 				name : 'endereco',
 				width : 320,
 				sortable : true,
@@ -430,7 +430,7 @@ var mixCotaProdutoController = $.extend(true, {
 		}else{
 			$(".mixProdutosGrid").flexReload();
 		}
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["Operaï¿½ï¿½o Realizada com sucesso!"]);
 	},
 	
 	//retorna msg de erro durante exclusao Todos
@@ -589,7 +589,7 @@ var mixCotaProdutoController = $.extend(true, {
 		//valida codigo duplicado
 		for ( var int = 0; int < countLinhas; int++) {
 			if(a.indexOf($("#codigoModal"+int).val())>-1){
-				exibirMensagem("WARNING", ["Código de produto já utilizado."]);
+				exibirMensagem("WARNING", ["Cï¿½digo de produto jï¿½ utilizado."]);
 				return false;
 			}else{
 				a.push($("#codigoModal"+int).val());
@@ -604,7 +604,7 @@ var mixCotaProdutoController = $.extend(true, {
 			var repMax = parseInt($("#repMaximo"+int2).val());
 			
 			if(repMin>repMax){
-				exibirMensagem("WARNING", ["Reparte Mínimo maior que Reparte Máximo para o produto."]);
+				exibirMensagem("WARNING", ["Reparte Mï¿½nimo maior que Reparte Mï¿½ximo para o produto."]);
 				return false;
 			}
 		}
@@ -615,12 +615,12 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	adicionarMixCotaSucesso:function(result){
 		$(".mixCotasGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["OperaÃ§Ã£o Realizada com sucesso!"]);
 	},
 	
 	adicionarMixProdutoSucesso:function(result){
 		$(".mixProdutosGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["OperaÃ§Ã£o Realizada com sucesso!"]);
 	},
 	
 	
@@ -826,7 +826,7 @@ var mixCotaProdutoController = $.extend(true, {
 						  });
 					  
 					if(somaReparte > reparteTotal){
-						//abre dialog de confirmação de alteração de reparte maximo
+						//abre dialog de confirmaÃ§Ã£o de alteraÃ§Ã£o de reparte maximo
 						$("#dialog-confirma-reparte").dialog({
 							resizable: false,
 							height:'auto',

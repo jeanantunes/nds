@@ -96,7 +96,6 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(filtroConsultaMixCotaDTO.getId());
 		return null;
-//				repartePDVRepository.obterRepartePdvPorCota(mixCotaProduto.getCota().getId());
 	}
 	
 	

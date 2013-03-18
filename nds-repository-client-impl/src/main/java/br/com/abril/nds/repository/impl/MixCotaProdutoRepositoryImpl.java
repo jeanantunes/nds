@@ -76,6 +76,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		sql.append(" and lancamento.status='FECHADO'")
 		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
+		.append(" GROUP BY cota.id")
 		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -98,13 +99,6 @@ public class MixCotaProdutoRepositoryImpl extends
 			paginacao.setQtdResultadosTotal(query.list().size());
 		}
 
-		/*if (paginacao.getQtdResultadosPorPagina() != null) {
-			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-		}*/
-
-		/*if (paginacao.getPosicaoInicial() != null) {
-			query.setFirstResult(paginacao.getPosicaoInicial());
-		}*/
 	}
 
 
@@ -177,13 +171,6 @@ public class MixCotaProdutoRepositoryImpl extends
 			paginacao.setQtdResultadosTotal(query.list().size());
 		}
 
-		/*if (paginacao.getQtdResultadosPorPagina() != null) {
-			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-		}*/
-
-		/*if (paginacao.getPosicaoInicial() != null) {
-			query.setFirstResult(paginacao.getPosicaoInicial());
-		}*/
 	}
 
 		
