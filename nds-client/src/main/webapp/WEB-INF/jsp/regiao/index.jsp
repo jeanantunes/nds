@@ -196,8 +196,7 @@ $(function(){
 							onchange="$('.grids').toggle(); regiaoController.carregarSegmento()">
 							 -->
 													
-							<select name="comboSegmento" id="comboSegmento" style="width: 180px;"
-									onchange="$('.grids').toggle();">
+							<select name="comboSegmento" id="comboSegmento" style="width: 180px;">
 									<option option selected="selected">Selecione...</option>
 										<c:forEach items="${listaSegmento}" var="segmento">
 											<option value="${segmento.key}">${segmento.value}</option>
@@ -258,7 +257,7 @@ $(function(){
 				de Cotas:&nbsp;&nbsp; <input name="" type="text"
 				style="width: 60px;" /> <a href="javascript:;"
 				onclick="regiaoController.add_cotas();"><img
-					src="${pageContext.request.contextPath}k/images/ico_check.gif" border="0" /> </a> </span>
+					src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /> </a> </span>
 		</fieldset>
 
 		<!-- REGIAO AUTOMÁTICA - POR SEGMENTO -->
@@ -266,31 +265,34 @@ $(function(){
 		<fieldset style="width: 600px !important; margin-top: 10px;"
 			class="gridsegmentos">
 			<legend>Segmento</legend>
-			<table class="segmentosGrid"></table>
+			<table class="segmentosGrid" id="segmentosGrid"></table>
 			
 			<span class="bt_sellAll" style="float: right;">
 				<label for="sel">Selecionar Todos</label>
-					<input type="checkbox" id="sel"	name="Todos" onchange='regiaoController.checkAll();'
-						   style="float: left; margin-right: 25px;" /> 
+					<input type="checkbox" id="todosSegmento"	name="todosSegmento" onchange='regiaoController.checkAllSegmento();'
+						   style="float: left; margin-right: 25px;" checked /> 
 			</span> 
 			
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="regiaoController.add_cotas();">
-					<img src="../images/ico_add.gif" hspace="5" border="0" />
+				<a href="javascript:;" onclick="regiaoController.add_cotas_Segmento();">
+					<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />
 				
 				Incluir
 				
 				</a> 
 			</span> 
 			
+			<!-- 
 			<span class="bt_novos">
 				<a href="javascript:;">
-					<img src="../images/ico_excluir.gif" hspace="5" border="0" />
+					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />
 				
 				Cancelar
 				
 				</a> 
 			</span>
+			 -->
+			
 		</fieldset>
 	</div>
 	
@@ -325,7 +327,7 @@ $(function(){
 			<table class="addCotasGrid"></table>
 			<span class="bt_novos"><a href="javascript:;"
 				onclick="regiaoController.addNovaRegiao();"><img
-					src="../images/ico_add.gif" hspace="5" border="0" />Nova Região</a> </span>
+					src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Nova Região</a> </span>
 		</fieldset>
 	</div>
 
