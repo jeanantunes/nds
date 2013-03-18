@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 public interface TipoMovimentoFinanceiroRepository extends Repository<TipoMovimentoFinanceiro, Long> {
@@ -15,4 +16,9 @@ public interface TipoMovimentoFinanceiroRepository extends Repository<TipoMovime
 
 	List<Long> buscarIdsTiposMovimentoFinanceiro(
 			List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro);
+
+	List<Long> buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(OperacaoFinaceira operacao);
+
+	List<TipoMovimentoFinanceiro> buscarTiposMovimentoFinanceiroPorOperacaoFinanceira(
+			OperacaoFinaceira operacaoFinaceira);
 }

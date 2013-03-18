@@ -279,30 +279,31 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			for (ParcelaNegociacao parcelaNegociacao : parcelas) {
 
 				parcelaNegociacao.getMovimentoFinanceiroCota().setCota(cota);
-				parcelaNegociacao.getMovimentoFinanceiroCota().setUsuario(
-						usuarioResponsavel);
-				parcelaNegociacao.getMovimentoFinanceiroCota().setData(
-						dataAtual);
-				parcelaNegociacao.getMovimentoFinanceiroCota().setDataCriacao(
-						dataAtual);
-				parcelaNegociacao.getMovimentoFinanceiroCota().setStatus(
-						StatusAprovacao.APROVADO);
-				parcelaNegociacao.getMovimentoFinanceiroCota().setAprovador(
-						usuarioResponsavel);
-				parcelaNegociacao.getMovimentoFinanceiroCota()
-						.setTipoMovimento(tipoMovimentoFinanceiro);
-
-				Fornecedor fornecedor = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null;
+				parcelaNegociacao.getMovimentoFinanceiroCota().setUsuario(usuarioResponsavel);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setData(dataAtual);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setDataCriacao(dataAtual);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setStatus(StatusAprovacao.APROVADO);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setAprovador(usuarioResponsavel);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setTipoMovimento(tipoMovimentoFinanceiro);
+				
+				Fornecedor fornecedor = 
+						cota.getParametroCobranca() != null 
+						? cota.getParametroCobranca().getFornecedorPadrao()
+						: null;
 				
 				if (fornecedor == null){
 
-					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !"));
+					throw new ValidacaoException(
+							new ValidacaoVO(
+									TipoMensagem.WARNING, 
+									"A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !"));
 				}
 				
 				parcelaNegociacao.getMovimentoFinanceiroCota().setFornecedor(fornecedor);
 				
-				totalNegociacao = totalNegociacao.add(parcelaNegociacao
-						.getMovimentoFinanceiroCota().getValor());
+				totalNegociacao = 
+						totalNegociacao.add(
+								parcelaNegociacao.getMovimentoFinanceiroCota().getValor());
 
 				this.movimentoFinanceiroCotaRepository
 						.adicionar(parcelaNegociacao
@@ -320,80 +321,38 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 					BigDecimal valorTotalParcela = 
 							parcelaNegociacao.getMovimentoFinanceiroCota().getValor();
 					
+					MovimentoFinanceiroCota movFinanMulta = null;
+					
+					if (parcelaNegociacao.getEncargos() != null &&
+							parcelaNegociacao.getEncargos().compareTo(BigDecimal.ZERO) != 0){
+						
+						valorTotalParcela = valorTotalParcela.add(parcelaNegociacao.getEncargos());
+						
+						movFinanMulta = 
+								this.criarMovimentoFinanceiroMulta(parcelaNegociacao.getMovimentoFinanceiroCota(),
+										parcelaNegociacao.getEncargos());
+					}
+					
 					consolidado = new ConsolidadoFinanceiroCota();
 					consolidado.setCota(cota);
 					consolidado.setDataConsolidado(dataAtual);
 					List<MovimentoFinanceiroCota> movs = new ArrayList<MovimentoFinanceiroCota>();
 					movs.add(parcelaNegociacao.getMovimentoFinanceiroCota());
+					
+					if (movFinanMulta != null){
+						
+						movs.add(movFinanMulta);
+					}
+					
 					consolidado.setMovimentos(movs);
 
 					consolidado.setEncalhe(BigDecimal.ZERO);
 					consolidado.setVendaEncalhe(BigDecimal.ZERO);
-					consolidado.setDebitoCredito(BigDecimal.ZERO);
+					consolidado.setDebitoCredito(valorTotalParcela.negate());
 					consolidado.setPendente(BigDecimal.ZERO);
 					consolidado.setEncargos(parcelaNegociacao.getEncargos());
 					
-					BigDecimal juros = cobrancaService.calcularJuros(banco, cota.getId(), 
-							valorTotalParcela, 
-							parcelaNegociacao.getDataVencimento(), new Date());
-					
-					if (juros != null && BigDecimal.ZERO.compareTo(juros) != 0){
-						
-						MovimentoFinanceiroCota movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-						movimentoFinanceiroCota.setAprovadoAutomaticamente(true);
-						movimentoFinanceiroCota.setAprovador(usuarioResponsavel);
-						movimentoFinanceiroCota.setCota(cota);
-						movimentoFinanceiroCota.setData(dataAtual);
-						movimentoFinanceiroCota.setDataAprovacao(dataAtual);
-						movimentoFinanceiroCota.setDataCriacao(dataAtual);
-						movimentoFinanceiroCota.setLancamentoManual(false);
-						movimentoFinanceiroCota.setMotivo("Juros provenientes de negociação");
-						movimentoFinanceiroCota.setParcelaNegociacao(parcelaNegociacao);
-						movimentoFinanceiroCota.setTipoMovimento(
-								this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-										GrupoMovimentoFinaceiro.JUROS));
-						movimentoFinanceiroCota.setUsuario(usuarioResponsavel);
-						movimentoFinanceiroCota.setValor(juros);
-												
-						movimentoFinanceiroCota.setFornecedor(cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null);												
-												
-						movs.add(movimentoFinanceiroCota);
-						
-						this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
-					}
-					
-					BigDecimal multas = cobrancaService.calcularMulta(banco, cota,
-							valorTotalParcela);
-					
-					if (multas != null && BigDecimal.ZERO.compareTo(multas) != 0){
-						
-						MovimentoFinanceiroCota movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-						movimentoFinanceiroCota.setAprovadoAutomaticamente(true);
-						movimentoFinanceiroCota.setAprovador(usuarioResponsavel);
-						movimentoFinanceiroCota.setCota(cota);
-						movimentoFinanceiroCota.setData(dataAtual);
-						movimentoFinanceiroCota.setDataAprovacao(dataAtual);
-						movimentoFinanceiroCota.setDataCriacao(dataAtual);
-						movimentoFinanceiroCota.setLancamentoManual(false);
-						movimentoFinanceiroCota.setMotivo("Multa proveniente de negociação");
-						movimentoFinanceiroCota.setParcelaNegociacao(parcelaNegociacao);
-						movimentoFinanceiroCota.setTipoMovimento(
-								this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-										GrupoMovimentoFinaceiro.MULTA));
-						movimentoFinanceiroCota.setUsuario(usuarioResponsavel);
-						movimentoFinanceiroCota.setValor(multas);
-
-						movimentoFinanceiroCota.setFornecedor(cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null);
-						
-						movs.add(movimentoFinanceiroCota);
-						
-						this.movimentoFinanceiroCotaRepository.adicionar(movimentoFinanceiroCota);
-					}
-					
-					valorTotalParcela = valorTotalParcela.add(multas);
-					valorTotalParcela = valorTotalParcela.add(juros);
-					
-					consolidado.setTotal(valorTotalParcela);
+					consolidado.setTotal(valorTotalParcela.negate());
 					
 					this.consolidadoFinanceiroRepository.adicionar(consolidado);
 
@@ -488,6 +447,41 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		this.negociacaoDividaRepository.adicionar(negociacao);
 
 		return negociacao.getId();
+	}
+
+	private MovimentoFinanceiroCota criarMovimentoFinanceiroMulta(
+			MovimentoFinanceiroCota movimentoFinanceiroCota, BigDecimal valor) {
+		
+		MovimentoFinanceiroCota novo = new MovimentoFinanceiroCota();
+		novo.setAprovadoAutomaticamente(movimentoFinanceiroCota.isAprovadoAutomaticamente());
+		novo.setAprovador(movimentoFinanceiroCota.getAprovador());
+		novo.setBaixaCobranca(movimentoFinanceiroCota.getBaixaCobranca());
+		novo.setConsolidadoFinanceiroCota(movimentoFinanceiroCota.getConsolidadoFinanceiroCota());
+		novo.setCota(movimentoFinanceiroCota.getCota());
+		novo.setData(movimentoFinanceiroCota.getData());
+		novo.setDataAprovacao(movimentoFinanceiroCota.getDataAprovacao());
+		novo.setDataIntegracao(movimentoFinanceiroCota.getDataIntegracao());
+		novo.setFornecedor(movimentoFinanceiroCota.getFornecedor());
+		//novo.setHistoricos(movimentoFinanceiroCota.getHistoricos());
+		novo.setLancamentoManual(movimentoFinanceiroCota.isLancamentoManual());
+		novo.setMotivo(movimentoFinanceiroCota.getMotivo());
+		novo.setObservacao("Multa proveniente de negociação (encargos)");
+		novo.setParcelaNegociacao(movimentoFinanceiroCota.getParcelaNegociacao());
+		novo.setPrazo(movimentoFinanceiroCota.getPrazo());
+		novo.setStatus(movimentoFinanceiroCota.getStatus());
+		novo.setStatusIntegracao(movimentoFinanceiroCota.getStatusIntegracao());
+		
+		TipoMovimentoFinanceiro tipo = 
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.MULTA);
+		
+		novo.setTipoMovimento(tipo);
+		novo.setUsuario(movimentoFinanceiroCota.getUsuario());
+		novo.setValor(valor);
+		
+		this.movimentoFinanceiroCotaRepository.adicionar(novo);
+		
+		return novo;
 	}
 
 	private void validarDadosEntrada(List<String> msgs, Date dataAtual,
