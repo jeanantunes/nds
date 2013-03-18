@@ -672,14 +672,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProdutoEdicao> buscarProdutosLancadosData(Date data) {
-		
+
 		StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
 		hql.append(" from Lancamento l ")
 		   .append(" where l.dataLancamentoDistribuidor = :data ")
-		   .append(" and l.status= '" + StatusLancamento.EXPEDIDO.toString() + "'");
+		   .append(" and l.status in (:statusLancamentos) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", data);
+
+		query.setParameterList("statusLancamentos", 
+				new StatusLancamento[] {
+					StatusLancamento.EXPEDIDO, 
+					StatusLancamento.BALANCEADO,
+					StatusLancamento.ESTUDO_FECHADO
+				});
+
 		query.setMaxResults(6);
 		
 		return query.list();

@@ -127,9 +127,7 @@ public class ConsultaNotasController extends BaseController {
 		try {
 			
 			List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais =
-					notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
-			/*List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
-					notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);*/
+				notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
 
  			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 			
@@ -139,8 +137,6 @@ public class ConsultaNotasController extends BaseController {
 						
 			this.result.use(FlexiGridJson.class).noReference().from(listaNotasFiscais)
 			.total(quantidadeRegistros.intValue()).page(page).serialize();
-			
-			
 
 		} catch (IllegalArgumentException e) {
 
