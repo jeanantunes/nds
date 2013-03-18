@@ -209,7 +209,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	visualizarMatrizBalanceamentoPorDia : function(data) {
-		
+		$(".hidden_buttons").show();
 		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(data);
 		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
@@ -934,7 +934,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	fecharGridBalanceamento : function() {
-		
+		$(".hidden_buttons").hide();
 		$(".grids", balanceamentoRecolhimentoController.workspace).hide();
 		
 		balanceamentoRecolhimentoController.deselectCheckAll();

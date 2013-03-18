@@ -136,7 +136,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 	private Calendar obterDataFimRecolhimento(Calendar dataInicioRecolhimento) {
 		Calendar dataFimRecolhimento;
 		dataFimRecolhimento = Calendar.getInstance();
-		int maxDiaRecolhimento = obterMaxDiaRecolhimentoDistribuidor();
+		int maxDiaRecolhimento = obterMaxDiaRecolhimentoDistribuidor() - 1;
 		dataFimRecolhimento.setTime(this.calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), maxDiaRecolhimento));
 		return dataFimRecolhimento;
 	}
@@ -162,7 +162,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 					"Informe [Semana] ou [Data Recolhimento]"));
 		}
 			
-		int maxDiaSemanaRecolhimento = obterMaxDiaRecolhimentoDistribuidor();
+		int maxDiaSemanaRecolhimento = obterMaxDiaRecolhimentoDistribuidor() - 1;
 		
 		if (semanaRecolhimento != null) {
 			dataInicioRecolhimento = Calendar.getInstance();
