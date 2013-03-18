@@ -132,6 +132,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				.append(" (notaFiscal.id, ")
 				.append("  notaFiscal.numero, ")
 				.append("  notaFiscal.serie, ")
+				.append("  notaFiscal.numeroNotaEnvio, ")
 				.append("  notaFiscal.dataEmissao, ")
 				.append("  notaFiscal.dataExpedicao, ")
 				.append("  tipoNotaFiscal.descricao, ")
@@ -201,17 +202,17 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			
 			case SOMENTE_NOTAS_RECEBIDAS:
 				
-				condicaoNotaRecebida = " notaFiscal.chaveAcesso is not null ";
+				condicaoNotaRecebida = " notaFiscal.numero is not null ";
 				
 				break;
 			case SOMENTE_NOTAS_NAO_RECEBIDAS:
 				
-				condicaoNotaRecebida = " notaFiscal.chaveAcesso is null and notaFiscal.numeroNotaEnvio is null ";
+				condicaoNotaRecebida = " notaFiscal.numero is null and notaFiscal.numeroNotaEnvio is null ";
 				
 				break;
 			case NOTAS_NAO_RECEBIDAS_COM_NOTA_DE_ENVIO:
 				
-				condicaoNotaRecebida = " notaFiscal.chaveAcesso is null and notaFiscal.numeroNotaEnvio is not null ";
+				condicaoNotaRecebida = " notaFiscal.numero is null and notaFiscal.numeroNotaEnvio is not null ";
 				
 				break;
 			default:
@@ -248,6 +249,10 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 					case SERIE:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
 						orderByColumn += " notaFiscal.serie ";
+						break;
+					case NUMERO_NOTA_ENVIO:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.numeroNotaEnvio ";
 						break;	
 					case DATA_EXPEDICAO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
