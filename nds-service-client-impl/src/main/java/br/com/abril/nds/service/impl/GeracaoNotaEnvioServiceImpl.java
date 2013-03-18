@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,15 +159,25 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				}
 			}
 			
-			List<MovimentoEstoqueCota> movimentos = new ArrayList<>();			
-			movimentos.addAll(
-					movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
+			List<MovimentoEstoqueCota> movimentos = 
+				movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
 					estudoCota.getEstudo().getLancamento().getDataLancamentoDistribuidor()
 					, cota.getId()
-					, GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE)
-				);
+					, GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 			
-			for(MovimentoEstoqueCota movimentoEstoqueCota : movimentos) {
+			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentos) {
+				
+				quantidadeResultante = quantidadeResultante.subtract(movimentoEstoqueCota.getQtde());
+			}
+			
+			movimentos = 
+				movimentoEstoqueCotaRepository.obterMovimentoCotaPorTipoMovimento(
+					estudoCota.getEstudo().getLancamento().getDataLancamentoDistribuidor()
+					, cota.getId()
+					, GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+			
+			for (MovimentoEstoqueCota movimentoEstoqueCota : movimentos) {
+				
 				quantidadeResultante = quantidadeResultante.add(movimentoEstoqueCota.getQtde());
 			}
 			
@@ -563,7 +575,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		situacoesCadastro.add(SituacaoCadastro.ATIVO);
 		situacoesCadastro.add(SituacaoCadastro.SUSPENSO);
 
-		Set<Long> listaIdCotas = this.cotaRepository.obterIdCotasEntre(
+		List<Long> listaIdCotas = this.cotaRepository.obterIdCotasEntre(
 				filtro.getIntervaloCota(), filtro.getIntervaloBox(),
 				situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
 				null, null, null, null);
@@ -589,7 +601,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 
 	private void validarRoteirizacaoCota(FiltroConsultaNotaEnvioDTO filtro,
-			Set<Long> listaIdCotas) {
+			List<Long> listaIdCotas) {
 		List<String> cotasSemRoteirizacao = new ArrayList<String>();
 		
 		for (Long idCota : listaIdCotas) {

@@ -79,6 +79,34 @@ public class ParciaisServiceImpl implements ParciaisService{
 			lancamentoRepository.alterar(proximoLancamento);
 		}
 	}
+	
+	@Transactional(readOnly=true)
+	public Integer calcularPebParcial(String codigoProduto, Long edicaoProduto, Integer qtdePeriodos){
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
+		
+		return getPebProduto(produtoEdicao, qtdePeriodos);
+	}
+	
+	private Integer getPebProduto(ProdutoEdicao produtoEdicao, Integer qntPeriodos){
+		
+		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
+		
+		if(produtoEdicao == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Produto Edição não encontrado!");
+		}
+		
+		if(fatorRelancamentoParcial == null ){
+			return produtoEdicao.getPeb();
+		}
+		
+		if(qntPeriodos == null || qntPeriodos <= 1){
+			return produtoEdicao.getPeb();
+		}
+		
+		return ((produtoEdicao.getPeb() - (fatorRelancamentoParcial*(qntPeriodos-1))) / qntPeriodos);
+	}
 
 	@Override
 	@Transactional
@@ -90,47 +118,35 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		Long qntPeriodosNaoBalanceados = periodoLancamentoParcialRepository.obterQntPeriodosAposBalanceamentoRealizado(lancamentoParcial.getId());
 		
-		Integer peb = produtoEdicao.getPeb();
+		Integer peb = getPebProduto(produtoEdicao, qtdePeriodos);
 		
 		if(this.isLimparPeriodos(qtdePeriodos, lancamentoParcial,qntPeriodosNaoBalanceados)){
 			
-			peb = (produtoEdicao.getPeb() / (qtdePeriodos));
-		
 			qtdePeriodos = qtdePeriodos - qntPeriodosNaoBalanceados.intValue();
 		}
-		
-		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
-		
-		Integer qntDiasUltrapassaPEB = this.qntDiasQueUltrapassamPEB(qtdePeriodos, fatorRelancamentoParcial, 
-																	  lancamentoParcial.getRecolhimentoFinal(), 
-																	  lancamentoParcial.getLancamentoInicial(),peb);
-		if(qntDiasUltrapassaPEB!= null){
-			
-			if(qntDiasUltrapassaPEB < ( peb / 2 )){
-
-				peb = peb + (qntDiasUltrapassaPEB / qtdePeriodos);
-			}
-		}
-		
+				
 		this.processarDadosLancamentoParcial(produtoEdicao, qtdePeriodos, usuario,
-											 lancamentoParcial, peb, fatorRelancamentoParcial);
+											 lancamentoParcial, peb);
 	}
 
 	private void processarDadosLancamentoParcial(ProdutoEdicao produtoEdicao,
 												 Integer qtdePeriodos, Usuario usuario,
 												 LancamentoParcial lancamentoParcial, 
-												 Integer peb,Integer fatorRelancamentoParcial) {
+												 Integer peb) {
 		Date dtLancamento = null;
 		Date dtRecolhimento = null;
 		
 		Lancamento ultimoLancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
+		
+		Integer fatorRelancamentoParcial = this.distribuidorService.fatorRelancamentoParcial();
 		
 		for(int i=0; i<qtdePeriodos; i++) {
 		
 			if(ultimoLancamento == null) {
 				dtLancamento = lancamentoParcial.getLancamentoInicial();			
 			} else {
-				dtLancamento = calendarioService.adicionarDiasRetornarDiaUtil(ultimoLancamento.getDataRecolhimentoDistribuidor(), fatorRelancamentoParcial) ;
+				
+				dtLancamento = calendarioService.adicionarDiasRetornarDiaUtil(ultimoLancamento.getDataRecolhimentoDistribuidor(),fatorRelancamentoParcial) ;
 			}
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtLancamento) > 0) {
@@ -140,12 +156,6 @@ public class ParciaisServiceImpl implements ParciaisService{
 			dtRecolhimento =  calendarioService.adicionarDiasRetornarDiaUtil(dtLancamento,peb); 
 			
 			if(DateUtil.obterDiferencaDias(lancamentoParcial.getRecolhimentoFinal(), dtRecolhimento) > 0) {
-				
-				Long qntDiasRestante = DateUtil.obterDiferencaDias(dtLancamento,lancamentoParcial.getRecolhimentoFinal());
-				
-				if(qntDiasRestante < (peb/2)){
-					break;
-				}
 				
 				i = qtdePeriodos;	
 				dtRecolhimento = lancamentoParcial.getRecolhimentoFinal();
@@ -165,64 +175,6 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 			ultimoLancamento = novoLancamento;
 		}
-	}
-	
-	@Transactional(readOnly = true)
-	public void exibirAlertaDePeriodosNaoGerados(Long idProdutoEdicao, Integer qtdePeriodos){
-		
-		LancamentoParcial lancamentoParcial = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(idProdutoEdicao);
-		
-		if (lancamentoParcial.getPeriodos() != null && lancamentoParcial.getPeriodos().size() > 0) {
-			
-			int qntPeriodosGeradoSemBalanceamento = 0;
-			
-			for (PeriodoLancamentoParcial item : lancamentoParcial.getPeriodos()) {
-
-				if( Arrays.asList(StatusLancamento.PLANEJADO, 
-								  StatusLancamento.CONFIRMADO)
-								  .contains(item.getLancamento().getStatus())){
-					
-					qntPeriodosGeradoSemBalanceamento += 1;
-				}
-			}
-			
-			if(qtdePeriodos > qntPeriodosGeradoSemBalanceamento){
-				throw new ValidacaoException(TipoMensagem.WARNING,
-											"Não foi possível inserir "+ qtdePeriodos+ " períodos pois o ultimo ficaria com uma PEB menor que os demais.");
-			}
-		}
-	}
-	
-	private Integer qntDiasQueUltrapassamPEB(Integer qtdePeriodos,Integer fatorRelancamentoParcial, 
-										     Date dataLancamentoFinal,Date dataLancamentoInicial,
-										     Integer peb){
-		Date dtLancamento = null;
-		Date dtRecolhimento = null;
-		
-		for(int i=0; i<qtdePeriodos; i++) {
-			
-			if(dtLancamento == null){
-				
-				dtLancamento = dataLancamentoInicial;
-			}
-			else{
-				
-				dtLancamento = calendarioService.adicionarDiasRetornarDiaUtil(dtRecolhimento, fatorRelancamentoParcial) ;
-			}
-			
-			if(DateUtil.obterDiferencaDias(dataLancamentoFinal, dtLancamento) > 0) {
-				break;
-			}			
-			
-			dtRecolhimento =  calendarioService.adicionarDiasRetornarDiaUtil(dtLancamento,peb); 
-			
-			if(DateUtil.obterDiferencaDias(dataLancamentoFinal, dtRecolhimento) > 0) {
-				
-				return  (int) DateUtil.obterDiferencaDias(dtLancamento, dataLancamentoFinal);
-			}
-		}
-		
-		return null;
 	}
 	
 	private boolean isLimparPeriodos(int qtdePeriodos, LancamentoParcial lancamentoParcial,long qntPeriodosNaoBalanceados){

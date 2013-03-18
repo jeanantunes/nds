@@ -308,6 +308,11 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-ehcache</artifactId>
+				<version>4.1.7.Final</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -369,6 +374,10 @@
 			<artifactId>fixedformat4j</artifactId>
 			<type>jar</type>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
 		</dependency>
 	</dependencies>
 

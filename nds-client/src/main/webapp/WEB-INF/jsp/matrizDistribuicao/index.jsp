@@ -27,8 +27,6 @@ display: none;
 function estudoComplementarShow(link){
 	$('#workspace').tabs('addTab', 'Estudo Complementar', link);
 }
-</script>
-<script type="text/javascript">
 
 var pathTela = "${pageContext.request.contextPath}";
 
@@ -119,10 +117,9 @@ var lancamentosSelecionados = [];
 		      <div class="linha_separa_fields">&nbsp;</div>
 		      <fieldset class="fieldGrid">
 		       	  <legend>Matriz de Distribuição</legend>
-		       
 		        <div class="grids" style="display:none;">
 		        
-		       	   	<table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
+		       	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
 		         	  		
 		         	  		<span class="bt_novos">
 		         	  			<a id="linkExcluir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_exclusao_estudo();" rel="tipsy" title="Excluir Estudo"> 
@@ -140,7 +137,7 @@ var lancamentosSelecionados = [];
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/estudo_manual.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribuição Manual</a></li>
 								               <li><a href="javascript:;" onclick="matrizDistribuicao.somarEstudos();"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
 								               <li><a href="${pageContext.request.contextPath}/Lancamento/dividir_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
-								               <li><a href="${pageContext.request.contextPath}/Lancamento/estudo_complementar.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
+								               <li><a href="javascript:;"  onclick="estudoComplementarShow('${pageContext.request.contextPath}/lancamento/estudoComplementar')" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
 								               <li><a href="javascript:;" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
 								           </ul>
           							 	</div>
@@ -175,25 +172,25 @@ var lancamentosSelecionados = [];
 		         	  		</span>
 				 </br>	
 					
-					<div>
-						<table width="650" border="0" align="left">
-							<tr>
-								<td align="left">
-									<span class="bt_novos" style="float:left;">
-										<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-									    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" >Arquivo</img>
-								   	 	</a>
-								   	</span>
-								</td>
-								<td>
-									<span class="bt_novos" title="Imprimir">
-										<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
-									    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" >Imprimir</img>
-								    	</a>
-									</span>
-								</td>
-								<td align="left">
-									<span class="bt_novos">
+				<div>
+					<table width="650" border="0" align="left">
+						<tr>
+							<td align="left">
+								<span class="bt_novos" style="float:left;">
+									<a id="linkArquivo" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+								    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" >Arquivo</img>
+							   	 	</a>
+							   	</span>
+							</td>
+							<td>
+								<span class="bt_novos" title="Imprimir">
+									<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+								    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" >Imprimir</img>
+							    	</a>
+								</span>
+							</td>
+							<td align="left">
+								<span class="bt_novos">
 										<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_duplicarLinha();"><img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />Duplicar Linha</a>
 									</span>
 								</td>
@@ -207,8 +204,7 @@ var lancamentosSelecionados = [];
 								</td>
 							</tr>
 						</table>
-					</div>	
-		      	
+					</div>			      	
 		      	</div>
 		      	
 		      	<div class="matrizFinalizada" style="display: none;">
@@ -224,8 +220,8 @@ var lancamentosSelecionados = [];
 		    	</div> 
 		      
 		      </fieldset>
-			
-			  <form id="form-confirm-finalizacao">
+		
+		<form id="form-confirm-finalizacao">
 		<div id="dialog-confirm-finalizacao" title="Finalizar Matriz" style="display:none;">
 		    
 		    <jsp:include page="../messagesDialog.jsp">
@@ -287,7 +283,7 @@ var lancamentosSelecionados = [];
 
 		    </fieldset>
 		</div>
-		</form> 	
+		</form>
 		
 		<form id="form-confirm-duplicar">
 		<div id="dialog-confirm-duplicar" title="Duplicar Linha" style="display:none;">

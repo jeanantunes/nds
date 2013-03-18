@@ -468,11 +468,6 @@ public class ExportHandler {
 			return returnColumnType;
 		}
 		
-		if (value instanceof Number) {
-			
-			returnColumnType = ColumType.NUMBER;
-		}
-		
 		if (columnType.equals(ColumType.INTEGER)) {
 			
 			returnColumnType = ColumType.INTEGER;
@@ -480,6 +475,13 @@ public class ExportHandler {
 		} else if (columnType.equals(ColumType.DECIMAL)) {
 			
 			returnColumnType = ColumType.DECIMAL;
+			
+		} else if (columnType.equals(ColumType.MOEDA)) {
+			
+			returnColumnType = ColumType.MOEDA;
+		} else if (value instanceof Number) {
+			
+			returnColumnType = ColumType.NUMBER;
 		}
 		
 		return returnColumnType;

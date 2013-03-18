@@ -38,6 +38,15 @@ public class PessoaRepositoryImpl extends AbstractRepositoryModel<Pessoa, Long> 
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Pessoa> buscarPorNome(String nome, Integer qtdMaxResult) {
+		String hql = "from Pessoa where upper(nome) like upper(:nome) or upper(razaoSocial) like upper(:nome)";
+		Query query = getSession().createQuery(hql);
+		query.setParameter("nome",  "%" + nome + "%");
+		query.setMaxResults(qtdMaxResult);
+		return query.list();
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override

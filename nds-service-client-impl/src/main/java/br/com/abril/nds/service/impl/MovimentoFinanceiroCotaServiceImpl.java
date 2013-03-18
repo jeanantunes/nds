@@ -582,7 +582,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
     		if (fornecedor==null){
     			
     			throw new ValidacaoException(
-    					TipoMensagem.WARNING, "Fornecedor não encontrado na geração de Movimento Financeiro para o Movimentos de Estoque ["+mec.getId()+"] !");
+    					TipoMensagem.WARNING, "Fornecedor não encontrado na geração de Movimento Financeiro para o Movimentos de Estoque ["+mec.getId()+"] [Cota "+mec.getCota().getNumeroCota()+"] !");
     		}
     		
     		mecs = movEstAgrup.get(fornecedor.getId());
@@ -865,7 +865,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			
 			//GERA DEBITOS DO CONSIGNADO
 
-			
             valorTotalEstorno = this.obterValorMovimentosEstoqueCota(movimentosEstoqueCotaOperacaoEstorno);
 
             valorTotalEncalheOperacaoConferenciaEncalhe = this.obterValorMovimentosEstoqueCota(movimentosEstoqueCotaOperacaoConferenciaEncalhe);

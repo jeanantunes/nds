@@ -478,8 +478,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	SUM(CHAMADA_ENCALHE_COTA.QTDE_PREVISTA) as reparte,  		");
 		sql.append("	SUM(MOVIMENTO_ESTOQUE_COTA.QTDE) 	as encalhe,     		");
 		
-		sql.append("    (PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce((MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO) / 100, 0))) ");
-		sql.append("	as precoComDesconto,  ");
+		sql.append("    (COALESCE(MOVIMENTO_ESTOQUE_COTA.PRECO_COM_DESCONTO,PRODUTO_EDICAO.PRECO_VENDA)) as precoComDesconto,  ");
 		
 		sql.append("	FORNECEDOR.ID as idFornecedor, 		");
 		sql.append("	PESSOA.RAZAO_SOCIAL, 				");
@@ -629,8 +628,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	PRODUTO_EDICAO.NUMERO_EDICAO 	as numeroEdicao,  		");
 		sql.append("	PRODUTO_EDICAO.PRECO_VENDA 		as precoVenda,    		");
 		
-		sql.append("    (PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce((MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO) / 100, 0))) ");
-		sql.append("	as precoComDesconto,  ");
+		sql.append("    (COALESCE(MOVIMENTO_ESTOQUE_COTA.PRECO_COM_DESCONTO,PRODUTO_EDICAO.PRECO_VENDA)) as precoComDesconto, ");
 
 		sql.append("	SUM(CHAMADA_ENCALHE_COTA.QTDE_PREVISTA) as reparte,  		");
 		sql.append("	SUM(MOVIMENTO_ESTOQUE_COTA.QTDE) 	as encalhe,     		");
@@ -642,7 +640,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	(sum(MOVIMENTO_ESTOQUE_COTA.QTDE) * ( PRODUTO_EDICAO.PRECO_VENDA) ) as valor, ");
 		
-		sql.append("	(sum(MOVIMENTO_ESTOQUE_COTA.QTDE) * ( PRODUTO_EDICAO.PRECO_VENDA - (PRODUTO_EDICAO.PRECO_VENDA * coalesce((MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO) / 100, 0) ) ) ) as valorComDesconto, ");
+		sql.append("	(sum(MOVIMENTO_ESTOQUE_COTA.QTDE) * (COALESCE(MOVIMENTO_ESTOQUE_COTA.PRECO_COM_DESCONTO,PRODUTO_EDICAO.PRECO_VENDA)) ) as valorComDesconto, ");
 		
 		sql.append("	((TO_DAYS(MOVIMENTO_ESTOQUE_COTA.DATA) - TO_DAYS(CHAMADA_ENCALHE.DATA_RECOLHIMENTO)) + 1) as recolhimento,  ");
 
@@ -970,19 +968,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	coalesce(sum( ESTOQUE_PRODUTO_COTA.QTDE_RECEBIDA * ");
 			
-		sql.append(" ( PRODUTO_EDICAO.PRECO_VENDA - ( PRODUTO_EDICAO.PRECO_VENDA  *  coalesce((");
-
-		sql.append(" MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO ");
-
-		sql.append(" ) / 100, 0) ) ) ), 0) as valorReparte,");
+		sql.append("    (COALESCE(MOVIMENTO_ESTOQUE_COTA.PRECO_COM_DESCONTO,PRODUTO_EDICAO.PRECO_VENDA)) ), 0) as valorReparte,");
 			
 		sql.append("	coalesce(sum( ESTOQUE_PRODUTO_COTA.QTDE_DEVOLVIDA * ");
 			
-		sql.append(" ( PRODUTO_EDICAO.PRECO_VENDA - ( PRODUTO_EDICAO.PRECO_VENDA  *  coalesce((");
-
-		sql.append(" MOVIMENTO_ESTOQUE_COTA.VALOR_DESCONTO ");
-
-		sql.append(" ) / 100, 0) ) ) ), 0) as valorEncalhe ");
+		sql.append("    (COALESCE(MOVIMENTO_ESTOQUE_COTA.PRECO_COM_DESCONTO,PRODUTO_EDICAO.PRECO_VENDA)) ), 0) as valorEncalhe ");
 
 		sql.append("	from	");
 		
@@ -1444,10 +1434,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" join movimento.cota cota ");
 		
 		hql.append(" join movimento.tipoMovimento tipoMovimento ");
+		
+		hql.append(" join movimento.lancamento lancamento ");
 				
 		hql.append(" where cota.numeroCota in (:numCotas) ");
 		
 		hql.append(" and movimento.data = :data ");
+		
+		hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
 		
 		hql.append(" and tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
 		

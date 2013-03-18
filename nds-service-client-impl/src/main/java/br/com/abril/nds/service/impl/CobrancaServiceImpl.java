@@ -659,7 +659,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
         if (fornecedor == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota "+cota.getNumeroCota()+"] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
 		}
 
 		movimento.setFornecedor(fornecedor);

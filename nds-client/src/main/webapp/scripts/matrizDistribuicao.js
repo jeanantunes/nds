@@ -268,14 +268,13 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		return $('[name=checkgroup]:checked', _workspace).size();
 	},
 	
-	this.alterarReparte = function(input, index) {
-		
+	this.alterarReparte = function(input, index) {		
 		if (!$.isNumeric(input.value)) {
 			
 			exibirMensagem("WARNING", ["Digite um número valido!"]);
 			return;
 		}
-		
+
 		T.lancamentos[index].repDistrib = input.value;
 		var vlr = (T.lancamentos[index].lancto - T.lancamentos[index].promo - T.lancamentos[index].repDistrib); 
 		$("#sobra" + index, _workspace).text(vlr);
@@ -310,7 +309,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
   },
   
   this.confirmarFinalizacaoDeMatriz = function() {
-		
 		var data = [];
 		
 		$.each(T.lancamentos, function(index, lancamento){
@@ -617,6 +615,35 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 //		
 //	},
 	
+//	this.duplicarLinha = function() {
+//		
+//		if(!T.validarMarcacaoUnicoItem()) {
+//			return;
+//		}
+//		
+//		var index = T.obterUnicoIndiceSelecionado() + 1;
+//		var idTR = 'row'+index;
+//		var idCloneTR = 'row'+index+'clone';
+//		var cloneCheckBox =  'checkDistribuicao' + (index - 1);
+//		var checkBox =  'checkDistribuicao' + (index - 1);
+//		
+//		
+//		if ($('#'+idCloneTR + '2') > 0) {
+//			return;
+//		}
+//		
+//		if ($('#'+idCloneTR + '1') > 0) {
+//			idCloneTR = idCloneTR + '1';
+//		}
+//		
+//		$('#'+idTR).clone().insertAfter('#'+idTR).attr('id',idCloneTR);
+//		$($('#'+idCloneTR).find('td')[14]).find('div').text('');
+//		$($('#'+idCloneTR).find('td')[15]).find('div').text('');
+//		$($('#'+idCloneTR).find('td')[16]).find('input').attr('id',cloneCheckBox);
+//		$('#'+checkBox).uncheck();
+//		
+//	},
+	
 	this.confirmaDuplicaoLinha = function() {
 		
 		if(!T.validarMarcacaoUnicoItem()) {
@@ -630,7 +657,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		data.push({name: 'produtoDistribuicao.idLancamento',  	  value: selecionado.idLancamento});
 		data.push({name: 'produtoDistribuicao.numeroEdicao',  	  value: selecionado.edicao});
 		data.push({name: 'produtoDistribuicao.codigoProduto',  	  value: selecionado.codigoProduto});
-		
 		
 		$.postJSON(pathTela + "/matrizDistribuicao/duplicarLinha", data,
 				function(result){

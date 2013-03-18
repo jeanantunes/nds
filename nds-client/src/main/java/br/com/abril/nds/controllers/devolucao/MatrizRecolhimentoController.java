@@ -824,9 +824,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			produtoRecolhimentoVO.setEncalheAtendida(
 				produtoRecolhimentoDTO.getExpectativaEncalheAtendida());
-				
-			produtoRecolhimentoVO.setEncalheAlternativo(
-				produtoRecolhimentoDTO.getExpectativaEncalheAlternativo());
 			
 			produtoRecolhimentoVO.setEncalhe(
 				produtoRecolhimentoDTO.getExpectativaEncalhe());
@@ -944,9 +941,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		produtoRecolhimentoFormatado.setEncalheAtendida(
 			(produtoRecolhimento.getEncalheAtendida() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAtendida(), 0).toString() : null);
 		
-		produtoRecolhimentoFormatado.setEncalheAlternativo(
-			(produtoRecolhimento.getEncalheAlternativo() != null) ? MathUtil.round(produtoRecolhimento.getEncalheAlternativo(), 0).toString() : null);
-			
 		produtoRecolhimentoFormatado.setEncalhe(
 			(produtoRecolhimento.getEncalhe() != null) ? MathUtil.round(produtoRecolhimento.getEncalhe(), 0).toString() : null);
 		

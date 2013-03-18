@@ -3,21 +3,24 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
 @Service
@@ -31,6 +34,9 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	/**
 	 * Verifica se ja existe a Forma Cobranca Mensal que o usuário deseja cadastrar(Valida por Fornecedor e Concentração)
@@ -311,12 +317,36 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Date data, BigDecimal valor) {
 		
+		Cota cota = null;
+		
+		if (idCota!=null){
+		    
+			cota = this.cotaRepository.buscarPorId(idCota);
+		}
+		
+		if (idFornecedor == null && cota!=null){
+			
+			idFornecedor = cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao()!=null?cota.getParametroCobranca().getFornecedorPadrao().getId():null:null;
+		}
+		
+		if (idFornecedor==null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Para a obtenção de uma Forma de Cobrança é necessário que seja informado um [Fornecedor] ou que haja [Fornecedor Padrão] definido nos parâmetros financeiros da [Cota]!");
+		}
+		
+		Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(idFornecedor);
+		
 		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota, idFornecedor, data, valor);
 
 		if (formaCobranca == null){
 			
 			formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor, data, valor);
 		}
+		
+		if (formaCobranca == null){
+	    	
+	    	throw new ValidacaoException(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor "+CurrencyUtil.formatarValorComSimbolo(valor)+"]"+(cota!=null?" [Cota "+cota.getNumeroCota()+"].":"."));
+	    }
 		
 		return formaCobranca;
 	}

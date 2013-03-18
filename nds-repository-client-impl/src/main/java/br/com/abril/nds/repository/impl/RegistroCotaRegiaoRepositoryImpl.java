@@ -57,11 +57,9 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		
 		query.setParameter("ID_REGIAO", filtro.getId());
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				RegiaoCotaDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(RegiaoCotaDTO.class));
 		
 		configurarPaginacao(filtro, query);
-		
 		return query.list();
 		
 	}
@@ -120,4 +118,24 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				query.setFirstResult(paginacao.getPosicaoInicial());
 			}
 		}
+
+		@Override
+		public List<Integer> buscarNumeroCotasPorIdRegiao(Long idRegiao) {
+				
+				StringBuilder hql = new StringBuilder();
+				
+				hql.append(" SELECT ");
+				hql.append(" cota.numeroCota ");
+				hql.append(" FROM RegistroCotaRegiao AS registroCotaRegiao ");
+				hql.append(" LEFT JOIN registroCotaRegiao.cota as cota ");
+				hql.append(" LEFT JOIN registroCotaRegiao.regiao as regiao ");
+				hql.append(" WHERE regiao.id = :id_regiao ");
+
+				Query query = super.getSession().createQuery(hql.toString());
+				
+				query.setParameter("id_regiao", idRegiao);
+				
+				return (List<Integer>)query.list();
+			}
+			
 }

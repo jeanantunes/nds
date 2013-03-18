@@ -240,7 +240,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @param page TODO
      * @return ids das cotas
      */
-    Set<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota,
+    List<Long> obterIdCotasEntre(Intervalo<Integer> intervaloCota,
             Intervalo<Integer> intervaloBox, List<SituacaoCadastro> situacoesCadastro, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page);
     
     Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);

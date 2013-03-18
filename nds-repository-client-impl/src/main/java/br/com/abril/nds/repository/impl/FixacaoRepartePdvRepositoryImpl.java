@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
@@ -33,3 +34,47 @@ public class FixacaoRepartePdvRepositoryImpl extends  AbstractRepositoryModel<Fi
 	}
 		
 }
+=======
+package br.com.abril.nds.repository.impl;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+
+import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
+import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.FixacaoRepartePdvRepository;
+/**
+ * Classe de implementação referente ao acesso a dados da entidade
+ *
+ * FixacaoRepartePdv 
+ */
+
+@Repository
+public class FixacaoRepartePdvRepositoryImpl extends  AbstractRepositoryModel<FixacaoRepartePdv, Long> implements FixacaoRepartePdvRepository {
+ 
+	public FixacaoRepartePdvRepositoryImpl() {
+		super(FixacaoRepartePdv.class);
+	}
+	
+	
+	public List<FixacaoRepartePdv> obterFixacaoRepartePdvPorFixacaoReparte(FixacaoReparte fixacaoReparte){
+		StringBuilder hql = new StringBuilder("");
+		hql.append(" from FixacaoRepartePdv frp where frp.fixacaoReparte = :fixacaoReparte");
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("fixacaoReparte",  fixacaoReparte );
+		return query.list();
+		
+	}
+	
+	public void removerFixacaoReparte(FixacaoReparte fixacaoReparte){
+		StringBuilder hql = new StringBuilder("");
+		hql.append("delete from FixacaoRepartePdv frp where frp.fixacaoReparte = :fixacaoReparte");
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("fixacaoReparte",  fixacaoReparte );
+	}
+		
+}
+>>>>>>> 03f1ca6c8da04a45696f13aca9cd81446f5232f7

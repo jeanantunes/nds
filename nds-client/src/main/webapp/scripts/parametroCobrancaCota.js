@@ -409,6 +409,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto", this.workspace).val(resultado.vrDividasAberto);
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
+		
+		$("#unificaCobranca", this.workspace).val(resultado.unificaCobranca?0:1);
 
         if (resultado.inicioContrato) {
             $("#parametroCobrancaDateInicio", this.workspace).val(resultado.inicioContrato.$);
@@ -452,6 +454,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var vrDividasAberto = $("#vrDividasAberto", this.workspace).val();
 		var tipoCota = $("#tipoCota", this.workspace).val();
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
+		var unificaCobranca = $("#unificaCobranca", this.workspace).val()==0?1:0;
 		
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
 				{"parametroCobranca.idParametroCobranca":idParametroCobranca,
@@ -464,7 +467,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 			"parametroCobranca.qtdDividasAberto":qtdDividasAberto,  
 			"parametroCobranca.vrDividasAberto":vrDividasAberto,
 			"parametroCobranca.tipoCota":tipoCota,
-			"parametroCobranca.idFornecedor":fornecedorPadrao},
+			"parametroCobranca.idFornecedor":fornecedorPadrao,
+			"parametroCobranca.unificaCobranca":unificaCobranca},
 				   function(){
 			           return true;
 				   },

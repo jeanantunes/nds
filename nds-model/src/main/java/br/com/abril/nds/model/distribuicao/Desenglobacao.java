@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.distribuicao;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -51,6 +54,10 @@ public class Desenglobacao implements Serializable {
 	
 	@Column(name = "PORCENTAGEM_COTA_ENGLOBADA")
 	private Float englobadaPorcentagemCota;
+
+	@Temporal(TemporalType.DATE)
+	@Column (name = "DATA_ALTERACAO")
+	private Date dataAlteracao;
 
 	public Long getId() {
 		return id;
@@ -114,5 +121,12 @@ public class Desenglobacao implements Serializable {
 
 	public void setEnglobadaPorcentagemCota(Float englobadaPorcentagemCota) {
 		this.englobadaPorcentagemCota = englobadaPorcentagemCota;
+	}
+	public Date getDataAlteracao() {
+		return dataAlteracao;
+	}
+
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
 	}
 }

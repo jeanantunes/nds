@@ -26,6 +26,18 @@ var vendaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
+				display : 'Período',
+				name : 'periodoFormatado',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
+				display : 'Estudo',
+				name : 'numeroEstudo',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			}, {
 				display : 'Dt. Lcto',
 				name : 'dataLancamento',
 				width : 100,
@@ -146,6 +158,19 @@ var vendaProdutoController = $.extend(true, {
 			height : 200
 		});
 
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#codigo", vendaProdutoController.workspace));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					vendaProdutoController.cliquePesquisar();
+				}
+				
+				return true;
+			});
+		});
 	},
 	
 	popup_detalhes : function(codigoProduto, numEdicao) {
@@ -347,6 +372,9 @@ var vendaProdutoController = $.extend(true, {
 		data.push({name:'filtro.edicao',		value: vendaProdutoController.get("edicoes")});
 		data.push({name:'filtro.idFornecedor',		value: vendaProdutoController.get("idFornecedor")});		
 		data.push({name:'filtro.nomeFornecedor',	value: $('#idFornecedor option:selected', vendaProdutoController.workspace).text()});
+		data.push({name:'filtro.numeroCota',		value: vendaProdutoController.get("numeroCota")});
+		data.push({name:'filtro.nomeCota',		value: vendaProdutoController.get("nomeCota")});
+		data.push({name:'filtro.idClassificacaoProduto',		value: vendaProdutoController.get("selectClassificacao")});
 		
 		return data;
 	},

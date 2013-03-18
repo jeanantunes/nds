@@ -970,7 +970,7 @@ public class DescontoServiceImpl implements DescontoService {
         
         Desconto desconto = null;
         
-        if (produtoEdicao.getProduto().isPublicacao()) {
+        //if (produtoEdicao.getProduto().isPublicacao()) {
 
             desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, cota, produtoEdicao);
 
@@ -1001,12 +1001,12 @@ public class DescontoServiceImpl implements DescontoService {
             
             descontoRepository.alterar(desconto);
             
-        } else {
+        /*} else {
 
         	desconto = new Desconto();
         	
             desconto.setValor(produtoEdicao.getProduto().getDesconto());
-        }
+        }*/
         
         return desconto;
     }

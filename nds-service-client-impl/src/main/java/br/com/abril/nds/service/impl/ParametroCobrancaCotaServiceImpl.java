@@ -210,6 +210,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setFatorVencimento((parametroCobranca.getFatorVencimento()==null) ? 0 : parametroCobranca.getFatorVencimento());
 			parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
 			parametroCobrancaDTO.setTipoCota(parametroCobranca.getTipoCota());
+			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			
 			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
 			
@@ -384,7 +385,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobranca.setFatorVencimento((int) parametroCobrancaDTO.getFatorVencimento());
 			parametroCobranca.setValorMininoCobranca((parametroCobrancaDTO.getValorMinimo()!=null?parametroCobrancaDTO.getValorMinimo():BigDecimal.ZERO));
 			parametroCobranca.setTipoCota(parametroCobrancaDTO.getTipoCota());
-			
+			parametroCobranca.setUnificaCobranca(parametroCobrancaDTO.isUnificaCobranca());
 
 			if (politicaSuspensao == null){
 				politicaSuspensao = new PoliticaSuspensao();
