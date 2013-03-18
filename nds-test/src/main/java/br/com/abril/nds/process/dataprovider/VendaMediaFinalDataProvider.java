@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -12,14 +13,18 @@ import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.process.ajustecota.AjusteCota;
+import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
 import br.com.abril.nds.process.medias.Medias;
 
-public abstract class VendaMediaFinalDataProvider {
+public abstract class VendaMediaFinalDataProvider extends NDSDataProvider {
 
     @DataProvider(name = "getCotaParaCalculoList")
-    public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList() throws Exception {
+    public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList(ITestContext context) throws Exception {
 
+	List<Long> listParamCotaId = getParamCotaId(context);
+	
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
 	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
@@ -31,6 +36,11 @@ public abstract class VendaMediaFinalDataProvider {
 	    List<ProdutoEdicao> edicoesRecebidas = new ArrayList<ProdutoEdicao>();
 
 	    Cota cota = itCota.next();
+	    
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
 
 	    List<ProdutoEdicao> produtoEdicaoList = new ProdutoEdicaoDAO().getEdicaoRecebidas(cota);
 	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO().getByCotaIdProdutoEdicaoId(cota, produtoEdicaoList);
@@ -44,21 +54,30 @@ public abstract class VendaMediaFinalDataProvider {
 		produtoEdicao.setVenda(estoqueProdutoCota.getQuantidadeRecebida().subtract(estoqueProdutoCota.getQuantidadeDevolvida()));
 		produtoEdicao.setPeso(new Integer(1));
 
-		edicoesRecebidas.add(produtoEdicao);
+		if (!produtoEdicao.isEdicaoAberta()) {
+		    edicoesRecebidas.add(produtoEdicao);
+		}
 
 		iEdicaoBase++;
 	    }
 
-	    cota.setEdicoesRecebidas(edicoesRecebidas);
+	    if (edicoesRecebidas.size() >= 4) {
 
-	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
-	    correcaoVendas.executar();
+		cota.setEdicoesRecebidas(edicoesRecebidas);
+		CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
+		correcaoVendas.executar();
 
-	    Medias medias = new Medias(cota);
-	    medias.executar();
+		Medias medias = new Medias(cota);
+		medias.executar();
 
-	    listCotaReturn.add(new Cota[] { cota });
+		Bonificacoes bonificacoes = new Bonificacoes(cota);
+		bonificacoes.executar();
 
+		AjusteCota ajusteCota = new AjusteCota(cota);
+		ajusteCota.executar();
+
+		listCotaReturn.add(new Cota[] { cota });
+	    }
 	}
 
 	return listCotaReturn.iterator();

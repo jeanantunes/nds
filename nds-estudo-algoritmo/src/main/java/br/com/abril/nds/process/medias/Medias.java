@@ -62,7 +62,7 @@ public class Medias extends ProcessoAbstrato {
 	    iProdutoEdicao++;
 	}
 
-	if (totalPeso.compareTo(BigDecimal.ONE) == 1) {
+	if (totalPeso.compareTo(BigDecimal.ZERO) == 1) {
 	    if (qtdeEdicaoBase < 3) {
 		vendaMediaCorrigida = totalVendaMultiplyPeso.divide(totalPeso, 2, BigDecimal.ROUND_FLOOR);
 	    } else {

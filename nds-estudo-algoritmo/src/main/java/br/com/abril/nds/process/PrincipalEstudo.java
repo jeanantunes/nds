@@ -103,7 +103,7 @@ public class PrincipalEstudo {
 	    VendaMediaFinal vendaMediaFinal = new VendaMediaFinal(cota);
 	    vendaMediaFinal.executar();
 
-	    Bonificacoes bonificacoes = new Bonificacoes(estudo);
+	    Bonificacoes bonificacoes = new Bonificacoes(cota);
 	    bonificacoes.executar();
 
 	    AjusteCota ajusteCota = new AjusteCota(cota);

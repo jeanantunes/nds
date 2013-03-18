@@ -1,6 +1,6 @@
 package br.com.abril.nds.process.medias;
 
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
@@ -21,7 +21,7 @@ public class MediasTest {
      * @param cota
      */
     @Test(dataProvider = "getCotaQuantidadeEdicoesMenorTresList", dataProviderClass = MediasDataProvider.class)
-    public void quantidadeEdicaoMenorTres(Cota cota) {
+    public void cotaComQuantidadeEdicaoBaseMenorTres(Cota cota) {
 
 	try {
 
@@ -41,10 +41,7 @@ public class MediasTest {
 	    }
 
 	    BigDecimal vendaMedia = cota.getVendaMedia();
-
-	    boolean assertVendaMedia = (vendaMedia != null && (vendaMedia.compareTo(BigDecimal.ZERO) == 1));
-
-	    assertTrue(assertVendaMedia, "Venda Media : " + assertVendaMedia + " Cota : " + cota.getId());
+	    assertNotNull(vendaMedia, "Venda Media : " + vendaMedia + " Cota : " + cota.getId());
 	    gerarReporterLog(cota, sbReporterLog, vendaMedia);
 
 	} catch (Exception e) {
@@ -58,7 +55,7 @@ public class MediasTest {
      * @param cota
      */
     @Test(dataProvider = "getCotaQuantidadeEdicoesMaiorIgualTresList", dataProviderClass = MediasDataProvider.class)
-    public void quantidadeEdicaoMaiorIgualTres(Cota cota) {
+    public void cotaComQuantidadeEdicaoBaseMaiorIgualTres(Cota cota) {
 
 	try {
 
@@ -78,10 +75,7 @@ public class MediasTest {
 	    }
 
 	    BigDecimal vendaMedia = cota.getVendaMedia();
-
-	    boolean assertVendaMedia = (vendaMedia != null && (vendaMedia.compareTo(BigDecimal.ZERO) == 1));
-
-	    assertTrue(assertVendaMedia, "Venda Media : " + assertVendaMedia + " Cota : " + cota.getId());
+	    assertNotNull(vendaMedia, "Venda Media : " + vendaMedia + " Cota : " + cota.getId());
 	    gerarReporterLog(cota, sbReporterLog, vendaMedia);
 
 	} catch (Exception e) {

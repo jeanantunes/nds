@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dao.CotaDAO;
+import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.TipoAjusteReparte;
@@ -61,6 +62,7 @@ public class AjusteCota extends ProcessoAbstrato {
 	}
 
 	cota.setIndiceAjusteCota(indiceAjusteCota);
+	cota.setClassificacao(ClassificacaoCota.Ajuste);
 
     }
 

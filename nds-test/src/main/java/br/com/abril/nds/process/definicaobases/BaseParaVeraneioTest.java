@@ -6,7 +6,7 @@ import static org.testng.AssertJUnit.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.LocalDate;
+//import org.joda.time.LocalDate;
 import org.testng.Reporter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -50,7 +50,7 @@ public class BaseParaVeraneioTest {
 	produtoEdicao.setId(134437L);
 	produtoEdicao.setIdLancamento(92826L);
 	produtoEdicao.setEdicaoAberta(true);
-	produtoEdicao.setDataLancamento(LocalDate.parse("2013-02-11").toDate());
+//	produtoEdicao.setDataLancamento(LocalDate.parse("2013-02-11").toDate());
 	produtoEdicao.setColecao(false);
 	produtoEdicao.setParcial(false);
 	produtoEdicao.setCodigoProduto("61310001");

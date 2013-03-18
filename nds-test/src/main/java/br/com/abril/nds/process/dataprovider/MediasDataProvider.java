@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -14,10 +15,12 @@ import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.correcaovendas.CorrecaoIndividual;
 
-public abstract class MediasDataProvider {
+public abstract class MediasDataProvider extends NDSDataProvider {
 
     @DataProvider(name = "getCotaQuantidadeEdicoesMenorTresList")
-    public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList() throws Exception {
+    public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList(ITestContext context) throws Exception {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -30,6 +33,11 @@ public abstract class MediasDataProvider {
 	    List<ProdutoEdicao> edicoesRecebidas = new ArrayList<ProdutoEdicao>();
 
 	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
 
 	    List<ProdutoEdicao> produtoEdicaoList = new ProdutoEdicaoDAO().getEdicaoRecebidas(cota);
 	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO().getByCotaIdProdutoEdicaoId(cota, produtoEdicaoList);
@@ -61,7 +69,9 @@ public abstract class MediasDataProvider {
     }
 
     @DataProvider(name = "getCotaQuantidadeEdicoesMaiorIgualTresList")
-    public static Iterator<Cota[]> getCotaQuantidadeEdicoesMaiorIgualTresList() throws Exception {
+    public static Iterator<Cota[]> getCotaQuantidadeEdicoesMaiorIgualTresList(ITestContext context) throws Exception {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -74,6 +84,11 @@ public abstract class MediasDataProvider {
 	    List<ProdutoEdicao> edicoesRecebidas = new ArrayList<ProdutoEdicao>();
 
 	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
 
 	    List<ProdutoEdicao> produtoEdicaoList = new ProdutoEdicaoDAO().getEdicaoRecebidas(cota);
 	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO().getByCotaIdProdutoEdicaoId(cota, produtoEdicaoList);

@@ -17,10 +17,7 @@ public class EstoqueProdutoCotaDAO {
 
 	try {
 
-	    PreparedStatement psmt = Conexao
-		    .getConexao()
-		    .prepareStatement(
-			    "SELECT * FROM ESTOQUE_PRODUTO_COTA WHERE ESTOQUE_PRODUTO_COTA.COTA_ID = ? ORDER BY ID");
+	    PreparedStatement psmt = Conexao.getConexao().prepareStatement("SELECT * FROM ESTOQUE_PRODUTO_COTA WHERE ESTOQUE_PRODUTO_COTA.COTA_ID = ? ORDER BY ID");
 	    psmt.setLong(1, cotaId);
 
 	    ResultSet rs = psmt.executeQuery();
@@ -36,10 +33,8 @@ public class EstoqueProdutoCotaDAO {
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 
 		estoqueProdutoCota.setCota(cota);
-		estoqueProdutoCota.setQuantidadeDevolvida(rs
-			.getBigDecimal("QTDE_DEVOLVIDA"));
-		estoqueProdutoCota.setQuantidadeRecebida(rs
-			.getBigDecimal("QTDE_RECEBIDA"));
+		estoqueProdutoCota.setQuantidadeDevolvida(rs.getBigDecimal("QTDE_DEVOLVIDA"));
+		estoqueProdutoCota.setQuantidadeRecebida(rs.getBigDecimal("QTDE_RECEBIDA"));
 		estoqueProdutoCota.setVersao(rs.getInt("VERSAO"));
 
 		estoqueProdutoCotas.add(estoqueProdutoCota);
@@ -56,15 +51,13 @@ public class EstoqueProdutoCotaDAO {
 
 	try {
 
-	    StringBuilder query = new StringBuilder(
-		    " SELECT EPC.* FROM ESTOQUE_PRODUTO_COTA EPC ");
+	    StringBuilder query = new StringBuilder(" SELECT EPC.* FROM ESTOQUE_PRODUTO_COTA EPC ");
 	    query.append(" INNER JOIN PRODUTO_EDICAO ON (PRODUTO_EDICAO.ID = EPC.PRODUTO_EDICAO_ID) ");
 	    query.append(" INNER JOIN COTA C ON (C.ID = EPC.COTA_ID) ");
 	    query.append(" WHERE EPC.PRODUTO_EDICAO_ID = ? ");
 	    query.append(" ORDER BY C.ID ");
 
-	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(
-		    query.toString());
+	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
 	    psmt.setLong(1, produtoEdicaoId);
 
 	    ResultSet rs = psmt.executeQuery();
@@ -80,10 +73,8 @@ public class EstoqueProdutoCotaDAO {
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 
 		estoqueProdutoCota.setCota(cota);
-		estoqueProdutoCota.setQuantidadeDevolvida(rs
-			.getBigDecimal("QTDE_DEVOLVIDA"));
-		estoqueProdutoCota.setQuantidadeRecebida(rs
-			.getBigDecimal("QTDE_RECEBIDA"));
+		estoqueProdutoCota.setQuantidadeDevolvida(rs.getBigDecimal("QTDE_DEVOLVIDA"));
+		estoqueProdutoCota.setQuantidadeRecebida(rs.getBigDecimal("QTDE_RECEBIDA"));
 		estoqueProdutoCota.setVersao(rs.getInt("VERSAO"));
 
 		estoqueProdutoCotas.add(estoqueProdutoCota);
@@ -94,16 +85,16 @@ public class EstoqueProdutoCotaDAO {
 	return estoqueProdutoCotas;
     }
 
-    public List<EstoqueProdutoCota> getByCotaIdProdutoEdicaoId(Cota cota,
-	    List<ProdutoEdicao> listProdutoEdicao) {
+    public List<EstoqueProdutoCota> getByCotaIdProdutoEdicaoId(Cota cota, List<ProdutoEdicao> listProdutoEdicao) {
 
 	List<EstoqueProdutoCota> estoqueProdutoCotas = new ArrayList<EstoqueProdutoCota>();
 
 	try {
 
 	    StringBuilder query = new StringBuilder(
-		    " SELECT EPC.*, PE.NUMERO_EDICAO, P.NOME, P.ID AS ID_PRODUTO, TP.GRUPO_PRODUTO FROM ESTOQUE_PRODUTO_COTA EPC ");
+		    " SELECT EPC.*, PE.NUMERO_EDICAO, P.NOME, P.ID AS ID_PRODUTO, TP.GRUPO_PRODUTO, LAN.STATUS FROM ESTOQUE_PRODUTO_COTA EPC ");
 	    query.append(" INNER JOIN PRODUTO_EDICAO PE ON (PE.ID = EPC.PRODUTO_EDICAO_ID) ");
+	    query.append(" INNER JOIN LANCAMENTO LAN ON (LAN.PRODUTO_EDICAO_ID = PE.ID) ");
 	    query.append(" INNER JOIN PRODUTO P ON (P.ID = PE.PRODUTO_ID) ");
 	    query.append(" INNER JOIN TIPO_PRODUTO TP ON (TP.ID = P.TIPO_PRODUTO_ID) ");
 	    query.append(" INNER JOIN COTA C ON (C.ID = EPC.COTA_ID) ");
@@ -129,8 +120,7 @@ public class EstoqueProdutoCotaDAO {
 
 	    query.append(" ORDER BY EPC.PRODUTO_EDICAO_ID ");
 
-	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(
-		    query.toString());
+	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
 
 	    psmt.setLong(1, cota.getId());
 
@@ -144,15 +134,18 @@ public class EstoqueProdutoCotaDAO {
 		produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 		produtoEdicao.setIdProduto(rs.getLong("ID_PRODUTO"));
 		produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-		produtoEdicao.setColecao(rs.getString("GRUPO_PRODUTO")
-			.equalsIgnoreCase("COLECIONAVEL"));
+		produtoEdicao.setColecao(rs.getString("GRUPO_PRODUTO").equalsIgnoreCase("COLECIONAVEL"));
+
+		String status = rs.getString("STATUS");
+		if (status != null && !status.equalsIgnoreCase("FECHADO")) {
+		    produtoEdicao.setEdicaoAberta(true);
+		}
+
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 
 		estoqueProdutoCota.setCota(cota);
-		estoqueProdutoCota.setQuantidadeDevolvida(rs
-			.getBigDecimal("QTDE_DEVOLVIDA"));
-		estoqueProdutoCota.setQuantidadeRecebida(rs
-			.getBigDecimal("QTDE_RECEBIDA"));
+		estoqueProdutoCota.setQuantidadeDevolvida(rs.getBigDecimal("QTDE_DEVOLVIDA"));
+		estoqueProdutoCota.setQuantidadeRecebida(rs.getBigDecimal("QTDE_RECEBIDA"));
 		estoqueProdutoCota.setVersao(rs.getInt("VERSAO"));
 
 		estoqueProdutoCotas.add(estoqueProdutoCota);

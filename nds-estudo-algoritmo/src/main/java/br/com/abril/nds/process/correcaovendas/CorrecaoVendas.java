@@ -1,6 +1,7 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.model.Cota;
@@ -43,6 +44,8 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 
 	Cota cota = (Cota) super.genericDTO;
 
+	List<ProdutoEdicao> listEdicaoFechada = new ArrayList<ProdutoEdicao>();
+	
 	List<ProdutoEdicao> listEdicaoRecebida = cota.getEdicoesRecebidas();
 
 	if (listEdicaoRecebida != null && listEdicaoRecebida.size() > 1) {
@@ -51,7 +54,11 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 	    BigDecimal totalVenda = BigDecimal.ZERO;
 
 	    for (ProdutoEdicao produtoEdicao : listEdicaoRecebida) {
-
+		
+		if(!produtoEdicao.isEdicaoAberta()) {
+		    listEdicaoFechada.add(produtoEdicao);
+		}
+		
 		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
 
 		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
@@ -68,8 +75,10 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 		correcaoTendencia.executar();
 	    }
 	}
-
-	VendaCrescente vendaCrescente = new VendaCrescente(cota);
-	vendaCrescente.executar();
+	
+	if(listEdicaoFechada.size() >= 4) {
+	    VendaCrescente vendaCrescente = new VendaCrescente(cota);
+	    vendaCrescente.executar();
+	}
     }
 }

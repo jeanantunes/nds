@@ -32,9 +32,9 @@ public class VendaMediaFinal extends ProcessoAbstrato {
 	BigDecimal vendaMedia = cota.getVendaMedia();
 	BigDecimal indiceAjusteCota = cota.getIndiceAjusteCota();
 	BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
-	BigDecimal indiceTratamentoReginal = cota.getIndiceTratamentoRegional();
+	BigDecimal indiceTratamentoRegional = cota.getIndiceTratamentoRegional();
 
-	if (vendaMedia != null && indiceAjusteCota != null && indiceVendaCrescente != null && indiceTratamentoReginal != null) {
+	if (vendaMedia != null && indiceAjusteCota != null && indiceVendaCrescente != null && indiceTratamentoRegional != null) {
 	    value = cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()).multiply(cota.getIndiceVendaCrescente()).multiply(cota.getIndiceTratamentoRegional());
 	}
     }

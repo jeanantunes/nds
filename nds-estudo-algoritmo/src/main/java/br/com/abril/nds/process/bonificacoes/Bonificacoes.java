@@ -1,6 +1,8 @@
 package br.com.abril.nds.process.bonificacoes;
 
-import br.com.abril.nds.model.Estudo;
+import java.math.BigDecimal;
+
+import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.medias.Medias;
@@ -12,18 +14,23 @@ import br.com.abril.nds.process.medias.Medias;
  * <p style="white-space: pre-wrap;">
  * SubProcessos: - N/A Processo Pai: - N/A
  * 
- * Processo Anterior: {@link Medias} Próximo Processo: {@link AjusteCota}
- * </p>
+ * Processo Anterior: {@link Medias} Próximo Processo: {@link AjusteCota} </p>
  */
 public class Bonificacoes extends ProcessoAbstrato {
 
-    public Bonificacoes(Estudo estudo) {
-	super(estudo);
+    public Bonificacoes(Cota cota) {
+	super(cota);
     }
 
     @Override
     protected void executarProcesso() {
+
+	Cota cota = (Cota) super.genericDTO;
+
+	BigDecimal indiceTratamentoRegional = BigDecimal.ONE;
+
+	cota.setIndiceTratamentoRegional(indiceTratamentoRegional);
+
     }
-    
 
 }
