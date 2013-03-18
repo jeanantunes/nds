@@ -120,7 +120,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	public void pesquisar(Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
-			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota,
+			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
 			String sortname, String sortorder, int rp, int page) {
 				
 		if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
@@ -129,10 +129,9 @@ public class GeracaoNotaEnvioController extends BaseController {
 		FiltroConsultaNotaEnvioDTO filtro = 
 				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
 						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
-						listaIdFornecedores, idRoteiro, idRota, sortname, sortorder, rp, page);
+						listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, rp, page);
 		
-		List<ConsultaNotaEnvioDTO> listaCotaExemplares = 
-				this.geracaoNotaEnvioService.busca(filtro);
+		List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
 		
 		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 		
@@ -265,7 +264,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	private FiltroConsultaNotaEnvioDTO setFiltroNotaEnvioSessao(Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
-			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota,
+			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
 			String sortname, String sortorder, int rp, int page) {
 		
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
@@ -291,6 +290,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		filtroConsultaNotaEnvioDTO.setIntervaloBox(intervaloBox);
 		filtroConsultaNotaEnvioDTO.setIntervaloCota(intervaloCota);
 		filtroConsultaNotaEnvioDTO.setIntervaloMovimento(intervaloDateMovimento);
+		filtroConsultaNotaEnvioDTO.setExibirNotasEnvio(exibirNotasEnvio);
 		filtroConsultaNotaEnvioDTO.setPaginacaoVO(paginacao);
 		
 		session.setAttribute(FILTRO_CONSULTA_NOTA_ENVIO, filtroConsultaNotaEnvioDTO);
@@ -299,14 +299,19 @@ public class GeracaoNotaEnvioController extends BaseController {
 	}
 	
 	@Get
-	public void visualizarNE(){
+	public void visualizarNE() {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		NotaEnvio notaEnvio = geracaoNotaEnvioService.visualizar(filtro.getIntervaloCota().getDe(), 
-				filtro.getIdRota(), null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
-		
-		result.include("notaEnvio",notaEnvio);
+		NotaEnvio notaEnvio = null;
+		if(filtro.getIntervaloCota().getDe() != null) {
+			notaEnvio = geracaoNotaEnvioService.visualizar(filtro.getIntervaloCota().getDe(), 
+					filtro.getIdRota(), null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
+			
+		} else {
+			result.include("errorMessage", "É necessário informar o número da Cota.");
+		}
+		result.include("notaEnvio", notaEnvio);
 		
 	}
 	

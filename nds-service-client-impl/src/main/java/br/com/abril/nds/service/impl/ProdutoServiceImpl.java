@@ -80,6 +80,16 @@ public class ProdutoServiceImpl implements ProdutoService {
 	
 	@Override
 	@Transactional(readOnly = true)
+	public List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxResult) {
+		if (nome == null || nome.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
+		}
+		
+		return produtoRepository.obterProdutoLikeNome(nome, qtdMaxResult);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public Produto obterProdutoPorCodigo(String codigoProduto) {
 		if (codigoProduto == null || codigoProduto.isEmpty()){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
@@ -303,6 +313,15 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 		return produtoRepository.buscarProdutosBalanceadosOrdenadosNome(dataLancamento);
 	}
-	
-	
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Produto> obterProdutoLikeCodigo(String codigo) {
+			if (codigo == null || codigo.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.ERROR, "Nome é obrigatório.");
+			}
+			
+			return produtoRepository.obterProdutoLikeCodigo(codigo);
+	}
+
 }

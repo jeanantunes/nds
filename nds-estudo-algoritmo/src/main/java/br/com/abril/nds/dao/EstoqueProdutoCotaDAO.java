@@ -5,14 +5,22 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
 
+@Repository
 public class EstoqueProdutoCotaDAO {
 
-    public List<EstoqueProdutoCota> getByCotaId(Long cotaId) {
+    @Autowired
+    private DataSource dataSource;
 
+<<<<<<< HEAD
 	List<EstoqueProdutoCota> estoqueProdutoCotas = new ArrayList<EstoqueProdutoCota>();
 
 	try {
@@ -85,6 +93,8 @@ public class EstoqueProdutoCotaDAO {
 	return estoqueProdutoCotas;
     }
 
+=======
+>>>>>>> branch 'master' of https://adenilton@bitbucket.org/pedroxs/nds.git
     public List<EstoqueProdutoCota> getByCotaIdProdutoEdicaoId(Cota cota, List<ProdutoEdicao> listProdutoEdicao) {
 
 	List<EstoqueProdutoCota> estoqueProdutoCotas = new ArrayList<EstoqueProdutoCota>();
@@ -120,7 +130,11 @@ public class EstoqueProdutoCotaDAO {
 
 	    query.append(" ORDER BY EPC.PRODUTO_EDICAO_ID ");
 
+<<<<<<< HEAD
 	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
+=======
+	    PreparedStatement psmt = dataSource.getConnection().prepareStatement(query.toString());
+>>>>>>> branch 'master' of https://adenilton@bitbucket.org/pedroxs/nds.git
 
 	    psmt.setLong(1, cota.getId());
 
@@ -135,12 +149,15 @@ public class EstoqueProdutoCotaDAO {
 		produtoEdicao.setIdProduto(rs.getLong("ID_PRODUTO"));
 		produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
 		produtoEdicao.setColecao(rs.getString("GRUPO_PRODUTO").equalsIgnoreCase("COLECIONAVEL"));
+<<<<<<< HEAD
 
 		String status = rs.getString("STATUS");
 		if (status != null && !status.equalsIgnoreCase("FECHADO")) {
 		    produtoEdicao.setEdicaoAberta(true);
 		}
 
+=======
+>>>>>>> branch 'master' of https://adenilton@bitbucket.org/pedroxs/nds.git
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 
 		estoqueProdutoCota.setCota(cota);

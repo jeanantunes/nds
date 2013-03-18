@@ -7,7 +7,6 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoRepository;
 
@@ -78,6 +77,21 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		Estudo estudo = (Estudo)query.uniqueResult();
 		
 		return estudo;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Estudo> obterEstudosPorIntervaloData(Date dataStart, Date dataEnd) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from Estudo");
+		hql.append(" where dataCadastro between :dateStart and :dateEnd ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("dateStart", dataStart);
+		query.setParameter("dateEnd", dataEnd);
+		
+		return (List<Estudo>)query.list();
 	}
 
 }

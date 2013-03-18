@@ -44,6 +44,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		$('#nomeCotaFiltroPrincipal').keyup(function (){
 			pesquisaCota.autoCompletarPorNome('#nomeCotaFiltroPrincipal');
 		});
+		
+		$("#nomeCotaFiltroPrincipal").change(function(){
+			pesquisaCota.pesquisarPorNomeCota('#numeroCotaFiltroPrincipal','#nomeCotaFiltroPrincipal');
+		});
 
 		// FILTRO PARA PESQUISAR OS PRODUTOS NÃO RECEBIDOS PELA COTA
 		$('#codigoProduto').change(function (){
@@ -545,6 +549,23 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 				
 			},
 		};
+		
+		$(document).ready(function(){
+			
+			filtroPorCota();
+			focusSelectRefField($("#radio", excecaoSegmentoParciaisController.workspace));
+			$("#radio", excecaoSegmentoParciaisController.workspace).attr("checked", true);
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					excecaoSegmentoParciaisController.porCota();
+				}
+				
+				return true;
+			});
+		});
+		
 	},
 	
 	excluirExcecaoProduto : function excluirExcecaoProduto(excecaoId){

@@ -6,6 +6,7 @@ import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -15,6 +16,9 @@ import br.com.abril.nds.process.dataprovider.CorrecaoIndividualDataProvider;
 
 public class CorrecaoIndividualTest {
 
+    @Autowired
+    private CorrecaoIndividual correcaoIndividual;
+    
     /**
      * Testar se o índice de correção será 1.
      * 
@@ -25,7 +29,7 @@ public class CorrecaoIndividualTest {
 
 	try {
 
-	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(estoqueProdutoCota.getProdutoEdicao());
+	    correcaoIndividual.setGenericDTO(estoqueProdutoCota.getProdutoEdicao());
 	    correcaoIndividual.executar();
 
 	    ProdutoEdicao produtoEdicao = (ProdutoEdicao) correcaoIndividual.getGenericDTO();
@@ -76,7 +80,7 @@ public class CorrecaoIndividualTest {
 
 	try {
 
-	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(estoqueProdutoCota.getProdutoEdicao());
+	    correcaoIndividual.setGenericDTO(estoqueProdutoCota.getProdutoEdicao());
 	    correcaoIndividual.executar();
 
 	    ProdutoEdicao produtoEdicao = (ProdutoEdicao) correcaoIndividual.getGenericDTO();
@@ -129,7 +133,7 @@ public class CorrecaoIndividualTest {
 
 	try {
 
-	    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(estoqueProdutoCota.getProdutoEdicao());
+	    correcaoIndividual.setGenericDTO(estoqueProdutoCota.getProdutoEdicao());
 	    correcaoIndividual.executar();
 
 	    ProdutoEdicao produtoEdicao = (ProdutoEdicao) correcaoIndividual.getGenericDTO();

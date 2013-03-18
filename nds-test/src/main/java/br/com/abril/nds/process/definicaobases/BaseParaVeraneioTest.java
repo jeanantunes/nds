@@ -3,10 +3,14 @@ package br.com.abril.nds.process.definicaobases;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
+<<<<<<< HEAD
 //import org.joda.time.LocalDate;
+=======
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+>>>>>>> branch 'master' of https://adenilton@bitbucket.org/pedroxs/nds.git
 import org.testng.Reporter;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -16,22 +20,23 @@ import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class BaseParaVeraneioTest {
 
+    @Autowired
     private BaseParaVeraneio baseParaVeraneio;
     
     @BeforeMethod
     public void setUp() throws Exception {
-	List<ProdutoEdicaoBase> edicoes = new ArrayList<ProdutoEdicaoBase>();
+	LinkedList<ProdutoEdicaoBase> edicoes = new LinkedList<ProdutoEdicaoBase>();
 	edicoes.add(getEdicao());
 	Estudo estudo = new Estudo();
 	estudo.setPracaVeraneio(true);
 	estudo.setEdicoesBase(edicoes);
-	baseParaVeraneio = new BaseParaVeraneio(estudo);
+	baseParaVeraneio.setEstudo(estudo);
     }
 
     @Test
     public void testBasesParaVeraneio() throws Exception {
 	baseParaVeraneio.executar();
-	List<ProdutoEdicaoBase> edicoesBase = baseParaVeraneio.getEstudo().getEdicoesBase();
+	LinkedList<ProdutoEdicaoBase> edicoesBase = baseParaVeraneio.getEstudo().getEdicoesBase();
 	assertNotNull(edicoesBase);
 	assertTrue(edicoesBase.size() > 0);
 	

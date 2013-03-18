@@ -13,7 +13,10 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
+import br.com.abril.nds.model.cadastro.ParametroContratoCota;
+import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
@@ -129,4 +132,16 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	Integer fatorRelancamentoParcial();
 
 	Long obterId();
+
+	String cnpj();
+
+	List<ParametrosDistribuidorEmissaoDocumento> parametrosDistribuidorEmissaoDocumentos();
+
+	Integer codigo();
+
+	BigInteger capacidadeDistribuicao();
+
+	PessoaJuridica juridica();
+
+	ParametroContratoCota parametroContratoCota();
 }

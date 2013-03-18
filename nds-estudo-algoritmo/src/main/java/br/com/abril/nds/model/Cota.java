@@ -13,22 +13,25 @@ public class Cota extends GenericDTO<Cota> {
     private ClassificacaoCota classificacao;
     private BigDecimal reparteCalculado;
     private BigDecimal reparteJuramentadoAFaturar;
-    private BigDecimal vendaMediaMaisN;
     private BigDecimal reparteMinimo;
     private BigDecimal reparteMaximo;
     private BigDecimal vendaMedia;
     private BigDecimal vendaMediaNominal;
     private BigDecimal vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
-    private BigDecimal percentualEncalheMaximo;
     private BigDecimal somaReparteEdicoesAbertas;
     private BigDecimal indiceCorrecaoTendencia;
     private BigDecimal quantidadePDVs;
     private boolean recebeReparteComplementar;
-    // TODO: o q é mix?
+    // esse atributo irá receber o valor configurado na tela Ajuste Reparte
+    // independente se a forma de ajuste for Histórico ou Segmento
+    private BigDecimal ajusteReparte;
+    private BigDecimal vendaMediaMaisN;
+    private BigDecimal percentualEncalheMaximo;
+    
     private boolean mix;
-    private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceAjusteCota;
+    private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceTratamentoRegional;
     private List<Cota> equivalente;
     private BigDecimal indiceAjusteEquivalente;
@@ -70,18 +73,6 @@ public class Cota extends GenericDTO<Cota> {
 
     public void setReparteCalculado(BigDecimal reparteCalculado) {
 	this.reparteCalculado = reparteCalculado;
-    }
-
-    /**
-     * Valor do parâmetro "VendaMedia + n" configurado na tela de Ajuste de Reparte
-     * @return {@link BigDecimal}
-     */
-    public BigDecimal getVendaMediaMaisN() {
-	return vendaMediaMaisN;
-    }
-
-    public void setVendaMediaMaisN(BigDecimal vendaMediaMaisN) {
-	this.vendaMediaMaisN = vendaMediaMaisN;
     }
 
     /**
@@ -153,18 +144,6 @@ public class Cota extends GenericDTO<Cota> {
 
     public void setSomaReparteEdicoesAbertas(BigDecimal somaReparteEdicoesAbertas) {
 	this.somaReparteEdicoesAbertas = somaReparteEdicoesAbertas;
-    }
-
-    public void setPercentualEncalheMaximo(BigDecimal percentualEncalheMaximo) {
-	this.percentualEncalheMaximo = percentualEncalheMaximo;
-    }
-
-    /**
-     * Percentual de encalhe máximo definido na tela Ajuste de Reparte (por Cota)
-     * @return {@link BigDecimal}
-     */
-    public BigDecimal getPercentualEncalheMaximo() {
-	return percentualEncalheMaximo;
     }
 
     public BigDecimal getIndiceCorrecaoTendencia() {
@@ -244,14 +223,6 @@ public class Cota extends GenericDTO<Cota> {
 	this.vendaMediaNominal = vendaMediaNominal;
     }
 
-    public BigDecimal getIndiceAjusteCota() {
-	return indiceAjusteCota;
-    }
-
-    public void setIndiceAjusteCota(BigDecimal indiceAjusteCota) {
-	this.indiceAjusteCota = indiceAjusteCota;
-    }
-
     public BigDecimal getIndiceTratamentoRegional() {
 	return indiceTratamentoRegional;
     }
@@ -296,8 +267,65 @@ public class Cota extends GenericDTO<Cota> {
 	this.indiceAjusteEquivalente = indiceAjusteEquivalente;
     }
 
+    public BigDecimal getAjusteReparte() {
+	return ajusteReparte;
+    }
+
+    public void setAjusteReparte(BigDecimal ajusteReparte) {
+	this.ajusteReparte = ajusteReparte;
+    }
+
+    public BigDecimal getIndiceAjusteCota() {
+	return indiceAjusteCota;
+    }
+
+    public void setIndiceAjusteCota(BigDecimal indiceAjusteCota) {
+	this.indiceAjusteCota = indiceAjusteCota;
+    }
+
+    public BigDecimal getVendaMediaMaisN() {
+	return vendaMediaMaisN;
+    }
+
+    public void setVendaMediaMaisN(BigDecimal vendaMediaMaisN) {
+	this.vendaMediaMaisN = vendaMediaMaisN;
+    }
+
+    public BigDecimal getPercentualEncalheMaximo() {
+	return percentualEncalheMaximo;
+    }
+
+    public void setPercentualEncalheMaximo(BigDecimal percentualEncalheMaximo) {
+	this.percentualEncalheMaximo = percentualEncalheMaximo;
+    }
+
     @Override
     public String toString() {
 	return "Cota [id=" + id + ", numero=" + numero + "]";
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((id == null) ? 0 : id.hashCode());
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	Cota other = (Cota) obj;
+	if (id == null) {
+	    if (other.id != null)
+		return false;
+	} else if (!id.equals(other.id))
+	    return false;
+	return true;
     }
 }

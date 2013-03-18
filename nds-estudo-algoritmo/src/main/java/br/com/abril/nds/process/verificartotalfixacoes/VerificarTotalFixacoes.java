@@ -1,6 +1,8 @@
 package br.com.abril.nds.process.verificartotalfixacoes;
 
-import br.com.abril.nds.model.Estudo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
 import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
@@ -16,15 +18,15 @@ import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
  * {@link MontaTabelaEstudos}
  * </p>
  */
+@Component
 public class VerificarTotalFixacoes extends ProcessoAbstrato {
-
-    public VerificarTotalFixacoes(Estudo estudo) {
-	super(estudo);
-    }
+    
+    @Autowired
+    private SelecaoBancas selecaoBancas;
     
     @Override
     protected void executarProcesso() throws Exception {
-	SelecaoBancas selecaoBancas = new SelecaoBancas(super.getEstudo());
+	selecaoBancas.setEstudo(getEstudo());
 	selecaoBancas.executar();
     }
 

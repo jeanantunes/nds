@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.distribuicao;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -29,13 +32,17 @@ public class Desenglobacao implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "COTA_ID")
-	private Long idCota;
+	@Column(name = "COTA_ID_DESENGLOBADA")
+	private Long desenglobaNumeroCota;
 	
-	@Column(name = "NOME_COTA")
-	private String nomeCota;
+	@Column(name = "NOME_COTA_DESENGLOBADA")
+	private String desenglobaNomePessoa;
 	
+<<<<<<< HEAD
+	@ManyToOne
+=======
 	@ManyToOne(optional = false)
+>>>>>>> 4b791b352d5d30b3e972dd169f27cfd320b87c60
 	@JoinColumn(name = "TIPO_PDV_ID")
 	private TipoPontoPDV tipoPDV;
 	
@@ -43,8 +50,18 @@ public class Desenglobacao implements Serializable {
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario responsavel;
 	
-	@Column(name = "PORCENTAGEM_COTA")
-	private Float porcentagemCota;
+	@Column(name = "COTA_ID_ENGLOBADA")
+	private Long englobadaNumeroCota;
+	
+	@Column(name = "NOME_COTA_ENGLOBADA")
+	private String englobadaNomePessoa;
+	
+	@Column(name = "PORCENTAGEM_COTA_ENGLOBADA")
+	private Float englobadaPorcentagemCota;
+	
+	@Temporal(TemporalType.DATE)
+	@Column (name = "DATA_ALTERACAO")
+	private Date dataAlteracao;
 
 	public Long getId() {
 		return id;
@@ -54,20 +71,20 @@ public class Desenglobacao implements Serializable {
 		this.id = id;
 	}
 
-	public Long getIdCota() {
-		return idCota;
+	public Long getDesenglobaNumeroCota() {
+		return desenglobaNumeroCota;
 	}
 
-	public void setIdCota(Long idCota) {
-		this.idCota = idCota;
+	public void setDesenglobaNumeroCota(Long desenglobaNumeroCota) {
+		this.desenglobaNumeroCota = desenglobaNumeroCota;
 	}
 
-	public String getNomeCota() {
-		return nomeCota;
+	public String getDesenglobaNomePessoa() {
+		return desenglobaNomePessoa;
 	}
 
-	public void setNomeCota(String nomeCota) {
-		this.nomeCota = nomeCota;
+	public void setDesenglobaNomePessoa(String desenglobaNomePessoa) {
+		this.desenglobaNomePessoa = desenglobaNomePessoa;
 	}
 
 	public TipoPontoPDV getTipoPDV() {
@@ -86,11 +103,35 @@ public class Desenglobacao implements Serializable {
 		this.responsavel = responsavel;
 	}
 
-	public Float getPorcentagemCota() {
-		return porcentagemCota;
+	public Long getEnglobadaNumeroCota() {
+		return englobadaNumeroCota;
 	}
 
-	public void setPorcentagemCota(Float porcentagemCota) {
-		this.porcentagemCota = porcentagemCota;
+	public void setEnglobadaNumeroCota(Long englobadaNumeroCota) {
+		this.englobadaNumeroCota = englobadaNumeroCota;
+	}
+
+	public String getEnglobadaNomePessoa() {
+		return englobadaNomePessoa;
+	}
+
+	public void setEnglobadaNomePessoa(String englobadaNomePessoa) {
+		this.englobadaNomePessoa = englobadaNomePessoa;
+	}
+
+	public Float getEnglobadaPorcentagemCota() {
+		return englobadaPorcentagemCota;
+	}
+
+	public void setEnglobadaPorcentagemCota(Float englobadaPorcentagemCota) {
+		this.englobadaPorcentagemCota = englobadaPorcentagemCota;
+	}
+
+	public Date getDataAlteracao() {
+		return dataAlteracao;
+	}
+
+	public void setDataAlteracao(Date dataAlteracao) {
+		this.dataAlteracao = dataAlteracao;
 	}
 }

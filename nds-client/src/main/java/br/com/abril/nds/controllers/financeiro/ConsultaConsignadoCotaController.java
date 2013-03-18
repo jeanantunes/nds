@@ -28,8 +28,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.UsuarioService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
@@ -64,12 +62,6 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	@Autowired
 	private FornecedorService fornecedorService;
 	
-	@Autowired
-	private DistribuidorService distribuidorService;
-
-	@Autowired
-	private UsuarioService usuarioService;
-
 	@Autowired
 	private HttpServletResponse httpResponse;
 	

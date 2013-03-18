@@ -1,7 +1,6 @@
 /**
  * 
  */
-
 function InformeEncalhe() {
 	
 	this.initDialogImprimir();
@@ -15,6 +14,15 @@ function InformeEncalhe() {
 		};
 	$("#checkTipoImpressaoDados", this.workspace).button();
 	$("#buttonsetTipoImpressaoCapas", this.workspace).buttonset();
+	var _this = this;
+	$("#sugerirSemana", this.workspace).click(function(e){
+		
+		if($(this).is(":checked")){
+			_this.carregarDiaSemana();
+		}else{
+			$("#semanaRecolhimentoBox", _this.workspace).val("");
+		 }
+	});
 
 };
 InformeEncalhe.prototype.path = contextPath + "/devolucao/informeEncalhe/";
@@ -252,6 +260,9 @@ InformeEncalhe.prototype.carregarDataSemana = function() {
 
 InformeEncalhe.prototype.carregarDiaSemana = function() {
 	
+	if($("#sugerirSemana:checked").size() < 1)
+		return;
+
 	var _this = this;
 	
 	var dataPesquisa = $("#dataRecolhimentoBox", _this.workspace).val();

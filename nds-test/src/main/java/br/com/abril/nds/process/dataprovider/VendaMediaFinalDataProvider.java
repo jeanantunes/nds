@@ -1,10 +1,15 @@
 package br.com.abril.nds.process.dataprovider;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+<<<<<<< HEAD
 import org.testng.ITestContext;
+=======
+import org.springframework.beans.factory.annotation.Autowired;
+>>>>>>> branch 'master' of https://adenilton@bitbucket.org/pedroxs/nds.git
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -20,6 +25,12 @@ import br.com.abril.nds.process.medias.Medias;
 
 public abstract class VendaMediaFinalDataProvider extends NDSDataProvider {
 
+    @Autowired
+    private static CorrecaoVendas correcaoVendas;
+    
+    @Autowired
+    private static Medias medias;
+    
     @DataProvider(name = "getCotaParaCalculoList")
     public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList(ITestContext context) throws Exception {
 
@@ -52,7 +63,7 @@ public abstract class VendaMediaFinalDataProvider extends NDSDataProvider {
 		ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
 		produtoEdicao.setReparte(estoqueProdutoCota.getQuantidadeRecebida());
 		produtoEdicao.setVenda(estoqueProdutoCota.getQuantidadeRecebida().subtract(estoqueProdutoCota.getQuantidadeDevolvida()));
-		produtoEdicao.setPeso(new Integer(1));
+		produtoEdicao.setPeso(BigDecimal.ONE);
 
 		if (!produtoEdicao.isEdicaoAberta()) {
 		    edicoesRecebidas.add(produtoEdicao);
@@ -63,12 +74,22 @@ public abstract class VendaMediaFinalDataProvider extends NDSDataProvider {
 
 	    if (edicoesRecebidas.size() >= 4) {
 
+<<<<<<< HEAD
 		cota.setEdicoesRecebidas(edicoesRecebidas);
 		CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 		correcaoVendas.executar();
+=======
+	    correcaoVendas.setGenericDTO(cota);
+	    correcaoVendas.executar();
+>>>>>>> branch 'master' of https://adenilton@bitbucket.org/pedroxs/nds.git
 
+<<<<<<< HEAD
 		Medias medias = new Medias(cota);
 		medias.executar();
+=======
+	    medias.setGenericDTO(cota);
+	    medias.executar();
+>>>>>>> branch 'master' of https://adenilton@bitbucket.org/pedroxs/nds.git
 
 		Bonificacoes bonificacoes = new Bonificacoes(cota);
 		bonificacoes.executar();

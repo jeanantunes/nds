@@ -421,8 +421,14 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	obterParametrosPesquisa : function() {
 
 		var parametros = new Array();
+		
+		var anoSemanaNumero = $("#numeroSemana", balanceamentoRecolhimentoController.workspace).val();
+		var numeroSemana = '';
+		if(anoSemanaNumero && anoSemanaNumero.length>=5){
+			numeroSemana = anoSemanaNumero.substr(4);
+		}
 
-		parametros.push({name:'numeroSemana', value: $("#numeroSemana", balanceamentoRecolhimentoController.workspace).val()});
+		parametros.push({name:'numeroSemana', value:numeroSemana });
 		
 		parametros.push({name:'dataPesquisa', value: $("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val()});
 		
@@ -438,15 +444,22 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 
 		var numeroSemana = $("#numeroSemana", balanceamentoRecolhimentoController.workspace).val();
 
-		if (!numeroSemana) {
+		if (!numeroSemana || numeroSemana.length<5) {
 
 			return;
 		}
 		
+//		var dataBase=new Date();
+		
+		var anoBase = numeroSemana.slice(0,4);
+		var nmSemana = numeroSemana.substr(4);
+		
+		var dataBase = this.w2date(anoBase,nmSemana,0);
+		dataBase = dataBase.getDate()+"/"+(dataBase.getMonth()+1)+"/"+dataBase.getFullYear();
+		
 		var data = [
-				{
-					name: 'numeroSemana', value: numeroSemana
-				}
+				{name: 'numeroSemana', value: nmSemana},
+				{name: 'dataBase', value: dataBase}
 			];
 		
 		$.getJSON(
@@ -462,6 +475,13 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		);
 	},
 
+	w2date :function(year, wn, dayNb){
+	    var j10 = new Date( year,0,10,12,0,0),
+	        j4 = new Date( year,0,4,12,0,0),
+	        mon1 = j4.getTime() - j10.getDay() * 86400000;
+	    return new Date(mon1 + ((wn - 1)  * 7  + dayNb) * 86400000);
+	},
+	
 	carregarDiaSemana : function() {
 
 		var dataPesquisa = $("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
@@ -471,9 +491,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			return;
 		}
 		
+		
+		var dataBase = $("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
 		var data = [
 				{
-					name: 'data', value: $("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val()
+					name: 'data', value:dataBase 
 				}
 			];
 		
@@ -484,7 +506,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 
 				if (result) {
 
-					$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val(result.int);
+					$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val((dataBase.substr(6))+(result.int));
 				}
 			}
 		);

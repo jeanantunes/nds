@@ -192,7 +192,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Override
 	@Transactional
 	public List<TipoClassificacaoProduto> obterClassificacoesProduto(){
-		return tipoClassificacaoProdutoRepository.obterTodos();
+		return null;//tipoClassificacaoProdutoRepository.obterTodos();
 	}
 	
 	@Override
