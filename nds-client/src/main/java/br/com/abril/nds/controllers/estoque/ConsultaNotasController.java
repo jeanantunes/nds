@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -364,7 +365,15 @@ public class ConsultaNotasController extends BaseController {
 			sobrasFaltas += itemExibicaoToString(detalheNotaFiscalVO.getSobrasFaltas());
 
 		    DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
-
+		    
+		    BigDecimal valorTotal = 
+		    	(detalheNotaFiscalVO.getValorTotal() == null) 
+		    		? BigDecimal.ZERO : detalheNotaFiscalVO.getValorTotal();
+		    
+		    BigInteger qtdeExemplares = 
+		    	(detalheNotaFiscalVO.getQuantidadeExemplares() == null) 
+		    		? BigInteger.ZERO : detalheNotaFiscalVO.getQuantidadeExemplares();
+		    
 			CellModel cellModel = 
 					new CellModel(
 							detalheNotaFiscalVO.getCodigoItem().intValue(),
@@ -372,9 +381,9 @@ public class ConsultaNotasController extends BaseController {
 							itemExibicaoToString(detalheNotaFiscalVO.getNomeProduto()),
 							itemExibicaoToString(detalheNotaFiscalVO.getNumeroEdicao()),
 							itemExibicaoToString(decimalFormat.format(detalheNotaFiscalVO.getPrecoVenda())),
-							itemExibicaoToString(detalheNotaFiscalVO.getQuantidadeExemplares().intValue()),
+							itemExibicaoToString(qtdeExemplares.intValue()),
 							sobrasFaltas, 
-							itemExibicaoToString(detalheNotaFiscalVO.getValorTotal().setScale(2, BigDecimal.ROUND_DOWN)));
+							itemExibicaoToString(valorTotal.setScale(2, BigDecimal.ROUND_DOWN)));
 
 			listaCellModels.add(cellModel);
 		}
