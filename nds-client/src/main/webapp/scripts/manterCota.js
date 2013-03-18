@@ -33,6 +33,21 @@ var MANTER_COTA = $.extend(true, {
         SOCIO_COTA.initGridSocioCota();
 
         this.initCotaGridPrincipal();
+        
+        
+        $(document).ready(function(){
+        	
+        	focusSelectRefField($("#numCota"));
+        	
+        	$(document.body).keydown(function(e) {
+        		
+        		if(keyEventEnterAux(e)){
+        			MANTER_COTA.pesquisar();
+        		}
+        		
+        		return true;
+        	});
+        });
     },
     
     initCotaGridPrincipal: function() {
@@ -113,6 +128,9 @@ var MANTER_COTA = $.extend(true, {
             {name:"numeroCpfCnpj",value:$("#txtCPF_CNPJ", this.workspace).val()},
             {name:"logradouro",value:$("#logradouroPesquisa", this.workspace).val()},
             {name:"bairro",value:$("#bairroPesquisa", this.workspace).val()},
+            
+            {name:"status",value:$("#selectStatus", this.workspace).val()},
+            
             {name:"municipio",value:$("#municipioPesquisa", this.workspace).val()}
         ];
         return formData;
@@ -300,7 +318,7 @@ var MANTER_COTA = $.extend(true, {
                     }
                     else {
                     	
-                    	$("#numeroCota", this.workspace).attr("disabled", "disabled");
+                    	$("#numeroCotaCNPJ", this.workspace).attr("disabled", "disabled");
                     	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         
@@ -707,7 +725,7 @@ var MANTER_COTA = $.extend(true, {
 
         if (MANTER_COTA.tipoCotaSelecionada == MANTER_COTA.tipoCota_CNPJ){
 
-            numeroCota = $("#numeroCota", this.workspace).val();
+            numeroCota = $("#numeroCotaCNPJ", this.workspace).val();
 
         } else {
 
@@ -722,7 +740,7 @@ var MANTER_COTA = $.extend(true, {
 
         } else {
 
-            campoNumeroCota = $("#numeroCota", this.workspace);
+            campoNumeroCota = $("#numeroCotaCNPJ", this.workspace);
 
             COTA_CNPJ.novoCNPJ();
         }
@@ -815,13 +833,16 @@ var MANTER_COTA = $.extend(true, {
 
                         $("#cotaTemEntregador").hide();
                     }
+                    
+                    DISTRIB_COTA.verificarTipoConvencional(MANTER_COTA.idCota);
                 },
                 null,
                 true,
                 "dialog-cota"
             );
         }
-    }
+    },
+    
 
 }, BaseController);
 
@@ -920,7 +941,18 @@ var COTA_DESCONTO = $.extend(true,
                 params: [{name:'idCota', value:MANTER_COTA.idCota},
                     {name:'modoTela', value:MANTER_COTA.modoTela.value},
                     {name:'idHistorico', value:MANTER_COTA.idHistorico}] ,
-                newp: 1
+                newp: 1,
+                preProcess:function(result) {
+                	 $.each(result.rows, function(index, value) {
+                		 
+                		 if(value.cell.qtdeProxLcmt != null) value.cell.numeroEdicao = 'por ' + value.cell.qtdeProxLcmt + ' edição(ões)';
+                		 
+                		 if(!value.cell.numeroEdicao)
+                			 value.cell.numeroEdicao='*';
+                	 });
+                	 
+                	return result;
+                }
             });
 
             $(".descProdutosGrid", this.workspace).flexReload();
@@ -1075,7 +1107,7 @@ var COTA_CNPJ = $.extend(true, {
 
                 if (!MANTER_COTA.isAlteracaoTitularidade) {
 
-                    $("#numeroCota", this.workspace).val(dados.numeroSugestaoCota);
+                    $("#numeroCotaCNPJ", this.workspace).val(dados.numeroSugestaoCota);
                 }
 
                 MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionada");
@@ -1083,7 +1115,7 @@ var COTA_CNPJ = $.extend(true, {
                 MANTER_COTA.popupCota(true);
             }
         );
-        MANTER_COTA.numeroCota = $("#numeroCota", this.workspace).val();
+        MANTER_COTA.numeroCota = $("#numeroCotaCNPJ", this.workspace).val();
     },
 
     editarCNPJ:function(result){
@@ -1104,7 +1136,7 @@ var COTA_CNPJ = $.extend(true, {
         $( "#tabCota", this.workspace ).tabs({ selected:0 });
         TAB_COTA.possuiDadosObrigatorios = true;
 
-        $("#numeroCota", this.workspace).val(result.numeroCota);
+        $("#numeroCotaCNPJ", this.workspace).val(result.numeroCota);
         $("#email", this.workspace).val(result.email);
         $("#status", this.workspace).val(result.status);
         $("#dataInclusao", this.workspace).html(result.dataInclusao.$);
@@ -1965,4 +1997,4 @@ function GridAntigosProprietarios(element, workspace) {
     };
 }
 
-//@ sourceURL=scriptManterCota.js
+//@ sourceURL=manterCota.js

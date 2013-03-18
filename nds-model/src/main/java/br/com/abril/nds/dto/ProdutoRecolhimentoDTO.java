@@ -38,9 +38,9 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private String nomeProduto;
 	
 	private Long idLancamento;
-	
-	private Integer sequencia;
 
+	private Integer sequencia;
+	
 	private Long idFornecedor;
 	
 	private String nomeFornecedor;
@@ -62,8 +62,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private BigDecimal expectativaEncalheSede;
 
 	private BigDecimal expectativaEncalheAtendida;
-	
-	private BigDecimal expectativaEncalheAlternativo;
 	
 	private BigDecimal expectativaEncalhe;
 
@@ -211,7 +209,7 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
-
+	
 	/**
 	 * @return the sequencia
 	 */
@@ -351,21 +349,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	public void setExpectativaEncalheAtendida(BigDecimal expectativaEncalheAtendida) {
 		this.expectativaEncalheAtendida = expectativaEncalheAtendida;
-	}
-
-	/**
-	 * @return the expectativaEncalheAlternativo
-	 */
-	public BigDecimal getExpectativaEncalheAlternativo() {
-		return expectativaEncalheAlternativo;
-	}
-
-	/**
-	 * @param expectativaEncalheAlternativo the expectativaEncalheAlternativo to set
-	 */
-	public void setExpectativaEncalheAlternativo(
-			BigDecimal expectativaEncalheAlternativo) {
-		this.expectativaEncalheAlternativo = expectativaEncalheAlternativo;
 	}
 
 	/**

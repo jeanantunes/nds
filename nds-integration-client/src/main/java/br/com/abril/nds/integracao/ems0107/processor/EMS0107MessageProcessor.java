@@ -14,14 +14,15 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0107.inbound.EMS0107Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -79,6 +80,13 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			}
 		}
 		
+		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo cota!");
+			return;
+		}		
+		
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
@@ -111,6 +119,10 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		eCota.setCota(cota);
 		eCota.setQtdePrevista(qtdReparte);
 		eCota.setQtdeEfetiva(qtdReparte);
+
+		this.ndsiLoggerFactory.getLogger().logError(message,
+				EventoExecucaoEnum.INF_DADO_ALTERADO,
+				"EstudoCota para a numero de Cota: " + numeroCota + "para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " no Lancamento: " + lancamento.getDataLancamentoPrevista().toString() + " Inserido com sucesso!");
 		
 		this.getSession().persist(eCota);
 	}	

@@ -3,6 +3,8 @@ package br.com.abril.nds.controllers.devolucao;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -21,11 +23,11 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
@@ -100,9 +102,7 @@ public class EmissaoCEController extends BaseController {
 		filtro.setOrdenacao(sortorder);
 		filtro.setColunaOrdenacao(sortname);
 		
-		validarCamposPesquisa(filtro);
-		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+		this.setFiltroSessao(filtro);
 	
 		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
 		
@@ -128,6 +128,13 @@ public class EmissaoCEController extends BaseController {
 				&& DateUtil.isDataInicialMaiorDataFinal(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte()))
 			throw new ValidacaoException(TipoMensagem.WARNING, "Intervalo de Dt. Recolhimento inválido, o valor inicial é maior que o final.");
 		
+		if(filtro.getCodigoBoxDe() != null && filtro.getCodigoBoxAte() != null) {
+			
+			if(filtro.getCodigoBoxDe().compareTo(filtro.getCodigoBoxAte()) == 1) {
+				throw new ValidacaoException(TipoMensagem.WARNING, 
+						"Intervalo de Box inválido, o valor inicial é maior que o final.");
+			}
+		}
 	}
 
 	/**
@@ -149,16 +156,29 @@ public class EmissaoCEController extends BaseController {
 	 * Carrega a lista de Boxes
 	 * @return 
 	 */
-	private List<ItemDTO<Long, String>> carregarBoxes(List<Box> listaBoxes){
+	private List<ItemDTO<Integer, String>> carregarBoxes(List<Box> listaBoxes){
 		
-		List<ItemDTO<Long, String>> boxes = new ArrayList<ItemDTO<Long,String>>();
+		sortByCodigo(listaBoxes);
+		
+		List<ItemDTO<Integer, String>> boxes = new ArrayList<ItemDTO<Integer,String>>();
 				
 		for(Box box : listaBoxes){
 			
-			boxes.add(new ItemDTO<Long, String>(box.getId(),box.getCodigo() + " - " + box.getNome()));
+			boxes.add(new ItemDTO<Integer, String>(box.getCodigo(),box.getCodigo() + " - " + box.getNome()));
 		}
 		
 		return boxes;			
+	}
+
+	private void sortByCodigo(List<Box> listaBoxes) {
+		Collections.sort(listaBoxes, new Comparator<Box>() {
+			@Override
+			public int compare(Box box1, Box box2) {
+				if(box1.getCodigo()==null)
+					return -1;
+				return box1.getCodigo().compareTo(box2.getCodigo());
+			}
+		});
 	}
 		
 	/**
@@ -198,12 +218,12 @@ public class EmissaoCEController extends BaseController {
 	}
 	
 	public void imprimirCE() {
+						
+		TipoImpressaoCE tipoImpressao = this.distribuidorService.tipoImpressaoCE();
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		if(distribuidor != null && distribuidor.getTipoImpressaoCE()!= null){
+		if(tipoImpressao != null){
 			
-			switch (distribuidor.getTipoImpressaoCE()) {
+			switch (tipoImpressao) {
 				case MODELO_1:
 					result.forwardTo(EmissaoCEController.class).modelo1();
 					break;
@@ -214,9 +234,7 @@ public class EmissaoCEController extends BaseController {
 				default:
 					break;
 			}
-		}
-		
-		else{
+		} else{
 			result.nothing();
 		}
 	}
@@ -229,7 +247,7 @@ public class EmissaoCEController extends BaseController {
 	
 	public void setDados() {
 		
-		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroEmissaoCE filtro = getFiltroSessao();
 		
 		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
 				
@@ -269,7 +287,7 @@ public class EmissaoCEController extends BaseController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroEmissaoCE filtro = getFiltroSessao();
 
 		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
 	
@@ -281,6 +299,23 @@ public class EmissaoCEController extends BaseController {
 				lista, CotaEmissaoDTO.class, this.httpResponse);
 		
 		result.nothing();
+	}
+	
+	private void setFiltroSessao(FiltroEmissaoCE filtro) {
+		
+		validarCamposPesquisa(filtro);
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+	}
+	
+	private FiltroEmissaoCE getFiltroSessao() {
+		FiltroEmissaoCE filtro = (FiltroEmissaoCE) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "É necessario realizar a pesquisa primeiro !");
+		}
+		
+		return filtro;
 	}
 	
 }

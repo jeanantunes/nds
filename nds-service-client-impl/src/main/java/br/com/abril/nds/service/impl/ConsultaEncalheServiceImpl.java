@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
+import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -66,15 +67,27 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
 		
-		Integer qtdeRegistrosConsultaEncalhe = movimentoEstoqueCotaRepository.obterQtdConsultaEncalhe(filtro);
+		BigDecimal valorTotalReparte = BigDecimal.ZERO;
+		BigDecimal valorTotalEncalhe = BigDecimal.ZERO;
 		
-		ConsultaEncalheRodapeDTO consultaEncalheRodapeDTO = movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
-
-		BigDecimal valorVendaDia = consultaEncalheRodapeDTO.getValorReparte().subtract(consultaEncalheRodapeDTO.getValorEncalhe());
+		for (ConsultaEncalheDTO consultaEncalhe : listaConsultaEncalhe) {
+			
+			valorTotalReparte = 
+				valorTotalReparte.add(
+					consultaEncalhe.getReparte().multiply(consultaEncalhe.getPrecoVenda()));
+			
+			valorTotalEncalhe = 
+				valorTotalEncalhe.add(
+					consultaEncalhe.getEncalhe().multiply(consultaEncalhe.getPrecoVenda()));
+		}
+		
+		BigDecimal valorVendaDia = valorTotalReparte.subtract(valorTotalEncalhe); 
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
 		
@@ -82,11 +95,16 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
 		
-		if(listaDebitoCreditoCota != null) {
-			for(DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCota) {
-				if(OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+		if (listaDebitoCreditoCota != null) {
+			
+			for (DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCota) {
+				
+				if (OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					
 					valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
-				} else if(OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					
+				} else if (OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					
 					valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
 				}
 			}
@@ -98,12 +116,6 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCota));
 		
-		info.setQtdeConsultaEncalhe(qtdeRegistrosConsultaEncalhe);
-		
-		info.setValorReparte(consultaEncalheRodapeDTO.getValorReparte());
-		
-		info.setValorEncalhe(consultaEncalheRodapeDTO.getValorEncalhe());
-		
 		info.setValorVendaDia(valorVendaDia);
 		
 		info.setValorDebitoCredito(valorDebitoCredito);
@@ -111,6 +123,18 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		info.setValorPagar(valorPagar);
 		
 		return info;
+	}
+	
+	@Transactional
+	public TotalizadorConsultaEncalheDTO obterTotalizadorConsultaEncalhe(FiltroConsultaEncalheDTO filtro) {
+
+		return movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
+	}
+	
+	@Transactional
+	public ConsultaEncalheRodapeDTO obterResultadosConsultaEncalhe(FiltroConsultaEncalheDTO filtro) {
+		
+		return this.movimentoEstoqueCotaRepository.obterValoresTotais(filtro);
 	}
 
 	@Transactional
@@ -146,19 +170,22 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCotaPorFiltro(filtro); 
 		
 		if (listaConferenciaEncalheCotas != null) {
+			List<byte[]> arquivos = new ArrayList<byte[]>();
 			for(ControleConferenciaEncalheCota conferenciaEncalheCota: listaConferenciaEncalheCotas) {
 				arquivo = conferenciaEncalheService.gerarSlip(conferenciaEncalheCota.getId(), false);
-				if(retorno == null) {
-					retorno = arquivo;
-				} else {
-					List<byte[]> arquivos = new ArrayList<byte[]>();
-					arquivos.add(retorno);
-					arquivos.add(arquivo);
-					retorno = PDFUtil.mergePDFs(arquivos);
-				}
+				arquivos.add(arquivo);
+			}
+
+			if (arquivos.size() == 1) {
+			
+				retorno = arquivos.get(0);
+			
+			} else if (arquivos.size() > 1) {
+
+				retorno = PDFUtil.mergePDFs(arquivos);
 			}
 		}
-		
+
 		return retorno;
 	}
 	

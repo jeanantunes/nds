@@ -106,7 +106,7 @@ function imprimir(){
   </tr>
   <tr>
     <td height="20" colspan="4" style="border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;">
-    	<span class="dadosNota" style="font-size:13px!important;"><strong>${cotaEmissao.numCota}</strong> - ${cotaEmissao.nomeCota.toUpperCase()}</span>
+    	<span class="dadosNota" style="font-size:13px!important;"><strong>${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()} </strong></span>
     </td>
     <td style=" border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">${cotaEmissao.cnpj}</span></td>
   </tr>
@@ -132,7 +132,7 @@ function imprimir(){
     <td width="458" style="border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
   </tr>
   <tr>
-    <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataRecolhimento}</span></td>
+    <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota"><strong>${cotaEmissao.dataRecolhimento}</strong></span></td>
     <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
     <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.nomeBox} / Roteiro: ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.nomeRota}</span></td>
   </tr>
@@ -203,6 +203,8 @@ function imprimir(){
     </table></td>
   </tr>
 </table>
+
+<c:if test=" ${cotaEmissao.vlrComDesconto != '0.0' } ">
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top:5px;">
   <tr class="class_linha_3">
     <td colspan="6" align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-right:1px solid #000; border-top:1px solid #000;"><strong>OBSERVAÇÕES</strong></td>
@@ -245,6 +247,7 @@ function imprimir(){
     <td style="padding-left:5px; border-bottom:1px solid #000;">&nbsp;</td>
   </tr>
 </table>
+</c:if>
 <br />
 <br />
 

@@ -208,9 +208,11 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		String codigoBarra = "147a7a77a7s";
 		
-			ProdutoEdicao produtoEdicao =
-						produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoBarra);
-		}
+		List<ProdutoEdicao> produtosEdicao =
+					produtoEdicaoRepository.obterProdutoEdicaoPorCodigoBarra(codigoBarra);
+	
+		Assert.assertNotNull(produtosEdicao);
+	}
 	
 	@Test
 	public void obterProdutosEdicaoPorCodigoProduto() {
@@ -253,19 +255,23 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 	@Test
 	public void obterProdutoEdicaoPorSequenciaMatriz() {
 		
+		Date dataOperacao = new Date();
+		
 		Integer sequenciaMatriz = 1;
 		
-			ProdutoEdicao produtoEdicao =
-						produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sequenciaMatriz);
+		ProdutoEdicao produtoEdicao =
+						produtoEdicaoRepository.obterProdutoEdicaoPorSequenciaMatriz(sequenciaMatriz, dataOperacao);
+		
+		Assert.assertNotNull(produtoEdicao);
 			
-		}
+	}
 	
 	@Test
 	public void obterCodigoMatrizPorProdutoEdicao() {
 		
 		Long idProdutoEdicao = 1L;
 		
-				produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(idProdutoEdicao);
+				produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(idProdutoEdicao, null);
 			
 		}
 	

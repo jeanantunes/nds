@@ -413,6 +413,8 @@ var VENDA_PRODUTO = {
 			
 			var inputFormaVenda='<input type="text" id="formaVenda0" name="formaVenda" value="'+row.cell.formaVenda+'" disabled="disabled" />';
 			
+			var inputHiddenTipoComercailizacao = '<input id="hiddenComercializacao'+index+'" name="hiddenComercializacao" type="hidden" value="'+row.cell.formaComercializacao+'">';
+			
 			$("#qntSolicitada0", VENDA_PRODUTO.workspace).keypress(function(e) {
 				if (e.keyCode == 13) {
 					VENDA_PRODUTO.totalizarValorProdutoSelecionado(0);
@@ -428,7 +430,7 @@ var VENDA_PRODUTO = {
 			row.cell.qntSolicitada = inputQntSolicitada;
 			row.cell.total =inputTotal + inputHiddenTotal;
 			row.cell.tipoVendaEncalhe = inputTipoVenda;
-			row.cell.formaVenda = inputFormaVenda;
+			row.cell.formaVenda = inputFormaVenda + inputHiddenTipoComercailizacao;
 			
 			$("#span_nome_box_venda", VENDA_PRODUTO.workspace).html(row.cell.codBox);
 			$("#dataVencimento", VENDA_PRODUTO.workspace).val(row.cell.dataVencimentoDebito);
@@ -512,7 +514,7 @@ var VENDA_PRODUTO = {
 		}
 		var parametroPesCodBarra ='\'#codBarras'+ index+ '\',' + index;
 		
-		return '<input type="text" id="codBarras'+index+'" name="codBarras" style="width:90px;" value="'+valor+'" onchange="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
+		return '<input type="text" id="codBarras'+index+'" name="codBarras" style="width:90px;" value="'+valor+'" onkeyup="VENDA_PRODUTO.pesquisarProdutoCodBarra('+parametroPesCodBarra+')"/>';
 	},
 	
 	getInputCodigoProduto:function(index,result,parametroPesquisaProduto){
@@ -694,7 +696,7 @@ var VENDA_PRODUTO = {
 			contextPath + "/devolucao/vendaEncalhe/obterDadosDoProduto", 
 			data,
 			function(resultado) {
-		
+				
 				VENDA_PRODUTO.atribuirDadosProduto(resultado, index);
 				
 				if(VENDA_PRODUTO.validaritemRepetido(index)== true){
@@ -710,6 +712,21 @@ var VENDA_PRODUTO = {
 				VENDA_PRODUTO.totalizarQntDisponivelGeral();
 			},
 			function(resultado){
+
+				if (resultado.mensagens) {
+
+					exibirMensagemDialog(
+							resultado.mensagens.tipoMensagem, 
+							resultado.mensagens.listaMensagens,""
+					);
+					
+					VENDA_PRODUTO.limparDadoVendaProduto(index);
+					
+					$("#codBarras"+index, VENDA_PRODUTO.workspace).focus();
+					
+					return;
+				}
+				
 				VENDA_PRODUTO.totalizarQntDisponivelGeral();
 				$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).val("");
 				$("#totalFormatado"+index, VENDA_PRODUTO.workspace).val("");
@@ -750,16 +767,47 @@ var VENDA_PRODUTO = {
  	
  	pesquisarProdutoCodBarra : function(idCodBarras,index){
  		
- 		if($(idCodBarras).val().length == 0){
+ 		if($(idCodBarras).val().length <= 5){
  			return;
  		}
  		
+ 		var codBarras = $(idCodBarras).val();
+ 		
  		$.postJSON(contextPath + "/devolucao/vendaEncalhe/pesquisarProdutoCodBarra",
-				{codBarra:$(idCodBarras).val()}, 
+				{codBarra:codBarras}, 
 				function(result){
+
+					var codigoProduto = "";
+					var numeroEdicao = null;
 					
- 					VENDA_PRODUTO.obterDadosProduto(result.codigoProduto,result.nuemroEdicao,index);						
- 					
+					 if (result.length > 1){
+						
+						$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete({
+							source: result,
+							select: function(event, ui){
+								
+								codigoProduto = ui.item.chave.string;
+								
+								numeroEdicao = ui.item.chave.long;
+								
+			 					VENDA_PRODUTO.obterDadosProduto(codigoProduto,numeroEdicao,index);		
+							},
+							delay: 0
+						});
+						
+						$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete("search", codBarras);
+					}
+					else{
+						
+						$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete({});
+						
+						codigoProduto = result[0].chave.string;
+						
+						numeroEdicao = result[0].chave.long;
+						
+	 					VENDA_PRODUTO.obterDadosProduto(codigoProduto,numeroEdicao,index);			
+					}
+				
  				}, function(result){
 					
 					//Verifica mensagens de erro do retorno da chamada ao controller.
@@ -780,7 +828,7 @@ var VENDA_PRODUTO = {
  	},
  
  	atribuirDadosProduto:function(resultado, index){
- 		
+
  		$("#codBarras"+index, VENDA_PRODUTO.workspace).val(resultado.codigoBarras);
  		$("#codProduto"+index, VENDA_PRODUTO.workspace).val(resultado.codigoProduto);
 		$("#nmProduto"+index, VENDA_PRODUTO.workspace).val(resultado.nomeProduto);
@@ -822,6 +870,7 @@ var VENDA_PRODUTO = {
 		$("#hiddenTipoVenda" + index, VENDA_PRODUTO.workspace).val("");
 		
 		$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).attr("disabled","disabled");
+		$("#numEdicao"+index, VENDA_PRODUTO.workspace).attr("disabled","disabled");
 		
 		$("#qntSolicitada"+index, VENDA_PRODUTO.workspace).removeAttr("class");
 		$("#hiddenTotal"+index, VENDA_PRODUTO.workspace).removeAttr("class");

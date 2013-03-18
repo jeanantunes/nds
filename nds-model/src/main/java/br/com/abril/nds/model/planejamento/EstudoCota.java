@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,10 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -49,16 +46,21 @@ public class EstudoCota implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+
+	@Column(name = "REPARTE")
+	private BigInteger reparte;
 	
 	@OneToMany(mappedBy = "estudoCota")
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	
 	@OneToMany(mappedBy = "estudoCota")
-
 	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
 	
-	@OneToOne(mappedBy = "estudoCota")
-	private ItemNotaEnvio itemNotaEnvio;
+	@OneToMany(mappedBy = "estudoCota")
+	private List<ItemNotaEnvio> itemNotaEnvios;
+	
+	@Column(name = "CLASSIFICACAO")
+	private String classificacao;
 	
 	public EstudoCota() {
 		
@@ -124,12 +126,36 @@ public class EstudoCota implements Serializable {
 		this.movimentosEstoqueCota = movimentosEstoqueCota;
 	}
 
-	public ItemNotaEnvio getItemNotaEnvio() {
-		return itemNotaEnvio;
+	/**
+	 * @return the itemNotaEnvios
+	 */
+	public List<ItemNotaEnvio> getItemNotaEnvios() {
+		return itemNotaEnvios;
 	}
 
-	public void setItemNotaEnvio(ItemNotaEnvio itemNotaEnvio) {
-		this.itemNotaEnvio = itemNotaEnvio;
+	/**
+	 * @param itemNotaEnvios the itemNotaEnvios to set
+	 */
+	public void setItemNotaEnvios(List<ItemNotaEnvio> itemNotaEnvios) {
+		this.itemNotaEnvios = itemNotaEnvios;
 	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public BigInteger getReparte() {
+		return reparte;
+	}
+	
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+
+
 
 }

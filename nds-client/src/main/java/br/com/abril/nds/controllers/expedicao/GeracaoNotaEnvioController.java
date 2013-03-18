@@ -20,7 +20,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -84,6 +84,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 
 	private static final String FILTRO_CONSULTA_NOTA_ENVIO = "filtroConsultaNotaEnvio";
 	
+	private static final String ARQUIVO_NE = "notaEnvioSession";
+	
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO)
@@ -118,7 +120,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	public void pesquisar(Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
-			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota,
+			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
 			String sortname, String sortorder, int rp, int page) {
 				
 		if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
@@ -127,12 +129,9 @@ public class GeracaoNotaEnvioController extends BaseController {
 		FiltroConsultaNotaEnvioDTO filtro = 
 				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
 						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
-						listaIdFornecedores, idRoteiro, idRota, sortname, sortorder, rp, page);
+						listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, rp, page);
 		
-		List<ConsultaNotaEnvioDTO> listaCotaExemplares = 
-				this.geracaoNotaEnvioService.busca(filtro);
-		
-		filtro.setPaginacaoVO(new PaginacaoVO());
+		List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
 		
 		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 		
@@ -163,7 +162,8 @@ public class GeracaoNotaEnvioController extends BaseController {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		filtro.setPaginacaoVO(new PaginacaoVO());
+		filtro.getPaginacaoVO().setPaginaAtual(null);
+		filtro.getPaginacaoVO().setQtdResultadosPorPagina(null);
 		
 		List<ConsultaNotaEnvioDTO> consultaNotaEnvioDTO =	
 				geracaoNotaEnvioService.busca(filtro);
@@ -179,11 +179,12 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Post
 	public void transferirSuplementar(List<Long> listaIdCotas) {
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor =
+				this.distribuidorService.parametrosRecolhimentoDistribuidor();
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		this.movimentoEstoqueCotaService.transferirReparteParaSuplementar(distribuidor, listaIdCotas, 
+		this.movimentoEstoqueCotaService.transferirReparteParaSuplementar(parametrosRecolhimentoDistribuidor, listaIdCotas, 
 				filtro.getIntervaloMovimento(), filtro.getIdFornecedores(), null, null);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
@@ -192,35 +193,54 @@ public class GeracaoNotaEnvioController extends BaseController {
 	}
 	
 	@Post
-	public void gerarNotaEnvio(List<Long> listaIdCotas) {
+	public void getArquivoNotaEnvio() {
 		
-		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+		byte[] notasGeradas = (byte[]) session.getAttribute(ARQUIVO_NE);
 		
-		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
-
-		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
-	        
-        if (notasGeradas != null) {
-        	
-        	DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-        	
-        	this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
-        	
-        	OutputStream output;
-			try {
+		try {
+		
+			if (notasGeradas != null) {
+				
+				DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+				
+				this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+				
+				OutputStream output;
+			
 				output = this.httpResponse.getOutputStream();
 
-	        	output.write(notasGeradas);
+		    	output.write(notasGeradas);
 
-	        	httpResponse.getOutputStream().close();
+		    	httpResponse.getOutputStream().close();
 
-	        	result.use(Results.nothing());
-
-			} catch (IOException e) {
-				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+		    	session.setAttribute(ARQUIVO_NE, null);
+		    	
+		    	result.use(Results.nothing());
+	
 			}
+		} catch (Exception e) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
+		}
+	}
+	
+	@Post
+	public void gerarNotaEnvio(List<Long> listaIdCotas) {
+		
+			FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+			
+			List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
 
-        }
+			if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
+			}
+			
+			byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
+			    
+			session.setAttribute(ARQUIVO_NE, notasGeradas);
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
+					"Geração de NE realizada com sucesso!"),
+								Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	/**
@@ -244,7 +264,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	private FiltroConsultaNotaEnvioDTO setFiltroNotaEnvioSessao(Integer intervaloBoxDe, Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloMovimentoDe, Date intervaloMovimentoAte, Date dataEmissao,
-			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota,
+			List<Long> listaIdFornecedores, Long idRoteiro, Long idRota, String exibirNotasEnvio,
 			String sortname, String sortorder, int rp, int page) {
 		
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(intervaloBoxDe, intervaloBoxAte);
@@ -270,6 +290,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		filtroConsultaNotaEnvioDTO.setIntervaloBox(intervaloBox);
 		filtroConsultaNotaEnvioDTO.setIntervaloCota(intervaloCota);
 		filtroConsultaNotaEnvioDTO.setIntervaloMovimento(intervaloDateMovimento);
+		filtroConsultaNotaEnvioDTO.setExibirNotasEnvio(exibirNotasEnvio);
 		filtroConsultaNotaEnvioDTO.setPaginacaoVO(paginacao);
 		
 		session.setAttribute(FILTRO_CONSULTA_NOTA_ENVIO, filtroConsultaNotaEnvioDTO);
@@ -278,14 +299,19 @@ public class GeracaoNotaEnvioController extends BaseController {
 	}
 	
 	@Get
-	public void visualizarNE(){
+	public void visualizarNE() {
 		
 		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
 		
-		NotaEnvio notaEnvio = geracaoNotaEnvioService.visualizar(filtro.getIntervaloCota().getDe(), 
-				filtro.getIdRota(), null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
-		
-		result.include("notaEnvio",notaEnvio);
+		NotaEnvio notaEnvio = null;
+		if(filtro.getIntervaloCota().getDe() != null) {
+			notaEnvio = geracaoNotaEnvioService.visualizar(filtro.getIntervaloCota().getDe(), 
+					filtro.getIdRota(), null, null, null, filtro.getDataEmissao(), filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
+			
+		} else {
+			result.include("errorMessage", "É necessário informar o número da Cota.");
+		}
+		result.include("notaEnvio", notaEnvio);
 		
 	}
 	

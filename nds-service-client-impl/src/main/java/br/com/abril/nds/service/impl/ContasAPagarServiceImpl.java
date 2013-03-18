@@ -175,7 +175,7 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 		
 		if (filtro.getCe() != null){
 			
-			Intervalo<Date> intervaloCE = this.recolhimentoService.getPeriodoRecolhimento(null, filtro.getCe(), null);
+			Intervalo<Date> intervaloCE = this.recolhimentoService.getPeriodoRecolhimento(filtro.getCe(), null);
 			
 			if (filtro.getDataDe() != null && filtro.getDataAte() != null){
 			

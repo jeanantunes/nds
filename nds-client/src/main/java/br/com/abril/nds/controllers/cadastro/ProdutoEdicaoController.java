@@ -36,6 +36,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -72,6 +73,8 @@ public class ProdutoEdicaoController extends BaseController {
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
 
 	private static List<ItemDTO<GrupoProduto,String>> listaGrupoProduto =  new ArrayList<ItemDTO<GrupoProduto,String>>();
+	
+	private static List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
 
 	
 	/** Traz a página inicial. */
@@ -118,54 +121,84 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		result.include("listaGrupoProduto",listaGrupoProduto);
 		
+		listaStatusLancamento.clear();
+		
+		for (StatusLancamento statusLancamento : StatusLancamento.values()) {
+			
+			listaStatusLancamento.add(
+				new ItemDTO<StatusLancamento, String>(
+					statusLancamento, statusLancamento.getDescricao()));
+		}
+		
+		result.include("listaStatusLancamento", listaStatusLancamento);
+		
 		List<Brinde> brindes = brindeService.obterBrindes();
 		result.include("brindes", brindes);
     }
+
+	@Post
+	public void pesquisarProdutoCodBarra(String codBarra){
+		
+		List<ProdutoEdicao> produtosEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
+		
+		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+			
+			this.result.nothing();
+			
+			return;
+		}
+
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+
+		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+
+			listaProdutos.add(new ItemAutoComplete(
+					produtoEdicao.getProduto().getNome() + " - " + produtoEdicao.getNumeroEdicao(), 
+					null, produtoEdicao.getId()));
+		}
+
+		result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
+	}
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")
 	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
+			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,
+			BigDecimal precoAte , StatusLancamento situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
 		Intervalo<BigDecimal> intervaloPreco = null;
 		Intervalo<Date> intervaloLancamento = null;
 		// Validar:
-		if (codigoDeBarras == null || codigoDeBarras.isEmpty()) {
-			if ((codigoProduto == null || codigoProduto.trim().isEmpty()) 
-					|| (nomeProduto == null || nomeProduto.trim().isEmpty())) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o campo 'Código', 'Produto' ou 'Código de Barras'!");
-			}
-		}
 		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
 		}else if(dataLancamentoDe != null && dataLancamentoAte != null){
 			if(dataLancamentoDe.after(dataLancamentoAte)){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
 			}
 			
 			intervaloLancamento = new Intervalo<Date>(dataLancamentoDe, dataLancamentoAte);		
 		}
 		if(precoDe == null ^ precoAte == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 		}else if(precoDe != null && precoAte != null ){
 			if(precoDe.compareTo(precoAte) > 0){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 			}
 			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
-		}		
-		
-		StatusLancamento statusLancamento = null;
-		for (StatusLancamento status : StatusLancamento.values()) {
-			if (status.getDescricao().equals(situacaoLancamento)) {
-				statusLancamento = status;
-			}
-		}		
+		}	
 	
 		// Pesquisar:
-		Long qtd = produtoEdicaoService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
-		if(qtd > 0){			
-			List<ProdutoEdicaoDTO> lst = produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+		Long qtd = produtoEdicaoService.countPesquisarEdicoes(
+				codigoProduto, nomeProduto, intervaloLancamento, 
+				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde);
+		
+		if(qtd > 0){		
+			
+			List<ProdutoEdicaoDTO> lst = 
+					produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, 
+							intervaloLancamento, intervaloPreco, situacaoLancamento, codigoDeBarras, 
+							brinde, sortorder, sortname, page, rp);
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		}else{
@@ -211,7 +244,7 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		dto.setId(idProdutoEdicao);
 		dto.setNomeComercialProduto(nomeComercialProduto);
-		dto.setPeb(peb);
+		dto.setPeb( (peb == null)?0:peb);
 		dto.setCaracteristicaProduto(descricaoProduto);
 		dto.setNumeroEdicao(numeroEdicao);
 		dto.setCodigoProduto(codigoProdutoEdicao);

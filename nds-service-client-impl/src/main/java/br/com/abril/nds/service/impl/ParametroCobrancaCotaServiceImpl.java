@@ -36,6 +36,7 @@ import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO;
 import br.com.abril.nds.dto.PessoaContratoDTO.TipoPessoa;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
@@ -43,20 +44,18 @@ import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.ContratoCota;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFinanceiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
@@ -69,6 +68,7 @@ import br.com.abril.nds.repository.ParametroCobrancaCotaRepository;
 import br.com.abril.nds.service.ContratoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
@@ -84,8 +84,6 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaService {
 	
-
-	
 	@Autowired
 	private CotaRepository cotaRepository;
 	
@@ -97,6 +95,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	
 	@Autowired
 	private FormaCobrancaRepository formaCobrancaRepository;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
 	private ParametroCobrancaCotaRepository parametroCobrancaCotaRepository;
@@ -209,6 +210,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setFatorVencimento((parametroCobranca.getFatorVencimento()==null) ? 0 : parametroCobranca.getFatorVencimento());
 			parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
 			parametroCobrancaDTO.setTipoCota(parametroCobranca.getTipoCota());
+			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			
 			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
 			
@@ -216,7 +218,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
 				parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
 			}
-					
+			
+			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);					
 		}
 
 		return parametroCobrancaDTO;
@@ -382,7 +385,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobranca.setFatorVencimento((int) parametroCobrancaDTO.getFatorVencimento());
 			parametroCobranca.setValorMininoCobranca((parametroCobrancaDTO.getValorMinimo()!=null?parametroCobrancaDTO.getValorMinimo():BigDecimal.ZERO));
 			parametroCobranca.setTipoCota(parametroCobrancaDTO.getTipoCota());
-			
+			parametroCobranca.setUnificaCobranca(parametroCobrancaDTO.isUnificaCobranca());
 
 			if (politicaSuspensao == null){
 				politicaSuspensao = new PoliticaSuspensao();
@@ -391,6 +394,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			politicaSuspensao.setValor((parametroCobrancaDTO.getVrDividasAberto()!=null?parametroCobrancaDTO.getVrDividasAberto():BigDecimal.ZERO));
 			
 			parametroCobranca.setPoliticaSuspensao(politicaSuspensao);
+			
+			
+			Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedor());
+			parametroCobranca.setFornecedorPadrao(fornecedor);
 			
 			
 			if (novo){
@@ -460,9 +467,24 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}
 		
 		
-		FormaCobranca formaCobrancaPrincipal = this.obterFormaCobrancaPrincipalCota(formaCobrancaDTO.getIdCota());
+		
+		
+		
+		
+		
+		
+		
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(formaCobrancaDTO.getIdCota());
+		
 		formaCobranca.setPrincipal(formaCobrancaPrincipal==null);
 
+		
+		
+		
+		
+		
+		
+		
 		
 		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
 		concentracoesCobranca = new HashSet<ConcentracaoCobrancaCota>();
@@ -672,9 +694,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		ContratoTransporteDTO contrato = new ContratoTransporteDTO();
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();	
-		
-		PessoaJuridica pessoaJuridica = distribuidor.getJuridica();		
+		PessoaJuridica pessoaJuridica = this.distribuidorRepository.juridica();		
 		PessoaContratoDTO contratante = new PessoaContratoDTO();		
 		
 		contratante.setNome((pessoaJuridica.getNome()!=null?pessoaJuridica.getNome():""));
@@ -699,7 +719,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		
 		String descTelefones = "";
-		for (Telefone itemTelefone:distribuidor.getJuridica().getTelefones()){
+		for (Telefone itemTelefone: pessoaJuridica.getTelefones()){
 			descTelefones=descTelefones+"("+itemTelefone.getDdd()+")"+itemTelefone.getNumero()+"    ";
 		}
 		contratante.setDescTelefones(descTelefones);
@@ -758,10 +778,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				contrato.setPrazo(cota.getContratoCota().getPrazo()!=null?cota.getContratoCota().getPrazo().toString():"");
 			}
 			
-			ParametroContratoCota parametroContrato= distribuidor.getParametroContratoCota();
+			ParametroContratoCota parametroContrato = this.distribuidorRepository.parametroContratoCota();
 			if (parametroContrato!=null){
 				contrato.setAvisoPrevio( Integer.toString(parametroContrato.getDiasAvisoRescisao()));
-			    contrato.setComplemento(distribuidor.getParametroContratoCota().getComplementoContrato());
+			    contrato.setComplemento(parametroContrato.getComplementoContrato());
 			    contrato.setCondicoes(parametroContrato.getCondicoesContratacao());
 			}
 			
@@ -837,7 +857,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		contrato.setDataTermino(contratoDTO.getTermino());
 		contrato.setExigeDocumentacaoSuspencao(cota.isSugereSuspensao());
 		contrato.setCota(cota);
-		contrato.setPrazo(Integer.parseInt(contratoDTO.getPrazo()));
+		contrato.setPrazo((contratoDTO.getPrazo() != null) ? Integer.parseInt(contratoDTO.getPrazo()) : null);
 		contrato.setRecebido(isRecebido);
 		
 		this.contratoService.salvarContrato(contrato);
@@ -909,14 +929,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		return contratoVO;
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota) {
-		return this.formaCobrancaRepository.obterFormaCobrancaPrincipalCota(idCota);
-	}
-
 	
-
 	@Override
 	@Transactional(readOnly = true)
 	public List<FormaCobranca> obterFormasCobrancaCota(Long idCota) {
@@ -940,64 +953,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	public void excluirFormaCobranca(Long idFormaCobranca) {
 		this.formaCobrancaRepository.desativarFormaCobranca(idFormaCobranca);
 	}
-
-
-
-	@Override
-	@Transactional
-	public boolean validarFormaCobrancaMensal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca,
-			List<Long> idFornecedores, Integer diaDoMes) {
-		boolean res=true;
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca, idFormaCobranca);
-		for (FormaCobranca itemFormaCobranca:formas){
-			for (int i=0; i<idFornecedores.size();i++){
-				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
-				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
-					if (itemFormaCobranca.getDiasDoMes() !=null && itemFormaCobranca.getDiasDoMes().contains(diaDoMes)){
-						res=false;
-					}
-				}
-			}
-		}
-		return res;
-	}
-
-
-
-	@Override
-	@Transactional
-	public boolean validarFormaCobrancaSemanal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
-			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
-		
-		boolean res=true;
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorCotaETipoCobranca(idCota, tipoCobranca,idFormaCobranca);
-		for (FormaCobranca itemFormaCobranca:formas){
-			for (int i=0; i<idFornecedores.size();i++){
-				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
-				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
-					
-					for(ConcentracaoCobrancaCota itemConcentracao:itemFormaCobranca.getConcentracaoCobrancaCota()){
-						
-						if (
-								(domingo && (itemConcentracao.getDiaSemana()==DiaSemana.DOMINGO))||
-								(segunda && (itemConcentracao.getDiaSemana()==DiaSemana.SEGUNDA_FEIRA))||
-								(terca && (itemConcentracao.getDiaSemana()==DiaSemana.TERCA_FEIRA))||
-								(quarta && (itemConcentracao.getDiaSemana()==DiaSemana.QUARTA_FEIRA))||
-								(quinta && (itemConcentracao.getDiaSemana()==DiaSemana.QUINTA_FEIRA))||
-								(sexta && (itemConcentracao.getDiaSemana()==DiaSemana.SEXTA_FEIRA))||
-								(sabado && (itemConcentracao.getDiaSemana()==DiaSemana.SABADO))
-						    ){
-							res=false;
-						}
-	
-					}
-	
-				}
-			}
-		}
-		return res;
-	}
-
 
     /**
      * {@inheritDoc}
@@ -1063,12 +1018,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	@Transactional(readOnly = true)
 	public List<BigDecimal> comboValoresMinimos(){
 		return this.parametroCobrancaCotaRepository.comboValoresMinimos();
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public FormaCobranca obterFormaCobrancaPrincipal() {
-		return this.formaCobrancaRepository.obterFormaCobrancaPrincipal();
 	}
 	
 }

@@ -148,7 +148,26 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		criteria.addOrder(Order.asc("rota.descricaoRota"));
 		
 		return criteria.list();
-	}	
+	}
+	
+	@Override
+	public Long obterQtdRotasPorCota(Integer numeroCota){
+		
+		StringBuilder hql = new StringBuilder("select distinct ");
+		hql.append(" count(rota.id) ")
+		   .append(" from Rota rota ")
+		   .append(" join rota.rotaPDVs rotaPDV ")
+		   .append(" join rotaPDV.pdv pdv ")
+		   .append(" join pdv.cota cota ")
+		   .append(" where cota.numeroCota = :numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("numeroCota", numeroCota);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	
 	@Override
 	public Integer buscarMaiorOrdemRota(Long idRoteiro){
 		Criteria criteria  = getSession().createCriteria(Rota.class);

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +21,9 @@ import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -52,7 +49,6 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -260,33 +256,11 @@ public class ImpressaoBoletosController extends BaseController {
 
 		result.use(CustomJson.class).from(mapa).serialize();
 	}
-
-	@Post
-	public void gerarDivida() throws IOException {
-
-		try {
-			this.gerarCobrancaService.gerarCobranca(null, this.getUsuarioLogado()
-					.getId(), new HashSet<String>());
-		} catch (GerarCobrancaValidacaoException e) {
-
-			throw e.getValidacaoException();
-		}
-
-		throw new ValidacaoException(TipoMensagem.SUCCESS,
-			"As dividas para a data de operação [" + this.getDataOperacaoDistribuidor()
-				+ "] foram geradas com sucesso!");
-	}
 	
 	private String getDataOperacaoDistribuidor() {
 
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor != null) {
-
-			return DateUtil.formatarDataPTBR(distribuidor.getDataOperacao());
-		}
-
-		return null;
+		return DateUtil.formatarDataPTBR(
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 	}
 
 	@Post
@@ -535,13 +509,13 @@ public class ImpressaoBoletosController extends BaseController {
 
 		TipoCobranca tipoCobranca = filtro.getTipoCobranca();
 
-		String message = "Não foi encontrado Dividas para impressão.";
+		String message = "Não foi encontrada Divida para impressão.";
 
 		byte[] arquivo = null;
 
 		if ("BOLETO".equals(tipoImpressao)) {
 
-			message = "Não foi encontrado Boletos para impressão.";
+			message = "Não foi encontrado Boleto para impressão.";
 
 			if (tipoCobranca != null
 					&& !TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())) {
@@ -620,9 +594,9 @@ public class ImpressaoBoletosController extends BaseController {
 		OutputStream output = this.httpResponse.getOutputStream();
 		output.write(arquivo);
 
-		httpResponse.getOutputStream().close();
+		this.httpResponse.getOutputStream().close();
 
-		result.use(Results.nothing());
+		this.result.use(Results.nothing());
 	}
 
 	@Post
@@ -673,36 +647,6 @@ public class ImpressaoBoletosController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida.");
 		}
 	}
-
-	@Post
-	public void habilitarAcaoGeracaoDivida(Date dataPesquisa) {
-
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		boolean isAcaoGeraDivida = true;
-
-		if (dataPesquisa == null) {
-			isAcaoGeraDivida = false;
-		} else if (dataPesquisa.before(distribuidor.getDataOperacao())) {
-			isAcaoGeraDivida = false;
-		}
-
-		result.use(CustomJson.class).from(isAcaoGeraDivida).serialize();
-	}
 	
-	@Post
-	public void veificarCobrancaGerada(){
-		
-		if (this.gerarCobrancaService.verificarCobrancasGeradas(null)){
-			
-			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, 
-							"Já existe(m) cobrança(s) gerada(s) para a data de operação atual, continuar irá sobrescreve-la(s). Deseja continuar?"), 
-							"result").recursive().serialize();
-			return;
-		}
-		
-		this.result.use(Results.json()).from("").serialize();
-	}
 
 }

@@ -1,11 +1,15 @@
 package br.com.abril.nds.service.integracao;
 
+import org.lightcouch.NoDocumentException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
+import br.com.abril.nds.integracao.spring.NdsiRunner;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 
@@ -30,13 +34,19 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException {
 		
 		// Inclui o pacote na classe
-		String classe = PACOTE_PRIMEIRA_PARTE + classeExecucao.substring(0, classeExecucao.indexOf(ROUTE)).toLowerCase() + PACOTE_SEGUNDA_PARTE + classeExecucao;
+		String classe = PACOTE_PRIMEIRA_PARTE + classeExecucao.toLowerCase() + PACOTE_SEGUNDA_PARTE + classeExecucao + ROUTE;
 		
-		RouteTemplate route = (RouteTemplate) applicationContext.getBean(Class.forName(classe));
-		route.execute(usuario.getLogin());
+		try {
 		
-		Class.forName("br.com.abril.nds.integracao.ems0106.route.EMS0106Route");
-		Class.forName("java.lang.Thread");
+			RouteTemplate route = (RouteTemplate) applicationContext.getBean(Class.forName(classe));
+			route.execute(NdsiRunner.USER_NAME);
+		
+		} catch (NoDocumentException e) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum documento encontrado na base de dados!");
+		}
+		
+		// br.com.abril.nds.integracao.ems0136.route.EMS0136Route
+
 	}
 
 }

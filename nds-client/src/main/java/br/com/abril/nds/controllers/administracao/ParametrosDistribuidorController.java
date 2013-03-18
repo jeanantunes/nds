@@ -167,7 +167,7 @@ public class ParametrosDistribuidorController extends BaseController {
 
 	public Download getLogo() {
 		
-		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();;
+		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();
 		
 		if (imgLogotipo != null) {
 		
@@ -188,7 +188,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	/**buscarDiasOperacaoFornecedor
 	 * Grava as alterações de parametros realizadas para o distribuidor
-	 * @param distribuidor
+	 * @param parametrosDistribuidor
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
 	    
@@ -286,7 +286,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	/**
 	 * Grava os dias de distribuição de recolhimento do fornecedor
-	 * @param distribuidor
+	 * @param selectFornecedoresLancamento
 	 */
 	@Post
 	@Path("/gravarDiasDistribuidorFornecedor")
@@ -450,7 +450,7 @@ public class ParametrosDistribuidorController extends BaseController {
 				
 		List<MunicipioDTO> municipios =	grupoService.obterQtdeCotaMunicipio(page, rp, sortname, sortorder);
 		
-		List<Long> selecionados = getSelecionados(TipoGrupo.MUNICIPIO);
+		List<String> selecionados = getMunicipiosSelecionados();
 				
 		for(MunicipioDTO municipio : municipios) {
 			if(selecionados.contains(municipio.getMunicipio()))
@@ -466,7 +466,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		session.setAttribute(TIPO_COTA, tipoCota);
 		
-		List<Long> selecionados = getSelecionados(TipoGrupo.TIPO_COTA);
+		List<Long> selecionados = getCotasSelecionados();
 		
 		List<CotaTipoDTO> cotas =	grupoService.obterCotaPorTipo(tipoCota, page, rp, sortname, sortorder);
 		
@@ -478,20 +478,18 @@ public class ParametrosDistribuidorController extends BaseController {
 		result.use(FlexiGridJson.class).from(cotas).page(page).total(total).serialize();		
 	}
 	
-	private List<Long> getSelecionados(TipoGrupo tipoGrupo) {
+	@SuppressWarnings("unchecked")
+	private List<Long> getCotasSelecionados() {
 		
-		String tipo;
+		return session.getAttribute(COTAS_SELECIONADAS) == null ?  new ArrayList<Long>()
+				: (List<Long>)session.getAttribute(COTAS_SELECIONADAS);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<String> getMunicipiosSelecionados() {
 		
-		if(TipoGrupo.TIPO_COTA.equals(tipoGrupo))
-			tipo = COTAS_SELECIONADAS;
-		else
-			tipo = MUNICIPIOS_SELECIONADOS;
-		
-		@SuppressWarnings("unchecked")
-		List<Long> selecionados = session.getAttribute(tipo) == null ?  new ArrayList<Long>()
-				: (List<Long>)session.getAttribute(tipo);
-		
-		return selecionados;
+		return	session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?  
+					new ArrayList<String>() : (List<String>) session.getAttribute(MUNICIPIOS_SELECIONADOS);
 	}
 	
 	/**
@@ -502,7 +500,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	public void selecionarCota(Long idCota, Boolean selecionado, Boolean addResult) {
 		
 		
-		List<Long> selecionados = getSelecionados(TipoGrupo.TIPO_COTA);
+		List<Long> selecionados = getCotasSelecionados();
 		
 		int index = selecionados.indexOf(idCota); 
 		
@@ -525,14 +523,14 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * 
 	 */
 	@Post
-	public void selecionarMunicipio(Long idMunicipio, Boolean selecionado, Boolean addResult) {
+	public void selecionarMunicipio(String  municipio, Boolean selecionado, Boolean addResult) {
 				
-		List<Long> selecionados = getSelecionados(TipoGrupo.MUNICIPIO);		
+		List<String> selecionados = getMunicipiosSelecionados();		
 		
-		int index = selecionados.indexOf(idMunicipio); 
+		int index = selecionados.indexOf(municipio); 
 		
 		if(index==-1 && selecionado==true) {
-			selecionados.add(idMunicipio);
+			selecionados.add(municipio);
 		} else if(index!=-1 && selecionado==false){
 			selecionados.remove(index);
 		}
@@ -565,10 +563,10 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * @param selecionado - true(adiciona todos) false (remove todos)
 	 */
 	@Post
-	public void selecionarTodosMunicipios(List<Long>selecionados, Boolean selecionado){
+	public void selecionarTodosMunicipios(List<String>selecionados, Boolean selecionado){
 		
-		for(Long id : selecionados)
-			selecionarMunicipio(id, selecionado, false);
+		for(String municipio : selecionados)
+			selecionarMunicipio(municipio, selecionado, false);
 				
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
@@ -610,10 +608,10 @@ public class ParametrosDistribuidorController extends BaseController {
 
 		if(tipoGrupo.equals(TipoGrupo.MUNICIPIO)) {
 		
-			List<Long> ids = grupoService.obterMunicipiosDoGrupo(idGrupo);
+			List<String> municipios = grupoService.obterMunicipiosDoGrupo(idGrupo);
 			
 			session.setAttribute(COTAS_SELECIONADAS, null);
-			session.setAttribute(MUNICIPIOS_SELECIONADOS, ids);
+			session.setAttribute(MUNICIPIOS_SELECIONADOS, municipios);
 		} else {
 			
 			List<Long> ids = grupoService.obterCotasDoGrupo(idGrupo);

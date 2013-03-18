@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
+import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 
 public interface ConferenciaEncalheService {
 	
@@ -28,6 +30,27 @@ public interface ConferenciaEncalheService {
 	 */
 	public List<Box> obterListaBoxEncalhe(Long idUsuario);
 
+	/**
+	 * Obtem flag indicando se a cota em questão emite Nfe.
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return boolean
+	 */
+	public boolean isCotaEmiteNfe(Integer numeroCota);
+	
+	
+	/**
+	 * 
+	 * @param conferenciaEncalhe
+	 * @param numeroCota
+	 * @param dataOperacao
+	 */
+	public void validarQtdeEncalheExcedeQtdeReparte(
+			ConferenciaEncalheDTO conferenciaEncalhe,
+			Integer numeroCota, 
+			Date dataOperacao);
+	
 	/**
 	 * Método faz seguintes verificações:
 	 * 
@@ -48,6 +71,15 @@ public interface ConferenciaEncalheService {
 	 */
 	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
 	
+	
+	/**
+	 * Valida a existencia de um fechamento de encalhe para a data em questão, caso positivo
+	 * sera lançada uma exceção {@link FechamentoEncalheRealizadoException}
+	 * 
+	 * @throws FechamentoEncalheRealizadoException
+	 */
+	public void validarFechamentoEncalheRealizado() throws FechamentoEncalheRealizadoException;
+	
 	/**
 	 * Valida se o produto edicao em questão é relalivo a lancamento parcial.
 	 * 
@@ -58,6 +90,15 @@ public interface ConferenciaEncalheService {
 	 */
 	public boolean isLancamentoParcialProdutoEdicao(String codigo, Long numeroEdicao);
 
+	/**
+	 * Verifica se a cota cota possui reparte a recolher na data em questão.
+	 * 
+	 * @param numeroCota
+	 * 
+	 * @return boolean
+	 */
+	public boolean isCotaComReparteARecolherNaDataOperacao(Integer numeroCota);
+	
 	
 	/**
 	 * Obtém o TipoContabilizacaoCE.
@@ -114,12 +155,12 @@ public interface ConferenciaEncalheService {
 	 * @param numeroCota
 	 * @param codigoDeBarras
 	 * 
-	 * @return ProdutoEdicaoDTO
+	 * @return List<ProdutoEdicaoDTO>
 	 * 
 	 * @throws ChamadaEncalheCotaInexistenteException
 	 * @throws EncalheRecolhimentoParcialException
 	 */
-	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
+	List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
 	
 	/**
 	 * Obtém dados do produtoEdicao através do código SM do mesmo se houver chamada de encalhe.

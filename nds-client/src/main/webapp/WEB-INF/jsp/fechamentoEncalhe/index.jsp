@@ -51,37 +51,9 @@
 	</form>
 	
 	<form id="form-encerrarEncalhe">
-	<div id="dialog-encerrarEncalhe" title="Opera&ccedil;&atilde;o de Encalhe" style="display:none;">
-		
-		<jsp:include page="../messagesDialog.jsp">
-			<jsp:param value="dialogMensagemEncerrarEncalhe" name="messageDialog"/>
-		</jsp:include> 
-		
-		<fieldset>
-			<legend>Cotas Ausentes</legend>
-			<form id="formGridCotas" name="formGridCotas" >
-				<table class="cotasGrid" id="tabelaGridCotas" ></table>
-			</form>
-			<span class="bt_novos" title="Gerar Arquivo" >
-				<a href="javascript:;" onclick="fechamentoEncalheController.gerarArquivoCotasAusentes('XLS');">
-					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-					Arquivo
-				</a>
-			</span>
-			<span class="bt_novos" title="Imprimir">
-				<a href="javascript:;" onclick="fechamentoEncalheController.gerarArquivoCotasAusentes('PDF');">
-					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-					Imprimir 
-				</a>
-			</span>
-			<span class="bt_sellAll" style="float:right;">
-				<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="fechamentoEncalheController.checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
-				<label for="checkTodasCotas" id="textoCheckAllCotas" ></label>
-			</span>
-		</fieldset>
-	</div>
+		<jsp:include page="cotasAusentesDialog.jsp" />
 	</form>
-	
+
 	<form id="form-confirmar-regerar-cobranca">
 		<div id="dialog-confirmar-regerar-cobranca" title="Regerar Cobrança" style="display: none;">
 			<fieldset>
@@ -92,11 +64,18 @@
 	</form>
 	<div class="areaBts">
 		<div class="area">
-			<div id="divBotoesPrincipais" style="display:none; float:left;">
+			<div class="divBotoesPrincipais" style="display:none; float:left;">
 	            <span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvar()" rel="tipsy" title="Salvar"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /> </a></span>
-				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe(false);" rel="tipsy" title="Cotas Ausentes"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" /></a></span>
+			</div>
+			<span class="bt_novos" style="display:none;" id="bt_cotas_ausentes" ><a href="javascript:;" onclick="fechamentoEncalheController.popup_encerrarEncalhe(false);" rel="tipsy" title="Cotas Ausentes"><img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0" /></a></span>
+			<span id="btAnaliticoEncalhe" class="bt_novos" style="display: none;">
+				<a href="javascript:;" onclick="fechamentoEncalheController.analiticoEncalhe();" 
+				   rel="tipsy" title="Anal&iacute;tico Encalhe">
+					<img src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0" />
+				</a>
+			</span>
+			<div class="divBotoesPrincipais" style="display:none; float:left;">
 				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.salvarNoEncerrementoOperacao();" rel="tipsy" title="Encerrar Opera&ccedil;&atilde;o Encalhe"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" /></a></span>
-				<span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.analiticoEncalhe();" rel="tipsy" title="Anal&iacute;tico Encalhe"><img src="${pageContext.request.contextPath}/images/bt_lancamento.png" hspace="5" border="0" /></a></span>
 			</div>
 			
 			<span class="bt_arq"><a href="javascript:;" onclick="fechamentoEncalheController.imprimirArquivo('XLS');" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>

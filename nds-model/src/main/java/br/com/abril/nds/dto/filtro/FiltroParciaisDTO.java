@@ -68,6 +68,8 @@ public class FiltroParciaisDTO implements Serializable  {
 
 		DATA_LANCAMENTO("dataLancamento"),
 		DATA_RECOLHIMENTO("dataRecolhimento"),
+		DATA_LANCAMENTO_PREVISTA("dataLancamentoPrevista"),
+		DATA_RECOLHIMENTO_PREVISTA("dataRecolhimentoPrevista"),
 		PERIODO("periodo"),
 		REPARTE("reparte"),
 		ENCALHE("encalhe"),

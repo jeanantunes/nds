@@ -61,9 +61,9 @@
                         </tr>
     
                         <tr>
-                            <td width="133"><label class="tdComboBanco" for="banco">Banco:</label></td>
+                            <td width="133"><label class="tdComboBanco" for="dBanco">Banco:</label></td>
     
-                            <td><select class="tdComboBanco" name="banco" id="banco"
+                            <td><select class="tdComboBanco" name="dBanco" id="dBanco"
                                 style="width: 200px;"
                                 onchange="parametroCobrancaController.obterDadosBancarios(this.value);">
                                     <option value="">Selecione</option>
@@ -103,10 +103,10 @@
                                 <table class="tdMulta" width="100%" border="0" cellspacing="0"
                                     cellpadding="0">
                                     <tr>
-                                        <td width="31%"><input type="text" readonly="true"
+                                        <td width="31%"><input type="text"
                                             name="taxaMulta" id="taxaMulta" style="width: 50px; text-align:right;" /></td>
                                         <td width="40%">&nbsp;ou R$:</td>
-                                        <td width="29%"><input type="text" readonly="true"
+                                        <td width="29%"><input type="text"
                                             name="valorMulta" id="valorMulta" style="width: 50px; text-align:right;" /></td>
                                     </tr>
                                 </table>
@@ -123,7 +123,7 @@
     
                         <tr>
                             <td><label class="tdJuros" for="taxaJuros">Juros %:</label></td>
-                            <td><input class="tdJuros" type="text" readonly="true"
+                            <td><input class="tdJuros" type="text"
                                 name="taxaJuros" id="taxaJuros" style="width: 50px; text-align:right;" /></td>
                             <td>Impress&atilde;o:</td>
                             <td>

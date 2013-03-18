@@ -32,7 +32,6 @@ import br.com.abril.nds.model.cadastro.ChequeImage;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCaucaoLiquida;
 import br.com.abril.nds.model.cadastro.ContaBancariaDeposito;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
@@ -166,6 +165,13 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		}
 		
 		return new CotaGarantiaDTO<CotaGarantia>(tipo, cotaGarantia);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long getQtdCotaGarantiaByCota(Long idCota){
+		
+		return this.cotaGarantiaRepository.getQtdCotaGarantiaByCota(idCota);
 	}
 
 	/*
@@ -605,13 +611,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			throw new RuntimeException( "Endereço não cadastrado para esta cota.");
 		}
 		dto.setEnderecoEmitente(enderecoCota.getEndereco());
-		Distribuidor distribuidor= distribuidorRepository.obter();
 		
-		if(distribuidor==null){
-			throw new RuntimeException( "Distribuidor não cadastrado.");
-		}
-		dto.setNomeBeneficiario(distribuidor.getJuridica().getNome());
-		dto.setDocumentoBeneficiario(Util.adicionarMascaraCNPJ( distribuidor.getJuridica().getDocumento()));
+		dto.setNomeBeneficiario(this.distribuidorRepository.obterRazaoSocialDistribuidor());
+		dto.setDocumentoBeneficiario(Util.adicionarMascaraCNPJ(this.distribuidorRepository.cnpj()));
 		
 		EnderecoDistribuidor enderecoDistribuidor =  distribuidorRepository.obterEnderecoPrincipal();
 		if(enderecoDistribuidor==null  || enderecoDistribuidor.getEndereco() == null){

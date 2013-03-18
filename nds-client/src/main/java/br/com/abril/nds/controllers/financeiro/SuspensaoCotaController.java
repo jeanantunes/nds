@@ -74,10 +74,6 @@ public class SuspensaoCotaController extends BaseController {
 		this.distribuidorService = distribuidorService;
 	}
 	
-	public void suspensaoCota() {
-		
-	}
-	
 	/**
 	 * Inicializa dados da tela
 	 */
@@ -85,13 +81,13 @@ public class SuspensaoCotaController extends BaseController {
 	public void index() {
 		
 		session.setAttribute("selecionados",null);
-		
-		result.forwardTo(SuspensaoCotaController.class).suspensaoCota();
 	}
 
 	private void verificarBaixaBancariaNaData() {
 		
-		boolean existeBaixa = baixaBancariaSerivice.verificarBaixaBancariaNaData(distribuidorService.obter().getDataOperacao());
+		boolean existeBaixa = 
+				this.baixaBancariaSerivice.verificarBaixaBancariaNaData(
+						this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		if ( !existeBaixa ) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, SEM_BAIXA_NA_DATA));
@@ -129,7 +125,7 @@ public class SuspensaoCotaController extends BaseController {
 		retorno[1] = mensagens;
 		retorno[2] = status.name();
 		
-		result.use(Results.json()).withoutRoot().from(retorno).serialize();	
+		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();	
 	}
 	
 	public void getInadinplenciasDaCota(Long idCota) {

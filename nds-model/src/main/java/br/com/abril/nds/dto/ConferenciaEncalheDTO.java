@@ -28,6 +28,11 @@ public class ConferenciaEncalheDTO implements Serializable {
 	private boolean parcial;
 	
 	/**
+	 * Utilizado como referência para o valor do reparte.
+	 */
+	private BigInteger qtdReparte;
+	
+	/**
 	 * Quantidade apontada na conferência de encalhe
 	 */	
 	private BigInteger qtdExemplar;
@@ -58,6 +63,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	private BigDecimal precoCapa;
 	
 	private BigDecimal desconto;
+	
+	private BigDecimal precoComDesconto;
 	
 	private BigDecimal valorTotal;
 	
@@ -185,10 +192,6 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.observacao = observacao;
 	}
 
-	public Boolean isJuramentada() {
-		return juramentada;
-	}
-
 	public void setJuramentada(Boolean juramentada) {
 		this.juramentada = juramentada;
 	}
@@ -264,8 +267,52 @@ public class ConferenciaEncalheDTO implements Serializable {
 	public void setParcial(boolean parcial) {
 		this.parcial = parcial;
 	}
-	
-	
+
+	public BigInteger getQtdReparte() {
+		return qtdReparte;
+	}
+
+	public void setQtdReparte(BigInteger qtdReparte) {
+		this.qtdReparte = qtdReparte;
+	}
+
+	public BigDecimal getPrecoComDesconto() {
+		return precoComDesconto;
+	}
+
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		this.precoComDesconto = precoComDesconto;
+	}
+
+	public Boolean isJuramentada() {
+		return juramentada;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((idProdutoEdicao == null) ? 0 : idProdutoEdicao.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConferenciaEncalheDTO other = (ConferenciaEncalheDTO) obj;
+		if (idProdutoEdicao == null) {
+			if (other.idProdutoEdicao != null)
+				return false;
+		} else if (!idProdutoEdicao.equals(other.idProdutoEdicao))
+			return false;
+		return true;
+	}
 	
 	
 }

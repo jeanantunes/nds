@@ -21,17 +21,6 @@ import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
 public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoFinanceiroCota, Long> {
 
-
-	/**
-	 * Obtem MovimentoFinaceiroCota relativo a um registro de MovimentoEstoqueCota. 
-	 * 
-	 * @param idMovimentoEstoqueCota
-	 * 
-	 * @return MovimentoFinanceiroCota;
-	 */
-	MovimentoFinanceiroCota obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(Long idMovimentoEstoqueCota);
-	
-	
 	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota);	
 
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
@@ -42,7 +31,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 
 	Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual);
 
-
+	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
 	/**
@@ -139,6 +128,15 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	
 	Long obterCountResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro);
 	
+	/**
+	 * Obtém o movimento financeiro relativo a uma operação de conferencia de encalhe.
+	 * 
+	 * @param idControleConfEncalheCota
+	 * 
+	 * @return MovimentoFinanceiroCota
+	 */
+	MovimentoFinanceiroCota obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota);
+	
 	BigDecimal obterSaldoDistribuidor(Date data, 
 							 	      TipoCota tipoCota, 
 							 	      OperacaoFinaceira operacaoFinaceira);
@@ -148,6 +146,13 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 
 
 	List<MovimentoFinanceiroCota> obterMovimentosFinanceirosCotaPorTipoMovimento(
-			Long idCota,
-			Collection<TipoMovimentoFinanceiro> tiposMovimentoPostergado);
+			Long idCota, Long idConsolidado,
+			Collection<TipoMovimentoFinanceiro> tiposMovimento,
+			Date dataCriacao);
+
+	List<DebitoCreditoCotaDTO> obterCreditoDebitoCota(Long idConsolidado,
+			Date dataCriacao, Integer numeroCota, List<TipoMovimentoFinanceiro> tiposDebitoCredito, String sortorder, String sortname);
+
+	BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado,
+			Date dataCriacao, Integer numeroCota, Collection<TipoMovimentoFinanceiro> tiposMovimento);
 }

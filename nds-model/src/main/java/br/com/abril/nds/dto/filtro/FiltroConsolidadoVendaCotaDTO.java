@@ -17,6 +17,8 @@ public class FiltroConsolidadoVendaCotaDTO {
 	private String cota;	
 	
 	private Long idConsolidado;
+	
+	private Integer numeroCota;
 			
 	public Long getIdConsolidado() {
 		return idConsolidado;
@@ -35,27 +37,15 @@ public class FiltroConsolidadoVendaCotaDTO {
 	 */
 	public enum OrdenacaoColuna {
 		
-		codigoProduto("p.codigo"),
-		nomeProduto("p.nome"),
-		numeroEdicao("pe.numeroEdicao"),
-		precoCapa("pe.precoVenda"),
-		precoComDesconto("(pe.precoVenda - pe.desconto)"),
-		box("box.codigo"),
-		exemplares("mec.qtde"),
-		nomeFornecedor("f.juridica.razaoSocial"),
-		total("sum(mec.qtde*(pe.precoVenda - pe.desconto))");	
-		
-		private String nomeColuna;
-		
-		private OrdenacaoColuna(String nomeColuna) {
-			this.nomeColuna = nomeColuna;
-		}
-		
-		@Override
-		public String toString() {
-			return this.nomeColuna;
-		}
-		
+		codigoProduto,
+		nomeProduto,
+		numeroEdicao,
+		precoCapa,
+		precoComDesconto,
+		box,
+		exemplares,
+		nomeFornecedor,
+		total;	
 	}	
 	
 	public Date getDataConsolidado() {
@@ -136,6 +126,14 @@ public class FiltroConsolidadoVendaCotaDTO {
 		} else if (!paginacao.equals(other.paginacao))
 			return false;
 		return true;
+	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 	
 	

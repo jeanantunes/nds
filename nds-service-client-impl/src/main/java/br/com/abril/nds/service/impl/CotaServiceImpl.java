@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
+import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
@@ -33,8 +35,10 @@ import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.EnderecoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -46,12 +50,12 @@ import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -62,7 +66,6 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.ParametrosCotaNotaFiscalEletronica;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -76,13 +79,15 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoCota;
@@ -104,6 +109,7 @@ import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
@@ -121,6 +127,7 @@ import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -235,6 +242,9 @@ public class CotaServiceImpl implements CotaService {
 	@Autowired
 	private PessoaService pessoaService;
 	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaDTO> obterCotas(FiltroCotaDTO filtro) {
@@ -267,7 +277,7 @@ public class CotaServiceImpl implements CotaService {
 	}
 
 	@Transactional(readOnly = true)
-	public Cota obterPorNome(String nome) {
+	public List<Cota> obterPorNome(String nome) {
 		
 		List<Cota> listaCotas = this.cotaRepository.obterPorNome(nome);
 		
@@ -275,14 +285,14 @@ public class CotaServiceImpl implements CotaService {
 			
 			return null;
 		}
-		
+		/*
 		if (listaCotas.size() > 1) {
 			
 			throw new ValidacaoException(
 				TipoMensagem.ERROR, "Mais de um resultado encontrado para a cota com nome \"" + nome + "\"");
 		}
-		
-		return listaCotas.get(0);
+		*/
+		return listaCotas;
 	}
 	
 	/**
@@ -671,7 +681,7 @@ public class CotaServiceImpl implements CotaService {
 			String nome = pessoa instanceof PessoaFisica ? 
 					((PessoaFisica)pessoa).getNome() : ((PessoaJuridica)pessoa).getRazaoSocial();
 			
-			if(cota.getContratoCota().isExigeDocumentacaoSuspencao()) {
+			if(cota.getContratoCota() != null && cota.getContratoCota().isExigeDocumentacaoSuspencao()) {
 				
 				cotasDTO.add(new CotaSuspensaoDTO(
 					cota.getId(), 
@@ -725,7 +735,7 @@ public class CotaServiceImpl implements CotaService {
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historico.setDataInicioValidade(new Date());
 		
-		historicoSituacaoCotaRepository.adicionar(historico);
+		historicoSituacaoCotaRepository.merge(historico);
 		
 		cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
 		
@@ -801,9 +811,8 @@ public class CotaServiceImpl implements CotaService {
 	 */
 	private DistribuicaoDTO setDistribuicaoDefault(DistribuicaoDTO distribuicao){
 		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-		
-		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = distribuidor.getParametrosDistribuidorEmissaoDocumentos();
+		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = 
+				this.distribuidorRepository.parametrosDistribuidorEmissaoDocumentos();
 		
 		if (listaParametrosDistribuidorEmissaoDocumentos!=null && listaParametrosDistribuidorEmissaoDocumentos.size() > 0){
 		
@@ -875,7 +884,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		ParametroDistribuicaoCota parametro = cota.getParametroDistribuicao();
 		
-		boolean qtdePDVAutomatico = distribuidorService.obter().isPreenchimentoAutomaticoPDV();
+		boolean qtdePDVAutomatico = this.distribuidorService.preenchimentoAutomaticoPDV();
 				
 		DistribuicaoDTO dto = new DistribuicaoDTO();
 		
@@ -958,6 +967,7 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setRepartePorPontoVenda(dto.getRepPorPontoVenda());
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
 		parametros.setRecebeRecolheParciais(dto.getRecebeRecolhe());
+		parametros.setRecebeComplementar(dto.getRecebeComplementar());
 		parametros.setNotaEnvioImpresso(dto.getNeImpresso());
 		parametros.setNotaEnvioEmail(dto.getNeEmail());
 		parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
@@ -1847,11 +1857,9 @@ public class CotaServiceImpl implements CotaService {
 			return true;
 		}
 		
-	    Distribuidor distribuidor = distribuidorService.obter();
-	    
 	    Long qntDiasInativo =  DateUtil.obterDiferencaDias(histCota.getDataInicioValidade(), new Date());
 	    
-	    Long qntDiasDistribuidor =  (distribuidor.getQntDiasReutilizacaoCodigoCota() == null)?0:distribuidor.getQntDiasReutilizacaoCodigoCota();
+	    Long qntDiasDistribuidor = this.distribuidorService.qntDiasReutilizacaoCodigoCota();
 	    
 		return (qntDiasInativo > qntDiasDistribuidor );
 	}
@@ -1909,7 +1917,7 @@ public class CotaServiceImpl implements CotaService {
 		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
 		situacoesCadastro.add(situacao);
 		
-		Set<Long> idCotas = this.cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox, situacoesCadastro, null, null, null, null, null, null);
+		List<Long> idCotas = this.cotaRepository.obterIdCotasEntre(intervaloCota, intervaloBox, situacoesCadastro, null, null, null, null, null, null);
 		
 		for(Long idCota : idCotas ) {
 			
@@ -2187,9 +2195,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		this.obterPercentualFaturamentoTaxaFixa(cota.getId(), dto);
 		
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-		
-		dto.setUtilizaTermoAdesao(distribuidor.getParametroEntregaBanca()!=null?distribuidor.getParametroEntregaBanca().isUtilizaTermoAdesao():false);
+		dto.setUtilizaTermoAdesao(this.distribuidorRepository.utilizaTermoAdesao());
 		
 		return dto;
 	}
@@ -2367,5 +2373,155 @@ public class CotaServiceImpl implements CotaService {
 		return this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataRecolhimentoEncalhe);
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas){
+		return cotaRepository.buscarCotasQuePossuemRangeReparte(qtdReparteInicial, qtdReparteFinal, listProdutoEdicaoDto, cotasAtivas);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota) {
+		
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		for (PDV pdv: cota.getPdvs()) {
+			
+			if (pdv != null) {
+				
+				CaracteristicasPDV caracteristicasPDV = pdv.getCaracteristicas();
+				
+				if (caracteristicasPDV != null && caracteristicasPDV.isPontoPrincipal()) {
+					
+					SegmentacaoPDV segmentacaoPDV = pdv.getSegmentacao();
+					
+					if (segmentacaoPDV != null) {
+						
+						if (segmentacaoPDV.getTipoCaracteristica() != null &&
+								segmentacaoPDV.getTipoCaracteristica().equals(TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL)) {
+							
+							return true;
+						}
+					}
+				}
+			}
+			
+		}
+		
+		
+		return false;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasQueInquadramNoRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		return cotaRepository.buscarCotasQuePossuemRangeVenda(qtdVendaInicial, qtdVendaFinal, listProdutoEdicaoDto, cotasAtivas);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasQuePossuemPercentualVendaSuperior(BigDecimal percentVenda, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		return cotaRepository.buscarCotasQuePossuemPercentualVendaSuperior(percentVenda, listProdutoEdicaoDto, cotasAtivas);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasPorNomeOuNumero(CotaDTO cotaDto, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		 return cotaRepository.buscarCotasPorNomeOuNumero(cotaDto, listProdutoEdicaoDto, cotasAtivas);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+		return cotaRepository.buscarCotasPorComponentes(componente, elemento, listProdutoEdicaoDto, cotasAtivas);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
+		Collections.sort(listProdutoEdicaoDto);
+		
+		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);  
+		
+		for (AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
+			
+			for (int i = 0; i < listProdutoEdicaoDto.size(); i++) {
+				ProdutoEdicaoDTO produtoEdicaoDTO = listProdutoEdicaoDto.get(i);
+				
+				ProdutoEdicaoDTO dto = produtoEdicaoRepository.obterHistoricoProdutoEdicao(produtoEdicaoDTO.getCodigoProduto(), produtoEdicaoDTO.getNumeroEdicao(), analiseHistoricoDTO.getNumeroCota());
+				
+				if (dto != null) {
+					if (i == 0) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd1Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd1Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 1) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd2Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd2Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 2) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd3Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd3Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 3) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd4Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd4Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 4) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd5Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd5Venda(dto.getQtdeVendas().toString());
+						}
+					}
+					
+					if (i == 5) {
+						if(dto.getReparte() != null){
+							analiseHistoricoDTO.setEd6Reparte(dto.getReparte().toString());
+						}
+						
+						if(dto.getQtdeVendas() != null){
+							analiseHistoricoDTO.setEd6Venda(dto.getQtdeVendas().toString());
+						}
+					}
+				}
+			}
+		}
+		
+		return listAnaliseHistoricoDTO;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public HistoricoVendaPopUpCotaDto buscarCota(Integer numero) {
+		return cotaRepository.buscarCota(numero);
+	}
+	
 }
 

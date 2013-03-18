@@ -19,6 +19,9 @@ public class InterfaceExecucao implements Serializable {
 	
 	@Column(name = "NOME", nullable = false, length = 7, unique = true)
 	private String nome;
+	
+	@Column(name = "MASCARA_ARQUIVO", nullable = false, length = 50)
+	private String mascaraArquivo;
 
 	public Long getId() {
 		return id;
@@ -35,4 +38,13 @@ public class InterfaceExecucao implements Serializable {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	
+	public String getMascaraArquivo() {
+		return mascaraArquivo;
+	}
+
+	public void setMascaraArquivo(String mascaraArquivo) {
+		this.mascaraArquivo = mascaraArquivo;
+	}
+	
 }

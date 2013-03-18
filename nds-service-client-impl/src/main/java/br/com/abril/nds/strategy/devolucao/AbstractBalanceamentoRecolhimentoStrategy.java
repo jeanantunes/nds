@@ -40,23 +40,14 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = null;
 		
-		if (!dadosRecolhimento.isSemanaRecolhimento()) {
-			
-			matrizRecolhimento = this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
-			
-			this.configurarMatrizRecolhimento(matrizRecolhimento);
-			
-		} else {
-			
-			matrizRecolhimento = this.carregarMatrizRecolhimentoSalva(dadosRecolhimento);
-		}
+		matrizRecolhimento = this.gerarMatrizRecolhimentoBalanceada(dadosRecolhimento);
+		
+		this.configurarMatrizRecolhimento(matrizRecolhimento);
 		
 		balanceamentoRecolhimento.setMatrizRecolhimento(matrizRecolhimento);
 		
 		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
 			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
-		
-		balanceamentoRecolhimento.setSemanaRecolhimento(dadosRecolhimento.isSemanaRecolhimento());
 		
 		return balanceamentoRecolhimento;
 	}
@@ -399,43 +390,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		
 			matrizRecolhimento.put(dataBalanceamento, produtosRecolhimentoAtuais);
 		}
-	}
-	
-	/*
-	 * Carrega a matriz de recolhimento salva.
-	 */
-	private TreeMap<Date, List<ProdutoRecolhimentoDTO>> carregarMatrizRecolhimentoSalva(
-																		RecolhimentoDTO dadosRecolhimento) {
-		
-		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento = 
-			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
-		
-		List<ProdutoRecolhimentoDTO> produtosRecolhimento = dadosRecolhimento.getProdutosRecolhimento();
-		
-		if (produtosRecolhimento == null
-				|| produtosRecolhimento.isEmpty()) {
-			
-			return matrizRecolhimento;
-		}
-		
-		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
-			
-			Date dataRecolhimento = produtoRecolhimento.getDataRecolhimentoDistribuidor();
-			
-			List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceados = 
-					matrizRecolhimento.get(dataRecolhimento);
-			
-			if (produtosRecolhimentoBalanceados == null) {
-				
-				produtosRecolhimentoBalanceados = new ArrayList<ProdutoRecolhimentoDTO>();
-			}
-			
-			produtosRecolhimentoBalanceados.add(produtoRecolhimento);
-			
-			matrizRecolhimento.put(dataRecolhimento, produtosRecolhimentoBalanceados);
-		}
-		
-		return matrizRecolhimento;
 	}
 	
 	/*

@@ -16,6 +16,7 @@
             <ul>
                 <li><a href="#tabNegocia">Negociação</a></li>
                 <li><a href="#tabChamadao">Chamadão</a></li>
+                <li><a href="#tabDistribuicao">Distribuição</a></li>
                 <li><a href="#tabAlteracao">Alteração de Status Cota</a></li>
                 <li><a href="#tabAtualizacao">Atualização Cadastral</a></li>
                 <li><a href="#tabPendencia">Pend&ecirc;ncias NF-e Encalhe</a></li>
@@ -24,23 +25,31 @@
                 
             </ul>
             <div id="tabNegocia" style="height:auto">
-               <fieldset style="width:880px!important;">
-               	  <legend>Negociação</legend>
+               <fieldset style="width:970px!important;">
+               
+               	    <legend>Negociação</legend>
+                    
+                    <div class="areaBtsNegociacao">
+						<div class="area">
+							<span class="bt_arq">
+							    <a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=negociacao" rel="bandeira">
+							        <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				                </a>
+							</span> 
+							
+							<span class="bt_arq"> 
+								<a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=negociacao">
+								    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+								</a>
+							</span>
+						</div>
+					</div>
+				    <br/>
+				    <br/>
+				    <br/>
+                    
                     <table class="negociacaoGrid"></table>
-                    <div id="botoesArquivoNegociacao">
-                     <span class="bt_novos" title="Gerar Arquivo">                      
-						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=negociacao">
-         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-         				Arquivo
-						</a>
-                  </span>
-                  <span class="bt_novos" title="Imprimir">                      
-                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=negociacao">
-         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-         				Imprimir
-						</a>
-                  </span>  
-                  </div>            
+                                              
                </fieldset>
             </div>
             <div id="tabChamadao">
@@ -61,6 +70,26 @@
 						</a>
                   </span>  
                   </div>              
+               </fieldset>
+            </div>
+            <div id="tabDistribuicao">
+               <fieldset style="width:880px!important;">
+               	<legend>Distribuição</legend>
+                <table class="distribuicaoGrid"></table>
+                <div id="botoesArquivoDistribuicao">
+                  <span class="bt_novos" title="Gerar Arquivo">                      
+						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=distribuicao">
+         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+         				Arquivo
+						</a>
+                  </span>
+                  <span class="bt_novos" title="Imprimir">                      
+                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=distribuicao">
+         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+         				Imprimir
+						</a>
+                  </span> 
+                  </div>   
                </fieldset>
             </div>
             <div id="tabAlteracao">
@@ -124,23 +153,31 @@
             </div>
             
              <div id="tabCadastroParcial">
-               <fieldset style="width:880px!important;">
+               <fieldset style="width:970px!important;">
+               
                	<legend>Cadastro Parcial</legend>
+               	
+               	<div class="areaBtsParcial">
+					<div class="area">
+						<span class="bt_arq">
+						    <a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=cadastroParcial" rel="bandeira">
+						        <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+			                </a>
+						</span> 
+						
+						<span class="bt_arq"> 
+							<a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=cadastroParcial">
+							    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+							</a>
+						</span>
+					</div>
+				</div>
+			    <br/>
+			    <br/>
+			    <br/>
+               	
                 <table class="atualizacaoCadastralParcialGrid"></table>
-                <div id="botoesArquivoCadastroParcial">
-                  <span class="bt_novos" title="Gerar Arquivo">                      
-						<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=cadastroParcial">
-         					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-         				Arquivo
-						</a>
-                  </span>
-                  <span class="bt_novos" title="Imprimir">                      
-                      <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=cadastroParcial">
-         					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-         				Imprimir
-						</a>
-                  </span> 
-                  </div>   
+     
                </fieldset>
             </div>
             

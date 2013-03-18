@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -281,6 +282,9 @@ public class ConferenciaEncalheRepositoryImplTest extends
 						StatusOperacao.CONCLUIDO, usuarioJoao, box1);
 
 		save(controleConferenciaEncalheCota);
+		
+		
+		
 		/**
 		 * MOVIMENTOS DE ENVIO ENCALHE ABAIXO
 		 */
@@ -325,6 +329,17 @@ public class ConferenciaEncalheRepositoryImplTest extends
 				Fixture.criarData(2, Calendar.MARCH, 2012),
 				BigInteger.valueOf(45), BigInteger.valueOf(45), veja1);
 		save(conferenciaEncalhe);
+		
+		
+	
+		controleConferenciaEncalheCota = Fixture
+				.controleConferenciaEncalheCota(controleConferenciaEncalhe,
+						cotaManoel,
+						Fixture.criarData(1, Calendar.FEBRUARY, 2013),
+						Fixture.criarData(10, Calendar.FEBRUARY, 2013),
+						Fixture.criarData(1, Calendar.FEBRUARY, 2013),
+						StatusOperacao.EM_ANDAMENTO, usuarioJoao, box1);
+		save(controleConferenciaEncalheCota);
 
 	}
 
@@ -402,8 +417,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 				.getId();
 
 		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = conferenciaEncalheRepository
-				.obterListaConferenciaEncalheDTO(
-						idControleConferenciaEncalheCota, distribuidor.getId());
+				.obterListaConferenciaEncalheDTO(idControleConferenciaEncalheCota);
 
 		Assert.assertEquals(3, listaConferenciaEncalhe.size());
 
@@ -414,8 +428,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 
 		Long idDistribuidor = 1L;
 		Integer numeroCota = 5637;
-		Date dataInicial = Fixture.criarData(1, Calendar.JANUARY, 2012);
-		Date dataFinal = Fixture.criarData(1, Calendar.DECEMBER, 2012);
+		Date dataRecolhimento = Fixture.criarData(1, Calendar.JANUARY, 2012);
 		boolean indFechado = false;
 		boolean indPostergado = false;
 
@@ -425,8 +438,8 @@ public class ConferenciaEncalheRepositoryImplTest extends
 
 		@SuppressWarnings("unused")
 		List<ConferenciaEncalheDTO> listaConferenciaEncalhe = conferenciaEncalheRepository
-				.obterListaConferenciaEncalheDTOContingencia(idDistribuidor,
-						numeroCota, dataInicial, dataFinal, indFechado,
+				.obterListaConferenciaEncalheDTOContingencia(
+						numeroCota, dataRecolhimento, indFechado,
 						indPostergado, listaIdProdutoEdicao);
 
 	}
@@ -518,8 +531,9 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		Integer numeroCota = 1;
 
 		Calendar data = Calendar.getInstance();
-		Date dataInicial = data.getTime();
-		Date dataFinal = data.getTime();
+		
+		Date dataRecolhimento = data.getTime();
+		
 
 		boolean indFechado = false;
 		boolean indPostergado = false;
@@ -529,10 +543,8 @@ public class ConferenciaEncalheRepositoryImplTest extends
 
 		listaConferencia = conferenciaEncalheRepository
 				.obterListaConferenciaEncalheDTOContingencia(
-						idDistribuidor,
 						numeroCota, 
-						dataInicial, 
-						dataFinal, 
+						dataRecolhimento,
 						indFechado,
 						indPostergado, 
 						listaIdProdutoEdicao
@@ -552,9 +564,9 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		Integer numeroCota = 1;
 
 		Calendar data = Calendar.getInstance();
-		Date dataInicial = data.getTime();
-		Date dataFinal = data.getTime();
-
+		
+		Date dataRecolhimento = data.getTime();
+		
 		boolean indFechado = false;
 		boolean indPostergado = false;
 
@@ -566,10 +578,8 @@ public class ConferenciaEncalheRepositoryImplTest extends
 
 		listaConferencia = conferenciaEncalheRepository
 				.obterListaConferenciaEncalheDTOContingencia(
-						idDistribuidor,
 						numeroCota, 
-						dataInicial, 
-						dataFinal, 
+						dataRecolhimento, 
 						indFechado,
 						indPostergado, 
 						listaIdProdutoEdicao
@@ -585,9 +595,8 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		List<ConferenciaEncalheDTO> listaConferencia;
 		
 		Long idControleConferenciaEncalheCota = 1L;
-		Long idDistribuidor = 2L;
 		
-		listaConferencia = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConferenciaEncalheCota, idDistribuidor);
+		listaConferencia = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(idControleConferenciaEncalheCota);
 		
 		Assert.assertNotNull(listaConferencia);		
 		
@@ -609,6 +618,25 @@ public class ConferenciaEncalheRepositoryImplTest extends
 	public void testarObterReparteConferencia() {
 		
 		this.conferenciaEncalheRepository.obterReparteConferencia(1L, 1L, 1L);
+	}
+	
+	
+	
+	@Test
+	public void testarObterListaCotaConferenciaNaoFinalizada() {
+		
+		 List<CotaDTO> listaCota = this.conferenciaEncalheRepository.obterListaCotaConferenciaNaoFinalizada(Fixture.criarData(1, Calendar.FEBRUARY, 2013));
+		 
+		 Assert.assertEquals(1, listaCota.size());
+		 
+	}
+	
+	
+	@Test
+	public void testarObterQtdeEncalhe() {
+		
+		this.conferenciaEncalheRepository.obterQtdeEncalhe(1L);
+		
 	}
 
 }

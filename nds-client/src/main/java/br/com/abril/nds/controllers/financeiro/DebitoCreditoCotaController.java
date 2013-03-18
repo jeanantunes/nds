@@ -124,7 +124,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	private void preencherComboTipoMovimento() {
 
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiro = 
-				this.tipoMovimentoFinanceiroService.obterTodosTiposMovimento();
+				this.tipoMovimentoFinanceiroService.obterTipoMovimentosFinanceirosCombo();
 
 		this.result.include("tiposMovimentoFinanceiro", tiposMovimentoFinanceiro);
 	}
@@ -789,7 +789,7 @@ public class DebitoCreditoCotaController extends BaseController{
 			movimentoEditavel = false;
 		}
 		
-		Date dataOperacao = this.distribuidorService.obter().getDataOperacao();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		dataOperacao = DateUtil.removerTimestamp(dataOperacao);
 		
@@ -875,7 +875,9 @@ public class DebitoCreditoCotaController extends BaseController{
 
 			listaMensagens.add("O preenchimento do campo [Data de Vencimento] é obrigatório.");
 		
-		} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.adicionarDias(this.distribuidorService.obter().getDataOperacao(),1), dataVencimento)) {
+		} else if (DateUtil.isDataInicialMaiorDataFinal(
+				DateUtil.adicionarDias(
+						this.distribuidorService.obterDataOperacaoDistribuidor() ,1), dataVencimento)) {
 
 			listaMensagens.add("A data de vencimento deve suceder a data de operação atual.");
 		}
@@ -917,32 +919,45 @@ public class DebitoCreditoCotaController extends BaseController{
 		}
 		
 		if (listaNovosDebitoCredito==null || listaNovosDebitoCredito.size()<=0){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não há movimentos para serem lançados.");
 		}
 		
 		List<Long> linhasComErro = new ArrayList<Long>();
 		
+		String msgsErros = "";
+		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
+			
+			long linha = (debitoCredito.getId()+1l);
 			
 			Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
 			
 			if (debitoCredito.getNumeroCota() == null) {
 				
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nInforme o [número] da [Cota] na linha ["+linha+"] !");
 			}
+			
+			Date dataDistrib = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
 			if (dataVencimento == null) {
 
 				linhasComErro.add(debitoCredito.getId());
 			
-			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(new Date()), dataVencimento)) {
+			} else if (DateUtil.isDataInicialMaiorDataFinal(DateUtil.removerTimestamp(DateUtil.adicionarDias(dataDistrib, 1)), dataVencimento)) {
 
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nO campo [Data] deve ser maior que a [Data de Operação: "+DateUtil.formatarDataPTBR(dataDistrib)+"] na linha ["+linha+"] !");
 			}
 
 			if (debitoCredito.getValor() == null) {
 				
 				linhasComErro.add(debitoCredito.getId());
+				
+				msgsErros += ("\nInforme o [Valor] na linha ["+linha+"] !");
 			
 			} else {
 
@@ -953,14 +968,23 @@ public class DebitoCreditoCotaController extends BaseController{
 				} catch(NumberFormatException e) {
 
 					linhasComErro.add(debitoCredito.getId());
+					
+					msgsErros += ("\nInforme um [Valor] válido na linha ["+linha+"] !");
 				}
-			}			
+			}		
+			
+			if (debitoCredito.getDataVencimento()==null){
+				
+                linhasComErro.add(debitoCredito.getId());
+				
+                msgsErros += ("\nInforme a [Data] na linha ["+linha+"] !");
+			}
 		}
 
 		if (!linhasComErro.isEmpty()) {
 			
 			ValidacaoVO validacao = new ValidacaoVO(
-					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.");
+					TipoMensagem.WARNING, "Existe(m) movimento(s) preenchido(s) incorretamente.\n"+msgsErros);
 					
 			validacao.setDados(linhasComErro);
 			
@@ -997,6 +1021,7 @@ public class DebitoCreditoCotaController extends BaseController{
 			filtroDebitoCredito.setDataVencimentoFim(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
 			filtroDebitoCredito.setNumeroCota(debitoCredito.getNumeroCota());
 			filtroDebitoCredito.setIdTipoMovimento(idTipoMovimento);
+			filtroDebitoCredito.setGrupoMovimentosFinanceirosDebitosCreditos(this.movimentoFinanceiroCotaService.getGrupoMovimentosFinanceirosDebitosCreditos());
 			
 			Integer contagem = this.movimentoFinanceiroCotaService.obterContagemMovimentosFinanceiroCota(filtroDebitoCredito);
 			

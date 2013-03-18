@@ -461,17 +461,6 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 
 	@Test
 	@SuppressWarnings("unused")
-	public void obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota() {
-		
-		Long idMovimentoEstoqueCota = 1L;
-		
-		MovimentoFinanceiroCota movimentoFinanceiroCota = 
-				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCotaParaMovimentoEstoqueCota(idMovimentoEstoqueCota);
-
-	}
-
-	@Test
-	@SuppressWarnings("unused")
 	public void obterContagemMovimentosFinanceiroCota() {
 		
 		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = new FiltroDebitoCreditoDTO();
@@ -860,6 +849,15 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	    OperacaoFinaceira operacaoFinaceira = OperacaoFinaceira.DEBITO;
 		
 		BigDecimal saldo = this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(data, tipoCota, operacaoFinaceira);
+		
+	}
+	
+	@Test
+	public void testObterMovimentoFinanceiroDaConferenciaEncalhe() {
+		
+		Long idConferenciaEncalhe = 1L;
+		
+		movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idConferenciaEncalhe);
 		
 	}
 	

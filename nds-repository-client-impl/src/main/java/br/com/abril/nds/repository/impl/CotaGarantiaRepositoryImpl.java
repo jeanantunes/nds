@@ -41,6 +41,21 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		return (CotaGarantia) criteria.uniqueResult();
 	}
 	
+	@Override
+	public Long getQtdCotaGarantiaByCota(Long idCota){
+		
+		StringBuilder hql = new StringBuilder("select distinct ");
+		hql.append(" count(cg.id) ")
+		   .append(" from CotaGarantia cg ")
+		   .append(" join cg.cota cota ")
+		   .append(" where cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		return (Long) query.uniqueResult();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends CotaGarantia> T  getByCota(Long idCota, Class<T> type) {

@@ -5,8 +5,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.AnaliseHistogramaDTO;
+import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
+import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
@@ -147,7 +151,7 @@ public interface ProdutoEdicaoService {
 	 * @param codigoBarras - código de barras
 	 * @return  ProdutoEdicao
 	 */
-	ProdutoEdicao buscarProdutoPorCodigoBarras(String codigoBarras);
+	List<ProdutoEdicao> buscarProdutoPorCodigoBarras(String codigoBarras);
 	
 	/**
 	 * Retorna o DTO produtoEdicao
@@ -157,5 +161,26 @@ public interface ProdutoEdicaoService {
 	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao);
 
 	public ProdutoEdicao buscarPorID(Long idProdutoEdicao);
+	
+	/**
+	 * Obtém a porcentagem de desconto de um produto edição, 
+	 * respeitando a regra de prioridade
+	 * 
+	 * @param produtoEdicao
+	 * @return
+	 */
+	public BigDecimal obterPorcentualDesconto(ProdutoEdicao produtoEdicao);
 
+	/**
+	 * Obtém a lista de ProdutoEdicaoDTO de acordo com o FiltroHistoricoVendaDTO
+	 * @param filtro
+	 * @return List ProdutoEdicaoDTO
+	 * 
+	 */
+	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro);
+	
+	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(FiltroHistogramaVendas filtro);
+	
+	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes);
+	
 }

@@ -15,7 +15,8 @@ var geracaoNotaEnvioController = $.extend({
 			intervaloCotaDe:null, 
 			intervaloCotaAte:null,
 			intervaloBoxDe:null, 
-			intervaloBoxAte:null
+			intervaloBoxAte:null,
+			exibirNotasEnvio:null
 		},
 	
 		/**
@@ -185,7 +186,16 @@ var geracaoNotaEnvioController = $.extend({
 			
 			var uri = "pesquisar";
 			
-			this.gridReaload(grid, uri);
+			mensagens = this.validarDataMovimento(); 
+			if(mensagens[0]['value']) {
+				
+				this.gridReaload(grid, uri);
+				
+			} else {
+				
+				exibirMensagem('WARNING', mensagens);
+				
+			}
 		
 		},
 		
@@ -218,8 +228,11 @@ var geracaoNotaEnvioController = $.extend({
 			},{
 				name : "intervaloMovimentoAte",
 				value : this.filtroPesquisa.intervaloMovimentoAte	
+			},{
+				name : "exibirNotasEnvio",
+				value : this.filtroPesquisa.exibirNotasEnvio	
 			}];
-						
+			
 			if (this.filtroPesquisa.listaFornecedores) {
 				$.each(this.filtroPesquisa.listaFornecedores, function(index, value) {
 					params.push({
@@ -304,13 +317,33 @@ var geracaoNotaEnvioController = $.extend({
 			
 		},
 		
+		getArquivoNotaEnvio : function(data) {
+			
+			var path = geracaoNotaEnvioController.path + 'getArquivoNotaEnvio';
+
+            $.fileDownload(path, {
+                httpMethod : "POST",
+                failCallback : function(responseHtml, url) {
+                	if(responseHtml){
+                		var data =  $.parseJSON($(responseHtml).html());                   	 
+                   	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+                	}else{
+                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + responseHtml]);
+                	}
+                    
+                },
+                successCallback : function() {
+                    _this.pesquisar();
+                }
+            });
+		},
+		
 		/**
 		 * Gera Notas de Envio para resultados da pesquisa e para cotas ausentes selecionadas
 		 */
 		gerarNotaEnvio : function() {
 			
 			var cotasSelecionadas = [];
-			var _this = this;
 			var cotasAusentes = $(".checkboxCheckCotasAusentes");
 			
 			for (var index in cotasAusentes) {
@@ -321,20 +354,9 @@ var geracaoNotaEnvioController = $.extend({
 			
 			var params = serializeArrayToPost("listaIdCotas", cotasSelecionadas);
 
-            var path = this.path + 'gerarNotaEnvio';
-
-            $.fileDownload(path, {
-                httpMethod : "POST",
-                data : params,
-                failCallback : function() {
-                	
-                    exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA!"]);
-                },
-                successCallback : function() {
-                    exibirMensagem("SUCCESS", ["Geração de NE realizada com sucesso!"]);
-                    _this.pesquisar();
-                }
-            });
+        	$.postJSON(geracaoNotaEnvioController.path + 'gerarNotaEnvio', params, 
+        			geracaoNotaEnvioController.getArquivoNotaEnvio 
+			);
            
 		},
 		
@@ -369,6 +391,9 @@ var geracaoNotaEnvioController = $.extend({
 			
 			this.filtroPesquisa.intervaloMovimentoDe = $("#geracaoNotaEnvio-filtro-movimentoDe").val();
 			this.filtroPesquisa.intervaloMovimentoAte = $("#geracaoNotaEnvio-filtro-movimentoAte").val();
+			
+			this.filtroPesquisa.exibirNotasEnvio = $("#geracaoNotaEnvio-filtro-exibirNotasEnvio").val();
+			
 		},
 		
 		/**
@@ -394,11 +419,16 @@ var geracaoNotaEnvioController = $.extend({
 						data.rows[index].cell["notaImpressa"] = "";
 					}
 					
-					if(data.rows[index].cell["cotaSuspensa"]) {
-						data.rows[index].cell["cotaSuspensa"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
+					if(data.rows[index].cell["situacaoCadastro"] == 'SUSPENSO') {
+						
+						data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_suspenso.gif" border="0" />';
 			
-					}else {
-						data.rows[index].cell["cotaSuspensa"] = "";
+					} else if(data.rows[index].cell["situacaoCadastro"] == 'INATIVO') {
+						
+						data.rows[index].cell["situacaoCadastro"] = '<a href="javascript:;" ><img src="' + contextPath + '/images/ico_inativo.gif" border="0" />';
+						
+					} else {
+						data.rows[index].cell["situacaoCadastro"] = "";
 					}
 				}
 				return data;
@@ -426,6 +456,29 @@ var geracaoNotaEnvioController = $.extend({
 				
 				return data;
 			}
+		},
+		
+		/**
+		 * Metodo de pre-processamento dos dados inseridos na grid Cotas Ausentes
+		 * 
+		 * @returns intervalo de datas validos (true) ou invalidos (false)
+		 */
+		validarDataMovimento : function() {
+			
+			messages = [];
+			
+			if($('#geracaoNotaEnvio-filtro-movimentoDe').val() == ''
+				|| $('#geracaoNotaEnvio-filtro-movimentoAte').val() == '') {
+				
+				messages.push({name: 'isValid', value: false});
+				messages.push('Os campos de Data de Movimento não podem estar vazios');
+				
+				return messages;
+			}
+			
+			messages.push({name: 'isValid', value: true});
+			return messages;
+			
 		},
 		
 		/**
@@ -476,30 +529,24 @@ var geracaoNotaEnvioController = $.extend({
 			display : 'Total Exemplares',
 			name : 'exemplares',
 			width : 110,
-			sortable : false,
+			sortable : true,
 			align : 'center',
 		}, {
 			display : 'Total R$',
 			name : 'total',
-			width : 70,
-			sortable : false,
-			align : 'right',
-		}, {
-			display : 'Total Desconto R$',
-			name : 'totalDesconto',
 			width : 120,
-			sortable : false,
+			sortable : true,
 			align : 'right',
-		}, {
+		},  {
 			display : 'Status',
 			name : 'notaImpressa',
-			width : 50,
-			sortable : false,
+			width : 100,
+			sortable : true,
 			align : 'center',
 		}, {
 			display : 'Suspensa',
-			name : 'cotaSuspensa',
-			width : 60,
+			name : 'situacaoCadastro',
+			width : 100,
 			sortable : true,
 			align : 'center',
 		}],

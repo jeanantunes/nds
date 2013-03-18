@@ -51,7 +51,6 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -1238,24 +1237,9 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		if(codigo!=null && !codigo.trim().isEmpty() && edicao != null) {
 			
-			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicao);
-		
-			if(produtoEdicao!=null) {
-				
-				RecebimentoFisicoDTO recFisicoDTO = new RecebimentoFisicoDTO();
-				BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-				BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getProduto().getDescontoProduto().getValor(), BigDecimal.ZERO);
-				BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-                recFisicoDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));
-
-                recFisicoDTO.setRepartePrevisto(produtoEdicao.getReparteDistribuido());
-				
-				result.use(Results.json()).from(recFisicoDTO, "result").serialize();
-			}
-			else{
-				throw new ValidacaoException(TipoMensagem.WARNING, "A [Edição] informada não existe para este [Produto].");
-			}
+			RecebimentoFisicoDTO recebimentoFisicoDTO = this.recebimentoFisicoService.obterRecebimentoFisicoDTO(codigo, edicao);
 			
+			result.use(Results.json()).from(recebimentoFisicoDTO, "result").serialize();
 		}
 		
 		result.use(Results.nothing());
@@ -1457,19 +1441,10 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		notaFiscal.setValorBruto(totalItem);
 		
-		try{
-			
-			recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
-		    
-			recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date(), true);
-		}
-		catch(Exception e){
-			if (e instanceof ValidacaoException) {
-				throw e;
-			}
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao incluir nota: "+e.getMessage());
-		}
-		
+		recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
+	    
+		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date(), true);
+
 		List<String> listaMensagens = new ArrayList<String>();
 		listaMensagens.add("Nota fiscal cadastrada com sucesso.");
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();

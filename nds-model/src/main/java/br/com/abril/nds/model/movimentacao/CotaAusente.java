@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -17,6 +19,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 
 @Entity
 @Table(name = "COTA_AUSENTE")
@@ -31,16 +34,19 @@ public class CotaAusente {
 	@Column(name = "DATA", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date data;
-	
-	@Column(name = "ATIVO", nullable = false)
-	private boolean ativo;
-	
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@OneToMany(mappedBy = "cotaAusente")
+	@OneToMany(mappedBy = "cotaAusente", cascade = CascadeType.ALL)
 	private List<RateioCotaAusente> rateios = new ArrayList<RateioCotaAusente>(); 
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "COTA_AUSENTE_MOVIMENTO_ESTOQUE_COTA",
+			   joinColumns = {@JoinColumn(name = "COTA_AUSENTE_ID")}, 
+			   inverseJoinColumns = {@JoinColumn(name = "MOVIMENTO_ESTOQUE_COTA_ID")})
+	private List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
 
 	public Long getId() {
 		return id;
@@ -57,14 +63,6 @@ public class CotaAusente {
 	public void setData(Date data) {
 		this.data = data;
 	}
-
-	public boolean isAtivo() {
-		return ativo;
-	}
-
-	public void setAtivo(boolean ativo) {
-		this.ativo = ativo;
-	}
 	
 	public Cota getCota() {
 		return cota;
@@ -80,6 +78,15 @@ public class CotaAusente {
 	
 	public void setRateios(List<RateioCotaAusente> rateios) {
 		this.rateios = rateios;
+	}
+
+	public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
+		return movimentosEstoqueCota;
+	}
+
+	public void setMovimentosEstoqueCota(
+			List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		this.movimentosEstoqueCota = movimentosEstoqueCota;
 	}
 
 }

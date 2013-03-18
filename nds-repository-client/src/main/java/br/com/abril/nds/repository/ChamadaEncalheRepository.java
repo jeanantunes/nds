@@ -45,4 +45,6 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	
 	List<ChamadaEncalhe> obterChamadaEncalhePorProdutoEdicao(ProdutoEdicao produtoEdicao,TipoChamadaEncalhe tipoChamadaEncalhe);
 
+	Integer obterMaiorSequenciaPorDia(Date dataRecolhimento);
+	
 }

@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -77,7 +78,6 @@ public interface ParametroCobrancaCotaService {
      */
     FormaCobrancaDTO obterDadosFormaCobranca(Long idForma);
 
-    
     /**
      * Obtem os dados para o contrato de prestação de serviços de transportes de revistas.<br/>
      * 
@@ -92,7 +92,6 @@ public interface ParametroCobrancaCotaService {
      */
 	public abstract ContratoTransporteDTO obtemContratoTransporte(long idCota);
 	
-	
 	/**
 	 * Obtém o contrato em forma de array de bytes
 	 * @param idCota
@@ -101,15 +100,6 @@ public interface ParametroCobrancaCotaService {
 	 * @return Array de bytes do contrato
 	 */
 	byte[] geraImpressaoContrato(Long idCota, Date dataInicio, Date dataTermino);
-	
-	
-	/**
-	 * Obtém a forma de cobranca principal da cota
-	 * @param idCota
-	 * @return FormaCobrança principal da cota
-	 */
-	 FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota);
-	 
 	 
 	 /**
 	 * Obtém lista de forma de cobranca da Cota
@@ -117,7 +107,6 @@ public interface ParametroCobrancaCotaService {
 	 * @return {@link List<FormaCobranca>}
 	 */
 	 List<FormaCobranca> obterFormasCobrancaCota(Long idCota);
-		 
 		 	 
 	 /**
 	 * Obtém quantidade de forma de cobranca da Cota
@@ -126,38 +115,11 @@ public interface ParametroCobrancaCotaService {
 	 */
 	 int obterQuantidadeFormasCobrancaCota(Long idCota);
 	 
-	 
 	 /**
 	 * Exclusão de Forma de Cobranca
 	 * @param ID da Forma de Cobrança
 	 */
 	 void excluirFormaCobranca(Long idFormaCobranca);
-	 
-	 
-	 /**
-	 * Verifica se ja existe a Forma Cobranca Mensal que o usuário deseja cadastrar(Valida por Fornecedor, Concentração e Tipo)
-	 * @param tipoCobranca
-	 * @param idFornecedor
-	 * @param diaDoMes
-	 * @return Boolean
-	 */
-	 boolean validarFormaCobrancaMensal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Integer diaDoMes);
-		 
-	 
-	 /**
-	 * Verifica se ja existe a Forma Cobranca Semanal que o usuário deseja cadastrar(Valida por Fornecedor, Concentração e Tipo)
-	 * @param TipoCobranca
-	 * @param idFornecedor
-	 * @param domingo
-	 * @param segunda
-	 * @param terca
-	 * @param quarta
-	 * @param quinta
-	 * @param sexta
-	 * @param sabado
-	 * @return Boolean
-	 */
-	 boolean validarFormaCobrancaSemanal(Long idFormaCobranca, Long idCota, TipoCobranca tipoCobranca, List<Long> idFornecedores, Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado);
 		 	 
 	 /**
 	  * Salva o contrato da cota
@@ -231,6 +193,4 @@ public interface ParametroCobrancaCotaService {
 	void alterarParametro(ParametroCobrancaCota parametroCobrancaCota);
 	
 	List<BigDecimal> comboValoresMinimos();
-
-	FormaCobranca obterFormaCobrancaPrincipal();
 }

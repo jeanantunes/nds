@@ -23,8 +23,6 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 
 	private BigInteger capacidadeRecolhimentoDistribuidor;
 	
-	private boolean isSemanaRecolhimento;
-	
 	/**
 	 * Construtor padrão.
 	 */
@@ -44,20 +42,6 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 	 */
 	public void setMatrizRecolhimento(TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
 		this.matrizRecolhimento = matrizRecolhimento;
-	}
-	
-	/**
-	 * @return the isSemanaRecolhimento
-	 */
-	public boolean isSemanaRecolhimento() {
-		return isSemanaRecolhimento;
-	}
-
-	/**
-	 * @param isSemanaRecolhimento the isSemanaRecolhimento to set
-	 */
-	public void setSemanaRecolhimento(boolean isSemanaRecolhimento) {
-		this.isSemanaRecolhimento = isSemanaRecolhimento;
 	}
 
 	/**

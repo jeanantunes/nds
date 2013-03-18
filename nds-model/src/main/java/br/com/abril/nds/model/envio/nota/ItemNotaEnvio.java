@@ -9,7 +9,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -55,7 +54,7 @@ public class ItemNotaEnvio implements Serializable {
 	@Column(name="DESCONTO",precision=21, scale=2 , nullable=false)
 	private BigDecimal desconto;
 	
-	@OneToOne
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTUDO_COTA_ID")
 	private EstudoCota estudoCota;
 

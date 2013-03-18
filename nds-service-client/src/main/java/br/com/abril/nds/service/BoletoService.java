@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.ResumoBaixaBoletosDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.model.cadastro.Banco;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -39,11 +38,12 @@ public interface BoletoService {
 	ResumoBaixaBoletosDTO obterResumoBaixaFinanceiraBoletos(Date data);
 	
 	void baixarBoletosAutomatico(ArquivoPagamentoBancoDTO arquivoPagamento,
-					   			 BigDecimal valorFinanceiro, Usuario usuario);
+					   			 BigDecimal valorFinanceiro, Usuario usuario, Date dataPagamento);
 	
 	void baixarBoleto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento, Usuario usuario,
-			 		  String nomeArquivo, Distribuidor distribuidor,
-			 		  Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco);
+			 		  String nomeArquivo,  
+			 		  Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos,
+			 		  Banco banco, Date dataPagamento);
 	
 	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException;
 

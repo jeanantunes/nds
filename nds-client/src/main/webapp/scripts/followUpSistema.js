@@ -53,6 +53,47 @@ var followUpSistemaController = $.extend(true, {
 			width : 880,
 			height : 255
 	    }));
+		
+		
+		$(".distribuicaoGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
+			url : contextPath + '/followup/pesquisaDistribuicaoCotasAjustes',
+	        preProcess:  followUpSistemaController.exPreProcFollowupDistribuicao, 
+			dataType : 'json',
+			colModel : [ {
+				display : 'Cota',
+				name : 'numeroCota',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Nome',
+				name : 'nomeJornaleiro',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Mensagem',
+				name : 'mensagem',
+				width : 290,
+				sortable : true,
+				align : 'left'
+			}, {
+				display : 'Dias restantes',
+				name : 'qtdDiasRestantes',
+				width : 150,
+				sortable : true,
+				align : 'left'
+			}],
+			sortname : "numeroCota",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true,
+			width : 880,
+			height : 255
+		}));
+		
 
 		$(".pendenciasGrid", followUpSistemaController.workspace).flexigrid($.extend({},{
 			url : contextPath + '/followup/pesquisaDadosPendenciaNFEEncalhe',
@@ -311,6 +352,13 @@ var followUpSistemaController = $.extend(true, {
 			$('#botoesArquivoNegociacao').hide();
 		}
 		
+		if (resultado.total > 0){
+			$('.areaBtsNegociacao', followUpSistemaController.workspace).show();
+		}
+		else{
+			$('.areaBtsNegociacao', followUpSistemaController.workspace).hide();
+		}
+		
 		return resultado;
 	},
 	
@@ -395,6 +443,22 @@ var followUpSistemaController = $.extend(true, {
 		
 		if(resultado.rows.length == 0){
 			$('#botoesArquivoCadastroParcial').hide();
+		}
+		
+		if (resultado.total > 0){
+			$('.areaBtsParcial', followUpSistemaController.workspace).show();
+		}
+		else{
+			$('.areaBtsParcial', followUpSistemaController.workspace).hide();
+		}
+		
+		return resultado;
+	},
+	
+	exPreProcFollowupDistribuicao : function (resultado) {
+		
+		if(resultado.rows.length == 0){
+			$('#botoesArquivoDistribuicao').hide();
 		}
 		return resultado;
 	}

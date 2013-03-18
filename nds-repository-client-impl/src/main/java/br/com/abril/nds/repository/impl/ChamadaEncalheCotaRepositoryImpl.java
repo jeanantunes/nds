@@ -29,39 +29,51 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			Integer numeroCota, Date dataOperacao,
 			boolean conferido, boolean postergado) {
 
-		StringBuilder hql = new StringBuilder();
+		StringBuffer subSqlWhereDesconto = new StringBuffer();
+		
+		subSqlWhereDesconto.append(" (SELECT ");	
+		subSqlWhereDesconto.append("	MEC.PRECO_COM_DESCONTO ");
+		subSqlWhereDesconto.append(" FROM 	");
+		subSqlWhereDesconto.append(" MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV	");
+		subSqlWhereDesconto.append(" WHERE  	");
+		subSqlWhereDesconto.append(" MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND 					");
+		subSqlWhereDesconto.append(" MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND 				");
+		subSqlWhereDesconto.append(" MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND ");
+		subSqlWhereDesconto.append(" TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
+		subSqlWhereDesconto.append(" ORDER BY MEC.DATA DESC ");
+		subSqlWhereDesconto.append(" LIMIT 1) ");
 
-		hql.append(" select sum ( ");
-		hql.append(" mec.reparte * (mec.valoresAplicados.valorComDesconto) ");
-		hql.append(" ) ");
+		StringBuilder sql = new StringBuilder();
 		
-		hql.append(" from ChamadaEncalheCota chamadaEncalheCota ");
-		hql.append(" join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ");
-		hql.append(" join chamadaEncalhe.produtoEdicao produtoEdicao ");
-		hql.append(" join chamadaEncalheCota.cota cota ");
-		hql.append(" join cota.movimentoEstoqueCotas mec ");
-		hql.append(" join produtoEdicao.produto produto ");
-		hql.append(" join produto.fornecedores fornecedor ");
+		sql.append(" SELECT SUM( COALESCE( ");
+		sql.append( subSqlWhereDesconto.toString() +  ", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+		sql.append(" ) ");
 		
-		hql.append(" where ");
-		hql.append(" cota.numeroCota = :numeroCota ");
-		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
-		hql.append(" and chamadaEncalheCota.fechado = :postergado ");
-		hql.append(" and mec.tipoMovimento.grupoMovimento = :grupoMovimento ");
-		hql.append(" and mec.lancamento in (chamadaEncalheCota.chamadaEncalhe.lancamentos) ");
-
-		hql.append(" and chamadaEncalhe.dataRecolhimento = :dataOperacao ");
+		sql.append("    FROM    ");
 		
-		Query query = this.getSession().createQuery(hql.toString());
+		sql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 				");
+		sql.append("	inner join COTA AS COTA ON 								");
+		sql.append("	(COTA.ID = CH_ENCALHE_COTA.COTA_ID)						");
+		sql.append("	inner join CHAMADA_ENCALHE AS CH_ENCALHE ON 			");
+		sql.append("	(CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)	");
+		sql.append("	inner join PRODUTO_EDICAO as PROD_EDICAO ON 			");
+		sql.append("	(PROD_EDICAO.ID = CH_ENCALHE.PRODUTO_EDICAO_ID)			");
+		sql.append("	inner join PRODUTO as PROD ON 							");
+		sql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)						");
+		
+		sql.append("	WHERE   ");
+		
+		sql.append("	COTA.NUMERO_COTA = :numeroCota AND 					");
+		sql.append("	CH_ENCALHE.DATA_RECOLHIMENTO = :dataOperacao AND 	");
+		sql.append("	CH_ENCALHE_COTA.FECHADO = :conferido AND			");
+		sql.append("	CH_ENCALHE_COTA.POSTERGADO = :postergado 			");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
 
 		query.setParameter("numeroCota", numeroCota);
-
 		query.setParameter("conferido", conferido);
-
 		query.setParameter("postergado", postergado);
-		
-		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		query.setParameter("dataOperacao", dataOperacao);
 
 		return (BigDecimal) query.uniqueResult();
@@ -456,6 +468,24 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		query.setParameter("idChamada", idChamadaEncalhe);
 
 		return (Long) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ChamadaEncalheCota> obterListChamadaEncalheCota(
+			Long chamadaEncalheID, Long cotaID) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cec from ChamadaEncalheCota cec ");
+		hql.append(" where cec.chamadaEncalhe.id = :chamadaEncalheID ");
+		hql.append(" and cec.cota.id = :cotaID ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("chamadaEncalheID", chamadaEncalheID);
+		query.setParameter("cotaID", cotaID);
+		
+		return query.list();
 	}
 
 }

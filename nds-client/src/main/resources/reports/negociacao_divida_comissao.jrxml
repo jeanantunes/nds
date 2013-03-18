@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_comissao" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty">
-	<property name="ireport.zoom" value="4.5949729863572255"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_comissao" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="2a4f98e6-e0f0-4cc1-b099-e82e926c0cdf">
+	<property name="ireport.zoom" value="1.2100000000000024"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="323"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -55,89 +56,89 @@
 	<title>
 		<band height="79" splitType="Stretch">
 			<rectangle>
-				<reportElement mode="Transparent" x="0" y="0" width="555" height="79"/>
+				<reportElement uuid="6219eaf3-a4a5-4859-80dc-59987569f558" mode="Transparent" x="0" y="0" width="555" height="79"/>
 				<graphicElement>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="131" y="18" width="164" height="38"/>
+				<reportElement uuid="d8ab790c-100e-4a2e-9aad-ee45996bfaa8" x="131" y="18" width="164" height="38"/>
 				<textElement textAlignment="Center">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[TREELOG S/A
 LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 			</staticText>
-			<image>
-				<reportElement x="2" y="2" width="127" height="77"/>
-				<imageExpression><![CDATA[$P{SUBREPORT_DIR} + "logo_2.jpg"]]></imageExpression>
-			</image>
 			<staticText>
-				<reportElement x="331" y="15" width="204" height="41"/>
+				<reportElement uuid="47bb5779-5420-4516-8414-c3876c5ff624" x="331" y="15" width="204" height="41"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Negociação de Dívida]]></text>
 			</staticText>
+			<image scaleImage="RealSize" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
+				<reportElement uuid="3e3b3112-9474-4fbb-9c93-ee36abec5c64" x="-1" y="0" width="115" height="78"/>
+				<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
 		<band height="60" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="555" height="20"/>
+				<reportElement uuid="5d153a5e-e944-44b9-917b-db42d288a5a6" x="0" y="0" width="555" height="20"/>
 			</rectangle>
 			<staticText>
-				<reportElement x="3" y="0" width="36" height="20"/>
+				<reportElement uuid="3285906a-2d45-4473-9c95-fa0d8be01ca7" x="3" y="0" width="36" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cota:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="131" y="0" width="37" height="20"/>
+				<reportElement uuid="65474db3-405c-4671-9ae6-f3cfdc7f3020" x="131" y="0" width="37" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nome:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="358" y="0" width="121" height="20"/>
+				<reportElement uuid="c9a05904-bd15-401f-85ac-0f15ff5ed6b2" x="358" y="0" width="121" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dívida Selecionada R$:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="20" width="106" height="20"/>
+				<reportElement uuid="1ab9787e-ca3a-4cd8-b679-512240745607" x="3" y="20" width="106" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Forma de Pagamento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="40" width="106" height="20"/>
+				<reportElement uuid="cf93a13e-750f-4199-8b26-47b39135b888" x="3" y="40" width="106" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tipo de Pagamento:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="109" y="40" width="100" height="20"/>
+				<reportElement uuid="2839eeef-0b92-418a-b25e-5c25658f1c3d" x="109" y="40" width="100" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Comissão da Cota]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="39" y="0" width="90" height="20"/>
+				<reportElement uuid="3da8632a-5936-44df-ac72-3887e1ef0b57" x="39" y="0" width="90" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="168" y="0" width="190" height="20"/>
+				<reportElement uuid="23c9c872-71ef-40fb-b386-2823ddc5207a" x="168" y="0" width="190" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{nomeCota}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="479" y="0" width="76" height="20"/>
+				<reportElement uuid="b09d3893-ccba-4460-b965-8239f3972541" x="479" y="0" width="76" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{totalDividaSelecionada}.setScale(2, RoundingMode.HALF_EVEN)]]></textFieldExpression>
 			</textField>
@@ -146,7 +147,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 	<columnHeader>
 		<band height="20" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="-1" y="0" width="110" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement uuid="562a346e-18ea-4a51-a0cf-254ba1d91baa" mode="Opaque" x="-1" y="0" width="110" height="20" forecolor="#000000" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -159,7 +160,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 				<text><![CDATA[Comissão Atual]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="109" y="0" width="111" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement uuid="4078b4d5-e8dc-48e1-bc71-56c2b139f7e5" mode="Opaque" x="109" y="0" width="111" height="20" forecolor="#000000" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -172,7 +173,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 				<text><![CDATA[Utilizar]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="220" y="0" width="335" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement uuid="e31f2bdb-888d-4f39-9223-33bfc4593be4" mode="Opaque" x="220" y="0" width="335" height="20" forecolor="#000000" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -189,7 +190,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="-1" y="0" width="110" height="20" backcolor="#CCCCCC"/>
+				<reportElement uuid="593b07c8-8232-45b5-9c1f-c9321989b5f4" mode="Opaque" x="-1" y="0" width="110" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -200,7 +201,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 				<textFieldExpression><![CDATA[$F{comissaoAtualCota}.setScale(2, RoundingMode.HALF_EVEN) + " %"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="109" y="0" width="111" height="20" backcolor="#CCCCCC"/>
+				<reportElement uuid="4033f043-b5c1-4722-b7cf-afe6111d1dcf" mode="Opaque" x="109" y="0" width="111" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -211,7 +212,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 				<textFieldExpression><![CDATA[$F{comissaoParaPagamento}.setScale(2, RoundingMode.HALF_EVEN) + " %"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement mode="Opaque" x="220" y="0" width="335" height="20" backcolor="#CCCCCC"/>
+				<reportElement uuid="135f4f01-1d66-40fb-a983-ccc3e36248da" mode="Opaque" x="220" y="0" width="335" height="20" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>

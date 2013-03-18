@@ -86,12 +86,15 @@ public class LancamentoParcialRepositoryImpl extends AbstractRepositoryModel<Lan
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ParcialDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		if(filtro.getPaginacao()!= null){
+
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-				
 		return query.list();
 	}
 	

@@ -25,6 +25,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -34,12 +35,14 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.VendaEncalheService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -101,6 +104,9 @@ public class VendaEncalheController extends BaseController {
 	@Autowired
 	private DescontoService descontoService;
 	
+	@Autowired 
+	private GerarCobrancaService cobrancaService;
+	
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE)
@@ -147,7 +153,7 @@ public class VendaEncalheController extends BaseController {
 	
 	private void confirmaVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito,boolean novaVenda){
 		
-		validarParametrosVenda(listaVendas,numeroCota, dataDebito);
+		validarParametrosVenda(listaVendas,numeroCota, dataDebito,novaVenda);
 		
 		byte[] comprovanteVenda = null;
 		
@@ -163,6 +169,16 @@ public class VendaEncalheController extends BaseController {
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 				"result").recursive().serialize();
+	}
+	
+	private boolean containsVendaContaFirme(List<VendaEncalheDTO> listaVendas){
+		
+		for(VendaEncalheDTO item : listaVendas){
+			if(FormaComercializacao.CONTA_FIRME.equals(item.getFormaVenda())){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	@Post
@@ -210,15 +226,14 @@ public class VendaEncalheController extends BaseController {
 			qntDias = (qntDias == null)?0: qntDias;
 			
 			dataVencimentoDebito = DateUtil.adicionarDias(dataVencimentoDebito,qntDias);
+			
 		} 
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
 		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
 		mapa.put("dataVencimentoDebito",DateUtil.formatarDataPTBR(dataVencimentoDebito));
 		
-		result.use(CustomJson.class)
-				.from(mapa)
-				.serialize();
+		result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	@Post
@@ -241,20 +256,25 @@ public class VendaEncalheController extends BaseController {
 	@Post
 	public void pesquisarProdutoCodBarra(String codBarra){
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
-		
-		if(produtoEdicao== null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código de barras \""+codBarra+"\" não encontrado!");
+		List<ProdutoEdicao> produtosEdicao = produtoEdicaoService.buscarProdutoPorCodigoBarras(codBarra);
+
+		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+			
+			this.result.nothing();
+			
+			return;
 		}
-		
-		Map<String, Object> mapa = new TreeMap<String, Object>();
-		
-		if (produtoEdicao.getProduto() != null) {
-			mapa.put("codigoProduto", produtoEdicao.getProduto().getCodigo());
+
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+
+		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+
+			listaProdutos.add(new ItemAutoComplete(
+					produtoEdicao.getCodigoDeBarras() + " - " + produtoEdicao.getProduto().getNome() + " - Ed.:" + produtoEdicao.getNumeroEdicao(), 
+					null, new Object[] { produtoEdicao.getProduto().getCodigo(), produtoEdicao.getNumeroEdicao() }));
 		}
-		mapa.put("nuemroEdicao", produtoEdicao.getNumeroEdicao());
-		
-		result.use(CustomJson.class).from(mapa).serialize();
+
+		result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -288,7 +308,7 @@ public class VendaEncalheController extends BaseController {
 	public void prepararDadosEdicaoVenda(Long idVendaEncalhe){
 		
 		VendaEncalheDTO venda = vendaEncalheService.buscarVendaEncalhe(idVendaEncalhe);
-		
+	
 		List<VendaProdutoVO> listaPesquisaProduto= new ArrayList<VendaProdutoVO>();
 		
 		int qtdeInicialPadrao = 1;
@@ -477,7 +497,7 @@ public class VendaEncalheController extends BaseController {
 		return (valor == null)?"":valor.toString();
 	}
 	
-	private void validarParametrosVenda(List<VendaEncalheDTO> listaVendas,Long numeroCota, Date dataDebito){
+	private void validarParametrosVenda(List<VendaEncalheDTO> listaVendas,Long numeroCota, Date dataDebito, boolean isNovaVenda){
 	
 		validarFormatoData();
 		
@@ -504,10 +524,36 @@ public class VendaEncalheController extends BaseController {
 			if(DateUtil.isDataInicialMaiorDataFinal(distribuidor.getDataOperacao(),dataDebito)){
 				mensagensValidacao.add("O campo [Data Vencimento] deve ser maior que a data de operação do sistema!");
 			}
+			
+			this.validarDataDebitoParaVendaContaFirme(listaVendas, numeroCota,dataDebito, mensagensValidacao,isNovaVenda);
 		}
 		
 		if (!mensagensValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
+		}
+	}
+
+	private void validarDataDebitoParaVendaContaFirme(List<VendaEncalheDTO> listaVendas, Long numeroCota,
+													  Date dataDebito, List<String> mensagensValidacao, 
+													  boolean isNovaVenda) {
+		
+		if(containsVendaContaFirme(listaVendas)){
+			
+			Cota cota  = cotaService.obterPorNumeroDaCota(numeroCota.intValue());
+			
+			if (cobrancaService.verificarCobrancasGeradasNaDataVencimentoDebito(dataDebito, cota.getId())){
+				
+				if(!isNovaVenda){
+					
+					mensagensValidacao.add("Venda não pode ser editada!");
+					mensagensValidacao.add("Já foi gerado cobrança para cota na data de vencimento informada!");
+				}
+				else{
+					
+					mensagensValidacao.add("Já foi gerado cobrança para cota na data de vencimento informada!");
+					mensagensValidacao.add("O campo [Data Vencimento] deve ser maior que a data informada!");
+				}
+			}	
 		}
 	}
 	

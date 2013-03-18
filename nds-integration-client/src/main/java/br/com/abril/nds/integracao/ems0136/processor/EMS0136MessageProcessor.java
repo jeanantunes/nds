@@ -2,6 +2,8 @@ package br.com.abril.nds.integracao.ems0136.processor;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -13,12 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0136Input;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
@@ -209,7 +212,22 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			EMS0136Input input, LancamentoParcial lancamentoParcial) {
 		
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+
+		// Resgata todos os itens recebimentos fisicos para armazenar no novo lancamento
+		List<ItemRecebimentoFisico> itens = obtemItensRecebimentosFisicos(
+				lancamentoParcial, dataOperacao);
 		
+		/*getSession().flush();
+		getSession().clear();
+		Set<ItemRecebimentoFisico> itens = new HashSet<ItemRecebimentoFisico>();
+		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
+			if (periodo.getLancamento() != null) {
+				for (ItemRecebimentoFisico item : periodo.getLancamento().getRecebimentos()) {
+					itens.add(item);
+				}
+			}
+		}*/
+
 		/* 
 		 * Exclui todos os Períodos que não foram gerados hoje (== DataOperacao)
 		 */
@@ -227,7 +245,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Executa as exclusões e limpa a sessão.
 		getSession().flush();
 		getSession().clear();
-		
+
 		
 		Integer numeroPeriodo = input.getNumeroPeriodo();
 		Criteria criteria = getSession().createCriteria(
@@ -241,9 +259,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			pParcial.setNumeroPeriodo(numeroPeriodo);
 			pParcial.setLancamentoParcial(lancamentoParcial);
 		}
-		
+
 		Lancamento lancamento = this.obterLancamento(input, 
 				lancamentoParcial.getProdutoEdicao());
+		lancamento.setRecebimentos(new HashSet(itens));
 		pParcial.setLancamento(lancamento);
 		pParcial.setDataCriacao(dataOperacao);
 		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
@@ -259,6 +278,22 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		}
 		
 		return pParcial;
+	}
+
+	private List<ItemRecebimentoFisico> obtemItensRecebimentosFisicos(
+			LancamentoParcial lancamentoParcial, Date dataOperacao) {
+		StringBuilder hql = new StringBuilder();
+		hql.append("SELECT l.recebimentos ");
+		hql.append("	FROM  PeriodoLancamentoParcial p ");
+		hql.append("	JOIN  p.lancamento l ");
+		hql.append(" WHERE p.lancamentoParcial = :lancamentoParcial ");
+		hql.append("   AND (p.dataCriacao <> :dataOperacao ");
+		hql.append("    OR p.dataCriacao IS NULL)");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setDate("dataOperacao", dataOperacao);
+		query.setParameter("lancamentoParcial", lancamentoParcial);
+		return (List<ItemRecebimentoFisico>) query.list();
 	}
 	
 	/**
@@ -308,7 +343,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			lancamento.setDataStatus(dtAgora);
 			lancamento.setReparte(BigInteger.ZERO);
 			lancamento.setRepartePromocional(BigInteger.ZERO);
-			lancamento.setSequenciaMatriz(Integer.valueOf(0));
+			lancamento.setSequenciaMatriz(null);
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		}
 		

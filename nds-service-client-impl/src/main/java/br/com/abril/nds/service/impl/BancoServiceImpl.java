@@ -101,6 +101,7 @@ public class BancoServiceImpl implements BancoService {
 			bancoVO.setApelido(banco.getApelido());
 			bancoVO.setCodigoCedente(banco.getCodigoCedente());
 			bancoVO.setAgencia(banco.getAgencia());
+			bancoVO.setDigitoAgencia(banco.getDvAgencia());
 			bancoVO.setConta(banco.getConta());
 			bancoVO.setDigito(banco.getDvConta());
 			bancoVO.setCarteira(banco.getCarteira()!=null?banco.getCarteira():0);
@@ -211,6 +212,13 @@ public class BancoServiceImpl implements BancoService {
 	public List<Banco> obterBancosPorNome(String nomeBanco) {
 		
 		return bancoRepository.obterBancosPorNome(nomeBanco);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Banco> obterBancosPorNome(String nomeBanco, Integer qtdMaxResult) {
+		
+		return bancoRepository.obterBancosPorNome(nomeBanco, qtdMaxResult);
 	}
 
 }

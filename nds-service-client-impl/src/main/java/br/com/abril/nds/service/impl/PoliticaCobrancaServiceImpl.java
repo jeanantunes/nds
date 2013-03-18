@@ -16,7 +16,6 @@ import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -209,12 +208,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		return this.politicaCobrancaRepository.buscarPoliticaCobrancaPrincipal();
 	}
 
-	
-	
-	
-	
-	
-	
 	/**
 	 * Método responsável por obter os dados da politica de cobranca
 	 * @param idPolitica: ID da politica de cobranca
@@ -531,77 +524,8 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		this.politicaCobrancaRepository.desativarPoliticaCobranca(idPolitica);
 	}
 	
-	
 	@Override
-	@Transactional
-	public boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Distribuidor distribuidor,TipoCobranca tipoCobranca,
-			List<Long> idFornecedores, Integer diaDoMes) {
-		
-		Long idFormaCobrancaExcept = null;
-		
-		if (idPoliticaCobranca!=null){
-		    PoliticaCobranca politica = this.politicaCobrancaRepository.buscarPorId(idPoliticaCobranca);
-		    idFormaCobrancaExcept = politica.getFormaCobranca().getId();
-		}    
-		
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(distribuidor.getId(), tipoCobranca, idFormaCobrancaExcept);
-		for (FormaCobranca itemFormaCobranca:formas){
-			for (int i=0; i<idFornecedores.size();i++){
-				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedores.get(i));
-				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
-					if (!itemFormaCobranca.getDiasDoMes().isEmpty() && diaDoMes==itemFormaCobranca.getDiasDoMes().get(0)){
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
-
-
-
-	@Override
-	@Transactional
-	public boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, Distribuidor distribuidor, TipoCobranca tipoCobranca, List<Long> idFornecedores, 
-			Boolean domingo, Boolean segunda, Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta, Boolean sabado) {
-		
-		boolean res=true;
-        Long idFormaCobrancaExcept = null;
-		
-		if (idPoliticaCobranca!=null){
-			PoliticaCobranca politica = this.politicaCobrancaRepository.buscarPorId(idPoliticaCobranca);
-			idFormaCobrancaExcept = politica.getFormaCobranca().getId();
-		}	
-		
-		List<FormaCobranca> formas = this.formaCobrancaRepository.obterPorDistribuidorETipoCobranca(distribuidor.getId(), tipoCobranca, idFormaCobrancaExcept);
-		for (FormaCobranca itemFormaCobranca:formas){
-			for (Long idFornecedor : idFornecedores){
-				Fornecedor fornecedor= this.fornecedorService.obterFornecedorPorId(idFornecedor);
-				if (itemFormaCobranca.getFornecedores().contains(fornecedor)){
-					
-					for(ConcentracaoCobrancaCota itemConcentracao:itemFormaCobranca.getConcentracaoCobrancaCota()){
-						
-						if (
-								(domingo && (itemConcentracao.getDiaSemana()==DiaSemana.DOMINGO))||
-								(segunda && (itemConcentracao.getDiaSemana()==DiaSemana.SEGUNDA_FEIRA))||
-								(terca && (itemConcentracao.getDiaSemana()==DiaSemana.TERCA_FEIRA))||
-								(quarta && (itemConcentracao.getDiaSemana()==DiaSemana.QUARTA_FEIRA))||
-								(quinta && (itemConcentracao.getDiaSemana()==DiaSemana.QUINTA_FEIRA))||
-								(sexta && (itemConcentracao.getDiaSemana()==DiaSemana.SEXTA_FEIRA))||
-								(sabado && (itemConcentracao.getDiaSemana()==DiaSemana.SABADO))
-						    ){
-							res=false;
-						}
-	
-					}
-	
-				}
-			}
-		}
-		return res;
-	}
-	
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<TipoCobranca> obterTiposCobrancaDistribuidor() {
 		
 		List<TipoCobranca> tiposCobranca =

@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0106.inbound.EMS0106Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -68,6 +68,13 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			}
 		}
 		
+		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
+			this.ndsiLoggerFactory.getLogger().logError(message,
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo!");
+			return;
+		}
+		
 		Estudo estudo = lancamento.getEstudo();
 		if (estudo == null) {
 			
@@ -105,6 +112,14 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 								+ ", de: " + qtdeReparteAtual
 								+ " para: " + qtdeReparteCorrente);
 				estudo.setQtdeReparte(qtdeReparteCorrente);
+			} else {
+				this.ndsiLoggerFactory.getLogger().logInfo(message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Remoção dos estudos cotas vinculados ao estudo: "
+								+ estudo.getId()
+								+ ", do Produto: " + estudo.getProdutoEdicao().getProduto().getCodigo()
+								+ " / Edicao: " + estudo.getProdutoEdicao().getNumeroEdicao().toString()
+								+ " realizado com sucesso.");
 			}
 			
 			estudo.setDataAlteracao(new Date());

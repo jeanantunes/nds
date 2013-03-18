@@ -31,16 +31,15 @@ import br.com.abril.nds.dto.TipoEstabelecimentoAssociacaoPDVDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.LicencaMunicipal;
 import br.com.abril.nds.model.cadastro.MaterialPromocional;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoLicencaMunicipal;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -53,6 +52,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoEstabelecimentoAssociacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCodigoDescricao;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
 import br.com.abril.nds.repository.AreaInfluenciaPDVRepository;
@@ -157,14 +157,21 @@ public class PdvServiceImpl implements PdvService {
         return enderecoPDVRepository
                 .buscarMunicipioPdvPrincipal(codigoCidadeIBGE);
     }
-
+    
     @Transactional(readOnly = true)
     @Override
-    public List<AreaInfluenciaPDV> obterAreasInfluenciaPDV() {
+    public List<AreaInfluenciaPDV> obterTipoAreaInfluencia() {
 
         return areaInfluenciaPDVRepository.buscarTodos();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+	public List<TipoGeradorFluxoPDV> obterTipoGeradorDeFluxo() {
+		// TODO Auto-generated method stub
+    	return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+	}
+    
     @Transactional(readOnly = true)
     @Override
     public List<TipoGeradorFluxoPDV> obterTiposGeradorFluxo(Long... codigos) {
@@ -1565,5 +1572,25 @@ public class PdvServiceImpl implements PdvService {
         HistoricoTitularidadeCotaPDV pdv = pdvRepository.obterPDVHistoricoTitularidade(idPdv);
         return pdv.getImagem();
     }
+    
+    @Transactional(readOnly = true)
+    @Override
+    public List<AreaInfluenciaPDV> obterAreasInfluenciaPDV() {
+
+        return areaInfluenciaPDVRepository.buscarTodos();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo() {
+
+            return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+    }
+
+    @Transactional(readOnly = true)
+	@Override
+	public List<PdvDTO> obterPDVs(Integer numeroCota) {
+		return this.pdvRepository.obterPDVs(numeroCota);
+	}
 
 }

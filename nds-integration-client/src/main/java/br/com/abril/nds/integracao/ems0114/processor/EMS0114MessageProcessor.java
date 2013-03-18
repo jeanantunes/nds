@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0114.processor;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.engine.MessageProcessor;
-import br.com.abril.nds.integracao.engine.data.Message;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0114Input;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
+import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
@@ -72,6 +73,14 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			}
 		}
 		
+		if (lancamento.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO || lancamento.getStatus() == StatusLancamento.BALANCEADO_RECOLHIMENTO) {
+			DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			ndsiLoggerFactory.getLogger().logWarning(
+					message,
+					EventoExecucaoEnum.ERRO_INFRA,
+					String.format( "Registro não será atualizado pois já está em balanceamento / balanceado. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.", sdf.format(input.getDataRecolhimento()), input.getCodProd(), input.getEdicao().toString() ));
+			return;
+		}
 		
 		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(
 				lancamento.getDataRecolhimentoDistribuidor());
@@ -95,23 +104,18 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 				this.getSession().merge(lancamento);
 			}
 			
+			this.ndsiLoggerFactory.getLogger().logInfo(message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Alteracao da DATA RECOLHIMENTO DISTRIBUIDOR do Produto: "
+							+ codigoProduto + " e Edicao: " + edicao
+							+ " , de: " + simpleDateFormat.format(
+									lancamento.getDataRecolhimentoDistribuidor())
+							+ "para: " + simpleDateFormat.format(
+									dtRecolhimentoArquivo));
+			lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
+			lancamento.setAlteradoInteface(true);
+			this.getSession().merge(lancamento);
 			
-			StatusLancamento status = lancamento.getStatus();
-			if (!StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(status)
-					&& !StatusLancamento.BALANCEADO.equals(status)) {
-				
-				this.ndsiLoggerFactory.getLogger().logInfo(message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Alteracao da DATA RECOLHIMENTO DISTRIBUIDOR do Produto: "
-								+ codigoProduto + " e Edicao: " + edicao
-								+ " , de: " + simpleDateFormat.format(
-										lancamento.getDataRecolhimentoDistribuidor())
-								+ "para: " + simpleDateFormat.format(
-										dtRecolhimentoArquivo));
-				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimentoArquivo);
-				lancamento.setAlteradoInteface(true);
-				this.getSession().merge(lancamento);
-			}
 		}
 		
 	}

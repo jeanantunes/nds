@@ -83,7 +83,13 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 	}
 	
 	protected Session getSession() {
-		return sessionFactory.getCurrentSession();
+		try {
+			return sessionFactory.getCurrentSession();
+		} catch (Exception e) {
+			
+		}
+		
+		return sessionFactory.openSession();
 	}
 
 }

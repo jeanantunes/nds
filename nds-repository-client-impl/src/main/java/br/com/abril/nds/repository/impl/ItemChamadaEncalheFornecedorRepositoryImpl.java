@@ -51,7 +51,7 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 		
 		hql.append(" prodEdicao.id = produtoEdicao.id ");
 		
-		hql.append(" ) / 100 ");
+		hql.append(" ) ");
 		
 		hql.append(" ) * itemChamadaEncalheFornecedor.qtdeDevolucaoApurada ) ");
 		

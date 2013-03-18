@@ -51,6 +51,12 @@ public abstract class Cobranca {
 	@Column(name = "NOSSO_NUMERO", nullable = false, unique = true)
 	protected String nossoNumero;
 	
+	@Column(name = "DIGITO_NOSSO_NUMERO", nullable = true)
+	protected String digitoNossoNumero;
+	
+	@Column(name = "NOSSO_NUMERO_COMPLETO", nullable = true, unique = true)
+	protected String nossoNumeroCompleto;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "DT_EMISSAO", nullable = false)
 	protected Date dataEmissao;
@@ -120,6 +126,34 @@ public abstract class Cobranca {
 
 	public void setNossoNumero(String nossoNumero) {
 		this.nossoNumero = nossoNumero;
+	}
+
+	/**
+	 * @return the digitoNossoNumero
+	 */
+	public String getDigitoNossoNumero() {
+		return digitoNossoNumero;
+	}
+
+	/**
+	 * @param digitoNossoNumero the digitoNossoNumero to set
+	 */
+	public void setDigitoNossoNumero(String digitoNossoNumero) {
+		this.digitoNossoNumero = digitoNossoNumero;
+	}
+
+	/**
+	 * @return the nossoNumeroCompleto
+	 */
+	public String getNossoNumeroCompleto() {
+		return nossoNumeroCompleto;
+	}
+
+	/**
+	 * @param nossoNumeroCompleto the nossoNumeroCompleto to set
+	 */
+	public void setNossoNumeroCompleto(String nossoNumeroCompleto) {
+		this.nossoNumeroCompleto = nossoNumeroCompleto;
 	}
 
 	public Date getDataEmissao() {

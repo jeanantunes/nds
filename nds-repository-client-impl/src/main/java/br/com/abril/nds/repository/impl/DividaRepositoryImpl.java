@@ -15,7 +15,6 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
@@ -27,7 +26,6 @@ import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -38,19 +36,6 @@ import br.com.abril.nds.vo.PaginacaoVO;
 @Repository
 public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> implements
 		DividaRepository {
-
-	@Value("#{queries.inadimplenciasCota}")
-	protected String queryInadimplenciasCota;
-	
-	@Value("#{queries.countInadimplenciasCota}")
-	protected String queryCountInadimplenciasCota;
-	
-	@Value("#{queries.countCotaInadimplencias}")
-	protected String queryCountCotaInadimplencias;
-	
-	@Value("#{queries.sumDividaCotas}")
-	protected String querySumDividaCotas;
-	
 	
 	public DividaRepositoryImpl() {
 		super(Divida.class);
@@ -158,7 +143,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		param.put("data",filtro.getDataMovimento());
 		param.put("acumulaDivida", Boolean.FALSE);
 		param.put("statusCobranca",StatusCobranca.NAO_PAGO);
-		param.put("tipoRoteiro", TipoRoteiro.NORMAL);
 		
 		if(!isBoleto){
 			param.put("tipoCobrancaBoleto",TipoCobranca.BOLETO);
@@ -213,15 +197,29 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.append(" cobranca.tipoCobranca,")
 				.append(" cobranca.vias, ")
 				.append(" cobranca.nossoNumero, ")
-				.append(" (select (case when count(f.recebeCobrancaEmail)=2 then true else false end) " + //TODO
-						"  from FormaCobranca f " +
-						"  left join f.politicaCobranca p " +
-						"  left join f.parametroCobrancaCota pc " +
-						"  where f.recebeCobrancaEmail=true " +  
-						"  and ( (pc.id=parametroCobranca.id " +
-						"  and f.principal=true " +
-						"  and f.ativa=true) " +
-						"  or (p.principal=true and p.ativo=true) ))")
+
+				.append(" case when ("+
+				        "           select count(f.recebeCobrancaEmail) " +
+						"           from PoliticaCobranca p " +
+						"           join p.formaCobranca f " +
+						"           where f.recebeCobrancaEmail = true"+
+						"           and p.principal=true " +//TODO
+						"           and p.ativo=true " +
+				        "           ) > 0 " +
+						" then " + 
+				
+				        " (case when ("+
+				        "             select count(f.parametroCobrancaCota) " +
+						"             from FormaCobranca f " +
+						"             join f.parametroCobrancaCota p " +
+						"             join p.cota c " +
+						"             where f.recebeCobrancaEmail = true " +
+						"             and c.id = cota.id"+
+						"             and f.principal=true " +//TODO
+						"             and f.ativa=true "+
+				        "             ) > 0 then true else false end)" +
+						" else false end ")
+						
 			.append(")");
 			
 		}
@@ -235,18 +233,15 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		.append(" JOIN cota.pdvs pdv ")
 		.append(" JOIN cota.pessoa pessoa ")
 		.append(" JOIN cota.parametroCobranca parametroCobranca ")
-		.append(" LEFT JOIN pdv.rotas rotaPdv  ")
-		.append(" LEFT JOIN rotaPdv.rota rota  ")
-		.append(" LEFT JOIN rota.roteiro roteiro ")
+		.append(" JOIN pdv.rotas rotaPdv  ")
+		.append(" JOIN rotaPdv.rota rota  ")
+		.append(" JOIN rota.roteiro roteiro ")
 		
 		.append(" WHERE ")
 		
 		.append(" divida.data =:data ")
 		.append(" AND divida.acumulada =:acumulaDivida ")
-		.append(" AND cobranca.statusCobranca=:statusCobranca ")
-		.append(" AND pdv.caracteristicas.pontoPrincipal = true ")
-		.append(" AND (roteiro.tipoRoteiro is null OR roteiro.tipoRoteiro=:tipoRoteiro) ")
-		.append(" and rotaPdv.ordem = (select max(rotaPdvAux.ordem) from RotaPDV rotaPdvAux where rotaPdvAux.pdv.cota.id = cota.id)");
+		.append(" AND cobranca.statusCobranca=:statusCobranca ");
 		
 		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");
@@ -351,7 +346,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@SuppressWarnings("unchecked")
 	public List<StatusDividaDTO> obterInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
 	
-		StringBuilder sql = new StringBuilder(queryInadimplenciasCota);
+		StringBuilder sql =
+			new StringBuilder(
+				this.getSqlInadimplenciaClausulaSelect() + this.getSqlInadimplenciaClausulaFrom());
 		
 		HashMap<String,Object> params = new HashMap<String, Object>();
 		
@@ -438,39 +435,48 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			sql.append(" COTA_.SITUACAO_CADASTRO = :statusCota ");
 			params.put("statusCota",filtro.getStatusCota());
 		}
-
-		boolean utilizado = false;
 		
-		if( filtro.getSituacaoPaga() != null && filtro.getSituacaoEmAberto() != null && filtro.getSituacaoNegociada() != null
-				&& (filtro.getSituacaoPaga() == true || filtro.getSituacaoEmAberto() == true || filtro.getSituacaoNegociada() == true) ) {
+		if (filtro.getSituacaoEmAberto() || filtro.getSituacaoNegociada() || filtro.getSituacaoPaga()) {
+		
+			sql.append(" AND ( ");
 			
-			sql.append(whereUtilizado ? " AND " : " WHERE ");
-			whereUtilizado = true;			
-			sql.append("( ");
+			boolean utilizarOr = false;
 			
-			if( filtro.getSituacaoEmAberto() == true) {
-				utilizado = true;
+			if (filtro.getSituacaoEmAberto()) {
 				
-				sql.append(" DIVIDA_.STATUS = :situacaoEmAberto ");
-				params.put("situacaoEmAberto",StatusDivida.EM_ABERTO.name());
+				sql.append(" (COBRANCA_.DT_VENCIMENTO <= :dataAtual ");
+				sql.append(" AND DIVIDA_.STATUS = :statusDividaAberto) ");
+				
+				utilizarOr = true;
+				
+				params.put("dataAtual", new Date());
+				params.put("statusDividaAberto", StatusDivida.EM_ABERTO.name());
 			}
-			if( filtro.getSituacaoNegociada() == true) {
-				sql.append( utilizado ? " || " : "");
-				utilizado = true;
+			
+			if (filtro.getSituacaoNegociada()) {
 				
-				sql.append(" DIVIDA_.STATUS = :situacaoNegociada ");
-				params.put("situacaoNegociada",StatusDivida.NEGOCIADA.name());
-			} 
-			if( filtro.getSituacaoPaga() == true ) {
-				sql.append( utilizado ? " || " : "");
-				utilizado = true;
+				sql.append(utilizarOr ? " OR " : "");
 				
-				sql.append(" DIVIDA_.STATUS = :situacaoPaga ");
-				params.put("situacaoPaga",StatusDivida.QUITADA.name());
+				sql.append(" (COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
+				sql.append(" AND DIVIDA_.STATUS = :statusDividaNegogiada) ");
+				
+				utilizarOr = true;
+				
+				params.put("statusDividaNegogiada", StatusDivida.NEGOCIADA.name());
 			}
+			
+			if (filtro.getSituacaoPaga()) {
+				
+				sql.append(utilizarOr ? " OR " : "");
+				
+				sql.append(" (COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
+				sql.append(" AND DIVIDA_.STATUS = :statusDividaQuitada) ");
+				
+				params.put("statusDividaQuitada", StatusDivida.QUITADA.name());
+			}
+			
 			sql.append(" ) ");
 		}
-		
 	}
 
 	private String obterOrderByInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
@@ -520,7 +526,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	
 	public Long obterTotalInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
 		
-		StringBuilder sql = new StringBuilder(queryCountInadimplenciasCota);	
+		StringBuilder sql =
+			new StringBuilder(
+				this.getSqlCountInadimplenciaClausulaSelect() + this.getSqlInadimplenciaClausulaFrom());	
 		
 		
 		HashMap<String,Object> params = new HashMap<String, Object>();
@@ -538,7 +546,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	
 	public Long obterTotalCotasInadimplencias(FiltroCotaInadimplenteDTO filtro) {
 		
-		StringBuilder sql = new StringBuilder(queryCountCotaInadimplencias);	
+		StringBuilder sql =
+			new StringBuilder(
+				this.getSqlCountCotasInadimplentesClausulaSelect() + this.getSqlInadimplenciaClausulaFrom());	
 		
 		
 		HashMap<String,Object> params = new HashMap<String, Object>();
@@ -557,7 +567,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@Override
 	public Double obterSomaDividas(FiltroCotaInadimplenteDTO filtro) {
 		
-		StringBuilder sql = new StringBuilder(querySumDividaCotas);	
+		StringBuilder sql =
+			new StringBuilder(
+				this.getSqlSumValorInadimplenciaClausulaSelect() + this.getSqlInadimplenciaClausulaFrom());	
 		
 		HashMap<String,Object> params = new HashMap<String, Object>();
 		
@@ -578,10 +590,20 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@Override
 	public Divida obterDividaPorIdConsolidado(Long idConsolidado) {
 		
-		Criteria criteria = this.getSession().createCriteria(Divida.class);
-		criteria.add(Restrictions.eq("consolidado.id", idConsolidado));
+		StringBuilder hql = new StringBuilder("select d ");
+		hql.append(" from Divida d ")
+		   .append(" join d.consolidado cons ")
+		   .append(" join d.cobranca cob ")
+		   .append(" where cons.id = :idConsolidado ")
+		   .append(" and cob.id not in ( ")
+		   .append("     select c.id ")
+		   .append("     from Negociacao neg")
+		   .append("     join neg.cobrancasOriginarias c) ");
 		
-		return (Divida) criteria.uniqueResult();
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idConsolidado", idConsolidado);
+		
+		return (Divida) query.uniqueResult();
 	}
 
 	@Override
@@ -806,6 +828,74 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	        query.setMaxResults(paginacao.getQtdResultadosPorPagina());
 	    }
 	    return query;
+	}
+	
+	private String getSqlInadimplenciaClausulaFrom() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" FROM DIVIDA AS DIVIDA_ ");
+		sql.append(" JOIN COTA AS COTA_ ON(COTA_.ID=DIVIDA_.COTA_ID) ");
+		sql.append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ");
+		sql.append(" JOIN COBRANCA AS COBRANCA_ ON(COBRANCA_.DIVIDA_ID=DIVIDA_.ID) ");
+		sql.append(" LEFT JOIN NEGOCIACAO_COBRANCA_ORIGINARIA AS NEGOCIACAO_COBRANCA_ORIGINARIA_ ");
+		sql.append(" ON (NEGOCIACAO_COBRANCA_ORIGINARIA_.COBRANCA_ID = COBRANCA_.ID) ");
+		sql.append(" LEFT JOIN NEGOCIACAO AS NEGOCIACAO_ ");
+		sql.append(" ON (NEGOCIACAO_COBRANCA_ORIGINARIA_.NEGOCIACAO_ID=NEGOCIACAO_.ID) ");
+		sql.append(" JOIN POLITICA_COBRANCA POLITICA_COBRANCA_ ON (POLITICA_COBRANCA_.PRINCIPAL IS TRUE) ");
+		
+		return sql.toString();
+	}
+	
+	private String getSqlInadimplenciaClausulaSelect() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT ");
+		sql.append(" CASE WHEN DIVIDA_.ACUMULADA=0 ");
+		sql.append(" THEN DIVIDA_.VALOR ");
+		sql.append(" ELSE (SELECT SUM(ACUMULADAS_.VALOR) FROM DIVIDA ACUMULADAS_ ");
+		sql.append(" where ACUMULADAS_.DIVIDA_RAIZ_ID = divida_.DIVIDA_RAIZ_ID ");
+		sql.append(" or ACUMULADAS_.id = DIVIDA_.DIVIDA_RAIZ_ID) ");
+		sql.append(" END as dividaAcumulada, ");
+		sql.append(" CASE WHEN COBRANCA_.DT_PAGAMENTO IS NULL ");
+		sql.append(" THEN DATEDIFF((select DATA_OPERACAO from DISTRIBUIDOR), COBRANCA_.DT_VENCIMENTO) ");
+		sql.append(" ELSE DATEDIFF(COBRANCA_.DT_PAGAMENTO, COBRANCA_.DT_VENCIMENTO) ");
+		sql.append(" END as diasAtraso, ");
+		sql.append(" DIVIDA_.ID as idDivida, ");
+		sql.append(" COTA_.ID AS idCota, ");
+		sql.append(" COBRANCA_.ID AS idCobranca, ");
+		sql.append(" NEGOCIACAO_.ID as idNegociacao, ");
+		sql.append(" NEGOCIACAO_.COMISSAO_PARA_SALDO_DIVIDA as comissaoSaldoDivida, ");
+		sql.append(" COTA_.NUMERO_COTA AS numCota, ");
+		sql.append(" COTA_.SITUACAO_CADASTRO as status, ");
+		sql.append(" CASE WHEN PESSOA_.NOME IS NOT NULL ");
+		sql.append(" THEN PESSOA_.NOME ");
+		sql.append(" ELSE PESSOA_.RAZAO_SOCIAL END AS nome, ");
+		sql.append(" (SELECT SUM(ESTOQUE.QTDE_RECEBIDA * PRODEDICAO.PRECO_CUSTO) AS TOTALPRODUTO ");
+		sql.append(" FROM ESTOQUE_PRODUTO_COTA ESTOQUE ");
+		sql.append(" JOIN PRODUTO_EDICAO PRODEDICAO ON (ESTOQUE.PRODUTO_EDICAO_ID=PRODEDICAO.ID) ");
+		sql.append(" WHERE ESTOQUE.COTA_ID=COTA_.ID) AS consignado, ");
+		sql.append(" COBRANCA_.DT_VENCIMENTO as dataVencimento, ");
+		sql.append(" COBRANCA_.DT_PAGAMENTO as dataPagamento, ");
+		sql.append(" DIVIDA_.STATUS as situacao ");
+		
+		return sql.toString();
+	}
+	
+	private String getSqlCountInadimplenciaClausulaSelect() {
+		
+		return " SELECT COUNT(*) ";
+	}
+	
+	private String getSqlCountCotasInadimplentesClausulaSelect() {
+		
+		return " SELECT COUNT(DISTINCT COTA_.ID) ";
+	}
+	
+	private String getSqlSumValorInadimplenciaClausulaSelect() {
+		
+		return " SELECT SUM(DIVIDA_.VALOR) ";
 	}
 	
 }

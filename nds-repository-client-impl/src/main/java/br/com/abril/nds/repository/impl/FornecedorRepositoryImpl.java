@@ -471,6 +471,21 @@ public class FornecedorRepositoryImpl extends
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Pessoa> obterFornecedorPorNome(String nomeFornecedor, Integer qtdMaxResult) {
+		
+		String hql = "select pessoa from Fornecedor fornecedor "
+				+ " join  fornecedor.juridica pessoa "
+				+ " where lower(pessoa.razaoSocial) like :nomeFornecedor ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("nomeFornecedor", "%" + nomeFornecedor.toLowerCase() + "%");
+		query.setMaxResults(qtdMaxResult);
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia) {
 		
 		String hql = "select pessoa from Fornecedor fornecedor "
@@ -482,5 +497,23 @@ public class FornecedorRepositoryImpl extends
 		query.setParameter("nomeFantasia", "%" + nomeFantasia.toLowerCase() + "%");
 		
 		return query.list();
+	}
+
+	/**
+	 * Obtem Fornecedor Padrao, utilizado para em Movimentos Financeiros sem definição de Distribuidor
+	 * @return Fornecedor
+	 */
+	@Override
+	public Fornecedor obterFornecedorPadrao() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select f from Fornecedor f ");
+
+	    hql.append(" where f.padrao = true ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		return (Fornecedor) query.uniqueResult();
 	}
 }

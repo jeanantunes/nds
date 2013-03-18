@@ -18,14 +18,12 @@
 		<authentication-provider ref="preauthAuthProvider" />		
 	</authentication-manager>
 
-	<bean id="webgateFilter"
-		class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+	<bean id="webgateFilter" class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
 		<property name="principalRequestHeader" value="SM_USER" />
 		<property name="authenticationManager" ref="authenticationManager" />
 	</bean>
 
-	<bean id="preauthAuthProvider"
-		class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+	<bean id="preauthAuthProvider"	class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
 		<property name="preAuthenticatedUserDetailsService">
 			<bean id="userDetailsServiceWrapper"
 				class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">

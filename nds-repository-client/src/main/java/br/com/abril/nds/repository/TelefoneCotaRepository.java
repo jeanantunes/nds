@@ -23,4 +23,6 @@ public interface TelefoneCotaRepository extends Repository<TelefoneCota, Long> {
 	 * @return
 	 */
 	public abstract TelefoneCota obterTelefonePrincipal(long idCota);
+
+	Long obterQtdTelefoneAssociadoCota(Long idCota);
 }

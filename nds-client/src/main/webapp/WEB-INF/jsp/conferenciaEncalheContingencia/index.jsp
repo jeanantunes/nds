@@ -5,8 +5,6 @@
 	<title>Conferencia Encalhe Contingência</title>
 
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
-
-	<script type="text/javascript" src='<c:url value="/"/>/scripts/shortcut.js'></script>
 	
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/scriptConferenciaEncalheCont.js'></script>
 	
@@ -28,12 +26,24 @@
 	</jsp:include>
 
 	<jsp:include page="dialogs.jsp" />
-		<div class="areaBts">
-			<div class="area">
-				<br />
+		<div class="areaBts" style="height:38px">
+			<div class="area" style="width:auto">
+						
+				<fieldset class="classFieldset" style="height:25px">
+					<table width="950" height="20" border="0" cellpadding="1" cellspacing="1">
+						<tr>
+							<td width="126">&nbsp;</td>
+							<td width="330">&nbsp;</td>
+							<td width="63" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
+							<td width="93" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
+							<td width="120" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
+							<td width="62" bgcolor="#F8F8F8"><strong>F8</strong>-Salvar</td>
+							<td width="137" bgcolor="#F8F8F8"><strong>F9</strong>-Finalizar Conferência</td>
+						</tr>
+					</table>
+				</fieldset>
 			</div>
 		</div>
-		<div class="linha_separa_fields">&nbsp;</div>
 		<fieldset class="fieldFiltro">
 			<legend> Pesquisar Encalhe </legend>
 			<table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
@@ -48,25 +58,52 @@
 					<td colspan="2"><span class="dadosFiltro" id="nomeCota"/></td>
 					<td width="44"><span class="dadosFiltro">Status:</span></td>
 					<td width="91"><span class="dadosFiltro" id="statusCota"/></td>
-					<td width="144"><span class="dadosFiltro">Valor CE Jornaleiro R$:</span></td>
-					<td width="100">
+					
+					<td width="144">
+					
 						<span class="dadosFiltro">
-							<input type="text" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+						
+							<c:choose>
+								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
+									Valor CE Jornaleiro R$:
+								</c:when>
+								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
+									Qtde CE Jornaleiro:
+								</c:when>
+							</c:choose>
+													
 						</span>
+					
 					</td>
+					
+					<td width="100">
+					
+						<span class="dadosFiltro">
+						
+							<c:choose>
+								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
+							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+								</c:when>
+								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
+							<input type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
+								</c:when>
+							</c:choose>
+						
+						</span>
+					
+					</td>
+					
 				</tr>
 			</table>
 		</fieldset>
 	
-		<div class="linha_separa_fields">&nbsp;</div>
-	
-		<div class="grids" style="display: noneA;">
+		<div class="grids">
 			<fieldset class="fieldGrid">
 			<legend>Encalhes Cadastrados</legend>
 			
 				<table class="conferenciaEncalheContGrid"></table>
 				
-				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;">
+				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;" id="divEncalhesCadastrados">
 					<table class="conferenciaEncalheGrid" style="width: 941px;" id="dadosGridConferenciaEncalheContingencia">
 						<tr class="header_table">
 							<td style="width: 70px; text-align: left;">Código</td>
@@ -75,9 +112,10 @@
 							<td style="width: 80px; text-align: center;">Recolhimento</td>
 							<td style="width: 80px; text-align: right;">Preço Capa R$</td>
 							<td style="width: 70px; text-align: right;">Desconto R$</td>
+							<td style="width: 70px; text-align: center;">Reparte</td>
 							<td style="width: 100px; text-align: center;">Exemplares</td>
 							<td style="width: 100px; text-align: right;">Total R$</td>
-							<td style="width: 70px; text-align: center;">Juramentada</td>
+							<td style="width: 70px; text-align: center;" id="colunaJuramentada">Juramentada</td>
 						</tr>
 					</table>
 				</div>
@@ -103,22 +141,21 @@
 					</tr>
 				</table>
 			</fieldset>
+			
+			<div class="linha_separa_fields">&nbsp;</div>
+		
+			<fieldset class="classFieldset">
+				<table width="950" height="32" border="0" cellpadding="1" cellspacing="1">
+					<tr>
+						<td width="380">&nbsp;</td>
+						<td width="120" align="center" style="float:left"><strong>Data de Operação:</strong></td>
+						<td width="70" style="float:left">${dataOperacao}</td>
+						<td width="128" style="float:left"><strong>Total de devolução:</strong></td>
+						<td width="62" style="float:left"><span id="totalExemplaresFooter"></span></td>
+					</tr>
+				</table>
+			</fieldset>
+				
 		</div>
 	
-		<div class="linha_separa_fields">&nbsp;</div>
-	
-		<fieldset class="classFieldset">
-			<table width="950" height="32" border="0" cellpadding="1" cellspacing="1">
-				<tr>
-					<td width="126">&nbsp;</td>
-					<td width="330">&nbsp;</td>
-					<td width="63" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
-					<td width="93" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
-					<td width="120" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
-					<td width="137" bgcolor="#F8F8F8"><strong>F8</strong>-Finalizar Conferência</td>
-					<td width="62" bgcolor="#F8F8F8"><strong>F9</strong>-Salvar</td>
-				</tr>
-			</table>
-		</fieldset>
-
 </body>

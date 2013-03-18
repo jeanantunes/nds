@@ -92,7 +92,7 @@ var cotaAusenteController = $.extend(true, {
 			dataType : 'json',
 			colModel : [{
 				display : 'Código',
-				name : 'codigoProdutoEdicao',
+				name : 'codigoProduto',
 				width : 100,
 				sortable : false,
 				align : 'left' 
@@ -225,10 +225,10 @@ var cotaAusenteController = $.extend(true, {
 	popupConfirmaAusenciaCota : function(cotas) {
 		
 		cotaAusenteController.numCotasAusente = cotas;
-		
+			
 		var parametros = [];
 		
-		$.each(cotas, function(index, num) {			
+		$.each(cotas, function(index, num) {	
 			parametros.push({name:'numCotas['+ index +']', value: num});
 	  	});
 		
@@ -257,7 +257,29 @@ var cotaAusenteController = $.extend(true, {
 					
 					$.postJSON(contextPath + "/cotaAusente/carregarDadosRateio", 
 							parametros, 
-							cotaAusenteController.popupRateio);
+							function(result) {
+								
+								if (result == null) {
+									
+									return;
+								}
+						
+								var status = result[1];
+								
+								if (status == "WARNING") {
+									
+									var mensagens = result[0];
+									
+									exibirMensagemDialog(status, mensagens);
+									
+									cotaAusenteController.popupNovaCotaAusente(true);
+									
+								} else {
+									
+									cotaAusenteController.popupRateio(result);
+								}
+							}
+					);
 					
 					$( "#dialog-confirm", cotaAusenteController.workspace ).dialog("close");
 				}				
@@ -307,12 +329,14 @@ var cotaAusenteController = $.extend(true, {
 		
 		$.each(movimentos, function(index, movimento) {
 			var novaLinha = $(document.createElement("TR"));
+			novaLinha.attr('name', 'linhaMovimentos');
 			
 			var codigo = document.createElement("TD");
 			var produto = document.createElement("TD");
 			var edicao = document.createElement("TD");
 			var reparte = document.createElement("TD");
 			var botao = document.createElement("TD");
+			reparte.setAttribute('name', 'reparteMovimento'); 
 			botao.setAttribute('align','center');
 					
 			codigo.innerHTML = movimento.codigoProd;
@@ -586,30 +610,28 @@ var cotaAusenteController = $.extend(true, {
 		var num = $('#idNumCotaOrigem' + atual).val();
 		var nome = $('#idNomeCotaOrigem' + atual).val();
 		
-		var isNew = atual.length === 0;
+		var isNew = atual.length == 0;
 		
-		var nomePreenchido = nome.length != 0;
+		var isEdicao = nome.length != 0;
 		
-		if( nomePreenchido ) {
+		if( isEdicao ) {
 			
-			$("#idLinhaCota" + atual).remove();
-			
-			var cotaJaExiste = $( "#idLinhaCota" + num ).length>0;
+			var cotaJaExiste = $( "#idLinhaCota" + num ).length > 0;
 			
 			if( cotaJaExiste ) {				
 				exibirMensagemDialog("WARNING",["Cota já foi selecionada."]);
 				$('#idNumCotaOrigem' + atual).val('');
 				$('#idNomeCotaOrigem' + atual).val('');
+				return;
 			}
 			
-			cotaAusenteController.gerarLinhaCota(num,nome);
+			$("#idLinhaCota" + atual).before(cotaAusenteController.getNovaLinhaCota(num, nome));
 			
-			var existeNovo = $( '#idNumCotaOrigem').length > 0;
+			$("#idLinhaCota" + atual).remove();
 			
-			if ( existeNovo)
-				$( '#idNumCotaOrigem').focus();
-			else 			
-				cotaAusenteController.gerarLinhaCota('','');
+			$( '#idLinhaCota').remove();
+			
+			cotaAusenteController.gerarLinhaCota('','');
 						
 		} else {
 			
@@ -735,7 +757,7 @@ var cotaAusenteController = $.extend(true, {
 		cotaAusenteController.gerarMovimentos(movimentos);
 		
 		var parametros = [];
-		
+	
 		$.each(cotaAusenteController.numCotasAusente, function(index, num) {			
 			parametros.push({name:'numCotas['+ index +']', value: num});
 	  	});
@@ -746,19 +768,9 @@ var cotaAusenteController = $.extend(true, {
 			width:800,
 			modal: true,
 			buttons: {
-				"Suplementar": function() {
-					$.postJSON(contextPath + "/cotaAusente/enviarParaSuplementar", 
-							parametros, 
-							function(result){
-								$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog("close");
-								if(result[1]!='SUCCESS')
-									cotaAusenteController.popupNovaCotaAusente(true);
-								
-								cotaAusenteController.retornoEnvioSuplementar(result);
-									
-							}, null);	
-				},
-				"Redistribuir": function() {
+
+				"Confirmar": function() {
+
 					var qtdeProdutoSeleciodo =  $("input[name='checkgroup']:checked ").length;
 					
 					if(qtdeProdutoSeleciodo === 0) {
@@ -766,31 +778,154 @@ var cotaAusenteController = $.extend(true, {
 						return;
 					} else if(qtdeProdutoSeleciodo > 1) {
 						
-						if( !cotaAusenteController.atualizarRateiosProdutos() )
+						if( !cotaAusenteController.atualizarRateiosProdutos())
 							return;
 					}
 					
-					var parametros = cotaAusenteController.getParametrosFromMovimentos();
-					
-					if(!parametros) {
+					if (!cotaAusenteController.verificarRedistribuicaoReparte()) {
 						return;
 					}
 					
-					$.postJSON(contextPath + "/cotaAusente/realizarRateio", 
-							parametros,
-							cotaAusenteController.retornoRateio);
+					cotaAusenteController.realizarRateio();
+				},				
+				"Cancelar" : function() {
 					
-					$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
+					cotaAusenteController.popupConfirmaCancelamentoRedistribuicao();
 				}
 			},form: $( "#dialog-suplementar", cotaAusenteController.workspace ).parents("form")
 		});
 	},
+	
+	realizarRateio: function() {
+	
+		var parametros = cotaAusenteController.getParametrosFromMovimentos();
+		
+		if(!parametros) {
+			return;
+		}
 
+		$.postJSON(contextPath + "/cotaAusente/realizarRateio", 
+		    parametros,
+		    function(result) {
+				cotaAusenteController.retornoRateio(result);
+				$(".ausentesGrid", cotaAusenteController.workspace).flexReload();
+				$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
+		    }
+		);
+	},
+	
+	
+	verificarRedistribuicaoReparte: function() {
+	
+		var reparteTotal = 0;
+		var reparteSelecionado = 0;
+		var reparteNaoSelecionado = 0;
+		
+		var qtMovimentos = $("tr[name='linhaMovimentos']", cotaAusenteController.workspace).length;
+		var qtdeProdutosSelecionados =  $("input[name='checkgroup']:checked ").length;
+
+		$("tr[name='linhaMovimentos']", cotaAusenteController.workspace).each(
+				
+			function(index, value) {
+
+				var reparte = $(value).children("[name='reparteMovimento']");
+
+				reparteTotal += intValue($(reparte).html()); 
+
+				if ($(value).children("td").children("input[type='checkbox']").attr('checked') == 'checked') {
+					
+					reparteSelecionado += intValue($(reparte).html());
+				
+				} else if (qtMovimentos > 1) {
+					
+					reparteNaoSelecionado += intValue($(reparte).html());
+					
+				} else {
+				
+					reparteNaoSelecionado = intValue($(reparte).html()) - intValue($("#qtdeTotal").html());
+				}
+			}
+		);
+
+		if (qtdeProdutosSelecionados == 1) {
+		
+			reparteNaoSelecionado = reparteTotal - intValue($("#qtdeTotal").html());
+			
+			reparteSelecionado = intValue($("#qtdeTotal").html());
+		}
+		
+		if (reparteSelecionado == reparteTotal) {
+		
+			return true;
+		}
+
+		var mensagem = "O(s) " + reparteNaoSelecionado + " item(ns), não redistribuidos, "
+					 + "serão direcionados ao estoque suplementar. Deseja continuar?";
+		
+		cotaAusenteController.openDialogConfirmarRedistribuicao(mensagem);
+		
+		return false;
+	},
+	
+	openDialogConfirmarRedistribuicao: function(mensagem) {
+
+		$("#dialog-confirmar-redistribuicao p", cotaAusenteController.workspace ).html(mensagem);
+
+		$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			buttons: {
+				
+				"Confirmar": function() {
+			
+					$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+					
+					cotaAusenteController.realizarRateio();
+				},					
+				"Cancelar": function() {
+
+					$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+				}
+
+			}, form: $("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).parents("form") 
+		});
+	},
+	
+	popupConfirmaCancelamentoRedistribuicao: function() {
+		
+		$("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			buttons: {
+				
+				"Confirmar": function() {
+			
+					$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
+					$("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+				},					
+				"Cancelar": function() {
+
+					$("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+				}
+
+			}, form: $("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).parents("form") 
+		});
+	},
+	
 	getParametrosFromMovimentos : function() {
 		
 		var parametros = [];
 		
 		$.each(cotaAusenteController.mov, function(index, movimento) {
+			
+			if ($("input[name='checkgroup'][indice='" + index + "']:checked").size() == 0) {
+				
+				return;
+			}
 			
 			parametros.push({name:'movimentos['+ index +'].idCota', value: movimento.idCota});
 			parametros.push({name:'movimentos['+ index +'].idProdEd', value: movimento.idProdEd});
@@ -799,7 +934,7 @@ var cotaAusenteController = $.extend(true, {
 			parametros.push({name:'movimentos['+ index +'].nomeProd', value: movimento.nomeProd});
 			parametros.push({name:'movimentos['+ index +'].qtdeReparte', value: movimento.qtdeReparte});
 			
-			if(movimento.rateios) {
+			if (movimento.rateios) {
 							
 				$.each(movimento.rateios, function(indexR, rateio) {
 					parametros.push({name:'movimentos['+ index +'].rateios['+ indexR +'].numCota', value: rateio.numCota});

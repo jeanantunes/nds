@@ -27,7 +27,6 @@ import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
@@ -179,10 +178,8 @@ public class BoletoServiceImpl implements BoletoService {
 		resumoBaixaBoletos.setQuantidadeBaixadosComDivergencia(
 			this.boletoRepository.obterQuantidadeBoletosBaixadosComDivergencia(data).intValue());
 		
-		Date dataVencimento = calendarioService.subtrairDiasUteis(data, 1);
-		
 		resumoBaixaBoletos.setQuantidadeInadimplentes(
-			this.boletoRepository.obterQuantidadeBoletosInadimplentes(dataVencimento).intValue());
+			this.boletoRepository.obterQuantidadeBoletosInadimplentes(data).intValue());
 		
 		resumoBaixaBoletos.setValorTotalBancario(
 			this.boletoRepository.obterValorTotalBancario(data));
@@ -201,17 +198,9 @@ public class BoletoServiceImpl implements BoletoService {
 	@Override
 	@Transactional
 	public void baixarBoletosAutomatico(ArquivoPagamentoBancoDTO arquivoPagamento,
-							  			BigDecimal valorFinanceiro, Usuario usuario) {
+							  			BigDecimal valorFinanceiro, Usuario usuario, Date dataPagamento) {
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		if (distribuidor == null) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING, 
-					"Parâmetros do distribuidor não encontrados!");
-		}
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
 		Banco banco = this.bancoRepository.obterBanco(arquivoPagamento.getCodigoBanco(),
 													  arquivoPagamento.getNumeroAgencia(),
@@ -224,13 +213,13 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 		
 		ControleBaixaBancaria controleBaixa =
-			this.controleBaixaRepository.obterControleBaixaBancaria(dataOperacao, banco);
+			this.controleBaixaRepository.obterControleBaixaBancaria(dataPagamento, banco);
 		
 		if (controleBaixa != null
 				&& controleBaixa.getStatus().equals(StatusControle.CONCLUIDO_SUCESSO)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, 
-				"Já foi realizada baixa automática na data de operação atual para o banco " + banco.getNome() + "!");
+				"Já foi realizada baixa automática para a data de pagamento informada e banco " + banco.getNome() + "!");
 		}
 		
 		if (valorFinanceiro == null || arquivoPagamento.getSomaPagamentos() == null
@@ -242,7 +231,7 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 				
 		this.controleBaixaService.alterarControleBaixa(StatusControle.INICIADO,
-												  	   dataOperacao, usuario, banco);
+												  	   dataOperacao, dataPagamento, usuario, banco);
 		
 		ResumoBaixaBoletosDTO resumoBaixaBoletos = new ResumoBaixaBoletosDTO();
 		
@@ -255,16 +244,17 @@ public class BoletoServiceImpl implements BoletoService {
 				
 					this.baixarBoleto(TipoBaixaCobranca.AUTOMATICA, pagamento, usuario,
 								 	  arquivoPagamento.getNomeArquivo(),
-								 	  distribuidor, dataNovoMovimento, resumoBaixaBoletos, banco);
+								 	  dataNovoMovimento, resumoBaixaBoletos, banco,
+								 	  dataPagamento);
 				}
 				
 				this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_SUCESSO,
-						  								  	   dataOperacao, usuario, banco);
+						  								  	   dataOperacao, dataPagamento, usuario, banco);
 				
 			} else {
 				
 				this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
-															   dataOperacao, usuario, banco);
+															   dataOperacao, dataPagamento, usuario, banco);
 			}
 			
 			resumoBaixaBoletos.setNomeArquivo(arquivoPagamento.getNomeArquivo());
@@ -274,7 +264,7 @@ public class BoletoServiceImpl implements BoletoService {
 		} catch (Exception e) {
 			
 			this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
-														   dataOperacao, usuario, banco);
+														   dataOperacao, dataPagamento, usuario, banco);
 			
 			if (e instanceof ValidacaoException) {
 				
@@ -291,19 +281,27 @@ public class BoletoServiceImpl implements BoletoService {
 	@Override
 	@Transactional
 	public void baixarBoleto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento, Usuario usuario,
-							 String nomeArquivo, Distribuidor distribuidor,
-							 Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+							 String nomeArquivo,
+							 Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos,
+							 Banco banco, Date dataPagamento) {
 		
-		Boleto boleto = gerarBaixaBoleto(tipoBaixaCobranca, pagamento, usuario, nomeArquivo, distribuidor, dataNovoMovimento, resumoBaixaBoletos, banco);
+		Boleto boleto = this.gerarBaixaBoleto(
+			tipoBaixaCobranca, pagamento, usuario, nomeArquivo, 
+			this.distribuidorRepository.obterDataOperacaoDistribuidor(),
+			dataNovoMovimento, resumoBaixaBoletos, banco, dataPagamento);
 	
-		boleto.setTipoBaixa(tipoBaixaCobranca);
+		if (boleto != null) {
 		
-		boletoRepository.merge(boleto);
+			boleto.setTipoBaixa(tipoBaixaCobranca);
+			
+			boletoRepository.merge(boleto);
+		}
 	}
 	
 	private Boleto gerarBaixaBoleto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento, Usuario usuario,
-							 String nomeArquivo, Distribuidor distribuidor,
-							 Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+							 String nomeArquivo, Date dataOperacao,
+							 Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos,
+							 Banco banco, Date dataPagamento) {
 		
 		if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
@@ -313,8 +311,6 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			validarDadosEntradaBaixaManual(pagamento);
 		}
-		
-		Date dataOperacao = distribuidor.getDataOperacao();
 		
 		Boleto boleto = null;
 		
@@ -333,7 +329,7 @@ public class BoletoServiceImpl implements BoletoService {
 			if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
 				baixarBoletoNaoEncontrado(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
-										  dataOperacao, boleto, resumoBaixaBoletos, banco);
+										  dataOperacao, boleto, resumoBaixaBoletos, banco, dataPagamento);
 				
 			} else {
 				
@@ -349,7 +345,7 @@ public class BoletoServiceImpl implements BoletoService {
 			if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
 				baixarBoletoJaPago(tipoBaixaCobranca, pagamento, usuario, nomeArquivo, dataNovoMovimento,
-								   dataOperacao, boleto, resumoBaixaBoletos, banco);
+								   dataOperacao, boleto, resumoBaixaBoletos, banco, dataPagamento);
 			
 			} else {
 				
@@ -361,7 +357,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(boleto.getDataVencimento(), 0);
 		
-		Date dataPagamento = DateUtil.removerTimestamp(pagamento.getDataPagamento());
+		dataPagamento = DateUtil.removerTimestamp(dataPagamento);
 		
 		// Boleto vencido
 		if (dataVencimentoUtil.compareTo(dataPagamento) < 0) {
@@ -369,14 +365,14 @@ public class BoletoServiceImpl implements BoletoService {
 			if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
 				baixarBoletoVencidoAutomatico(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
-											  distribuidor, dataNovoMovimento,
-											  dataOperacao, boleto, resumoBaixaBoletos, banco);
+											  dataNovoMovimento, dataOperacao,
+											  boleto, resumoBaixaBoletos, banco, dataPagamento);
 			
 			} else {
 				
 				baixarBoletoVencidoManual(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
-										  distribuidor, dataNovoMovimento,
-										  dataOperacao, boleto, resumoBaixaBoletos, banco);
+										  dataNovoMovimento, dataOperacao,
+										  boleto, resumoBaixaBoletos, banco, dataPagamento);
 			}
 			
 			return boleto;
@@ -386,7 +382,7 @@ public class BoletoServiceImpl implements BoletoService {
 		if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == 0) {
 			
 			baixarBoletoValorCorreto(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
-									 dataOperacao, boleto, resumoBaixaBoletos, banco);
+									 dataOperacao, boleto, resumoBaixaBoletos, banco, dataPagamento);
 			
 			return boleto;
 			
@@ -395,8 +391,9 @@ public class BoletoServiceImpl implements BoletoService {
 			if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
 				// Boleto pago com valor acima
-				baixarBoletoValorAcima(tipoBaixaCobranca, pagamento, usuario, nomeArquivo, distribuidor,
-									   dataNovoMovimento, dataOperacao, boleto, resumoBaixaBoletos, banco);
+				baixarBoletoValorAcima(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
+									   dataNovoMovimento, dataOperacao, boleto, resumoBaixaBoletos,
+									   banco, dataPagamento);
 			
 			} else {
 				
@@ -410,8 +407,9 @@ public class BoletoServiceImpl implements BoletoService {
 			if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
 				// Boleto pago com valor abaixo
-				baixarBoletoValorAbaixo(tipoBaixaCobranca, pagamento, usuario, nomeArquivo, distribuidor,
-										dataNovoMovimento, dataOperacao, boleto, resumoBaixaBoletos, banco);
+				baixarBoletoValorAbaixo(tipoBaixaCobranca, pagamento, usuario, nomeArquivo,
+										dataNovoMovimento, dataOperacao, boleto, resumoBaixaBoletos,
+										banco, dataPagamento);
 			
 			} else {
 				
@@ -424,7 +422,8 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	private void baixarBoletoNaoEncontrado(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
 										   Usuario usuario, String nomeArquivo, Date dataOperacao,
-										   Boleto boleto, ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+										   Boleto boleto, ResumoBaixaBoletosDTO resumoBaixaBoletos,
+										   Banco banco, Date dataPagamento) {
 		
 		/*
 		 * Gera baixa com status de pago, porém o nosso número
@@ -433,13 +432,13 @@ public class BoletoServiceImpl implements BoletoService {
 		 */
 		
 		gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO, boleto,
-						   dataOperacao, nomeArquivo, pagamento, usuario, banco);
+						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 	}
 	
 	private void baixarBoletoJaPago(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
 									Usuario usuario, String nomeArquivo, Date dataNovoMovimento,
-									Date dataOperacao, Boleto boleto,
-									ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+									Date dataOperacao, Boleto boleto, ResumoBaixaBoletosDTO resumoBaixaBoletos,
+									Banco banco, Date dataPagamento) {
 		
 		/*
 		 * Não baixa o boleto, gera baixa com status de boleto pago anteriormente
@@ -449,7 +448,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BaixaCobranca baixaCobranca =
 			gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA, boleto,
-							   dataOperacao, nomeArquivo, pagamento, usuario, banco);
+							   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 
 		movimentoFinanceiroCotaService
 			.gerarMovimentosFinanceirosDebitoCredito(
@@ -462,9 +461,10 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	private void baixarBoletoVencidoAutomatico(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
 									 		   Usuario usuario, String nomeArquivo,
-									 		   Distribuidor distribuidor, Date dataNovoMovimento,
+									 		   Date dataNovoMovimento,
 									 		   Date dataOperacao, Boleto boleto,
-									 		   ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+									 		   ResumoBaixaBoletosDTO resumoBaixaBoletos,
+									 		   Banco banco, Date dataPagamento) {
 		
 		BaixaCobranca baixaCobranca = null;
 		
@@ -474,10 +474,10 @@ public class BoletoServiceImpl implements BoletoService {
 		 * 
 		 */
 		
-		if (distribuidor.getAceitaBaixaPagamentoVencido() == null || !distribuidor.getAceitaBaixaPagamentoVencido()) {
+		if (!this.distribuidorRepository.aceitaBaixaPagamentoVencido()) {
 			
 			baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA, boleto,
-								 			   dataOperacao, nomeArquivo, pagamento, usuario, banco);
+								 			   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 			
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
@@ -498,7 +498,7 @@ public class BoletoServiceImpl implements BoletoService {
 		 */
 		
 		baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_DATA, boleto,
-							 			   dataOperacao, nomeArquivo, pagamento, usuario, banco);
+							 			   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 
 		efetivarBaixaCobranca(boleto, dataOperacao);
 		
@@ -519,7 +519,7 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 		
 		BigDecimal valorMultaCalculado = 
-				cobrancaService.calcularMulta(null, boleto.getCota(), distribuidor,
+				cobrancaService.calcularMulta(null, boleto.getCota(),
 											  boleto.getValor());
 		
 		if (valorMultaCalculado.compareTo(BigDecimal.ZERO) == 1) {
@@ -563,9 +563,10 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	private void baixarBoletoVencidoManual(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
 								 		   Usuario usuario, String nomeArquivo,
-								 		   Distribuidor distribuidor, Date dataNovoMovimento,
+								 		   Date dataNovoMovimento,
 								 		   Date dataOperacao, Boleto boleto,
-								 		   ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+								 		   ResumoBaixaBoletosDTO resumoBaixaBoletos,
+								 		   Banco banco, Date dataPagamento) {
 		
 		/*
 		 * Baixa o boleto, calcula o valor pago considerando multas, juros e desconto, 
@@ -574,27 +575,29 @@ public class BoletoServiceImpl implements BoletoService {
 		 */
 		
 		gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_DATA, boleto,
-						   dataOperacao, nomeArquivo, pagamento, usuario, banco);
+						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 
 		efetivarBaixaCobranca(boleto, dataOperacao);
 	}
 	
 	private void baixarBoletoValorCorreto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
 										  Usuario usuario, String nomeArquivo, Date dataOperacao,
-										  Boleto boleto, ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+										  Boleto boleto, ResumoBaixaBoletosDTO resumoBaixaBoletos,
+										  Banco banco, Date dataPagamento) {
 		
 		// Baixa o boleto o gera baixa com status de pago
 		
 		gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO, boleto, dataOperacao,
-						   nomeArquivo, pagamento, usuario, banco);
+						   nomeArquivo, pagamento, usuario, banco, dataPagamento);
 		
 		efetivarBaixaCobranca(boleto, dataOperacao);
 	}
 	
 	private void baixarBoletoValorAcima(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
-										Usuario usuario, String nomeArquivo, Distribuidor distribuidor,
+										Usuario usuario, String nomeArquivo,
 										Date dataNovoMovimento, Date dataOperacao, Boleto boleto,
-			 							ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+			 							ResumoBaixaBoletosDTO resumoBaixaBoletos,
+			 							Banco banco, Date dataPagamento) {
 		
 		/*
 		 * Verifica o parâmetro para pagamento a maior, não baixa o boleto, gera baixa
@@ -605,10 +608,10 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 		
-			if (distribuidor.getAceitaBaixaPagamentoMaior() == null || !distribuidor.getAceitaBaixaPagamentoMaior()) {
+			if (!this.distribuidorRepository.aceitaBaixaPagamentoMaior()) {
 				
 				baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, boleto,
-		 				   						   dataOperacao, nomeArquivo, pagamento, usuario, banco);
+		 				   						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 	
 				movimentoFinanceiroCotaService
 					.gerarMovimentosFinanceirosDebitoCredito(
@@ -629,7 +632,7 @@ public class BoletoServiceImpl implements BoletoService {
 		 */
 		
 		baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_VALOR, boleto,
-										   dataOperacao, nomeArquivo, pagamento, usuario, banco);
+										   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 		
 		efetivarBaixaCobranca(boleto, dataOperacao);
 		
@@ -645,9 +648,10 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 	
 	private void baixarBoletoValorAbaixo(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
-										 Usuario usuario, String nomeArquivo, Distribuidor distribuidor,
+										 Usuario usuario, String nomeArquivo,
 										 Date dataNovoMovimento, Date dataOperacao, Boleto boleto,
-										 ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco) {
+										 ResumoBaixaBoletosDTO resumoBaixaBoletos, Banco banco,
+										 Date dataPagamento) {
 		
 		BaixaCobranca baixaCobranca = null;
 		
@@ -657,10 +661,10 @@ public class BoletoServiceImpl implements BoletoService {
 		 * 
 		 */
 		
-		if (distribuidor.getAceitaBaixaPagamentoMenor() == null || !distribuidor.getAceitaBaixaPagamentoMenor()) {
+		if (!this.distribuidorRepository.aceitaBaixaPagamentoMenor()) {
 			
 			baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, boleto,
-					   						   dataOperacao, nomeArquivo, pagamento, usuario, banco);
+					   						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
@@ -680,7 +684,7 @@ public class BoletoServiceImpl implements BoletoService {
 		 */
 
 		baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_VALOR, boleto,
- 				   						   dataOperacao, nomeArquivo, pagamento, usuario, banco);
+ 				   						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 		
 		efetivarBaixaCobranca(boleto, dataOperacao);
 		
@@ -762,13 +766,14 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	private BaixaCobranca gerarBaixaCobranca(TipoBaixaCobranca tipoBaixaCobranca, StatusBaixa statusBaixa,
 											 Boleto boleto, Date dataBaixa, String nomeArquivo,
-									  		 PagamentoDTO pagamento, Usuario usuario, Banco banco) {
+									  		 PagamentoDTO pagamento, Usuario usuario, Banco banco, Date dataPagamento) {
 		
 		if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
 			BaixaAutomatica baixaAutomatica = new BaixaAutomatica();
 			
 			baixaAutomatica.setDataBaixa(dataBaixa);
+			baixaAutomatica.setDataPagamento(dataPagamento);
 			baixaAutomatica.setValorPago(pagamento.getValorPagamento());
 			baixaAutomatica.setCobranca(boleto);
 			
@@ -815,6 +820,7 @@ public class BoletoServiceImpl implements BoletoService {
 			BaixaManual baixaManual = new BaixaManual();
 			
 			baixaManual.setDataBaixa(dataBaixa);
+			baixaManual.setDataPagamento(dataPagamento);
 			baixaManual.setValorPago(valorCalculadoPagamento);
 			baixaManual.setCobranca(boleto);
 			
@@ -878,7 +884,7 @@ public class BoletoServiceImpl implements BoletoService {
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
-		Pessoa pessoaCedente = distribuidorRepository.obter().getJuridica(); 
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
 		Pessoa pessoaSacado = boleto.getCota().getPessoa();
 		
 		Endereco endereco = null;
@@ -917,7 +923,7 @@ public class BoletoServiceImpl implements BoletoService {
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
-		Pessoa pessoaCedente = distribuidorRepository.obter().getJuridica(); 
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica();
 		Pessoa pessoaSacado = boleto.getFornecedor().getJuridica();
 		
 		Endereco endereco = null;
@@ -989,6 +995,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		
 		//DADOS DO CEDENTE
+		corpoBoleto.setCodigoCedente(Integer.valueOf(banco.getCodigoCedente()));
 		corpoBoleto.setCedenteNome(nomeCedente);         
 		corpoBoleto.setCedenteDocumento(documentoCedente);
 
@@ -1062,7 +1069,9 @@ public class BoletoServiceImpl implements BoletoService {
         	corpoBoleto.setContaTipoDeCobranca(FormaCobrancaBoleto.SEM_REGISTRO.name());
         }
         
-        corpoBoleto.setContaAgencia(banco.getAgencia().intValue());    
+        corpoBoleto.setContaAgencia(banco.getAgencia().intValue());
+        corpoBoleto.setDigitoAgencia(banco.getDvAgencia());    
+        
         corpoBoleto.setContaNumero(Integer.parseInt(contaNumero));   
         
          
@@ -1142,14 +1151,14 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			String[] destinatarios = new String[]{boleto.getCota().getPessoa().getEmail()};
 						
-			Distribuidor distribuidor = this.distribuidorRepository.obter();
+			String assunto = this.distribuidorRepository.assuntoEmailCobranca();
+			String mensagem = this.distribuidorRepository.mensagemEmailCobranca();
 			
-			String assunto=(distribuidor.getAssuntoEmailCobranca()!=null?distribuidor.getAssuntoEmailCobranca():"");
-			String mensagem=(distribuidor.getMensagemEmailCobranca()!=null?distribuidor.getMensagemEmailCobranca():"");
-			email.enviar(assunto, 
-					     mensagem, 
+			email.enviar(assunto == null ? "" : assunto, 
+					     mensagem == null ? "" : mensagem, 
 					     destinatarios, 
-					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF));
+					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF),
+					     true);
 		} catch(ValidacaoException e){
 			throw e;
 		}catch(Exception e){
@@ -1331,11 +1340,6 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Uma data deve ser informada para a pesquisa.");
 		}
-		
-		if (filtro.getDataVencimento() == null) {
-	
-			throw new ValidacaoException(TipoMensagem.WARNING, "A data de vencimento deve ser informada.");
-		}
 	}
 	
 	@Override
@@ -1370,7 +1374,7 @@ public class BoletoServiceImpl implements BoletoService {
 	@Transactional(readOnly = true)
 	public Long obterQuantidadeBoletosInadimplentes(FiltroDetalheBaixaBoletoDTO filtro) {
 
-		return this.boletoRepository.obterQuantidadeBoletosInadimplentes(filtro.getDataVencimento());
+		return this.boletoRepository.obterQuantidadeBoletosInadimplentes(filtro.getData());
 	}
 	
 	@Override

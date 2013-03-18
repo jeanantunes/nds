@@ -2,7 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
-public class ProdutoMapaCotaDTO implements Serializable{
+public class ProdutoMapaCotaDTO implements  Serializable{
 
 	private static final long serialVersionUID = -203864073274071280L;
 

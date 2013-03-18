@@ -2,6 +2,7 @@ var messageTimeout;
 var messageDialogTimeout;
 
 $(document).ready(function(){
+	
 	jQuery(":input[maxlength]").keyup(function () {
 	    var focus = jQuery(this);
 	    var valFocus;
@@ -26,6 +27,58 @@ $(document).ready(function(){
 	        });
 	    }
 	});
+	
+	$(document.body).keydown(function(e) {
+		var eventoJs= e;
+		var keycode = e.which;
+		if (window.event) {
+			eventoJs = window.event;
+			keycode = eventoJs.keyCode;
+		}
+		
+		if (keycode == 32 && ($("#effectWarning").css("display") == "block" || $("#effectError").css("display") == "block"
+				|| $("#effectSuccess").css("display") == "block")) {
+			esconde(false, $('#effectWarning'));
+			esconde(false, $('#effectError'));
+			esconde(false, $('#effectSuccess'));
+
+			focusFirstContentView(this);
+			
+		}else if( keycode == $.ui.keyCode.ENTER ) {
+			
+			//Confirmação genérica para modais por tec ENTER
+			
+			var refButtonsDialog = $(".ui-dialog:visible").find("button");
+			
+			//Considerar apenas bts Confirmação/Desistência pela abrangência sobre sistema.
+			if( refButtonsDialog.size()==2 ) {
+
+				//Verifica se o segundo botão está selecionado / Caso sim não acionará Confirmação por ser Desistência selecionado
+				if(eventoJs.target!=refButtonsDialog[1]){
+					refButtonsDialog.first().click(); /* Assuming the first one is the action button */
+				}
+				return true;
+		    }
+		}
+		
+	});
+	
+	//Move foco para primeiro campo do modal ao abrir modal
+	$(document).bind("dialogopen", function() {
+		focusFirstContentModal();
+	});
+	
+	//Move foco para primeiro campo ao fechar modal
+	$(document).bind("dialogclose", function() {
+		focusFirstContentView(this);
+	});	
+	
+	
+	//Foco primeiro campo ao carregar aba 
+//	$("#workspace").bind('focus',function(){
+//		alert("Passou")
+//		focusFirstContentView(document);
+//	});
 });
 
 function exibirMensagem(tipoMensagem, mensagens) {
@@ -47,11 +100,13 @@ function exibirMensagem(tipoMensagem, mensagens) {
 						   divWarning, textWarning,
 						   divError, textError, false);
 	
-	shortcut.add("ESC", function(){
+	
+	$(document.body).bind('keydown.hideMessages', jwerty.event('ESC',
+	function(){
 		esconde(false,divSuccess);
 		esconde(false,divWarning);
 		esconde(false,divError);
-	});
+	}));
 
 }
 
@@ -229,6 +284,29 @@ function carregarCombo(url, params, element, selected, idDialog ){
         },null,true, idDialog);
 }
 
+function doGet(url, params, target) {
+	
+	var element;
+	
+	var href = url;
+	
+	if (params && params.length > 0) href = href.concat("?");
+	
+	for(var index in params) {
+		
+		href = href.concat(params[index].name+"="+params[index].value);
+		
+		if(index+1 < params.length)
+			href = href.concat("&&");
+	}
+	
+	element = document.createElement("a");
+	
+	element.href   = href;
+	element.target = target;
+	
+	element.click();
+}
 
 function newOption(value, label) {
     return "<option value='" + value + "'>" + label + "</option>"
@@ -267,15 +345,19 @@ function priceToFloat(field) {
 function floatToPrice(field) {
 	
 	var price = String(field);
-	
+
 	if (price.indexOf(".") == -1) {
 		price = price + ".00";
+	}
+	
+	if(price.indexOf(",") > -1) {
+		price = price.replace(",", "");
 	}
 	
     var part = price.split(".");
     return part[0].split("").reverse().reduce(function(acc, price, i, orig) {
         return  price + (i && !(i % 3) ? "." : "") + acc;
-    }, "") + "," + part[1];
+    }, "") + "," + (part[1]+"0").substr(0, 2);
     
 }
 
@@ -335,3 +417,53 @@ function Cnpj(v){
 	return v;
 }
 
+
+/*Permite apenas número no campo input[type=text] 
+ * Adicionar no onkeydown do input()
+ * */
+function onlyNumeric(event){
+        // Allow: backspace, delete, tab, escape, and enter
+        if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || 
+             // Allow: Ctrl+A
+            (event.keyCode == 65 && event.ctrlKey === true) || 
+             // Allow: home, end, left, right
+            (event.keyCode >= 35 && event.keyCode <= 39)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        else {
+            // Ensure that it is a number and stop the keypress
+            if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+                event.preventDefault(); 
+            }   
+        }
+}
+
+function focusSelectRefField(objectField){
+	setTimeout (function () {objectField.focus();objectField.select();}, 1);
+}
+
+function focusFirstContentView(context){
+	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus();}, 1);
+}
+
+function focusFirstContentModal(){
+	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus()}, 1);
+}
+
+function keyEventEnterAux(e){
+	var eventoJs= e;
+	var keycode = e.which;
+	if (window.event) {
+		eventoJs = window.event;
+		keycode = eventoJs.keyCode;
+	}
+	
+	if( keycode == $.ui.keyCode.ENTER ) {
+		if(eventoJs.target!=":input"){
+			return true;
+		}
+	}
+	
+	return false;
+}

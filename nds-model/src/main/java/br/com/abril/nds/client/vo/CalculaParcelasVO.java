@@ -20,6 +20,8 @@ public class CalculaParcelasVO implements Serializable{
 	private String parcTotal;
 	
 	private String ativarAoPagar = "";
+	
+	private boolean modificada = false;
 
 	public String getNumParcela() {
 		return numParcela;
@@ -67,6 +69,20 @@ public class CalculaParcelasVO implements Serializable{
 
 	public void setAtivarAoPagar(String ativarAoPagar) {
 		this.ativarAoPagar = ativarAoPagar;
+	}
+
+	/**
+	 * @return the modificada
+	 */
+	public boolean isModificada() {
+		return modificada;
+	}
+
+	/**
+	 * @param modificada the modificada to set
+	 */
+	public void setModificada(boolean modificada) {
+		this.modificada = modificada;
 	}
 	
 	

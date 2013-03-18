@@ -12,8 +12,6 @@ public class ProdutoRecolhimentoVO {
 
 	private String idLancamento;
 	
-	private Integer sequencia;
-	
 	private Long idProdutoEdicao;
 	
 	private String codigoProduto;
@@ -44,8 +42,6 @@ public class ProdutoRecolhimentoVO {
 	
 	private BigDecimal encalheAtendida;
 	
-	private BigDecimal encalheAlternativo;
-	
 	private BigDecimal encalhe;
 	
 	private BigDecimal valorTotal;
@@ -66,20 +62,6 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setIdLancamento(String idLancamento) {
 		this.idLancamento = idLancamento;
-	}
-
-	/**
-	 * @return the sequencia
-	 */
-	public Integer getSequencia() {
-		return sequencia;
-	}
-
-	/**
-	 * @param sequencia the sequencia to set
-	 */
-	public void setSequencia(Integer sequencia) {
-		this.sequencia = sequencia;
 	}
 
 	/**
@@ -276,20 +258,6 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setEncalheAtendida(BigDecimal encalheAtendida) {
 		this.encalheAtendida = encalheAtendida;
-	}
-
-	/**
-	 * @return the encalheAlternativo
-	 */
-	public BigDecimal getEncalheAlternativo() {
-		return encalheAlternativo;
-	}
-
-	/**
-	 * @param encalheAlternativo the encalheAlternativo to set
-	 */
-	public void setEncalheAlternativo(BigDecimal encalheAlternativo) {
-		this.encalheAlternativo = encalheAlternativo;
 	}
 
 	/**

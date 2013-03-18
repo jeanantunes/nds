@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,11 +47,9 @@ public class BoxServiceImpl implements BoxService {
 	@Transactional(rollbackFor = { RelationshipRestrictionException.class })
 	public void remover(Long id) throws RelationshipRestrictionException {
 
-		if (!boxRepository.hasCotasVinculadas(id)
-				&& !boxRepository.hasCotasVinculadas(id)) {
-			Box box = this.boxRepository.buscarPorId(id);
-			this.boxRepository.remover(box);
-		} else {
+		try{
+			this.boxRepository.removerPorId(id);
+		} catch (DataIntegrityViolationException e) {
 			throw new RelationshipRestrictionException(
 					"Box está em uso e não pode ser removido.");
 		}

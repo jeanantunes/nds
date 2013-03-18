@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
@@ -28,9 +29,10 @@ public class VendaProdutoDTO implements Serializable {
 	@Export(label = "Reparte", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private BigInteger reparte;
 	
+	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private BigInteger venda;
 
-	private BigInteger percentagemVenda;
+	private BigDecimal percentualVenda;
 	
 	private BigDecimal precoCapa;
 	
@@ -38,11 +40,8 @@ public class VendaProdutoDTO implements Serializable {
 	
 	private BigDecimal encalhe;
 	
-	@Export(label = "Venda", alignment=Alignment.CENTER, exhibitionOrder = 5)
-	private String valorVendaFormatado;
-	
 	@Export(label = "% Venda", alignment=Alignment.RIGHT, exhibitionOrder = 6)
-	private String percentagemVendaFormatado;
+	private String percentualVendaFormatado;
 	
 	@Export(label = "Preço Capa R$", alignment=Alignment.RIGHT, exhibitionOrder = 7)
 	private String valorPrecoCapaFormatado;
@@ -52,6 +51,14 @@ public class VendaProdutoDTO implements Serializable {
 	
 	@Export(label = "Chamada Capa", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private String chamadaCapa;
+	
+	private Long numeroEstudo = new Long(0);
+	private PeriodicidadeProduto periodo;
+	private Integer periodoFormatado = 1;
+	
+	private Boolean parcial;
+
+	private String codigoProduto;
 	
 	public VendaProdutoDTO() {
 		
@@ -93,16 +100,15 @@ public class VendaProdutoDTO implements Serializable {
 
 	public void setVenda(BigInteger venda) {
 		this.venda = venda;
-		this.valorVendaFormatado = CurrencyUtil.formatarValor(venda);
 	}
 
-	public BigInteger getPercentagemVenda() {
-		return percentagemVenda;
+	public BigDecimal getPercentualVenda() {
+		return percentualVenda;
 	}
 
-	public void setPercentagemVenda(BigInteger percentagemVenda) {
-		this.percentagemVenda = percentagemVenda;
-		this.percentagemVendaFormatado = CurrencyUtil.formatarValor(percentagemVenda);
+	public void setPercentualVenda(BigDecimal percentualVenda) {
+		this.percentualVenda = percentualVenda;
+		this.percentualVendaFormatado = CurrencyUtil.formatarValor(percentualVenda);
 	}
 
 	public BigDecimal getPrecoCapa() {
@@ -131,14 +137,6 @@ public class VendaProdutoDTO implements Serializable {
 		this.encalhe = encalhe;
 	}
 
-	public String getValorVendaFormatado() {
-		return this.valorVendaFormatado;
-	}
-
-	public void setValorVendaFormatado(String valorVendaFormatado) {
-		this.valorVendaFormatado = valorVendaFormatado;
-	}
-
 	public String getValorPrecoCapaFormatado() {
 		return this.valorPrecoCapaFormatado;
 	}
@@ -155,12 +153,12 @@ public class VendaProdutoDTO implements Serializable {
 		this.valorTotalFormatado = valorTotalFormatado;
 	}
 
-	public String getPercentagemVendaFormatado() {
-		return this.percentagemVendaFormatado;
+	public String getPercentualVendaFormatado() {
+		return this.percentualVendaFormatado;
 	}
 
-	public void setPercentagemVendaFormatado(String percentagemVendaFormatado) {
-		this.percentagemVendaFormatado = percentagemVendaFormatado;
+	public void setPercentualVendaFormatado(String percentualVendaFormatado) {
+		this.percentualVendaFormatado = percentualVendaFormatado;
 	}
 
 	public String getDataLancamento() {
@@ -177,6 +175,54 @@ public class VendaProdutoDTO implements Serializable {
 
 	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = DateUtil.formatarDataPTBR(dataRecolhimento);
+	}
+
+	public Long getNumeroEstudo() {
+		return numeroEstudo;
+	}
+
+	public void setNumeroEstudo(Long numeroEstudo) {
+		this.numeroEstudo = numeroEstudo;
+	}
+
+	public PeriodicidadeProduto getPeriodo() {
+		return periodo;
+	}
+
+	public void setPeriodo(PeriodicidadeProduto periodo) {
+		this.periodo = periodo;
+		this.periodoFormatado = periodo.getOrdem();
+	}
+
+	public Integer getPeriodoFormatado() {
+		return periodoFormatado;
+	}
+	/**
+	 * @return the parcial
+	 */
+	public Boolean getParcial() {
+		return parcial;
+	}
+
+	/**
+	 * @param parcial the parcial to set
+	 */
+	public void setParcial(Boolean parcial) {
+		this.parcial = parcial;
+	}
+
+	/**
+	 * @return the codigoProduto
+	 */
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	/**
+	 * @param codigoProduto the codigoProduto to set
+	 */
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
 	}
 
 }

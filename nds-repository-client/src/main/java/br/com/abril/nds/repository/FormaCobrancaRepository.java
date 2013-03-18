@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Banco;
@@ -21,8 +22,6 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	FormaCobranca obterPorTipoEBanco(TipoCobranca tipo, Banco banco);
 	
 	List<Banco> obterBancosPorTipoDeCobranca(TipoCobranca tipo);
-	
-	FormaCobranca obterFormaCobrancaPrincipalCota(Long idCota);
 
 	List<FormaCobranca> obterFormasCobrancaCota(Cota cota);
 	
@@ -30,10 +29,39 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	
 	void desativarFormaCobranca(long idFormaCobranca);
 
-	List<FormaCobranca> obterPorCotaETipoCobranca(Long idCota,TipoCobranca tipoCobranca, Long idFormaCobranca);
+	List<FormaCobranca> obterPorCota(Long idCota, Long idFormaCobranca);
 	
-	List<FormaCobranca> obterPorDistribuidorETipoCobranca(Long idDistribuidor,TipoCobranca tipoCobranca, Long idFormaCobranca);
+	List<FormaCobranca> obterPorDistribuidor(Long idDistribuidor, Long idFormaCobranca);
 
-	FormaCobranca obterFormaCobrancaPrincipal();
+	/**
+	 * Obtem FormaCobranca da Cota
+	 * @param idCota
+	 * @param idFornecedor
+	 * @param data
+	 * @param valor
+	 * @return FormaCobranca
+	 */
+	FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor);
 	
+	/**
+	 * Obtem FormaCobranca do Distribuidor
+	 * @param idFornecedor
+	 * @param data
+	 * @param valor
+	 * @return FormaCobranca
+	 */
+	FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor);
+	
+	/**
+	 * Obtem FormaCobranca principal da Cota
+	 * @param idCota
+	 * @return FormaCobranca
+	 */
+	FormaCobranca obterFormaCobranca(Long idCota);
+	
+	/**
+	 * Obtem FormaCobranca principal do Distribuidor
+	 * @return FormaCobranca
+	 */
+	FormaCobranca obterFormaCobranca();
 }

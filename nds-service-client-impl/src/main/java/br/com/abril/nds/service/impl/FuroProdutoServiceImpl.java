@@ -14,21 +14,22 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.movimentacao.FuroProduto;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
-import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -45,16 +46,16 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	private FuroProdutoRepository furoProdutoRepository;
 	
 	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	
+	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
 	
 	@Autowired
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
 	
 	@Autowired
-	private EstudoRepository estudoRepository;
-
-	@Autowired
-	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	private EstudoCotaRepository estudoCotaRepository;
 
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
@@ -110,6 +111,19 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
 		
+		boolean ultrapassouLimiteReprogramacoes =
+			lancamento.getNumeroReprogramacoes() != null
+				&& lancamento.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE;
+		
+		boolean possuiRecebimento =
+			lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty();
+		
+		if (ultrapassouLimiteReprogramacoes && possuiRecebimento) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "Produto não pode sofrer furo! Já ultrapassou o limite de reprogramações!");
+		}
+		
 		//verificar se existe distribuição nesse dia da semana
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(novaData);
@@ -120,9 +134,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(novaData));
 		}
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (!distribuidor.isRegimeEspecial()) {
+		if (!this.distribuidorService.regimeEspecial()) {
 
 			boolean produtoExpedido = this.verificarProdutoExpedido(idLancamento);
 			
@@ -157,9 +169,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		if (distribuidor.isRegimeEspecial()) {
+		if (this.distribuidorService.regimeEspecial()) {
 			
 			List<ItemNotaEnvio> itensNotaEnvio = 
 				this.itemNovaEnvioRepository.obterItemNotaEnvio(idLancamento);
@@ -171,13 +181,39 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		}
 		
 		if (this.verificarProdutoExpedido(idLancamento)) {
-
+			
+			List<MovimentoEstoqueCota> movimentos = movimentoEstoqueCotaRepository.obterPorLancamento(idLancamento);
+			for (MovimentoEstoqueCota movimento : movimentos) {
+				movimento.setEstudoCota(null);
+				movimentoEstoqueCotaRepository.alterar(movimento);
+			}
+			
 			// Geração de movimentação de estoque por cota / movimentação de estoque / estoque / estoque cota
 			movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, idUsuario);
+			
+		}
+		
+		// Ao furar um produto com nota de envio emitida, o item da nota eh removido
+		if (lancamento.getEstudo()!=null){
+			
+			for(EstudoCota ec : lancamento.getEstudo().getEstudoCotas()) {
+				
+				if (lancamento.getEstudo().getEstudoCotas()!=null && !lancamento.getEstudo().getEstudoCotas().isEmpty()){
+					
+					for(ItemNotaEnvio item : ec.getItemNotaEnvios()){
+						
+						item.setEstudoCota(null);
+						
+						itemNovaEnvioRepository.alterar(item);
+					}
+				}
+			}
 		}
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(StatusLancamento.FURO);
+		lancamento.setNumeroReprogramacoes(this.atualizarNumeroReprogramacoes(lancamento));
+		lancamento.setExpedicao(null);
 		
 		FuroProduto furoProduto = new FuroProduto();
 		furoProduto.setData(new Date());
@@ -201,6 +237,20 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		this.lancamentoRepository.alterar(lancamento);
 		
 		this.historicoLancamentoRepository.adicionar(historicoLancamento);
+	}
+	
+	private Integer atualizarNumeroReprogramacoes(Lancamento lancamento) {
+		
+		Integer numeroReprogramacoes = lancamento.getNumeroReprogramacoes();
+		
+		if (numeroReprogramacoes == null) {
+			
+			numeroReprogramacoes = 0;
+		}
+		
+		numeroReprogramacoes++;
+		
+		return numeroReprogramacoes;
 	}
 	
 }

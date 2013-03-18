@@ -7,6 +7,7 @@ import java.util.List;
 
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -54,6 +55,8 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	private boolean isLancamentoManual;
 	
 	private List<MovimentoEstoqueCota> movimentos;
+	
+	private Fornecedor fornecedor;
 	
 	/**
 	 * @return the idMovimentoFinanceiroCota
@@ -307,6 +310,20 @@ public class MovimentoFinanceiroCotaDTO implements Serializable {
 	 */
 	public void setMovimentos(List<MovimentoEstoqueCota> movimentos) {
 		this.movimentos = movimentos;
+	}
+
+	/**
+	 * @return the fornecedor
+	 */
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	/**
+	 * @param fornecedor the fornecedor to set
+	 */
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
 	}
 	
 }

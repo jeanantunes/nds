@@ -15,7 +15,9 @@
 
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-1.7.1.min.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/shortcut.js"></script>
+
+<script language="javascript" type="text/javascript" src="scripts/jwerty/jwerty.js"></script>
+
 <script language="javascript" type="text/javascript" src="scripts/NDS.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/utils.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
@@ -23,7 +25,7 @@
 
 <script language="javascript" type="text/javascript" src="scripts/jquery.json-2.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>
+<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>'
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.justLetter.js"></script>
@@ -157,13 +159,13 @@
 									
 									tab = self.tabs('add', url, title);									
 									
-									$span = $("<span>").addClass(className);
+									$span = $("<span>").addClass(className);					
 									
 									if (url.indexOf("/devolucao/conferenciaEncalhe/") >= 0) {
 										$span = $($span).addClass("conferencia_encalhe");
 									}
 									
-									$('a:contains(' + title + ')', ulTabs).parent().prepend($span);
+									$('a:contains(' + title + ')', ulTabs).last().parent().prepend($span);
 									
 								}
 								

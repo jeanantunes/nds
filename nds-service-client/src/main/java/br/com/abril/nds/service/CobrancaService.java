@@ -11,7 +11,7 @@ import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
 
 public interface CobrancaService {
@@ -28,8 +28,25 @@ public interface CobrancaService {
 	 * @param dataCalculoJuros - data a ser calculado o juros
 	 * 
 	 * @return valor calculado com o juros
+	 * @deprecated Use {@link #calcularJuros(Banco,Long,BigDecimal,Date,Date)} instead
 	 */	
 	public BigDecimal calcularJuros(Banco banco, Cota cota,
+									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros);
+
+	/**
+	 * Obtém o valor do juros, respeitando a ordem dos parâmetros informados,
+	 * ou seja, se existir taxa de juros no banco informado, utiliza essa taxa.
+	 * Senão utilizada da cota caso exista ou do distribuídor.
+	 * 
+	 * @param banco - banco
+	 * @param idCota - cota
+	 * @param valor - valor a ser calculado
+	 * @param dataVencimento - data de vencimento
+	 * @param dataCalculoJuros - data a ser calculado o juros
+	 * 
+	 * @return valor calculado com o juros
+	 */	
+	public BigDecimal calcularJuros(Banco banco, Long idCota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros);
 	
 	/**
@@ -39,13 +56,11 @@ public interface CobrancaService {
 	 * 
 	 * @param banco - banco
 	 * @param cota - cota
-	 * @param distribuidor - distribuidor
 	 * @param valor - valor a ser calculado
-	 * 
 	 * @return valor calculado com a multa
 	 */
 	public BigDecimal calcularMulta(Banco banco, Cota cota,
-									Distribuidor distribuidor, BigDecimal valor);
+									BigDecimal valor);
 
 	
 	/**
@@ -139,5 +154,6 @@ public interface CobrancaService {
 	BigDecimal obterSaldoDivida(Long idCobranca);
 	
 	void confirmarBaixaManualDividas(List<Long> idsBaixaCobranca);
-	
+
+	List<TipoCobranca> obterTiposCobrancaCadastradas();
 }

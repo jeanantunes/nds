@@ -17,13 +17,15 @@ import br.com.abril.nds.client.vo.DetalhesDividaVO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.PagamentoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -45,23 +47,16 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
-import br.com.abril.nds.service.ParametroCobrancaCotaService;
-import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.TipoBaixaCobranca;
 
 @Service
 public class CobrancaServiceImpl implements CobrancaService {
-	
-
-	@Autowired
-	private ParametroCobrancaCotaService financeiroService;
-	
-	@Autowired
-	private PoliticaCobrancaService politicaCobrancaService;
 	
 	@Autowired
 	private CobrancaRepository cobrancaRepository;
@@ -86,30 +81,50 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 	@Autowired
 	protected BaixaCobrancaRepository baixaCobrancaRepository;
+	
+	@Autowired
+	protected FormaCobrancaService formaCobrancaService;
 
 
 
+	/**
+	 * @deprecated Use {@link #calcularJuros(Banco,Long,BigDecimal,Date,Date)} instead
+	 */
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularJuros(Banco banco, Cota cota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
+										return calcularJuros(banco, cota.getId(),
+												valor, dataVencimento,
+												dataCalculoJuros);
+									}
 
+	@Override
+	@Transactional(propagation=Propagation.SUPPORTS)
+	public BigDecimal calcularJuros(Banco banco, Long idCota,
+									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
+
+		
+		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
+		FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(idCota);
+		
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();		
+		
+		PoliticaCobranca politicaPrincipal = formaCobrancaPrincipal.getPoliticaCobranca();
+		
+		
 		BigDecimal taxaJurosMensal = BigDecimal.ZERO;
 
 		BigDecimal valorCalculadoJuros = null;
-
-		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
-        
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		if (banco != null && banco.getJuros() != null ) {
 			
 			taxaJurosMensal = banco.getJuros();
 		
-		} else if (formaCobrancaPrincipal != null 
-					&& formaCobrancaPrincipal.getTaxaJurosMensal() != null) {
+		} else if (formaCobrancaPrincipalCota != null 
+					&& formaCobrancaPrincipalCota.getTaxaJurosMensal() != null) {
 
-			taxaJurosMensal = formaCobrancaPrincipal.getTaxaJurosMensal();
+			taxaJurosMensal = formaCobrancaPrincipalCota.getTaxaJurosMensal();
 			
 		} else if (politicaPrincipal != null
 					&& politicaPrincipal.getFormaCobranca() != null
@@ -130,15 +145,20 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularMulta(Banco banco, Cota cota,
-									Distribuidor distribuidor, BigDecimal valor) {
+									BigDecimal valor) {
 		
-		FormaCobranca formaCobrancaPrincipal = this.financeiroService.obterFormaCobrancaPrincipalCota(cota.getId());
 
+		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
+        FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
+		
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
+		PoliticaCobranca politicaPrincipal = formaCobrancaPrincipal.getPoliticaCobranca();
+		
+		
 		BigDecimal taxaMulta = BigDecimal.ZERO;
 
 		BigDecimal valorCalculadoMulta = null;
-
-		PoliticaCobranca politicaPrincipal = this.politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		if (banco != null && banco.getVrMulta() != null) {
 		
@@ -150,10 +170,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 				taxaMulta = banco.getMulta();
 			
-			} else if (formaCobrancaPrincipal != null
-						&& formaCobrancaPrincipal.getTaxaMulta() != null) {
+			} else if (formaCobrancaPrincipalCota != null
+						&& formaCobrancaPrincipalCota.getTaxaMulta() != null) {
 	
-				taxaMulta = formaCobrancaPrincipal.getTaxaMulta();
+				taxaMulta = formaCobrancaPrincipalCota.getTaxaMulta();
 	
 			} else if (politicaPrincipal != null
 						&& politicaPrincipal.getFormaCobranca() != null
@@ -252,8 +272,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Transactional(readOnly=true)
 	public CobrancaVO obterDadosCobranca(Long idCobranca) {
 		//PARAMETROS PARA CALCULO DE JUROS E MULTA
-		Distribuidor distribuidor = distribuidorService.obter();
-        Date dataOperacao = distribuidor.getDataOperacao();
+		
+        Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		CobrancaVO cobranca=null;
 		
@@ -284,14 +304,19 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 			//CALCULO DE JUROS E MULTA
 			BigDecimal valorJurosCalculado = BigDecimal.ZERO;
-			BigDecimal valorMultaCalculado = BigDecimal.ZERO;
-			Date dataVencimentoUtil = calendarioService.adicionarDiasUteis(cob.getDataVencimento(), 0);
+			BigDecimal valorMultaCalculado = BigDecimal.ZERO; 
+			
+			Date vencimentoDiaUtil = calendarioService.adicionarDiasUteis(cob.getDataVencimento(), 0);
+
+		    Date dataVencimento = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(vencimentoDiaUtil)));
+	
+		    dataOperacao = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(dataOperacao)));
 			
 			//CALCULA VALOR DO SALDO DA DIVIDA(MOVIMENTOS DE PAGAMENTO PARCIAL)
 			BigDecimal saldoDivida = this.obterSaldoDivida(cob.getId());
 			cobranca.setValorSaldo(CurrencyUtil.formatarValor(saldoDivida));
 			
-			if (dataVencimentoUtil.compareTo(dataOperacao) < 0) {
+			if (dataVencimento.compareTo(dataOperacao) < 0) {
 				
 				//CALCULA JUROS
 				valorJurosCalculado =
@@ -300,7 +325,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 									   dataOperacao);
 				//CALCULA MULTA
 				valorMultaCalculado =
-					this.calcularMulta(cob.getBanco(), cob.getCota(), distribuidor,
+					this.calcularMulta(cob.getBanco(), cob.getCota(),
 							           cob.getValor().subtract(saldoDivida));
 			}
 			
@@ -508,6 +533,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 			if (valorPagamentoCobranca.floatValue() >=0 ){
 		    	itemCobranca.setDataPagamento(pagamento.getDataPagamento());
+		    	itemCobranca.setTipoBaixa(TipoBaixaCobranca.MANUAL);
 		    	itemCobranca.setStatusCobranca(StatusCobranca.PAGO);
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
 		    	itemCobranca.setBanco(pagamento.getBanco());
@@ -536,6 +562,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		BaixaManual baixaManual = new BaixaManual();
 		
 		baixaManual.setDataBaixa(pagamento.getDataPagamento());
+		baixaManual.setDataPagamento(pagamento.getDataPagamento());
 		baixaManual.setValorPago(valor);
 		baixaManual.setCobranca(cobrancaParcial);
 		baixaManual.setResponsavel(pagamento.getUsuario());
@@ -555,7 +582,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 			gerarMovimentoFinanceiroCota(
 				baixaManual, cobrancaParcial.getCota(), pagamento.getUsuario(), valor, 
 				cobrancaParcial.getDataVencimento(), pagamento.getDataPagamento(), 
-				pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO
+				pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO,
+				cobrancaParcial.getFornecedor()
 			);
 		}
 	}
@@ -601,14 +629,16 @@ public class CobrancaServiceImpl implements CobrancaService {
 				movimentoFinanceiroCota.getBaixaCobranca(), movimentoFinanceiroCota.getCota(), 
 				movimentoFinanceiroCota.getUsuario(), movimentoFinanceiroCota.getValor(), 
 				movimentoFinanceiroCota.getData(), null, 
-				movimentoFinanceiroCota.getObservacao(), GrupoMovimentoFinaceiro.DEBITO
+				movimentoFinanceiroCota.getObservacao(), GrupoMovimentoFinaceiro.DEBITO,
+				movimentoFinanceiroCota.getFornecedor()
 			);
 		}
 	}
 
 	private void gerarMovimentoFinanceiroCota(BaixaCobranca baixaCobranca, Cota cota, Usuario usuario,
 											  BigDecimal valor, Date dataVencimento, Date dataPagamento,
-											  String observacoes, GrupoMovimentoFinaceiro grupoMovimentoFinaceiro) {
+											  String observacoes, GrupoMovimentoFinaceiro grupoMovimentoFinaceiro,
+											  Fornecedor fornecedor) {
 
 		TipoMovimentoFinanceiro tipoMovimento = 
 				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
@@ -624,6 +654,15 @@ public class CobrancaServiceImpl implements CobrancaService {
 		movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
 		movimento.setDataVencimento(dataVencimento);
 		movimento.setObservacao(observacoes);
+		
+		fornecedor = fornecedor!=null?fornecedor:cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null;
+	
+        if (fornecedor == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota "+cota.getNumeroCota()+"] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
+		}
+
+		movimento.setFornecedor(fornecedor);
 		
 		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimento);
 	}
@@ -656,15 +695,16 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public boolean validaNegociacaoDividas(List<Long> idCobrancas) {
 		
 		boolean res=true;
-		Distribuidor distribuidor = distribuidorService.obter();
-		Integer diasNegociacao = (distribuidor.getParametroCobrancaDistribuidor()!=null?distribuidor.getParametroCobrancaDistribuidor().getDiasNegociacao():null);
+		
+		Integer diasNegociacao = this.distribuidorService.diasNegociacao();
 		
 		if (diasNegociacao!=null){
 			
 			for (Long id:idCobrancas){
 				Cobranca cobranca = this.cobrancaRepository.buscarPorId(id);
 				
-				if (  distribuidor.getDataOperacao().getTime() >  DateUtil.adicionarDias(cobranca.getDataVencimento(), diasNegociacao).getTime()){
+				if (this.distribuidorService.obterDataOperacaoDistribuidor().getTime() > 
+						DateUtil.adicionarDias(cobranca.getDataVencimento(), diasNegociacao).getTime()){
 					res=false;
 					break;
 				}
@@ -689,4 +729,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 		}
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public List<TipoCobranca> obterTiposCobrancaCadastradas() {
+		
+		return this.cobrancaRepository.obterTiposCobrancaCadastradas();
+	}
 }

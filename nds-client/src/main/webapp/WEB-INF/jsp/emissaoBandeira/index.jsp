@@ -18,6 +18,32 @@
 </head>
 
 <body>
+
+    <div class="areaBts">
+		<div class="area">
+			<span class="bt_arq">
+			    <a href="javascript:;" onclick="emissaoBandeiraController.imprimirBandeira();" rel="bandeira">
+			        <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+                </a>
+			</span> 
+			
+			<span class="bt_arq"> 
+				<a href="javascript:;" onclick="emissaoBandeiraController.imprimirArquivo('PDF')">
+				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+			</span>
+
+			<span class="bt_arq"> 
+				<a href="javascript:;" onclick="emissaoBandeiraController.bandeiraManual()"  >
+				    <img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" />
+                </a>
+			</span>
+		</div>
+	</div>
+    <br/>
+    <br/>
+    <br/>
+
 <form action="" method="get" id="form1" name="form1">
 
 
@@ -79,17 +105,7 @@
        	  <legend> Bandeiras Pesquisadas</legend>
         
 		  <table class="bandeirasRcltoGrid"></table>
-          <span class="bt_novos" title="Imprimir Bandeira"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirBandeira();" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Bandeiras</a></span>
-<!--imprimir_bandeira.htm target="_blank"-->
 
-		<span class="bt_novos" title="Imprimir Relat&oacute;rio"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirArquivo('PDF')"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Relat&oacute;rio</a></span>
-        
-        <span class="bt_novos" title="Bandeira Manual"><a href="javascript:;" onclick="emissaoBandeiraController.bandeiraManual()"  ><img src="${pageContext.request.contextPath}/images/bt_expedicao.png" hspace="5" border="0" />Bandeira Manual</a></span>
-     
-         
-
-
-		
        </fieldset>
       </div>
       <div class="linha_separa_fields">&nbsp;</div>

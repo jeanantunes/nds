@@ -23,4 +23,6 @@ public interface AlteracaoCotaService {
 	int contarAlteracaoCota(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO);
 	
 	FiltroAlteracaoCotaDTO preencherFiltroAlteracaoCotaDTO(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO);
+
+	public abstract void salvarAlteracoes(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO);
 }

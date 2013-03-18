@@ -1,3 +1,4 @@
+
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
@@ -25,6 +26,9 @@ import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+
 
 /**
  * @author francisco.garcia
@@ -162,6 +166,20 @@ public class Produto implements Serializable {
 	
 	@Column(name="DESCRICAO_DESCONTO")
 	private String descricaoDesconto;
+	
+	/**
+	 * Segmento do Produto
+	 */
+	@OneToOne(fetch=FetchType.EAGER, optional=true)
+	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
+	private TipoSegmentoProduto tipoSegmentoProduto;
+	
+	/**
+	 * Classificação do Produto
+	 */
+	@OneToOne(fetch=FetchType.EAGER, optional=true)
+	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
 	public Long getId() {
 		return id;
@@ -585,11 +603,6 @@ public class Produto implements Serializable {
 	}
 
 	/**
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
 	 * @return the descricaoDesconto
 	 */
 	public String getDescricaoDesconto() {
@@ -604,10 +617,6 @@ public class Produto implements Serializable {
 	}
 
 	/**
-<<<<<<< HEAD
->>>>>>> DGBti/master
-=======
->>>>>>> def3e02f049b86bfdb61ff735cad04f3f09f735b
      * Verifica se o produto é um publicação
      * 
      * @return true se o produto é uma publicação, false caso contrário
@@ -615,5 +624,24 @@ public class Produto implements Serializable {
 	public boolean isPublicacao() {
 	    return !GrupoProduto.OUTROS.equals(tipoProduto.getGrupoProduto());
 	}
+
+	public TipoSegmentoProduto getTipoSegmentoProduto() {
+		return tipoSegmentoProduto;
+	}
+
+	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
+		this.tipoSegmentoProduto = tipoSegmentoProduto;
+	}
+
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(
+			TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+	}
+	
+	
 
 }

@@ -13,11 +13,11 @@ import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.ConsultaConsignadoCotaPeloFornecedorDTO;
 import br.com.abril.nds.dto.TotalConsultaConsignadoCotaDetalhado;
 import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
-import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -40,30 +40,54 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT produto.codigo as codigoProduto, ")
-		   .append("        produto.nome as nomeProduto, ")	
-		   .append("        cota.id as cotaId, ")
-		   .append("        pe.id as produtoEdicaoId, ")	
-		   .append("        pe.numeroEdicao as numeroEdicao, ")
-		   .append("        pessoa.razaoSocial as nomeFornecedor, ")
-		   .append("        CASE WHEN movimentoEstoqueCotaFuro is not null THEN movimento.dataLancamentoOriginal ")
-		   .append("			 ELSE (CASE WHEN tipoMovimento = :tipoMovimentoCotaFuro THEN movimento.dataCriacao ELSE lancamento.dataLancamentoDistribuidor END) END as dataLancamento, ")
-		   .append("        pe.precoVenda as precoCapa, ")
-		   .append("        movimento.valoresAplicados.valorDesconto as desconto, ")
-		   .append("        (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) as precoDesconto, ")
-		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.qtde) ELSE (movimento.qtde*-1) END as reparte, ")		
-		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN (movimento.valoresAplicados.precoVenda * movimento.qtde) ELSE (movimento.valoresAplicados.precoVenda * movimento.qtde*-1) END as total, ")
-		   .append("        CASE WHEN movimento.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada THEN ((movimento.valoresAplicados.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde) ELSE ((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde*-1) END as totalDesconto ");
+		hql.append(" SELECT  ")
+		   .append(" produto.codigo as codigoProduto, 		")
+		   .append(" produto.nome as nomeProduto, 			")	
+		   .append(" cota.id as cotaId, 					")
+		   .append(" pe.id as produtoEdicaoId, 				")	
+		   .append(" pe.numeroEdicao as numeroEdicao, 		")
+		   .append(" pessoa.razaoSocial as nomeFornecedor, 	")
+		   .append(" case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end as dataLancamento,")
+		   .append(" coalesce(movimento.valoresAplicados.precoVenda, pe.precoVenda, 0) as precoCapa, ")
+		   
+		   .append(" coalesce(movimento.valoresAplicados.valorDesconto, 0) as desconto, ")
+		   .append(" coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) as precoDesconto, ")
+		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA'  then movimento.qtde else 0 end) ")
+		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) )) as reparte, ")
+		   .append(" ( coalesce( ")
+		   .append("		movimento.valoresAplicados.precoVenda, pe.precoVenda, 0) * ")
+		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA' then movimento.qtde else 0 end) ")
+		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ))  ")
+		   .append(" ) as total, ")
+		   .append(" ( coalesce( ")
+		   .append("        movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * ")
+		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA' then movimento.qtde else 0 end) ")
+		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ) ) ")
+		   .append(" ) as totalDesconto ");
+		   
+		hql.append(createFromConsultaConsignadoCota(filtro));
 		
-		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+		if (filtro.getPaginacao().getSortColumn() != null) {
+			hql.append(" ORDER BY ");
+			hql.append(filtro.getPaginacao().getSortColumn());		
 		
-		hql.append(getOrderBy(filtro));
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append(" ");
+				hql.append( filtro.getPaginacao().getOrdenacao().toString());
+			}
+		}
 
 		Query query =  getSession().createQuery(hql.toString());
-				
-		buscarParametrosConsignadoCota(query, filtro);
 		
-		query.setParameter("tipoMovimentoCotaFuro", tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
+		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+		
+		if(filtro.getIdCota() != null ) { 
+			query.setParameter("idCota", filtro.getIdCota());
+		}
+		
+		if(filtro.getIdFornecedor() != null ) { 
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaDTO.class));
@@ -77,6 +101,37 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		return query.list();
 				
 	}
+
+	private String createFromConsultaConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" FROM MovimentoEstoqueCota movimento, ProdutoEdicao pe ");
+		hql.append("  LEFT JOIN movimento.lancamento lancamento ");
+		hql.append("  JOIN movimento.cota as cota ");
+		hql.append("  JOIN movimento.tipoMovimento as tipoMovimento ");
+		hql.append("  JOIN pe.produto as produto ");
+		hql.append("  JOIN cota.parametroCobranca parametroCobranca ");
+		hql.append("  JOIN produto.fornecedores as fornecedor ");
+		hql.append("  JOIN fornecedor.juridica as pessoa ");		
+		hql.append("  JOIN cota.pessoa as pessoaCota ");
+		
+		hql.append(" WHERE movimento.produtoEdicao.id = pe.id " );
+		
+		hql.append(" AND movimento.movimentoEstoqueCotaFuro is null " );
+		
+		hql.append(" AND movimento.tipoMovimento.grupoMovimentoEstoque not in (:tipoMovimentoEstorno) " );
+		
+		if(filtro.getIdCota() != null ) { 
+			hql.append("   AND cota.id = :idCota");			
+		}
+		if(filtro.getIdFornecedor() != null) { 
+			hql.append("   AND fornecedor.id = :idFornecedor");
+		}
+		
+		hql.append(" GROUP BY case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end ");
+		
+		return hql.toString();
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -85,30 +140,36 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT cota.numeroCota as numeroCota, ")
-		   .append("        (CASE WHEN (pessoaCota.nome is not null) then ( pessoaCota.nome ) ")
-		   .append(" 			WHEN (pessoaCota.razaoSocial is not null) then ( pessoaCota.razaoSocial )")
-		   .append(" 			ELSE null END) as nomeCota, ")
-		   .append("        SUM(movimento.qtde *  ")
-		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-		   .append("                 ELSE 0 END) as consignado, ")
-		   .append("        SUM(pe.precoVenda * movimento.qtde *  ")
-		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-		   .append("                 ELSE 0 END) as total, ")
-		   .append("        SUM((pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde *  ")
-		   .append("            CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-		   .append("                 WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-		   .append("                 ELSE 0 END)  as totalDesconto, ")
-		   .append("        pessoa.razaoSocial as nomeFornecedor,  ")
-		   .append("        fornecedor.id as idFornecedor  ");
+		hql.append(" SELECT cota.numeroCota as numeroCota, 		")
+		   .append(" (CASE WHEN (pessoaCota.nome is not null)	")
+		   .append(" THEN ( pessoaCota.nome ) 					")
+		   .append(" WHEN (pessoaCota.razaoSocial is not null) 	")
+		   .append(" THEN (pessoaCota.razaoSocial)  			")
+		   .append(" ELSE null END) as nomeCota, 			    ")
+		   
+		   .append(" SUM(movimento.qtde) as consignado, 				")
+		   
+		   .append(" SUM( coalesce(movimento.valoresAplicados.precoVenda, pe.precoVenda, 0)  * movimento.qtde) as total, ")
+		   
+		   .append(" SUM( coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * movimento.qtde )  as totalDesconto, ")
+		   
+		   .append(" pessoa.razaoSocial as nomeFornecedor,  ")
+		   
+		   .append(" fornecedor.id as idFornecedor  ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
 		hql.append(getGroupBy(filtro));
 
-		hql.append(getOrderBy(filtro));
+		if (filtro.getPaginacao().getSortColumn() != null) {
+			hql.append(" ORDER BY ");
+			hql.append(filtro.getPaginacao().getSortColumn());		
+		
+			if (filtro.getPaginacao().getOrdenacao() != null) {
+				hql.append(" ");
+				hql.append( filtro.getPaginacao().getOrdenacao().toString());
+			}
+		}
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
@@ -127,6 +188,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Long buscarTodasMovimentacoesPorCota(
 			FiltroConsultaConsignadoCotaDTO filtro) {
@@ -135,13 +197,24 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" SELECT count(movimento)  ");
 		
-		hql.append(getHQLFromEWhereConsignadoCota(filtro));
-
+		hql.append(createFromConsultaConsignadoCota(filtro));
+		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		buscarParametrosConsignadoCota(query, filtro);
+		if(filtro.getIdCota() != null ) { 
+			query.setParameter("idCota", filtro.getIdCota());
+		}
 		
-		return (Long) query.uniqueResult();
+		if(filtro.getIdFornecedor() != null ) { 
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+		
+		List<Long> totalRegistros = query.list();
+		
+		return (totalRegistros == null) ? 0L : totalRegistros.size();
+
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -173,19 +246,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT SUM(( (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde ");
-
-		hql.append("            * CASE WHEN tipoMovimento.operacaoEstoque = (:tipoOperacaoEntrada) THEN 1 ")
-		   .append("                   WHEN tipoMovimento.operacaoEstoque = (:tipoOperacaoSaida) THEN -1 ")
-		   .append("                   ELSE 0 END ");
-
-		// TODO: Verificar pq existe isso se mesmo com a cota, isto deve ser aplicado na consulta consignado cota
-		/*if (filtro.getIdCota() == null) {
-			hql.append("            * CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-			   .append("                   WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-			   .append("                   ELSE 0 END ");
-		}*/
-		hql.append("           )) ");
+		hql.append(" SELECT SUM( coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0)  * movimento.qtde) ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		
@@ -205,14 +266,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		 
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT SUM(( (pe.precoVenda - (pe.precoVenda * (movimento.valoresAplicados.valorDesconto) / 100)) * movimento.qtde ");
-
-		if (filtro.getIdCota() == null) {
-			hql.append("            * CASE WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) THEN 1 ")
-			   .append("                   WHEN tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoSaida) THEN -1 ")
-			   .append("                   ELSE 0 END ");
-		}
-		hql.append("            )) as total, ");
+		hql.append("SELECT SUM(coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * movimento.qtde) as total, ");
 		
 		hql.append("pessoa.razaoSocial as nomeFornecedor");
 		
@@ -246,55 +300,22 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append("  JOIN cota.pessoa as pessoaCota ");
 		hql.append("  LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
 		
-		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimento) " );
-		hql.append("   AND parametroCobranca.tipoCota = :tipoCota  " );
+		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) " );
+		
+		hql.append(" AND (movimento.statusEstoqueFinanceiro is null ");
+		hql.append(" or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) " );
+		
+		hql.append(" AND movimento.tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
+		
+		hql.append(" AND movimentoEstoqueCotaFuro.id is null ");
 		
 		if(filtro.getIdCota() != null ) { 
-			hql.append("   AND cota.id = :numeroCota");			
+			hql.append("   AND cota.id = :idCota");			
 		}
 		if(filtro.getIdFornecedor() != null) { 
 			hql.append("   AND fornecedor.id = :idFornecedor");
 		}
-		
-		//Filtra os registro que ja teve enclahe finalizado
-		hql.append(" AND not exists ( ")
-		.append(" select chamadaCota  from ConferenciaEncalhe conferencia " +
-				" join   conferencia.chamadaEncalheCota chamadaCota " +
-				" join   chamadaCota.chamadaEncalhe chamadaEncalhe " +
-				" join   conferencia.controleConferenciaEncalheCota controleCota " +
-				" join   controleCota.controleConferenciaEncalhe controle, "  +
-				" FechamentoEncalhe fechamentoEncalhe" )
-		.append(" where  chamadaEncalhe.produtoEdicao.id = pe.id and chamadaCota.cota.id = cota.id " +
-				" and fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id = pe.id " +
-				" and fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe = controleCota.dataOperacao ) ");
 
-		return hql.toString();
-	}
-	
-	private String getOrderBy(FiltroConsultaConsignadoCotaDTO filtro){
-		
-		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
-			return "";
-		}
-		StringBuilder hql = new StringBuilder();
-		
-		boolean ordenar = false; 
-		
-		if(filtro.getIdCota() != null && !ordenar){
-			hql.append(" ORDER BY cota.numeroCota ");
-			ordenar = true;
-		}
-		
-		if(filtro.getIdFornecedor() != null && !ordenar){
-			hql.append(" ORDER BY cota.numeroCota ");
-			ordenar = true;
-		}
-		
-		
-		if (filtro.getPaginacao().getOrdenacao() != null && ordenar) {
-			hql.append( filtro.getPaginacao().getOrdenacao().toString());
-		}
-		
 		return hql.toString();
 	}
 
@@ -316,63 +337,50 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		return hql.toString();	
 	}
 	
-	private void buscarParametrosConsignadoCota(Query query, FiltroConsultaConsignadoCotaDTO filtro){
+	private List<GrupoMovimentoEstoque> obterGruposMovimentoEstoqueDeEntradaNaCota() {
 		
-		if(query.getQueryString().contains(":tipoOperacaoEntrada")) {
-			query.setParameter("tipoOperacaoEntrada", OperacaoEstoque.ENTRADA);
+		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoquesEntrada = new ArrayList<GrupoMovimentoEstoque>();
+		
+		for(GrupoMovimentoEstoque grupoMovimentoEstoque: GrupoMovimentoEstoque.values()) {
+			
+			if(Dominio.COTA.equals(grupoMovimentoEstoque.getDominio()) && 
+			   OperacaoEstoque.ENTRADA.equals(grupoMovimentoEstoque.getOperacaoEstoque())) {
+				
+				listaGrupoMovimentoEstoquesEntrada.add(grupoMovimentoEstoque);
+			
+			}
+			
 		}
-
-		if(query.getQueryString().contains(":tipoOperacaoSaida")) {
-			query.setParameter("tipoOperacaoSaida", OperacaoEstoque.SAIDA);
-		}
+		
+		return listaGrupoMovimentoEstoquesEntrada;
+		
+	}
+	
+	private void buscarParametrosConsignadoCota(Query query, FiltroConsultaConsignadoCotaDTO filtro){
 
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoquesEntrada = new ArrayList<GrupoMovimentoEstoque>();
-		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoquesSaida = new ArrayList<GrupoMovimentoEstoque>();
-		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
 		
-		if (filtro.getIdCota() == null) { 
-			for(GrupoMovimentoEstoque grupoMovimentoEstoque: GrupoMovimentoEstoque.values()) {
-				if(Dominio.COTA.equals(grupoMovimentoEstoque.getDominio())) {
-					if(OperacaoEstoque.ENTRADA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
-						listaGrupoMovimentoEstoquesEntrada.add(grupoMovimentoEstoque);
-					}else if(OperacaoEstoque.SAIDA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
-						listaGrupoMovimentoEstoquesSaida.add(grupoMovimentoEstoque);
-					}
-				}
-			} 
-			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesEntrada);
-			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesSaida);
+		if (filtro.getIdCota() == null) {
+			
+			listaGrupoMovimentoEstoquesEntrada = obterGruposMovimentoEstoqueDeEntradaNaCota();
+			
 
 		} else {
+			
 			listaGrupoMovimentoEstoquesEntrada.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
-			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesEntrada);
-			
-			for(GrupoMovimentoEstoque grupoMovimentoEstoque: GrupoMovimentoEstoque.values()) {
-				if(Dominio.COTA.equals(grupoMovimentoEstoque.getDominio())) {
-					if(OperacaoEstoque.SAIDA.equals(grupoMovimentoEstoque.getOperacaoEstoque())){
-						listaGrupoMovimentoEstoquesSaida.add(grupoMovimentoEstoque);
-					}
-				}
-			}
-			listaGrupoMovimentoEstoques.addAll(listaGrupoMovimentoEstoquesSaida);
 			
 		}
 		
+		query.setParameter("tipoOperacaoEntrada", OperacaoEstoque.ENTRADA);
 		
-		if(query.getQueryString().contains(":tipoMovimentoEntrada")) {
-			query.setParameterList("tipoMovimentoEntrada", listaGrupoMovimentoEstoquesEntrada);
-		}
+		query.setParameterList("tipoMovimentoEntrada", listaGrupoMovimentoEstoquesEntrada);
 		
-		if(query.getQueryString().contains(":tipoMovimentoSaida")) {
-			query.setParameterList("tipoMovimentoSaida", listaGrupoMovimentoEstoquesSaida);
-		}
-		
-		query.setParameterList("tipoMovimento", listaGrupoMovimentoEstoques);
-		query.setParameter("tipoCota", TipoCota.CONSIGNADO);
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		
 		if(filtro.getIdCota() != null ) { 
-			query.setParameter("numeroCota", filtro.getIdCota());
+			query.setParameter("idCota", filtro.getIdCota());
 		}
+		
 		if(filtro.getIdFornecedor() != null ) { 
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}

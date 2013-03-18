@@ -52,7 +52,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Transactional
 	public byte[] gerarCobrancaBoletoDistribuidor(FiltroFechamentoCEIntegracaoDTO filtro, TipoCobranca tipoCobranca) {
 		
-		Long numeroSemana = filtro.getSemana();
+		Long numeroSemana = Long.parseLong(filtro.getSemana().substring(4));
 		
 		List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(null, numeroSemana.intValue(), null);
 		
@@ -123,8 +123,6 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
 		fechamentoCEIntegracaoVO.setSemanaFechada(this.verificarStatusSemana(filtro));
 
-		// TODO: TOTAIS AQUI
-		
 		return fechamentoCEIntegracaoVO;
 	}
 

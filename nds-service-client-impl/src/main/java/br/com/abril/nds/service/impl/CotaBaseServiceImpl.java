@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaBaseDTO;
+import br.com.abril.nds.dto.CotaBaseHistoricoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaBaseDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.repository.CotaBaseRepository;
 import br.com.abril.nds.service.CotaBaseService;
@@ -21,20 +21,56 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public FiltroCotaBaseDTO obterDadosFiltro(Integer numeroCota, boolean obterFaturamento) {		 
-		return cotaBaseRepository.obterDadosFiltro(numeroCota, obterFaturamento);		
+	public FiltroCotaBaseDTO obterDadosFiltro(CotaBase cotaBase, boolean obterFaturamento, boolean semCotaBase,  Integer numeroCota) {		 
+		return cotaBaseRepository.obterDadosFiltro(cotaBase, obterFaturamento, semCotaBase, numeroCota);		
 	}
 
 	@Override
 	@Transactional
-	public List<CotaBaseDTO> obterCotasBases(Cota cotaNova) {
-		return cotaBaseRepository.obterCotasBases(cotaNova);
+	public List<CotaBaseDTO> obterCotasBases(CotaBase cotaBase, CotaBaseDTO dto) {
+		return cotaBaseRepository.obterCotasBases(cotaBase, dto);
 	}
 
 	@Override
 	@Transactional
 	public void salvar(CotaBase cotaBase) {
 		this.cotaBaseRepository.adicionar(cotaBase); 
+	}
+
+	@Override
+	@Transactional
+	public CotaBase obterCotaNova(Integer numeroCotaNova) {		
+		return this.cotaBaseRepository.obterCotaNova(numeroCotaNova);
+	}
+
+	@Override
+	@Transactional
+	public FiltroCotaBaseDTO obterCotaDoFiltro(CotaBase cotaBase) {
+		return this.cotaBaseRepository.obterCotaDoFiltro(cotaBase);
+	}
+
+	@Override
+	@Transactional
+	public void atualizar(CotaBase cotaBaseJaSalva) {
+		 this.cotaBaseRepository.alterar(cotaBaseJaSalva);		
+	}
+
+	@Override
+	@Transactional
+	public List<CotaBaseHistoricoDTO> obterCotasHistorico(CotaBase cotaBase, CotaBaseDTO dto) {
+		return this.cotaBaseRepository.obterCotasHistorico(cotaBase, dto);
+	}
+
+	@Override
+	@Transactional
+	public List<CotaBaseDTO> obterListaCotaPesquisaGeral(CotaBaseDTO dto){
+		return this.cotaBaseRepository.obterListaCotaPesquisaGeral(dto);
+	}
+
+	@Override
+	@Transactional
+	public List<CotaBaseDTO> obterListaTelaDetalhe(CotaBase cotaBase) {
+		return this.cotaBaseRepository.obterListaTelaDetalhe(cotaBase);
 	}
 
 }

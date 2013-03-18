@@ -77,4 +77,5 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	 */
 	List<Rota> obterRotasNaoAssociadasAoRoteiro(Long roteiroID);
 
+	Long obterQtdRotasPorCota(Integer numeroCota);
 }

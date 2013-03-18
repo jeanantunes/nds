@@ -1,7 +1,6 @@
 /**
  * 
  */
-
 function InformeEncalhe() {
 	
 	this.initDialogImprimir();
@@ -15,6 +14,15 @@ function InformeEncalhe() {
 		};
 	$("#checkTipoImpressaoDados", this.workspace).button();
 	$("#buttonsetTipoImpressaoCapas", this.workspace).buttonset();
+	var _this = this;
+	$("#sugerirSemana", this.workspace).click(function(e){
+		
+		if($(this).is(":checked")){
+			_this.carregarDiaSemana();
+		}else{
+			$("#semanaRecolhimentoBox", _this.workspace).val("");
+		 }
+	});
 
 };
 InformeEncalhe.prototype.path = contextPath + "/devolucao/informeEncalhe/";
@@ -125,7 +133,7 @@ InformeEncalhe.prototype.initGrid = function() {
 					align : 'center',
 					process : _this.processAcao
 				} ],
-				sortname : "nomeProduto",
+				sortname : "sequenciaMatriz",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
@@ -216,9 +224,67 @@ InformeEncalhe.prototype.bindEvents = function() {
 			$(".grids").show();
 		}
 	});
+	$('#dataRecolhimentoBox,', this.workspace).change(function() {
+		_this.carregarDiaSemana();
+	});
+	$('#semanaRecolhimentoBox', this.workspace).change(function() {
+		_this.carregarDataSemana();
+	});
 
 };
 
+InformeEncalhe.prototype.carregarDataSemana = function() {
+
+	var _this = this;
+	
+	var numeroSemana = $("#semanaRecolhimentoBox", _this.workspace).val();
+
+	if (!numeroSemana) {
+
+		return;
+	}
+	
+	var data = [{ name: 'numeroSemana', value: numeroSemana }];
+	
+	$.getJSON(
+		contextPath + "/cadastro/distribuidor/obterDataDaSemana", 
+		data,
+		function(result) {
+
+			if (result) {
+				
+				$("#dataRecolhimentoBox", _this.workspace).val(result);
+			}
+		});
+};
+
+InformeEncalhe.prototype.carregarDiaSemana = function() {
+	
+	if($("#sugerirSemana:checked").size() < 1)
+		return;
+
+	var _this = this;
+	
+	var dataPesquisa = $("#dataRecolhimentoBox", _this.workspace).val();
+
+	if (!dataPesquisa) {
+
+		return;
+	}
+
+	var data = [{ name: 'data', value: $("#dataRecolhimentoBox", _this.workspace).val() }];
+	
+	$.getJSON(
+		contextPath + "/cadastro/distribuidor/obterNumeroSemana", 
+		data,
+		function(result) {
+
+			if (result) {
+
+				$("#semanaRecolhimentoBox", _this.workspace).val(result.int);
+			}
+		});
+};
 
 InformeEncalhe.prototype.initDialogImprimir = function() {
 	

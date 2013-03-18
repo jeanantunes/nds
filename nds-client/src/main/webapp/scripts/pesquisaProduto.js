@@ -12,7 +12,8 @@ function PesquisaProduto(workspace) {
 	
 	//Pesquisa por código de produto
 	this.pesquisarPorCodigoProduto = function(idCodigo, idProduto, idEdicao, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).val();
+		
+		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).attr("value");
 		
 		codigoProduto = $.trim(codigoProduto);
 		
@@ -41,8 +42,7 @@ function PesquisaProduto(workspace) {
 	this.autoCompletarPorNomeProduto = function(idProduto, isFromModal) {
 		
 		pesquisaProduto.pesquisaRealizada = false;
-		
-		var nomeProduto = $(idProduto, pesquisaProduto.workspace).val();
+		var nomeProduto = $(idProduto, pesquisaProduto.workspace).attr("value");
 		
 		if (nomeProduto && nomeProduto.length > 2) {
 			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {nomeProduto:nomeProduto},
@@ -164,16 +164,32 @@ function PesquisaProduto(workspace) {
 		
 		var nomeProduto = $(idProduto, pesquisaProduto.workspace).val();
 		
-		nomeProduto = $.trim(nomeProduto);
+		var codigoProduto = $(idCodigo, pesquisaProduto.workspace).val();
 		
-		$(idCodigo, pesquisaProduto.workspace).val("");
+		nomeProduto = $.trim(nomeProduto);
+		codigoProduto = $.trim(codigoProduto);
+		
+		//$(idCodigo, pesquisaProduto.workspace).val("");
 		$(idEdicao, pesquisaProduto.workspace).val("");
 		$(idEdicao, pesquisaProduto.workspace).attr("disabled", "disabled");
 		
+		 var data = [{name:"nomeProduto",  value:nomeProduto},
+        			 {name:"codigoProduto",value:codigoProduto}
+					];
+		
 		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {nomeProduto:nomeProduto},
-					   function(result) { pesquisaProduto.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, idEdicao, successCallBack); },
-					   function() { pesquisaProduto.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, idEdicao, errorCallBack); }, isFromModal);
+			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto",data,
+					   function(result) { 
+							
+							pesquisaProduto.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, idEdicao, successCallBack); 
+						},
+					   function() { 
+							
+							$(idCodigo, pesquisaProduto.workspace).val("");
+							
+							pesquisaProduto.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, idEdicao, errorCallBack);
+							
+					   }, isFromModal);
 		} else {
 			
 			if (errorCallBack) {
@@ -278,12 +294,56 @@ function PesquisaProduto(workspace) {
 		
 	},
 	
+	//Mostrar auto complete por código do produto
+	//Auto complete após a 5° posição 
+	this.autoCompletarPorCodigoProduto = function(idCampoCodProduto, isFromModal) {
+		
+		pesquisaProduto.pesquisaRealizada = false;
+		
+		var codProduto = $(idCampoCodProduto, pesquisaProduto.workspace).val();
+		
+		if (codProduto && codProduto.length >= 5) {
+			$.postJSON(contextPath + "/produto/autoCompletarPorCodProduto", {codigoProduto:codProduto},
+					   function(result) { pesquisaProduto.exibirAutoComplete(result, idCampoCodProduto,5); },
+					   null, isFromModal);
+		}
+	},
+	
+	/*
+	 * 	this.autoCompletarPorNome = function(idCampoNomeCota, isFromModal) {
+		
+		pesquisaCota.pesquisaRealizada = false;
+		
+		var nomeCota = $(idCampoNomeCota, pesquisaCota.workspace).val();
+		
+		nomeCota = $.trim(nomeCota);
+		
+		$(idCampoNomeCota, pesquisaCota.workspace).autocomplete({source: [""]});
+		
+		if (nomeCota && nomeCota.length > 2) {
+			
+			$.postJSON(
+				contextPath + "/cadastro/cota/autoCompletarPorNome", {nomeCota:nomeCota},
+				function(result) { 
+					pesquisaCota.exibirAutoComplete(result, idCampoNomeCota, 3);
+				},
+				null, 
+				isFromModal
+			);
+		}
+	},
+	 */
+	
+	
 	this.exibirAutoCompleteEdicao = function(result, idEdicao) {
 		
 		$(idEdicao, pesquisaProduto.workspace).autocomplete({
 			source : result
 		});
 	};
+	
+	
+	
 	
 }
 

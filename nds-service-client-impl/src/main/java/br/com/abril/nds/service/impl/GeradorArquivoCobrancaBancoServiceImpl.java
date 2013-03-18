@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.export.cnab.cobranca.DetalheSegmentoP;
 import br.com.abril.nds.export.cnab.cobranca.Header;
@@ -23,9 +24,8 @@ import br.com.abril.nds.export.cnab.cobranca.Trailer;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Moeda;
-import br.com.abril.nds.model.cadastro.ParametroSistema;
-import br.com.abril.nds.model.cadastro.TipoParametroSistema;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -280,9 +280,9 @@ public class GeradorArquivoCobrancaBancoServiceImpl implements GeradorArquivoCob
 		
 		Map<Banco, List<DetalheSegmentoP>> inputDados = new HashMap<Banco, List<DetalheSegmentoP>>();
 		
-		Distribuidor distribuidor = getDistribuidor();
-		
-		List<Boleto> cobrancas = boletoRepository.obterBoletosGeradosNaDataOperacaoDistribuidor(distribuidor.getDataOperacao());
+		List<Boleto> cobrancas = 
+				boletoRepository.obterBoletosGeradosNaDataOperacaoDistribuidor(
+						this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		for(Boleto cobranca : cobrancas){
 			
