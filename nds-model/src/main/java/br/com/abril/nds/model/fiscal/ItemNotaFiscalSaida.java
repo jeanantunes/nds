@@ -38,19 +38,19 @@ public class ItemNotaFiscalSaida {
 	@Column(name = "CSOSN_PRODUTO")
 	private String CSOSNProduto;
 	
-	@Column(name = "BASE_CALCULO_PRODUTO")
+	@Column(name = "BASE_CALCULO_PRODUTO", precision=18, scale=4 )
 	private BigDecimal baseCalculoProduto;
 	
-	@Column(name = "ALIQUOTA_ICMS_PRODUTO")
+	@Column(name = "ALIQUOTA_ICMS_PRODUTO", precision=18, scale=4)
 	private BigDecimal aliquotaICMSProduto;
 	
-	@Column(name = "VALOR_ICMS_PRODUTO")
+	@Column(name = "VALOR_ICMS_PRODUTO", precision=18, scale=4)
 	private BigDecimal valorICMSProduto;
 	
-	@Column(name = "ALIQUOTA_IPI_PRODUTO")
+	@Column(name = "ALIQUOTA_IPI_PRODUTO", precision=18, scale=4)
 	private BigDecimal aliquotaIPIProduto;
 	
-	@Column(name = "VALOR_IPI_PRODUTO")
+	@Column(name = "VALOR_IPI_PRODUTO", precision=18, scale=4)
 	private BigDecimal valorIPIProduto;	
 	
 	@Column(name = "QTDE", nullable = false)

@@ -36,7 +36,7 @@ public class DescontoCota implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "DESCONTO")
+	@Column(name = "DESCONTO", precision=18, scale=4)
 	private BigDecimal desconto;
 	
 	@Temporal(TemporalType.TIMESTAMP)

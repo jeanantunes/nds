@@ -54,13 +54,13 @@ public class FormaCobranca implements Serializable {
 	@JoinColumn(name = "BANCO_ID")
 	private Banco banco;
 	
-	@Column(name = "VALOR_MINIMO_EMISSAO")
+	@Column(name = "VALOR_MINIMO_EMISSAO", precision=18, scale=4)
 	private BigDecimal valorMinimoEmissao;
 	
-	@Column(name = "TAXA_MULTA")
+	@Column(name = "TAXA_MULTA", precision=18, scale=4)
 	private BigDecimal taxaMulta;
 	
-	@Column(name = "TAXA_JUROS_MENSAL")
+	@Column(name = "TAXA_JUROS_MENSAL", precision=18, scale=4)
 	private BigDecimal taxaJurosMensal;
 	
 	@Column(name = "VENCIMENTO_DIA_UTIL", nullable = false)

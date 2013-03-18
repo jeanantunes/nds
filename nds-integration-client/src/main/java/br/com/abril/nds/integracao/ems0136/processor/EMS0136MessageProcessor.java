@@ -328,11 +328,12 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		criteria.setMaxResults(1);
 		Lancamento lancamento = (Lancamento) criteria.uniqueResult();
+		Date dtRecolhimento = input.getDataRecolhimento();
+		
 		if (lancamento == null) {
 			lancamento = new Lancamento();
 			
 			Date dtAgora = new Date();
-			Date dtRecolhimento = input.getDataRecolhimento();
 			
 			lancamento.setDataCriacao(dtAgora);
 			lancamento.setDataLancamentoPrevista(dtLancamento);
@@ -345,6 +346,13 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			lancamento.setRepartePromocional(BigInteger.ZERO);
 			lancamento.setSequenciaMatriz(null);
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
+		} else {
+			if ( lancamento.getStatus().equals(StatusLancamento.PLANEJADO) || lancamento.getStatus().equals(StatusLancamento.CONFIRMADO) ) {
+				lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
+				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
+				lancamento.setDataLancamentoDistribuidor(dtLancamento);
+				lancamento.setDataLancamentoPrevista(dtLancamento);
+			}
 		}
 		
 		/*

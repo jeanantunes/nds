@@ -121,11 +121,10 @@ public class EntregadorServiceImpl implements EntregadorService {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Entregador não encontrado.");
 		}
-		
-		if (entregador.getEnderecos() != null && !entregador.getEnderecos().isEmpty()) {
+
+		entregador.setEnderecos(null);
 			
-			this.enderecoEntregadorRepository.removerEnderecosEntregadorPorIdEntregador(idEntregador);
-		}
+		this.enderecoEntregadorRepository.removerEnderecosEntregadorPorIdEntregador(idEntregador);
 		
 		if (entregador.getTelefones() != null && !entregador.getTelefones().isEmpty()) {
 			

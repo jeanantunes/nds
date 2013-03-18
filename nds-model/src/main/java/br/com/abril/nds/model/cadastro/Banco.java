@@ -48,11 +48,14 @@ public class Banco implements Serializable {
 	private boolean ativo;
 	@Column(name = "INSTRUCOES")
 	private String instrucoes;
-	@Column(name = "JUROS")
+	
+	@Column(name = "JUROS", precision=18, scale=4)
 	private BigDecimal juros;
-	@Column(name = "MULTA")
+	
+	@Column(name = "MULTA", precision=18, scale=4)
 	private BigDecimal multa;
-	@Column(name = "VR_MULTA")
+	
+	@Column(name = "VR_MULTA", precision=18, scale=4)
 	private BigDecimal vrMulta;
 	
 	public Long getId() {
