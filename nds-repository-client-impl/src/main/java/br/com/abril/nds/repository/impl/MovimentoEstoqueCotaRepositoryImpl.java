@@ -23,7 +23,6 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -1020,8 +1019,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" PROD.CODIGO as codigoProduto,  				");		
 			sql.append(" PROD.NOME as nomeProduto, 						");
 			sql.append(" PROD_EDICAO.NUMERO_EDICAO as numeroEdicao, 	");
-			sql.append(" CONFERENCIAS.PRECO_VENDA as precoVenda, 	");
-			sql.append(" CONFERENCIAS.VALOR_DESCONTO as desconto 	");
+			sql.append(" PROD_EDICAO.PRECO_VENDA as precoVenda, 	");
+			sql.append(" (case when desconto_logistica_pe.ID is not null then ");
+      		sql.append("  		desconto_logistica_pe.PERCENTUAL_DESCONTO            ");
+      	    sql.append("  else												 		 ");
+			sql.append(" 		case when desconto_logistica_prod.ID is not null then ");	
+			sql.append(" 			 desconto_logistica_prod.PERCENTUAL_DESCONTO      ");	
+			sql.append("         else 0 end         ");		
+			sql.append("   end) as desconto           ");	
 			
 		}
 
@@ -1033,11 +1038,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 		sql.append(" SUM(MOV_ESTOQUE_COTA.QTDE) AS QTDE_ENCALHE, ");
 	
-		sql.append(" MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID, ");
-		
-		sql.append(" MOV_ESTOQUE_COTA.PRECO_VENDA, ");
-		
-		sql.append(" MOV_ESTOQUE_COTA.VALOR_DESCONTO  ");
+		sql.append(" MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID ");
 	
 		sql.append(" FROM ");
 
@@ -1067,12 +1068,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(" ) ");
 		
 		sql.append(" INNER JOIN PRODUTO_EDICAO PROD_EDICAO ON ( 					");
-		sql.append(" 	ITEM_CH_ENC_FORNECEDOR.PRODUTO_EDICAO_ID = PROD_EDICAO.ID 	");
+		sql.append(" 	CONFERENCIAS.PRODUTO_EDICAO_ID = PROD_EDICAO.ID 	");
 		sql.append(" ) 	");
+		
+		sql.append("  LEFT JOIN  ");
+		sql.append("  	desconto_logistica desconto_logistica_pe  ");
+		sql.append("  	on ( PROD_EDICAO.DESCONTO_LOGISTICA_ID = desconto_logistica_pe.id ) ");
 		
 		sql.append(" INNER JOIN PRODUTO PROD ON (			");
 		sql.append(" 	PROD_EDICAO.PRODUTO_ID = PROD.ID	");
 		sql.append(" ) 	");
+		
+		sql.append("  LEFT JOIN  ");
+		sql.append("  	desconto_logistica desconto_logistica_prod  ");
+		sql.append("  	on ( PROD.DESCONTO_LOGISTICA_ID = desconto_logistica_prod.id ) ");
 		
 		sql.append(" INNER JOIN PRODUTO_FORNECEDOR PROD_FORNEC ON (	");
 		sql.append(" 	PROD.ID = PROD_FORNEC.PRODUTO_ID 			");
@@ -1089,12 +1098,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		if(!indBuscaQtd){
     	
     		sql.append(" GROUP BY ");
-    		sql.append(" PROD_EDICAO.ID,			");		
-    		sql.append(" PROD.CODIGO,  				");		
-    		sql.append(" PROD.NOME, 				");
-    		sql.append(" PROD_EDICAO.NUMERO_EDICAO, ");
-    		sql.append(" PROD_EDICAO.PRECO_VENDA, 	");
-    		sql.append(" PROD_EDICAO.DESCONTO       ");
+    		sql.append(" PROD_EDICAO.ID ");
     		
         }
 		
@@ -2695,6 +2699,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		   .append(" WHERE conferenciaEncalhe.controleConferenciaEncalheCota.id = :idControleConferenciaEncalheCota ");
 		
 		Query query = getSession().createQuery(hql.toString());
+		
+		query.setMaxResults(1);
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
 		

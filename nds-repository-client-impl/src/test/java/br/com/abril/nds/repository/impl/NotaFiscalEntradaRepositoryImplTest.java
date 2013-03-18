@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.NotaRecebidaEnum;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -211,7 +212,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		FiltroConsultaNotaFiscalDTO filtro = new FiltroConsultaNotaFiscalDTO();
 		
 		filtro.setPeriodo(new PeriodoVO());
-		filtro.setIsNotaRecebida(true);
+		filtro.setNotaRecebida(NotaRecebidaEnum.SOMENTE_NOTAS_RECEBIDAS);
 		Integer quantidade = notaFiscalRepository.obterQuantidadeNotasFicaisCadastradas(filtro);
 		
 		Assert.assertNotNull(quantidade);
