@@ -255,7 +255,7 @@ public class FecharDiaController extends BaseController {
 		ResumoSuplementarFecharDiaDTO dto = 
 				this.resumoSuplementarFecharDiaService.obterResumoGeralSuplementar(dataOperacao);
 		
-		result.use(Results.json()).from(dto, "result").recursive().serialize();
+		result.use(CustomMapJson.class).put("result", dto).serialize();
 	}
 	
 	@Post

@@ -1138,10 +1138,10 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoSuplementar : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
 				function(result){
-					$("#totalSuplementarEstoqueLogico").html(result.totalEstoqueLogico);
-					$("#totalSuplementarTransferencia").html(result.totalTransferencia);
-					$("#totalSuplementarVenda").html(result.totalVenda);
-					$("#totalSuplementarSaldo").html(result.saldo);
+					$("#totalSuplementarEstoqueLogico").html(result.totalEstoqueLogicoFormatado);
+					$("#totalSuplementarTransferencia").html(result.totalTransferenciaFormatado);
+					$("#totalSuplementarVenda").html(result.totalVendaFormatado);
+					$("#totalSuplementarSaldo").html(result.saldoFormatado);
 				}
 			);
 	},
