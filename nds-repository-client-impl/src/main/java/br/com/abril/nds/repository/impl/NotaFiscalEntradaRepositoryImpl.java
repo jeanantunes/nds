@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.NotaFiscalEntradaRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -133,6 +132,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				.append(" (notaFiscal.id, ")
 				.append("  notaFiscal.numero, ")
 				.append("  notaFiscal.serie, ")
+				.append("  notaFiscal.numeroNotaEnvio, ")
 				.append("  notaFiscal.dataEmissao, ")
 				.append("  notaFiscal.dataExpedicao, ")
 				.append("  tipoNotaFiscal.descricao, ")
@@ -194,17 +194,39 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			condicoes += " f.id = :idFornecedor ";
 		}
 
-		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null) {
+		if (filtroConsultaNotaFiscal.getNotaRecebida() != null) {
 
-			String condicaoNotaRecebida = filtroConsultaNotaFiscal.getIsNotaRecebida() ? " = " : " != ";
-
-			condicoes += "".equals(condicoes) ? " where " : " and ";
+			String condicaoNotaRecebida = null;
 			
-			condicoes += " notaFiscal.statusNotaFiscal " 
-					  + condicaoNotaRecebida 
-					  + " :statusNotaFiscal ";
+			switch(filtroConsultaNotaFiscal.getNotaRecebida()) {
+			
+			case SOMENTE_NOTAS_RECEBIDAS:
+				
+				condicaoNotaRecebida = " notaFiscal.numero is not null ";
+				
+				break;
+			case SOMENTE_NOTAS_NAO_RECEBIDAS:
+				
+				condicaoNotaRecebida = " notaFiscal.numero is null and notaFiscal.numeroNotaEnvio is null ";
+				
+				break;
+			case NOTAS_NAO_RECEBIDAS_COM_NOTA_DE_ENVIO:
+				
+				condicaoNotaRecebida = " notaFiscal.numero is null and notaFiscal.numeroNotaEnvio is not null ";
+				
+				break;
+			default:
+				break;
+			}
+			
+			if (condicaoNotaRecebida != null) {
+
+				condicoes += "".equals(condicoes) ? " where " : " and ";
+
+				condicoes += condicaoNotaRecebida;
+			}
 		}
-		
+
 		hql.append(condicoes);
 
 		PaginacaoVO paginacao = filtroConsultaNotaFiscal.getPaginacao();
@@ -227,6 +249,10 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 					case SERIE:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
 						orderByColumn += " notaFiscal.serie ";
+						break;
+					case NUMERO_NOTA_ENVIO:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.numeroNotaEnvio ";
 						break;	
 					case DATA_EXPEDICAO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
@@ -296,11 +322,6 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		if (filtroConsultaNotaFiscal.getIdFornecedor() != null) {
 			
 			query.setParameter("idFornecedor", filtroConsultaNotaFiscal.getIdFornecedor());
-		}
-		
-		if (filtroConsultaNotaFiscal.getIsNotaRecebida() != null) {
-
-			query.setParameter("statusNotaFiscal", StatusNotaFiscalEntrada.RECEBIDA);
 		}
 
 		return query;

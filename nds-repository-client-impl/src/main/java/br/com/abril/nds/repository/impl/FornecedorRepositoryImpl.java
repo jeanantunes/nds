@@ -516,4 +516,22 @@ public class FornecedorRepositoryImpl extends
 		
 		return (Fornecedor) query.uniqueResult();
 	}
+	
+	@Override
+	public Fornecedor obterFornecedorPorMovimentoEstoqueCota(Long movimentoEstoqueCotaId) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select fornecedor from MovimentoEstoqueCota mec ");
+		hql.append(" join mec.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
+		hql.append(" join produto.fornecedores fornecedor ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setMaxResults(1);
+		
+		return (Fornecedor) query.uniqueResult();
+	}
+	
 }

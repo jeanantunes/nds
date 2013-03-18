@@ -405,6 +405,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 							.getMovimentoFinanceiroCota().getValor());
 					divida.setStatus(StatusDivida.EM_ABERTO);
 					divida.setConsolidado(consolidado);
+					divida.setOrigemNegociacao(true);
 
 					Cobranca cobranca = null;
 

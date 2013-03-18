@@ -146,4 +146,6 @@ public interface FornecedorRepository extends Repository<Fornecedor, Long> {
 
 	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor,
 			Integer qtdMaxResult);
+	
+	Fornecedor obterFornecedorPorMovimentoEstoqueCota(Long movimentoEstoqueCotaId);
 }
