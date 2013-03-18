@@ -394,6 +394,10 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				indWhere = true;
 			}
 			
+			if(indAnd) {
+				hql.append(" and ");
+			}
+			
 			hql.append(" nf.numeroNotaEnvio = :numeroNotaEnvio");
 			
 			indAnd = true;

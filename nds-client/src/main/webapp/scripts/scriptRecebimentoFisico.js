@@ -50,6 +50,8 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$("#numeroNotaEnvio", recebimentoFisicoController.workspace).numeric();
 		
+		$("#novoNumeroNotaEnvio", recebimentoFisicoController.workspace).numeric();
+		
 		$("#chaveAcesso", recebimentoFisicoController.workspace).numeric();
 		
 		$("#valorBruto", recebimentoFisicoController.workspace).maskMoney({
@@ -508,6 +510,26 @@ var recebimentoFisicoController = $.extend(true, {
 		}
 
 	},
+	
+	/**
+	 * APRESENTA O CAMPO DA NOVA CHAVE DA NFE.
+	 */
+	mostrar_chave_acesso_nova : function(){
+		
+		if( $("#novoNfe", recebimentoFisicoController.workspace).attr('checked') == 'checked' ){
+			
+			$(".nfesNovo", recebimentoFisicoController.workspace).show();
+			
+		}else{
+			
+			$(".nfesNovo", recebimentoFisicoController.workspace).hide();
+			
+			$("#novoChaveAcesso", recebimentoFisicoController.workspace).val("");
+			
+		}
+
+	},
+	
 	
 	/**
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
@@ -1475,6 +1497,7 @@ var recebimentoFisicoController = $.extend(true, {
 				'nota.fornecedor':$("#novoFornecedor",recebimentoFisicoController.workspace).val(),
 				'nota.cnpj':$("#novoCnpj",recebimentoFisicoController.workspace).val(),
 				'nota.numero':$("#novoNumeroNota",recebimentoFisicoController.workspace).val(),
+				'nota.numeroNotaEnvio':$("#novoNumeroNotaEnvio",recebimentoFisicoController.workspace).val(),
 				'nota.serie':$("#novoSerieNota",recebimentoFisicoController.workspace).val(),
 				'nota.chaveAcesso':$("#novoChaveAcesso",recebimentoFisicoController.workspace).val(),
 				'nota.dataEmissao':$("#novoDataEmissao",recebimentoFisicoController.workspace).val(),

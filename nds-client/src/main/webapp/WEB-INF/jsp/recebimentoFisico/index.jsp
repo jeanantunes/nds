@@ -69,7 +69,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Edição:</td>
+					<td>Edi&ccedil;&atilde;o:</td>
 					<td><input 
 						type="text" 
 						id="edicao" maxlength="20"
@@ -94,7 +94,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Preço R$:</td>
+					<td>Pre&ccedil;o R$:</td>
 					<td><input 	
 								disabled="disabled"
 								type="text" 
@@ -111,7 +111,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Pacote Padrão:</td>
+					<td>Pacote Padr&atilde;o:</td>
 					<td><input 	disabled="disabled"
 								type="text" 
 								id="pacotePadrao"
@@ -127,7 +127,7 @@
 				</tr>
 				<tr>
 					<td>
-						Lançamento: 
+						Lan&ccedil;amento: 
 					</td>				
 					<td>
 						<select name="tipoLancamento"
@@ -267,7 +267,7 @@
 							<td width="123"><input type="text" id=notaFiscal
 								style="width: 100px;" maxlength="9" />
 							</td>
-							<td width="33">Série:</td>
+							<td width="33">S&eacute;rie:</td>
 							<td width="43"><input id="serie" type="text"
 								style="width: 30px;" maxlength="3"/>
 							</td>
@@ -278,29 +278,29 @@
 
 						</tr>
 						<tr>
-							<td colspan="7" height="26">
 
-								<label for="eNF">É uma NF-e?</label>
-
-								<input type="checkbox" name="checkbox8" id="eNF" onchange="recebimentoFisicoController.mostrar_nfes();" style="float: left;  margin-left: 13px; margin-right: 10px;
-    margin-top: 9px;" /> 
-
-								<span id="nfes" class="nfes"> 
-
-								Chave de Acesso: 
-
-								<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" />
-								
-							</span>
-
-							</td>
-
-							<td>Numero Nota Envio:</td>
-							<td>
-								<input id="numeroNotaEnvio" type="text" style="width: 30px;"/>
+						<td width="86">Nota Envio:</td>
+							
+							<td width="254">
+								<input id="numeroNotaEnvio" type="text" style="width: 250px;"/>
 							</td>
 							
-							<td></span></td>
+							<td colspan="7" height="26">
+
+								<label for="eNF">&Eacute; uma NF-e?</label>
+
+								<input type="checkbox" name="checkbox8" id="eNF" 
+								onchange="recebimentoFisicoController.mostrar_nfes();" 
+								style="float: left;  margin-left: 13px; margin-right: 10px;
+    							margin-top: 9px;" /> 
+
+								<span id="nfes" class="nfes"> 
+									Chave de Acesso: 
+									<input type="text" name="chaveAcesso" id="chaveAcesso" maxlength="44" style="width: 310px; margin-left: 10px;" />
+								</span>
+
+							</td>
+							
 						</tr>
 					</table>
 
@@ -312,7 +312,7 @@
 
 			<fieldset class="fieldGrid">
 
-				<legend>Recebimentos Físico Cadastrados</legend>
+				<legend>Recebimentos F&iacute;sico Cadastrados</legend>
 
 				<div class="grids" style="display: none;">
 
@@ -341,7 +341,7 @@
 
 	<div id="div-wrapper-dialog-adicionar">
 
-		<div id="dialog-adicionar" title="Recebimento Físico" style="display: none;" >
+		<div id="dialog-adicionar" title="Recebimento F&iacute;sico" style="display: none;" >
 
 		    <jsp:include page="../messagesDialog.jsp" />
 
@@ -371,7 +371,7 @@
 			            <input maxlength="18" type="text" style="width:100px " id="novoNumeroNota" name="novoNumeroNota"  />
 			        </td>
 
-			        <td width="34">Série:</td>
+			        <td width="34">S&eacute;rie:</td>
 			        <td width="97">
 			            <input maxlength="200" type="text" style="width:50px " id="novoSerieNota" name="novoSerieNota" />
 			        </td>
@@ -381,27 +381,38 @@
 
 			    <tr style="width: 25%">
 
-			      <td>NF-e:</td>
-			      <td>
-			          <input type="checkbox" id="novoNfe" name="novoNfe" />
-			      </td>
-
-			      <td>Chave de Acesso:</td>
-			      <td colspan="3">
-			          <input maxlength="200" type="text" style="width:470px" id="novoChaveAcesso" name="novoChaveAcesso" />
-			      </td>
-
-				  <td>Numero Nota Envio:</td>
-				  <td>
-					<input id="numeroNotaEnvio" type="text" style="width: 30px;"/>
+			       <td>Nota Envio:</td>
+				  
+				  <td colspan="1">
+					<input id="novoNumeroNotaEnvio" type="text" style="width: 100px;"/>
 				  </td>
+
+			      
+			      
+				  <td colspan="1">
+				  
+						<label for="novoNfe">NF-e:</label>
+						
+						<input  type="checkbox" name="checkbox8" id="novoNfe" 
+								onchange="recebimentoFisicoController.mostrar_chave_acesso_nova();" 
+								style="float: left;  margin-left: 13px; margin-right: 10px;
+    							margin-top: 9px;" /> 
+						
+				  </td>
+				  
+					<td colspan="5">
+						<span id="nfesNovo" class="nfesNovo">
+							Chave de Acesso:
+							<input type="text" maxlength="44" style="width: 310px; margin-left: 65px;" id="novoChaveAcesso" name="novoChaveAcesso" />
+						</span>
+					</td>
 
 			    </tr>
 
 
 			    <tr style="width: 25%">
 
-			      <td>Data Emissão:</td>
+			      <td>Data Emiss&atilde;o:</td>
 			      <td>
 			          <input type="text" id="novoDataEmissao" name="novoDataEmissao" style="width:100px " />
 			      </td>

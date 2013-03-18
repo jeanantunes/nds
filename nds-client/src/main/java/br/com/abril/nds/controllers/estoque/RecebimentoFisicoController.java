@@ -1420,6 +1420,8 @@ public class RecebimentoFisicoController extends BaseController {
 		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(nota.getFornecedor());
 		
 		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
+		
+		notaFiscal.setNumeroNotaEnvio(nota.getNumeroNotaEnvio());
 		notaFiscal.setNumero(nota.getNumero());
 		notaFiscal.setSerie(nota.getSerie());
 		notaFiscal.setDataEmissao(nota.getDataEmissao());
@@ -1431,12 +1433,14 @@ public class RecebimentoFisicoController extends BaseController {
 		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
         notaFiscal.setValorDesconto(BigDecimal.ZERO);
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+        
 		
 		if(indNotaEnvio) {
+			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO);
 			notaFiscal.setOrigem(Origem.INTERFACE);
 		} else {
 			notaFiscal.setOrigem(Origem.MANUAL);
+			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		}
 		
 		
