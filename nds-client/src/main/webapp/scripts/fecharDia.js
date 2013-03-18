@@ -1091,10 +1091,10 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	validacaoControleDeAprovacao : function(result){
-		if(result.controleDeAprovacao){
+		if(result.controleDeAprovacao===true){
 			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoControleDeAprovacao", null,
 					function(result){
-						if(result){							
+						if(result.boolean===true){							
 							var conferenciaDeAprovacao = "<tr class='class_linha_1' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
 							var imagem = "<td align='center'><img src='"+ contextPath +"/images/ico_bloquear.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 							$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);

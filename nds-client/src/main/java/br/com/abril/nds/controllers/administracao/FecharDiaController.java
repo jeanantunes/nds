@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
@@ -577,7 +578,7 @@ public class FecharDiaController extends BaseController {
 		
 		Date dataFechamento = this.getDataFechamento();
 		
-		List<Cota> listaCotas = null;
+		List<CotaResumoDTO> listaCotas = null;
 		
 		switch (tipoResumo) {
 		
@@ -610,10 +611,10 @@ public class FecharDiaController extends BaseController {
 		List<DetalheCotaFechamentoDiarioVO> listaDetalhesCotaFechamentoDiarioVO =
 			new ArrayList<DetalheCotaFechamentoDiarioVO>();
 		
-		for (Cota cota : listaCotas) {
+		for (CotaResumoDTO cota : listaCotas) {
 			
 			listaDetalhesCotaFechamentoDiarioVO.add(
-				new DetalheCotaFechamentoDiarioVO(cota.getNumeroCota(), cota.getPessoa().getNome()));
+				new DetalheCotaFechamentoDiarioVO(cota.getNumero(), cota.getNome()));
 		}
 		
 		return listaDetalhesCotaFechamentoDiarioVO;

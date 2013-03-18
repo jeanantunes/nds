@@ -132,7 +132,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT p.codigo as codigo,  ");
+		hql.append(" SELECT pe.id as idProdutoEdicao, p.codigo as codigo,  ");
 		hql.append(" p.nome as nomeProduto, ");
 		hql.append(" pe.numeroEdicao as numeroEdicao, ");
 		hql.append(" ve.qntProduto as qtde, ");
@@ -171,7 +171,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	    .append("where movimentoEstoque.data = :data and movimentoEstoque.produtoEdicao = produtoEdicao and movimentoEstoque.status = :statusAprovado ")
         .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:%s)) as %s ").toString();
 	    
-	    StringBuilder hql = new StringBuilder("select new map(produto.codigo as codigo, ");
+	    StringBuilder hql = new StringBuilder("select new map(produtoEdicao.id as idProdutoEdicao,produto.codigo as codigo, ");
 		hql.append("produto.nome as nomeProduto, ");
 		hql.append("produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append("produtoEdicao.precoVenda as precoVenda, ");                               
@@ -230,6 +230,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
         List<SuplementarFecharDiaDTO> lista = new ArrayList<>(maps.size());
         
         for (Map<String, Object> map : maps) {
+        	Long idProdutoEdicao = (Long) map.get("idProdutoEdicao");
             String codigo = (String) map.get("codigo");
             String nomeProduto = (String) map.get("nomeProduto");
             Long numeroEdicao = (Long) map.get("numeroEdicao");
@@ -241,6 +242,7 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
             BigInteger quantidadeTransferenciaSaida = Util.nvl((BigInteger) map.get("quantidadeTransferenciaSaida"), BigInteger.ZERO);
 
             SuplementarFecharDiaDTO dto = new SuplementarFecharDiaDTO();
+            dto.setIdProdutoEdicao(idProdutoEdicao);
             dto.setCodigo(codigo);
             dto.setNomeProduto(nomeProduto);
             dto.setNumeroEdicao(numeroEdicao);

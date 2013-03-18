@@ -18,6 +18,8 @@ import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoAVista;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado;
+import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
@@ -47,6 +49,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
@@ -314,15 +317,15 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		Long quantidadeAtivas = this.cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO);
 		
-		List<Cota> ausentesExpedicaoReparte = 
+		List<CotaResumoDTO> ausentesExpedicaoReparte = 
 			this.cotaRepository.obterCotasAusentesNaExpedicaoDoReparteEm(dataFechamento);
 		
-		List<Cota> ausentesRecolhimentoEncalhe = 
+		List<CotaResumoDTO> ausentesRecolhimentoEncalhe = 
 			this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataFechamento);
 		
-		List<Cota> novas = this.cotaRepository.obterCotasComInicioAtividadeEm(dataFechamento);
+		List<CotaResumoDTO> novas = this.cotaRepository.obterCotasComInicioAtividadeEm(dataFechamento);
 		
-		List<Cota> inativas = this.cotaRepository.obterCotas(SituacaoCadastro.INATIVO);
+		List<CotaResumoDTO> inativas = this.cotaRepository.obterCotas(SituacaoCadastro.INATIVO);
 		
 		return new ResumoFechamentoDiarioCotasDTO(
 			quantidadeTotal, quantidadeAtivas, ausentesExpedicaoReparte, 
@@ -442,8 +445,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	
     	validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
     	validarDadosFechamentoDiario(usuario, "Usúario informado inválido!");
-    	
-    	usuario = usuarioRepository.buscarPorId(usuario.getId());
     	
     	validarDadosFechamentoDiario(usuario, "Usúario não identificado para operação de fechamento do dia!");
     	
@@ -665,16 +666,16 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 	}
 
-	private void incluirCotasFechamentoDiario(List<Cota> cotas, TipoSituacaoCota tipoDetalheCota,FechamentoDiarioConsolidadoCota fechamentoDiarioConsolidadoCota) {
+	private void incluirCotasFechamentoDiario(List<CotaResumoDTO> cotas, TipoSituacaoCota tipoDetalheCota,FechamentoDiarioConsolidadoCota fechamentoDiarioConsolidadoCota) {
 		
 		if(cotas!= null && !cotas.isEmpty()){
 			
-			for(Cota item : cotas ){
+			for(CotaResumoDTO item : cotas ){
 				
 				FechamentoDiarioCota cotaFechamentoDiario = new FechamentoDiarioCota();
 				
-				cotaFechamentoDiario.setNomeCota(item.getPessoa().getNome());
-				cotaFechamentoDiario.setNumeroCota(item.getNumeroCota());
+				cotaFechamentoDiario.setNomeCota(item.getNome());
+				cotaFechamentoDiario.setNumeroCota(item.getNumero());
 				cotaFechamentoDiario.setTipoSituacaoCota(tipoDetalheCota);
 				cotaFechamentoDiario.setFechamentoDiarioConsolidadoCota(fechamentoDiarioConsolidadoCota);
 				
@@ -800,9 +801,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				FechamentoDiarioLancamentoSuplementar lancamentoSuplementar = new FechamentoDiarioLancamentoSuplementar();
 				
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-				
-				lancamentoSuplementar.setProdutoEdicao(produtoEdicao);
+				lancamentoSuplementar.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 				lancamentoSuplementar.setFechamentoDiarioConsolidadoSuplementar(consolidadoSuplementar);
 				lancamentoSuplementar.setQuantidadeContabilizada(item.getQuantidadeContabil().longValue());
 				
@@ -822,9 +821,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				FechamentoDiarioMovimentoVendaSuplementar vendaSuplementar = new FechamentoDiarioMovimentoVendaSuplementar();
 				
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-				
-				vendaSuplementar.setProdutoEdicao(produtoEdicao);
+				vendaSuplementar.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 				vendaSuplementar.setQuantidade(item.getQtde());
 				vendaSuplementar.setValor(item.getValor());
 				vendaSuplementar.setDataRecebimento(DateUtil.parseDataPTBR(item.getDataRecolhimento()));
@@ -876,9 +873,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				FechamentoDiarioLancamentoEncalhe lancamentoEncalhe = new FechamentoDiarioLancamentoEncalhe();
 				
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-				
-				lancamentoEncalhe.setProdutoEdicao(produtoEdicao);
+				lancamentoEncalhe.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 				lancamentoEncalhe.setQuantidadeDiferenca(item.getQtdeDiferenca().intValue());
 				lancamentoEncalhe.setQuantidadeVendaEncalhe(Util.nvl(item.getQtdeVendaEncalhe(),0).intValue());
 				lancamentoEncalhe.setQuantidade(Util.nvl(item.getQtdeLogico(),0).intValue());
@@ -900,9 +895,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 				FechamentoDiarioMovimentoVendaEncalhe movimentoVendaEncalhe = new FechamentoDiarioMovimentoVendaEncalhe();
 				
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-				
-				movimentoVendaEncalhe.setProdutoEdicao(produtoEdicao);
+				movimentoVendaEncalhe.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 				movimentoVendaEncalhe.setQuantidade(item.getQtde());
 				movimentoVendaEncalhe.setValor(item.getValor());
 				movimentoVendaEncalhe.setDataRecebimento(DateUtil.parseDataPTBR(item.getDataRecolhimento()));
@@ -950,9 +943,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		    	
 		    	FechamentoDiarioLancamentoReparte movimentoReparte = new FechamentoDiarioLancamentoReparte();
 		    	
-		    	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigo(), item.getNumeroEdicao());
-		    	
-		    	movimentoReparte.setProdutoEdicao(produtoEdicao);
+		    	movimentoReparte.setProdutoEdicao(new ProdutoEdicao(item.getIdProdutoEdicao()));
 		    	movimentoReparte.setQuantidadeADistribuir(item.getQtdeDistribuir().intValue());
 		    	movimentoReparte.setQuantidadeDiferenca(item.getQtdeDiferenca().intValue());
 		    	movimentoReparte.setQuantidadeDistribuido(Util.nvl(item.getQtdeDistribuido(),0).intValue());
@@ -1022,7 +1013,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
 		
 		processarControleDeAprovacao();
-		
+				
 		try {
 		
 			return salvarResumoFechamentoDiario(usuario, dataFechamento);

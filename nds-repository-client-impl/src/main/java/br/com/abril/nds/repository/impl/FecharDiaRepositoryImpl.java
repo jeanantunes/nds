@@ -33,7 +33,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 	@Override
 	public boolean existeCobrancaParaFecharDia(Date diaDeOperaoMenosUm) {
 		StringBuilder hql = new StringBuilder();
-		hql.append(" from Cobranca c where ");		
+		hql.append(" select count(c.id) from Cobranca c where ");		
 		hql.append(" c.statusCobranca = :statusCobranca");		
 		hql.append(" and c.dataVencimento = :diaDeOperaoMenosUm ");
 		
@@ -43,7 +43,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 		query.setParameter("diaDeOperaoMenosUm", diaDeOperaoMenosUm);
 		
-		return query.list().isEmpty() ? false : true;
+		return (long)query.uniqueResult() == 0L ? false : true;
 	}
 
 	@Override
@@ -117,14 +117,14 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 		jpql.append(" FROM Lancamento AS lancamento ");
 		jpql.append(" JOIN lancamento.produtoEdicao AS pe ");
-		jpql.append(" JOIN lancamento.estudo  estudo ");
+		jpql.append(" left JOIN lancamento.estudo  estudo ");
 		jpql.append(" JOIN pe.produto AS produto ");
 		jpql.append(" join produto.fornecedores fornecedor ");
 		jpql.append(" WHERE  lancamento.dataLancamentoDistribuidor = :dataOperacaoDistribuidor ");
 		
-		jpql.append(" and estudo.status = :statusEstudo ");
+		// jpql.append(" and estudo.status = :statusEstudo ");
 				
-		jpql.append(" AND  lancamento.status NOT IN (:status) ");	
+		jpql.append(" AND  lancamento.status=:status ");	
 		jpql.append(" GROUP BY produto.codigo, produto.nome, pe.numeroEdicao ");
 		
 		Query query = super.getSession().createQuery(jpql.toString());
@@ -133,7 +133,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		listaLancamentos.add(StatusLancamento.BALANCEADO);
 		
 
-		query.setParameter("statusEstudo", StatusLancamento.ESTUDO_FECHADO);
+		//query.setParameter("statusEstudo", StatusLancamento.ESTUDO_FECHADO);
 		
 		query.setParameterList("status", listaLancamentos);
 		query.setParameter("dataOperacaoDistribuidor", dataOperacaoDistribuidor);
