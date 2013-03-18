@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_cheque_subreport" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_cheque_subreport" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="20d6dd16-7053-4a44-bd2f-60aceaff8ede">
 	<property name="ireport.zoom" value="1.2100000000000006"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -36,7 +36,7 @@
 	<columnHeader>
 		<band height="20">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="185" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement uuid="b6028280-b78c-4985-aace-6f5835be710d" mode="Opaque" x="0" y="0" width="185" height="20" forecolor="#000000" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -49,7 +49,7 @@
 				<text><![CDATA[Vencimento]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="185" y="0" width="185" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement uuid="79fc738b-1f4e-4aef-a732-91eec7a7c4a4" mode="Opaque" x="185" y="0" width="185" height="20" forecolor="#000000" backcolor="#999999"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -62,7 +62,7 @@
 				<text><![CDATA[Valor R$]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="370" y="0" width="185" height="20" forecolor="#000000" backcolor="#999999"/>
+				<reportElement uuid="5ee65548-b46b-4d92-90f7-ff17bc779a96" mode="Opaque" x="370" y="0" width="185" height="20" forecolor="#000000" backcolor="#999999"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -79,7 +79,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField>
-				<reportElement style="zebrado" x="0" y="0" width="185" height="20"/>
+				<reportElement uuid="9db9209a-32ad-4304-83b4-1e9ab95f0d7e" style="zebrado" x="0" y="0" width="185" height="20"/>
 				<box>
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -90,7 +90,7 @@
 				<textFieldExpression><![CDATA[new SimpleDateFormat("dd/MM/yyyy").format($F{dataVencimento})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="zebrado" x="185" y="0" width="185" height="20"/>
+				<reportElement uuid="c7b7b087-acd8-41e7-99b7-6d9fd50818cd" style="zebrado" x="185" y="0" width="185" height="20"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -98,10 +98,10 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{valor}.setScale(2, RoundingMode.HALF_EVEN)]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new DecimalFormat("#,##0.00").format($F{valor}.setScale(2, RoundingMode.HALF_EVEN))]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement style="zebrado" x="370" y="0" width="185" height="20"/>
+				<reportElement uuid="4eeecbe5-f224-41da-9b1a-659ceb17eadc" style="zebrado" x="370" y="0" width="185" height="20"/>
 				<box leftPadding="3" rightPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>

@@ -444,22 +444,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			
 		}
 			
-		if(filtroConsultaNotaFiscal.getChave() == null) {
-			
-			if(!indWhere) {
-				hql.append(" where ");
-				indWhere = true;
-			}
-			
-			if(indAnd) {
-				hql.append(" and ");
-			}
-			
-			hql.append(" nf.chaveAcesso is null ");
-			
-			indAnd = true;
-			
-		} else {
+		if(filtroConsultaNotaFiscal.getChave() != null) {
 			
 			if(!indWhere) {
 				hql.append(" where ");
