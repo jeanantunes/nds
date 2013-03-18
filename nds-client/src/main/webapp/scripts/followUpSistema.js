@@ -50,7 +50,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 	    }));
 
@@ -101,7 +101,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		}));
 
@@ -152,7 +152,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		}));
 
@@ -203,7 +203,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		}));
 
@@ -261,7 +261,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		});
 		
@@ -294,7 +294,7 @@ var followUpSistemaController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 880,
+			width : 950,
 			height : 255
 		}));
 		
@@ -412,6 +412,13 @@ var followUpSistemaController = $.extend(true, {
 		}
 		
 		return resultado;
+	},
+	
+	toggleButtons : function(idDivActive) {
+		
+		$(".divButtonsWrapper",  followUpSistemaController.workspace).hide();
+		$("#"+idDivActive,  followUpSistemaController.workspace).show();
+		
 	}
 	
 }, BaseController);
