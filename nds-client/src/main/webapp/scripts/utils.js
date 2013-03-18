@@ -28,7 +28,22 @@ $(document).ready(function(){
 	    }
 	});
 	
+	var pressedCtrl = false;
+	$(document).keyup(function (e) {
+		var eventoJs= e;
+		var keycode = e.which;
+		if (window.event) {
+			eventoJs = window.event;
+			keycode = eventoJs.keyCode;
+		}
+		
+		if(keycode == 17){
+			pressedCtrl=false; 
+		}
+	})
+	
 	$(document.body).keydown(function(e) {
+		
 		var eventoJs= e;
 		var keycode = e.which;
 		if (window.event) {
@@ -59,8 +74,39 @@ $(document).ready(function(){
 				}
 				return true;
 		    }
+		}else{
+			
+			//Navegação pelas abas por CTRL+TAB
+			
+			var refTabs = $("li", $('.ui-tabs-nav'));
+			if(refTabs.size() > 1){
+				
+				if(keycode == 17){
+					pressedCtrl = true; 
+				}
+				
+				var indexSecionado = $('.ui-tabs-selected').index();
+				var indexSelecionar = indexSecionado;
+				
+				if(keycode == 37 && pressedCtrl == true) {//Esquerda
+					if(indexSecionado == 0){
+						indexSelecionar == refTabs.size() -1;
+					}else{
+						indexSelecionar--;
+					}
+				}else if(keycode == 39 && pressedCtrl == true) {//Direita
+					if((indexSecionado+1) == refTabs.size()){
+						indexSelecionar = 0;
+					}else{
+						indexSelecionar++;
+					}
+				}
+				
+				if(indexSelecionar != -1){
+					refTabs.children('a')[indexSelecionar].click();
+				}
+			}
 		}
-		
 	});
 	
 	//Move foco para primeiro campo do modal ao abrir modal
