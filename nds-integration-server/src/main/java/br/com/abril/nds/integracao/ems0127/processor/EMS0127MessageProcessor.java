@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.model.integracao.icd.IcdChamadaEncalhe;
@@ -69,7 +70,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			for(IcdChamadaEncalhe ce : chamadasEncalhe) {
 				
 				try {
-					ce.setTipoDocumento("EMS0137");
+					ce.setTipoDocumento("EMS0127");
 					cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
 					cdbc.save(ce);
 				} catch(Exception e) {
