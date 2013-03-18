@@ -1,10 +1,7 @@
-package br.com.abril.nds.process.ajustefinalreparte;
+package br.com.abril.nds.process.calculoreparte;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
-import br.com.abril.nds.process.calculoreparte.CalcularReparte;
 import br.com.abril.nds.service.EstudoServiceEstudo;
 
 /**
@@ -19,14 +16,14 @@ import br.com.abril.nds.service.EstudoServiceEstudo;
  * Próximo Processo: N/A
  * </p>
  */
-@Component
 public class GravarReparteFinalCota extends ProcessoAbstrato {
 
-    @Autowired
-    private EstudoServiceEstudo estudoServiceEstudo;
+    public GravarReparteFinalCota(Estudo estudo) {
+	super(estudo);
+    }
 
     @Override
     protected void executarProcesso() {
-	estudoServiceEstudo.gravarEstudo(getEstudo());
+	new EstudoServiceEstudo().gravarEstudo(getEstudo());
     }
 }

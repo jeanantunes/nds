@@ -6,7 +6,6 @@ import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -16,9 +15,6 @@ import br.com.abril.nds.process.dataprovider.CorrecaoTendenciaDataProvider;
 
 public class CorrecaoTendenciaTest {
 
-    @Autowired
-    private CorrecaoTendencia correcaoTendencia;
-    
     /**
      * Testar se o índice de correção será 1.
      * 
@@ -31,9 +27,7 @@ public class CorrecaoTendenciaTest {
 
 	try {
 
-	    correcaoTendencia.setGenericDTO(cota);
-	    correcaoTendencia.setTotalReparte(totalReparte);
-	    correcaoTendencia.setTotalVenda(totalVenda);
+	    CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(cota, totalReparte, totalVenda);
 	    correcaoTendencia.executar();
 
 	    cota = (Cota) correcaoTendencia.getGenericDTO();
@@ -75,9 +69,7 @@ public class CorrecaoTendenciaTest {
 
 	try {
 
-	    correcaoTendencia.setGenericDTO(cota);
-	    correcaoTendencia.setTotalReparte(totalReparte);
-	    correcaoTendencia.setTotalVenda(totalVenda);
+	    CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(cota, totalReparte, totalVenda);
 	    correcaoTendencia.executar();
 
 	    cota = (Cota) correcaoTendencia.getGenericDTO();
@@ -123,9 +115,7 @@ public class CorrecaoTendenciaTest {
 
 	try {
 
-	    correcaoTendencia.setGenericDTO(cota);
-	    correcaoTendencia.setTotalReparte(totalReparte);
-	    correcaoTendencia.setTotalVenda(totalVenda);
+	    CorrecaoTendencia correcaoTendencia = new CorrecaoTendencia(cota, totalReparte, totalVenda);
 	    correcaoTendencia.executar();
 
 	    cota = (Cota) correcaoTendencia.getGenericDTO();

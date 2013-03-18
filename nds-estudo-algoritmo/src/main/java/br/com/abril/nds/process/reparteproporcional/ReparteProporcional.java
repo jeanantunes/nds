@@ -2,10 +2,9 @@ package br.com.abril.nds.process.reparteproporcional;
 
 import java.math.BigDecimal;
 
-import org.springframework.stereotype.Component;
-
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
@@ -22,8 +21,11 @@ import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
  * Processo Anterior: {@link ReparteMinimo}
  * Próximo Processo: {@link EncalheMaximo}</p>
  */
-@Component
 public class ReparteProporcional extends ProcessoAbstrato {
+
+	public ReparteProporcional(Estudo estudo) {
+		super(estudo);
+	}
 	
     @Override
     protected void executarProcesso() {

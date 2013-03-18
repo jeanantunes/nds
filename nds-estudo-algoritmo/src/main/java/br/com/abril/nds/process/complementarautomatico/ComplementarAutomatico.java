@@ -2,13 +2,12 @@ package br.com.abril.nds.process.complementarautomatico;
 
 import java.math.BigDecimal;
 
-import org.springframework.stereotype.Component;
-
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
-import br.com.abril.nds.process.ajustefinalreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
+import br.com.abril.nds.process.calculoreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
 
 /**
@@ -23,8 +22,11 @@ import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
  * Próximo Processo: {@link CalcularReparte}
  * </p>
  */
-@Component
 public class ComplementarAutomatico extends ProcessoAbstrato {
+
+	public ComplementarAutomatico(Estudo estudo) {
+		super(estudo);
+	}
 	
     @Override
     protected void executarProcesso() {

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -19,9 +18,6 @@ import br.com.abril.nds.process.dataprovider.CorrecaoVendasDataProvider;
 
 public class CorrecaoVendasTest {
 
-    @Autowired
-    private CorrecaoVendas correcaoVendas;
-    
     /**
      * Testar os índices da(s) cota(s) que as edições não encontra(m)-se na primeira edição.
      * 
@@ -36,7 +32,7 @@ public class CorrecaoVendasTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
-	    correcaoVendas.setGenericDTO(cota);
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();
@@ -122,7 +118,7 @@ public class CorrecaoVendasTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
-	    correcaoVendas.setGenericDTO(cota);
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();
@@ -208,7 +204,7 @@ public class CorrecaoVendasTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
-	    correcaoVendas.setGenericDTO(cota);
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();
@@ -294,7 +290,7 @@ public class CorrecaoVendasTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
-	    correcaoVendas.setGenericDTO(cota);
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();
@@ -380,7 +376,7 @@ public class CorrecaoVendasTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edicao base ");
 
-	    correcaoVendas.setGenericDTO(cota);
+	    CorrecaoVendas correcaoVendas = new CorrecaoVendas(cota);
 	    correcaoVendas.executar();
 
 	    cota = (Cota) correcaoVendas.getGenericDTO();

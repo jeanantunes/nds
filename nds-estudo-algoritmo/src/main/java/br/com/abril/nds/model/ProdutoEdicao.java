@@ -9,6 +9,8 @@ public class ProdutoEdicao extends ProdutoEdicaoBase {
     private Long idCota;
     private BigDecimal reparte;
     private BigDecimal venda;
+    private BigDecimal reparteMinimo; // Reparte mínimo configurado na tela de Mix de Produto
+    private BigDecimal reparteMaximo; // Reparte máximo configurado na tela de Mix de Produto
     private BigDecimal indiceCorrecao;
     private BigDecimal vendaCorrigida;
 
@@ -26,6 +28,22 @@ public class ProdutoEdicao extends ProdutoEdicaoBase {
 
     public void setVenda(BigDecimal venda) {
 	this.venda = venda;
+    }
+
+    public BigDecimal getReparteMinimo() {
+	return reparteMinimo;
+    }
+
+    public void setReparteMinimo(BigDecimal reparteMinimo) {
+	this.reparteMinimo = reparteMinimo;
+    }
+
+    public BigDecimal getReparteMaximo() {
+	return reparteMaximo;
+    }
+
+    public void setReparteMaximo(BigDecimal reparteMaximo) {
+	this.reparteMaximo = reparteMaximo;
     }
 
     public BigDecimal getIndiceCorrecao() {

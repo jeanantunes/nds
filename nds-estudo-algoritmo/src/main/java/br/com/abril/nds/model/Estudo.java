@@ -2,7 +2,6 @@ package br.com.abril.nds.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Estudo extends GenericDTO<Estudo> {
@@ -14,10 +13,9 @@ public class Estudo extends GenericDTO<Estudo> {
 	private BigDecimal reparteDistribuir;
 	private BigDecimal reparteDistribuirInicial;
 	private ProdutoEdicaoBase produto;
-	private LinkedList<ProdutoEdicaoBase> edicoesBase;
+	private List<ProdutoEdicaoBase> edicoesBase;
 	private List<Cota> cotas; //Cotas que receberam as edições base.
 	private boolean distribuicaoPorMultiplos;
-	private BigDecimal reparteMinimo;
 	private BigDecimal pacotePadrao;
 	private BigDecimal somatoriaVendaMedia;
 	private BigDecimal somatoriaReparteEdicoesAbertas;
@@ -67,11 +65,11 @@ public class Estudo extends GenericDTO<Estudo> {
 		this.produto = produto;
 	}
 
-	public LinkedList<ProdutoEdicaoBase> getEdicoesBase() {
+	public List<ProdutoEdicaoBase> getEdicoesBase() {
 		return edicoesBase;
 	}
 
-	public void setEdicoesBase(LinkedList<ProdutoEdicaoBase> edicoesBase) {
+	public void setEdicoesBase(List<ProdutoEdicaoBase> edicoesBase) {
 		this.edicoesBase = edicoesBase;
 	}
 
@@ -93,7 +91,7 @@ public class Estudo extends GenericDTO<Estudo> {
 		return somatoriaVendaMedia;
 	}
 
-	public void setSomatoriaVendaMedia(BigDecimal somatoriaVendaMedia) {
+	public void setSomatoriaVendaMediaFinal(BigDecimal somatoriaVendaMedia) {
 		this.somatoriaVendaMedia = somatoriaVendaMedia;
 	}
 
@@ -242,14 +240,6 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setDataCadastro(Date dataCadastro) {
 	    this.dataCadastro = dataCadastro;
-	}
-
-	public BigDecimal getReparteMinimo() {
-	    return reparteMinimo;
-	}
-
-	public void setReparteMinimo(BigDecimal reparteMinimo) {
-	    this.reparteMinimo = reparteMinimo;
 	}
 
 	@Override

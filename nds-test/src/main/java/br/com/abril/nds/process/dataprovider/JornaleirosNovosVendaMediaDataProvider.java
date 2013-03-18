@@ -5,11 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-<<<<<<< HEAD
 import org.testng.ITestContext;
-=======
-import org.springframework.beans.factory.annotation.Autowired;
->>>>>>> branch 'master' of https://adenilton@bitbucket.org/pedroxs/nds.git
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -22,12 +18,6 @@ import br.com.abril.nds.process.medias.Medias;
 
 public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProvider {
 
-    @Autowired
-    private static Medias medias;
-    
-    @Autowired
-    private static CorrecaoIndividual correcaoIndividual;
-    
     @DataProvider(name = "getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList")
     public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList(ITestContext context) throws Exception {
 
@@ -64,7 +54,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 		    ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
-		    correcaoIndividual.setGenericDTO(produtoEdicao);
+		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    int iCotaEquivalente = 0;
@@ -81,13 +71,13 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
-				correcaoIndividual.executar();
+				CorrecaoIndividual correcaoIndividualEquivalente = new CorrecaoIndividual(produtoEdicaoEquivalente);
+				correcaoIndividualEquivalente.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    medias.setGenericDTO(cotaEquivalente);
+			    Medias medias = new Medias(cotaEquivalente);
 			    medias.executar();
 
 			}
@@ -106,7 +96,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 		    }
 		}
 
-		medias.setGenericDTO(cota);
+		Medias medias = new Medias(cota);
 		medias.executar();
 	    }
 	}
@@ -148,7 +138,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 		    ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
-		    correcaoIndividual.setGenericDTO(produtoEdicao);
+		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    int iCotaEquivalente = 0;
@@ -165,13 +155,13 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
-				correcaoIndividual.executar();
+				CorrecaoIndividual correcaoIndividualEquivalente = new CorrecaoIndividual(produtoEdicaoEquivalente);
+				correcaoIndividualEquivalente.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    medias.setGenericDTO(cotaEquivalente);
+			    Medias medias = new Medias(cotaEquivalente);
 			    medias.executar();
 
 			}
@@ -180,7 +170,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 		    }
 		}
 
-		medias.setGenericDTO(cota);
+		Medias medias = new Medias(cota);
 		medias.executar();
 
 		listCotaReturn.add(new Cota[] { cota });
@@ -224,7 +214,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 		    ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
-		    correcaoIndividual.setGenericDTO(produtoEdicao);
+		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    int iCotaEquivalente = 0;
@@ -241,13 +231,13 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
-				correcaoIndividual.executar();
+				CorrecaoIndividual correcaoIndividualEquivalente = new CorrecaoIndividual(produtoEdicaoEquivalente);
+				correcaoIndividualEquivalente.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    medias.setGenericDTO(cotaEquivalente);
+			    Medias medias = new Medias(cotaEquivalente);
 			    medias.executar();
 
 			}
@@ -260,7 +250,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 		    }
 		}
 
-		medias.setGenericDTO(cota);
+		Medias medias = new Medias(cota);
 		medias.executar();
 
 		if (!hasVendaMediaMaiorZero.contains(Boolean.TRUE)) {

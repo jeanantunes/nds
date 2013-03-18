@@ -6,7 +6,6 @@ import static org.testng.Assert.fail;
 import java.math.BigDecimal;
 import java.util.Iterator;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
@@ -16,9 +15,6 @@ import br.com.abril.nds.process.dataprovider.MediasDataProvider;
 
 public class MediasTest {
 
-    @Autowired
-    private Medias medias;
-    
     /**
      * Testar se a venda médias é calculada conforme a quantidade de edições menor que três.
      * 
@@ -31,7 +27,7 @@ public class MediasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    medias.setGenericDTO(cota);
+	    Medias medias = new Medias(cota);
 	    medias.executar();
 
 	    cota = (Cota) medias.getGenericDTO();
@@ -65,7 +61,7 @@ public class MediasTest {
 
 	    StringBuilder sbReporterLog = new StringBuilder();
 
-	    medias.setGenericDTO(cota);
+	    Medias medias = new Medias(cota);
 	    medias.executar();
 
 	    cota = (Cota) medias.getGenericDTO();

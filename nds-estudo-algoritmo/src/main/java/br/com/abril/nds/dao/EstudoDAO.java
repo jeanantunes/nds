@@ -5,38 +5,32 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.util.ApplicationContextProvider;
+import br.com.abril.nds.util.PropertyLoader;
 
-@Repository
 public class EstudoDAO {
 
-    @Autowired
     private DataSource dataSource;
-    
-    @Value("#{query_estudo.insertEstudo}")
-    private String insertEstudo;
+    private String insertEstudo, insertEstudoCotas, insertProdutoEdicao, insertProdutoEdicaoBase;
 
-    @Value("#{query_estudo.insertEstudoCotas}")
-    private String insertEstudoCotas;
-    
-    @Value("#{query_estudo.insertProdutoEdicao}")
-    private String insertProdutoEdicao;
-    
-    @Value("#{query_estudo.insertProdutoEdicaoBase}")
-    private String insertProdutoEdicaoBase;
+    public EstudoDAO() {
+	this.dataSource = (DataSource) ApplicationContextProvider.getApplicationContext().getBean("dataSource");
+	insertEstudo = PropertyLoader.getProperty("insertEstudo");
+	insertEstudoCotas = PropertyLoader.getProperty("insertEstudoCotas");
+	insertProdutoEdicao =  PropertyLoader.getProperty("insertProdutoEdicao");
+	insertProdutoEdicaoBase =  PropertyLoader.getProperty("insertProdutoEdicaoBase");
+    }
 
     public void gravarEstudo(Estudo estudo) {
 	List<Estudo> estudos = new ArrayList<Estudo>();
@@ -87,7 +81,22 @@ public class EstudoDAO {
 	new NamedParameterJdbcTemplate(dataSource).batchUpdate(insertProdutoEdicaoBase, batch);
     }
 
-    public void carregarPercentuaisProporcao(Estudo estudo) {
-	// TODO: implementar método para carregar percentuais de venda e pdv da tela de parâmetros do distribuidor (EMS 188)
+    public void carregarParametros(Estudo estudo) {
+	// TODO: carregar edições base do estudo
+	//	PreparedStatement psmt = Conexao.getConexao().prepareStatement(SQL_CONSULTA_EDICOES_BASE);
+	//	psmt.setBigDecimal(1, estudo.getId());
+
+	// TODO: carregar parâmetros do estudo
+	//	PreparedStatement psmt = Conexao.getConexao().prepareStatement(SQL_CONSULTA_EDICOES_BASE);
+	//	psmt.setBigDecimal(1, estudo.getId());
     }
+
+    //    private final static String SQL_CONSULTA_PARAMETROS = ""
+    //	    + "select distribuicao_por_multiplos "
+    //	    + "  from tela_parametros "
+    //	    + " where estudo = ? ";
+    //    private final static String SQL_CONSULTA_EDICOES_BASE = ""
+    //	    + "select * "
+    //	    + "  from produto_edicao_base "
+    //	    + " where estudo = ? ";
 }

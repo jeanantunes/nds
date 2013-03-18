@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.stereotype.Component;
-
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -20,8 +18,11 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * Processo Anterior: {@link CorrecaoTendencia} Próximo Processo: N/A
  * </p>
  */
-@Component
 public class VendaCrescente extends ProcessoAbstrato {
+
+    public VendaCrescente(Cota cota) {
+	super(cota);
+    }
 
     @Override
     protected void executarProcesso() {
@@ -48,6 +49,7 @@ public class VendaCrescente extends ProcessoAbstrato {
 
 		    if (previousProdutoEdicao.getIdProduto().equals(produtoEdicao.getIdProduto()) && !previousProdutoEdicao.isEdicaoAberta()
 			    && !produtoEdicao.isEdicaoAberta()) {
+
 			if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
 			    BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 15, BigDecimal.ROUND_FLOOR);
 			    Boolean boo = divVendaEdicao.compareTo(BigDecimal.ONE) == 1;
@@ -55,6 +57,7 @@ public class VendaCrescente extends ProcessoAbstrato {
 			}
 		    }
 		}
+
 		iProdutoEdicao++;
 	    }
 
@@ -62,6 +65,7 @@ public class VendaCrescente extends ProcessoAbstrato {
 		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
 	    }
 	}
+
 	cota.setIndiceVendaCrescente(indiceVendaCrescente);
     }
 }

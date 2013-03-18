@@ -2,9 +2,8 @@ package br.com.abril.nds.process.encalhemaximo;
 
 import java.math.BigDecimal;
 
-import org.springframework.stereotype.Component;
-
 import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 
@@ -20,8 +19,11 @@ import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
  * Próximo Processo: {@link ComplementarAutomaticoTest}
  * </p>
  */
-@Component
 public class EncalheMaximo extends ProcessoAbstrato {
+
+    public EncalheMaximo(Estudo estudo) {
+	super(estudo);
+    }
 
     @Override
     protected void executarProcesso() {

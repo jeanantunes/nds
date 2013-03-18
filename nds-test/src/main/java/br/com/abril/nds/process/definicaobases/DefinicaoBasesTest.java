@@ -3,12 +3,10 @@ package br.com.abril.nds.process.definicaobases;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.ITestContext;
 import org.testng.Reporter;
 import org.testng.annotations.BeforeMethod;
@@ -22,8 +20,6 @@ import br.com.abril.nds.model.ProdutoEdicaoBase;
 public class DefinicaoBasesTest {
 
     private Estudo estudo;
-    
-    @Autowired
     private DefinicaoBases bases;
 
     @BeforeTest
@@ -34,12 +30,12 @@ public class DefinicaoBasesTest {
     
     @BeforeMethod
     public void setUp() throws Exception {
-	bases.setEstudo(estudo);
+	bases = new DefinicaoBases(estudo);
 //	bases.setEdicoesRecebidasParaEstudoRaw(MockEdicoes.getEdicoesRandom());
     }
 
     @Test(enabled=false, dataProvider="getEdicoesInput", dataProviderClass=DefinicaoBasesDataProvider.class)
-    public void testExecutarProcesso(LinkedList<ProdutoEdicaoBase> edicoes) throws Exception {
+    public void testExecutarProcesso(List<ProdutoEdicaoBase> edicoes) throws Exception {
 	Reporter.log("<p>Edi&ccedil;&otilde;es recebidas da interface:<ul>");
 	for (ProdutoEdicaoBase edicao : edicoes) {
 	    Reporter.log("<li>");
@@ -50,7 +46,7 @@ public class DefinicaoBasesTest {
 	
 //	bases.setEdicoesRecebidasParaEstudoRaw(edicoes);
 	bases.executar();
-	LinkedList<ProdutoEdicaoBase> edicoesBase = bases.getEstudo().getEdicoesBase();
+	List<ProdutoEdicaoBase> edicoesBase = bases.getEstudo().getEdicoesBase();
 	assertNotNull(edicoesBase);
 	assertTrue(bases.getEstudo().getEdicoesBase().size() > 0);
 	

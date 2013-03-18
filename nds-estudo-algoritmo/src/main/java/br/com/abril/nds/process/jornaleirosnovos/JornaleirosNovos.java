@@ -2,9 +2,6 @@ package br.com.abril.nds.process.jornaleirosnovos;
 
 import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.Cota;
@@ -24,31 +21,18 @@ import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
  * 
  * Processo Anterior: {@link AjusteCota} Próximo Processo: {@link VendaMediaFinal} </p>
  */
-@Component
 public class JornaleirosNovos extends ProcessoAbstrato {
 
-    @Autowired
-    private CotaDAO cotaDAO;
-    
-    @Autowired
-    private ProdutoEdicaoDAO produtoEdicaoDAO;
-    
-    @Autowired
-    private Medias medias;
-    
-    @Autowired
-    private CorrecaoIndividual correcaoIndividual;
-     
+    public JornaleirosNovos(Cota cota) {
+	super(cota);
+    }
+
     @Override
     protected void executarProcesso() throws Exception {
 
 	Cota cota = (Cota) super.genericDTO;
-	cota = cotaDAO.getIndiceAjusteCotaEquivalenteByCota(cota);
-	
-	if ((cota.getEquivalente() != null) && (cota.getEquivalente().size() > 0)) {
-	    cota.setIndiceAjusteEquivalente(cota.getEquivalente().get(0).getIndiceAjusteEquivalente());
-	} 
-	
+	cota = new CotaDAO().getIndiceAjusteCotaEquivalenteByCota(cota);
+
 	if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
 
 	    BigDecimal totalVendaMediaCorrigidaEquivalente = BigDecimal.ZERO;
@@ -62,7 +46,7 @@ public class JornaleirosNovos extends ProcessoAbstrato {
 
 			Cota cotaEquivalente = cota.getEquivalente().get(iEquivalente);
 
-			cotaEquivalente.setEdicoesRecebidas(produtoEdicaoDAO.getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
+			cotaEquivalente.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
 
 			if (cotaEquivalente.getEdicoesRecebidas() != null && !cotaEquivalente.getEdicoesRecebidas().isEmpty()) {
 
@@ -71,13 +55,13 @@ public class JornaleirosNovos extends ProcessoAbstrato {
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
+				CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicaoEquivalente);
 				correcaoIndividual.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    medias.setGenericDTO(cotaEquivalente);
+			    Medias medias = new Medias(cotaEquivalente);
 			    medias.executar();
 
 			    BigDecimal vendaMediaCorrigidaEquivalente = cotaEquivalente.getVendaMedia();
