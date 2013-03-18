@@ -54,19 +54,19 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	@Column(name = "CSOSN_PRODUTO")
 	private String CSOSNProduto;
 	
-	@Column(name = "BASE_CALCULO_PRODUTO")
+	@Column(name = "BASE_CALCULO_PRODUTO", precision=18, scale=4)
 	private BigDecimal baseCalculoProduto;
 	
-	@Column(name = "ALIQUOTA_ICMS_PRODUTO")
+	@Column(name = "ALIQUOTA_ICMS_PRODUTO", precision=18, scale=4)
 	private BigDecimal aliquotaICMSProduto;
 	
-	@Column(name = "VALOR_ICMS_PRODUTO")
+	@Column(name = "VALOR_ICMS_PRODUTO", precision=18, scale=4)
 	private BigDecimal valorICMSProduto;
 	
-	@Column(name = "ALIQUOTA_IPI_PRODUTO")
+	@Column(name = "ALIQUOTA_IPI_PRODUTO", precision=18, scale=4)
 	private BigDecimal aliquotaIPIProduto;
 	
-	@Column(name = "VALOR_IPI_PRODUTO")
+	@Column(name = "VALOR_IPI_PRODUTO", precision=18, scale=4)
 	private BigDecimal valorIPIProduto;	
 	
 	@Column(name = "QTDE", nullable = false)
@@ -103,10 +103,10 @@ public class ItemNotaFiscalEntrada implements Serializable {
 	@OneToOne(mappedBy = "itemNotaFiscal")
 	private ItemRecebimentoFisico recebimentoFisico;
 	
-	@Column(name = "PRECO", nullable = true)
+	@Column(name = "PRECO", nullable = true, precision=18, scale=4)
 	private BigDecimal preco;
 	
-	@Column(name = "DESCONTO", nullable = true)
+	@Column(name = "DESCONTO", nullable = true, precision=18, scale=4)
 	private BigDecimal desconto;
 
 	public Long getId() {

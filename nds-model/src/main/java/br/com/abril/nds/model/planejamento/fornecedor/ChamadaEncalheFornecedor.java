@@ -94,25 +94,25 @@ public class ChamadaEncalheFornecedor implements Serializable {
     @Column(name = "CODIGO_PREENCHIMENTO", nullable = false)
     private String codigoPreenchimento;
 
-    @Column(name = "TOTAL_VENDA_APURADA", nullable = false)
+    @Column(name = "TOTAL_VENDA_APURADA", nullable = false, precision=18, scale=4)
     private BigDecimal totalVendaApurada;
 
-    @Column(name = "TOTAL_CREDITO_APURADO", nullable = false)
+    @Column(name = "TOTAL_CREDITO_APURADO", nullable = false, precision=18, scale=4)
     private BigDecimal totalCreditoApurado;
 
-    @Column(name = "TOTAL_VENDA_INFORMADA", nullable = false)
+    @Column(name = "TOTAL_VENDA_INFORMADA", nullable = false, precision=18, scale=4)
     private BigDecimal totalVendaInformada;
 
-    @Column(name = "TOTAL_CREDITO_INFORMADO", nullable = false)
+    @Column(name = "TOTAL_CREDITO_INFORMADO", nullable = false, precision=18, scale=4)
     private BigDecimal totalCreditoInformado;
 
-    @Column(name = "TOTAL_MARGEM_INFORMADO", nullable = false)
+    @Column(name = "TOTAL_MARGEM_INFORMADO", nullable = false, precision=18, scale=4)
     private BigDecimal totalMargemInformado;
 
-    @Column(name = "TOTAL_MARGEM_APURADO", nullable = false)
+    @Column(name = "TOTAL_MARGEM_APURADO", nullable = false, precision=18, scale=4)
     private BigDecimal totalMargemApurado;
 
-    @Column(name = "NOTA_VALORES_DIVERSOS", nullable = false)
+    @Column(name = "NOTA_VALORES_DIVERSOS", nullable = false, precision=18, scale=4)
     private BigDecimal notaValoresDiversos;
 
     @OneToMany(mappedBy = "chamadaEncalheFornecedor")

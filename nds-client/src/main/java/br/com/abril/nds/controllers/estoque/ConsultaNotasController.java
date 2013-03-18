@@ -65,11 +65,6 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/estoque/consultaNotas")
 public class ConsultaNotasController extends BaseController {
 	
-	/**
-	 * Indicador para nota recebida.
-	 */
-	private static int NOTA_RECEBIDA = 1;
-	
 	@Autowired
 	private Result result;
 	
@@ -115,17 +110,17 @@ public class ConsultaNotasController extends BaseController {
 			notaFiscalService.obterNotasFiscaisCadastradasDTO(filtro);
 		
 		List<ConsultaNotaFiscalVO> listaConsultaNF = this.obterListaConsultaNotasFiscais(listaNotasFiscais);
-		
+		 
 		FileExporter.to("consulta-nota-fiscal", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					listaConsultaNF, ConsultaNotaFiscalVO.class, this.httpServletResponse);
 	}
 	
-	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
+	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal,
 							   String dataInicial, String dataFinal, String sortorder, String sortname, int page, int rp) {
 
 		filtroConsultaNotaFiscal =
-				prepararFiltro(filtroConsultaNotaFiscal, isNotaRecebida, dataInicial, dataFinal, sortorder, sortname, page, rp);
+				prepararFiltro(filtroConsultaNotaFiscal, dataInicial, dataFinal, sortorder, sortname, page, rp);
 
 		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroConsultaNotaFiscal);
 		
@@ -400,7 +395,7 @@ public class ConsultaNotasController extends BaseController {
 	}
 	
 	private FiltroConsultaNotaFiscalDTO prepararFiltro(
-			FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
+			FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal,
 			String dataInicial, String dataFinal, String sortorder, String sortname, int page, int rp) {
 
 		if (filtroConsultaNotaFiscal.getIdFornecedor() == -1L) {
@@ -435,11 +430,6 @@ public class ConsultaNotasController extends BaseController {
 		}
 		
 		filtroConsultaNotaFiscal.setListaColunaOrdenacao(listaColunaOrdenacao);
-
-		if (isNotaRecebida > -1) {
-
-			filtroConsultaNotaFiscal.setIsNotaRecebida(NOTA_RECEBIDA == isNotaRecebida);
-		}
 
 		return filtroConsultaNotaFiscal;
 	}

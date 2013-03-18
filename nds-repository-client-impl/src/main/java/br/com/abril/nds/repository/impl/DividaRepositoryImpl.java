@@ -598,7 +598,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		   .append(" and cob.id not in ( ")
 		   .append("     select c.id ")
 		   .append("     from Negociacao neg")
-		   .append("     join neg.cobrancasOriginarias c) ");
+		   .append("     join neg.cobrancasOriginarias c) ")
+		   .append(" and d.origemNegociacao = true ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idConsolidado", idConsolidado);

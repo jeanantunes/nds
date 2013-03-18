@@ -33,7 +33,7 @@ public class ParcelaNegociacao {
 	@Column(name = "DATA_VENCIMENTO")
 	private Date dataVencimento;
 	
-	@Column(name = "ENCARGOS")
+	@Column(name = "ENCARGOS", precision=18, scale=4)
 	private BigDecimal encargos;
 	
 	@ManyToOne
