@@ -35,7 +35,7 @@ public class Desconto implements Serializable {
 	@Column(name = "TIPO_DESCONTO")
 	private TipoDesconto tipoDesconto; 
 	
-	@Column(name = "VALOR", nullable=false, precision=5, scale=2)
+	@Column(name = "VALOR", nullable=false, precision=18, scale=4)
 	private BigDecimal valor;
 	
 	@Temporal(TemporalType.TIMESTAMP)

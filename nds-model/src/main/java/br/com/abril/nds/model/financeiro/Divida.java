@@ -48,7 +48,7 @@ public class Divida implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@Column(name = "VALOR", nullable = false)
+	@Column(name = "VALOR", nullable = false, precision=18, scale=4)
 	private BigDecimal valor;
 	
 	@Enumerated(EnumType.STRING)
@@ -73,6 +73,9 @@ public class Divida implements Serializable {
 	
 	@Column(name = "ACUMULADA")
 	private boolean acumulada;
+	
+	@Column(name = "ORIGEM_NEGOCIACAO", nullable = true)
+	private Boolean origemNegociacao;
 	
 	public Long getId() {
 		return id;
@@ -168,7 +171,21 @@ public class Divida implements Serializable {
 		this.dividaRaiz = dividaRaiz;
 	}
 
-    /* (non-Javadoc)
+    /**
+	 * @return the origemNegociacao
+	 */
+	public Boolean isOrigemNegociacao() {
+		return origemNegociacao;
+	}
+
+	/**
+	 * @param origemNegociacao the origemNegociacao to set
+	 */
+	public void setOrigemNegociacao(Boolean origemNegociacao) {
+		this.origemNegociacao = origemNegociacao;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override
