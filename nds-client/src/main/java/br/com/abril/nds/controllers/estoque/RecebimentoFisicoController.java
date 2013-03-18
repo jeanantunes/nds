@@ -384,7 +384,11 @@ public class RecebimentoFisicoController extends BaseController {
 			} else {
 				filtro.setCnpj(null);
 			}
-				
+			
+			if(filtro.getNumeroNotaEnvio() != null) {
+				return;
+			}
+			
 			if(filtro.getNumeroNota() == null) {
 				
 				if(verificaValidationError("numeroNotaFiscal")) {
@@ -796,14 +800,18 @@ public class RecebimentoFisicoController extends BaseController {
 	
 	/**
 	 * Faz a pesquisa de uma nota fiscal através dos parâmetros de 
-	 * CNPJ, numero da nota, série e chave de acesso caso a mesma
-	 * seja uma nota fiscal eletrônica. Caso a nota seja encontrada
-	 * o id interno da mesma será colocado na session.
+	 * CNPJ, numero da nota, série e chave de acesso ou ainda por 
+	 * numero da nota de envio caso a mesma seja uma nota fiscal 
+	 * eletrônica. Caso a nota seja encontrada o id interno da mesma 
+	 * será colocado na session.
 	 * 
 	 * @param cnpj
 	 * @param numeroNotaFiscal
 	 * @param serie
+	 * @param indNFe
+	 * @param fornecedor
 	 * @param chaveAcesso
+	 * @param numeroNotaEnvio
 	 */
 	@Post
 	public void verificarNotaFiscalExistente(
@@ -812,7 +820,8 @@ public class RecebimentoFisicoController extends BaseController {
 			String serie,
 			String indNFe,
 			String fornecedor, 
-			String chaveAcesso) {
+			String chaveAcesso,
+			Long numeroNotaEnvio) {
 		
 		limparDadosDaSession();
 		
@@ -825,10 +834,11 @@ public class RecebimentoFisicoController extends BaseController {
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
 		filtro.setNomeFornecedor(fornecedor);
+		filtro.setNumeroNotaEnvio(numeroNotaEnvio);
 		
 		validarDadosNotaFiscal(filtro, fornecedor, indNFe);		
 		
-		List<NotaFiscalEntrada> listaNotaFiscal = notaFiscalService.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+		List<NotaFiscalEntrada> listaNotaFiscal = notaFiscalService.obterNotaFiscalEntrada(filtro);
 		
 			
 		if(listaNotaFiscal != null && listaNotaFiscal.size()>1) {
@@ -1288,12 +1298,16 @@ public class RecebimentoFisicoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Cnpj] é obrigatório!");
 		}
 		
-		if (nota.getNumero()==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Nota Fiscal] é obrigatório!");
-		}
-		
-		if (nota.getSerie()==null || "".equals(nota.getSerie())){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Série] é obrigatório!");
+		if(nota.getNumeroNotaEnvio() == null) {
+
+			if (nota.getNumero()==null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Nota Fiscal] é obrigatório!");
+			}
+			
+			if (nota.getSerie()==null || "".equals(nota.getSerie())){
+				throw new ValidacaoException(TipoMensagem.WARNING, "O campo [Série] é obrigatório!");
+			}
+			
 		}
 		
 		if (nota.getDataEmissao()==null){
@@ -1401,9 +1415,13 @@ public class RecebimentoFisicoController extends BaseController {
 		this.validaCabecalhoNota(nota);
 		this.validaItensNota(itens);
 		
+		boolean indNotaEnvio = nota.getNumeroNotaEnvio() != null;
+		
 		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(nota.getFornecedor());
 		
 		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
+		
+		notaFiscal.setNumeroNotaEnvio(nota.getNumeroNotaEnvio());
 		notaFiscal.setNumero(nota.getNumero());
 		notaFiscal.setSerie(nota.getSerie());
 		notaFiscal.setDataEmissao(nota.getDataEmissao());
@@ -1415,8 +1433,17 @@ public class RecebimentoFisicoController extends BaseController {
 		notaFiscal.setFornecedor(fornecedor);
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
         notaFiscal.setValorDesconto(BigDecimal.ZERO);
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
-		notaFiscal.setOrigem(Origem.MANUAL);
+        
+		
+		if(indNotaEnvio) {
+			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO);
+			notaFiscal.setOrigem(Origem.INTERFACE);
+		} else {
+			notaFiscal.setOrigem(Origem.MANUAL);
+			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		}
+		
+		
 		notaFiscal.setEmitente(fornecedor.getJuridica());
 		
 		BigDecimal totalItem = BigDecimal.ZERO;

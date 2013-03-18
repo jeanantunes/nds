@@ -144,10 +144,10 @@ public abstract class NotaFiscal implements Serializable {
 	@Column(name = "DATA_EXPEDICAO", nullable = false)
 	protected Date dataExpedicao;
 	
-	@Column(name = "NUMERO", nullable = false)
+	@Column(name = "NUMERO")
 	protected Long numero;
 	
-	@Column(name = "SERIE", nullable  = false)
+	@Column(name = "SERIE")
 	protected String serie;
 	
 	@Column(name = "CHAVE_ACESSO")
