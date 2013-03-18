@@ -48,6 +48,8 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$("#notaFiscal", recebimentoFisicoController.workspace).numeric();
 		
+		$("#numeroNotaEnvio", recebimentoFisicoController.workspace).numeric();
+		
 		$("#chaveAcesso", recebimentoFisicoController.workspace).numeric();
 		
 		$("#valorBruto", recebimentoFisicoController.workspace).maskMoney({
@@ -183,6 +185,10 @@ var recebimentoFisicoController = $.extend(true, {
 		var serie 		= $("#serie", recebimentoFisicoController.workspace).val();		
 		var chaveAcesso = $("#chaveAcesso", recebimentoFisicoController.workspace).val();
 		var fornecedor  = $("#fornecedor", recebimentoFisicoController.workspace).val();
+		var numeroNotaEnvio  = $("#numeroNotaEnvio", recebimentoFisicoController.workspace).val();
+
+		
+		
         var indNFe      = "N";
         
         if( $('#eNF', recebimentoFisicoController.workspace).attr('checked') == 'checked' ) {
@@ -190,12 +196,14 @@ var recebimentoFisicoController = $.extend(true, {
 		}
         
 		var dadosPesquisa = [
-			{name: "cnpj" 				, value: cnpj			},
-			{name: "numeroNotaFiscal" 	, value: notaFiscal 	},
-			{name: "serie" 				, value: serie			},
-			{name: "indNFe" 			, value: indNFe			},
-			{name: "fornecedor" 		, value: fornecedor		},
-			{name: "chaveAcesso" 		, value: chaveAcesso 	}
+			{name: "cnpj" 				, value: cnpj				},
+			{name: "numeroNotaFiscal" 	, value: notaFiscal 		},
+			{name: "serie" 				, value: serie				},
+			{name: "indNFe" 			, value: indNFe				},
+			{name: "fornecedor" 		, value: fornecedor			},
+			{name: "chaveAcesso" 		, value: chaveAcesso 		},
+			{name: "numeroNotaEnvio" 	, value: numeroNotaEnvio 	}
+			
 		];
 		
 		this.limparCampos();

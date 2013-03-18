@@ -295,8 +295,11 @@
 
 							</td>
 
-							<td>&nbsp;</td>
-							<td>&nbsp;</td>
+							<td>Numero Nota Envio:</td>
+							<td>
+								<input id="numeroNotaEnvio" type="text" style="width: 30px;"/>
+							</td>
+							
 							<td></span></td>
 						</tr>
 					</table>
@@ -384,9 +387,14 @@
 			      </td>
 
 			      <td>Chave de Acesso:</td>
-			      <td colspan="5">
+			      <td colspan="3">
 			          <input maxlength="200" type="text" style="width:470px" id="novoChaveAcesso" name="novoChaveAcesso" />
 			      </td>
+
+				  <td>Numero Nota Envio:</td>
+				  <td>
+					<input id="numeroNotaEnvio" type="text" style="width: 30px;"/>
+				  </td>
 
 			    </tr>
 

@@ -85,7 +85,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		filtro.setSerie(serie);
 
 		List<NotaFiscalEntrada> listaNotas = notaFiscalRepository
-				.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+				.obterNotaFiscalEntrada(filtro);
 
 		Assert.assertNotNull(listaNotas);
 		Assert.assertEquals(1, listaNotas.size());
@@ -97,7 +97,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		FiltroConsultaNotaFiscalDTO filtro = new FiltroConsultaNotaFiscalDTO();
 
 		List<NotaFiscalEntrada> listaNotas = notaFiscalRepository
-				.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+				.obterNotaFiscalEntrada(filtro);
 
 		Assert.assertNotNull(listaNotas);
 
@@ -109,7 +109,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		filtro.setCnpj(cnpj);
 
 		List<NotaFiscalEntrada> listaNotas = notaFiscalRepository
-				.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+				.obterNotaFiscalEntrada(filtro);
 
 		Assert.assertNotNull(listaNotas);
 
@@ -121,7 +121,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		filtro.setChave(chave);
 
 		List<NotaFiscalEntrada> listaNotas = notaFiscalRepository
-				.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+				.obterNotaFiscalEntrada(filtro);
 
 		Assert.assertNotNull(listaNotas);
 
@@ -133,7 +133,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		filtro.setNumeroNota(numeroNota);
 
 		List<NotaFiscalEntrada> listaNotas = notaFiscalRepository
-				.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+				.obterNotaFiscalEntrada(filtro);
 
 		Assert.assertNotNull(listaNotas);
 
@@ -145,7 +145,7 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 		filtro.setSerie(serie);
 
 		List<NotaFiscalEntrada> listaNotas = notaFiscalRepository
-				.obterNotaFiscalPorNumeroSerieCnpj(filtro);
+				.obterNotaFiscalEntrada(filtro);
 
 		Assert.assertNotNull(listaNotas);
 
