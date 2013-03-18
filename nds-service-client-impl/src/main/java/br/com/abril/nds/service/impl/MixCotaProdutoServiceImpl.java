@@ -151,6 +151,13 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		mixCotaProdutoRepository.excluirTodos();
 		
 	}
+
+	@Override
+	@Transactional
+	public void excluirMixPorCota(Long idCota){
+		mixCotaProdutoRepository.removerPorIdCota(idCota);
+	}
+	
 	
 	@Override
 	@Transactional
