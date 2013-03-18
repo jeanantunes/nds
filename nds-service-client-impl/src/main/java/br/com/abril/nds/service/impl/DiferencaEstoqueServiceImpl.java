@@ -62,6 +62,7 @@ import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.VisaoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 
@@ -113,6 +114,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private VisaoEstoqueService visaoEstoqueService;
 	
 	@Autowired
 	private MovimentoEstoqueRepository movimentoEstoqueRepository;
@@ -365,7 +369,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			List<MovimentoEstoqueCota> listaMovimentosEstoqueCota = null;
 			MovimentoEstoque movimentoEstoque = null;
-			
+				
 			if (diferenca.getRateios() != null && !diferenca.getRateios().isEmpty()) {
 					
 				listaMovimentosEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
@@ -390,9 +394,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					diferenca.setQtde(qntTotalRateio);
 				}
 				
-			} else {
+			}else{
 				
-				movimentoEstoque = this.gerarMovimentoEstoque(diferenca, usuario.getId(), diferenca.isAutomatica());
+				movimentoEstoque = this.gerarMovimentoEstoque(diferenca, usuario.getId(),diferenca.isAutomatica());
 			}
 
 			StatusAprovacao statusAprovacao = obterStatusLancamento(diferenca);

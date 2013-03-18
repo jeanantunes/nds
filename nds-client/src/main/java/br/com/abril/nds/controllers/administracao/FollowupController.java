@@ -16,6 +16,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroDTO;
 import br.com.abril.nds.dto.ConsultaFollowupCadastroParcialDTO;
 import br.com.abril.nds.dto.ConsultaFollowupChamadaoDTO;
+import br.com.abril.nds.dto.ConsultaFollowupDistribuicaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupNegociacaoDTO;
 import br.com.abril.nds.dto.ConsultaFollowupPendenciaNFeDTO;
 import br.com.abril.nds.dto.ConsultaFollowupStatusCotaDTO;
@@ -31,6 +32,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FollowupCadastroParcialService;
 import br.com.abril.nds.service.FollowupCadastroService;
 import br.com.abril.nds.service.FollowupChamadaoService;
+import br.com.abril.nds.service.FollowupDistribuicaoService;
 import br.com.abril.nds.service.FollowupNegociacaoService;
 import br.com.abril.nds.service.FollowupPendenciaNFeService;
 import br.com.abril.nds.service.FollowupStatusCotaService;
@@ -84,6 +86,9 @@ public class FollowupController extends BaseController {
 	
 	@Autowired
 	private FollowupCadastroParcialService followupCadastroParcialService;
+	
+	@Autowired
+	private FollowupDistribuicaoService followupDistribuicaoService;
 	
 	
 	@Autowired
@@ -220,6 +225,7 @@ public class FollowupController extends BaseController {
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Reversão de pagamento da negociação efetuada com sucesso!"),
 								"result").recursive().serialize();
 	}	
+	
 	@Path("/pesquisaDadosStatusCota")
 	public void pesquisaDadosStatusCota( String sortorder, String sortname, int page, int rp ) {
 		FiltroFollowupStatusCotaDTO filtroStatusCota = new FiltroFollowupStatusCotaDTO();
@@ -296,6 +302,40 @@ public class FollowupController extends BaseController {
 		return tableModel;
 	}
 
+	@Path("/pesquisaDistribuicaoCotasAjustes")
+	public void pesquisaDistribuicaoCotasAjustes(String sortorder, String sortname, int page, int rp){
+		
+		ConsultaFollowupDistribuicaoDTO dto = new ConsultaFollowupDistribuicaoDTO();
+		
+		dto.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupDistribuicaoDTO>> tableModel = efetuarConsultaDistribuicao(dto);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+	
+	private TableModel<CellModelKeyValue<ConsultaFollowupDistribuicaoDTO>> efetuarConsultaDistribuicao (ConsultaFollowupDistribuicaoDTO dto) {
+		
+		List<ConsultaFollowupDistribuicaoDTO> consultaDistribuicao = this.followupDistribuicaoService.obterCotas(dto);
+		
+		TableModel<CellModelKeyValue<ConsultaFollowupDistribuicaoDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaFollowupDistribuicaoDTO>>();
+		
+		Integer totalRegistros = consultaDistribuicao.size();
+		
+		if(totalRegistros == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados resultados para Follow Up.");
+		}
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(consultaDistribuicao));
+		
+		tableModel.setPage(dto.getPaginacao().getPaginaAtual());
+		
+		tableModel.setTotal(15);
+		
+		return tableModel;
+	}
+	
 	@Path("/pesquisaDadosPendenciaNFEEncalhe")
 	public void pesquisaDadosPendenciaNFEEncalhe( String sortorder, String sortname, int page, int rp ) {
 		
@@ -523,6 +563,16 @@ public class FollowupController extends BaseController {
 			
 			FileExporter.to("FollowUp_dados_cadastrais", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					lista, ConsultaFollowupCadastroParcialDTO.class, this.httpResponse);
+		}else if(tipoExportacao.equals("distribuicao")){
+			
+			List<ConsultaFollowupDistribuicaoDTO> lista = this.followupDistribuicaoService.obterCotas(null);
+			
+			if(lista.isEmpty()) {
+				throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
+			}
+			
+			FileExporter.to("FollowUp_distribuicao", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
+					lista, ConsultaFollowupDistribuicaoDTO.class, this.httpResponse);
 		} 
 		
 		result.nothing();

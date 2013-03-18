@@ -44,6 +44,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		$('#nomeCotaFiltroPrincipal').keyup(function (){
 			pesquisaCota.autoCompletarPorNome('#nomeCotaFiltroPrincipal');
 		});
+		
+		$("#nomeCotaFiltroPrincipal").change(function(){
+			pesquisaCota.pesquisarPorNomeCota('#numeroCotaFiltroPrincipal','#nomeCotaFiltroPrincipal');
+		});
 
 		// FILTRO PARA PESQUISAR OS PRODUTOS NÃO RECEBIDOS PELA COTA
 		$('#codigoProduto').change(function (){

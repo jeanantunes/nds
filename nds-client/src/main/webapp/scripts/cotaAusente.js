@@ -336,9 +336,7 @@ var cotaAusenteController = $.extend(true, {
 			var edicao = document.createElement("TD");
 			var reparte = document.createElement("TD");
 			var botao = document.createElement("TD");
-			reparte.setAttribute('name', 'reparteMovimento');
-			reparte.setAttribute('align', 'center');
-			edicao.setAttribute('align', 'center');
+			reparte.setAttribute('name', 'reparteMovimento'); 
 			botao.setAttribute('align','center');
 					
 			codigo.innerHTML = movimento.codigoProd;
@@ -449,6 +447,7 @@ var cotaAusenteController = $.extend(true, {
 			proxIndice = movimento.rateios.length;
 			
 			$.each(movimento.rateios, function(index, rateio) {
+				
 				cotaAusenteController.gerarLinhaNova(index,rateio.numCota,rateio.nomeCota,rateio.qtde);
 			});
 			
@@ -470,21 +469,21 @@ var cotaAusenteController = $.extend(true, {
 		var qtde = $("#idQtde" + indiceLinhaAlterada, cotaAusenteController.workspace).attr("value");
 					
 		var totalRateado = 0;
-		$.each(cotaAusenteController.movAtual.rateios, function(index, rateio) {
-			if(rateio.numCota != numCota)
-				totalRateado = totalRateado*1 + rateio.qtde*1;
+		$.each(cotaAusenteController.movAtual.rateios, function(index, rateio) {		
+			totalRateado = totalRateado*1 + rateio.qtde*1;
 		});
 		
 		var soma = totalRateado*1 + qtde*1; 
 		
 		if( soma > cotaAusenteController.movAtual.qtdeReparte) {
 			exibirMensagemDialog("WARNING",["Não há reparte suficiente."]);	
-
-			this.alterarEvento(
+			
+			alterarEvento(
 					"idQtde"+indiceLinhaAlterada,
 					'idQtde'+ indiceLinhaAlterada, 
 					"onblur");
 			
+			$("#idQtde" + indiceLinhaAlterada).attr("value","");
 			return;
 		}
 		
@@ -530,7 +529,7 @@ var cotaAusenteController = $.extend(true, {
 		
 		var valorEvento = elemAtual.getAttribute(evento);
 		
-		elemAtual.setAttribute(evento, null);
+		elemAtual.setAttribute(evento,null);
 			
 		elemNovoFoco.focus();
 		
@@ -795,8 +794,6 @@ var cotaAusenteController = $.extend(true, {
 				}
 			},form: $( "#dialog-suplementar", cotaAusenteController.workspace ).parents("form")
 		});
-		
-		this.tratarSelecaoProduto();
 	},
 	
 	realizarRateio: function() {

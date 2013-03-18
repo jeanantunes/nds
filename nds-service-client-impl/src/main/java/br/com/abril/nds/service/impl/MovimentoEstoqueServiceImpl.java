@@ -175,10 +175,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data,
-																  Long idCota,
-																  List<MovimentoEstoqueCota> listaMovimentoCota) 
-																  throws TipoMovimentoEstoqueInexistenteException {
+	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException{
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
 
@@ -187,7 +184,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 
 		TipoMovimentoEstoque tipoMovimento =
-			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 
 		TipoMovimentoEstoque tipoMovimentoCota =
 			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
@@ -199,32 +196,23 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		if ( tipoMovimentoCota == null ) {
 			throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 		}
-		
-		List<MovimentoEstoqueCota> listaMovimentoCotaEnvio = 
-			new ArrayList<MovimentoEstoqueCota>();
 
-		for (MovimentoEstoqueCota movimentoCota : listaMovimentoCota) {
 
-			if (movimentoCota.getData() != null 
-					&& movimentoCota.getProdutoEdicao() != null
+		for(MovimentoEstoqueCota movimentoCota : listaMovimentoCota){
+
+			if(movimentoCota.getData() != null &&  movimentoCota.getProdutoEdicao()!=null
 					&& movimentoCota.getUsuario() != null
-					&& movimentoCota.getQtde() != null ) {
+					&&  movimentoCota.getQtde() != null ){
 
-				gerarMovimentoEstoque(
-					data, movimentoCota.getProdutoEdicao().getId(),
-						movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), 
-							tipoMovimento);
+				gerarMovimentoEstoque(data, movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
 
-				listaMovimentoCotaEnvio.add(
-					gerarMovimentoCota(
-						data, movimentoCota.getProdutoEdicao().getId(), 
-							movimentoCota.getCota().getId(), movimentoCota.getUsuario().getId(),
-								movimentoCota.getQtde(), tipoMovimentoCota, data, null, null, null));
+				gerarMovimentoCota(
+					data, movimentoCota.getProdutoEdicao().getId(), 
+						movimentoCota.getCota().getId(), movimentoCota.getUsuario().getId(),
+							movimentoCota.getQtde(), tipoMovimentoCota, data, null, null, null);
 
 			}
 		}
-		
-		return listaMovimentoCotaEnvio;
 	}
 
 	public MovimentoEstoque gerarMovimentoEstoqueJuramentado(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
@@ -290,7 +278,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoque.setAprovador(new Usuario(idUsuario));
 			movimentoEstoque.setDataAprovacao(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
-			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque);			
+			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque,movimentoEstoque);			
 			
 			movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
 		
@@ -525,9 +513,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-
-				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
 				
+				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
+
 				BigDecimal precoComDesconto = 
 						produtoEdicao.getPrecoVenda().subtract(
 								MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto.getValor()));
@@ -549,14 +537,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoqueCota.setAprovador(new Usuario(idUsuario));
 			movimentoEstoqueCota.setDataAprovacao(dataOperacao);
 			
-			movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
-			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque, movimentoEstoqueCota);
+			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque,movimentoEstoqueCota);
 			
 			movimentoEstoqueCota.setEstoqueProdutoCota(new EstoqueProdutoCota(idEstoqueCota));
 
 		}
 		
-		return movimentoEstoqueCota;
+		return movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 	}
 
 	@Override

@@ -7,7 +7,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -260,22 +263,19 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			Long idRoteiro = null;
 
-			if(cota.getBox() != null) {
-				List<Roteiro> roteiros = cota.getBox().getRoteirizacao()
-						.getRoteiros();
-	
-				for (Roteiro r : roteiros) {
-	
-					if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
-	
-						idRoteiro = r.getId();
-					}
+			List<Roteiro> roteiros = cota.getBox().getRoteirizacao()
+					.getRoteiros();
+
+			for (Roteiro r : roteiros) {
+
+				if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+
+					idRoteiro = r.getId();
 				}
-	
-				idRota = (Long) cota.getBox().getRoteirizacao()
-						.getRoteiro(idRoteiro).getRotas().get(0).getId();
 			}
-			
+
+			idRota = (Long) cota.getBox().getRoteirizacao()
+					.getRoteiro(idRoteiro).getRotas().get(0).getId();
 		}
 
 		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
@@ -337,21 +337,19 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 			Long idRoteiro = null;
 
-			if(cota.getBox() != null) {
-				
-				List<Roteiro> roteiros = cota.getBox().getRoteirizacao().getRoteiros();
+			List<Roteiro> roteiros = cota.getBox().getRoteirizacao()
+					.getRoteiros();
 
-				for (Roteiro r : roteiros) {
-	
-					if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
-	
-						idRoteiro = r.getId();
-					}
+			for (Roteiro r : roteiros) {
+
+				if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+
+					idRoteiro = r.getId();
 				}
-	
-				idRota = (Long) cota.getBox().getRoteirizacao()
-						.getRoteiro(idRoteiro).getRotas().get(0).getId();
 			}
+
+			idRota = (Long) cota.getBox().getRoteirizacao()
+					.getRoteiro(idRoteiro).getRotas().get(0).getId();
 		}
 
 		List<NotaEnvio> notasEnvio = new ArrayList<>();
@@ -493,7 +491,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		destinatario.setNumeroCota(cota.getNumeroCota());
 		destinatario.setDocumento(cota.getPessoa().getDocumento());
 
-		EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota.getId());
+		EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota
+				.getId());
 
 		if (enderecoCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
@@ -527,11 +526,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			telefoneRepository.adicionar(telefone);
 			destinatario.setTelefone(telefone);
 		}
-		
-		if(cota.getBox() != null) {
-			destinatario.setCodigoBox(cota.getBox().getCodigo());
-			destinatario.setNomeBox(cota.getBox().getNome());
-		}
+		destinatario.setCodigoBox(cota.getBox().getCodigo());
+		destinatario.setCodigoBox(cota.getBox().getCodigo());
+		destinatario.setNomeBox(cota.getBox().getNome());
 
 		if (idRota != null) {
 			Rota rota = rotaRepository.buscarPorId(idRota);
@@ -617,31 +614,26 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 				Long idRoteiro = null;
 
-				if(cota.getBox() != null) {
-					
-					List<Roteiro> roteiros = cota.getBox().getRoteirizacao().getRoteiros();
+				List<Roteiro> roteiros = cota.getBox().getRoteirizacao()
+						.getRoteiros();
 
-					if(roteiros != null) {
-						for (Roteiro r : roteiros) {
-		
-							if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
-		
-								idRoteiro = r.getId();
-							}
-						}
-					}
+				for (Roteiro r : roteiros) {
 
-					try {
-						idRota = (Long) cota.getBox().getRoteirizacao()
-								.getRoteiro(idRoteiro).getRotas().get(0).getId();
-					} catch (Exception e) {
-						if(cotasSemRoteirizacao.size() == 0) {
-							cotasSemRoteirizacao.add("Cota(s) com problemas de Roteirização:");
-						}
-						StringBuilder cotaSemRoteirizacao = new StringBuilder("Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
-						cotasSemRoteirizacao.add(cotaSemRoteirizacao.toString());
+					if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+
+						idRoteiro = r.getId();
 					}
-					
+				}
+
+				try {
+					idRota = (Long) cota.getBox().getRoteirizacao()
+							.getRoteiro(idRoteiro).getRotas().get(0).getId();
+				} catch (Exception e) {
+					if(cotasSemRoteirizacao.size() == 0) {
+						cotasSemRoteirizacao.add("Cota(s) com problemas de Roteirização:");
+					}
+					StringBuilder cotaSemRoteirizacao = new StringBuilder("Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
+					cotasSemRoteirizacao.add(cotaSemRoteirizacao.toString());
 				}
 			}
 			

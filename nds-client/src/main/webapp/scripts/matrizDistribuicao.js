@@ -47,7 +47,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.escondeGrid = function() { 
 		$(".grids", _workspace).hide();
-		
 	} ,
 
 	this.carregarGrid = function() {		
@@ -292,7 +291,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#selTodos", _workspace).uncheck();
 	},
 	
-
+	
   this.obterUnicoItemMarcado = function() {
 		
 		var selecionado = null;
@@ -343,7 +342,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		$.each(T.lancamentos, function(index, lancamento){
 			if(lancamento.selecionado) {
-				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  		  value: lancamento.estudo});
+				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  value: lancamento.estudo});
 				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  	  value: lancamento.idLancamento});
 				data.push({name: 'produtosDistribuicao[' + index + '].numeroEdicao',  	  value: lancamento.edicao});
 				data.push({name: 'produtosDistribuicao[' + index + '].codigoProduto',  	  value: lancamento.codigoProduto});
@@ -630,13 +629,13 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		data.push({name: 'produtoDistribuicao.numeroEdicao',  	  value: selecionado.edicao});
 		data.push({name: 'produtoDistribuicao.codigoProduto',  	  value: selecionado.codigoProduto});
 		
-
+		
 		$.postJSON(pathTela + "/matrizDistribuicao/duplicarLinha", data,
 				function(result){
 					T.checkUncheckLancamentos(false);
 					T.carregarGrid();
 					T.exibirMensagemSucesso();
-				}
+		}
 			);
 		
 	},

@@ -51,6 +51,31 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 	
 	/**
+	 * Obtém a quantidade de tipos de produtoEdicao da consulta de encalhe.
+	 * Caso o parâmetro "indQtdEncalheAposPrimeiroDia" = false a pesquisa ira retornar 
+	 * a quantidade de tipos de produtoEdicao do encalhe sumarizada do primeiro dia.
+	 * 
+	 * 
+	 * @param filtro
+	 * @param indQtdEncalheAposPrimeiroDia
+	 * 
+	 * @return Qtde - Integer
+	 */
+	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, boolean indQtdEncalheAposPrimeiroDia);
+	
+	/**
+	 * Obtém a quantidade de itens da consulta de encalhe.
+	 * Caso o parâmetro "indQtdEncalheAposPrimeiroDia" = false a pesquisa ira retornar 
+	 * a quantidade de itens do encalhe sumarizada do primeiro dia.
+	 * 
+	 * @param filtro
+	 * @param indQtdEncalheAposPrimeiroDia
+	 * 
+	 * @return Qtde -  BigDecimal
+	 */
+	public BigDecimal obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, boolean indQtdEncalheAposPrimeiroDia);
+	
+	/**
 	 * Pesquisa uma lista de ContagemDevolucao.
 	 * 
 	 * @param filtro
@@ -103,17 +128,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @return Qtde - Integer
 	 */
-	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
-	
-	/**
-	 * Obtém o valor total do encalhe para a cota (caso específicada)
-	 * e período de recolhimento.
-	 * 
-	 * @param filtro
-	 * 
-	 * @return BigDecimal
-	 */
-	public BigDecimal obterValorTotalEncalhe(FiltroConsultaEncalheDTO filtro);
+	public TotalizadorConsultaEncalheDTO obterTotalizadorConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Pesquisa lista de ConsultaEncalhe.
@@ -382,9 +397,5 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
 	
 	Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota);
-	
-	List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
-																			Long idCota, 
-																			GrupoMovimentoEstoque grupoMovimentoEstoque);
 
 }
