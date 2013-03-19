@@ -155,7 +155,7 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 			+ " from Lancamento lancamento "
 			+ " join lancamento.estudo estudo "
 			+ " join estudo.estudoCotas estudoCotas "
-			+ " join estudoCotas.itemNotaEnvio itemNotaEnvio "
+			+ " join estudoCotas.itemNotaEnvios itemNotaEnvio "
 			+ " where lancamento.id = :idLancamento ";
 
 		Query query = this.getSession().createQuery(hql);

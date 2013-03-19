@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"]></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
@@ -36,8 +37,6 @@
 	<img  width="235" height="314" id="imagemCapaEdicao" style="display:none"/>
 </div>
 
-
-<div class="corpo" id="analiseHistoricoVendasContent"/>
 
 <div class="corpo" id="histogramaVendasContent">
  
@@ -167,5 +166,4 @@
 </div> 
 
 <div class="corpo" id="analiseHistogramaVendasContent"/>
-
-
+<div class="corpo" id="analiseHistoricoVendasContent"/>

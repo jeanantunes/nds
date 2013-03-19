@@ -1,11 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.RankingFaturamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RankingFaturamentoIdRepository;
@@ -51,6 +53,23 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<Ra
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		query.executeUpdate();
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RankingFaturamento>  buscarPorCota(Cota cota){
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("from ranking_faturamento where " + 
+		           "     ranking_faturamento_gerados_id = (max(id) from ranking_faturamento_gerados"+
+				   "     and cota = :cota");
+		
+		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+		query.setParameter("cota", cota);
+		
+		
+		List<RankingFaturamento> list = query.list();
+		return list;
 		
 	}
 

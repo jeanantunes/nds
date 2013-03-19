@@ -38,6 +38,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
 		hql.append("		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
+		hql.append("		lancamento.dataLancamentoPrevista as dataLancamentoPrevista, ");
+		hql.append(" 		lancamento.dataRecolhimentoPrevista as dataRecolhimentoPrevista, ");
+
 		hql.append("		produtoEdicao.origem as origem, ");
 		
 		hql.append("		sum(lancamento.reparte) as reparte,  ");
@@ -485,11 +488,11 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	
 	}
 	
-	public List<PeriodoLancamentoParcial> obterPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial){
+	public Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial){
 		   
 		StringBuilder hql = new StringBuilder();
 
-		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
+		hql.append(" select count( periodo.id ) from PeriodoLancamentoParcial periodo  ")
 
 		.append(" join periodo.lancamento lancamento ")
 
@@ -506,7 +509,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		query.setParameterList("satatusLancamento", new StatusLancamento[] {
 				StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO });
 
-		return query.list();
+		return (Long) query.uniqueResult();
 	}
 
 }

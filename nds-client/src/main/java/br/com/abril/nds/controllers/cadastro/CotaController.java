@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -42,10 +43,12 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.ClassificacaoCotaDistribuidorEnum;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -107,6 +110,8 @@ public class CotaController extends BaseController {
 	
 	@Autowired
 	private Result result;
+	
+	
 	
 	@Autowired
 	private br.com.caelum.vraptor.Validator validator;
@@ -574,9 +579,36 @@ public class CotaController extends BaseController {
 		
 		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
 		
-		for(ClassificacaoEspectativaFaturamento clazz : ClassificacaoEspectativaFaturamento.values()){
+		
+		
+		List<DistribuidorClassificacaoCota> distribuidorClassificacaoCotas = cotaService.obterListaClassificacao();
+		for(DistribuidorClassificacaoCota dCC:distribuidorClassificacaoCotas ){
 			
-			listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
+			DecimalFormat df = new DecimalFormat(",##0.00");
+
+            String valorDe = df.format(dCC.getValorDe());
+            String valorAte = df.format(dCC.getValorAte());
+
+
+
+			
+			String maisDeUmPDV= dCC.getCodigoClassificacaoCota().toString().equals(ClassificacaoCotaDistribuidorEnum.AA) ? " (mais de 1 PDV)": "";
+			String descricao =  dCC.getCodigoClassificacaoCota().toString() + " - ("+
+							    dCC.getCodigoClassificacaoCota().toString() + " - " +
+					            " R$ " + valorDe + " a " +
+					            " R$ " + valorAte+
+					            maisDeUmPDV +
+					            ")";
+			listaClassificacao.add(new ItemDTO<String, String>(dCC.getCodigoClassificacaoCota().toString(), descricao));
+		}
+		
+		
+		
+		if (listaClassificacao==null || listaClassificacao.isEmpty()){
+			for(ClassificacaoEspectativaFaturamento clazz : ClassificacaoEspectativaFaturamento.values()){
+				
+				listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
+			}
 		}
 		
 		Collections.reverse(listaClassificacao);
@@ -795,6 +827,20 @@ public class CotaController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
+	
+	@Post
+	public void apagarTipoCota(Long idCota, String tipoCota){
+		
+
+		
+		cotaService.apagarTipoCota(idCota,  tipoCota);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Mix da Cota Apagados com sucesso!!"),
+				Constantes.PARAM_MSGS).recursive().serialize();
+	
+		
+	}
+	
 	
 	/**
 	 * Salva os dados dos fornecedores, associa os fornecedores a cota informada.
@@ -1044,7 +1090,7 @@ public class CotaController extends BaseController {
 	@Post
 	@Path("/pesquisarCotas")
 	public void pesquisarCotas(BigInteger numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
-							   String logradouro, String bairro, String municipio,
+							   String logradouro, String bairro, String municipio,String status,
 			 				   String sortname, int page, int rp){
 		
 		if (numeroCpfCnpj != null) {
@@ -1055,7 +1101,7 @@ public class CotaController extends BaseController {
 		
 		Integer numeroCota = (numCota!= null)?numCota.intValue():null;
 		    
-		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
+		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio, status);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		

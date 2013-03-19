@@ -6,8 +6,11 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
@@ -674,7 +677,19 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		Criteria criteria = this.getSession().createCriteria(Boleto.class);
 		criteria.add(Restrictions.eq("dataEmissao", dataOperacao));
+		
+		ProjectionList projectionList = Projections.projectionList();
 	
+		projectionList.add(Projections.property("banco").as("banco"));
+	    projectionList.add(Projections.property("nossoNumeroCompleto").as("nossoNumeroCompleto"));
+	    projectionList.add(Projections.property("dataVencimento").as("dataVencimento"));
+	    projectionList.add(Projections.property("valor").as("valor"));
+	    projectionList.add(Projections.property("dataEmissao").as("dataEmissao"));
+	    
+	    criteria.setProjection(projectionList);
+	    
+	    criteria.setResultTransformer(new AliasToBeanResultTransformer(Boleto.class));
+	    
 		return criteria.list();
 	}
 }

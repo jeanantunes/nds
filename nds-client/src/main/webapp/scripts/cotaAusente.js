@@ -329,12 +329,14 @@ var cotaAusenteController = $.extend(true, {
 		
 		$.each(movimentos, function(index, movimento) {
 			var novaLinha = $(document.createElement("TR"));
+			novaLinha.attr('name', 'linhaMovimentos');
 			
 			var codigo = document.createElement("TD");
 			var produto = document.createElement("TD");
 			var edicao = document.createElement("TD");
 			var reparte = document.createElement("TD");
 			var botao = document.createElement("TD");
+			reparte.setAttribute('name', 'reparteMovimento'); 
 			botao.setAttribute('align','center');
 					
 			codigo.innerHTML = movimento.codigoProd;
@@ -608,30 +610,28 @@ var cotaAusenteController = $.extend(true, {
 		var num = $('#idNumCotaOrigem' + atual).val();
 		var nome = $('#idNomeCotaOrigem' + atual).val();
 		
-		var isNew = atual.length === 0;
+		var isNew = atual.length == 0;
 		
-		var nomePreenchido = nome.length != 0;
+		var isEdicao = nome.length != 0;
 		
-		if( nomePreenchido ) {
+		if( isEdicao ) {
 			
-			$("#idLinhaCota" + atual).remove();
-			
-			var cotaJaExiste = $( "#idLinhaCota" + num ).length>0;
+			var cotaJaExiste = $( "#idLinhaCota" + num ).length > 0;
 			
 			if( cotaJaExiste ) {				
 				exibirMensagemDialog("WARNING",["Cota já foi selecionada."]);
 				$('#idNumCotaOrigem' + atual).val('');
 				$('#idNomeCotaOrigem' + atual).val('');
+				return;
 			}
 			
-			cotaAusenteController.gerarLinhaCota(num,nome);
+			$("#idLinhaCota" + atual).before(cotaAusenteController.getNovaLinhaCota(num, nome));
 			
-			var existeNovo = $( '#idNumCotaOrigem').length > 0;
+			$("#idLinhaCota" + atual).remove();
 			
-			if ( existeNovo)
-				$( '#idNumCotaOrigem').focus();
-			else 			
-				cotaAusenteController.gerarLinhaCota('','');
+			$( '#idLinhaCota').remove();
+			
+			cotaAusenteController.gerarLinhaCota('','');
 						
 		} else {
 			
@@ -778,24 +778,15 @@ var cotaAusenteController = $.extend(true, {
 						return;
 					} else if(qtdeProdutoSeleciodo > 1) {
 						
-						if( !cotaAusenteController.atualizarRateiosProdutos() )
+						if( !cotaAusenteController.atualizarRateiosProdutos())
 							return;
 					}
 					
-					var parametros = cotaAusenteController.getParametrosFromMovimentos();
-					
-					if(!parametros) {
+					if (!cotaAusenteController.verificarRedistribuicaoReparte()) {
 						return;
 					}
-
-					$.postJSON(contextPath + "/cotaAusente/realizarRateio", 
-							   parametros,
-							   function(result) {
-							   		cotaAusenteController.retornoRateio(result);
-							   		$(".ausentesGrid", cotaAusenteController.workspace).flexReload();
-							   		$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
-							   }
-					);
+					
+					cotaAusenteController.realizarRateio();
 				},				
 				"Cancelar" : function() {
 					
@@ -804,7 +795,104 @@ var cotaAusenteController = $.extend(true, {
 			},form: $( "#dialog-suplementar", cotaAusenteController.workspace ).parents("form")
 		});
 	},
+	
+	realizarRateio: function() {
+	
+		var parametros = cotaAusenteController.getParametrosFromMovimentos();
+		
+		if(!parametros) {
+			return;
+		}
 
+		$.postJSON(contextPath + "/cotaAusente/realizarRateio", 
+		    parametros,
+		    function(result) {
+				cotaAusenteController.retornoRateio(result);
+				$(".ausentesGrid", cotaAusenteController.workspace).flexReload();
+				$( "#dialog-suplementar", cotaAusenteController.workspace ).dialog( "close" );
+		    }
+		);
+	},
+	
+	
+	verificarRedistribuicaoReparte: function() {
+	
+		var reparteTotal = 0;
+		var reparteSelecionado = 0;
+		var reparteNaoSelecionado = 0;
+		
+		var qtMovimentos = $("tr[name='linhaMovimentos']", cotaAusenteController.workspace).length;
+		var qtdeProdutosSelecionados =  $("input[name='checkgroup']:checked ").length;
+
+		$("tr[name='linhaMovimentos']", cotaAusenteController.workspace).each(
+				
+			function(index, value) {
+
+				var reparte = $(value).children("[name='reparteMovimento']");
+
+				reparteTotal += intValue($(reparte).html()); 
+
+				if ($(value).children("td").children("input[type='checkbox']").attr('checked') == 'checked') {
+					
+					reparteSelecionado += intValue($(reparte).html());
+				
+				} else if (qtMovimentos > 1) {
+					
+					reparteNaoSelecionado += intValue($(reparte).html());
+					
+				} else {
+				
+					reparteNaoSelecionado = intValue($(reparte).html()) - intValue($("#qtdeTotal").html());
+				}
+			}
+		);
+
+		if (qtdeProdutosSelecionados == 1) {
+		
+			reparteNaoSelecionado = reparteTotal - intValue($("#qtdeTotal").html());
+			
+			reparteSelecionado = intValue($("#qtdeTotal").html());
+		}
+		
+		if (reparteSelecionado == reparteTotal) {
+		
+			return true;
+		}
+
+		var mensagem = "O(s) " + reparteNaoSelecionado + " item(ns), não redistribuidos, "
+					 + "serão direcionados ao estoque suplementar. Deseja continuar?";
+		
+		cotaAusenteController.openDialogConfirmarRedistribuicao(mensagem);
+		
+		return false;
+	},
+	
+	openDialogConfirmarRedistribuicao: function(mensagem) {
+
+		$("#dialog-confirmar-redistribuicao p", cotaAusenteController.workspace ).html(mensagem);
+
+		$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog({
+			resizable: false,
+			height:'auto',
+			width:'auto',
+			modal: true,
+			buttons: {
+				
+				"Confirmar": function() {
+			
+					$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+					
+					cotaAusenteController.realizarRateio();
+				},					
+				"Cancelar": function() {
+
+					$("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).dialog("close");
+				}
+
+			}, form: $("#dialog-confirmar-redistribuicao", cotaAusenteController.workspace ).parents("form") 
+		});
+	},
+	
 	popupConfirmaCancelamentoRedistribuicao: function() {
 		
 		$("#dialog-cancelar-redistribuicao", cotaAusenteController.workspace ).dialog({

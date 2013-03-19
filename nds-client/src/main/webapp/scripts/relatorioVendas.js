@@ -393,6 +393,19 @@ var relatorioVendasController = $.extend(true, {
 			height : 255
 		});
 		
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#filtro_distrib"));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					relatorioVendasController.pesquisar();
+				}
+				
+				return true;
+			});
+		});
 		
 	},
 	

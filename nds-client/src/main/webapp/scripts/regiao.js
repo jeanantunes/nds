@@ -2,14 +2,13 @@ var regiaoController = $.extend(true, {
 	cotaAtual : '',
 	numCotas : null,
 	
-	
 	init : function() {
 	
-		$("#faixaGrid", regiaoController.workspace).flexigrid({
+		$(".faixaGrid", regiaoController.workspace).flexigrid({
 			preProcess : regiaoController.executarPreProcessFaixaGrid,
 			dataType : 'json',
 			colModel : [ {
-				display : 'C�digo',
+				display : 'Código',
 				name : 'numeroCota',
 				width : 60,
 				sortable : true,
@@ -85,13 +84,13 @@ var regiaoController = $.extend(true, {
 //			url : '../xml/nMaioresLst-xml.xml',
 //			dataType : 'xml',
 			colModel : [ {
-				display : 'Edi��o',
+				display : 'Edição',
 				name : 'edicao',
 				width : 80,
 				sortable : true,
 				align : 'left',
 			}, {
-				display : 'Data de Lan�amento',
+				display : 'Data de Lançamento',
 				name : 'dtLancamento',
 				width : 130,
 				sortable : true,
@@ -103,8 +102,8 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Classifica��o',
-				name : 'classifica��o',
+				display : 'Classificação',
+				name : 'classificacao',
 				width : 120,
 				sortable : true,
 				align : 'left'
@@ -135,7 +134,7 @@ var regiaoController = $.extend(true, {
 //			url : '../xml/nMaiores-xml.xml',
 //			dataType : 'xml',
 			colModel : [ {
-				display : 'C�digo',
+				display : 'Código',
 				name : 'codigo',
 				width : 60,
 				sortable : true,
@@ -147,19 +146,19 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Edi��o',
+				display : 'Edição',
 				name : 'edicao',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Classifica��o',
+				display : 'Classificação',
 				name : 'classificacao',
 				width : 115,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'A��o',
+				display : 'Ação',
 				name : 'acao',
 				width : 30,
 				sortable : true,
@@ -176,36 +175,34 @@ var regiaoController = $.extend(true, {
 		});
 		
 		$(".segmentosGrid").flexigrid({
-//			url : '../xml/segmentoB-xml.xml',
-//			dataType : 'xml',
 			preProcess : regiaoController.executarPreProcessSegmentosGrid,
 			dataType : 'json',
 			colModel : [ {
-				display : 'C�digo',
-				name : 'codigo',
+				display : 'Número',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Nome',
-				name : 'Nome',
+				name : 'nomeCota',
 				width : 220,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Tipo de PDV',
-				name : 'tipoPdv',
+				name : 'tipoPDV',
 				width : 100,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Status',
-				name : 'Status',
+				name : 'tipoStatus',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : ' ',
+				display : 'Add',
 				name : 'sel',
 				width : 20,
 				sortable : true,
@@ -213,10 +210,6 @@ var regiaoController = $.extend(true, {
 			} ],
 			sortname : "codigo",
 			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
 			width : 600,
 			height : 200
 		});
@@ -251,7 +244,7 @@ var regiaoController = $.extend(true, {
 //			url : '../xml/addCotas-xml.xml',
 //			dataType : 'xml',
 			colModel : [ {
-				display : 'Regi�o',
+				display : 'Região',
 				name : 'regiao',
 				width : 280,
 				sortable : true,
@@ -263,7 +256,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'A��o',
+				display : 'Ação',
 				name : 'acao',
 				width : 30,
 				sortable : true,
@@ -281,13 +274,13 @@ var regiaoController = $.extend(true, {
 			preProcess: regiaoController.executarPreProcessamentoTelaManutencao,
 			dataType : 'json',
 			colModel : [ {
-				display : 'Regi�o',
+				display : 'Região',
 				name : 'nomeRegiao',
 				width : 210,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Usu�rio',
+				display : 'Usuário',
 				name : 'nomeUsuario',
 				width : 150,
 				sortable : true,
@@ -305,7 +298,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'A��o',
+				display : 'Ação',
 				name : 'acao',
 				width : 30,
 				sortable : true,
@@ -363,7 +356,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Usu�rio',
+				display : 'Usuário',
 				name : 'nomeUsuario',
 				width : 80,
 				sortable : true,
@@ -381,7 +374,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'A��o',
+				display : 'Ação',
 				name : 'acao',
 				width : 25,
 				sortable : true,
@@ -396,6 +389,7 @@ var regiaoController = $.extend(true, {
 			width : 960,
 			height : 255
 		});
+//		$("#index").show();
 	},
 
 	
@@ -501,11 +495,18 @@ var regiaoController = $.extend(true, {
 					resultado.mensagens.listaMensagens
 			);
 			
-//			$(".grids", regiaoController.workspace).hide();
 			$(".porSegmento", regiaoController.workspace).hide();
 			
 			return resultado;
 		}
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			var checkAll = '<input type="checkbox" name="cotaSegmentoSelected" id="cotaSegmentoSelected" checked value='+row.cell.numeroCota+'>';
+			
+			row.cell.sel = checkAll;
+			
+		});
 		
 		$(".porSegmento", regiaoController.workspace).show();
 		
@@ -515,9 +516,29 @@ var regiaoController = $.extend(true, {
 	
 	// -- FUNCTIONS --
 	
-	
 
-	//	FUNCTIONS - REGI�O
+	//	FUNCTIONS - REGIÃO
+	
+	
+	carregarRegiao : function (){
+		var regiao = $("#comboRegioes option:selected").val();
+		
+		
+		if (regiao != "Selecione..."){
+			
+		$(".cotasRegiaoGrid", this.workspace).flexOptions({
+			url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
+			dataType : 'json',
+			params:[{
+				name : 'filtro.id', value:regiao
+			}]
+			
+		});
+		
+		$(".cotasRegiaoGrid", this.workspace).flexReload();
+		}
+	},
+	
 
 	// FUNCTIONS - Manuten��o Regi�o
 
@@ -823,8 +844,8 @@ var regiaoController = $.extend(true, {
 	
 	// FUNCTION - REGI�O AUTOM�TICA - GRID PRINCIPAL
 	
-	addCotas : function() {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+	addCotasRegAutomatica : function() {
+//		 $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$("#dialog-cotas").dialog({
 			resizable : false,
@@ -833,8 +854,6 @@ var regiaoController = $.extend(true, {
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
-					//$("#dialog-cota").flexReload();
-//					$("#faixaGrid").flexReload();
 					var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
 					
 					$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
@@ -844,16 +863,24 @@ var regiaoController = $.extend(true, {
 					});
 					
 					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
+					$(".faixaGrid", regiaoController.workspace).flexReload();
 					$(this).dialog("close");
 //					$("#dialog-cotas").dialog("destroy");
 //					$ ("# jdialog_box_content") vazio ();
 //					$("#dialog-cotas").empty();
 //					$("#faixaGrid").empty();
-					closest('#faixaGrid');
+//					closest('#faixaGrid');
+					regiaoController.limparCamposAddAutomatica();
+					
+//					$("#faixaGrid").close();
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
+					regiaoController.limparCamposAddAutomatica();
+//					$("#faixaGrid").empty();
+//					
 					$("#faixaGrid").closest('#grid');
+//					$(".faixaGrid", regiaoController.workspace).flexReload();
 //					$("#dialog-cotas").dialog("destroy");
 //					$("#dialog-cotas").flexReload();
 //					$("#faixaGrid").flexReload();
@@ -861,8 +888,22 @@ var regiaoController = $.extend(true, {
 			}
 		});
 	},
-
 	
+	limparCamposAddAutomatica : function (){
+		regiaoController.filtroPorCep();
+		$("#radio").attr('checked', true);
+		
+		$("#radio2").attr('checked', false);
+		$("#radio3").attr('checked', false);
+		$("#cepInicialPart1").val("");
+		$("#cepInicialPart2").val("");
+		$("#cepFinalPart1").val("");
+		$("#cepFinalPart2").val("");
+		$("#qtdCotas").val("");
+		$("#comboSegmento").val("");
+		
+	},
+ 	
 
 	// FUNCTIONS - COTA
 	
@@ -894,6 +935,17 @@ var regiaoController = $.extend(true, {
 	
 	// FUNCTIONS - CARREGAR SEGMENTOS
 	
+/*
+ * 
+ * 
+ * 
+ * 
+ * VERIFICAR A NECESSIDADE
+ * 
+ * 
+ * 
+ * 
+ */
 	carregarSegmento : function() {
 		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
@@ -1013,10 +1065,46 @@ var regiaoController = $.extend(true, {
 
 	},
 	
-//	add_cotas : function() {
-//		$("#dialog-addCota").dialog({});
-// 
-//	},
+	add_cotas_Segmento : function() {
+		$("#dialog-confirmacao").dialog({
+			resizable : false,
+			height : 150,
+			width : 200,
+			modal : true,
+			buttons : {"Confirmar" : function() {
+					$(this).dialog("close");
+					$("#effect").show("highlight", {}, 1000, callback);
+					var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
+					var cotas = [];
+
+					$("input[type=checkbox][name='cotaSegmentoSelected']:checked").each(function() {
+						if(this.value.length>0)
+							cotas.push({name:'cotas', value:this.value});
+					});
+
+					// adicionando a regi�o
+					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
+					
+					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
+							cotas, 
+							function(result) {
+
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) 
+							exibirMensagem(tipoMensagem, listaMensagens);
+						
+						$(".cotasRegiaoGrid", this.workspace).flexReload();
+					});
+			},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+
+	},
 	
 	
 	// FUNCTION - VERIFICA SE A REGI�O � FIXA 	
@@ -1033,7 +1121,6 @@ var regiaoController = $.extend(true, {
 		
 	},
 
-	
 	
 	// FILTROS REGI�O AUTOM�TICA
 	
@@ -1090,25 +1177,15 @@ var regiaoController = $.extend(true, {
 	// FUNCTION - MOSTRAR POR SEGMENTO
 
 	mostrarPorSegmento : function() {
-		$('.gridfaixaCep').hide();
-		$('.gridNMaiores').hide();
 		$('.gridsegmentos').show();
 	
-//		$.postJSON(contextPath + "/distribuicao/regiao/buscarPorCep", 
-//				regiaoController.obterRangeDeCep(),
-//				function(result) {
-//						var json = JSON.stringify(result);
-//												
-//						$(".faixaGrid", regiaoController.workspace).flexAddData(json);
-//		
-//						$("#faixaGrid", regiaoController.workspace).flexReload();
-//				   },
-//				   null,
-//				   true
-//		);
-	
-	
-	
+		$("#segmentosGrid").flexOptions({
+			url: contextPath + "/distribuicao/regiao/buscarPorSegmento",
+			dataType : 'json',
+			params : regiaoController.obterFiltroSegmento()
+		});
+		
+		$("#segmentosGrid").flexReload();
 	},
 	
 	mostrarPorCep : function() {
@@ -1170,13 +1247,24 @@ var regiaoController = $.extend(true, {
 		return data;
 	},
 	
+	obterFiltroSegmento : function(){
+		
+		var data = [];
+		
+		var segmento = $("#comboSegmento option:selected").val();
+		var limite = $("#qtdCotas").val();
+		
+		data.push({name:'filtro.idSegmento', value: segmento});
+		data.push({name:'filtro.limiteBuscaPorSegmento', value: limite});
+		
+		return data;
+	},
+	
 		
 	// FUNCTION - SEGMENTOS
 	
 	comboSegmento : function(){
 		var segmento = $("#comboSegmento option:selected").val();
-		
-		alert(segmento);
 		
 		$(".cotasRegiaoGrid", this.workspace).flexOptions({
 			url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
@@ -1260,7 +1348,7 @@ var regiaoController = $.extend(true, {
 
 					$('.cotaOrigem').each(function() {
 						if(this.value.length>0)
-							cotas.push({name:'numeroCota', value:this.value});
+							cotas.push({name:'cotas', value:this.value});
 					});
 					
 					// adicionando ao array cotas.
@@ -1271,7 +1359,7 @@ var regiaoController = $.extend(true, {
 						return;
 					}
 					
-					$.postJSON(contextPath + "/distribuicao/regiao/addCotaNaRegiao",
+					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
 							cotas, function(result) {
 						
 						var tipoMensagem = result.tipoMensagem;
@@ -1518,6 +1606,11 @@ var regiaoController = $.extend(true, {
 	checkAll : function() {
 		var valor = $("#todos").is(":checked");
 		$("input[type=checkbox][name='cotaSelected']").attr("checked", valor);
+	},
+	
+	checkAllSegmento : function() {
+		var valor = $("#todosSegmento").is(":checked");
+		$("input[type=checkbox][name='cotaSegmentoSelected']").attr("checked", valor);
 	},
 	
 	

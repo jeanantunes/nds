@@ -46,8 +46,7 @@ public class EstudoCota implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
-	@Column(name = "CLASSIFICACAO")
-	private String classificacao;
+
 	@Column(name = "REPARTE")
 	private BigInteger reparte;
 	
@@ -59,6 +58,9 @@ public class EstudoCota implements Serializable {
 	
 	@OneToMany(mappedBy = "estudoCota")
 	private List<ItemNotaEnvio> itemNotaEnvios;
+	
+	@Column(name = "CLASSIFICACAO")
+	private String classificacao;
 	
 	public EstudoCota() {
 		
@@ -149,9 +151,11 @@ public class EstudoCota implements Serializable {
 	public BigInteger getReparte() {
 		return reparte;
 	}
-
+	
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
-	
+
+
+
 }

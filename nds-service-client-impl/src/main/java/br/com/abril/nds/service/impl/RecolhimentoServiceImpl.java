@@ -39,6 +39,7 @@ import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -94,8 +95,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	protected CalendarioService calendarioService;
-	
-	private static final Integer QTDE_PERIODOS_PARCIAIS = 1;
 	
 	/**
 	 * {@inheritDoc}
@@ -253,8 +252,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		this.gerarChamadasEncalhe(mapaDataRecolhimentoLancamentos, numeroSemana);
 		
-		this.gerarPeriodosParciais(idsProdutoEdicaoParcial, usuario);
-		
 		return matrizConfirmada;
 	}
 
@@ -355,6 +352,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				lancamento.setDataStatus(new Date());
 				
 				this.lancamentoRepository.merge(lancamento);
+				
+				if(TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento())){
+					parciaisService.atualizarReparteDoProximoLancamentoParcial(lancamento);
+				}
 				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
 												   		lancamento, novaData);
@@ -544,41 +545,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		chamadaEncalhe.setSequencia(sequencia);
 		
 		return chamadaEncalhe;
-	}
-	
-	/**
-	 * Gera os períodos de parciais
-	 * 
-	 * @param idsProdutoEdicaoParcial - identificadores dos produtos de edição
-	 * @param usuario - usuário
-	 */
-	private void gerarPeriodosParciais(Set<Long> idsProdutoEdicaoParcial, Usuario usuario) {
-		
-		if (idsProdutoEdicaoParcial == null || idsProdutoEdicaoParcial.isEmpty()) {
-			
-			return;
-		}
-		
-		List<ProdutoEdicao> listaProdutoEdicao =
-			produtoEdicaoRepository.obterProdutosEdicaoPorId(idsProdutoEdicaoParcial);
-		
-		if (listaProdutoEdicao == null || listaProdutoEdicao.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Produto edição não encontrado!");
-		}
-		
-		if (listaProdutoEdicao.size() != idsProdutoEdicaoParcial.size()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Produto edição não encontrado!");
-		}
-		
-		for (ProdutoEdicao produtoEdicao : listaProdutoEdicao) {
-		
-			parciaisService.gerarPeriodosParcias(produtoEdicao, QTDE_PERIODOS_PARCIAIS,
-												 usuario);
-		}
 	}
 	
 	/**

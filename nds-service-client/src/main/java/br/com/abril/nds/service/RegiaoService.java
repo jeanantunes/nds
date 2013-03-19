@@ -31,6 +31,10 @@ public interface RegiaoService {
 	
 	List<TipoSegmentoProduto> carregarSegmentos();
 	
+	List<Integer> buscarNumeroCotasPorIdRegiao (Long idRegiao);
+	
 //	List<RegiaoCotaDTO> carregarTodasCotasDaRegiao ();
+	
+	List<RegiaoCotaDTO> buscarPorSegmento (FiltroCotasRegiaoDTO filtro);
 
 }

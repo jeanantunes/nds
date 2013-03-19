@@ -40,4 +40,6 @@ public interface FixacaoReparteService {
 	public FixacaoReparte buscarFixacaoCadastrada(FixacaoReparte fixacaoReparte);
 	
 	public boolean isCotaPossuiVariosPdvs(Long idCota);
+
+	void excluirFixacaoPorCota(Long idCota);
 }

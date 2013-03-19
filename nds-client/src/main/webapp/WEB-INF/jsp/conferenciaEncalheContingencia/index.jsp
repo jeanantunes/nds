@@ -58,12 +58,41 @@
 					<td colspan="2"><span class="dadosFiltro" id="nomeCota"/></td>
 					<td width="44"><span class="dadosFiltro">Status:</span></td>
 					<td width="91"><span class="dadosFiltro" id="statusCota"/></td>
-					<td width="144"><span class="dadosFiltro">Valor CE Jornaleiro R$:</span></td>
-					<td width="100">
+					
+					<td width="144">
+					
 						<span class="dadosFiltro">
-							<input type="text" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+						
+							<c:choose>
+								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
+									Valor CE Jornaleiro R$:
+								</c:when>
+								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
+									Qtde CE Jornaleiro:
+								</c:when>
+							</c:choose>
+													
 						</span>
+					
 					</td>
+					
+					<td width="100">
+					
+						<span class="dadosFiltro">
+						
+							<c:choose>
+								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
+							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+								</c:when>
+								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
+							<input type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
+								</c:when>
+							</c:choose>
+						
+						</span>
+					
+					</td>
+					
 				</tr>
 			</table>
 		</fieldset>
@@ -74,7 +103,7 @@
 			
 				<table class="conferenciaEncalheContGrid"></table>
 				
-				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;">
+				<div style="overflow: auto; height: 250px; border: 1px #EEEEEE solid;" id="divEncalhesCadastrados">
 					<table class="conferenciaEncalheGrid" style="width: 941px;" id="dadosGridConferenciaEncalheContingencia">
 						<tr class="header_table">
 							<td style="width: 70px; text-align: left;">Código</td>

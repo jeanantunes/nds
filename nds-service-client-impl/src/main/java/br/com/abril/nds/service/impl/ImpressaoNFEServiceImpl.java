@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO;
 import br.com.abril.nds.dto.ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroImpressaoNFEDTO;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -77,10 +76,8 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	@Transactional
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
 		List<NotasCotasImpressaoNfeDTO> cotas = null;
-		if(distribuidor.getObrigacaoFiscal() == null) {
+		if(this.distribuidorRepository.obrigacaoFiscal() == null) {
 			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvio(filtro);
 		} else {
 			cotas = impressaoNFeRepository.buscarCotasParaImpressaoNFe(filtro);
@@ -92,9 +89,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	@Transactional
 	public Integer buscarNFeParaImpressaoTotalQtd(FiltroImpressaoNFEDTO filtro) {
 		
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		
-		if(distribuidor.getObrigacaoFiscal() == null) {
+		if(this.distribuidorRepository.obrigacaoFiscal() == null) {
 			return impressaoNFeRepository.buscarCotasParaImpressaoNotaEnvioQtd(filtro);
 		} else {
 			return impressaoNFeRepository.buscarCotasParaImpressaoNFeQtd(filtro);

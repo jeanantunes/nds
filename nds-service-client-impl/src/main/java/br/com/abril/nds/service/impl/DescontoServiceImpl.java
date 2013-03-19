@@ -772,9 +772,7 @@ public class DescontoServiceImpl implements DescontoService {
 	 */
 	private void validarExclusaoDesconto(Desconto desconto){
 
-		Distribuidor distribuidor = distribuidorRepository.obter();
-
-		if(desconto.getDataAlteracao().compareTo(distribuidor.getDataOperacao()) < 0)
+		if(desconto.getDataAlteracao().compareTo(this.distribuidorRepository.obterDataOperacaoDistribuidor()) < 0)
 			throw new ValidacaoException(TipoMensagem.WARNING,"Desconto não pode ser excluido fora da data vigente!");
 				
 		if(desconto.isUsado())
@@ -970,7 +968,7 @@ public class DescontoServiceImpl implements DescontoService {
         
         Desconto desconto = null;
         
-        if (produtoEdicao.getProduto().isPublicacao()) {
+        //if (produtoEdicao.getProduto().isPublicacao()) {
 
             desconto = descontoProdutoEdicaoRepository.obterDescontoPorCotaProdutoEdicao(lancamento, cota, produtoEdicao);
 
@@ -1001,12 +999,12 @@ public class DescontoServiceImpl implements DescontoService {
             
             descontoRepository.alterar(desconto);
             
-        } else {
+        /*} else {
 
         	desconto = new Desconto();
         	
             desconto.setValor(produtoEdicao.getProduto().getDesconto());
-        }
+        }*/
         
         return desconto;
     }

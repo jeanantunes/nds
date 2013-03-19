@@ -209,8 +209,36 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	
 	
 	
+	public List<FixacaoReparte> buscarPorCota(Cota cota){
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" from ");
+
+		sql.append(" FixacaoReparte f ");
+		
+		sql.append(" where f.cotaFixada = :cotaSelecionada ");
+		
+		Query query  = getSession().createQuery(sql.toString());
+		query.setParameter("cotaSelecionada",  cota);
+		
+		
+		return query.list();
+	}
 	
 	
+	public void removerPorCota(Cota cota){
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append("delete from ");
+
+		sql.append(" FixacaoReparte f ");
+		
+		sql.append(" where f.cotaFixada = :cotaSelecionada ");
+		
+		Query query  = getSession().createQuery(sql.toString());
+		query.setParameter("cotaSelecionada",  cota);
+		
+	}
 	
 }
 
