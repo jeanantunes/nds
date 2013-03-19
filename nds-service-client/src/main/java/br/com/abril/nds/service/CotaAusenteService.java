@@ -62,6 +62,8 @@ public interface CotaAusenteService {
 	void verificarExistenciaReparteCota(Date data, Integer numeroCota);
 	
 	List<ProdutoEdicaoSuplementarDTO> obterDadosExclusaoCotaAusente(Long idCotaAusente);
+	
+	void validarCotaAusenteNaData(Integer numCota, Date data);
 
 	void validarCotaAusenteNaData(Integer numCota, Date data);
 

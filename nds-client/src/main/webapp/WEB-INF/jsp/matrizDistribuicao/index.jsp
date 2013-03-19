@@ -1,5 +1,4 @@
 <head>
-
 <style>
 .linkDisabled {
 	cursor: default;
@@ -117,7 +116,9 @@ var lancamentosSelecionados = [];
 		      <div class="linha_separa_fields">&nbsp;</div>
 		      <fieldset class="fieldGrid">
 		       	  <legend>Matriz de Distribuição</legend>
-		        <div class="grids" style="display:none;">
+		       
+		        	<div class="gridDistribuicao" style="display:none;">
+
 		        
 		       	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
 		         	  		
@@ -302,7 +303,8 @@ var lancamentosSelecionados = [];
 		</form> 	
 			
 	</div>
-			
+	
+	<div style="display:none" class="campoPesquisaEstudo"></div>
 		
 	<form id="form-copiar-estudo">
 		<div id="dialog-copiar-estudo" title="Copia Proporcional de Estudo" style="display:none;">

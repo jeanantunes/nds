@@ -148,29 +148,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista,Date dataDistribuidor, Long idProdutoEdicao, Long idLancamento, Long idUsuario,Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
 		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.
-				obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
+			obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 
 		BigInteger total = BigInteger.ZERO;		
 
-		List<MovimentoEstoqueCota> movimentos = new ArrayList<>();
-		for( EstudoCotaDTO estudoCota : listaEstudoCota ) {
-			
-			movimentos.add(
-						gerarMovimentoCota(dataPrevista,idProdutoEdicao,estudoCota.getIdCota(),
-								idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota
-								, dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId())
-						);
+		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
+
+			gerarMovimentoCota(
+				dataPrevista,idProdutoEdicao,estudoCota.getIdCota(),
+					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota,
+						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId());
 
 			total = total.add(estudoCota.getQtdeEfetiva());
-			
-		}
-
-		for(MovimentoEstoqueCota mec : movimentos) {
-			movimentoEstoqueCotaRepository.merge(mec);
 		}
 
 		gerarMovimentoEstoque(dataPrevista, idProdutoEdicao, idUsuario, total, tipoMovimento);
-
 	}
 
 	@Override
@@ -290,7 +282,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoque.setAprovador(new Usuario(idUsuario));
 			movimentoEstoque.setDataAprovacao(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
-			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque,movimentoEstoque);			
+			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque);			
 			
 			movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
 		
@@ -540,7 +532,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 				
 			}			
-			
 		}
 		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {
@@ -549,10 +540,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoqueCota.setAprovador(new Usuario(idUsuario));
 			movimentoEstoqueCota.setDataAprovacao(dataOperacao);
 			
-			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque,movimentoEstoqueCota);
+			movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
+			
+			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque, movimentoEstoqueCota);
 			
 			movimentoEstoqueCota.setEstoqueProdutoCota(new EstoqueProdutoCota(idEstoqueCota));
 
+		} else {
+			
+			movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 		}
 		
 		return movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
