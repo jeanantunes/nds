@@ -191,7 +191,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		if ( tipoMovimentoCota == null ) {
 			throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 		}
-		
+
 		List<MovimentoEstoqueCota> listaMovimentoCotaEnvio = 
 			new ArrayList<MovimentoEstoqueCota>();
 
@@ -215,7 +215,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			}
 		}
-		
+
 		return listaMovimentoCotaEnvio;
 	}
 
@@ -517,9 +517,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-
-				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
 				
+				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
+
 				BigDecimal precoComDesconto = 
 						produtoEdicao.getPrecoVenda().subtract(
 								MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto.getValor()));
@@ -551,7 +551,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 		}
 		
-		return movimentoEstoqueCota;
+		return movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 	}
 
 	@Override

@@ -2,8 +2,6 @@ package br.com.abril.nds.util.export.fiscal.nota;
 
 import java.util.List;
 
-import br.com.abril.nds.model.fiscal.nota.COFINSST;
-import br.com.abril.nds.model.fiscal.nota.PISST;
 import br.com.abril.nds.util.export.fiscal.nota.condition.CNPJCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSNTCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSOutrasAliqCondition;

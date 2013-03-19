@@ -15,7 +15,6 @@ import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaAusenteRepository;
@@ -36,20 +35,14 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 						
 		StringBuilder queryNative = new StringBuilder();
 		
-		queryNative.append("SELECT 																				"); 		
-		queryNative.append("ca.ID as idCotaAusente, 															");
-		queryNative.append("ca.DATA as data, 																	");
-		queryNative.append("box.NOME as box, 																	");
-		queryNative.append("cota.NUMERO_COTA as cota,															");
-	    queryNative.append("(case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nome, ");
-		queryNative.append("( SELECT SUM(movEstoque.QTDE*pe.PRECO_VENDA) FROM MOVIMENTO_ESTOQUE_COTA movEstoque ");
-		queryNative.append("JOIN PRODUTO_EDICAO pe ON (movEstoque.PRODUTO_EDICAO_ID=pe.ID)						");
-		queryNative.append("JOIN TIPO_MOVIMENTO tm ON (movEstoque.TIPO_MOVIMENTO_ID=tm.ID)						");
-		queryNative.append("WHERE movEstoque.COTA_ID = cota.ID 									");
-		queryNative.append("AND tm.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
-		queryNative.append("AND movEstoque.DATA = ca.DATA ");
-		queryNative.append(") as valorNE 									");
-
+		queryNative.append(" SELECT "); 		
+		queryNative.append(" ca.ID as idCotaAusente, ");
+		queryNative.append(" ca.DATA as data, ");
+		queryNative.append(" box.NOME as box, ");
+		queryNative.append(" cota.NUMERO_COTA as cota, ");
+	    queryNative.append(" (case when (pessoa.TIPO = 'F') then pessoa.NOME else pessoa.RAZAO_SOCIAL end) AS nome, ");
+	    queryNative.append(" SUM(ec.QTDE_EFETIVA * pe.PRECO_VENDA) as valorNE ");
+		
 		queryNative.append(getFromWhereBuscaCotaAusente(filtro));
 		
 		ColunaOrdenacao colunaOrdenacao = filtro.getColunaOrdenacao();
@@ -90,8 +83,6 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 
 		setParametersBuscaCotaAusente(filtro, query);
 		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE.name());
-		
 		if(filtro.getPaginacao() != null && filtro.getPaginacao().getPosicaoInicial() != null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) {
 			query.setParameter("inicio", filtro.getPaginacao().getPosicaoInicial());
 			query.setParameter("qtdeResult", filtro.getPaginacao().getQtdResultadosPorPagina());
@@ -127,15 +118,23 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		
 		StringBuilder queryNative = new StringBuilder();
 		
-		queryNative.append("FROM COTA cota																		");
+		queryNative.append(" FROM COTA_AUSENTE ca ");
+		
+		queryNative.append(" JOIN COTA cota on (cota.ID = ca.COTA_ID) ");
+		queryNative.append(" JOIN cota_ausente_movimento_estoque_cota camec ON (camec.COTA_AUSENTE_ID = ca.ID) ");
+		queryNative.append(" JOIN movimento_estoque_cota mec on (camec.MOVIMENTO_ESTOQUE_COTA_ID = mec.id) ");
+		queryNative.append(" JOIN produto_edicao pe on (pe.ID = mec.PRODUTO_EDICAO_ID) ");
+		queryNative.append(" JOIN estudo_cota ec on (ec.cota_id = cota.id) ");
+		queryNative.append(" JOIN estudo estudo on (ec.estudo_id = estudo.id) ");
+		queryNative.append(" JOIN LANCAMENTO lancamento on (lancamento.id = mec.lancamento_id and estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
 
-		queryNative.append("LEFT JOIN COTA_AUSENTE ca ON (ca.COTA_ID=cota.ID)									");
-		queryNative.append("LEFT JOIN BOX box ON (cota.BOX_ID=box.ID)											");
-		queryNative.append("LEFT JOIN ROTEIRIZACAO roteirizacao ON (box.ID = roteirizacao.BOX_ID)               ");
-		queryNative.append("LEFT JOIN ROTEIRO roteiro ON (roteirizacao.ID = roteiro.ROTEIRIZACAO_ID)            ");
-		queryNative.append("LEFT JOIN ROTA rota ON (roteiro.ID = rota.ROTEIRO_ID)					            ");
-		queryNative.append("LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID)								");
-		queryNative.append("WHERE 1 = 1 																		");
+		queryNative.append(" LEFT JOIN BOX box ON (cota.BOX_ID=box.ID) ");
+		queryNative.append(" LEFT JOIN ROTEIRIZACAO roteirizacao ON (box.ID = roteirizacao.BOX_ID) ");
+		queryNative.append(" LEFT JOIN ROTEIRO roteiro ON (roteirizacao.ID = roteiro.ROTEIRIZACAO_ID) ");
+		queryNative.append(" LEFT JOIN ROTA rota ON (roteiro.ID = rota.ROTEIRO_ID) ");
+		queryNative.append(" LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID) ");
+		
+		queryNative.append(" WHERE 1 = 1 ");
 
 		if(filtro.getData() != null){	
 			queryNative.append("AND ca.DATA = :data  											");
@@ -215,7 +214,13 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		hql.append(" produtoEdicao.id as idProdutoEdicao, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" sum(movimentosEstoqueCota.qtde) as reparte, ");
-		hql.append(" estoqueProduto.qtdeSuplementar as quantidadeDisponivel ");
+		hql.append(" estoqueProduto.qtdeSuplementar + ");
+		hql.append(" (select coalesce(sum(rateioCotaAusente.qtde), 0) ");
+		hql.append(" from RateioCotaAusente rateioCotaAusente ");
+		hql.append(" inner join rateioCotaAusente.cotaAusente cotaAusenteSub ");
+		hql.append(" where cotaAusente.id = cotaAusenteSub.id ");
+		hql.append(" and rateioCotaAusente.produtoEdicao = estoqueProduto.produtoEdicao) ");
+		hql.append(" as quantidadeDisponivel ");
 		hql.append(" from CotaAusente cotaAusente ");
 		hql.append(" inner join cotaAusente.movimentosEstoqueCota movimentosEstoqueCota ");
 		hql.append(" inner join movimentosEstoqueCota.produtoEdicao produtoEdicao ");

@@ -316,10 +316,12 @@ public class CotaAusenteController extends BaseController {
 	public void exibirProdutosSuplementaresDisponiveis(Long idCotaAusente) {
 		
 		List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoDisponíveis = 
-			this.cotaAusenteService.obterDadosExclusaoCotaAusente(idCotaAusente);
-		
+				this.cotaAusenteService.obterDadosExclusaoCotaAusente(idCotaAusente);
+
 		result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1).total(listaProdutosEdicaoDisponíveis.size()).serialize();
+		
 	}
+	
 	
 	/**
 	 * 

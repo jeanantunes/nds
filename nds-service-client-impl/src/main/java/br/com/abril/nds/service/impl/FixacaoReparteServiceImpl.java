@@ -297,5 +297,3 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	
 
 }
-
-

@@ -156,8 +156,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
 		
-		BigDecimal valorTotalGeral = BigDecimal.ZERO;
-		info.setValorTotalGeral(valorTotalGeral);
+		info.setValorTotalGeral(BigDecimal.ZERO);
 		
 		if(indPerfilUsuarioEncarregado) {
 			carregarDadosAdicionais(info, listaContagemDevolucao);
