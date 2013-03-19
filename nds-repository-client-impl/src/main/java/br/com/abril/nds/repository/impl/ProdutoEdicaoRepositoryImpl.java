@@ -1037,7 +1037,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 */
 				" sum(vdEsmag) as vendaEsmagadas, " +
 				" sum(cotaAtiva) as qtdeCotasAtivas, " +
-				" sum(HIST.qtdeCotasSemVenda) as qtdeCotasSemVenda" +
+				" sum(HIST.qtdeCotasSemVenda) as qtdeCotasSemVenda," +
+				" GROUP_CONCAT(COTA_ID SEPARATOR ',') idCotaStr " +
 				
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
@@ -1255,10 +1256,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			hql.append(" and tipoClassificacaoProduto.id = :tipoClassificacaoProdutoId ");
 			parameters.put("tipoClassificacaoProdutoId", filtro.getTipoClassificacaoProdutoId());
 		}
+		
 		if (filtro.getNumeroEdicao() != null && filtro.getNumeroEdicao() > 0l) {
 			hql.append(" and produtoEdicao.numeroEdicao = :numeroEdicao ");
 			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
-		} 
+		}else if(filtro.getListProdutoEdicaoDTO()!=null && !filtro.getListProdutoEdicaoDTO().isEmpty()){
+			hql.append(" and produtoEdicao.numeroEdicao in (:numeroEdicaoList) ");
+			
+			List<Long> l = new ArrayList<Long>();
+			for (ProdutoEdicaoDTO pe : filtro.getListProdutoEdicaoDTO()) {
+				l.add(pe.getNumeroEdicao());
+			}
+			parameters.put("numeroEdicaoList", l);
+		}
 		
 		hql.append("GROUP BY produtoEdicao.numeroEdicao");
 		
@@ -1274,7 +1284,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	private void setParameters(Query query, Map<String, Object> parameters) {
 		for (String key : parameters.keySet()) {
-			query.setParameter(key, parameters.get(key));
+			Object val = parameters.get(key);
+			if(val instanceof List){
+				query.setParameterList(key, (List)val);
+			}else{
+				query.setParameter(key, val);				
+			}
 		}
 	}
 

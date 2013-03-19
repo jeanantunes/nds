@@ -7,6 +7,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/analiseHistograma.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 
+
 <script language="javascript" type="text/javascript">
 
 	var pesquisaProduto= new PesquisaProduto(histogramaVendasController.workspace);
@@ -22,9 +23,9 @@
 </style>
 <style>
 .gridScroll tr:hover{background:#FFC}
-.dadosTab .class_linha_1, .dadosTab .class_linha_2{line-height:18px!important;border-bottom:1px solid #ccc;}
-.dadosTab .class_linha_1:hover, .dadosTab .class_linha_2:hover{background:#fff; font-weight:bold; font-size:12px!important;}
+
 #outros{display:none;}
+
 </style>
 
 
@@ -36,6 +37,7 @@
 </div>
 
 
+<div class="corpo" id="analiseHistoricoVendasContent"/>
 
 <div class="corpo" id="histogramaVendasContent">
  
@@ -165,4 +167,5 @@
 </div> 
 
 <div class="corpo" id="analiseHistogramaVendasContent"/>
+
 

@@ -57,6 +57,8 @@ public class AnaliseHistogramaDTO implements Serializable {
 	
 	private Long qtdeTotalCotasAtivas=0l;
 	
+	private String idCotaStr;
+	
 	public String getFaixaVenda() {
 		return faixaVenda;
 	}
@@ -173,6 +175,12 @@ public class AnaliseHistogramaDTO implements Serializable {
 	}
 	public void setReparteDistribuido(BigInteger reparteDistribuido) {
 		this.reparteDistribuido = reparteDistribuido;
+	}
+	public String getIdCotaStr() {
+		return idCotaStr;
+	}
+	public void setIdCotaStr(String idCotaStr) {
+		this.idCotaStr = idCotaStr;
 	}
 	
 

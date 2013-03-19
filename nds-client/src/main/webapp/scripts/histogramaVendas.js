@@ -1,28 +1,28 @@
-var edicoesEscolhidas = new Array();
+var edicoesEscolhidas_HistogramaVenda = new Array();
 var nomeProduto='';
 var descricaoTipoProduto='';
-var codigoProduto="";
+var codigoProduto_HistogramaVenda="";
 
 function checkEdicao(check){
 	//console.log(check.checked);
 	
 	var obj = jQuery.parseJSON(check.value);
 	
-	if(edicoesEscolhidas.indexOf(obj.edicao)>-1){
+	if(edicoesEscolhidas_HistogramaVenda.indexOf(obj.edicao)>-1){
 		
-		var len = edicoesEscolhidas.length;
+		var len = edicoesEscolhidas_HistogramaVenda.length;
 		
 		//remover do array
-		edicoesEscolhidas.splice(edicoesEscolhidas.indexOf(obj.edicao),1);
+		edicoesEscolhidas_HistogramaVenda.splice(edicoesEscolhidas_HistogramaVenda.indexOf(obj.edicao),1);
 		//liberar os checkboxs para remarcação
 		if(len==6)
 			$(".checkEdicao").removeAttr("disabled");
 		
 	}else{
 		//Adicionar no array
-		edicoesEscolhidas.push(obj.edicao);
+		edicoesEscolhidas_HistogramaVenda.push(obj.edicao);
 		//Verfificar se alcançou 6, case seja 6, desabilitar todos os checks
-		if(edicoesEscolhidas.length==6){
+		if(edicoesEscolhidas_HistogramaVenda.length==6){
 			$(".checkEdicao:not(:checked)").attr("disabled","disabled");
 		}
 	}
@@ -47,7 +47,7 @@ var histogramaVendasController = $.extend(true, {
 
 					nomeProduto=value.cell.nomeProduto;
 					descricaoTipoProduto=value.cell.descricaoTipoProduto;
-					codigoProduto=value.cell.codigoProduto;
+					codigoProduto_HistogramaVenda=value.cell.codigoProduto;
 					
 					var objString = 
 						'{"codigo":"'+ value.cell.codigoProduto
@@ -57,7 +57,7 @@ var histogramaVendasController = $.extend(true, {
 					+ '"}'; 
 					
 					//verificando se já estão escolhidas 6 edicoes para analise do histograma
-					var disabled=(edicoesEscolhidas.length==6)?"disabled='disabled'":""
+					var disabled=(edicoesEscolhidas_HistogramaVenda.length==6)?"disabled='disabled'":""
 					value.cell.sel = "<input type='checkbox'  class='checkEdicao' value='"+objString+"' "+disabled+" onclick='checkEdicao(this)'/>";
 					
 					//setando atributo para capa
@@ -131,7 +131,7 @@ var histogramaVendasController = $.extend(true, {
 	},
 	
 	realizarAnalise:function(){
-		if(edicoesEscolhidas.length==0){
+		if(edicoesEscolhidas_HistogramaVenda.length==0){
 			exibirMensagem("WARNING", ["Selecione ao menos uma edição."]);
 			return;
 		}
@@ -154,11 +154,11 @@ var histogramaVendasController = $.extend(true, {
 			
 		}
 		
-		var data = {"edicoes":edicoesEscolhidas.sort().toString(),
+		var data = {"edicoes":edicoesEscolhidas_HistogramaVenda.sort().toString(),
 				"segmento":descricaoTipoProduto,
 				"nomeProduto":nomeProduto,
 				"faixasVenda":faixas,
-				"codigoProduto":codigoProduto,
+				"codigoProduto":codigoProduto_HistogramaVenda,
 				"labelComponente":labelComponente,
 				"labelElemento":labelElemento};
 		

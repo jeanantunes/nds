@@ -220,7 +220,7 @@ public class HistoricoVendaController extends BaseController {
 	 * Faz a entrada da análise histórico de vendas (TELA ANÁLISE)
 	 * 
 	 */
-	@Get
+	@Post
 	public void analiseHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas){
 		
 		Collections.sort(listProdutoEdicaoDto);

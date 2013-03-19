@@ -1,4 +1,57 @@
+var tempData=null;
 
+function montarDados(){
+
+	$("#voltarBaseAnalise").click(function(){
+		$("#analiseHistogramaVendasContent").show();
+		$("#analiseHistoricoVendasContent").hide();
+	});
+	
+//	console.log("link pra mostrar!!! "+($(".linkMostrarTodos").length));
+	$("#analiseHistoricoPopUpNomeProduto").clear();
+	$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1"><strong>Produto:</strong></td>');
+	console.log($("#analiseHistoricoPopUpNomeProduto").length);
+	
+	// tr numeroEdicao
+	$('#analiseHistoricoPopUpNumeroEdicao').html('')
+	.append('<td class="class_linha_1"><strong>Edição:</strong></td>');
+	
+	// tr dataLancamento
+	$('#analiseHistoricoPopUpDatalancamento').html('')
+	.append('<td width="136" class="class_linha_2"><strong>Data Lançamento:</strong></td>');
+	
+	// tr reparte
+	$('#analiseHistoricoPopUpReparte').html('')
+	.append('<td class="class_linha_1"><strong>Reparte:</strong></td>');
+	
+	// tr venda
+	$('#analiseHistoricoPopUpVenda').html('')
+	.append('<td class="class_linha_2"><strong>Venda:</strong></td>');
+	
+	// carregando popUp_analiseHistoricoVenda
+	for ( var int2 = 0; int2 < tempData.rows.length; int2++) {
+		row = tempData.rows[int2];
+		
+		$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1">'+row.cell.nomeProduto+'</td>');
+		$("#analiseHistoricoPopUpNumeroEdicao").append('<td class="class_linha_1">'+row.cell.numeroEdicao+'</td>');
+		$("#analiseHistoricoPopUpDatalancamento").append('<td width="130" align="center" class="class_linha_2">' + row.cell.dataLancamentoFormatada + '</td>');
+		$("#analiseHistoricoPopUpReparte").append('<td align="right" class="class_linha_1">' + row.cell.repartePrevisto +'</td>');
+		$("#analiseHistoricoPopUpVenda").append('<td align="right" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
+	}
+	
+	qtdEdicoesSelecionadas = 6 - tempData.rows.length; 
+	
+	// por estética de layout, insiro elementos td vazios
+	for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
+		$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1"></td>');
+		$("#analiseHistoricoPopUpNumeroEdicao").append('<td class="class_linha_1"></td>');
+		$("#analiseHistoricoPopUpDatalancamento").append('<td width="130" align="center" class="class_linha_2"></td>');
+		$("#analiseHistoricoPopUpReparte").append('<td align="right" class="class_linha_1"></td>');
+		$("#analiseHistoricoPopUpVenda").append('<td align="right" class="class_linha_1"></td>');
+	}
+	//analiseHistoricoVendaController.init();
+	
+}
 function updateFaixa(input,idx){
 	if(input.value=='' || input.value==null || parseInt(input.value)==0 ||(parseInt(input.value) <= faixasVenda[idx-1].cell.faixaReparteDe)){
 		if(faixasVenda[idx-1].cell.bkp){
@@ -154,7 +207,10 @@ var anaLiseHistogramaController = $.extend(true, {
 				resultadoAnalise=data.rows;
 				
 				$.each(data.rows, function(index, value) {
-					value.cell.faixaVenda="<a href=\"javascript:alert('todo: [EMS 2028]');\">"+value.cell.faixaVenda+"</a>";
+//					console.log(value.cell.idCotaStr);
+					if(parseInt(value.cell.qtdeCotas)>0){
+						value.cell.faixaVenda="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+");\">"+value.cell.faixaVenda+"</a>";						
+					}
 				});
 				
 				var idArray=["cotasAtivasCell","repartTotalCell","repMedioCell","vdaMedioCell","cotasEsmagadasCell","vdaTotalCell","vendaEsmagadasCell","encalheMedioCell","cotasProdutoCell","reparteDistribuidoCell"];
@@ -180,7 +236,7 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				
 				var r = parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2);
-				console.log(r);
+//				console.log(r);
 				$("#abrangenciaDistribuicaoCell").text(r+"%");
 				/*
 				console.log("qtdeCotas::"+qtdeCotas);
@@ -189,7 +245,7 @@ var anaLiseHistogramaController = $.extend(true, {
 				console.log("qtdeCotas-qtdeCotasSemVenda/qtdeTotalCotasAtivas*100::"+(qtdeCotas-qtdeCotasSemVenda/qtdeTotalCotasAtivas*100));
 				*/
 				r = parseFloat(Math.round( (qtdeCotas-qtdeCotasSemVenda)/qtdeTotalCotasAtivas*100 )).toFixed(2);
-				console.log(r);
+				
 				$("#abrangenciaVendaCell").text(r+"%");
 				
 				
@@ -277,6 +333,57 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 	},
 	
+	executarAnaliseHistoricoVenda:function(idx){
+		var idCotaArray = resultadoAnalise[idx].cell.idCotaStr.split(',');
+		
+		url = contextPath + "/distribuicao/historicoVenda/analiseHistorico";
+
+		var params = new Array();
+		
+		//popular lista de ID de cotas
+		$.each(idCotaArray, function(index, val) {
+			params.push({name : "cotas["+index+"].numeroCota", value : val });
+		});
+		
+		//
+		
+		for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
+			params.push({name : "listProdutoEdicaoDto["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
+			params.push({name : "listProdutoEdicaoDto["+int+"].codigoProduto", value :  codigoProduto_HistogramaVenda});
+			
+		}
+		
+		$.post(url, params, function(data){
+		      if(data){
+		    	  $("#analiseHistogramaVendasContent").hide();
+		    	  $("#analiseHistoricoVendasContent").html(data).show();
+		    	  
+		    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload();
+		      }
+		});
+		
+		params = new Array();
+		
+		params.push({name : "filtro.produtoDto.codigoProduto", value :  codigoProduto_HistogramaVenda});
+		for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
+			params.push({name : "filtro.listProdutoEdicaoDTO["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
+			
+		}
+
+		//carregando pop superior para as edições
+		url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
+		$.post(url, params, function(data){
+			if(data){
+				tempData = data;
+				// limpando conteúdo
+				// tr produto
+//				console.log(mostraDados);
+			}
+		});
+		
+			
+		
+	},
 	refazerHistograma:function(){
 		/*var data = {"edicoes":edicoesEscolhidas.sort().toString(),
 				"faixasVenda":faixas,
@@ -297,7 +404,7 @@ var anaLiseHistogramaController = $.extend(true, {
 		formData.push({name:"faixasVenda",value:faixas});
 		formData.push({name:"codigoProduto",value:codigoProduto});
 		
-		console.log($.param(formData));
+//		console.log($.param(formData));
 		$("#estudosAnaliseHistGrid").flexOptions({
 			url: contextPath + "/distribuicao/histogramaVendas/populateHistograma",
 			dataType : 'json',
@@ -432,3 +539,4 @@ function popup_divergencias() {
 function divergencia(){
 	$('.classDivergencias').toggle();
 	}
+//@ sourceURL=analiseHistograma.js
