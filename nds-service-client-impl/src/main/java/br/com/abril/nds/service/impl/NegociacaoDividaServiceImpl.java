@@ -954,28 +954,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 		parcela.setDataVencimento(DateUtil.formatarDataPTBR(dataParcela));
 
-		dataBase = dataParcela;
-//		Double encargos = 0.0;		
-//
-//		if (!filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)
-//				&& (filtro.getIsentaEncargos() != null && !filtro
-//						.getIsentaEncargos())){				
-//			
-//			BigDecimal juros = cobrancaService.calcularJuros(banco,cota.getId()
-//					,
-//					valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()), new Date());
-//
-//			BigDecimal multas = cobrancaService.calcularMulta(banco,
-//					cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota()),
-//					valorParcela);
-//
-//			encargos = juros.add(multas).doubleValue();
-//		}
-//		parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
-//
-//		parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela.doubleValue()
-//				+ encargos));
-		return dataBase;
+		return dataParcela;
 	}
 	@Override
 	@Transactional(readOnly=true)
