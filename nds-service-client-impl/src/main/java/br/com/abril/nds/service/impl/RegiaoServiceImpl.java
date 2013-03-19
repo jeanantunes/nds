@@ -106,9 +106,11 @@ public class RegiaoServiceImpl implements RegiaoService  {
 	public List<Integer> buscarNumeroCotasPorIdRegiao(Long idRegiao) {
 		return registroCotaRegiaoRepository.buscarNumeroCotasPorIdRegiao(idRegiao);
 	}
-	
-	//implementar nome as cotas
-	//String nomeExibicao = PessoaUtil.obterNomeExibicaoPeloTipo(cota.getPessoa());
-	//percorrer lista e setar dentro a lista de cotas por regiao...as
+
+	@Override
+	@Transactional
+	public List<RegiaoCotaDTO> buscarPorSegmento(FiltroCotasRegiaoDTO filtro) {
+		return regiaoRepository.buscarCotasPorSegmento(filtro);
+	}
 	
 }

@@ -26,21 +26,10 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	@Autowired
 	private EstoqueProdutoRespository estoqueProdutoRespository;
 	
-	@Autowired
-	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
-	
 	@Transactional(readOnly = true)
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
 		
 		return this.estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEdicao);
-	}
-
-	@Override
-	@Transactional
-	public List<ProdutoEdicaoSuplementarDTO> obterProdutosEdicaoSuplementarDisponivel(
-			Date data, Long idCota) {
-		
-		return this.estoqueProdutoRespository.obterProdutosEdicaoSuplementarNaoDisponivel(idCota, data);
 	}
 
 }

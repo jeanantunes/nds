@@ -39,7 +39,7 @@ public class FechamentoDiarioMovimentoVenda implements Serializable {
 	@Column(name="QUANTIDADE")
 	private BigInteger quantidade;
 	
-	@Column(name="VALOR", precision=18, scale=4)
+	@Column(name="VALOR")
 	private BigDecimal valor;
 	
 	@Column(name="DATA_VENCIMENTO")

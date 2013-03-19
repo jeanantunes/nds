@@ -3,7 +3,6 @@ package br.com.abril.nds.dto.filtro;
 import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 /**

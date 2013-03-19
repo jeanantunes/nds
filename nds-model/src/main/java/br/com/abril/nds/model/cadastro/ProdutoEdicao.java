@@ -78,10 +78,10 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "NOME_COMERCIAL", nullable = true, unique = false, length = 60)
 	private String nomeComercial;
 	
-	@Column(name = "PRECO_VENDA", nullable = true, precision=18, scale=4)
+	@Column(name = "PRECO_VENDA", nullable = true)
 	protected BigDecimal precoVenda;
 	
-	@Column(name = "PRECO_PREVISTO", nullable = true, precision=18, scale=4)
+	@Column(name = "PRECO_PREVISTO", nullable = true)
 	protected BigDecimal precoPrevisto;
 	
 	@Column(name = "REPARTE_DISTRIBUIDO", nullable = true)
@@ -96,7 +96,7 @@ public class ProdutoEdicao implements Serializable {
 	@Column(name = "CARACTERISTICA_PRODUTO")
 	protected String caracteristicaProduto;
 	
-	@Column(name = "PRECO_CUSTO", precision=18, scale=4)
+	@Column(name = "PRECO_CUSTO")
 	protected BigDecimal precoCusto;
 	
 	@Column(name = "PESO", nullable = false)
@@ -132,7 +132,7 @@ public class ProdutoEdicao implements Serializable {
 	/**
 	 * Percentual de expectativa de venda do produto
 	 */
-	@Column(name = "EXPECTATIVA_VENDA", precision=18, scale=4)
+	@Column(name = "EXPECTATIVA_VENDA")
 	protected BigDecimal expectativaVenda;
 	
 	/**
@@ -190,7 +190,7 @@ public class ProdutoEdicao implements Serializable {
 	@Embedded
 	private SegmentacaoProduto segmentacao;
 
-	@Column(name="DESCONTO", precision=18, scale=4)
+	@Column(name="DESCONTO")
 	private BigDecimal desconto;
 	
 	@Column(name="DESCRICAO_DESCONTO")

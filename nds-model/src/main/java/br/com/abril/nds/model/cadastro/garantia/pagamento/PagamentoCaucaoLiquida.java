@@ -28,7 +28,7 @@ public class PagamentoCaucaoLiquida implements Serializable {
 	@Column(name="ID")
 	private Long id;
 	
-	@Column(name="VALOR", precision=18, scale=4)
+	@Column(name="VALOR")
 	private BigDecimal valor;
 
 	/**

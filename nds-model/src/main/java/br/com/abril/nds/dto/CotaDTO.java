@@ -113,6 +113,8 @@ public class CotaDTO implements Serializable {
 	
 	private TipoDistribuicaoCota tipoDistribuicaoCota;
 	
+	private String tipoCota;
+	
 	public String getNumeroRG() {
 		return numeroRG;
 	}
@@ -646,6 +648,14 @@ public class CotaDTO implements Serializable {
 
 	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	}
+
+	public String getTipoCota() {
+		return tipoCota;
+	}
+
+	public void setTipoCota(String tipoCota) {
+		this.tipoCota = tipoCota;
 	}
 	
 	

@@ -21,7 +21,7 @@ public class PoliticaChamadao implements Serializable {
     @Column(name = "DIAS_SUSPENSO")
 	private Integer diasSuspenso;
 	
-	@Column(name = "VALOR_CONSIGNADO", precision=18, scale=4)
+	@Column(name = "VALOR_CONSIGNADO")
 	private BigDecimal valorConsignado;
 
     /**

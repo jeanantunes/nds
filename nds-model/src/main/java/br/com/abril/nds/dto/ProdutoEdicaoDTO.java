@@ -16,7 +16,6 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Util;
 
 public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
 

@@ -51,19 +51,21 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		
 		hql.append(" WHERE estudo.produtoEdicao.id = lancamento.produtoEdicao.id AND ");
 		hql.append(" estudo.id = :NUM_ESTUDO OR ");
-		hql.append(" prodEdicao.numeroEdicao = :NUM_EDICAO_PRODUTO OR ");
-		hql.append(" produto.codigo = :COD_PRODUTO OR ");
-		hql.append(" produto.nome = :NOME_PRODUTO OR ");
+//		hql.append(" prodEdicao.numeroEdicao = :NUM_EDICAO_PRODUTO OR ");
+//		hql.append(" produto.codigo = :COD_PRODUTO OR ");
+		hql.append(" produto.codigo = :COD_PRODUTO ");
+//		hql.append(" produto.nome = :NOME_PRODUTO OR ");
 				
-		hql.append(" tpClassifProduto.id = :ID_TIPO_CLASS_PRODUTO ");
+//		hql.append(" tpClassifProduto.id = :ID_TIPO_CLASS_PRODUTO ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
-		
+	
 		query.setParameter("NUM_ESTUDO", filtro.getNumEstudo());
 		query.setParameter("COD_PRODUTO", filtro.getCodigoProduto());
-		query.setParameter("NOME_PRODUTO", filtro.getNome());
-		query.setParameter("NUM_EDICAO_PRODUTO", filtro.getNumeroEdicao());
-		query.setParameter("ID_TIPO_CLASS_PRODUTO", filtro.getIdTipoClassificacaoProduto());
+//		query.setParameter("NOME_PRODUTO", filtro.getNome());
+//		query.setParameter("NUM_EDICAO_PRODUTO", filtro.getNumeroEdicao());
+//		query.setParameter("ID_TIPO_CLASS_PRODUTO", filtro.getIdTipoClassificacaoProduto());
+
 		query.setParameter("RECOLHIDO", StatusLancamento.RECOLHIDO);
 		query.setParameter("EXPEDIDO", StatusLancamento.EXPEDIDO);
 		

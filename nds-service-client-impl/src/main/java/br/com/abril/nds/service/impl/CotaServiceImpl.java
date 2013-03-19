@@ -30,7 +30,6 @@ import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
-import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -57,6 +56,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -98,6 +98,7 @@ import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
@@ -122,7 +123,9 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.HistoricoTitularidadeService;
+import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.SituacaoCotaService;
@@ -245,6 +248,15 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	MixCotaProdutoService mixCotaProdutoService;
+	
+	@Autowired
+	FixacaoReparteService fixacaoReparteService;
+	
+	@Autowired
+	DistribuidorClassificacaoCotaRepository distribuidorClassificacaoCotaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1037,6 +1049,7 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica()!= null)
 				?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
+		cotaDTO.setTipoCota(cota.getTipoCota());
 		
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
@@ -1232,7 +1245,7 @@ public class CotaServiceImpl implements CotaService {
 	    cota.setClassificacaoEspectativaFaturamento(cotaDto.getClassificacaoSelecionada());
 	    
 	    cota.setPessoa(persistePessoaCota(cota, cotaDto));
-	    
+	    cota.setTipoCota(cotaDto.getTipoCota());
 	    cota  = cotaRepository.merge(cota);
 	    
 	    BaseReferenciaCota baseReferenciaCota = processarDadosBaseReferenciaCota(cota, cotaDto);
@@ -2348,28 +2361,28 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CotaResumoDTO> obterCotas(SituacaoCadastro situacaoCadastro) {
+	public List<Cota> obterCotas(SituacaoCadastro situacaoCadastro) {
 
 		return this.cotaRepository.obterCotas(situacaoCadastro);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CotaResumoDTO> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
+	public List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
 
 		return this.cotaRepository.obterCotasComInicioAtividadeEm(dataInicioAtividade);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
+	public List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
 
 		return this.cotaRepository.obterCotasAusentesNaExpedicaoDoReparteEm(dataExpedicaoReparte);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
+	public List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
 
 		return this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataRecolhimentoEncalhe);
 	}
@@ -2523,6 +2536,52 @@ public class CotaServiceImpl implements CotaService {
 	public HistoricoVendaPopUpCotaDto buscarCota(Integer numero) {
 		return cotaRepository.buscarCota(numero);
 	}
+	@Transactional
+	@Override
+	public void apagarTipoCota(Long idCota, String TipoCota){
+
+
+		
+		if(idCota == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada inválida!");
+		}
+		
+		if (TipoCota==null || TipoCota.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Cota Inválida");
+		}
+		
+
+		
+
+	
+		try{	
+			
+			if(TipoCota.equalsIgnoreCase("A")){
+				mixCotaProdutoService.excluirMixPorCota(idCota);
+			}
+			
+
+			if(TipoCota.equalsIgnoreCase("C")){
+				fixacaoReparteService.excluirFixacaoPorCota(idCota);
+			}
+
+			
+			
+		}catch (RuntimeException e) {
+			
+			if( e instanceof org.springframework.dao.DataIntegrityViolationException){
+				throw new ValidacaoException(TipoMensagem.ERROR,"Exclusão não permitida, registro possui dependências!");
+			}
+		}
+			
+		
+		
+	}
+
+	@Override
+	public List<DistribuidorClassificacaoCota> obterListaClassificacao() {
+		
+		return distribuidorClassificacaoCotaRepository.buscarTodos();
+	}
 	
 }
-

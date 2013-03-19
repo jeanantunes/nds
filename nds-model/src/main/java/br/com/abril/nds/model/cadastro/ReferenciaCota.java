@@ -35,7 +35,7 @@ public class ReferenciaCota implements Serializable {
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@Column(name="PERCENTUAL", precision=18, scale=4)
+	@Column(name="PERCENTUAL")
 	private BigDecimal percentual;
 
 	/**

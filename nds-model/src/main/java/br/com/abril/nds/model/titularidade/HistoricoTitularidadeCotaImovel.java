@@ -41,7 +41,7 @@ public class HistoricoTitularidadeCotaImovel extends HistoricoTitularidadeCotaGa
     /**
      * Valor do imóvel
      */
-    @Column(name = "IMOVEL_VALOR", precision=18, scale=4)
+    @Column(name = "IMOVEL_VALOR")
     private BigDecimal valor;
 
     @Column(name = "IMOVEL_OBSERVACAO")

@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
@@ -388,4 +389,8 @@ public interface CotaService {
 	 * @return
 	 */
 	boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota);
+	
+	public void apagarTipoCota(Long idCota, String TipoCota);
+	
+	public List<DistribuidorClassificacaoCota> obterListaClassificacao();
 }

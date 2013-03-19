@@ -51,7 +51,7 @@ public class HistoricoTitularidadeCotaFinanceiro implements Serializable {
     /**
      * Valor mínimo de cobrança
      */
-    @Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
+    @Column(name = "VALOR_MINIMO_COBRANCA")
     private BigDecimal valorMininoCobranca;
     
     /**

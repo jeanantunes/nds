@@ -26,16 +26,16 @@ public class FechamentoDiarioConsolidadoSuplementar implements Serializable{
     @Column(name = "ID")
     private Long id;
 
-	@Column(name = "VALOR_ESTOQUE_LOGICO", precision=18, scale=4)
+	@Column(name = "VALOR_ESTOQUE_LOGICO")
 	private BigDecimal valorEstoqueLogico;
 	
-	@Column(name = "VALOR_TRANSFERENCIA", precision=18, scale=4)
+	@Column(name = "VALOR_TRANSFERENCIA")
 	private BigDecimal valorTransferencia;
 	
-	@Column(name = "VALOR_VENDAS", precision=18, scale=4)	
+	@Column(name = "VALOR_VENDAS")	
 	private BigDecimal valorVendas;
 	
-	@Column(name = "VALOR_SALDO", precision=18, scale=4)
+	@Column(name = "VALOR_SALDO")
 	private BigDecimal valorSaldo;
 	
 	@OneToOne(optional = false)

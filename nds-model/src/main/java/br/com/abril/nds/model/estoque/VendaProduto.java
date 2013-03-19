@@ -70,7 +70,7 @@ public class VendaProduto implements Serializable {
 	@Column(name="QNT_PRODUTO")
 	private BigInteger qntProduto;
 	
-	@Column(name="VALOR_TOTAL_VENDA", precision=18, scale=4)
+	@Column(name="VALOR_TOTAL_VENDA")
 	private BigDecimal valorTotalVenda;
 	
 	@ManyToOne(optional = false)
@@ -91,10 +91,6 @@ public class VendaProduto implements Serializable {
 	
 	@Embedded
 	private ValoresAplicados valoresAplicados;
-	
-	@Column(name="DATA_OPERACAO")
-	@Temporal(TemporalType.DATE)
-	private Date dataOperacao;
 	
 	/**
 	 * @return the id
@@ -286,16 +282,6 @@ public class VendaProduto implements Serializable {
 	public void setValoresAplicados(ValoresAplicados valoresAplicados) {
 		this.valoresAplicados = valoresAplicados;
 	}
-
-	public Date getDataOperacao() {
-		return dataOperacao;
-	}
-
-	public void setDataOperacao(Date dataOperacao) {
-		this.dataOperacao = dataOperacao;
-	}
-	
-	
 	
 	
 }

@@ -2,6 +2,8 @@ package br.com.abril.nds.service.exception;
 
 public class ConferenciaEncalheExistenteException extends Exception {
 
+    private static final long serialVersionUID = 6835891459158626637L;
+
 	public ConferenciaEncalheExistenteException() {
 		super();
 	}
