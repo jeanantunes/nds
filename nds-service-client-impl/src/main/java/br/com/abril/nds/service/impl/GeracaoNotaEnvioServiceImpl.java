@@ -549,7 +549,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		if (enderecoPdv == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço do PDV principal da cota " + cota.getId()
+					"Endereço do PDV principal da cota " + cota.getNumeroCota()
 							+ " não encontrado!");
 		}
 

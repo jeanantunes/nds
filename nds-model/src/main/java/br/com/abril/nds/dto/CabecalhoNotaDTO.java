@@ -1,6 +1,5 @@
 package br.com.abril.nds.dto;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class CabecalhoNotaDTO {
@@ -8,13 +7,23 @@ public class CabecalhoNotaDTO {
 	private Long fornecedor;
 	private String cnpj;
 	private Long numero;
+	private Long numeroNotaEnvio;
 	private String serie;
 	private String chaveAcesso;
 	private Date dataEmissao;
 	private Date dataEntrada;
 	private String valorTotal;
 	
-	
+
+
+	public Long getNumeroNotaEnvio() {
+		return numeroNotaEnvio;
+	}
+
+	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
+		this.numeroNotaEnvio = numeroNotaEnvio;
+	}
+
 	/**
 	 * @return the fornecedor
 	 */

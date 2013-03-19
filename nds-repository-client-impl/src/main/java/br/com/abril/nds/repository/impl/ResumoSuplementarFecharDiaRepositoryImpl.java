@@ -115,15 +115,14 @@ public class ResumoSuplementarFecharDiaRepositoryImpl extends AbstractRepository
 	public BigDecimal obterValorFisico(Date dataOperacao) {
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT SUM(ep.qtdeSuplementar) ");
-		hql.append("FROM EstoqueProduto as ep ");
+		hql.append(" SELECT SUM(ep.qtdeSuplementar*pe.precoVenda) ");
+		hql.append(" FROM EstoqueProduto as ep ");
+		hql.append(" JOIN ep.produtoEdicao pe ");
 	
 		Query query = super.getSession().createQuery(hql.toString());		
 		
-		BigInteger total =  (BigInteger) query.uniqueResult();
-		BigDecimal totalFormatado = new BigDecimal(total);
-		
-		return totalFormatado != null ? totalFormatado : BigDecimal.ZERO ;
+		BigDecimal total =  (BigDecimal) query.uniqueResult();
+		return total != null ? total : BigDecimal.ZERO ;
 	}
 
 	@SuppressWarnings("unchecked")
