@@ -1,5 +1,4 @@
-
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"]></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script  type="text/javascript" src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 
@@ -7,10 +6,10 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/analiseHistograma.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 
+
 <script language="javascript" type="text/javascript">
 
-	var pesquisaProduto=null;
-		pesquisaProduto = new PesquisaProduto(histogramaVendasController.workspace);
+	var pesquisaProduto= new PesquisaProduto(histogramaVendasController.workspace);
 	$(function(){
 		histogramaVendasController.init();
 	});
@@ -23,9 +22,9 @@
 </style>
 <style>
 .gridScroll tr:hover{background:#FFC}
-.dadosTab .class_linha_1, .dadosTab .class_linha_2{line-height:18px!important;border-bottom:1px solid #ccc;}
-.dadosTab .class_linha_1:hover, .dadosTab .class_linha_2:hover{background:#fff; font-weight:bold; font-size:12px!important;}
+
 #outros{display:none;}
+
 </style>
 
 
@@ -35,7 +34,6 @@
 	<!-- <img src="capas/revista-nautica-11.jpg" width="235" height="314" id="imagemCapaEdicao" style="display:none"/>  -->
 	<img  width="235" height="314" id="imagemCapaEdicao" style="display:none"/>
 </div>
-
 
 
 <div class="corpo" id="histogramaVendasContent">
@@ -130,7 +128,9 @@
         <table width="440" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
             <td width="42">Código:</td>
-            <td width="60"><input type="text" name="codigo" id="codigo" style="width:60px;" class="not-empty"/></td>
+            <td width="60"><input type="text" name="codigo" id="codigo" style="width:60px;" class="not-empty" maxlength="8"
+		            onblur="pesquisaProduto.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao' , false);"
+		            /></td>
             <td width="47">Produto:</td>
             <td width="140"><input type="text" name="produto" id="produto" style="width:140px;" class="not-empty" /></td>
             <td width="38">Edição:</td>
@@ -164,4 +164,4 @@
 </div> 
 
 <div class="corpo" id="analiseHistogramaVendasContent"/>
-
+<div class="corpo" id="analiseHistoricoVendasContent"/>
