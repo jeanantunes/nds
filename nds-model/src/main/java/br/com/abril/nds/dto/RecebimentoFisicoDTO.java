@@ -8,6 +8,7 @@ import java.util.Date;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.util.MathUtil;
 
 public class RecebimentoFisicoDTO implements Serializable {
 	
@@ -107,8 +108,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 
 		// caso possua um percentual de desconto (logistica)
 		if (percentualDesconto != null) {
-			//this.precoCapa = precoCapa.subtract( precoItem.multiply(new BigDecimal(percentualDesconto.floatValue())).divide(new BigDecimal(100)) );
-			this.precoCapa = precoItem.subtract( precoItem.multiply(percentualDesconto) );
+//			this.precoCapa = precoCapa.subtract( precoItem.multiply(new BigDecimal(percentualDesconto.floatValue())).divide(new BigDecimal(100)) );
+			this.precoCapa = precoItem.subtract( MathUtil.divide(precoItem.multiply(percentualDesconto), new BigDecimal(100)) );
 		} else {
 			this.precoCapa = precoItem;
 		}
