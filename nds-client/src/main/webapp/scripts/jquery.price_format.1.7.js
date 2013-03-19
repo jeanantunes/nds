@@ -164,7 +164,7 @@
 			// inster formatted price as a value of an input field
 			function price_it ()
 			{
-				var str = obj.val();
+				var str = parseFloat(obj.val()).toFixed(centsLimit);
 				var price = price_format(str);
 				if (str != price) obj.val(price);
 			}
