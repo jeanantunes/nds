@@ -540,7 +540,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro()){
 				case CREDITO:
 					vlMovFinanTotal = vlMovFinanTotal.add(movimentoFinanceiroCota.getValor());
-					vlMovFinanDebitoCredito = vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor());
 				break;
 				case COMPRA_NUMEROS_ATRAZADOS:
 				case DEBITO:
@@ -549,11 +548,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								movimentoFinanceiroCota.getValor() != null ? 
 										movimentoFinanceiroCota.getValor().negate() : 
 											BigDecimal.ZERO);
-					
-					vlMovFinanDebitoCredito = 
-							vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor() != null ? 
-									movimentoFinanceiroCota.getValor().negate() : 
-										BigDecimal.ZERO);
 				break;
 				
 				case ENVIO_ENCALHE:
@@ -670,6 +664,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							movimentoFinanceiroCota.getValor() != null ?
 									movimentoFinanceiroCota.getValor():
 										BigDecimal.ZERO);
+				break;
+			}
+			
+			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getOperacaoFinaceira()){
+				case CREDITO:
+					vlMovFinanDebitoCredito = vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor());
+				break;
+				
+				case DEBITO:
+					vlMovFinanDebitoCredito = 
+					vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor() != null ? 
+							movimentoFinanceiroCota.getValor().negate() : 
+								BigDecimal.ZERO);
 				break;
 			}
 		}
