@@ -87,4 +87,6 @@ public interface FeriadoRepository extends Repository<Feriado, Long> {
 	 * @return
 	 */
 	public Feriado obterFeriadoAnualLocalidade(Date data, String localidade);
+
+	boolean isFeriado(Date data);
 }
