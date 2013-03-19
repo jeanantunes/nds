@@ -12,8 +12,6 @@ import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.model.TipoAjusteReparte;
-import br.com.abril.nds.model.TipoSegmentoProduto;
 
 // FIXME: é preciso remover os comentários do código e solucionar o problema
 public abstract class AjusteCotaDataProvider {

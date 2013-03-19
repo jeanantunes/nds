@@ -304,11 +304,6 @@ public class Distribuidor {
 	@Column(name = "MENSAGEM_EMAIL_COBRANCA")
 	private String mensagemEmailCobranca;
 	
-<<<<<<< HEAD
-	@Column(name = "PRACA_VERANEIO")
-	private boolean pracaVeraneio;
-	
-=======
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DistribuidorClassificacaoCota> listClassificacaoCota;
 	
@@ -318,7 +313,6 @@ public class Distribuidor {
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DistribuidorPercentualExcedente> listPercentualExcedente;
 
->>>>>>> 03f1ca6c8da04a45696f13aca9cd81446f5232f7
 	public Long getId() {
 		return id;
 	}
@@ -1085,17 +1079,6 @@ public class Distribuidor {
 		this.mensagemEmailCobranca = mensagemEmailCobranca;
 	}
 
-<<<<<<< HEAD
-	public boolean isPracaVeraneio() {
-	    return pracaVeraneio;
-	}
-
-	public void setPracaVeraneio(boolean pracaVeraneio) {
-	    this.pracaVeraneio = pracaVeraneio;
-	}
-
-}
-=======
 	public List<DistribuidorClassificacaoCota> getListClassificacaoCota() {
 		return listClassificacaoCota;
 	}
@@ -1123,4 +1106,3 @@ public class Distribuidor {
 		this.listPercentualExcedente = listPercentualExcedente;
 	}
 }
->>>>>>> 03f1ca6c8da04a45696f13aca9cd81446f5232f7
