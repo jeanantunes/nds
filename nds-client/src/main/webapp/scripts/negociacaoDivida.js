@@ -136,7 +136,8 @@ var negociacaoDividaController = $.extend(true, {
 			value.cell.detalhes = detalhes;
 			value.cell.acao = acao;
 
-			total += parseFloat( formatMoneyValue(value.cell.vlDivida) ); 
+			total += parseFloat( formatMoneyValue(value.cell.vlDivida) );
+			total += parseFloat( formatMoneyValue(value.cell.encargos) );
 			
 			value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
 			value.cell.vlDivida = floatToPrice(formatMoneyValue(value.cell.vlDivida));
@@ -804,11 +805,13 @@ var negociacaoDividaController = $.extend(true, {
 		totalSelecionado.html('0,00');
 		$(".negociacaoCheck", this.workspace).each(function(index, element) {	
 			var total = $('td[abbr="vlDivida"] >div', element.parentNode.parentNode.parentNode);
+			var encargo = $('td[abbr="encargos"] >div', element.parentNode.parentNode.parentNode);
 			if (!element.checked) {
 				todosChecados = false;
 			}
 			if(element.checked){
-				totalSelecionado.html(sumPrice(totalSelecionado.html(), total.html()));
+				total = sumPrice(totalSelecionado.html(), total.html());
+				totalSelecionado.html(sumPrice(total, encargo.html()));
 			}
 			
 		});

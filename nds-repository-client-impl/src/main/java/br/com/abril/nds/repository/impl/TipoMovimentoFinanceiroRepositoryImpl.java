@@ -8,6 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -34,7 +35,8 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<TipoMovimentoFinanceiro> buscarTiposMovimentoFinanceiro(List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro) {
+	public List<TipoMovimentoFinanceiro> buscarTiposMovimentoFinanceiro(
+			List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro) {
 
 		Criteria criteria = super.getSession().createCriteria(TipoMovimentoFinanceiro.class);
 		
@@ -53,7 +55,6 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameterList("gruposMovimentoFinanceiro", gruposMovimentoFinanceiro);
-		query.setMaxResults(1);
 		
 		return query.list();
 	}
@@ -67,5 +68,32 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		criteria.setMaxResults(1);
 		
 		return (TipoMovimentoFinanceiro) criteria.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
+			OperacaoFinaceira operacao) {
+		
+		StringBuilder hql = new StringBuilder("select t.id ");
+		hql.append(" from TipoMovimentoFinanceiro t ")
+		   .append(" where t.operacaoFinaceira = :operacao)");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("operacao", operacao);
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TipoMovimentoFinanceiro> buscarTiposMovimentoFinanceiroPorOperacaoFinanceira(
+			OperacaoFinaceira operacaoFinaceira) {
+
+		Criteria criteria = super.getSession().createCriteria(TipoMovimentoFinanceiro.class);
+		
+		criteria.add(Restrictions.eq("operacaoFinaceira", operacaoFinaceira));
+		
+		return criteria.list();
 	}
 }
