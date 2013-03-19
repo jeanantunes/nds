@@ -15,7 +15,6 @@ import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -23,6 +22,7 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
@@ -56,6 +56,9 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
 	
+	@Autowired
+	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConsultaEncalheService#pesquisarEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO)
@@ -67,19 +70,31 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
 		
+		Integer qtdeConsultaEncalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
+		
 		BigDecimal valorTotalReparte = BigDecimal.ZERO;
+		
 		BigDecimal valorTotalEncalhe = BigDecimal.ZERO;
 		
-		for (ConsultaEncalheDTO consultaEncalhe : listaConsultaEncalhe) {
-			
-			valorTotalReparte = 
-				valorTotalReparte.add(
-					consultaEncalhe.getReparte().multiply(consultaEncalhe.getPrecoVenda()));
-			
-			valorTotalEncalhe = 
-				valorTotalEncalhe.add(
-					consultaEncalhe.getEncalhe().multiply(consultaEncalhe.getPrecoVenda()));
+		valorTotalReparte = 
+				chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCotaNoPeriodo(
+						filtro.getIdCota(), 
+						filtro.getDataRecolhimentoInicial(), 
+						filtro.getDataRecolhimentoFinal(), 
+						false, false);
+		
+		valorTotalEncalhe = movimentoEstoqueCotaRepository.obterValorTotalEncalhe(filtro);
+		
+		
+		if(valorTotalEncalhe == null) {
+			valorTotalEncalhe = BigDecimal.ZERO;
 		}
+		
+		if(valorTotalReparte == null) {
+			valorTotalReparte = BigDecimal.ZERO;
+		}
+		
+		
 		
 		BigDecimal valorVendaDia = valorTotalReparte.subtract(valorTotalEncalhe); 
 		
@@ -114,6 +129,8 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setListaConsultaEncalhe(listaConsultaEncalhe);
 		
+		info.setQtdeConsultaEncalhe(qtdeConsultaEncalhe);
+		
 		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCota));
 		
 		info.setValorVendaDia(valorVendaDia);
@@ -122,13 +139,11 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setValorPagar(valorPagar);
 		
+		info.setValorReparte(valorTotalReparte);
+		
+		info.setValorEncalhe(valorTotalEncalhe);
+		
 		return info;
-	}
-	
-	@Transactional
-	public TotalizadorConsultaEncalheDTO obterTotalizadorConsultaEncalhe(FiltroConsultaEncalheDTO filtro) {
-
-		return movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
 	}
 	
 	@Transactional
