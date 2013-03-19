@@ -33,6 +33,10 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 	private Long idBanco;
 	
 	private Boolean isentaEncargos;
+	
+	private BigDecimal valorSelecionadoSemEncargo;
+	
+	private BigDecimal valorEncargoSelecionado;
 
 	public TipoFormaCobranca getPeriodicidade() {
 		return periodicidade;
@@ -120,6 +124,22 @@ public class FiltroCalculaParcelas extends FiltroConsultaNegociacaoDivida implem
 
 	public void setSemanalDias(List<DiaSemanaDTO> semanalDias) {
 		this.semanalDias = semanalDias;
+	}
+
+	public BigDecimal getValorSelecionadoSemEncargo() {
+		return valorSelecionadoSemEncargo;
+	}
+
+	public void setValorSelecionadoSemEncargo(BigDecimal valorSelecionadoSemEncargo) {
+		this.valorSelecionadoSemEncargo = valorSelecionadoSemEncargo;
+	}
+
+	public BigDecimal getValorEncargoSelecionado() {
+		return valorEncargoSelecionado;
+	}
+
+	public void setValorEncargoSelecionado(BigDecimal valorEncargoSelecionado) {
+		this.valorEncargoSelecionado = valorEncargoSelecionado;
 	}
 
 	
