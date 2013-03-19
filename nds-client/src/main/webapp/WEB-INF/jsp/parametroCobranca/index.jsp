@@ -104,12 +104,10 @@
                                     cellpadding="0">
                                     <tr>
                                         <td width="31%"><input type="text"
-                                            name="taxaMulta" id="taxaMulta" style="width: 50px; text-align:right;"
-                                            readonly="readonly" /></td>
+                                            name="taxaMulta" id="taxaMulta" style="width: 50px; text-align:right;" /></td>
                                         <td width="40%">&nbsp;ou R$:</td>
                                         <td width="29%"><input type="text"
-                                            name="valorMulta" id="valorMulta" style="width: 50px; text-align:right;" 
-                                            readonly="readonly"/></td>
+                                            name="valorMulta" id="valorMulta" style="width: 50px; text-align:right;" /></td>
                                     </tr>
                                 </table>
                             </td>
@@ -126,8 +124,7 @@
                         <tr>
                             <td><label class="tdJuros" for="taxaJuros">Juros %:</label></td>
                             <td><input class="tdJuros" type="text"
-                                name="taxaJuros" id="taxaJuros" style="width: 50px; text-align:right;"
-                                readonly="readonly" /></td>
+                                name="taxaJuros" id="taxaJuros" style="width: 50px; text-align:right;" /></td>
                             <td>Impress&atilde;o:</td>
                             <td>
                                 <div id="formasEmissao" />

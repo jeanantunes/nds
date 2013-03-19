@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -40,13 +39,13 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 			data = null;
 		}
 		
-		List<TipoMovimentoFinanceiro> tiposDebitoCredito = 
-				this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiroPorOperacaoFinanceira(
-						OperacaoFinaceira.CREDITO);
-		
-		tiposDebitoCredito.addAll(					
-				this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiroPorOperacaoFinanceira(
-						OperacaoFinaceira.DEBITO));
+		List<TipoMovimentoFinanceiro> tiposDebitoCredito = Arrays.asList(
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.CREDITO),
+						
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.DEBITO)
+		);
 		
 		return this.movimentoFinanceiroCotaRepository.obterCreditoDebitoCota(
 				idConsolidado, data, numeroCota, tiposDebitoCredito, sortorder, sortname);

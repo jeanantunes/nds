@@ -3,7 +3,7 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	// Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		
+		debugger;
 		var codigoProduto = $(idCodigo,this.workspace).val();
 
 		codigoProduto = $.trim(codigoProduto);
