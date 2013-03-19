@@ -273,7 +273,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							formaCobrancaService.obterFormaCobranca(
 									ultimaCota != null ? ultimaCota.getId() : null, 
 									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-									dataOperacao, valorMovimentos);
+									dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) >= 0?valorMovimentos:valorMovimentos.negate());
 
 					if (formaCobranca.getPoliticaCobranca() != null){
 				    	
@@ -338,7 +338,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						formaCobrancaService.obterFormaCobranca(
 								ultimaCota != null ? ultimaCota.getId() : null, 
 								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-								dataOperacao, valorMovimentos);
+								dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) > 0?valorMovimentos:valorMovimentos.negate());
 			}
 			
 			//Decide se gera movimento consolidado ou postergado para a ultima cota
@@ -1052,28 +1052,24 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				if (divida != null){
 				
-					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(
-							divida.getCobranca().getId());
+					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					this.cobrancaRepository.remover(divida.getCobranca());
 					this.dividaRepository.remover(divida);
-					
-					this.consolidadoFinanceiroRepository.remover(consolidado);
-					
-					List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
-						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-								GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
-								
-						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-								GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
-					);
-					
-					this.movimentoFinanceiroCotaService.removerPostergadosDia(
-							consolidado.getCota().getId(), 
-							listaPostergados);
-				} else {
-					
-					this.consolidadoFinanceiroRepository.remover(consolidado);
-				}
+				}	
+				
+				this.consolidadoFinanceiroRepository.remover(consolidado);
+				
+				List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
+							
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
+				);
+				
+				this.movimentoFinanceiroCotaService.removerPostergadosDia(
+						consolidado.getCota().getId(), 
+						listaPostergados);
 			}
 		}
 	}
