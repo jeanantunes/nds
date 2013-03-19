@@ -1,6 +1,8 @@
 var informacoesProdutoController = $.extend(true, {
 
 init : function() {
+	
+	var T = this;
 
 $(".produtosInfosGrid").flexigrid({
 		preProcess : informacoesProdutoController.executarPreProcessProdutosInfosGrid,
@@ -80,7 +82,7 @@ $(".produtosInfosGrid").flexigrid({
 			align : 'center'
 		},{
 			display : 'Estudo',
-			name : 'estudo',
+			name : 'estudo' ,
 			width : 40,
 			sortable : true,
 			align : 'left'
@@ -239,6 +241,8 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			
 			row.cell.numeroEdicao = capa;
 			
+			var numeroEstudo = '<a href="javascript:;" onclick="informacoesProdutoController.recuperarNumeroEstudo(' + row.cell.estudo + ')">' + row.cell.estudo +'</a>'
+			row.cell.estudo = numeroEstudo;
 			
 		});
 		
@@ -279,15 +283,29 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		return resultado;
 	},
 
-//	carregarProdutosCadastrados : function() {
-//		
-//		$(".produtosInfosGrid", this.workspace).flexOptions({
-//			url: contextPath + "/distribuicao/informacoesProduto/buscarProduto",
-//			dataType : 'json'
-//		});
-//		$(".produtosInfosGrid", this.workspace).flexReload();		
-//	},
-
+	recuperarNumeroEstudo: function(numeroEstudo){
+		
+		if($("#codigoEstudo").val()==undefined && $(".pesquisaEstudo").val() == undefined){
+			
+			return;
+		}
+		
+		if ($(".pesquisaEstudo").val() != undefined) {
+			
+			$(".pesquisaEstudo").trigger(jQuery.Event("change"));
+			$(".pesquisaEstudo").val(numeroEstudo);
+			$(".pesquisaEstudo").focus();
+			
+		}
+		else {
+			
+			$("#codigoEstudo").val(numeroEstudo);
+			$("#codigoEstudo").focus();
+		}
+		
+		$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+	},
+	
 	filtroPrincipal : function(){
 		var codigo = $("#idCodigo").val();
 		
@@ -436,4 +454,3 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		   
 }, BaseController);
 //@ sourceURL=informacoesProduto.js
-

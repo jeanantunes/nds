@@ -78,7 +78,7 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		return estudo;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Estudo> obterEstudosPorIntervaloData(Date dataStart, Date dataEnd) {

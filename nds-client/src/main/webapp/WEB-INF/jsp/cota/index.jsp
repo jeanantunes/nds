@@ -108,10 +108,18 @@
 				      		 onkeyup="pesquisaCotaCadastroCota.autoCompletarPorNome('#descricaoPessoa');" />
                </td>
                <td width="83">CPF / CNPJ:</td>
-               <td width="219">
+               <td width="200">
                		<input type="text" name="txtCPF_CNPJ" id="txtCPF_CNPJ" style="width:180px;" maxlength="18"/>
                </td>
-               <td width="104">&nbsp;</td>
+               <td width="170">Status:	&nbsp;
+                               <select name="selectStatus" id="selectStatus" style="width:120px;">
+									<option value="PENDENTE">Pendente </option>
+                					<option value="ATIVO">Ativo    </option>
+                					<option value="SUSPENSO">Suspenso </option>
+                					<option value="INATIVO">Inativo  </option>
+                					<option value="TODOS" selected="selected">Todos</option>
+              						</select>
+               </td>
            </tr>
            </table>
            <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
