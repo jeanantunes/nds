@@ -24,8 +24,10 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.CopiaProporcionalDeDistribuicaoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.SomarEstudosService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -63,6 +65,12 @@ public class MatrizDistribuicaoController extends BaseController {
 	
 	@Autowired
 	private CalendarioService calendarioService;
+	
+	@Autowired
+	private CopiaProporcionalDeDistribuicaoService copiaProporcionalDeDistribuicaoService;
+	
+	@Autowired
+	private SomarEstudosService somarEstudosService;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
 	
@@ -109,15 +117,28 @@ public class MatrizDistribuicaoController extends BaseController {
 		
 		ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterProdutoDistribuicaoPorEstudo(estudo);
 		
+		if (produtoDistribuicaoVO == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Estudo não encontrado.");
+		}
+		
 		result.use(Results.json()).from(produtoDistribuicaoVO,"result").recursive().serialize();
 	}
 	
 	@Post
 	public void confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO copiaProporcionalDeDistribuicaoVO) {
 		
-		Long idEstudo = matrizDistribuicaoService.confirmarCopiarProporcionalDeEstudo(copiaProporcionalDeDistribuicaoVO);
+		Long idEstudo = copiaProporcionalDeDistribuicaoService.confirmarCopiarProporcionalDeEstudo(copiaProporcionalDeDistribuicaoVO);
 		
 		result.use(Results.json()).from(idEstudo,"result").recursive().serialize();
+	}
+	
+	@Post
+	public void somarEstudos(Long idEstudoBase, ProdutoDistribuicaoVO distribuicaoVO) {
+		
+		somarEstudosService.somarEstudos(idEstudoBase, distribuicaoVO);
+		
+		result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
 	private void processarDistribuicao(TotalizadorProdutoDistribuicaoVO totProdDistVO, FiltroLancamentoDTO filtro) {

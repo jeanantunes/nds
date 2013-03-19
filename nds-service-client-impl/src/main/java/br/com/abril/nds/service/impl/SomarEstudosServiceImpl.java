@@ -1,9 +1,7 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -45,8 +43,7 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 		
 		if (!produtoEdicaoRepository.estudoPodeSerSomado(idEstudoBase, distribuicaoVO.getCodigoProduto())) {
 			
-			return;
-			//throw new ValidacaoException(TipoMensagem.WARNING, "Estudo não pode ser somado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Estudo não pode ser somado.");
 		}
 		
 		Estudo estudoBase = estudoRepository.buscarPorId(idEstudoBase);
