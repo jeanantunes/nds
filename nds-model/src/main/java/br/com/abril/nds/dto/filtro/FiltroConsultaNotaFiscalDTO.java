@@ -44,6 +44,9 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	
 	private Long idDistribuidor;
 	
+	
+	private Long numeroNotaEnvio;
+
 	private PaginacaoVO paginacao;
 	
 	private NotaRecebidaEnum notaRecebida;
@@ -63,6 +66,7 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 
 		NUMERO_NOTA("numero"),
 		SERIE("serie"),
+		NUMERO_NOTA_ENVIO("numeroNotaEnvio"),
 		DATA_EMISSAO("dataEmissao"),
 		DATA_EXPEDICAO("dataExpedicao"),
 		TIPO_NOTA("descricao"),
@@ -82,6 +86,15 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 		}
 	}
 	
+	
+	public Long getNumeroNotaEnvio() {
+		return numeroNotaEnvio;
+	}
+
+	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
+		this.numeroNotaEnvio = numeroNotaEnvio;
+	}
+
 	/**
 	 * @return the periodo
 	 */

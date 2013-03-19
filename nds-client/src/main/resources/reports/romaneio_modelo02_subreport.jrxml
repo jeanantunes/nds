@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo02_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="1.6105100000000079"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="627"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="PACOTE_PADRAO" class="java.lang.Long"/>
@@ -42,10 +42,10 @@
 		<variableExpression><![CDATA[$F{reparteTotal}]]></variableExpression>
 	</variable>
 	<variable name="SOMA_QUEBRA" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{quebra}]]></variableExpression>
+		<variableExpression><![CDATA[$F{reparteTotal}.doubleValue() % $P{PACOTE_PADRAO}]]></variableExpression>
 	</variable>
 	<variable name="SOMA_PACOTE" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[$F{pacote}]]></variableExpression>
+		<variableExpression><![CDATA[java.lang.Math.floor($F{reparteTotal}.doubleValue() / $P{PACOTE_PADRAO})]]></variableExpression>
 	</variable>
 	<columnHeader>
 		<band height="28" splitType="Stretch">
@@ -256,7 +256,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[java.lang.Math.round($F{reparteTotal}.doubleValue() / $P{PACOTE_PADRAO})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("0.##").format(java.lang.Math.floor($F{reparteTotal}.doubleValue() / $P{PACOTE_PADRAO}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="470" y="0" width="50" height="30"/>
@@ -267,7 +267,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none"/>
-				<textFieldExpression><![CDATA[new java.text.DecimalFormat("0.##").format($F{reparteTotal}.doubleValue() % $P{PACOTE_PADRAO}) ]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("0.##").format($F{reparteTotal}.doubleValue() % $P{PACOTE_PADRAO})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="520" y="0" width="50" height="30"/>
@@ -312,14 +312,14 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{SOMA_QUEBRA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("0.##").format($V{SOMA_QUEBRA})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="420" y="5" width="50" height="16"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{SOMA_PACOTE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("0.##").format($V{SOMA_PACOTE})]]></textFieldExpression>
 			</textField>
 		</band>
 	</lastPageFooter>

@@ -132,6 +132,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				.append(" (notaFiscal.id, ")
 				.append("  notaFiscal.numero, ")
 				.append("  notaFiscal.serie, ")
+				.append("  notaFiscal.numeroNotaEnvio, ")
 				.append("  notaFiscal.dataEmissao, ")
 				.append("  notaFiscal.dataExpedicao, ")
 				.append("  tipoNotaFiscal.descricao, ")
@@ -201,17 +202,17 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			
 			case SOMENTE_NOTAS_RECEBIDAS:
 				
-				condicaoNotaRecebida = " notaFiscal.chaveAcesso is not null ";
+				condicaoNotaRecebida = " notaFiscal.numero is not null ";
 				
 				break;
 			case SOMENTE_NOTAS_NAO_RECEBIDAS:
 				
-				condicaoNotaRecebida = " notaFiscal.chaveAcesso is null and notaFiscal.numeroNotaEnvio is null ";
+				condicaoNotaRecebida = " notaFiscal.numero is null and notaFiscal.numeroNotaEnvio is null ";
 				
 				break;
 			case NOTAS_NAO_RECEBIDAS_COM_NOTA_DE_ENVIO:
 				
-				condicaoNotaRecebida = " notaFiscal.chaveAcesso is null and notaFiscal.numeroNotaEnvio is not null ";
+				condicaoNotaRecebida = " notaFiscal.numero is null and notaFiscal.numeroNotaEnvio is not null ";
 				
 				break;
 			default:
@@ -248,6 +249,10 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 					case SERIE:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
 						orderByColumn += " notaFiscal.serie ";
+						break;
+					case NUMERO_NOTA_ENVIO:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " notaFiscal.numeroNotaEnvio ";
 						break;	
 					case DATA_EXPEDICAO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
@@ -365,7 +370,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
+	public List<NotaFiscalEntrada> obterNotaFiscalEntrada(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from NotaFiscalEntrada nf ");		
@@ -382,6 +387,23 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			}
 			
 			hql.append(" nf.numero = :numero");
+			
+			indAnd = true;
+			
+		}
+		
+		if(filtroConsultaNotaFiscal.getNumeroNotaEnvio()!=null) {
+			
+			if(!indWhere) {
+				hql.append(" where ");
+				indWhere = true;
+			}
+			
+			if(indAnd) {
+				hql.append(" and ");
+			}
+			
+			hql.append(" nf.numeroNotaEnvio = :numeroNotaEnvio");
 			
 			indAnd = true;
 			
@@ -422,22 +444,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			
 		}
 			
-		if(filtroConsultaNotaFiscal.getChave() == null) {
-			
-			if(!indWhere) {
-				hql.append(" where ");
-				indWhere = true;
-			}
-			
-			if(indAnd) {
-				hql.append(" and ");
-			}
-			
-			hql.append(" nf.chaveAcesso is null ");
-			
-			indAnd = true;
-			
-		} else {
+		if(filtroConsultaNotaFiscal.getChave() != null) {
 			
 			if(!indWhere) {
 				hql.append(" where ");
@@ -455,6 +462,10 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		
 		if(filtroConsultaNotaFiscal.getNumeroNota()!=null) {
 			query.setParameter("numero", filtroConsultaNotaFiscal.getNumeroNota());
+		}
+
+		if(filtroConsultaNotaFiscal.getNumeroNotaEnvio()!=null) {
+			query.setParameter("numeroNotaEnvio", filtroConsultaNotaFiscal.getNumeroNotaEnvio());
 		}
 		
 		if(filtroConsultaNotaFiscal.getSerie()!=null) {

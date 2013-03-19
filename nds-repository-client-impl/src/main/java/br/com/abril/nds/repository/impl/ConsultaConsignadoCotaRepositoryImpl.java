@@ -126,7 +126,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			hql.append(" AND fornecedor.id = :idFornecedor ");
 		}
 		
-		hql.append(" GROUP BY pe.id, case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end ");
+		hql.append(" GROUP BY pe.id ");
 		
 		hql.append(" HAVING sum( (case when tipoMovimento.operacaoEstoque = 'ENTRADA'  then movimento.qtde else 0 end)  ");
 		hql.append("	-  (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ) <> 0 ");

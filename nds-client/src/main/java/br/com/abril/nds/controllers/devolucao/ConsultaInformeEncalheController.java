@@ -125,6 +125,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 							sortname,
 							Ordenacao.valueOf(sortorder.toUpperCase()), page
 									* rp - rp, rp);
+			
 			result.use(FlexiGridJson.class).from(informeEncalheDTOs)
 					.total(quantidade.intValue()).page(page).serialize();
 		}else{
@@ -136,7 +137,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 	private Calendar obterDataFimRecolhimento(Calendar dataInicioRecolhimento) {
 		Calendar dataFimRecolhimento;
 		dataFimRecolhimento = Calendar.getInstance();
-		int maxDiaRecolhimento = obterMaxDiaRecolhimentoDistribuidor();
+		int maxDiaRecolhimento = obterMaxDiaRecolhimentoDistribuidor() - 1;
 		dataFimRecolhimento.setTime(this.calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), maxDiaRecolhimento));
 		return dataFimRecolhimento;
 	}
@@ -164,6 +165,8 @@ public class ConsultaInformeEncalheController extends BaseController {
 			
 		int maxDiaSemanaRecolhimento = obterMaxDiaRecolhimentoDistribuidor();
 		
+		Calendar dataImpressãoFimRecolhimento = Calendar.getInstance();
+		
 		if (semanaRecolhimento != null) {
 			dataInicioRecolhimento = Calendar.getInstance();
 
@@ -178,11 +181,13 @@ public class ConsultaInformeEncalheController extends BaseController {
 			
 			dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
 			dataFimRecolhimento = Calendar.getInstance();
-			dataFimRecolhimento.setTime(this.calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), maxDiaSemanaRecolhimento));
-
+			dataFimRecolhimento.setTime(this.calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), (maxDiaSemanaRecolhimento-1)));
+			dataImpressãoFimRecolhimento = dataFimRecolhimento;
+			
 		} else if (dataRecolhimento != null) {
 			dataInicioRecolhimento = dataRecolhimento;
-			dataFimRecolhimento = obterDataFimRecolhimento(dataInicioRecolhimento);
+			dataFimRecolhimento = dataInicioRecolhimento;
+			dataImpressãoFimRecolhimento = obterDataFimRecolhimento(dataInicioRecolhimento);
 		}
 
 		List<InformeEncalheDTO> dados = lancamentoService
@@ -195,8 +200,8 @@ public class ConsultaInformeEncalheController extends BaseController {
 		this.result.include("diaSemanaInicioRecolhimento", DateUtil.obterDiaSemana(dataInicioRecolhimento.get(Calendar.DAY_OF_WEEK)));
 		
 		this.result.include("diaMesFimRecolhimento", maxDiaSemanaRecolhimento);
-		this.result.include("dataFimRecolhimento", new SimpleDateFormat("dd/MM").format(dataFimRecolhimento.getTime()));
-		this.result.include("diaSemanaFimRecolhimento", DateUtil.obterDiaSemana(dataFimRecolhimento.get(Calendar.DAY_OF_WEEK)));
+		this.result.include("dataFimRecolhimento", new SimpleDateFormat("dd/MM").format(dataImpressãoFimRecolhimento.getTime()));
+		this.result.include("diaSemanaFimRecolhimento", DateUtil.obterDiaSemana(dataImpressãoFimRecolhimento.get(Calendar.DAY_OF_WEEK)));
 		
 		List<ColunaRelatorioInformeEncalhe> colunas = new ArrayList<ColunaRelatorioInformeEncalhe>();
 		

@@ -401,8 +401,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append(" produtoEdicao.PRECO_VENDA as precoCapa, ");
 		hql.append(" sum(estudoCota.QTDE_EFETIVA) as qntReparte, ");
 		hql.append(" sum(case ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='FALTA_DE' then -(diferenca.QTDE*produtoEdicao.PACOTE_PADRAO) ");
-		hql.append(" when diferenca.TIPO_DIFERENCA='SOBRA_DE' then diferenca.QTDE*produtoEdicao.PACOTE_PADRAO ");
+		hql.append(" when diferenca.TIPO_DIFERENCA='FALTA_DE' then -diferenca.QTDE ");
+		hql.append(" when diferenca.TIPO_DIFERENCA='SOBRA_DE' then diferenca.QTDE ");
 		hql.append(" when diferenca.TIPO_DIFERENCA='FALTA_EM' then -diferenca.QTDE ");
 		hql.append(" when diferenca.TIPO_DIFERENCA='SOBRA_EM' then diferenca.QTDE ");
 		hql.append(" else 0 ");

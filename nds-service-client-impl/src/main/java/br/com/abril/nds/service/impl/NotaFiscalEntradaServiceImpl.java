@@ -249,11 +249,11 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 		for (DetalheItemNotaFiscalDTO item : itensDetalhados) {
 			
+			BigDecimal valorTotal =
+				(item.getValorTotal() == null) ? BigDecimal.ZERO : item.getValorTotal();
+			
 			totalExemplares = totalExemplares.add(item.getQuantidadeExemplares() == null ? BigInteger.ZERO : item.getQuantidadeExemplares());
-			totalSumarizado = totalSumarizado.add(item.getPrecoVenda() == null ? BigDecimal.ZERO : item.getValorTotal().setScale(2, BigDecimal.ROUND_DOWN));
-			/*if (item.getPrecoVenda() != null && item.getDesconto() != null) {
-				totalSumarizado = totalSumarizado.subtract(item.getValorTotal().multiply(item.getDesconto()));
-			}*/
+			totalSumarizado = totalSumarizado.add(item.getPrecoVenda() == null ? BigDecimal.ZERO : valorTotal.setScale(2, BigDecimal.ROUND_DOWN));
 		}
 
 		detalheNotaFiscalDTO.setTotalExemplares(totalExemplares);
@@ -265,9 +265,9 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	
 	@Override
 	@Transactional
-	public List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
+	public List<NotaFiscalEntrada> obterNotaFiscalEntrada(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
 		
-		return notaFiscalRepository.obterNotaFiscalPorNumeroSerieCnpj(filtroConsultaNotaFiscal);
+		return notaFiscalRepository.obterNotaFiscalEntrada(filtroConsultaNotaFiscal);
 	
 	}
 
