@@ -15,18 +15,32 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * Obtém obtém o reparte referente a chamada encalhe relacionadas a um 
 	 * numeroCota e dataRecolhimento.  
 	 * 
-	 * Se flag indPesquisaCEFutura for true sera pesquisado registro com 
-	 * dataRecolhimento >= a data passado por parâmetro, senão, pesquisará 
-	 * registros com dataRecolhimento igual data passada por parâmetro.
-	 * 
 	 * @param numeroCota
 	 * @param dataOperacao
 	 * @param conferido
 	 * @param postergado
 	 * 
-	 * @return List - Long
+	 * @return BigDecimal
 	 */
-	public BigDecimal obterReparteDaChamaEncalheCota(Integer numeroCota, Date dataOperacao, boolean conferido, boolean postergado);
+	public BigDecimal obterReparteDaChamaEncalheCota(Integer numeroCota, Date dataOperacao, Boolean conferido, Boolean postergado);
+	 
+	/**
+	 * Obtém obtém o reparte referente a chamada encalhe relacionadas a um 
+	 * numeroCota e período de dataRecolhimento.  
+	 * 
+	 * @param cotaId
+	 * @param dataOperacaoDe
+	 * @param dataOperacaoAte
+	 * @param conferido
+	 * @param postergado
+	 * 
+	 * @return BigDecimal
+	 */
+	public BigDecimal obterReparteDaChamaEncalheCotaNoPeriodo(
+			Long cotaId, 
+			Date dataOperacaoDe,
+			Date dataOperacaoAte,
+			Boolean conferido, Boolean postergado);
 	
 	
 	/**

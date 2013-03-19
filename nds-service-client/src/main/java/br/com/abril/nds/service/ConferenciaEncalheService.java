@@ -45,6 +45,7 @@ public interface ConferenciaEncalheService {
 	 * @param conferenciaEncalhe
 	 * @param numeroCota
 	 * @param dataOperacao
+	 * @param indConferenciaContingencia
 	 */
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
@@ -193,6 +194,7 @@ public interface ConferenciaEncalheService {
 	 * @param listaConferenciaEncalhe
 	 * @param listaIdConferenciaEncalheParaExclusao
 	 * @param usuario
+	 * @param indConferenciaContingencia
 	 * 
 	 * @throws EncalheSemPermissaoSalvarException
 	 * @throws ConferenciaEncalheFinalizadaException
@@ -203,7 +205,8 @@ public interface ConferenciaEncalheService {
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException;
+			Usuario usuario,
+			boolean indConferenciaContingencia) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException;
 	
 	
 	/**
@@ -217,12 +220,14 @@ public interface ConferenciaEncalheService {
 	 * @param listaConferenciaEncalhe
 	 * @param listaIdConferenciaEncalheParaExclusao
 	 * @param usuario
+	 * @param indConferenciaContingencia
 	 */
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario);
+			Usuario usuario,
+			boolean indConferenciaContingencia);
 	
 	/**
 	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota

@@ -63,7 +63,7 @@ public class Tributacao implements Serializable {
 	@Column(name = "FLG_BSC_ICMS", length = 1)
 	private String indicadorBaseCalculoICMS;
 	
-	@Column(name = "ALIQUOTA_ICMS", precision = 5, scale = 2)
+	@Column(name = "ALIQUOTA_ICMS", precision=18, scale=4)
 	private BigDecimal aliquotaICMS;
 	
 	@Column(name = "FLG_VLR_ICMS", length = 1)
@@ -87,7 +87,7 @@ public class Tributacao implements Serializable {
 	@Column(name = "FLG_BSC_IPI", length = 1)
 	private String indicadorBaseCalculoIPI;
 	
-	@Column(name = "ALIQUOTA_IPI", precision = 5, scale = 2)
+	@Column(name = "ALIQUOTA_IPI", precision=18, scale=4)
 	private BigDecimal aliquotaIPI;
 	
 	@Column(name = "FLG_VLR_IPI", length = 1)
@@ -111,7 +111,7 @@ public class Tributacao implements Serializable {
 	@Column(name = "FLG_BSC_CRE_PIS", length = 1)
 	private String indicadorBaseCalculoCreditoPIS;
 	
-	@Column(name = "ALIQUOTA_PIS", precision = 5, scale = 2)
+	@Column(name = "ALIQUOTA_PIS", precision=18, scale=4)
 	private BigDecimal aliquotaPIS;
 	
 	@Column(name = "FLG_VLR_DEB_PIS", length = 1)
@@ -132,7 +132,7 @@ public class Tributacao implements Serializable {
 	@Column(name = "FLG_BSC_CRE_COFINS", length = 1)
 	private String indicadorBaseCalculoCreditoCOFINS;
 	
-	@Column(name = "ALIQUOTA_COFINS", precision = 5, scale = 2)
+	@Column(name = "ALIQUOTA_COFINS", precision=18, scale=4)
 	private BigDecimal aliquotaCOFINS;
 	
 	@Column(name = "FLG_VLR_DEB_COF", length = 1)
