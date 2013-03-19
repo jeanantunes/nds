@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -252,7 +253,7 @@ public class ConsultaNotasController extends BaseController {
 			consultaNotaFiscalVO.setNotaRecebida(notaFiscal.getNotaRecebida());
 			consultaNotaFiscalVO.setNumeroNota( Long.parseLong(notaFiscal.getNumero()) );
 			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getDescricao());
-			consultaNotaFiscalVO.setValor(CurrencyUtil.formatarValor(notaFiscal.getValorTotalNota()));
+			consultaNotaFiscalVO.setValor(notaFiscal.getValorTotalNota());
 			
 			listaConsultasNF.add(consultaNotaFiscalVO);
 		}
@@ -299,57 +300,6 @@ public class ConsultaNotasController extends BaseController {
 		
 	}
 	
-	private List<CellModel> getTableModelNotasFiscais(List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais) {
-
-		Map<Long, String> mapaFornecedorNotaFiscal = obterMapaFornecedorNotaFiscal(listaNotasFiscais);
-		
-		List<CellModel> listaCellModels = new LinkedList<CellModel>();
-
-		for (NotaFiscalEntradaFornecedorDTO notaFiscal : listaNotasFiscais) {
-
-			DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
-
-			CellModel cellModel = 
-					new CellModel(
-							notaFiscal.getId().intValue(), 
-							itemExibicaoToString(notaFiscal.getNumero()),
-							itemExibicaoToString(notaFiscal.getDataEmissao()), 
-							itemExibicaoToString(notaFiscal.getDataExpedicao()), 
-							itemExibicaoToString(notaFiscal.getDescricao()), 
-							itemExibicaoToString(mapaFornecedorNotaFiscal.get(notaFiscal.getId())),
-							itemExibicaoToString(decimalFormat.format(notaFiscal.getValorTotalNota())),
-							notaFiscal.getNotaRecebida(), 
-							" ", 
-							itemExibicaoToString(notaFiscal.getId()));
-
-			listaCellModels.add(cellModel);
-		}
-		
-		TableModel<CellModel> tableModel = new TableModel<CellModel>();
-		
-		return (listaCellModels);
-
-		/*tableModel.setRows(listaCellModels);
-
-		return tableModel;*/
-	}
-	
-	private BigDecimal obterValorTotalNota(Long idNotaFiscal) {
-		
-		BigDecimal valorTotal = BigDecimal.ZERO;
-		
-		DetalheNotaFiscalDTO detalheNota = this.notaFiscalService.obterDetalhesNotaFical(idNotaFiscal);
-		
-		if (detalheNota != null && detalheNota.getValorTotalSumarizado() != null) {
-			valorTotal = detalheNota.getValorTotalSumarizado();
-		
-		}
-		
-		return valorTotal; 
-		
-	}
-	
-	
 	private TableModel<CellModel> getTableModelDetalhesNotaFiscal(List<DetalheItemNotaFiscalDTO> listaDetalhesNotaFiscal) {
 		
 		List<CellModel> listaCellModels = new LinkedList<CellModel>();
@@ -362,19 +312,25 @@ public class ConsultaNotasController extends BaseController {
 
 			String sobrasFaltas = isFalta ? "-" : "";
 			sobrasFaltas += itemExibicaoToString(detalheNotaFiscalVO.getSobrasFaltas());
-
-		    DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
-
+		    
+		    BigDecimal valorTotal = 
+		    	(detalheNotaFiscalVO.getValorTotal() == null) 
+		    		? BigDecimal.ZERO : detalheNotaFiscalVO.getValorTotal();
+		    
+		    BigInteger qtdeExemplares = 
+		    	(detalheNotaFiscalVO.getQuantidadeExemplares() == null) 
+		    		? BigInteger.ZERO : detalheNotaFiscalVO.getQuantidadeExemplares();
+		    
 			CellModel cellModel = 
 					new CellModel(
 							detalheNotaFiscalVO.getCodigoItem().intValue(),
 							itemExibicaoToString(detalheNotaFiscalVO.getCodigoProduto()),
 							itemExibicaoToString(detalheNotaFiscalVO.getNomeProduto()),
 							itemExibicaoToString(detalheNotaFiscalVO.getNumeroEdicao()),
-							itemExibicaoToString(decimalFormat.format(detalheNotaFiscalVO.getPrecoVenda())),
-							itemExibicaoToString(detalheNotaFiscalVO.getQuantidadeExemplares().intValue()),
+							itemExibicaoToString(CurrencyUtil.formatarValor(detalheNotaFiscalVO.getPrecoVenda())),
+							itemExibicaoToString(qtdeExemplares.intValue()),
 							sobrasFaltas, 
-							itemExibicaoToString(detalheNotaFiscalVO.getValorTotal().setScale(2, BigDecimal.ROUND_DOWN)));
+							itemExibicaoToString(CurrencyUtil.formatarValor(valorTotal)));
 
 			listaCellModels.add(cellModel);
 		}

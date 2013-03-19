@@ -502,7 +502,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		if (enderecoDistribuidor == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço principal do distribuidor n�o encontrada!");
+					"Endereço principal do distribuidor não encontrada!");
 		}
 
 		try {
@@ -548,15 +548,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		}
 		
 		if (enderecoPdv == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço do PDV principal da cota " + cota.getId()
-							+ " não encontrado!");
+
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Endereço do PDV principal da cota " + cota.getNumeroCota() + " não encontrado!");
 		}
 
 		try {
 			destinatario.setEndereco(cloneEndereco(enderecoPdv.getEndereco()));
 		} catch (CloneNotSupportedException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
+			throw new ValidacaoException(TipoMensagem.WARNING,
 					"Erro ao adicionar o endereço do Emitente!");
 		}
 

@@ -41,6 +41,7 @@ import br.com.abril.nds.service.NotaFiscalEntradaService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -245,8 +246,6 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		BigInteger totalExemplares = BigInteger.ZERO;
 		BigDecimal totalSumarizado = BigDecimal.ZERO;
 		
-		totalSumarizado = totalSumarizado.setScale(2, BigDecimal.ROUND_DOWN);
-		
 		for (DetalheItemNotaFiscalDTO item : itensDetalhados) {
 			
 			BigDecimal valorTotal =
@@ -257,7 +256,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		}
 
 		detalheNotaFiscalDTO.setTotalExemplares(totalExemplares);
-		detalheNotaFiscalDTO.setValorTotalSumarizado(totalSumarizado);
+		detalheNotaFiscalDTO.setValorTotalSumarizado(MathUtil.round(totalSumarizado, 2));
 		
 		return detalheNotaFiscalDTO;
 	}
@@ -265,9 +264,9 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	
 	@Override
 	@Transactional
-	public List<NotaFiscalEntrada> obterNotaFiscalPorNumeroSerieCnpj(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
+	public List<NotaFiscalEntrada> obterNotaFiscalEntrada(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal){
 		
-		return notaFiscalRepository.obterNotaFiscalPorNumeroSerieCnpj(filtroConsultaNotaFiscal);
+		return notaFiscalRepository.obterNotaFiscalEntrada(filtroConsultaNotaFiscal);
 	
 	}
 
