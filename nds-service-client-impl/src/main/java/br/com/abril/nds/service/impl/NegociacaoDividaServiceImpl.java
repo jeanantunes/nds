@@ -665,22 +665,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 		Cota cota = negociacao.getCobrancasOriginarias().get(0).getCota();
 
-		BigDecimal totalDividaSelecionada = BigDecimal.ZERO;
-
-		for (Cobranca cobranca : negociacao.getCobrancasOriginarias()) {
-
-			totalDividaSelecionada = totalDividaSelecionada.add(cobranca
-					.getValor());
-		}
-
 		ImpressaoNegociacaoDTO impressaoNegociacaoDTO = new ImpressaoNegociacaoDTO();
 		// campo cota(numero)
 		impressaoNegociacaoDTO.setNumeroCota(cota.getNumeroCota());
 		// campo nome
 		impressaoNegociacaoDTO.setNomeCota(cota.getPessoa().getNome());
-		// campo divida selecionada
-		impressaoNegociacaoDTO
-				.setTotalDividaSelecionada(totalDividaSelecionada);
 
 		// campo Comissão da Cota para pagamento da dívida
 		impressaoNegociacaoDTO.setComissaoParaPagamento(negociacao
@@ -791,6 +780,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 			impressaoNegociacaoDTO.getParcelasCheques().add(vo);
 		}
+		
+		// campo divida selecionada
+				impressaoNegociacaoDTO
+						.setTotalDividaSelecionada(totalParcelas);
 
 		List<ImpressaoNegociacaoDTO> listaJasper = new ArrayList<ImpressaoNegociacaoDTO>();
 		listaJasper.add(impressaoNegociacaoDTO);
@@ -962,26 +955,26 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		parcela.setDataVencimento(DateUtil.formatarDataPTBR(dataParcela));
 
 		dataBase = dataParcela;
-		Double encargos = 0.0;		
-
-		if (!filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)
-				&& (filtro.getIsentaEncargos() != null && !filtro
-						.getIsentaEncargos())){				
-			
-			BigDecimal juros = cobrancaService.calcularJuros(banco,cota.getId()
-					,
-					valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()), new Date());
-
-			BigDecimal multas = cobrancaService.calcularMulta(banco,
-					cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota()),
-					valorParcela);
-
-			encargos = juros.add(multas).doubleValue();
-		}
-		parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
-
-		parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela.doubleValue()
-				+ encargos));
+//		Double encargos = 0.0;		
+//
+//		if (!filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)
+//				&& (filtro.getIsentaEncargos() != null && !filtro
+//						.getIsentaEncargos())){				
+//			
+//			BigDecimal juros = cobrancaService.calcularJuros(banco,cota.getId()
+//					,
+//					valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()), new Date());
+//
+//			BigDecimal multas = cobrancaService.calcularMulta(banco,
+//					cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota()),
+//					valorParcela);
+//
+//			encargos = juros.add(multas).doubleValue();
+//		}
+//		parcela.setEncargos(CurrencyUtil.formatarValor(encargos));
+//
+//		parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela.doubleValue()
+//				+ encargos));
 		return dataBase;
 	}
 	@Override
@@ -990,8 +983,20 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			FiltroCalculaParcelas filtro) {
 		List<CalculaParcelasVO> listParcelas = new ArrayList<CalculaParcelasVO>();
 
-		BigDecimal valorParcela = filtro.getValorSelecionado().divide(BigDecimal.valueOf(filtro.getQntdParcelas()),DEFAULT_SCALE,RoundingMode.HALF_EVEN);		
-		BigDecimal somaParelas =  BigDecimal.ZERO;
+		BigDecimal valorParcela = 
+				filtro.getValorSelecionadoSemEncargo().divide(
+						BigDecimal.valueOf(
+								filtro.getQntdParcelas()),
+								DEFAULT_SCALE, RoundingMode.HALF_EVEN);		
+		BigDecimal somaParelas = BigDecimal.ZERO;
+		
+		
+		BigDecimal valorEncargo = 
+				filtro.getValorEncargoSelecionado().divide(
+						BigDecimal.valueOf(
+								filtro.getQntdParcelas()),
+								DEFAULT_SCALE, RoundingMode.HALF_EVEN);
+		BigDecimal somaEncargo = BigDecimal.ZERO;
 
 		Date dataBase = new Date();
 		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
@@ -1006,14 +1011,33 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			CalculaParcelasVO parcela = new CalculaParcelasVO();
 			
 			if(i == filtro.getQntdParcelas() -1){
-				valorParcela = filtro.getValorSelecionado().subtract(somaParelas);
+				valorParcela = filtro.getValorSelecionadoSemEncargo().subtract(somaParelas);
 				valorParcela = valorParcela.setScale(DEFAULT_SCALE,RoundingMode.HALF_EVEN);
 			}
 			
 			somaParelas = somaParelas.add(valorParcela);
+			
+			if (!filtro.getTipoPagamento().equals(TipoCobranca.CHEQUE)
+					&& (filtro.getIsentaEncargos() != null && !filtro
+							.getIsentaEncargos())){
+			
+				if(i == filtro.getQntdParcelas() -1){
+					valorEncargo = filtro.getValorEncargoSelecionado().subtract(somaEncargo);
+					valorEncargo = valorEncargo.setScale(DEFAULT_SCALE,RoundingMode.HALF_EVEN);
+				}
+				
+				somaEncargo = somaEncargo.add(valorEncargo);
+			} else {
+				
+				valorEncargo = BigDecimal.ZERO;
+			}
 
 			dataBase = calculaParcela(filtro, valorParcela, dataBase, i,
 					parcela, banco,cota,formaCobranca);
+			
+			parcela.setEncargos(CurrencyUtil.formatarValor(valorEncargo));
+
+			parcela.setParcTotal(CurrencyUtil.formatarValor(valorParcela.add(valorEncargo)));
 
 			listParcelas.add(parcela);
 		}
