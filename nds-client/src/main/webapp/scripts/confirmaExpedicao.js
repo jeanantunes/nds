@@ -244,7 +244,7 @@ var confirmaExpedicaoController = $.extend(true, {
 		$.postJSON(contextPath + "/confirmacaoExpedicao/verificarExpedicao", 
 			null,
 			function(result) {
-				$('#mensagemLoading').text(result)
+				$('#mensagemLoading').text(result);
 				
 				if(result=='FINALIZADO') {
 					$('#mensagemLoading').text('Aguarde, carregando ...');
