@@ -79,23 +79,24 @@ $(document).ready(function(){
 			//Navegação pelas abas por CTRL+TAB
 			
 			var refTabs = $("li", $('.ui-tabs-nav'));
-			if(refTabs.size() > 1){
+			var qtdAbasAbertas =  $('.ui-corner-top').size()
+			if(qtdAbasAbertas > 1){
 				
 				if(keycode == 17){
 					pressedCtrl = true; 
 				}
-				
+
 				var indexSecionado = $('.ui-tabs-selected').index();
 				var indexSelecionar = indexSecionado;
 				
 				if(keycode == 37 && pressedCtrl == true) {//Esquerda
 					if(indexSecionado == 0){
-						indexSelecionar == refTabs.size() -1;
+						indexSelecionar == qtdAbasAbertas-1;
 					}else{
 						indexSelecionar--;
 					}
 				}else if(keycode == 39 && pressedCtrl == true) {//Direita
-					if((indexSecionado+1) == refTabs.size()){
+					if(indexSecionado == (qtdAbasAbertas-1)){
 						indexSelecionar = 0;
 					}else{
 						indexSelecionar++;
