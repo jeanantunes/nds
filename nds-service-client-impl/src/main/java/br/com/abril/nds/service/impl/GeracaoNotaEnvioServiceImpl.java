@@ -403,13 +403,16 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			NotaEnvio notaEnvio = (itemNotaEnvioPK == null) ? null : itemNotaEnvioPK.getNotaEnvio();
 						
 			if (notaEnvio != null && !notasEnvio.contains(notaEnvio)) {
+
+				notaEnvio.setDestinatario(this.carregaDestinatario(cota, idRota));
+
 				notasEnvio.add(notaEnvio);
 			}
 			
 			if (notaEnvio != null && notasEnvio.contains(notaEnvio)) {
+				
 				itensNotasEnvioExistentes.add(ine);
 			}
-			
 		}
 		
 		listaItemNotaEnvio.removeAll(itensNotasEnvioExistentes);
