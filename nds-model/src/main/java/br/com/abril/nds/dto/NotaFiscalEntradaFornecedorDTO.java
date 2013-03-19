@@ -4,8 +4,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 
 public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 
@@ -25,7 +29,7 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 	
 	private String descricao;
 
-	private BigDecimal valorTotalNota;
+	private String valorTotalNota;
 	
 	private String notaRecebida;
 	
@@ -35,34 +39,34 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 			Date dataEmissao, Date dataExpedicao, String descricao,
 			BigDecimal valorTotalNota, StatusNotaFiscalEntrada statusNotaFiscal, Date dataRecebimento, String razaoSocial) {
 		this.id = id;
-		this.numero = numero.toString();
+		this.numero = (numero == null) ? "" : numero.toString();
 		this.dataEmissao = DateUtil.formatarDataPTBR(dataEmissao);
 		this.dataExpedicao = DateUtil.formatarDataPTBR(dataExpedicao);
-		this.descricao = descricao;
-		this.valorTotalNota = valorTotalNota;
+		this.descricao = StringUtils.defaultString(descricao);
+		this.valorTotalNota = CurrencyUtil.formatarValor(MathUtil.round(valorTotalNota, 2));
 		this.notaRecebida = 
 				StatusNotaFiscalEntrada.RECEBIDA.equals(statusNotaFiscal) 
 					? DateUtil.formatarDataPTBR(dataRecebimento)
 					: " ";		
-		this.razaoSocial = razaoSocial;
+		this.razaoSocial = StringUtils.defaultString(razaoSocial);
 	}
 	
 	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, String serie, Long numeroNotaEnvio,
 			Date dataEmissao, Date dataExpedicao, String descricao,
 			BigDecimal valorTotalNota, StatusNotaFiscalEntrada statusNotaFiscal, Date dataRecebimento, String razaoSocial) {
 		this.id = id;
-		this.numero = numero.toString();
-		this.serie = serie;
+		this.numero = (numero == null) ? "" : numero.toString();
+		this.serie = StringUtils.defaultString(serie);
 		this.numeroNotaEnvio = numeroNotaEnvio;
 		this.dataEmissao = DateUtil.formatarDataPTBR(dataEmissao);
 		this.dataExpedicao = DateUtil.formatarDataPTBR(dataExpedicao);
-		this.descricao = descricao;
-		this.valorTotalNota = valorTotalNota;
+		this.descricao = StringUtils.defaultString(descricao);
+		this.valorTotalNota = CurrencyUtil.formatarValor(MathUtil.round(valorTotalNota, 2));
 		this.notaRecebida = 
 				StatusNotaFiscalEntrada.RECEBIDA.equals(statusNotaFiscal) 
 					? DateUtil.formatarDataPTBR(dataRecebimento)
 					: " ";		
-		this.razaoSocial = razaoSocial;
+		this.razaoSocial = StringUtils.defaultString(razaoSocial);
 	}
 
 	public Long getId() {
@@ -105,11 +109,11 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 		this.descricao = descricao;
 	}
 
-	public BigDecimal getValorTotalNota() {
+	public String getValorTotalNota() {
 		return valorTotalNota;
 	}
 
-	public void setValorTotalNota(BigDecimal valorTotalNota) {
+	public void setValorTotalNota(String valorTotalNota) {
 		this.valorTotalNota = valorTotalNota;
 	}
 
