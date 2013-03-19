@@ -14,7 +14,9 @@ import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Util;
 
 public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
 
@@ -107,6 +109,9 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private BigInteger reparte;
 	private String qtdVendasFormatada = "0";
 	
+	private String precoVendaFormatado;
+	private String precoPrevistoFormatado;
+	
 	public ProdutoEdicaoDTO() {};
 	
 	public ProdutoEdicaoDTO(
@@ -164,6 +169,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
+		this.precoVendaFormatado = CurrencyUtil.formatarValor(precoVenda);
 	}
 	public BigDecimal getDesconto() {
 		return desconto;
@@ -374,6 +380,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 */
 	public void setPrecoPrevisto(BigDecimal precoPrevisto) {
 		this.precoPrevisto = precoPrevisto;
+		this.precoPrevistoFormatado = CurrencyUtil.formatarValor(precoPrevisto);
 	}
 	/**
 	 * @return the dataLancamentoPrevisto
@@ -767,8 +774,33 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public String getQtdVendasFormatada() {
 		return qtdVendasFormatada;
+	}
+
+	/**
+	 * @return the precoVendaFormatado
+	 */
+	public String getPrecoVendaFormatado() {
+		return precoVendaFormatado;
+	}
+
+	/**
+	 * @param precoVendaFormatado the precoVendaFormatado to set
+	 */
+	public void setPrecoVendaFormatado(String precoVendaFormatado) {
+		this.precoVendaFormatado = precoVendaFormatado;
+	}
+
+	/**
+	 * @return the precoPrevistoFormatado
+	 */
+	public String getPrecoPrevistoFormatado() {
+		return precoPrevistoFormatado;
+	}
+
+	/**
+	 * @param precoPrevistoFormatado the precoPrevistoFormatado to set
+	 */
+	public void setPrecoPrevistoFormatado(String precoPrevistoFormatado) {
+		this.precoPrevistoFormatado = precoPrevistoFormatado;
 	}  
-	
-	
-	
 }

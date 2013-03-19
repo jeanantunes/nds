@@ -1185,7 +1185,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#nomeProduto", ConferenciaEncalhe.workspace).text(result.nomeProduto);
 		$("#edicaoProduto", ConferenciaEncalhe.workspace).text(result.numeroEdicao);
-		$("#precoCapa", ConferenciaEncalhe.workspace).text(result.precoCapa);
+		$("#precoCapa", ConferenciaEncalhe.workspace).text(parseFloat(result.precoCapa).toFixed(2));
 		$("#desconto", ConferenciaEncalhe.workspace).text(parseFloat(result.desconto).toFixed(2));
 		
 		$("#valorTotal", ConferenciaEncalhe.workspace).text(((parseFloat(result.precoCapa) - parseFloat(result.desconto)) * parseFloat(result.qtdExemplar)).toFixed(2));

@@ -486,7 +486,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(new Cota(idCota));
 		
-		movimentoEstoqueCota.setData(dataMovimento);
+		movimentoEstoqueCota.setData(dataMovimento==null? dataOperacao : dataMovimento);
 
 		movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
 		
