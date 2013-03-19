@@ -345,7 +345,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		StringBuilder hql = new StringBuilder();
 
 		hql.append("from NotaFiscalEntradaFornecedor nf ")
-			.append("where nf.numero = :numeroNotaEnvio ");
+			.append("where nf.numeroNotaEnvio = :numeroNotaEnvio ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		query.setParameter("numeroNotaEnvio", Long.parseLong(numeroNotaEnvio));

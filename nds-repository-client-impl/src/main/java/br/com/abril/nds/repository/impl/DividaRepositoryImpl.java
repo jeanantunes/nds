@@ -588,7 +588,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	}
 
 	@Override
-	public Divida obterDividaPorIdConsolidado(Long idConsolidado) {
+	public Divida obterDividaPorIdConsolidadoNaoNegociado(Long idConsolidado) {
 		
 		StringBuilder hql = new StringBuilder("select d ");
 		hql.append(" from Divida d ")
@@ -600,6 +600,20 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		   .append("     from Negociacao neg")
 		   .append("     join neg.cobrancasOriginarias c) ")
 		   .append(" and d.origemNegociacao = true ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idConsolidado", idConsolidado);
+		
+		return (Divida) query.uniqueResult();
+	}
+	
+	@Override
+	public Divida obterDividaPorIdConsolidado(Long idConsolidado) {
+		
+		StringBuilder hql = new StringBuilder("select d ");
+		hql.append(" from Divida d ")
+		   .append(" join d.consolidado cons ")
+		   .append(" where cons.id = :idConsolidado ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("idConsolidado", idConsolidado);

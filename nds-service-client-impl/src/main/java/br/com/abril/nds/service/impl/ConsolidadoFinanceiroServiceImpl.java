@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
@@ -75,12 +76,12 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	public List<ContaCorrenteCotaVO> obterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro){
 		
 		List<Long> tiposMovimentoCredito = 
-				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.CREDITO));
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
+						OperacaoFinaceira.CREDITO);
 		
 		List<Long> tiposMovimentoDebito =
-				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.DEBITO));
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
+						OperacaoFinaceira.DEBITO);
 		
 		List<Long> tipoMovimentoEncalhe = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(

@@ -676,20 +676,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
 		hql.append(" from Lancamento l ")
 		   .append(" where l.dataLancamentoDistribuidor = :data ")
-		   .append(" and l.status in (:statusLancamentos) ");
+		   .append(" and l.status = :statusLancamento ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", data);
 
-		query.setParameterList("statusLancamentos", 
-				new StatusLancamento[] {
-					StatusLancamento.EXPEDIDO, 
-					StatusLancamento.BALANCEADO,
-					StatusLancamento.ESTUDO_FECHADO
-				});
+		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO);
 
-		query.setMaxResults(6);
-		
 		return query.list();
 	}
 

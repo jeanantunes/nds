@@ -9,7 +9,7 @@ import java.util.List;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
-public class EMS0137Input extends IntegracaoDocumentMaster<EMS0137InputItem> implements Serializable {
+public class EMS0127Input extends IntegracaoDocumentMaster<EMS0127InputItem> implements Serializable {
 
 	/**
 	 * 
@@ -60,7 +60,7 @@ public class EMS0137Input extends IntegracaoDocumentMaster<EMS0137InputItem> imp
 	
 	private String indiceCEProvisoria;
 	
-	private List<EMS0137InputItem> chamadaEncalheItens = new ArrayList<EMS0137InputItem>();
+	private List<EMS0127InputItem> chamadaEncalheItens = new ArrayList<EMS0127InputItem>();
 
 	public CEPKInput getCePK() {
 		return cePK;
@@ -238,36 +238,36 @@ public class EMS0137Input extends IntegracaoDocumentMaster<EMS0137InputItem> imp
 		this.indiceCEProvisoria = indiceCEProvisoria;
 	}
 
-	public List<EMS0137InputItem> getChamadaEncalheItens() {
+	public List<EMS0127InputItem> getChamadaEncalheItens() {
 		return chamadaEncalheItens;
 	}
 	
-	public void setChamadaEncalheItens(List<EMS0137InputItem> itens) {
+	public void setChamadaEncalheItens(List<EMS0127InputItem> itens) {
 		this.chamadaEncalheItens = itens;
 	}
 
-	public List<EMS0137InputItem> getItens() {
+	public List<EMS0127InputItem> getItens() {
 		return chamadaEncalheItens;
 	}
 
-	public void setItens(List<EMS0137InputItem> itens) {
+	public void setItens(List<EMS0127InputItem> itens) {
 		this.chamadaEncalheItens = itens;
 	}
 	
 	@Override
 	public void addItem(IntegracaoDocumentDetail docD) {
-		chamadaEncalheItens.add((EMS0137InputItem) docD);		
+		chamadaEncalheItens.add((EMS0127InputItem) docD);		
 	}
 	
 	@Override
-	public List<EMS0137InputItem> getItems() {
+	public List<EMS0127InputItem> getItems() {
 		return chamadaEncalheItens;
 	}
 	
 	@Override
 	public boolean sameObject(IntegracaoDocumentMaster<?> docM) {	
 		//FIXME: Sérgio: Colocar a propriedade identificadora
-		return (null == docM ? false : ((EMS0137Input)docM).getCodigoDistribuidor().equals(this.codigoDistribuidor)) ;
+		return (null == docM ? false : ((EMS0127Input)docM).getCodigoDistribuidor().equals(this.codigoDistribuidor)) ;
 	}
 	
 	public class CEPKInput {

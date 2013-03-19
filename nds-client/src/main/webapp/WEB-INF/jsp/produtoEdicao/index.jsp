@@ -180,7 +180,7 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="60">Previsto:</td>
-									<td width="90"><input type="text" name="precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; float:left;" /></td>
+									<td width="90"><input type="text" name="precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; text-align:right; float:left;" /></td>
 									<td width="30">Real:</td>
 									<td width="120"><input type="text" name="precoVenda" id="produtoEdicaoController-precoVenda" style="width:70px; text-align:right;" /></td>
 								</tr>

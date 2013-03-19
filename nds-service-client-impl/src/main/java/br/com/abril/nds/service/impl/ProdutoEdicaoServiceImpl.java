@@ -1077,28 +1077,40 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 	@Override
 	@Transactional
-	public BigDecimal obterPorcentualDesconto(
-			ProdutoEdicao produtoEdicao) {
+	public BigDecimal obterPorcentualDesconto(ProdutoEdicao produtoEdicao) {
 		
 		BigDecimal porcentagemDesconto = null;
 		
 		switch (produtoEdicao.getOrigem()) {
 		
-		case MANUAL:
-			porcentagemDesconto = (produtoEdicao.getDesconto() != null) ? produtoEdicao.getDesconto() : produtoEdicao.getProduto().getDesconto() ;
-			break;
-		
-		case INTERFACE:
+			case MANUAL:
+				
+				porcentagemDesconto = 
+					(produtoEdicao.getDesconto() != null) 
+						? produtoEdicao.getDesconto() 
+							: produtoEdicao.getProduto().getDesconto() ;
+						
+				break;
 			
-			DescontoLogistica descontoLogistica = (produtoEdicao.getDescontoLogistica() != null) ? produtoEdicao.getDescontoLogistica() : produtoEdicao.getProduto().getDescontoLogistica();
-			
-			porcentagemDesconto = descontoLogistica.getPercentualDesconto();
-			break;
-	
+			case INTERFACE:
+				
+				DescontoLogistica descontoLogistica = 
+					(produtoEdicao.getDescontoLogistica() != null) 
+						? produtoEdicao.getDescontoLogistica() 
+							: produtoEdicao.getProduto().getDescontoLogistica();
+				
+				porcentagemDesconto = descontoLogistica.getPercentualDesconto();
+				
+				break;
 		}
 		
-		if(porcentagemDesconto == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "O produto "+produtoEdicao.getProduto().getNome()+" não possui desconto! É necessario cadastrar um desconto para ele na tela de cadastro de produtos"));
+		if	(porcentagemDesconto == null 
+				|| BigDecimal.ZERO.equals(porcentagemDesconto)) {
+			
+			throw new ValidacaoException(new ValidacaoVO(
+				TipoMensagem.WARNING, 
+					"O produto " + produtoEdicao.getProduto().getNome() 
+						+ " não possui desconto! É necessario cadastrar um desconto para ele na tela de cadastro de produtos"));
 		}
 		
 		return porcentagemDesconto;
