@@ -31,7 +31,7 @@
 			centsSeparator: '.',
 			thousandsSeparator: ',',
 			limit: false,
-			centsLimit: 2,
+			centsLimit: 4,
 			clearPrefix: false,
             clearSufix: false,
 			allowNegative: false
