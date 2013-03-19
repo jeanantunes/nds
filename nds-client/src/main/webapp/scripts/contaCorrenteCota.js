@@ -102,12 +102,12 @@ var contaCorrenteCotaController = $.extend(true, {
 				$.each(data.listaInfoFornecedores, function(index, value) {
 					conteudoSpan = $("#listaInfoEncalhe", contaCorrenteCotaController.workspace).html();
 					$("#listaInfoEncalhe", contaCorrenteCotaController.workspace).html(conteudoSpan + 
-							value.nomeFornecedor+":      " + floatToPrice(value.valorTotal) + "<br><br>");
+							value.nomeFornecedor+":      " + floatToPrice(formatMoneyValue(value.valorTotal)) + "<br><br>");
 			    });
 				
 				$(".encalheCotaGrid", contaCorrenteCotaController.workspace).show();
 				$(".gridsEncalhe", contaCorrenteCotaController.workspace).show();
-				$("#labelTotalGeral", contaCorrenteCotaController.workspace).text(floatToPrice(result[2]));
+				$("#labelTotalGeral", contaCorrenteCotaController.workspace).text(floatToPrice(formatMoneyValue(result[2])));
 			});
 		contaCorrenteCotaController.popup_encalhe();
 	},
@@ -144,7 +144,7 @@ var contaCorrenteCotaController = $.extend(true, {
 			      conteudoSpan = $("#listaInfoConsignado", contaCorrenteCotaController.workspace).html();
 			 	 	
 			      $("#listaInfoConsignado", contaCorrenteCotaController.workspace).html(conteudoSpan + 
-			    		  value.nomeFornecedor+":      " + floatToPrice(value.valorTotal) + "<br><br>");
+			    		  value.nomeFornecedor+":      " + floatToPrice(formatMoneyValue(value.valorTotal)) + "<br><br>");
 			    });
 				
 				$(".consignadoCotaGrid", contaCorrenteCotaController.workspace).show();
@@ -178,34 +178,34 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				value.cell.consignado = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+
 					[value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>'+
-					(value.cell.consignado != null ? floatToPrice(value.cell.consignado) : '0,00')+'</a>';
+					(value.cell.consignado != null ? floatToPrice(formatMoneyValue(value.cell.consignado)) : '0,00')+'</a>';
 				
 				value.cell.encalhe = '<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarEncalheCota('+
 					[value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>' + 
-					floatToPrice(value.cell.encalhe) + '</a>';
+					floatToPrice(formatMoneyValue(value.cell.encalhe)) + '</a>';
 				
-				value.cell.valorVendaDia = floatToPrice(value.cell.valorVendaDia);
+				value.cell.valorVendaDia = floatToPrice(formatMoneyValue(value.cell.valorVendaDia));
 				
 				value.cell.vendaEncalhe = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+
 					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cota", contaCorrenteCotaController.workspace).val() +
-					',\''+value.cell.nomeBox+'\');"/>' + floatToPrice(value.cell.vendaEncalhe) + '</a>';
+					',\''+value.cell.nomeBox+'\');"/>' + floatToPrice(formatMoneyValue(value.cell.vendaEncalhe)) + '</a>';
 				
 				value.cell.debitoCredito = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
 					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito +'\');"/>' +
-					floatToPrice(value.cell.debitoCredito) +'</a>';
+					floatToPrice(formatMoneyValue(value.cell.debitoCredito)) +'</a>';
 				
 				value.cell.encargos = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + floatToPrice(value.cell.encargos) +'</a>';
+					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + floatToPrice(formatMoneyValue(value.cell.encargos)) +'</a>';
 					
 				value.cell.valorPostergado = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'">' +
-					(value.cell.valorPostergado != null ? floatToPrice(value.cell.valorPostergado) : '0,00') + '</a></span>';
+					(value.cell.valorPostergado != null ? floatToPrice(formatMoneyValue(value.cell.valorPostergado)) : '0,00') + '</a></span>';
 				
 				value.cell.pendente = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'">' +
-					floatToPrice(value.cell.pendente) +'</a></span>';
+					floatToPrice(formatMoneyValue(value.cell.pendente)) +'</a></span>';
 				
-				value.cell.total = floatToPrice(value.cell.total);
-				value.cell.valorPago = floatToPrice(value.cell.valorPago);
-				value.cell.saldo = floatToPrice(value.cell.saldo);
+				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
+				value.cell.valorPago = floatToPrice(formatMoneyValue(value.cell.valorPago));
+				value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.saldo));
 				
 				if (value.cell.tipo == 'CONSOLIDADO'){
 					
@@ -244,9 +244,9 @@ var contaCorrenteCotaController = $.extend(true, {
 		}else{			
 			$.each(data.rows, function(index, value) {
 				
-				value.cell.precoCapa = floatToPrice(value.cell.precoCapa);
-				value.cell.precoComDesconto = floatToPrice(value.cell.precoComDesconto);
-				value.cell.total = floatToPrice(value.cell.total);
+				value.cell.precoCapa = floatToPrice(formatMoneyValue(value.cell.precoCapa));
+				value.cell.precoComDesconto = floatToPrice(formatMoneyValue(value.cell.precoComDesconto));
+				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
 			});
 			
 			return data;
@@ -494,9 +494,9 @@ var contaCorrenteCotaController = $.extend(true, {
 					value.cell.motivo = "";
 				}
 				
-				value.cell.precoCapa = floatToPrice(value.cell.precoCapa);
-				value.cell.precoComDesconto = floatToPrice(value.cell.precoComDesconto);
-				value.cell.total = floatToPrice(value.cell.total);
+				value.cell.precoCapa = floatToPrice(formatMoneyValue(value.cell.precoCapa));
+				value.cell.precoComDesconto = floatToPrice(formatMoneyValue(value.cell.precoComDesconto));
+				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
 			});
 			
 			return data;
@@ -685,8 +685,8 @@ var contaCorrenteCotaController = $.extend(true, {
 				$.each(data.rows, function(index, value) {
 					
 					value.cell.dataCriacao = value.cell.dataLancamento;
-					value.cell.observacao = value.cell.observacoes;
-					value.cell.valor = floatToPrice(value.cell.valor);
+					value.cell.observacoes = value.cell.observacoes ? value.cell.observacoes : '';
+					value.cell.valor = floatToPrice(formatMoneyValue(value.cell.valor));
 				});
 				
 				return data;
@@ -742,7 +742,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				var texto = $("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).text();
 				$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).text(dataConsolidado + " - " + texto);
-				$("#valorTotalDebitoCredito", contaCorrenteCotaController.workspace).text(valorTotal);
+				$("#valorTotalDebitoCredito", contaCorrenteCotaController.workspace).text(floatToPrice(formatMoneyValue(valorTotal)));
 			
 				contaCorrenteCotaController.montarGridDebitoCredio();
 				$("#dialog-debitos-creditos", contaCorrenteCotaController.workspace ).dialog({
@@ -757,7 +757,10 @@ var contaCorrenteCotaController = $.extend(true, {
 							$(".debitoCreditoGrid", contaCorrenteCotaController.workspace).show();
 						},
 					},
-					form: $("#dialog-debitos-creditos", this.workspace).parents("form")
+					form: $("#dialog-debitos-creditos", this.workspace).parents("form"),
+					close: function(event, ui) {
+						$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).text(texto);
+					}
 				});
 				
 				$(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexAddData({

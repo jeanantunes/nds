@@ -824,11 +824,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
 					diferenca.getProdutoEdicao().getId(), idUsuario, quantidade, tipoMovimentoEstoque);
 		}
-		
 		return this.movimentoEstoqueService.gerarMovimentoCota(
 				null, diferenca.getProdutoEdicao().getId(), cota.getId()
 				, idUsuario, quantidade, tipoMovimentoEstoque
-				, new Date(), null, null, estudoCotaId);
+				, null, null, null, estudoCotaId);
 	}
 	
 	/*
