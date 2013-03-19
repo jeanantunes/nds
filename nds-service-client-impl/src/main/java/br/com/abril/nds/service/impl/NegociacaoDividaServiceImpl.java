@@ -168,22 +168,29 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		Date data = DateUtil.removerTimestamp(new Date());
 
 		for (NegociacaoDividaDTO divida : dividas) {
-
-			Banco banco = this.bancoRepository.buscarBancoPorIdCobranca(divida
-					.getIdCobranca());
-			BigDecimal encargo = (divida.getEncargos()!=null)?divida.getEncargos():BigDecimal.ZERO;
-
-			encargo = encargo.add(cobrancaService.calcularJuros(banco,
-					cota.getId(),
-					divida.getVlDivida(), divida.getDtVencimento(), data));
-
 			
-			if (divida.getDtVencimento().compareTo(data) < 0) {
-				encargo = encargo.add(cobrancaService.calcularMulta(banco,
-						cota, divida.getVlDivida()));
+			if (divida.getPrazo() != 0){
+
+				Banco banco = this.bancoRepository.buscarBancoPorIdCobranca(divida
+						.getIdCobranca());
+				BigDecimal encargo = (divida.getEncargos()!=null)?divida.getEncargos():BigDecimal.ZERO;
+	
+				encargo = encargo.add(cobrancaService.calcularJuros(banco,
+						cota.getId(),
+						divida.getVlDivida(), divida.getDtVencimento(), data));
+	
+				
+				if (divida.getDtVencimento().compareTo(data) < 0) {
+					encargo = encargo.add(cobrancaService.calcularMulta(banco,
+							cota, divida.getVlDivida()));
+				}
+				divida.setEncargos(encargo);
+				divida.setTotal(divida.getVlDivida().add(encargo));
+			} else {
+				
+				divida.setEncargos(BigDecimal.ZERO);
+				divida.setTotal(divida.getVlDivida());
 			}
-			divida.setEncargos(encargo);
-			divida.setTotal(divida.getVlDivida().add(encargo));
 		}
 
 		return dividas;
