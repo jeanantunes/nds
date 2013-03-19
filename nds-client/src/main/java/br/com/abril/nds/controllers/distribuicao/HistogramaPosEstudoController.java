@@ -9,6 +9,9 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BaseEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoDadoInicioDTO;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
@@ -52,13 +55,20 @@ public class HistogramaPosEstudoController extends BaseController{
 	public void histogramaPosEstudo(){
 	}
 	
+//	@Post
+//	public void carregarGridHistogramaPosEstudo(){
+//	}
+	
 	@Post
-	public void carregarGridHistogramaPosEstudo(){
-		
+	public void excluirEstudo(long id){
+		if (id > 0) {
+			estudoService.excluirEstudo(id);
+			
+			throw new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso!");
+		}
 	}
 	
 	@Post
-	@Path("/carregarDadosFieldsetHistogramaPreAnalise")
 	public void carregarDadosFieldsetHistogramaPreAnalise(HistogramaPosEstudoDadoInicioDTO selecionado ){
 		Produto produto = produtoService.obterProdutoPorCodigo(selecionado.getCodigoProduto());
 		Estudo estudo = estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
@@ -73,9 +83,15 @@ public class HistogramaPosEstudoController extends BaseController{
 		}
 		
 		result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
-		
 	}
 	
+	@Post
+	public void carregarDadosFieldSetResumoEstudo(long estudoId){
+		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(estudoId);
+		
+		result.use(Results.json()).withoutRoot().from(resumo).recursive().serialize();
+	}
+
 	@Post
 	public void carregarGridAnalise(String[] faixasReparte, int estudoId){
 

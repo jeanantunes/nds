@@ -682,7 +682,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 						$('#matrizDistribuicaoContent').hide();
 						$('#histogramaPosEstudoContent').html(html);
 						$('#histogramaPosEstudoContent').show();
-				
+
 						params = [];
 						
 						for(var prop in selecionado){

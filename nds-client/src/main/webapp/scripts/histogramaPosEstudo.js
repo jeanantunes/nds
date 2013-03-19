@@ -15,6 +15,36 @@ var histogramaPosEstudoController = $.extend(true, {
 			   '</a>';
 	},
 	
+	voltarPagina : function voltarPagina(){
+		$('#matrizDistribuicaoContent').show();
+		$('#histogramaPosEstudoContent').hide();
+	},
+	
+	
+	formatarMilhar : function formatarMilhar(num){	
+		x = 0;   
+		
+		if(num < 0){
+			num = Math.abs(num);
+			x = 1;
+		}
+		
+		if(isNaN(num)) 
+			num = "0";
+		
+		num = Math.floor((num*100+0.5)/100).toString();
+		
+		for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
+		
+		num = num.substring(0,num.length-(4*i+3))+'.'
+			 +num.substring(num.length-(4*i+3));
+		ret = num;
+		
+		if (x == 1) ret = ' - ' + ret;
+		
+		return ret;	
+	},
+	
 	init:function(){
 
 		var flexGridService = new FlexGridService();
@@ -22,6 +52,42 @@ var histogramaPosEstudoController = $.extend(true, {
 		/**
 		 * Associando eventos ao DOM
 		 */
+		$('#botaoVoltarMatrizDistribuicao').click(function(){
+			histogramaPosEstudoController.voltarPagina();
+		});
+		
+		$('#excluirEstudo').click(function(){
+			$( "#popup_confirmar_exclusao_estudo" ).dialog({
+				resizable: false,
+				height:150,
+				width:200,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						$( this ).dialog( "close" );
+						
+						var url = contextPath + "/distribuicao/histogramaPosEstudo/excluirEstudo",
+							matrizSelecionada = histogramaPosEstudoController.matrizSelecionado;
+						
+						$.postJSON(
+							url,
+							[{name : "id", value : matrizSelecionada.estudo}],
+							function(response){
+								histogramaPosEstudoController.voltarPagina();
+								matrizDistribuicao.pesquisar();
+							}
+						);
+						
+					},
+					"Cancelar": function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
+		});
+		
+		
+		
 		$('#alterarFaixaReparte').click(function(){
 			$( "#dialog-alterar-faixa" ).dialog({
 				resizable: false,
@@ -45,8 +111,8 @@ var histogramaPosEstudoController = $.extend(true, {
 							newRow = {
 								id : rowId,
 								cell : {
-									faixaReparteDe : row.cell.faixaReparte.split("a")[0].replace(" ", "") + " a",
-									faixaReparteAte : createInput(rowId, row.cell.faixaReparte.split("a")[1].replace(" ", "")),
+									faixaReparteDe : replaceAll(row.cell.faixaReparte.split("a")[0].replace(" ", ""),".","") + " a",
+									faixaReparteAte : createInput(rowId, replaceAll(row.cell.faixaReparte.split("a")[1].replace(" ", ""),".","")),
 									acao : createImgExcluir(rowId)
 								}
 							};
@@ -108,10 +174,7 @@ var histogramaPosEstudoController = $.extend(true, {
 			});
 		});
 		
-		$('#botaoVoltarMatrizDistribuicao').click(function(){
-			$('#matrizDistribuicaoContent').show();
-			$('#histogramaPosEstudoContent').hide();
-		});
+		
 		
 		histogramaPosEstudoController.Grids = {
 				EstudosAnaliseGrid : flexGridService.GridFactory.createGrid({
@@ -141,6 +204,15 @@ var histogramaPosEstudoController = $.extend(true, {
 						};
 						
 						$.each( response.rows, function( key, row ) {
+							
+							// formatando faixaDeReparte com milhar
+							faixaDe = row.cell.faixaReparte.split("a")[0];
+							faixaAte = row.cell.faixaReparte.split("a")[1];
+							faixaReparteFormatada = histogramaPosEstudoController.formatarMilhar(parseInt(faixaDe)) + " a " + histogramaPosEstudoController.formatarMilhar(parseInt(faixaAte));
+							
+							// adicionando a linha
+							row.cell.faixaReparte = faixaReparteFormatada;
+							
 							rowConsolidado.cell.reparteTotalFormatado += parseInt(row.cell.reparteTotalFormatado || 0);
 							rowConsolidado.cell.vendaNominalFormatado += parseInt(row.cell.vendaNominalFormatado || 0);
 							rowConsolidado.cell.qtdCotasFormatado += parseInt(row.cell.qtdCotas || 0);
@@ -148,11 +220,17 @@ var histogramaPosEstudoController = $.extend(true, {
 							rowConsolidado.cell.qtdRecebida += parseInt(row.cell.qtdRecebida || 0);
 						});
 						
-						rowConsolidado.cell.reparteMedioFormatado = (rowConsolidado.cell.reparteTotalFormatado / rowConsolidado.cell.qtdCotasFormatado).toFixed(2).toString().replace('.', ',');
-						rowConsolidado.cell.vendaMediaFormatado = (rowConsolidado.cell.vendaNominalFormatado / rowConsolidado.cell.qtdCotasFormatado).toFixed(2).toString().replace('.', ',');
-						rowConsolidado.cell.vendaPercentFormatado = ((rowConsolidado.cell.vendaNominalFormatado / rowConsolidado.cell.reparteTotalFormatado) * 100).toFixed(2).toString().replace('.', ',');
-						rowConsolidado.cell.encalheMedioFormatado = (((rowConsolidado.cell.reparteTotalFormatado - rowConsolidado.cell.vendaNominalFormatado) / rowConsolidado.cell.qtdCotasFormatado) * 100).toFixed(2).toString().replace('.', ',');
-						rowConsolidado.cell.participacaoReparteFormatado = ((rowConsolidado.cell.qtdRecebida / rowConsolidado.cell.reparteTotalFormatado) * 100).toFixed(2).toString().replace('.', ',');
+						reparteMedioFormatado = (rowConsolidado.cell.reparteTotalFormatado / rowConsolidado.cell.qtdCotasFormatado);
+						vendaMediaFormatada = (rowConsolidado.cell.vendaNominalFormatado / rowConsolidado.cell.qtdCotasFormatado);
+						vendaPercentFormatado = ((rowConsolidado.cell.vendaNominalFormatado / rowConsolidado.cell.reparteTotalFormatado) * 100).toFixed(2).toString().replace('.', ',');
+						encalheMedioFormatado = ((rowConsolidado.cell.reparteTotalFormatado - rowConsolidado.cell.vendaNominalFormatado) / rowConsolidado.cell.qtdCotasFormatado);
+						participacaoReparteFormatado = ((rowConsolidado.cell.qtdRecebida / rowConsolidado.cell.reparteTotalFormatado) * 100).toFixed(2).toString().replace('.', ',');
+						
+						rowConsolidado.cell.reparteMedioFormatado = !isNaN(reparteMedioFormatado) ? reparteMedioFormatado : "0";
+						rowConsolidado.cell.vendaMediaFormatado = !isNaN(vendaMediaFormatada) ? vendaMediaFormatada : "0";
+						rowConsolidado.cell.vendaPercentFormatado = vendaPercentFormatado != "NaN" ? vendaPercentFormatado : "0,00";
+						rowConsolidado.cell.encalheMedioFormatado = !isNaN(encalheMedioFormatado)  ? encalheMedioFormatado : "0";
+						rowConsolidado.cell.participacaoReparteFormatado = participacaoReparteFormatado != "NaN"  ? participacaoReparteFormatado : "0,00";
 						
 						histogramaPosEstudoController.analiseGridRowConsolidada = rowConsolidado;
 						
@@ -305,13 +383,7 @@ var histogramaPosEstudoController = $.extend(true, {
 				}),
 				FaixasReparteGrid : flexGridService.GridFactory.createGrid({
 					gridName : "faixasReparteGrid",
-//					url : contextPath + "/distribuicao/histogramaPosEstudo/alterarFaixaReparte",
 					cached : true,
-//					preProcess : function(tableModel){
-//						$.each( tableModel.rows, function( key, row ) {
-//							
-//						});
-//					},
 					gridConfiguration : {
 						dataType : 'json',
 						colModel : [ {
@@ -353,7 +425,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					 histogramaPosEstudoController.fieldSetValues = jsonData;
 					 
 					 histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
-						params : jsonData.estudo,
+						params : [{ name : 'estudoId' , value : jsonData.estudo}],
 					 });
 					 
 					 $('#codigoProdutoFs').html(jsonData.codigoProduto);
@@ -377,33 +449,42 @@ var histogramaPosEstudoController = $.extend(true, {
 	
 	popularFieldsetResumoEstudo : function popularFieldsetResumoEstudo(){
 		var matrizSelecionada = histogramaPosEstudoController.matrizSelecionado,
-			rowConsolidada = histogramaPosEstudoController.analiseGridRowConsolidada;
-
+			rowConsolidada = histogramaPosEstudoController.analiseGridRowConsolidada,
+			url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo";
+		
 		// Primeira coluna
 		$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
 		$('#fieldSetResumoRepartePromocional').html(matrizSelecionada.promo);
 		$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
 		$('#fieldSetResumoReparteDistribuida').html(matrizSelecionada.repDistrib);
 		
-		// Segunda coluna
-		$('#fieldSetResumoNpdvAtual').html(123); // count tb cotas onde status for ativo
-		$('#fieldSetResumoNpdvProduto').html(123); // quantidade de cotas que irão receber reparte (fazem parte do estudo)
-		$('#fieldSetResumoNpdvComplementar').html(123); // quantidade de cotas que foram adicionadas no estudo pela “complementar automática”; segundo o Jhonis é "CP" no campo classificação na tb estudo_cota
-		$('#fieldSetResumoReparteMedioCota').html(123); // quantidade de exemplares que cada cota irá receber na média 
-		
-		// Terceira coluna
-		$('#fieldSetResumoReparteMinimoSugerida').html(123);
-		$('#fieldSetResumoReparteMinimoEstudo').html(123);
-		 
-		$('#fieldSetResumoAbrangenciaSugerida').html(123);
-		$('#fieldSetResumoAbrangenciaEstudo').html(123);
-
-		$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;'+50+'% ');
-		
-		
-		
-		
+		$.postJSON(
+				url,
+				[{name : "estudoId" , value :matrizSelecionada.estudo}],
+				function(response){
+					
+					// Segunda coluna
+					$('#fieldSetResumoNpdvAtual').html(response.qtdCotasAtivas); // count tb cotas onde status for ativo
+					
+					$('#fieldSetResumoNpdvProduto').html(response.qtdCotasRecebemReparte); // quantidade de cotas que irão receber reparte (fazem parte do estudo)
+					
+					// quantidade de cotas que foram adicionadas no estudo pela “complementar automática”; segundo o Jhonis é "CP" no campo classificação na tb estudo_cota
+					$('#fieldSetResumoNpdvComplementar').html(response.qtdCotasAdicionadasPelaComplementarAutomatica || 0); 
+					
+					$('#fieldSetResumoReparteMedioCota').html(parseInt(matrizSelecionada.repDistrib) / parseInt(response.qtdCotasRecebemReparte)); // quantidade de exemplares que cada cota irá receber na média 
+					
+					// Terceira coluna
+					$('#fieldSetResumoReparteMinimoSugerida').html(response.qtdReparteMinimoSugerido);
+					$('#fieldSetResumoReparteMinimoEstudo').html(response.qtdReparteMinimoEstudo);
+					
+					$('#fieldSetResumoAbrangenciaSugerida').html(response.abrangenciaSugerida || 0);
+					$('#fieldSetResumoAbrangenciaEstudo').html((response.abrangenciaEstudo * 100).toFixed(2));
+					
+					$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;'+"??"+'% ');
+				}
+		);
 	},
+	
 	alterarFaixaAte : function alterarFaixaAte(rowId, event){
 		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
 		
@@ -510,7 +591,6 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	mostrarBaseEstudo : function mostrarBaseEstudo(estudoId){
-
 		var baseEstudo = histogramaPosEstudoController.Grids.BaseEstudoGrid;
 		
 		baseEstudo.reload({

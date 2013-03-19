@@ -4,8 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoRepository;
@@ -92,6 +96,39 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		query.setParameter("dateEnd", dataEnd);
 		
 		return (List<Estudo>)query.list();
+	}
+
+
+	@Override
+	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId) {
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append("   qtdCotasAtivas, ");
+		sql.append("   qtdCotasRecebemReparte, ");
+		sql.append("   qtdCotasAdicionadasPelaComplementarAutomatica ");
+		sql.append("   qtdReparteMinimoSugerido, ");
+		sql.append("   qtdReparteMinimoEstudo, ");
+		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 as abrangenciaEstudo ");
+		sql.append("   FROM ");
+		sql.append("   ( ");
+		sql.append("     select ");
+		sql.append("       (select count(id) from cota where SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
+		sql.append("       (select count(estudo_cota.cota_id) from estudo_cota"); 
+		sql.append("        	inner join movimento_estoque_cota ON movimento_estoque_cota.ESTUDO_COTA_ID = estudo_cota.ID ");
+		sql.append(" 				where ESTUDO_ID = :estudoId) AS qtdCotasRecebemReparte, ");
+		sql.append("       (select count(id) from estudo_cota where CLASSIFICACAO in ('CP') and estudo_id = :estudoId ) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
+		sql.append(" 		ifnull((select distinct estudo.REPARTE_MINIMO_SUGERIDO from estudo where id = :estudoId ),0) as qtdReparteMinimoSugerido, ");
+		sql.append(" 		ifnull((select min(REPARTE_MINIMO) from estudo_cota where estudo_id = :estudoId ),0) as qtdReparteMinimoEstudo ");
+		sql.append("   ) as base ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("estudoId", estudoId);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ResumoEstudoHistogramaPosAnaliseDTO.class));
+
+		return (ResumoEstudoHistogramaPosAnaliseDTO) query.uniqueResult();
 	}
 
 }

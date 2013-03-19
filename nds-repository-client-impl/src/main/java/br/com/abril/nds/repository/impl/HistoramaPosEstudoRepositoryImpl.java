@@ -7,11 +7,15 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.BaseEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.HistoramaPosEstudoRepository;
+import br.com.caelum.stella.inwords.FormatoDeInteiro;
+import br.com.caelum.stella.inwords.FormatoDeReal;
 
+@SuppressWarnings("rawtypes")
 @Repository
 public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel implements
 		HistoramaPosEstudoRepository  {
 
+	@SuppressWarnings("unchecked")
 	public HistoramaPosEstudoRepositoryImpl(){
 		super(Object.class);
 	}
@@ -28,7 +32,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		hql.append("  sum(venda) as vendaNominal, ");
 		hql.append("  avg(venda) as vendaMedia, ");
 		hql.append("  (sum(venda) / sum(reparte) * 100) as vendaPercent, ");
-		hql.append("  ((sum(reparte) - sum(venda)) / sum(qtdCota)) * 100 as encalheMedio, ");
+		hql.append("  ((sum(reparte) - sum(venda)) / sum(qtdCota)) as encalheMedio, ");
 		hql.append("  (sum(qtdRecebida)/sum(reparte) * 100) as participacaoReparte, ");
 		hql.append("  sum(qtdCota) as qtdCotas, ");
 		hql.append("  sum(qtdCotasQuePossuemReparteMenorQueVendaNominal) as qtdCotaPossuemReparteMenorVenda, ");
@@ -59,7 +63,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		
-		query.setParameter("estudoId", 80222); // estudoId
+		query.setParameter("estudoId", estudoId);
 		query.setParameter("faixaDe", faixaDe);
 		query.setParameter("faixaAte", faixaAte);
 		
