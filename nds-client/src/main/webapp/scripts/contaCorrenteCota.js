@@ -191,7 +191,7 @@ var contaCorrenteCotaController = $.extend(true, {
 					',\''+value.cell.nomeBox+'\');"/>' + floatToPrice(value.cell.vendaEncalhe) + '</a>';
 				
 				value.cell.debitoCredito = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito +'\');"/>' +
+					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + floatToPrice(value.cell.debitoCredito) +'\');"/>' +
 					floatToPrice(value.cell.debitoCredito) +'</a>';
 				
 				value.cell.encargos = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+
@@ -685,7 +685,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				$.each(data.rows, function(index, value) {
 					
 					value.cell.dataCriacao = value.cell.dataLancamento;
-					value.cell.observacao = value.cell.observacoes;
+					value.cell.observacoes = value.cell.observacoes != undefined ? value.cell.observacoes : '';
 					value.cell.valor = floatToPrice(value.cell.valor);
 				});
 				
