@@ -70,6 +70,7 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
@@ -95,6 +96,7 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
+import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -256,6 +258,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
+	
+	@Autowired
+	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -1261,10 +1266,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void resetarDadosFinanceirosConferenciaEncalheCota(Long idControleConferenciaEncalheCota, Long idCota) {
 		
-
 		MovimentoFinanceiroCota movimentoFinanceiroCota = movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
 		
 		if(movimentoFinanceiroCota!=null) {
+			
 			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
 			
 			if (movimentoFinanceiroCota.getMovimentos() != null){
@@ -1272,9 +1277,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
 					
 					mec.setMovimentoFinanceiroCota(null);
+					
 					this.movimentoEstoqueCotaRepository.merge(mec);
 				}
 			}
+			
+			movimentoFinanceiroCota.setConsolidadoFinanceiroCota(null);
 			
 			this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 		}

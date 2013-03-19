@@ -881,7 +881,7 @@ public class NFeServiceImpl implements NFeService {
 		if(endereco != null) {
 
 			destinatarioLogradouro 	= endereco.getLogradouro();
-			destinatarioNumero		= endereco.getNumero().toString();
+			destinatarioNumero		= endereco.getNumero()!=null?endereco.getNumero().toString():"";
 			destinatarioComplemento	= endereco.getComplemento();
 			destinatarioBairro		= endereco.getBairro();
 			destinatarioMunicipio	= endereco.getCidade();

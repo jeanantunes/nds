@@ -7,7 +7,7 @@ import java.util.Date;
 import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 @Record
-public class EMS0137InputItem extends IntegracaoDocumentDetail implements Serializable {
+public class EMS0127InputItem extends IntegracaoDocumentDetail implements Serializable {
 	
 
 	/**

@@ -1,10 +1,10 @@
-package br.com.abril.nds.integracao.ems0137.route;
+package br.com.abril.nds.integracao.ems0127.route;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.ems0137.processor.EMS0137MessageProcessor;
+import br.com.abril.nds.integracao.ems0127.processor.EMS0127MessageProcessor;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.RouteInterface;
 import br.com.abril.nds.integracao.engine.data.CouchDBImportRouteTemplate;
@@ -12,19 +12,19 @@ import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 
 @Component
 @Scope("prototype")
-public class EMS0137Route extends CouchDBImportRouteTemplate {
+public class EMS0127Route extends CouchDBImportRouteTemplate {
 
 	@Autowired
-	private EMS0137MessageProcessor messageProcessor;
+	private EMS0127MessageProcessor messageProcessor;
 	
 	@Override
 	public InterfaceEnum getInterfaceEnum() {
-		return InterfaceEnum.EMS0137;
+		return InterfaceEnum.EMS0127;
 	}
 
 	@Override
 	public String getUri() {
-		return "EMS0137";
+		return "EMS0127";
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class EMS0137Route extends CouchDBImportRouteTemplate {
 
 	@Override
 	public RouteInterface getRouteInterface() {
-		return RouteInterface.EMS0137;
+		return RouteInterface.EMS0127;
 	}
 
 }
