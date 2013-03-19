@@ -43,8 +43,6 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 		
 		} catch (NoDocumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum documento encontrado na base de dados!");
-		} catch(Exception e) {
-			throw e;
 		}
 		
 		// br.com.abril.nds.integracao.ems0136.route.EMS0136Route

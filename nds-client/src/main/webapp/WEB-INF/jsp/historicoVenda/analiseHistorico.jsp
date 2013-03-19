@@ -5,7 +5,6 @@
 
 $(function() {
 	analiseHistoricoVendaController.init();
-	if(typeof(montarDados) == "function")montarDados();
 });
 
 

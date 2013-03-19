@@ -152,7 +152,6 @@
              
                    <tr>
                       <td>Na CE, deseja utilizar:</td>
-                      
                       <td>
 			                <c:choose>
 				                <c:when test="${parametrosDistribuidor.tipoContabilizacaoCE eq 'VALOR'}">
