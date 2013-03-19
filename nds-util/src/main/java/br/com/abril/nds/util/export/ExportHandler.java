@@ -399,7 +399,8 @@ public class ExportHandler {
 			return new ExportColumn(
 				getExportValue(methodReturn, exportAnnotation.columnType()), 
 					exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(),
-					getExportValueType(methodReturn, exportAnnotation.columnType()));
+					getExportValueType(methodReturn, exportAnnotation.columnType()),
+					exportAnnotation.fontSize());
 		}
 		
 		return null;
@@ -425,7 +426,8 @@ public class ExportHandler {
 			return new ExportColumn(
 				getExportValue(fieldValue, exportAnnotation.columnType()), 
 					exportAnnotation.alignment(), exportAnnotation.exhibitionOrder(), 
-					getExportValueType(fieldValue, exportAnnotation.columnType()));
+					getExportValueType(fieldValue, exportAnnotation.columnType()),
+					exportAnnotation.fontSize());
 		}
 		
 		return null;

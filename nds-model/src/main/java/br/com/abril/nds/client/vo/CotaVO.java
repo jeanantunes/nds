@@ -23,10 +23,10 @@ public class CotaVO implements Serializable {
 
 	private Long idCota;
 	
-	@Export(label = "Código", exhibitionOrder = 0)
+	@Export(label = "Código", exhibitionOrder = 0, widthPercent = 5)
 	private Integer numero;
 	
-	@Export(label = "Nome / Razão Social", exhibitionOrder = 1)
+	@Export(label = "Nome / Razão Social", exhibitionOrder = 1, fontSize = 7)
 	private String nome;
 	
 	private BigDecimal qtdeReparte;
@@ -35,10 +35,10 @@ public class CotaVO implements Serializable {
 	
 	private String codigoBox;
 	
-	@Export(label = "CPF / CNPJ", exhibitionOrder = 2)
+	@Export(label = "CPF / CNPJ", exhibitionOrder = 2, widthPercent = 16)
 	private String numeroCpfCnpj;
 	
-	@Export(label = "Contato", exhibitionOrder = 4)
+	@Export(label = "Contato", exhibitionOrder = 4, fontSize = 7)
 	private String contato;
 	
 	@Export(label = "Telefone", exhibitionOrder = 5)
@@ -47,10 +47,10 @@ public class CotaVO implements Serializable {
 	@Export(label = "E-Mail", exhibitionOrder = 6)
 	private String email;
 	
-	@Export(label = "Status", exhibitionOrder = 7)
+	@Export(label = "Status", exhibitionOrder = 7, widthPercent = 5)
 	private String status;
 	
-	@Export(label = "Box", exhibitionOrder = 3)
+	@Export(label = "Box", exhibitionOrder = 3, widthPercent = 5)
 	private String descricaoBox;
 	
 	
