@@ -39,7 +39,7 @@ public class NotaPromissoria implements Serializable {
 	@Column(name="VENCIMENTO", nullable=false)
 	private Date vencimento;
 	
-	@Column(name="VALOR", nullable=false, precision=18, scale=4)
+	@Column(name="VALOR", nullable=false)
 	private BigDecimal valor;
 	
 	@Column(name="VALOR_EXTENSO", nullable=false)

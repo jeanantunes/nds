@@ -30,7 +30,6 @@ import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
-import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -2362,28 +2361,28 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CotaResumoDTO> obterCotas(SituacaoCadastro situacaoCadastro) {
+	public List<Cota> obterCotas(SituacaoCadastro situacaoCadastro) {
 
 		return this.cotaRepository.obterCotas(situacaoCadastro);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CotaResumoDTO> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
+	public List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
 
 		return this.cotaRepository.obterCotasComInicioAtividadeEm(dataInicioAtividade);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
+	public List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
 
 		return this.cotaRepository.obterCotasAusentesNaExpedicaoDoReparteEm(dataExpedicaoReparte);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
+	public List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
 
 		return this.cotaRepository.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataRecolhimentoEncalhe);
 	}
@@ -2586,4 +2585,3 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 }
-

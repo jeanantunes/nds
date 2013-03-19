@@ -102,7 +102,7 @@ public class FechamentoDiarioDiferenca implements Serializable {
     /**
      * Total em R$ da diferença
      */
-    @Column(name = "TOTAL", nullable = false, precision=18, scale=4)
+    @Column(name = "TOTAL", nullable = false)
     private BigDecimal total;
     
     /**

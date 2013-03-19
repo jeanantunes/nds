@@ -1,7 +1,6 @@
 package br.com.abril.nds.util.export.fiscal.nota.condition;
 
 import br.com.caelum.stella.validation.CNPJValidator;
-import br.com.caelum.stella.validation.CPFValidator;
 
 public class CNPJCondition extends ConditionDefault {
 

@@ -17,7 +17,7 @@ public class PoliticaSuspensao implements Serializable {
 	@Column(name = "NUM_ACUMULO_DIVIDA",nullable=true)
 	private Integer numeroAcumuloDivida;
 	
-	@Column(name = "VALOR_SUSPENSAO",nullable=true, precision=18, scale=4)
+	@Column(name = "VALOR_SUSPENSAO",nullable=true)
 	private BigDecimal valor;
 	
 	public Integer getNumeroAcumuloDivida() {

@@ -161,7 +161,7 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "DESCONTO_ID")
 	private Desconto descontoProduto;
 
-	@Column(name="DESCONTO", precision=18, scale=4)
+	@Column(name="DESCONTO")
 	private BigDecimal desconto;
 	
 	@Column(name="DESCRICAO_DESCONTO")

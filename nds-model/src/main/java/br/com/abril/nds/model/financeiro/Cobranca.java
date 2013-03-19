@@ -69,10 +69,10 @@ public abstract class Cobranca {
 	@Column(name = "DT_PAGAMENTO", nullable = true)
 	protected Date dataPagamento;
 	
-	@Column(name = "ENCARGOS", nullable = true, precision=18, scale=4)
+	@Column(name = "ENCARGOS", nullable = true)
 	protected BigDecimal encargos;
 
-	@Column(name = "VALOR", nullable = false, precision=18, scale=4)
+	@Column(name = "VALOR", nullable = false)
 	protected BigDecimal valor;
 	
 	@Enumerated(EnumType.STRING)

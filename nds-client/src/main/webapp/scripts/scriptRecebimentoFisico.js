@@ -48,10 +48,6 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$("#notaFiscal", recebimentoFisicoController.workspace).numeric();
 		
-		$("#numeroNotaEnvio", recebimentoFisicoController.workspace).numeric();
-		
-		$("#novoNumeroNotaEnvio", recebimentoFisicoController.workspace).numeric();
-		
 		$("#chaveAcesso", recebimentoFisicoController.workspace).numeric();
 		
 		$("#valorBruto", recebimentoFisicoController.workspace).maskMoney({
@@ -187,10 +183,6 @@ var recebimentoFisicoController = $.extend(true, {
 		var serie 		= $("#serie", recebimentoFisicoController.workspace).val();		
 		var chaveAcesso = $("#chaveAcesso", recebimentoFisicoController.workspace).val();
 		var fornecedor  = $("#fornecedor", recebimentoFisicoController.workspace).val();
-		var numeroNotaEnvio  = $("#numeroNotaEnvio", recebimentoFisicoController.workspace).val();
-
-		
-		
         var indNFe      = "N";
         
         if( $('#eNF', recebimentoFisicoController.workspace).attr('checked') == 'checked' ) {
@@ -198,14 +190,12 @@ var recebimentoFisicoController = $.extend(true, {
 		}
         
 		var dadosPesquisa = [
-			{name: "cnpj" 				, value: cnpj				},
-			{name: "numeroNotaFiscal" 	, value: notaFiscal 		},
-			{name: "serie" 				, value: serie				},
-			{name: "indNFe" 			, value: indNFe				},
-			{name: "fornecedor" 		, value: fornecedor			},
-			{name: "chaveAcesso" 		, value: chaveAcesso 		},
-			{name: "numeroNotaEnvio" 	, value: numeroNotaEnvio 	}
-			
+			{name: "cnpj" 				, value: cnpj			},
+			{name: "numeroNotaFiscal" 	, value: notaFiscal 	},
+			{name: "serie" 				, value: serie			},
+			{name: "indNFe" 			, value: indNFe			},
+			{name: "fornecedor" 		, value: fornecedor		},
+			{name: "chaveAcesso" 		, value: chaveAcesso 	}
 		];
 		
 		this.limparCampos();
@@ -510,26 +500,6 @@ var recebimentoFisicoController = $.extend(true, {
 		}
 
 	},
-	
-	/**
-	 * APRESENTA O CAMPO DA NOVA CHAVE DA NFE.
-	 */
-	mostrar_chave_acesso_nova : function(){
-		
-		if( $("#novoNfe", recebimentoFisicoController.workspace).attr('checked') == 'checked' ){
-			
-			$(".nfesNovo", recebimentoFisicoController.workspace).show();
-			
-		}else{
-			
-			$(".nfesNovo", recebimentoFisicoController.workspace).hide();
-			
-			$("#novoChaveAcesso", recebimentoFisicoController.workspace).val("");
-			
-		}
-
-	},
-	
 	
 	/**
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
@@ -1497,7 +1467,6 @@ var recebimentoFisicoController = $.extend(true, {
 				'nota.fornecedor':$("#novoFornecedor",recebimentoFisicoController.workspace).val(),
 				'nota.cnpj':$("#novoCnpj",recebimentoFisicoController.workspace).val(),
 				'nota.numero':$("#novoNumeroNota",recebimentoFisicoController.workspace).val(),
-				'nota.numeroNotaEnvio':$("#novoNumeroNotaEnvio",recebimentoFisicoController.workspace).val(),
 				'nota.serie':$("#novoSerieNota",recebimentoFisicoController.workspace).val(),
 				'nota.chaveAcesso':$("#novoChaveAcesso",recebimentoFisicoController.workspace).val(),
 				'nota.dataEmissao':$("#novoDataEmissao",recebimentoFisicoController.workspace).val(),

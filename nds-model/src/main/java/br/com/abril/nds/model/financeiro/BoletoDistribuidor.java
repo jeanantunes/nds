@@ -46,7 +46,7 @@ public class BoletoDistribuidor {
     @Column(name="DIGITO_NOSSO_NUMERO_DISTRIBUIDOR", nullable = true)
 	private String digitoNossoNumeroDistribuidor;
 	
-	@Column(name="VALOR", nullable = true, precision=18, scale=4)
+	@Column(name="VALOR", nullable = true)
 	private BigDecimal valor;
 	
 	@ManyToOne

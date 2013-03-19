@@ -110,7 +110,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	private List<IcdChamadaEncalhe> obterChamadasEncalhe(String distribuidor) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select distinct ce ")
+		hql.append(" select ce ")
 			.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
 			.append("where ce.tipoStatus in (:status) ")
 			.append("and ce.codigoDistribuidor = :distribuidor ");

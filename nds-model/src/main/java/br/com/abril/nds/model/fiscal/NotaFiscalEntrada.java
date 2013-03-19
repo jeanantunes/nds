@@ -33,13 +33,11 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	
 	private static final long serialVersionUID = 1L;
 
-
-	
 	@Id
 	@GeneratedValue(generator = "NF_ENTRADA_SEQ")
 	@Column(name = "ID")
 	protected Long id;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "ORIGEM", nullable = false)
 	protected Origem origem;
@@ -134,6 +132,5 @@ public abstract class NotaFiscalEntrada extends NotaFiscal {
 	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
-	
 	
 }

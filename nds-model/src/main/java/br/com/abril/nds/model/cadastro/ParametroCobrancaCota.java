@@ -41,7 +41,7 @@ public class ParametroCobrancaCota implements Serializable {
 	@JoinColumn(name = "COTA_ID", unique = true)
 	private Cota cota;
 	
-	@Column(name = "VALOR_MINIMO_COBRANCA", precision=18, scale=4)
+	@Column(name = "VALOR_MINIMO_COBRANCA")
 	private BigDecimal valorMininoCobranca;
 	
 	@Column(name = "FATOR_VENCIMENTO")

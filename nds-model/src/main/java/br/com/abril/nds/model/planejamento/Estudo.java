@@ -87,10 +87,10 @@ public class Estudo implements Serializable {
 	@Column(name = "PACOTE_PADRAO")
 	private BigInteger pacotePadrao;
 	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_PDV", precision=18, scale=4)
+	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_PDV")
 	private BigDecimal percentualProporcaoExcedentePDV;
 	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_VENDA", precision=18, scale=4)
+	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_VENDA")
 	private BigDecimal percentualProporcaoExcedenteVenda;
 	
 	public Long getId() {

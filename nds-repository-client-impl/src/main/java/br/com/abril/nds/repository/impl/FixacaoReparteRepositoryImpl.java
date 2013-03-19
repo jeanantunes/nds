@@ -241,4 +241,3 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	}
 	
 }
-

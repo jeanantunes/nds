@@ -632,6 +632,8 @@ public class DescontoServiceImpl implements DescontoService {
 			
 
 			break;
+		default:
+		    break;
 		}
 
 		return listaFornecedores;

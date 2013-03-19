@@ -15,9 +15,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
@@ -68,7 +65,6 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	private EstudoCota estudoCota;
 	
 	@ManyToMany(mappedBy="listaMovimentoEstoqueCota")
-	@Cascade(value = {CascadeType.ALL})
 	private List<ProdutoServico> listaProdutoServicos;
 	
 	@ManyToOne(optional = true)

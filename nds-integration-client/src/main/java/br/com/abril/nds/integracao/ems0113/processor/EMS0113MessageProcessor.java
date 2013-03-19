@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.ems0113.processor;
 
-import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Autowired;

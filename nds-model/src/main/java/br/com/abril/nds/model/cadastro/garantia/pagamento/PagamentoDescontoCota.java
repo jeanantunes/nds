@@ -13,13 +13,13 @@ public class PagamentoDescontoCota extends PagamentoCaucaoLiquida {
 
 	private static final long serialVersionUID = 7009749644620020575L;
 	
-	@Column(name="DESCONTO_ATUAL", nullable=true, precision=18, scale=4)
+	@Column(name="DESCONTO_ATUAL", nullable=true)
 	private BigDecimal descontoAtual;
 	
-	@Column(name="DESCONTO_COTA",nullable=true, precision=18, scale=4)
+	@Column(name="DESCONTO_COTA",nullable=true)
 	private BigDecimal descontoCota;
 	
-	@Column(name="PORCENTAGEM_UTILIZADA",nullable=true, precision=18, scale=4)
+	@Column(name="PORCENTAGEM_UTILIZADA",nullable=true)
 	private BigDecimal porcentagemUtilizada;
 
 	/**

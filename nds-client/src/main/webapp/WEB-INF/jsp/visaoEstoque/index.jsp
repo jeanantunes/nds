@@ -15,28 +15,6 @@
 
 <body>
 
-
-    <div class="areaBts">
-	    <div class="area">
-	
-			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
-					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-				</a>
-			</span>
-			
-			<span class="bt_arq">
-			    <a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=PDF" rel="tipsy" title="Imprimir">
-				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
-				</a>
-			</span>
-		</div>
-	</div>
-	<br/>
-	<br/>
-	<br/>
-
-
 	<form action="/estoque/visaoEstoque" id="pesquisarVisaoEstoqueForm">
 	<input type="hidden" name="filtro.tipoEstoque" id="visaoEstoque_filtro_tipoEstoque"/>
 	<input type="hidden" name="filtro.tipoEstoqueSelecionado" id="visaoEstoque_filtro_tipoEstoqueSelecionado"/>
@@ -67,6 +45,8 @@
 		<fieldset class="classFieldset">
 			<legend>Vis&atilde;o do Estoque</legend>
        	  	<table class="visaoEstoqueGrid"></table>
+       	  	<span class="bt_arquivo"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportar?fileType=XLS">Arquivo</a></span>
+			<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportar?fileType=PDF">Imprimir</a></span>
 		</fieldset>
 	</div>
 	
@@ -89,6 +69,8 @@
 			<fieldset>
 		        <legend>Vis&atilde;o de Estoque / Juramentado</legend>
 		        <table class="visaoEstoqueDetalheJuramentadoGrid"></table>
+		        <span class="bt_arquivo"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=XLS">Arquivo</a></span>
+				<span class="bt_imprimir"><a href="${pageContext.request.contextPath}/estoque/visaoEstoque/exportarDetalhe?fileType=PDF">Imprimir</a></span>
 			</fieldset>
 		</div>
 	</form>

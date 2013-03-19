@@ -12,7 +12,7 @@ import br.com.abril.nds.model.financeiro.BaixaCobranca;
 @MappedSuperclass
 public abstract class AbstractMovimentoFinanceiro extends Movimento {
 
-	@Column(name = "VALOR", nullable = false, precision=18, scale=4)
+	@Column(name = "VALOR", nullable = false)
 	private BigDecimal valor;
 	
 	/*

@@ -79,7 +79,6 @@
 					</td>
 					
 					<td width="44"><span class="dadosFiltro">Status:</span></td>
-					
 					<td width="91"><span class="dadosFiltro" id="statusCota"></span></td>
 					
 					<td width="144">
