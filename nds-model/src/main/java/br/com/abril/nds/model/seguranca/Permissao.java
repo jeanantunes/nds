@@ -112,8 +112,8 @@ public enum Permissao
 	ROLE_FINANCEIRO_HELP("Help",           															 	   Permissao.ROLE_FINANCEIRO),
 	
 	ROLE_ADMINISTRACAO("Administração",														  			   null),
-	ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração Cota", 												   Permissao.ROLE_ADMINISTRACAO),
-	ROLE_ADMINISTRACAO_INICIAR_DIA("Inicio Diario", 												       Permissao.ROLE_ADMINISTRACAO),
+	//ROLE_ADMINISTRACAO_ALTERACAO_COTA("Alteração Cota", 												   Permissao.ROLE_ADMINISTRACAO),
+	//ROLE_ADMINISTRACAO_INICIAR_DIA("Inicio Diario", 												       Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_FECHAR_DIA("Fechamento Diário",												  	   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_CONTROLE_APROVACAO("Controle Aprovação",									  		   Permissao.ROLE_ADMINISTRACAO),
 	ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO("Painel Processamento	",							  		   Permissao.ROLE_ADMINISTRACAO),
