@@ -549,13 +549,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoqueCota.setAprovador(new Usuario(idUsuario));
 			movimentoEstoqueCota.setDataAprovacao(dataOperacao);
 			
-			movimentoEstoqueCotaRepository.adicionar(movimentoEstoqueCota);
 			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque, movimentoEstoqueCota);
 			
 			movimentoEstoqueCota.setEstoqueProdutoCota(new EstoqueProdutoCota(idEstoqueCota));
-
 		}
 		
+		movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
+				
 		return movimentoEstoqueCota;
 	}
 
