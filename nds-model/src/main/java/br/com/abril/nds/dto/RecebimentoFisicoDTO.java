@@ -27,7 +27,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private BigDecimal precoCapa;
 	
-	private BigDecimal precoDesconto;
+	private String precoDesconto;
 
 	private BigDecimal precoItem;
 
@@ -174,11 +174,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.precoCapa = precoCapa;
 	}
 
-	public BigDecimal getPrecoDesconto() {
+	public String getPrecoDesconto() {
 		return precoDesconto;
 	}
 
-	public void setPrecoDesconto(BigDecimal precoDesconto) {
+	public void setPrecoDesconto(String precoDesconto) {
 		this.precoDesconto = precoDesconto;
 	}
 
