@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
@@ -88,6 +89,24 @@ public class FornecedorRepositoryImpl extends
 		Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("situacaoCadastro", SituacaoCadastro.ATIVO);
+
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Fornecedor> obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro situacaoCadastro, 
+																Origem origem) {
+
+		String hql = "from Fornecedor fornecedor "
+				+ " join fetch fornecedor.juridica "
+				+ " where fornecedor.situacaoCadastro = :situacaoCadastro "
+				+ " and fornecedor.origem = :origem ";
+
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("situacaoCadastro", situacaoCadastro);
+		query.setParameter("origem", origem);
 
 		return query.list();
 	}

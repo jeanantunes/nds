@@ -1067,6 +1067,54 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#diferenca_"+idLinha).text(diferenca);
 	},
 	
+	alterarValorItem : function(idLinha) {
+		
+		var preco = priceToFloat($("#precoDescontoItem"+idLinha, recebimentoFisicoController.workspace).val());
+		
+		var qtdPacote 		= $("#qtdPacoteItem"+idLinha).val();
+		var qtdQuebra 		= $("#qtdExemplarItem"+idLinha).val();
+
+		if (qtdPacote == "") {
+			qtdPacote = 0;
+			$("#qtdPacoteItem"+idLinha).val(0);
+		}
+
+		if (qtdQuebra == "") {
+			qtdQuebra = 0;
+			$("#qtdExemplarItem"+idLinha).val(0);
+		}
+		
+		var qtdPacote 		= parseInt(qtdPacote);
+		var qtdQuebra 		= parseInt(qtdQuebra);
+		var repartePrevisto = parseInt($("#qtdNotaItem"+idLinha).text());
+		var pacotePadrao 	= parseInt($("#pacotePadraoItem"+idLinha).val());
+		var diferenca 		= 0;
+
+		var valor = preco * ((qtdPacote * pacotePadrao) + qtdQuebra)
+
+        $("#valorItem"+idLinha, recebimentoFisicoController.workspace).val($.formatNumber(valor,{locale:'br'}));
+		
+		diferenca = ((qtdPacote * pacotePadrao) + qtdQuebra) - repartePrevisto; 
+
+		if (diferenca < 0) {
+			$("#diferencaItem"+idLinha)[0].style.color = "red";			
+		} else {
+			$("#diferencaItem"+idLinha)[0].style.color = "black";			
+		}
+
+		if (isNaN(diferenca)){
+        	diferenca = 0;
+        }
+		
+		$("#diferencaItem"+idLinha).val(diferenca);
+		
+		 $("#diferencaItem"+idLinha, recebimentoFisicoController.workspace).numeric({
+			decimal:''
+		});
+		
+		recebimentoFisicoController.obterValorTotalItens();
+	},
+	
 	numericOnly : function(event) {
           var num=event.keyCode;
           if(num>=48 & num<=57)
@@ -1271,6 +1319,13 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center',
 				resizable : false
 			}, {
+				display : 'Pcte. Padrão',
+				name : 'pacotePadrao',
+				width : 70,
+				sortable : false,
+				align : 'center',
+				resizable : false
+			}, {
 				display : 'Diferença',
 				name : 'diferenca',
 				width : 80,
@@ -1292,7 +1347,7 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center',
 				resizable : false
 			}],
-			width : 910,
+			width : 1000,
 			height : 180
 		});
 
@@ -1309,7 +1364,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$( "#dialog-adicionar", recebimentoFisicoController.workspace ).dialog({
 			resizable: false,
 			height:530,
-			width:958,
+			width:1028,
 			modal: true,
 			buttons:[ 
 			          {
@@ -1424,6 +1479,7 @@ var recebimentoFisicoController = $.extend(true, {
 
 		if((codigo == "")||(edicao == "")) {
 			$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val("");
+			$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).val("");
 			return;
 		}
 		
@@ -1431,9 +1487,11 @@ var recebimentoFisicoController = $.extend(true, {
 			function(result) { 
 				
 				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(result.precoDesconto);
+				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).val(result.pacotePadrao);
 			},
 			function(result) {
-				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val("");	   
+				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val("");
+				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).val("");
 			},
 			true
 		);	
@@ -1441,7 +1499,7 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	calcularDiferencaEValorItem : function(index){
 		
-		var preco = removeMascaraPriceFormat($("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val());
+		var preco = priceToFloat($("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val());
 		var quantidade = removeMascaraPriceFormat($("#qtdNotaItem"+index, recebimentoFisicoController.workspace).val());
 		var quantidadeExemp = removeMascaraPriceFormat($("#qtdExemplarItem"+index, recebimentoFisicoController.workspace).val());
 		
@@ -1454,15 +1512,9 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#diferencaItem"+index, recebimentoFisicoController.workspace).val("");
 		}
 		
-        var valor = intValue(preco) * intValue(quantidade);
+        var valor = preco * intValue(quantidade);
 
-        $("#valorItem"+index, recebimentoFisicoController.workspace).val(valor);
-        
-        $("#valorItem"+index, recebimentoFisicoController.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
+        $("#valorItem"+index, recebimentoFisicoController.workspace).val($.formatNumber(valor,{locale:'br'}));
 
         var diferenca = 0;
         if (quantidade > quantidadeExemp){
@@ -1557,6 +1609,11 @@ var recebimentoFisicoController = $.extend(true, {
 				 valueQtdExemplar = row.cell.qtdExemplar;
 			 }
 			 
+			 var valuePacotePadrao='';
+			 if (row.cell.pacotePadrao!=null && row.cell.pacotePadrao != 0){
+				 valuePacotePadrao = row.cell.pacotePadrao;
+			 }
+			 
 			 var valueDiferenca='';
 			 if (row.cell.diferenca!=null){
 				 valueDiferenca = row.cell.diferenca;
@@ -1575,12 +1632,14 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			 var precoDesconto ='<input class="money" maxlength="17" value="'+valuePrecoDesconto+'" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
 			 
-			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
+			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
 			     
-	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
+	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>';
 				             
-			 var qtdExemplar =  '<input class="number" maxlength="10" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
-				
+			 var qtdExemplar =  '<input class="number" maxlength="10" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>'; 
+			 
+			 var pacotePadrao =  '<input class="number" maxlength="10" value="'+valuePacotePadrao+'" type="text" readonly="readonly" name="itensRecebimento.pacotePadraoItem" id="pacotePadraoItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+			 
 			 var diferenca =    '<input class="number" maxlength="10" value="'+valueDiferenca+'" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 				 
 			 var valor =        '<input class="money" maxlength="17" value="'+valueValor+'" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
@@ -1594,9 +1653,10 @@ var recebimentoFisicoController = $.extend(true, {
 		     row.cell[4] = qtdNota;
 		     row.cell[5] = qtdPacote;
 		     row.cell[6] = qtdExemplar;
-		     row.cell[7] = diferenca;
-		     row.cell[8] = valor;
-		     row.cell[9] = checkBox;
+		     row.cell[7] = pacotePadrao;
+		     row.cell[8] = diferenca;
+		     row.cell[9] = valor;
+		     row.cell[10] = checkBox;
          }
 	    
 		);
@@ -1654,9 +1714,10 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaQtdNota = linha.find("td")[4];
 			var colunaQtdPacote = linha.find("td")[5];
 			var colunaQtdExemplar = linha.find("td")[6];
-			var colunaDiferenca = linha.find("td")[7];
-			var colunaValor = linha.find("td")[8];
-			var colunaCheck = linha.find("td")[9];
+			var colunaPacotePadrao = linha.find("td")[7];
+			var colunaDiferenca = linha.find("td")[8];
+			var colunaValor = linha.find("td")[9];
+			var colunaCheck = linha.find("td")[10];
 			
 			var codigo = 
 				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val();
@@ -1678,6 +1739,9 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			var qtdExemplar =
 				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val();
+			
+			var pacotePadrao =
+				$(colunaPacotePadrao).find("div").find('input[name="itensRecebimento.pacotePadraoItem"]').val();
 			
 			var diferenca =
 				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val();
@@ -1701,6 +1765,7 @@ var recebimentoFisicoController = $.extend(true, {
 						qtdFisico:qtdNota,
 						qtdPacote:qtdPacote,
 						qtdExemplar:qtdExemplar,
+						pacotePadrao:pacotePadrao,
 						diferenca:diferenca,
 						valorTotal:recebimentoFisicoController.preparaValor(valor),
 						dataLancamento:dataLancamento,
@@ -1727,24 +1792,18 @@ var recebimentoFisicoController = $.extend(true, {
 
 			var linha = $(value);
 
-			var colunaValor = linha.find("td")[8];
+			var colunaValor = linha.find("td")[9];
 
 			valorTotal += intValue(removeMascaraPriceFormat($(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val()));
 			
 		});
 		
 		if(!this.novoValorTotalTyped){
-			$("#novoValorTotal", recebimentoFisicoController.workspace).val(valorTotal);
-		        
-	        $("#novoValorTotal", recebimentoFisicoController.workspace).priceFormat({
-				allowNegative: true,
-				centsSeparator: ',',
-			    thousandsSeparator: '.'
-			});
+			$("#novoValorTotal", recebimentoFisicoController.workspace).val(floatToPrice(valorTotal/100));
 		}
        
         
-        $("#labelValorTotal", recebimentoFisicoController.workspace).html($.formatNumber(valorTotal/100,{locale:'br'}));
+        $("#labelValorTotal", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
 	},
     
     replicarQuantidadeItem : function(index){
@@ -1770,12 +1829,14 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		var precoDesconto ='<input class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
 		 
-		var qtdNota =      '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
+		var qtdNota =      '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
 		     
-        var qtdPacote =    '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>';
+        var qtdPacote =    '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>';
 			             
-		var qtdExemplar =  '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.calcularDiferencaEValorItem('+index+');"></input>'; 
-			
+		var qtdExemplar =  '<input class="number" maxlength="10" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>'; 
+		
+		var pacotePadrao =    '<input class="number" maxlength="10" type="text" readonly="readonly" name="itensRecebimento.pacotePadraoItem" id="pacotePadraoItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
+		
 		var diferenca =    '<input class="number" maxlength="10" type="text" readonly="readonly" name="itensRecebimento.diferencaItem" id="diferencaItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 			 
 		var valor =        '<input class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
@@ -1789,6 +1850,7 @@ var recebimentoFisicoController = $.extend(true, {
    	          	   {name: 'qtdeNota', value: qtdNota},
    	               {name: 'qtdePcts', value: qtdPacote},
    	               {name: 'qtdeExemplar', value: qtdExemplar},
+				   {name: 'pacotePadrao', value: pacotePadrao},
    	               {name: 'diferenca', value: diferenca},
    	               {name: 'valor', value: valor},
    	               {name: 'replicar', value: checkBox}];
@@ -1822,9 +1884,10 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaQtdNota = linha.find("td")[4];
 			var colunaQtdPacote = linha.find("td")[5];
 			var colunaQtdExemplar = linha.find("td")[6];
-			var colunaDiferenca = linha.find("td")[7];
-			var colunaValor = linha.find("td")[8];
-			var colunaCheck = linha.find("td")[9];
+			var colunaPacotePadrao = linha.find("td")[7];
+			var colunaDiferenca = linha.find("td")[8];
+			var colunaValor = linha.find("td")[9];
+			var colunaCheck = linha.find("td")[10];
 			
 			var valueCodigo = 
 				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val();
@@ -1847,6 +1910,9 @@ var recebimentoFisicoController = $.extend(true, {
 			var valueQtdExemplar =
 				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val();
 			
+			var valuePacotePadrao =
+				$(colunaPacotePadrao).find("div").find('input[name="itensRecebimento.pacotePadraoItem"]').val();
+			
 			var valueDiferenca =
 				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val();
 			
@@ -1860,7 +1926,8 @@ var recebimentoFisicoController = $.extend(true, {
 		   	              {name: 'precoDesconto', value: valuePrecoDesconto},
 		   	              {name: 'qtdeNota', value: valueQtdNota},
 		   	              {name: 'qtdePcts', value: valueQtdPacote},
-		   	              {name: 'qtdeExemplar', value: valueQtdExemplar},
+						  {name: 'qtdeExemplar', value: valueQtdExemplar},
+		   	              {name: 'pacotePadrao', value: valuePacotePadrao},
 		   	              {name: 'diferenca', value: valueDiferenca},
 		   	              {name: 'valor', value: valueValor},
 		   	              {name: 'replicar', value: 0}];
@@ -1906,9 +1973,10 @@ var recebimentoFisicoController = $.extend(true, {
 				var colunaQtdNota = linha.find("td")[4];
 				var colunaQtdPacote = linha.find("td")[5];
 				var colunaQtdExemplar = linha.find("td")[6];
-				var colunaDiferenca = linha.find("td")[7];
-				var colunaValor = linha.find("td")[8];
-				var colunaCheck = linha.find("td")[9];
+				var colunaPacotePadrao = linha.find("td")[7];
+				var colunaDiferenca = linha.find("td")[8];
+				var colunaValor = linha.find("td")[9];
+				var colunaCheck = linha.find("td")[10];
 				
 				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val(dataValores[index].cell[0].value);
 				$(colunaProduto).find("div").find('input[name="itensRecebimento.produtoItem"]').val(dataValores[index].cell[1].value);
@@ -1917,8 +1985,9 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[4].value);
 				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val(dataValores[index].cell[5].value);
 				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val(dataValores[index].cell[6].value);
-				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val(dataValores[index].cell[7].value);
-				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val(dataValores[index].cell[8].value);
+				$(colunaPacotePadrao).find("div").find('input[name="itensRecebimento.pacotePadraoItem"]').val(dataValores[index].cell[7].value);
+				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val(dataValores[index].cell[8].value);
+				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val(dataValores[index].cell[9].value);
 	        	
         	}
         });
