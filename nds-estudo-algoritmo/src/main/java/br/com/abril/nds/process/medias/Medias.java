@@ -1,6 +1,7 @@
 package br.com.abril.nds.process.medias;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.TreeMap;
 
 import org.springframework.stereotype.Component;
@@ -29,23 +30,37 @@ public class Medias extends ProcessoAbstrato {
 	BigDecimal vendaMediaCorrigida = BigDecimal.ZERO;
 
 	Cota cota = (Cota) super.genericDTO;
-	
+
+	List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
+
+	int qtdeEdicaoBase = listProdutoEdicao.size();
+
 	BigDecimal totalPeso = BigDecimal.ZERO;
 	BigDecimal totalVendaMultiplyPeso = BigDecimal.ZERO;
 
-	TreeMap<BigDecimal, BigDecimal> treeVendaPeso = new TreeMap<>();
+	TreeMap<BigDecimal, BigDecimal> treeVendaPeso = new TreeMap<BigDecimal, BigDecimal>();
 
-	for (ProdutoEdicao edicao : cota.getEdicoesRecebidas()) {
-	    if (edicao.getVendaCorrigida() != null && edicao.getPeso() != null) {
-		treeVendaPeso.put(edicao.getVendaCorrigida(), edicao.getPeso());
+	int iProdutoEdicao = 0;
+	while (iProdutoEdicao < qtdeEdicaoBase) {
 
-		totalPeso = totalPeso.add(edicao.getPeso());
-		totalVendaMultiplyPeso = totalVendaMultiplyPeso.add(edicao.getVendaCorrigida().multiply(edicao.getPeso()));
+	    ProdutoEdicao produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
+
+	    BigDecimal vendaCorrigida = produtoEdicao.getVendaCorrigida();
+	    BigDecimal peso = produtoEdicao.getPeso();
+
+	    if (vendaCorrigida != null && peso != null) {
+
+		treeVendaPeso.put(vendaCorrigida, peso);
+
+		totalPeso = totalPeso.add(peso);
+		totalVendaMultiplyPeso = totalVendaMultiplyPeso.add(vendaCorrigida.multiply(peso));
 	    }
+
+	    iProdutoEdicao++;
 	}
 
-	if (totalPeso.compareTo(BigDecimal.ONE) == 1) {
-	    if (cota.getEdicoesRecebidas().size() < 3) {
+	if (totalPeso.compareTo(BigDecimal.ZERO) == 1) {
+	    if (qtdeEdicaoBase < 3) {
 		vendaMediaCorrigida = totalVendaMultiplyPeso.divide(totalPeso, 2, BigDecimal.ROUND_FLOOR);
 	    } else {
 		BigDecimal menorValor = treeVendaPeso.firstEntry().getKey();
@@ -55,8 +70,8 @@ public class Medias extends ProcessoAbstrato {
 		vendaMediaCorrigida = totalVendaMultiplyPeso.subtract(menorMultiply).divide(totalPeso.subtract(menorPeso), 2, BigDecimal.ROUND_FLOOR);
 	    }
 	}
-	if ((vendaMediaCorrigida != null) && (vendaMediaCorrigida.compareTo(BigDecimal.ZERO) > 0)) {
-	    cota.setVendaMedia(vendaMediaCorrigida);
-	}
+
+	cota.setVendaMedia(vendaMediaCorrigida);
     }
+
 }

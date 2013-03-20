@@ -1,6 +1,8 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,13 +27,13 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 
     @Autowired
     private CorrecaoIndividual correcaoIndividual;
-    
+
     @Autowired
     private CorrecaoTendencia correcaoTendencia;
-    
+
     @Autowired
     private VendaCrescente vendaCrescente;
-    
+
     /**
      * <h2>Processo: Correção de Vendas</h2>
      * <p><b>Recuperar as cotas armazenadas na tabela e para cada edição base por cota aplicar a regra abaixo e<br>depois armazenar os valores encontrados (vendaCorr) na
@@ -50,21 +52,33 @@ public class CorrecaoVendas extends ProcessoAbstrato {
     protected void executarProcesso() throws Exception {
 
 	Cota cota = (Cota) super.genericDTO;
-	
-	if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() > 1) {
+
+	List<ProdutoEdicao> listEdicaoFechada = new ArrayList<ProdutoEdicao>();
+
+	List<ProdutoEdicao> listEdicaoRecebida = cota.getEdicoesRecebidas();
+
+	if (listEdicaoRecebida != null && listEdicaoRecebida.size() > 1) {
 
 	    BigDecimal totalReparte = BigDecimal.ZERO;
 	    BigDecimal totalVenda = BigDecimal.ZERO;
 
-	    for (ProdutoEdicao produtoEdicao : cota.getEdicoesRecebidas()) {
+	    for (ProdutoEdicao produtoEdicao : listEdicaoRecebida) {
+
+		if (!produtoEdicao.isEdicaoAberta()) {
+		    listEdicaoFechada.add(produtoEdicao);
+		}
+
 		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
+
 		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();
-		    
+
 		    totalReparte = totalReparte.add(produtoEdicao.getReparte());
+
 		    totalVenda = totalVenda.add(produtoEdicao.getVenda());
 		}
 	    }
+
 	    if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
 		correcaoTendencia.setGenericDTO(cota);
 		correcaoTendencia.setTotalReparte(totalReparte);
@@ -72,7 +86,10 @@ public class CorrecaoVendas extends ProcessoAbstrato {
 		correcaoTendencia.executar();
 	    }
 	}
-	vendaCrescente.setGenericDTO(cota);
-	vendaCrescente.executar();
+
+	if (listEdicaoFechada.size() >= 4) {
+	    vendaCrescente.setGenericDTO(cota);
+	    vendaCrescente.executar();
+	}
     }
 }

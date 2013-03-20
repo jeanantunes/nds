@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -14,19 +15,27 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
 
-public abstract class CorrecaoIndividualDataProvider {
+public abstract class CorrecaoIndividualDataProvider extends NDSDataProvider {
 
-    @DataProvider(name = "getEstoqueProdutoCotaParaPercentualVendaNaoIgualUmNaoIgualMaiorZeroVirgualNoveList")
-    public static Iterator<EstoqueProdutoCota[]> getEstoqueProdutoCotaParaPercentualVendaNaoIgualUmNaoIgualMaiorZeroVirgualNoveList() {
+    @DataProvider(name = "getEdicaoParaIndiceCorrecaoUmList")
+    public static Iterator<EstoqueProdutoCota[]> getEdicaoParaIndiceCorrecaoUmList(ITestContext context) {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
 
 	List<EstoqueProdutoCota[]> listEstoqueProdutoCotas = new ArrayList<EstoqueProdutoCota[]>();
 
-	int iCota = 0;
-	while (iCota < listCota.size()) {
+	Iterator<Cota> itCota = listCota.iterator();
 
-	    Cota cota = listCota.get(iCota);
+	while (itCota.hasNext()) {
+
+	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
 
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
@@ -50,24 +59,30 @@ public abstract class CorrecaoIndividualDataProvider {
 		iEstoqueProdutoCota++;
 
 	    }
-
-	    iCota++;
 	}
 
 	return listEstoqueProdutoCotas.iterator();
     }
 
-    @DataProvider(name = "getEstoqueProdutoCotaParaPercentualVendaIgualUmList")
-    public static Iterator<EstoqueProdutoCota[]> getEstoqueProdutoCotaParaPercentualVendaIgualUmList() {
+    @DataProvider(name = "getEdicaoParaIndiceCorrecaoUmPontoDoisList")
+    public static Iterator<EstoqueProdutoCota[]> getEdicaoParaIndiceCorrecaoUmPontoDoisList(ITestContext context) {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
 
 	List<EstoqueProdutoCota[]> listEstoqueProdutoCotas = new ArrayList<EstoqueProdutoCota[]>();
 
-	int iCota = 0;
-	while (iCota < listCota.size()) {
+	Iterator<Cota> itCota = listCota.iterator();
 
-	    Cota cota = listCota.get(iCota);
+	while (itCota.hasNext()) {
+
+	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
 
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
@@ -90,24 +105,30 @@ public abstract class CorrecaoIndividualDataProvider {
 		iEstoqueProdutoCota++;
 
 	    }
-
-	    iCota++;
 	}
 
 	return listEstoqueProdutoCotas.iterator();
     }
 
-    @DataProvider(name = "getEstoqueProdutoCotaParaPercentualVendaMaiorIgualZeroVirgulaNoveList")
-    public static Iterator<EstoqueProdutoCota[]> getEstoqueProdutoCotaParaPercentualVendaMaiorIgualZeroVirgulaNoveList() {
+    @DataProvider(name = "getEdicaoParaIndiceCorrecaoUmPontoUmList")
+    public static Iterator<EstoqueProdutoCota[]> getEdicaoParaIndiceCorrecaoUmPontoUmList(ITestContext context) {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
 
 	List<EstoqueProdutoCota[]> listEstoqueProdutoCotas = new ArrayList<EstoqueProdutoCota[]>();
 
-	int iCota = 0;
-	while (iCota < listCota.size()) {
+	Iterator<Cota> itCota = listCota.iterator();
 
-	    Cota cota = listCota.get(iCota);
+	while (itCota.hasNext()) {
+
+	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
 
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
@@ -129,8 +150,6 @@ public abstract class CorrecaoIndividualDataProvider {
 		iEstoqueProdutoCota++;
 
 	    }
-
-	    iCota++;
 	}
 
 	return listEstoqueProdutoCotas.iterator();

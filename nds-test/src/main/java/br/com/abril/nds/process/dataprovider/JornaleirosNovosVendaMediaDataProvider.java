@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -16,16 +17,24 @@ import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.correcaovendas.CorrecaoIndividual;
 import br.com.abril.nds.process.medias.Medias;
 
-public abstract class JornaleirosNovosVendaMediaDataProvider {
+public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProvider {
+
+    @Autowired
+    private static CorrecaoIndividual correcaoIndividual;
+
+    @Autowired
+    private static CorrecaoIndividual correcaoIndividualEquivalente;
 
     @Autowired
     private static Medias medias;
-    
+
     @Autowired
-    private static CorrecaoIndividual correcaoIndividual;
-    
+    private static Medias mediasEquivalente;
+
     @DataProvider(name = "getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList")
-    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList() throws Exception {
+    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList(ITestContext context) throws Exception {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -38,6 +47,12 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
+
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 	    cota = new CotaDAO().getIndiceAjusteCotaEquivalenteByCota(cota);
 
@@ -69,14 +84,14 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
-				correcaoIndividual.executar();
+				correcaoIndividualEquivalente.setGenericDTO(produtoEdicaoEquivalente);
+				correcaoIndividualEquivalente.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    medias.setGenericDTO(cotaEquivalente);
-			    medias.executar();
+			    mediasEquivalente.setGenericDTO(cotaEquivalente);
+			    mediasEquivalente.executar();
 
 			}
 
@@ -103,7 +118,9 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
     }
 
     @DataProvider(name = "getCotaNovaComQtdeEdicaoBaseMaiorTresList")
-    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMaiorTresList() throws Exception {
+    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMaiorTresList(ITestContext context) throws Exception {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -116,6 +133,12 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
+
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 	    cota = new CotaDAO().getIndiceAjusteCotaEquivalenteByCota(cota);
 
@@ -145,14 +168,14 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
-				correcaoIndividual.executar();
+				correcaoIndividualEquivalente.setGenericDTO(produtoEdicaoEquivalente);
+				correcaoIndividualEquivalente.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    medias.setGenericDTO(cotaEquivalente);
-			    medias.executar();
+			    mediasEquivalente.setGenericDTO(cotaEquivalente);
+			    mediasEquivalente.executar();
 
 			}
 
@@ -171,7 +194,9 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
     }
 
     @DataProvider(name = "getCotaNovaComQtdeEdicaoBaseMenorIgualTresSemEquivalenteVendaMediaCorrigidaMaiorZeroList")
-    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresSemEquivalenteVendaMediaCorrigidaMaiorZeroList() throws Exception {
+    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresSemEquivalenteVendaMediaCorrigidaMaiorZeroList(ITestContext context) throws Exception {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -182,9 +207,15 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
+
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 	    cota = new CotaDAO().getIndiceAjusteCotaEquivalenteByCota(cota);
-	    
+
 	    if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
 
 		List<Cota> listCotaEquivalente = cota.getEquivalente();
@@ -203,7 +234,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 		    while (iCotaEquivalente < listCotaEquivalente.size()) {
 
 			Cota cotaEquivalente = listCotaEquivalente.get(iCotaEquivalente);
-			
+
 			cotaEquivalente.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
 
 			if (cotaEquivalente.getEdicoesRecebidas() != null && !cotaEquivalente.getEdicoesRecebidas().isEmpty()) {
@@ -213,14 +244,14 @@ public abstract class JornaleirosNovosVendaMediaDataProvider {
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
-				correcaoIndividual.executar();
+				correcaoIndividualEquivalente.setGenericDTO(produtoEdicaoEquivalente);
+				correcaoIndividualEquivalente.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    medias.setGenericDTO(cotaEquivalente);
-			    medias.executar();
+			    mediasEquivalente.setGenericDTO(cotaEquivalente);
+			    mediasEquivalente.executar();
 
 			}
 

@@ -16,7 +16,7 @@ public class VendaMediaFinalTest {
 
     @Autowired
     private VendaMediaFinal vendaMediaFinal;
-    
+
     /**
      * Testar se a venda médias final é calculada conforme a cota.
      * 
@@ -44,10 +44,15 @@ public class VendaMediaFinalTest {
 	}
     }
 
-    private void gerarReporterLog(Cota cota, StringBuilder sbReporterLog, BigDecimal vendaMedia) {
+    private void gerarReporterLog(Cota cota, StringBuilder sbReporterLog, BigDecimal vendaMediaFinal) {
+
 	Reporter.log("<p>Cota </p>");
 	Reporter.log("<p style='margin-left: 50px'>ID : " + cota.getId() + "</p>");
-	Reporter.log("<p style='margin-left: 50px'>-> Venda Media: " + vendaMedia + "</p>");
+	Reporter.log("<p style='margin-left: 50px'>-> Venda Media Final : " + vendaMediaFinal + "</p>");
+	Reporter.log("<p style='margin-left: 50px'>-> Venda Media : " + cota.getVendaMedia() + "</p>");
+	Reporter.log("<p style='margin-left: 50px'>-> Indice Ajuste : " + cota.getIndiceAjusteCota() + "</p>");
+	Reporter.log("<p style='margin-left: 50px'>-> Indice Venda Crescente : " + cota.getIndiceVendaCrescente() + "</p>");
+	Reporter.log("<p style='margin-left: 50px'>-> Indice Tratamento Regional : " + cota.getIndiceTratamentoRegional() + "</p>");
 	Reporter.log(sbReporterLog.toString());
     }
 

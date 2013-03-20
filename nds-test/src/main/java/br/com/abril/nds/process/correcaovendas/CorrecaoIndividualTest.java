@@ -15,17 +15,17 @@ import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.dataprovider.CorrecaoIndividualDataProvider;
 
 public class CorrecaoIndividualTest {
-
+    
     @Autowired
     private CorrecaoIndividual correcaoIndividual;
-    
+
     /**
      * Testar se o índice de correção será 1.
      * 
      * @param estoqueProdutoCota
      */
-    @Test(dataProvider = "getEstoqueProdutoCotaParaPercentualVendaNaoIgualUmNaoIgualMaiorZeroVirgualNoveList", dataProviderClass = CorrecaoIndividualDataProvider.class)
-    public void percentualVendaNaoIgualUmNaoIgualMaiorZeroVirgualNove(EstoqueProdutoCota estoqueProdutoCota) {
+    @Test(dataProvider = "getEdicaoParaIndiceCorrecaoUmList", dataProviderClass = CorrecaoIndividualDataProvider.class)
+    public void edicaoComIndiceCorrecaoUm(EstoqueProdutoCota estoqueProdutoCota) {
 
 	try {
 
@@ -35,8 +35,25 @@ public class CorrecaoIndividualTest {
 	    ProdutoEdicao produtoEdicao = (ProdutoEdicao) correcaoIndividual.getGenericDTO();
 
 	    BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
+	    BigDecimal vendaCorrigida = produtoEdicao.getVendaCorrigida();
 
-	    assertNotNull(indiceCorrecao);
+	    StringBuffer sbAssert = new StringBuffer();
+	    sbAssert.append("\n Indice Correcao : ");
+	    sbAssert.append(indiceCorrecao);
+	    sbAssert.append("\n Venda Corrigida :");
+	    sbAssert.append(vendaCorrigida);
+	    sbAssert.append("\n Produto Edicao : ");
+	    sbAssert.append(produtoEdicao.getId());
+	    sbAssert.append("\n Produto : ");
+	    sbAssert.append(produtoEdicao.getIdProduto());
+	    sbAssert.append("\n Numero Edicao : ");
+	    sbAssert.append(produtoEdicao.getNumeroEdicao());
+	    sbAssert.append("\n Colecao : ");
+	    sbAssert.append(produtoEdicao.isColecao());
+	    sbAssert.append("\n");
+
+	    assertNotNull(indiceCorrecao, sbAssert.toString());
+	    assertNotNull(vendaCorrigida, sbAssert.toString());
 
 	    boolean assertIndice = (indiceCorrecao.compareTo(BigDecimal.ONE) == 0);
 
@@ -58,8 +75,8 @@ public class CorrecaoIndividualTest {
      * 
      * @param estoqueProdutoCota
      */
-    @Test(dataProvider = "getEstoqueProdutoCotaParaPercentualVendaIgualUmList", dataProviderClass = CorrecaoIndividualDataProvider.class)
-    public void percentualVendaIgualUm(EstoqueProdutoCota estoqueProdutoCota) {
+    @Test(dataProvider = "getEdicaoParaIndiceCorrecaoUmPontoDoisList", dataProviderClass = CorrecaoIndividualDataProvider.class)
+    public void edicaoComIndiceCorrecaoUmPontoDois(EstoqueProdutoCota estoqueProdutoCota) {
 
 	try {
 
@@ -69,8 +86,25 @@ public class CorrecaoIndividualTest {
 	    ProdutoEdicao produtoEdicao = (ProdutoEdicao) correcaoIndividual.getGenericDTO();
 
 	    BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
+	    BigDecimal vendaCorrigida = produtoEdicao.getVendaCorrigida();
 
-	    assertNotNull(indiceCorrecao);
+	    StringBuffer sbAssert = new StringBuffer();
+	    sbAssert.append("\n Indice Correcao : ");
+	    sbAssert.append(indiceCorrecao);
+	    sbAssert.append("\n Venda Corrigida :");
+	    sbAssert.append(vendaCorrigida);
+	    sbAssert.append("\n Produto Edicao : ");
+	    sbAssert.append(produtoEdicao.getId());
+	    sbAssert.append("\n Produto : ");
+	    sbAssert.append(produtoEdicao.getIdProduto());
+	    sbAssert.append("\n Numero Edicao : ");
+	    sbAssert.append(produtoEdicao.getNumeroEdicao());
+	    sbAssert.append("\n Colecao : ");
+	    sbAssert.append(produtoEdicao.isColecao());
+	    sbAssert.append("\n");
+
+	    assertNotNull(indiceCorrecao, sbAssert.toString());
+	    assertNotNull(vendaCorrigida, sbAssert.toString());
 
 	    BigDecimal oneDotTwo = BigDecimal.ONE.add(new BigDecimal(0.2)).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
 
@@ -94,8 +128,8 @@ public class CorrecaoIndividualTest {
      * 
      * @param estoqueProdutoCota
      */
-    @Test(dataProvider = "getEstoqueProdutoCotaParaPercentualVendaMaiorIgualZeroVirgulaNoveList", dataProviderClass = CorrecaoIndividualDataProvider.class)
-    public void percentualVendaMaiorIgualZeroVirgulaNove(EstoqueProdutoCota estoqueProdutoCota) {
+    @Test(dataProvider = "getEdicaoParaIndiceCorrecaoUmPontoUmList", dataProviderClass = CorrecaoIndividualDataProvider.class)
+    public void edicaoComIndiceCorrecaoUmPontoUm(EstoqueProdutoCota estoqueProdutoCota) {
 
 	try {
 
@@ -105,8 +139,25 @@ public class CorrecaoIndividualTest {
 	    ProdutoEdicao produtoEdicao = (ProdutoEdicao) correcaoIndividual.getGenericDTO();
 
 	    BigDecimal indiceCorrecao = produtoEdicao.getIndiceCorrecao();
+	    BigDecimal vendaCorrigida = produtoEdicao.getVendaCorrigida();
 
-	    assertNotNull(indiceCorrecao);
+	    StringBuffer sbAssert = new StringBuffer();
+	    sbAssert.append("\n Indice Correcao : ");
+	    sbAssert.append(indiceCorrecao);
+	    sbAssert.append("\n Venda Corrigida :");
+	    sbAssert.append(vendaCorrigida);
+	    sbAssert.append("\n Produto Edicao : ");
+	    sbAssert.append(produtoEdicao.getId());
+	    sbAssert.append("\n Produto : ");
+	    sbAssert.append(produtoEdicao.getIdProduto());
+	    sbAssert.append("\n Numero Edicao : ");
+	    sbAssert.append(produtoEdicao.getNumeroEdicao());
+	    sbAssert.append("\n Colecao : ");
+	    sbAssert.append(produtoEdicao.isColecao());
+	    sbAssert.append("\n");
+
+	    assertNotNull(indiceCorrecao, sbAssert.toString());
+	    assertNotNull(vendaCorrigida, sbAssert.toString());
 
 	    BigDecimal oneDotOne = BigDecimal.ONE.add(new BigDecimal(0.1)).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
 
@@ -134,6 +185,8 @@ public class CorrecaoIndividualTest {
      */
     private void gerarReporterLog(EstoqueProdutoCota estoqueProdutoCota, ProdutoEdicao produtoEdicao, BigDecimal indiceCorrecao) {
 
+	Reporter.log("<p>Cota</p>");
+	Reporter.log("<p style='margin-left: 50px'>ID : " + estoqueProdutoCota.getCota().getId() + "</p>");
 	Reporter.log("<p>Estoque Produto Cota</p>");
 	Reporter.log("<p style='margin-left: 50px'>ID : " + estoqueProdutoCota.getId() + "</p>");
 	Reporter.log("<p style='margin-left: 100px'>Produto Edicao : " + produtoEdicao.getId() + "</p>");

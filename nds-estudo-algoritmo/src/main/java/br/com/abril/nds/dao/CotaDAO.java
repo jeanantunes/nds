@@ -1,9 +1,12 @@
 package br.com.abril.nds.dao;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +24,7 @@ import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.model.TipoAjusteReparte;
+import br.com.abril.nds.model.TipoSegmentoProduto;
 
 @Repository
 public class CotaDAO {
@@ -38,6 +42,67 @@ public class CotaDAO {
     private String queryCotaWithEstoqueProdutoCota;
 
     private Map<Long, BigDecimal> idsPesos = new HashMap<>();
+
+    public BigDecimal getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(Cota cota, TipoSegmentoProduto tipoSegmentoProduto, TipoAjusteReparte[] tipoAjusteReparte) {
+
+	BigDecimal ajusteAplicado = null;
+
+	try {
+
+	    StringBuilder query = new StringBuilder(" SELECT AR.AJUSTE_APLICADO FROM AJUSTE_REPARTE AR ");
+
+	    if (tipoSegmentoProduto != null) {
+		query.append(" INNER JOIN TIPO_SEGMENTO_PRODUTO TSP ON (TSP.ID = AR.TIPO_SEGMENTO_AJUSTE_ID AND TSP.ID = ?) ");
+	    }
+
+	    query.append(" INNER JOIN COTA C ON (C.ID = AR.COTA_ID) ");
+	    query.append(" INNER JOIN PESSOA P ON (P.ID = C.PESSOA_ID) ");
+	    query.append(" WHERE AR.COTA_ID = ? ");
+	    query.append(" AND ? >= AR.DATA_INICIO AND ? <= AR.DATA_FIM ");
+
+	    if (tipoAjusteReparte != null && tipoAjusteReparte.length > 0) {
+
+		query.append(" AND AR.FORMA_AJUSTE IN ( ");
+
+		int i = 0;
+		while (i < tipoAjusteReparte.length) {
+
+		    query.append("\"");
+		    query.append(tipoAjusteReparte[i].toString());
+		    query.append("\"");
+		    query.append(",");
+		    i++;
+		}
+
+		query.delete(query.length() - 1, query.length());
+
+		query.append(" ) ");
+
+	    }
+
+	    PreparedStatement psmt = Conexao.getConexao().prepareStatement(query.toString());
+
+	    int i = 1;
+
+	    if (tipoSegmentoProduto != null) {
+		psmt.setLong(i++, tipoSegmentoProduto.getId());
+	    }
+
+	    psmt.setLong(i++, cota.getId());
+	    psmt.setString(i++, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+	    psmt.setString(i++, new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+
+	    ResultSet rs = psmt.executeQuery();
+	    if (rs.next()) {
+		ajusteAplicado = rs.getBigDecimal("AJUSTE_APLICADO");
+	    }
+
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	}
+	
+	return ajusteAplicado;
+    }
 
     public Cota getIndiceAjusteCotaEquivalenteByCota(Cota cota) {
 

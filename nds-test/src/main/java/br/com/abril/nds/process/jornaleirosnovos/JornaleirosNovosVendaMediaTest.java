@@ -17,7 +17,7 @@ public class JornaleirosNovosVendaMediaTest {
 
     @Autowired
     private JornaleirosNovos jornaleirosNovos;
-    
+
     /**
      * Testar venda média corrigida com Cota Nova com a quantidade de Edição Base menor ou igual a três e se existe Equivalente com a Venda Média Corrigida maior do que
      * zero.
@@ -89,7 +89,7 @@ public class JornaleirosNovosVendaMediaTest {
 
 	    StringBuilder sbReporterLog = gerarReporterLog(new StringBuilder(), cota, vendaMediaCorrigida);
 
-	    cota = (Cota) jornaleirosNovos.getGenericDTO();
+	    jornaleirosNovos.setGenericDTO(cota);
 	    jornaleirosNovos.executar();
 
 	    cota = (Cota) jornaleirosNovos.getGenericDTO();
@@ -138,7 +138,7 @@ public class JornaleirosNovosVendaMediaTest {
 
 	    StringBuilder sbReporterLog = gerarReporterLog(new StringBuilder(), cota, vendaMediaCorrigida);
 
-	    cota = (Cota) jornaleirosNovos.getGenericDTO();
+	    jornaleirosNovos.setGenericDTO(cota);
 	    jornaleirosNovos.executar();
 
 	    cota = (Cota) jornaleirosNovos.getGenericDTO();

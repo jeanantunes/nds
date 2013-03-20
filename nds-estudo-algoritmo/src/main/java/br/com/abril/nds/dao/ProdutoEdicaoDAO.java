@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.TipoSegmentoProduto;
 
 @Repository
 public class ProdutoEdicaoDAO {
@@ -106,7 +107,7 @@ public class ProdutoEdicaoDAO {
 		produtoEdicaoBase.setCodigoProduto(rs.getString("CODIGO"));
 		produtoEdicaoBase.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 		produtoEdicaoBase.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-		produtoEdicaoBase.setTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID"));
+		produtoEdicaoBase.setTipoSegmentoProduto(new TipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID"), null));
 		return produtoEdicaoBase;
 	    }
 	});

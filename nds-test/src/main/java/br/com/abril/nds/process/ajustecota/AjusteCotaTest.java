@@ -1,29 +1,25 @@
 package br.com.abril.nds.process.ajustecota;
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 
+import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.process.dataprovider.AjusteCotaDataProvider;
 
 public class AjusteCotaTest {
 
-    @Autowired
-    private AjusteCota ajusteCota;
-    
     /**
      * Testar índice de ajuste de cota sem segmento.
      * 
      * @param cota
      */
     @Test(dataProvider = "getCotaSemIndiceAjusteSegmentoList", dataProviderClass = AjusteCotaDataProvider.class)
-    public void indiceAjusteCota(Cota cota) {
+    public void cotaSemIndiceAjusteSegmento(Cota cota) {
 
 	try {
 
@@ -31,7 +27,7 @@ public class AjusteCotaTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edições ");
 
-	    ajusteCota.setGenericDTO(cota);
+	    AjusteCota ajusteCota = new AjusteCota(cota);
 	    ajusteCota.executar();
 
 	    cota = (Cota) ajusteCota.getGenericDTO();
@@ -39,6 +35,7 @@ public class AjusteCotaTest {
 	    BigDecimal indiceAjuste = cota.getIndiceAjusteCota();
 
 	    assertNotNull(indiceAjuste, "Indice Ajuste : " + indiceAjuste + " Cota : " + cota.getId());
+	    assertEquals(cota.getClassificacao(), ClassificacaoCota.Ajuste);
 
 	    gerarReporterLog(cota, sbReporterLog, indiceAjuste);
 
@@ -53,7 +50,7 @@ public class AjusteCotaTest {
      * @param cota
      */
     @Test(dataProvider = "getCotaComIndiceAjusteSegmentoList", dataProviderClass = AjusteCotaDataProvider.class)
-    public void indiceAjusteCotaSegmento(Cota cota) {
+    public void cotaComIndiceAjusteSegmento(Cota cota) {
 
 	try {
 
@@ -61,7 +58,7 @@ public class AjusteCotaTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edições ");
 
-	    ajusteCota.setGenericDTO(cota);
+	    AjusteCota ajusteCota = new AjusteCota(cota);
 	    ajusteCota.executar();
 
 	    cota = (Cota) ajusteCota.getGenericDTO();
@@ -69,7 +66,8 @@ public class AjusteCotaTest {
 	    BigDecimal indiceAjuste = cota.getIndiceAjusteCota();
 
 	    assertNotNull(indiceAjuste, "Indice Ajuste : " + indiceAjuste + " Cota : " + cota.getId());
-
+	    assertEquals(cota.getClassificacao(), ClassificacaoCota.Ajuste);
+	    
 	    gerarReporterLog(cota, sbReporterLog, indiceAjuste);
 
 	} catch (Exception e) {
@@ -83,7 +81,7 @@ public class AjusteCotaTest {
      * @param cota
      */
     @Test(dataProvider = "getCotaComIndiceAjusteSegmentoMenorList", dataProviderClass = AjusteCotaDataProvider.class)
-    public void indiceAjusteCotaSegmentoMenor(Cota cota) {
+    public void cotaConsiderandoIndiceAjusteSegmentoMenor(Cota cota) {
 
 	try {
 
@@ -91,7 +89,7 @@ public class AjusteCotaTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edições ");
 
-	    ajusteCota.setGenericDTO(cota);
+	    AjusteCota ajusteCota = new AjusteCota(cota);
 	    ajusteCota.executar();
 
 	    cota = (Cota) ajusteCota.getGenericDTO();
@@ -99,6 +97,7 @@ public class AjusteCotaTest {
 	    BigDecimal indiceAjuste = cota.getIndiceAjusteCota();
 
 	    assertNotNull(indiceAjuste, "Indice Ajuste : " + indiceAjuste + " Cota : " + cota.getId());
+	    assertEquals(cota.getClassificacao(), ClassificacaoCota.Ajuste);
 
 	    gerarReporterLog(cota, sbReporterLog, indiceAjuste);
 
@@ -113,7 +112,7 @@ public class AjusteCotaTest {
      * @param cota
      */
     @Test(dataProvider = "getCotaComIndiceAjusteMenorList", dataProviderClass = AjusteCotaDataProvider.class)
-    public void indiceAjusteCotaMenor(Cota cota) {
+    public void cotaConsiderandoIndiceAjusteSegmentoMaior(Cota cota) {
 
 	try {
 
@@ -121,7 +120,7 @@ public class AjusteCotaTest {
 
 	    assertNotNull(cota.getEdicoesRecebidas(), " Cota : " + cota.getId() + " nao contem edições ");
 
-	    ajusteCota.setGenericDTO(cota);
+	    AjusteCota ajusteCota = new AjusteCota(cota);
 	    ajusteCota.executar();
 
 	    cota = (Cota) ajusteCota.getGenericDTO();
@@ -129,6 +128,7 @@ public class AjusteCotaTest {
 	    BigDecimal indiceAjuste = cota.getIndiceAjusteCota();
 
 	    assertNotNull(indiceAjuste, "Indice Ajuste : " + indiceAjuste + " Cota : " + cota.getId());
+	    assertEquals(cota.getClassificacao(), ClassificacaoCota.Ajuste);
 
 	    gerarReporterLog(cota, sbReporterLog, indiceAjuste);
 

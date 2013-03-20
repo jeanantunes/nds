@@ -59,8 +59,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>nds-estudo-algoritmo</finalName>
-
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>

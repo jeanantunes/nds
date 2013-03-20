@@ -5,37 +5,42 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.TipoAjusteReparte;
+import br.com.abril.nds.model.TipoSegmentoProduto;
 
-// FIXME: é preciso remover os comentários do código e solucionar o problema
-public abstract class AjusteCotaDataProvider {
+public abstract class AjusteCotaDataProvider extends NDSDataProvider {
 
-    @Autowired
-    private static CotaDAO cotaDAO;
-    
     @DataProvider(name = "getCotaSemIndiceAjusteSegmentoList")
-    public static Iterator<Cota[]> getCotaSemIndiceAjusteSegmentoList() {
+    public static Iterator<Cota[]> getCotaSemIndiceAjusteSegmentoList(ITestContext context) {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
-	List<Cota> listCota = cotaDAO.getCotaWithEstoqueProdutoCota();
+	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
 
 	Iterator<Cota> itCota = listCota.iterator();
 
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
+
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
-	    BigDecimal ajusteAplicado = BigDecimal.ONE;
-//	    BigDecimal ajusteAplicado = cotaDAO.getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
-//		    TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
+	    BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
+		    TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
 
 	    if (ajusteAplicado != null && ajusteAplicado.compareTo(BigDecimal.ZERO) == 1) {
 		listCotaReturn.add(new Cota[] { cota });
@@ -47,7 +52,9 @@ public abstract class AjusteCotaDataProvider {
     }
 
     @DataProvider(name = "getCotaComIndiceAjusteSegmentoList")
-    public static Iterator<Cota[]> getCotaComIndiceAjusteSegmentoList() {
+    public static Iterator<Cota[]> getCotaComIndiceAjusteSegmentoList(ITestContext context) {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -58,17 +65,22 @@ public abstract class AjusteCotaDataProvider {
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
+
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
 	    List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
 
 	    if (listProdutoEdicao != null && !listProdutoEdicao.isEmpty()) {
 
-//		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
+		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
 
-		BigDecimal ajusteAplicado = BigDecimal.ONE;
-//		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
-//			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
+		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
+			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
 
 		if (ajusteAplicado != null && ajusteAplicado.compareTo(BigDecimal.ZERO) == 1) {
 		    listCotaReturn.add(new Cota[] { cota });
@@ -81,7 +93,9 @@ public abstract class AjusteCotaDataProvider {
     }
 
     @DataProvider(name = "getCotaComIndiceAjusteSegmentoMenorList")
-    public static Iterator<Cota[]> getCotaComIndiceAjusteSegmentoMenorList() {
+    public static Iterator<Cota[]> getCotaComIndiceAjusteSegmentoMenorList(ITestContext context) {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -92,20 +106,26 @@ public abstract class AjusteCotaDataProvider {
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
+
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
 	    List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
 
 	    if (listProdutoEdicao != null && !listProdutoEdicao.isEmpty()) {
 
-//		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
-		BigDecimal ajusteAplicado = BigDecimal.ONE;
-//		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
-//			TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
-		BigDecimal ajusteAplicadoSegmento = BigDecimal.ONE;
-//		BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
-//			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
-		
+		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
+
+		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
+			TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
+
+		BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
+			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
+
 		if (ajusteAplicado != null && ajusteAplicadoSegmento != null && ajusteAplicado.compareTo(ajusteAplicadoSegmento) == 1) {
 		    listCotaReturn.add(new Cota[] { cota });
 		}
@@ -115,9 +135,11 @@ public abstract class AjusteCotaDataProvider {
 
 	return listCotaReturn.iterator();
     }
-    
+
     @DataProvider(name = "getCotaComIndiceAjusteMenorList")
-    public static Iterator<Cota[]> getCotaComIndiceAjusteMenorList() {
+    public static Iterator<Cota[]> getCotaComIndiceAjusteMenorList(ITestContext context) {
+
+	List<Long> listParamCotaId = getParamCotaId(context);
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -128,20 +150,26 @@ public abstract class AjusteCotaDataProvider {
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
+
+	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
+		itCota.remove();
+		continue;
+	    }
+
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 
 	    List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
 
 	    if (listProdutoEdicao != null && !listProdutoEdicao.isEmpty()) {
 
-//		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
-		BigDecimal ajusteAplicado = BigDecimal.ONE;
-//		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
-//			TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
-		BigDecimal ajusteAplicadoSegmento = BigDecimal.ONE;
-//		BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
-//			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
-		
+		TipoSegmentoProduto tipoSegmentoProduto = listProdutoEdicao.iterator().next().getTipoSegmentoProduto();
+
+		BigDecimal ajusteAplicado = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, null, new TipoAjusteReparte[] {
+			TipoAjusteReparte.AJUSTE_ENCALHE_MAX, TipoAjusteReparte.AJUSTE_HISTORICO, TipoAjusteReparte.AJUSTE_VENDA_MEDIA });
+
+		BigDecimal ajusteAplicadoSegmento = new CotaDAO().getAjusteAplicadoByCotaTipoSegmentoFormaAjuste(cota, tipoSegmentoProduto,
+			new TipoAjusteReparte[] { TipoAjusteReparte.AJUSTE_SEGMENTO });
+
 		if (ajusteAplicado != null && ajusteAplicadoSegmento != null && ajusteAplicado.compareTo(ajusteAplicadoSegmento) == -1) {
 		    listCotaReturn.add(new Cota[] { cota });
 		}
