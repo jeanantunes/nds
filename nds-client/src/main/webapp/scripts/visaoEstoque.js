@@ -509,7 +509,10 @@ var visaoEstoqueController = $.extend(true, {
 			sortname : "codigo",
 			sortorder : "asc",
 			width : 795,
-			height : 200
+			height : 200,
+			usepager : true,
+			useRp : true,
+			rp : 15
 		});
 	},
 	
@@ -581,7 +584,10 @@ var visaoEstoqueController = $.extend(true, {
 			sortname : "codigo",
 			sortorder : "asc",
 			width : 795,
-			height : 200
+			height : 200,
+			usepager : true,
+			useRp : true,
+			rp : 15
 		});
 	},
 	

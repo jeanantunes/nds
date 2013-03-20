@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
@@ -12,5 +13,19 @@ public class ParcelaNegociacaoRepositoryImpl extends AbstractRepositoryModel<Par
 
 	public ParcelaNegociacaoRepositoryImpl() {
 		super(ParcelaNegociacao.class);
+	}
+
+	@Override
+	public int excluirPorNegociacao(Long idNegociacao) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("delete from ParcelaNegociacao pn where pn.negociacao.id = :idNegociacao ");
+	
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idNegociacao", idNegociacao);
+
+		return query.executeUpdate();
 	}
 }

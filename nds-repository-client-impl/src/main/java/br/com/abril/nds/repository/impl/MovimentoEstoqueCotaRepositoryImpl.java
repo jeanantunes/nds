@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.persistence.Column;
+
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -992,21 +994,24 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		if(indBuscaQtd) {
 			
-			sql.append("	COUNT(*)	");
+			sql.append(" COUNT(PROD_EDICAO.ID) ");
 			
 		} else {
 		
-			sql.append(" PROD_EDICAO.ID, 								");
+			sql.append(" PROD_EDICAO.ID, ");
 			
-			sql.append(" CONFERENCIAS.QTDE_ENCALHE as qtdDevolucao,		");
+			sql.append(" ( SELECT SUM(  		");
+			sql.append(" ESTOQUE_PROD.QTDE +	");
+			sql.append(" ESTOQUE_PROD.QTDE_SUPLEMENTAR + 		");
+			sql.append(" ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE )	");
+			sql.append(" FROM ESTOQUE_PRODUTO ESTOQUE_PROD ");
+			sql.append(" WHERE ESTOQUE_PROD.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ) as qtdDevolucao, ");
 			
 			if(indBuscaTotalParcial) {
-
 				sql.append(" ( ");
 				sql.append(" SELECT SUM(PARCIAL.QTDE) ");
 				sql.append(" FROM CONFERENCIA_ENC_PARCIAL PARCIAL ");
-				sql.append(" WHERE PARCIAL.DATA_MOVIMENTO BETWEEN :dataInicial AND :dataFinal AND ");  
-				sql.append(" PROD_EDICAO.ID = PARCIAL.PRODUTOEDICAO_ID AND  ");
+				sql.append(" WHERE PROD_EDICAO.ID = PARCIAL.PRODUTOEDICAO_ID AND  ");
 				sql.append(" PARCIAL.STATUS_APROVACAO = :statusAprovacao  ");
 				sql.append(" ) AS qtdNota, ");
 				
@@ -1019,57 +1024,39 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" PROD.CODIGO as codigoProduto,  				");		
 			sql.append(" PROD.NOME as nomeProduto, 						");
 			sql.append(" PROD_EDICAO.NUMERO_EDICAO as numeroEdicao, 	");
-			sql.append(" PROD_EDICAO.PRECO_VENDA as precoVenda, 	");
-			sql.append(" (case when desconto_logistica_pe.ID is not null then ");
-      		sql.append("  		desconto_logistica_pe.PERCENTUAL_DESCONTO            ");
-      	    sql.append("  else												 		 ");
-			sql.append(" 		case when desconto_logistica_prod.ID is not null then ");	
-			sql.append(" 			 desconto_logistica_prod.PERCENTUAL_DESCONTO      ");	
-			sql.append("         else 0 end         ");		
-			sql.append("   end) as desconto           ");	
+			sql.append(" PROD_EDICAO.PRECO_VENDA as precoVenda, 		");
+			
+			sql.append(" (case when desconto_logistica_pe.ID is not null then 			");
+      		sql.append("  		desconto_logistica_pe.PERCENTUAL_DESCONTO            	");
+      	    sql.append("  else												 		 	");
+			sql.append(" 		case when desconto_logistica_prod.ID is not null then 	");	
+			sql.append(" 			 desconto_logistica_prod.PERCENTUAL_DESCONTO      	");	
+			sql.append("         else 0 end         	");		
+			sql.append("   end) as desconto           	");	
 			
 		}
 
 		sql.append(" FROM ");
 
-		sql.append(" ( ");
-
-		sql.append(" SELECT ");
-	
-		sql.append(" SUM(MOV_ESTOQUE_COTA.QTDE) AS QTDE_ENCALHE, ");
-	
-		sql.append(" MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AS PRODUTO_EDICAO_ID ");
-	
-		sql.append(" FROM ");
-
-		sql.append(" MOVIMENTO_ESTOQUE_COTA MOV_ESTOQUE_COTA ");
-
-		sql.append(" INNER JOIN CONFERENCIA_ENCALHE ON (	");
-		sql.append(" CONFERENCIA_ENCALHE.movimento_estoque_cota_id = MOV_ESTOQUE_COTA.ID ");
-		sql.append(" )	"); 
 		
-		sql.append(" LEFT JOIN CONTROLE_CONTAGEM_DEVOLUCAO ON ( ");
-		sql.append(" CONTROLE_CONTAGEM_DEVOLUCAO.PRODUTO_EDICAO_ID 	=  MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID AND ");
-	    sql.append(" CONTROLE_CONTAGEM_DEVOLUCAO.DATA     			=  MOV_ESTOQUE_COTA.DATA AND ");
-	    sql.append(" CONTROLE_CONTAGEM_DEVOLUCAO.STATUS = :statusOperacao ) ");
-	
-		sql.append(" WHERE ");
-
-		sql.append(" MOV_ESTOQUE_COTA.DATA BETWEEN :dataInicial AND :dataFinal AND	");
-	
-		sql.append(" CONTROLE_CONTAGEM_DEVOLUCAO.ID IS NULL  ");
+		sql.append(" (	              ");
+		sql.append(" SELECT FECHAMENTO_ENC.PRODUTO_EDICAO_ID AS FECHAMENTO_PRODUTO_EDICAO_ID	");
+		sql.append(" FROM FECHAMENTO_ENCALHE FECHAMENTO_ENC   									");
+		sql.append(" WHERE FECHAMENTO_ENC.DATA_ENCALHE BETWEEN :dataInicial and :dataFinal     	");
+		sql.append(" GROUP BY FECHAMENTO_ENC.PRODUTO_EDICAO_ID 	");
 		
-		sql.append(" GROUP BY MOV_ESTOQUE_COTA.PRODUTO_EDICAO_ID	");
-
-		sql.append(" ) AS CONFERENCIAS 	");
-
-		sql.append(" RIGHT OUTER JOIN ITEM_CHAMADA_ENCALHE_FORNECEDOR ITEM_CH_ENC_FORNECEDOR ON ( ");
-		sql.append(" 	CONFERENCIAS.produto_edicao_id = ITEM_CH_ENC_FORNECEDOR.PRODUTO_EDICAO_ID ");
-		sql.append(" ) ");
+		sql.append(" UNION ALL ");
+		
+		sql.append(" SELECT FECHAMENTO_ENC_BOX.PRODUTO_EDICAO_ID AS FECHAMENTO_PRODUTO_EDICAO_ID 	");
+		sql.append(" FROM FECHAMENTO_ENCALHE_BOX FECHAMENTO_ENC_BOX 									");
+		sql.append(" WHERE FECHAMENTO_ENC_BOX.DATA_ENCALHE BETWEEN :dataInicial and :dataFinal	    ");
+		sql.append(" GROUP BY FECHAMENTO_ENC_BOX.PRODUTO_EDICAO_ID 	");
+		
+		sql.append(" ) AS FECHAMENTOS	              ");
 		
 		sql.append(" INNER JOIN PRODUTO_EDICAO PROD_EDICAO ON ( 					");
-		sql.append(" 	CONFERENCIAS.PRODUTO_EDICAO_ID = PROD_EDICAO.ID 	");
-		sql.append(" ) 	");
+		sql.append(" 	FECHAMENTOS.FECHAMENTO_PRODUTO_EDICAO_ID = PROD_EDICAO.ID 	");
+		sql.append(" ) ");
 		
 		sql.append("  LEFT JOIN  ");
 		sql.append("  	desconto_logistica desconto_logistica_pe  ");
@@ -1087,20 +1074,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(" 	PROD.ID = PROD_FORNEC.PRODUTO_ID 			");
 		sql.append(" ) ");
 		
-		sql.append(" WHERE ");
-
-		sql.append(" ITEM_CH_ENC_FORNECEDOR.DATA_RECOLHIMENTO BETWEEN :dataInicial AND :dataFinal ");
+		
 
 		if( filtro.getIdFornecedor() != null ) {
-			sql.append(" AND PROD_FORNEC.FORNECEDORES_ID = :idFornecedor ");		
+			
+			sql.append(" WHERE ");
+			
+			sql.append(" PROD_FORNEC.FORNECEDORES_ID = :idFornecedor ");
+			
 		}
-
-		if(!indBuscaQtd){
-    	
-    		sql.append(" GROUP BY ");
-    		sql.append(" PROD_EDICAO.ID ");
-    		
-        }
 		
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
@@ -1114,22 +1096,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				switch (filtro.getOrdenacaoColuna()) {
 				
 					case CODIGO_PRODUTO:
-						orderByColumn = " PROD.CODIGO ";
+						orderByColumn = "codigoProduto ";
 						break;
 					case NOME_PRODUTO:
-						orderByColumn = " PROD.NOME  ";
+						orderByColumn = "nomeProduto ";
 						break;
 					case NUMERO_EDICAO:
-						orderByColumn = " PROD_EDICAO.NUMERO_EDICAO  ";
+						orderByColumn = "numeroEdicao ";
 						break;
 					case PRECO_CAPA:
-						orderByColumn = " PROD_EDICAO.PRECO_VENDA ";
+						orderByColumn = "precoVenda ";
 						break;
 					case QTD_DEVOLUCAO:
-						orderByColumn = " CONFERENCIAS.QTDE_ENCALHE ";
+						orderByColumn = "qtdDevolucao ";
 						break;
 					case QTD_NOTA:
-						orderByColumn = " qtdNota ";
+						orderByColumn = "qtdNota ";
 						break;
 						
 					default:
@@ -1187,8 +1169,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("dataInicial", filtro.getPeriodo().getDe());
 		
 		query.setParameter("dataFinal", filtro.getPeriodo().getAte());
-		
-		query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
 		
 		if(indBuscaTotalParcial) {
 			query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());

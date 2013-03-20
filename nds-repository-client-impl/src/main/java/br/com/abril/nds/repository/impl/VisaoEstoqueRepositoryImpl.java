@@ -14,7 +14,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.VisaoEstoqueRepository;
-import br.com.abril.nds.util.StringUtil;
+import br.com.abril.nds.util.QueryUtil;
 
 @Repository
 public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
@@ -142,6 +142,42 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		return dto;
 	}
 
+	public Query queryObterVisaoEstoqueDetalhe(Boolean isCount, String coluna, StringBuilder hql, FiltroConsultaVisaoEstoque filtro) {
+		
+		hql.append("   FROM EstoqueProduto as ep ")
+				.append("   JOIN ep.produtoEdicao as pe ")
+				.append("   JOIN pe.lancamentos as lan ");
+		
+		if (filtro.getIdFornecedor() != -1) {
+			hql.append("   JOIN pe.produto.fornecedores f ");
+		}
+		
+		hql.append("  WHERE ep." + coluna + " > 0 ");
+		
+		if (filtro.getIdFornecedor() != -1) {
+			hql.append("    AND f.id = :idFornecedor ");
+		}
+		
+		
+		
+		if(!isCount) {
+			hql.append(" group by pe.id ");
+			QueryUtil.addOrderBy(hql, filtro.getPaginacao(), 
+				"codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if(!isCount) 
+			QueryUtil.addPaginacao(query, filtro.getPaginacao());
+		
+		if (filtro.getIdFornecedor() != -1) {
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		return query;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VisaoEstoqueDetalheDTO> obterVisaoEstoqueDetalhe(
@@ -162,39 +198,62 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				.append("       ,lan.dataLancamentoDistribuidor as lcto")
 				.append("       ,lan.dataRecolhimentoDistribuidor as rclto")
 				.append("		,(pe.precoVenda * ep." + coluna + ") as valor ")
-				.append("       ,ep." + coluna + " as qtde")
-				.append("   FROM EstoqueProduto as ep ")
-				.append("   JOIN ep.produtoEdicao as pe ")
-				.append("   JOIN pe.lancamentos as lan ");
-
-		if (filtro.getIdFornecedor() != -1) {
-			hql.append("   JOIN pe.produto.fornecedores f ");
-		}
-
-		hql.append("  WHERE ep." + coluna + " > 0 ");
-
-		if (filtro.getIdFornecedor() != -1) {
-			hql.append("    AND f.id = :idFornecedor ");
-		}
+				.append("       ,ep." + coluna + " as qtde");
 		
-		hql.append(" group by pe.id ");
-		
-		if (filtro.getPaginacao() != null && !StringUtil.isEmpty(filtro.getPaginacao().getSortColumn())) {
-			hql.append("order by ")
-					.append(filtro.getPaginacao().getSortColumn()).append(" ")
-					.append(filtro.getPaginacao().getSortOrder());
-		}
-
-		Query query = this.getSession().createQuery(hql.toString());
-
-		if (filtro.getIdFornecedor() != -1) {
-			query.setParameter("idFornecedor", filtro.getIdFornecedor());
-		}
+		Query query = queryObterVisaoEstoqueDetalhe(false,coluna, hql, filtro);
 
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				VisaoEstoqueDetalheDTO.class));
 
 		return query.list();
+	}
+	
+	@Override
+	public Long obterCountVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
+
+		String coluna = this.getColunaQtde(filtro.getTipoEstoque());
+
+		StringBuilder hql = new StringBuilder(" SELECT count(distinct pe.id) ");
+		
+		Query query = queryObterVisaoEstoqueDetalhe(true, coluna, hql, filtro);
+		
+		return (Long) query.uniqueResult();
+	}
+	
+	public Query queryObterVisaoEstoqueDetalheHistorico(Boolean isCount, String coluna, StringBuilder hql, FiltroConsultaVisaoEstoque filtro) {
+		
+		hql.append("   FROM HistoricoEstoqueProduto as ep ")
+				.append("   JOIN ep.produtoEdicao as pe ")
+				.append("   JOIN pe.produto as pr ")
+				.append("   JOIN pe.lancamentos as lan ");
+		
+		if (filtro.getIdFornecedor() != -1) {
+			hql.append("   JOIN pr.fornecedores f ");
+		}
+		
+		hql.append("  WHERE ep." + coluna + " > 0 ");
+		hql.append("    AND ep.data = :data ");
+		
+		if (filtro.getIdFornecedor() != -1) {
+			hql.append("    AND f.id = :idFornecedor ");
+		}
+		
+		if(!isCount)
+			QueryUtil.addOrderBy(hql, filtro.getPaginacao(), 
+				"codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if(!isCount) 
+			QueryUtil.addPaginacao(query, filtro.getPaginacao());
+		
+		query.setDate("data", filtro.getDataMovimentacao());
+		
+		if (filtro.getIdFornecedor() != -1) {
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+
+		return query;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -212,42 +271,64 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				.append("       ,pe.precoVenda as precoCapa")
 				.append("       ,lan.dataLancamentoDistribuidor as lcto")
 				.append("       ,lan.dataRecolhimentoDistribuidor as rclto")
-				.append("       ,ep." + coluna + " as qtde")
-				.append("   FROM HistoricoEstoqueProduto as ep ")
-				.append("   JOIN ep.produtoEdicao as pe ")
-				.append("   JOIN pe.produto as pr ")
-				.append("   JOIN pe.lancamentos as lan ");
-
-		if (filtro.getIdFornecedor() != -1) {
-			hql.append("   JOIN pr.fornecedores f ");
-		}
-
-		hql.append("  WHERE ep." + coluna + " > 0 ");
-		hql.append("    AND ep.data = :data ");
-
-		if (filtro.getIdFornecedor() != -1) {
-			hql.append("    AND f.id = :idFornecedor ");
-		}
+				.append("       ,ep." + coluna + " as qtde");
 		
-		if (!StringUtil.isEmpty(filtro.getPaginacao().getSortColumn())) {
-			hql.append("order by ")
-					.append(filtro.getPaginacao().getSortColumn()).append(" ")
-					.append(filtro.getPaginacao().getSortOrder());
-		}
-
-		Query query = this.getSession().createQuery(hql.toString());
-
-		query.setDate("data", filtro.getDataMovimentacao());
-		if (filtro.getIdFornecedor() != -1) {
-			query.setParameter("idFornecedor", filtro.getIdFornecedor());
-		}
-
+		Query query = queryObterVisaoEstoqueDetalheHistorico(false, coluna,hql,filtro);
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				VisaoEstoqueDetalheDTO.class));
 
 		return query.list();
 	}
+	
 
+	@Override
+	public Long obterCountVisaoEstoqueDetalheHistorico(
+			FiltroConsultaVisaoEstoque filtro) {
+		
+		String coluna = this.getColunaQtde(filtro.getTipoEstoque());
+
+		StringBuilder hql = new StringBuilder(" SELECT count(pe.id) ");
+		
+		Query query = queryObterVisaoEstoqueDetalheHistorico(true, coluna,hql,filtro);
+		
+		return (Long) query.uniqueResult();
+	}
+
+	public Query queryObterVisaoEstoqueDetalheJuramentado(Boolean isCount, StringBuilder hql, FiltroConsultaVisaoEstoque filtro) {
+		
+		hql.append("   FROM EstoqueProdutoCotaJuramentado as ep ")
+				.append("   JOIN ep.cota as co ")
+				.append("   JOIN co.pessoa as pess ")
+				.append("   JOIN ep.produtoEdicao as pe ")
+				.append("   JOIN pe.produto as pr ")
+				.append("   JOIN pe.lancamentos as lan ");
+		if (filtro.getIdFornecedor() != -1) {
+			hql.append("   JOIN pr.fornecedores f ");
+		}
+		hql.append("  WHERE ep.qtde > 0 ");
+		hql.append("    AND ep.data = :data ");
+		if (filtro.getIdFornecedor() != -1) {
+			hql.append("    AND f.id = :idFornecedor ");
+		}
+		
+		if(!isCount)
+			QueryUtil.addOrderBy(hql, filtro.getPaginacao(), 
+				"codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if(!isCount) 
+			QueryUtil.addPaginacao(query, filtro.getPaginacao());
+		
+		query.setDate("data", filtro.getDataMovimentacao());
+		if (filtro.getIdFornecedor() != -1) {
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		return query;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VisaoEstoqueDetalheJuramentadoDTO> obterVisaoEstoqueDetalheJuramentado(
@@ -263,39 +344,27 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				.append("       ,pe.precoVenda as precoCapa")
 				.append("       ,lan.dataLancamentoDistribuidor as lcto")
 				.append("       ,lan.dataRecolhimentoDistribuidor as rclto")
-				.append("       ,ep.qtde as qtde")
-				.append("   FROM EstoqueProdutoCotaJuramentado as ep ")
-				.append("   JOIN ep.cota as co ")
-				.append("   JOIN co.pessoa as pess ")
-				.append("   JOIN ep.produtoEdicao as pe ")
-				.append("   JOIN pe.produto as pr ")
-				.append("   JOIN pe.lancamentos as lan ");
-		if (filtro.getIdFornecedor() != -1) {
-			hql.append("   JOIN pr.fornecedores f ");
-		}
-		hql.append("  WHERE ep.qtde > 0 ");
-		hql.append("    AND ep.data = :data ");
-		if (filtro.getIdFornecedor() != -1) {
-			hql.append("    AND f.id = :idFornecedor ");
-		}
-
-		if (!StringUtil.isEmpty(filtro.getPaginacao().getSortColumn())) {
-			hql.append("order by ")
-					.append(filtro.getPaginacao().getSortColumn()).append(" ")
-					.append(filtro.getPaginacao().getSortOrder());
-		}
-		Query query = this.getSession().createQuery(hql.toString());
-
-		query.setDate("data", filtro.getDataMovimentacao());
-		if (filtro.getIdFornecedor() != -1) {
-			query.setParameter("idFornecedor", filtro.getIdFornecedor());
-		}
-
+				.append("       ,ep.qtde as qtde");
+		
+		Query query = queryObterVisaoEstoqueDetalheJuramentado(false, hql, filtro);
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				VisaoEstoqueDetalheJuramentadoDTO.class));
-
+		
 		return query.list();
 	}
+	
+	@Override
+	public Long obterCountVisaoEstoqueDetalheJuramentado(
+			FiltroConsultaVisaoEstoque filtro) {
+		
+		StringBuilder hql = new StringBuilder(" SELECT count(co.id) ");
+		
+		Query query = queryObterVisaoEstoqueDetalheJuramentado(true, hql, filtro);
+		
+		return (Long) query.uniqueResult();
+	}
+
 
 	private String getColunaQtde(String tipoEstoque) {
 
