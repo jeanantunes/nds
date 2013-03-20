@@ -76,7 +76,7 @@ $(document).ready(function(){
 		    }
 		}else{
 			
-			//Navegação pelas abas por CTRL+TAB
+			//Navegação pelas abas por CTRL+(Seta Esquerda | Direita)
 			
 			var refTabs = $("li", $('.ui-tabs-nav'));
 			var qtdAbasAbertas =  $('.ui-corner-top').size()
@@ -123,7 +123,6 @@ $(document).ready(function(){
 	
 	//Foco primeiro campo ao carregar aba 
 //	$("#workspace").bind('focus',function(){
-//		alert("Passou")
 //		focusFirstContentView(document);
 //	});
 });
@@ -487,11 +486,11 @@ function onlyNumeric(event){
 }
 
 function focusSelectRefField(objectField){
-	setTimeout (function () {objectField.focus();objectField.select();}, 1);
+	setTimeout (function () {objectField.focus();objectField.select()}, 500);
 }
 
 function focusFirstContentView(context){
-	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus();}, 1);
+	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus()}, 1);
 }
 
 function focusFirstContentModal(){
@@ -513,4 +512,8 @@ function keyEventEnterAux(e){
 	}
 	
 	return false;
+}
+
+function visibleOverlay(){
+	return $("div.ui-widget-overlay").val()=="";
 }

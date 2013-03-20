@@ -99,7 +99,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).keypress(function(e) {
 			
-			if(e.keyCode == 13) {
+			if(e.keyCode == 13 && !visibleOverlay()) {
 				
 				ConferenciaEncalhe.pesquisarCota();
 			}
@@ -443,14 +443,19 @@ var ConferenciaEncalhe = $.extend(true, {
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
 							
 							ConferenciaEncalhe.modalAberta = false;
-							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 							
+							$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 						}
 					},
 					form: $("#dialog-reabertura", this.workspace).parents("form"),
 					close : function(){
 						
-						focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+						var refCampoCEJornaleiro = $("span.dadosFiltro").find("input:text");
+						if(refCampoCEJornaleiro.val()==undefined){
+							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+						}else{
+							focusSelectRefField(refCampoCEJornaleiro);
+						}
 					}					
 				});
 				
