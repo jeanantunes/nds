@@ -11,7 +11,7 @@ import br.com.abril.nds.util.upload.XlsUploaderUtils;
 public class UploaderXlsUtilTest {
 
 	public static void main(String[] args) throws URISyntaxException {
-		
+
 		URL url = ClassLoader.getSystemResource("test.xlsx");
 		List<KeyValue> list = XlsUploaderUtils.returnKeyValueFromXls(new File(url.toURI()));
 		

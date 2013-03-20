@@ -185,10 +185,10 @@ $(function(){
 					<td>Período:</td>
 							 <tr>
 								<td width="100">
-									<input name="periodo1" id="dataInicio" type="text" value="${dataAtual}" style="width: 60px;"/>
+									<input name="periodo1" id="dataInicio" type="text" value="${dataAtual}" style="width: 70px;"/>
 								<td width="100">
 									Até: 
-									<input name="periodo2" id="dataFim" type="text" value="${dataAtual}" style="width: 60px;"/>
+									<input name="periodo2" id="dataFim" type="text" value="${dataAtual}" style="width: 70px;"/>
 								</td>
 							</tr>
 				</tr>
@@ -292,10 +292,10 @@ $(function(){
 					<td>Período:</td>
 							 <tr>
 								<td width="100">
-									<input name="periodo1" id="dataInicioEditar" type="text" value="${dataAtual}" style="width: 60px;"/>
+									<input name="periodo1" id="dataInicioEditar" type="text" value="${dataAtual}" style="width: 70px;"/>
 								<td width="100">
 									Até: 
-									<input name="periodo2" id="dataFimEditar" type="text" value="${dataAtual}" style="width: 60px;"/>
+									<input name="periodo2" id="dataFimEditar" type="text" value="${dataAtual}" style="width: 70px;"/>
 								</td>
 							</tr>
 				</tr>

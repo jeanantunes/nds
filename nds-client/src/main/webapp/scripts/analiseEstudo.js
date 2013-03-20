@@ -98,8 +98,10 @@ init : function() {
 		
 		$(".estudosGrid", this.workspace).flexOptions({url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
 			params: data});
+		
 		$(".estudosGrid", this.workspace).flexReload();	
 	}
+	
 	
 	}, BaseController);
 //@ sourceURL=analiseEstudo.js
