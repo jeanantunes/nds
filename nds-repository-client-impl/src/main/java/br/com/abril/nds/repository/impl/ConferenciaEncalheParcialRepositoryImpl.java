@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -205,11 +207,10 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 	private StringBuffer getSubQueryMovimentoEstoqueCota() {
 		
 		StringBuffer hqlMovimentoEstoqueCota = new StringBuffer("")
-		.append(" ( select sum(movimento.qtde) 								")
-		.append(" from MovimentoEstoqueCota movimento						")
-		.append(" where 													")
-		.append(" movimento.produtoEdicao.id = parcial.produtoEdicao.id and ")
-		.append(" movimento.data = parcial.dataMovimento )  				");
+		.append(" ( select sum(estoque.qtde + estoque.qtdeSuplementar + estoque.qtdeDevolucaoEncalhe) ")
+		.append(" from EstoqueProduto estoque		")
+		.append(" where ")
+		.append(" estoque.produtoEdicao.id = parcial.produtoEdicao.id ) ");
 		
 		return hqlMovimentoEstoqueCota;
 		

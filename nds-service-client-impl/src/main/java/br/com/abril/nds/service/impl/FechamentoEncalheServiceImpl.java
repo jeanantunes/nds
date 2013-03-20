@@ -596,8 +596,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				gerarMovimentoFaltasSobras(item,usuario);
 				
-				//TODO hoje está sendo atualizado na conferencia de encalhe, ver com cesar onde ficara a geração desses movimentos
-				//gerarMovimentoEstoqueEntradaDistribuidor(item,usuario);
+				//TODO: se o produto for parcial e nao juramentado 
+				//mover o a qtdeEstoqueEncalhe de para qtde (do estoque do distribuidor)
+				
 			}
 		}
 		
