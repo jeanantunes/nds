@@ -32,8 +32,10 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private BigInteger venda;
 
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
 	private BigDecimal precoCapa;
+	
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
+	private String precoCapaFormatado;
 
 	private BigDecimal valorVenda;
 
@@ -42,31 +44,18 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 	
 	@Export(label = "Valor Venda R$", alignment = Alignment.RIGHT, exhibitionOrder = 9)
 	private String valorVendaFormatado;
-	
-	private Boolean tipo;
-	
+		
 	private String tipoFormatado;
 	
 	private Long idCota;
 	
 	private Long idProdutoEdicao;
 	
+	private Long idItemCeIntegracao;
+	
 	@Export(label = "Tipo", alignment = Alignment.CENTER, exhibitionOrder = 5)
 	public String getTipoFormatado() {
 		return tipoFormatado;
-	}
-
-	public Boolean getTipo() {
-		return tipo;
-	}
-	
-	public void setTipo(Boolean tipo) {
-		this.tipo = tipo;
-		if(tipo){
-			tipoFormatado = "Final";
-		}else{
-			tipoFormatado = "Parcial";
-		}
 	}
 
 	public Long getSequencial() {
@@ -123,6 +112,7 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 
 	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
+		this.precoCapaFormatado = CurrencyUtil.formatarValor(precoCapa);
 	}
 
 	public BigDecimal getValorVenda() {
@@ -162,4 +152,15 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
+	public String getPrecoCapaFormatado() {
+		return precoCapaFormatado;
+	}
+
+	public Long getIdItemCeIntegracao() {
+		return idItemCeIntegracao;
+	}
+
+	public void setIdItemCeIntegracao(Long idItemCeIntegracao) {
+		this.idItemCeIntegracao = idItemCeIntegracao;
+	}
 }

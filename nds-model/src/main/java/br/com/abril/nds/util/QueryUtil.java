@@ -10,7 +10,7 @@ public class QueryUtil {
 
     public static void addPaginacao(Query query, PaginacaoVO paginacaoVO) {
     	
-    	if( paginacaoVO != null ) {
+    	if( paginacaoVO != null && paginacaoVO.getQtdResultadosPorPagina()!=null && paginacaoVO.getPosicaoInicial()!=null) {
 			query.setFirstResult(paginacaoVO.getPosicaoInicial());
 			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
 		}
