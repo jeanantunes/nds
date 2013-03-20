@@ -37,6 +37,7 @@ var gruposPermissaoController = $.extend(true, {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						var self = this;
 						
 						var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serializeObject();
 						//var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serialize();
@@ -60,11 +61,12 @@ var gruposPermissaoController = $.extend(true, {
 							}
 
 							$("#effect").show("highlight", {}, 1000, callback);
+							$( self ).dialog("close");
 							$(".gruposGrid", gruposPermissaoController.workspace).flexReload();
 
 						}, null, true);
 
-						$( this ).dialog("close");
+						
 
 					},
 					"Cancelar": function() {
@@ -98,6 +100,7 @@ var gruposPermissaoController = $.extend(true, {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						var self = this;
 						$.getJSON(
 								gruposPermissaoController.path + "/excluirGrupoPermissao",
 								{codigoGrupo:codigoGrupo}, 
@@ -110,14 +113,14 @@ var gruposPermissaoController = $.extend(true, {
 										exibirMensagemDialog(tipoMensagem, listaMensagens, "dialog-excluir_grupo");
 									}
 
+									$( self ).dialog( "close" );
 									$("#effect").show("highlight", {}, 1000, callback);
 									$(".gruposGrid", gruposPermissaoController.workspace).flexReload();
 
 								}
 							);
 
-						$( this ).dialog( "close" );
-						$("#effect").show("highlight", {}, 1000, callback);
+						
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );

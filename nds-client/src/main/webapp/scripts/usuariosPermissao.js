@@ -151,6 +151,7 @@ var usuariosPermissaoController = $.extend(true, {
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						var self = this;
 						var obj = $("#novo_usuario_form", usuariosPermissaoController.workspace).serializeObject();
 						
 						var permissoes = new Array();
@@ -177,15 +178,13 @@ var usuariosPermissaoController = $.extend(true, {
 							if(tipoMensagem && listaMensagens) {
 								exibirMensagem(tipoMensagem, listaMensagens);
 							}
-							
-							console.log(tipoMensagem);
 
-							$("#effect").show("highlight", {}, 1000, callback);
+							$( self ).dialog("close");
 							$(".usuariosGrid", usuariosPermissaoController.workspace).flexReload();
 
 						}, null, true);
 
-						$( this ).dialog("close");
+						
 					},
 					
 					"Cancelar": function() {
