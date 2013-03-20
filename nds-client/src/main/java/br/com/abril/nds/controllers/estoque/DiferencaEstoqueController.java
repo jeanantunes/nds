@@ -174,7 +174,7 @@ public class DiferencaEstoqueController extends BaseController {
 
 			Date dataLancamento = null;
 
-			StatusAprovacao statusAprovacao = null;
+			String descricaoStatusAprovacao = null;
 			
 			String motivo = null;
 			
@@ -183,7 +183,7 @@ public class DiferencaEstoqueController extends BaseController {
 				
 				dataLancamento = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
 				
-				statusAprovacao = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatus();
+				descricaoStatusAprovacao = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatus().getDescricaoAbreviada();
 				
 				motivo = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getMotivo();
 			}
@@ -217,8 +217,7 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
 			
-			consultaDiferencaVO.setStatusAprovacao(
-				statusAprovacao.getDescricaoAbreviada());
+			consultaDiferencaVO.setStatusAprovacao(descricaoStatusAprovacao);
 			
 			consultaDiferencaVO.setMotivoAprovacao(motivo);
 			
