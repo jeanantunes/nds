@@ -44,9 +44,11 @@ public class FollowupChamadaoRepositoryImpl  extends AbstractRepositoryModel<Con
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupChamadaoDTO.class));
-
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		}
 		
 		return query.list();
 		
