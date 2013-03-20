@@ -1008,12 +1008,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" WHERE ESTOQUE_PROD.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ) as qtdDevolucao, ");
 			
 			if(indBuscaTotalParcial) {
-
 				sql.append(" ( ");
 				sql.append(" SELECT SUM(PARCIAL.QTDE) ");
 				sql.append(" FROM CONFERENCIA_ENC_PARCIAL PARCIAL ");
-				sql.append(" WHERE PARCIAL.DATA_MOVIMENTO BETWEEN :dataInicial AND :dataFinal AND ");  
-				sql.append(" PROD_EDICAO.ID = PARCIAL.PRODUTOEDICAO_ID AND  ");
+				sql.append(" WHERE PROD_EDICAO.ID = PARCIAL.PRODUTOEDICAO_ID AND  ");
 				sql.append(" PARCIAL.STATUS_APROVACAO = :statusAprovacao  ");
 				sql.append(" ) AS qtdNota, ");
 				
