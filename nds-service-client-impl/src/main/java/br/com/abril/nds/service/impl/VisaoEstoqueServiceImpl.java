@@ -121,17 +121,29 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 				list = visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);
 			}
 		}
-		
-		for (VisaoEstoqueDetalheDTO dto: list) {
-			
-			if (dto.getPrecoCapa() == null || dto.getQtde() == null) {
 				
-				continue;
-			}
+		return list;
+	}
+	
+	@Override
+	@Transactional
+	public Long obterCountVisaoEstoqueDetalhe(FiltroConsultaVisaoEstoque filtro) {
+		
+		
+
+		if (filtro.getTipoEstoque().equals(TipoEstoque.LANCAMENTO_JURAMENTADO.toString())) {
+			return visaoEstoqueRepository.obterCountVisaoEstoqueDetalheJuramentado(filtro);
+		} else {
 			
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			
+			if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
+				return visaoEstoqueRepository.obterCountVisaoEstoqueDetalhe(filtro);
+			} else {
+				return visaoEstoqueRepository.obterCountVisaoEstoqueDetalheHistorico(filtro);
+			}
 		}
 		
-		return list;
 	}
 	
 	@Override
@@ -244,4 +256,5 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque);
 		}
 	}
+
 }

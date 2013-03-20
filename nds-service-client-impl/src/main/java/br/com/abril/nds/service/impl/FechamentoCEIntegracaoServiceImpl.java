@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,11 +100,13 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Transactional(readOnly=true)
 	public FechamentoCEIntegracaoVO construirFechamentoCEIntegracaoVO(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
-		List<FechamentoCEIntegracaoDTO> listaFechamento = this.buscarFechamentoEncalhe(filtro);
+		BigInteger qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
 		
-		if(listaFechamento.size() == 0){
+		if(qntItens.compareTo(BigInteger.ZERO) == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
+		
+		List<FechamentoCEIntegracaoDTO> listaFechamento = this.buscarFechamentoEncalhe(filtro);
 		
 		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>>();
 
@@ -111,14 +114,14 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(listaFechamento.size());
+		tableModel.setTotal(qntItens.intValue());
 		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = new FechamentoCEIntegracaoVO();
 
 		FechamentoCEIntegracaoConsolidadoDTO totalFechamento = this.buscarFechamentoEncalheTotal(filtro);
 		fechamentoCEIntegracaoVO.setTotalBruto(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto()));
 		fechamentoCEIntegracaoVO.setTotalDesconto(CurrencyUtil.formatarValor(totalFechamento.getTotalDesconto()));
-		fechamentoCEIntegracaoVO.setTotalLiquido(CurrencyUtil.formatarValor(totalFechamento.getTotalLiquido()));
+		fechamentoCEIntegracaoVO.setTotalLiquido(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto().subtract(totalFechamento.getTotalDesconto())));
 
 		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
 		fechamentoCEIntegracaoVO.setSemanaFechada(this.verificarStatusSemana(filtro));
