@@ -32,8 +32,10 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 	@Export(label = "Venda", alignment = Alignment.CENTER, exhibitionOrder = 6)
 	private BigInteger venda;
 
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
 	private BigDecimal precoCapa;
+	
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, exhibitionOrder = 7)
+	private String precoCapaFormatado;
 
 	private BigDecimal valorVenda;
 
@@ -123,6 +125,7 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 
 	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
+		this.precoCapaFormatado = CurrencyUtil.formatarValor(precoCapa);
 	}
 
 	public BigDecimal getValorVenda() {
@@ -162,4 +165,8 @@ public class FechamentoCEIntegracaoDTO implements Serializable {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
+	public String getPrecoCapaFormatado() {
+		return precoCapaFormatado;
+	}
+	
 }
