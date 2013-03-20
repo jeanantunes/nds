@@ -1080,7 +1080,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" produto.NOME as nomeProduto, ");
 		sql.append(" produto.PERIODICIDADE as periodicidadeProduto, ");
 		
-		sql.append(" ( ");
+		sql.append(" (coalesce(estoqueProduto.QTDE,0) + coalesce(estoqueProduto.QTDE_SUPLEMENTAR,0)) ");
+		
+		/*
 		sql.append(" 	select sum(itemRecebFisico.QTDE_FISICO) ");
 		sql.append(" 		from RECEBIMENTO_FISICO recebimentoFisico ");
 		sql.append(" 		inner join ");
@@ -1090,7 +1092,8 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 			LANCAMENTO_ITEM_RECEB_FISICO lancamentoItemRecebFisico ");
 		sql.append(" 			on itemRecebFisico.ID = lancamentoItemRecebFisico.RECEBIMENTOS_ID ");
 		sql.append(" 		where lancamentoItemRecebFisico.LANCAMENTO_ID = lancamento.ID ");
-		sql.append(" ) as reparteFisico, ");
+		*/
+		sql.append(" as reparteFisico, ");
 		
 		sql.append(" case when ( ");
 		sql.append(" 	select recebimentoFisico.ID ");
@@ -1136,6 +1139,8 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" inner join ");
 		sql.append(" PRODUTO_EDICAO produtoEdicao ");
 		sql.append(" on lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		sql.append(" inner join ESTOQUE_PRODUTO estoqueProduto ");
+		sql.append(" on estoqueProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto ");
 		sql.append(" on produtoEdicao.PRODUTO_ID = produto.ID ");

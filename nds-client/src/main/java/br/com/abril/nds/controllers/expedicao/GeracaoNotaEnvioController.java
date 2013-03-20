@@ -35,6 +35,7 @@ import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -114,6 +115,12 @@ public class GeracaoNotaEnvioController extends BaseController {
 		}
 		
 		result.include("rotas", listRota);
+	}
+	
+	@Post
+	public void obterDataDistribuidor(){
+		
+		this.result.use(Results.json()).from(DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()), "result").recursive().serialize();
 	}
 	
 	@Post
