@@ -50,4 +50,5 @@ public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 	public void setIdTipoClassificacaoProduto(Long idTipoClassificacaoProduto) {
 		this.idTipoClassificacaoProduto = idTipoClassificacaoProduto;
 	}
+
 }

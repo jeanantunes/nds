@@ -1054,8 +1054,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			totalGeralDTO.setPartReparte(totalGeralDTO.getPartReparte().add(obj.getPartReparte()).setScale(2,BigDecimal.ROUND_FLOOR));
 			totalGeralDTO.setPartVenda(totalGeralDTO.getPartVenda().add(obj.getPartVenda()).setScale(2,BigDecimal.ROUND_FLOOR));
 			totalGeralDTO.setQtdeCotas(totalGeralDTO.getQtdeCotas().add(obj.getQtdeCotas()));
-			totalGeralDTO.setCotasEsmagadas(totalGeralDTO.getCotasEsmagadas().add(obj.getCotasEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setQtdeCotasSemVenda((totalGeralDTO.getQtdeCotasSemVenda().add(obj.getQtdeCotasSemVenda()).setScale(2,BigDecimal.ROUND_FLOOR)));
+			
+			if(obj.getCotasEsmagadas()!=null){
+				totalGeralDTO.setCotasEsmagadas(totalGeralDTO.getCotasEsmagadas().add(obj.getCotasEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR));
+			}
+			
+			if(obj.getQtdeCotasSemVenda()!=null){
+				totalGeralDTO.setQtdeCotasSemVenda((totalGeralDTO.getQtdeCotasSemVenda().add(obj.getQtdeCotasSemVenda()).setScale(2,BigDecimal.ROUND_FLOOR)));
+			}
 			totalGeralDTO.setVendaEsmagadas((totalGeralDTO.getVendaEsmagadas().add(obj.getVendaEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR)));
 //			totalGeralDTO.setReparteDistribuido((totalGeralDTO.getReparteDistribuido().add(obj.getReparteDistribuido()).setScale(2,BigDecimal.ROUND_FLOOR)));
 			

@@ -1103,7 +1103,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) {
+			Usuario usuario,
+			boolean indConferenciaContingencia) {
 		
 		if(	controleConfEncalheCota.getId() != null) {
 			
@@ -1124,7 +1125,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		controleConfEncalheCota = 
 				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, 
-						listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO);
+						listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO, indConferenciaContingencia);
 		
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
 				//conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
@@ -1310,6 +1311,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param listaIdConferenciaEncalheParaExclusao
 	 * @param usuario
 	 * @param statusOperacao
+	 * @param indConferenciaContingencia
 	 * 
 	 * @return ControleConferenciaEncalheCota
 	 */
@@ -1318,7 +1320,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
-			StatusOperacao statusOperacao) {
+			StatusOperacao statusOperacao,
+			boolean indConferenciaContingencia) {
 		
 		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item conferido, não é possível realizar a conferência de encalhe.");
@@ -1357,10 +1360,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		for(ConferenciaEncalheDTO conferenciaEncalheDTO : listaConferenciaEncalhe) {
 			
+
 			validarQtdeEncalheExcedeQtdeReparte(
 					conferenciaEncalheDTO,
 					controleConferenciaEncalheCota.getCota().getNumeroCota(), 
 					dataOperacao);
+				
+			
 			
 			if(conferenciaEncalheDTO.getIdConferenciaEncalhe()!=null) {
 
@@ -1831,14 +1837,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
+			Usuario usuario, 
+			boolean indConferenciaContingencia) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
 
 		desfazerCobrancaConferenciaEncalheReaberta(controleConfEncalheCota.getId());
 		
 		//validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
-				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.EM_ANDAMENTO);
+				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.EM_ANDAMENTO, indConferenciaContingencia);
 		
 		return controleConferenciaEncalheCota.getId();
 		
@@ -1875,12 +1882,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param conferenciaEncalhe
 	 * @param numeroCota
 	 * @param dataOperacao
+	 * @param indConferenciaContingencia
 	 */
 	@Transactional
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Integer numeroCota, 
 			Date dataOperacao) {
+		
+		if(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos deve encalhe de ser maior que zero.");
+			
+		}
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		

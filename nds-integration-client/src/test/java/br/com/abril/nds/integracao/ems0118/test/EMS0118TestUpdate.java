@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.integracao.ems0118.route.EMS0118Route;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
 import br.com.abril.nds.integracao.test.RouteNoTransactionTestTemplate;
-import br.com.abril.nds.integracao.test.RouteTestTemplate;
 
 public class EMS0118TestUpdate extends RouteNoTransactionTestTemplate {
 	@Autowired

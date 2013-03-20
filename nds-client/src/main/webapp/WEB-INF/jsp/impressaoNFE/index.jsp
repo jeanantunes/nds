@@ -12,6 +12,27 @@
 
 <body>
 
+
+     <div class="areaBts">
+		<div class="area">
+			<span class="bt_arq">
+			    <a href="javascript:;" onclick="impressaoNfeController.imprimir('XLS');" rel="bandeira">
+			        <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+                </a>
+			</span> 
+			
+			<span class="bt_arq"> 
+				<a href="javascript:;" onclick="impressaoNfeController.imprimir('PDF');">
+				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+			</span>
+		</div>
+	</div>
+    <br/>
+    <br/>
+    <br/>
+
+
 	<div class="container">
 
 		<fieldset class="classFieldset">
@@ -122,18 +143,15 @@
 		<fieldset class="classFieldset">
 			<legend>Impressão NF-e</legend>
 			<div class="grids" style="display: none;">
+			
 				<table class="impressaoGrid"></table>
 
-				<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" onclick="impressaoNfeController.imprimir('XLS');"><img src="images/ico_excel.png"
-						hspace="5" border="0" />Arquivo</a></span> <span class="bt_novos" title="Imprimir">
-				<a href="javascript:;" onclick="impressaoNfeController.imprimir('PDF');">
-					<img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir Documento</a>
-					</span>
 				<span class="bt_sellAll" style="float: right;" id="btSel"><label for="sel">Selecionar Todos</label><input
 					type="checkbox" id="selTodasAsNotas" name="Todos" onclick="impressaoNfeController.checkTodasAsNotas();" style="float: left; margin-right: 30px;" /></span>
 			</div>
 
 		</fieldset>
+		
 		<div class="linha_separa_fields">&nbsp;</div>
 
 		<div id="msgBoxDataMovimentoInvalida" title="Data de Movimento inválida.">
