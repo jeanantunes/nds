@@ -157,16 +157,16 @@ public class DistribuicaoVendaMediaController extends BaseController {
 			dto.setStatusSituacao(lancamento.getStatus());
 		}else{
 			dto.setDataLancamentoFormatada("");
-			dto.setDataRecolhimentoDistribuidorFormatada("");
+			//dto.setDataRecolhimentoDistribuidorFormatada("");
 		}
 		
 		dto.setPrecoVenda(produtoEdicao.getPrecoVenda());
 		dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
 		if(produtoEdicao.getProduto().getTipoSegmentoProduto() != null){
-			dto.setSegmentacao(produtoEdicao.getProduto().getTipoSegmentoProduto().getDescricao());
+//			dto.setSegmentacao(produtoEdicao.getProduto().getTipoSegmentoProduto().getDescricao());
 		}
 		if(produtoEdicao.getProduto().getTipoClassificacaoProduto() != null){
-			dto.setClassificacao(produtoEdicao.getProduto().getTipoClassificacaoProduto().getDescricao());
+//			dto.setClassificacao(produtoEdicao.getProduto().getTipoClassificacaoProduto().getDescricao());
 		}
 		
 		return dto;
