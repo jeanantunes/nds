@@ -49,32 +49,67 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" JOIN prodEdicao.produto as produto ");
 		hql.append(" JOIN produto.tipoClassificacaoProduto as tpClassifProduto ");
 		
-		hql.append(" WHERE estudo.produtoEdicao.id = lancamento.produtoEdicao.id AND ");
-		hql.append(" estudo.id = :NUM_ESTUDO OR ");
-//		hql.append(" prodEdicao.numeroEdicao = :NUM_EDICAO_PRODUTO OR ");
-//		hql.append(" produto.codigo = :COD_PRODUTO OR ");
-		hql.append(" produto.codigo = :COD_PRODUTO ");
-//		hql.append(" produto.nome = :NOME_PRODUTO OR ");
-				
-//		hql.append(" tpClassifProduto.id = :ID_TIPO_CLASS_PRODUTO ");
+		hql.append(" WHERE estudo.produtoEdicao.id = lancamento.produtoEdicao.id ");
+		
+		hql.append(this.getSqlWhereBuscarEstudos(filtro));
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("NUM_ESTUDO", filtro.getNumEstudo());
-		query.setParameter("COD_PRODUTO", filtro.getCodigoProduto());
-//		query.setParameter("NOME_PRODUTO", filtro.getNome());
-//		query.setParameter("NUM_EDICAO_PRODUTO", filtro.getNumeroEdicao());
-//		query.setParameter("ID_TIPO_CLASS_PRODUTO", filtro.getIdTipoClassificacaoProduto());
+		this.paramsDinamicos(query, filtro);
+		
 		query.setParameter("RECOLHIDO", StatusLancamento.RECOLHIDO);
 		query.setParameter("EXPEDIDO", StatusLancamento.EXPEDIDO);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				AnaliseEstudoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseEstudoDTO.class));
 		
 		configurarPaginacao(filtro, query);
 		
 		return query.list();
 		
+	}
+
+	private String getSqlWhereBuscarEstudos(FiltroAnaliseEstudoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		if(filtro.getNumEstudo() !=null && filtro.getNumEstudo() > 0){
+			hql.append(" AND estudo.id = :NUM_ESTUDO ");
+		}
+		if(filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()){
+			hql.append(" AND produto.codigo = :COD_PRODUTO ");
+		}
+		if(filtro.getNome() !=null && !filtro.getNome().isEmpty()){
+			hql.append(" AND produto.nome = :NOME_PRODUTO ");
+		}
+		if(filtro.getNumeroEdicao() !=null && filtro.getNumeroEdicao() > 0){
+			hql.append(" AND prodEdicao.numeroEdicao = :NUM_EDICAO_PRODUTO ");
+		}
+		
+		if(filtro.getIdTipoClassificacaoProduto() !=null && filtro.getIdTipoClassificacaoProduto() > 0){
+			hql.append(" AND tpClassifProduto.id = :ID_TIPO_CLASS_PRODUTO ");
+		}
+		
+		return hql.toString();
+	}
+	
+	private void paramsDinamicos (Query query, FiltroAnaliseEstudoDTO filtro){
+		
+		if(filtro.getNumEstudo() !=null && filtro.getNumEstudo() > 0){
+			query.setParameter("NUM_ESTUDO", filtro.getNumEstudo());
+		}
+		if(filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()){
+			query.setParameter("COD_PRODUTO", filtro.getCodigoProduto());
+		}
+		if(filtro.getNome() !=null && !filtro.getNome().isEmpty()){
+			query.setParameter("NOME_PRODUTO", filtro.getNome());
+		}
+		if(filtro.getNumeroEdicao() !=null && filtro.getNumeroEdicao() > 0){
+			query.setParameter("NUM_EDICAO_PRODUTO", filtro.getNumeroEdicao());
+		}
+		
+		if(filtro.getIdTipoClassificacaoProduto() !=null && filtro.getIdTipoClassificacaoProduto() > 0){
+			query.setParameter("ID_TIPO_CLASS_PRODUTO", filtro.getIdTipoClassificacaoProduto());
+		}
 	}
 	
 	private void configurarPaginacao(FiltroAnaliseEstudoDTO filtro, Query query) {

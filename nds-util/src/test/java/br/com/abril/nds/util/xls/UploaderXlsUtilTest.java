@@ -11,8 +11,8 @@ import br.com.abril.nds.util.upload.XlsUploaderUtils;
 public class UploaderXlsUtilTest {
 
 	public static void main(String[] args) throws URISyntaxException {
-		
 		URL url = ClassLoader.getSystemResource("test.xls");
+		
 		List<KeyValue> list = XlsUploaderUtils.returnKeyValueFromXls(new File(url.toURI()));
 		
 		System.out.println("## retornando todos os valores que contem a chave cotaID");

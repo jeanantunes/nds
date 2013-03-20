@@ -114,7 +114,7 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : '',
+				display : 'add',
 				name : 'sel',
 				width : 30,
 				sortable : true,
@@ -978,20 +978,45 @@ var regiaoController = $.extend(true, {
 	
 	//FUNCTIONS ADD REGI�O AUTOM�TICA  
 	
-	
 	// FUNCTION - ADD EM LOTE
 	
-	cotaslote : function() {
+	cotasLote : function() {
+		var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
+		
 		$("#dialog-lote").dialog({
 			resizable : false,
-			height : 320,
-			width : 250,
+			height : 250,
+			width : 350,
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
 					$(this).dialog("close");
-					$("#effect").show("highlight", {}, 1000, callback);
-//					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
+					
+					$("#arquivoUpLoad").ajaxSubmit({
+						beforeSubmit: function(arr, formData, options) {
+						},
+						success: function(responseText, statusText, xhr, $form)  { 
+							var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+							var tipoMensagem = mensagens.tipoMensagem;
+							var listaMensagens = mensagens.listaMensagens;
+
+							if (tipoMensagem && listaMensagens) {
+								
+								if (tipoMensagem != 'SUCCESS') {
+									
+									exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+								}
+								$("#dialog-lote").dialog( "close" );
+								regiaoController.cotasDaRegiao();
+								exibirMensagem(tipoMensagem, listaMensagens);	
+							}
+						}, 
+						url:  contextPath + '/distribuicao/regiao/addLote',
+						type: 'POST',
+						dataType: 'json',
+						data: { idRegiao : idRegiaoSelecionada }
+					});
+					
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
