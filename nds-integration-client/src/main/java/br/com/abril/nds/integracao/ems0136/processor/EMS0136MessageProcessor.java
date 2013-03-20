@@ -348,11 +348,13 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		} else {
 			if ( lancamento.getStatus().equals(StatusLancamento.PLANEJADO) || lancamento.getStatus().equals(StatusLancamento.CONFIRMADO) ) {
-				lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
-				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
 				lancamento.setDataLancamentoDistribuidor(dtLancamento);
 				lancamento.setDataLancamentoPrevista(dtLancamento);
+			} else if ( lancamento.getStatus().equals(StatusLancamento.BALANCEADO_RECOLHIMENTO) || lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO) ) {
+				lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
+				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
 			}
+			
 		}
 		
 		/*
