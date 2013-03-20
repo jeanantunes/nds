@@ -106,8 +106,11 @@ public class VisaoEstoqueController extends BaseController {
 		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
+		Long count = visaoEstoqueService.obterCountVisaoEstoqueDetalhe(filtro);
+		
 		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
-		result.use(FlexiGridJson.class).from(listDetalhe).total(listDetalhe.size()).page(page).serialize();
+				
+		result.use(FlexiGridJson.class).from(listDetalhe).total(count.intValue()).page(page).serialize();
 	}
 	
 	
@@ -188,6 +191,8 @@ public class VisaoEstoqueController extends BaseController {
 	public void exportarDetalhe(FileType fileType) throws IOException {
 		
 		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
+		
+		filtro.setPaginacao(new PaginacaoVO());
 		
 		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
 		Class clazz = VisaoEstoqueDetalheDTO.class;

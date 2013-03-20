@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.NullComparator;
+import org.hibernate.Query;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -198,5 +199,5 @@ public class PaginacaoUtil {
 		
 		session.setAttribute(atributoFiltroSessao, filtroAtual);
 	}		
-	
+
 }
