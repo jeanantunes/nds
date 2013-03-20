@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -201,8 +200,6 @@ public class RecebimentoFisicoController extends BaseController {
 			setItensRecebimentoFisicoToSession(new LinkedList<RecebimentoFisicoDTO>());
 		}
 		
-		recarregarValoresCalculados(getItensRecebimentoFisicoFromSession());
-		
 		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
 		
 		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());
@@ -219,23 +216,6 @@ public class RecebimentoFisicoController extends BaseController {
 		tableModel.setPage(1);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
-	}
-	
-	/**
-	 * Recalcula os campos valorTotal e valorDiferenca.
-	 * 
-	 * @param itensRecebimento
-	 */
-	private void recarregarValoresCalculados(List<RecebimentoFisicoDTO> itensRecebimento) {
-		
-		for(RecebimentoFisicoDTO item : itensRecebimento) {
-			
-			carregarValorTotal(item);
-			
-			carregarValorDiferenca(item);
-			
-		}
 		
 	}
 		
@@ -256,8 +236,6 @@ public class RecebimentoFisicoController extends BaseController {
 		}
 		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
-		
-		recarregarValoresCalculados(getItensRecebimentoFisicoFromSession());
 		
 		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());	
 		
@@ -464,7 +442,7 @@ public class RecebimentoFisicoController extends BaseController {
 		String codigo			= recebimentoFisicoDTO.getCodigoProduto();
 		String nomeProduto		= recebimentoFisicoDTO.getNomeProduto();
 		String edicao			= (recebimentoFisicoDTO.getEdicao() 		== null) 	? "" 	: recebimentoFisicoDTO.getEdicao().toString();
-		String precoCapa		= (recebimentoFisicoDTO.getPrecoCapa() 		== null) 	? "0.0" : recebimentoFisicoDTO.getPrecoCapa().toString();
+		String precoItem		= (recebimentoFisicoDTO.getPrecoItem() 		== null) 	? "0.0" : recebimentoFisicoDTO.getPrecoItem().toString();
 		String dataLancamento	= (recebimentoFisicoDTO.getDataLancamento() != null) ? DateUtil.formatarDataPTBR(recebimentoFisicoDTO.getDataLancamento()) : "";
 		String dataRecolhimento = (recebimentoFisicoDTO.getDataRecolhimento() != null) ?  DateUtil.formatarDataPTBR(recebimentoFisicoDTO.getDataRecolhimento()) : "";
 		String repartePrevisto  = (recebimentoFisicoDTO.getRepartePrevisto()!=null) ? recebimentoFisicoDTO.getRepartePrevisto().toString() : "";
@@ -479,7 +457,7 @@ public class RecebimentoFisicoController extends BaseController {
 		recebimentoFisicoVO.setCodigo(codigo);
 		recebimentoFisicoVO.setNomeProduto(nomeProduto);
 		recebimentoFisicoVO.setEdicao(edicao);
-		recebimentoFisicoVO.setPrecoCapa(precoCapa);
+		recebimentoFisicoVO.setPrecoCapa(precoItem);
 		recebimentoFisicoVO.setDataLancamento(dataLancamento);
 		recebimentoFisicoVO.setDataRecolhimento(dataRecolhimento);
 		recebimentoFisicoVO.setRepartePrevisto(repartePrevisto);
@@ -605,23 +583,21 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private void carregarValorTotal(RecebimentoFisicoDTO itemRecebimento) {
 		
-		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
+		BigInteger qtdeExemplares = itemRecebimento.getQtdExemplar() == null ? BigInteger.ZERO : itemRecebimento.getQtdExemplar();
 		
-		BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
+		BigInteger qtdePacote = itemRecebimento.getQtdPacote() == null ? BigInteger.ZERO : itemRecebimento.getQtdPacote();
+		
+		BigInteger qtdePacotePadrao = BigInteger.valueOf(itemRecebimento.getPacotePadrao());
+		
+		BigDecimal precoItem = itemRecebimento.getPrecoItem() == null ? BigDecimal.ZERO :  itemRecebimento.getPrecoItem();
 		
 		BigDecimal valorTotal = new BigDecimal(0.0D);
 		
-		if(qtdRepartePrevisto != null && precoCapa != null) {
-			
-			valorTotal = precoCapa.multiply( new BigDecimal(qtdRepartePrevisto) ) ;
+		BigInteger qtdeTotalItens = qtdePacote.multiply(qtdePacotePadrao).add(qtdeExemplares);
 		
-		}
-		  DecimalFormat df = new DecimalFormat("0.##");
-		  
-		  String dx = df.format(valorTotal);
-		  
-		  itemRecebimento.setValorTotal(new BigDecimal(dx.replace(',' , '.')));
-		
+		valorTotal = precoItem.multiply(new BigDecimal(qtdeTotalItens));
+  
+		itemRecebimento.setValorTotal(valorTotal);
 	}
 		
 	/**
@@ -631,27 +607,23 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private void carregarValorDiferenca(RecebimentoFisicoDTO itemRecebimento) {
 		
-		if(itemRecebimento.getRepartePrevisto() == null) {
+		if (itemRecebimento.getRepartePrevisto() == null) {
+			
 			itemRecebimento.setRepartePrevisto(BigInteger.ZERO);
 		}
-
-		// Realizado em conjunto com Cesar Punk Pop
-		/*if(itemRecebimento.getQtdFisico() == null) {
-			itemRecebimento.setQtdFisico(BigInteger.ZERO);
-		}*/
 
 		BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 		
 		BigInteger qtdFisico = itemRecebimento.getQtdFisico();
 		
-		//BigInteger valorDiferenca = qtdFisico.subtract(qtdRepartePrevisto);
 		BigInteger valorDiferenca = BigInteger.ZERO;
+		
 		if (itemRecebimento.getQtdFisico() != null) {
+			
 			valorDiferenca = qtdFisico.subtract(qtdRepartePrevisto);
 		}
 		
 		itemRecebimento.setDiferenca(valorDiferenca);
-		
 	}
 	
 	/**
@@ -966,7 +938,7 @@ public class RecebimentoFisicoController extends BaseController {
 		int counter = 0;
 		
 		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = new LinkedList<CellModelKeyValue<RecebimentoFisicoVO>>();
-		
+
 		for(RecebimentoFisicoDTO dto : itensRecebimentoFisico) {
 			
 			counter++;
@@ -975,12 +947,16 @@ public class RecebimentoFisicoController extends BaseController {
 		
 			carregarValoresQtdPacoteQtdExemplar(dto);
 			
+			carregarValorTotal(dto);
+			
+			carregarValorDiferenca(dto);
+			
 			RecebimentoFisicoVO recebFisico = new RecebimentoFisicoVO();
 			
 			String codigo 		     	 = dto.getCodigoProduto();
 			String nomeProduto 	     	 = dto.getNomeProduto();
 			String edicao 		     	 = (dto.getEdicao() 			== null) 	? "" 	: dto.getEdicao().toString();
-			String precoCapa 	     	 = (dto.getPrecoCapa() 			== null) 	? "0.0" : dto.getPrecoCapa().toString();
+			String precoItem 	     	 = (dto.getPrecoItem() 			== null) 	? "0.0" : dto.getPrecoItem().toString();
 			String repartePrevisto 	 	 = (dto.getRepartePrevisto() 	== null) 	? "0" : dto.getRepartePrevisto().toString();
 			String qtdPacote			 = (dto.getQtdPacote()			== null) 	? "0"	: dto.getQtdPacote().toString(); 
 			String qtdExemplar			 = (dto.getQtdExemplar()		== null)	? "0"	: dto.getQtdExemplar().toString();
@@ -1016,7 +992,7 @@ public class RecebimentoFisicoController extends BaseController {
 			recebFisico.setCodigo(codigo);
 			recebFisico.setNomeProduto(nomeProduto);
 			recebFisico.setEdicao(edicao);
-			recebFisico.setPrecoCapa(precoCapa);
+			recebFisico.setPrecoCapa(precoItem);
 			recebFisico.setRepartePrevisto(repartePrevisto);
 			recebFisico.setQtdPacote(qtdPacote);
 			recebFisico.setQtdExemplar(qtdExemplar);
@@ -1415,8 +1391,6 @@ public class RecebimentoFisicoController extends BaseController {
 		this.validaCabecalhoNota(nota);
 		this.validaItensNota(itens);
 		
-		boolean indNotaEnvio = nota.getNumeroNotaEnvio() != null;
-		
 		Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(nota.getFornecedor());
 		
 		NotaFiscalEntradaFornecedor notaFiscal = new NotaFiscalEntradaFornecedor();
@@ -1434,15 +1408,7 @@ public class RecebimentoFisicoController extends BaseController {
 		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
         notaFiscal.setValorDesconto(BigDecimal.ZERO);
         
-		
-		if(indNotaEnvio) {
-			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO);
-			notaFiscal.setOrigem(Origem.INTERFACE);
-		} else {
-			notaFiscal.setOrigem(Origem.MANUAL);
-			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
-		}
-		
+        notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		notaFiscal.setEmitente(fornecedor.getJuridica());
 		

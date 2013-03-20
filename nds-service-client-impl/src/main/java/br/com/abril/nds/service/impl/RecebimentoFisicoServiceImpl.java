@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -141,12 +140,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
 			
-			BigDecimal precoCapa = itemRecebimento.getPrecoCapa();
+			BigDecimal precoItem = itemRecebimento.getPrecoItem();
 			
 			BigDecimal valorTotal = new BigDecimal(0.0D);
 			
-			if(qtdRepartePrevisto != null && precoCapa != null) {
-				valorTotal = precoCapa.multiply( BigDecimal.valueOf( qtdRepartePrevisto.longValue() ) );
+			if(qtdRepartePrevisto != null && precoItem != null) {
+				valorTotal = precoItem.multiply( BigDecimal.valueOf( qtdRepartePrevisto.longValue() ) );
 			}
 			
 			itemRecebimento.setValorTotal(valorTotal);
@@ -389,6 +388,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		notaFiscal.setDataRecebimento(new Date());
 		
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		
 		notaFiscalRepository.merge(notaFiscal);
 		
 		RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
@@ -477,26 +478,21 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
 		
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		
 		boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
 		
 		if(indNotaEnvio) {
 
-			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO);
-			
 			notaFiscal.setOrigem(Origem.INTERFACE);
 
 			
 		} else {
-
-			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 			
 			notaFiscal.setOrigem(Origem.MANUAL);
 			
 		}
-		
-		
-		
-		
+
 		notaFiscal.setDataRecebimento(new Date());
 		
 		
@@ -766,8 +762,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		itemNota.setDataLancamento(recebimentoDTO.getDataLancamento());
 		itemNota.setDataRecolhimento(recebimentoDTO.getDataRecolhimento());
 		itemNota.setTipoLancamento(recebimentoDTO.getTipoLancamento());
-		itemNota.setQtde(recebimentoDTO.getRepartePrevisto());
-		itemNota.setPreco(CurrencyUtil.converterValor(recebimentoDTO.getPrecoDesconto()));
+		itemNota.setPreco(new BigDecimal(recebimentoDTO.getPrecoDesconto()));
 		itemNota.setProdutoEdicao(produtoEdicao);
 		itemNota.setUsuario(usuarioLogado);
 		itemNota.setNotaFiscal(notaFiscal);
@@ -814,7 +809,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			itemNotaFiscalEntrada.setDataLancamento(recebimentoDTO.getDataLancamento());
 			itemNotaFiscalEntrada.setDataRecolhimento(recebimentoDTO.getDataRecolhimento());
 			itemNotaFiscalEntrada.setTipoLancamento(recebimentoDTO.getTipoLancamento());
-			itemNotaFiscalEntrada.setQtde(recebimentoDTO.getRepartePrevisto());
 			itemNotaFiscalEntrada.setProdutoEdicao(produtoEdicao);
 			itemNotaFiscalEntrada.setUsuario(usuarioLogado);
 			itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
@@ -847,21 +841,13 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			RecebimentoFisico recebimentoFisico) {
 		
 		ItemRecebimentoFisico itemRecebimento = new ItemRecebimentoFisico();
-		
-		if(Origem.MANUAL.equals(recebimentoDTO.getOrigemItemNota())) {
+
+		BigInteger qtdFisico = obterQtdRecebimentoFisicoPorQtdPacoteQtdExemplar(
+				recebimentoDTO.getPacotePadrao(), 
+				recebimentoDTO.getQtdPacote(), 
+				recebimentoDTO.getQtdExemplar());
 			
-			itemRecebimento.setQtdeFisico(recebimentoDTO.getRepartePrevisto());
-			
-		} else {
-			
-			BigInteger qtdFisico = obterQtdRecebimentoFisicoPorQtdPacoteQtdExemplar(
-					recebimentoDTO.getPacotePadrao(), 
-					recebimentoDTO.getQtdPacote(), 
-					recebimentoDTO.getQtdExemplar());
-			
-			itemRecebimento.setQtdeFisico(qtdFisico);
-			
-		}
+		itemRecebimento.setQtdeFisico(qtdFisico);
 		
 		itemRecebimento.setItemNotaFiscal(itemNotaFiscal);
 		
@@ -1000,7 +986,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
             recebimentoFisicoDTO.setRepartePrevisto(
             	produtoEdicao.getReparteDistribuido());
-		
+            
+            recebimentoFisicoDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+            
 		} else {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A [Edição] informada não existe para este [Produto].");
