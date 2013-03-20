@@ -41,12 +41,14 @@ public class FollowupStatusCotaRepositoryImpl  extends AbstractRepositoryModel<C
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupStatusCotaDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());			
+		}
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());			
-		 
 		return query.list();
 	}
 	
@@ -62,11 +64,12 @@ public class FollowupStatusCotaRepositoryImpl  extends AbstractRepositoryModel<C
 		return hql.toString();
 	}
 
-	private Object getOrderByStatusCota(FiltroFollowupStatusCotaDTO filtro) {
+	private String getOrderByStatusCota(FiltroFollowupStatusCotaDTO filtro) {
 		
 		if(filtro.getPaginacao() == null || filtro.getPaginacao().getSortColumn() == null){
 			return "";
 		}
+		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" order by cota.numeroCota ");

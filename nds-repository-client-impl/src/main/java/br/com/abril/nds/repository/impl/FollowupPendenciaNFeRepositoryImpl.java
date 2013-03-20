@@ -42,12 +42,14 @@ public class FollowupPendenciaNFeRepositoryImpl extends AbstractRepositoryModel<
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupPendenciaNFeDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());			
+		}
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());			
-		 
 		return query.list();
 	}
 	

@@ -57,11 +57,14 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		if(filtro.getPaginacao() != null) {
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -94,11 +97,13 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao() != null){
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -128,11 +133,14 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		if(filtro.getPaginacao() != null) {
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -164,11 +172,13 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -192,11 +202,14 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao() != null) {
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
@@ -228,11 +241,13 @@ public class FollowupCadastroRepositoryImpl extends AbstractRepositoryModel<Cota
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaFollowupCadastroDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 	}
