@@ -29,6 +29,7 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.NotaFiscal;
@@ -1043,7 +1044,9 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private void carregarComboFornecedor() {
 		
-		List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresAtivos();
+		List<Fornecedor> fornecedores = 
+			this.fornecedorService.obterFornecedoresPorSituacaoEOrigem(
+				SituacaoCadastro.ATIVO, Origem.MANUAL);
 		
 		if (fornecedores != null) {
 			result.include("listafornecedores", fornecedores);

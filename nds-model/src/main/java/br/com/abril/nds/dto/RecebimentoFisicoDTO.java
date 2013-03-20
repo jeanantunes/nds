@@ -8,7 +8,6 @@ import java.util.Date;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.util.MathUtil;
 
 public class RecebimentoFisicoDTO implements Serializable {
 	

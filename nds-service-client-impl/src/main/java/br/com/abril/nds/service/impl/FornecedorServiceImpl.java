@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFornecedorDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
@@ -746,5 +747,14 @@ public class FornecedorServiceImpl implements FornecedorService {
 	public Fornecedor obterPorId(Long idFornecedor) {
 		return this.fornecedorRepository.buscarPorId(idFornecedor);
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Fornecedor> obterFornecedoresPorSituacaoEOrigem(SituacaoCadastro situacaoCadastro, 
+																Origem origem) {
+		
+		return this.fornecedorRepository.obterFornecedoresPorSituacaoEOrigem(situacaoCadastro, origem);
+	}
+	
 }
 
