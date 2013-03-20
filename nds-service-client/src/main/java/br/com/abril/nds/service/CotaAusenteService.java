@@ -65,6 +65,4 @@ public interface CotaAusenteService {
 	
 	void validarCotaAusenteNaData(Integer numCota, Date data);
 
-	void validarCotaAusenteNaData(Integer numCota, Date data);
-
 }

@@ -107,14 +107,15 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		result.include("lancamento", lancamento);
 		
 		ProdutoEdicaoDTO convertido = converterResultado(produtoEdicao, lancamento);
-		produtoEdicaoRepository.findReparteEVenda(convertido);
+//		produtoEdicaoRepository.findReparteEVenda(convertido);
 		
 		result.include("produtoEdicao", convertido);
 	}
 	
 	@Transactional(readOnly=true)
 	public void pesquisarProdutosEdicao(String codigo, String nome, Long edicao){
-		List<ProdutoEdicao> resultado = produtoEdicaoRepository.pesquisar(codigo, nome, edicao);
+		List<ProdutoEdicao> resultado = null; 
+//				produtoEdicaoRepository.pesquisar(codigo, nome, edicao);
 		
 		List<ProdutoEdicaoDTO> convertido = converterResultado(resultado);
 		
@@ -130,7 +131,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 			convertido.add(dto);
 		}
 		
-		produtoEdicaoRepository.findReparteEVenda(convertido);
+//		produtoEdicaoRepository.findReparteEVenda(convertido);
 		
 		return convertido;
 	}
