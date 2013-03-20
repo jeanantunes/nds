@@ -81,7 +81,7 @@
 					<td width="69">Fornecedor:</td>    
 				  	<td width="223">
 						<select id="idFornecedor" name="idFornecedor" style="width:170px;">
-							<option value="-1"  selected="selected">Todos</option>
+							<option  selected="selected">Todos</option>
 							<c:forEach items="${listaFornecedores}" var="fornecedor">
 								<option value="${fornecedor.key}">${fornecedor.value}</option>	
 							</c:forEach>
