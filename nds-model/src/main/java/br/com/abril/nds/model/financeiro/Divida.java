@@ -74,6 +74,9 @@ public class Divida implements Serializable {
 	@Column(name = "ACUMULADA")
 	private boolean acumulada;
 	
+	@Column(name = "ORIGEM_NEGOCIACAO", nullable = true)
+	private Boolean origemNegociacao;
+	
 	public Long getId() {
 		return id;
 	}
@@ -166,6 +169,20 @@ public class Divida implements Serializable {
 	 */
 	public void setDividaRaiz(Divida dividaRaiz) {
 		this.dividaRaiz = dividaRaiz;
+	}
+	
+	/**
+	 * @return the origemNegociacao
+	 */
+	public Boolean isOrigemNegociacao() {
+		return origemNegociacao;
+	}
+
+	/**
+	 * @param origemNegociacao the origemNegociacao to set
+	 */
+	public void setOrigemNegociacao(Boolean origemNegociacao) {
+		this.origemNegociacao = origemNegociacao;
 	}
 
     /* (non-Javadoc)
