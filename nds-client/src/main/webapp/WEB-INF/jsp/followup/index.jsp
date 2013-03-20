@@ -13,12 +13,12 @@
 		<div id="btnsNegociacao" class="divButtonsWrapper" >
 		<div class="areaBtsNegociacao">
 			<span class="bt_arq" title="Gerar Arquivo">
-			    <a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=negociacao" rel="bandeira">
+			    <a href="${pageContext.request.contextPath}/followup/imprimirNegociacao?fileType=XLS" rel="bandeira">
 			    	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 		        </a>
 			</span> 
 			<span class="bt_arq" title="Imprimir"> 
-				<a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=negociacao" >
+				<a href="${pageContext.request.contextPath}/followup/imprimirNegociacao?fileType=PDF" >
 				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 			</span>
@@ -28,12 +28,12 @@
 		<div id="btnsChamadao" class="divButtonsWrapper" style="display:none;">
 	    <div id="botoesArquivoChamadao">
 	        <span class="bt_arq" title="Gerar Arquivo">                      
-				<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=chamadao">
+				<a href="${pageContext.request.contextPath}/followup/imprimirChamadao?fileType=XLS">
 		     		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a>
 	        </span>
 	        <span class="bt_arq" title="Imprimir">                      
-		        <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=chamadao">
+		        <a href="${pageContext.request.contextPath}/followup/imprimirChamadao?fileType=PDF">
 		       		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 	        </span>  
@@ -43,12 +43,12 @@
 		<div id="btnsStatusCota" class="divButtonsWrapper" style="display:none;">
 		<div id="botoesArquivoAlteracaoStatusCota">
 	        <span class="bt_arq" title="Gerar Arquivo">                      
-				<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=alteracao">
+				<a href="${pageContext.request.contextPath}/followup/imprimirAlteracaoStatusCota?fileType=XLS">
 		 			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a>
 	        </span>
 	        <span class="bt_arq" title="Imprimir">                      
-		        <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=alteracao">
+		        <a href="${pageContext.request.contextPath}/followup/imprimirAlteracaoStatusCota?fileType=PDF">
 		 			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 	        </span> 
@@ -58,12 +58,12 @@
 		<div id="btnsAtualizacaoCadastral" class="divButtonsWrapper" style="display:none;">
 		<div id="botoesArquivoAtualizacaoCadastral">
 	        <span class="bt_arq" title="Gerar Arquivo">                      
-				<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=atualizacao">
+				<a href="${pageContext.request.contextPath}/followup/imprimirAtualizacaoCadastral?fileType=XLS">
 		        	<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 		        </a>
 	        </span>
 	        <span class="bt_arq" title="Imprimir">                      
-		        <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=atualizacao">
+		        <a href="${pageContext.request.contextPath}/followup/imprimirAtualizacaoCadastral?fileType=PDF">
 		       		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 		        </a>
 	        </span>
@@ -73,12 +73,12 @@
 		<div id="btnsArquivoPendencia" class="divButtonsWrapper" style="display:none;">
 		<div id="botoesArquivoPendencia">
 			<span class="bt_arq" title="Gerar Arquivo">                      
-				<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=pendenciaNFE">
+				<a href="${pageContext.request.contextPath}/followup/imprimirPendenciasNFe?fileType=XLS">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a>
 			</span>
 			<span class="bt_arq" title="Imprimir">                      
-				<a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=pendenciaNFE">
+				<a href="${pageContext.request.contextPath}/followup/imprimirPendenciasNFe?fileType=PDF">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 	        </span> 
@@ -88,12 +88,12 @@
 		<div id="btnsParcial" class="divButtonsWrapper" style="display:none;">
 		<div class="areaBtsParcial">
 			<span class="bt_arq" title="Gerar Arquivo">
-			    <a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=cadastroParcial" rel="bandeira">
+			    <a href="${pageContext.request.contextPath}/followup/imprimirCadastroParcial?fileType=XLS" rel="bandeira">
 			        <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
                 </a>
 			</span> 
 			<span class="bt_arq" title="Imprimir"> 
-				<a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=cadastroParcial">
+				<a href="${pageContext.request.contextPath}/followup/imprimirCadastroParcial?fileType=PDF">
 				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 			</span>

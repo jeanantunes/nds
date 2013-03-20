@@ -229,16 +229,16 @@ var produtoEdicaoController =$.extend(true,  {
 		$("#produtoEdicaoController-expectativaVenda").numeric();
 		$("#produtoEdicaoController-repartePromocional").numeric();
 		
-		$('#produtoEdicaoController-precoPrevisto', this.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
+		$('#produtoEdicaoController-precoPrevisto', this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
 		});
 		
-		$('#produtoEdicaoController-precoVenda', this.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
+		$('#produtoEdicaoController-precoVenda', this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
 		});
 		
 		$("#produtoEdicaoController-desconto").numeric();
@@ -686,19 +686,8 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-situacao").val(result.situacaoLancamento);
 							$("#produtoEdicaoController-tipoLancamento").val(result.tipoLancamento);	
 							
-							$("#produtoEdicaoController-precoPrevisto").val(result.precoPrevisto);
-							$('#produtoEdicaoController-precoPrevisto', this.workspace).priceFormat({
-								allowNegative: true,
-								centsSeparator: ',',
-							    thousandsSeparator: '.'
-							});
-							
-							$("#produtoEdicaoController-precoVenda").val(result.precoVenda);						
-							$('#produtoEdicaoController-precoVenda', this.workspace).priceFormat({
-								allowNegative: true,
-								centsSeparator: ',',
-							    thousandsSeparator: '.'
-							});
+							$("#produtoEdicaoController-precoPrevisto").val(result.precoPrevistoFormatado);
+							$("#produtoEdicaoController-precoVenda").val(result.precoVendaFormatado);
 							
 							$("#produtoEdicaoController-dataLancamentoPrevisto").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
 							$("#produtoEdicaoController-dataLancamento").val(result.dataLancamento == undefined ? '' : result.dataLancamento.$);

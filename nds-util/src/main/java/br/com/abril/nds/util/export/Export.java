@@ -25,6 +25,8 @@ public @interface Export {
 	
 	ColumType columnType() default ColumType.STRING;
 	
+	float fontSize() default 0;
+	
 	public enum Alignment {
 		
 		LEFT(0),

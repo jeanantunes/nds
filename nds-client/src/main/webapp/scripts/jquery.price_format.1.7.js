@@ -31,7 +31,7 @@
 			centsSeparator: '.',
 			thousandsSeparator: ',',
 			limit: false,
-			centsLimit: 2,
+			centsLimit: 4,
 			clearPrefix: false,
             clearSufix: false,
 			allowNegative: false
@@ -165,7 +165,8 @@
 			function price_it ()
 			{
 				var str = obj.val();
-				var price = parseFloat(obj.val()).toFixed(centsLimit);
+				//var price = parseFloat(obj.val()).toFixed(centsLimit);
+				var price = price_format(str);
 				if (str != price) obj.val(price);
 			}
 
