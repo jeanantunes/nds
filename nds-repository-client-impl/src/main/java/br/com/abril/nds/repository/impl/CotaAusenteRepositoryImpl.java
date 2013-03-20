@@ -127,14 +127,17 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		queryNative.append(" JOIN estudo_cota ec on (ec.cota_id = cota.id) ");
 		queryNative.append(" JOIN estudo estudo on (ec.estudo_id = estudo.id) ");
 		queryNative.append(" JOIN LANCAMENTO lancamento on (lancamento.id = mec.lancamento_id and estudo.PRODUTO_EDICAO_ID = lancamento.PRODUTO_EDICAO_ID and estudo.DATA_LANCAMENTO = lancamento.DATA_LCTO_PREVISTA) ");
-
-		queryNative.append(" LEFT JOIN BOX box ON (cota.BOX_ID=box.ID) ");
-		queryNative.append(" LEFT JOIN ROTEIRIZACAO roteirizacao ON (box.ID = roteirizacao.BOX_ID) ");
-		queryNative.append(" LEFT JOIN ROTEIRO roteiro ON (roteirizacao.ID = roteiro.ROTEIRIZACAO_ID) ");
-		queryNative.append(" LEFT JOIN ROTA rota ON (roteiro.ID = rota.ROTEIRO_ID) ");
-		queryNative.append(" LEFT JOIN PESSOA pessoa ON (cota.PESSOA_ID=pessoa.ID) ");
 		
-		queryNative.append(" WHERE 1 = 1 ");
+		queryNative.append(" JOIN PDV pdv ON (pdv.COTA_ID = cota.ID) ");
+		queryNative.append(" JOIN ROTA_PDV rota_pdv ON (pdv.ID = rota_pdv.PDV_ID) ");
+		queryNative.append(" JOIN ROTA rota ON (rota.ID = rota_pdv.ROTA_ID) ");
+		queryNative.append(" JOIN ROTEIRO roteiro ON (rota.ROTEIRO_ID = roteiro.ID) ");
+		queryNative.append(" JOIN ROTEIRIZACAO roteirizacao ON (roteirizacao.ID = roteiro.ROTEIRIZACAO_ID) ");
+		queryNative.append(" JOIN BOX box ON (box.ID = roteirizacao.BOX_ID) ");
+		
+		queryNative.append(" JOIN PESSOA pessoa  ");
+		
+		queryNative.append(" WHERE cota.PESSOA_ID=pessoa.ID ");
 
 		if(filtro.getData() != null){	
 			queryNative.append("AND ca.DATA = :data  											");
