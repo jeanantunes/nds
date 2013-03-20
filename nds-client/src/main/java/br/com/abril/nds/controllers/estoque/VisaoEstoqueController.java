@@ -102,6 +102,11 @@ public class VisaoEstoqueController extends BaseController {
 		}
 		filtro.setPaginacao(new PaginacaoVO(page, rp,sortorder,sortname));
 		
+		if(filtro.getPaginar()!=null && !filtro.getPaginar()) {
+			filtro.getPaginacao().setQtdResultadosPorPagina(null);
+			filtro.getPaginacao().setPaginaAtual(null);
+		}
+		
 		this.atualizarDataMovimentacao(filtro);
 		
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
