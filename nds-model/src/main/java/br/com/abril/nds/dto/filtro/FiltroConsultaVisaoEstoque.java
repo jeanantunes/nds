@@ -12,6 +12,7 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private Boolean paginar;
 	private Date dataMovimentacao;
 	private Long idFornecedor;
 	private String tipoEstoque;
@@ -124,5 +125,11 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 	 */
 	public void setPaginacao(PaginacaoVO paginacao) {
 		this.paginacao = paginacao;
+	}
+	public Boolean getPaginar() {
+		return paginar;
+	}
+	public void setPaginar(Boolean paginar) {
+		this.paginar = paginar;
 	}
 }
