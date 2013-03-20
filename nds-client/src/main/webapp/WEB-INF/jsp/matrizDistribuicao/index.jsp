@@ -165,7 +165,7 @@ var lancamentosSelecionados = [];
 			         	  		<span class="bt_novos">
 			         	  			<a href="javascript:;" onclick="matrizDistribuicao.analise()" rel="tipsy" title="Analisar Estudo">
 			         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0">
-			         	  				An·lise
+			         	  				An√°lise
 			         	  			</img>
 			         	  			</a>
 			         	  		</span>
