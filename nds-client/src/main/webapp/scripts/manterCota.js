@@ -9,6 +9,7 @@ var MANTER_COTA = $.extend(true, {
 
     numeroCota:"",
     idCota:"",
+    tipoCota:"",
     tipoCotaSelecionada:"",
     tipoCota_CPF:"FISICA",
     tipoCota_CNPJ:"JURIDICA",
@@ -50,6 +51,21 @@ var MANTER_COTA = $.extend(true, {
         });
     },
     
+    verificaTipoCota : function(tipoCotaCPF){
+       	var retorno = confirm("O Mix (para o tipo alternativo) e a Fixação (para o tipo convencional) desta Cota serão apagados, confirma?");
+    	if (retorno){
+    		
+    		  $.postJSON(contextPath + "/cadastro/cota/apagarTipoCota",
+    	        		{idCota:MANTER_COTA.idCota, tipoCota:tipoCotaCPF.value},
+    	            function(){
+    	                alert("feito!!!!");
+    	            }
+    	        );
+    
+    		
+    	}
+ 
+    },
     initCotaGridPrincipal: function() {
 
         $(".pessoasGrid", MANTER_COTA.workspace).flexigrid({
@@ -128,6 +144,9 @@ var MANTER_COTA = $.extend(true, {
             {name:"numeroCpfCnpj",value:$("#txtCPF_CNPJ", this.workspace).val()},
             {name:"logradouro",value:$("#logradouroPesquisa", this.workspace).val()},
             {name:"bairro",value:$("#bairroPesquisa", this.workspace).val()},
+            
+            {name:"status",value:$("#selectStatus", this.workspace).val()},
+            
             {name:"municipio",value:$("#municipioPesquisa", this.workspace).val()}
         ];
         return formData;
@@ -1381,6 +1400,7 @@ var COTA_CPF = $.extend(true, {
         }
     },
 
+    
     salvarDadosBasico:function (){
 
         var formData = $("#formDadosBasicoCpf", this.workspace).serializeArray();

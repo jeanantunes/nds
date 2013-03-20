@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 
@@ -237,7 +238,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	private void setParametersQueryResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-		//query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
+		query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
 	}
 	
 	private void setParametersQueryResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro, Query query) {
@@ -260,8 +261,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append(" produto.NOME as nomeProduto, ");
 		hql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
 		hql.append(" produtoEdicao.PRECO_VENDA as precoCapa, ");
-		hql.append(" coalesce((select valor from desconto where id = produtoEdicao.desconto_id),");
-		hql.append(" (select valor from desconto where id = produto.desconto_id), 0) as desconto, ");
+		hql.append(this.getHQLDesconto() + " as desconto, ");
 		hql.append(" sum(estudoCota.QTDE_EFETIVA) as qntReparte, ");
 		hql.append(" sum(case ");
 		hql.append(" when diferenca.TIPO_DIFERENCA='FALTA_DE' then -(diferenca.QTDE*produtoEdicao.PACOTE_PADRAO) ");
@@ -305,7 +305,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append(" inner join ");
 		hql.append(" COTA cota ");
 		hql.append(" on estudoCota.COTA_ID=cota.ID ");
-		hql.append(" left outer join ");
+		hql.append(" inner join ");
 		hql.append(" BOX box ");
 		hql.append(" on cota.BOX_ID=box.ID ");
 		hql.append(" left outer join ");
@@ -323,6 +323,17 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append(" group by ");
 		hql.append(" produtoEdicao.ID ");
 
+		return hql.toString();
+	}
+	
+	private String getHQLDesconto(){
+		
+		StringBuilder hql = new StringBuilder("coalesce ((select view.DESCONTO");
+		hql.append(" from VIEW_DESCONTO view ")
+		   .append(" where view.COTA_ID = cota.ID ")
+		   .append(" and view.PRODUTO_EDICAO_ID = produtoEdicao.ID ")
+		   .append(" and view.FORNECEDOR_ID = fornecedor.ID), 0) ");
+		
 		return hql.toString();
 	}
 	
@@ -391,11 +402,11 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		hql.append(" select ");
 		hql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ");
-		hql.append(" coalesce(box.ID, 0) as idBox, ");
-		hql.append(" concat(coalesce(box.CODIGO, ''), ");
+		hql.append(" box.ID as idBox, ");
+		hql.append(" concat(box.CODIGO, ");
 		hql.append(" '-', ");
-		hql.append(" coalesce(box.NOME, '')) as codigoBox, ");
-		hql.append(" coalesce(box.NOME, '') as nomeBox, ");
+		hql.append(" box.NOME) as codigoBox, ");
+		hql.append(" box.NOME as nomeBox, ");
 		hql.append(" produtoEdicao.PRECO_VENDA as precoCapa, ");
 		hql.append(" sum(estudoCota.QTDE_EFETIVA) as qntReparte, ");
 		hql.append(" sum(case ");
@@ -434,7 +445,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		hql.append(" inner join ");
 		hql.append(" COTA cota ");
 		hql.append(" on estudoCota.COTA_ID=cota.ID ");
-		hql.append(" left outer join ");
+		hql.append(" inner join ");
 		hql.append(" BOX box ");
 		hql.append(" on cota.BOX_ID=box.ID ");
 		hql.append(" left outer join ");
@@ -446,7 +457,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		hql.append(" where ");
 		hql.append(" lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ");
-		//hql.append(" and box.TIPO_BOX in (:tiposBox) ");
+		hql.append(" and box.TIPO_BOX in (:tiposBox) ");
 		
 		return hql.toString();
 	}

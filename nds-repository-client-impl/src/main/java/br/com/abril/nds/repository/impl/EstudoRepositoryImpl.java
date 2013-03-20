@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
@@ -137,3 +138,102 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	}
 
 }
+=======
+package br.com.abril.nds.repository.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+
+import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.EstudoRepository;
+
+/**
+ * Classe de implementação referente ao acesso a dados da entidade 
+ * {@link br.com.abril.nds.model.planejamento.Estudo}.
+ * 
+ * @author Discover Technology
+ *
+ */
+@Repository
+public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> implements EstudoRepository {
+	
+	/**
+	 * Construtor.
+	 */
+	public EstudoRepositoryImpl() {
+		
+		super(Estudo.class);
+	}
+
+	
+	@Override
+	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
+		
+		String hql = " from Estudo estudo"
+				   + " where estudo.dataLancamento = :dataReferencia "
+				   + " and estudo.produtoEdicao.id = :idProdutoEdicao "
+				   + " order by estudo.dataLancamento ";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("dataReferencia", dataReferencia);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setMaxResults(1);
+		
+		return (Estudo) query.uniqueResult();
+	}
+	
+	@Override
+	public void liberarEstudo(List<Long> listIdEstudos, boolean liberado) {
+		
+		StringBuilder hql = new StringBuilder("update Estudo set");
+		hql.append(" status = :statusEstudo")
+		   .append(" where id in (:listIdEstudos)");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("statusEstudo", (liberado)?1:0);
+		
+		query.setParameterList("listIdEstudos", listIdEstudos);
+		
+		query.executeUpdate();
+	}
+	
+	@Override
+	public Estudo obterEstudoECotasPorIdEstudo(Long idEstudo) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select estudoCota.estudo from EstudoCota estudoCota");
+		hql.append(" where estudoCota.estudo.id = :estudo");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("estudo", idEstudo);
+		
+		Estudo estudo = (Estudo)query.uniqueResult();
+		
+		return estudo;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Estudo> obterEstudosPorIntervaloData(Date dataStart, Date dataEnd) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append(" from Estudo");
+		hql.append(" where dataCadastro between :dateStart and :dateEnd ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("dateStart", dataStart);
+		query.setParameter("dateEnd", dataEnd);
+		
+		return (List<Estudo>)query.list();
+	}
+
+}
+>>>>>>> DGBti/fase2

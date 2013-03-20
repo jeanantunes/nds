@@ -356,5 +356,4 @@ public class HistoricoVendaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getValidationMsg());
 		}
 	}
-	
 }

@@ -18,17 +18,21 @@
 	<context:component-scan base-package="br.com.abril.nds" />
 			
 	<util:properties id="properties" location="classpath:/nds-client.properties" />
-	
 	<util:properties id="queries" location="classpath:/query.properties" />
+	<util:properties id="query_estudo" location="classpath:/query-estudo.properties" />
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 		
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
 
 	<!-- TOMCAT -->
-	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}"/>
+	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/nds-client" />
 	
 	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="dataSource" />
+	</bean>
 
 	<task:annotation-driven />
 
@@ -38,8 +42,6 @@
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="br.com.abril.nds.model" />
-		
-		
 		<property name="hibernateProperties">
 			<props>			
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
@@ -47,9 +49,12 @@
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
 				<!-- prop key="hibernate.hbm2ddl.auto">update</prop-->
-				<prop key="hibernate.cache.use_second_level_cache">true</prop>
-				<prop key="hibernate.cache.use_query_cache">true</prop>
-				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+				<prop key="hibernate.c3p0.min_size">5</prop>	
+				<prop key="hibernate.c3p0.max_size">20</prop>	
+				<prop key="hibernate.c3p0.timeout">300</prop>	
+				<prop key="hibernate.c3p0.max_statements">50</prop>	
+				<prop key="hibernate.c3p0.idle_test_period">3000</prop>    
+				<prop key="hibernate.jdbc.batch_size">500</prop>	
 			</props>
 		</property>
 		<!-- Descomentar abaixo para ligar o bloqueador -->
@@ -65,5 +70,4 @@
 	</bean>
 	
 	<tx:annotation-driven transaction-manager="transactionManager" />
-
 </beans>

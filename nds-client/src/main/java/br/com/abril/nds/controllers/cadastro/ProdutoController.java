@@ -43,7 +43,6 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -134,10 +133,6 @@ public class ProdutoController extends BaseController {
 	
 	@Post
 	public void pesquisarPorCodigoProduto(String codigoProduto) throws ValidacaoException{
-		
-		if(codigoProduto == null || "".equals(codigoProduto.trim()))
-				throw new ValidacaoException(TipoMensagem.WARNING, "Código vazio!");
-		
 		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto == null) {
@@ -153,7 +148,7 @@ public class ProdutoController extends BaseController {
 
 	@Post
 	public void autoCompletarPorNomeProduto(String nomeProduto) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		

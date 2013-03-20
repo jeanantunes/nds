@@ -13,6 +13,8 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheVendaProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroVendaProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.VendaProdutoRepository;
 import br.com.abril.nds.service.VendaProdutoService;
 
@@ -21,6 +23,9 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 	
 	@Autowired
 	private VendaProdutoRepository vendaProdutoRepository;
+	
+	@Autowired
+	private TipoClassificacaoProdutoRepository tipoClassificacaoProduto;
 
 	@Override
 	@Transactional
@@ -54,5 +59,10 @@ public class VendaProdutoServiceImpl implements VendaProdutoService {
 		}
 		
 		return listaLancamentoPorEdicao;
+	}
+	
+	@Override
+	public List<TipoClassificacaoProduto> buscarClassificacaoProduto() {
+		return tipoClassificacaoProduto.buscarTodos();
 	}
 }

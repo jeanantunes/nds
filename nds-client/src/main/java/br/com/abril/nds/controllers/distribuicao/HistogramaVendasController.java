@@ -67,6 +67,7 @@ public class HistogramaVendasController extends BaseController {
 	@Autowired
 	private PdvService pdvService;
 	
+	
 	@Autowired
 	private EnderecoService enderecoService;
 	

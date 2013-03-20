@@ -31,5 +31,12 @@ public class FixacaoRepartePdvRepositoryImpl extends  AbstractRepositoryModel<Fi
 		return query.list();
 		
 	}
+	
+	public void removerFixacaoReparte(FixacaoReparte fixacaoReparte){
+		StringBuilder hql = new StringBuilder("");
+		hql.append("delete from FixacaoRepartePdv frp where frp.fixacaoReparte = :fixacaoReparte");
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("fixacaoReparte",  fixacaoReparte );
+	}
 		
 }

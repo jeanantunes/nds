@@ -52,6 +52,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Autowired
 	private FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
 	
+	
+	
 
 	
 	@Transactional
@@ -273,10 +275,25 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	}
 
 	
+	@Transactional
+	@Override
+	public void excluirFixacaoPorCota(Long idCota){
+		
+		Cota cota = cotaRepository.buscarCotaPorID(idCota);
+		
+		List<FixacaoReparte> fixacaoRepartes = fixacaoReparteRepository.buscarPorCota(cota);
+		
 
+		for(FixacaoReparte fr : fixacaoRepartes ){
+			
+			fixacaoRepartePdvRepository.removerFixacaoReparte(fr);
+		}
+		
+		fixacaoReparteRepository.removerPorCota(cota);
+		
+		
+	}
 	
 	
 
 }
-
-

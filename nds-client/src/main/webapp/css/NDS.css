@@ -667,3 +667,9 @@ input[type='text'], input[type='password'], textarea {
 div#ui-tabs-\*.ui-tabs-panel {
 	background-color: blue!important;
 }
+
+.distribuicaoVendaMedia-tab{
+	height: auto !important; 
+	margin-top: 10px;
+	margin-left: 10px;
+}

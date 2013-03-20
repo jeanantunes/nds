@@ -38,7 +38,7 @@ public class AjusteReparte implements Serializable {
 	@Column(name = "FORMA_AJUSTE", nullable = true)
 	private TipoAjusteReparte formaAjuste;
 	
-	@Column(name = "AJUSTE_APLICADO")
+	@Column(name = "AJUSTE_APLICADO", precision=18, scale=4)
 	private BigDecimal ajusteAplicado;
 	
 	@Column (name = "DATA_INICIO")

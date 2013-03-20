@@ -17,7 +17,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
@@ -31,6 +30,7 @@ import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -1301,10 +1301,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterCotas(SituacaoCadastro situacaoCadastro) {
+	public List<CotaResumoDTO> obterCotas(SituacaoCadastro situacaoCadastro) {
 		
-		StringBuilder hql = new StringBuilder(" from Cota cota ");
+		StringBuilder hql = new StringBuilder("select pessoa.nome as nome, cota.numeroCota as numero  from Cota cota ");
 
+		hql.append(" join cota.pessoa pessoa ");
+		
 		if (situacaoCadastro != null) {
 			
 			hql.append(" where cota.situacaoCadastro = :situacao ");
@@ -1317,15 +1319,19 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			query.setParameter("situacao", situacaoCadastro);
 		}
 		
+		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
+		
 		return query.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
+	public List<CotaResumoDTO> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
 		
-		StringBuilder hql = new StringBuilder(" from Cota cota ");
+		StringBuilder hql = new StringBuilder("select pessoa.nome as nome, cota.numeroCota as numero from Cota cota ");
 
+		hql.append(" join cota.pessoa pessoa ");
+		
 		if (dataInicioAtividade != null) {
 			
 			hql.append(" where cota.inicioAtividade = :dataInicioAtividade ");
@@ -1338,20 +1344,25 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			query.setParameter("dataInicioAtividade", dataInicioAtividade);
 		}
 		
+		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
+		
 		return query.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
+	public List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
 		
-		StringBuilder hql = new StringBuilder(" select cotaAusente.cota from CotaAusente cotaAusente ");
+		StringBuilder hql = new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from CotaAusente cotaAusente ");
 		
-		hql.append(" where ativo = true");
+		hql.append(" join cotaAusente.cota cota ");
+		
+		hql.append(" join cota.pessoa pessoa ");
+				
 		
 		if (dataExpedicaoReparte != null) {
 			
-			hql.append(" and cotaAusente.data = :dataExpedicaoReparte ");
+			hql.append(" where cotaAusente.data = :dataExpedicaoReparte ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -1361,15 +1372,21 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			query.setParameter("dataExpedicaoReparte", dataExpedicaoReparte);
 		}
 		
+		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
+		
 		return query.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
+	public List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
 		
 		StringBuilder hql = 
-			new StringBuilder(" select chamadaEncalheCota.cota from ChamadaEncalheCota chamadaEncalheCota ");
+			new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
+		
+		hql.append(" join chamadaEncalheCota.cota cota ");
+		
+		hql.append(" join cota.pessoa pessoa ");
 		
 		hql.append(" where chamadaEncalheCota.cota.id not in ( ");
 		hql.append(" select cota.id from ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
@@ -1384,6 +1401,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.setParameter("dataRecolhimentoEncalhe", dataRecolhimentoEncalhe);
 		query.setParameter("statusControleConferenciaEncalhe", StatusOperacao.CONCLUIDO);
 
+		query.setResultTransformer(Transformers.aliasToBean(CotaResumoDTO.class));
+		
 		return query.list();
 	}
 
@@ -1396,7 +1415,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 										, Long idRoteiro, Long idRota, String sortName, String sortOrder, Integer maxResults, Integer page) {
 		
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
-		criteria.createAlias("box", "box", JoinType.LEFT_OUTER_JOIN);
+		criteria.createAlias("box", "box");
 		criteria.createAlias("pdvs", "pdvs");
 		criteria.setProjection(Projections.distinct(Projections.id()));
 		
@@ -1420,9 +1439,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		}
 		
 	
-		criteria.createAlias("pdvs.rotas", "rotaPdv", JoinType.LEFT_OUTER_JOIN);
-	    criteria.createAlias("rotaPdv.rota", "rota", JoinType.LEFT_OUTER_JOIN);
-		criteria.createAlias("rota.roteiro", "roteiro", JoinType.LEFT_OUTER_JOIN);
+		criteria.createAlias("pdvs.rotas", "rotaPdv");
+	    criteria.createAlias("rotaPdv.rota", "rota");
+		criteria.createAlias("rota.roteiro", "roteiro");
 				
 		
 		if (idRoteiro != null){
@@ -1595,7 +1614,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append( 
 		  "	    from "
 		+ "	        COTA cota_ " 
-		+ "	    left outer join "
+		+ "	    inner join "
 		+ "	        BOX box1_  "
 		+ "	            on cota_.BOX_ID=box1_.ID  "
 		+ "	    inner join "
@@ -1623,13 +1642,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		+ "	    inner join "
 		+ "	        PDV pdv_  "
 		+ "	            on cota_.ID=pdv_.COTA_ID  "
-		+ "	    left outer join "
+		+ "	     inner join "
 		+ "        ROTA_PDV rota_pdv_  "
 		+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
-		+ "	    left outer join "
+		+ "	    inner join "
 		+ "	        ROTA rota_  "
 		+ "	            on rota_pdv_.rota_ID=rota_.ID  "
-		+ "	    left outer join "
+		+ "	    inner join "
 		+ "	        ROTEIRO roteiro_  "
 		+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
 		+ "	    inner join "
@@ -1702,7 +1721,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		}
 		sql.append( "   from "
 				+ "	        COTA cota_ " 
-				+ "	    left outer join "
+				+ "	    inner join "
 				+ "	        BOX box1_  "
 				+ "	            on cota_.BOX_ID=box1_.ID  "
 				+ "	    inner join "
@@ -1730,13 +1749,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				+ "	    inner join "
 				+ "	        PDV pdv_  "
 				+ "	            on cota_.ID=pdv_.COTA_ID  "
-				+ "	    left outer join "
+				+ "	     inner join "
 				+ "        ROTA_PDV rota_pdv_  "
 				+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
-				+ "	    left outer join "
+				+ "	    inner join "
 				+ "	        ROTA rota_  "
 				+ "	            on rota_pdv_.rota_ID=rota_.ID  "
-				+ "	    left outer join "
+				+ "	    inner join "
 				+ "	        ROTEIRO roteiro_  "
 				+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
 				+ "	    inner join "
