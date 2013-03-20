@@ -109,7 +109,8 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append("   qtdCotasAdicionadasPelaComplementarAutomatica ");
 		sql.append("   qtdReparteMinimoSugerido, ");
 		sql.append("   qtdReparteMinimoEstudo, ");
-		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 as abrangenciaEstudo ");
+		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 as abrangenciaEstudo, ");
+		sql.append("   ( qtdCotasQueVenderam  / qtdCotasRecebemReparte ) * 100 as abrangenciaDeVenda ");
 		sql.append("   FROM ");
 		sql.append("   ( ");
 		sql.append("     select ");
@@ -119,7 +120,11 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append(" 				where ESTUDO_ID = :estudoId) AS qtdCotasRecebemReparte, ");
 		sql.append("       (select count(id) from estudo_cota where CLASSIFICACAO in ('CP') and estudo_id = :estudoId ) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
 		sql.append(" 		ifnull((select distinct estudo.REPARTE_MINIMO_SUGERIDO from estudo where id = :estudoId ),0) as qtdReparteMinimoSugerido, ");
-		sql.append(" 		ifnull((select min(REPARTE_MINIMO) from estudo_cota where estudo_id = :estudoId ),0) as qtdReparteMinimoEstudo ");
+		sql.append(" 		ifnull((select min(REPARTE_MINIMO) from estudo_cota where estudo_id = :estudoId ),0) as qtdReparteMinimoEstudo, ");
+		sql.append(" 		(select sum(case when qtde_recebida - qtde_devolvida > 0 then 1 else 0 end) from estoque_produto_cota ");
+		sql.append(" 		 inner join produto_edicao on estoque_produto_cota.produto_edicao_id = produto_edicao.id");
+		sql.append(" 		 where estoque_produto_cota.produto_edicao_id = (select produto_edicao_id from estudo where id = :estudoId)");
+		sql.append(" 		 and estoque_produto_cota.COTA_ID in (select cota_id from estudo_cota where estudo_id = :estudoId)) as qtdCotasQueVenderam");
 		sql.append("   ) as base ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());

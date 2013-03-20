@@ -454,7 +454,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		
 		// Primeira coluna
 		$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
-		$('#fieldSetResumoRepartePromocional').html(matrizSelecionada.promo);
+		$('#fieldSetResumoRepartePromocional').html(parseInt(matrizSelecionada.promo || 0));
 		$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
 		$('#fieldSetResumoReparteDistribuida').html(matrizSelecionada.repDistrib);
 		
@@ -471,16 +471,16 @@ var histogramaPosEstudoController = $.extend(true, {
 					// quantidade de cotas que foram adicionadas no estudo pela “complementar automática”; segundo o Jhonis é "CP" no campo classificação na tb estudo_cota
 					$('#fieldSetResumoNpdvComplementar').html(response.qtdCotasAdicionadasPelaComplementarAutomatica || 0); 
 					
-					$('#fieldSetResumoReparteMedioCota').html(parseInt(matrizSelecionada.repDistrib) / parseInt(response.qtdCotasRecebemReparte)); // quantidade de exemplares que cada cota irá receber na média 
+					$('#fieldSetResumoReparteMedioCota').html((parseInt(matrizSelecionada.repDistrib) / parseInt(response.qtdCotasRecebemReparte)) || 0 ); // quantidade de exemplares que cada cota irá receber na média 
 					
 					// Terceira coluna
-					$('#fieldSetResumoReparteMinimoSugerida').html(response.qtdReparteMinimoSugerido);
+					$('#fieldSetResumoReparteMinimoSugerida').html( "??"/*response.qtdReparteMinimoSugerido*/);
 					$('#fieldSetResumoReparteMinimoEstudo').html(response.qtdReparteMinimoEstudo);
 					
-					$('#fieldSetResumoAbrangenciaSugerida').html(response.abrangenciaSugerida || 0);
+					$('#fieldSetResumoAbrangenciaSugerida').html( "??"/*response.abrangenciaSugerida || 0*/);
 					$('#fieldSetResumoAbrangenciaEstudo').html((response.abrangenciaEstudo * 100).toFixed(2));
 					
-					$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;'+"??"+'% ');
+					$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;' + (parseFloat(response.abrangenciaDeVenda) || 0 ).toFixed(2) + '% ');
 				}
 		);
 	},

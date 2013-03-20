@@ -11,7 +11,10 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 			qtdReparteMinimoSugerido,
 			qtdReparteMinimoEstudo;
 	
-	private BigDecimal abrangenciaEstudo;
+	private BigDecimal 
+				abrangenciaEstudo,
+				abrangenciaSugerida,
+				abrangenciaDeVenda;
 	
 	public BigInteger getQtdCotasAtivas() {
 		return qtdCotasAtivas;
@@ -61,6 +64,21 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 	public void setAbrangenciaEstudo(BigDecimal abrangenciaEstudo) {
 		this.abrangenciaEstudo = abrangenciaEstudo;
 	}
-	
+
+	public BigDecimal getAbrangenciaSugerida() {
+		return abrangenciaSugerida;
+	}
+
+	public void setAbrangenciaSugerida(BigDecimal abrangenciaSugerida) {
+		this.abrangenciaSugerida = abrangenciaSugerida;
+	}
+
+	public BigDecimal getAbrangenciaDeVenda() {
+		return abrangenciaDeVenda;
+	}
+
+	public void setAbrangenciaDeVenda(BigDecimal abrangenciaDeVenda) {
+		this.abrangenciaDeVenda = abrangenciaDeVenda;
+	}
 	
 }
