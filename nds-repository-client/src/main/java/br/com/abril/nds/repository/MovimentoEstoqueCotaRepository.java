@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -81,16 +80,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
-	 * Obtém o valor total do encalhe para a cota (caso específicada)
-	 * e período de recolhimento.
-	 * 
-	 * @param filtro
-	 * 
-	 * @return BigDecimal
-	 */
-	public BigDecimal obterValorTotalEncalhe(FiltroConsultaEncalheDTO filtro);	
-	
-	/**
 	 * Obtém o valorTotalGeral da pesquisa de contagemDevolucao 
 	 * que corresponde a somatória da seguinte expressão 
 	 * (qtdMovimentoEncalhe * precoVendoProdutoEdicao).
@@ -113,15 +102,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(
 			Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
-	
-	/**
-	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
-	 * 
-	 * @param filtro
-	 * 
-	 * @return Qtde - Integer
-	 */
-	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Obtém o valor total do encalhe para a cota (caso específicada)

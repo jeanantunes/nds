@@ -23,7 +23,8 @@ public interface MovimentoEstoqueService {
 
 	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataMovimento, Date dataOperacao,Long idLancamento,Long idEestudoCota);
 
-	void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
+	List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data, Long idCota, List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
+
 
 	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
 							 	 MovimentoEstoque movimentoEstoque);

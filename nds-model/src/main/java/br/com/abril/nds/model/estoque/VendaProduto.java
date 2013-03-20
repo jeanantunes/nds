@@ -92,6 +92,10 @@ public class VendaProduto implements Serializable {
 	@Embedded
 	private ValoresAplicados valoresAplicados;
 	
+	@Column(name="DATA_OPERACAO")
+	@Temporal(TemporalType.DATE)
+	private Date dataOperacao;
+	
 	/**
 	 * @return the id
 	 */
@@ -281,6 +285,14 @@ public class VendaProduto implements Serializable {
 
 	public void setValoresAplicados(ValoresAplicados valoresAplicados) {
 		this.valoresAplicados = valoresAplicados;
+	}
+	
+	public Date getDataOperacao() {
+		return dataOperacao;
+	}
+
+	public void setDataOperacao(Date dataOperacao) {
+		this.dataOperacao = dataOperacao;
 	}
 	
 	
