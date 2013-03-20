@@ -136,7 +136,7 @@ var negociacaoDividaController = $.extend(true, {
 			value.cell.detalhes = detalhes;
 			value.cell.acao = acao;
 
-			total += parseFloat( formatMoneyValue(value.cell.vlDivida) ); 
+			total += parseFloat( formatMoneyValue(value.cell.total) ); 
 			
 			value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
 			value.cell.vlDivida = floatToPrice(formatMoneyValue(value.cell.vlDivida));
@@ -279,11 +279,15 @@ var negociacaoDividaController = $.extend(true, {
         });
 		
 		params.push({
-            name: "filtro.numeroCota",
-            value: $('#negociacaoDivida_numCota').val()
+            name: "filtro.valorSelecionadoSemEncargo",
+            value: negociacaoDividaController.valorSelecionadoSemEncargo
         });
 		
-				
+		params.push({
+            name: "filtro.valorEncargoSelecionado",
+            value: negociacaoDividaController.valorEncargoSelecionado
+        });
+		
 		return params;
 	},
 	
@@ -797,21 +801,41 @@ var negociacaoDividaController = $.extend(true, {
 		}
 	},
 	
+	valorSelecionadoSemEncargo: 0,
+	valorEncargoSelecionado: 0,
+	
 	verificarCheck : function() {
+		
+		negociacaoDividaController.valorSelecionadoSemEncargo = 0;
+		negociacaoDividaController.valorEncargoSelecionado = 0;
 		
 		var todosChecados = true;
 		var totalSelecionado = $("#totalSelecionado", this.workspace);
 		totalSelecionado.html('0,00');
 		$(".negociacaoCheck", this.workspace).each(function(index, element) {	
-			var total = $('td[abbr="vlDivida"] >div', element.parentNode.parentNode.parentNode);
+			var total = $('td[abbr="total"] >div', element.parentNode.parentNode.parentNode);
+			var vlrDividaSemEncargo = $('td[abbr="vlDivida"] >div', element.parentNode.parentNode.parentNode);
+			var vlrEncargo = $('td[abbr="encargos"] >div', element.parentNode.parentNode.parentNode);
 			if (!element.checked) {
 				todosChecados = false;
 			}
 			if(element.checked){
 				totalSelecionado.html(sumPrice(totalSelecionado.html(), total.html()));
+				
+				negociacaoDividaController.valorSelecionadoSemEncargo = 
+					sumPrice(vlrDividaSemEncargo.html(), negociacaoDividaController.valorSelecionadoSemEncargo);
+				
+				negociacaoDividaController.valorEncargoSelecionado = 
+					sumPrice(vlrEncargo.html(), negociacaoDividaController.valorEncargoSelecionado);
 			}
 			
 		});
+		
+		negociacaoDividaController.valorSelecionadoSemEncargo = 
+			floatValue(negociacaoDividaController.valorSelecionadoSemEncargo);
+		
+		negociacaoDividaController.valorEncargoSelecionado = 
+			floatValue(negociacaoDividaController.valorEncargoSelecionado);
 		
 		$("#negociacaoCheckAll", negociacaoDividaController.workspace).get(0).checked = todosChecados;
 	},

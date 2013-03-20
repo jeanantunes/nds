@@ -239,21 +239,12 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 	private boolean isFeriado(Calendar cal) {
 
-		Feriado feriado = null;
-
 		if (cal != null) {
-
-			List<Feriado> feriados = feriadoRepository.obterFeriados(
-					cal.getTime(), TipoFeriado.FEDERAL, null, null);
-
-			if (feriados == null || feriados.isEmpty()) {
-				return false;
-			}
-
-			feriado = feriados.get(0);
+			
+			return this.feriadoRepository.isFeriado(cal.getTime());
 		}
-
-		return (feriado != null) ? true : false;
+		
+		return false;
 	}
 	
 	private void tratarTipoFeriado(CalendarioFeriadoDTO calendarioFeriado) {

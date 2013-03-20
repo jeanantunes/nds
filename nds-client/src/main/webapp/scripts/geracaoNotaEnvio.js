@@ -27,6 +27,20 @@ var geracaoNotaEnvioController = $.extend({
 			this.initDialog();
 			this.initButtons();
 			this.initFlexiGrids();
+			this.initFiltroDatas();
+		},
+		
+		initFiltroDatas : function(){
+			
+		    $.postJSON(contextPath + '/expedicao/geracaoNotaEnvio/obterDataDistribuidor',
+					null, 
+					function(result) {
+				
+						$("#geracaoNotaEnvio-filtro-movimentoDe", this.workspace).val(result);
+						
+						$("#geracaoNotaEnvio-filtro-movimentoAte", this.workspace).val(result);
+			        }
+			); 
 		},
 		
 		/**
@@ -49,8 +63,8 @@ var geracaoNotaEnvioController = $.extend({
 			});
 			
 			$("#geracaoNotaEnvio-filtro-selectFornecedores").multiselect("checkAll");
-		},
-		
+		},     
+		     
 		/**
 		 * inicializa os botões com suas funções de click
 		 */
