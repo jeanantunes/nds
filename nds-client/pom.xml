@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
@@ -17,20 +17,6 @@
 	<name>NDS - Client</name>
 
 	<dependencies>
-		<dependency>
-			<groupId>javax.servlet.jsp.jstl</groupId>
-			<artifactId>jstl-api</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.web</groupId>
-			<artifactId>jstl-impl</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
@@ -117,36 +103,41 @@
 			<groupId>aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jrimum</groupId>
 			<artifactId>jrimum-bopepo</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>net.sourceforge.barbecue</groupId>
 			<artifactId>barbecue</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-hibernate4</artifactId>
-			<version>2.0.0</version>
-		</dependency>
+		  <groupId>com.fasterxml.jackson.datatype</groupId>
+		  <artifactId>jackson-datatype-hibernate4</artifactId>
+		  <version>2.0.0</version>
+		</dependency> 
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.9</version>
-		</dependency>
+		</dependency>             
 		<dependency>
 			<groupId>com.fasterxml</groupId>
 			<artifactId>jackson-module-hibernate</artifactId>
@@ -163,14 +154,17 @@
 			<artifactId>jackson-dataformat-csv</artifactId>
 			<version>2.0.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.lightcouch</groupId>
 			<artifactId>lightcouch</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>br.com.jcomputacao</groupId>
 			<artifactId>nfexml</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>br.com.abril</groupId>
 			<artifactId>nds-common</artifactId>
@@ -200,6 +194,7 @@
 			<artifactId>nds-service-client-impl</artifactId>
 			<version>1.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
@@ -229,6 +224,7 @@
 			<groupId>org.ektorp</groupId>
 			<artifactId>org.ektorp.spring</artifactId>
 		</dependency>
+            
 	</dependencies>
 
 	<build>
@@ -260,14 +256,14 @@
 					<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
 					<sourceDirectory>src/main/resources/reports</sourceDirectory>
 
-					<server>tomcat-server</server>
+                    <server>tomcat-server</server>
 					<url>http://localhost:8080/manager/text</url>
 				</configuration>
 				<version>1.0-beta-2</version>
 				<executions>
 					<execution>
 						<phase>prepare-package</phase>
-						<goals>
+                        <goals>
 							<goal>compile-reports</goal>
 						</goals>
 					</execution>
@@ -375,7 +371,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
-						<version>1.1</version>
+						<version>1.1</version>						
 						<configuration>
 							<server>tomcat-server</server>
 							<url>http://177.71.255.76:8080/manager/text</url>
@@ -529,5 +525,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>

@@ -167,7 +167,7 @@ public class ParametrosDistribuidorController extends BaseController {
 
 	public Download getLogo() {
 		
-		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();
+		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();;
 		
 		if (imgLogotipo != null) {
 		
@@ -188,7 +188,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	/**buscarDiasOperacaoFornecedor
 	 * Grava as alterações de parametros realizadas para o distribuidor
-	 * @param parametrosDistribuidor
+	 * @param distribuidor
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
 	    
@@ -286,7 +286,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	/**
 	 * Grava os dias de distribuição de recolhimento do fornecedor
-	 * @param selectFornecedoresLancamento
+	 * @param distribuidor
 	 */
 	@Post
 	@Path("/gravarDiasDistribuidorFornecedor")

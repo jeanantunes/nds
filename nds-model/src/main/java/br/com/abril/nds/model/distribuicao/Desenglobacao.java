@@ -38,11 +38,7 @@ public class Desenglobacao implements Serializable {
 	@Column(name = "NOME_COTA_DESENGLOBADA")
 	private String desenglobaNomePessoa;
 	
-<<<<<<< HEAD
-	@ManyToOne
-=======
 	@ManyToOne(optional = false)
->>>>>>> 4b791b352d5d30b3e972dd169f27cfd320b87c60
 	@JoinColumn(name = "TIPO_PDV_ID")
 	private TipoPontoPDV tipoPDV;
 	
@@ -58,7 +54,7 @@ public class Desenglobacao implements Serializable {
 	
 	@Column(name = "PORCENTAGEM_COTA_ENGLOBADA")
 	private Float englobadaPorcentagemCota;
-	
+
 	@Temporal(TemporalType.DATE)
 	@Column (name = "DATA_ALTERACAO")
 	private Date dataAlteracao;
@@ -126,7 +122,6 @@ public class Desenglobacao implements Serializable {
 	public void setEnglobadaPorcentagemCota(Float englobadaPorcentagemCota) {
 		this.englobadaPorcentagemCota = englobadaPorcentagemCota;
 	}
-
 	public Date getDataAlteracao() {
 		return dataAlteracao;
 	}

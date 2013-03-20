@@ -6,10 +6,9 @@ $(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
     }
 });
 
-$(document).ajaxError(function(event, jqXHR, ajaxOptions, thrownError) {
+$(document).ajaxError(function(event, jqXHR, ajaxOptions) {
 	 if (jqXHR.status != 601) {
     	 alert("Ocorreu um erro na requisição.\nConsulte o log do Servidor para mais informações" );
-    	 alert(thrownError);
      }
 });
 

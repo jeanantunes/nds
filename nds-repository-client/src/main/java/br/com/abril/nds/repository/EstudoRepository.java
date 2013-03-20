@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.StatusEstudo;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade

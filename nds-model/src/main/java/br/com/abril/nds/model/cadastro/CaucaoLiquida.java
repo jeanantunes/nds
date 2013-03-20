@@ -5,7 +5,6 @@ package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Column;

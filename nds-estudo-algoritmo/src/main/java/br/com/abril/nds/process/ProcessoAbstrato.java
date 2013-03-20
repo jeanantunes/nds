@@ -1,14 +1,16 @@
 package br.com.abril.nds.process;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.GenericDTO;
 
+@Component
 public abstract class ProcessoAbstrato {
 
 	protected GenericDTO<?> genericDTO;
 
 	protected ProcessoAbstrato() {
-
 	}
 
 	protected ProcessoAbstrato(GenericDTO<?> genericDTO) {
@@ -24,6 +26,10 @@ public abstract class ProcessoAbstrato {
 
 	public GenericDTO<?> getGenericDTO() {
 		return genericDTO;
+	}
+	
+	public void setGenericDTO(GenericDTO<?> genericDTO) {
+	    this.genericDTO = genericDTO;
 	}
 	
 	public Estudo getEstudo() {

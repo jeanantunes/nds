@@ -315,12 +315,11 @@ public class CotaAusenteController extends BaseController {
 	@Post
 	public void exibirProdutosSuplementaresDisponiveis(Long idCotaAusente) {
 		
-		FiltroCotaAusenteDTO filtro = this.getFiltroSessao();
-		
 		List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoDisponíveis = 
-				this.estoqueProdutoService.obterProdutosEdicaoSuplementarDisponivel(filtro.getData(), idCotaAusente);
-		
+				this.cotaAusenteService.obterDadosExclusaoCotaAusente(idCotaAusente);
+
 		result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1).total(listaProdutosEdicaoDisponíveis.size()).serialize();
+		
 	}
 	
 	

@@ -33,6 +33,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.service.ExpedicaoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -71,6 +72,9 @@ public class ResumoExpedicaoController extends BaseController {
 	
 	@Autowired
 	private ExpedicaoService expedicaoService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroResumo";
 

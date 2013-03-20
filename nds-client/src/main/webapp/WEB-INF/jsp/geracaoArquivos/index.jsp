@@ -17,18 +17,6 @@ $(function(){
 });
 </script>
 <form>
-
-    <div class="areaBts">
-		<div class="area">
-		    <span class="bt_arq"
-			    title="Confirmar"><a id="btnGerar" href="javascript:;" onclick="mostrar();"><img
-					border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
-			</span>
-		</div>
-	</div>
-    <br/>
-    <br/>
-
 <fieldset class="classFieldset">
 	<legend> Geração de Arquivos aos Jornaleiros</legend>
 	<table width="950" border="0" cellpadding="2" cellspacing="1"
@@ -49,8 +37,10 @@ $(function(){
 					<input type="text" name="datepickerDe" id="datepickerDe"
 						style="width: 70px;" />
 				</div></td>
-			<td width="128">
-		    </td>
+			<td width="128"><span class="bt_confirmar_novo"
+				title="Confirmar"><a id="btnGerar" href="javascript:;" onclick="mostrar();"><img
+						border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">Gerar
+						Arquivos</a></span></td>
 		</tr>
 	</table>
 

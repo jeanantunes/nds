@@ -21,7 +21,6 @@ import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO.OrdenacaoColunaDetalhe;
@@ -772,201 +771,58 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void obterQtdProdutoEdicaoEncalhePrimeiroDia() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
-		
-		Assert.assertNotNull(qtde);
-		
-		Assert.assertEquals(1, qtde.intValue());
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdProdutoEdicaoEncalhe() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdProdutoEdicaoEncalhePorIdFornecedor() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setIdFornecedor(fornecedorDinap.getId());
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdProdutoEdicaoEncalhePorIdCota() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setIdCota(cotaManoel.getId());
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdItemProdutoEdicaoEncalhe() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdItemProdutoEdicaoEncalhePorIdFornecedor() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdItemProdutoEdicaoEncalhePorIdCota() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	public void obterQtdItemProdutoEdicaoEncalhePrimeiroDia() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
-		
-		Assert.assertEquals(8, qtde.intValue());
-		
-	}
-
-	@Test
-	public void obterQtdProdutoEdicaoEncalheAposPrimeiroDia() {
-
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(1, Calendar.MARCH, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(1, Calendar.MARCH, 2012));
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, true);
-		
-		Assert.assertNotNull(qtde);
-		
-		Assert.assertEquals(1, qtde.intValue());
-	}
-
-	@Test
-	public void obterQtdItemProdutoEdicaoEncalheAposPrimeiroDia() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(2, Calendar.MARCH, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(2, Calendar.MARCH, 2012));
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, true);
-		
-		Assert.assertEquals(45, qtde.intValue());
-	}
-	
-	@Test
 	public void obterQtdConsultaEncalhe() {
 		
 		setUpForConsultaEncalhe();
-		
+
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		
-		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
-		
-		Assert.assertEquals(3, totalizador.getQtdConsultaEncalhe().intValue());
+
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
+
+		Assert.assertEquals(3, qtde.intValue());
 	}
 	
 	@Test
 	public void obterQtdConsultaEncalheNulo() {
 		
 		setUpForConsultaEncalhe();
-		
+
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
-		
-		Assert.assertEquals(3, totalizador.getQtdConsultaEncalhe().intValue());
+
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
+
+		Assert.assertEquals(3, qtde.intValue());
 	}
 	
 	@Test
 	@SuppressWarnings("unused")
 	public void obterQtdConsultaEncalhePorIdCota() {
-		
+
 		setUpForConsultaEncalhe();
-		
+
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdCota(1L);
-		
-		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
-		
+
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
+
 	}
 	
 	@Test
 	@SuppressWarnings("unused")
 	public void obterQtdConsultaEncalhePorIdFornecedor() {
-		
 		setUpForConsultaEncalhe();
 		
+
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdFornecedor(1L);
-		
-		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
+
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
 		
 	}
 

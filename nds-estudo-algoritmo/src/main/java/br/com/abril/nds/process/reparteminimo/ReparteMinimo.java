@@ -2,8 +2,9 @@ package br.com.abril.nds.process.reparteminimo;
 
 import java.math.BigDecimal;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
@@ -12,32 +13,31 @@ import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
  * Processo que faz o ajuste do Reparte Mínimo para as cotas de acordo com os parâmetros do setup, com o pacote padrão e com a
  * quantidade de reparte que ele deverá receber, para evitar que ele receba uma quantidade menor que o mínimo configurado ou que o
  * pacote padrão do produto.
- * <p style="white-space: pre-wrap;">SubProcessos:
- * 	- N/A
- * Processo Pai:
- * 	- N/A
+ * <p style="white-space: pre-wrap;">
+ * SubProcessos: - N/A Processo Pai: - N/A
  * 
- * Processo Anterior: {@link RedutorAutomatico}
- * Próximo Processo: {@link ReparteProporcional}
+ * Processo Anterior: {@link RedutorAutomatico} Próximo Processo: {@link ReparteProporcional}
  * </p>
  */
+@Component
 public class ReparteMinimo extends ProcessoAbstrato {
-
-    public ReparteMinimo(Estudo estudo) {
-	super(estudo);
-    }
 
     @Override
     protected void executarProcesso() throws Exception {
-	if (getEstudo().isDistribuicaoPorMultiplos()) {
+	if (getEstudo().isDistribuicaoPorMultiplos() && (getEstudo().getPacotePadrao() != null)) {
 	    BigDecimal somatoriaReparteMinimo = BigDecimal.ZERO;
-	    BigDecimal reparteMinimo = BigDecimal.ZERO;
 	    for (Cota cota : getEstudo().getCotas()) {
-		if (getEstudo().getPacotePadrao().compareTo(BigDecimal.ZERO) > 0) {
-		    reparteMinimo = cota.getReparteMinimo().divide(getEstudo().getPacotePadrao(), 0, BigDecimal.ROUND_FLOOR)
-			    .multiply(getEstudo().getPacotePadrao());
+		BigDecimal reparteMinimo = null;
+		if (cota.getReparteMinimo().compareTo(getEstudo().getReparteMinimo()) > 0) {
+		    reparteMinimo = cota.getReparteMinimo();
+		} else {
+		    reparteMinimo = getEstudo().getReparteMinimo();
 		}
-		if (cota.getReparteMinimo().compareTo(BigDecimal.ZERO) == 0) {
+		if (getEstudo().getPacotePadrao().compareTo(BigDecimal.ZERO) > 0) {
+		    reparteMinimo = reparteMinimo.divide(getEstudo().getPacotePadrao(), 0, BigDecimal.ROUND_FLOOR).multiply(
+			    getEstudo().getPacotePadrao());
+		}
+		if (reparteMinimo.compareTo(BigDecimal.ZERO) == 0) {
 		    reparteMinimo = getEstudo().getPacotePadrao();
 		}
 		if (cota.getReparteMinimo().compareTo(reparteMinimo) < 0) {

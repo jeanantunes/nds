@@ -309,15 +309,9 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-<<<<<<< HEAD
-				<groupId>org.testng</groupId>
-				<artifactId>testng</artifactId>
-				<version>6.8</version>
-=======
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-ehcache</artifactId>
 				<version>4.1.7.Final</version>
->>>>>>> branch 'master' of https://adenilton@bitbucket.org/pedroxs/nds.git
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

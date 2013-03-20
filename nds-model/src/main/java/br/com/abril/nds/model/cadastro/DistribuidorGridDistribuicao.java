@@ -50,14 +50,6 @@ public class DistribuidorGridDistribuicao implements Serializable {
 		this.id = id;
 	}
 
-	public Distribuidor getDistribuidor() {
-		return distribuidor;
-	}
-
-	public void setDistribuidor(Distribuidor distribuidor) {
-		this.distribuidor = distribuidor;
-	}
-
 	public boolean isGeracaoAutomaticaEstudo() {
 		return geracaoAutomaticaEstudo;
 	}

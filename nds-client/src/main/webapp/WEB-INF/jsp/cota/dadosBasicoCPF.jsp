@@ -7,7 +7,22 @@
  <table width="870" cellpadding="2" cellspacing="2" style="text-align:left;">
    <tr>
      <td><strong>Cota:</strong></td>
-     <td><input name="cotaDTO.numeroCota" maxlength="16" id="numeroCotaCPF" type="text" style="width:150px" /></td>
+     <td>
+        <input name="cotaDTO.numeroCota" maxlength="16" id="numeroCotaCPF" type="text" style="width:60px" />
+     	 
+     	 <strong>Tipo:</strong>
+     	 
+	     <select name="cotaDTO.tipoCota" id="cotaDTO.tipoCota" style="width:110px;" onchange="MANTER_COTA.verificaTipoCota(this);">
+	        <option selected="selected">Selecione...</option>
+	        <option value="A">Alternativo</option>
+	        <option value="C">Convencional</option>
+	      </select>
+     
+     </td>
+     
+     
+      
+     
      <td><strong>Início de Atividade:</strong></td>
      <td><span id="dataInclusaoCPF"style="width:100px"></span></td>
    </tr>

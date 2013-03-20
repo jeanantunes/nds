@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.testng.ITestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -16,12 +16,16 @@ import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.process.correcaovendas.CorrecaoIndividual;
 import br.com.abril.nds.process.medias.Medias;
 
-public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProvider {
+public abstract class JornaleirosNovosVendaMediaDataProvider {
 
+    @Autowired
+    private static Medias medias;
+    
+    @Autowired
+    private static CorrecaoIndividual correcaoIndividual;
+    
     @DataProvider(name = "getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList")
-    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList(ITestContext context) throws Exception {
-
-	List<Long> listParamCotaId = getParamCotaId(context);
+    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresComEquivalenteVendaMediaCorrigidaMaiorZeroList() throws Exception {
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -34,12 +38,6 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
-
-	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
-		itCota.remove();
-		continue;
-	    }
-
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 	    cota = new CotaDAO().getIndiceAjusteCotaEquivalenteByCota(cota);
 
@@ -54,7 +52,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 		    ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
-		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
+		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    int iCotaEquivalente = 0;
@@ -71,13 +69,13 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				CorrecaoIndividual correcaoIndividualEquivalente = new CorrecaoIndividual(produtoEdicaoEquivalente);
-				correcaoIndividualEquivalente.executar();
+				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
+				correcaoIndividual.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    Medias medias = new Medias(cotaEquivalente);
+			    medias.setGenericDTO(cotaEquivalente);
 			    medias.executar();
 
 			}
@@ -96,7 +94,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 		    }
 		}
 
-		Medias medias = new Medias(cota);
+		medias.setGenericDTO(cota);
 		medias.executar();
 	    }
 	}
@@ -105,9 +103,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
     }
 
     @DataProvider(name = "getCotaNovaComQtdeEdicaoBaseMaiorTresList")
-    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMaiorTresList(ITestContext context) throws Exception {
-
-	List<Long> listParamCotaId = getParamCotaId(context);
+    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMaiorTresList() throws Exception {
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -120,12 +116,6 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
-
-	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
-		itCota.remove();
-		continue;
-	    }
-
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 	    cota = new CotaDAO().getIndiceAjusteCotaEquivalenteByCota(cota);
 
@@ -138,7 +128,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 		    ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
-		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
+		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    int iCotaEquivalente = 0;
@@ -155,13 +145,13 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				CorrecaoIndividual correcaoIndividualEquivalente = new CorrecaoIndividual(produtoEdicaoEquivalente);
-				correcaoIndividualEquivalente.executar();
+				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
+				correcaoIndividual.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    Medias medias = new Medias(cotaEquivalente);
+			    medias.setGenericDTO(cotaEquivalente);
 			    medias.executar();
 
 			}
@@ -170,7 +160,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 		    }
 		}
 
-		Medias medias = new Medias(cota);
+		medias.setGenericDTO(cota);
 		medias.executar();
 
 		listCotaReturn.add(new Cota[] { cota });
@@ -181,9 +171,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
     }
 
     @DataProvider(name = "getCotaNovaComQtdeEdicaoBaseMenorIgualTresSemEquivalenteVendaMediaCorrigidaMaiorZeroList")
-    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresSemEquivalenteVendaMediaCorrigidaMaiorZeroList(ITestContext context) throws Exception {
-
-	List<Long> listParamCotaId = getParamCotaId(context);
+    public static Iterator<Cota[]> getCotaNovaComQtdeEdicaoBaseMenorIgualTresSemEquivalenteVendaMediaCorrigidaMaiorZeroList() throws Exception {
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -194,15 +182,9 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 	while (itCota.hasNext()) {
 
 	    Cota cota = itCota.next();
-
-	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
-		itCota.remove();
-		continue;
-	    }
-
 	    cota.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cota));
 	    cota = new CotaDAO().getIndiceAjusteCotaEquivalenteByCota(cota);
-
+	    
 	    if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
 
 		List<Cota> listCotaEquivalente = cota.getEquivalente();
@@ -214,14 +196,14 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 		    ProdutoEdicao produtoEdicao = itProdutoEdicao.next();
 
-		    CorrecaoIndividual correcaoIndividual = new CorrecaoIndividual(produtoEdicao);
+		    correcaoIndividual.setGenericDTO(produtoEdicao);
 		    correcaoIndividual.executar();
 
 		    int iCotaEquivalente = 0;
 		    while (iCotaEquivalente < listCotaEquivalente.size()) {
 
 			Cota cotaEquivalente = listCotaEquivalente.get(iCotaEquivalente);
-
+			
 			cotaEquivalente.setEdicoesRecebidas(new ProdutoEdicaoDAO().getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
 
 			if (cotaEquivalente.getEdicoesRecebidas() != null && !cotaEquivalente.getEdicoesRecebidas().isEmpty()) {
@@ -231,13 +213,13 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 
 				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
 
-				CorrecaoIndividual correcaoIndividualEquivalente = new CorrecaoIndividual(produtoEdicaoEquivalente);
-				correcaoIndividualEquivalente.executar();
+				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
+				correcaoIndividual.executar();
 
 				iProdutoEdicaoEquivalente++;
 			    }
 
-			    Medias medias = new Medias(cotaEquivalente);
+			    medias.setGenericDTO(cotaEquivalente);
 			    medias.executar();
 
 			}
@@ -250,7 +232,7 @@ public abstract class JornaleirosNovosVendaMediaDataProvider extends NDSDataProv
 		    }
 		}
 
-		Medias medias = new Medias(cota);
+		medias.setGenericDTO(cota);
 		medias.executar();
 
 		if (!hasVendaMediaMaiorZero.contains(Boolean.TRUE)) {

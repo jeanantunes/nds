@@ -307,8 +307,8 @@ public class Distribuidor {
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DistribuidorClassificacaoCota> listClassificacaoCota;
 	
-	@OneToOne(mappedBy = "distribuidor", cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	private DistribuidorGridDistribuicao gridDistribuicao;
+	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DistribuidorGridDistribuicao> listGridDistribuicao;
 	
 	@OneToMany(mappedBy="distribuidor", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DistribuidorPercentualExcedente> listPercentualExcedente;
@@ -1088,12 +1088,13 @@ public class Distribuidor {
 		this.listClassificacaoCota = listClassificacaoCota;
 	}
 
-	public DistribuidorGridDistribuicao getGridDistribuicao() {
-		return gridDistribuicao;
+	public List<DistribuidorGridDistribuicao> getListGridDistribuicao() {
+		return listGridDistribuicao;
 	}
 
-	public void setGridDistribuicao(DistribuidorGridDistribuicao gridDistribuicao) {
-		this.gridDistribuicao = gridDistribuicao;
+	public void setListGridDistribuicao(
+			List<DistribuidorGridDistribuicao> listGridDistribuicao) {
+		this.listGridDistribuicao = listGridDistribuicao;
 	}
 
 	public List<DistribuidorPercentualExcedente> getListPercentualExcedente() {

@@ -17,8 +17,6 @@ import br.com.abril.nds.dto.RepartePDVDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
@@ -154,6 +152,13 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		mixCotaProdutoRepository.excluirTodos();
 		
 	}
+
+	@Override
+	@Transactional
+	public void excluirMixPorCota(Long idCota){
+		mixCotaProdutoRepository.removerPorIdCota(idCota);
+	}
+	
 	
 	@Override
 	@Transactional
@@ -222,5 +227,3 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	
 
 }
-
-

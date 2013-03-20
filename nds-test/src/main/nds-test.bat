@@ -1,1 +1,0 @@
-java -jar nds-test-1.0.jar resources/CorrecaoVendas.xml -testnames "Primeiro Cenario"

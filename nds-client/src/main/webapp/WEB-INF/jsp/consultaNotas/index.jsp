@@ -104,11 +104,12 @@ fieldset label
 						</select></td>
 						<td width="95"><label for="notaRecebida" style="margin:0px">Nota Recebida</label></td>
 						<td colspan="2">
-						<select name="isNotaRecebida" id="selectNotaRecebida"
+						<select name="filtroConsultaNotaFiscal.notaRecebida" id="selectNotaRecebida"
 								style="width: 135px;">
-								<option value="-1"></option>
-								<option value="1">Sim</option>
-								<option value="0">Não</option>
+								<option value="TODAS">Todas</option>
+								<option value="SOMENTE_NOTAS_RECEBIDAS">Sim</option>
+								<option value="SOMENTE_NOTAS_NAO_RECEBIDAS">Não</option>
+								<option value="NOTAS_NAO_RECEBIDAS_COM_NOTA_DE_ENVIO">Apenas nota de envio</option>
 						</select></td>
 						<td width="31">&nbsp;</td>
 						<td width="222">
