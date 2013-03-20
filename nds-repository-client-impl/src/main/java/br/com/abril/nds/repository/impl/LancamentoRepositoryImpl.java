@@ -1080,7 +1080,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" produto.NOME as nomeProduto, ");
 		sql.append(" produto.PERIODICIDADE as periodicidadeProduto, ");
 		
-		sql.append(" (coalesce(estoqueProduto.QTDE,0) + coalesce(estoqueProduto.QTDE_SUPLEMENTAR,0)) ");
+		sql.append(" (coalesce(estoqueProduto.QTDE,0)) ");
 		
 		/*
 		sql.append(" 	select sum(itemRecebFisico.QTDE_FISICO) ");
