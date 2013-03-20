@@ -332,6 +332,8 @@ var visaoEstoqueController = $.extend(true, {
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
+		params +="&filtro.paginar=false";
+		
 		$(".visaoEstoqueTransferenciaGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarDetalhe.json?' + params, 
 			preProcess : visaoEstoqueController.montaInputTransferencia,
@@ -368,6 +370,8 @@ var visaoEstoqueController = $.extend(true, {
 		$("#visaoEstoque_filtro_tipoEstoque", this.workspace).val(tipoEstoque);
 		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+		
+		params +="&filtro.paginar=false";
 		
 		$(".visaoEstoqueInventarioGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisarDetalhe.json?' + params,
