@@ -21,7 +21,6 @@ display: none;
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/matrizDistribuicao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicaoVendaMedia.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 
 <script type="text/javascript">
 function estudoComplementarShow(link){
