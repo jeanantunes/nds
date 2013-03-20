@@ -19,8 +19,6 @@ public interface AjusteReparteService {
 	
 	void excluirAjuste(Long idAjuste);
 	
-//	void excluirAjustePorCota(Cota cota);
-	
 	int qtdAjusteSegmento (Long idCota);
 	
 	AjusteReparteDTO buscarPorIdAjuste(Long id);

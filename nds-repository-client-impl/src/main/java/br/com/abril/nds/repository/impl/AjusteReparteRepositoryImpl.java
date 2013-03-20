@@ -186,6 +186,10 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 
 		query.setParameter("ID_COTA", idCota);
 		
-		return ((Long)query.uniqueResult()).intValue();
+		if(((Long)query.uniqueResult()) > 0){
+			return ((Long)query.uniqueResult()).intValue();
+		}else{
+			return 0;
+		}
 	}
 }

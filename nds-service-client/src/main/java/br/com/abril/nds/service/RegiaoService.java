@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 
 public interface RegiaoService {
@@ -36,5 +37,7 @@ public interface RegiaoService {
 //	List<RegiaoCotaDTO> carregarTodasCotasDaRegiao ();
 	
 	List<RegiaoCotaDTO> buscarPorSegmento (FiltroCotasRegiaoDTO filtro);
+	
+	List<TipoClassificacaoProduto> buscarClassificacao();
 
 }
