@@ -56,9 +56,9 @@
     				
     				<td>Data Movimento:</td>
     				<td>
-    					<input type="text" id="geracaoNotaEnvio-filtro-movimentoDe" style="width:76px;" class="input-date">
+    					<input type="text" id="geracaoNotaEnvio-filtro-movimentoDe" name ="movimentoDe" style="width:76px;" class="input-date">
      						&nbsp;&nbsp;Até&nbsp;
-      					<input type="text" id="geracaoNotaEnvio-filtro-movimentoAte" style="width:76px;" class="input-date">
+      					<input type="text" id="geracaoNotaEnvio-filtro-movimentoAte" name ="movimentoAte" style="width:76px;" class="input-date">
       				</td>
     				
     				<td>Data Emissão:</td>
