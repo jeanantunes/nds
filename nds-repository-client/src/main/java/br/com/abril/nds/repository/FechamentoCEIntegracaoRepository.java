@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
@@ -16,5 +17,7 @@ public interface FechamentoCEIntegracaoRepository {
 	boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro);
 
 	FechamentoCEIntegracaoConsolidadoDTO buscarConferenciaEncalheTotal(FiltroFechamentoCEIntegracaoDTO filtro);
+	
+	BigInteger countItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
 }

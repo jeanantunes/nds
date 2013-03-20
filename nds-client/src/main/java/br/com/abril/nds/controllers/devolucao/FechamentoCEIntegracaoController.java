@@ -117,7 +117,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		this.tratarFiltro(filtro);
 
-		filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro.getSemana()));
+		//filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro.getSemana()));
 
 		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = fechamentoCEIntegracaoService.construirFechamentoCEIntegracaoVO(filtro); 
 		
