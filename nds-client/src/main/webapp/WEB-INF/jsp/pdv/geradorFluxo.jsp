@@ -1,4 +1,4 @@
-
+<div id="geradorFluxo" style="display: none">
 <fieldset>
 	<legend>Gerador de Fluxo</legend>
     <table width="620" border="0" align="center" cellpadding="2" cellspacing="2">
@@ -54,4 +54,4 @@
 	 </table>
 
 </fieldset>
-
+</div>

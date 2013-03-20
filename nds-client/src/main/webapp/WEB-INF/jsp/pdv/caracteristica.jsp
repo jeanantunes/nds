@@ -28,8 +28,10 @@
 	      <input name="temComputador" type="checkbox" value="" id="temComputador" />
 	      <label for="temComputador" >Tem Computador?</label>
 	      <br clear="all" />
+	     <!--
 	      <input name="possuiCartao" type="checkbox" value="" id="possuiCartao" />
 	      <label for="possuiCartao" >Possui cartão de Crédito/Débito?</label>
+	      -->
 	      <br clear="all" />
 	      <input name="luminoso" type="checkbox" value="" id="luminoso" onclick="PDV.opcaoTextoLuminoso('#luminoso')" />
 	      <label for="luminoso" >Luminoso</label>
@@ -46,6 +48,7 @@
  
     <table width="522" border="0" cellspacing="1" cellpadding="1">
     
+	  
 	    <tr>
 		    <td width="123">Tipo de Ponto:</td>
 		    <td width="392">
@@ -57,7 +60,7 @@
 			    </select>
 		    </td>
 	    </tr>
-    
+     
 	    <tr>
 		    <td>Características:</td>
 		    <td>
