@@ -13,6 +13,8 @@ public class SuplementarFecharDiaDTO implements Serializable {
 
 	private static final long serialVersionUID = 1712356619355112111L;
 	
+	private Long idProdutoEdicao;
+	
 	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String codigo;
 	
@@ -131,5 +133,13 @@ public class SuplementarFecharDiaDTO implements Serializable {
             BigInteger quantidadeTransferenciaSaida) {
         this.quantidadeTransferenciaSaida = quantidadeTransferenciaSaida;
     }
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
 
 }

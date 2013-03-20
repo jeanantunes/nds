@@ -11,15 +11,15 @@ import br.com.abril.nds.util.upload.XlsUploaderUtils;
 public class UploaderXlsUtilTest {
 
 	public static void main(String[] args) throws URISyntaxException {
-		URL url = ClassLoader.getSystemResource("test.xls");
-		
+
+		URL url = ClassLoader.getSystemResource("test.xlsx");
 		List<KeyValue> list = XlsUploaderUtils.returnKeyValueFromXls(new File(url.toURI()));
 		
 		System.out.println("## retornando todos os valores que contem a chave cotaID");
 		for (KeyValue keyValue : list) {
 			if (keyValue.getKey().equals("cotaID")) {
 				System.out.println(keyValue.getValue());
-			}			
+			}
 		}
 		
 		System.out.println("\n\n## retornando todos os valores que contem a chave nomeCota");

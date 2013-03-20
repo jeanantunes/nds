@@ -1,4 +1,5 @@
 package br.com.abril.nds.model.planejamento;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.HashSet;
@@ -155,7 +156,5 @@ public class EstudoCota implements Serializable {
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
-
-
 
 }

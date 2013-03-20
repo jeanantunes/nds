@@ -56,7 +56,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		this.paramsDinamicos(query, filtro);
-		
+
 		query.setParameter("RECOLHIDO", StatusLancamento.RECOLHIDO);
 		query.setParameter("EXPEDIDO", StatusLancamento.EXPEDIDO);
 		

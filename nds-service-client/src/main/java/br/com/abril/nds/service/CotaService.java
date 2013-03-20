@@ -11,6 +11,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -27,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
@@ -359,13 +361,13 @@ public interface CotaService {
 	
 	Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
     
-    List<Cota> obterCotas(SituacaoCadastro situacaoCadastro);
+    List<CotaResumoDTO> obterCotas(SituacaoCadastro situacaoCadastro);
 	
-	List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade);
+	List<CotaResumoDTO> obterCotasComInicioAtividadeEm(Date dataInicioAtividade);
 	
-	List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
+	List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
 	
-	List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
+	List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
 
 	List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
@@ -387,4 +389,8 @@ public interface CotaService {
 	 * @return
 	 */
 	boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota);
+	
+	public void apagarTipoCota(Long idCota, String TipoCota);
+	
+	public List<DistribuidorClassificacaoCota> obterListaClassificacao();
 }

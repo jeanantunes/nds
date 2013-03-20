@@ -1,4 +1,3 @@
-
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
@@ -211,6 +210,17 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 	}
 
-	
+	public void removerPorIdCota(Long idCota){
+
+		StringBuilder hql = new StringBuilder("");
+
+		hql.append("")
+				.append("delete from MixCotaProduto m  ")
+				.append(" where  m.cota.id = :idCota ");
+				
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+	}
 
 }
