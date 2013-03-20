@@ -151,7 +151,7 @@ public class GruposAcessoController extends BaseController {
 		}
 
 		if (!listaMensagemValidacao.isEmpty()) {
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR,
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING,
 					listaMensagemValidacao);
 			throw new ValidacaoException(validacaoVO);
 		}
@@ -293,7 +293,7 @@ public class GruposAcessoController extends BaseController {
 		}
 
 		if (!listaMensagemValidacao.isEmpty()) {
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
+			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.WARNING, listaMensagemValidacao);
 			throw new ValidacaoException(validacaoVO);
 		}
 
