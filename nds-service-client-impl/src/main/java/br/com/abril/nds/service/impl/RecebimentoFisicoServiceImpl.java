@@ -129,30 +129,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	*/
 	@Transactional
 	public List<RecebimentoFisicoDTO> obterListaItemRecebimentoFisico(Long idNotaFiscal) {
-		
-		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(idNotaFiscal);
-		
-		if(listaItemRecebimentoFisico == null) {
-			return null;
-		}
-		
-		for(RecebimentoFisicoDTO itemRecebimento : listaItemRecebimentoFisico) {
-			
-			BigInteger qtdRepartePrevisto = itemRecebimento.getRepartePrevisto();
-			
-			BigDecimal precoItem = itemRecebimento.getPrecoItem();
-			
-			BigDecimal valorTotal = new BigDecimal(0.0D);
-			
-			if(qtdRepartePrevisto != null && precoItem != null) {
-				valorTotal = precoItem.multiply( BigDecimal.valueOf( qtdRepartePrevisto.longValue() ) );
-			}
-			
-			itemRecebimento.setValorTotal(valorTotal);
-			
-		}
-		
-		return listaItemRecebimentoFisico;		
+
+		return this.recebimentoFisicoRepository.obterListaItemRecebimentoFisico(idNotaFiscal);		
 	}
 	
 	/**

@@ -87,6 +87,7 @@ public class FiltroResumoExpedicaoDTO implements Serializable {
 			QNT_PRODUTO("qntProduto"),
 			REPARTE("reparte"),
 			DIFERENCA("qntDiferenca"),
+			DATA_LANCAMENTO("dataLancamento"),
 			VALOR_FATURADO("valorFaturado");
 			
 			private String nomeColuna;
