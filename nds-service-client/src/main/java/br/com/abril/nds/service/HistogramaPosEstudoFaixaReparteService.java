@@ -1,9 +1,9 @@
 package br.com.abril.nds.service;
 
-import br.com.abril.nds.dto.BaseEstudoAnaliseFaixaReparteDTO;
+import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 
 public interface HistogramaPosEstudoFaixaReparteService {
 
-	BaseEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo( int faixaDe, int faixaAte, Integer estudoId);
+	HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo( int faixaDe, int faixaAte, Integer estudoId);
 	
 }
