@@ -3,7 +3,7 @@ package br.com.abril.nds.integracao.test;
 import org.junit.Test;
 
 import br.com.abril.nds.integracao.fileimporter.InterfaceExecutor;
-import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
+import br.com.abril.nds.integracao.model.InterfaceEnum;
 
 public class TestExecutor {
 

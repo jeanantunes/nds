@@ -111,17 +111,17 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				display : 'Encalhe',
 				name : 'encalhe',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			},  {
 				display : 'Venda',
 				name : 'venda',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			},  {
 				display : 'Preço Capa R$',
-				name : 'precoCapa',
+				name : 'precoCapaFormatado',
 				width : 80,
 				sortable : true,
 				align : 'right'
@@ -129,7 +129,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				display : 'Valor Venda R$',
 				name : 'valorVendaFormatado',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}],
 			sortname : "sequencial",
@@ -144,13 +144,47 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	},
 	
-	alteraValorEncalhe : function(idProdEdicao, valor) {
+	tratarAlteracaoEncalhe : function(idProdEdicao, encalhe) {
+		
+		var reparte = $("#reparte" + idProdEdicao).html();
+		var precoCapa = $("#precoCapa" + idProdEdicao).html();
+		
+		var venda = reparte - encalhe;
+		var valorVenda = venda * priceToFloat(precoCapa);
+		var valorVendaFormatado = floatToPrice(valorVenda);
+		
+		$("#venda" + idProdEdicao).html(venda);
+		$("#valorVenda" + idProdEdicao).html(valorVendaFormatado);
 		
 		for(var id in fechamentoCEIntegracaoController.idsProdEdicao) {
 			if(fechamentoCEIntegracaoController.idsProdEdicao[id].name == idProdEdicao) {
-				fechamentoCEIntegracaoController.idsProdEdicao[id].value = valor;
+				fechamentoCEIntegracaoController.idsProdEdicao[id].value = encalhe;
 			}
 		}
+		
+		//TODO: idItemChamadaFornecedor
+		var idItemChamadaFornecedor = 10;
+		
+		fechamentoCEIntegracaoController.obterTotais(idItemChamadaFornecedor, encalhe);
+	},
+	
+	obterTotais : function(idItemChamadaFornecedor, encalhe) {
+		
+		var data = {
+			'idItemChamadaFornecedor': idItemChamadaFornecedor, 'encalhe': encalhe
+		};
+		
+		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/atualizarEncalheCalcularTotais', 
+			data,
+			function(result) {
+				if (result) {
+					
+					$("#totalBruto").html(result.totalBruto);
+					$("#totalDesconto").html(result.totalDesconto);
+					$("#totalLiquido").html(result.totalLiquido);
+				}
+			}
+		);
 	},
 	
 	fechamentoCeGridPreProcess : function(resultado) {
@@ -164,10 +198,41 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 
 				$.each(resultado.listaFechamento.rows, function(index, row) {
 					
-					fechamentoCEIntegracaoController.idsProdEdicao = [];
+					//fechamentoCEIntegracaoController.idsProdEdicao = [];
+					
 					fechamentoCEIntegracaoController.idsProdEdicao.push({name: row.cell.idProdutoEdicao, value: row.cell.encalhe});
-					var linhaEncalhe = '<input type="text" name="inputEncalhe" id="inputEncalhe' + row.cell.sequencial + '" value="' + row.cell.encalhe + '" size="5px" onchange="fechamentoCEIntegracaoController.alteraValorEncalhe('+ row.cell.idProdutoEdicao +', this.value)"/>';
-					row.cell.encalhe = linhaEncalhe;
+					
+					var colunaReparte =
+						'<span id="reparte' + row.cell.idProdutoEdicao + '">' +
+							row.cell.reparte +
+						'</span>';
+					
+					var colunaEncalhe =
+						'<input type="text" name="inputEncalhe"' +
+						'id="inputEncalhe' + row.cell.sequencial + '"' +
+						'value="' + row.cell.encalhe + '" size="5px"' +
+						'onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe('+ row.cell.idProdutoEdicao +', this.value)"/>';
+					
+					var colunaVenda =
+						'<span id="venda' + row.cell.idProdutoEdicao + '">' +
+							row.cell.venda +
+						'</span>';
+					
+					var colunaPrecoCapa =
+						'<span id="precoCapa' + row.cell.idProdutoEdicao + '">' +
+							row.cell.precoCapaFormatado +
+						'</span>';
+					
+					var colunaValorVenda =
+						'<span id="valorVenda' + row.cell.idProdutoEdicao + '">' +
+							row.cell.valorVendaFormatado +
+						'</span>';
+					
+					row.cell.reparte = colunaReparte;
+					row.cell.encalhe = colunaEncalhe;					
+					row.cell.venda = colunaVenda;
+					row.cell.precoCapaFormatado = colunaPrecoCapa;
+					row.cell.valorVendaFormatado = colunaValorVenda;
 				});
 				
 			};

@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -116,7 +117,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		this.tratarFiltro(filtro);
 
-		filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro.getSemana()));
+		//filtro.setPeriodoRecolhimento(obterDataDaSemana(filtro.getSemana()));
 
 		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = fechamentoCEIntegracaoService.construirFechamentoCEIntegracaoVO(filtro); 
 		
@@ -271,6 +272,17 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		}
 		
 		result.include("listaFornecedores",listaFornecedoresCombo );
+	}
+	
+	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe) {
+		
+		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
+		
+		fechamentoCEIntegracao.setTotalBruto("10.00");
+		fechamentoCEIntegracao.setTotalDesconto("20.00");
+		fechamentoCEIntegracao.setTotalLiquido("30.00");
+		
+		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
 	}
 
 }

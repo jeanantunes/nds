@@ -37,13 +37,13 @@
 			<p>Valor total da [Nota] n&atilde;o confere com o valor total dos [Itens], Deseja prosseguir?</p>
 		</div>
 
-		<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
+		<div id="dialog-novo-item" style="display: none;" title="Recebimento FÃ­sico">
 
 			<jsp:include page="../messagesDialog.jsp" />
 
 			<table width="341" border="0" cellspacing="2" cellpadding="2">
 				<tr>
-					<td>Código:</td>
+					<td>CÃ³digo:</td>
 					<td width="202">
 						<input 
 						type="text"
@@ -78,7 +78,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Data Lançamento:</td>
+					<td>Data LanÃ§amento:</td>
 					<td><input 	type="text" 
 								name="datepickerLancto"
 								id="datepickerLancto" 
@@ -200,7 +200,7 @@
 						</span>
 
 						<span class="bt_novos">
-							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
+							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento FÃ­sico">
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
 							</a>
 						</span>
@@ -221,7 +221,7 @@
 						</span>
 
 						<span class="bt_novos">
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento Físico"> 
+							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento FÃ­sico"> 
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0"/>
 							</a>
 						</span>						
@@ -235,7 +235,7 @@
 
 				<fieldset class="fieldFiltro">
 
-					<legend> Pesquisar Recebimento Físico</legend>
+					<legend> Pesquisar Recebimento FÃ­sico</legend>
 
 					<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 
@@ -345,9 +345,9 @@
 
 		    <jsp:include page="../messagesDialog.jsp" />
 
-			<fieldset style="width:910px!important;">
+			<fieldset style="width:1000x!important;">
 			  <legend>Dados da Nota</legend>
-			  <table width="885" cellpadding="2" cellspacing="2" style="text-align:left;">
+			  <table width="1000" cellpadding="2" cellspacing="2" style="text-align:left;">
 
 			    <tr style="width: 25%">
 
@@ -403,7 +403,7 @@
 					<td colspan="5">
 						<span id="nfesNovo" class="nfesNovo">
 							Chave de Acesso:
-							<input type="text" maxlength="44" style="width: 310px; margin-left: 65px;" id="novoChaveAcesso" name="novoChaveAcesso" />
+							<input type="text" maxlength="44" style="width: 365px; margin-left: 65px;" id="novoChaveAcesso" name="novoChaveAcesso" />
 						</span>
 					</td>
 
@@ -438,7 +438,7 @@
 			</fieldset>
 
 
-			<fieldset style="width:910px!important; margin-top:10px;">
+			<fieldset style="width:1000px!important; margin-top:10px;">
 			    <form name="formularioItensNota" id="formularioItensNota">
 				    <legend>Itens da Nota</legend>
 				    <table id="tabelaItens" class="novoItemNotaGrid"></table>

@@ -39,6 +39,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.StatusInadimplencia;
@@ -56,6 +57,8 @@ import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
+import br.com.abril.nds.repository.NegociacaoDividaRepository;
+import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CalendarioService;
@@ -139,6 +142,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private FormaCobrancaService formaCobrancaService;
+	
+	@Autowired
+	private NegociacaoDividaRepository negociacaoRepository;
+	
+	@Autowired
+	private ParcelaNegociacaoRepository parcelaNegociacaoRepository;
 	
 	/**
 	 * Obtém a situação da cota
@@ -1054,31 +1063,53 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			for (ConsolidadoFinanceiroCota consolidado : consolidados){
 				
-				//a cobrança (divida/cobranca/consolidado) não pode ser apagada caso pertença a uma negociação
 				Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
 				
 				if (divida != null){
 				
 					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
-					this.cobrancaRepository.remover(divida.getCobranca());
-					this.dividaRepository.remover(divida);
+					
+					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
+					
+					if (negociacao != null){
+					    
+						if (!negociacao.isNegociacaoAvulsa()){
+						
+						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
+						
+						    this.negociacaoRepository.remover(negociacao);
+						    
+						    this.removerDividaCobrancaConsolidado(divida,consolidado);
+						}
+					}
+					else{
+					
+						this.removerDividaCobrancaConsolidado(divida,consolidado);
+					}
 				}	
-				
-				this.consolidadoFinanceiroRepository.remover(consolidado);
-				
-				List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
-							
-					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-							GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
-				);
-				
-				this.movimentoFinanceiroCotaService.removerPostergadosDia(
-						consolidado.getCota().getId(), 
-						listaPostergados);
 			}
 		}
+	}
+	
+	private void removerDividaCobrancaConsolidado(Divida divida, ConsolidadoFinanceiroCota consolidado){
+		
+		this.cobrancaRepository.remover(divida.getCobranca());
+		
+	    this.dividaRepository.remover(divida);
+	    
+	    this.consolidadoFinanceiroRepository.remover(consolidado);
+		
+		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
+			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+					GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
+					
+			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+					GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
+		);
+		
+		this.movimentoFinanceiroCotaService.removerPostergadosDia(
+				consolidado.getCota().getId(), 
+				listaPostergados);
 	}
 	
 	/**

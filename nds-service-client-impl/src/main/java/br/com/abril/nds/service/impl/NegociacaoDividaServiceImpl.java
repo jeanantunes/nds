@@ -854,10 +854,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		
 		BigDecimal valorParcelasModificadas =  BigDecimal.ZERO;
 		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
-		FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
-		if(formaCobranca ==null){
-			formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();		
-		}
+		FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();	
 		int qtdParcelasModificadas = 0;
 		for (CalculaParcelasVO calculaParcelasVO : parcelas) {
 			if(calculaParcelasVO.isModificada()){
@@ -981,10 +978,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
 		Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
 		
-		FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
-		if(formaCobranca ==null){
-			formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();		
-		}
+		FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();	
 
 		for (int i = 0; i < filtro.getQntdParcelas(); i++) {
 			CalculaParcelasVO parcela = new CalculaParcelasVO();
