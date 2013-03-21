@@ -46,12 +46,21 @@ public class Regiao implements Serializable {
 	private Date dataRegiao;
 	
 	@ManyToOne(optional = false)
-    @JoinColumn(name = "USUARIO_ID")
-    private Usuario idUsuario;
-	
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario idUsuario;
+
 	public Regiao() {
         this.dataRegiao = new Date();
     }
+
+	public Usuario getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Usuario idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+
 
 	public Long getId() {
 		return id;
@@ -83,13 +92,5 @@ public class Regiao implements Serializable {
 
 	public void setDataRegiao(Date dataRegiao) {
 		this.dataRegiao = dataRegiao;
-	}
-	
-	public Usuario getIdUsuario() {
-		return idUsuario;
-	}
-
-	public void setIdUsuario(Usuario idUsuario) {
-		this.idUsuario = idUsuario;
 	}
 }

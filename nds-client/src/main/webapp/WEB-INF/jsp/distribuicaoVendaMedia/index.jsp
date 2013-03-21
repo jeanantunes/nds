@@ -406,7 +406,7 @@ function esconde_redutor(){
                      <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
                                        
                      <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.gerar()"><img src="images/ico_check.gif" alt="Gerar" hspace="5" border="0" />Gerar</a></span>
-                     <span class="bt_novos"><a href="analise_1.htm"><img src="images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.analise()"><img src="images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
                 </div>
                 <div id="tab-distribuicao-2" class="distribuicaoVendaMedia-tab">
                	  <fieldset style="width:600px!important;">
