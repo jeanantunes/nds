@@ -1088,8 +1088,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				porcentagemDesconto = 
 					(produtoEdicao.getDesconto() != null) 
 						? produtoEdicao.getDesconto() 
-							: produtoEdicao.getProduto().getDesconto() ;
+							: produtoEdicao.getProduto().getDesconto();
+				
+				if	((porcentagemDesconto == null 
+						|| BigInteger.ZERO.equals(porcentagemDesconto.unscaledValue()))
+						&& (Origem.INTERFACE.equals(produtoEdicao.getProduto().getOrigem()))) {
+					
+					DescontoLogistica descontoLogistica = 
+						produtoEdicao.getProduto().getDescontoLogistica();
+					
+					if (descontoLogistica != null) {
 						
+						porcentagemDesconto = 
+							produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto();
+					}
+				}
+				
 				break;
 			
 			case INTERFACE:
@@ -1099,13 +1113,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 						? produtoEdicao.getDescontoLogistica() 
 							: produtoEdicao.getProduto().getDescontoLogistica();
 				
-				porcentagemDesconto = descontoLogistica.getPercentualDesconto();
+				if (descontoLogistica != null) {
+					
+					porcentagemDesconto = descontoLogistica.getPercentualDesconto();
+				}
+				
+				break;
+				
+			default:
 				
 				break;
 		}
 		
 		if	(porcentagemDesconto == null 
-				|| BigDecimal.ZERO.equals(porcentagemDesconto)) {
+				|| BigInteger.ZERO.equals(porcentagemDesconto.unscaledValue())) {
 			
 			throw new ValidacaoException(new ValidacaoVO(
 				TipoMensagem.WARNING, 
