@@ -343,9 +343,12 @@ public class RegiaoController extends BaseController {
 	}
 
 	private File upLoadArquivo(UploadedFile xls) throws IOException, FileNotFoundException {
+		
 		File x = new File(xls.getFileName());
-	    File destino = new File(xls.getFileName());  
+	    
+		File destino = new File(xls.getFileName());  
 	    destino.createNewFile();  
+	    
 	    InputStream stream = xls.getFile();  
 	    IOUtils.copy(stream,new FileOutputStream(destino));
 		return x;
