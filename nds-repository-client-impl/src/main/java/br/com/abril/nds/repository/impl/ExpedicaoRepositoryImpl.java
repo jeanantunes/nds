@@ -36,11 +36,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(getHqlResumoLancamentoPorBox());
-		
-		hql.append(" group by ");
-		hql.append(" produtoEdicao.ID ");
-		
+		hql.append(this.getHqlResumoLancamentoPorProduto());
+
 		hql.append(getOrderBy(filtro));
 		
 		Query query = this.getQueryResumoLancamentoPorBox(hql);
@@ -344,35 +341,28 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 			switch (filtro.getOrdenacaoColunaProduto()) {
 				
 				case CODIGO_PRODUTO:
-					hql.append(" produto.CODIGO ");
+					hql.append(" codigoProduto ");
 					break;
 				case DESCRICAO_PRODUTO:
-					hql.append(" produto.NOME ");
+					hql.append(" nomeProduto ");
 					break;
 				case NUMERO_EDICAO:
-					hql.append(" produtoEdicao.NUMERO_EDICAO ");
+					hql.append(" numeroEdicao ");
 					break;
 				case PRECO_CAPA:
-					hql.append(" produtoEdicao.PRECO_VENDA ");
+					hql.append(" precoCapa ");
 					break;
 				case REPARTE:
-					hql.append(" estudo.QTDE_REPARTE ");
+					hql.append(" qntReparte ");
 					break;
 				case DIFERENCA:
-					hql.append(" ")
-					.append(" sum( ( case ")
-						.append(" when (diferenca.TIPO_DIFERENCA = 'FALTA_DE') then (-diferenca.QTDE)")
-						.append(" when (diferenca.TIPO_DIFERENCA = 'SOBRA_DE') then (diferenca.QTDE)")
-						.append(" when (diferenca.TIPO_DIFERENCA = 'FALTA_EM') then (-diferenca.QTDE)")
-						.append(" when (diferenca.TIPO_DIFERENCA = 'SOBRA_EM') then (diferenca.QTDE)")
-						.append(" else 0")
-					.append(" end ) )");
+					hql.append(" qntDiferenca ");
 					break;
 				case VALOR_FATURADO:
-					hql.append("  produtoEdicao.PRECO_VENDA*estudo.QTDE_REPARTE ");
+					hql.append("  valorFaturado ");
 					break;
 				default:
-					hql.append(" produto.CODIGO ");
+					hql.append(" codigoProduto ");
 			}
 			
 			if (filtro.getPaginacao().getOrdenacao() != null) {
@@ -467,5 +457,61 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		criteria.setProjection(Projections.max("dataExpedicao"));
 		return (Date) criteria.uniqueResult();
 	}
+	
+	private String getHqlResumoLancamentoPorProduto() {
 
+		StringBuilder fromClause = new StringBuilder(this.getHqlResumoLancamentoPorBox());
+
+		StringBuilder innerQuery = new StringBuilder();
+		innerQuery.append(" select ");
+		innerQuery.append(" diferenca.id as diferencaId, ");
+		innerQuery.append(" lancamento.DATA_LCTO_DISTRIBUIDOR as dataLancamento, ");
+		innerQuery.append(" coalesce(box.ID, 0) as idBox, ");
+		innerQuery.append(" concat(coalesce(box.CODIGO, ''), ");
+		innerQuery.append(" '-', ");
+		innerQuery.append(" coalesce(box.NOME, '')) as codigoBox, ");
+		innerQuery.append(" coalesce(box.NOME, '') as nomeBox, ");
+		innerQuery.append(" produtoEdicao.PRECO_VENDA as precoCapa, ");
+		innerQuery.append(" estudoCota.QTDE_EFETIVA as qntReparte, ");
+		innerQuery.append(" case ");
+		innerQuery.append(" when diferenca.TIPO_DIFERENCA='FALTA_DE' then -diferenca.QTDE ");
+		innerQuery.append(" when diferenca.TIPO_DIFERENCA='SOBRA_DE' then diferenca.QTDE ");
+		innerQuery.append(" when diferenca.TIPO_DIFERENCA='FALTA_EM' then -diferenca.QTDE ");
+		innerQuery.append(" when diferenca.TIPO_DIFERENCA='SOBRA_EM' then diferenca.QTDE ");
+		innerQuery.append(" else 0 ");
+		innerQuery.append(" end as qntDiferenca, ");
+		innerQuery.append(" estudoCota.QTDE_EFETIVA*produtoEdicao.PRECO_VENDA as valorFaturado, ");
+		innerQuery.append(" produto.CODIGO as codigoProduto, ");
+		innerQuery.append(" produto.NOME as nomeProduto, ");
+		innerQuery.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
+		innerQuery.append(" produtoEdicao.ID as produtoEdicaoId ");
+		innerQuery.append(fromClause.substring(fromClause.lastIndexOf("from")));
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select diferencaGrouped.dataLancamento as dataLancamento, diferencaGrouped.idBox as idBox, ");
+		sql.append(" diferencaGrouped.codigoBox as codigoBox, ");
+		sql.append(" diferencaGrouped.nomeBox as nomeBox, diferencaGrouped.precoCapa as precoCapa, ");
+		sql.append(" sum(diferencaGrouped.qntReparte) as qntReparte, sum(diferencaGrouped.qntDiferenca) as qntDiferenca, ");
+		sql.append(" sum(diferencaGrouped.valorFaturado) as valorFaturado, ");
+		sql.append(" diferencaGrouped.codigoProduto as codigoProduto, diferencaGrouped.nomeProduto as nomeProduto, ");
+		sql.append(" diferencaGrouped.numeroEdicao as numeroEdicao, diferencaGrouped.qntProduto as qntProduto ");
+		sql.append(" from ( ");
+		sql.append(" select nonGrouped.dataLancamento as dataLancamento, nonGrouped.idBox as idBox, ");
+		sql.append(" nonGrouped.codigoBox as codigoBox, ");
+		sql.append(" nonGrouped.nomeBox as nomeBox, nonGrouped.precoCapa as precoCapa, ");
+		sql.append(" sum(nonGrouped.qntReparte) as qntReparte, nonGrouped.qntDiferenca as qntDiferenca, ");
+		sql.append(" sum(nonGrouped.valorFaturado) as valorFaturado, nonGrouped.codigoProduto as codigoProduto, ");
+		sql.append(" nonGrouped.nomeProduto as nomeProduto, nonGrouped.numeroEdicao as numeroEdicao, ");
+		sql.append(" count(distinct nonGrouped.produtoEdicaoId) as qntProduto, ");
+		sql.append(" nonGrouped.produtoEdicaoId as produtoEdicaoId ");
+		sql.append(" from ( ");
+		sql.append(innerQuery);
+		sql.append(" ) nonGrouped ");
+		sql.append(" group by nonGrouped.diferencaId, nonGrouped.produtoEdicaoId ");
+		sql.append(" ) diferencaGrouped ");
+		sql.append(" group by diferencaGrouped.produtoEdicaoId ");
+
+		return sql.toString();
+	}
 }
