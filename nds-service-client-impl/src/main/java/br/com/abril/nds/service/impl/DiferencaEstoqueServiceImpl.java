@@ -812,9 +812,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			tipoMovimentoEstoque.setAprovacaoAutomatica(true);
 		}
 	   	
-		Long estudoCotaId = 0L;
+		Long estudoCotaId = null;
 		for(RateioDiferenca rd : diferenca.getRateios()) {
-			if(rd.getEstudoCota().getCota().getId() == cota.getId()) {
+			if(rd.getEstudoCota()!= null && rd.getEstudoCota().getCota().getId() == cota.getId()) {
 				estudoCotaId = rd.getEstudoCota().getId();
 				break;
 			}
