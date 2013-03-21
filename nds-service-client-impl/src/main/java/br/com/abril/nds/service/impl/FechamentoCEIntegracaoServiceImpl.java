@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.FechamentoCEIntegracaoVO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -17,6 +18,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
 import br.com.abril.nds.service.BoletoService;
@@ -46,7 +48,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	private ProdutoEdicaoService produtoEdicaoService;
 
 	@Transactional
-	public List<FechamentoCEIntegracaoDTO> buscarFechamentoEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {
+	public List<ItemFechamentoCEIntegracaoDTO> buscarFechamentoEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {
 		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalhe(filtro);
 	}
 	
@@ -86,7 +88,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		for(int cont = 0; cont < listaEncalhePronta.length; cont++){
 			encalhe = Long.parseLong(listaEncalhePronta[cont]);
 			produtoEdicao = produtoEdicaoService.obterProdutoEdicao(Long.parseLong(listaIdProdutoEdicaoPronta[cont]), false);
-			this.fechamentoCEIntegracaoRepository.fecharCE(encalhe, produtoEdicao, (idFornecedor.equals("-1") ? null : new Long(idFornecedor)),numeroSemana);
+		//	this.fechamentoCEIntegracaoRepository.fecharCE(encalhe, produtoEdicao, (idFornecedor.equals("-1") ? null : new Long(idFornecedor)),numeroSemana);
 		}
 	}
 
@@ -98,7 +100,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 
 	@Override
 	@Transactional(readOnly=true)
-	public FechamentoCEIntegracaoVO construirFechamentoCEIntegracaoVO(FiltroFechamentoCEIntegracaoDTO filtro) {
+	public FechamentoCEIntegracaoDTO obterCEIntegracaoFornecedor(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
 		BigInteger qntItens = fechamentoCEIntegracaoRepository.countItensFechamentoCeIntegracao(filtro);
 		
@@ -106,33 +108,37 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 		
-		List<FechamentoCEIntegracaoDTO> listaFechamento = this.buscarFechamentoEncalhe(filtro);
+		FechamentoCEIntegracaoDTO fechamentoCEIntegracaoDTO = new FechamentoCEIntegracaoDTO();
+	
+		fechamentoCEIntegracaoDTO.setQntItensCE(qntItens.intValue());
 		
-		TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>> tableModel = new TableModel<CellModelKeyValue<FechamentoCEIntegracaoDTO>>();
-
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaFechamento));
+		fechamentoCEIntegracaoDTO.setItensFechamentoCE( this.buscarFechamentoEncalhe(filtro));
 		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+		fechamentoCEIntegracaoDTO.setConsolidado(this.buscarFechamentoEncalheTotal(filtro));
 		
-		tableModel.setTotal(qntItens.intValue());
+		fechamentoCEIntegracaoDTO.setSemanaFechada(this.verificarStatusSemana(filtro));
 		
-		FechamentoCEIntegracaoVO fechamentoCEIntegracaoVO = new FechamentoCEIntegracaoVO();
-
-		FechamentoCEIntegracaoConsolidadoDTO totalFechamento = this.buscarFechamentoEncalheTotal(filtro);
-		fechamentoCEIntegracaoVO.setTotalBruto(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto()));
-		fechamentoCEIntegracaoVO.setTotalDesconto(CurrencyUtil.formatarValor(totalFechamento.getTotalDesconto()));
-		fechamentoCEIntegracaoVO.setTotalLiquido(CurrencyUtil.formatarValor(totalFechamento.getTotalBruto().subtract(totalFechamento.getTotalDesconto())));
-
-		fechamentoCEIntegracaoVO.setListaFechamento(tableModel);
-		fechamentoCEIntegracaoVO.setSemanaFechada(this.verificarStatusSemana(filtro));
-
-		return fechamentoCEIntegracaoVO;
+		return fechamentoCEIntegracaoDTO;
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public FechamentoCEIntegracaoConsolidadoDTO buscarFechamentoEncalheTotal(FiltroFechamentoCEIntegracaoDTO filtro) {
 		return this.fechamentoCEIntegracaoRepository.buscarConferenciaEncalheTotal(filtro);
+	}
+	
+	@Override
+	@Transactional
+	public void reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
+		
+		ChamadaEncalheFornecedor encalheFornecedor = 
+				chamadaEncalheFornecedorRepository.obterChamadaEncalheFornecedor(filtro.getIdFornecedor(), 
+																				 filtro.getAnoCorrente().intValue(), 
+																				 filtro.getNumeroSemana().intValue());
+		if(encalheFornecedor!= null){
+			encalheFornecedor.setStatusCeNDS(StatusCeNDS.ABERTO);
+			chamadaEncalheFornecedorRepository.alterar(encalheFornecedor);
+		}
 	}
 	
 }

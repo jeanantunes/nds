@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
-import br.com.abril.nds.dto.FechamentoCEIntegracaoDTO;
+import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
@@ -36,7 +36,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<FechamentoCEIntegracaoDTO> buscarConferenciaEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {
+	public List<ItemFechamentoCEIntegracaoDTO> buscarConferenciaEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -83,7 +83,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 						.addScalar("valorVenda", StandardBasicTypes.BIG_DECIMAL)
 						.addScalar("encalhe", StandardBasicTypes.BIG_INTEGER)
 						.addScalar("idItemCeIntegracao",StandardBasicTypes.LONG)
-						.setResultTransformer(Transformers.aliasToBean(FechamentoCEIntegracaoDTO.class));	
+						.setResultTransformer(Transformers.aliasToBean(ItemFechamentoCEIntegracaoDTO.class));	
 		
 		this.aplicarParametros(filtro, query);
 		
@@ -210,34 +210,34 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 				switch (filtro.getOrdenacaoColuna()) {
 				
 					case SEQUENCIAL:
-						orderByColumn = " ITEM_CH_ENC_FORNECEDOR.NUEMRO_ITEM ";
+						orderByColumn = " sequencial ";
 						break;
 					case CODIGO_PRODUTO:
-						orderByColumn = " PROD.CODIGO ";
+						orderByColumn = " codigoProduto ";
 						break;
 					case NOME_PRODUTO:
-						orderByColumn = " PROD.NOME  ";
+						orderByColumn = " nomeProduto  ";
 						break;
 					case ENCALHE:
-						orderByColumn = "  ";
+						orderByColumn = " encalhe  ";
 						break;
 					case PRECO_CAPA:
-						orderByColumn = "  ";
+						orderByColumn = " precoCapa ";
 						break;
 					case NUMERO_EDICAO:
-						orderByColumn = " PROD_EDICAO.NUMERO_EDICAO ";
+						orderByColumn = " numeroEdicao ";
 						break;
 					case REPARTE:
-						orderByColumn = " ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA ";
+						orderByColumn = " reparte ";
 						break;
 					case TIPO:
-						orderByColumn = " ";
+						orderByColumn = " tipoFormatado ";
 						break;
 					case VALOR_VENDA:
-						orderByColumn = " ";
+						orderByColumn = " valorVenda ";
 						break;
 					case VENDA:
-						orderByColumn = " ";
+						orderByColumn = " venda ";
 						break;
 						
 					default:
@@ -267,38 +267,19 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	}
 	
 	@Override
-	public void fecharCE(Long encalhe, ProdutoEdicao produtoEdicao, Long idFornecedor, Integer numeroSemana) {
-		
-		 //TODO acertar aimplementação deste método conforme novo fluxo
-		
-		 FechamentoEncalhe fe = new FechamentoEncalhe();
-		 fe.setQuantidade(encalhe);
-		 FechamentoEncalhePK pk = new FechamentoEncalhePK();
-		 pk.setProdutoEdicao(produtoEdicao);
-		 pk.setDataEncalhe(new Date());
-		 fe.setFechamentoEncalhePK(pk);
-		 
-		 for (ChamadaEncalheFornecedor chamadaEncalheFornecedor : chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(idFornecedor, numeroSemana, null)) {
-			 chamadaEncalheFornecedor.setStatusCeNDS(StatusCeNDS.FECHADO);
-			 this.getSession().save(chamadaEncalheFornecedor);
-		 }
-		 
-		 this.getSession().save(fe);
-		
-	}
-
-	@Override
 	public boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro) {
 		 
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("SELECT cef FROM ChamadaEncalheFornecedor cef WHERE" +
 				   " numeroSemana = :numeroSemana" +
+				   " and anoReferencia= :anoReferencia"+
 				   " and cef.statusCeNDS = :statusCeNDS");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		query.setParameter("numeroSemana", new Integer( filtro.getSemana().toString()) );
+		query.setParameter("numeroSemana", filtro.getNumeroSemana().intValue());
+		query.setParameter("anoReferencia", filtro.getAnoCorrente().intValue());
 		query.setParameter("statusCeNDS", StatusCeNDS.FECHADO);
 		
 		return (query.uniqueResult() == null) ? false : true;
