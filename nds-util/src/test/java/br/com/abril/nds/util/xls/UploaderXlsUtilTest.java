@@ -11,7 +11,15 @@ import br.com.abril.nds.util.upload.XlsUploaderUtils;
 public class UploaderXlsUtilTest {
 
 	public static void main(String[] args) throws URISyntaxException {
-		
+		URL url = ClassLoader.getSystemResource("test.xlsx");
+		List<CotaXlsDTO> lista = XlsUploaderUtils.getBeanListFromXls(CotaXlsDTO.class, new File(url.toURI()));
+		for (CotaXlsDTO cota : lista) {
+			System.out.println(cota.getIdCota());
+			System.out.println(cota.getNomeCota());
+		}
+	}
+
+	private static void getKeyValueMethod() throws URISyntaxException {
 		URL url = ClassLoader.getSystemResource("test.xlsx");
 		List<KeyValue> list = XlsUploaderUtils.returnKeyValueFromXls(new File(url.toURI()));
 		
