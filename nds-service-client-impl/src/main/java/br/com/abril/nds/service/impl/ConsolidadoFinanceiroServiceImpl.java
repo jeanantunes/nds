@@ -77,11 +77,17 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		
 		List<Long> tiposMovimentoCredito = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
-						OperacaoFinaceira.CREDITO);
+						OperacaoFinaceira.CREDITO,
+						null);
 		
 		List<Long> tiposMovimentoDebito =
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
-						OperacaoFinaceira.DEBITO);
+						OperacaoFinaceira.DEBITO,
+						Arrays.asList(
+								this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+										GrupoMovimentoFinaceiro.MULTA),
+								this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+										GrupoMovimentoFinaceiro.JUROS)));
 		
 		List<Long> tipoMovimentoEncalhe = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(

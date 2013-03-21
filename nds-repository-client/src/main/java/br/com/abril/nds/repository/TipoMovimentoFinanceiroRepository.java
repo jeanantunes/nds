@@ -18,8 +18,9 @@ public interface TipoMovimentoFinanceiroRepository extends Repository<TipoMovime
 			List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro);
 
 	List<TipoMovimentoFinanceiro> buscarTiposMovimentoFinanceiroPorOperacaoFinanceira(
-			OperacaoFinaceira operacaoFinaceira);
+			OperacaoFinaceira operacaoFinaceira, List<TipoMovimentoFinanceiro> movimentosIgnorar);
 	
 	List<Long> buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
-			OperacaoFinaceira operacaoFinaceira);
+			OperacaoFinaceira operacaoFinaceira,
+			List<TipoMovimentoFinanceiro> tiposIgnorar);
 }
