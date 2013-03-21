@@ -1402,9 +1402,13 @@ public class RecebimentoFisicoController extends BaseController {
 		notaFiscal.setValorInformado(CurrencyUtil.converterValor(nota.getValorTotal()));
 		notaFiscal.setChaveAcesso(nota.getChaveAcesso());
 		
-		
 		notaFiscal.setFornecedor(fornecedor);
-		notaFiscal.setTipoNotaFiscal(tipoNotaService.obterPorId(3l));//RECEBIMENTO DE ENCALHE
+		
+		final long codigoTipoNotaFiscalRemessaMercadoriaConsignacao = 5L;
+		
+		notaFiscal.setTipoNotaFiscal(
+			this.tipoNotaService.obterPorId(codigoTipoNotaFiscalRemessaMercadoriaConsignacao));
+		
         notaFiscal.setValorDesconto(BigDecimal.ZERO);
         
         notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
