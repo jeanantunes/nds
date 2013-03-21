@@ -34,6 +34,9 @@ public interface ChamadaEncalheFornecedorRepository extends Repository<ChamadaEn
      *         consulta
      */
     List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(Long idFornecedor, Integer numeroSemana,  Intervalo<Date> periodo);
+    
+    
+    ChamadaEncalheFornecedor obterChamadaEncalheFornecedor(Long idFornecedor,Integer anoReferencia, Integer numeroSemana);
 	
 	
 
