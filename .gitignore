@@ -1,3 +1,26 @@
+<<<<<<< HEAD
+.settings
+.classpath
+.project
+.metadata
+bin
+target
+META-INF/
+Servers/
+.svn*
+/NDS_replica.eap
+.DS_Store
+*.ldb
+/nds-client/src/main/webapp/capas/13.jpg
+/nds-client/src/main/java/applicationContext.xml
+/nds-client/velocity.log
+*.swp
+packages
+node_modules
+*.jasper
+/nds-client/src/main/resources/applicationContext-local.xml
+/nds-client/src/test/java/br/com/abril/nds/client/util/RepositoryTest.java
+=======
 .settings
 .classpath
 .project
@@ -18,3 +41,4 @@ node_modules
 *.jasper
 /nds-client/src/main/resources/applicationContext-local.xml
 /nds-client/src/test/java/br/com/abril/nds/client/util/RepositoryTest.java
+>>>>>>> 03f1ca6c8da04a45696f13aca9cd81446f5232f7

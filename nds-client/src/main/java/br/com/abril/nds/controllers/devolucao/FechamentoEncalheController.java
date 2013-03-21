@@ -104,29 +104,13 @@ public class FechamentoEncalheController extends BaseController {
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = 
 				consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
-		
-		int quantidade = this.quantidadeItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo);
 			
 		if (listaEncalhe.isEmpty()) {
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
 		} else {
-			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(quantidade).page(page).serialize();
+			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
 		}
 	}
-	
-	private int quantidadeItensFechamentoEncalhe(
-			String dataEncalhe, Long fornecedorId, Long boxId,
-			Boolean aplicaRegraMudancaTipo) {
-		
-		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
-		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
-		filtro.setFornecedorId(fornecedorId);
-		filtro.setBoxId(boxId);
-		
-		int quantidadeFechamentoEncalhe = this.fechamentoEncalheService.buscarQuantidadeConferenciaEncalhe(filtro);
-		
-		return quantidadeFechamentoEncalhe;
-	}	
 
 	private List<FechamentoFisicoLogicoDTO> consultarItensFechamentoEncalhe(
 			String dataEncalhe, Long fornecedorId, Long boxId,
@@ -589,6 +573,5 @@ public class FechamentoEncalheController extends BaseController {
 		}
 		
 		this.result.use(Results.nothing());
-	}
-		
+	}		
 }

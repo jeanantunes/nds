@@ -384,6 +384,13 @@ public class MatrizLancamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 		
+		Distribuidor distribuidor = this.distribuidorService.obter();
+		
+		if (distribuidor == null) {
+			
+			throw new RuntimeException("Dados do distribuidor inexistentes!");
+		}
+		
 		this.matrizLancamentoService.verificaDataOperacao(novaData);
 		
 		List<String> listaMensagens = new ArrayList<String>();
@@ -391,7 +398,7 @@ public class MatrizLancamentoController extends BaseController {
 		String produtos = "";
 		
 		Integer qtdDiasLimiteParaReprogLancamento =
-				this.distribuidorService.qtdDiasLimiteParaReprogLancamento();
+				distribuidor.getQtdDiasLimiteParaReprogLancamento();
 		
 		for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
 		
@@ -408,7 +415,7 @@ public class MatrizLancamentoController extends BaseController {
 			
 			Date dataLimiteReprogramacao =
 				DateUtil.subtrairDias(dataRecolhimentoPrevista,
-									  qtdDiasLimiteParaReprogLancamento);
+									  distribuidor.getQtdDiasLimiteParaReprogLancamento());
 			
 			if (novaData.compareTo(dataLimiteReprogramacao) == 1) {
 				

@@ -76,10 +76,4 @@ public class AjusteReparteServiceImpl implements AjusteReparteService  {
 	public List<AjusteReparteDTO> buscarPorIdCota(Long numCota) {
 		return this.ajusteRepository.buscarPorIdCota(numCota);
 	}
-
-//	@Override
-//	public void excluirAjustePorCota(Cota cota) {
-//		ajusteRepository.removerPorCota(cota);
-//		
-//	}
 }

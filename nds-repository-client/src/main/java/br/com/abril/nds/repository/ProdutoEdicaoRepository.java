@@ -324,6 +324,11 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @param produtoEdicao
 	 * @return
 	 */
-	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao);
+	public Boolean estudoPodeSerSomado(Long idEstudoBase, String codigoProduto);
+	
+	ProdutoEdicaoDTO findReparteEVenda(ProdutoEdicaoDTO dto);
+
+	List<ProdutoEdicaoDTO> findReparteEVenda(
+			List<ProdutoEdicaoDTO> produtosEdicao);
 
 }

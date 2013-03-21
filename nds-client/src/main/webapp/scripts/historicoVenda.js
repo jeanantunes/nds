@@ -119,7 +119,7 @@ var historicoVendaController = $.extend(true, {
 				params.push({name : "listProdutoEdicaoDto["+i+"].codigoProduto", value :  row.cell.codigoProduto});
 			}
 			
-			$.post(url, params, function(data){
+			$.get(url, params, function(data){
 			      if(data){ 
 			    	  $("#baseAnalise").hide();
 			    	  $('#analiseHistoricoContent').html(data);
@@ -148,10 +148,6 @@ var historicoVendaController = $.extend(true, {
 			    	  $('#analiseHistoricoPopUpVenda').html('');
 			    	  $('#analiseHistoricoPopUpVenda').append('<td class="class_linha_2"><strong>Venda:</strong></td>');
 			    	  
-			    	  //tr status
-			    	  $('#analiseHistoricoPopUpStatus').html('');
-			    	  $('#analiseHistoricoPopUpStatus').append('<td class="class_linha_1"><strong>Status:</strong></td>');
-			    	  
 			    	  // carregando popUp_analiseHistoricoVenda
 			    	  for ( var i in grids.EdicaoSelecionadaGrid.tableModel.rows) {
 			    		  row = grids.EdicaoSelecionadaGrid.tableModel.rows[i];
@@ -161,7 +157,6 @@ var historicoVendaController = $.extend(true, {
 			    	      $('#analiseHistoricoPopUpDatalancamento').append('<td width="130" align="center" class="class_linha_2">' + row.cell.dataLancamentoFormatada + '</td>');
 			    	      $('#analiseHistoricoPopUpReparte').append('<td align="right" class="class_linha_1">' + row.cell.repartePrevisto +'</td>');
 			    	      $('#analiseHistoricoPopUpVenda').append('<td align="right" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
-			    	      $('#analiseHistoricoPopUpStatus').append('<td align="right" class="class_linha_1">' + row.cell.situacaoLancamento + '</td>');
 			    	  }
 			    	  
 			    	  qtdEdicoesSelecionadas = 6 - grids.EdicaoSelecionadaGrid.tableModel.rows.length; 
@@ -173,7 +168,6 @@ var historicoVendaController = $.extend(true, {
 			    	      $('#analiseHistoricoPopUpDatalancamento').append('<td width="130" align="center" class="class_linha_2"></td>');
 			    	      $('#analiseHistoricoPopUpReparte').append('<td align="right" class="class_linha_1"></td>');
 			    	      $('#analiseHistoricoPopUpVenda').append('<td align="right" class="class_linha_1"></td>');
-			    	      $('#analiseHistoricoPopUpStatus').append('<td align="right" class="class_linha_2"></td>');
 			    	  }
 			      };
 			    });
@@ -325,13 +319,7 @@ var historicoVendaController = $.extend(true, {
 					},{
 						display : 'Produto',
 						name : 'nomeProduto',
-						width : 90,
-						sortable : true,
-						align : 'left'
-					},{
-						display : 'Classificação',
-						name : 'classificacaoProduto',
-						width : 70,
+						width : 140,
 						sortable : true,
 						align : 'left'
 					},{

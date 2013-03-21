@@ -50,8 +50,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.serialization.xstream.XStreamBuilder;
-import br.com.caelum.vraptor.serialization.xstream.XStreamJSONSerialization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -60,7 +58,6 @@ public class HistoricoVendaController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroHistoricoVendaDTO";
 	
-	private static final ValidacaoVO VALIDACAO_VO_SUCESSO = new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.");
 	private static final ValidacaoVO VALIDACAO_VO_LISTA_VAZIA = new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 	
 	@Autowired
@@ -68,12 +65,6 @@ public class HistoricoVendaController extends BaseController {
 	
 	@Autowired
 	private RegiaoService regiaoService;
-	
-	@Autowired
-	private XStreamJSONSerialization jsonSerializer;
-	
-	@Autowired
-	private XStreamBuilder xStreamBuilder; 
 	
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
@@ -223,7 +214,7 @@ public class HistoricoVendaController extends BaseController {
 	 * Faz a entrada da análise histórico de vendas (TELA ANÁLISE)
 	 * 
 	 */
-	@Post
+	@Get
 	public void analiseHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas){
 		
 		Collections.sort(listProdutoEdicaoDto);
@@ -372,5 +363,4 @@ public class HistoricoVendaController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getValidationMsg());
 		}
 	}
-	
 }

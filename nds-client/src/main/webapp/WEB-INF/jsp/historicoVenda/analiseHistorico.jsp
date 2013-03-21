@@ -5,7 +5,6 @@
 
 $(function() {
 	analiseHistoricoVendaController.init();
-	if(typeof(montarDados) == "function")montarDados();
 });
 
 
@@ -95,7 +94,6 @@ function escondeDados(){
     	    <tr id="analiseHistoricoPopUpDatalancamento" />
     	    <tr id="analiseHistoricoPopUpReparte" />
     	    <tr id="analiseHistoricoPopUpVenda" />
-    	    <tr id="analiseHistoricoPopUpStatus" />
   	    </table>
     	</div>
       <fieldset class="classFieldset">

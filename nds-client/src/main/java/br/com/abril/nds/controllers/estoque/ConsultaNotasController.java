@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -65,11 +66,6 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/estoque/consultaNotas")
 public class ConsultaNotasController extends BaseController {
 	
-	/**
-	 * Indicador para nota recebida.
-	 */
-	private static int NOTA_RECEBIDA = 1;
-	
 	@Autowired
 	private Result result;
 	
@@ -115,26 +111,24 @@ public class ConsultaNotasController extends BaseController {
 			notaFiscalService.obterNotasFiscaisCadastradasDTO(filtro);
 		
 		List<ConsultaNotaFiscalVO> listaConsultaNF = this.obterListaConsultaNotasFiscais(listaNotasFiscais);
-		
+		 
 		FileExporter.to("consulta-nota-fiscal", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 					listaConsultaNF, ConsultaNotaFiscalVO.class, this.httpServletResponse);
 	}
 	
-	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
+	public void pesquisarNotas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal,
 							   String dataInicial, String dataFinal, String sortorder, String sortname, int page, int rp) {
 
 		filtroConsultaNotaFiscal =
-				prepararFiltro(filtroConsultaNotaFiscal, isNotaRecebida, dataInicial, dataFinal, sortorder, sortname, page, rp);
+				prepararFiltro(filtroConsultaNotaFiscal, dataInicial, dataFinal, sortorder, sortname, page, rp);
 
 		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroConsultaNotaFiscal);
 		
 		try {
 			
 			List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais =
-					notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
-			/*List<NotaFiscalEntradaFornecedor> listaNotasFiscais =
-					notaFiscalService.obterNotasFiscaisCadastradas(filtroConsultaNotaFiscal);*/
+				notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
 
  			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 			
@@ -144,8 +138,6 @@ public class ConsultaNotasController extends BaseController {
 						
 			this.result.use(FlexiGridJson.class).noReference().from(listaNotasFiscais)
 			.total(quantidadeRegistros.intValue()).page(page).serialize();
-			
-			
 
 		} catch (IllegalArgumentException e) {
 
@@ -373,7 +365,15 @@ public class ConsultaNotasController extends BaseController {
 			sobrasFaltas += itemExibicaoToString(detalheNotaFiscalVO.getSobrasFaltas());
 
 		    DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
-
+		    
+		    BigDecimal valorTotal = 
+		    	(detalheNotaFiscalVO.getValorTotal() == null) 
+		    		? BigDecimal.ZERO : detalheNotaFiscalVO.getValorTotal();
+		    
+		    BigInteger qtdeExemplares = 
+		    	(detalheNotaFiscalVO.getQuantidadeExemplares() == null) 
+		    		? BigInteger.ZERO : detalheNotaFiscalVO.getQuantidadeExemplares();
+		    
 			CellModel cellModel = 
 					new CellModel(
 							detalheNotaFiscalVO.getCodigoItem().intValue(),
@@ -381,9 +381,9 @@ public class ConsultaNotasController extends BaseController {
 							itemExibicaoToString(detalheNotaFiscalVO.getNomeProduto()),
 							itemExibicaoToString(detalheNotaFiscalVO.getNumeroEdicao()),
 							itemExibicaoToString(decimalFormat.format(detalheNotaFiscalVO.getPrecoVenda())),
-							itemExibicaoToString(detalheNotaFiscalVO.getQuantidadeExemplares().intValue()),
+							itemExibicaoToString(qtdeExemplares.intValue()),
 							sobrasFaltas, 
-							itemExibicaoToString(detalheNotaFiscalVO.getValorTotal().setScale(2, BigDecimal.ROUND_DOWN)));
+							itemExibicaoToString(valorTotal.setScale(2, BigDecimal.ROUND_DOWN)));
 
 			listaCellModels.add(cellModel);
 		}
@@ -400,7 +400,7 @@ public class ConsultaNotasController extends BaseController {
 	}
 	
 	private FiltroConsultaNotaFiscalDTO prepararFiltro(
-			FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal, int isNotaRecebida,
+			FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal,
 			String dataInicial, String dataFinal, String sortorder, String sortname, int page, int rp) {
 
 		if (filtroConsultaNotaFiscal.getIdFornecedor() == -1L) {
@@ -435,11 +435,6 @@ public class ConsultaNotasController extends BaseController {
 		}
 		
 		filtroConsultaNotaFiscal.setListaColunaOrdenacao(listaColunaOrdenacao);
-
-		if (isNotaRecebida > -1) {
-
-			filtroConsultaNotaFiscal.setIsNotaRecebida(NOTA_RECEBIDA == isNotaRecebida);
-		}
 
 		return filtroConsultaNotaFiscal;
 	}

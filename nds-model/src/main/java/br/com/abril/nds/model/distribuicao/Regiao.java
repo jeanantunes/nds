@@ -38,14 +38,17 @@ public class Regiao implements Serializable {
 	@Column(name = "REGIAO_IS_FIXA", nullable = false)
 	private boolean regiaoIsFixa;
 	
+	/**
+	 * Data de início da Região
+	 */
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_REGIAO", nullable = false)
 	private Date dataRegiao;
-
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario idUsuario;
-	
+
 	public Regiao() {
         this.dataRegiao = new Date();
     }
@@ -90,7 +93,7 @@ public class Regiao implements Serializable {
 	public void setDataRegiao(Date dataRegiao) {
 		this.dataRegiao = dataRegiao;
 	}
-
+	
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

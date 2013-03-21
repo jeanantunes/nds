@@ -28,5 +28,4 @@ public enum Sexo {
 	public String getDescricao() {
 		return descricao;
 	}
-
 }

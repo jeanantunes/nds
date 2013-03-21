@@ -2,7 +2,6 @@ package br.com.abril.nds.model.distribuicao;
 
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -166,10 +165,6 @@ public class FixacaoReparte {
 	public void setRepartesPDV(List<RepartePDV> repartesPDV) {
 		this.repartesPDV = repartesPDV;
 	}
-
-
-
-	
 
 }
 

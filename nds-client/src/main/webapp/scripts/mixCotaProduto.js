@@ -26,13 +26,13 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Rep. médio',
+				display : 'Rep. Médio',
 				name : 'reparteMedio',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Vda. média',
+				display : 'Vda. Média',
 				name : 'vendaMedia',
 				width : 60,
 				sortable : true,
@@ -615,12 +615,12 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	adicionarMixCotaSucesso:function(result){
 		$(".mixCotasGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["Opera��o Realizada com sucesso!"]);
 	},
 	
 	adicionarMixProdutoSucesso:function(result){
 		$(".mixProdutosGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["Opera��o Realizada com sucesso!"]);
 	},
 	
 	
@@ -826,7 +826,7 @@ var mixCotaProdutoController = $.extend(true, {
 						  });
 					  
 					if(somaReparte > reparteTotal){
-						//abre dialog de confirmação de alteração de reparte maximo
+						//abre dialog de confirma��o de altera��o de reparte maximo
 						$("#dialog-confirma-reparte").dialog({
 							resizable: false,
 							height:'auto',

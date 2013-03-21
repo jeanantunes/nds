@@ -13,9 +13,11 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.repository.RegiaoRepository;
 import br.com.abril.nds.repository.RegistroCotaRegiaoRepository;
+import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.RegiaoService;
 
@@ -30,6 +32,9 @@ public class RegiaoServiceImpl implements RegiaoService  {
 	
 	@Autowired
 	private RegistroCotaRegiaoRepository registroCotaRegiaoRepository;
+	
+	@Autowired
+	private TipoClassificacaoProdutoRepository tipoClassificacaoProduto;
 	
 	@Override
 	@Transactional
@@ -113,4 +118,9 @@ public class RegiaoServiceImpl implements RegiaoService  {
 		return regiaoRepository.buscarCotasPorSegmento(filtro);
 	}
 	
+	@Override
+	@Transactional
+	public List<TipoClassificacaoProduto> buscarClassificacao() {
+		return tipoClassificacaoProduto.buscarTodos();
+	}
 }

@@ -13,6 +13,8 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class AnaliseHistogramaDTO implements Serializable {
 
+	private static final long serialVersionUID = 23157883037782978L;
+
 	@Export(label="Faixa de Venda", alignment=Alignment.CENTER)
 	private String faixaVenda=StringUtils.EMPTY;
 	
