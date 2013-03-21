@@ -564,6 +564,12 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
+				display : 'Pcte. Padrão',
+				name : 'pacotePadrao',
+				width : 70,
+				sortable : false,
+				align : 'center'
+			}, {
 				display : 'Preço c/ Desconto R$ ',
 				name : 'precoCapa',
 				width : 110,
@@ -585,12 +591,6 @@ var recebimentoFisicoController = $.extend(true, {
 				display : 'Qtd. Quebra',
 				name : 'qtdExemplar',
 				width : 60,
-				sortable : false,
-				align : 'center'
-			}, {
-				display : 'Pcte. Padrão',
-				name : 'pacotePadrao',
-				width : 70,
 				sortable : false,
 				align : 'center'
 			}, {				
@@ -662,7 +662,13 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Preço Capa R$',
+				display : 'Pcte. Padrão',
+				name : 'pacotePadrao',
+				width : 70,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Preço c/ Desconto R$',
 				name : 'precoCapa',
 				width : 120,
 				sortable : false,
@@ -679,7 +685,6 @@ var recebimentoFisicoController = $.extend(true, {
 				width : 70,
 				sortable : false,
 				align : 'center'
-				
 			},{
 				display : 'Ação',
 				name : 'acao',
@@ -688,7 +693,6 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center'
 			}],
 			
-		
 			showTableToggleBtn : true,
 			width : 960,
 			height : 180
@@ -1090,7 +1094,7 @@ var recebimentoFisicoController = $.extend(true, {
 		var pacotePadrao 	= parseInt($("#pacotePadraoItem"+idLinha).val());
 		var diferenca 		= 0;
 
-		var valor = parseFloat(preco * ((qtdPacote * pacotePadrao) + qtdQuebra));
+		var valor = preco * ((qtdPacote * pacotePadrao) + qtdQuebra);
 
 		$("#valorItem"+idLinha, recebimentoFisicoController.workspace).val($.formatNumber(valor,{locale:'br'}));
 		

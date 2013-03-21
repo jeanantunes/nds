@@ -203,11 +203,11 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		NotaFiscalEntrada notaFiscal = getNotaFiscalFromSession();
 		
-		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());
-		
 		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
 		
-		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = obterListaCellModelKeyValue(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
+		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = 
+			obterListaCellModelKeyValue(
+				getItensRecebimentoFisicoFromSession(), indRecebimentoFisicoConfirmado);
 		
 		TableModel<CellModelKeyValue<RecebimentoFisicoVO>> tableModel = 
 				new TableModel<CellModelKeyValue<RecebimentoFisicoVO>>();
@@ -217,7 +217,6 @@ public class RecebimentoFisicoController extends BaseController {
 		tableModel.setPage(1);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-		
 	}
 		
 	/**
@@ -236,13 +235,13 @@ public class RecebimentoFisicoController extends BaseController {
 			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
 		}
 		
-		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
-		
-		boolean indNotaInterface = Origem.INTERFACE.equals(notaFiscal.getOrigem());	
+		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);	
 		
 		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(idNotaFiscal);
 		
-		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = obterListaCellModelKeyValue(getItensRecebimentoFisicoFromSession(), indNotaInterface, indRecebimentoFisicoConfirmado);
+		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = 
+			obterListaCellModelKeyValue(
+				getItensRecebimentoFisicoFromSession(), indRecebimentoFisicoConfirmado);
 		
 		TableModel<CellModelKeyValue<RecebimentoFisicoVO>> tableModel = 
 				new TableModel<CellModelKeyValue<RecebimentoFisicoVO>>();
@@ -933,7 +932,6 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private List<CellModelKeyValue<RecebimentoFisicoVO>> obterListaCellModelKeyValue(
 			List<RecebimentoFisicoDTO> itensRecebimentoFisico, 
-			boolean indNotaInterface, 
 			boolean indRecebimentoFisicoConfirmado) {
 		
 		int counter = 0;
@@ -1006,11 +1004,9 @@ public class RecebimentoFisicoController extends BaseController {
 			recebFisico.setDestacarValorNegativo(destacarValorNegativo);
 
 			rows.add(new CellModelKeyValue<RecebimentoFisicoVO>(counter, recebFisico));
-			
 		}
 		
 		return rows;
-		
 	}
 	
 	/**
