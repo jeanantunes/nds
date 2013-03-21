@@ -57,10 +57,6 @@ public class Cota implements Serializable {
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
 	
-	
-	@Column(name="TIPO_COTA", nullable= false)
-	private String tipoCota;
-	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
