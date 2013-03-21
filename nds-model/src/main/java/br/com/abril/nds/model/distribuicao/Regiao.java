@@ -7,10 +7,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "REGIAO")
@@ -40,6 +44,11 @@ public class Regiao implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATA_REGIAO", nullable = false)
 	private Date dataRegiao;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario idUsuario;
+	
 	
 	public Regiao() {
         this.dataRegiao = new Date();
@@ -107,5 +116,13 @@ public class Regiao implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	public Usuario getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Usuario idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 }
