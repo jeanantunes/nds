@@ -564,6 +564,12 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
+				display : 'Pcte. Padrão',
+				name : 'pacotePadrao',
+				width : 70,
+				sortable : false,
+				align : 'center'
+			}, {
 				display : 'Preço c/ Desconto R$ ',
 				name : 'precoCapa',
 				width : 110,
@@ -585,12 +591,6 @@ var recebimentoFisicoController = $.extend(true, {
 				display : 'Qtd. Quebra',
 				name : 'qtdExemplar',
 				width : 60,
-				sortable : false,
-				align : 'center'
-			}, {
-				display : 'Pcte. Padrão',
-				name : 'pacotePadrao',
-				width : 70,
 				sortable : false,
 				align : 'center'
 			}, {				
@@ -662,7 +662,13 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Preço Capa R$',
+				display : 'Pcte. Padrão',
+				name : 'pacotePadrao',
+				width : 70,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Preço c/ Desconto R$',
 				name : 'precoCapa',
 				width : 120,
 				sortable : false,
@@ -679,7 +685,6 @@ var recebimentoFisicoController = $.extend(true, {
 				width : 70,
 				sortable : false,
 				align : 'center'
-				
 			},{
 				display : 'Ação',
 				name : 'acao',
@@ -688,7 +693,6 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center'
 			}],
 			
-		
 			showTableToggleBtn : true,
 			width : 960,
 			height : 180
@@ -1086,13 +1090,13 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		var qtdPacote 		= parseInt(qtdPacote);
 		var qtdQuebra 		= parseInt(qtdQuebra);
-		var repartePrevisto = parseInt($("#qtdNotaItem"+idLinha).text());
+		var repartePrevisto = parseInt($("#qtdNotaItem"+idLinha).val());
 		var pacotePadrao 	= parseInt($("#pacotePadraoItem"+idLinha).val());
 		var diferenca 		= 0;
 
-		var valor = preco * ((qtdPacote * pacotePadrao) + qtdQuebra)
+		var valor = preco * ((qtdPacote * pacotePadrao) + qtdQuebra);
 
-        $("#valorItem"+idLinha, recebimentoFisicoController.workspace).val($.formatNumber(valor,{locale:'br'}));
+		$("#valorItem"+idLinha, recebimentoFisicoController.workspace).val($.formatNumber(valor,{locale:'br'}));
 		
 		diferenca = ((qtdPacote * pacotePadrao) + qtdQuebra) - repartePrevisto; 
 
@@ -1291,6 +1295,13 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'left',
 				resizable : false
 			}, {
+				display : 'Pcte. Padrão',
+				name : 'pacotePadrao',
+				width : 70,
+				sortable : false,
+				align : 'center',
+				resizable : false
+			}, {
 				display : 'Preço Desc. R$',
 				name : 'precoDesconto',
 				width : 90,
@@ -1315,13 +1326,6 @@ var recebimentoFisicoController = $.extend(true, {
 				display : 'Qtde. Exems',
 				name : 'qtdeExemplar',
 				width : 80,
-				sortable : false,
-				align : 'center',
-				resizable : false
-			}, {
-				display : 'Pcte. Padrão',
-				name : 'pacotePadrao',
-				width : 70,
 				sortable : false,
 				align : 'center',
 				resizable : false
@@ -1649,11 +1653,11 @@ var recebimentoFisicoController = $.extend(true, {
 		     row.cell[0] = codigo;
 		     row.cell[1] = produto;
 		     row.cell[2] = edicao;
-		     row.cell[3] = precoDesconto;
-		     row.cell[4] = qtdNota;
-		     row.cell[5] = qtdPacote;
-		     row.cell[6] = qtdExemplar;
-		     row.cell[7] = pacotePadrao;
+		     row.cell[3] = pacotePadrao;
+		     row.cell[4] = precoDesconto;
+		     row.cell[5] = qtdNota;
+		     row.cell[6] = qtdPacote;
+		     row.cell[7] = qtdExemplar;
 		     row.cell[8] = diferenca;
 		     row.cell[9] = valor;
 		     row.cell[10] = checkBox;
@@ -1710,11 +1714,11 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaCodigo = linha.find("td")[0];
 			var colunaProduto = linha.find("td")[1];
 			var colunaEdicao = linha.find("td")[2];
-			var colunaPrecoDesconto = linha.find("td")[3];
-			var colunaQtdNota = linha.find("td")[4];
-			var colunaQtdPacote = linha.find("td")[5];
-			var colunaQtdExemplar = linha.find("td")[6];
-			var colunaPacotePadrao = linha.find("td")[7];
+			var colunaPacotePadrao = linha.find("td")[3];
+			var colunaPrecoDesconto = linha.find("td")[4];
+			var colunaQtdNota = linha.find("td")[5];
+			var colunaQtdPacote = linha.find("td")[6];
+			var colunaQtdExemplar = linha.find("td")[7];
 			var colunaDiferenca = linha.find("td")[8];
 			var colunaValor = linha.find("td")[9];
 			var colunaCheck = linha.find("td")[10];
@@ -1846,11 +1850,11 @@ var recebimentoFisicoController = $.extend(true, {
     	var row = [{name: 'codigo', value: codigo},
    	               {name: 'produto', value: produto},
    	               {name: 'edicao', value: edicao},
+   	               {name: 'pacotePadrao', value: pacotePadrao},
    	               {name: 'precoDesconto', value: precoDesconto},
    	          	   {name: 'qtdeNota', value: qtdNota},
    	               {name: 'qtdePcts', value: qtdPacote},
    	               {name: 'qtdeExemplar', value: qtdExemplar},
-				   {name: 'pacotePadrao', value: pacotePadrao},
    	               {name: 'diferenca', value: diferenca},
    	               {name: 'valor', value: valor},
    	               {name: 'replicar', value: checkBox}];
@@ -1880,11 +1884,11 @@ var recebimentoFisicoController = $.extend(true, {
     		var colunaCodigo = linha.find("td")[0];
 			var colunaProduto = linha.find("td")[1];
 			var colunaEdicao = linha.find("td")[2];
-			var colunaPrecoDesconto = linha.find("td")[3];
-			var colunaQtdNota = linha.find("td")[4];
-			var colunaQtdPacote = linha.find("td")[5];
-			var colunaQtdExemplar = linha.find("td")[6];
-			var colunaPacotePadrao = linha.find("td")[7];
+			var colunaPacotePadrao = linha.find("td")[3];
+			var colunaPrecoDesconto = linha.find("td")[4];
+			var colunaQtdNota = linha.find("td")[5];
+			var colunaQtdPacote = linha.find("td")[6];
+			var colunaQtdExemplar = linha.find("td")[7];
 			var colunaDiferenca = linha.find("td")[8];
 			var colunaValor = linha.find("td")[9];
 			var colunaCheck = linha.find("td")[10];
@@ -1923,11 +1927,11 @@ var recebimentoFisicoController = $.extend(true, {
 		    rowValores = [{name: 'codigo', value: valueCodigo},
 		   	              {name: 'produto', value: valueProduto},
 		   	              {name: 'edicao', value: valueEdicao},
+		   	              {name: 'pacotePadrao', value: valuePacotePadrao},
 		   	              {name: 'precoDesconto', value: valuePrecoDesconto},
 		   	              {name: 'qtdeNota', value: valueQtdNota},
 		   	              {name: 'qtdePcts', value: valueQtdPacote},
 						  {name: 'qtdeExemplar', value: valueQtdExemplar},
-		   	              {name: 'pacotePadrao', value: valuePacotePadrao},
 		   	              {name: 'diferenca', value: valueDiferenca},
 		   	              {name: 'valor', value: valueValor},
 		   	              {name: 'replicar', value: 0}];
@@ -1969,11 +1973,11 @@ var recebimentoFisicoController = $.extend(true, {
 	    		var colunaCodigo = linha.find("td")[0];
 				var colunaProduto = linha.find("td")[1];
 				var colunaEdicao = linha.find("td")[2];
-				var colunaPrecoDesconto = linha.find("td")[3];
-				var colunaQtdNota = linha.find("td")[4];
-				var colunaQtdPacote = linha.find("td")[5];
-				var colunaQtdExemplar = linha.find("td")[6];
-				var colunaPacotePadrao = linha.find("td")[7];
+				var colunaPacotePadrao = linha.find("td")[3];
+				var colunaPrecoDesconto = linha.find("td")[4];
+				var colunaQtdNota = linha.find("td")[5];
+				var colunaQtdPacote = linha.find("td")[6];
+				var colunaQtdExemplar = linha.find("td")[7];
 				var colunaDiferenca = linha.find("td")[8];
 				var colunaValor = linha.find("td")[9];
 				var colunaCheck = linha.find("td")[10];
@@ -1981,11 +1985,11 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val(dataValores[index].cell[0].value);
 				$(colunaProduto).find("div").find('input[name="itensRecebimento.produtoItem"]').val(dataValores[index].cell[1].value);
 				$(colunaEdicao).find("div").find('input[name="itensRecebimento.edicaoItem"]').val(dataValores[index].cell[2].value);
-				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val(dataValores[index].cell[3].value);
-				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[4].value);
-				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val(dataValores[index].cell[5].value);
-				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val(dataValores[index].cell[6].value);
-				$(colunaPacotePadrao).find("div").find('input[name="itensRecebimento.pacotePadraoItem"]').val(dataValores[index].cell[7].value);
+				$(colunaPacotePadrao).find("div").find('input[name="itensRecebimento.pacotePadraoItem"]').val(dataValores[index].cell[3].value);
+				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val(dataValores[index].cell[4].value);
+				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[5].value);
+				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val(dataValores[index].cell[6].value);
+				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val(dataValores[index].cell[7].value);
 				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val(dataValores[index].cell[8].value);
 				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val(dataValores[index].cell[9].value);
 	        	
