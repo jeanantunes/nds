@@ -93,7 +93,7 @@ public class Regiao implements Serializable {
 	public void setDataRegiao(Date dataRegiao) {
 		this.dataRegiao = dataRegiao;
 	}
-
+	
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
