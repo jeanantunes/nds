@@ -632,6 +632,8 @@ public class DescontoServiceImpl implements DescontoService {
 			
 
 			break;
+		default:
+		    break;
 		}
 
 		return listaFornecedores;
@@ -958,7 +960,7 @@ public class DescontoServiceImpl implements DescontoService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
     public Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento,
             										  Cota cota, 
             										  ProdutoEdicao produtoEdicao) {

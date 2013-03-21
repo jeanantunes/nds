@@ -1,8 +1,5 @@
 package br.com.abril.nds.integracao.ems0108.test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.integracao.ems0108.route.EMS0108Route;

@@ -1,5 +1,4 @@
 //#workspace div.ui-tabs-panel:not(.ui-tabs-hide)
-
 var produtoController = $.extend(true, {
 	
 	pesquisaProduto:null,
@@ -15,19 +14,6 @@ var produtoController = $.extend(true, {
 		
 		$(".bt_arq", this.workspace).hide();
 
-		$(document).ready(function(){
-			
-			focusSelectRefField($("#codigoProduto"));
-			
-			$(document.body).keydown(function(e) {
-				
-				if(keyEventEnterAux(e)){
-					produtoController.pesquisar();
-				}
-				
-				return true;
-			});
-		});
 	},
 
 	aplicarMascaras : function () {

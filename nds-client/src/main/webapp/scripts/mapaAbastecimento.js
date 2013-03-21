@@ -339,10 +339,13 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		
 		$('#titleBox', _workspace).html(mapa.box);
 		
+		var dataLancamento = $('#dataLancamento', _workspace).val();
+		
 		var data = [];
 		
 		data.push({name: 'idBox' ,value: mapa.idBox});
-		data.push({name: 'data'  ,value: mapa.data});
+		data.push({name: 'numeroCota' ,value: mapa.codigoCota});
+		data.push({name: 'data'  ,value: mapa.data?mapa.data:dataLancamento});
 		
 		$(".mapaAbastecimentoDetalheGrid", _workspace).flexOptions({			
 			url : pathTela + "/mapaAbastecimento/pesquisarDetalhes",

@@ -5,11 +5,9 @@ import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 
 /**

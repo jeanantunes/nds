@@ -51,12 +51,12 @@ var MANTER_COTA = $.extend(true, {
         });
     },
     
-    verificaTipoCota : function(tipoCota){
+    verificaTipoCota : function(tipoCotaCPF){
        	var retorno = confirm("O Mix (para o tipo alternativo) e a Fixação (para o tipo convencional) desta Cota serão apagados, confirma?");
     	if (retorno){
     		
     		  $.postJSON(contextPath + "/cadastro/cota/apagarTipoCota",
-    	        		{idCota:MANTER_COTA.idCota, tipoCota:tipoCota.value},
+    	        		{idCota:MANTER_COTA.idCota, tipoCota:tipoCotaCPF.value},
     	            function(){
     	                alert("feito!!!!");
     	            }
@@ -1153,10 +1153,6 @@ var COTA_CNPJ = $.extend(true, {
         TAB_COTA.possuiDadosObrigatorios = true;
 
         $("#numeroCotaCNPJ", this.workspace).val(result.numeroCota);
-        
-        $("#tipoCota", this.workspace).val(result.tipoCota);
-        
-        
         $("#email", this.workspace).val(result.email);
         $("#status", this.workspace).val(result.status);
         $("#dataInclusao", this.workspace).html(result.dataInclusao.$);
@@ -1355,8 +1351,6 @@ var COTA_CPF = $.extend(true, {
         TAB_COTA.possuiDadosObrigatorios = true;
 
         $("#numeroCotaCPF", this.workspace).val(result.numeroCota);
-        
-        
         $("#emailCPF", this.workspace).val(result.email);
         $("#statusCPF", this.workspace).val(result.status);
         $("#dataInclusaoCPF", this.workspace).html(result.dataInclusao.$);

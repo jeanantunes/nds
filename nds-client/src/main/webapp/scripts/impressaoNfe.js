@@ -212,6 +212,8 @@ var impressaoNfeController = $.extend(true, {
 		//$(".grids").show();
 
 		this.criarDialogPesquisarProdutos();
+		
+		$(".areaBts", impressaoNfeController.workspace).hide();
 	},
 
 	criarDialogPesquisarProdutos : function() {		
@@ -302,6 +304,8 @@ var impressaoNfeController = $.extend(true, {
 		});
 
 		$(".impressaoGrid", impressaoNfeController.workspace).flexReload();
+		
+		$(".areaBts", impressaoNfeController.workspace).show();
 		
 	},
 

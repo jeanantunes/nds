@@ -31,10 +31,10 @@ public class DescontoLogistica {
 	@Column(name = "TIPO_DESCONTO", nullable = false)
 	private Integer tipoDesconto;
 	
-	@Column(name = "PERCENTUAL_DESCONTO", nullable = false)
+	@Column(name = "PERCENTUAL_DESCONTO", nullable = false, precision=18, scale=4)
 	private BigDecimal percentualDesconto;
 	
-	@Column(name = "PERCENTUAL_PRESTACAO_SERVICO", nullable = false)
+	@Column(name = "PERCENTUAL_PRESTACAO_SERVICO", nullable = false, precision=18, scale=4)
 	private BigDecimal percentualPrestacaoServico;
 	
 	@Temporal(TemporalType.DATE)

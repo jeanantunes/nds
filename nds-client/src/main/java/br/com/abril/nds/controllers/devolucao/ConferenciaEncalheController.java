@@ -753,6 +753,8 @@ public class ConferenciaEncalheController extends BaseController {
 		this.carregarListaConferencia(null, false, false);
 	}
 	
+	
+	
 	/**
 	 * Valida se a quantidade informada excede a quantidade especificada no reparte
 	 * @param qtdExemplares
@@ -933,7 +935,8 @@ public class ConferenciaEncalheController extends BaseController {
 					controleConfEncalheCota, 
 					listaConferenciaEncalheCotaToSave, 
 					this.getSetConferenciaEncalheExcluirFromSession(), 
-					this.getUsuarioLogado());
+					this.getUsuarioLogado(),
+					indConferenciaContingencia);
 			
 			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
 			
@@ -1165,7 +1168,8 @@ public class ConferenciaEncalheController extends BaseController {
 							controleConfEncalheCota, 
 							listaConferenciaEncalheCotaToSave, 
 							this.getSetConferenciaEncalheExcluirFromSession(), 
-							this.getUsuarioLogado());
+							this.getUsuarioLogado(),
+							indConferenciaContingencia);
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			

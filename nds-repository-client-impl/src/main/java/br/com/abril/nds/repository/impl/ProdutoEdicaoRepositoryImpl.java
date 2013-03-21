@@ -18,7 +18,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
@@ -1297,7 +1296,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
-//		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
@@ -1381,23 +1379,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	
 	@Override
-	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao) {
+	public Boolean estudoPodeSerSomado(Long idEstudoBase, String codigoProduto) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(*) from Estudo estudo");
-		hql.append(" where estudo.produtoEdicao.codigoDeBarras = :codigoBarra");
-		hql.append(" and   estudo.produtoEdicao.numeroEdicao    	   = :numeroEdicao");
-		hql.append(" and   estudo.produtoEdicao.produto.codigo  	   = :codigoProduto");
-		hql.append(" and   estudo.produtoEdicao.produto.tipoProduto.id = :tipoProduto");
-		hql.append(" and   estudo.id    				   = :idEstudo");
+		hql.append(" SELECT count(*) from Estudo estudo");
+		hql.append(" WHERE   estudo.produtoEdicao.produto.codigo  	   = :codigoProduto");
+		hql.append(" AND   estudo.id    				   = :idEstudo");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("codigoBarra", 	 produtoEdicao.getCodigoDeBarras());
-		query.setParameter("numeroEdicao", 	 produtoEdicao.getNumeroEdicao());
-		query.setParameter("codigoProduto",  produtoEdicao.getProduto().getCodigo());
-		query.setParameter("tipoProduto", 	 produtoEdicao.getProduto().getTipoProduto().getId());
+		query.setParameter("codigoProduto", 	 codigoProduto);		
 		query.setParameter("idEstudo", 	 	 idEstudoBase);
 		
 		return ((Long)query.uniqueResult() > 0);

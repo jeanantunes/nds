@@ -14,6 +14,8 @@ public class ReparteFecharDiaDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	private Long idProdutoEdicao;
+	
     @Export(label = "Código", alignment = Alignment.LEFT, exhibitionOrder = 1)
 	private String codigo;
 	
@@ -73,10 +75,11 @@ public class ReparteFecharDiaDTO implements Serializable {
 	public ReparteFecharDiaDTO() {
     }
 	
-    public ReparteFecharDiaDTO(String codigo, String nomeProduto, Long numeroEdicao, BigDecimal precoVenda, BigInteger qtdeReparte,
+    public ReparteFecharDiaDTO(Long idProdutoEdicao, String codigo, String nomeProduto, Long numeroEdicao, BigDecimal precoVenda, BigInteger qtdeReparte,
             BigInteger qtdeSobraDe, BigInteger qtdeSobraEm, BigInteger qtdeFaltaDe, BigInteger qtdeFaltaEm, BigInteger qtdeDistribuido, 
             BigInteger qtdeTransferencia) {
-        this.codigo = codigo;
+        this.idProdutoEdicao = idProdutoEdicao;
+    	this.codigo = codigo;
         this.nomeProduto = nomeProduto;
         this.numeroEdicao = numeroEdicao;
         this.precoVenda = precoVenda;
@@ -326,6 +329,14 @@ public class ReparteFecharDiaDTO implements Serializable {
     public BigInteger getQtdeDiferencaLogicoFisico() {
         return qtdeDiferencaLogicoFisico;
     }
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
     
     
 	

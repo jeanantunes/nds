@@ -176,7 +176,6 @@ var analiseHistoricoVendaController = $.extend(true, {
 	},
 	
 	popularPopUpInformacoesCota : function(cotaDto){
-		
 		if(cotaDto){
 		       $('#popUpNumeroCota').text(cotaDto.numeroCota);
 		       $('#popUpNomePessoa').text(cotaDto.nomePessoa);
