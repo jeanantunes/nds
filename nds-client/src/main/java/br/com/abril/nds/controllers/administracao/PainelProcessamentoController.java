@@ -24,7 +24,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -154,17 +153,7 @@ public class PainelProcessamentoController extends BaseController {
 
 		FiltroInterfacesDTO filtro = carregarFiltroInterfaces(sortorder, sortname, page, rp);
 		
-		List<InterfaceDTO> resultado = null;
-		try {
-			resultado = painelProcessamentoService.listarInterfaces(filtro);
-		} catch (Exception e) {
-			if (e instanceof ValidacaoException) {
-				throw e;
-			} else {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Erro ao pesquisar registros: " + e.getMessage());
-			}
-		}
+		List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfaces(filtro);
 
 		if (resultado == null || resultado.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");

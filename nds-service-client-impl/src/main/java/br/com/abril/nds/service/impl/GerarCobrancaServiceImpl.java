@@ -545,8 +545,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (!movimentoFinanceiroCota.getCota().getId().equals(cota.getId())) {
 				continue;
 			}
+			
+			GrupoMovimentoFinaceiro grupoMovimentoFinaceiro = 
+					((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro();
+			
+			OperacaoFinaceira operacaoFinaceira = 
+					((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getOperacaoFinaceira();
 
-			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro()){
+			switch (grupoMovimentoFinaceiro){
 				case CREDITO:
 					vlMovFinanTotal = vlMovFinanTotal.add(movimentoFinanceiroCota.getValor());
 				break;
@@ -676,17 +682,21 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				break;
 			}
 			
-			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getOperacaoFinaceira()){
-				case CREDITO:
-					vlMovFinanDebitoCredito = vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor());
-				break;
+			if (grupoMovimentoFinaceiro != GrupoMovimentoFinaceiro.JUROS &&
+					grupoMovimentoFinaceiro != GrupoMovimentoFinaceiro.MULTA){
 				
-				case DEBITO:
-					vlMovFinanDebitoCredito = 
-					vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor() != null ? 
-							movimentoFinanceiroCota.getValor().negate() : 
-								BigDecimal.ZERO);
-				break;
+				switch (operacaoFinaceira){
+					case CREDITO:
+						vlMovFinanDebitoCredito = vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor());
+					break;
+					
+					case DEBITO:
+						vlMovFinanDebitoCredito = 
+						vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor() != null ? 
+								movimentoFinanceiroCota.getValor().negate() : 
+									BigDecimal.ZERO);
+					break;
+				}
 			}
 		}
 		
