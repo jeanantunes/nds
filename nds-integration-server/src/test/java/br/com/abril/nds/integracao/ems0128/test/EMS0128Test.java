@@ -1,4 +1,4 @@
-package br.com.abril.nds.integracao.ems0XXX.test;
+package br.com.abril.nds.integracao.ems0128.test;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
