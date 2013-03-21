@@ -211,7 +211,6 @@ var histogramaPosEstudoController = $.extend(true, {
 						};
 						
 						$.each( response.rows, function( key, row ) {
-							
 							// formatando faixaDeReparte com milhar
 							faixaDe = row.cell.faixaReparte.split("a")[0];
 							faixaAte = row.cell.faixaReparte.split("a")[1];
