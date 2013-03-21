@@ -11,12 +11,24 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	verificarDataFechamentoCE : function(fechada) {
 		
 			if (fechada) {					
+				
 				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
+				
 				$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
-				$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
-				$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+				
+				$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+				
+				$("#btnReabertura", fechamentoCEIntegracaoController.workspace).click(function() {
+					fechamentoCEIntegracaoController.reabrirCeIntegracao();
+				});
+				
 			} else {
+				$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
+				
+				$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+				
 				$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+				
 				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
 					fechamentoCEIntegracaoController.fecharCE();
 				});
@@ -295,6 +307,24 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				true
 			);
 		
+	},
+	
+	reabrirCeIntegracao:function (){
+		
+		var idFornecedor = $("#idFornecedor", fechamentoCEIntegracaoController.workspace).val();
+		var semana = $("#semana", fechamentoCEIntegracaoController.workspace).val();
+		
+		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/reabrirCeIntegracao',
+				[
+		         {name:'filtro.idFornecedor' , value:idFornecedor},
+		         {name:'filtro.semana' , value:semana}
+				]	,
+				 function(resultado) {
+				 	exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+				 },
+				null,
+				true
+			);
 	}
 	
 }, BaseController);

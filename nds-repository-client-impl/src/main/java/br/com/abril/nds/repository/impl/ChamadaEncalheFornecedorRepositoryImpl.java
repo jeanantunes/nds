@@ -47,5 +47,31 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
         }
         return query.list();
     }
+    
+    public ChamadaEncalheFornecedor obterChamadaEncalheFornecedor(Long idFornecedor,Integer anoReferencia, Integer numeroSemana){
+    	
+    	StringBuilder hql = new StringBuilder();
+    	
+    	hql.append(" select cef from ChamadaEncalheFornecedor as cef ");
+    	hql.append(" where cef.numeroSemana =:numeroSemana and cef.anoReferencia =:anoReferencia ");
+    	
+    	if(idFornecedor!= null){
+    		hql.append(" and cef.fornecedor.id =:idFornecedor ");
+    	}
+    	
+    	Query query = getSession().createQuery(hql.toString());
+    	
+    	query.setParameter("numeroSemana", numeroSemana);
+    	query.setParameter("anoReferencia", anoReferencia);
+    	
+    	if(idFornecedor!= null){
+    		query.setParameter("idFornecedor", idFornecedor);
+    	}
+    	
+    	query.setMaxResults(1);
+    	
+    	return (ChamadaEncalheFornecedor) query.uniqueResult();
+    	
+    }
 
 }

@@ -52,7 +52,6 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		Query query = queryMovimentoEstoque();
 		
 		tempVar.set( query.list() );		
-		
 			
 	}
 
