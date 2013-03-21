@@ -4,9 +4,9 @@ public enum ClasseSocial {
 	
 	CLASSE_AB("Classe AB"),
 	CLASSE_A("Classe A"),
-	CLASSE_C("Classe C"),
+	CLASSE_CD("Classe CD"),
 	CLASSE_BC("Classe BC"),
-	CLASSE_D("Classe D");
+	CLASSE_DE("Classe DE");
 	
 	private String descricao;
 	

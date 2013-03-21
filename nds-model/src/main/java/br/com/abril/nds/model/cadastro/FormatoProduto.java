@@ -2,6 +2,10 @@ package br.com.abril.nds.model.cadastro;
 
 public enum FormatoProduto {
 
+	AMERICANO("Americano"),
+	CARAS("Caras"),
+	OUTROS("Outros"),
+	PATO("Pato"),
 	VEJA("Veja");
 	
 	private String descricao;

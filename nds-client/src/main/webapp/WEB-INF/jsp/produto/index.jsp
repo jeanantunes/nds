@@ -126,12 +126,15 @@
 											<td style="width:200px;">
 												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" class="habilitarCampoInterface" >
 													<option value="" selected="selected"></option>
+													<option value="DIARIA" >Diária</option>
 													<option value="SEMANAL" >Semanal</option>
 													<option value="QUINZENAL" >Quinzenal</option>
 													<option value="MENSAL" >Mensal</option>
+													<option value="BIMESTRAL" >Bimestral</option>
 													<option value="TRIMESTRAL" >Trimestral</option>
-													<option value="SEMESTRAL" >Semestral</option>
+													<option value="SEMESTRAL" >Semestral/Quadrimestral</option>
 													<option value="ANUAL" >Anual</option>
+													<option value="SEM_PERIODICIDADE" >Sem Periodicidade</option>
 												</select>
 											</td>
 										</tr>
@@ -241,7 +244,7 @@
 										
 										
 										<tr>
-											<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
+											<td><strong>Forma Fisica</strong></td>
 											<td>
 												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoTipoLancamento" id="segmentacaoTipoLancamento" style="width:150px;">
 							                        <option value="">Selecione</option>
