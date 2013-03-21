@@ -57,6 +57,7 @@ import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -139,6 +140,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private ConferenciaEncalheRepository conferenciaEncalheRepository;
+	
+	@Autowired
+	private EstoqueProdutoRespository estoqueProdutoRespository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	
 	
 	@Override
 	@Transactional
@@ -596,8 +605,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				gerarMovimentoFaltasSobras(item,usuario);
 				
-				//TODO: se o produto for parcial e nao juramentado 
-				//mover o a qtdeEstoqueEncalhe de para qtde (do estoque do distribuidor)
+				ajustarEstoqueProdutoParaParcialNaoJuramentado(item.getEdicao());
+				
+				
 				
 			}
 		}
@@ -607,12 +617,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		this.gerarNotaFiscal(dataEncalhe);
 	}
 	
-	private void gerarMovimentoEstoqueEntradaDistribuidor(FechamentoFisicoLogicoDTO item,Usuario usuario) {
+	
+	/**
+	 * Ajusta o estoque distribuidor de um produto 
+	 * edicao parcial não juramentado.
+	 * 
+	 * @param idProdutoEdicao
+	 */
+	private void ajustarEstoqueProdutoParaParcialNaoJuramentado(Long idProdutoEdicao) {
 		
-		TipoMovimentoEstoque tipoMovEstoque = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
-		tipoMovEstoque.setAprovacaoAutomatica(true);
-				
-		movimentoEstoqueService.gerarMovimentoEstoque(null, item.getProdutoEdicao(), usuario.getId(), item.getExemplaresDevolucao(), tipoMovEstoque);
+		//TODO: se o produto for parcial e nao juramentado 
+		//mover o a qtdeEstoqueEncalhe de para qtde (do estoque do distribuidor)
+		
 	}
 
 	private void gerarMovimentoFaltasSobras(FechamentoFisicoLogicoDTO item, Usuario usuarioLogado) {

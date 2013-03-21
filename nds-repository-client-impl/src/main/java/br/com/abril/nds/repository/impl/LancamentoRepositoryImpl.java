@@ -1139,7 +1139,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" inner join ");
 		sql.append(" PRODUTO_EDICAO produtoEdicao ");
 		sql.append(" on lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		sql.append(" inner join ESTOQUE_PRODUTO estoqueProduto ");
+		sql.append(" left join ESTOQUE_PRODUTO estoqueProduto ");
 		sql.append(" on estoqueProduto.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto ");
