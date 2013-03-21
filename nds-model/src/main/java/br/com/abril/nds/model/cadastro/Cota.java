@@ -567,19 +567,4 @@ public class Cota implements Serializable {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
 
-
-	public String getTipoCota() {
-		return tipoCota;
-	}
-
-
-	public void setTipoCota(String tipoCota) {
-		this.tipoCota = tipoCota;
-	}
-
-
-	
-	
-	
-
 }

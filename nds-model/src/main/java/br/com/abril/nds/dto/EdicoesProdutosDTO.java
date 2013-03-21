@@ -25,8 +25,9 @@ public class EdicoesProdutosDTO implements Serializable {
 	private String sel;
 	private BigInteger reparte;
 	private String nomeProduto;
-	private String descricaoTipoProduto;
+	private String descricaoTipoClassificacao;
 	private String codigoProduto;
+	private String descricaoTipoSegmento;
 	
 	/* Campos para grid */
 	private String dataLancamento;
@@ -108,17 +109,24 @@ public class EdicoesProdutosDTO implements Serializable {
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
 	}
-	public String getDescricaoTipoProduto() {
-		return descricaoTipoProduto;
-	}
-	public void setDescricaoTipoProduto(String descricaoTipoProduto) {
-		this.descricaoTipoProduto = descricaoTipoProduto;
-	}
+	
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
+	}
+	public String getDescricaoTipoClassificacao() {
+		return descricaoTipoClassificacao;
+	}
+	public void setDescricaoTipoClassificacao(String descricaoTipoClassificacao) {
+		this.descricaoTipoClassificacao = descricaoTipoClassificacao;
+	}
+	public String getDescricaoTipoSegmento() {
+		return descricaoTipoSegmento;
+	}
+	public void setDescricaoTipoSegmento(String descricaoTipoSegmento) {
+		this.descricaoTipoSegmento = descricaoTipoSegmento;
 	}
 	
 	
