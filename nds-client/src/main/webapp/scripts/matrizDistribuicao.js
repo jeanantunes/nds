@@ -1112,8 +1112,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					null, // parametros
 					function(html){ // onSucessCallBack
 						$('#matrizDistribuicaoContent').hide();
-						$('#histogramaPosEstudoContent').html(html);
-						$('#histogramaPosEstudoContent').show();
+						$('#telasAuxiliaresContent').html(html);
+						$('#telasAuxiliaresContent').show();
 
 						params = [];
 						
@@ -1161,12 +1161,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		data.push({name: "lancado", value: selecionado.lancto});
 		data.push({name: "promocional", value: selecionado.promo});
 		data.push({name: "sobra", value: selecionado.sobra});
+		
+		distribuicaoVendaMedia.matrizSelecionada = selecionado;
+		
 		$.post(pathTela + "/distribuicaoVendaMedia/", data, function(response) {
-			var currentTab = getCurrentTabContainer();
-			currentTab.html(response);
-			currentTab.innerHeight(650);
-			redimensionarWorkspace();
+			$('#matrizDistribuicaoContent').hide();
+			$('#telasAuxiliaresContent').html(response);
+			$('#telasAuxiliaresContent').show();
 		});
+
 	};
 }
 //@ sourceURL=matrizDistribuicao.js

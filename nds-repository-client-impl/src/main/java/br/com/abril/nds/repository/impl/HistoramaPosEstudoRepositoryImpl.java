@@ -4,7 +4,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.BaseEstudoAnaliseFaixaReparteDTO;
+import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.HistoramaPosEstudoRepository;
 import br.com.caelum.stella.inwords.FormatoDeInteiro;
@@ -21,7 +21,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 	}
 	
 	@Override
-	public BaseEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(int faixaDe, int faixaAte, Integer estudoId) {
+	public HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(int faixaDe, int faixaAte, Integer estudoId) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -67,9 +67,9 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		query.setParameter("faixaDe", faixaDe);
 		query.setParameter("faixaAte", faixaAte);
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(BaseEstudoAnaliseFaixaReparteDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(HistogramaPosEstudoAnaliseFaixaReparteDTO.class));
 
-		BaseEstudoAnaliseFaixaReparteDTO resultado = (BaseEstudoAnaliseFaixaReparteDTO) query.uniqueResult();
+		HistogramaPosEstudoAnaliseFaixaReparteDTO resultado = (HistogramaPosEstudoAnaliseFaixaReparteDTO) query.uniqueResult();
 		
 		return resultado;
 	}

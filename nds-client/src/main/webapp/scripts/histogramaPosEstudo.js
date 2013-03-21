@@ -4,6 +4,8 @@ var histogramaPosEstudoController = $.extend(true, {
 	fieldSetValues : {},
 	matrizSelecionado : {},
 	analiseGridRowConsolidada : {},
+	oldTabContent : "",
+	oldTabHeight : 0,
 	
 	createInput : function createInput(id, value){
 		return '<input type="text" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
@@ -17,7 +19,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	
 	voltarPagina : function voltarPagina(){
 		$('#matrizDistribuicaoContent').show();
-		$('#histogramaPosEstudoContent').hide();
+		$('#telasAuxiliaresContent').hide();
 	},
 	
 	
@@ -54,6 +56,11 @@ var histogramaPosEstudoController = $.extend(true, {
 		 */
 		$('#botaoVoltarMatrizDistribuicao').click(function(){
 			histogramaPosEstudoController.voltarPagina();
+		});
+		
+		// RECALCULAR ESTUDO - EMS 2025 - Distribuição Venda Média
+		$('#recalcularEstudo').click(function(){
+			histogramaPosEstudoController.recalcularEstudo();
 		});
 		
 		$('#excluirEstudo').click(function(){
@@ -220,16 +227,16 @@ var histogramaPosEstudoController = $.extend(true, {
 							rowConsolidado.cell.qtdRecebida += parseInt(row.cell.qtdRecebida || 0);
 						});
 						
-						reparteMedioFormatado = (rowConsolidado.cell.reparteTotalFormatado / rowConsolidado.cell.qtdCotasFormatado);
-						vendaMediaFormatada = (rowConsolidado.cell.vendaNominalFormatado / rowConsolidado.cell.qtdCotasFormatado);
+						reparteMedioFormatado = (rowConsolidado.cell.reparteTotalFormatado / rowConsolidado.cell.qtdCotasFormatado).toFixed(2);
+						vendaMediaFormatada = (rowConsolidado.cell.vendaNominalFormatado / rowConsolidado.cell.qtdCotasFormatado).toFixed(2);
 						vendaPercentFormatado = ((rowConsolidado.cell.vendaNominalFormatado / rowConsolidado.cell.reparteTotalFormatado) * 100).toFixed(2).toString().replace('.', ',');
-						encalheMedioFormatado = ((rowConsolidado.cell.reparteTotalFormatado - rowConsolidado.cell.vendaNominalFormatado) / rowConsolidado.cell.qtdCotasFormatado);
+						encalheMedioFormatado = ((rowConsolidado.cell.reparteTotalFormatado - rowConsolidado.cell.vendaNominalFormatado) / rowConsolidado.cell.qtdCotasFormatado).toFixed(2);
 						participacaoReparteFormatado = ((rowConsolidado.cell.qtdRecebida / rowConsolidado.cell.reparteTotalFormatado) * 100).toFixed(2).toString().replace('.', ',');
 						
-						rowConsolidado.cell.reparteMedioFormatado = !isNaN(reparteMedioFormatado) ? reparteMedioFormatado : "0";
-						rowConsolidado.cell.vendaMediaFormatado = !isNaN(vendaMediaFormatada) ? vendaMediaFormatada : "0";
+						rowConsolidado.cell.reparteMedioFormatado = !isNaN(reparteMedioFormatado) ? reparteMedioFormatado : "0,00";
+						rowConsolidado.cell.vendaMediaFormatado = !isNaN(vendaMediaFormatada) ? vendaMediaFormatada : "0,00";
 						rowConsolidado.cell.vendaPercentFormatado = vendaPercentFormatado != "NaN" ? vendaPercentFormatado : "0,00";
-						rowConsolidado.cell.encalheMedioFormatado = !isNaN(encalheMedioFormatado)  ? encalheMedioFormatado : "0";
+						rowConsolidado.cell.encalheMedioFormatado = !isNaN(encalheMedioFormatado)  ? encalheMedioFormatado : "0,00";
 						rowConsolidado.cell.participacaoReparteFormatado = participacaoReparteFormatado != "NaN"  ? participacaoReparteFormatado : "0,00";
 						
 						histogramaPosEstudoController.analiseGridRowConsolidada = rowConsolidado;
@@ -598,6 +605,27 @@ var histogramaPosEstudoController = $.extend(true, {
 				name : "estudoId",
 				value : estudoId
 			}]
+		});
+	},
+	
+	recalcularEstudo : function(){
+		var data = [],
+			matrizSelecionado = histogramaPosEstudoController.matrizSelecionado;
+		
+		data.push({name: "edicao", value: matrizSelecionado.edicao});
+		data.push({name: "estudoId", value: matrizSelecionado.estudo});
+		data.push({name: "lancamentoId", value: matrizSelecionado.idLancamento});
+		data.push({name: "codigoProduto", value: matrizSelecionado.codigoProduto});
+		
+		data.push({name: "juramentado", value: matrizSelecionado.juram || 0});
+		data.push({name: "suplementar", value: matrizSelecionado.suplem || 0});
+		data.push({name: "lancado", value: matrizSelecionado.lancto || 0});
+		data.push({name: "promocional", value: matrizSelecionado.promo || 0});
+		data.push({name: "sobra", value: matrizSelecionado.sobra || 0});
+		$.post(pathTela + "/distribuicaoVendaMedia/", data, function(response) {
+			$('#matrizDistribuicaoContent').hide();
+			$('#telasAuxiliaresContent').html(response);
+			$('#telasAuxiliaresContent').show();
 		});
 	}
 
