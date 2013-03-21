@@ -295,7 +295,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			form: $("#dialog-confirm", this.workspace).parents("form")
 		});
 	},
-		
+	
 	popup_pesq_fornecedor: function() {
 		
 		$("#dialog-pesq-fornecedor", this.workspace).dialog({
@@ -529,7 +529,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		$("#chamadaoValorConsignado", this.workspace).maskMoney({
 			 thousands:'.', 
-			 decimal:',', 
+			 decimal:',' 
 		});
 		
 		$("#chamadaoDiasSuspensao", this.workspace).maskMoney({
@@ -601,6 +601,41 @@ var parametrosDistribuidorController = $.extend(true, {
 		parametrosDistribuidorController.exibirAdesao();
 
 		parametrosDistribuidorController.exibirContratoCota();
+		
+		// Configs iniciais da aba Distribuição
+		$('#listClassificacaoCota0\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota0\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota1\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota1\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota2\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota2\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota3\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota4\\.valorDe', this.workspace)
+		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
+		.maskMoney({
+			 thousands:'.', 
+			 decimal:',' 
+		});
+		
+		if ($('#listClassificacaoCota4\\.valorDe', this.workspace).val() === '') {
+			$('#listClassificacaoCota4\\.valorDe', this.workspace).val('0.00');
+		}
+		
+		$('#listClassificacaoCota1\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota2\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
+		.on('blur', function(){
+		    if (this.value) {
+		        var intIdValorDe = parseInt(this.id.match(/\d/), 10) - 1;
+		        var campoValorDe = $('#listClassificacaoCota' + intIdValorDe + '\\.valorDe');
+		        var numValorAte = parseFloat(this.value.replace(/\./g, '').replace(/,/, '.'));
+		        campoValorDe.val((numValorAte + 0.01).toFixed(2)).maskMoney('mask');
+//		        console.log(numValorAte,campoValorDe.val());
+		    }
+		});
+
 	},
 	
 	dialogConfirmarGrupo: function() {
