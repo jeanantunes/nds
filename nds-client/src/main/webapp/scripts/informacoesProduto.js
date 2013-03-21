@@ -1,6 +1,8 @@
 var informacoesProdutoController = $.extend(true, {
 
 init : function() {
+	
+	var T = this;
 
 $(".produtosInfosGrid").flexigrid({
 		preProcess : informacoesProdutoController.executarPreProcessProdutosInfosGrid,
@@ -281,18 +283,29 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		return resultado;
 	},
 
-
 	recuperarNumeroEstudo: function(numeroEstudo){
-		if($("#codigoEstudo").val()==undefined){
-			alert("A aba de Estudo Complementar foi fechada");
-		    return;
+		
+		if($("#codigoEstudo").val()==undefined && $(".pesquisaEstudo").val() == undefined){
+			
+			return;
 		}
-		$("#codigoEstudo").val(numeroEstudo);
+		
+		if ($(".pesquisaEstudo").val() != undefined) {
+			
+			$(".pesquisaEstudo").trigger(jQuery.Event("change"));
+			$(".pesquisaEstudo").val(numeroEstudo);
+			$(".pesquisaEstudo").focus();
+			
+		}
+		else {
+			
+			$("#codigoEstudo").val(numeroEstudo);
+			$("#codigoEstudo").focus();
+		}
 		
 		$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-		$("#codigoEstudo").focus();
-	}
-	,
+	},
+	
 	filtroPrincipal : function(){
 		var codigo = $("#idCodigo").val();
 		
@@ -441,4 +454,3 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		   
 }, BaseController);
 //@ sourceURL=informacoesProduto.js
-

@@ -29,6 +29,7 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	private List<ProdutoEdicaoDTO> listProdutoEdicaoDTO;
 	private String elemento;
 	
+	
 	// utilizado para retorno de mensagem
 	private String validationMsg;
 	
@@ -242,5 +243,6 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	public void setElemento(String elemento) {
 		this.elemento = elemento;
 	}
-
+	
+	
 }

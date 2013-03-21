@@ -1,4 +1,3 @@
-
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;

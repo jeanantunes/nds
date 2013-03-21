@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.TipoImpressaoInformeEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -111,8 +112,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 
 		} else if (dataRecolhimento != null) {
 			dataInicioRecolhimento = dataRecolhimento;
-			dataFimRecolhimento = obterDataFimRecolhimento(dataInicioRecolhimento);
-			
+			dataFimRecolhimento = dataRecolhimento;
 		}
 			
 		Long quantidade = lancamentoService
@@ -131,14 +131,6 @@ public class ConsultaInformeEncalheController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Registros não encontrados."));
 		}
-	}
-
-	private Calendar obterDataFimRecolhimento(Calendar dataInicioRecolhimento) {
-		Calendar dataFimRecolhimento;
-		dataFimRecolhimento = Calendar.getInstance();
-		int maxDiaRecolhimento = obterMaxDiaRecolhimentoDistribuidor();
-		dataFimRecolhimento.setTime(this.calendarioService.adicionarDiasUteis(dataInicioRecolhimento.getTime(), maxDiaRecolhimento));
-		return dataFimRecolhimento;
 	}
 
 	
@@ -162,7 +154,9 @@ public class ConsultaInformeEncalheController extends BaseController {
 					"Informe [Semana] ou [Data Recolhimento]"));
 		}
 			
-		int maxDiaSemanaRecolhimento = obterMaxDiaRecolhimentoDistribuidor();
+		ParametrosRecolhimentoDistribuidor parametros = this.distribuidorService.parametrosRecolhimentoDistribuidor();
+
+		int maxDiaSemanaRecolhimento = obterMaxDiaRecolhimentoDistribuidor(parametros);
 		
 		if (semanaRecolhimento != null) {
 			dataInicioRecolhimento = Calendar.getInstance();
@@ -182,7 +176,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 
 		} else if (dataRecolhimento != null) {
 			dataInicioRecolhimento = dataRecolhimento;
-			dataFimRecolhimento = obterDataFimRecolhimento(dataInicioRecolhimento);
+			dataFimRecolhimento = dataRecolhimento;
 		}
 
 		List<InformeEncalheDTO> dados = lancamentoService
@@ -437,8 +431,18 @@ public class ConsultaInformeEncalheController extends BaseController {
 		return tamanhoTotalTable / qtdColunas * porcentual / 100;
 	}
 
-	private int obterMaxDiaRecolhimentoDistribuidor() {
-		return this.distribuidorService.obterOrdinalUltimoDiaRecolhimento();
+	private int obterMaxDiaRecolhimentoDistribuidor(ParametrosRecolhimentoDistribuidor recolhimento) {
+		
+		if (recolhimento.isDiaRecolhimentoQuinto())
+			return 5;
+		else if (recolhimento.isDiaRecolhimentoQuarto())
+			return 4;
+		else if (recolhimento.isDiaRecolhimentoTerceiro())
+			return 3;
+		else if (recolhimento.isDiaRecolhimentoSegundo())
+			return 2;
+
+		return 0;
 	}
 	
 	/**

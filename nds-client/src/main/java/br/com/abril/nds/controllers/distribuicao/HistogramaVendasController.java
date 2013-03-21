@@ -339,8 +339,5 @@ public class HistogramaVendasController extends BaseController {
 	public void setHttpResponse(HttpServletResponse httpResponse) {
 		this.httpResponse = httpResponse;
 	}
-	
-	
-	
 }
 

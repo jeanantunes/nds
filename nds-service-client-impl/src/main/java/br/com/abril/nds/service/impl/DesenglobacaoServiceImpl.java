@@ -22,8 +22,11 @@ import br.com.abril.nds.service.DesenglobacaoService;
 @Service
 public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 
-	@Autowired private DesenglobacaoRepository repository;
-	@Autowired private PdvRepository pdvRepository;
+	@Autowired
+	private DesenglobacaoRepository repository;
+	
+	@Autowired
+	private PdvRepository pdvRepository;
 	
 	@Override
 	public List<DesenglobacaoDTO> obterDesenglobacaoPorCota(Long cotaId) {

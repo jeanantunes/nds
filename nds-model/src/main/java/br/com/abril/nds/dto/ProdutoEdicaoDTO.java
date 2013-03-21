@@ -107,6 +107,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private BigInteger reparte;
 	private String qtdVendasFormatada = "0";
 	
+	private String segmentacao;
+	private String classificacao;
+	
+	private Double venda;
+	private Double percentualVenda;
+	private Long reparteEstudo;
+	
 	public ProdutoEdicaoDTO() {};
 	
 	public ProdutoEdicaoDTO(
@@ -133,6 +140,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 * Tipo de chamada de encalhe deste produtoEdicao
 	 */
 	private TipoChamadaEncalhe tipoChamadaEncalhe;
+
+	private String dataRecolhimentoDistribuidorFormatada;
 	
 	
 	public Long getId() {
@@ -242,6 +251,9 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
 		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+		if (dataRecolhimentoDistribuidor != null) {
+			this.dataRecolhimentoDistribuidorFormatada = DateUtil.formatarDataPTBR(dataRecolhimentoDistribuidor); 
+		}
 	}
 	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
 		return tipoChamadaEncalhe;
@@ -767,6 +779,55 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public String getQtdVendasFormatada() {
 		return qtdVendasFormatada;
+	}
+
+	public String getDataRecolhimentoDistribuidorFormatada() {
+		return dataRecolhimentoDistribuidorFormatada;
+	}
+
+	public void setDataRecolhimentoDistribuidorFormatada(
+			String dataRecolhimentoDistribuidorFormatada) {
+		this.dataRecolhimentoDistribuidorFormatada = dataRecolhimentoDistribuidorFormatada;
+	}
+
+	public String getSegmentacao() {
+		return segmentacao;
+	}
+
+	public void setSegmentacao(String segmentacao) {
+		this.segmentacao = segmentacao;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public Double getVenda() {
+		return venda;
+	}
+
+	public void setVenda(Double venda) {
+		this.venda = venda;
+	}
+
+	public Long getReparteEstudo() {
+		return reparteEstudo;
+	}
+
+	public void setReparteEstudo(Long reparteEstudo) {
+		this.reparteEstudo = reparteEstudo;
+	}
+
+	public Double getPercentualVenda() {
+		return percentualVenda;
+	}
+
+	public void setPercentualVenda(Double percentualVenda) {
+		this.percentualVenda = percentualVenda;
 	}  
 	
 	

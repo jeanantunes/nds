@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -422,9 +423,9 @@ public class DistribuidorRepositoryImpl extends
 	@Override
 	public Set<PoliticaCobranca> politicasCobranca() {
 		
-		return (Set<PoliticaCobranca>)
+		return new HashSet<PoliticaCobranca>(
 				this.getSession().
-				createQuery("select politicasCobranca from Distribuidor").uniqueResult();
+				createQuery("select politicasCobranca from Distribuidor").list());
 	}
 
 	@Override

@@ -19,7 +19,6 @@ import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -54,11 +53,12 @@ public class AnaliseEstudoController extends BaseController {
 		this.carregarComboClassificacao();
 	}
 	
-	
 	private void carregarComboClassificacao(){
+		
 		List<TipoClassificacaoProduto> classificacoes = classificacao.obterTodos();
 		result.include("listaClassificacao", classificacoes);
-		}
+		
+	}
 	
 	
 	@Post
@@ -109,12 +109,19 @@ public class AnaliseEstudoController extends BaseController {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
-	private FiltroAnaliseEstudoDTO tratarAtributosFiltro (FiltroAnaliseEstudoDTO filtro){
+	private void tratarAtributosFiltro (FiltroAnaliseEstudoDTO filtro){
 		
-		if(filtro == null){
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Preencha pelo menos 1 campo."),"result").recursive().serialize();
+		if(filtro.getNumEstudo() == null || filtro.getNumEstudo() < 0){
+			if(filtro.getCodigoProduto() == null || filtro.getCodigoProduto().isEmpty()){
+				if(filtro.getNome() == null || filtro.getNome().isEmpty()){
+					if(filtro.getNumeroEdicao() == null || filtro.getNumeroEdicao() < 0){
+						if(filtro.getIdTipoClassificacaoProduto() == null || filtro.getIdTipoClassificacaoProduto() < 0){
+							throw new ValidacaoException(TipoMensagem.WARNING, "Preencha no mínimo 1 campo.");
+						}
+					}
+				}
+			}
 		}
-		return filtro;
 	}
 	
 	private List<AnaliseEstudoDTO> popularPeriodoEStatus (List<AnaliseEstudoDTO> estudos){

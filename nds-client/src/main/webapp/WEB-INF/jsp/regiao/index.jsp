@@ -1,12 +1,14 @@
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 <script type="text/javascript" src="scripts/regiao.js"></script>
 
 <script language="javascript" type="text/javascript">
 
 var pesquisaCota = new PesquisaCota();
+var pesquisaProduto = new PesquisaProduto();
 
 $(function(){
 	regiaoController.init();
@@ -102,23 +104,24 @@ $(function(){
 			<table width="588" border="0" cellspacing="2" cellpadding="2">
 				<tr>
 					<td width="36">Código:</td>
-					<td width="77"><input type="text" name="textfield"
-						id="textfield" style="width: 60px;" />
+					<td width="77">
+						<input type="text" name="idCodigo"	id="idCodigo" style="width: 60px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#idCodigo','#nomeProduto', false, undefined, undefined);" />
 					</td>
 					<td width="40">Produto:</td>
-					<td width="129"><input type="text" name="textfield5"
-						id="textfield6" style="width: 120px;" />
+					<td width="129">
+						<input type="text" name="nomeProduto" id="nomeProduto" style="width: 120px;"
+							   onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#nomeProduto');" 
+		 	   		   		   onblur="pesquisaProduto.pesquisarPorNomeProduto('#idCodigo', '#nomeProduto');" />
 					</td>
 					<td width="68">Classificação:</td>
-					<td width="163"><select name="select" id="select"
-						style="width: 140px;">
-							<option selected="selected">Selecione...</option>
-							<option>Classificaçao 1</option>
-							<option>Classificação 2</option>
-							<option>Classificação 3</option>
-							<option>Classificação 4</option>
-					</select>
-					</td>
+						 <td width="163">
+						 	<select name="select" id="select" style="width:140px;">
+                            	<option selected="selected">Selecione...</option>
+                  					<c:forEach items="${listaClassificacao}" var="classificacao">
+										<option value="${classificacao.key}">${classificacao.value}</option>
+				  					</c:forEach>
+                			</select>
+                		</td>
 					<td width="31"><span title="Pesquisar Produto"
 						class="classPesquisar"><a href="javascript:;">&nbsp;</a> </span>
 					</td>
@@ -128,7 +131,7 @@ $(function(){
 
 		<fieldset
 			style="width: 600px !important; margin-top: 10px !important;">
-			<legend>Regiao</legend>
+			<legend>Produtos</legend>
 			<table class="lstProdutosGrid"></table>
 			<span class="bt_sellAll" style="float: right;"><label
 				for="sel">Selecionar Todos</label><input type="checkbox" id="sel"
@@ -282,17 +285,6 @@ $(function(){
 				</a> 
 			</span> 
 			
-			<!-- 
-			<span class="bt_novos">
-				<a href="javascript:;">
-					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />
-				
-				Cancelar
-				
-				</a> 
-			</span>
-			 -->
-			
 		</fieldset>
 	</div>
 	
@@ -300,13 +292,27 @@ $(function(){
 	<!-- ADICIONAR EM LOTE -->
 
 	<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
-		<fieldset style="width: 225px;">
+		<fieldset style="width: 300px;">
 			<legend>Adicionar em Lote</legend>
 			<table width="200" border="0" cellspacing="2" cellpadding="2">
 				<tr>
+				<!-- 
+					<form action="myWebForm">
+						Caminho do arquivo: 
+						<input type="text" name="usrname"><br>
+						<input type="submit" value="Submit">
+					</form>					
+				 -->
+				 
+				 <form name="arquivoUpLoad" id="arquivoUpLoad" method="post" enctype="multipart/form-data">
+					<input type="file" id="xls" name="xls" />
+				 </form>
+					
+					<!-- 
 					<td width="44">N° cota: <textarea rows="4" cols="30" > </textarea> 
-					<!-- <input name="numCota" id="numCota" type="text" style="width: 100px;" /> --> 
+					<!-- <input name="numCota" id="numCota" type="text" style="width: 100px;" /> 
 					</td>
+					--> 
 				</tr>
 			</table>
 			<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
@@ -498,7 +504,7 @@ $(function(){
 					</span> 
 					
 					<span class="bt_novos" title="Adicionar em Lote">
-						<a href="javascript:;" onclick="regiaoController.add_lote();">
+						<a href="javascript:;" onclick="regiaoController.cotasLote();">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
 						
 						Adicionar em Lote
@@ -528,4 +534,3 @@ $(function(){
 			</div>
 		</div>
 </body>
-

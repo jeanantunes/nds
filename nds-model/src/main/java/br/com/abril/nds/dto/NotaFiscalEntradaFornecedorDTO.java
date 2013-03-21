@@ -17,6 +17,8 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 	
 	private String serie;
 	
+	private Long numeroNotaEnvio;
+	
 	private String dataEmissao;
 	
 	private String dataExpedicao;
@@ -45,12 +47,13 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 		this.razaoSocial = razaoSocial;
 	}
 	
-	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, String serie,
+	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, String serie, Long numeroNotaEnvio,
 			Date dataEmissao, Date dataExpedicao, String descricao,
 			BigDecimal valorTotalNota, StatusNotaFiscalEntrada statusNotaFiscal, Date dataRecebimento, String razaoSocial) {
 		this.id = id;
 		this.numero = numero.toString();
 		this.serie = serie;
+		this.numeroNotaEnvio = numeroNotaEnvio;
 		this.dataEmissao = DateUtil.formatarDataPTBR(dataEmissao);
 		this.dataExpedicao = DateUtil.formatarDataPTBR(dataExpedicao);
 		this.descricao = descricao;
@@ -132,6 +135,14 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 
 	public void setSerie(String serie) {
 		this.serie = serie;
+	}
+
+	public Long getNumeroNotaEnvio() {
+		return numeroNotaEnvio;
+	}
+
+	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
+		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
 	
 }

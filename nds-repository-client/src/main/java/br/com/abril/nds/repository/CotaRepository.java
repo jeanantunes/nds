@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -245,7 +246,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
     
     Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
     
-    List<Cota> obterCotas(SituacaoCadastro situacaoCadastro);
+    List<CotaResumoDTO> obterCotas(SituacaoCadastro situacaoCadastro);
 
     /**
      * Obtém cotas relacionadas a um fornecedor.
@@ -322,11 +323,11 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 	void ativarCota(Integer numeroCota);
 	
-	List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade);
+	List<CotaResumoDTO> obterCotasComInicioAtividadeEm(Date dataInicioAtividade);
 	
-	List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
+	List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
 	
-	List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
+	List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
 	
 	Cota obterPorPDV(Long idPDV);
 	

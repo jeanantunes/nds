@@ -14,6 +14,8 @@ public class EncalheFecharDiaDTO implements Serializable {
 
 	private static final long serialVersionUID = 1712356619355112111L;
 	
+	private Long idProdutoEdicao;
+	
 	@Export(label = "Código", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	private String codigo;
 	
@@ -67,11 +69,12 @@ public class EncalheFecharDiaDTO implements Serializable {
 	public EncalheFecharDiaDTO() {
     }
 
-    public EncalheFecharDiaDTO(String codigo, String nomeProduto,
+    public EncalheFecharDiaDTO(Long idProdutoEdicao, String codigo, String nomeProduto,
             Long numeroEdicao, BigDecimal precoVenda, BigInteger qtdeLogico,
             BigInteger qtdeLogicoJuramentado, BigInteger qtdeFisico,
             BigInteger qtdeVendaEncalhe, BigInteger qtdeDiferenca) {
-        this.codigo = codigo;
+        this.idProdutoEdicao = idProdutoEdicao;
+    	this.codigo = codigo;
         this.nomeProduto = nomeProduto;
         this.numeroEdicao = numeroEdicao;
         this.precoVenda = precoVenda;
@@ -188,5 +191,13 @@ public class EncalheFecharDiaDTO implements Serializable {
         return new StringBuilder("Produto:[").append(nomeProduto).append("], ")
                 .append("Qtde:[").append(qtdeLogico).append("]").toString();
     }
+
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
 	
 }

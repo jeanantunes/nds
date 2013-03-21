@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 
 @Entity
