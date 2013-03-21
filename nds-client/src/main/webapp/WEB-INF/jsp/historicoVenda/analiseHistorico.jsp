@@ -5,7 +5,7 @@
 
 $(function() {
 	analiseHistoricoVendaController.init();
-	if(typeof(montarDados) == "function")montarDados();
+	//if(typeof(montarDados) == "function")montarDados(anaLiseHistogramaController.workspace);
 });
 
 

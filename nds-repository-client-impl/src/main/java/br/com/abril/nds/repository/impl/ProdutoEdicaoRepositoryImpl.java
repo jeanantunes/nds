@@ -821,8 +821,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"lancamento.reparte as reparte, " +
 				"produto.nome as nomeProduto, " +
 				"produto.codigo as codigoProduto, " +				
-				"tipoProduto.descricao as descricaoTipoProduto, " +
-				"lancamento.status as status " +
+				"tipoClassificacaoProduto.descricao as descricaoTipoClassificacao, " +
+				" tipoSegmentoProduto.descricao as descricaoTipoSegmento,"+
+				" lancamento.status as status " +
 				
 				"from " +
 				 "EstoqueProdutoCota estoqueProdutoCota" +
@@ -831,7 +832,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				 " join estoqueProdutoCota.cota cota " +
 				 " join cota.box box " +
 				 " join produtoEdicao.produto produto " +
-				 " join produto.tipoProduto tipoProduto " +
+				 " join produto.tipoClassificacaoProduto tipoClassificacaoProduto " +
+				 " join produto.tipoSegmentoProduto tipoSegmentoProduto " +
+				 
 				 
 				 " ";
 				 
@@ -863,7 +866,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//edicao = numero da edicao
 		if (StringUtils.isNotEmpty(filtro.getEdicao())) {
 			whereList.add(" produtoEdicao.numeroEdicao = :numeroEdicao");
-			parameterMap.put("numeroEdicao",filtro.getEdicao());
+			parameterMap.put("numeroEdicao",new Long(filtro.getEdicao()));
 		}
 		
 		//check opcao de componente
