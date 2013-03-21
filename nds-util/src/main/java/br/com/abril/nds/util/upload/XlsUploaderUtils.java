@@ -19,11 +19,20 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+/**
+ * @author Thiago
+ * Classe criada para fazer a engenharia reversa de uma planilha em formado XLS ou XLSX, passando as informações para um Bean anotado.
+ */
 public class XlsUploaderUtils {
 	
 	private static final String XLS = ".xls";
 	private static final String XLSX = ".xlsx";
 	
+	/**
+	 * @param clazz Bean para setar os valores do arquivo passado, nos fields anotados
+	 * @param file File pode ser do tipo XLS e XLSX
+	 * @return retorna uma lista de @param clazz
+	 */
 	public static <T> List<T> getBeanListFromXls(Class<T> clazz, File file) {
 		
 		List<T> list = new ArrayList<T>();
@@ -105,6 +114,13 @@ public class XlsUploaderUtils {
 		}
 	}
 	
+	/**
+	 * @param file
+	 * @return
+	 * 
+	 * Usando a antiga estrutura de KeyValue.
+	 * Método já @Deprecated
+	 */
 	@Deprecated
 	public static List<KeyValue> returnKeyValueFromXls(File file) {
 		
@@ -138,6 +154,7 @@ public class XlsUploaderUtils {
 		return list;
 	}
 
+	@Deprecated
 	private static <T extends Sheet> void getContent(List<KeyValue> list, T sheet) {
 		int header = 0;
 		int content = 1;
@@ -159,6 +176,11 @@ public class XlsUploaderUtils {
 		}
 	}
 
+	
+	/**
+	 * @param cell
+	 * @return retorna um objeto boolan, numeric ou string de acordo com a celula recebida.
+	 */
 	private static Object returnCellValue(Cell cell) {
 		switch (cell.getCellType()) {
 			case Cell.CELL_TYPE_BOOLEAN:

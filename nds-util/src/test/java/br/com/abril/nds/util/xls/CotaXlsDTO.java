@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 import br.com.abril.nds.util.upload.XlsMapper;
 
+/**
+ * @author Thiago
+ * Bean de exemplo, com fields anotados, contemplando as colunas do XLS de exemplo.
+ */
 public class CotaXlsDTO implements Serializable {
 	
 	/**
