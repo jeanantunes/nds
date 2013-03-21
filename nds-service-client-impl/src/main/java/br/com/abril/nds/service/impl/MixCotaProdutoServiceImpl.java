@@ -221,9 +221,4 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		}
 		
 	}
-
-	
-	
-	
-
 }
