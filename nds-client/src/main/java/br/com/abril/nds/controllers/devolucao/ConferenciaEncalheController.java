@@ -1,8 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.beans.IntrospectionException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -198,6 +196,7 @@ public class ConferenciaEncalheController extends BaseController {
 			this.session.setAttribute(ID_BOX_LOGADO, idBox);
 			
 			this.result.include(ID_BOX_LOGADO, idBox);
+			this.result.include("boxes", idBox);
 			
 			alterarBoxUsuario(idBox);
 		} else {

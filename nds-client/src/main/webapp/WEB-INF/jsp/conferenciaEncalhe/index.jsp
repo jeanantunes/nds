@@ -22,6 +22,8 @@
 	
 	<script type="text/javascript">
 		var ID_BOX_LOGADO = '<c:out value="${idBoxLogado}"/>';
+		$('#boxLogado option[value="<c:out value='${idBoxLogado}'/>"]').attr("selected","selected");
+		
 		var VEIO_DO_BT_BOX_ENCALHE = false;
 		
 		//Solicita seleção do box caso usuário não esteja associado.
