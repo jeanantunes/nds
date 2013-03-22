@@ -77,7 +77,7 @@ label {
 													
 					</td>
 					<td>Juros %:</td>
-					<td><input maxlength="6" type="text" name="newJuros" id="newJuros"
+					<td><input maxlength="8" type="text" name="newJuros" id="newJuros"
 						style="width: 80px; text-align:right;" />
 					</td>
 				</tr>
@@ -89,7 +89,7 @@ label {
 	
 					<td>Multa %:</td>
 					<td>
-					    <input onblur="bancoController.limparVrMulta();" maxlength="6" type="text" name="newMulta" id="newMulta" style="width:80px; text-align:right;" />
+					    <input onblur="bancoController.limparVrMulta();" maxlength="8" type="text" name="newMulta" id="newMulta" style="width:80px; text-align:right;" />
 					    ou R$: <input onblur="bancoController.limparMulta();" maxlength="15" type="text" name="newVrMulta" id="newVrMulta" style="width:80px; text-align:right;" />
 					</td>
 
@@ -158,7 +158,7 @@ label {
 								                
 					</td>
 					<td>Juros %:</td>
-					<td><input maxlength="6" type="text" name="alterJuros" id="alterJuros"
+					<td><input maxlength="8" type="text" name="alterJuros" id="alterJuros"
 						style="width: 80px;" />
 					</td>
 				</tr>
@@ -170,7 +170,7 @@ label {
 					
 					<td>Multa %:</td>
 					<td>
-					    <input onblur="bancoController.limparVrMulta();" maxlength="6" type="text" name="alterMulta" id="alterMulta" style="width:80px; text-align:right;" />
+					    <input onblur="bancoController.limparVrMulta();" maxlength="8" type="text" name="alterMulta" id="alterMulta" style="width:80px; text-align:right;" />
 					    ou R$: <input onblur="bancoController.limparMulta();" maxlength="12" type="text" name="alterVrMulta" id="alterVrMulta" style="width:80px; text-align:right;" />
 					</td>
 					
