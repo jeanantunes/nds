@@ -50,20 +50,7 @@ function incluirSegmento() {
 		}
 	});
 };		
-function porExcessao(){
-	$('.porCota').hide();
-	$('.porExcessao').show();
-}
-function filtroPorCota(){
-	$('.filtroPorCota').show();
-	$('.filtroPorProduto').hide();
-	$('.porExcessao').hide();
-}
-function filtroPorProduto(){
-	$('.filtroPorCota').hide();
-	$('.filtroPorProduto').show();
-	$('.porCota').hide();
-}
+
 </script>
 </head>
 
@@ -111,9 +98,9 @@ function filtroPorProduto(){
         
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
-            <td width="22" align="right"><input type="radio" name="filtroPor" id="radio" value="radio" onclick="filtroPorCota();" /></td>
+            <td width="22" align="right"><input type="radio" name="filtroPor" id="radio" value="radio" onclick="excecaoSegmentoParciaisController.filtroPorCota();" /></td>
             <td width="50">Cota</td>
-            <td width="22"><input type="radio" name="filtroPor" id="radio2" value="radio" onclick="filtroPorProduto()" /></td>
+            <td width="22"><input type="radio" name="filtroPor" id="radio2" value="radio" onclick="excecaoSegmentoParciaisController.filtroPorProduto()" /></td>
             <td width="49">Produto</td>
             <td width="781">
             <form id="filtroPrincipalCota">

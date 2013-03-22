@@ -552,18 +552,18 @@
 		
 		$(document).ready(function(){
 			
-			filtroPorCota();
+			excecaoSegmentoParciaisController.filtroPorCota();
 			focusSelectRefField($("#radio", excecaoSegmentoParciaisController.workspace));
 			$("#radio", excecaoSegmentoParciaisController.workspace).attr("checked", true);
 			
-			$(document.body).keydown(function(e) {
-				
-				if(keyEventEnterAux(e)){
-					excecaoSegmentoParciaisController.porCota();
-				}
-				
-				return true;
-			});
+//			$(document.body).keydown(function(e) {
+//				
+//				if(keyEventEnterAux(e)){
+//					excecaoSegmentoParciaisController.porCota();
+//				}
+//				
+//				return true;
+//			});
 		});
 		
 	},
@@ -1040,6 +1040,17 @@
 			minLength: 4,
 			delay : 0,
 		});
+	},
+	
+	filtroPorCota : function filtroPorCota(){
+		$('.filtroPorCota').show();
+		$('.filtroPorProduto').hide();
+		$('.porExcessao').hide();
+	},
+	filtroPorProduto: function filtroPorProduto(){
+		$('.filtroPorCota').hide();
+		$('.filtroPorProduto').show();
+		$('.porCota').hide();
 	},
 	
 }, BaseController);

@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.ClassificacaoCotaService;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
@@ -74,6 +75,9 @@ public class ParametrosDistribuidorController extends BaseController {
 
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private ClassificacaoCotaService classificacaoCotaService;
 	
 	@Autowired
 	private HttpSession session;
@@ -203,6 +207,8 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		parametrosDistribuidorService.salvarDistribuidor(
 			parametrosDistribuidor, imgLogotipo, contentType);
+		
+		classificacaoCotaService.executeReclassificacaoCota();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}

@@ -1,4 +1,4 @@
-package br.com.abril.nds.service.impl;
+﻿package br.com.abril.nds.service.impl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,12 +16,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +101,7 @@ import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorClassificacaoCotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoCotaRepository;
 import br.com.abril.nds.repository.EnderecoPDVRepository;
@@ -123,7 +126,9 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.FileService;
+import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.HistoricoTitularidadeService;
+import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.SituacaoCotaService;
@@ -246,6 +251,15 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+
+	@Autowired
+	DistribuidorClassificacaoCotaRepository distribuidorClassificacaoCotaRepository;
+		
+	@Autowired
+	MixCotaProdutoService mixCotaProdutoService;
+
+	@Autowired
+	FixacaoReparteService fixacaoReparteService;	
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -2525,16 +2539,55 @@ public class CotaServiceImpl implements CotaService {
 		return cotaRepository.buscarCota(numero);
 	}
 
+	@Transactional
 	@Override
-	public void apagarTipoCota(Long idCota, String TipoCota) {
-		// TODO Auto-generated method stub
+	public void apagarTipoCota(Long idCota, String TipoCota){
+
+		Log4JLogger log =new Log4JLogger();
+		log.info(  "CotaServiceImpl.apagarTipoCota");
+
+		
+		if(idCota == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada invÃ¡lida!");
+		}
+		
+		if (TipoCota==null || TipoCota.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Cota InvÃ¡lida");
+		}
+		
+
+		
+
+	
+		try{	
+			
+			if(TipoCota.equalsIgnoreCase("A")){
+				mixCotaProdutoService.excluirMixPorCota(idCota);
+			}
+			
+
+			if(TipoCota.equalsIgnoreCase("C")){
+				fixacaoReparteService.excluirFixacaoPorCota(idCota);
+			}
+
+			
+			
+		}catch (RuntimeException e) {
+			
+			if( e instanceof org.springframework.dao.DataIntegrityViolationException){
+				throw new ValidacaoException(TipoMensagem.ERROR,"ExclusÃ£o nÃ£o permitida, registro possui dependÃªncias!");
+			}
+		}
+			
+		
 		
 	}
 
 	@Override
 	public List<DistribuidorClassificacaoCota> obterListaClassificacao() {
-		// TODO Auto-generated method stub
-		return null;
+		Logger logger = Logger.getLogger(CotaServiceImpl.class.getName());
+		logger.info("-->CotaServiceImpl.obterListaClassificacao");
+		return distribuidorClassificacaoCotaRepository.buscarTodos();
 	}
 	
 }
