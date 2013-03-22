@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.BaseEstudoAnaliseFaixaReparteDTO;
+import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoDadoInicioDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
@@ -95,7 +95,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	@Post
 	public void carregarGridAnalise(String[] faixasReparte, int estudoId){
 
-		List<BaseEstudoAnaliseFaixaReparteDTO> base = new ArrayList<>();
+		List<HistogramaPosEstudoAnaliseFaixaReparteDTO> base = new ArrayList<>();
 		
 		String[] faixaIterator = faixasReparte;
 		
@@ -106,11 +106,11 @@ public class HistogramaPosEstudoController extends BaseController{
 		for (String faixas : faixaIterator) {
 			int faixaDe = Integer.parseInt(faixas.split("-")[0]);
 			int faixaAte = Integer.parseInt(faixas.split("-")[1]);
-			BaseEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId);
+			HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId);
 			base.add(baseEstudoAnaliseFaixaReparteDTO);
 		}
 		
-		TableModel<CellModelKeyValue<BaseEstudoAnaliseFaixaReparteDTO>> tableModel = new TableModel<>();
+		TableModel<CellModelKeyValue<HistogramaPosEstudoAnaliseFaixaReparteDTO>> tableModel = new TableModel<>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(base));
 

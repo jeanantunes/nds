@@ -57,6 +57,7 @@ public class Cota implements Serializable {
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
 	
+<<<<<<< HEAD
 	
 	@Column(name="TIPO_COTA", nullable= false)
 	private String tipoCota;
@@ -65,6 +66,8 @@ public class Cota implements Serializable {
 	@Column(name="RECEBE_COMPLEMENTAR",insertable=false,updatable=false )
 	private int recebeComplementar;
 	*/
+=======
+>>>>>>> upstream/fase2
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
@@ -575,6 +578,7 @@ public class Cota implements Serializable {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
 
+<<<<<<< HEAD
 
 	public String getTipoCota() {
 		return tipoCota;
@@ -600,4 +604,6 @@ public class Cota implements Serializable {
 	
 	
 
+=======
+>>>>>>> upstream/fase2
 }

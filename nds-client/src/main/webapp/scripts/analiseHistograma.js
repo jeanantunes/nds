@@ -1,55 +1,77 @@
-<<<<<<< HEAD
-var tempData=null;
+//var tempData=null;
 
 function montarDados(){
 
-	$("#voltarBaseAnalise").click(function(){
-		$("#analiseHistogramaVendasContent").show();
-		$("#analiseHistoricoVendasContent").hide();
-	});
+	params = new Array();
 	
-//	console.log("link pra mostrar!!! "+($(".linkMostrarTodos").length));
-	$("#analiseHistoricoPopUpNomeProduto").clear();
-	$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1"><strong>Produto:</strong></td>');
-	console.log($("#analiseHistoricoPopUpNomeProduto").length);
-	
-	// tr numeroEdicao
-	$('#analiseHistoricoPopUpNumeroEdicao').html('')
-	.append('<td class="class_linha_1"><strong>Edição:</strong></td>');
-	
-	// tr dataLancamento
-	$('#analiseHistoricoPopUpDatalancamento').html('')
-	.append('<td width="136" class="class_linha_2"><strong>Data Lançamento:</strong></td>');
-	
-	// tr reparte
-	$('#analiseHistoricoPopUpReparte').html('')
-	.append('<td class="class_linha_1"><strong>Reparte:</strong></td>');
-	
-	// tr venda
-	$('#analiseHistoricoPopUpVenda').html('')
-	.append('<td class="class_linha_2"><strong>Venda:</strong></td>');
-	
-	// carregando popUp_analiseHistoricoVenda
-	for ( var int2 = 0; int2 < tempData.rows.length; int2++) {
-		row = tempData.rows[int2];
+	params.push({name : "filtro.produtoDto.codigoProduto", value :  codigoProduto_HistogramaVenda});
+	for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
+		params.push({name : "filtro.listProdutoEdicaoDTO["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
 		
-		$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1">'+row.cell.nomeProduto+'</td>');
-		$("#analiseHistoricoPopUpNumeroEdicao").append('<td class="class_linha_1">'+row.cell.numeroEdicao+'</td>');
-		$("#analiseHistoricoPopUpDatalancamento").append('<td width="130" align="center" class="class_linha_2">' + row.cell.dataLancamentoFormatada + '</td>');
-		$("#analiseHistoricoPopUpReparte").append('<td align="right" class="class_linha_1">' + row.cell.repartePrevisto +'</td>');
-		$("#analiseHistoricoPopUpVenda").append('<td align="right" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
 	}
-	
-	qtdEdicoesSelecionadas = 6 - tempData.rows.length; 
-	
-	// por estética de layout, insiro elementos td vazios
-	for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
-		$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1"></td>');
-		$("#analiseHistoricoPopUpNumeroEdicao").append('<td class="class_linha_1"></td>');
-		$("#analiseHistoricoPopUpDatalancamento").append('<td width="130" align="center" class="class_linha_2"></td>');
-		$("#analiseHistoricoPopUpReparte").append('<td align="right" class="class_linha_1"></td>');
-		$("#analiseHistoricoPopUpVenda").append('<td align="right" class="class_linha_1"></td>');
-	}
+
+	//carregando popup superior para as edições
+	url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
+	$.post(url, params, function(data){
+		if(data){
+//						console.log("retorno do post...");
+						anaLiseHistogramaController.tempData = data;
+//						console.log(anaLiseHistogramaController.data);
+							
+						
+						/* montando popup superior */ 
+						$("#voltarBaseAnalise").click(function(){
+							$("#analiseHistogramaVendasContent").show();
+							$("#analiseHistoricoVendasContent").hide();
+						});
+						
+					//	console.log("link pra mostrar!!! "+($(".linkMostrarTodos").length));
+						$("#analiseHistoricoPopUpNomeProduto").clear();
+						$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1"><strong>Produto:</strong></td>');
+					//	console.log($("#analiseHistoricoPopUpNomeProduto").length);
+						
+						// tr numeroEdicao
+						$('#analiseHistoricoPopUpNumeroEdicao').html('')
+						.append('<td class="class_linha_1"><strong>Edição:</strong></td>');
+						
+						// tr dataLancamento
+						$('#analiseHistoricoPopUpDatalancamento').html('')
+						.append('<td width="136" class="class_linha_2"><strong>Data Lançamento:</strong></td>');
+						
+						// tr reparte
+						$('#analiseHistoricoPopUpReparte').html('')
+						.append('<td class="class_linha_1"><strong>Reparte:</strong></td>');
+						
+						// tr venda
+						$('#analiseHistoricoPopUpVenda').html('')
+						.append('<td class="class_linha_2"><strong>Venda:</strong></td>');
+						
+						// carregando popUp_analiseHistoricoVenda
+//						console.log(anaLiseHistogramaController);
+						for ( var int2 = 0; int2 < anaLiseHistogramaController.tempData.rows.length; int2++) {
+//							console.log(int2)
+							row = anaLiseHistogramaController.tempData.rows[int2];
+							
+							$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1">'+row.cell.nomeProduto+'</td>');
+							$("#analiseHistoricoPopUpNumeroEdicao").append('<td class="class_linha_1">'+row.cell.numeroEdicao+'</td>');
+							$("#analiseHistoricoPopUpDatalancamento").append('<td width="130" align="center" class="class_linha_2">' + row.cell.dataLancamentoFormatada + '</td>');
+							$("#analiseHistoricoPopUpReparte").append('<td align="right" class="class_linha_1">' + row.cell.repartePrevisto +'</td>');
+							$("#analiseHistoricoPopUpVenda").append('<td align="right" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
+						}
+						
+						qtdEdicoesSelecionadas = 6 - anaLiseHistogramaController.tempData.rows.length; 
+						
+						// por estética de layout, insiro elementos td vazios
+						for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
+							$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1"></td>');
+							$("#analiseHistoricoPopUpNumeroEdicao").append('<td class="class_linha_1"></td>');
+							$("#analiseHistoricoPopUpDatalancamento").append('<td width="130" align="center" class="class_linha_2"></td>');
+							$("#analiseHistoricoPopUpReparte").append('<td align="right" class="class_linha_1"></td>');
+							$("#analiseHistoricoPopUpVenda").append('<td align="right" class="class_linha_1"></td>');
+						}
+						
+		}
+	});
 	//analiseHistoricoVendaController.init();
 	
 }
@@ -140,10 +162,11 @@ var faixasVendaOriginal=[
 				"nome" : "faixa5",
 				"faixaReparteDe" : 41,
 				formatFaixaDe : "<font>" + 41 + " a</font>",
-				"faixaReparteAte" : 99999999,
+				"faixaReparteAte" : 999999,
 				"enabled" : true,
 				"acao" : "<input type='checkbox' checked='checked' onclick='checkFaixa(this);' value='5' />",
-				inputfaixaReparteAte : "<input type='text' value='99999999' style='width:60px;' onkeyup='if(event.keyCode==13){updateFaixa(this,5);}' onblur='updateFaixa(this,5);' onkeydown='onlyNumeric(event);'/>"
+				//<input type='text' value='99999999' style='width:60px;' onkeyup='if(event.keyCode==13){updateFaixa(this,5);}' onblur='updateFaixa(this,5);' onkeydown='onlyNumeric(event);'/>
+				inputfaixaReparteAte : "999.999"
 			}
 		} ];
 
@@ -188,7 +211,7 @@ function checkFaixa(checkbox){
 
 var resultadoAnalise;
 var anaLiseHistogramaController = $.extend(true, {
-	
+	tempData:null,
 	voltarFiltro:function(){
 		$("#analiseHistogramaVendasContent").clear();
 		$("#histogramaVendasContent").show();
@@ -356,13 +379,16 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 		$.post(url, params, function(data){
 		      if(data){
+		    	  
+		    	  
 		    	  $("#analiseHistogramaVendasContent").hide();
 		    	  $("#analiseHistoricoVendasContent").html(data).show();
-		    	  
+		    	  montarDados();
 		    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload();
 		      }
 		});
 		
+		/*
 		params = new Array();
 		
 		params.push({name : "filtro.produtoDto.codigoProduto", value :  codigoProduto_HistogramaVenda});
@@ -375,13 +401,12 @@ var anaLiseHistogramaController = $.extend(true, {
 		url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
 		$.post(url, params, function(data){
 			if(data){
-				tempData = data;
-				// limpando conteúdo
-				// tr produto
-//				console.log(mostraDados);
+				console.log("retorno do post...");
+				anaLiseHistogramaController.tempData = data;
+				console.log(anaLiseHistogramaController.data);
 			}
 		});
-		
+		*/
 			
 		
 	},
@@ -401,9 +426,9 @@ var anaLiseHistogramaController = $.extend(true, {
 		}
 		
 		var formData = new Array();
-		formData.push({name:"edicoes",value:edicoesEscolhidas.sort().toString()});
+		formData.push({name:"edicoes",value:edicoesEscolhidas_HistogramaVenda.sort().toString()});
 		formData.push({name:"faixasVenda",value:faixas});
-		formData.push({name:"codigoProduto",value:codigoProduto});
+		formData.push({name:"codigoProduto",value:codigoProduto_HistogramaVenda});
 		
 //		console.log($.param(formData));
 		$("#estudosAnaliseHistGrid").flexOptions({

@@ -1112,8 +1112,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					null, // parametros
 					function(html){ // onSucessCallBack
 						$('#matrizDistribuicaoContent').hide();
-						$('#histogramaPosEstudoContent').html(html);
-						$('#histogramaPosEstudoContent').show();
+						$('#telasAuxiliaresContent').html(html);
+						$('#telasAuxiliaresContent').show();
 
 						params = [];
 						
@@ -1133,6 +1133,43 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return false;
 		}
 		
+	};
+	
+	this.abrirDistribuicaoVendaMedia = function(){
+		var selecionado = null;
+		$.each(T.lancamentos, function(index, lancamento){
+			if(lancamento.selecionado){
+				if(selecionado != null){
+					selecionado = null;
+					return;
+				}
+				selecionado = lancamento;
+			}
+		});
+		if(selecionado == null){
+			exibirMensagem("ERROR", ["Deve haver exatamente um item selecionado para esta opção."]);
+			return;
+		}
+		var data = [];
+		data.push({name: "edicao", value: selecionado.edicao});
+		data.push({name: "estudoId", value: selecionado.estudo});
+		data.push({name: "lancamentoId", value: selecionado.idLancamento});
+		data.push({name: "codigoProduto", value: selecionado.codigoProduto});
+		
+		data.push({name: "juramentado", value: selecionado.juram});
+		data.push({name: "suplementar", value: selecionado.suplem});
+		data.push({name: "lancado", value: selecionado.lancto});
+		data.push({name: "promocional", value: selecionado.promo});
+		data.push({name: "sobra", value: selecionado.sobra});
+		
+		distribuicaoVendaMedia.matrizSelecionada = selecionado;
+		
+		$.post(pathTela + "/distribuicaoVendaMedia/", data, function(response) {
+			$('#matrizDistribuicaoContent').hide();
+			$('#telasAuxiliaresContent').html(response);
+			$('#telasAuxiliaresContent').show();
+		});
+
 	};
 }
 //@ sourceURL=matrizDistribuicao.js

@@ -20,7 +20,6 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 	private String produto;
 	private String edicao;
 	
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -98,7 +97,5 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 	public void setEdicao(String edicao) {
 		this.edicao = edicao;
 	}
-
-	
 	
 }
