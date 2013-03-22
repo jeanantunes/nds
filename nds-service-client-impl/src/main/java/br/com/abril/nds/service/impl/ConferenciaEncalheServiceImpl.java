@@ -70,7 +70,6 @@ import br.com.abril.nds.model.estoque.RecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
-import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
@@ -658,11 +657,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigDecimal reparte = obterValorTotalReparte(numeroCota, dataOperacao);
 		
-		BigDecimal totalDebitoCreditoCota = null;
-		BigDecimal valorPagar = null;
-		BigDecimal valorVendaDia = null;
-		
-		
+		BigDecimal valorPagar = BigDecimal.ZERO;
+		BigDecimal valorVendaDia = BigDecimal.ZERO;
+		BigDecimal totalDebitoCreditoCota = BigDecimal.ZERO;
+
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 	
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);

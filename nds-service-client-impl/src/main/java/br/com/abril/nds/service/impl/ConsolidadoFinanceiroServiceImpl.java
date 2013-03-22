@@ -76,22 +76,30 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	public List<ContaCorrenteCotaVO> obterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro){
 		
 		List<Long> tiposMovimentoCredito = 
-				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
-						OperacaoFinaceira.CREDITO,
-						null);
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.CREDITO,
+						GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO
+					)
+				);
 		
 		List<Long> tiposMovimentoDebito =
-				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
-						OperacaoFinaceira.DEBITO,
-						Arrays.asList(
-								this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-										GrupoMovimentoFinaceiro.MULTA),
-								this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-										GrupoMovimentoFinaceiro.JUROS)));
+				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.DEBITO,
+						GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
+						GrupoMovimentoFinaceiro.VENDA_TOTAL
+					)
+				);
 		
 		List<Long> tipoMovimentoEncalhe = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.ENVIO_ENCALHE));
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.ENVIO_ENCALHE, 
+						GrupoMovimentoFinaceiro.ESTORNO_REPARTE_COTA_AUSENTE
+					)
+				);
 		
 		List<Long> tiposMovimentoEncargos =
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
@@ -111,7 +119,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		
 		List<Long> tiposMovimentoConsignado = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE));
+						Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE, GrupoMovimentoFinaceiro.RECUPERACAO_REPARTE_COTA_AUSENTE));
 		
 		return this.consolidadoFinanceiroRepository.obterContaCorrente(filtro, 
 				tiposMovimentoCredito, tiposMovimentoDebito, tipoMovimentoEncalhe, 

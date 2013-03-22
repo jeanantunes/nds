@@ -18,7 +18,6 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
-import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CobrancaRepository;
 
@@ -267,11 +266,9 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	@Override
 	public BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota){
 		
-		BigDecimal valorPagoBaixaCobranca = this.obterValorPagoBaixaCobrancaCota(numeroCota);
-		
 		BigDecimal valorCobrancaNaoPago = this.obterValorNaoPagoCobranca(numeroCota); 
-		
-		return valorCobrancaNaoPago!=null?valorCobrancaNaoPago.subtract(valorPagoBaixaCobranca!=null?valorPagoBaixaCobranca:BigDecimal.ZERO):BigDecimal.ZERO;
+
+		return valorCobrancaNaoPago != null ? valorCobrancaNaoPago : BigDecimal.ZERO;
 	}
 	
 	/**
@@ -287,10 +284,14 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum(cobranca.valor) ")
+		hql.append(" select cobranca.valor ")
 			.append(" from Cobranca cobranca inner join cobranca.cota cota ")
 			.append(" where cota.numeroCota		  =	 :numeroCota ")
-			.append(" and cobranca.statusCobranca =  :status ");
+			.append(" and cobranca.statusCobranca =  :status ")
+			.append(" and cobranca.divida.data = ")
+			.append(" 	  (select max(divida.data) ")
+			.append(" 			  from Divida ")
+			.append(" 			  where divida.cota.numeroCota = :numeroCota) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
@@ -298,41 +299,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		return   (BigDecimal) query.uniqueResult();
 	}
-	
-	/**
-	 * Retorna o valor total pago das baixas de cobrança em aberto de uma determinda cota.
-	 * 
-	 * @param dataVencimento - data de vencimento da cobrança
-	 * 
-	 * @param numeroCota - numero da cota
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorPagoBaixaCobrancaCota(Integer numeroCota) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select sum(baixa.valorPago) ")
-			.append(" from Cobranca cobranca ")
-			.append(" inner join cobranca.cota cota  ")
-			.append(" inner join cobranca.baixasCobranca baixa ")
-			.append(" where cota.numeroCota		   = :numeroCota ")
-			.append(" and cobranca.statusCobranca  = :status ")
-			.append(" and baixa.status 			   IN (:statusBaixa) ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("status", StatusCobranca.NAO_PAGO);
-		query.setParameter("numeroCota", numeroCota);
-		query.setParameterList("statusBaixa", 
-								new StatusBaixa[]{StatusBaixa.PAGAMENTO_PARCIAL,
-												  StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO,
-												  StatusBaixa.PAGO_DIVERGENCIA_DATA,
-												  StatusBaixa.PAGO_DIVERGENCIA_VALOR,
-												  StatusBaixa.PAGO});
-		
-		return (BigDecimal) query.uniqueResult();
-	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Cobranca> obterCobrancasEfetuadaNaDataOperacaoDistribuidor(Date dataOperacao) {
