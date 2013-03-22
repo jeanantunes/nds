@@ -72,14 +72,26 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<TipoMovimentoFinanceiro> buscarTiposMovimentoFinanceiroPorOperacaoFinanceira(
-			OperacaoFinaceira operacaoFinaceira){
+			OperacaoFinaceira operacaoFinaceira, List<TipoMovimentoFinanceiro> movimentosIgnorar){
 		
 		StringBuilder hql = new StringBuilder("select t ");
 		hql.append(" from TipoMovimentoFinanceiro t ")
-		   .append(" where t.operacaoFinaceira = :operacaoFinaceira");
+		   .append(" where t.operacaoFinaceira = :operacaoFinaceira ");
+		
+		if (movimentosIgnorar != null && 
+				!movimentosIgnorar.isEmpty()){
+			
+			hql.append(" and t not in (:movimentosIgnorar) ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("operacaoFinaceira", operacaoFinaceira);
+		
+		if (movimentosIgnorar != null && 
+				!movimentosIgnorar.isEmpty()){
+			
+			query.setParameterList("movimentosIgnorar", movimentosIgnorar);
+		}
 		
 		return query.list();
 	}
@@ -87,14 +99,26 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(
-			OperacaoFinaceira operacaoFinaceira) {
+			OperacaoFinaceira operacaoFinaceira, List<TipoMovimentoFinanceiro> tiposIgnorar) {
 		
 		StringBuilder hql = new StringBuilder("select t.id ");
 		hql.append(" from TipoMovimentoFinanceiro t ")
-		   .append(" where t.operacaoFinaceira = :operacaoFinaceira");
+		   .append(" where t.operacaoFinaceira = :operacaoFinaceira ");
+		
+		if (tiposIgnorar != null &&
+				!tiposIgnorar.isEmpty()){
+			
+			hql.append(" and t not in (:tiposIgnorar) ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("operacaoFinaceira", operacaoFinaceira);
+		
+		if (tiposIgnorar != null &&
+				!tiposIgnorar.isEmpty()){
+			
+			query.setParameterList("tiposIgnorar", tiposIgnorar);
+		}
 		
 		return query.list();
 	}

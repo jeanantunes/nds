@@ -178,41 +178,15 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		}
 	}
 	
-	private Intervalo<Date> obterDataDaSemana(String anoSemana) {
-		
-		Date data = obterDataBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
-		
-		Integer semana = Integer.parseInt(anoSemana.substring(4));
-		
-		Date dataInicioSemana = 
-				DateUtil.obterDataDaSemanaNoAno(
-					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
-			
-		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
-		
-		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
-		
-		return periodoRecolhimento;
-		
-	}
-	
-	private Date obterDataBase(String anoSemana, Date data) {
-		
-		String ano = anoSemana.substring(0,4);
-		Calendar c = Calendar.getInstance();
-		c.setTime(data);
-		c.set(Calendar.YEAR, Integer.parseInt(ano));
-		
-		return c.getTime();
-	}
-
 	@Post
 	@Path("fecharCE")
 	public void fecharCE(String[] listaEncalhe, String[] listaIdProdutoEdicao, String idFornecedor, String semana){
-		String listaEncalhePronta[] = listaEncalhe[0].split(",");		
-		String listaIdProdutoEdicaoPronta[] = listaIdProdutoEdicao[0].split(",");		
 		
-		fechamentoCEIntegracaoService.fecharCE(listaEncalhePronta, listaIdProdutoEdicaoPronta, idFornecedor, new Integer(semana));
+		//TODO Alterar os parametros do metodo
+		
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		fechamentoCEIntegracaoService.fecharCE(filtro);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
 		
@@ -279,7 +253,9 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
+		filtro.setPaginacao(null);
+		
+		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarItensFechamentoCeIntegracao(filtro);
 		
 		if(listaFechamento.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");

@@ -1725,15 +1725,13 @@ public class ConferenciaEncalheController extends BaseController {
 						continue;
 					}
 					
-					if(OperacaoFinaceira.DEBITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					if(OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 						valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
 					}
 						
-					if(OperacaoFinaceira.CREDITO.name().equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+					if(OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 						valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
 					}
-					
-					
 				}
 			}
 		}

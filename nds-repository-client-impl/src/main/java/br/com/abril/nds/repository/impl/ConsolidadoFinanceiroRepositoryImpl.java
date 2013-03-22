@@ -140,7 +140,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("where ")
            .append("	cota1_.NUMERO_COTA = :numeroCota ")
            .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
-           .append("	and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
+           .append("	and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinanceiro) ")
            .append("    and movimentos4_.QTDE != 0 ")
            .append("group by ")
            .append("	produto8_.CODIGO , ")
@@ -193,7 +193,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("where ")
            .append("	cota1_.NUMERO_COTA = :numeroCota ")
            .append("	and movimentof0_.DATA = :dataConsolidado ")
-           .append("	and tipomovime3_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
+           .append("	and tipomovime3_.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinanceiro) ")
            .append("	and ( ")
            .append("		movimentof0_.ID not in  ( ")
            .append("			select ")
@@ -279,7 +279,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		query.setParameter("numeroCota", filtro.getNumeroCota());
 		query.setParameter("dataConsolidado", filtro.getDataConsolidado());
-		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.ENVIO_ENCALHE.toString());
+		query.setParameterList("grupoMovimentoFinanceiro", 
+				Arrays.asList(
+					GrupoMovimentoFinaceiro.ENVIO_ENCALHE.toString(), 
+					GrupoMovimentoFinaceiro.ESTORNO_REPARTE_COTA_AUSENTE.toString()
+				));
 		
 		if (paginacao != null &&
 				paginacao.getQtdResultadosPorPagina() != null &&
@@ -876,11 +880,13 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
 		   .append(" 'CONSOLIDADO' as tipo, ")
 		   .append("(")
-		   .append(" select case when divida.DATA is not null then divida.DATA else acumulada.DATA end as dataRaiz ")
+		   .append(" select case when divida.DATA is not null then max(divida.DATA) else max(acumulada.DATA) end as dataRaiz ")
 		   .append(" from DIVIDA acumulada ")
 		   .append(" left join DIVIDA divida ")
 		   .append("      ON divida.ID = acumulada.DIVIDA_RAIZ_ID ")
-		   .append(" where acumulada.CONSOLIDADO_ID = cfc.ID ")
+		   .append(" where divida.DATA < (select max(d.DATA) from DIVIDA d where d.COTA_ID = divida.COTA_ID) ")
+		   .append(" or acumulada.DATA < (select max(a.DATA) from DIVIDA a where a.COTA_ID = acumulada.COTA_ID) ")
+		   .append(" and acumulada.CONSOLIDADO_ID = cfc.ID ")
 		   .append(" )AS dataRaiz, ")
 		   .append(" coalesce((select sum(bc.VALOR_PAGO) ")
 		   .append("           from BAIXA_COBRANCA bc ")
@@ -994,17 +1000,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("),0) as encargos, ")
 		   
 		   //pendente
-		   .append("coalesce((select sum(m.VALOR) ")
-		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
-		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
-		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
-		   .append(" and m.ID not in (")
-		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
-		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
-		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
-		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
-		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) as pendente, ")
+		   .append(" 0 as pendente, ")
 		   
 		   //total
 		   .append("coalesce((select sum(m.VALOR) ")
