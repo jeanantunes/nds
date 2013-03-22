@@ -96,18 +96,18 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		this.periodoRecolhimento = periodoRecolhimento;
 	}
 	
-	public Long getAnoCorrente(){
+	public Integer getAnoReferente(){
 		
 		return (semana == null)
 				? null
-						: Long.parseLong(semana.substring(0,4));
+						: Integer.parseInt(semana.substring(0,4));
 	}
 	
-	public Long getNumeroSemana(){
+	public Integer getNumeroSemana(){
 	
 		return (semana == null || semana.length() < 4)
 				? null
-						: Long.parseLong(semana.substring(4));
+						: Integer.parseInt(semana.substring(4));
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
@@ -48,30 +49,28 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
         return query.list();
     }
     
-    public ChamadaEncalheFornecedor obterChamadaEncalheFornecedor(Long idFornecedor,Integer anoReferencia, Integer numeroSemana){
+    public List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(FiltroFechamentoCEIntegracaoDTO filtro){
     	
     	StringBuilder hql = new StringBuilder();
     	
     	hql.append(" select cef from ChamadaEncalheFornecedor as cef ");
     	hql.append(" where cef.numeroSemana =:numeroSemana and cef.anoReferencia =:anoReferencia ");
     	
-    	if(idFornecedor!= null){
+    	if(filtro.getIdFornecedor()!= null){
     		hql.append(" and cef.fornecedor.id =:idFornecedor ");
     	}
     	
     	Query query = getSession().createQuery(hql.toString());
     	
-    	query.setParameter("numeroSemana", numeroSemana);
-    	query.setParameter("anoReferencia", anoReferencia);
+    	query.setParameter("numeroSemana", filtro.getNumeroSemana());
+    	query.setParameter("anoReferencia", filtro.getAnoReferente());
     	
-    	if(idFornecedor!= null){
-    		query.setParameter("idFornecedor", idFornecedor);
+    	if(filtro.getIdFornecedor()!= null){
+    		query.setParameter("idFornecedor", filtro.getIdFornecedor());
     	}
     	
-    	query.setMaxResults(1);
-    	
-    	return (ChamadaEncalheFornecedor) query.uniqueResult();
-    	
+    	return query.list();
+
     }
 
 }

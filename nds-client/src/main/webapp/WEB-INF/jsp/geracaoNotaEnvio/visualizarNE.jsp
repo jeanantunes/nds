@@ -36,8 +36,8 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 	<table width="760" border="0" align="center" cellpadding="0"
 		cellspacing="0" style="margin-bottom: 10px; margin-top: 10px;">
 		<tr>
-			<td width="124" rowspan="8" valign="top"><span>
-				<img width="120" src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" />
+			<td width="124" rowspan="8" valign="middle"><span>
+				<img width="120" align="middle" src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" />
 				</span></td>
 			<td colspan="4"
 				style="border-left: 1px solid #000; border-top: 1px solid #000;"><span
@@ -135,18 +135,19 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 		<tr>
 			<td width="232" style="border-left: 1px solid #000;"><span
 				class="titulo">Endereço </span></td>
-			<th width="36" style="border-left: 1px solid #000;">&nbsp;</th>
+			<td width="39" style="border-left: 1px solid #000;"><span
+				class="titulo">Número</span></td>
 			<td width="105"
 				style="border-right: 1px solid #000; border-left: 1px solid #000;"><span
 				class="titulo">Cidade</span></td>
-			<td width="39" align="center" style="border-right: 1px solid #000;"><span
+			<td width="36" align="center" style="border-right: 1px solid #000;"><span
 				class="titulo">UF</span></td>
 			<td width="90" align="center" style="border-right: 1px solid #000;"><span
 				class="titulo">CEP</span></td>
 			<td width="134" align="center" style="border-right: 1px solid #000;"><span
-				class="titulo">CNPJ</span></td>
+				class="titulo">CPF/CNPJ</span></td>
 			<td align="center" style="border-right: 1px solid #000;"><span
-				class="titulo">Inscrição Estadual</span></td>
+				class="titulo">RG/Inscrição Estadual</span></td>
 		</tr>
 		<tr>
 			<td

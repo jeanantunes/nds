@@ -789,18 +789,90 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		var listaDeValores  = null;
 		
-		if(recebimentoFisicoController.indNotaFiscalInterface){
-			listaDeValores = serializeArrayToPost('itensRecebimento', recebimentoFisicoController.obterListaValores());
+		if (recebimentoFisicoController.indNotaFiscalInterface) {
+			
+			if (!recebimentoFisicoController.validarPreenchimentoQuantidades()) {
+
+				return;
+			}
+			
+			listaDeValores = 
+				serializeArrayToPost(
+					'itensRecebimento', recebimentoFisicoController.obterListaValores());
 		}
 		
-		$.postJSON(this.path + 'confirmarRecebimentoFisico', listaDeValores, 
-		function(result) {
+		$.postJSON(
+			this.path + 'confirmarRecebimentoFisico', listaDeValores, 
+			function(result) {
 
-			$(".grids", recebimentoFisicoController.workspace).hide();
-			recebimentoFisicoController.limparCamposPesquisa();
-			recebimentoFisicoController.ocultarBtns();
+				$(".grids", recebimentoFisicoController.workspace).hide();
+				
+				recebimentoFisicoController.limparCamposPesquisa();
+				
+				recebimentoFisicoController.ocultarBtns();
+			}
+		);
+	},
+	
+	/**
+	 * Valida o preenchimento das quantidades do recebimento físico.
+	 */
+	validarPreenchimentoQuantidades : function() {
+		
+		var linhasDaGrid = $(".itemNotaGrid tr", recebimentoFisicoController.workspace);
+		
+		var valido = true;
+		
+		$.each(linhasDaGrid, function(index, value) {
+			
+			var qtdPacotes = 
+				(!$(value).find('input[name="qtdPacote"]').val()) ? 0 : parseInt($(value).find('input[name="qtdPacote"]').val());
+			
+			var qtdExemplares = 
+				(!$(value).find('input[name="qtdExemplar"]').val()) ? 0 : parseInt($(value).find('input[name="qtdExemplar"]').val());
+			
+			var qtdTotal = qtdPacotes + qtdExemplares;
+			
+			if (isNaN(qtdTotal)){
+				qtdTotal = 0;
+			}
+			
+			if (qtdTotal == 0) {
+
+				recebimentoFisicoController.exibirConfirmacaoQuantidadeDigitadas();
+				
+				valido = false;
+				
+				return;
+			}
 		});
 		
+		return valido;
+	},
+	
+	exibirConfirmacaoQuantidadeDigitadas : function() {
+			
+		$("#dialog-verificacao-quantidades", this.workspace).dialog({
+			
+			resizable : false,
+			height : 'auto',
+			width : 450,
+			modal : true,
+			buttons : {
+				
+				"Confirmar" : function() {
+					$(this).dialog("close");
+					return true;
+				},
+
+				"Cancelar" : function() {
+					$(this).dialog("close");
+					return false;
+				}
+			},
+			
+			form: $("#dialog-verificacao-quantidades", this.workspace).parents("form")
+		});	
 	},
     
     /**
@@ -1482,21 +1554,20 @@ var recebimentoFisicoController = $.extend(true, {
 		var edicao = $("#edicaoItem"+index, recebimentoFisicoController.workspace).val();	
 
 		if((codigo == "")||(edicao == "")) {
-			$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val("");
-			$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).val("");
+			
+			recebimentoFisicoController.limparCamposItemNota(index);
+			
 			return;
 		}
 		
+		recebimentoFisicoController.limparCamposItemNota(index);
+		
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
-				
 				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(result.precoDesconto);
 				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).val(result.pacotePadrao);
 			},
-			function(result) {
-				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val("");
-				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).val("");
-			},
+			null,
 			true
 		);	
 	},
@@ -1628,9 +1699,9 @@ var recebimentoFisicoController = $.extend(true, {
 				 valueValor = row.cell.valorTotal;
 			 }
 
-        	 var codigo =       '<input class="number" maxlength="28" value="'+valueCodigo+'" type="text" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);" ></input>';
+        	 var codigo =       '<input class="number" maxlength="28" value="'+valueCodigo+'" type="text" name="itensRecebimento.codigoItem" id="codigoItem'+ index +'" style="width: 50px;" onchange="pesquisaProdutoRecebimentoFisico.pesquisarPorCodigoProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null, recebimentoFisicoController.limparCamposItemNota('+index+'));" ></input>';
 	         			 					     
-	         var produto =      '<input maxlength="200" value="'+valueProduto+'" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null);"></input>';
+	         var produto =      '<input maxlength="200" value="'+valueProduto+'" type="text" name="itensRecebimento.produtoItem" id="produtoItem'+ index +'" style="width: 140px;" onkeyup="pesquisaProdutoRecebimentoFisico.autoCompletarPorNomeProduto(\'#produtoItem'+ index +'\', false);" onblur="pesquisaProdutoRecebimentoFisico.pesquisarPorNomeProduto(\'#codigoItem'+ index +'\', \'#produtoItem'+ index +'\', \'#edicaoItem'+ index +'\', true, null, recebimentoFisicoController.limparCamposItemNota('+index+'));"></input>';
 				             
 			 var edicao =       '<input class="number" maxlength="18" value="'+valueEdicao+'" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onchange="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 			
@@ -1666,6 +1737,19 @@ var recebimentoFisicoController = $.extend(true, {
 		);
 
 		return resultado;
+	},
+	
+	limparCamposItemNota : function(idLinha) {
+		
+		$("#precoDescontoItem" + idLinha, recebimentoFisicoController.workspace).val("");
+		$("#qtdNotaItem" + idLinha, recebimentoFisicoController.workspace).val("");
+		$("#qtdPacoteItem" + idLinha, recebimentoFisicoController.workspace).val("");
+		$("#qtdExemplarItem" + idLinha, recebimentoFisicoController.workspace).val("");
+		$("#pacotePadraoItem" + idLinha, recebimentoFisicoController.workspace).val("");
+		$("#diferencaItem" + idLinha, recebimentoFisicoController.workspace).val("");
+		$("#valorItem" + idLinha, recebimentoFisicoController.workspace).val("");
+		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
+		$("#labelValorTotal", recebimentoFisicoController.workspace).text("");
 	},
 	
 	isAtributosLancamentoVazios : function(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar) {

@@ -609,6 +609,13 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					<textElement textAlignment="Left" verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{destinatarioNumero}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement x="177" y="30" width="40" height="9"/>
+					<textElement>
+						<font size="7"/>
+					</textElement>
+					<text><![CDATA[Número]]></text>
+				</staticText>
 			</frame>
 		</band>
 	</pageHeader>

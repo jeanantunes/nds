@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -40,14 +39,25 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 			data = null;
 		}
 		
+		List<TipoMovimentoFinanceiro> movsIgnore = Arrays.asList(
+			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+					GrupoMovimentoFinaceiro.MULTA),
+					
+			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+					GrupoMovimentoFinaceiro.JUROS)
+		);
+		
 		List<TipoMovimentoFinanceiro> tiposDebitoCredito = 
-				this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiroPorOperacaoFinanceira(
-						OperacaoFinaceira.CREDITO);
-		
-		tiposDebitoCredito.addAll(
-				this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiroPorOperacaoFinanceira(
-						OperacaoFinaceira.DEBITO));
-		
+				this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+					Arrays.asList(
+						GrupoMovimentoFinaceiro.CREDITO, 
+						GrupoMovimentoFinaceiro.DEBITO,
+						GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
+						GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO
+					)
+				);
+
 		return this.movimentoFinanceiroCotaRepository.obterCreditoDebitoCota(
 				idConsolidado, data, numeroCota, tiposDebitoCredito, sortorder, sortname);
 	}

@@ -153,17 +153,7 @@ public class PainelProcessamentoController extends BaseController {
 
 		FiltroInterfacesDTO filtro = carregarFiltroInterfaces(sortorder, sortname, page, rp);
 		
-		List<InterfaceDTO> resultado = null;
-		try {
-			resultado = painelProcessamentoService.listarInterfaces(filtro);
-		} catch (Exception e) {
-			if (e instanceof ValidacaoException) {
-				throw e;
-			} else {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Erro ao pesquisar registros: " + e.getMessage());
-			}
-		}
+		List<InterfaceDTO> resultado = painelProcessamentoService.listarInterfaces(filtro);
 
 		if (resultado == null || resultado.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
