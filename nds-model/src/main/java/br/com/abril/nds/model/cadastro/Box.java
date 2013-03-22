@@ -1,7 +1,9 @@
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -15,6 +17,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * @author francisco.garcia
@@ -67,6 +71,9 @@ public class Box implements Serializable {
 	@OneToOne(mappedBy="box")
 	@JoinColumn(name="ROTEIRIZACAO_ID", unique=true)
 	private Roteirizacao roteirizacao;
+
+	@OneToMany//Muitos usuários devido ao problema de lock de box
+	private List<Usuario> usuarios = new ArrayList<Usuario>();
 	
 	public Set<Cota> getCotas() {
 		return cotas;
@@ -122,6 +129,14 @@ public class Box implements Serializable {
 		this.roteirizacao = roteirizacao;
 	}
 
+	public List<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(List<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -130,7 +145,11 @@ public class Box implements Serializable {
 		result = prime * result + ((cotas == null) ? 0 : cotas.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result
+				+ ((roteirizacao == null) ? 0 : roteirizacao.hashCode());
 		result = prime * result + ((tipoBox == null) ? 0 : tipoBox.hashCode());
+		result = prime * result
+				+ ((usuarios == null) ? 0 : usuarios.hashCode());
 		return result;
 	}
 
@@ -162,9 +181,20 @@ public class Box implements Serializable {
 			if (other.nome != null)
 				return false;
 		} else if (!nome.equals(other.nome))
-			return false;		
+			return false;
+		if (roteirizacao == null) {
+			if (other.roteirizacao != null)
+				return false;
+		} else if (!roteirizacao.equals(other.roteirizacao))
+			return false;
 		if (tipoBox != other.tipoBox)
+			return false;
+		if (usuarios == null) {
+			if (other.usuarios != null)
+				return false;
+		} else if (!usuarios.equals(other.usuarios))
 			return false;
 		return true;
 	}
+
 }
