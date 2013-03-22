@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.controllers.distribuicao;
+package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.File;
 import java.io.FileNotFoundException;

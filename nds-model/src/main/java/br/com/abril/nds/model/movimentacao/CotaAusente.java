@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.model.movimentacao;
+package br.com.abril.nds.model.movimentacao;
 
 import java.util.ArrayList;
 import java.util.Date;

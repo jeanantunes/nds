@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.model.cadastro;
+package br.com.abril.nds.model.cadastro;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

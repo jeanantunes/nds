@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.model.distribuicao;
+package br.com.abril.nds.model.distribuicao;
 
 import java.io.Serializable;
 import java.util.Date;

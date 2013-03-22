@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.integracao.ems0127.processor;
+package br.com.abril.nds.integracao.ems0127.processor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

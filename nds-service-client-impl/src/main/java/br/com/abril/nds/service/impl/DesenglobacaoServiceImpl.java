@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.service.impl;
+package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;

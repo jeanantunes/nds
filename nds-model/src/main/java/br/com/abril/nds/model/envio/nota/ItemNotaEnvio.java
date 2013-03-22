@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.model.envio.nota;
+package br.com.abril.nds.model.envio.nota;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

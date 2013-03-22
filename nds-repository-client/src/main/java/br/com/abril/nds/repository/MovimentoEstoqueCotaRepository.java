@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.repository;
+package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

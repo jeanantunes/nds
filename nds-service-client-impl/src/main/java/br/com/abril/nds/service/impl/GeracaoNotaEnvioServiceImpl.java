@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.service.impl;
+package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -502,7 +502,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		if (enderecoDistribuidor == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço principal do distribuidor n�o encontrada!");
+					"Endereço principal do distribuidor não encontrada!");
 		}
 
 		try {
