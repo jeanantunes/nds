@@ -1,4 +1,4 @@
-var desenglobacaoController = $.extend(true, {
+﻿var desenglobacaoController = $.extend(true, {
 
 	errorCallBack : function errorCallBack(){
 		$('#statusCota').val('');

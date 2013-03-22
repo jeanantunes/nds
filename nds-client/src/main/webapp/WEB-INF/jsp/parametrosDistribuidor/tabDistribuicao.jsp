@@ -1,30 +1,48 @@
-<div id="tabDistribuicao" style="width: 930px; margin: auto;">
+﻿<div id="tabDistribuicao" style="width: 930px; margin: auto;">
 	<br clear="all" />
 	<fieldset style="width: 260px;">
 		<legend>Distribuição</legend>
 		<table width="253" border="0" cellspacing="1" cellpadding="2">
 			<tr>
 				<td>Geração Automática de Estudo:</td>
-				<td align="center"><input name="input26" type="checkbox" value="" /></td>
+				<td align="center">
+					<input name="parametrosDistribuidor.geracaoAutomaticaEstudo" 
+					id="geracaoAutomaticaEstudo"
+					type="checkbox" ${parametrosDistribuidor.geracaoAutomaticaEstudo ? "checked" : ""} />
+				</td>
 			</tr>
 			<tr>
 				<td width="161">Venda Média +:</td>
 				<td width="81" align="center">
-					<input name="textfield13" type="text" id="textfield13" style="width: 50px; text-align: center;" />
+					<input name="parametrosDistribuidor.vendaMediaMais" type="text" 
+					id="vendaMediaMais" value="${parametrosDistribuidor.vendaMediaMais}" 
+					style="width: 50px; text-align: center;" />
 				</td>
 			</tr>
 			<tr>
 				<td>Praça de Veraneio:</td>
-				<td align="center"><input name="input9" type="checkbox" value="" /></td>
+				<td align="center">
+					<input name="parametrosDistribuidor.pracaVeraneio" 
+					id="pracaVeraneio"
+					type="checkbox" ${parametrosDistribuidor.pracaVeraneio ? "checked" : ""} />
+				</td>
 			</tr>
 			<tr>
 				<td>Complementar Automático:</td>
-				<td align="center"><input name="input25" type="checkbox" value="" checked="checked" /></td>
+				<td align="center">
+					<input name="parametrosDistribuidor.complementarAutomatico" 
+					id="complementarAutomatico"
+					type="checkbox" value="" ${parametrosDistribuidor.complementarAutomatico ? "checked" : ""} />
+				</td>
 			</tr>
 			<tr>
 				<td>% Máximo de Fixação</td>
-				<td align="center"><input name="textfield14" type="text" id="textfield14"
-					style="width: 50px; text-align: center;" value="50" /></td>
+				<td align="center">
+					<input name="parametrosDistribuidor.percentualMaximoFixacao"
+					id="percentualMaximoFixacao"
+					value="${parametrosDistribuidor.percentualMaximoFixacao}" 
+					type="text" style="width: 50px; text-align: center;" />
+				</td>
 			</tr>
 		</table>
 	</fieldset>
@@ -39,41 +57,94 @@
 				<td align="center">Até</td>
 			</tr>
 			<tr class="class_linha_1">
-				<td width="110">AA ( + de 1 PDV )</td>
-				<td width="80" align="center">
-					<input name="textfield15" type="text" id="textfield15" style="width: 70px; text-align: right;" />
+				<td width="110">AA ( + de 1 PDV )
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[0].id" id="listClassificacaoCota0.id" value="${parametrosDistribuidor.listClassificacaoCota[0].id}" />
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[0].codigoClassificacaoCota" id="listClassificacaoCota0.codigoClassificacaoCota" value="AA" />
 				</td>
 				<td width="80" align="center">
-					<input name="textfield25" type="text" id="textfield25" style="width: 70px; text-align: right;" />
+					<input name="parametrosDistribuidor.listClassificacaoCota[0].valorDe" 
+					id="listClassificacaoCota0.valorDe" 
+					value="${parametrosDistribuidor.listClassificacaoCota[0].valorDe}"
+					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+				</td>
+				<td width="80" align="center">
+					<input name="parametrosDistribuidor.listClassificacaoCota[0].valorAte"
+					id="listClassificacaoCota0.valorAte"
+					value="${parametrosDistribuidor.listClassificacaoCota[0].valorAte}"
+					type="text" style="width: 70px; text-align: right;" />
 				</td>
 			</tr>
 			<tr class="class_linha_2">
-				<td>A</td>
-				<td align="center"><input name="textfield33" type="text" id="textfield33"
-					style="width: 70px; text-align: right;" /></td>
-				<td width="80" align="center"><input name="textfield26" type="text" id="textfield26"
-					style="width: 70px; text-align: right;" /></td>
+				<td>A
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[1].id" id="listClassificacaoCota1.id" value="${parametrosDistribuidor.listClassificacaoCota[1].id}" />
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[1].codigoClassificacaoCota" id="listClassificacaoCota1.codigoClassificacaoCota" value="A" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listClassificacaoCota[1].valorDe"
+					id="listClassificacaoCota1.valorDe"
+					value="${parametrosDistribuidor.listClassificacaoCota[1].valorDe}"
+					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+				</td>
+				<td width="80" align="center">
+					<input name="parametrosDistribuidor.listClassificacaoCota[1].valorAte"
+					id="listClassificacaoCota1.valorAte"
+					value="${parametrosDistribuidor.listClassificacaoCota[1].valorAte}"
+					type="text" style="width: 70px; text-align: right;" />
+				</td>
 			</tr>
 			<tr class="class_linha_1">
-				<td>B</td>
-				<td align="center"><input name="textfield32" type="text" id="textfield32"
-					style="width: 70px; text-align: right;" /></td>
-				<td align="center"><input name="textfield27" type="text" id="textfield27"
-					style="width: 70px; text-align: right;" /></td>
+				<td>B
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[2].id" id="listClassificacaoCota2.id" value="${parametrosDistribuidor.listClassificacaoCota[2].id}" />
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[2].codigoClassificacaoCota" id="listClassificacaoCota2.codigoClassificacaoCota" value="B" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listClassificacaoCota[2].valorDe"
+					id="listClassificacaoCota2.valorDe"
+					value="${parametrosDistribuidor.listClassificacaoCota[2].valorDe}"
+					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listClassificacaoCota[2].valorAte"
+					id="listClassificacaoCota2.valorAte"
+					value="${parametrosDistribuidor.listClassificacaoCota[2].valorAte}"
+					type="text" style="width: 70px; text-align: right;" />
+				</td>
 			</tr>
 			<tr class="class_linha_2">
-				<td>C</td>
-				<td align="center"><input name="textfield31" type="text" id="textfield31"
-					style="width: 70px; text-align: right;" /></td>
-				<td align="center"><input name="textfield28" type="text" id="textfield28"
-					style="width: 70px; text-align: right;" /></td>
+				<td>C
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[3].id" id="listClassificacaoCota3.id" value="${parametrosDistribuidor.listClassificacaoCota[3].id}" />
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[3].codigoClassificacaoCota" id="listClassificacaoCota3.codigoClassificacaoCota" value="C" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listClassificacaoCota[3].valorDe"
+					id="listClassificacaoCota3.valorDe"
+					value="${parametrosDistribuidor.listClassificacaoCota[3].valorDe}"
+					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listClassificacaoCota[3].valorAte"
+					id="listClassificacaoCota3.valorAte"
+					value="${parametrosDistribuidor.listClassificacaoCota[3].valorAte}"
+					type="text" style="width: 70px; text-align: right;" />
+				</td>
 			</tr>
 			<tr class="class_linha_1">
-				<td>D</td>
-				<td align="center"><input name="textfield30" type="text" id="textfield30"
-					style="width: 70px; text-align: right;" /></td>
-				<td align="center"><input name="textfield29" type="text" id="textfield29"
-					style="width: 70px; text-align: right;" /></td>
+				<td>D
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[4].id" id="listClassificacaoCota4.id" value="${parametrosDistribuidor.listClassificacaoCota[4].id}" />
+					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[4].codigoClassificacaoCota" id="listClassificacaoCota4.codigoClassificacaoCota" value="D" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listClassificacaoCota[4].valorDe"
+					id="listClassificacaoCota4.valorDe"
+					value="${parametrosDistribuidor.listClassificacaoCota[4].valorDe}"
+					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listClassificacaoCota[4].valorAte"
+					id="listClassificacaoCota4.valorAte"
+					value="${parametrosDistribuidor.listClassificacaoCota[4].valorAte}"
+					type="text" style="width: 70px; text-align: right;" />
+				</td>
 			</tr>
 		</table>
 	</fieldset>
@@ -92,25 +163,58 @@
 				<td align="center">PDV</td>
 			</tr>
 			<tr class="class_linha_1">
-				<td width="110">&gt; 60 %</td>
-				<td width="85" align="center"><input name="textfield15" type="text" id="textfield15"
-					style="width: 80px; text-align: center;" /></td>
-				<td width="85" align="center"><input name="textfield16" type="text" id="textfield16"
-					style="width: 80px; text-align: center;" /></td>
+				<td width="110">&gt; 60 %
+					<input type="hidden" name="parametrosDistribuidor.listPercentualExcedente[0].id" id="listPercentualExcedente0.id" value="${parametrosDistribuidor.listPercentualExcedente[0].id}" />
+					<input type="hidden" name="parametrosDistribuidor.listPercentualExcedente[0].eficiencia" id="listPercentualExcedente0.eficiencia" value="DE_60_100" />
+				</td>
+				<td width="85" align="center">
+					<input name="parametrosDistribuidor.listPercentualExcedente[0].venda"
+					id="listPercentualExcedente0.venda"
+					value="${parametrosDistribuidor.listPercentualExcedente[0].venda}"
+					type="text" style="width: 80px; text-align: center;" />
+				</td>
+				<td width="85" align="center">
+					<input name="parametrosDistribuidor.listPercentualExcedente[0].pdv"
+					id="listPercentualExcedente0.pdv"
+					value="${parametrosDistribuidor.listPercentualExcedente[0].pdv}"
+					type="text" style="width: 80px; text-align: center;" />
+				</td>
 			</tr>
 			<tr class="class_linha_2">
-				<td>&gt; 30% a 60%</td>
-				<td align="center"><input name="textfield17" type="text" id="textfield17"
-					style="width: 80px; text-align: center;" /></td>
-				<td width="85" align="center"><input name="textfield24" type="text" id="textfield24"
-					style="width: 80px; text-align: center;" /></td>
+				<td>&gt; 30% a 60%
+					<input type="hidden" name="parametrosDistribuidor.listPercentualExcedente[1].id" id="listPercentualExcedente1.id" value="${parametrosDistribuidor.listPercentualExcedente[1].id}" />
+					<input type="hidden" name="parametrosDistribuidor.listPercentualExcedente[1].eficiencia" id="listPercentualExcedente1.eficiencia" value="DE_30_60" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listPercentualExcedente[1].venda"
+					id="listPercentualExcedente1.venda"
+					value="${parametrosDistribuidor.listPercentualExcedente[1].venda}"
+					type="text" style="width: 80px; text-align: center;" />
+				</td>
+				<td width="85" align="center">
+					<input name="parametrosDistribuidor.listPercentualExcedente[1].pdv"
+					id="listPercentualExcedente1.pdv"
+					value="${parametrosDistribuidor.listPercentualExcedente[1].pdv}"
+					type="text" style="width: 80px; text-align: center;" />
+				</td>
 			</tr>
 			<tr class="class_linha_1">
-				<td>0% a 30%</td>
-				<td align="center"><input name="textfield18" type="text" id="textfield18"
-					style="width: 80px; text-align: center;" /></td>
-				<td align="center"><input name="textfield23" type="text" id="textfield23"
-					style="width: 80px; text-align: center;" /></td>
+				<td>0% a 30%
+					<input type="hidden" name="parametrosDistribuidor.listPercentualExcedente[2].id" id="listPercentualExcedente2.id" value="${parametrosDistribuidor.listPercentualExcedente[2].id}" />
+					<input type="hidden" name="parametrosDistribuidor.listPercentualExcedente[2].eficiencia" id="listPercentualExcedente2.eficiencia" value="DE_0_30" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listPercentualExcedente[2].venda"
+					id="listPercentualExcedente2.venda"
+					value="${parametrosDistribuidor.listPercentualExcedente[2].venda}"
+					type="text" style="width: 80px; text-align: center;" />
+				</td>
+				<td align="center">
+					<input name="parametrosDistribuidor.listPercentualExcedente[2].pdv"
+					id="listPercentualExcedente2.pdv"
+					value="${parametrosDistribuidor.listPercentualExcedente[2].pdv}"
+					type="text" style="width: 80px; text-align: center;" />
+				</td>
 			</tr>
 		</table>
 	</fieldset>

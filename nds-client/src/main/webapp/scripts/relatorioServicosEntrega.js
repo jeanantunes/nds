@@ -1,4 +1,4 @@
-relatorioServicosEntregaController = $.extend(true, {
+﻿relatorioServicosEntregaController = $.extend(true, {
 	
 	path : contextPath + '/administracao/relatorioServicosEntrega/',
 

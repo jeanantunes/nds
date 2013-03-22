@@ -1,7 +1,6 @@
-/**
+﻿/**
  * 
  */
-
 function InformeEncalhe() {
 	
 	this.initDialogImprimir();
@@ -17,7 +16,12 @@ function InformeEncalhe() {
 	$("#buttonsetTipoImpressaoCapas", this.workspace).buttonset();
 	var _this = this;
 	$("#sugerirSemana", this.workspace).click(function(e){
-		 $("#semanaRecolhimentoBox", _this.workspace).val("");
+		
+		if($(this).is(":checked")){
+			_this.carregarDiaSemana();
+		}else{
+			$("#semanaRecolhimentoBox", _this.workspace).val("");
+		 }
 	});
 
 };

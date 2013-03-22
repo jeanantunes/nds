@@ -1,4 +1,4 @@
-function MatrizDistribuicao(pathTela, descInstancia, workspace) {
+﻿function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	var _workspace = workspace;
 	
