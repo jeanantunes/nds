@@ -267,7 +267,7 @@
 								style="width: 130px;" disabled="disabled" />
 							</td>
 
-							<td width="76">Nota Fiscal:</td>
+							<td width="85">Nota Fiscal / NE:</td>
 							<td width="123"><input type="text" id=notaFiscal
 								style="width: 100px;" maxlength="9" />
 							</td>
@@ -282,13 +282,6 @@
 
 						</tr>
 						<tr>
-
-						<td width="86">Nota Envio:</td>
-							
-							<td width="254">
-								<input id="numeroNotaEnvio" type="text" style="width: 250px;"/>
-							</td>
-							
 							<td colspan="7" height="26">
 
 								<label for="eNF">&Eacute; uma NF-e?</label>
