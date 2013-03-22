@@ -1,6 +1,10 @@
-package br.com.abril.nds.controllers.distribuicao;
+﻿package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +13,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -21,6 +26,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
@@ -30,6 +36,8 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.upload.KeyValue;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -37,6 +45,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -70,6 +79,8 @@ public class RegiaoController extends BaseController {
 	public void index(){
 		this.carregarComboRegiao();
 		this.carregarComboSegmento();
+		this.carregarComboClassificacao();
+		
 	}
 	
 	@Post
@@ -270,10 +281,72 @@ public class RegiaoController extends BaseController {
 	
 	@Post
 	@Path("/incluirCota")
-	public void incluirCotaPorCepNaRegiao (int[] cotas, long idRegiao){
+	public void incluirCota (List<Integer> cotas, long idRegiao){
 		
 		
-		this.validaEntradaDaCotaEmLote(cotas, idRegiao);
+		this.validarEntradaDeVariasCotas(cotas, idRegiao);
+		
+		popularRegistroESalvarCota(cotas, idRegiao);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota inserida com sucesso!"), 
+				"result").recursive().serialize();
+	}
+
+	private void popularRegistroESalvarCota(List<Integer> cotas, long idRegiao) {
+		for (int numeroCota : cotas) {
+			
+			RegistroCotaRegiao registro = new RegistroCotaRegiao();
+
+			Date dataEHora = new Date();
+			Timestamp data = new Timestamp(dataEHora.getTime());
+			
+			registro.setRegiao(this.regiaoService.obterRegiaoPorId(idRegiao));
+			registro.setCota(this.cotaService.obterPorNumeroDaCota(numeroCota));
+			registro.setUsuario(this.usuarioService.getUsuarioLogado());
+			registro.setDataAlteracao(data);
+			
+			regiaoService.addCotaNaRegiao(registro);
+			
+		}
+	}
+	
+	@Post
+	@Path("/addLote")
+	public void addCotasEmLote (UploadedFile xls, Long idRegiao) throws IOException {  
+		List<Integer> numerosCota = new ArrayList<Integer>();
+		
+		File x = upLoadArquivo(xls);
+
+		List<KeyValue> lista = XlsUploaderUtils.returnKeyValueFromXls(x);
+		
+		for (KeyValue keyValue : lista) {
+			if(keyValue.getValue() != null){
+			Double xjiji = (Double) keyValue.getValue();
+			numerosCota.add(xjiji.intValue());
+			}
+		}
+		
+		//Implementar a mensagem de erro...
+		this.validarEntradaDeVariasCotas(numerosCota, idRegiao);
+		this.popularRegistroESalvarCotasEmLote(numerosCota, idRegiao);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas inseridas com sucesso!"),
+			"result").recursive().serialize();
+
+	}
+
+	private File upLoadArquivo(UploadedFile xls) throws IOException, FileNotFoundException {
+		File x = new File(xls.getFileName());
+	    File destino = new File(xls.getFileName());  
+	    destino.createNewFile();  
+	    InputStream stream = xls.getFile();  
+	    IOUtils.copy(stream,new FileOutputStream(destino));
+		return x;
+	}
+	
+	private void popularRegistroESalvarCotasEmLote(List<Integer> cotas, long idRegiao) {
+		boolean mensagem = false;
+		String numCotaCadastrada = "";
 		
 		for (int numeroCota : cotas) {
 			
@@ -288,59 +361,19 @@ public class RegiaoController extends BaseController {
 			registro.setDataAlteracao(data);
 			
 			
-			// verificar... mover para o repository e service, passar uma lista pra lá...
-			// percorrer e add lá...			
+			if(registro.getCota() == null){
+				mensagem = true;
+				numCotaCadastrada += "["+numeroCota+"] ";
+			}
 			regiaoService.addCotaNaRegiao(registro);
-			
 		}
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota inserida com sucesso!"), 
-				"result").recursive().serialize();
+		
+		if(mensagem == true){
+			throw new ValidacaoException(TipoMensagem.WARNING, "As cotas " + numCotaCadastrada + " não existem.");
+		}
 	}
 	
-//	@Post
-//	@Path("/addCotaNaRegiao")
-//	public void addCotaNaRegiao (int[] numeroCota, Long idRegiao){
-//		
-//		for (int numCota : numeroCota) {
-//			this.validaEntradaDaCotaEmLote(numCota);
-//			
-//			RegistroCotaRegiao registro = new RegistroCotaRegiao();
-//			
-//			Date dataEHora = new Date();
-//			Timestamp data = new Timestamp(dataEHora.getTime());
-//			
-//			registro.setRegiao(this.regiaoService.obterRegiaoPorId(idRegiao));
-//			registro.setCota(this.cotaService.obterPorNumeroDaCota(numCota));
-//			registro.setUsuario(this.usuarioService.getUsuarioLogado());
-//			registro.setDataAlteracao(data);
-//			
-//			regiaoService.addCotaNaRegiao(registro);
-//		}
-//		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota adicionada com sucesso."), 
-//			"result").recursive().serialize();
-//	}
-	
-//	@Post
-//	@Path("/addEmLote")
-//	public void addCotaEmLote (int[] numeroCota, Long idRegiao){
-//
-//		for (int numCota : numeroCota) {
-//			this.validaEntradaDaCotaEmLote(numCota);
-//			RegistroCotaRegiao registro = new RegistroCotaRegiao();
-//			
-//			Date dataEHora = new Date();
-//			Timestamp data = new Timestamp(dataEHora.getTime());
-//			
-//			registro.setRegiao(this.regiaoService.obterRegiaoPorId(idRegiao));
-//			registro.setCota(this.cotaService.obterPorNumeroDaCota(numCota));
-//			registro.setUsuario(this.usuarioService.getUsuarioLogado());
-//			registro.setDataAlteracao(data);
-//			
-//			regiaoService.addCotaNaRegiao(registro);
-//		}
-//	}
-	
-	private void validaEntradaDaCotaEmLote(int[] cotas, Long idRegiao) {
+	private void validarEntradaDeVariasCotas(List<Integer> cotas, Long idRegiao) {
 		
 		List<Integer> cotasCadas =  this.regiaoService.buscarNumeroCotasPorIdRegiao(idRegiao);
 		
@@ -382,10 +415,18 @@ public class RegiaoController extends BaseController {
 			comboSegmento.add(new ItemDTO<Long,String>(itemSegmento.getId(), itemSegmento.getDescricao()));
 		}
 		
-//		if (comboSegmento == null || comboSegmento.isEmpty()) {
-//			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-//		}
 		result.include("listaSegmento",comboSegmento );
+	}
+	
+	private void carregarComboClassificacao(){
+		List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
+		
+		List<TipoClassificacaoProduto> classificacoes = regiaoService.buscarClassificacao();
+		
+		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
+			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
+		}
+		result.include("listaClassificacao",comboClassificacao);		
 	}
 	
 	private void tratarFiltroSegmento(FiltroCotasRegiaoDTO filtro) {

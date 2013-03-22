@@ -26,9 +26,6 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	@Autowired
 	private EstoqueProdutoRespository estoqueProdutoRespository;
 	
-	@Autowired
-	private MovimentoEstoqueCotaService movimentoEstoqueCotaService;
-	
 	@Transactional(readOnly = true)
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
 		

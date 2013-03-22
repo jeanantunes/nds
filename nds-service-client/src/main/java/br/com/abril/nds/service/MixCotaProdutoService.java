@@ -28,6 +28,8 @@ public interface MixCotaProdutoService {
 	
 	public void excluirTodos();
 	
+	public void excluirMixPorCota(Long idCota);
+	
 	public void adicionarListaMixPorCota(List<MixCotaProdutoDTO> listaMixCota, Integer cotaId);
 	
 	

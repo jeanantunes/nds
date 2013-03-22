@@ -1,4 +1,4 @@
-var areaInfluenciaGeradorFluxoController = $.extend(true,	{
+﻿var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 	
 					init : function() {
         
@@ -18,87 +18,87 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 						
 						
 						$(".areaInfluenciaGrid", areaInfluenciaGeradorFluxoController.workspace).flexigrid(	{
-							preProcess : areaInfluenciaGeradorFluxoController.executarPreProcessamento,
-							dataType : 'json',
-							colModel : [
-									{
-										display : 'Cota',
-										name : 'numeroCota',
-										width : 60,
-										sortable : true,
-										align : 'left'
-									},
-									{
-										display : 'Status',
-										name : 'statusCota',
-										width : 60,
-										sortable : true,
-										align : 'left'
-									},
-									{
-										display : 'Nome',
-										name : 'nomeCota',
-										width : 120,
-										sortable : true,
-										align : 'left'
-									},
-									{
-										display : 'Tipo PDV',
-										name : 'tipoPdv',
-										width : 80,
-										sortable : true,
-										align : 'left'
-									},
-									{
-										display : 'Bairro',
-										name : 'bairro',
-										width : 70,
-										sortable : true,
-										align : 'left'
-									},
-									{
-										display : 'Cidade',
-										name : 'cidade',
-										width : 80,
-										sortable : true,
-										align : 'left'
-									},
-									{
-										display : 'Faturamento R$',
-										name : 'faturamentoFormatado',
-										width : 80,
-										sortable : true,
-										align : 'right'
-									},
-									{
-										display : 'Área de Influência',
-										name : 'areaInfluencia',
-										width : 90,
-										sortable : true,
-										align : 'left'
-									}, {
-										display : 'Gerador 1',
-										name : 'geradorFluxoPrincipal',
-										width : 90,
-										sortable : true,
-										align : 'left'
-									}, {
-										display : 'Gerador 2',
-										name : 'geradorFluxoSecundario',
-										width : 90,
-										sortable : true,
-										align : 'left'
-									} ],
-							sortname : "nomeCota",
-							sortorder : "asc",
-							usepager : true,
-							useRp : true,
-							rp : 15,
-							showTableToggleBtn : true,
-							width : 960,
-							height : 255
-						});
-						
+											preProcess : areaInfluenciaGeradorFluxoController.executarPreProcessamento,
+											dataType : 'json',
+											colModel : [
+													{
+														display : 'Cota',
+														name : 'numeroCota',
+														width : 60,
+														sortable : true,
+														align : 'left'
+													},
+													{
+														display : 'Status',
+														name : 'statusCota',
+														width : 60,
+														sortable : true,
+														align : 'left'
+													},
+													{
+														display : 'Nome',
+														name : 'nomeCota',
+														width : 120,
+														sortable : true,
+														align : 'left'
+													},
+													{
+														display : 'Tipo PDV',
+														name : 'tipoPdv',
+														width : 80,
+														sortable : true,
+														align : 'left'
+													},
+													{
+														display : 'Bairro',
+														name : 'bairro',
+														width : 70,
+														sortable : true,
+														align : 'left'
+													},
+													{
+														display : 'Cidade',
+														name : 'cidade',
+														width : 80,
+														sortable : true,
+														align : 'left'
+													},
+													{
+														display : 'Faturamento R$',
+														name : 'faturamentoFormatado',
+														width : 80,
+														sortable : true,
+														align : 'right'
+													},
+													{
+														display : 'Área de Influência',
+														name : 'areaInfluencia',
+														width : 90,
+														sortable : true,
+														align : 'left'
+													}, {
+														display : 'Gerador 1',
+														name : 'geradorFluxoPrincipal',
+														width : 90,
+														sortable : true,
+														align : 'left'
+													}, {
+														display : 'Gerador 2',
+														name : 'geradorFluxoSecundario',
+														width : 90,
+														sortable : true,
+														align : 'left'
+													} ],
+											sortname : "nomeCota",
+											sortorder : "asc",
+											usepager : true,
+											useRp : true,
+											rp : 15,
+											showTableToggleBtn : true,
+											width : 960,
+											height : 255
+										});
+
 						$(document).ready(function(){
 							
 							areaInfluenciaGeradorFluxoController.filtroPorArea();

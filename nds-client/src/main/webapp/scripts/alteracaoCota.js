@@ -1,3 +1,17 @@
+﻿$(document).ready(function() {
+	
+	
+	showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
+	
+	$("#idIsSugereSuspensaoModal").click(function() {
+		showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
+	});
+	
+	
+	
+	
+});
+
 var alteracaoCotaController = $.extend(true, {
 	
 	pesquisaCotaAlteracaoCota : null,

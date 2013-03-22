@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.movimentacao;
+﻿package br.com.abril.nds.model.movimentacao;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,12 +34,15 @@ public class CotaAusente {
 	@Column(name = "DATA", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date data;
-
+	
+	@Column(name = "ATIVO", nullable = false)
+	private boolean ativo;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
-	@OneToMany(mappedBy = "cotaAusente", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "cotaAusente")
 	private List<RateioCotaAusente> rateios = new ArrayList<RateioCotaAusente>(); 
 	
 	@OneToMany(cascade = CascadeType.ALL)
@@ -63,6 +66,14 @@ public class CotaAusente {
 	public void setData(Date data) {
 		this.data = data;
 	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
+	}
 	
 	public Cota getCota() {
 		return cota;
@@ -79,7 +90,7 @@ public class CotaAusente {
 	public void setRateios(List<RateioCotaAusente> rateios) {
 		this.rateios = rateios;
 	}
-
+	
 	public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
 		return movimentosEstoqueCota;
 	}

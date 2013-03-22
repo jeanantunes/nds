@@ -1,4 +1,4 @@
-relatorioServicosEntregaController = $.extend(true, {
+﻿relatorioServicosEntregaController = $.extend(true, {
 	
 	path : contextPath + '/administracao/relatorioServicosEntrega/',
 
@@ -22,8 +22,6 @@ relatorioServicosEntregaController = $.extend(true, {
 		
 		this.initGridTransportadores();
 		this.initGridDetalhe();
-		
-		$(".areaBts").hide();
 	},
 	
 	
@@ -44,8 +42,6 @@ relatorioServicosEntregaController = $.extend(true, {
 		});
 		
 		$(".relatorioServicosEntrega_transportadoresGrid").flexReload();
-		
-		$(".areaBts").show();
 	},
 	
 	

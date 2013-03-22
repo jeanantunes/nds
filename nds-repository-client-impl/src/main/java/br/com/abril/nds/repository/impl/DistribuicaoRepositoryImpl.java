@@ -1,4 +1,4 @@
-package br.com.abril.nds.repository.impl;
+﻿package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;

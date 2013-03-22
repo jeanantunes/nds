@@ -1,4 +1,4 @@
-	<head>
+﻿	<head>
 		
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 		
@@ -63,9 +63,14 @@
 				</a>
 			</span>
 		
-			
-			
-		</div>
+			<span class="bt_novos hidden_buttons" style="display:none;">
+				<a id="linkReprogramar" href="javascript:;" title="Reprogramar" >
+					<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
+				</a>
+			</span>
+				
+				
+			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
 		
@@ -161,7 +166,7 @@
 					</td>
 					<td width="164">
 						<span class="bt_pesquisar" title="Pesquisar">
-							<a href="javascript:;" onclick="balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);">Pesquisar</a>
+							<a href="javascript:;" onclick="balanceamentoRecolhimentoController.verificarBalanceamentosAlterados(balanceamentoRecolhimentoController.pesquisar);"></a>
 						</span>
 					</td>
 				</tr>
@@ -213,7 +218,6 @@
 			<legend>Balanceamento da Matriz de Recolhimento </legend>
 			
 			<div class="grids" style="display: none;">
-	
 				<span class="bt_novos" id="bt_fechar" title="Fechar" style="float: right;">
 					<a id="linkFechar" href="javascript:;" onclick="balanceamentoRecolhimentoController.fecharGridBalanceamento();">
 						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
@@ -221,7 +225,8 @@
 					</a>
 				</span>
 	
-				<br clear="all" />
+	         						
+				<br clear="all" style="margin-top: 20px;" />
 				
 				<input type="hidden" id="dataBalanceamentoHidden" />
 				
@@ -230,13 +235,7 @@
 				
 				<table width="950" border="0" cellspacing="2" cellpadding="2">
 					<tr>
-						<td width="152">
-							<span class="bt_novos" title="Reprogramar">
-								<a id="linkReprogramar" href="javascript:;">
-									<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
-								</a>
-							</span>
-						</td>
+						<td width="152"></td>
 						<td width="46">&nbsp;</td>
 						<td width="443">&nbsp;</td>
 						<td width="150">

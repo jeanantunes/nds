@@ -1,9 +1,5 @@
 package br.com.abril.nds.dto;
 
-import org.eclipse.jdt.internal.compiler.util.FloatUtil;
-import org.springframework.format.annotation.NumberFormat;
-
-import antlr.StringUtils;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;

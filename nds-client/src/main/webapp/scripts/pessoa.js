@@ -1,4 +1,4 @@
-var PESSOA = {
+﻿var PESSOA = {
 		//Busca dados para o auto complete do nome da cota
 		autoCompletarPorNome : function(idCampoNome, isFromModal) {
 			

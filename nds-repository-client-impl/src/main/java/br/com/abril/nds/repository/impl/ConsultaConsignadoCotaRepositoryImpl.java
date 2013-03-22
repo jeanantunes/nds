@@ -1,4 +1,4 @@
-package br.com.abril.nds.repository.impl;
+﻿package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -52,13 +52,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   
 		   .append(" coalesce(movimento.valoresAplicados.valorDesconto, 0) as desconto, ")
 		   .append(" coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) as precoDesconto, ")
+		   
 		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA'  then movimento.qtde else 0 end) ")
 		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) )) as reparte, ")
+		   
 		   .append(" ( coalesce( ")
 		   .append("		movimento.valoresAplicados.precoVenda, pe.precoVenda, 0) * ")
 		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA' then movimento.qtde else 0 end) ")
 		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ))  ")
 		   .append(" ) as total, ")
+		   
 		   .append(" ( coalesce( ")
 		   .append("        movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * ")
 		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA' then movimento.qtde else 0 end) ")
@@ -121,14 +124,18 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" AND movimento.tipoMovimento.grupoMovimentoEstoque not in (:tipoMovimentoEstorno) " );
 		
-		if(filtro.getIdCota() != null ) { 
-			hql.append("   AND cota.id = :idCota");			
+		 if(filtro.getIdCota() != null ) { 
+			hql.append(" AND cota.id = :idCota ");			
 		}
 		if(filtro.getIdFornecedor() != null) { 
-			hql.append("   AND fornecedor.id = :idFornecedor");
+			hql.append(" AND fornecedor.id = :idFornecedor ");
 		}
 		
 		hql.append(" GROUP BY case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end ");
+		
+		hql.append(" HAVING sum( (case when tipoMovimento.operacaoEstoque = 'ENTRADA'  then movimento.qtde else 0 end)  ");
+		hql.append("	-  (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ) <> 0 ");
+		  
 		
 		return hql.toString();
 	}

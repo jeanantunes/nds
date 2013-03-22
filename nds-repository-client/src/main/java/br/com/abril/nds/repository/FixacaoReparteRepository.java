@@ -18,5 +18,9 @@ public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Lo
 	public FixacaoReparte buscarPorId(Long id);
 	
 	public FixacaoReparte buscarPorProdutoCota(Cota cota, Produto produto);
+	
+	public List<FixacaoReparte> buscarPorCota(Cota cota);
+	
+	public void removerPorCota(Cota cota);
 
 }

@@ -39,7 +39,7 @@ public class CotaBase implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataFim;
 	
-	@Column(name = "INDICE_AJUSTE")
+	@Column(name = "INDICE_AJUSTE", precision=18, scale=4)
 	private BigDecimal indiceAjuste;
 	
 	

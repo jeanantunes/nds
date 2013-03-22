@@ -1,4 +1,4 @@
-var segmentoNaoRecebidoController = $.extend(true,	{
+﻿var segmentoNaoRecebidoController = $.extend(true,	{
 
 					init : function() {
 						
@@ -201,22 +201,6 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 							showTableToggleBtn : true,
 							width : 630,
 							height : 250
-						});
-					
-						$(document).ready(function(){
-							
-							segmentoNaoRecebidoController.filtroPorSegmento();
-							focusSelectRefField($("#radio", segmentoNaoRecebidoController.workspace));
-							$("#radio", segmentoNaoRecebidoController.workspace).attr("checked", true);
-							
-							$(document.body).keydown(function(e) {
-								
-								if(keyEventEnterAux(e)){
-									mostrar(); segmentoNaoRecebidoController.porSegmento();
-								}
-								
-								return true;
-							});
 						});
 					},
 

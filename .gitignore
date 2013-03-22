@@ -1,4 +1,4 @@
-.settings
+﻿.settings
 .classpath
 .project
 .metadata
@@ -18,3 +18,4 @@ node_modules
 *.jasper
 /nds-client/src/main/resources/applicationContext-local.xml
 /nds-client/src/test/java/br/com/abril/nds/client/util/RepositoryTest.java
+/nds-estudo-algoritmo/.classpath

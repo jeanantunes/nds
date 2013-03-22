@@ -26,6 +26,7 @@ public interface MovimentoEstoqueService {
 
 	void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException;
 
+
 	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
 							 	 MovimentoEstoque movimentoEstoque);
 	

@@ -2,7 +2,6 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 

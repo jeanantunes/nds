@@ -1,4 +1,4 @@
-var fiadorController = $.extend(true, {
+﻿var fiadorController = $.extend(true, {
 		fecharModalCadastroFiador: false,
 		addConjuge : false,
 		alteracaoDadosBasicos : false,

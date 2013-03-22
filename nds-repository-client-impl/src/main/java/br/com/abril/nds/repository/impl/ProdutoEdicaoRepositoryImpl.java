@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +19,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
@@ -820,8 +820,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"lancamento.reparte as reparte, " +
 				"produto.nome as nomeProduto, " +
 				"produto.codigo as codigoProduto, " +				
-				"tipoProduto.descricao as descricaoTipoProduto, " +
-				"lancamento.status as status " +
+				"tipoClassificacaoProduto.descricao as descricaoTipoClassificacao, " +
+				" tipoSegmentoProduto.descricao as descricaoTipoSegmento,"+
+				" lancamento.status as status " +
 				
 				"from " +
 				 "EstoqueProdutoCota estoqueProdutoCota" +
@@ -830,7 +831,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				 " join estoqueProdutoCota.cota cota " +
 				 " join cota.box box " +
 				 " join produtoEdicao.produto produto " +
-				 " join produto.tipoProduto tipoProduto " +
+				 " join produto.tipoClassificacaoProduto tipoClassificacaoProduto " +
+				 " join produto.tipoSegmentoProduto tipoSegmentoProduto " +
+				 
 				 
 				 " ";
 				 
@@ -862,7 +865,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//edicao = numero da edicao
 		if (StringUtils.isNotEmpty(filtro.getEdicao())) {
 			whereList.add(" produtoEdicao.numeroEdicao = :numeroEdicao");
-			parameterMap.put("numeroEdicao",filtro.getEdicao());
+			parameterMap.put("numeroEdicao",new Long(filtro.getEdicao()));
 		}
 		
 		//check opcao de componente
@@ -1297,7 +1300,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
-//		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
@@ -1381,28 +1383,95 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	
 	@Override
-	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao) {
+	public Boolean estudoPodeSerSomado(Long idEstudoBase, String codigoProduto) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(*) from Estudo estudo");
-		hql.append(" where estudo.produtoEdicao.codigoDeBarras = :codigoBarra");
-		hql.append(" and   estudo.produtoEdicao.numeroEdicao    	   = :numeroEdicao");
-		hql.append(" and   estudo.produtoEdicao.produto.codigo  	   = :codigoProduto");
-		hql.append(" and   estudo.produtoEdicao.produto.tipoProduto.id = :tipoProduto");
-		hql.append(" and   estudo.id    				   = :idEstudo");
+		hql.append(" SELECT count(*) from Estudo estudo");
+		hql.append(" WHERE   estudo.produtoEdicao.produto.codigo  	   = :codigoProduto");
+		hql.append(" AND   estudo.id    				   = :idEstudo");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("codigoBarra", 	 produtoEdicao.getCodigoDeBarras());
-		query.setParameter("numeroEdicao", 	 produtoEdicao.getNumeroEdicao());
-		query.setParameter("codigoProduto",  produtoEdicao.getProduto().getCodigo());
-		query.setParameter("tipoProduto", 	 produtoEdicao.getProduto().getTipoProduto().getId());
+		query.setParameter("codigoProduto", 	 codigoProduto);		
 		query.setParameter("idEstudo", 	 	 idEstudoBase);
 		
 		return ((Long)query.uniqueResult() > 0);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public ProdutoEdicaoDTO findReparteEVenda(ProdutoEdicaoDTO dto){
+		List<ProdutoEdicaoDTO> produtosEdicao = new ArrayList<>();
+		produtosEdicao.add(dto);
+		findReparteEVenda(produtosEdicao);
+		return dto;
+	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicaoDTO> findReparteEVenda(List<ProdutoEdicaoDTO> produtosEdicao){
+		StringBuffer selectReparte = new StringBuffer();
+		StringBuffer selectVenda = new StringBuffer();
+
+		selectReparte.append("SELECT REPARTE,PRODUTO_EDICAO_ID FROM estudo_produto_edicao where PRODUTO_EDICAO_ID in (");
+		
+		selectVenda.append("select distinct pe.id,p.qtde_devolucao_fornecedor, m.qtde from produto_edicao pe ")
+				.append("join MOVIMENTO_ESTOQUE m on m.produto_edicao_id = pe.id ")
+				.append("join ESTOQUE_PRODUTO p on p.produto_edicao_id = pe.id ")
+				.append("where m.tipo_movimento_id = 13 and m.qtde and p.qtde_devolucao_fornecedor is not null and pe.id in (");
+		
+		for(int i = 0; i < produtosEdicao.size(); i++){
+			ProdutoEdicaoDTO dto = produtosEdicao.get(i);
+			selectReparte.append(dto.getId());
+			selectVenda.append(dto.getId());
+			if(i != produtosEdicao.size() - 1){
+				selectReparte.append(",");
+				selectVenda.append(",");
+			}
+		}
+		
+		selectReparte.append(");");
+		selectVenda.append(") ");
+		
+		Query queryReparte = super.getSession().createSQLQuery(selectReparte.toString());
+		Query queryVenda = super.getSession().createSQLQuery(selectVenda.toString());
+		
+		List<Object[]> resultVenda = queryVenda.list();
+		List<Object[]> resultReparte = queryReparte.list();
+		
+		for(ProdutoEdicaoDTO dto : produtosEdicao){
+			preencherCampos(dto, resultReparte, resultVenda);
+		}
+		 
+		return produtosEdicao;
+	}
+	
+	private void preencherCampos(ProdutoEdicaoDTO dto, List<Object[]> resultadoReparte, List<Object[]> resultadoVenda){
+		for(Object[] item : resultadoReparte){
+			BigInteger id = (BigInteger)item[1];
+			if(id.longValue() == dto.getId()){
+				dto.setReparte((BigInteger)item[0]);
+				break;
+			}
+		}
+		for(Object[] item : resultadoVenda){
+			BigInteger id = (BigInteger)item[0];
+			if( id.longValue() == dto.getId() ){
+				BigDecimal produto = (BigDecimal) item[1];
+				BigDecimal movimento = (BigDecimal) item[2];
+				if(produto == null){
+					break;
+				}
+				if(movimento == null){
+					movimento = new BigDecimal(0);
+				}
+				Double venda = produto.doubleValue() - movimento.doubleValue();
+				dto.setVenda(venda);
+				dto.setPercentualVenda( (venda / produto.doubleValue()) * 100);
+				break;
+			}
+		}
+	}
 
 }

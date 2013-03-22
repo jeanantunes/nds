@@ -567,9 +567,4 @@ public class Cota implements Serializable {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
 
-
-	
-	
-	
-
 }

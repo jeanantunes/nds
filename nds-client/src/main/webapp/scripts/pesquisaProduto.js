@@ -1,4 +1,4 @@
-function PesquisaProduto(workspace) {
+﻿function PesquisaProduto(workspace) {
 
 	var pesquisaProduto = this;
 	
@@ -346,5 +346,4 @@ function PesquisaProduto(workspace) {
 	
 	
 }
-
 //@ sourceURL=pesquisaProduto.js

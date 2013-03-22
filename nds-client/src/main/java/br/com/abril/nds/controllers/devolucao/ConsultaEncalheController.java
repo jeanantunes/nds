@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers.devolucao;
+﻿package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -343,16 +343,8 @@ public class ConsultaEncalheController extends BaseController {
 		String valorVendaDia = ( infoConsultaEncalhe.getValorVendaDia() != null ) ? infoConsultaEncalhe.getValorVendaDia().toString() : "0" ;
 		String valorDebitoCredito = ( infoConsultaEncalhe.getValorDebitoCredito() != null ) ? infoConsultaEncalhe.getValorDebitoCredito().toString() : "0" ;
 		String valorPagar = ( infoConsultaEncalhe.getValorPagar() != null ) ? infoConsultaEncalhe.getValorPagar().toString() : "0" ;
-		
-		String valorReparte = null;
-		String valorEncalhe = null;
-		
-		TotalizadorConsultaEncalheDTO footer = this.consultaEncalheService.obterTotalizadorConsultaEncalhe(filtro);
-
-		valorReparte = (footer.getValorReparte() != null) ? footer.getValorReparte().toString() : "0";
-		valorEncalhe = (footer.getValorEncalhe() != null) ? footer.getValorEncalhe().toString() : "0";
-
-		infoConsultaEncalhe.setQtdeConsultaEncalhe(footer.getQtdConsultaEncalhe().intValue());
+		String valorReparte = (infoConsultaEncalhe.getValorReparte() != null) ? infoConsultaEncalhe.getValorReparte().toString() : "0";
+		String valorEncalhe = (infoConsultaEncalhe.getValorEncalhe() != null) ? infoConsultaEncalhe.getValorEncalhe().toString() : "0";
 
 		resultadoPesquisa.setValorReparte(valorReparte);
 		resultadoPesquisa.setValorEncalhe(valorEncalhe);

@@ -1,4 +1,4 @@
-<head>
+﻿<head>
 
 <script type="text/javascript" src="scripts/desenglobacao.js"></script>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>

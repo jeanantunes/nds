@@ -1,4 +1,4 @@
-package br.com.abril.nds.service.impl;
+﻿package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -7,10 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +18,8 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
+import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Rota;
@@ -33,6 +30,9 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.envio.nota.IdentificacaoDestinatario;
 import br.com.abril.nds.model.envio.nota.IdentificacaoEmitente;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
@@ -50,6 +50,7 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
+import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
@@ -89,6 +90,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
+	
+	@Autowired
+	private PdvRepository pdvRepository;
 	
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
@@ -260,22 +264,41 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Long idCota = cota.getId();
 
 		if (idRota == null) {
+			
+			PDV pdv = this.pdvRepository.obterPDVPrincipal(cota.getId());
 
-			Long idRoteiro = null;
-
-			List<Roteiro> roteiros = cota.getBox().getRoteirizacao()
-					.getRoteiros();
-
-			for (Roteiro r : roteiros) {
-
-				if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
-
-					idRoteiro = r.getId();
+			for (RotaPDV r : pdv.getRotas()){
+				
+				if (!r.getRota().getRoteiro().getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)){
+					
+					idRota = r.getRota().getId();
+					
+					break;
 				}
 			}
 
-			idRota = (Long) cota.getBox().getRoteirizacao()
-					.getRoteiro(idRoteiro).getRotas().get(0).getId();
+			if (idRota == null) {
+				
+				Roteiro roteiro = null;
+				
+				if(cota.getBox() != null) {
+					
+					List<Roteiro> roteiros = cota.getBox().getRoteirizacao().getRoteiros();
+		
+					for (Roteiro r : roteiros) {
+		
+						if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+		
+							roteiro = r;
+							
+							break;
+						}
+					}
+		
+					idRota = (Long) roteiro.getRotas().get(0).getId();
+				}
+			}	
+			
 		}
 
 		NotaEnvio notaEnvio = criarNotaEnvio(idCota, idRota, chaveAcesso,
@@ -334,22 +357,40 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		}
 
 		if (idRota == null) {
+			
+			PDV pdv = this.pdvRepository.obterPDVPrincipal(cota.getId());
 
-			Long idRoteiro = null;
-
-			List<Roteiro> roteiros = cota.getBox().getRoteirizacao()
-					.getRoteiros();
-
-			for (Roteiro r : roteiros) {
-
-				if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
-
-					idRoteiro = r.getId();
+			for (RotaPDV r : pdv.getRotas()){
+				
+				if (!r.getRota().getRoteiro().getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)){
+					
+					idRota = r.getRota().getId();
+					
+					break;
 				}
 			}
 
-			idRota = (Long) cota.getBox().getRoteirizacao()
-					.getRoteiro(idRoteiro).getRotas().get(0).getId();
+			if (idRota == null) {
+
+				if(cota.getBox() != null) {
+					
+					List<Roteiro> roteiros = cota.getBox().getRoteirizacao().getRoteiros();
+					
+					Roteiro roteiro = null;
+	
+					for (Roteiro r : roteiros) {
+		
+						if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+		
+							roteiro = r;
+							
+							break;
+						}
+					}
+		
+					idRota = (Long) roteiro.getRotas().get(0).getId();
+				}
+			}	
 		}
 
 		List<NotaEnvio> notasEnvio = new ArrayList<>();
@@ -490,28 +531,52 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
 		destinatario.setNumeroCota(cota.getNumeroCota());
 		destinatario.setDocumento(cota.getPessoa().getDocumento());
-
-		EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota
-				.getId());
-
-		if (enderecoCota == null) {
+		
+		PDV pdv = this.pdvRepository.obterPDVPrincipal(cota.getId());
+		
+		EnderecoPDV enderecoPdv = pdv!=null?pdv.getEnderecoEntrega():null;
+		
+		if (enderecoPdv == null) {
+		
+			for (EnderecoPDV ePdv : pdv.getEnderecos()){
+			    
+				if (ePdv.isPrincipal()){
+				    
+					enderecoPdv = ePdv;
+				}
+			}
+		}
+		
+		if (enderecoPdv == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço principal da cota " + cota.getId()
-							+ " não encontrada!");
+					"Endereço do PDV principal da cota " + cota.getId()
+							+ " não encontrado!");
 		}
 
 		try {
-			destinatario.setEndereco(cloneEndereco(enderecoCota.getEndereco()));
+			destinatario.setEndereco(cloneEndereco(enderecoPdv.getEndereco()));
 		} catch (CloneNotSupportedException e) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
 					"Erro ao adicionar o endereço do Emitente!");
 		}
 
 		if (cota.getPessoa() instanceof PessoaJuridica) {
+			
 			PessoaJuridica pessoaJuridica = (PessoaJuridica) cota.getPessoa();
-			destinatario.setInscricaoEstadual(pessoaJuridica
-					.getInscricaoEstadual());
+			
+			destinatario.setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
+			
+			destinatario.setDocumento(pessoaJuridica.getCnpj());
 		}
+		else if (cota.getPessoa() instanceof PessoaFisica) {
+			
+			PessoaFisica pessoaFisica = (PessoaFisica) cota.getPessoa();
+			
+			destinatario.setInscricaoEstadual(pessoaFisica.getRg());
+			
+			destinatario.setDocumento(pessoaFisica.getCpf());
+		}
+		
 		destinatario.setNome(cota.getPessoa().getNome());
 		destinatario.setPessoaDestinatarioReferencia(cota.getPessoa());
 
@@ -526,16 +591,22 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			telefoneRepository.adicionar(telefone);
 			destinatario.setTelefone(telefone);
 		}
-		destinatario.setCodigoBox(cota.getBox().getCodigo());
-		destinatario.setCodigoBox(cota.getBox().getCodigo());
-		destinatario.setNomeBox(cota.getBox().getNome());
+		
+		if(cota.getBox() != null) {
+			
+			destinatario.setCodigoBox(cota.getBox().getCodigo());
+			destinatario.setNomeBox(cota.getBox().getNome());
+		}
 
 		if (idRota != null) {
+			
 			Rota rota = rotaRepository.buscarPorId(idRota);
+			
 			if (rota == null) {
-				throw new ValidacaoException(TipoMensagem.ERROR,
-						"Rota não encontrada!");
+				
+				throw new ValidacaoException(TipoMensagem.ERROR,"Rota não encontrada!");
 			}
+			
 			destinatario.setCodigoRota(rota.getId().toString());
 			destinatario.setDescricaoRota(rota.getDescricaoRota());
 		}
@@ -614,26 +685,31 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 				Long idRoteiro = null;
 
-				List<Roteiro> roteiros = cota.getBox().getRoteirizacao()
-						.getRoteiros();
+				if(cota.getBox() != null) {
+					
+					List<Roteiro> roteiros = cota.getBox().getRoteirizacao().getRoteiros();
 
-				for (Roteiro r : roteiros) {
-
-					if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
-
-						idRoteiro = r.getId();
+					if(roteiros != null) {
+						for (Roteiro r : roteiros) {
+		
+							if (!r.getTipoRoteiro().equals(TipoRoteiro.ESPECIAL)) {
+		
+								idRoteiro = r.getId();
+							}
+						}
 					}
-				}
 
-				try {
-					idRota = (Long) cota.getBox().getRoteirizacao()
-							.getRoteiro(idRoteiro).getRotas().get(0).getId();
-				} catch (Exception e) {
-					if(cotasSemRoteirizacao.size() == 0) {
-						cotasSemRoteirizacao.add("Cota(s) com problemas de Roteirização:");
+					try {
+						idRota = (Long) cota.getBox().getRoteirizacao()
+								.getRoteiro(idRoteiro).getRotas().get(0).getId();
+					} catch (Exception e) {
+						if(cotasSemRoteirizacao.size() == 0) {
+							cotasSemRoteirizacao.add("Cota(s) com problemas de Roteirização:");
+						}
+						StringBuilder cotaSemRoteirizacao = new StringBuilder("Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
+						cotasSemRoteirizacao.add(cotaSemRoteirizacao.toString());
 					}
-					StringBuilder cotaSemRoteirizacao = new StringBuilder("Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
-					cotasSemRoteirizacao.add(cotaSemRoteirizacao.toString());
+					
 				}
 			}
 			

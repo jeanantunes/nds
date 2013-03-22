@@ -1,4 +1,4 @@
-package br.com.abril.nds.service.impl;
+﻿package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -148,34 +148,29 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista,Date dataDistribuidor, Long idProdutoEdicao, Long idLancamento, Long idUsuario,Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
 		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.
-				obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
+			obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 
 		BigInteger total = BigInteger.ZERO;		
 
-		List<MovimentoEstoqueCota> movimentos = new ArrayList<>();
-		for( EstudoCotaDTO estudoCota : listaEstudoCota ) {
-			
-			movimentos.add(
-						gerarMovimentoCota(dataPrevista,idProdutoEdicao,estudoCota.getIdCota(),
-								idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota
-								, dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId())
-						);
+		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
+
+			gerarMovimentoCota(
+				dataPrevista,idProdutoEdicao,estudoCota.getIdCota(),
+					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota,
+						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId());
 
 			total = total.add(estudoCota.getQtdeEfetiva());
-			
-		}
-
-		for(MovimentoEstoqueCota mec : movimentos) {
-			movimentoEstoqueCotaRepository.merge(mec);
 		}
 
 		gerarMovimentoEstoque(dataPrevista, idProdutoEdicao, idUsuario, total, tipoMovimento);
-
 	}
 
 	@Override
 	@Transactional
-	public void enviarSuplementarCotaAusente(Date data, Long idCota,List<MovimentoEstoqueCota> listaMovimentoCota) throws TipoMovimentoEstoqueInexistenteException{
+	public List<MovimentoEstoqueCota> enviarSuplementarCotaAusente(Date data,
+																  Long idCota,
+																  List<MovimentoEstoqueCota> listaMovimentoCota) 
+																  throws TipoMovimentoEstoqueInexistenteException {
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
 
@@ -184,7 +179,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 
 		TipoMovimentoEstoque tipoMovimento =
-				tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE);
 
 		TipoMovimentoEstoque tipoMovimentoCota =
 			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
@@ -197,22 +192,31 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			throw new TipoMovimentoEstoqueInexistenteException(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 		}
 
+		List<MovimentoEstoqueCota> listaMovimentoCotaEnvio = 
+			new ArrayList<MovimentoEstoqueCota>();
 
-		for(MovimentoEstoqueCota movimentoCota : listaMovimentoCota){
+		for (MovimentoEstoqueCota movimentoCota : listaMovimentoCota) {
 
-			if(movimentoCota.getData() != null &&  movimentoCota.getProdutoEdicao()!=null
+			if (movimentoCota.getData() != null 
+					&& movimentoCota.getProdutoEdicao() != null
 					&& movimentoCota.getUsuario() != null
-					&&  movimentoCota.getQtde() != null ){
+					&& movimentoCota.getQtde() != null ) {
 
-				gerarMovimentoEstoque(data, movimentoCota.getProdutoEdicao().getId(), movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), tipoMovimento);
+				gerarMovimentoEstoque(
+					data, movimentoCota.getProdutoEdicao().getId(),
+						movimentoCota.getUsuario().getId(), movimentoCota.getQtde(), 
+							tipoMovimento);
 
-				gerarMovimentoCota(
-					data, movimentoCota.getProdutoEdicao().getId(), 
-						movimentoCota.getCota().getId(), movimentoCota.getUsuario().getId(),
-							movimentoCota.getQtde(), tipoMovimentoCota, data, null, null, null);
+				listaMovimentoCotaEnvio.add(
+					gerarMovimentoCota(
+						data, movimentoCota.getProdutoEdicao().getId(), 
+							movimentoCota.getCota().getId(), movimentoCota.getUsuario().getId(),
+								movimentoCota.getQtde(), tipoMovimentoCota, data, null, null, null));
 
 			}
 		}
+
+		return listaMovimentoCotaEnvio;
 	}
 
 	public MovimentoEstoque gerarMovimentoEstoqueJuramentado(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
@@ -278,7 +282,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoque.setAprovador(new Usuario(idUsuario));
 			movimentoEstoque.setDataAprovacao(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
-			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque,movimentoEstoque);			
+			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque);			
 			
 			movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
 		
@@ -528,7 +532,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 				
 			}			
-			
 		}
 		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica()) {
@@ -537,10 +540,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoqueCota.setAprovador(new Usuario(idUsuario));
 			movimentoEstoqueCota.setDataAprovacao(dataOperacao);
 			
-			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque,movimentoEstoqueCota);
+			movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
+			
+			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque, movimentoEstoqueCota);
 			
 			movimentoEstoqueCota.setEstoqueProdutoCota(new EstoqueProdutoCota(idEstoqueCota));
 
+		} else {
+			
+			movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 		}
 		
 		return movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
