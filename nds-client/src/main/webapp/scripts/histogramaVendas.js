@@ -1,7 +1,8 @@
 var edicoesEscolhidas_HistogramaVenda = new Array();
 var nomeProduto='';
-var descricaoTipoProduto='';
+var descricaoTipoSegmento='';
 var codigoProduto_HistogramaVenda="";
+var descricaoTipoClassificacao_histogramaVenda="";
 
 function checkEdicao(check){
 	//console.log(check.checked);
@@ -38,6 +39,20 @@ var histogramaVendasController = $.extend(true, {
 			dataType : 'json',
 			preProcess: function (data){
 				
+
+				if (data.mensagens) {
+
+					exibirMensagem(
+						data.mensagens.tipoMensagem, 
+						data.mensagens.listaMensagens
+					);
+					
+//					$(".grids", vendaProdutoController.workspace).hide();
+//					$(".area", vendaProdutoController.workspace).hide();
+					
+					return data;
+				}
+				
 				if (data.result){
 					
 					data = data.result;
@@ -46,18 +61,19 @@ var histogramaVendasController = $.extend(true, {
 				$.each(data.rows, function(index, value) {						
 
 					nomeProduto=value.cell.nomeProduto;
-					descricaoTipoProduto=value.cell.descricaoTipoProduto;
+					descricaoTipoSegmento=value.cell.descricaoTipoSegmento;
 					codigoProduto_HistogramaVenda=value.cell.codigoProduto;
+					descricaoTipoClassificacao_histogramaVenda=value.cell.descricaoTipoClassificacao;
 					
 					var objString = 
 						'{"codigo":"'+ value.cell.codigoProduto
 					+ '","edicao":"'+ value.cell.edicao
 					+ '","nomeProduto":"'+ value.cell.nomeProduto
-					+ '","descricaoTipoProduto":"'+ value.cell.descricaoTipoProduto
+					+ '","descricaoTipoSegmento":"'+ value.cell.descricaoTipoSegmento
 					+ '"}'; 
 					
 					//verificando se já estão escolhidas 6 edicoes para analise do histograma
-					var disabled=(edicoesEscolhidas_HistogramaVenda.length==6)?"disabled='disabled'":""
+					var disabled=(edicoesEscolhidas_HistogramaVenda.length==6)?"disabled='disabled'":"";
 					value.cell.sel = "<input type='checkbox'  class='checkEdicao' value='"+objString+"' "+disabled+" onclick='checkEdicao(this)'/>";
 					
 					//setando atributo para capa
@@ -105,10 +121,18 @@ var histogramaVendasController = $.extend(true, {
 			}, {
 				display : 'Status',
 				name : 'status',
-				width : 240,
+				width : 100,
 				sortable : true,
 				align : 'left'
-			}, {
+			}, 
+			{
+				display : 'Classificação',
+				name : 'descricaoTipoClassificacao',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			},
+			{
 				display : 'Capa',
 				name : 'capa',
 				width : 30,
@@ -155,10 +179,11 @@ var histogramaVendasController = $.extend(true, {
 		}
 		
 		var data = {"edicoes":edicoesEscolhidas_HistogramaVenda.sort().toString(),
-				"segmento":descricaoTipoProduto,
+				"segmento":descricaoTipoSegmento,
 				"nomeProduto":nomeProduto,
 				"faixasVenda":faixas,
 				"codigoProduto":codigoProduto_HistogramaVenda,
+				"classificacaoLabel":descricaoTipoClassificacao_histogramaVenda,
 				"labelComponente":labelComponente,
 				"labelElemento":labelElemento};
 		
@@ -206,6 +231,12 @@ var histogramaVendasController = $.extend(true, {
 		});
 		
 		$("#edicaoProdCadastradosGrid", histogramaVendasController.workspace).flexReload();
+		
+		edicoesEscolhidas_HistogramaVenda = new Array();
+		nomeProduto='';
+		descricaoTipoSegmento='';
+		codigoProduto_HistogramaVenda="";
+		descricaoTipoClassificacao_histogramaVenda="";
 
 	}
 
@@ -234,12 +265,13 @@ function popup_detalhes(codigoProduto,numeroEdicao) {
 			
 			$("#imagemCapaEdicao")
 					.attr("src",contextPath
-									+ "/distribuicao/histogramaVendas/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
+							
+									+ "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
 //									+ "/capas/revista-nautica-11.jpg?codigoProduto="
 									+ codigoProduto
 									+ "&numeroEdicao="
 									+ numeroEdicao);
-			console.log($("#imagemCapaEdicao").attr("src"));
+//			console.log($("#imagemCapaEdicao").attr("src"));
 		},
 		close:function(event, ui){
 			$("#imagemCapaEdicao").removeAttr("src").hide();
@@ -278,3 +310,4 @@ function filtroComponentes(){
 	$('.filtroPracaAtendida').hide();
 	$('.filtroComponentes').show();
 }
+//@ sourceURL=historicoVenda.js
