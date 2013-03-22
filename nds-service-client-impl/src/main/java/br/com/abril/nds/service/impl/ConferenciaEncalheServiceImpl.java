@@ -2114,22 +2114,31 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
 						tipoMovimentoEstoqueCota);
-
-		Cota cota = this.cotaRepository.buscarPorId(idCota);
-		Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		
-		BigDecimal precoComDesconto = 
-				produtoEdicao.getPrecoVenda().subtract(
-						MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto.getValor()));
-		
-		ValoresAplicados valoresAplicados = new ValoresAplicados();
-		valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
-		valoresAplicados.setValorDesconto(desconto.getValor());
-		valoresAplicados.setPrecoComDesconto(precoComDesconto);
+		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
 
+		verificarValorAplicadoNulo(valoresAplicados);
+		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
 		return movimentoEstoqueCota;
+	}
+	
+	
+	private void verificarValorAplicadoNulo(ValoresAplicados valoresAplicados){
+		
+		if(valoresAplicados.getPrecoComDesconto() == null) {
+			valoresAplicados.setPrecoComDesconto(BigDecimal.ZERO);
+		}
+		
+		if(valoresAplicados.getPrecoVenda() == null) {
+			valoresAplicados.setPrecoVenda(BigDecimal.ZERO);
+		}
+
+		if(valoresAplicados.getValorDesconto() == null) {
+			valoresAplicados.setValorDesconto(BigDecimal.ZERO);
+		}
+		
 	}
 	
 	/**

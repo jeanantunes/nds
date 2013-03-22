@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -13,10 +12,8 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
 import br.com.abril.nds.dto.ItemFechamentoCEIntegracaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
-import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
@@ -36,7 +33,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemFechamentoCEIntegracaoDTO> buscarConferenciaEncalhe(FiltroFechamentoCEIntegracaoDTO filtro) {
+	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -62,7 +59,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("    ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO AS tipoFormatado, ");
 		
-		hql.append("	COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR,0) AS encalhe, ");
+		hql.append("	COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) + COALESCE(ESTOQUE_PROD.QTDE,0) + COALESCE(FCH_ENCALHE.QUANTIDADE,0) AS encalhe, ");
 		
 		hql.append("	ITEM_CH_ENC_FORNECEDOR.ID AS idItemCeIntegracao ");
 		
@@ -119,17 +116,17 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	}
 
 	@Override
-	public FechamentoCEIntegracaoConsolidadoDTO buscarConferenciaEncalheTotal(FiltroFechamentoCEIntegracaoDTO filtro) {
+	public FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT ");
 		
-		hql.append("  sum(COALESCE(((ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA - COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR,0))  * PROD_EDICAO.PRECO_VENDA),0)) as totalBruto,");
+		hql.append("  sum(COALESCE(((ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA - (COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) + COALESCE(ESTOQUE_PROD.QTDE,0) + COALESCE(FCH_ENCALHE.QUANTIDADE,0)))  * PROD_EDICAO.PRECO_VENDA),0)) as totalBruto,");
 		
 		hql.append("  sum(COALESCE((((select desconto_logistica.PERCENTUAL_DESCONTO");
-		hql.append("   from desconto_logistica where desconto_logistica.ID = PROD.DESCONTO_LOGISTICA_ID)");
-		hql.append("  / 100)* PROD_EDICAO.PRECO_VENDA)*(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA- COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR,0)),0)) as totalDesconto ");
+		hql.append("   from desconto_logistica where desconto_logistica.ID = COALESCE(PROD_EDICAO.DESCONTO_LOGISTICA_ID,PROD.DESCONTO_LOGISTICA_ID))");
+		hql.append("  / 100)* PROD_EDICAO.PRECO_VENDA)*(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA- (COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) + COALESCE(ESTOQUE_PROD.QTDE,0) + COALESCE(FCH_ENCALHE.QUANTIDADE,0))),0)) as totalDesconto ");
 		
 		hql.append(this.obterHqlFrom(filtro));
 		
@@ -181,11 +178,18 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("			  	ESTOQUE_PROD.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
 		hql.append("			  ) ");
 		
+		hql.append(" INNER JOIN fechamento_encalhe FCH_ENCALHE ");
+		hql.append(" 		ON ( ");
+		hql.append("  			FCH_ENCALHE.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		hql.append("  		)  ");
+		
 		hql.append(" WHERE ");
 		
 		hql.append(" chmFornecedor.ANO_REFERENCIA =:anoReferencia  ");
 		
 		hql.append(" AND chmFornecedor.NUMERO_SEMANA =:numeroSemana ");
+		
+		hql.append(" AND FCH_ENCALHE.DATA_ENCALHE BETWEEN :inicioSemana AND :fimSemana ");
 		
 		if(filtro.getIdFornecedor()!= null){
 			
@@ -257,9 +261,13 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 	
 	private void aplicarParametros(FiltroFechamentoCEIntegracaoDTO filtro, Query query) {
 		
-		query.setParameter("anoReferencia",filtro.getAnoCorrente());
+		query.setParameter("anoReferencia",filtro.getAnoReferente());
 		
 		query.setParameter("numeroSemana",filtro.getNumeroSemana());
+		
+		query.setParameter("inicioSemana",filtro.getPeriodoRecolhimento().getDe());
+		
+		query.setParameter("fimSemana", filtro.getPeriodoRecolhimento().getAte());
 		
 		if(filtro.getIdFornecedor() != null) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
@@ -278,8 +286,8 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		Query query =  getSession().createQuery(hql.toString());
 		
-		query.setParameter("numeroSemana", filtro.getNumeroSemana().intValue());
-		query.setParameter("anoReferencia", filtro.getAnoCorrente().intValue());
+		query.setParameter("numeroSemana", filtro.getNumeroSemana());
+		query.setParameter("anoReferencia", filtro.getAnoReferente());
 		query.setParameter("statusCeNDS", StatusCeNDS.FECHADO);
 		
 		return (query.uniqueResult() == null) ? false : true;

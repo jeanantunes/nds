@@ -93,9 +93,11 @@ var negociacaoDividaController = $.extend(true, {
 		
 		$.each(result.rows, function(index, row) {
 			saldo += row.cell.valorDouble;
+			
+			row.cell.valor = floatToPrice(row.cell.valor);
 		});
 		
-		$('#id_saldo').text(floatToPrice(saldo.toFixed(2)));
+		$('#id_saldo').text(floatToPrice(saldo));
 		
 		return result;
 	},

@@ -42,7 +42,6 @@ import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO.Ordenacao
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoFornecedor;
@@ -183,10 +182,23 @@ public class DiferencaEstoqueController extends BaseController {
 				
 				dataLancamento = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
 				
-				descricaoStatusAprovacao = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatus().getDescricaoAbreviada();
-				
 				motivo = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getMotivo();
+			}else{
+				
+				if(diferenca.getLancamentoDiferenca()!= null 
+						&& diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota()!= null 
+						&& !diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().isEmpty()){
+					
+					dataLancamento = diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0).getData();
+					
+					motivo = diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota().get(0).getMotivo();
+				}
 			}
+			
+			descricaoStatusAprovacao = 
+					diferenca.getLancamentoDiferenca() != null 
+						&& diferenca.getLancamentoDiferenca().getStatus()!= null ?
+								diferenca.getLancamentoDiferenca().getStatus().getDescricaoAbreviada() : "";
 			
 			DiferencaVO consultaDiferencaVO = new DiferencaVO();
 			
