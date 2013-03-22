@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.service.impl;
+package br.com.abril.nds.service.impl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
