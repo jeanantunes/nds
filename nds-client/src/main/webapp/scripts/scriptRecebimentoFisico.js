@@ -48,8 +48,6 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$("#notaFiscal", recebimentoFisicoController.workspace).numeric();
 		
-		$("#numeroNotaEnvio", recebimentoFisicoController.workspace).numeric();
-		
 		$("#novoNumeroNotaEnvio", recebimentoFisicoController.workspace).numeric();
 		
 		$("#chaveAcesso", recebimentoFisicoController.workspace).numeric();
@@ -187,9 +185,6 @@ var recebimentoFisicoController = $.extend(true, {
 		var serie 		= $("#serie", recebimentoFisicoController.workspace).val();		
 		var chaveAcesso = $("#chaveAcesso", recebimentoFisicoController.workspace).val();
 		var fornecedor  = $("#fornecedor", recebimentoFisicoController.workspace).val();
-		var numeroNotaEnvio  = $("#numeroNotaEnvio", recebimentoFisicoController.workspace).val();
-
-		
 		
         var indNFe      = "N";
         
@@ -203,9 +198,7 @@ var recebimentoFisicoController = $.extend(true, {
 			{name: "serie" 				, value: serie				},
 			{name: "indNFe" 			, value: indNFe				},
 			{name: "fornecedor" 		, value: fornecedor			},
-			{name: "chaveAcesso" 		, value: chaveAcesso 		},
-			{name: "numeroNotaEnvio" 	, value: numeroNotaEnvio 	}
-			
+			{name: "chaveAcesso" 		, value: chaveAcesso 		}
 		];
 		
 		this.limparCampos();
