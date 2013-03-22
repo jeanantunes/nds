@@ -267,14 +267,24 @@ var PDV =  $.extend(true, {
 				parametros.push({name:'codigos['+ (parametros.length) +']', value:result.pdvDTO.geradorFluxoPrincipal});
 				PDV.carregarGeradorFluxoNotIn(parametros);
 				
+				if(result.pdvDTO.principal== false){
+					$("#geradorFluxo").hide();
+				}else{
+					$("#geradorFluxo").show();
+				}
+					
+				
 				var parametro = [ {name:"codigos",value:result.pdvDTO.geradorFluxoPrincipal}, 
 				                  {name:"modoTela", value: PDV.modoTela.value}, 
 				                  {name: "idPdv", value: PDV.idPdv}];
 				$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxo",
 						parametro, 
 						   function(result){
+					
 					$("#txtGeradorFluxoPrincipal", this.workspace).val(result[0].value.$);
-					$("#hiddenGeradorFluxoPrincipal", this.workspace).val(result[0].key.$);	
+					$("#hiddenGeradorFluxoPrincipal", this.workspace).val(result[0].key.$);
+					
+					
 				});
 			}
 			else{
@@ -964,9 +974,11 @@ var PDV =  $.extend(true, {
 			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxoNotIn",
 					   data, 
 					   function(result){
+				
 							var combo =  montarComboBox(result, false);
 							$("#selecTipoGeradorFluxo", this.workspace).html(combo);
 							$("#selecTipoGeradorFluxo", this.workspace).sortOptions();
+							
 			},null,true,"idModalPDV");
 		},
 		

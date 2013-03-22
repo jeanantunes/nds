@@ -3,7 +3,7 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-public class BaseEstudoAnaliseFaixaReparteDTO {
+public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 
 	private DecimalFormat decimalFormat = new DecimalFormat("0.00");
 	
@@ -90,7 +90,7 @@ public class BaseEstudoAnaliseFaixaReparteDTO {
 
 	public void setReparteMedio(BigDecimal reparteMedio) {
 		this.reparteMedio = reparteMedio != null ? reparteMedio : BigDecimal.ZERO;
-		this.reparteMedioFormatado = String.valueOf(this.reparteMedio.intValue());
+		this.reparteMedioFormatado = decimalFormat.format(this.reparteMedio.doubleValue());
 	}
 
 	public void setVendaNominal(BigDecimal vendaNominal) {
@@ -100,7 +100,7 @@ public class BaseEstudoAnaliseFaixaReparteDTO {
 
 	public void setVendaMedia(BigDecimal vendaMedia) {
 		this.vendaMedia = vendaMedia != null ? vendaMedia : BigDecimal.ZERO;
-		this.vendaMediaFormatado = String.valueOf(this.vendaMedia.intValue());
+		this.vendaMediaFormatado = decimalFormat.format(this.vendaMedia.doubleValue());
 	}
 
 	public void setVendaPercent(BigDecimal vendaPercent) {
@@ -110,7 +110,7 @@ public class BaseEstudoAnaliseFaixaReparteDTO {
 
 	public void setEncalheMedio(BigDecimal encalheMedio) {
 		this.encalheMedio = encalheMedio != null ? encalheMedio : BigDecimal.ZERO;
-		this.encalheMedioFormatado = String.valueOf(this.encalheMedio.intValue());
+		this.encalheMedioFormatado = decimalFormat.format(this.encalheMedio.doubleValue());
 	}
 
 	public void setParticipacaoReparte(BigDecimal participacaoReparte) {
