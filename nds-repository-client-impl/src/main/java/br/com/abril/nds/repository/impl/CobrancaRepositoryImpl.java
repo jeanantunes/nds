@@ -290,7 +290,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			.append(" and cobranca.statusCobranca =  :status ")
 			.append(" and cobranca.divida.data = ")
 			.append(" 	  (select max(divida.data) ")
-			.append(" 			  from Divida ")
+			.append(" 			  from Divida divida ")
 			.append(" 			  where divida.cota.numeroCota = :numeroCota) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
