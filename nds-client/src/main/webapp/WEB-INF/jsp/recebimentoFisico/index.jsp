@@ -36,8 +36,12 @@
 		<div id="dialog-valor-nota-divergente" title="Valor Total Nota Fiscal Divergente" style="display: none;">
 			<p>Valor total da [Nota] n&atilde;o confere com o valor total dos [Itens], Deseja prosseguir?</p>
 		</div>
+		
+		<div id="dialog-verificacao-quantidades" title="Verificação de Digitação" style="display: none;">
+			<p>Há itens que não possuem quantidade digitada ou estão com quantidade zerada. Deseja prosseguir mesmo assim?</p>
+		</div>
 
-		<div id="dialog-novo-item" style="display: none;" title="Recebimento FÃ­sico">
+		<div id="dialog-novo-item" style="display: none;" title="Recebimento Físico">
 
 			<jsp:include page="../messagesDialog.jsp" />
 
@@ -200,7 +204,7 @@
 						</span>
 
 						<span class="bt_novos">
-							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento FÃ­sico">
+							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
 							</a>
 						</span>
@@ -430,7 +434,7 @@
 			      <td align="right">
 			          <input type="checkbox" id="novoReplicarQtde" name="novoReplicarQtde" />
 			      </td>
-			      <td>Replicar Qtde:</td>
+			      <td>Replicar Qtde</td>
 
 			    </tr>
 
