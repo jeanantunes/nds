@@ -28,7 +28,22 @@ $(document).ready(function(){
 	    }
 	});
 	
+	var pressedCtrl = false;
+	$(document).keyup(function (e) {
+		var eventoJs= e;
+		var keycode = e.which;
+		if (window.event) {
+			eventoJs = window.event;
+			keycode = eventoJs.keyCode;
+		}
+		
+		if(keycode == 17){
+			pressedCtrl=false; 
+		}
+	})
+	
 	$(document.body).keydown(function(e) {
+		
 		var eventoJs= e;
 		var keycode = e.which;
 		if (window.event) {
@@ -59,8 +74,40 @@ $(document).ready(function(){
 				}
 				return true;
 		    }
+		}else{
+			
+			//Navegação pelas abas por CTRL+(Seta Esquerda | Direita)
+			
+			var refTabs = $("li", $('.ui-tabs-nav'));
+			var qtdAbasAbertas =  $('.ui-corner-top').size()
+			if(qtdAbasAbertas > 1){
+				
+				if(keycode == 17){
+					pressedCtrl = true; 
+				}
+
+				var indexSecionado = $('.ui-tabs-selected').index();
+				var indexSelecionar = indexSecionado;
+				
+				if(keycode == 37 && pressedCtrl == true) {//Esquerda
+					if(indexSecionado == 0){
+						indexSelecionar == qtdAbasAbertas-1;
+					}else{
+						indexSelecionar--;
+					}
+				}else if(keycode == 39 && pressedCtrl == true) {//Direita
+					if(indexSecionado == (qtdAbasAbertas-1)){
+						indexSelecionar = 0;
+					}else{
+						indexSelecionar++;
+					}
+				}
+				
+				if(indexSelecionar != -1){
+					refTabs.children('a')[indexSelecionar].click();
+				}
+			}
 		}
-		
 	});
 	
 	//Move foco para primeiro campo do modal ao abrir modal
@@ -76,7 +123,6 @@ $(document).ready(function(){
 	
 	//Foco primeiro campo ao carregar aba 
 //	$("#workspace").bind('focus',function(){
-//		alert("Passou")
 //		focusFirstContentView(document);
 //	});
 });
@@ -440,11 +486,11 @@ function onlyNumeric(event){
 }
 
 function focusSelectRefField(objectField){
-	setTimeout (function () {objectField.focus();objectField.select();}, 1);
+	setTimeout (function () {objectField.focus();objectField.select()}, 500);
 }
 
 function focusFirstContentView(context){
-	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus();}, 1);
+	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus()}, 1);
 }
 
 function focusFirstContentModal(){
@@ -466,4 +512,8 @@ function keyEventEnterAux(e){
 	}
 	
 	return false;
+}
+
+function visibleOverlay(){
+	return $("div.ui-widget-overlay").val()=="";
 }

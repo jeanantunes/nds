@@ -21,10 +21,22 @@
 	</style>
 	
 	<script type="text/javascript">
-	
-	$(function(){
-		ConferenciaEncalhe.init();
-	});
+		var ID_BOX_LOGADO = '<c:out value="${idBoxLogado}"/>';
+		$('#boxLogado option[value="<c:out value='${idBoxLogado}'/>"]').attr("selected","selected");
+		
+		var VEIO_DO_BT_BOX_ENCALHE = false;
+		
+		//Solicita seleção do box caso usuário não esteja associado.
+		if(ID_BOX_LOGADO == ""){
+			ConferenciaEncalhe.popup_logado();
+		}else{
+			<c:set var="idBoxLogado" value="idBoxLogado" scope="session"/>
+			focusSelectRefField($('#numeroCota', ConferenciaEncalhe.workspace));
+		}
+		
+		$(function(){
+			ConferenciaEncalhe.init();
+		});
 	</script>
 	
 </head>
@@ -42,13 +54,20 @@
 				<fieldset class="classFieldset" style="height:25px">
 					<table width="950" border="0" cellspacing="1" cellpadding="1">
 						<tr>
-							<td width="126">
+							<td width="20">
 								<span class="bt_novos">
 									<a href="javascript:;" onclick="ConferenciaEncalhe.irParaContigencia()" rel="tipsy" title="ContingÃªncia">
-										<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />
+										<img border="0" src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" />
 									</a>
 								</span>
-							</td>
+							</td>			
+							<td width="80">
+								<span class="bt_novos">
+									<a href="javascript:;" onclick="ConferenciaEncalhe.abrirModalLogadoDoBotao()" rel="tipsy" title="Alterar BOX Encalhe">
+										<img border="0" width="40" height="16" src="${pageContext.request.contextPath}/images/bt_operacao_box.png" />
+									</a>
+								</span>
+							</td>											
 							<td width="314">&nbsp;</td>
 							<td width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
 							<td width="102" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
