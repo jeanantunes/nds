@@ -562,9 +562,7 @@ public class Cota implements Serializable {
 		return tipoDistribuicaoCota;
 	}
 
-
 	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
-
 }
