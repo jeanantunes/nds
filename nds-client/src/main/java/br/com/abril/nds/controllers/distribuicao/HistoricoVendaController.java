@@ -312,8 +312,12 @@ public class HistoricoVendaController extends BaseController {
 		
 		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota);
 		
-		FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,
-				AnaliseHistoricoDTO.class, this.httpResponse);
+		try {
+			FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,
+					AnaliseHistoricoDTO.class, this.httpResponse);
+		} catch (Exception e) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Não foi possível gerar o arquivo ." + fileType.toString()));
+		}
 		
 		result.nothing();
 	}

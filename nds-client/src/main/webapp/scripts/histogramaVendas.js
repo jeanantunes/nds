@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 var edicoesEscolhidas_HistogramaVenda = new Array();
 var nomeProduto='';
 var descricaoTipoProduto='';
