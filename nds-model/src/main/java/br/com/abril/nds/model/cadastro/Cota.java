@@ -57,17 +57,6 @@ public class Cota implements Serializable {
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
 	
-<<<<<<< HEAD
-	
-	@Column(name="TIPO_COTA", nullable= false)
-	private String tipoCota;
-	
-	/*
-	@Column(name="RECEBE_COMPLEMENTAR",insertable=false,updatable=false )
-	private int recebeComplementar;
-	*/
-=======
->>>>>>> upstream/fase2
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PESSOA_ID")
 	private Pessoa pessoa;
@@ -185,6 +174,11 @@ public class Cota implements Serializable {
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
+	
+	
+	@Column(name="TIPO_COTA", nullable= false)
+	private String tipoCota;
+	
 	
 	public Cota() {
         this.inicioAtividade = new Date();
@@ -573,12 +567,10 @@ public class Cota implements Serializable {
 		return tipoDistribuicaoCota;
 	}
 
-
 	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
 
-<<<<<<< HEAD
 
 	public String getTipoCota() {
 		return tipoCota;
@@ -588,22 +580,4 @@ public class Cota implements Serializable {
 	public void setTipoCota(String tipoCota) {
 		this.tipoCota = tipoCota;
 	}
-
-/*
-	public int getRecebeComplementar() {
-		return recebeComplementar;
-	}
-
-
-	public void setRecebeComplementar(int recebeComplementar) {
-		this.recebeComplementar = recebeComplementar;
-	}
-
-*/
-	
-	
-	
-
-=======
->>>>>>> upstream/fase2
 }
