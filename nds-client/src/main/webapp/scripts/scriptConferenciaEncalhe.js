@@ -59,8 +59,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).autocomplete({source: []}); 
 		
-		$('#qtdeExemplar', ConferenciaEncalhe.workspace).focus();
-
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -242,8 +240,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		    	setTimeout (function () {$('#qtdeExemplar', ConferenciaEncalhe.workspace).select();}, 1);
 		    }
 		});
-		
-		ConferenciaEncalhe.popup_logado();
 		
 		ConferenciaEncalhe.removerAtalhos();
 		

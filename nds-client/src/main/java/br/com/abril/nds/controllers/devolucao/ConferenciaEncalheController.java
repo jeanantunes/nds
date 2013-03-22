@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.beans.IntrospectionException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -39,11 +41,14 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
+import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
@@ -125,6 +130,12 @@ public class ConferenciaEncalheController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private BoxService boxService;
+	
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
@@ -139,7 +150,11 @@ public class ConferenciaEncalheController extends BaseController {
 			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
 		}
 		
-		
+		//Obter box usuário
+		if(this.getUsuarioLogado()!= null && this.getUsuarioLogado().getBox() != null && 
+				this.getUsuarioLogado().getBox().getId() != null){
+			this.result.include(ID_BOX_LOGADO, this.getUsuarioLogado().getBox().getId());
+		}
 		
 		limparDadosSessao();
 		carregarComboBoxEncalhe();
@@ -181,12 +196,27 @@ public class ConferenciaEncalheController extends BaseController {
 		if (idBox != null){
 		
 			this.session.setAttribute(ID_BOX_LOGADO, idBox);
+			
+			this.result.include(ID_BOX_LOGADO, idBox);
+			
+			alterarBoxUsuario(idBox);
 		} else {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento é obrigatório.");
 		}
 		
 		this.result.use(Results.json()).from("").serialize();
+	}
+
+	private void alterarBoxUsuario(Long idBox) {
+		
+		Box box = this.boxService.buscarPorId(idBox);
+		
+		Usuario usuarioLogado = this.getUsuarioLogado();
+		
+		usuarioLogado.setBox(box);
+		
+		usuarioService.salvar(usuarioLogado);
 	}
 	
 	

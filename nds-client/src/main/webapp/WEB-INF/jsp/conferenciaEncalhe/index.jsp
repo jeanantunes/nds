@@ -21,10 +21,19 @@
 	</style>
 	
 	<script type="text/javascript">
-	
-	$(function(){
-		ConferenciaEncalhe.init();
-	});
+		var ID_BOX_LOGADO = '<c:out value="${idBoxLogado}"/>';
+		
+		//Solicita seleção do box caso usuário não esteja associado.
+		if(ID_BOX_LOGADO == ""){
+			ConferenciaEncalhe.popup_logado();
+		}else{
+			<c:set var="idBoxLogado" value="idBoxLogado" scope="session"/>
+			focusSelectRefField($('#numeroCota', ConferenciaEncalhe.workspace));
+		}
+		
+		$(function(){
+			ConferenciaEncalhe.init();
+		});
 	</script>
 	
 </head>
