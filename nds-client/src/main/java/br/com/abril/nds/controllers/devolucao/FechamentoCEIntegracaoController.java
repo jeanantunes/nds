@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +32,6 @@ import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -296,11 +292,23 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe) {
 		
+		this.fechamentoCEIntegracaoService.atualizarItemChamadaEncalheFornecedor(
+			idItemChamadaFornecedor, encalhe);
+		
+		FiltroFechamentoCEIntegracaoDTO filtro =
+			(FiltroFechamentoCEIntegracaoDTO)
+				session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		filtro.setPaginacao(null);
+		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
 		
-		fechamentoCEIntegracao.setTotalBruto("10.00");
-		fechamentoCEIntegracao.setTotalDesconto("20.00");
-		fechamentoCEIntegracao.setTotalLiquido("30.00");
+		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = 
+			this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
+		
+		fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()));
+		fechamentoCEIntegracao.setTotalDesconto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalDesconto()));
+		fechamentoCEIntegracao.setTotalLiquido(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalLiquido()));
 		
 		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
 	}
