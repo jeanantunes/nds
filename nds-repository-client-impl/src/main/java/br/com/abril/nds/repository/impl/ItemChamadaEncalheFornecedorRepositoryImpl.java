@@ -1,6 +1,8 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
+import br.com.abril.nds.util.Intervalo;
 
 @Repository
 public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryModel<ItemChamadaEncalheFornecedor, Long> implements ItemChamadaEncalheFornecedorRepository {
@@ -71,5 +74,39 @@ public class ItemChamadaEncalheFornecedorRepositoryImpl extends AbstractReposito
 	
 		return (BigDecimal) query.uniqueResult();
 		
+	}
+	
+	
+	public List<ItemChamadaEncalheFornecedor> obterItensChamadaEncalheFornecedor(Long idChamadaEncalheFornecedor,Intervalo<Date> periodo){
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select itemChamadaEncalheFornecedor ");
+
+		hql.append(" from ItemChamadaEncalheFornecedor itemChamadaEncalheFornecedor ");
+		
+		hql.append(" inner join itemChamadaEncalheFornecedor.chamadaEncalheFornecedor as chamadaEncalheFornecedor  ");
+		
+		hql.append(" inner join itemChamadaEncalheFornecedor.produtoEdicao produtoEdicao ");
+		
+		hql.append(" inner join produtoEdicao.estoqueProduto estoqueProduto, ");
+		
+		hql.append(" FechamentoEncalhe fechamentoEncalhe");
+		
+		hql.append(" where ");
+		
+		hql.append(" fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id = produtoEdicao.id " );
+		
+		hql.append(" AND fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe BETWEEN :inicioSemana AND :fimSemana ");
+		
+		hql.append(" AND chamadaEncalheFornecedor.id = :idChamadaEncalheFornecedor ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idChamadaEncalheFornecedor", idChamadaEncalheFornecedor);
+		query.setParameter("inicioSemana", periodo.getDe());
+		query.setParameter("fimSemana", periodo.getAte());
+	
+		return query.list();
 	}
 }

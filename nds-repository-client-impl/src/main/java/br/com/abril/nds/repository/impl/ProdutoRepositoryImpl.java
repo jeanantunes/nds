@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -346,6 +347,22 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		query.setParameter("dataLancamentoDistribuidor", dataLancamento);
 		
 		return query.list();
+	}
+	
+	@Override
+	public BigDecimal obterDescontoLogistica(Long idProduto) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select p.descontoLogistica.percentualDesconto from Produto p ");
+		hql.append(" where p.id = :idProduto ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProduto",idProduto);
+		
+		return (BigDecimal) query.uniqueResult();
+	
 	}
 	
 }

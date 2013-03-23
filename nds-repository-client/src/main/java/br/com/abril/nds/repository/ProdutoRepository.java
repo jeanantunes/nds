@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -66,5 +67,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	GrupoProduto obterGrupoProduto(String codigoProduto);
 	
 	List<Produto> buscarProdutosBalanceadosOrdenadosNome(Date dataLancamento);
+	
+	BigDecimal obterDescontoLogistica(Long idProduto);
 	
 }
