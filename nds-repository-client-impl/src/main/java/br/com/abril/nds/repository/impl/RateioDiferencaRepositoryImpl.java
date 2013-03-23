@@ -63,7 +63,7 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido.");
 		}
 		
-		String hql = getHQLDetalhesDiferencaCota();
+		String hql = getHQLDetalhesDiferencaCota(filtro);
 
 		if (filtro.getColunaOrdenacao() != null && filtro.getPaginacao() != null) {
 
@@ -104,6 +104,11 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 
 			query.setParameter("idDiferenca", filtro.getIdDiferenca());
 		}
+		
+        if (filtro.getNumeroCota()!=null){
+		    
+			query.setParameter("numeroCota", filtro.getNumeroCota());
+		}
 
 		query.setParameter("statusConfirmado", StatusConfirmacao.CONFIRMADO);
 		query.setParameter("statusPendente", StatusConfirmacao.PENDENTE);
@@ -130,20 +135,37 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro inválido.");
 		}
-		
-		String hql = getHQLDetalhesDiferencaCota();
 
+		String hql = "";
+		
 		hql = " select "
-			+ " count(rateioDiferenca) as quantidadeTotalRegistrosDiferencaCota, "
-			+ " sum(rateioDiferenca.qtde) as totalExemplares, "
-			+ " sum(rateioDiferenca.qtde * (mec.valoresAplicados.precoComDesconto)) as valorTotal "
-			+ hql.substring(hql.lastIndexOf(" from "));
+			+ " count(distinct rateioDiferenca) as quantidadeTotalRegistrosDiferencaCota, ";
+				
+		if (filtro.getNumeroCota()!=null){
+			
+			hql += " (select sum(rd.qtde) from RateioDiferenca rd where rd.cota.numeroCota = :numeroCota and rd.diferenca.id = :idDiferenca) as totalExemplares, "
+				+  " ( (select sum(rd2.qtde) from RateioDiferenca rd2 where rd2.cota.numeroCota = :numeroCota and rd2.diferenca.id = :idDiferenca) * "
+				+  "   (select sum(coalesce(va.precoComDesconto,movEst.produtoEdicao.precoVenda)) "
+			    +  "    from RateioDiferenca rd3 join rd3.diferenca as dif join dif.lancamentoDiferenca as ldif join ldif.movimentosEstoqueCota as movEst join movEst.valoresAplicados va where rd3.cota.numeroCota = :numeroCota and movEst.cota.numeroCota = :numeroCota and dif.id = :idDiferenca) ) as valorTotal ";
+		}
+		else{
+			
+			hql += " sum(rateioDiferenca.qtde) as totalExemplares, "
+				+  " sum(rateioDiferenca.qtde * coalesce(mec.valoresAplicados.precoComDesconto,mec.produtoEdicao.precoVenda)) as valorTotal ";	
+		}
+	
+		hql += this.getFromHQLDetalhesDiferencaCota(filtro);
 		
 		Query query = this.getSession().createQuery(hql);
 
 		if (filtro.getIdDiferenca() != null) {
 
 			query.setParameter("idDiferenca", filtro.getIdDiferenca());
+		}
+		
+		if (filtro.getNumeroCota()!=null){
+		    
+			query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 
 		query.setMaxResults(1);
@@ -153,7 +175,7 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		return (DetalheDiferencaCotaDTO) query.uniqueResult();
 	}
 
-	private String getHQLDetalhesDiferencaCota() {
+	private String getHQLDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -173,15 +195,31 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		   .append(" (rateioDiferenca.qtde * (coalesce(mec.valoresAplicados.precoComDesconto,produtoEdicao.precoVenda))) ")
 		   .append(" else 0 end as totalRejeitadas, ")
 		   .append(" coalesce(rateioDiferenca.qtde * (coalesce(mec.valoresAplicados.precoComDesconto,produtoEdicao.precoVenda)),0) as valorTotal ")
-		   .append(" from RateioDiferenca rateioDiferenca ")
-		   .append(" inner join rateioDiferenca.diferenca.produtoEdicao as produtoEdicao ")
-		   .append(" inner join rateioDiferenca.diferenca.lancamentoDiferenca.movimentosEstoqueCota as mec ")
-		   .append(" inner join produtoEdicao.produto.fornecedores as fornecedor ")
-		   .append(" inner join rateioDiferenca.diferenca as diferenca ")
-		   .append(" where rateioDiferenca.diferenca.id = :idDiferenca ")
-		   .append(" group by rateioDiferenca.id ");
-
+		   
+		   .append(this.getFromHQLDetalhesDiferencaCota(filtro));
+		   
 		return hql.toString();
+	}
+	
+	private StringBuilder getFromHQLDetalhesDiferencaCota(FiltroDetalheDiferencaCotaDTO filtro){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from RateioDiferenca rateioDiferenca ");
+	    hql.append(" inner join rateioDiferenca.diferenca.produtoEdicao as produtoEdicao ");
+	    hql.append(" inner join rateioDiferenca.diferenca.lancamentoDiferenca.movimentosEstoqueCota as mec ");
+	    hql.append(" inner join produtoEdicao.produto.fornecedores as fornecedor ");
+	    hql.append(" inner join rateioDiferenca.diferenca as diferenca ");
+	    hql.append(" where rateioDiferenca.diferenca.id = :idDiferenca ");
+
+			if (filtro.getNumeroCota()!=null){
+			    
+				hql.append(" and rateioDiferenca.cota.numeroCota = :numeroCota ");
+			}
+		   
+			hql.append(" group by rateioDiferenca.id ");
+			
+		return hql;	
 	}
 	
 	@SuppressWarnings("unchecked")
