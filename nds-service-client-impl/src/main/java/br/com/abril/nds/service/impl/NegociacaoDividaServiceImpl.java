@@ -287,11 +287,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 				parcelaNegociacao.getMovimentoFinanceiroCota().setCota(cota);
 				parcelaNegociacao.getMovimentoFinanceiroCota().setUsuario(usuarioResponsavel);
-				parcelaNegociacao.getMovimentoFinanceiroCota().setData(dataAtual);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setData(parcelaNegociacao.getDataVencimento());
 				parcelaNegociacao.getMovimentoFinanceiroCota().setDataCriacao(dataAtual);
 				parcelaNegociacao.getMovimentoFinanceiroCota().setStatus(StatusAprovacao.APROVADO);
 				parcelaNegociacao.getMovimentoFinanceiroCota().setAprovador(usuarioResponsavel);
 				parcelaNegociacao.getMovimentoFinanceiroCota().setTipoMovimento(tipoMovimentoFinanceiro);
+				parcelaNegociacao.getMovimentoFinanceiroCota().setObservacao("Negociação de dívida.");
 				
 				Fornecedor fornecedor = 
 						cota.getParametroCobranca() != null 

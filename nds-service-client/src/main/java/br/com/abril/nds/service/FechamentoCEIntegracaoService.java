@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
@@ -23,5 +24,7 @@ public interface FechamentoCEIntegracaoService {
 	FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 
 	void reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
+	
+	void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda);
 
 }

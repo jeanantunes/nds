@@ -1,11 +1,12 @@
 var fechamentoCEIntegracaoController = $.extend(true, {
 	
-	idsProdEdicao : [],
+	itensCEIntegracao : [],
 	
 	init : function(){
 		fechamentoCEIntegracaoController.initGrid();
 		fechamentoCEIntegracaoController.bindButtons();
-		fechamentoCEIntegracaoController.buscarNumeroSemana();		
+		fechamentoCEIntegracaoController.buscarNumeroSemana();
+		fechamentoCEIntegracaoController.esconderBotoes();
 	},
 	
 	verificarDataFechamentoCE : function(fechada) {
@@ -156,34 +157,101 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	},
 	
-	tratarAlteracaoEncalhe : function(idProdEdicao, encalhe) {
+	tratarAlteracaoEncalhe : function(idItemCeIntegracao, encalhe) {
 		
-		var reparte = $("#reparte" + idProdEdicao).html();
-		var precoCapa = $("#precoCapa" + idProdEdicao).html();
+		var reparte = $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		var precoCapa = $("#precoCapa" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
 		
 		var venda = reparte - encalhe;
 		var valorVenda = venda * priceToFloat(precoCapa);
 		var valorVendaFormatado = floatToPrice(valorVenda);
 		
-		$("#venda" + idProdEdicao).html(venda);
-		$("#valorVenda" + idProdEdicao).html(valorVendaFormatado);
-		
-		for(var id in fechamentoCEIntegracaoController.idsProdEdicao) {
-			if(fechamentoCEIntegracaoController.idsProdEdicao[id].name == idProdEdicao) {
-				fechamentoCEIntegracaoController.idsProdEdicao[id].value = encalhe;
-			}
+		if (reparte < encalhe) {
+			
+			exibirMensagem(
+				'WARNING', ["A quantidade de encalhe não pode exceder a quantidade do reparte!"]);
+			
+			$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+				
+				if(itemCEIntegracao.id == idItemCeIntegracao) {
+					
+					var encalhe = itemCEIntegracao.encalhe;
+					
+					$("#inputEncalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(encalhe);
+					
+					return false;
+				}
+			});
+			
+			return;
 		}
 		
-		//TODO: idItemChamadaFornecedor
-		var idItemChamadaFornecedor = 10;
+		$("#venda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(venda);
+		$("#valorVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorVendaFormatado);
 		
-		fechamentoCEIntegracaoController.obterTotais(idItemChamadaFornecedor, encalhe);
+		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(
+			idItemCeIntegracao, encalhe, venda);
+		
+		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(
+			idItemCeIntegracao, encalhe, venda);
 	},
 	
-	obterTotais : function(idItemChamadaFornecedor, encalhe) {
+	tratarAlteracaoVenda : function(idItemCeIntegracao, venda) {
+		
+		var reparte = $("#reparte" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		var precoCapa = $("#precoCapa" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		var encalhe = $("#encalhe" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html();
+		
+		var valorVenda = venda * priceToFloat(precoCapa);
+		var valorVendaFormatado = floatToPrice(valorVenda);
+		
+		if (reparte < venda) {
+			
+			exibirMensagem(
+				'WARNING', ["A quantidade de venda não pode exceder a quantidade do reparte!"]);
+			
+			$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+				
+				if(itemCEIntegracao.id == idItemCeIntegracao) {
+					
+					var venda = itemCEIntegracao.venda;
+					
+					$("#inputVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).val(venda);
+					
+					return false;
+				}
+			});
+			
+			return;
+		}
+		
+		$("#valorVenda" + idItemCeIntegracao, fechamentoCEIntegracaoController.workspace).html(valorVendaFormatado);
+		
+		fechamentoCEIntegracaoController.atualizarItensCEIntegracao(
+			idItemCeIntegracao, encalhe, venda);
+		
+		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(
+			idItemCeIntegracao, encalhe, venda);
+	},
+	
+	atualizarItensCEIntegracao : function(idItemCeIntegracao, encalhe, venda) {
+		
+		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+			
+			if(itemCEIntegracao.id == idItemCeIntegracao) {
+				
+				itemCEIntegracao.encalhe = encalhe;
+				itemCEIntegracao.venda = venda;
+				
+				return false;
+			}
+		});
+	},
+	
+	atualizarEncalheCalcularTotais : function(idItemChamadaFornecedor, encalhe, venda) {
 		
 		var data = {
-			'idItemChamadaFornecedor': idItemChamadaFornecedor, 'encalhe': encalhe
+			'idItemChamadaFornecedor' : idItemChamadaFornecedor, 'encalhe': encalhe, 'venda' : venda
 		};
 		
 		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/atualizarEncalheCalcularTotais', 
@@ -191,9 +259,9 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			function(result) {
 				if (result) {
 					
-					$("#totalBruto").html(result.totalBruto);
-					$("#totalDesconto").html(result.totalDesconto);
-					$("#totalLiquido").html(result.totalLiquido);
+					$("#totalBruto", fechamentoCEIntegracaoController.workspace).html(result.totalBruto);
+					$("#totalDesconto", fechamentoCEIntegracaoController.workspace).html(result.totalDesconto);
+					$("#totalLiquido", fechamentoCEIntegracaoController.workspace).html(result.totalLiquido);
 				}
 			}
 		);
@@ -201,42 +269,73 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	fechamentoCeGridPreProcess : function(resultado) {
 		if (resultado.mensagens) {
+			
 			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+			
 			$(".grids", fechamentoCEIntegracaoController.workspace).hide();
+			
+			fechamentoCEIntegracaoController.esconderBotoes();
+			
 			return resultado;
+			
 		} else {
 			
 			if (!resultado.semanaFechada) {
 
+				fechamentoCEIntegracaoController.itensCEIntegracao = [];
+				
 				$.each(resultado.listaFechamento.rows, function(index, row) {
 					
-					//fechamentoCEIntegracaoController.idsProdEdicao = [];
+					fechamentoCEIntegracaoController.itensCEIntegracao.push(
+						{id: row.cell.idItemCeIntegracao, encalhe: row.cell.encalhe, venda: row.cell.venda});
 					
-					fechamentoCEIntegracaoController.idsProdEdicao.push({name: row.cell.idProdutoEdicao, value: row.cell.encalhe});
+					var isParcial = row.cell.tipoFormatado == 'PARCIAL';
 					
 					var colunaReparte =
-						'<span id="reparte' + row.cell.idProdutoEdicao + '">' +
+						'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
 							row.cell.reparte +
 						'</span>';
 					
-					var colunaEncalhe =
-						'<input type="text" name="inputEncalhe"' +
-						'id="inputEncalhe' + row.cell.sequencial + '"' +
-						'value="' + row.cell.encalhe + '" size="5px"' +
-						'onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe('+ row.cell.idProdutoEdicao +', this.value)"/>';
+					var colunaEncalhe;
 					
-					var colunaVenda =
-						'<span id="venda' + row.cell.idProdutoEdicao + '">' +
-							row.cell.venda +
-						'</span>';
+					var colunaVenda;
+					
+					if (isParcial) {
+						
+						colunaEncalhe =
+							'<span id="encalhe' + row.cell.idItemCeIntegracao + '">' +
+								row.cell.encalhe +
+							'</span>';
+						
+						colunaVenda =
+							'<input type="text" name="inputVenda"' +
+							'id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
+							'value="' + row.cell.venda + '" size="5px"' +
+							'onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
+							row.cell.idItemCeIntegracao + ', this.value)"/>';
+						
+					} else {
+						
+						colunaEncalhe =
+							'<input type="text" name="inputEncalhe"' +
+							'id="inputEncalhe' + row.cell.idItemCeIntegracao + '"' +
+							'value="' + row.cell.encalhe + '" size="5px"' +
+							'onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+							row.cell.idItemCeIntegracao + ', this.value)"/>';
+						
+						colunaVenda =
+							'<span id="venda' + row.cell.idItemCeIntegracao + '">' +
+								row.cell.venda +
+							'</span>';
+					}
 					
 					var colunaPrecoCapa =
-						'<span id="precoCapa' + row.cell.idProdutoEdicao + '">' +
+						'<span id="precoCapa' + row.cell.idItemCeIntegracao + '">' +
 							row.cell.precoCapaFormatado +
 						'</span>';
 					
 					var colunaValorVenda =
-						'<span id="valorVenda' + row.cell.idProdutoEdicao + '">' +
+						'<span id="valorVenda' + row.cell.idItemCeIntegracao + '">' +
 							row.cell.valorVendaFormatado +
 						'</span>';
 					
@@ -253,6 +352,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			fechamentoCEIntegracaoController.verificarDataFechamentoCE(resultado.semanaFechada);
 			
 			$(".grids", fechamentoCEIntegracaoController.workspace).show();
+			
+			fechamentoCEIntegracaoController.mostrarBotoes();
 			
 			return resultado.listaFechamento;
 			
@@ -272,7 +373,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			         ]		         
 		});
 		
-		$(".fechamentoCeGrid").flexReload();
+		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexReload();
 		
 	},
 	
@@ -280,14 +381,14 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		$("#totalBruto", fechamentoCEIntegracaoController.workspace).html(resultado.totalBruto);
 		$("#totalDesconto", fechamentoCEIntegracaoController.workspace).html(resultado.totalDesconto);
 		$("#totalLiquido", fechamentoCEIntegracaoController.workspace).html(resultado.totalLiquido);
-		$(".tabelaTotal").show();
+		$(".tabelaTotal", fechamentoCEIntegracaoController.workspace).show();
 	},
 	
 	fecharCE : function(){
 		var listaEncalhe = new Array();
 		var listaIdProdutoEdicao = new Array();
 		for(var id in fechamentoCEIntegracaoController.idsProdEdicao) {
-			listaEncalhe[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].value;
+			listaEncalhe[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].encalhe;
 			listaIdProdutoEdicao[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].name;
 		}
 	
@@ -307,6 +408,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				true
 			);
 		
+	},
+	
+	esconderBotoes : function() {
+		
+		$(".bt_acoes_grid_ce", fechamentoCEIntegracaoController.workspace).hide();
+	},
+	
+	mostrarBotoes : function() {
+	
+		$(".bt_acoes_grid_ce", fechamentoCEIntegracaoController.workspace).show();
 	},
 	
 	reabrirCeIntegracao:function (){

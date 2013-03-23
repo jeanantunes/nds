@@ -792,8 +792,7 @@ public class RecebimentoFisicoController extends BaseController {
 			String serie,
 			String indNFe,
 			String fornecedor, 
-			String chaveAcesso,
-			Long numeroNotaEnvio) {
+			String chaveAcesso) {
 		
 		limparDadosDaSession();
 		
@@ -802,11 +801,21 @@ public class RecebimentoFisicoController extends BaseController {
 		String cnpjSemMascara = Util.removerMascaraCnpj(cnpj);
 		
 		filtro.setCnpj(cnpjSemMascara);
-		filtro.setNumeroNota(numeroNotaFiscal);
+		
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
 		filtro.setNomeFornecedor(fornecedor);
-		filtro.setNumeroNotaEnvio(numeroNotaEnvio);
+		
+		boolean isNE = (numeroNotaFiscal != null && serie == null);
+		
+		if (isNE) {
+			
+			filtro.setNumeroNotaEnvio(numeroNotaFiscal);
+			
+		} else {
+			
+			filtro.setNumeroNota(numeroNotaFiscal);
+		}
 		
 		validarDadosNotaFiscal(filtro, fornecedor, indNFe);		
 		
@@ -823,11 +832,18 @@ public class RecebimentoFisicoController extends BaseController {
 			notaFiscal = listaNotaFiscal.get(0);
 		} 
 		
-		if(notaFiscal == null){	
+		if (notaFiscal == null){	
 						
 			List<String> msgs = new ArrayList<String>();
 			
-			msgs.add("Nota fiscal não encontrada");
+			if (isNE) {
+			
+				msgs.add("Nota de Envio não encontrada");
+				
+			} else {
+			
+				msgs.add("Nota fiscal não encontrada");
+			}
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
 													
@@ -1358,24 +1374,27 @@ public class RecebimentoFisicoController extends BaseController {
 	@Path("/validarValorTotalNotaFiscal")
 	public void validarValorTotalNotaFiscal(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens) {
 		
-		BigDecimal valorInformadoNotaFiscal = new BigDecimal(getValorSemMascara(nota.getValorTotal()));
-		
+		BigDecimal valorInformadoNotaFiscal = CurrencyUtil.converterValor(nota.getValorTotal());
+				
 		BigDecimal totalItem = BigDecimal.ZERO;
 		
-		for ( RecebimentoFisicoDTO recebimento : itens ){
-		    totalItem = totalItem.add(recebimento.getValorTotal());
+		for (RecebimentoFisicoDTO recebimento : itens) {
+		    
+			totalItem = totalItem.add(recebimento.getValorTotal());
 	    }
 		
-		if (valorInformadoNotaFiscal.compareTo(totalItem)!=0){
+		if (totalItem.compareTo(valorInformadoNotaFiscal) != 0) {
 			
 			result.use(CustomJson.class).from(
-					new ValidacaoException(TipoMensagem.WARNING, "Valor total da [Nota] não confere com o valor total dos [Itens], Deseja prosseguir?")
+				new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Valor total da [Nota] não confere com o valor total dos [Itens]. Deseja prosseguir?")
 			).serialize();
 			
 		} else {
+			
 			result.use(Results.json()).from("").serialize();
 		}
-		
 	}
 	
 	/**
@@ -1444,21 +1463,6 @@ public class RecebimentoFisicoController extends BaseController {
 		List<String> listaMensagens = new ArrayList<String>();
 		listaMensagens.add("Nota fiscal cadastrada com sucesso.");
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
-	}
-	
-	private String getValorSemMascara(String valor) {
-
-		String chr = String.valueOf(valor.charAt(valor.length()-3));
-		if (",".equals(chr)){
-		    valor = valor.replaceAll("\\.", "");
-		    valor = valor.replaceAll(",", "\\.");
-		}
-		
-		if (".".equals(chr)){
-		    valor = valor.replaceAll(",", "");
-		}
-
-		return valor;
 	}
 	
 }

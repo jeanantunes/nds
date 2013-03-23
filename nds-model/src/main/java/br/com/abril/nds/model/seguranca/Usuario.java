@@ -18,8 +18,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import br.com.abril.nds.model.cadastro.Box;
 
 /**
  * @author T30541
@@ -80,6 +83,10 @@ public class Usuario implements Serializable {
 	@Column(name = "CEP")
 	private String cep;
 
+	@OneToOne
+	@JoinColumn(name = "BOX_ID")
+	private Box box;
+	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@Column(name="GRUPO_PERMISSAO_ID")
 	private Set<GrupoPermissao> gruposPermissoes = new HashSet<GrupoPermissao>();
@@ -238,6 +245,14 @@ public class Usuario implements Serializable {
 
 	public void setContaAtiva(boolean contaAtiva) {
 		this.contaAtiva = contaAtiva;
+	}
+
+	public Box getBox() {
+		return box;
+	}
+
+	public void setBox(Box box) {
+		this.box = box;
 	}
 	
 }

@@ -316,8 +316,6 @@ public class FornecedorServiceImpl implements FornecedorService {
 	@Transactional
 	public List<FornecedorDTO> obterFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
 
-		validarFiltroConsultaFornecedorDTO(filtroConsultaFornecedor);
-		
 		return this.fornecedorRepository.obterFornecedoresPorFiltro(filtroConsultaFornecedor);
 	}
 
@@ -328,29 +326,9 @@ public class FornecedorServiceImpl implements FornecedorService {
 	@Transactional
 	public Long obterContagemFornecedoresPorFiltro(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
 
-		validarFiltroConsultaFornecedorDTO(filtroConsultaFornecedor);
-		
 		return this.fornecedorRepository.obterContagemFornecedoresPorFiltro(filtroConsultaFornecedor);
 	}
 	
-	/*
-	 * Método que realiza a validação do filtro para consulta de fornecedores.
-	 */
-	private void validarFiltroConsultaFornecedorDTO(FiltroConsultaFornecedorDTO filtroConsultaFornecedor) {
-
-		if (filtroConsultaFornecedor == null) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Filtro obrigatório para a pesquisa.");
-		}
-
-		if ((filtroConsultaFornecedor.getCnpj() == null || filtroConsultaFornecedor.getCnpj().isEmpty()) 
-				&& (filtroConsultaFornecedor.getRazaoSocial() == null || filtroConsultaFornecedor.getRazaoSocial().isEmpty())
-				&& (filtroConsultaFornecedor.getNomeFantasia() == null || filtroConsultaFornecedor.getNomeFantasia().isEmpty())) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Digite ao menos um filtro para realizar a pesquisa.");
-		}
-		
-	}
 
 	@Transactional(readOnly=true)
 	@Override
