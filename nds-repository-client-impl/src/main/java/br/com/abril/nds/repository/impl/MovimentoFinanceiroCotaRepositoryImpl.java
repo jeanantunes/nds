@@ -99,11 +99,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		   
 		hql.append(" where ");
 		
-		hql.append(" mfc.data = :dataOperacao ");
+		hql.append(" mfc.data = :dataOperacao and ");
 		
-		hql.append(" and mfc.status = :statusAprovado ");
+		hql.append(" mfc.status = :statusAprovado and ");
 		
-		hql.append(" and mfc.cota.numeroCota = :numeroCota ");
+		hql.append(" mfc.cota.numeroCota = :numeroCota ");
 		
 		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
 			hql.append(" and mfc.tipoMovimento not in (:tiposMovimentoFinanceiroIgnorados) ");

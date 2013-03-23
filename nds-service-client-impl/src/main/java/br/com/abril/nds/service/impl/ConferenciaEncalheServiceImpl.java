@@ -671,13 +671,33 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
 		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = 
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(
 						numeroCota, 
 						dataOperacao, 
 						tiposMovimentoFinanceiroIgnorados);
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		List<Cobranca> listaCobrancas = cobrancaRepository.obterCobrancasDaCotaEmAberto(cota.getId(), true);
+		
+		for(Cobranca cobranca : listaCobrancas){
+			
+			DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
+			
+			debitoCredito.setValor(cobranca.getValor());
+			
+			debitoCredito.setTipoLancamento(OperacaoFinaceira.DEBITO);
+		
+			debitoCredito.setObservacoes("Cobrança em aberto.");
+			
+			debitoCredito.setDataVencimento(cobranca.getDataEmissao());
+			
+			debitoCredito.setDataLancamento(cobranca.getDataEmissao());
+			
+			listaDebitoCreditoCota.add(debitoCredito);
+			
+		}
 		
 		infoConfereciaEncalheCota.setCota(cota);
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCota);
@@ -2385,6 +2405,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void atualizarMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota, 
 											   ConferenciaEncalheDTO conferenciaEncalheDTO) {
+		
+		
+		
+		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.
+				obterValoresAplicadosProdutoEdicao(
+						movimentoEstoqueCota.getCota().getNumeroCota(), 
+						movimentoEstoqueCota.getProdutoEdicao().getId(), 
+						distribuidorService.obterDataOperacaoDistribuidor());
+
+		verificarValorAplicadoNulo(valoresAplicados);
+		
+		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
 		BigInteger oldQtdeMovEstoqueCota = movimentoEstoqueCota.getQtde();
 		

@@ -26,7 +26,7 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * @param idCota
 	 * @return
 	 */
-	List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota);
+	List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean naoObtemCobrancaOrigemNegociacao);
 	
 	/**
 	 * Obtém a cobrança pelo nosso numero
