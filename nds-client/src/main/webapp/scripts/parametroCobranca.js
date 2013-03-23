@@ -402,9 +402,9 @@ var parametroCobrancaController = $.extend(true,
 			
 			$("#instrucoes", this.workspace).val(resultado.instrucoes);
 	
-			$("#acumulaDivida", this.workspace).val(resultado.envioEmail?'S':'N');
-			$("#vencimentoDiaUtil", this.workspace).val(resultado.envioEmail?'S':'N');
-			$("#unificada", this.workspace).val(resultado.envioEmail?'S':'N');
+			$("#acumulaDivida", this.workspace).val(resultado.acumulaDivida?'S':'N');
+			$("#vencimentoDiaUtil", this.workspace).val(resultado.vencimentoDiaUtil?'S':'N');
+			$("#unificada", this.workspace).val(resultado.unificada?'S':'N');
 			$("#envioEmail", this.workspace).val(resultado.envioEmail?'S':'N');
 			
 			if(resultado.tipoFormaCobranca == 'MENSAL'){

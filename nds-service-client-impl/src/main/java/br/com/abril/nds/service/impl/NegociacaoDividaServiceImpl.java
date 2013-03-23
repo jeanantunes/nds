@@ -1030,13 +1030,12 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		Calendar proximoDia = DateUtil.toCalendar(dataBase);
 
 		int mesBase = proximoDia.get(Calendar.MONTH);
-		int dias = 0;
 
 		switch (periodicidade) {
 
 		case DIARIA:		
 			
-			return this.calendarioService.adicionarDiasUteis(dataBase, 1);
+			return DateUtil.adicionarDias(dataBase, 1);
 
 		case SEMANAL:
 
@@ -1045,20 +1044,16 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				throw new ValidacaoException(TipoMensagem.WARNING,
 						"Dia(s) da semana não selecionado(s).");
 			}
-			
-			dias = 0;
+
 			while (true) {
-				
-				proximoDia = 
-						DateUtil.toCalendar(
-							this.calendarioService.adicionarDiasUteis(dataBase, dias++));
-				
+
+				proximoDia = DateUtil.adicionarDias(proximoDia, 1);
+
 				for (DiaSemanaDTO dia : semanalDias) {
-					
-					if (proximoDia.get(Calendar.DAY_OF_WEEK) == dia.getNumDia()){
-						
+
+					if (proximoDia.get(Calendar.DAY_OF_WEEK) == dia.getNumDia())
+
 						return proximoDia.getTime();
-					}
 				}
 			}
 
@@ -1083,8 +1078,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				throw new ValidacaoException(TipoMensagem.WARNING,
 						"O 1º dia deve ser menor que o 2º.");
 			}
-			
-			dias = 0;
+
 			while (true) {
 
 				if (quinzenalDia1 > proximoDia
@@ -1097,12 +1091,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia1);
 
 				if (proximoDia.getTime().compareTo(dataBase) == 1) {
-					
-					proximoDia = 
-							DateUtil.toCalendar(
-									this.calendarioService.adicionarDiasUteis(
-											proximoDia.getTime(), dias++));
-					
+
 					return proximoDia.getTime();
 				}
 
@@ -1116,12 +1105,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				proximoDia.set(Calendar.DAY_OF_MONTH, quinzenalDia2);
 
 				if (proximoDia.getTime().compareTo(dataBase) == 1) {
-					
-					proximoDia = 
-							DateUtil.toCalendar(
-									this.calendarioService.adicionarDiasUteis(
-											proximoDia.getTime(), dias++));
-					
+
 					return proximoDia.getTime();
 				}
 
@@ -1143,10 +1127,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				throw new ValidacaoException(TipoMensagem.WARNING,
 						"Dia do mês não deve ser maior do que 31.");
 			}
-			
-			dias = 0;
+
 			while (true) {
-				
+
 				if (diaMensal > proximoDia
 						.getActualMaximum(Calendar.DAY_OF_MONTH)) {
 
@@ -1158,12 +1141,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 				}
 
 				if (proximoDia.getTime().compareTo(dataBase) == 1) {
-					
-					proximoDia = 
-							DateUtil.toCalendar(
-									this.calendarioService.adicionarDiasUteis(
-											proximoDia.getTime(), dias++));
-					
+
 					return proximoDia.getTime();
 				}
 
