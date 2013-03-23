@@ -52,7 +52,9 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				.addScalar("status", StandardBasicTypes.STRING)
 				.addScalar("nome", StandardBasicTypes.STRING)
 				.addScalar("id", StandardBasicTypes.LONG)
+				.addScalar("descricao", StandardBasicTypes.STRING)
 				.addScalar("nomeArquivo", StandardBasicTypes.STRING)
+				.addScalar("extensaoArquivo", StandardBasicTypes.STRING)
 				.addScalar("dataInicio", StandardBasicTypes.TIMESTAMP)
 				.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
 
@@ -89,11 +91,13 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 			sql.append(" SELECT COUNT(*) FROM ("); 
 
 		}
-		
-		sql.append(" SELECT "); 
+		/*
+		sql.append(" SELECT ");
 		sql.append(" LOG_EXECUCAO.STATUS AS status, ");
 		sql.append(" INTERFACE_EXECUCAO.NOME AS nome, ");
 		sql.append(" INTERFACE_EXECUCAO.ID AS id, ");
+		sql.append(" INTERFACE_EXECUCAO.DESCRICAO AS descricao, ");
+		sql.append(" INTERFACE_EXECUCAO.EXTENSAO_ARQUIVO AS extensaoArquivo, ");
 		sql.append(" MAX(LOG_EXECUCAO_MENSAGEM.NOME_ARQUIVO) AS nomeArquivo, ");
 		sql.append(" MAX(LOG_EXECUCAO.DATA_INICIO) AS dataInicio ");
 
@@ -101,7 +105,18 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		sql.append(" LOG_EXECUCAO_MENSAGEM ");
 		sql.append(" RIGHT OUTER JOIN LOG_EXECUCAO ON (LOG_EXECUCAO_MENSAGEM.LOG_EXECUCAO_ID=LOG_EXECUCAO.ID) ");
 		sql.append(" RIGHT OUTER JOIN INTERFACE_EXECUCAO ON (LOG_EXECUCAO.INTERFACE_EXECUCAO_ID = INTERFACE_EXECUCAO.ID) ");
-
+		*/
+		
+		sql.append(" select ie.id, ie.nome, ie.extensao_arquivo, ie.descricao, ie.extensao_arquivo as extensaoArquivo, le.status, le.data_inicio as dataInicio, rs1.nome_arquivo as nomeArquivo");
+		sql.append(" from interface_execucao ie ");
+		sql.append(" left join log_execucao le on ie.id = le.interface_execucao_id ");
+		sql.append(" left join ( ");
+		sql.append(" select id, log_execucao_id, MAX(NOME_ARQUIVO) as NOME_ARQUIVO ");
+		sql.append(" from log_execucao_mensagem lem ");
+		sql.append(" group by log_execucao_id) rs1 on le.id = rs1.log_execucao_id ");
+		sql.append(" where le.data_inicio between '" + sdf.format(this.getPeriodoInicialDia(dataOperacao)) + " 00:00:00' and '" + sdf.format(this.getPeriodoFinalDia(dataOperacao)) + " 23:59:59'");
+		sql.append(" group by interface_execucao_id ");
+		/*
 		sql.append(" WHERE ");
 		sql.append(" LOG_EXECUCAO.DATA_INICIO BETWEEN '" + sdf.format(this.getPeriodoInicialDia(dataOperacao)) + " 00:00:00' AND '" + sdf.format(this.getPeriodoFinalDia(dataOperacao)) + " 23:59:59'");
 
@@ -109,8 +124,9 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		sql.append(" LOG_EXECUCAO.STATUS, ");
 		sql.append(" INTERFACE_EXECUCAO.NOME, ");
 		sql.append(" INTERFACE_EXECUCAO.ID ");
+		*/
 		//sql.append(" DATE_FORMAT(LOG_EXECUCAO.DATA_INICIO, '%Y-%m-%d') ");
-
+/*
 		if (filtro.getOrdenacaoColuna() != null) {
 
 			sql.append(" ORDER BY ");
@@ -140,7 +156,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 			}
 				
 		}
-		
+		*/
 		if (totalizar) {
 			sql.append(") as total");
 		}

@@ -120,14 +120,20 @@ var painelProcessamentoController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Interface',
-				name : 'nome',
+				name : 'descricaoInterface',
 				width : 215,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Arquivo',
+				name : 'nome',
+				width : 100,
+				sortable : false,
+				align : 'left'
+			}, {
+				display : 'Extensão',
 				name : 'extensaoArquivo',
-				width : 180,
+				width : 60,
 				sortable : false,
 				align : 'left'
 			}, {
@@ -161,7 +167,7 @@ var painelProcessamentoController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 920,
+			width : 930,
 			height : 'auto'
 		});
 	},
@@ -247,12 +253,14 @@ var painelProcessamentoController = $.extend(true, {
 			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 			row.cell.reprocessar = btReprocessamento + brDetalhes;
 
-			row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
+			//row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
 			
 			if (row.cell.status == 'S' || row.cell.status == 'A')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_operando.png />";
 			else if (row.cell.status == 'F')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_offline.png />";
+			else if (row.cell.status == 'V')
+				row.cell.status = "<img src= " + contextPath + "/images/ico_semdados.png />";
 			else // Não processado
 				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
 			

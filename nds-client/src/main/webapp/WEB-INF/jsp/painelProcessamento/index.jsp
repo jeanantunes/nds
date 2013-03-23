@@ -55,10 +55,12 @@
                     <li><a href="#tabPainel-Processos" onclick="painelProcessamentoController.pesquisarProcessos()">Processos</a></li>
                 </ul>
                 <div id="tabPainel-Interfaces">
-                    <table width="500" border="0" align="right" cellpadding="2" cellspacing="1" class="filtro">
+                    <table width="600" border="0" align="right" cellpadding="2" cellspacing="1" class="filtro">
                       <tr>
                         <td width="17"><img src="${pageContext.request.contextPath}/images/ico_operando.png" alt="Operando" /></td>
                         <td width="143">Realizado com Sucesso</td>
+                        <td width="17"><img src="${pageContext.request.contextPath}/images/ico_semdados.png" alt="Off-line" /></td>
+                        <td width="143">Sem dados a processar</td>
                         <td width="17"><img src="${pageContext.request.contextPath}/images/ico_offline.png" alt="Off-line" /></td>
                         <td width="142">Processado com erro</td>
                         <td width="17"><img src="${pageContext.request.contextPath}/images/ico_encerrado.png" alt="Off-line" /></td>
