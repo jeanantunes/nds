@@ -602,8 +602,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
 		
-		boolean aceitaJuramentado = this.distribuidorService.aceitaJuramentado();
-		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
@@ -614,22 +612,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = null;
 		
 		if(controleConferenciaEncalheCota!=null) {
-			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
 							controleConferenciaEncalheCota.getId());
-			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
-			
 			infoConfereciaEncalheCota.setEncalhe(null);
-			
 			infoConfereciaEncalheCota.setIdControleConferenciaEncalheCota(controleConferenciaEncalheCota.getId());
-			
 			infoConfereciaEncalheCota.setNotaFiscalEntradaCota(controleConferenciaEncalheCota.getNotaFiscalEntradaCotaPricipal());
-			
 		} else {
-			
 			infoConfereciaEncalheCota.setEncalhe(BigDecimal.ZERO);
-			
 		}
 		
 		if(indConferenciaContingencia) {
@@ -641,74 +631,93 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							infoConfereciaEncalheCota.getListaConferenciaEncalhe());
 			
 			if(listaConferenciaEncalheDTO!=null && !listaConferenciaEncalheDTO.isEmpty()) {
-				
 				listaConferenciaEncalheDTO.addAll(listaConferenciaEncalheContingencia);
-				
 				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
-				
 			} else {
-				
 				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheContingencia);
-				
 			}
 			
 			
 		}
 		
-		BigDecimal reparte = obterValorTotalReparte(numeroCota, dataOperacao);
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
-		BigDecimal valorPagar = BigDecimal.ZERO;
-		BigDecimal valorVendaDia = BigDecimal.ZERO;
-		BigDecimal totalDebitoCreditoCota = BigDecimal.ZERO;
-
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, dataOperacao);
+		
+		infoConfereciaEncalheCota.setCota(cota);
+		infoConfereciaEncalheCota.setReparte(obterValorTotalReparte(numeroCota, dataOperacao));
+		
+		infoConfereciaEncalheCota.setTotalDebitoCreditoCota(BigDecimal.ZERO);
+		infoConfereciaEncalheCota.setValorPagar(BigDecimal.ZERO);
+		infoConfereciaEncalheCota.setValorVendaDia(BigDecimal.ZERO);
+		
+		infoConfereciaEncalheCota.setDistribuidorAceitaJuramentado(this.distribuidorService.aceitaJuramentado());
+		
+		return infoConfereciaEncalheCota;
+		
+	}
 	
+	
+	private void carregarDadosDebitoCreditoDaCota(
+			InfoConferenciaEncalheCota infoConfereciaEncalheCota, 
+			Cota cota,
+			Date dataOperacao) {
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
 		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
-		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
+
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = 
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(
-						numeroCota, 
+						cota.getNumeroCota(), 
 						dataOperacao, 
 						tiposMovimentoFinanceiroIgnorados);
 		
+		if(listaDebitoCreditoCota!=null && !listaDebitoCreditoCota.isEmpty()) {
+			listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCota);
+		}
+		
+		List<DebitoCreditoCotaDTO> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
+				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cota.getNumeroCota());
+		
+		if(listaDebitoNegociacaoNaoAvulsaMaisEncargos != null && !listaDebitoNegociacaoNaoAvulsaMaisEncargos.isEmpty()) {
+			
+			for(DebitoCreditoCotaDTO negociacao : listaDebitoNegociacaoNaoAvulsaMaisEncargos) {
+				
+				negociacao.setTipoLancamento(OperacaoFinaceira.DEBITO);
+				
+			}
+			
+			listaDebitoCreditoCompleta.addAll(listaDebitoNegociacaoNaoAvulsaMaisEncargos);
+		}
+		
 		List<Cobranca> listaCobrancas = cobrancaRepository.obterCobrancasDaCotaEmAberto(cota.getId(), true);
 		
-		for(Cobranca cobranca : listaCobrancas){
-			
-			DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
-			
-			debitoCredito.setValor(cobranca.getValor());
-			
-			debitoCredito.setTipoLancamento(OperacaoFinaceira.DEBITO);
-		
-			debitoCredito.setObservacoes("Cobrança em aberto.");
-			
-			debitoCredito.setDataVencimento(cobranca.getDataEmissao());
-			
-			debitoCredito.setDataLancamento(cobranca.getDataEmissao());
-			
-			listaDebitoCreditoCota.add(debitoCredito);
+		if( listaCobrancas != null && !listaCobrancas.isEmpty() ) {
+
+			for ( Cobranca cobranca : listaCobrancas ) {
+				
+				DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
+				debitoCredito.setValor(cobranca.getValor());
+				debitoCredito.setTipoLancamento(OperacaoFinaceira.DEBITO);
+				debitoCredito.setObservacoes("Cobrança em aberto.");
+				debitoCredito.setDataVencimento(cobranca.getDataEmissao());
+				debitoCredito.setDataLancamento(cobranca.getDataEmissao());
+				listaDebitoCreditoCompleta.add(debitoCredito);
+				
+			}
 			
 		}
 		
-		infoConfereciaEncalheCota.setCota(cota);
-		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCota);
-		infoConfereciaEncalheCota.setReparte(reparte);
-		infoConfereciaEncalheCota.setTotalDebitoCreditoCota(totalDebitoCreditoCota);
-		infoConfereciaEncalheCota.setValorPagar(valorPagar);
-		infoConfereciaEncalheCota.setValorVendaDia(valorVendaDia);
-		infoConfereciaEncalheCota.setDistribuidorAceitaJuramentado(aceitaJuramentado);
-		
-		return infoConfereciaEncalheCota;
-		
+		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
+
 	}
 	
 	/*
