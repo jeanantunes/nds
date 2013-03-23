@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.FechamentoCEIntegracaoConsolidadoDTO;
@@ -10,9 +11,9 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 
 public interface FechamentoCEIntegracaoService {
 	
-	List<ItemFechamentoCEIntegracaoDTO> buscarFechamentoEncalhe(FiltroFechamentoCEIntegracaoDTO filtro);
+	List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
-	void fecharCE(String[] listaEncalhePronta, String[] listaIdProdutoEdicaoPronta, String idFornecedor, Integer numeroSemana);
+	void fecharCE(FiltroFechamentoCEIntegracaoDTO filtro);
 
 	boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro);
 	
@@ -20,8 +21,10 @@ public interface FechamentoCEIntegracaoService {
 
 	FechamentoCEIntegracaoDTO obterCEIntegracaoFornecedor(FiltroFechamentoCEIntegracaoDTO filtro);
 
-	FechamentoCEIntegracaoConsolidadoDTO buscarFechamentoEncalheTotal(FiltroFechamentoCEIntegracaoDTO filtro);
+	FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 
 	void reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
+	
+	void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe);
 
 }

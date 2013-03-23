@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +32,6 @@ import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -178,41 +174,15 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		}
 	}
 	
-	private Intervalo<Date> obterDataDaSemana(String anoSemana) {
-		
-		Date data = obterDataBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
-		
-		Integer semana = Integer.parseInt(anoSemana.substring(4));
-		
-		Date dataInicioSemana = 
-				DateUtil.obterDataDaSemanaNoAno(
-					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
-			
-		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
-		
-		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
-		
-		return periodoRecolhimento;
-		
-	}
-	
-	private Date obterDataBase(String anoSemana, Date data) {
-		
-		String ano = anoSemana.substring(0,4);
-		Calendar c = Calendar.getInstance();
-		c.setTime(data);
-		c.set(Calendar.YEAR, Integer.parseInt(ano));
-		
-		return c.getTime();
-	}
-
 	@Post
 	@Path("fecharCE")
 	public void fecharCE(String[] listaEncalhe, String[] listaIdProdutoEdicao, String idFornecedor, String semana){
-		String listaEncalhePronta[] = listaEncalhe[0].split(",");		
-		String listaIdProdutoEdicaoPronta[] = listaIdProdutoEdicao[0].split(",");		
 		
-		fechamentoCEIntegracaoService.fecharCE(listaEncalhePronta, listaIdProdutoEdicaoPronta, idFornecedor, new Integer(semana));
+		//TODO Alterar os parametros do metodo
+		
+		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		fechamentoCEIntegracaoService.fecharCE(filtro);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Fechamento realizado com sucesso."),"result").recursive().serialize();
 		
@@ -279,7 +249,9 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarFechamentoEncalhe(filtro);
+		filtro.setPaginacao(null);
+		
+		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarItensFechamentoCeIntegracao(filtro);
 		
 		if(listaFechamento.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,"A última pesquisa realizada não obteve resultado.");
@@ -320,11 +292,23 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe) {
 		
+		this.fechamentoCEIntegracaoService.atualizarItemChamadaEncalheFornecedor(
+			idItemChamadaFornecedor, encalhe);
+		
+		FiltroFechamentoCEIntegracaoDTO filtro =
+			(FiltroFechamentoCEIntegracaoDTO)
+				session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		filtro.setPaginacao(null);
+		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
 		
-		fechamentoCEIntegracao.setTotalBruto("10.00");
-		fechamentoCEIntegracao.setTotalDesconto("20.00");
-		fechamentoCEIntegracao.setTotalLiquido("30.00");
+		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = 
+			this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
+		
+		fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()));
+		fechamentoCEIntegracao.setTotalDesconto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalDesconto()));
+		fechamentoCEIntegracao.setTotalLiquido(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalLiquido()));
 		
 		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
 	}

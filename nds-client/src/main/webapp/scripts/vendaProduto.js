@@ -397,7 +397,7 @@ var vendaProdutoController = $.extend(true, {
 			
 			if (row.cell.parcial) {
 				
-				linkDetalhe = '<a href="javascript:;" onclick="vendaProdutoController.popup_detalhes(' + row.cell.codigoProduto + ',' + row.cell.numEdicao + ');" style="cursor:pointer">' +
+				linkDetalhe = '<a href="javascript:;" onclick="vendaProdutoController.popup_detalhes(\'' + row.cell.codigoProduto + '\',' + row.cell.numEdicao + ');" style="cursor:pointer">' +
 							  	'<img title="Lançamentos da Edição" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 							  '</a>';
 			} else {

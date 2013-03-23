@@ -9,11 +9,11 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoCEIntegracaoDTO;
 
 public interface FechamentoCEIntegracaoRepository {
 	
-	List<ItemFechamentoCEIntegracaoDTO> buscarConferenciaEncalhe(FiltroFechamentoCEIntegracaoDTO filtro);
+	List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 
 	boolean verificarStatusSemana(FiltroFechamentoCEIntegracaoDTO filtro);
 
-	FechamentoCEIntegracaoConsolidadoDTO buscarConferenciaEncalheTotal(FiltroFechamentoCEIntegracaoDTO filtro);
+	FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
 	BigInteger countItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
