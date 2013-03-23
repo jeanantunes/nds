@@ -25,6 +25,6 @@ public interface FechamentoCEIntegracaoService {
 
 	void reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
-	void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe);
+	void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda);
 
 }
