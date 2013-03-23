@@ -303,6 +303,10 @@ var diferencaEstoqueController = $.extend(true, {
 		data.push({name:'filtro.tipoDiferenca',	   value: resultado.tipoDiferenca});
 		data.push({name:'filtro.quantidade', 	   value: resultado.quantidade});
 		
+		var numeroCota = $("#numeroCota", diferencaEstoqueController.workspace).val();
+		
+		data.push({name:'filtro.numeroCota', 	   value: numeroCota});
+		
 		return data;
 	},
 	
@@ -373,3 +377,4 @@ var diferencaEstoqueController = $.extend(true, {
 
 }, BaseController);
 
+//@ sourceURL=diferencaEstoque.js
