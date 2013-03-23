@@ -345,7 +345,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 		
 		if (formaCobranca == null){
 	    	
-	    	throw new ValidacaoException(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor "+CurrencyUtil.formatarValorComSimbolo(valor)+"]"+(cota!=null?" [Cota "+cota.getNumeroCota()+"].":"."));
+	    	throw new ValidacaoException(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor Mínimo "+CurrencyUtil.formatarValorComSimbolo(valor)+"]"+(cota!=null?" [Cota "+cota.getNumeroCota()+"].":"."));
 	    }
 		
 		return formaCobranca;

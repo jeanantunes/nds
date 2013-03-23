@@ -813,6 +813,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			novaDivida.setCota(cota);
 			novaDivida.setStatus(StatusDivida.EM_ABERTO);
 			novaDivida.setResponsavel(usuario);
+			novaDivida.setOrigemNegociacao(false);
 			
 			BigDecimal valorCalculadoJuros = BigDecimal.ZERO;
 			

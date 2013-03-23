@@ -337,7 +337,8 @@ public class ExportHandler {
 					obtainExportFooter(
 						null, getLabelValue(exportAnnotation, footer, clazz), 
 							exportAnnotation.alignment(), 
-								exportAnnotation.alignWithHeader(), false));
+								exportAnnotation.alignWithHeader(), 
+								exportAnnotation.columnType(), exportAnnotation.fontSize(), false));
 			}
 			
 			for (Map.Entry<String, Object> entry : footerMap.entrySet()) {
@@ -345,7 +346,9 @@ public class ExportHandler {
 				exportFooters.add(
 					obtainExportFooter(
 						entry.getValue(), entry.getKey(), 
-							exportAnnotation.alignment(), null, exportAnnotation.printVertical()));
+							exportAnnotation.alignment(), null, 
+							exportAnnotation.columnType(), exportAnnotation.fontSize(), 
+							exportAnnotation.printVertical()));
 			}
 			
 		} else {
@@ -354,7 +357,9 @@ public class ExportHandler {
 				obtainExportFooter(
 					exportObject, getLabelValue(exportAnnotation, footer, clazz), 
 						exportAnnotation.alignment(), 
-							exportAnnotation.alignWithHeader(), exportAnnotation.printVertical()));
+							exportAnnotation.alignWithHeader(), 
+							exportAnnotation.columnType(), exportAnnotation.fontSize(), 
+							exportAnnotation.printVertical()));
 		}
 	}
 	
@@ -362,19 +367,25 @@ public class ExportHandler {
 												   String label, 
 												   Alignment alignment, 
 												   String alignWithHeader,
+												   ColumType columnType,
+												   float fontSize,
 												   boolean verticalPrinting) {
 
 		ExportFooter exportFooter = new ExportFooter();
 		
 		exportFooter.setLabel(label);
 		
-		exportFooter.setValue(getExportValue(value, ColumType.STRING));
+		exportFooter.setValue(getExportValue(value, columnType));
 		
 		exportFooter.setAlignment(alignment);
 		
 		exportFooter.setHeaderToAlign(alignWithHeader);
 		
 		exportFooter.setVerticalPrinting(verticalPrinting);
+		
+		exportFooter.setColumnType(columnType);
+		
+		exportFooter.setFontSize(fontSize);
 		
 		return exportFooter;
 	}
@@ -436,6 +447,8 @@ public class ExportHandler {
 	private static String getExportValue(Object value, ColumType columnType) {
 		
 		String exportValue = "";
+		
+		columnType = columnType == null ? ColumType.STRING : columnType;
 		
 		if (value != null) {
 			

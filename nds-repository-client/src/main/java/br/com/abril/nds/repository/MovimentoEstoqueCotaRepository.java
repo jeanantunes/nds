@@ -29,6 +29,9 @@ import br.com.abril.nds.util.Intervalo;
 
 public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEstoqueCota, Long> {
 	
+	
+
+	
 	/**
 	 * Obtém as qtdes de devolução de encalhe juramentado
 	 * agrupados por cota relativos a uma data de operação.

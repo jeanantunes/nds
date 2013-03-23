@@ -474,7 +474,18 @@ public class PDFExporter implements Exporter {
 
         		PdfPCell footerValuePdfCell = new PdfPCell();
         		
-        		Paragraph footerValueParagraph = new Paragraph(exportFooter.getValue());
+        		Float fontSize = exportFooter.getFontSize();
+    			
+    			Paragraph footerValueParagraph;
+    			
+        		if (fontSize != null && fontSize != 0){
+        			
+        			Font font = new Font(Font.FontFamily.TIMES_ROMAN, fontSize);
+        			footerValueParagraph = new Paragraph(StringUtils.defaultString(exportFooter.getValue()), font);
+        		} else {
+        			
+        			footerValueParagraph = new Paragraph(StringUtils.defaultString(exportFooter.getValue()));
+        		}
         		
         		footerValueParagraph.setAlignment(exportFooter.getAlignment().getValue());
         		
