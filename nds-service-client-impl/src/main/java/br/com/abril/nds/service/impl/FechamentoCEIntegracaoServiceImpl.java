@@ -18,9 +18,11 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.StatusCeNDS;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.FechamentoCEIntegracaoRepository;
+import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.FechamentoCEIntegracaoService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -49,6 +51,9 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private ItemChamadaEncalheFornecedorRepository itemChamadaEncalheFornecedorRepository;
 
 	@Transactional
 	public List<ItemFechamentoCEIntegracaoDTO> buscarItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro) {
@@ -201,6 +206,17 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		c.set(Calendar.YEAR, Integer.parseInt(ano));
 		
 		return c.getTime();
+	}
+	
+	@Transactional
+	public void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe) {
+		
+		ItemChamadaEncalheFornecedor item = 
+			this.itemChamadaEncalheFornecedorRepository.buscarPorId(idItemChamadaFornecedor);
+		
+		item.setQtdeDevolucaoInformada(encalhe.longValue());
+		
+		this.itemChamadaEncalheFornecedorRepository.merge(item);
 	}
 
 	
