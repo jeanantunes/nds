@@ -391,7 +391,7 @@
                   <td align="center">Recolhimento</td>
                 </tr>
                 <tr>
-                  <td width="123" align="center" class="class_linha_1">Exes. Homem/ Hora</td>
+                  <td width="123" align="center" class="class_linha_1">Exes. / Dia</td>
                   <td width="115" align="center"><input type="text" name="parametrosDistribuidor.capacidadeManuseioHomemHoraLancamento" id="capacidadeManuseioHomemHoraLancamento" value="${parametrosDistribuidor.capacidadeManuseioHomemHoraLancamento}" style="width:40px; text-align:center;" /></td>
                   <td width="148" align="center"><input type="text" name="parametrosDistribuidor.capacidadeManuseioHomemHoraRecolhimento" id="capacidadeManuseioHomemHoraRecolhimento" value="${parametrosDistribuidor.capacidadeManuseioHomemHoraRecolhimento}" style="width:40px; text-align:center;" /></td>
                 </tr>
