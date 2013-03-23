@@ -56,6 +56,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		super(MovimentoEstoqueCota.class);
 	}
 	
+	
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCotaGenericoDTO> obterListaMovimentoEstoqueCotaDevolucaoJuramentada(Date dataOperacao) {
 		
