@@ -75,18 +75,16 @@ var bancoController = $.extend(true, {
 				height : 180
 			});
 		
-			$("#numero", this.workspace).numeric();	
-			$("#cedente", this.workspace).numeric();	
+			$("#numero", this.workspace).numeric();		
 			
 			$("#newNumero", this.workspace).numeric();	
-			$("#newCodigoCedente", this.workspace).numeric();	
+			
 			$("#newAgencia", this.workspace).numeric();	
 			$("#newConta", this.workspace).numeric();	
 			//$("#newDigito", this.workspace).numeric();
 			$("#newCarteira", this.workspace).numeric();
 			
 			$("#alterNumero", this.workspace).numeric();	
-			$("#alterCodigoCedente", this.workspace).numeric();	
 			$("#alterAgencia", this.workspace).numeric();	
 			$("#alterConta", this.workspace).numeric();	
 			//$("#alterDigito", this.workspace).numeric();	
