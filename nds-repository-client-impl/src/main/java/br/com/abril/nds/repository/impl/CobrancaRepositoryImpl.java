@@ -352,19 +352,22 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	private BigDecimal obterValorNaoPagoCobranca(Integer numeroCota) {
 		
 		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select sum(cobranca.valor + cobranca.encargos) ")
+
+		hql.append(" select sum(cobranca.valor + coalesce(cobranca.encargos, 0)) ")
 			.append(" from Cobranca cobranca, Distribuidor distribuidor ")
 			.append(" inner join cobranca.cota cota ")
 			.append(" where cota.numeroCota		  =	 :numeroCota ")
 			.append(" and cobranca.statusCobranca =  :status ")
-			.append(" and cobranca.dataEmissao < distribuidor.dataOperacao ");
+			.append(" and cobranca.dataEmissao < distribuidor.dataOperacao ")
+			.append(" and (cobranca.divida.origemNegociacao = :origemNegociacao ")
+			.append(" 	or cobranca.divida.origemNegociacao is null) ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
 		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("origemNegociacao", false);
 
-		return   (BigDecimal) query.uniqueResult();
+		return (BigDecimal) query.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")
