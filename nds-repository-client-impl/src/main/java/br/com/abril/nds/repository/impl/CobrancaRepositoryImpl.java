@@ -13,6 +13,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -64,6 +65,64 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		return criteria.list();				
 	}
+	
+	public List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota) {
+		
+		StringBuffer sql = new StringBuffer();
+			
+		sql.append(" SELECT cobranca.VALOR as valor, cobranca.DT_EMISSAO as dataLancamento FROM COBRANCA cobranca ");
+		
+		sql.append(" inner join DIVIDA d on ( 	");
+		sql.append(" 	cobranca.DIVIDA_ID = d.id 	");
+		sql.append(" ) ");
+		
+		if(idControleConfEncCota != null) {
+
+			sql.append(" left join COBRANCA_CONTROLE_CONFERENCIA_ENCALHE_COTA cc on ( ");
+			sql.append(" 	cc.CONTROLE_CONF_ENCALHE_COTA_ID = :idControleConfEncCota and	");
+			sql.append(" 	cc.COBRANCA_ID = cobranca.ID	");
+			sql.append(" )	");
+			
+		}
+		
+		
+		sql.append(" inner join COTA cota on ( 	");
+		sql.append(" 	cota.ID =  cobranca.COTA_ID	");
+		sql.append(" ) ");
+		
+		sql.append(" WHERE ");
+		
+		sql.append(" cobranca.STATUS_COBRANCA = :statusCobranca and ");
+
+		sql.append(" cota.id = :idCota and ");
+		
+		sql.append(" d.ORIGEM_NEGOCIACAO = :origemNegociacao  ");
+		
+		if(idControleConfEncCota != null) {
+			sql.append(" and cc.id is null ");
+		}
+		
+		
+		sql.append(" GROUP BY cobranca.id ORDER BY cobranca.DT_VENCIMENTO ASC ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		
+		query.setParameter("idCota", idCota);
+		
+		if(idControleConfEncCota != null) {
+			query.setParameter("idControleConfEncCota", idControleConfEncCota);
+		}
+		
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO.name());
+		
+		query.setParameter("origemNegociacao", false);
+		
+		return query.list();
+		
+	}
+	
 	
 	public Cobranca obterCobrancaPorNossoNumero(String nossoNumero){
 		

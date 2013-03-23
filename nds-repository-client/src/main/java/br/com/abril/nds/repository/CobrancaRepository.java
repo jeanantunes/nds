@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -12,6 +13,18 @@ import br.com.abril.nds.model.financeiro.Cobranca;
 
 public interface CobrancaRepository extends Repository<Cobranca, Long>{
 
+	
+	/**
+	 * Obtem cobrancas em aberto que não estejam associadas a 
+	 * operacao de encalhe em questão (caso flag seja true)
+	 * 
+	 * @param idCota
+	 * @param idControleConfEncCota
+	 * 
+	 * @return List - DebitoCreditoCotaDTO
+	 */
+	List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota);
+	
 	/**
 	 * Obtem data em que houve a primeira inadimplencia com cobrança ainda em aberto
 	 * 

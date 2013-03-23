@@ -698,19 +698,20 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			listaDebitoCreditoCompleta.addAll(listaDebitoNegociacaoNaoAvulsaMaisEncargos);
 		}
 		
-		List<Cobranca> listaCobrancas = cobrancaRepository.obterCobrancasDaCotaEmAberto(cota.getId(), true);
+		List<DebitoCreditoCotaDTO> listaCobrancas 
+		= cobrancaRepository.obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(
+				cota.getId(), infoConfereciaEncalheCota.getIdControleConferenciaEncalheCota());
+		
 		
 		if( listaCobrancas != null && !listaCobrancas.isEmpty() ) {
 
-			for ( Cobranca cobranca : listaCobrancas ) {
+			for ( DebitoCreditoCotaDTO cobranca : listaCobrancas ) {
 				
-				DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
-				debitoCredito.setValor(cobranca.getValor());
-				debitoCredito.setTipoLancamento(OperacaoFinaceira.DEBITO);
-				debitoCredito.setObservacoes("Cobrança em aberto.");
-				debitoCredito.setDataVencimento(cobranca.getDataEmissao());
-				debitoCredito.setDataLancamento(cobranca.getDataEmissao());
-				listaDebitoCreditoCompleta.add(debitoCredito);
+				cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
+				cobranca.setObservacoes("Cobrança em aberto.");
+				cobranca.setDataVencimento(cobranca.getDataLancamento());
+				
+				listaDebitoCreditoCompleta.add(cobranca);
 				
 			}
 			
