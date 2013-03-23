@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.Column;
-
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -2685,5 +2683,58 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
 		
 		return (Long) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
+			Long idCota, Intervalo<Date> periodo,
+			List<Long> listaIdFornecedores,
+			List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("   select mec from MovimentoEstoqueCota mec   ");
+		sql.append("   join mec.cota cota   ");
+		sql.append("   join mec.lancamento lancamento   ");
+		sql.append("   join mec.tipoMovimento tm   ");
+		sql.append("   join mec.produtoEdicao pe   ");
+		sql.append("   join pe.produto p   ");
+		sql.append("   join p.fornecedores f   ");
+		sql.append("   where mec.estudoCota is null   ");
+		
+		if(listaGruposMovimentoEstoqueCota != null && !listaGruposMovimentoEstoqueCota.isEmpty())
+			sql.append("  and tm.grupoMovimentoEstoque in (:gruposMovimentosEstoque)  ");
+		
+		if(idCota != null)
+			sql.append("  and mec.cota.id = :cotaID  ");
+		
+		if(periodo != null)
+			sql.append("  and lancamento.dataLancamentoDistribuidor between :dataInicial and :dataFinal ");
+		
+		if(listaIdFornecedores != null && !listaIdFornecedores.isEmpty())
+			sql.append(" and f.id in (:fornecedoresID) ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		
+		query.setParameterList("gruposMovimentosEstoque", listaGruposMovimentoEstoqueCota);
+		query.setParameter("cotaID", idCota);
+		query.setParameter("dataInicial", periodo.getDe());
+		query.setParameter("dataFinal", periodo.getAte());
+		query.setParameterList("fornecedoresID", listaIdFornecedores);
+		
+		return query.list();
+	}
+
+	@Override
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
+			Long idCota, Intervalo<Date> periodo,
+			List<Long> listaIdFornecedores,
+			GrupoMovimentoEstoque grupoMovimentoEstoque) {
+		
+		List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota = new ArrayList<GrupoMovimentoEstoque>(); 
+		listaGruposMovimentoEstoqueCota.add(grupoMovimentoEstoque);
+		
+		return this.obterMovimentoEstoqueCotaSemEstudoPor(idCota, periodo, listaIdFornecedores, listaGruposMovimentoEstoqueCota);
 	}
 }

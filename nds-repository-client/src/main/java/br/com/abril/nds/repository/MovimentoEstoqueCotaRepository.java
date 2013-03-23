@@ -13,7 +13,6 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
@@ -386,5 +385,29 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
 																			Long idCota, 
 																			GrupoMovimentoEstoque grupoMovimentoEstoque);
+
+	/**
+	 * Obtém movimentos de estoque cota que não possuem estudos.
+	 * 
+	 * @param idCota
+	 * @param periodo
+	 * @param listaIdFornecedores
+	 * @param listaGruposMovimentoEstoqueCota
+	 * @return
+	 */
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
+			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota);
+
+	/**
+	 * Obtém movimentos de estoque cota que não possuem estudos.
+	 * 
+	 * @param idCota
+	 * @param periodo
+	 * @param listaIdFornecedores
+	 * @param rateioReparteCotaAusente
+	 * @return
+	 */
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
+			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, GrupoMovimentoEstoque grupoMovimentoEstoque);
 
 }

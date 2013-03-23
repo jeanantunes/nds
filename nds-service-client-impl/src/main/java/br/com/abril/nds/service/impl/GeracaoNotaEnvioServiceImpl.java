@@ -125,11 +125,116 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 
 	private List<ItemNotaEnvio> gerarItensNotaEnvio(
-			List<EstudoCota> listaEstudoCota, Cota cota) {
+			List<EstudoCota> listaEstudoCota, Cota cota, List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
 
-		List<ItemNotaEnvio> listItemNotaEnvio = new ArrayList<ItemNotaEnvio>(
-				listaEstudoCota.size());
+		List<ItemNotaEnvio> listItemNotaEnvio = new ArrayList<ItemNotaEnvio>(listaEstudoCota.size());
 
+		gerarItensNEMovimento(listaMovimentoEstoqueCota, cota, listItemNotaEnvio);
+		
+		gerarItensNEEstudo(listaEstudoCota, cota, listItemNotaEnvio);
+		
+		sortItensByProdutoNome(listItemNotaEnvio);
+		
+		return listItemNotaEnvio;
+	}
+
+	/**
+	 * Gera itens de nota de envio a partir do movimentos de estoque que não possuem estudo.
+	 * 
+	 * @param listaMovimentoEstoqueCota
+	 * @param cota
+	 * @param listItemNotaEnvio
+	 */
+	private void gerarItensNEMovimento(
+			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, Cota cota,
+			List<ItemNotaEnvio> listItemNotaEnvio) {
+					
+		for(MovimentoEstoqueCota mec : listaMovimentoEstoqueCota) {
+			
+			ItemNotaEnvio itemNotaEnvio = getItemNE(listItemNotaEnvio, mec.getProdutoEdicao());
+			
+			ProdutoEdicao produtoEdicao = mec.getProdutoEdicao();
+			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
+			
+			itemNotaEnvio.setProdutoEdicao(produtoEdicao);
+			itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+			itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+			itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNome());
+			
+			BigDecimal valorDesconto = itemNotaEnvio.getDesconto();
+			
+			if(valorDesconto == null) {
+			
+				Desconto desconto = 
+						descontoService.obterDescontoPorCotaProdutoEdicao(mec.getLancamento(), cota, produtoEdicao);
+				
+				valorDesconto = (desconto != null && desconto.getValor() != null) ? 
+						desconto.getValor() : BigDecimal.ZERO;
+			}
+			
+			itemNotaEnvio.setDesconto(valorDesconto);
+			
+			BigInteger quantidade;
+			
+			quantidade = itemNotaEnvio.getReparte();
+			
+			if(quantidade == null)
+				quantidade = BigInteger.ZERO;
+			
+			quantidade = quantidade.add(mec.getQtde());
+			
+			itemNotaEnvio.setReparte(quantidade);
+			
+			itemNotaEnvio.setPrecoCapa(precoVenda);
+			
+			List<MovimentoEstoqueCota> movimentosProdutoSemEstudo = itemNotaEnvio.getMovimentosProdutoSemEstudo();
+			
+			if(movimentosProdutoSemEstudo == null)
+				movimentosProdutoSemEstudo = new ArrayList<MovimentoEstoqueCota>();
+			
+			movimentosProdutoSemEstudo.add(mec);
+			
+			itemNotaEnvio.setMovimentosProdutoSemEstudo(movimentosProdutoSemEstudo);
+			
+			listItemNotaEnvio.add(itemNotaEnvio);
+		}
+		
+	}
+
+	/**
+	 * Método que verifica se ja existe um itemNotaEnvio para um determinado produto.
+	 * caso não exista retorna uma nova instancia de ItemNotaEnvio.
+	 * 
+	 * @param listItemNotaEnvio
+	 * @param produtoEdicao
+	 * @return
+	 */
+	private ItemNotaEnvio getItemNE(List<ItemNotaEnvio> listItemNotaEnvio,
+			ProdutoEdicao produtoEdicao) {
+		
+		ItemNotaEnvio itemNE = new ItemNotaEnvio();
+		
+		for(ItemNotaEnvio item : listItemNotaEnvio) {
+			
+			if(item.getProdutoEdicao().getId().equals(produtoEdicao.getId())) {
+				itemNE = item;
+				break;
+			}
+		}
+		
+		return itemNE;
+	}
+
+	/**
+	 * Gera itens de Nota de Envio a partir dos Estudos Cota
+	 * 
+	 * @param listaEstudoCota
+	 * @param cota
+	 * @param listItemNotaEnvio
+	 */
+	private void gerarItensNEEstudo(List<EstudoCota> listaEstudoCota,
+			Cota cota, List<ItemNotaEnvio> listItemNotaEnvio) {
+		
 		for (EstudoCota estudoCota : listaEstudoCota) {
 
 			if (!estudoCota.getItemNotaEnvios().isEmpty()) {
@@ -202,10 +307,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			listItemNotaEnvio.add(itemNotaEnvio);
 			
 		}
-
-		sortItensByProdutoNome(listItemNotaEnvio);
-		
-		return listItemNotaEnvio;
 	}
 
 	private void sortItensByProdutoNome(List<ItemNotaEnvio> listItemNotaEnvio) {
@@ -305,13 +406,16 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
 				pessoaEmitente, cota);
 
-
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(idCota, periodo, listaIdFornecedores, 
+																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+		
 		List<EstudoCota> listaEstudosCota = this.estudoCotaRepository
 				.obterEstudosCotaParaNotaEnvio(idCota, periodo,
 						listaIdFornecedores);
 
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(
-				listaEstudosCota, cota);
+				listaEstudosCota, cota, listaMovimentoEstoqueCota);
 
 		if (listaItemNotaEnvio.isEmpty()) {
 
@@ -347,9 +451,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		List<EstudoCota> listaEstudosCota = this.estudoCotaRepository
 				.obterEstudosCotaParaNotaEnvio(idCota, periodo,
 						listaIdFornecedores);
-
+				
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(idCota, periodo, listaIdFornecedores, 
+																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+		
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(
-				listaEstudosCota, cota);
+				listaEstudosCota, cota, listaMovimentoEstoqueCota);
 
 		if (listaItemNotaEnvio.isEmpty()) {
 
@@ -430,10 +538,17 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
 				
 				if(itemNotaEnvio.getItemNotaEnvioPK() == null) {
+					
 					itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio, ++sequencia));
 					itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+					
+					if(itemNotaEnvio.getMovimentosProdutoSemEstudo() != null && !itemNotaEnvio.getMovimentosProdutoSemEstudo().isEmpty()) {
+						for(MovimentoEstoqueCota mec : itemNotaEnvio.getMovimentosProdutoSemEstudo()) {
+							mec.setItemNotaEnvio(itemNotaEnvio);
+							this.movimentoEstoqueCotaRepository.merge(mec);
+						}
+					}
 				}
-				
 			}
 	
 			notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
