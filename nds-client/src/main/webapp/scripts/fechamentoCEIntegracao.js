@@ -166,7 +166,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var valorVenda = venda * priceToFloat(precoCapa);
 		var valorVendaFormatado = floatToPrice(valorVenda);
 		
-		if (reparte < encalhe) {
+		if (eval(reparte) < eval(encalhe)) {
 			
 			exibirMensagem(
 				'WARNING', ["A quantidade de encalhe não pode exceder a quantidade do reparte!"]);
@@ -205,7 +205,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var valorVenda = venda * priceToFloat(precoCapa);
 		var valorVendaFormatado = floatToPrice(valorVenda);
 		
-		if (reparte < venda) {
+		if (eval(reparte) < eval(venda)) {
 			
 			exibirMensagem(
 				'WARNING', ["A quantidade de venda não pode exceder a quantidade do reparte!"]);
@@ -402,6 +402,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				 function(resultado) {
 				 	exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
 					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
+					fechamentoCEIntegracaoController.esconderBotoes();
 					return resultado;
 				 },
 				null,
