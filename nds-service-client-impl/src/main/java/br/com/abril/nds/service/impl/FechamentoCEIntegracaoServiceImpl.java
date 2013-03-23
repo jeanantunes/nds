@@ -209,7 +209,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	}
 	
 	@Transactional
-	public void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe) {
+	public void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda) {
 		
 		ItemChamadaEncalheFornecedor item = 
 			this.itemChamadaEncalheFornecedorRepository.buscarPorId(idItemChamadaFornecedor);

@@ -6,13 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-
-import com.ancientprogramming.fixedformat4j.format.impl.StringFormatter;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;

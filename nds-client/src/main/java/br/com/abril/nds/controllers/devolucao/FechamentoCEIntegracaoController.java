@@ -290,10 +290,10 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		result.include("listaFornecedores",listaFornecedoresCombo );
 	}
 	
-	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe) {
+	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda) {
 		
 		this.fechamentoCEIntegracaoService.atualizarItemChamadaEncalheFornecedor(
-			idItemChamadaFornecedor, encalhe);
+			idItemChamadaFornecedor, encalhe, venda);
 		
 		FiltroFechamentoCEIntegracaoDTO filtro =
 			(FiltroFechamentoCEIntegracaoDTO)

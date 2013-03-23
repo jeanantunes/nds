@@ -294,9 +294,15 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 
 			BigDecimal valorTotalDiferenca = (BigDecimal) resultado[1];
 
+			Long quantidadeCota = (Long) resultado[2];
+			
 			boolean existemRateios = ((Long) resultado[2]) > 0;
 
-			listaDiferencas.add(new Diferenca(existemRateios, diferenca, valorTotalDiferenca));
+			Diferenca diferencaRelatorio = new Diferenca(existemRateios, diferenca, valorTotalDiferenca);
+			
+			diferencaRelatorio.setQtde(BigInteger.valueOf(quantidadeCota));
+			
+			listaDiferencas.add(diferencaRelatorio);
 		}
 		
 		return listaDiferencas;
@@ -334,14 +340,41 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 		} else {
 			
+			
+			String hqlCota = "";
+			
+			if (filtro.getNumeroCota()!=null){
+				
+				hqlCota += " ((select rd.qtde from Diferenca d join d.rateios rd where rd.cota.numeroCota = :numeroCota and d = diferenca) * coalesce(movimentoEstoqueCota.valoresAplicados.precoComDesconto,diferenca.produtoEdicao.precoVenda)) ";
+			}
+			else{
+			
+				hqlCota += " (diferenca.qtde * coalesce(movimentoEstoqueCota.valoresAplicados.precoComDesconto,diferenca.produtoEdicao.precoVenda)) ";
+			}
+			
+			
 			hql = " select distinct(diferenca), "
+					
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
-				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
-				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
+				
+				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then "
+				
+			    + hqlCota
+				
+				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then "
+				
+			    + hqlCota
+				
 				+ " else 0 end) as valorTotalDiferenca, "
-				+ " (select count(rateios) from RateioDiferenca rateios where rateios.diferenca.id = diferenca.id) ";
+				
+				+ " (select count(rateios) from RateioDiferenca rateios where rateios.diferenca.id = diferenca.id ";
+			
+				if (filtro.getNumeroCota()!=null){
+				    
+					hql += "  and rateios.cota.numeroCota = :numeroCota ";
+				}
+				
+				hql +=  ") ";
 		}
 		
 		hql += " from Diferenca diferenca "
@@ -354,7 +387,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		if (filtro != null) {
 		
-			if (filtro.getIdCota() != null) {
+			if (filtro.getIdCota() != null || filtro.getNumeroCota()!=null) {
 				 hql += " join diferenca.rateios rateios ";
 			}
 			
@@ -373,7 +406,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			if (filtro.getIdCota() != null) {
 				hql += " and rateios.cota.id = :idCota ";
 			}
-						
+			
+            if (filtro.getNumeroCota()!=null){
+				hql += " and rateios.cota.numeroCota = :numeroCota ";
+			}
+					
 			if (filtro.getPeriodoVO() != null
 					&& filtro.getPeriodoVO().getDataInicial() != null
 					&& filtro.getPeriodoVO().getDataFinal() != null) {
@@ -417,6 +454,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		if (filtro.getIdCota() != null) {
 			query.setParameter("idCota", filtro.getIdCota());
+		}
+		
+		if (filtro.getNumeroCota()!=null){
+			query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 		
 		if (filtro.getPeriodoVO() != null
