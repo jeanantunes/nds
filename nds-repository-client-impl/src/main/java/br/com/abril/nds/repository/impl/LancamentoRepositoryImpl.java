@@ -259,8 +259,6 @@ public class LancamentoRepositoryImpl extends
 			hql.append(" join produto.fornecedores fornecedor ");
 		}
 		
-		hql.append(" left join lancamento.recebimentos itemRecebido ");
-		
 		hql.append(" left join produtoEdicao.estoqueProduto estoque ");
 		
 		hql.append(" left join lancamento.estudo estudo ");
