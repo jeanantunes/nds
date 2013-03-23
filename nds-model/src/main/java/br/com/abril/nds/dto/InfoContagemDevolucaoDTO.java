@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -19,7 +20,7 @@ public class InfoContagemDevolucaoDTO implements Serializable {
 	
 	private Integer qtdTotalRegistro;
 	
-	@Export(label="Valor Total Geral", alignWithHeader="Total R$")
+	@Export(label="Valor Total Geral", alignWithHeader="Total R$", fontSize=9, columnType=ColumType.MOEDA)
 	private BigDecimal valorTotalGeral;
 	
 	public InfoContagemDevolucaoDTO() {}
