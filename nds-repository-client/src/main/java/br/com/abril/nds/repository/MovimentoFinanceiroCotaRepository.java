@@ -135,7 +135,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	 * 
 	 * @return MovimentoFinanceiroCota
 	 */
-	MovimentoFinanceiroCota obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota);
+	List<MovimentoFinanceiroCota> obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota);
 	
 	BigDecimal obterSaldoDistribuidor(Date data, 
 							 	      TipoCota tipoCota, 

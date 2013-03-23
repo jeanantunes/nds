@@ -193,7 +193,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 								   
-	public MovimentoFinanceiroCota obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota) {
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota) {
 
 		StringBuffer hql = new StringBuffer();
 		
@@ -217,7 +217,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		query.setMaxResults(1);
 		
-		return (MovimentoFinanceiroCota) query.uniqueResult();
+		return query.list();
 		
 	}
 	

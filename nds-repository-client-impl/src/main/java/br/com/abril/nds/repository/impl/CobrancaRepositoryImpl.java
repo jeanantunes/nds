@@ -284,19 +284,15 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select cobranca.valor ")
+		hql.append(" select sum(cobranca.valor) ")
 			.append(" from Cobranca cobranca inner join cobranca.cota cota ")
 			.append(" where cota.numeroCota		  =	 :numeroCota ")
-			.append(" and cobranca.statusCobranca =  :status ")
-			.append(" and cobranca.divida.data = ")
-			.append(" 	  (select max(divida.data) ")
-			.append(" 			  from Divida divida ")
-			.append(" 			  where divida.cota.numeroCota = :numeroCota) ");
-		
+			.append(" and cobranca.statusCobranca =  :status ");
+
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
 		query.setParameter("numeroCota", numeroCota);
-		
+
 		return   (BigDecimal) query.uniqueResult();
 	}
 

@@ -1123,7 +1123,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						controleConfEncalheCota.getId(), 
 						controleConfEncalheCota.getCota().getId());
 			}
-			
 		} 			
 		
 		controleConfEncalheCota = 
@@ -1264,27 +1263,31 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void resetarDadosFinanceirosConferenciaEncalheCota(Long idControleConferenciaEncalheCota, Long idCota) {
 		
-		MovimentoFinanceiroCota movimentoFinanceiroCota = movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
+		List<MovimentoFinanceiroCota> movimentosFinanceiroCota = 
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
 		
-		if(movimentoFinanceiroCota!=null) {
+		if(movimentosFinanceiroCota!=null && !movimentosFinanceiroCota.isEmpty()) {
 			
-			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
-			
-			if (movimentoFinanceiroCota.getMovimentos() != null){
+			for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentosFinanceiroCota) {
+
+				gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
 				
-				for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
+				if (movimentoFinanceiroCota.getMovimentos() != null){
 					
-					mec.setMovimentoFinanceiroCota(null);
-					
-					this.movimentoEstoqueCotaRepository.merge(mec);
+					for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
+						
+						mec.setMovimentoFinanceiroCota(null);
+						
+						this.movimentoEstoqueCotaRepository.merge(mec);
+					}
 				}
+
+				movimentoFinanceiroCota.setConsolidadoFinanceiroCota(null);
+				
+				this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 			}
-			
-			movimentoFinanceiroCota.setConsolidadoFinanceiroCota(null);
-			
-			this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 		}
-		
+
 		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
 				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 						GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
