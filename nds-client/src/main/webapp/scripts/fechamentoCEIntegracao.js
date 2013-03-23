@@ -1,6 +1,6 @@
 var fechamentoCEIntegracaoController = $.extend(true, {
 	
-	idsProdEdicao : [],
+	itensCEIntegracao : [],
 	
 	init : function(){
 		fechamentoCEIntegracaoController.initGrid();
@@ -156,31 +156,54 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		
 	},
 	
-	tratarAlteracaoEncalhe : function(idProdEdicao, encalhe) {
+	tratarAlteracaoEncalhe : function(idItemCeIntegracao) {
 		
-		var reparte = $("#reparte" + idProdEdicao).html();
-		var precoCapa = $("#precoCapa" + idProdEdicao).html();
+		var reparte = $("#reparte" + idItemCeIntegracao).html();
+		var precoCapa = $("#precoCapa" + idItemCeIntegracao).html();
+		var encalhe = $("#inputEncalhe" + idItemCeIntegracao).val();
 		
 		var venda = reparte - encalhe;
 		var valorVenda = venda * priceToFloat(precoCapa);
 		var valorVendaFormatado = floatToPrice(valorVenda);
 		
-		$("#venda" + idProdEdicao).html(venda);
-		$("#valorVenda" + idProdEdicao).html(valorVendaFormatado);
-		
-		for(var id in fechamentoCEIntegracaoController.idsProdEdicao) {
-			if(fechamentoCEIntegracaoController.idsProdEdicao[id].name == idProdEdicao) {
-				fechamentoCEIntegracaoController.idsProdEdicao[id].value = encalhe;
-			}
+		if (reparte < encalhe) {
+			
+			exibirMensagem(
+				'WARNING', ["A quantidade de encalhe não pode exceder a quantidade do reparte!"]);
+			
+			$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+				
+				if(itemCEIntegracao.id == idItemCeIntegracao) {
+					
+					var encalhe = itemCEIntegracao.encalhe;
+					
+					$("#inputEncalhe" + idItemCeIntegracao).val(encalhe);
+					
+					return false;
+				}
+			});
+			
+			return;
 		}
 		
-		//TODO: idItemChamadaFornecedor
-		var idItemChamadaFornecedor = 10;
+		$("#venda" + idItemCeIntegracao).html(venda);
+		$("#valorVenda" + idItemCeIntegracao).html(valorVendaFormatado);
 		
-		fechamentoCEIntegracaoController.obterTotais(idItemChamadaFornecedor, encalhe);
+		$.each(fechamentoCEIntegracaoController.itensCEIntegracao, function(index, itemCEIntegracao) {
+		
+			if(itemCEIntegracao.id == idItemCeIntegracao) {
+				
+				itemCEIntegracao.encalhe = encalhe;
+				itemCEIntegracao.venda = venda;
+				
+				return false;
+			}
+		});
+		
+		fechamentoCEIntegracaoController.atualizarEncalheCalcularTotais(idItemCeIntegracao, encalhe);
 	},
 	
-	obterTotais : function(idItemChamadaFornecedor, encalhe) {
+	atualizarEncalheCalcularTotais : function(idItemChamadaFornecedor, encalhe) {
 		
 		var data = {
 			'idItemChamadaFornecedor': idItemChamadaFornecedor, 'encalhe': encalhe
@@ -208,35 +231,37 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 			
 			if (!resultado.semanaFechada) {
 
+				fechamentoCEIntegracaoController.itensCEIntegracao = [];
+				
 				$.each(resultado.listaFechamento.rows, function(index, row) {
 					
-					//fechamentoCEIntegracaoController.idsProdEdicao = [];
-					
-					fechamentoCEIntegracaoController.idsProdEdicao.push({name: row.cell.idProdutoEdicao, value: row.cell.encalhe});
+					fechamentoCEIntegracaoController.itensCEIntegracao.push(
+						{id: row.cell.idItemCeIntegracao, encalhe: row.cell.encalhe, venda: row.cell.venda});
 					
 					var colunaReparte =
-						'<span id="reparte' + row.cell.idProdutoEdicao + '">' +
+						'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
 							row.cell.reparte +
 						'</span>';
 					
 					var colunaEncalhe =
 						'<input type="text" name="inputEncalhe"' +
-						'id="inputEncalhe' + row.cell.sequencial + '"' +
+						'id="inputEncalhe' + row.cell.idItemCeIntegracao + '"' +
 						'value="' + row.cell.encalhe + '" size="5px"' +
-						'onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe('+ row.cell.idProdutoEdicao +', this.value)"/>';
+						'onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
+						row.cell.idItemCeIntegracao + ')"/>';
 					
 					var colunaVenda =
-						'<span id="venda' + row.cell.idProdutoEdicao + '">' +
+						'<span id="venda' + row.cell.idItemCeIntegracao + '">' +
 							row.cell.venda +
 						'</span>';
 					
 					var colunaPrecoCapa =
-						'<span id="precoCapa' + row.cell.idProdutoEdicao + '">' +
+						'<span id="precoCapa' + row.cell.idItemCeIntegracao + '">' +
 							row.cell.precoCapaFormatado +
 						'</span>';
 					
 					var colunaValorVenda =
-						'<span id="valorVenda' + row.cell.idProdutoEdicao + '">' +
+						'<span id="valorVenda' + row.cell.idItemCeIntegracao + '">' +
 							row.cell.valorVendaFormatado +
 						'</span>';
 					
@@ -287,7 +312,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		var listaEncalhe = new Array();
 		var listaIdProdutoEdicao = new Array();
 		for(var id in fechamentoCEIntegracaoController.idsProdEdicao) {
-			listaEncalhe[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].value;
+			listaEncalhe[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].encalhe;
 			listaIdProdutoEdicao[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].name;
 		}
 	
