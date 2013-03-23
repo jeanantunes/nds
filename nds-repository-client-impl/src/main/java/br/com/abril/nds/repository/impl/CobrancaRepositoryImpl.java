@@ -353,10 +353,12 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select sum(cobranca.valor) ")
-			.append(" from Cobranca cobranca inner join cobranca.cota cota ")
+		hql.append(" select sum(cobranca.valor + cobranca.encargos) ")
+			.append(" from Cobranca cobranca, Distribuidor distribuidor ")
+			.append(" inner join cobranca.cota cota ")
 			.append(" where cota.numeroCota		  =	 :numeroCota ")
-			.append(" and cobranca.statusCobranca =  :status ");
+			.append(" and cobranca.statusCobranca =  :status ")
+			.append(" and cobranca.dataEmissao < distribuidor.dataOperacao ");
 
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("status", StatusCobranca.NAO_PAGO);
