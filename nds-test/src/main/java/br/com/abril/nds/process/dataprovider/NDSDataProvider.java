@@ -5,7 +5,10 @@ import java.util.List;
 
 import org.testng.ITestContext;
 
-public abstract class NDSDataProvider {
+import br.com.abril.nds.config.NDSConfig;
+
+
+public abstract class NDSDataProvider extends NDSConfig {
     
     protected static List<Long> getParamCotaId(ITestContext context) {
 

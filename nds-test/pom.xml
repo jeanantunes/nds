@@ -17,19 +17,6 @@
 	</properties>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<targetPath>${project.build.directory}/resources</targetPath>
-			</resource>
-			<resource>
-				<directory>src/main</directory>
-				<includes>
-					<include>**/*.bat</include>
-				</includes>
-				<targetPath>${project.build.directory}</targetPath>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -65,7 +52,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>package</phase>
+						<phase>install</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -75,14 +62,52 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- <plugin> -->
+			<!-- <artifactId>maven-clean-plugin</artifactId> -->
+			<!-- <version>2.5</version> -->
+			<!-- <configuration> -->
+			<!-- <filesets> -->
+			<!-- <fileset> -->
+			<!-- <directory>${project.build.directory}</directory> -->
+			<!-- <includes> -->
+			<!-- <include>**/*.jar</include> -->
+			<!-- </includes> -->
+			<!-- </fileset> -->
+			<!-- </filesets> -->
+			<!-- </configuration> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <phase>install</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>clean</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<targetPath>${project.build.directory}/resources</targetPath>
+			</resource>
+			<resource>
+				<directory>src/main/bin</directory>
+				<targetPath>${project.build.directory}/bin</targetPath>
+			</resource>
+			<!-- <resource> -->
+			<!-- <directory>${project.build.directory}</directory> -->
+			<!-- <includes> -->
+			<!-- <include>*.jar</include> -->
+			<!-- </includes> -->
+			<!-- <targetPath>${project.build.directory}/bin</targetPath> -->
+			<!-- </resource> -->
+		</resources>
 	</build>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
-			<version>6.8</version>
 		</dependency>
 
 		<dependency>
@@ -90,6 +115,62 @@
 			<artifactId>nds-estudo-algoritmo</artifactId>
 			<version>1.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+		</dependency>
+
 	</dependencies>
 
 </project>

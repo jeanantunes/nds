@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 
@@ -16,13 +17,16 @@ import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
 
 public abstract class CorrecaoIndividualDataProvider extends NDSDataProvider {
+    
+    @Autowired
+    private static CotaDAO cotaDAO;
 
     @DataProvider(name = "getEdicaoParaIndiceCorrecaoUmList")
     public static Iterator<EstoqueProdutoCota[]> getEdicaoParaIndiceCorrecaoUmList(ITestContext context) {
 
 	List<Long> listParamCotaId = getParamCotaId(context);
 
-	List<Cota> listCota = new CotaDAO().getCotaWithEstoqueProdutoCota();
+	List<Cota> listCota = cotaDAO.getCotaWithEstoqueProdutoCota();
 
 	List<EstoqueProdutoCota[]> listEstoqueProdutoCotas = new ArrayList<EstoqueProdutoCota[]>();
 

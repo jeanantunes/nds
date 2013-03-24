@@ -11,6 +11,7 @@
 			</class>
 		</classes>
 	</test>
+	<!-- 
 	<test verbose="2" name="Segundo Cenario">
 		<classes>
 			<class name="br.com.abril.nds.process.correcaovendas.CorrecaoIndividualTest">
@@ -29,4 +30,5 @@
 			</class>
 		</classes>
 	</test>
+	 -->
 </suite> <!-- Suite -->

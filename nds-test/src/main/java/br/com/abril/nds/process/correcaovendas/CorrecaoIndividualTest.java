@@ -12,10 +12,11 @@ import org.testng.annotations.Test;
 
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.process.NDSTest;
 import br.com.abril.nds.process.dataprovider.CorrecaoIndividualDataProvider;
 
-public class CorrecaoIndividualTest {
-    
+public class CorrecaoIndividualTest extends NDSTest {
+
     @Autowired
     private CorrecaoIndividual correcaoIndividual;
 
