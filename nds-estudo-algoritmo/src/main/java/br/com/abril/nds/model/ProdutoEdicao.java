@@ -51,4 +51,5 @@ public class ProdutoEdicao extends ProdutoEdicaoBase {
     public void setIdCota(Long idCota) {
 	this.idCota = idCota;
     }
+
 }
