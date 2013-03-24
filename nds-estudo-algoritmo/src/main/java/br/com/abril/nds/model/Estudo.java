@@ -36,6 +36,8 @@ public class Estudo extends GenericDTO<Estudo> {
 	// atributos utilizados 
 	private Date dataCadastro;
 	
+	private BigDecimal percentualBonificacao;
+	
 	public Estudo() {
 	    dataCadastro = new Date();
 	    status = "ESTUDO_FECHADO";
@@ -250,6 +252,14 @@ public class Estudo extends GenericDTO<Estudo> {
 
 	public void setReparteMinimo(BigDecimal reparteMinimo) {
 	    this.reparteMinimo = reparteMinimo;
+	}
+
+	public BigDecimal getPercentualBonificacao() {
+		return percentualBonificacao;
+	}
+
+	public void setPercentualBonificacao(BigDecimal percentualBonificacao) {
+		this.percentualBonificacao = percentualBonificacao;
 	}
 
 	@Override

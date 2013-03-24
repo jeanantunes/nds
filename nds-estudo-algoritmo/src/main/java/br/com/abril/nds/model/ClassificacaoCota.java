@@ -40,6 +40,10 @@ public enum ClassificacaoCota {
 	 */
 	BancaQueRecebemDeterminadoSegmento("GN"),
 	/**
+	 * S
+	 */
+	CotaNova("S"),
+	/**
 	 * SM
 	 */
 	BancaMixSemDeterminadaPublicacao("SM"),

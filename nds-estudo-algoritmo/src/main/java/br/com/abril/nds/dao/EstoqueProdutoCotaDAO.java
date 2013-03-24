@@ -14,6 +14,7 @@ import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
 
+@Deprecated
 @Repository
 public class EstoqueProdutoCotaDAO {
 
