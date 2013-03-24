@@ -3,6 +3,8 @@ package br.com.abril.nds.process.ajustecota;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
@@ -26,6 +28,7 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
  * Próximo Processo: {@link JornaleirosNovos}
  * </p>
  */
+@Component
 public class AjusteCota extends ProcessoAbstrato {
 
     public AjusteCota(Cota cota) {
