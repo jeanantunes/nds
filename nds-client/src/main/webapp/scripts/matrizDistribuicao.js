@@ -1,4 +1,4 @@
-﻿function MatrizDistribuicao(pathTela, descInstancia, workspace) {
+function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	var _workspace = workspace;
 	
@@ -147,9 +147,9 @@
 		if (typeof resultadoPesquisa[0] == 'undefined' || resultadoPesquisa[0].rows.length == 0) {
 			T.escondeGrid();
 		} else {
-			$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
-			$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
-			
+		$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
+		$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
+		
 			$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
 		}
 		
