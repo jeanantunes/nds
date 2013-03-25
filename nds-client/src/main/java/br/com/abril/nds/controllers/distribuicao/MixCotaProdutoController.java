@@ -1,12 +1,19 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -26,7 +33,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.PdvService;
@@ -38,7 +45,9 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -46,12 +55,14 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
+@SuppressWarnings("restriction")
 @Resource
 @Path("/distribuicao/mixCotaProduto")
 public class MixCotaProdutoController extends BaseController {
 
 	private static final String FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE = "filtroMixPorProduto";
 	private static final String FILTRO_MIX_COTA_SESSION_ATTRIBUTE = "filtroMixPorCota";
+	private static final String COTA_IMPORT_INCONSISTENTE="cotaImportInconsistente";
 
 	@Autowired
 	private Result result;
@@ -92,6 +103,9 @@ public class MixCotaProdutoController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 
+	@Autowired
+	private CotaService cotaService;
+	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO)
 	@Path("/")
 	public void index() {
@@ -362,6 +376,90 @@ public class MixCotaProdutoController extends BaseController {
 		boolean rangeEdicoesOK = (fixacaoReparteDTO.getEdicaoFinal() >= fixacaoReparteDTO
 				.getEdicaoInicial());
 		return rangeEdicoesOK;
+	}
+	
+	@Post
+	@Path("/uploadArquivoLote")
+	public void uploadExcel(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFile) throws FileNotFoundException, IOException{
+		
+		File file = XlsUploaderUtils.upLoadArquivo(excelFile);
+		
+		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, file );
+		
+		List<MixCotaDTO> mixCotaDTOInconsistente = importarMixCotaDTO(listMixExcel);
+		
+		//salvar lista listMixExcel 
+		List<MixCotaProdutoDTO> mixCotaProdutoDTOList = new ArrayList<MixCotaProdutoDTO>();
+		for (MixCotaDTO mixCotaDTO : listMixExcel) {
+			MixCotaProdutoDTO mix = new MixCotaProdutoDTO();
+			mix.setCodigoProduto(mixCotaDTO.getCodigoProduto());
+			mix.setNumeroCota(mixCotaDTO.getNumeroCota().toString());
+			mix.setReparteMinimo(mixCotaDTO.getReparteMinimo().longValue());
+			mix.setReparteMaximo(mixCotaDTO.getReparteMaximo().longValue());
+			mixCotaProdutoDTOList.add(mix);
+		}
+		this.mixCotaProdutoService.adicionarListaMixPorCota(mixCotaProdutoDTOList);
+		
+		//salvar em sessao mixxCotaDTOIconsistente para posteriormente mostrar na tela
+		session.setAttribute(COTA_IMPORT_INCONSISTENTE,mixCotaDTOInconsistente );
+		
+		/*this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas inseridas com sucesso!"),
+				"result").recursive().serialize();*/
+		this.result.use(Results.json()).from(mixCotaDTOInconsistente, "mixCotaDTOInconsistente").recursive().serialize();
+	}
+
+	private List<MixCotaDTO> importarMixCotaDTO(List<MixCotaDTO> listMixExcel) {
+		List<MixCotaDTO> listCotaInconsistente = new ArrayList<MixCotaDTO>();
+		for (MixCotaDTO mixCotaDTO : listMixExcel) {
+			if(StringUtils.isEmpty(mixCotaDTO.getCodigoProduto())
+					|| (mixCotaDTO.getNumeroCota()==null||mixCotaDTO.getNumeroCota().equals(0))
+					|| (mixCotaDTO.getReparteMinimo()==null||mixCotaDTO.getReparteMinimo().equals(BigInteger.ZERO))
+					|| (mixCotaDTO.getReparteMaximo()==null||mixCotaDTO.getReparteMaximo().equals(BigInteger.ZERO))){
+				listCotaInconsistente.add(mixCotaDTO);
+			}
+		}
+		listMixExcel.removeAll(listCotaInconsistente);
+		
+//		validar se o reparteMaximo é maior que o reparteMinimo
+		for (MixCotaDTO mixCotaDTO : listMixExcel) {
+			if(mixCotaDTO.getReparteMinimo().compareTo(mixCotaDTO.getReparteMaximo())==1){
+				listCotaInconsistente.add(mixCotaDTO);
+			}
+		}
+		listMixExcel.removeAll(listCotaInconsistente);
+
+//		validar se a cota existe		
+		Integer[] cotaIdArray = new Integer[listMixExcel.size()];
+		for (int i = 0; i < listMixExcel.size(); i++) {
+			cotaIdArray[i] = listMixExcel.get(i).getNumeroCota();
+		}
+		List<Integer> verificarNumeroCotaExiste = this.cotaService.verificarNumeroCotaExiste(cotaIdArray);
+		
+		for (MixCotaDTO mixCotaDTO : listMixExcel) {
+			if(!verificarNumeroCotaExiste.contains(mixCotaDTO.getNumeroCota())){
+				listCotaInconsistente.add(mixCotaDTO);
+			}
+		}
+		listMixExcel.removeAll(listCotaInconsistente);
+
+
+		/*
+		validar se o produto é um produtoValido
+		*/
+		String[] codigoProdutoArray = new String[listMixExcel.size()];
+		for (int i = 0; i < listMixExcel.size(); i++) {
+			codigoProdutoArray[i]=listMixExcel.get(i).getCodigoProduto();
+		}
+		
+		List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
+		for (MixCotaDTO mixCotaDTO : listMixExcel) {
+			if(!verificarProdutoExiste.contains(mixCotaDTO.getCodigoProduto())){
+				listCotaInconsistente.add(mixCotaDTO);
+			}
+		}
+		listMixExcel.removeAll(listCotaInconsistente);
+		
+		return listCotaInconsistente;
 	}
 
 }

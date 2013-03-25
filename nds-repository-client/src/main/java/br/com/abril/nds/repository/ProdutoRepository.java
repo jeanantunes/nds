@@ -76,4 +76,6 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	
 	List<Produto> buscarProdutosBalanceadosOrdenadosNome(Date dataLancamento);
 	
+	List<String> verificarProdutoExiste(String[] codigoProduto);
+	
 }

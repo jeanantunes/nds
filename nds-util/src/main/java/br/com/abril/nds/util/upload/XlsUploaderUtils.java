@@ -3,7 +3,9 @@ package br.com.abril.nds.util.upload;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -16,8 +18,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 /**
  * @author Thiago
@@ -191,5 +196,18 @@ public class XlsUploaderUtils {
 				return cell.getStringCellValue();
 		}
 		return null;
-	}	
+	}
+	
+	
+	public static File upLoadArquivo(UploadedFile xls) throws IOException, FileNotFoundException {
+		
+		File x = new File(xls.getFileName());
+	    
+		File destino = new File(xls.getFileName());  
+	    destino.createNewFile();  
+	    
+	    InputStream stream = xls.getFile();  
+	    IOUtils.copy(stream,new FileOutputStream(destino));
+		return x;
+	}
 }
