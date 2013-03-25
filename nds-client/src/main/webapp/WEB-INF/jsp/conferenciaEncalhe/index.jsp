@@ -1,3 +1,5 @@
+<%@ page session="true" %> 
+
 <head>
 
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -21,16 +23,15 @@
 	</style>
 	
 	<script type="text/javascript">
-		var ID_BOX_LOGADO = '<c:out value="${idBoxLogado}"/>';
-		$('#boxLogado option[value="<c:out value='${idBoxLogado}'/>"]').attr("selected","selected");
+		var ID_BOX_LOGADO = "${conferenciaEncalheSessionScopeAttr.idBoxLogado}";
+		$('#boxLogado option[value="${conferenciaEncalheSessionScopeAttr.idBoxLogado}"]').attr("selected","selected");
 		
 		var VEIO_DO_BT_BOX_ENCALHE = false;
 		
-		//Solicita seleÃ§Ã£o do box caso usuÃ¡rio nÃ£o esteja associado.
+		//Solicita seleção do box caso usuário não esteja associado.
 		if(ID_BOX_LOGADO == ""){
 			ConferenciaEncalhe.popup_logado();
 		}else{
-			<c:set var="idBoxLogado" value="${idBoxLogado}" scope="session"/>
 			focusSelectRefField($('#numeroCota', ConferenciaEncalhe.workspace));
 		}
 		
