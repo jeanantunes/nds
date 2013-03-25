@@ -5,7 +5,7 @@ $(document).ready(function(){
 	
 	jQuery(":input[maxlength]").keyup(function () {
 	    var focus = jQuery(this);
-	    var valFocus;
+	    var valFocus = null;
 	    try {
 	        if (typeof jQuery(focus).mask() == 'string') {
 	            valFocus = jQuery(focus).val().replace("_", "");
@@ -309,7 +309,7 @@ function doGet(url, params, target) {
 }
 
 function newOption(value, label) {
-    return "<option value='" + value + "'>" + label + "</option>"
+    return "<option value='" + value + "'>" + label + "</option>";
 }
 
 function replaceAll(string, token, newtoken) {
@@ -445,6 +445,7 @@ function getCurrentTabContainer(){
 	
 	return currentTab;
 }
+
 function focusSelectRefField(objectField){
 	setTimeout (function () {objectField.focus();objectField.select();}, 1);
 }
@@ -454,7 +455,7 @@ function focusFirstContentView(context){
 }
 
 function focusFirstContentModal(){
-	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus()}, 1);
+	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus();}, 1);
 }
 
 function keyEventEnterAux(e){
@@ -472,4 +473,9 @@ function keyEventEnterAux(e){
 	}
 	
 	return false;
+}
+
+function addTabWithPost(tabs, label, postResponse, blankPath) {
+	tabs.tabs({load : function( event, ui ) { $('#'+ ui.panel.id).html(postResponse); }});
+	tabs.tabs('addTab', label, blankPath);
 }
