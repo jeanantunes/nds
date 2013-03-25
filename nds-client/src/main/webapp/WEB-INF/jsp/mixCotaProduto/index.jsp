@@ -126,13 +126,13 @@
 </div>
 
 	<!-- DIALOG EXCLUSAO TODOS REGISTROS-->	
-	<div id="dialog-excluirTodos" title="Excluir Fixa��o" style="display:none;">
+	<div id="dialog-excluirTodos" title="Excluir Fixação" style="display:none;">
 	<p>Confirma a exclus&atilde;o de todos os registros?</p>
 	</div>
 	
 	<!-- DIALOG EXCLUSAO -->	
-	<div id="dialog-excluir" title="Excluir Fixa��o" style="display:none;">
-	<p>Confirma a exclus&atilde;o desta Fixa��o?</p>
+	<div id="dialog-excluir" title="Excluir Fixação" style="display:none;">
+	<p>Confirma a exclus&atilde;o desta Fixa&ccedil;&atilde;o?</p>
 	</div>
 	
 	<!-- DIALOG REPARTE -->	
