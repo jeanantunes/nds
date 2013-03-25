@@ -3,6 +3,7 @@
 .classpath
 .project
 .metadata
+.settings/
 bin
 target
 META-INF/
