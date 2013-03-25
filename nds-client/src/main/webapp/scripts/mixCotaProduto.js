@@ -496,7 +496,7 @@ var mixCotaProdutoController = $.extend(true, {
 		}else{
 			$(".mixProdutosGrid").flexReload();
 		}
-		exibirMensagem("SUCCESS", ["Opera��o Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
 	},
 	
 	//retorna msg de erro durante exclusao Todos
@@ -655,7 +655,7 @@ var mixCotaProdutoController = $.extend(true, {
 		//valida codigo duplicado
 		for ( var int = 0; int < countLinhas; int++) {
 			if(a.indexOf($("#codigoModal"+int).val())>-1){
-				exibirMensagem("WARNING", ["C�digo de produto j� utilizado."]);
+				exibirMensagem("WARNING", ["Código de produto já utilizado."]);
 				return false;
 			}else{
 				a.push($("#codigoModal"+int).val());
@@ -670,7 +670,7 @@ var mixCotaProdutoController = $.extend(true, {
 			var repMax = parseInt($("#repMaximo"+int2).val());
 			
 			if(repMin>repMax){
-				exibirMensagem("WARNING", ["Reparte M�nimo maior que Reparte M�ximo para o produto."]);
+				exibirMensagem("WARNING", ["Reparte Mínimo maior que Reparte Máximo para o produto."]);
 				return false;
 			}
 		}
@@ -681,12 +681,12 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	adicionarMixCotaSucesso:function(result){
 		$(".mixCotasGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Opera��o Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
 	},
 	
 	adicionarMixProdutoSucesso:function(result){
 		$(".mixProdutosGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Opera��o Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
 	},
 	
 	

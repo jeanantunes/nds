@@ -54,7 +54,7 @@
           <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
          
          <span class="bt_novos" title="Novo"  id="btNovoMixCota"><a href="javascript:mixCotaProdutoController.novoMixPorCota();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-         <!--<span class="bt_novos" title="Histórico"><a href="javascript:;" onclick="mostra_historico();"><img src="../images/ico_msg_anteriores.gif" hspace="5" border="0" />Histórico</a></span>-->
+         <!--<span class="bt_novos" title="Histï¿½rico"><a href="javascript:;" onclick="mostra_historico();"><img src="../images/ico_msg_anteriores.gif" hspace="5" border="0" />Histï¿½rico</a></span>-->
          <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoMixCota"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridCota?fileType=XLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
          <span class="bt_novos" title="Imprimir" id="btImprimirMixCota"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridCota?fileType=PDF"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
 		 <span class="bt_novos" title="Excluir Todos" id="btExcluirTudoCota"><a href="javascript:mixCotaProdutoController.excluirTodos();"><img src="images/ico_excluir.gif" alt="Excluir Todos" hspace="5" border="0" />Excluir Todos</a></span>
@@ -98,11 +98,11 @@
    		<legend>Dados do Produto</legend>
     	<table width="500" border="0" cellspacing="1" cellpadding="1">
           
-          <td width="42"><strong>Código:</strong></td>
+          <td width="42"><strong>C&oacute;digo:</strong></td>
             <td width="92">&nbsp;<span id="codigoProdutoModalReparte"></td>
             <td width="44"><strong>Produto:</strong></td>
             <td width="400">&nbsp;<span id="nomeProdutoModalReparte" ></td>
-            <td width="44"><strong>Classificação:</strong></td>
+            <td width="44"><strong>Classifica&ccedil;&atilde;o:</strong></td>
             <td width="155">&nbsp;<span id="classificacaoModalReparte"></td>
           
         </table>
@@ -126,18 +126,18 @@
 </div>
 
 	<!-- DIALOG EXCLUSAO TODOS REGISTROS-->	
-	<div id="dialog-excluirTodos" title="Excluir Fixação" style="display:none;">
-	<p>Confirma a exclusão de todos os registros?</p>
+	<div id="dialog-excluirTodos" title="Excluir Fixaï¿½ï¿½o" style="display:none;">
+	<p>Confirma a exclus&atilde;o de todos os registros?</p>
 	</div>
 	
 	<!-- DIALOG EXCLUSAO -->	
-	<div id="dialog-excluir" title="Excluir Fixação" style="display:none;">
-	<p>Confirma a exclusão desta Fixação?</p>
+	<div id="dialog-excluir" title="Excluir Fixaï¿½ï¿½o" style="display:none;">
+	<p>Confirma a exclus&atilde;o desta Fixaï¿½ï¿½o?</p>
 	</div>
 	
 	<!-- DIALOG REPARTE -->	
 	<div id="dialog-confirma-reparte" title="Confirma Reparte PDV" style="display:none;">
-	<p>A soma dos valores dos repartes definidos está maior que o valor de reparte máximo. Deseja prosseguir?</p>
+	<p>A soma dos valores dos repartes definidos est&aacute; maior que o valor de reparte m&aacute;ximo. Deseja prosseguir?</p>
 	</div>
 	
 	<!-- DIALOG NOVO MIX POR COTA -->	
@@ -145,7 +145,7 @@
 	<table id="tableNovoCota" border="0" cellspacing="1" cellpadding="1" >
          <thead>
         		<tr>
-         		<td><strong>Código:</strong></td>
+         		<td><strong>C&oacute;digo:</strong></td>
          		<td><strong>Produto:</strong></td>
          		<td><strong>Rep. Minimo:</strong></td>
          		<td><strong>Rep. Maximo:</strong></td>
@@ -169,7 +169,7 @@
 	<table id="tableNovoProduto" border="0" cellspacing="1" cellpadding="1" >
          <thead>
         		<tr>
-         		<td><strong>Código:</strong></td>
+         		<td><strong>C&oacute;digo:</strong></td>
          		<td><strong>Cota:</strong></td>
          		<td><strong>Rep. Minimo:</strong></td>
          		<td><strong>Rep. Maximo:</strong></td>
