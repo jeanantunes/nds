@@ -58,6 +58,10 @@ function filtroPercVenda(){
 	<img id="imagemCapaEdicao" width="235" height="314" />
 </div>
 
+<div id="analiseHistoricoContent"/>
+
+<div id="baseAnalise"> 
+
 <div class="corpo">
    
     <div class="container">
@@ -129,24 +133,24 @@ function filtroPercVenda(){
             <td width="62"><input type="text" onkeydown="onlyNumeric(event);" name="filtro.qtdReparteInicial" id="qtdReparteInicial" style="width:40px; text-align:center;" class="filtroQtdeReparte"  /></td>
             <td width="35"><span class="filtroQtdeReparte">Final:</span></td>
             <td width="46"><input type="text" onkeydown="onlyNumeric(event);" name="filtro.qtdReparteFinal" id="qtdReparteFinal" style="width:40px; text-align:center;" class="filtroQtdeReparte"  /></td>
-            <td width="15"><span class="classPesquisar filtroQtdeReparte"><a href="javascript:;" id="pesquisaPorReparte"></a></span></td>
+            <td width="15"><span class="classPesquisar filtroQtdeReparte"><a href="javascript:;" id="pesquisaPorQtdReparte"></a></span></td>
           </tr>
           <tr>
             <td><input type="radio" name="filtroPor" id="radio4" value="radio" onclick="filtroVenda();" /></td>
             <td><strong>Qtde. Venda:</strong></td>
             <td><span class="filtroQtdeVenda">Inicial:</span></td>
-            <td><input type="text" name="textfield4" id="textfield4" style="width:40px; text-align:center;" class="filtroQtdeVenda"  /></td>
+            <td><input type="text" onkeydown="onlyNumeric(event);" name="filtro.qtdVendaInicial" id="qtdVendaInicial" style="width:40px; text-align:center;" class="filtroQtdeVenda"  /></td>
             <td><span class="filtroQtdeVenda">Final:</span></td>
-            <td><input type="text" name="textfield" id="textfield" style="width:40px; text-align:center;" class="filtroQtdeVenda" /></td>
-            <td width="15"><span class="classPesquisar filtroQtdeVenda"><a href="javascript:;"></a></span></td>
+            <td><input type="text" onkeydown="onlyNumeric(event);" name="filtro.qtdVendaFinal" id="qtdVendaFinal" style="width:40px; text-align:center;" class="filtroQtdeVenda" /></td>
+            <td width="15"><span class="classPesquisar filtroQtdeVenda"><a href="javascript:;" id="pesquisaPorQtdVenda"></a></span></td>
           </tr>
           <tr>
             <td><input type="radio" name="filtroPor" id="radio5" value="radio" onclick="filtroPercVenda();" /></td>
             <td><strong>% Venda:</strong></td>
             <td>
-            <span class="filtroPercVenda"><input name="" type="text" style="width:30px;" />%</span>
+            <span class="filtroPercVenda"><input onkeydown="onlyNumeric(event);"  name="filtro.percentualVenda" id="percentualVenda" type="text" style="width:30px;" />%</span>
             </td>
-            <td width="15"><span class="classPesquisar filtroPercVenda"><a href="javascript:;"></a></span></td>
+            <td width="15"><span class="classPesquisar filtroPercVenda"><a href="javascript:;" id="pesquisaPorPercentualVenda"></a></span></td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
@@ -158,17 +162,17 @@ function filtroPercVenda(){
             <td width="69"><strong>Componentes:</strong></td>
             <td width="523" colspan="10"><table border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorSegmento" style="display:noneA;">
               <tr>
-                <td width="110"><select name="filtro.componentePdv" id="componente"  style="width:110px;" class="filtroComponentes">
+                <td width="110"><select name="filtro.componentesPdv" id="componente"  style="width:110px;" class="filtroComponentes">
                   <option selected="selected">Selecione...</option>
                   <c:forEach items="${componenteList}" var="componente" varStatus="idx">
 						<option value="${idx.count-1}">${componente.descricao}</option>
 					</c:forEach>
                 </select></td>
                 <td width="36"><span class="filtroComponentes">Elem.:</span></td>
-                <td width="110"><select name="elemento" id="elemento" style="width:110px;" class="filtroComponentes">
+                <td width="110"><select name="filtro.elemento" id="elemento" style="width:110px;" class="filtroComponentes">
                   <option selected="selected">Selecione...</option>
                 </select></td>
-                <td width="15"><span class="classPesquisar filtroComponentes"><a href="javascript:;">&nbsp;</a></span></td>
+                <td width="15"><span class="classPesquisar filtroComponentes"><a href="javascript:;" id="pesquisaPorComponenentes">&nbsp;</a></span></td>
               </tr>
             </table></td>
           </tr>
@@ -179,8 +183,8 @@ function filtroPercVenda(){
             <td width="27"><strong>Cota:</strong></td>
             <td colspan="2"><input type="text" name="filtro.cotaDto.numeroCota" id="numeroCota" style="width:60px;" class="filtroCotas"  /></td>
             <td width="30"><span class="filtroCotas"><strong>Nome:</strong></span></td>
-            <td width="207"><input type="text" name="filtro.cotaDto.nomeCota" id="nomeCota" style="width:200px;" class="filtroCotas"  /></td>
-            <td width="23"><span class="classPesquisar filtroCotas"><a href="javascript:;">&nbsp;</a></span></td>
+            <td width="207"><input type="text" name="filtro.cotaDto.nomePessoa" id="nomePessoa" style="width:200px;" class="filtroCotas"  /></td>
+            <td width="23"><span class="classPesquisar filtroCotas"><a href="javascript:;" id="pesquisaCotaPorNumeroOuNome">&nbsp;</a></span></td>
           </tr>
   	</table>
   </form>
@@ -190,7 +194,7 @@ function filtroPercVenda(){
 
        	<table class="pesqHistoricoGrid"></table>
        	
-        <span class="bt_novos" title="Analisar" style="float:right;"><a href="analise_historico.htm"><img src="images/ico_copia_distrib.gif" hspace="5" border="0" />Analisar</a></span>
+        <span class="bt_novos" title="Analisar" style="float:right;"><a href="javascript:;" id="analiseHistorico"><img src="images/ico_copia_distrib.gif" hspace="5" border="0" />Analisar</a></span>
         
         <span class="bt_novos" title="Cancelar" style="float:right;"><a href="javascript:;"><img src="images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a></span>
 
@@ -208,209 +212,4 @@ function filtroPercVenda(){
     
     </div>
 </div> 
-<script>
-$(".edicaoSelecionadaGrid").flexigrid({
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 45,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Produto',
-				name : 'produto',
-				width : 140,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Edição',
-				name : 'numeroEdicao',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Período',
-				name : 'periodo',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 40,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Venda',
-				name : 'venda',
-				width : 40,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 480,
-			height : 110
-		});
-
-$(".segmentoCotaGrid").flexigrid({
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Segmento',
-				name : 'segmento',
-				width : 260,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Usuário',
-				name : 'usuario',
-				width : 100,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Data',
-				name : 'data',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Hora',
-				name : 'hora',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			},  {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 510,
-			height : 250
-		});
-	$(".pesqBancasGrid").flexigrid({
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 110,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'Nome',
-				width : 400,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : '',
-				name : 'sel',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 600,
-			height : 200
-		});
-		
-		
-		$(".segmentosGrid").flexigrid({
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 50,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'Nome',
-				width : 160,
-				sortable : true,
-				align : 'left'
-			},  {
-				display : '',
-				name : 'sel',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			width : 300,
-			height : 235
-		});
-		
-	$(".segmentoNaoRecebidaGrid").flexigrid({
-			dataType : 'xml',
-			colModel : [ {
-				display : 'Cota',
-				name : 'cota',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Status',
-				name : 'status',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Nome',
-				name : 'Nome',
-				width : 130,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Usuário',
-				name : 'usuario',
-				width : 115,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Data',
-				name : 'data',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Hora',
-				name : 'hora',
-				width : 60,
-				sortable : true,
-				align : 'center'
-			},  {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			sortname : "cota",
-			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
-			width : 630,
-			height : 250
-		});
-</script>
+</div>

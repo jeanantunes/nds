@@ -488,6 +488,7 @@ public class Fixture {
 			boolean ativo,
 			Cota cota){
 		CotaAusente cotaAusente = new CotaAusente();
+		cotaAusente.setAtivo(ativo);
 		cotaAusente.setCota(cota);
 		cotaAusente.setData(data);
 		return cotaAusente;
