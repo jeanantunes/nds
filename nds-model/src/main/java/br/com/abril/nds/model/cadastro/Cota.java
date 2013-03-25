@@ -175,11 +175,6 @@ public class Cota implements Serializable {
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
 	
-	
-	@Column(name="TIPO_COTA", nullable= false)
-	private String tipoCota;
-	
-	
 	public Cota() {
         this.inicioAtividade = new Date();
         this.inicioTitularidade = new Date();
@@ -562,7 +557,6 @@ public class Cota implements Serializable {
 		return null;
 	}
 
-
 	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
 		return tipoDistribuicaoCota;
 	}
@@ -571,13 +565,4 @@ public class Cota implements Serializable {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
 
-
-	public String getTipoCota() {
-		return tipoCota;
-	}
-
-
-	public void setTipoCota(String tipoCota) {
-		this.tipoCota = tipoCota;
-	}
 }
