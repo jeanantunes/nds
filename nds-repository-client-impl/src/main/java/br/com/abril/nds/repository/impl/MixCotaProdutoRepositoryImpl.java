@@ -125,7 +125,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" coalesce(avg(lancamento.reparte),0) as reparteMedio, coalesce(avg(venda_produto.valor_total_venda),0) as vendaMedia, ")
-		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LAN�ADA','CALCULADA') limit 1),0) as ultimoReparte ")
+		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		.append(" FROM lancamento ") 
 		.append(" LEFT join produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID ")
 		.append(" LEFT join produto on produto_edicao.ID = produto.ID ") 
@@ -136,22 +136,24 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
 		.append(" LEFT join pessoa on cota.pessoa_id = pessoa.id ")
 		
-		.append(" where ");
+		.append(" where ")
+		.append(" lancamento.status='FECHADO' ");
 		if(filtroConsultaMixProdutoDTO.getCodigoProduto()!=null ){
-			sql.append("produto.CODIGO = :codigoProduto ");
+			sql.append(" and produto.CODIGO = :codigoProduto ");
 		}
 		if(isClassificacaoPreenchida){
 			sql.append(" and upper(tipo_classificacao_produto.descricao) = upper(:classificacaoProduto)");
 		}
-		sql.append(" and lancamento.status='FECHADO' ")
-		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
+		sql.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" GROUP BY produto.id")
 		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
 	
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
-		query.setParameter("codigoProduto", filtroConsultaMixProdutoDTO.getCodigoProduto());
+		if(filtroConsultaMixProdutoDTO.getCodigoProduto()!=null){
+			query.setParameter("codigoProduto", filtroConsultaMixProdutoDTO.getCodigoProduto());
+		}
 		if(isClassificacaoPreenchida){
 			query.setParameter("classificacaoProduto", filtroConsultaMixProdutoDTO.getClassificacaoProduto());
 		}

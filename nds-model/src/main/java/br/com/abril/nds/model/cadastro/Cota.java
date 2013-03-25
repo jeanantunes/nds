@@ -568,14 +568,6 @@ public class Cota implements Serializable {
 	}
 
 
-	public String getTipoCota() {
-		return tipoCota;
-	}
-
-
-	public void setTipoCota(String tipoCota) {
-		this.tipoCota = tipoCota;
-	}
 
 
 	

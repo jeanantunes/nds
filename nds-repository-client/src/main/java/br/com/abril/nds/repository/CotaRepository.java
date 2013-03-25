@@ -371,4 +371,5 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 	
+	List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
 }

@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.FixacaoReparteCotaDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
@@ -35,7 +38,9 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -127,11 +132,12 @@ public class FixacaoReparteController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		tratarFiltroPorCota(filtro);
-		
+		//remove tipo cota adicionado no autocomplete	
+		filtro.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtro.getNomeCota()));
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorCota(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "N�o Foram encontrados resultados para a pesquisa");	
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");	
 		}
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelCota = montarTableModelCota(filtro);
@@ -433,6 +439,68 @@ public class FixacaoReparteController extends BaseController {
 		}
 		
 		return statusOK ;
+	}
+	
+	@Post
+	@Path("/uploadArquivoLoteFixacao")
+	public void uploadArquivoEmLote(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFileFixacao) throws FileNotFoundException, IOException{
+		List<FixacaoReparteDTO> listaRegistrosInvalidosExcel=null;
+		File file = XlsUploaderUtils.upLoadArquivo(excelFileFixacao);
+		List<FixacaoReparteDTO> listaFixacaoExcel = XlsUploaderUtils.getBeanListFromXls(FixacaoReparteDTO.class, file );
+	
+		if(!isListaVazia(listaFixacaoExcel)){
+			 listaRegistrosInvalidosExcel = obterListaInvalidos(listaFixacaoExcel);
+		}
+		
+		
+		
+	}
+
+
+	private List<FixacaoReparteDTO> obterListaInvalidos(List<FixacaoReparteDTO> listaFixacaoExcel) {
+		List<FixacaoReparteDTO>invalidos = null;
+		for(FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel){
+		//  validar se a cota existe  
+			  Integer[] cotaIdArray = new Integer[listaFixacaoExcel.size()];
+			  for (int i = 0; i < listaFixacaoExcel.size(); i++) {
+			   cotaIdArray[i] = listaFixacaoExcel.get(i).getCotaFixada();
+			  }
+			  List<Integer> verificarNumeroCotaExiste = this.cotaService.verificarNumeroCotaExiste(cotaIdArray);
+			  
+			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
+			   if(!verificarNumeroCotaExiste.contains(fixacaoDTO.getCotaFixada())){
+			    invalidos.add(fixacaoDTO);
+			   }
+			  }
+			  listaFixacaoExcel.removeAll(invalidos);
+
+			  /*
+			  validar se o produto é um produtoValido
+			  */
+			  String[] codigoProdutoArray = new String[listaFixacaoExcel.size()];
+			  for (int i = 0; i < listaFixacaoExcel.size(); i++) {
+			   codigoProdutoArray[i]=listaFixacaoExcel.get(i).getCodigoProduto();
+			  }
+			  
+			  List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
+			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
+			   if(!verificarProdutoExiste.contains(fixacaoDTO.getCodigoProduto())){
+			    invalidos.add(fixacaoDTO);
+			   }
+			  }
+			  listaFixacaoExcel.removeAll(invalidos);
+		}
+		return invalidos;
+	}
+
+
+	private boolean isListaVazia(List<FixacaoReparteDTO> listaFixacaoExcel) {
+		
+		if(listaFixacaoExcel == null || listaFixacaoExcel.isEmpty()){
+			return true;
+	}else{
+		return false;
+		}
 	}
 
 }

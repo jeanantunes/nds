@@ -34,5 +34,7 @@ public interface MixCotaProdutoService {
 	
 	
 	public void adicionarListaMixPorProduto(List<MixCotaProdutoDTO> listaMixProduto , String produtoId);
+
+	public void adicionarListaMixPorCota(List<MixCotaProdutoDTO> mixCotaProdutoDTOList);
 	
 }

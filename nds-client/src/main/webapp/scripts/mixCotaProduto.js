@@ -210,6 +210,21 @@ var mixCotaProdutoController = $.extend(true, {
 		});
 		
 		
+		//UPLOAD LOTE
+		
+		$("#excelFile").change(function (){
+			       var fileName = $(this).val();
+			       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+			       if(ext!="xls" & ext!="xlsx"){
+			    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+			    	   $(this).val('');
+			    	   return;
+			       }
+			       
+			       //SUBMIT FORM
+			       $("#formUploadLoteMix").submit();
+			       
+		     });
 		
 		},
 		
@@ -225,7 +240,7 @@ var mixCotaProdutoController = $.extend(true, {
 			);
 			$("#spanLegendCota").text(""); //limpa o titulo produto, evitando permanecer valores digitados em pesquisa anterior
 			$("#btNovoMixCota").show();
-			$("#btAddLoteMixCota").hide();
+//			$("#btAddLoteMixCota").hide();
 			$("#btGerarArquivoMixCota").hide();
 			$("#btImprimirMixCota").hide();
 			$("#btExcluirTudoCota").hide();
@@ -233,7 +248,7 @@ var mixCotaProdutoController = $.extend(true, {
 		}else{
 			$("#spanLegendCota").text($("#codigoCotaMix").val() + "-" +$("#nomeCotaMix").val());// preenche fieldset com os valores digitados no fitro
 			$("#btNovoMixCota").show();
-			$("#btAddLoteMixCota").show();
+//			$("#btAddLoteMixCota").show();
 			$("#btGerarArquivoMixCota").show();
 			$("#btImprimirMixCota").show();
 			$("#btExcluirTudoCota").show();
@@ -1010,6 +1025,9 @@ var mixCotaProdutoController = $.extend(true, {
 			return data;
 		},
 		
-	
+		add_lote:function(){
+			
+			$("#excelFile").val('').click();
+		}
 	}, BaseController);
 //@ sourceURL=mixCotaProduto.js

@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -2694,5 +2695,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (HistoricoVendaPopUpCotaDto) query.uniqueResult();
 	
 	}
+
+	@Override
+	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray) {
+
+		StringBuilder hql = new StringBuilder("select NUMERO_COTA from cota where cota.NUMERO_COTA in (:cotaIDList)");
+		
+		SQLQuery query = super.getSession().createSQLQuery(hql.toString());
+		query.setParameterList("cotaIDList", cotaIdArray);
+		
+		return query.list();
+	}
+	
+	
 
 }

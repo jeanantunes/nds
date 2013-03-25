@@ -109,4 +109,6 @@ public interface ProdutoService {
 	
 	List<Produto> obterProdutosBalanceadosOrdenadosNome(Date dataLancamento);
 	
+	List<String> verificarProdutoExiste(String...codigoProduto);
+	
 }

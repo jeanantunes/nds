@@ -259,6 +259,50 @@ var fixacaoReparteController = $.extend(true, {
 			width : 960,
 			height : 250
 		});
+	
+	//UPLOAD Arquivo Lote - evento selecao de arquivo
+	$("#excelFileFixacao").change(function(){
+	       var fileName = $(this).val();
+	      
+	       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+	       if(ext!="xls" & ext!="xlsx"){
+	    	   exibirMensagem("WARNING", ["Somente arquivos com extensÃ£o .XLS ou .XLSX sÃ£o permitidos."]);
+	    	   $(this).val('');
+	    	   return;
+	       }else{
+	    	   
+	    	   $("#formUploadLoteFixacao").ajaxSubmit({
+	     		   
+	     		   /*beforeSubmit: function(arr, formData, options) {
+	     		      },*/
+	     		      success: function(responseText, statusText, xhr, $form)  { 
+	     		    	  
+	     		    	  var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+	     		          var tipoMensagem = mensagens.tipoMensagem;
+	     		          var listaMensagens = mensagens.listaMensagens;
+
+	     		          if (tipoMensagem && listaMensagens) {
+	     		           
+	     		           if (tipoMensagem != 'SUCCESS') {
+	     		            
+	     		            exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
+	     		           }
+	     		           $("#dialog-lote").dialog( "close" );
+	     		           regiaoController.cotasDaRegiao();
+	     		           exibirMensagem(tipoMensagem, listaMensagens); 
+	     		          }
+	     		      }, 
+//	     		      url:  contextPath + '/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao',
+	     		      type: 'POST',
+	     		      dataType: 'json'//,
+//	     		      data: { "tipoUpload" : ""}
+	     		   
+	     	   });
+	    	   
+	       }
+	});
+	
+	
 	},
 	
 	//funcao de pre-processamento do resultado da busca de fixacao por produto
@@ -271,7 +315,7 @@ var fixacaoReparteController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			
-			$("#btAddLoteProduto").hide();
+			$("#btAddLoteProduto").show();
 			$("#btGerarArquivoProduto").hide();
 			$("#btImprimirProduto").hide();
 			
@@ -306,7 +350,7 @@ var fixacaoReparteController = $.extend(true, {
 				data.mensagens.tipoMensagem, 
 				data.mensagens.listaMensagens
 			);
-			$("#btAddLoteCota").hide();
+			$("#btAddLoteCota").show();
 			$("#btGerarArquivoCota").hide();
 			$("#btImprimirCota").hide();
 			return data;
@@ -455,7 +499,7 @@ var fixacaoReparteController = $.extend(true, {
 	},
 	
 	//funcao que executa chamada postJSON que busca dados da fixacao 
-	editarFixacao:function (idFixacao,qtdeReparte, numeroCota, codigoProduto){
+	editarFixacao:function (idFixacao, qtdeReparte, numeroCota, codigoProduto){
 		var reparteTotal= qtdeReparte;
 		arrayPesquisa = [];
 		arrayPesquisa.push({
@@ -833,7 +877,7 @@ var fixacaoReparteController = $.extend(true, {
 			
 		},
 		
-		//Limpa os campos preenchidos durante a fixação, apos finalizada a adição de fixação
+		//Limpa os campos preenchidos durante a fixaï¿½ï¿½o, apos finalizada a adiï¿½ï¿½o de fixaï¿½ï¿½o
 		limparCamposModalNovo:function(){
 			$("#qtdeEdicoesModal").val("");
 			$("#qtdeFixadaModal").val("");
@@ -934,7 +978,7 @@ var fixacaoReparteController = $.extend(true, {
 			
 		},
 		
-		//FunÃ§Ã£o que realiza a pesquisa que preenche os dados da grid historico produto
+//FunÃ§Ã£o que realiza a pesquisa que preenche os dados da grid historico produto
 		pesquisaHistoricoPorCota:function(){
 			
 			$(".historicoGrid").flexOptions({
@@ -944,7 +988,13 @@ var fixacaoReparteController = $.extend(true, {
 			});
 			$(".historicoGrid").flexReload();
 			
+		},
+//click do botao adicionar em lote		
+		add_lote:function(){
+			$("#excelFileFixacao").val('').click();
 		}
+		
+		
 	
 	}, BaseController);
 //@ sourceURL=fixacaoReparte.js

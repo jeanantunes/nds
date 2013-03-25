@@ -2536,6 +2536,12 @@ public class CotaServiceImpl implements CotaService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<Integer> verificarNumeroCotaExiste(Integer... cotaIdArray) {
+
+		return cotaRepository.verificarNumeroCotaExiste(cotaIdArray);
+	}
 	
 }
 

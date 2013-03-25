@@ -1,8 +1,5 @@
 
 
-<body>
-
-
 <br clear="all"/>
     <br />
     
@@ -51,7 +48,8 @@
        	  <legend >Cota: &nbsp;<span id="spanLegendCota"></span></legend>
         
         	<table class="mixCotasGrid"></table>
-         <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
+         <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
+         
          <span class="bt_novos" title="Novo"  id="btNovoMixCota"><a href="javascript:mixCotaProdutoController.novoMixPorCota();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
          <!--<span class="bt_novos" title="Histórico"><a href="javascript:;" onclick="mostra_historico();"><img src="../images/ico_msg_anteriores.gif" hspace="5" border="0" />Histórico</a></span>-->
          <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoMixCota"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridCota?fileType=XLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -59,6 +57,11 @@
 		 <span class="bt_novos" title="Excluir Todos" id="btExcluirTudoCota"><a href="javascript:mixCotaProdutoController.excluirTodos();"><img src="images/ico_excluir.gif" alt="Excluir Todos" hspace="5" border="0" />Excluir Todos</a></span>
             
       </fieldset>
+      <form action="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/uploadArquivoLote" id="formUploadLoteMix" method="post" target="_blank" style="display:none" enctype="multipart/form-data">
+      	<input type="file" id="excelFile" name="excelFile"></input>
+      </form>
+      
+      <iframe style="display:none" name="uploadFileFrame" id="uploadFileFrame"></iframe>
       
       <fieldset class="classFieldset pesqProduto" style="display:none;">
        	  <legend>Produto: &nbsp;<span id="spanLegendProduto">lalalal</span></legend>
@@ -223,5 +226,4 @@ function limpaCamposRadioProduto(){
 }
 </script>
 
-</body>     
       
