@@ -98,12 +98,10 @@ public class XlsUploaderUtils {
 					for (Field f : clazz.getDeclaredFields()) {
 						if(f.isAnnotationPresent(XlsMapper.class)){
 							XlsMapper mapper = f.getAnnotation(XlsMapper.class);
-							if (mapper != null) {
-								if(mapper.value().equals(xlsHeader)){
-									Cell cellIndex = sheet.getRow(content).getCell(cell.getColumnIndex(), Row.RETURN_BLANK_AS_NULL);
-									if (cellIndex != null) {
-										BeanUtils.setProperty(obj, f.getName(), returnCellValue(cellIndex));										
-									}
+							if(mapper.value().equals(xlsHeader)){
+								Cell cellIndex = sheet.getRow(content).getCell(cell.getColumnIndex(), Row.RETURN_BLANK_AS_NULL);
+								if (cellIndex != null) {
+									BeanUtils.setProperty(obj, f.getName(), returnCellValue(cellIndex));										
 								}
 							}
 						}
@@ -120,82 +118,23 @@ public class XlsUploaderUtils {
 
 	private static <T> void verifyObjBeforeAddToList(Class<T> clazz, List<T> list, T obj) throws IllegalAccessException {
 		int nullable = 0;
+		int annotatedFields = 0;
 		Field[] fields = clazz.getDeclaredFields();
 		
-		for (Field f : fields) {
-			f.setAccessible(true);
-			if (f.get(obj) == null) {
-				nullable++;
+		for (Field f : fields) {			
+			if(f.isAnnotationPresent(XlsMapper.class)){
+				f.setAccessible(true);
+				if (f.get(obj) == null) {
+					nullable++;
+				}
+				annotatedFields++;
 			}
 		}
 		
-		if (nullable != fields.length -1) {
+		if (nullable != annotatedFields) {
 			list.add(obj);
 		}
 	}
-	
-	/**
-	 * @param file
-	 * @return
-	 * 
-	 * Usando a antiga estrutura de KeyValue.
-	 * Método já @Deprecated
-	 */
-	@Deprecated
-	public static List<KeyValue> returnKeyValueFromXls(File file) {
-		
-		String extension = file.getName().substring(file.getName().lastIndexOf("."));
-		
-		List<KeyValue> list = new ArrayList<KeyValue>();
-		
-		try {
-			
-			FileInputStream xls = new FileInputStream(file);
-			
-			if (extension.equals(XLS)) {
-				HSSFWorkbook workbook = new HSSFWorkbook(xls);
-				HSSFSheet sheet = workbook.getSheetAt(0);
-				getContent(list, sheet);
-				
-			} else if (extension.equals(XLSX)) {
-				XSSFWorkbook workbook = new XSSFWorkbook(xls);
-				XSSFSheet sheet = workbook.getSheetAt(0);
-				getContent(list, sheet);
-			}
-			
-			xls.close();
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return list;
-	}
-
-	@Deprecated
-	private static <T extends Sheet> void getContent(List<KeyValue> list, T sheet) {
-		int header = 0;
-		int content = 1;
-		
-		Iterator<Row> rowIterator = sheet.rowIterator();
-		while (rowIterator.hasNext()) {
-			Row row = (Row) rowIterator.next();
-			Iterator<Cell> cellIterator = row.cellIterator();
-			while (cellIterator.hasNext()) {
-				Cell cell = (Cell) cellIterator.next();
-				if (sheet.getRow(content) != null) {
-					KeyValue keyValue = new KeyValue();
-					keyValue.setKey(sheet.getRow(header).getCell(cell.getColumnIndex()).getStringCellValue());
-					keyValue.setValue(returnCellValue(sheet.getRow(content).getCell(cell.getColumnIndex())));
-					list.add(keyValue);
-				}
-			}
-			content++;
-		}
-	}
-
 	
 	/**
 	 * @param cell
