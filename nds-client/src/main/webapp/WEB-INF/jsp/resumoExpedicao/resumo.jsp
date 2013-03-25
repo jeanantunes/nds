@@ -62,7 +62,9 @@
 		
 			<fieldset class="fieldGrid">
 			    
-			    <legend id="idFiledResultResumo">Resumo  Expedição por Box</legend>
+			    <legend id="idFiledResultResumo">
+			    	
+			    </legend>
 			
 				<div id="gridProduto" style="display:none;">
 			    	<table id="resumoExpedicaoGridProduto" class="resumoExpedicaoGridProduto"></table>
