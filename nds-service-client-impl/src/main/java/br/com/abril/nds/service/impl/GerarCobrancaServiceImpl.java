@@ -1095,12 +1095,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						    
 						    this.removerDividaCobrancaConsolidado(divida,consolidado);
 						}
-					}
-					else{
+					
+					} else{
 					
 						this.removerDividaCobrancaConsolidado(divida,consolidado);
 					}
-				}	
+				}
+				
+			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}
 	}
@@ -1111,8 +1113,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 	    this.dividaRepository.remover(divida);
 	    
-	    this.consolidadoFinanceiroRepository.remover(consolidado);
-		
 		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
 			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 					GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
