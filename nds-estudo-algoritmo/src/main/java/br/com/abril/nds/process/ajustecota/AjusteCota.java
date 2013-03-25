@@ -31,10 +31,6 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
 @Component
 public class AjusteCota extends ProcessoAbstrato {
 
-    public AjusteCota(Cota cota) {
-	super(cota);
-    }
-
     @Override
     protected void executarProcesso() {
 

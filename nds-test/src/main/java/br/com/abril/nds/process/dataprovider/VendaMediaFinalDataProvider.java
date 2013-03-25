@@ -30,6 +30,9 @@ public abstract class VendaMediaFinalDataProvider extends NDSDataProvider {
 
     @Autowired
     private static Bonificacoes bonificacoes;
+    
+    @Autowired
+    private static AjusteCota ajusteCota;
 
     @DataProvider(name = "getCotaParaCalculoList")
     public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList(ITestContext context) throws Exception {
@@ -84,7 +87,7 @@ public abstract class VendaMediaFinalDataProvider extends NDSDataProvider {
 		bonificacoes.setGenericDTO(cota);
 		bonificacoes.executar();
 
-		AjusteCota ajusteCota = new AjusteCota(cota);
+		ajusteCota.setGenericDTO(cota);
 		ajusteCota.executar();
 
 		listCotaReturn.add(new Cota[] { cota });
