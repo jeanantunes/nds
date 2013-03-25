@@ -48,7 +48,6 @@
    	        <td width="123"><input type="text" name="filtro.dataAte" value="filtro.dataAte" id="dataAte" style="width:80px;" /></td>
    	        <td width="76">Fornecedor:</td>
    	        <td width="211"><select name="filtro.fornecedor" id="fornecedor" style="width:200px;">
-   	          <option selected="selected">Selecionar...</option>
    	          <option value="Todos">Todos</option>
 			  <c:forEach items="${fornecedores}" var="fornecedor">
 					<option value="${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</option>
