@@ -3,7 +3,7 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	// Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		debugger;
+		
 		var codigoProduto = $(idCodigo,this.workspace).val();
 
 		codigoProduto = $.trim(codigoProduto);
@@ -183,10 +183,11 @@ var produtoEdicaoController =$.extend(true,  {
 	},	
 
 	init : function(){
-
+        
 		$(document).ready(function(){
 			
 			focusSelectRefField($("#produtoEdicaoController-pCodigoProduto", produtoEdicaoController.workspace));
+			
 			
 			$(document.body).keydown(function(e) {
 				
@@ -196,14 +197,16 @@ var produtoEdicaoController =$.extend(true,  {
 				
 				return true;
 			});
+			
 		});
+		
 		
 		window.addEventListener('blur', function() {
 
 			window.clearInterval(produtoEdicaoController.intervalo);
 		
 		});
-
+        
 		
 		$("#produtoEdicaoController-tabEdicoes",this.workspace ).tabs();
 		$("#produtoEdicaoController-pDateLanctoDe,#produtoEdicaoController-pDateLanctoAte",this.workspace ).datepicker({
