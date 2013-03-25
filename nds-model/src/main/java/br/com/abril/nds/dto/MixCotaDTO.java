@@ -8,6 +8,7 @@ import java.util.Date;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.upload.XlsMapper;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @SuppressWarnings("serial")
@@ -17,12 +18,13 @@ public class MixCotaDTO implements Serializable{
 	private BigInteger id;
 	
 	@Export(label="codigo",exhibitionOrder = 1)
+	@XlsMapper(value="codigoProduto")
 	private String codigoProduto;
 	
 	@Export(label="nome",exhibitionOrder = 2)
 	private String nomeProduto;
 	
-	@Export(label="classificação",exhibitionOrder = 3)
+	@Export(label="classificacao",exhibitionOrder = 3)
 	private String classificacaoProduto;
 	
 	@Export(label="Reparte Médio", exhibitionOrder = 4)
@@ -35,9 +37,11 @@ public class MixCotaDTO implements Serializable{
 	private BigDecimal ultimoReparte;
 	
 	@Export(label="Reparte Mínimo" ,exhibitionOrder = 7)
+	@XlsMapper(value="reparteMinimo")
 	private BigInteger reparteMinimo;
 	
 	@Export(label="Reparte Máximo" ,exhibitionOrder = 8)
+	@XlsMapper(value="reparteMaximo")
 	private BigInteger reparteMaximo;
 	
 	@Export(label="Usuário",exhibitionOrder = 9)
@@ -57,6 +61,7 @@ public class MixCotaDTO implements Serializable{
 	private BigInteger idProduto;
 	
 //	necessario para modal adicionar mix 
+	@XlsMapper(value="numeroCota")
 	private Integer numeroCota;
 	
 	private PaginacaoVO paginacaoVO;
