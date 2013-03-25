@@ -161,7 +161,7 @@ var painelProcessamentoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "nome",
+			sortname : "descricaoInterface",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -356,6 +356,9 @@ var painelProcessamentoController = $.extend(true, {
 		painelProcessamentoController.popup_sistema();
 	},
 	bindButtonsInterfaces : function() {
+		$("#btnReprocessarTodas", painelProcessamentoController.workspace).click(function() {
+			painelProcessamentoController.reprocessarInterfacesEmOrdem();
+		});
 		$("#btnGerarXLS", painelProcessamentoController.workspace).click(function() {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=XLS&tipoRelatorio=1";
 		});
@@ -379,6 +382,32 @@ var painelProcessamentoController = $.extend(true, {
 					   exibirMensagem(resultado.tipoMensagem, 
 					   				  resultado.listaMensagens);
 				   });
+	},
+	reprocessarInterfacesEmOrdem : function() {
+		
+		$( "#dialog-excutarInterfacesEmOrdem" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					var data = {};
+					$.postJSON(contextPath + "/administracao/painelProcessamento/executarTodasInterfacesEmOrdem",
+						   data,
+						   function (resultado) {
+							   exibirMensagem(resultado.tipoMensagem, 
+							   				  resultado.listaMensagens);
+					});
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		
 	}
 
 }, BaseController);

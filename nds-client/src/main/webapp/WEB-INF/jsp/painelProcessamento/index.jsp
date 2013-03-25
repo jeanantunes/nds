@@ -29,6 +29,15 @@
     </fieldset>
 </div>
 </form>
+
+<div id="dialog-excutarInterfacesEmOrdem" title="Processar todas as Interfaces em Ordem" style="display:none;">
+    <fieldset style="width:350px!important;">
+    <legend>Reprocessar Interfaces:</legend>
+    <p>Deseja reprocessar todas as interfaces do Prodin e MDC?</p><br />
+    <p>* As interfaces serão executadas em ordem de prioridade</p><br />
+    </fieldset>
+</div>
+
 <form id="detalhesInterface">
 <div id="dialog-detalhes" title="Detalhes da Interface">
     <fieldset>
@@ -41,6 +50,7 @@
 
 	  <div class="areaBts">
 	  	<div class="area">
+	  		<span class="bt_novos"><a href="javascript:;" id="btnReprocessarTodas" rel="tipsy" title="Reprocessar todas as interfaces em ordem"><img src="${pageContext.request.contextPath}/images/bt_devolucao.png" hspace="5" border="0" /></a></span>
 	  		<span class="bt_arq"><a href="javascript:;" id="btnGerarXLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
 			<span class="bt_arq"><a href="javascript:;" id="btnGerarPDF" rel="tipsy" title="Imprimir"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /></a></span>
 	  	</div>

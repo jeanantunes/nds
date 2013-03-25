@@ -1,15 +1,16 @@
 package br.com.abril.nds.service.integracao;
 
+import org.apache.commons.lang.StringUtils;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.engine.data.RouteTemplate;
-import br.com.abril.nds.integracao.spring.NdsiRunner;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 
@@ -24,8 +25,16 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	private ApplicationContext applicationContext;
 	
 	private static final String PACOTE_PRIMEIRA_PARTE = "br.com.abril.nds.integracao.";
+	
 	private static final String PACOTE_SEGUNDA_PARTE = ".route.";
+	
 	private static final String ROUTE = "Route";
+	
+	@Value("#{properties.interfacesProdin}")
+	private String interfacesProdin;
+	
+	@Value("#{properties.interfacesMDCEntrada}")
+	private String interfacesMDC;
 	
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarInterface(java.lang.String, java.lang.String)
@@ -39,7 +48,7 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 		try {
 		
 			RouteTemplate route = (RouteTemplate) applicationContext.getBean(Class.forName(classe));
-			route.execute(NdsiRunner.USER_NAME);
+			route.execute(usuario.getNome());
 		
 		} catch (NoDocumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum documento encontrado na base de dados!");
@@ -47,8 +56,40 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 			throw e;
 		}
 		
-		// br.com.abril.nds.integracao.ems0136.route.EMS0136Route
-
+	}
+	
+	/* (non-Javadoc)
+	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarTodasInterfacesEmOrdem(java.lang.String)
+	 */
+	@Override
+	public void executarTodasInterfacesEmOrdem(Usuario usuario) throws BeansException, ClassNotFoundException {
+		
+		String[] interfacesProdinReprocessar = interfacesProdin.split(",");
+		
+		String[] interfacesMDCReprocessar = interfacesMDC.split(",");
+		
+		for(String interfaceProdin : interfacesProdinReprocessar) {
+			
+			String classeExecucao = "EMS"+ StringUtils.leftPad(interfaceProdin.trim(), 4, '0');
+			
+			try {
+				this.executarInterface(classeExecucao, usuario);
+			} catch (ValidacaoException ve) {
+				
+			}
+		}
+		
+		for(String interfaceMDC : interfacesMDCReprocessar) {
+			
+			String classeExecucao = "EMS"+ StringUtils.leftPad(interfaceMDC, 4, '0');
+			
+			try {
+				this.executarInterface(classeExecucao, usuario);
+			} catch (ValidacaoException ve) {
+				
+			}
+		}
+				
 	}
 
 }
