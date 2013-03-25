@@ -19,12 +19,14 @@ public class UploaderXlsUtilTest {
 	 * Vejam o exemplo no Bean de teste criado {@link CotaXlsDTO}
 	 * 
 	 */
-	public static void main(String[] args) throws URISyntaxException {
-		URL url = ClassLoader.getSystemResource("test.xlsx");
-		List<CotaXlsDTO> lista = XlsUploaderUtils.getBeanListFromXls(CotaXlsDTO.class, new File(url.toURI()));
-		for (CotaXlsDTO cota : lista) {
-			System.out.println(cota.getIdCota());
-			System.out.println(cota.getNomeCota());
+	public static void main(String[] args) throws URISyntaxException {		
+		URL url = ClassLoader.getSystemResource("cota-template.xlsx");
+		List<CotaTemplateDTO> lista = XlsUploaderUtils.getBeanListFromXls(CotaTemplateDTO.class, new File(url.toURI()));
+		for (CotaTemplateDTO cotaTemplateDTO : lista) {
+			System.out.println(cotaTemplateDTO.getCodigoProduto());
+			System.out.println(cotaTemplateDTO.getNumeroCota());
+			System.out.println(cotaTemplateDTO.getReparteMinimo());
+			System.out.println(cotaTemplateDTO.getReparteMaximo());
 		}
 	}
 }
