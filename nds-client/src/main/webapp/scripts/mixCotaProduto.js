@@ -1,3 +1,4 @@
+
 var mixCotaProdutoController = $.extend(true, {
 //Grid de cota 	
 	init : function() {
