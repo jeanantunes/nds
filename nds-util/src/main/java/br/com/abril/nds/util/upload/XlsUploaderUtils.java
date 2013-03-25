@@ -85,13 +85,14 @@ public class XlsUploaderUtils {
 		while (rowIterator.hasNext()) {
 			
 			if (sheet.getRow(content) != null) {
+				
 				T obj = clazz.newInstance();
 				
 				Row row = (Row) rowIterator.next();
 				Iterator<Cell> cellIterator = row.cellIterator();
 				while (cellIterator.hasNext()) {
 					Cell cell = (Cell) cellIterator.next();
-						
+					
 					String xlsHeader = sheet.getRow(header).getCell(cell.getColumnIndex()).getStringCellValue();
 					
 					for (Field f : clazz.getDeclaredFields()) {
@@ -99,18 +100,37 @@ public class XlsUploaderUtils {
 							XlsMapper mapper = f.getAnnotation(XlsMapper.class);
 							if (mapper != null) {
 								if(mapper.value().equals(xlsHeader)){
-									BeanUtils.setProperty(obj, f.getName(), returnCellValue(sheet.getRow(content).getCell(cell.getColumnIndex())));
+									Cell cellIndex = sheet.getRow(content).getCell(cell.getColumnIndex(), Row.RETURN_BLANK_AS_NULL);
+									if (cellIndex != null) {
+										BeanUtils.setProperty(obj, f.getName(), returnCellValue(cellIndex));										
+									}
 								}
 							}
 						}
 					}
 				}
 				
-				list.add(obj);
+				verifyObjBeforeAddToList(clazz, list, obj);
 				content++;
 			} else {
 				break;
 			}
+		}
+	}
+
+	private static <T> void verifyObjBeforeAddToList(Class<T> clazz, List<T> list, T obj) throws IllegalAccessException {
+		int nullable = 0;
+		Field[] fields = clazz.getDeclaredFields();
+		
+		for (Field f : fields) {
+			f.setAccessible(true);
+			if (f.get(obj) == null) {
+				nullable++;
+			}
+		}
+		
+		if (nullable != fields.length -1) {
+			list.add(obj);
 		}
 	}
 	
