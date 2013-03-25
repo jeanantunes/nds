@@ -98,7 +98,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 				
 				ItemRecebimentoFisico item = itemFisico.next();
 			
-				if(maisRecente.getTime()<item.getRecebimentoFisico().getDataRecebimento().getTime()) {
+				if(maisRecente == null || maisRecente.getTime()<item.getRecebimentoFisico().getDataRecebimento().getTime()) {
 					maisRecente = item.getRecebimentoFisico().getDataRecebimento();
 				}
 			}
