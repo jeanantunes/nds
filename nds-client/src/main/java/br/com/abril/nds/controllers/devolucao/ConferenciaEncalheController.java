@@ -189,8 +189,6 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void salvarIdBoxSessao(Long idBox){
 		
-		this.limparDadosSessao();
-		
 		if (idBox != null){
 		
 			this.session.setAttribute(ID_BOX_LOGADO, idBox);

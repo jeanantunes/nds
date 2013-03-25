@@ -813,6 +813,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			novaDivida.setCota(cota);
 			novaDivida.setStatus(StatusDivida.EM_ABERTO);
 			novaDivida.setResponsavel(usuario);
+			novaDivida.setOrigemNegociacao(false);
 			
 			BigDecimal valorCalculadoJuros = BigDecimal.ZERO;
 			
@@ -1094,12 +1095,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						    
 						    this.removerDividaCobrancaConsolidado(divida,consolidado);
 						}
-					}
-					else{
+					
+					} else{
 					
 						this.removerDividaCobrancaConsolidado(divida,consolidado);
 					}
-				}	
+				}
+				
+			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}
 	}
@@ -1110,8 +1113,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 	    this.dividaRepository.remover(divida);
 	    
-	    this.consolidadoFinanceiroRepository.remover(consolidado);
-		
 		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
 			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 					GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),

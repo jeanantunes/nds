@@ -115,9 +115,16 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		validarAnoSemana(filtro.getSemana());
 		
-		fechamentoCEIntegracaoService.reabrirCeIntegracao(filtro);
+		String mensagemReaberturaNaoRealizada = fechamentoCEIntegracaoService.reabrirCeIntegracao(filtro); 
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Reabertura realizada com sucesso."),"result").recursive().serialize();
+		if (mensagemReaberturaNaoRealizada!= null){
+						
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING,mensagemReaberturaNaoRealizada),"result").recursive().serialize();
+		}
+		else{
+
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Reabertura realizada com sucesso."),"result").recursive().serialize();
+		}
 	}
 	
 	@Post
@@ -176,9 +183,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Post
 	@Path("fecharCE")
-	public void fecharCE(String[] listaEncalhe, String[] listaIdProdutoEdicao, String idFornecedor, String semana){
-		
-		//TODO Alterar os parametros do metodo
+	public void fecharCE(){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
@@ -249,7 +254,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		filtro.setPaginacao(null);
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
 		
 		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarItensFechamentoCeIntegracao(filtro);
 		
@@ -290,10 +296,10 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		result.include("listaFornecedores",listaFornecedoresCombo );
 	}
 	
-	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe) {
+	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda) {
 		
 		this.fechamentoCEIntegracaoService.atualizarItemChamadaEncalheFornecedor(
-			idItemChamadaFornecedor, encalhe);
+			idItemChamadaFornecedor, encalhe, venda);
 		
 		FiltroFechamentoCEIntegracaoDTO filtro =
 			(FiltroFechamentoCEIntegracaoDTO)

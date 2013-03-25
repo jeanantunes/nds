@@ -664,7 +664,7 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {	
-		return cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota);
+		return cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota, false);
 	}
 
 	@Override

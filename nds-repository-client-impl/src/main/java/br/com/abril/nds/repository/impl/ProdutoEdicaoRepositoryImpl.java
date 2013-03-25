@@ -18,7 +18,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
@@ -675,14 +674,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		StringBuilder hql = new StringBuilder("select distinct l.produtoEdicao ");
 		hql.append(" from Lancamento l ")
+		   .append(" join l.estudo estudo ")
 		   .append(" where l.dataLancamentoDistribuidor = :data ")
-		   .append(" and l.status = :statusLancamento ")
+		   .append(" and l.status in(:statusLancamento) ")
 		   .append(" order by l.produtoEdicao.produto.nome, l.produtoEdicao.numeroEdicao ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
 		query.setParameter("data", data);
-
-		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO);
+		query.setParameterList("statusLancamento", 
+				new StatusLancamento[]{StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
 
 		return query.list();
 	}
@@ -1406,5 +1407,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
 	
-
+	public BigDecimal obterDescontoLogistica(Long idPropdutoEdicao){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pEdicao.descontoLogistica.percentualDesconto from ProdutoEdicao pEdicao ");
+		hql.append(" where pEdicao.id = :idPropdutoEdicao ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idPropdutoEdicao",idPropdutoEdicao);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
 }

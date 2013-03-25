@@ -325,5 +325,13 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return
 	 */
 	public Boolean estudoPodeSerSomado(Long idEstudoBase, ProdutoEdicao produtoEdicao);
+	
+	/**
+	 * Retorna o percentual de desconto logistica de um produto edição
+	 * 
+	 * @param idPropdutoEdicao
+	 * @return BigDecimal
+	 */
+	BigDecimal obterDescontoLogistica(Long idPropdutoEdicao);
 
 }
