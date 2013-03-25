@@ -16,6 +16,7 @@ td{padding-left:3px;padding-right:3px;}
 .quebraPaginaEmissao{
 			page-break-after: always;
 			table-layout: fixed;
+			margin-top:30px;
 		}
 .capaImgBox {
 	display: block;
@@ -32,6 +33,10 @@ td{padding-left:3px;padding-right:3px;}
 	width: 850px;
 	display: block;
 	margin: 0 auto;
+}
+
+.resumosTotais td {
+	font-size:14px;
 }
 
 .cabecalho{
@@ -132,7 +137,7 @@ function imprimir(){
     <td width="458" style="border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
   </tr>
   <tr>
-    <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><span class="dadosNota"><strong>${cotaEmissao.dataRecolhimento}</strong></span></td>
+    <td align="center" style="border-left:1px solid #000;font-size:13px!important;border-bottom:1px solid #000;"><span class="dadosNota"><strong>${cotaEmissao.dataRecolhimento}</strong></span></td>
     <td align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;border-left:1px solid #000;"><span class="dadosNota">${cotaEmissao.dataEmissao}</span></td>
     <td style="border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota">Box: ${cotaEmissao.nomeBox} / Roteiro: ${cotaEmissao.nomeRoteiro} / Rota: ${cotaEmissao.nomeRota}</span></td>
   </tr>
@@ -183,7 +188,7 @@ function imprimir(){
 </table>
 <table width="850" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
-    <td><table width="300" border="0" align="right" cellpadding="1" cellspacing="1">
+    <td><table width="300" class="resumosTotais" border="0" align="right" cellpadding="1" cellspacing="1">
       <tr>
         <td align="right">&nbsp;</td>
         <td align="right">&nbsp;</td>

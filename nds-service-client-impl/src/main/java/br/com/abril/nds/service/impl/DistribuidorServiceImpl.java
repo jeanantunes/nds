@@ -332,6 +332,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return this.distribuidorRepository.obterId();
 	}
 	
+	@Transactional(readOnly = true)
 	public int obterOrdinalUltimoDiaRecolhimento() {
 		
 		ParametrosRecolhimentoDistribuidor parametroRecolhimento = 

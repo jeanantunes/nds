@@ -86,25 +86,28 @@ $(document).ready(function(){
 					pressedCtrl = true; 
 				}
 
-				var indexSecionado = $('.ui-tabs-selected').index();
-				var indexSelecionar = indexSecionado;
-				
-				if(keycode == 37 && pressedCtrl == true) {//Esquerda
-					if(indexSecionado == 0){
-						indexSelecionar == qtdAbasAbertas-1;
-					}else{
-						indexSelecionar--;
+				if(keycode == 37 || keycode == 39){
+					
+					var indexSecionado = $('.ui-tabs-selected').index();
+					var indexSelecionar = indexSecionado;
+					
+					if(keycode == 37 && pressedCtrl == true) {//Esquerda
+						if(indexSecionado == 0){
+							indexSelecionar == qtdAbasAbertas-1;
+						}else{
+							indexSelecionar--;
+						}
+					}else if(keycode == 39 && pressedCtrl == true) {//Direita
+						if(indexSecionado == (qtdAbasAbertas-1)){
+							indexSelecionar = 0;
+						}else{
+							indexSelecionar++;
+						}
 					}
-				}else if(keycode == 39 && pressedCtrl == true) {//Direita
-					if(indexSecionado == (qtdAbasAbertas-1)){
-						indexSelecionar = 0;
-					}else{
-						indexSelecionar++;
+					
+					if(indexSelecionar != -1){
+						refTabs.children('a')[indexSelecionar].click();
 					}
-				}
-				
-				if(indexSelecionar != -1){
-					refTabs.children('a')[indexSelecionar].click();
 				}
 			}
 		}
