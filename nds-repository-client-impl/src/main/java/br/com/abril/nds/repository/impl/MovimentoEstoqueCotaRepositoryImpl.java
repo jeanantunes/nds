@@ -1039,22 +1039,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		
 		sql.append(" (	              ");
-		sql.append(" SELECT FECHAMENTO_ENC.PRODUTO_EDICAO_ID AS FECHAMENTO_PRODUTO_EDICAO_ID	");
-		sql.append(" FROM FECHAMENTO_ENCALHE FECHAMENTO_ENC   									");
-		sql.append(" WHERE FECHAMENTO_ENC.DATA_ENCALHE BETWEEN :dataInicial and :dataFinal     	");
-		sql.append(" GROUP BY FECHAMENTO_ENC.PRODUTO_EDICAO_ID 	");
 		
-		sql.append(" UNION ALL ");
+		sql.append(" SELECT CE.PRODUTO_EDICAO_ID AS CE_PRODUTO_EDICAO_ID		");
+		sql.append(" FROM CHAMADA_ENCALHE CE		");
+		sql.append(" WHERE CE.DATA_RECOLHIMENTO BETWEEN :dataInicial and :dataFinal		");
+		sql.append(" GROUP BY CE.PRODUTO_EDICAO_ID		");
 		
-		sql.append(" SELECT FECHAMENTO_ENC_BOX.PRODUTO_EDICAO_ID AS FECHAMENTO_PRODUTO_EDICAO_ID 	");
-		sql.append(" FROM FECHAMENTO_ENCALHE_BOX FECHAMENTO_ENC_BOX 									");
-		sql.append(" WHERE FECHAMENTO_ENC_BOX.DATA_ENCALHE BETWEEN :dataInicial and :dataFinal	    ");
-		sql.append(" GROUP BY FECHAMENTO_ENC_BOX.PRODUTO_EDICAO_ID 	");
-		
-		sql.append(" ) AS FECHAMENTOS	              ");
+		sql.append(" ) AS RECOLHIMENTOS	              ");
 		
 		sql.append(" INNER JOIN PRODUTO_EDICAO PROD_EDICAO ON ( 					");
-		sql.append(" 	FECHAMENTOS.FECHAMENTO_PRODUTO_EDICAO_ID = PROD_EDICAO.ID 	");
+		sql.append(" 	RECOLHIMENTOS.CE_PRODUTO_EDICAO_ID = PROD_EDICAO.ID 	");
 		sql.append(" ) ");
 		
 		sql.append("  LEFT JOIN  ");
