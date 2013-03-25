@@ -17,4 +17,5 @@ public interface FechamentoCEIntegracaoRepository {
 	
 	BigInteger countItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
+	FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCEIntegracao(Long idChamadaEncalheForncecdor);
 }

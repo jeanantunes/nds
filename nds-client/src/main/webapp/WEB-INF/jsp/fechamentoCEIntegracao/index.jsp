@@ -34,27 +34,25 @@
 		      	</a>
 		    </span>
 		
-			
-		    <span class="bt_novos bt_acoes_grid_ce">
-		    
+		    <span class="bt_novos bt_acoes_grid_ce" id="btnImpBoleto">
+    
 		    	<c:if test="${BOLETO}">
 		    	
 			    	<a 	href="javascript:;"
-			    		onclick="fechamentoCEIntegracaoController.geraBoleto('BOLETO');"
 			    		rel="tipsy" title="Imprimir Boleto">
-			    		<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
+			    		<img src="${pageContext.request.contextPath}/images/ico_negociar.png" id="imagemImpressaoBoleto" hspace="5" border="0" />
 			    	</a>
 		    	
 		    	</c:if>	
 		    </span>
 		       
-	       <span class="bt_novos bt_acoes_grid_ce">
+	       <span class="bt_novos bt_acoes_grid_ce" id="btnImpBoletoEmBranco">
+
 				
 				<c:if test="${BOLETO_EM_BRANCO}">
-			       	<a href="javascript:;"
-			       	onclick="fechamentoCEIntegracaoController.geraBoleto('BOLETO_EM_BRANCO');"			       	
+			       	<a href="javascript:;"		       	
 			       	rel="tipsy" title="Imprimir Boleto em Branco">
-			       		<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0" />
+			       		<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" id="imagemBoletoEmBranco" hspace="5" border="0" />
 			       	</a>
 				</c:if>					       
 	       

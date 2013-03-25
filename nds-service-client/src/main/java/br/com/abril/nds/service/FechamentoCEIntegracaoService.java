@@ -22,9 +22,9 @@ public interface FechamentoCEIntegracaoService {
 	FechamentoCEIntegracaoDTO obterCEIntegracaoFornecedor(FiltroFechamentoCEIntegracaoDTO filtro);
 
 	FechamentoCEIntegracaoConsolidadoDTO buscarConsolidadoItensFechamentoCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
-
-	void reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 	
 	void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda);
+
+	String reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro);
 
 }

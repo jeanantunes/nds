@@ -43,26 +43,57 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append("    ITEM_CH_ENC_FORNECEDOR.NUEMRO_ITEM AS sequencial, ");
 		
-		hql.append("    PROD.CODIGO as codigoProduto, ");
+		hql.append("    PROD.CODIGO AS codigoProduto, ");
 		
-		hql.append("    PROD.NOME as nomeProduto, ");
+		hql.append("    PROD.NOME AS nomeProduto, ");
 		
-		hql.append("    PROD_EDICAO.NUMERO_EDICAO as numeroEdicao, ");
+		hql.append("    PROD_EDICAO.NUMERO_EDICAO AS numeroEdicao, ");
 		
-		hql.append("    ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA as reparte, ");
+		hql.append("    ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA AS reparte, ");
 		
-		hql.append("    COALESCE((ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA - COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR,0) ),0) as venda, ");
-		
-		hql.append("    ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO as precoCapa,");
-		
-		hql.append("    COALESCE((ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA - COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_FORNECEDOR,0) ) * PROD_EDICAO.PRECO_VENDA,0) as valorVenda,");
+		hql.append("	ITEM_CH_ENC_FORNECEDOR.ID AS idItemCeIntegracao, ");
 		
 		hql.append("    ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO AS tipoFormatado, ");
 		
-		hql.append("	COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) + COALESCE(ESTOQUE_PROD.QTDE,0) + COALESCE(FCH_ENCALHE.QUANTIDADE,0) AS encalhe, ");
+		hql.append("    ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO AS precoCapa,");
 		
-		hql.append("	ITEM_CH_ENC_FORNECEDOR.ID AS idItemCeIntegracao ");
+		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL' ");
+		hql.append("		then ");
+		hql.append("			 ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA ");
+		hql.append("		else	");	
+		hql.append("			(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA ");
+		hql.append("				- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
+		hql.append("					  	COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) ");
+		hql.append("						 + COALESCE(ESTOQUE_PROD.QTDE,0) ");
+		hql.append("					  	 + COALESCE(FCH_ENCALHE.QUANTIDADE,0)");		
+		hql.append("				 )");
+		hql.append("			)");
+		hql.append("	end AS venda,");
 		
+		hql.append("	case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL'");
+		hql.append("		then");
+		hql.append("			ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO"); 
+		hql.append("		else ");     		
+		hql.append("			(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA ");
+		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
+		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0)"); 
+		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE,0) ");
+		hql.append("					+ COALESCE(FCH_ENCALHE.QUANTIDADE,0)");		
+		hql.append("			   )");
+		hql.append("			) * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO"); 
+		hql.append("	end AS valorVenda,");
+		
+		hql.append("    case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL' "); 
+		hql.append("    	then");
+		hql.append("			ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA ");
+		hql.append("		else ");
+		hql.append("			COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA, ");
+		hql.append("				COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) "); 
+		hql.append("				+ COALESCE(ESTOQUE_PROD.QTDE,0) ");
+		hql.append("				+ COALESCE(FCH_ENCALHE.QUANTIDADE,0) ");		
+		hql.append("			) ");
+		hql.append("	end AS encalhe ");
+		 
 		hql.append(this.obterHqlFrom(filtro));
 		
 		hql.append(obterOrdenacao(filtro));
@@ -122,12 +153,41 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(" SELECT ");
 		
-		hql.append("  sum(COALESCE(((ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA - (COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) + COALESCE(ESTOQUE_PROD.QTDE,0) + COALESCE(FCH_ENCALHE.QUANTIDADE,0)))  * PROD_EDICAO.PRECO_VENDA),0)) as totalBruto,");
+		hql.append("sum(COALESCE( case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL'");
+		hql.append("		then");
+		hql.append("			ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO ");
+		hql.append("		else");
+		hql.append("		(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA ");
+		hql.append("			- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
+		hql.append("				COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) ");
+		hql.append("				+ COALESCE(ESTOQUE_PROD.QTDE,0) ");
+		hql.append("				+ COALESCE(FCH_ENCALHE.QUANTIDADE,0)");		
+		hql.append("			  )");
+		hql.append("		) * ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO ");
+	    
+		hql.append("	end,0)) as totalBruto,");
 		
-		hql.append("  sum(COALESCE((((select desconto_logistica.PERCENTUAL_DESCONTO");
-		hql.append("   from desconto_logistica where desconto_logistica.ID = COALESCE(PROD_EDICAO.DESCONTO_LOGISTICA_ID,PROD.DESCONTO_LOGISTICA_ID))");
-		hql.append("  / 100)* PROD_EDICAO.PRECO_VENDA)*(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA- (COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) + COALESCE(ESTOQUE_PROD.QTDE,0) + COALESCE(FCH_ENCALHE.QUANTIDADE,0))),0)) as totalDesconto ");
-		
+		hql.append("sum(COALESCE( case when ITEM_CH_ENC_FORNECEDOR.REGIME_RECOLHIMENTO = 'PARCIAL'");
+		hql.append("		then");
+		hql.append("			(((COALESCE((select desconto_logistica.PERCENTUAL_DESCONTO  ");
+		hql.append("				from desconto_logistica ");
+		hql.append("				where desconto_logistica.ID = COALESCE(PROD_EDICAO.DESCONTO_LOGISTICA_ID,PROD.DESCONTO_LOGISTICA_ID)");
+		hql.append("			),0)/100)*ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO)");
+		hql.append("			* ITEM_CH_ENC_FORNECEDOR.QTDE_VENDA_INFORMADA)");
+		hql.append("		else");
+		hql.append("			(((COALESCE((select desconto_logistica.PERCENTUAL_DESCONTO "); 
+		hql.append("				from desconto_logistica ");
+		hql.append("				where desconto_logistica.ID = COALESCE(PROD_EDICAO.DESCONTO_LOGISTICA_ID,PROD.DESCONTO_LOGISTICA_ID)");
+		hql.append("			),0)/100)*ITEM_CH_ENC_FORNECEDOR.PRECO_UNITARIO)");
+		hql.append("			*(ITEM_CH_ENC_FORNECEDOR.QTDE_ENVIADA ");
+		hql.append("				- COALESCE(ITEM_CH_ENC_FORNECEDOR.QTDE_DEVOLUCAO_INFORMADA,");
+		hql.append("					COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR,0) ");
+		hql.append("					+ COALESCE(ESTOQUE_PROD.QTDE,0) ");
+		hql.append("					+ COALESCE(FCH_ENCALHE.QUANTIDADE,0)");		
+		hql.append("				)");
+		hql.append("			))");
+		hql.append("	end,0) ) as totalDesconto");
+
 		hql.append(this.obterHqlFrom(filtro));
 		
 		Query  query = getSession().createSQLQuery(hql.toString())
@@ -166,12 +226,6 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("            PROD_EDICAO.PRODUTO_ID = PROD.ID ");
 		hql.append("        ) ");
 		
-		hql.append(" INNER JOIN ");
-		hql.append("    PRODUTO_FORNECEDOR PROD_FORNEC ");
-		hql.append("        ON ( ");
-		hql.append("            PROD.ID = PROD_FORNEC.PRODUTO_ID ");
-		hql.append("        ) ");
-		
 		hql.append(" INNER JOIN "); 
 		hql.append(" 	 ESTOQUE_PRODUTO ESTOQUE_PROD ");
 		hql.append(" 	 		ON ( ");
@@ -193,7 +247,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		
 		if(filtro.getIdFornecedor()!= null){
 			
-			hql.append(" AND PROD_FORNEC.FORNECEDORES_ID = :idFornecedor ");
+			hql.append(" AND chmFornecedor.FORNECEDOR_ID = :idFornecedor ");
 		}
 		
 		return hql.toString();
@@ -291,6 +345,50 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		query.setParameter("statusCeNDS", StatusCeNDS.FECHADO);
 		
 		return (query.uniqueResult() == null) ? false : true;
+	}
+	
+	public FechamentoCEIntegracaoConsolidadoDTO obterConsolidadoCEIntegracao(Long idChamadaEncalheForncecdor){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ");
+		
+		hql.append(" sum(COALESCE(ITEM_CHM_ENCALHE.QTDE_DEVOLUCAO_APURADA,0)) as totalVendaApurada,");
+		
+		hql.append(" sum(COALESCE(ITEM_CHM_ENCALHE.QTDE_VENDA_INFORMADA,0))   as totalVendaInformada,");
+		
+		hql.append(" sum(COALESCE(ITEM_CHM_ENCALHE.VALOR_VENDA_APURADO,0))    as totalCreditoApurado,"); 
+		
+		hql.append(" sum(COALESCE(ITEM_CHM_ENCALHE.VALOR_VENDA_INFORMADO,0))  as totalCreditoInformado,");
+		
+		hql.append(" sum(COALESCE(ITEM_CHM_ENCALHE.VALOR_MARGEM_APURADO,0))   as totalMargemInformado, ");
+		
+		hql.append(" sum(COALESCE(ITEM_CHM_ENCALHE.VALOR_MARGEM_INFORMADO,0)) as toatalMargemApurado"); 
+		 		  
+		hql.append(" from chamada_encalhe_fornecedor CHM_ENCALHE ");
+		
+		hql.append(" join item_chamada_encalhe_fornecedor ITEM_CHM_ENCALHE");
+		
+		hql.append(" on( ");
+		
+		hql.append("   ITEM_CHM_ENCALHE.CHAMADA_ENCALHE_FORNECEDOR_ID = CHM_ENCALHE.ID");
+		
+		hql.append("   )");
+		
+		hql.append(" where CHM_ENCALHE.ID = :idChamadaEncalheForncecdor ");
+		
+		Query  query = getSession().createSQLQuery(hql.toString())
+									.addScalar("totalVendaApurada", StandardBasicTypes.BIG_DECIMAL)
+									.addScalar("totalVendaInformada", StandardBasicTypes.BIG_DECIMAL)
+									.addScalar("totalCreditoApurado", StandardBasicTypes.BIG_DECIMAL)
+									.addScalar("totalCreditoInformado", StandardBasicTypes.BIG_DECIMAL)
+									.addScalar("totalMargemInformado", StandardBasicTypes.BIG_DECIMAL)
+									.addScalar("toatalMargemApurado", StandardBasicTypes.BIG_DECIMAL)
+									.setResultTransformer(Transformers.aliasToBean(FechamentoCEIntegracaoConsolidadoDTO.class));		
+		
+		query.setParameter("idChamadaEncalheForncecdor", idChamadaEncalheForncecdor);
+		
+		return (FechamentoCEIntegracaoConsolidadoDTO) query.uniqueResult();
 	}
 
 }

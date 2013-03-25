@@ -25,6 +25,7 @@ import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.CFOP;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
 
 /**
  * Chamada de Encalhe do Fornecedor para retorno
@@ -118,7 +119,18 @@ public class ChamadaEncalheFornecedor implements Serializable {
     @OneToMany(mappedBy = "chamadaEncalheFornecedor")
     @Cascade(value = CascadeType.ALL)
     private List<ItemChamadaEncalheFornecedor> itens = new ArrayList<ItemChamadaEncalheFornecedor>();
-
+    
+    @Enumerated(EnumType.STRING)
+	@Column(name = "STATUS_INTEGRACAO")
+    private StatusIntegracao statusIntegracao;
+    
+    /**
+     * Será atribuido a data de Operação do Distribuidor
+     */
+    @Column(name="DATA_FECHAMENTO_NDS")
+    @Temporal(TemporalType.DATE)
+    private Date dataFechamentoNDS;
+    
     /**
      * @return the id
      */
@@ -433,6 +445,22 @@ public class ChamadaEncalheFornecedor implements Serializable {
 
 	public void setStatusCeNDS(StatusCeNDS statusCeNDS) {
 		this.statusCeNDS = statusCeNDS;
+	}
+	
+	public StatusIntegracao getStatusIntegracao() {
+		return statusIntegracao;
+	}
+
+	public void setStatusIntegracao(StatusIntegracao statusIntegracao) {
+		this.statusIntegracao = statusIntegracao;
+	}
+
+	public Date getDataFechamentoNDS() {
+		return dataFechamentoNDS;
+	}
+
+	public void setDataFechamentoNDS(Date dataFechamentoNDS) {
+		this.dataFechamentoNDS = dataFechamentoNDS;
 	}
 
 	/* (non-Javadoc)
