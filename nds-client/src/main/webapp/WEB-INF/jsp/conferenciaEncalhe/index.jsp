@@ -26,11 +26,11 @@
 		
 		var VEIO_DO_BT_BOX_ENCALHE = false;
 		
-		//Solicita seleÁ„o do box caso usu·rio n„o esteja associado.
+		//Solicita sele√ß√£o do box caso usu√°rio n√£o esteja associado.
 		if(ID_BOX_LOGADO == ""){
 			ConferenciaEncalhe.popup_logado();
 		}else{
-			<c:set var="idBoxLogado" value="idBoxLogado" scope="session"/>
+			<c:set var="idBoxLogado" value="${idBoxLogado}" scope="session"/>
 			focusSelectRefField($('#numeroCota', ConferenciaEncalhe.workspace));
 		}
 		
