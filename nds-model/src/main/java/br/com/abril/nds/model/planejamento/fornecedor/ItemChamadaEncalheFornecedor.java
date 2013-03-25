@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -39,11 +40,11 @@ public class ItemChamadaEncalheFornecedor implements Serializable {
     @Column(name = "NUMERO_DOCUMENTO", nullable = false)
     private Long numeroDocumento;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false,fetch=FetchType.LAZY)
     @JoinColumn(name = "CHAMADA_ENCALHE_FORNECEDOR_ID")
     private ChamadaEncalheFornecedor chamadaEncalheFornecedor;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false,fetch=FetchType.LAZY)
     @JoinColumn(name = "PRODUTO_EDICAO_ID")
     private ProdutoEdicao produtoEdicao;
 

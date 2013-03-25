@@ -7,6 +7,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		fechamentoCEIntegracaoController.bindButtons();
 		fechamentoCEIntegracaoController.buscarNumeroSemana();
 		fechamentoCEIntegracaoController.esconderBotoes();
+
 	},
 	
 	verificarDataFechamentoCE : function(fechada) {
@@ -19,16 +20,36 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				
 				$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
 				
+				$("#imagemImpressaoBoleto", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+				
+				$("#imagemBoletoEmBranco", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+				
 				$("#btnReabertura", fechamentoCEIntegracaoController.workspace).click(function() {
 					fechamentoCEIntegracaoController.reabrirCeIntegracao();
+				});
+				
+				$("#btnImpBoleto", fechamentoCEIntegracaoController.workspace).click(function() {
+					fechamentoCEIntegracaoController.geraBoleto('BOLETO')
+				});
+				
+				$("#btnImpBoletoEmBranco", fechamentoCEIntegracaoController.workspace).click(function() {
+					fechamentoCEIntegracaoController.geraBoleto('BOLETO_EM_BRANCO')
 				});
 				
 			} else {
 				$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
 				
+				$("#btnImpBoleto", fechamentoCEIntegracaoController.workspace).unbind("click");
+				
+				$("#btnImpBoletoEmBranco", fechamentoCEIntegracaoController.workspace).unbind("click");
+				
 				$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
 				
 				$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "1.0");
+				
+				$("#imagemImpressaoBoleto", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
+				
+				$("#imagemBoletoEmBranco", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
 				
 				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).click(function() {
 					fechamentoCEIntegracaoController.fecharCE();
@@ -385,22 +406,11 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	},
 	
 	fecharCE : function(){
-		var listaEncalhe = new Array();
-		var listaIdProdutoEdicao = new Array();
-		for(var id in fechamentoCEIntegracaoController.idsProdEdicao) {
-			listaEncalhe[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].encalhe;
-			listaIdProdutoEdicao[id] = fechamentoCEIntegracaoController.idsProdEdicao[id].name;
-		}
 	
 		$.postJSON(contextPath + '/devolucao/fechamentoCEIntegracao/fecharCE',
-				[
-				 {name:'listaEncalhe' , value:listaEncalhe},
-				 {name:'listaIdProdutoEdicao' , value:listaIdProdutoEdicao},
-				 {name:'idFornecedor', value: $("#idFornecedor", fechamentoCEIntegracaoController.workspace).val()},
-				 {name:'semana', value: $("#semana", fechamentoCEIntegracaoController.workspace).val()}
-				 ],
+				 null,
 				 function(resultado) {
-				 	exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+				 	exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
 					$(".grids", fechamentoCEIntegracaoController.workspace).hide();
 					fechamentoCEIntegracaoController.esconderBotoes();
 					return resultado;
@@ -432,7 +442,10 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 		         {name:'filtro.semana' , value:semana}
 				]	,
 				 function(resultado) {
-				 	exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+					
+					exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+			
+					fechamentoCEIntegracaoController.pesquisaPrincipal();
 				 },
 				null,
 				true
