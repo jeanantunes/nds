@@ -1,10 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,11 +10,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.AddLoteRegiaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
@@ -36,7 +33,6 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.upload.KeyValue;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -315,18 +311,14 @@ public class RegiaoController extends BaseController {
 	public void addCotasEmLote (UploadedFile xls, Long idRegiao) throws IOException {  
 		List<Integer> numerosCota = new ArrayList<Integer>();
 		
-		File x = upLoadArquivo(xls);
+		File x = XlsUploaderUtils.upLoadArquivo(xls); 
 
-		List<KeyValue> lista = XlsUploaderUtils.returnKeyValueFromXls(x);
+		List<AddLoteRegiaoDTO> listaDto = XlsUploaderUtils.getBeanListFromXls(AddLoteRegiaoDTO.class, x);
 		
-		for (KeyValue keyValue : lista) {
-			if(keyValue.getValue() != null){
-			Double xjiji = (Double) keyValue.getValue();
-			numerosCota.add(xjiji.intValue());
-			}
+		for (AddLoteRegiaoDTO list : listaDto) {
+			numerosCota.add(list.getNumeroCota());
 		}
 		
-		//Implementar a mensagem de erro...
 		this.validarEntradaDeVariasCotas(numerosCota, idRegiao);
 		this.popularRegistroESalvarCotasEmLote(numerosCota, idRegiao);
 		
@@ -335,18 +327,6 @@ public class RegiaoController extends BaseController {
 
 	}
 
-	private File upLoadArquivo(UploadedFile xls) throws IOException, FileNotFoundException {
-		
-		File x = new File(xls.getFileName());
-	    
-		File destino = new File(xls.getFileName());  
-	    destino.createNewFile();  
-	    
-	    InputStream stream = xls.getFile();  
-	    IOUtils.copy(stream,new FileOutputStream(destino));
-		return x;
-	}
-	
 	private void popularRegistroESalvarCotasEmLote(List<Integer> cotas, long idRegiao) {
 		boolean mensagem = false;
 		String numCotaCadastrada = "";
