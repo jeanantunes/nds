@@ -54,6 +54,7 @@ import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
 import br.com.abril.nds.service.exception.FechamentoEncalheRealizadoException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -70,9 +71,13 @@ import br.com.caelum.vraptor.view.Results;
 @Path(value="/devolucao/conferenciaEncalhe")
 public class ConferenciaEncalheController extends BaseController {
 	
-	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
+	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
 	
-	private static final String ID_BOX_LOGADO = "idBoxLogado";
+	public ConferenciaEncalheController(ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr){
+		this.conferenciaEncalheSessionScopeAttr = conferenciaEncalheSessionScopeAttr;
+	}
+	
+	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
 	
 	private static final String INFO_CONFERENCIA = "infoCoferencia";
 	
@@ -124,7 +129,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private HttpSession session;
-	
+
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
@@ -151,7 +156,10 @@ public class ConferenciaEncalheController extends BaseController {
 		//Obter box usuário
 		if(this.getUsuarioLogado()!= null && this.getUsuarioLogado().getBox() != null && 
 				this.getUsuarioLogado().getBox().getId() != null){
-			this.result.include(ID_BOX_LOGADO, this.getUsuarioLogado().getBox().getId());
+			
+			if(conferenciaEncalheSessionScopeAttr != null){
+				conferenciaEncalheSessionScopeAttr.setIdBoxLogado(this.getUsuarioLogado().getBox().getId());
+			}
 		}
 		
 		limparDadosSessao();
@@ -191,9 +199,8 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (idBox != null){
 		
-			this.session.setAttribute(ID_BOX_LOGADO, idBox);
+			conferenciaEncalheSessionScopeAttr.setIdBoxLogado(idBox);
 			
-			this.result.include(ID_BOX_LOGADO, idBox);
 			this.result.include("boxes", idBox);
 			
 			alterarBoxUsuario(idBox);
@@ -296,7 +303,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		
-		if (this.session.getAttribute(ID_BOX_LOGADO) == null){
+		if (conferenciaEncalheSessionScopeAttr.getIdBoxLogado() == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Box de recolhimento não informado.");
 		}
 		
@@ -933,7 +940,7 @@ public class ConferenciaEncalheController extends BaseController {
 		controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 				
 		Box boxEncalhe = new Box();
-		boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
+		boxEncalhe.setId(conferenciaEncalheSessionScopeAttr.getIdBoxLogado());
 		
 		controleConfEncalheCota.setBox(boxEncalhe);
 		
@@ -1167,7 +1174,7 @@ public class ConferenciaEncalheController extends BaseController {
 			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 			
 			Box boxEncalhe = new Box();
-			boxEncalhe.setId((Long) this.session.getAttribute(ID_BOX_LOGADO));
+			boxEncalhe.setId(conferenciaEncalheSessionScopeAttr.getIdBoxLogado());
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
 			
@@ -1586,7 +1593,6 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void limparDadosSessao() {
 		
-		this.session.removeAttribute(ID_BOX_LOGADO);
 		this.session.removeAttribute(NUMERO_COTA);
 		this.session.removeAttribute(INFO_CONFERENCIA);
 		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
