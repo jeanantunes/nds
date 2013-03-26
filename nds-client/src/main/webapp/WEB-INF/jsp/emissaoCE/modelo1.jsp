@@ -166,7 +166,7 @@ function imprimir(){
               <td width="30" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
               <td width="80" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
               <td width="80" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.precoComDesconto}</td>
-              <td width="37" align="center" style="border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.reparte}</strong></td>
+              <td width="37" align="center" style="border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.reparte}</strong></font></td>
               <td width="50" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
             </tr>
             <tr class="class_linha_${status.index%2==0?1:2}">
@@ -279,7 +279,7 @@ function imprimir(){
     
       <table width="375" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;">
         <tr class="class_linha_3">
-          <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Seq</strong></td>
+          <td class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;" height="50"><strong>Seq</strong></td>
           <td colspan="2" align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Produto</strong></td>
           <td align="center" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;"><strong>Reparte</strong></td>
           <td align="center" width="70" class="relatorios" style="padding-left:5px; border-left:1px solid #000; border-top:1px solid #000; border-bottom:1px solid #000;border-right:1px solid #000;"><strong>Qtde. Dev</strong></td>
@@ -295,13 +295,13 @@ function imprimir(){
         
 	        <tr class="class_linha_1">
 	          <td width="61" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.sequencia}</td>
-	          <td colspan="2" width="224" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><font size="2">${produto.nomeProduto}</font></td>
-	          <td width="61" align="center" style="border-left:1px solid #000; border-bottom:1px solid #000;padding-left:5px; ">${produto.reparte}</td>
+	          <td colspan="2" width="224" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.nomeProduto}</strong></font></td>
+	          <td width="61" align="center" style="border-left:1px solid #000; border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.reparte}</strong></font></td>
 	          <td width="67" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
 	        </tr>
 	        <tr class="class_linha_1">
 	          <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.codigoProduto}</td>
-	          <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;"><font size="2">${produto.edicao}</font></td>
+	          <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;"><font size="2"><strong>${produto.edicao}</strong></font></td>
 	          <td align="right" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.precoComDesconto}</td>
 	          <td colspan="2" align="center" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
 	        </tr>
