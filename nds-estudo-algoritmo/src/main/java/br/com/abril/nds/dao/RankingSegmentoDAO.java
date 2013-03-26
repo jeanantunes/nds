@@ -113,6 +113,7 @@ public class RankingSegmentoDAO {
 	params.put("IDS_COTA", listaCotas);
 	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryCotasOrdenadasMaiorMenor, params);
 
+
 	List<Long> retorno = new ArrayList<>();
 	while (rs.next()) {
 	    retorno.add(rs.getLong(1));

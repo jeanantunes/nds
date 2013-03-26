@@ -32,7 +32,10 @@ public interface MixCotaProdutoService {
 	
 	public void adicionarListaMixPorCota(List<MixCotaProdutoDTO> listaMixCota, Integer cotaId);
 	
-	
 	public void adicionarListaMixPorProduto(List<MixCotaProdutoDTO> listaMixProduto , String produtoId);
+
+	public void adicionarListaMixPorCota(List<MixCotaProdutoDTO> mixCotaProdutoDTOList);
+	
+	public void adicionarListaMixPorCota(List<MixCotaProdutoDTO> mixCotaProdutoDTOList);
 	
 }

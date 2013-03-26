@@ -1,3 +1,4 @@
+
 var mixCotaProdutoController = $.extend(true, {
 //Grid de cota 	
 	init : function() {
@@ -8,7 +9,7 @@ var mixCotaProdutoController = $.extend(true, {
 			preProcess: function(data){return mixCotaProdutoController.executarPreprocessamentoGridCota(data);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'codigoProduto',
 				width : 50,
 				sortable : true,
@@ -20,31 +21,31 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Classificação',
+				display : 'ClassificaÃ§Ã£o',
 				name : 'classificacaoProduto',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Rep. Médio',
+				display : 'Rep. MÃ©dio',
 				name : 'reparteMedio',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Vda. Média',
+				display : 'Vda. MÃ©dia',
 				name : 'vendaMedia',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Últ. Rep.',
+				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 60,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Rep. Inf. Mín.',
+				display : 'Rep. Inf. Min.',
 				name : 'reparteMinimo',
 				width : 70,
 				sortable : true,
@@ -56,7 +57,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Usuário',
+				display : 'UsuÃ¡rio',
 				name : 'usuario',
 				width : 80,
 				sortable : true,
@@ -74,7 +75,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},  {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'acao',
 				width : 50,
 				sortable : true,
@@ -107,25 +108,25 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			},  {
-				display : 'Rep. Médio',
+				display : 'Rep. MÃ©dio',
 				name : 'reparteMedio',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Vda. Média',
+				display : 'Vda. MÃ©dia',
 				name : 'vendaMedia',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Últ. Rep.',
+				display : 'Ult. Rep.',
 				name : 'ultimoReparte',
 				width : 70,
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Rep. Inf. Mín.',
+				display : 'Rep. Inf. Min.',
 				name : 'reparteMinimo',
 				width : 80,
 				sortable : true,
@@ -137,7 +138,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			},  {
-				display : 'Usuário',
+				display : 'UsuÃ¡rio',
 				name : 'usuario',
 				width : 80,
 				sortable : true,
@@ -155,7 +156,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},  {
-				display : 'Ação',
+				display : 'AÃ§Ã£o',
 				name : 'acao',
 				width : 50,
 				sortable : true,
@@ -175,7 +176,7 @@ var mixCotaProdutoController = $.extend(true, {
 			preProcess: function(data){return mixCotaProdutoController.preProcessarListaPdv(data);},
 			dataType : 'json',
 			colModel : [ {
-				display : 'Código',
+				display : 'CÃ³digo',
 				name : 'id',
 				width : 50,
 				sortable : true,
@@ -187,7 +188,7 @@ var mixCotaProdutoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Endereço',
+				display : 'EndereÃ§o',
 				name : 'endereco',
 				width : 320,
 				sortable : true,
@@ -210,6 +211,71 @@ var mixCotaProdutoController = $.extend(true, {
 		});
 		
 		
+		//UPLOAD LOTE
+		
+		$("#excelFile").change(function (){
+			
+			       var fileName = $(this).val();
+			       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+			       if(ext!="xls" & ext!="xlsx"){
+			    	   exibirMensagem("WARNING", ["Somente arquivos com extensÃ£o .XLS ou .XLSX sÃ£o permitidos."]);
+			    	   $(this).val('');
+			    	   return;
+			       }
+			       
+			       //SUBMIT FORM
+			       $("#formUploadLoteMix").ajaxSubmit({
+						/*beforeSubmit: function(arr, formData, options) {
+						},*/
+						success: function(responseText, statusText, xhr, $form)  { 
+							
+							console.log(responseText.mixCotaDTOInconsistente);
+							
+							var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
+							if(typeof(mensagens)!='undefined'){
+								var tipoMensagem = mensagens.tipoMensagem;
+								var listaMensagens = mensagens.listaMensagens;
+								
+								if (tipoMensagem && listaMensagens) {
+									
+									if (tipoMensagem != 'SUCCESS') {
+										
+										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+									}
+									$("#dialog-lote").dialog( "close" );
+									regiaoController.cotasDaRegiao();
+									exibirMensagem(tipoMensagem, listaMensagens);	
+								}
+								
+							}else if (typeof(responseText.mixCotaDTOInconsistente)=='object'){
+								
+								if(responseText.mixCotaDTOInconsistente.length==0){
+									exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
+									return;
+								}else{
+									var a = new Array();
+									a.push("A arquivo possui registros incosistentes no total de "+responseText.mixCotaDTOInconsistente.length);
+									for ( var int = 0; int < responseText.mixCotaDTOInconsistente.length; int++) {
+										a.push("codigoProduto="+responseText.mixCotaDTOInconsistente[int].codigoProduto
+												+",numeroCota="+responseText.mixCotaDTOInconsistente[int].numeroCota
+												+",reparteMinimo="+responseText.mixCotaDTOInconsistente[int].reparteMinimo
+												+",reparteMaximo="+responseText.mixCotaDTOInconsistente[int].reparteMaximo);
+									}
+									exibirMensagemDialog("WARNING", a);
+									
+								}
+							
+							
+								
+							}
+						}, 
+//						url:  contextPath + '/distribuicao/regiao/addLote',
+						type: 'POST',
+						dataType: 'json'//,
+//						data: { "tipoUpload" : ""}
+					});
+			       
+		     });
 		
 		},
 		
@@ -225,7 +291,7 @@ var mixCotaProdutoController = $.extend(true, {
 			);
 			$("#spanLegendCota").text(""); //limpa o titulo produto, evitando permanecer valores digitados em pesquisa anterior
 			$("#btNovoMixCota").show();
-			$("#btAddLoteMixCota").hide();
+//			$("#btAddLoteMixCota").hide();
 			$("#btGerarArquivoMixCota").hide();
 			$("#btImprimirMixCota").hide();
 			$("#btExcluirTudoCota").hide();
@@ -233,7 +299,7 @@ var mixCotaProdutoController = $.extend(true, {
 		}else{
 			$("#spanLegendCota").text($("#codigoCotaMix").val() + "-" +$("#nomeCotaMix").val());// preenche fieldset com os valores digitados no fitro
 			$("#btNovoMixCota").show();
-			$("#btAddLoteMixCota").show();
+//			$("#btAddLoteMixCota").show();
 			$("#btGerarArquivoMixCota").show();
 			$("#btImprimirMixCota").show();
 			$("#btExcluirTudoCota").show();
@@ -344,7 +410,7 @@ var mixCotaProdutoController = $.extend(true, {
 			
 			$("#spanLegendProduto").text(""); //limpa o titulo produto, evitando permanecer valores digitados em pesquisa anterior
 			$("#btNovoMixProduto").show();
-			$("#btAddLoteMixProduto").hide();
+//			$("#btAddLoteMixProduto").show();
 			$("#btGerarArquivoMixProduto").hide();
 			$("#btImprimirMixProduto").hide();
 			$("#btExcluirTudoProduto").hide();
@@ -353,7 +419,7 @@ var mixCotaProdutoController = $.extend(true, {
 			// pesquisa achou resultado
 			$("#spanLegendProduto").text($("#codigoProdutoMix").val() + "-" +$("#nomeProdutoMix").val());// preenche fieldset com os valores digitados no fitro
 			$("#btNovoMixProduto").show();
-			$("#btAddLoteMixProduto").show();
+// 			$("#btAddLoteMixProduto").show();
 			$("#btGerarArquivoMixProduto").show();
 			$("#btImprimirMixProduto").show();
 			$("#btExcluirTudoProduto").show();
@@ -430,7 +496,7 @@ var mixCotaProdutoController = $.extend(true, {
 		}else{
 			$(".mixProdutosGrid").flexReload();
 		}
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["OperaÃ§Ã£o Realizada com sucesso!"]);
 	},
 	
 	//retorna msg de erro durante exclusao Todos
@@ -589,7 +655,7 @@ var mixCotaProdutoController = $.extend(true, {
 		//valida codigo duplicado
 		for ( var int = 0; int < countLinhas; int++) {
 			if(a.indexOf($("#codigoModal"+int).val())>-1){
-				exibirMensagem("WARNING", ["Código de produto já utilizado."]);
+				exibirMensagem("WARNING", ["CÃ³digo de produto jÃ¡ utilizado."]);
 				return false;
 			}else{
 				a.push($("#codigoModal"+int).val());
@@ -604,7 +670,7 @@ var mixCotaProdutoController = $.extend(true, {
 			var repMax = parseInt($("#repMaximo"+int2).val());
 			
 			if(repMin>repMax){
-				exibirMensagem("WARNING", ["Reparte Mínimo maior que Reparte Máximo para o produto."]);
+				exibirMensagem("WARNING", ["Reparte MÃ­nimo maior que Reparte MÃ¡ximo para o produto."]);
 				return false;
 			}
 		}
@@ -615,12 +681,12 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	adicionarMixCotaSucesso:function(result){
 		$(".mixCotasGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["OperaÃ§Ã£o Realizada com sucesso!"]);
 	},
 	
 	adicionarMixProdutoSucesso:function(result){
 		$(".mixProdutosGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["OperaÃ§Ã£o Realizada com sucesso!"]);
 	},
 	
 	
@@ -826,7 +892,7 @@ var mixCotaProdutoController = $.extend(true, {
 						  });
 					  
 					if(somaReparte > reparteTotal){
-						//abre dialog de confirmação de alteração de reparte maximo
+						//abre dialog de confirmaï¿½ï¿½o de alteraï¿½ï¿½o de reparte maximo
 						$("#dialog-confirma-reparte").dialog({
 							resizable: false,
 							height:'auto',
@@ -1010,6 +1076,9 @@ var mixCotaProdutoController = $.extend(true, {
 			return data;
 		},
 		
-	
+		add_lote:function(){
+			
+			$("#excelFile").val('').click();
+		}
 	}, BaseController);
 //@ sourceURL=mixCotaProduto.js

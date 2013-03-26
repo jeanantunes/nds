@@ -1,3 +1,4 @@
+
 package br.com.abril.nds.model.cadastro;
 
 import java.io.Serializable;
@@ -557,7 +558,6 @@ public class Cota implements Serializable {
 		return null;
 	}
 
-
 	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
 		return tipoDistribuicaoCota;
 	}
@@ -565,4 +565,5 @@ public class Cota implements Serializable {
 	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
+
 }

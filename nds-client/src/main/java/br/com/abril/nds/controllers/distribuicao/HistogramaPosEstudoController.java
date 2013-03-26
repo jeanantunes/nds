@@ -55,9 +55,6 @@ public class HistogramaPosEstudoController extends BaseController{
 	public void histogramaPosEstudo(){
 	}
 	
-//	@Post
-//	public void carregarGridHistogramaPosEstudo(){
-//	}
 	
 	@Post
 	public void excluirEstudo(long id){

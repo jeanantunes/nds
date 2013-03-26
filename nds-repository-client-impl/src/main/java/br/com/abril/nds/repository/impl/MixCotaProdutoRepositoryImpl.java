@@ -1,3 +1,4 @@
+
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
@@ -75,6 +76,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		sql.append(" and lancamento.status='FECHADO'")
 		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
+		.append(" group by cota.id ")
 		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -141,22 +143,24 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
 		.append(" LEFT join pessoa on cota.pessoa_id = pessoa.id ")
 		
-		.append(" where ");
+		.append(" where ")
+		.append(" lancamento.status='FECHADO' ");
 		if(filtroConsultaMixProdutoDTO.getCodigoProduto()!=null ){
-			sql.append("produto.CODIGO = :codigoProduto ");
+			sql.append(" and produto.CODIGO = :codigoProduto ");
 		}
 		if(isClassificacaoPreenchida){
 			sql.append(" and upper(tipo_classificacao_produto.descricao) = upper(:classificacaoProduto)");
 		}
-		sql.append(" and lancamento.status='FECHADO' ")
-		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
+		sql.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" GROUP BY produto.id")
 		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
 	
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
-		query.setParameter("codigoProduto", filtroConsultaMixProdutoDTO.getCodigoProduto());
+		if(filtroConsultaMixProdutoDTO.getCodigoProduto() !=null && filtroConsultaMixProdutoDTO.getCodigoProduto()!=""){
+			query.setParameter("codigoProduto", filtroConsultaMixProdutoDTO.getCodigoProduto());
+		}
 		if(isClassificacaoPreenchida){
 			query.setParameter("classificacaoProduto", filtroConsultaMixProdutoDTO.getClassificacaoProduto());
 		}

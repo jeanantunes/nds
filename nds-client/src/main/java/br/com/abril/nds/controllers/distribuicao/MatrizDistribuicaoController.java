@@ -112,6 +112,7 @@ public class MatrizDistribuicaoController extends BaseController {
 	processarDistribuicao(vo, filtro);
     }
 
+
 	@Post
 	public void carregarProdutoEdicaoPorEstudo(BigInteger estudo) {
 		
@@ -264,10 +265,10 @@ public class MatrizDistribuicaoController extends BaseController {
 
 	}
 
-	if (!listaMensagens.isEmpty()) {
-
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
-	}
+		if (!listaMensagens.isEmpty()) {
+	
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
+	    }
     }
 
     /**
@@ -283,7 +284,6 @@ public class MatrizDistribuicaoController extends BaseController {
 
 	    throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 	}
-
 	return filtro;
     }
 
@@ -340,4 +340,4 @@ public class MatrizDistribuicaoController extends BaseController {
 		result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo();
 	}
 	
-}
+    }

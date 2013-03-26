@@ -15,11 +15,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -63,6 +65,7 @@ import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
+import br.com.abril.nds.service.impl.CotaServiceImpl;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -578,9 +581,10 @@ public class CotaController extends BaseController {
 	private List<ItemDTO<String, String>> getListaClassificacao(){
 		
 		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
+		Logger logger = Logger.getLogger(CotaController.class.getName());
+		logger.info("getListaClassificacao");
 		
-		
-		
+
 		List<DistribuidorClassificacaoCota> distribuidorClassificacaoCotas = cotaService.obterListaClassificacao();
 		for(DistribuidorClassificacaoCota dCC:distribuidorClassificacaoCotas ){
 			
@@ -831,8 +835,8 @@ public class CotaController extends BaseController {
 	@Post
 	public void apagarTipoCota(Long idCota, String tipoCota){
 		
-
-		
+		Logger logger = Logger.getLogger(CotaController.class.getName());
+		logger.info("-->CotaController.apagarTipoCota");
 		cotaService.apagarTipoCota(idCota,  tipoCota);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Mix da Cota Apagados com sucesso!!"),
