@@ -19,4 +19,12 @@ public interface InterfaceExecucaoService {
 	 */
 	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException;
 	
+	/**
+	 * Executa as Interfaces em Ordem de Prioridade 
+	 * @param usuario
+	 * @throws BeansException
+	 * @throws ClassNotFoundException
+	 */
+	public void executarTodasInterfacesEmOrdem(Usuario usuario) throws BeansException, ClassNotFoundException;
+	
 }

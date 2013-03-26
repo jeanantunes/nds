@@ -361,7 +361,20 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 		}
 		
 	}
-	
-	
-	
+
+	@Override
+	public boolean verificarDevolucao(Date dataOperacao,
+			StatusAprovacao status) {
+		
+		StringBuilder hql = new StringBuilder("select count (c.id) ");
+		hql.append(" from ConferenciaEncalheParcial c ")
+		   .append(" where c.dataMovimento = :dataOperacao ")
+		   .append(" and c.statusAprovacao = :status ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameter("status", status);
+		
+		return (Long)query.uniqueResult() > 0;
+	}
 }

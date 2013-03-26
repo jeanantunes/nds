@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -12,19 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoAVista;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado;
-import br.com.abril.nds.dto.CotaDTO;
-import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
-import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
@@ -42,14 +41,14 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
@@ -75,7 +74,9 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.Movimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
@@ -102,9 +103,10 @@ import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
+import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CalendarioService;
-import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
@@ -218,6 +220,15 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Autowired
 	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository;
 	
+	@Autowired
+	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private ConferenciaEncalheParcialRepository conferenciaEncalheParcialRepository;
+	
 	@Override
 	@Transactional
 	public boolean existeCobrancaParaFecharDia(Date dataOperacaoDistribuidor) {
@@ -264,9 +275,101 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	@Override
 	@Transactional
-	public List<ValidacaoControleDeAprovacaoFecharDiaDTO> obterPendenciasDeAprovacao(Date dataOperacao, StatusAprovacao pendente) {
-		 
-		return this.fecharDiaRepository.obterPendenciasDeAprovacao(dataOperacao,pendente);
+	public boolean existePendenciasDeAprovacao(Date dataOperacao) {
+		
+		if (this.distribuidorRepository.utilizaControleAprovacao()){
+			
+			ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor =
+					this.distribuidorRepository.parametrosAprovacaoDistribuidor();
+			
+			List<TipoMovimento> movimentosVerificaAprovacao = new ArrayList<TipoMovimento>();
+			
+			if (parametrosAprovacaoDistribuidor != null){
+				
+				if (parametrosAprovacaoDistribuidor.isDevolucaoFornecedor()){
+					
+					if (this.conferenciaEncalheParcialRepository.verificarDevolucao(
+							dataOperacao, StatusAprovacao.PENDENTE)){
+						
+						return true;
+					}
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isAjusteEstoque()){
+					
+					movimentosVerificaAprovacao.addAll(
+						
+						this.tipoMovimentoEstoqueRepository.buscarTiposMovimentoEstoque(
+							Arrays.asList(
+								GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
+								GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
+								GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR,
+								GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
+								GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
+								GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
+								GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS
+							)
+						)
+					);
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isDebitoCredito()){
+					
+					movimentosVerificaAprovacao.addAll(
+						
+						this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+							Arrays.asList(
+								GrupoMovimentoFinaceiro.CREDITO,
+								GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+								GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO
+							)
+						)
+					);
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isFaltasSobras()){
+					
+					movimentosVerificaAprovacao.addAll(
+							
+						this.tipoMovimentoEstoqueRepository.buscarTiposMovimentoEstoque(
+							Arrays.asList(
+								GrupoMovimentoEstoque.FALTA_EM,
+								GrupoMovimentoEstoque.FALTA_DE,
+								GrupoMovimentoEstoque.SOBRA_EM,
+								GrupoMovimentoEstoque.SOBRA_DE
+							)
+						)
+					);
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isNegociacao()){
+					
+					movimentosVerificaAprovacao.addAll(
+						this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+							Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO)
+						)
+					);
+				}
+				
+				if (parametrosAprovacaoDistribuidor.isPostergacaoCobranca()){
+					
+					movimentosVerificaAprovacao.addAll(
+						this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
+							Arrays.asList(
+								GrupoMovimentoFinaceiro.POSTERGADO_DEBITO,
+								GrupoMovimentoFinaceiro.POSTERGADO_CREDITO
+							)
+						)
+					);
+				}
+			}
+			
+			return this.fecharDiaRepository.existePendenciasDeAprovacao(
+					dataOperacao, StatusAprovacao.PENDENTE, movimentosVerificaAprovacao);
+		} else {
+			
+			return false;
+		}
 	}
 
 	@Override
