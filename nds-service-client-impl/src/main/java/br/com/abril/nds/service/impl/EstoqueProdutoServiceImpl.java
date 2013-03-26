@@ -11,7 +11,6 @@ import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.service.EstoqueProdutoService;
-import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -30,6 +29,13 @@ public class EstoqueProdutoServiceImpl implements EstoqueProdutoService {
 	public EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao) {
 		
 		return this.estoqueProdutoRespository.buscarEstoquePorProduto(idProdutoEdicao);
+	}
+
+	@Transactional
+	public List<ProdutoEdicaoSuplementarDTO> obterProdutosEdicaoSuplementarDisponivel(
+			Date data, Long idCota) {
+		
+		return this.estoqueProdutoRespository.obterProdutosEdicaoSuplementarNaoDisponivel(idCota, data);
 	}
 
 }

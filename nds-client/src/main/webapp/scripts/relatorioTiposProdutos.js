@@ -1,4 +1,5 @@
-var relatorioTiposProdutosController = $.extend(true, {
+
+﻿var relatorioTiposProdutosController = $.extend(true, {
 	
 	path : contextPath + '/lancamento/relatorioTiposProdutos/',
 

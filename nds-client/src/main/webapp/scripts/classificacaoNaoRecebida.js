@@ -1,5 +1,5 @@
 
-var classificacaoNaoRecebidaController = $.extend(true, {
+﻿var classificacaoNaoRecebidaController = $.extend(true, {
 	
 	/**
 	* @author InfoA2 - Samuel Mendes

@@ -395,4 +395,6 @@ public interface CotaService {
 	public List<DistribuidorClassificacaoCota> obterListaClassificacao();
 
 	public abstract boolean cotaVinculadaCotaBase(Long idCota);
+	
+	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
 }

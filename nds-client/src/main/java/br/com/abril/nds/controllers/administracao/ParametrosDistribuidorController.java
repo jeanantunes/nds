@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.DistribuidorPercentualExcedenteVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaTipoDTO;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.ClassificacaoCotaService;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
@@ -57,6 +59,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/administracao/parametrosDistribuidor")
 public class ParametrosDistribuidorController extends BaseController {
 	
+	private static final Integer _100 = 100;
+
 	@Autowired
 	private Result result;
 	
@@ -71,6 +75,9 @@ public class ParametrosDistribuidorController extends BaseController {
 
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private ClassificacaoCotaService classificacaoCotaService;
 	
 	@Autowired
 	private HttpSession session;
@@ -167,7 +174,7 @@ public class ParametrosDistribuidorController extends BaseController {
 
 	public Download getLogo() {
 		
-		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();;
+		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();
 		
 		if (imgLogotipo != null) {
 		
@@ -188,7 +195,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	/**buscarDiasOperacaoFornecedor
 	 * Grava as alterações de parametros realizadas para o distribuidor
-	 * @param distribuidor
+	 * @param parametrosDistribuidor
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
 	    
@@ -200,6 +207,8 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		parametrosDistribuidorService.salvarDistribuidor(
 			parametrosDistribuidor, imgLogotipo, contentType);
+		
+		classificacaoCotaService.executeReclassificacaoCota();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}
@@ -286,7 +295,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	/**
 	 * Grava os dias de distribuição de recolhimento do fornecedor
-	 * @param distribuidor
+	 * @param selectFornecedoresLancamento
 	 */
 	@Post
 	@Path("/gravarDiasDistribuidorFornecedor")
@@ -406,6 +415,20 @@ public class ParametrosDistribuidorController extends BaseController {
 	    if (vo.isUtilizaOutros() && vo.getValidadeOutros() == null) {
             erros.add("É necessário informar a Validade da Garantia Outros!");
         }
+	    
+	    if (vo.getPercentualMaximoFixacao() != null && (vo.getPercentualMaximoFixacao().compareTo(1) < 0 || vo.getPercentualMaximoFixacao().compareTo(75) > 0)) {
+	    	erros.add("% Máximo de Fixação deve estar entre 1% e 75%!");
+	    }
+	    
+	    List<DistribuidorPercentualExcedenteVO> listPercentualExcedente = vo.getListPercentualExcedente();
+	    for (DistribuidorPercentualExcedenteVO percentualExcedenteVO : listPercentualExcedente) {
+			if (percentualExcedenteVO.getPdv() != null && percentualExcedenteVO.getVenda() != null
+					&& (_100.compareTo(percentualExcedenteVO.getPdv() + percentualExcedenteVO.getVenda()) < 0)) {
+				erros.add("O % de excedente da venda + pdv não pode ultrapassar 100%!");
+				break;
+			}
+		}
+	    
 	    verificarExistenciaErros(erros);
 	}
 

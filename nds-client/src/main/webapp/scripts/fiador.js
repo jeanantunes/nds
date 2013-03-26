@@ -1,4 +1,5 @@
-var fiadorController = $.extend(true, {
+
+﻿var fiadorController = $.extend(true, {
 		fecharModalCadastroFiador: false,
 		addConjuge : false,
 		alteracaoDadosBasicos : false,
@@ -1269,3 +1270,4 @@ var fiadorController = $.extend(true, {
 }, BaseController);
 
 //@ sourceURL=fiador.js
+

@@ -371,6 +371,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 
-	public abstract boolean cotaVinculadaCotaBase(Long idCota);
+	boolean cotaVinculadaCotaBase(Long idCota);
 	
+	List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
 }

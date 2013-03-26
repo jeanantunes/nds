@@ -1,4 +1,5 @@
-var segmentoNaoRecebidoController = $.extend(true,	{
+
+﻿var segmentoNaoRecebidoController = $.extend(true,	{
 
 					init : function() {
 						
@@ -202,6 +203,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 							width : 630,
 							height : 250
 						});
+<<<<<<< HEAD
 					
 						$(document).ready(function(){
 							
@@ -218,6 +220,8 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								return true;
 							});
 						});
+=======
+>>>>>>> DGBti/fase2
 					},
 
 					incluirSegmento : function () {

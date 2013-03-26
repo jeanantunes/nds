@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -371,6 +372,19 @@ public class DateUtil {
 		return calendar;
 	}
 	
+	
+	public static Date obterDtInicioSemanaPorNumeroSemanaAno(Integer inicioSemana,Integer numeroSemana, Integer ano){
+		GregorianCalendar dataInicio = new GregorianCalendar();
+		dataInicio.set(Calendar.YEAR, ano);  
+		dataInicio.setFirstDayOfWeek(inicioSemana);  
+		dataInicio.set(Calendar.WEEK_OF_YEAR, numeroSemana);  
+		
+	
+		Date retorno = dataInicio.getTime();
+		
+		return retorno;
+	}
+	
 	/**
 	 * Retorna o código do dia da semana de uma determinada data.
 	 * 
@@ -552,4 +566,9 @@ public class DateUtil {
 				return "Dezembro";
 		}
 	}
+	
+	
+	
+	
+	
 }

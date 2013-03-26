@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -2158,7 +2159,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
-		hql.append(" LEFT JOIN produtoEdicao.lancamentos as lancamento ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
@@ -2201,7 +2201,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" GROUP BY cota.numeroCota ");
 		
 		if (qtdReparteInicial != null && qtdReparteInicial.intValue() >= 0 && qtdReparteFinal != null && qtdReparteFinal.intValue() >= 0 ) {
-			hql.append(" HAVING avg(lancamento.reparte) between :reparteInicial and :reparteFinal");
+			hql.append(" HAVING avg(estoqueProdutoCota.qtdeRecebida) between :reparteInicial and :reparteFinal");
 			parameters.put("reparteInicial", qtdReparteInicial.doubleValue());
 			parameters.put("reparteFinal", qtdReparteFinal.doubleValue());
 		}
@@ -2695,7 +2695,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	
 	}
 	
-	
 	@Override
 	public boolean cotaVinculadaCotaBase(Long idCota) {
 		
@@ -2710,6 +2709,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		Long count = (Long)query.uniqueResult();
 		
 		return (count > 0);
+	}
+	
+	@Override
+	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray) {
+
+		StringBuilder hql = new StringBuilder("select NUMERO_COTA from cota where cota.NUMERO_COTA in (:cotaIDList)");
+		
+		SQLQuery query = super.getSession().createSQLQuery(hql.toString());
+		query.setParameterList("cotaIDList", cotaIdArray);
+		
+		return query.list();
 	}
 
 }

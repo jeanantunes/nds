@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -819,8 +820,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"lancamento.reparte as reparte, " +
 				"produto.nome as nomeProduto, " +
 				"produto.codigo as codigoProduto, " +				
-				"tipoProduto.descricao as descricaoTipoProduto, " +
-				"lancamento.status as status " +
+				"tipoClassificacaoProduto.descricao as descricaoTipoClassificacao, " +
+				" tipoSegmentoProduto.descricao as descricaoTipoSegmento,"+
+				" lancamento.status as status " +
 				
 				"from " +
 				 "EstoqueProdutoCota estoqueProdutoCota" +
@@ -829,7 +831,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				 " join estoqueProdutoCota.cota cota " +
 				 " join cota.box box " +
 				 " join produtoEdicao.produto produto " +
-				 " join produto.tipoProduto tipoProduto " +
+				 " join produto.tipoClassificacaoProduto tipoClassificacaoProduto " +
+				 " join produto.tipoSegmentoProduto tipoSegmentoProduto " +
+				 
 				 
 				 " ";
 				 
@@ -861,7 +865,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//edicao = numero da edicao
 		if (StringUtils.isNotEmpty(filtro.getEdicao())) {
 			whereList.add(" produtoEdicao.numeroEdicao = :numeroEdicao");
-			parameterMap.put("numeroEdicao",filtro.getEdicao());
+			parameterMap.put("numeroEdicao",new Long(filtro.getEdicao()));
 		}
 		
 		//check opcao de componente
@@ -1225,8 +1229,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" sum(lancamento.reparte) as repartePrevisto, ");
 		hql.append(" sum(ifnull(estoqueProduto.qtdeDevolucaoFornecedor,0)  - movimentos.qtde) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
-		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa ");
-		
+		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
+		hql.append(" produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 		hql.append(" FROM EstoqueProduto estoqueProduto");
 		hql.append(" LEFT JOIN estoqueProduto.movimentos as movimentos");
 		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
@@ -1395,6 +1399,79 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return ((Long)query.uniqueResult() > 0);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public ProdutoEdicaoDTO findReparteEVenda(ProdutoEdicaoDTO dto){
+		List<ProdutoEdicaoDTO> produtosEdicao = new ArrayList<>();
+		produtosEdicao.add(dto);
+		findReparteEVenda(produtosEdicao);
+		return dto;
+	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicaoDTO> findReparteEVenda(List<ProdutoEdicaoDTO> produtosEdicao){
+		StringBuffer selectReparte = new StringBuffer();
+		StringBuffer selectVenda = new StringBuffer();
+
+		selectReparte.append("SELECT REPARTE,PRODUTO_EDICAO_ID FROM estudo_produto_edicao where PRODUTO_EDICAO_ID in (");
+		
+		selectVenda.append("select distinct pe.id,p.qtde_devolucao_fornecedor, m.qtde from produto_edicao pe ")
+				.append("join MOVIMENTO_ESTOQUE m on m.produto_edicao_id = pe.id ")
+				.append("join ESTOQUE_PRODUTO p on p.produto_edicao_id = pe.id ")
+				.append("where m.tipo_movimento_id = 13 and m.qtde and p.qtde_devolucao_fornecedor is not null and pe.id in (");
+		
+		for(int i = 0; i < produtosEdicao.size(); i++){
+			ProdutoEdicaoDTO dto = produtosEdicao.get(i);
+			selectReparte.append(dto.getId());
+			selectVenda.append(dto.getId());
+			if(i != produtosEdicao.size() - 1){
+				selectReparte.append(",");
+				selectVenda.append(",");
+			}
+		}
+		
+		selectReparte.append(");");
+		selectVenda.append(") ");
+		
+		Query queryReparte = super.getSession().createSQLQuery(selectReparte.toString());
+		Query queryVenda = super.getSession().createSQLQuery(selectVenda.toString());
+		
+		List<Object[]> resultVenda = queryVenda.list();
+		List<Object[]> resultReparte = queryReparte.list();
+		
+		for(ProdutoEdicaoDTO dto : produtosEdicao){
+			preencherCampos(dto, resultReparte, resultVenda);
+		}
+		 
+		return produtosEdicao;
+	}
+	
+	private void preencherCampos(ProdutoEdicaoDTO dto, List<Object[]> resultadoReparte, List<Object[]> resultadoVenda){
+		for(Object[] item : resultadoReparte){
+			BigInteger id = (BigInteger)item[1];
+			if(id.longValue() == dto.getId()){
+				dto.setReparte((BigInteger)item[0]);
+				break;
+			}
+		}
+		for(Object[] item : resultadoVenda){
+			BigInteger id = (BigInteger)item[0];
+			if( id.longValue() == dto.getId() ){
+				BigDecimal produto = (BigDecimal) item[1];
+				BigDecimal movimento = (BigDecimal) item[2];
+				if(produto == null){
+					break;
+				}
+				if(movimento == null){
+					movimento = new BigDecimal(0);
+				}
+				Double venda = produto.doubleValue() - movimento.doubleValue();
+				dto.setVenda(venda);
+				dto.setPercentualVenda( (venda / produto.doubleValue()) * 100);
+				break;
+			}
+		}
+	}
 
 }

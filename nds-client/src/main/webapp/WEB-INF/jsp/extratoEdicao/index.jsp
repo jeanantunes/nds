@@ -1,4 +1,4 @@
-<head>
+﻿<head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>meuConteudo</title>
 
@@ -19,6 +19,28 @@ $(function(){
 </head>
 
 <body>
+
+
+	<div class="areaBts">
+	    <div class="area">
+	
+			<span class="bt_arq">
+				<a href="${pageContext.request.contextPath}/estoque/extratoEdicao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+			</span>
+			
+			<span class="bt_arq">
+			    <a href="${pageContext.request.contextPath}/estoque/extratoEdicao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+				    <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+			</span>
+		</div>
+	</div>
+	<br/>
+	<br/>
+	<br/>
+
 
 	<div class="container">
 
@@ -105,20 +127,6 @@ $(function(){
 				<table class="extratoEdicaoGrid"></table>
 				<table width="950" border="0" cellspacing="2" cellpadding="2">
 					<tr>
-						<td width="689">
-							<span class="bt_novos" title="Gerar Arquivo">
-								<a href="${pageContext.request.contextPath}/estoque/extratoEdicao/exportar?fileType=XLS">
-									<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
-									Arquivo
-								</a>
-							</span>
-							<span class="bt_novos" title="Imprimir">
-								<a href="${pageContext.request.contextPath}/estoque/extratoEdicao/exportar?fileType=PDF">
-									<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
-									Imprimir
-								</a>
-							</span>
-						</td>
 						<td width="115"><strong>Saldo em Estoque:</strong>
 						</td>
 						<td width="126"><div id="saldoTotalExtratoEdicao"></div></td>
