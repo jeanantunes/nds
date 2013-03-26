@@ -80,6 +80,8 @@ public class DiferencaVO implements Serializable {
 	private TipoDirecionamentoDiferenca tipoDirecionamento;
 	
 	private TipoDiferenca tipoDiferenca;
+	
+	private Long quantidadeDiferencaDetalheEstoqueCota;
 
 	/**
 	 * Construtor padrão.
@@ -565,6 +567,17 @@ public class DiferencaVO implements Serializable {
 	public void setExistemRateios(boolean existemRateios) {
 		this.existemRateios = existemRateios;
 	}
+
+	public Long getQuantidadeDiferencaDetalheEstoqueCota() {
+		return quantidadeDiferencaDetalheEstoqueCota;
+	}
+
+	public void setQuantidadeDiferencaDetalheEstoqueCota(
+			Long quantidadeDiferencaDetalheEstoqueCota) {
+		this.quantidadeDiferencaDetalheEstoqueCota = quantidadeDiferencaDetalheEstoqueCota;
+	}
+	
+	
 
 
 }
