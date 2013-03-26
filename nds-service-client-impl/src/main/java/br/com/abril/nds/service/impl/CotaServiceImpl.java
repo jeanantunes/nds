@@ -1,4 +1,3 @@
-
 package br.com.abril.nds.service.impl;
 
 import java.io.FileNotFoundException;
@@ -2595,6 +2594,12 @@ public class CotaServiceImpl implements CotaService {
 	public List<Integer> verificarNumeroCotaExiste(Integer... cotaIdArray) {
 
 		return cotaRepository.verificarNumeroCotaExiste(cotaIdArray);
+	}
+	
+	@Override
+	public boolean cotaVinculadaCotaBase(Long idCota) {
+		
+		return cotaRepository.cotaVinculadaCotaBase(idCota);
 	}
 }
 
