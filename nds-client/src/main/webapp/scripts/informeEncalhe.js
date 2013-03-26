@@ -196,7 +196,7 @@ InformeEncalhe.prototype.busca = function() {
 InformeEncalhe.prototype.bindEvents = function() {
 	var _this = this;
 
-	$("#semanaRecolhimento", this.workspace).mask("99");
+	$("#semanaRecolhimento", this.workspace).mask("999999");
 	$("#dataRecolhimentoBox", this.workspace).mask("99/99/9999");
 	$("#dataRecolhimentoBox", this.workspace)
 			.datepicker(
@@ -224,7 +224,7 @@ InformeEncalhe.prototype.bindEvents = function() {
 		_this.carregarDiaSemana();
 	});
 	$('#semanaRecolhimentoBox', this.workspace).change(function() {
-		_this.carregarDataSemana();
+		/*_this.carregarDataSemana();*/
 	});
 
 };

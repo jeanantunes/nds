@@ -23,7 +23,7 @@ var contasAPagarController = $.extend(true, {
 			buttonImageOnly: true
 		});
 		
-		this.initcontasAPagarListaProdutosGrid();		
+		this.initcontasAPagarListaProdutosGrid();
 		this.initGridPesquisarPorProduto();
 		this.initGridPesquisarPorFornecedor();
 		this.initGridParciais();
