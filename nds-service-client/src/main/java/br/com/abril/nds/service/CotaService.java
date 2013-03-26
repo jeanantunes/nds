@@ -393,4 +393,6 @@ public interface CotaService {
 	public void apagarTipoCota(Long idCota, String TipoCota);
 	
 	public List<DistribuidorClassificacaoCota> obterListaClassificacao();
+
+	public abstract boolean cotaVinculadaCotaBase(Long idCota);
 }

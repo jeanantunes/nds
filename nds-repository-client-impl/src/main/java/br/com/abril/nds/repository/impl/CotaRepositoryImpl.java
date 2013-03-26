@@ -2694,5 +2694,22 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (HistoricoVendaPopUpCotaDto) query.uniqueResult();
 	
 	}
+	
+	
+	@Override
+	public boolean cotaVinculadaCotaBase(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(*) from CotaBase");
+		hql.append(" where cota.id = :idCota");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		Long count = (Long)query.uniqueResult();
+		
+		return (count > 0);
+	}
 
 }

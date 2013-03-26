@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 var tempData=null;
 
 function montarDados(){

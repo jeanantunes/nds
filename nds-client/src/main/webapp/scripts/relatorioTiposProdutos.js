@@ -1,49 +1,3 @@
-<<<<<<< HEAD
-var relatorioTiposProdutosController = $.extend(true, {
-	
-	path : contextPath + '/lancamento/relatorioTiposProdutos/',
-
-
-	init : function() {
-		
-		$("#dateLanctoDe", this.workspace).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$("#dateLanctoAte", this.workspace).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$("#dateRecoltoDe", this.workspace).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$("#dateRecoltoAte", this.workspace).datepicker({
-			showOn: "button",
-			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
-			buttonImageOnly: true
-		});
-		
-		$("#dateLanctoDe", this.workspace).mask("99/99/9999");
-		$("#dateLanctoAte", this.workspace).mask("99/99/9999");
-		$("#dateRecoltoDe", this.workspace).mask("99/99/9999");
-		$("#dateRecoltoAte", this.workspace).mask("99/99/9999");
-		
-		this.initGrid();
-	},
-	
-	
-	pesquisar : function() {
-
-		var params = $("#relatorioTiposProdutosForm", this.workspace).serialize();
-		
-=======
 var relatorioTiposProdutosController = $.extend(true, {
 	
 	path : contextPath + '/lancamento/relatorioTiposProdutos/',
@@ -102,7 +56,6 @@ var relatorioTiposProdutosController = $.extend(true, {
 
 		var params = $("#relatorioTiposProdutosForm", this.workspace).serialize();
 		
->>>>>>> 03f1ca6c8da04a45696f13aca9cd81446f5232f7
 		$(".tiposProdutosGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisar.json?' + params, 
 			newp : 1,

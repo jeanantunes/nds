@@ -582,27 +582,29 @@ public class CotaController extends BaseController {
 		
 		
 		List<DistribuidorClassificacaoCota> distribuidorClassificacaoCotas = cotaService.obterListaClassificacao();
-		for(DistribuidorClassificacaoCota dCC:distribuidorClassificacaoCotas ){
+		
+		if (distribuidorClassificacaoCotas != null) {
 			
-			DecimalFormat df = new DecimalFormat(",##0.00");
+			for(DistribuidorClassificacaoCota dCC:distribuidorClassificacaoCotas ){
+				
+				DecimalFormat df = new DecimalFormat(",##0.00");
 
-            String valorDe = df.format(dCC.getValorDe());
-            String valorAte = df.format(dCC.getValorAte());
+	            String valorDe = df.format(dCC.getValorDe());
+	            String valorAte = df.format(dCC.getValorAte());
 
 
 
-			
-			String maisDeUmPDV= dCC.getCodigoClassificacaoCota().toString().equals(ClassificacaoCotaDistribuidorEnum.AA) ? " (mais de 1 PDV)": "";
-			String descricao =  dCC.getCodigoClassificacaoCota().toString() + " - ("+
-							    dCC.getCodigoClassificacaoCota().toString() + " - " +
-					            " R$ " + valorDe + " a " +
-					            " R$ " + valorAte+
-					            maisDeUmPDV +
-					            ")";
-			listaClassificacao.add(new ItemDTO<String, String>(dCC.getCodigoClassificacaoCota().toString(), descricao));
+				
+				String maisDeUmPDV= dCC.getCodigoClassificacaoCota().toString().equals(ClassificacaoCotaDistribuidorEnum.AA) ? " (mais de 1 PDV)": "";
+				String descricao =  dCC.getCodigoClassificacaoCota().toString() + " - ("+
+								    dCC.getCodigoClassificacaoCota().toString() + " - " +
+						            " R$ " + valorDe + " a " +
+						            " R$ " + valorAte+
+						            maisDeUmPDV +
+						            ")";
+				listaClassificacao.add(new ItemDTO<String, String>(dCC.getCodigoClassificacaoCota().toString(), descricao));
+			}
 		}
-		
-		
 		
 		if (listaClassificacao==null || listaClassificacao.isEmpty()){
 			for(ClassificacaoEspectativaFaturamento clazz : ClassificacaoEspectativaFaturamento.values()){

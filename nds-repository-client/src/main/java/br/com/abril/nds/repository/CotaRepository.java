@@ -370,5 +370,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
+
+	public abstract boolean cotaVinculadaCotaBase(Long idCota);
 	
 }

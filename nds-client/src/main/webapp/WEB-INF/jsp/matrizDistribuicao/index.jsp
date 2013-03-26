@@ -86,24 +86,24 @@ var lancamentosSelecionados = [];
 			        </legend>
 			   	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			   	      <tr>
-	<!-- 		   	        <td width="68">Fornecedor:&nbsp;</td> -->
-	<!-- 		   	        <td width="228"> -->
-	<!-- 		            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a> -->
-	<!-- 		              <div class="menu_fornecedor" style="display:none;"> -->
-	<!-- 		                	<span class="bt_sellAll"> -->
+			   	        <td width="68">Fornecedor:&nbsp;</td> 
+	 		   	        <td width="228"> 
+				            <a href="#" id="selFornecedor" onclick="return false;">Clique e Selecione o Fornecedor</a> 
+		 		              <div class="menu_fornecedor" style="display:none;">
+		 		                	<span class="bt_sellAll"> 
 	
-	<!-- 							<input type="checkbox" id="selTodos1" checked="checked" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/> -->
+		 							<input type="checkbox" id="selTodos1" checked="checked" name="selTodos1" onclick="checkAll(this, 'checkgroup_menu');" style="float:left;"/> 
 	
-	<!-- 							<label for="selTodos1">Selecionar Todos</label></span> -->
-	<!-- 		                    <br clear="all" /> -->
-	<%-- 		                    <c:forEach items="${fornecedores}" var="fornecedor"> --%>
-	<%-- 		                      <input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}"  name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox" checked="checked"/> --%>
-	<%-- 		                      <label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label> --%>
-	<!-- 		                      <br clear="all" /> -->
-	<%-- 		                   </c:forEach>  --%>
-	<!-- 		              </div> -->
+		 							<label for="selTodos1">Selecionar Todos</label></span>
+		 		                    <br clear="all" /> 
+		 		                    <c:forEach items="${fornecedores}" var="fornecedor">
+		 		                      <input id="fornecedor_${fornecedor.id}" value="${fornecedor.id}"  name="checkgroup_menu" onclick="verifyCheck($('#selTodos1'));" type="checkbox" checked="checked"/>
+		 		                      <label for="fornecedor_${fornecedor.id}">${fornecedor.juridica.nomeFantasia}</label> 
+		 		                      <br clear="all" />
+		 		                   </c:forEach>  
+		 		              </div> 
 			            
-	<!-- 		            </td> -->
+		 		            </td> 
 			   	        <td width="120">Data de Lançamento:</td>
 			   	        <td width="109"><input class="campoDePesquisa" type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
 			   	        <td width="30" align="center">&nbsp;</td>

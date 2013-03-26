@@ -44,6 +44,7 @@ import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -2910,4 +2911,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return (Long) query.uniqueResult();
 	}
+	
+	
+	public void removerMovimentoEstoqueCotaPorEstudo(Long idEstudo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" update MovimentoEstoqueCota movEst set movEst.estudoCota = null");
+		hql.append(" where movEst.estudoCota.id in (");
+		hql.append(" select id from EstudoCota");
+		hql.append(" where estudo.id = :idEstudo)");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idEstudo", idEstudo);
+		
+		
+	}
+	
 }

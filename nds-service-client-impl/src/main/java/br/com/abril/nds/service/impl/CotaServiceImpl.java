@@ -2537,5 +2537,12 @@ public class CotaServiceImpl implements CotaService {
 		return null;
 	}
 	
+	
+	@Override
+	public boolean cotaVinculadaCotaBase(Long idCota) {
+		
+		return cotaRepository.cotaVinculadaCotaBase(idCota);
+	}
+	
 }
 
