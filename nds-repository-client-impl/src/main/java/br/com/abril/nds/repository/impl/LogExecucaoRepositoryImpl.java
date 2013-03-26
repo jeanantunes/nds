@@ -52,7 +52,9 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				.addScalar("status", StandardBasicTypes.STRING)
 				.addScalar("nome", StandardBasicTypes.STRING)
 				.addScalar("id", StandardBasicTypes.LONG)
+				.addScalar("descricao", StandardBasicTypes.STRING)
 				.addScalar("nomeArquivo", StandardBasicTypes.STRING)
+				.addScalar("extensaoArquivo", StandardBasicTypes.STRING)
 				.addScalar("dataInicio", StandardBasicTypes.TIMESTAMP)
 				.setResultTransformer(Transformers.aliasToBean(ConsultaInterfacesDTO.class));
 
@@ -73,7 +75,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 
 	@Override
 	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro) {
-		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro, true);
+		String sql = getConsultaObterInterfaces(new Date(), filtro, true);
 		Query query = (Query) getSession().createSQLQuery(sql.toString());
 		return (BigInteger) query.uniqueResult();
 	}
@@ -90,26 +92,23 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 
 		}
 		
-		sql.append(" SELECT "); 
-		sql.append(" LOG_EXECUCAO.STATUS AS status, ");
-		sql.append(" INTERFACE_EXECUCAO.NOME AS nome, ");
-		sql.append(" INTERFACE_EXECUCAO.ID AS id, ");
-		sql.append(" MAX(LOG_EXECUCAO_MENSAGEM.NOME_ARQUIVO) AS nomeArquivo, ");
-		sql.append(" MAX(LOG_EXECUCAO.DATA_INICIO) AS dataInicio ");
-
-		sql.append(" FROM ");
-		sql.append(" LOG_EXECUCAO_MENSAGEM ");
-		sql.append(" INNER JOIN LOG_EXECUCAO ON (LOG_EXECUCAO_MENSAGEM.LOG_EXECUCAO_ID=LOG_EXECUCAO.ID) ");
-		sql.append(" INNER JOIN INTERFACE_EXECUCAO ON (LOG_EXECUCAO.INTERFACE_EXECUCAO_ID = INTERFACE_EXECUCAO.ID) ");
-
-		sql.append(" WHERE ");
-		sql.append(" LOG_EXECUCAO.DATA_INICIO BETWEEN '" + sdf.format(this.getPeriodoInicialDia(dataOperacao)) + " 00:00:00' AND '" + sdf.format(this.getPeriodoFinalDia(dataOperacao)) + " 23:59:59'");
-
-		sql.append(" GROUP BY ");
-		sql.append(" LOG_EXECUCAO.STATUS, ");
-		sql.append(" INTERFACE_EXECUCAO.NOME, ");
-		sql.append(" INTERFACE_EXECUCAO.ID ");
-		//sql.append(" DATE_FORMAT(LOG_EXECUCAO.DATA_INICIO, '%Y-%m-%d') ");
+		String data = sdf.format(new Date());
+		sql.append("select ie.id, ie.nome, ie.extensao_arquivo ");
+		sql.append("	, ie.descricao, ie.extensao_arquivo as extensaoArquivo, ");
+		sql.append("	case when (le.status = 'S' and lem.nome_arquivo is null and ie.extensao_arquivo <> 'BANCO') then 'V' "); 
+		sql.append("	else coalesce(le.status, 'N') end as status ");
+		sql.append("	, le.data_inicio as dataInicio, lem.nome_arquivo as nomeArquivo ");
+		sql.append(" from interface_execucao ie ");
+		sql.append(" left join ( ");
+		sql.append(" 	select le.id, le.interface_execucao_id, le.status, MAX(le.data_inicio) as data_inicio ");
+		sql.append(" 	from log_execucao le ");
+		sql.append(" 	where date(le.data_inicio) between '"+ data +" 00:00:00' and '"+ data +" 23:59:59' ");
+		sql.append(" 	group by interface_execucao_id) le on ie.id = le.interface_execucao_id ");
+		sql.append(" left join ( ");
+		sql.append(" 	select id, log_execucao_id, MAX(NOME_ARQUIVO) as NOME_ARQUIVO ");
+		sql.append(" 	from log_execucao_mensagem lem ");
+		sql.append(" 	group by log_execucao_id) lem on le.id = lem.log_execucao_id ");
+		sql.append(" group by ie.id ");
 
 		if (filtro.getOrdenacaoColuna() != null) {
 
@@ -119,14 +118,14 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 			
 				switch (filtro.getOrdenacaoColuna()) {
 				
-					case NOME:
-						orderByColumn = " INTERFACE_EXECUCAO.NOME ";
+					case DESCRICAO_INTERFACE:
+						orderByColumn = " ie.descricao ";
 						break;
 					case STATUS:
-						orderByColumn = " LOG_EXECUCAO.STATUS ";
+						orderByColumn = " status ";
 						break;
 					case DATA_PROCESSAMENTO:
-						orderByColumn = " LOG_EXECUCAO.DATA_INICIO ";
+						orderByColumn = " dataInicio ";
 						break;
 						
 					default:
@@ -140,7 +139,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 			}
 				
 		}
-		
+	
 		if (totalizar) {
 			sql.append(") as total");
 		}
