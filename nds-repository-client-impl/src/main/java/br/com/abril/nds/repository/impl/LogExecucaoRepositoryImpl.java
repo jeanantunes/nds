@@ -75,7 +75,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 
 	@Override
 	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro) {
-		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro, true);
+		String sql = getConsultaObterInterfaces(new Date(), filtro, true);
 		Query query = (Query) getSession().createSQLQuery(sql.toString());
 		return (BigInteger) query.uniqueResult();
 	}
@@ -92,7 +92,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 
 		}
 		
-		String data = sdf.format(this.getPeriodoInicialDia(dataOperacao));
+		String data = sdf.format(new Date());
 		sql.append("select ie.id, ie.nome, ie.extensao_arquivo ");
 		sql.append("	, ie.descricao, ie.extensao_arquivo as extensaoArquivo, ");
 		sql.append("	case when (le.status = 'S' and lem.nome_arquivo is null and ie.extensao_arquivo <> 'BANCO') then 'V' "); 

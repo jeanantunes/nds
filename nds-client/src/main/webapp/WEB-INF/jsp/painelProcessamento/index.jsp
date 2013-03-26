@@ -8,6 +8,8 @@
 </script>
 <style type="text/css">
 #dialog-novo fieldset, #dialog-detalhes fieldset{ width: 700px!important;}
+#conteudo{width: 950px !important;}
+.fieldFiltro {width: 960px !important;}
 </style>
 </head>
 <body>
@@ -47,6 +49,7 @@
     <table class="detalheInterfaceGrid"></table>
     </fieldset>
 </div>
+</form>
 
 	  <div class="areaBts">
 	  	<div class="area">
@@ -65,7 +68,7 @@
                     <li><a href="#tabPainel-Processos" onclick="painelProcessamentoController.pesquisarProcessos()">Processos</a></li>
                 </ul>
                 <div id="tabPainel-Interfaces">
-                    <table width="600" border="0" align="right" cellpadding="2" cellspacing="1" class="filtro">
+                    <table width="600" border="0" align="right" cellpadding="2" cellspacing="1" >
                       <tr>
                         <td width="17"><img src="${pageContext.request.contextPath}/images/ico_operando.png" alt="Operando" /></td>
                         <td width="143">Realizado com Sucesso</td>
@@ -79,7 +82,7 @@
                       </table>
                       <br clear="all"/>
                   <table class="painelInterfaceGrid"></table>
-              </div>
+              	</div>
                 <div id="tabPainel-Processos">
                 	<table width="500" border="0" align="right" cellpadding="2" cellspacing="1" class="filtro">
                       <tr>

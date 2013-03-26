@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.integracao;
 
+import java.lang.ref.WeakReference;
+
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.BeansException;
@@ -70,10 +72,12 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 		
 		for(String interfaceProdin : interfacesProdinReprocessar) {
 			
-			String classeExecucao = "EMS"+ StringUtils.leftPad(interfaceProdin.trim(), 4, '0');
+			WeakReference<String> classeExecucao = new WeakReference<String>(
+					new StringBuilder("EMS")
+					.append(StringUtils.leftPad(interfaceProdin.trim(), 4, '0')).toString());
 			
 			try {
-				this.executarInterface(classeExecucao, usuario);
+				this.executarInterface(classeExecucao.get(), usuario);
 			} catch (ValidacaoException ve) {
 				
 			}
@@ -81,10 +85,12 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 		
 		for(String interfaceMDC : interfacesMDCReprocessar) {
 			
-			String classeExecucao = "EMS"+ StringUtils.leftPad(interfaceMDC, 4, '0');
+			WeakReference<String> classeExecucao = new WeakReference<String>(
+					new StringBuilder("EMS")
+					.append(StringUtils.leftPad(interfaceMDC, 4, '0')).toString());
 			
 			try {
-				this.executarInterface(classeExecucao, usuario);
+				this.executarInterface(classeExecucao.get(), usuario);
 			} catch (ValidacaoException ve) {
 				
 			}

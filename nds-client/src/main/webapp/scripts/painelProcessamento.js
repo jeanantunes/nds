@@ -126,7 +126,7 @@ var painelProcessamentoController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Arquivo',
-				name : 'nome',
+				name : 'nomeArquivo',
 				width : 100,
 				sortable : false,
 				align : 'left'
@@ -163,12 +163,12 @@ var painelProcessamentoController = $.extend(true, {
 			}],
 			sortname : "descricaoInterface",
 			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
+			usepager : false,
+			useRp : false,
+			rp : 0,
 			showTableToggleBtn : true,
 			width : 930,
-			height : 'auto'
+			height : 400
 		});
 	},
 	popup : function(idLogProcessamento, dataProcessamento, horaProcessamento) {
