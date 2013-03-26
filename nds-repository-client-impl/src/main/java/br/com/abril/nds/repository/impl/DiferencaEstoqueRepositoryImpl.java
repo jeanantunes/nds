@@ -292,17 +292,13 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 
 			Diferenca diferenca = (Diferenca) resultado[0];
 
-			BigDecimal valorTotalDiferenca = (BigDecimal) resultado[1];
-
-			Long quantidadeCota = (Long) resultado[2];
+			diferenca.setValorTotalDiferenca((BigDecimal) resultado[1]);
 			
-			boolean existemRateios = ((Long) resultado[2]) > 0;
-
-			Diferenca diferencaRelatorio = new Diferenca(existemRateios, diferenca, valorTotalDiferenca);
+			diferenca.setExistemRateios(((Long) resultado[2]) > 0);
+									
+			diferenca.setQtde((BigInteger) resultado[3]);
 			
-			diferencaRelatorio.setQtde(BigInteger.valueOf(quantidadeCota));
-			
-			listaDiferencas.add(diferencaRelatorio);
+			listaDiferencas.add(diferenca);
 		}
 		
 		return listaDiferencas;
@@ -352,7 +348,6 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 				hqlCota += " (diferenca.qtde * coalesce(movimentoEstoqueCota.valoresAplicados.precoComDesconto,diferenca.produtoEdicao.precoVenda)) ";
 			}
 			
-			
 			hql = " select distinct(diferenca), "
 					
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
@@ -374,7 +369,16 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "  and rateios.cota.numeroCota = :numeroCota ";
 				}
 				
-				hql +=  ") ";
+				hql +=  "), ";
+				
+				if (filtro.getNumeroCota()!=null){
+
+					hql += " (select rd.qtde from Diferenca d join d.rateios rd where rd.cota.numeroCota = :numeroCota and d = diferenca) ";
+				}
+				else{
+
+					hql += " diferenca.qtde ";
+				}
 		}
 		
 		hql += " from Diferenca diferenca "
