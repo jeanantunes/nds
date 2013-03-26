@@ -14,6 +14,7 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
+import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -144,4 +145,6 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	PessoaJuridica juridica();
 
 	ParametroContratoCota parametroContratoCota();
+
+	ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor();
 }

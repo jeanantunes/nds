@@ -63,4 +63,6 @@ public interface FechamentoEncalheService {
 	List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 	
 	int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);
+
+	Boolean buscaControleFechamentoEncalhe(Date data);
 }
