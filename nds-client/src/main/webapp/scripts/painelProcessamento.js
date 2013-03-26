@@ -168,7 +168,7 @@ var painelProcessamentoController = $.extend(true, {
 			rp : 0,
 			showTableToggleBtn : true,
 			width : 930,
-			height : 400
+			height : 'auto'
 		});
 	},
 	popup : function(idLogProcessamento, dataProcessamento, horaProcessamento) {
