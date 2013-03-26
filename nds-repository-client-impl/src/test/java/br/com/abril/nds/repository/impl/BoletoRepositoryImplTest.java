@@ -201,17 +201,26 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 				new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.PAGO, cota, bancoHSBC, divida3, 0);
 		save(boleto3);
 		
+		Boleto boleto4 =
+			Fixture.boleto(
+				"5555", "5", "5555", dataAtual, dataAtual, dataAtual, BigDecimal.ZERO,
+				new BigDecimal(100.00), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida4, 0);
+		save(boleto4);
+		
 		BaixaAutomatica baixa =
 			Fixture.baixaAutomatica(
-				boleto, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO, BigDecimal.TEN, bancoHSBC);
+				boleto, DateUtil.removerTimestamp(dataAtual), DateUtil.removerTimestamp(dataAtual), 
+				null, null, null, StatusBaixa.PAGO, BigDecimal.TEN, bancoHSBC);
 		
 		BaixaAutomatica baixa2 =
 			Fixture.baixaAutomatica(
-				boleto2, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN, bancoITAU);
+				boleto2, DateUtil.removerTimestamp(dataAtual), DateUtil.removerTimestamp(dataAtual), 
+				null, null, null, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN, bancoITAU);
 		
 		BaixaAutomatica baixa3 =
 			Fixture.baixaAutomatica(
-				boleto3, DateUtil.removerTimestamp(dataAtual), null, null, null, StatusBaixa.PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN, bancoHSBC);
+				boleto3, DateUtil.removerTimestamp(dataAtual), DateUtil.removerTimestamp(dataAtual), 
+				null, null, null, StatusBaixa.PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN, bancoHSBC);
 		
 		save(baixa, baixa2, baixa3);
 	}
@@ -465,11 +474,11 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 	public void obterQuantidadeBoletosInadimplentes() {
 		
 		Long quantidadeBoletosInadimplentes =
-			this.boletoRepository.obterQuantidadeBoletosInadimplentes(dataAtual);
+			this.boletoRepository.obterQuantidadeBoletosInadimplentes(DateUtil.removerTimestamp(dataAtual));
 		
 		Assert.assertNotNull(quantidadeBoletosInadimplentes);
 		
-		Assert.assertTrue(!quantidadeBoletosInadimplentes.equals(0L));
+		Assert.assertNotSame(quantidadeBoletosInadimplentes, 0L);
 	}
 	
 	@Test
@@ -538,7 +547,7 @@ public class BoletoRepositoryImplTest extends AbstractRepositoryImplTest  {
 				this.boletoRepository.obterBoletosPrevistos(filtro);
 		
 		Assert.assertNotNull(boletosPrevistos);
-		Assert.assertEquals(3, boletosPrevistos.size());
+		Assert.assertEquals(4, boletosPrevistos.size());
 		
 		DetalheBaixaBoletoDTO detalheBaixaBoleto = boletosPrevistos.get(0);
 

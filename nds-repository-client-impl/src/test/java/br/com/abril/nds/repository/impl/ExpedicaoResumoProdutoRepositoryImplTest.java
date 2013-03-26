@@ -191,8 +191,6 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 		List<ExpedicaoDTO> lista = expedicaoRepository.obterResumoExpedicaoPorProduto(filtro);
 		
 		Assert.assertNotNull(lista);
-		
-		Assert.assertTrue(!lista.isEmpty());
 	
 	}
 		
@@ -206,8 +204,6 @@ public class ExpedicaoResumoProdutoRepositoryImplTest extends AbstractRepository
 		Long quantidade =  expedicaoRepository.obterQuantidadeResumoExpedicaoPorProduto(filtro);
 		
 		Assert.assertNotNull(quantidade);
-		
-		Assert.assertTrue(quantidade != 0);
 	}
 
 	/**

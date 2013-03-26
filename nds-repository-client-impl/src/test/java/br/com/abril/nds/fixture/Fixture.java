@@ -3660,7 +3660,6 @@ public class Fixture {
 	public static Desconto desconto(Usuario usuario, br.com.abril.nds.model.cadastro.desconto.TipoDesconto tipoDesconto){
 		
 		Desconto desconto = new Desconto();
-		desconto.setId(1L);
 		desconto.setDataAlteracao(new Date());
 		desconto.setValor(new BigDecimal("10"));
 		desconto.setTipoDesconto(TipoDesconto.ESPECIFICO);
@@ -3858,15 +3857,15 @@ public class Fixture {
         pdv.setExpositor(true);
         pdv.setTipoExpositor("Tipo Expositor");
         
-        try {
-            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("bancaJornal.jpg");
-            File fileImagem = new File(urlImagem.toURI());
-            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
-            pdv.setImagem(imagem);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro definindo imagem histórico titularidade PDV", e);
-        }
-        
+//        try {
+//            URL urlImagem = Thread.currentThread().getContextClassLoader().getResource("bancaJornal.jpg");
+//            File fileImagem = new File(urlImagem.toURI());
+//            byte[] imagem = FileUtils.readFileToByteArray(fileImagem);
+//            pdv.setImagem(imagem);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Erro definindo imagem histórico titularidade PDV", e);
+//        }
+//        
         historico.addPdv(pdv);
         
         HistoricoTitularidadeCotaFinanceiro financeiro = new HistoricoTitularidadeCotaFinanceiro();
@@ -3976,7 +3975,7 @@ public class Fixture {
     }
 
     
-    public static BaixaAutomatica baixaAutomatica(Cobranca cobranca, Date dataBaixa,
+    public static BaixaAutomatica baixaAutomatica(Cobranca cobranca, Date dataBaixa, Date dataPagamento,
     									   		  String nomeArquivo, String nossoNumero,
     									   		  Integer numeroRegistroArquivo, StatusBaixa status,
     									   		  BigDecimal valorPago, Banco banco) {
@@ -3985,6 +3984,7 @@ public class Fixture {
     	
     	baixaAutomatica.setCobranca(cobranca);
     	baixaAutomatica.setDataBaixa(dataBaixa);
+    	baixaAutomatica.setDataPagamento(dataPagamento);
     	baixaAutomatica.setNomeArquivo(nomeArquivo);
     	baixaAutomatica.setNossoNumero(nossoNumero);
     	baixaAutomatica.setNumeroRegistroArquivo(numeroRegistroArquivo);

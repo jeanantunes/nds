@@ -794,7 +794,7 @@ public class ContasAPagarRepositoryImpl extends AbstractRepository implements Co
 		   .append("    left join l.movimentoEstoqueCotas mec ")
 		   .append("    left join l.estudo estudo ")
 		   .append("    left join estudo.estudoCotas estudoCotas ")
-		   .append("    left join estudoCotas.itemNotaEnvio ine ")
+		   .append("    left join estudoCotas.itemNotaEnvios ine ")
 		   .append("  	left join ine.itemNotaEnvioPK.notaEnvio ne ")
 		   .append(" 	left join produtoEdicao.diferencas dif ")
 		   .append("    left join dif.lancamentoDiferenca ld ")

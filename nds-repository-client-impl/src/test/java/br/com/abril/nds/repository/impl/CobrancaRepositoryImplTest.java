@@ -214,16 +214,18 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 		save(boleto3);
 
 		baixa = Fixture.baixaAutomatica(boleto,
-				DateUtil.removerTimestamp(dataAtual), null, null, null,
+				DateUtil.removerTimestamp(dataAtual), DateUtil.removerTimestamp(dataAtual), 
+				null, null, null,
 				StatusBaixa.PAGO, BigDecimal.TEN, bancoHSBC);
 
 		baixa2 = Fixture.baixaAutomatica(boleto2,
-				DateUtil.removerTimestamp(dataAtual), null, null, null,
-				StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO, BigDecimal.TEN,
+				DateUtil.removerTimestamp(dataAtual), DateUtil.removerTimestamp(dataAtual), 
+				null, null, null, StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO, BigDecimal.TEN,
 				bancoHSBC);
 
 		baixa3 = Fixture.baixaAutomatica(boleto3,
-				DateUtil.removerTimestamp(dataAtual), null, null, null,
+				DateUtil.removerTimestamp(dataAtual), DateUtil.removerTimestamp(dataAtual), 
+				null, null, null,
 				StatusBaixa.PAGO_DIVERGENCIA_VALOR, BigDecimal.TEN, bancoHSBC);
 
 		save(baixa, baixa2, baixa3);
