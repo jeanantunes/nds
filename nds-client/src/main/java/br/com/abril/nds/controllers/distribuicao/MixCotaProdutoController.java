@@ -2,9 +2,7 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +45,6 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -380,6 +377,7 @@ public class MixCotaProdutoController extends BaseController {
 	
 	@Post
 	@Path("/uploadArquivoLote")
+
 	public void uploadExcel(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFile) throws FileNotFoundException, IOException{
 		
 		File file = XlsUploaderUtils.upLoadArquivo(excelFile);

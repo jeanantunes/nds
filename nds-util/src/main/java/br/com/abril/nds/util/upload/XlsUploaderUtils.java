@@ -41,7 +41,6 @@ public class XlsUploaderUtils {
 	public static <T> List<T> getBeanListFromXls(Class<T> clazz, File file) {
 		
 		List<T> list = new ArrayList<T>();
-		
 		String extension = file.getName().substring(file.getName().lastIndexOf("."));
 		
 		try {

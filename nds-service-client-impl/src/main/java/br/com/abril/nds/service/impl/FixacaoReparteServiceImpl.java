@@ -290,8 +290,12 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		}
 		
 		fixacaoReparteRepository.removerPorCota(cota);
-		
-		
+	}
+
+	@Transactional
+	@Override
+	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO) {
+		return fixacaoReparteRepository.isFixacaoExistente(fixacaoReparteDTO);
 	}
 	
 	
