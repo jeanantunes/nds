@@ -264,7 +264,6 @@ public class FeriadoRepositoryImpl extends
 				"from Feriado where tipoFeriado = :tipoFeriado ");
 		hql.append(" and indRepeteAnualmente = :anual and day(data) = day(:dataPesquisa) ");
 		hql.append(" and month(data) = month(:dataPesquisa)");
-		hql.append(" and year(data) = year(:dataPesquisa)");
 
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("tipoFeriado", tipo);

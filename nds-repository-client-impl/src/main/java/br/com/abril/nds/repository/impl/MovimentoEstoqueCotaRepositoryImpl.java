@@ -1161,10 +1161,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 					.addScalar("numeroEdicao", StandardBasicTypes.LONG)
 					.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL)
 					.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL)
-					.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER)
-					.addScalar("qtdNota", StandardBasicTypes.BIG_INTEGER).
-					setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
+					.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER);
 			
+
+			if(indBuscaTotalParcial) {
+			
+				((SQLQuery) query).addScalar("qtdNota", StandardBasicTypes.BIG_INTEGER);
+			}
+			
+			query.setResultTransformer(Transformers.aliasToBean(ContagemDevolucaoDTO.class));
 		}
 		
 		query.setParameter("dataInicial", filtro.getPeriodo().getDe());
@@ -1447,7 +1452,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id ");
 		
-		if (filtro.getQuebraPorCota()) {
+		if (filtro.getQuebraPorCota() != null && filtro.getQuebraPorCota()) {
 			hql.append(" , cota.id ");
 		}
 		
@@ -1691,7 +1696,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by box.id ");
 		
-		if (filtro.getQuebraPorCota()) {
+		if (filtro.getQuebraPorCota() != null && filtro.getQuebraPorCota()) {
 			hql.append(" , cota.id ");
 		}
 		
@@ -1826,7 +1831,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" group by produtoEdicao.id, box.id ");
 		
-		if (filtro.getQuebraPorCota()) {
+		if (filtro.getQuebraPorCota() != null && filtro.getQuebraPorCota()) {
 			hql.append(" , cota.id ");
 		}
 		

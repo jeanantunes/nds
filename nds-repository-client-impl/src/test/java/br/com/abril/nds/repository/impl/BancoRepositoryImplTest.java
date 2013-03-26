@@ -288,8 +288,7 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		String nome = "teste";
 		
-		Banco banco;		
-		banco = bancoRepository.obterbancoPorNome(nome);
+		Banco banco = bancoRepository.obterbancoPorNome(nome);
 		
 //		Assert.assertNull(banco);	
 		
@@ -323,4 +322,43 @@ public class BancoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Banco banco = bancoRepository.obterbancoPorApelido("");
 	}
 	
+	@Test
+	public void obterBancosPorNome() {
+		
+		String nomeBanco = "BANCO HSBC S/A";
+		
+		List<Banco> bancos = this.bancoRepository.obterBancosPorNome(nomeBanco);
+		
+		Assert.assertNotNull(bancos);
+	}
+	
+	@Test
+	public void obterBancosPorNomePaginado() {
+		
+		String nomeBanco = "BANCO HSBC S/A";
+		
+		int maxResults = 10;
+		
+		List<Banco> bancos = this.bancoRepository.obterBancosPorNome(nomeBanco, maxResults);
+		
+		Assert.assertNotNull(bancos);
+	}
+	
+	@Test
+	public void obterBancosPorStatus() {
+		
+		boolean ativo = true;
+		
+		List<Banco> bancos = this.bancoRepository.obterBancosPorStatus(ativo);
+		
+		Assert.assertNotNull(bancos);
+	}
+	
+	@Test
+	public void buscarBancoPorIdCobranca() {
+		
+		Long idCobranca = 1L;
+		
+		Banco banco = this.bancoRepository.buscarBancoPorIdCobranca(idCobranca);
+	}
 }

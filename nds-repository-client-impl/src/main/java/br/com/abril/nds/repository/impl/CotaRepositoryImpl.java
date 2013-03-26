@@ -1041,8 +1041,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			query.setParameter(key, param.get(key));
 		}
 		
-		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
-		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}

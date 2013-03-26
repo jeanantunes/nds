@@ -1914,7 +1914,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		FiltroMapaAbastecimentoDTO filtro = new FiltroMapaAbastecimentoDTO();
 		filtro.setPaginacao(new PaginacaoVO());
-		filtro.getPaginacao().setSortColumn("reparte");
+		filtro.getPaginacao().setSortColumn("totalReparte");
 		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
 		
 		List<AbastecimentoDTO> listaMovimento = movimentoEstoqueCotaRepository.obterDadosAbastecimento(filtro);

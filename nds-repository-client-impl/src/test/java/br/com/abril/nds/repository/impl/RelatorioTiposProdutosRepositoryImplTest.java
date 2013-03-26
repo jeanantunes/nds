@@ -8,10 +8,12 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.repository.RelatorioTiposProdutosRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 public class RelatorioTiposProdutosRepositoryImplTest extends AbstractRepositoryImplTest{
 	
@@ -29,10 +31,10 @@ public class RelatorioTiposProdutosRepositoryImplTest extends AbstractRepository
 		
 		
 		filtro.setPaginacaoVO(new PaginacaoVO());
-		filtro.getPaginacaoVO().setSortOrder("ASC");
-		filtro.getPaginacaoVO().setSortColumn("codigo");
 		filtro.getPaginacaoVO().setPaginaAtual(2);
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(10);
+		filtro.getPaginacaoVO().setSortOrder("ASC");
+		filtro.setOrdenacaoColuna(FiltroRelatorioTiposProdutos.OrdenacaoColuna.CODIGO);
 		
 		List<RelatorioTiposProdutosDTO> lista = relatorioTiposProdutosRepository.gerarRelatorio(filtro);
 		
@@ -47,7 +49,7 @@ public class RelatorioTiposProdutosRepositoryImplTest extends AbstractRepository
 		
 		filtro.setPaginacaoVO(new PaginacaoVO());
 		filtro.getPaginacaoVO().setSortOrder("ASC");
-		filtro.getPaginacaoVO().setSortColumn("codigo");
+		filtro.setOrdenacaoColuna(FiltroRelatorioTiposProdutos.OrdenacaoColuna.CODIGO);
 		filtro.getPaginacaoVO().setPaginaAtual(2);
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(10);
 		
@@ -64,7 +66,7 @@ public class RelatorioTiposProdutosRepositoryImplTest extends AbstractRepository
 		
 		filtro.setPaginacaoVO(new PaginacaoVO());
 		filtro.getPaginacaoVO().setSortOrder("ASC");
-		filtro.getPaginacaoVO().setSortColumn("codigo");
+		filtro.setOrdenacaoColuna(FiltroRelatorioTiposProdutos.OrdenacaoColuna.CODIGO);
 		filtro.getPaginacaoVO().setPaginaAtual(2);
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(10);
 		
@@ -81,7 +83,7 @@ public class RelatorioTiposProdutosRepositoryImplTest extends AbstractRepository
 		
 		filtro.setPaginacaoVO(new PaginacaoVO());
 		filtro.getPaginacaoVO().setSortOrder("ASC");
-		filtro.getPaginacaoVO().setSortColumn("codigo");
+		filtro.setOrdenacaoColuna(FiltroRelatorioTiposProdutos.OrdenacaoColuna.CODIGO);
 		filtro.getPaginacaoVO().setPaginaAtual(2);
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(10);
 		
@@ -97,7 +99,7 @@ public class RelatorioTiposProdutosRepositoryImplTest extends AbstractRepository
 		
 		filtro.setPaginacaoVO(new PaginacaoVO());
 		filtro.getPaginacaoVO().setSortOrder("ASC");
-		filtro.getPaginacaoVO().setSortColumn("codigo");
+		filtro.setOrdenacaoColuna(FiltroRelatorioTiposProdutos.OrdenacaoColuna.CODIGO);
 		filtro.getPaginacaoVO().setPaginaAtual(2);
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(10);
 		
@@ -113,7 +115,7 @@ public class RelatorioTiposProdutosRepositoryImplTest extends AbstractRepository
 		
 		filtro.setPaginacaoVO(new PaginacaoVO());
 		filtro.getPaginacaoVO().setSortOrder("ASC");
-		filtro.getPaginacaoVO().setSortColumn("codigo");
+		filtro.setOrdenacaoColuna(FiltroRelatorioTiposProdutos.OrdenacaoColuna.CODIGO);
 		filtro.getPaginacaoVO().setPaginaAtual(2);
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(10);
 		
@@ -129,7 +131,7 @@ public class RelatorioTiposProdutosRepositoryImplTest extends AbstractRepository
 				
 		filtro.setPaginacaoVO(new PaginacaoVO());
 		filtro.getPaginacaoVO().setSortOrder("ASC");
-		filtro.getPaginacaoVO().setSortColumn("codigo");
+		filtro.setOrdenacaoColuna(FiltroRelatorioTiposProdutos.OrdenacaoColuna.CODIGO);
 		filtro.getPaginacaoVO().setPaginaAtual(2);
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(10);
 		
@@ -137,6 +139,30 @@ public class RelatorioTiposProdutosRepositoryImplTest extends AbstractRepository
 		List<RelatorioTiposProdutosDTO> lista = relatorioTiposProdutosRepository.gerarRelatorio(filtro);
 		
 		Assert.assertNotNull(lista);
+	}
+
+	@Test
+	public void gerarRelatorioTesteOrdenacao(){
+		
+		FiltroRelatorioTiposProdutos filtro = null;
+
+		for (Ordenacao order : Ordenacao.values()) {
+
+			for (FiltroRelatorioTiposProdutos.OrdenacaoColuna column : FiltroRelatorioTiposProdutos.OrdenacaoColuna.values()) {
+				
+				filtro = new FiltroRelatorioTiposProdutos();
+						
+				filtro.setPaginacaoVO(new PaginacaoVO());
+				filtro.getPaginacaoVO().setSortOrder(order.getOrdenacao());
+				filtro.setOrdenacaoColuna(column);
+				filtro.getPaginacaoVO().setPaginaAtual(2);
+				filtro.getPaginacaoVO().setQtdResultadosPorPagina(10);
+
+				List<RelatorioTiposProdutosDTO> lista = relatorioTiposProdutosRepository.gerarRelatorio(filtro);
+			
+				Assert.assertNotNull(lista);
+			}
+		}
 	}
 	
 }
