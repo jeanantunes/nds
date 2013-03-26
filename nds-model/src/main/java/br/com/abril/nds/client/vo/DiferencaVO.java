@@ -80,6 +80,7 @@ public class DiferencaVO implements Serializable {
 	private TipoDirecionamentoDiferenca tipoDirecionamento;
 	
 	private TipoDiferenca tipoDiferenca;
+	
 
 	/**
 	 * Construtor padrão.
@@ -565,6 +566,5 @@ public class DiferencaVO implements Serializable {
 	public void setExistemRateios(boolean existemRateios) {
 		this.existemRateios = existemRateios;
 	}
-
 
 }

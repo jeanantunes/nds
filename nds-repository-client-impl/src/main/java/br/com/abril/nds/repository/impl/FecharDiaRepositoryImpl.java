@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.EstoqueFecharDiaVO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
-import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
@@ -23,6 +22,7 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.movimentacao.Movimento;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
@@ -171,26 +171,33 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		return query.list();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<ValidacaoControleDeAprovacaoFecharDiaDTO> obterPendenciasDeAprovacao(Date dataOperacao, StatusAprovacao statusAprovacao) {
-		StringBuilder jpql = new StringBuilder();
+	public boolean existePendenciasDeAprovacao(Date dataOperacao, StatusAprovacao statusAprovacao, 
+			List<TipoMovimento> tiposMovimentoVerificaAprovacao) {
 		
-		jpql.append("SELECT movimento.tipoMovimento.descricao as descricaoTipoMovimento ");
+		StringBuilder jpql = new StringBuilder("select count(movimento.id) ");
+		jpql.append(" FROM Movimento movimento ");
+		jpql.append(" WHERE  movimento.dataCriacao = :dataOperacao ");
+		jpql.append(" AND  movimento.status = :statusAprovacao");
 		
-		jpql.append("FROM Movimento movimento ");
-		jpql.append("WHERE  movimento.dataCriacao = :dataOperacao ");
-		jpql.append("AND  movimento.status = :statusAprovacao");
+		if (tiposMovimentoVerificaAprovacao != null &&
+				!tiposMovimentoVerificaAprovacao.isEmpty()){
+			
+			jpql.append(" AND movimento.tipoMovimento in (:tiposMovimentoVerificaAprovacao) ");
+		}
 		
 		Query query = getSession().createQuery(jpql.toString());
 		
 		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("statusAprovacao", statusAprovacao);
 		
+		if (tiposMovimentoVerificaAprovacao != null &&
+				!tiposMovimentoVerificaAprovacao.isEmpty()){
+			
+			query.setParameterList("tiposMovimentoVerificaAprovacao", tiposMovimentoVerificaAprovacao);
+		}
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoControleDeAprovacaoFecharDiaDTO.class));
-		
-		return query.list();
+		return (Long)query.uniqueResult() > 0;
 	}
 
 	@SuppressWarnings("unchecked")
