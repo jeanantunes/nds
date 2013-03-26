@@ -36,8 +36,6 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.abril.nds.util.upload.KeyValue;
-import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -317,14 +315,14 @@ public class RegiaoController extends BaseController {
 		
 		File x = upLoadArquivo(xls);
 
-		List<KeyValue> lista = XlsUploaderUtils.returnKeyValueFromXls(x);
-		
-		for (KeyValue keyValue : lista) {
-			if(keyValue.getValue() != null){
-			Double xjiji = (Double) keyValue.getValue();
-			numerosCota.add(xjiji.intValue());
-			}
-		}
+//		List<KeyValue> lista = XlsUploaderUtils.returnKeyValueFromXls(x);
+//		
+//		for (KeyValue keyValue : lista) {
+//			if(keyValue.getValue() != null){
+//			Double xjiji = (Double) keyValue.getValue();
+//			numerosCota.add(xjiji.intValue());
+//			}
+//		}
 		
 		//Implementar a mensagem de erro...
 		this.validarEntradaDeVariasCotas(numerosCota, idRegiao);
