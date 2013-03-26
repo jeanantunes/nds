@@ -166,9 +166,5 @@ public class FixacaoReparte {
 		this.repartesPDV = repartesPDV;
 	}
 
-
-
-	
-
 }
 

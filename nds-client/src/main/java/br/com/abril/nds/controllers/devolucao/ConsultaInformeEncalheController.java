@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -30,6 +31,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -83,9 +85,8 @@ public class ConsultaInformeEncalheController extends BaseController {
 	}
 
 	@Post("/busca.json")
-	public void busca(Long idFornecedor, Integer semanaRecolhimento,
-			Calendar dataRecolhimento, String sortname, String sortorder,
-			int rp, int page) {
+	public void busca(Long idFornecedor, Integer semanaRecolhimento, Calendar dataRecolhimento, String sortname, String sortorder, int rp, int page) {
+		
 		Calendar dataInicioRecolhimento = null, dataFimRecolhimento = null;
 
 		if ((semanaRecolhimento == null) && (dataRecolhimento == null)) {
@@ -96,41 +97,55 @@ public class ConsultaInformeEncalheController extends BaseController {
 
 		if (semanaRecolhimento != null) {
 			dataInicioRecolhimento = Calendar.getInstance();
-
-			if (semanaRecolhimento > dataInicioRecolhimento
-					.getMaximum(Calendar.WEEK_OF_YEAR)) {
-				throw new ValidacaoException(new ValidacaoVO(
-						TipoMensagem.WARNING, "Semana inválida."));
-			}
-
-			dataInicioRecolhimento.set(Calendar.WEEK_OF_YEAR,
-					semanaRecolhimento);
+			dataFimRecolhimento = Calendar.getInstance();
 			
-			dataInicioRecolhimento.set(Calendar.DAY_OF_WEEK, inicioDaSemana.getCodigoDiaSemana());
-			dataFimRecolhimento = (Calendar) dataInicioRecolhimento.clone();
-			dataFimRecolhimento.add(Calendar.DAY_OF_MONTH, 6);
+			Intervalo<Date> intervalo = obterDataDaSemana(semanaRecolhimento.toString());
+			dataInicioRecolhimento.setTime(intervalo.getDe());
+			dataFimRecolhimento.setTime(intervalo.getAte());
 
 		} else if (dataRecolhimento != null) {
 			dataInicioRecolhimento = dataRecolhimento;
 			dataFimRecolhimento = dataRecolhimento;
 		}
 			
-		Long quantidade = lancamentoService
-				.quantidadeLancamentoInformeRecolhimento(idFornecedor,
-						dataInicioRecolhimento, dataFimRecolhimento);
+		Long quantidade = lancamentoService.quantidadeLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento);
+		
 		if (quantidade > 0) {
 			List<InformeEncalheDTO> informeEncalheDTOs = lancamentoService
-					.obterLancamentoInformeRecolhimento(idFornecedor,
-							dataInicioRecolhimento, dataFimRecolhimento,
-							sortname,
-							Ordenacao.valueOf(sortorder.toUpperCase()), page
-									* rp - rp, rp);
-			result.use(FlexiGridJson.class).from(informeEncalheDTOs)
-					.total(quantidade.intValue()).page(page).serialize();
-		}else{
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
-					"Registros não encontrados."));
+					.obterLancamentoInformeRecolhimento(idFornecedor, dataInicioRecolhimento, dataFimRecolhimento, sortname, Ordenacao.valueOf(sortorder.toUpperCase()), page * rp - rp, rp);
+			
+			result.use(FlexiGridJson.class).from(informeEncalheDTOs).total(quantidade.intValue()).page(page).serialize();
+		} else {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Registros não encontrados."));
 		}
+	}
+	
+	private Intervalo<Date> obterDataDaSemana(String anoSemana) {
+		
+		Date data = obterDataBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor());
+		
+		Integer semana = Integer.parseInt(anoSemana.substring(4));
+		
+		Date dataInicioSemana = 
+				DateUtil.obterDataDaSemanaNoAno(
+					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
+			
+		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		
+		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+		
+		return periodoRecolhimento;
+		
+	}
+	
+	private Date obterDataBase(String anoSemana, Date data) {
+		
+		String ano = anoSemana.substring(0,4);
+		Calendar c = Calendar.getInstance();
+		c.setTime(data);
+		c.set(Calendar.YEAR, Integer.parseInt(ano));
+		
+		return c.getTime();
 	}
 
 	

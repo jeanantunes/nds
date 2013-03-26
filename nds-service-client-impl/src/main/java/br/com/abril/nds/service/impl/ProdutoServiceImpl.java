@@ -325,6 +325,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 
+
 	@Override
 	public List<String> verificarProdutoExiste(String... codigoProduto) {
 
