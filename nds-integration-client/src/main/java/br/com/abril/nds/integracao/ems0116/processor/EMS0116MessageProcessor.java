@@ -36,6 +36,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
+	@Autowired
 	private EnderecoRepository enderecoRepository;
 	
 	@Override
