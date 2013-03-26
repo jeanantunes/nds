@@ -32,10 +32,10 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	
 	private static final String ROUTE = "Route";
 	
-	@Value("#{properties.interfacesProdin}")
+	@Value("${properties.interfacesProdin:}")
 	private String interfacesProdin;
 	
-	@Value("#{properties.interfacesMDCEntrada}")
+	@Value("${properties.interfacesMDCEntrada:}")
 	private String interfacesMDC;
 	
 	/* (non-Javadoc)

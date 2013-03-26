@@ -36,6 +36,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
+	@Autowired
 	private EnderecoRepository enderecoRepository;
 	
 	@Override
@@ -322,7 +323,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		EnderecoPDV enderecoPDV = new EnderecoPDV();
 		enderecoPDV.setEndereco(endereco);
 		enderecoPDV.setPdv(pdv);
-		enderecoPDV.setPrincipal(!isEnderecoPrincipal(pdv.getEnderecos()));
+		//enderecoPDV.setPrincipal(!isEnderecoPrincipal(pdv.getEnderecos()));
+		enderecoPDV.setPrincipal(true);
 		enderecoPDV.setTipoEndereco(TipoEndereco.COMERCIAL);
 		
 		return (EnderecoPDV) getSession().merge(enderecoPDV);
