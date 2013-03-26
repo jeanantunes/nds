@@ -245,5 +245,24 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		query.setParameter("cotaSelecionada",  cota);
 		
 	}
+
+	@Override
+	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO) {
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" from ")
+
+		.append(" FixacaoReparte f ")
+		
+		.append(" where f.cotaFixada.id = :cotaSelecionada ")
+		
+		.append(" and f.produtoFixado.id = :produtoSelecionado  ");
+		
+		Query query  = getSession().createQuery(sql.toString());
+		query.setParameter("cotaSelecionada",  fixacaoReparteDTO.getCotaFixada());
+		query.setParameter("produtoSelecionado", fixacaoReparteDTO.getProdutoFixado());
+		
+		return query.list().size() > 0;
+	}
 	
 }

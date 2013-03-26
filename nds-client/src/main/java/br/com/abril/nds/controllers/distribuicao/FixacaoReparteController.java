@@ -55,6 +55,8 @@ public class FixacaoReparteController extends BaseController {
 	private static final String FILTRO_PRODUTO_SESSION_ATTRIBUTE = "filtroPorProduto";
 	private static final String FILTRO_COTA_SESSION_ATTRIBUTE = "filtroPorCota";
 	private static final int MAX_EDICOES =6;
+	private static final String IMPORT_INCONSISTENTE="importInconsistente";
+	private List<String> errosUpload=new ArrayList<String>();
 	
 	@Autowired
 	private Result result;
@@ -115,7 +117,7 @@ public class FixacaoReparteController extends BaseController {
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "N�o foram encontrados resultados para a pesquisa");	
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");	
 		}
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelProduto = montarTableModelProduto(filtro);
@@ -450,7 +452,21 @@ public class FixacaoReparteController extends BaseController {
 	
 		if(!isListaVazia(listaFixacaoExcel)){
 			 listaRegistrosInvalidosExcel = obterListaInvalidos(listaFixacaoExcel);
+			 listaFixacaoExcel.removeAll(listaRegistrosInvalidosExcel);
+			 for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
+				 fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
+			}
+			 if(listaRegistrosInvalidosExcel.size() ==0){
+				 this.result.use(Results.json()).from(
+							new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso!"), 
+							"result").recursive().serialize();
+			 }else{
+				 this.result.use(Results.json()).from(
+							new ValidacaoVO(TipoMensagem.WARNING, getMsgErroUpload()), 
+							"result").recursive().serialize();
+			 }
 			
+			 
 		}else{
 			 this.result.use(Results.json()).from(
 						new ValidacaoVO(TipoMensagem.WARNING, "Arquivo esta vazio"), 
@@ -459,6 +475,16 @@ public class FixacaoReparteController extends BaseController {
 		
 		
 		
+	}
+
+
+	private String getMsgErroUpload() {
+		StringBuilder builderErros = new StringBuilder("");
+		builderErros.append("Alguns registros nao foram adicionados \n");
+		for(String msg: getErrosUpload()){
+			builderErros.append(msg).append("\n");
+		}
+		return builderErros.toString();
 	}
 
 
@@ -475,37 +501,66 @@ public class FixacaoReparteController extends BaseController {
 			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
 			   if(!verificarNumeroCotaExiste.contains(fixacaoDTO.getCotaFixada())){
 			    invalidos.add(fixacaoDTO);
+			    getErrosUpload().add("-Cota \t" + fixacaoDTO.getCotaFixada().toString() +  "\t nao encontrada");
 			   }
 			  }
-			  listaFixacaoExcel.removeAll(invalidos);
 
 			  /*
 			  validar se o produto é um produtoValido
 			  */
 			  String[] codigoProdutoArray = new String[listaFixacaoExcel.size()];
 			  for (int i = 0; i < listaFixacaoExcel.size(); i++) {
-			   codigoProdutoArray[i]=listaFixacaoExcel.get(i).getCodigoProduto();
+			   codigoProdutoArray[i]=listaFixacaoExcel.get(i).getProdutoFixado();
 			  }
 			  
 			  List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
 			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
-			   if(!verificarProdutoExiste.contains(fixacaoDTO.getCodigoProduto())){
+			   if(!verificarProdutoExiste.contains(fixacaoDTO.getProdutoFixado())){
 			    invalidos.add(fixacaoDTO);
+			    getErrosUpload().add("-Produto \t" + fixacaoDTO.getProdutoFixado() +  "\t nao encontrado");
 			   }
 			  }
-			  listaFixacaoExcel.removeAll(invalidos);
+			  
+			  // Validacao preenchimento campos
+			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
+				  if(isPreechimentoInvalido(fixacaoReparteDTO)){
+					  invalidos.add(fixacaoDTO);
+					  getErrosUpload().add("-Impossivel identificar fixação por cota ou produto");
+				  }
+			  }
+			  
+			  //validacao existe registro salvo
+			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
+				  if(fixacaoReparteService.isFixacaoExistente(fixacaoReparteDTO)){
+					  invalidos.add(fixacaoDTO);
+					  getErrosUpload().add("-Registro existente para o codigo:\t" + fixacaoDTO.getProdutoFixado() + "\t e cota:" + fixacaoDTO.getCotaFixada().toString()) ;
+				  }
+			  }
+			  
 		}
 		return invalidos;
 	}
 
 
-	private boolean isListaVazia(List<FixacaoReparteDTO> listaFixacaoExcel) {
-		
-		if(listaFixacaoExcel == null || listaFixacaoExcel.isEmpty()){
-			return true;
-	}else{
-		return false;
-		}
+	private boolean isPreechimentoInvalido(FixacaoReparteDTO fixacaoReparteDTO) {
+		boolean edIniOk= (fixacaoReparteDTO.getEdicaoInicial()!=null && fixacaoReparteDTO.getEdicaoInicial() > 0);
+		boolean edFinalOk= (fixacaoReparteDTO.getEdicaoFinal()!=null && fixacaoReparteDTO.getEdicaoFinal() > 0 && fixacaoReparteDTO.getEdicaoFinal() > fixacaoReparteDTO.getEdicaoFinal());
+		boolean qtdeEdicoesOk= (fixacaoReparteDTO.getQtdeEdicoes()!=null && fixacaoReparteDTO.getQtdeEdicoes()>0);		
+		return ( edIniOk  && qtdeEdicoesOk) || (edFinalOk && qtdeEdicoesOk);
 	}
 
+
+	private boolean isListaVazia(List<FixacaoReparteDTO> listaFixacaoExcel) {
+		return (listaFixacaoExcel == null || listaFixacaoExcel.isEmpty());
+	}
+
+
+	public List<String> getErrosUpload() {
+		return errosUpload;
+	}
+
+
+	public void setErrosUpload(List<String> errosUpload) {
+		this.errosUpload = errosUpload;
+	}
 }
