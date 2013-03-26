@@ -288,7 +288,7 @@ var fixacaoReparteController = $.extend(true, {
 	     		            exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
 	     		           }
 	     		           $("#dialog-lote").dialog( "close" );
-	     		           regiaoController.cotasDaRegiao();
+	     		           
 	     		           exibirMensagem(tipoMensagem, listaMensagens); 
 	     		          }
 	     		      }, 
@@ -500,19 +500,20 @@ var fixacaoReparteController = $.extend(true, {
 	
 	//funcao que executa chamada postJSON que busca dados da fixacao 
 	editarFixacao:function (idFixacao, qtdeReparte, numeroCota, codigoProduto){
+		
 		var reparteTotal= qtdeReparte;
 		arrayPesquisa = [];
 		arrayPesquisa.push({
-			  name : "filtro.codigoProduto" , 
+			  name : "filtro.codigoProduto", 
 			  value : codigoProduto
 			  });
 		arrayPesquisa.push({
-			  name : "filtro.codigoCota" , 
+			  name : "filtro.codigoCota", 
 			  value : numeroCota
 			  });
 		  
 		arrayPesquisa.push({
-			  name : "filtro.idFixacao" , 
+			  name : "filtro.idFixacao", 
 			  value : idFixacao
 			  });
 		$.postJSON(contextPath + '/distribuicao/fixacaoReparte/editarFixacao', fixacaoReparteController.getIdSelecionado(idFixacao)
@@ -674,7 +675,7 @@ var fixacaoReparteController = $.extend(true, {
 	},
 	
 	//funcao que retorna id da fixação a lista de fixacoes
-	getIdSelecionado: function(cell){
+	getIdSelecionado: function(idFixacao){
 		var data = [];
 		data.push({name:'filtro.idFixacao',	value: idFixacao});
 		data.push({name:'filtro.codigoCota', value: $("#codigoCota").val()});

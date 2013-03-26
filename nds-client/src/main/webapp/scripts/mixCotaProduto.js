@@ -1,3 +1,4 @@
+
 var mixCotaProdutoController = $.extend(true, {
 //Grid de cota 	
 	init : function() {
@@ -213,6 +214,7 @@ var mixCotaProdutoController = $.extend(true, {
 		//UPLOAD LOTE
 		
 		$("#excelFile").change(function (){
+			
 			       var fileName = $(this).val();
 			       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
 			       if(ext!="xls" & ext!="xlsx"){
@@ -222,7 +224,56 @@ var mixCotaProdutoController = $.extend(true, {
 			       }
 			       
 			       //SUBMIT FORM
-			       $("#formUploadLoteMix").submit();
+			       $("#formUploadLoteMix").ajaxSubmit({
+						/*beforeSubmit: function(arr, formData, options) {
+						},*/
+						success: function(responseText, statusText, xhr, $form)  { 
+							
+							console.log(responseText.mixCotaDTOInconsistente);
+							
+							var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
+							if(typeof(mensagens)!='undefined'){
+								var tipoMensagem = mensagens.tipoMensagem;
+								var listaMensagens = mensagens.listaMensagens;
+								
+								if (tipoMensagem && listaMensagens) {
+									
+									if (tipoMensagem != 'SUCCESS') {
+										
+										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+									}
+									$("#dialog-lote").dialog( "close" );
+									regiaoController.cotasDaRegiao();
+									exibirMensagem(tipoMensagem, listaMensagens);	
+								}
+								
+							}else if (typeof(responseText.mixCotaDTOInconsistente)=='object'){
+								
+								if(responseText.mixCotaDTOInconsistente.length==0){
+									exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
+									return;
+								}else{
+									var a = new Array();
+									a.push("A arquivo possui registros incosistentes no total de "+responseText.mixCotaDTOInconsistente.length);
+									for ( var int = 0; int < responseText.mixCotaDTOInconsistente.length; int++) {
+										a.push("codigoProduto="+responseText.mixCotaDTOInconsistente[int].codigoProduto
+												+",numeroCota="+responseText.mixCotaDTOInconsistente[int].numeroCota
+												+",reparteMinimo="+responseText.mixCotaDTOInconsistente[int].reparteMinimo
+												+",reparteMaximo="+responseText.mixCotaDTOInconsistente[int].reparteMaximo);
+									}
+									exibirMensagemDialog("WARNING", a);
+									
+								}
+							
+							
+								
+							}
+						}, 
+//						url:  contextPath + '/distribuicao/regiao/addLote',
+						type: 'POST',
+						dataType: 'json'//,
+//						data: { "tipoUpload" : ""}
+					});
 			       
 		     });
 		
@@ -359,7 +410,7 @@ var mixCotaProdutoController = $.extend(true, {
 			
 			$("#spanLegendProduto").text(""); //limpa o titulo produto, evitando permanecer valores digitados em pesquisa anterior
 			$("#btNovoMixProduto").show();
-			$("#btAddLoteMixProduto").hide();
+//			$("#btAddLoteMixProduto").show();
 			$("#btGerarArquivoMixProduto").hide();
 			$("#btImprimirMixProduto").hide();
 			$("#btExcluirTudoProduto").hide();
@@ -368,7 +419,7 @@ var mixCotaProdutoController = $.extend(true, {
 			// pesquisa achou resultado
 			$("#spanLegendProduto").text($("#codigoProdutoMix").val() + "-" +$("#nomeProdutoMix").val());// preenche fieldset com os valores digitados no fitro
 			$("#btNovoMixProduto").show();
-			$("#btAddLoteMixProduto").show();
+// 			$("#btAddLoteMixProduto").show();
 			$("#btGerarArquivoMixProduto").show();
 			$("#btImprimirMixProduto").show();
 			$("#btExcluirTudoProduto").show();
@@ -445,7 +496,7 @@ var mixCotaProdutoController = $.extend(true, {
 		}else{
 			$(".mixProdutosGrid").flexReload();
 		}
-		exibirMensagem("SUCCESS", ["Opera��o Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
 	},
 	
 	//retorna msg de erro durante exclusao Todos
@@ -604,7 +655,7 @@ var mixCotaProdutoController = $.extend(true, {
 		//valida codigo duplicado
 		for ( var int = 0; int < countLinhas; int++) {
 			if(a.indexOf($("#codigoModal"+int).val())>-1){
-				exibirMensagem("WARNING", ["C�digo de produto j� utilizado."]);
+				exibirMensagem("WARNING", ["Código de produto já utilizado."]);
 				return false;
 			}else{
 				a.push($("#codigoModal"+int).val());
@@ -619,7 +670,7 @@ var mixCotaProdutoController = $.extend(true, {
 			var repMax = parseInt($("#repMaximo"+int2).val());
 			
 			if(repMin>repMax){
-				exibirMensagem("WARNING", ["Reparte M�nimo maior que Reparte M�ximo para o produto."]);
+				exibirMensagem("WARNING", ["Reparte Mínimo maior que Reparte Máximo para o produto."]);
 				return false;
 			}
 		}
@@ -630,12 +681,12 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	adicionarMixCotaSucesso:function(result){
 		$(".mixCotasGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Opera��o Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
 	},
 	
 	adicionarMixProdutoSucesso:function(result){
 		$(".mixProdutosGrid").flexReload();
-		exibirMensagem("SUCCESS", ["Opera��o Realizada com sucesso!"]);
+		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
 	},
 	
 	

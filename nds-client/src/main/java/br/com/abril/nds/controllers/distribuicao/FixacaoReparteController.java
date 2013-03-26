@@ -450,6 +450,11 @@ public class FixacaoReparteController extends BaseController {
 	
 		if(!isListaVazia(listaFixacaoExcel)){
 			 listaRegistrosInvalidosExcel = obterListaInvalidos(listaFixacaoExcel);
+			
+		}else{
+			 this.result.use(Results.json()).from(
+						new ValidacaoVO(TipoMensagem.WARNING, "Arquivo esta vazio"), 
+						"result").recursive().serialize();
 		}
 		
 		
@@ -458,7 +463,7 @@ public class FixacaoReparteController extends BaseController {
 
 
 	private List<FixacaoReparteDTO> obterListaInvalidos(List<FixacaoReparteDTO> listaFixacaoExcel) {
-		List<FixacaoReparteDTO>invalidos = null;
+		List<FixacaoReparteDTO>invalidos = new ArrayList<FixacaoReparteDTO>();
 		for(FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel){
 		//  validar se a cota existe  
 			  Integer[] cotaIdArray = new Integer[listaFixacaoExcel.size()];

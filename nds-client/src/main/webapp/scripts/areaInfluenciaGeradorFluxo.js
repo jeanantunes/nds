@@ -1,4 +1,4 @@
-var areaInfluenciaGeradorFluxoController = $.extend(true,	{
+﻿var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 	
 					init : function() {
         
@@ -98,6 +98,22 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 											width : 960,
 											height : 255
 										});
+
+						$(document).ready(function(){
+							
+							areaInfluenciaGeradorFluxoController.filtroPorArea();
+							focusSelectRefField($("#radio", areaInfluenciaGeradorFluxoController.workspace));
+							$("#radio", areaInfluenciaGeradorFluxoController.workspace).attr("checked", true);
+							
+							$(document.body).keydown(function(e) {
+								
+								if(keyEventEnterAux(e)){
+									areaInfluenciaGeradorFluxoController.pesquisarPorArea();
+								}
+								
+								return true;
+							});
+						});
 					},
 
 					executarPreProcessamento : function(resultado) {

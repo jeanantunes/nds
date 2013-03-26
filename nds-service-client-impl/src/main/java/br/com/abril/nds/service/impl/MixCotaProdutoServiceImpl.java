@@ -1,3 +1,4 @@
+
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
@@ -96,6 +97,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(filtroConsultaMixCotaDTO.getId());
 		return null;
+//				repartePDVRepository.obterRepartePdvPorCota(mixCotaProduto.getCota().getId());
 	}
 	
 	
@@ -176,7 +178,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 					mixCotaProduto.setCota(cota);
 					mixCotaProduto.setDataHora(new Date());
 					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
-					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
+					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMinimo());
 					mixCotaProduto.setUsuario(usuario);
 					if(mixCotaProduto.getProduto()!=null || mixCotaProduto.getProduto().getId() !=null){
 						if(!mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())){
@@ -188,6 +190,37 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				
 				}
 		}
+	}
+	
+	
+	@Override
+	@Transactional
+	public void adicionarListaMixPorProduto(List<MixCotaProdutoDTO> listaMixCota , String produtoId) {
+		
+		Produto produto = produtoService.obterProdutoPorCodigo(produtoId);
+		Usuario usuario = usuarioService.getUsuarioLogado();
+		for (MixCotaProdutoDTO mixCotaProdutoDTO : listaMixCota) {
+			if(StringUtils.isEmpty(mixCotaProdutoDTO.getNomeCota()) || StringUtils.isEmpty(mixCotaProdutoDTO.getNumeroCota()) || mixCotaProdutoDTO.getReparteMinimo()==null || mixCotaProdutoDTO.getReparteMaximo()==null){
+				continue;
+			}else{
+				Cota cota = cotaService.obterPorNumeroDaCota(Integer.parseInt(mixCotaProdutoDTO.getNumeroCota()));
+				MixCotaProduto mixCotaProduto = new MixCotaProduto();
+				mixCotaProduto.setUsuario(usuario);
+				mixCotaProduto.setProduto(produto);
+				mixCotaProduto.setCota(cota);
+				mixCotaProduto.setDataHora(new Date());
+				mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
+				mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
+				if(mixCotaProduto.getProduto()!=null || mixCotaProduto.getProduto().getId() !=null){
+					if(!mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())){
+						mixCotaProdutoRepository.adicionar(mixCotaProduto);
+					}
+				}else{
+					continue;
+				}
+			}
+		}
+		
 	}
 	
 	@Override
@@ -222,37 +255,4 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				}
 		}
 	}
-	
-	@Override
-	@Transactional
-	public void adicionarListaMixPorProduto(List<MixCotaProdutoDTO> listaMixCota , String produtoId) {
-		
-		Produto produto = produtoService.obterProdutoPorCodigo(produtoId);
-		Usuario usuario = usuarioService.getUsuarioLogado();
-		for (MixCotaProdutoDTO mixCotaProdutoDTO : listaMixCota) {
-			if(StringUtils.isEmpty(mixCotaProdutoDTO.getNomeCota()) || StringUtils.isEmpty(mixCotaProdutoDTO.getNumeroCota()) || mixCotaProdutoDTO.getReparteMinimo()==null || mixCotaProdutoDTO.getReparteMaximo()==null){
-				continue;
-			}else{
-				Cota cota = cotaService.obterPorNumeroDaCota(Integer.parseInt(mixCotaProdutoDTO.getNumeroCota()));
-				MixCotaProduto mixCotaProduto = new MixCotaProduto();
-				mixCotaProduto.setUsuario(usuario);
-				mixCotaProduto.setProduto(produto);
-				mixCotaProduto.setCota(cota);
-				mixCotaProduto.setDataHora(new Date());
-				mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
-				mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
-				if(mixCotaProduto.getProduto()!=null || mixCotaProduto.getProduto().getId() !=null){
-					if(!mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())){
-						mixCotaProdutoRepository.adicionar(mixCotaProduto);
-					}
-				}else{
-					continue;
-				}
-			}
-		}
-		
-	}
-
-
 }
-

@@ -76,7 +76,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		sql.append(" and lancamento.status='FECHADO'")
 		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
-		.append(" GROUP BY cota.id")
+		.append(" group by cota.id ")
 		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -99,6 +99,13 @@ public class MixCotaProdutoRepositoryImpl extends
 			paginacao.setQtdResultadosTotal(query.list().size());
 		}
 
+		/*if (paginacao.getQtdResultadosPorPagina() != null) {
+			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+		}*/
+
+		/*if (paginacao.getPosicaoInicial() != null) {
+			query.setFirstResult(paginacao.getPosicaoInicial());
+		}*/
 	}
 
 
@@ -125,7 +132,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" coalesce(avg(lancamento.reparte),0) as reparteMedio, coalesce(avg(venda_produto.valor_total_venda),0) as vendaMedia, ")
-		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
+		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LAN�ADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		.append(" FROM lancamento ") 
 		.append(" LEFT join produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID ")
 		.append(" LEFT join produto on produto_edicao.ID = produto.ID ") 
@@ -151,7 +158,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
-		if(filtroConsultaMixProdutoDTO.getCodigoProduto()!=null){
+		if(filtroConsultaMixProdutoDTO.getCodigoProduto() !=null && filtroConsultaMixProdutoDTO.getCodigoProduto()!=""){
 			query.setParameter("codigoProduto", filtroConsultaMixProdutoDTO.getCodigoProduto());
 		}
 		if(isClassificacaoPreenchida){
@@ -173,6 +180,13 @@ public class MixCotaProdutoRepositoryImpl extends
 			paginacao.setQtdResultadosTotal(query.list().size());
 		}
 
+		/*if (paginacao.getQtdResultadosPorPagina() != null) {
+			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
+		}*/
+
+		/*if (paginacao.getPosicaoInicial() != null) {
+			query.setFirstResult(paginacao.getPosicaoInicial());
+		}*/
 	}
 
 		

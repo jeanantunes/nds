@@ -72,7 +72,7 @@ function mostraIntervalo(){
             <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="52">Código:</td>
-            <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
+            <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onkeydown="onlyNumeric(event);" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
             <td width="48">Produto:</td>
             <td width="206"><input type="text" name="nomeProduto" id="nomeProduto" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#nomeProduto');" style="width:200px;"/></td>
             <td width="75">Classificação:</td>
@@ -92,7 +92,7 @@ function mostraIntervalo(){
             <tr>
            	  <td width="30" >Cota:</td>
                 <td width="91">
-                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoCota','#nomeCota',false,undefined,undefined)"/></td>
+                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onkeydown="onlyNumeric(event);" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoCota','#nomeCota',false,undefined,undefined)"/></td>
                 <td width="37" >Nome:</td>
                 <td width="470"><input type="text" name="nomeCota" id="nomeCota" style="width:200px;"/></td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="fixacaoReparteController.pesquisarPorCota();">Pesquisar</a></span></td>

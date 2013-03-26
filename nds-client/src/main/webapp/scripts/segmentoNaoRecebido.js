@@ -1,4 +1,4 @@
-var segmentoNaoRecebidoController = $.extend(true,	{
+﻿var segmentoNaoRecebidoController = $.extend(true,	{
 
 					init : function() {
 						

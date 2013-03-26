@@ -1,9 +1,8 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -378,29 +377,10 @@ public class MixCotaProdutoController extends BaseController {
 	
 	@Post
 	@Path("/uploadArquivoLote")
-	public void uploadExcel(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFile){
+
+	public void uploadExcel(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFile) throws FileNotFoundException, IOException{
 		
-		try {
-			
-			OutputStream out = new FileOutputStream(new File(excelFile.getFileName()));
-			 
-			int read = 0;
-			byte[] bytes = new byte[1024];
-		 
-			while ((read = excelFile.getFile().read(bytes)) != -1) {
-				out.write(bytes, 0, read);
-			}
-		 
-			excelFile.getFile().close();
-			out.flush();
-			out.close();
-			
-//			new FileOutputStream(excelFile.getFileName()).write(IOUtils.readFully(excelFile.getFile(), -1, false));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		
-		File file = new File(excelFile.getFileName());
+		File file = XlsUploaderUtils.upLoadArquivo(excelFile);
 		
 		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, file );
 		
@@ -420,12 +400,14 @@ public class MixCotaProdutoController extends BaseController {
 		
 		//salvar em sessao mixxCotaDTOIconsistente para posteriormente mostrar na tela
 		session.setAttribute(COTA_IMPORT_INCONSISTENTE,mixCotaDTOInconsistente );
-//		result.forwardTo("/WEB-INF/jsp/mixCotaProduto/uploadExcel.jsp");
+		
+		/*this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas inseridas com sucesso!"),
+				"result").recursive().serialize();*/
+		this.result.use(Results.json()).from(mixCotaDTOInconsistente, "mixCotaDTOInconsistente").recursive().serialize();
 	}
 
 	private List<MixCotaDTO> importarMixCotaDTO(List<MixCotaDTO> listMixExcel) {
 		List<MixCotaDTO> listCotaInconsistente = new ArrayList<MixCotaDTO>();
-		//aprova de ... já sabe né ;)
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			if(StringUtils.isEmpty(mixCotaDTO.getCodigoProduto())
 					|| (mixCotaDTO.getNumeroCota()==null||mixCotaDTO.getNumeroCota().equals(0))

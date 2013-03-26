@@ -370,6 +370,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
-	
+
 	List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
 }

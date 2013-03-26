@@ -2159,7 +2159,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
-		hql.append(" LEFT JOIN produtoEdicao.lancamentos as lancamento ");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
@@ -2202,7 +2201,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" GROUP BY cota.numeroCota ");
 		
 		if (qtdReparteInicial != null && qtdReparteInicial.intValue() >= 0 && qtdReparteFinal != null && qtdReparteFinal.intValue() >= 0 ) {
-			hql.append(" HAVING avg(lancamento.reparte) between :reparteInicial and :reparteFinal");
+			hql.append(" HAVING avg(estoqueProdutoCota.qtdeRecebida) between :reparteInicial and :reparteFinal");
 			parameters.put("reparteInicial", qtdReparteInicial.doubleValue());
 			parameters.put("reparteFinal", qtdReparteFinal.doubleValue());
 		}
@@ -2695,7 +2694,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (HistoricoVendaPopUpCotaDto) query.uniqueResult();
 	
 	}
-
+	
 	@Override
 	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray) {
 
@@ -2706,6 +2705,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return query.list();
 	}
+
 	
 	
 
