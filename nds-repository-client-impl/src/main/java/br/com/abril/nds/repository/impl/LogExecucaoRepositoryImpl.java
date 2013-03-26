@@ -46,7 +46,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	@Override
 	public List<ConsultaInterfacesDTO> obterInterfaces(FiltroInterfacesDTO filtro) {
 		
-		String sql = getConsultaObterInterfaces(distribuidorRepository.obterDataOperacaoDistribuidor(), filtro, false);
+		String sql = getConsultaObterInterfaces(new Date(), filtro, false);
 		
 		Query query = (Query) getSession().createSQLQuery(sql.toString())
 				.addScalar("status", StandardBasicTypes.STRING)
