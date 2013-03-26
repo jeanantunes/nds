@@ -1,6 +1,4 @@
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
-
 <br clear="all"/>
     <br />
     
@@ -49,6 +47,7 @@
        	  <legend >Cota: &nbsp;<span id="spanLegendCota"></span></legend>
         
         	<table class="mixCotasGrid"></table>
+
         	
         	
           <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
@@ -61,6 +60,7 @@
             
       </fieldset>
       <form action="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/uploadArquivoLote" id="formUploadLoteMix" method="post" target="_blank" style="display:none" enctype="multipart/form-data">
+
       	<input type="file" id="excelFile" name="excelFile"/>
       </form>
       
@@ -189,7 +189,7 @@
 	</div>
 	
 	
-	
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>	
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="scripts/fixacaoReparte.js"></script>
