@@ -1,4 +1,5 @@
-﻿.settings
+﻿.settings/
+.settings
 .classpath
 .project
 .metadata
