@@ -2696,6 +2696,22 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	@Override
+	public boolean cotaVinculadaCotaBase(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(*) from CotaBase");
+		hql.append(" where cota.id = :idCota");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		Long count = (Long)query.uniqueResult();
+		
+		return (count > 0);
+	}
+	
+	@Override
 	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray) {
 
 		StringBuilder hql = new StringBuilder("select NUMERO_COTA from cota where cota.NUMERO_COTA in (:cotaIDList)");
@@ -2705,8 +2721,5 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return query.list();
 	}
-
-	
-	
 
 }
