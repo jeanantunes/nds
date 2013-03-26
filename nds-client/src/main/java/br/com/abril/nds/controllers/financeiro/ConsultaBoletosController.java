@@ -2,6 +2,8 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -171,19 +173,21 @@ public class ConsultaBoletosController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
 		
-		for (Boleto boleto : boletos){	
+		DecimalFormat formatoMoeda = new DecimalFormat("#,###,##0.00");
+		
+		for (Boleto boleto : boletos){
 			listaModelo.add(new CellModel(1,
-										  (boleto.getNossoNumero()!=null?boleto.getNossoNumero():""),
-										  (boleto.getDataEmissao()!=null?DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"):""),
-										  (boleto.getDataVencimento()!=null?DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"):""),
-										  (boleto.getDataPagamento()!=null?DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"):""),
-										  (boleto.getEncargos()!=null?boleto.getEncargos().toString():""),
-										  (boleto.getValor()!=null?boleto.getValor().toString():""),
-										  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():""),
-										  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():""),
-										  ""
-                      					)
-              );
+			  (boleto.getNossoNumero()!=null?boleto.getNossoNumero():""),
+			  (boleto.getDataEmissao()!=null?DateUtil.formatarData(boleto.getDataEmissao(),"dd/MM/yyyy"):""),
+			  (boleto.getDataVencimento()!=null?DateUtil.formatarData(boleto.getDataVencimento(),"dd/MM/yyyy"):""),
+			  (boleto.getDataPagamento()!=null?DateUtil.formatarData(boleto.getDataPagamento(),"dd/MM/yyyy"):""),
+			  (boleto.getEncargos()!=null? formatoMoeda.format(boleto.getEncargos()) : ""),
+			  (boleto.getValor()!=null? formatoMoeda.format(boleto.getValor()) : ""),
+			  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():""),
+			  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():""),
+			  ""
+			)
+          );
 		}	
 		
 		TableModel<CellModel> tm = new TableModel<CellModel>();
