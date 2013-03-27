@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.persistence.Column;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -102,37 +104,54 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			Date dataOperacaoAte,
 			Boolean conferido, Boolean postergado) {
 		
-		StringBuffer subSqlWhereDesconto = new StringBuffer();
-		
-		subSqlWhereDesconto.append(" (SELECT ");	
-		subSqlWhereDesconto.append("	MEC.PRECO_COM_DESCONTO ");
-		subSqlWhereDesconto.append(" FROM 	");
-		subSqlWhereDesconto.append(" MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV	");
-		subSqlWhereDesconto.append(" WHERE  	");
-		subSqlWhereDesconto.append(" MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND 					");
-		subSqlWhereDesconto.append(" MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND 				");
-		subSqlWhereDesconto.append(" MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND ");
-		subSqlWhereDesconto.append(" TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
-		subSqlWhereDesconto.append(" ORDER BY MEC.DATA DESC ");
-		subSqlWhereDesconto.append(" LIMIT 1) ");
-
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT SUM( COALESCE( ");
-		sql.append( subSqlWhereDesconto.toString() +  ", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
-		sql.append(" ) ");
+		sql.append(" SELECT SUM(PRODUTOS_DESCONTO.PRECO_COM_DESCONTO * PRODUTOS_DESCONTO.QTDE_PREVISTA) ");
+		
+		sql.append(" FROM	");
+		
+		sql.append(" ( ");
+		
+		sql.append("  SELECT	");
+		
+		
+		sql.append("  COALESCE(MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA) AS PRECO_COM_DESCONTO, ");
+		
+		sql.append("  CH_ENCALHE_COTA.QTDE_PREVISTA AS QTDE_PREVISTA  ");
+		
 		
 		sql.append("    FROM    ");
 		
 		sql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 				");
+		
 		sql.append("	inner join COTA AS COTA ON 								");
 		sql.append("	(COTA.ID = CH_ENCALHE_COTA.COTA_ID)						");
+		
 		sql.append("	inner join CHAMADA_ENCALHE AS CH_ENCALHE ON 			");
 		sql.append("	(CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)	");
+		
 		sql.append("	inner join PRODUTO_EDICAO as PROD_EDICAO ON 			");
 		sql.append("	(PROD_EDICAO.ID = CH_ENCALHE.PRODUTO_EDICAO_ID)			");
+		
 		sql.append("	inner join PRODUTO as PROD ON 							");
 		sql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)						");
+		
+		sql.append("	left join CHAMADA_ENCALHE_LANCAMENTO as CEL ON 	");
+		sql.append("	(CEL.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)		");
+
+		sql.append("	left join LANCAMENTO as LANCAMENTO ON 		");
+		sql.append("	(CEL.LANCAMENTO_ID = LANCAMENTO.ID)			");
+		
+		sql.append("	left join MOVIMENTO_ESTOQUE_COTA as MEC ON 	( ");
+		sql.append("		MEC.LANCAMENTO_ID = LANCAMENTO.ID AND ");
+		sql.append("		MEC.COTA_ID = COTA.ID AND ");
+		sql.append("		MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		sql.append("	)														");
+		
+		sql.append("	inner join TIPO_MOVIMENTO ON (	");
+		sql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOVIMENTO.ID AND	");
+		sql.append("	TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque	");
+		sql.append(" 	) ");
 		
 		sql.append("	WHERE   ");
 
@@ -149,6 +168,13 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		if(postergado!=null) {
 			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
 		}
+
+		
+		sql.append("  GROUP BY PRECO_COM_DESCONTO, QTDE_PREVISTA ");
+		
+		
+		sql.append(" ) AS PRODUTOS_DESCONTO ");
+
 		
 		Query query = this.getSession().createSQLQuery(sql.toString());
 
