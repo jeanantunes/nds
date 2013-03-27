@@ -331,18 +331,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Override
 	@Transactional
-	public void reabrirMatrizDistribuicao(FiltroDistribuicaoDTO filtro) {
+	public void reabrirMatrizDistribuicao(FiltroDistribuicaoDTO filtro,  List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 		
-		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
-		
-		if (!totProdDistribVO.isMatrizFinalizada()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz ainda não finalizada.");
-		}
-		
-		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO.getListProdutoDistribuicao();
-		
-		for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
+		for (ProdutoDistribuicaoVO prodDistribVO:produtoDistribuicaoVOs) {
 			
 			if (prodDistribVO.isItemFinalizado()) {
 				

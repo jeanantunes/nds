@@ -11,6 +11,7 @@
 	
 	</script>
 
+
 	<style>
 		label { 
 			vertical-align:super; 
@@ -126,15 +127,12 @@
 											<td style="width:200px;">
 												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" class="habilitarCampoInterface" >
 													<option value="" selected="selected"></option>
-													<option value="DIARIA" >Diária</option>
 													<option value="SEMANAL" >Semanal</option>
 													<option value="QUINZENAL" >Quinzenal</option>
 													<option value="MENSAL" >Mensal</option>
-													<option value="BIMESTRAL" >Bimestral</option>
 													<option value="TRIMESTRAL" >Trimestral</option>
 													<option value="SEMESTRAL" >Semestral</option>
 													<option value="ANUAL" >Anual</option>
-													<option value="SEM_PERIODICIDADE" >Sem Periodicidade</option>
 												</select>
 											</td>
 										</tr>
@@ -183,7 +181,7 @@
 				</td>
 				
 				<td style="vertical-align: top;" >
-					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 205px;" id="fieldSegmentacao">
+					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 230px;" id="fieldSegmentacao">
 						<legend>P&uacute;blico-Alvo</legend>
 						<table width="380" border="0" cellspacing="1" cellpadding="1">
 							<tr>
@@ -229,6 +227,17 @@
 											</td>
 										</tr>
 										
+										<tr>
+											<td><strong>Forma Fisica:</strong></td>
+											<td>
+												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoFormaFisica" id="segmentacaoFormaFisica" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemFormaFisica" items="${listaFormaFisica}">
+									                    <option value="${itemFormaFisica.key}">${itemFormaFisica.value}</option>
+									                </c:forEach>
+							                    </select> 
+											</td>
+										</tr>
 										
 										<tr>
 											<td width="137"><strong>Formato:</strong></td>
@@ -320,7 +329,7 @@
 	<div class="linha_separa_fields">&nbsp;</div>
 	<fieldset class="fieldFiltro">
 		<legend> Pesquisar Produtos</legend>
-		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+		<table width="980" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			<tr>
 				<td width="43">C&oacute;digo:</td>
 				<td width="123" >
@@ -349,7 +358,7 @@
 			</tr>
 			<tr>
 				<td>Editor:</td>
-				<td colspan="3" >
+				<td colspan="3" style="width:470px;">
 					<input type="text" style="width:410px;" name="edicao" id="edicao" maxlength="20"/>
 				</td>
 				<td>Tipo de Produto:</td>
@@ -359,6 +368,15 @@
 						<c:forEach items="${listaTipoProduto}" var="tipoProduto" >
 							<option value="${tipoProduto.id}">${tipoProduto.descricao}</option>
 						</c:forEach>
+					</select>
+				</td>
+				<td>Geração Automática:</td>
+				<td style="width:100px;">
+					<select id="comboGeracaoAutomatica" style="width:57px;">
+						<option value="-1" selected="selected"></option>
+						<option value="0">Sim</option>
+						<option value="1">Não</option>
+						<option value="2">Ambos</option>
 					</select>
 				</td>
 				<td>
@@ -379,3 +397,4 @@
 		</fieldset>
 	</div>
 </body>
+

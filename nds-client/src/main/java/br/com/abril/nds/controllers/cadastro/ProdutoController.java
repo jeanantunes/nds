@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
+import br.com.abril.nds.model.cadastro.FormaFisica;
 import br.com.abril.nds.model.cadastro.FormatoProduto;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -110,6 +111,8 @@ public class ProdutoController extends BaseController {
 	private static List<ItemDTO<TipoLancamento,String>> listaTipoLancamento =  new ArrayList<ItemDTO<TipoLancamento,String>>();
 	
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
+	
+	private static List<ItemDTO<FormaFisica,String>> listaFormaFisica =  new ArrayList<ItemDTO<FormaFisica,String>>();
 	
 	private static final String PRODUTO_MANUAL = "MANUAL";
 
@@ -427,7 +430,13 @@ public class ProdutoController extends BaseController {
 		for(TemaProduto item:TemaProduto.values()){
 			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
 		}
-		result.include("listaTemaProduto",listaTemaProduto);	
+		result.include("listaTemaProduto",listaTemaProduto);
+		
+		listaFormaFisica.clear();
+		for(FormaFisica item:FormaFisica.values()){
+			listaFormaFisica.add(new ItemDTO<FormaFisica,String>(item,item.getDescFormaFisica()));
+		}
+		result.include("listaFormaFisica",listaFormaFisica);
     }
 	
 	/**
