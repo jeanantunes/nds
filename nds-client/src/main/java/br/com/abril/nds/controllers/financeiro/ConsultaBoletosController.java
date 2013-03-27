@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;

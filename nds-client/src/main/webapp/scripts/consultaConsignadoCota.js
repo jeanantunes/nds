@@ -3,7 +3,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 	init : function() {
 		
 		$(".consignadosCotaDetalhesGrid", consultaConsignadoCotaController.workspace).flexigrid({
-			preProcess: consultaConsignadoCotaController.executarPreProcessamento,
+			preProcess: consultaConsignadoCotaController.executarPreProcessamentoCota,
 			dataType : 'json',
 				colModel : [  {
 					display : 'Código',
@@ -341,11 +341,24 @@ var consultaConsignadoCotaController = $.extend(true, {
 		
 	},
 	
-	mostra_detalhes : function(idCota, idFornecedor) {
+	mostra_detalhes : function(idCota, idFornecedor,nomeCota) {
 		
-		consultaConsignadoCotaController.popularPopUp(idCota, idFornecedor);
+		$("#numeroNomeCotaPopUp").html("Dados da Cota: " + idCota + " - " + nomeCota);
+		
+		$(".consignadosCotaDetalhesGrid").flexOptions({
+			url: contextPath + "/financeiro/consultaConsignadoCota/pesquisarConsignadoCota",
+			params: [
+						{name:'filtro.idCota', value:idCota},
+						{name:'filtro.idFornecedor', value:idFornecedor}
+						]
+		});		
+		
+		$(".consignadosCotaDetalhesGrid").flexReload();
+	},
 	
-		$( "#dialog-detalhes", consultaConsignadoCotaController.workspace ).dialog({
+	exibirDialogCota:function(){
+		
+		$( "#dialog-detalhes").dialog({
 			resizable: false,
 			height:370,
 			width:860,
@@ -355,36 +368,23 @@ var consultaConsignadoCotaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
-			beforeClose: function(){
-				
-				consultaConsignadoCotaController.pesquisar();
-			},
 			form: $("#dialog-detalhes", this.workspace).parents("form")
 		});
 	},
-	
-	popularPopUp : function(idCota, idFornecedor){
+
+	executarPreProcessamentoCota : function(resultado) {
 		
-		$(".consignadosCotaDetalhesGrid", consultaConsignadoCotaController.workspace).flexOptions({
-			url: contextPath + "/financeiro/consultaConsignadoCota/pesquisarConsignadoCota",
-			dataType : 'json',
-			params: [
-						{name:'filtro.idCota', value:idCota},
-						{name:'filtro.idFornecedor', value:idFornecedor}
-						]
-		});		
-		$(".consignadosCotaDetalhesGrid", consultaConsignadoCotaController.workspace).flexReload();
+		$.each(resultado.rows, function(index, row) {				
+		   	
+		   	row.cell.precoCapa = row.cell.precoCapaFormatado;
+		   	row.cell.precoDesconto = row.cell.precoDescontoFormatado;
+		   	row.cell.total = row.cell.totalFormatado;
+			row.cell.totalDesconto = row.cell.totalDescontoFormatado;		
+		});
+
+		consultaConsignadoCotaController.exibirDialogCota();
 		
-		$.postJSON(
-				contextPath + '/financeiro/consultaConsignadoCota/buscarCotaPorNumero',
-				{ "numeroCota": idCota },
-				function(result) {								  
-					$("#numeroNomeCotaPopUp", consultaConsignadoCotaController.workspace).html("Dados da Cota: " + idCota + " - " + result);
-				},
-				null,
-				true
-			);
-		$('#valorGrid', consultaConsignadoCotaController.workspace).val('GridPopUp');
+		return resultado;
 	},
 	
 	executarPreProcessamento : function(resultado) {
@@ -402,7 +402,10 @@ var consultaConsignadoCotaController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {				
-		   	var linkAcao = '<a href="javascript:;" onclick="consultaConsignadoCotaController.mostra_detalhes('+row.cell.numeroCota+','+row.cell.idFornecedor+');" style="cursor:pointer">' +
+		   	
+			var nomeCota  = "'"+row.cell.nomeCota+"'";
+			
+			var linkAcao = '<a href="javascript:;" onclick="consultaConsignadoCotaController.mostra_detalhes('+row.cell.numeroCota+','+row.cell.idFornecedor+','+nomeCota+');" style="cursor:pointer">' +
 						   	 '<img title="Lançamentos da Edição" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 	                         '</a>';   
 		   	
@@ -415,7 +418,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 		});
 		
 		$(".grids", consultaConsignadoCotaController.workspace).show();
-
+		
 		consultaConsignadoCotaController.mostrarGrid();
 		
 		return resultado;

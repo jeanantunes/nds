@@ -386,7 +386,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			 + " left join diferenca.produtoEdicao.produto.fornecedores fornecedor "
 			 + " left join itemRecebimentoFisico.itemNotaFiscal itemNotaFiscal "
 			 + " left join itemNotaFiscal.notaFiscal notaFiscal "
-			 + " left join diferenca.lancamentoDiferenca.movimentoEstoque movimentoEstoque"
+			 + " join diferenca.lancamentoDiferenca lancamentoDiferenca "
+			 + " join lancamentoDiferenca.movimentoEstoque movimentoEstoque"
 			 + " left join diferenca.lancamentoDiferenca.movimentosEstoqueCota movimentoEstoqueCota";
 		
 		if (filtro != null) {

@@ -39,14 +39,6 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 			data = null;
 		}
 		
-		List<TipoMovimentoFinanceiro> movsIgnore = Arrays.asList(
-			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-					GrupoMovimentoFinaceiro.MULTA),
-					
-			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-					GrupoMovimentoFinaceiro.JUROS)
-		);
-		
 		List<TipoMovimentoFinanceiro> tiposDebitoCredito = 
 				this.tipoMovimentoFinanceiroRepository.buscarTiposMovimentoFinanceiro(
 					Arrays.asList(
@@ -54,7 +46,9 @@ public class ContaCorrenteCotaServiceImpl implements ContaCorrenteCotaService {
 						GrupoMovimentoFinaceiro.DEBITO,
 						GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
 						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
-						GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO
+						GrupoMovimentoFinaceiro.VENDA_TOTAL,
+						GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
+						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS
 					)
 				);
 
