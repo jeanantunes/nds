@@ -120,14 +120,20 @@ var painelProcessamentoController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Interface',
-				name : 'nome',
+				name : 'descricaoInterface',
 				width : 215,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Arquivo',
+				name : 'nomeArquivo',
+				width : 100,
+				sortable : false,
+				align : 'left'
+			}, {
+				display : 'Extensão',
 				name : 'extensaoArquivo',
-				width : 180,
+				width : 60,
 				sortable : false,
 				align : 'left'
 			}, {
@@ -155,13 +161,13 @@ var painelProcessamentoController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "nome",
+			sortname : "descricaoInterface",
 			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
+			usepager : false,
+			useRp : false,
+			rp : 0,
 			showTableToggleBtn : true,
-			width : 920,
+			width : 930,
 			height : 'auto'
 		});
 	},
@@ -247,12 +253,14 @@ var painelProcessamentoController = $.extend(true, {
 			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 			row.cell.reprocessar = btReprocessamento + brDetalhes;
 
-			row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
+			//row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
 			
 			if (row.cell.status == 'S' || row.cell.status == 'A')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_operando.png />";
 			else if (row.cell.status == 'F')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_offline.png />";
+			else if (row.cell.status == 'V')
+				row.cell.status = "<img src= " + contextPath + "/images/ico_semdados.png />";
 			else // Não processado
 				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
 			
@@ -348,6 +356,9 @@ var painelProcessamentoController = $.extend(true, {
 		painelProcessamentoController.popup_sistema();
 	},
 	bindButtonsInterfaces : function() {
+		$("#btnReprocessarTodas", painelProcessamentoController.workspace).click(function() {
+			painelProcessamentoController.reprocessarInterfacesEmOrdem();
+		});
 		$("#btnGerarXLS", painelProcessamentoController.workspace).click(function() {
 			window.location = contextPath + "/administracao/painelProcessamento/exportar?fileType=XLS&tipoRelatorio=1";
 		});
@@ -371,6 +382,32 @@ var painelProcessamentoController = $.extend(true, {
 					   exibirMensagem(resultado.tipoMensagem, 
 					   				  resultado.listaMensagens);
 				   });
+	},
+	reprocessarInterfacesEmOrdem : function() {
+		
+		$( "#dialog-excutarInterfacesEmOrdem" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					var data = {};
+					$.postJSON(contextPath + "/administracao/painelProcessamento/executarTodasInterfacesEmOrdem",
+						   data,
+						   function (resultado) {
+							   exibirMensagem(resultado.tipoMensagem, 
+							   				  resultado.listaMensagens);
+					});
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		
 	}
 
 }, BaseController);

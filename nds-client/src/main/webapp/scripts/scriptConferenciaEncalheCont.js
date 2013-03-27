@@ -499,7 +499,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		var data = [
             {name: "idConferencia", value: $("#idConferenciaEncalheHidden_" + index, ConferenciaEncalheCont.workspace).val()},
             {name: "qtdExemplares", value: $("#qtdExemplaresGrid_" + index, ConferenciaEncalheCont.workspace).val()},
-            {name: "juramentada", value: juramentado}
+            {name: "juramentada", value: juramentado}, {name: 'indConferenciaContingencia', value: true}
 		];
 		
 		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/atualizarValores", 

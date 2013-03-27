@@ -440,7 +440,6 @@ public class PainelProcessamentoController extends BaseController {
 			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroInterfacesDTO.OrdenacaoColunaConsulta.values(), sortname));
 		}
 	}
-	
 
 	/**
 	 * Executa uma interface
@@ -450,4 +449,14 @@ public class PainelProcessamentoController extends BaseController {
 		interfaceExecucaoService.executarInterface(classeInterface, getUsuarioLogado());
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
 	}
+	
+	/**
+	 * Executa uma interface
+	 * @param classeInterface
+	 */
+	public void executarTodasInterfacesEmOrdem() throws Exception {
+		interfaceExecucaoService.executarTodasInterfacesEmOrdem(getUsuarioLogado());
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Execução da interface foi realizada com sucesso"),"result").recursive().serialize();
+	}
+	
 }

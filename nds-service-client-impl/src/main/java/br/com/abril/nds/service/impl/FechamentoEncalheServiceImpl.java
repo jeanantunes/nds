@@ -982,5 +982,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 		return dataFimSemana;
 	}
-
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Boolean buscaControleFechamentoEncalhe(Date data){
+		
+		return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
+	}
 }

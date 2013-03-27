@@ -129,7 +129,7 @@ public class FileExporter {
 	 *
 	 */
 	public enum FileType {
-		
+		TXT(".txt", "application/text"),
 		PDF(".pdf", "application/pdf"),
 		XLS(".xls", "application/vnd.ms-excel"),
 		XML(".xml", "text/xml"),

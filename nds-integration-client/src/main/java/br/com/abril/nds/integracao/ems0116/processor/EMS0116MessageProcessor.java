@@ -36,6 +36,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
+	@Autowired
 	private EnderecoRepository enderecoRepository;
 	
 	@Override
@@ -76,12 +77,15 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private void processarPDV(Message message, EMS0116Input input, Cota cota) {
 		
-		PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input,cota);
+		PDV pdvCandidatoAlteracao = cota.getPdvs().get(0);
 		
-		if(pdvCandidatoAlteracao == null){
+		//PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input,cota);
+		
+		// Comentado por Cesar Pop Punk em 26/03/2013 pois quem "manda" no cadastro é o novo distrib e não mais o MDC.
+		/*if(pdvCandidatoAlteracao == null){
 			this.processarNovoPDV(message, input, cota);
 			return;
-		}
+		}*/
 		
 		pdvCandidatoAlteracao.setNome(cota.getPessoa().getNome());
 		pdvCandidatoAlteracao.setPontoReferencia(input.getPontoReferencia());
@@ -224,6 +228,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 
 			if (enderecosPDV.isEmpty()) {
 				
+				removerPrincipais(input, pdv);
+				
 				incluirNovoEnderecoPDV(input, pdv);
 
 			} else {
@@ -293,6 +299,20 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			
 	}
 	
+	public void removerPrincipais(EMS0116Input input, PDV pdv) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE EnderecoPDV SET principal = false ");
+		sql.append("WHERE ");
+		sql.append(" pdv = :pdv ");
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("pdv", pdv);
+		
+		query.executeUpdate();
+		
+	}
+	
 	/*
 	 * Inclui um novo Endereço para o PDV
 	 */
@@ -322,7 +342,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		EnderecoPDV enderecoPDV = new EnderecoPDV();
 		enderecoPDV.setEndereco(endereco);
 		enderecoPDV.setPdv(pdv);
-		enderecoPDV.setPrincipal(!isEnderecoPrincipal(pdv.getEnderecos()));
+		//enderecoPDV.setPrincipal(!isEnderecoPrincipal(pdv.getEnderecos()));
+		enderecoPDV.setPrincipal(true);
 		enderecoPDV.setTipoEndereco(TipoEndereco.COMERCIAL);
 		
 		return (EnderecoPDV) getSession().merge(enderecoPDV);
