@@ -6,12 +6,16 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.ItemNotaEnvioRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 
@@ -22,6 +26,15 @@ import br.com.abril.nds.repository.EstudoRepository;
  */
 @Repository
 public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> implements EstudoRepository {
+	
+	@Autowired
+	private EstudoCotaRepository estudoCotaRepository;
+	
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	
+	@Autowired
+	private ItemNotaEnvioRepository itemNotaEnvioRepository;
 	
 	/**
 	 * Construtor.
@@ -134,4 +147,29 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 
 		return (ResumoEstudoHistogramaPosAnaliseDTO) query.uniqueResult();
 	}
+	
+	
+	@Override
+	public void remover(Estudo estudo) {
+		
+		Long idEstudo = estudo.getId();
+		
+		movimentoEstoqueCotaRepository.removerMovimentoEstoqueCotaPorEstudo(idEstudo);
+		itemNotaEnvioRepository.removerItemNotaEnvioPorEstudo(idEstudo);
+		estudoCotaRepository.removerEstudoCotaPorEstudo(idEstudo);
+		
+		super.remover(estudo);
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+

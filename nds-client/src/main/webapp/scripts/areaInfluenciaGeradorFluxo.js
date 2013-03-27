@@ -18,6 +18,7 @@
 						
 						
 						$(".areaInfluenciaGrid", areaInfluenciaGeradorFluxoController.workspace).flexigrid(	{
+
 											preProcess : areaInfluenciaGeradorFluxoController.executarPreProcessamento,
 											dataType : 'json',
 											colModel : [
@@ -237,4 +238,5 @@
 					}
 
 				}, BaseController);
+
  //@ sourceURL=areaInfluenciaGeradorFluxo.js

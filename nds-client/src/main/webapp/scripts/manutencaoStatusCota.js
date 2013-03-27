@@ -157,13 +157,15 @@ obterColunasGridPesquisaSemCota:function(){
 			);
 			
 			$(".grids", manutencaoStatusCotaController.workspace).hide();
-
+			$(".botoesGrid", manutencaoStatusCotaController.workspace).hide();	
+			
 			return;
 		}
 
 		if ($(".grids", manutencaoStatusCotaController.workspace).css('display') == 'none') {	
 
 			$(".grids", manutencaoStatusCotaController.workspace).show();
+			$(".botoesGrid", manutencaoStatusCotaController.workspace).show();	
 		}
 		
 		$.each(data.result.rows, function(index, row) {
