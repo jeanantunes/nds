@@ -28,6 +28,11 @@
 		var data = [];
 		
 		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
+		$('[id^="fornecedor_"]').each(function(key){
+			if (this.checked) {
+				data.push({name:'idsFornecedores['+key+']', value: this.value});
+			}
+		});
 		
 		$.postJSON(
 			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
@@ -138,14 +143,14 @@
 		
 		T.lancamentos = [];
 		
-		if (resultadoPesquisa[0].rows.length == 0) {
+		if (typeof resultadoPesquisa[0] == 'undefined' || resultadoPesquisa[0].rows.length == 0) {
 			T.escondeGrid();
+		} else {
+			$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
+			$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
+			
+			$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
 		}
-		
-		$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
-		$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
-		
-		$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
 		
 		return resultadoPesquisa[0];
 	},
