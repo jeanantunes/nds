@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 
 <script type="text/javascript" src="scripts/desenglobacao.js"></script>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
@@ -76,13 +76,13 @@
 					<table class="englobadosGrid"></table>
 
 					<span class="bt_novos" title="Gerar Arquivo">
-						<a href="${pageContext.request.contextPath}/distribuicao/desenglobacao/exportar?fileType=XLS">
+						<a id="gerarArquivoDesengloba" href="#">
 							<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 								Arquivo
 						</a>
 					</span>
 					<span class="bt_novos" title="Imprimir">
-						<a href="${pageContext.request.contextPath}/distribuicao/desenglobacao/exportar?fileType=PDF">
+						<a id="imprimirDesengloba" href="#">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 								Imprimir
 						</a>
