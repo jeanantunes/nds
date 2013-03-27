@@ -23,6 +23,9 @@ public class IcdChamadaEncalhe {
 	@Transient
 	private String tipoDocumento;
 	
+	@Transient
+	private String baseDeDados;
+	
 	@Column(name = "COD_DISTRIBUIDOR", nullable = false)
 	private Long codigoDistribuidor;
 	
@@ -103,6 +106,14 @@ public class IcdChamadaEncalhe {
 
 	public void setTipoDocumento(String tipoDocumento) {
 		this.tipoDocumento = tipoDocumento;
+	}
+
+	public String getBaseDeDados() {
+		return baseDeDados;
+	}
+
+	public void setBaseDeDados(String baseDeDados) {
+		this.baseDeDados = baseDeDados;
 	}
 
 	public Long getCodigoDistribuidor() {

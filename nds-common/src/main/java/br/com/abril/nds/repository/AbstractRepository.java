@@ -19,7 +19,12 @@ public abstract class AbstractRepository extends CouchDBRepositoryImpl {
 	private SessionFactory sessionFactory;
 	
 	protected Session getSession() {
-		return sessionFactory.getCurrentSession();
+		try {
+			return sessionFactory.getCurrentSession();
+		} catch (Exception e) {
+			
+		}
+		return sessionFactory.openSession();
 	}
 	
 }
