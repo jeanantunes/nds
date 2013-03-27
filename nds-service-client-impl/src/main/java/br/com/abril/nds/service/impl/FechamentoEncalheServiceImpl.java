@@ -460,6 +460,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 		try {
 			
+			BigDecimal valorTotalEncalhe = this.buscarValorTotalEncalhe(dataOperacao, cota.getId());
+			
+			if (valorTotalEncalhe == null || valorTotalEncalhe.compareTo(BigDecimal.ZERO) == 0){
+				
+				return;
+			}
+			
 			Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
@@ -470,7 +477,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			movimentoFinanceiroCotaDTO.setCota(cota);
 			movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 			movimentoFinanceiroCotaDTO.setUsuario(usuario);
-			movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
+			movimentoFinanceiroCotaDTO.setValor(valorTotalEncalhe);
 			movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacaoDistribuidor);
 			movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
 			movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacaoDistribuidor);
