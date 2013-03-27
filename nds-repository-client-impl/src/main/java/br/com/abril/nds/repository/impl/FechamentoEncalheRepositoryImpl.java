@@ -66,7 +66,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		subquery.append(" select COALESCE(sum( vp.qntProduto ),0) ");
 		subquery.append(" from VendaProduto vp ");
-		subquery.append(" where vp.produtoEdicao = pe ");
+		subquery.append(" where vp.produtoEdicao.id = pe.id ");
 		subquery.append(" and vp.dataOperacao = :dataEncalhe ");
 		subquery.append(" and vp.tipoVenda = :tipoVenda ");
 		
@@ -570,14 +570,47 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	public List<AnaliticoEncalheDTO> buscarAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortorder, String sortname, Integer page, Integer rp ) {
 
+		StringBuffer hqlVendaProduto = new StringBuffer();
+		
+		hqlVendaProduto.append(" select COALESCE( sum( vp.qntProduto ),0 ) ");
+		
+		hqlVendaProduto.append(" from VendaProduto vp ");
+		
+		hqlVendaProduto.append(" where vp.produtoEdicao.id = pe.id and ");
+		
+		hqlVendaProduto.append(" vp.dataOperacao = :dataEncalhe ");
+		
+		hqlVendaProduto.append(" and vp.tipoVenda = :tipoVenda ");
+		
+		hqlVendaProduto.append(" and vp.cota.id = cota.id ");
+		
+		
+		StringBuffer hqlPrecoComDesconto = new StringBuffer();
+		
+		hqlPrecoComDesconto.append(" ( coalesce(pe.precoVenda, 0) - (coalesce(pe.precoVenda, 0)  * ( ");
+		hqlPrecoComDesconto.append("   CASE WHEN pe.origem = :origemInterface ");
+		hqlPrecoComDesconto.append("   THEN (coalesce(descLogProdEdicao.percentualDesconto, descLogProd.percentualDesconto, 0 ) /100 ) ");
+		hqlPrecoComDesconto.append("   ELSE (coalesce(pe.desconto, pro.desconto, 0) / 100) END ");
+		hqlPrecoComDesconto.append("   )) ) ");
+		
+		
+		
 		StringBuffer hql = new StringBuffer();
-		hql.append("   SELECT cota.numeroCota as numeroCota ");
-		hql.append("       , coalesce(pess.nome, '') as nomeCota");
-		hql.append("       , box.nome as boxEncalhe");
-		hql.append("       , sum(mec.qtde*pe.precoVenda) as total ");
+		
+		hql.append("   SELECT  ");
+		
+		hql.append("	cota.numeroCota as numeroCota,			");
+		
+		hql.append("    coalesce(pess.nome, pess.razaoSocial, '') as nomeCota, 	");
+		
+		hql.append("	box.nome as boxEncalhe, 	");
+		
+		hql.append("    sum( ( mec.qtde - (" + hqlVendaProduto.toString()  + ") ) * " + hqlPrecoComDesconto.toString() + " ) as total ");
+		
 		hql.append("       , coalesce(div.status, 'EM_ABERTO') as statusCobranca ");
 		
 		getQueryAnalitico(filtro, hql);	
+		
 		hql.append("   group by cota.id ");
 		
 		if (sortname != null) {
@@ -590,18 +623,24 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			
 		}
 		
-		
-		
 		Query query = this.getSession().createQuery(hql.toString());
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliticoEncalheDTO.class));
-		query.setDate("dataEncalhe", filtro.getDataEncalhe());
+		
+		query.setParameter("dataEncalhe", filtro.getDataEncalhe());
+		
+		query.setParameter("origemInterface", Origem.INTERFACE);
+		
+		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
+		
+		query.setParameter("statusOperacaoFinalizada", StatusOperacao.CONCLUIDO);
 		
 		if (filtro.getBoxId() != null) {
-			query.setLong("boxId", filtro.getBoxId());
+			query.setParameter("boxId", filtro.getBoxId());
 		}	
 		
 		if (filtro.getFornecedorId() != null) {
-			query.setLong("fornecedorId", filtro.getFornecedorId());
+			query.setParameter("fornecedorId", filtro.getFornecedorId());
 		}
 		
 		if (page != null){
@@ -611,10 +650,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		if (rp != null){
 			query.setMaxResults(rp);
 		}
-	
-
-		
-		
 
 		return query.list();
 	}
@@ -627,7 +662,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		getQueryAnalitico(filtro, hql);
 		
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setDate("dataEncalhe", filtro.getDataEncalhe());
+		
+		query.setParameter("dataEncalhe", filtro.getDataEncalhe());
+		
+		query.setParameter("statusOperacaoFinalizada", StatusOperacao.CONCLUIDO);
 		
 		if (filtro.getBoxId() != null) {
 			query.setLong("boxId", filtro.getBoxId());
@@ -687,31 +725,40 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 			StringBuffer hql) {
 		
 		hql.append("     FROM ControleConferenciaEncalheCota  controle ");
-		hql.append("     LEFT JOIN controle.cobrancasControleConferenciaEncalheCota cobrancaControle ");
-		hql.append("     LEFT JOIN cobrancaControle.cobranca cob");
-		hql.append("     LEFT JOIN cob.divida div");
-		
+
 		hql.append("     JOIN controle.cota cota");
-		hql.append("     JOIN cota.pessoa pess");
-		hql.append("     JOIN controle.box  box ");
 		
-			
+		hql.append("     JOIN cota.pessoa pess");
+		
+		hql.append("     JOIN controle.box  box ");
+
 		hql.append("     JOIN controle.conferenciasEncalhe confEnc ");
 		
 		hql.append("     JOIN confEnc.movimentoEstoqueCota mec ");
-		
-		hql.append("     JOIN mec.movimentoFinanceiroCota mfc ");
-		
-		
+
 		hql.append("     JOIN confEnc.produtoEdicao pe ");
 		
 		hql.append("     JOIN pe.produto pro ");
+		
+		hql.append("  	LEFT JOIN pe.descontoLogistica as descLogProdEdicao ");
+		
+		hql.append("  	LEFT JOIN pro.descontoLogistica as descLogProd ");
+		
+		
+		hql.append("     LEFT JOIN controle.cobrancasControleConferenciaEncalheCota cobrancaControle ");
+		
+		hql.append("     LEFT JOIN cobrancaControle.cobranca cob");
+		
+		hql.append("     LEFT JOIN cob.divida div");
+		
 
 		if (filtro.getFornecedorId() != null) {
 			hql.append("     JOIN  pro.fornecedores for ");
 		}
 		
-		hql.append("    WHERE controle.dataOperacao = :dataEncalhe ");
+		hql.append(" WHERE controle.dataOperacao = :dataEncalhe ");
+		
+		hql.append(" and controle.status = :statusOperacaoFinalizada  ");
 		
 		if (filtro.getBoxId() != null) {
 			hql.append("     and  box.id = :boxId ");
