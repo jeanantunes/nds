@@ -94,16 +94,17 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			}
 		}
 
-		if (input.getNotaFiscal() != null && !input.getNotaFiscal().equals(0L) &&
+		/*if (input.getNotaFiscal() != null && !input.getNotaFiscal().equals(0L) &&
 			input.getSerieNotaFiscal() != null && !input.getSerieNotaFiscal().isEmpty() && !"0".equals(input.getSerieNotaFiscal()) &&
-			input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty() && !"0".equals(input.getChaveAcessoNF()) ) {
+			input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty() && !"0".equals(input.getChaveAcessoNF()) ) {*/
 
 			notafiscalEntrada = obterNotaFiscal(
 					input.getNotaFiscal()
 					, input.getSerieNotaFiscal()
 					, input.getCnpjEmissor()
+					, input.getNumeroNotaEnvio()
 					);		
-		}
+		//}
 		
 		if(notafiscalEntrada == null){
 			
@@ -318,20 +319,40 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 	}
 
-	private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, String serie, String cnpjEmissor) {
+	private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, String serie, String cnpjEmissor, String numeroNotaEnvio) {
 		StringBuilder hql = new StringBuilder();
 
 		PessoaJuridica emitente = this.obterPessoaJuridica( cnpjEmissor );		
 				
-		hql.append("from NotaFiscalEntradaFornecedor nf ")
-			.append("where nf.numero = :numero ")
-			.append("and nf.serie = :serie ")
-			.append("and nf.emitente = :emitente ");
+		hql.append("from NotaFiscalEntradaFornecedor nf ");
+		hql.append("where nf.emitente = :emitente ");
 		
+		if (numero == null || numero.equals(0L)) {
+			hql.append("and (nf.numero is null or nf.numero = 0 or nf.numero = '') ");
+		} else {
+			hql.append("and nf.numero = :numero ");
+		}
+		
+		if (serie == null || serie.isEmpty() || serie.equals("0")) {
+			hql.append("and ( nf.serie is null or nf.serie = 0 or nf.serie = '') ");
+		} else {
+			hql.append("and nf.serie = :serie ");
+		}
+
+		hql.append("and nf.numeroNotaEnvio = :numeroNotaEnvio ");
+
 		Query query = super.getSession().createQuery(hql.toString());
-		query.setParameter("numero", numero);
-		query.setParameter("serie", serie);
+
+		if ( numero != null && !numero.equals(0L) ) {
+			query.setParameter("numero", numero);
+		}
+		
+		if ( serie != null && !serie.isEmpty() && !serie.equals("0")) {
+			query.setParameter("serie", serie);
+		}
 		query.setParameter("emitente",  emitente);
+		query.setParameter("numeroNotaEnvio",  Long.parseLong(numeroNotaEnvio) );
+		
 		return (NotaFiscalEntradaFornecedor) query.uniqueResult();
 		
 	}

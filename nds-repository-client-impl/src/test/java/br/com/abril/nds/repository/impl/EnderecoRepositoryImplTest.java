@@ -20,9 +20,6 @@ import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
-import br.com.abril.nds.model.dne.Localidade;
-import br.com.abril.nds.model.dne.UnidadeFederacao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.EnderecoRepository;
 
 public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -34,7 +31,6 @@ public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 	EnderecoRepository enderecoRepository;
 	
 	private Cota cota;
-	private Usuario usuario;
 	private PessoaJuridica pessoaJuridica;
 	private Editor abril;
 	
@@ -57,22 +53,6 @@ public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 		cota = Fixture.cota(NUMERO_COTA, pessoaFisica, SituacaoCadastro.ATIVO, box);
 		cota.setSugereSuspensao(true);
 		save(cota);
-		
-		criarEnderecoCota(cota);
-		
-		usuario = Fixture.usuarioJoao();
-		save(usuario);
-		
-
-		UnidadeFederacao uf = Fixture.criarUnidadeFederacao("SP");
-		save(uf);
-		
-		Localidade localidade = Fixture.criarLocalidade(1L, "Mococa", 1L, uf);
-		save(localidade);
-
-	}
-	
-	private void criarEnderecoCota(Cota cota) {
 		
 		Endereco endereco = Fixture.criarEndereco(
 				TipoEndereco.COMERCIAL, "13730-000", "Rua Marechal Deodoro", "50", "Centro", "Mococa", "SP", 1);
@@ -100,6 +80,7 @@ public class EnderecoRepositoryImplTest extends AbstractRepositoryImplTest {
 		enderecoCota2.setTipoEndereco(TipoEndereco.COBRANCA);
 		
 		save(endereco, enderecoCota, endereco2, enderecoCota2);
+
 	}
 	
 	@Test
