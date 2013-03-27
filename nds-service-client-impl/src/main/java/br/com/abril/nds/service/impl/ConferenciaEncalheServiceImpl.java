@@ -55,7 +55,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -1403,7 +1402,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			validarQtdeEncalheExcedeQtdeReparte(
 					conferenciaEncalheDTO,
 					controleConferenciaEncalheCota.getCota().getNumeroCota(), 
-					dataOperacao);
+					dataOperacao, indConferenciaContingencia);
 				
 			
 			
@@ -1927,9 +1926,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Integer numeroCota, 
-			Date dataOperacao) {
-		
-		if(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0) {
+			Date dataOperacao, boolean indConferenciaContingencia) {
+
+		if (!indConferenciaContingencia &&
+				(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0)){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos deve encalhe de ser maior que zero.");
 			
