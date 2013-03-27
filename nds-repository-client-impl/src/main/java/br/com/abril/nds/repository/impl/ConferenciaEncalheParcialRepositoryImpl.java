@@ -4,8 +4,6 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -94,6 +92,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 	 * 
 	 * @return List - ConferenciaEncalheParcial
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheParcial> obterListaConferenciaEncalhe(
 			Boolean diferencaApurada,
 			Boolean nfParcialGerada,
@@ -230,6 +229,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 	 * 
 	 * @return List<ContagemDevolucaoDTO>
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			Boolean diferencaApurada,
 			Boolean nfParcialGerada,
