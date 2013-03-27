@@ -173,4 +173,20 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
 		return query.list();
 	}
+	
+	
+
+	@Override
+	public void removerEstudoCotaPorEstudo(Long idEstudo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" delete from EstudoCota estudoCota");
+		hql.append(" where estudoCota.estudo.id = :idEstudo");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idEstudo", idEstudo);
+		
+		query.executeUpdate();
+	}
 }

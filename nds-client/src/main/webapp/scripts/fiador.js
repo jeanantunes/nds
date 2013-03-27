@@ -1,3 +1,4 @@
+
 ﻿var fiadorController = $.extend(true, {
 		fecharModalCadastroFiador: false,
 		addConjuge : false,
@@ -1267,4 +1268,6 @@
 		}
 	
 }, BaseController);
+
 //@ sourceURL=fiador.js
+
