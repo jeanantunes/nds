@@ -29,7 +29,9 @@
 		
 		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
 		$('[id^="fornecedor_"]').each(function(key){
-			data.push({name:'idsFornecedores['+key+']', value: this.value});
+			if (this.checked) {
+				data.push({name:'idsFornecedores['+key+']', value: this.value});
+			}
 		});
 		
 		$.postJSON(
