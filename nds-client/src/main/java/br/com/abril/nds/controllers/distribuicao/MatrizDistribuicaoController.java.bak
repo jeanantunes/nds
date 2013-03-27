@@ -91,8 +91,11 @@ public class MatrizDistribuicaoController extends BaseController {
 	public void obterMatrizDistribuicao(Date dataLancamento, List<Long> idsFornecedores) {
 
 		validarDadosPesquisa(dataLancamento);
+		
+		if (idsFornecedores != null && !idsFornecedores.isEmpty()) {
 			
-		configurarFiltropesquisa(dataLancamento, idsFornecedores);
+			configurarFiltropesquisa(dataLancamento, idsFornecedores);
+		}
 
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
@@ -170,11 +173,11 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 
 	@Post
-	public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
+	public void reabrirMatrizDistribuicao() {
 		
 		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
 		
-		matrizDistribuicaoService.reabrirMatrizDistribuicao(filtro, produtosDistribuicao);
+		matrizDistribuicaoService.reabrirMatrizDistribuicao(filtro);
 
 		result.use(Results.json()).from(Results.nothing()).serialize();
     }
@@ -243,12 +246,9 @@ public class MatrizDistribuicaoController extends BaseController {
 	private FiltroDistribuicaoDTO configurarFiltropesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
 
 		FiltroDistribuicaoDTO filtro = new FiltroDistribuicaoDTO(dataPesquisa, listaIdsFornecedores);
-		
-		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
-			
-			filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
-		}
-		
+
+		filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
+
 		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 
 		return filtro;
