@@ -59,11 +59,9 @@ public class SelecaoBancas extends ProcessoAbstrato {
 			if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
 				if (totalReparte.compareTo(BigDecimal.ZERO) == 0) {
 					cota.setClassificacao(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga);
-					//TODO remover da lista?
 				}
 				if (totalVenda.compareTo(BigDecimal.ZERO) == 0) {
 					cota.setClassificacao(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga);
-					//TODO remover da lista?
 				}
 			}
 			cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes));
