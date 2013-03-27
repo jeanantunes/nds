@@ -50,7 +50,8 @@ public interface ConferenciaEncalheService {
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Integer numeroCota, 
-			Date dataOperacao);
+			Date dataOperacao, 
+			boolean indConferenciaContingencia);
 	
 	/**
 	 * Método faz seguintes verificações:

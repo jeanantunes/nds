@@ -118,7 +118,7 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 		
 		if(filtro.getPaginacaoVO()!= null){
 			
-			hql.append(aplicarOrdenacao(filtro) + " " + filtro.getPaginacaoVO().getSortOrder());
+			hql.append(aplicarOrdenacao(filtro));
 		}
 		
 		return hql.toString();
@@ -134,39 +134,35 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 			switch (filtro.getOrdenacaoColuna()) {
 				
 				case CODIGO:
-					hql.append(" order by p.codigo ");
+					hql.append(" order by p.codigo " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case DATA_LANCAMENTO:
-					hql.append(" order by l.dataLancamentoDistribuidor ");
+					hql.append(" order by l.dataLancamentoDistribuidor " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case DATA_RECOLHIMENTO:
-					hql.append(" order by l.dataRecolhimentoDistribuidor ");
+					hql.append(" order by l.dataRecolhimentoDistribuidor " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case FATURAMENTO:
 					hql.append(" order by (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'SAIDA' and mec.lancamento.id = l.id)" )
 					.append(" - ")
 					.append("   (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'ENTRADA' and mec.lancamento.id = l.id)" )
-					.append(" ) * pe.precoVenda ");
+					.append(" ) * pe.precoVenda " + filtro.getPaginacaoVO().getSortOrder());
 					
 					break;
 				case NOME_PRODUTO:
-					hql.append(" order by  p.nome ");
+					hql.append(" order by  p.nome " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case NUMERO_EDICAO:
-					hql.append(" order by pe.numeroEdicao ");
+					hql.append(" order by pe.numeroEdicao " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case PRECO_CAPA:
-					hql.append(" order by pe.precoVenda ");
+					hql.append(" order by pe.precoVenda " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case TIPO_PRODUTO:
-					hql.append(" order by t.descricao ");
+					hql.append(" order by t.descricao " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				default:
-					hql.append(" order by pe.numeroEdicao ");
-			}
-			
-			if (filtro.getPaginacaoVO().getOrdenacao() != null) {
-				hql.append( filtro.getPaginacaoVO().getOrdenacao().toString());
+					hql.append(" order by pe.numeroEdicao " + filtro.getPaginacaoVO().getSortOrder());
 			}
 		}
 		
