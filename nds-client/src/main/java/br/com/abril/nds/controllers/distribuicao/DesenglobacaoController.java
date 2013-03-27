@@ -97,6 +97,7 @@ public class DesenglobacaoController extends BaseController {
 	}
 	
 	@Get
+	@Path("/exportar")
 	public void exportar(FileType fileType) throws IOException {
 		FiltroDesenglobacaoDTO filtro = (FiltroDesenglobacaoDTO) session.getAttribute("filtroDesengloba");
 		List<DesenglobacaoDTO> cotasDesenglobadas = service.obterDesenglobacaoPorCota(filtro.getCotaDto().getNumeroCota().longValue());
@@ -107,8 +108,8 @@ public class DesenglobacaoController extends BaseController {
 			
 			FileExporter.to("ENGLOBACAO_DESENGLOBACAO", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					cotasDesenglobadas, DesenglobacaoDTO.class, this.httpResponse);
-		
-		result.nothing();
+			
+			result.nothing();
 	}
 }
 
