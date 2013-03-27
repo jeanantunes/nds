@@ -33,6 +33,7 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.ResumoPeriodoBalanceamentoDTO;
 import br.com.abril.nds.dto.SumarioLancamentosDTO;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -823,11 +824,16 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" produtoEdicao.codigoDeBarras as codigoDeBarras, ");
 		hql.append(" produtoEdicao.precoVenda as precoVenda, 		");
 		
-		hql.append(" coalesce(produto.desconto, 0) as desconto, 	");
+		hql.append(" (CASE WHEN produtoEdicao.origem = :origemInterface ");
+		hql.append(" THEN (coalesce(descLogProdEdicao.percentualDesconto, descLogProd.percentualDesconto, 0 ) /100 ) ");
+		hql.append(" ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
+		hql.append(" ) as desconto, ");
 		
-		hql.append(" ( produtoEdicao.precoVenda -  ");
-		
-		hql.append(" ( produtoEdicao.precoVenda * ( coalesce(produto.desconto, 0) / 100 ) ) ) as precoDesconto, ");
+		hql.append(" coalesce(produtoEdicao.precoVenda, 0) - (coalesce(produtoEdicao.precoVenda, 0) * ( ");
+		hql.append(" CASE WHEN produtoEdicao.origem = :origemInterface ");
+		hql.append(" THEN (coalesce(descLogProdEdicao.percentualDesconto, descLogProd.percentualDesconto, 0 ) /100 ) ");
+		hql.append(" ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
+		hql.append(" )) as precoDesconto, ");
 		
 		hql.append(" lancamento.dataLancamentoDistribuidor as dataLancamento, 		");
 		
@@ -858,6 +864,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("dataInicioRecolhimento", dataInicioRecolhimento.getTime());
 		query.setParameter("dataFimRecolhimento", dataFimRecolhimento.getTime());
 		query.setParameter("statusLancamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		query.setParameter("origemInterface", Origem.INTERFACE);
 		
 		if (maxResults != null) {
 			query.setMaxResults(maxResults);
@@ -894,6 +901,10 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" left join editor.pessoaJuridica as editorPessoaJuridica ");
 		hql.append(" left join lancamento.periodoLancamentoParcial as periodoLancamentoParcial 	");
 		hql.append(" left join periodoLancamentoParcial.lancamentoParcial as lancamentoParcial	");
+		
+		hql.append(" left join produtoEdicao.descontoLogistica as descLogProdEdicao ");
+		hql.append(" left join produto.descontoLogistica as descLogProd ");
+		
 		hql.append(" join lancamento.chamadaEncalhe as chamadaEncalhe ");
 		
 		hql.append(" where ");

@@ -1361,10 +1361,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			StatusOperacao statusOperacao,
 			boolean indConferenciaContingencia) {
 		
-		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item conferido, não é possível realizar a conferência de encalhe.");
-		}
-		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 	    
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -2149,8 +2145,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						tipoMovimentoEstoqueCota);
 		
 		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
-
-		verificarValorAplicadoNulo(valoresAplicados);
+		if(valoresAplicados == null){
+			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
+		}else{
+			verificarValorAplicadoNulo(valoresAplicados);
+		}
+		
 		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
@@ -2159,7 +2159,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 	private void verificarValorAplicadoNulo(ValoresAplicados valoresAplicados){
-		
+				
 		if(valoresAplicados.getPrecoComDesconto() == null) {
 			valoresAplicados.setPrecoComDesconto(BigDecimal.ZERO);
 		}

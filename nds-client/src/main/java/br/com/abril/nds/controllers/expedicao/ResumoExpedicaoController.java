@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -388,9 +387,6 @@ public class ResumoExpedicaoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		BigInteger qtdeTotalReparte = BigInteger.ZERO;
-		BigDecimal valorTotalFaturado = BigDecimal.ZERO;
-		
 		List<ResumoExpedicaoBoxVO> listaLancamentosExpedidosBox = new LinkedList<ResumoExpedicaoBoxVO>();
 		
 		ResumoExpedicaoBoxVO resumoExpedicaoBoxVO = null;
@@ -408,18 +404,16 @@ public class ResumoExpedicaoController extends BaseController {
 			resumoExpedicaoBoxVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
 			resumoExpedicaoBoxVO.setQntDiferenca(getValor(expd.getQntDiferenca()));
 			
-			valorTotalFaturado = valorTotalFaturado.add(expd.getValorFaturado());
-			qtdeTotalReparte = qtdeTotalReparte.add(expd.getQntReparte());
-			
 			listaLancamentosExpedidosBox.add(resumoExpedicaoBoxVO);
 		}
 		
+		ExpedicaoDTO expedicaoDTO = this.expedicaoService.obterTotaisResumoExpedicaoPorProduto(filtro);
+		
 		RetornoExpedicaoVO retornoExpedicaoVO = new RetornoExpedicaoVO();
+		
 		retornoExpedicaoVO.setResumosExpedicaoBox(listaLancamentosExpedidosBox);
-		
-		retornoExpedicaoVO.setTotalReparte(qtdeTotalReparte);
-		
-		retornoExpedicaoVO.setTotalValorFaturado(valorTotalFaturado);
+		retornoExpedicaoVO.setTotalReparte(expedicaoDTO.getQntReparte());
+		retornoExpedicaoVO.setTotalValorFaturado(expedicaoDTO.getValorFaturado());
 		
 		return retornoExpedicaoVO;
 	}

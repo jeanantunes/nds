@@ -1,9 +1,13 @@
 package br.com.abril.nds.integracao.ems0127.processor;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -12,11 +16,14 @@ import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
 import br.com.abril.nds.model.integracao.icd.IcdChamadaEncalhe;
+import br.com.abril.nds.model.integracao.icd.IcdChamadaEncalheItem;
 import br.com.abril.nds.repository.AbstractRepository;
 
 @Component
@@ -57,6 +64,21 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 
 	@Override
 	public void processMessage(Message message) {
+
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring/applicationContext-ndsi-cli.xml");
+
+		DataSource ds = (DataSource) applicationContext.getBean("dataSourceIcd");
+		
+		String database = "";
+		try {
+			Connection c = ds.getConnection();
+			String[] s = c.getMetaData().getURL().split(":");
+			database = s[s.length - 1];
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		
 		CouchDbClient cdbc = null;
 		
@@ -68,8 +90,27 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	
 			for(IcdChamadaEncalhe ce : chamadasEncalhe) {
 				
+				ce.setValorTotalMargemApurado(null);
+				ce.setValorTotalMargemInformado(null);
+				ce.setValorTotalCreditoApurado(null);
+				ce.setValorTotalCreditoInformado(null);
+				ce.setValorTotalVendaInformada(null);
+				
+				for(IcdChamadaEncalheItem icei : ce.getChamadaEncalheItens()) {
+					icei.setQuantidadeDevolucaoApurada(null);
+					icei.setQuantidadeDevolucaoInformada(null);
+					icei.setQuantidadeDevolucaoParcial(null);
+					icei.setQuantidadeVendaApurada(null);
+					icei.setQuantidadeVendaInformada(null);
+					icei.setValorVendaInformada(null);
+					icei.setValorVendaApurada(null);
+					icei.setValorMargemInformado(null);
+					icei.setValorMargemApurado(null);
+				}
+				
 				try {
 					ce.setTipoDocumento("EMS0127");
+					ce.setBaseDeDados(database);
 					cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
 					cdbc.save(ce);
 				} catch(Exception e) {
