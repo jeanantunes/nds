@@ -124,8 +124,8 @@
 						</tr>
 						<tr id="trCota1">
 							<td>
-								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="255"
-									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota(1));"/>
+								<input type="text" name="cotaInput" id="cotaInput1" style="width:60px;" maxlength="10"
+									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNumeroCota(cotaInput1, nomeInput1, true, lancamentoNovoController.buscarReparteAtualCota,lancamentoNovoController.erroPesquisaCota,1);"/>
 								
 								<input type="hidden" name="rateioIDInputHidden"  id="rateioIDInputHidden1"/>
 								
@@ -133,7 +133,7 @@
 							<td>
 								<input type="text" name="nomeInput" id="nomeInput1" style="width:300px;" maxlength="255"
 									onkeyup="pesquisaCotaLancamentoFaltasSobras.autoCompletarPorNome(nomeInput1);" 
-									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1, lancamentoNovoController.buscarReparteAtualCota(1),lancamentoNovoController.erroPesquisaCota(1));"/>
+									onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInput1, nomeInput1, lancamentoNovoController.buscarReparteAtualCota,lancamentoNovoController.erroPesquisaCota,1);"/>
 							</td>
 							<td align="center" id="reparteText1"></td>
 							<td align="center">

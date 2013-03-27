@@ -5,7 +5,7 @@ function PesquisaCota(workspace) {
 	this.workspace = workspace;
 		
 	//Pesquisa por número da cota
-	this.pesquisarPorNumeroCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarPorNumeroCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,identificadorLinhaGrid) {
 		
 		var numeroCota = $(idCampoNumeroCota, pesquisaCota.workspace).val();
 
@@ -18,10 +18,10 @@ function PesquisaCota(workspace) {
 			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNumero",
 					{numeroCota:numeroCota},
 				function(result) { 
-					pesquisaCota.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack); 
+					pesquisaCota.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack,identificadorLinhaGrid); 
 				},
 				function() {
-					pesquisaCota.pesquisarPorNumeroErrorCallBack(idCampoNumeroCota, errorCallBack); 
+					pesquisaCota.pesquisarPorNumeroErrorCallBack(idCampoNumeroCota, errorCallBack,identificadorLinhaGrid); 
 				}, 
 				isFromModal
 			);
@@ -34,7 +34,7 @@ function PesquisaCota(workspace) {
 	},
 	
 	//Success callback para pesquisa por número da cota
-	this.pesquisarPorNumeroSuccessCallBack = function(result, idCampoNomeCota, successCallBack) {
+	this.pesquisarPorNumeroSuccessCallBack = function(result, idCampoNomeCota, successCallBack,identificadorLinhaGrid) {
 
 		pesquisaCota.pesquisaRealizada = true;
 		
@@ -42,12 +42,12 @@ function PesquisaCota(workspace) {
 		
 		if (successCallBack) {
 			
-			successCallBack(result);
+			successCallBack(result,identificadorLinhaGrid);
 		}
 	},
 	
 	//Error callback para pesquisa por número da cota
-	this.pesquisarPorNumeroErrorCallBack = function(idCampoNumeroCota, errorCallBack) {
+	this.pesquisarPorNumeroErrorCallBack = function(idCampoNumeroCota, errorCallBack,identificadorLinhaGrid) {
 		
 		$(idCampoNumeroCota, pesquisaCota.workspace).val("");
 		
@@ -55,7 +55,7 @@ function PesquisaCota(workspace) {
 		
 		if (errorCallBack) {
 			
-			errorCallBack();
+			errorCallBack(identificadorLinhaGrid);
 		}
 	},
 	
@@ -113,7 +113,7 @@ function PesquisaCota(workspace) {
 	},
 	
 	//Pesquisar por nome da cota
-	this.pesquisarPorNomeCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarPorNomeCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,identificadorLinhaGrid) {
 		
 		setTimeout(function() { clearInterval(pesquisaCota.intervalo); }, 10 * 1000);
 		
@@ -128,14 +128,14 @@ function PesquisaCota(workspace) {
 					return;
 				}
 				
-				pesquisaCota.pesquisarPorNomeCotaAposIntervalo(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack);
+				pesquisaCota.pesquisarPorNomeCotaAposIntervalo(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,identificadorLinhaGrid);
 			}
 			
 		}, 100);
 	},
 	
 	//Pesquisa por nome da cota após o intervalo
-	this.pesquisarPorNomeCotaAposIntervalo = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarPorNomeCotaAposIntervalo = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,identificadorLinhaGrid) {
 		
 		clearInterval(pesquisaCota.intervalo);
 		
@@ -162,11 +162,11 @@ function PesquisaCota(workspace) {
 					}
 					else{
 					
-					    pesquisaCota.pesquisarPorNomeSuccessCallBack(result, idCampoNumeroCota, idCampoNomeCota, successCallBack);
+					    pesquisaCota.pesquisarPorNomeSuccessCallBack(result, idCampoNumeroCota, idCampoNomeCota, successCallBack,identificadorLinhaGrid);
 					}
 				},
 				function() {
-					pesquisaCota.pesquisarPorNomeErrorCallBack(idCampoNomeCota, errorCallBack);
+					pesquisaCota.pesquisarPorNomeErrorCallBack(idCampoNomeCota, errorCallBack,identificadorLinhaGrid);
 				}, 
 				isFromModal
 			);
@@ -179,7 +179,7 @@ function PesquisaCota(workspace) {
 	},
 	
 	//Success callback para pesquisa por nome da cota
-	this.pesquisarPorNomeSuccessCallBack = function(result, idCampoNumeroCota, idCampoNomeCota, successCallBack) {
+	this.pesquisarPorNomeSuccessCallBack = function(result, idCampoNumeroCota, idCampoNomeCota, successCallBack,identificadorLinhaGrid) {
 		
 		if (result != "") {
 			
@@ -187,13 +187,13 @@ function PesquisaCota(workspace) {
 			$(idCampoNomeCota, pesquisaCota.workspace).val(result.nome);
 			
 			if (successCallBack) {
-				successCallBack(result);
+				successCallBack(result,identificadorLinhaGrid);
 			}
 		}
 	},
 	
 	//Error callback para pesquisa por nome da cota
-	this.pesquisarPorNomeErrorCallBack = function(idCampoNomeCota, errorCallBack) {
+	this.pesquisarPorNomeErrorCallBack = function(idCampoNomeCota, errorCallBack,identificadorLinhaGrid) {
 		
 		$(idCampoNomeCota, pesquisaCota.workspace).val("");
 		
@@ -201,7 +201,7 @@ function PesquisaCota(workspace) {
 		
 		if (errorCallBack) {
 			
-			errorCallBack();
+			errorCallBack(identificadorLinhaGrid);
 		}
 	},
 	
