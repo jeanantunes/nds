@@ -1,5 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.FixacaoReparteCotaDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
@@ -35,7 +38,9 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -50,6 +55,8 @@ public class FixacaoReparteController extends BaseController {
 	private static final String FILTRO_PRODUTO_SESSION_ATTRIBUTE = "filtroPorProduto";
 	private static final String FILTRO_COTA_SESSION_ATTRIBUTE = "filtroPorCota";
 	private static final int MAX_EDICOES =6;
+	private static final String IMPORT_INCONSISTENTE="importInconsistente";
+	private List<String> errosUpload=new ArrayList<String>();
 	
 	@Autowired
 	private Result result;
@@ -110,7 +117,7 @@ public class FixacaoReparteController extends BaseController {
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "N�o foram encontrados resultados para a pesquisa");	
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");	
 		}
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelProduto = montarTableModelProduto(filtro);
@@ -127,11 +134,12 @@ public class FixacaoReparteController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		tratarFiltroPorCota(filtro);
-		
+		//remove tipo cota adicionado no autocomplete	
+		filtro.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtro.getNomeCota()));
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorCota(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "N�o Foram encontrados resultados para a pesquisa");	
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");	
 		}
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelCota = montarTableModelCota(filtro);
@@ -434,5 +442,125 @@ public class FixacaoReparteController extends BaseController {
 		
 		return statusOK ;
 	}
+	
+	@Post
+	@Path("/uploadArquivoLoteFixacao")
+	public void uploadArquivoEmLote(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFileFixacao) throws FileNotFoundException, IOException{
+		List<FixacaoReparteDTO> listaRegistrosInvalidosExcel=null;
+		File file = XlsUploaderUtils.upLoadArquivo(excelFileFixacao);
+		List<FixacaoReparteDTO> listaFixacaoExcel = XlsUploaderUtils.getBeanListFromXls(FixacaoReparteDTO.class, file );
+	
+		if(!isListaVazia(listaFixacaoExcel)){
+			 listaRegistrosInvalidosExcel = obterListaInvalidos(listaFixacaoExcel);
+			 listaFixacaoExcel.removeAll(listaRegistrosInvalidosExcel);
+			 for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
+				 fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
+			}
+			 if(listaRegistrosInvalidosExcel.size() ==0){
+				 this.result.use(Results.json()).from(
+							new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso!"), 
+							"result").recursive().serialize();
+			 }else{
+				 this.result.use(Results.json()).from(
+							new ValidacaoVO(TipoMensagem.WARNING, getMsgErroUpload()), 
+							"result").recursive().serialize();
+			 }
+			
+			 
+		}else{
+			 this.result.use(Results.json()).from(
+						new ValidacaoVO(TipoMensagem.WARNING, "Arquivo esta vazio"), 
+						"result").recursive().serialize();
+		}
+		
+		
+		
+	}
 
+
+	private String getMsgErroUpload() {
+		StringBuilder builderErros = new StringBuilder("");
+		builderErros.append("Alguns registros nao foram adicionados \n");
+		for(String msg: getErrosUpload()){
+			builderErros.append(msg).append("\n");
+		}
+		return builderErros.toString();
+	}
+
+
+	private List<FixacaoReparteDTO> obterListaInvalidos(List<FixacaoReparteDTO> listaFixacaoExcel) {
+		List<FixacaoReparteDTO>invalidos = new ArrayList<FixacaoReparteDTO>();
+		for(FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel){
+		//  validar se a cota existe  
+			  Integer[] cotaIdArray = new Integer[listaFixacaoExcel.size()];
+			  for (int i = 0; i < listaFixacaoExcel.size(); i++) {
+			   cotaIdArray[i] = listaFixacaoExcel.get(i).getCotaFixada();
+			  }
+			  List<Integer> verificarNumeroCotaExiste = this.cotaService.verificarNumeroCotaExiste(cotaIdArray);
+			  
+			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
+			   if(!verificarNumeroCotaExiste.contains(fixacaoDTO.getCotaFixada())){
+			    invalidos.add(fixacaoDTO);
+			    getErrosUpload().add("-Cota \t" + fixacaoDTO.getCotaFixada().toString() +  "\t nao encontrada");
+			   }
+			  }
+
+			  /*
+			  validar se o produto é um produtoValido
+			  */
+			  String[] codigoProdutoArray = new String[listaFixacaoExcel.size()];
+			  for (int i = 0; i < listaFixacaoExcel.size(); i++) {
+			   codigoProdutoArray[i]=listaFixacaoExcel.get(i).getProdutoFixado();
+			  }
+			  
+			  List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
+			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
+			   if(!verificarProdutoExiste.contains(fixacaoDTO.getProdutoFixado())){
+			    invalidos.add(fixacaoDTO);
+			    getErrosUpload().add("-Produto \t" + fixacaoDTO.getProdutoFixado() +  "\t nao encontrado");
+			   }
+			  }
+			  
+			  // Validacao preenchimento campos
+			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
+				  if(isPreechimentoInvalido(fixacaoReparteDTO)){
+					  invalidos.add(fixacaoDTO);
+					  getErrosUpload().add("-Impossivel identificar fixação por cota ou produto");
+				  }
+			  }
+			  
+			  //validacao existe registro salvo
+			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
+				  if(fixacaoReparteService.isFixacaoExistente(fixacaoReparteDTO)){
+					  invalidos.add(fixacaoDTO);
+					  getErrosUpload().add("-Registro existente para o codigo:\t" + fixacaoDTO.getProdutoFixado() + "\t e cota:" + fixacaoDTO.getCotaFixada().toString()) ;
+				  }
+			  }
+			  
+		}
+		return invalidos;
+	}
+
+
+	private boolean isPreechimentoInvalido(FixacaoReparteDTO fixacaoReparteDTO) {
+		boolean edIniOk= (fixacaoReparteDTO.getEdicaoInicial()!=null && fixacaoReparteDTO.getEdicaoInicial() > 0);
+		boolean edFinalOk= (fixacaoReparteDTO.getEdicaoFinal()!=null && fixacaoReparteDTO.getEdicaoFinal() > 0 && fixacaoReparteDTO.getEdicaoFinal() > fixacaoReparteDTO.getEdicaoFinal());
+		boolean qtdeEdicoesOk= (fixacaoReparteDTO.getQtdeEdicoes()!=null && fixacaoReparteDTO.getQtdeEdicoes()>0);		
+		return ( edIniOk  && qtdeEdicoesOk) || (edFinalOk && qtdeEdicoesOk);
+	}
+
+
+	private boolean isListaVazia(List<FixacaoReparteDTO> listaFixacaoExcel) {
+		return (listaFixacaoExcel == null || listaFixacaoExcel.isEmpty());
+	}
+
+
+	public List<String> getErrosUpload() {
+		return errosUpload;
+	}
+
+
+	public void setErrosUpload(List<String> errosUpload) {
+		this.errosUpload = errosUpload;
+	}
 }

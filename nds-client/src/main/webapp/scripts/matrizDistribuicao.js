@@ -189,7 +189,8 @@
 			dataLancto:                 row.cell.dataLancto,
 			reparte:					row.cell.reparte,
 			pctPadrao:					row.cell.pctPadrao,
-			liberado:					liberado
+			liberado:					liberado,
+			dataFinMatDistrib:          row.cell.dataFinMatDistrib
 		});
 		
 	},
@@ -313,8 +314,14 @@
 		var data = [];
 		
 		$.each(T.lancamentos, function(index, lancamento){
-			data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  	  value: lancamento.estudo});
-			data.push({name: 'produtosDistribuicao[' + index + '].repDistrib',    value: lancamento.repDistrib});
+			
+			if (lancamento.selecionado) {
+				
+				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  		 value: lancamento.idLancamento});
+				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  	  		 value: lancamento.estudo});
+				data.push({name: 'produtosDistribuicao[' + index + '].repDistrib',    		 value: lancamento.repDistrib});
+				data.push({name: 'produtosDistribuicao[' + index + '].dataFinMatDistrib',    value: lancamento.dataFinMatDistrib});
+			}
 		});
 
 		$.postJSON(pathTela + "/matrizDistribuicao/finalizarMatrizDistribuicao", data,

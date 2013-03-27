@@ -48,7 +48,7 @@ public class ParametroCobrancaCota implements Serializable {
 	private Integer fatorVencimento;
 	
 	@Column(name = "UNIFICA_COBRANCA")
-	private boolean unificaCobranca;
+	private Boolean unificaCobranca;
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;

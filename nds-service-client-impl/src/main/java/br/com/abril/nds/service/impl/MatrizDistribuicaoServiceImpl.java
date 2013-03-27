@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
@@ -73,7 +73,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Override
 	@Transactional(readOnly = true)
-	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroLancamentoDTO filtro) {
+	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroDistribuicaoDTO filtro) {
 	
 		this.validarFiltro(filtro);
 		
@@ -212,7 +212,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	/**
 	 * Valida o filtro informado.
 	 */
-	private void validarFiltro(FiltroLancamentoDTO filtro) {
+	private void validarFiltro(FiltroDistribuicaoDTO filtro) {
 		
 		if (filtro == null) {
 			
@@ -289,11 +289,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Override
 	@Transactional
-	public void finalizarMatrizDistribuicao(FiltroLancamentoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 		
-		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
+		//TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
 		
-		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO.getListProdutoDistribuicao();
+		List<ProdutoDistribuicaoVO> listDistrib = produtoDistribuicaoVOs;
 		
 		Map <BigInteger, BigInteger> map = obterMapaEstudoRepartDistrib(produtoDistribuicaoVOs);
 		
@@ -331,7 +331,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Override
 	@Transactional
-	public void reabrirMatrizDistribuicao(FiltroLancamentoDTO filtro) {
+	public void reabrirMatrizDistribuicao(FiltroDistribuicaoDTO filtro) {
 		
 		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
 		

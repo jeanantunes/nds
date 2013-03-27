@@ -69,7 +69,7 @@
 	            <td width="28">At&eacute;:</td>
 	            <td width="107"><input type="text" name="filtro.dataAte" id="contasAPagar_Filtro_Ate" style="width:80px;"/></td>
 	            <td width="67">Semana CE:</td>
-	            <td width="71"><input type="text" name="filtro.ce" id="contasAPagar_Filtro_Ce" style="width:50px;" maxlength="2"/></td>
+	            <td width="71"><input type="text" name="filtro.ce" id="contasAPagar_Filtro_Ce" style="width:50px;" maxlength="6"/></td>
 	           
 	            <td width="147">
 

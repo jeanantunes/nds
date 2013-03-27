@@ -57,7 +57,7 @@ public class Estudo implements Serializable {
 	@OneToMany(mappedBy = "estudo")
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
-	@OneToMany(mappedBy = "estudo", cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+	@OneToMany(mappedBy = "estudo")
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
 	/** Status do Estudo. */
