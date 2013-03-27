@@ -62,6 +62,9 @@ var lancamentosSelecionados = [];
    color:#000;
 }
 
+.fieldFiltroMatriz{margin-top:27px; width:1080px!important; margin-right:0px!important;}
+.fieldGridMatriz{width:1080px;}
+
 </style>
 
 </head>
@@ -72,17 +75,17 @@ var lancamentosSelecionados = [];
 <div id="matrizDistribuicaoContent">
 	<form id="form_exclusao_estudo">
 	<div id="popup_confirmar_exclusao_estudo" title="Excluir Estudo" style="display:none">
-		<p>Confirma a exclusão do estudo?</p>
+		<p>Confirma a exclus&ccedil&atildeo do estudo?</p>
 	</div>
 	</form>
 			
-				<jsp:include page="../messagesDialog.jsp">
+			   	<jsp:include page="../messagesDialog.jsp">
 					<jsp:param value="dialog-novo" name="messageDialog"/>
 				</jsp:include>
-			
+			     
 			    <div id="telaPesquisaMatriz"> 
-			      <fieldset class="fieldFiltro">
-			   	    <legend>Pesquisar Matriz de Distribuição
+			      <fieldset class="fieldFiltroMatriz">
+			   	    <legend>Pesquisar Matriz de Distribui&ccedil&atildeo
 			        </legend>
 			   	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 			   	      <tr>
@@ -115,8 +118,8 @@ var lancamentosSelecionados = [];
 			        </table>
 			      </fieldset>
 			      <div class="linha_separa_fields">&nbsp;</div>
-			      <fieldset class="fieldGrid">
-			       	  <legend>Matriz de Distribuição</legend>
+			      <fieldset class="fieldGridMatriz">
+			       	  <legend>Matriz de Distribui&ccedil&atildeo</legend>
 			       
 			        	<div class="gridDistribuicao" style="display:none;">
 	
@@ -148,7 +151,7 @@ var lancamentosSelecionados = [];
 			         	  		<span class="bt_novos">
 			         	  			<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();">
 				         	  			<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0">
-				         	  				Finalizar Matriz de Distribuição
+				         	  				Finalizar Matriz de Distribui&ccedil&atildeo
 				         	  			</img>
 			         	  			</a>
 			         	  		</span>	
@@ -164,7 +167,7 @@ var lancamentosSelecionados = [];
 			         	  		<span class="bt_novos">
 			         	  			<a href="javascript:;" onclick="matrizDistribuicao.analise()" rel="tipsy" title="Analisar Estudo">
 			         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0">
-			         	  				An�lise
+			         	  				An&aacutelise
 			         	  			</img>
 			         	  			</a>
 			         	  		</span>
@@ -252,7 +255,7 @@ var lancamentosSelecionados = [];
 			    <fieldset style="width:250px!important;">
 			    	<legend>Confirmar Reabertura de Matriz</legend>
 					
-						Confirma reabertura da Matriz de Distribuição?
+						Confirma reabertura da Matriz de Distribui&ccedil&atildeo?
 	
 			    </fieldset>
 			</div>

@@ -78,6 +78,15 @@
 		
 		//###### AÇÕES DOS BOTÕES DA TELA ######
 		
+		//EXPORTAR
+		$('#gerarArquivoDesengloba').click(function(){
+			desenglobacaoController.exportar("XLS");
+		});
+		
+		$('#imprimirDesengloba').click(function(){
+			desenglobacaoController.exportar("PDF");
+		});
+		
 		//PESQUISAR DA TELA PRINCIPAL
 		$('#pesquisaPorCota').click(function (){
 			desenglobacaoController.porCota();
@@ -325,6 +334,17 @@
 				}
 			}
 		});
+	},
+	
+	exportar: function exportar(fileType) {
+		$.get(contextPath + "/distribuicao/desenglobacao/exportar?fileType=" + fileType, function(result) {
+        	if (result.mensagens) {
+				exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+				return result;
+			} else {
+				window.location = contextPath + "/distribuicao/desenglobacao/exportar?fileType=" + fileType;
+			}
+        });
 	},
 	
 }, BaseController);

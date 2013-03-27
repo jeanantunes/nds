@@ -27,7 +27,7 @@ public interface MatrizDistribuicaoService {
 	
 	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO FiltroDistribuicaoDTO, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs);
 	
-	public void reabrirMatrizDistribuicao(FiltroDistribuicaoDTO filtro); 
+	public void reabrirMatrizDistribuicao(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtosDistribuicao); 
 	
 	public void duplicarLinhas(ProdutoDistribuicaoVO prodDistribVO);
 }

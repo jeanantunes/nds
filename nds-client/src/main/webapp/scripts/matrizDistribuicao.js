@@ -337,6 +337,16 @@
 	
   this.confirmarReaberturaDeMatriz = function() {
 		
+	  var data = [];
+		
+		$.each(T.lancamentos, function(index, lancamento) {
+			
+			if (lancamento.selecionado) {
+				
+				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  		 value: lancamento.idLancamento});
+			}
+		});
+	  
 		$.postJSON(pathTela + "/matrizDistribuicao/reabrirMatrizDistribuicao", null, 
 				function(){
 					T.checkUncheckLancamentos(false);
@@ -1057,8 +1067,8 @@
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
-			height : 180,
+			width : 1080,
+			height : 220,
 			disableSelect : true
 			});
 
