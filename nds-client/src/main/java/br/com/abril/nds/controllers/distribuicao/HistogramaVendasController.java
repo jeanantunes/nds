@@ -26,11 +26,13 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
@@ -74,11 +76,11 @@ public class HistogramaVendasController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
 	public void index(){
 		
 		result.include("componenteList", ComponentesPDV.values());
-		
 	}
 	
 	@Post
@@ -169,7 +171,7 @@ public class HistogramaVendasController extends BaseController {
 	@Post
 	@Path("/analiseHistograma")
 	public void  analiseHistograma(String edicoes,String segmento,String codigoProduto,String nomeProduto,String[] faixasVenda
-			,String labelComponente,String labelElemento){
+			,String labelComponente,String labelElemento,String classificacaoLabel){
 		String[] nrEdicoes = edicoes.split(",");
 		
 		String enumeratedList = null;
@@ -184,11 +186,12 @@ public class HistogramaVendasController extends BaseController {
 		result.include("filtroUtilizado", getFiltroSessao());
 		result.include("listaEdicoes", enumeratedList);
 		result.include("segmentoLabel", segmento);
-		result.include("produtoLabel", codigoProduto);
+		result.include("codigoLabel", codigoProduto);
 		result.include("nomeProduto", nomeProduto);
 		
 		result.include("labelComponente", labelComponente);
 		result.include("labelElemento", labelElemento);
+		result.include("classificacaoLabel", classificacaoLabel);
 		
 		
 		//Pesquisar base de estudo e salvar em sessão
@@ -272,9 +275,9 @@ public class HistogramaVendasController extends BaseController {
 	}
 	
 
-	private void tratarFiltro(FiltroHistogramaVendas filtroAtual) {
+	private void tratarFiltro(FiltroHistogramaVendas filtroAtual)throws ValidacaoException {
 
-		if(StringUtils.isNotEmpty(filtroAtual.getEdicao()) && (StringUtils.isEmpty(filtroAtual.getCodigo()) || StringUtils.isNotEmpty(filtroAtual.getProduto()) )){ 
+		if(StringUtils.isEmpty(filtroAtual.getCodigo()) & StringUtils.isEmpty(filtroAtual.getProduto())){ 
 			throw new ValidacaoException(TipoMensagem.WARNING,"Favor informar um código ou nome de produto.");
 		}
 		
@@ -336,8 +339,5 @@ public class HistogramaVendasController extends BaseController {
 	public void setHttpResponse(HttpServletResponse httpResponse) {
 		this.httpResponse = httpResponse;
 	}
-	
-	
-	
 }
 

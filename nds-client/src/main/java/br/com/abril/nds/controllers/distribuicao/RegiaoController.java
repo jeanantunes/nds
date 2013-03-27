@@ -1,6 +1,10 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +13,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -21,6 +26,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
@@ -30,6 +36,8 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.upload.KeyValue;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -37,6 +45,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -69,7 +78,9 @@ public class RegiaoController extends BaseController {
 	@Rules(Permissao.ROLE_DISTRIBUICAO_REGIAO)
 	public void index(){
 		this.carregarComboRegiao();
-//		this.carregarComboSegmento();
+		this.carregarComboSegmento();
+		this.carregarComboClassificacao();
+		
 	}
 	
 	@Post
@@ -77,12 +88,11 @@ public class RegiaoController extends BaseController {
 	public void salvarRegiao (String nome, boolean isFixa){
 		
 		this.validarEntradaRegiao(nome);
-
 		
 		Regiao regiao = new Regiao();
 		regiao.setNomeRegiao(nome);
 		regiao.setRegiaoIsFixa(isFixa);
-//		regiao.setIdUsuario(this.usuarioService.getUsuarioLogado());
+		regiao.setIdUsuario(this.usuarioService.getUsuarioLogado());
 		
 		Date dataEHora = new Date();
 		Timestamp data = new Timestamp(dataEHora.getTime());
@@ -94,36 +104,6 @@ public class RegiaoController extends BaseController {
 		List <RegiaoDTO> listaRegiao = regiaoService.buscarRegiao();
 		
 		result.use(Results.json()).from(listaRegiao, "listaRegiao").recursive().serialize();
-	}
-	
-	@Post
-	@Path("/addCotaNaRegiao")
-	public void addCotaNaRegiao (int[] numeroCota, Long idRegiao){
-		
-		validaEntradaDaCotaEmLote(numeroCota, idRegiao);
-		
-		for (int numCota : numeroCota) {
-			RegistroCotaRegiao registro = new RegistroCotaRegiao();
-			
-			Date dataEHora = new Date();
-			Timestamp data = new Timestamp(dataEHora.getTime());
-			
-			registro.setRegiao(this.regiaoService.obterRegiaoPorId(idRegiao));
-			registro.setCota(this.cotaService.obterPorNumeroDaCota(numCota));
-			registro.setUsuario(this.usuarioService.getUsuarioLogado());
-			registro.setDataAlteracao(data);
-			
-			regiaoService.addCotaNaRegiao(registro);
-		}
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota adicionada com sucesso."), 
-			"result").recursive().serialize();
-	}
-
-	private void validaEntradaDaCotaEmLote(int[] numeroCota, Long idRegiao) {
-		
-		if (numeroCota.length == 0){
-			throw new ValidacaoException(TipoMensagem.WARNING, "O n�mero da cota � obrigat�rio.");
-		}
 	}
 	
 	@Post
@@ -144,12 +124,12 @@ public class RegiaoController extends BaseController {
 		Regiao regiao = regiaoService.obterRegiaoPorId(id);
 		
 		if (regiao.isRegiaoIsFixa() == true){
-			throw new ValidacaoException(TipoMensagem.WARNING, "N�o � poss�vel excluir uma regi�o FIXA.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível excluir uma região marcada como FIXA.");
 		}else{
 			
 		this.regiaoService.excluirRegiao(id);
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Regiao exclu�da com sucesso."), 
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Regiao excluída com sucesso."), 
 				"result").recursive().serialize();
 		}
 	}
@@ -169,25 +149,8 @@ public class RegiaoController extends BaseController {
 		regiaoService.alterarRegiao(regiao);
 		
 		this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, "Regi�o alterada com sucesso."), 
+				new ValidacaoVO(TipoMensagem.SUCCESS, "Região alterada com sucesso."), 
 				"result").recursive().serialize();
-	}
-	
-	
-	private void carregarComboRegiao() {
-		
-		List<ItemDTO<Long,String>> comboRegiao =  new ArrayList<ItemDTO<Long,String>>();
-		List<RegiaoDTO> regioes = regiaoService.buscarRegiao();
-		
-		for (RegiaoDTO itemRegiao : regioes) {
-			comboRegiao.add(new ItemDTO<Long,String>(itemRegiao.getIdRegiao() , itemRegiao.getNomeRegiao()));
-		}
-		
-		if (comboRegiao == null || comboRegiao.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		}
-		
-		result.include("listaRegiao",comboRegiao );
 	}
 	
 	@Post
@@ -196,20 +159,17 @@ public class RegiaoController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
-		this.tratarFiltro(filtro);
+		this.tratarFiltroCotasRegiao(filtro);
 		
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = efetuarConsultaCotasDaRegiao(filtro);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
 	}
 	
 	private TableModel<CellModelKeyValue<RegiaoCotaDTO>> efetuarConsultaCotasDaRegiao(FiltroCotasRegiaoDTO filtro) {
 
 		List<RegiaoCotaDTO> listaCotasRegiaoDTO = regiaoService.carregarCotasRegiao(filtro);
-
-		if (listaCotasRegiaoDTO == null || listaCotasRegiaoDTO.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		}
 
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoCotaDTO>>();
 
@@ -252,7 +212,7 @@ public class RegiaoController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
-		this.tratarFiltro(filtro);
+		this.tratarFiltroCotasRegiao(filtro);
 		
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = montarTableModelBuscaCep(filtro);
 		
@@ -279,33 +239,170 @@ public class RegiaoController extends BaseController {
 		return tableModel;
 	}
 	
-	@Get
-	public void exportar(FileType fileType) throws IOException {
+	@Post
+	@Path("/buscarPorSegmento")
+	public void buscarPorSegmento(FiltroCotasRegiaoDTO filtro){
 		
-		FiltroCotasRegiaoDTO filtro = (FiltroCotasRegiaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+//		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
-		List<RegiaoCotaDTO> listaCotasRegiaoDTO = regiaoService.carregarCotasRegiao(filtro);
+//		this.tratarFiltroCotasRegiao(filtro);
+		
+		tratarFiltroSegmento(filtro);
+		
+		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = montarTableModelBuscaSegmento(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		
+	}
+
+	private TableModel<CellModelKeyValue<RegiaoCotaDTO>> montarTableModelBuscaSegmento (FiltroCotasRegiaoDTO filtro) {
+		
+		List<RegiaoCotaDTO> listaCotasSegmento = regiaoService.buscarPorSegmento(filtro);
+		
+		if (listaCotasSegmento == null || listaCotasSegmento.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+
+		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoCotaDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaCotasSegmento));
+
+		tableModel.setPage(1);
+		
+		tableModel.setTotal(listaCotasSegmento.size());
+		
+//		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+//
+//		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
+
+		return tableModel;
+	}
+
+	
+	@Post
+	@Path("/incluirCota")
+	public void incluirCota (List<Integer> cotas, long idRegiao){
+		
+		
+		this.validarEntradaDeVariasCotas(cotas, idRegiao);
+		
+		popularRegistroESalvarCota(cotas, idRegiao);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota inserida com sucesso!"), 
+				"result").recursive().serialize();
+	}
+
+	private void popularRegistroESalvarCota(List<Integer> cotas, long idRegiao) {
+		for (int numeroCota : cotas) {
 			
-			if(listaCotasRegiaoDTO.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada n�o obteve resultado.");
-			}
+			RegistroCotaRegiao registro = new RegistroCotaRegiao();
+
+			Date dataEHora = new Date();
+			Timestamp data = new Timestamp(dataEHora.getTime());
 			
-			FileExporter.to("Cotas_Cadastradas_Na_Região", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
-					listaCotasRegiaoDTO, RegiaoCotaDTO.class, this.httpResponse);
-		
-		result.nothing();
+			registro.setRegiao(this.regiaoService.obterRegiaoPorId(idRegiao));
+			registro.setCota(this.cotaService.obterPorNumeroDaCota(numeroCota));
+			registro.setUsuario(this.usuarioService.getUsuarioLogado());
+			registro.setDataAlteracao(data);
+			
+			regiaoService.addCotaNaRegiao(registro);
+			
+		}
 	}
 	
-	private void tratarFiltro(FiltroCotasRegiaoDTO filtroAtual) {
-
-		FiltroCotasRegiaoDTO filtroSession = (FiltroCotasRegiaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+	@Post
+	@Path("/addLote")
+	public void addCotasEmLote (UploadedFile xls, Long idRegiao) throws IOException {  
+		List<Integer> numerosCota = new ArrayList<Integer>();
 		
-		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
+		File x = upLoadArquivo(xls);
 
-			filtroAtual.getPaginacao().setPaginaAtual(1);
+//		List<KeyValue> lista = XlsUploaderUtils.returnKeyValueFromXls(x);
+//		
+//		for (KeyValue keyValue : lista) {
+//			if(keyValue.getValue() != null){
+//			Double xjiji = (Double) keyValue.getValue();
+//			numerosCota.add(xjiji.intValue());
+//			}
+//		}
+		
+		//Implementar a mensagem de erro...
+		this.validarEntradaDeVariasCotas(numerosCota, idRegiao);
+		this.popularRegistroESalvarCotasEmLote(numerosCota, idRegiao);
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas inseridas com sucesso!"),
+			"result").recursive().serialize();
+
+	}
+
+	private File upLoadArquivo(UploadedFile xls) throws IOException, FileNotFoundException {
+		File x = new File(xls.getFileName());
+	    File destino = new File(xls.getFileName());  
+	    destino.createNewFile();  
+	    InputStream stream = xls.getFile();  
+	    IOUtils.copy(stream,new FileOutputStream(destino));
+		return x;
+	}
+	
+	private void popularRegistroESalvarCotasEmLote(List<Integer> cotas, long idRegiao) {
+		boolean mensagem = false;
+		String numCotaCadastrada = "";
+		
+		for (int numeroCota : cotas) {
+			
+			RegistroCotaRegiao registro = new RegistroCotaRegiao();
+
+			Date dataEHora = new Date();
+			Timestamp data = new Timestamp(dataEHora.getTime());
+			
+			registro.setRegiao(this.regiaoService.obterRegiaoPorId(idRegiao));
+			registro.setCota(this.cotaService.obterPorNumeroDaCota(numeroCota));
+			registro.setUsuario(this.usuarioService.getUsuarioLogado());
+			registro.setDataAlteracao(data);
+			
+			
+			if(registro.getCota() == null){
+				mensagem = true;
+				numCotaCadastrada += "["+numeroCota+"] ";
+			}
+			regiaoService.addCotaNaRegiao(registro);
 		}
 		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+		if(mensagem == true){
+			throw new ValidacaoException(TipoMensagem.WARNING, "As cotas " + numCotaCadastrada + " não existem.");
+		}
+	}
+	
+	private void validarEntradaDeVariasCotas(List<Integer> cotas, Long idRegiao) {
+		
+		List<Integer> cotasCadas =  this.regiaoService.buscarNumeroCotasPorIdRegiao(idRegiao);
+		
+		boolean mensagem = false;
+		String numCotaCadastrada = "";
+		
+		for (Integer numCota : cotasCadas) {
+			for (Integer cota : cotas) {
+				if(numCota == cota){
+					mensagem = true;
+					numCotaCadastrada += "["+cota+"] ";
+				}
+			}
+		}
+		if(mensagem == true){
+			throw new ValidacaoException(TipoMensagem.WARNING, "As cotas " + numCotaCadastrada + " já estão cadastradas, retire-as e faça uma nova inclusão.");
+		}
+	}
+	
+	private void carregarComboRegiao() {
+		
+		List<ItemDTO<Long,String>> comboRegiao =  new ArrayList<ItemDTO<Long,String>>();
+		List<RegiaoDTO> regioes = regiaoService.buscarRegiao();
+		
+		for (RegiaoDTO itemRegiao : regioes) {
+			comboRegiao.add(new ItemDTO<Long,String>(itemRegiao.getIdRegiao() , itemRegiao.getNomeRegiao()));
+		}
+		
+		result.include("listaRegiao",comboRegiao );
 	}
 	
 	private void carregarComboSegmento() {
@@ -318,73 +415,71 @@ public class RegiaoController extends BaseController {
 			comboSegmento.add(new ItemDTO<Long,String>(itemSegmento.getId(), itemSegmento.getDescricao()));
 		}
 		
-		if (comboSegmento == null || comboSegmento.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		result.include("listaSegmento",comboSegmento );
+	}
+	
+	private void carregarComboClassificacao(){
+		List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
+		
+		List<TipoClassificacaoProduto> classificacoes = regiaoService.buscarClassificacao();
+		
+		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
+			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
+		}
+		result.include("listaClassificacao",comboClassificacao);		
+	}
+	
+	private void tratarFiltroSegmento(FiltroCotasRegiaoDTO filtro) {
+		
+		if(filtro.getLimiteBuscaPorSegmento() == null || filtro.getLimiteBuscaPorSegmento() == 0){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de Cotas.");
 		}
 		
-		result.include("listaSegmento",comboSegmento );
+		if(filtro.getLimiteBuscaPorSegmento() > 4) {
+			filtro.setLimiteBuscaPorSegmento(filtro.getLimiteBuscaPorSegmento() + 1);
+		}
+		
 	}
 	
 	private void validarEntradaRegiao(String nomeRegiao) {
 		if (nomeRegiao == null || (nomeRegiao.isEmpty())) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Nome da regiao � obrigat�rio.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nome da regiao é obrigatório.");
 		}
 
 		List<RegiaoDTO> listaRegiaoDTO = regiaoService.buscarRegiao();
 
 		for (RegiaoDTO regiaoDTO : listaRegiaoDTO) {
 			if (regiaoDTO.getNomeRegiao().equalsIgnoreCase(nomeRegiao)) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Regi�o j� cadastrada.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Região já cadastrada.");
 			}
 		}
 	}
 	
-	@Post
-	@Path("/incluirCota")
-	public void incluirCotaPorCepNaRegiao (int []cotas, long idRegiao){
+	private void tratarFiltroCotasRegiao (FiltroCotasRegiaoDTO filtroAtual) {
 		
-		validaEntradaDaCotaEmLote(cotas, idRegiao);
+		FiltroCotasRegiaoDTO filtroSession = (FiltroCotasRegiaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
-		
-		for (int numeroCota : cotas) {
-			RegistroCotaRegiao registro = new RegistroCotaRegiao();
-
-			Date dataEHora = new Date();
-			Timestamp data = new Timestamp(dataEHora.getTime());
-			
-			registro.setRegiao(this.regiaoService.obterRegiaoPorId(idRegiao));
-			registro.setCota(this.cotaService.obterPorNumeroDaCota(numeroCota));
-			registro.setUsuario(this.usuarioService.getUsuarioLogado());
-			registro.setDataAlteracao(data);
-			
-			
-			// verificar... mover para o repository e service, passar uma lista pra lá...
-			// percorrer e add lá...			
-			regiaoService.addCotaNaRegiao(registro);
+		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
+			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota inserida com sucesso!"), 
-				"result").recursive().serialize();
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
-	@Post
-	@Path("/addEmLote")
-	public void addCotaEmLote (int[] numeroCota, Long idRegiao){
-
-		validaEntradaDaCotaEmLote(numeroCota, idRegiao);
+	@Get
+	public void exportar(FileType fileType) throws IOException {
 		
-		for (int numCota : numeroCota) {
-			RegistroCotaRegiao registro = new RegistroCotaRegiao();
-			
-			Date dataEHora = new Date();
-			Timestamp data = new Timestamp(dataEHora.getTime());
-			
-			registro.setRegiao(this.regiaoService.obterRegiaoPorId(idRegiao));
-			registro.setCota(this.cotaService.obterPorNumeroDaCota(numCota));
-			registro.setUsuario(this.usuarioService.getUsuarioLogado());
-			registro.setDataAlteracao(data);
-			
-			regiaoService.addCotaNaRegiao(registro);
+		FiltroCotasRegiaoDTO filtro = (FiltroCotasRegiaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		List<RegiaoCotaDTO> listaCotasRegiaoDTO = regiaoService.carregarCotasRegiao(filtro);
+		
+		if(listaCotasRegiaoDTO.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada não obteve resultado.");
 		}
+		
+		FileExporter.to("Cotas_Cadastradas_Na_Região", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
+				listaCotasRegiaoDTO, RegiaoCotaDTO.class, this.httpResponse);
+		
+		result.nothing();
 	}
 }

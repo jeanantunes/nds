@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.DivisaoEstudoDTO;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.service.EstudoService;
@@ -30,6 +32,12 @@ public class EstudoServiceImpl implements EstudoService {
 	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
 		
 		return this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(dataReferencia, idProdutoEdicao);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Estudo obterEstudo(Long id) {
+		return this.estudoRepository.buscarPorId(id);
 	}
 
 	@Override
@@ -73,6 +81,23 @@ public class EstudoServiceImpl implements EstudoService {
 			
 		}
 	}
+
+	@Override
+	@Transactional
+	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId) {
+		return estudoRepository.obterResumoEstudo(estudoId);
+	}
+
+	@Override
+	@Transactional
+	public void excluirEstudo(long id) {
+		this.estudoRepository.removerPorId(id);
+	}
 	
+	@Transactional(readOnly = true)
+	public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO) {
+		
+		return this.estudoRepository.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudoVO);
+	}
 	
 }

@@ -2,6 +2,8 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 
+import br.com.abril.nds.dto.DivisaoEstudoDTO;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 
 /**
@@ -15,6 +17,14 @@ public interface EstudoService {
 	
 	Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao);
 
+	Estudo obterEstudo(Long id);
+
 	public abstract void excluirEstudosAnoPassado();
 
+	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId);
+	
+	void excluirEstudo(long id);
+	
+	public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
+	
 }

@@ -514,6 +514,14 @@
 				<module>nds-test</module>
 			</modules>
 		</profile>
+		
+		<profile>
+			<id>ndsClientProfile</id>
+			<modules>
+				<module>nds-client</module>
+			</modules>
+		</profile>
+		
 	</profiles>
 
 </project>

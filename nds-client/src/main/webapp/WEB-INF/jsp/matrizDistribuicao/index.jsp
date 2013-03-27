@@ -1,4 +1,6 @@
+
 <head>
+
 <style>
 .linkDisabled {
 	cursor: default;
@@ -19,23 +21,26 @@ display: none;
 
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/matrizDistribuicao.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicaoVendaMedia.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 
 <script type="text/javascript">
 function estudoComplementarShow(link){
 	$('#workspace').tabs('addTab', 'Estudo Complementar', link);
 }
 
+
+function showTab(link, title) {
+	$('#workspace').tabs('addTab', title, link);
+}
+
+</script>
+<script type="text/javascript">
+
+
 var pathTela = "${pageContext.request.contextPath}";
 
 var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
 
 matrizDistribuicao.inicializar();
-
-var distribuicaoVendaMedia = new DistribuicaoVendaMedia(pathTela, BaseController.workspace);
-
-var lancamentosSelecionados = [];
 
 </script>
 
@@ -71,7 +76,7 @@ var lancamentosSelecionados = [];
 
 <form id="form_exclusao_estudo">
 <div id="popup_confirmar_exclusao_estudo" title="Excluir Estudo" style="display:none">
-	<p>Confirma a exclus√£o do estudo?</p>
+	<p>Confirma a exclus„o do estudo?</p>
 </div>
 </form>
 		
@@ -81,7 +86,7 @@ var lancamentosSelecionados = [];
 		     
 		    <div id="telaPesquisaMatriz"> 
 		      <fieldset class="fieldFiltro">
-		   	    <legend>Pesquisar Matriz de Distribui√ß√£o
+		   	    <legend>Pesquisar Matriz de DistribuiÁ„o
 		        </legend>
 		   	    <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		   	      <tr>
@@ -103,7 +108,7 @@ var lancamentosSelecionados = [];
 <!-- 		              </div> -->
 		            
 <!-- 		            </td> -->
-		   	        <td width="120">Data de Lan√ßamento:</td>
+		   	        <td width="120">Data de LanÁamento:</td>
 		   	        <td width="109"><input class="campoDePesquisa" type="text" name="datepickerDe" id="datepickerDe" style="width:80px;" value="${data}" /></td>
 		   	        <td width="30" align="center">&nbsp;</td>
 		   	        <td ><span class="bt_novos" title="Pesquisar">   
@@ -115,10 +120,8 @@ var lancamentosSelecionados = [];
 		      </fieldset>
 		      <div class="linha_separa_fields">&nbsp;</div>
 		      <fieldset class="fieldGrid">
-		       	  <legend>Matriz de Distribui√ß√£o</legend>
-		       
-		        	<div class="gridDistribuicao" style="display:none;">
-
+		       	  <legend>Matriz de DistribuiÁ„o</legend>
+		        <div class="grids">
 		        
 		       	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
 		         	  		
@@ -131,15 +134,15 @@ var lancamentosSelecionados = [];
 		         	  		</span>
 		         	  		
 		         	  		<div class="bt_novos" style="position:relative; z-index:1;">
-						        		<a href="javascript:;" onclick="matrizDistribuicao.mostrarOpcoes();"><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0"/>Op√ß√µes<img src="${pageContext.request.contextPath}/images/p7PM_dark_south.gif" width="14" height="8" border="0" class="setaMuda" /></a>
+						        		<a href="javascript:;" onclick="matrizDistribuicao.mostrarOpcoes();"><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0"/>OpÁıes<img src="${pageContext.request.contextPath}/images/p7PM_dark_south.gif" width="14" height="8" border="0" class="setaMuda" /></a>
 						        		<div class="opcoesEstudos">
 								           <ul>
-								               <li><a onclick="matrizDistribuicao.abrirDistribuicaoVendaMedia()" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>Distribui√ß√£o Venda M√©dia</a></li>
-								               <li><a href="${pageContext.request.contextPath}/Lancamento/estudo_manual.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribui√ß√£o Manual</a></li>
+								               <li><a href="${pageContext.request.contextPath}/Lancamento/distribuicao.htm"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>DistribuiÁ„o Venda MÈdia</a></li>
+								               <li><a href="${pageContext.request.contextPath}/Lancamento/estudo_manual.htm"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>DistribuiÁ„o Manual</a></li>
 								               <li><a href="javascript:;" onclick="matrizDistribuicao.somarEstudos();"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
-								               <li><a href="${pageContext.request.contextPath}/Lancamento/dividir_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
-								               <li><a href="javascript:;"  onclick="estudoComplementarShow('${pageContext.request.contextPath}/lancamento/estudoComplementar')" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
-								               <li><a href="javascript:;" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>C√≥pia Proporcional de Estudo</a></li>
+								               <li><a href="javascript:;" onclick="showTab('${pageContext.request.contextPath}/dividirEstudo/index', 'Dividir Estudo')"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
+								               <li><a href="javascript:;" onclick="estudoComplementarShow('${pageContext.request.contextPath}/lancamento/estudoComplementar')" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
+								               <li><a href="javascript:;" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>CÛpia Proporcional de Estudo</a></li>
 								           </ul>
           							 	</div>
        	  					</div>
@@ -147,7 +150,7 @@ var lancamentosSelecionados = [];
 		         	  		<span class="bt_novos">
 		         	  			<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_finalizacao_matriz();">
 			         	  			<img id="imgFinalizar" src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0">
-			         	  				Finalizar Matriz de Distribui√ß√£o
+			         	  				Finalizar Matriz de DistribuiÁ„o
 			         	  			</img>
 		         	  			</a>
 		         	  		</span>	
@@ -162,7 +165,7 @@ var lancamentosSelecionados = [];
 		         	  		
 		         	  		<span class="bt_novos">
 		         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0">
-		         	  				An√°lise
+		         	  				An·lise
 		         	  			</img>
 		         	  		</span>
 		         	  		
@@ -193,19 +196,20 @@ var lancamentosSelecionados = [];
 							<td align="left">
 								<span class="bt_novos">
 										<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_duplicarLinha();"><img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />Duplicar Linha</a>
-									</span>
-								</td>
-								<td>
-									<span class="bt_novos"><a href="#" onclick="matrizDistribuicao.gerarEstudoAutomatico();"><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Gera√ß√£o Autom√°tica</a></span>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="4">
-									<b>Total previsto na matriz para estudos gerados:</b> &nbsp;<span id="totalGerado"></span>, &nbsp;<b>liberados:&nbsp;</b> <span id="totalLiberado"></span>
-								</td>
-							</tr>
-						</table>
-					</div>			      	
+								</span>
+							</td>
+							<td>
+								<span class="bt_novos"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />GeraÁ„o Autom·tica</a></span>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="4">
+								<b>Total previsto na matriz para estudos gerados:</b> &nbsp;<span id="totalGerado"></span>, &nbsp;<b>liberados:&nbsp;</b> <span id="totalLiberado"></span>
+							</td>
+						</tr>
+					</table>
+				</div>	
+		      	
 		      	</div>
 		      	
 		      	<div class="matrizFinalizada" style="display: none;">
@@ -230,9 +234,9 @@ var lancamentosSelecionados = [];
 			</jsp:include>
 			
 		    <fieldset style="width:250px!important;">
-		    	<legend>Confirmar Finaliza√ß√£o de Matriz</legend>
+		    	<legend>Confirmar FinalizaÁ„o de Matriz</legend>
 				
-					Confirma finaliza√ß√£o da Matriz de Distribui√ß√£o?
+					Confirma finalizaÁ„o da Matriz de DistribuiÁ„o?
 
 		    </fieldset>
 		</div>
@@ -248,7 +252,7 @@ var lancamentosSelecionados = [];
 		    <fieldset style="width:250px!important;">
 		    	<legend>Confirmar Reabertura de Matriz</legend>
 				
-					Confirma reabertura da Matriz de Distribui√ß√£o?
+					Confirma reabertura da Matriz de DistribuiÁ„o?
 
 		    </fieldset>
 		</div>
@@ -262,9 +266,9 @@ var lancamentosSelecionados = [];
 			</jsp:include>
 			
 		    <fieldset style="width:250px!important;">
-		    	<legend>Confirmar Exclus√£o de Estudo</legend>
+		    	<legend>Confirmar Exclus„o de Estudo</legend>
 				
-					Confirma exclus√£o do estudo selecionado?
+					Confirma exclus„o do estudo selecionado?
 
 		    </fieldset>
 		</div>
@@ -294,28 +298,28 @@ var lancamentosSelecionados = [];
 			</jsp:include>
 			
 		    <fieldset style="width:250px!important;">
-		    	<legend>Duplica√ß√£o Registro</legend>
+		    	<legend>DuplicaÁ„o Registro</legend>
 				
-					Confirmar a duplica√ß√£o do registro selecionado?
+					Confirmar a duplicaÁ„o do registro selecionado?
 
 		    </fieldset>
 		</div>
 		</form> 	
 			
 	</div>
-	
-	<div style="display:none" class="campoPesquisaEstudo"></div>
+			
 		
-	<form id="form-copiar-estudo">
+		<form id="form-copiar-estudo">
 		<div id="dialog-copiar-estudo" title="Copia Proporcional de Estudo" style="display:none;">
+		    
 		    <jsp:include page="copiarEstudo.jsp" />
 		</div>
 	</form>
-	
+			
 	<form id="form-somar-estudo">
 		<div id="dialog-somar-estudo" title="Somar Estudos" style="display:none;">
 		    <jsp:include page="somarEstudo.jsp" />
 		</div>
-	</form>
+		</form>
 		
 </body>

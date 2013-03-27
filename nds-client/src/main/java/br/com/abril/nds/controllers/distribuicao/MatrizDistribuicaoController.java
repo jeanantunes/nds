@@ -47,6 +47,7 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
+@Path("/matrizDistribuicao")
 public class MatrizDistribuicaoController extends BaseController {
 
     @Autowired
@@ -326,12 +327,17 @@ public class MatrizDistribuicaoController extends BaseController {
 
     @Post
     public void gerarEstudoAutomatico(String codigoProduto, BigDecimal reparte) {
-	
-	try {
-	    estudoServiceEstudo.gerarEstudoAutomatico(new ProdutoEdicaoBase(codigoProduto), reparte);
-	} catch (Exception e) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
-	}
-	result.nothing();
+    	try {
+    		estudoServiceEstudo.gerarEstudoAutomatico(new ProdutoEdicaoBase(codigoProduto), reparte);
+    	} catch (Exception e) {
+    		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+    	}
+    	result.nothing();
     }
+	
+	@Get
+	public void histogramaPosEstudo(){
+		result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo();
+	}
+	
 }

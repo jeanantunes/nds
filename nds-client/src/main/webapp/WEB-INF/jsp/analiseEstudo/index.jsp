@@ -31,7 +31,8 @@ $(function(){
               <td width="44">Estudo:</td>
               <td width="90"><input type="text" name="idEstudo" id="idEstudo"  style="width:80px;" /></td>
               <td width="46">Código:</td>
-              <td width="71"><input type="text" name="codProduto" id="codProduto"  style="width:60px;" /></td>
+              <td width="71"><input type="text" name="codProduto" id="codProduto"  style="width:60px;" 
+              				 onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codProduto','#produto', false, undefined, undefined);"/></td>
               
               <td width="55">Produto:</td>
               <td width="138"><input type="text" name="produto" id="produto"  style="width:130px;" 

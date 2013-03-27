@@ -34,6 +34,7 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
@@ -158,19 +159,25 @@ public class PdvController extends BaseController {
 	@Post
 	@Path("/carregarGeradorFluxo")
 	public void carregarGeradorFluxo(List<Long> codigos, ModoTela modoTela, Long idPdv){
-	    List<ItemDTO<Long, String>> listaDescricao;
-	    Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-	    if (ModoTela.CADASTRO_COTA == modoTela) {
-	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxo(cod));
-	    } else {
-	        Set<Long> codigosGeradores = new HashSet<Long>(Arrays.asList(cod));
-	        List<GeradorFluxoDTO> dtos = pdvService.obterGeradoresFluxoHistoricoTitularidadePDV(idPdv, codigosGeradores);
-	        listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
-	        for (GeradorFluxoDTO geradorFluxoDTO : dtos) {
-                listaDescricao.add(new ItemDTO<Long, String>(geradorFluxoDTO.getCodigo(), geradorFluxoDTO.getDescricao()));
-            }
-	    }
-        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
+	   PDV pdv =	 pdvService.obterPDVporId(idPdv);
+	   
+		  
+			
+		    List<ItemDTO<Long, String>> listaDescricao;
+		    Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+		    if (ModoTela.CADASTRO_COTA == modoTela) {
+		        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxo(cod));
+		    } else {
+		        Set<Long> codigosGeradores = new HashSet<Long>(Arrays.asList(cod));
+		        List<GeradorFluxoDTO> dtos = pdvService.obterGeradoresFluxoHistoricoTitularidadePDV(idPdv, codigosGeradores);
+		        listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
+		        for (GeradorFluxoDTO geradorFluxoDTO : dtos) {
+	                listaDescricao.add(new ItemDTO<Long, String>(geradorFluxoDTO.getCodigo(), geradorFluxoDTO.getDescricao()));
+	            }
+		    }
+	        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
+	  
+		   
 	}
 	
 	@Post
@@ -182,6 +189,8 @@ public class PdvController extends BaseController {
 	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxoNotIn(cod));
 	    }		
         result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
+        //TODO ALMIR VERIFICAR SE É PRINCIPAL PARA BLOQUER O GERADOR DE FLUXO 
+        
 	}
 	
 	
