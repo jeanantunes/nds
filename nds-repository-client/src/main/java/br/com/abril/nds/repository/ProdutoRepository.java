@@ -75,5 +75,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	GrupoProduto obterGrupoProduto(String codigoProduto);
 	
 	List<Produto> buscarProdutosBalanceadosOrdenadosNome(Date dataLancamento);
+
+	List<String> verificarProdutoExiste(String[] codigoProduto);
 	
 }

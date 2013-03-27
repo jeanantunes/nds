@@ -1,7 +1,9 @@
-﻿.settings
+﻿.settings/
+.settings
 .classpath
 .project
 .metadata
+.settings/
 bin
 target
 META-INF/

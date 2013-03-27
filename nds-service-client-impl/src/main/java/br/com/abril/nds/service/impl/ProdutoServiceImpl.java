@@ -324,4 +324,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 			return produtoRepository.obterProdutoLikeCodigo(codigo);
 	}
 
+
+
+	@Override
+	public List<String> verificarProdutoExiste(String... codigoProduto) {
+
+		return produtoRepository.verificarProdutoExiste(codigoProduto);
+	}
 }

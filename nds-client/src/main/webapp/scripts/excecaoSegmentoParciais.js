@@ -1,3 +1,4 @@
+
 ﻿var excecaoSegmentoParciaisController = $.extend(true, {
 	
 	/**
@@ -1054,4 +1055,5 @@
 	},
 	
 }, BaseController);
+
 //@ sourceURL=excecaoSegmentoParciaisController.js
