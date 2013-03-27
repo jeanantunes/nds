@@ -1,4 +1,3 @@
-<%@ page session="true" %> 
 
 <head>
 
