@@ -1361,10 +1361,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			StatusOperacao statusOperacao,
 			boolean indConferenciaContingencia) {
 		
-		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item conferido, não é possível realizar a conferência de encalhe.");
-		}
-		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 	    
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();

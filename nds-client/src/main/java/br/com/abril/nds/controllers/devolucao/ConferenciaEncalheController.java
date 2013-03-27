@@ -1220,7 +1220,14 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
 			
-			dados.put("listaMensagens", 	new String[]{"Operação efetuada com sucesso."});
+			String msgSucess = "Operação efetuada com sucesso.";
+			
+			if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
+				
+				msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
+			}
+			
+			dados.put("listaMensagens", 	new String[]{msgSucess});
 
 			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
 			
