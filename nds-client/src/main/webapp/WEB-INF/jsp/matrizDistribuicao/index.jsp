@@ -202,7 +202,7 @@ var lancamentosSelecionados = [];
 									</span>
 								</td>
 								<td>
-									<span class="bt_novos"><a href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Geração Automática</a></span>
+									<span class="bt_novos"><a href="#" onclick="matrizDistribuicao.gerarEstudoAutomatico();"><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Geração Automática</a></span>
 								</td>
 							</tr>
 							<tr>

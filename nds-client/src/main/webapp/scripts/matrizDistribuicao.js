@@ -174,16 +174,20 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.formataCampos(row);
 		
-		var repDist = (row.cell.lancto - row.cell.promo); 
+		var repDist = (row.cell.reparte - row.cell.promo); 
 		
 		row.cell.sobra = '<span id="sobra'+i+'">'+repDist+'</span>';
 		
 		row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i);
+		row.cell.reparte = parseInt(row.cell.reparte, 10);
+		row.cell.promo = parseInt(row.cell.promo, 10);
+		row.cell.juram = parseInt(row.cell.juram, 10);
+		row.cell.suplem = parseInt(row.cell.suplem, 10);
 		
 		T.lancamentos.push({
 			idLancamento:				row.cell.idLancamento, 
 			estudo:                     row.cell.idEstudo,
-			lancto:                     row.cell.lancto,
+			lancto:                     row.cell.reparte,
 			promo:                      row.cell.promo,
 			repDistrib:                 repDist,
 			sobra:                      repDist,
@@ -226,8 +230,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			row.cell.suplem = 0;
 		}
 		
-		if (row.cell.lancto == null) {
-			row.cell.lancto = 0;
+		if (row.cell.reparte == null) {
+			row.cell.reparte = 0;
 		}
 		
 		if (row.cell.promo == null) {
@@ -282,7 +286,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}
 		
 		T.lancamentos[index].repDistrib = input.value;
-		var vlr = (T.lancamentos[index].lancto - T.lancamentos[index].promo - T.lancamentos[index].repDistrib); 
+		var vlr = (T.lancamentos[index].reparte - T.lancamentos[index].promo - T.lancamentos[index].repDistrib); 
 		$("#sobra" + index, _workspace).text(vlr);
 		T.lancamentos[index].sobra = vlr;
 	},
@@ -1022,7 +1026,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				align : 'center'
 			}, {
 				display : 'Lancto.',
-				name : 'lancto',
+				name : 'reparte',
 				width : 40,
 				sortable : true,
 				align : 'center'
@@ -1070,7 +1074,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 1080,
+			width : 1100,
 			height : 220,
 			disableSelect : true
 			});
@@ -1181,7 +1185,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		data.push({name: "juramentado", value: selecionado.juram});
 		data.push({name: "suplementar", value: selecionado.suplem});
-		data.push({name: "lancado", value: selecionado.lancto});
+		data.push({name: "lancado", value: selecionado.reparte});
 		data.push({name: "promocional", value: selecionado.promo});
 		data.push({name: "sobra", value: selecionado.sobra});
 		

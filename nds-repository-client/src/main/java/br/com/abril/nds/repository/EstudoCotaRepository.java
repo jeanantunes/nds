@@ -42,5 +42,6 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	 * @param idEstudo
 	 */
 	public abstract void removerEstudoCotaPorEstudo(Long idEstudo);
+
 	List<EstudoCota> obterEstudosCota(Long idEstudo);
 }
