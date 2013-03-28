@@ -337,14 +337,39 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Para a obtenção de uma Forma de Cobrança é necessário que seja informado um [Fornecedor] ou que haja [Fornecedor Padrão] definido nos parâmetros financeiros da [Cota]!");
 		}
 		
-		Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(idFornecedor);
-		
 		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota, idFornecedor, data, valor);
 
 		if (formaCobranca == null){
 			
 			formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor, data, valor);
 		}
+		
+		return formaCobranca;
+	}
+	
+	/**
+	 * Obtem FormaCobranca da Cota com os Parâmetros passados, caso não encontre, busca FormaCobranca do Distribuidor 
+	 * Caso não encontre Forma de Cobranca, retorna excecao com informacoes
+	 * @param idCota
+	 * @param idFornecedor
+	 * @param data
+	 * @param valor
+	 * @return FormaCobranca
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public FormaCobranca obterFormaCobrancaValidacao(Long idCota, Long idFornecedor, Date data, BigDecimal valor) {
+		
+		Cota cota = null;
+		
+		if (idCota!=null){
+		    
+			cota = this.cotaRepository.buscarPorId(idCota);
+		}
+		
+		Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(idFornecedor);
+		
+		FormaCobranca formaCobranca = this.obterFormaCobranca(idCota, idFornecedor, data, valor);
 		
 		if (formaCobranca == null){
 	    	
