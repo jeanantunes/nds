@@ -64,6 +64,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/estoque/recebimentoFisico")
+@Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO)
 public class RecebimentoFisicoController extends BaseController {
 	
 	private Result result;
@@ -112,7 +113,7 @@ public class RecebimentoFisicoController extends BaseController {
 	/**
 	 * Direciona para a página de recebimento físico.
 	 */
-	@Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO)
+	@Path("/")
 	public void index() {
 
 		preencherCombos();

@@ -58,6 +58,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path(value="/expedicao")
+@Rules(Permissao.ROLE_EXPEDICAO_RESUMO_EXPEDICAO)
 public class ResumoExpedicaoController extends BaseController {
 	
 	@Autowired
@@ -78,7 +79,7 @@ public class ResumoExpedicaoController extends BaseController {
 	 * Carrega as informações default da tela de pesquisa.
 	 */
 	@Get
-	@Rules(Permissao.ROLE_EXPEDICAO_RESUMO_EXPEDICAO)
+	@Path("/")
 	public void resumo(){
 		
 		carregarTiposResumo();

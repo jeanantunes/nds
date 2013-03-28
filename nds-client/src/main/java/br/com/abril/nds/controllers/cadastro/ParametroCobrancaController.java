@@ -49,6 +49,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuidor/parametroCobranca")
+@Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA)
 public class ParametroCobrancaController extends BaseController {
 	
 	@Autowired
@@ -101,7 +102,7 @@ public class ParametroCobrancaController extends BaseController {
      * Método de chamada da página
      */
     @Get
-    @Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA)
+    @Path("/")
     public void index(){ 
     	
     	listaBancos.clear();

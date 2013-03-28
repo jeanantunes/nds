@@ -110,29 +110,29 @@
 								var tabOpt = {
 									tabTemplate : "<li> <a href='#\{href\}'>#\{label\}</a> <span class='ui-icon ui-icon-close'>Remove Tab</span></li>",
 									add : function(event, ui) {
+										
 										self.tabs('select', '#' + ui.panel.id);
 										//console.log($('#'+ui.panel.id) );
 									},
 									ajaxOptions : {
 										error : function(xhr, status, index,
 												anchor) {
-											$(anchor.hash)
-													.html(
-															"pagina não encontrada :</br> Mensagem de Erro: </br>xhr["
-																	+ JSON.stringify(xhr)
-																	+ "] </br>status["
-																	+ xhr.status
-																	+ "] </br>index ["
-																	+ index
-																	+ "] </br>anchor ["
-																	+ anchor);
+											
 										},
 										complete : function(xhr, status, index,
 												anchor) {
+											
 											if( $('#logout_true').length ) {
 												// Logout por fim ou perda da sessão
 												logout();
 											};
+											
+											try {
+												validation = JSON.parse(xhr.responseText);
+												exibirMensagem(validation.mensagens.tipoMensagem, validation.mensagens.listaMensagens);
+												return;
+											} catch(error) { /*not a JSON*/ }
+											
 											focarPrimeiroElemento();
 											$('#workspace div.ui-tabs-panel:not(.ui-tabs-hide) > *').wrap("<div id='conteudo' />");
 										}
@@ -479,7 +479,10 @@
 			</p>
 					
 		</div>
+		
+		
+	
 	</div>			
-
+	
 </body>
 </html>

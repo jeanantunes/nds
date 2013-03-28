@@ -72,6 +72,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/devolucao/vendaEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE)
 public class VendaEncalheController extends BaseController {
 	
 
@@ -109,7 +110,6 @@ public class VendaEncalheController extends BaseController {
 	
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE)
 	public void index() {}
 
 	/**

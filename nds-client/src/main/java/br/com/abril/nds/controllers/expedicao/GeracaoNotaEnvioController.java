@@ -51,6 +51,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/expedicao/geracaoNotaEnvio")
+@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO)
 public class GeracaoNotaEnvioController extends BaseController {
 
 	@Autowired
@@ -87,9 +88,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	
 	private static final String ARQUIVO_NE = "notaEnvioSession";
 	
-	
 	@Path("/")
-	@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO)
 	public void index() {
 		
 		result.include("fornecedores",  fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));

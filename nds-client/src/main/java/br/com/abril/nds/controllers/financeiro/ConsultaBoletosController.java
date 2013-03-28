@@ -60,6 +60,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/financeiro/boletos")
+@Rules(Permissao.ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA)
 public class ConsultaBoletosController extends BaseController {
 
 	@Autowired
@@ -101,8 +102,8 @@ public class ConsultaBoletosController extends BaseController {
 	 * Pré-carrega itens da pagina com informações default.
 	 */
 	@Get
-	@Rules(Permissao.ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA)
-    public void consulta(){ 
+	@Path("/")
+	public void consulta(){ 
 		listaStatusCombo.clear();
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(null,"Todos"));
 		listaStatusCombo.add(new ItemDTO<StatusCobranca,String>(StatusCobranca.PAGO,"Pagos"));

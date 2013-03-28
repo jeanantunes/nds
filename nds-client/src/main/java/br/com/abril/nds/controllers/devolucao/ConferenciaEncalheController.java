@@ -68,6 +68,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/devolucao/conferenciaEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
@@ -135,7 +136,6 @@ public class ConferenciaEncalheController extends BaseController {
 	private BoxService boxService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
 		
 		this.result.include(

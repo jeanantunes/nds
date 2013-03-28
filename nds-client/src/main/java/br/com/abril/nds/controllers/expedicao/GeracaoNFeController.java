@@ -39,6 +39,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/expedicao/geracaoNFe")
+@Rules(Permissao.ROLE_NFE_GERACAO_NFE)
 public class GeracaoNFeController extends BaseController {
 
 	@Autowired
@@ -66,7 +67,6 @@ public class GeracaoNFeController extends BaseController {
 	private RoteirizacaoService roteirizacaoService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_NFE_GERACAO_NFE)
 	public void index() {
 		
 		result.include("fornecedores", fornecedorService

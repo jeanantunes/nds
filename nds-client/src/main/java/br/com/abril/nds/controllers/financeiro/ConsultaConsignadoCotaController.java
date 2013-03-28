@@ -43,6 +43,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/consultaConsignadoCota")
+@Rules(Permissao.ROLE_FINANCEIRO_CONSIGNADO_COTA)
 public class ConsultaConsignadoCotaController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA = "filtroConsultaConsignadoCotaController";
@@ -68,7 +69,6 @@ public class ConsultaConsignadoCotaController extends BaseController {
 	private Cota cota = null;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_CONSIGNADO_COTA)
 	public void index(){
 		this.carregarComboFornecedores();		
 	}

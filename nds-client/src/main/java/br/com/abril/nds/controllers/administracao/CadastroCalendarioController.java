@@ -37,6 +37,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/cadastroCalendario")
+@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO)
 public class CadastroCalendarioController extends BaseController {
 	
 	@Autowired
@@ -59,7 +60,6 @@ public class CadastroCalendarioController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO)
 	public void index(){
 		
 		adicionarAnoCorrentePesquisa();

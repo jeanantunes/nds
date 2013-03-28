@@ -64,6 +64,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/estoque/consultaNotas")
+@Rules(Permissao.ROLE_ESTOQUE_CONSULTA_NOTAS)
 public class ConsultaNotasController extends BaseController {
 	
 	@Autowired
@@ -90,7 +91,6 @@ public class ConsultaNotasController extends BaseController {
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroConsultaNotaFiscal";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ESTOQUE_CONSULTA_NOTAS)
 	public void index() {
 		
 		preencherCombos();

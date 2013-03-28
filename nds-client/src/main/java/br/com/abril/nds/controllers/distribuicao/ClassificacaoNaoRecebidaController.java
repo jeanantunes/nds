@@ -49,6 +49,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/classificacaoNaoRecebida")
+@Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA)
 public class ClassificacaoNaoRecebidaController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroClassificacaoNaoRecebidaDTO";
@@ -73,7 +74,7 @@ public class ClassificacaoNaoRecebidaController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse; 
 	
-	@Rules(Permissao.ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA)
+	@Path("/")
 	public void index(){
 		this.carregarComboClassificacao();
 	}

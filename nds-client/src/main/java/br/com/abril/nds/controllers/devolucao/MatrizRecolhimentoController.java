@@ -64,6 +64,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/devolucao/balanceamentoMatriz")
+@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ)
 public class MatrizRecolhimentoController extends BaseController {
 
 	@Autowired
@@ -98,7 +99,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	@Get
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ)
 	public void index() {
 		
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);

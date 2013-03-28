@@ -59,6 +59,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/followup")
+@Rules(Permissao.ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA)
 public class FollowupController extends BaseController {
 
 	@Autowired
@@ -105,7 +106,6 @@ public class FollowupController extends BaseController {
 	private int quantidadeDiasSuspensaoCotas;
 
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_FOLLOW_UP_SISTEMA)
 	public void index() {
 		session.setAttribute(FILTRO_FOLLOWUP_CONSIGNADOS_SESSION_ATTRIBUTE, null);
 	}
