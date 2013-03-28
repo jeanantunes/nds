@@ -278,49 +278,58 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					}
 				} else {
 					
+					
+					Long idUltimaCota = (ultimaCota != null) ? ultimaCota.getId() : null;
+					Long idUltimoFornecedor = (ultimoFornecedor != null) ? ultimoFornecedor.getId() : null;
+					BigDecimal valorMinimoCobranca = valorMovimentos.compareTo(BigDecimal.ZERO) >= 0 ? valorMovimentos : valorMovimentos.negate();
+					
 					formaCobranca = 
 							formaCobrancaService.obterFormaCobranca(
-									ultimaCota != null ? ultimaCota.getId() : null, 
-									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-									dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) >= 0?valorMovimentos:valorMovimentos.negate());
-
-					if (formaCobranca.getPoliticaCobranca() != null){
-				    	
-				    	unificaCobranca = formaCobranca.getPoliticaCobranca().isUnificaCobranca();
-				    } else if (formaCobranca.getParametroCobrancaCota() != null){
-				    	
-				    	unificaCobranca = formaCobranca.getParametroCobrancaCota().isUnificaCobranca();
-				    }
-				    
-				    if (formaCobranca.getPoliticaCobranca() != null){
-				    	
-				    	acumulaDivida = formaCobranca.getPoliticaCobranca().isAcumulaDivida();
-				    } else if (formaCobranca.getParametroCobrancaCota() != null 
-				    		&& formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao() != null
-				    		&& formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
-				    	
-				    	acumulaDivida = formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida() > 0;
-				    }
-				    
-				    tipoCobranca = formaCobranca.getTipoCobranca();
+									idUltimaCota, 
+									idUltimoFornecedor, 
+									dataOperacao, valorMinimoCobranca);
 					
-					//Decide se gera movimento consolidado ou postergado para a cota
-					nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, 
-																	movimentos,
-																	formaCobranca.getValorMinimoEmissao(), 
-																	acumulaDivida, 
-																	idUsuario, 
-																	tipoCobranca != null ? tipoCobranca : formaCobranca.getTipoCobranca(),
-																	numeroDiasNovaCobranca,
-																	dataOperacao, 
-																	msgs, 
-																	fornecedorProdutoMovimento,
-																	formaCobranca);
-					
-					if (nossoNumero != null){
+					if(formaCobranca != null) {
 						
-						setNossoNumero.add(nossoNumero);
+						if (formaCobranca.getPoliticaCobranca() != null){
+					    	
+					    	unificaCobranca = formaCobranca.getPoliticaCobranca().isUnificaCobranca();
+					    } else if (formaCobranca.getParametroCobrancaCota() != null){
+					    	
+					    	unificaCobranca = formaCobranca.getParametroCobrancaCota().isUnificaCobranca();
+					    }
+					    
+					    if (formaCobranca.getPoliticaCobranca() != null){
+					    	
+					    	acumulaDivida = formaCobranca.getPoliticaCobranca().isAcumulaDivida();
+					    } else if (formaCobranca.getParametroCobrancaCota() != null 
+					    		&& formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao() != null
+					    		&& formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida() != null) {
+					    	
+					    	acumulaDivida = formaCobranca.getParametroCobrancaCota().getPoliticaSuspensao().getNumeroAcumuloDivida() > 0;
+					    }
+					    
+					    tipoCobranca = formaCobranca.getTipoCobranca();
+						
+						//Decide se gera movimento consolidado ou postergado para a cota
+						nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, 
+																		movimentos,
+																		formaCobranca.getValorMinimoEmissao(), 
+																		acumulaDivida, 
+																		idUsuario, 
+																		tipoCobranca != null ? tipoCobranca : formaCobranca.getTipoCobranca(),
+																		numeroDiasNovaCobranca,
+																		dataOperacao, 
+																		msgs, 
+																		fornecedorProdutoMovimento,
+																		formaCobranca);
+						
+						if (nossoNumero != null){
+							setNossoNumero.add(nossoNumero);
+						}
+						
 					}
+					
 					
 					//Limpa dados para contabilizar próxima cota
 					ultimaCota = movimentoFinanceiroCota.getCota();
@@ -343,30 +352,42 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			if (formaCobranca == null){
 				
+				Long idUltimaCota = (ultimaCota != null) ? ultimaCota.getId() : null;
+				Long idUltimoFornecedor = (ultimoFornecedor != null) ? ultimoFornecedor.getId() : null;
+				BigDecimal valorMinimoCobranca = valorMovimentos.compareTo(BigDecimal.ZERO) >= 0 ? valorMovimentos : valorMovimentos.negate();
+
+			
 				formaCobranca = 
 						formaCobrancaService.obterFormaCobranca(
-								ultimaCota != null ? ultimaCota.getId() : null, 
-								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-								dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) > 0?valorMovimentos:valorMovimentos.negate());
+								idUltimaCota, 
+								idUltimoFornecedor, 
+								dataOperacao, valorMinimoCobranca);
 			}
 			
-			//Decide se gera movimento consolidado ou postergado para a ultima cota
-			nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, 
-															movimentos, 
-															formaCobranca.getValorMinimoEmissao(),
-															acumulaDivida, 
-															idUsuario, 
-															tipoCobranca != null ? tipoCobranca : formaCobranca.getTipoCobranca(),
-															numeroDiasNovaCobranca, 
-															dataOperacao, 
-															msgs, 
-															fornecedorProdutoMovimento, 
-															formaCobranca);
 			
-			if (nossoNumero != null){
+			if(formaCobranca != null) {
 				
-				setNossoNumero.add(nossoNumero);
+				//Decide se gera movimento consolidado ou postergado para a ultima cota
+				nossoNumero = this.inserirConsolidadoFinanceiro(ultimaCota, 
+																movimentos, 
+																formaCobranca.getValorMinimoEmissao(),
+																acumulaDivida, 
+																idUsuario, 
+																tipoCobranca != null ? tipoCobranca : formaCobranca.getTipoCobranca(),
+																numeroDiasNovaCobranca, 
+																dataOperacao, 
+																msgs, 
+																fornecedorProdutoMovimento, 
+																formaCobranca);
+				
+				if (nossoNumero != null){
+					
+					setNossoNumero.add(nossoNumero);
+				}
+				
 			}
+
+			
 		}
 		
 		if (!msgs.isEmpty()){
