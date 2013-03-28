@@ -4,8 +4,7 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
 import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
 
@@ -19,27 +18,24 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
  * Processo Anterior: {@link JornaleirosNovos} Próximo Processo: {@link AjusteReparte} </p>
  */
 @Component
-public class VendaMediaFinal extends ProcessoAbstrato {
+public class VendaMediaFinal {
 
-    private BigDecimal value = BigDecimal.ZERO;
+	private BigDecimal value = BigDecimal.ZERO;
 
-    @Override
-    protected void executarProcesso() {
+	public void executar(CotaEstudo cota) {
 
-	Cota cota = (Cota) super.genericDTO;
+		BigDecimal vendaMedia = cota.getVendaMedia();
+		BigDecimal indiceAjusteCota = cota.getIndiceAjusteCota();
+		BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
+		BigDecimal indiceTratamentoReginal = cota.getIndiceTratamentoRegional();
 
-	BigDecimal vendaMedia = cota.getVendaMedia();
-	BigDecimal indiceAjusteCota = cota.getIndiceAjusteCota();
-	BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
-	BigDecimal indiceTratamentoReginal = cota.getIndiceTratamentoRegional();
-
-	if (vendaMedia != null && indiceAjusteCota != null && indiceVendaCrescente != null && indiceTratamentoReginal != null) {
-	    value = cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()).multiply(cota.getIndiceVendaCrescente()).multiply(cota.getIndiceTratamentoRegional());
+		if (vendaMedia != null && indiceAjusteCota != null && indiceVendaCrescente != null && indiceTratamentoReginal != null) {
+			value = cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()).multiply(cota.getIndiceVendaCrescente()).multiply(cota.getIndiceTratamentoRegional());
+		}
 	}
-    }
 
-    public BigDecimal getValue() {
-	return value;
-    }
+	public BigDecimal getValue() {
+		return value;
+	}
 
 }

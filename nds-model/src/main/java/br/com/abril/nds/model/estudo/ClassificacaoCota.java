@@ -1,4 +1,4 @@
-package br.com.abril.nds.model;
+package br.com.abril.nds.model.estudo;
 
 
 public enum ClassificacaoCota {

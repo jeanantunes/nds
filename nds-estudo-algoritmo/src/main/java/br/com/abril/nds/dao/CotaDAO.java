@@ -17,13 +17,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.CotaDesenglobada;
-import br.com.abril.nds.model.CotaEnglobada;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
-import br.com.abril.nds.model.TipoAjusteReparte;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.TipoAjusteReparte;
+import br.com.abril.nds.model.estudo.CotaDesenglobada;
+import br.com.abril.nds.model.estudo.CotaEnglobada;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 @Repository
 public class CotaDAO {
@@ -49,20 +49,20 @@ public class CotaDAO {
 
 	private Map<Long, BigDecimal> idsPesos = new HashMap<>();
 
-	public Cota getIndiceAjusteCotaEquivalenteByCota(Cota cota) {
+	public CotaEstudo getIndiceAjusteCotaEquivalenteByCota(CotaEstudo cota) {
 
-		List<Cota> listEquivalente = new ArrayList<Cota>();
+		List<CotaEstudo> listEquivalente = new ArrayList<CotaEstudo>();
 		try {
 			Map<String, Object> params = new HashMap<>();
 			params.put("COTA_ID", cota.getId());
 			params.put("DATA", new java.sql.Date(new Date().getTime()));
 
-			listEquivalente = jdbcTemplate.query(queryCotaEquivalente, params, new RowMapper<Cota>() {
+			listEquivalente = jdbcTemplate.query(queryCotaEquivalente, params, new RowMapper<CotaEstudo>() {
 				@Override
-				public Cota mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Cota temp = new Cota();
+				public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
+					CotaEstudo temp = new CotaEstudo();
 					temp.setId(rs.getLong("ID"));
-					temp.setNumero(rs.getLong("NUMERO_COTA"));
+					temp.setNumeroCota(rs.getInt("NUMERO_COTA"));
 					temp.setIndiceAjusteEquivalente(rs.getBigDecimal("INDICE_AJUSTE"));
 					return temp;
 				}
@@ -74,12 +74,12 @@ public class CotaDAO {
 		return cota;
 	}
 
-	public List<Cota> getCotaWithEstoqueProdutoCota() {
-		List<Cota> cotas = new ArrayList<Cota>();
+	public List<CotaEstudo> getCotaWithEstoqueProdutoCota() {
+		List<CotaEstudo> cotas = new ArrayList<CotaEstudo>();
 		try {
 			SqlRowSet rs = jdbcTemplate.queryForRowSet(queryCotaWithEstoqueProdutoCota, new HashMap<String, Object>());
 			while (rs.next()) {
-				Cota cota = new Cota();
+				CotaEstudo cota = new CotaEstudo();
 				cota.setId(rs.getLong("ID"));
 				// cota.setNumero(rs.getLong("NUMERO_COTA"));
 				// cota.setNomePessoa(rs.getString("NOME"));
@@ -92,24 +92,24 @@ public class CotaDAO {
 		return cotas;
 	}
 
-	public List<Cota> getCotasComEdicoesBase(Estudo estudo) {
-		List<Cota> returnListCota = new ArrayList<>();
-		for (ProdutoEdicaoBase edicao : estudo.getEdicoesBase()) {
-			idsPesos.put(edicao.getId(), edicao.getPeso());
+	public List<CotaEstudo> getCotasComEdicoesBase(EstudoTransient estudo) {
+		List<CotaEstudo> returnListCota = new ArrayList<>();
+		for (ProdutoEdicaoEstudo edicao : estudo.getEdicoesBase()) {
+			idsPesos.put(edicao.getId(), edicao.getIndicePeso());
 		}
 
 		Map<String, Object> params = new HashMap<>();
-		params.put("ID_PRODUTO", estudo.getProduto().getIdProduto());
+		params.put("ID_PRODUTO", estudo.getProduto().getId());
 		params.put("NUMERO_EDICAO", estudo.getProduto().getNumeroEdicao());
 		params.put("TIPO_SEGMENTO", estudo.getProduto().getTipoSegmentoProduto());
 		params.put("IDS_PRODUTOS", idsPesos.keySet());
 
-		returnListCota = jdbcTemplate.query(queryProdutoEdicaoPorCota, params, new RowMapper<Cota>() {
+		returnListCota = jdbcTemplate.query(queryProdutoEdicaoPorCota, params, new RowMapper<CotaEstudo>() {
 			@Override
-			public Cota mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Cota cota = new Cota();
+			public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CotaEstudo cota = new CotaEstudo();
 				cota.setId(rs.getLong("COTA_ID"));
-				cota.setNumero(rs.getLong("NUMERO_COTA"));
+				cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
 				cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
 				cota.setMix(rs.getInt("MIX") == 1);
 				traduzAjusteReparte(rs, cota);
@@ -158,11 +158,11 @@ public class CotaDAO {
 		}
 	}
 
-	private void traduzAjusteReparte(ResultSet rs, Cota cota) throws SQLException {
+	private void traduzAjusteReparte(ResultSet rs, CotaEstudo cota) throws SQLException {
 		String formaAjuste = rs.getString("FORMA_AJUSTE");
 		if ((formaAjuste != null) && (!formaAjuste.isEmpty())) {
 			if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_VENDA_MEDIA)) {
-				cota.setVendaMediaMaisN(rs.getBigDecimal("AJUSTE_APLICADO"));
+				cota.setVendaMediaMaisN(rs.getBigDecimal("AJUSTE_APLICADO").toBigInteger());
 			} else if (formaAjuste.equals(TipoAjusteReparte.AJUSTE_ENCALHE_MAX)) {
 				cota.setPercentualEncalheMaximo(rs.getBigDecimal("AJUSTE_APLICADO"));
 			} else {
@@ -171,10 +171,10 @@ public class CotaDAO {
 		}
 	}
 
-	private List<Cota> agrupaCotas(List<Cota> lista) {
+	private List<CotaEstudo> agrupaCotas(List<CotaEstudo> lista) {
 		if (lista.size() > 0) {
-			List<Cota> novaLista = new ArrayList<Cota>();
-			Cota temp = lista.get(0);
+			List<CotaEstudo> novaLista = new ArrayList<CotaEstudo>();
+			CotaEstudo temp = lista.get(0);
 			for (int i = 1; i < lista.size(); i++) {
 				if (temp.equals(lista.get(i))) {
 					temp.getEdicoesRecebidas().addAll(lista.get(i).getEdicoesRecebidas());
@@ -189,11 +189,12 @@ public class CotaDAO {
 		}
 	}
 
-	private List<ProdutoEdicao> getEdicoes(ResultSet rs, Map<Long, BigDecimal> idsPesos) throws SQLException {
-		List<ProdutoEdicao> edicoes = new ArrayList<ProdutoEdicao>();
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+	private List<ProdutoEdicaoEstudo> getEdicoes(ResultSet rs, Map<Long, BigDecimal> idsPesos) throws SQLException {
+		List<ProdutoEdicaoEstudo> edicoes = new ArrayList<>();
+		ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
 
-		produtoEdicao.setIdProduto(rs.getLong("PRODUTO_ID"));
+		produtoEdicao.setProduto(new Produto());
+		produtoEdicao.getProduto().setId(rs.getLong("PRODUTO_ID"));
 		produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 		produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
 		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
@@ -203,10 +204,10 @@ public class CotaDAO {
 		produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
 		produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
 
-		produtoEdicao.setPeso(idsPesos.get(produtoEdicao.getId()));
+		produtoEdicao.setIndicePeso(idsPesos.get(produtoEdicao.getId()));
 
 		produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-		produtoEdicao.setCodigoProduto(rs.getString("CODIGO"));
+		produtoEdicao.getProduto().setCodigo(rs.getString("CODIGO"));
 
 		edicoes.add(produtoEdicao);
 		return edicoes;
@@ -226,18 +227,18 @@ public class CotaDAO {
 		return false;
 	}
 
-	public Cota getCotaById(Long id) {
+	public CotaEstudo getCotaById(Long id) {
 		Map<String, Object> paramMap = new HashMap<>();
 		
 		paramMap.put("ID", id);
 		
-		return jdbcTemplate.queryForObject("select * from cota where id = :ID", paramMap, new RowMapper<Cota>() {
+		return jdbcTemplate.queryForObject("select * from cota where id = :ID", paramMap, new RowMapper<CotaEstudo>() {
 
 			@Override
-			public Cota mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Cota cota = new Cota();
+			public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CotaEstudo cota = new CotaEstudo();
 				cota.setId(rs.getLong("ID"));
-				cota.setNumero(rs.getLong("NUMERO_COTA"));
+				cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
 				return cota;
 			}
 		});

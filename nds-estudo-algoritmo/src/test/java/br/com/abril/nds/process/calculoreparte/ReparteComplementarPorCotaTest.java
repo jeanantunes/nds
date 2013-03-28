@@ -1,21 +1,8 @@
 package br.com.abril.nds.process.calculoreparte;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import br.com.abril.nds.model.ClassificacaoCota;
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
 
 public class ReparteComplementarPorCotaTest {
-
+/*
 	ReparteComplementarPorCota reparteComplementarPorCota;
 	Estudo estudo;
 	
@@ -102,5 +89,5 @@ public class ReparteComplementarPorCotaTest {
 	}
 
 	
-	
+*/	
 }

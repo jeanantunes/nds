@@ -1,11 +1,8 @@
 package br.com.abril.nds.process.bonificacoes;
 
-import java.math.BigDecimal;
-
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.ClassificacaoCota;
-import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.medias.Medias;
@@ -23,20 +20,21 @@ import br.com.abril.nds.process.medias.Medias;
 @Component
 public class Bonificacoes extends ProcessoAbstrato {
 
-    private static final BigDecimal BIGDECIMAL_100 = BigDecimal.valueOf(100);
+//    private static final BigDecimal BIGDECIMAL_100 = BigDecimal.valueOf(100);
 
 	@Override
-    protected void executarProcesso() {
+	public void executar(EstudoTransient estudo) {
     	
-    	for(Cota cota : getEstudo().getCotas()) {
-    		if (getEstudo().getPercentualBonificacao() != null) {
-    			BigDecimal percentualBonificacao = BigDecimal.ONE.add(getEstudo().getPercentualBonificacao()).divide(BIGDECIMAL_100);
-    			if (percentualBonificacao.compareTo(cota.getIndiceTratamentoRegional()) > 0) {
-    				cota.setIndiceTratamentoRegional(percentualBonificacao);
-    			}
-    			cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
-    		}
-    	}
+//    	if (estudo.getPercentualBonificacao() != null) { //TODO verificar regiao
+//    		for(CotaEstudo cota : estudo.getCotas()) {
+//    			//TODO verificar se cota pertence a regio informada no estudo
+//    			BigDecimal percentualBonificacao = BigDecimal.ONE.add(estudo.getPercentualBonificacao()).divide(BIGDECIMAL_100);
+//    			if (percentualBonificacao.compareTo(cota.getIndiceTratamentoRegional()) > 0) {
+//    				cota.setIndiceTratamentoRegional(percentualBonificacao);
+//    			}
+//    			cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
+//    		}
+//    	}
     }
     
 

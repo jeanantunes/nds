@@ -11,8 +11,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 @Repository
 public class RankingSegmentoDAO {
@@ -46,11 +46,11 @@ public class RankingSegmentoDAO {
 	 * return d; }
 	 */
 
-	public List<Long> getCotasOrdenadaPorSegmentoEdicaoAberta(List<Cota> cotaList, List<Long> idEdicoesBase) {
+	public List<Long> getCotasOrdenadaPorSegmentoEdicaoAberta(List<CotaEstudo> cotaList, List<Long> idEdicoesBase) {
 
 		List<Long> retorno = new ArrayList<>();
 		List<Long> idList = new ArrayList<>();
-		for (Cota c : cotaList) {
+		for (CotaEstudo c : cotaList) {
 			idList.add(c.getId());
 		}
 		Map<String, Object> params = new HashMap<>();
@@ -63,14 +63,14 @@ public class RankingSegmentoDAO {
 		return retorno;
 	}
 
-	public List<Long> getCotasOrdenadaPorSegmentoSemEdicaoBase(List<Cota> cotaList, List<ProdutoEdicaoBase> edicoesBase) {
+	public List<Long> getCotasOrdenadaPorSegmentoSemEdicaoBase(List<CotaEstudo> cotaList, List<ProdutoEdicaoEstudo> edicoesBase) {
 
 		List<Long> idList = new ArrayList<>();
 		List<Long> idListEdicoesBase = new ArrayList<>();
-		for (Cota c : cotaList) {
+		for (CotaEstudo c : cotaList) {
 			idList.add(c.getId());
 		}
-		for (ProdutoEdicaoBase c : edicoesBase) {
+		for (ProdutoEdicaoEstudo c : edicoesBase) {
 			idListEdicoesBase.add(c.getId());
 		}
 		Map<String, Object> params = new HashMap<>();
@@ -85,10 +85,10 @@ public class RankingSegmentoDAO {
 		return retorno;
 	}
 
-	public List<Long> getCotasOrdenadaPorSegmento(List<Cota> cList, List<ProdutoEdicaoBase> edicoesBase, int qtde) {
+	public List<Long> getCotasOrdenadaPorSegmento(List<CotaEstudo> cList, List<ProdutoEdicaoEstudo> edicoesBase, int qtde) {
 
 		List<Long> listaProdutoEdicao = new ArrayList<>();
-		for (ProdutoEdicaoBase edicao : edicoesBase) {
+		for (ProdutoEdicaoEstudo edicao : edicoesBase) {
 			listaProdutoEdicao.add(edicao.getId());
 		}
 		Map<String, Object> params = new HashMap<>();
@@ -103,9 +103,9 @@ public class RankingSegmentoDAO {
 		return retorno;
 	}
 
-	public List<Long> getCotasOrdenadasMaiorMenor(List<Cota> cotaList, ProdutoEdicaoBase produtoEdicaoBase) {
+	public List<Long> getCotasOrdenadasMaiorMenor(List<CotaEstudo> cotaList, ProdutoEdicaoEstudo produtoEdicaoBase) {
 		List<Long> listaCotas = new ArrayList<>();
-		for (Cota cota : cotaList) {
+		for (CotaEstudo cota : cotaList) {
 			listaCotas.add(cota.getId());
 		}
 		Map<String, Object> params = new HashMap<>();

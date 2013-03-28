@@ -2,6 +2,7 @@ package br.com.abril.nds.process.somarfixacoes;
 
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
@@ -21,7 +22,8 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
 public class SomarFixacoes extends ProcessoAbstrato {
 
     @Override
-    protected void executarProcesso() {
+    public void executar(EstudoTransient estudo) {
+    	// FIXME implementar URGENTE!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
 }

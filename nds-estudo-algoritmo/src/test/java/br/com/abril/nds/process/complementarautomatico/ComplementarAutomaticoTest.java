@@ -1,22 +1,8 @@
 package br.com.abril.nds.process.complementarautomatico;
 
-import static org.junit.Assert.assertEquals;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
-import br.com.abril.nds.service.EstudoServiceEstudo;
 
 public class ComplementarAutomaticoTest {
-
+/*
     @Autowired
     private ComplementarAutomatico complementarAutomatico;
 
@@ -71,4 +57,5 @@ public class ComplementarAutomaticoTest {
 	    assertEquals(BigDecimal.ZERO, c.getReparteCalculado());
 	}
     }
+*/    
 }

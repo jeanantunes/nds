@@ -10,8 +10,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 @Repository
 public class MovimentoEstoqueCotaDAO {
@@ -22,7 +22,7 @@ public class MovimentoEstoqueCotaDAO {
 	@Value("#{query_estudo.queryReparteJuramentadoAFaturar}")
 	private String queryReparteJuramentadoAFaturar;
 
-	public BigDecimal retornarReparteJuramentadoAFaturar(Cota cota, ProdutoEdicaoBase produtoEdicao) {
+	public BigDecimal retornarReparteJuramentadoAFaturar(CotaEstudo cota, ProdutoEdicaoEstudo produtoEdicao) {
 		BigDecimal valorJuramentado = BigDecimal.ZERO;
 
 		Map<String, Object> params = new HashMap<>();

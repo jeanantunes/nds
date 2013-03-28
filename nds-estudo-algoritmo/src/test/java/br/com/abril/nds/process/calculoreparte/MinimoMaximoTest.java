@@ -1,20 +1,8 @@
 package br.com.abril.nds.process.calculoreparte;
 
-import static org.junit.Assert.assertEquals;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import br.com.abril.nds.model.ClassificacaoCota;
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.service.EstudoServiceEstudo;
 
 public class MinimoMaximoTest {
-
+/*
     @Autowired
     private MinimoMaximo minimoMaximo;
 
@@ -97,4 +85,6 @@ public class MinimoMaximoTest {
 	    assertEquals(ClassificacaoCota.CotaMix, c.getClassificacao());
 	}
     }
+
+*/
 }
