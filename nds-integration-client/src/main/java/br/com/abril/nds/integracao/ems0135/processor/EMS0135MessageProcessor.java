@@ -86,6 +86,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				String chaveAcessoAntiga = notafiscalEntrada.getChaveAcesso(); 
 				notafiscalEntrada.setChaveAcesso(input.getChaveAcessoNF());
 				notafiscalEntrada.setNumero(input.getNotaFiscal());
+				notafiscalEntrada.setSerie(input.getSerieNotaFiscal());
 				this.getSession().merge(notafiscalEntrada);
 				this.ndsiLoggerFactory.getLogger().logInfo(message, 
 						EventoExecucaoEnum.INF_DADO_ALTERADO, 
@@ -119,7 +120,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				// Validar código do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
-						String.format("Nota Fiscal Com Produtos nao encontrados no sistema:", input.getNotaFiscal()));
+						String.format("Nota Fiscal Com Produtos nao encontrados no sistema: %1$s", input.getNotaFiscal()));
 				return;		
 			}
 			
