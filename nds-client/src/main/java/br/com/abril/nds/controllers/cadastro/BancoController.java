@@ -46,6 +46,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/banco")
+@Rules(Permissao.ROLE_CADASTRO_BANCO)
 public class BancoController extends BaseController {
 	
 	@Autowired
@@ -76,7 +77,7 @@ public class BancoController extends BaseController {
      * Método de chamada da página
      */
     @Get
-    @Rules(Permissao.ROLE_CADASTRO_BANCO)
+    @Path("/")
     public void bancos(){ 
    		
 	}

@@ -38,6 +38,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/lancamento/vendaProduto")
+@Rules(Permissao.ROLE_LANCAMENTO_VENDA_PRODUTO)
 public class VendaProdutoController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroVendaProduto";
@@ -70,7 +71,6 @@ public class VendaProdutoController extends BaseController {
 	
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_LANCAMENTO_VENDA_PRODUTO)
 	public void index(){
 		this.carregarComboFornecedores();
 	}

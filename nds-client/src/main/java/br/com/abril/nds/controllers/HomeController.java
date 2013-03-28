@@ -51,10 +51,6 @@ public class HomeController {
 	@Autowired
 	private UsuarioService usuarioService;
 	
-	private String changes;
-
-	private List<MenuDTO> menus;
-
 	private static Logger LOGGER = Logger.getLogger(HomeController.class);	
 	
 	/**
@@ -70,13 +66,10 @@ public class HomeController {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("rawtypes")
 	@Get
 	@Path("/")
 	public void index() {
-
-		menus = new ArrayList<MenuDTO>();
-
-		MenuDTO menuDTO = null;
 
 		Map mapaMenus = geraMenus(getPermissoesUsuario());
 
@@ -91,8 +84,8 @@ public class HomeController {
 		
 	}
 
+	@SuppressWarnings("unused")
 	private String readJenkins() {
-		StringBuilder builder = new StringBuilder();
 		
 		Document doc = null;
 		try {
@@ -130,17 +123,40 @@ public class HomeController {
 	private String getUrlByPermission(Permissao permissao) {
 
 		List<Route> routes = router.allRoutes();
+		
+		for (Route route : routes) {
+			ResourceMethod resourceMethod = (ResourceMethod) new Mirror()
+					.on(route).get().field("resourceMethod");
+			Rules rule = resourceMethod.getResource().getType().getAnnotation(Rules.class);
+			
+			// Caso possua uma lista de regras, aplica as permissões de menus
+			if (rule != null && rule.value() == permissao) {
+				
+				return resourceMethod.getResource().getType().getAnnotation(Path.class).value()[0];
+			}
 
+		}
+		
 		for (Route route : routes) {
 			ResourceMethod resourceMethod = (ResourceMethod) new Mirror()
 					.on(route).get().field("resourceMethod");
 			Rules rule = resourceMethod.getMethod().getAnnotation(Rules.class);
+			
 			// Caso possua uma lista de regras, aplica as permissões de menus
 			if (rule != null && rule.value() == permissao) {
-				return route.getOriginalUri();
+				
+				boolean pathIsNull = !resourceMethod.getMethod().isAnnotationPresent(Path.class);
+				
+				String pathBase = resourceMethod.getResource().getType().getAnnotation(Path.class).value()[0];
+				
+				String pathMetodo = pathIsNull ? resourceMethod.getMethod().getName() : resourceMethod.getMethod().getAnnotation(Path.class).value()[0];
+				
+				return pathBase + "/" + pathMetodo;
 			}
 
 		}
+		
+		
 		return "";
 	}
 
@@ -155,7 +171,9 @@ public class HomeController {
 		Map<MenuDTO, List<MenuDTO>> mapaMenus = new TreeMap<MenuDTO, List<MenuDTO>>();
 
 		for (Permissao p : permissoes) {
-			organizaMenus(p, p.getPermissaoPai(), mapaMenus);
+			
+			if(!p.isPermissaoAlteracao())
+				organizaMenus(p, p.getPermissaoPai(), mapaMenus);
 		}
 
 		return mapaMenus;
@@ -171,6 +189,7 @@ public class HomeController {
 	 *            (permissão Pai)
 	 * @param mapaMenus
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void organizaMenus(Permissao permissao, Permissao permissaoPai,
 			Map mapaMenus) {
 		if (permissaoPai == null) {
@@ -194,16 +213,18 @@ public class HomeController {
 	 * @param permissao
 	 * @return Map
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Map insereMenus(Permissao permissao, Map mapaMenus) {
 
 		MenuDTO menuDTO = new MenuDTO(permissao.getPermissaoPai(),
 				this.getUrlByPermission(permissao.getPermissaoPai()));
 
+		Permissao paiDoPai = permissao.getPermissaoPai();
+		
+		Map mapa= (Map) mapaMenus.get(new MenuDTO(paiDoPai, this.getUrlByPermission(paiDoPai)));
+		
 		if (mapaMenus.get(menuDTO) == null) {
-			insereMenus(permissao, (Map) mapaMenus.get(new MenuDTO(permissao
-					.getPermissaoPai().getPermissaoPai(), this
-					.getUrlByPermission(permissao.getPermissaoPai()
-							.getPermissaoPai()))));
+			insereMenus(permissao, mapa);
 		} else {
 			((Map) mapaMenus.get(menuDTO)).put(
 					new MenuDTO(permissao, this.getUrlByPermission(permissao)),

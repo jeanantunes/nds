@@ -1,12 +1,16 @@
 package br.com.abril.nds.dto;
 
+import java.io.Serializable;
+
 import br.com.abril.nds.model.seguranca.Permissao;
 
 /**
  * Classe referente aos menus da lista de menus
  * @author InfoA2
  */
-public class MenuDTO implements Comparable<MenuDTO> {
+public class MenuDTO implements Comparable<MenuDTO>, Serializable {
+
+	private static final long serialVersionUID = -6635805327761211247L;
 
 	private String url;
 	

@@ -56,6 +56,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("devolucao/fechamentoEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 public class FechamentoEncalheController extends BaseController {
 
 	@Autowired
@@ -93,7 +94,6 @@ public class FechamentoEncalheController extends BaseController {
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaFechamentoEncalhe";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 	public void index() {
 		
 		List<Fornecedor> listaFornecedores = fornecedorService.obterFornecedores();

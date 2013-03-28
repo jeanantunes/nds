@@ -46,6 +46,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/inadimplencia")
+@Rules(Permissao.ROLE_FINANCEIRO_HISTORICO_INADIMPLENCIA)
 public class InadimplenciaController extends BaseController {
 
 
@@ -88,7 +89,7 @@ public class InadimplenciaController extends BaseController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_FINANCEIRO_HISTORICO_INADIMPLENCIA)
+	@Path("/")
 	public void index() {
 		gerarListaStatus();
 		result.forwardTo(InadimplenciaController.class).inadimplencia();

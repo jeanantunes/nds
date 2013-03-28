@@ -56,6 +56,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/nfe/impressaoNFE")
+@Rules(Permissao.ROLE_NFE_IMPRESSAO_NFE)
 public class ImpressaoNFEController extends BaseController {
 
 	@Autowired
@@ -92,7 +93,6 @@ public class ImpressaoNFEController extends BaseController {
 	private Result result;
 
 	@Path("/")
-	@Rules(Permissao.ROLE_NFE_IMPRESSAO_NFE)
 	public void index() {
 
 		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);

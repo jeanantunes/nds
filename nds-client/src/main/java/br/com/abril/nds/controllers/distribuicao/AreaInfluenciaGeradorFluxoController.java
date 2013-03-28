@@ -36,6 +36,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/areaInfluenciaGeradorFluxo")
+@Rules(Permissao.ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO)
 public class AreaInfluenciaGeradorFluxoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroAreaInfluenciaGeradorFluxo";
@@ -55,7 +56,7 @@ public class AreaInfluenciaGeradorFluxoController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	@Rules(Permissao.ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO)
+	@Path("/")
 	public void index() {
 
 		this.carregarComboAreaInfluencia();

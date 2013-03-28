@@ -49,6 +49,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/tipoDescontoCota")
+@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA)
 public class TipoDescontoCotaController extends BaseController {
 	
 	@Autowired
@@ -76,7 +77,6 @@ public class TipoDescontoCotaController extends BaseController {
 	private static final String FILTRO_PESQUISA_TIPO_DESCONTO_COTA_SESSION_ATTRIBUTE = "filtroPesquisaPorCota";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_TIPO_DESCONTO_COTA)
 	public void index() {}
 	
 	@Post

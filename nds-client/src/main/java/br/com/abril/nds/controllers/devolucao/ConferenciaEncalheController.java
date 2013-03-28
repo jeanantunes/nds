@@ -75,6 +75,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/devolucao/conferenciaEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 public class ConferenciaEncalheController extends BaseController {
 	
 	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
@@ -146,7 +147,6 @@ public class ConferenciaEncalheController extends BaseController {
 	private HttpServletResponse httpResponse;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
 		
 		this.result.include(
