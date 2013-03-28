@@ -23,6 +23,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
@@ -2871,22 +2872,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
-		
+
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
+
 		String path = null;
-		
+
 		try {
-		
-			path = obterSlipReportPath();
-		
+
+			path = url.toURI().getPath();
+
 		} catch (URISyntaxException e) {
-			
+
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
-			
+
 		}
+
 		
 		try {
 			
-			//Retorna um byte array de um TXT
+			/*//Retorna um byte array de um TXT
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			JRTextExporter exporter = new JRTextExporter();  
 			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
@@ -2896,8 +2900,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
 			exporter.exportReport();
 
-			return out.toByteArray();
-			//return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+			return out.toByteArray();*/
+			
+			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		
 		} catch (JRException e) {
 		
