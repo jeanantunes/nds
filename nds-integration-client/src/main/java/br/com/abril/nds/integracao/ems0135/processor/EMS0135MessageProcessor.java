@@ -120,7 +120,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				// Validar código do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
-						String.format("Nota Fiscal Com Produtos nao encontrados no sistema:", input.getNotaFiscal()));
+						String.format("Nota Fiscal Com Produtos nao encontrados no sistema: %1$s", input.getNotaFiscal()));
 				return;		
 			}
 			
