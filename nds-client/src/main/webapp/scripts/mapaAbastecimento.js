@@ -344,7 +344,6 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		var data = [];
 		
 		data.push({name: 'idBox' ,value: mapa.idBox});
-		data.push({name: 'numeroCota' ,value: mapa.codigoCota});
 		data.push({name: 'data'  ,value: mapa.data?mapa.data:dataLancamento});
 		
 		$(".mapaAbastecimentoDetalheGrid", _workspace).flexOptions({			

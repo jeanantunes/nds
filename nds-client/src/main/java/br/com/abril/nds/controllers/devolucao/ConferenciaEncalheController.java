@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -58,9 +59,13 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TXTUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.ZipFileUtil;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -130,15 +135,15 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private HttpSession session;
-
-	@Autowired
-	private HttpServletResponse httpResponse;
 	
 	@Autowired
 	private UsuarioService usuarioService;
 	
 	@Autowired
 	private BoxService boxService;
+
+	@Autowired
+	private HttpServletResponse httpResponse;
 	
 	@Path("/")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
@@ -1015,36 +1020,62 @@ public class ConferenciaEncalheController extends BaseController {
 				
 			Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
 			
-			boolean isUtilizaBoleto = dtoDoc.isUtilizaSlipBoleto();
+			boolean isUtilizaBoleto = dtoDoc.isUtilizaBoleto();
 			
 			boolean isUtilizaSlip = dtoDoc.isUtilizaSlip();
 			
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			
-			if (isUtilizaSlip) {
-				
-				arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-							idControleConferenciaEncalheCota, 
-							null, 
-							TipoDocumentoConferenciaEncalhe.SLIP));
-			}
+			Map<String, byte[]> mapFileNameFile = new HashMap<String, byte[]>();
 			
-			if(isUtilizaBoleto) {
-				
-				for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
-
-					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-							idControleConferenciaEncalheCota, 
-							nossoNumero,
-							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+			if(dtoDoc.isUtilizaBoletoSlip()) {
 					
+					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+								idControleConferenciaEncalheCota, 
+								null, 
+								TipoDocumentoConferenciaEncalhe.SLIP));
+				
+					for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
+	
+						arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+								idControleConferenciaEncalheCota, 
+								nossoNumero,
+								TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+					}
+					
+					byte[] arquivo = PDFUtil.mergePDFs(arquivos);
+					mapFileNameFile.put("arquivos_cobranca_boleto_slip.pdf", arquivo);
+					
+			} else {
+				
+				if (isUtilizaSlip) {
+					
+					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+								idControleConferenciaEncalheCota, 
+								null, 
+								TipoDocumentoConferenciaEncalhe.SLIP));
+				
+					byte[] arquivoSlip = TXTUtil.mergeTXTs(arquivos);
+					mapFileNameFile.put("arquivos_cobranca_slip.txt", arquivoSlip);
+					arquivos.clear();
 				}
 				
-			} 
-//			byte[] retorno = PDFUtil.mergePDFs(arquivos);
-			byte[] retorno = TXTUtil.mergeTXTs(arquivos);
-			
-			this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, retorno);
+				if(isUtilizaBoleto) {
+					
+					for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
+	
+						arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+								idControleConferenciaEncalheCota, 
+								nossoNumero,
+								TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+					}
+
+					byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
+					mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
+				} 
+			}
+
+			this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, mapFileNameFile);
 			
 		} catch (Exception e) {
 			
@@ -1053,14 +1084,28 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void imprimirDocumentosCobranca() throws IOException{
 		
-		Object docs = this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+		Map<String, byte[]> arquivos = (Map<String, byte[]>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+			
+		byte[] fileBytes = null;
+		String fileName = null;
 		
-		if (docs instanceof byte[]){
+		if(arquivos != null && !arquivos.isEmpty()) {
+									
+			if (arquivos.size() > 1){
+				fileBytes  = ZipFileUtil.getZipFile(arquivos);
+				fileName = "arquivos_cobranca.zip";
+			} else {
+				
+				for(Map.Entry<String, byte[]> arquivo : arquivos.entrySet()) {
+					fileName  = arquivo.getKey();
+					fileBytes = arquivo.getValue();
+				}
+			}
 			
-			this.escreverArquivoParaResponse((byte[]) docs, "arquivosCobranca");
-			
+			this.escreverArquivoParaResponse(fileBytes, fileName);
 			this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
 			
 		} else {
@@ -1068,7 +1113,7 @@ public class ConferenciaEncalheController extends BaseController {
 			this.result.use(Results.nothing());
 		}
 	}
-	
+
 	@Post
 	public void veificarCobrancaGerada(){
 		
@@ -1123,9 +1168,7 @@ public class ConferenciaEncalheController extends BaseController {
 			} catch (Exception e) {
 			
 				throw new ValidacaoException(TipoMensagem.ERROR, "Falha na execução do sistema.");
-			
 			}
-			
 		}
 		
 		return newListaConferenciaEncalheCota;
@@ -1199,7 +1242,6 @@ public class ConferenciaEncalheController extends BaseController {
 				Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
 				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
 			}
-				
 			
 			if(dadosDocumentacaoConfEncalheCota!=null) {
 				
@@ -1211,10 +1253,7 @@ public class ConferenciaEncalheController extends BaseController {
 					
 					throw new Exception("Cobrança efetuada, erro ao gerar arquivo(s) de cobrança - " + e.getMessage());
 				}
-
-				
 			}
-			
 			
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
@@ -1244,20 +1283,17 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
 		
-		/*this.httpResponse.setContentType("application/txt");
+		this.httpResponse.setContentType("application/octet-stream");
+		this.httpResponse.setHeader("Content-Disposition", 
+									"attachment; filename="+nomeArquivo);
 		
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename="+nomeArquivo +".txt");
-
 		OutputStream output = this.httpResponse.getOutputStream();
 		
 		output.write(arquivo);
 
-		httpResponse.getOutputStream().close();
-		
-		result.use(Results.nothing());*/
-		
-		result.use(PlainJSONSerialization.class).from(new String(arquivo, Charset.forName("UTF-8")), "resultado").serialize();
-		
+		output.close();
+
+		result.use(Results.nothing());
 	}
 
 	
