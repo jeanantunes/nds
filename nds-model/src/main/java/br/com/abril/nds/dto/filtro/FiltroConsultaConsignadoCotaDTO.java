@@ -3,6 +3,7 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
+import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -12,7 +13,14 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 	private static final long serialVersionUID = -642561468775306010L;
 	
 	private Long idCota;
+	
 	private Long idFornecedor;
+	
+	@Export(label="Cota")
+	private String nomeCota;
+	
+	@Export(label="Fornecedor")
+	private String nomeFornecedor;
 	
 	private PaginacaoVO paginacao;
 	
@@ -74,4 +82,22 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 			ColunaOrdenacaoConsultaConsignadoCota ordenacaoColuna) {
 		this.ordenacaoColuna = ordenacaoColuna;
 	}
+
+	public String getNomeCota() {
+		return nomeCota;
+	}
+
+	public void setNomeCota(String nomeCota) {
+		this.nomeCota = nomeCota;
+	}
+
+	public String getNomeFornecedor() {
+		return nomeFornecedor;
+	}
+
+	public void setNomeFornecedor(String nomeFornecedor) {
+		this.nomeFornecedor = nomeFornecedor;
+	}
+
+	
 }

@@ -248,6 +248,30 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		FiltroConsultaConsignadoCotaDTO filtro = (FiltroConsultaConsignadoCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
 		
+		if(filtro.getIdCota() != null){
+
+			Cota cota  = cotaService.obterPorId(filtro.getIdCota());
+			
+			if(cota!= null && cota.getPessoa()!= null ){
+				filtro.setNomeCota(cota.getNumeroCota() + " - " +cota.getPessoa().getNome());
+			}
+			
+		}
+		
+		if(filtro.getIdFornecedor() != null){
+			
+			Fornecedor fornecedor = fornecedorService.obterFornecedorPorId(filtro.getIdFornecedor());
+			
+			if(fornecedor!= null && fornecedor.getJuridica()!= null){
+
+				filtro.setNomeFornecedor(fornecedor.getJuridica().getRazaoSocial());
+			}
+			
+		}else{
+			
+			filtro.setNomeFornecedor("Todos");
+		}
+		
 		if(filtro.getIdCota() != null
 				&& filtro.getIdFornecedor() == null) { 
 				
@@ -272,8 +296,6 @@ public class ConsultaConsignadoCotaController extends BaseController {
 					listaConsignadoCota, ConsultaConsignadoCotaPeloFornecedorDTO.class, this.httpResponse);
 			
 		}
-		
-		
 		
 		result.nothing();
 	}
