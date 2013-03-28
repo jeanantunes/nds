@@ -224,6 +224,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	}
 	
 	@Override
+	@Transactional
 	public void adicionarListaMixPorCota(List<MixCotaProdutoDTO> mixCotaProdutoDTOList) {
 		
 		Usuario usuario = usuarioService.getUsuarioLogado();

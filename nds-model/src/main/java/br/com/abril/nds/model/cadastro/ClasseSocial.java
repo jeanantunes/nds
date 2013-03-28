@@ -2,10 +2,10 @@ package br.com.abril.nds.model.cadastro;
 
 public enum ClasseSocial {
 	
-	CLASSE_AB("Classe AB"),
 	CLASSE_A("Classe A"),
-	CLASSE_CD("Classe CD"),
+	CLASSE_AB("Classe AB"),
 	CLASSE_BC("Classe BC"),
+	CLASSE_CD("Classe CD"),
 	CLASSE_DE("Classe DE");
 	
 	private String descricao;

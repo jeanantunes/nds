@@ -6,9 +6,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
@@ -18,9 +21,9 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoServiceEstudo;
@@ -91,11 +94,8 @@ public class MatrizDistribuicaoController extends BaseController {
 	public void obterMatrizDistribuicao(Date dataLancamento, List<Long> idsFornecedores) {
 
 		validarDadosPesquisa(dataLancamento);
-		
-		if (idsFornecedores != null && !idsFornecedores.isEmpty()) {
 			
-			configurarFiltropesquisa(dataLancamento, idsFornecedores);
-		}
+		configurarFiltropesquisa(dataLancamento, idsFornecedores);
 
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
@@ -173,11 +173,11 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 
 	@Post
-	public void reabrirMatrizDistribuicao() {
+	public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
 		
 		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
 		
-		matrizDistribuicaoService.reabrirMatrizDistribuicao(filtro);
+		matrizDistribuicaoService.reabrirMatrizDistribuicao(filtro, produtosDistribuicao);
 
 		result.use(Results.json()).from(Results.nothing()).serialize();
     }
@@ -246,9 +246,12 @@ public class MatrizDistribuicaoController extends BaseController {
 	private FiltroDistribuicaoDTO configurarFiltropesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
 
 		FiltroDistribuicaoDTO filtro = new FiltroDistribuicaoDTO(dataPesquisa, listaIdsFornecedores);
-
-		filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
-
+		
+		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
+			
+			filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
+		}
+		
 		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 
 		return filtro;
@@ -360,7 +363,7 @@ public class MatrizDistribuicaoController extends BaseController {
     @Post
     public void gerarEstudoAutomatico(String codigoProduto, BigDecimal reparte) {
     	try {
-    		estudoServiceEstudo.gerarEstudoAutomatico(new ProdutoEdicaoBase(codigoProduto), reparte);
+    		estudoServiceEstudo.gerarEstudoAutomatico(new ProdutoEdicaoEstudo(codigoProduto), reparte.toBigInteger());
     	} catch (Exception e) {
     		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
     	}

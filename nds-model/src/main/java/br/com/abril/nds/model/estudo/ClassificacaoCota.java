@@ -1,4 +1,4 @@
-package br.com.abril.nds.model;
+package br.com.abril.nds.model.estudo;
 
 
 public enum ClassificacaoCota {
@@ -39,6 +39,10 @@ public enum ClassificacaoCota {
 	 * GN
 	 */
 	BancaQueRecebemDeterminadoSegmento("GN"),
+	/**
+	 * S
+	 */
+	CotaNova("S"),
 	/**
 	 * SM
 	 */
