@@ -9,11 +9,14 @@ import java.util.LinkedList;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.model.ClassificacaoCota;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.service.EstudoServiceEstudo;
 
 public class CalcularReparteTest {
@@ -21,15 +24,15 @@ public class CalcularReparteTest {
     @Autowired
     private CalcularReparte calcularReparte;
     
-    private Estudo criarAmbiente(boolean configurado, boolean distribuicaoPorMultiplos, BigDecimal pacotePadrao, BigDecimal vendaMedia,
+    private EstudoTransient criarAmbiente(boolean configurado, Integer distribuicaoPorMultiplos, BigDecimal pacotePadrao, BigDecimal vendaMedia,
 	    BigDecimal reparteCalculado, BigDecimal reparteDistribuir, boolean temEdicaoBaseFechada) {
-	Estudo estudo = new Estudo();
-	estudo.setProduto(new ProdutoEdicao());
-	estudo.setEdicoesBase(new LinkedList<ProdutoEdicaoBase>());
-	Cota cota = new Cota();
+	EstudoTransient estudo = new EstudoTransient();
+	estudo.setProduto(new ProdutoEdicaoEstudo());
+	estudo.setEdicoesBase(new LinkedList<ProdutoEdicaoEstudo>());
+	CotaEstudo cota = new CotaEstudo();
 	if (configurado) {
 	    if (temEdicaoBaseFechada) {
-		ProdutoEdicao edicao = new ProdutoEdicao();
+		ProdutoEdicaoEstudo edicao = new ProdutoEdicaoEstudo();
 		edicao.setEdicaoAberta(false);
 		estudo.getEdicoesBase().add(edicao);
 	    }
