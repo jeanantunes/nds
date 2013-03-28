@@ -239,6 +239,13 @@ var ConferenciaEncalhe = $.extend(true, {
 		    }
 		});
 		
+		$("#sm").keydown(function (event) {			
+		    if (event.keyCode == 37) {//"<"
+		    	$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).focus();
+		    	setTimeout (function () {$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).select();}, 1);
+		    }
+		});
+		
 		ConferenciaEncalhe.removerAtalhos();
 		
 		ConferenciaEncalhe.atribuirAtalhos();
@@ -830,6 +837,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#nomeCota", ConferenciaEncalhe.workspace).text(result.razaoSocial);
 		$("#statusCota", ConferenciaEncalhe.workspace).text(result.situacao);
 		
+
 		if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
 			
 			focusSelectRefField($("#vlrCE", ConferenciaEncalhe.workspace));

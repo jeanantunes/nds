@@ -82,10 +82,10 @@
 						
 							<c:choose>
 								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
-							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" onkeydown="ConferenciaEncalheCont.nextInputExemplares(0, window.event);" />
 								</c:when>
 								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
-							<input type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
+							<input type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" onkeydown="ConferenciaEncalheCont.nextInputExemplares(0, window.event);" />
 								</c:when>
 							</c:choose>
 						
