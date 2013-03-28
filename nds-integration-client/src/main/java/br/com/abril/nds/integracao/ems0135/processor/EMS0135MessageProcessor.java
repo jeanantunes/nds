@@ -86,6 +86,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				String chaveAcessoAntiga = notafiscalEntrada.getChaveAcesso(); 
 				notafiscalEntrada.setChaveAcesso(input.getChaveAcessoNF());
 				notafiscalEntrada.setNumero(input.getNotaFiscal());
+				notafiscalEntrada.setSerie(input.getSerieNotaFiscal());
 				this.getSession().merge(notafiscalEntrada);
 				this.ndsiLoggerFactory.getLogger().logInfo(message, 
 						EventoExecucaoEnum.INF_DADO_ALTERADO, 
