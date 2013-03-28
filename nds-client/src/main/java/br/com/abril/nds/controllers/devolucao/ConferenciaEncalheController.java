@@ -535,13 +535,10 @@ public class ConferenciaEncalheController extends BaseController {
 
 		List<ProdutoEdicao> produtosEdicao = new ArrayList<ProdutoEdicao>();
 
-		produtosEdicao = this.produtoEdicaoService.buscarProdutoPorCodigoBarras(codigoBarra);
-		
+		produtosEdicao = this.produtoEdicaoService.obterPorCodigoBarraILike(codigoBarra);
 		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
 			
-			this.result.nothing();
-			
-			return;
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
 		}
 
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
