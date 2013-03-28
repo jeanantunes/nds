@@ -33,7 +33,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		super(MixCotaProduto.class);
 	}
 
-	
+		
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -55,7 +55,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" avg(lancamento.reparte) as reparteMedio, avg(venda_produto.valor_total_venda) as vendaMedia, ")
-		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LAN�ADA','CALCULADA') limit 1),0) as ultimoReparte ")
+		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		.append(" FROM lancamento ") 
 		.append(" LEFT join produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID ")
 		.append(" LEFT join produto on produto_edicao.ID = produto.ID ") 
@@ -224,6 +224,24 @@ public class MixCotaProdutoRepositoryImpl extends
 				
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
+		
+	}
+	
+	@Override
+	public void execucaoQuartz() {
+		StringBuilder hql = new StringBuilder("");
+
+		hql.append("")
+				.append(" delete from mix_cota_produto   ")
+				.append(" where mix_cota_produto.ID_PRODUTO in")
+				.append(" (select  id_produto from mix_cota_produto ")
+				.append(" join produto on produto.ID = mix_cota_produto.ID_PRODUTO  ")
+				.append(" join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ")
+				.append(" join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ")
+				.append(" where lancamento.DATA_CRIACAO between date_format(DATE_SUB(CURDATE(),INTERVAL 180 DAY),'%d/%m/%Y')  and CURDATE() ");
+				
+		Query query = getSession().createSQLQuery(hql.toString());
+		query.executeUpdate();
 		
 	}
 
