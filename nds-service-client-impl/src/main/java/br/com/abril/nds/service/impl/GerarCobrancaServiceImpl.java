@@ -279,7 +279,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				} else {
 					
 					formaCobranca = 
-							formaCobrancaService.obterFormaCobranca(
+							formaCobrancaService.obterFormaCobrancaValidacao(
 									ultimaCota != null ? ultimaCota.getId() : null, 
 									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
 									dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) >= 0?valorMovimentos:valorMovimentos.negate());
@@ -344,7 +344,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			if (formaCobranca == null){
 				
 				formaCobranca = 
-						formaCobrancaService.obterFormaCobranca(
+						formaCobrancaService.obterFormaCobrancaValidacao(
 								ultimaCota != null ? ultimaCota.getId() : null, 
 								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
 								dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) > 0?valorMovimentos:valorMovimentos.negate());

@@ -358,11 +358,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append("	from Cota cota	")
 		
-		.append("	    left join                                                               ")
+		.append("	    join                                                               ")
 		.append("	        CHAMADA_ENCALHE_COTA chamadaEncalheCota								")
 		.append("	            on chamadaEncalheCota.COTA_ID=cota.ID                           ")
 
-		.append("	    left join                                                               ")
+		.append("	    join                                                               ")
 		.append("	        CHAMADA_ENCALHE chamadaEncalhe 										")
 		.append("	            on chamadaEncalheCota.CHAMADA_ENCALHE_ID=chamadaEncalhe.ID      ")
 		
