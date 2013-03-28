@@ -32,8 +32,8 @@
 
 	<task:annotation-driven />
 
-	<!-- Descomentar abaixo para ligar o bloqueador -->
-	<!-- <bean id="interceptor" class="br.com.abril.nds.interceptor.EntityInterceptor" />-->
+	<bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" />
+	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
@@ -52,11 +52,10 @@
 				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
 			</props>
 		</property>
-		<!-- Descomentar abaixo para ligar o bloqueador -->
-		<!--<property name="entityInterceptor">
+	
+		<property name="entityInterceptor">
     		<ref local="interceptor" />
-  		</property-->
-  		
+  		</property>
 	</bean>
 
 	<bean id="transactionManager"
