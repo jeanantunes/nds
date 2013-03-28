@@ -189,4 +189,10 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
 		query.executeUpdate();
 	}
+
+	@Override
+	public List<EstudoCota> obterEstudosCota(Long idEstudo) {
+	    // TODO Auto-generated method stub
+	    return null;
+	}
 }

@@ -10,10 +10,10 @@
         <dependent-module archiveName="nds-estudo-algoritmo-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nds-estudo-algoritmo/nds-estudo-algoritmo">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="nds-integration-client-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nds-integration-client/nds-integration-client">
+        <dependent-module archiveName="nds-model-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nds-model/nds-model">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="nds-model-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nds-model/nds-model">
+        <dependent-module archiveName="nds-integration-client-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nds-integration-client/nds-integration-client">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="nds-integration-canonical-1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nds-integration-canonical/nds-integration-canonical">

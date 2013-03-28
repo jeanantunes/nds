@@ -5,20 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import br.com.abril.nds.model.ClassificacaoCota;
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
-
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 
 public class ReparteComplementarPorCotaTest {

@@ -1,13 +1,14 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -36,8 +37,7 @@ public class DistribuicaoManualController extends BaseController {
     }
 
     @Path("/carregarGrid")
-    public void carregarGrid(Estudo estudo) {
-	estudoService.
+    public void carregarGrid(EstudoTransient estudo) {
 	List<ProdutoDistribuicaoVO> listaProdutos = new ArrayList<>();
 	listaProdutos.add(new ProdutoDistribuicaoVO());
 	TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> tableModel = new TableModel<>();

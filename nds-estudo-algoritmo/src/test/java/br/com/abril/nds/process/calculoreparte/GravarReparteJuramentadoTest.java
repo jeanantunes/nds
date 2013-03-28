@@ -1,13 +1,6 @@
 ﻿package br.com.abril.nds.process.calculoreparte;
 
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
-
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 
 public class GravarReparteJuramentadoTest {

@@ -43,7 +43,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" else ''")
 	    .append(" end as liberado,")
 	    .append(" estudo.ID as idEstudo,")
-	    .append(" prodEdic.REPARTE_DISTRIBUIDO as reparte,")
+	    .append(" lanc.REPARTE as reparte,")
 	    .append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
 	    .append(" prodEdic.CODIGO_DE_BARRAS as codigoBarraProduto")
 	    .append(" from produto prod")

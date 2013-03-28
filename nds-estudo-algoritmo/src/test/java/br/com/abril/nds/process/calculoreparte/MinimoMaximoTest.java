@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.model.ClassificacaoCota;
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.service.EstudoServiceEstudo;
 import static org.junit.Assert.assertEquals;
 
@@ -20,8 +17,6 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.service.EstudoServiceEstudo;
 
