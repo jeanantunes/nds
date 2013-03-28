@@ -90,7 +90,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	
 	@Path("/")
 	public void index() {
-		
+				
 		result.include("fornecedores",  fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
 		
 		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);

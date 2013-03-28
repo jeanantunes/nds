@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -187,6 +188,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
 		criteria.add(Restrictions.eq("codigoDeBarras", codigoBarra));
+		
+		return criteria.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoEdicao> obterPorCodigoBarraILike(String codigoBarra) {
+		
+		Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
+		criteria.add(Restrictions.ilike("codigoDeBarras", codigoBarra,MatchMode.START));
 		
 		return criteria.list();
 	}

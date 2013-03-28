@@ -258,7 +258,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			Date dataAtual,
 			Date dataFimSemana){
 		
-		conferencia.setTotal(new BigDecimal(conferencia.getExemplaresDevolucao()).multiply(conferencia.getPrecoCapa()));
+		conferencia.setTotal(new BigDecimal(conferencia.getExemplaresDevolucao()).multiply(conferencia.getPrecoCapaDesconto()));
 		conferencia.setFechado(fechado);
 		
 		  if ("P".equals(conferencia.getTipo())){
