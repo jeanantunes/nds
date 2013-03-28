@@ -58,6 +58,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/impressaoBoletos")
+@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS)
 public class ImpressaoBoletosController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "pesquisaGeraDivida";
@@ -110,7 +111,6 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Get
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS)
 	public void index() {
 
 		carregarTiposCobranca();

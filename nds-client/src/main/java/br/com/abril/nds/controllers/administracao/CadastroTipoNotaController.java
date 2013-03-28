@@ -39,6 +39,7 @@ import br.com.caelum.vraptor.Result;
  */
 @Resource
 @Path("/administracao/cadastroTipoNota")
+@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_NOTA)
 public class CadastroTipoNotaController extends BaseController {
 
 	@Autowired
@@ -57,7 +58,6 @@ public class CadastroTipoNotaController extends BaseController {
 	private HttpServletResponse httpServletResponse;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_TIPO_NOTA)
 	public void index() {
 		
 		List<ItemDTO<TipoAtividade, String>> listaAtividades = new ArrayList<ItemDTO<TipoAtividade,String>>();

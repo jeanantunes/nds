@@ -26,6 +26,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/administracao/geracaoArquivos")
+@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO)
 public class GeracaoArquivosController extends BaseController {
 
 	@Autowired
@@ -50,7 +51,6 @@ public class GeracaoArquivosController extends BaseController {
 	private HttpServletResponse httpServletResponse;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_GERACAO_ARQUIVO)
 	public void index() {
 		
 		

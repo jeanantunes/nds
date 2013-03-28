@@ -54,6 +54,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("financeiro/negociacaoDivida")
+@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA)
 public class NegociacaoDividaController extends BaseController {
 	
 	private static final String FILTRO_NEGOCIACAO_DIVIDA = "FILTRO_NEGOCIACAO_DIVIDA";
@@ -92,7 +93,6 @@ public class NegociacaoDividaController extends BaseController {
 	}
 
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA)
 	public void index(){
 		
 		Integer qntdParcelas = this.distribuidorService.negociacaoAteParcelas();

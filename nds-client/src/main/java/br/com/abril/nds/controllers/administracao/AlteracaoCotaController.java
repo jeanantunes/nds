@@ -54,6 +54,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/alteracaoCota")
+@Rules(Permissao.ROLE_CADASTRO_ALTERACAO_COTA)
 public class AlteracaoCotaController extends BaseController {
 
 	@Autowired
@@ -97,7 +98,6 @@ public class AlteracaoCotaController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_ALTERACAO_COTA)
 	public void index()
 	{
 		result.include("listFornecedores", fornecedorService.obterFornecedoresAtivos());

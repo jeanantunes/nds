@@ -61,6 +61,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/cadastro/fornecedor")
+@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR)
 public class FornecedorController extends BaseController {
 
 	@Autowired
@@ -94,7 +95,6 @@ public class FornecedorController extends BaseController {
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecosExibicaoFornecedor";
 
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_FORNECEDOR)
 	public void index() {
 
 		obterTiposFornecedor();
