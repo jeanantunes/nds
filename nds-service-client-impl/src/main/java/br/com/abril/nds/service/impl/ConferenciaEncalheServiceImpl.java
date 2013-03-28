@@ -2424,7 +2424,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						movimentoEstoqueCota.getProdutoEdicao().getId(), 
 						distribuidorService.obterDataOperacaoDistribuidor());
 
-		verificarValorAplicadoNulo(valoresAplicados);
+		if(valoresAplicados == null){
+			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
+		}else{
+			verificarValorAplicadoNulo(valoresAplicados);
+		}
 		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
