@@ -2862,9 +2862,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("VALOR_TOTAL_PAGAR", totalComposicao);
 		
 		
+		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
 		try{
-			
-		    parameters.put("SUBREPORT_DIR", obterSlipSubReportPath());
+		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -2873,7 +2873,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
 
-		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip_pdf.jasper");
 
 		String path = null;
 
