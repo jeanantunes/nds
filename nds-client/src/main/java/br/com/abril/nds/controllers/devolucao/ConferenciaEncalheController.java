@@ -1068,10 +1068,10 @@ public class ConferenciaEncalheController extends BaseController {
 								idControleConferenciaEncalheCota, 
 								nossoNumero,
 								TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+						
+						byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
+						mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
 					}
-
-					byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
-					mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
 				} 
 			}
 
