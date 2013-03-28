@@ -1,18 +1,8 @@
 package br.com.abril.nds.process.reparteminimo;
 
-import static org.junit.Assert.assertEquals;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
 
 public class ReparteMinimoTest {
-    
+/*    
     @Autowired
     private ReparteMinimo reparteMinimo;
 
@@ -128,4 +118,6 @@ public class ReparteMinimoTest {
 	}
 	assertEquals(BigDecimal.valueOf(93), reparteMinimo.getEstudo().getReparteDistribuir());
     }
+
+*/
 }

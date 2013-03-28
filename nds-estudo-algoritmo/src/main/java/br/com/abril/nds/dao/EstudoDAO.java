@@ -1,18 +1,25 @@
-package br.com.abril.nds.dao;
+﻿package br.com.abril.nds.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
@@ -34,6 +41,9 @@ public class EstudoDAO {
 
 	@Value("#{query_estudo.insertProdutoEdicaoBase}")
 	private String insertProdutoEdicaoBase;
+
+	@Value("#{query_estudo.queryParametrosDistribuidor}")
+	private String queryParametrosDistribuidor;
 
 	public void gravarEstudo(EstudoTransient estudo) {
 		List<EstudoTransient> estudos = new ArrayList<>();
@@ -86,5 +96,19 @@ public class EstudoDAO {
 
 	public void carregarPercentuaisProporcao(EstudoTransient estudo) {
 		// TODO: implementar método para carregar percentuais de venda e pdv da tela de parâmetros do distribuidor (EMS 188)
+	}
+	
+	public void carregarParametrosDistribuidor(EstudoTransient estudo) {
+		
+		SqlRowSet rs = jdbcTemplate.queryForRowSet(queryParametrosDistribuidor, new HashMap<String, Object>());
+		
+		while(rs.next()) {
+			estudo.setComplementarAutomatico(rs.getBoolean("COMPLEMENTAR_AUTOMATICO"));
+			estudo.setGeracaoAutomatica(rs.getBoolean("GERACAO_AUTOMATICA_ESTUDO"));
+			estudo.setPercentualMaximoFixacao(rs.getBigDecimal("PERCENTUAL_MAXIMO_FIXACAO"));
+			estudo.setPracaVeraneio(rs.getBoolean("PRACA_VERANEIO"));
+			estudo.setVendaMediaMais(rs.getBigDecimal("VENDA_MEDIA_MAIS").toBigInteger());
+			
+		}
 	}
 }
