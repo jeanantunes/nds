@@ -1283,27 +1283,17 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void escreverArquivoParaResponse(byte[] arquivo, String nomeArquivo) throws IOException {
 		
-		String fileExtension = FileImportUtil.getExtensionFile(nomeArquivo);
+		this.httpResponse.setContentType("application/octet-stream");
+		this.httpResponse.setHeader("Content-Disposition", 
+									"attachment; filename="+nomeArquivo);
 		
-		if(FileType.TXT.getExtension().equals(fileExtension)) {
-			
-			result.use(PlainJSONSerialization.class).from(
-					new String(arquivo, Charset.forName("UTF-8")), "resultado").serialize();
-		}else {
+		OutputStream output = this.httpResponse.getOutputStream();
 		
-			this.httpResponse.setContentType("application/octet-stream");
-			this.httpResponse.setHeader("Content-Disposition", 
-										"attachment; filename="+nomeArquivo);
-			
-			OutputStream output = this.httpResponse.getOutputStream();
-			
-			output.write(arquivo);
-	
-			output.close();
-	
-			result.use(Results.nothing());
-		}
-		
+		output.write(arquivo);
+
+		output.close();
+
+		result.use(Results.nothing());
 	}
 
 	
