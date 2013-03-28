@@ -1325,7 +1325,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                 vencimento, BigDecimal.ZERO, BigDecimal.valueOf(923.5), TipoBaixaCobranca.MANUAL, "1", StatusCobranca.PAGO, cotaOrlando, bancoHSBC, dividaOrlando, 0);
         save(boletoOrlando);
         
-        BaixaAutomatica baixaOrlando = Fixture.baixaAutomatica(boletoOrlando, vencimento, "arquivo.txt", "55578849854528", 100, StatusBaixa.PAGO, BigDecimal.valueOf(923.5), bancoHSBC);
+        BaixaAutomatica baixaOrlando = Fixture.baixaAutomatica(boletoOrlando, vencimento, vencimento, "arquivo.txt", "55578849854528", 100, StatusBaixa.PAGO, BigDecimal.valueOf(923.5), bancoHSBC);
         boletoOrlando.getBaixasCobranca().add(baixaOrlando);
         save(baixaOrlando);
 

@@ -54,7 +54,7 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 	
 	@Before
 	public void setup() {
-		
+		 
 		PessoaFisica manoel = Fixture.pessoaFisica("319.435.088-95",
 						"sys.discover@gmail.com", "Manoel da Silva");
 		save(manoel);

@@ -793,9 +793,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			valorDesconto = produtoRecolhimentoDTO.getDesconto() != null ? produtoRecolhimentoDTO.getDesconto() : BigDecimal.ZERO;
 			
-			//precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(BigDecimal.valueOf(100D))));
-			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto));
-			
+			precoDesconto = precoVenda.subtract(precoVenda.multiply(valorDesconto.divide(new BigDecimal("100"))));
 			
 			produtoRecolhimentoVO.setPrecoDesconto(precoDesconto);
 			

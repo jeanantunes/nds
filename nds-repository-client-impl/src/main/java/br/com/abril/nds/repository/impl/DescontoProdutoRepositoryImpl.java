@@ -110,7 +110,8 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		
 		OrdenacaoColunaConsulta sortColum = filtro.getOrdenacaoColuna();
 		
-		String sortOrder = filtro.getPaginacao().getOrdenacao().name();
+		String sortOrder = filtro.getPaginacao() != null ? 
+						   filtro.getPaginacao().getOrdenacao() == null ? "" : filtro.getPaginacao().getOrdenacao().name() : "";
 		
 		if(sortColum != null && sortOrder != null)
 			hql.append(" order by " + sortColum + " " + sortOrder);

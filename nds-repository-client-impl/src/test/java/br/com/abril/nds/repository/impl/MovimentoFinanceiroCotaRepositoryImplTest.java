@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -38,6 +39,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -254,7 +256,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 	public void obterMovimentosFinanceiroCotaSucesso() {
 		
 		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = getFiltroDebitoCredito();
-
+		
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
 				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
 		
@@ -465,9 +467,10 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		
 		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = new FiltroDebitoCreditoDTO();
 		
+		filtroDebitoCreditoDTO.setGrupoMovimentosFinanceirosDebitosCreditos(Arrays.asList(GrupoMovimentoFinaceiro.CREDITO));
+
 		Integer totalMovimentosFinanceiroCota = 
 				this.movimentoFinanceiroCotaRepository.obterContagemMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
-
 	}
 
 	@Test
@@ -487,9 +490,10 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		
 		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = new FiltroDebitoCreditoDTO();
 		
+		filtroDebitoCreditoDTO.setGrupoMovimentosFinanceirosDebitosCreditos(Arrays.asList(GrupoMovimentoFinaceiro.CREDITO));
+
 		BigDecimal somatoriaMovimentosFinanceiroCota = 
 				this.movimentoFinanceiroCotaRepository.obterSomatorioValorMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
-
 	}
 
 	@Test
@@ -779,6 +783,9 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		
 		FiltroDebitoCreditoDTO filtroDebitoCreditoDTO = new FiltroDebitoCreditoDTO();
 		
+		filtroDebitoCreditoDTO.setGrupoMovimentosFinanceirosDebitosCreditos(
+				Arrays.asList(GrupoMovimentoFinaceiro.CREDITO, GrupoMovimentoFinaceiro.DEBITO));
+
 		filtroDebitoCreditoDTO.setColunaOrdenacao(ColunaOrdenacao.TIPO_LANCAMENTO);
 		
 		calendar.add(Calendar.DATE, -5);
@@ -861,4 +868,10 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		
 	}
 	
+	@Test
+	public void test() {
+		
+		movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cotaManoel.getNumeroCota());
+		
+	}
 }

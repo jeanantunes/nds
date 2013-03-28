@@ -40,17 +40,7 @@ public enum GrupoMovimentoFinaceiro {
 	/**
 	 * Multa cota
 	 */
-	MULTA(OperacaoFinaceira.DEBITO), 
-	
-	/**
-	 * Estorno do reparte de cota ausente
-	 */
-	ESTORNO_REPARTE_COTA_AUSENTE(OperacaoFinaceira.CREDITO),
-	
-	/**
-	 * Recuperação do reparte de cota ausente
-	 */
-	RECUPERACAO_REPARTE_COTA_AUSENTE(OperacaoFinaceira.DEBITO),	
+	MULTA(OperacaoFinaceira.DEBITO), 	
 
 	/**
 	 * Conta comprando encalhe.

@@ -514,7 +514,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		} else if ("2".equals(input.getSituacaoCota())) {
 			cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
 
-		} else if ("3".equals(input.getSituacaoCota())) {
+		} else if ("3".equals(input.getSituacaoCota()) || "5".equals(input.getSituacaoCota())) {
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
 
 		} else if ("4".equals(input.getSituacaoCota())) {

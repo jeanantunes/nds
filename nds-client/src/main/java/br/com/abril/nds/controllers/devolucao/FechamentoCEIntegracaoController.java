@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +32,6 @@ import br.com.abril.nds.service.PoliticaCobrancaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -119,9 +115,16 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		validarAnoSemana(filtro.getSemana());
 		
-		fechamentoCEIntegracaoService.reabrirCeIntegracao(filtro);
+		String mensagemReaberturaNaoRealizada = fechamentoCEIntegracaoService.reabrirCeIntegracao(filtro); 
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Reabertura realizada com sucesso."),"result").recursive().serialize();
+		if (mensagemReaberturaNaoRealizada!= null){
+						
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING,mensagemReaberturaNaoRealizada),"result").recursive().serialize();
+		}
+		else{
+
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Reabertura realizada com sucesso."),"result").recursive().serialize();
+		}
 	}
 	
 	@Post
@@ -180,9 +183,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Post
 	@Path("fecharCE")
-	public void fecharCE(String[] listaEncalhe, String[] listaIdProdutoEdicao, String idFornecedor, String semana){
-		
-		//TODO Alterar os parametros do metodo
+	public void fecharCE(){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
@@ -253,7 +254,8 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
 		
-		filtro.setPaginacao(null);
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setPaginaAtual(null);
 		
 		List<ItemFechamentoCEIntegracaoDTO> listaFechamento = this.fechamentoCEIntegracaoService.buscarItensFechamentoCeIntegracao(filtro);
 		
@@ -294,13 +296,25 @@ public class FechamentoCEIntegracaoController extends BaseController{
 		result.include("listaFornecedores",listaFornecedoresCombo );
 	}
 	
-	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe) {
+	public void atualizarEncalheCalcularTotais(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda) {
+		
+		this.fechamentoCEIntegracaoService.atualizarItemChamadaEncalheFornecedor(
+			idItemChamadaFornecedor, encalhe, venda);
+		
+		FiltroFechamentoCEIntegracaoDTO filtro =
+			(FiltroFechamentoCEIntegracaoDTO)
+				session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
+		
+		filtro.setPaginacao(null);
 		
 		FechamentoCEIntegracaoVO fechamentoCEIntegracao = new FechamentoCEIntegracaoVO();
 		
-		fechamentoCEIntegracao.setTotalBruto("10.00");
-		fechamentoCEIntegracao.setTotalDesconto("20.00");
-		fechamentoCEIntegracao.setTotalLiquido("30.00");
+		FechamentoCEIntegracaoConsolidadoDTO fechamentoConsolidado = 
+			this.fechamentoCEIntegracaoService.buscarConsolidadoItensFechamentoCeIntegracao(filtro);
+		
+		fechamentoCEIntegracao.setTotalBruto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalBruto()));
+		fechamentoCEIntegracao.setTotalDesconto(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalDesconto()));
+		fechamentoCEIntegracao.setTotalLiquido(CurrencyUtil.formatarValor(fechamentoConsolidado.getTotalLiquido()));
 		
 		result.use(Results.json()).withoutRoot().from(fechamentoCEIntegracao).recursive().serialize();
 	}

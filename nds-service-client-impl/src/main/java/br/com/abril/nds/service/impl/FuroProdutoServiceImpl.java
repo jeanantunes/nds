@@ -105,7 +105,8 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 
 		if (novaData.after(lancamento.getDataRecolhimentoDistribuidor())){
 			mensagensValidacao.add("Nova data não deve ser maior que data de recolhimento.");
-		}
+		}		
+		
 
 		if (!mensagensValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));

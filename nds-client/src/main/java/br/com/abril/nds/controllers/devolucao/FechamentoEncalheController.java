@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -20,8 +21,10 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.FormaCobrancaExcepion;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -29,6 +32,7 @@ import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ChamadaAntecipadaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -81,6 +85,8 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private HttpSession session;
@@ -287,7 +293,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 
 	@Path("/cobrarCotas")
-	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas, boolean cobrarTodasCotas) {//TODO
+	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas, boolean cobrarTodasCotas) {
 
 		if (!cobrarTodasCotas && (idsCotas == null || idsCotas.isEmpty())) {
 			this.result.use(Results.json()).from(
@@ -298,8 +304,29 @@ public class FechamentoEncalheController extends BaseController {
 		try {
 			
 			if (cobrarTodasCotas) {
+				List<Integer> listNumeroCota =  new ArrayList<Integer>();
+				
+				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+				
+				for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
+					
+					Cota cota = cotaService.obterPorId(cotaAusenteEncalheDTO.getIdCota());
+					try{
+					this.fechamentoEncalheService.realizarCobrancaCotas(dataOperacao, getUsuarioLogado(), cota);
+					} catch (FormaCobrancaExcepion e) {
+						listNumeroCota.add(cotaAusenteEncalheDTO.getNumeroCota());
+						
+					}
+					
+				}				
 			
-				this.fechamentoEncalheService.cobrarTodasCotas(dataOperacao, getUsuarioLogado());
+				if(!listNumeroCota.isEmpty()){					
+					String cotas = "[" +StringUtils.join(listNumeroCota, ", ")+"]";					
+					this.result.use(Results.json()).from(
+							new ValidacaoVO(TipoMensagem.WARNING, "Atenção algumas cotas não foram processadas por não atimgirem o valor mínimo. Cotas " + cotas ), "result").recursive().serialize();		
+					return;
+				}
 				
 			} else {
 			

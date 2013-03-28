@@ -23,6 +23,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
@@ -55,7 +56,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
-import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -95,7 +95,6 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
-import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -105,7 +104,6 @@ import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
-import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
@@ -213,9 +211,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private EstoqueProdutoRespository estoqueProdutoRepository;
 	
 	@Autowired
-	private LancamentoParcialRepository lancamentoParcialRepository;
-	
-	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
 	
 	@Autowired
@@ -257,9 +252,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
-	
-	@Autowired
-	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -602,8 +594,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	@Transactional(readOnly = true)
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
 		
-		boolean aceitaJuramentado = this.distribuidorService.aceitaJuramentado();
-		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
@@ -614,22 +604,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = null;
 		
 		if(controleConferenciaEncalheCota!=null) {
-			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(
 							controleConferenciaEncalheCota.getId());
-			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
-			
 			infoConfereciaEncalheCota.setEncalhe(null);
-			
 			infoConfereciaEncalheCota.setIdControleConferenciaEncalheCota(controleConferenciaEncalheCota.getId());
-			
 			infoConfereciaEncalheCota.setNotaFiscalEntradaCota(controleConferenciaEncalheCota.getNotaFiscalEntradaCotaPricipal());
-			
 		} else {
-			
 			infoConfereciaEncalheCota.setEncalhe(BigDecimal.ZERO);
-			
 		}
 		
 		if(indConferenciaContingencia) {
@@ -641,54 +623,94 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 							infoConfereciaEncalheCota.getListaConferenciaEncalhe());
 			
 			if(listaConferenciaEncalheDTO!=null && !listaConferenciaEncalheDTO.isEmpty()) {
-				
 				listaConferenciaEncalheDTO.addAll(listaConferenciaEncalheContingencia);
-				
 				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
-				
 			} else {
-				
 				infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheContingencia);
-				
 			}
 			
 			
 		}
 		
-		BigDecimal reparte = obterValorTotalReparte(numeroCota, dataOperacao);
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
-		BigDecimal valorPagar = BigDecimal.ZERO;
-		BigDecimal valorVendaDia = BigDecimal.ZERO;
-		BigDecimal totalDebitoCreditoCota = BigDecimal.ZERO;
-
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, dataOperacao);
+		
+		infoConfereciaEncalheCota.setCota(cota);
+		infoConfereciaEncalheCota.setReparte(obterValorTotalReparte(numeroCota, dataOperacao));
+		
+		infoConfereciaEncalheCota.setTotalDebitoCreditoCota(BigDecimal.ZERO);
+		infoConfereciaEncalheCota.setValorPagar(BigDecimal.ZERO);
+		infoConfereciaEncalheCota.setValorVendaDia(BigDecimal.ZERO);
+		
+		infoConfereciaEncalheCota.setDistribuidorAceitaJuramentado(this.distribuidorService.aceitaJuramentado());
+		
+		return infoConfereciaEncalheCota;
+		
+	}
 	
+	
+	private void carregarDadosDebitoCreditoDaCota(
+			InfoConferenciaEncalheCota infoConfereciaEncalheCota, 
+			Cota cota,
+			Date dataOperacao) {
+		
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
 		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
-		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
+
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = 
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(
-						numeroCota, 
+						cota.getNumeroCota(), 
 						dataOperacao, 
 						tiposMovimentoFinanceiroIgnorados);
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		if(listaDebitoCreditoCota!=null && !listaDebitoCreditoCota.isEmpty()) {
+			listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCota);
+		}
 		
-		infoConfereciaEncalheCota.setCota(cota);
-		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCota);
-		infoConfereciaEncalheCota.setReparte(reparte);
-		infoConfereciaEncalheCota.setTotalDebitoCreditoCota(totalDebitoCreditoCota);
-		infoConfereciaEncalheCota.setValorPagar(valorPagar);
-		infoConfereciaEncalheCota.setValorVendaDia(valorVendaDia);
-		infoConfereciaEncalheCota.setDistribuidorAceitaJuramentado(aceitaJuramentado);
+		List<DebitoCreditoCotaDTO> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
+				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cota.getNumeroCota());
 		
-		return infoConfereciaEncalheCota;
+		if(listaDebitoNegociacaoNaoAvulsaMaisEncargos != null && !listaDebitoNegociacaoNaoAvulsaMaisEncargos.isEmpty()) {
+			
+			for(DebitoCreditoCotaDTO negociacao : listaDebitoNegociacaoNaoAvulsaMaisEncargos) {
+				
+				negociacao.setTipoLancamento(OperacaoFinaceira.DEBITO);
+				
+			}
+			
+			listaDebitoCreditoCompleta.addAll(listaDebitoNegociacaoNaoAvulsaMaisEncargos);
+		}
 		
+		List<DebitoCreditoCotaDTO> listaCobrancas 
+		= cobrancaRepository.obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(
+				cota.getId(), infoConfereciaEncalheCota.getIdControleConferenciaEncalheCota());
+		
+		
+		if( listaCobrancas != null && !listaCobrancas.isEmpty() ) {
+
+			for ( DebitoCreditoCotaDTO cobranca : listaCobrancas ) {
+				
+				cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
+				cobranca.setObservacoes("Cobrança em aberto.");
+				cobranca.setDataVencimento(cobranca.getDataLancamento());
+				
+				listaDebitoCreditoCompleta.add(cobranca);
+				
+			}
+			
+		}
+		
+		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
+
 	}
 	
 	/*
@@ -1123,7 +1145,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						controleConfEncalheCota.getId(), 
 						controleConfEncalheCota.getCota().getId());
 			}
-			
 		} 			
 		
 		controleConfEncalheCota = 
@@ -1149,10 +1170,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		boolean isUtililzaSlipImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
 		
+		boolean isUtililzaBoletoImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.BOLETO);
+		
+		boolean isUtililzaBoletoSlipImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP);
+		
 		documentoConferenciaEncalhe.setIdControleConferenciaEncalheCota(controleConfEncalheCota.getId());
 		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
-		documentoConferenciaEncalhe.setUtilizaSlipBoleto(isUtililzaSlipImpressao);
+		documentoConferenciaEncalhe.setUtilizaBoleto(isUtililzaBoletoImpressao);
 		documentoConferenciaEncalhe.setUtilizaSlip(isUtililzaSlipImpressao);
+		documentoConferenciaEncalhe.setUtilizaBoletoSlip(isUtililzaBoletoSlipImpressao);
 		
 		documentoConferenciaEncalhe.setListaNossoNumero(new LinkedList<String>());
 		
@@ -1264,27 +1290,31 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void resetarDadosFinanceirosConferenciaEncalheCota(Long idControleConferenciaEncalheCota, Long idCota) {
 		
-		MovimentoFinanceiroCota movimentoFinanceiroCota = movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
+		List<MovimentoFinanceiroCota> movimentosFinanceiroCota = 
+				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
 		
-		if(movimentoFinanceiroCota!=null) {
+		if(movimentosFinanceiroCota!=null && !movimentosFinanceiroCota.isEmpty()) {
 			
-			gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
-			
-			if (movimentoFinanceiroCota.getMovimentos() != null){
+			for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentosFinanceiroCota) {
+
+				gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), null);
 				
-				for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
+				if (movimentoFinanceiroCota.getMovimentos() != null){
 					
-					mec.setMovimentoFinanceiroCota(null);
-					
-					this.movimentoEstoqueCotaRepository.merge(mec);
+					for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
+						
+						mec.setMovimentoFinanceiroCota(null);
+						
+						this.movimentoEstoqueCotaRepository.merge(mec);
+					}
 				}
+
+				movimentoFinanceiroCota.setConsolidadoFinanceiroCota(null);
+				
+				this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 			}
-			
-			movimentoFinanceiroCota.setConsolidadoFinanceiroCota(null);
-			
-			this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 		}
-		
+
 		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
 				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 						GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
@@ -1329,10 +1359,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			StatusOperacao statusOperacao,
 			boolean indConferenciaContingencia) {
 		
-		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item conferido, não é possível realizar a conferência de encalhe.");
-		}
-		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 	    
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -1370,7 +1396,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			validarQtdeEncalheExcedeQtdeReparte(
 					conferenciaEncalheDTO,
 					controleConferenciaEncalheCota.getCota().getNumeroCota(), 
-					dataOperacao);
+					dataOperacao, indConferenciaContingencia);
 				
 			
 			
@@ -1894,9 +1920,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Integer numeroCota, 
-			Date dataOperacao) {
-		
-		if(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0) {
+			Date dataOperacao, boolean indConferenciaContingencia) {
+
+		if (!indConferenciaContingencia &&
+				(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0)){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos deve encalhe de ser maior que zero.");
 			
@@ -2116,8 +2143,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						tipoMovimentoEstoqueCota);
 		
 		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
-
-		verificarValorAplicadoNulo(valoresAplicados);
+		if(valoresAplicados == null){
+			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
+		}else{
+			verificarValorAplicadoNulo(valoresAplicados);
+		}
+		
 		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
@@ -2126,7 +2157,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 	private void verificarValorAplicadoNulo(ValoresAplicados valoresAplicados){
-		
+				
 		if(valoresAplicados.getPrecoComDesconto() == null) {
 			valoresAplicados.setPrecoComDesconto(BigDecimal.ZERO);
 		}
@@ -2385,6 +2416,22 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void atualizarMovimentoEstoqueCota(MovimentoEstoqueCota movimentoEstoqueCota, 
 											   ConferenciaEncalheDTO conferenciaEncalheDTO) {
+		
+		
+		
+		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.
+				obterValoresAplicadosProdutoEdicao(
+						movimentoEstoqueCota.getCota().getNumeroCota(), 
+						movimentoEstoqueCota.getProdutoEdicao().getId(), 
+						distribuidorService.obterDataOperacaoDistribuidor());
+
+		if(valoresAplicados == null){
+			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
+		}else{
+			verificarValorAplicadoNulo(valoresAplicados);
+		}
+		
+		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
 		BigInteger oldQtdeMovEstoqueCota = movimentoEstoqueCota.getQtde();
 		
@@ -2829,22 +2876,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
-		
+
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
+
 		String path = null;
-		
+
 		try {
-		
-			path = obterSlipReportPath();
-		
+
+			path = url.toURI().getPath();
+
 		} catch (URISyntaxException e) {
-			
+
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
-			
+
 		}
+
 		
 		try {
 			
-			//Retorna um byte array de um TXT
+			/*//Retorna um byte array de um TXT
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			JRTextExporter exporter = new JRTextExporter();  
 			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
@@ -2854,8 +2904,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
 			exporter.exportReport();
 
-			return out.toByteArray();
-			//return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+			return out.toByteArray();*/
+			
+			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		
 		} catch (JRException e) {
 		

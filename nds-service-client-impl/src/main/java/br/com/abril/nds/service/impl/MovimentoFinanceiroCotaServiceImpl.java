@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -86,6 +87,10 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	
 	@Autowired
 	private FornecedorRepository fornecedorRepository;
+	
+	
+	
+	
 	
 	@Override
 	@Transactional

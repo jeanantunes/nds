@@ -292,11 +292,13 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 
 			Diferenca diferenca = (Diferenca) resultado[0];
 
-			BigDecimal valorTotalDiferenca = (BigDecimal) resultado[1];
-
-			boolean existemRateios = ((Long) resultado[2]) > 0;
-
-			listaDiferencas.add(new Diferenca(existemRateios, diferenca, valorTotalDiferenca));
+			diferenca.setValorTotalDiferenca((BigDecimal) resultado[1]);
+			
+			diferenca.setExistemRateios(((Long) resultado[2]) > 0);
+									
+			diferenca.setQtde((BigInteger) resultado[3]);
+			
+			listaDiferencas.add(diferenca);
 		}
 		
 		return listaDiferencas;
@@ -334,14 +336,49 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 		} else {
 			
+			
+			String hqlCota = "";
+			
+			if (filtro.getNumeroCota()!=null){
+				
+				hqlCota += " ((select rd.qtde from Diferenca d join d.rateios rd where rd.cota.numeroCota = :numeroCota and d = diferenca) * coalesce(movimentoEstoqueCota.valoresAplicados.precoComDesconto,diferenca.produtoEdicao.precoVenda)) ";
+			}
+			else{
+			
+				hqlCota += " (diferenca.qtde * coalesce(movimentoEstoqueCota.valoresAplicados.precoComDesconto,diferenca.produtoEdicao.precoVenda)) ";
+			}
+			
 			hql = " select distinct(diferenca), "
+					
 				+ " (case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
-				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
-				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-				+ " diferenca.qtde * diferenca.produtoEdicao.precoVenda) "
+				
+				+ " diferenca.tipoDiferenca = 'SOBRA_DE') then "
+				
+			    + hqlCota
+				
+				+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then "
+				
+			    + hqlCota
+				
 				+ " else 0 end) as valorTotalDiferenca, "
-				+ " (select count(rateios) from RateioDiferenca rateios where rateios.diferenca.id = diferenca.id) ";
+				
+				+ " (select count(rateios) from RateioDiferenca rateios where rateios.diferenca.id = diferenca.id ";
+			
+				if (filtro.getNumeroCota()!=null){
+				    
+					hql += "  and rateios.cota.numeroCota = :numeroCota ";
+				}
+				
+				hql +=  "), ";
+				
+				if (filtro.getNumeroCota()!=null){
+
+					hql += " (select rd.qtde from Diferenca d join d.rateios rd where rd.cota.numeroCota = :numeroCota and d = diferenca) ";
+				}
+				else{
+
+					hql += " diferenca.qtde ";
+				}
 		}
 		
 		hql += " from Diferenca diferenca "
@@ -349,12 +386,13 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			 + " left join diferenca.produtoEdicao.produto.fornecedores fornecedor "
 			 + " left join itemRecebimentoFisico.itemNotaFiscal itemNotaFiscal "
 			 + " left join itemNotaFiscal.notaFiscal notaFiscal "
-			 + " left join diferenca.lancamentoDiferenca.movimentoEstoque movimentoEstoque"
+			 + " join diferenca.lancamentoDiferenca lancamentoDiferenca "
+			 + " join lancamentoDiferenca.movimentoEstoque movimentoEstoque"
 			 + " left join diferenca.lancamentoDiferenca.movimentosEstoqueCota movimentoEstoqueCota";
 		
 		if (filtro != null) {
 		
-			if (filtro.getIdCota() != null) {
+			if (filtro.getIdCota() != null || filtro.getNumeroCota()!=null) {
 				 hql += " join diferenca.rateios rateios ";
 			}
 			
@@ -373,7 +411,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			if (filtro.getIdCota() != null) {
 				hql += " and rateios.cota.id = :idCota ";
 			}
-						
+			
+            if (filtro.getNumeroCota()!=null){
+				hql += " and rateios.cota.numeroCota = :numeroCota ";
+			}
+					
 			if (filtro.getPeriodoVO() != null
 					&& filtro.getPeriodoVO().getDataInicial() != null
 					&& filtro.getPeriodoVO().getDataFinal() != null) {
@@ -417,6 +459,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		if (filtro.getIdCota() != null) {
 			query.setParameter("idCota", filtro.getIdCota());
+		}
+		
+		if (filtro.getNumeroCota()!=null){
+			query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 		
 		if (filtro.getPeriodoVO() != null

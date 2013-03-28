@@ -4,8 +4,6 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -94,6 +92,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 	 * 
 	 * @return List - ConferenciaEncalheParcial
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheParcial> obterListaConferenciaEncalhe(
 			Boolean diferencaApurada,
 			Boolean nfParcialGerada,
@@ -230,6 +229,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 	 * 
 	 * @return List<ContagemDevolucaoDTO>
 	 */
+	@SuppressWarnings("unchecked")
 	public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(
 			Boolean diferencaApurada,
 			Boolean nfParcialGerada,
@@ -361,7 +361,20 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 		}
 		
 	}
-	
-	
-	
+
+	@Override
+	public boolean verificarDevolucao(Date dataOperacao,
+			StatusAprovacao status) {
+		
+		StringBuilder hql = new StringBuilder("select count (c.id) ");
+		hql.append(" from ConferenciaEncalheParcial c ")
+		   .append(" where c.dataMovimento = :dataOperacao ")
+		   .append(" and c.statusAprovacao = :status ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameter("status", status);
+		
+		return (Long)query.uniqueResult() > 0;
+	}
 }

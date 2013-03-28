@@ -1046,9 +1046,12 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	validacaoFechamentoDeEncalhe : function(result){
+		
+		var img = (result.fechamentoEncalhe ? '/images/ico_check.gif' : '/images/ico_bloquear.gif');
+		
 		var fechamentoDeEncalhe = "<tr class='class_linha_1' id='fechamentoDeEncalhe'>" + 
         "<td>Fechamento de Encalhe:</td>" +
-        "<td align='center'><img src='"+ contextPath +"/images/ico_check.gif' width='16' height='16' alt='Com DiferenÃ§a' /></td>" +
+        "<td align='center'><img src='"+ contextPath + img + "' width='16' height='16' alt='Com DiferenÃ§a' /></td>" +
         "</tr>";
 		$('#tabela-validacao').append(fechamentoDeEncalhe);
 	},
@@ -1094,12 +1097,19 @@ var fecharDiaController =  $.extend(true, {
 		if(result.controleDeAprovacao===true){
 			$.postJSON(contextPath + "/administracao/fecharDia/validacoesDoControleDeAprovacao", null,
 					function(result){
-						if(result.boolean===true){							
-							var conferenciaDeAprovacao = "<tr class='class_linha_1' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
-							var imagem = "<td align='center'><img src='"+ contextPath +"/images/ico_bloquear.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-							$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
-						}
 						
+						var conferenciaDeAprovacao = 
+							"<tr class='class_linha_1' id='controleDeAplicacao'><td>Controle de Aprovações:</td>";
+						
+						var imagem = "<td align='center'><img src='"+ contextPath;
+						if(result.boolean===true){							
+							
+							imagem += "/images/ico_bloquear.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+						} else {
+							
+							imagem += "/images/ico_check.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+						}
+						$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
 					}
 				);
 		}

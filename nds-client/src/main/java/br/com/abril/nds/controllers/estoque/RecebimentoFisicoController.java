@@ -793,8 +793,7 @@ public class RecebimentoFisicoController extends BaseController {
 			String serie,
 			String indNFe,
 			String fornecedor, 
-			String chaveAcesso,
-			Long numeroNotaEnvio) {
+			String chaveAcesso) {
 		
 		limparDadosDaSession();
 		
@@ -803,11 +802,21 @@ public class RecebimentoFisicoController extends BaseController {
 		String cnpjSemMascara = Util.removerMascaraCnpj(cnpj);
 		
 		filtro.setCnpj(cnpjSemMascara);
-		filtro.setNumeroNota(numeroNotaFiscal);
+		
 		filtro.setSerie(serie);
 		filtro.setChave(chaveAcesso);
 		filtro.setNomeFornecedor(fornecedor);
-		filtro.setNumeroNotaEnvio(numeroNotaEnvio);
+		
+		boolean isNE = (numeroNotaFiscal != null && serie == null);
+		
+		if (isNE) {
+			
+			filtro.setNumeroNotaEnvio(numeroNotaFiscal);
+			
+		} else {
+			
+			filtro.setNumeroNota(numeroNotaFiscal);
+		}
 		
 		validarDadosNotaFiscal(filtro, fornecedor, indNFe);		
 		
@@ -824,11 +833,18 @@ public class RecebimentoFisicoController extends BaseController {
 			notaFiscal = listaNotaFiscal.get(0);
 		} 
 		
-		if(notaFiscal == null){	
+		if (notaFiscal == null){	
 						
 			List<String> msgs = new ArrayList<String>();
 			
-			msgs.add("Nota fiscal não encontrada");
+			if (isNE) {
+			
+				msgs.add("Nota de Envio não encontrada");
+				
+			} else {
+			
+				msgs.add("Nota fiscal não encontrada");
+			}
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
 													

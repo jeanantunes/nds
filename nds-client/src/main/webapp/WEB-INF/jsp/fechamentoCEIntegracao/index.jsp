@@ -22,51 +22,49 @@
 
     <div class="areaBts">
     	<div class="area">
-    		<span class="bt_novos" id="btnFechamento" >
+    		<span class="bt_novos bt_acoes_grid_ce" id="btnFechamento" >
 		      	<a href="javascript:;" title="Fechamento" rel="tipsy" title="Fechamento">
 		      		<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" id="imagemFechamento" />
 		      	</a>
 		    </span>
 		      
-		    <span class="bt_novos" id="btnReabertura">
+		    <span class="bt_novos bt_acoes_grid_ce" id="btnReabertura">
 		      	<a href="javascript:;" title="Reabertura" rel="tipsy">
 		      		<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" hspace="5" border="0" id="imagemReabertura" />
 		      	</a>
 		    </span>
 		
-			
-		    <span class="bt_novos">
-		    
+		    <span class="bt_novos bt_acoes_grid_ce" id="btnImpBoleto">
+    
 		    	<c:if test="${BOLETO}">
 		    	
 			    	<a 	href="javascript:;"
-			    		onclick="fechamentoCEIntegracaoController.geraBoleto('BOLETO');"
 			    		rel="tipsy" title="Imprimir Boleto">
-			    		<img src="${pageContext.request.contextPath}/images/ico_negociar.png" hspace="5" border="0" />
+			    		<img src="${pageContext.request.contextPath}/images/ico_negociar.png" id="imagemImpressaoBoleto" hspace="5" border="0" />
 			    	</a>
 		    	
 		    	</c:if>	
 		    </span>
 		       
-	       <span class="bt_novos">
+	       <span class="bt_novos bt_acoes_grid_ce" id="btnImpBoletoEmBranco">
+
 				
 				<c:if test="${BOLETO_EM_BRANCO}">
-			       	<a href="javascript:;"
-			       	onclick="fechamentoCEIntegracaoController.geraBoleto('BOLETO_EM_BRANCO');"			       	
+			       	<a href="javascript:;"		       	
 			       	rel="tipsy" title="Imprimir Boleto em Branco">
-			       		<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" hspace="5" border="0" />
+			       		<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" id="imagemBoletoEmBranco" hspace="5" border="0" />
 			       	</a>
 				</c:if>					       
 	       
 	       </span>
 		       
 		       
-		       <span class="bt_arq">
+		       <span class="bt_arq bt_acoes_grid_ce">
 				  	<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 				  		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 					</a>
 			</span>
-		    <span class="bt_arq">
+		    <span class="bt_arq bt_acoes_grid_ce">
     			<a href="${pageContext.request.contextPath}/devolucao/fechamentoCEIntegracao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
     				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
     			</a>
@@ -93,7 +91,7 @@
 				  	<td width="151">
 				  		<input type="text" id="semana" name="semana" />
 				  	</td>
-			  		<td width="433"><span id="btnPesquisar" class="bt_novos"><a href="javascript:;" class="botaoPesquisar" ><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+			  		<td width="433"><span id="btnPesquisar"><a href="javascript:;" class="botaoPesquisar" ><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 				</tr>
 			</table>
 

@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
+import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -522,5 +523,12 @@ public class DistribuidorRepositoryImpl extends
 		
 		return (ParametroContratoCota)
 				this.getSession().createQuery("select parametroContratoCota from Distribuidor").uniqueResult();
+	}
+	
+	@Override
+	public ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor(){
+		
+		return (ParametrosAprovacaoDistribuidor)
+				this.getSession().createQuery("select parametrosAprovacaoDistribuidor from Distribuidor").uniqueResult();
 	}
 }

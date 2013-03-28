@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 

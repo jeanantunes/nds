@@ -75,7 +75,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		BigDecimal valorTotalReparte = BigDecimal.ZERO;
 		
 		BigDecimal valorTotalEncalhe = BigDecimal.ZERO;
-		
+
 		valorTotalReparte = 
 				chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCotaNoPeriodo(
 						filtro.getIdCota(), 

@@ -36,6 +36,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
+	@Autowired
 	private EnderecoRepository enderecoRepository;
 	
 	@Override
@@ -76,12 +77,15 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private void processarPDV(Message message, EMS0116Input input, Cota cota) {
 		
-		PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input,cota);
+		PDV pdvCandidatoAlteracao = cota.getPdvs().get(0);
 		
-		if(pdvCandidatoAlteracao == null){
+		//PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input,cota);
+		
+		// Comentado por Cesar Pop Punk em 26/03/2013 pois quem "manda" no cadastro é o novo distrib e não mais o MDC.
+		/*if(pdvCandidatoAlteracao == null){
 			this.processarNovoPDV(message, input, cota);
 			return;
-		}
+		}*/
 		
 		pdvCandidatoAlteracao.setNome(cota.getPessoa().getNome());
 		pdvCandidatoAlteracao.setPontoReferencia(input.getPontoReferencia());
@@ -224,6 +228,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 
 			if (enderecosPDV.isEmpty()) {
 				
+				removerPrincipais(input, pdv);
+				
 				incluirNovoEnderecoPDV(input, pdv);
 
 			} else {
@@ -248,9 +254,14 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		EnderecoPDV enderecoPDV = null;
 		
+		String logradouro = input.getEndereco().split(",")[0].trim();
+		String numero = input.getEndereco().split(",")[1].trim();
+		
 		for (EnderecoPDV item : enderecosPDV) {
-			
-			if(item.getEndereco().getLogradouro().equals(input.getEndereco())){
+
+			//if(item.getEndereco().getLogradouro().equals(input.getEndereco())){
+			if(item.getEndereco().getLogradouro().equals(logradouro) &&
+			   item.getEndereco().getNumero().equals(numero)	){
 				enderecoPDV = item;
 				break;
 			}
@@ -265,7 +276,9 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			
 			endereco.setCep(input.getCep());
 			endereco.setCidade(input.getNomeMunicipio());
-			endereco.setLogradouro(input.getEndereco());
+			//endereco.setLogradouro(input.getEndereco());
+			endereco.setLogradouro(logradouro);
+			endereco.setNumero(numero);
 			endereco.setUf(input.getSiglaUF());
 			
 			Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
@@ -286,15 +299,34 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			
 	}
 	
+	public void removerPrincipais(EMS0116Input input, PDV pdv) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE EnderecoPDV SET principal = false ");
+		sql.append("WHERE ");
+		sql.append(" pdv = :pdv ");
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("pdv", pdv);
+		
+		query.executeUpdate();
+		
+	}
+	
 	/*
 	 * Inclui um novo Endereço para o PDV
 	 */
 	private EnderecoPDV incluirNovoEnderecoPDV(EMS0116Input input, PDV pdv) {
 		
+		String logradouro = input.getEndereco().split(",")[0].trim();
+		String numero = input.getEndereco().split(",")[1].trim();
+		
 		Endereco endereco = new Endereco();
 		endereco.setCep(input.getCep());
 		endereco.setCidade(input.getNomeMunicipio());
-		endereco.setLogradouro(input.getEndereco());
+		//endereco.setLogradouro(input.getEndereco());
+		endereco.setLogradouro(logradouro);
+		endereco.setNumero(numero);
 		endereco.setUf(input.getSiglaUF());
 		Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
 		
@@ -310,7 +342,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		EnderecoPDV enderecoPDV = new EnderecoPDV();
 		enderecoPDV.setEndereco(endereco);
 		enderecoPDV.setPdv(pdv);
-		enderecoPDV.setPrincipal(!isEnderecoPrincipal(pdv.getEnderecos()));
+		//enderecoPDV.setPrincipal(!isEnderecoPrincipal(pdv.getEnderecos()));
+		enderecoPDV.setPrincipal(true);
 		enderecoPDV.setTipoEndereco(TipoEndereco.COMERCIAL);
 		
 		return (EnderecoPDV) getSession().merge(enderecoPDV);
@@ -485,6 +518,9 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private PDV obterPdvCorrenteImportacao(EMS0116Input input,Cota cota) {
 		
+		String logradouro = input.getEndereco().split(",")[0].trim();
+		String numero = input.getEndereco().split(",")[1].trim();
+		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT p  ");
@@ -492,10 +528,12 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		sql.append(" WHERE ");
 		sql.append(" p.cota = :cota ");
 		sql.append(" and endereco.logradouro=:logradouro");
+		sql.append(" and endereco.numero=:numero");
 
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("cota", cota);
-		query.setParameter("logradouro", input.getEndereco());
+		query.setParameter("logradouro", logradouro);
+		query.setParameter("numero", numero);
 		query.setMaxResults(1);
 		
 		return (PDV) query.uniqueResult();
@@ -549,6 +587,9 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	@SuppressWarnings("unchecked")
 	private List<EnderecoPDV> obterEnderecoPDVPorLogradouro(EMS0116Input input, PDV pdv) {
 		
+		String logradouro = input.getEndereco().split(",")[0].trim();
+		String numero = input.getEndereco().split(",")[1].trim();
+
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT ep  ");
 		sql.append("FROM EnderecoPDV ep ");
@@ -556,10 +597,12 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		sql.append("WHERE ");
 		sql.append("     ep.pdv = :pdv ");
 		sql.append(" AND    ed.logradouro = :logradouro ");
+		sql.append(" AND    ed.numero = :numero ");
 
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("pdv", pdv);
-		query.setParameter("logradouro", input.getEndereco());
+		query.setParameter("logradouro", logradouro);
+		query.setParameter("numero", numero);
 		
 		return query.list();
 	}

@@ -53,6 +53,7 @@ import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
+import br.com.abril.nds.model.envio.nota.StatusNotaEnvio;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -1040,8 +1041,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			query.setParameter(key, param.get(key));
 		}
 		
-		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
-		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
 			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
@@ -1472,6 +1471,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append( " select count(*) from ( ");
 		
 		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, true);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, true, StatusNotaEnvio.EMITIDA);
 		
 		sql.append(" ) rs1 ");
 		
@@ -1493,6 +1494,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		sql.append( " select count(*) from ( ");
 		
 		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, true);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, true, StatusNotaEnvio.NAO_EMITIDA);
 		
 		sql.append(" ) rs1 ");
 		
@@ -1516,6 +1519,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, true);
 		sql.append(" union all ");
 		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, true);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, true, null);
 		
 		sql.append(" ) rs1 ");
 		
@@ -1538,6 +1543,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		StringBuilder sql = new StringBuilder();
 
 		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, false);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, false, StatusNotaEnvio.EMITIDA);
 		
 		orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
 				filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
@@ -1559,6 +1566,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		StringBuilder sql = new StringBuilder();
 
 		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, false);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro, sql, false, StatusNotaEnvio.NAO_EMITIDA);
 		
 		orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
 				filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
@@ -1583,6 +1592,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		montarQueryCotasComNotasEnvioEmitidas(filtro, sql, false);
 		sql.append( " union all ");
 		montarQueryCotasComNotasEnvioNaoEmitidas(filtro, sql, false);
+		sql.append(" union all ");
+		montarQueryReparteCotaAusente(filtro,sql, false, null);
 		
 		orderByCotasComNotaEnvioEntre(sql, filtro.getPaginacaoVO().getSortColumn(),
 				filtro.getPaginacaoVO().getSortOrder() == null? "":filtro.getPaginacaoVO().getSortOrder());
@@ -1596,6 +1607,128 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return query.list();
 		
 	}
+	
+	private void montarQueryReparteCotaAusente(FiltroConsultaNotaEnvioDTO filtro, 
+			StringBuilder sql, boolean isCount, StatusNotaEnvio status) {
+		
+		if(isCount) {
+			sql.append( " select cota_.ID ");
+		} else {
+			sql.append( " select "
+				+ "	        cota_.ID as idCota, "
+				+ "	        cota_.NUMERO_COTA as numeroCota, "
+				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
+				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
+				+ "	        SUM(mec.QTDE) as exemplares, "
+				+ "	        SUM(mec.QTDE * pe_.PRECO_VENDA) as total, "
+				+ "			case when count(nei.NOTA_ENVIO_ID)>0 then true else false end notaImpressa	"); 
+		}
+		sql.append( "   from "
+				+ "	        COTA cota_ " 
+				+ "	    left outer join "
+				+ "	        BOX box1_  "
+				+ "	            on cota_.BOX_ID=box1_.ID  "
+				+ "	    inner join "
+				+ "	        MOVIMENTO_ESTOQUE_COTA mec  "
+				+ "	            on cota_.ID=mec.COTA_ID  "
+				+ "	    inner join "
+				+ "	        TIPO_MOVIMENTO tm  "
+				+ "	            on mec.TIPO_MOVIMENTO_ID=tm.ID  "
+				+ "	    inner join "
+				+ "	        LANCAMENTO lancamento_  "
+				+ "	            on mec.LANCAMENTO_ID=lancamento_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO_EDICAO pe_  "
+				+ "	            on mec.PRODUTO_EDICAO_ID=pe_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO p_  "
+				+ "	            on pe_.PRODUTO_ID=p_.ID  "
+				+ "	    inner join "
+				+ "	        PRODUTO_FORNECEDOR pf_  "
+				+ "	            on p_.ID=pf_.PRODUTO_ID  "
+				+ "	    inner join "
+				+ "	        FORNECEDOR f_  "
+				+ "	            on pf_.fornecedores_ID=f_.ID  "
+				+ "	    inner join "
+				+ "	        PDV pdv_  "
+				+ "	            on cota_.ID=pdv_.COTA_ID  "
+				+ "	    left outer join "
+				+ "        ROTA_PDV rota_pdv_  "
+				+ "	            on pdv_.ID=rota_pdv_.PDV_ID    "  
+				+ "	    left outer join "
+				+ "	        ROTA rota_  "
+				+ "	            on rota_pdv_.rota_ID=rota_.ID  "
+				+ "	    left outer join "
+				+ "	        ROTEIRO roteiro_  "
+				+ "	            on rota_.ROTEIRO_ID=roteiro_.ID  "
+				+ "	    inner join "
+				+ "	        PESSOA pessoa_cota_  "
+				+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  ");
+				
+				String joinType = " left outer join ";
+				
+				if(StatusNotaEnvio.EMITIDA.equals(status)){
+					joinType = " inner join ";
+				}
+				
+				sql.append(joinType+"   NOTA_ENVIO_ITEM nei " 
+		        + "    				on ( nei.SEQUENCIA = mec.NOTA_ENVIO_ITEM_SEQUENCIA " 
+		        + "                  	 and nei.NOTA_ENVIO_ID = mec.NOTA_ENVIO_ITEM_NOTA_ENVIO_ID )"
+				+ "	   	where "
+				+ "	        lancamento_.STATUS in (:status)  "
+				+ "	        and mec.ESTUDO_COTA_ID is null  "
+				+ "    	and tm.GRUPO_MOVIMENTO_ESTOQUE = 'RATEIO_REPARTE_COTA_AUSENTE'  "
+				+ "		and pdv_.ponto_principal = :principal ");
+		
+				if(StatusNotaEnvio.NAO_EMITIDA.equals(status)){
+					sql.append( "  and mec.NOTA_ENVIO_ITEM_SEQUENCIA is null  ");
+				}
+				
+				if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
+					sql.append(
+					  "	        and ( "
+					+ "	            f_.ID is null  "
+					+ "	            or f_.ID in (:idFornecedores) "
+					+ "	        )  ");
+				}
+				
+				if (filtro.getIntervaloCota() != null && filtro.getIntervaloCota().getDe() != null) {
+					if (filtro.getIntervaloCota().getAte() != null) {
+						
+						sql.append("   and cota_.NUMERO_COTA between :numeroCotaDe and :numeroCotaAte  ");
+						
+					} else {
+						
+						sql.append("   and cota_.NUMERO_COTA=:numeroCota ");
+					}
+			
+				}
+				
+				if (filtro.getIntervaloBox() != null 
+						&& filtro.getIntervaloBox().getDe() != null 
+						&&  filtro.getIntervaloBox().getAte() != null) {
+					sql.append(" and box1_.CODIGO between :boxDe and :boxAte  ");
+				}
+				
+				if (filtro.getIdRoteiro() != null){
+					sql.append(" and roteiro_.ID=:idRoteiro  ");
+				}
+				
+				if (filtro.getIdRota() != null){
+					sql.append(" and rota_.ID=:idRota  ");
+				}
+				
+				if (filtro.getIntervaloMovimento() != null 
+						&& filtro.getIntervaloMovimento().getDe() != null 
+						&& filtro.getIntervaloMovimento().getAte() != null) {
+					sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+				}
+				
+				sql.append(
+				  "	    group by cota_.ID ");
+		
+	}
+	
 	
 	private void montarQueryCotasComNotasEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
 		
@@ -1819,6 +1952,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		query.setParameter("principal", true);
 		query.setParameterList("status", new String[]{StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()});
+		//query.setParameter("movimentoReparteCotaAusente", GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			query.setParameterList("idFornecedores", filtro.getIdFornecedores());

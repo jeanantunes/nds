@@ -15,7 +15,8 @@ var parametroCobrancaController = $.extend(true,
 		formatarCampos : function() {
 			$("#valorMinimo", this.workspace).priceFormat({
 				centsSeparator: ',',
-			    thousandsSeparator: '.'
+			    thousandsSeparator: '.',
+			    centsLimit:2	
 			});
 			$("#diasDoMes", this.workspace).numeric();
 			$("#diasDoMes1", this.workspace).numeric();
@@ -402,9 +403,9 @@ var parametroCobrancaController = $.extend(true,
 			
 			$("#instrucoes", this.workspace).val(resultado.instrucoes);
 	
-			$("#acumulaDivida", this.workspace).val(resultado.envioEmail?'S':'N');
-			$("#vencimentoDiaUtil", this.workspace).val(resultado.envioEmail?'S':'N');
-			$("#unificada", this.workspace).val(resultado.envioEmail?'S':'N');
+			$("#acumulaDivida", this.workspace).val(resultado.acumulaDivida?'S':'N');
+			$("#vencimentoDiaUtil", this.workspace).val(resultado.vencimentoDiaUtil?'S':'N');
+			$("#unificada", this.workspace).val(resultado.unificada?'S':'N');
 			$("#envioEmail", this.workspace).val(resultado.envioEmail?'S':'N');
 			
 			if(resultado.tipoFormaCobranca == 'MENSAL'){
@@ -468,7 +469,7 @@ var parametroCobrancaController = $.extend(true,
 					tipoCobranca : $("#dTipoCobranca", this.worspace).val(),
 					formaEmissao : $("#formaEmissao", this.worspace).val(),
 					idBanco : $("#dBanco", this.workspace).val(),
-					valorMinimo : $("#valorMinimo", this.worspace).unmask()/100,
+					valorMinimo : floatValue($("#valorMinimo").val()),
 					taxaMulta : $("#taxaMulta", this.worspace).val(),
 					valorMulta : $("#valorMulta", this.worspace).val(),
 					taxaJuros : $("#taxaJuros", this.worspace).val(),

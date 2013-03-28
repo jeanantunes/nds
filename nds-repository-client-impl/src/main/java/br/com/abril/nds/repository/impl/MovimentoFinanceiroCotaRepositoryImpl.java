@@ -6,13 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-
-import com.ancientprogramming.fixedformat4j.format.impl.StringFormatter;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
@@ -42,6 +39,56 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 	public MovimentoFinanceiroCotaRepositoryImpl() {
 		super(MovimentoFinanceiroCota.class);
+	}
+	
+	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota) {
+		
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" SELECT  ");
+		
+		sql.append(" SUM(MFC.VALOR  + PN.ENCARGOS ) AS valor,    	");
+		sql.append(" PN.DATA_VENCIMENTO AS dataVencimento,    		");
+		sql.append(" MFC.DATA as dataLancamento                    ");
+		
+		sql.append(" FROM  PARCELA_NEGOCIACAO PN                                     ");
+		
+		sql.append(" INNER JOIN NEGOCIACAO N ON (                                    ");
+		sql.append(" 	N.ID = PN.NEGOCIACAO_ID                                      ");
+		sql.append(" )                                                               ");
+		
+		sql.append(" INNER JOIN MOVIMENTO_FINANCEIRO_COTA MFC ON (                   ");
+		sql.append(" 	PN.MOVIMENTO_FINANCEIRO_ID = MFC.ID                          ");
+		sql.append(" )                                                               ");
+
+		sql.append(" INNER JOIN COTA ON (                    						 ");
+		sql.append(" 	COTA.ID = MFC.COTA_ID                           			 ");
+		sql.append(" )                                                               ");
+
+		sql.append(" LEFT JOIN CONSOLIDADO_MVTO_FINANCEIRO_COTA CMFC ON (            ");
+		sql.append(" 	CMFC.MVTO_FINANCEIRO_COTA_ID = MFC.ID                        ");
+		sql.append(" )                                                               ");
+		
+		sql.append(" LEFT JOIN CONSOLIDADO_FINANCEIRO_COTA CFC ON (                  ");
+		sql.append(" 	CFC.ID = CMFC.CONSOLIDADO_FINANCEIRO_ID                      ");
+		sql.append(" )                                                               ");
+		
+		sql.append(" WHERE                                                           ");
+		
+		sql.append(" N.NEGOCIACAO_AVULSA = false AND     	");
+		sql.append(" COTA.NUMERO_COTA = :numeroCota AND  	");
+		sql.append(" CFC.ID IS NULL							");
+		sql.append(" GROUP BY PN.ID, MFC.ID                 ");
+		
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		return query.list();
+		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -99,11 +146,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		   
 		hql.append(" where ");
 		
-		hql.append(" mfc.data = :dataOperacao ");
+		hql.append(" mfc.data = :dataOperacao and ");
 		
-		hql.append(" and mfc.status = :statusAprovado ");
+		hql.append(" mfc.status = :statusAprovado and ");
 		
-		hql.append(" and mfc.cota.numeroCota = :numeroCota ");
+		hql.append(" mfc.cota.numeroCota = :numeroCota ");
 		
 		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
 			hql.append(" and mfc.tipoMovimento not in (:tiposMovimentoFinanceiroIgnorados) ");
@@ -193,7 +240,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 								   
-	public MovimentoFinanceiroCota obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota) {
+	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota) {
 
 		StringBuffer hql = new StringBuffer();
 		
@@ -217,7 +264,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		query.setMaxResults(1);
 		
-		return (MovimentoFinanceiroCota) query.uniqueResult();
+		return query.list();
 		
 	}
 	

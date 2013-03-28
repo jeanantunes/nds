@@ -1686,6 +1686,14 @@ public class DiferencaEstoqueController extends BaseController {
 								&& diferenca.getLancamentoDiferenca().getStatus()!= null) ?
 										diferenca.getLancamentoDiferenca().getStatus().getDescricaoAbreviada() : "");
 			
+			if(diferenca.getLancamentoDiferenca() != null
+					&& diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null
+					&& diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao() != null) {
+				
+				consultaDiferencaVO.setStatusIntegracao(diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao().name());
+				
+			}
+			
 			consultaDiferencaVO.setMotivoAprovacao(motivo);
 			
 			consultaDiferencaVO.setValorTotalDiferenca(

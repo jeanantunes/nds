@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -107,21 +109,32 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 		
 		save(cota);
 		
-		Usuario usuario = Fixture.usuarioJoao();
-		Desconto desconto = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		Distribuidor distribuidor = Fixture.distribuidor(10, pessoaCota, new Date(), null);
+		save(distribuidor);
 		
-		DescontoCotaProdutoExcessao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoVeja1, TipoDesconto.GERAL);
+		Usuario usuario = Fixture.usuarioJoao();
+		save(usuario);
+		Desconto desconto1 = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		Desconto desconto2 = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		Desconto desconto3 = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		Desconto desconto4 = Fixture.desconto(usuario, TipoDesconto.ESPECIFICO);
+		save(desconto1, desconto2, desconto3, desconto4);
+		
+		DescontoCotaProdutoExcessao descontoProdutoEdicao = Fixture.descontoProdutoEdicao(cota, desconto1, distribuidor, fornecedor, produtoEdicaoVeja1, TipoDesconto.GERAL);
+		descontoProdutoEdicao.setUsuario(usuario);
 		save(descontoProdutoEdicao);
 		
-		DescontoCotaProdutoExcessao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoVeja2, TipoDesconto.GERAL);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao2 = Fixture.descontoProdutoEdicao(cota, desconto2, distribuidor, fornecedor, produtoEdicaoVeja2, TipoDesconto.GERAL);
+		descontoProdutoEdicao2.setUsuario(usuario);
 		save(descontoProdutoEdicao2);
 		
-		DescontoCotaProdutoExcessao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao3 = Fixture.descontoProdutoEdicao(cota, desconto3, distribuidor, fornecedor, produtoEdicaoVeja3, TipoDesconto.ESPECIFICO);
+		descontoProdutoEdicao3.setUsuario(usuario);
 		save(descontoProdutoEdicao3);
 		
-		DescontoCotaProdutoExcessao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota, desconto, null, fornecedor, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
+		DescontoCotaProdutoExcessao descontoProdutoEdicao4 = Fixture.descontoProdutoEdicao(cota, desconto4, distribuidor, fornecedor, produtoEdicaoBoaForma1, TipoDesconto.PRODUTO);
+		descontoProdutoEdicao4.setUsuario(usuario);
 		save(descontoProdutoEdicao4);
-		
 	}
 	
 	

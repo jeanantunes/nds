@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
@@ -146,6 +148,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	
+	@Autowired
+	private PlatformTransactionManager transactionManager;
 	
 	
 	
@@ -441,24 +447,20 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 	}
 	
-	@Override
-	@Transactional
-	public void cobrarTodasCotas(Date dataOperacao, Usuario usuario) {
-
-		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-				this.fechamentoEncalheRepository.obterCotasAusentes(dataOperacao, true, null, null, 0, 0);
-
-		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
-
-			Cota cota = this.cotaRepository.buscarPorId(cotaAusente.getIdCota());
-
-			realizarCobrancaCotas(dataOperacao, usuario, cota);
-		}
-	}
 	
-	private void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, Cota cota) {
+
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
+	public void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, Cota cota) {
 
 		try {
+			
+			BigDecimal valorTotalEncalhe = this.buscarValorTotalEncalhe(dataOperacao, cota.getId());
+			
+			if (valorTotalEncalhe == null || valorTotalEncalhe.compareTo(BigDecimal.ZERO) == 0){
+				
+				return;
+			}
 			
 			Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -470,7 +472,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			movimentoFinanceiroCotaDTO.setCota(cota);
 			movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 			movimentoFinanceiroCotaDTO.setUsuario(usuario);
-			movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
+			movimentoFinanceiroCotaDTO.setValor(valorTotalEncalhe);
 			movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacaoDistribuidor);
 			movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
 			movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacaoDistribuidor);
@@ -516,8 +518,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
 			
 			
-		} catch (ValidacaoException e) {
-			throw new ValidacaoException(e.getValidacao());
+		
 		} catch (GerarCobrancaValidacaoException e) {
 			throw e.getValidacaoException();
 		} 
@@ -982,5 +983,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 		return dataFimSemana;
 	}
-
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Boolean buscaControleFechamentoEncalhe(Date data){
+		
+		return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
+	}
 }

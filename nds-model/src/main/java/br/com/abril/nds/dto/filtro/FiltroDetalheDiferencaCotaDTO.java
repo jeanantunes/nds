@@ -36,6 +36,8 @@ public class FiltroDetalheDiferencaCotaDTO extends FiltroDTO {
 
 	@Export(label = "Exemplar", exhibitionOrder = 6)
 	private BigInteger quantidade;
+	
+	private Integer numeroCota;
 
 	private ColunaOrdenacao colunaOrdenacao;
 	
@@ -175,6 +177,20 @@ public class FiltroDetalheDiferencaCotaDTO extends FiltroDTO {
 	 */
 	public void setColunaOrdenacao(ColunaOrdenacao colunaOrdenacao) {
 		this.colunaOrdenacao = colunaOrdenacao;
+	}
+
+	/**
+	 * @return the numeroCota
+	 */
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	/**
+	 * @param numeroCota the numeroCota to set
+	 */
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}
 }
 

@@ -22,6 +22,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.report.RelatorioFechamentoDiario;
 import br.com.abril.nds.client.vo.DetalheCotaFechamentoDiarioVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.EncalheFecharDiaDTO;
 import br.com.abril.nds.dto.FecharDiaDTO;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
@@ -29,11 +30,9 @@ import br.com.abril.nds.dto.ResumoEncalheFecharDiaDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioConsignadoDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO.TipoResumo;
-import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
-import br.com.abril.nds.dto.ValidacaoControleDeAprovacaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
@@ -45,14 +44,13 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
@@ -101,6 +99,9 @@ public class FecharDiaController extends BaseController {
 	private CotaService cotaService;
 	
 	@Autowired
+	private FechamentoEncalheService fechamentoEncalheService;
+	
+	@Autowired
 	private Result result;
 	
 	@Autowired
@@ -139,6 +140,7 @@ public class FecharDiaController extends BaseController {
 		dto.setConfirmacaoDeExpedicao(this.fecharDiaService.existeConfirmacaoDeExpedicao(dataOperacao));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(dataOperacao));
 		dto.setControleDeAprovacao(this.distribuidorService.utilizaControleAprovacao());
+		dto.setFechamentoEncalhe(this.fechamentoEncalheService.buscaControleFechamentoEncalhe(dataOperacao));
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}
@@ -201,27 +203,26 @@ public class FecharDiaController extends BaseController {
 	@Path("validacoesDoControleDeAprovacao")
 	public void validacoesDoControleDeAprovacao(){
 		
-		List<ValidacaoControleDeAprovacaoFecharDiaDTO> listaLancamentoFaltaESobra = 
-				this.fecharDiaService.obterPendenciasDeAprovacao(dataOperacao, StatusAprovacao.PENDENTE);
-		Boolean pendencia = false;
-		for (ValidacaoControleDeAprovacaoFecharDiaDTO dto : listaLancamentoFaltaESobra) {
-			if(dto.getDescricaoTipoMovimento().equals("Falta DE") || dto.getDescricaoTipoMovimento().equals("Falta EM") 
-					|| dto.getDescricaoTipoMovimento().equals("Sobra DE") || dto.getDescricaoTipoMovimento().equals("Sobra EM")) {
-				pendencia = true;
-			}
-			if(dto.getDescricaoTipoMovimento().equals("Crédito") || dto.getDescricaoTipoMovimento().equals("Débito")){
-				pendencia = true;
-			}
-			if(dto.getDescricaoTipoMovimento().equals("Negociação")){
-				pendencia = true;
-			}
-			if(dto.getDescricaoTipoMovimento().equals("Ajuste de estoque")){
-				pendencia = true;
-			}
-			if(dto.getDescricaoTipoMovimento().equals("Postergação de cobrança")){
-				pendencia = true;
-			}
-		}
+		Boolean pendencia = this.fecharDiaService.existePendenciasDeAprovacao(dataOperacao);
+		
+//		for (ValidacaoControleDeAprovacaoFecharDiaDTO dto : listaLancamentoFaltaESobra) {
+//			if(dto.getDescricaoTipoMovimento().equals("Falta DE") || dto.getDescricaoTipoMovimento().equals("Falta EM") 
+//					|| dto.getDescricaoTipoMovimento().equals("Sobra DE") || dto.getDescricaoTipoMovimento().equals("Sobra EM")) {
+//				pendencia = true;
+//			}
+//			if(dto.getDescricaoTipoMovimento().equals("Crédito") || dto.getDescricaoTipoMovimento().equals("Débito")){
+//				pendencia = true;
+//			}
+//			if(dto.getDescricaoTipoMovimento().equals("Negociação")){
+//				pendencia = true;
+//			}
+//			if(dto.getDescricaoTipoMovimento().equals("Ajuste de estoque")){
+//				pendencia = true;
+//			}
+//			if(dto.getDescricaoTipoMovimento().equals("Postergação de cobrança")){
+//				pendencia = true;
+//			}
+//		}
 		
 		this.session.setAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO, pendencia);
 		

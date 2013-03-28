@@ -111,19 +111,27 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		Long idProdutoEdicao = lancamento.getProdutoEdicao().getId();
 
 		TipoMovimentoEstoque tipoMovimento =
-			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
 
 		TipoMovimentoEstoque tipoMovimentoCota =
-			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+		
+		TipoMovimentoEstoque tipoMovimentoEstCotaAusente =
+			tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
 
 		BigInteger total = BigInteger.ZERO;
 
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCotas = lancamentoRepository.buscarMovimentosEstoqueCotaParaFuro(lancamento, tipoMovimentoCota);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCotas = 
+			lancamentoRepository.buscarMovimentosEstoqueCotaParaFuro(
+				lancamento, tipoMovimentoCota);
 
 		MovimentoEstoqueCota movimento = null;
 
 		for (MovimentoEstoqueCota movimentoEstoqueCota : listaMovimentoEstoqueCotas) {
-
+			
 			movimento = (MovimentoEstoqueCota) movimentoEstoqueCota.clone();
 
 			movimento = 
@@ -131,7 +139,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					null, idProdutoEdicao, movimento.getCota().getId(), idUsuario, 
 						movimento.getQtde(), tipoMovimentoCota, new Date(), null, lancamento.getId(), null);
 
-			total = total.add(movimento.getQtde());
+			if (movimentoEstoqueCota.getTipoMovimento() != tipoMovimentoEstCotaAusente){
+			
+				total = total.add(movimento.getQtde());
+			} else {
+				
+				total = total.subtract(movimento.getQtde());
+			}
 
 			movimentoEstoqueCota.setMovimentoEstoqueCotaFuro(movimento);
 			

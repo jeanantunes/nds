@@ -56,9 +56,12 @@ public class DiferencaVO implements Serializable {
 	@Export(label = "Status", exhibitionOrder = 10, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 5)
 	private String statusAprovacao;
 	
+	@Export(label = "StatusIntegracao", exhibitionOrder = 11, alignment = Alignment.CENTER, fontSize = 9, widthPercent = 5)
+	private String statusIntegracao;
+	
 	private String motivoAprovacao;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 11, fontSize = 9)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, exhibitionOrder = 12, fontSize = 9)
 	private String valorTotalDiferenca;
 	
 	private BigInteger qtdeEstoqueAtual;
@@ -80,6 +83,7 @@ public class DiferencaVO implements Serializable {
 	private TipoDirecionamentoDiferenca tipoDirecionamento;
 	
 	private TipoDiferenca tipoDiferenca;
+	
 
 	/**
 	 * Construtor padrão.
@@ -305,6 +309,20 @@ public class DiferencaVO implements Serializable {
 	 */
 	public void setStatusAprovacao(String statusAprovacao) {
 		this.statusAprovacao = statusAprovacao;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getStatusIntegracao() {
+		return statusIntegracao;
+	}
+
+	/**
+	 * @param statusIntegracao
+	 */
+	public void setStatusIntegracao(String statusIntegracao) {
+		this.statusIntegracao = statusIntegracao;
 	}
 
 	/**
@@ -565,6 +583,5 @@ public class DiferencaVO implements Serializable {
 	public void setExistemRateios(boolean existemRateios) {
 		this.existemRateios = existemRateios;
 	}
-
 
 }

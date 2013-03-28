@@ -444,11 +444,18 @@ var ConferenciaEncalhe = $.extend(true, {
 					form: $("#dialog-reabertura", this.workspace).parents("form"),
 					close : function(){
 						
-						var refCampoCEJornaleiro = $("span.dadosFiltro").find("input:text");
-						if(refCampoCEJornaleiro.val()==undefined){
+						if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
+							
+							focusSelectRefField($("#vlrCE", ConferenciaEncalhe.workspace));
+						
+						} else if( $("#qtdCE", ConferenciaEncalhe.workspace).length != 0 ) {
+							
+							focusSelectRefField($("#qtdCE", ConferenciaEncalhe.workspace));
+						
+						} else {
+							
 							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
-						}else{
-							focusSelectRefField(refCampoCEJornaleiro);
+							
 						}
 					}					
 				});
@@ -465,7 +472,21 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.ifCotaEmiteNfe(data, ConferenciaEncalhe.popup_alert);
 				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
+					
+					focusSelectRefField($("#vlrCE", ConferenciaEncalhe.workspace));
+				
+				} else if( $("#qtdCE", ConferenciaEncalhe.workspace).length != 0 ) {
+					
+					focusSelectRefField($("#qtdCE", ConferenciaEncalhe.workspace));
+				
+				} else {
+					
+					focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+					
+				}
+
+				
 			}
 			
 			ConferenciaEncalhe.limparDadosProduto();
@@ -808,10 +829,24 @@ var ConferenciaEncalhe = $.extend(true, {
 		$(".dadosFiltro", ConferenciaEncalhe.workspace).show();
 		$("#nomeCota", ConferenciaEncalhe.workspace).text(result.razaoSocial);
 		$("#statusCota", ConferenciaEncalhe.workspace).text(result.situacao);
+		
+		if( $("#vlrCE", ConferenciaEncalhe.workspace).length != 0 ){
+			
+			focusSelectRefField($("#vlrCE", ConferenciaEncalhe.workspace));
+		
+		} else if( $("#qtdCE", ConferenciaEncalhe.workspace).length != 0 ) {
+			
+			focusSelectRefField($("#qtdCE", ConferenciaEncalhe.workspace));
+		
+		} else {
+			
+			focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+			
+		}
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
-		
+		/*
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
 				null,
 				function(resultado){
@@ -829,10 +864,10 @@ var ConferenciaEncalhe = $.extend(true, {
 					w.print();
 					w.close();
 				}
-		);
+		); */
 		
-		/*var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
-		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);*/		
+		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
+		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
 	},
 	
 	carregarGridItensNotaFiscal : function (modeloConferenciaEncalhe) {
