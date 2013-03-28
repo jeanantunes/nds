@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.VisaoEstoqueTransferenciaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -244,16 +245,22 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			diferenca.setProdutoEdicao(produtoEdicao);
 			diferenca.setQtde(qtdeDiferenca.abs());
 			
+			StatusAprovacao statusAprovacao = null;
+			
 			if (BigInteger.ZERO.compareTo(qtdeDiferenca) < 0) {
 				
 				diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
 				
+				statusAprovacao = StatusAprovacao.GANHO;
+				
 			} else {
 				
 				diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+				
+				statusAprovacao = StatusAprovacao.PERDA;
 			}
 			
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque, statusAprovacao);
 		}
 	}
 
