@@ -53,6 +53,9 @@
 			</props>
 		</property>
 		
+		<property name="entityInterceptor">
+    		<ref local="interceptor" />
+  		</property>
 	</bean>
 
 
