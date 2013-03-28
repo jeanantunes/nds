@@ -1,19 +1,8 @@
 package br.com.abril.nds.process.redutorautomatico;
 
-import static org.junit.Assert.assertEquals;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.service.EstudoServiceEstudo;
 
 public class RedutorAutomaticoTest {
-
+/*
     @Autowired
     private RedutorAutomatico redutorAutomatico;
     
@@ -215,4 +204,6 @@ public class RedutorAutomaticoTest {
 	// Validação do teste
 	assertEquals(BigDecimal.valueOf(0.5), redutorAutomatico.getMenorVenda());
     }
+
+*/
 }

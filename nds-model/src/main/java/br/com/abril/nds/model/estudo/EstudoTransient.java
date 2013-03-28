@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 
 public class EstudoTransient extends Estudo {
@@ -18,12 +19,16 @@ public class EstudoTransient extends Estudo {
 	private BigDecimal reparteMinimo;
 	private BigDecimal somatoriaVendaMedia;
 	private BigDecimal somatoriaReparteEdicoesAbertas;
-	private boolean complementarAutomatico;
 	private BigDecimal totalPDVs;
-	private boolean pracaVeraneio; //TODO verificar alteração pelo parametro do distribuidor
 	private BigInteger ajusteReparte;
 	private BigDecimal excedente;
 	private BigInteger reparteComplementar;
+	
+	private boolean complementarAutomatico;
+	private boolean pracaVeraneio;
+	private boolean geracaoAutomatica;
+	private BigDecimal percentualMaximoFixacao;
+	private BigInteger vendaMediaMais;
 	
 	public BigInteger getReparteDistribuirInicial() {
 		return reparteDistribuirInicial;
@@ -106,5 +111,23 @@ public class EstudoTransient extends Estudo {
 	}
 	public boolean isDistribuicaoPorMultiplos() {
 		return getDistribuicaoPorMultiplos() == 1;
+	}
+	public boolean isGeracaoAutomatica() {
+		return geracaoAutomatica;
+	}
+	public void setGeracaoAutomatica(boolean geracaoAutomatica) {
+		this.geracaoAutomatica = geracaoAutomatica;
+	}
+	public BigDecimal getPercentualMaximoFixacao() {
+		return percentualMaximoFixacao;
+	}
+	public void setPercentualMaximoFixacao(BigDecimal percentualMaximoFixacao) {
+		this.percentualMaximoFixacao = percentualMaximoFixacao;
+	}
+	public BigInteger getVendaMediaMais() {
+		return vendaMediaMais;
+	}
+	public void setVendaMediaMais(BigInteger vendaMediaMais) {
+		this.vendaMediaMais = vendaMediaMais;
 	}
 }
