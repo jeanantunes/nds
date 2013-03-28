@@ -1,9 +1,12 @@
 package br.com.abril.nds.process.calculoreparte;
 
+import java.math.BigDecimal;
+
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.ClassificacaoCota;
-import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -18,15 +21,15 @@ import br.com.abril.nds.process.ProcessoAbstrato;
 public class MinimoMaximo extends ProcessoAbstrato {
 
     @Override
-    public void executarProcesso() throws Exception {
+    public void executar(EstudoTransient estudo) throws Exception {
 
-	for (Cota cota : getEstudo().getCotas()) {
+	for (CotaEstudo cota : estudo.getCotas()) {
 	    if ((cota.getReparteMinimo() != null) && (cota.getReparteMaximo() != null)) {
 		if (cota.getReparteMinimo().compareTo(cota.getReparteMaximo()) > 0) {
 		    throw new Exception(String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId()));
 		}
-		if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
-		    cota.setReparteCalculado(cota.getReparteMinimo());
+		if (new BigDecimal(cota.getReparteCalculado()).compareTo(cota.getReparteMinimo()) < 0) {
+		    cota.setReparteCalculado(cota.getReparteMinimo().toBigInteger());
 
 		    if (cota.isMix()) {
 			cota.setClassificacao(ClassificacaoCota.CotaMix);
@@ -34,7 +37,7 @@ public class MinimoMaximo extends ProcessoAbstrato {
 			cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
 		    }
 		} else if (cota.getReparteCalculado().longValue() > cota.getReparteMaximo().longValue()) {
-		    cota.setReparteCalculado(cota.getReparteMaximo());
+		    cota.setReparteCalculado(cota.getReparteMaximo().toBigInteger());
 
 		    if (cota.isMix()) {
 			cota.setClassificacao(ClassificacaoCota.CotaMix);

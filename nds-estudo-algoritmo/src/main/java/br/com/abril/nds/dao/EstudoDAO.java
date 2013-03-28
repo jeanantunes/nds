@@ -3,8 +3,6 @@ package br.com.abril.nds.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -15,16 +13,15 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 @Repository
 public class EstudoDAO {
 
 	@Autowired
-	private DataSource dataSource;
+	private NamedParameterJdbcTemplate jdbcTemplate;
 
 	@Value("#{query_estudo.insertEstudo}")
 	private String insertEstudo;
@@ -38,14 +35,14 @@ public class EstudoDAO {
 	@Value("#{query_estudo.insertProdutoEdicaoBase}")
 	private String insertProdutoEdicaoBase;
 
-	public void gravarEstudo(Estudo estudo) {
-		List<Estudo> estudos = new ArrayList<Estudo>();
+	public void gravarEstudo(EstudoTransient estudo) {
+		List<EstudoTransient> estudos = new ArrayList<>();
 		estudos.add(estudo);
 		Long estudoId = null;
 		try {
 			KeyHolder keyHolder = new GeneratedKeyHolder();
 			SqlParameterSource paramSource = new BeanPropertySqlParameterSource(estudo);
-			new NamedParameterJdbcTemplate(dataSource).update(insertEstudo, paramSource, keyHolder);
+			jdbcTemplate.update(insertEstudo, paramSource, keyHolder);
 			estudoId = keyHolder.getKey().longValue();
 			System.out.println(estudoId);
 		} catch (Exception e) {
@@ -53,10 +50,10 @@ public class EstudoDAO {
 		}
 
 		if (estudoId != null) {
-			List<ProdutoEdicao> listaProdutoEdicao = new ArrayList<>();
-			for (Cota cota : estudo.getCotas()) {
+			List<ProdutoEdicaoEstudo> listaProdutoEdicao = new ArrayList<>();
+			for (CotaEstudo cota : estudo.getCotas()) {
 				cota.setIdEstudo(estudoId);
-				for (ProdutoEdicao produto : cota.getEdicoesRecebidas()) {
+				for (ProdutoEdicaoEstudo produto : cota.getEdicoesRecebidas()) {
 					produto.setIdEstudo(estudoId);
 					produto.setIdCota(cota.getId());
 					listaProdutoEdicao.add(produto);
@@ -64,7 +61,7 @@ public class EstudoDAO {
 			}
 			gravarCotas(estudo.getCotas());
 
-			for (ProdutoEdicaoBase prod : estudo.getEdicoesBase()) {
+			for (ProdutoEdicaoEstudo prod : estudo.getEdicoesBase()) {
 				prod.setIdEstudo(estudoId);
 			}
 			gravarProdutoEdicaoBase(estudo.getEdicoesBase());
@@ -72,22 +69,22 @@ public class EstudoDAO {
 		}
 	}
 
-	public void gravarCotas(final List<Cota> cotas) {
+	public void gravarCotas(final List<CotaEstudo> cotas) {
 		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(cotas.toArray());
-		new NamedParameterJdbcTemplate(dataSource).batchUpdate(insertEstudoCotas, batch);
+		jdbcTemplate.batchUpdate(insertEstudoCotas, batch);
 	}
 
-	public void gravarProdutoEdicao(List<ProdutoEdicao> produtosEdicao) {
+	public void gravarProdutoEdicao(List<ProdutoEdicaoEstudo> produtosEdicao) {
 		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicao.toArray());
-		new NamedParameterJdbcTemplate(dataSource).batchUpdate(insertProdutoEdicao, batch);
+		jdbcTemplate.batchUpdate(insertProdutoEdicao, batch);
 	}
 
-	public void gravarProdutoEdicaoBase(List<ProdutoEdicaoBase> produtosEdicaoBase) {
+	public void gravarProdutoEdicaoBase(List<ProdutoEdicaoEstudo> produtosEdicaoBase) {
 		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicaoBase.toArray());
-		new NamedParameterJdbcTemplate(dataSource).batchUpdate(insertProdutoEdicaoBase, batch);
+		jdbcTemplate.batchUpdate(insertProdutoEdicaoBase, batch);
 	}
 
-	public void carregarPercentuaisProporcao(Estudo estudo) {
+	public void carregarPercentuaisProporcao(EstudoTransient estudo) {
 		// TODO: implementar método para carregar percentuais de venda e pdv da tela de parâmetros do distribuidor (EMS 188)
 	}
 }

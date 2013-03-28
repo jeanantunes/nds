@@ -2,12 +2,12 @@ package br.com.abril.nds.service;
 
 import java.math.BigDecimal;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 public class CotaServiceEstudo {
 
-    public static void calculate(Cota cota) {
+    public static void calculate(CotaEstudo cota) {
 	// Cálculo da Venda Média Final
 	BigDecimal soma = BigDecimal.ZERO;
 
@@ -15,7 +15,7 @@ public class CotaServiceEstudo {
 	cota.setCotaSoRecebeuEdicaoAberta(true);
 	cota.setSomaReparteEdicoesAbertas(BigDecimal.ZERO);
 	if (cota.getEdicoesRecebidas() != null) {
-	    for (ProdutoEdicao edicao : cota.getEdicoesRecebidas()) {
+	    for (ProdutoEdicaoEstudo edicao : cota.getEdicoesRecebidas()) {
 		soma = soma.add(edicao.getVenda());
 		if (edicao.isEdicaoAberta()) {
 		    cota.setSomaReparteEdicoesAbertas(cota.getSomaReparteEdicoesAbertas().add(edicao.getReparte()));

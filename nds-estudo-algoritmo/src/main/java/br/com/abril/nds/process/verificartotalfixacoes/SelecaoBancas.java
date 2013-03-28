@@ -12,11 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.CotaDAO;
-import br.com.abril.nds.model.ClassificacaoCota;
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.CotaDesenglobada;
-import br.com.abril.nds.model.CotaEnglobada;
-import br.com.abril.nds.model.ProdutoEdicao;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaDesenglobada;
+import br.com.abril.nds.model.estudo.CotaEnglobada;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -38,20 +39,20 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	private CotaDAO cotaDAO;
 
 	@Override
-	protected void executarProcesso() {
-		List<Cota> cotasComHistorico = trataCotasComEnglobacao(cotaDAO.getCotasComEdicoesBase(getEstudo()));
+	public void executar(EstudoTransient estudo) {
+		List<CotaEstudo> cotasComHistorico = trataCotasComEnglobacao(cotaDAO.getCotasComEdicoesBase(estudo));
 
 		calcularTotais(cotasComHistorico);
 		
-		getEstudo().setCotas(cotasComHistorico);
+		estudo.setCotas(cotasComHistorico);
 	}
 
-	private void calcularTotais(List<Cota> cotasComHistorico) {
-		for (Cota cota : cotasComHistorico) {
+	private void calcularTotais(List<CotaEstudo> cotasComHistorico) {
+		for (CotaEstudo cota : cotasComHistorico) {
 			BigDecimal totalEdicoes = BigDecimal.ZERO;
 			BigDecimal totalVenda = BigDecimal.ZERO;
 			BigDecimal totalReparte = BigDecimal.ZERO;
-			for (ProdutoEdicao edicao : cota.getEdicoesRecebidas()) {
+			for (ProdutoEdicaoEstudo edicao : cota.getEdicoesRecebidas()) {
 				totalEdicoes.add(BigDecimal.ONE);
 				totalVenda.add(edicao.getVenda());
 				totalReparte.add(edicao.getReparte());
@@ -68,9 +69,9 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		}
 	}
 
-	private List<Cota> trataCotasComEnglobacao(List<Cota> cotasComHistorico) {
-		LinkedHashMap<Long, Cota> cotasComHistoricoMap = new LinkedHashMap<>();
-		for (Cota cota : cotasComHistorico) {
+	private List<CotaEstudo> trataCotasComEnglobacao(List<CotaEstudo> cotasComHistorico) {
+		LinkedHashMap<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
+		for (CotaEstudo cota : cotasComHistorico) {
 			cotasComHistoricoMap.put(cota.getId(), cota);
 		}
 		
@@ -79,7 +80,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 			if (cotasComHistoricoMap.containsKey(cotaDesenglobada.getId())) {
 				cotasComHistoricoMap.get(cotaDesenglobada.getId()).setClassificacao(ClassificacaoCota.EnglobaDesengloba);
 				
-				for (ProdutoEdicao edicaoCotaDesenglobada : cotasComHistoricoMap.get(cotaDesenglobada.getId()).getEdicoesRecebidas()) {
+				for (ProdutoEdicaoEstudo edicaoCotaDesenglobada : cotasComHistoricoMap.get(cotaDesenglobada.getId()).getEdicoesRecebidas()) {
 					BigDecimal reparteInicial = edicaoCotaDesenglobada.getReparte();
 					BigDecimal vendaInicial = edicaoCotaDesenglobada.getVenda();
 					
@@ -89,7 +90,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 						if (cotasComHistoricoMap.containsKey(cotaEnglobada.getId())) {
 							distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cotasComHistoricoMap.get(cotaEnglobada.getId()));
 						} else {
-							Cota cota = cotaDAO.getCotaById(cotaEnglobada.getId());
+							CotaEstudo cota = cotaDAO.getCotaById(cotaEnglobada.getId());
 							distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cota);
 							cotasComHistoricoMap.put(cota.getId(), cota);
 						}
@@ -102,11 +103,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 
 	private void distribuiEnglobacao(BigDecimal reparteInicial,
-			BigDecimal vendaInicial, BigDecimal porcentualEnglobacao, ProdutoEdicao edicaoCotaDesenglobada,
-			Cota cotaEnglobada) {
+			BigDecimal vendaInicial, BigDecimal porcentualEnglobacao, ProdutoEdicaoEstudo edicaoCotaDesenglobada,
+			CotaEstudo cotaEnglobada) {
 		
 		cotaEnglobada.setClassificacao(ClassificacaoCota.EnglobaDesengloba);
-		ProdutoEdicao edicaoCotaEnglobada = buscaEdicaoPorNumeroLancamento(edicaoCotaDesenglobada, cotaEnglobada.getEdicoesRecebidas());
+		ProdutoEdicaoEstudo edicaoCotaEnglobada = buscaEdicaoPorNumeroLancamento(edicaoCotaDesenglobada, cotaEnglobada.getEdicoesRecebidas());
 		
 		BigDecimal reparteTransferir = reparteInicial.multiply(porcentualEnglobacao);
 		edicaoCotaDesenglobada.setReparte(edicaoCotaDesenglobada.getReparte().subtract(reparteTransferir));
@@ -118,8 +119,8 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		
 	}
 
-	private ProdutoEdicao buscaEdicaoPorNumeroLancamento(ProdutoEdicao edicaoCotaDesenglobada, List<ProdutoEdicao> edicoesRecebidas) {
-		for (ProdutoEdicao produtoEdicao : edicoesRecebidas) {
+	private ProdutoEdicaoEstudo buscaEdicaoPorNumeroLancamento(ProdutoEdicaoEstudo edicaoCotaDesenglobada, List<ProdutoEdicaoEstudo> edicoesRecebidas) {
+		for (ProdutoEdicaoEstudo produtoEdicao : edicoesRecebidas) {
 			if(produtoEdicao.getNumeroEdicao().equals(edicaoCotaDesenglobada.getNumeroEdicao())) {
 				return produtoEdicao;
 			}
@@ -127,8 +128,8 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		return atualizaListaCotaEnglobadaComEdicaoClonada(edicaoCotaDesenglobada, edicoesRecebidas);
 	}
 
-	private ProdutoEdicao atualizaListaCotaEnglobadaComEdicaoClonada(ProdutoEdicao edicaoCotaDesenglobada, List<ProdutoEdicao> edicoesRecebidas) {
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+	private ProdutoEdicaoEstudo atualizaListaCotaEnglobadaComEdicaoClonada(ProdutoEdicaoEstudo edicaoCotaDesenglobada, List<ProdutoEdicaoEstudo> edicoesRecebidas) {
+		ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
 		try {
 			BeanUtils.copyProperties(produtoEdicao, edicaoCotaDesenglobada);
 		} catch (IllegalAccessException | InvocationTargetException e) {

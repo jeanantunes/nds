@@ -82,10 +82,10 @@ public class Estudo implements Serializable {
 	private BigInteger reparteDistribuir;
 	
 	@Column(name = "DISTRIBUICAO_POR_MULTIPLOS")
-	private Integer distribuicaoPorMultiplos;
+	private Integer distribuicaoPorMultiplos; //TODO no estudo usa boolean, verificar alteração
 	
 	@Column(name = "PACOTE_PADRAO")
-	private BigInteger pacotePadrao;
+	private BigInteger pacotePadrao; //TODO BigDecimal
 	
 	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_PDV")
 	private BigDecimal percentualProporcaoExcedentePDV;
