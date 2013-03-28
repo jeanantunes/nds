@@ -1055,8 +1055,8 @@ public class ConferenciaEncalheController extends BaseController {
 								null, 
 								TipoDocumentoConferenciaEncalhe.SLIP));
 				
-					byte[] arquivoSlip = TXTUtil.mergeTXTs(arquivos);
-					mapFileNameFile.put("arquivos_cobranca_slip.txt", arquivoSlip);
+					byte[] arquivoSlip = PDFUtil.mergePDFs(arquivos);
+					mapFileNameFile.put("arquivos_cobranca_slip.pdf", arquivoSlip);
 					arquivos.clear();
 				}
 				
