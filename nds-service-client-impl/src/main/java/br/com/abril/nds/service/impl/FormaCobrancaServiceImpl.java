@@ -3,10 +3,13 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.FormaCobrancaExcepion;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
@@ -345,7 +348,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 		
 		if (formaCobranca == null){
 	    	
-	    	throw new ValidacaoException(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor Mínimo "+CurrencyUtil.formatarValorComSimbolo(valor)+"]"+(cota!=null?" [Cota "+cota.getNumeroCota()+"].":"."));
+	    	throw new FormaCobrancaExcepion(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor Mínimo "+CurrencyUtil.formatarValorComSimbolo(valor)+"]"+(cota!=null?" [Cota "+cota.getNumeroCota()+"].":"."));
 	    }
 		
 		return formaCobranca;
