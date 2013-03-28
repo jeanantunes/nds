@@ -32,7 +32,7 @@
 
 	<task:annotation-driven />
 
-	<bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" />
+	<!-- bean id="interceptor" class="br.com.abril.nds.interceptor.auditoria.EntityInterceptor" /-->
 	
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
@@ -53,9 +53,9 @@
 			</props>
 		</property>
 	
-		<property name="entityInterceptor">
+		<!-- property name="entityInterceptor">
     		<ref local="interceptor" />
-  		</property>
+  		</property-->
 	</bean>
 
 	<bean id="transactionManager"
