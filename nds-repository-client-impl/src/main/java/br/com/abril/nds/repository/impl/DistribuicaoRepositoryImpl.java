@@ -2,9 +2,11 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
 import java.util.List;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -73,7 +75,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		
 		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
 			
-			query.setParameter("idFornecedores", filtro.getIdsFornecedores());
+			query.setParameterList("idFornecedores", filtro.getIdsFornecedores());
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
