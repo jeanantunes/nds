@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
@@ -146,6 +148,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	
+	@Autowired
+	private PlatformTransactionManager transactionManager;
 	
 	
 	
@@ -441,22 +447,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 	}
 	
-	@Override
-	@Transactional
-	public void cobrarTodasCotas(Date dataOperacao, Usuario usuario) {
-
-		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-				this.fechamentoEncalheRepository.obterCotasAusentes(dataOperacao, true, null, null, 0, 0);
-
-		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
-
-			Cota cota = this.cotaRepository.buscarPorId(cotaAusente.getIdCota());
-
-			realizarCobrancaCotas(dataOperacao, usuario, cota);
-		}
-	}
 	
-	private void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, Cota cota) {
+
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
+	public void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, Cota cota) {
 
 		try {
 			
@@ -516,8 +511,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
 			
 			
-		} catch (ValidacaoException e) {
-			throw new ValidacaoException(e.getValidacao());
+		
 		} catch (GerarCobrancaValidacaoException e) {
 			throw e.getValidacaoException();
 		} 
