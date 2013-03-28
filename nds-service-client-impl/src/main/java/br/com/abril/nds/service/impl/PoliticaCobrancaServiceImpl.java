@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -246,7 +247,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				parametroCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
 				parametroCobrancaDTO.setEnvioEmail(formaCobranca.isRecebeCobrancaEmail()?true:false);
 				parametroCobrancaDTO.setVencimentoDiaUtil(formaCobranca.isVencimentoDiaUtil()?true:false);
-				parametroCobrancaDTO.setValorMinimo(formaCobranca.getValorMinimoEmissao());
+				parametroCobrancaDTO.setValorMinimo(formaCobranca.getValorMinimoEmissao().setScale(2, RoundingMode.HALF_UP));
 				parametroCobrancaDTO.setFormaCobrancaBoleto(formaCobranca.getFormaCobrancaBoleto());
 				
 				
