@@ -54,6 +54,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/mapaAbastecimento")
+@Rules(Permissao.ROLE_EXPEDICAO_MAPA_ABASTECIMENTO)
 public class MapaAbastecimentoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMapaAbastecimento";
@@ -94,7 +95,7 @@ public class MapaAbastecimentoController extends BaseController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_EXPEDICAO_MAPA_ABASTECIMENTO)
+	@Path("/")
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);

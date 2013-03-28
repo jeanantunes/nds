@@ -40,6 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/ajusteReparte")
+@Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE)
 public class AjusteReparteController extends BaseController {
 	
 	@Autowired
@@ -61,8 +62,7 @@ public class AjusteReparteController extends BaseController {
 		this.result = result;
 	}
 	
-	@Path("/")
-	@Rules(Permissao.ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE)
+	@Path("/")	
 	public void index(){
 		this.carregarComboMotivoStatusCota();
 		this.carregarComboSegmento();

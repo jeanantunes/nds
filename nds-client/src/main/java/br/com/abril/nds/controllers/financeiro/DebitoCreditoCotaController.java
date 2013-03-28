@@ -70,6 +70,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/financeiro/debitoCreditoCota")
+@Rules(Permissao.ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA)
 public class DebitoCreditoCotaController extends BaseController{
 
 	@Autowired
@@ -112,7 +113,6 @@ public class DebitoCreditoCotaController extends BaseController{
 	private static final String FILTRO_SESSION_ATTRIBUTE = "pesquisaDebitoCreditoCota";
 
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA)
 	public void index() { 
 		preencherComboTipoMovimento();
 		preencherComboBaseCalculo();

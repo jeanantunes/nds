@@ -45,6 +45,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/romaneio")
+@Rules(Permissao.ROLE_EXPEDICAO_ROMANEIOS)
 public class RomaneioController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_ROMANEIOS = "filtroRomaneio";
@@ -69,7 +70,6 @@ public class RomaneioController extends BaseController {
 	
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_EXPEDICAO_ROMANEIOS)
 	public void index() {
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_ROMANEIOS, null);
 		carregarComboBox();

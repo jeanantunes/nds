@@ -854,28 +854,34 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
-		
+		/*
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
 				null,
 				function(resultado){
+//					var html = "<html><body><applet code=Impressao.class width=1 height=1></applet><pre>";
+//					html+=resultado.resultado
+//					html+="</pre></body></html>";
+//					
+//					window.location =  html;
+			
 					var w = window.open();
 					self.focus();
 					w.document.open();
 					w.document.write('<html>');
+					w.document.write('<head></head>');
 					w.document.write('<body>');
-					w.document.write('<pre>');
-					w.document.write(resultado.resultado);
-					w.document.write('</pre>');
+					w.document.write('<pre>'+resultado.resultado+'</pre>');
+					w.document.write('<applet code="br.com.abril.nds.print.Impressao.class" width=320 height=80></applet>');
 					w.document.write('</body>');
 					w.document.write('</html>');
-					w.document.close();
-					w.print();
-					w.close();
+//					w.document.close();
+//					w.print();
+//					w.close();
 				}
-		);
+		); */
 		
-		/*var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
-		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);*/		
+		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
+		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
 	},
 	
 	carregarGridItensNotaFiscal : function (modeloConferenciaEncalhe) {

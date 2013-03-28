@@ -44,6 +44,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/administracao/painelProcessamento")
+@Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO)
 public class PainelProcessamentoController extends BaseController {
 
 	@Autowired
@@ -71,7 +72,6 @@ public class PainelProcessamentoController extends BaseController {
 	private static final int PROCESSO  = 2;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_PAINEL_PROCESSAMENTO)
 	public void index() {
 	}
 

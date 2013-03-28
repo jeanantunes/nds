@@ -67,6 +67,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/devolucao/digitacao/contagem")
+@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO)
 public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Autowired
@@ -103,7 +104,6 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO)
 	public void index(){
 		
 		/**

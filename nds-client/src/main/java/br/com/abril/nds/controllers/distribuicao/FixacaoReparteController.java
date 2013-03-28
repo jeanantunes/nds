@@ -45,6 +45,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/fixacaoReparte")
+@Rules(Permissao.ROLE_DISTRIBUICAO_FIXACAO_REPARTE)
 public class FixacaoReparteController extends BaseController {
 	
 	private static final String FILTRO_PRODUTO_SESSION_ATTRIBUTE = "filtroPorProduto";
@@ -85,10 +86,7 @@ public class FixacaoReparteController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	
-	
 
-	@Rules(Permissao.ROLE_DISTRIBUICAO_FIXACAO_REPARTE)
 	@Path("/")
 	public void index(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());

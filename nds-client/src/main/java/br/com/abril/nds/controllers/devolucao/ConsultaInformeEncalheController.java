@@ -47,6 +47,7 @@ import br.com.caelum.vraptor.Result;
  */
 @Resource
 @Path(value = "/devolucao/informeEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_CONSULTA_INFORME_ENCALHE)
 public class ConsultaInformeEncalheController extends BaseController {
 
 	@Autowired
@@ -74,8 +75,7 @@ public class ConsultaInformeEncalheController extends BaseController {
 		inicioDaSemana = distribuidorService.inicioSemana();
 	}
 
-	@Get("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CONSULTA_INFORME_ENCALHE)
+	@Path("/")
 	public void index() {
 		result.include("fornecedores", fornecedorService
 				.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));

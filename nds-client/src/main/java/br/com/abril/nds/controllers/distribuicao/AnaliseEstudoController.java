@@ -28,6 +28,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/analiseEstudo")
+@Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS)
 public class AnaliseEstudoController extends BaseController {
 	
 	@Autowired
@@ -49,7 +50,6 @@ public class AnaliseEstudoController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS)
 	public void index(){
 		this.carregarComboClassificacao();
 	}

@@ -59,6 +59,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/transportador")
+@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR)
 public class TransportadorController extends BaseController {
 
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoTransportador";
@@ -112,7 +113,6 @@ public class TransportadorController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR)
 	public void index(){
 		
 		this.limparDadosSessao();
