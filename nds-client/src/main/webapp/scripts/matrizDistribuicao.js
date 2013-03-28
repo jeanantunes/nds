@@ -40,9 +40,10 @@
 			function(result) {
 				
 				T.carregarGrid();
-			},
+			}
+//			,
 			
-			T.escondeGrid()
+//			T.escondeGrid()
 		);
 	},
 	

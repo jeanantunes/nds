@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -33,6 +34,7 @@ import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -64,6 +66,9 @@ public class ProdutoEdicaoController extends BaseController {
 	@Autowired
 	private LancamentoService lancamentoService;
 
+	@Autowired
+	private TipoSegmentoProdutoService tipoSegmentoProdutoService;
+	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
 	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
@@ -75,6 +80,8 @@ public class ProdutoEdicaoController extends BaseController {
 	private static List<ItemDTO<GrupoProduto,String>> listaGrupoProduto =  new ArrayList<ItemDTO<GrupoProduto,String>>();
 	
 	private static List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
+	
+	private static List<ItemDTO<Long,String>> listaTipoSegmentoProduto =  new ArrayList<ItemDTO<Long,String>>();
 
 	
 	/** Traz a página inicial. */
@@ -122,7 +129,6 @@ public class ProdutoEdicaoController extends BaseController {
 		result.include("listaGrupoProduto",listaGrupoProduto);
 		
 		listaStatusLancamento.clear();
-		
 		for (StatusLancamento statusLancamento : StatusLancamento.values()) {
 			
 			listaStatusLancamento.add(
@@ -131,6 +137,15 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		result.include("listaStatusLancamento", listaStatusLancamento);
+		
+		listaTipoSegmentoProduto.clear();
+		for (TipoSegmentoProduto tipoSegmentoProduto : tipoSegmentoProdutoService.obterTipoSegmentoProduto()) {
+			listaTipoSegmentoProduto.add(
+					new ItemDTO<Long, String>(
+							tipoSegmentoProduto.getId(), tipoSegmentoProduto.getDescricao()));
+		}
+		
+		result.include("listaTipoSegmentoProduto", listaTipoSegmentoProduto);
 		
 		List<Brinde> brindes = brindeService.obterBrindes();
 		result.include("brindes", brindes);
@@ -234,7 +249,7 @@ public class ProdutoEdicaoController extends BaseController {
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
 			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
-            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario) {
+            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria, long tipoSegmentoProdutoId) {
 			
 		BigDecimal pPrevisto = precoPrevisto!=null?new BigDecimal(this.getValorSemMascara(precoPrevisto)):null;
 		BigDecimal pVenda = precoVenda!=null?new BigDecimal(this.getValorSemMascara(precoVenda)):null;
@@ -277,8 +292,7 @@ public class ProdutoEdicaoController extends BaseController {
 		dto.setClasseSocial(classeSocial);
 		dto.setFaixaEtaria(faixaEtaria);
 		dto.setSexo(sexo);
-		dto.setTemaPrincipal(temaPrincipal);
-		dto.setTemaSecundario(temaSecundario);
+		dto.setTipoSegmentoProdutoId(tipoSegmentoProdutoId);
 		
 		ValidacaoVO vo = null;
 		 
