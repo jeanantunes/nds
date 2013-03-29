@@ -145,7 +145,8 @@ public class EstudoServiceEstudo {
 		}
 		estudo.getProduto().setPacotePadrao(0);
 		
-		//TODO chamar DAO com parametros distribuidor
+		estudoDAO.carregarParametrosDistribuidor(estudo);
+		estudoDAO.carregarPercentuaisExcedente(estudo);
 	}
 
 	public LinkedList<ProdutoEdicaoEstudo> buscaEdicoesPorLancamento(ProdutoEdicaoEstudo edicao) {

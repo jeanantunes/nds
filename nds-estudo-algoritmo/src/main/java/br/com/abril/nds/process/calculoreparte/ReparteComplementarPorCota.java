@@ -26,6 +26,7 @@ import br.com.abril.nds.process.ajustefinalreparte.GravarReparteFinalCota;
  * {@link GravarReparteFinalCota}
  * </p>
  */
+@Deprecated
 public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
 	private List<Ordenador> ordenadorList = new ArrayList<Ordenador>();
