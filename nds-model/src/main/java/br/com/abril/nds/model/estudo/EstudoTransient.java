@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -31,6 +32,8 @@ public class EstudoTransient extends Estudo {
 	private boolean geracaoAutomatica;
 	private BigDecimal percentualMaximoFixacao;
 	private BigInteger vendaMediaMais;
+	
+	private Map<String, PercentualExcedenteEstudo> percentualExcedente;
 	
 	public BigInteger getReparteDistribuirInicial() {
 		return reparteDistribuirInicial;
@@ -143,5 +146,11 @@ public class EstudoTransient extends Estudo {
 	}
 	public void setStatusEstudo(String statusEstudo) {
 	    this.statusEstudo = statusEstudo;
+	}
+	public Map<String, PercentualExcedenteEstudo> getPercentualExcedente() {
+		return percentualExcedente;
+	}
+	public void setPercentualExcedente(Map<String, PercentualExcedenteEstudo> percentualExcedente) {
+		this.percentualExcedente = percentualExcedente;
 	}
 }
