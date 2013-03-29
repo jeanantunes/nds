@@ -1,10 +1,17 @@
-var distribuicaoManualController = $.extend(true, {
+var distribuicaoManual = $.extend(true, {
 	
 	totalDistribuido : 0,
 	totalADistribuir : 0,
+	rowCount : 0,
+	inputNomeCota : '<div class="textoGridCota" id="nomeCotaGrid#index" >#valor</div>',
+	inputPercEstoque : '<div class="textoGridCota" id="percEstoqueGrid#index" >#valor</div>',
+	inputReparte : '<div><input type="text" id="reparteGrid#index" name="reparteGrid" value="#valor" onchange="distribuicaoManual.calcularPercEstoque(#index)" class="inputGridCota" /></div>',
+	inputNumeroCota : '<div><input type="text" id="numeroCotaGrid#index" name="numeroCotaGrid" value="#valor" onchange="distribuicaoManual.pesquisarCota(\'#numeroCotaGrid#index\', #index)" class="inputGridCota" /></div>',
 	
 	init : function() {
 		this.configGrid();
+		$(".estudosManuaisGrid", distribuicaoManual.workspace).find('tbody').append(distribuicaoManual.construirLinhaVazia());
+		distribuicaoManual.rowCount++;
 		this.atualizarTotalDistribuido(0);
 	},
 	
@@ -17,43 +24,67 @@ var distribuicaoManualController = $.extend(true, {
 		totalDistribuido = valor;
 		$('#totalDistribuido').html(valor);
 	},
-	
-	calcularPercEstoque : function(index) {
+
+	somarReparteDistribuido : function() {
 		
 	},
 	
-	criarInputNumeroCota : function(resultado, index){
-		var valor = "";
-		if(resultado && resultado.numeroCota){
-			valor = resultado.numeroCota;
+	calcularPercEstoque : function(index) {
+		$("#percEstoqueGrid"+ index, distribuicaoManual.workspace).html('0');
+		var repCota = parseInt($("#reparteGrid"+ index, distribuicaoManual.workspace).val());
+		var repDistrib = parseInt($('#repDistribuir').html());
+		var totalDistribuido = distribuicaoManual.somarReparteDistribuido;
+		if (repCota < repDistrib) {
+			totalDistribuido += repCota;
+			if (totalDistribuido <= repDistrib) {
+				$("#percEstoqueGrid"+ index, distribuicaoManual.workspace).html(Math.floor((repCota / repDistrib) * 100), 1);
+				$('#totalDistribuido').html(totalDistribuido);
+			} else {
+				$("#reparteGrid"+ index, distribuicaoManual.workspace).val('');
+				exibirMensagemDialog('ERROR', ['Você não possui saldo suficiente para distribuir essa quantidade para a cota, reveja os valores.'], '');
+				$("#reparteGrid"+ index, distribuicaoManual.workspace).focus();
+			}
+		} else {
+			$("#reparteGrid"+ index, distribuicaoManual.workspace).val('');
+			exibirMensagemDialog('ERROR', ['O reparte da cota deve ser menor que o Total a Distribuir.'], '');
+			$("#reparteGrid"+ index, distribuicaoManual.workspace).focus();
 		}
-		var parametroPesquisaCota ='\'#numeroCotaGrid'+ index+ '\',' + index;
-		var inputNumeroCota = '<div><input type="text" id="numeroCotaGrid'+ index +'" name="numeroCotaGrid" value="'+ valor
-								+ '" onchange="distribuicaoManualController.pesquisarCota('+ parametroPesquisaCota
-								+ ')" class="inputGridCota" /></div>';
-		return inputNumeroCota;
 	},
 	
-	criarInputReparte : function(resultado, index){
-		var valor = 0;
-		if(resultado && resultado.reparte){
-			valor = resultado.reparte;
+	construirLinhaVazia : function() {
+		var linhaVazia = '';
+		if (!$('.estudosManuaisGrid', distribuicaoManual.workspace).find('tbody')[0]) {
+			linhaVazia += '<tbody>';
 		}
-		var inputReparte = '<div><input type="text" id="reparteGrid'+ index +'" name="reparteGrid" value="'+ valor
-								+ '" onchange="distribuicaoManualController.calcularPercEstoque('+ index
-								+ ')" class="inputGridCota" /></div>';
-		return inputReparte;
+		linhaVazia += '<tr id="row'+ (distribuicaoManual.rowCount + 1) +'"><td align="left" abbr="numeroCota"><div style="text-align: left; width: 90px;">';
+		linhaVazia += distribuicaoManual.inputNumeroCota.replace(/#index/g, distribuicaoManual.rowCount).replace(/#valor/g, '');
+		linhaVazia += '</div></td><td align="left" abbr="nomeCota"><div style="text-align: left; width: 135px;">';
+		linhaVazia += distribuicaoManual.inputNomeCota.replace(/#index/g, distribuicaoManual.rowCount).replace(/#valor/g, '');
+		linhaVazia += '</div></td><td align="center" abbr="reparte"><div style="text-align: center; width: 65px;">';
+		linhaVazia += distribuicaoManual.inputReparte.replace(/#index/g, distribuicaoManual.rowCount).replace(/#valor/g, '0');
+		linhaVazia += '</div></td><td align="center" abbr="percEstoque"><div style="text-align: center; width: 80px;">';
+		linhaVazia += distribuicaoManual.inputPercEstoque.replace(/#index/g, distribuicaoManual.rowCount).replace(/#valor/g, '0');
+		linhaVazia += '</div></td></tr>';
+		if (!$('.estudosManuaisGrid', distribuicaoManual.workspace).find('tbody')[0]) {
+			linhaVazia += '</tbody>';
+			$('.estudosManuaisGrid', distribuicaoManual.workspace).append(linhaVazia);
+		} else {
+			$('.estudosManuaisGrid', distribuicaoManual.workspace).find('tbody').append(linhaVazia);
+		}
+		distribuicaoManual.rowCount++;
 	},
 	
 	pesquisarCota : function(numeroCota, index) {
 		
 		if($(numeroCota).val().trim().length == 0){
+			$("#row"+ (index + 1), distribuicaoManual.workspace)[0].remove();
  			return;
  		}
  		$.postJSON(contextPath + "/distribuicaoManual/consultarCota",
 				{numeroCota : $(numeroCota).val().trim()},
 				function(result){
-					$("#nomeCotaGrid"+ index, distribuicaoManualController.workspace).text(result.nomeCota);
+					$("#nomeCotaGrid"+ index, distribuicaoManual.workspace).text(result.nomePessoa);
+					distribuicaoManual.construirLinhaVazia();
  				},
  				function(result){
 					//Verifica mensagens de erro do retorno da chamada ao controller.
@@ -67,27 +98,8 @@ var distribuicaoManualController = $.extend(true, {
 		);
 	},
 	
-	refreshGrid : function(resultado) {
-		$.each(resultado.rows, function(index, row) {
-			if (row.cell.numeroCota == null) {								
-				row.cell.numeroCota = distribuicaoManualController.criarInputNumeroCota(resultado, index) ;
-				row.cell.nomeCota = '<div class="textoGridCota" id="nomeCotaGrid'+index+'" ></div>';
-				row.cell.reparte = distribuicaoManualController.criarInputReparte(resultado, index);
-				row.cell.percEstoque = '<div class="textoGridCota" id="percEstoqueGrid'+index+'" ></div>';
-			} else {
-				row.cell.numeroCota = distribuicaoManualController.criarInputNumeroCota(resultado, index) ;
-				row.cell.nomeCota = '<div class="textoGridCota" id="nomeCotaGrid'+index+'" >'+ row.cell.nomeCota +'</div>';
-				row.cell.reparte = distribuicaoManualController.criarInputReparte(resultado, index);
-				row.cell.percEstoque = '<div class="textoGridCota" id="percEstoqueGrid'+index+'" ></div>';
-			}		
-		});
-		return resultado;
-	},
-	
 	configGrid : function () {
-		$(".estudosManuaisGrid", distribuicaoManualController.workspace).flexigrid({
-			preProcess: distribuicaoManualController.refreshGrid,
-			url: pathTela +'/distribuicaoManual/carregarGridVazia',
+		$(".estudosManuaisGrid", distribuicaoManual.workspace).flexigrid({
 			dataType : 'json',
 				colModel : [ {
 					display : 'Cota',
@@ -114,7 +126,7 @@ var distribuicaoManualController = $.extend(true, {
 					sortable : true,
 					align : 'center'
 				}],
-				width : 400,
+				width : 447,
 				height : 270
 			});
 	}

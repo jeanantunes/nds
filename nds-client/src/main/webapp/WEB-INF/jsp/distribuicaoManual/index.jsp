@@ -3,7 +3,7 @@
 
 <script type="text/javascript">
 	$(function() {
-		distribuicaoManualController.init();
+		distribuicaoManual.init();
 	});
 </script>
 
@@ -57,7 +57,7 @@
 								<table width="376" border="0" cellspacing="2" cellpadding="2">
 									<tr>
 										<td width="106"><strong>Estudo:</strong></td>
-										<td width="256">${produto.idEstudo}</td>
+										<td width="256" id="estudo">${produto.idEstudo}</td>
 									</tr>
 									<tr>
 										<td><strong>Código:</strong></td>
@@ -83,9 +83,9 @@
 							</fieldset>
 
 						</td>
-						<td style="width: 20px;">&nbsp;</td>
+						<td style="width: 15px;">&nbsp;</td>
 						<td valign="top">
-							<fieldset style="width: 400px;">
+							<fieldset style="width: 450px;">
 								<legend>Distribuição Manual</legend>
 								<table class="estudosManuaisGrid"></table>
 
@@ -96,7 +96,7 @@
 									</tr>
 									<tr>
 										<td><strong>Total A Distribuir:</strong></td>
-										<td>${produto.reparte}</td>
+										<td id="repDistribuir">${produto.reparte}</td>
 									</tr>
 								</table>
 							</fieldset>
@@ -104,12 +104,12 @@
 					</tr>
 				</table>
 				<span class="bt_novos">
-					<a href="#" onclick="distribuicaoManualController.voltar();">
+					<a href="#" onclick="distribuicaoManual.voltar();">
 						<img src="${pageContext.request.contextPath}/images/seta_voltar.gif"
 						alt="Voltar" hspace="5" border="0" />Voltar</a>
 				</span>
 				<span class="bt_novos">
-					<a href="#" onclick="distribuicaoManualController.voltar();">
+					<a href="#" onclick="distribuicaoManual.voltar();">
 						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
 						alt="Cancelar" hspace="5" border="0" />Cancelar</a>
 				</span>
