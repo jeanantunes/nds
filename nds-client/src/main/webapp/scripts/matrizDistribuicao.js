@@ -147,9 +147,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		if (typeof resultadoPesquisa[0] == 'undefined' || resultadoPesquisa[0].rows.length == 0) {
 			T.escondeGrid();
 		} else {
-		$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
-		$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
-		
+			$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
+			$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
+			
 			$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
 		}
 		
@@ -184,21 +184,23 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		row.cell.suplem = parseInt(row.cell.suplem, 10);
 		
 		T.lancamentos.push({
-			idLancamento:				row.cell.idLancamento, 
-			estudo:                     row.cell.idEstudo,
-			lancto:                     row.cell.reparte,
-			promo:                      row.cell.promo,
-			repDistrib:                 repDist,
-			sobra:                      repDist,
-			codigoProduto:              row.cell.codigoProduto,
-			edicao:                     row.cell.numeroEdicao,
-			nomeProduto:                row.cell.nomeProduto,
-			classificacao:              row.cell.classificacao,
-			dataLancto:                 row.cell.dataLancto,
-			reparte:					row.cell.reparte,
-			pctPadrao:					row.cell.pctPadrao,
-			liberado:					liberado,
-			dataFinMatDistrib:          row.cell.dataFinMatDistrib
+					idLancamento : row.cell.idLancamento,
+					estudo : row.cell.idEstudo,
+					lancto : row.cell.lancto,
+					promo : row.cell.promo,
+					suplem : row.cell.suplem,
+					juram : row.cell.juram,
+					repDistrib : repDist,
+					sobra : repDist,
+					codigoProduto : row.cell.codigoProduto,
+					idProdutoEdicao : row.cell.idProdutoEdicao,
+					edicao : row.cell.numeroEdicao,
+					nomeProduto : row.cell.nomeProduto,
+					classificacao : row.cell.classificacao,
+					dataLancto : row.cell.dataLancto,
+					reparte : row.cell.reparte,
+					pctPadrao : row.cell.pctPadrao,
+					liberado : liberado
 		});
 		
 	},
