@@ -1,4 +1,4 @@
-package br.com.abril.nds.controllers.distribuicao;
+﻿package br.com.abril.nds.controllers.distribuicao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
-import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.service.CotaService;
@@ -20,7 +19,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Path("/distribuicaoManual")
 @Resource
-public class DistribuicaoManualController extends BaseController {
+public class DistribuicaoManualController {
 
     @Autowired
     private Result result;

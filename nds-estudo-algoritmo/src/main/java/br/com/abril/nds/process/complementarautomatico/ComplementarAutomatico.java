@@ -29,7 +29,7 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 	@Override
 	public void executar(EstudoTransient estudo) {
 		if ((estudo.getProduto() != null) && (estudo.getEdicoesBase() != null)) {
-			if ((estudo.isComplementarAutomatico()) && (estudo.getEdicoesBase().size() == 1) && (estudo.getProduto().isColecao())) {
+			if ((estudo.isComplementarAutomatico()) && ((estudo.getProduto().getNumeroEdicao() == 1) || (!estudo.getProduto().isColecao()))) {
 				estudo.setExcedente(new BigDecimal(estudo.getReparteDistribuir()).subtract(estudo.getSomatoriaVendaMedia()));
 				BigDecimal percentualExcedente = BigDecimal.ZERO;
 				if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
@@ -74,8 +74,9 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 					if (estudo.isDistribuicaoPorMultiplos()) {
 						estudo.setReparteComplementar(estudo.getPacotePadrao());
 					} else {
-						// RepComplementar = Excedente * 2%
-						if (BigDecimal.valueOf(100).divide(estudo.getExcedente(), 2, BigDecimal.ROUND_FLOOR).doubleValue() < 10) {
+						// RepComplementar = Excedente * 2%`
+					    // 2 / EXCEDENTE > 0.1
+						if (BigDecimal.valueOf(2).divide(estudo.getExcedente(), 2, BigDecimal.ROUND_FLOOR).compareTo(BigDecimal.valueOf(0.1)) < 0) {
 							if (2 > estudo.getExcedente().multiply(BigDecimal.valueOf(0.02)).doubleValue()) {
 								estudo.setReparteComplementar(BigInteger.valueOf(2));
 							} else {

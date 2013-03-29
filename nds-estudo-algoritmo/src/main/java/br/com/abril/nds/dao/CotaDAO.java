@@ -112,6 +112,7 @@ public class CotaDAO {
 				cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
 				cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
 				cota.setMix(rs.getInt("MIX") == 1);
+				cota.setRegiao(rs.getInt("REGIAO_ID"));
 				traduzAjusteReparte(rs, cota);
 				cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos));
 				return cota;

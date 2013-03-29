@@ -42,17 +42,14 @@ import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
 
 /**
- * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
- * as cotas encontradas para o perfil definido no setup do estudo, levando em
- * consideração todas as variáveis também definidas no setup.
+ * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
+ * setup do estudo, levando em consideração todas as variáveis também definidas no setup.
  * <p style="white-space: pre-wrap;">
- * SubProcessos: - {@link DefinicaoBases} - {@link SomarFixacoes} -
- * {@link VerificarTotalFixacoes} - {@link MontaTabelaEstudos} -
- * {@link CorrecaoVendas} - {@link Medias} - {@link Bonificacoes} -
- * {@link AjusteCota} - {@link JornaleirosNovos} - {@link VendaMediaFinal} -
- * {@link AjusteReparte} - {@link RedutorAutomatico} - {@link ReparteMinimo} -
- * {@link ReparteProporcional} - {@link EncalheMaximo} -
- * {@link ComplementarAutomatico} - {@link CalcularReparte} Processo Pai: - N/A
+ * SubProcessos: - {@link DefinicaoBases} - {@link SomarFixacoes} - {@link VerificarTotalFixacoes} - {@link MontaTabelaEstudos} -
+ * {@link CorrecaoVendas} - {@link Medias} - {@link Bonificacoes} - {@link AjusteCota} - {@link JornaleirosNovos} -
+ * {@link VendaMediaFinal} - {@link AjusteReparte} - {@link RedutorAutomatico} - {@link ReparteMinimo} -
+ * {@link ReparteProporcional} - {@link EncalheMaximo} - {@link ComplementarAutomatico} - {@link CalcularReparte} Processo Pai: -
+ * N/A
  * 
  * Processo Anterior: N/A Próximo Processo: N/A
  * </p>
@@ -122,39 +119,41 @@ public class EstudoServiceEstudo {
     @Autowired
     private JornaleirosNovos jornaleirosNovos;
 
-	public static void calculate(EstudoTransient estudo) {
+    public static void calculate(EstudoTransient estudo) {
 	// Somatória da venda média de todas as cotas e
 	// Somatória de reparte das edições abertas de todas as cotas
 	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
 	estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
-		for (CotaEstudo cota : estudo.getCotas()) {
+	estudo.setTotalPDVs(BigDecimal.ZERO);
+	for (CotaEstudo cota : estudo.getCotas()) {
 	    CotaServiceEstudo.calculate(cota);
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
 		    ClassificacaoCota.RedutorAutomatico)) {
 		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
 	    }
 	    estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
+	    estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
 	}
     }
 
-	public void carregarParametros(EstudoTransient estudo) {
-		// FIXME validar regra de pacotePadrao
-		estudo.setProduto(produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(estudo.getProduto().getProduto().getCodigo()));
+    public void carregarParametros(EstudoTransient estudo) {
+	// FIXME validar regra de pacotePadrao
+	estudo.setProduto(produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(estudo.getProduto().getProduto().getCodigo()));
 	if (estudo.getPacotePadrao() == null) {
-			estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProduto().getPacotePadrao()));
+	    estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProduto().getPacotePadrao()));
 	}
-		estudo.getProduto().setPacotePadrao(0);
-		
-		//TODO chamar DAO com parametros distribuidor
+	estudo.getProduto().setPacotePadrao(0);
+
+	// TODO chamar DAO com parametros distribuidor
     }
 
-	public LinkedList<ProdutoEdicaoEstudo> buscaEdicoesPorLancamento(ProdutoEdicaoEstudo edicao) {
+    public LinkedList<ProdutoEdicaoEstudo> buscaEdicoesPorLancamento(ProdutoEdicaoEstudo edicao) {
 	log.info("Buscando edições para estudo.");
 	return definicaoBasesDAO.listaEdicoesPorLancamento(edicao);
     }
 
-	public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(ProdutoEdicaoEstudo edicao) throws Exception {
-		List<ProdutoEdicaoEstudo> listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
+    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(ProdutoEdicaoEstudo edicao) throws Exception {
+	List<ProdutoEdicaoEstudo> listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
 
 	if (!listaEdicoesBase.isEmpty()) {
 	    return listaEdicoesBase;
@@ -167,11 +166,11 @@ public class EstudoServiceEstudo {
 	return listaEdicoesBase;
     }
 
-	public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
+    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
 	return definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoSaidaVeraneio(edicao));
     }
 
-	private List<LocalDate> getDatasPeriodoVeraneio(ProdutoEdicaoEstudo edicao) {
+    private List<LocalDate> getDatasPeriodoVeraneio(ProdutoEdicaoEstudo edicao) {
 	List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
 	Date dataLancamento = edicao.getDataLancamento();
 	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_20));
@@ -181,7 +180,7 @@ public class EstudoServiceEstudo {
 	return periodoVeraneio;
     }
 
-	private List<LocalDate> getDatasPeriodoSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
+    private List<LocalDate> getDatasPeriodoSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
 	List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
 	Date dataLancamento = edicao.getDataLancamento();
 	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_16));
@@ -195,67 +194,70 @@ public class EstudoServiceEstudo {
 	return MonthDay.parse(dataReferencia.getData()).toLocalDate(LocalDate.fromDateFields(dataLancamento).minus(anosSubtrair).getYear());
     }
 
-	public void gravarEstudo(EstudoTransient estudo) {
+    public void gravarEstudo(EstudoTransient estudo) {
 	estudoDAO.gravarEstudo(estudo);
     }
 
-	public EstudoTransient gerarEstudoAutomatico(ProdutoEdicaoEstudo produto, BigInteger reparte) throws Exception {
+    public EstudoTransient gerarEstudoAutomatico(ProdutoEdicaoEstudo produto, BigInteger reparte) throws Exception {
 	return gerarEstudoAutomatico(null, false, null, null, produto, reparte);
     }
 
-	public EstudoTransient gerarEstudoAutomatico(List<ProdutoEdicaoEstudo> edicoesBase, boolean distribuicaoPorMultiplos, BigDecimal _reparteMinimo,
-			BigInteger pacotePadrao, ProdutoEdicaoEstudo produto, BigInteger reparte) throws Exception {
+    public EstudoTransient gerarEstudoAutomatico(List<ProdutoEdicaoEstudo> edicoesBase, boolean distribuicaoPorMultiplos, BigInteger _reparteMinimo,
+	    BigInteger pacotePadrao, ProdutoEdicaoEstudo produto, BigInteger reparte) throws Exception {
 	log.debug("Iniciando execução do estudo.");
-		EstudoTransient estudo = new EstudoTransient();
+	EstudoTransient estudo = new EstudoTransient();
+	estudo.setDataCadastro(new Date());
+	estudo.setComplementarAutomatico(true); // FIXME PEGAR VALOR DO PARAMETRO DO DISTRIBUIDOR
+	estudo.setStatusEstudo("ESTUDO_FECHADO");
 	estudo.setProduto(produto);
 	estudo.setReparteDistribuir(reparte);
 	estudo.setReparteDistribuirInicial(reparte);
 
-		estudo.setDistribuicaoPorMultiplos(distribuicaoPorMultiplos ? 1 : 0);
+	estudo.setDistribuicaoPorMultiplos(distribuicaoPorMultiplos ? 1 : 0);
 	estudo.setReparteMinimo(_reparteMinimo);
 	estudo.setPacotePadrao(pacotePadrao);
 
 	// carregando parâmetros do banco de dados
 	carregarParametros(estudo);
 
-		definicaoBases.executar(estudo);
+	definicaoBases.executar(estudo);
 
-		somarFixacoes.executar(estudo);
+	somarFixacoes.executar(estudo);
 
-		verificarTotalFixacoes.executar(estudo);
+	verificarTotalFixacoes.executar(estudo);
 
 	calculate(estudo);
 
-		for (CotaEstudo cota : estudo.getCotas()) {
-			ajusteCota.executar(cota);
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    ajusteCota.executar(cota);
 
-			correcaoVendas.executar(cota);
+	    correcaoVendas.executar(cota);
 
-			medias.executar(cota);
+	    medias.executar(cota);
 
-			vendaMediaFinal.executar(cota);
+	    vendaMediaFinal.executar(cota);
 
-			jornaleirosNovos.executar(cota);
+	    jornaleirosNovos.executar(cota);
 	}
-		bonificacoes.executar(estudo);
+	bonificacoes.executar(estudo);
 
-		ajusteReparte.executar(estudo);
+	ajusteReparte.executar(estudo);
 
-		redutorAutomatico.executar(estudo);
+	redutorAutomatico.executar(estudo);
 
-		reparteMinimo.executar(estudo);
+	reparteMinimo.executar(estudo);
 
-		reparteProporcional.executar(estudo);
+	reparteProporcional.executar(estudo);
 
-		encalheMaximo.executar(estudo);
+	encalheMaximo.executar(estudo);
 
-		complementarAutomatico.executar(estudo);
+	complementarAutomatico.executar(estudo);
 
-		calcularReparte.executar(estudo);
+	calcularReparte.executar(estudo);
 
 	// processo que faz os ajustes finais e grava as informações no banco de dados
-		ajusteFinalReparte.executar(estudo);
-		
+	ajusteFinalReparte.executar(estudo);
+
 	log.debug("Execução do estudo concluída");
 	return estudo;
     }

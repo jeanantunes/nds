@@ -28,7 +28,7 @@ public class VendaMediaFinal {
 		BigDecimal indiceAjusteCota = cota.getIndiceAjusteCota();
 		BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
 		BigDecimal indiceTratamentoReginal = cota.getIndiceTratamentoRegional();
-
+// FIXME INDICE DE TRATAMENTO REGIONAL DEVE INICIAR COM 1
 		if (vendaMedia != null && indiceAjusteCota != null && indiceVendaCrescente != null && indiceTratamentoReginal != null) {
 			value = cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()).multiply(cota.getIndiceVendaCrescente()).multiply(cota.getIndiceTratamentoRegional());
 		}

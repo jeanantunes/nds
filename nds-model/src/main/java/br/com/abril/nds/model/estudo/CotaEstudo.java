@@ -15,8 +15,9 @@ public class CotaEstudo extends Cota {
 	private ClassificacaoCota classificacao;
 	private BigInteger reparteCalculado;
 	private BigInteger reparteJuramentadoAFaturar;
-	private BigDecimal reparteMinimo;
-	private BigDecimal reparteMaximo;
+	private BigInteger reparteMinimo;
+	private BigInteger reparteMaximo;
+	private BigInteger reparteFixado;
 	private BigDecimal vendaMedia;
 	private BigDecimal vendaMediaNominal;
 	private BigDecimal vendaEdicaoMaisRecenteFechada;
@@ -34,6 +35,7 @@ public class CotaEstudo extends Cota {
 	private BigDecimal indiceTratamentoRegional;
 	private List<CotaEstudo> equivalente;
 	private BigDecimal indiceAjusteEquivalente;
+	private Integer regiao;
 	
 	public CotaEstudo() {
 		reparteCalculado = BigInteger.ZERO;
@@ -70,16 +72,16 @@ public class CotaEstudo extends Cota {
 	public void setReparteJuramentadoAFaturar(BigInteger reparteJuramentadoAFaturar) {
 		this.reparteJuramentadoAFaturar = reparteJuramentadoAFaturar;
 	}
-	public BigDecimal getReparteMinimo() {
+	public BigInteger getReparteMinimo() {
 		return reparteMinimo;
 	}
-	public void setReparteMinimo(BigDecimal reparteMinimo) {
+	public void setReparteMinimo(BigInteger reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
 	}
-	public BigDecimal getReparteMaximo() {
+	public BigInteger getReparteMaximo() {
 		return reparteMaximo;
 	}
-	public void setReparteMaximo(BigDecimal reparteMaximo) {
+	public void setReparteMaximo(BigInteger reparteMaximo) {
 		this.reparteMaximo = reparteMaximo;
 	}
 	public BigDecimal getVendaMedia() {
@@ -189,6 +191,22 @@ public class CotaEstudo extends Cota {
 	public boolean isNova() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public BigInteger getReparteFixado() {
+	    return reparteFixado;
+	}
+
+	public void setReparteFixado(BigInteger reparteFixado) {
+	    this.reparteFixado = reparteFixado;
+	}
+
+	public Integer getRegiao() {
+	    return regiao;
+	}
+
+	public void setRegiao(Integer regiao) {
+	    this.regiao = regiao;
 	}
 
 }

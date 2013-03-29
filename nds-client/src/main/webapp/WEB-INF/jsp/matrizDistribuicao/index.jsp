@@ -1,4 +1,4 @@
-<head>
+﻿<head>
 <style>
 .linkDisabled {
 	cursor: default;
@@ -12,7 +12,7 @@ width: 220px;
 margin-bottom: 1px;
 border-radius: 0px 8px 8px 0px;
 box-shadow: 0px -1px 3px 6px rgba(0, 0, 0, 0.2);
-background: url(../images/bg_header.jpg) repeat-x bottom left #fff;
+background: url(${pageContext.request.contextPath}/images/bg_header.jpg) repeat-x bottom left #fff;
 padding: 15px;
 display: none;
 }

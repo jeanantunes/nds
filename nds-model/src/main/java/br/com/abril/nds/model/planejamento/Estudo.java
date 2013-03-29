@@ -13,6 +13,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -33,6 +35,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  * @created 14-fev-2012 11:35:31
  */
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "ESTUDO", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"DATA_LANCAMENTO", "PRODUTO_EDICAO_ID" }) })
 @SequenceGenerator(name = "ESTUDO_SEQ", initialValue = 1, allocationSize = 1)

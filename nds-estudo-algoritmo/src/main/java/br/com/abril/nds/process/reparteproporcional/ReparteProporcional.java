@@ -40,6 +40,8 @@ public class ReparteProporcional extends ProcessoAbstrato {
     	BigDecimal indiceReparteEdicoesAbertas = BigDecimal.ZERO;
     	if (estudo.getSomatoriaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0) {
     		// ÍndiceRepAberta =  RepDistribInicial / ΣRepEdiçãoAberta
+    	    // SÓ ENTRAR NESSE CALCULO SE HOUVER MAIS DE UMA EDICAO BASE
+    	    // FIXME SOMATORIA SOMENTE DEVE CONTER REPARTE DA EDICAO ABERTA DE TODAS AS COTAS QUE SÓ RECEBERAM UMA EDICAO ABERTA
     		indiceReparteEdicoesAbertas = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(estudo.getSomatoriaReparteEdicoesAbertas(), 3, BigDecimal.ROUND_HALF_UP);
     	} 
     	for (CotaEstudo cota : estudo.getCotas()) {
