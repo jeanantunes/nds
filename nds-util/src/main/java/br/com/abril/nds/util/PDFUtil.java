@@ -42,7 +42,7 @@ public class PDFUtil {
 
 	public static byte[] concatPDFs(List<InputStream> streamOfPDFFiles, boolean paginate) throws Exception {
 
-		String file = System.getProperty("java.io.tmpdir") + File.separator + "temp.pdf";		
+		File file = File.createTempFile("pdfUtil", "pdf");		
 		
 		
 		OutputStream outputStream = new FileOutputStream(file);
@@ -107,7 +107,7 @@ public class PDFUtil {
 			
 			byte[] retorno = IOUtils.toByteArray(new FileInputStream(file));
 			
-			new File(file).delete();
+			file.delete();
 			
 			return retorno;			
 		
