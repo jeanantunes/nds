@@ -42,17 +42,14 @@ import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
 
 /**
- * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
- * as cotas encontradas para o perfil definido no setup do estudo, levando em
- * consideração todas as variáveis também definidas no setup.
+ * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
+ * setup do estudo, levando em consideração todas as variáveis também definidas no setup.
  * <p style="white-space: pre-wrap;">
- * SubProcessos: - {@link DefinicaoBases} - {@link SomarFixacoes} -
- * {@link VerificarTotalFixacoes} - {@link MontaTabelaEstudos} -
- * {@link CorrecaoVendas} - {@link Medias} - {@link Bonificacoes} -
- * {@link AjusteCota} - {@link JornaleirosNovos} - {@link VendaMediaFinal} -
- * {@link AjusteReparte} - {@link RedutorAutomatico} - {@link ReparteMinimo} -
- * {@link ReparteProporcional} - {@link EncalheMaximo} -
- * {@link ComplementarAutomatico} - {@link CalcularReparte} Processo Pai: - N/A
+ * SubProcessos: - {@link DefinicaoBases} - {@link SomarFixacoes} - {@link VerificarTotalFixacoes} - {@link MontaTabelaEstudos} -
+ * {@link CorrecaoVendas} - {@link Medias} - {@link Bonificacoes} - {@link AjusteCota} - {@link JornaleirosNovos} -
+ * {@link VendaMediaFinal} - {@link AjusteReparte} - {@link RedutorAutomatico} - {@link ReparteMinimo} -
+ * {@link ReparteProporcional} - {@link EncalheMaximo} - {@link ComplementarAutomatico} - {@link CalcularReparte} Processo Pai: -
+ * N/A
  * 
  * Processo Anterior: N/A Próximo Processo: N/A
  * </p>
@@ -127,6 +124,7 @@ public class EstudoServiceEstudo {
 	// Somatória de reparte das edições abertas de todas as cotas
 	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
 	estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
+	estudo.setTotalPDVs(BigDecimal.ZERO);
 		for (CotaEstudo cota : estudo.getCotas()) {
 	    CotaServiceEstudo.calculate(cota);
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
@@ -134,6 +132,7 @@ public class EstudoServiceEstudo {
 		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
 	    }
 	    estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
+	    estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
 	}
     }
 
@@ -144,6 +143,8 @@ public class EstudoServiceEstudo {
 			estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProduto().getPacotePadrao()));
 	}
 		estudo.getProduto().setPacotePadrao(0);
+		
+		//TODO chamar DAO com parametros distribuidor
     }
 
 	public LinkedList<ProdutoEdicaoEstudo> buscaEdicoesPorLancamento(ProdutoEdicaoEstudo edicao) {
@@ -201,10 +202,13 @@ public class EstudoServiceEstudo {
 	return gerarEstudoAutomatico(null, false, null, null, produto, reparte);
     }
 
-	public EstudoTransient gerarEstudoAutomatico(List<ProdutoEdicaoEstudo> edicoesBase, boolean distribuicaoPorMultiplos, BigDecimal _reparteMinimo,
+    public EstudoTransient gerarEstudoAutomatico(List<ProdutoEdicaoEstudo> edicoesBase, boolean distribuicaoPorMultiplos, BigInteger _reparteMinimo,
 			BigInteger pacotePadrao, ProdutoEdicaoEstudo produto, BigInteger reparte) throws Exception {
 	log.debug("Iniciando execução do estudo.");
 		EstudoTransient estudo = new EstudoTransient();
+	estudo.setDataCadastro(new Date());
+	estudo.setComplementarAutomatico(true); // FIXME PEGAR VALOR DO PARAMETRO DO DISTRIBUIDOR
+	estudo.setStatusEstudo("ESTUDO_FECHADO");
 	estudo.setProduto(produto);
 	estudo.setReparteDistribuir(reparte);
 	estudo.setReparteDistribuirInicial(reparte);

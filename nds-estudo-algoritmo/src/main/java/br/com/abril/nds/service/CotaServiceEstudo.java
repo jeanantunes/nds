@@ -20,6 +20,9 @@ public class CotaServiceEstudo {
 		if (edicao.isEdicaoAberta()) {
 		    cota.setSomaReparteEdicoesAbertas(cota.getSomaReparteEdicoesAbertas().add(edicao.getReparte()));
 		} else {
+		    if (cota.getVendaEdicaoMaisRecenteFechada() == null) {
+			cota.setVendaEdicaoMaisRecenteFechada(edicao.getVenda());
+		    }
 		    cota.setCotaSoRecebeuEdicaoAberta(false);
 		}
 	    }

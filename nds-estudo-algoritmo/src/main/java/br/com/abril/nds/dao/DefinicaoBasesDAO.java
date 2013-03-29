@@ -36,6 +36,7 @@ public class DefinicaoBasesDAO {
 	private static final String LANCAMENTO_PARCIAL = "PARCIAL";
 	private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
 	private static final String STATUS_FECHADO = "FECHADO";
+	private static final String STATUS_RECOLHIDO = "RECOLHIDO";
 
 	public LinkedList<ProdutoEdicaoEstudo> listaEdicoesPorLancamento(ProdutoEdicaoEstudo edicao) {
 
@@ -102,9 +103,9 @@ public class DefinicaoBasesDAO {
 	}
 
 	private boolean traduzStatus(String status) {
-		if (status != null && !status.equalsIgnoreCase(STATUS_FECHADO)) {
-			return true;
+		if (status != null && ((status.equalsIgnoreCase(STATUS_FECHADO)) || (status.equalsIgnoreCase(STATUS_RECOLHIDO)))) {
+			return false;
 		}
-		return false;
+		return true;
 	}
 }

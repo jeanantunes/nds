@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 
-import br.com.abril.nds.model.cadastro.DistribuidorGridDistribuicao;
+import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 
 public class EstudoTransient extends Estudo {
@@ -16,13 +16,15 @@ public class EstudoTransient extends Estudo {
 	private ProdutoEdicaoEstudo produto; //TODO refatorar nome qdo possivel...
 	private LinkedList<ProdutoEdicaoEstudo> edicoesBase;
 	private List<CotaEstudo> cotas; //Cotas que receberam as edições base.
-	private BigDecimal reparteMinimo;
+	private BigInteger reparteMinimo;
 	private BigDecimal somatoriaVendaMedia;
 	private BigDecimal somatoriaReparteEdicoesAbertas;
 	private BigDecimal totalPDVs;
 	private BigInteger ajusteReparte;
 	private BigDecimal excedente;
 	private BigInteger reparteComplementar;
+	private String statusEstudo;
+	private List<BonificacaoDTO> bonificacoes;
 	
 	private boolean complementarAutomatico;
 	private boolean pracaVeraneio;
@@ -54,10 +56,10 @@ public class EstudoTransient extends Estudo {
 	public void setCotas(List<CotaEstudo> cotas) {
 		this.cotas = cotas;
 	}
-	public BigDecimal getReparteMinimo() {
+	public BigInteger getReparteMinimo() {
 		return reparteMinimo;
 	}
-	public void setReparteMinimo(BigDecimal reparteMinimo) {
+	public void setReparteMinimo(BigInteger reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
 	}
 	public BigDecimal getSomatoriaVendaMedia() {
@@ -118,16 +120,28 @@ public class EstudoTransient extends Estudo {
 	public void setGeracaoAutomatica(boolean geracaoAutomatica) {
 		this.geracaoAutomatica = geracaoAutomatica;
 	}
+	public BigInteger getVendaMediaMais() {
+		return vendaMediaMais;
+	}
+	public void setVendaMediaMais(BigInteger vendaMediaMais) {
+		this.vendaMediaMais = vendaMediaMais;
+	}
 	public BigDecimal getPercentualMaximoFixacao() {
 		return percentualMaximoFixacao;
 	}
 	public void setPercentualMaximoFixacao(BigDecimal percentualMaximoFixacao) {
 		this.percentualMaximoFixacao = percentualMaximoFixacao;
 	}
-	public BigInteger getVendaMediaMais() {
-		return vendaMediaMais;
+	public List<BonificacaoDTO> getBonificacoes() {
+	    return bonificacoes;
 	}
-	public void setVendaMediaMais(BigInteger vendaMediaMais) {
-		this.vendaMediaMais = vendaMediaMais;
+	public void setBonificacoes(List<BonificacaoDTO> bonificacoes) {
+	    this.bonificacoes = bonificacoes;
+	}
+	public String getStatusEstudo() {
+	    return statusEstudo;
+	}
+	public void setStatusEstudo(String statusEstudo) {
+	    this.statusEstudo = statusEstudo;
 	}
 }

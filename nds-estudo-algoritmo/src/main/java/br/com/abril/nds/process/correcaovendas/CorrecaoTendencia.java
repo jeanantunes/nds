@@ -98,7 +98,7 @@ public class CorrecaoTendencia {
 		BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
 
 		if (this.totalVenda.compareTo(BigDecimal.ZERO) != 0) {
-
+// FIXME NÃO ARREDONDAR!!!
 			BigDecimal percentualVenda = this.totalVenda.divide(this.totalReparte, 1, BigDecimal.ROUND_FLOOR);
 
 			if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {

@@ -1162,41 +1162,123 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 	};
 	
-	this.abrirDistribuicaoVendaMedia = function(){
+	this.gerarEstudoAutomatico = function() {
 		var selecionado = null;
-		$.each(T.lancamentos, function(index, lancamento){
-			if(lancamento.selecionado){
-				if(selecionado != null){
+        var maisDeUm = false;
+        $.each(T.lancamentos, function(index, lancamento) {
+                if (lancamento.selecionado) {
+                        if (selecionado != null) {
+                                selecionado = null;
+                                maisDeUm = true;
+                                return;
+                        }
+                        selecionado = lancamento;
+                }
+        });
+        if (selecionado == null) {
+                exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
+                return;
+        }
+        var postData = [];
+        postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
+        postData.push({name : "reparte", value : selecionado.repDistrib});
+        $.postJSON(pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", postData,
+    			function(result) {
+        			T.carregarGrid();
+        			T.exibirMensagemSucesso();
+    			}
+    	);
+	};
+	
+	this.gerarEstudoManual = function() {
+		var selecionado = null;
+        var maisDeUm = false;
+        $.each(T.lancamentos, function(index, lancamento) {
+                if (lancamento.selecionado) {
+                        if (selecionado != null) {
 					selecionado = null;
+                                maisDeUm = true;
 					return;
 				}
 				selecionado = lancamento;
 			}
 		});
-		if(selecionado == null){
-			exibirMensagem("ERROR", ["Deve haver exatamente um item selecionado para esta opção."]);
+        if (selecionado == null) {
+                exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
 			return;
 		}
-		var data = [];
-		data.push({name: "edicao", value: selecionado.edicao});
-		data.push({name: "estudoId", value: selecionado.estudo});
-		data.push({name: "lancamentoId", value: selecionado.idLancamento});
-		data.push({name: "codigoProduto", value: selecionado.codigoProduto});
+        var params = 'produto.codigoProduto='+ selecionado.codigoProduto;
+        params += '&produto.nomeProduto='+ selecionado.nomeProduto;
+        params += '&produto.numeroEdicao='+ selecionado.edicao;
+        params += '&produto.classificacao='+ selecionado.classificacao;
+        params += '&produto.dataLancto='+ selecionado.dataLancto;
+        params += '&produto.reparte='+ selecionado.repDistrib;
+        params += '&produto.idProdutoEdicao='+ selecionado.idProdutoEdicao;
+        $('#workspace').tabs('addTab', 'Distribuição Manual', pathTela +'/distribuicaoManual/?'+ params);
+        T.esconderOpcoes();
+	};
+
+	this.distribuicaoVendaMedia = function() {
+        var selecionado = null;
+        var maisDeUm = false;
+        $.each(T.lancamentos, function(index, lancamento) {
+                if (lancamento.selecionado) {
+                        if (selecionado != null) {
+                                selecionado = null;
+                                maisDeUm = true;
+                                return;
+                        }
+                        selecionado = lancamento;
+                }
+        });
+        if (selecionado == null) {
+                exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
+                return;
+        }
+        var postData = [];
+        postData.push({
+                name : "edicao",
+                value : selecionado.edicao
+        });
+        postData.push({
+                name : "estudoId",
+                value : selecionado.estudo
+        });
+        postData.push({
+                name : "lancamentoId",
+                value : selecionado.idLancamento
+        });
+        postData.push({
+                name : "codigoProduto",
+                value : selecionado.codigoProduto
+        });
 		
-		data.push({name: "juramentado", value: selecionado.juram});
-		data.push({name: "suplementar", value: selecionado.suplem});
-		data.push({name: "lancado", value: selecionado.reparte});
-		data.push({name: "promocional", value: selecionado.promo});
-		data.push({name: "sobra", value: selecionado.sobra});
+        postData.push({
+                name : "juramentado",
+                value : selecionado.juram
+        });
+        postData.push({
+                name : "suplementar",
+                value : selecionado.suplem
+        });
+        postData.push({
+                name : "lancado",
+                value : selecionado.lancto
+        });
+        postData.push({
+                name : "promocional",
+                value : selecionado.promo
+        });
+        postData.push({
+                name : "sobra",
+                value : selecionado.sobra
+        });
 		
-		distribuicaoVendaMedia.matrizSelecionada = selecionado;
-		
-		$.post(pathTela + "/distribuicaoVendaMedia/", data, function(response) {
-			$('#matrizDistribuicaoContent').hide();
-			$('#telasAuxiliaresContent').html(response);
-			$('#telasAuxiliaresContent').show();
+        $.post(pathTela + "/distribuicaoVendaMedia/", postData, function(response) {
+                addTabWithPost($('#workspace').tabs(), 'Distribuição Venda Média', response, pathTela +'/distribuicaoVendaMedia/blank');
 		});
 
+        T.esconderOpcoes();
 	};
 }
 //@ sourceURL=matrizDistribuicao.js

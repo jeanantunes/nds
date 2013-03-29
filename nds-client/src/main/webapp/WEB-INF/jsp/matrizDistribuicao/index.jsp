@@ -1,4 +1,4 @@
-<head>
+﻿<head>
 <style>
 .linkDisabled {
 	cursor: default;
