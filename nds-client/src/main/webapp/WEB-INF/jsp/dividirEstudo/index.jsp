@@ -6,24 +6,20 @@
 <script type="text/javascript" src='scripts/dividirEstudo.js'></script>
 
 <script>
-	$(function() {
-		$("#dataDistribuicao")
-				.datepicker(
-						{
-							showOn : "button",
-							buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
-							buttonImageOnly : true,
-							dateFormat : 'dd/mm/yy'
-						});
-		$("#dataLancamentoSegundoEstudo")
-				.datepicker(
-						{
-							showOn : "button",
-							buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
-							buttonImageOnly : true,
-							dateFormat : 'dd/mm/yy'
-						});
+    $(function() {
+	$("#dataDistribuicao").datepicker({
+	    showOn : "button",
+	    buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
+	    buttonImageOnly : true,
+	    dateFormat : 'dd/mm/yy'
 	});
+	$("#dataLancamentoSegundoEstudo").datepicker({
+	    showOn : "button",
+	    buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
+	    buttonImageOnly : true,
+	    dateFormat : 'dd/mm/yy'
+	});
+    });
 </script>
 </head>
 
@@ -82,8 +78,8 @@
 								</tr>
 								<tr>
 									<td>Produto:</td>
-									<td><input type="text" name="nomeProduto"
-										id="nomeProduto" style="width: 200px;" /></td>
+									<td><input type="text" name="nomeProduto" id="nomeProduto"
+										style="width: 200px;" /></td>
 								</tr>
 								<tr>
 									<td>Edi&ccedil;&atilde;o:</td>
@@ -108,12 +104,13 @@
 											<tr>
 												<td width="48%">Percentuais da Divis&atilde;o:</td>
 												<td width="16%"><input type="text"
-													name="percentualDivisaoPrimeiroEstudo" id="percentualDivisaoPrimeiroEstudo"
-													style="width: 40px;" /></td>
+													name="percentualDivisaoPrimeiroEstudo"
+													id="percentualDivisaoPrimeiroEstudo" style="width: 40px;" /></td>
 												<td width="5%">%</td>
 												<td width="31%"><input type="text"
-													name="percentualDivisaoSegundoEstudo" id="percentualDivisaoSegundoEstudo"
-													style="width: 40px;" /></td>
+													name="percentualDivisaoSegundoEstudo"
+													id="percentualDivisaoSegundoEstudo" style="width: 40px;"
+													onchange="dividirEstudo.gerarDivisao();" /></td>
 											</tr>
 										</table></td>
 								</tr>
@@ -124,7 +121,8 @@
 												<td width="49%">N&atilde;o dividir reparte menor que:</td>
 												<td width="51%"><input type="text"
 													name="quantidadeReparte" id="quantidadeReparte"
-													style="width: 40px;" /> exs</td>
+													style="width: 40px;"
+													onchange="dividirEstudo.gerarDivisao();" /> exs</td>
 											</tr>
 										</table></td>
 								</tr>
@@ -147,20 +145,23 @@
 								</tr>
 								<tr>
 									<td width="84">Estudo 1:</td>
-									<td width="102"><input type="text" style="width: 80px;" name="numeroPrimeiroEstudo" id="numeroPrimeiroEstudo"/></td>
+									<td width="102"><input type="text" style="width: 80px;"
+										name="numeroPrimeiroEstudo" id="numeroPrimeiroEstudo" /></td>
 									<td width="46">Reparte:</td>
-									<td width="50"><input type="text" name="repartePrimeiroEstudo"
-										id="repartePrimeiroEstudo" style="width: 50px;" /></td>
+									<td width="50"><input type="text"
+										name="repartePrimeiroEstudo" id="repartePrimeiroEstudo"
+										style="width: 50px;" /></td>
 									<td width="106">10/05/2012</td>
 								</tr>
 								<tr>
 									<td>Estudo 2:</td>
-									<td><input type="text" style="width: 80px;" name="numeroSegundoEstudo" id="numeroSegundoEstudo"/></td>
+									<td><input type="text" style="width: 80px;"
+										name="numeroSegundoEstudo" id="numeroSegundoEstudo" /></td>
 									<td>Reparte:</td>
-									<td><input type="text" name="reparteSegundoEstudo" id="reparteSegundoEstudo"
-										style="width: 50px;" /></td>
-									<td><input type="text" name="dataLancamentoSegundoEstudo" id="dataLancamentoSegundoEstudo"
-										style="width: 80px;" /></td>
+									<td><input type="text" name="reparteSegundoEstudo"
+										id="reparteSegundoEstudo" style="width: 50px;" /></td>
+									<td><input type="text" name="dataLancamentoSegundoEstudo"
+										id="dataLancamentoSegundoEstudo" style="width: 80px;" /></td>
 								</tr>
 								<tr>
 									<td>&nbsp;</td>

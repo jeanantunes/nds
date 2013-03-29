@@ -1,6 +1,6 @@
 var dividirEstudo = $.extend(true, {
 
-    confirmar : function() {
+    gerarDivisao : function() {
 
 	var numeroEstudoOriginal = $('#numeroEstudoOriginal').val();
 	var codigoProduto = $('#codigoProduto').val();
@@ -83,19 +83,31 @@ var dividirEstudo = $.extend(true, {
 	    value : dataLancamentoSegundoEstudo
 	});
 
+	$(".corpo", this.workspace).flexOptions({
+		url: "dividirEstudo/gerarDivisao",
+		dataType : 'json',
+		params : dados
+	});
+		
+	$(".corpo", this.workspace).flexReload();
+	
+	/*
 	$.ajax({
-	    url : 'dividirEstudo/confirmar',
+	    url : 'dividirEstudo/gerarDivisao',
 	    data : dados,
 	    type : "POST",
 
 	    success : function(data) {
+		
 		if (data.mensagens.tipoMensagem == "ERROR") {
-		    alert("Ocorreu um erro durante a divisão!");
+		    alert(data.mensagens.listaMensagens);
+		} else if (data.mensagens.tipoMensagem == "WARNING") {
+		    alert(data.mensagens.listaMensagens);
 		} else {
 		    alert("Divisão executada com sucesso!");
 		}
-
 	    }
 	});
+	*/
     },
 }, BaseController);
