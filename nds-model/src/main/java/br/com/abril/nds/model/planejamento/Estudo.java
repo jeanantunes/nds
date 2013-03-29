@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.planejamento;
+﻿package br.com.abril.nds.model.planejamento;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -35,7 +35,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
  * @created 14-fev-2012 11:35:31
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "ESTUDO", uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"DATA_LANCAMENTO", "PRODUTO_EDICAO_ID" }) })
 @SequenceGenerator(name = "ESTUDO_SEQ", initialValue = 1, allocationSize = 1)
