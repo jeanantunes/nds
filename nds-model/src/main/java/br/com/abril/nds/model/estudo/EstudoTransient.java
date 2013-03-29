@@ -24,7 +24,6 @@ public class EstudoTransient extends Estudo {
 	private BigDecimal excedente;
 	private BigInteger reparteComplementar;
 	private String statusEstudo;
-	private BigDecimal percentualMaximoFixacao;
 	private List<BonificacaoDTO> bonificacoes;
 	
 	private boolean complementarAutomatico;
@@ -144,11 +143,5 @@ public class EstudoTransient extends Estudo {
 	}
 	public void setStatusEstudo(String statusEstudo) {
 	    this.statusEstudo = statusEstudo;
-	}
-	public BigDecimal getPercentualMaximoFixacao() {
-	    return percentualMaximoFixacao;
-	}
-	public void setPercentualMaximoFixacao(BigDecimal percentualMaximoFixacao) {
-	    this.percentualMaximoFixacao = percentualMaximoFixacao;
 	}
 }
