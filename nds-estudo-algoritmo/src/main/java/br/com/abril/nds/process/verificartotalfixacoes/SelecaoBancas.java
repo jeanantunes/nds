@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.process.verificartotalfixacoes;
+﻿﻿package br.com.abril.nds.process.verificartotalfixacoes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;

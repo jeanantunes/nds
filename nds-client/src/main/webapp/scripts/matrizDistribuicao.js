@@ -1194,7 +1194,7 @@
         $.each(T.lancamentos, function(index, lancamento) {
                 if (lancamento.selecionado) {
                         if (selecionado != null) {
-                                selecionado = null;
+					selecionado = null;
                                 maisDeUm = true;
 					return;
 				}
@@ -1215,7 +1215,7 @@
         $('#workspace').tabs('addTab', 'Distribuição Manual', pathTela +'/distribuicaoManual/?'+ params);
         T.esconderOpcoes();
 	};
-
+		
 	this.distribuicaoVendaMedia = function() {
         var selecionado = null;
         var maisDeUm = false;
@@ -1250,6 +1250,7 @@
                 name : "codigoProduto",
                 value : selecionado.codigoProduto
         });
+
         postData.push({
                 name : "juramentado",
                 value : selecionado.juram
@@ -1271,11 +1272,9 @@
                 value : selecionado.sobra
         });
 		
-		distribuicaoVendaMedia.matrizSelecionada = selecionado;
-
         $.post(pathTela + "/distribuicaoVendaMedia/", postData, function(response) {
                 addTabWithPost($('#workspace').tabs(), 'Distribuição Venda Média', response, pathTela +'/distribuicaoVendaMedia/blank');
-        });
+		});
 
         T.esconderOpcoes();
 	};
