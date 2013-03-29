@@ -558,7 +558,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
 		}
 		
-		if (!validacaoVO.getListaMensagens().isEmpty()){
+		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
 			
 			throw new GerarCobrancaValidacaoException(validacaoVO);
 		}
