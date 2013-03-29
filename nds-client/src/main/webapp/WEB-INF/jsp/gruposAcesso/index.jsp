@@ -23,7 +23,7 @@
 	<form action="/administracao/gruposAcesso" id="novo_grupo_form">
 	<div id="dialog-novo-grupo" title="Grupo" style="display:none;">
         <input type="hidden" name="grupoPermissaoDTO.id" id="grupoPermissaoId" />
-     	<fieldset style="width:638px;">
+     	<fieldset style="width:638px;margin-bottom: 20px;">
 	   		<legend>Nome do Grupo</legend>
 			<table width="641" border="0" cellpadding="2" cellspacing="2" class="filtro">
 		        <tr>
@@ -32,28 +32,15 @@
 		        </tr>
 	      	</table>
         </fieldset>
-         <table width="663" border="0" cellpadding="2" cellspacing="2">
-			 <tr class="especialidades">
-			    <td width="290" valign="top">
-			    	<fieldset>
-			    		<legend>Regras Disponíveis:</legend>
-					    <select name="grupoPermissaoDTO.permissoesGrupo" size="10" multiple="multiple" id="permissoesGrupo" style="height:200px; width:285px;">
-					    </select>
-			    	</fieldset>
-			    </td>
-			    <td width="63" align="center">
-			    	<a href="javascript:;" onclick="gruposPermissaoController.adicionaGruposSelecionados();"><img src="images/seta_vai_todos.png" width="39" height="30" border="0" /></a><br />
-			      	<br /><a href="javascript:;" onclick="gruposPermissaoController.removeGruposSelecionados();"><img src="images/seta_volta_todos.png" width="39" height="30" border="0" /></a><br />
-			    </td>
-			    <td width="290" valign="top">
-				    <fieldset>
-				    	<legend>Regras Selecionadas</legend>
-					    <select name="grupoPermissaoDTO.permissoes" size="10" multiple="multiple" id="permissoesGrupoSelecionadas" style="height:200px; width:285px;">
-						</select>
-					</fieldset>
-				</td>
-			 </tr>
-		</table>   	
+         
+         <!-- RULES DO USUÁRIO -->
+         <div id="localPermissaoGridGrupo">
+         	<div id="permissaoGridConteudo">
+         	 <table id="permissaoGrid" class="permissaoGrid"> </table>
+         	</div>
+         </div>
+        
+		
 	</div>
 	</form>
 	<form action="/administracao/gruposAcesso" id="excluir_usuario_form">
@@ -178,7 +165,8 @@
 		</fieldset>
 		<fieldset style="width:710px; margin-top:5px;">
     	<legend>Regras</legend>
-         <table width="582" border="0" align="center" cellpadding="2" cellspacing="2" style="margin-left:20px;">
+         <div id="localPermissaoGridUsuario" style="margin-left: 30px;"></div>
+         <table  width="582" border="0" align="center" cellpadding="2" cellspacing="2" style="margin-left:20px;display:none">
 			 <tr class="especialidades">
 			    <td width="264" valign="top">
 			    	<fieldset>
@@ -203,23 +191,30 @@
 		</fieldset>
 	</div>
 	</form>
+	
+	<style>
+		.fixo{
+			height: 440px !important;
+			overflow-y: visible !important;
+		}
+	</style>
 
 	<jsp:include page="../messagesDialog.jsp" />	
-      	<div id="tabs-grupos">
+      	<div id="tabs-acesso" style="margin-top: 10px; width: 920px;">
            <ul>
                <li><a href="#tabs-grupos">Grupos</a></li>
                <li><a href="#tabs-usuarios">Usuários</a></li>
                <li><a href="#tabs-regras">Regras</a></li>
            </ul>
            <form action="/administracao/gruposAcesso" id="pesquisar_grupos_form">
-           <div id="tabs-grupos">
+           <div id="tabs-grupos" class="fixo" style="height: 300px" >
            <div class="areaBts">
            		<div class="area">
            			<span class="bt_novos"><a href="javascript:;" onclick="gruposPermissaoController.popup_novo_grupo();" rel="tipsy" title="Novo"><img src="images/ico_salvar.gif" hspace="5" border="0"/></a></span>
            		</div>
            </div>
-           <div class="linha_separa_fields">&nbsp;</div>
-	        <fieldset class="fieldFiltro" style="width:925px!important;">
+           <div  class="linha_separa_fields">&nbsp;</div>
+	        <fieldset class="fieldFiltro" style="width:905px!important;">
 	   	    	<legend> Pesquisar Grupo</legend>
 	        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		            <tr>
@@ -230,25 +225,24 @@
 	          	</table>
 	      	</fieldset>
 	      <div class="linha_separa_fields">&nbsp;</div>
-	      <fieldset class="fieldGrid" style="width:925px!important;">
+	      <fieldset class="fieldGrid" style="width:905px!important;">
 	       	<legend>Grupos Cadastrados</legend>
 	      	<div class="gridsGrupos" style="display:none;">
 	       		<table class="gruposGrid"></table>
 	        </div>
 	        
 	      </fieldset>
-	      <br clear="all" />
            </div>
            </form>
            <form action="/administracao/gruposAcesso" id="pesquisar_usuario_form">
-           <div id="tabs-usuarios">
+           <div id="tabs-usuarios" class="fixo">
            <div class="areaBts">
            		<div class="area">
            			<span class="bt_novos"><a href="javascript:;" onclick="usuariosPermissaoController.popup_novo_usuario();" rel="tipsy" title="Novo"><img src="images/ico_salvar.gif" hspace="5" border="0"/></a></span>
            		</div>
            </div>
            <div class="linha_separa_fields">&nbsp;</div>
-	        <fieldset class="fieldFiltro" style="width:925px!important;">
+	        <fieldset class="fieldFiltro" style="width:905px!important;">
 	   	    	<legend> Pesquisar Usuário</legend>
 	        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		            <tr>
@@ -259,7 +253,7 @@
 	          	</table>
 	      	</fieldset>
 	      <div class="linha_separa_fields">&nbsp;</div>
-	      <fieldset class="fieldGrid" style="width:925px!important;">
+	      <fieldset class="fieldGrid" style="width:905px!important;">
 	       	<legend>Usuários  Cadastrados</legend>
 	      	<div class="gridsUsuario" style="display:none;">
 	       		<table class="usuariosGrid"></table>
@@ -270,14 +264,14 @@
            </div>
            </form>
            <form action="/administracao/gruposAcesso" id="pesquisar_regras_form">
-           <div id="tabs-regras">
+           <div id="tabs-regras" class="fixo">
            <div class="areaBts">
            		<div class="area">
            			&nbsp;
            		</div>
            </div>
            <div class="linha_separa_fields">&nbsp;</div>
-           	<fieldset class="fieldFiltro" style="width:925px!important;">
+           	<fieldset class="fieldFiltro" style="width:905px!important;">
 	   	    <legend> Pesquisar Regras</legend>
 	        	<table width="850" border="0" cellpadding="2" cellspacing="1" class="filtro">
 	            	<tr>
@@ -290,9 +284,9 @@
 	          	</table>
 	      	</fieldset>
 	      <div class="linha_separa_fields">&nbsp;</div>
-	      <fieldset class="field"Grid style="width:925px!important;">
+	      <fieldset class="field"Grid style="width:905px!important;">
 	       	  <legend>Regras Cadastradas</legend>
-	          <div class="gridsRegra" style="display:none;">
+	          <div class="gridsRegra" style="display:none;height: 300px;overflow: scroll;">
 	       	  	<table class="regrasGrid"></table>
 	          </div>
 	          <%--<span class="bt_novos" title="Novo"><a href="javascript:;" onclick="gruposAcessoController.popup_nova_regra();"><img src="images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span--%>

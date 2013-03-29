@@ -61,6 +61,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path(value="/devolucao/consultaEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_CONSULTA_ENCALHE_COTA)
 public class ConsultaEncalheController extends BaseController {
 
 	@Autowired
@@ -91,7 +92,6 @@ public class ConsultaEncalheController extends BaseController {
 	private static final String SUFIXO_DIA = "º Dia";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CONSULTA_ENCALHE_COTA)
 	public void index(){
 		
 		carregarComboFornecedores();

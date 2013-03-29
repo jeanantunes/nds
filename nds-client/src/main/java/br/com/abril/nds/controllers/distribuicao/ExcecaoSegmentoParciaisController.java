@@ -50,6 +50,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Path("/distribuicao/excecaoSegmentoParciais")
 @Resource()
+@Rules(Permissao.ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS)
 public class ExcecaoSegmentoParciaisController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroExcecaoSegmentoParciaisDTO";
@@ -80,7 +81,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	@Rules(Permissao.ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS)
+	@Path("/")
 	public void index(){
 		
 	}

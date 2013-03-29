@@ -3,10 +3,13 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.FormaCobrancaExcepion;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
@@ -334,8 +337,6 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Para a obtenção de uma Forma de Cobrança é necessário que seja informado um [Fornecedor] ou que haja [Fornecedor Padrão] definido nos parâmetros financeiros da [Cota]!");
 		}
 		
-		Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(idFornecedor);
-		
 		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota, idFornecedor, data, valor);
 
 		if (formaCobranca == null){
@@ -343,9 +344,36 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 			formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor, data, valor);
 		}
 		
+		return formaCobranca;
+	}
+	
+	/**
+	 * Obtem FormaCobranca da Cota com os Parâmetros passados, caso não encontre, busca FormaCobranca do Distribuidor 
+	 * Caso não encontre Forma de Cobranca, retorna excecao com informacoes
+	 * @param idCota
+	 * @param idFornecedor
+	 * @param data
+	 * @param valor
+	 * @return FormaCobranca
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public FormaCobranca obterFormaCobrancaValidacao(Long idCota, Long idFornecedor, Date data, BigDecimal valor) {
+		
+		Cota cota = null;
+		
+		if (idCota!=null){
+		    
+			cota = this.cotaRepository.buscarPorId(idCota);
+		}
+		
+		Fornecedor fornecedor = this.fornecedorService.obterFornecedorPorId(idFornecedor);
+		
+		FormaCobranca formaCobranca = this.obterFormaCobranca(idCota, idFornecedor, data, valor);
+		
 		if (formaCobranca == null){
 	    	
-	    	throw new ValidacaoException(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor Mínimo "+CurrencyUtil.formatarValorComSimbolo(valor)+"]"+(cota!=null?" [Cota "+cota.getNumeroCota()+"].":"."));
+	    	throw new FormaCobrancaExcepion(TipoMensagem.WARNING, "Forma de Cobrança não encontrada para a [Data "+DateUtil.formatarDataPTBR(data)+"] [Fornecedor "+fornecedor.getJuridica().getNome()+"] [Valor Mínimo "+CurrencyUtil.formatarValorComSimbolo(valor)+"]"+(cota!=null?" [Cota "+cota.getNumeroCota()+"].":"."));
 	    }
 		
 		return formaCobranca;

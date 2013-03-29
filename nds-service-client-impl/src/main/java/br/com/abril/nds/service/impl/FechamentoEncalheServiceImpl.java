@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -13,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
@@ -75,6 +78,7 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
@@ -146,6 +150,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	
+	@Autowired
+	private PlatformTransactionManager transactionManager;
 	
 	
 	
@@ -252,7 +260,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			Date dataAtual,
 			Date dataFimSemana){
 		
-		conferencia.setTotal(new BigDecimal(conferencia.getExemplaresDevolucao()).multiply(conferencia.getPrecoCapa()));
+		conferencia.setTotal(new BigDecimal(conferencia.getExemplaresDevolucao()).multiply(conferencia.getPrecoCapaDesconto()));
 		conferencia.setFechado(fechado);
 		
 		  if ("P".equals(conferencia.getTipo())){
@@ -425,8 +433,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 
 	@Override
-	@Transactional
-	public void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas) {
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas) throws GerarCobrancaValidacaoException {
 
 		if (idsCotas == null || idsCotas.isEmpty()) {
 			throw new IllegalArgumentException("Lista de ids das cotas não pode ser nula e nem vazia.");
@@ -434,31 +442,50 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		List<Cota> listaCotas = 
 			this.cotaRepository.obterCotasPorIDS(idsCotas);
-
+		
+		GerarCobrancaValidacaoException ex = null;
 		for (Cota cota : listaCotas) {
-
-			realizarCobrancaCotas(dataOperacao, usuario, cota);
+			
+			try {
+				realizarCobrancaCotas(dataOperacao, usuario, null, cota);
+			} catch (GerarCobrancaValidacaoException e) {
+				ex = e;
+			}
+		}
+		
+		if (ex != null){
+			
+			throw ex;
 		}
 	}
 	
+	
+
 	@Override
-	@Transactional
-	public void cobrarTodasCotas(Date dataOperacao, Usuario usuario) {
+	@Transactional(propagation=Propagation.REQUIRED, noRollbackFor=GerarCobrancaValidacaoException.class)
+	public void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, 
+			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException {
 
-		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-				this.fechamentoEncalheRepository.obterCotasAusentes(dataOperacao, true, null, null, 0, 0);
-
-		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
-
-			Cota cota = this.cotaRepository.buscarPorId(cotaAusente.getIdCota());
-
-			realizarCobrancaCotas(dataOperacao, usuario, cota);
+		ValidacaoVO validacaoVO = new ValidacaoVO();
+		
+		if (cotaAusente != null){
+			
+			listaCotasAusentes = new ArrayList<>();
+			CotaAusenteEncalheDTO cotaAusenteEncalheDTO = new CotaAusenteEncalheDTO();
+			cotaAusenteEncalheDTO.setIdCota(cotaAusente.getId());
+			listaCotasAusentes.add(cotaAusenteEncalheDTO);
 		}
-	}
-	
-	private void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, Cota cota) {
-
-		try {
+		
+		for (CotaAusenteEncalheDTO c : listaCotasAusentes){
+			
+			Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
+			
+			BigDecimal valorTotalEncalhe = this.buscarValorTotalEncalhe(dataOperacao, cota.getId());
+			
+			if (valorTotalEncalhe == null || valorTotalEncalhe.compareTo(BigDecimal.ZERO) == 0){
+				
+				return;
+			}
 			
 			Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -470,7 +497,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			movimentoFinanceiroCotaDTO.setCota(cota);
 			movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 			movimentoFinanceiroCotaDTO.setUsuario(usuario);
-			movimentoFinanceiroCotaDTO.setValor(this.buscarValorTotalEncalhe(dataOperacao, cota.getId()));
+			movimentoFinanceiroCotaDTO.setValor(valorTotalEncalhe);
 			movimentoFinanceiroCotaDTO.setDataOperacao(dataOperacaoDistribuidor);
 			movimentoFinanceiroCotaDTO.setBaixaCobranca(null);
 			movimentoFinanceiroCotaDTO.setDataVencimento(dataOperacaoDistribuidor);
@@ -483,8 +510,20 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			movimentoFinanceiroCotaDTO.setFornecedor( (cota.getParametroCobranca()!= null)? cota.getParametroCobranca().getFornecedorPadrao():null);
 			
 			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
-	
-			this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>());
+			
+			GerarCobrancaValidacaoException ex = null;
+			try {
+				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>());
+			} catch (GerarCobrancaValidacaoException e) {
+				ex = e;
+				
+				if (validacaoVO.getListaMensagens() == null){
+					
+					validacaoVO.setListaMensagens(new ArrayList<String>());
+				}
+				
+				validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
+			}
 			
 			List<ChamadaEncalhe> listaChamadaEncalhe = 
 				this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
@@ -504,23 +543,25 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					chamadaEncalheCota.setFechado(true);
 				}
 				
-				this.movimentoEstoqueService.gerarMovimentoCota(
-						new Date(), 
-						chamadaEncalhe.getProdutoEdicao().getId(), 
-						cota.getId(), 
-						usuario.getId(), 
-						BigInteger.ZERO, 
-						tipoMovimentoEstoque);
+				if (ex == null){
+					this.movimentoEstoqueService.gerarMovimentoCota(
+							new Date(), 
+							chamadaEncalhe.getProdutoEdicao().getId(), 
+							cota.getId(), 
+							usuario.getId(), 
+							BigInteger.ZERO, 
+							tipoMovimentoEstoque,
+							dataOperacao);
+				}
 	
 				this.chamadaEncalheRepository.merge(chamadaEncalhe);
 			}
+		}
+		
+		if (!validacaoVO.getListaMensagens().isEmpty()){
 			
-			
-		} catch (ValidacaoException e) {
-			throw new ValidacaoException(e.getValidacao());
-		} catch (GerarCobrancaValidacaoException e) {
-			throw e.getValidacaoException();
-		} 
+			throw new GerarCobrancaValidacaoException(validacaoVO);
+		}
 	}
 
 	@Override
@@ -545,7 +586,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	 * ao distribuidor de forma juramentada.
 	 * 
 	 */
-	private void gerarMovimentosDeEstoqueProdutosJuramentados(Date dataEncalhe, Usuario usuario){
+	private void gerarMovimentosDeEstoqueProdutosJuramentados(Date dataEncalhe, Usuario usuario, Date dataOperacao){
 		
 		List<MovimentoEstoqueCotaGenericoDTO> listaMovimentoEstoqueCota = 
 				movimentoEstoqueCotaRepository.obterListaMovimentoEstoqueCotaDevolucaoJuramentada(dataEncalhe);
@@ -563,7 +604,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					movimentoEstoqueCota.getIdCota(), 
 					usuario.getId(), 
 					movimentoEstoqueCota.getQtde(), 
-					tipoMovEstoqueRecebJornaleiroJuramentado);
+					tipoMovEstoqueRecebJornaleiroJuramentado,
+					dataOperacao);
 			
 			movimentoEstoqueService.gerarMovimentoEstoque(
 					null, 
@@ -612,7 +654,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
 		}
 		
-		gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario);
+		gerarMovimentosDeEstoqueProdutosJuramentados(dataEncalhe, usuario, this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		this.gerarNotaFiscal(dataEncalhe);
 	}

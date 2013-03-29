@@ -43,6 +43,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path(value="/nfe/retornoNFe")
+@Rules(Permissao.ROLE_NFE_RETORNO_NFE)
 public class RetornoNFEController extends BaseController {
 	
 	@Autowired
@@ -60,7 +61,6 @@ public class RetornoNFEController extends BaseController {
 	private static final String LISTA_NOTAS_DE_RETORNO = "listaNotasDeRetorno";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_NFE_RETORNO_NFE)
 	public void index() {	
 	}
 

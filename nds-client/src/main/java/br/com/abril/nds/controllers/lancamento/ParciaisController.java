@@ -45,6 +45,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/parciais")
+@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS)
 public class ParciaisController extends BaseController {
 
 	private static final String FILTRO_SESSION = "filtroParcial";
@@ -98,7 +99,7 @@ public class ParciaisController extends BaseController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS)
+	@Path("/")
 	public void index() {
 		
 		session.removeAttribute(FILTRO_SESSION);

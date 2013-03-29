@@ -31,6 +31,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/lancamento/furoProduto")
+@Rules(Permissao.ROLE_LANCAMENTO_FURO_PRODUTO)
 public class FuroProdutoController extends BaseController {
 
 	@Autowired
@@ -50,7 +51,6 @@ public class FuroProdutoController extends BaseController {
 	
 	@Get
 	@Path("/")
-	@Rules(Permissao.ROLE_LANCAMENTO_FURO_PRODUTO)
 	public void index(){
 		
 	}

@@ -84,6 +84,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 	},
 	
 	atribuirAtalhos: function(){
+		$(document.body).unbind();
 		
 		$(document.body).bind('keydown.adicionarProduto', jwerty.event('F2',function() {
 			
@@ -428,7 +429,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
 					
-					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeypress="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +','+value.qtdInformada+');" style="width:90px; text-align: center;" value="' + value.qtdInformada + '"/>' +
+					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +','+value.qtdInformada+');" style="width:90px; text-align: center;" value="' + value.qtdInformada + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
@@ -486,6 +487,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$(".dadosFiltro", ConferenciaEncalheCont.workspace).show();
 		$("#nomeCota", ConferenciaEncalheCont.workspace).text(result.razaoSocial);
 		$("#statusCota", ConferenciaEncalheCont.workspace).text(result.situacao);
+		
+		focusSelectRefField($("[name=inputValorExemplares]", ConferenciaEncalhe.workspace).first());
 	},
 	
 	atualizarValores: function(index, valorReal) {
@@ -782,12 +785,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 	nextInputExemplares : function(curIndex, evt) {
 	
-		if (evt.keyCode == 13) {
-
+		if (evt.keyCode == 13 || evt.keyCode == 40) {
 			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
 			nextElement.focus();
 			nextElement.select();
-		}
+		}else if (event.keyCode == 38) {
+			var nextElement = $('[tabindex=' + (curIndex - 1) + ']');
+			nextElement.focus();
+			nextElement.select();  
+		} 
 	},
 	
 	abrirDialogNotaFiscalDivergente: function(result){
@@ -1062,8 +1068,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
-					var data = [{name: 'indConferenciaContingencia', value: true}];
-					
+					var data = [{name: 'indConferenciaContingencia', value: true}];					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarConferencia', data,
 						function(result){
 					

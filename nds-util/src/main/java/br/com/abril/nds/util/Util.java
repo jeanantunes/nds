@@ -201,6 +201,11 @@ public abstract class Util {
 		
 		NomeBanco nomeBanco = NomeBanco.getByNumeroBanco(numeroBanco);
 		
+		if (nomeBanco == null){
+			
+			return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
+		}
+		
 		switch (nomeBanco) {
 			case BANCO_ABN_AMRO_REAL:
 				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);

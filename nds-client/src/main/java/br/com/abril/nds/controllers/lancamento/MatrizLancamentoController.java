@@ -55,6 +55,8 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
+@Path("/matrizLancamento")
+@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ)
 public class MatrizLancamentoController extends BaseController {
 
 	@Autowired
@@ -84,8 +86,7 @@ public class MatrizLancamentoController extends BaseController {
 	
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
-	@Path("/matrizLancamento")
-	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ)
+	@Path("/")
 	public void index() {
 		
 		removerAtributoAlteracaoSessao();

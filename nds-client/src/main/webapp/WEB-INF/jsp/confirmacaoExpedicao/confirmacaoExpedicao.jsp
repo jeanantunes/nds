@@ -19,7 +19,9 @@
 </head>
 
 <body>
-
+	
+	<input id="apenasVizualizacao" type="hidden" value="${apenasVizualizacao}">
+	
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
@@ -51,7 +53,7 @@
 			</div>
 
 			<fieldset class="classFieldset">
-				<legend> Pesquisar Expedi&ccedil;&atilde;o</legend>
+				<legend>Pesquisar Expedi&ccedil;&atilde;o</legend>
 				<table width="950" border="0" cellpadding="2" cellspacing="1"
 					class="filtro">
 					<tr>

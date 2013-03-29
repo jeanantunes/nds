@@ -32,6 +32,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("devolucao/emissaoBandeira")
+@Rules(Permissao.ROLE_RECOLHIMENTO_EMISSAO_BANDEIRA)
 public class EmissaoBandeiraController extends BaseController {
 
 	@Autowired
@@ -50,7 +51,6 @@ public class EmissaoBandeiraController extends BaseController {
 	private ChamadaEncalheService chamadaEncalheService;
 
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_EMISSAO_BANDEIRA)
 	public void index() {
 	
 	}

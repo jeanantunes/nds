@@ -55,6 +55,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/administracao/parametrosDistribuidor")
+@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR)
 public class ParametrosDistribuidorController extends BaseController {
 	
 	@Autowired
@@ -99,7 +100,6 @@ public class ParametrosDistribuidorController extends BaseController {
 	private GrupoService grupoService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR)
 	public void index() {
 		
 		this.limparLogoSessao();

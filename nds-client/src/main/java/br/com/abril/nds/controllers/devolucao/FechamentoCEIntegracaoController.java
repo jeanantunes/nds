@@ -47,6 +47,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("devolucao/fechamentoCEIntegracao")
+@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO)
 public class FechamentoCEIntegracaoController extends BaseController{
 	
 	private static final String BOLETO_GERADO = "boletoDistribuidorGerado";
@@ -78,7 +79,6 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO)
 	public void index(){
 		
 		this.carregarComboFornecedores();

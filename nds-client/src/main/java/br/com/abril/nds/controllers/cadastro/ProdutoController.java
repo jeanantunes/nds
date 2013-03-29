@@ -62,6 +62,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/produto")
+@Rules(Permissao.ROLE_CADASTRO_PRODUTO)
 public class ProdutoController extends BaseController {
 
 	private Result result;
@@ -120,7 +121,6 @@ public class ProdutoController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_PRODUTO)
 	public void index() {
 		
 		List<TipoProduto> listaTipoProduto = this.tipoProdutoService.obterTodosTiposProduto();
