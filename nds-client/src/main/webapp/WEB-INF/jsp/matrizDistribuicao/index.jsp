@@ -138,11 +138,11 @@ var lancamentosSelecionados = [];
 							        		<a href="javascript:;" onclick="matrizDistribuicao.mostrarOpcoes();"><img src="${pageContext.request.contextPath}/images/ico_boletos.gif" hspace="5" border="0"/>Opções<img src="${pageContext.request.contextPath}/images/p7PM_dark_south.gif" width="14" height="8" border="0" class="setaMuda" /></a>
 							        		<div class="opcoesEstudos">
 									           <ul>
-									               <li><a onclick="matrizDistribuicao.distribuicaoVendaMedia();" href="javascript:;"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>Distribuição Venda Média</a></li>
-									               <li><a href="matrizDistribuicao.distribuicaoManual();"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribuição Manual</a></li>
+									               <li><a href="javascript:;" onclick="matrizDistribuicao.distribuicaoVendaMedia();"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>Distribuição Venda Média</a></li>
+									               <li><a href="javascript:;" onclicl="matrizDistribuicao.gerarEstudoManual();"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribuição Manual</a></li>
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.somarEstudos();"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
 									               <li><a href="${pageContext.request.contextPath}/Lancamento/dividir_estudo.htm"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
-									               <li><a href="javascript:;"  onclick="estudoComplementarShow('${pageContext.request.contextPath}/lancamento/estudoComplementar')" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
+									               <li><a href="javascript:;" onclick="estudoComplementarShow('${pageContext.request.contextPath}/lancamento/estudoComplementar')" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
 									           </ul>
 	          							 	</div>
@@ -202,7 +202,7 @@ var lancamentosSelecionados = [];
 									</span>
 								</td>
 								<td>
-									<span class="bt_novos"><a href="#" onclick="matrizDistribuicao.gerarEstudoAutomatico();"><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Geração Automática</a></span>
+									<span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.gerarEstudoAutomatico();"><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Geração Automática</a></span>
 								</td>
 							</tr>
 							<tr>

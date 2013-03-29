@@ -175,8 +175,7 @@
 		
 		var repDist = (row.cell.reparte - row.cell.promo); 
 		
-		row.cell.sobra = '<span id="sobra'+i+'">'+repDist+'</span>';
-		
+		row.cell.sobra = '<span id="sobra'+i+'">0</span>';
 		row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i);
 		row.cell.reparte = parseInt(row.cell.reparte, 10);
 		row.cell.promo = parseInt(row.cell.promo, 10);
