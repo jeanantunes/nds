@@ -141,7 +141,7 @@ public class NFeServiceImpl implements NFeService {
 			return gerarDocumentoIreportNE(listaNEWrapper, false);
 
 		} catch(Exception e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração dos arquivos NE");
+			throw new RuntimeException("Falha na geração dos arquivos NE!", e);
 		}
 	}
 	
