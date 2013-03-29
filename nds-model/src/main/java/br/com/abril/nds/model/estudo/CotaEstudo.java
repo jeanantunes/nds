@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.estudo;
+﻿package br.com.abril.nds.model.estudo;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
