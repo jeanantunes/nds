@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -27,7 +28,7 @@ public interface FechamentoEncalheService {
 	
 	void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao);
 
-	void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas);
+	void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas) throws GerarCobrancaValidacaoException;
 	
 
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
@@ -67,5 +68,5 @@ public interface FechamentoEncalheService {
 	Boolean buscaControleFechamentoEncalhe(Date data);
 
 	public abstract void realizarCobrancaCotas(Date dataOperacao, Usuario usuario,
-			Cota cota);
+			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException;
 }

@@ -12,6 +12,7 @@ import java.util.Objects;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
@@ -41,12 +42,20 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		super(Divida.class);
 	}
 	
-	public Divida obterDividaParaAcumuloPorCota(Long idCota, Date diaDivida){
-		Criteria criteria = this.getSession().createCriteria(Divida.class);
-		criteria.add(Restrictions.eq("cota.id", idCota));
-		criteria.add(Restrictions.eq("data", diaDivida));
+	public Divida obterDividaParaAcumuloPorCota(Long idCota){
 		
-		return (Divida) criteria.uniqueResult();
+		StringBuilder hql = new StringBuilder("select d ");
+		hql.append(" from Divida d ")
+		   .append(" join d.cota cota ")
+		   .append(" where cota.id = :idCota ")
+		   .append(" and d.status = :status ")
+		   .append(" and d.data = (select max(d2.data) from Divida d2 where d2.cota.id = :idCota) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		query.setParameter("status", StatusDivida.EM_ABERTO);
+		
+		return (Divida) query.uniqueResult();
 	}
 	
 	@Override

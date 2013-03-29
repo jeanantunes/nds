@@ -479,9 +479,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, 
 			Long idProdutoEdicao, Long idCota, Long idUsuario, 
-			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao) {
 		
-		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null);
+		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, 
+				idUsuario, quantidade, tipoMovimentoEstoque, new Date(), dataOperacao,null,null);
 	}
 	
 	@Override
@@ -721,10 +722,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			throw new ImportacaoException("Cota inexistente.");
 
 		Long idUsuario = usuarioRepository.getUsuarioImportacao().getId();
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 
-		persistirRegistroVendaHistoricoReparte(idUsuario, reparte, edicao, cota);
+		persistirRegistroVendaHistoricoReparte(idUsuario, reparte, edicao, cota, dataOperacao);
 
-		persistirRegistroVendaHistoricoEncalhe(idUsuario, encalhe, edicao, cota);
+		persistirRegistroVendaHistoricoEncalhe(idUsuario, encalhe, edicao, cota, dataOperacao);
 
 	}
 
@@ -736,7 +739,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	 * @param edicao
 	 * @param cota
 	 */
-	private void persistirRegistroVendaHistoricoReparte(Long idUsuario, Integer reparte, ProdutoEdicao edicao, Cota cota){
+	private void persistirRegistroVendaHistoricoReparte(Long idUsuario, Integer reparte, ProdutoEdicao edicao, Cota cota,
+			Date dataOperacao){
 
 		if(reparte != null && reparte>0) {
 
@@ -770,7 +774,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoEnvioReparte);
 
-			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte);
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), 
+					tipoMovimentoRecebimentoReparte, dataOperacao);
 		}
 	}
 
@@ -782,7 +787,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	 * @param edicao
 	 * @param cota
 	 */
-	private void persistirRegistroVendaHistoricoEncalhe(Long idUsuario, Integer encalhe, ProdutoEdicao edicao, Cota cota){
+	private void persistirRegistroVendaHistoricoEncalhe(Long idUsuario, Integer encalhe, ProdutoEdicao edicao, Cota cota, 
+			Date dataOperacao){
 
 		if(encalhe != null && encalhe>0) {
 
@@ -816,7 +822,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe);
 
-			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe);
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), 
+					tipoMovimentoEnvioEncalhe, dataOperacao);
 		}
 	}
 
