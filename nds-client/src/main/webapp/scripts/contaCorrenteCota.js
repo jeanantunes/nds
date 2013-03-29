@@ -218,7 +218,7 @@ var contaCorrenteCotaController = $.extend(true, {
 			});
 			
 		
-			$("#cotanome", contaCorrenteCotaController.workspace).html($("#cota", contaCorrenteCotaController.workspace).val()+" "+
+			$("#cotanomeselecionado", contaCorrenteCotaController.workspace).html($("#cota", contaCorrenteCotaController.workspace).val()+" "+
 					$("#nomeCota", contaCorrenteCotaController.workspace).val());
 			
 			$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).
