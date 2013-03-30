@@ -21,9 +21,8 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
- * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
- * as cotas encontradas para o perfil definido no setup do estudo, levando em
- * consideração todas as variáveis também definidas no setup.
+ * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
+ * setup do estudo, levando em consideração todas as variáveis também definidas no setup.
  * <p style="white-space: pre-wrap;">
  * SubProcessos: - N/A Processo Pai: - {@link VerificarTotalFixacoes}
  * 
@@ -53,9 +52,9 @@ public class SelecaoBancas extends ProcessoAbstrato {
 			BigDecimal totalVenda = BigDecimal.ZERO;
 			BigDecimal totalReparte = BigDecimal.ZERO;
 			for (ProdutoEdicaoEstudo edicao : cota.getEdicoesRecebidas()) {
-				totalEdicoes.add(BigDecimal.ONE);
-				totalVenda.add(edicao.getVenda());
-				totalReparte.add(edicao.getReparte());
+		totalEdicoes = totalEdicoes.add(BigDecimal.ONE);
+		totalVenda = totalVenda.add(edicao.getVenda());
+		totalReparte = totalReparte.add(edicao.getReparte());
 			}
 			if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
 				if (totalReparte.compareTo(BigDecimal.ZERO) == 0) {
@@ -65,9 +64,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 					cota.setClassificacao(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga);
 				}
 			}
-			cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes));
+	    if (totalEdicoes.compareTo(BigDecimal.ZERO) != 0) {
+		cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes, 0, BigDecimal.ROUND_HALF_UP));
 		}
 	}
+    }
 
 	private List<CotaEstudo> trataCotasComEnglobacao(List<CotaEstudo> cotasComHistorico) {
 		LinkedHashMap<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
@@ -88,7 +89,8 @@ public class SelecaoBancas extends ProcessoAbstrato {
 						BigDecimal porcentualEnglobacao = BigDecimal.valueOf(cotaEnglobada.getPorcentualEnglobacao()).divide(BIGDECIMAL_100);
 						
 						if (cotasComHistoricoMap.containsKey(cotaEnglobada.getId())) {
-							distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cotasComHistoricoMap.get(cotaEnglobada.getId()));
+			    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada,
+				    cotasComHistoricoMap.get(cotaEnglobada.getId()));
 						} else {
 							CotaEstudo cota = cotaDAO.getCotaById(cotaEnglobada.getId());
 							distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cota);
@@ -102,9 +104,8 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		return new ArrayList<>(cotasComHistoricoMap.values());
 	}
 
-	private void distribuiEnglobacao(BigDecimal reparteInicial,
-			BigDecimal vendaInicial, BigDecimal porcentualEnglobacao, ProdutoEdicaoEstudo edicaoCotaDesenglobada,
-			CotaEstudo cotaEnglobada) {
+    private void distribuiEnglobacao(BigDecimal reparteInicial, BigDecimal vendaInicial, BigDecimal porcentualEnglobacao,
+	    ProdutoEdicaoEstudo edicaoCotaDesenglobada, CotaEstudo cotaEnglobada) {
 		
 		cotaEnglobada.setClassificacao(ClassificacaoCota.EnglobaDesengloba);
 		ProdutoEdicaoEstudo edicaoCotaEnglobada = buscaEdicaoPorNumeroLancamento(edicaoCotaDesenglobada, cotaEnglobada.getEdicoesRecebidas());
@@ -121,14 +122,15 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 	private ProdutoEdicaoEstudo buscaEdicaoPorNumeroLancamento(ProdutoEdicaoEstudo edicaoCotaDesenglobada, List<ProdutoEdicaoEstudo> edicoesRecebidas) {
 		for (ProdutoEdicaoEstudo produtoEdicao : edicoesRecebidas) {
-			if(produtoEdicao.getNumeroEdicao().equals(edicaoCotaDesenglobada.getNumeroEdicao())) {
+	    if (produtoEdicao.getNumeroEdicao().equals(edicaoCotaDesenglobada.getNumeroEdicao())) {
 				return produtoEdicao;
 			}
 		}
 		return atualizaListaCotaEnglobadaComEdicaoClonada(edicaoCotaDesenglobada, edicoesRecebidas);
 	}
 
-	private ProdutoEdicaoEstudo atualizaListaCotaEnglobadaComEdicaoClonada(ProdutoEdicaoEstudo edicaoCotaDesenglobada, List<ProdutoEdicaoEstudo> edicoesRecebidas) {
+    private ProdutoEdicaoEstudo atualizaListaCotaEnglobadaComEdicaoClonada(ProdutoEdicaoEstudo edicaoCotaDesenglobada,
+	    List<ProdutoEdicaoEstudo> edicoesRecebidas) {
 		ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
 		try {
 			BeanUtils.copyProperties(produtoEdicao, edicaoCotaDesenglobada);

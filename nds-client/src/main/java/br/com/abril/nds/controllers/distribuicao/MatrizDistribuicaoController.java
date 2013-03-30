@@ -367,7 +367,7 @@ public class MatrizDistribuicaoController extends BaseController {
     	} catch (Exception e) {
     		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
     	}
-    	result.nothing();
+    	result.use(Results.json()).from(Results.nothing()).serialize();
     }
 	
     @Post

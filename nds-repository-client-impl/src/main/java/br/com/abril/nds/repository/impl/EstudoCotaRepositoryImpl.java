@@ -8,7 +8,6 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
-import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -188,5 +187,11 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		query.setParameter("idEstudo", idEstudo);
 		
 		query.executeUpdate();
+	}
+
+	@Override
+	public List<EstudoCota> obterEstudosCota(Long idEstudo) {
+	    // TODO Auto-generated method stub
+	    return null;
 	}
 }

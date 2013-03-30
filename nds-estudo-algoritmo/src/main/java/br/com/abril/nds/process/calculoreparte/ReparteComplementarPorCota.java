@@ -265,8 +265,8 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 						c.setReparteCalculado(c.getReparteCalculado().add(estudoTransient.getPacotePadrao()));
 						estudoTransient.setReparteComplementar(estudoTransient.getReparteComplementar().subtract(estudoTransient.getPacotePadrao()));
 					} else {
-						c.setReparteCalculado(c.getReparteCalculado().add(c.getReparteMinimo().toBigInteger()));
-						estudoTransient.setReparteComplementar(estudoTransient.getReparteComplementar().subtract(c.getReparteMinimo().toBigInteger()));
+						c.setReparteCalculado(c.getReparteCalculado().add(c.getReparteMinimo()));
+						estudoTransient.setReparteComplementar(estudoTransient.getReparteComplementar().subtract(c.getReparteMinimo()));
 					}
 
 					if (estudoTransient.getReparteComplementar().compareTo(BigInteger.ZERO) <= 0) {

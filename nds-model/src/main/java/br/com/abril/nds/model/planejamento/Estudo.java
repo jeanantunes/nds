@@ -1,4 +1,4 @@
-package br.com.abril.nds.model.planejamento;
+﻿package br.com.abril.nds.model.planejamento;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

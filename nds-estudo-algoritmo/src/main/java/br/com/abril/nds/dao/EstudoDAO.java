@@ -1,9 +1,8 @@
-package br.com.abril.nds.dao;
+﻿package br.com.abril.nds.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +37,7 @@ public class EstudoDAO {
 
 	@Value("#{query_estudo.insertProdutoEdicaoBase}")
 	private String insertProdutoEdicaoBase;
-	
+
 	@Value("#{query_estudo.queryParametrosDistribuidor}")
 	private String queryParametrosDistribuidor;
 	
