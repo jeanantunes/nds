@@ -1,4 +1,4 @@
-﻿//#workspace div.ui-tabs-panel:not(.ui-tabs-hide)
+//#workspace div.ui-tabs-panel:not(.ui-tabs-hide)
 var produtoController = $.extend(true, {
 	
 	pesquisaProduto:null,
