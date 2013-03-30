@@ -1,4 +1,4 @@
-﻿var areaInfluenciaGeradorFluxoController = $.extend(true,	{
+var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 	
 					init : function() {
         

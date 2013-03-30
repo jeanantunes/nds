@@ -1,4 +1,4 @@
-﻿function PesquisaProduto(workspace) {
+function PesquisaProduto(workspace) {
 
 	var pesquisaProduto = this;
 	
