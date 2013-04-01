@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -21,11 +20,8 @@ import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRTextExporter;
-import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -1122,13 +1118,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	@Transactional(rollbackFor=Exception.class)
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
-			boolean indConferenciaContingencia) {
+			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException {
 		
 		if(	controleConfEncalheCota.getId() != null) {
 			
@@ -1256,26 +1252,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param controleConferenciaEncalheCota
 	 * 
 	 * @return Set - String
+	 * @throws GerarCobrancaValidacaoException 
 	 */
-	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 
 		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCotaRecolhimento(controleConferenciaEncalheCota, FormaComercializacao.CONSIGNADO);
 
 		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
-		try {
-			
-			gerarCobrancaService.gerarCobranca(
-					controleConferenciaEncalheCota.getCota().getId(), 
-					controleConferenciaEncalheCota.getUsuario().getId(), 
-					nossoNumeroCollection);
-			
-		} catch (GerarCobrancaValidacaoException e) {
-
-			ValidacaoException validacaoException = e.getValidacaoException();
-			
-			throw validacaoException;
-		}
+		gerarCobrancaService.gerarCobranca(
+				controleConferenciaEncalheCota.getCota().getId(), 
+				controleConferenciaEncalheCota.getUsuario().getId(), 
+				nossoNumeroCollection);
 		
 		return nossoNumeroCollection;
 	}
@@ -2139,7 +2127,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						idCota, 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
-						tipoMovimentoEstoqueCota);
+						tipoMovimentoEstoqueCota,
+						this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
 		if(valoresAplicados == null){
@@ -2156,7 +2145,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 	private void verificarValorAplicadoNulo(ValoresAplicados valoresAplicados){
-				
+		
+		if (valoresAplicados == null) {
+			valoresAplicados = new ValoresAplicados();
+		}
+		
 		if(valoresAplicados.getPrecoComDesconto() == null) {
 			valoresAplicados.setPrecoComDesconto(BigDecimal.ZERO);
 		}
@@ -2424,7 +2417,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						movimentoEstoqueCota.getProdutoEdicao().getId(), 
 						distribuidorService.obterDataOperacaoDistribuidor());
 
-		verificarValorAplicadoNulo(valoresAplicados);
+		if(valoresAplicados == null){
+			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
+		}else{
+			verificarValorAplicadoNulo(valoresAplicados);
+		}
 		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
@@ -2861,9 +2858,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("VALOR_TOTAL_PAGAR", totalComposicao);
 		
 		
+		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
 		try{
-			
-		    parameters.put("SUBREPORT_DIR", obterSlipSubReportPath());
+		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -2871,22 +2868,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
-		
+
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip_pdf.jasper");
+
 		String path = null;
-		
+
 		try {
-		
-			path = obterSlipReportPath();
-		
+
+			path = url.toURI().getPath();
+
 		} catch (URISyntaxException e) {
-			
+
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
-			
+
 		}
+
 		
 		try {
 			
-			//Retorna um byte array de um TXT
+			/*//Retorna um byte array de um TXT
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			JRTextExporter exporter = new JRTextExporter();  
 			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
@@ -2896,8 +2896,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
 			exporter.exportReport();
 
-			return out.toByteArray();
-			//return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+			return out.toByteArray();*/
+			
+			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		
 		} catch (JRException e) {
 		

@@ -50,6 +50,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/edicao")
+@Rules(Permissao.ROLE_CADASTRO_EDICAO)
 public class ProdutoEdicaoController extends BaseController {
 
 	@Autowired
@@ -80,7 +81,6 @@ public class ProdutoEdicaoController extends BaseController {
 	/** Traz a página inicial. */
 	@Get
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_EDICAO)
 	public void index() {
 		
 		this.carregarDadosCombo();

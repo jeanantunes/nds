@@ -47,6 +47,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/estoque/edicoesFechadas")
+@Rules(Permissao.ROLE_ESTOQUE_EDICOES_FECHADAS_SALDO)
 public class EdicoesFechadasController extends BaseController {
 	
 	@Autowired
@@ -72,7 +73,6 @@ public class EdicoesFechadasController extends BaseController {
 	private static final String FILTRO_PESQUISA_EDICOES_FECHADAS_SESSION_ATTRIBUTE = "filtroPesquisaEdicoesFechadas";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ESTOQUE_EDICOES_FECHADAS_SALDO)
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
 		result.include("data", data);

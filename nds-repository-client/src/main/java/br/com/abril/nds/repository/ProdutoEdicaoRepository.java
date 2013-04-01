@@ -334,4 +334,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	BigDecimal obterDescontoLogistica(Long idPropdutoEdicao);
 
+	public abstract List<ProdutoEdicao> obterPorCodigoBarraILike(String codigoBarra);
+
 }

@@ -278,7 +278,7 @@
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display: none;">
 	      <fieldset class="fieldGrid">
-	       	  <legend>Conta-Corrente Selecionado: <span id="cotanome"></span></legend>
+	       	  <legend>Conta-Corrente Selecionado: <span id="cotanomeselecionado"></span></legend>
 	       	  <table class="itemContaCorrenteCotaGrid"></table>
 	      </fieldset>
       </div>

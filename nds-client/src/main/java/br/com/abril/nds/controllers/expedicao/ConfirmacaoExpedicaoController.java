@@ -40,6 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/confirmacaoExpedicao")
+@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO)
 public class ConfirmacaoExpedicaoController extends BaseController{
 
 	@Autowired
@@ -95,7 +96,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		/**
 		 * Inicializa dados da tela
 		 */
-		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO)
+		@Path("/")
 		public void index() {
 			gerarListaFornecedores();
 			gerarDataLancamento();

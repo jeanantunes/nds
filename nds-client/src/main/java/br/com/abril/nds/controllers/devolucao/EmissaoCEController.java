@@ -46,6 +46,7 @@ import br.com.caelum.vraptor.Result;
 
 @Resource
 @Path("/emissaoCE")
+@Rules(Permissao.ROLE_RECOLHIMENTO_EMISSAO_CE)
 public class EmissaoCEController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroEmissaoCE";
@@ -81,7 +82,7 @@ public class EmissaoCEController extends BaseController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_RECOLHIMENTO_EMISSAO_CE)
+	@Path("/")
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);

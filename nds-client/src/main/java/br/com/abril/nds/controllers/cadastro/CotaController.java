@@ -84,6 +84,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/cota")
+@Rules(Permissao.ROLE_CADASTRO_COTA)
 public class CotaController extends BaseController {
 	
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoCota";
@@ -154,7 +155,6 @@ public class CotaController extends BaseController {
 	private static final String NOME_DEFAULT_PROCURACAO = "procuracao.pdf";
 
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_COTA)
 	public void index() {
 		
 		this.financeiroController.preCarregamento();

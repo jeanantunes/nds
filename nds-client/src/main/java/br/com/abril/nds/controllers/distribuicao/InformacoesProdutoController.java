@@ -35,6 +35,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/informacoesProduto")
+@Rules(Permissao.ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO)
 public class InformacoesProdutoController extends BaseController {
 	
 	@Autowired
@@ -56,7 +57,6 @@ public class InformacoesProdutoController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO)
 	public void index(){
 		this.carregarComboClassificacao();
 	}

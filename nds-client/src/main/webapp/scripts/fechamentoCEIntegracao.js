@@ -314,7 +314,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					
 					var colunaReparte =
 						'<span id="reparte' + row.cell.idItemCeIntegracao + '">' +
-							row.cell.reparte +
+							(row.cell.reparte)?row.cell.reparte:"" +
 						'</span>';
 					
 					var colunaEncalhe;
@@ -325,7 +325,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						
 						colunaEncalhe =
 							'<span id="encalhe' + row.cell.idItemCeIntegracao + '">' +
-								row.cell.encalhe +
+								(row.cell.encalhe)?row.cell.encalhe:"" +
 							'</span>';
 						
 						colunaVenda =
@@ -340,7 +340,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 						colunaEncalhe =
 							'<input type="text" name="inputEncalhe"' +
 							'id="inputEncalhe' + row.cell.idItemCeIntegracao + '"' +
-							'value="' + row.cell.encalhe + '" size="5px"' +
+							'value="' + (row.cell.encalhe)?row.cell.encalhe:'' + '" size="5px"' +
 							'onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
 							row.cell.idItemCeIntegracao + ', this.value)"/>';
 						

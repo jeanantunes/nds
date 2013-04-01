@@ -47,6 +47,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/cotaBase")
+@Rules(Permissao.ROLE_CADASTRO_COTA_BASE)
 public class CotaBaseController extends BaseController {
 	
 	private static final String COTA_BASE_DTO = "cotaBaseDTO";
@@ -75,7 +76,6 @@ public class CotaBaseController extends BaseController {
 	private HttpServletResponse httpResponse;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_COTA_BASE)
 	public void index(){
 		
 	}
