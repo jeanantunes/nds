@@ -1,7 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.math.BigInteger;
 
 public class DivisaoEstudoDTO implements Serializable {
 
@@ -9,20 +9,21 @@ public class DivisaoEstudoDTO implements Serializable {
      * 
      */
     private static final long serialVersionUID = -8445940217521984235L;
-    
+
     private Long numeroEstudoOriginal;
     private String codigoProduto;
     private String nomeProduto;
     private Long edicaoProduto;
-    private Date dataDistribuicao;
+    private String dataDistribuicao;
     private Integer percentualDivisaoPrimeiroEstudo;
     private Integer percentualDivisaoSegundoEstudo;
     private Integer quantidadeReparte;
     private Long numeroPrimeiroEstudo;
-    private Long repartePrimeiroEstudo;
     private Long numeroSegundoEstudo;
-    private Long reparteSegundoEstudo;
-    private Date dataLancamentoSegundoEstudo;
+    private BigInteger repartePrimeiroEstudo;
+    private BigInteger reparteSegundoEstudo;
+    private String dataLancamentoPrimeiroEstudo;
+    private String dataLancamentoSegundoEstudo;
 
     public Long getNumeroEstudoOriginal() {
 	return numeroEstudoOriginal;
@@ -56,11 +57,11 @@ public class DivisaoEstudoDTO implements Serializable {
 	this.edicaoProduto = edicaoProduto;
     }
 
-    public Date getDataDistribuicao() {
+    public String getDataDistribuicao() {
 	return dataDistribuicao;
     }
 
-    public void setDataDistribuicao(Date dataDistribuicao) {
+    public void setDataDistribuicao(String dataDistribuicao) {
 	this.dataDistribuicao = dataDistribuicao;
     }
 
@@ -96,11 +97,11 @@ public class DivisaoEstudoDTO implements Serializable {
 	this.numeroPrimeiroEstudo = numeroPrimeiroEstudo;
     }
 
-    public Long getRepartePrimeiroEstudo() {
+    public BigInteger getRepartePrimeiroEstudo() {
 	return repartePrimeiroEstudo;
     }
 
-    public void setRepartePrimeiroEstudo(Long repartePrimeiroEstudo) {
+    public void setRepartePrimeiroEstudo(BigInteger repartePrimeiroEstudo) {
 	this.repartePrimeiroEstudo = repartePrimeiroEstudo;
     }
 
@@ -112,19 +113,27 @@ public class DivisaoEstudoDTO implements Serializable {
 	this.numeroSegundoEstudo = numeroSegundoEstudo;
     }
 
-    public Long getReparteSegundoEstudo() {
+    public BigInteger getReparteSegundoEstudo() {
 	return reparteSegundoEstudo;
     }
 
-    public void setReparteSegundoEstudo(Long reparteSegundoEstudo) {
+    public void setReparteSegundoEstudo(BigInteger reparteSegundoEstudo) {
 	this.reparteSegundoEstudo = reparteSegundoEstudo;
     }
 
-    public Date getDataLancamentoSegundoEstudo() {
+    public String getDataLancamentoPrimeiroEstudo() {
+	return dataLancamentoPrimeiroEstudo;
+    }
+
+    public void setDataLancamentoPrimeiroEstudo(String dataLancamentoPrimeiroEstudo) {
+	this.dataLancamentoPrimeiroEstudo = dataLancamentoPrimeiroEstudo;
+    }
+
+    public String getDataLancamentoSegundoEstudo() {
 	return dataLancamentoSegundoEstudo;
     }
 
-    public void setDataLancamentoSegundoEstudo(Date dataLancamentoSegundoEstudo) {
+    public void setDataLancamentoSegundoEstudo(String dataLancamentoSegundoEstudo) {
 	this.dataLancamentoSegundoEstudo = dataLancamentoSegundoEstudo;
     }
 
