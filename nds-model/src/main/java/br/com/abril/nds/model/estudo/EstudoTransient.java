@@ -14,7 +14,7 @@ public class EstudoTransient extends Estudo {
 	private static final long serialVersionUID = 8058482081570920501L;
 
 	private BigInteger reparteDistribuirInicial;
-	private ProdutoEdicaoEstudo produto; //TODO refatorar nome qdo possivel...
+	private ProdutoEdicaoEstudo produtoEdicaoEstudo;
 	private LinkedList<ProdutoEdicaoEstudo> edicoesBase;
 	private List<CotaEstudo> cotas; //Cotas que receberam as edições base.
 	private BigInteger reparteMinimo;
@@ -35,17 +35,21 @@ public class EstudoTransient extends Estudo {
 	
 	private Map<String, PercentualExcedenteEstudo> percentualExcedente;
 	
+	public EstudoTransient() {
+		complementarAutomatico = true; //Default conforme documentação.
+	}
+	
 	public BigInteger getReparteDistribuirInicial() {
 		return reparteDistribuirInicial;
 	}
 	public void setReparteDistribuirInicial(BigInteger reparteDistribuirInicial) {
 		this.reparteDistribuirInicial = reparteDistribuirInicial;
 	}
-	public ProdutoEdicaoEstudo getProduto() {
-		return produto;
+	public ProdutoEdicaoEstudo getProdutoEdicaoEstudo() {
+		return produtoEdicaoEstudo;
 	}
-	public void setProduto(ProdutoEdicaoEstudo produto) {
-		this.produto = produto;
+	public void setProdutoEdicaoEstudo(ProdutoEdicaoEstudo produtoEdicaoEstudo) {
+		this.produtoEdicaoEstudo = produtoEdicaoEstudo;
 	}
 	public LinkedList<ProdutoEdicaoEstudo> getEdicoesBase() {
 		return edicoesBase;
@@ -153,4 +157,25 @@ public class EstudoTransient extends Estudo {
 	public void setPercentualExcedente(Map<String, PercentualExcedenteEstudo> percentualExcedente) {
 		this.percentualExcedente = percentualExcedente;
 	}
+
+	@Override
+	public String toString() {
+		return "EstudoTransient [reparteDistribuirInicial="
+				+ reparteDistribuirInicial + ", produtoEdicaoEstudo="
+				+ produtoEdicaoEstudo + ", edicoesBase=" + edicoesBase
+				+ ", reparteMinimo=" + reparteMinimo + ", somatoriaVendaMedia="
+				+ somatoriaVendaMedia + ", somatoriaReparteEdicoesAbertas="
+				+ somatoriaReparteEdicoesAbertas + ", totalPDVs=" + totalPDVs
+				+ ", ajusteReparte=" + ajusteReparte + ", excedente="
+				+ excedente + ", reparteComplementar=" + reparteComplementar
+				+ ", statusEstudo=" + statusEstudo + ", bonificacoes="
+				+ bonificacoes + ", complementarAutomatico="
+				+ complementarAutomatico + ", pracaVeraneio=" + pracaVeraneio
+				+ ", geracaoAutomatica=" + geracaoAutomatica
+				+ ", percentualMaximoFixacao=" + percentualMaximoFixacao
+				+ ", vendaMediaMais=" + vendaMediaMais
+				+ ", percentualExcedente=" + percentualExcedente.values() + "]";
+	}
+	
+	
 }

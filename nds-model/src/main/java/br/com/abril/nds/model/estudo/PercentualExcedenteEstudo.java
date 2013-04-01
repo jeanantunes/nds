@@ -26,4 +26,9 @@ public class PercentualExcedenteEstudo {
 	public void setVenda(BigDecimal venda) {
 		this.venda = venda;
 	}
+	@Override
+	public String toString() {
+		return "eficiencia=" + eficiencia + ", pdv="
+				+ pdv + ", venda=" + venda;
+	}
 }

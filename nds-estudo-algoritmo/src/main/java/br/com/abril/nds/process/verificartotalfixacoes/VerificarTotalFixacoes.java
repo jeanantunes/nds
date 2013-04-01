@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
-import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -23,27 +22,27 @@ import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
 @Component
 public class VerificarTotalFixacoes extends ProcessoAbstrato {
 
-    @Autowired
-    private SelecaoBancas selecaoBancas;
+	@Autowired
+	private SelecaoBancas selecaoBancas;
 
-    @Override
-    public void executar(EstudoTransient estudo) throws Exception {
-	selecaoBancas.executar(estudo);
-	
-	BigInteger somaFixacao = BigInteger.ZERO;
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (cota.getReparteFixado() != null) {
-		somaFixacao.add(cota.getReparteFixado());
-	    }
+	@Override
+	public void executar(EstudoTransient estudo) throws Exception {
+		selecaoBancas.executar(estudo);
+
+		BigInteger somaFixacao = BigInteger.ZERO;
+		for (CotaEstudo cota : estudo.getCotas()) {
+			if (cota.getReparteFixado() != null) {
+				somaFixacao.add(cota.getReparteFixado());
+			}
+		}
+		BigDecimal maximoFixacao = null;
+		if (estudo.getPercentualMaximoFixacao() != null) {
+			maximoFixacao = new BigDecimal(estudo.getReparteDistribuir()).multiply(
+					estudo.getPercentualMaximoFixacao().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+		}
+		if ((maximoFixacao != null) && (maximoFixacao.compareTo(new BigDecimal(somaFixacao)) < 0)) {
+			throw new Exception("A soma das fixações de reparte é maior que o percentual configurado na tela de parâmetros do distribuidor.");
+		}
 	}
-	BigDecimal maximoFixacao = null;
-	if (estudo.getPercentualMaximoFixacao() != null) {
-	    maximoFixacao = new BigDecimal(estudo.getReparteDistribuir()).multiply(
-		estudo.getPercentualMaximoFixacao().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
-	}
-	if ((maximoFixacao != null) && (maximoFixacao.compareTo(new BigDecimal(somaFixacao)) > 0)) {
-	    throw new Exception("A soma das fixações de reparte é maior que o percentual configurado na tela de parâmetros do distribuidor.");
-	}
-    }
 
 }
