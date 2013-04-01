@@ -7,7 +7,6 @@
 	var opcoesAberto = false;
 	
 	this.instancia = descInstancia;
-	this.linhasDestacadas = [];
 	this.lancamentos = [];
 	this.isCliquePesquisar;
 	
@@ -28,6 +27,10 @@
 		var data = [];
 		
 		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
+		
+		$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
+			data.push({name:'idsFornecedores', value: $(this).val()});
+		});
 		
 		$.postJSON(
 			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
@@ -50,7 +53,6 @@
 		
 		T.mostrarGridEBotoesAcao();
 		
-		T.linhasDestacadas = [];		
 		lancamentosSelecionados = [];		
 		$('#selTodos', _workspace).uncheck();	
 		
@@ -115,12 +117,14 @@
 	
 	this.onSuccessPesquisa = function() {
 		
-		$(T.linhasDestacadas).each(function(i, item){
-			 id = '#row' + item;			    	
-			 $(id, _workspace).removeClass("erow").addClass("gridLinhaDestacada");
-			 $(id, _workspace).children("td").removeClass("sorted");
+		$(T.lancamentos).each(function(i,lancamento){
+			 id = '#row' + i;		
+			 $("#inputRepDistrib" + i, _workspace).removeAttr('disabled');
+			 if (lancamento.dataFinMatDistrib != undefined) {
+				 
+				 T.finalizaItem(i);
+			 }
 		});
-		
 		
 	},
 		
@@ -292,6 +296,13 @@
 		$("#selTodos", _workspace).uncheck();
 	},
 	
+	this.finalizaItem = function(index) {
+		
+		var id = "#inputRepDistrib" + index;
+		
+		$(id, _workspace).closest('tr').css({opacity:0.5});
+		$(id, _workspace).attr('disabled','true');
+	},
 	
   this.obterUnicoItemMarcado = function() {
 		
@@ -312,6 +323,11 @@
 		
 		var data = [];
 		
+		var noSelect = $('[name=checkgroup]:checked', _workspace).size() == 0;
+		
+		var action = (noSelect)?"/matrizDistribuicao/finalizarMatrizDistribuicaoTodosItens":"/matrizDistribuicao/finalizarMatrizDistribuicao";
+	
+		
 		$.each(T.lancamentos, function(index, lancamento){
 			
 			if (lancamento.selecionado) {
@@ -323,7 +339,7 @@
 			}
 		});
 
-		$.postJSON(pathTela + "/matrizDistribuicao/finalizarMatrizDistribuicao", data,
+		$.postJSON(pathTela + action, data,
 				function(result){
 					T.checkUncheckLancamentos(false);
 					T.carregarGrid();
@@ -334,23 +350,47 @@
 	
   this.confirmarReaberturaDeMatriz = function() {
 		
-	  var data = [];
-		
-		$.each(T.lancamentos, function(index, lancamento) {
-			
-			if (lancamento.selecionado) {
-				
-				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  		 value: lancamento.idLancamento});
-			}
-		});
-	  
-		$.postJSON(pathTela + "/matrizDistribuicao/reabrirMatrizDistribuicao", null, 
-				function(){
-					T.checkUncheckLancamentos(false);
-					T.carregarGrid();
-					T.exibirMensagemSucesso();
-				}
+	  var noSelect = $('[name=checkgroup]:checked', _workspace).size() == 0;
+	 
+	  if (noSelect) {
+		  
+		  $.postJSON(pathTela + "/matrizDistribuicao/reabrirMatrizDistribuicaoTodosItens", null, 
+					function(){
+						T.checkUncheckLancamentos(false);
+						T.carregarGrid();
+						T.exibirMensagemSucesso();
+					}
 			);
+	  }
+	  
+	  else {
+		  
+		  var data = [];
+		  
+		  $(T.lancamentos).each(function(index, lancamento) {
+			  
+			   if (lancamento.selecionado && lancamento.dataFinMatDistrib != undefined) {
+					
+					data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  	   value: lancamento.idLancamento});
+				}
+			   
+			});
+		  
+			if (data.length == 0) {
+				
+				exibirMensagem("WARNING", ["Nenhum item selecionado está finalizado."]);
+				return;
+			}
+			
+			$.postJSON(pathTela + "/matrizDistribuicao/reabrirMatrizDistribuicao", data, 
+					function(){
+						T.checkUncheckLancamentos(false);
+						T.carregarGrid();
+						T.exibirMensagemSucesso();
+					}
+			);
+	  }
+	  
   },
   
   this.confirmarExclusaoEstudos = function() {
@@ -758,7 +798,6 @@
 		
 		T.mostrarGridEBotoesAcao();
 		
-		T.linhasDestacadas = [];		
 		lancamentosSelecionados = [];		
 		$('#selTodos', _workspace).uncheck();	
 		
@@ -1058,8 +1097,6 @@
 				align : 'center'
 			 }
 			],
-			sortname : "codigoProduto",
-			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,

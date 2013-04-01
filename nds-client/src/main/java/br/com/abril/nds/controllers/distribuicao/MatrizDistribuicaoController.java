@@ -138,8 +138,7 @@ public class MatrizDistribuicaoController extends BaseController {
 				.isMatrizFinalizada()) ? new ArrayList<ProdutoDistribuicaoVO>()
 				: totProdDistVO.getListProdutoDistribuicao();
 
-		listProdutosDistrib = PaginacaoUtil.paginarEOrdenarEmMemoria(
-				listProdutosDistrib, paginacao, paginacao.getSortColumn());
+		listProdutosDistrib = PaginacaoUtil.paginarEmMemoria(listProdutosDistrib, paginacao);
 
 		TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> tm = new TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>>();
 		List<CellModelKeyValue<ProdutoDistribuicaoVO>> cells = CellModelKeyValue
@@ -169,16 +168,34 @@ public class MatrizDistribuicaoController extends BaseController {
 		result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 
-	@Post
-	public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
+    @Post
+	public void finalizarMatrizDistribuicaoTodosItens(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
 		
 		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
 		
-		matrizDistribuicaoService.reabrirMatrizDistribuicao(filtro, produtosDistribuicao);
+		matrizDistribuicaoService.finalizarMatrizDistribuicaoTodosItens(filtro, produtosDistribuicao);
+		
+		result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+
+	@Post
+	public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
+		
+		matrizDistribuicaoService.reabrirMatrizDistribuicao(produtosDistribuicao);
 
 		result.use(Results.json()).from(Results.nothing()).serialize();
     }
 
+	@Post
+	public void reabrirMatrizDistribuicaoTodosItens() {
+		
+		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
+		
+		matrizDistribuicaoService.reabrirMatrizDistribuicaoTodosItens(filtro);
+
+		result.use(Results.json()).from(Results.nothing()).serialize();
+    }
+	
 
 	@Exportable
 	public class RodapeDTO {
