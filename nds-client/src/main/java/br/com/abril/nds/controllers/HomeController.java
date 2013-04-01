@@ -172,7 +172,7 @@ public class HomeController {
 
 		for (Permissao p : permissoes) {
 			
-			if(!p.isPermissaoAlteracao())
+			if(p.isPermissaoMenu() && !p.isPermissaoAlteracao())
 				organizaMenus(p, p.getPermissaoPai(), mapaMenus);
 		}
 

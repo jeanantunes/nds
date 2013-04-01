@@ -16,11 +16,13 @@ public class AcessoDTO implements Serializable {
 	
 	private Permissao alteracao;
 
+	public AcessoDTO(){};
+		
 	public AcessoDTO(Permissao permissao) {
 		this.descricao = permissao.getDescricao();
 		this.visualizacao = permissao;
 		this.alteracao = permissao.getPermissaoAlteracao();
-		this.setPai(permissao.getPermissaoPai());
+		this.pai = permissao.getPermissaoPai();
 	}
 	
 	public String getDescricao() {
