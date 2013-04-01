@@ -2391,7 +2391,7 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas){
+	public List<CotaDTO> buscarCotasQueEnquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas){
 		return cotaRepository.buscarCotasQuePossuemRangeReparte(qtdReparteInicial, qtdReparteFinal, listProdutoEdicaoDto, cotasAtivas);
 	}
 	

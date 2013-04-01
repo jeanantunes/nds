@@ -18,7 +18,9 @@ import br.com.abril.nds.dto.AddLoteRegiaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
@@ -354,6 +356,63 @@ public class RegiaoController extends BaseController {
 		if(mensagem == true){
 			throw new ValidacaoException(TipoMensagem.WARNING, "As cotas " + numCotaCadastrada + " não existem.");
 		}
+	}
+	
+	@Post
+	@Path("/buscarProduto")
+	public void buscarProduto (FiltroRegiaoNMaioresProdDTO filtro, String sortorder, String sortname, int page, int rp){
+		
+		this.tratarArgumentosFiltro(filtro);
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		tratarFiltroNMaiores(filtro);
+		
+		TableModel<CellModelKeyValue<RegiaoNMaiores_ProdutoDTO>> tableModel = gridProdutos(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+
+	}
+	
+	private TableModel<CellModelKeyValue<RegiaoNMaiores_ProdutoDTO>> gridProdutos (FiltroRegiaoNMaioresProdDTO filtro) {
+		
+		List<RegiaoNMaiores_ProdutoDTO> produtos = regiaoService.buscarProdutos(filtro);
+		
+		if (produtos == null || produtos.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_ProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoNMaiores_ProdutoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(produtos));
+
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+
+		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
+
+		return tableModel;
+	}
+	
+	private void tratarArgumentosFiltro (FiltroRegiaoNMaioresProdDTO filtro){
+		
+		if(filtro.getCodigoProduto() == null || filtro.getCodigoProduto().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Informe o Código e o Nome do produto.");
+		}
+		
+		if(filtro.getNome() == null || filtro.getNome().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Informe o Código e o Nome do produto.");
+		}
+	}
+	
+	private void tratarFiltroNMaiores(FiltroRegiaoNMaioresProdDTO filtroAtual) {
+		
+		FiltroRegiaoNMaioresProdDTO filtroSession = (FiltroRegiaoNMaioresProdDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
+			
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
 	private void validarEntradaDeVariasCotas(List<Integer> cotas, Long idRegiao) {

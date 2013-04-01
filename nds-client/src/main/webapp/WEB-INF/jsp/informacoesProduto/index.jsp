@@ -48,8 +48,8 @@ $(function(){
 		 	   		   onblur="pesquisaProduto.pesquisarPorNomeProduto('#idCodigo', '#nomeProduto');"/>
                 </td>
                 <td width="43">Classificação:</td>
-                <td width="276"><select name="select" id="select" style="width:200px;">
-                 
+                <td width="276">
+                  <select name="select" id="comboClassificacao" style="width:200px;">
                   <option selected="selected">Selecione...</option>
                   		<c:forEach items="${listaClassificacao}" var="classificacao">
 								<option value="${classificacao.key}">${classificacao.value}</option>

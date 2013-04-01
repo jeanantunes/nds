@@ -115,7 +115,7 @@ $(function(){
 					</td>
 					<td width="68">Classificação:</td>
 						 <td width="163">
-						 	<select name="select" id="select" style="width:140px;">
+						 	<select name="select" id="comboClassificacao" style="width:140px;">
                             	<option selected="selected">Selecione...</option>
                   					<c:forEach items="${listaClassificacao}" var="classificacao">
 										<option value="${classificacao.key}">${classificacao.value}</option>
@@ -123,7 +123,7 @@ $(function(){
                 			</select>
                 		</td>
 					<td width="31"><span title="Pesquisar Produto"
-						class="classPesquisar"><a href="javascript:;">&nbsp;</a> </span>
+						class="classPesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">&nbsp;</a> </span>
 					</td>
 				</tr>
 			</table>

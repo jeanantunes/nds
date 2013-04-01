@@ -975,6 +975,30 @@
 	},
 
 	
+	filtroNMaiores : function(){
+		var codigo = $("#idCodigo").val();
+		var nomeProduto = $("#nomeProduto").val();
+		var classificacao = $("#comboClassificacao").val();
+		
+		$(".produtosInfosGrid", this.workspace).flexOptions({
+			url: contextPath + "/distribuicao/regiao/buscarProduto",
+			dataType : 'json',
+			params:[
+			        {name : 'filtro.codigoProduto', value:codigo},
+			        {name : 'filtro.nome', value:nomeProduto},
+			        {name : 'filtro.idTipoClassificacaoProduto', value:classificacao}
+			        ]
+		});
+			
+		$(".produtosInfosGrid", this.workspace).flexReload();
+		/*
+		 * 
+		 * acabar de arrumar os grid, preprocess e função do botão pesquisar!
+		 * 
+		 * 
+		 */
+	},
+	
 	
 	//FUNCTIONS ADD REGI�O AUTOM�TICA  
 	
