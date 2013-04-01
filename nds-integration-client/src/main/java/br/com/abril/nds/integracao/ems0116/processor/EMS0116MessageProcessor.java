@@ -254,7 +254,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	private void alterarEnderecoPDV(Message message, EMS0116Input input,PDV pdv,List<EnderecoPDV> enderecosPDV) {
 		
 		EnderecoPDV enderecoPDV = null;
-		
+
 		String logradouro = input.getEndereco().split(",")[0].trim();
 		String numero = input.getEndereco().split(",")[1].trim();
 		numero = StringUtils.leftPad(numero, 6, '0');

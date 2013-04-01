@@ -505,7 +505,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque,
 			Date dataMovimento, Date dataOperacao, Long idLancamento,
 			Long idEestudoCota) {
-		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null);
+		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null, false);
 	}
 
 	
@@ -861,10 +861,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				tipoMovimentoEstoqueRepository.adicionar(tipoMovimentoRecebimentoEncalhe);
 			}
 
-			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe);
+			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe, dataOperacao, true);
 
-			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), 
-					tipoMovimentoEnvioEncalhe, dataOperacao);
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao, true);
 		}
 	}
 
