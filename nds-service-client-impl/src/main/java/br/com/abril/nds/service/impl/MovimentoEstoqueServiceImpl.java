@@ -235,7 +235,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	public MovimentoEstoque gerarMovimentoEstoqueJuramentado(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false);
 
 		return movimentoEstoque;
 	}
@@ -244,7 +244,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false);
 
 		return movimentoEstoque;
 	}
@@ -253,21 +253,30 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque, origem);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque, origem, null, false);
 
 		return movimentoEstoque;
 	}
 
 	@Override
-	@Transactional
-	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
+	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false);
 
 		return movimentoEstoque;
 	}
 
-	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Origem origem){
+	
+	@Override
+	@Transactional
+	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao, boolean isImportacao) {
+
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, dataOperacao, isImportacao);
+
+		return movimentoEstoque;
+	}
+
+	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Origem origem, Date dataOperacao, boolean isImportacao){
 
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 
@@ -283,7 +292,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 
 		movimentoEstoque.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
-		movimentoEstoque.setData(new Date());
+		
+		if (isImportacao) {
+			movimentoEstoque.setData(dataOperacao);
+		}else {
+			movimentoEstoque.setData(new Date());
+		}
 		movimentoEstoque.setUsuario(new Usuario(idUsuario));
 		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
@@ -296,7 +310,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoque.setAprovador(new Usuario(idUsuario));
 			movimentoEstoque.setDataAprovacao(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
-			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque);			
+			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao);			
 			
 			movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
 		
@@ -310,6 +324,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
 			 							MovimentoEstoque movimentoEstoque) {
+		return this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, false);
+	}
+
+	@Override
+	@Transactional
+	public Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
+			 							MovimentoEstoque movimentoEstoque, boolean isImportacao) {
 
 		if (StatusAprovacao.APROVADO.equals(movimentoEstoque.getStatus())) {
 
@@ -422,8 +443,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					 throw new ValidacaoException(TipoMensagem.WARNING, "Estoque inválido para a operação.");
 			}
 
-			this.validarAlteracaoEstoqueProdutoDistribuidor(
-				novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao());
+			// Caso seja importação, deve inserir mesmo se o estoque ficar negativo - Definido em conjunto com Cesar Pop Punk
+			if (!isImportacao) {
+				this.validarAlteracaoEstoqueProdutoDistribuidor(
+					novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao());
+			}
 			
 			if (estoqueProduto.getId() == null) {
 				
@@ -439,7 +463,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		return null;
 	}
-	
+
 	private void validarAlteracaoEstoqueProdutoDistribuidor(BigInteger saldoEstoque, 
 															TipoEstoque tipoEstoque,
 															ProdutoEdicao produtoEdicao) {
@@ -476,6 +500,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	}
 
 	@Override
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento,
+			Long idProdutoEdicao, Long idCota, Long idUsuario,
+			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque,
+			Date dataMovimento, Date dataOperacao, Long idLancamento,
+			Long idEestudoCota) {
+		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null, false);
+	}
+
+	
+	@Override
 	@Transactional
 	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, 
 			Long idProdutoEdicao, Long idCota, Long idUsuario, 
@@ -484,12 +518,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, 
 				idUsuario, quantidade, tipoMovimentoEstoque, new Date(), dataOperacao,null,null);
 	}
-	
+
+	@Override
+	@Transactional
+	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, 
+			Long idProdutoEdicao, Long idCota, Long idUsuario, 
+			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao, boolean isHistorico) {
+		
+		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), dataOperacao,null,null, isHistorico);
+	}
+
 	@Override
 	@Transactional
 	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
-			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
+			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota, boolean isHistorico) {
 
 		if (dataOperacao == null) {
 			
@@ -705,7 +748,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput) {
+	public void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput, Date dataOperacao) {
 
 		Integer reparte = vendaInput.getQtdReparte();
 		Integer encalhe = vendaInput.getQtdEncalhe();
@@ -714,17 +757,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				vendaInput.getCodigoProduto().toString(), vendaInput.getNumeroEdicao().longValue());
 
 		if(edicao == null)
-			throw new ImportacaoException("Edição inexistente.");
+			throw new ImportacaoException("Edição " + vendaInput.getNumeroEdicao()
+										+ " inexistente para produto : " + vendaInput.getCodigoProduto().toString());
 
 		Cota cota = cotaRepository.obterPorNumerDaCota(vendaInput.getNumeroCota());
 
 		if(cota == null)
-			throw new ImportacaoException("Cota inexistente.");
+			throw new ImportacaoException("Cota " + vendaInput.getNumeroCota() + " inexistente.");
 
 		Long idUsuario = usuarioRepository.getUsuarioImportacao().getId();
 		
-		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-
 		persistirRegistroVendaHistoricoReparte(idUsuario, reparte, edicao, cota, dataOperacao);
 
 		persistirRegistroVendaHistoricoEncalhe(idUsuario, encalhe, edicao, cota, dataOperacao);
@@ -738,9 +780,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	 * @param reparte
 	 * @param edicao
 	 * @param cota
+	 * @param dataOperacao 
 	 */
-	private void persistirRegistroVendaHistoricoReparte(Long idUsuario, Integer reparte, ProdutoEdicao edicao, Cota cota,
-			Date dataOperacao){
+	private void persistirRegistroVendaHistoricoReparte(Long idUsuario, Integer reparte, ProdutoEdicao edicao, Cota cota, Date dataOperacao){
 
 		if(reparte != null && reparte>0) {
 
@@ -772,10 +814,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				tipoMovimentoEstoqueRepository.adicionar(tipoMovimentoRecebimentoReparte);
 			}
 
-			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoEnvioReparte);
+			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoEnvioReparte, dataOperacao, true);
 
-			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), 
-					tipoMovimentoRecebimentoReparte, dataOperacao);
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao, true);
 		}
 	}
 
@@ -820,10 +861,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				tipoMovimentoEstoqueRepository.adicionar(tipoMovimentoRecebimentoEncalhe);
 			}
 
-			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe);
+			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe, dataOperacao, true);
 
-			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), 
-					tipoMovimentoEnvioEncalhe, dataOperacao);
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao, true);
 		}
 	}
 
@@ -862,7 +902,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			this.criarMovimentoEstoque(null,
 					produtoServico.getProdutoEdicao().getId(),
-					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null);
+					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null, null, false);
 		}
 	}
 	
