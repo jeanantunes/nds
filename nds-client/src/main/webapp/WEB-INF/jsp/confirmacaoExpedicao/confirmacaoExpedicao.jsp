@@ -1,3 +1,4 @@
+<input id="apenasVizualizacao" type="hidden" value="${apenasVizualizacao}">
 
 <head>
 
@@ -12,6 +13,7 @@
 	
 	$(function(){
 		confirmaExpedicaoController.init();
+		bloquearItensEdicao(confirmaExpedicaoController.workspace);
 	});
 	
 </script>
@@ -19,13 +21,11 @@
 </head>
 
 <body>
-	
-	<input id="apenasVizualizacao" type="hidden" value="${apenasVizualizacao}">
-	
+		
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:confirmaExpedicaoController.popupConfirmar();" rel="tipsy"  title="Confirmar">
+				<a isEdicao="true" href="javascript:confirmaExpedicaoController.popupConfirmar();" rel="tipsy"  title="Confirmar">
 					<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />
 				</a> 
 			</span> 
@@ -109,7 +109,7 @@
 						<span class="bt_sellAll" style="float: right;">
 						<label for="sel">Selecionar Todos</label>					
 	<!-- SELECIONAR TODOS -->	
-							<input type="checkbox" name="Todos" id="selecionarTodosID"onclick="confirmaExpedicaoController.selecionarTodos(this);" style="float: left;" /> </span>
+							<input isEdicao="true" type="checkbox" name="Todos" id="selecionarTodosID"onclick="confirmaExpedicaoController.selecionarTodos(this);" style="float: left;" /> </span>
 	
 				</fieldset>
 			</div>

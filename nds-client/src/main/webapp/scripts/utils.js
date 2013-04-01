@@ -520,3 +520,22 @@ function keyEventEnterAux(e){
 function visibleOverlay(){
 	return $("div.ui-widget-overlay").val()=="";
 }
+
+function bloquearItensEdicao(workspace) {
+		
+	if($('#apenasVizualizacao',confirmaExpedicaoController.workspace).val()=="false")
+		return;
+	
+	$('a[isEdicao="true"]',workspace).each(function() {
+		this.href="#";
+		$(this).css('opacity',0.5);
+		//this.title += ' - Não Permitido';
+	});
+	
+	$('input[isEdicao="true"][type:"checkbox"]',workspace).each(function() {
+		this.disabled = true;
+	});
+	
+	
+	
+}

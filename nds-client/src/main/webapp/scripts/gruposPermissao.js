@@ -217,9 +217,16 @@ var gruposPermissaoController = $.extend(true, {
 				var alteracao = linha.cell.alteracao;
 				
 				var visualizacao = linha.cell.visualizacao;
+								
+				if(visualizacao)
+					linha.cell.visualizacao = gruposPermissaoController.getInput(false, visualizacao, linha.cell.pai, alteracao);
+				else
+					linha.cell.visualizacao = '';
 				
-				linha.cell.visualizacao = gruposPermissaoController.getInput(false, visualizacao, linha.cell.pai, alteracao);
-				linha.cell.alteracao = gruposPermissaoController.getInput(true, visualizacao, linha.cell.pai, alteracao);				
+				if(alteracao)
+					linha.cell.alteracao = gruposPermissaoController.getInput(true, visualizacao, linha.cell.pai, alteracao);				
+				else
+					linha.cell.alteracao = ''; 
 			});
 			
 			return data;

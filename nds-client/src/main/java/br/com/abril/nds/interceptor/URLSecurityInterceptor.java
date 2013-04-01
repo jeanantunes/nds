@@ -24,7 +24,6 @@ import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
-import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.core.InterceptorStack;
@@ -65,18 +64,13 @@ public class URLSecurityInterceptor implements Interceptor {
 		try {			
 			
 			boolean authorize = usuarioPossuiRule(resourceInstance.getClass());
-						
-			if(method.getMethod().isAnnotationPresent(Path.class) 
-					&& method.getMethod().getAnnotation(Path.class).value().toString().equals("/")) {
-				//TODO verificar funcionamento do toString no caso acima.
+			
+			if(authorize) {
+				authorize = usuarioPossuiRule(method.getMethod());
+				
 				boolean apenasVizualizacao = !usuarioPossuiRuleAlteracao(resourceInstance.getClass());
-				//Utilizado para apresentar tela em modo de edicao
 				result.include("apenasVizualizacao", apenasVizualizacao);				
 			}
-				
-			
-			if(authorize==true)
-				authorize = usuarioPossuiRule(method.getMethod());
 						
 			if((resourceInstance instanceof HomeController || resourceInstance instanceof InicialController) || authorize)
 				stack.next(method, resourceInstance);
