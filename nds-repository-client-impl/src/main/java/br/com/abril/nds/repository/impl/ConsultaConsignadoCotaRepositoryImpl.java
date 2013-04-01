@@ -65,11 +65,12 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   
 		hql.append(createFromConsultaConsignadoCota(filtro));
 		
-		if (filtro.getPaginacao().getSortColumn() != null) {
+		if (	filtro.getPaginacao().getSortColumn() != null && 
+				!filtro.getPaginacao().getSortColumn().trim().isEmpty()) {
 			hql.append(" ORDER BY ");
 			hql.append(filtro.getPaginacao().getSortColumn());		
 		
-			if (filtro.getPaginacao().getOrdenacao() != null) {
+			if ( filtro.getPaginacao().getOrdenacao() != null ) {
 				hql.append(" ");
 				hql.append( filtro.getPaginacao().getOrdenacao().toString());
 			}
