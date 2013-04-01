@@ -236,12 +236,14 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 				this.movimentoEstoqueService.gerarMovimentoCota(
 					cotaAusente.getData(), rateio.getProdutoEdicao().getId(),
 						rateio.getCota().getId(), idUsuario, 
-							rateio.getQtde(), tipoMovimentoCotaEstorno);
+							rateio.getQtde(), tipoMovimentoCotaEstorno,
+							dataOperacaoDistribuidor);
 				
 				this.movimentoEstoqueService.gerarMovimentoCota(
 					cotaAusente.getData(), rateio.getProdutoEdicao().getId(),
 						cotaAusente.getCota().getId(), idUsuario, 
-							rateio.getQtde(), tipoMovimentoCota); 
+							rateio.getQtde(), tipoMovimentoCota,
+							dataOperacaoDistribuidor); 
 			}
 		}
 		
@@ -276,7 +278,8 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 				this.movimentoEstoqueService.gerarMovimentoCota(
 					cotaAusente.getData(), movimento.getProdutoEdicao().getId(),
 						cotaAusente.getCota().getId(), idUsuario, 
-							qtdeARetirar, tipoMovimentoCota); 
+							qtdeARetirar, tipoMovimentoCota,
+							dataOperacaoDistribuidor); 
 			}	
 		}
 		

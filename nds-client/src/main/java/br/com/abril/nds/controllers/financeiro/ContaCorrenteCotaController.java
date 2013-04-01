@@ -66,6 +66,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/financeiro/contaCorrenteCota")
+@Rules(Permissao.ROLE_FINANCEIRO_CONTA_CORRENTE)
 public class ContaCorrenteCotaController extends BaseController {
 
 	@Autowired
@@ -104,7 +105,7 @@ public class ContaCorrenteCotaController extends BaseController {
 	public ContaCorrenteCotaController() {
 	}
 
-	@Rules(Permissao.ROLE_FINANCEIRO_CONTA_CORRENTE)
+	@Path("/")
 	public void index() {
 	}
 

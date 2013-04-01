@@ -21,10 +21,9 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.FormaCobrancaExcepion;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -56,6 +55,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("devolucao/fechamentoEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 public class FechamentoEncalheController extends BaseController {
 
 	@Autowired
@@ -93,7 +93,6 @@ public class FechamentoEncalheController extends BaseController {
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaFechamentoEncalhe";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 	public void index() {
 		
 		List<Fornecedor> listaFornecedores = fornecedorService.obterFornecedores();
@@ -309,17 +308,7 @@ public class FechamentoEncalheController extends BaseController {
 				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
 						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
 				
-				for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
-					
-					Cota cota = cotaService.obterPorId(cotaAusenteEncalheDTO.getIdCota());
-					try{
-					this.fechamentoEncalheService.realizarCobrancaCotas(dataOperacao, getUsuarioLogado(), cota);
-					} catch (FormaCobrancaExcepion e) {
-						listNumeroCota.add(cotaAusenteEncalheDTO.getNumeroCota());
-						
-					}
-					
-				}				
+				this.fechamentoEncalheService.realizarCobrancaCotas(dataOperacao, getUsuarioLogado(), listaCotaAusenteEncalhe, null);				
 			
 				if(!listNumeroCota.isEmpty()){					
 					String cotas = "[" +StringUtils.join(listNumeroCota, ", ")+"]";					
@@ -336,9 +325,9 @@ public class FechamentoEncalheController extends BaseController {
 		} catch (ValidacaoException e) {
 			this.result.use(Results.json()).from(e.getValidacao(), "result").recursive().serialize();
 			return;
-		} catch (Exception e) {
+		} catch (GerarCobrancaValidacaoException e) {
 			this.result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar cobrar: " + e.getMessage()), "result").recursive().serialize();
+				new ValidacaoException(TipoMensagem.WARNING, e.getValidacaoVO().getListaMensagens()).getValidacao(), "result").recursive().serialize();
 			return;
 		}
 		

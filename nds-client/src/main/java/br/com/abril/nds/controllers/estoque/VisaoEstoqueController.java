@@ -40,6 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("estoque/visaoEstoque")
+@Rules(Permissao.ROLE_ESTOQUE_VISAO_DO_ESTOQUE)
 public class VisaoEstoqueController extends BaseController {
 	
 	private static final String FILTRO_VISAO_ESTOQUE = "FILTRO_VISAO_ESTOQUE";
@@ -70,7 +71,6 @@ public class VisaoEstoqueController extends BaseController {
 
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ESTOQUE_VISAO_DO_ESTOQUE)
 	public void index()
 	{
 		List<Fornecedor> listFornecedores = fornecedorService.obterFornecedores();

@@ -513,9 +513,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, 
 			Long idProdutoEdicao, Long idCota, Long idUsuario, 
-			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
+			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao) {
 		
-		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null);
+		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, 
+				idUsuario, quantidade, tipoMovimentoEstoque, new Date(), dataOperacao,null,null);
 	}
 
 	@Override
@@ -765,10 +766,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			throw new ImportacaoException("Cota " + vendaInput.getNumeroCota() + " inexistente.");
 
 		Long idUsuario = usuarioRepository.getUsuarioImportacao().getId();
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 
 		persistirRegistroVendaHistoricoReparte(idUsuario, reparte, edicao, cota, dataOperacao);
 
+<<<<<<< HEAD
 		persistirRegistroVendaHistoricoReparte(idUsuario, encalhe, edicao, cota, dataOperacao);
+=======
+		persistirRegistroVendaHistoricoEncalhe(idUsuario, encalhe, edicao, cota, dataOperacao);
+>>>>>>> DGBti/master
 
 	}
 
@@ -781,7 +788,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	 * @param cota
 	 * @param dataOperacao 
 	 */
+<<<<<<< HEAD
 	private void persistirRegistroVendaHistoricoReparte(Long idUsuario, Integer reparte, ProdutoEdicao edicao, Cota cota, Date dataOperacao){
+=======
+	private void persistirRegistroVendaHistoricoReparte(Long idUsuario, Integer reparte, ProdutoEdicao edicao, Cota cota,
+			Date dataOperacao){
+>>>>>>> DGBti/master
 
 		if(reparte != null && reparte>0) {
 
@@ -815,7 +827,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoEnvioReparte, dataOperacao, true);
 
+<<<<<<< HEAD
 			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao, true);
+=======
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), 
+					tipoMovimentoRecebimentoReparte, dataOperacao);
+>>>>>>> DGBti/master
 		}
 	}
 
@@ -827,7 +844,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	 * @param edicao
 	 * @param cota
 	 */
-	private void persistirRegistroVendaHistoricoEncalhe(Long idUsuario, Integer encalhe, ProdutoEdicao edicao, Cota cota){
+	private void persistirRegistroVendaHistoricoEncalhe(Long idUsuario, Integer encalhe, ProdutoEdicao edicao, Cota cota, 
+			Date dataOperacao){
 
 		if(encalhe != null && encalhe>0) {
 
@@ -861,7 +879,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe);
 
-			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe);
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), 
+					tipoMovimentoEnvioEncalhe, dataOperacao);
 		}
 	}
 

@@ -861,7 +861,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			List<Long> tiposMovimentoCredito, List<Long> tiposMovimentoDebito,
 			List<Long> tipoMovimentoEncalhe, List<Long> tiposMovimentoEncargos,
 			List<Long> tiposMovimentoPostergadoCredito, List<Long> tiposMovimentoPostergadoDebito,
-			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado){
+			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado) {
 		
 		StringBuilder sql = new StringBuilder("select ");
 		sql.append(" cfc.ID as id, ")
@@ -877,15 +877,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
 		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
 		   .append(" 'CONSOLIDADO' as tipo, ")
-		   .append("(")
-		   .append(" select case when divida.DATA is not null then max(divida.DATA) else max(acumulada.DATA) end as dataRaiz ")
-		   .append(" from DIVIDA acumulada ")
-		   .append(" left join DIVIDA divida ")
-		   .append("      ON divida.ID = acumulada.DIVIDA_RAIZ_ID ")
-		   .append(" where divida.DATA < (select max(d.DATA) from DIVIDA d where d.COTA_ID = divida.COTA_ID) ")
-		   .append(" or acumulada.DATA < (select max(a.DATA) from DIVIDA a where a.COTA_ID = acumulada.COTA_ID) ")
-		   .append(" and acumulada.CONSOLIDADO_ID = cfc.ID ")
-		   .append(" )AS dataRaiz, ")
+		   .append(" COALESCE ( ")
+		   .append(" 	COALESCE ( ")
+		   .append(" 		MIN(dividaRaiz.DATA), divida.DATA ")
+		   .append(" 	), cfc.DT_CONSOLIDADO ")
+		   .append(" ) AS dataRaiz, ")
 		   .append(" coalesce((select sum(bc.VALOR_PAGO) ")
 		   .append("           from BAIXA_COBRANCA bc ")
 		   .append("           inner join COBRANCA cobranca ")
@@ -914,6 +910,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
 		   .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
 		   .append(" inner join BOX box on cota.BOX_ID = box.ID ")
+		   .append(" left join DIVIDA divida on divida.CONSOLIDADO_ID = cfc.ID ")
+		   .append(" left join DIVIDA dividaRaiz on divida.DIVIDA_RAIZ_ID = dividaRaiz.ID ")
 		   .append(" where cota.NUMERO_COTA = :numeroCota ");
 		
 		if (filtro.getInicioPeriodo() != null && filtro.getFimPeriodo() != null){
@@ -921,7 +919,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			sql.append(" and cfc.DT_CONSOLIDADO between :inicioPeriodo and :fimPeriodo ");
 		}
 		
-		sql.append(" union all ")
+		sql.append(" group by cfc.ID ")
+		
+		   .append(" union all ")
 		   
 		   .append(" select ")
 		   .append(" null as id, ")

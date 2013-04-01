@@ -39,6 +39,8 @@ public class ItemImpressaoNfe{
 	private BigDecimal valorIPIProduto;
 	
 	private Integer sequencia;
+	
+	private String codigoBarra;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -183,5 +185,19 @@ public class ItemImpressaoNfe{
 	public void setSequencia(Integer sequencia) {
 		this.sequencia = sequencia;
 	}
+
+	/**
+	 * @return the codigoBarra
+	 */
+	public String getCodigoBarra() {
+		return codigoBarra;
+	}
+
+	/**
+	 * @param codigoBarra the codigoBarra to set
+	 */
+	public void setCodigoBarra(String codigoBarra) {
+		this.codigoBarra = codigoBarra;
+	}	
 	
 }

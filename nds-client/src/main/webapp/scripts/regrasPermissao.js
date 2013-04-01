@@ -31,7 +31,7 @@ var regrasPermissaoController = $.extend(true, {
 				colModel : [ {
 					display : 'Nome',
 					name : 'nome',
-					width : 473,
+					width : 453,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -47,7 +47,7 @@ var regrasPermissaoController = $.extend(true, {
 				useRp : true,
 				rp : 15,
 				showTableToggleBtn : true,
-				width : 900,
+				width : 880,
 				height : 'auto'
 			});
 		}

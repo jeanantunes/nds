@@ -1145,15 +1145,13 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	public void obterDividaParaAcumuloPorCotaIdCota() {
 		Long idCota = 1L;
 		
-		Divida divida =  dividaRepository.obterDividaParaAcumuloPorCota(idCota, null);
+		Divida divida =  dividaRepository.obterDividaParaAcumuloPorCota(idCota);
 		
 	}
 	
 	@Test
 	public void obterDividaParaAcumuloPorCotaData() {
-		Date diaDivida = Fixture.criarData(24, Calendar.OCTOBER, 2012);
-		
-		Divida divida =  dividaRepository.obterDividaParaAcumuloPorCota(null, diaDivida);
+		Divida divida =  dividaRepository.obterDividaParaAcumuloPorCota(null);
 		
 	}
 	

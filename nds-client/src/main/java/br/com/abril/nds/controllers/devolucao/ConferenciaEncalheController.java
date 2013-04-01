@@ -75,6 +75,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/devolucao/conferenciaEncalhe")
+@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 public class ConferenciaEncalheController extends BaseController {
 	
 	private ConferenciaEncalheSessionScopeAttr conferenciaEncalheSessionScopeAttr;
@@ -146,7 +147,6 @@ public class ConferenciaEncalheController extends BaseController {
 	private HttpServletResponse httpResponse;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
 		
 		this.result.include(
@@ -535,13 +535,10 @@ public class ConferenciaEncalheController extends BaseController {
 
 		List<ProdutoEdicao> produtosEdicao = new ArrayList<ProdutoEdicao>();
 
-		produtosEdicao = this.produtoEdicaoService.buscarProdutoPorCodigoBarras(codigoBarra);
-		
+		produtosEdicao = this.produtoEdicaoService.obterPorCodigoBarraILike(codigoBarra);
 		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
 			
-			this.result.nothing();
-			
-			return;
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
 		}
 
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
@@ -1055,8 +1052,8 @@ public class ConferenciaEncalheController extends BaseController {
 								null, 
 								TipoDocumentoConferenciaEncalhe.SLIP));
 				
-					byte[] arquivoSlip = TXTUtil.mergeTXTs(arquivos);
-					mapFileNameFile.put("arquivos_cobranca_slip.txt", arquivoSlip);
+					byte[] arquivoSlip = PDFUtil.mergePDFs(arquivos);
+					mapFileNameFile.put("arquivos_cobranca_slip.pdf", arquivoSlip);
 					arquivos.clear();
 				}
 				
@@ -1068,10 +1065,10 @@ public class ConferenciaEncalheController extends BaseController {
 								idControleConferenciaEncalheCota, 
 								nossoNumero,
 								TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+						
+						byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
+						mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
 					}
-
-					byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
-					mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
 				} 
 			}
 

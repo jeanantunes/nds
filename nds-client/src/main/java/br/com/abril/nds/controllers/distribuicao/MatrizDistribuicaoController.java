@@ -44,6 +44,8 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
+@Path("/matrizDistribuicao")
+@Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
 public class MatrizDistribuicaoController extends BaseController {
 
 	@Autowired
@@ -66,8 +68,7 @@ public class MatrizDistribuicaoController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
 	
-	@Path("/matrizDistribuicao")
-	@Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
+	@Path("/")
 	public void index() {
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);

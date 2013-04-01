@@ -163,6 +163,8 @@ public class NfeImpressaoDTO implements Serializable{
 	
 	private Integer numeroCota;
 	
+	private Date dataLancamento;
+	
 	public Integer getNumeroCota() {
 		return numeroCota;
 	}
@@ -781,4 +783,19 @@ public class NfeImpressaoDTO implements Serializable{
 	public void setFaturas(List<Duplicata> faturas) {
 		this.faturas = faturas;
 	}
+
+	/**
+	 * @return the dataLancamento
+	 */
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	/**
+	 * @param dataLancamento the dataLancamento to set
+	 */
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = dataLancamento;
+	}
+	
 }

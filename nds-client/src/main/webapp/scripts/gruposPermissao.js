@@ -2,65 +2,48 @@ var gruposPermissaoController = $.extend(true, {
 		path : "",
 		init : function(contextPath) {
 			this.path = contextPath + "/administracao/gruposAcesso";
-			$( "#tabs-grupos" , gruposPermissaoController.workspace).tabs();
+						
+			$("#tabs-acesso" , gruposPermissaoController.workspace).tabs({height:400});
+			
+			
 			this.initGruposGrid();
 			this.mostrarGrupo();
 		},
 		popup_novo_grupo : function() {
-			$("#permissoesGrupo option", gruposPermissaoController.workspace).remove();
-			$("#permissoesGrupoSelecionadas option", gruposPermissaoController.workspace).remove();
+			
+			$('input[tipo="permissao"]').attr("checked", false);
+			$('#permissaoGridConteudo').appendTo($('#localPermissaoGridGrupo'));
 
 			$("#grupoPermissaonome", gruposPermissaoController.workspace).val("");
 			$("#grupoPermissaoId", gruposPermissaoController.workspace).val("");
-
-			$.getJSON(
-					this.path + "/novoGrupoPermissao",
-					null, 
-					function(result) {
-						if (result) {
-							$(result.permissoes).each(function() {
-								$("#permissoesGrupo", gruposPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
-																			 			   text: $(this)[0].toString() 
-																			 			  }));
-							});
-						}
-					}
-				);
 			
 			this.popup_grupo();
 		},
 		popup_grupo : function() {
 			$( "#dialog-novo-grupo", gruposPermissaoController.workspace).dialog({
 				resizable: false,
-				height:420,
+				height:470,
 				width:680,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
+						
 						var self = this;
 						
-						var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serializeObject();
-						//var obj = $("#novo_grupo_form", gruposPermissaoController.workspace).serialize();
+						var params = [];
 						
-						var permissoes = "";
-						$("#permissoesGrupoSelecionadas option", gruposPermissaoController.workspace).each(function() {
-							if (permissoes!="") {
-								permissoes += ",";
-							}
-							permissoes += $(this).val();
-					    });
-
-						obj['grupoPermissaoDTO.permissoesSelecionadas'] = permissoes;
+						params.push({'name' : 'grupoPermissaoDTO.id', 'value' : $("#grupoPermissaoId", gruposPermissaoController.workspace).val()});
 						
-						$.postJSON(gruposPermissaoController.path + '/salvarGrupoPermissao', obj, function(data) {
-							var tipoMensagem = data.tipoMensagem;
-							var listaMensagens = data.listaMensagens;
-
-							if(tipoMensagem && listaMensagens) {
-								exibirMensagem(tipoMensagem, listaMensagens);
-							}
-
-							$("#effect").show("highlight", {}, 1000, callback);
+						params.push({'name' : 'grupoPermissaoDTO.nome', 'value' : $('#grupoPermissaonome', gruposPermissaoController.workspace).val()});
+						
+						var checkSelecionados = $('.permissao:checked');
+												
+						$.each(checkSelecionados, function(index, elemento) {
+							params.push({'name':'grupoPermissaoDTO.permissoes['+index+']', value : elemento.getAttribute('role')});
+						});
+																		
+						$.postJSON(gruposPermissaoController.path + '/salvarGrupoPermissao', params, function(data) {
+														
 							$( self ).dialog("close");
 							$(".gruposGrid", gruposPermissaoController.workspace).flexReload();
 
@@ -76,22 +59,7 @@ var gruposPermissaoController = $.extend(true, {
 				form: $("#dialog-novo-grupo", gruposPermissaoController.workspace).parents("form")
 			});
 		},
-		adicionaGruposSelecionados : function() {
-			$('#permissoesGrupo', gruposPermissaoController.workspace).find(":selected").each(function() {
-				$("#permissoesGrupoSelecionadas", gruposPermissaoController.workspace).append($("<option/>", {value: $(this).val(),
-		 			   text: $(this).val() 
-		 			  }));
-			});
-			$("#permissoesGrupo option:selected", gruposPermissaoController.workspace).remove();
-		},
-		removeGruposSelecionados : function() {
-			$('#permissoesGrupoSelecionadas', gruposPermissaoController.workspace).find(":selected").each(function() {
-				$("#permissoesGrupo", gruposPermissaoController.workspace).append($("<option/>", {value: $(this).val(),
-		 			   text: $(this).val() 
-		 			  }));
-			});
-			$("#permissoesGrupoSelecionadas option:selected", gruposPermissaoController.workspace).remove();
-		},
+	
 		popup_excluir_grupo : function(codigoGrupo) {
 			$( "#dialog-excluir_grupo", gruposPermissaoController.workspace ).dialog({
 				resizable: false,
@@ -139,9 +107,10 @@ var gruposPermissaoController = $.extend(true, {
 			$(".gruposGrid", gruposPermissaoController.workspace).flexReload();
 		},
 		popup_editar_grupo : function(idGrupo) {
-			$("#permissoesGrupo option", gruposPermissaoController.workspace).remove();
-			$("#permissoesGrupoSelecionadas option", gruposPermissaoController.workspace).remove();
 			
+			$('input[tipo="permissao"]').attr("checked", false);
+			$('#permissaoGridConteudo').appendTo($('#localPermissaoGridGrupo'));
+
 			$.getJSON(
 					this.path + "/editarGrupoPermissao",
 					{codigoGrupo:idGrupo}, 
@@ -151,18 +120,9 @@ var gruposPermissaoController = $.extend(true, {
 							$("#grupoPermissaonome", gruposPermissaoController.workspace).val(result.nome);
 							$("#grupoPermissaoId", gruposPermissaoController.workspace).val(result.id);
 							
-							$(result.permissoes).each(function() {
-								$("#permissoesGrupo", gruposPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
-																			 			   text: $(this)[0].toString() 
-																			 			  }));
-							});
-
-							$(result.permissoesSelecionadas).each(function() {
-								$("#permissoesGrupoSelecionadas", gruposPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
-																			 			   text: $(this)[0].toString() 
-																			 			  }));
-							});
-
+							$.each(result.permissoes, function(index, role) {
+								$('input[tipo="permissao"][role="'+role+'"][isPai="false"]').attr("checked", true);
+							});							
 						}
 					}
 				);
@@ -216,5 +176,150 @@ var gruposPermissaoController = $.extend(true, {
 				width : 900,
 				height : 'auto'
 			});
+			
+			$(".permissaoGrid", gruposPermissaoController.workspace).flexigrid({
+				url : contextPath + '/administracao/gruposAcesso/obterPermissoes',
+				preProcess : gruposPermissaoController.preProcessPermissao,
+				dataType : 'json',
+				colModel : [ {
+					display : 'Regra',
+					name : 'descricao',
+					width : 443,
+					sortable : false,
+					align : 'left'
+				}, {
+					display : 'Visualização',
+					name : 'visualizacao',
+					width : 70,
+					sortable : false,
+					align : 'center'
+				}, {
+					display : 'Alteração',
+					name : 'alteracao',
+					width : 70,
+					sortable : false,
+					align : 'center'
+				}],
+				width : 640,
+				height : 260
+			});
+		},
+		
+		preProcessPermissao : function(data) {
+			
+			$.each(data.rows, function(indice, linha) { 
+				
+				if(linha.cell.pai)
+					linha.cell.descricao = '<div style="margin-left:20px;padding: 0px">' + linha.cell.descricao + '</div>'; 
+				else	
+					linha.cell.descricao = '<div style="font-weight: bolder;padding: 0px">' + linha.cell.descricao + '</div>'; 
+				
+				var alteracao = linha.cell.alteracao;
+				
+				var visualizacao = linha.cell.visualizacao;
+								
+				if(visualizacao)
+					linha.cell.visualizacao = gruposPermissaoController.getInput(false, visualizacao, linha.cell.pai, alteracao);
+				else
+					linha.cell.visualizacao = '';
+				
+				if(alteracao)
+					linha.cell.alteracao = gruposPermissaoController.getInput(true, visualizacao, linha.cell.pai, alteracao);				
+				else
+					linha.cell.alteracao = ''; 
+			});
+			
+			return data;
+		},
+		
+		getInput : function(isAlteracao, permissao, pai, alteracao) {
+						 
+			var isPai = !pai ? true : false;
+			
+			var onchange = '';
+			
+			if (isPai)
+				onchange = 'gruposPermissaoController.paiSelecionado(this)';
+			else if(isAlteracao)
+				onchange = 'gruposPermissaoController.alteracaoSelecionada(this)';
+			else 
+				onchange = 'gruposPermissaoController.visualizacaoSelecionada(this)';
+			
+			if(!pai)
+				pai='';
+			
+			if(!permissao)
+				permissao='';
+			
+			if(!alteracao)
+				alteracao='';
+			
+			var role = isAlteracao ? alteracao : permissao;
+						
+			return '<input class="permissao" tipo="permissao" type="checkbox" onchange="'+onchange+'" role="'+role+'" permissao="'+permissao
+						+'"  alteracao="'+alteracao+'" pai="'+pai+'" isAlteracao="'+isAlteracao+'" isPai="'+isPai+'"/>';
+		},
+		
+		paiSelecionado : function(elemento) {
+			
+			var rolePai = elemento.getAttribute('permissao');
+			
+			var isAlteracao = (elemento.getAttribute('isAlteracao') === 'true');
+			
+			var filhos = $('input[pai="'+rolePai+'"][isAlteracao="'+isAlteracao+'"]' );
+			
+			filhos.attr('checked',elemento.checked);
+		
+			if(isAlteracao===true && elemento.checked===true) {
+				var filhosVisualizacao = $('input[pai="'+rolePai+'"][isAlteracao="false"]' );
+				filhosVisualizacao.attr('checked',true);
+				
+				var paiVisualizacao = $('input[permissao="'+rolePai+'"][isAlteracao="false"]' );
+				paiVisualizacao.attr('checked',true);
+			}
+			
+			if(isAlteracao===false && elemento.checked===false) {
+				
+				var filhosAlteracao = $('input[pai="'+rolePai+'"][isAlteracao="true"]' );
+				filhosAlteracao.attr('checked',false);
+				
+				var paiAlteracao = $('input[permissao="'+rolePai+'"][isAlteracao="true"]' );
+				paiAlteracao.attr('checked',false);
+			}
+				
+		},
+				
+		alteracaoSelecionada : function(elemento) {
+			var rolePai = elemento.getAttribute('pai');
+			
+			var elementoPai = $('input[permissao="'+rolePai+'"][isAlteracao="true"]').get(0);
+			
+			elementoPai.checked=false;
+			
+			if(elemento.checked===true) {
+				
+				var visualizacao = elemento.getAttribute('permissao');
+				
+				var elementoVisualizacao = $('input[permissao="'+visualizacao+'"][isAlteracao="false"]').get(0);
+				
+				elementoVisualizacao.checked=true;
+			}
+		},
+		
+		visualizacaoSelecionada : function(elemento) {
+						
+			var rolePai = elemento.getAttribute('pai');
+						
+			$('input[permissao="'+rolePai+'"]').attr('checked', false);
+			
+			if(elemento.checked===false) {			
+				
+				var visualizacao = elemento.getAttribute('permissao');
+				
+				var elementoAlteracao = $('input[permissao="'+visualizacao+'"][isAlteracao="true"]').get(0);
+				
+				elementoAlteracao.checked=false;
+			}
 		}
+		
 }, BaseController);

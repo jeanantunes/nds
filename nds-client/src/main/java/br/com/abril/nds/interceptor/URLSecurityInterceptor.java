@@ -16,6 +16,7 @@ import br.com.abril.nds.controllers.HomeController;
 import br.com.abril.nds.controllers.InicialController;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ExceptionUtil;
@@ -59,59 +60,23 @@ public class URLSecurityInterceptor implements Interceptor {
 			ResourceMethod method,
 			Object resourceInstance) throws InterceptionException {
 
+		
 		try {			
-
-			Method[] methods = resourceInstance.getClass().getMethods();
-
-			boolean authorize = false;
-
-			/*
-			 *  Se o metodo nao for anotado,
-			 *  sera verificado nos outros metodos se ha alguma restricao de seguranca.
-			 *  Se houver, verifica-se se o usuario logado tem a permissao que 
-			 *  o metodo anotado necessita, e aplica ao metodo invocado.
-			 */
-			if(!method.getMethod().isAnnotationPresent(Rules.class)) {
-
-				int totalMetodosAnotados = 0;
+			
+			boolean authorize = usuarioPossuiRule(resourceInstance.getClass());
+			
+			if(authorize) {
+				authorize = usuarioPossuiRule(method.getMethod());
 				
-				for(Method m : methods) {
-
-					if(m.isAnnotationPresent(Rules.class)) {
-
-						totalMetodosAnotados++;
-
-						Collection<? extends GrantedAuthority> auths = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-
-						for(GrantedAuthority auth : auths) {
-
-							Rules rule = m.getAnnotation(Rules.class);
-
-							if(auth.getAuthority().toString().equals(rule.value().toString())) {
-								authorize = true;
-								break;
-							}
-
-						}
-
-					}
-
-					if(authorize) break;
-
-				}
-
-				//Se forem iguais, a classe nao possui nenhuma restricao de seguranca (nenhum metodo anotado)
-				if(methods.length == (methods.length - totalMetodosAnotados)) authorize = true;
-
-			} else {
-				authorize = true;
+				boolean apenasVizualizacao = !usuarioPossuiRuleAlteracao(resourceInstance.getClass());
+				result.include("apenasVizualizacao", apenasVizualizacao);				
 			}
-
+						
 			if((resourceInstance instanceof HomeController || resourceInstance instanceof InicialController) || authorize)
 				stack.next(method, resourceInstance);
 
 			if(!(resourceInstance instanceof HomeController || resourceInstance instanceof InicialController) && !authorize)
-				throw new Exception("Acesso Negado.");
+				throw new ValidacaoException(TipoMensagem.ERROR, "Acesso Negado.");
 
 		} catch (Throwable throwable ) {
 
@@ -133,6 +98,54 @@ public class URLSecurityInterceptor implements Interceptor {
 		}
 	}
 
+	private boolean usuarioPossuiRule(Method method) {
+		
+		if(!method.isAnnotationPresent(Rules.class))
+			return true;
+	
+		Rules rule = method.getAnnotation(Rules.class);
+
+		return usuarioPossuiRule(rule.value());
+	}
+
+	private boolean usuarioPossuiRule(Class<? extends Object> classe) {
+		
+		if(!classe.isAnnotationPresent(Rules.class))
+			return true;
+	
+		Rules rule = classe.getAnnotation(Rules.class);
+		
+		return usuarioPossuiRule(rule.value());
+	}
+	
+	private boolean usuarioPossuiRuleAlteracao(Class<? extends Object> classe) {
+		
+		if(!classe.isAnnotationPresent(Rules.class))
+			return true;
+	
+		Rules rule = classe.getAnnotation(Rules.class);
+		
+		Permissao permissaoAlteracao = rule.value().getPermissaoAlteracao();
+		
+		if(permissaoAlteracao==null)
+			throw new ValidacaoException(TipoMensagem.ERROR,"Não há permissão de alteraçao para '" + rule.value().getNome() + "'");
+		
+		return usuarioPossuiRule(permissaoAlteracao);
+	}
+
+	
+	private boolean usuarioPossuiRule(Permissao permissao) {
+		
+		Collection<? extends GrantedAuthority> auths = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+		
+		for(GrantedAuthority auth : auths) {
+
+			if(auth.getAuthority().toString().equals(permissao.toString()))
+				return true;			
+		}
+		
+		return false;
+	}
 
 	/**
 	 * Trata as validações a partir da ValidacaoException lançada
