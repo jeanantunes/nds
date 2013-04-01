@@ -65,6 +65,7 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -136,6 +137,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private TipoSegmentoProdutoService tipoSegmentoProdutoService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -684,6 +688,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			segm.setFaixaEtaria(dto.getFaixaEtaria());
 			segm.setTemaPrincipal(dto.getTemaPrincipal());
 			segm.setTemaSecundario(dto.getTemaSecundario());
+			produtoEdicao.setTipoSegmentoProduto(tipoSegmentoProdutoService.obterTipoProdutoSegmentoPorId(dto.getTipoSegmentoProdutoId()));
 			
 			produtoEdicao.setSegmentacao(segm);
 			
@@ -866,7 +871,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		dto.setFase(produto.getFase());
 		dto.setPacotePadrao(produto.getPacotePadrao());
 		dto.setPeso(produto.getPeso());
-
+		
 		String nomeFornecedor = "";
 		if (produto.getFornecedor() != null 
 				&& produto.getFornecedor().getJuridica() != null) {
@@ -905,6 +910,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setNumeroEdicao(pe.getNumeroEdicao());
 			dto.setPacotePadrao(pe.getPacotePadrao());
 			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
+			dto.setTipoSegmentoProdutoId(pe.getTipoSegmentoProduto() == null ? null : pe.getTipoSegmentoProduto().getId());
 			
 			BigDecimal precoVenda = pe.getPrecoVenda();
             dto.setPrecoVenda(precoVenda);

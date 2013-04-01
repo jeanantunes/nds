@@ -707,9 +707,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 			query.setParameter("municipio", filtro.getMunicipio() + "%" );
 		}
+		
+		if (filtro.getStatus() != null && !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS")) {
+			query.setParameter("situacaoCadastro", SituacaoCadastro.valueOf(filtro.getStatus()));
+		}
 
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				CotaDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
 		
 		if (filtro.getPaginacao() != null) {
 
@@ -764,6 +767,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				&& !filtro.getMunicipio().trim().isEmpty()) {
 
 			query.setParameter("municipio", filtro.getMunicipio() + "%" );
+		}
+		
+		if (filtro.getStatus() != null && !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS")) {
+			query.setParameter("situacaoCadastro", SituacaoCadastro.valueOf(filtro.getStatus()));
 		}
 
 		return (Long) query.uniqueResult();
@@ -855,7 +862,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			(filtro.getNomeCota() != null && !filtro.getNomeCota().trim().isEmpty()) ||
 			(filtro.getLogradouro() != null && !filtro.getLogradouro().trim().isEmpty()) ||
 			(filtro.getBairro() != null && !filtro.getBairro().trim().isEmpty()) ||
-			(filtro.getMunicipio() != null && !filtro.getMunicipio().trim().isEmpty())) {
+			(filtro.getMunicipio() != null && !filtro.getMunicipio().trim().isEmpty()) ||
+			(filtro.getStatus() != null && !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS"))) {
 			
 			hql.append(" WHERE ");
 			
@@ -926,6 +934,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			}
 			
 			hql.append(" ( upper(endereco.cidade) like upper(:municipio) )");
+			
+			indAnd = true;
+		}
+		
+		if (filtro.getStatus() != null
+				&& !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS")) {
+
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" cota.situacaoCadastro =:situacaoCadastro ");
 		}
 
 		

@@ -21,3 +21,4 @@ node_modules
 /nds-client/src/main/resources/applicationContext-local.xml
 /nds-client/src/test/java/br/com/abril/nds/client/util/RepositoryTest.java
 /nds-estudo-algoritmo/.classpath
+/nds-server/WebContent/
