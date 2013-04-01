@@ -28,6 +28,11 @@
 		var data = [];
 		
 		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
+		$('[id^="fornecedor_"]').each(function(key){
+			if (this.checked) {
+				data.push({name:'idsFornecedores['+key+']', value: this.value});
+			}
+		});
 		
 		$.postJSON(
 			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
@@ -35,9 +40,10 @@
 			function(result) {
 				
 				T.carregarGrid();
-			},
+			}
+//			,
 			
-			T.escondeGrid()
+//			T.escondeGrid()
 		);
 	},
 	
@@ -138,14 +144,14 @@
 		
 		T.lancamentos = [];
 		
-		if (resultadoPesquisa[0].rows.length == 0) {
+		if (typeof resultadoPesquisa[0] == 'undefined' || resultadoPesquisa[0].rows.length == 0) {
 			T.escondeGrid();
+		} else {
+			$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
+			$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
+			
+			$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
 		}
-		
-		$("#totalGerado", _workspace).html(resultadoPesquisa[1]);
-		$("#totalLiberado", _workspace).html(resultadoPesquisa[2]);
-		
-		$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
 		
 		return resultadoPesquisa[0];
 	},
@@ -334,6 +340,16 @@
 	
   this.confirmarReaberturaDeMatriz = function() {
 		
+	  var data = [];
+		
+		$.each(T.lancamentos, function(index, lancamento) {
+			
+			if (lancamento.selecionado) {
+				
+				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  		 value: lancamento.idLancamento});
+			}
+		});
+	  
 		$.postJSON(pathTela + "/matrizDistribuicao/reabrirMatrizDistribuicao", null, 
 				function(){
 					T.checkUncheckLancamentos(false);
@@ -1054,8 +1070,8 @@
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
-			height : 180,
+			width : 1080,
+			height : 220,
 			disableSelect : true
 			});
 

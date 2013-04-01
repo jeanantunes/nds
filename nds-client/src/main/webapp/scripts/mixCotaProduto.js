@@ -1,4 +1,4 @@
-
+	
 var mixCotaProdutoController = $.extend(true, {
 //Grid de cota 	
 	init : function() {
@@ -315,6 +315,13 @@ var mixCotaProdutoController = $.extend(true, {
 			var lastIndex = data.rows[i].cell.length;
 			
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridCota(data.rows[i].cell);
+			
+			//arrumar formatacao campos bigdecimal para duas casas decimais
+			var ar= ["reparteMedio","vendaMedia","ultimoReparte"];
+			for ( var int = 0; int < ar.length; int++) {
+				var valorarrumado = parseFloat(data.rows[i].cell[ar[int]]).toFixed(2);
+				data.rows[i].cell[ar[int]]=valorarrumado;
+			}
 		}
 		
 		$('.mixCotasGrid').show();
@@ -1002,7 +1009,7 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	//funcao que retorna input de reparte a grid de reparte por pdv
 	getInputReparte:function(cell){
-		return "<input type='text' class='reparteGridinput' name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+		return "<input type='text' maxlength='5' class='reparteGridinput' name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
 		
 	},
 	//funcao de exibicao de grid
