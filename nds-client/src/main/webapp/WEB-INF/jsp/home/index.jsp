@@ -121,7 +121,6 @@
 										},
 										complete : function(xhr, status, index,
 												anchor) {
-											
 											if( $('#logout_true').length ) {
 												// Logout por fim ou perda da sessão
 												logout();
