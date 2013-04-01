@@ -36,7 +36,6 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	
 	private boolean utilizaBoletoSlip;
 	
-	private boolean indCobrancaPostergada;
 	
 	/**
 	 * Obtém idControleConferenciaEncalheCota
@@ -124,13 +123,7 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 		this.utilizaBoletoSlip = utilizaBoletoSlip;
 	}
 
-	public boolean isIndCobrancaPostergada() {
-		return indCobrancaPostergada;
-	}
 
-	public void setIndCobrancaPostergada(boolean indCobrancaPostergada) {
-		this.indCobrancaPostergada = indCobrancaPostergada;
-	}
 	
 	
 }
