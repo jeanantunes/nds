@@ -14,9 +14,12 @@
 		margin: 2px 0 10px 0;
 	}
 	.textoGridCota {
-		text-align: left;
+		text-align: center;
 		width: 90px;
 		height: 23px;
+	}
+	.displayNone {
+		display: none !important;
 	}
 </style>
 </head>
@@ -53,6 +56,7 @@
 						<td valign="top">
 							<fieldset
 								style="width: 380px; margin-top: 5px; margin-left: 20px">
+								<input type="hidden" id="idProdutoEdicao" value="${produto.idProdutoEdicao}"/>
 								<legend>Dados da Publicação </legend>
 								<table width="376" border="0" cellspacing="2" cellpadding="2">
 									<tr>
@@ -61,7 +65,7 @@
 									</tr>
 									<tr>
 										<td><strong>Código:</strong></td>
-										<td>${produto.codigoProduto}</td>
+										<td id="codigoProduto">${produto.codigoProduto}</td>
 									</tr>
 									<tr>
 										<td><strong>Produto:</strong></td>
@@ -77,7 +81,7 @@
 									</tr>
 									<tr>
 										<td><strong>Data Distribuição:</strong></td>
-										<td>${produto.dataLancto}</td>
+										<td id="dataLancamento">${produto.dataLancto}</td>
 									</tr>
 								</table>
 							</fieldset>
@@ -88,7 +92,8 @@
 							<fieldset style="width: 450px;">
 								<legend>Distribuição Manual</legend>
 								<table class="estudosManuaisGrid"></table>
-
+								
+								<input type="hidden" id="reparteInicial" value="${produto.reparte}"/>
 								<table width="394" border="0" cellspacing="2" cellpadding="2">
 									<tr>
 										<td width="109"><strong>Total Distribuido:</strong></td>
@@ -104,22 +109,23 @@
 					</tr>
 				</table>
 				<span class="bt_novos">
-					<a href="#" onclick="distribuicaoManual.voltar();">
+					<a href="javascript:;" onclick="distribuicaoManual.voltar();">
 						<img src="${pageContext.request.contextPath}/images/seta_voltar.gif"
 						alt="Voltar" hspace="5" border="0" />Voltar</a>
 				</span>
 				<span class="bt_novos">
-					<a href="#" onclick="distribuicaoManual.voltar();">
+					<a href="javascript:;" onclick="distribuicaoManual.voltar();">
 						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
 						alt="Cancelar" hspace="5" border="0" />Cancelar</a>
 				</span>
 				<span class="bt_novos">
-					<a href="../Distribuicao/matriz_distribuicao.htm">
+					<a href="javascript:;" onclick="distribuicaoManual.gerarEstudo();">
 						<img src="${pageContext.request.contextPath}/images/ico_check.gif"
 						alt="Confirmar" hspace="5" border="0" />Gerar Estudo</a>
 				</span>
-				<span class="bt_novos"><a href="analise_2.htm">
-					<img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif"
+				<span class="bt_novos">
+					<a href="javascript:;" onclick="distribuicaoManual.analisar();">
+						<img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif"
 						alt="Confirmar" hspace="5" border="0" />Análise</a>
 				</span>
 			</fieldset>

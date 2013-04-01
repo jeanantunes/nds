@@ -1,4 +1,4 @@
-﻿package br.com.abril.nds.dao;
+package br.com.abril.nds.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;

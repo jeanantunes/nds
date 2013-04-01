@@ -2601,5 +2601,10 @@ public class CotaServiceImpl implements CotaService {
 		
 		return cotaRepository.cotaVinculadaCotaBase(idCota);
 	}
+
+	@Override
+	public List<CotaDTO> obterPorNomeAutoComplete(String nome) {
+	    return cotaRepository.obterCotasPorNomeAutoComplete(nome);
+	}
 }
 

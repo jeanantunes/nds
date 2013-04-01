@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +23,8 @@ import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -129,32 +132,32 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (Cota) criteria.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Cota> obterCotasPorNomePessoa(String nome) {
+	@Deprecated // método idêntido ao obterPorNome, favor verificar a necessidade
+    @SuppressWarnings("unchecked")
+    public List<Cota> obterCotasPorNomePessoa(String nome) {
 
-		Criteria criteria = super.getSession().createCriteria(Cota.class);
+	Criteria criteria = super.getSession().createCriteria(Cota.class);
 
-		criteria.createAlias("pessoa", "pessoa");
+	criteria.createAlias("pessoa", "pessoa");
 
-		criteria.add(Restrictions.or(Restrictions.ilike("pessoa.nome", nome,
-				MatchMode.ANYWHERE), Restrictions.ilike("pessoa.razaoSocial",
-				nome, MatchMode.ANYWHERE)));
+	criteria.add(Restrictions.or(Restrictions.ilike("pessoa.nome", nome, MatchMode.ANYWHERE),
+		Restrictions.ilike("pessoa.razaoSocial", nome, MatchMode.ANYWHERE)));
 
-		return criteria.list();
-	}
+	return criteria.list();
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Cota> obterPorNome(String nome) {
+    @SuppressWarnings("unchecked")
+    public List<Cota> obterPorNome(String nome) {
 
-		Criteria criteria = super.getSession().createCriteria(Cota.class);
+	Criteria criteria = super.getSession().createCriteria(Cota.class);
 
-		criteria.createAlias("pessoa", "pessoa");
+	criteria.createAlias("pessoa", "pessoa");
 
-		criteria.add(Restrictions.or(Restrictions.like("pessoa.nome", nome, MatchMode.ANYWHERE),
-				Restrictions.like("pessoa.razaoSocial", nome, MatchMode.ANYWHERE)));
+	criteria.add(Restrictions.or(Restrictions.like("pessoa.nome", nome, MatchMode.ANYWHERE),
+		Restrictions.like("pessoa.razaoSocial", nome, MatchMode.ANYWHERE)));
 
-		return criteria.list();
-	}
+	return criteria.list();
+    }
 
 	/**
 	 * @see br.com.abril.nds.repository.CotaRepository#obterEnderecosPorIdCota(java.lang.Long)
@@ -2720,6 +2723,21 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.setParameterList("cotaIDList", cotaIdArray);
 		
 		return query.list();
+	}
+
+	@Override
+	public List<CotaDTO> obterCotasPorNomeAutoComplete(String nome) {
+	    List lista = super.getSession().createSQLQuery("select c.NUMERO_COTA, p.NOME from COTA c join PESSOA p on p.ID = c.PESSOA_ID where p.nome like ?")
+		    .addScalar("NUMERO_COTA", IntegerType.INSTANCE).addScalar("NOME", StringType.INSTANCE).setParameter(0, "%"+ nome +"%").setMaxResults(10).list();
+	    Object[] retorno = lista.toArray();
+	    List<CotaDTO> cotas = new ArrayList<>();
+	    for (int i = 0; i < retorno.length; i++) {
+		CotaDTO cota = new CotaDTO();
+		cota.setNumeroCota((Integer)((Object[])retorno[i])[0]);
+		cota.setNomePessoa((String)((Object[])retorno[i])[1]);
+		cotas.add(cota);
+	    }
+	    return cotas;
 	}
 
 }

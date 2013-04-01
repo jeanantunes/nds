@@ -1,4 +1,4 @@
-﻿var regiaoController = $.extend(true, {
+var regiaoController = $.extend(true, {
 	cotaAtual : '',
 	numCotas : null,
 	

@@ -14,7 +14,9 @@ import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.service.EstudoService;
 
@@ -30,6 +32,9 @@ public class EstudoServiceImpl implements EstudoService {
 	
 	@Autowired
 	private EstudoRepository estudoRepository;
+	
+	@Autowired
+	private EstudoCotaRepository estudoCotaRepository;
 
 	@Transactional(readOnly = true)
 	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
@@ -41,6 +46,14 @@ public class EstudoServiceImpl implements EstudoService {
 	@Override
 	public Estudo obterEstudo(Long id) {
 		return this.estudoRepository.buscarPorId(id);
+	}
+	
+	@Override
+	public void gravarEstudo(Estudo estudo) {
+	    estudoRepository.adicionar(estudo);
+	    for (EstudoCota estudoCota : estudo.getEstudoCotas()) {
+		estudoCotaRepository.adicionar(estudoCota);
+	    }
 	}
 
 	@Override

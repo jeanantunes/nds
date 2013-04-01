@@ -1,4 +1,4 @@
-﻿var descontoCotaController = $.extend(true,{
+var descontoCotaController = $.extend(true,{
 		
 	popup_especifico:function() {		
 		 

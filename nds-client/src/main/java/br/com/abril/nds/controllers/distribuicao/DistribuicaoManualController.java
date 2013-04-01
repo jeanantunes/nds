@@ -1,6 +1,10 @@
-﻿package br.com.abril.nds.controllers.distribuicao;
+package br.com.abril.nds.controllers.distribuicao;
 
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.EstudoCotaDTO;
+import br.com.abril.nds.dto.EstudoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.CotaService;
-import br.com.abril.nds.service.EstudoCotaService;
 import br.com.abril.nds.service.EstudoService;
-import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -34,33 +40,56 @@ public class DistribuicaoManualController extends BaseController {
     @Autowired
     private EstudoService estudoService;
 
-    @Autowired
-    private EstudoCotaService estudoCotaService;
-    
     @Path("/")
     public void index(ProdutoDistribuicaoVO produto) {
-	estudoService.criarNovoEstudo(produto);
 	result.include("produto", produto);
-    }
-
-    @Post
-    @Path("/carregarGrid")
-    public void carregarGrid() {
-	List<EstudoCota> estudosCota = new ArrayList<>();
-	estudosCota.add(new EstudoCota());
-	TableModel<CellModelKeyValue<EstudoCota>> tableModel = new TableModel<>();
-	tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(estudosCota));
-	tableModel.setTotal(estudosCota.size());
-	result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
     }
     
     @Post
-    @Path("/consultarCota")
-    public void consultarCota(Integer numeroCota) {
+    @Path("/consultarCotaPorNumero")
+    public void consultarCotaPorNumero(Integer numeroCota) {
 	CotaDTO cotaDTO = new CotaDTO();
 	Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 	cotaDTO.setIdCota(cota.getId());
 	cotaDTO.setNomePessoa(cota.getPessoa().getNome());
 	result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+    }
+
+    @Post
+    @Path("/consultarCotaPorNome")
+    public void consultarCotaPorNome(String nomeCota) {
+	List<ItemAutoComplete> lista = new ArrayList<>();
+	for (CotaDTO cota : this.cotaService.obterPorNomeAutoComplete(nomeCota)) {
+	    ItemAutoComplete item = new ItemAutoComplete(cota.getNumeroCota().toString(), cota.getNomePessoa(), cota);
+	    lista.add(item);
+	}
+	this.result.use(Results.json()).from(lista, "result").include("value", "chave").serialize();
+    }
+    
+    @Post
+    @Path("/gravarEstudo")
+    public void gravarEstudo(EstudoDTO estudoDTO, List<EstudoCotaDTO> estudoCotasDTO) throws Exception {
+	Estudo estudo = new Estudo();
+	estudo.getProdutoEdicao().setId(estudoDTO.getProdutoEdicaoId());
+	estudo.setReparteDistribuir(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
+	estudo.setQtdeReparte(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
+	estudo.setDataCadastro(new Date());
+	estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+	estudo.setLiberado(0);
+	try {
+	    estudo.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(estudoDTO.getDataLancamento()));
+	} catch (ParseException e) {
+	    throw new Exception("Data de lançamento em formato incorreto.");
+	}
+	for (EstudoCotaDTO cotaDTO : estudoCotasDTO) {
+	    EstudoCota estudoCota = new EstudoCota();
+	    estudoCota.getCota().setId(cotaDTO.getIdCota());
+	    estudoCota.setQtdePrevista(cotaDTO.getQtdeEfetiva());
+	    estudoCota.setQtdeEfetiva(cotaDTO.getQtdeEfetiva());
+	    estudoCota.setReparte(cotaDTO.getQtdeEfetiva());
+	    estudo.getEstudoCotas().add(estudoCota);
+	}
+	estudoService.gravarEstudo(estudo);
+	result.use(Results.json()).from(estudo.getId(), "result").serialize();
     }
 }
