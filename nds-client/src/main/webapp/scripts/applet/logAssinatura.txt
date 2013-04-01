@@ -1,0 +1,35 @@
+
+s k      500 Mon Apr 01 15:25:10 BRT 2013 META-INF/MANIFEST.MF
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
+      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+
+         662 Mon Apr 01 15:25:10 BRT 2013 META-INF/IMPRESSA.SF
+        1364 Mon Apr 01 15:25:10 BRT 2013 META-INF/IMPRESSA.RSA
+smk     1318 Mon Apr 01 11:19:22 BRT 2013 ImpressaoFinalizacaoEncalheUtil$1.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
+      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+
+smk      927 Mon Apr 01 11:19:22 BRT 2013 ImpressaoFinalizacaoEncalheUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
+      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+
+smk     1367 Mon Apr 01 11:19:20 BRT 2013 ImpressaoFinalizacaoEncalhe$1.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
+      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+
+smk     2630 Mon Apr 01 11:19:20 BRT 2013 ImpressaoFinalizacaoEncalhe.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
+      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+
+
+  s = signature was verified 
+  m = entry is listed in manifest
+  k = at least one certificate was found in keystore
+  i = at least one certificate was found in identity scope
+
+jar verified.

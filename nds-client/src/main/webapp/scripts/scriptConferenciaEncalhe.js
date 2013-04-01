@@ -821,16 +821,30 @@ var ConferenciaEncalhe = $.extend(true, {
 //					
 //					window.location =  html;
 			
-					var w = window.open();
-					self.focus();
-					w.document.open();
-					w.document.write('<html>');
-					w.document.write('<head></head>');
-					w.document.write('<body>');
-					w.document.write('<pre>'+resultado.resultado+'</pre>');
-					w.document.write('<applet code="br.com.abril.nds.print.Impressao.class" width=320 height=80></applet>');
-					w.document.write('</body>');
-					w.document.write('</html>');
+					var w = window.open("scripts/ImpressaoFinalizacaoEncalhe.html", "_blank");
+					w.focus();
+			
+//					var w = window.open();
+//					self.focus();
+//					w.document.open();
+//					w.document.write('<html>'); 
+//					w.document.write('<head></head>');
+//					w.document.write('<body>');
+//
+//					w.document.write('<script src="applet/deployJava.js"></script>');
+//					w.document.write('<script>');
+//					w.document.write('var attributes = { code:"nds_applets.class", archive:"applet/nds_applets.jar",  width:300, height:300};');
+//					w.document.write('var parameters = {jnlp_href: "nds_applets.jnlp"};');
+//					w.document.write('deployJava.runApplet(attributes, parameters, "1.7");');
+//					w.document.write('</script>');
+					
+//					w.document.write('<applet codebase="scripts/applet" archive="nds_applets.jar"'); 
+//					w.document.write('	code="nds_applets.class" width="600" height="500">');
+//					w.document.write('</applet>');					
+					
+//					w.document.write('<pre>'+resultado.resultado+'</pre>');
+//					w.document.write('</body>');
+//					w.document.write('</html>');
 //					w.document.close();
 //					w.print();
 //					w.close();

@@ -1,4 +1,5 @@
-package br.com.abril.nds.print;
+
+
 
 
 import java.awt.print.PrinterJob;
@@ -7,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -18,26 +21,52 @@ import javax.swing.JApplet;
 
 public class ImpressaoFinalizacaoEncalhe extends JApplet{
 
+    /*public void init() {
+
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                    createGUI();
+                }
+            });
+        } catch (Exception e) {
+            System.err.println("createGUI didn't successfully complete");
+        }
+    }
+    private void createGUI() {
+        String text = "Applet's parameters are -- inputStr: " + "sdfsdfsdf" +
+                ",   inputInt: " + 34234 +
+                ",   paramOutsideJNLPFile: " + "dsfsdfsdf";
+        JLabel lbl = new JLabel(text);
+        add(lbl);
+    }*/
+    
 	// ========== - Metodo de iniciação do applet - =============
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init() {
-
-		try {
-			try {
-				imprimir();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		AccessController.doPrivileged(new PrivilegedAction<Object>() {
+			public Object run() {
+				try {
+					try {
+						imprimir();
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} catch (PrintException e) {
+					e.printStackTrace();
+				}
+				return accessibleContext;
 			}
-		} catch (PrintException e) {
-			e.printStackTrace();
-		}
+		});
+
 	}
 
 	public void imprimir() throws URISyntaxException, FileNotFoundException,

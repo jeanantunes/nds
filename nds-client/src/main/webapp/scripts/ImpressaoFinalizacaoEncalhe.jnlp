@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0" codebase="http://localhost:8080/nds-client/scripts/" href="ImpressaoFinalizacaoEncalhe.jnlp">
+    <information>
+        <title>Impressao Finalização Encalhe</title>
+        <vendor>DGB-Abril</vendor>
+    </information>
+    <resources>
+        <!-- Application Resources -->
+        <j2se version="1.0+" href="http://java.sun.com/products/autodl/j2se"/>
+        <jar href="applet/ImpressaoFinalizacaoEncalhe.jar" main="true" />
+    </resources>
+	<security>
+		<all-permissions/>
+	</security>
+
+    <applet-desc 
+         name="ImpressaoFinalizacaoEncalhe"
+         main-class="ImpressaoFinalizacaoEncalhe"
+         width="800"
+         height="50">
+
+     </applet-desc>
+     <update check="background"/>
+</jnlp>
