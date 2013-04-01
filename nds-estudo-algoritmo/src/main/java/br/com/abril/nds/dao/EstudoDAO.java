@@ -3,6 +3,7 @@ package br.com.abril.nds.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.PercentualExcedenteEstudo;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 @Repository
@@ -39,6 +41,9 @@ public class EstudoDAO {
 
 	@Value("#{query_estudo.queryParametrosDistribuidor}")
 	private String queryParametrosDistribuidor;
+	
+	@Value("#{query_estudo.queryPercentuaisExcedentes}")
+	private String queryPercentuaisExcedentes;
 
 	public void gravarEstudo(EstudoTransient estudo) {
 		List<EstudoTransient> estudos = new ArrayList<>();
@@ -89,8 +94,22 @@ public class EstudoDAO {
 		jdbcTemplate.batchUpdate(insertProdutoEdicaoBase, batch);
 	}
 
-	public void carregarPercentuaisProporcao(EstudoTransient estudo) {
-		// TODO: implementar método para carregar percentuais de venda e pdv da tela de parâmetros do distribuidor (EMS 188)
+	public void carregarPercentuaisExcedente(EstudoTransient estudo) {
+		
+		SqlRowSet rs = jdbcTemplate.queryForRowSet(queryPercentuaisExcedentes, new HashMap<String, Object>());
+		
+		Map<String, PercentualExcedenteEstudo> mapPercentualExcedente = new HashMap<>();
+		
+		while (rs.next()) {
+			PercentualExcedenteEstudo percentualExcedente = new PercentualExcedenteEstudo();
+			percentualExcedente.setEficiencia(rs.getString("EFICIENCIA"));
+			percentualExcedente.setPdv(rs.getBigDecimal("PDV"));
+			percentualExcedente.setVenda(rs.getBigDecimal("VENDA"));
+			
+			mapPercentualExcedente.put(percentualExcedente.getEficiencia(), percentualExcedente);
+		}
+		
+		estudo.setPercentualExcedente(mapPercentualExcedente);
 	}
 	
 	public void carregarParametrosDistribuidor(EstudoTransient estudo) {

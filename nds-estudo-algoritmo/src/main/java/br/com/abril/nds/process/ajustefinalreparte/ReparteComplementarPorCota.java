@@ -37,7 +37,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	private EstudoTransient estudoTransient;
 
 	public void initComponents() {
-		cotasIdList = rankingSegmentoDAO.getCotasOrdenadasMaiorMenor(estudoTransient.getCotas(), estudoTransient.getProduto());
+		cotasIdList = rankingSegmentoDAO.getCotasOrdenadasMaiorMenor(estudoTransient.getCotas(), estudoTransient.getProdutoEdicaoEstudo());
 
 		// Prioridade de recebimento de reparte:
 
@@ -193,7 +193,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 				if (!c.getClassificacao().equals(ClassificacaoCota.ReparteFixado) && !c.getClassificacao().equals(ClassificacaoCota.CotaMix)
 						&& !c.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)) {
 
-					// TODO: FAZER REDISTRIBUICAO
+					// TODO: fazer redistribuicao
 					// 5) Marcar cotas com 'CP'
 					c.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
 					c.setReparteCalculado(c.getReparteCalculado().add(BigInteger.ONE));
@@ -243,7 +243,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		}
 	}
 
-	// FIXME talvez usar o Guava do google para ordenar?
+	// XXX talvez usar o Guava do google para ordenar?
 	private abstract class Ordenador {
 		abstract void filtrar(List<CotaEstudo> cotaListRecebeComplementar);
 	}

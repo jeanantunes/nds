@@ -28,8 +28,8 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 
 	@Override
 	public void executar(EstudoTransient estudo) {
-		if ((estudo.getProduto() != null) && (estudo.getEdicoesBase() != null)) {
-			if ((estudo.isComplementarAutomatico()) && ((estudo.getProduto().getNumeroEdicao() == 1) || (!estudo.getProduto().isColecao()))) {
+		if ((estudo.getProdutoEdicaoEstudo() != null) && (estudo.getEdicoesBase() != null)) {
+			if ((estudo.isComplementarAutomatico()) && ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao() == 1) || (!estudo.getProdutoEdicaoEstudo().isColecao()))) {
 				estudo.setExcedente(new BigDecimal(estudo.getReparteDistribuir()).subtract(estudo.getSomatoriaVendaMedia()));
 				BigDecimal percentualExcedente = BigDecimal.ZERO;
 				if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
