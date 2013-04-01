@@ -15,7 +15,7 @@
             <td width="757"><table width="99%" border="0" cellspacing="0" cellpadding="0" class="porCota">
               <tr>
                 <td width="5%">Cota:</td>
-                <td width="13%"><input type="text" name="codigoCotaMix" id="codigoCotaMix" style="width:80px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoCotaMix','#nomeCotaMix',false,undefined,undefined)"/></td>
+                <td width="13%"><input type="text" name="codigoCotaMix" id="codigoCotaMix" style="width:80px;" onkeydown="onlyNumeric(event);" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoCotaMix','#nomeCotaMix',false,undefined,undefined)"/></td>
                 <td width="6%">Nome:</td>
                 <td width="62%"><input type="text" name="nomeCotaMix" id="nomeCotaMix" style="width:200px;"/></td>
                 <td width="14%"><span class="bt_pesquisar"><a href="javascript:;" onclick="mixCotaProdutoController.pesquisarPorCota()">Pesquisar</a></span></td>
@@ -24,7 +24,7 @@
             <table width="99%" border="0" cellspacing="0" cellpadding="0" class="porProduto">
               <tr>
                 <td width="6%">C&oacute;digo:</td>
-                <td width="13%"><input type="text" name="codigoProduto" id="codigoProdutoMix"  style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProdutoMix','#nomeProdutoMix',false,undefined,undefined )"/></td>
+                <td width="13%"><input type="text" name="codigoProduto" id="codigoProdutoMix"  onkeydown="onlyNumeric(event);" style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProdutoMix','#nomeProdutoMix',false,undefined,undefined )"/></td>
                 <td width="7%">Produto:</td>
                 <td width="24%"><input type="text" name="nomeProduto" id="nomeProdutoMix" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#nomeProduto');" style="width:200px;"/></td>
                 <td width="11%">Classifica&ccedil;&atilde;o:</td>
@@ -156,8 +156,8 @@
            <tr> 
            		<td><input id="codigoModal" class="codigoId" type="text"  style="width:80px;" onblur="pesquisaProduto.pesquisarPorCodigoProduto('#'+this.id,'#'+$(this).parent().parent().find('.target').attr('id'),null,false,undefined,undefined )"></td>
            		<td><input id="produtoModal" type="text"  style="width:80px;" class="target"></td>
-           		<td><input type="text"  style="width:80px;"></td>
-           		<td><input type="text"  style="width:80px;"></td>
+           		<td><input type="text"  style="width:80px;" maxlength="5"></td>
+           		<td><input type="text"  style="width:80px;" maxlength="5"></td>
            		<td><input type="image" src="images/ico_excluir.gif" onclick="$(this).parent().parent().remove();mixCotaProdutoController.definirIdInput();" style="display:none"/></td>
    			</tr>
    			</tbody>
@@ -180,8 +180,8 @@
            <tr> 
            		<td><input id="numeroCotaModal" type="text"  style="width:80px;" onblur="pesquisaCota.pesquisarPorNumeroCota('#'+this.id,'#'+$(this).parent().parent().find('.target').attr('id'),null,false,undefined,undefined )"></td>
            		<td><input id="cotaModal" type="text"  style="width:80px;" class="target"></td>
-           		<td><input type="text"  style="width:80px;"></td>
-           		<td><input type="text"  style="width:80px;"></td>
+           		<td><input type="text" max="5" style="width:80px;"></td>
+           		<td><input type="text" max="5" style="width:80px;"></td>
            		<td><input type="image" src="images/ico_excluir.gif" onclick="$(this).parent().parent().remove();mixCotaProdutoController.definirIdInputProduto();" style="display:none"/></td>
    			</tr>
    			</tbody>

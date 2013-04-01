@@ -25,6 +25,7 @@ import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.SegmentoNaoRecebidoService;
+import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -57,6 +58,9 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	private SegmentoNaoRecebidoService segmentoNaoRecebidoService;
 	
 	@Autowired
+	private TipoSegmentoProdutoService tipoSegmentoProdutoService;
+	
+	@Autowired
 	private CotaService cotaService;
 	
 	@Autowired
@@ -71,7 +75,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	@Rules(Permissao.ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO)
 	public void index(){
 		// POPULANDO FILTROS
-		List<TipoSegmentoProduto> listaTipoSegmentoProduto = segmentoNaoRecebidoService.obterTipoSegmentoProduto();
+		List<TipoSegmentoProduto> listaTipoSegmentoProduto = tipoSegmentoProdutoService.obterTipoSegmentoProduto();
 		this.carregarComboSegmento(listaTipoSegmentoProduto, "listaTipoSegmentoProduto");
 	}
 	
@@ -228,7 +232,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		for (Long idCota : idCotas) {
 			SegmentoNaoRecebido segmentoNaoRecebido = new SegmentoNaoRecebido();
 			segmentoNaoRecebido.setCota(cotaService.obterPorId(idCota));
-			segmentoNaoRecebido.setTipoSegmentoProduto(segmentoNaoRecebidoService.obterTipoProdutoSegmentoPorId(idTipoSegmento));
+			segmentoNaoRecebido.setTipoSegmentoProduto(tipoSegmentoProdutoService.obterTipoProdutoSegmentoPorId(idTipoSegmento));
 			segmentoNaoRecebido.setUsuario(usuarioService.getUsuarioLogado());
 			segmentoNaoRecebido.setDataAlteracao(new Date());
 			
@@ -267,7 +271,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 				segmentoNaoRecebido.setCota(cotaService.obterPorNome(PessoaUtil.removerSufixoDeTipo(nomeCota)).get(0));
 			}
 			
-			segmentoNaoRecebido.setTipoSegmentoProduto(segmentoNaoRecebidoService.obterTipoProdutoSegmentoPorId(idTipoSegmento));
+			segmentoNaoRecebido.setTipoSegmentoProduto(tipoSegmentoProdutoService.obterTipoProdutoSegmentoPorId(idTipoSegmento));
 			segmentoNaoRecebido.setUsuario(usuarioService.getUsuarioLogado());
 			segmentoNaoRecebido.setDataAlteracao(new Date());
 			

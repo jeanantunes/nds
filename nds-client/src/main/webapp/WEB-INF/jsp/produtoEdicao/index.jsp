@@ -129,7 +129,7 @@ fieldset {
 								</tr>
 							
 								<tr>
-									<td>Tipo de Lan&ccedil;amento:</td>
+									<td>Tipo de Distribui&ccedil;&atilde;o:</td>
 									<td colspan="3">
 										<select name="tipoLancamento" id="produtoEdicaoController-tipoLancamento" style="width:160px;" >
 											<option value="">Selecione...</option>
@@ -137,7 +137,7 @@ fieldset {
 											<option value="PARCIAL">Ed. Parcial</option>
 											<option value="RELANCAMENTO">Relan&ccedil;amento</option>
 											<option value="REDISTRIBUICAO">Redistribui&ccedil;&atilde;o</option>
-											<option value="SUPLEMENTAR">Supl. Compuls</option>
+											<option value="SUPLEMENTAR">Suplementar</option>
 										</select>
 									</td>
 									<td>N&ordm; Lancto:</td>
@@ -237,7 +237,7 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td width="145">Categoria:</td>
+									<td width="145">Firma F&iacute;sica:</td>
 									<td width="193">
 										<select name="categoria" id="produtoEdicaoController-categoria" style="width:180px;" >
 											<option value="">Selecione</option>
@@ -302,7 +302,7 @@ fieldset {
 									<td width="193"><input type="text" name="chamadaCapa" id="produtoEdicaoController-chamadaCapa" style="width:190px;" /></td>
 								</tr>
 								<tr>
-									<td height="24">Regime Recolhimento:</td>
+									<td height="24">Tipo de Recolhimento:</td>
 									<td>
 										<select name="parcial" id="produtoEdicaoController-parcial" style="width:190px;" >
 											<option value="">Selecione...</option>
@@ -395,10 +395,21 @@ fieldset {
 -					                    </select>
 									</td>
 								</tr>
+								<tr>
+									<td>Segmento:</td>
+									<td>
+										<select name="tipoSegmentoProdutoId" id="produtoEdicaoController-tipoSegmento" style="width:150px;">
+-					                        <option value="">Selecione</option>
+-					                        <c:forEach varStatus="counter" var="itemTipoSegmentoProduto" items="${listaTipoSegmentoProduto}">
+-							                    <option value="${itemTipoSegmentoProduto.key}">${itemTipoSegmentoProduto.value}</option>
+-							                </c:forEach>
+-					                    </select>
+									</td>
+								</tr>
 							</tbody>
 						</table>
 					</fieldset>
-					<fieldset style="width:410px!important;">
+					<%-- <fieldset style="width:410px!important;">
 						<legend>Outros</legend>
 						<table width="400" border="0" cellspacing="1" cellpadding="1">
 							<thead />
@@ -426,7 +437,7 @@ fieldset {
 									</td>
 							</tbody>
 						</table>
-					</fieldset>
+					</fieldset> --%>
 				</div>
 				<br clear="all" />
 			</div>
