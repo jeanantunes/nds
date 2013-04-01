@@ -79,12 +79,12 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		.append("   endereco.cidade as municipio, " )
 		.append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 		.append(" 		   sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)) ")
-		.append(" 		   else 0 end, ")
+		.append(" 		   else 0 end as vendaExemplares, ")
 		.append("   case when (lancamento.status in (:statusLancamentoRecolhido)) then ( ")
 		.append("          sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (movimentos.valoresAplicados.precoComDesconto)) ) ")
 		.append("          else 0 end as faturamentoCapa, ")
-		.append("  estoqueProdutoCota.produtoEdicao.produto.id ,")
-		.append("  estoqueProdutoCota.cota.id )");
+		.append("  estoqueProdutoCota.produtoEdicao.produto.id as idProduto,")
+		.append("  estoqueProdutoCota.cota.id as idCota ");
 		hql.append(getWhereQueryObterCurvaABCDistribuidor(filtro));
 		hql.append(getGroupQueryObterCurvaABCDistribuidor(filtro));
 		
