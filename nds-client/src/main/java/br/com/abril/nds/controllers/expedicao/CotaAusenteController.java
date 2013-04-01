@@ -51,6 +51,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cotaAusente")
+@Rules(Permissao.ROLE_EXPEDICAO_COTA_AUSENTE)
 public class CotaAusenteController extends BaseController {
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroCotaAusente";
@@ -117,7 +118,7 @@ public class CotaAusenteController extends BaseController {
 	/**
 	 * Inicializa dados da tela
 	 */
-	@Rules(Permissao.ROLE_EXPEDICAO_COTA_AUSENTE)
+	@Path("/")
 	public void index() {
 		
 		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);

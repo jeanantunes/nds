@@ -71,6 +71,9 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			$('#usuarioAtivaTrue').attr('checked', true).button("refresh");								
 			
+			$('input[tipo="permissao"]').attr("checked", false);
+			$('#permissaoGridConteudo').appendTo($('#localPermissaoGridUsuario'));
+			
 			$.getJSON(
 					this.path + "/novoUsuario",
 					null, 
@@ -79,11 +82,6 @@ var usuariosPermissaoController = $.extend(true, {
 							$(result.usuarioDTO.grupos).each(function() {
 								$("#gruposUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].id,
 																			 			   text: $(this)[0].nome 
-																			 			  }));
-							});
-							$(result.usuarioDTO.permissoes).each(function() {
-								$("#permissoesUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
-																			 			   text: $(this)[0].toString()
 																			 			  }));
 							});
 						}
@@ -96,6 +94,9 @@ var usuariosPermissaoController = $.extend(true, {
 			
 			$("#trInsercaoSenhas", usuariosPermissaoController.workspace).hide();
 			$("#trLembreteSenha", usuariosPermissaoController.workspace).hide();
+			
+			$('input[tipo="permissao"]').attr("checked", false);
+			$('#permissaoGridConteudo').appendTo($('#localPermissaoGridUsuario'));
 			
 			this.limpar_selecoes();
 			
@@ -125,18 +126,10 @@ var usuariosPermissaoController = $.extend(true, {
 																			 			  }));
 							});
 
-							$(result.usuarioDTO.permissoes).each(function() {
-								$("#permissoesUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
-																			 			   text: $(this)[0].toString()
-																			 			  }));
-							});
-
-							$(result.usuarioDTO.permissoesSelecionadasList).each(function() {
-								$("#permissoesSelecionadasUsuario", usuariosPermissaoController.workspace).append($("<option/>", {value: $(this)[0].toString(),
-																			 			   text: $(this)[0].toString() 
-																			 			  }));
-							});
-
+							$.each(result.usuarioDTO.permissoes, function(index, role) {
+								$('input[tipo="permissao"][role="'+role+'"][isPai="false"]').attr("checked", true);
+							});	
+							
 						}
 					}
 				);
@@ -147,7 +140,7 @@ var usuariosPermissaoController = $.extend(true, {
 			$( "#dialog-novo-usuario" , usuariosPermissaoController.workspace).dialog({
 				resizable: false,
 				height:620,
-				width:770,
+				width:780,
 				modal: true,
 				buttons: {
 					"Confirmar": function() {
@@ -155,18 +148,25 @@ var usuariosPermissaoController = $.extend(true, {
 						var obj = $("#novo_usuario_form", usuariosPermissaoController.workspace).serializeObject();
 						
 						var permissoes = new Array();
-						$("#permissoesSelecionadasUsuario option", usuariosPermissaoController.workspace).each(function() {							
-							permissoes.push($(this).val());
-					    });
-						obj = serializeArrayToPost('usuarioDTO.permissoesSelecionadas', permissoes, obj);
-
+						
+						var checkSelecionados = $('.permissao:checked');
+						
+						$.each(checkSelecionados, function(index, elemento) {
+							permissoes.push(elemento.getAttribute('role'));
+						});
+						//$("#permissoesSelecionadasUsuario option", usuariosPermissaoController.workspace).each(function() {							
+						//	permissoes.push($(this).val());
+					    //});
+						
+						obj = serializeArrayToPost('usuarioDTO.permissoes', permissoes, obj);
+						
 						var grupos = new Array();
 						$("#gruposSelecionadosUsuario option", usuariosPermissaoController.workspace).each(function() {
 							
 							grupos.push($(this).val());
 					    });
 						
-						obj = serializeArrayToPost('usuarioDTO.gruposSelecionados', grupos, obj);
+						obj = serializeArrayToPost('usuarioDTO.idsGrupos', grupos, obj);
 						
 						obj['usuarioDTO.contaAtiva'] = ($('#usuarioAtivaTrue:checked').attr("checked") == "checked");
 						
@@ -393,7 +393,7 @@ var usuariosPermissaoController = $.extend(true, {
 				rp : 15,
 				showTableToggleBtn : true,
 				width : 900,
-				height : 'auto'
+				height : 240
 			});
 		}
 }, BaseController);

@@ -26,7 +26,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.PdvService;
@@ -48,6 +47,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/mixCotaProduto")
+@Rules(Permissao.ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO)
 public class MixCotaProdutoController extends BaseController {
 
 	private static final String FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE = "filtroMixPorProduto";
@@ -92,7 +92,6 @@ public class MixCotaProdutoController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 
-	@Rules(Permissao.ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO)
 	@Path("/")
 	public void index() {
 		result.include("classificacao",

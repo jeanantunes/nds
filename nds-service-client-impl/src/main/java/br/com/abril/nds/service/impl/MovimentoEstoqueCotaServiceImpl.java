@@ -27,6 +27,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -73,6 +74,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 	
 	@Transactional
 	public List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
@@ -205,6 +209,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 		HashMap<ProdutoEdicao, TransferenciaReparteSuplementarDTO> mapaEstornoEnvioCota = null;
 
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		for (Long idCota : idsCota) {
 
 			Cota cota = this.cotaRepository.buscarPorId(idCota);
@@ -222,7 +227,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 				ajustarQuantidadeMovimentoPorProdutoEdicao(mapaEstornoEnvioCota, movimentoEstoqueCota);
 			}
 
-			this.gerarMovimentoEstorno(mapaEstornoEnvioCota, cota, usuario);
+			this.gerarMovimentoEstorno(mapaEstornoEnvioCota, cota, usuario, dataOperacao);
 		}
 
 		this.gerarSuplementares(mapaSuplementar, usuario);
@@ -261,7 +266,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	 * Método que gera os movimentos de estorno para a cota.
 	 */
 	private void gerarMovimentoEstorno(HashMap<ProdutoEdicao, TransferenciaReparteSuplementarDTO> mapaEstornoEnvioCota, 
-									   Cota cota, Usuario usuario) {
+									   Cota cota, Usuario usuario, Date dataOperacao) {
 
 		TipoMovimentoEstoque tipoMovimento = 
 			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
@@ -275,7 +280,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 			
 			this.movimentoEstoqueService.gerarMovimentoCota(
 				null, produtoEdicao.getId(), cota.getId(), usuario.getId(), 
-					transferencia.getQuantidadeTransferir(), tipoMovimento);
+					transferencia.getQuantidadeTransferir(), tipoMovimento, dataOperacao);
 		}
 	}
 

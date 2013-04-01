@@ -132,6 +132,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 			taxaJurosMensal = politicaPrincipal.getFormaCobranca().getTaxaJurosMensal();
 		}
+		
+		if (BigDecimal.ZERO.compareTo(taxaJurosMensal) == 0){
+			
+			return valor;
+		}
 
 		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
 

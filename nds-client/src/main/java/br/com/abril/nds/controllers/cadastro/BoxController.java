@@ -39,6 +39,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/box")
+@Rules(Permissao.ROLE_CADASTRO_BOX)
 public class BoxController extends BaseController {
 
 	private static final String FILTRO_CONSULTA_BOX = "filtroConsultaBox";
@@ -69,7 +70,6 @@ public class BoxController extends BaseController {
 	}
 
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_BOX)
 	public void index() {
 	}
 

@@ -47,6 +47,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/administracao/controleAprovacao")
+@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO)
 public class ControleAprovacaoController extends BaseController {
 
 	@Autowired
@@ -66,7 +67,6 @@ public class ControleAprovacaoController extends BaseController {
 	private static final String QTD_REGISTROS_PESQUISA_CONTROLE_APROVACAO_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaControleAprovacao";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO)
 	public void index() {
 		
 		carregarComboTipoMovimento();

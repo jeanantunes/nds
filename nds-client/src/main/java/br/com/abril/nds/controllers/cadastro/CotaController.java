@@ -84,6 +84,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/cota")
+@Rules(Permissao.ROLE_CADASTRO_COTA)
 public class CotaController extends BaseController {
 	
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoCota";
@@ -154,7 +155,6 @@ public class CotaController extends BaseController {
 	private static final String NOME_DEFAULT_PROCURACAO = "procuracao.pdf";
 
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_COTA)
 	public void index() {
 		
 		this.financeiroController.preCarregamento();
@@ -550,6 +550,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/incluirNovoCNPJ")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void prepararDadosInclusaoCotaCNPJ(){
 		
 		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
@@ -560,6 +561,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/incluirNovoCPF")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void prepararDadosInclusaoCota(){
 		
 		result.use(Results.json()).from(getDadosInclusaoCota(), "result").recursive().serialize();
@@ -771,6 +773,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/editar")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void editar(Long idCota){
 		
 		carregarDadosEnderecoETelefone(idCota);
@@ -788,6 +791,7 @@ public class CotaController extends BaseController {
 	 */
 	@Post
 	@Path("/excluir")
+	@Rules(Permissao.ROLE_CADASTRO_COTA_ALTERACAO)
 	public void excluir(Long idCota){
 		
 		cotaService.excluirCota(idCota); 

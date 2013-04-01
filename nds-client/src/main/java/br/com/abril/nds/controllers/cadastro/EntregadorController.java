@@ -86,6 +86,7 @@ import br.com.caelum.vraptor.view.Results;
  */
 @Resource
 @Path("/cadastro/entregador")
+@Rules(Permissao.ROLE_CADASTRO_ENTREGADOR)
 public class EntregadorController extends BaseController {
 
 	@Autowired
@@ -135,7 +136,6 @@ public class EntregadorController extends BaseController {
 	
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_ENTREGADOR)
 	public void index() { }
 	
 	/**

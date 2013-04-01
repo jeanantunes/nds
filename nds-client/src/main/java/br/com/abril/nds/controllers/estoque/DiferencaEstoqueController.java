@@ -153,6 +153,25 @@ public class DiferencaEstoqueController extends BaseController {
 	public DiferencaEstoqueController() {}
 
 	@Get
+	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS)
+	public void lancamento() {
+		
+		this.carregarCombosLancamento();
+		
+		this.limparSessao();
+		
+		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
+	}
+	
+	@Get
+	@Rules(Permissao.ROLE_ESTOQUE_CONSULTA_FALTAS_SOBRAS)
+	public void consulta() {
+		this.carregarCombosConsulta();
+		
+		result.include("dataAtual", new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(new Date()));
+	}
+	
+	@Get
 	public void exportar(FileType fileType) throws IOException {
 				
 		if (fileType == null) {
@@ -253,17 +272,6 @@ public class DiferencaEstoqueController extends BaseController {
 		FileExporter.to("consulta-faltas-sobras", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoDiferencaVO, 
 				listaConsultaDiferenca, DiferencaVO.class, this.httpServletResponse);
-	}
-	
-	@Get
-	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS)
-	public void lancamento() {
-		
-		this.carregarCombosLancamento();
-		
-		this.limparSessao();
-		
-		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
 	}
 	
 	@Post
@@ -1000,15 +1008,6 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 		
 	}
-
-	
-	@Get
-	@Rules(Permissao.ROLE_ESTOQUE_CONSULTA_FALTAS_SOBRAS)
-	public void consulta() {
-		this.carregarCombosConsulta();
-		
-		result.include("dataAtual", new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(new Date()));
-	}
 	
 	@Post
 	@Path("/pesquisarDiferencas")
@@ -1686,6 +1685,14 @@ public class DiferencaEstoqueController extends BaseController {
 					(diferenca.getLancamentoDiferenca() != null 
 								&& diferenca.getLancamentoDiferenca().getStatus()!= null) ?
 										diferenca.getLancamentoDiferenca().getStatus().getDescricaoAbreviada() : "");
+			
+			if(diferenca.getLancamentoDiferenca() != null
+					&& diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null
+					&& diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao() != null) {
+				
+				consultaDiferencaVO.setStatusIntegracao(diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao().name());
+				
+			}
 			
 			consultaDiferencaVO.setMotivoAprovacao(motivo);
 			

@@ -15,7 +15,8 @@ var parametroCobrancaController = $.extend(true,
 		formatarCampos : function() {
 			$("#valorMinimo", this.workspace).priceFormat({
 				centsSeparator: ',',
-			    thousandsSeparator: '.'
+			    thousandsSeparator: '.',
+			    centsLimit:2	
 			});
 			$("#diasDoMes", this.workspace).numeric();
 			$("#diasDoMes1", this.workspace).numeric();
@@ -468,7 +469,7 @@ var parametroCobrancaController = $.extend(true,
 					tipoCobranca : $("#dTipoCobranca", this.worspace).val(),
 					formaEmissao : $("#formaEmissao", this.worspace).val(),
 					idBanco : $("#dBanco", this.workspace).val(),
-					valorMinimo : $("#valorMinimo", this.worspace).unmask()/100,
+					valorMinimo : floatValue($("#valorMinimo").val()),
 					taxaMulta : $("#taxaMulta", this.worspace).val(),
 					valorMulta : $("#valorMulta", this.worspace).val(),
 					taxaJuros : $("#taxaJuros", this.worspace).val(),

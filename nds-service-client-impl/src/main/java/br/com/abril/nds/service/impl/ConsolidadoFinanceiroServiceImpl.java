@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,12 +18,14 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 
 @Service
@@ -33,6 +36,12 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 	
 	@Autowired
 	FornecedorService fornecedorService;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
@@ -89,15 +98,15 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 						GrupoMovimentoFinaceiro.DEBITO,
 						GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
 						GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,
-						GrupoMovimentoFinaceiro.VENDA_TOTAL
+						GrupoMovimentoFinaceiro.VENDA_TOTAL,
+						GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS
 					)
 				);
 		
 		List<Long> tipoMovimentoEncalhe = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
 					Arrays.asList(
-						GrupoMovimentoFinaceiro.ENVIO_ENCALHE, 
-						GrupoMovimentoFinaceiro.ESTORNO_REPARTE_COTA_AUSENTE
+						GrupoMovimentoFinaceiro.ENVIO_ENCALHE
 					)
 				);
 		
@@ -119,7 +128,7 @@ public class ConsolidadoFinanceiroServiceImpl implements ConsolidadoFinanceiroSe
 		
 		List<Long> tiposMovimentoConsignado = 
 				this.tipoMovimentoFinanceiroRepository.buscarIdsTiposMovimentoFinanceiro(
-						Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE, GrupoMovimentoFinaceiro.RECUPERACAO_REPARTE_COTA_AUSENTE));
+						Arrays.asList(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE));
 		
 		return this.consolidadoFinanceiroRepository.obterContaCorrente(filtro, 
 				tiposMovimentoCredito, tiposMovimentoDebito, tipoMovimentoEncalhe, 

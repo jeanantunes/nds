@@ -68,6 +68,7 @@ import br.com.caelum.vraptor.view.Results;
 @SuppressWarnings("deprecation")
 @Resource
 @Path("/financeiro/manutencaoStatusCota")
+@Rules(Permissao.ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA)
 public class ManutencaoStatusCotaController extends BaseController {
 
 	@Autowired
@@ -104,7 +105,6 @@ public class ManutencaoStatusCotaController extends BaseController {
 	
 	@Get
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA)
 	public void index() {
 
 		this.carregarCombos();

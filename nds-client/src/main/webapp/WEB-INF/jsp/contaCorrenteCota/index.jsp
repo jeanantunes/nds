@@ -236,7 +236,8 @@
 			</div>
 		</div>
 	
-		<div class="linha_separa_fields">&nbsp;</div>	
+		<div class="linha_separa_fields">&nbsp;</div>
+		<form id="formPesquisaContaCorrente">
       <fieldset class="fieldFiltro">
    	    <legend> Pesquisar Conta-Corrente</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -273,10 +274,11 @@
           </table>
 
       </fieldset>
+      </form>
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display: none;">
 	      <fieldset class="fieldGrid">
-	       	  <legend>Conta-Corrente Selecionado: <span id="cotanome"></span></legend>
+	       	  <legend>Conta-Corrente Selecionado: <span id="cotanomeselecionado"></span></legend>
 	       	  <table class="itemContaCorrenteCotaGrid"></table>
 	      </fieldset>
       </div>

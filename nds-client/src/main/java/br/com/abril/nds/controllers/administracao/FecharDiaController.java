@@ -75,6 +75,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/administracao/fecharDia")
+@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
 public class FecharDiaController extends BaseController {
     
     private static final Logger LOG = LoggerFactory.getLogger(FecharDiaController.class);
@@ -121,7 +122,6 @@ public class FecharDiaController extends BaseController {
 	private static final String FECHAMENTO_DIARIO_REPORT_EXPORT_NAME = "relatorio-fechamento-diario.pdf";
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
 	public void index(){
 		dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		result.include("dataOperacao", DateUtil.formatarData(dataOperacao, Constantes.DATE_PATTERN_PT_BR));

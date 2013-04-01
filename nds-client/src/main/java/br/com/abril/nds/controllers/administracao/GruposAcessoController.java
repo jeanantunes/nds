@@ -18,7 +18,7 @@ import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ResultadoGrupoVO;
 import br.com.abril.nds.client.vo.ResultadoPermissaoVO;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.ConsultaGrupoPermissaoDTO;
+import br.com.abril.nds.dto.AcessoDTO;
 import br.com.abril.nds.dto.GrupoPermissaoDTO;
 import br.com.abril.nds.dto.UsuarioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaGrupoDTO;
@@ -50,6 +50,7 @@ import br.com.caelum.vraptor.view.Results;
  * Controller dos grupos de acesso
  */
 @Resource
+@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO)
 @Path("/administracao/gruposAcesso")
 public class GruposAcessoController extends BaseController {
 
@@ -75,12 +76,31 @@ public class GruposAcessoController extends BaseController {
 	private static final String FILTRO_PESQUISA_CONSULTA_PERMISSAO_SESSION_ATTRIBUTE = "filtroPesquisaConsultaPermissao";
 	private static final String FILTRO_PESQUISA_CONSULTA_GRUPO_SESSION_ATTRIBUTE = "filtroPesquisaConsultaGrupo";
 	
+	
 	@Path("/")
-	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO)
 	public void index() {
+		
 	}
 
-	// GRUPO PERMISSÃO
+	public void obterPermissoes() {
+		
+		List<AcessoDTO> permissoes = new ArrayList<AcessoDTO>();
+
+		for(Permissao p : Permissao.values()) {
+			if(!p.isPermissaoAlteracao()) {
+				permissoes.add(new AcessoDTO(p));
+			} else if(p.isPermissaoAlteracao() && !p.isPermissaoMenu() && p.getPermissaoPai()!=null) {
+				AcessoDTO dto = new AcessoDTO();
+				dto.setAlteracao(p);
+				dto.setDescricao(p.getDescricao());
+				dto.setPai(p.getPermissaoPai());
+				permissoes.add(dto);
+			}
+		}		
+
+		result.use(FlexiGridJson.class).from(permissoes).total(permissoes.size()).page(1).serialize();
+		
+	}
 	
 	/**
 	 * 
@@ -111,24 +131,11 @@ public class GruposAcessoController extends BaseController {
 	@Get
 	@Path("/editarGrupoPermissao")
 	public void editarGrupoPermissao(Long codigoGrupo) {
-
-		ConsultaGrupoPermissaoDTO dto = new ConsultaGrupoPermissaoDTO();
 		
-		List<Permissao> permissoes = permissaoService.buscar();
-		if (codigoGrupo != null) {
-			GrupoPermissao grupoPermissao = grupoPermissaoService.buscar(codigoGrupo);
-			List<Permissao> permissoesSelecionadas = new ArrayList<Permissao>(grupoPermissao.getPermissoes());
-			dto.setId(grupoPermissao.getId());
-			dto.setNome(grupoPermissao.getNome());
-			dto.setPermissoesSelecionadas(permissoesSelecionadas);
-			// Remove da lista as permissões selecionadas anteriormente
-			for (Permissao p : permissoesSelecionadas) {
-				if (permissoes.contains(p)) {
-					permissoes.remove(permissoes.indexOf(p));
-				}
-			}
-		}
-		dto.setPermissoes(permissoes);
+		GrupoPermissao grupoPermissao = grupoPermissaoService.buscar(codigoGrupo);
+		
+		GrupoPermissaoDTO dto = new GrupoPermissaoDTO(
+				grupoPermissao.getId(),grupoPermissao.getNome(), new ArrayList<Permissao>(grupoPermissao.getPermissoes()));		
 		
 		result.use(Results.json()).from(dto, "result").recursive().serialize();
 	}
@@ -145,7 +152,7 @@ public class GruposAcessoController extends BaseController {
 					.add("O preenchimento do campo nome é obrigatório!");
 		}
 
-		if (grupoPermissaoDTO.getPermissoesSelecionadas() == null || grupoPermissaoDTO.getPermissoesSelecionadas().isEmpty()) {
+		if (grupoPermissaoDTO.getPermissoes() == null || grupoPermissaoDTO.getPermissoes().isEmpty()) {
 			listaMensagemValidacao
 					.add("É necessário selecionar ao menos uma permissão!");
 		}
@@ -164,24 +171,48 @@ public class GruposAcessoController extends BaseController {
 	@Post
 	@Path("/salvarGrupoPermissao")
 	public void salvarGrupoPermissao(GrupoPermissaoDTO grupoPermissaoDTO) throws Exception {
+		
 		this.validarDadosGrupoPermissao(grupoPermissaoDTO);
 
 		GrupoPermissao grupoPermissao = new GrupoPermissao();
 		grupoPermissao.setId(grupoPermissaoDTO.getId());
 		grupoPermissao.setNome(grupoPermissaoDTO.getNome());
 		
-		Set<Permissao> permissoes = new HashSet<Permissao>();
-		for (String permissao : grupoPermissaoDTO.getPermissoesSelecionadas().split(",")) {
-			permissoes = adicionarPermissoes(permissoes, Permissao.valueOf(permissao));
-			//permissoes.add(Permissao.valueOf(permissao));
-		}
+		if(grupoPermissaoDTO.getPermissoes() == null)
+			grupoPermissaoDTO.setPermissoes(new ArrayList<Permissao>());
 		
-		grupoPermissao.setPermissoes(permissoes);
+		addPais(grupoPermissaoDTO.getPermissoes());
+		
+		grupoPermissao.setPermissoes(new HashSet<>(grupoPermissaoDTO.getPermissoes()));
 		
 		grupoPermissaoService.salvar(grupoPermissao);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Grupo de Permissões salvo com Sucesso."),"result").recursive().serialize();
 		
+	}
+
+	private void addPais(List<Permissao> permissoes) {
+		
+		List<Permissao> pais = new ArrayList<Permissao>();
+				
+		for(Permissao permissao : permissoes) {
+			
+			Permissao pai = permissao.getPermissaoPai();
+			
+			boolean paiEncontrado = false;
+			
+			for(Permissao pComparar : permissoes) {
+				if(pai!=null && pai.equals(pComparar))  {
+					paiEncontrado=true;
+					continue;
+				}
+			}
+			
+			if(!paiEncontrado)
+				pais.add(pai);
+		}
+		
+		permissoes.addAll(pais);
 	}
 
 	/**
@@ -287,8 +318,8 @@ public class GruposAcessoController extends BaseController {
 
 		}
 
-		if ( (usuario.getPermissoesSelecionadas() == null || usuario.getPermissoesSelecionadas().isEmpty()) && 
-			 (usuario.getGruposSelecionados() == null || usuario.getGruposSelecionados().isEmpty()) ) {
+		if ( (usuario.getPermissoes() == null || usuario.getPermissoes().isEmpty()) && 
+			 (usuario.getIdsGrupos() == null || usuario.getIdsGrupos().isEmpty()) ) {
 			listaMensagemValidacao.add("É necessário selecionar ao menos uma permissão e/ou grupo!");
 		}
 
@@ -369,40 +400,30 @@ public class GruposAcessoController extends BaseController {
 		
 		Usuario usuario = getUsuarioEntity(usuarioDTO);
 		
-		Set<Permissao> permissoes = new HashSet<Permissao>();
-		if(usuarioDTO.getPermissoesSelecionadas() != null) {
-			for (String p : usuarioDTO.getPermissoesSelecionadas().split(",")) {
-				if ( p != null && !p.isEmpty() ) {
-					permissoes = adicionarPermissoes(permissoes, Permissao.valueOf(p));
-				}
-			}
-		}
-		usuario.setPermissoes(permissoes);
+		if(usuarioDTO.getPermissoes() == null)
+			usuarioDTO.setPermissoes(new ArrayList<Permissao>());
+		
+		addPais(usuarioDTO.getPermissoes());
+	
+		if(usuarioDTO.getPermissoes().isEmpty())
+			usuario.setPermissoes(new HashSet<Permissao>());
+		else 
+			usuario.setPermissoes(new HashSet<Permissao>(usuarioDTO.getPermissoes()));
 
 		Set<GrupoPermissao> grupos = new HashSet<GrupoPermissao>();
-		for (String grupo : usuarioDTO.getGruposSelecionados().split(",")) {
-			if (grupo != null && !grupo.isEmpty())
-				grupos.add(grupoPermissaoService.buscar(Long.parseLong(grupo)));
-		}
-		usuario.setGruposPermissoes(grupos);
+		
+		if(usuarioDTO.getGrupos() != null) {
+			for (Long id : usuarioDTO.getIdsGrupos()) {
+					grupos.add(grupoPermissaoService.buscar(id));
+			}
+			usuario.setGruposPermissoes(grupos);
+		}		
 		
 		usuarioService.salvar(usuario);
+	
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Usuário salvo com Sucesso."),"result").recursive().serialize();
 	
-	}
-
-	/**
-	 * @param permissoes
-	 * @param permissao
-	 * @return
-	 */
-	private Set<Permissao> adicionarPermissoes(Set<Permissao> permissoes, Permissao permissao) {
-		if (permissao.getPermissaoPai() != null) {
-			permissoes = adicionarPermissoes(permissoes, permissao.getPermissaoPai());
-		}
-		permissoes.add(permissao);
-		return permissoes;
 	}
 	
 	/**
@@ -487,7 +508,7 @@ public class GruposAcessoController extends BaseController {
 		dto.setSobrenome(usuario.getSobrenome());
 		dto.setTelefone(usuario.getTelefone());
 		
-		dto.setPermissoesSelecionadasList(usuarioService.buscarPermissoes(usuario.getId()));
+		dto.setPermissoes(usuarioService.buscarPermissoes(usuario.getId()));
 		
 		List<GrupoPermissaoDTO> grupos = new ArrayList<GrupoPermissaoDTO>();
 		GrupoPermissaoDTO grupo = null;
@@ -534,19 +555,11 @@ public class GruposAcessoController extends BaseController {
 
 		UsuarioDTO dto = new UsuarioDTO();
 		
-		List<Permissao> permissoes = permissaoService.buscar();
 		List<GrupoPermissaoDTO> grupos = grupoPermissaoService.listarDTOs();
 		if (codigoUsuario != null && codigoUsuario != 0) {
 			Usuario usuario = usuarioService.buscar(codigoUsuario);
 			dto = this.getUsuarioDTO(usuario);
 			
-			// Remove da lista as permissões selecionadas anteriormente
-			for (Permissao p : dto.getPermissoesSelecionadasList()) {
-				if (permissoes.contains(p)) {
-					permissoes.remove(permissoes.indexOf(p));
-				}
-			}
-
 			// Remove da lista de grupos selecionados anteriormente
 			for (GrupoPermissaoDTO g : dto.getGruposSelecionadosList()) {
 				if (grupos.contains(g)) {
@@ -555,7 +568,7 @@ public class GruposAcessoController extends BaseController {
 			}
 
 		}
-		dto.setPermissoes(permissoes);
+		
 		dto.setGrupos(grupos);
 		
 		

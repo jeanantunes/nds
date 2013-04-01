@@ -51,6 +51,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path(value="/nfe/entradaNFETerceiros")
+@Rules(Permissao.ROLE_NFE_ENTRADA_NFE_TERCEIROS)	
 public class EntradaNFETerceirosController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE_CONSULTA = "filtroConsultaNFEEncalheTratamento";
@@ -89,7 +90,6 @@ public class EntradaNFETerceirosController extends BaseController {
 	private CotaService cotaService;
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_NFE_ENTRADA_NFE_TERCEIROS)	
 	public void index(){
 		carregarComboStatusNota();
 		

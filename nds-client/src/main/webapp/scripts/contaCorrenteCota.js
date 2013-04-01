@@ -170,7 +170,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				if(!dataRaizPostergado){
 					dataRaizPostergado = value.cell.dataConsolidado;
 				}
-				var dataRaizPendente =  value.cell.dataRaizPendente;
+				var dataRaizPendente =  value.cell.dataRaiz;
 				
 				if(!dataRaizPendente){
 					dataRaizPendente = value.cell.dataConsolidado;
@@ -201,7 +201,7 @@ var contaCorrenteCotaController = $.extend(true, {
 					(value.cell.valorPostergado != null ? floatToPrice(formatMoneyValue(value.cell.valorPostergado)) : '0,00') + '</a></span>';
 				
 				value.cell.pendente = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'">' +
-					floatToPrice(formatMoneyValue(value.cell.pendente)) +'</a></span>';
+					floatToPrice(formatMoneyValue(value.cell.pendente ? value.cell.pendente : '0,00')) +'</a></span>';
 				
 				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
 				value.cell.valorPago = floatToPrice(formatMoneyValue(value.cell.valorPago));
@@ -213,11 +213,12 @@ var contaCorrenteCotaController = $.extend(true, {
 				} else {
 					
 					value.cell.tipo = '<img src="'+ contextPath +'/images/ico_excluir.gif"/>';
+					value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.total));
 				}
 			});
 			
 		
-			$("#cotanome", contaCorrenteCotaController.workspace).html($("#cota", contaCorrenteCotaController.workspace).val()+" "+
+			$("#cotanomeselecionado", contaCorrenteCotaController.workspace).html($("#cota", contaCorrenteCotaController.workspace).val()+" "+
 					$("#nomeCota", contaCorrenteCotaController.workspace).val());
 			
 			$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).

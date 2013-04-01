@@ -92,7 +92,7 @@ var bancoController = $.extend(true, {
 			$("#alterMulta", this.workspace).numeric();
 			$("#alterVrMulta", this.workspace).numeric();
 			
-			$("#nome", this.workspace).autocomplete({source: ""});
+			$("#nome", this.workspace).autocomplete({source: []});
 			
 			bancoController.formatarValores();
 			
@@ -470,29 +470,27 @@ var bancoController = $.extend(true, {
 	    		$("#alterVrMulta", this.workspace).val("");
 	    },
 	    
-		exibirAutoComplete : function(result, idCampoNome) {
-			
-			$(idCampoNome,this.workspace).autocomplete({
-				source: result,
-				minLength: 4,
-				delay : 0,
-			});
-		},
-		
 		autoCompletarPorNomeBanco : function(idCampoNome) {
 			
 			var nomeBanco = $(idCampoNome,this.workspace).val();
 			
 			nomeBanco = $.trim(nomeBanco);
 			
-			$(idCampoNome,this.workspace).autocomplete({source: ""});
-			
 			if (nomeBanco && nomeBanco.length > 2) {
 				
 				$.postJSON(
 					contextPath + "/banco/autoCompletarPorNomeBanco", {nomeBanco:nomeBanco},
 					function(result) { 
-						bancoController.exibirAutoComplete(result, idCampoNome, this.workspace); 
+					
+						$(idCampoNome,this.workspace).autocomplete({
+							source: result,
+							delay : 0,
+						});
+						
+						$(idCampoNome,this.workspace).autocomplete(
+							"search",nomeBanco
+						);
+						
 					},
 					null
 				);

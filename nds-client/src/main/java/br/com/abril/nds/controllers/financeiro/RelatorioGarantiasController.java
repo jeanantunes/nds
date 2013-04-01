@@ -40,6 +40,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("financeiro/relatorioGarantias")
+@Rules(Permissao.ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS)
 public class RelatorioGarantiasController extends BaseController {
 	
 	@Autowired
@@ -69,7 +70,6 @@ public class RelatorioGarantiasController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_FINANCEIRO_RELATORIO_DE_GARANTIAS)
 	public void index() {
 		
 		listaTiposGarantia.clear();

@@ -59,6 +59,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/cadastro/fiador")
+@Rules(Permissao.ROLE_CADASTRO_FIADOR)
 public class FiadorController extends BaseController {
 	
 	public static final String LISTA_TELEFONES_SALVAR_SESSAO = "listaTelefonesSalvarSessaoFiador";
@@ -105,7 +106,6 @@ public class FiadorController extends BaseController {
 	}
 	
 	@Path("/")
-	@Rules(Permissao.ROLE_CADASTRO_FIADOR)
 	public void index(){
 		
 		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));

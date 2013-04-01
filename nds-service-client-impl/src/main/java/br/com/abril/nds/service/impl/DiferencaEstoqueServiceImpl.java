@@ -190,11 +190,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 	
 	@Transactional
-	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca, TipoEstoque tipoEstoque) {
+	public Diferenca lancarDiferencaAutomatica(Diferenca diferenca, 
+											   TipoEstoque tipoEstoque, 
+											   StatusAprovacao statusAprovacao) {
 		
-		diferenca = processarDiferenca(diferenca, tipoEstoque,StatusConfirmacao.CONFIRMADO);
+		diferenca = processarDiferenca(diferenca, tipoEstoque, StatusConfirmacao.CONFIRMADO);
 		
-		this.confirmarLancamentosDiferenca(Arrays.asList(diferenca));
+		this.confirmarLancamentosDiferenca(Arrays.asList(diferenca), statusAprovacao);
 		
 		return diferenca;
 	}
@@ -224,7 +226,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		listaNovasDiferencas = salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario, isDiferencaNova, StatusConfirmacao.PENDENTE);
 		
-		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas));
+		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null);
 	} 
 	
 	@Transactional
@@ -355,7 +357,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 	}
 
-	private void confirmarLancamentosDiferenca(List<Diferenca> listaDiferencas) {
+	private void confirmarLancamentosDiferenca(List<Diferenca> listaDiferencas, StatusAprovacao statusAprovacao) {
 		
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
@@ -395,10 +397,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				movimentoEstoque = this.gerarMovimentoEstoque(diferenca, usuario.getId(), diferenca.isAutomatica());
 			}
 
-			StatusAprovacao statusAprovacao = obterStatusLancamento(diferenca);
+			if (statusAprovacao == null) {
+			
+				statusAprovacao = obterStatusLancamento(diferenca);
+			}
 			
 			LancamentoDiferenca lancamentoDiferenca =  
-					this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, listaMovimentosEstoqueCota);
+				this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, listaMovimentosEstoqueCota);
 			
 			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
 			

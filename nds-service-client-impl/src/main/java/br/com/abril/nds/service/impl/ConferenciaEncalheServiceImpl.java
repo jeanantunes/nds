@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -14,6 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +21,8 @@ import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRTextExporter;
-import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,7 +91,6 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
-import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -104,7 +100,6 @@ import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
-import br.com.abril.nds.repository.LancamentoParcialRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
@@ -212,9 +207,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private EstoqueProdutoRespository estoqueProdutoRepository;
 	
 	@Autowired
-	private LancamentoParcialRepository lancamentoParcialRepository;
-	
-	@Autowired
 	private DocumentoCobrancaService documentoCobrancaService;
 	
 	@Autowired
@@ -256,9 +248,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
-	
-	@Autowired
-	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -572,7 +561,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @return BigDecimal
 	 */
-	protected BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao) {
+	@Transactional(readOnly = true)
+	public BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao) {
 		
 		BigDecimal reparte =
 			chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
@@ -586,6 +576,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return reparte;
 	}
 	
+	@Transactional(readOnly = true)
 	public boolean isCotaComReparteARecolherNaDataOperacao(Integer numeroCota) {
 		
 		BigDecimal valorTotal = obterValorTotalReparte(numeroCota, distribuidorService.obterDataOperacaoDistribuidor());
@@ -1130,13 +1121,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	@Transactional(rollbackFor=Exception.class)
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class)
 	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
 			ControleConferenciaEncalheCota controleConfEncalheCota, 
 			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
-			boolean indConferenciaContingencia) {
+			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException {
 		
 		if(	controleConfEncalheCota.getId() != null) {
 			
@@ -1168,19 +1159,36 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		this.abaterNegociacaoPorComissao(controleConfEncalheCota.getCota().getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
 		
-		Set<String> nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
+		Set<String> nossoNumeroCollection = new LinkedHashSet<>();
+		
+		DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
+		
+		try {
+			
+			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
+		
+		} catch(GerarCobrancaValidacaoException e) {
+			
+			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());
+			
+		}
+		
 		
 		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
-				
-		DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 		
 		boolean isUtililzaSlipImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
 		
+		boolean isUtililzaBoletoImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.BOLETO);
+		
+		boolean isUtililzaBoletoSlipImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP);
+		
 		documentoConferenciaEncalhe.setIdControleConferenciaEncalheCota(controleConfEncalheCota.getId());
 		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
-		documentoConferenciaEncalhe.setUtilizaSlipBoleto(isUtililzaSlipImpressao);
+		documentoConferenciaEncalhe.setUtilizaBoleto(isUtililzaBoletoImpressao);
 		documentoConferenciaEncalhe.setUtilizaSlip(isUtililzaSlipImpressao);
+		documentoConferenciaEncalhe.setUtilizaBoletoSlip(isUtililzaBoletoSlipImpressao);
 		
 		documentoConferenciaEncalhe.setListaNossoNumero(new LinkedList<String>());
 		
@@ -1259,26 +1267,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param controleConferenciaEncalheCota
 	 * 
 	 * @return Set - String
+	 * @throws GerarCobrancaValidacaoException 
 	 */
-	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
+	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 
 		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCotaRecolhimento(controleConferenciaEncalheCota, FormaComercializacao.CONSIGNADO);
 
 		Set<String> nossoNumeroCollection = new HashSet<String>();
 		
-		try {
-			
-			gerarCobrancaService.gerarCobranca(
-					controleConferenciaEncalheCota.getCota().getId(), 
-					controleConferenciaEncalheCota.getUsuario().getId(), 
-					nossoNumeroCollection);
-			
-		} catch (GerarCobrancaValidacaoException e) {
-
-			ValidacaoException validacaoException = e.getValidacaoException();
-			
-			throw validacaoException;
-		}
+		gerarCobrancaService.gerarCobranca(
+				controleConferenciaEncalheCota.getCota().getId(), 
+				controleConferenciaEncalheCota.getUsuario().getId(), 
+				nossoNumeroCollection);
 		
 		return nossoNumeroCollection;
 	}
@@ -1360,10 +1360,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Usuario usuario,
 			StatusOperacao statusOperacao,
 			boolean indConferenciaContingencia) {
-		
-		if(listaConferenciaEncalhe == null || listaConferenciaEncalhe.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum item conferido, não é possível realizar a conferência de encalhe.");
-		}
 		
 	    Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
 	    
@@ -2146,11 +2142,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						idCota, 
 						usuario.getId(), 
 						conferenciaEncalheDTO.getQtdExemplar(), 
-						tipoMovimentoEstoqueCota);
+						tipoMovimentoEstoqueCota,
+						this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		ValoresAplicados valoresAplicados =  movimentoEstoqueCotaRepository.obterValoresAplicadosProdutoEdicao(numeroCota, produtoEdicao.getId(), distribuidorService.obterDataOperacaoDistribuidor());
-
-		verificarValorAplicadoNulo(valoresAplicados);
+		if(valoresAplicados == null){
+			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
+		}else{
+			verificarValorAplicadoNulo(valoresAplicados);
+		}
+		
 		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
@@ -2159,6 +2160,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 	private void verificarValorAplicadoNulo(ValoresAplicados valoresAplicados){
+		
+		if (valoresAplicados == null) {
+			valoresAplicados = new ValoresAplicados();
+		}
 		
 		if(valoresAplicados.getPrecoComDesconto() == null) {
 			valoresAplicados.setPrecoComDesconto(BigDecimal.ZERO);
@@ -2427,7 +2432,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						movimentoEstoqueCota.getProdutoEdicao().getId(), 
 						distribuidorService.obterDataOperacaoDistribuidor());
 
-		verificarValorAplicadoNulo(valoresAplicados);
+		if(valoresAplicados == null){
+			valoresAplicados = new ValoresAplicados(BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO);
+		}else{
+			verificarValorAplicadoNulo(valoresAplicados);
+		}
 		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
@@ -2864,9 +2873,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("VALOR_TOTAL_PAGAR", totalComposicao);
 		
 		
+		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
 		try{
-			
-		    parameters.put("SUBREPORT_DIR", obterSlipSubReportPath());
+		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -2874,22 +2883,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
-		
+
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip_pdf.jasper");
+
 		String path = null;
-		
+
 		try {
-		
-			path = obterSlipReportPath();
-		
+
+			path = url.toURI().getPath();
+
 		} catch (URISyntaxException e) {
-			
+
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
-			
+
 		}
+
 		
 		try {
 			
-			//Retorna um byte array de um TXT
+			/*//Retorna um byte array de um TXT
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			JRTextExporter exporter = new JRTextExporter();  
 			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
@@ -2899,8 +2911,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
 			exporter.exportReport();
 
-			return out.toByteArray();
-			//return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
+			return out.toByteArray();*/
+			
+			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		
 		} catch (JRException e) {
 		

@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.abril.nds.vo.ValidacaoVO;
+
 public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 
 	/**
@@ -28,11 +30,16 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	private boolean indGeraDocumentacaoConferenciaEncalhe = false;
 
 	/**
-	 * Define se distribuidor utiliza  impressão de Boleto + Slip no mesmo documento
+	 * Define se distribuidor utiliza  impressão de Boleto + Slip 
 	 */
-	private boolean utilizaSlipBoleto;
+	private boolean utilizaBoleto;
 	
 	private boolean utilizaSlip;
+	
+	private boolean utilizaBoletoSlip;
+	
+	private ValidacaoVO msgsGeracaoCobranca;
+	
 	
 	/**
 	 * Obtém idControleConferenciaEncalheCota
@@ -87,15 +94,15 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	/**
 	 * @return the utilizaSlipBoleto
 	 */
-	public boolean isUtilizaSlipBoleto() {
-		return utilizaSlipBoleto;
+	public boolean isUtilizaBoleto() {
+		return utilizaBoleto;
 	}
 
 	/**
-	 * @param utilizaSlipBoleto the utilizaSlipBoleto to set
+	 * @param utilizaBoleto the utilizaSlipBoleto to set
 	 */
-	public void setUtilizaSlipBoleto(boolean utilizaSlipBoleto) {
-		this.utilizaSlipBoleto = utilizaSlipBoleto;
+	public void setUtilizaBoleto(boolean utilizaBoleto) {
+		this.utilizaBoleto = utilizaBoleto;
 	}
 
 	/**
@@ -111,5 +118,23 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	public void setUtilizaSlip(boolean utilizaSlip) {
 		this.utilizaSlip = utilizaSlip;
 	}
+
+	public boolean isUtilizaBoletoSlip() {
+		return utilizaBoletoSlip;
+	}
+
+	public void setUtilizaBoletoSlip(boolean utilizaBoletoSlip) {
+		this.utilizaBoletoSlip = utilizaBoletoSlip;
+	}
+
+	public ValidacaoVO getMsgsGeracaoCobranca() {
+		return msgsGeracaoCobranca;
+	}
+
+	public void setMsgsGeracaoCobranca(ValidacaoVO msgsGeracaoCobranca) {
+		this.msgsGeracaoCobranca = msgsGeracaoCobranca;
+	}
+
+	
 	
 }

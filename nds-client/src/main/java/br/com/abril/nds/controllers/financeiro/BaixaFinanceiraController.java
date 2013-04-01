@@ -81,7 +81,8 @@ import br.com.caelum.vraptor.serialization.JSONSerialization;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
-@Path("/financeiro")
+@Path("/financeiro/baixa")
+@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA)
 public class BaixaFinanceiraController extends BaseController {
 
 	private Result result;
@@ -143,8 +144,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 		
 	@Get
-	@Path("/baixa")
-	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA)
+	@Path("/")
 	public void baixa() {
 		listaTiposCobranca.clear();
 		listaTiposCobranca.add(new ItemDTO<TipoCobranca,String>(TipoCobranca.DINHEIRO, TipoCobranca.DINHEIRO.getDescTipoCobranca()));

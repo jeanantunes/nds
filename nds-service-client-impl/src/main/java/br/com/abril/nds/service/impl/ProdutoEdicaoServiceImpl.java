@@ -1142,5 +1142,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro) {
 		return this.produtoEdicaoRepository.obterEdicoesProduto(filtro);
 	}
+
+	/**
+	 * @param codigoBarra
+	 * @return
+	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterPorCodigoBarraILike(java.lang.String)
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<ProdutoEdicao> obterPorCodigoBarraILike(String codigoBarra) {
+		return produtoEdicaoRepository.obterPorCodigoBarraILike(codigoBarra);
+	}
 	
 }
