@@ -43,6 +43,9 @@ public class CotaDAO {
 	@Value("#{query_estudo.queryCotasDesenglobadas}")
 	private String queryCotasDesenglobadas;
 
+	@Value("#{query_estudo.queryCotasFixadas}")
+	private String queryCotasFixadas;
+	
 	private static final String LANCAMENTO_PARCIAL = "PARCIAL";
 	private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
 	private static final String STATUS_FECHADO = "FECHADO";
@@ -99,9 +102,9 @@ public class CotaDAO {
 		}
 
 		Map<String, Object> params = new HashMap<>();
-		params.put("ID_PRODUTO", estudo.getProduto().getId());
-		params.put("NUMERO_EDICAO", estudo.getProduto().getNumeroEdicao());
-		params.put("TIPO_SEGMENTO", estudo.getProduto().getTipoSegmentoProduto());
+		params.put("ID_PRODUTO", estudo.getProdutoEdicaoEstudo().getId());
+		params.put("NUMERO_EDICAO", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
+		params.put("TIPO_SEGMENTO", estudo.getProdutoEdicaoEstudo().getTipoSegmentoProduto());
 		params.put("IDS_PRODUTOS", idsPesos.keySet());
 
 		returnListCota = jdbcTemplate.query(queryProdutoEdicaoPorCota, params, new RowMapper<CotaEstudo>() {
@@ -133,6 +136,7 @@ public class CotaDAO {
 				CotaEnglobada cotaEnglobada = new CotaEnglobada();
 				cotaEnglobada.setId(rs.getLong("COTA_ID_ENGLOBADA"));
 				cotaEnglobada.setPorcentualEnglobacao(rs.getInt("PORCENTAGEM_COTA_ENGLOBADA"));
+				cotaEnglobada.setDataInclusao(rs.getDate("DATA_ALTERACAO"));
 				cotaDesenglobada.setCotasEnglobadas(Arrays.asList(cotaEnglobada));
 				return cotaDesenglobada;
 			}
@@ -240,6 +244,33 @@ public class CotaDAO {
 				CotaEstudo cota = new CotaEstudo();
 				cota.setId(rs.getLong("ID"));
 				cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
+				return cota;
+			}
+		});
+	}
+
+	public List<CotaEstudo> getCotasBase() {
+		List<CotaEstudo> cotaEstudos = new ArrayList<>();
+		SqlRowSet rs = jdbcTemplate.queryForRowSet("select COTA_ID from cota_base", new HashMap<String, Object>());
+		while (rs.next()) {
+			CotaEstudo cotaEstudo = new CotaEstudo();
+			cotaEstudo.setId(rs.getLong("COTA_ID"));
+		}
+		return cotaEstudos;
+	}
+	
+	public List<CotaEstudo> getCotasComFixacao(Long idProduto, Long numeroEdicaoEstudo) {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("ID_PRODUTO", idProduto);
+		paramMap.put("NUMERO_EDICAO_ESTUDO", numeroEdicaoEstudo);
+		
+		return jdbcTemplate.query(queryCotasFixadas, paramMap, new RowMapper<CotaEstudo>() {
+
+			@Override
+			public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
+				CotaEstudo cota = new CotaEstudo();
+				cota.setId(rs.getLong("ID_COTA"));
+				cota.setReparteFixado(rs.getBigDecimal("QTDE_EXEMPLARES").toBigInteger());
 				return cota;
 			}
 		});

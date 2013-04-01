@@ -36,8 +36,12 @@ public class CotaEstudo extends Cota {
 	private List<CotaEstudo> equivalente;
 	private BigDecimal indiceAjusteEquivalente;
 	private Integer regiao;
+	private boolean nova;
 	
 	public CotaEstudo() {
+		nova = false;
+		indiceTratamentoRegional = BigDecimal.ONE;
+		reparteMinimo = BigInteger.ZERO;
 		reparteCalculado = BigInteger.ZERO;
 		classificacao = ClassificacaoCota.SemClassificacao;
 	}
@@ -188,11 +192,6 @@ public class CotaEstudo extends Cota {
 		this.indiceAjusteEquivalente = indiceAjusteEquivalente;
 	}
 
-	public boolean isNova() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public BigInteger getReparteFixado() {
 	    return reparteFixado;
 	}
@@ -207,6 +206,19 @@ public class CotaEstudo extends Cota {
 
 	public void setRegiao(Integer regiao) {
 	    this.regiao = regiao;
+	}
+
+	public boolean isNova() {
+		return nova;
+	}
+
+	public void setNova(boolean nova) {
+		this.nova = nova;
+	}
+
+	@Override
+	public String toString() {
+		return "" + getNumeroCota() + "";
 	}
 
 }

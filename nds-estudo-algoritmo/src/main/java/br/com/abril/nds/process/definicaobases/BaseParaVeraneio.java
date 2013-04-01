@@ -13,7 +13,7 @@ import br.com.abril.nds.enumerators.DataReferencia;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
-import br.com.abril.nds.service.EstudoServiceEstudo;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
@@ -29,7 +29,7 @@ import br.com.abril.nds.service.EstudoServiceEstudo;
 public class BaseParaVeraneio extends ProcessoAbstrato {
 
 	@Autowired
-	private EstudoServiceEstudo estudoServiceEstudo;
+	private EstudoAlgoritmoService estudoAlgoritmoService;
 
 	@Override
 	public void executar(EstudoTransient estudo) throws Exception {
@@ -49,14 +49,14 @@ public class BaseParaVeraneio extends ProcessoAbstrato {
 	}
 
 	private void adicionarEdicoesAnterioresAoEstudoSaidaVeraneio(ProdutoEdicaoEstudo produtoEdicao, EstudoTransient estudo) {
-		List<ProdutoEdicaoEstudo> edicoesAnosAnterioresSaidaVeraneio = estudoServiceEstudo.buscaEdicoesAnosAnterioresSaidaVeraneio(produtoEdicao);
+		List<ProdutoEdicaoEstudo> edicoesAnosAnterioresSaidaVeraneio = estudoAlgoritmoService.buscaEdicoesAnosAnterioresSaidaVeraneio(produtoEdicao);
 		if (!edicoesAnosAnterioresSaidaVeraneio.isEmpty()) {
 			estudo.getEdicoesBase().addAll(edicoesAnosAnterioresSaidaVeraneio);
 		}
 	}
 
 	private void adicionarEdicoesAnterioresAoEstudo(ProdutoEdicaoEstudo produtoEdicaoBase, EstudoTransient estudo) throws Exception {
-		List<ProdutoEdicaoEstudo> edicoesAnosAnteriores = estudoServiceEstudo.buscaEdicoesAnosAnterioresVeraneio(produtoEdicaoBase);
+		List<ProdutoEdicaoEstudo> edicoesAnosAnteriores = estudoAlgoritmoService.buscaEdicoesAnosAnterioresVeraneio(produtoEdicaoBase);
 		if (edicoesAnosAnteriores.isEmpty()) {
 			throw new Exception("Não foram encontradas outras bases para veraneio, favor inserir bases manualmente.");
 		}

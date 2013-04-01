@@ -120,5 +120,10 @@ public class ProdutoEdicaoEstudo extends ProdutoEdicao {
 	public void setVendaCorrigida(BigDecimal vendaCorrigida) {
 		this.vendaCorrigida = vendaCorrigida;
 	}
+
+	@Override
+	public String toString() {
+		return "" + numeroEdicao + "";
+	}
     
 }

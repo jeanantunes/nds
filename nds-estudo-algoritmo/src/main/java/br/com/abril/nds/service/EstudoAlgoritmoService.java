@@ -37,7 +37,6 @@ import br.com.abril.nds.process.medias.Medias;
 import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
-import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
 
@@ -55,9 +54,9 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
  * </p>
  */
 @Service
-public class EstudoServiceEstudo {
+public class EstudoAlgoritmoService {
 
-	private static final Logger log = LoggerFactory.getLogger(EstudoServiceEstudo.class);
+	private static final Logger log = LoggerFactory.getLogger(EstudoAlgoritmoService.class);
 
 	@Autowired
 	private EstudoDAO estudoDAO;
@@ -70,9 +69,6 @@ public class EstudoServiceEstudo {
 
 	@Autowired
 	private DefinicaoBases definicaoBases;
-
-	@Autowired
-	private SomarFixacoes somarFixacoes;
 
 	@Autowired
 	private VerificarTotalFixacoes verificarTotalFixacoes;
@@ -131,18 +127,19 @@ public class EstudoServiceEstudo {
 					ClassificacaoCota.RedutorAutomatico)) {
 				estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
 			}
-			estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
+			if (cota.isCotaSoRecebeuEdicaoAberta()) {
+				estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
+			}
 			estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
 		}
 	}
 
 	public void carregarParametros(EstudoTransient estudo) {
-		// FIXME validar regra de pacotePadrao
-		estudo.setProduto(produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(estudo.getProduto().getProduto().getCodigo()));
+		estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo()));
 		if (estudo.getPacotePadrao() == null) {
-			estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProduto().getPacotePadrao()));
+			estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProdutoEdicaoEstudo().getPacotePadrao()));
 		}
-		estudo.getProduto().setPacotePadrao(0);
+		estudo.getProdutoEdicaoEstudo().setPacotePadrao(0);
 		estudoDAO.carregarParametrosDistribuidor(estudo);
 		estudoDAO.carregarPercentuaisExcedente(estudo);
 	}
@@ -207,9 +204,8 @@ public class EstudoServiceEstudo {
 		log.debug("Iniciando execução do estudo.");
 		EstudoTransient estudo = new EstudoTransient();
 		estudo.setDataCadastro(new Date());
-		estudo.setComplementarAutomatico(true); // FIXME PEGAR VALOR DO PARAMETRO DO DISTRIBUIDOR
 		estudo.setStatusEstudo("ESTUDO_FECHADO");
-		estudo.setProduto(produto);
+		estudo.setProdutoEdicaoEstudo(produto);
 		estudo.setReparteDistribuir(reparte);
 		estudo.setReparteDistribuirInicial(reparte);
 
@@ -221,8 +217,6 @@ public class EstudoServiceEstudo {
 		carregarParametros(estudo);
 
 		definicaoBases.executar(estudo);
-
-		somarFixacoes.executar(estudo);
 
 		verificarTotalFixacoes.executar(estudo);
 

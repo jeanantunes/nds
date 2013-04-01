@@ -38,12 +38,12 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
 	@Override
 	public void executar(EstudoTransient estudo) {
 
-		if (estudo.getProduto().isParcial()) {
+		if (estudo.getProdutoEdicaoEstudo().isParcial()) {
 			for (CotaEstudo cota : estudo.getCotas()) {
 
 				int qtdeVezesEnviada = 0;
 				for(ProdutoEdicaoEstudo pe :cota.getEdicoesRecebidas()){
-					if(estudo.getProduto().getId().equals(pe.getId())){
+					if(estudo.getProdutoEdicaoEstudo().getId().equals(pe.getId())){
 						qtdeVezesEnviada++;
 					}
 				}
@@ -52,7 +52,7 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
 
 					// Verificar se tem reparte juramentado A SER FATURADO
 					BigInteger reparteJuramentadoAFaturar = movimentoEstoqueCotaDAO
-							.retornarReparteJuramentadoAFaturar(cota, estudo.getProduto()).toBigInteger();
+							.retornarReparteJuramentadoAFaturar(cota, estudo.getProdutoEdicaoEstudo()).toBigInteger();
 
 					if (reparteJuramentadoAFaturar.compareTo(BigInteger.ZERO) == 1) {
 						// Gravar ReparteJura Cota na tabela

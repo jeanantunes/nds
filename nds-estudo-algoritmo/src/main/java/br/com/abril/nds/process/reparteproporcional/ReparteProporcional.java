@@ -38,10 +38,11 @@ public class ReparteProporcional extends ProcessoAbstrato {
     	}
     	BigInteger somaReparteProporcional = BigInteger.ZERO;
     	BigDecimal indiceReparteEdicoesAbertas = BigDecimal.ZERO;
-    	if (estudo.getSomatoriaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0) {
+    	if (estudo.getEdicoesBase().size() > 1 && estudo.getSomatoriaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0) {
     		// ÍndiceRepAberta =  RepDistribInicial / ΣRepEdiçãoAberta
-    	    // SÓ ENTRAR NESSE CALCULO SE HOUVER MAIS DE UMA EDICAO BASE
-    	    // FIXME SOMATORIA SOMENTE DEVE CONTER REPARTE DA EDICAO ABERTA DE TODAS AS COTAS QUE SÓ RECEBERAM UMA EDICAO ABERTA
+    	    // só entrar nesse calculo se houver mais de uma edicao base
+    	    // somatoria somente deve conter reparte da edicao aberta de todas as cotas que só receberam uma edicao aberta
+    		// validação ocorre em {@link EstudoService.calculate}
     		indiceReparteEdicoesAbertas = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(estudo.getSomatoriaReparteEdicoesAbertas(), 3, BigDecimal.ROUND_HALF_UP);
     	} 
     	for (CotaEstudo cota : estudo.getCotas()) {

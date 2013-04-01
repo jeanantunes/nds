@@ -100,7 +100,6 @@ public class CalcularReparte extends ProcessoAbstrato {
 	public void calcularPercentualExcedente(EstudoTransient estudo) {
 		// %Excedente = Excedente / SVendaMédiaFinal
 		if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
-		    // FIXME TROCAR VARIAVEL DO EXCEDENTE
 			percentualExcedente = excedenteDistribuir.divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
 		}
 

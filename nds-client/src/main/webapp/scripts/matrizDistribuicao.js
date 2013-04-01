@@ -1,9 +1,9 @@
 function MatrizDistribuicao(pathTela, descInstancia, workspace) {
-
+	
 	var _workspace = workspace;
 
 	var T = this;
-
+	
 	var opcoesAberto = false;
 
 	this.instancia = descInstancia;
@@ -11,114 +11,110 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.lancamentos = [];
 	this.isCliquePesquisar;
 
-			this.definirAcaoPesquisaTeclaEnter = function() {
+	this.definirAcaoPesquisaTeclaEnter = function() {
+		definirAcaoPesquisaTeclaEnter();
+	},
 
-				definirAcaoPesquisaTeclaEnter();
-			},
-
-			this.exibirMensagemSucesso = function() {
-
+	this.exibirMensagemSucesso = function() {
 		exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
-			},
+	},
 
-			this.pesquisar = function() {
+	this.pesquisar = function() {
 
-				$("#resumoPeriodo", _workspace).show();
-
-				var data = [];
+		$("#resumoPeriodo", _workspace).show();
+		var data = [];
 
 		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
+		
 		$('[id^="fornecedor_"]').each(function(key){
 			if (this.checked) {
 				data.push({name:'idsFornecedores['+key+']', value: this.value});
 			}
-				});
+		});
 
 		$.postJSON(
 			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
 			data,
-						function(result) {
-
-							T.carregarGrid();
-						},
-
+			function(result) {
+				T.carregarGrid();
+			},
 			T.escondeGrid()
 		);
-			},
+	},
 
-			this.escondeGrid = function() {
-				$(".gridDistribuicao", _workspace).hide();
+	this.escondeGrid = function() {
+		$(".gridDistribuicao", _workspace).hide();
+	},
 
-	} ,
+	this.carregarGrid = function() {
 
-			this.carregarGrid = function() {
+		T.mostrarGridEBotoesAcao();
 
-				T.mostrarGridEBotoesAcao();
+		T.linhasDestacadas = [];
+		lancamentosSelecionados = [];
+		$('#selTodos', _workspace).uncheck();
 
-				T.linhasDestacadas = [];
-				lancamentosSelecionados = [];
-				$('#selTodos', _workspace).uncheck();
-
-				T.isCliquePesquisar = true;
+		T.isCliquePesquisar = true;
 
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
 			url : pathTela + "/matrizDistribuicao/obterGridMatrizDistribuicao",
-									dataType : 'json',
+			dataType : 'json',
 			autoload: false,
 			singleSelect: true,
 			preProcess: T.processaRetornoPesquisa,
 			onSuccess: T.onSuccessPesquisa,
 			onSubmit: function(elemento){return T.confirmarPaginacao(this);}
-								});
+		});
 
-				$(".lancamentosProgramadosGrid", _workspace).flexReload();
-			},
+		$(".lancamentosProgramadosGrid", _workspace).flexReload();
+	},
 
-			this.confirmarPaginacao = function(elemento) {
+	this.confirmarPaginacao = function(elemento) {
 
 		var noSelect = $('[name=checkgroup]:checked', _workspace).size() == 0;
 
 		if(T.isCliquePesquisar || noSelect ) {
-					T.isCliquePesquisar = false;
-					return true;
-				}
+			T.isCliquePesquisar = false;
+			return true;
+		}
 
 		$("#dialog-pagincao-confirmada", _workspace).dialog({
 			resizable: false,
 			height:'auto',
 			width:600,
 			modal: true,
-			buttons: [
-								{
-			    	id: "selecaoLancamentosBtnConfirmar",
-			    	text: "Confirmar",
-			    	click: function() {
+			buttons: [ {
+		    	id: "selecaoLancamentosBtnConfirmar",
+		    	text: "Confirmar",
+		    	click: function() {
+					$(".lancamentosProgramadosGrid", _workspace).flexOptions({ onSubmit: null });
 
-						$(".lancamentosProgramadosGrid", _workspace).flexOptions({ onSubmit: null });
+					$(".lancamentosProgramadosGrid", _workspace).flexReload();
 
-						$(".lancamentosProgramadosGrid", _workspace).flexReload();
+					$(".lancamentosProgramadosGrid", _workspace)
+					.flexOptions({ 
+						onSubmit: function(elemento) { 
+							return T.confirmarPaginacao(this); 
+						}
+					});
 
-						$(".lancamentosProgramadosGrid", _workspace).flexOptions({ onSubmit: function(elemento){return T.confirmarPaginacao(this);} });
-
-													$(this).dialog("close");
-												}
-											},
-											{
-			    	id: "selecaoLancamentosBtnCancelar",
-			    	text: "Cancelar",
-			    	click: function() {
-
-													$(this).dialog("close");
-												}
+					$(this).dialog("close");
 				}
-			],
-			form: $("#dialog-pagincao-confirmada", this.workspace).parents("form")
-								});
-
-				return false;
 			},
+			{
+		    	id: "selecaoLancamentosBtnCancelar",
+		    	text: "Cancelar",
+		    	click: function() {
+					$(this).dialog("close");
+				}
+			} ],
+			form: $("#dialog-pagincao-confirmada", this.workspace).parents("form")
+		});
 
-			this.onSuccessPesquisa = function() {
+		return false;
+	},
+
+	this.onSuccessPesquisa = function() {
 
 		$(T.linhasDestacadas).each(function(i, item){
 							id = '#row' + item;
@@ -1184,6 +1180,27 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
         postData.push({name : "reparte", value : selecionado.repDistrib});
         $.postJSON(pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", postData,
     			function(result) {
+        			T.estudo = result;
+		        	$('<div>Exibir variaveis do estudo?</div>').dialog({ 
+		        	    title: "Estudo",
+		        	    buttons: [ { 
+		        	        text: "OK", 
+		        	        click: function() { 
+		        	            $( this ).dialog( "close" );
+//		        	            $('<div title="Variaveis do Estudo">')
+//		        	            .html(T.estudo.estudo)
+//		        	            .dialog();
+		        	            var myWindow=window.open('','');
+		        	            myWindow.document.write(T.estudo.estudo);
+		        	            myWindow.focus();
+		        	        } 
+		        	    }, {
+		        	    	text: "Cancel", 
+		        	        click: function() { 
+		        	            $( this ).dialog( "close" ); 
+		        	        }
+		        	    } ] 
+		        	});
         			T.carregarGrid();
         			T.exibirMensagemSucesso();
     			}
