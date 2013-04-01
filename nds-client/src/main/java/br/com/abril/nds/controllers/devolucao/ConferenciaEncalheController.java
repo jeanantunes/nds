@@ -1235,35 +1235,38 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
-			if(dadosDocumentacaoConfEncalheCota!=null ) {
-				Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
-				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-			}
+			Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
 			
-			if(dadosDocumentacaoConfEncalheCota!=null) {
+			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
 				
-				try {
-					
-					this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
-					
-				} catch (Exception e){
-					
-					throw new Exception("Cobrança efetuada, erro ao gerar arquivo(s) de cobrança - " + e.getMessage());
-				}
+			try {
+				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
+			} catch (Exception e){
+				throw new Exception("Erro ao gerar documentos da conferência de encalhe - " + e.getMessage());
 			}
 			
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
 			
-			String msgSucess = "Operação efetuada com sucesso.";
-			
-			if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
+			if(dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca()!=null) {
 				
-				msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
+				dados.put("listaMensagens", dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca().getListaMensagens());
+				
+			} else {
+
+				String msgSucess = "";
+				
+				if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
+					msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
+				} else {
+					msgSucess = "Operação efetuada com sucesso.";
+				}
+				
+				dados.put("listaMensagens", 	new String[]{msgSucess});
+				
 			}
 			
-			dados.put("listaMensagens", 	new String[]{msgSucess});
 
 			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
 			
