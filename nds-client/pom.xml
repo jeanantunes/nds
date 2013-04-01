@@ -227,33 +227,6 @@
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jasperreports-maven-plugin</artifactId>
-				<configuration>
-					<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
-					<sourceDirectory>src/main/resources/reports</sourceDirectory>
-
-					<server>tomcat-server</server>
-					<url>http://localhost:8080/manager/text</url>
-				</configuration>
-				<version>1.0-beta-2</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>compile-reports</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>net.sf.jasperreports</groupId>
-						<artifactId>jasperreports</artifactId>
-						<version>5.0.0</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.2.1</version>
 				<executions>
@@ -321,6 +294,33 @@
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<version>1.1</version>
 						<configuration>
@@ -331,6 +331,33 @@
 				</plugins>
 			</build>
 		</profile>
+
+		<profile>
+			<id>desenvolvimento-no-reports</id>
+			<properties>
+				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
+				<dataSourceURL>jdbc:mysql://localhost:3306/nds-client</dataSourceURL>
+				<dataSourceUsername>root</dataSourceUsername>
+				<dataSourcePassword>root</dataSourcePassword>
+				<testDataSourceURL>jdbc:mysql://localhost:3306/nds-client-test</testDataSourceURL>
+				<testDataSourceUsername>root</testDataSourceUsername>
+				<testDataSourcePassword>root</testDataSourcePassword>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>tomcat-maven-plugin</artifactId>
+						<version>1.1</version>
+						<configuration>
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
 		<profile>
 			<id>integracaoContinua</id>
 			<properties>
@@ -344,6 +371,33 @@
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
@@ -368,6 +422,33 @@
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<version>1.1</version>
 						<configuration>
@@ -388,6 +469,33 @@
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
@@ -415,6 +523,33 @@
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<version>1.1</version>
 						<configuration>
@@ -438,6 +573,33 @@
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
@@ -465,6 +627,33 @@
 				<plugins>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<version>1.1</version>
 						<configuration>
@@ -488,6 +677,33 @@
 			</properties>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>jasperreports-maven-plugin</artifactId>
+						<configuration>
+							<outputDirectory>${project.build.directory}/classes/reports</outputDirectory>
+							<sourceDirectory>src/main/resources/reports</sourceDirectory>
+
+							<server>tomcat-server</server>
+							<url>http://localhost:8080/manager/text</url>
+						</configuration>
+						<version>1.0-beta-2</version>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>compile-reports</goal>
+								</goals>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>net.sf.jasperreports</groupId>
+								<artifactId>jasperreports</artifactId>
+								<version>5.0.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>tomcat-maven-plugin</artifactId>

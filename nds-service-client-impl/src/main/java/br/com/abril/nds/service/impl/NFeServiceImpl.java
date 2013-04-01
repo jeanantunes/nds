@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.fiscal.nota.Identificacao;
@@ -49,6 +50,7 @@ import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
@@ -77,6 +79,9 @@ public class NFeServiceImpl implements NFeService {
 
 	@Autowired
 	protected ItemNotaFiscalSaidaRepository itemNotaFiscalSaidaRepository;
+	
+	@Autowired
+	protected DistribuidorRepository distribuidorRepository;
 
 	@Transactional
 	public InfoNfeDTO pesquisarNFe(FiltroMonitorNfeDTO filtro) {
@@ -136,7 +141,7 @@ public class NFeServiceImpl implements NFeService {
 			return gerarDocumentoIreportNE(listaNEWrapper, false);
 
 		} catch(Exception e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração dos arquivos NE");
+			throw new RuntimeException("Falha na geração dos arquivos NE!", e);
 		}
 	}
 	
@@ -718,8 +723,23 @@ public class NFeServiceImpl implements NFeService {
 		JRDataSource jrDataSource = new JRBeanCollectionDataSource(list);
 
 		URL diretorioReports = obterDiretorioReports();
-
-		String path = diretorioReports.toURI().getPath() + "/neWrapper.jasper";
+		
+		TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE = distribuidorRepository.tipoImpressaoNENECADANFE();
+		
+		String path = diretorioReports.toURI().getPath();
+		
+		if (TipoImpressaoNENECADANFE.MODELO_1.equals(tipoImpressaoNENECADANFE)) {
+			
+			path += "/ne_modelo1_wrapper.jasper";
+		
+		} else if (TipoImpressaoNENECADANFE.MODELO_2.equals(tipoImpressaoNENECADANFE)) {
+		
+			path += "/ne_modelo2_wrapper.jasper";
+		
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");
+		}
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -745,6 +765,9 @@ public class NFeServiceImpl implements NFeService {
 	 */
 	private void carregarNEDadosPrincipais(NfeImpressaoDTO nfeImpressao, NotaEnvio notaEnvio) {
 
+		Date dataLancamento =
+			this.notaEnvioRepository.obterMenorDataLancamentoPorNotaEnvio(notaEnvio.getNumero());
+		
 		Long numeroNF 	    		= notaEnvio.getNumero();
 		String chave 				= notaEnvio.getChaveAcesso();
 		Date dataEmissao 			= notaEnvio.getDataEmissao();
@@ -767,7 +790,7 @@ public class NFeServiceImpl implements NFeService {
 		nfeImpressao.setVersao(versao);
 		nfeImpressao.setValorLiquido(valorLiquido);
 		nfeImpressao.setValorDesconto(valorDesconto);
-
+		nfeImpressao.setDataLancamento(dataLancamento);
 	}
 	
 	/**
@@ -929,7 +952,6 @@ public class NFeServiceImpl implements NFeService {
 
 		String codigoProduto 		= "";
 		String descricaoProduto 	= "";
-		Integer sequencia			= 0;
 		Long produtoEdicao 			= null;
 		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
 		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
@@ -955,6 +977,7 @@ public class NFeServiceImpl implements NFeService {
 			item.setValorTotalProduto(valorTotalProduto);
 			item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
 			item.setSequencia(itemNotaEnvio.getSequencia());
+			item.setCodigoBarra(itemNotaEnvio.getProdutoEdicao().getCodigoDeBarras());
 
 			listaItemImpressaoNfe.add(item);
 

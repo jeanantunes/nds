@@ -172,6 +172,10 @@ var diferencaEstoqueController = $.extend(true, {
 			
 			diferencaEstoqueController.detalhes.push(row.cell);
 			
+			row.cell.statusIntegracao = (row.cell.statusIntegracao)
+												?row.cell.statusIntegracao
+														:"";
+			
 			if (row.cell.motivoAprovacao) {
 			
 				var spanAprovacao = "<span name='statusAprovacao' title='" + row.cell.motivoAprovacao + "'>"

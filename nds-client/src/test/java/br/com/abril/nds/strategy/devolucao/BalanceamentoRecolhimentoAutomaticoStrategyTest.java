@@ -105,8 +105,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		Assert.assertTrue(matrizRecolhimento.containsKey(data08052012));
 		Assert.assertTrue(matrizRecolhimento.containsKey(data10052012));
 		
-		int qtdeProdutosRecolhimentoEsperada08052012 = 85;
-		int qtdeProdutosRecolhimentoEsperada10052012 = 105;
+		int qtdeProdutosRecolhimentoEsperada08052012 = 90;
+		int qtdeProdutosRecolhimentoEsperada10052012 = 100;
 		
 		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada08052012, matrizRecolhimento.get(data08052012).size());
 		Assert.assertEquals(qtdeProdutosRecolhimentoEsperada10052012, matrizRecolhimento.get(data10052012).size());
@@ -114,8 +114,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategyTest {
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria =
 			this.gerarMapaExpectativaEncalheTotalDiaria(matrizRecolhimento);
 		
-		BigDecimal expectativaEncalheEsperada08052012 = new BigDecimal("100");
-		BigDecimal expectativaEncalheEsperada10052012 = new BigDecimal("120");
+		BigDecimal expectativaEncalheEsperada08052012 = new BigDecimal("110");
+		BigDecimal expectativaEncalheEsperada10052012 = new BigDecimal("110");
 		
 		Assert.assertEquals(expectativaEncalheEsperada08052012, mapaExpectativaEncalheTotalDiaria.get(data08052012));
 		Assert.assertEquals(expectativaEncalheEsperada10052012, mapaExpectativaEncalheTotalDiaria.get(data10052012));
