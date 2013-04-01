@@ -49,8 +49,7 @@ public interface MovimentoFinanceiroCotaService {
 			FormaComercializacao formaComercializacaoProduto);
 
 	void processarRegistrohistoricoFinanceiro(
-			HistoricoFinanceiroInput vendaInput);
-
+			HistoricoFinanceiroInput vendaInput, Date dataOperacao);
 
 	boolean existeOutrosMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCredito, Long idMovimentoFinanceiroAtual);
 
@@ -58,4 +57,5 @@ public interface MovimentoFinanceiroCotaService {
 			List<TipoMovimentoFinanceiro> tiposMovimentoPostergado);
 	
 	List<GrupoMovimentoFinaceiro> getGrupoMovimentosFinanceirosDebitosCreditos();
+
 }
