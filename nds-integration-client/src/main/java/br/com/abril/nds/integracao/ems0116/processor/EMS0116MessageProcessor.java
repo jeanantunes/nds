@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -77,15 +78,15 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private void processarPDV(Message message, EMS0116Input input, Cota cota) {
 		
-		PDV pdvCandidatoAlteracao = cota.getPdvs().get(0);
+		//PDV pdvCandidatoAlteracao = cota.getPdvs().get(0);
 		
-		//PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input,cota);
+		PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input,cota);
 		
-		// Comentado por Cesar Pop Punk em 26/03/2013 pois quem "manda" no cadastro é o novo distrib e não mais o MDC.
-		/*if(pdvCandidatoAlteracao == null){
+		// comentado por cesar pop punk em 26/03/2013 pois quem "manda" no cadastro é o novo distrib e não mais o mdc.
+		if(pdvCandidatoAlteracao == null){
 			this.processarNovoPDV(message, input, cota);
 			return;
-		}*/
+		}
 		
 		pdvCandidatoAlteracao.setNome(cota.getPessoa().getNome());
 		pdvCandidatoAlteracao.setPontoReferencia(input.getPontoReferencia());
@@ -256,12 +257,13 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		String logradouro = input.getEndereco().split(",")[0].trim();
 		String numero = input.getEndereco().split(",")[1].trim();
+		numero = StringUtils.leftPad(numero, 6, '0');
 		
 		for (EnderecoPDV item : enderecosPDV) {
 
 			//if(item.getEndereco().getLogradouro().equals(input.getEndereco())){
 			if(item.getEndereco().getLogradouro().equals(logradouro) &&
-			   item.getEndereco().getNumero().equals(numero)	){
+			   item.getEndereco().getNumero().equals(numero)){
 				enderecoPDV = item;
 				break;
 			}
@@ -320,6 +322,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		String logradouro = input.getEndereco().split(",")[0].trim();
 		String numero = input.getEndereco().split(",")[1].trim();
+		numero = StringUtils.leftPad(numero, 6, '0');
 		
 		Endereco endereco = new Endereco();
 		endereco.setCep(input.getCep());
@@ -335,7 +338,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
 		}
 
-		endereco.setNumero(null);
+		//endereco.setNumero(null);
 
 		getSession().persist(endereco);
 
@@ -520,6 +523,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		String logradouro = input.getEndereco().split(",")[0].trim();
 		String numero = input.getEndereco().split(",")[1].trim();
+		numero = StringUtils.leftPad(numero, 6, '0');
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -589,6 +593,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		String logradouro = input.getEndereco().split(",")[0].trim();
 		String numero = input.getEndereco().split(",")[1].trim();
+		numero = StringUtils.leftPad(numero, 6, '0');
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT ep  ");
