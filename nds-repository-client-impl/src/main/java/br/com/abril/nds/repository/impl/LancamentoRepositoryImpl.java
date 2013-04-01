@@ -201,7 +201,7 @@ public class LancamentoRepositoryImpl extends
 		String order;
 		
 		if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.DATA_ENTRADA)) {
-			order = "itemRecebido.recebimentoFisico.dataRecebimento";
+			order = "lancamento.dataRecolhimentoPrevista";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.CODIGO_PRODUTO)) {
 			order = "produto.id";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.NOME_PRODUTO)) {
