@@ -2145,7 +2145,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 	private void verificarValorAplicadoNulo(ValoresAplicados valoresAplicados){
-				
+		
+		if (valoresAplicados == null) {
+			valoresAplicados = new ValoresAplicados();
+		}
+		
 		if(valoresAplicados.getPrecoComDesconto() == null) {
 			valoresAplicados.setPrecoComDesconto(BigDecimal.ZERO);
 		}
