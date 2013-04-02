@@ -196,7 +196,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
 				
 				for (FechamentoEncalhe fechamento : listaFechamento) {
-					if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
+					if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getId())) {
 						conferencia.setFisico(fechamento.getQuantidade());
 						conferencia.setDiferenca(calcularDiferencao(conferencia));
 						break;
@@ -211,7 +211,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
 				
 				for (FechamentoEncalheBox fechamento : listaFechamentoBox) {
-					if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
+					if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getId())) {
 												
 						conferencia.setFisico(fechamento.getQuantidade());
 												
@@ -1002,6 +1002,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		return fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro,  sortorder,  sortname,  startSearch,  rp);
+	}
+	
+	@Transactional
+	public BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, Integer page, Integer rp) {
+		
+		return fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro, page, rp);
+		
 	}
 	
 	@Override
