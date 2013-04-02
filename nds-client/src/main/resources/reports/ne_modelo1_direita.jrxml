@@ -54,9 +54,7 @@
 	<parameter name="FAT_NUMERO10" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="FAT_VENCIMENTO10" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="FAT_VALOR10" class="java.lang.Double" isForPrompting="false"/>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String">
-		<defaultValueExpression><![CDATA["C:\\Servidores\\apache-tomcat-7.0.25\\webapps\\nds-client\\WEB-INF\\classes\\reports\\"]]></defaultValueExpression>
-	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="IND_EMISSAO_DEPEC" class="java.lang.Boolean"/>
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
 	<queryString language="xPath">

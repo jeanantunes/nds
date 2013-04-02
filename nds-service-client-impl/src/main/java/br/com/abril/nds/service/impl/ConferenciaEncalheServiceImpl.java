@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -560,7 +561,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @return BigDecimal
 	 */
-	protected BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao) {
+	@Transactional(readOnly = true)
+	public BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao) {
 		
 		BigDecimal reparte =
 			chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
@@ -574,6 +576,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return reparte;
 	}
 	
+	@Transactional(readOnly = true)
 	public boolean isCotaComReparteARecolherNaDataOperacao(Integer numeroCota) {
 		
 		BigDecimal valorTotal = obterValorTotalReparte(numeroCota, distribuidorService.obterDataOperacaoDistribuidor());
@@ -1156,12 +1159,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		this.abaterNegociacaoPorComissao(controleConfEncalheCota.getCota().getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
 		
-		Set<String> nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
+		Set<String> nossoNumeroCollection = new LinkedHashSet<>();
+		
+		DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
+		
+		try {
+			
+			nossoNumeroCollection = gerarCobranca(controleConfEncalheCota);
+		
+		} catch(GerarCobrancaValidacaoException e) {
+			
+			documentoConferenciaEncalhe.setMsgsGeracaoCobranca(e.getValidacaoVO());
+			
+		}
+		
 		
 		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
+		
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
-				
-		DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 		
 		boolean isUtililzaSlipImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
 		

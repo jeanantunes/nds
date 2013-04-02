@@ -66,22 +66,24 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 					hql += "order by diferenca.produtoEdicao.precoVenda ";
 					break;
 				case PRECO_DESCONTO:
-					hql += "order by diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100)";
+					hql += "order by (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100)) ";
 					break;
 				case TIPO_DIFERENCA:
 					hql += "order by diferenca.tipoDiferenca ";
 					break;
 				case VALOR_TOTAL_DIFERENCA:
-					//+  " diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
 					hql += " order by "
-						+  " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
-						+  " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
-						+  " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
-						+  " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
-						+  " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * desconto / 100))) "
-						+  " else 0 end ";
+					+ " case when (diferenca.tipoDiferenca = 'FALTA_DE' or "
+					+ " diferenca.tipoDiferenca = 'SOBRA_DE') then ("
+					+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100))) "
+					+ " when (diferenca.tipoDiferenca = 'FALTA_EM' or diferenca.tipoDiferenca = 'SOBRA_EM') then ("
+					+ " diferenca.qtde * (diferenca.produtoEdicao.precoVenda - (diferenca.produtoEdicao.precoVenda * (coalesce(diferenca.produtoEdicao.produto.desconto, 0)) / 100))) "
+					+ " else 0 end ";
+
 					break;
+
 				default:
+					
 					break;
 			}
 			
@@ -387,7 +389,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			 + " left join itemRecebimentoFisico.itemNotaFiscal itemNotaFiscal "
 			 + " left join itemNotaFiscal.notaFiscal notaFiscal "
 			 + " join diferenca.lancamentoDiferenca lancamentoDiferenca "
-			 + " join lancamentoDiferenca.movimentoEstoque movimentoEstoque"
+			 + " left join lancamentoDiferenca.movimentoEstoque movimentoEstoque"
 			 + " left join diferenca.lancamentoDiferenca.movimentosEstoqueCota movimentoEstoqueCota";
 		
 		if (filtro != null) {

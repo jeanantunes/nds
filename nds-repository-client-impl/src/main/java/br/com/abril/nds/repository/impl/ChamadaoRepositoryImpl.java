@@ -67,7 +67,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		hql.append("SELECT ")
 			.append(" sum(chamadaEncalheCota.qtdePrevista) as qtdExemplaresTotal, ")
-			.append(" sum(mec.valoresAplicados.valorComDesconto * mec.qtde) as valorTotal ");
+			.append(" sum(mec.valoresAplicados.precoComDesconto * mec.qtde) as valorTotal ");
 		
 		hql.append(this.gerarQueryChamadasEncalhe(filtro));
 		
@@ -216,7 +216,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.append("juridica.razaoSocial as nomeFornecedor, ")
 			.append("chamadaEncalhe.dataRecolhimento as dataRecolhimento, ")
 			.append("mec.valoresAplicados.precoVenda * mec.qtde as valorTotal, ")
-			.append("(mec.valoresAplicados.valorComDesconto) * mec.qtde as valorTotalDesconto, ")
+			.append("(mec.valoresAplicados.precoComDesconto) * mec.qtde as valorTotalDesconto, ")
 			.append("produtoEdicao.possuiBrinde as possuiBrinde ");
 		
 		hql.append(this.gerarQueryChamadasEncalhe(filtro));
@@ -438,8 +438,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			
 			.append(" WHERE chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
 			.append(" AND produto.tipoProduto.grupoProduto != :grupoProduto ")
-			.append(" AND mec.tipoMovimento.grupoMovimento = :grupoMovimento ")
-			.append(" AND mec.lancamento in (chamadaEncalheCota.chamadaEncalhe.lancamentos) ");
+			.append(" AND mec.tipoMovimento.grupoMovimentoEstoque = :grupoMovimento ")
+			.append(" AND mec.lancamento.id in ( select lan.id from ChamadaEncalhe cham join cham.lancamentos lan where cham.id = chamadaEncalhe.id ) ");
 		
 		if (filtro != null) {
 		

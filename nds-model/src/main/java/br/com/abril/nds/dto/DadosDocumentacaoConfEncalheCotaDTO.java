@@ -3,6 +3,8 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.abril.nds.vo.ValidacaoVO;
+
 public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 
 	/**
@@ -35,6 +37,9 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	private boolean utilizaSlip;
 	
 	private boolean utilizaBoletoSlip;
+	
+	private ValidacaoVO msgsGeracaoCobranca;
+	
 	
 	/**
 	 * Obtém idControleConferenciaEncalheCota
@@ -121,4 +126,15 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	public void setUtilizaBoletoSlip(boolean utilizaBoletoSlip) {
 		this.utilizaBoletoSlip = utilizaBoletoSlip;
 	}
+
+	public ValidacaoVO getMsgsGeracaoCobranca() {
+		return msgsGeracaoCobranca;
+	}
+
+	public void setMsgsGeracaoCobranca(ValidacaoVO msgsGeracaoCobranca) {
+		this.msgsGeracaoCobranca = msgsGeracaoCobranca;
+	}
+
+	
+	
 }

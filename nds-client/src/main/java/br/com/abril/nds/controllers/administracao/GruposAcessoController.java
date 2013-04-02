@@ -87,8 +87,15 @@ public class GruposAcessoController extends BaseController {
 		List<AcessoDTO> permissoes = new ArrayList<AcessoDTO>();
 
 		for(Permissao p : Permissao.values()) {
-			if(!p.isPermissaoAlteracao())
+			if(!p.isPermissaoAlteracao()) {
 				permissoes.add(new AcessoDTO(p));
+			} else if(p.isPermissaoAlteracao() && !p.isPermissaoMenu() && p.getPermissaoPai()!=null) {
+				AcessoDTO dto = new AcessoDTO();
+				dto.setAlteracao(p);
+				dto.setDescricao(p.getDescricao());
+				dto.setPai(p.getPermissaoPai());
+				permissoes.add(dto);
+			}
 		}		
 
 		result.use(FlexiGridJson.class).from(permissoes).total(permissoes.size()).page(1).serialize();
@@ -171,7 +178,11 @@ public class GruposAcessoController extends BaseController {
 		grupoPermissao.setId(grupoPermissaoDTO.getId());
 		grupoPermissao.setNome(grupoPermissaoDTO.getNome());
 		
+		if(grupoPermissaoDTO.getPermissoes() == null)
+			grupoPermissaoDTO.setPermissoes(new ArrayList<Permissao>());
+		
 		addPais(grupoPermissaoDTO.getPermissoes());
+		
 		grupoPermissao.setPermissoes(new HashSet<>(grupoPermissaoDTO.getPermissoes()));
 		
 		grupoPermissaoService.salvar(grupoPermissao);
@@ -183,7 +194,7 @@ public class GruposAcessoController extends BaseController {
 	private void addPais(List<Permissao> permissoes) {
 		
 		List<Permissao> pais = new ArrayList<Permissao>();
-		
+				
 		for(Permissao permissao : permissoes) {
 			
 			Permissao pai = permissao.getPermissaoPai();
@@ -389,9 +400,15 @@ public class GruposAcessoController extends BaseController {
 		
 		Usuario usuario = getUsuarioEntity(usuarioDTO);
 		
-		addPais(usuarioDTO.getPermissoes());
+		if(usuarioDTO.getPermissoes() == null)
+			usuarioDTO.setPermissoes(new ArrayList<Permissao>());
 		
-		usuario.setPermissoes(new HashSet<Permissao>(usuarioDTO.getPermissoes()));
+		addPais(usuarioDTO.getPermissoes());
+	
+		if(usuarioDTO.getPermissoes().isEmpty())
+			usuario.setPermissoes(new HashSet<Permissao>());
+		else 
+			usuario.setPermissoes(new HashSet<Permissao>(usuarioDTO.getPermissoes()));
 
 		Set<GrupoPermissao> grupos = new HashSet<GrupoPermissao>();
 		
