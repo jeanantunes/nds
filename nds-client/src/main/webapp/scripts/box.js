@@ -229,6 +229,10 @@ var boxController = $.extend(true, {
 		});
 	},
 	novo : function() {
+		
+		if(!verificarPermissaoAcesso(this.workspace))
+			return;
+		
 		var data = {
 			box : {}
 		};

@@ -191,6 +191,7 @@ public class BancoController extends BaseController {
 	 */
 	@Post
 	@Path("/novoBanco")
+	@Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
 	public void novoBanco(String numero,
 						  String nome,
 						  String codigoCedente,
@@ -262,6 +263,7 @@ public class BancoController extends BaseController {
 	 */
 	@Post
 	@Path("/buscaBanco")
+	@Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
 	public void buscaBanco(long idBanco){
 		BancoVO bancoVO = this.bancoService.obterDadosBanco(idBanco);
 		if (bancoVO==null){
@@ -470,6 +472,7 @@ public class BancoController extends BaseController {
 	 */
 	@Post
 	@Path("/excluirBanco")
+	@Rules(Permissao.ROLE_CADASTRO_BANCO_ALTERACAO)
 	public void excluirBanco(long idBanco){
 		
 		Banco banco = this.bancoService.obterBancoPorId(idBanco);
