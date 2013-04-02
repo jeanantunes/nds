@@ -1,4 +1,4 @@
-﻿-- Apaga a tabela criada na exportação do entidade (ViewContaCorrente)
+-- Apaga a tabela criada na exportação do entidade (ViewContaCorrente)
 
 DROP TABLE IF EXISTS VIEW_CONTA_CORRENTE_COTA;
 

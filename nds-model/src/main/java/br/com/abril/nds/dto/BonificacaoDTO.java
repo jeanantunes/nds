@@ -1,5 +1,8 @@
 package br.com.abril.nds.dto;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import br.com.abril.nds.util.ComponentesPDV;
 
 public class BonificacaoDTO {
@@ -8,7 +11,23 @@ public class BonificacaoDTO {
 	private String elemento;
 	private Double bonificacao;
 	private Double reparteMinimo;
-	private Boolean todasAsCotas;
+	private boolean todasAsCotas;
+	
+	public void setBonificacaoBigDecimal(BigDecimal bonificacao) {
+	    this.bonificacao = bonificacao.doubleValue();
+	}
+	
+	public BigDecimal getBonificacaoBigDecimal() {
+	    return BigDecimal.valueOf(bonificacao);
+	}
+	
+	public void setReparteMinimoBigInteger(BigInteger reparteMinimo) {
+	    this.reparteMinimo = reparteMinimo.doubleValue();
+	}
+	
+	public BigInteger getReparteMinimoBigInteger() {
+	    return BigInteger.valueOf(reparteMinimo.longValue());
+	}
 	
 	public ComponentesPDV getComponente() {
 		return componente;
@@ -34,10 +53,10 @@ public class BonificacaoDTO {
 	public void setReparteMinimo(Double reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
 	}
-	public Boolean getTodasAsCotas() {
+	public boolean isTodasAsCotas() {
 		return todasAsCotas;
 	}
-	public void setTodasAsCotas(Boolean todasAsCotas) {
+	public void setTodasAsCotas(boolean todasAsCotas) {
 		this.todasAsCotas = todasAsCotas;
 	}
 	

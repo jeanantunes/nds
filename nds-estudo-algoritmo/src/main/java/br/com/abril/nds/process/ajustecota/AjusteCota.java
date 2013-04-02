@@ -4,8 +4,7 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
 
@@ -19,20 +18,19 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
  * </p>
  */
 @Component
-public class AjusteCota extends ProcessoAbstrato {
+public class AjusteCota {
 
-    @Override
-    protected void executarProcesso() {
+	public void executar(CotaEstudo cota) {
 
-	Cota cota = (Cota) super.genericDTO;
-	BigDecimal indiceAjusteCota = BigDecimal.ONE;
+		BigDecimal indiceAjusteCota = BigDecimal.ONE;
 
-	if (cota.getAjusteReparte() != null && cota.getAjusteReparte().compareTo(indiceAjusteCota) == 1) {
-	    indiceAjusteCota = cota.getAjusteReparte();
+		if (cota.getAjusteReparte() != null && cota.getAjusteReparte().compareTo(indiceAjusteCota) == 1) {
+			indiceAjusteCota = cota.getAjusteReparte();
+		}
+		if (cota.getAjusteReparte() != null && cota.getAjusteReparte().compareTo(indiceAjusteCota) == 1) {
+			indiceAjusteCota = cota.getAjusteReparte();
+		}
+		cota.setIndiceAjusteCota(indiceAjusteCota);
 	}
-	if (cota.getAjusteReparte() != null && cota.getAjusteReparte().compareTo(indiceAjusteCota) == 1) {
-	    indiceAjusteCota = cota.getAjusteReparte();
-	}
-	cota.setIndiceAjusteCota(indiceAjusteCota);
-    }
+
 }

@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/visaoEstoque.js"></script>
 	
 	<style type="text/css">

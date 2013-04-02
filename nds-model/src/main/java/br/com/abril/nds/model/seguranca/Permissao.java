@@ -52,6 +52,7 @@ public enum Permissao
 	ROLE_DISTRIBUICAO_HISTORICO_VENDA("Histórico de Vendas",										 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO("Matriz Distribuição"				 ,					 	   	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS("Analise de Estudos", 				  							   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_MANUAL("Distribuição Manual", 				  							   Permissao.ROLE_DISTRIBUICAO),
 	
 	ROLE_ESTOQUE("Estoque",																	  			   null),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),
