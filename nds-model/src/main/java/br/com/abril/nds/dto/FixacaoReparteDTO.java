@@ -8,6 +8,7 @@ import java.util.Date;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.upload.XlsMapper;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 
@@ -20,23 +21,28 @@ public class FixacaoReparteDTO implements Serializable{
 	private Long id;
 	
 	@Export(label ="exemplares")
+	@XlsMapper(value="qtd")
 	private Integer qtdeExemplares;
 	
 	private Date dataHora;
 	
 	@Export(label ="ed. inicial")
+	@XlsMapper(value="edinicial")
 	private Integer edicaoInicial;
 	
 	@Export(label ="ed. final")
+	@XlsMapper(value="edfinal")
 	private Integer edicaoFinal;
 	
-	@Export(label ="codigo")
+	@Export(label ="cota")
+	@XlsMapper(value="cota")
 	private Integer cotaFixada;
 	
-	@Export(label ="codigo")
+	@Export(label ="numero")
 	private String nomeCota;
 	
 	@Export(label ="classificacao")
+	@XlsMapper(value="classific")
 	private String classificacaoProduto;
 	
 	@Export(label ="usuario")
@@ -45,9 +51,11 @@ public class FixacaoReparteDTO implements Serializable{
 	private String cotaFixadaString;
 	
 	@Export(label ="produto")
+	@XlsMapper(value="codpub")
 	private String produtoFixado;
 	
 	@Export(label ="qtde ed")
+	@XlsMapper(value="qtdedicoes")
 	private Integer qtdeEdicoes;
 	
 	@Export(label ="data")

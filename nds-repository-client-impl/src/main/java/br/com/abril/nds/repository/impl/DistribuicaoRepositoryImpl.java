@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
@@ -9,7 +8,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuicaoRepository;
@@ -23,7 +22,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<ProdutoDistribuicaoVO> obterMatrizDistribuicao(FiltroLancamentoDTO filtro) {
+	public List<ProdutoDistribuicaoVO> obterMatrizDistribuicao(FiltroDistribuicaoDTO filtro) {
 		StringBuilder sql = new StringBuilder();
 		
 	 sql.append(" select ")
@@ -62,12 +61,22 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" and lanc.status = 'BALANCEADO'")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
 		.append(" and lanc.EXPEDICAO_ID is null")
-	 	.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev")
-	 	.append(" order by liberado");
+	 	.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev");
+	 
+	 	if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
+	 		sql.append(" and forn.id in (:idFornecedores)");
+	 	}
+
+	 	sql.append(" order by lanc.DATA_FIN_MAT_DISTRIB, liberado");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
+		
+		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
+			
+			query.setParameterList("idFornecedores", filtro.getIdsFornecedores());
+		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
 		

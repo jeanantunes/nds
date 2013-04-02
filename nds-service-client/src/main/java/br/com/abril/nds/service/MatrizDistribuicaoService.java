@@ -6,7 +6,7 @@ import java.util.List;
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 
 public interface MatrizDistribuicaoService {
 	
@@ -15,7 +15,7 @@ public interface MatrizDistribuicaoService {
 	 * @param filtro
 	 * @return
 	 */
-	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroLancamentoDTO filtro);
+	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroDistribuicaoDTO filtro);
 	
 	public void reabrirEstudos(List<ProdutoDistribuicaoVO> produtosDistribuicao);
 	
@@ -25,9 +25,9 @@ public interface MatrizDistribuicaoService {
 	
 	public Long confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO vo);
 	
-	public void finalizarMatrizDistribuicao(FiltroLancamentoDTO filtroLancamentoDTO, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs);
+	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO FiltroDistribuicaoDTO, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs);
 	
-	public void reabrirMatrizDistribuicao(FiltroLancamentoDTO filtro); 
+	public void reabrirMatrizDistribuicao(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtosDistribuicao); 
 	
 	public void duplicarLinhas(ProdutoDistribuicaoVO prodDistribVO);
 }

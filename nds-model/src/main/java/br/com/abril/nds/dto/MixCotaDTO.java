@@ -3,11 +3,13 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.util.upload.XlsMapper;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @SuppressWarnings("serial")
@@ -17,12 +19,13 @@ public class MixCotaDTO implements Serializable{
 	private BigInteger id;
 	
 	@Export(label="codigo",exhibitionOrder = 1)
+	@XlsMapper(value="codigoProduto")
 	private String codigoProduto;
 	
 	@Export(label="nome",exhibitionOrder = 2)
 	private String nomeProduto;
 	
-	@Export(label="classificação",exhibitionOrder = 3)
+	@Export(label="classificacao",exhibitionOrder = 3)
 	private String classificacaoProduto;
 	
 	@Export(label="Reparte Médio", exhibitionOrder = 4)
@@ -35,9 +38,11 @@ public class MixCotaDTO implements Serializable{
 	private BigDecimal ultimoReparte;
 	
 	@Export(label="Reparte Mínimo" ,exhibitionOrder = 7)
+	@XlsMapper(value="reparteMinimo")
 	private BigInteger reparteMinimo;
 	
 	@Export(label="Reparte Máximo" ,exhibitionOrder = 8)
+	@XlsMapper(value="reparteMaximo")
 	private BigInteger reparteMaximo;
 	
 	@Export(label="Usuário",exhibitionOrder = 9)
@@ -57,6 +62,7 @@ public class MixCotaDTO implements Serializable{
 	private BigInteger idProduto;
 	
 //	necessario para modal adicionar mix 
+	@XlsMapper(value="numeroCota")
 	private Integer numeroCota;
 	
 	private PaginacaoVO paginacaoVO;
@@ -92,13 +98,15 @@ public class MixCotaDTO implements Serializable{
 		}
 	}
 	public BigDecimal getReparteMedio() {
-		return reparteMedio;
+			return reparteMedio;
 	}
 	public void setReparteMedio(BigDecimal reparteMedio) {
+		DecimalFormat formatador = new DecimalFormat("#0.0");
 		if(reparteMedio==null){
 			this.reparteMedio=new BigDecimal(0);
 		}else{
-			this.reparteMedio = reparteMedio;
+			String reparteFormatado = formatador.format(reparteMedio);
+			this.reparteMedio= new BigDecimal(reparteFormatado);
 		}
 	}
 	public BigDecimal getVendaMedia() {

@@ -39,6 +39,7 @@ import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
@@ -122,7 +123,7 @@ public class PdvController extends BaseController {
 		result.include("listaTipoLicencaMunicipal",getListaDescricao(pdvService.obterTipoLicencaMunicipal()));
 		
 		result.include("listaTipoPontoPDV",getListaDescricao(pdvService.obterTiposPontoPDV()));
-		result.include("listaCaracteristicaPDV",getListaCaracteristica());
+//		result.include("listaCaracteristicaPDV",getLicstaCaracteristica());
 		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterTipoAreaInfluencia()));
 		
 	}
@@ -236,12 +237,14 @@ public class PdvController extends BaseController {
 	 * 
 	 * @return List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>>
 	 */
-	private List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> getListaCaracteristica(){
+	private List<ItemDTO<String, String>> getListaCaracteristica(){
 		
-		List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> itens = new ArrayList<ItemDTO<TipoCaracteristicaSegmentacaoPDV,String>>();
+		//AJUSTE EMS-0159
+		//•	Características: características possíveis do PDV (banca, livraria, revistaria, etc..)
+		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
 		
-		for( TipoCaracteristicaSegmentacaoPDV item: TipoCaracteristicaSegmentacaoPDV.values()) {
-			itens.add(new ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>(item, item.getDescricao()));
+		for( TipoPontoPDV item: pdvService.obterTiposPontoPDV()) {
+			itens.add(new ItemDTO<String, String>(item.getDescricao(), item.getDescricao()));
 		}
 		
 		return itens;

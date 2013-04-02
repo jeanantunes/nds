@@ -34,6 +34,7 @@ import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
@@ -202,6 +203,10 @@ public class ProdutoEdicao implements Serializable {
     @OneToOne(mappedBy = "produtoEdicao")
     private EstoqueProduto estoqueProduto;
 
+    @OneToOne(fetch=FetchType.EAGER, optional=true)
+	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
+	private TipoSegmentoProduto tipoSegmentoProduto;
+    
 	public ProdutoEdicao() {
 	}
 	
@@ -620,6 +625,14 @@ public class ProdutoEdicao implements Serializable {
 	 */
 	public void setEstoqueProduto(EstoqueProduto estoqueProduto) {
 		this.estoqueProduto = estoqueProduto;
+	}
+	
+	public TipoSegmentoProduto getTipoSegmentoProduto() {
+		return tipoSegmentoProduto;
+	}
+
+	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
+		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
 
 	@Override

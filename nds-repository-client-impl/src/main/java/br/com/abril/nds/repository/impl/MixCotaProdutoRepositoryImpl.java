@@ -1,3 +1,4 @@
+
 package br.com.abril.nds.repository.impl;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		super(MixCotaProduto.class);
 	}
 
-	
+		
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -54,7 +55,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" avg(lancamento.reparte) as reparteMedio, avg(venda_produto.valor_total_venda) as vendaMedia, ")
-		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LAN�ADA','CALCULADA') limit 1),0) as ultimoReparte ")
+		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		.append(" FROM lancamento ") 
 		.append(" LEFT join produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID ")
 		.append(" LEFT join produto on produto_edicao.ID = produto.ID ") 
@@ -75,6 +76,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		sql.append(" and lancamento.status='FECHADO'")
 		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
+		.append(" group by cota.id ")
 		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -141,22 +143,24 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
 		.append(" LEFT join pessoa on cota.pessoa_id = pessoa.id ")
 		
-		.append(" where ");
+		.append(" where ")
+		.append(" lancamento.status='FECHADO' ");
 		if(filtroConsultaMixProdutoDTO.getCodigoProduto()!=null ){
-			sql.append("produto.CODIGO = :codigoProduto ");
+			sql.append(" and produto.CODIGO = :codigoProduto ");
 		}
 		if(isClassificacaoPreenchida){
 			sql.append(" and upper(tipo_classificacao_produto.descricao) = upper(:classificacaoProduto)");
 		}
-		sql.append(" and lancamento.status='FECHADO' ")
-		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
+		sql.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" GROUP BY produto.id")
 		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
 	
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
-		query.setParameter("codigoProduto", filtroConsultaMixProdutoDTO.getCodigoProduto());
+		if(filtroConsultaMixProdutoDTO.getCodigoProduto() !=null && filtroConsultaMixProdutoDTO.getCodigoProduto()!=""){
+			query.setParameter("codigoProduto", filtroConsultaMixProdutoDTO.getCodigoProduto());
+		}
 		if(isClassificacaoPreenchida){
 			query.setParameter("classificacaoProduto", filtroConsultaMixProdutoDTO.getClassificacaoProduto());
 		}
@@ -220,6 +224,24 @@ public class MixCotaProdutoRepositoryImpl extends
 				
 		Query query = getSession().createQuery(hql.toString());
 		query.setParameter("idCota", idCota);
+		
+	}
+	
+	@Override
+	public void execucaoQuartz() {
+		StringBuilder hql = new StringBuilder("");
+
+		hql.append("")
+				.append(" delete from mix_cota_produto   ")
+				.append(" where mix_cota_produto.ID_PRODUTO in")
+				.append(" (select  id_produto from mix_cota_produto ")
+				.append(" join produto on produto.ID = mix_cota_produto.ID_PRODUTO  ")
+				.append(" join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ")
+				.append(" join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ")
+				.append(" where lancamento.DATA_CRIACAO between date_format(DATE_SUB(CURDATE(),INTERVAL 180 DAY),'%d/%m/%Y')  and CURDATE() ");
+				
+		Query query = getSession().createSQLQuery(hql.toString());
+		query.executeUpdate();
 		
 	}
 

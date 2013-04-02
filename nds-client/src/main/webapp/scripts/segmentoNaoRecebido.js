@@ -1,4 +1,4 @@
-﻿var segmentoNaoRecebidoController = $.extend(true,	{
+var segmentoNaoRecebidoController = $.extend(true,	{
 
 					init : function() {
 						
@@ -897,4 +897,20 @@
 					},
 
 				}, BaseController);
+
+$(document).ready(function(){
+	
+	segmentoNaoRecebidoController.filtroPorSegmento();
+	focusSelectRefField($("#radio", segmentoNaoRecebidoController.workspace));
+	$("#radio", segmentoNaoRecebidoController.workspace).attr("checked", true);
+	
+//	$(document.body).keydown(function(e) {
+//		
+//		if(keyEventEnterAux(e)){
+//			mostrar(); segmentoNaoRecebidoController.porSegmento();
+//		}
+//		
+//		return true;
+//	});
+});
  //@ sourceURL=segmentoNaoRecebido.js
