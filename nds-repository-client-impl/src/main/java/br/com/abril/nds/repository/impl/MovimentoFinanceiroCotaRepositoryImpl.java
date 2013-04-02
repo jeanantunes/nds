@@ -41,6 +41,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		super(MovimentoFinanceiroCota.class);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<DebitoCreditoCotaDTO> obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(Integer numeroCota) {
 		
 		StringBuilder sql = new StringBuilder("");
@@ -240,6 +241,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 								   
+	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota) {
 
 		StringBuffer hql = new StringBuffer();

@@ -1,10 +1,12 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -26,8 +28,8 @@ public class ConsultaFollowupCadastroDTO implements Serializable {
 	@Export(label = "Documento", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private String tipo;
 	
-	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 5)
-	private Double valor;
+	@Export(label = "Valor R$", alignment=Alignment.RIGHT, exhibitionOrder = 5, columnType=ColumType.MOEDA)
+	private BigDecimal valor = BigDecimal.ZERO;
 	
 	@Export(label = "Dt. Vencto.", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private String dataVencimento;
@@ -35,7 +37,7 @@ public class ConsultaFollowupCadastroDTO implements Serializable {
 	public ConsultaFollowupCadastroDTO() {}
 	
 	public ConsultaFollowupCadastroDTO(Integer numeroCota,
-			String nomeJornaleiro, String tipo, Double valor,
+			String nomeJornaleiro, String tipo, BigDecimal valor,
 			String dataVencimento, String responsavel) {
 		super();
 		this.numeroCota = numeroCota;
@@ -72,11 +74,11 @@ public class ConsultaFollowupCadastroDTO implements Serializable {
 		this.tipo = tipo;
 	}
 
-	public Double getValor() {
+	public BigDecimal getValor() {
 		return valor;
 	}
 
-	public void setValor(Double valor) {
+	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
 

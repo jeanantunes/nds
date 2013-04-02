@@ -536,7 +536,8 @@ function bloquearItensEdicao(workspace) {
 	});
 	
 	$('input[isEdicao="true"]',workspace).each(function() {
-		this.disabled = true;
+		$(this).attr("disabled",true);
+		$(this).removeAttr("onClick");
 	});
 }
 

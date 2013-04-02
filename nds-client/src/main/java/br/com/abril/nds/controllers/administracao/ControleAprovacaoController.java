@@ -138,6 +138,7 @@ public class ControleAprovacaoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO_ALTERACAO)
 	public void aprovarMovimento(Long idMovimento) {
 		
 		controleAprovacaoService.aprovarMovimento(idMovimento, obterUsuario());
@@ -151,6 +152,7 @@ public class ControleAprovacaoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CONTROLE_APROVACAO_ALTERACAO)
 	public void rejeitarMovimento(Long idMovimento, String motivo) {
 		
 		if (motivo == null || motivo.trim().isEmpty()) {

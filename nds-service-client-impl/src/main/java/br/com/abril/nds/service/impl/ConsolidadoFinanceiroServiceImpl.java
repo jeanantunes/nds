@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
@@ -18,7 +17,6 @@ import br.com.abril.nds.dto.FiltroConsolidadoConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
