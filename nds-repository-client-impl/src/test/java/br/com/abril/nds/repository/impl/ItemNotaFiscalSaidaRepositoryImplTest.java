@@ -230,6 +230,8 @@ public class ItemNotaFiscalSaidaRepositoryImplTest extends AbstractRepositoryImp
 						valorFatura);
 		
 		
+		notaFiscalSaidaFornecedor.setEmitente(fornecedorDinap.getJuridica());
+		
 		save(notaFiscalSaidaFornecedor);
 		
 		String 		NCMProduto               = "3424";
