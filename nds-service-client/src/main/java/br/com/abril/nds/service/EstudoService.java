@@ -28,7 +28,7 @@ public interface EstudoService {
     public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
 
     public Long obterMaxId();
-
+ 
     public List<Long> salvarDivisao(Estudo estudoOriginal, List<Estudo> listEstudo);
 
 }

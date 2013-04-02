@@ -170,7 +170,7 @@ public class DividirEstudoController extends BaseController {
 		primeiroEstudo.setId(null);
 		primeiroEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoPrimeiroEstudo, Constantes.DATE_PATTERN_PT_BR));
-
+ 
 		Estudo segundoEstudo = (Estudo) SerializationUtils.clone(estudoOriginal);
 		segundoEstudo.setId(null);
 		segundoEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());

@@ -171,7 +171,7 @@ public class EstudoServiceImpl implements EstudoService {
 
 		listIdEstudoAdicionado.add(idEstudo);
 
-		iEstudo++;
+		iEstudo++; 
 	    }
 	}
 
