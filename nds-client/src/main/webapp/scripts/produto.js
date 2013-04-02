@@ -229,37 +229,38 @@ var produtoController = $.extend(true, {
 	},
 	
 	editarProduto : function(id) {
-
-		$("#dialog-novo", this.workspace).dialog({
-			resizable: false,
-			height:550,
-			width:850,
-			modal: true,
-			title:"Edição de Produto",
-			buttons: {
-				"Confirmar": function() {
-
-					produtoController.salvarProduto();
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
-			beforeClose: function() {
-				produtoController.limparModalCadastro();
-				clearMessageDialogTimeout('dialogMensagemNovo');
-			},
-			form: $("#dialog-novo", this.workspace).parents("form")
-		});
 		
-		this.carregarNovoProduto(
-			function() {
+		this.carregarNovoProduto(function() {
 				produtoController.limparModalCadastro();
 				produtoController.carregarProdutoEditado(id);		
-			}
-		);
+				
+
+				$("#dialog-novo", this.workspace).dialog({
+					resizable: false,
+					height:550,
+					width:850,
+					modal: true,
+					title:"Edição de Produto",
+					buttons: {
+						"Confirmar": function() {
+
+							produtoController.salvarProduto();
+						},
+						"Cancelar": function() {
+							$( this ).dialog( "close" );
+						}
+					},
+					beforeClose: function() {
+						produtoController.limparModalCadastro();
+						clearMessageDialogTimeout('dialogMensagemNovo');
+					},
+					form: $("#dialog-novo", this.workspace).parents("form")
+				});
+				
+				$("#codigoProdutoCadastro", this.workspace).disable();		
+		});
 		
-		$("#codigoProdutoCadastro", this.workspace).disable();
+		
 	},
 	
 	habilitarDesabilitarCamposInterface : function(habilitar) {
@@ -359,11 +360,11 @@ var produtoController = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
+					$("#dialog-excluir", this.workspace).dialog("close");
+					
 					$.postJSON(contextPath + "/produto/removerProduto", 
 							   {id:id},
 							   function(result) {
-							   		
-							   		$("#dialog-excluir", this.workspace).dialog("close");
 							   		
 									var tipoMensagem = result.tipoMensagem;
 									var listaMensagens = result.listaMensagens;
@@ -395,7 +396,15 @@ var produtoController = $.extend(true, {
 	},
 	
 	novoProduto : function () {
-
+		
+		this.carregarNovoProduto(function(){
+			produtoController.limparModalCadastro();
+			produtoController.prepararNovoProduto();
+			});
+	},
+	
+	prepararNovoProduto : function() {
+		
 		$("#dialog-novo", this.workspace).dialog({
 			resizable: false,
 			height:550,
@@ -420,12 +429,11 @@ var produtoController = $.extend(true, {
 
 		produtoController.habilitarDesabilitarCamposInterface(true);
 		
-		this.carregarNovoProduto(this.limparModalCadastro);
-		
 		$("#codigoProdutoCadastro", this.workspace).enable();
 		$("#comboTipoDesconto", produtoController.workspace).hide();
 		$("#tipoDescontoManual", produtoController.workspace).show();
 		$("#percentualDesconto", produtoController.workspace).removeAttr('disabled');
+		
 	},
 
 	carregarNovoProduto : function(callback) {

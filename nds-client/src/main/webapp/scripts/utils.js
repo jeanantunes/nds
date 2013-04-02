@@ -523,19 +523,33 @@ function visibleOverlay(){
 
 function bloquearItensEdicao(workspace) {
 		
-	if($('#apenasVizualizacao',confirmaExpedicaoController.workspace).val()=="false")
+	if($('#permissaoAlteracao',workspace).val()=="true")
 		return;
 	
 	$('a[isEdicao="true"]',workspace).each(function() {
 		this.href="#";
-		$(this).css('opacity',0.5);
-		//this.title += ' - Não Permitido';
+		$(this).removeAttr("onClick");
+		$(this).click(function(e){
+			exibirAcessoNegado();
+		});
 	});
 	
-	$('input[isEdicao="true"][type:"checkbox"]',workspace).each(function() {
-		this.disabled = true;
+	$('input[isEdicao="true"]',workspace).each(function() {
+		$(this).attr("disabled",true);
+		$(this).removeAttr("onClick");
 	});
+}
+
+function exibirAcessoNegado() {
+	exibirMensagem('WARNING',['Acesso Negado.']);
+}
+
+function verificarPermissaoAcesso(workspace) {
 	
+	if($('#permissaoAlteracao',workspace).val()=="true")
+		return true;
 	
+	exibirAcessoNegado();
 	
+	return false;
 }

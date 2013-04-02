@@ -326,6 +326,7 @@ public class CotaAusenteController extends BaseController {
 	 * 
 	 * @param idCotaAusente
 	 */
+	@Rules(Permissao.ROLE_EXPEDICAO_COTA_AUSENTE_ALTERACAO)
 	public void cancelarCotaAusente(Long idCotaAusente) {
 				
 		TipoMensagem status = TipoMensagem.SUCCESS;

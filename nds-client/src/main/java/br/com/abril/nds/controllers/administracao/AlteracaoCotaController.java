@@ -151,6 +151,7 @@ public class AlteracaoCotaController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_ALTERACAO_COTA_ALTERACAO)
 	public void carregarCamposAlteracao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, String sortname, int page, int rp) {
 		
 		List<Fornecedor> listaFornecedoresAtivos = fornecedorService.obterFornecedores();

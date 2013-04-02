@@ -209,6 +209,7 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Post
 	@Path("/carregarDadosProdutoEdicao.json")
+	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
 	public void carregarDadosProdutoEdicao(String codigoProduto, String idProdutoEdicao) {
 		
 		if (codigoProduto == null || codigoProduto.trim().isEmpty()) {
@@ -430,6 +431,7 @@ public class ProdutoEdicaoController extends BaseController {
 	 */
 	@Post
 	@Path("/removerEdicao.json")
+	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
 	public void removerEdicao(Long idProdutoEdicao) {
 
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {

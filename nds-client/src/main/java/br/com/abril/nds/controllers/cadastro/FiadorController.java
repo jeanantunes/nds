@@ -115,6 +115,7 @@ public class FiadorController extends BaseController {
 	
 	@Get
 	@Path("/novoFiador")
+	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
 	public void novoFiador(){
 		
 		this.limparDadosSessao();
@@ -637,6 +638,7 @@ public class FiadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
 	public void excluirFiador(Long idFiador){
 		
 		this.fiadorService.excluirFiador(idFiador);
@@ -650,6 +652,7 @@ public class FiadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
 	public void editarFiador(Long idFiador){
 		
 		limparDadosSessao();
