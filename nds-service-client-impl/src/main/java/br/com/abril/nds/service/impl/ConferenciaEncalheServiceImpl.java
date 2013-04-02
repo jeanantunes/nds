@@ -2784,6 +2784,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		valorTotalEncalhe = (valorTotalEncalhe == null) ? BigDecimal.ZERO : valorTotalEncalhe;
 		
+		qtdeTotalProdutos = (qtdeTotalProdutos == null) ? BigInteger.ZERO : qtdeTotalProdutos;
+		
 		BigDecimal valorTotalDebitoCredito	= obterValorTotalDebitoCreditoCota(numeroCota, dataOperacao);
 		
 		valorTotalPagar = (valorTotalReparte.subtract(valorTotalEncalhe));
@@ -2869,10 +2871,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				totalComposicao = totalComposicao.subtract(item.getValor());
 			}
 		}
+		
 		totalComposicao = totalComposicao.add(slip.getValorSlip());
-		parameters.put("VALOR_TOTAL_PAGAR", totalComposicao);
-		
-		
+
+		BigDecimal totalPagar = listaComposicaoCobranca.isEmpty() ? valorTotalPagar.add(slip.getValorSlip()) : totalComposicao;
+
+		parameters.put("VALOR_TOTAL_PAGAR", totalPagar);
+
 		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
 		try{
 		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
