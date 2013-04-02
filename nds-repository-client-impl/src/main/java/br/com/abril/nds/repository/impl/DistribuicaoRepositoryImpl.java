@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.SQLQuery;
@@ -45,13 +46,14 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	    .append(" estudo.ID as idEstudo,")
 	    .append(" prodEdic.REPARTE_DISTRIBUIDO as reparte,")
 	    .append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
-	    .append(" prodEdic.CODIGO_DE_BARRAS as codigoBarraProduto")
+	    .append(" lanc.REPARTE as lancto")
 	    .append(" from produto prod")
 		.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
 		.append(" left join estoque_produto estoqueProd on estoqueProd.PRODUTO_EDICAO_ID = prodEdic.ID ")
 		.append(" left join estoque_produto_cota_juramentado estoqueProdJuram on estoqueProdJuram.PRODUTO_EDICAO_ID = prodEdic.ID ")
 		.append(" join lancamento lanc on lanc.PRODUTO_EDICAO_ID = prodEdic.ID")
-		.append(" left join estudo estudo on estudo.PRODUTO_EDICAO_ID = prodEdic.ID")
+		.append(" left join estudo estudo on lanc.PRODUTO_EDICAO_ID = estudo.PRODUTO_EDICAO_ID")
+		.append(" and  lanc.DATA_LCTO_PREVISTA = estudo.DATA_LANCAMENTO")
 		.append(" left join tipo_classificacao_produto tpClassProd on prod.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")
 		.append(" join produto_fornecedor prodForn on prodForn.PRODUTO_ID = prod.ID")
 		.append(" join fornecedor forn on forn.ID = prodForn.fornecedores_ID")
@@ -66,9 +68,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	 	if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
 	 		sql.append(" and forn.id in (:idFornecedores)");
 	 	}
-
-	 	sql.append(" order by lanc.DATA_FIN_MAT_DISTRIB, liberado");
-		
+	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
@@ -81,6 +81,8 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
 		
 		List<ProdutoDistribuicaoVO> result = query.list();
+		
+		Collections.sort(result);
 		
 		return result;
 	}
