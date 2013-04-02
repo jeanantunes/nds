@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Role;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.report.RelatorioFechamentoDiario;
@@ -128,6 +129,7 @@ public class FecharDiaController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA_ALTERACAO)
 	public void inicializarValidacoes(){		
 		
 		this.fecharDiaService.setLockBancoDeDados(true);

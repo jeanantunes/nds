@@ -27,7 +27,6 @@ import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -172,6 +171,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void confirmarMatrizLancamento(List<Date> datasConfirmadas) {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
@@ -211,6 +211,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void voltarConfiguracaoOriginal() {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
@@ -238,6 +239,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
 												   String novaDataFormatada) {
 		
@@ -257,6 +259,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarLancamentoUnico(ProdutoLancamentoVO produtoLancamento) {
 		
 		String novaDataFormatada = produtoLancamento.getNovaDataLancamento();
@@ -1076,6 +1079,7 @@ public class MatrizLancamentoController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void atualizarResumoBalanceamento() {
 				
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 

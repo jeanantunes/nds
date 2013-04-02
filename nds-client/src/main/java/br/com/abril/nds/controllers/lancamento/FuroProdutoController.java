@@ -191,6 +191,7 @@ public class FuroProdutoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_FURO_PRODUTO_ALTERACAO)
 	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception{
 		

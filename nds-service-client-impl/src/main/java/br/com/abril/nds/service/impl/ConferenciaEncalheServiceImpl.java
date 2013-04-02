@@ -13,8 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -489,6 +488,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#isLancamentoParcialProdutoEdicao(java.lang.String, java.lang.Long)
 	 */
+	@Transactional(readOnly = true)
 	public boolean isLancamentoParcialProdutoEdicao(String codigo, Long numeroEdicao) {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, numeroEdicao);
@@ -646,7 +646,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return infoConfereciaEncalheCota;
 		
 	}
-	
 	
 	private void carregarDadosDebitoCreditoDaCota(
 			InfoConferenciaEncalheCota infoConfereciaEncalheCota, 
@@ -1050,7 +1049,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return produtoEdicao.getProduto().getEditor().getPessoaJuridica().getRazaoSocial();
 	}
-
 	
 	private String obterNomeFornecedor(ProdutoEdicao produtoEdicao) {
 		
@@ -1159,7 +1157,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		this.abaterNegociacaoPorComissao(controleConfEncalheCota.getCota().getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
 		
-		Set<String> nossoNumeroCollection = new LinkedHashSet<>();
+		Map<String, Boolean> nossoNumeroCollection = new LinkedHashMap<String, Boolean>();
 		
 		DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 		
@@ -1190,17 +1188,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		documentoConferenciaEncalhe.setUtilizaSlip(isUtililzaSlipImpressao);
 		documentoConferenciaEncalhe.setUtilizaBoletoSlip(isUtililzaBoletoSlipImpressao);
 		
-		documentoConferenciaEncalhe.setListaNossoNumero(new LinkedList<String>());
+		documentoConferenciaEncalhe.setListaNossoNumero(new LinkedHashMap<String, Boolean>());
 		
 		if(nossoNumeroCollection!=null && !nossoNumeroCollection.isEmpty()) {
 			
-			for (String nossoNumero : nossoNumeroCollection){
+			for (String nossoNumero : nossoNumeroCollection.keySet()){
 				
 				if(nossoNumero!=null && !nossoNumero.trim().isEmpty()) {
 					associarCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId(), nossoNumero);
 				}
 				
-				documentoConferenciaEncalhe.getListaNossoNumero().add(nossoNumero);
+				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero,
+						nossoNumeroCollection.get(nossoNumero));
 				
 			}
 		}
@@ -1269,11 +1268,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return Set - String
 	 * @throws GerarCobrancaValidacaoException 
 	 */
-	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
+	private Map<String, Boolean> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 
 		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCotaRecolhimento(controleConferenciaEncalheCota, FormaComercializacao.CONSIGNADO);
 
-		Set<String> nossoNumeroCollection = new HashSet<String>();
+		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
 		
 		gerarCobrancaService.gerarCobranca(
 				controleConferenciaEncalheCota.getCota().getId(), 
@@ -1327,7 +1326,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		this.movimentoFinanceiroCotaService.removerPostergadosDia(idCota, listaPostergados);
 	}
-	
 	
 	private void removerItensConferenciaEncallhe(Set<Long> listaIdConferenciaEncalheParaExclusao) {
 		
@@ -2158,7 +2156,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return movimentoEstoqueCota;
 	}
 	
-	
 	private void verificarValorAplicadoNulo(ValoresAplicados valoresAplicados){
 		
 		if (valoresAplicados == null) {
@@ -2582,7 +2579,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @return BigDecimal
 	 */
-	protected BigDecimal obterValorTotalDebitoCreditoCota(Integer numeroCota, Date dataOperacao) {
+	@Transactional(readOnly = true)
+	public BigDecimal obterValorTotalDebitoCreditoCota(Integer numeroCota, Date dataOperacao) {
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
@@ -2693,6 +2691,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return d;
 	}
 	
+	@Transactional
 	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
 
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
@@ -2784,6 +2783,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		valorTotalEncalhe = (valorTotalEncalhe == null) ? BigDecimal.ZERO : valorTotalEncalhe;
 		
+		qtdeTotalProdutos = (qtdeTotalProdutos == null) ? BigInteger.ZERO : qtdeTotalProdutos;
+		
 		BigDecimal valorTotalDebitoCredito	= obterValorTotalDebitoCreditoCota(numeroCota, dataOperacao);
 		
 		valorTotalPagar = (valorTotalReparte.subtract(valorTotalEncalhe));
@@ -2869,10 +2870,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				totalComposicao = totalComposicao.subtract(item.getValor());
 			}
 		}
+		
 		totalComposicao = totalComposicao.add(slip.getValorSlip());
-		parameters.put("VALOR_TOTAL_PAGAR", totalComposicao);
-		
-		
+
+		BigDecimal totalPagar = listaComposicaoCobranca.isEmpty() ? valorTotalPagar.add(slip.getValorSlip()) : totalComposicao;
+
+		parameters.put("VALOR_TOTAL_PAGAR", totalPagar);
+
 		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
 		try{
 		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
@@ -2923,7 +2927,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-
 	protected String obterSlipReportPath() throws URISyntaxException {
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
@@ -2932,8 +2935,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 
-	
-	
 	protected String obterSlipSubReportPath() throws URISyntaxException {
 	
 		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");

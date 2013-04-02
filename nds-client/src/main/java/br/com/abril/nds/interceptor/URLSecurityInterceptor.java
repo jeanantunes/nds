@@ -68,15 +68,15 @@ public class URLSecurityInterceptor implements Interceptor {
 			if(authorize) {
 				authorize = usuarioPossuiRule(method.getMethod());
 				
-				boolean apenasVizualizacao = !usuarioPossuiRuleAlteracao(resourceInstance.getClass());
-				result.include("apenasVizualizacao", apenasVizualizacao);				
+				boolean permissaoAlteracao = usuarioPossuiRuleAlteracao(resourceInstance.getClass());
+				result.include("permissaoAlteracao", permissaoAlteracao);				
 			}
 						
 			if((resourceInstance instanceof HomeController || resourceInstance instanceof InicialController) || authorize)
 				stack.next(method, resourceInstance);
 
 			if(!(resourceInstance instanceof HomeController || resourceInstance instanceof InicialController) && !authorize)
-				throw new ValidacaoException(TipoMensagem.ERROR, "Acesso Negado.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Acesso Negado.");
 
 		} catch (Throwable throwable ) {
 
