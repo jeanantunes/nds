@@ -199,6 +199,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO_ALTERACAO)
 	public void gerarNotaEnvio(List<Long> listaIdCotas) {
 		
 		    session.setAttribute(COTAS_ID, listaIdCotas);

@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permicaoAlteracao}">
 <head>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
@@ -8,6 +9,8 @@
 
 <script>
 	geracaoNotaEnvioController.init();
+	bloquearItensEdicao(geracaoNotaEnvioController.workspace);
+	
 </script>
 
 </head>
@@ -22,8 +25,8 @@
 					</a>
 				</span>
 		
-        		<span id="geracaoNotaEnvio-btnImprimirNE" class="bt_arq" >
-        			<a href="javascript:;" title="Imprimir NE/NECA" >
+        		<span class="bt_arq" >
+        			<a id="geracaoNotaEnvio-btnImprimirNE" isEdicao="true" href="#" title="Imprimir NE/NECA" >
         				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir NE/NECA" hspace="5" border="0" />
         			</a>
         		</span>

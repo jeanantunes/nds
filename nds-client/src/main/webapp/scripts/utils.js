@@ -528,12 +528,14 @@ function bloquearItensEdicao(workspace) {
 	
 	$('a[isEdicao="true"]',workspace).each(function() {
 		this.href="#";
+		$(this).removeAttr("onClick");
+		$(this).unbind('click');
 		$(this).click(function(e){
 			exibirAcessoNegado();
 		});
 	});
 	
-	$('input[isEdicao="true"][type:"checkbox"]',workspace).each(function() {
+	$('input[isEdicao="true"]',workspace).each(function() {
 		this.disabled = true;
 	});
 }

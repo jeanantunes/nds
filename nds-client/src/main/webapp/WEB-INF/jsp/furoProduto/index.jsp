@@ -1,8 +1,10 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/furoProduto.js"></script>
 	<script language="javascript" type="text/javascript">
 		$(function(){
 			furoProdutoController.init();
+			bloquearItensEdicao(furoProdutoController.workspace);
 		});
 	</script>
 </head>
@@ -17,8 +19,8 @@
 		</div>
 		<div class="areaBts">
 			<div class="area">
-				<span style="cursor: pointer;" class="bt_novos" onclick="furoProdutoController.popup();" rel="tipsy" title="Confirmar Furo de Produto">
-	            	<a href="javascript:;" id="linkConfirmar"><img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /></a>
+				<span style="cursor: pointer;" class="bt_novos" rel="tipsy" title="Confirmar Furo de Produto">
+	            	<a isEdicao="true" href="javascript:;" onclick="furoProdutoController.popup();" id="linkConfirmar"><img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /></a>
 	            </span>
 			</div>
 		</div>
