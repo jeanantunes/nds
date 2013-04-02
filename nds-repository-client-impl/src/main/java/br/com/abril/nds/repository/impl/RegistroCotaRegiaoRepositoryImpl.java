@@ -6,8 +6,12 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.RegiaoCotaDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDTO;
+import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RegistroCotaRegiaoRepository;
@@ -102,7 +106,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		}
 		
 		
-		private void configurarPaginacao(FiltroCotasRegiaoDTO filtro, Query query) {
+		private void configurarPaginacao(FiltroDTO filtro, Query query) {
 
 			PaginacaoVO paginacao = filtro.getPaginacao();
 
@@ -137,5 +141,67 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				
 				return (List<Integer>)query.list();
 			}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public List<RegiaoNMaiores_ProdutoDTO> buscarProdutos(FiltroRegiaoNMaioresProdDTO filtro) {
+
+				StringBuilder hql = new StringBuilder();
+				
+				hql.append(" SELECT ");
+				
+				hql.append(" prodEdicao.numeroEdicao AS numeroEdicao, ");
+				hql.append(" produto.codigo AS codProduto, ");
+				hql.append(" produto.tipoClassificacaoProduto.descricao AS descricaoClassificacao, ");
+				hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
+				hql.append(" lancamento.tipoLancamento AS status ");
+				
+				hql.append(" FROM ProdutoEdicao AS prodEdicao ");
+				
+				hql.append(" left join prodEdicao.produto AS produto ");
+				hql.append(" left join prodEdicao.lancamentos AS lancamento ");
+				
+				hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
+				hql.append(" AND produto.nome = :NOME_PRODUTO ");
+				hql.append(this.getSqlWhereBuscarProdutos(filtro));
+				
+				hql.append(" ORDER BY numeroEdicao ");
+				
+				Query query = super.getSession().createQuery(hql.toString());
+				
+				query.setParameter("COD_PRODUTO", filtro.getCodigoProduto());
+				query.setParameter("NOME_PRODUTO", filtro.getNome());
+				this.paramsDinamicosBuscarProdutos(query, filtro);
+				
+				query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
+				
+				if (filtro != null){
+					configurarPaginacao(filtro, query);
+				}
+				
+				return query.list();
+			}
+			
+		private String paramsDinamicosBuscarProdutos (Query query, FiltroRegiaoNMaioresProdDTO filtro) {
+			
+			StringBuilder hql = new StringBuilder();
+			
+			if(filtro.getIdTipoClassificacaoProduto() !=null && filtro.getIdTipoClassificacaoProduto() > 0){
+				query.setParameter("ID_CLASSIFICACAO", filtro.getIdTipoClassificacaoProduto());
+			}
+			
+			return hql.toString();
+		}
+		
+		private String getSqlWhereBuscarProdutos (FiltroRegiaoNMaioresProdDTO filtro) {
+			
+			StringBuilder hql = new StringBuilder();
+			
+			if(filtro.getIdTipoClassificacaoProduto() !=null && filtro.getIdTipoClassificacaoProduto() > 0){
+				hql.append(" AND produto.tipoClassificacaoProduto.id = :ID_CLASSIFICACAO ");
+			}
+
+			return hql.toString();
+		}
 			
 }

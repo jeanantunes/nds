@@ -385,5 +385,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			Long idCota, 
 			GrupoMovimentoEstoque grupoMovimentoEstoque);
 
+	/**
+	 * 
+	 * @param idEstudo
+	 */
+	public abstract void removerMovimentoEstoqueCotaPorEstudo(Long idEstudo);
+
 
 }

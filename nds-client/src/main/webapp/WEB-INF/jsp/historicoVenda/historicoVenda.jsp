@@ -84,18 +84,20 @@ function filtroPercVenda(){
             <td width="60"><input type="text" name="filtro.produtoDto.codigoProduto" id="filtroCodigoProduto" style="width:60px;" /></td>
             <td width="47">Produto:</td>
             <td width="140"><input type="text" name="filtro.produtoDto.nomeProduto" id="filtroNomeProduto" style="width:140px;" /></td>
-           	<!-- <td width="76">Classificação:</td>
-             <td width="100">
-                 <select name="filtro.idTipoClassificacaoProduto" id="selectClassificacao" style="width:200px;">
-                  <option selected="selected">Selecione...</option>
-                  <c:forEach items="${listaTipoClassificacao}" var="tipoClassificacao">
-                  	<option value="${tipoClassificacao.key}">${tipoClassificacao.value}</option>
-                  </c:forEach>
-                 </select>
-                </td-->
-            <td width="38">Edição:</td>
-            <td width="60"><input type="text" name="filtro.numeroEdicao" id="filtroNumeroEdicao" style="width:60px;" /></td>
-            <td width="16"><span class="classPesquisar"><a href="javascript:;" id="pesquisaFiltroProduto">&nbsp;</a></span></td>
+          </tr>
+          <tr>
+          	<td width="38">Edição:</td>
+            <td width="40"><input type="text" name="filtro.numeroEdicao" id="filtroNumeroEdicao" style="width:60px;"/></td>
+           	<td width="76">Classificação:</td>
+             <td width="50">
+                <select name="filtro.tipoClassificacaoProdutoId" id="comboClassificacao" style="width:200px;">
+                	<option selected="selected">Selecione...</option>
+                  		<c:forEach items="${listaClassificacao}" var="classificacao">
+							<option value="${classificacao.key}">${classificacao.value}</option>
+				  		</c:forEach>
+                </select>
+              </td>
+              <td width="16"><span class="classPesquisar"><a href="javascript:;" id="pesquisaFiltroProduto"></a></span></td>
           </tr>
         </table>
 	</form>
@@ -196,7 +198,7 @@ function filtroPercVenda(){
        	
         <span class="bt_novos" title="Analisar" style="float:right;"><a href="javascript:;" id="analiseHistorico"><img src="images/ico_copia_distrib.gif" hspace="5" border="0" />Analisar</a></span>
         
-        <span class="bt_novos" title="Cancelar" style="float:right;"><a href="javascript:;"><img src="images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a></span>
+        <span class="bt_novos" title="Cancelar" style="float:right;"><a href="javascript:;" id="botaoCancelar"><img src="images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a></span>
 
       
       </fieldset>

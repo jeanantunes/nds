@@ -42,4 +42,6 @@ public interface FixacaoReparteService {
 	public boolean isCotaPossuiVariosPdvs(Long idCota);
 
 	void excluirFixacaoPorCota(Long idCota);
+	
+	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO);;
 }

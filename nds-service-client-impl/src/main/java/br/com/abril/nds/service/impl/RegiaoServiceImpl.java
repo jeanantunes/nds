@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
@@ -122,5 +124,11 @@ public class RegiaoServiceImpl implements RegiaoService  {
 	@Transactional
 	public List<TipoClassificacaoProduto> buscarClassificacao() {
 		return tipoClassificacaoProduto.buscarTodos();
+	}
+
+	@Override
+	public List<RegiaoNMaiores_ProdutoDTO> buscarProdutos(FiltroRegiaoNMaioresProdDTO filtro) {
+
+		return null;
 	}
 }

@@ -1,4 +1,4 @@
-﻿var descontoCotaController = $.extend(true,{
+var descontoCotaController = $.extend(true,{
 		
 	popup_especifico:function() {		
 		 
@@ -160,7 +160,6 @@
 			width : 960,
 			height : 'auto'
 		});		
-	}
+	},
 }, BaseController);
 //@ sourceURL=tipoDescontoCota.js
-	

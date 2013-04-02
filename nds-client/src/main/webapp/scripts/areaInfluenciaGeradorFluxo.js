@@ -1,4 +1,4 @@
-﻿var areaInfluenciaGeradorFluxoController = $.extend(true,	{
+var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 	
 					init : function() {
         
@@ -18,6 +18,7 @@
 						
 						
 						$(".areaInfluenciaGrid", areaInfluenciaGeradorFluxoController.workspace).flexigrid(	{
+
 											preProcess : areaInfluenciaGeradorFluxoController.executarPreProcessamento,
 											dataType : 'json',
 											colModel : [
@@ -237,4 +238,5 @@
 					}
 
 				}, BaseController);
+
  //@ sourceURL=areaInfluenciaGeradorFluxo.js

@@ -4,7 +4,9 @@ import java.util.List;
 
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
@@ -39,5 +41,7 @@ public interface RegiaoService {
 	List<RegiaoCotaDTO> buscarPorSegmento (FiltroCotasRegiaoDTO filtro);
 	
 	List<TipoClassificacaoProduto> buscarClassificacao();
+	
+	List<RegiaoNMaiores_ProdutoDTO> buscarProdutos(FiltroRegiaoNMaioresProdDTO filtro);
 
 }

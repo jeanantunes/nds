@@ -26,151 +26,135 @@ import br.com.abril.nds.model.estoque.RateioDiferenca;
  */
 @Entity
 @Table(name = "ESTUDO_COTA")
-@SequenceGenerator(name = "ESTUDO_COTA_SEQ", initialValue = 1, allocationSize = 1)
-public class EstudoCota implements Serializable, Cloneable {
+@SequenceGenerator(name="ESTUDO_COTA_SEQ", initialValue = 1, allocationSize = 1)
+public class EstudoCota implements Serializable {
 
-    /**
-     * Serial Version UID
-     */
-    private static final long serialVersionUID = -2730755900853136814L;
-    @Id
-    @GeneratedValue(generator = "ESTUDO_COTA_SEQ")
-    @Column(name = "ID")
-    private Long id;
-    @Column(name = "QTDE_PREVISTA", nullable = false)
-    private BigInteger qtdePrevista;
-    @Column(name = "QTDE_EFETIVA", nullable = false)
-    private BigInteger qtdeEfetiva;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "ESTUDO_ID")
-    private Estudo estudo;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "COTA_ID")
-    private Cota cota;
+	/**
+	 * Serial Version UID
+	 */
+	private static final long serialVersionUID = -2730755900853136814L;
+	@Id
+	@GeneratedValue(generator = "ESTUDO_COTA_SEQ")
+	@Column(name = "ID")
+	private Long id;
+	@Column(name = "QTDE_PREVISTA", nullable = false)
+	private BigInteger qtdePrevista;
+	@Column(name = "QTDE_EFETIVA", nullable = false)
+	private BigInteger qtdeEfetiva;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ESTUDO_ID")
+	private Estudo estudo;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "COTA_ID")
+	private Cota cota;
 
-    @Column(name = "REPARTE")
-    private BigInteger reparte;
-
-    @OneToMany(mappedBy = "estudoCota")
-    private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
-
-    @OneToMany(mappedBy = "estudoCota")
-    private List<MovimentoEstoqueCota> movimentosEstoqueCota;
-
-    @OneToMany(mappedBy = "estudoCota")
-    private List<ItemNotaEnvio> itemNotaEnvios;
-
-    @Column(name = "CLASSIFICACAO")
-    private String classificacao;
-
-    public EstudoCota() {
-
-    }
-
-    public EstudoCota(Long id) {
-	this.id = id;
-    }
-
-    public Long getId() {
-	return id;
-    }
-
-    public void setId(Long id) {
-	this.id = id;
-    }
-
-    public BigInteger getQtdePrevista() {
-	return qtdePrevista;
-    }
-
-    public void setQtdePrevista(BigInteger qtdePrevista) {
-	this.qtdePrevista = qtdePrevista;
-    }
-
-    public BigInteger getQtdeEfetiva() {
-	return qtdeEfetiva;
-    }
-
-    public void setQtdeEfetiva(BigInteger qtdeEfetiva) {
-	this.qtdeEfetiva = qtdeEfetiva;
-    }
-
-    public Estudo getEstudo() {
-	return estudo;
-    }
-
-    public void setEstudo(Estudo estudo) {
-	this.estudo = estudo;
-    }
-
-    public Cota getCota() {
-	return cota;
-    }
-
-    public void setCota(Cota cota) {
-	this.cota = cota;
-    }
-
-    public Set<RateioDiferenca> getRateiosDiferenca() {
-	return rateiosDiferenca;
-    }
-
-    public void setRateiosDiferenca(Set<RateioDiferenca> rateiosDiferenca) {
-	this.rateiosDiferenca = rateiosDiferenca;
-    }
-
-    public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
-	return movimentosEstoqueCota;
-    }
-
-    public void setMovimentosEstoqueCota(List<MovimentoEstoqueCota> movimentosEstoqueCota) {
-	this.movimentosEstoqueCota = movimentosEstoqueCota;
-    }
-
-    /**
-     * @return the itemNotaEnvios
-     */
-    public List<ItemNotaEnvio> getItemNotaEnvios() {
-	return itemNotaEnvios;
-    }
-
-    /**
-     * @param itemNotaEnvios the itemNotaEnvios to set
-     */
-    public void setItemNotaEnvios(List<ItemNotaEnvio> itemNotaEnvios) {
-	this.itemNotaEnvios = itemNotaEnvios;
-    }
-
-    public String getClassificacao() {
-	return classificacao;
-    }
-
-    public void setClassificacao(String classificacao) {
-	this.classificacao = classificacao;
-    }
-
-    public BigInteger getReparte() {
-	return reparte;
-    }
-
-    public void setReparte(BigInteger reparte) {
-	this.reparte = reparte;
-    }
-
-    @Override
-    public EstudoCota clone() {
-
-	EstudoCota clone = null;
-
-	try {
-
-	    clone = (EstudoCota) super.clone();
-
-	} catch (CloneNotSupportedException e) {
-	    e.printStackTrace();
+	@Column(name = "REPARTE")
+	private BigInteger reparte;
+	
+	@OneToMany(mappedBy = "estudoCota")
+	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
+	
+	@OneToMany(mappedBy = "estudoCota")
+	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
+	
+	@OneToMany(mappedBy = "estudoCota")
+	private List<ItemNotaEnvio> itemNotaEnvios;
+	
+	@Column(name = "CLASSIFICACAO")
+	private String classificacao;
+	
+	public EstudoCota() {
+		
+	}
+	
+	public EstudoCota(Long id) {
+		this.id=id;
 	}
 
-	return clone;
-    }
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public BigInteger getQtdePrevista() {
+		return qtdePrevista;
+	}
+	
+	public void setQtdePrevista(BigInteger qtdePrevista) {
+		this.qtdePrevista = qtdePrevista;
+	}
+	
+	public BigInteger getQtdeEfetiva() {
+		return qtdeEfetiva;
+	}
+	
+	public void setQtdeEfetiva(BigInteger qtdeEfetiva) {
+		this.qtdeEfetiva = qtdeEfetiva;
+	}
+	
+	public Estudo getEstudo() {
+		return estudo;
+	}
+	
+	public void setEstudo(Estudo estudo) {
+		this.estudo = estudo;
+	}
+	
+	public Cota getCota() {
+		return cota;
+	}
+	
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}
+	
+	public Set<RateioDiferenca> getRateiosDiferenca() {
+		return rateiosDiferenca;
+	}
+	
+	public void setRateiosDiferenca(Set<RateioDiferenca> rateiosDiferenca) {
+		this.rateiosDiferenca = rateiosDiferenca;
+	}
+
+	public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
+		return movimentosEstoqueCota;
+	}
+
+	public void setMovimentosEstoqueCota(List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		this.movimentosEstoqueCota = movimentosEstoqueCota;
+	}
+
+	/**
+	 * @return the itemNotaEnvios
+	 */
+	public List<ItemNotaEnvio> getItemNotaEnvios() {
+		return itemNotaEnvios;
+	}
+
+	/**
+	 * @param itemNotaEnvios the itemNotaEnvios to set
+	 */
+	public void setItemNotaEnvios(List<ItemNotaEnvio> itemNotaEnvios) {
+		this.itemNotaEnvios = itemNotaEnvios;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public BigInteger getReparte() {
+		return reparte;
+	}
+	
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
 
 }

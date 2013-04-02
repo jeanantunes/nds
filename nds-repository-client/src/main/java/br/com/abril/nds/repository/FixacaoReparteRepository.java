@@ -22,5 +22,7 @@ public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Lo
 	public List<FixacaoReparte> buscarPorCota(Cota cota);
 	
 	public void removerPorCota(Cota cota);
+	
+	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO);
 
 }

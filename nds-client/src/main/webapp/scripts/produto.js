@@ -1,4 +1,4 @@
-﻿//#workspace div.ui-tabs-panel:not(.ui-tabs-hide)
+//#workspace div.ui-tabs-panel:not(.ui-tabs-hide)
 var produtoController = $.extend(true, {
 	
 	pesquisaProduto:null,
@@ -284,6 +284,7 @@ var produtoController = $.extend(true, {
 						$("#segmentacaoTipoLancamento", produtoController.workspace).val(result.tipoLancamento);
 						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
 						$("#segmentacaoTemaSecundario", produtoController.workspace).val(result.temaSecundario);
+						$("#segmentacaoFormaFisica", produtoController.workspace).val(result.formaFisica);//ainda nao carrega
 						
 						$("#percentualDesconto", produtoController.workspace).val($.formatNumber(result.desconto, {format:"###,##000.00", locale:"br"}));
 
@@ -476,6 +477,7 @@ var produtoController = $.extend(true, {
         			   {name:"produto.segmentacao.tipoLancamento",value:$("#segmentacaoTipoLancamento", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.temaPrincipal",value:$("#segmentacaoTemaPrincipal", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.temaSecundario",value:$("#segmentacaoTemaSecundario", produtoController.workspace).val()},
+        			   {name:"produto.segmentacao.formaFisica",value:$("#segmentacaoFormaFisica", produtoController.workspace).val()},
         			   {name:"codigoEditor",value:$("#comboEditor", produtoController.workspace).val()},
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
         			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", produtoController.workspace).val()},

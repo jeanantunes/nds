@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.filtro.FiltroLancamentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
@@ -73,7 +73,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Override
 	@Transactional(readOnly = true)
-	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroLancamentoDTO filtro) {
+	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroDistribuicaoDTO filtro) {
 	
 		this.validarFiltro(filtro);
 		
@@ -212,7 +212,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	/**
 	 * Valida o filtro informado.
 	 */
-	private void validarFiltro(FiltroLancamentoDTO filtro) {
+	private void validarFiltro(FiltroDistribuicaoDTO filtro) {
 		
 		if (filtro == null) {
 			
@@ -248,6 +248,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			if (vo.getIdEstudo() != null) {
 				idsEstudos.add(vo.getIdEstudo().longValue());
 			}
+		}
+		
+		if (idsEstudos == null || idsEstudos.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não existe estudo para o(s) produto(s) selecionado!"));
 		}
 		
 		estudoRepository.liberarEstudo(idsEstudos, false);
@@ -289,7 +294,26 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Override
 	@Transactional
-	public void finalizarMatrizDistribuicao(FiltroLancamentoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+		
+		List<ProdutoDistribuicaoVO> listDistrib = produtoDistribuicaoVOs;
+		
+		Map <BigInteger, BigInteger> map = obterMapaEstudoRepartDistrib(produtoDistribuicaoVOs);
+		
+		for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
+			
+			if (!prodDistribVO.isItemFinalizado()) {
+				
+				finalizaItemDistribuicao(prodDistribVO, map);
+			}
+			
+		}
+	}
+	
+	
+	@Override
+	@Transactional
+	public void finalizarMatrizDistribuicaoTodosItens(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 		
 		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
 		
@@ -308,6 +332,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			
 		}
 	}
+	
 	
 	private void validaFinalizacaoMatriz(ProdutoDistribuicaoVO prodDistribVO) {
 		
@@ -331,7 +356,17 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Override
 	@Transactional
-	public void reabrirMatrizDistribuicao(FiltroLancamentoDTO filtro) {
+	public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+		
+		for (ProdutoDistribuicaoVO prodDistribVO:produtoDistribuicaoVOs) {
+				
+			reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void reabrirMatrizDistribuicaoTodosItens(FiltroDistribuicaoDTO filtro) {
 		
 		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
 		

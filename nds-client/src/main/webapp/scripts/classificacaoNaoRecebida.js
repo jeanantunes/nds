@@ -1,3 +1,4 @@
+
 ﻿var classificacaoNaoRecebidaController = $.extend(true, {
 	
 	/**
@@ -748,4 +749,5 @@
 	},
 	
 }, BaseController);
+
 //@ sourceURL=classificacaoNaoRecebidaController.js

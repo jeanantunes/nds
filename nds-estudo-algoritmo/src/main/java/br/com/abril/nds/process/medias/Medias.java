@@ -1,14 +1,12 @@
 package br.com.abril.nds.process.medias;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.TreeMap;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
 
@@ -22,56 +20,39 @@ import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
  * Processo Anterior: {@link CorrecaoVendas} Próximo Processo: {@link Bonificacoes} </p>
  */
 @Component
-public class Medias extends ProcessoAbstrato {
+public class Medias {
 
-    @Override
-    protected void executarProcesso() {
+	public void executar(CotaEstudo cota) {
 
-	BigDecimal vendaMediaCorrigida = BigDecimal.ZERO;
+		BigDecimal vendaMediaCorrigida = BigDecimal.ZERO;
 
-	Cota cota = (Cota) super.genericDTO;
+		BigDecimal totalPeso = BigDecimal.ZERO;
+		BigDecimal totalVendaMultiplyPeso = BigDecimal.ZERO;
 
-	List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
+		TreeMap<BigDecimal, BigDecimal> treeVendaPeso = new TreeMap<>();
 
-	int qtdeEdicaoBase = listProdutoEdicao.size();
+		for (ProdutoEdicaoEstudo edicao : cota.getEdicoesRecebidas()) {
+			if (edicao.getVendaCorrigida() != null && edicao.getIndicePeso() != null) {
+				treeVendaPeso.put(edicao.getVendaCorrigida(), edicao.getIndicePeso());
 
-	BigDecimal totalPeso = BigDecimal.ZERO;
-	BigDecimal totalVendaMultiplyPeso = BigDecimal.ZERO;
+				totalPeso = totalPeso.add(edicao.getIndicePeso());
+				totalVendaMultiplyPeso = totalVendaMultiplyPeso.add(edicao.getVendaCorrigida().multiply(edicao.getIndicePeso()));
+			}
+		}
 
-	TreeMap<BigDecimal, BigDecimal> treeVendaPeso = new TreeMap<BigDecimal, BigDecimal>();
+		if (totalPeso.compareTo(BigDecimal.ONE) == 1) {
+			if (cota.getEdicoesRecebidas().size() < 3) {
+				vendaMediaCorrigida = totalVendaMultiplyPeso.divide(totalPeso, 2, BigDecimal.ROUND_FLOOR);
+			} else {
+				BigDecimal menorValor = treeVendaPeso.firstEntry().getKey();
+				BigDecimal menorPeso = treeVendaPeso.firstEntry().getValue();
+				BigDecimal menorMultiply = menorValor.multiply(menorPeso);
 
-	int iProdutoEdicao = 0;
-	while (iProdutoEdicao < qtdeEdicaoBase) {
-
-	    ProdutoEdicao produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
-
-	    BigDecimal vendaCorrigida = produtoEdicao.getVendaCorrigida();
-	    BigDecimal peso = produtoEdicao.getPeso();
-
-	    if (vendaCorrigida != null && peso != null) {
-
-		treeVendaPeso.put(vendaCorrigida, peso);
-
-		totalPeso = totalPeso.add(peso);
-		totalVendaMultiplyPeso = totalVendaMultiplyPeso.add(vendaCorrigida.multiply(peso));
-	    }
-
-	    iProdutoEdicao++;
+				vendaMediaCorrigida = totalVendaMultiplyPeso.subtract(menorMultiply).divide(totalPeso.subtract(menorPeso), 2, BigDecimal.ROUND_FLOOR);
+			}
+		}
+		if ((vendaMediaCorrigida != null) && (vendaMediaCorrigida.compareTo(BigDecimal.ZERO) > 0)) {
+			cota.setVendaMedia(vendaMediaCorrigida);
+		}
 	}
-
-	if (totalPeso.compareTo(BigDecimal.ZERO) == 1) {
-	    if (qtdeEdicaoBase < 3) {
-		vendaMediaCorrigida = totalVendaMultiplyPeso.divide(totalPeso, 2, BigDecimal.ROUND_FLOOR);
-	    } else {
-		BigDecimal menorValor = treeVendaPeso.firstEntry().getKey();
-		BigDecimal menorPeso = treeVendaPeso.firstEntry().getValue();
-		BigDecimal menorMultiply = menorValor.multiply(menorPeso);
-
-		vendaMediaCorrigida = totalVendaMultiplyPeso.subtract(menorMultiply).divide(totalPeso.subtract(menorPeso), 2, BigDecimal.ROUND_FLOOR);
-	    }
-	}
-
-	cota.setVendaMedia(vendaMediaCorrigida);
-    }
-
 }

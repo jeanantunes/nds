@@ -1,17 +1,13 @@
 package br.com.abril.nds.process.correcaovendas;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.medias.Medias;
-import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
@@ -23,73 +19,52 @@ import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
  * Processo Anterior: {@link MontaTabelaEstudos} Próximo Processo: {@link Medias} </p>
  */
 @Component
-public class CorrecaoVendas extends ProcessoAbstrato {
+public class CorrecaoVendas {
 
-    @Autowired
-    private CorrecaoIndividual correcaoIndividual;
+	@Autowired
+	private CorrecaoIndividual correcaoIndividual;
 
-    @Autowired
-    private CorrecaoTendencia correcaoTendencia;
+	@Autowired
+	private CorrecaoTendencia correcaoTendencia;
 
-    @Autowired
-    private VendaCrescente vendaCrescente;
+	@Autowired
+	private VendaCrescente vendaCrescente;
 
-    /**
-     * <h2>Processo: Correção de Vendas</h2>
-     * <p><b>Recuperar as cotas armazenadas na tabela e para cada edição base por cota aplicar a regra abaixo e<br>depois armazenar os valores encontrados (vendaCorr) na
-     * mesma tabela.</b></p>
-     * <p>Se QtdeEdsBase > 1</p>
-     * <p><pre>Se Edição = 1 ou Publicação <> Fascículos / Coleções</pre></p>
-     * <p><pre>Procedure CorreçãoIndividual</pre></p>
-     * <p><pre>Procedure Correção Tendência</pre></p>
-     * <p><pre>Endif</pre></p>
-     * <p>Endif</p>
-     * <p>Se cota recebeu 4 ou mais edições-base fechadas</p>
-     * <pre>Procedure VendaCrescente</pre>
-     * <p>Endif</p>
-     */
-    @Override
-    protected void executarProcesso() throws Exception {
+	/**
+	 * <h2>Processo: Correção de Vendas</h2>
+	 * <p><b>Recuperar as cotas armazenadas na tabela e para cada edição base por cota aplicar a regra abaixo e<br>depois armazenar os valores encontrados (vendaCorr) na
+	 * mesma tabela.</b></p>
+	 * <p>Se QtdeEdsBase > 1</p>
+	 * <p><pre>Se Edição = 1 ou Publicação <> Fascículos / Coleções</pre></p>
+	 * <p><pre>Procedure CorreçãoIndividual</pre></p>
+	 * <p><pre>Procedure Correção Tendência</pre></p>
+	 * <p><pre>Endif</pre></p>
+	 * <p>Endif</p>
+	 * <p>Se cota recebeu 4 ou mais edições-base fechadas</p>
+	 * <pre>Procedure VendaCrescente</pre>
+	 * <p>Endif</p>
+	 */
+	public void executar(CotaEstudo cota) throws Exception {
 
-	Cota cota = (Cota) super.genericDTO;
+		if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() > 1) {
 
-	List<ProdutoEdicao> listEdicaoFechada = new ArrayList<ProdutoEdicao>();
+			BigDecimal totalReparte = BigDecimal.ZERO;
+			BigDecimal totalVenda = BigDecimal.ZERO;
 
-	List<ProdutoEdicao> listEdicaoRecebida = cota.getEdicoesRecebidas();
+			for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
+				if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
+					correcaoIndividual.executar(produtoEdicao);
 
-	if (listEdicaoRecebida != null && listEdicaoRecebida.size() > 1) {
-
-	    BigDecimal totalReparte = BigDecimal.ZERO;
-	    BigDecimal totalVenda = BigDecimal.ZERO;
-
-	    for (ProdutoEdicao produtoEdicao : listEdicaoRecebida) {
-
-		if (!produtoEdicao.isEdicaoAberta()) {
-		    listEdicaoFechada.add(produtoEdicao);
+					totalReparte = totalReparte.add(produtoEdicao.getReparte());
+					totalVenda = totalVenda.add(produtoEdicao.getVenda());
+				}
+			}
+			if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
+				correcaoTendencia.setTotalReparte(totalReparte);
+				correcaoTendencia.setTotalVenda(totalVenda);
+				correcaoTendencia.executar(cota);
+			}
 		}
-
-		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
-
-		    correcaoIndividual.setGenericDTO(produtoEdicao);
-		    correcaoIndividual.executar();
-
-		    totalReparte = totalReparte.add(produtoEdicao.getReparte());
-
-		    totalVenda = totalVenda.add(produtoEdicao.getVenda());
-		}
-	    }
-
-	    if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
-		correcaoTendencia.setGenericDTO(cota);
-		correcaoTendencia.setTotalReparte(totalReparte);
-		correcaoTendencia.setTotalVenda(totalVenda);
-		correcaoTendencia.executar();
-	    }
+		vendaCrescente.executar(cota);
 	}
-
-	if (listEdicaoFechada.size() >= 4) {
-	    vendaCrescente.setGenericDTO(cota);
-	    vendaCrescente.executar();
-	}
-    }
 }

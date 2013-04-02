@@ -11,6 +11,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -113,6 +114,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private Double venda;
 	private Double percentualVenda;
 	private Long reparteEstudo;
+	private Long tipoSegmentoProdutoId;
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -828,8 +830,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setPercentualVenda(Double percentualVenda) {
 		this.percentualVenda = percentualVenda;
+	}
+
+	public Long getTipoSegmentoProdutoId() {
+		return tipoSegmentoProdutoId;
+	}
+
+	public void setTipoSegmentoProdutoId(Long tipoSegmentoProdutoId) {
+		this.tipoSegmentoProdutoId = tipoSegmentoProdutoId;
 	}  
-	
-	
-	
 }

@@ -23,4 +23,5 @@ public interface MixCotaProdutoRepository extends
 
 	public void removerPorIdCota(Long idCota);
 
+	public void execucaoQuartz();
 }

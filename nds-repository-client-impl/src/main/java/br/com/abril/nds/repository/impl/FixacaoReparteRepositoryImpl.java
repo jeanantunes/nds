@@ -41,9 +41,9 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	boolean isClassificacaoPreenchida = (produto.getClassificacaoProduto() != null ||produto.getClassificacaoProduto() !="");
 		StringBuilder sql = new StringBuilder("");
 
-		sql.append(" select ");
+		sql.append(" select ")
 		
-		sql.append(" f.id as id, " +
+		.append(" f.id as id, " +
 				" f.qtdeExemplares as qtdeExemplares," +
 				" f.qtdeEdicoes as qtdeEdicoes," +
 				" f.dataHora as dataHora," +
@@ -55,21 +55,23 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 				" f.produtoFixado.tipoClassificacaoProduto.descricao as classificacaoProduto," +
 				" f.usuario.login as usuario," +
 				" produto.codigo as codigoProduto," +
-				" count(pdv.id) as qtdPdv");
+				" count(pdv.id) as qtdPdv")
 
-		sql.append(" from ");
+		.append(" from ")
 
-		sql.append(" FixacaoReparte f ");
+		.append(" FixacaoReparte f ")
 		
-		sql.append(" left join f.cotaFixada.pessoa as pessoa ");
+		.append(" left join f.cotaFixada.pessoa as pessoa ")
 
-		sql.append(" left join f.cotaFixada.pdvs as pdv ");
+		.append(" left join f.cotaFixada.pdvs as pdv ")
 		
-		sql.append(" inner join f.produtoFixado as produto ");
+		.append(" inner join f.produtoFixado as produto ")
 		
-		sql.append(" where UPPER(produto.nome) like  UPPER(:nomeProduto) ");
+		.append(" where ")
+		.append( " UPPER(produto.nome) like  UPPER(:nomeProduto) ")
 		
-		sql.append(" and f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
+		
+		.append(" and f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
 		
 		if(isClassificacaoPreenchida){
 			sql.append(" and upper(f.produtoFixado.tipoClassificacaoProduto.descricao) = upper(:classificacaoProduto)");
@@ -121,17 +123,21 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 				" f.produtoFixado.nome as nomeProduto, " +
 				" f.produtoFixado.tipoClassificacaoProduto.descricao as classificacaoProduto," +
 				" f.usuario.login as usuario," +
-				" count(pdv.id) as qtdPdv");
+				" count(pdv.id) as qtdPdv")
 
-		sql.append(" from ");
+		.append(" from ")
 
-		sql.append(" FixacaoReparte f ");
+		.append(" FixacaoReparte f ")
 
-		sql.append(" inner join f.cotaFixada as cota ");
-		sql.append(" inner join cota.pdvs as pdv ");
+		.append(" inner join f.cotaFixada as cota ")
+		.append(" inner join cota.pdvs as pdv ")
 		
-		sql.append(" where cota.pessoa.nome like  :nomeCota ");
-		sql.append(" and f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
+		.append(" where ")
+		.append(" upper(cota.pessoa.nome) like  upper(:nomeCota) ")
+		.append(" or upper(cota.pessoa.nomeFantasia) like  upper(:nomeCota) ")
+		.append(" or upper(cota.pessoa.razaoSocial) like  upper(:nomeCota) ")
+		
+		.append(" and f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
 		
 		if(isNumeroCotaPreenchido ){
 			sql.append(	" and cota.numeroCota = :numeroCota ");
@@ -238,6 +244,25 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		Query query  = getSession().createQuery(sql.toString());
 		query.setParameter("cotaSelecionada",  cota);
 		
+	}
+
+	@Override
+	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO) {
+		StringBuilder sql = new StringBuilder("");
+		
+		sql.append(" from ")
+
+		.append(" FixacaoReparte f ")
+		
+		.append(" where f.cotaFixada.id = :cotaSelecionada ")
+		
+		.append(" and f.produtoFixado.id = :produtoSelecionado  ");
+		
+		Query query  = getSession().createQuery(sql.toString());
+		query.setParameter("cotaSelecionada",  fixacaoReparteDTO.getCotaFixada());
+		query.setParameter("produtoSelecionado", fixacaoReparteDTO.getProdutoFixado());
+		
+		return query.list().size() > 0;
 	}
 	
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.InformacoesBaseProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
+import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
@@ -47,6 +48,11 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 	@Transactional
 	public InformacoesCaracteristicasProdDTO buscarCaracteristicas(String codProduto, Long numEdicao) {
 		return infoProdutosRepo.buscarCaracteristicas(codProduto, numEdicao);
+	}
+
+	@Override
+	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItemRegiao() {
+		return infoProdutosRepo.buscarItensRegiao();
 	}
 
 }

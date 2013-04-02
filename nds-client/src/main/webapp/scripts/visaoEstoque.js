@@ -1,4 +1,4 @@
-﻿var visaoEstoqueController = $.extend(true, {
+var visaoEstoqueController = $.extend(true, {
 	
 	path : contextPath + '/estoque/visaoEstoque/',
 

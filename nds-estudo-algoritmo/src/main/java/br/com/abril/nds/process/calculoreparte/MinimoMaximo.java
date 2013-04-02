@@ -2,8 +2,9 @@ package br.com.abril.nds.process.calculoreparte;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.ClassificacaoCota;
-import br.com.abril.nds.model.Cota;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 
 /**
@@ -18,9 +19,9 @@ import br.com.abril.nds.process.ProcessoAbstrato;
 public class MinimoMaximo extends ProcessoAbstrato {
 
     @Override
-    public void executarProcesso() throws Exception {
+    public void executar(EstudoTransient estudo) throws Exception {
 
-	for (Cota cota : getEstudo().getCotas()) {
+	for (CotaEstudo cota : estudo.getCotas()) {
 	    if ((cota.getReparteMinimo() != null) && (cota.getReparteMaximo() != null)) {
 		if (cota.getReparteMinimo().compareTo(cota.getReparteMaximo()) > 0) {
 		    throw new Exception(String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId()));

@@ -1,4 +1,4 @@
-﻿$(document).ready(function() {
+$(document).ready(function() {
 	
 	
 	showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");

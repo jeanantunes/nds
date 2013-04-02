@@ -48,8 +48,8 @@ $(function(){
 		 	   		   onblur="pesquisaProduto.pesquisarPorNomeProduto('#idCodigo', '#nomeProduto');"/>
                 </td>
                 <td width="43">Classificação:</td>
-                <td width="276"><select name="select" id="select" style="width:200px;">
-                 
+                <td width="276">
+                  <select name="select" id="comboClassificacao" style="width:200px;">
                   <option selected="selected">Selecione...</option>
                   		<c:forEach items="${listaClassificacao}" var="classificacao">
 								<option value="${classificacao.key}">${classificacao.value}</option>
@@ -170,7 +170,7 @@ $(function(){
                 <tr>
                   <td width="26">Total:</td>
                   <td width="41"><input type="text" name="dataLcto3" id="dataLcto3" style="width:35px; text-align:right;" /></td>
-                  <td width="55">Calculado:</td>
+                  <td width="55">Promocional:</td>
                   <td width="41"><input type="text" name="dataLcto4" id="dataLcto4" style="width:35px; text-align:right;" /></td>
                   <td width="54">Distribuido:</td>
                   <td width="35"><input type="text" name="dataLcto6" id="dataLcto6" style="width:35px; text-align:right;" /></td>

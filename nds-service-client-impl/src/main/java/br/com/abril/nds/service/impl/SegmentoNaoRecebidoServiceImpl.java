@@ -14,25 +14,14 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.repository.SegmentoNaoRecebidoRepository;
-import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.SegmentoNaoRecebidoService;
 
 @Service
 public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoService {
 
 	@Autowired
-	private TipoSegmentoProdutoRepository tipoSegmentoProdutoRepo;
-	
-	@Autowired
 	private SegmentoNaoRecebidoRepository segmentoNaoRecebidoRepo;
 	
-	@Transactional(readOnly = true)
-	@Override
-	public List<TipoSegmentoProduto> obterTipoSegmentoProduto() {
-		// TODO Auto-generated method stub
-		return tipoSegmentoProdutoRepo.buscarTodos() ;
-	}
-
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaNaoRecebeSegmentoDTO> obterCotasNaoRecebemSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
@@ -43,13 +32,6 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 	@Override
 	public void excluirSegmentoNaoRecebido(Long segmentoNaoRecebidoId) {
 		segmentoNaoRecebidoRepo.removerPorId(segmentoNaoRecebidoId);	
-	}
-
-	@Transactional(readOnly = true)
-	@Override
-	public TipoSegmentoProduto obterTipoProdutoSegmentoPorId(Long id) {
-		// TODO Auto-generated method stub
-		return tipoSegmentoProdutoRepo.buscarPorId(id);
 	}
 
 	@Transactional
@@ -70,7 +52,6 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 	@Override
 	public List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota(
 			FiltroSegmentoNaoRecebidoDTO filtro) {
-		// TODO Auto-generated method stub
 		return segmentoNaoRecebidoRepo.obterSegmentosNaoRecebidosCadastradosNaCota(filtro);
 	}
 
@@ -78,7 +59,6 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 	@Override
 	public List<TipoSegmentoProduto> obterSegmentosElegiveisParaInclusaoNaCota(
 			FiltroSegmentoNaoRecebidoDTO filtro) {
-		// TODO Auto-generated method stub
 		return segmentoNaoRecebidoRepo.obterSegmentosElegiveisParaInclusaoNaCota(filtro);
 	}
 

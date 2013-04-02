@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -706,9 +707,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 			query.setParameter("municipio", filtro.getMunicipio() + "%" );
 		}
+		
+		if (filtro.getStatus() != null && !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS")) {
+			query.setParameter("situacaoCadastro", SituacaoCadastro.valueOf(filtro.getStatus()));
+		}
 
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				CotaDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
 		
 		if (filtro.getPaginacao() != null) {
 
@@ -763,6 +767,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				&& !filtro.getMunicipio().trim().isEmpty()) {
 
 			query.setParameter("municipio", filtro.getMunicipio() + "%" );
+		}
+		
+		if (filtro.getStatus() != null && !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS")) {
+			query.setParameter("situacaoCadastro", SituacaoCadastro.valueOf(filtro.getStatus()));
 		}
 
 		return (Long) query.uniqueResult();
@@ -854,7 +862,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			(filtro.getNomeCota() != null && !filtro.getNomeCota().trim().isEmpty()) ||
 			(filtro.getLogradouro() != null && !filtro.getLogradouro().trim().isEmpty()) ||
 			(filtro.getBairro() != null && !filtro.getBairro().trim().isEmpty()) ||
-			(filtro.getMunicipio() != null && !filtro.getMunicipio().trim().isEmpty())) {
+			(filtro.getMunicipio() != null && !filtro.getMunicipio().trim().isEmpty()) ||
+			(filtro.getStatus() != null && !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS"))) {
 			
 			hql.append(" WHERE ");
 			
@@ -925,6 +934,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			}
 			
 			hql.append(" ( upper(endereco.cidade) like upper(:municipio) )");
+			
+			indAnd = true;
+		}
+		
+		if (filtro.getStatus() != null
+				&& !filtro.getStatus().trim().isEmpty() && !filtro.getStatus().equalsIgnoreCase("TODOS")) {
+
+			if(indAnd) {
+				hql.append(" AND ");
+			}
+			
+			hql.append(" cota.situacaoCadastro =:situacaoCadastro ");
 		}
 
 		
@@ -2692,6 +2713,33 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return (HistoricoVendaPopUpCotaDto) query.uniqueResult();
 	
+	}
+	
+	@Override
+	public boolean cotaVinculadaCotaBase(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(*) from CotaBase");
+		hql.append(" where cota.id = :idCota");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("idCota", idCota);
+		
+		Long count = (Long)query.uniqueResult();
+		
+		return (count > 0);
+	}
+	
+	@Override
+	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray) {
+
+		StringBuilder hql = new StringBuilder("select NUMERO_COTA from cota where cota.NUMERO_COTA in (:cotaIDList)");
+		
+		SQLQuery query = super.getSession().createSQLQuery(hql.toString());
+		query.setParameterList("cotaIDList", cotaIdArray);
+		
+		return query.list();
 	}
 
 }

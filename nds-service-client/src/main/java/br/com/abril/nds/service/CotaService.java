@@ -369,7 +369,7 @@ public interface CotaService {
 	
 	List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
 
-	List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	List<CotaDTO> buscarCotasQueEnquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
 	List<CotaDTO> buscarCotasQueInquadramNoRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
@@ -393,4 +393,8 @@ public interface CotaService {
 	public void apagarTipoCota(Long idCota, String TipoCota);
 	
 	public List<DistribuidorClassificacaoCota> obterListaClassificacao();
+
+	public abstract boolean cotaVinculadaCotaBase(Long idCota);
+	
+	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
 }
