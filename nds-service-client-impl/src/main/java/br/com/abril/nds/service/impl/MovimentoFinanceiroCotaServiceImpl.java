@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
-import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -367,7 +366,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 	@Override
 	public void processarRegistrohistoricoFinanceiro(
-			HistoricoFinanceiroInput valorInput) {
+			HistoricoFinanceiroInput valorInput, Date dataOperacao) {
 		
 		Cota cota = validarHistoricoFinanceiroInput(valorInput);
 		
@@ -443,7 +442,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				|| valorInput.getValorPendente() == null  
 				|| valorInput.getValorPostergado() == null  
 			) {
-			throw new ImportacaoException("Valor nulo."); 
+			throw new ImportacaoException("Valor (futuro, pendente ou postergado) nulo."); 
 		}
 		
 		if (!(
@@ -451,7 +450,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				^ valorInput.getValorPendente().equals(BigDecimal.ZERO)  
 				^ valorInput.getValorPostergado().equals(BigDecimal.ZERO)  
 			)) {
-			throw new ImportacaoException("Mais de um valor com valor."); 
+			throw new ImportacaoException("Mais de um valor (futuro, pendente ou postergado) com valor."); 
 		}
 		
 		if (
@@ -459,12 +458,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				&& valorInput.getValorPendente().equals(BigDecimal.ZERO)  
 				&& valorInput.getValorPostergado().equals(BigDecimal.ZERO)  
 			) {
-			throw new ImportacaoException("Todos os Valores Zerados.");
+			throw new ImportacaoException("Todos os Valores (futuro, pendente e postergado) Zerados.");
 		}
 		
 		Cota cota = cotaService.obterCotaPDVPorNumeroDaCota(valorInput.getNumeroCota());		
 		if (cota == null) {
-			throw new ImportacaoException("Cota inexistente."); 
+			throw new ImportacaoException("Cota " + valorInput.getNumeroCota() + " inexistente."); 
 		}
 		return cota;
 	}

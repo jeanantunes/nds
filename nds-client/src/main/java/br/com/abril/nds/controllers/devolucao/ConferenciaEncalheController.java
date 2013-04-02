@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,7 +42,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
-import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -59,13 +57,10 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.FileImportUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.PDFUtil;
-import br.com.abril.nds.util.TXTUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.ZipFileUtil;
-import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -1235,35 +1230,38 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
-			if(dadosDocumentacaoConfEncalheCota!=null ) {
-				Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
-				this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-			}
+			Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
 			
-			if(dadosDocumentacaoConfEncalheCota!=null) {
+			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
 				
-				try {
-					
-					this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
-					
-				} catch (Exception e){
-					
-					throw new Exception("Cobrança efetuada, erro ao gerar arquivo(s) de cobrança - " + e.getMessage());
-				}
+			try {
+				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
+			} catch (Exception e){
+				throw new Exception("Erro ao gerar documentos da conferência de encalhe - " + e.getMessage());
 			}
 			
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
 			
-			String msgSucess = "Operação efetuada com sucesso.";
-			
-			if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
+			if(dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca()!=null) {
 				
-				msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
+				dados.put("listaMensagens", dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca().getListaMensagens());
+				
+			} else {
+
+				String msgSucess = "";
+				
+				if (listaConferenciaEncalheCotaToSave == null || listaConferenciaEncalheCotaToSave.isEmpty()){
+					msgSucess = "Operação efetuada com sucesso. Nenhum ítem encalhado, total cobrado.";
+				} else {
+					msgSucess = "Operação efetuada com sucesso.";
+				}
+				
+				dados.put("listaMensagens", 	new String[]{msgSucess});
+				
 			}
 			
-			dados.put("listaMensagens", 	new String[]{msgSucess});
 
 			dados.put("indGeraDocumentoConfEncalheCota", dadosDocumentacaoConfEncalheCota.isIndGeraDocumentacaoConferenciaEncalhe());
 			

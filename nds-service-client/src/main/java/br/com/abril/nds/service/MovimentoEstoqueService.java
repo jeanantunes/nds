@@ -33,7 +33,7 @@ public interface MovimentoEstoqueService {
 	
 	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque);
 
-	void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput);
+	void processarRegistroHistoricoVenda(HistoricoVendaInput vendaInput, Date dataOperacao);
 	
 	/**
 	 * Gera movimento para cancelamento de nota, 
@@ -59,4 +59,23 @@ public interface MovimentoEstoqueService {
 	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem);
 	
 	public BigInteger obterReparteDistribuidoProduto(String codigoProduto);
+
+	MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao,
+			Long idUsuario, BigInteger quantidade,
+			TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao,
+			boolean isImportacao);
+
+	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento,
+			Long idProdutoEdicao, Long idCota, Long idUsuario,
+			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque,
+			Date dataOperacao, boolean isHistorico);
+
+	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque, MovimentoEstoque movimentoEstoque, boolean isImportacao);
+
+	MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento,
+			Long idProdutoEdicao, Long idCota, Long idUsuario,
+			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque,
+			Date dataMovimento, Date dataOperacao, Long idLancamento,
+			Long idEstudoCota, boolean isHistorico);
+	
 }

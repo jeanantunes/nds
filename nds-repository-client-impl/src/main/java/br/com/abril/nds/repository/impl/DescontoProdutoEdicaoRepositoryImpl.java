@@ -304,21 +304,40 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 
 	private Query obterDescontoCotaProdutoEdicaoExcessoes(Cota cota, ProdutoEdicao produtoEdicao) {
 		
+		boolean indWhere = false;
+		
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdcfpe.desconto_id as idDesconto ")
-		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
-		    .append("where ")
-		    .append(" vdcfpe.fornecedor_id = :idFornecedor ")
-		    .append(" and vdcfpe.cota_id = :idCota ")
-		    .append(" and vdcfpe.produto_id = :idProduto ")
-		    .append(" and vdcfpe.produto_edicao_id = :idProdutoEdicao ");
+		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ");
 		
+		if (cota != null) {
+		
+			hql.append(" where vdcfpe.cota_id = :idCota ");
+		
+			indWhere = true;
+		}
+
+		if (produtoEdicao != null) {
+
+			hql.append(indWhere ? " and " : " where ")
+			   .append(" vdcfpe.fornecedor_id = :idFornecedor ")
+			   .append(" and vdcfpe.produto_id = :idProduto ")
+			   .append(" and vdcfpe.produto_edicao_id = :idProdutoEdicao ");
+		}
+
 		Query query = getSession().createSQLQuery(hql.toString());
-		//TODO: Validar nulos
-		query.setParameter("idFornecedor", produtoEdicao.getProduto().getFornecedor().getId());
-		query.setParameter("idCota", cota.getId());
-        query.setParameter("idProduto", produtoEdicao.getProduto().getId());
-        query.setParameter("idProdutoEdicao", produtoEdicao.getId());
+		
+		if (cota != null) {
+			
+			query.setParameter("idCota", cota.getId());
+		}
+		
+		if (produtoEdicao != null) {
+			
+			query.setParameter("idProdutoEdicao", produtoEdicao.getId());
+			query.setParameter("idProduto", produtoEdicao.getProduto().getId());
+			query.setParameter("idFornecedor", produtoEdicao.getProduto().getFornecedor().getId());
+		}
         
 		return query;
 	}
@@ -328,17 +347,31 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdcfpe.desconto_id as idDesconto ")
 		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
-		    .append("where ")
-		    .append(" vdcfpe.fornecedor_id = :idFornecedor ")
-		    .append(" and vdcfpe.cota_id = :idCota ")
-		    .append(" and vdcfpe.produto_id = :idProduto ")
-		    .append("and vdcfpe.produto_edicao_id is null ");
+		    .append("where vdcfpe.produto_edicao_id is null ");
+		
+		if (cota != null) {
+			
+			hql.append(" and vdcfpe.cota_id = :idCota ");
+		}
+		
+		if (produtoEdicao != null) {
+
+			hql.append(" and vdcfpe.fornecedor_id = :idFornecedor ")
+		       .append(" and vdcfpe.produto_id = :idProduto ");
+		}
 		
 		Query query = getSession().createSQLQuery(hql.toString());
-		//TODO: Validar nulos
-		query.setParameter("idFornecedor", produtoEdicao.getProduto().getFornecedor().getId());
-		query.setParameter("idCota", cota.getId());
-        query.setParameter("idProduto", produtoEdicao.getProduto().getId());
+
+		if (cota != null) {
+			
+			query.setParameter("idCota", cota.getId());
+		}
+		
+		if (produtoEdicao != null) {
+		
+			query.setParameter("idFornecedor", produtoEdicao.getProduto().getFornecedor().getId());
+	        query.setParameter("idProduto", produtoEdicao.getProduto().getId());
+		}
         
 		return query;
 	}
@@ -347,18 +380,32 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdcfpe.desconto_id as idDesconto ")
-		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ") 
-		    .append("where ")
-		    .append(" vdcfpe.fornecedor_id = :idFornecedor ")
-		    .append(" and vdcfpe.cota_id = :idCota ")
-			.append(" and vdcfpe.produto_id is null ")
+		    .append("from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
+			.append(" where vdcfpe.produto_id is null ")
 			.append(" and vdcfpe.produto_edicao_id is null ");
 		
-		Query query = getSession().createSQLQuery(hql.toString());
-		//TODO: Validar nulos
-		query.setParameter("idFornecedor", produtoEdicao.getProduto().getFornecedor().getId());
-		query.setParameter("idCota", cota.getId());
+		if (cota != null) {
+			
+			hql.append(" and vdcfpe.cota_id = :idCota ");
+		}
+		
+		if (produtoEdicao != null) {
+			
+			hql.append(" and vdcfpe.fornecedor_id = :idFornecedor ");
+		}
 
+		Query query = getSession().createSQLQuery(hql.toString());
+		
+		if (cota != null) {
+			
+			query.setParameter("idCota", cota.getId());
+		}
+
+		if (produtoEdicao != null) {
+		
+			query.setParameter("idFornecedor", produtoEdicao.getProduto().getFornecedor().getId());
+		}
+		
 		return query;
 	}
 	
@@ -366,12 +413,19 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" d.id ")
-		    .append("from Fornecedor f join f.desconto d  ") 
-		    .append("where f.id = :idFornecedor ");
+		    .append("from Fornecedor f join f.desconto d  ");
+		
+		if (fornecedor != null) {
+			 
+		    hql.append(" where f.id = :idFornecedor ");
+		}
 		
 		Query query = getSession().createQuery(hql.toString());
-		//TODO: Validar nulos
-		query.setParameter("idFornecedor", fornecedor.getId());
+		
+		if (fornecedor != null) {
+			 
+			query.setParameter("idFornecedor", fornecedor.getId());
+		}
 
 		return query;
 	}
@@ -380,15 +434,21 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdpe.desconto_id as idDesconto ")
-		    .append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ") 
-		    .append("where ")
-		    .append(" vdpe.codigo_produto = :codigoProduto ")
-		    .append(" and vdpe.numero_edicao = :numeroEdicao ");
+		    .append(" from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ");
 		
-		//TODO: Validar nulos
+		if (produtoEdicao != null) {
+		
+			hql.append(" where vdpe.codigo_produto = :codigoProduto ")
+			   .append(" and vdpe.numero_edicao = :numeroEdicao ");
+		}
+
 		Query query = getSession().createSQLQuery(hql.toString());
-		query.setParameter("codigoProduto", produtoEdicao.getProduto().getCodigo());
-		query.setParameter("numeroEdicao", produtoEdicao.getNumeroEdicao());
+
+		if (produtoEdicao != null) {
+		
+			query.setParameter("codigoProduto", produtoEdicao.getProduto().getCodigo());
+			query.setParameter("numeroEdicao", produtoEdicao.getNumeroEdicao());
+		}
 
 		return query;
 	}
@@ -397,14 +457,20 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		
 		StringBuilder hql = new StringBuilder("select ")
 			.append(" vdpe.desconto_id as idDesconto ")
-		    .append("from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ") 
-		    .append("where ")
-		    .append("vdpe.codigo_produto = :codigoProduto ")
-		    .append("and vdpe.numero_edicao is null ");
+		    .append(" from VIEW_DESCONTO_PRODUTOS_EDICOES as vdpe ")
+		    .append(" where vdpe.numero_edicao is null ");
 		
-		//TODO: Validar nulos
+		if (produtoEdicao != null) {
+			
+			hql.append(" and vdpe.codigo_produto = :codigoProduto ");
+		}
+		
 		Query query = getSession().createSQLQuery(hql.toString());
-		query.setParameter("codigoProduto", produtoEdicao.getProduto().getCodigo());
+
+		if (produtoEdicao != null) {
+		
+			query.setParameter("codigoProduto", produtoEdicao.getProduto().getCodigo());
+		}
 
 		return query;
 	}

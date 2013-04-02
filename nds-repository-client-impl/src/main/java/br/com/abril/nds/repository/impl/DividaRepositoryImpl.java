@@ -445,7 +445,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			params.put("statusCota",filtro.getStatusCota());
 		}
 		
-		if (filtro.getSituacaoEmAberto() || filtro.getSituacaoNegociada() || filtro.getSituacaoPaga()) {
+		if (filtro.getSituacaoEmAberto() != null && filtro.getSituacaoEmAberto()  
+				|| filtro.getSituacaoNegociada() != null && filtro.getSituacaoNegociada()  
+				|| filtro.getSituacaoPaga() != null && filtro.getSituacaoPaga()) {
 		
 			sql.append(" AND ( ");
 			

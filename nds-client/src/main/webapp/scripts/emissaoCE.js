@@ -97,7 +97,7 @@ var EmissaoCEController = $.extend(true, {
 	
 			if(!row.cell.nomeCota){
 				row.cell.nomeCota = "";
-			}	
+			}
 		});
 		
 		$(".grids", this.workspace).show();
