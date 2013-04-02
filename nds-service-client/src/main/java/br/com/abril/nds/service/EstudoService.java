@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.Date;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 
@@ -23,5 +24,7 @@ public interface EstudoService {
 	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId);
 	
 	void excluirEstudo(long id);
+
+	void criarNovoEstudo(ProdutoDistribuicaoVO produto);
 	
 }

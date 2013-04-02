@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.service.EstudoService;
 
@@ -91,6 +95,21 @@ public class EstudoServiceImpl implements EstudoService {
 	@Transactional
 	public void excluirEstudo(long id) {
 		this.estudoRepository.removerPorId(id);
+	}
+
+	@Override
+	public void criarNovoEstudo(ProdutoDistribuicaoVO produto) {
+	    Estudo estudo = new Estudo();
+	    estudo.setLiberado(0);
+	    estudo.setReparteDistribuir(produto.getRepDistrib());
+	    estudo.setDataLancamento(produto.getDataLanctoSemFormatacao());
+	    estudo.setDataCadastro(new Date());
+	    estudo.setDistribuicaoPorMultiplos(0);
+	    estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+	    estudo.setQtdeReparte(produto.getRepDistrib());
+	    estudo.setProdutoEdicao(new ProdutoEdicao(produto.getIdProdutoEdicao().longValue()));
+	    estudoRepository.adicionar(estudo);
+	    produto.setIdEstudo(BigInteger.valueOf(estudo.getId()));
 	}
 	
 }

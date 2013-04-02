@@ -6,9 +6,14 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
@@ -18,18 +23,20 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CalendarioService;
-import br.com.abril.nds.service.EstudoServiceEstudo;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.SomarEstudosService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.HTMLTableUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -48,6 +55,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/matrizDistribuicao")
 public class MatrizDistribuicaoController extends BaseController {
 
+	Logger log = LoggerFactory.getLogger(MatrizDistribuicaoController.class);
+	
     @Autowired
     private Result result;
 
@@ -67,7 +76,7 @@ public class MatrizDistribuicaoController extends BaseController {
     private CalendarioService calendarioService;
     
     @Autowired
-    private EstudoServiceEstudo estudoServiceEstudo;
+    private EstudoAlgoritmoService estudoAlgoritmoService;
     
     @Autowired
 	private SomarEstudosService somarEstudosService;
@@ -376,15 +385,30 @@ public class MatrizDistribuicaoController extends BaseController {
 
     @Post
     public void gerarEstudoAutomatico(String codigoProduto, BigDecimal reparte) {
+    	EstudoTransient estudoAutomatico;
     	try {
-    		estudoServiceEstudo.gerarEstudoAutomatico(new ProdutoEdicaoBase(codigoProduto), reparte);
+    		estudoAutomatico = estudoAlgoritmoService.gerarEstudoAutomatico(new ProdutoEdicaoEstudo(codigoProduto), reparte.toBigInteger());
     	} catch (Exception e) {
+    		log.error("Erro na geração automatica do estudo.", e);
     		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
     	}
-    	result.nothing();
+    	String htmlEstudo = estudoToHTML(estudoAutomatico);
+//    	result.use(Results.json()).from(Results.nothing()).serialize();
+//    	result.use(Results.json()).from(estudoAutomatico, "estudo").recursive().serialize();
+    	result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
     }
 	
-    @Post
+    private String estudoToHTML(EstudoTransient estudoAutomatico) {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico));
+    	sb.append("<br>");
+    	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico.getEdicoesBase()));
+    	sb.append("<br>");
+    	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico.getCotas()));
+		return sb.toString();
+	}
+
+	@Post
 	public void somarEstudos(Long idEstudoBase, ProdutoDistribuicaoVO distribuicaoVO) {
 		
 		somarEstudosService.somarEstudos(idEstudoBase, distribuicaoVO);
