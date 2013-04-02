@@ -541,6 +541,7 @@ public class TransportadorController extends BaseController {
 
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void editarTransportador(Long referencia){
 		
 		this.httpSession.setAttribute(ID_TRANSPORTADORA_EDICAO, referencia);
@@ -584,6 +585,7 @@ public class TransportadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void excluirTransportador(Long referencia){
 		
 		this.transportadorService.excluirTransportador(referencia);
@@ -671,6 +673,7 @@ public class TransportadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void adicionarVeiculo(Veiculo veiculo){
 		
 		this.validarDadosEntradaVeiculo(veiculo);
@@ -732,6 +735,7 @@ public class TransportadorController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void editarVeiculo(Long referencia){
 		
 		Veiculo veiculo = null;
@@ -761,6 +765,7 @@ public class TransportadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void excluirVeiculo(Long referencia){
 		
 		if (referencia != null){
@@ -882,6 +887,7 @@ public class TransportadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void adicionarMotorista(Motorista motorista){
 		
 		this.validarDadosEntradaMotorista(motorista);
@@ -981,6 +987,7 @@ public class TransportadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void excluirMotorista(Long referencia){
 		
 		if (referencia != null){
@@ -1220,6 +1227,7 @@ public class TransportadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void excluirAssociacao(Long referencia){
 		
 		Set<Long> removerAssoc = this.obterAssociacoesRemoverSessao();
@@ -1327,6 +1335,7 @@ public class TransportadorController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_TRANSPORTADOR_ALTERACAO)
 	public void carregarCotasAtendidas(String sortorder, String sortname){
 		
 		List<CotaAtendidaTransportadorVO> cotasAtendidas;

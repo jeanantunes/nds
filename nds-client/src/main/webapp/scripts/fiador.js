@@ -8,26 +8,28 @@ var fiadorController = $.extend(true, {
 			fiadorController.alteracaoDadosBasicos = true;
 		},
 		
-		novoFiador: function (){
+		novoFiador: function (callback){
 			
-			$.getJSON(contextPath + '/cadastro/fiador/novoFiador', null);
+			$.getJSON(contextPath + '/cadastro/fiador/novoFiador', null, function(result){callback();});
 		},
 		
 		novoFiadorCPF:function (){
 			
-			fiadorController.novoFiador();
-			
-			$(".fiadorController-inicioAtividadeNovo").show();
-			$(".fiadorController-inicioAtividadeEdicao").hide();
-			
-			fiadorController.popupCadastroFiadorCPF();
+			fiadorController.novoFiador(function() {
+				
+				$(".fiadorController-inicioAtividadeNovo").show();
+				$(".fiadorController-inicioAtividadeEdicao").hide();
+				
+				fiadorController.popupCadastroFiadorCPF();
+			});
 		},
 		
 		novoFiadorCNPJ:function (){
 			
-			fiadorController.novoFiador();
-			
-			fiadorController.popupCadastroFiadorCNPJ();
+			fiadorController.novoFiador(function() {
+				fiadorController.popupCadastroFiadorCNPJ();
+			});
+						
 		},
 		
 		popupCadastroFiadorCPF:function () {

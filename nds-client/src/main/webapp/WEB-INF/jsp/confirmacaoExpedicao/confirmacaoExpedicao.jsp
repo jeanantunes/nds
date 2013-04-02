@@ -1,4 +1,4 @@
-<input id="apenasVizualizacao" type="hidden" value="${apenasVizualizacao}">
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 
 <head>
 

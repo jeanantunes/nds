@@ -297,6 +297,10 @@ var alteracaoCotaController = $.extend(true, {
 	},
 	
 	carregarAlteracao : function() {
+		
+		if(!verificarPermissaoAcesso(this.workspace))
+			return;
+		
 		var linhasSelecionadas = 0;
 		
 		this.listListaLinhaSelecao = new Array();
