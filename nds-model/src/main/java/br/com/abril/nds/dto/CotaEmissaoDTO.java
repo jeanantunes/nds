@@ -198,7 +198,7 @@ public class CotaEmissaoDTO implements Serializable{
 	 * @param qtdeExemplares the qtdeExemplares to set
 	 */
 	public void setQtdeExemplares(BigInteger qtdeExemplares) {
-		this.qtdeExemplares = (qtdeExemplares==null)?null:qtdeExemplares.intValue();
+		this.qtdeExemplares = (qtdeExemplares==null)?0:qtdeExemplares.intValue();
 	}
 	/**
 	 * @return the vlrTotalCe
@@ -210,7 +210,7 @@ public class CotaEmissaoDTO implements Serializable{
 	 * @param vlrTotalCe the vlrTotalCe to set
 	 */
 	public void setVlrTotalCe(BigDecimal vlrTotalCe) {
-		this.vlrTotalCe = CurrencyUtil.formatarValor(vlrTotalCe);
+		this.vlrTotalCe = CurrencyUtil.formatarValor( (vlrTotalCe == null)?BigDecimal.ZERO:vlrTotalCe);
 	}
 	/**
 	 * @return the produtos
