@@ -561,7 +561,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @return BigDecimal
 	 */
-	protected BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao) {
+	@Transactional(readOnly = true)
+	public BigDecimal obterValorTotalReparte(Integer numeroCota, Date dataOperacao) {
 		
 		BigDecimal reparte =
 			chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
@@ -575,6 +576,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return reparte;
 	}
 	
+	@Transactional(readOnly = true)
 	public boolean isCotaComReparteARecolherNaDataOperacao(Integer numeroCota) {
 		
 		BigDecimal valorTotal = obterValorTotalReparte(numeroCota, distribuidorService.obterDataOperacaoDistribuidor());
