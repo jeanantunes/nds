@@ -17,6 +17,13 @@ padding: 15px;
 display: none;
 }
 
+.gridLinha {
+  background:#CCFFFF; 
+}
+
+
+
+
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/matrizDistribuicao.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicaoVendaMedia.js"></script>
