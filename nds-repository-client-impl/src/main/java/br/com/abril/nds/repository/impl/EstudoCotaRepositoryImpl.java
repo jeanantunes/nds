@@ -166,5 +166,4 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
 		query.executeUpdate();
 	}
-
 }
