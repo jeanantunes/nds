@@ -1,5 +1,10 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+
+
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
+
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
@@ -9,7 +14,8 @@
 <script language="javascript" type="text/javascript">
 
 	$(function() {
-		fecharDiaController.init();		
+		fecharDiaController.init();
+		bloquearItensEdicao(fecharDiaController.workspace);
 	});		
 	
 </script>
@@ -361,7 +367,7 @@
               <td width="111" id="dataDaOperacao">${dataOperacao}</td>
               <td width="185">
               	<span class="bt_novos" title="Iniciar Fechamento do Dia">
-              		<a href="javascript:;" onclick="fecharDiaController.popup_processos();">
+              		<a isEdicao="true" href="#" onclick="fecharDiaController.popup_processos();">
               		<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_devolucao.png">Iniciar Fechamento do Dia</a>
               	</span>
               </td>

@@ -1,3 +1,5 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.js"></script>
@@ -11,6 +13,7 @@
     var pesquisaProdutoRecebimentoFisico = new PesquisaProduto(recebimentoFisicoController.workspace);
 	$(function(){
 		recebimentoFisicoController.init();	
+		bloquearItensEdicao(recebimentoFisicoController.workspace);
     });
 	
 </script>
@@ -26,10 +29,6 @@
 </head>
 
 <body>
-
-
-	
-	
 
 	<form action="/recebimentoFisico" id="form_novo_item">
 
@@ -167,7 +166,7 @@
 		<div class="area">
 			<div id="botaoNovoProdutoOpaco" style="float:left;">
 							<span class="bt_novos" id="bt_novo_produtoOpaco"> 
-								<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Incluir Novo Produto"> 
+								<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Incluir Novo Produto"> 
 									<img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"  />
 								</a> 
 							</span>
@@ -175,7 +174,7 @@
 
 					<div id="botaoNovoProduto" style="float:left;">
 							<span class="bt_novos" id="bt_novo_produto"> 
-								<a href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();" rel="tipsy" title="Incluir Novo Produto"> 
+								<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.popup_novo_item();" rel="tipsy" title="Incluir Novo Produto"> 
 									<img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"  />
 								</a> 
 							</span>
@@ -183,7 +182,7 @@
 
 					<div id="botaoAdicionar" style="float:left;">
 							<span class="bt_novos" id="bt_adicionar"> 
-								<a href="javascript:;" onclick="recebimentoFisicoController.popup_adicionar();" rel="tipsy" title="Adicionar Nota Fiscal">  
+								<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.popup_adicionar();" rel="tipsy" title="Adicionar Nota Fiscal">  
 									<img src="${pageContext.request.contextPath}/images/ico_expedicao_box.gif" border="0"  />
 								</a> 
 							</span>
@@ -192,19 +191,19 @@
 					<div id="botoesNormais" style="float:left; width:140px;">	
 
 						<span class="bt_novos"> 
-							<a href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()" rel="tipsy" title="Salvar">
+							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.salvarDadosItensDaNotaFiscal()" rel="tipsy" title="Salvar">
 								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"  border="0" /> 
 							</a> 
 						</span>
 
 						<span class="bt_novos"> 
-							<a href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()" rel="tipsy" title="Cancelar">
+							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.cancelarNotaRecebimentoFisico()" rel="tipsy" title="Cancelar">
 								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"   border="0" />
 							</a> 
 						</span>
 
 						<span class="bt_novos">
-							<a href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
+							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
 							</a>
 						</span>
@@ -213,19 +212,19 @@
 					<div id="botoesOpacos">
 
 						<span class="bt_novos"> 
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Salvar"> 
+							<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Salvar"> 
 								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif"  border="0" />
 							</a> 
 						</span>
 
 						<span class="bt_novos"> 
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Cancelar"> 
+							<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Cancelar"> 
 								<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" border="0" /> 
 							</a> 
 						</span>
 
 						<span class="bt_novos">
-							<a href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento FÃ­sico"> 
+							<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento FÃ­sico"> 
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0"/>
 							</a>
 						</span>						
@@ -323,7 +322,7 @@
 
 					<span class="bt_sellAll" style="float:right; margin-right:40px;">
 						<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
-						<input type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
+						<input isEdicao="true" type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
 					</span>
 
 				</div>

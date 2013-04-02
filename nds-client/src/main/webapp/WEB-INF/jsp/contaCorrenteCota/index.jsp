@@ -243,10 +243,15 @@
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="33">Cota:</td>
-              <td width="92"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
+              <td width="92">
+              	<input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
+              	<input type="hidden" name="filtroViewContaCorrenteCota.cotaHidden" id="cotaHidden"/>
               </td>
               <td width="41">Nome:</td>
-              <td width="240"><input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
+              <td width="240">
+              	<input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/>
+              	<input type="hidden" name="nomeCotaHidden" id="nomeCotaHidden"/>
+              </td>
               
 			   <td width="10"></td>
 			  

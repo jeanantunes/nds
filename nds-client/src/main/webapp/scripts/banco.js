@@ -151,7 +151,10 @@ var bancoController = $.extend(true, {
 		},
 		
 	    popup : function() {
-		
+	    	
+	    	if(!verificarPermissaoAcesso(this.workspace))
+				return;
+	    	
 	    	bancoController.limparTelaCadastroBanco();
 			
 			$( "#dialog-novo", this.workspace).dialog({
@@ -198,7 +201,8 @@ var bancoController = $.extend(true, {
 		},
 		
 		popup_excluir : function(idBanco) {
-		
+			
+			
 			$( "#dialog-excluir", this.workspace ).dialog({
 				resizable: false,
 				height:170,

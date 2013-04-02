@@ -662,8 +662,6 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	carregarDialog : 			function (id, codigoProduto) {
 		
-		produtoEdicaoController.iniciaTab();
-
 		if (codigoProduto == "") {
 			codigoProduto = $("#produtoEdicaoController-codigoProduto",this.workspace).val();
 		}
@@ -674,6 +672,32 @@ var produtoEdicaoController =$.extend(true,  {
 				{ codigoProduto : codigoProduto, 
 					idProdutoEdicao : id},
 					function(result) {
+						
+						var title = (id)?"Editar Edição":"Incluir Nova Edição";
+						
+						$( "#produtoEdicaoController-dialog-novo" ).dialog({
+							resizable: false,
+							height:540,
+							width:960,
+							modal: true,
+							title: title,
+							buttons: {
+								"Confirmar": function() {
+
+									produtoEdicaoController.salvarProdutoEdicao(true);
+									
+									
+								},
+								"Cancelar": function() {
+									$("#produtoEdicaoController-dialog-novo",this.workspace).dialog( "close" );
+								}
+							},
+							form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
+						});
+						
+						produtoEdicaoController.iniciaTab();
+						
+						produtoEdicaoController.prepararTela(id, codigoProduto);
 						
 						if (result) {
 							$("#produtoEdicaoController-idProdutoEdicao").val(result.id);
@@ -772,18 +796,7 @@ var produtoEdicaoController =$.extend(true,  {
 							}
 						}
 					},
-					function(result) { 
-						$("#produtoEdicaoController-dialog-novo",this.workspace).dialog( "close" );
-						
-						var mensagens = (result.mensagens) ? result.mensagens : result;   
-						var tipoMensagem = mensagens.tipoMensagem;
-						var listaMensagens = mensagens.listaMensagens;
-		
-						if (tipoMensagem && listaMensagens) {
-
-							exibirMensagem(tipoMensagem, listaMensagens);
-						}
-					},
+					null,
 					true
 		);
 
@@ -820,7 +833,7 @@ var produtoEdicaoController =$.extend(true,  {
 			exibirMensagem('WARNING', ['Por favor, escolha um produto para adicionar a Edi&ccedil;&atilde;o!'], "");
 			return;
 		}
-		var title = (id)?"Editar Edição":"Incluir Nova Edição";
+		
 		if (codigo == "" || codigo == undefined) {
 			codigo = $("#produtoEdicaoController-codigoProduto",this.workspace).val();
 			
@@ -829,28 +842,8 @@ var produtoEdicaoController =$.extend(true,  {
 		if (nome == undefined) {
 			nome = "";
 		}
-
-		$( "#produtoEdicaoController-dialog-novo" ).dialog({
-			resizable: false,
-			height:540,
-			width:960,
-			modal: true,
-			title: title,
-			buttons: {
-				"Confirmar": function() {
-
-					produtoEdicaoController.salvarProdutoEdicao(true);
-					
-					
-				},
-				"Cancelar": function() {
-					$("#produtoEdicaoController-dialog-novo",this.workspace).dialog( "close" );
-				}
-			},
-			form: $("#produtoEdicaoController-dialog-novo", this.workspace).parents("form")
-		});
-
-		produtoEdicaoController.prepararTela(id, codigo);
+		
+		
 		produtoEdicaoController.carregarDialog(id, codigo);
 	},
 	
@@ -1032,17 +1025,7 @@ var produtoEdicaoController =$.extend(true,  {
 								produtoEdicaoController.carregarImagemCapa(null);
 								$(".edicoesGrid").flexReload();
 							},
-							function(result) {
-								$("#produtoEdicaoController-dialog-excluir").dialog("close");
-
-								var tipoMensagem = result.tipoMensagem;
-								var listaMensagens = result.listaMensagens;
-
-								if (tipoMensagem && listaMensagens) {
-
-									exibirMensagem(tipoMensagem, listaMensagens);
-								}
-							},
+							null,
 							true
 					);
 					

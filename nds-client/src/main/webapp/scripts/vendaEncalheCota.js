@@ -144,7 +144,7 @@ var vendaEncalhe = $.extend(true, {
 			this.exportButtons(idConsolidado);
 			
 			
-			 $("#datacotanome-venda-encalhe").html(dataEscolhida+" Cota: "+$("#cota").val()+" - "+$("#nomeCota").val());
+			 $("#datacotanome-venda-encalhe").html(dataEscolhida+" Cota: "+$("#cotaHidden").val()+" - "+$("#nomeCotaHidden").val());
 			 
 			 if (numeroBox){
 				 
