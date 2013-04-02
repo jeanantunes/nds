@@ -30,6 +30,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" lanc.ID as idLancamento,")
 		.append(" prod.CODIGO as codigoProduto,") 
 		.append(" prod.NOME as nomeProduto,")
+		.append(" prodEdic.ID as idProdutoEdicao,")
 		.append(" prodEdic.NUMERO_EDICAO as numeroEdicao,")
 		.append(" prod.PERIODICIDADE as periodo, ")
 		.append(" prodEdic.PRECO_VENDA as precoVenda,")
@@ -39,12 +40,12 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" estoqueProdJuram.QTDE as juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
 		.append(" lanc.REPARTE_PROMOCIONAL as promo,")
-		.append(" DATE_FORMAT(lanc.DATA_LCTO_DISTRIBUIDOR,'%d/%m/%Y') as dataLancto,")
+		.append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
 		.append(" case estudo.liberado when 1 then 'LIBERADO'")
 		.append(" else ''")
 	    .append(" end as liberado,")
 	    .append(" estudo.ID as idEstudo,")
-	    .append(" prodEdic.REPARTE_DISTRIBUIDO as reparte,")
+	    .append(" lanc.REPARTE as reparte,")
 	    .append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
 	    .append(" lanc.REPARTE as lancto")
 	    .append(" from produto prod")
@@ -64,7 +65,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
 		.append(" and lanc.EXPEDICAO_ID is null")
 	 	.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev");
-	 
+		
 	 	if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
 	 		sql.append(" and forn.id in (:idFornecedores)");
 	 	}
@@ -96,7 +97,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" prod.CODIGO as codigoProduto,")
 		.append(" prod.NOME as nomeProduto,")
 		.append(" prodEdic.NUMERO_EDICAO as numeroEdicao,")
-		.append(" DATE_FORMAT(lanc.DATA_LCTO_DISTRIBUIDOR,'%d/%m/%Y') as dataLancto,")
+		.append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
 	    .append(" prodEdic.REPARTE_DISTRIBUIDO as reparte,")
 	    .append(" tpClassProd.DESCRICAO as classificacao")
 	    .append(" from produto prod")

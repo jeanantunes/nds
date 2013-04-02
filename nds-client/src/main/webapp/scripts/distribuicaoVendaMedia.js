@@ -2,11 +2,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	
 	var url = pathTela;
 	var T = this;
-	var produtoEdicaoBases = [];
-	var produtoEdicaoPesquisaBases = [];
-	var _workspace = workspace;
-	var oldTabContent = '';
-	var oldTabHeight = 0;
+//	var _workspace = workspace;
 	
 	this.confirmarProdutosEdicaoBasePopup = function(){
 		var data = [];
@@ -189,14 +185,9 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 	};
 	
-	var componenteBonificacaoSelecionado = null;
-	var elementosBonificacao = [];
-
-	var bonificacaoSelecionados = [];
-	
 	this.checkComponenteBonificaca = function(value, descricao, enumValue){
 		if(T.componenteBonificacaoSelecionado != null){
-			$("#componenteBonificacao" + T.componenteBonificacaoSelecionado.value).removeAttr("checked")
+			$("#componenteBonificacao" + T.componenteBonificacaoSelecionado.value).removeAttr("checked");
 		}
 		$("#componenteBonificacao" + value).attr("checked", "checked");
 		T.componenteBonificacaoSelecionado = {descricao : descricao, value : value, enumValue : enumValue};
@@ -365,32 +356,9 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.cancelar = function(){
-		$('#matrizDistribuicaoContent').show();
-		$('#telasAuxiliaresContent').hide();
-	};
-
-	
-	this.analise = function(){
-		$.get(
-			pathTela + '/matrizDistribuicao/histogramaPosEstudo', //url
-			null, // parametros
-			function(response){ // onSucessCallBack
-				$('#matrizDistribuicaoContent').hide();
-				$('#telasAuxiliaresContent').html(response);
-				$('#telasAuxiliaresContent').show();
-
-				params = [];
-				
-				for(var prop in distribuicaoVendaMedia.matrizSelecionada){
-					params.push({
-						name : "selecionado." + prop, value : distribuicaoVendaMedia.matrizSelecionada[prop]
-					});
-				}
-				
-				histogramaPosEstudoController.matrizSelecionado = distribuicaoVendaMedia.matrizSelecionada;
-				histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(params);
-			}
-		);
+		
+		$(".ui-tabs-selected").find("span").click();
+		$("a[href='"+pathTela+"/matrizDistribuicao']").click();
 	};
 	
 };

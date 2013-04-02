@@ -7,9 +7,8 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.correcaovendas.CorrecaoIndividual;
 import br.com.abril.nds.process.medias.Medias;
@@ -25,81 +24,77 @@ import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
  * Processo Anterior: {@link AjusteCota} Próximo Processo: {@link VendaMediaFinal} </p>
  */
 @Component
-public class JornaleirosNovos extends ProcessoAbstrato {
+public class JornaleirosNovos {
 
-    @Autowired
-    private CotaDAO cotaDAO;
-    
-    @Autowired
-    private ProdutoEdicaoDAO produtoEdicaoDAO;
-    
-    @Autowired
-    private Medias medias;
-    
-    @Autowired
-    private CorrecaoIndividual correcaoIndividual;
-     
-    @Override
-    protected void executarProcesso() throws Exception {
+	@Autowired
+	private CotaDAO cotaDAO;
 
-	Cota cota = (Cota) super.genericDTO;
-	cota = cotaDAO.getIndiceAjusteCotaEquivalenteByCota(cota);
-	
-	if ((cota.getEquivalente() != null) && (cota.getEquivalente().size() > 0)) {
-	    cota.setIndiceAjusteEquivalente(cota.getEquivalente().get(0).getIndiceAjusteEquivalente());
-	} 
-	
-	if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
+	@Autowired
+	private ProdutoEdicaoDAO produtoEdicaoDAO;
 
-	    BigDecimal totalVendaMediaCorrigidaEquivalente = BigDecimal.ZERO;
+	@Autowired
+	private Medias medias;
 
-	    for (ProdutoEdicao produtoEdicao : cota.getEdicoesRecebidas()) {
+	@Autowired
+	private CorrecaoIndividual correcaoIndividual;
 
-		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
+	public void executar(CotaEstudo cota) throws Exception {
 
-		    int iEquivalente = 0;
-		    while (iEquivalente < cota.getEquivalente().size()) {
+		cota = cotaDAO.getIndiceAjusteCotaEquivalenteByCota(cota);
 
-			Cota cotaEquivalente = cota.getEquivalente().get(iEquivalente);
+		if ((cota.getEquivalente() != null) && (cota.getEquivalente().size() > 0)) {
+			cota.setIndiceAjusteEquivalente(cota.getEquivalente().get(0).getIndiceAjusteEquivalente());
+		} 
 
-			cotaEquivalente.setEdicoesRecebidas(produtoEdicaoDAO.getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
+		if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
 
-			if (cotaEquivalente.getEdicoesRecebidas() != null && !cotaEquivalente.getEdicoesRecebidas().isEmpty()) {
+			BigDecimal totalVendaMediaCorrigidaEquivalente = BigDecimal.ZERO;
 
-			    int iProdutoEdicaoEquivalente = 0;
-			    while (iProdutoEdicaoEquivalente < cotaEquivalente.getEdicoesRecebidas().size()) {
+			for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
 
-				ProdutoEdicao produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
+				if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
 
-				correcaoIndividual.setGenericDTO(produtoEdicaoEquivalente);
-				correcaoIndividual.executar();
+					int iEquivalente = 0;
+					while (iEquivalente < cota.getEquivalente().size()) {
 
-				iProdutoEdicaoEquivalente++;
-			    }
+						CotaEstudo cotaEquivalente = cota.getEquivalente().get(iEquivalente);
 
-			    medias.setGenericDTO(cotaEquivalente);
-			    medias.executar();
+						cotaEquivalente.setEdicoesRecebidas(produtoEdicaoDAO.getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
 
-			    BigDecimal vendaMediaCorrigidaEquivalente = cotaEquivalente.getVendaMedia();
+						if (cotaEquivalente.getEdicoesRecebidas() != null && !cotaEquivalente.getEdicoesRecebidas().isEmpty()) {
 
-			    if (vendaMediaCorrigidaEquivalente.compareTo(BigDecimal.ZERO) == 1)
-				totalVendaMediaCorrigidaEquivalente = totalVendaMediaCorrigidaEquivalente.add(vendaMediaCorrigidaEquivalente);
+							int iProdutoEdicaoEquivalente = 0;
+							while (iProdutoEdicaoEquivalente < cotaEquivalente.getEdicoesRecebidas().size()) {
+
+								ProdutoEdicaoEstudo produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
+
+								correcaoIndividual.executar(produtoEdicaoEquivalente);
+
+								iProdutoEdicaoEquivalente++;
+							}
+
+							medias.executar(cotaEquivalente);
+
+							BigDecimal vendaMediaCorrigidaEquivalente = cotaEquivalente.getVendaMedia();
+
+							if (vendaMediaCorrigidaEquivalente.compareTo(BigDecimal.ZERO) == 1)
+								totalVendaMediaCorrigidaEquivalente = totalVendaMediaCorrigidaEquivalente.add(vendaMediaCorrigidaEquivalente);
+						}
+
+						iEquivalente++;
+					}
+				}
 			}
-			
-			iEquivalente++;
-		    }
+
+			if (totalVendaMediaCorrigidaEquivalente.compareTo(BigDecimal.ZERO) == 1) {
+
+				BigDecimal vendaMediaCorrigidaNovo = BigDecimal.ZERO;
+				BigDecimal qtdeEquivalente = new BigDecimal(cota.getEquivalente().size());
+				vendaMediaCorrigidaNovo = totalVendaMediaCorrigidaEquivalente.divide(qtdeEquivalente, 2, BigDecimal.ROUND_FLOOR);
+				vendaMediaCorrigidaNovo = vendaMediaCorrigidaNovo.multiply(cota.getIndiceAjusteEquivalente()).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_FLOOR);
+
+				cota.setVendaMedia(vendaMediaCorrigidaNovo);
+			}
 		}
-	    }
-	    
-	    if (totalVendaMediaCorrigidaEquivalente.compareTo(BigDecimal.ZERO) == 1) {
-
-		BigDecimal vendaMediaCorrigidaNovo = BigDecimal.ZERO;
-		BigDecimal qtdeEquivalente = new BigDecimal(cota.getEquivalente().size());
-		vendaMediaCorrigidaNovo = totalVendaMediaCorrigidaEquivalente.divide(qtdeEquivalente, 2, BigDecimal.ROUND_FLOOR);
-		vendaMediaCorrigidaNovo = vendaMediaCorrigidaNovo.multiply(cota.getIndiceAjusteEquivalente()).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_FLOOR);
-
-		cota.setVendaMedia(vendaMediaCorrigidaNovo);
-	    }
 	}
-    }
 }

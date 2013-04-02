@@ -6,9 +6,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
@@ -21,47 +20,44 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * </p>
  */
 @Component
-public class VendaCrescente extends ProcessoAbstrato {
+public class VendaCrescente {
 
-    @Override
-    protected void executarProcesso() {
+	protected void executar(CotaEstudo cota) {
 
-	BigDecimal indiceVendaCrescente = BigDecimal.ONE;
+		BigDecimal indiceVendaCrescente = BigDecimal.ONE;
 
-	Cota cota = (Cota) super.getGenericDTO();
+		List<ProdutoEdicaoEstudo> listProdutoEdicao = cota.getEdicoesRecebidas();
 
-	List<ProdutoEdicao> listProdutoEdicao = cota.getEdicoesRecebidas();
+		List<Boolean> listDivBoolean = new ArrayList<Boolean>();
 
-	List<Boolean> listDivBoolean = new ArrayList<Boolean>();
+		if (listProdutoEdicao != null && listProdutoEdicao.size() >= 4) {
 
-	if (listProdutoEdicao != null && listProdutoEdicao.size() >= 4) {
+			int iProdutoEdicao = 0;
+			while (iProdutoEdicao < listProdutoEdicao.size()) {
 
-	    int iProdutoEdicao = 0;
-	    while (iProdutoEdicao < listProdutoEdicao.size()) {
+				ProdutoEdicaoEstudo produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
+				ProdutoEdicaoEstudo previousProdutoEdicao = null;
 
-		ProdutoEdicao produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
-		ProdutoEdicao previousProdutoEdicao = null;
+				if (iProdutoEdicao > 0) {
 
-		if (iProdutoEdicao > 0) {
+					previousProdutoEdicao = listProdutoEdicao.get(iProdutoEdicao - 1);
 
-		    previousProdutoEdicao = listProdutoEdicao.get(iProdutoEdicao - 1);
-
-		    if (previousProdutoEdicao.getIdProduto().equals(produtoEdicao.getIdProduto()) && !previousProdutoEdicao.isEdicaoAberta()
-			    && !produtoEdicao.isEdicaoAberta()) {
-			if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
-			    BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 15, BigDecimal.ROUND_FLOOR);
-			    Boolean boo = divVendaEdicao.compareTo(BigDecimal.ONE) == 1;
-			    listDivBoolean.add(boo);
+					if (previousProdutoEdicao.getProduto().getId().equals(produtoEdicao.getProduto().getId()) && !previousProdutoEdicao.isEdicaoAberta()
+							&& !produtoEdicao.isEdicaoAberta()) {
+						if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
+							BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 15, BigDecimal.ROUND_FLOOR);
+							Boolean boo = divVendaEdicao.compareTo(BigDecimal.ONE) == 1;
+							listDivBoolean.add(boo);
+						}
+					}
+				}
+				iProdutoEdicao++;
 			}
-		    }
-		}
-		iProdutoEdicao++;
-	    }
 
-	    if (!listDivBoolean.isEmpty() && !listDivBoolean.contains(Boolean.FALSE)) {
-		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
-	    }
+			if (!listDivBoolean.isEmpty() && !listDivBoolean.contains(Boolean.FALSE)) {
+				indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+			}
+		}
+		cota.setIndiceVendaCrescente(indiceVendaCrescente);
 	}
-	cota.setIndiceVendaCrescente(indiceVendaCrescente);
-    }
 }

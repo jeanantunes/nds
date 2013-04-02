@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.com.abril.nds.model.planejamento.StatusEstudo;
@@ -57,6 +58,8 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 
 	@Export(label="Estudo", exhibitionOrder = 13)
 	private BigInteger idEstudo;
+	
+	private BigInteger idProdutoEdicao;
 	
 	private String dataLancto;
 	
@@ -190,6 +193,17 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		this.nomeFornecedor = nomeFornecedor;
 	}
 	
+	public Date getDataLanctoSemFormatacao() {
+	    try {
+		return new SimpleDateFormat("dd/MM/yyyy").parse(dataLancto);
+	    } catch (Exception ex) {}
+	    return null;
+	}
+	
+	public void setDataLanctoSemFormatacao(Date dataLancto) {
+		this.dataLancto = new SimpleDateFormat("dd/MM/yyyy").format(dataLancto);
+	}
+	
 	public String getDataLancto() {
 		return dataLancto;
 	}
@@ -235,6 +249,14 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		this.idUsuario = idUsuario;
 	}
 	
+
+	public BigInteger getIdProdutoEdicao() {
+	    return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(BigInteger idProdutoEdicao) {
+	    this.idProdutoEdicao = idProdutoEdicao;
+	}
 
 	@Override
 	public int hashCode() {

@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -82,16 +81,10 @@ public class Estudo implements Serializable {
 	private BigInteger reparteDistribuir;
 	
 	@Column(name = "DISTRIBUICAO_POR_MULTIPLOS")
-	private Integer distribuicaoPorMultiplos;
+	private Integer distribuicaoPorMultiplos; //TODO no estudo usa boolean, verificar alteração
 	
 	@Column(name = "PACOTE_PADRAO")
-	private BigInteger pacotePadrao;
-	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_PDV")
-	private BigDecimal percentualProporcaoExcedentePDV;
-	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_VENDA")
-	private BigDecimal percentualProporcaoExcedenteVenda;
+	private BigInteger pacotePadrao; //TODO BigDecimal
 	
 	public Long getId() {
 		return id;
@@ -207,22 +200,4 @@ public class Estudo implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 	}
 
-	public BigDecimal getPercentualProporcaoExcedentePDV() {
-		return percentualProporcaoExcedentePDV;
-	}
-
-	public void setPercentualProporcaoExcedentePDV(
-			BigDecimal percentualProporcaoExcedentePDV) {
-		this.percentualProporcaoExcedentePDV = percentualProporcaoExcedentePDV;
-	}
-
-	public BigDecimal getPercentualProporcaoExcedenteVenda() {
-		return percentualProporcaoExcedenteVenda;
-	}
-
-	public void setPercentualProporcaoExcedenteVenda(
-			BigDecimal percentualProporcaoExcedenteVenda) {
-		this.percentualProporcaoExcedenteVenda = percentualProporcaoExcedenteVenda;
-	}
-	
 }
