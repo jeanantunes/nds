@@ -339,6 +339,7 @@ public class ProdutoController extends BaseController {
 	 * Carrega os combos do modal de inclusão/edição do Produto.
 	 */
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarDadosProduto() {
 		
 		List<Object> listaCombos = new ArrayList<Object>();
@@ -417,6 +418,7 @@ public class ProdutoController extends BaseController {
 	 * @param id
 	 */
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void removerProduto(Long id) {
 		
 		this.produtoService.removerProduto(id);
@@ -476,6 +478,7 @@ public class ProdutoController extends BaseController {
 	 * @param id
 	 */
 	@Post
+	@Rules(Permissao.ROLE_CADASTRO_PRODUTO_ALTERACAO)
 	public void carregarProdutoParaEdicao(Long id) {
 		
 		if (id == null) {

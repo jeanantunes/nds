@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	<script type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 	<script type="text/javascript" src="scripts/transportador.js"></script>

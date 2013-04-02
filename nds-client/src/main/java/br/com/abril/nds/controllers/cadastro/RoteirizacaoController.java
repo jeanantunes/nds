@@ -965,6 +965,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Post
     @Path("/novaRoteirizacao")
+	@Rules(Permissao.ROLE_CADASTRO_ROTEIRIZACAO_ALTERACAO)
 	public void novaRoteirizacao() {
 	    List<Box> disponiveis = roteirizacaoService.obterListaBoxLancamento(null);
 	    List<BoxRoteirizacaoDTO> dtos = BoxRoteirizacaoDTO.toDTOs(disponiveis);

@@ -447,6 +447,9 @@ var transportadorController = $.extend(true, {
 	
 	popup_novo_transportador : function() {
 		
+		if(!verificarPermissaoAcesso(transportadorController.workspace))
+			return;
+		
 		fecharModalCadastroTransp = false;
 		
 		$('#tabs', transportadorController.workspace).tabs('select', 0);

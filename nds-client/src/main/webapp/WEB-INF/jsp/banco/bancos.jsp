@@ -1,3 +1,5 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/banco.js"></script>
