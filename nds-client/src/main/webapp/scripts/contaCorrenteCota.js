@@ -31,30 +31,22 @@ var contaCorrenteCotaController = $.extend(true, {
 		vendaEncalhe.urlExport = contextPath + '/financeiro/contaCorrenteCota/exportarVendaEncalhe';
 		
 	},
-	
-	/**
-	 * VERIFICA A EXISTENCIA DE UMA NOTAFISCAL
-	 * COM OS PARÂMETROS DE PESQUISA
-	 */
-	verificarContaCorrenteCotaExistente : function() {
-
-		var cota = $("#cota", contaCorrenteCotaController.workspace).val();
-		
-		var dadosPesquisa = {numeroCota:cota};
-		
-		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/verificarContaCorrenteCotaExistente", 
-					   dadosPesquisa,
-					   contaCorrenteCotaController.confirmaContaCorrenteCotaEncontrada);
-
-	},
 
 	/**
 	 * FAZ A PESQUISA DOS ITENS REFERENTES A CONTA CORRENTE COTA.
 	 */
 	pesquisarItemContaCorrenteCota : function() {
 
+		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();
+		
+		var nomeCota = $("#nomeCota", contaCorrenteCotaController.workspace).val();
+		
+		$("#cotaHidden", contaCorrenteCotaController.workspace).val(numeroCota);
+		
+		$("#nomeCotaHidden", contaCorrenteCotaController.workspace).val(nomeCota);
+		
 		var parametroPesquisa = [
-                 {name:'filtroViewContaCorrenteCotaDTO.numeroCota', value: $("#cota", contaCorrenteCotaController.workspace).val() },
+                 {name:'filtroViewContaCorrenteCotaDTO.numeroCota', value: numeroCota },
                  {name:'filtroViewContaCorrenteCotaDTO.inicioPeriodo', value:$("#periodoContaDe", contaCorrenteCotaController.workspace).val() },
                  {name:'filtroViewContaCorrenteCotaDTO.fimPeriodo', value:$("#periodoContaAte", contaCorrenteCotaController.workspace).val() }
 		];
@@ -77,7 +69,7 @@ var contaCorrenteCotaController = $.extend(true, {
 	 */
 	pesquisarEncalheCota : function(idConsolidado, dataConsolidado){
 			
-		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();		
+		var numeroCota = $("#cotaHidden", contaCorrenteCotaController.workspace).val();		
 		
 		var parametroPesquisa = [{name:'filtro.numeroCota', value:numeroCota },
 		                         {name:'filtro.dataConsolidado', value:dataConsolidado },
@@ -95,7 +87,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				var data = result[1];
 				
 				$("#datacotanome", contaCorrenteCotaController.workspace).html(dataConsolidado+" - Cota: "+
-						$("#cota", contaCorrenteCotaController.workspace).val()+" - "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
+						$("#cotaHidden", contaCorrenteCotaController.workspace).val()+" - "+$("#nomeCotaHidden", contaCorrenteCotaController.workspace).val());
 		
 				var conteudoSpan = $("#listaInfoEncalhe", contaCorrenteCotaController.workspace).html("");
 				
@@ -117,7 +109,7 @@ var contaCorrenteCotaController = $.extend(true, {
 	 */
 	pesquisarConsignadoCota : function(idConsolidado, dataConsolidado){
 			
-		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();		
+		var numeroCota = $("#cotaHidden", contaCorrenteCotaController.workspace).val();		
 		
 		var parametroPesquisa = [{name:'filtro.numeroCota', value:numeroCota },
 		                         {name:'filtro.idConsolidado', value:idConsolidado },
@@ -135,7 +127,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				var data = result[1];
 				
 				$("#datacotanome_consignado", contaCorrenteCotaController.workspace).html(dataConsolidado+" - Cota: "+
-						$("#cota", contaCorrenteCotaController.workspace).val()+" - "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
+						$("#cotaHidden", contaCorrenteCotaController.workspace).val()+" - "+$("#nomeCotaHidden", contaCorrenteCotaController.workspace).val());
 				
 				var conteudoSpan = $("#listaInfoConsignado", contaCorrenteCotaController.workspace).html("");
 				
@@ -187,7 +179,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				value.cell.valorVendaDia = floatToPrice(formatMoneyValue(value.cell.valorVendaDia));
 				
 				value.cell.vendaEncalhe = '<a href="javascript:;" onclick="vendaEncalhe.showDialog('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cota", contaCorrenteCotaController.workspace).val() +
+					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cotaHidden", contaCorrenteCotaController.workspace).val() +
 					',\''+value.cell.nomeBox+'\');"/>' + floatToPrice(formatMoneyValue(value.cell.vendaEncalhe)) + '</a>';
 				
 				value.cell.debitoCredito = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
@@ -218,14 +210,14 @@ var contaCorrenteCotaController = $.extend(true, {
 			});
 			
 		
-			$("#cotanomeselecionado", contaCorrenteCotaController.workspace).html($("#cota", contaCorrenteCotaController.workspace).val()+" "+
-					$("#nomeCota", contaCorrenteCotaController.workspace).val());
+			$("#cotanomeselecionado", contaCorrenteCotaController.workspace).html($("#cotaHidden", contaCorrenteCotaController.workspace).val()+" "+
+					$("#nomeCotaHidden", contaCorrenteCotaController.workspace).val());
 			
 			$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).
-				text("Cota: " + $("#cota", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
+				text("Cota: " + $("#cotaHidden", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCotaHidden", contaCorrenteCotaController.workspace).val());
 			
 			$("#msgFieldsetEncargos", contaCorrenteCotaController.workspace).
-				text("Cota: " + $("#cota", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCota", contaCorrenteCotaController.workspace).val());
+				text("Cota: " + $("#cotaHidden", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCotaHidden", contaCorrenteCotaController.workspace).val());
 			
 			$(".grids", contaCorrenteCotaController.workspace).show();
 			
@@ -296,8 +288,8 @@ var contaCorrenteCotaController = $.extend(true, {
 	 */
 	carregarDadosEmail : function(){
 		
-		var numeroCota = $("#cota", contaCorrenteCotaController.workspace).val();
-		var nomeCota = $("#nomeCota", contaCorrenteCotaController.workspace).val();
+		var numeroCota = $("#cotaHidden", contaCorrenteCotaController.workspace).val();
+		var nomeCota = $("#nomeCotaHidden", contaCorrenteCotaController.workspace).val();
 		
 		var parametroPesquisa = [{name:'numeroCota', value:numeroCota}];
 		
@@ -734,7 +726,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		var dadosPesquisa = [
 		   {name:'idConsolidado', value: idConsolidado},
 		   {name:'data', value:dataConsolidado},
-		   {name:'numeroCota', value: $("#cota", contaCorrenteCotaController.workspace).val()}
+		   {name:'numeroCota', value: $("#cotaHidden", contaCorrenteCotaController.workspace).val()}
 		];
 		
 		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/consultarDebitoCreditoCota",
@@ -797,7 +789,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		var dadosPesquisa = [
 		   {name:'idConsolidado', value: idConsolidado},
 		   {name:'data', value:dataConsolidado},
-		   {name:'numeroCota', value:$("#cota", contaCorrenteCotaController.workspace).val()}
+		   {name:'numeroCota', value:$("#cotaHidden", contaCorrenteCotaController.workspace).val()}
 		];
 		
 		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/consultarEncargosCota",
