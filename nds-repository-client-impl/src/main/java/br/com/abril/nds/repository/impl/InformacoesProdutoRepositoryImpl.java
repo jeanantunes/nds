@@ -3,12 +3,15 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.InformacoesBaseProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
+import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
@@ -40,7 +43,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
 
-		hql.append(" prodEdicao.reparteDistribuido AS venda, "); // DADO INCONSISTENTE...
+//		hql.append(" prodEdicao.venda AS venda, ");
 		hql.append(" prodEdicao.reparteDistribuido AS reparteMinimoGhoma, "); // DADO INCONSISTENTE...
 		
 		hql.append(" algortm.descricao AS algoritmo, "); 
@@ -53,17 +56,17 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" left join produto.algoritmo AS algortm ");
 		hql.append(" INNER join lancamento.estudo AS estudoG ");
 		
-//		hql.append(" group by prodEdicao.numeroEdicao ");
-
 		hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
-		hql.append(" OR produto.nome = :NOME_PRODUTO ");
+		hql.append(" AND produto.nome = :NOME_PRODUTO ");
+		hql.append(this.getSqlWhereBuscarProdutos(filtro));
 		
 		hql.append(" ORDER BY numeroEdicao ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
-
+		
 		query.setParameter("COD_PRODUTO", filtro.getCodProduto());
 		query.setParameter("NOME_PRODUTO", filtro.getNomeProduto());
+		this.paramsDinamicosBuscarProdutos(query, filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
 		
@@ -74,29 +77,71 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		return query.list();
 	}
 	
+	private String paramsDinamicosBuscarProdutos (Query query, FiltroInformacoesProdutoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
+			query.setParameter("ID_CLASSIFICACAO", filtro.getIdTipoClassificacaoProd());
+		}
+		
+		return hql.toString();
+	}
+	
+	private String getSqlWhereBuscarProdutos (FiltroInformacoesProdutoDTO filtro) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
+			hql.append(" AND produto.tipoClassificacaoProduto.id = :ID_CLASSIFICACAO ");
+		}
+
+		return hql.toString();
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<InformacoesBaseProdDTO> buscarBase(String codProduto) {
 
-		StringBuilder hql = new StringBuilder();
+//		StringBuilder hql = new StringBuilder();
+//		
+//		hql.append(" SELECT ");
+//		hql.append(" produto.codigo AS codProduto, ");
+//		hql.append(" produto.nome AS nomeProduto, ");
+//		hql.append(" prodEdicao.numeroEdicao AS numeroEdicao, ");
+//		hql.append(" produto.peso AS peso ");
+//
+//		hql.append(" FROM ProdutoEdicao AS prodEdicao ");
+//		hql.append(" left join prodEdicao.produto AS produto ");
+//		hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
+//		
+//		Query query = super.getSession().createQuery(hql.toString());
+//
+//		query.setParameter("COD_PRODUTO", codProduto);
+//		
+//		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesBaseProdDTO.class));
 		
-		hql.append(" SELECT ");
-		hql.append(" produto.codigo AS codProduto, ");
-		hql.append(" produto.nome AS nomeProduto, ");
-		hql.append(" prodEdicao.numeroEdicao AS numeroEdicao, ");
-		hql.append(" produto.peso AS peso ");
-
-		hql.append(" FROM ProdutoEdicao AS prodEdicao ");
-		hql.append(" left join prodEdicao.produto AS produto ");
-		hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
+		StringBuilder sql = new StringBuilder();
+//		
+//		 sql.append(" select ")
+//		    .append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
+//		    .append(" prodEdic.CODIGO_DE_BARRAS as codigoBarraProduto")
+//		    .append(" from produto prod")
+//			.append(" join pessoa ON pessoa.ID = forn.JURIDICA_ID")
+//			.append(" where prod.ATIVO = true")
+//			.append(" and prodEdic.ATIVO = true")
+//			.append(" and lanc.status = 'BALANCEADO'")
+//		 	.append(" order by liberado");
+//			
+//			
+//			query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
+//			
+//			query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
+//			
+//			List<ProdutoDistribuicaoVO> result = query.list();
 		
-		Query query = super.getSession().createQuery(hql.toString());
-
-		query.setParameter("COD_PRODUTO", codProduto);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesBaseProdDTO.class));
-		
+		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		return query.list();
 	}
 
@@ -127,6 +172,23 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		return (InformacoesCaracteristicasProdDTO) query.uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItensRegiao() {
+
+			StringBuilder hql = new StringBuilder();
+			
+			hql.append(" SELECT ");
+			hql.append(" regiao.nomeRegiao as nomeItemRegiao");
+			hql.append(" FROM Regiao AS regiao ");
+			
+			Query query = super.getSession().createQuery(hql.toString());
+
+			query.setResultTransformer(new AliasToBeanResultTransformer(InfoProdutosItemRegiaoEspecificaDTO.class));
+			
+			return query.list();
+	}
+	
 	private void configurarPaginacao(FiltroInformacoesProdutoDTO filtro, Query query) {
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
@@ -143,5 +205,6 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
 	}
+
 
 }
