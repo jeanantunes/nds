@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 Lazaro
+=======
+Lazaro
+>>>>>>> refs/remotes/DGBTi/fase2
 Tiago2

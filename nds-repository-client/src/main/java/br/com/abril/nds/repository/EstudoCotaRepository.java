@@ -16,6 +16,7 @@ import br.com.abril.nds.util.Intervalo;
  */
 public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 
+<<<<<<< HEAD
     /**
      * Obtém o estudo da cota de acordo com o
      * número da cota e a data de referência do lançamento.
@@ -36,4 +37,34 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
     List<EstudoCota> obterEstudosCotaParaNotaEnvio(Long idCota, Intervalo<Date> periodo, List<Long> listaIdsFornecedores);
 
     public List<EstudoCota> obterEstudoCotaPorEstudo(Estudo estudo);
+=======
+	/**
+	 * Obtém o estudo da cota de acordo com o
+	 * número da cota e a data de referência do lançamento.
+	 * 
+	 * @param numeroCota - número da cota
+	 * @param dataReferencia - data de referência
+	 * 
+	 * @return {@link EstudoCota}
+	 */
+	EstudoCota obterEstudoCota(Integer numeroCota, Date dataReferencia);
+	
+	List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao);
+	
+	EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota);
+	
+	EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota);
+	
+	List<EstudoCota> obterEstudosCotaParaNotaEnvio(Long idCota, 
+												   Intervalo<Date> periodo, 
+												   List<Long> listaIdsFornecedores);
+
+	/**
+	 * 
+	 * @param idEstudo
+	 */
+	public abstract void removerEstudoCotaPorEstudo(Long idEstudo);
+
+	List<EstudoCota> obterEstudosCota(Long idEstudo);
+>>>>>>> refs/remotes/DGBTi/fase2
 }

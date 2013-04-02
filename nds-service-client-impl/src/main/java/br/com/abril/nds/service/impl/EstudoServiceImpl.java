@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,12 +15,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+<<<<<<< HEAD
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+=======
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+>>>>>>> refs/remotes/DGBTi/fase2
 import br.com.abril.nds.model.planejamento.Estudo;
+<<<<<<< HEAD
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.EstudoCotaRepository;
+=======
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+>>>>>>> refs/remotes/DGBTi/fase2
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.EstudoService;
@@ -33,6 +44,7 @@ import br.com.abril.nds.service.EstudoService;
 @Service
 public class EstudoServiceImpl implements EstudoService {
 
+<<<<<<< HEAD
     @Autowired
     private EstudoRepository estudoRepository;
 
@@ -93,6 +105,18 @@ public class EstudoServiceImpl implements EstudoService {
 		e.printStackTrace();
 	    }
 
+=======
+	@Transactional(readOnly = true)
+	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
+		
+		return this.estudoRepository.obterEstudoDoLancamentoPorDataProdutoEdicao(dataReferencia, idProdutoEdicao);
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Estudo obterEstudo(Long id) {
+		return this.estudoRepository.buscarPorId(id);
+>>>>>>> refs/remotes/DGBTi/fase2
 	}
     }
 
@@ -175,6 +199,36 @@ public class EstudoServiceImpl implements EstudoService {
 	    }
 	}
 
+<<<<<<< HEAD
 	return listIdEstudoAdicionado;
     }
+=======
+	@Override
+	@Transactional
+	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId) {
+		return estudoRepository.obterResumoEstudo(estudoId);
+	}
+
+	@Override
+	@Transactional
+	public void excluirEstudo(long id) {
+		this.estudoRepository.removerPorId(id);
+	}
+
+	@Override
+	public void criarNovoEstudo(ProdutoDistribuicaoVO produto) {
+	    Estudo estudo = new Estudo();
+	    estudo.setLiberado(0);
+	    estudo.setReparteDistribuir(produto.getRepDistrib());
+	    estudo.setDataLancamento(produto.getDataLanctoSemFormatacao());
+	    estudo.setDataCadastro(new Date());
+	    estudo.setDistribuicaoPorMultiplos(0);
+	    estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+	    estudo.setQtdeReparte(produto.getRepDistrib());
+	    estudo.setProdutoEdicao(new ProdutoEdicao(produto.getIdProdutoEdicao().longValue()));
+	    estudoRepository.adicionar(estudo);
+	    produto.setIdEstudo(BigInteger.valueOf(estudo.getId()));
+	}
+	
+>>>>>>> refs/remotes/DGBTi/fase2
 }

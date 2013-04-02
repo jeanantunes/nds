@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package br.com.abril.nds.integracao.ems0108.test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,3 +19,25 @@ public class EMS0108Test extends RouteTestTemplate {
 	}
 
 }
+=======
+package br.com.abril.nds.integracao.ems0108.test;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.abril.nds.integracao.ems0108.route.EMS0108Route;
+import br.com.abril.nds.integracao.engine.data.RouteTemplate;
+import br.com.abril.nds.integracao.test.RouteTestTemplate;
+
+public class EMS0108Test extends RouteTestTemplate {
+	@Autowired
+	private EMS0108Route rota;
+	
+	@Override
+	public RouteTemplate getRoute() {
+		// List<NdsiParametroSistema> list = entityManager.createQuery("select o from NdsiParametroSistema o where o.id = ?").setParameter(1, 1L).getResultList();
+		// System.out.println(list);
+		return rota;
+	}
+
+}
+>>>>>>> refs/remotes/DGBTi/fase2
