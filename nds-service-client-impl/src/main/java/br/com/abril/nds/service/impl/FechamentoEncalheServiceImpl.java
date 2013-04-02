@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -76,6 +78,7 @@ import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -511,9 +514,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 			
+			Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+			
 			GerarCobrancaValidacaoException ex = null;
 			try {
-				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>());
+				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
 			} catch (GerarCobrancaValidacaoException e) {
 				ex = e;
 				
@@ -523,6 +528,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				}
 				
 				validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
+			}
+			
+			for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
+				
+				if (nossoNumeroEnvioEmail.get(nossoNumero)){
+					
+					try {
+						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, cota.getPessoa().getEmail());
+					} catch (AutenticacaoEmailException e) {
+						
+						validacaoVO.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
+								cota.getNumeroCota() + ", " +
+								e.getMessage());
+					}
+				}
 			}
 			
 			List<ChamadaEncalhe> listaChamadaEncalhe = 

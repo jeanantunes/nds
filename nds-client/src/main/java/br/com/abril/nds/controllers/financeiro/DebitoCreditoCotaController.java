@@ -591,8 +591,7 @@ public class DebitoCreditoCotaController extends BaseController{
 		
 		existeMovimentoFinanceiroCota(debitoCredito);
 		
-		//TODO: remover mock de usuário.
-		debitoCredito.setIdUsuario(1L);
+		debitoCredito.setIdUsuario(this.getIdUsuario());
 		
 		debitoCredito.setValor(getValorSemMascara(debitoCredito.getValor()));
 
@@ -973,6 +972,11 @@ public class DebitoCreditoCotaController extends BaseController{
 		}
 
 		return valor;
+	}
+	
+	private Long getIdUsuario(){
+		
+		return this.usuarioService.getUsuarioLogado().getId();
 	}
 }
 

@@ -13,8 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1159,7 +1158,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		this.abaterNegociacaoPorComissao(controleConfEncalheCota.getCota().getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
 		
-		Set<String> nossoNumeroCollection = new LinkedHashSet<>();
+		Map<String, Boolean> nossoNumeroCollection = new LinkedHashMap<String, Boolean>();
 		
 		DadosDocumentacaoConfEncalheCotaDTO documentoConferenciaEncalhe = new DadosDocumentacaoConfEncalheCotaDTO();
 		
@@ -1190,17 +1189,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		documentoConferenciaEncalhe.setUtilizaSlip(isUtililzaSlipImpressao);
 		documentoConferenciaEncalhe.setUtilizaBoletoSlip(isUtililzaBoletoSlipImpressao);
 		
-		documentoConferenciaEncalhe.setListaNossoNumero(new LinkedList<String>());
+		documentoConferenciaEncalhe.setListaNossoNumero(new LinkedHashMap<String, Boolean>());
 		
 		if(nossoNumeroCollection!=null && !nossoNumeroCollection.isEmpty()) {
 			
-			for (String nossoNumero : nossoNumeroCollection){
+			for (String nossoNumero : nossoNumeroCollection.keySet()){
 				
 				if(nossoNumero!=null && !nossoNumero.trim().isEmpty()) {
 					associarCobrancaConferenciaEncalheCota(controleConfEncalheCota.getId(), nossoNumero);
 				}
 				
-				documentoConferenciaEncalhe.getListaNossoNumero().add(nossoNumero);
+				documentoConferenciaEncalhe.getListaNossoNumero().put(nossoNumero,
+						nossoNumeroCollection.get(nossoNumero));
 				
 			}
 		}
@@ -1269,11 +1269,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return Set - String
 	 * @throws GerarCobrancaValidacaoException 
 	 */
-	private Set<String> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
+	private Map<String, Boolean> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 
 		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCotaRecolhimento(controleConferenciaEncalheCota, FormaComercializacao.CONSIGNADO);
 
-		Set<String> nossoNumeroCollection = new HashSet<String>();
+		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
 		
 		gerarCobrancaService.gerarCobranca(
 				controleConferenciaEncalheCota.getCota().getId(), 

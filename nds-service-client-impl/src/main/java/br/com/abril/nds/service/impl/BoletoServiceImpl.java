@@ -503,7 +503,7 @@ public class BoletoServiceImpl implements BoletoService {
 		efetivarBaixaCobranca(boleto, dataOperacao);
 		
 		BigDecimal valorJurosCalculado = 
-				cobrancaService.calcularJuros(null, boleto.getCota(),
+				cobrancaService.calcularJuros(null, boleto.getCota().getId(),
 											  boleto.getValor(), boleto.getDataVencimento(),
 											  pagamento.getDataPagamento());
 		
