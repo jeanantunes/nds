@@ -86,7 +86,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 
 	private static final String FILTRO_CONSULTA_NOTA_ENVIO = "filtroConsultaNotaEnvio";
 	
-	private static final String ARQUIVO_NE = "notaEnvioSession";
+	private static final String COTAS_ID = "cotasId";
 	
 	@Path("/")
 	public void index() {
@@ -199,10 +199,36 @@ public class GeracaoNotaEnvioController extends BaseController {
 	}
 	
 	@Post
+	public void gerarNotaEnvio(List<Long> listaIdCotas) {
+		
+		    session.setAttribute(COTAS_ID, listaIdCotas);
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
+					"Geração de NE."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+	
+	private byte[] getNotas(){
+		
+        FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+		
+		@SuppressWarnings("unchecked")
+		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, (List<Long>) session.getAttribute(COTAS_ID));
+
+		if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
+		}
+		
+		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false);
+		
+		return notasGeradas;
+	}
+	
+	@Post
 	public void getArquivoNotaEnvio() {
-		
-		byte[] notasGeradas = (byte[]) session.getAttribute(ARQUIVO_NE);
-		
+
+		byte[] notasGeradas = this.getNotas();
+
 		try {
 		
 			if (notasGeradas != null) {
@@ -219,7 +245,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 
 		    	httpResponse.getOutputStream().close();
 
-		    	session.setAttribute(ARQUIVO_NE, null);
+		    	session.setAttribute(COTAS_ID, null);
 		    	
 		    	result.use(Results.nothing());
 	
@@ -227,26 +253,6 @@ public class GeracaoNotaEnvioController extends BaseController {
 		} catch (Exception e) {
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
 		}
-	}
-	
-	@Post
-	public void gerarNotaEnvio(List<Long> listaIdCotas) {
-		
-			FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
-			
-			List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, listaIdCotas);
-
-			if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
-			}
-			
-			byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false); 
-			    
-			session.setAttribute(ARQUIVO_NE, notasGeradas);
-			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
-					"Geração de NE realizada com sucesso!"),
-								Constantes.PARAM_MSGS).recursive().serialize();
 	}
 	
 	/**
