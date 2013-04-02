@@ -1006,74 +1006,66 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 
-	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) throws Exception {
+	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) {
 		
-		try {
+		Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
+		
+		boolean isUtilizaBoleto = dtoDoc.isUtilizaBoleto();
+		
+		boolean isUtilizaSlip = dtoDoc.isUtilizaSlip();
+		
+		List<byte[]> arquivos = new ArrayList<byte[]>();
+		
+		Map<String, byte[]> mapFileNameFile = new HashMap<String, byte[]>();
+		
+		if(dtoDoc.isUtilizaBoletoSlip()) {
 				
-			Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
+				arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+							idControleConferenciaEncalheCota, 
+							null, 
+							TipoDocumentoConferenciaEncalhe.SLIP));
 			
-			boolean isUtilizaBoleto = dtoDoc.isUtilizaBoleto();
-			
-			boolean isUtilizaSlip = dtoDoc.isUtilizaSlip();
-			
-			List<byte[]> arquivos = new ArrayList<byte[]>();
-			
-			Map<String, byte[]> mapFileNameFile = new HashMap<String, byte[]>();
-			
-			if(dtoDoc.isUtilizaBoletoSlip()) {
-					
+				for(String nossoNumero : dtoDoc.getListaNossoNumero().keySet()) {
+
 					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-								idControleConferenciaEncalheCota, 
-								null, 
-								TipoDocumentoConferenciaEncalhe.SLIP));
-				
-					for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
-	
-						arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-								idControleConferenciaEncalheCota, 
-								nossoNumero,
-								TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
-					}
-					
-					byte[] arquivo = PDFUtil.mergePDFs(arquivos);
-					mapFileNameFile.put("arquivos_cobranca_boleto_slip.pdf", arquivo);
-					
-			} else {
-				
-				if (isUtilizaSlip) {
-					
-					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-								idControleConferenciaEncalheCota, 
-								null, 
-								TipoDocumentoConferenciaEncalhe.SLIP));
-				
-					byte[] arquivoSlip = PDFUtil.mergePDFs(arquivos);
-					mapFileNameFile.put("arquivos_cobranca_slip.pdf", arquivoSlip);
-					arquivos.clear();
+							idControleConferenciaEncalheCota, 
+							nossoNumero,
+							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
 				}
 				
-				if(isUtilizaBoleto) {
-					
-					for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
-	
-						arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-								idControleConferenciaEncalheCota, 
-								nossoNumero,
-								TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
-						
-						byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
-						mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
-					}
-				} 
+				byte[] arquivo = PDFUtil.mergePDFs(arquivos);
+				mapFileNameFile.put("arquivos_cobranca_boleto_slip.pdf", arquivo);
+				
+		} else {
+			
+			if (isUtilizaSlip) {
+				
+				arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+							idControleConferenciaEncalheCota, 
+							null, 
+							TipoDocumentoConferenciaEncalhe.SLIP));
+			
+				byte[] arquivoSlip = PDFUtil.mergePDFs(arquivos);
+				mapFileNameFile.put("arquivos_cobranca_slip.pdf", arquivoSlip);
+				arquivos.clear();
 			}
+			
+			if(isUtilizaBoleto) {
+				
+				for(String nossoNumero : dtoDoc.getListaNossoNumero().keySet()) {
 
-			this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, mapFileNameFile);
-			
-		} catch (Exception e) {
-			
-			throw new Exception("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança - " + e.getMessage(), 
-					e);
+					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+							idControleConferenciaEncalheCota, 
+							nossoNumero,
+							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
+					
+					byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
+					mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
+				}
+			} 
 		}
+
+		this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, mapFileNameFile);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1233,11 +1225,16 @@ public class ConferenciaEncalheController extends BaseController {
 			Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
 			
 			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
+			
+			this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
+			
+			for (String nossoNumero : dadosDocumentacaoConfEncalheCota.getListaNossoNumero().keySet()){
 				
-			try {
-				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
-			} catch (Exception e){
-				throw new Exception("Erro ao gerar documentos da conferência de encalhe - " + e.getMessage());
+				if (dadosDocumentacaoConfEncalheCota.getListaNossoNumero().get(nossoNumero)){
+				
+					this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, 
+							controleConfEncalheCota.getCota().getPessoa().getEmail());
+				}
 			}
 			
 			Map<String, Object> dados = new HashMap<String, Object>();

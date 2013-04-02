@@ -55,6 +55,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaCotaConferenciaNaoFinalizada(java.util.Date)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao) {
 		

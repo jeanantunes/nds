@@ -1,7 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -21,7 +21,7 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	/**
 	 * List de nosso numero gerado durante a geração de cobrança.
 	 */
-	private List<String> listaNossoNumero;
+	private Map<String, Boolean> listaNossoNumero;
 	
 	/**
 	 * Flag que indica se os documentos de conferencia de encalhe deverão
@@ -62,14 +62,14 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	/**
 	 * @return the listaNossoNumero
 	 */
-	public List<String> getListaNossoNumero() {
+	public Map<String, Boolean> getListaNossoNumero() {
 		return listaNossoNumero;
 	}
 
 	/**
 	 * @param listaNossoNumero the listaNossoNumero to set
 	 */
-	public void setListaNossoNumero(List<String> listaNossoNumero) {
+	public void setListaNossoNumero(Map<String, Boolean> listaNossoNumero) {
 		this.listaNossoNumero = listaNossoNumero;
 	}
 
