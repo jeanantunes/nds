@@ -86,12 +86,6 @@ public class Estudo implements Serializable {
 	@Column(name = "PACOTE_PADRAO")
 	private BigInteger pacotePadrao; //TODO BigDecimal
 	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_PDV")
-	private BigDecimal percentualProporcaoExcedentePDV;
-	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_VENDA")
-	private BigDecimal percentualProporcaoExcedenteVenda;
-	
 	public Long getId() {
 		return id;
 	}
@@ -206,22 +200,4 @@ public class Estudo implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 	}
 
-	public BigDecimal getPercentualProporcaoExcedentePDV() {
-		return percentualProporcaoExcedentePDV;
-	}
-
-	public void setPercentualProporcaoExcedentePDV(
-			BigDecimal percentualProporcaoExcedentePDV) {
-		this.percentualProporcaoExcedentePDV = percentualProporcaoExcedentePDV;
-	}
-
-	public BigDecimal getPercentualProporcaoExcedenteVenda() {
-		return percentualProporcaoExcedenteVenda;
-	}
-
-	public void setPercentualProporcaoExcedenteVenda(
-			BigDecimal percentualProporcaoExcedenteVenda) {
-		this.percentualProporcaoExcedenteVenda = percentualProporcaoExcedenteVenda;
-	}
-	
 }

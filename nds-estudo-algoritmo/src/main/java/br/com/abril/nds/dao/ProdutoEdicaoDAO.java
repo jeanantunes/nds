@@ -17,6 +17,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
@@ -107,8 +108,14 @@ public class ProdutoEdicaoDAO {
 				produtoEdicaoBase.getProduto().setCodigo(rs.getString("CODIGO"));
 				produtoEdicaoBase.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 				produtoEdicaoBase.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-				produtoEdicaoBase.setTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID"));
+				produtoEdicaoBase.setTipoSegmentoProduto(getTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
 				return produtoEdicaoBase;
+			}
+
+			private TipoSegmentoProduto getTipoSegmentoProduto(long idTipoSegmentoProduto) {
+				TipoSegmentoProduto tipoSegmentoProduto = new TipoSegmentoProduto();
+				tipoSegmentoProduto.setId(idTipoSegmentoProduto);
+				return tipoSegmentoProduto;
 			}
 		});
 	}
