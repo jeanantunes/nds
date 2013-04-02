@@ -489,6 +489,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.ConferenciaEncalheService#isLancamentoParcialProdutoEdicao(java.lang.String, java.lang.Long)
 	 */
+	@Transactional(readOnly = true)
 	public boolean isLancamentoParcialProdutoEdicao(String codigo, Long numeroEdicao) {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, numeroEdicao);
@@ -646,7 +647,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return infoConfereciaEncalheCota;
 		
 	}
-	
 	
 	private void carregarDadosDebitoCreditoDaCota(
 			InfoConferenciaEncalheCota infoConfereciaEncalheCota, 
@@ -1050,7 +1050,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return produtoEdicao.getProduto().getEditor().getPessoaJuridica().getRazaoSocial();
 	}
-
 	
 	private String obterNomeFornecedor(ProdutoEdicao produtoEdicao) {
 		
@@ -1327,7 +1326,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		this.movimentoFinanceiroCotaService.removerPostergadosDia(idCota, listaPostergados);
 	}
-	
 	
 	private void removerItensConferenciaEncallhe(Set<Long> listaIdConferenciaEncalheParaExclusao) {
 		
@@ -2158,7 +2156,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return movimentoEstoqueCota;
 	}
 	
-	
 	private void verificarValorAplicadoNulo(ValoresAplicados valoresAplicados){
 		
 		if (valoresAplicados == null) {
@@ -2582,7 +2579,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @return BigDecimal
 	 */
-	protected BigDecimal obterValorTotalDebitoCreditoCota(Integer numeroCota, Date dataOperacao) {
+	@Transactional(readOnly = true)
+	public BigDecimal obterValorTotalDebitoCreditoCota(Integer numeroCota, Date dataOperacao) {
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
@@ -2693,6 +2691,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return d;
 	}
 	
+	@Transactional
 	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
 
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
@@ -2923,7 +2922,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-
 	protected String obterSlipReportPath() throws URISyntaxException {
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
@@ -2932,8 +2930,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 
-	
-	
 	protected String obterSlipSubReportPath() throws URISyntaxException {
 	
 		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
