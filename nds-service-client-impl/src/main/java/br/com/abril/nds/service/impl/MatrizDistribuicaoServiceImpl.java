@@ -250,6 +250,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			}
 		}
 		
+		if (idsEstudos == null || idsEstudos.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não existe estudo para o(s) produto(s) selecionado!"));
+		}
+		
 		estudoRepository.liberarEstudo(idsEstudos, false);
 	}
 	
@@ -291,9 +296,28 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	@Transactional
 	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 		
-		//TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
-		
 		List<ProdutoDistribuicaoVO> listDistrib = produtoDistribuicaoVOs;
+		
+		Map <BigInteger, BigInteger> map = obterMapaEstudoRepartDistrib(produtoDistribuicaoVOs);
+		
+		for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
+			
+			if (!prodDistribVO.isItemFinalizado()) {
+				
+				finalizaItemDistribuicao(prodDistribVO, map);
+			}
+			
+		}
+	}
+	
+	
+	@Override
+	@Transactional
+	public void finalizarMatrizDistribuicaoTodosItens(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+		
+		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
+		
+		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO.getListProdutoDistribuicao();
 		
 		Map <BigInteger, BigInteger> map = obterMapaEstudoRepartDistrib(produtoDistribuicaoVOs);
 		
@@ -308,6 +332,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			
 		}
 	}
+	
 	
 	private void validaFinalizacaoMatriz(ProdutoDistribuicaoVO prodDistribVO) {
 		
@@ -331,9 +356,28 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	@Override
 	@Transactional
-	public void reabrirMatrizDistribuicao(FiltroDistribuicaoDTO filtro,  List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+	public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 		
 		for (ProdutoDistribuicaoVO prodDistribVO:produtoDistribuicaoVOs) {
+				
+			reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void reabrirMatrizDistribuicaoTodosItens(FiltroDistribuicaoDTO filtro) {
+		
+		TotalizadorProdutoDistribuicaoVO totProdDistribVO = obterMatrizDistribuicao(filtro);
+		
+		if (!totProdDistribVO.isMatrizFinalizada()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz ainda não finalizada.");
+		}
+		
+		List<ProdutoDistribuicaoVO> listDistrib = totProdDistribVO.getListProdutoDistribuicao();
+		
+		for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
 			
 			if (prodDistribVO.isItemFinalizado()) {
 				
