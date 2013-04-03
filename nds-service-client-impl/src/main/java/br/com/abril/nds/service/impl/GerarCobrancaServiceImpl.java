@@ -19,6 +19,7 @@ import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
@@ -889,6 +890,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		movimentoFinanceiroCota.setValor(vlMovFinanTotal.abs());
 		movimentoFinanceiroCota.setLancamentoManual(false);
 		movimentoFinanceiroCota.setCota(cota);
+		movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
 		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
