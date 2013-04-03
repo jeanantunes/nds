@@ -38,6 +38,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -194,12 +195,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> obterPorCodigoBarraILike(String codigoBarra) {
+	public List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra) {
 		
 		Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class);
-		criteria.add(Restrictions.ilike("codigoDeBarras", codigoBarra,MatchMode.START));
 		
-		return criteria.list();
+		Query query = this.getSession().createQuery("select o.id as chave, o.codigoDeBarras as value, o.codigoDeBarras || ' -  ' || o.produto.nome || ' - Ed.:' || o.numeroEdicao as label from ProdutoEdicao o where o.codigoDeBarras like :codigoDeBarras");
+		
+		criteria.add(Restrictions.ilike("codigoDeBarras", codigoBarra,MatchMode.START));
+		query.setString("codigoDeBarras", codigoBarra + "%");
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ItemAutoComplete.class));
+		
+		return query.list();
 	}
 	
 

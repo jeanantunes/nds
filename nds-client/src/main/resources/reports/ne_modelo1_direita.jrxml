@@ -296,7 +296,7 @@
 					</textElement>
 					<text><![CDATA[Razão Social]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement style="dados" positionType="Float" x="3" y="12" width="215" height="16"/>
 					<textElement verticalAlignment="Middle">
 						<font size="7" isBold="false" isPdfEmbedded="true"/>
@@ -313,7 +313,7 @@
 					</textElement>
 					<text><![CDATA[Endereço]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement style="dados" positionType="Float" x="3" y="39" width="125" height="16"/>
 					<textElement>
 						<font size="7" isBold="false" isPdfEmbedded="true"/>
@@ -327,7 +327,7 @@
 					</textElement>
 					<text><![CDATA[CNPJ]]></text>
 				</staticText>
-				<textField pattern="">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement style="dados" x="129" y="39" width="89" height="16"/>
 					<textElement textAlignment="Center">
 						<font size="7" isBold="false"/>
@@ -346,7 +346,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</textElement>
 					<text><![CDATA[Cidade]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement style="dados" positionType="Float" x="3" y="66" width="96" height="16"/>
 					<textElement>
 						<font size="7" isBold="false" isPdfEmbedded="true"/>
@@ -360,7 +360,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</textElement>
 					<text><![CDATA[UF]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement style="dados" positionType="Float" x="99" y="66" width="17" height="16"/>
 					<textElement textAlignment="Center">
 						<font size="7" isBold="false" isPdfEmbedded="true"/>
@@ -374,7 +374,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</textElement>
 					<text><![CDATA[CEP]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement style="dados" positionType="Float" x="116" y="66" width="40" height="16"/>
 					<textElement textAlignment="Center">
 						<font size="7" isBold="false" isPdfEmbedded="true"/>
@@ -388,7 +388,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</textElement>
 					<text><![CDATA[Inscrição Estadual]]></text>
 				</staticText>
-				<textField pattern="">
+				<textField pattern="" isBlankWhenNull="true">
 					<reportElement style="dados" x="156" y="66" width="62" height="16"/>
 					<textElement textAlignment="Center">
 						<font size="7" isBold="false"/>
@@ -439,7 +439,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</textElement>
 					<text><![CDATA[Cliente]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement style="dados" positionType="Float" x="3" y="120" width="215" height="16"/>
 					<textElement verticalAlignment="Middle">
 						<font size="7" isBold="false" isPdfEmbedded="true"/>
@@ -456,7 +456,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					</textElement>
 					<text><![CDATA[Box / Rota]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 					<reportElement style="dados" x="3" y="147" width="215" height="16"/>
 					<textElement>
 						<font size="7" isBold="false"/>

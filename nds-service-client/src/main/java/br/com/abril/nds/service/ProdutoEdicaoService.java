@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.ItemAutoComplete;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -183,6 +184,6 @@ public interface ProdutoEdicaoService {
 	
 	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes);
 
-	public abstract List<ProdutoEdicao> obterPorCodigoBarraILike(String codigoBarra);
+	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
 	
 }

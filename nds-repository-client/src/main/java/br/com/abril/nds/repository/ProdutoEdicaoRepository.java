@@ -18,6 +18,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.ItemAutoComplete;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -334,6 +335,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 */
 	BigDecimal obterDescontoLogistica(Long idPropdutoEdicao);
 
-	public abstract List<ProdutoEdicao> obterPorCodigoBarraILike(String codigoBarra);
+	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
 
 }
