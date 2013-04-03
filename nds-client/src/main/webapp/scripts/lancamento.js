@@ -78,13 +78,13 @@ var lancamentoController = $.extend(true, {
 			
 			if (row.cell.automatica) {
 				
-				linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);">' +
+				linkExclusaoDiferenca = '<a isEdicao="true" id="excluirDiferenca' + row.cell.id + '" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40);">' +
 												'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 											'</a>';
 				
 			} else {
 
-				linkExclusaoDiferenca = '<a id="excluirDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoController.popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
+				linkExclusaoDiferenca = '<a isEdicao="true" id="excluirDiferenca' + row.cell.id + '" href="javascript:;" onclick="lancamentoController.popupExclusaoDiferenca(' + row.cell.id + ');" style="cursor:pointer">' +
 												'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 											'</a>';
 			}
@@ -308,6 +308,7 @@ var lancamentoController = $.extend(true, {
 	configurarFlexiGrid : function() {
 
 		$("#gridLancamentos", lancamentoController.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(confirmaExpedicaoController.workspace);},
 			preProcess: lancamentoController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [{

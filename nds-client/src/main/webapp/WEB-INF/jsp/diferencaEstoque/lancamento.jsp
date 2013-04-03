@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permicaoAlteracao}">
 <head>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -15,6 +16,8 @@
 		var pesquisaCotaLancamentoFaltasSobras = new PesquisaCota();
 	
 		lancamentoController.inicializar();
+		
+		bloquearItensEdicao(lancamentoController.workspace);
 		
 	</script>
 	
@@ -64,7 +67,7 @@
 			<div class="areaBts">
 					<div class="area">
 						<span class="bt_novos">
-							<a href="javascript:;" onclick="lancamentoNovoController.popupNovasDiferencas();" rel="tipsy"
+							<a isEdicao="true" href="javascript:;" onclick="lancamentoNovoController.popupNovasDiferencas();" rel="tipsy"
 							   title="Incluir Novo">
 								<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
 							</a>
@@ -72,7 +75,7 @@
 						
 							
 						<span class="bt_novos">
-							<a href="javascript:"  onclick="lancamentoController.imprimirRelatorioFaltasSobras();" rel="tipsy" title="Imprimir confer&ecirc;cia manual">
+							<a isEdicao="true" href="javascript:"  onclick="lancamentoController.imprimirRelatorioFaltasSobras();" rel="tipsy" title="Imprimir confer&ecirc;cia manual">
 								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif"  border="0" />
 							</a>
 						</span>
@@ -80,21 +83,21 @@
 						
 						<div id="btnsControleDiferenca">
 							<span class="bt_novos">
-								<a href="javascript:;" onclick="lancamentoController.popupConfirmar();"
+								<a isEdicao="true" href="javascript:;" onclick="lancamentoController.popupConfirmar();"
 								   title="Confirmar Lançamento de Faltas e Sobras">
 									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
 								</a>
 							</span>
 							
 							<span class="bt_novos">
-								<a href="javascript:;" onclick="lancamentoController.popupSalvarLancamentos();"
+								<a isEdicao="true" href="javascript:;" onclick="lancamentoController.popupSalvarLancamentos();"
 								   title="Salvar">
 									<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
 								</a>
 							</span>
 							
 							<span class="bt_novos">
-								<a href="javascript:;" onclick="lancamentoController.popupCancelarLancamentos();"
+								<a isEdicao="true" href="javascript:;" onclick="lancamentoController.popupCancelarLancamentos();"
 								   title="Cancelar Lançamento de Faltas e Sobras">
 							 		<img src="${pageContext.request.contextPath}/images/ico_bloquear.gif" border="0" />
 							 	</a>

@@ -412,7 +412,7 @@ public class GruposAcessoController extends BaseController {
 
 		Set<GrupoPermissao> grupos = new HashSet<GrupoPermissao>();
 		
-		if(usuarioDTO.getGrupos() != null) {
+		if(usuarioDTO.getIdsGrupos() != null && !usuarioDTO.getIdsGrupos().isEmpty()) {
 			for (Long id : usuarioDTO.getIdsGrupos()) {
 					grupos.add(grupoPermissaoService.buscar(id));
 			}

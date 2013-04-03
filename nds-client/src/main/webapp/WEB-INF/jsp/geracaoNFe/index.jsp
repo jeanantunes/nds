@@ -1,3 +1,5 @@
+<input id="permissaoAlteracao" type="hidden" value="${permicaoAlteracao}">
+
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.br.js"></script>
@@ -13,6 +15,8 @@
 var geracaoNFeController;
 $(function(){
 	geracaoNFeController = $.extend(true, new GeracaoNFeController(),  BaseController);
+	
+	bloquearItensEdicao(geracaoNFeController.workspace);
 	
 });
 </script>
@@ -40,7 +44,7 @@ $(function(){
 </div>
 <div class="areaBts">
 	<div class="area">
-		<span class="bt_novos"><a href="javascript:;" id="btnGerar" rel="tipsy" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" /></a></span>
+		<span class="bt_novos"><a isEdicao="true" href="javascript:;" id="btnGerar" rel="tipsy" title="Confirma  Gera&ccedil;&atilde;o de Nf-e?" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" width="16" height="16" border="0" hspace="5" /></a></span>
 
         <span class="bt_arq"><a href="javascript:;" id="btnImprimirXLS" rel="tipsy" title="Gerar Arquivo"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /></a></span>
 

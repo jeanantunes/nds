@@ -369,6 +369,7 @@ public class CotaAusenteController extends BaseController {
 	 * @param numCota - Número da Cota
 	 */
 	@Post
+	@Rules(Permissao.ROLE_EXPEDICAO_COTA_AUSENTE_ALTERACAO)
 	public void enviarParaSuplementar(List<Integer> numCotas) {
 	
 		TipoMensagem status = TipoMensagem.SUCCESS;
@@ -485,6 +486,7 @@ public class CotaAusenteController extends BaseController {
 	 * @param numCota
 	 */
 	@Post
+	@Rules(Permissao.ROLE_EXPEDICAO_COTA_AUSENTE_ALTERACAO)
 	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, 
 							   List<Integer> numCotas) {
 		
