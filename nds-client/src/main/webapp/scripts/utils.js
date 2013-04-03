@@ -186,7 +186,9 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 							    divWarning, textWarning,
 							    divError, textError, isPopUp) {
 	
-	$("<div id='disabledBackground' class='ui-widget-overlay' style='width: 100%; height: 100%; z-index: 10001;'/>").appendTo($("#divCorpo"));
+	if(!$('#disabledBackground') || $('#disabledBackground').size() < 1) {
+		$("<div id='disabledBackground' class='ui-widget-overlay disabledBackground' style='width: 100%; height: 100%; z-index: 10001;'/>").appendTo($("#divCorpo"));
+	}
 	
 	var campoTexto;
 

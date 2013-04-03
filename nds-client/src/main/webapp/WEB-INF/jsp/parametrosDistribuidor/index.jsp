@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
 <head>
 <style type="text/css">
 	#dialog-confirm{display:none;}
@@ -38,6 +39,7 @@
 	var endereco = new Endereco("", "");
 	
 	endereco.preencherComboUF("${parametrosDistribuidor.endereco.uf}");
+	bloquearItensEdicao(parametrosDistribuidorController.workspace);
 </script>
 
 </head>
@@ -78,7 +80,7 @@
 		   
 	<div class="areaBts">
 		<div class="area">
-		    <span class="bt_novos"><a href="javascript:;" onclick="parametrosDistribuidorController.popup_confirm();" rel="tipsy" title="Salvar Parâmetros do Distribuidor"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a></span>
+		    <span class="bt_novos"><a isEdicao="true" href="javascript:;" onclick="parametrosDistribuidorController.popup_confirm();" rel="tipsy" title="Salvar Parâmetros do Distribuidor"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a></span>
 		</div>
 	</div>
 	<div class="linha_separa_fields">&nbsp;</div>

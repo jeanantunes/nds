@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
 <head>
 <script type="text/javascript" src="scripts/gruposPermissao.js"></script>
 <script type="text/javascript" src="scripts/usuariosPermissao.js"></script>
@@ -7,6 +8,10 @@
 		gruposPermissaoController.init("${pageContext.request.contextPath}");
 		usuariosPermissaoController.init("${pageContext.request.contextPath}");
 		regrasPermissaoController.init("${pageContext.request.contextPath}");
+		
+		bloquearItensEdicao(gruposPermissaoController.workspace.workspace);
+		bloquearItensEdicao(usuariosPermissaoController.workspace.workspace);
+		bloquearItensEdicao(regrasPermissaoController.workspace.workspace);
 	});
 </script>
 <style type="text/css">
@@ -210,7 +215,7 @@
            <div id="tabs-grupos" class="fixo" style="height: 300px" >
            <div class="areaBts">
            		<div class="area">
-           			<span class="bt_novos"><a href="javascript:;" onclick="gruposPermissaoController.popup_novo_grupo();" rel="tipsy" title="Novo"><img src="images/ico_salvar.gif" hspace="5" border="0"/></a></span>
+           			<span class="bt_novos"><a isEdicao="true" href="javascript:;" onclick="gruposPermissaoController.popup_novo_grupo();" rel="tipsy" title="Novo"><img src="images/ico_salvar.gif" hspace="5" border="0"/></a></span>
            		</div>
            </div>
            <div  class="linha_separa_fields">&nbsp;</div>
@@ -238,7 +243,7 @@
            <div id="tabs-usuarios" class="fixo">
            <div class="areaBts">
            		<div class="area">
-           			<span class="bt_novos"><a href="javascript:;" onclick="usuariosPermissaoController.popup_novo_usuario();" rel="tipsy" title="Novo"><img src="images/ico_salvar.gif" hspace="5" border="0"/></a></span>
+           			<span class="bt_novos"><a isEdicao="true" href="javascript:;" onclick="usuariosPermissaoController.popup_novo_usuario();" rel="tipsy" title="Novo"><img src="images/ico_salvar.gif" hspace="5" border="0"/></a></span>
            		</div>
            </div>
            <div class="linha_separa_fields">&nbsp;</div>
