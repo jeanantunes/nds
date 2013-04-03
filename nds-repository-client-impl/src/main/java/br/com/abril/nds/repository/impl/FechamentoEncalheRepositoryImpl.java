@@ -24,6 +24,7 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
@@ -83,6 +84,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		subquery.append(" vp.tipoVenda = :tipoVenda ");
 		
+		subquery.append(" and vp.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
+
 		return subquery;
 	}
 	
@@ -155,6 +158,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		query.setDate("dataEncalhe", filtro.getDataEncalhe());
 		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
+		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);
 		query.setParameter("origemInterface", Origem.INTERFACE);
 		query.setParameter("statusOperacaoFinalizada", StatusOperacao.CONCLUIDO);
 
@@ -209,6 +213,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		query.setDate("dataEncalhe", filtro.getDataEncalhe());
 		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
+		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);
 		query.setParameter("origemInterface", Origem.INTERFACE);
 		query.setParameter("statusOperacaoFinalizada", StatusOperacao.CONCLUIDO);
 
