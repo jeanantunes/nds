@@ -841,7 +841,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setTipoSegmentoProdutoId(Long tipoSegmentoProdutoId) {
 		this.tipoSegmentoProdutoId = tipoSegmentoProdutoId;
-	}
+	}  
 
 	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
 		return tipoClassificacaoProduto;
