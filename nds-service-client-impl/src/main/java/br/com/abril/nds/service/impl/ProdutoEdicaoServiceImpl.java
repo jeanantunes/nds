@@ -70,6 +70,7 @@ import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -965,11 +966,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					
 				}else{
 					
-					dto.setDataLancamento(this.lancamentoRepository.obterDataMinimaProdutoEdicao(pe.getId(), "dataLancamentoDistribuidor"));
-					dto.setDataLancamentoPrevisto(this.lancamentoRepository.obterDataMinimaProdutoEdicao(pe.getId(), "dataLancamentoPrevista"));
+					dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+					dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
 
-					dto.setDataRecolhimentoPrevisto(this.lancamentoRepository.obterDataMaximaProdutoEdicao(pe.getId(), "dataRecolhimentoPrevista"));
-					dto.setDataRecolhimentoReal(this.lancamentoRepository.obterDataMaximaProdutoEdicao(pe.getId(), "dataRecolhimentoDistribuidor"));					
+					dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
+					dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
 				}
 				
 				dto.setRepartePrevisto(uLancamento.getReparte());
@@ -1150,7 +1151,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public List<ProdutoEdicao> obterPorCodigoBarraILike(String codigoBarra) {
+	public List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra) {
 		return produtoEdicaoRepository.obterPorCodigoBarraILike(codigoBarra);
 	}
 	

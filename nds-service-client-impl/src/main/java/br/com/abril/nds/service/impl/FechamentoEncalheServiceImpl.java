@@ -199,7 +199,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
 				
 				for (FechamentoEncalhe fechamento : listaFechamento) {
-					if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
+					if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getId())) {
 						conferencia.setFisico(fechamento.getQuantidade());
 						conferencia.setDiferenca(calcularDiferencao(conferencia));
 						break;
@@ -214,7 +214,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
 				
 				for (FechamentoEncalheBox fechamento : listaFechamentoBox) {
-					if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
+					if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getId())) {
 												
 						conferencia.setFisico(fechamento.getQuantidade());
 												
@@ -549,7 +549,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
 			
 			TipoMovimentoEstoque tipoMovimentoEstoque =
-					this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+			
+			TipoMovimentoEstoque tipoMovimentoEstoqueCota =
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 			
 			for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
 				
@@ -564,13 +567,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				}
 				
 				if (ex == null){
+					
+					this.movimentoEstoqueService.gerarMovimentoEstoque(
+						chamadaEncalhe.getProdutoEdicao().getId(), 
+							usuario.getId(), BigInteger.ZERO, tipoMovimentoEstoque);
+					
 					this.movimentoEstoqueService.gerarMovimentoCota(
-							new Date(), 
+							null, 
 							chamadaEncalhe.getProdutoEdicao().getId(), 
 							cota.getId(), 
 							usuario.getId(), 
 							BigInteger.ZERO, 
-							tipoMovimentoEstoque,
+							tipoMovimentoEstoqueCota,
 							dataOperacao);
 				}
 	
@@ -1022,6 +1030,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		return fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro,  sortorder,  sortname,  startSearch,  rp);
+	}
+	
+	@Transactional
+	public BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, Integer page, Integer rp) {
+		
+		return fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro, page, rp);
+		
 	}
 	
 	@Override

@@ -337,4 +337,18 @@ public class FechamentoEncalheRepositoryImplTest extends AbstractRepositoryImplT
 		Assert.assertNotNull(resultado);
 	}
 
+	@Test
+	public void testarObterValorTotalAnaliticoEncalhe() {
+		
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR("28/02/2012"));
+		
+		this.fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro, 0, 15);
+		
+	}
+	
+	
+	
+	
 }

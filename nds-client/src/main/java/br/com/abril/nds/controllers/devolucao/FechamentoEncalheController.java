@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -579,6 +580,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.result.use(FlexiGridJson.class).from(listVO).total(totalRegistro).page(page).serialize();
 	}
+	
 	
 	@Get
 	@Path("/imprimirArquivoAnaliticoEncalhe")

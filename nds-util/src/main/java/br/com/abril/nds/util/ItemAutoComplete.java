@@ -2,6 +2,8 @@ package br.com.abril.nds.util;
 
 public class ItemAutoComplete {
 
+	public ItemAutoComplete() {
+	}
 	public ItemAutoComplete(String value, String label, Object chave){
 		this.value = value;
 		this.label = label;
