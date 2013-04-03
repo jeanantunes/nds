@@ -186,23 +186,23 @@ $(".editorBaseGrid").flexigrid({
 	});
 
 $(".itensRegioesEspecificasGrid").flexigrid({
-		//url : '../xml/itensRegioesEspecificas-xml.xml',
-		//dataType : 'xml',
+	preProcess : informacoesProdutoController.executarPreProcessItemRegiao,
+	dataType : 'json',
 		colModel : [ {
 			display : 'Nome Item',
-			name : 'nomeItem',
+			name : 'nomeItemRegiao',
 			width : 150,
 			sortable : true,
 			align : 'left'
 		},{
 			display : 'Qtde',
-			name : 'qtde',
+			name : 'quantidade',
 			width : 25,
 			sortable : true,
 			align : 'center'
 		},{
 			display : '%',
-			name : 'perc',
+			name : 'bonificacao',
 			width : 20,
 			sortable : true,
 			align : 'right'
@@ -282,7 +282,22 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		$(".grids", informacoesProdutoController.workspace).show();
 		return resultado;
 	},
-
+	
+	executarPreProcessItemRegiao : function(resultado){
+		
+		if (resultado.mensagens) {
+			exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+			);
+			
+			return resultado;
+		}
+	
+		$(".grids", informacoesProdutoController.workspace).show();
+		return resultado;
+	},
+	
 	recuperarNumeroEstudo: function(numeroEstudo){
 		
 		if($("#codigoEstudo").val()==undefined && $(".pesquisaEstudo").val() == undefined){
@@ -308,17 +323,22 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	filtroPrincipal : function(){
 		var codigo = $("#idCodigo").val();
+		var nomeProduto = $("#nomeProduto").val();
+		var classificacao = $("#comboClassificacao").val();
 		
 		$(".produtosInfosGrid", this.workspace).flexOptions({
 			url: contextPath + "/distribuicao/informacoesProduto/buscarProduto",
 			dataType : 'json',
-			params:[{
-				name : 'filtro.codProduto', value:codigo
-			}]
+			params:[
+			        {name : 'filtro.codProduto', value:codigo},
+			        {name : 'filtro.nomeProduto', value:nomeProduto},
+			        {name : 'filtro.idTipoClassificacaoProd', value:classificacao}
+			        ]
 		});
 			
 		$(".produtosInfosGrid", this.workspace).flexReload();		
 	},
+	
 	
 	pop_detalhes : function (codProd, numeroEdicao){
 	
@@ -328,6 +348,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			width:950,
 			modal: true,
 			open: informacoesProdutoController.baseSugerida(codProd),
+			open: informacoesProdutoController.itensRegiao(),
 			open: informacoesProdutoController.baseEstudo(codProd),
 			open: informacoesProdutoController.caracteristicasProduto(codProd, numeroEdicao),
 			open: informacoesProdutoController.openDetalhe(codProd, numeroEdicao),
@@ -352,6 +373,15 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			}]
 		});
 		$(".editorBaseGrid").flexReload();		
+	},
+	
+	itensRegiao : function(codProd){
+		
+		$(".itensRegioesEspecificasGrid").flexOptions({
+			url: contextPath + "/distribuicao/informacoesProduto/buscarItemRegiao",
+			dataType : 'json',
+		});
+		$(".itensRegioesEspecificasGrid").flexReload();		
 	},
 	
 	baseEstudo : function(codProd){

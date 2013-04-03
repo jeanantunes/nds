@@ -2,7 +2,6 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
@@ -12,7 +11,7 @@ public class FiltroInformacoesProdutoDTO extends FiltroDTO implements Serializab
 	
 	private String codProduto;
 	private String nomeProduto;
-	private TipoClassificacaoProduto classificacaoProd;
+	private Long idTipoClassificacaoProd;
 
 	
 	public String getCodProduto() {
@@ -28,11 +27,10 @@ public class FiltroInformacoesProdutoDTO extends FiltroDTO implements Serializab
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
 	}
-	
-	public TipoClassificacaoProduto getClassificacaoProd() {
-		return classificacaoProd;
+	public Long getIdTipoClassificacaoProd() {
+		return idTipoClassificacaoProd;
 	}
-	public void setClassificacaoProd(TipoClassificacaoProduto classificacaoProd) {
-		this.classificacaoProd = classificacaoProd;
+	public void setIdTipoClassificacaoProd(Long idTipoClassificacaoProd) {
+		this.idTipoClassificacaoProd = idTipoClassificacaoProd;
 	}
 }

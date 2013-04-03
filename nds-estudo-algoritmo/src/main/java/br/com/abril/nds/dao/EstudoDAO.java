@@ -38,10 +38,10 @@ public class EstudoDAO {
 
 	@Value("#{query_estudo.insertProdutoEdicaoBase}")
 	private String insertProdutoEdicaoBase;
-
+	
 	@Value("#{query_estudo.queryParametrosDistribuidor}")
 	private String queryParametrosDistribuidor;
-	
+
 	@Value("#{query_estudo.queryPercentuaisExcedentes}")
 	private String queryPercentuaisExcedentes;
 

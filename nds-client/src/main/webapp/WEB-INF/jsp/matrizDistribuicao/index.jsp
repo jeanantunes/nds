@@ -157,8 +157,16 @@ var lancamentosSelecionados = [];
 			         	  		</span>	
 			         	  		
 			         	  		<span class="bt_novos">
+						         	<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();">
+								        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0">
+								         	 Reabrir Itens
+								        </img>
+						         	</a>
+				     			</span>	
+			         	  		
+			         	  		<span class="bt_novos">
 			         	  			<a id="linkReabrir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_estudo();" rel="tipsy" title="Reabrir Estudo">
-							        		<img id="imgReabrirEst" src="${pageContext.request.contextPath}/images/ico_add_novo.gif" hspace="5" border="0">
+							        		<img id="imgReabrirEst" src="${pageContext.request.contextPath}/images/ico_add_novo.gif" hspace="5" border="0" />
 							        			Reabrir Estudo
 							        		</img>
 							        	</a>
@@ -167,7 +175,7 @@ var lancamentosSelecionados = [];
 			         	  		<span class="bt_novos">
 			         	  			<a href="javascript:;" onclick="matrizDistribuicao.analise()" rel="tipsy" title="Analisar Estudo">
 			         	  			<img id="imgAnalise" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" hspace="5" border="0">
-			         	  				An&aacutelise
+			         	  						An&aacutelise
 			         	  			</img>
 			         	  			</a>
 			         	  		</span>
@@ -237,9 +245,9 @@ var lancamentosSelecionados = [];
 				</jsp:include>
 				
 			    <fieldset style="width:250px!important;">
-			    	<legend>Confirmar Finalização de Matriz</legend>
+			    	<legend>Confirmar Finaliza&ccedil&atildeo de Matriz</legend>
 					
-						Confirma finalização da Matriz de Distribuição?
+						Confirma finaliza&ccedil&atildeo da Matriz de Distribui&ccedil&atildeo?
 	
 			    </fieldset>
 			</div>
@@ -269,9 +277,9 @@ var lancamentosSelecionados = [];
 				</jsp:include>
 				
 			    <fieldset style="width:250px!important;">
-			    	<legend>Confirmar Exclusão de Estudo</legend>
+			    	<legend>Confirmar Exclus&ccedil&atildeo de Estudo</legend>
 					
-						Confirma exclusão do estudo selecionado?
+						Confirma exclus&ccedil&atildeo do estudo selecionado?
 	
 			    </fieldset>
 			</div>
@@ -303,7 +311,7 @@ var lancamentosSelecionados = [];
 			    <fieldset style="width:250px!important;">
 			    	<legend>Duplicação Registro</legend>
 					
-						Confirmar a duplicação do registro selecionado?
+						Confirmar a duplica&ccedil&atildeo do registro selecionado?
 	
 			    </fieldset>
 			</div>
@@ -312,7 +320,6 @@ var lancamentosSelecionados = [];
 		</div>
 		
 		<div style="display:none" class="campoPesquisaEstudo"></div>
-			
 			<form id="form-copiar-estudo">
 			<div id="dialog-copiar-estudo" title="Copia Proporcional de Estudo" style="display:none;">
 			    

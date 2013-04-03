@@ -133,12 +133,6 @@ public class EstudoTransient extends Estudo {
 	public void setVendaMediaMais(BigInteger vendaMediaMais) {
 		this.vendaMediaMais = vendaMediaMais;
 	}
-	public Map<String, PercentualExcedenteEstudo> getPercentualExcedente() {
-		return percentualExcedente;
-	}
-	public void setPercentualExcedente(Map<String, PercentualExcedenteEstudo> percentualExcedente) {
-		this.percentualExcedente = percentualExcedente;
-	}
 	public BigDecimal getPercentualMaximoFixacao() {
 	    return percentualMaximoFixacao;
 	}
@@ -156,6 +150,12 @@ public class EstudoTransient extends Estudo {
 	}
 	public void setStatusEstudo(String statusEstudo) {
 	    this.statusEstudo = statusEstudo;
+	}
+	public Map<String, PercentualExcedenteEstudo> getPercentualExcedente() {
+		return percentualExcedente;
+	}
+	public void setPercentualExcedente(Map<String, PercentualExcedenteEstudo> percentualExcedente) {
+		this.percentualExcedente = percentualExcedente;
 	}
 
 	@Override

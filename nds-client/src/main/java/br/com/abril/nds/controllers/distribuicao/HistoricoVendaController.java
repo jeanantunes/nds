@@ -30,10 +30,12 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RegiaoService;
@@ -67,6 +69,9 @@ public class HistoricoVendaController extends BaseController {
 	private RegiaoService regiaoService;
 	
 	@Autowired
+	private InformacoesProdutoService infoProdService;
+	
+	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
 	@Autowired
@@ -94,8 +99,8 @@ public class HistoricoVendaController extends BaseController {
 	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTORICO_VENDA)
 	public void historicoVenda(){
 		result.include("componenteList", ComponentesPDV.values());
+		this.carregarComboClassificacao();
 		result.include("classificacaoProduto",tipoClassificacaoProdutoService.obterTodos());
-		
 	}
 	
 	@Post
@@ -120,7 +125,7 @@ public class HistoricoVendaController extends BaseController {
 		// valida se o campo percentual venda está preenchido
 		filtroValidate(filtro.validarPorQtdReparte(), filtro);
 		
-		List<CotaDTO> cotas = cotaService.buscarCotasQueInquadramNoRangeDeReparte(filtro.getQtdReparteInicial(), filtro.getQtdReparteFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
+		List<CotaDTO> cotas = cotaService.buscarCotasQueEnquadramNoRangeDeReparte(filtro.getQtdReparteInicial(), filtro.getQtdReparteFinal(), filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
 		
 		validarLista(cotas);
 		
@@ -366,5 +371,15 @@ public class HistoricoVendaController extends BaseController {
 		if (!isValid) {
 			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getValidationMsg());
 		}
+	}
+	
+	private void carregarComboClassificacao(){
+		List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
+		List<TipoClassificacaoProduto> classificacoes = infoProdService.buscarClassificacao();
+		
+		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
+			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
+		}
+		result.include("listaClassificacao",comboClassificacao);		
 	}
 }

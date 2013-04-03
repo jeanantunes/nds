@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.InformacoesBaseProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -75,6 +76,8 @@ public class InformacoesProdutoController extends BaseController {
 	@Path("/buscarProduto")
 	public void buscarProduto (FiltroInformacoesProdutoDTO filtro, String sortorder, String sortname, int page, int rp){
 		
+		this.tratarArgumentosFiltro(filtro);
+		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		tratarFiltro(filtro);
@@ -119,16 +122,6 @@ public class InformacoesProdutoController extends BaseController {
 		return tableModel;
 	}
 	
-	private void tratarFiltro(FiltroInformacoesProdutoDTO filtroAtual) {
-
-		FiltroInformacoesProdutoDTO filtroSession = (FiltroInformacoesProdutoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
-
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
-	}
 	
 	@Post
 	@Path("/buscarBaseSugerida")
@@ -181,6 +174,31 @@ public class InformacoesProdutoController extends BaseController {
 	}
 	
 	@Post
+	@Path("/buscarItemRegiao")
+	public void buscarItemRegiao (){
+		
+		TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> tableModel = gridItemRegiao();
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	
+	}
+	
+	private TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> gridItemRegiao () {
+		
+		List<InfoProdutosItemRegiaoEspecificaDTO> itensRegiao = infoProdService.buscarItemRegiao();
+		
+		TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> tableModel = new TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>>();
+	
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(itensRegiao));
+	
+		tableModel.setPage(1);
+	
+		tableModel.setTotal(itensRegiao.size());
+	
+		return tableModel;
+	}
+	
+	@Post
 	@Path("/buscarCaracteristicaProduto")
 	public void buscarCaracteristicaProduto(String codProd, Long numEdicao){
 
@@ -188,6 +206,28 @@ public class InformacoesProdutoController extends BaseController {
 		
 		result.use(Results.json()).from(caracteristicas, "result").serialize();
 
+	}
+	
+	private void tratarFiltro(FiltroInformacoesProdutoDTO filtroAtual) {
+		
+		FiltroInformacoesProdutoDTO filtroSession = (FiltroInformacoesProdutoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
+			
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+	}
+	
+	private void tratarArgumentosFiltro (FiltroInformacoesProdutoDTO filtro){
+		
+		if(filtro.getCodProduto() == null || filtro.getCodProduto().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Informe o Código e o Nome do produto.");
+		}
+		
+		if(filtro.getNomeProduto() == null || filtro.getNomeProduto().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Informe o Código e o Nome do produto.");
+		}
 	}
 	
 	@Get

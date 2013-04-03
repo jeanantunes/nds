@@ -179,7 +179,7 @@ function FlexGridService() {
 		
 		options.preProcess = options.preProcess || this.preProcess; 
 		
-		options.onSuccess = options.onSucess || this.onSuccess;
+		options.onSuccess = options.onSuccess || this.onSuccess;
 		
 		// GUARDA O ULTIMO PARÂMETRO UTILIZADO
 		this.lastParams = options.params;

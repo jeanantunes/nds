@@ -108,8 +108,14 @@ public class ProdutoEdicaoDAO {
 				produtoEdicaoBase.getProduto().setCodigo(rs.getString("CODIGO"));
 				produtoEdicaoBase.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 				produtoEdicaoBase.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-				produtoEdicaoBase.setTipoSegmentoProduto(new TipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
+				produtoEdicaoBase.setTipoSegmentoProduto(getTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
 				return produtoEdicaoBase;
+			}
+
+			private TipoSegmentoProduto getTipoSegmentoProduto(long idTipoSegmentoProduto) {
+				TipoSegmentoProduto tipoSegmentoProduto = new TipoSegmentoProduto();
+				tipoSegmentoProduto.setId(idTipoSegmentoProduto);
+				return tipoSegmentoProduto;
 			}
 		});
 	}
