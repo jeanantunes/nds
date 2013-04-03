@@ -18,7 +18,7 @@ public class CorrecaoTendenciaTest {
 
     @Autowired
     private CorrecaoTendencia correcaoTendencia;
-
+    
     /**
      * Testar se o índice de correção será 1.
      * 

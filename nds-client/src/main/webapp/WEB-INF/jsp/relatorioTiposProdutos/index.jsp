@@ -1,4 +1,4 @@
-﻿<head>
+<head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/relatorioTiposProdutos.js"></script>
 	
 	<script type="text/javascript">
