@@ -2878,11 +2878,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("VALOR_TOTAL_PAGAR", totalPagar);
 
 		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+		
 		try{
+			
 		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
-		}
-		catch(Exception e){
-			e.printStackTrace();
+		
+		} catch(Exception e){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+			
 		}
 
 
@@ -2904,19 +2908,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		
 		try {
-			
-			/*//Retorna um byte array de um TXT
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			JRTextExporter exporter = new JRTextExporter();  
-			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
-			//exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "/home/roger/teste.txt");  
-			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);  
-			exporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Float(4));  
-			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
-			exporter.exportReport();
-
-			return out.toByteArray();*/
-			
 			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		
 		} catch (JRException e) {
