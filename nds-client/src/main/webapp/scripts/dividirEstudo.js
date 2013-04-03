@@ -1,4 +1,30 @@
 var dividirEstudo = $.extend(true, {
+    
+    inicializar : function() {
+	
+	var numeroEstudoOriginal = $('#numeroEstudoOriginal', this.workspace);
+	var codigoProduto = $('#codigoProduto', this.workspace);
+	var nomeProduto = $('#nomeProduto', this.workspace);
+	var edicaoProduto = $('#edicaoProduto', this.workspace);
+	var dataDistribuicao = $('#dataDistribuicao', this.workspace);
+	var percentualDivisaoPrimeiroEstudo = $('#percentualDivisaoPrimeiroEstudo', this.workspace);
+	var percentualDivisaoSegundoEstudo = $('#percentualDivisaoSegundoEstudo', this.workspace);
+	var quantidadeReparte = $('#quantidadeReparte', this.workspace);
+	var numeroPrimeiroEstudo = $('#numeroPrimeiroEstudo', this.workspace);
+	var repartePrimeiroEstudo = $('#repartePrimeiroEstudo', this.workspace);
+	var numeroSegundoEstudo = $('#numeroSegundoEstudo', this.workspace);
+	var reparteSegundoEstudo = $('#reparteSegundoEstudo', this.workspace);
+	var dataLancamentoPrimeiroEstudo = $('#dataLancamentoPrimeiroEstudo', this.workspace);
+	var dataLancamentoSegundoEstudo = $('#dataLancamentoSegundoEstudo', this.workspace);
+	
+	numeroEstudoOriginal.numeric();
+	codigoProduto.numeric();
+	edicaoProduto.numeric();
+	percentualDivisaoPrimeiroEstudo.numeric();
+	percentualDivisaoSegundoEstudo.numeric();
+	quantidadeReparte.numeric();
+	
+    },
 
     gerarDivisao : function() {
 

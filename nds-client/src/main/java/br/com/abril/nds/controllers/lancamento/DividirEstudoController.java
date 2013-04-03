@@ -138,6 +138,8 @@ public class DividirEstudoController extends BaseController {
 		    divisaoEstudo.setNumeroSegundoEstudo(++maxId);
 
 		    result.use(json()).from(divisaoEstudo).recursive().serialize();
+		} else {
+		    mensagensValidacao.add("- Estudo Original não encontrado!");
 		}
 	    }
 	} else {

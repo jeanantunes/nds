@@ -6,21 +6,26 @@
 <script type="text/javascript" src='scripts/dividirEstudo.js'></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/matrizDistribuicao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 <script>
+
     $(function() {
-	$("#dataDistribuicao").datepicker({
-	    showOn : "button",
-	    buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
-	    buttonImageOnly : true,
-	    dateFormat : 'dd/mm/yy'
-	});
-	$("#dataLancamentoSegundoEstudo").datepicker({
-	    showOn : "button",
-	    buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
-	    buttonImageOnly : true,
-	    dateFormat : 'dd/mm/yy'
-	});
+
+		dividirEstudo.inicializar();
+		
+		$("#dataDistribuicao").datepicker({
+		    showOn : "button",
+		    buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
+		    buttonImageOnly : true,
+		    dateFormat : 'dd/mm/yy'
+		});
+		$("#dataLancamentoSegundoEstudo").datepicker({
+		    showOn : "button",
+		    buttonImage : "${pageContext.request.contextPath}/images/calendar.gif",
+		    buttonImageOnly : true,
+		    dateFormat : 'dd/mm/yy'
+		});
     });
 </script>
 </head>
