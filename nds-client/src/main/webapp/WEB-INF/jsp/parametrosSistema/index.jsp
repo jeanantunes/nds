@@ -1,3 +1,5 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
+
 <head>
 
 <script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
@@ -11,6 +13,7 @@
 	
 $(function(){
 	parametroSistemaController.init();
+	bloquearItensEdicao(parametroSistemaController.workspace);
 	
 });
 	
@@ -25,7 +28,7 @@ $(function(){
 		<div class="areaBts">
 			<div class="area">
 				<span class="bt_novos">
-					<a onclick="parametroSistemaController.salvar();" href="javascript:;" rel="tipsy" title="Salvar">
+					<a isEdicao="true" onclick="parametroSistemaController.salvar();" href="javascript:;" rel="tipsy" title="Salvar">
 					<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 					</a>
 				</span>

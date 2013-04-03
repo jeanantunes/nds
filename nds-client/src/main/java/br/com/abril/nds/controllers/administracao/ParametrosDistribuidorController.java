@@ -177,6 +177,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		return null;
 	}
 
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
 	public void salvarLogo(UploadedFile logo) {
 		
 		this.gravarArquivoTemporario(logo.getFile());
@@ -190,6 +191,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * Grava as alterações de parametros realizadas para o distribuidor
 	 * @param distribuidor
 	 */
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
 	    
 		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();
@@ -272,6 +274,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	/**
 	 * Realiza a exclusão dos dias de distribuição e recolhimento do fornecedor
 	 */
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
 	public void excluirDiasDistribuicaoFornecedor(long codigoFornecedor) {
 		distribuicaoFornecedorService.excluirDadosFornecedor(codigoFornecedor);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dias de Distribuição do Fornecedor excluido com sucesso"),"result").recursive().serialize();
@@ -290,6 +293,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	 */
 	@Post
 	@Path("/gravarDiasDistribuidorFornecedor")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
 	public void gravarDiasDistribuidorFornecedor(String selectFornecedoresLancamento, String selectDiasLancamento, String selectDiasRecolhimento) throws Exception {
 		
 		List<String> listaFornecedoresLancamento = Arrays.asList(selectFornecedoresLancamento.split(","));
@@ -436,6 +440,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * Excluir Grupo
 	 * @param idGrupo
 	 */
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
 	public void excluirGrupo(Long idGrupo)  {
 		
 		grupoService.excluirGrupo(idGrupo);
@@ -582,6 +587,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	@SuppressWarnings("unchecked")
 	@Post
+	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
 	public void cadastrarOperacaoDiferenciada(String nome,List<DiaSemana> diasSemana, Long idGrupo){
 		
 		List<Long> cotas = (List<Long>) (session.getAttribute(COTAS_SELECIONADAS) == null ?
