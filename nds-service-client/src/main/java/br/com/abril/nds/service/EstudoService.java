@@ -20,6 +20,8 @@ public interface EstudoService {
 	Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao);
 
 	Estudo obterEstudo(Long id);
+	
+	void gravarEstudo(Estudo estudo);
 
 	public abstract void excluirEstudosAnoPassado();
 

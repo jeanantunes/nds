@@ -39,10 +39,10 @@ public class EstudoServiceImpl implements EstudoService {
 	
 	@Autowired
 	private EstudoRepository estudoRepository;
-	
-        @Autowired
-        private EstudoCotaRepository estudoCotaRepository;
-        
+
+	@Autowired
+	private EstudoCotaRepository estudoCotaRepository;
+
         @Autowired
         private LancamentoRepository lancamentoRepository;
 
@@ -56,6 +56,15 @@ public class EstudoServiceImpl implements EstudoService {
 	@Override
 	public Estudo obterEstudo(Long id) {
 		return this.estudoRepository.buscarPorId(id);
+	}
+
+	@Override
+	public void gravarEstudo(Estudo estudo) {
+	    estudoRepository.adicionar(estudo);
+	    for (EstudoCota estudoCota : estudo.getEstudoCotas()) {
+		estudoCota.setEstudo(estudo);
+		estudoCotaRepository.adicionar(estudoCota);
+	    }
 	}
 
 	@Override
