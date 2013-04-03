@@ -1,6 +1,10 @@
 package br.com.abril.nds.dto;
 
-public class EstudoDTO {
+import java.io.Serializable;
+
+public class EstudoDTO implements Serializable {
+
+    private static final long serialVersionUID = 8906513605649269719L;
 
     private Long produtoEdicaoId;
     private String dataLancamento;

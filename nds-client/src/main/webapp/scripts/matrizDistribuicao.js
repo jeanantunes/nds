@@ -37,7 +37,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			data,
 			function(result) {
 				T.carregarGrid();
-			},
+			}
 			
 //			T.escondeGrid()
 		);
@@ -1229,6 +1229,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		var params = 'produto.codigoProduto='+ selecionado.codigoProduto;
 		params += '&produto.nomeProduto='+ selecionado.nomeProduto;
 		params += '&produto.numeroEdicao='+ selecionado.edicao;
+		params += '&produto.periodo='+ selecionado.periodo;
 		params += '&produto.classificacao='+ selecionado.classificacao;
 		params += '&produto.dataLancto='+ selecionado.dataLancto;
 		params += '&produto.reparte='+ selecionado.repDistrib;

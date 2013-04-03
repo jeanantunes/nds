@@ -137,7 +137,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 					}
 
 					// ExcedenteVDA = ((ExcedenteDistribuir * %PropVenda) / SVendaMédiaFinal) * VendaMédiaFinalCota
-					temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getVenda());
+	                                temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getVenda());
 					if (percentualExcedenteEstudo.getVenda().compareTo(BigDecimal.ZERO) > 0) {
 						temp = temp.divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_FLOOR);
 					}

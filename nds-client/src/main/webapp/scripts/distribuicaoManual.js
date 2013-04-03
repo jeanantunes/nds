@@ -2,10 +2,12 @@ var distribuicaoManual = $.extend(true, {
 	
 	rowCount : 0,
 	workspace : null,
+	hiddenIdCota : '<input type="hidden" id="idCotaGrid#index" value="#valor"/>',
+	hiddenStatusCota : '<input type="hidden" id="statusCotaGrid#index" value="#valor"/>',
 	inputNomeCota : '<div><input type="text" class="inputNomeCotaGrid" id="nomeCotaGrid#index" value="#valor" onblur="distribuicaoManual.checaSeRemoveu(\'#nomeCotaGrid#index\', #index)"></div>',
 	inputPercEstoque : '<div class="textoGridCota" id="percEstoqueGrid#index" >#valor</div>',
-	inputReparte : '<div><input type="text" id="reparteGrid#index" name="reparteGrid" value="#valor" onchange="distribuicaoManual.calcularPercEstoque(#index)" class="inputGridCota" /></div>',
-	inputNumeroCota : '<div><input type="text" id="numeroCotaGrid#index" name="numeroCotaGrid" value="#valor" onchange="distribuicaoManual.pesquisarCota(\'#numeroCotaGrid#index\', #index)" class="inputGridCota" /></div>',
+	inputReparte : '<div><input type="text" class="inputGridCota" id="reparteGrid#index" name="reparteGrid" value="#valor" onchange="distribuicaoManual.calcularPercEstoque(#index)" class="inputGridCota" /></div>',
+	inputNumeroCota : '<div><input type="text" class="inputGridCota" id="numeroCotaGrid#index" name="numeroCotaGrid" value="#valor" onchange="distribuicaoManual.pesquisarCota(\'#numeroCotaGrid#index\', #index)" /></div>',
 	
 	init : function() {
 		distribuicaoManual.workspace = $('.estudosManuaisGrid');
@@ -42,6 +44,11 @@ var distribuicaoManual = $.extend(true, {
 		var totalGeral = parseInt($("#reparteInicial").val());
 		var repCota = parseInt($("#reparteGrid"+ index, distribuicaoManual.workspace).val());
 		var totalDistribuido = distribuicaoManual.somarReparteDistribuido(index);
+		if (((repCota / totalGeral) * 100).toFixed(2) > 5) {
+			$("#reparteGrid"+ index, distribuicaoManual.workspace).css("background-color", "#FFFF00");
+		} else {
+			$("#reparteGrid"+ index, distribuicaoManual.workspace).css("background-color", "#FFFFFF");
+		}
 		if (repCota <= totalGeral) {
 			var repDistrib = totalGeral - totalDistribuido;
 			if (repCota <= repDistrib) {
@@ -110,12 +117,19 @@ var distribuicaoManual = $.extend(true, {
 	 		$.postJSON(contextPath + "/distribuicaoManual/consultarCotaPorNumero",
 					{numeroCota : numeroCota},
 					function(result){
-						$("#nomeCotaGrid"+ index, distribuicaoManual.workspace).val(result.nomePessoa);
+						$('#row'+ (index + 1), distribuicaoManual.workspace).append(
+								distribuicaoManual.hiddenIdCota.replace(/#valor/g, result.idCota).replace(/#index/g, index));
+						$('#row'+ (index + 1), distribuicaoManual.workspace).append(
+								distribuicaoManual.hiddenStatusCota.replace(/#valor/g, result.status).replace(/#index/g, index));
+						$('#nomeCotaGrid'+ index, distribuicaoManual.workspace).val(result.nomePessoa);
+						$('#reparteGrid'+ index, distribuicaoManual.workspace).focus();
 						distribuicaoManual.construirLinhaVazia();
 	 				},
 	 				function(result){
 						//Verifica mensagens de erro do retorno da chamada ao controller.
 						if (result.mensagens) {
+							$('#numeroCotaGrid'+ index, distribuicaoManual.workspace).val('');
+							$('#numeroCotaGrid'+ index, distribuicaoManual.workspace).focus();
 							exibirMensagemDialog(result.mensagens.tipoMensagem, result.mensagens.listaMensagens, "");
 						}
 					}, true, null
@@ -189,7 +203,12 @@ var distribuicaoManual = $.extend(true, {
 					}});
 			},
 			select : function(event, ui) {
+				$('#row'+ (index + 1), distribuicaoManual.workspace).append(
+						distribuicaoManual.hiddenIdCota.replace(/#valor/g, ui.item.chave.idCota).replace(/#index/g, index));
+				$('#row'+ (index + 1), distribuicaoManual.workspace).append(
+						distribuicaoManual.hiddenStatusCota.replace(/#valor/g, ui.item.chave.status).replace(/#index/g, index));
 				$('#numeroCotaGrid'+ index, distribuicaoManual.workspace).val(ui.item.value);
+				$('#reparteGrid'+ index, distribuicaoManual.workspace).focus();
 				distribuicaoManual.construirLinhaVazia();
 			},
 			focus: function( event, ui ) {
@@ -202,20 +221,20 @@ var distribuicaoManual = $.extend(true, {
 	
 	gerarEstudo : function() {
 		var data = [];
-		data.push({'estudoDTO.produtoEdicaoId': $('#idProdutoEdicao').val()});
-		data.push({'estudoDTO.reparteDistribuir': $('#reparteInicial').val()});
-		data.push({'estudoDTO.dataLancamento': $('#dataLancamento').html()});
+		data.push({name: 'estudoDTO.produtoEdicaoId', value: $('#idProdutoEdicao').val()});
+		data.push({name: 'estudoDTO.reparteDistribuir', value: $('#reparteInicial').val()});
+		data.push({name: 'estudoDTO.dataLancamento', value: $('#dataLancamento').html()});
 		for (var i = 0; i < distribuicaoManual.rowCount; i++) {
-			if ($("#reparteGrid"+ i, distribuicaoManual.workspace).val()) {
-				var temp = "estudoCotasDTO[";
-				data.push({temp.concat(i, "].idCota"): $("#numeroCotaGrid"+ i, distribuicaoManual.workspace).val()});
-				data.push({temp.concat(i, "].qtdeEfetiva"): $("#reparteGrid"+ i, distribuicaoManual.workspace).val()});
+			if ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() && ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() > 0)) {
+				data.push({name: "estudoCotasDTO["+ i +"].idCota", value: $("#numeroCotaGrid"+ i, distribuicaoManual.workspace).val()});
+				data.push({name: "estudoCotasDTO["+ i +"].qtdeEfetiva", value: $("#reparteGrid"+ i, distribuicaoManual.workspace).val()});
 			}
 		}
 		$.postJSON(contextPath +"/distribuicaoManual/gravarEstudo",
 				data,
 				function(result){
-					console.log(result);
+					$('#estudo').html(result.long);
+					distribuicaoManual.bloquearCampos();
 					exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
  				},
  				function(result){
@@ -224,6 +243,38 @@ var distribuicaoManual = $.extend(true, {
 					}
 				}, true, null
 		);
+	},
+	
+	bloquearCampos : function() {
+		for (var i = 0; i < distribuicaoManual.rowCount; i++) {
+			if ($("#reparteGrid"+ i, distribuicaoManual.workspace).val()) {
+				$("#numeroCotaGrid"+ i, distribuicaoManual.workspace).attr("disabled", true).css("background-color", "#f0f0f0");
+				$("#nomeCotaGrid"+ i, distribuicaoManual.workspace).attr("disabled", true).css("background-color", "#f0f0f0");
+				$("#reparteGrid"+ i, distribuicaoManual.workspace).attr("disabled", true).css("background-color", "#f0f0f0");
+			}
+		}
+	},
+	
+	analisar : function() {
+		//testa se registro selecionado possui estudo gerado
+		if ($('#estudo').html() == null || $('#estudo').html() == "") {
+			exibirMensagem("WARNING",["Gere o estudo antes de fazer a análise."]);
+			return;
+		} else {
+			var dados = [];
+			dados.push({name: 'selecionado.codigoProduto', value: $('#codigoProduto').html()});
+			dados.push({name: 'selecionado.nomeProduto', value: $('#nomeProduto').html()});
+			dados.push({name: 'selecionado.edicao', value: $('#numeroEdicao').html()});
+			dados.push({name: 'selecionado.periodo', value: $('#periodicidadeProduto').html()});
+			dados.push({name: 'selecionado.classificacao', value: $('#classificacao').html()});
+			dados.push({name: 'selecionado.estudo', value: $('#estudo').html()});
+			dados.push({name: 'selecionado.estudoLiberado', value: false});
+			$('#workspace').tabs({load : function(event, ui) {
+				histogramaPosEstudoController.matrizSelecionado = dados;
+				histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(dados);
+			}});
+			$('#workspace').tabs('addTab', 'Análise', pathTela + '/matrizDistribuicao/histogramaPosEstudo');
+		}
 	}
 });
 

@@ -52,6 +52,7 @@ public class EstudoServiceImpl implements EstudoService {
 	public void gravarEstudo(Estudo estudo) {
 	    estudoRepository.adicionar(estudo);
 	    for (EstudoCota estudoCota : estudo.getEstudoCotas()) {
+		estudoCota.setEstudo(estudo);
 		estudoCotaRepository.adicionar(estudoCota);
 	    }
 	}

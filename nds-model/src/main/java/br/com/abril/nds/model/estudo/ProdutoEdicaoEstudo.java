@@ -18,7 +18,6 @@ public class ProdutoEdicaoEstudo extends ProdutoEdicao {
     private Date dataLancamento;
     private boolean colecao; // Atributo que define se o Produto é um fascículo/coleção
     private Integer periodo;
-    private Long tipoSegmentoProduto;
 
     private Long idCota;
     private BigDecimal reparte;
@@ -83,12 +82,6 @@ public class ProdutoEdicaoEstudo extends ProdutoEdicao {
 	}
 	public void setPeriodo(Integer periodo) {
 		this.periodo = periodo;
-	}
-	public Long getTipoSegmentoProduto() {
-		return tipoSegmentoProduto;
-	}
-	public void setTipoSegmentoProduto(Long tipoSegmentoProduto) {
-		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
 	public Long getIdCota() {
 		return idCota;

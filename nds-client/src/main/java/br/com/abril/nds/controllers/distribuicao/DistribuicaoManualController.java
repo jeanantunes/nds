@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.EstudoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -47,11 +48,17 @@ public class DistribuicaoManualController extends BaseController {
     
     @Post
     @Path("/consultarCotaPorNumero")
-    public void consultarCotaPorNumero(Integer numeroCota) {
+    public void consultarCotaPorNumero(Integer numeroCota) throws Exception {
 	CotaDTO cotaDTO = new CotaDTO();
 	Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
-	cotaDTO.setIdCota(cota.getId());
-	cotaDTO.setNomePessoa(cota.getPessoa().getNome());
+	if (cota == null) {
+	    throw new Exception("Não foi encontrada nenhuma cota com este número.");
+	} else {
+	    cotaDTO.setNumeroCota(cota.getNumeroCota());
+	    cotaDTO.setIdCota(cota.getId());
+	    cotaDTO.setNomePessoa(cota.getPessoa().getNome());
+	    cotaDTO.setStatus(cota.getSituacaoCadastro());
+	}
 	result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
     }
 
@@ -70,7 +77,7 @@ public class DistribuicaoManualController extends BaseController {
     @Path("/gravarEstudo")
     public void gravarEstudo(EstudoDTO estudoDTO, List<EstudoCotaDTO> estudoCotasDTO) throws Exception {
 	Estudo estudo = new Estudo();
-	estudo.getProdutoEdicao().setId(estudoDTO.getProdutoEdicaoId());
+	estudo.setProdutoEdicao(new ProdutoEdicao(estudoDTO.getProdutoEdicaoId()));
 	estudo.setReparteDistribuir(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
 	estudo.setQtdeReparte(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
 	estudo.setDataCadastro(new Date());
@@ -83,7 +90,7 @@ public class DistribuicaoManualController extends BaseController {
 	}
 	for (EstudoCotaDTO cotaDTO : estudoCotasDTO) {
 	    EstudoCota estudoCota = new EstudoCota();
-	    estudoCota.getCota().setId(cotaDTO.getIdCota());
+	    estudoCota.setCota(new Cota(cotaDTO.getIdCota()));
 	    estudoCota.setQtdePrevista(cotaDTO.getQtdeEfetiva());
 	    estudoCota.setQtdeEfetiva(cotaDTO.getQtdeEfetiva());
 	    estudoCota.setReparte(cotaDTO.getQtdeEfetiva());

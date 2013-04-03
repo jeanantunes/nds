@@ -11,15 +11,12 @@
 	.inputGridCota {
 		width:50px;
 		float:left;
-		margin: 2px 0 10px 0;
+		margin: 0px 0 10px 0;
 	}
 	.textoGridCota {
 		text-align: center;
 		width: 90px;
 		height: 23px;
-	}
-	.displayNone {
-		display: none !important;
 	}
 </style>
 </head>
@@ -57,6 +54,7 @@
 							<fieldset
 								style="width: 380px; margin-top: 5px; margin-left: 20px">
 								<input type="hidden" id="idProdutoEdicao" value="${produto.idProdutoEdicao}"/>
+								<input type="hidden" id="periodo" value="${produto.periodo}"/>
 								<legend>Dados da Publicação </legend>
 								<table width="376" border="0" cellspacing="2" cellpadding="2">
 									<tr>
@@ -69,15 +67,15 @@
 									</tr>
 									<tr>
 										<td><strong>Produto:</strong></td>
-										<td>${produto.nomeProduto}</td>
+										<td id="nomeProduto">${produto.nomeProduto}</td>
 									</tr>
 									<tr>
 										<td><strong>Edição:</strong></td>
-										<td>${produto.numeroEdicao}</td>
+										<td id="numeroEdicao">${produto.numeroEdicao}</td>
 									</tr>
 									<tr>
 										<td><strong>Classificação:</strong></td>
-										<td>${produto.classificacao}</td>
+										<td id="classificacao">${produto.classificacao}</td>
 									</tr>
 									<tr>
 										<td><strong>Data Distribuição:</strong></td>
