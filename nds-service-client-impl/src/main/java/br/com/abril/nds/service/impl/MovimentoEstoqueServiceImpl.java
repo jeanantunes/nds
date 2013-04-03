@@ -506,7 +506,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao) {
 		
 		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, 
-				idUsuario, quantidade, tipoMovimentoEstoque, new Date(), dataOperacao,null,null);
+				idUsuario, quantidade, tipoMovimentoEstoque, null, dataOperacao,null,null);
 	}
 
 	@Override
