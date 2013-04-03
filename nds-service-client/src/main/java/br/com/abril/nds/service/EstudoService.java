@@ -1,8 +1,10 @@
 package br.com.abril.nds.service;
 
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
+import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 
@@ -26,5 +28,11 @@ public interface EstudoService {
 	void excluirEstudo(long id);
 
 	void criarNovoEstudo(ProdutoDistribuicaoVO produto);
+	
+	public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
+	
+	public Long obterMaxId();
+
+	public List<Long> salvarDivisao(Estudo estudoOriginal, List<Estudo> listEstudo);
 	
 }

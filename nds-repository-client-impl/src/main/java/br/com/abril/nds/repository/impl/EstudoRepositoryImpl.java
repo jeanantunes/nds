@@ -9,6 +9,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -160,6 +161,44 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		super.remover(estudo);
 	}
+	
+    @Override
+    public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO) {
+
+	StringBuilder hql = new StringBuilder();
+
+	hql.append(" from Estudo estudo ");
+	hql.append(" where estudo.id = :numeroEstudoOriginal ");
+	hql.append(" and estudo.produtoEdicao.produto.codigo = :codigoProduto ");
+	hql.append(" and estudo.produtoEdicao.produto.nome = :nomeProduto ");
+	hql.append(" and estudo.produtoEdicao.numeroEdicao = :numeroEdicao ");
+	hql.append(" and estudo.dataLancamento = :dataDistribuicao ");
+
+	Query query = getSession().createQuery(hql.toString());
+
+	query.setParameter("numeroEstudoOriginal", divisaoEstudoVO.getNumeroEstudoOriginal());
+	query.setParameter("codigoProduto", divisaoEstudoVO.getCodigoProduto());
+	query.setParameter("nomeProduto", divisaoEstudoVO.getNomeProduto());
+	query.setParameter("numeroEdicao", divisaoEstudoVO.getEdicaoProduto());
+	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicao());
+
+	Estudo estudo = (Estudo) query.uniqueResult();
+
+	return estudo;
+    }
+
+    @Override
+    public Long obterMaxId() {
+
+	StringBuilder hql = new StringBuilder();
+	hql.append(" select max(estudo.id) from Estudo estudo ");
+
+	Query query = getSession().createQuery(hql.toString());
+
+	Long maxId = (Long) query.uniqueResult();
+
+	return maxId;
+    }
 }
 
 
