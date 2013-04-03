@@ -19,7 +19,7 @@ public class VendaCrescenteTest {
 
     @Autowired
     private VendaCrescente vendaCrescente;
-
+    
     /**
      * Testar se o índice de venda crescente será 1 com uma única publicacão e com menos de quatro edições.
      * 

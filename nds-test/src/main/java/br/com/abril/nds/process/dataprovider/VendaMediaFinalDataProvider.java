@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.testng.ITestContext;
 import org.testng.annotations.DataProvider;
 
 import br.com.abril.nds.dao.CotaDAO;
@@ -15,29 +14,19 @@ import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.Cota;
 import br.com.abril.nds.model.EstoqueProdutoCota;
 import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.process.ajustecota.AjusteCota;
-import br.com.abril.nds.process.bonificacoes.Bonificacoes;
 import br.com.abril.nds.process.correcaovendas.CorrecaoVendas;
 import br.com.abril.nds.process.medias.Medias;
 
-public abstract class VendaMediaFinalDataProvider extends NDSDataProvider {
+public abstract class VendaMediaFinalDataProvider {
 
     @Autowired
     private static CorrecaoVendas correcaoVendas;
-
-    @Autowired
-    private static Medias medias;
-
-    @Autowired
-    private static Bonificacoes bonificacoes;
     
     @Autowired
-    private static AjusteCota ajusteCota;
-
+    private static Medias medias;
+    
     @DataProvider(name = "getCotaParaCalculoList")
-    public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList(ITestContext context) throws Exception {
-
-	List<Long> listParamCotaId = getParamCotaId(context);
+    public static Iterator<Cota[]> getCotaQuantidadeEdicoesMenorTresList() throws Exception {
 
 	List<Cota[]> listCotaReturn = new ArrayList<Cota[]>();
 
@@ -51,11 +40,6 @@ public abstract class VendaMediaFinalDataProvider extends NDSDataProvider {
 
 	    Cota cota = itCota.next();
 
-	    if (!listParamCotaId.isEmpty() && !listParamCotaId.contains(cota.getId())) {
-		itCota.remove();
-		continue;
-	    }
-
 	    List<ProdutoEdicao> produtoEdicaoList = new ProdutoEdicaoDAO().getEdicaoRecebidas(cota);
 	    List<EstoqueProdutoCota> listEstoqueProdutoCota = new EstoqueProdutoCotaDAO().getByCotaIdProdutoEdicaoId(cota, produtoEdicaoList);
 
@@ -68,30 +52,21 @@ public abstract class VendaMediaFinalDataProvider extends NDSDataProvider {
 		produtoEdicao.setVenda(estoqueProdutoCota.getQuantidadeRecebida().subtract(estoqueProdutoCota.getQuantidadeDevolvida()));
 		produtoEdicao.setPeso(BigDecimal.ONE);
 
-		if (!produtoEdicao.isEdicaoAberta()) {
-		    edicoesRecebidas.add(produtoEdicao);
-		}
+		edicoesRecebidas.add(produtoEdicao);
 
 		iEdicaoBase++;
 	    }
 
-	    if (edicoesRecebidas.size() >= 4) {
+	    cota.setEdicoesRecebidas(edicoesRecebidas);
 
-		cota.setEdicoesRecebidas(edicoesRecebidas);
-		correcaoVendas.setGenericDTO(cota);
-		correcaoVendas.executar();
+	    correcaoVendas.setGenericDTO(cota);
+	    correcaoVendas.executar();
 
-		medias.setGenericDTO(cota);
-		medias.executar();
+	    medias.setGenericDTO(cota);
+	    medias.executar();
 
-		bonificacoes.setGenericDTO(cota);
-		bonificacoes.executar();
+	    listCotaReturn.add(new Cota[] { cota });
 
-		ajusteCota.setGenericDTO(cota);
-		ajusteCota.executar();
-
-		listCotaReturn.add(new Cota[] { cota });
-	    }
 	}
 
 	return listCotaReturn.iterator();

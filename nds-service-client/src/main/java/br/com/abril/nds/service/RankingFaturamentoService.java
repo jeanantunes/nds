@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 
-=======
-
->>>>>>> refs/remotes/DGBTi/fase2
 package br.com.abril.nds.service;
 
 import java.util.List;

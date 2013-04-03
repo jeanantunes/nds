@@ -132,9 +132,5 @@ function escondeDados(){
     <span class="bt_novos" title="Imprimir"><a href="javascript:;" id="analiseHistoricoVendaPDF" ><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
       </fieldset>
        </div>
-<<<<<<< HEAD
      </div>
-=======
-     </div>
->>>>>>> refs/remotes/DGBTi/fase2
 </div>

@@ -1,6 +1,6 @@
 package br.com.abril.nds.process.medias;
 
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.math.BigDecimal;
@@ -18,14 +18,14 @@ public class MediasTest {
 
     @Autowired
     private Medias medias;
-
+    
     /**
      * Testar se a venda médias é calculada conforme a quantidade de edições menor que três.
      * 
      * @param cota
      */
     @Test(dataProvider = "getCotaQuantidadeEdicoesMenorTresList", dataProviderClass = MediasDataProvider.class)
-    public void cotaComQuantidadeEdicaoBaseMenorTres(Cota cota) {
+    public void quantidadeEdicaoMenorTres(Cota cota) {
 
 	try {
 
@@ -45,7 +45,10 @@ public class MediasTest {
 	    }
 
 	    BigDecimal vendaMedia = cota.getVendaMedia();
-	    assertNotNull(vendaMedia, "Venda Media : " + vendaMedia + " Cota : " + cota.getId());
+
+	    boolean assertVendaMedia = (vendaMedia != null && (vendaMedia.compareTo(BigDecimal.ZERO) == 1));
+
+	    assertTrue(assertVendaMedia, "Venda Media : " + assertVendaMedia + " Cota : " + cota.getId());
 	    gerarReporterLog(cota, sbReporterLog, vendaMedia);
 
 	} catch (Exception e) {
@@ -59,7 +62,7 @@ public class MediasTest {
      * @param cota
      */
     @Test(dataProvider = "getCotaQuantidadeEdicoesMaiorIgualTresList", dataProviderClass = MediasDataProvider.class)
-    public void cotaComQuantidadeEdicaoBaseMaiorIgualTres(Cota cota) {
+    public void quantidadeEdicaoMaiorIgualTres(Cota cota) {
 
 	try {
 
@@ -79,7 +82,10 @@ public class MediasTest {
 	    }
 
 	    BigDecimal vendaMedia = cota.getVendaMedia();
-	    assertNotNull(vendaMedia, "Venda Media : " + vendaMedia + " Cota : " + cota.getId());
+
+	    boolean assertVendaMedia = (vendaMedia != null && (vendaMedia.compareTo(BigDecimal.ZERO) == 1));
+
+	    assertTrue(assertVendaMedia, "Venda Media : " + assertVendaMedia + " Cota : " + cota.getId());
 	    gerarReporterLog(cota, sbReporterLog, vendaMedia);
 
 	} catch (Exception e) {

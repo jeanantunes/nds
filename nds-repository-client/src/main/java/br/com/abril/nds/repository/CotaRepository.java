@@ -372,10 +372,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 
 	boolean cotaVinculadaCotaBase(Long idCota);
-<<<<<<< HEAD
 	
-=======
-	
->>>>>>> refs/remotes/DGBTi/fase2
 	List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
 }
