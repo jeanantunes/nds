@@ -8,6 +8,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -166,4 +167,17 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
 		query.executeUpdate();
 	}
+	
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<EstudoCota> obterEstudoCotaPorEstudo(Estudo estudo) {
+
+	String hql = " from EstudoCota estudoCota where estudoCota.estudo = :estudo ";
+
+	Query query = super.getSession().createQuery(hql);
+
+	query.setParameter("estudo", estudo);
+
+	return query.list();
+    }
 }

@@ -70,6 +70,8 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	 		sql.append(" and forn.id in (:idFornecedores)");
 	 	}
 	 	
+	 	sql.append(" order by codigoProduto, numeroEdicao");
+	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));

@@ -1,0 +1,39 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: soaresa
+Build-Jdk: 1.7.0_11
+Specification-Title: NDS - Test
+Specification-Version: 1.0
+Implementation-Title: NDS - Test
+Implementation-Version: 1.0
+Implementation-Vendor-Id: br.com.abril
+Main-Class: org.testng.TestNG
+Class-Path: lib/testng-6.8.jar lib/bsh-2.0b4.jar lib/jcommander-1.27.j
+ ar lib/snakeyaml-1.6.jar lib/nds-estudo-algoritmo-1.0.jar lib/mysql-c
+ onnector-java-5.1.23.jar lib/joda-time-2.1.jar lib/spring-context-sup
+ port-3.1.2.RELEASE.jar lib/spring-beans-3.1.2.RELEASE.jar lib/spring-
+ jdbc-3.1.2.RELEASE.jar lib/spring-tx-3.1.2.RELEASE.jar lib/spring-cor
+ e-3.1.2.RELEASE.jar lib/spring-asm-3.1.2.RELEASE.jar lib/commons-logg
+ ing-1.1.1.jar lib/spring-context-3.1.2.RELEASE.jar lib/spring-aop-3.1
+ .2.RELEASE.jar lib/aopalliance-1.0.jar lib/spring-expression-3.1.2.RE
+ LEASE.jar lib/spring-test-3.1.2.RELEASE.jar lib/slf4j-api-1.6.1.jar l
+ ib/slf4j-log4j12-1.6.1.jar lib/log4j-1.2.16.jar lib/commons-beanutils
+ -1.8.3.jar lib/caelum-stella-core-2.0-beta1.jar lib/caelum-stella-bol
+ eto-2.0-beta1.jar lib/itext-2.1.7.jar lib/bctsp-jdk14-1.38.jar lib/bc
+ prov-jdk14-1.38.jar lib/bcmail-jdk14-1.38.jar lib/itextpdf-5.2.0.jar 
+ lib/poi-3.8-beta5.jar lib/commons-codec-1.5.jar lib/jasperreports-4.5
+ .1.jar lib/commons-collections-2.1.jar lib/commons-digester-2.1.jar l
+ ib/jcommon-1.0.15.jar lib/jfreechart-1.0.12.jar lib/xml-apis-1.0.b2.j
+ ar lib/jdtcore-3.1.0.jar lib/castor-1.2.jar lib/poi-ooxml-3.7.jar lib
+ /poi-ooxml-schemas-3.7.jar lib/xmlbeans-2.3.0.jar lib/stax-api-1.0.1.
+ jar lib/geronimo-stax-api_1.0_spec-1.0.jar lib/dom4j-1.6.1.jar lib/ja
+ ckson-core-lgpl-1.7.4.jar lib/jackson-mapper-lgpl-1.7.4.jar lib/quart
+ z-2.1.2.jar lib/c3p0-0.9.1.1.jar lib/jasperreports-fonts-nds-4.5.1.ja
+ r lib/fixedformat4j-1.2.2.jar lib/commons-lang-2.6.jar lib/hibernate-
+ ehcache-4.1.7.Final.jar lib/jboss-logging-3.1.0.GA.jar lib/ehcache-co
+ re-2.4.3.jar lib/hibernate-core-4.1.7.Final.jar lib/antlr-2.7.7.jar l
+ ib/jboss-transaction-api_1.1_spec-1.0.0.Final.jar lib/hibernate-jpa-2
+ .0-api-1.0.1.Final.jar lib/javassist-3.15.0-GA.jar lib/hibernate-comm
+ ons-annotations-4.0.1.Final.jar resources/applicationContext.xml
+
