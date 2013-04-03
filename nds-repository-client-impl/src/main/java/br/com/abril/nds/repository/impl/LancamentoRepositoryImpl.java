@@ -747,8 +747,8 @@ public class LancamentoRepositoryImpl extends
 
 		hql.append(" select lancamento ")
 		   .append(" from Lancamento lancamento ")
-		   .append(" where lancamento.dataLancamentoDistribuidor = ")
-		   .append(" (select max(lancamentoMaxDate.dataLancamentoDistribuidor) ")
+		   .append(" where lancamento.dataLancamentoPrevista = ")
+		   .append(" (select max(lancamentoMaxDate.dataLancamentoPrevista) ")
 		   .append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id=:idProdutoEdicao ) ")
 		   .append(" and lancamento.produtoEdicao.id=:idProdutoEdicao ");
 		
