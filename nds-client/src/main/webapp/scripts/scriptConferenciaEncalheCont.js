@@ -54,7 +54,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
+		$("#numeroCota", ConferenciaEncalheCont.workspace).keyup(function(e) {
 			
 			if (e.keyCode == 13) {
 				
@@ -62,7 +62,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			}
 		});
 		
-		$("#lstProdutos", ConferenciaEncalheCont.workspace).keypress(function(e){
+		$("#lstProdutos", ConferenciaEncalheCont.workspace).keyup(function(e){
 			
 			ConferenciaEncalheCont.pesquisarProdutoPorCodigoNome();
 		});

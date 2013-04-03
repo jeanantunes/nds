@@ -528,21 +528,10 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
 		}
 
-		List<ProdutoEdicao> produtosEdicao = new ArrayList<ProdutoEdicao>();
-
-		produtosEdicao = this.produtoEdicaoService.obterPorCodigoBarraILike(codigoBarra);
-		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+		List<ItemAutoComplete> listaProdutos = this.produtoEdicaoService.obterPorCodigoBarraILike(codigoBarra);
+		if (listaProdutos == null || listaProdutos.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
-		}
-
-		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-
-		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
-
-			listaProdutos.add(new ItemAutoComplete(
-					produtoEdicao.getCodigoDeBarras() + " - " + produtoEdicao.getProduto().getNome() + " - Ed.:" + produtoEdicao.getNumeroEdicao(), 
-					null, new Object[]{produtoEdicao.getId()}));
 		}
 
 		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
@@ -1006,7 +995,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 
-	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) {
+	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) throws Exception {
 		
 		Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
 		
@@ -1225,16 +1214,11 @@ public class ConferenciaEncalheController extends BaseController {
 			Long idControleConferenciaEncalheCota = dadosDocumentacaoConfEncalheCota.getIdControleConferenciaEncalheCota();
 			
 			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-			
-			this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
-			
-			for (String nossoNumero : dadosDocumentacaoConfEncalheCota.getListaNossoNumero().keySet()){
 				
-				if (dadosDocumentacaoConfEncalheCota.getListaNossoNumero().get(nossoNumero)){
-				
-					this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, 
-							controleConfEncalheCota.getCota().getPessoa().getEmail());
-				}
+			try {
+				this.gerarDocumentoConferenciaEncalhe(dadosDocumentacaoConfEncalheCota);
+			} catch (Exception e){
+				throw new Exception("Erro ao gerar documentos da conferência de encalhe - " + e.getMessage());
 			}
 			
 			Map<String, Object> dados = new HashMap<String, Object>();
