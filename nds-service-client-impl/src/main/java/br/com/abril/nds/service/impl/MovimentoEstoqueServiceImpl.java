@@ -504,8 +504,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			Long idProdutoEdicao, Long idCota, Long idUsuario,
 			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque,
 			Date dataMovimento, Date dataOperacao, Long idLancamento,
-			Long idEestudoCota) {
-		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null, false);
+			Long idEstudoCota) {
+		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, dataMovimento, dataOperacao,idLancamento,idEstudoCota, false);
+		//return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null, false);
 	}
 
 	
