@@ -498,17 +498,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		return (saldoEstoque != null && saldoEstoque.compareTo(BigInteger.ZERO) >= 0);
 	}
-
-	@Override
-	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento,
-			Long idProdutoEdicao, Long idCota, Long idUsuario,
-			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque,
-			Date dataMovimento, Date dataOperacao, Long idLancamento,
-			Long idEstudoCota) {
-		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, dataMovimento, dataOperacao,idLancamento,idEstudoCota, false);
-		//return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), null,null,null, false);
-	}
-
 	
 	@Override
 	@Transactional
@@ -522,18 +511,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, 
-			Long idProdutoEdicao, Long idCota, Long idUsuario, 
-			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao, boolean isHistorico) {
-		
-		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, tipoMovimentoEstoque, new Date(), dataOperacao,null,null, isHistorico);
-	}
-
-	@Override
-	@Transactional
 	public MovimentoEstoqueCota gerarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
-			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota, boolean isHistorico) {
+			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
 
 		if (dataOperacao == null) {
 			
@@ -817,7 +797,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoEnvioReparte, dataOperacao, true);
 
-			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao, true);
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(reparte), tipoMovimentoRecebimentoReparte, dataOperacao);
 		}
 	}
 
@@ -864,7 +844,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			gerarMovimentoEstoque(edicao.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoRecebimentoEncalhe, dataOperacao, true);
 
-			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao, true);
+			gerarMovimentoCota(null, edicao.getId(), cota.getId(), idUsuario, BigInteger.valueOf(encalhe), tipoMovimentoEnvioEncalhe, dataOperacao);
 		}
 	}
 
