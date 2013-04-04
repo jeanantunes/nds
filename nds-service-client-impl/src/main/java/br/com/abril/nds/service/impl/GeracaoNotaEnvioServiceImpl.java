@@ -29,7 +29,6 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
@@ -497,6 +496,36 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 	
 	/**
+	 * Define sequencia para cada ItemNotaEnvio e atualiza MovimentoEstoqueCota sem estudo com cada ItemNotaEnvio
+	 * @param notaEnvio
+	 * @param listaItemNotaEnvio
+	 */
+	private void atualizaMovimentosEstoqueItemNotaEnvio(NotaEnvio notaEnvio, List<ItemNotaEnvio> listaItemNotaEnvio){
+		
+		int sequencia = 0;
+		
+		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
+			
+			if(itemNotaEnvio.getItemNotaEnvioPK() == null) {
+				
+				itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio, ++sequencia));
+				
+				itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+				
+				if(itemNotaEnvio.getMovimentosProdutoSemEstudo() != null && !itemNotaEnvio.getMovimentosProdutoSemEstudo().isEmpty()) {
+					
+					for(MovimentoEstoqueCota mec : itemNotaEnvio.getMovimentosProdutoSemEstudo()) {
+						
+						mec.setItemNotaEnvio(itemNotaEnvio);
+						
+						this.movimentoEstoqueCotaRepository.merge(mec);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Gera Nota de envio da Cota
 	 * @param pessoaEmitente
 	 * @param idCota
@@ -509,9 +538,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * @param codigoNaturezaOperacao
 	 * @param descricaoNaturezaOperacao
 	 * @param listaEstudosCota
-	 * @return NotaEnvio
 	 */
-	private NotaEnvio getNotaEnvioCota(PessoaJuridica pessoaEmitente,
+	private void getNotaEnvioCota(PessoaJuridica pessoaEmitente,
 			                           Long idCota, 
 				                       Long idRota, 
 				                       List<NotaEnvio> notasEnvio, 
@@ -538,7 +566,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		if (listaItemNotaEnvio==null || listaItemNotaEnvio.isEmpty()) {
 
-			return null;
+			return;
 		}
 		
 		PDV pdvPrincipal = this.pdvRepository.obterPDVPrincipal(cota.getId());
@@ -563,34 +591,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	
 			notaEnvioRepository.adicionar(notaEnvio);
 			
-			int sequencia = 0;
-	
-			for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
-				
-				if(itemNotaEnvio.getItemNotaEnvioPK() == null) {
-					
-					itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio, ++sequencia));
-					
-					itemNotaEnvioRepository.adicionar(itemNotaEnvio);
-					
-					if(itemNotaEnvio.getMovimentosProdutoSemEstudo() != null && !itemNotaEnvio.getMovimentosProdutoSemEstudo().isEmpty()) {
-						
-						for(MovimentoEstoqueCota mec : itemNotaEnvio.getMovimentosProdutoSemEstudo()) {
-							
-							mec.setItemNotaEnvio(itemNotaEnvio);
-							
-							this.movimentoEstoqueCotaRepository.merge(mec);
-						}
-					}
-				}
-			}
+			this.atualizaMovimentosEstoqueItemNotaEnvio(notaEnvio, listaItemNotaEnvio);
 	
 			notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
 	
 			notaEnvio = notaEnvioRepository.merge(notaEnvio);
 		}
-		
-		return notaEnvio;
 	}
 	
 	/**
@@ -647,21 +653,17 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		for (Long idCota:idCotas){
 
-			NotaEnvio notaEnvio = this.getNotaEnvioCota(pessoaEmitente,
-					                                    idCota,  
-													    idRota, 
-													    notasEnvio, 
-													    dataEmissao, 
-													    periodo, 
-													    listaIdFornecedores, 
-													    chaveAcesso, 
-													    codigoNaturezaOperacao, 
-													    descricaoNaturezaOperacao, 
-													    mapEstudosCota.get(idCota));
-            if (notaEnvio!=null){
-			    
-            	notasEnvio.add(notaEnvio);
-            }
+			this.getNotaEnvioCota(pessoaEmitente,
+                                  idCota,  
+								  idRota, 
+								  notasEnvio, 
+								  dataEmissao, 
+								  periodo, 
+								  listaIdFornecedores, 
+								  chaveAcesso, 
+								  codigoNaturezaOperacao, 
+								  descricaoNaturezaOperacao, 
+								  mapEstudosCota.get(idCota));
 		}
 		
 		return notasEnvio;
