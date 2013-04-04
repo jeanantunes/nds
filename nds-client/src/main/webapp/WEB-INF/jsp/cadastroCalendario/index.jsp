@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
 <head>
 
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptCadastroCalendario.js"></script>
@@ -5,6 +6,7 @@
 	<script type="text/javascript">
 		$(function() {
 			CadastroCalendario.init();
+			bloquearItensEdicao(CadastroCalendario.workspace);
 		});
 	</script>
 <style type="text/css">
@@ -169,7 +171,7 @@
 		</fieldset>
 	
 		<span class="bt_novos">
-			<a href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" Title="Incluir Novo Feriado">
+			<a isEdicao="true" href="javascript:;" onclick="CadastroCalendario.popupNovoCadastroFeriado();" rel="tipsy" Title="Incluir Novo Feriado">
 			<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0" /></a>
 		</span>
 		<span class="bt_novos" title="Gerar Arquivo">

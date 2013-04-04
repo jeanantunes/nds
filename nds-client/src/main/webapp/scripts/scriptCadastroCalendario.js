@@ -318,10 +318,10 @@ var CadastroCalendario = $.extend(true, {
 				var parametros = [ idFeriado, dtFeriado, tipoFeriado, localidade, indRepeteAnualmente, indOpera, indEfetuaCobranca, descricaoFeriado ];
 								
 				var imgDetalhar = '<img src="' + contextPath + '/images/ico_detalhes.png" border="0" hspace="3"/>';
-				cell.acao = '<a href="javascript:;" onclick="CadastroCalendario.editarFeriado('+ parametros +');" style="margin-right:10px;">' + imgDetalhar + '</a>';
+				cell.acao = '<a isEdicao="true" href="javascript:;" onclick="CadastroCalendario.editarFeriado('+ parametros +');" style="margin-right:10px;">' + imgDetalhar + '</a>';
 				
 				var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
-				cell.acao += '<a href="javascript:;" onclick="CadastroCalendario.excluirFeriado(' + [ idFeriado, dtFeriado] + ');">' + imgExclusao + '</a>';
+				cell.acao += '<a isEdicao="true" href="javascript:;" onclick="CadastroCalendario.excluirFeriado(' + [ idFeriado, dtFeriado] + ');">' + imgExclusao + '</a>';
 
 				cell.indOpera = (cell.indOpera == false) ?  'N' : 'S';
 				cell.indRepeteAnualmente = (cell.indRepeteAnualmente  == false) ?  'N' : 'S';
@@ -344,7 +344,12 @@ var CadastroCalendario = $.extend(true, {
 		},
 		
 		popupEdicaoCadastroFeriado : function(date, dates) {			
-					
+			
+			if($('#permissaoAlteracao',workspace).val()!="true") {
+				exibirAcessoNegado();
+				return;
+			}
+			
 			CadastroCalendario.limparCamposEdicaoCadastroFeriado();
 			
 			CadastroCalendario.recarregarDiaFeriadoGrid(date);
@@ -587,12 +592,9 @@ var CadastroCalendario = $.extend(true, {
 	    				        
 	    						onSelect: CadastroCalendario.popupEdicaoCadastroFeriado
 	    						
-	    						
 	    					});
-	    					
 	    				
 	    				});
-	    	 
 	     }
 		
 }, BaseController);
