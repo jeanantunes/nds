@@ -2,6 +2,8 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -37,9 +39,9 @@ public class FiltroProdutoDTO implements Serializable {
 
 	public FiltroProdutoDTO() {}
 	
-	public FiltroProdutoDTO(String codigo,String nome,String editor,String fornecedor, Long codigoTipoProduto,String sortOrder, String sortName) {
+	public FiltroProdutoDTO(String codigo, String nome, String editor, String fornecedor, Long codigoTipoProduto, String sortOrder, String sortName) {
 		
-		this.codigo = codigo;
+		this.codigo = StringUtils.leftPad(codigo, 8, '0');
 		this.nome = nome;
 		this.editor = editor;
 		this.fornecedor = fornecedor;
@@ -54,7 +56,7 @@ public class FiltroProdutoDTO implements Serializable {
 	}
 
 	public void setCodigo(String codigo) {
-		this.codigo = codigo;
+		this.codigo = StringUtils.leftPad(codigo, 8, '0');
 	}
 
 	public String getNome() {

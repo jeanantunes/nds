@@ -18,7 +18,7 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		if (codigoProduto && codigoProduto.length > 0) {
 			
 			$.postJSON(contextPath + "/mapaAbastecimento/getProdutosPorCodigo",
-					   {codigoProduto:codigoProduto,
+					   {'filtro.codigo': codigoProduto,
 					    dataLancamento: T.get("dataLancamento")},
 					   function(result) {
 							

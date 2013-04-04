@@ -220,7 +220,7 @@ var vendaProdutoController = $.extend(true, {
 		var nome = $(idProduto,this.workspace).val();
 
 		if (nome && nome.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {"nomeProduto" : nome},
+			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'filtro.nome': nome},
 					function(result) { vendaProdutoController.exibirAutoComplete(result, idProduto); },
 					null, isFromModal);
 		}
@@ -265,7 +265,7 @@ var vendaProdutoController = $.extend(true, {
 		$(idCodigo,this.workspace).val("");
 
 		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"nomeProduto" : nomeProduto},
+			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"filtro.nome" : nomeProduto},
 					function(result) { vendaProdutoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
 					function() { vendaProdutoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
 		} else {

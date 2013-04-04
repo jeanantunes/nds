@@ -26,6 +26,7 @@ import br.com.abril.nds.dto.ProdutoEdicaoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
+import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
@@ -135,14 +136,14 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	@Post
-	public void getProdutosPorCodigo(String codigoProduto, Date dataLancamento) throws ValidacaoException{
+	public void getProdutosPorCodigo(FiltroProdutoDTO filtro, Date dataLancamento) throws ValidacaoException{
 		
-		Produto produto = produtoService.obterProdutoBalanceadosPorCodigo(codigoProduto, dataLancamento);
+		Produto produto = produtoService.obterProdutoBalanceadosPorCodigo(filtro.getCodigo(), dataLancamento);
 		
 		if (produto == null) {
 			
 			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Não existe produto balanceado com o código \"" + codigoProduto + "\" na data informada!");
+				TipoMensagem.WARNING, "Não existe produto balanceado com o código \"" + filtro.getCodigo() + "\" na data informada!");
 			
 		} else {
 			
