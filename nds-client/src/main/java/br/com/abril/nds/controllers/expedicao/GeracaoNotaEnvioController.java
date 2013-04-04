@@ -210,9 +210,11 @@ public class GeracaoNotaEnvioController extends BaseController {
 	private byte[] getNotas(){
 		
         FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+        
+        @SuppressWarnings("unchecked")
+		List<Long> idCotas = (List<Long>) session.getAttribute(COTAS_ID);
 		
-		@SuppressWarnings("unchecked")
-		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, (List<Long>) session.getAttribute(COTAS_ID));
+		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, idCotas);
 
 		if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
 			

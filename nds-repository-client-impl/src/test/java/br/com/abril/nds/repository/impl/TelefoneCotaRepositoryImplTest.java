@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 
 public class TelefoneCotaRepositoryImplTest extends AbstractRepositoryImplTest {
@@ -53,8 +52,6 @@ public class TelefoneCotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Long idCota = 1L;
 		
-		TelefoneCota telefoneCota =  telefoneCotaRepository.obterTelefonePrincipal(idCota);
-		
-	
+		Telefone telefone =  telefoneCotaRepository.obterTelefonePrincipalCota(idCota);
 	}
 }

@@ -217,9 +217,9 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		
 	}
 	
-	
 	@Test
 	public void obterPDVPrincipal(){
+		
 		PDV pdv = this.pdvRepository.obterPDVPrincipal(cotaManoel.getId());
 
 		Assert.assertNotNull(pdv);
@@ -227,7 +227,6 @@ public class PdvRepositoryTest extends AbstractRepositoryImplTest {
 		Assert.assertEquals(cotaManoel, pdv.getCota());
 		
 		Assert.assertTrue(pdv.getCaracteristicas().isPontoPrincipal());
-		
 	}
 	
 	@Test

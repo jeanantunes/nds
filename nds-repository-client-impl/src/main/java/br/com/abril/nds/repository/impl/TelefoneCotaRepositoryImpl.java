@@ -4,9 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
@@ -74,15 +72,27 @@ public class TelefoneCotaRepositoryImpl extends AbstractRepositoryModel<Telefone
 	}
 	
 	@Override
-	public TelefoneCota obterTelefonePrincipal(long idCota){
-		Criteria criteria = getSession().createCriteria(TelefoneCota.class );
-		criteria.add(Restrictions.eq("cota.id", idCota));
+	public Telefone obterTelefonePrincipalCota(long idCota){
 
-		criteria.add(Restrictions.eq("principal", true));
-		criteria.setMaxResults(1);
+        StringBuilder hql = new StringBuilder();
 		
-		return (TelefoneCota) criteria.uniqueResult();
+		hql.append(" SELECT telefoneCota.telefone from TelefoneCota telefoneCota ");
 		
+		hql.append(" JOIN telefoneCota.telefone telefone ");
+		
+		hql.append(" JOIN telefoneCota.cota cota ");
+		
+		hql.append(" WHERE telefoneCota.principal = true ");
+		
+		hql.append(" AND cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setMaxResults(1);
+
+		return (Telefone) query.uniqueResult();
 	}
 	
 	@Override

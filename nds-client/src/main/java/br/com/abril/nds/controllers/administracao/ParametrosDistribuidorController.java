@@ -628,4 +628,10 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		result.use(Results.json()).from("").serialize();
 	}
+	
+	@Post
+	public void mensagemControleAprovacao(){
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Ao desmarcar a opção [Utiliza Controle de Aprovação] não serão mais exibidos os avisos de pendências das funcionalidades abaixo !"),"result").recursive().serialize();
+	}
 }
