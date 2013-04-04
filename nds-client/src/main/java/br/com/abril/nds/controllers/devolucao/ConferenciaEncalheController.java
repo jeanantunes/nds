@@ -314,7 +314,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void verificarReabertura(Integer numeroCota){
 		
-		limparDadosSessaoManterBoxLogado();
+		limparDadosSessao();
 		
 		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		
@@ -1638,19 +1638,6 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	private void limparDadosSessao() {
-		
-		this.session.removeAttribute(NUMERO_COTA);
-		this.session.removeAttribute(INFO_CONFERENCIA);
-		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
-		this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
-		this.session.removeAttribute(HORA_INICIO_CONFERENCIA);
-		this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
-		this.session.removeAttribute(CONFERENCIA_ENCALHE_COTA_STATUS);
-		
-		indicarStatusConferenciaEncalheCotaSalvo();
-	}
-	
-	private void limparDadosSessaoManterBoxLogado() {
 		
 		this.session.removeAttribute(NUMERO_COTA);
 		this.session.removeAttribute(INFO_CONFERENCIA);
