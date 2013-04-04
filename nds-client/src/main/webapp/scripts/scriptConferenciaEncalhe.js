@@ -273,7 +273,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			}, function() {
 				
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
-				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("");
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
 				$("#sm", ConferenciaEncalhe.workspace).val("");
 				$("#codProduto", ConferenciaEncalhe.workspace).val("");
 				
@@ -555,8 +555,6 @@ var ConferenciaEncalhe = $.extend(true, {
 					ConferenciaEncalhe._pesquisarCota(result);		
 					
 				}
-			
-				
 			}
 		);
 	},
@@ -1282,7 +1280,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	limparDadosProduto : function(){
 		
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("");
+		$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
 		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
 		$("#sm", ConferenciaEncalhe.workspace).val("");
 		$("#codProduto", ConferenciaEncalhe.workspace).val("");
