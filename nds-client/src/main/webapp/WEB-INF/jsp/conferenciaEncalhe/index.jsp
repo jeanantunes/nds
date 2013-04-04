@@ -75,11 +75,11 @@
 								</span>
 							</td>											
 							<td width="314">&nbsp;</td>
-							<td width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
-							<td width="102" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
-							<td width="119" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
-							<td width="62" bgcolor="#F8F8F8"><strong>F8</strong>-Salvar</td>
-							<td width="145" bgcolor="#F8F8F8"><strong>F9</strong>-Finalizar Conferência</td>
+							<td class="atalhosCE" width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
+							<td class="atalhosCE" width="102" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
+							<td class="atalhosCE" width="119" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
+							<td class="atalhosCE" width="62" bgcolor="#F8F8F8"><strong>F8</strong>-Salvar</td>
+							<td class="atalhosCE" width="145" bgcolor="#F8F8F8"><strong>F9</strong>-Finalizar Conferência</td>
 						</tr>
 					</table>
 				</fieldset>
