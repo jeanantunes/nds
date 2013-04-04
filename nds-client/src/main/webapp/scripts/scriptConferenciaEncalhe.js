@@ -744,7 +744,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					var valorExemplares = parseInt(value.qtdExemplar);
 					
-					var inputExemplares = '<input id="qtdExemplaresGrid_' + index + '" class="input-numericE" onchange="ConferenciaEncalhe.atualizarValores('+ index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
+					var inputExemplares = '<input isEdicao="true" id="qtdExemplaresGrid_' + index + '" class="input-numericE" onchange="ConferenciaEncalhe.atualizarValores('+ index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
@@ -789,12 +789,12 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 						if(parcial == true) {
 							
-							inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
+							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 							+ ' onchange="ConferenciaEncalhe.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
 							
 						} else {
 							
-							inputCheckBoxJuramentada = '<input type="checkbox" disabled="disabled" id="checkGroupJuramentada_' + index + '"/>';
+							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" disabled="disabled" id="checkGroupJuramentada_' + index + '"/>';
 							
 						}
 						
@@ -806,7 +806,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					innerTable += '<td style="text-align: center;" nowrap="nowrap"><a href="javascript:;" onclick="ConferenciaEncalhe.exibirDetalhesConferencia(' + value.idConferenciaEncalhe + ');">' + imgDetalhar + '</a></td>';
 					
 					var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
-					innerTable += '<td style="text-align: center;" nowrap="nowrap"><a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
+					innerTable += '<td style="text-align: center;" nowrap="nowrap"><a isEdicao="true" href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
 					
 					innerTable += "</tr>";
 					
@@ -853,6 +853,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 			
 		}
+		
+		bloquearItensEdicao(ConferenciaEncalhe.workspace);
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
@@ -926,19 +928,19 @@ var ConferenciaEncalhe = $.extend(true, {
 					}
 					
 					innerTable +=
-						'<td style="text-align: center"><input id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" type="text" maxlength="255" style="width:50px; text-align: center;" value="' + parseInt(value.qtdInformada) + '"/></td>';
+						'<td style="text-align: center"><input isEdicao="true" id="qtdeInformadaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" type="text" maxlength="255" style="width:50px; text-align: center;" value="' + parseInt(value.qtdInformada) + '"/></td>';
 					
 					innerTable += "<td style='text-align: center;'>" + (value.qtdExemplar ? parseInt(value.qtdExemplar) : "0") + "</td>";
 				
 					innerTable +=
-						'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapaInformado).toFixed(2) + '"/></td>';
+						'<td style="text-align: center;"><input isEdicao="true" id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalhe.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapaInformado).toFixed(2) + '"/></td>';
 					
 					innerTable += "<td style='text-align: right;'>" + parseFloat(value.precoComDesconto).toFixed(2) + "</td>";
 					
 					innerTable += "<td style='text-align: right;' id='valorTotalConferenciaFinalizar_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
 					
 					var imgExclusao = '<img src="' + contextPath + '/images/ico_excluir.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />';
-					innerTable += '<td style="text-align: center;"><a href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
+					innerTable += '<td style="text-align: center;"><a isEdicao="true" href="javascript:;" onclick="ConferenciaEncalhe.excluirConferencia(' + value.idConferenciaEncalhe + ');">' + imgExclusao + '</a></td>';
 					
 					innerTable += "</tr>";
 					
@@ -948,6 +950,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				}
 			);
 		
+		bloquearItensEdicao(ConferenciaEncalhe.workspace);
 	},
 	
 	abrirDialogNotaFiscalDivergente : function(result) {
@@ -1644,7 +1647,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
 		$(".tipsy").hide();
 		$('#workspace').tabs('addTab', "Conferência Encalhe Cota Contingência",
-				contextPath + "/devolucao/conferenciaEncalheContingencia" + "?random=" + Math.random());
+				contextPath + "/devolucao/conferenciaEncalhe/contingencia" + "?random=" + Math.random());
 	},
 	
 

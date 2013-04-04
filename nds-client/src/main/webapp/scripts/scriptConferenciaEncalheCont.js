@@ -355,6 +355,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				function(result){
 					
 					ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
+					
+					bloquearItensEdicao(ConferenciaEncalheCont.workspace);
 				}
 		);
 	},
@@ -429,7 +431,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
 					
-					var inputExemplares = '<input name="inputValorExemplares" tabindex="' + (++index) + '" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +','+value.qtdInformada+');" style="width:90px; text-align: center;" value="' + value.qtdInformada + '"/>' +
+					var inputExemplares = '<input isEdicao="true" name="inputValorExemplares" tabindex="' + (++index) + '" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +','+value.qtdInformada+');" style="width:90px; text-align: center;" value="' + value.qtdInformada + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";
@@ -442,13 +444,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 
 						if(parcial == true) {
 							
-							inputCheckBoxJuramentada = '<input type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
+							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" ' + (value.juramentada == true ? 'checked="checked"' : '')
 							+ ' onchange="ConferenciaEncalheCont.atualizarValores('+ index +');" id="checkGroupJuramentada_' + index + '"/>';
 							
 							
 						} else {
 							
-							inputCheckBoxJuramentada = '<input type="checkbox" disabled="disabled" id="checkGroupJuramentada_' + index + '"/>';
+							inputCheckBoxJuramentada = '<input isEdicao="true" type="checkbox" disabled="disabled" id="checkGroupJuramentada_' + index + '"/>';
 							
 						}
 						
@@ -607,6 +609,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				$("#lstProdutos", ConferenciaEncalheCont.workspace).focus();
 				
+				bloquearItensEdicao(ConferenciaEncalheCont.workspace);
+
 			}, null, true, "idModalNovoEncalhe"
 		);
 	},
@@ -695,7 +699,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 					innerTable = '';
 				}
 			);
-		
 	},
 	
 	excluirConferencia : function(idConferenciaEncalhe){
@@ -719,6 +722,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 							ConferenciaEncalheCont.preProcessarConsultaConferenciaEncalhe(result);
 							
 							ConferenciaEncalheCont.carregarGridItensNotaFiscal(result.listaConferenciaEncalhe);
+							
+							bloquearItensEdicao(ConferenciaEncalheCont.workspace);
 							
 							$("#dialog-excluir-conferencia", ConferenciaEncalheCont.workspace).dialog("close");
 						}
@@ -884,6 +889,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#somatorioQtdInformada", ConferenciaEncalheCont.workspace).text(parseInt(result.qtdInformada));
 		$("#somatorioQtdRecebida", ConferenciaEncalheCont.workspace).text(parseInt(result.qtdRecebida));
 		$("#somatorioTotal", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+		
+		bloquearItensEdicao(ConferenciaEncalheCont.workspace);
 	},
 	
 	popup_novo_encalhe: function () {
@@ -1151,6 +1158,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#numeroCota", ConferenciaEncalheCont.workspace).select();
 		
 		$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
+		
+		bloquearItensEdicao(ConferenciaEncalheCont.workspace);
 	}
 }, BaseController);
 

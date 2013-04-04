@@ -168,6 +168,7 @@ public class MatrizRecolhimentoController extends BaseController {
 
 	@Post
 	@Path("/confirmar")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void confirmar(List<Date> datasConfirmadas) {
 		
 		if (datasConfirmadas == null || datasConfirmadas.size() <= 0) {
@@ -249,6 +250,7 @@ public class MatrizRecolhimentoController extends BaseController {
 
 	@Post
 	@Path("/balancearPorEditor")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void balancearPorEditor() {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
@@ -272,6 +274,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	@Post
 	@Path("/balancearPorValor")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void balancearPorValor() {
 
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
@@ -295,6 +298,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	@Post
 	@Path("/salvar")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void salvar() {
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
@@ -366,6 +370,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	@Post
 	@Path("/voltarConfiguracaoOriginal")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void voltarConfiguracaoOriginal() {
 		
 		this.validarDataConfirmacaoConfiguracaoInicial();
@@ -392,6 +397,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	@Post
 	@Path("/reprogramarSelecionados")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarSelecionados(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento,
 										String novaDataFormatada, String dataAntigaFormatada) {
 		
@@ -416,6 +422,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	@Post
 	@Path("/reprogramarRecolhimentoUnico")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarRecolhimentoUnico(ProdutoRecolhimentoFormatadoVO produtoRecolhimento,
 										     String dataAntigaFormatada) {
 		
@@ -449,6 +456,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	@Post
 	@Path("/atualizarResumoBalanceamento")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void atualizarResumoBalanceamento() {
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
@@ -1247,6 +1255,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	 * Obtem agrupamento diário para confirmação de Balanceamento
 	 */
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void obterAgrupamentoDiarioBalanceamento() {
 
 		List<ConfirmacaoVO> confirmacoesVO = this.montarListaDatasConfirmacao();
@@ -1352,6 +1361,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void excluirBalanceamento(Long idLancamento) {
 
 		this.recolhimentoService.excluiBalanceamento(idLancamento);

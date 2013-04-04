@@ -167,6 +167,20 @@ public class ConferenciaEncalheController extends BaseController {
 		carregarComboBoxEncalhe();
 	}
 	
+	@Path("/contingencia")
+	public void contingencia() {
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+
+		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(dataOperacao));
+		
+		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+		
+		if(tipoContabilizacaoCE!=null) {
+			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
+		}
+	}
+	
 	public void carregarComboBoxEncalheContingencia() {
 		
 		List<Box> boxes = 
@@ -709,6 +723,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void adicionarProdutoConferido(Long idProdutoEdicao, String quantidade, Boolean juramentada, boolean indConferenciaContingencia) {
 		
 		if (idProdutoEdicao == null){
@@ -786,6 +801,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void atualizarValores(Long idConferencia, Long qtdExemplares, Boolean juramentada, BigDecimal valorCapa, boolean indConferenciaContingencia){
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
@@ -846,6 +862,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void alterarQtdeValorInformado(Long idConferencia, Long qtdInformada, BigDecimal valorCapaInformado){
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
@@ -890,6 +907,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * Salva os dados da conferência de encalhe.
 	 */
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void salvarConferencia(boolean indConferenciaContingencia){
 		
 		this.verificarInicioConferencia();
@@ -995,7 +1013,8 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 
-	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) throws Exception {
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) {
 		
 		Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
 		
@@ -1058,6 +1077,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void imprimirDocumentosCobranca() throws IOException{
 		
 		Map<String, byte[]> arquivos = (Map<String, byte[]>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
@@ -1149,6 +1169,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void finalizarConferencia(boolean indConferenciaContingencia) throws Exception {
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
@@ -1316,6 +1337,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void excluirConferencia(Long idConferenciaEncalhe){
 		
 		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
@@ -1342,6 +1364,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void gravarObservacaoConferecnia(Long idConferenciaEncalhe, String observacao){
 		
 		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
@@ -1392,6 +1415,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void salvarNotaFiscal(NotaFiscalEntradaCota notaFiscal){
 		
 		validarCamposNotaFiscalEntrada(notaFiscal);
@@ -1434,6 +1458,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * 
 	 */
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void verificarValorTotalNotaFiscal(boolean indConferenciaContingencia) throws Exception {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
