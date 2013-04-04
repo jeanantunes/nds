@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -9,6 +10,7 @@
 
     $(function() {
     	parametroCobrancaController.init();
+    	bloquearItensEdicao(parametroCobrancaController.workspace);
     });
 
 </script>
@@ -283,8 +285,11 @@
 		</jsp:include>
 		<div class="areaBts">
 			<div class="area">
-			<span class="bt_novos" id="bt_novo" title="Novo"><a
-				href="javascript:;" onclick="parametroCobrancaController.popup();"><img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif"></a></span>
+			<span class="bt_novos" id="bt_novo" title="Novo">
+			<a isEdicao="true" href="javascript:;" onclick="parametroCobrancaController.popup();">
+				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
+			</a>
+			</span>
 			</div>
 		</div>
 		<div class="linha_separa_fields">&nbsp;</div>
