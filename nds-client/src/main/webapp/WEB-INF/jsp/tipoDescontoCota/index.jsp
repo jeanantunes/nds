@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}" />
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
@@ -21,6 +22,7 @@ $(function() {
 	descontoDistribuidorController.init();
 	descontoCotaController.init();
 	descontoProdutoController.init(pesquisaCotaTipoDescontoCota);
+	bloquearItensEdicao(tipoDescontoController.workspace);
 });
 
 </script>
@@ -158,7 +160,7 @@ $(function() {
 					</a>
 	             </span>
              </div>
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="descontoDistribuidorController.popup_geral();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+           <span class="bt_novos" title="Novo"><a isEdicao="true" href="javascript:;" onclick="descontoDistribuidorController.popup_geral();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
       
@@ -172,7 +174,7 @@ $(function() {
 				
 				
 	        </div>
-           <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="descontoCotaController.popup_especifico();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+           <span class="bt_novos" title="Novo"><a isEdicao="true" href="javascript:;" onclick="descontoCotaController.popup_especifico();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
       
@@ -198,7 +200,7 @@ $(function() {
 				</a>
              </span>
         </div>
-        <span class="bt_novos" title="Novo"><a href="javascript:;" onclick="descontoProdutoController.popup_produto();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
+        <span class="bt_novos" title="Novo"><a isEdicao="true" href="javascript:;" onclick="descontoProdutoController.popup_produto();"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/>Novo</a></span>
    
       </fieldset>
     </div>

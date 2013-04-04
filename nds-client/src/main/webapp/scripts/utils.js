@@ -524,7 +524,7 @@ function visibleOverlay(){
 }
 
 function bloquearItensEdicao(workspace) {
-		
+
 	if($('#permissaoAlteracao',workspace).val()=="true")
 		return;
 	

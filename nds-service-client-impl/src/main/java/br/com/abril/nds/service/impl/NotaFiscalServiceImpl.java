@@ -515,7 +515,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		if (!diretorioExportacaoNFE.isDirectory()) {
 			throw new FileNotFoundException(
-					"O diretório de exportação parametrizado não é válido!");
+					"O diretório["+pathNFEExportacao.getValor()+"] de exportação parametrizado não é válido!");
 		}
 		Long time = new Date().getTime();
 		File notaExportacao = new File(diretorioExportacaoNFE + File.separator

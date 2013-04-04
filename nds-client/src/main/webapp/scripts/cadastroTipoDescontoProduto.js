@@ -184,6 +184,7 @@ var descontoProdutoController = $.extend(true,{
 		
 		$(".tiposDescProdutoGrid",this.workspace).flexigrid({
 			preProcess: tipoDescontoController.executarPreProcessamento,
+			onSuccess: function(){bloquearItensEdicao(tipoDescontoController.workspace);},
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
