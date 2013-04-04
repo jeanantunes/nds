@@ -202,9 +202,9 @@ public class CotaDAO {
 		produtoEdicao.getProduto().setId(rs.getLong("PRODUTO_ID"));
 		produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 		produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
+		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getString("STATUS")));
 		produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
-		produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
+		produtoEdicao.setColecao(traduzColecionavel(rs.getString("GRUPO_PRODUTO")));
 		produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 		produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
 		produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
