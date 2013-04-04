@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
@@ -112,9 +113,12 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Transactional
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorProduto(
 			FiltroConsultaFixacaoProdutoDTO filtroProduto) {
-		Produto produto = produtoRepository.obterProdutoPorCodigo(filtroProduto.getCodigoProduto());
-		List<FixacaoReparteDTO> resutado =estoqueProdutoCotaRepository.obterHistoricoEdicaoPorProduto(produto) ;
-		return resutado; 
+		List<FixacaoReparteDTO> resultado = null;
+		if(filtroProduto != null && filtroProduto.getCodigoProduto()!=null){
+			Produto produto = produtoRepository.obterProdutoPorCodigo(filtroProduto.getCodigoProduto());
+			 resultado =estoqueProdutoCotaRepository.obterHistoricoEdicaoPorProduto(produto) ;
+		}
+		return resultado; 
 	}
 	
 	@Override
@@ -296,6 +300,13 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Override
 	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO) {
 		return fixacaoReparteRepository.isFixacaoExistente(fixacaoReparteDTO);
+	}
+
+	@Override
+	public boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO) {
+		Cota cota = cotaRepository.buscarPorId(new Long(fixacaoReparteDTO.getCotaFixada()));
+		String situacaoCadastro = cota.getSituacaoCadastro().toString();
+		return situacaoCadastro.equals(cota.getSituacaoCadastro().ATIVO);
 	}
 	
 	

@@ -254,15 +254,35 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 
 		.append(" FixacaoReparte f ")
 		
-		.append(" where f.cotaFixada.id = :cotaSelecionada ")
+		.append(" where f.cotaFixada.numeroCota = :cotaSelecionada ")
 		
-		.append(" and f.produtoFixado.id = :produtoSelecionado  ");
+		.append(" and f.produtoFixado.codigo = :produtoSelecionado  ");
 		
 		Query query  = getSession().createQuery(sql.toString());
 		query.setParameter("cotaSelecionada",  fixacaoReparteDTO.getCotaFixada());
 		query.setParameter("produtoSelecionado", fixacaoReparteDTO.getProdutoFixado());
 		
 		return query.list().size() > 0;
+	}
+
+	@Override
+	public void execucaoQuartz() {
+		StringBuilder hql = new StringBuilder("");
+
+		hql.append("")
+				.append(" delete from fixacao_reparte   ")
+				.append(" where  fixacao_reparte.manter_fixa is false ")
+				.append(" and fixacao_reparte.data_hora <= date_format(DATE_SUB(CURDATE(),INTERVAL 732 DAY),'%d/%m/%Y') ")
+				.append(" and fixacao_reparte.ID_PRODUTO in  ")
+				.append(" ( select distinct id_produto from fixacao_reparte ")
+				.append(" join produto on produto.ID = fixacao_reparte.ID_PRODUTO  ")
+				.append(" join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ")
+				.append(" join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ")
+				.append(" where lancamento.DATA_CRIACAO <= date_format(DATE_SUB(CURDATE(),INTERVAL 732 DAY),'%d/%m/%Y')) ");
+				
+		Query query = getSession().createSQLQuery(hql.toString());
+		query.executeUpdate();
+		
 	}
 	
 }

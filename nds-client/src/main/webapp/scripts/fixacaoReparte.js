@@ -261,47 +261,47 @@ var fixacaoReparteController = $.extend(true, {
 		});
 	
 	//UPLOAD Arquivo Lote - evento selecao de arquivo
-	$("#excelFileFixacao").change(function(){
-	       var fileName = $(this).val();
-	      
-	       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
-	       if(ext!="xls" & ext!="xlsx"){
-	    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
-	    	   $(this).val('');
-	    	   return;
-	       }else{
-	    	   
-	    	   $("#formUploadLoteFixacao").ajaxSubmit({
-	     		   
-	     		   /*beforeSubmit: function(arr, formData, options) {
-	     		      },*/
-	     		      success: function(responseText, statusText, xhr, $form)  { 
-	     		    	  
-	     		    	  var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
-	     		          var tipoMensagem = mensagens.tipoMensagem;
-	     		          var listaMensagens = mensagens.listaMensagens;
-
-	     		          if (tipoMensagem && listaMensagens) {
-	     		           
-	     		           if (tipoMensagem != 'SUCCESS') {
-	     		            
-	     		            exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
-	     		           }
-	     		           $("#dialog-lote").dialog( "close" );
-	     		           
-	     		           exibirMensagem(tipoMensagem, listaMensagens); 
-	     		          }
-	     		      }, 
-//	     		      url:  contextPath + '/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao',
-	     		      type: 'POST',
-	     		      dataType: 'json'//,
-//	     		      data: { "tipoUpload" : ""}
-	     		   
-	     	   });
-	    	   
-	       }
-	});
-	
+//	$("#excelFileFixacao").change(function(){
+//	       var fileName = $(this).val();
+//	      
+//	       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+//	       if(ext!="xls" & ext!="xlsx"){
+//	    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+//	    	   $(this).val('');
+//	    	   return;
+//	       }else{
+//	    	   
+//	    	   $("#formUploadLoteFixacao").ajaxSubmit({
+//	     		   
+//	     		   /*beforeSubmit: function(arr, formData, options) {
+//	     		      },*/
+//	     		      success: function(responseText, statusText, xhr, $form)  { 
+//	     		    	  
+//	     		    	  var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+//	     		          var tipoMensagem = mensagens.tipoMensagem;
+//	     		          var listaMensagens = mensagens.listaMensagens;
+//
+//	     		          if (tipoMensagem && listaMensagens) {
+//	     		           
+//	     		           if (tipoMensagem != 'SUCCESS') {
+//	     		            
+//	     		            exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
+//	     		           }
+//	     		           $("#dialog-lote").dialog( "close" );
+//	     		           
+//	     		           exibirMensagem(tipoMensagem, listaMensagens); 
+//	     		          }
+//	     		      }, 
+////	     		      url:  contextPath + '/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao',
+//	     		      type: 'POST',
+//	     		      dataType: 'json',
+//
+//	     		   
+//	     	   });
+//	    	   
+//	       }
+//	});
+//	
 	
 	},
 	
@@ -684,7 +684,7 @@ var fixacaoReparteController = $.extend(true, {
 	
 	//funcao que retorna input de reparte a grid de reparte por pdv
 	getInputReparte:function(cell){
-		return "<input type='text' class='reparteGridinput' name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+		return "<input type='text' class='reparteGridinput'  onkeydown='onlyNumeric(event);' maxlength='5'  name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
 		
 	},
 	//funcao de exibicao de grid
@@ -704,11 +704,11 @@ var fixacaoReparteController = $.extend(true, {
 		if(result.rows[0]){
 			$("#edicaoDestaque").text(result.rows[0].cell.edicaoString);
 			$("#statusDestaque").text(result.rows[0].cell.status);
-			$("#historicoXLS").show();
-			$("#historicoPDF").show();
+			//$("#historicoXLS").show();
+			//$("#historicoPDF").show();
 		}else{
-			$("#historicoXLS").hide();
-			$("#historicoPDF").hide();
+		//	$("#historicoXLS").hide();
+		//	$("#historicoPDF").hide();
 			$("#edicaoDestaque").text("");
 			$("#statusDestaque").text("");
 		}
@@ -973,10 +973,26 @@ var fixacaoReparteController = $.extend(true, {
 			$(".historicoGrid").flexOptions({
 				url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoProduto",
 				dataType : 'json',
-				params: fixacaoReparteController.getDadosProdutoHistorico()
+				params: fixacaoReparteController.getDadosProdutoHistorico(),
+				//preProcess:function(data){return fixacaoReparteController.preProcessarGridHistoricoPorProduto(data);}, 
 			});
+			
 			$(".historicoGrid").flexReload();
 			
+		},
+		
+		preProcessarGridHistoricoPorProduto:function(data){
+			if(data.rows > 0){
+				$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
+				$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
+			}
+		},
+		
+		preProcessarGridHistoricoPorCota:function(data){
+			if(data.rows > 0){
+				$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
+				$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
+			}
 		},
 		
 //Função que realiza a pesquisa que preenche os dados da grid historico produto
@@ -987,13 +1003,74 @@ var fixacaoReparteController = $.extend(true, {
 				dataType : 'json',
 				params: fixacaoReparteController.getDadosCotaHistorico()
 			});
+		//	$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
+		//	$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
 			$(".historicoGrid").flexReload();
 			
 		},
+		
 //click do botao adicionar em lote		
 		add_lote:function(){
-			$("#excelFileFixacao").val('').click();
-		}
+			//$("#excelFileFixacao").val('').click();
+			$("#modalUploadArquivo").dialog({
+				resizable: false,
+				height:'auto',
+				width:400,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						fixacaoReparteController.executarSubmitArquivo();
+					},
+					"Cancelar": function() {
+						$("#excelFileFixacao").val("");
+						$(this).dialog("close");
+					}
+				},
+			});
+		},
+		
+		
+		
+		executarSubmitArquivo:function(){
+			 var fileName = $("#excelFileFixacao").val();
+		      
+		       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+		       if(ext!="xls" & ext!="xlsx"){
+		    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+		    	   $(this).val('');
+		    	   return;
+		       }else{
+		    	   
+		    	   $("#formUploadLoteFixacao").ajaxSubmit({
+		     		   
+		     		   /*beforeSubmit: function(arr, formData, options) {
+		     		      },*/
+		     		      success: function(responseText, statusText, xhr, $form)  { 
+		     		    	  
+		     		    	  var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+		     		          var tipoMensagem = mensagens.tipoMensagem;
+		     		          var listaMensagens = mensagens.listaMensagens;
+
+		     		          if (tipoMensagem && listaMensagens) {
+		     		           
+		     		           if (tipoMensagem != 'SUCCESS') {
+		     		            
+		     		            exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
+		     		           }
+		     		           $("#dialog-lote").dialog( "close" );
+		     		           
+		     		           exibirMensagem(tipoMensagem, listaMensagens); 
+		     		          }
+		     		      }, 
+//		     		      url:  contextPath + '/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao',
+		     		      type: 'POST',
+		     		      dataType: 'json',
+
+		     		   
+		     	   });
+		    	   
+		       }
+		},
 		
 		
 	

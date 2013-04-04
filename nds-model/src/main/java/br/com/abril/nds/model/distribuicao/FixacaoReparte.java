@@ -61,6 +61,9 @@ public class FixacaoReparte {
 	@Column(name="DATA_HORA")
 	private Date dataHora;
 	
+	@Column(name="MANTER_FIXA", nullable=false)
+	private boolean manterFixa;
+	
 	public Long getId() {
 		return id;
 	}
@@ -164,6 +167,14 @@ public class FixacaoReparte {
 
 	public void setRepartesPDV(List<RepartePDV> repartesPDV) {
 		this.repartesPDV = repartesPDV;
+	}
+
+	public boolean isManterFixa() {
+		return manterFixa;
+	}
+
+	public void setManterFixa(boolean manterFixa) {
+		this.manterFixa = manterFixa;
 	}
 
 }

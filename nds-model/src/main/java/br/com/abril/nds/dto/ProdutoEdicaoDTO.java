@@ -11,7 +11,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
-import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -38,6 +38,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String codigoProduto;
 	private PeriodicidadeProduto periodicidade;
 	private Integer numeroPeriodicidade;
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
 	private String nomeProduto;
 	private String nomeComercial;
@@ -838,5 +839,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setTipoSegmentoProdutoId(Long tipoSegmentoProdutoId) {
 		this.tipoSegmentoProdutoId = tipoSegmentoProdutoId;
+	}
+
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}  
 }

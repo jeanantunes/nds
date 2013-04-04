@@ -2721,5 +2721,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return query.list();
 	}
+	
+	
+	
 
 }
