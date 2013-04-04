@@ -718,9 +718,13 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		parametrosAprovacaoDistribuidor.setDevolucaoFornecedor(parametrosDistribuidor.getDevolucaoFornecedor());
 		
-		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
+		TipoMovimentoEstoque tipoMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
+		tipoMovimentoEstoque.setAprovacaoAutomatica(!parametrosDistribuidor.getDevolucaoFornecedor());
+		this.tipoMovimentoEstoqueRepository.merge(tipoMovimentoEstoque);
+		
+		/*this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
 				 					 		this.getGruposMovimentoEstoqueDevolucaoFornecedor(),
-				 					 		!parametrosDistribuidor.getDevolucaoFornecedor());
+				 					 		!parametrosDistribuidor.getDevolucaoFornecedor());*/
 		
 		parametrosAprovacaoDistribuidor.setFaltasSobras(parametrosDistribuidor.getFaltasSobras());
 		
