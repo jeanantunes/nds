@@ -199,7 +199,7 @@ public class EntityInterceptor extends EmptyInterceptor {
 
 		Session session = getSessionFactory().openSession();
 
-		session = session.sessionWithOptions().noInterceptor().openSession();
+		session.sessionWithOptions().noInterceptor();
 
 		return session;
 	}
