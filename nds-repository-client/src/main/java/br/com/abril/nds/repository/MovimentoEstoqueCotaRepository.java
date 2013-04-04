@@ -99,6 +99,17 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
 	
 	/**
+	 * Obtém o somatorio do campo qtde do Movimento de Estoque da cota pelo Tipo de Movimento.
+	 * 
+	 * @param data
+	 * @param idCota
+	 * @param grupoMovimentoEstoque
+	 * 
+	 * @return BigInteger
+	 */
+	BigInteger obterQtdMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
+		
+	/**
 	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
 	 * 
 	 * @param filtro

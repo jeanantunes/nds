@@ -1342,6 +1342,35 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdMovimentoCotaPorTipoMovimento(java.util.Date, java.lang.Long, br.com.abril.nds.model.estoque.GrupoMovimentoEstoque)
+	 */
+	@Override
+	public BigInteger obterQtdMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
+		
+		StringBuffer hql = new StringBuffer(" select sum(movimento.qtde) as quantidade ");
+		
+		hql.append(" from MovimentoEstoqueCota movimento");			
+		
+		hql.append(" where movimento.cota.id = :idCota ");
+		
+		hql.append(" and movimento.data = :data ");
+		
+		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		
+		return (BigInteger) query.uniqueResult();
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
 																				   Long idCota, 

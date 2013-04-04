@@ -599,8 +599,19 @@ var parametrosDistribuidorController = $.extend(true, {
 		 }else{
 			 $(".exibirContratoComCotas").hide();
 		 }
-	 }
+	 },
 	 
+	 mensagemControleAprovacao:function(check){
+		 
+		 if (check==false){
+			 
+			 $.postJSON(parametrosDistribuidorController.path + "mensagemControleAprovacao",null,
+					   function (result) {
+				 
+							exibirMensagem(result.tipoMensagem, result.listaMensagens);
+					   });
+		 }
+	 }
 	 
 }, BaseController);
 
