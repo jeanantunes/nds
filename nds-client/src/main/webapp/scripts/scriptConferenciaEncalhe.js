@@ -385,7 +385,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		}));
 
 		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
-			
 			if (!ConferenciaEncalhe.modalAberta){
 				
 				ConferenciaEncalhe.veificarCobrancaGerada();
@@ -560,7 +559,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	verificarValorTotalNotaFiscal : function() {
-		
 		var data = [{name: 'indConferenciaContingencia', value: false}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal', data,
@@ -621,7 +619,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	verificarValorTotalCE : function() {
-		
 		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())},
 		            {name: "qtdCEInformado", value: $("#qtdCE", ConferenciaEncalhe.workspace).val()}];
 		
@@ -854,45 +851,50 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
-		/*
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
 				null,
 				function(resultado){
-//					var html = "<html><body><applet code=Impressao.class width=1 height=1></applet><pre>";
-//					html+=resultado.resultado
-//					html+="</pre></body></html>";
-//					
-//					window.location =  html;
+				
+					
+//					var saidaTeste = 'TREELOG S/A LOGISTICA E DISTRIBUICAO$#;;';
+//					saidaTeste+="SLIP DE RECOLHIMENTO DE ENCALHE\r\n";
+//					saidaTeste+="\r\n";
+//					saidaTeste+="Cota: BALBALBALBAL - 545646\r\n";
+//					saidaTeste+="Data: 04/04/2013\r\n";
+//					saidaTeste+="Hora: 15:57:02\r\n";
+//					saidaTeste+="BOX: 4564\r\n";
+//					saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";
+//					saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";
+//					resultado.resultado= saidaTeste;
+					
 			
-					var w = window.open("scripts/ImpressaoFinalizacaoEncalhe.html", "_blank");
-					w.focus();
-			
-//					var w = window.open();
-//					self.focus();
-//					w.document.open();
-//					w.document.write('<html>'); 
-//					w.document.write('<head></head>');
-//					w.document.write('<body>');
-//
-//					w.document.write('<script src="applet/deployJava.js"></script>');
+			//FIXME MELHORAR ESSE CÓDIGO PARA QUE NÃO ABRA ABA E TENHA QUE FECHAR
+					var w = window.open();
+					self.focus();
+					w.document.open();
+					w.document.write('<html>'); 
+					w.document.write('<head></head>');
+					w.document.write('<body>');
+
+//					w.document.write('<script src="scripts/applet/deployJava.js"></script>');
 //					w.document.write('<script>');
-//					w.document.write('var attributes = { code:"nds_applets.class", archive:"applet/nds_applets.jar",  width:300, height:300};');
-//					w.document.write('var parameters = {jnlp_href: "nds_applets.jnlp"};');
+//					w.document.write('var attributes = { code:"br.com.abril.nds.applet.ImpressaoFinalizacaoEncalhe.class", archive:"scripts/applet/ImpressaoFinalizacaoEncalhe.jar",  width:300, height:300};');
+//					w.document.write('var parameters = {jnlp_href: "scripts/applet/ImpressaoFinalizacaoEncalhe.jnlp", resultado: "\u001b\u0040'+resultado.resultado+'\u001B\u004A"};');
 //					w.document.write('deployJava.runApplet(attributes, parameters, "1.7");');
 //					w.document.write('</script>');
 					
-//					w.document.write('<applet codebase="scripts/applet" archive="nds_applets.jar"'); 
-//					w.document.write('	code="nds_applets.class" width="600" height="500">');
-//					w.document.write('</applet>');					
+					w.document.write('<applet archive="scripts/applet/ImpressaoFinalizacaoEncalhe.jar"'); 
+					w.document.write('	code="br.com.abril.nds.applet.ImpressaoFinalizacaoEncalhe.class" width="600" height="500">');
+					w.document.write('<param name="resultado" value="'+resultado.resultado+'"/>');
+					w.document.write('</applet>');	
+			
+//					w.document.write("<pre>"+resultado.resultado+"</pre>");
+					w.document.write('</body>');
+					w.document.write('</html>');
 					
-//					w.document.write('<pre>'+resultado.resultado+'</pre>');
-//					w.document.write('</body>');
-//					w.document.write('</html>');
-//					w.document.close();
-//					w.print();
-//					w.close();
+					setTimeout(function(){w.document.close();w.close();},5000);
 				}
-		); */
+		); 
 		
 		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
 		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
@@ -1670,7 +1672,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	veificarCobrancaGerada: function(){
-		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/veificarCobrancaGerada', null,
 		
 			function(conteudo){

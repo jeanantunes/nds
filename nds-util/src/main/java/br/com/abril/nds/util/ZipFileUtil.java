@@ -2,7 +2,6 @@ package br.com.abril.nds.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -10,7 +9,11 @@ import org.apache.commons.lang.StringUtils;
 
 public class ZipFileUtil {
 
-	public static byte[] getZipFile(Map<String, byte[]> filesToZip) throws IOException {
+	public static byte[] getZipFile(String fileName, byte[] fileBytes) throws IOException {
+		
+		if (StringUtils.isEmpty(fileName) || fileBytes == null) {
+			return null;
+		}
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
@@ -18,21 +21,10 @@ public class ZipFileUtil {
 		
 		ZipEntry fileToZip = null;
 				
-		for(Map.Entry<String, byte[]> file : filesToZip.entrySet()) {
-		
-			String fileName = file.getKey();
-			byte[] fileBytes = file.getValue();
+		fileToZip = new ZipEntry(fileName);
 			
-			if (StringUtils.isEmpty(fileName) || fileBytes == null) {
-				
-				continue;
-			}
-			
-			fileToZip = new ZipEntry(fileName);
-				
-			zos.putNextEntry(fileToZip);
-			zos.write(fileBytes);
-		}
+		zos.putNextEntry(fileToZip);
+		zos.write(fileBytes);
 		
 		zos.closeEntry();
 		zos.close();

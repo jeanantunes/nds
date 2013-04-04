@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -8,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,13 +23,18 @@ import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRTextExporter;
+import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.applet.EmissorNotaFiscalMatricial;
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -49,6 +56,7 @@ import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
@@ -248,6 +256,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
+	
+	private SlipDTO slipDTO = new SlipDTO();
+	private Map<String, Object> parametersSlip = new HashMap<String, Object>();
+	
+	public SlipDTO getSlipDTO(){
+		return slipDTO;
+	}
+	
+	public Map<String, Object> getParametersSlip(){
+		return parametersSlip;		
+	}
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -2554,9 +2573,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		switch(tipoDocumentoConferenciaEncalhe) {
 		
-		case SLIP :
+		case SLIP_PDF :
 			
-			return gerarSlip(idControleConferenciaEncalheCota, true);
+			return gerarSlip(idControleConferenciaEncalheCota, true, TipoArquivo.PDF);
 		
 		case BOLETO_OU_RECIBO:
 			
@@ -2693,8 +2712,28 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return d;
 	}
 	
-	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
+	@Transactional
+	public String gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
+		setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
+		
+		return gerarSlipTxtMatricial();
+	}
+	
+	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip, TipoArquivo tpArquivo) {
 
+		setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
+		
+		switch (tpArquivo) {
+		case PDF:
+			return gerarSlipPDF();
+		default:
+			return null;
+		}
+		
+	}
+
+	@Transactional
+	public void setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
 		
@@ -2798,47 +2837,42 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 
 		
-		SlipDTO slip = new SlipDTO();
-
 		//TODO: pode haver produtos na operação de encalhe pertencentes
 		// 		a mais de uma chamada de encalhe.
-		slip.setCeJornaleiro(null);
+		slipDTO.setCeJornaleiro(null);
 		
 		
-		slip.setNumeroCota(numeroCota);
-		slip.setNomeCota(nomeCota);
-		slip.setDataConferencia(dataConferencia);           
-		slip.setCodigoBox(codigoBox.toString());                   
-		slip.setTotalProdutoDia(qtdeTotalProdutos);  
-		slip.setTotalProdutos(qtdeTotalProdutos);    
-		slip.setValorEncalheDia(valorTotalEncalhe);    
-		slip.setValorTotalEncalhe(valorTotalEncalhe); 
-		slip.setValorDevido(valorDevido);        
-		slip.setValorSlip(valorDevido.subtract(valorTotalEncalhe));           
-		slip.setValorTotalPagar(valorTotalPagar); 
-		slip.setNumSlip(null);                 
-		slip.setListaProdutoEdicaoSlipDTO(listaProdutoEdicaoSlip);
-
+		slipDTO.setNumeroCota(numeroCota);
+		slipDTO.setNomeCota(nomeCota);
+		slipDTO.setDataConferencia(dataConferencia);           
+		slipDTO.setCodigoBox(codigoBox.toString());                   
+		slipDTO.setTotalProdutoDia(qtdeTotalProdutos);  
+		slipDTO.setTotalProdutos(qtdeTotalProdutos);    
+		slipDTO.setValorEncalheDia(valorTotalEncalhe);    
+		slipDTO.setValorTotalEncalhe(valorTotalEncalhe); 
+		slipDTO.setValorDevido(valorDevido);        
+		slipDTO.setValorSlip(valorDevido.subtract(valorTotalEncalhe));           
+		slipDTO.setValorTotalPagar(valorTotalPagar); 
+		slipDTO.setNumSlip(null);                 
+		slipDTO.setListaProdutoEdicaoSlipDTO(listaProdutoEdicaoSlip);
 		
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		
-		parameters.put("NUMERO_COTA", slip.getNumeroCota());
-		parameters.put("NOME_COTA", slip.getNomeCota());
-		parameters.put("NUM_SLIP", numeroSlip.toString());
-		parameters.put("CODIGO_BOX", slip.getCodigoBox());
-		parameters.put("DATA_CONFERENCIA", slip.getDataConferencia());
-		parameters.put("CE_JORNALEIRO", slip.getCeJornaleiro());
-		parameters.put("VALOR_DEVIDO", slip.getValorDevido());
-		parameters.put("VALOR_SLIP", slip.getValorSlip());
-		parameters.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
-		parameters.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
-		parameters.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
-		parameters.put("VALOR_PAGAMENTO_PENDENTE", slip.getValorTotalPagar());
-		parameters.put("VALOR_MULTA_MORA", slip.getValorTotalPagar());
-		parameters.put("VALOR_CREDITO_DIF", slip.getValorTotalPagar());
+		parametersSlip.put("NUMERO_COTA", slipDTO.getNumeroCota());
+		parametersSlip.put("NOME_COTA", slipDTO.getNomeCota());
+		parametersSlip.put("NUM_SLIP", numeroSlip.toString());
+		parametersSlip.put("CODIGO_BOX", slipDTO.getCodigoBox());
+		parametersSlip.put("DATA_CONFERENCIA", slipDTO.getDataConferencia());
+		parametersSlip.put("CE_JORNALEIRO", slipDTO.getCeJornaleiro());
+		parametersSlip.put("VALOR_DEVIDO", slipDTO.getValorDevido());
+		parametersSlip.put("VALOR_SLIP", slipDTO.getValorSlip());
+		parametersSlip.put("TOTAL_PRODUTOS", slipDTO.getTotalProdutos());
+		parametersSlip.put("VALOR_TOTAL_ENCA", slipDTO.getValorTotalEncalhe() );
+		parametersSlip.put("VALOR_PAGAMENTO_POSTERGADO", slipDTO.getValorTotalPagar());
+		parametersSlip.put("VALOR_PAGAMENTO_PENDENTE", slipDTO.getValorTotalPagar());
+		parametersSlip.put("VALOR_MULTA_MORA", slipDTO.getValorTotalPagar());
+		parametersSlip.put("VALOR_CREDITO_DIF", slipDTO.getValorTotalPagar());
 
 		try {
-			parameters.put("LOGOTIPO", JasperUtil.getImagemRelatorio(getLogoDistribuidor()));
+			parametersSlip.put("LOGOTIPO", JasperUtil.getImagemRelatorio(getLogoDistribuidor()));
 		} catch(Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao carregar logotipo do distribuidor no documento de cobrança");
 		}
@@ -2847,7 +2881,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		//OBTEM OS MOVIMENTOS FINANCEIROS(DÉBITOS E CRÉDITOS) DA COTA NA DATA DE OPERAÇÃO
 		List<ComposicaoCobrancaSlipDTO> listaComposicaoCobranca = this.conferenciaEncalheRepository.obterComposicaoCobrancaSlip(numeroCota, controleConferenciaEncalheCota.getDataOperacao(), null);
 		
-		parameters.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
+		parametersSlip.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
 		
 		
         //OBTÉM O NUMERO DE CHAMADA DE ENCALHE RELACIONADO COM CADA MOVIMENTO FINANCEIRO DA COMPOSIÇÃO DE COBRANÇA
@@ -2869,61 +2903,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				totalComposicao = totalComposicao.subtract(item.getValor());
 			}
 		}
-		totalComposicao = totalComposicao.add(slip.getValorSlip());
-		parameters.put("VALOR_TOTAL_PAGAR", totalComposicao);
-		
-		
-		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
-		try{
-		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-
-
-		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
-
-		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip_pdf.jasper");
-
-		String path = null;
-
-		try {
-
-			path = url.toURI().getPath();
-
-		} catch (URISyntaxException e) {
-
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
-
-		}
-
-		
-		try {
-			
-			/*//Retorna um byte array de um TXT
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			JRTextExporter exporter = new JRTextExporter();  
-			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
-			//exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "/home/roger/teste.txt");  
-			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);  
-			exporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Float(4));  
-			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
-			exporter.exportReport();
-
-			return out.toByteArray();*/
-			
-			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
-		
-		} catch (JRException e) {
-		
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
-		
-		}
-		
+		totalComposicao = totalComposicao.add(slipDTO.getValorSlip());
+		parametersSlip.put("VALOR_TOTAL_PAGAR", totalComposicao);
 	}
-	
 
+	
 	protected String obterSlipReportPath() throws URISyntaxException {
 		
 		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip.jasper");
@@ -2931,8 +2915,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return url.toURI().getPath();
 		
 	}
-
-	
 	
 	protected String obterSlipSubReportPath() throws URISyntaxException {
 	
@@ -2974,5 +2956,103 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return inputStream;
 	}
 
+	public byte[] gerarSlipTxtJasper(SlipDTO slip, Map<String, Object> parameters){
+		try{
+			
+		    parameters.put("SUBREPORT_DIR", obterSlipSubReportPath());
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
+		
+		String path = null;
+		
+		try {
+			path = obterSlipReportPath();
+			
+			//Retorna um byte array de um TXT
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			JRTextExporter exporter = new JRTextExporter();  
+			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
+			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);  
+			exporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Float(4));  
+			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
+			exporter.exportReport();
+
+			return out.toByteArray();
+		} catch (JRException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+		}catch (URISyntaxException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatário Slip");
+		}
+	}
 	
+	public String gerarSlipTxtMatricial(){
+		
+		StringBuffer sb = new StringBuffer();
+		EmissorNotaFiscalMatricial e = new EmissorNotaFiscalMatricial(sb);
+		
+		e.adicionar("TREELOG S/A LOGISTICA E DISTRIBUICAO");
+		e.quebrarLinhaEscape();
+		e.adicionar("SLIP DE RECOLHIMENTO DE ENCALHE");
+		e.quebrarLinhaEscape();
+		e.quebrarLinhaEscape();
+		e.adicionar("Cota: "+slipDTO.getNumeroCota()+" - "+slipDTO.getNomeCota());
+		e.quebrarLinhaEscape();
+		e.adicionar("Data: "+new SimpleDateFormat("dd/MM/yyyy").format(slipDTO.getDataConferencia()));
+		e.quebrarLinhaEscape();
+		e.adicionar("Hora: "+new SimpleDateFormat("HH:mm:ss").format(slipDTO.getDataConferencia()));
+		e.quebrarLinhaEscape();
+		e.adicionar("BOX: "+slipDTO.getCodigoBox());e.darEspaco(3);e.adicionar("Num. Slip: "+slipDTO.getNumSlip());
+		e.quebrarLinhaEscape();
+		e.adicionar("-------------------------------------------");
+
+		for(ProdutoEdicaoSlipDTO itemLista : slipDTO.getListaProdutoEdicaoSlipDTO()){
+			e.adicionar(itemLista.getOrdinalDiaConferenciaEncalhe());
+			e.quebrarLinhaEscape();
+			e.adicionar(itemLista.getNomeProduto());
+			e.adicionar(itemLista.getNumeroEdicao() == null ? "" : itemLista.getNumeroEdicao().toString());
+			e.adicionar(itemLista.getReparte() == null ? "" : itemLista.getReparte().toString());
+			e.adicionar(itemLista.getEncalhe() == null ? "" : itemLista.getEncalhe().toString());
+			e.adicionar(itemLista.getPrecoVenda() == null ? "" : itemLista.getPrecoVenda().toString());
+			e.adicionar(itemLista.getValorTotal() == null ? "" : itemLista.getValorTotal().toString());
+		}
+		
+		e.quebrarLinhaEscape(9);//Espaços fim da impressao
+		
+		String saida = sb.toString();
+		System.out.println("SAIDA SERVICE\n\n");
+        System.out.println(saida);
+        
+		
+		return saida;
+	}
+
+	private byte[] gerarSlipPDF() {
+		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+		try{
+		    parametersSlip.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+
+		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slipDTO.getListaProdutoEdicaoSlipDTO());
+
+		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/slip_pdf.jasper");
+
+		String path = null;
+
+		try {
+			
+			path = url.toURI().getPath();
+			return  JasperRunManager.runReportToPdf(path, parametersSlip, jrDataSource);
+		} catch (JRException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+		}catch (URISyntaxException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+		}
+	}
 }

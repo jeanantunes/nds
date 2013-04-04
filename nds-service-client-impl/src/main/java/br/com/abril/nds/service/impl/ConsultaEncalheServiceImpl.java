@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -187,7 +188,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		if (listaConferenciaEncalheCotas != null) {
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			for(ControleConferenciaEncalheCota conferenciaEncalheCota: listaConferenciaEncalheCotas) {
-				arquivo = conferenciaEncalheService.gerarSlip(conferenciaEncalheCota.getId(), false);
+				arquivo = conferenciaEncalheService.gerarSlip(conferenciaEncalheCota.getId(), false, TipoArquivo.PDF);
 				arquivos.add(arquivo);
 			}
 

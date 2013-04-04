@@ -23,4 +23,4 @@ jarsigner -verbose -keypass 123456 -storepass 123456 "C:\Users\robson\NDS\nds-cl
 
 rem Verificar se a assinatura está correta 
 
-rem jarsigner -verify -verbose -certs "C:\Users\robson\NDS\nds-client\src\main\webapp\scripts\applet\ImpressaoFinalizacaoEncalhe.jar" > "C:\Users\robson\NDS\nds-client\src\main\webapp\scripts\applet\logAssinatura.txt" 
+jarsigner -verify -verbose -certs "C:\Users\robson\NDS\nds-client\src\main\webapp\scripts\applet\ImpressaoFinalizacaoEncalhe.jar" > "C:\Users\robson\NDS\nds-client\src\main\webapp\scripts\applet\logAssinatura.txt" 
