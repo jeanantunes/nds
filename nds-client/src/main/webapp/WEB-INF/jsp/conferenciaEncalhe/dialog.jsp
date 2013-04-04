@@ -78,7 +78,7 @@
 			    <td>&nbsp;</td>
 			    <td>&nbsp;</td>
 			    <td>
-			    	<textarea class="tit" name="observacao" id="observacao" cols="90" rows="5"></textarea>
+			    	<textarea idEdicao="true" class="tit" name="observacao" id="observacao" cols="90" rows="5"></textarea>
 			    </td>
 	  		</tr>
 	  		<tr>
@@ -86,7 +86,7 @@
 			    <td>&nbsp;</td>
 			    <td>
 			    	<span class="bt_novos" id="btObs" title="Incluir Observa&ccedil;&atilde;o">
-			    		<a href="javascript:;" onclick="ConferenciaEncalhe.gravaObs();">
+			    		<a idEdicao="true" href="javascript:;" onclick="ConferenciaEncalhe.gravaObs();">
 			    			<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir Observa&ccedil;&atilde;o
 			    		</a>
 			    	</span>
@@ -222,16 +222,16 @@
 	<table width="670" border="0" cellspacing="1" cellpadding="1">
 		<tr>
 			<td width="119">N&uacute;. Nota Fiscal:</td>
-		    <td width="321"><input type="text" id="numNotaFiscal" style="width:200px;" /></td>
+		    <td width="321"><input isEdicao="true" type="text" id="numNotaFiscal" style="width:200px;" /></td>
 		    <td width="106">S&eacute;rie:</td>
-		    <td width="111"><input type="text" id="serieNotaFiscal" style="width:80px;" /></td>
+		    <td width="111"><input isEdicao="true" type="text" id="serieNotaFiscal" style="width:80px;" /></td>
   		</tr>
   		<tr>
 		    <td>Data:</td>
-		    <td><input type="text" id="dataNotaFiscal" style="width:80px;" /></td>
+		    <td><input isEdicao="true" type="text" id="dataNotaFiscal" style="width:80px;" /></td>
 		    <td>Valor Total R$:</td>
 		    <td>
-		    	<input type="text" id="valorNotaFiscal" style="width:80px; text-align:right;" />
+		    	<input isEdicao="true" type="text" id="valorNotaFiscal" style="width:80px; text-align:right;" />
 		    </td>
 		</tr>
 		<tr>
@@ -240,9 +240,9 @@
 				<table width="300" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 				    
-				        <td width="26"><input type="radio" checked="checked" name="radioNFE" onchange="ConferenciaEncalhe.mostrarChaveAcesso()" id="radioNFEsim" value="S"/></td>
+				        <td width="26"><input isEdicao="true" type="radio" checked="checked" name="radioNFE" onchange="ConferenciaEncalhe.mostrarChaveAcesso()" id="radioNFEsim" value="S"/></td>
 				        <td width="71" valign="bottom">Sim</td>
-				        <td width="20"><input type="radio"  onchange="ConferenciaEncalhe.mostrarChaveAcesso()" name="radioNFE" id="radioNFEnao" value="N" /></td>
+				        <td width="20"><input isEdicao="true" type="radio"  onchange="ConferenciaEncalhe.mostrarChaveAcesso()" name="radioNFE" id="radioNFEnao" value="N" /></td>
 				        <td width="183" valign="bottom">N&atilde;o</td>
 	      			
 	      			</tr>
@@ -260,7 +260,7 @@
 					    	Chave de Acesso:
 					    </td>
 				    	<td colspan="3">
-				    		<input type="text" id="chaveAcessoNFE" style="width:510px;" />
+				    		<input isEdicao="true" type="text" id="chaveAcessoNFE" style="width:510px;" />
 				    	</td>
 					</table>
 				</div>
