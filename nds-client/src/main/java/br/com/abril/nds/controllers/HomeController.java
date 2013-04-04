@@ -125,37 +125,17 @@ public class HomeController {
 		List<Route> routes = router.allRoutes();
 		
 		for (Route route : routes) {
-			ResourceMethod resourceMethod = (ResourceMethod) new Mirror()
-					.on(route).get().field("resourceMethod");
-			Rules rule = resourceMethod.getResource().getType().getAnnotation(Rules.class);
 			
-			// Caso possua uma lista de regras, aplica as permissões de menus
-			if (rule != null && rule.value() == permissao) {
+			ResourceMethod resourceMethod = 
+				(ResourceMethod) new Mirror().on(route).get().field("resourceMethod");
+			
+			Rules rule = resourceMethod.getResource().getType().getAnnotation(Rules.class);
+		
+			if (rule != null && rule.value().equals(permissao)) {
 				
 				return resourceMethod.getResource().getType().getAnnotation(Path.class).value()[0];
 			}
-
 		}
-		
-		for (Route route : routes) {
-			ResourceMethod resourceMethod = (ResourceMethod) new Mirror()
-					.on(route).get().field("resourceMethod");
-			Rules rule = resourceMethod.getMethod().getAnnotation(Rules.class);
-			
-			// Caso possua uma lista de regras, aplica as permissões de menus
-			if (rule != null && rule.value() == permissao) {
-				
-				boolean pathIsNull = !resourceMethod.getMethod().isAnnotationPresent(Path.class);
-				
-				String pathBase = resourceMethod.getResource().getType().getAnnotation(Path.class).value()[0];
-				
-				String pathMetodo = pathIsNull ? resourceMethod.getMethod().getName() : resourceMethod.getMethod().getAnnotation(Path.class).value()[0];
-				
-				return pathBase + "/" + pathMetodo;
-			}
-
-		}
-		
 		
 		return "";
 	}
