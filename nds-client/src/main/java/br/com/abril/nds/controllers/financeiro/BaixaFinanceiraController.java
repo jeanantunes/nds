@@ -157,6 +157,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void realizarBaixaAutomatica(Date data, UploadedFile uploadedFile, String valorFinanceiro) {
 		
 		valorFinanceiro = CurrencyUtil.convertValorInternacional(valorFinanceiro);
@@ -507,6 +508,7 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("/baixaManualBoleto")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void baixaManualBoleto(String nossoNumero, 
 					              String valor,
 					              Date dataVencimento,
@@ -730,6 +732,7 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("baixaManualDividas")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void baixaManualDividas(Boolean manterPendente,
 			                       String valorDividas, 
 								   String valorMulta, 
@@ -838,6 +841,7 @@ public class BaixaFinanceiraController extends BaseController {
 	
 	@Post
 	@Path("finalizarPostergacao")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void finalizarPostergacao(Date dataPostergacao, boolean isIsento, List<Long> idCobrancas) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
@@ -1157,6 +1161,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void confirmarBaixaDividas(List<Long> idCobrancas) {
 		
 		if (idCobrancas == null || idCobrancas.isEmpty()) {
@@ -1173,6 +1178,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void cancelarBaixaDividas(List<Long> idCobrancas) {
 		
 		if (idCobrancas == null || idCobrancas.isEmpty()) {

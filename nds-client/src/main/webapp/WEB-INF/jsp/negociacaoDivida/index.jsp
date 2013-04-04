@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/negociacaoDivida.js"></script>
@@ -81,7 +82,7 @@
 						<label for="selTodos">Selecionar Todos</label>
 					</td>
 					<td width="5%" align="left">
-						<input type="checkbox"
+						<input isEdicao="true" type="checkbox"
 							id="negociacaoCheckAll" name="Todos"
 							onclick="negociacaoDividaController.checkAll(this);"
 							style="float: left;" />

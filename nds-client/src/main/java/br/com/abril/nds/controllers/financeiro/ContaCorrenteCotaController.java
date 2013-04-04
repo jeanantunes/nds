@@ -535,6 +535,7 @@ public class ContaCorrenteCotaController extends BaseController {
 		result.use(Results.nothing());
 	}
 	
+	@Rules(Permissao.ROLE_FINANCEIRO_CONTA_CORRENTE_ALTERACAO)
 	public void enviarEmail(String mensagem, String[] destinatarios) throws IOException {
 		
 		AnexoEmail anexoXLS = new AnexoEmail("conta-corrente-cota", this.gerarAnexo(FileType.XLS), TipoAnexo.XLS);

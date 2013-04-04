@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -8,6 +9,7 @@
 	
 	$(function() {
 		impressaoBoletosController.init();
+		bloquearItensEdicao(impressaoBoletosController.workspace);
 	});
 
 	</script>
@@ -33,13 +35,13 @@
 			<div class="area">
 				<div id="divImpressoes" style="display: none">
 					<span class="bt_novos">
-						<a href="javascript:impressaoBoletosController.imprimirDividas('BOLETO')" rel="tipsy" title="Imprimir Boletos">
+						<a isEdicao="true" href="javascript:impressaoBoletosController.imprimirDividas('BOLETO')" rel="tipsy" title="Imprimir Boletos">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
 						</a>
 					</span>
 					
 					<span class="bt_novos">
-						<a href="javascript:impressaoBoletosController.imprimirDividas('DIVIDA')" rel="tipsy" title="Imprimir Dividas">
+						<a isEdicao="true" href="javascript:impressaoBoletosController.imprimirDividas('DIVIDA')" rel="tipsy" title="Imprimir Dividas">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						</a>
 					</span>

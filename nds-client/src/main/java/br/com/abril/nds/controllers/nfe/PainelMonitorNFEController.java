@@ -238,6 +238,7 @@ public class PainelMonitorNFEController extends BaseController {
 		
 	}
 
+	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
 	public void cancelarNfe() {
 
 		result.use(Results.json()).from("").serialize();
@@ -266,6 +267,7 @@ public class PainelMonitorNFEController extends BaseController {
 	}
 	
 
+	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
 	public void imprimirDanfes(boolean indEmissaoDepec) {
 		
 		List<NfeVO> listaNfesParaImpressaoDanfe = (List<NfeVO>) session.getAttribute(NFES_PARA_IMPRESSAO_DANFES);
