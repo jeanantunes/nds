@@ -26,6 +26,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * @author francisco.garcia
@@ -85,6 +86,10 @@ public class Estudo implements Serializable {
 	
 	@Column(name = "PACOTE_PADRAO")
 	private BigInteger pacotePadrao; //TODO BigDecimal
+	
+	@ManyToOne (optional = false)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario; 
 	
 	public Long getId() {
 		return id;
@@ -200,4 +205,11 @@ public class Estudo implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 	}
 
+	public Usuario getUsuarioId() {
+		return usuario;
+	}
+
+	public void setUsuarioId(Usuario usuarioId) {
+		this.usuario = usuarioId;
+	}
 }

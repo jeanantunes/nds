@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.InformacoesBaseProdDTO;
+import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
+import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InformacoesAbrangenciaEMinimoProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -92,21 +94,6 @@ public class InformacoesProdutoController extends BaseController {
 		
 		List<InformacoesProdutoDTO> produtos = infoProdService.buscarProduto(filtro);
 		
-		for (InformacoesProdutoDTO informacoesProdutoDTO : produtos) {
-			if((informacoesProdutoDTO.getHora()) == null){
-				informacoesProdutoDTO.setHora("");
-			}
-			
-			if((informacoesProdutoDTO.getNomeUsuario()) == null){
-				informacoesProdutoDTO.setNomeUsuario("");
-			}
-			
-			if((informacoesProdutoDTO.getDataInsercao()) == null){
-				informacoesProdutoDTO.setDataInser("");
-			}
-			
-		}
-		
 		if (produtos == null || produtos.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
@@ -125,19 +112,19 @@ public class InformacoesProdutoController extends BaseController {
 	
 	@Post
 	@Path("/buscarBaseSugerida")
-	public void baseSugerida (String codProd){
+	public void baseSugerida (Long idEstudo){
 		
-		TableModel<CellModelKeyValue<InformacoesBaseProdDTO>> tableModel = gridBaseSugerida(codProd);
+		TableModel<CellModelKeyValue<ProdutoBaseSugeridaDTO>> tableModel = gridBaseSugerida(idEstudo);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 
 	}
 	
-	private TableModel<CellModelKeyValue<InformacoesBaseProdDTO>> gridBaseSugerida (String codProd) {
+	private TableModel<CellModelKeyValue<ProdutoBaseSugeridaDTO>> gridBaseSugerida (Long idEstudo) {
 		
-		List<InformacoesBaseProdDTO> baseSugerida = infoProdService.buscarBases(codProd);
+		List<ProdutoBaseSugeridaDTO> baseSugerida = infoProdService.buscarBaseSugerida(idEstudo);
 		
-		TableModel<CellModelKeyValue<InformacoesBaseProdDTO>> tableModel = new TableModel<CellModelKeyValue<InformacoesBaseProdDTO>>();
+		TableModel<CellModelKeyValue<ProdutoBaseSugeridaDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoBaseSugeridaDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(baseSugerida));
 
@@ -150,26 +137,26 @@ public class InformacoesProdutoController extends BaseController {
 
 	@Post
 	@Path("/buscarBaseEstudo")
-	public void baseEstudo (String codProd){
+	public void baseEstudo (Long idEstudo){
 		
-		TableModel<CellModelKeyValue<InformacoesBaseProdDTO>> tableModel = gridBaseEstudo(codProd);
+		TableModel<CellModelKeyValue<EdicaoBaseEstudoDTO>> tableModel = gridBaseEstudo(idEstudo);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-	
+
 	}
 	
-	private TableModel<CellModelKeyValue<InformacoesBaseProdDTO>> gridBaseEstudo (String codProd) {
+	private TableModel<CellModelKeyValue<EdicaoBaseEstudoDTO>> gridBaseEstudo(Long idEstudo) {
 		
-		List<InformacoesBaseProdDTO> baseEstudo = infoProdService.buscarBases(codProd);
+		List<EdicaoBaseEstudoDTO> baseSugerida = infoProdService.buscarBases(idEstudo);
 		
-		TableModel<CellModelKeyValue<InformacoesBaseProdDTO>> tableModel = new TableModel<CellModelKeyValue<InformacoesBaseProdDTO>>();
-	
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(baseEstudo));
-	
+		TableModel<CellModelKeyValue<EdicaoBaseEstudoDTO>> tableModel = new TableModel<CellModelKeyValue<EdicaoBaseEstudoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(baseSugerida));
+
 		tableModel.setPage(1);
-	
-		tableModel.setTotal(baseEstudo.size());
-	
+
+		tableModel.setTotal(baseSugerida.size());
+
 		return tableModel;
 	}
 	
@@ -205,6 +192,16 @@ public class InformacoesProdutoController extends BaseController {
 		InformacoesCaracteristicasProdDTO caracteristicas = infoProdService.buscarCaracteristicas(codProd, numEdicao);
 		
 		result.use(Results.json()).from(caracteristicas, "result").serialize();
+
+	}
+	
+	@Post
+	@Path("/buscarAbrangenciaEMinimo")
+	public void buscarAbrangenciaEMinimo(Long idEstudo){
+
+		InformacoesAbrangenciaEMinimoProdDTO informacoes = infoProdService.buscarAbrangenciaEMinimo(idEstudo);
+		
+		result.use(Results.json()).from(informacoes, "result").serialize();
 
 	}
 	
@@ -247,6 +244,4 @@ public class InformacoesProdutoController extends BaseController {
 		
 		result.nothing();
 	}
-	
-
 }

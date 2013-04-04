@@ -7,11 +7,11 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.InformacoesBaseProdDTO;
+import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InformacoesAbrangenciaEMinimoProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
@@ -27,7 +27,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<InformacoesProdutoDTO> buscarProdutos(FiltroInformacoesProdutoDTO filtro) {
-		
+//		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT ");
@@ -44,10 +44,12 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
 
 //		hql.append(" prodEdicao.venda AS venda, ");
-		hql.append(" prodEdicao.reparteDistribuido AS reparteMinimoGhoma, "); // DADO INCONSISTENTE...
+		hql.append(" prodEdicao.reparteDistribuido AS reparteMinimo, "); // DADO INCONSISTENTE...
 		
 		hql.append(" algortm.descricao AS algoritmo, "); 
-		hql.append(" estudoG.id AS estudo "); 
+		hql.append(" estudoG.dataAlteracao AS dataAlteracao, ");
+		hql.append(" estudoG.id AS estudo, "); 
+		hql.append(" usuarioEstudo.nome AS nomeUsuario ");
 
 		hql.append(" FROM ProdutoEdicao AS prodEdicao ");
 		
@@ -55,6 +57,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" left join prodEdicao.lancamentos AS lancamento ");
 		hql.append(" left join produto.algoritmo AS algortm ");
 		hql.append(" INNER join lancamento.estudo AS estudoG ");
+		hql.append(" left join estudoG.usuario as usuarioEstudo ");
 		
 		hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
 		hql.append(" AND produto.nome = :NOME_PRODUTO ");
@@ -73,9 +76,68 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		if (filtro != null){
 			configurarPaginacao(filtro, query);
 		}
-		
 		return query.list();
 	}
+		
+	
+//	StringBuilder sql = new StringBuilder();
+//	
+//				 sql.append(" select ")
+//				.append(" 	produto.CODIGO as codProduto,") 
+//				.append(" 	produtoEdicao.NUMERO_EDICAO as numeroEdicao,")	    
+//				.append("   produto.NOME as nomeProduto,") 
+//				.append("   produto.PERIODICIDADE as periodo,")
+//				.append("   produtoEdicao.PRECO_VENDA as preco,")
+//				.append("   lancamento.TIPO_LANCAMENTO as status,")
+//				.append("   produtoEdicao.REPARTE_DISTRIBUIDO as reparteDistribuido,")
+//				.append("   produto.PERCENTUAl_ABRANGENCIA as percentualAbrangencia,")
+//				.append("   lancamento.DATA_LCTO_PREVISTA as dataLcto,")
+//				.append("   lancamento.DATA_REC_PREVISTA as dataRcto,")
+//				.append("   estrateg.REPARTE_MINIMO as reparteMinimoGhoma,")
+//				.append("   algoritmo.DESCRICAO as algoritmo,")
+//				.append("   estudo.ID as estudo,")
+//				.append("   usua.NOME as nomeUsuario,")
+//				.append("   estudo.DATA_ALTERACAO as dataAlteracao ")
+//				.append("   from		")
+//				.append("   PRODUTO_EDICAO produtoEdicao") 
+//				.append("   left outer join")
+//				.append("   	PRODUTO produto") 
+//				.append("       	on produtoEdicao.PRODUTO_ID=produto.ID") 
+//				.append("   left outer join")
+//				.append("       ALGORITMO algoritmo") 
+//				.append("           on produto.ALGORITMO_ID=algoritmo.ID") 
+//				.append("   left outer join")
+//				.append("       LANCAMENTO lancamento") 
+//				.append("           on produtoEdicao.ID=lancamento.PRODUTO_EDICAO_ID") 
+//				.append("   inner join")
+//				.append("       ESTUDO estudo") 
+//				.append("           on lancamento.PRODUTO_EDICAO_ID=estudo.PRODUTO_EDICAO_ID") 
+//				.append("           and lancamento.DATA_LCTO_PREVISTA=estudo.DATA_LANCAMENTO")
+//				.append("   left join usuario usua ")
+//				.append("         on usua.ID = estudo.USUARIO_ID")
+//				.append("   left join estrategia estrateg")
+//				.append("         on estrateg.PRODUTO_EDICAO_ID = produtoEdicao.ID")
+//				.append("   where		")
+//				.append(" 		produto.codigo = :COD_PRODUTO ")
+//				.append(" 		AND produto.nome = :NOME_PRODUTO ")
+//				.append(this.getSqlWhereBuscarProdutos(filtro));
+//				 
+////				.append(" ORDER BY numeroEdicao ");
+//				 
+//		SQLQuery query = getSession().createSQLQuery(sql.toString());
+//		
+//		query.setParameter("COD_PRODUTO", filtro.getCodProduto());
+//		query.setParameter("NOME_PRODUTO", filtro.getNomeProduto());
+//		
+//		this.paramsDinamicosBuscarProdutos(query, filtro);
+//
+//		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
+//
+//		if (filtro != null){
+//			configurarPaginacao(filtro, query);
+//		}
+//		
+//		return query.list();
 	
 	private String paramsDinamicosBuscarProdutos (Query query, FiltroInformacoesProdutoDTO filtro) {
 		
@@ -99,52 +161,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		return hql.toString();
 	}
 	
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<InformacoesBaseProdDTO> buscarBase(String codProduto) {
-
-//		StringBuilder hql = new StringBuilder();
-//		
-//		hql.append(" SELECT ");
-//		hql.append(" produto.codigo AS codProduto, ");
-//		hql.append(" produto.nome AS nomeProduto, ");
-//		hql.append(" prodEdicao.numeroEdicao AS numeroEdicao, ");
-//		hql.append(" produto.peso AS peso ");
-//
-//		hql.append(" FROM ProdutoEdicao AS prodEdicao ");
-//		hql.append(" left join prodEdicao.produto AS produto ");
-//		hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
-//		
-//		Query query = super.getSession().createQuery(hql.toString());
-//
-//		query.setParameter("COD_PRODUTO", codProduto);
-//		
-//		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesBaseProdDTO.class));
-		
-		StringBuilder sql = new StringBuilder();
-//		
-//		 sql.append(" select ")
-//		    .append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
-//		    .append(" prodEdic.CODIGO_DE_BARRAS as codigoBarraProduto")
-//		    .append(" from produto prod")
-//			.append(" join pessoa ON pessoa.ID = forn.JURIDICA_ID")
-//			.append(" where prod.ATIVO = true")
-//			.append(" and prodEdic.ATIVO = true")
-//			.append(" and lanc.status = 'BALANCEADO'")
-//		 	.append(" order by liberado");
-//			
-//			
-//			query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
-//			
-//			query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
-//			
-//			List<ProdutoDistribuicaoVO> result = query.list();
-		
-		SQLQuery query = getSession().createSQLQuery(sql.toString());
-		return query.list();
-	}
-
+	
 	@Override
 	public InformacoesCaracteristicasProdDTO buscarCaracteristicas(String codProduto, Long numEdicao) {
 
@@ -170,6 +187,46 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesCaracteristicasProdDTO.class));		
 
 		return (InformacoesCaracteristicasProdDTO) query.uniqueResult();
+	}
+	
+	@Override
+	public InformacoesAbrangenciaEMinimoProdDTO buscarAbrangenciaEMinimo(Long estudoId) {
+		/*
+		 * select 
+	est.reparte_minimo as minimoSugerido, est.ABRANGENCIA as abrangSugerido, estudo.ID as estudoId 
+	from estrategia est
+	inner join produto_edicao prodEdic 
+	  ON est.PRODUTO_EDICAO_ID = prodEdic.ID
+	inner join estudo 
+	  ON estudo.PRODUTO_EDICAO_ID = prodEdic.ID
+	where estudo.id = 27161;
+		 */
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append("     distinct ");
+		sql.append("         est.reparte_minimo as minimoSugerido, ");
+		sql.append("         est.ABRANGENCIA as abrangenciaSugerida, ");
+		sql.append("         estudo.ID as minimoEstudoId ");
+		sql.append("     FROM ");
+		sql.append("         estrategia est ");
+		sql.append("     INNER JOIN ");
+		sql.append("         produto_edicao prodEdic  ");
+		sql.append("             ON est.PRODUTO_EDICAO_ID = prodEdic.ID ");
+		sql.append("     INNER JOIN  ");
+		sql.append("         estudo  ");
+		sql.append("             ON estudo.PRODUTO_EDICAO_ID = prodEdic.ID ");
+		sql.append("     where ");
+		sql.append("         estudo.id = ");
+		sql.append(estudoId);
+
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesAbrangenciaEMinimoProdDTO.class));
+		 
+		return (InformacoesAbrangenciaEMinimoProdDTO) query.uniqueResult();
+		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -205,6 +262,5 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
 	}
-
 
 }

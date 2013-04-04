@@ -131,9 +131,9 @@ $(function(){
                   <table width="240" border="0" cellpadding="2" cellspacing="1">
                       <tr>
                          <td width="52">Sugerido:</td>
-                        <td width="55"><input type="text" name="dataLcto5" id="dataLcto5" style="width:35px; text-align:right;" /></td>
+                        <td width="55"><input type="text" name="dataLcto5" id="sugeridoAbrang" style="width:35px; text-align:right;" /></td>
                        <td width="45">Apurada:</td>
-                        <td width="35"><input type="text" name="dataLcto2" id="dataLcto2" style="width:35px; text-align:right;" /></td>
+                        <td width="35"><input type="text" name="dataLcto2" id="apuradaAbrang" style="width:35px; text-align:right;" /></td>
                       </tr>
                 </table>
     	</fieldset>
@@ -143,9 +143,9 @@ $(function(){
                   <table width="230" border="0" cellpadding="2" cellspacing="1">
                       <tr>
                         <td width="52">Sugerido:</td>
-                        <td width="55"><input type="text" name="dataLcto5" id="dataLcto5" style="width:35px; text-align:right;" /></td>
+                        <td width="55"><input type="text" name="dataLcto5" id="sugeridoMinimo" style="width:35px; text-align:right;" /></td>
                         <td width="44">Estudo:</td>
-                        <td width="59"><input type="text" name="dataLcto5" id="dataLcto5" style="width:35px; text-align:right;" /></td>
+                        <td width="59"><input type="text" name="dataLcto5" id="estudoMinimo" style="width:35px; text-align:right;" /></td>
                       </tr>
                 </table>
     	</fieldset>
@@ -165,7 +165,7 @@ $(function(){
 	  <br />
 
       <fieldset style="width:528px; margin-right:0px!important; margin-top:5px;margin-left:5px !important; ">
-       	    <legend>Reparte da Região</legend>
+       	    <legend>Reparte da edição</legend>
        	    <table width="520" border="0" cellpadding="2" cellspacing="1">
                 <tr>
                   <td width="26">Total:</td>
