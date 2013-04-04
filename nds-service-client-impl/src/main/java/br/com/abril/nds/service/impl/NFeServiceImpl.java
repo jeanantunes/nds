@@ -131,6 +131,7 @@ public class NFeServiceImpl implements NFeService {
 			NfeImpressaoDTO nfeImpressao = obterDadosNENECA(ne);
 
 			if(nfeImpressao!=null) {
+				
 				listaNEWrapper.add(new NfeImpressaoWrapper(nfeImpressao));
 			}
 
@@ -141,6 +142,7 @@ public class NFeServiceImpl implements NFeService {
 			return gerarDocumentoIreportNE(listaNEWrapper, false);
 
 		} catch(Exception e) {
+			
 			throw new RuntimeException("Falha na geração dos arquivos NE!", e);
 		}
 	}

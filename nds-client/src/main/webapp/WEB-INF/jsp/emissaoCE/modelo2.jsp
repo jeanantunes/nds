@@ -199,11 +199,11 @@ function imprimir(){
       </tr>
       <tr>
         <td align="right"><strong> Total Desconto R$</strong></td>
-        <td align="right" style="border-bottom:1px solid #000;"></td>
+        <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrComDesconto}</td>
       </tr>
       <tr>
         <td align="right"><strong>Total Líquido R$</strong></td>
-        <td align="right" style="border-bottom:1px solid #000;"></td>
+        <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparteLiquido}</td>
       </tr>
     </table></td>
   </tr>
