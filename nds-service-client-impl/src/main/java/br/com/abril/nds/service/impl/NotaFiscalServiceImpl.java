@@ -683,18 +683,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		destinatario.setNome(cota.getPessoa().getNome());
 		destinatario.setPessoaDestinatarioReferencia(cota.getPessoa());
 
-		TelefoneCota telefoneCota = telefoneCotaRepository
-				.obterTelefonePrincipal(cota.getId());
-		if (telefoneCota != null) {
-			Telefone telefone = telefoneCota.getTelefone();
 
+		Telefone telefone = telefoneCotaRepository.obterTelefonePrincipalCota(cota.getId());
+		
+        if (telefone!=null){
 			telefoneRepository.detach(telefone);
 			telefone.setId(null);
 			telefone.setPessoa(null);
 			telefoneRepository.adicionar(telefone);
 			destinatario.setTelefone(telefone);
-		}
-
+        }
+        
 		return destinatario;
 	}
 

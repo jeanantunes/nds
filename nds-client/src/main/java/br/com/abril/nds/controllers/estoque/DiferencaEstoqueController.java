@@ -381,6 +381,7 @@ public class DiferencaEstoqueController extends BaseController {
 	
 	@Post
 	@Path("/lancamento/cadastrarNovasDiferencasNotaEnvio")
+	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
 	public void cadastrarNovasDiferencasNotaEnvio(TipoDiferenca tipoDiferenca, 
 												  Date dataNotaEnvio,
 										 		  Integer numeroCota,
@@ -554,6 +555,7 @@ public class DiferencaEstoqueController extends BaseController {
 
 	@Post
 	@Path("/lancamento/cadastrarNovasDiferencas")
+	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
 	public void cadastrarNovasDiferencas(TipoDiferenca tipoDiferenca, 
 										 boolean direcionadoParaEstoque,
 										 String codigoProduto,
@@ -1135,6 +1137,7 @@ public class DiferencaEstoqueController extends BaseController {
 	
 	@Post
 	@Path("/lancamento/excluir")
+	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
 	public void excluirFaltaSobra(Long idDiferenca){
 		
 		Boolean modoNovaDiferenca = (Boolean) this.httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE); 
@@ -1227,6 +1230,7 @@ public class DiferencaEstoqueController extends BaseController {
 
 	@Post
 	@SuppressWarnings("unchecked")
+	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
 	public void confirmarLancamentos() {
 		
 		Boolean modoNovaDiferenca = (Boolean) this.httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
@@ -1263,6 +1267,7 @@ public class DiferencaEstoqueController extends BaseController {
 	
 	@Post
 	@SuppressWarnings("unchecked")
+	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
 	public void salvarLancamentos() {
 		
 		Boolean modoNovaDiferenca = (Boolean) this.httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
@@ -1297,6 +1302,7 @@ public class DiferencaEstoqueController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
 	public void cancelarLancamentos() {
 		
 		Boolean modoNovaDiferenca =
@@ -1950,6 +1956,7 @@ public class DiferencaEstoqueController extends BaseController {
 	 */
 	@Post
 	@Path("/lancamento/novo/validar")
+	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
 	public void validarEntradaDadosNovoLancamento(String dataMovimentoFormatada, TipoDiferenca tipoDiferenca) {
 		
 		if (dataMovimentoFormatada == null 

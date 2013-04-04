@@ -314,6 +314,7 @@ public class ParciaisController extends BaseController {
 	 * Insere períodos ao Lançamento Parcial
 	 */
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
 	public void inserirPeriodos(Integer peb, Integer qtde, Long idProdutoEdicao) {
 		
 		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuarioLogado());
@@ -327,6 +328,7 @@ public class ParciaisController extends BaseController {
 	 * @param idLancamento
 	 */
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
 	public void excluirPeriodoParcial(Long idLancamento) {
 		
 		parciaisService.excluirPeriodo(idLancamento);
@@ -339,6 +341,7 @@ public class ParciaisController extends BaseController {
 	 * Insere períodos ao Lançamento Parcial
 	 */
 	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_PARCIAIS_ALTERACAO)
 	public void editarPeriodoParcial(Long idLancamento, String dataLancamento, String dataRecolhimento) {
 		
 		Date lancamento = DateUtil.parseDataPTBR(dataLancamento);

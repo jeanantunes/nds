@@ -121,39 +121,32 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<EstudoCota> obterEstudosCotaParaNotaEnvio(Long idCota, 
+	public List<EstudoCota> obterEstudosCotaParaNotaEnvio(List<Long> idCotas, 
 														  Intervalo<Date> periodo, 
 														  List<Long> listaIdsFornecedores) {
 		
 		StringBuffer sql = new StringBuffer("SELECT DISTINCT estudoCota ");	
 		
 		sql.append(" FROM EstudoCota estudoCota ");
-
+		sql.append(" JOIN estudoCota.cota cota WITH cota.id IN (:idCotas) ");
 		sql.append(" JOIN estudoCota.estudo estudo ");
-		sql.append(" JOIN estudo.lancamentos lancamento ");
-		sql.append(" JOIN estudoCota.cota cota ");
-		sql.append(" JOIN estudo.produtoEdicao produtoEdicao ");
+		sql.append(" JOIN estudo.lancamentos lancamento WITH lancamento.status IN (:listaStatusLancamento) ");
 		
-		sql.append(" JOIN produtoEdicao.produto produto ");
-		sql.append(" JOIN produto.fornecedores fornecedor ");
-		
-		sql.append(" WHERE cota.id = :idCota ");
-		
-		sql.append(" AND lancamento.status IN (:listaStatusLancamento) ");
-		
-		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
+        if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
 			
 			sql.append(" AND lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
 		}	
 		
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			
-			sql.append(" AND (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
-		}		
+			sql.append(" JOIN estudo.produtoEdicao produtoEdicao ");
+			sql.append(" JOIN produtoEdicao.produto produto ");
+			sql.append(" JOIN produto.fornecedores fornecedor WITH (fornecedor IS NULL OR fornecedor.id IN (:listaFornecedores)) ");
+		}	
 		
 		Query query = getSession().createQuery(sql.toString());
 		
-		query.setParameter("idCota", idCota);
+		query.setParameterList("idCotas", idCotas);
 	
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			
@@ -163,12 +156,11 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		if (periodo != null && periodo.getDe() != null && periodo.getAte() != null) {
 			
 			query.setParameter("dataInicio", periodo.getDe());
+			
 			query.setParameter("dataFim", periodo.getAte());
 		}
 
-		query.setParameterList(
-			"listaStatusLancamento", 
-				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
+		query.setParameterList("listaStatusLancamento", new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
 		
 		return query.list();
 	}

@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
@@ -15,6 +16,8 @@
 	
 	$(function(){
 		contaCorrenteCotaController.init();
+		
+		bloquearItensEdicao(contaCorrenteCotaController.workspace);
 	});
 	
 </script>
@@ -228,7 +231,7 @@
 				</span>
 				
 				<span class="bt_novos" id="bt_email">
-					<a href="javascript:;"  onclick="contaCorrenteCotaController.popup_email();" rel="tipsy" title="Enviar por e-mail">
+					<a isEdicao="true" href="javascript:;"  onclick="contaCorrenteCotaController.popup_email();" rel="tipsy" title="Enviar por e-mail">
 						<img src="${pageContext.request.contextPath}/images/ico_email.png" hspace="5" border="0" />
 					</a>
 				</span>

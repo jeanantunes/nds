@@ -337,6 +337,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
 	public void adicionarEdicoesFechadas(boolean checkAll, List<ProdutoEdicaoFechadaVO> listaEdicoesFechadas ) {
 		
 		FiltroDigitacaoContagemDevolucaoDTO filtro = 
@@ -359,6 +360,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/salvar")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
 	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
 		
 		if (listaDigitacaoContagemDevolucao == null || listaDigitacaoContagemDevolucao.isEmpty()) {
@@ -376,6 +378,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/confirmar")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
 	public void confirmar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
 		
 		if (listaDigitacaoContagemDevolucao == null 
@@ -395,6 +398,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/geraNota")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
 	public void geraNota(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) throws IOException {
 		
 		if (listaDigitacaoContagemDevolucao == null 

@@ -544,6 +544,7 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Get
 	@Path("/imprimirDivida")
+	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
 	public void imprimirDivida(String nossoNumero) throws Exception {
 
 		byte[] arquivo = (byte[]) session
@@ -556,6 +557,7 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Get
 	@Path("/imprimirBoletosEmMassa")
+	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
 	public void imprimirBoletosEmMassa() throws Exception {
 
 		byte[] arquivo = (byte[]) session
@@ -568,6 +570,7 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Get
 	@Path("/imprimirDividasEmMassa")
+	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
 	public void imprimirDividasEmMassa() throws Exception {
 
 		byte[] arquivo = (byte[]) session
@@ -601,6 +604,7 @@ public class ImpressaoBoletosController extends BaseController {
 
 	@Post
 	@Path("/enviarDivida")
+	@Rules(Permissao.ROLE_FINANCEIRO_IMPRESSAO_BOLETOS_ALTERACAO)
 	public void enviarDivida(String nossoNumero) throws Exception {
 
 		dividaService.enviarArquivoPorEmail(nossoNumero);

@@ -42,11 +42,11 @@ var debitoCreditoCotaController = $.extend(true, {
 		if (isLancamentoManual == "true") {
 			
 			acoes = 
-				'<a href="javascript:;" onclick="debitoCreditoCotaController.editarMovimento(' + idMovimento + ')" ' +
+				'<a isEdicao="true" href="javascript:;" onclick="debitoCreditoCotaController.editarMovimento(' + idMovimento + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Editar movimento">' +
 				'<img src="' + contextPath + '/images/ico_editar.gif" border="0px"/>' +
 				'</a>' +
-				'<a href="javascript:;" onclick="debitoCreditoCotaController.confirmarExclusaoMovimento(' + idMovimento + ')" ' +
+				'<a isEdicao="true href="javascript:;" onclick="debitoCreditoCotaController.confirmarExclusaoMovimento(' + idMovimento + ')" ' +
 				' style="cursor:pointer;border:0px;margin:5px" title="Excluir movimento">' +
 				'<img src="' + contextPath + '/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';	
@@ -73,6 +73,7 @@ var debitoCreditoCotaController = $.extend(true, {
 		$(".debitosCreditosGrid", debitoCreditoCotaController.workspace).flexigrid({
 			url : contextPath + '/financeiro/debitoCreditoCota/pesquisarDebitoCredito',
 			dataType : 'json',
+			onSuccess: function() {bloquearItensEdicao(debitoCreditoCotaController.workspace);},
 			preProcess: debitoCreditoCotaController.processarResultadoConsultaDebitosCreditos,
 			colModel : [  {
 				display : 'Data de Lançamento',

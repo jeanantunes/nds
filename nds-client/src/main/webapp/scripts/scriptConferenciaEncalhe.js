@@ -93,7 +93,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#sm", ConferenciaEncalhe.workspace).numeric();
 		
-		$("#numeroCota", ConferenciaEncalhe.workspace).keyup(function(e) {
+		$("#numeroCota", ConferenciaEncalhe.workspace).keypress(function(e) {
 			
 			if(e.keyCode == 13 && !visibleOverlay()) {
 				
@@ -101,7 +101,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 		});
 		
-		$("#vlrCE", ConferenciaEncalhe.workspace).keyup(function(e) {
+		$("#vlrCE", ConferenciaEncalhe.workspace).keypress(function(e) {
 			
 			if (e.keyCode == 13) {
 				
@@ -109,14 +109,14 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 		});
 		
-		$("#qtdCE", ConferenciaEncalhe.workspace).keyup(function(e) {
+		$("#qtdCE", ConferenciaEncalhe.workspace).keypress(function(e) {
 			
 			if (e.keyCode == 13) {
 				
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).focus();
 			}
 		});
-		$('#sm', ConferenciaEncalhe.workspace).keyup(function(e) {
+		$('#sm', ConferenciaEncalhe.workspace).keypress(function(e) {
 			
 			if (e.keyCode == 13) {
 				
@@ -149,7 +149,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 		});
 		
-		$("#pesq_prod", ConferenciaEncalhe.workspace).keyup(function (e){
+		$("#pesq_prod", ConferenciaEncalhe.workspace).keypress(function (e){
 			
 			if (e.keyCode == 13) {
 				
@@ -191,19 +191,19 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 		});
 		
-		$('#codProduto', ConferenciaEncalhe.workspace).keyup(function(e) {
+		$('#codProduto', ConferenciaEncalhe.workspace).keypress(function(e) {
 			
 			$("#pesq_prod", ConferenciaEncalhe.workspace).val("");
 			ConferenciaEncalhe.popup_pesquisar();
 		});
 		
-		$('#observacao', ConferenciaEncalhe.workspace).keyup(function(e) {
+		$('#observacao', ConferenciaEncalhe.workspace).keypress(function(e) {
 			if (e.keyCode == 13) {
 				ConferenciaEncalhe.gravaObs();
 			}
 		});
 		
-		$("#dialog-notaFiscal").keyup(function (event) {
+		$("#dialog-notaFiscal").keypress(function (event) {
 		    if (event.keyCode == 13) {
 		    	confirmarPopup_notaFiscal();
 		    }
@@ -236,13 +236,13 @@ var ConferenciaEncalhe = $.extend(true, {
 		    	setTimeout (function () {$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).select();}, 1);
 		    }
 		});
-		this.bindKeyUpCodigoBarras();
+		this.bindkeypressCodigoBarras();
 		ConferenciaEncalhe.removerAtalhos();
 		
 		ConferenciaEncalhe.atribuirAtalhos();
 	
 	},
-	 bindKeyUpCodigoBarras:function(){
+	 bindkeypressCodigoBarras:function(){
 	
 		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).keypress(function(e) {
 			
@@ -1581,7 +1581,7 @@ var ConferenciaEncalhe = $.extend(true, {
 								$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).unbind('keypress');								
 							},
 							close:function(event, ui){								
-								ConferenciaEncalhe.bindKeyUpCodigoBarras();
+								ConferenciaEncalhe.bindkeypressCodigoBarras();
 							},
 							delay : 0,
 						});						
@@ -1627,7 +1627,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 
 	fechar_produtos : function() {
-		$('.pesqProdutosGrid', ConferenciaEncalhe.workspace).keyup(function(e) {
+		$('.pesqProdutosGrid', ConferenciaEncalhe.workspace).keypress(function(e) {
 			if (e.keyCode == 13) {
 				$(".itensPesquisados", ConferenciaEncalhe.workspace).show();
 			}
@@ -1635,7 +1635,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 
 	pesqMostraCota : function() {
-		$('#pesq_cota', ConferenciaEncalhe.workspace).keyup(function(e) {
+		$('#pesq_cota', ConferenciaEncalhe.workspace).keypress(function(e) {
 			if (e.keyCode == 13) {
 				$('.dadosFiltro', ConferenciaEncalhe.workspace).fadeIn('fast');
 				ConferenciaEncalhe.popup_alert();

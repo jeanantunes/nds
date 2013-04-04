@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 	<title>NDS - Novo Distrib</title>
@@ -12,6 +13,7 @@
 		var pesquisaCotaDebitoCreditoCota = new PesquisaCota();
 		debitoCreditoCotaController.init();
 		novoDialogDebitoCreditoCotaController.init(pesquisaCotaDebitoCreditoCota);
+		bloquearItensEdicao(debitoCreditoCotaController.workspace);
 	});
 	
 </script>
@@ -180,7 +182,7 @@
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="novoDialogDebitoCreditoCotaController.popupNovoDialog();" rel="tipsy" title="Incluir Novo Tipo de Movimento">
+				<a isEdicao="true" href="javascript:;" onclick="novoDialogDebitoCreditoCotaController.popupNovoDialog();" rel="tipsy" title="Incluir Novo Tipo de Movimento">
 					<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" 
  	   				hspace="5" border="0"/>
  	   			</a>
