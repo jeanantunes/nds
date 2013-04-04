@@ -2829,8 +2829,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("CODIGO_BOX", slip.getCodigoBox());
 		parameters.put("DATA_CONFERENCIA", slip.getDataConferencia());
 		parameters.put("CE_JORNALEIRO", slip.getCeJornaleiro());
-		parameters.put("VALOR_DEVIDO", slip.getValorDevido());
-		parameters.put("VALOR_SLIP", slip.getValorSlip());
 		parameters.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
 		parameters.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
 		parameters.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
@@ -2850,20 +2848,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		parameters.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
 		
-		
-        //OBTÉM O NUMERO DE CHAMADA DE ENCALHE RELACIONADO COM CADA MOVIMENTO FINANCEIRO DA COMPOSIÇÃO DE COBRANÇA
-		for (ComposicaoCobrancaSlipDTO item:listaComposicaoCobranca){
+		BigDecimal totalComposicao = BigDecimal.ZERO;
+		for(ComposicaoCobrancaSlipDTO item:listaComposicaoCobranca){
+			
+	        //OBTÉM O NUMERO DE CHAMADA DE ENCALHE RELACIONADO COM CADA MOVIMENTO FINANCEIRO DA COMPOSIÇÃO DE COBRANÇA
 			ChamadaEncalheCota chamadaEncalhe = this.conferenciaEncalheRepository.obterChamadaEncalheDevolucao(item.getIdMovimentoFinanceiro());
 		    if (chamadaEncalhe!=null){
 		        item.setDescricao(item.getDescricao()+"-CE num "+formatter.format(chamadaEncalhe.getId()));
 		    }
-		}
-		
-		
-        //TOTALIZAÇÃO DO SLIP CONSIDERANDO COMPOSIÇÃO DE COBRANÇA
-		BigDecimal totalComposicao = BigDecimal.ZERO;
-		for(ComposicaoCobrancaSlipDTO item:listaComposicaoCobranca){
-			if (item.getOperacaoFinanceira().equals("D")){
+			
+	        //TOTALIZAÇÃO DO SLIP CONSIDERANDO COMPOSIÇÃO DE COBRANÇA
+		    if (item.getOperacaoFinanceira().equals("D")){
 				totalComposicao = totalComposicao.add(item.getValor());
 			}
 			else{
@@ -2873,8 +2868,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		totalComposicao = totalComposicao.add(slip.getValorSlip());
 
-		BigDecimal totalPagar = listaComposicaoCobranca.isEmpty() ? valorTotalPagar.add(slip.getValorSlip()) : totalComposicao;
+		BigDecimal devido = listaComposicaoCobranca.isEmpty() ? valorTotalReparte : slip.getValorDevido();
+		BigDecimal totalSlip = listaComposicaoCobranca.isEmpty() ? devido.subtract(slip.getValorTotalEncalhe()): slip.getValorSlip();
+		BigDecimal totalPagar = listaComposicaoCobranca.isEmpty() ? valorTotalPagar : totalComposicao;
 
+		parameters.put("VALOR_DEVIDO", devido);
+		parameters.put("VALOR_SLIP", totalSlip);
 		parameters.put("VALOR_TOTAL_PAGAR", totalPagar);
 
 		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
