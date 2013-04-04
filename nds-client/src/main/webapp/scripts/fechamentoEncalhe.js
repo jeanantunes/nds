@@ -18,6 +18,7 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 
 		$(".cotasGrid", fechamentoEncalheController.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(fechamentoEncalheController.workspace);},
 			preProcess: fechamentoEncalheController.preprocessamentoGrid,
 			dataType : 'json',
 			colModel : [ {
@@ -75,6 +76,7 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexigrid({
 			dataType : 'json',
+			onSuccess: function() {bloquearItensEdicao(fechamentoEncalheController.workspace);},
 			preProcess: fechamentoEncalheController.preprocessamentoGridFechamento,
 			colModel : [ {
 				display : 'C&oacute;digo',
@@ -214,9 +216,9 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			row.cell.fisico = '<input type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',window.event);" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
+			row.cell.fisico = '<input isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',window.event);" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 		
-			row.cell.replicar = '<input type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
+			row.cell.replicar = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
 			
 			if (fechado != '') {
 				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
@@ -512,10 +514,18 @@ var fechamentoEncalheController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Postergar": function() {
+					
+					if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
+						return;
+					
 					fechamentoEncalheController.postergarCotas();
 					
 				},
 				"Cobrar": function() {
+					
+					if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
+						return;
+					
 					fechamentoEncalheController.veificarCobrancaGerada();
 					
 				},
@@ -538,9 +548,9 @@ var fechamentoEncalheController = $.extend(true, {
 			var checkBox = '<span></span>';
 			
 			if (row.cell.acao == null || row.cell.acao == '') { 
-				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+				checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
 			} else {
-				checkBox = '<input type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" disabled="disabled"/>';	
+				checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" disabled="disabled"/>';	
 			}
 			
 		    row.cell.check = checkBox;

@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 
 <head>
 
@@ -27,7 +28,7 @@
 		
 		var VEIO_DO_BT_BOX_ENCALHE = false;
 		
-		//Solicita seleção do box caso usuário não esteja associado.
+		//Solicita seleï¿½ï¿½o do box caso usuï¿½rio nï¿½o esteja associado.
 		if(ID_BOX_LOGADO == ""){
 			ConferenciaEncalhe.popup_logado();
 		}else{
@@ -36,6 +37,7 @@
 		
 		$(function(){
 			ConferenciaEncalhe.init();
+			bloquearItensEdicao(ConferenciaEncalhe.workspace);
 		});
 	</script>
 	
@@ -122,10 +124,10 @@
 
 							<c:choose>
 								<c:when test="${tipoContabilizacaoCE eq 'VALOR'}">
-							<input type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
+							<input isEdicao="true" type="text" name="vlrCE" id="vlrCE" style="width: 100px; text-align: right;" maxlength="255" />
 								</c:when>
 								<c:when test="${tipoContabilizacaoCE eq 'EXEMPLARES'}">
-							<input type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
+							<input isEdicao="true" type="text" name="qtdCE" id="qtdCE" style="width: 100px; text-align: right;" maxlength="255" />
 								</c:when>
 							</c:choose>
 							
@@ -181,7 +183,7 @@
 						
 						<input name="idProdutoEdicaoHidden" type="hidden" id="idProdutoEdicaoHidden" />
 						
-						<a href="javascript:;" class="ok_filtro" onclick="ConferenciaEncalhe.adicionarProdutoConferido();">
+						<a isEdicao="true" href="javascript:;" class="ok_filtro" onclick="ConferenciaEncalhe.adicionarProdutoConferido();">
 							<img src="${pageContext.request.contextPath}/images/bt_check.gif" alt="Incluir" width="22" height="22" border="0" />
 						</a>
 					</td>

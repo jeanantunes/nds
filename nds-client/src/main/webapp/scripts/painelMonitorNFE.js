@@ -11,6 +11,7 @@ var PainelMonitorNFE = $.extend(true, {
 		$("#numeroFinal", PainelMonitorNFE.workspace).numeric();
 		
 		$("#nfeGrid", PainelMonitorNFE.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(PainelMonitorNFE.workspace);},
 			colModel : colunas,
 			preProcess: PainelMonitorNFE.executarPreProcessamento,
 			dataType : 'json',
@@ -151,10 +152,10 @@ var PainelMonitorNFE = $.extend(true, {
 			
 			var hiddenField = '<input type="hidden" name="lineId" value="'+value.id+'" />';
 			
-			value.cell.imprimirLinha = '<a href="javascript:;" onclick="PainelMonitorNFE.imprimirDanfeUnica('+value.id+')">'+
-			'<img title="Imprimir" src="${pageContext.request.contextPath}/images/ico_impressora.gif" border="0"/></a>';
+			value.cell.imprimirLinha = '<a isEdicao="true" href="javascript:;" onclick="PainelMonitorNFE.imprimirDanfeUnica('+value.id+')">'+
+			'<img title="Imprimir" src="'+contextPath+'/images/ico_impressora.gif" border="0"/></a>';
 			
-			value.cell.sel = '<input type="checkbox" name="checkgroup" style="float: left; margin-right: 25px;"/>'+hiddenField;
+			value.cell.sel = '<input isEdicao="true" type="checkbox" name="checkgroup" style="float: left; margin-right: 25px;"/>'+hiddenField;
 			
 			var descMovimentoIntegracao = value.cell.movimentoIntegracao;
 

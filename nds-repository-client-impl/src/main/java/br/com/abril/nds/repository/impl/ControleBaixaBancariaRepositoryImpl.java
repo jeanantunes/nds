@@ -3,6 +3,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -49,12 +50,12 @@ public class ControleBaixaBancariaRepositoryImpl extends AbstractRepositoryModel
 	public List<ControleBaixaBancaria> obterListaControleBaixaBancaria(Date dataOperacao,
 																	   StatusControle status) {
 
-		Criteria criteria = super.getSession().createCriteria(ControleBaixaBancaria.class);
+		Query query = getSession().createQuery(" select c from ControleBaixaBancaria c where c.dataOperacao=:dataOperacao and c.status=:status ");
 		
-		criteria.add(Restrictions.eq("dataOperacao", dataOperacao));
-		criteria.add(Restrictions.eq("status", status));
-		
-		return criteria.list();
+		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameter("status", status);
+		 
+		return query.list();
 	}
 	
 }

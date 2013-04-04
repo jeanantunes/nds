@@ -1,3 +1,5 @@
+	<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+	
 	<head>
 		
 		<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -14,9 +16,11 @@
 			
 			$(function() {
 				balanceamentoRecolhimentoController.inicializar(balanceamento);
+				bloquearItensEdicao(balanceamentoRecolhimentoController.workspace);
 			});
 			
 		</script>
+		
 	</head>
 	
 	<body>
@@ -27,7 +31,7 @@
 		<div class="area">
 			
 			<span class="bt_novos" >
-				<a id="linkConfiguracaoInicial" title="Voltar Configuração Inicial" href="javascript:;">
+				<a isEdicao="true" id="linkConfiguracaoInicial" title="Voltar Configuração Inicial" href="javascript:;">
 					<img src="${pageContext.request.contextPath}/images/bt_devolucao.png" border="0" hspace="5" />
 				</a>
 			</span>
@@ -35,24 +39,24 @@
 			
 			
 			<span class="bt_novos" >
-				<a id="linkEditor" href="javascript:;" title="Balancear Editor">
+				<a isEdicao="true" id="linkEditor" href="javascript:;" title="Balancear Editor">
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_add_novo.gif">
 				</a>
 			</span>
 			
 			<span class="bt_novos" >
-				<a id="linkValor" href="javascript:;" title="Balancear Volume / Valor">
+				<a isEdicao="true" id="linkValor" href="javascript:;" title="Balancear Volume / Valor">
 					<img style="width: 16px;height: 16px;" border="0" hspace="5" src="${pageContext.request.contextPath}/images/bt_financeiro.png">
 				</a>
 			</span>
 			<span class="bt_novos" >
-				<a id="linkSalvar" href="javascript:;" title="Salvar">
+				<a isEdicao="true" id="linkSalvar" href="javascript:;" title="Salvar">
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
 				</a>
 			</span>
 			
 			<span class="bt_novos" >
-				<a id="linkConfirmar" href="javascript:;" title="Confirmar balanceamento">
+				<a isEdicao="true" id="linkConfirmar" href="javascript:;" title="Confirmar balanceamento">
 					<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
 				</a>
 			</span>
@@ -64,7 +68,7 @@
 			</span>
 			
 			<span class="bt_novos hidden_buttons" style="display:none;">
-				<a id="linkReprogramar" href="javascript:;" title="Reprogramar" >
+				<a isEdicao="true" id="linkReprogramar" href="javascript:;" title="Reprogramar" >
 					<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
 				</a>
 			</span>
@@ -241,7 +245,7 @@
 						<td width="150">
 							<span class="bt_sellAll">
 								<label for="sel">Selecionar Todos</label>
-								<input type="checkbox" name="checkAllReprogramar" id="checkAllReprogramar" onclick="balanceamentoRecolhimentoController.selecionarTodos(this);" style="float: left;" />
+								<input isEdicao="true" type="checkbox" name="checkAllReprogramar" id="checkAllReprogramar" onclick="balanceamentoRecolhimentoController.selecionarTodos(this);" style="float: left;" />
 							</span>
 						</td>
 					</tr>

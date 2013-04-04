@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
@@ -13,6 +14,7 @@ var pesquisaProdutoVendaEncalhe = new PesquisaProduto();
 
 $(function(){
 	VENDA_PRODUTO.inicializar();
+	bloquearItensEdicao(VENDA_PRODUTO.workspace);
 });
 
 </script>
@@ -29,7 +31,7 @@ $(function(){
 	<div class="area">
 		      		
    		<span class="bt_novos">
-   			<a onclick="VENDA_PRODUTO.novaVenda();" href="javascript:;" rel="tipsy" title="Venda Encalhe / Suplementar">
+   			<a isEdicao="true" onclick="VENDA_PRODUTO.novaVenda();" href="javascript:;" rel="tipsy" title="Venda Encalhe / Suplementar">
    				<img hspace="5" border="0" src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif">
    			</a>
    		</span>

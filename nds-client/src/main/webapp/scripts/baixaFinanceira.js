@@ -581,6 +581,7 @@ var baixaFinanceiraController = $.extend(true, {
 	initGradeDividas : function() {
 		$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexigrid({
 			preProcess: baixaFinanceiraController.getDataFromResultDividas,
+			onSuccess: function() {bloquearItensEdicao(baixaFinanceiraController.workspace);},
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -720,11 +721,11 @@ var baixaFinanceiraController = $.extend(true, {
 		
 			var checkBox;			   
 			if (row.cell.check){			   
-			    checkBox = '<input checked="' + row.cell.check + '" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ row.cell.codigo +', \'checado\', this.checked); " />';	
+			    checkBox = '<input isEdicao="true" checked="' + row.cell.check + '" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ row.cell.codigo +', \'checado\', this.checked); " />';	
 			    baixaFinanceiraController.calculaSelecionados(true, valorItem);
 			}
 			else{
-			    checkBox = '<input title="Selecionar Dívida" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ row.cell.codigo +', \'checado\', this.checked); " />';
+			    checkBox = '<input isEdicao="true" title="Selecionar Dívida" type="checkbox" name="checkboxGrid" id="checkbox_'+ row.cell.codigo +'" onchange="baixaFinanceiraController.calculaSelecionados(this.checked,'+ valorItem +'); dataHolder.hold(\'baixaManual\', '+ row.cell.codigo +', \'checado\', this.checked); " />';
 			}
 
 			row.cell.acao = detalhes;
@@ -787,7 +788,7 @@ var baixaFinanceiraController = $.extend(true, {
     obterDetalhesDivida : function(idDividaCobranca){
     	
 		$(".dadosDividaGrid", baixaFinanceiraController.workspace).flexOptions({
-			url: contextPath + "/financeiro/obterDetalhesDivida",
+			url: contextPath + "/financeiro/baixa/obterDetalhesDivida",
 			params: [
 			         {name:'idCobranca', value: idDividaCobranca}
 			        ] ,
@@ -838,7 +839,7 @@ var baixaFinanceiraController = $.extend(true, {
 			
 			/*BAIXA MANUAL DE DIVIDAS BAIXADAS*/
 			$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexOptions({
-				url: contextPath + "/financeiro/buscaDividasBaixadas",
+				url: contextPath + "/financeiro/baixa/buscaDividasBaixadas",
 				params: [
 				         {name:'numCota', value: numCota},
 				         {name:'nossoNumero', value: nossoNumero}
@@ -861,7 +862,7 @@ var baixaFinanceiraController = $.extend(true, {
 				
 				/*BAIXA MANUAL DE DIVIDAS*/
 				$(".liberaDividaGrid", baixaFinanceiraController.workspace).flexOptions({
-					url: contextPath + "/financeiro/buscaDividas",
+					url: contextPath + "/financeiro/baixa/buscaDividas",
 					params: [
 					         {name:'numCota', value: numCota}
 					        ] ,
@@ -879,7 +880,7 @@ var baixaFinanceiraController = $.extend(true, {
 				
 				/*BAIXA INDIVIDUAL DE COBRANÇA(BOLETO)*/
 				var data = [{name: 'nossoNumero', value: nossoNumero}];
-				$.postJSON(contextPath + "/financeiro/buscaBoleto",
+				$.postJSON(contextPath + "/financeiro/baixa/buscaBoleto",
 						   data,
 						   baixaFinanceiraController.sucessCallbackPesquisarBoleto, 
 						   baixaFinanceiraController.errorCallbackPesquisarBoleto);
@@ -958,7 +959,7 @@ var baixaFinanceiraController = $.extend(true, {
     			multa : $("#multa", baixaFinanceiraController.workspace).val()
     	};
 		
-		$.postJSON(contextPath + "/financeiro/baixaManualBoleto",param,
+		$.postJSON(contextPath + "/financeiro/baixa/baixaManualBoleto",param,
 				   function() {baixaFinanceiraController.mostrarBaixaManual();});
 	},
 	
@@ -1004,7 +1005,7 @@ var baixaFinanceiraController = $.extend(true, {
     obterPagamentoDividas : function() {
     	
     	var param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas());
-		$.postJSON(contextPath + "/financeiro/obterPagamentoDividas",
+		$.postJSON(contextPath + "/financeiro/baixa/obterPagamentoDividas",
 				   param,
 				   baixaFinanceiraController.sucessCallbackPagamentoDivida,
 				   null);
@@ -1141,7 +1142,7 @@ var baixaFinanceiraController = $.extend(true, {
 
     	param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(), param);
 		
-    	$.postJSON(contextPath + "/financeiro/baixaManualDividas",param,
+    	$.postJSON(contextPath + "/financeiro/baixa/baixaManualDividas",param,
 				   function(mensagens) {
 					   
 			           $("#dialog-baixa-dividas", baixaFinanceiraController.workspace).dialog("close");
@@ -1164,7 +1165,7 @@ var baixaFinanceiraController = $.extend(true, {
     //OBTEM VALIDAÇÃO DE PERMISSÃO DE NEGOCIAÇÃO
     obterNegociacao : function() {
     	var param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas());
-		$.postJSON(contextPath + "/financeiro/obterNegociacao",param);
+		$.postJSON(contextPath + "/financeiro/baixa/obterNegociacao",param);
 	},
 
 	
@@ -1196,7 +1197,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".previsaoGrid", baixaFinanceiraController.workspace).flexOptions({
-			url: contextPath + "/financeiro/mostrarGridBoletosPrevisao",
+			url: contextPath + "/financeiro/baixa/mostrarGridBoletosPrevisao",
 			params: [
 		         {name:'data', value: dataBaixa}
 		    ],
@@ -1227,7 +1228,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".boletoBaixadoGrid").flexOptions({
-			url: contextPath + "/financeiro/mostrarGridBoletosBaixados",
+			url: contextPath + "/financeiro/baixa/mostrarGridBoletosBaixados",
 			params: [
 		         {name:'data', value: dataBaixa}
 		    ],
@@ -1258,7 +1259,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".boletoRejeitadoGrid", baixaFinanceiraController.workspace).flexOptions({
-			url: contextPath + "/financeiro/mostrarGridBoletosRejeitados",
+			url: contextPath + "/financeiro/baixa/mostrarGridBoletosRejeitados",
 			params: [
 		         {name:'data', value: dataBaixa}
 		    ],
@@ -1289,7 +1290,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".boletoDivergenciaGrid", baixaFinanceiraController.workspace).flexOptions({
-			url: contextPath + "/financeiro/mostrarGridBoletosBaixadosComDivergencia",
+			url: contextPath + "/financeiro/baixa/mostrarGridBoletosBaixadosComDivergencia",
 			params: [
 		         {name:'data', value: dataBaixa}
 		    ],
@@ -1320,7 +1321,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".inadimplentesGrid", baixaFinanceiraController.workspace).flexOptions({
-			url: contextPath + "/financeiro/mostrarGridBoletosInadimplentes",
+			url: contextPath + "/financeiro/baixa/mostrarGridBoletosInadimplentes",
 			params: [
 		         {name:'data', value: dataBaixa}
 		    ],
@@ -1351,7 +1352,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var dataBaixa = $("#dataBaixa", baixaFinanceiraController.workspace).val();
 		
 		$(".totalGrid", baixaFinanceiraController.workspace).flexOptions({
-			url: contextPath + "/financeiro/mostrarGridTotalBancario",
+			url: contextPath + "/financeiro/baixa/mostrarGridTotalBancario",
 			params: [
 		         {name:'data', value: dataBaixa}
 		    ],
@@ -1454,7 +1455,7 @@ var baixaFinanceiraController = $.extend(true, {
 		var param = {dataPostergacao:$("#dtPostergada", baixaFinanceiraController.workspace).val(),
 				isIsento:baixaFinanceiraController.buscarValueCheckBox('checkIsIsento')};
 		param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(),param);
-		$.postJSON(contextPath + "/financeiro/finalizarPostergacao",param,
+		$.postJSON(contextPath + "/financeiro/baixa/finalizarPostergacao",param,
 					function (result) {
 
 						$("#dialog-postergar", baixaFinanceiraController.workspace).dialog("close");
@@ -1479,7 +1480,7 @@ var baixaFinanceiraController = $.extend(true, {
     obterPostergacao : function() {
     	var param = {dataPostergacao:$("#dtPostergada", baixaFinanceiraController.workspace).val()};
 		param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(),param);
-		$.postJSON(contextPath + "/financeiro/obterPostergacao",param,
+		$.postJSON(contextPath + "/financeiro/baixa/obterPostergacao",param,
 					function (result) {
 						if (result) {
 
@@ -1581,7 +1582,7 @@ var baixaFinanceiraController = $.extend(true, {
 
 		var data = [{name:'data', value: dataSelecionada}];
 		
-		$.postJSON(contextPath + "/financeiro/mostrarResumoBaixaFinanceira",
+		$.postJSON(contextPath + "/financeiro/baixa/mostrarResumoBaixaFinanceira",
 			data,
 			function(result) {
 
@@ -1647,14 +1648,14 @@ var baixaFinanceiraController = $.extend(true, {
 	
     confirmarBaixa : function() {
     	var param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas());
-    	$.postJSON(contextPath + "/financeiro/confirmarBaixaDividas",param,
+    	$.postJSON(contextPath + "/financeiro/baixa/confirmarBaixaDividas",param,
 				   function() { baixaFinanceiraController.buscaManual(); }
     	);
 	},
 	
 	cancelarBaixa : function() {
 		var param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas());
-		$.postJSON(contextPath + "/financeiro/cancelarBaixaDividas",param,
+		$.postJSON(contextPath + "/financeiro/baixa/cancelarBaixaDividas",param,
 				   function() { baixaFinanceiraController.buscaManual(); }
 		);
 	},

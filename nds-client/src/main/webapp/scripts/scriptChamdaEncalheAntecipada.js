@@ -97,7 +97,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				onSuccess:function(){
 					chamdaEncalheAnteipadaController.formatarCampos();
 					chamdaEncalheAnteipadaController.sumarizarCotasSelecionadas(chamdaEncalheAnteipadaController.nameGrid);
-					chamdaEncalheAnteipadaController.processarRenderizacaoDeBotoesCE();			
+					chamdaEncalheAnteipadaController.processarRenderizacaoDeBotoesCE();		
+					bloquearItensEdicao(chamdaEncalheAnteipadaController.workspace);
 				}
 			});
 			
@@ -111,7 +112,8 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				params: chamdaEncalheAnteipadaController.params(),newp: 1,
 				onSuccess:function(){
 					chamdaEncalheAnteipadaController.sumarizarCotasSelecionadas(chamdaEncalheAnteipadaController.nameGrid);
-					chamdaEncalheAnteipadaController.processarRenderizacaoDeBotoesCE();			
+					chamdaEncalheAnteipadaController.processarRenderizacaoDeBotoesCE();
+					bloquearItensEdicao(chamdaEncalheAnteipadaController.workspace);
 				}
 			});
 			
@@ -420,7 +422,7 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 					
 				var parametroCheckbox = '\'#qntExemplar' + index + '\', this';
 				
-				var inputCheck = '<input type="checkbox"  id="ch'+index+'" name="'+chamdaEncalheAnteipadaController.groupNameCheck+'" onclick="chamdaEncalheAnteipadaController.calcularTotalGridCota( '+parametroCheckbox +')" />';
+				var inputCheck = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="'+chamdaEncalheAnteipadaController.groupNameCheck+'" onclick="chamdaEncalheAnteipadaController.calcularTotalGridCota( '+parametroCheckbox +')" />';
 				
 				var inputQuantidadeExemplares = 
 					'<input type="hidden" id="qntExemplar' + index + '" name="qntExemplares" value="'+ row.cell.qntExemplares +'"/>';
@@ -549,19 +551,19 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 				var parametroPesquisaCota = '\'#numCota' + index + '\', \'#descricaoCota'+ index + '\', false,function(){chamdaEncalheAnteipadaController.pesquisarCotaSuccessCallBack('+paramIdCheck+')}, function(){ chamdaEncalheAnteipadaController.pesquisarCotaErrorCallBack('+paramIdCheck+')}';
 				
 				var inputCodigoCota = 
-					'<input type="text" id="numCota' + index + '" name="numCota" style="width:80px; float:left; margin-right:10px;" maxlenght="255" onchange="chamdaEncalheAnteipadaController.pesquisaCota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" />';
+					'<input isEdicao="true" type="text" id="numCota' + index + '" name="numCota" style="width:80px; float:left; margin-right:10px;" maxlenght="255" onchange="chamdaEncalheAnteipadaController.pesquisaCota.pesquisarPorNumeroCota(' + parametroPesquisaCota + ');" />';
 
 				var parametroAutoCompleteCota = '\'#descricaoCota' + index + '\', true';
 
 				var inputDescricaoCota = 
-					'<input type="text" id="descricaoCota' + index + '" name="descricaoCota" style="width:580px;" maxlenght="255" onkeyup="chamdaEncalheAnteipadaController.pesquisaCota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="chamdaEncalheAnteipadaController.pesquisaCota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
+					'<input isEdicao="true" type="text" id="descricaoCota' + index + '" name="descricaoCota" style="width:580px;" maxlenght="255" onkeyup="chamdaEncalheAnteipadaController.pesquisaCota.autoCompletarPorNome(' + parametroAutoCompleteCota + ');" onblur="chamdaEncalheAnteipadaController.pesquisaCota.pesquisarPorNomeCota(' + parametroPesquisaCota + ')" />';
 
 				var inputQuantidadeExemplares = 
-					'<input type="text" id="qntExemplares' + index + '" name="qntExemplares" disabled="disabled" style="width:80px; text-align: center"   />';
+					'<input isEdicao="true" type="text" id="qntExemplares' + index + '" name="qntExemplares" disabled="disabled" style="width:80px; text-align: center"   />';
 				
 				var parametroCheckbox = '\'#qntExemplares' + index + '\', this';
 					
-				var inputCheck = '<input disabled="disabled" type="checkbox" id="'+idCheck+'" name="'+chamdaEncalheAnteipadaController.groupNameCheckGridCota+'" onclick="chamdaEncalheAnteipadaController.calcularTotalCota( '+parametroCheckbox +')" />';	
+				var inputCheck = '<input isEdicao="true" disabled="disabled" type="checkbox" id="'+idCheck+'" name="'+chamdaEncalheAnteipadaController.groupNameCheckGridCota+'" onclick="chamdaEncalheAnteipadaController.calcularTotalCota( '+parametroCheckbox +')" />';	
 				
 				var inputHiddenCodigoChamadaEncalhe = 	
 					'<input type="hidden" id="codigoChamadaAntecipada' + index + '" name="codigoChamadaAntecipada" value="'+ row.cell.codigoChamdaEncalhe+'"/>';

@@ -218,6 +218,7 @@ public class ConsultaBoletosController extends BaseController {
 	 */
 	@Get
 	@Path("/imprimeBoleto")
+	@Rules(Permissao.ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA_ALTERACAO)
 	public void imprimeBoleto(String nossoNumero) throws Exception{
 
 		byte[] b = boletoService.gerarImpressaoBoleto(nossoNumero);
@@ -256,6 +257,7 @@ public class ConsultaBoletosController extends BaseController {
 	 */
 	@Post
 	@Path("/enviaBoleto")
+	@Rules(Permissao.ROLE_FINANCEIRO_CONSULTA_BOLETOS_COTA_ALTERACAO)
 	public void enviaBoleto(String nossoNumero) throws Exception{
 
 		if (!validarBoletoPago(nossoNumero)){

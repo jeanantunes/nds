@@ -141,7 +141,8 @@ var cotaAusenteController = $.extend(true, {
 			          {name:'idRota', value:idRota},
 			          {name:'idRoteiro', value:idRoteiro}];
 		
-		$(".ausentesGrid", cotaAusenteController.workspace).flexOptions({			
+		$(".ausentesGrid", cotaAusenteController.workspace).flexOptions({	
+			onSuccess: function() {bloquearItensEdicao(cotaAusenteController.workspace);},
 			url : contextPath + '/cotaAusente/pesquisarCotasAusentes',
 			dataType : 'json',
 			preProcess:cotaAusenteController.processaRetornoPesquisa,
@@ -177,7 +178,7 @@ var cotaAusenteController = $.extend(true, {
 	gerarBotaoExcluir : function(idCotaAusente) {
 		
 		if(idCotaAusente) {
-			return "<a href=\"javascript:;\" onclick=\"cotaAusenteController.popup_excluir("+idCotaAusente+");\"> "+
+			return "<a href=\"javascript:;\" isEdicao=\"true\" onclick=\"cotaAusenteController.popup_excluir("+idCotaAusente+");\"> "+
 			 "<img src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" /></a>";
 		} else {
 			return  "<img style=\"opacity: 0.5\" src=\"" + contextPath + "/images/ico_excluir.gif\" title=\"Excluir\" hspace=\"5\" border=\"0\" />";

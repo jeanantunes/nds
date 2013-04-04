@@ -18,6 +18,7 @@ var suspensaoCotaController = $.extend(true, {
 			url : contextPath + '/suspensaoCota/obterCotasSuspensaoJSON',
 			dataType : 'json',
 			preProcess:suspensaoCotaController.processaRetornoPesquisa,
+			onSuccess: function() {bloquearItensEdicao(suspensaoCotaController.workspace);},
 			colModel : [  {
 				display : 'Cota',
 				name : 'numCota',
@@ -266,6 +267,7 @@ var suspensaoCotaController = $.extend(true, {
 		input.name=name;
 		input.style.cssText = "float:left;" + input.style.cssText;
 		input.type="checkbox";
+		input.setAttribute("isEdicao",true);
 		input.setAttribute("onclick","suspensaoCotaController.adicionarSelecao("+idCota+",this);");
 		
 		if(selecionado==true) {

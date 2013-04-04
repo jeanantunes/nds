@@ -685,7 +685,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Aprovação
 		distribuidor.setUtilizaControleAprovacao(parametrosDistribuidor.getUtilizaControleAprovacao());
 		
-		this.validarUtilizacaoControleAprovacao(parametrosDistribuidor);
+		if (parametrosDistribuidor.getUtilizaControleAprovacao()){
+		    
+			this.validarUtilizacaoControleAprovacao(parametrosDistribuidor);
+		}
 		
 		ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor = new ParametrosAprovacaoDistribuidor();
 		
@@ -807,7 +810,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroDebitosCreditos())) {
 	
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para débitos e créditos. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Débitos e Créditos]. Existem movimentos pendentes!");
 			}
 		}
 
@@ -816,7 +819,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroNegociacao())) {
 
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para negociação. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Negociação]. Existem movimentos pendentes!");
 			}
 		}
 //		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
@@ -826,7 +829,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 //					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueAjusteEstoque())) {
 //
 //				mensagens.add(
-//					"Não é possível não utilizar controle de aprovação para ajuste de estoque. Existem movimentos pendentes!");
+//					"Não é possível não utilizar controle de [Aprovação] para [Ajuste de Estoque]. Existem movimentos pendentes!");
 //			}
 //		}
 
@@ -835,7 +838,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoFinanceiroPendente(getGruposMovimentoFinanceiroPostergacaoCobranca())) {
 
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para postergacao de cobranca. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Postergação de Cobranca]. Existem movimentos pendentes!");
 			}
 		}
 
@@ -844,7 +847,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueDevolucaoFornecedor())) {
 
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para devolucao fornecedor. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Devolucao Fornecedor]. Existem movimentos pendentes!");
 			}
 		}
 
@@ -853,7 +856,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					.existeMovimentoEstoquePendente(getGruposMovimentoEstoqueFaltasSobras())) {
 
 				mensagens.add(
-					"Não é possível não utilizar controle de aprovação para faltas e sobras. Existem movimentos pendentes!");
+					"Não é possível não utilizar controle de [Aprovação] para [Faltas e Sobras]. Existem movimentos pendentes!");
 			}
 		}
 		

@@ -56,6 +56,9 @@ InformeEncalhe.prototype.initGrid = function() {
 						return data;
 					}
 				},
+				onSuccess: function() {
+					bloquearItensEdicao(_this.workspace);
+				},
 				dataType : 'json',
 				colModel : [ {
 					display : 'Seq',
@@ -381,7 +384,16 @@ function CapaPopup(idProdutoEdicao) {
 			img : contextPath + '/images/ico_xml.gif',
 			events : [ {
 				event : 'click',
-				handler : _this.openDialogUpload
+				handler : function(event) { 
+
+					var isPermissaoAlteracao = $('#permissaoAlteracao',_this.workspace).val()=="true";
+					
+					if (isPermissaoAlteracao) {
+						_this.openDialogUpload(event);
+					} else {
+						exibirAcessoNegado();
+					}
+				}
 			} ]
 		}
 	};
