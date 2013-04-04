@@ -125,13 +125,14 @@ public class CadastroCalendarioController extends BaseController {
 		}
 	}
 
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO_ALTERACAO)
 	public void excluirCadastroFeriado(Long idFeriado) {
 				
 		calendarioService.excluirFeriado(idFeriado);
 		result.use(Results.json()).from("Feriado excluído com sucesso").serialize();
 	}
 
-	
+	@Rules(Permissao.ROLE_ADMINISTRACAO_CALENDARIO_ALTERACAO)
 	public void cadastrarFeriado(
 			Long idFeriado,
 			String dtFeriado, 

@@ -63,13 +63,13 @@
 			</div>
 			
 			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/financeiro/baixa/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a>
 			</span>
 			
 			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/financeiro/baixa/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 			</span>
@@ -104,7 +104,7 @@
 		
 		<!-- BAIXA AUTOMÁTICA -->
 		
-		<form action="<c:url value='/financeiro/realizarBaixaAutomatica' />" id="formBaixaAutomatica"
+		<form action="<c:url value='/financeiro/baixa/realizarBaixaAutomatica' />" id="formBaixaAutomatica"
 			  method="post" enctype="multipart/form-data" >
 		
 			<input type="hidden" name="formUploadAjax" value="true" />
