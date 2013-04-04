@@ -19,6 +19,10 @@
 		._dados:hover{
 			background: none repeat scroll 0 0 #D9EBF5;
 		}
+		
+		.td {
+			font-size: 14px;
+		}
 	</style>
 	
 	<script type="text/javascript">

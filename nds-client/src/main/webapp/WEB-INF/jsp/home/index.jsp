@@ -251,9 +251,12 @@
 	$(document).ready(function() {
 		
 		$("#ajaxLoading").ajaxStart(function() {
+			$(window).keydown(function(event){event.stopPropagation();return false;});
 			$(this).fadeIn(200);
+			
 		});
 		$("#ajaxLoading").ajaxStop(function() {
+			$(window).unbind('keydown');
 			$(this).fadeOut(200);
 			redimensionarWorkspace();
 		});
