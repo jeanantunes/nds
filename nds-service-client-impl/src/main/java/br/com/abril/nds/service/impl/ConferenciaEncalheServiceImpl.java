@@ -62,6 +62,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -2454,6 +2455,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			EstoqueProdutoCotaJuramentado estoqueProdutoCotaJuramentado =
 				movimentoEstoqueCota.getEstoqueProdutoCotaJuramentado();
 			
+			if(estoqueProdutoCotaJuramentado == null) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Produto ["
+								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() + " - "
+								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getNomeComercial()
+								+ " - " + movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao()
+								+ "] não possui registro de estoque da cota.");
+				
+			}
+			
 			BigInteger qtdDevolvida = 
 				estoqueProdutoCotaJuramentado.getQtde() != null ? 
 					estoqueProdutoCotaJuramentado.getQtde() : BigInteger.ZERO;
@@ -2462,7 +2474,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
 						
 			estoqueProdutoCotaJuramentado.setQtde(qtdDevolvida);
-						
+			
+			validarAlteracaoEstoqueProdutoCota(estoqueProdutoCotaJuramentado.getQtde(), movimentoEstoqueCota.getProdutoEdicao());
+			
 			this.estoqueProdutoCotaJuramentadoRepository.alterar(estoqueProdutoCotaJuramentado);
 			
 		} else {
@@ -2470,6 +2484,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			EstoqueProdutoCota estoqueProdutoCota =  
 				movimentoEstoqueCota.getEstoqueProdutoCota();
 
+			
+			if(estoqueProdutoCota == null) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR,
+						"Produto ["
+								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getCodigo() + " - "
+								+ movimentoEstoqueCota.getProdutoEdicao().getProduto().getNomeComercial()
+								+ " - " + movimentoEstoqueCota.getProdutoEdicao().getNumeroEdicao()
+								+ "] não possui registro de estoque da cota.");
+				
+			}
+			
 			BigInteger qtdDevolvida = 
 				estoqueProdutoCota.getQtdeDevolvida() != null ? 
 					estoqueProdutoCota.getQtdeDevolvida() : BigInteger.ZERO;
@@ -2478,7 +2504,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				qtdDevolvida.subtract(oldQtdeMovEstoqueCota).add(newQtdeMovEstoquecota);
 						
 			estoqueProdutoCota.setQtdeDevolvida(qtdDevolvida);
-						
+			
+			validarAlteracaoEstoqueProdutoCota(estoqueProdutoCota.getQtdeDevolvida(), movimentoEstoqueCota.getProdutoEdicao());
+			
 			this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 		}
 	}
@@ -2515,6 +2543,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 				estoqueProduto.setQtdeSuplementar(estoqueProduto.getQtdeSuplementar().add(newQtdeMovEstoque));
 				
+				validarAlteracaoEstoqueProdutoDistribuidor(
+						estoqueProduto.getQtdeSuplementar(), TipoEstoque.SUPLEMENTAR, estoqueProduto.getProdutoEdicao());
+				
 				this.estoqueProdutoRepository.alterar(estoqueProduto);
 
 			} else {
@@ -2525,13 +2556,64 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 				estoqueProduto.setQtdeDevolucaoEncalhe(estoqueProduto.getQtdeDevolucaoEncalhe().add(newQtdeMovEstoque));
 				
+				validarAlteracaoEstoqueProdutoDistribuidor(
+						estoqueProduto.getQtdeDevolucaoEncalhe(), TipoEstoque.DEVOLUCAO_ENCALHE, estoqueProduto.getProdutoEdicao());
+				
 				this.estoqueProdutoRepository.alterar(estoqueProduto);			
 			}
+			
+		} else {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"Produto ["
+							+ movimentoEstoque.getProdutoEdicao().getProduto().getCodigo() + " - "
+							+ movimentoEstoque.getProdutoEdicao().getProduto().getNomeComercial()
+							+ " - " + movimentoEstoque.getProdutoEdicao().getNumeroEdicao()
+							+ "] não possui registro de estoque do distribuidor.");
+			
 		}
 		
-		this.estoqueProdutoRepository.alterar(estoqueProduto);	
 	}
 
+	private void validarAlteracaoEstoqueProdutoDistribuidor(
+			BigInteger saldoEstoque, TipoEstoque tipoEstoque,
+			ProdutoEdicao produtoEdicao) {
+
+		if (!this.validarSaldoEstoque(saldoEstoque)) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Saldo do produto ["
+							+ produtoEdicao.getProduto().getCodigo() + " - "
+							+ produtoEdicao.getProduto().getNomeComercial()
+							+ " - " + produtoEdicao.getNumeroEdicao()
+							+ "] no estoque \"" + tipoEstoque.getDescricao()
+							+ "\", insuficiente para movimentação.");
+		}
+	}
+
+	private void validarAlteracaoEstoqueProdutoCota(BigInteger saldoEstoque,
+			ProdutoEdicao produtoEdicao) {
+
+		if (!this.validarSaldoEstoque(saldoEstoque)) {
+
+			throw new ValidacaoException(
+					TipoMensagem.WARNING,
+					"Saldo do produto ["
+							+ produtoEdicao.getProduto().getCodigo()
+							+ " - "
+							+ produtoEdicao.getProduto().getNomeComercial()
+							+ " - "
+							+ produtoEdicao.getNumeroEdicao()
+							+ "] no estoque da cota, insuficiente para movimentação.");
+		}
+	}
+
+	private boolean validarSaldoEstoque(BigInteger saldoEstoque) {
+
+		return (saldoEstoque != null && saldoEstoque.compareTo(BigInteger.ZERO) >= 0);
+	}
+	
+	
 	/**
 	 * Apos finalizar conferencia de encalhe sera verificado        
 	 * quais documentos serao gerados e se os mesmos serao impressos
