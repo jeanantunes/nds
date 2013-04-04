@@ -2829,8 +2829,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parameters.put("CODIGO_BOX", slip.getCodigoBox());
 		parameters.put("DATA_CONFERENCIA", slip.getDataConferencia());
 		parameters.put("CE_JORNALEIRO", slip.getCeJornaleiro());
-		parameters.put("VALOR_DEVIDO", slip.getValorDevido());
-		parameters.put("VALOR_SLIP", slip.getValorSlip());
 		parameters.put("TOTAL_PRODUTOS", slip.getTotalProdutos());
 		parameters.put("VALOR_TOTAL_ENCA", slip.getValorTotalEncalhe() );
 		parameters.put("VALOR_PAGAMENTO_POSTERGADO", slip.getValorTotalPagar());
@@ -2850,20 +2848,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		parameters.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
 		
-		
-        //OBTÉM O NUMERO DE CHAMADA DE ENCALHE RELACIONADO COM CADA MOVIMENTO FINANCEIRO DA COMPOSIÇÃO DE COBRANÇA
-		for (ComposicaoCobrancaSlipDTO item:listaComposicaoCobranca){
+		BigDecimal totalComposicao = BigDecimal.ZERO;
+		for(ComposicaoCobrancaSlipDTO item:listaComposicaoCobranca){
+			
+	        //OBTÉM O NUMERO DE CHAMADA DE ENCALHE RELACIONADO COM CADA MOVIMENTO FINANCEIRO DA COMPOSIÇÃO DE COBRANÇA
 			ChamadaEncalheCota chamadaEncalhe = this.conferenciaEncalheRepository.obterChamadaEncalheDevolucao(item.getIdMovimentoFinanceiro());
 		    if (chamadaEncalhe!=null){
 		        item.setDescricao(item.getDescricao()+"-CE num "+formatter.format(chamadaEncalhe.getId()));
 		    }
-		}
-		
-		
-        //TOTALIZAÇÃO DO SLIP CONSIDERANDO COMPOSIÇÃO DE COBRANÇA
-		BigDecimal totalComposicao = BigDecimal.ZERO;
-		for(ComposicaoCobrancaSlipDTO item:listaComposicaoCobranca){
-			if (item.getOperacaoFinanceira().equals("D")){
+			
+	        //TOTALIZAÇÃO DO SLIP CONSIDERANDO COMPOSIÇÃO DE COBRANÇA
+		    if (item.getOperacaoFinanceira().equals("D")){
 				totalComposicao = totalComposicao.add(item.getValor());
 			}
 			else{
@@ -2873,16 +2868,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		totalComposicao = totalComposicao.add(slip.getValorSlip());
 
-		BigDecimal totalPagar = listaComposicaoCobranca.isEmpty() ? valorTotalPagar.add(slip.getValorSlip()) : totalComposicao;
+		BigDecimal devido = listaComposicaoCobranca.isEmpty() ? valorTotalReparte : slip.getValorDevido();
+		BigDecimal totalSlip = listaComposicaoCobranca.isEmpty() ? devido.subtract(slip.getValorTotalEncalhe()): slip.getValorSlip();
+		BigDecimal totalPagar = listaComposicaoCobranca.isEmpty() ? valorTotalPagar : totalComposicao;
 
+		parameters.put("VALOR_DEVIDO", devido);
+		parameters.put("VALOR_SLIP", totalSlip);
 		parameters.put("VALOR_TOTAL_PAGAR", totalPagar);
 
 		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
+		
 		try{
+			
 		    parameters.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
-		}
-		catch(Exception e){
-			e.printStackTrace();
+		
+		} catch(Exception e){
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
+			
 		}
 
 
@@ -2904,19 +2907,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		
 		try {
-			
-			/*//Retorna um byte array de um TXT
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			JRTextExporter exporter = new JRTextExporter();  
-			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
-			//exporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, "/home/roger/teste.txt");  
-			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);  
-			exporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Float(4));  
-			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
-			exporter.exportReport();
-
-			return out.toByteArray();*/
-			
 			return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 		
 		} catch (JRException e) {

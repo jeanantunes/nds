@@ -23,6 +23,7 @@ import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -278,6 +279,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Origem origem, Date dataOperacao, boolean isImportacao){
 
+		this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.DISTRIBUIDOR);
+		
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
 
 		if (dataLancamento!= null) {
@@ -506,7 +509,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao) {
 		
 		return gerarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, 
-				idUsuario, quantidade, tipoMovimentoEstoque, null, dataOperacao,null,null);
+				idUsuario, quantidade, tipoMovimentoEstoque, null, dataOperacao, null, null);
 	}
 
 	@Override
@@ -515,13 +518,15 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota) {
 
+		this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.COTA);
+		
 		if (dataOperacao == null) {
 			
 			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
 		
 		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
-
+		
 		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoqueCota.setCota(new Cota(idCota));
 		
@@ -890,6 +895,17 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Override
 	public BigInteger obterReparteDistribuidoProduto(String produtoEdicaoId){
 		return this.movimentoEstoqueRepository.obterReparteDistribuidoProduto(produtoEdicaoId);
+	}
+	
+	private void validarDominioGrupoMovimentoEstoque(TipoMovimentoEstoque tipoMovimentoEstoque, 
+													 Dominio dominio) {
+		
+		if (tipoMovimentoEstoque != null
+				&& dominio != null
+				&& !dominio.equals(tipoMovimentoEstoque.getGrupoMovimentoEstoque().getDominio())) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Domínio do grupo de movimento de estoque inválido");
+		}
 	}
 
 }

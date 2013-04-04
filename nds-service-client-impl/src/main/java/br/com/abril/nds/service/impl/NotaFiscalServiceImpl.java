@@ -515,7 +515,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		if (!diretorioExportacaoNFE.isDirectory()) {
 			throw new FileNotFoundException(
-					"O diretório de exportação parametrizado não é válido!");
+					"O diretório["+pathNFEExportacao.getValor()+"] de exportação parametrizado não é válido!");
 		}
 		Long time = new Date().getTime();
 		File notaExportacao = new File(diretorioExportacaoNFE + File.separator
@@ -683,18 +683,17 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		destinatario.setNome(cota.getPessoa().getNome());
 		destinatario.setPessoaDestinatarioReferencia(cota.getPessoa());
 
-		TelefoneCota telefoneCota = telefoneCotaRepository
-				.obterTelefonePrincipal(cota.getId());
-		if (telefoneCota != null) {
-			Telefone telefone = telefoneCota.getTelefone();
 
+		Telefone telefone = telefoneCotaRepository.obterTelefonePrincipalCota(cota.getId());
+		
+        if (telefone!=null){
 			telefoneRepository.detach(telefone);
 			telefone.setId(null);
 			telefone.setPessoa(null);
 			telefoneRepository.adicionar(telefone);
 			destinatario.setTelefone(telefone);
-		}
-
+        }
+        
 		return destinatario;
 	}
 

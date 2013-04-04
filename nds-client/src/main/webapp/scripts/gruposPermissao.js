@@ -102,7 +102,8 @@ var gruposPermissaoController = $.extend(true, {
 			$(".gruposGrid", gruposPermissaoController.workspace).flexOptions({
 				"url" : gruposPermissaoController.path + '/pesquisarGrupos?' + serializedObj,
 				method: 'GET',
-				newp:1
+				newp:1,
+				onSuccess: function() {bloquearItensEdicao(gruposPermissaoController.workspace.workspace);}
 			});
 			$(".gruposGrid", gruposPermissaoController.workspace).flexReload();
 		},
@@ -138,11 +139,11 @@ var gruposPermissaoController = $.extend(true, {
 					} else {
 						$.each(data.rows , function(index, value) {
 
-							var linkEditarGrupo = '<a href="javascript:;" onclick="gruposPermissaoController.popup_editar_grupo(\'' + value.cell.id + '\');" style="cursor:pointer; margin-right:10px;">' +
+							var linkEditarGrupo = '<a isEdicao="true" href="javascript:;" onclick="gruposPermissaoController.popup_editar_grupo(\'' + value.cell.id + '\');" style="cursor:pointer; margin-right:10px;">' +
 				     	  	'<img title="Editar Grupo" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 				  		    '</a>';
 
-							var linkExcluirGrupo = '<a href="javascript:;" onclick="gruposPermissaoController.popup_excluir_grupo(\'' + value.cell.id + '\');" style="cursor:pointer">' +
+							var linkExcluirGrupo = '<a isEdicao="true" href="javascript:;" onclick="gruposPermissaoController.popup_excluir_grupo(\'' + value.cell.id + '\');" style="cursor:pointer">' +
 				     	  	'<img title="Excluir Grupo" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
 				  		    '</a>';
 							

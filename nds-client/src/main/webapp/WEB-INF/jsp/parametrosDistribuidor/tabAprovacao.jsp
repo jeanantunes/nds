@@ -4,10 +4,12 @@
 		<legend>Aprovação</legend>
 		<table width="450" border="0" cellspacing="2" cellpadding="2">
 			<tr>
-				<td width="23"><input
-					name="parametrosDistribuidor.utilizaControleAprovacao"
-					id="utilizaControleAprovacao" type="checkbox" ${parametrosDistribuidor.utilizaControleAprovacao ? "checked" : ""} 
-					onclick="parametrosDistribuidorController.alternarControleAprovacao();" /></td>
+				<td width="23">
+				    <input onchange="parametrosDistribuidorController.mensagemControleAprovacao(this.checked);"
+					       name="parametrosDistribuidor.utilizaControleAprovacao"
+					       id="utilizaControleAprovacao" type="checkbox" ${parametrosDistribuidor.utilizaControleAprovacao ? "checked" : ""} 
+					       onclick="parametrosDistribuidorController.alternarControleAprovacao();" />
+			    </td>
 				<td width="190">Utiliza Controle de Aprovação?</td>
 				<td width="20">&nbsp;</td>
 				<td width="178">&nbsp;</td>

@@ -33,7 +33,7 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	
 	EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota);
 	
-	List<EstudoCota> obterEstudosCotaParaNotaEnvio(Long idCota, 
+	List<EstudoCota> obterEstudosCotaParaNotaEnvio(List<Long> listaIdCotas, 
 												   Intervalo<Date> periodo, 
 												   List<Long> listaIdsFornecedores);
 	

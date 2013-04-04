@@ -204,7 +204,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.setMaxResults(1);
 		return (PDV) criteria.uniqueResult();
 	}
-	
+
 	/**
 	 * Obtém PDV's por Rota
 	 * @param idRota
