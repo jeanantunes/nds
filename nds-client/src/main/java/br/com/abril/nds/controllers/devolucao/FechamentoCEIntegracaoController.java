@@ -111,6 +111,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
 	public void reabrirCeIntegracao(FiltroFechamentoCEIntegracaoDTO filtro){
 		
 		validarAnoSemana(filtro.getSemana());
@@ -183,6 +184,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Post
 	@Path("fecharCE")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
 	public void fecharCE(){
 		
 		FiltroFechamentoCEIntegracaoDTO filtro = (FiltroFechamentoCEIntegracaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_FECHAMENTO_CE_INTEGRACAO);
@@ -195,6 +197,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 
 	@Post
 	@Path("/geraBoleto")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
 	public void geraBoleto(TipoCobranca tipoCobranca) {
 		
 		session.setAttribute(BOLETO_GERADO, null);
@@ -223,6 +226,7 @@ public class FechamentoCEIntegracaoController extends BaseController{
 	
 	@Get
 	@Path("/imprimeBoleto")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_INTEGRACAO_ALTERACAO)
 	public void imprimeBoleto() throws Exception {
 		
 		byte[] boleto = (byte[]) session.getAttribute(BOLETO_GERADO);

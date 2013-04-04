@@ -103,6 +103,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	
 	initGrid : function(){	
 		$(".fechamentoCeGrid", fechamentoCEIntegracaoController.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(fechamentoCEIntegracaoController.workspace);},
 			preProcess : fechamentoCEIntegracaoController.fechamentoCeGridPreProcess,
 			dataType : 'json',
 			colModel : [ {
@@ -329,7 +330,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'</span>';
 						
 						colunaVenda =
-							'<input type="text" name="inputVenda"' +
+							'<input isEdicao="true" type="text" name="inputVenda"' +
 							'id="inputVenda' + row.cell.idItemCeIntegracao + '"' +
 							'value="' + row.cell.venda + '" size="5px"' +
 							'onchange="fechamentoCEIntegracaoController.tratarAlteracaoVenda(' +
@@ -338,7 +339,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					} else {
 						
 						colunaEncalhe =
-							'<input type="text" name="inputEncalhe"' +
+							'<input isEdicao="true" type="text" name="inputEncalhe"' +
 							'id="inputEncalhe' + row.cell.idItemCeIntegracao + '"' +
 							'value="' + (row.cell.encalhe)?row.cell.encalhe:'' + '" size="5px"' +
 							'onchange="fechamentoCEIntegracaoController.tratarAlteracaoEncalhe(' +
