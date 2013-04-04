@@ -1003,7 +1003,8 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				},
-			}
+			},
+			form: $("#dialog-recebe-fisico", fecharDiaController.workspace).parents("form")
 		});
 	},
 	
@@ -1041,7 +1042,8 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				},
-			}
+			},
+			form: $("#dialog-confirma-expedicao", fecharDiaController.workspace).parents("form")
 		});
 	},
 	
@@ -1089,7 +1091,8 @@ var fecharDiaController =  $.extend(true, {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
 				},
-			}
+			},
+			form: $("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).parents("form")
 		});
 	},
 	
