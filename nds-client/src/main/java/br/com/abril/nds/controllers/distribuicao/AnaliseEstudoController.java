@@ -130,7 +130,7 @@ public class AnaliseEstudoController extends BaseController {
 			analiseEstudoDTO.setCodPeriodoProd(periodo);
 			
 				if ((analiseEstudoDTO.getStatusRecolhiOuExpedido() == null)) {
-					if (analiseEstudoDTO.getStatusLiberadoOuGerado() == 1) {
+					if (analiseEstudoDTO.getStatusLiberadoOuGerado() != null && analiseEstudoDTO.getStatusLiberadoOuGerado() == 1) {
 						analiseEstudoDTO.setStatusEstudo("Liberado");
 					} else {
 						analiseEstudoDTO.setStatusEstudo("Gerado");

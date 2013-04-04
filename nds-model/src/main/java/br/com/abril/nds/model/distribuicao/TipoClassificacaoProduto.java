@@ -1,5 +1,7 @@
 package br.com.abril.nds.model.distribuicao;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +12,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "TIPO_CLASSIFICACAO_PRODUTO")
 @SequenceGenerator(name = "TIPO_CLASSIFICACAO_PRODUTO_SEQ", initialValue = 1, allocationSize = 1)
-public class TipoClassificacaoProduto {
+public class TipoClassificacaoProduto implements Serializable {
 		
 	private static final long serialVersionUID = 5272002928979766079L;
 

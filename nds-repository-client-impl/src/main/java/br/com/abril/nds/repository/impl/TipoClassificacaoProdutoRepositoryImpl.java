@@ -18,7 +18,7 @@ public class TipoClassificacaoProdutoRepositoryImpl extends AbstractRepositoryMo
 	@Override
 	public List<TipoClassificacaoProduto> obterTodos() {
 	
-		StringBuilder hql = new StringBuilder(" from TipoClassificacaoProduto tcp ");
+		StringBuilder hql = new StringBuilder(" from TipoClassificacaoProduto tcp order by descricao");
 		Query query = getSession().createQuery(hql.toString()); 
 		return query.list();
 	}

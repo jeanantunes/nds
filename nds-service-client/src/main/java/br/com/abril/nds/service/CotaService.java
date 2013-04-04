@@ -73,6 +73,8 @@ public interface CotaService {
 	List<Cota> obterCotasPorNomePessoa(String nome);
 
 	List<Cota> obterPorNome(String nome);
+	
+	List<CotaDTO> obterPorNomeAutoComplete(String nome);
 
 	Cota obterPorId(Long idCota);
 

@@ -63,6 +63,8 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return Lista de {@link Cota}
      */
     List<Cota> obterCotasPorNomePessoa(String nome);
+    
+    List<CotaDTO> obterCotasPorNomeAutoComplete(String nome);
 
     /**
      * Obtém uma lista de cotas pelo nome.
