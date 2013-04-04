@@ -238,10 +238,9 @@ var ConferenciaEncalhe = $.extend(true, {
 		});
 		this.bindkeypressCodigoBarras();
 		ConferenciaEncalhe.removerAtalhos();
-		
-		ConferenciaEncalhe.atribuirAtalhos();
-	
+		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
 	},
+	
 	 bindkeypressCodigoBarras:function(){
 	
 		$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).keypress(function(e) {
@@ -273,7 +272,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			}, function() {
 				
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
-				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("");
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
 				$("#sm", ConferenciaEncalhe.workspace).val("");
 				$("#codProduto", ConferenciaEncalhe.workspace).val("");
 				
@@ -356,7 +355,11 @@ var ConferenciaEncalhe = $.extend(true, {
 	 * ALTERACAO FINAL
 	 */
 	
-	
+	configurarAtalhos : function() {
+		
+		ConferenciaEncalhe.removerAtalhos();
+		ConferenciaEncalhe.atribuirAtalhos();
+	},
 	
 	atribuirAtalhos: function(){
 		
@@ -446,6 +449,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
 							
 							ConferenciaEncalhe.modalAberta = false;
+							
+							ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 							
 							$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 						}
@@ -555,8 +560,6 @@ var ConferenciaEncalhe = $.extend(true, {
 					ConferenciaEncalhe._pesquisarCota(result);		
 					
 				}
-			
-				
 			}
 		);
 	},
@@ -577,7 +580,7 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 						}
 						
-						ConferenciaEncalhe.limparDadosConferenciaEncalheCotaFinalizada();
+						ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 						
 					} else if(result.tipoMensagem == 'WARNING') {
 						
@@ -669,11 +672,19 @@ var ConferenciaEncalhe = $.extend(true, {
 				function(result){
 					
 					ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);
+					
+					ConferenciaEncalhe.configurarAtalhos();
+					
+					$(".atalhosCE", ConferenciaEncalhe.workspace).show();
 				}
 		);
 	},
 
-	limparDadosConferenciaEncalheCotaFinalizada : function() {
+	limparDadosConferenciaEncalheCota : function() {
+		
+		ConferenciaEncalhe.removerAtalhos();
+		
+		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
 		
 		$("._dadosConfEncalhe", ConferenciaEncalhe.workspace).remove();
 		
@@ -980,7 +991,7 @@ var ConferenciaEncalhe = $.extend(true, {
 									ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(conteudo.tiposDocumento);
 								}
 								
-								ConferenciaEncalhe.limparDadosConferenciaEncalheCotaFinalizada();
+								ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
 								
 							}
 
@@ -1285,7 +1296,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	
 	limparDadosProduto : function(){
 		
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("");
+		$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
 		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
 		$("#sm", ConferenciaEncalhe.workspace).val("");
 		$("#codProduto", ConferenciaEncalhe.workspace).val("");
