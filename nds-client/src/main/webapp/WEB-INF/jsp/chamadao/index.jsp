@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
@@ -12,6 +13,8 @@
 
 	$(function(){
 		chamadaoController.init();
+
+		bloquearItensEdicao(chamadaoController.workspace);
 	});
 		
 </script>
@@ -56,7 +59,7 @@
 			<div id="divBotaoConfirmarChamadao" style="display: none">
 	    			
    				<span class="bt_novos">
-   					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy"  title="Confirmar" >
+   					<a isEdicao="true" onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy"  title="Confirmar" >
    						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
    					</a>
 				</span>

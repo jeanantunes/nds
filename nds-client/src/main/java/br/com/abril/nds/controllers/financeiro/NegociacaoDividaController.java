@@ -185,6 +185,7 @@ public class NegociacaoDividaController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_NEGOCIACAO_DIVIDA_ALTERACAO)
 	public void confirmarNegociacao(boolean porComissao, BigDecimal comissaoAtualCota, BigDecimal comissaoUtilizar, 
 			TipoCobranca tipoCobranca, TipoFormaCobranca tipoFormaCobranca, List<DiaSemana> diasSemana,
 			Integer diaInicio, Integer diaFim, boolean negociacaoAvulsa, boolean isentaEncargos,

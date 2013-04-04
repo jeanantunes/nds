@@ -17,11 +17,13 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 
 			var colunas = digitacaoContagemDevolucaoController.montarColunas();
 			
-			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexigrid({
-				
+			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexigrid({				
 				dataType : 'json',
 				preProcess:digitacaoContagemDevolucaoController.executarPreProcessamento,
-				onSuccess:function(){$('input[id^="valorExemplarNota"]', digitacaoContagemDevolucaoController.workspace).numeric();},
+				onSuccess:function(){
+					bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);
+					$('input[id^="valorExemplarNota"]', digitacaoContagemDevolucaoController.workspace).numeric();
+				},
 				colModel : colunas,
 				sortname : "codigoProduto",
 				sortorder : "asc",
@@ -78,7 +80,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexOptions({
 				url: contextPath + "/devolucao/digitacao/contagem/pesquisar",
 				params: formData,
-				onSuccess: function(){$(".edicaoFechada").parents("tr").css("background", "#ffeeee");}
+				onSuccess: function(){
+					bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);
+					$(".edicaoFechada").parents("tr").css("background", "#ffeeee");
+				}
 			});
 			
 			$("#contagemDevolucaoGrid", digitacaoContagemDevolucaoController.workspace).flexReload();
@@ -110,13 +115,13 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var classEdicaoFechada = row.cell.isEdicaoFechada ? "edicaoFechada" : "";
 				
-				var inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
+				var inputExemplarNota = '<input isEdicao="true" id="'+idInput+'" name="qtdNota" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  maxlength="17" value="'+row.cell.qtdNota+'"/>';
 										
 				if(!digitacaoContagemDevolucaoController.isRoleOperador()){
 					
-					inputExemplarNota = '<input id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onkeypress="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
+					inputExemplarNota = '<input isEdicao="true" id="'+idInput+'" name="qtdNota" maxlength="17" class="input-exemplar-nota '+classEdicaoFechada+' " type="text" style="width:80px; text-align: center;"  value="'+row.cell.qtdNota+'" onkeypress="digitacaoContagemDevolucaoController.limparCheck(\'ch'+index+'\')"/>';
 					
-					var inputCheckReplicarValor = '<input type="checkbox" id="ch'+index+'" class="chBoxReplicar" name="checkgroup"  "/>';
+					var inputCheckReplicarValor = '<input isEdicao="true" type="checkbox" id="ch'+index+'" class="chBoxReplicar" name="checkgroup"  "/>';
 					
 					//Altera cor do valor da quantidade, caso seja um valo negativo
 					if(row.cell.diferenca < 0){
@@ -551,7 +556,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 		
 		montaGridEdicoesFechadas :function(){
 			$(".consultaEdicoesFechadasGrid", this.workspace).flexigrid({
-				
+				onSuccess: function() {bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);},
 				preProcess: function(data) {
 					if( typeof data.mensagens == "object") {
 

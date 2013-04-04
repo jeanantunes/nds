@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -7,6 +8,7 @@
 <script  type="text/javascript">
 $(function(){
 	digitacaoContagemDevolucaoController.init("${userProfileOperador}");
+	bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);
 });
 </script>
 
@@ -94,29 +96,29 @@ $(function(){
 							</span> 
 							
 							<span id="btnSalvar" class="bt_novos" title="Salvar"> 
-							<a href="javascript:digitacaoContagemDevolucaoController.salvar();"> 
+							<a isEdicao="true" href="javascript:digitacaoContagemDevolucaoController.salvar();"> 
 							<img border="0" hspace="5" alt="Salvar"
 								src="${pageContext.request.contextPath}/images/ico_salvar.gif" />
 								Salvar
 							</a> 
 							</span> 
 							
-							<span class="bt_novos" title="Incluir Produtos" onclick="digitacaoContagemDevolucaoController.incluirProdutoDialog();">
-							<a href="javascript:;">
+							<span class="bt_novos" title="Incluir Produtos">
+							<a isEdicao="true" href="javascript:;" onclick="digitacaoContagemDevolucaoController.incluirProdutoDialog();">
 							<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0">
 									Incluir Edições
 							</a>
 							</span>
 							
-							<span class="bt_novos" title="Gerar NF-e de Dev. ao Fornecedor" onclick="digitacaoContagemDevolucaoController.geraNota();">
-							<a href="javascript:;">
+							<span class="bt_novos" title="Gerar NF-e de Dev. ao Fornecedor" >
+							<a isEdicao="true" href="javascript:;" onclick="digitacaoContagemDevolucaoController.geraNota();">
 								<img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0">
 								Gerar NF-e
 							</a>
 							</span>
 							
 							<span id="btnConfirmar" class="bt_novos" title="Devolução Parcial"> 
-							<a href="javascript:digitacaoContagemDevolucaoController.popupConfirmar();"> 
+							<a isEdicao="true" href="javascript:digitacaoContagemDevolucaoController.popupConfirmar();"> 
 								<img border="0" hspace="5" alt="Confirmar"
 								src="${pageContext.request.contextPath}//images/bt_expedicao.png" hspace="5" border="0">
 							Devolução Parcial
@@ -124,7 +126,7 @@ $(function(){
 							</span>
 							
 							<span class="bt_novos" title="Replicar Quantidades">
-							<a href="javascript:digitacaoContagemDevolucaoController.replicarValores();">
+							<a isEdicao="true" href="javascript:digitacaoContagemDevolucaoController.replicarValores();">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0">
 							Replicar
 							</a>
@@ -164,7 +166,7 @@ $(function(){
 					<td width="18%">
 						<span id="bt_sellAll" class="bt_sellAll">
 							<label for="sel" style="margin-right:15px;">Selecionar Todos</label> 
-							<input type="checkbox" name="Todos" id="sel" onclick="digitacaoContagemDevolucaoController.checkAllReplicarValor(this, 'checkgroup');"
+							<input isEdicao="true" type="checkbox" name="Todos" id="sel" onclick="digitacaoContagemDevolucaoController.checkAllReplicarValor(this, 'checkgroup');"
 							style="float: left;" /> 
 						</span>
 					</td>

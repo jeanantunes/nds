@@ -1,4 +1,4 @@
-<input id="permissaoAlteracao" type="hidden" value="${permicaoAlteracao}">
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/parciais.js"></script>
 

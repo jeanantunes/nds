@@ -247,6 +247,7 @@ public class SuspensaoCotaController extends BaseController {
 	
 	@SuppressWarnings("unchecked")
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_SUSPENSAO_COTA_ALTERACAO)
 	public void suspenderCotas() {
 		
 		TipoMensagem status =  TipoMensagem.SUCCESS;

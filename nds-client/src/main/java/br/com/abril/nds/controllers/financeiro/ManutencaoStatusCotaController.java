@@ -135,6 +135,7 @@ public class ManutencaoStatusCotaController extends BaseController {
 	
 	@Post
 	@Path("/novo")
+	@Rules(Permissao.ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA_ALTERACAO)
 	public void novo(FiltroStatusCotaDTO filtro) {
 		
 		 Cota cota = this.validarDadosCota(filtro);
@@ -149,6 +150,7 @@ public class ManutencaoStatusCotaController extends BaseController {
 	
 	@Post
 	@Path("/novo/confirmar")
+	@Rules(Permissao.ROLE_FINANCEIRO_MANUTENCAO_STATUS_COTA_ALTERACAO)
 	public void confirmarNovo(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
 		
 		this.validarAlteracaoStatus(novoHistoricoSituacaoCota);

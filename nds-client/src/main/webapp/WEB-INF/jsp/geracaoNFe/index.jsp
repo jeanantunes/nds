@@ -1,4 +1,4 @@
-<input id="permissaoAlteracao" type="hidden" value="${permicaoAlteracao}">
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.multiselect.css" />
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.multiselect.min.js"></script>
