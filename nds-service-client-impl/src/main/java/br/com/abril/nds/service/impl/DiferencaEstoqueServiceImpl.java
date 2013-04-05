@@ -39,12 +39,12 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -415,52 +415,62 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	private void processarTransferenciaEstoque(Diferenca diferenca, Long idUsuario) {
 		
-		if( TipoEstoque.LANCAMENTO.equals(diferenca.getTipoEstoque())){
+		if (TipoEstoque.LANCAMENTO.equals(diferenca.getTipoEstoque())) {
+			
 			return;
 		}
 		
 		TipoMovimentoEstoque tipoMovimentoEstoqueLancamento = null;
+		
 		TipoMovimentoEstoque tipoMovimentoEstoqueAlvo = null;
 				
-		if(TipoDiferenca.FALTA_DE.equals(diferenca.getTipoDiferenca()) 
-				|| TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())){
+		if (OperacaoEstoque.SAIDA.equals(
+				diferenca.getTipoDiferenca().getTipoMovimentoEstoque().getOperacaoEstoque())) {
 			
 			 tipoMovimentoEstoqueLancamento = 
-					this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-							obterTipoMovimentoEstoqueTransferencia(TipoEstoque.LANCAMENTO, TipoOperacao.ENTRADA));
+				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+					obterTipoMovimentoEstoqueTransferencia(
+						TipoEstoque.LANCAMENTO, OperacaoEstoque.ENTRADA));
 			 
-			 tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento,"Tipo de movimento de entrada não encontrado!");
+			 tratarTipoMovimentoEstoque(
+				tipoMovimentoEstoqueLancamento, "Tipo de movimento de entrada não encontrado!");
 			
 			 tipoMovimentoEstoqueAlvo = 
-					this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-							obterTipoMovimentoEstoqueTransferencia(diferenca.getTipoEstoque(), TipoOperacao.SAIDA));
+				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+					obterTipoMovimentoEstoqueTransferencia(
+						diferenca.getTipoEstoque(), OperacaoEstoque.SAIDA));
 			
-			 tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento,"Tipo de movimento de saida não encontrado!");
-		}
-		
-		if(TipoDiferenca.SOBRA_DE.equals(diferenca.getTipoDiferenca()) 
-				|| TipoDiferenca.SOBRA_EM.equals(diferenca.getTipoDiferenca())){
+			 tratarTipoMovimentoEstoque(
+				tipoMovimentoEstoqueAlvo, "Tipo de movimento de saída não encontrado!");
+			 
+		} else 
+			if (OperacaoEstoque.ENTRADA.equals(
+					diferenca.getTipoDiferenca().getTipoMovimentoEstoque().getOperacaoEstoque())) {
 			
 			 tipoMovimentoEstoqueLancamento = 
-					this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-							obterTipoMovimentoEstoqueTransferencia(TipoEstoque.LANCAMENTO, TipoOperacao.SAIDA));
+				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+					obterTipoMovimentoEstoqueTransferencia(
+						TipoEstoque.LANCAMENTO, OperacaoEstoque.SAIDA));
 			
-			 tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento,"Tipo de movimento de entrada não encontrado!");
+			 tratarTipoMovimentoEstoque(
+				tipoMovimentoEstoqueLancamento, "Tipo de movimento de saída não encontrado!");
 			
 			 tipoMovimentoEstoqueAlvo = 
-					this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-							obterTipoMovimentoEstoqueTransferencia(diferenca.getTipoEstoque(), TipoOperacao.ENTRADA));
+				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+					obterTipoMovimentoEstoqueTransferencia(
+						diferenca.getTipoEstoque(), OperacaoEstoque.ENTRADA));
 			
-			 tratarTipoMovimentoEstoque(tipoMovimentoEstoqueLancamento,"Tipo de movimento de saida não encontrado!");
+			 tratarTipoMovimentoEstoque(
+				tipoMovimentoEstoqueAlvo, "Tipo de movimento de entrada não encontrado!");
 		}
 		
-		movimentoEstoqueService.gerarMovimentoEstoque(
-				diferenca.getProdutoEdicao().getId(),idUsuario,diferenca.getQtde(),
-				tipoMovimentoEstoqueLancamento,Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA);
+		this.movimentoEstoqueService.gerarMovimentoEstoque(
+			diferenca.getProdutoEdicao().getId(), idUsuario, diferenca.getQtde(),
+				tipoMovimentoEstoqueLancamento, Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA);
 		
-		movimentoEstoqueService.gerarMovimentoEstoque(
-				diferenca.getProdutoEdicao().getId(),idUsuario,diferenca.getQtde(),
-				tipoMovimentoEstoqueAlvo,Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA);
+		this.movimentoEstoqueService.gerarMovimentoEstoque(
+			diferenca.getProdutoEdicao().getId(), idUsuario, diferenca.getQtde(),
+				tipoMovimentoEstoqueAlvo, Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA);
 	}
 	
 	private void tratarTipoMovimentoEstoque(TipoMovimentoEstoque tipoMovimento,String mensagem){
@@ -470,29 +480,29 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 	}
 	
-	private GrupoMovimentoEstoque obterTipoMovimentoEstoqueTransferencia(TipoEstoque tipoEstoque, TipoOperacao tipoOperacao){
+	private GrupoMovimentoEstoque obterTipoMovimentoEstoqueTransferencia(TipoEstoque tipoEstoque, OperacaoEstoque operacaoEstoque){
 		
 		switch(tipoEstoque) {
 		
 		case LANCAMENTO:
-			return isOperacaoEntrada(tipoOperacao) 
+			return isOperacaoEntrada(operacaoEstoque) 
 					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO  
 							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO;
 		case SUPLEMENTAR:
-			return isOperacaoEntrada(tipoOperacao) 
+			return isOperacaoEntrada(operacaoEstoque) 
 					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR 
 							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR;
 		case RECOLHIMENTO:
-			return isOperacaoEntrada(tipoOperacao) 
+			return isOperacaoEntrada(operacaoEstoque) 
 					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO 
 							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO;
 		case PRODUTOS_DANIFICADOS:
-			return isOperacaoEntrada(tipoOperacao) 
+			return isOperacaoEntrada(operacaoEstoque) 
 					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS
 							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS;
 		
 		case DEVOLUCAO_FORNECEDOR:
-			return isOperacaoEntrada(tipoOperacao) 
+			return isOperacaoEntrada(operacaoEstoque) 
 					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR
 							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR;
 		default:
@@ -501,8 +511,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 	}
 	
-	private boolean isOperacaoEntrada(TipoOperacao tipoOperacao){
-		return (TipoOperacao.ENTRADA.equals(tipoOperacao));
+	private boolean isOperacaoEntrada(OperacaoEstoque operacaoEstoque){
+		return (OperacaoEstoque.ENTRADA.equals(operacaoEstoque));
 	}
 
 	private StatusAprovacao obterStatusLancamento(Diferenca diferenca) {
