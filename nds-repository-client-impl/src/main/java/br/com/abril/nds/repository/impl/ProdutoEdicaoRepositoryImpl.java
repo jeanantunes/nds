@@ -1438,4 +1438,20 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+	
+	@Override
+	public Boolean isEdicaoParcial(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select pEdicao.parcial from ProdutoEdicao pEdicao ");
+		hql.append(" where pEdicao.id = :idPropdutoEdicao ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idPropdutoEdicao",idProdutoEdicao);
+		
+		return (Boolean) query.uniqueResult();
+		
+	}
 }

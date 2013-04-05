@@ -335,5 +335,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 			Date data, Long idFornecedor);
 
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
+	
+	List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname);
 
 }

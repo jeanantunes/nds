@@ -955,13 +955,21 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					LancamentoParcial lancamentoParcial  = lancamentoParcialRepository.obterLancamentoPorProdutoEdicao(pe.getId());
 					
 					if(lancamentoParcial!= null){
-
-						dto.setDataLancamento(lancamentoParcial.getLancamentoInicial());
-						dto.setDataLancamentoPrevisto(lancamentoParcial.getLancamentoInicial());
-
+						
+						dto.setDataLancamentoPrevisto(lancamentoParcial.getLancamentoInicial());	
 						dto.setDataRecolhimentoPrevisto(lancamentoParcial.getRecolhimentoFinal());
-						dto.setDataRecolhimentoReal(lancamentoParcial.getRecolhimentoFinal());
-
+					}
+					
+					PeriodoLancamentoParcial primeiroPeriodo = periodoLancamentoParcialRepository.obterPrimeiroLancamentoParcial(pe.getId());
+					
+					if(primeiroPeriodo!= null && primeiroPeriodo.getLancamento()!= null){
+						dto.setDataLancamento(primeiroPeriodo.getLancamento().getDataLancamentoDistribuidor());
+					}
+					
+					PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(pe.getId());
+					
+					if(ultimoPeriodo!= null && ultimoPeriodo.getLancamento()!= null){
+						dto.setDataRecolhimentoReal(ultimoPeriodo.getLancamento().getDataRecolhimentoDistribuidor());
 					}
 					
 				}else{

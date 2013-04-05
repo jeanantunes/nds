@@ -462,7 +462,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
 			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
 			.append(" where lancamento.dataLancamentoDistribuidor = ")
-			.append(" ( select max(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
+			.append(" ( select min(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
 			.append(" and produtoEdicao.id =:idProdutoEdicao ");
 		
 		Query query = getSession().createQuery(hql.toString());
@@ -478,7 +478,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select periodo from PeriodoLancamentoParcial periodo  ")
 			.append(" join periodo.lancamento lancamento join lancamento.produtoEdicao produtoEdicao ")
 			.append(" where lancamento.dataLancamentoDistribuidor = ")
-			.append(" ( select min(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
+			.append(" ( select max(l.dataLancamentoDistribuidor) from PeriodoLancamentoParcial lp join lp.lancamento l join l.produtoEdicao e where e.id = :idProdutoEdicao  ) ")
 			.append(" and produtoEdicao.id =:idProdutoEdicao ");
 		
 		Query query = getSession().createQuery(hql.toString());
