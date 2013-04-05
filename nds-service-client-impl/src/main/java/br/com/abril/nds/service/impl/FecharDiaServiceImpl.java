@@ -568,26 +568,46 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	
 		Distribuidor distribuidor = distribuidorRepository.obter();		
 		
-		List<Integer> dias = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null, null);
+		List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null, null);
 		
-		Date novaData = obterDataValida(distribuidor.getDataOperacao(), dias);
+		if(diasSemanaDistribuidorOpera == null || diasSemanaDistribuidorOpera.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível realizar fechamento diário. Nenhum dia da semana com operação cadastradado para o Distribuidor."); 
+		}
+		
+		Date novaData = obterDataValida(distribuidor.getDataOperacao(), diasSemanaDistribuidorOpera);
 				
 		distribuidor.setDataOperacao(novaData);
 		
 		distribuidorRepository.alterar(distribuidor);
 		
 	}
-		
-	public Date obterDataValida(Date dataAtual, List<Integer> dias) {
+	
+    /**
+     * Retorna a próxima data em que o distribuidor opera.
+     *
+     * @param dataAtual
+     * @param diasSemanaDistribuidorOpera
+     * 
+     * @return Date
+     */
+	public Date obterDataValida(Date dataAtual, List<Integer> diasSemanaDistribuidorOpera) {
 		
 		Date novaData = DateUtil.adicionarDias(dataAtual, 1);
 		
 		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
 
-		if (dias.contains(codigoDiaCorrente))
+		if ( 	diasSemanaDistribuidorOpera.contains(codigoDiaCorrente) && 
+				!calendarioService.isFeriadoSemOperacao(novaData) && 
+				!calendarioService.isFeriadoMunicipalSemOperacao(novaData) 	) {
+			
 			return novaData;
-		else
-			return obterDataValida(novaData, dias);
+			
+		} else {
+
+			return obterDataValida(novaData, diasSemanaDistribuidorOpera);
+			
+		}
+			
 		
 	}
 
