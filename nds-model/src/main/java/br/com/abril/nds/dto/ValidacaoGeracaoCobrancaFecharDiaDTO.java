@@ -10,19 +10,19 @@ public class ValidacaoGeracaoCobrancaFecharDiaDTO implements Serializable {
 
 	private static final long serialVersionUID = 4116643880953265518L;
 	
-	private String tipoFormaCobranca;
+	private TipoFormaCobranca tipoFormaCobranca;
 	
 	private Long formaCobrancaId;
 	
 	private Integer diaDoMes;
 
 	
-	public String getTipoFormaCobranca() {
+	public TipoFormaCobranca getTipoFormaCobranca() {
 		return tipoFormaCobranca;
 	}
 
 	public void setTipoFormaCobranca(TipoFormaCobranca tipoFormaCobranca) {
-		this.tipoFormaCobranca = tipoFormaCobranca.getDescricao();
+		this.tipoFormaCobranca = tipoFormaCobranca;
 	}
 
 	public Long getFormaCobrancaId() {

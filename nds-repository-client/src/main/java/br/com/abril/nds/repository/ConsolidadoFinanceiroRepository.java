@@ -48,4 +48,6 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 	
 	
 	Long obterQuantidadeDividasGeradasData(Date dataVencimentoDebito, Long... idsCota);
+
+	Long obterQuantidadeConsolidadosDia(Date data);
 }

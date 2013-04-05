@@ -1337,4 +1337,16 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		return (BigInteger) query.uniqueResult();
 	}
+	
+	@Override
+	public Long obterQuantidadeConsolidadosDia(Date data){
+		
+		Query query = 
+			this.getSession().createQuery(
+				"select count (c.id) from ConsolidadoFinanceiroCota c where c.dataConsolidado = :data");
+		
+		query.setParameter("data", data);
+		
+		return (Long) query.uniqueResult();
+	}
 }
