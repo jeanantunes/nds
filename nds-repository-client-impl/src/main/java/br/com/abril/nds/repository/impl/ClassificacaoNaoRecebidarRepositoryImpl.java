@@ -70,7 +70,7 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
 		}
 		
-		hql.append(" order by nomePessoa, numeroCota");
+		hql.append(" order by numeroCota, nomePessoa");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -106,7 +106,7 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 			parameters.put("tipoClassificacaoProduto", filtro.getIdTipoClassificacaoProduto());
 		}
 		
-		hql.append(" order by nomePessoa, numeroCota");
+		hql.append(" order by numeroCota, nomePessoa");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
