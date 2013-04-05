@@ -21,6 +21,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -679,9 +680,16 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 														  null);
 				c = Calendar.getInstance();
 				c.setTime(dataOperacao);
-				cobrarHoje = 
-						diasSemanaConcentracaoPagamento.contains(
-								c.get(Calendar.DAY_OF_WEEK));
+				
+				for (ConcentracaoCobrancaCota conc : formaCobrancaPrincipal.getConcentracaoCobrancaCota()){
+					
+					cobrarHoje = 
+							c.get(Calendar.DAY_OF_WEEK) == conc.getDiaSemana().getCodigoDiaSemana();
+					
+					if (cobrarHoje){
+						break;
+					}
+				}
 			break;
 		}
 		
