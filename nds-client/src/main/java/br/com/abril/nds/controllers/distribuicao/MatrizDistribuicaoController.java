@@ -387,7 +387,8 @@ public class MatrizDistribuicaoController extends BaseController {
     public void gerarEstudoAutomatico(String codigoProduto, BigDecimal reparte) {
     	EstudoTransient estudoAutomatico;
     	try {
-    		estudoAutomatico = estudoAlgoritmoService.gerarEstudoAutomatico(new ProdutoEdicaoEstudo(codigoProduto), reparte.toBigInteger());
+    		estudoAutomatico = estudoAlgoritmoService.gerarEstudoAutomatico(new ProdutoEdicaoEstudo(codigoProduto), reparte.toBigInteger(),
+    			this.getUsuarioLogado());
     	} catch (Exception e) {
     		log.error("Erro na geração automatica do estudo.", e);
     		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));

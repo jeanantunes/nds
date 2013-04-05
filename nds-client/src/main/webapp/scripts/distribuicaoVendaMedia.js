@@ -347,7 +347,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			data.push({name : "dto.excecaoDeBancasElemento", value : $("#elementoInformacoesComplementares").val() });
 		}
 		
-		$.post(pathTela + "/distribuicaoVendaMedia/teste", data, function(response) {
+		$.post(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(response) {
 			var currentTab = getCurrentTabContainer();
 			currentTab.html(response);
 			currentTab.innerHeight(650);
