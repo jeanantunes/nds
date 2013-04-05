@@ -11,7 +11,7 @@
 
 
 <script language="javascript" type="text/javascript">
-	var pesquisaCotaContaCorrentCota = new PesquisaCota();
+	var pesquisaCotaContaCorrentCota = new PesquisaCota(contaCorrenteCotaController.workspace);
 	
 	$(function(){
 		contaCorrenteCotaController.init();
