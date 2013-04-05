@@ -139,7 +139,7 @@ public class FuroProdutoController extends BaseController {
 		
 		List<Produto> listaProdutoEdicao = null;
 		try {
-			listaProdutoEdicao = this.produtoService.obterProdutoLikeNome(nomeProduto);
+			listaProdutoEdicao = this.produtoService.obterProdutoLikeNome(nomeProduto, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		} catch (Exception e) {
 			if (e instanceof ValidacaoException){
 				throw e;

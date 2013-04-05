@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ParametroSistemaGeralDTO;
 import br.com.abril.nds.enums.TipoParametroSistema;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -40,12 +39,8 @@ public class ParametroSistemaServiceImpl implements ParametroSistemaService {
 		ParametroSistemaGeralDTO dto = new ParametroSistemaGeralDTO();
 		dto.setParametrosSistema(lst);
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-		
-		if(distribuidor!= null){
-
-			dto.setDtOperacaoCorrente(DateUtil.formatarDataPTBR(distribuidor.getDataOperacao()));
-		}
+		dto.setDtOperacaoCorrente(DateUtil.formatarDataPTBR(
+				this.distribuidorService.obterDataOperacaoDistribuidor()));
 		
 		return dto;
 	}

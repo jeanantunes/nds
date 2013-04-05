@@ -193,7 +193,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					display : 'Ação',
 					name : 'acao',
 					width : 40,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}],
 				sortname : "numeroCota",

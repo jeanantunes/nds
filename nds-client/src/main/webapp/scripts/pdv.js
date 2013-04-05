@@ -217,19 +217,19 @@ var PDV =  $.extend(true, {
 			$("#textoLuminoso", this.workspace).val(result.pdvDTO.caracteristicaDTO.textoLuminoso);
 
             if (PDV.isModoTelaCadastroCota()) {
-                PDV.carregarTiposPontoPdv(result.pdvDTO.tipoPontoPDV.codigo);
+                PDV.carregarTiposPontoPdv(result.pdvDTO.caracteristicaDTO.tipoPonto);
                 PDV.carregarCaracteristicasPdv(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV);
                 PDV.carregarAreasInfluenciaPdv(result.pdvDTO.caracteristicaDTO.areaInfluencia);
             } else {
                 if (result.pdvDTO.tipoPontoPDV.codigo) {
                     montarComboBoxUnicaOpcao(result.pdvDTO.tipoPontoPDV.codigo, result.pdvDTO.tipoPontoPDV.descricao,
-                        $("#selectdTipoPonto", this.workspace));
+                        $("#selectCaracteristica", this.workspace));
                 }
-                if (result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV) {
+                /*if (result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV) {
                     montarComboBoxUnicaOpcao(result.pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV,
                         result.pdvDTO.caracteristicaDTO.descricaoTipoCaracteristica, $("#selectCaracteristica", this.workspace));
                }
-               if (result.pdvDTO.caracteristicaDTO.areaInfluencia) {
+*/               if (result.pdvDTO.caracteristicaDTO.areaInfluencia) {
                    montarComboBoxUnicaOpcao(result.pdvDTO.caracteristicaDTO.areaInfluencia, result.pdvDTO.caracteristicaDTO.descricaoAreaInfluencia,
                        $("#selectAreainfluencia", this.workspace));
                }
@@ -267,14 +267,24 @@ var PDV =  $.extend(true, {
 				parametros.push({name:'codigos['+ (parametros.length) +']', value:result.pdvDTO.geradorFluxoPrincipal});
 				PDV.carregarGeradorFluxoNotIn(parametros);
 				
+				if(result.pdvDTO.principal== false){
+					$("#geradorFluxo").hide();
+				}else{
+					$("#geradorFluxo").show();
+				}
+					
+				
 				var parametro = [ {name:"codigos",value:result.pdvDTO.geradorFluxoPrincipal}, 
 				                  {name:"modoTela", value: PDV.modoTela.value}, 
 				                  {name: "idPdv", value: PDV.idPdv}];
 				$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxo",
 						parametro, 
 						   function(result){
+					
 					$("#txtGeradorFluxoPrincipal", this.workspace).val(result[0].value.$);
-					$("#hiddenGeradorFluxoPrincipal", this.workspace).val(result[0].key.$);	
+					$("#hiddenGeradorFluxoPrincipal", this.workspace).val(result[0].key.$);
+					
+					
 				});
 			}
 			else{
@@ -399,8 +409,9 @@ var PDV =  $.extend(true, {
 					"pdvDTO.caracteristicaDTO.possuiCartao":this.isChecked("#possuiCartao"),
 					"pdvDTO.caracteristicaDTO.luminoso":this.isChecked("#luminoso"),
 					"pdvDTO.caracteristicaDTO.textoLuminoso":$("#textoLuminoso",this.workspace).val(),
-					"pdvDTO.caracteristicaDTO.tipoPonto":$("#selectdTipoPonto",this.workspace).val(),
-					"pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV":$("#selectCaracteristica",this.workspace).val(),
+					//AJUSTE EMS-0159 Remocao tipo de ponto, items deste campo se tornam caracteristicas 
+					"pdvDTO.caracteristicaDTO.tipoPonto":$("#selectCaracteristica",this.workspace).val(),
+//					"pdvDTO.caracteristicaDTO.tipoCaracteristicaSegmentacaoPDV":$("#selectCaracteristica",this.workspace).val(),
 					"pdvDTO.caracteristicaDTO.areaInfluencia":$("#selectAreainfluencia",this.workspace).val(),
 					"pdvDTO.geradorFluxoPrincipal":$("#hiddenGeradorFluxoPrincipal", this.workspace).val(),
 					"pdvDTO.expositor":PDV.isChecked("#expositor"), 
@@ -714,8 +725,22 @@ var PDV =  $.extend(true, {
                     buttons: {
                         "Confirmar": function() {
 
+
+                        	if($("#selectAreainfluencia option:selected").val()=="-1"){
+
+                        		exibirMensagemDialog("WARNING", ["[Caract./Segmentação] Área de Influência é obrigatório."], "");
+                        	
+                        		return;
+                        	}
+                        	
                             if ($("#ptoPrincipal", this.workspace).attr("checked")){
 
+                            	if($("#txtGeradorFluxoPrincipal").val().trim()==""){
+
+                            		exibirMensagemDialog("WARNING", ["Gerador de Fluxo é obrigatório para o ponto principal."], "");
+                            	
+                            		return;
+                            	}
                                 data = {idCota:PDV.idCota,idPdv:$("#idPDV").val()};
 
                                 $.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal",
@@ -754,6 +779,7 @@ var PDV =  $.extend(true, {
                                     true,
                                     "idModalPDV"
                                 );
+                                
                             } else {
 
                                 PDV.fecharModalCadastroPDV = true;
@@ -943,12 +969,12 @@ var PDV =  $.extend(true, {
 
         carregarTiposPontoPdv:function(selected){
             carregarCombo(contextPath + "/cadastro/pdv/carregarTiposPontoPdv", null,
-                $("#selectdTipoPonto", this.workspace), selected, "idModalPDV" );
+                $("#selectCaracteristica", this.workspace), selected, "idModalPDV" );
         },
 
         carregarCaracteristicasPdv:function(selected){
-            carregarCombo(contextPath + "/cadastro/pdv/carregarCaracteristicasPdv", null,
-                $("#selectCaracteristica", this.workspace), selected, "idModalPDV" );
+            /*carregarCombo(contextPath + "/cadastro/pdv/carregarCaracteristicasPdv", null,
+                $("#selectCaracteristica", this.workspace), selected, "idModalPDV" );*/
         },
 
         carregarAreasInfluenciaPdv:function(selected){
@@ -964,9 +990,11 @@ var PDV =  $.extend(true, {
 			$.postJSON(contextPath + "/cadastro/pdv/carregarGeradorFluxoNotIn",
 					   data, 
 					   function(result){
+				
 							var combo =  montarComboBox(result, false);
 							$("#selecTipoGeradorFluxo", this.workspace).html(combo);
 							$("#selecTipoGeradorFluxo", this.workspace).sortOptions();
+							
 			},null,true,"idModalPDV");
 		},
 		
@@ -1048,7 +1076,7 @@ var PDV =  $.extend(true, {
                         
             $("#luminoso", this.workspace).attr("checked",null);
             $("#textoLuminoso", this.workspace).val("");
-            $("#selectdTipoPonto", this.workspace).val("");
+//            $("#selectdTipoPonto", this.workspace).val("");
             $("#selectCaracteristica", this.workspace).val("");
             $("#selectAreainfluencia", this.workspace).val("");
                      

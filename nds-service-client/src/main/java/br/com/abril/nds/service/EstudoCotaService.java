@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.planejamento.EstudoCota;
 
@@ -17,4 +18,5 @@ public interface EstudoCotaService {
 	
 	EstudoCota obterEstudoCotaDeLancamentoComEstudoFechado(Date dataLancamentoDistribuidor, Long idProdutoEdicao, Integer numeroCota);
 
+	List<EstudoCota> obterEstudosCota(Long idEstudo);
 }

@@ -52,7 +52,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	@Transactional
 	public byte[] gerarCobrancaBoletoDistribuidor(FiltroFechamentoCEIntegracaoDTO filtro, TipoCobranca tipoCobranca) {
 		
-		Long numeroSemana = filtro.getSemana();
+		Long numeroSemana = Long.parseLong(filtro.getSemana().substring(4));
 		
 		List<ChamadaEncalheFornecedor> listaChamadaEncalheFornecedor = chamadaEncalheFornecedorRepository.obterChamadasEncalheFornecedor(null, numeroSemana.intValue(), null);
 		

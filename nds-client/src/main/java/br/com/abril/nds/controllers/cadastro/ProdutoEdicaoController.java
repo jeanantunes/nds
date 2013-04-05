@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -33,6 +34,7 @@ import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -64,6 +66,9 @@ public class ProdutoEdicaoController extends BaseController {
 	@Autowired
 	private LancamentoService lancamentoService;
 
+	@Autowired
+	private TipoSegmentoProdutoService tipoSegmentoProdutoService;
+	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
 	private static List<ItemDTO<Sexo,String>> listaSexo =  new ArrayList<ItemDTO<Sexo,String>>();
@@ -73,6 +78,10 @@ public class ProdutoEdicaoController extends BaseController {
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
 
 	private static List<ItemDTO<GrupoProduto,String>> listaGrupoProduto =  new ArrayList<ItemDTO<GrupoProduto,String>>();
+	
+	private static List<ItemDTO<StatusLancamento,String>> listaStatusLancamento =  new ArrayList<ItemDTO<StatusLancamento,String>>();
+	
+	private static List<ItemDTO<Long,String>> listaTipoSegmentoProduto =  new ArrayList<ItemDTO<Long,String>>();
 
 	
 	/** Traz a página inicial. */
@@ -119,6 +128,25 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		result.include("listaGrupoProduto",listaGrupoProduto);
 		
+		listaStatusLancamento.clear();
+		for (StatusLancamento statusLancamento : StatusLancamento.values()) {
+			
+			listaStatusLancamento.add(
+				new ItemDTO<StatusLancamento, String>(
+					statusLancamento, statusLancamento.getDescricao()));
+		}
+		
+		result.include("listaStatusLancamento", listaStatusLancamento);
+		
+		listaTipoSegmentoProduto.clear();
+		for (TipoSegmentoProduto tipoSegmentoProduto : tipoSegmentoProdutoService.obterTipoSegmentoProduto()) {
+			listaTipoSegmentoProduto.add(
+					new ItemDTO<Long, String>(
+							tipoSegmentoProduto.getId(), tipoSegmentoProduto.getDescricao()));
+		}
+		
+		result.include("listaTipoSegmentoProduto", listaTipoSegmentoProduto);
+		
 		List<Brinde> brindes = brindeService.obterBrindes();
 		result.include("brindes", brindes);
     }
@@ -150,47 +178,42 @@ public class ProdutoEdicaoController extends BaseController {
 	@Post
 	@Path("/pesquisarEdicoes.json")
 	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
-			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,BigDecimal precoAte , String situacaoLancamento,
+			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,
+			BigDecimal precoAte , StatusLancamento situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
 		Intervalo<BigDecimal> intervaloPreco = null;
 		Intervalo<Date> intervaloLancamento = null;
 		// Validar:
-		if (codigoDeBarras == null || codigoDeBarras.isEmpty()) {
-			if ((codigoProduto == null || codigoProduto.trim().isEmpty()) 
-					|| (nomeProduto == null || nomeProduto.trim().isEmpty())) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o campo 'Código', 'Produto' ou 'Código de Barras'!");
-			}
-		}
 		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
 		}else if(dataLancamentoDe != null && dataLancamentoAte != null){
 			if(dataLancamentoDe.after(dataLancamentoAte)){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Lançamento'!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
 			}
 			
 			intervaloLancamento = new Intervalo<Date>(dataLancamentoDe, dataLancamentoAte);		
 		}
 		if(precoDe == null ^ precoAte == null ){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 		}else if(precoDe != null && precoAte != null ){
 			if(precoDe.compareTo(precoAte) > 0){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o interválo válido de 'Preço'!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 			}
 			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
-		}		
-		
-		StatusLancamento statusLancamento = null;
-		for (StatusLancamento status : StatusLancamento.values()) {
-			if (status.getDescricao().equals(situacaoLancamento)) {
-				statusLancamento = status;
-			}
-		}		
+		}	
 	
 		// Pesquisar:
-		Long qtd = produtoEdicaoService.countPesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde);
-		if(qtd > 0){			
-			List<ProdutoEdicaoDTO> lst = produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, intervaloLancamento, intervaloPreco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, page, rp);
+		Long qtd = produtoEdicaoService.countPesquisarEdicoes(
+				codigoProduto, nomeProduto, intervaloLancamento, 
+				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde);
+		
+		if(qtd > 0){		
+			
+			List<ProdutoEdicaoDTO> lst = 
+					produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, 
+							intervaloLancamento, intervaloPreco, situacaoLancamento, codigoDeBarras, 
+							brinde, sortorder, sortname, page, rp);
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
 		}else{
@@ -226,7 +249,7 @@ public class ProdutoEdicaoController extends BaseController {
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
 			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
-            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria,TemaProduto temaPrincipal,TemaProduto temaSecundario) {
+            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria, long tipoSegmentoProdutoId) {
 			
 		BigDecimal pPrevisto = precoPrevisto!=null?new BigDecimal(this.getValorSemMascara(precoPrevisto)):null;
 		BigDecimal pVenda = precoVenda!=null?new BigDecimal(this.getValorSemMascara(precoVenda)):null;
@@ -269,8 +292,7 @@ public class ProdutoEdicaoController extends BaseController {
 		dto.setClasseSocial(classeSocial);
 		dto.setFaixaEtaria(faixaEtaria);
 		dto.setSexo(sexo);
-		dto.setTemaPrincipal(temaPrincipal);
-		dto.setTemaSecundario(temaSecundario);
+		dto.setTipoSegmentoProdutoId(tipoSegmentoProdutoId);
 		
 		ValidacaoVO vo = null;
 		 

@@ -857,7 +857,6 @@ public class NFeServiceImpl implements NFeService {
 	private void carregarNEDadosDestinatario(NfeImpressaoDTO nfeImpressao, NotaEnvio notaEnvio) {
 
 		String documento 			= notaEnvio.getDestinatario().getDocumento();
-		Pessoa pessoaDestinatario 	= notaEnvio.getDestinatario().getPessoaDestinatarioReferencia();
 		Integer codigoBox			= notaEnvio.getDestinatario().getCodigoBox();
 		String nomeBox				= notaEnvio.getDestinatario().getNomeBox();
 		String codigoRota			= notaEnvio.getDestinatario().getCodigoRota();
@@ -866,13 +865,7 @@ public class NFeServiceImpl implements NFeService {
 		Endereco endereco = notaEnvio.getDestinatario().getEndereco();
 		Telefone telefone = notaEnvio.getDestinatario().getTelefone();
 
-		boolean indPessoaJuridica = false;
-
-		if(pessoaDestinatario instanceof PessoaJuridica) {
-			indPessoaJuridica = true;
-		} 
-
-		String destinatarioCNPJ 				= "";
+		String destinatarioCNPJ = documento;
 		String destinatarioNome 				= notaEnvio.getDestinatario().getNome();
 		String destinatarioInscricaoEstadual 	= notaEnvio.getDestinatario().getInscricaoEstadual();
 
@@ -884,10 +877,6 @@ public class NFeServiceImpl implements NFeService {
 		String destinatarioUF 					= "";
 		String destinatarioCEP 					= "";
 		String destinatarioTelefone 			= "";
-
-		if (indPessoaJuridica) {
-			destinatarioCNPJ = documento;
-		} 
 
 		if(endereco != null) {
 

@@ -65,6 +65,7 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -136,6 +137,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private TipoSegmentoProdutoService tipoSegmentoProdutoService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -472,7 +476,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
 		if(lancamentoParcial.getPeriodos().isEmpty())
-			parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario , produtoEdicao.getPeb(), distribuidorService.obter());
+			parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario);
 		
 		Lancamento periodo = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
 		
@@ -684,6 +688,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			segm.setFaixaEtaria(dto.getFaixaEtaria());
 			segm.setTemaPrincipal(dto.getTemaPrincipal());
 			segm.setTemaSecundario(dto.getTemaSecundario());
+			produtoEdicao.setTipoSegmentoProduto(tipoSegmentoProdutoService.obterTipoProdutoSegmentoPorId(dto.getTipoSegmentoProdutoId()));
 			
 			produtoEdicao.setSegmentacao(segm);
 			
@@ -866,7 +871,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		dto.setFase(produto.getFase());
 		dto.setPacotePadrao(produto.getPacotePadrao());
 		dto.setPeso(produto.getPeso());
-
+		
 		String nomeFornecedor = "";
 		if (produto.getFornecedor() != null 
 				&& produto.getFornecedor().getJuridica() != null) {
@@ -905,6 +910,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setNumeroEdicao(pe.getNumeroEdicao());
 			dto.setPacotePadrao(pe.getPacotePadrao());
 			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
+			dto.setTipoSegmentoProdutoId(pe.getTipoSegmentoProduto() == null ? null : pe.getTipoSegmentoProduto().getId());
 			
 			BigDecimal precoVenda = pe.getPrecoVenda();
             dto.setPrecoVenda(precoVenda);
@@ -1054,8 +1060,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			totalGeralDTO.setPartReparte(totalGeralDTO.getPartReparte().add(obj.getPartReparte()).setScale(2,BigDecimal.ROUND_FLOOR));
 			totalGeralDTO.setPartVenda(totalGeralDTO.getPartVenda().add(obj.getPartVenda()).setScale(2,BigDecimal.ROUND_FLOOR));
 			totalGeralDTO.setQtdeCotas(totalGeralDTO.getQtdeCotas().add(obj.getQtdeCotas()));
-			totalGeralDTO.setCotasEsmagadas(totalGeralDTO.getCotasEsmagadas().add(obj.getCotasEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setQtdeCotasSemVenda((totalGeralDTO.getQtdeCotasSemVenda().add(obj.getQtdeCotasSemVenda()).setScale(2,BigDecimal.ROUND_FLOOR)));
+			
+			if(obj.getCotasEsmagadas()!=null){
+				totalGeralDTO.setCotasEsmagadas(totalGeralDTO.getCotasEsmagadas().add(obj.getCotasEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR));
+			}
+			
+			if(obj.getQtdeCotasSemVenda()!=null){
+				totalGeralDTO.setQtdeCotasSemVenda((totalGeralDTO.getQtdeCotasSemVenda().add(obj.getQtdeCotasSemVenda()).setScale(2,BigDecimal.ROUND_FLOOR)));
+			}
 			totalGeralDTO.setVendaEsmagadas((totalGeralDTO.getVendaEsmagadas().add(obj.getVendaEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR)));
 //			totalGeralDTO.setReparteDistribuido((totalGeralDTO.getReparteDistribuido().add(obj.getReparteDistribuido()).setScale(2,BigDecimal.ROUND_FLOOR)));
 			

@@ -92,13 +92,19 @@ public class CotaBaseController extends BaseController {
 			existeCotaBase = this.cotaBaseCotaService.isCotaBaseAtiva(cotaBase);			
 		}
 		
-		FiltroCotaBaseDTO filtro = null;
+		FiltroCotaBaseDTO filtro = (existeCotaBase)?this.cotaBaseService.obterCotaDoFiltro(cotaBase):
+			this.cotaBaseService.obterDadosFiltro(cotaBase, false, true, numeroCota);
+			
+		if(filtro == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
+		}
 		
-		if(existeCotaBase){
-			filtro = this.cotaBaseService.obterCotaDoFiltro(cotaBase);
+		if (existeCotaBase) {
 			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataFinal()));
-		}else{
-			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, false, true, numeroCota);
+		}
+		else {
+			filtro.setDataInicial(null);
+			filtro.setDataFinal(null);
 		}
 		
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();		
@@ -164,17 +170,14 @@ public class CotaBaseController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 		
 	}
-
 	
-	@Post
-	@Path("/pesquisarCotasBasePesquisaGeral")
-	public void pesquisarCotasBasePesquisaGeral(Integer numeroCota, String sortorder, String sortname, int page, int rp){
-		
-		CotaBaseDTO dto = new CotaBaseDTO();
-		dto.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
-		dto.setNumeroCota(numeroCota);
-		
-		tratarPaginacao(dto);
+
+	/**
+	 * 
+	 * @param dto
+	 * @return
+	 */
+	private List<CotaBaseDTO> obterListaCotaBaseFormatada(CotaBaseDTO dto) {
 		
 		List<CotaBaseDTO> listaCotaBase = this.cotaBaseService.obterListaCotaPesquisaGeral(dto);
 		
@@ -194,6 +197,21 @@ public class CotaBaseController extends BaseController {
 			listaFormatada.add(cotaBase);
 		}
 		
+		return listaCotaBase;
+	}
+
+	
+	@Post
+	@Path("/pesquisarCotasBasePesquisaGeral")
+	public void pesquisarCotasBasePesquisaGeral(Integer numeroCota, String sortorder, String sortname, int page, int rp){
+		
+		CotaBaseDTO dto = new CotaBaseDTO();
+		dto.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		dto.setNumeroCota(numeroCota);
+		
+		tratarPaginacao(dto);
+		
+		List<CotaBaseDTO> listaFormatada = obterListaCotaBaseFormatada(dto);
 		
 		TableModel<CellModelKeyValue<CotaBaseDTO>> tableModel =
 				new TableModel<CellModelKeyValue<CotaBaseDTO>>();
@@ -249,6 +267,24 @@ public class CotaBaseController extends BaseController {
 		return listaCotaBase;
 	}
 	
+	private void validarCota(Cota cota, CotaBase cotaBase) {
+		
+		boolean existeCotaBase = false;
+		if(cotaBase != null){
+			 existeCotaBase = this.cotaBaseCotaService.isCotaBaseAtiva(cotaBase);
+		}
+		
+		if(cota.getSituacaoCadastro() != SituacaoCadastro.ATIVO) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + cota.getNumeroCota() + "\" não está ativa!");
+		} 
+		
+		if(existeCotaBase) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + cota.getNumeroCota() + "\" tem cota base ativa!");
+		}
+	}
+	
 	@Post
 	@Path("/obterCota")
 	public void obterCota(Integer numeroCota){
@@ -256,24 +292,15 @@ public class CotaBaseController extends BaseController {
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		
 		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota);
-		boolean existeCotaBase = false;
-		if(cotaBase != null){
-			 existeCotaBase = this.cotaBaseCotaService.isCotaBaseAtiva(cotaBase);
-		}
 		
-		FiltroCotaBaseDTO filtro = null;
+		validarCota(cota, cotaBase);
 		
-		if(cota.getSituacaoCadastro() != SituacaoCadastro.ATIVO){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não está ativa!");
-		}else if(existeCotaBase){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" tem cota base ativa!");
-		}else{			
-			filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, true, true, numeroCota);			
-		}
+		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, true, true, numeroCota);	
 		
 		this.result.use(Results.json()).from(filtro, "result").recursive().serialize();
 		
 	}
+
 	@Post
 	@Path("/excluirCotaBase")
 	public void excluirCotaBase(Integer numeroCotaNova, Long idCotaBase){
@@ -301,6 +328,8 @@ public class CotaBaseController extends BaseController {
 		Cota cotaNova = this.cotaService.obterPorNumeroDaCota(idCotaNova);	
 		
 		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(idCotaNova);
+		
+		validarCota(cotaNova, cotaBase);
 		
 		if(cotaBase != null){
 			
@@ -417,39 +446,24 @@ public class CotaBaseController extends BaseController {
 	@Get
 	public void exportar(FileType fileType, String tipoDeLista) throws IOException {
 		
-		if(tipoDeLista.equals("pesquisaGeral")){
+		if(tipoDeLista.equals("pesquisaGeral")) {
+			
 			CotaBaseDTO dto = (CotaBaseDTO) session.getAttribute(COTA_BASE_DTO);
 			
-			List<CotaBaseDTO> listaCotaBase = obterListaDeCotasBase(dto.getNumeroCota(), dto);
-			
-			List<CotaBaseDTO> listaFormatada = new ArrayList<CotaBaseDTO>();
-			
-			for(CotaBaseDTO cotaBase : listaCotaBase){
-				cotaBase.setDiasRestantes(this.calcularDiasRestantes(cotaBase.getDtFinal()));
-				listaFormatada.add(cotaBase);
-			}
-			
-			if(listaCotaBase.isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
-			}
+			List<CotaBaseDTO> listaFormatada = obterListaCotaBaseFormatada(dto);
 			
 			FileExporter.to("PESQUISA_GERAL_COTA_BASE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaFormatada, CotaBaseDTO.class, this.httpResponse);
 			
-		}else if(tipoDeLista.equals("pesquisaHistorico")){
+		} else if(tipoDeLista.equals("pesquisaHistorico")) {
 			
 			CotaBaseDTO dto = (CotaBaseDTO) session.getAttribute(COTA_BASE_HISTORICO);
 			
 			List<CotaBaseHistoricoDTO> listaCotaBase = this.cotaBaseService.obterCotasHistorico(this.cotaBaseService.obterCotaNova(dto.getNumeroCota()),  dto);
 			
-			if(listaCotaBase.isEmpty()){
-				throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum registro encontrado.");
-			}
-			
 			FileExporter.to("PESQUISA_HISTORICO_COTA_BASE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					listaCotaBase, CotaBaseHistoricoDTO.class, this.httpResponse);			
 		}
-	
 		
 		result.nothing();
 	}

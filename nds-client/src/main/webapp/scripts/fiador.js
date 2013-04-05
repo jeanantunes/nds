@@ -1,4 +1,5 @@
-var fiadorController = $.extend(true, {
+
+﻿var fiadorController = $.extend(true, {
 		fecharModalCadastroFiador: false,
 		addConjuge : false,
 		alteracaoDadosBasicos : false,
@@ -372,6 +373,19 @@ var fiadorController = $.extend(true, {
 		
 			$("#fiadorController-nomeFiadorPesquisa", fiadorController.workspace).autocomplete({source: ""});
 			
+			$(document).ready(function(){
+				
+				focusSelectRefField($("#fiadorController-nomeFiadorPesquisa"));
+				
+				$(document.body).keydown(function(e) {
+					
+					if(keyEventEnterAux(e)){
+						fiadorController.exibirGridFiadoresCadastrados();
+					}
+					
+					return true;
+				});
+			});
 		},
 		
 		processarResultadoConsultaFiadores:function (data){
@@ -1254,4 +1268,6 @@ var fiadorController = $.extend(true, {
 		}
 	
 }, BaseController);
+
 //@ sourceURL=fiador.js
+

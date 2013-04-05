@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -50,9 +52,12 @@ implements MovimentoEstoqueRepository {
 
 		hql.append(" where m.produtoEdicao.numeroEdicao = :numeroEdicao and ");		
 
-		hql.append(" m.produtoEdicao.produto.codigo = :codigoProduto ");		
-
+		hql.append(" m.produtoEdicao.produto.codigo = :codigoProduto ");
 		
+		if (filtro != null && filtro.getGruposExcluidos() != null) {
+			hql.append(" and m.tipoMovimento.grupoMovimentoEstoque not in (:gruposExcluidos) ");
+		}
+
 		if(statusAprovacao != null) {
 			hql.append(" and m.status = :statusAprovacao  ");
 		}
@@ -75,6 +80,11 @@ implements MovimentoEstoqueRepository {
 		
 		query.setParameter("numeroEdicao", numeroEdicao);
 		
+		if (filtro != null && filtro.getGruposExcluidos() != null) {
+
+			query.setParameterList("gruposExcluidos", filtro.getGruposExcluidos());
+		}
+		
 		if (filtro != null && filtro.getPaginacao() != null) {
 			
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
@@ -87,9 +97,8 @@ implements MovimentoEstoqueRepository {
 		}
 		
 		return query.list();
-				
 	}
-	
+
 	@Override
 	public BigInteger obterReparteDistribuidoProduto(String codigoProduto){
 //		 select coalesce(sum(QTDE),0) from movimento_estoque where TIPO_MOVIMENTO_ID=13 and PRODUTO_EDICAO_ID=2350

@@ -9,10 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import br.com.abril.nds.model.cadastro.CodigoDescricao;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 @Entity
@@ -31,6 +30,13 @@ public class TipoSegmentoProduto implements Serializable {
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
 	
+	public TipoSegmentoProduto() {
+	}
+
+	public TipoSegmentoProduto(Long id) {
+	    this.id = id;
+	}
+
 	public Long getId() {
 		return id;
 	}

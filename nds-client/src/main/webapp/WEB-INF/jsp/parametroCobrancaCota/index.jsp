@@ -73,6 +73,7 @@ $(function(){
 				<td width="195">Fator Vencimento de Cobrança em D+:</td>
 				<td width="157"><select id="fatorVencimento"
 					name="fatorVencimento" size="1" style="width: 50px; height: 19px;">
+					    <option>0</option>
 						<option>1</option>
 						<option>2</option>
 						<option>3</option>
@@ -189,14 +190,23 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Unifica Cobrança?</td>
-				<td><select name="select3" id="select2">
-						<option selected="selected" value=""></option>
-						<option value="1">Sim</option>
-						<option value="2">Não</option>
+				<td><select name="unificaCobranca" id="unificaCobranca">
+						<option value="0">Sim</option>
+						<option value="1">Não</option>
 				</select></td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
 			</tr>
+			
+			<tr>
+			    <td>Fornecedor Padrão:</td>
+				<td>
+					<div id="fornecedoresPadrao" />
+				</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			
 		</tbody>
 	</table>
 	
@@ -318,7 +328,7 @@ $(function(){
 						     <table width="100%" border="0" cellspacing="1" cellpadding="1" class="mensal">
 						         <tr>
 						             <td width="68">Todo dia:</td>
-						             <td width="156"><input maxlength="2" type="text" name="diaDoMes" id="diaDoMes" style="width:60px;"/></td>
+						             <td width="156"><input maxlength="2" type="text" name="diaDoMesCota" id="diaDoMesCota" style="width:60px;"/></td>
 						         </tr>
 						     </table>
 					     
@@ -527,10 +537,10 @@ $(function(){
 </form>
 
 <form id="form-excluir-unificacao">
-	<div id="dialog-excluir-unificacao" title="Unificação de Boletos">
+	<div id="dialog-excluir-unificacao" title="Forma de Pagamento">
 		<fieldset>
-			<legend>Exclusão de Unificalção de Boletos</legend>
-			<p>Confirma a exclusão desta Unificação de Boleto</p>
+			<legend>Exclusão de Forma de Pagamento</legend>
+			<p>Confirma a exclusão da Forma de Pagamento.</p>
 		</fieldset>
 	</div>
 </form>

@@ -28,12 +28,12 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoDistribuidor;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -199,14 +199,15 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 				.getListaIdFornecedores();
 
 		Map<Cota, QuantidadePrecoItemNotaDTO> idCotaTotalItensNota = new HashMap<Cota, QuantidadePrecoItemNotaDTO>();
-
-		Distribuidor distribuidor = this.distribuidorRepository.obter();
-
+		
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = 
+				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+		
 		for (Long idCota : dadosConsultaLoteNotaFiscal
 				.getIdsCotasDestinatarias()) {
 
 			if (tipoNotaFiscal.getTipoAtividade().equals(
-					distribuidor.getTipoAtividade())) {
+					this.distribuidorRepository.tipoAtividade())) {
 
 				Cota cota = this.cotaRepository.buscarPorId(idCota);
 
@@ -217,7 +218,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 							.isContribuinte()) {
 
 						List<ItemNotaFiscalSaida> itensNotaFiscal = obterItensNotaFiscalPor(
-								distribuidor, cota, periodo,
+								parametrosRecolhimentoDistribuidor, 
+								cota, periodo,
 								listaIdFornecedores, null, tipoNotaFiscal);
 
 						if (itensNotaFiscal != null
@@ -593,24 +595,16 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	private IdentificacaoEmitente carregaEmitente() {
 		IdentificacaoEmitente identificacaoEmitente = new IdentificacaoEmitente();
 
-		Distribuidor distribuidor = distribuidorRepository.obter();
-		if (distribuidor == null) {
-			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço principal do distribuidor não encontrada!");
-		}
+		PessoaJuridica pessoaJuridica = this.distribuidorRepository.juridica();
 		
-		String cnpj = Util.removerMascaraCnpj(distribuidor.getJuridica().getCnpj());
+		String cnpj = Util.removerMascaraCnpj(pessoaJuridica.getCnpj());
 		
 		identificacaoEmitente.setDocumento(cnpj);
-		identificacaoEmitente.setInscricaoEstadual(distribuidor.getJuridica()
-				.getInscricaoEstadual());
-		identificacaoEmitente.setInscricaoMunicipal(distribuidor.getJuridica()
-				.getInscricaoMunicipal());
-		identificacaoEmitente.setNome(distribuidor.getJuridica().getNome());
-		identificacaoEmitente.setNomeFantasia(distribuidor.getJuridica()
-				.getNomeFantasia());
-		identificacaoEmitente.setPessoaEmitenteReferencia(distribuidor
-				.getJuridica());
+		identificacaoEmitente.setInscricaoEstadual(pessoaJuridica.getInscricaoEstadual());
+		identificacaoEmitente.setInscricaoMunicipal(pessoaJuridica.getInscricaoMunicipal());
+		identificacaoEmitente.setNome(pessoaJuridica.getNome());
+		identificacaoEmitente.setNomeFantasia(pessoaJuridica.getNomeFantasia());
+		identificacaoEmitente.setPessoaEmitenteReferencia(pessoaJuridica);
 
 		EnderecoDistribuidor enderecoDistribuidor = distribuidorRepository
 				.obterEnderecoPrincipal();
@@ -1139,7 +1133,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 */
 	@Override
 	public List<ItemNotaFiscalSaida> obterItensNotaFiscalPor(
-			Distribuidor distribuidor, Cota cota, Intervalo<Date> periodo,
+			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Cota cota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
 			TipoNotaFiscal tipoNotaFiscal) {
 
@@ -1153,7 +1147,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		case NF_REMESSA_CONSIGNACAO:
 			itensNotaFiscal = this.obterItensNFeRemessaEmConsignacao(	
-					distribuidor, idCota, periodo, listaIdFornecedores,
+					parametrosRecolhimentoDistribuidor, idCota, periodo, listaIdFornecedores,
 					listaIdProdutos, tipoNotaFiscal);
 			break;
 
@@ -1165,7 +1159,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 						.getEmiteNotaFiscalEletronica()) {
 					itensNotaFiscal = this
 							.obterItensNFeEntradaDevolucaoRemessaConsignacao(
-									distribuidor, idCota, periodo,
+									parametrosRecolhimentoDistribuidor, idCota, periodo,
 									listaIdFornecedores, listaIdProdutos,
 									tipoNotaFiscal);
 				}
@@ -1178,7 +1172,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
 				if (!cota.getParametrosCotaNotaFiscalEletronica()
 						.getEmiteNotaFiscalEletronica()) {
-					itensNotaFiscal = this.obterItensNFeVenda(distribuidor,
+					itensNotaFiscal = this.obterItensNFeVenda(parametrosRecolhimentoDistribuidor,
 							idCota, periodo, listaIdFornecedores,
 							listaIdProdutos, tipoNotaFiscal);
 				}
@@ -1187,12 +1181,14 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			break;
 
 		case NF_VENDA:
-			itensNotaFiscal = this.obterItensNFeVenda(distribuidor, idCota,
+			itensNotaFiscal = this.obterItensNFeVenda(parametrosRecolhimentoDistribuidor, idCota,
 					periodo, listaIdFornecedores, listaIdProdutos,
 					tipoNotaFiscal);
 			break;
 		case NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO:
-			itensNotaFiscal = this.obterItensNFeSaisaDevolucaoMercadoriaRecebidaConsignacao(distribuidor, idCota, periodo, listaIdFornecedores, listaIdProdutos, tipoNotaFiscal);
+			itensNotaFiscal = this.obterItensNFeSaisaDevolucaoMercadoriaRecebidaConsignacao(
+					parametrosRecolhimentoDistribuidor, idCota, periodo, listaIdFornecedores, 
+					listaIdProdutos, tipoNotaFiscal);
 			break;
 		}
 
@@ -1207,7 +1203,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 *            intervalo do periodo de lançamento
 	 */
 	private List<ItemNotaFiscalSaida> obterItensNFeRemessaEmConsignacao(
-			Distribuidor distribuidor, Long idCota, Intervalo<Date> periodo,
+			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
+			Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
 			TipoNotaFiscal tipoNotaFiscal) {
 
@@ -1226,7 +1223,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		.add(GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR);
 
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaService
-				.obterMovimentoEstoqueCotaPor(distribuidor, idCota,
+				.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, idCota,
 						tipoNotaFiscal, listaGrupoMovimentoEstoque, periodo,
 						listaIdFornecedores, listaIdProduto);
 
@@ -1250,7 +1247,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return lista de itens nota fiscal
 	 */
 	private List<ItemNotaFiscalSaida> obterItensNFeEntradaDevolucaoRemessaConsignacao(
-			Distribuidor distribuidor, Long idCota, Intervalo<Date> periodo,
+			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, 
+			Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
 			TipoNotaFiscal tipoNotaFiscal) {
 
@@ -1262,7 +1260,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaService
-				.obterMovimentoEstoqueCotaPor(distribuidor, idCota,
+				.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, idCota,
 						tipoNotaFiscal, listaGrupoMovimentoEstoque, periodo,
 						listaIdFornecedores, listaIdProduto);
 
@@ -1286,7 +1284,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @return lista de itens nota fiscal
 	 */
 	private List<ItemNotaFiscalSaida> obterItensNFeSaisaDevolucaoMercadoriaRecebidaConsignacao(
-			Distribuidor distribuidor, Long idCota, Intervalo<Date> periodo,
+			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Long idCota, 
+			Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProduto,
 			TipoNotaFiscal tipoNotaFiscal) {
 
@@ -1296,7 +1295,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		listaGrupoMovimentoEstoque.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaService
-				.obterMovimentoEstoqueCotaPor(distribuidor, idCota,
+				.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, idCota,
 						tipoNotaFiscal, listaGrupoMovimentoEstoque, periodo,
 						listaIdFornecedores, listaIdProduto);
 
@@ -1316,18 +1315,19 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 	 * @param periodo
 	 *            intervalo do periodo de lançamento
 	 */
-	private List<ItemNotaFiscalSaida> obterItensNFeVenda(Distribuidor distribuidor,
+	private List<ItemNotaFiscalSaida> obterItensNFeVenda(
+			ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor,
 			Long idCota, Intervalo<Date> periodo,
 			List<Long> listaIdFornecedores, List<Long> listaIdProdutos,
 			TipoNotaFiscal tipoNotaFiscal) {
 
 		List<ItemNotaFiscalSaida> itensNFeEnvioConsignado = this
-				.obterItensNFeRemessaEmConsignacao(distribuidor, idCota,
+				.obterItensNFeRemessaEmConsignacao(parametrosRecolhimentoDistribuidor, idCota,
 						periodo, listaIdFornecedores, listaIdProdutos,
 						tipoNotaFiscal);
 
 		List<ItemNotaFiscalSaida> itensNFeDevolucaoConsignado = this
-				.obterItensNFeEntradaDevolucaoRemessaConsignacao(distribuidor,
+				.obterItensNFeEntradaDevolucaoRemessaConsignacao(parametrosRecolhimentoDistribuidor,
 						idCota, periodo, listaIdFornecedores, listaIdProdutos,
 						tipoNotaFiscal);
 

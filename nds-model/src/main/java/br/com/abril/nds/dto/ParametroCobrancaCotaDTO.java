@@ -36,6 +36,10 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private TipoCota tipoCota;
 	
+	private Long idFornecedor;
+	
+	private boolean unificaCobranca;
+	
 	
 	public Long getIdParametroCobranca() {
 		return idParametroCobranca;
@@ -161,7 +165,28 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 		this.tipoCota = tipoCota;
 	}
 
-    /* (non-Javadoc)
+	
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
+	}
+	
+
+	public boolean isUnificaCobranca() {
+		return unificaCobranca;
+	}
+
+
+	public void setUnificaCobranca(boolean unificaCobranca) {
+		this.unificaCobranca = unificaCobranca;
+	}
+
+	
+	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override

@@ -56,4 +56,5 @@ public interface FiadorService {
 	Fiador obterFiadorPorCNPJ(String cnpj);
 
 	List<Pessoa> obterFiadorPorNome(String nomeFiador);
+	List<Pessoa> obterFiadorPorNome(String nomeFiador, Integer qtdMaxResult);
 }

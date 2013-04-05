@@ -471,6 +471,21 @@ public class FornecedorRepositoryImpl extends
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<Pessoa> obterFornecedorPorNome(String nomeFornecedor, Integer qtdMaxResult) {
+		
+		String hql = "select pessoa from Fornecedor fornecedor "
+				+ " join  fornecedor.juridica pessoa "
+				+ " where lower(pessoa.razaoSocial) like :nomeFornecedor ";
+		
+		Query query = super.getSession().createQuery(hql);
+		
+		query.setParameter("nomeFornecedor", "%" + nomeFornecedor.toLowerCase() + "%");
+		query.setMaxResults(qtdMaxResult);
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia) {
 		
 		String hql = "select pessoa from Fornecedor fornecedor "
@@ -483,4 +498,40 @@ public class FornecedorRepositoryImpl extends
 		
 		return query.list();
 	}
+
+	/**
+	 * Obtem Fornecedor Padrao, utilizado para em Movimentos Financeiros sem definição de Distribuidor
+	 * @return Fornecedor
+	 */
+	@Override
+	public Fornecedor obterFornecedorPadrao() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select f from Fornecedor f ");
+
+	    hql.append(" where f.padrao = true ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		return (Fornecedor) query.uniqueResult();
+	}
+	
+	@Override
+	public Fornecedor obterFornecedorPorMovimentoEstoqueCota(Long movimentoEstoqueCotaId) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select fornecedor from MovimentoEstoqueCota mec ");
+		hql.append(" join mec.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
+		hql.append(" join produto.fornecedores fornecedor ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setMaxResults(1);
+		
+		return (Fornecedor) query.uniqueResult();
+	}
+	
 }

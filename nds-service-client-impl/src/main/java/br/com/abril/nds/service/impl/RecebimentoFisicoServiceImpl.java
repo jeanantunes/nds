@@ -386,8 +386,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void atualizarDadosNotaFiscalExistente(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
 		
 		
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);		
 		notaFiscal.setDataRecebimento(new Date());
+		
 		notaFiscalRepository.merge(notaFiscal);
 		
 		RecebimentoFisico recebimentoFisico = recebimentoFisicoRepository.obterRecebimentoFisicoPorNotaFiscal(notaFiscal.getId());
@@ -476,10 +476,28 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
 		
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
+		
+		if(indNotaEnvio) {
+
+			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.PENDENTE_RECEBIMENTO);
+			
+			notaFiscal.setOrigem(Origem.INTERFACE);
+
+			
+		} else {
+
+			notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+			
+			notaFiscal.setOrigem(Origem.MANUAL);
+			
+		}
+		
+		
+		
+		
 		notaFiscal.setDataRecebimento(new Date());
 		
-		notaFiscal.setOrigem(Origem.MANUAL);
 		
 		notaFiscal.setUsuario(usuarioLogado);
 		
@@ -577,7 +595,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			Usuario usuario = usuarioService.getUsuarioLogado();
 						
 			if(lancamentoParcial.getPeriodos().isEmpty())
-				parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario , produtoEdicao.getPeb(), distribuidorService.obter());
+				parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario);
 			
 			Lancamento periodo = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
 			
@@ -752,8 +770,17 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		itemNota.setProdutoEdicao(produtoEdicao);
 		itemNota.setUsuario(usuarioLogado);
 		itemNota.setNotaFiscal(notaFiscal);
-		itemNota.setOrigem(Origem.MANUAL);
 		itemNota.setDesconto(desconto);
+		
+		
+		boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
+		
+		if(indNotaEnvio) {
+			itemNota.setOrigem(Origem.INTERFACE);
+		} else {
+			itemNota.setOrigem(Origem.MANUAL);
+		}
+		
 		itemNotaFiscalRepository.adicionar(itemNota);
 				
 		return itemNota;		
@@ -790,7 +817,15 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			itemNotaFiscalEntrada.setProdutoEdicao(produtoEdicao);
 			itemNotaFiscalEntrada.setUsuario(usuarioLogado);
 			itemNotaFiscalEntrada.setNotaFiscal(notaFiscal);
-			itemNotaFiscalEntrada.setOrigem(Origem.MANUAL);
+			
+			boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
+			
+			if(indNotaEnvio) {
+				itemNotaFiscalEntrada.setOrigem(Origem.INTERFACE);
+			} else {
+				itemNotaFiscalEntrada.setOrigem(Origem.MANUAL);
+			}			
+			
 			itemNotaFiscalRepository.alterar(itemNotaFiscalEntrada);
 
 			return itemNotaFiscalEntrada;

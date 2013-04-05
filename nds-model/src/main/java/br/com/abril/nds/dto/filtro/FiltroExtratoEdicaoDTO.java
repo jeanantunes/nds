@@ -2,7 +2,9 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -35,6 +37,8 @@ public class FiltroExtratoEdicaoDTO implements Serializable {
 	
 	@Export(label = "Fornecedor")
 	private String nomeFornecedor;
+	
+	private List<GrupoMovimentoEstoque> gruposExcluidos;
 	
 	private PaginacaoVO paginacao;
 	
@@ -124,4 +128,17 @@ public class FiltroExtratoEdicaoDTO implements Serializable {
 		this.paginacao = paginacao;
 	}
 
+	/**
+	 * @return the gruposExcluidos
+	 */
+	public List<GrupoMovimentoEstoque> getGruposExcluidos() {
+		return gruposExcluidos;
+	}
+
+	/**
+	 * @param gruposExcluidos the gruposExcluidos to set
+	 */
+	public void setGruposExcluidos(List<GrupoMovimentoEstoque> gruposExcluidos) {
+		this.gruposExcluidos = gruposExcluidos;
+	}
 }

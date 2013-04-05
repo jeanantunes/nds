@@ -156,8 +156,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
 		
-		BigDecimal valorTotalGeral = BigDecimal.ZERO;
-		info.setValorTotalGeral(valorTotalGeral);
+		info.setValorTotalGeral(BigDecimal.ZERO);
 		
 		if(indPerfilUsuarioEncarregado) {
 			carregarDadosAdicionais(info, listaContagemDevolucao);
@@ -432,10 +431,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		Diferenca diferenca = new Diferenca();
 
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
 		ProdutoEdicao produtoEdicao = 
-			this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(contagem.getCodigoProduto(), contagem.getNumeroEdicao());
+			this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
+					contagem.getCodigoProduto(), contagem.getNumeroEdicao());
 		
 		if (produtoEdicao == null) {
 			
@@ -462,7 +460,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
 		diferenca.setTipoEstoque(TipoEstoque.DEVOLUCAO_FORNECEDOR);
 		diferenca.setAutomatica(true);
-		diferenca.setDataMovimento(distribuidor.getDataOperacao());
+		diferenca.setDataMovimento(this.distribuidorService.obterDataOperacaoDistribuidor());
 		
 		this.diferencaEstoqueRepository.adicionar(diferenca);
 	}
@@ -759,12 +757,6 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			throw new IllegalStateException("Nota Fiscal Saida não parametrizada no sistema");
 		}
 		
-		Distribuidor distribuidor = distribuidorService.obter();
-
-		if(distribuidor == null) {
-			throw new IllegalStateException("Informações do distribuidor não encontradas");
-		}
-
 		// Alterado por Pop Punk
 		TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
 		//TipoNotaFiscal tipoNF = tipoNotaFiscalRepository.obterTipoNotaFiscal(GrupoNotaFiscal.DEVOLUCAO_MERCADORIA_FORNECEDOR);
@@ -806,7 +798,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 			TipoMovimentoEstoque tipoMovimento = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 
 			movimentoEstoqueService.gerarMovimentoEstoque(
-					distribuidorService.obter().getDataOperacao(), 
+					this.distribuidorService.obterDataOperacaoDistribuidor(),
 					item.getIdProdutoEdicao(), 
 					usuarioService.getUsuarioLogado().getId(), 
 					item.getQuantidade(),

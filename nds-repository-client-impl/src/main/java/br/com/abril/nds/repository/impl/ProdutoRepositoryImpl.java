@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -43,6 +44,18 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		Query query = super.getSession().createQuery(hql);
 
 		query.setParameter("nome", "%" + nome + "%");
+		return query.list();
+	}
+	
+	@Override
+	public List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxRegRetorno) {
+		String hql = "from Produto produto "
+				   + " where upper(produto.nome) like upper(:nome) order by produto.nome";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("nome", "%" + nome + "%");
+		query.setMaxResults(qtdMaxRegRetorno);
 		
 		return query.list();
 	}
@@ -335,6 +348,28 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return query.list();
 	}
-	
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Produto> obterProdutoLikeCodigo(String codigo) {
+		String hql = "from Produto produto "
+				   + " where upper(produto.codigo) like upper(:codigo) order by produto.codigo";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("codigo", "%" + codigo + "%");
+		
+		return query.list();
+	}
+
+	@Override
+	public List<String> verificarProdutoExiste(String[] codigoProduto) {
+		StringBuilder hql = new StringBuilder("select codigo from produto where produto.codigo in (:codigoProdutoList)");
+		
+		SQLQuery query = super.getSession().createSQLQuery(hql.toString());
+		query.setParameterList("codigoProdutoList", codigoProduto);
+		
+		return query.list();
+	}
+
 }

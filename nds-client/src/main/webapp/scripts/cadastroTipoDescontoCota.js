@@ -160,7 +160,6 @@ var descontoCotaController = $.extend(true,{
 			width : 960,
 			height : 'auto'
 		});		
-	}
+	},
 }, BaseController);
-
-	
+//@ sourceURL=tipoDescontoCota.js

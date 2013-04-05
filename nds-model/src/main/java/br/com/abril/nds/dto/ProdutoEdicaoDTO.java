@@ -8,14 +8,17 @@ import java.util.Date;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.DateUtil;
 
-public class ProdutoEdicaoDTO implements Serializable {
+public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
 
 	/**
 	 * serialVersionUID
@@ -34,6 +37,10 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private BigDecimal precoCusto;
 	private Long peso;
 	private String codigoProduto;
+	private PeriodicidadeProduto periodicidade;
+	private Integer numeroPeriodicidade;
+	
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
 	private String nomeProduto;
 	private String nomeComercial;
@@ -100,7 +107,17 @@ public class ProdutoEdicaoDTO implements Serializable {
 	private TemaProduto temaSecundario;
 
 	private String dataLancamentoFormatada;
-	private BigDecimal qtdeVendas;
+	private BigInteger qtdeVendas;
+	private BigInteger reparte;
+	private String qtdVendasFormatada = "0";
+	
+	private String segmentacao;
+	private String classificacao;
+	
+	private Double venda;
+	private Double percentualVenda;
+	private Long reparteEstudo;
+	private Long tipoSegmentoProdutoId;
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -128,6 +145,8 @@ public class ProdutoEdicaoDTO implements Serializable {
 	 * Tipo de chamada de encalhe deste produtoEdicao
 	 */
 	private TipoChamadaEncalhe tipoChamadaEncalhe;
+
+	private String dataRecolhimentoDistribuidorFormatada;
 	
 	
 	public Long getId() {
@@ -237,6 +256,9 @@ public class ProdutoEdicaoDTO implements Serializable {
 	}
 	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
 		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+		if (dataRecolhimentoDistribuidor != null) {
+			this.dataRecolhimentoDistribuidorFormatada = DateUtil.formatarDataPTBR(dataRecolhimentoDistribuidor); 
+		}
 	}
 	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
 		return tipoChamadaEncalhe;
@@ -716,15 +738,118 @@ public class ProdutoEdicaoDTO implements Serializable {
 		this.dataLancamentoFormatada = dataLancamentoFormatada;
 	}
 
-	public BigDecimal getQtdeVendas() {
-		
-		if(qtdeVendas == null)
-			qtdeVendas = new BigDecimal(0);
-			
+	public BigInteger getQtdeVendas() {
 		return qtdeVendas;
 	}
 
-	public void setQtdeVendas(BigDecimal qtdeVendas) {
+	public void setQtdeVendas(BigInteger qtdeVendas) {
 		this.qtdeVendas = qtdeVendas;
+		
+		if (qtdeVendas != null) {
+			this.qtdVendasFormatada = qtdeVendas.toString();
+		}
 	}
+
+	public BigInteger getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
+	}
+
+	@Override
+    public int compareTo(ProdutoEdicaoDTO o) {  
+        if (o.getNumeroEdicao() > this.getNumeroEdicao()) {  
+            return -1;  
+        } else if (o.getNumeroEdicao() < this.getNumeroEdicao()){  
+            return 1;  
+        } else {  
+            return 0;  
+        }  
+    }
+
+	public PeriodicidadeProduto getPeriodicidade() {
+		return periodicidade;
+	}
+
+	public void setPeriodicidade(PeriodicidadeProduto periodicidade) {
+		this.periodicidade = periodicidade;
+		this.numeroPeriodicidade = periodicidade.getOrdem();
+	}
+
+	public Integer getNumeroPeriodicidade() {
+		return numeroPeriodicidade;
+	}
+
+	public String getQtdVendasFormatada() {
+		return qtdVendasFormatada;
+	}
+
+	public String getDataRecolhimentoDistribuidorFormatada() {
+		return dataRecolhimentoDistribuidorFormatada;
+	}
+
+	public void setDataRecolhimentoDistribuidorFormatada(
+			String dataRecolhimentoDistribuidorFormatada) {
+		this.dataRecolhimentoDistribuidorFormatada = dataRecolhimentoDistribuidorFormatada;
+	}
+
+	public String getSegmentacao() {
+		return segmentacao;
+	}
+
+	public void setSegmentacao(String segmentacao) {
+		this.segmentacao = segmentacao;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public Double getVenda() {
+		return venda;
+	}
+
+	public void setVenda(Double venda) {
+		this.venda = venda;
+	}
+
+	public Long getReparteEstudo() {
+		return reparteEstudo;
+	}
+
+	public void setReparteEstudo(Long reparteEstudo) {
+		this.reparteEstudo = reparteEstudo;
+	}
+
+	public Double getPercentualVenda() {
+		return percentualVenda;
+	}
+
+	public void setPercentualVenda(Double percentualVenda) {
+		this.percentualVenda = percentualVenda;
+	}
+
+	public Long getTipoSegmentoProdutoId() {
+		return tipoSegmentoProdutoId;
+	}
+
+	public void setTipoSegmentoProdutoId(Long tipoSegmentoProdutoId) {
+		this.tipoSegmentoProdutoId = tipoSegmentoProdutoId;
+	}  
+
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(
+			TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+	}
+	
 }

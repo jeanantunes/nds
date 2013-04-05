@@ -27,7 +27,7 @@ public class NegociacaoDividaRepositoryImplTest extends AbstractRepositoryImplTe
 		FiltroConsultaNegociacaoDivida filtro = new FiltroConsultaNegociacaoDivida();
 		filtro.setLancamento(true);
 				
-		List<NegociacaoDividaDTO> negociacaoDividaDTOs = negociacaoDividaRepository.obterCotaPorNumero(filtro);
+		List<NegociacaoDividaDTO> negociacaoDividaDTOs = negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
 		
 		Assert.assertNotNull(negociacaoDividaDTOs);		
 	}
@@ -37,7 +37,7 @@ public class NegociacaoDividaRepositoryImplTest extends AbstractRepositoryImplTe
 		FiltroConsultaNegociacaoDivida filtro = new FiltroConsultaNegociacaoDivida();
 		filtro.setNumeroCota(1);
 						
-		List<NegociacaoDividaDTO> negociacaoDividaDTOs = negociacaoDividaRepository.obterCotaPorNumero(filtro);
+		List<NegociacaoDividaDTO> negociacaoDividaDTOs = negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
 		
 		Assert.assertNotNull(negociacaoDividaDTOs);		
 	}
@@ -50,7 +50,7 @@ public class NegociacaoDividaRepositoryImplTest extends AbstractRepositoryImplTe
 		filtro.getPaginacaoVO().setPaginaAtual(1);
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(2);
 						
-		List<NegociacaoDividaDTO> negociacaoDividaDTOs = negociacaoDividaRepository.obterCotaPorNumero(filtro);
+		List<NegociacaoDividaDTO> negociacaoDividaDTOs = negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
 		
 		Assert.assertNotNull(negociacaoDividaDTOs);		
 	}
@@ -64,7 +64,7 @@ public class NegociacaoDividaRepositoryImplTest extends AbstractRepositoryImplTe
 		filtro.getPaginacaoVO().setPaginaAtual(1);
 		filtro.getPaginacaoVO().setQtdResultadosPorPagina(2);
 						
-		List<NegociacaoDividaDTO> negociacaoDividaDTOs = negociacaoDividaRepository.obterCotaPorNumero(filtro);
+		List<NegociacaoDividaDTO> negociacaoDividaDTOs = negociacaoDividaRepository.obterNegociacaoPorCota(filtro);
 		
 		Assert.assertNotNull(negociacaoDividaDTOs);		
 	}

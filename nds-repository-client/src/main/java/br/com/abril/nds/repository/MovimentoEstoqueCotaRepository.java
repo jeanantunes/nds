@@ -13,12 +13,12 @@ import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -50,31 +50,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 	
 	/**
-	 * Obtém a quantidade de tipos de produtoEdicao da consulta de encalhe.
-	 * Caso o parâmetro "indQtdEncalheAposPrimeiroDia" = false a pesquisa ira retornar 
-	 * a quantidade de tipos de produtoEdicao do encalhe sumarizada do primeiro dia.
-	 * 
-	 * 
-	 * @param filtro
-	 * @param indQtdEncalheAposPrimeiroDia
-	 * 
-	 * @return Qtde - Integer
-	 */
-	public Integer obterQtdProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, boolean indQtdEncalheAposPrimeiroDia);
-	
-	/**
-	 * Obtém a quantidade de itens da consulta de encalhe.
-	 * Caso o parâmetro "indQtdEncalheAposPrimeiroDia" = false a pesquisa ira retornar 
-	 * a quantidade de itens do encalhe sumarizada do primeiro dia.
-	 * 
-	 * @param filtro
-	 * @param indQtdEncalheAposPrimeiroDia
-	 * 
-	 * @return Qtde -  BigDecimal
-	 */
-	public BigDecimal obterQtdItemProdutoEdicaoEncalhe(FiltroConsultaEncalheDTO filtro, boolean indQtdEncalheAposPrimeiroDia);
-	
-	/**
 	 * Pesquisa uma lista de ContagemDevolucao.
 	 * 
 	 * @param filtro
@@ -95,6 +70,14 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public Integer obterQuantidadeContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
+	/**
+	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
+	 * 
+	 * @param filtro
+	 * 
+	 * @return Qtde - Integer
+	 */
+	public Integer obterQtdeConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Obtém o valorTotalGeral da pesquisa de contagemDevolucao 
@@ -121,13 +104,14 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
 	
 	/**
-	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.
+	 * Obtém o valor total do encalhe para a cota (caso específicada)
+	 * e período de recolhimento.
 	 * 
 	 * @param filtro
 	 * 
-	 * @return Qtde - Integer
+	 * @return BigDecimal
 	 */
-	public TotalizadorConsultaEncalheDTO obterTotalizadorConsultaEncalhe(FiltroConsultaEncalheDTO filtro);
+	public BigDecimal obterValorTotalEncalhe(FiltroConsultaEncalheDTO filtro);
 	
 	/**
 	 * Pesquisa lista de ConsultaEncalhe.
@@ -165,6 +149,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * acordo com o range de data informado.
 	 * 
 	 * @param idCota
+	 * @param idFornecedor
 	 * @param idProdutoEdicao
 	 * @param dataInicial
 	 * @param dataFinal
@@ -173,7 +158,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return BigInteger
 	 */
 	public BigDecimal obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(
-			Long idCota,
+			Long idCota, 
+			Long idFornecedor,
 			Long idProdutoEdicao,
 			Date dataInicial, 
 			Date dataFinal,
@@ -291,7 +277,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @param listaProduto
 	 * @return lista movimento estoque cota
 	 */
-	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(Distribuidor distribuidor, Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProduto);
+	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Long idCota, GrupoNotaFiscal grupoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, Intervalo<Date> periodo, List<Long> listaFornecedores, List<Long> listaProduto);
 
 	/**
 	 * Obtém quantidade de produto transferido pela/para cota de acordo com o tipo de movimento
@@ -380,23 +366,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @return List<MovimentoEstoqueCota>
 	 */
 	public List<MovimentoEstoqueCota> obterMovimentosEstornados(Long idCota);
-	
-	/**
-	 * Obtém o Valor Total dos movimentos de estoque da cota que ainda não geraram movimento financeiro
-	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
-	 * @param idCota
-	 * @param dataControleConferencia
-	 * @return BigDecimal
-	 */
-	public BigDecimal obterValorTotalMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia);
-	
-	/**
-	 * Obtém o Valor Total dos movimentos de estoque da cota que forão estornados
-	 * Considera movimentos de estoque provenientes dos fluxos de Venda de Encalhe e Suplementar
-	 * @param idCota
-	 * @return List<MovimentoEstoqueCota>
-	 */
-	public BigDecimal obterValorTotalMovimentosEstornados(Long idCota);
 
 	public List<MovimentoEstoqueCota> obterPorLancamento(Long idLancamento);
 
@@ -411,5 +380,16 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
 	
 	Long obterIdProdutoEdicaoPorControleConferenciaEncalhe(Long idControleConferenciaEncalheCota);
+	
+	List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
+			Long idCota, 
+			GrupoMovimentoEstoque grupoMovimentoEstoque);
+
+	/**
+	 * 
+	 * @param idEstudo
+	 */
+	public abstract void removerMovimentoEstoqueCotaPorEstudo(Long idEstudo);
+
 
 }

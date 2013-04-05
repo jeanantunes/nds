@@ -12,8 +12,13 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 							pesquisaCota.autoCompletarPorNome('#nomeCota');
 						});
 						
+						$("#nomeCota").change(function(){
+							pesquisaCota.pesquisarPorNomeCota('#numeroCota','#nomeCota');
+						});
+						
 						
 						$(".areaInfluenciaGrid", areaInfluenciaGeradorFluxoController.workspace).flexigrid(	{
+
 											preProcess : areaInfluenciaGeradorFluxoController.executarPreProcessamento,
 											dataType : 'json',
 											colModel : [
@@ -94,6 +99,22 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 											width : 960,
 											height : 255
 										});
+
+						$(document).ready(function(){
+							
+							areaInfluenciaGeradorFluxoController.filtroPorArea();
+							focusSelectRefField($("#radio", areaInfluenciaGeradorFluxoController.workspace));
+							$("#radio", areaInfluenciaGeradorFluxoController.workspace).attr("checked", true);
+							
+							$(document.body).keydown(function(e) {
+								
+								if(keyEventEnterAux(e)){
+									areaInfluenciaGeradorFluxoController.pesquisarPorArea();
+								}
+								
+								return true;
+							});
+						});
 					},
 
 					executarPreProcessamento : function(resultado) {
@@ -208,13 +229,28 @@ var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 						$('.filtroPorCota').show();
 						$('.filtroPorArea').hide();
 						$('.porArea').hide();
+						areaInfluenciaGeradorFluxoController.limparCamposCota();
 					},
 
 					filtroPorArea : function() {
 						$('.filtroPorCota').hide();
 						$('.filtroPorArea').show();
 						$('.porCota').hide();
+						areaInfluenciaGeradorFluxoController.limparCamposArea(); 
+					},
+					
+					limparCamposCota : function() {
+						$('#numeroCota').val("");
+						$('#nomeCota').val("");
+					},
+					
+					limparCamposArea : function() {
+						$('#areaInfluencia').val(null);
+						$('#geradorFluxoPrincipal').val(null);
+						$('#geradorFluxoSecundario').val(null);
+						$('#cotasAtivas').click();
 					}
 
 				}, BaseController);
+
  //@ sourceURL=areaInfluenciaGeradorFluxo.js

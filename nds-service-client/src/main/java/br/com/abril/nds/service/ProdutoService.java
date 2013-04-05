@@ -5,7 +5,6 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.service.exception.UniqueConstraintViolationException;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -33,6 +32,17 @@ public interface ProdutoService {
 	 */
 	List<Produto> obterProdutoLikeNome(String nome);
 	
+	List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxResult);
+	/**
+	 * Obtém produtos cujo código começa com o código informado.
+	 * 
+	 * @param nomeProduto - código do produto
+	 * 
+	 * @return {@link List<Produto>}
+	 */
+	List<Produto> obterProdutoLikeCodigo(String codigo);
+
+	
 	/**
 	 * Obtém um produto de acordo com o código do produto.
 	 * 
@@ -50,7 +60,7 @@ public interface ProdutoService {
 			String fornecedor, String editor, Long codigoTipoProduto,
 			String sortorder, String sortname, int page, int rp);
 
-	void removerProduto(Long id) throws UniqueConstraintViolationException;
+	void removerProduto(Long id);
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto);
@@ -98,5 +108,6 @@ public interface ProdutoService {
 	List<Produto> obterProdutos();
 	
 	List<Produto> obterProdutosBalanceadosOrdenadosNome(Date dataLancamento);
-	
+
+	List<String> verificarProdutoExiste(String...codigoProduto);
 }

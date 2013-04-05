@@ -77,7 +77,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Transactional
 	public void cancelarChamadaAntecipadaCota(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
-		filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		List<ChamadaAntecipadaEncalheDTO> chamadasEncalheCota = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
 		
@@ -285,7 +285,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		if(filtro.isProgramacaoCE()){
 			
-			filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+			filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 			list = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
 			antecipadaEncalheDTO.setTotalRegistros(chamadaEncalheCotaRepository.obterQntCotasProgramadaParaAntecipacoEncalhe(filtro));
 		}
@@ -319,7 +319,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		if(filtro.isProgramacaoCE()){
 			
-			filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+			filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 			list = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
 		}
 		else{
@@ -355,7 +355,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		BigDecimal qntPrevistaEncalhe = BigDecimal.ZERO;
 		
-		filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		qntPrevistaEncalhe = chamadaEncalheCotaRepository.obterQntExemplaresComProgramacaoAntecipadaEncalheCota(filtro);
 		
 		if(qntPrevistaEncalhe == null || (qntPrevistaEncalhe.compareTo(BigDecimal.ZERO) <= 0)){
@@ -369,7 +369,7 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Override
 	public ChamadaAntecipadaEncalheDTO obterChamadaEncalheAntecipada(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
-		filtro.setDataOperacao(distribuidorRepository.obter().getDataOperacao());
+		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		List<ChamadaAntecipadaEncalheDTO> chamada = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
 		

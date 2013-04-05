@@ -15,7 +15,6 @@ public class MunicipioDTO  implements Serializable {
 	}
 	
 	public MunicipioDTO(String municipio, Integer qtde, Boolean selecionado) {
-		super();
 		this.municipio = municipio;
 		this.qtde = qtde;
 		this.selecionado = selecionado;

@@ -63,6 +63,8 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private String descricaoDescontoManual;
 	
+	private String formaFisica;
+	
 	/**
 	 * 
 	 */
@@ -78,7 +80,7 @@ public class ProdutoCadastroVO implements Serializable {
 			String tributacaoFiscal, String classeSocial, String sexo, 
 			String faixaEtaria, String formatoProduto, 
 			String tipoLancamento, String temaPrincipal, 
-			String temaSecundario, Origem origem) {
+			String temaSecundario, String formaFisica,Origem origem) {
 		this.id = id;
 		this.codigo = codigo;
 		this.nome = nome;
@@ -101,6 +103,7 @@ public class ProdutoCadastroVO implements Serializable {
 		this.tipoLancamento = tipoLancamento;
 		this.temaPrincipal = temaPrincipal;
 		this.temaSecundario = temaSecundario;
+		this.formaFisica=formaFisica;
 		this.origem = origem;
 		
 	}
@@ -443,7 +446,6 @@ public class ProdutoCadastroVO implements Serializable {
 		
 		long codigoTipoDesconto = produto.getDescontoLogistica() != null ? 
 				produto.getDescontoLogistica().getTipoDesconto().longValue() : 0L;
-		
 		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
 			produto.getId(), 
 			produto.getCodigo(), 
@@ -463,6 +465,7 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTipoLancamento()!=null?produto.getSegmentacao().getTipoLancamento().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaPrincipal()!=null?produto.getSegmentacao().getTemaPrincipal().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaSecundario()!=null?produto.getSegmentacao().getTemaSecundario().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormaFisica()!=null?produto.getSegmentacao().getFormaFisica().name():""):"",		
 			produto.getOrigem());
 		
 		if(Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()!= null){
@@ -483,4 +486,14 @@ public class ProdutoCadastroVO implements Serializable {
 	public void setDescricaoDescontoManual(String descricaoDescontoManual) {
 		this.descricaoDescontoManual = descricaoDescontoManual;
 	}
+
+	public String getFormaFisica() {
+		return formaFisica;
+	}
+
+	public void setFormaFisica(String formaFisica) {
+		this.formaFisica = formaFisica;
+	}
+	
+	
 }

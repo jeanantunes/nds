@@ -9,11 +9,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.DistribuicaoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
+import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
@@ -25,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
@@ -32,6 +36,7 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
 
 /**
@@ -68,6 +73,8 @@ public interface CotaService {
 	List<Cota> obterCotasPorNomePessoa(String nome);
 
 	List<Cota> obterPorNome(String nome);
+	
+	List<CotaDTO> obterPorNomeAutoComplete(String nome);
 
 	Cota obterPorId(Long idCota);
 
@@ -356,14 +363,40 @@ public interface CotaService {
 	
 	Long obterQuantidadeCotas(SituacaoCadastro situacaoCadastro);
     
-    List<Cota> obterCotas(SituacaoCadastro situacaoCadastro);
+    List<CotaResumoDTO> obterCotas(SituacaoCadastro situacaoCadastro);
 	
-	List<Cota> obterCotasComInicioAtividadeEm(Date dataInicioAtividade);
+	List<CotaResumoDTO> obterCotasComInicioAtividadeEm(Date dataInicioAtividade);
 	
-	List<Cota> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
+	List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte);
 	
-	List<Cota> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
+	List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
 
-	List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	List<CotaDTO> buscarCotasQueEnquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
+	List<CotaDTO> buscarCotasQueInquadramNoRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	
+	List<CotaDTO> buscarCotasQuePossuemPercentualVendaSuperior(BigDecimal percentVenda, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	
+	List<CotaDTO> buscarCotasPorNomeOuNumero(CotaDTO cotaDto, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	
+	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	
+	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
+	
+	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
+	
+	/**
+	 * 
+	 * @param idCota
+	 * @return
+	 */
+	boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota);
+	
+	public void apagarTipoCota(Long idCota, String TipoCota);
+	
+	public List<DistribuidorClassificacaoCota> obterListaClassificacao();
+
+	public abstract boolean cotaVinculadaCotaBase(Long idCota);
+	
+	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
 }

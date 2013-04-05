@@ -23,13 +23,15 @@ var contasAPagarController = $.extend(true, {
 			buttonImageOnly: true
 		});
 		
-		this.initcontasAPagarListaProdutosGrid();		
+		this.initcontasAPagarListaProdutosGrid();
 		this.initGridPesquisarPorProduto();
 		this.initGridPesquisarPorFornecedor();
 		this.initGridParciais();
 		this.initGridConsignado();
 		this.initGridEncalhe();
 		this.initGridFaltasSobras();
+		
+		$('.areaBts').hide();
 	},
 	
 	
@@ -150,6 +152,8 @@ var contasAPagarController = $.extend(true, {
 		);
 		
 		$('.gridProduto').show();
+		
+		$('.areaBts').show();
 	},
 	
 	
@@ -181,6 +185,8 @@ var contasAPagarController = $.extend(true, {
 		);
 
 		$('.gridDistrib').show();
+		
+		$('.areaBts').show();
 	},
 	
 	
@@ -195,6 +201,8 @@ var contasAPagarController = $.extend(true, {
 		});
 
 		$(".contasAPagarListaProdutosGrid").flexReload();
+		
+		$('.areaBts').show();
 	},
 	
 	

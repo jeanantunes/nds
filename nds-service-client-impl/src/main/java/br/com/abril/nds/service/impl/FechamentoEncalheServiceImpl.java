@@ -28,7 +28,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
@@ -217,6 +217,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		return listaConferencia;
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro){
+		
+		int quantidade = 0;
+		
+		quantidade = this.fechamentoEncalheRepository.buscarQuantidadeConferenciaEncalhe(filtro);
+				
+		return quantidade;
+	}
+	
 	private Long calcularDiferencao(FechamentoFisicoLogicoDTO conferencia) {
 		 
 		if (conferencia.getFisico() != null && conferencia.getExemplaresDevolucao() != null) {	
@@ -302,7 +313,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		} 
 		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
+			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
 		
 		if (isSomenteCotasSemAcao) {
 			
@@ -332,7 +343,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao) {
 		
-		return this.fechamentoEncalheRepository.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		return this.fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
 	}
 
 	@Override
@@ -340,7 +351,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public int buscarQuantidadeCotasAusentes(Date dataEncalhe) {
 		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-			this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, false, "asc", "numeroCota", 0, 0);
+			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, false, "asc", "numeroCota", 0, 0);
 		
 		int total = 0;
 		
@@ -396,7 +407,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-				this.fechamentoEncalheRepository.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0);
+				this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, true, null, null, 0, 0);
 		
 		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
 		
@@ -426,7 +437,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public void cobrarTodasCotas(Date dataOperacao, Usuario usuario) {
 
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-				this.fechamentoEncalheRepository.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+				this.fechamentoEncalheRepository.obterCotasAusentes(dataOperacao, true, null, null, 0, 0);
 
 		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
 
@@ -635,8 +646,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public void gerarNotaFiscal(Date dataEncalhe)  {
 		
 		List<TipoNotaFiscal> listaTipoNotaFiscal = this.tipoNotaFiscalRepository.obterTiposNotaFiscal(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO);
-			
-		Distribuidor distribuidor = this.distribuidorService.obter();
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = 
+				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		List<Cota> cotas = fechamentoEncalheRepository.buscarCotaFechamentoChamadaEncalhe(dataEncalhe);
 		for (Cota cota : cotas) {
 		
@@ -645,7 +656,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				TipoNotaFiscal tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
 				
 				List<ItemNotaFiscalSaida> listItemNotaFiscal = 
-						this.notaFiscalService.obterItensNotaFiscalPor(distribuidor,cota, null, null, null, tipoNotaFiscal);
+						this.notaFiscalService.obterItensNotaFiscalPor(
+								parametrosRecolhimentoDistribuidor,
+								cota, null, null, null, tipoNotaFiscal);
 				
 				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
 					continue;
@@ -941,12 +954,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional(readOnly=true)
 	public Date buscarUtimoDiaDaSemanaRecolhimento() {
-		Distribuidor  distribuidor =  distribuidorService.obter();
 		
 		Integer numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date());
 		Date dataInicioSemana = 
 				DateUtil.obterDataDaSemanaNoAno(
-					numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), null);
+					numeroSemana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
 			
 			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 

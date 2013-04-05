@@ -175,8 +175,8 @@ public interface FornecedorService {
 	public Fornecedor obterFornecedorPorCodigoInterface(Integer codigoInterface);
 
 	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor);
+	
+	List<Pessoa> obterFornecedorPorNome(String nomeFornecedor, Integer qtdMaxResult);
 
 	List<Pessoa> obterFornecedorPorNomeFantasia(String nomeFantasia);
-
-
 }

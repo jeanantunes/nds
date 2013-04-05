@@ -61,11 +61,11 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					String.format( "Produto %1$s não encontrado.", input.getCodigoPublicacao() )
 				);
 			return ;
-		} else {
+		} /*else {
 			if (!produto.getOrigem().equals(Origem.MANUAL)) {
 				return;
 			}
-		}
+		}*/
 		
 		
 		// regra para Registro de Lancamento 		
@@ -221,7 +221,10 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
 
-		int peb = produtoEdicaoLancamento.getPeb() == 0 ? produtoEdicaoLancamento.getPeb() : produtoEdicaoLancamento.getProduto().getPeb();
+		int peb = produtoEdicaoLancamento.getPeb() == 0 ? produtoEdicaoLancamento.getProduto().getPeb() : produtoEdicaoLancamento.getPeb();
+		if (peb == 0) {
+			peb = 10;
+		}
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(input.getDataMovimento());

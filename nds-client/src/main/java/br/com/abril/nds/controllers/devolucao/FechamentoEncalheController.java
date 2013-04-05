@@ -22,7 +22,6 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -91,11 +90,10 @@ public class FechamentoEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 	public void index() {
 		
-		Distribuidor dist = distribuidorService.obter();
 		List<Fornecedor> listaFornecedores = fornecedorService.obterFornecedores();
 		List<Box> listaBoxes = boxService.buscarPorTipo(TipoBox.ENCALHE);
 		
-		result.include("dataOperacao", DateUtil.formatarDataPTBR(dist.getDataOperacao()));
+		result.include("dataOperacao", DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()));
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
 	}
@@ -106,13 +104,29 @@ public class FechamentoEncalheController extends BaseController {
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = 
 				consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
+		
+		int quantidade = this.quantidadeItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo);
 			
 		if (listaEncalhe.isEmpty()) {
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
 		} else {
-			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(listaEncalhe.size()).page(page).serialize();
+			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(quantidade).page(page).serialize();
 		}
 	}
+	
+	private int quantidadeItensFechamentoEncalhe(
+			String dataEncalhe, Long fornecedorId, Long boxId,
+			Boolean aplicaRegraMudancaTipo) {
+		
+		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+		filtro.setFornecedorId(fornecedorId);
+		filtro.setBoxId(boxId);
+		
+		int quantidadeFechamentoEncalhe = this.fechamentoEncalheService.buscarQuantidadeConferenciaEncalhe(filtro);
+		
+		return quantidadeFechamentoEncalhe;
+	}	
 
 	private List<FechamentoFisicoLogicoDTO> consultarItensFechamentoEncalhe(
 			String dataEncalhe, Long fornecedorId, Long boxId,
@@ -311,7 +325,7 @@ public class FechamentoEncalheController extends BaseController {
 			int rp, int page, FileType fileType) {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
-			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, false, sortorder, sortname, page, rp);
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, false, sortorder, sortname, 0, 0);
 
 		if (listaCotasAusenteEncalhe != null && !listaCotasAusenteEncalhe.isEmpty()) {
 		
@@ -443,13 +457,13 @@ public class FechamentoEncalheController extends BaseController {
 		
 		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
-			this.result.use(Results.json()).from(Boolean.FALSE, "isCotasAusentes").recursive().serialize();
+			this.result.use(Results.json()).from(Boolean.FALSE.toString(), "isNenhumaCotaAusente").recursive().serialize();
 			
 			return;
 		
 		} else if (totalCotasAusentes <= 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			
-			this.result.use(Results.json()).from(Boolean.TRUE, "isCotasAusentes").recursive().serialize();
+			this.result.use(Results.json()).from(Boolean.TRUE.toString(), "isNenhumaCotaAusente").recursive().serialize();
 			
 			return;
 		}

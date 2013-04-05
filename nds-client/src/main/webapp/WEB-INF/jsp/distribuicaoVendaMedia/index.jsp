@@ -8,7 +8,15 @@ $(function() {
 	});
 function popup_novo() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-
+	$("#edicaoProdCadastradosGrid").flexAddData({
+			rows : [],
+			page : 1,
+			total : 1
+		});
+	$("#codigoPesquisaBases").val("");
+	$("#produtoPesquisaBases").val("");
+	$("#edicaoPesquisaBases").val("");
+	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
 	$( "#dialog-novo" ).dialog({
 		resizable: false,
 		height:420,
@@ -38,6 +46,7 @@ function popup_cancelar() {
 			"Confirmar": function() {
 				$( this ).dialog( "close" );
 				$("#effect").show("highlight", {}, 1000, callback);				
+				distribuicaoVendaMedia.cancelar();
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -46,6 +55,24 @@ function popup_cancelar() {
 	});
 };
 
+function popup_excluir_bonificacao(index) {
+	$( "#dialog-excluir" ).dialog({
+		resizable: false,
+		height:'auto',
+		width:380,
+		modal: true,
+		buttons: {
+			"Confirmar": function() {
+				distribuicaoVendaMedia.removerBonificacao(index);
+				$( this ).dialog( "close" );
+				$("#effect").show("highlight", {}, 1000, callback);				
+			},
+			"Cancelar": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+}
 function popup_excluir() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
@@ -56,6 +83,7 @@ function popup_excluir() {
 		modal: true,
 		buttons: {
 			"Confirmar": function() {
+				distribuicaoVendaMedia.removerProdutoEdicaoDaBase();
 				$( this ).dialog( "close" );
 				$("#effect").show("highlight", {}, 1000, callback);				
 			},
@@ -163,6 +191,8 @@ function esconde_redutor(){
 	$('.redutorManual').hide();
 	}
 
+ var pesquisaProduto = new PesquisaProduto();
+
 </script>
 
 <div id="dialog-regiao" title="Pesquisar Região" style="display:none;">
@@ -191,9 +221,13 @@ function esconde_redutor(){
 </div>
 
 
-<div id="dialog-detalhes" title="Visualizando Produto">
-	<img src="../capas/revista-nautica-11.jpg" width="235" height="314" />
+<div id="dialog-detalhes" title="Visualizando Produto" style="margin-right:0px!important; float:right!important;">
+	
+	<img src="images/loading.gif" id="loadingCapa"/>
+	<!-- <img src="capas/revista-nautica-11.jpg" width="235" height="314" id="imagemCapaEdicao" style="display:none"/>  -->
+	<img  width="235" height="314" id="imagemCapaEdicao" style="display:none"/>
 </div>
+
 <div id="dialog-excluir" title="Excluir Produto" style="display:none;">  
     <fieldset style="width:320px!important;">
             <legend>Excluir Produto</legend>
@@ -215,9 +249,18 @@ function esconde_redutor(){
       <table width="545" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
             <td width="43">Código:</td>
-            <td width="78"><input type="text" name="textfield" id="codigoPesquisaBases" style="width:60px;" /></td>
+            <td width="78">
+            	<input type="text" name="textfield" id="codigoPesquisaBases" style="width:60px;"
+            	 	onblur="if(this.value.length > 7) pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
+            	 	/>
+            </td>
             <td width="48">Produto:</td>
-            <td width="184"><input type="text" name="textfield2" id="produtoPesquisaBases" style="width:160px;" /></td>
+            <td width="184">
+            	<input type="text" name="textfield2" id="produtoPesquisaBases" style="width:160px;" 
+            		onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produtoPesquisaBases', true);" 
+                	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
+            		/>
+            </td>
             <td width="42">Edição:</td>
             <td width="62"><input type="text" name="textfield3" id="edicaoPesquisaBases" style="width:60px;" /></td>
             <td width="52"><span class="classPesquisar"><a href="javascript:;" onclick="distribuicaoVendaMedia.pesquisarBases('${pageContext.request.contextPath}')">&nbsp;</a></span></td>
@@ -250,7 +293,7 @@ function esconde_redutor(){
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
                 <span class="ui-state-default ui-corner-all" style="float:right;">
                 <a href="javascript:;" class="ui-icon ui-icon-close">&nbsp;</a></span>
-				<b>Box < evento > com < status >.</b></p>
+				<b>Ação realizada com sucesso</b></p>
 	</div>
     	
       <fieldset style="width:650px!important; float:left;">
@@ -263,21 +306,21 @@ function esconde_redutor(){
                     <li><a href="#tab-distribuicao-3">Bonificação</a></li>
                     <li><a href="#tab-distribuicao-4">Região Distribuição</a></li>
                 </ul>
-                <div id="tab-distribuicao-1">
+                <div id="tab-distribuicao-1" class="distribuicaoVendaMedia-tab">
                 	<fieldset style="width:280px!important; margin-bottom:10px; float:left;">
                     	<legend>Dados da Distribuição</legend>
                     	<table width="280" border="0" cellspacing="2" cellpadding="2">
                           <tr>
                             <td>Produto:</td>
-                            <td>${ produtoEdicao.produto.nome }</td>
+                            <td>${ produtoEdicao.nomeProduto }</td>
                           </tr>
                           <tr>
                             <td>Nome Comercial:</td>
-                            <td>${ produtoEdicao.produto.nomeComercial }</td>
+                            <td>${ produtoEdicao.nomeComercial }</td>
                           </tr>
                           <tr>
                             <td width="110">Código</td>
-                            <td>${ produtoEdicao.produto.codigo }</td>
+                            <td>${ produtoEdicao.codigoProduto }</td>
                           </tr>
                           <tr>
                             <td>Edição:</td>
@@ -285,27 +328,27 @@ function esconde_redutor(){
                           </tr>
                           <tr>
                             <td>Preço R$</td>
-                            <td>${ produtoEdicao.precoVenda }</td>
+                            <td> <fmt:formatNumber type="currency" minFractionDigits="2" currencySymbol="" value="${ produtoEdicao.precoVenda }" /> </td>
                           </tr>
                           <tr>
                             <td>Pacote Padrão:</td>
                             <td>${ produtoEdicao.pacotePadrao }</td>
                           </tr>
                           <tr>
-                            <td>Data Lan�amento:</td>
-                            <td>${ lancamento.dataLancamentoDistribuidor }</td>
+                            <td>Data Lançamento:</td>
+                            <td>${ produtoEdicao.dataLancamentoFormatada }</td>
                           </tr>
                           <tr>
                             <td>Data Recolhimento:</td>
-                            <td>${ lancamento.dataRecolhimentoDistribuidor }</td>
+                            <td>${ produtoEdicao.dataRecolhimentoDistribuidorFormatada }</td>
                           </tr>
                           <tr>
                             <td>Segmento:</td>
-                            <td>${ produtoEdicao.segmentacao.temaPrincipal.descTemaProduto }</td>
+                            <td>${ produtoEdicao.segmentacao }</td>
                           </tr>
                           <tr>
                             <td>Classificação</td>
-                            <td width="156">${ produtoEdicao.segmentacao.faixaEtaria.descFaixaEtaria }</td>
+                            <td width="156">${ produtoEdicao.classificacao }</td>
                           </tr>
                         </table>
                         
@@ -319,10 +362,6 @@ function esconde_redutor(){
                         </tr>
                       </table>
                    	  <table width="275" border="0" cellspacing="2" cellpadding="2">
-                   	    <tr>
-                   	      <td>&nbsp;</td>
-                   	      <td colspan="2">&nbsp;</td>
-               	        </tr>
                    	    <tr>
                    	      <td width="91">Juramentado:</td>
                    	      <td colspan="2">${ juramentado }</td>
@@ -345,42 +384,42 @@ function esconde_redutor(){
                	        </tr>
                    	    <tr>
                    	      <td>Reparte Distribuir:</td>
-                   	      <td colspan="2"><input type="text" name="textfield6" id="textfield6" style="width:40px; text-align:center;"  /></td>
+                   	      <td colspan="2"><input type="text" name="textfield6" id="reparteDistribuir" style="width:40px; text-align:center;"  /></td>
                	        </tr>
                    	    <tr>
-                   	      <td>Reparte M�nimo:</td>
-                   	      <td colspan="2"><input type="text" name="textfield4" id="textfield4" style="width:40px; text-align:center;"  /></td>
+                   	      <td>Reparte Mínimo:</td>
+                   	      <td colspan="2"><input type="text" name="textfield4" id="reparteMinimo" style="width:40px; text-align:center;"  /></td>
                	        </tr>
                    	    <tr>
-                   	      <td align="right"><input name="checkbox2" type="checkbox" id="checkbox2" checked="checked" /></td>
+                   	      <td align="right"><input name="checkbox2" type="checkbox" id="usarFixacao" checked="checked" /></td>
                    	      <td colspan="2">Usar Fixação</td>
                	        </tr>
                    	    <tr>
-                   	      <td align="right"><input type="checkbox" name="checkbox3" id="checkbox3" onclick="$('.distrMult').toggle();" /></td>
+                   	      <td align="right"><input type="checkbox" name="checkbox3" id="distribuicaoPorMultiplo" onclick="$('.distrMult').toggle();" /></td>
                    	      <td width="120">Distribuição por multiplo</td>
-                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" value="10" readonly="readonly" /></td>
+                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" id="multiplo" value="10" readonly="readonly" /></td>
                	        </tr>
                	    </table>
                   </fieldset>
                     <br clear="all" />
-                    <span class="bt_novos"><a href="../Distribuicao/matriz_distribuicao.htm"><img src="../images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                     <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="../images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
+                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
                                        
-                     <span class="bt_novos"><a href="javascript:;"><img src="../images/ico_check.gif" alt="Gerar" hspace="5" border="0" />Gerar</a></span>
-                     <span class="bt_novos"><a href="analise_1.htm"><img src="../images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.gerar()"><img src="images/ico_check.gif" alt="Gerar" hspace="5" border="0" />Gerar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.analise()"><img src="images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
                 </div>
-                <div id="tab-distribuicao-2">
+                <div id="tab-distribuicao-2" class="distribuicaoVendaMedia-tab">
                	  <fieldset style="width:600px!important;">
                    	<legend>Bases</legend>
                    	  <table width="600" border="0" cellspacing="2" cellpadding="2">
                    	    <tr>
                    	      <td width="36">Código:</td>
-                   	      <td width="56">${ produtoEdicao.produto.codigo }</td>
+                   	      <td width="56">${ produtoEdicao.codigoProduto }</td>
                    	      <td width="41">Produto:</td>
-                   	      <td width="226">${ produtoEdicao.produto.nome }</td>
+                   	      <td width="226">${ produtoEdicao.nomeProduto }</td>
                    	      <td width="35">Edição:</td>
                    	      <td width="83">${ produtoEdicao.numeroEdicao }</td>
-                   	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="popup_novo();"><img src="../images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
+                   	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="popup_novo();"><img src="images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
                	        </tr>
                	    </table>
                    	</fieldset>
@@ -392,25 +431,24 @@ function esconde_redutor(){
                     </fieldset>
                     <br clear="all" />
                     
-                    <span class="bt_novos"><a href="../Distribuicao/matriz_distribuicao.htm"><img src="../images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
 
-                    <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="../images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
+                    <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
                     
                    
-                <span class="bt_novos"><a href="javascript:;"><img src="../images/ico_salvar.gif" alt="Salvar" hspace="5" border="0" />Salvar</a></span>
-                <span class="bt_novos"><a href="javascript:;" onclick="popup_excluir();"><img src="../images/ico_excluir.gif" hspace="5" alt="Cancelar" border="0" />Excluir</a></span>
+                <span class="bt_novos"><a href="javascript:;" onclick="popup_excluir();"><img src="images/ico_excluir.gif" hspace="5" alt="Cancelar" border="0" />Excluir</a></span>
                 
                 </div>
                 
-                <div id="tab-distribuicao-3">
+                <div id="tab-distribuicao-3" class="distribuicaoVendaMedia-tab">
                 <fieldset style="width:600px!important; margin-bottom:10px;">
                    	<legend>Produto</legend>
                    	<table width="600" border="0" cellspacing="2" cellpadding="2">
                    	  <tr>
                    	    <td width="36">Código:</td>
-                   	    <td width="60">${ produtoEdicao.produto.codigo }</td>
+                   	    <td width="60">${ produtoEdicao.codigoProduto }</td>
                    	    <td width="42">Produto:</td>
-                   	    <td width="235">${ produtoEdicao.produto.nomeComercial }</td>
+                   	    <td width="235">${ produtoEdicao.nomeComercial }</td>
                    	    <td width="35">Edição:</td>
                    	    <td width="66">${ produtoEdicao.numeroEdicao }</td>
                    	    <td width="69">&nbsp;</td>
@@ -429,42 +467,49 @@ function esconde_redutor(){
             </tr>
     	<tr>
             <td width="281" valign="top">
-                <table class="lstComponentesGrid"></table>
+                <table class="lstComponentesGrid">
+                	<c:forEach items="${ componentes }" var="componente" varStatus="idx">
+	                	<tr onclick="distribuicaoVendaMedia.selectComponenteBonificacao(${ idx.count - 1 }, '${ componente.descricao }', '${ componente }')">
+	                		<td>${ componente.descricao }</td>
+	                		<td><input type="checkbox" id="componenteBonificacao${ idx.count - 1 }" ></<input></td>
+	                	</tr>
+                	</c:forEach>
+                </table>
             </td>
             <td width="12" style="width:10px;">&nbsp;</td>
             <td width="281" valign="top">
-              <table class="bonificacoesGrid"></table>
+              <table class="bonificacoesGrid" id="bonificacoesGrid"></table>
             </td>
             </tr>
     </table>
-    <span class="bt_novos" style="float:right!important; margin-right:20px;"><a href="javascript:;"><img src="../images/ico_add.gif" alt="Confirmar Seleção" hspace="5" border="0" />Confirmar Seleção</a></span>
+    <span class="bt_novos" style="float:right!important; margin-right:20px;"><a href="javascript:;" onclick="distribuicaoVendaMedia.confirmarSelecaoBonificacao();"><img src="images/ico_add.gif" alt="Confirmar Seleção" hspace="5" border="0" />Confirmar Seleção</a></span>
     <br />
 
     <table width="590" border="0" cellspacing="2" cellpadding="2">
         <tr>
           <td width="672" valign="top">
-            <table class="elemento1Grid"></table>
+            <table class="elemento1Grid" id="elemento1Grid"></table>
             </td>
         </tr>
     </table>                 
 <br clear="all" />
 </fieldset>
                     <br clear="all" />
-                    <span class="bt_novos"><a href="../Distribuicao/matriz_distribuicao.htm"><img src="../images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                    <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="../images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span><span class="bt_novos"><a href="javascript:;"><img src="../images/ico_salvar.gif" alt="Salvar" hspace="5" border="0" />Salvar</a></span>
+                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+                    <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span><span class="bt_novos"><a href="javascript:;"><img src="images/ico_salvar.gif" alt="Salvar" hspace="5" border="0" />Salvar</a></span>
                 <br clear="all" />
 
                 </div>
                 
-                <div id="tab-distribuicao-4">
+                <div id="tab-distribuicao-4" class="distribuicaoVendaMedia-tab">
                 <fieldset style="width:600px!important; margin-bottom:10px;">
                	  <legend>Região Distribuição</legend>
                    	<table width="587" border="0" cellspacing="2" cellpadding="2">
                    	  <tr>
                    	    <td width="36">Código:</td>
-                   	    <td width="60">${ produtoEdicao.produto.codigo }</td>
+                   	    <td width="60">${ produtoEdicao.codigoProduto }</td>
                    	    <td width="42">Produto:</td>
-                   	    <td width="235">${ produtoEdicao.produto.nomeComercial }</td>
+                   	    <td width="235">${ produtoEdicao.nomeComercial }</td>
                    	    <td width="35">Edição:</td>
                    	    <td width="66">${ produtoEdicao.numeroEdicao }</td>
                    	    <td width="69">&nbsp;</td>
@@ -477,33 +522,47 @@ function esconde_redutor(){
                		<legend>Região</legend>
                         <table width="600" border="0" cellspacing="2" cellpadding="2">
                           <tr>
-                            <td width="20"><input name="regiao" type="radio" id="radio" value="radio" checked="checked" onclick="nenhuma();" /></td>
+                            <td width="20"><input name="regiao" type="radio" id="RDtodasAsCotas" value="radio" checked="checked"  /></td>
                             <td width="85">Todas as Cotas</td>
                             <td width="475">&nbsp;</td>
                           </tr>
                           <tr>
-                            <td><input type="radio" name="regiao" id="radio2" value="radio" onclick="mostraComponentes();" /><!--mostra_regiao()--></td>
+                            <td><input type="radio" name="regiao" id="RDcomponente" value="radio" onclick="mostraComponentes();" /><!--mostra_regiao()--></td>
                             <td>Componente:</td>
                  <td><table width="369" border="0" cellspacing="1" cellpadding="1" id="lstComponentes" style="display:none;">
                    <tr>
-                     <td width="156"><select name="select" id="select" style="width:150px;">
-                     </select></td>
+                     <td width="156">
+	                     <select name="componenteRegiaoDistribuicao" id="componenteRegiaoDistribuicao"
+	                     	onchange="distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteRegiaoDistribuicao', 'elementoRegiaoDistribuicao')"  
+	                     	style="width:110px;" class="filtroComponentes">
+	                  		<option selected="selected">Selecione...</option>
+		                    <c:forEach items="${componentes}" var="componente" varStatus="idx">
+								<option value="${idx.count-1}">${componente.descricao}</option>
+							</c:forEach>
+		                </select>
+                     </td>
                      <td width="51">Elemento:</td>
-                     <td width="152"><select name="select2" id="select2" style="width:150px;">
-                     </select></td>
+                     <td width="152">
+                     	<select name="elementoRegiaoDistribuicao" id="elementoRegiaoDistribuicao" style="width:150px;">
+                     	</select>
+                     </td>
                    </tr>
                  </table></td>
                           </tr>
                           <tr>
-                            <td><input type="radio" name="regiao" id="radio3" value="radio" onclick="mostra_qtdeBancas();" /></td>
+                            <td><input type="radio" name="regiao" id="RDAbrangencia" value="radio" onclick="mostra_qtdeBancas();" /></td>
                             <td> % Abrangência</td>
                             <td>
-                            <div id="qtdeBancas" style="display:none;">Critério:&nbsp;<select name="" style="margin-right:10px;">
-                              <option selected="selected">Selecione</option>
-                              <option>Faturamento</option>
-                              <option>Segmento</option>
-                              <option>Histórico</option>
-                            </select><input type="text"  style="width:40px; text-align:center; margin-right:5px;" value="0" />%</div></td>
+	                            <div id="qtdeBancas" style="display:none;">Critério:&nbsp;
+		                            <select name="" style="margin-right:10px;" id="RDabrangenciaCriterio">
+		                              <option selected="selected">Selecione...</option>
+		                              <option>Faturamento</option>
+		                              <option>Segmento</option>
+		                              <option>Histórico</option>
+		                            </select>
+		                            <input type="text"  style="width:40px; text-align:center; margin-right:5px;" value="0" id="RDabrangencia"/>%
+	                            </div>
+                            </td>
                           </tr>
                         </table>
                     </fieldset>
@@ -512,32 +571,46 @@ function esconde_redutor(){
 
 				    <table width="600" border="0" cellspacing="2" cellpadding="2">
                         <tr>
-                          <td width="20"><input type="checkbox" name="checkbox" id="checkbox" onclick="$('#selRoteiro').toggle();" /></td>
+                          <td width="20"><input type="checkbox" name="checkbox" id="RDroteiroEntrega" onclick="$('#selRoteiro').toggle();" /></td>
                           <td width="142">Roteiro de Entrega</td>
-                          <td width="418"><select name="selRoteiro" id="selRoteiro" style="width:200px; display:none;">
+                          <td width="418">
+                          <select name="selRoteiro" id="selRoteiro" style="width:200px; display:none;">
                             <option>Selecione...</option>
+                            <c:forEach items="${ roteiros }" var="roteiro">
+                            	<option value="${ roteiro.id }">${ roteiro.descricaoRoteiro }</option>
+                            </c:forEach>
                           </select></td>
                         </tr>
                           <tr>
-                            <td><input name="checkbox4" type="checkbox" id="checkbox4" checked="checked" /></td>
+                            <td><input name="checkbox4" type="checkbox" id="complementarAutomatico" checked="checked" /></td>
                             <td>Complementar Automático</td>
                             <td>&nbsp;</td>
                           </tr>
                           <tr>
-                            <td><input name="checkbox5" type="checkbox" id="checkbox5" checked="checked" /></td>
+                            <td><input name="checkbox5" type="checkbox" id="cotasAVista" checked="checked" /></td>
                             <td>Cotas à Vista</td>
                             <td>&nbsp;</td>
                           </tr>
                           <tr>
-                            <td><input type="checkbox" name="checkbox6" id="checkbox6" onclick="$('#lstExcecao1').toggle();" /></td>
+                            <td><input type="checkbox" name="checkbox6" id="RDExcecaoBancas" onclick="$('#lstExcecao1').toggle();" /></td>
                             <td>Exceção de Bancas</td>
                             <td><table width="369" border="0" cellspacing="1" cellpadding="1" id="lstExcecao1" style="display:none;">
                    <tr>
-                     <td width="156"><select name="select" id="select" style="width:150px;">
-                     </select></td>
+                     <td width="156">
+	                     <select name="componenteInformacoesComplementares" id="componenteInformacoesComplementares"
+	                     	onchange="distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares')"  
+	                     	style="width:110px;" class="filtroComponentes">
+	                  		<option selected="selected">Selecione...</option>
+		                    <c:forEach items="${componentes}" var="componente" varStatus="idx">
+								<option value="${idx.count-1}">${componente.descricao}</option>
+							</c:forEach>
+		                </select>
+                     </td>
                      <td width="51">Elemento:</td>
-                     <td width="152"><select name="select2" id="select2" style="width:150px;">
-                     </select></td>
+                     <td width="152">
+                     	<select name="elementoInformacoesComplementares" id="elementoInformacoesComplementares" style="width:150px;">
+                     	</select>
+                     </td>
                    </tr>
                  </table></td>
                           </tr>
@@ -545,9 +618,8 @@ function esconde_redutor(){
                         
                     </fieldset>
                     <br clear="all" />
-                    <span class="bt_novos"><a href="javascript:history.back(-1);"><img src="../images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img 	src="../images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
-                <span class="bt_novos"><a href="javascript:;"><img src="../images/ico_salvar.gif" alt="Salvar" hspace="5" border="0" />Salvar</a></span>
+                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+                <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img 	src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
                 </div>
                 <br clear="all" />
 
@@ -561,7 +633,7 @@ function esconde_redutor(){
   <tr>
     <td width="219">Veja - Edição: 021</td>
     <td width="28">Capa:</td>
-    <td width="15"><a href="javascript:;" onmouseover="popup_detalhes();" onmouseout="popup_detalhes_close();"><img src="../images/ico_detalhes.png" alt="Capa" width="15" height="15" border="0" /></a></td>
+    <td width="15"><a href="javascript:;" onmouseover="popup_detalhes();" onmouseout="popup_detalhes_close();"><img src="images/ico_detalhes.png" alt="Capa" width="15" height="15" border="0" /></a></td>
   </tr>
 </table>
 <p><strong>Período:</strong> 1</p>
@@ -619,7 +691,7 @@ $(".listaRegiaoGrid").flexigrid({
 				align : 'left'
 			}, {
 				display : 'Período',
-				name : 'peb',
+				name : 'periodicidade',
 				width : 40,
 				sortable : true,
 				align : 'center'
@@ -631,13 +703,13 @@ $(".listaRegiaoGrid").flexigrid({
 				align : 'center'
 			}, {
 				display : 'Reparte',
-				name : 'repartePrevisto',
+				name : 'reparte',
 				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Venda',
-				name : 'repartePrevisto',
+				name : 'venda',
 				width : 35,
 				sortable : true,
 				align : 'right'
@@ -649,7 +721,7 @@ $(".listaRegiaoGrid").flexigrid({
 				align : 'left'
 			}, {
 				display : 'Classificação',
-				name : 'peb',
+				name : 'classificacao',
 				width : 70,
 				sortable : true,
 				align : 'left'
@@ -674,25 +746,25 @@ $(".listaRegiaoGrid").flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Componentes',
-				name : 'componentes',
+				name : 'componenteDesc',
 				width : 120,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Elementos',
-				name : 'elementos',
+				name : 'elementoDesc',
 				width : 145,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : '% Bonificacao',
-				name : 'percBonificacao',
+				name : 'percBonificacaoInput',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Reparte Min.',
-				name : 'reparteMinimo',
+				name : 'reparteMinimoInput',
 				width : 70,
 				sortable : true,
 				align : 'center'
@@ -719,7 +791,7 @@ $(".listaRegiaoGrid").flexigrid({
 			dataType : 'json',
 			colModel : [{
 				display : 'Elementos',
-				name : 'elementos',
+				name : 'descricao',
 				width : 205,
 				sortable : true,
 				align : 'left'
@@ -800,31 +872,31 @@ $(".listaRegiaoGrid").flexigrid({
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'codigo',
+				name : 'codigoProduto',
 				width : 40,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeComercial',
 				width : 80,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 35,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Período',
-				name : 'periodo',
+				name : 'periodicidade',
 				width : 50,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Status',
-				name : 'status',
+				name : 'statusSituacao',
 				width : 70,
 				sortable : true,
 				align : 'left'
@@ -842,19 +914,19 @@ $(".listaRegiaoGrid").flexigrid({
 				align : 'center'
 			}, {
 				display : 'Venda %',
-				name : 'vendaPerc',
+				name : 'percentualVenda',
 				width : 40,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Peso',
-				name : 'peso',
+				name : 'pesoInput',
 				width : 40,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : '',
-				name : 'sel',
+				name : 'select',
 				width : 20,
 				sortable : true,
 				align : 'center'

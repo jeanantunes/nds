@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -55,7 +54,6 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
-import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TXTUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -131,7 +129,17 @@ public class ConferenciaEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA)
 	public void index() {
 		
-		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(distribuidorService.obter().getDataOperacao()));
+		this.result.include(
+				"dataOperacao", 
+				DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
+		
+		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+		
+		if(tipoContabilizacaoCE!=null) {
+			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
+		}
+		
+		
 		
 		limparDadosSessao();
 		carregarComboBoxEncalhe();
@@ -217,8 +225,8 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	/**
-	 * Verifica se a cota cuja conferência esta sendo realizada esta salva ou com 
-	 * dados em session alterados pelo usuário
+	 * Verifica se o usuario esta iniciando (ou reiniciando) a conferência de uma cota 
+	 * sem ter salvo (ou finalizado) os dados de uma conferência em andamento.
 	 * 
 	 * @param numeroCota
 	 */
@@ -293,9 +301,11 @@ public class ConferenciaEncalheController extends BaseController {
 			this.conferenciaEncalheService.verificarChamadaEncalheCota(numeroCota);
 			
 		} catch (ConferenciaEncalheExistenteException e) {
-			
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "REABERTURA"), "result").recursive().serialize();
-		
+
+			this.result.use(CustomMapJson.class)
+			.put("IND_COTA_RECOLHE_NA_DATA", "S")
+			.put("IND_REABERTURA", "S").serialize();
+
 			return;
 		
 		} catch (ChamadaEncalheCotaInexistenteException e) {
@@ -303,9 +313,22 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para essa cota.");
 		}
 		
+		boolean indCotaComRecolhimento = conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota);
+
 		this.session.setAttribute(NUMERO_COTA, numeroCota);
 		
-		this.result.use(Results.json()).from("").serialize();
+		if(!indCotaComRecolhimento) {
+			
+			this.result.use(CustomMapJson.class)
+			.put("IND_COTA_RECOLHE_NA_DATA", "N")
+			.put("msg", "Cota não possui recolhimento planejado para a data de operação atual.").serialize();
+			
+		} else {
+			
+			this.result.use(CustomMapJson.class).put("IND_COTA_RECOLHE_NA_DATA", "S").serialize();
+			
+		}
+		
 	}
 	
 	/**
@@ -730,6 +753,8 @@ public class ConferenciaEncalheController extends BaseController {
 		this.carregarListaConferencia(null, false, false);
 	}
 	
+	
+	
 	/**
 	 * Valida se a quantidade informada excede a quantidade especificada no reparte
 	 * @param qtdExemplares
@@ -910,7 +935,8 @@ public class ConferenciaEncalheController extends BaseController {
 					controleConfEncalheCota, 
 					listaConferenciaEncalheCotaToSave, 
 					this.getSetConferenciaEncalheExcluirFromSession(), 
-					this.getUsuarioLogado());
+					this.getUsuarioLogado(),
+					indConferenciaContingencia);
 			
 			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
 			
@@ -968,7 +994,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			boolean isUtilizaBoleto = dtoDoc.isUtilizaSlipBoleto();
 			
-			boolean isUtilizaSlip = true;//TODO: voltar apos testes...dtoDoc.isUtilizaSlip();
+			boolean isUtilizaSlip = dtoDoc.isUtilizaSlip();
 			
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			
@@ -1142,7 +1168,8 @@ public class ConferenciaEncalheController extends BaseController {
 							controleConfEncalheCota, 
 							listaConferenciaEncalheCotaToSave, 
 							this.getSetConferenciaEncalheExcluirFromSession(), 
-							this.getUsuarioLogado());
+							this.getUsuarioLogado(),
+							indConferenciaContingencia);
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
@@ -1400,35 +1427,51 @@ public class ConferenciaEncalheController extends BaseController {
 	 * ao valor de encalhe conferido na operação. 
 	 * 
 	 * @param valorCEInformado
+	 * @param qtdCEInformado
 	 */
 	@Post
-	public void verificarValorTotalCE(BigDecimal valorCEInformado) {
-		
+	public void verificarValorTotalCE(BigDecimal valorCEInformado, BigInteger qtdCEInformado) {
+
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
-		if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
-			
-			resultadoValidacao.put("valorCEInformadoValido", false);
-			
-			resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido. Deseja continuar?");
-			
+		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+		
+		if(tipoContabilizacaoCE == null) {
+			resultadoValidacao.put("valorCEInformadoValido", true);
 			this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
-
-		} else {
-
-			TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+			return;
+		}
+		
+		if(TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
 			
-			if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
+			if (valorCEInformado == null || BigDecimal.ZERO.compareTo(valorCEInformado) >= 0 ){
+				resultadoValidacao.put("valorCEInformadoValido", false);
+				resultadoValidacao.put("mensagemConfirmacao", "Valor CE jornaleiro informado inválido. Deseja continuar?");
+				this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
+				return;
+			} 
+			
+		} else {
+			
+			if (qtdCEInformado == null || BigInteger.ZERO.compareTo(qtdCEInformado) >= 0 ){
 				
-				this.comparValorTotalCEMonetario(valorCEInformado);
-				
-			} else {
-				
-				this.comparValorTotalCEQuantidade(valorCEInformado);
-				
-			}
+				resultadoValidacao.put("valorCEInformadoValido", false);
+				resultadoValidacao.put("mensagemConfirmacao", "Qtde CE jornaleiro informada inválido. Deseja continuar?");
+				this.result.use(CustomJson.class).from(resultadoValidacao).serialize();
+				return;
+
+			} 
 			
 		}
+
+			
+		if (TipoContabilizacaoCE.VALOR.equals(tipoContabilizacaoCE)) {
+			this.comparValorTotalCEMonetario(valorCEInformado);
+		} else {
+			this.comparValorTotalCEQuantidade(qtdCEInformado);
+		}
+			
+		
 		
 	}
 	
@@ -1439,15 +1482,13 @@ public class ConferenciaEncalheController extends BaseController {
 	 * @param valorTotalCEQuantidade
 	 */
 
-	private void comparValorTotalCEQuantidade(BigDecimal valorTotalCEQuantidade) {
+	private void comparValorTotalCEQuantidade(BigInteger valorTotalCEQuantidade) {
 		
 		Map<String, Object> resultadoValidacao = new HashMap<String, Object>();
 		
-		BigInteger qtde = BigInteger.valueOf(valorTotalCEQuantidade.longValue());
-		
 		BigInteger qtdeItensConferenciaEncalhe = obterQtdeItensConferenciaEncalhe();
 
-		if (qtdeItensConferenciaEncalhe.compareTo(qtde)!=0){
+		if (qtdeItensConferenciaEncalhe.compareTo(valorTotalCEQuantidade)!=0){
 
 			resultadoValidacao.put("valorCEInformadoValido", false);
 			

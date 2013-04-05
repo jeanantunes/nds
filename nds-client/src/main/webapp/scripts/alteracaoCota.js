@@ -110,22 +110,42 @@ var alteracaoCotaController = $.extend(true, {
     	
     	
     	$('#uploadedFileTermo').fileupload(
-				{
-					url :"administracao/alteracaoCota/uploadTermoAdesao",
-					sequentialUploads: false,
-					dataType : 'json',
-					paramName : 'uploadedFileTermo',
-					replaceFileInput: false,
-					submit : function(e, data) {
-						data = $("#pesquisarForm", this.workspace).serialize();
-
-					},
-					success : function(e, data) {
-						$("#nomeArquivoTermoAdesao").html(e.result);
-					}
+			{
+				url :"administracao/alteracaoCota/uploadTermoAdesao",
+				sequentialUploads: false,
+				dataType : 'json',
+				paramName : 'uploadedFileTermo',
+				replaceFileInput: false,
+				submit : function(e, data) {
+					data = $("#pesquisarForm", this.workspace).serialize();
+	
+				},
+				success : function(e, data) {
+					$("#nomeArquivoTermoAdesao").html(e.result);
+			}
 					 
-				});
+		});
+    	
+    	$(document).ready(function() {
+    		
+    		
+    		showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
+    		
+    		$("#idIsSugereSuspensaoModal").click(function() {
+    			showCamposSuspensao($("#idIsSugereSuspensaoModal").attr("checked") == "checked");
+    		});
+    		
+			focusSelectRefField($("#numeroCota", this.workspace));
 			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					alteracaoCotaController.pesquisar();
+				}
+				
+				return true;
+			});
+    	});			
 	},
 	
 	formatarCampos: function() {
@@ -528,8 +548,10 @@ var alteracaoCotaController = $.extend(true, {
 	salvarAlteracao : function() {
 		
 		var  dataForm = $("#alteracaoForm :input[value][value!=''][value!='-1']", this.workspace).serializeArray();
+		if(dataForm[0] && dataForm[0].value){
+			dataForm[0].value = floatValue(dataForm[0].value);
+		}
 		
-		dataForm[0].value = floatValue(dataForm[0].value);
 		
 		$("#idListaFornecedorAssociado option", this.workspace).each(function (index) {
 			 dataForm.push({name: 'filtroAlteracaoCotaDTO.filtroModalFornecedor.listaFornecedoresSelecionados['+index+']', 

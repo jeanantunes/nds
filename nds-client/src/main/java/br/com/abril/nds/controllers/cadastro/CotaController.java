@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -14,11 +15,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -42,11 +45,12 @@ import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.ClassificacaoCotaDistribuidorEnum;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.ClassificacaoEspectativaFaturamento;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -61,6 +65,7 @@ import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
+import br.com.abril.nds.service.impl.CotaServiceImpl;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -108,6 +113,8 @@ public class CotaController extends BaseController {
 	
 	@Autowired
 	private Result result;
+	
+	
 	
 	@Autowired
 	private br.com.caelum.vraptor.Validator validator;
@@ -192,6 +199,13 @@ public class CotaController extends BaseController {
 	    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
 	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
+	}
+	
+	public void verificarTipoConvencional(Long idCota) {
+		
+		boolean isTipoConvencional = cotaService.isTipoCaracteristicaSegmentacaoConvencional(idCota);
+		
+		result.use(Results.json()).from(isTipoConvencional, "result").recursive().serialize();
 	}
 
     private void carregarEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {
@@ -313,7 +327,7 @@ public class CotaController extends BaseController {
 	public void pesquisarPorNumero(Integer numeroCota) {
 		
 		if(numeroCota == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota inválido!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Número da cota deve ser informado!");
 		}
 		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
@@ -333,6 +347,7 @@ public class CotaController extends BaseController {
 				cotaVO.setCodigoBox(cota.getBox().getCodigo() + " - "+cota.getBox().getNome());
 			}
 			
+			cotaVO.setSituacaoCadastro(cota.getSituacaoCadastro());
 			if (cota.getSituacaoCadastro() != null) {
 
 				cotaVO.setStatus(cota.getSituacaoCadastro().toString());
@@ -566,10 +581,40 @@ public class CotaController extends BaseController {
 	private List<ItemDTO<String, String>> getListaClassificacao(){
 		
 		List<ItemDTO<String, String>> listaClassificacao = new ArrayList<ItemDTO<String,String>>();
+		Logger logger = Logger.getLogger(CotaController.class.getName());
+		logger.info("getListaClassificacao");
 		
-		for(ClassificacaoEspectativaFaturamento clazz : ClassificacaoEspectativaFaturamento.values()){
+
+		List<DistribuidorClassificacaoCota> distribuidorClassificacaoCotas = cotaService.obterListaClassificacao();
+		
+		if (distribuidorClassificacaoCotas != null) {
 			
-			listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
+			for(DistribuidorClassificacaoCota dCC:distribuidorClassificacaoCotas ){
+				
+				DecimalFormat df = new DecimalFormat(",##0.00");
+
+	            String valorDe = df.format(dCC.getValorDe());
+	            String valorAte = df.format(dCC.getValorAte());
+
+
+
+				
+				String maisDeUmPDV= dCC.getCodigoClassificacaoCota().toString().equals(ClassificacaoCotaDistribuidorEnum.AA) ? " (mais de 1 PDV)": "";
+				String descricao =  dCC.getCodigoClassificacaoCota().toString() + " - ("+
+								    dCC.getCodigoClassificacaoCota().toString() + " - " +
+						            " R$ " + valorDe + " a " +
+						            " R$ " + valorAte+
+						            maisDeUmPDV +
+						            ")";
+				listaClassificacao.add(new ItemDTO<String, String>(dCC.getCodigoClassificacaoCota().toString(), descricao));
+			}
+		}
+		
+		if (listaClassificacao==null || listaClassificacao.isEmpty()){
+			for(ClassificacaoEspectativaFaturamento clazz : ClassificacaoEspectativaFaturamento.values()){
+				
+				listaClassificacao.add(new ItemDTO<String, String>(clazz.toString(), clazz.getDescricao()));
+			}
 		}
 		
 		Collections.reverse(listaClassificacao);
@@ -788,6 +833,20 @@ public class CotaController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso."),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	}
+	
+	@Post
+	public void apagarTipoCota(Long idCota, String tipoCota){
+		
+		Logger logger = Logger.getLogger(CotaController.class.getName());
+		logger.info("-->CotaController.apagarTipoCota");
+		cotaService.apagarTipoCota(idCota,  tipoCota);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Mix da Cota Apagados com sucesso!!"),
+				Constantes.PARAM_MSGS).recursive().serialize();
+	
+		
+	}
+	
 	
 	/**
 	 * Salva os dados dos fornecedores, associa os fornecedores a cota informada.
@@ -1037,7 +1096,7 @@ public class CotaController extends BaseController {
 	@Post
 	@Path("/pesquisarCotas")
 	public void pesquisarCotas(BigInteger numCota,String nomeCota,String numeroCpfCnpj, String sortorder, 
-							   String logradouro, String bairro, String municipio,
+							   String logradouro, String bairro, String municipio,String status,
 			 				   String sortname, int page, int rp){
 		
 		if (numeroCpfCnpj != null) {
@@ -1048,7 +1107,7 @@ public class CotaController extends BaseController {
 		
 		Integer numeroCota = (numCota!= null)?numCota.intValue():null;
 		    
-		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio );
+		FiltroCotaDTO filtro = new FiltroCotaDTO(numeroCota ,nomeCota,numeroCpfCnpj, logradouro, bairro, municipio, status);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -1061,8 +1120,7 @@ public class CotaController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		filtro.setPaginacao(null);
-		
+				
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		
 		List<CotaDTO> listaCotas = null;
@@ -1680,11 +1738,7 @@ public class CotaController extends BaseController {
 	@Post
 	public void distribuidorUtilizaTermoAdesao(){
 		
-		Boolean utilizaTermo = false;
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.getParametroEntregaBanca().isUtilizaTermoAdesao():false;
+		Boolean utilizaTermo = this.distribuidorService.utilizaTermoAdesao();
 	
 		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
 	}
@@ -1692,11 +1746,7 @@ public class CotaController extends BaseController {
 	@Post
 	public void distribuidorUtilizaProcuracao(){
 		
-		Boolean utilizaTermo = false;
-		
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		
-		utilizaTermo = distribuidor.getParametroEntregaBanca()!=null?distribuidor.isUtilizaProcuracaoEntregadores():false;
+		Boolean utilizaTermo = this.distribuidorService.utilizaProcuracaoEntregadores();
 	
 		this.result.use(Results.json()).from(utilizaTermo, "result").serialize();
 	}

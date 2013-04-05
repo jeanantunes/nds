@@ -374,7 +374,7 @@ var entregadorController = $.extend(true, {
 
 	confirmarExclusaoEntregador: function(idEntregador) {
 
-		$( "#dialog-excluir-entregador", this.workspace ).dialog({
+		$( "#dialog-excluir-entregador").dialog({
 			resizable: false,
 			height:170,
 			width:380,
@@ -539,6 +539,20 @@ var entregadorController = $.extend(true, {
 		this.initTabs();
 		this.bindButtonActions();
 		this.setMascaras();
+		
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#filtroEntregador-nomeRazaoSocial"));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					entregadorController.pesquisarEntregadores();
+				}
+				
+				return true;
+			});
+		});		
 	},
 	
 	initGridPrincipal: function() {

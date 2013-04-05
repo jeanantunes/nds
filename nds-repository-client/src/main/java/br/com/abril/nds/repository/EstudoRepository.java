@@ -3,8 +3,9 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.DivisaoEstudoDTO;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.StatusEstudo;
 
 /**
  * Interface que define as regras de acesso a dados referentes a entidade
@@ -17,5 +18,15 @@ public interface EstudoRepository extends Repository<Estudo, Long> {
 	
 	Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao);
 	
-	void alterarStatusEstudos(List<Long> listIdEstudos, StatusEstudo status);
+	void liberarEstudo(List<Long> listIdEstudos, boolean liberado);
+	
+	public Estudo obterEstudoECotasPorIdEstudo(Long idEstudo);
+	
+	public List<Estudo> obterEstudosPorIntervaloData(Date dataStart, Date dataEnd);
+	
+	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long id);
+	
+	public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
+
+	public Long obterMaxId();
 }

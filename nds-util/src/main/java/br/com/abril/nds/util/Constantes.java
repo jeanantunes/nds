@@ -32,12 +32,13 @@ public abstract class Constantes {
 	
 	public static final String CNPJ = "cnpj";
 	
-	public static final Integer NUMERO_REPROGRAMACOES_LIMITE = 2;
+	public static final Integer NUMERO_REPROGRAMACOES_LIMITE = 3;
 	
 	public static final String DATA_FMT_PESQUISA_MYSQL = "YYYY-MM-DD";
 	
 	public static final Integer MAX_CODIGO_INTERFACE_FORNCECEDOR_MANUAL = 9999;
 	
+	public static final Integer QTD_MAX_REGISTROS_AUTO_COMPLETE = 20;
 }
 
 

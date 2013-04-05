@@ -3,16 +3,19 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class ProdutoDistribuicaoVO  implements Serializable {
+public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoDistribuicaoVO> {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 	
-	private BigInteger id;
+	private BigInteger idLancamento;
 	
 	@Export(label="Codigo", exhibitionOrder = 0)
 	private String codigoProduto;
@@ -45,7 +48,7 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	private BigDecimal suplem;
 	
 	@Export(label="Lancto.", exhibitionOrder = 10)
-	private Integer lancto;
+	private BigDecimal lancto;
 	
 	@Export(label="Promo.", exhibitionOrder = 11)
 	private BigDecimal promo;
@@ -56,8 +59,25 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	@Export(label="Estudo", exhibitionOrder = 13)
 	private BigInteger idEstudo;
 	
-	public BigInteger getId() {
-		return id;
+	private BigInteger idProdutoEdicao;
+	
+	private String dataLancto;
+	
+	private BigDecimal reparte;
+	
+	private BigInteger repDistrib;
+	
+	private Date dataFinMatDistrib;
+	
+	private Long idUsuario;
+	
+	
+	public BigInteger getIdLancamento() {
+		return idLancamento;
+	}
+
+	public void setIdLancamento(BigInteger idLancamento) {
+		this.idLancamento = idLancamento;
 	}
 
 	public String getLiberado() {
@@ -76,10 +96,7 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		this.classificacao = classificacao;
 	}
 
-	public void setId(BigInteger id) {
-		this.id = id;
-	}
-
+	
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -144,11 +161,11 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		this.suplem = suplem;
 	}
 
-	public Integer getLancto() {
+	public BigDecimal getLancto() {
 		return lancto;
 	}
 
-	public void setLancto(Integer lancto) {
+	public void setLancto(BigDecimal lancto) {
 		this.lancto = lancto;
 	}
 
@@ -176,11 +193,76 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		this.nomeFornecedor = nomeFornecedor;
 	}
 	
+	public Date getDataLanctoSemFormatacao() {
+	    try {
+		return new SimpleDateFormat("dd/MM/yyyy").parse(dataLancto);
+	    } catch (Exception ex) {}
+	    return null;
+	}
+	
+	public void setDataLanctoSemFormatacao(Date dataLancto) {
+		this.dataLancto = new SimpleDateFormat("dd/MM/yyyy").format(dataLancto);
+	}
+	
+	public String getDataLancto() {
+		return dataLancto;
+	}
+
+	public void setDataLancto(String dataLancto) {
+		this.dataLancto = dataLancto;
+	}
+	
+	public BigDecimal getReparte() {
+		return reparte;
+	}
+
+	public void setReparte(BigDecimal reparte) {
+		this.reparte = reparte;
+	}
+	
+	public boolean isItemFinalizado() {
+		
+		return (this.getDataFinMatDistrib() != null);
+	}
+
+	public Date getDataFinMatDistrib() {
+		return dataFinMatDistrib;
+	}
+
+	public void setDataFinMatDistrib(Date dataFinMatDistrib) {
+		this.dataFinMatDistrib = dataFinMatDistrib;
+	}
+
+	public BigInteger getRepDistrib() {
+		return repDistrib;
+	}
+
+	public void setRepDistrib(BigInteger repDistrib) {
+		this.repDistrib = repDistrib;
+	}
+	
+	public Long getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Long idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+	
+
+	public BigInteger getIdProdutoEdicao() {
+	    return idProdutoEdicao;
+	}
+
+	public void setIdProdutoEdicao(BigInteger idProdutoEdicao) {
+	    this.idProdutoEdicao = idProdutoEdicao;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((idLancamento == null) ? 0 : idLancamento.hashCode());
 		return result;
 	}
 
@@ -193,14 +275,34 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProdutoDistribuicaoVO other = (ProdutoDistribuicaoVO) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (idLancamento == null) {
+			if (other.idLancamento != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!idLancamento.equals(other.idLancamento))
 			return false;
 		return true;
 	}
-	
-	
 
+	@Override
+	public int compareTo(ProdutoDistribuicaoVO prodDistribVO) {
+		
+		if (this.getCodigoProduto().equals(prodDistribVO.getCodigoProduto()) && 
+				this.getNumeroEdicao().equals(prodDistribVO.getNumeroEdicao())) {
+				
+				if (prodDistribVO.getIdEstudo() == null) {
+					return -1;
+				}
+				else {
+					
+					return this.getIdLancamento().compareTo(prodDistribVO.getIdLancamento());
+				}
+		}
+		else if (prodDistribVO.isItemFinalizado() || prodDistribVO.getLiberado().equals(StatusEstudo.LIBERADO.name())) {
+			
+			return -1;
+		}
+		
+		return 1;
+	}
+	
 }

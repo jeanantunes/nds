@@ -1,0 +1,16 @@
+package br.com.abril.nds.repository;
+
+import java.util.List;
+
+import br.com.abril.nds.dto.RegiaoCotaDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
+import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
+
+public interface RegistroCotaRegiaoRepository extends Repository<RegistroCotaRegiao, Long> {
+	List<RegiaoCotaDTO> carregarCotasRegiao (FiltroCotasRegiaoDTO filtro);
+	List<RegiaoCotaDTO> buscarPorCEP (FiltroCotasRegiaoDTO filtro);
+	List<Integer> buscarNumeroCotasPorIdRegiao (Long idRegiao);
+	List<RegiaoNMaiores_ProdutoDTO> buscarProdutos (FiltroRegiaoNMaioresProdDTO filtro);
+}

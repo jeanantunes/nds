@@ -1,5 +1,4 @@
 package br.com.abril.nds.model.movimentacao;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import javax.persistence.Column;

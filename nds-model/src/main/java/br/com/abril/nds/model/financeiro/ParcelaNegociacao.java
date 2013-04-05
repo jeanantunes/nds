@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -34,7 +33,7 @@ public class ParcelaNegociacao {
 	@Column(name = "DATA_VENCIMENTO")
 	private Date dataVencimento;
 	
-	@Column(name = "ENCARGOS")
+	@Column(name = "ENCARGOS", precision=18, scale=4)
 	private BigDecimal encargos;
 	
 	@ManyToOne

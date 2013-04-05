@@ -1,4 +1,5 @@
-var classificacaoNaoRecebidaController = $.extend(true, {
+
+﻿var classificacaoNaoRecebidaController = $.extend(true, {
 	
 	/**
 	* @author InfoA2 - Samuel Mendes
@@ -445,6 +446,22 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 				
 			},
 		};
+		
+		$(document).ready(function(){
+			
+			mostraFiltroPorClassificacao();
+			focusSelectRefField($("#radio", classificacaoNaoRecebidaController.workspace));
+			$("#radio", classificacaoNaoRecebidaController.workspace).attr("checked", true);
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					classificacaoNaoRecebidaController.porClassificacao();
+				}
+				
+				return true;
+			});
+		});
 	},
 	
 	excluirCotaDaClassificacaoNaoRecebida : function excluirCotaDaClassificacaoNaoRecebida(id){
@@ -732,4 +749,5 @@ var classificacaoNaoRecebidaController = $.extend(true, {
 	},
 	
 }, BaseController);
+
 //@ sourceURL=classificacaoNaoRecebidaController.js

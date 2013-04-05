@@ -21,7 +21,6 @@ import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO.OrdenacaoColunaDetalhe;
@@ -33,7 +32,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
@@ -142,8 +140,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	private TipoMovimentoFinanceiro tipoMovimetnoFinanceiro;
 	private MovimentoFinanceiroCota movimentoFinanceiro;
 
-	private Date dataOperacao;
-	
 	@Before
 	public void setUpGeral() {
 		
@@ -775,201 +771,58 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 	}
 	
 	@Test
-	public void obterQtdProdutoEdicaoEncalhePrimeiroDia() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
-		
-		Assert.assertNotNull(qtde);
-		
-		Assert.assertEquals(1, qtde.intValue());
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdProdutoEdicaoEncalhe() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdProdutoEdicaoEncalhePorIdFornecedor() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setIdFornecedor(fornecedorDinap.getId());
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdProdutoEdicaoEncalhePorIdCota() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setIdCota(cotaManoel.getId());
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdItemProdutoEdicaoEncalhe() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdItemProdutoEdicaoEncalhePorIdFornecedor() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	@SuppressWarnings("unused")
-	public void obterQtdItemProdutoEdicaoEncalhePorIdCota() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
-		
-	}
-
-	@Test
-	public void obterQtdItemProdutoEdicaoEncalhePrimeiroDia() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, false);
-		
-		Assert.assertEquals(8, qtde.intValue());
-		
-	}
-
-	@Test
-	public void obterQtdProdutoEdicaoEncalheAposPrimeiroDia() {
-
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(1, Calendar.MARCH, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(1, Calendar.MARCH, 2012));
-		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQtdProdutoEdicaoEncalhe(filtro, true);
-		
-		Assert.assertNotNull(qtde);
-		
-		Assert.assertEquals(1, qtde.intValue());
-	}
-
-	@Test
-	public void obterQtdItemProdutoEdicaoEncalheAposPrimeiroDia() {
-		
-		setUpForConsultaEncalhe();
-		
-		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		
-		filtro.setDataRecolhimentoInicial(Fixture.criarData(2, Calendar.MARCH, 2012));
-		filtro.setDataRecolhimentoFinal(Fixture.criarData(2, Calendar.MARCH, 2012));
-		
-		BigDecimal qtde = movimentoEstoqueCotaRepository.obterQtdItemProdutoEdicaoEncalhe(filtro, true);
-		
-		Assert.assertEquals(45, qtde.intValue());
-	}
-	
-	@Test
 	public void obterQtdConsultaEncalhe() {
 		
 		setUpForConsultaEncalhe();
-		
+
 		FiltroConsultaEncalheDTO filtro = obterFiltroConsultaEncalhe();
-		
-		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
-		
-		Assert.assertEquals(3, totalizador.getQtdConsultaEncalhe().intValue());
+
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
+
+		Assert.assertEquals(3, qtde.intValue());
 	}
 	
 	@Test
 	public void obterQtdConsultaEncalheNulo() {
 		
 		setUpForConsultaEncalhe();
-		
+
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
-		
-		Assert.assertEquals(3, totalizador.getQtdConsultaEncalhe().intValue());
+
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
+
+		Assert.assertEquals(3, qtde.intValue());
 	}
 	
 	@Test
 	@SuppressWarnings("unused")
 	public void obterQtdConsultaEncalhePorIdCota() {
-		
+
 		setUpForConsultaEncalhe();
-		
+
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdCota(1L);
-		
-		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
-		
+
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
+
 	}
 	
 	@Test
 	@SuppressWarnings("unused")
 	public void obterQtdConsultaEncalhePorIdFornecedor() {
-		
 		setUpForConsultaEncalhe();
 		
+
 		FiltroConsultaEncalheDTO filtro = new FiltroConsultaEncalheDTO();
 		filtro.setDataRecolhimentoInicial(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimentoFinal(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdFornecedor(1L);
-		
-		TotalizadorConsultaEncalheDTO totalizador = movimentoEstoqueCotaRepository.obterTotalizadorConsultaEncalhe(filtro);
+
+		Integer qtde = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
 		
 	}
 
@@ -1242,7 +1095,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Date dataFinal = Fixture.criarData(31, Calendar.NOVEMBER, 2012);
 		OperacaoEstoque operacaoEstoque = OperacaoEstoque.SAIDA;
 		
-		BigDecimal QtdeMovimentoEstoqueCota = movimentoEstoqueCotaRepository.obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(idCota, idProdutoEdicao, dataInicial, dataFinal, operacaoEstoque);		
+		BigDecimal QtdeMovimentoEstoqueCota = movimentoEstoqueCotaRepository.obterValorTotalMovimentoEstoqueCotaParaProdutoEdicaoNoPeriodo(idCota, this.fornecedorDinap.getId(), idProdutoEdicao, dataInicial, dataFinal, operacaoEstoque);		
 		
 	}
 
@@ -2861,9 +2714,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(true);
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
 
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
@@ -2880,7 +2730,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
 		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
 		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(), 
+						GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, listaFornecedores, listaProdutos);
 
 		int tamanhoEsperado = 1;
 		
@@ -2900,9 +2752,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(true);
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
 
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
@@ -2911,7 +2760,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
 		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
 		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, null, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(), 
+						GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, null, null);
 
 		int tamanhoEsperado = 3;
 		
@@ -2931,9 +2782,6 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(true);
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
 
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
 		List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques = new ArrayList<GrupoMovimentoEstoque>();
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR);
@@ -2944,7 +2792,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
 		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
 		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, null, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(), 
+						GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, periodo, null, null);
 		
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 
@@ -2966,10 +2816,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		periodo.setDe(DateUtil.parseData("01/01/2012", "dd/MM/yyyy"));
 		periodo.setAte(DateUtil.parseData("01/01/2013", "dd/MM/yyyy"));
 
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, null, null, null, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(), 
+						GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, null, null, null, null);
 
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 		
@@ -2993,10 +2842,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		listaGrupoMovimentoEstoques.add(GrupoMovimentoEstoque.ENCALHE_ANTECIPADO);
 		
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, null, null, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, 
+						cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, listaGrupoMovimentoEstoques, null, null, null);
 
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 		
@@ -3019,10 +2867,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 			listaFornecedores.add(fornecedor.getId());
 		}
 		
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, null, null, listaFornecedores, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor,
+						cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, null, null, listaFornecedores, null);
 
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 		
@@ -3040,10 +2887,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
 
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(), 
+						GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
 
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 		
@@ -3061,10 +2907,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
 
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(),
+						GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
 
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 		
@@ -3082,10 +2927,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
 
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(), 
+						GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
 
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 		
@@ -3103,10 +2947,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(true);
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(false);
 
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(), 
+						GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
 
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 		
@@ -3124,10 +2967,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuarto(false);
 		parametrosRecolhimentoDistribuidor.setDiaRecolhimentoQuinto(true);
 
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(), 
+						GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_CONSIGNACAO, null, null, null, null);
 
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 		
@@ -3148,10 +2990,9 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		List<Long> listaProdutos =  new ArrayList<Long>();
 		listaProdutos.add(veja1.getProduto().getId());
 		
-		Distribuidor distribuidor = new Distribuidor();
-		distribuidor.setParametrosRecolhimentoDistribuidor(parametrosRecolhimentoDistribuidor);
-		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(distribuidor, cotaManoel.getId(), GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, null, null, null, listaProdutos);
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaPor(parametrosRecolhimentoDistribuidor, cotaManoel.getId(), 
+						GrupoNotaFiscal.NF_REMESSA_CONSIGNACAO, null, null, null, listaProdutos);
 
 		Assert.assertNotNull(listaMovimentoEstoqueCota);
 		
@@ -3316,32 +3157,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
         Assert.assertEquals(2, movimentos.size());
 	}
-	
-	@Test
-	public void obterValorTotalMovimentosPendentesGerarFinanceiro(){
 		
-		this.setupFinanceiroReparteEncalhe();
-
-		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosPendentesGerarFinanceiro(cotaValdomiro.getId(), Fixture.criarData(28, Calendar.FEBRUARY, 2012));
-		
-		Assert.assertNotNull(total);
-		
-		Assert.assertEquals(0,total.compareTo(new BigDecimal(600)));
-	}
-	
-	@Test
-	public void obterValorTotalMovimentosEstornados(){
-		
-		this.setupFinanceiroReparteEncalhe();
-		
-		BigDecimal total = this.movimentoEstoqueCotaRepository.obterValorTotalMovimentosEstornados(cotaValdomiro.getId());
-				
-        Assert.assertNotNull(total);
-		
-        Assert.assertEquals(0,total.compareTo(new BigDecimal(300)));
-	}
-	
-	
 	@Test
 	public void testObterListaMovimentoEstoqueCotaDevolucaoJuramentada() {
 		

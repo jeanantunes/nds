@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaResumoDTO;
 import br.com.abril.nds.dto.CotaSuspensaoDTO;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
@@ -1175,7 +1176,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void obterIdCotasEntreNull() {
-		Set<Long> set = cotaRepository.obterIdCotasEntre(null, null, null,
+		List<Long> set = cotaRepository.obterIdCotasEntre(null, null, null,
 				null, null, null, null, null, null);
 		
 		Assert.assertNotNull(set);
@@ -1185,7 +1186,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterIdCotasEntrePorIntervaloCota() {
 
 		Intervalo<Integer> intervaloCota = new Intervalo<Integer>(1, 10);
-		Set<Long> set = cotaRepository.obterIdCotasEntre(intervaloCota, null, null,
+		List<Long> set = cotaRepository.obterIdCotasEntre(intervaloCota, null, null,
 				null, null, null, null, null, null);
 		
 		Assert.assertNotNull(set);
@@ -1194,7 +1195,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterIdCotasEntrePorIntervaloBox() {
 		Intervalo<Integer> intervaloBox = new Intervalo<Integer>(1, 2);
-		Set<Long> set = cotaRepository.obterIdCotasEntre(null, intervaloBox, null,
+		List<Long> set = cotaRepository.obterIdCotasEntre(null, intervaloBox, null,
 				null, null, null, null, null, null);
 		Assert.assertNotNull(set);
 	}
@@ -1204,21 +1205,21 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
 		situacoesCadastro.add(SituacaoCadastro.ATIVO);
 		
-		Set<Long> set = cotaRepository.obterIdCotasEntre(null, null, situacoesCadastro,
+		List<Long> set = cotaRepository.obterIdCotasEntre(null, null, situacoesCadastro,
 				null, null, null, null, null, null);
 		Assert.assertNotNull(set);
 	}
 	
 	@Test
 	public void obterIdCotasEntrePorIdRoteiro() {
-		Set<Long> set = cotaRepository.obterIdCotasEntre(null, null, null,
+		List<Long> set = cotaRepository.obterIdCotasEntre(null, null, null,
 				1L, null, null, null, null, null);
 		Assert.assertNotNull(set);
 	}
 	
 	@Test
 	public void obterIdCotasEntrePorIdRota() {
-		Set<Long> set = cotaRepository.obterIdCotasEntre(null, null, null,
+		List<Long> set = cotaRepository.obterIdCotasEntre(null, null, null,
 				null, 1L, null, null, null, null);
 		Assert.assertNotNull(set);
 	}
@@ -1268,14 +1269,14 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		final int quantidadeEsperada = 1;
 
-		final List<Cota> cotasInativasObtidas = this.cotaRepository
+		final List<CotaResumoDTO> cotasInativasObtidas = this.cotaRepository
 				.obterCotas(SituacaoCadastro.INATIVO);
 
 		Assert.assertNotNull(cotasInativasObtidas);
 
 		Assert.assertEquals(quantidadeEsperada, cotasInativasObtidas.size());
 
-		final Integer numeroCota = cotasInativasObtidas.get(0).getNumeroCota();
+		final Integer numeroCota = cotasInativasObtidas.get(0).getNumero();
 
 		Assert.assertEquals(NUMERO_COTA_INATIVA, numeroCota);
 	}
@@ -1284,7 +1285,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterCotasAtivas() {
 
-		final List<Cota> cotasInativasObtidas = this.cotaRepository
+		final List<CotaResumoDTO> cotasInativasObtidas = this.cotaRepository
 				.obterCotas(SituacaoCadastro.ATIVO);
 
 		Assert.assertNotNull(cotasInativasObtidas);
@@ -1295,7 +1296,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void obterCotasNulo() {
 		SituacaoCadastro situacaoCadastro = null;
 
-		final List<Cota> cotasInativasObtidas = this.cotaRepository
+		final List<CotaResumoDTO> cotasInativasObtidas = this.cotaRepository
 				.obterCotas(situacaoCadastro);
 
 		Assert.assertNotNull(cotasInativasObtidas);
@@ -1307,7 +1308,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		final int quantidadeEsperada = 2;
 
-		final List<Cota> novasCotas = this.cotaRepository
+		final List<CotaResumoDTO> novasCotas = this.cotaRepository
 				.obterCotasComInicioAtividadeEm(new Date());
 
 		Assert.assertNotNull(novasCotas);
@@ -1318,7 +1319,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterNovasCotasNulo() {
 
-		final List<Cota> novasCotas = this.cotaRepository
+		final List<CotaResumoDTO> novasCotas = this.cotaRepository
 				.obterCotasComInicioAtividadeEm(null);
 
 		Assert.assertNotNull(novasCotas);
@@ -1331,7 +1332,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		final int quantidadeEsperada = 1;
 
-		final List<Cota> cotasAusentesExpedicaoReparte = this.cotaRepository
+		final List<CotaResumoDTO> cotasAusentesExpedicaoReparte = this.cotaRepository
 				.obterCotasAusentesNaExpedicaoDoReparteEm(new Date());
 
 		Assert.assertNotNull(cotasAusentesExpedicaoReparte);
@@ -1343,7 +1344,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterCotasAusentesNaExpedicaoDoReparteNulo() {
 
-		final List<Cota> cotasAusentesExpedicaoReparte = this.cotaRepository
+		final List<CotaResumoDTO> cotasAusentesExpedicaoReparte = this.cotaRepository
 				.obterCotasAusentesNaExpedicaoDoReparteEm(null);
 
 		Assert.assertNotNull(cotasAusentesExpedicaoReparte);
@@ -1360,7 +1361,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		final Date dataRecolhimentoEncalhe = Fixture.criarData(28,
 				Calendar.FEBRUARY, 2012);
 
-		final List<Cota> cotasAusentesRecolhimentoEncalhe = this.cotaRepository
+		final List<CotaResumoDTO> cotasAusentesRecolhimentoEncalhe = this.cotaRepository
 				.obterCotasAusentesNoRecolhimentoDeEncalheEm(dataRecolhimentoEncalhe);
 
 		Assert.assertNotNull(cotasAusentesRecolhimentoEncalhe);

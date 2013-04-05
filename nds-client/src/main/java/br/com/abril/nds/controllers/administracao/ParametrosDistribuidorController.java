@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.DistribuidorPercentualExcedenteVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaTipoDTO;
@@ -34,6 +35,7 @@ import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.ClassificacaoCotaService;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
@@ -57,6 +59,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/administracao/parametrosDistribuidor")
 public class ParametrosDistribuidorController extends BaseController {
 	
+	private static final Integer _100 = 100;
+
 	@Autowired
 	private Result result;
 	
@@ -71,6 +75,9 @@ public class ParametrosDistribuidorController extends BaseController {
 
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
+	
+	@Autowired
+	private ClassificacaoCotaService classificacaoCotaService;
 	
 	@Autowired
 	private HttpSession session;
@@ -167,7 +174,7 @@ public class ParametrosDistribuidorController extends BaseController {
 
 	public Download getLogo() {
 		
-		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();;
+		InputStream imgLogotipo = this.getInputStreamArquivoTemporario();
 		
 		if (imgLogotipo != null) {
 		
@@ -188,7 +195,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	/**buscarDiasOperacaoFornecedor
 	 * Grava as alterações de parametros realizadas para o distribuidor
-	 * @param distribuidor
+	 * @param parametrosDistribuidor
 	 */
 	public void gravar(ParametrosDistribuidorVO parametrosDistribuidor) {
 	    
@@ -200,6 +207,8 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		parametrosDistribuidorService.salvarDistribuidor(
 			parametrosDistribuidor, imgLogotipo, contentType);
+		
+		classificacaoCotaService.executeReclassificacaoCota();
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
 	}
@@ -286,7 +295,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	
 	/**
 	 * Grava os dias de distribuição de recolhimento do fornecedor
-	 * @param distribuidor
+	 * @param selectFornecedoresLancamento
 	 */
 	@Post
 	@Path("/gravarDiasDistribuidorFornecedor")
@@ -406,6 +415,20 @@ public class ParametrosDistribuidorController extends BaseController {
 	    if (vo.isUtilizaOutros() && vo.getValidadeOutros() == null) {
             erros.add("É necessário informar a Validade da Garantia Outros!");
         }
+	    
+	    if (vo.getPercentualMaximoFixacao() != null && (vo.getPercentualMaximoFixacao().compareTo(1) < 0 || vo.getPercentualMaximoFixacao().compareTo(75) > 0)) {
+	    	erros.add("% Máximo de Fixação deve estar entre 1% e 75%!");
+	    }
+	    
+	    List<DistribuidorPercentualExcedenteVO> listPercentualExcedente = vo.getListPercentualExcedente();
+	    for (DistribuidorPercentualExcedenteVO percentualExcedenteVO : listPercentualExcedente) {
+			if (percentualExcedenteVO.getPdv() != null && percentualExcedenteVO.getVenda() != null
+					&& (_100.compareTo(percentualExcedenteVO.getPdv() + percentualExcedenteVO.getVenda()) < 0)) {
+				erros.add("O % de excedente da venda + pdv não pode ultrapassar 100%!");
+				break;
+			}
+		}
+	    
 	    verificarExistenciaErros(erros);
 	}
 
@@ -450,7 +473,7 @@ public class ParametrosDistribuidorController extends BaseController {
 				
 		List<MunicipioDTO> municipios =	grupoService.obterQtdeCotaMunicipio(page, rp, sortname, sortorder);
 		
-		List<Long> selecionados = getSelecionados(TipoGrupo.MUNICIPIO);
+		List<String> selecionados = getMunicipiosSelecionados();
 				
 		for(MunicipioDTO municipio : municipios) {
 			if(selecionados.contains(municipio.getMunicipio()))
@@ -466,7 +489,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		session.setAttribute(TIPO_COTA, tipoCota);
 		
-		List<Long> selecionados = getSelecionados(TipoGrupo.TIPO_COTA);
+		List<Long> selecionados = getCotasSelecionados();
 		
 		List<CotaTipoDTO> cotas =	grupoService.obterCotaPorTipo(tipoCota, page, rp, sortname, sortorder);
 		
@@ -478,20 +501,18 @@ public class ParametrosDistribuidorController extends BaseController {
 		result.use(FlexiGridJson.class).from(cotas).page(page).total(total).serialize();		
 	}
 	
-	private List<Long> getSelecionados(TipoGrupo tipoGrupo) {
+	@SuppressWarnings("unchecked")
+	private List<Long> getCotasSelecionados() {
 		
-		String tipo;
+		return session.getAttribute(COTAS_SELECIONADAS) == null ?  new ArrayList<Long>()
+				: (List<Long>)session.getAttribute(COTAS_SELECIONADAS);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<String> getMunicipiosSelecionados() {
 		
-		if(TipoGrupo.TIPO_COTA.equals(tipoGrupo))
-			tipo = COTAS_SELECIONADAS;
-		else
-			tipo = MUNICIPIOS_SELECIONADOS;
-		
-		@SuppressWarnings("unchecked")
-		List<Long> selecionados = session.getAttribute(tipo) == null ?  new ArrayList<Long>()
-				: (List<Long>)session.getAttribute(tipo);
-		
-		return selecionados;
+		return	session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?  
+					new ArrayList<String>() : (List<String>) session.getAttribute(MUNICIPIOS_SELECIONADOS);
 	}
 	
 	/**
@@ -502,7 +523,7 @@ public class ParametrosDistribuidorController extends BaseController {
 	public void selecionarCota(Long idCota, Boolean selecionado, Boolean addResult) {
 		
 		
-		List<Long> selecionados = getSelecionados(TipoGrupo.TIPO_COTA);
+		List<Long> selecionados = getCotasSelecionados();
 		
 		int index = selecionados.indexOf(idCota); 
 		
@@ -525,14 +546,14 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * 
 	 */
 	@Post
-	public void selecionarMunicipio(Long idMunicipio, Boolean selecionado, Boolean addResult) {
+	public void selecionarMunicipio(String  municipio, Boolean selecionado, Boolean addResult) {
 				
-		List<Long> selecionados = getSelecionados(TipoGrupo.MUNICIPIO);		
+		List<String> selecionados = getMunicipiosSelecionados();		
 		
-		int index = selecionados.indexOf(idMunicipio); 
+		int index = selecionados.indexOf(municipio); 
 		
 		if(index==-1 && selecionado==true) {
-			selecionados.add(idMunicipio);
+			selecionados.add(municipio);
 		} else if(index!=-1 && selecionado==false){
 			selecionados.remove(index);
 		}
@@ -565,10 +586,10 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * @param selecionado - true(adiciona todos) false (remove todos)
 	 */
 	@Post
-	public void selecionarTodosMunicipios(List<Long>selecionados, Boolean selecionado){
+	public void selecionarTodosMunicipios(List<String>selecionados, Boolean selecionado){
 		
-		for(Long id : selecionados)
-			selecionarMunicipio(id, selecionado, false);
+		for(String municipio : selecionados)
+			selecionarMunicipio(municipio, selecionado, false);
 				
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
@@ -610,10 +631,10 @@ public class ParametrosDistribuidorController extends BaseController {
 
 		if(tipoGrupo.equals(TipoGrupo.MUNICIPIO)) {
 		
-			List<Long> ids = grupoService.obterMunicipiosDoGrupo(idGrupo);
+			List<String> municipios = grupoService.obterMunicipiosDoGrupo(idGrupo);
 			
 			session.setAttribute(COTAS_SELECIONADAS, null);
-			session.setAttribute(MUNICIPIOS_SELECIONADOS, ids);
+			session.setAttribute(MUNICIPIOS_SELECIONADOS, municipios);
 		} else {
 			
 			List<Long> ids = grupoService.obterCotasDoGrupo(idGrupo);

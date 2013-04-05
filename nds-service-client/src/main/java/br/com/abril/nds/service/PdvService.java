@@ -182,5 +182,10 @@ public interface PdvService {
     List<AreaInfluenciaPDV> obterAreasInfluenciaPDV();
     
     public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo();
+    
+    /**
+	 * Preenche o PdvDTO com os atributos para o popUp do AnaliseHistórico
+	 */
+	List<PdvDTO> obterPDVs(Integer numeroCota);
 }
 

@@ -3,7 +3,6 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
-import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO.ColunaOrdenacaoRomaneio;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -15,7 +14,7 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private long idFornecedor;
 	
-	private Long semana;
+	private String semana;
 	
 	private PaginacaoVO paginacao;
 	
@@ -64,11 +63,11 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 		this.idFornecedor = idFornecedor;
 	}
 
-	public Long getSemana() {
+	public String getSemana() {
 		return semana;
 	}
 
-	public void setSemana(Long semana) {
+	public void setSemana(String semana) {
 		this.semana = semana;
 	}
 

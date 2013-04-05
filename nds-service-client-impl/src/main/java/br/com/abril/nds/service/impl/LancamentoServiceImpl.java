@@ -27,7 +27,6 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -47,9 +46,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private ExpedicaoRepository expedicaoRepository;
-	
-	@Autowired
-	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Override
 	@Transactional
@@ -131,21 +127,21 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Override
 	@Transactional
-	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario,Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
 
 		Expedicao expedicao = new Expedicao();
-		expedicao.setDataExpedicao(new Date());
+		expedicao.setDataExpedicao(dataOperacao);
 		expedicao.setResponsavel(new Usuario(idUsuario));
 		Long idExpedicao = expedicaoRepository.adicionar(expedicao);
 		
 		expedicao.setId(idExpedicao);
 		
-		lancamentoRepository.alterarLancamento(idLancamento, new Date(), StatusLancamento.EXPEDIDO, expedicao);
+		lancamentoRepository.alterarLancamento(idLancamento, dataOperacao, StatusLancamento.EXPEDIDO, expedicao);
 				
 		HistoricoLancamento historico = new HistoricoLancamento();
-		historico.setDataEdicao(new Date());
+		historico.setDataEdicao(dataOperacao);
 		historico.setLancamento(new Lancamento(idLancamento));
 		
 		historico.setResponsavel(new Usuario(idUsuario));
@@ -155,30 +151,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
 				lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
-		
-		// TODO: Sergio, vc poderia corrigir este trecho após finalizar a implementação do DescontoCota fzd favor? Obrigado.
-		/*DescontoProximosLancamentos desconto = this.descontoProximosLancamentosRepository.
-		obterDescontoProximosLancamentosPor(lancamento.getProdutoEdicao().getProduto().getId(), 
-				lancamento.getDataLancamentoPrevista());
-				
-		if (desconto != null) {	
-		
-			Integer quantidade = desconto.getQuantidadeProximosLancamaentos();
-						
-			DescontoProduto descontoProduto = new DescontoProduto();
-			
-			descontoProduto.setCotas(desconto.getCotas());
-			descontoProduto.setDataAlteracao(new Date());
-			descontoProduto.setDesconto(desconto.getValorDesconto());
-			descontoProduto.setProdutoEdicao(lancamento.getProdutoEdicao());
-			descontoProduto.setDistribuidor(desconto.getDistribuidor());
-			descontoProduto.setUsuario(usuario);
-			
-			this.descontoProdutoRepository.adicionar(descontoProduto);
-			
-			desconto.setQuantidadeProximosLancamaentos(--quantidade);
-			this.descontoProximosLancamentosRepository.alterar(desconto);
-		}*/
 		
 		return true;
 	}

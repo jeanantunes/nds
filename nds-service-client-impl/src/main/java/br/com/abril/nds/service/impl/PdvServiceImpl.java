@@ -157,19 +157,19 @@ public class PdvServiceImpl implements PdvService {
         return enderecoPDVRepository
                 .buscarMunicipioPdvPrincipal(codigoCidadeIBGE);
     }
-
+    
     @Transactional(readOnly = true)
     @Override
     public List<AreaInfluenciaPDV> obterTipoAreaInfluencia() {
 
-        return areaInfluenciaPDVRepository.buscarTodos();
+        return areaInfluenciaPDVRepository.obterTodasAreaInfluenciaPDV();
     }
 
     @Transactional(readOnly = true)
     @Override
 	public List<TipoGeradorFluxoPDV> obterTipoGeradorDeFluxo() {
 		// TODO Auto-generated method stub
-    	return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+    	return tipoGeradorFluxoPDVRepsitory.obterTodosTiposGeradorFluxo();
 	}
     
     @Transactional(readOnly = true)
@@ -1586,5 +1586,11 @@ public class PdvServiceImpl implements PdvService {
 
             return tipoGeradorFluxoPDVRepsitory.buscarTodos();
     }
+
+    @Transactional(readOnly = true)
+	@Override
+	public List<PdvDTO> obterPDVs(Integer numeroCota) {
+		return this.pdvRepository.obterPDVs(numeroCota);
+	}
 
 }

@@ -780,21 +780,34 @@ var VENDA_PRODUTO = {
 					var codigoProduto = "";
 					var numeroEdicao = null;
 					
-					$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete({
-						source: result,
-						select: function(event, ui){
-							
-							codigoProduto = ui.item.chave.string;
-							
-							numeroEdicao = ui.item.chave.long;
-							
-		 					VENDA_PRODUTO.obterDadosProduto(codigoProduto,numeroEdicao,index);		
-						},
-						delay: 0
-					});
-					
-					$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete("search", codBarras);
- 					
+					 if (result.length > 1){
+						
+						$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete({
+							source: result,
+							select: function(event, ui){
+								
+								codigoProduto = ui.item.chave.string;
+								
+								numeroEdicao = ui.item.chave.long;
+								
+			 					VENDA_PRODUTO.obterDadosProduto(codigoProduto,numeroEdicao,index);		
+							},
+							delay: 0
+						});
+						
+						$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete("search", codBarras);
+					}
+					else{
+						
+						$(idCodBarras, VENDA_PRODUTO.workspace).autocomplete({});
+						
+						codigoProduto = result[0].chave.string;
+						
+						numeroEdicao = result[0].chave.long;
+						
+	 					VENDA_PRODUTO.obterDadosProduto(codigoProduto,numeroEdicao,index);			
+					}
+				
  				}, function(result){
 					
 					//Verifica mensagens de erro do retorno da chamada ao controller.

@@ -15,7 +15,8 @@ var geracaoNotaEnvioController = $.extend({
 			intervaloCotaDe:null, 
 			intervaloCotaAte:null,
 			intervaloBoxDe:null, 
-			intervaloBoxAte:null
+			intervaloBoxAte:null,
+			exibirNotasEnvio:null
 		},
 	
 		/**
@@ -185,7 +186,16 @@ var geracaoNotaEnvioController = $.extend({
 			
 			var uri = "pesquisar";
 			
-			this.gridReaload(grid, uri);
+			mensagens = this.validarDataMovimento(); 
+			if(mensagens[0]['value']) {
+				
+				this.gridReaload(grid, uri);
+				
+			} else {
+				
+				exibirMensagem('WARNING', mensagens);
+				
+			}
 		
 		},
 		
@@ -218,8 +228,11 @@ var geracaoNotaEnvioController = $.extend({
 			},{
 				name : "intervaloMovimentoAte",
 				value : this.filtroPesquisa.intervaloMovimentoAte	
+			},{
+				name : "exibirNotasEnvio",
+				value : this.filtroPesquisa.exibirNotasEnvio	
 			}];
-						
+			
 			if (this.filtroPesquisa.listaFornecedores) {
 				$.each(this.filtroPesquisa.listaFornecedores, function(index, value) {
 					params.push({
@@ -304,28 +317,12 @@ var geracaoNotaEnvioController = $.extend({
 			
 		},
 		
-		/**
-		 * Gera Notas de Envio para resultados da pesquisa e para cotas ausentes selecionadas
-		 */
-		gerarNotaEnvio : function() {
+		getArquivoNotaEnvio : function(data) {
 			
-			var cotasSelecionadas = [];
-			var _this = this;
-			var cotasAusentes = $(".checkboxCheckCotasAusentes");
-			
-			for (var index in cotasAusentes) {
-				if (cotasAusentes[index].checked) {
-					cotasSelecionadas.push(cotasAusentes[index].value);
-				}
-			}
-			
-			var params = serializeArrayToPost("listaIdCotas", cotasSelecionadas);
-
-            var path = this.path + 'gerarNotaEnvio';
+			var path = geracaoNotaEnvioController.path + 'getArquivoNotaEnvio';
 
             $.fileDownload(path, {
                 httpMethod : "POST",
-                data : params,
                 failCallback : function(responseHtml, url) {
                 	if(responseHtml){
                 		var data =  $.parseJSON($(responseHtml).html());                   	 
@@ -336,10 +333,30 @@ var geracaoNotaEnvioController = $.extend({
                     
                 },
                 successCallback : function() {
-                    exibirMensagem("SUCCESS", ["Geração de NE realizada com sucesso!"]);
                     _this.pesquisar();
                 }
             });
+		},
+		
+		/**
+		 * Gera Notas de Envio para resultados da pesquisa e para cotas ausentes selecionadas
+		 */
+		gerarNotaEnvio : function() {
+			
+			var cotasSelecionadas = [];
+			var cotasAusentes = $(".checkboxCheckCotasAusentes");
+			
+			for (var index in cotasAusentes) {
+				if (cotasAusentes[index].checked) {
+					cotasSelecionadas.push(cotasAusentes[index].value);
+				}
+			}
+			
+			var params = serializeArrayToPost("listaIdCotas", cotasSelecionadas);
+
+        	$.postJSON(geracaoNotaEnvioController.path + 'gerarNotaEnvio', params, 
+        			geracaoNotaEnvioController.getArquivoNotaEnvio 
+			);
            
 		},
 		
@@ -374,6 +391,9 @@ var geracaoNotaEnvioController = $.extend({
 			
 			this.filtroPesquisa.intervaloMovimentoDe = $("#geracaoNotaEnvio-filtro-movimentoDe").val();
 			this.filtroPesquisa.intervaloMovimentoAte = $("#geracaoNotaEnvio-filtro-movimentoAte").val();
+			
+			this.filtroPesquisa.exibirNotasEnvio = $("#geracaoNotaEnvio-filtro-exibirNotasEnvio").val();
+			
 		},
 		
 		/**
@@ -439,6 +459,29 @@ var geracaoNotaEnvioController = $.extend({
 		},
 		
 		/**
+		 * Metodo de pre-processamento dos dados inseridos na grid Cotas Ausentes
+		 * 
+		 * @returns intervalo de datas validos (true) ou invalidos (false)
+		 */
+		validarDataMovimento : function() {
+			
+			messages = [];
+			
+			if($('#geracaoNotaEnvio-filtro-movimentoDe').val() == ''
+				|| $('#geracaoNotaEnvio-filtro-movimentoAte').val() == '') {
+				
+				messages.push({name: 'isValid', value: false});
+				messages.push('Os campos de Data de Movimento não podem estar vazios');
+				
+				return messages;
+			}
+			
+			messages.push({name: 'isValid', value: true});
+			return messages;
+			
+		},
+		
+		/**
 		 * objeto utilizado para encapsular as colunas da grid de Cotas Ausentes
 		 */
 		colunasGridCotasAusentes:[{
@@ -486,30 +529,24 @@ var geracaoNotaEnvioController = $.extend({
 			display : 'Total Exemplares',
 			name : 'exemplares',
 			width : 110,
-			sortable : false,
+			sortable : true,
 			align : 'center',
 		}, {
 			display : 'Total R$',
 			name : 'total',
-			width : 70,
-			sortable : false,
-			align : 'right',
-		}, {
-			display : 'Total Desconto R$',
-			name : 'totalDesconto',
 			width : 120,
-			sortable : false,
+			sortable : true,
 			align : 'right',
-		}, {
+		},  {
 			display : 'Status',
 			name : 'notaImpressa',
-			width : 50,
-			sortable : false,
+			width : 100,
+			sortable : true,
 			align : 'center',
 		}, {
 			display : 'Suspensa',
 			name : 'situacaoCadastro',
-			width : 60,
+			width : 100,
 			sortable : true,
 			align : 'center',
 		}],

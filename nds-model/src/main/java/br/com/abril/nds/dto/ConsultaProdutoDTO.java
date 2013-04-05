@@ -174,7 +174,9 @@ public class ConsultaProdutoDTO implements Serializable {
 	 * @param percentualDesconto the percentualDesconto to set
 	 */
 	public void setPercentualDesconto(BigDecimal percentualDesconto) {
-		this.percentualDesconto = percentualDesconto != null ? percentualDesconto.setScale(2, RoundingMode.HALF_EVEN) : null;
+		this.percentualDesconto = percentualDesconto != null 
+				? percentualDesconto.setScale(2, RoundingMode.HALF_EVEN) 
+				: null;
 	}
 
 	/**

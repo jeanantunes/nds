@@ -6,10 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+
+import com.ancientprogramming.fixedformat4j.format.impl.StringFormatter;
 
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
@@ -189,6 +192,35 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		return query.list();
 	}
+								   
+	public MovimentoFinanceiroCota obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(Long idControleConfEncalheCota) {
+
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select mfc from ");
+		
+		hql.append(" ControleConferenciaEncalheCota ccec ");
+
+		hql.append(" inner join ccec.conferenciasEncalhe confEncalhe	");
+
+		hql.append(" inner join confEncalhe.movimentoEstoqueCota mec	");
+		
+		hql.append(" inner join mec.movimentoFinanceiroCota mfc			");
+		
+		hql.append(" where	");
+		
+		hql.append(" ccec.id = :idControleConfEncalheCota ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idControleConfEncalheCota", idControleConfEncalheCota);
+		
+		query.setMaxResults(1);
+		
+		return (MovimentoFinanceiroCota) query.uniqueResult();
+		
+	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -312,7 +344,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	public List<MovimentoFinanceiroCota> obterMovimentosFinanceiroCota(
 			FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 
-		String hql = getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO) +
+		String hql = " select  movimentoFinanceiroCota "+getQueryObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO) +
 					 getOrderByObterMovimentosFinanceiroCota(filtroDebitoCreditoDTO); 
 
 		Query query = criarQueryObterMovimentosFinanceiroCota(hql, filtroDebitoCreditoDTO);
@@ -334,36 +366,28 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 		hql.append(" from MovimentoFinanceiroCota movimentoFinanceiroCota ");
 
-		String conditions = "";
+		String conditions = " where movimentoFinanceiroCota.tipoMovimento.id in ( " + getTipoMovimentoPorGrupoFinanceiros()+" ) ";
 
 		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
 
-			conditions += conditions == "" ? " where " : " and ";
-
-			conditions += " movimentoFinanceiroCota.tipoMovimento.id = :idTipoMovimento ";
+			conditions += " and movimentoFinanceiroCota.tipoMovimento.id = :idTipoMovimento ";
 		}
 
 		if (filtroDebitoCreditoDTO.getDataLancamentoInicio() != null && 
 				filtroDebitoCreditoDTO.getDataLancamentoFim() != null) {
 			
-			conditions += conditions == "" ? " where " : " and ";
-
-			conditions += " movimentoFinanceiroCota.dataCriacao between :dataLancamentoInicio and :dataLancamentoFim ";
+			conditions += " and movimentoFinanceiroCota.dataCriacao between :dataLancamentoInicio and :dataLancamentoFim ";
 		}
 		
 		if (filtroDebitoCreditoDTO.getDataVencimentoInicio() != null && 
 				filtroDebitoCreditoDTO.getDataVencimentoFim() != null) {
 			
-			conditions += conditions == "" ? " where " : " and ";
-
-			conditions += " movimentoFinanceiroCota.data between :dataVencimentoInicio and :dataVencimentoFim ";
+			conditions += " and movimentoFinanceiroCota.data between :dataVencimentoInicio and :dataVencimentoFim ";
 		}
 
 		if (filtroDebitoCreditoDTO.getNumeroCota() != null) {
 
-			conditions += conditions == "" ? " where " : " and ";
-
-			conditions += " movimentoFinanceiroCota.cota.numeroCota = :numeroCota ";
+			conditions += " and movimentoFinanceiroCota.cota.numeroCota = :numeroCota ";
 		}
 
 		hql.append(conditions);
@@ -371,10 +395,21 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return hql.toString();
 	}
 
+	private StringBuilder getTipoMovimentoPorGrupoFinanceiros() {
+		
+		StringBuilder hql = new StringBuilder("select t.id ");
+		hql.append(" from TipoMovimentoFinanceiro t ")
+		   .append(" where t.grupoMovimentoFinaceiro in (:grupoMovimentosFinanceiros)");
+	
+		return hql;
+	}
+
 	private Query criarQueryObterMovimentosFinanceiroCota(String hql, FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
 		Query query = getSession().createQuery(hql);
-
+		
+		query.setParameterList("grupoMovimentosFinanceiros", filtroDebitoCreditoDTO.getGrupoMovimentosFinanceirosDebitosCreditos());
+		
 		if (filtroDebitoCreditoDTO.getIdTipoMovimento() != null) {
 
 			query.setParameter("idTipoMovimento", filtroDebitoCreditoDTO.getIdTipoMovimento());

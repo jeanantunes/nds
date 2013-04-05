@@ -182,6 +182,20 @@ var produtoEdicaoController =$.extend(true,  {
 
 	init : function(){
 		
+		$(document).ready(function(){
+			
+			focusSelectRefField($("#produtoEdicaoController-pCodigoProduto", produtoEdicaoController.workspace));
+			
+			$(document.body).keydown(function(e) {
+				
+				if(keyEventEnterAux(e)){
+					produtoEdicaoController.pesquisarEdicoes();
+				}
+				
+				return true;
+			});
+		});
+		
 		window.addEventListener('blur', function() {
 
 			window.clearInterval(produtoEdicaoController.intervalo);
@@ -702,7 +716,13 @@ var produtoEdicaoController =$.extend(true,  {
 							$('#produtoEdicaoController-parcial').val(result.parcial + "");
 							$('#produtoEdicaoController-possuiBrinde').attr('checked', result.possuiBrinde).change();
 							$('#produtoEdicaoController-boletimInformativo').val(result.boletimInformativo);
-							$('#produtoEdicaoController-semanaRecolhimento').val(result.semanaRecolhimento);
+							
+							if (result.dataRecolhimentoReal || result.dataRecolhimentoPrevisto) {
+								ano = (result.dataRecolhimentoReal || result.dataRecolhimentoPrevisto).$.split("/")[2];
+								anoSemanaRecolhimento = ano + result.semanaRecolhimento;
+								$('#produtoEdicaoController-semanaRecolhimento').val(anoSemanaRecolhimento);
+							}
+							
 							$('#produtoEdicaoController-dataRecolhimentoReal').val(result.dataRecolhimentoReal == undefined ? '' : result.dataRecolhimentoReal.$);								
 							$('#produtoEdicaoController-dataRecolhimentoPrevisto').val(result.dataRecolhimentoPrevisto == undefined ? '' : result.dataRecolhimentoPrevisto.$);
 							$("#produtoEdicaoController-peb").val(result.peb);		
@@ -715,6 +735,7 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-faixaEtaria").val(result.faixaEtaria);
 							$("#produtoEdicaoController-temaPrincipal").val(result.temaPrincipal);
 							$("#produtoEdicaoController-temaSecundario").val(result.temaSecundario);
+							$("#produtoEdicaoController-tipoSegmento").val(result.tipoSegmentoProdutoId);
 
 							var naoEditavel = result.origemInterface;
 							
@@ -749,7 +770,8 @@ var produtoEdicaoController =$.extend(true,  {
 						    $("#produtoEdicaoController-sexo option").not(":selected").attr("disabled", naoEditavel);
 						    $("#produtoEdicaoController-faixaEtaria option").not(":selected").attr("disabled", naoEditavel);
 						    $("#produtoEdicaoController-temaPrincipal option").not(":selected").attr("disabled", naoEditavel);
-						    $("#produtoEdicaoController-temaSecundario option").not(":selected").attr("disabled", naoEditavel);    
+						    $("#produtoEdicaoController-temaSecundario option").not(":selected").attr("disabled", naoEditavel);
+						    $("#produtoEdicaoController-tipoSegmento option").not(":selected").attr("disabled", naoEditavel);
 
 							$("#produtoEdicaoController-precoVenda").attr("readonly", false); 
 							$("#produtoEdicaoController-imagemCapa").attr("readonly", false);

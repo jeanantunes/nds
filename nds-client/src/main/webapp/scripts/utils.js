@@ -2,9 +2,10 @@ var messageTimeout;
 var messageDialogTimeout;
 
 $(document).ready(function(){
+	
 	jQuery(":input[maxlength]").keyup(function () {
 	    var focus = jQuery(this);
-	    var valFocus;
+	    var valFocus = null;
 	    try {
 	        if (typeof jQuery(focus).mask() == 'string') {
 	            valFocus = jQuery(focus).val().replace("_", "");
@@ -26,6 +27,58 @@ $(document).ready(function(){
 	        });
 	    }
 	});
+	
+	$(document.body).keydown(function(e) {
+		var eventoJs= e;
+		var keycode = e.which;
+		if (window.event) {
+			eventoJs = window.event;
+			keycode = eventoJs.keyCode;
+		}
+		
+		if (keycode == 32 && ($("#effectWarning").css("display") == "block" || $("#effectError").css("display") == "block"
+				|| $("#effectSuccess").css("display") == "block")) {
+			esconde(false, $('#effectWarning'));
+			esconde(false, $('#effectError'));
+			esconde(false, $('#effectSuccess'));
+
+			focusFirstContentView(this);
+			
+		}else if( keycode == $.ui.keyCode.ENTER ) {
+			
+			//Confirmação genérica para modais por tec ENTER
+			
+			var refButtonsDialog = $(".ui-dialog:visible").find("button");
+			
+			//Considerar apenas bts Confirmação/Desistência pela abrangência sobre sistema.
+			if( refButtonsDialog.size()==2 ) {
+
+				//Verifica se o segundo botão está selecionado / Caso sim não acionará Confirmação por ser Desistência selecionado
+				if(eventoJs.target!=refButtonsDialog[1]){
+					refButtonsDialog.first().click(); /* Assuming the first one is the action button */
+				}
+				return true;
+		    }
+		}
+		
+	});
+	
+	//Move foco para primeiro campo do modal ao abrir modal
+	$(document).bind("dialogopen", function() {
+		focusFirstContentModal();
+	});
+	
+	//Move foco para primeiro campo ao fechar modal
+	$(document).bind("dialogclose", function() {
+		focusFirstContentView(this);
+	});	
+	
+	
+	//Foco primeiro campo ao carregar aba 
+//	$("#workspace").bind('focus',function(){
+//		alert("Passou")
+//		focusFirstContentView(document);
+//	});
 });
 
 function exibirMensagem(tipoMensagem, mensagens) {
@@ -256,7 +309,7 @@ function doGet(url, params, target) {
 }
 
 function newOption(value, label) {
-    return "<option value='" + value + "'>" + label + "</option>"
+    return "<option value='" + value + "'>" + label + "</option>";
 }
 
 function replaceAll(string, token, newtoken) {
@@ -304,7 +357,7 @@ function floatToPrice(field) {
     var part = price.split(".");
     return part[0].split("").reverse().reduce(function(acc, price, i, orig) {
         return  price + (i && !(i % 3) ? "." : "") + acc;
-    }, "") + "," + part[1];
+    }, "") + "," + (part[1]+"0").substr(0, 2);
     
 }
 
@@ -386,10 +439,43 @@ function onlyNumeric(event){
         }
 }
 
-
 function getCurrentTabContainer(){
 	var currentTabId = $(".ui-tabs-selected").find("a").attr("href");
 	var currentTab = $(currentTabId);
 	
 	return currentTab;
+}
+
+function focusSelectRefField(objectField){
+	setTimeout (function () {objectField.focus();objectField.select();}, 1);
+}
+
+function focusFirstContentView(context){
+	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus();}, 1);
+}
+
+function focusFirstContentModal(){
+	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus();}, 1);
+}
+
+function keyEventEnterAux(e){
+	var eventoJs= e;
+	var keycode = e.which;
+	if (window.event) {
+		eventoJs = window.event;
+		keycode = eventoJs.keyCode;
+	}
+	
+	if( keycode == $.ui.keyCode.ENTER ) {
+		if(eventoJs.target!=":input"){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+function addTabWithPost(tabs, label, postResponse, blankPath) {
+	tabs.tabs({load : function( event, ui ) { $('#'+ ui.panel.id).html(postResponse); }});
+	tabs.tabs('addTab', label, blankPath);
 }

@@ -76,7 +76,7 @@ public interface GrupoService {
 	 * @param idGrupo
 	 * @return
 	 */
-	List<Long> obterMunicipiosDoGrupo(Long idGrupo);
+	List<String> obterMunicipiosDoGrupo(Long idGrupo);
 
 	/**
 	 * Obtém ids das Cotas do Grupo

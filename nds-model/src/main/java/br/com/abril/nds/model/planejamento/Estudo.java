@@ -1,12 +1,12 @@
 package br.com.abril.nds.model.planejamento;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -26,6 +26,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * @author francisco.garcia
@@ -56,7 +57,7 @@ public class Estudo implements Serializable {
 	@OneToMany(mappedBy = "estudo")
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
-	@OneToMany(mappedBy = "estudo", cascade = {CascadeType.REMOVE, CascadeType.MERGE})
+	@OneToMany(mappedBy = "estudo")
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
 	/** Status do Estudo. */
@@ -74,6 +75,21 @@ public class Estudo implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataAlteracao;
 	
+	@Column(name = "LIBERADO")
+	private Integer liberado;
+	
+	@Column(name = "REPARTE_DISTRIBUIR")
+	private BigInteger reparteDistribuir;
+	
+	@Column(name = "DISTRIBUICAO_POR_MULTIPLOS")
+	private Integer distribuicaoPorMultiplos; //TODO no estudo usa boolean, verificar alteração
+	
+	@Column(name = "PACOTE_PADRAO")
+	private BigInteger pacotePadrao; //TODO BigDecimal
+	
+	@ManyToOne (optional = false)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario; 
 	
 	public Long getId() {
 		return id;
@@ -149,4 +165,51 @@ public class Estudo implements Serializable {
 		this.dataAlteracao = dataAlteracao;
 	}
 
+	public Integer getLiberado() {
+		return liberado;
+	}
+
+	public void setLiberado(Integer liberado) {
+		this.liberado = liberado;
+	}
+
+	public Set<Lancamento> getLancamentos() {
+		return lancamentos;
+	}
+
+	public void setLancamentos(Set<Lancamento> lancamentos) {
+		this.lancamentos = lancamentos;
+	}
+
+	public BigInteger getReparteDistribuir() {
+		return reparteDistribuir;
+	}
+
+	public void setReparteDistribuir(BigInteger reparteDistribuir) {
+		this.reparteDistribuir = reparteDistribuir;
+	}
+
+	public Integer getDistribuicaoPorMultiplos() {
+		return distribuicaoPorMultiplos;
+	}
+
+	public void setDistribuicaoPorMultiplos(Integer distribuicaoPorMultiplos) {
+		this.distribuicaoPorMultiplos = distribuicaoPorMultiplos;
+	}
+
+	public BigInteger getPacotePadrao() {
+		return pacotePadrao;
+	}
+
+	public void setPacotePadrao(BigInteger pacotePadrao) {
+		this.pacotePadrao = pacotePadrao;
+	}
+
+	public Usuario getUsuarioId() {
+		return usuario;
+	}
+
+	public void setUsuarioId(Usuario usuarioId) {
+		this.usuario = usuarioId;
+	}
 }

@@ -406,3 +406,5 @@ var inadimplenciaController = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=inadimplencia.js

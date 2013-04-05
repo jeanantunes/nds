@@ -7,7 +7,6 @@ import br.com.abril.nds.dto.ParcialVendaDTO;
 import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 
 public interface PeriodoLancamentoParcialRepository extends
@@ -101,5 +100,15 @@ public interface PeriodoLancamentoParcialRepository extends
 	 * @return LancamentoParcial
 	 */
 	PeriodoLancamentoParcial obterUltimoLancamentoParcial(Long idProdutoEdicao);
+	
+
+	/**
+	 * Retorna lançamentos parciais após seu balanceamento.
+	 * 
+	 * @param idLancamentoParcial
+	 * 
+	 * @return Long
+	 */
+	Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial);
 
 }

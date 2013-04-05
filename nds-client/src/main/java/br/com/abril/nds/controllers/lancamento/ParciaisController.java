@@ -21,7 +21,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FornecedorService;
@@ -304,36 +303,11 @@ public class ParciaisController extends BaseController {
 	@Post
 	public void obterPebDoProduto(String codigoProduto, String edicaoProduto, Integer periodos) {
 		
-		Integer peb =obterPEB(codigoProduto,edicaoProduto,null);
+		Integer pebProduto = parciaisService.calcularPebParcial(codigoProduto,Long.parseLong(edicaoProduto),periodos);
 		
-		if(periodos == null){
-			
-			result.use(Results.json()).withoutRoot().from(peb).recursive().serialize();
-		}
-		else{
-			
-			Integer pebProduto = (peb / periodos);
-			
-			result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
-		}
+		result.use(Results.json()).withoutRoot().from(pebProduto).recursive().serialize();
 	}
 	
-	private Integer obterPEB(String codigoProduto, String edicaoProduto, Long idEdicao){
-		
-		ProdutoEdicao produtoEdicao=null;
-		
-		if(idEdicao == null){
-			produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto);
-		}
-		else{
-			produtoEdicao = produtoEdicaoService.buscarPorID(idEdicao);
-		}
-		
-		if(produtoEdicao == null) 
-			throw new ValidacaoException(TipoMensagem.WARNING, "Edição não encontrada.");
-		
-		return produtoEdicao.getPeb();
-	}
 	
 	/**
 	 * Insere períodos ao Lançamento Parcial
@@ -341,7 +315,7 @@ public class ParciaisController extends BaseController {
 	@Post
 	public void inserirPeriodos(Integer peb, Integer qtde, Long idProdutoEdicao) {
 		
-		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuarioLogado(), peb);
+		parciaisService.gerarPeriodosParcias(idProdutoEdicao, qtde, getUsuarioLogado());
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}

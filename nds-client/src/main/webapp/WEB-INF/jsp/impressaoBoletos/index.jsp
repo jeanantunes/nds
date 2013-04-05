@@ -44,14 +44,6 @@
 						</a>
 					</span>
 				</div>
-			
-				<div id="divGerarDivida">
-  						<span class="bt_novos" style="margin-left:20px;">
-  							<a href="javascript:impressaoBoletosController.veificarCobrancaGerada();" id="btnGerarDivida" rel="tipsy" title="Gerar Dívida">
-  								<img src="${pageContext.request.contextPath}/images/ico_redistribuicao_complementar.gif" hspace="5" border="0" />
-  							</a>
-  						</span>
- 					</div>
  					
  					<span class="bt_arq">
          				<a href="${pageContext.request.contextPath}/financeiro/impressaoBoletos/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
@@ -73,7 +65,6 @@
 					    <td width="29">Data:</td>
 					    <td width="125">
 					    	<input value="${dataOperacao}" type="text" name="dataMovimento" id="dataMovimento"
-					    		   onchange="impressaoBoletosController.habilitarAcaoGeracaoDivida(this.value);"
 					    		   style="width:70px; float:left; margin-right:5px;" />
 					    </td>
 					    <td width="49">Box</td>

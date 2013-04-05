@@ -34,6 +34,23 @@ public class ConferenciaEncalheRepositoryImpl extends
 		super(ConferenciaEncalhe.class);
 	}
 	
+	public BigInteger obterQtdeEncalhe(Long idConferenciaEncalhe) {
+		
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select conf.qtde from ConferenciaEncalhe conf ")
+			.append(" where conf.id = :idConferenciaEncalhe ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idConferenciaEncalhe", idConferenciaEncalhe);
+		
+	
+		return (BigInteger) query.uniqueResult();
+		
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaCotaConferenciaNaoFinalizada(java.util.Date)
@@ -229,7 +246,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTOContingencia(
-			Long idDistribuidor,
 			Integer numeroCota,
 			Date dataRecolhimento,
 			boolean indFechado,
@@ -388,7 +404,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTO(java.lang.Long, java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota, Long idDistribuidor) {
+	public List<ConferenciaEncalheDTO> obterListaConferenciaEncalheDTO(Long idControleConferenciaEncalheCota) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -419,8 +435,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial, 						 ");
 		hql.append(" PROD_EDICAO.PACOTE_PADRAO AS pacotePadrao,              ");
 		
-
-		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA, 0) AS precoComDesconto, ");
+		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, 0) AS precoComDesconto, ");
 		
 		hql.append(" COALESCE( ( COALESCE(MOV_ESTOQUE_COTA.PRECO_VENDA, 0) - COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, 0)), 0 ) AS desconto, ");
 		

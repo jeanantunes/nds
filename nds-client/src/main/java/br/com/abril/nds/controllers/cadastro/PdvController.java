@@ -34,10 +34,12 @@ import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.EnderecoUniqueConstraintViolationException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.CodigoDescricao;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.StatusPDV;
 import br.com.abril.nds.model.cadastro.pdv.TamanhoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPeriodoFuncionamentoPDV;
+import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaService;
@@ -121,7 +123,7 @@ public class PdvController extends BaseController {
 		result.include("listaTipoLicencaMunicipal",getListaDescricao(pdvService.obterTipoLicencaMunicipal()));
 		
 		result.include("listaTipoPontoPDV",getListaDescricao(pdvService.obterTiposPontoPDV()));
-		result.include("listaCaracteristicaPDV",getListaCaracteristica());
+//		result.include("listaCaracteristicaPDV",getLicstaCaracteristica());
 		result.include("listaAreaInfluenciaPDV",getListaDescricao(pdvService.obterTipoAreaInfluencia()));
 		
 	}
@@ -158,19 +160,25 @@ public class PdvController extends BaseController {
 	@Post
 	@Path("/carregarGeradorFluxo")
 	public void carregarGeradorFluxo(List<Long> codigos, ModoTela modoTela, Long idPdv){
-	    List<ItemDTO<Long, String>> listaDescricao;
-	    Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
-	    if (ModoTela.CADASTRO_COTA == modoTela) {
-	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxo(cod));
-	    } else {
-	        Set<Long> codigosGeradores = new HashSet<Long>(Arrays.asList(cod));
-	        List<GeradorFluxoDTO> dtos = pdvService.obterGeradoresFluxoHistoricoTitularidadePDV(idPdv, codigosGeradores);
-	        listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
-	        for (GeradorFluxoDTO geradorFluxoDTO : dtos) {
-                listaDescricao.add(new ItemDTO<Long, String>(geradorFluxoDTO.getCodigo(), geradorFluxoDTO.getDescricao()));
-            }
-	    }
-        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
+	   PDV pdv =	 pdvService.obterPDVporId(idPdv);
+	   
+		  
+			
+		    List<ItemDTO<Long, String>> listaDescricao;
+		    Long[] cod = (codigos == null)? new Long[]{} : codigos.toArray(new Long[]{});
+		    if (ModoTela.CADASTRO_COTA == modoTela) {
+		        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxo(cod));
+		    } else {
+		        Set<Long> codigosGeradores = new HashSet<Long>(Arrays.asList(cod));
+		        List<GeradorFluxoDTO> dtos = pdvService.obterGeradoresFluxoHistoricoTitularidadePDV(idPdv, codigosGeradores);
+		        listaDescricao = new ArrayList<ItemDTO<Long,String>>(dtos.size());
+		        for (GeradorFluxoDTO geradorFluxoDTO : dtos) {
+	                listaDescricao.add(new ItemDTO<Long, String>(geradorFluxoDTO.getCodigo(), geradorFluxoDTO.getDescricao()));
+	            }
+		    }
+	        result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
+	  
+		   
 	}
 	
 	@Post
@@ -182,6 +190,8 @@ public class PdvController extends BaseController {
 	        listaDescricao = getListaDescricao(pdvService.obterTiposGeradorFluxoNotIn(cod));
 	    }		
         result.use(Results.json()).from(listaDescricao, "result").recursive().serialize();
+        //TODO ALMIR VERIFICAR SE É PRINCIPAL PARA BLOQUER O GERADOR DE FLUXO 
+        
 	}
 	
 	
@@ -227,12 +237,14 @@ public class PdvController extends BaseController {
 	 * 
 	 * @return List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>>
 	 */
-	private List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> getListaCaracteristica(){
+	private List<ItemDTO<String, String>> getListaCaracteristica(){
 		
-		List<ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>> itens = new ArrayList<ItemDTO<TipoCaracteristicaSegmentacaoPDV,String>>();
+		//AJUSTE EMS-0159
+		//•	Características: características possíveis do PDV (banca, livraria, revistaria, etc..)
+		List<ItemDTO<String, String>> itens = new ArrayList<ItemDTO<String,String>>();
 		
-		for( TipoCaracteristicaSegmentacaoPDV item: TipoCaracteristicaSegmentacaoPDV.values()) {
-			itens.add(new ItemDTO<TipoCaracteristicaSegmentacaoPDV, String>(item, item.getDescricao()));
+		for( TipoPontoPDV item: pdvService.obterTiposPontoPDV()) {
+			itens.add(new ItemDTO<String, String>(item.getDescricao(), item.getDescricao()));
 		}
 		
 		return itens;

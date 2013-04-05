@@ -15,9 +15,10 @@
 
     </fieldset>
 
-</div>
+</div> 
 
 
+</script>
 
 <div id="dialog-alterar-faixa" title="Consulta de Cotas do Histograma de Venda" style="display:none;">
 <fieldset style="width:350px; margin-top:8px;">
@@ -44,7 +45,7 @@
         <table width="950" border="0" cellpadding="2" cellspacing="1">
             <tr>
               <td width="66"><strong>Código:</strong></td>
-              <td width="146">${filtroUtilizado.codigo}</td>
+              <td width="146">${codigoLabel}</td>
               <td width="75"><strong>Produto:</strong></td>
               <td width="160">${nomeProduto}</td>
               <td width="58"><strong>Edições:</strong></td>
@@ -54,7 +55,7 @@
               <td><strong>Segmento:</strong></td>
               <td>${segmentoLabel}</td>
               <td><strong>Classificação:</strong></td>
-              <td>Lançamento</td>
+              <td>${classificacaoLabel}</td>
               <td><strong>Elemento:</strong></td>
               <td width="213">${labelElemento}</td>
               <td width="78"><strong>Componente:</strong></td>

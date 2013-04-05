@@ -315,15 +315,14 @@ public class CotaAusenteController extends BaseController {
 	@Post
 	public void exibirProdutosSuplementaresDisponiveis(Long idCotaAusente) {
 		
-		FiltroCotaAusenteDTO filtro = this.getFiltroSessao();
-		
 		List<ProdutoEdicaoSuplementarDTO> listaProdutosEdicaoDisponíveis = 
-				this.estoqueProdutoService.obterProdutosEdicaoSuplementarDisponivel(filtro.getData(), idCotaAusente);
+			this.cotaAusenteService.obterDadosExclusaoCotaAusente(idCotaAusente);
 		
 		result.use(FlexiGridJson.class).from(listaProdutosEdicaoDisponíveis).page(1).total(listaProdutosEdicaoDisponíveis.size()).serialize();
-	}
-	
-	
+		
+		}
+		
+		
 	/**
 	 * 
 	 * @param idCotaAusente
@@ -427,9 +426,54 @@ public class CotaAusenteController extends BaseController {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
+		for (Integer numeroCota : numCotas) {
+			
+			try {
+				
+				this.cotaAusenteService.verificarExistenciaReparteCota(dataOperacao, numeroCota);
+				
+			} catch (ValidacaoException e) {
+				
+				List<String> mensagens = new ArrayList<String>();
+				
+				mensagens.addAll(e.getValidacao().getListaMensagens());
+				
+				TipoMensagem tipoMensagem = TipoMensagem.WARNING;
+				
+				Object[] retorno = new Object[2];
+				
+				retorno[0] = mensagens;
+				retorno[1] = tipoMensagem;
+				
+				result.use(Results.json()).from(retorno, "result").serialize();
+				
+				return;
+			}
+		}
+
+		//TODO: Alterar para não trazer dados já rateados
+		
 		List<MovimentoEstoqueCotaDTO> movimentos = 
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
 				dataOperacao, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		if (movimentos == null || movimentos.isEmpty()) {
+			
+			List<String> mensagens = new ArrayList<String>();
+			
+			mensagens.add("Não ha reparte para as cotas nesta data.");
+			
+			TipoMensagem tipoMensagem = TipoMensagem.WARNING;
+			
+			Object[] retorno = new Object[2];
+			
+			retorno[0] = mensagens;
+			retorno[1] = tipoMensagem;
+			
+			result.use(Results.json()).from(retorno, "result").serialize();
+			
+			return;
+		}
 		
 		result.use(Results.json()).from(movimentos, "result").recursive().serialize();
 	}
@@ -441,7 +485,8 @@ public class CotaAusenteController extends BaseController {
 	 * @param numCota
 	 */
 	@Post
-	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, List<Integer> numCotas) {
+	public void realizarRateio(List<MovimentoEstoqueCotaDTO> movimentos, 
+							   List<Integer> numCotas) {
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
@@ -451,7 +496,8 @@ public class CotaAusenteController extends BaseController {
 			
 			if (numCotas == null) { 
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, WARNING_NUMERO_COTA_NAO_INFORMADO);
 			}
 			
 			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -461,31 +507,38 @@ public class CotaAusenteController extends BaseController {
 			
 			mensagens.add(SUCESSO_RATEIO);
 			
-		} catch(ValidacaoException e) {
+		} catch (ValidacaoException e) {
+			
 			mensagens.clear();
 			mensagens.addAll(e.getValidacao().getListaMensagens());
-			status=TipoMensagem.WARNING;
+			status = TipoMensagem.WARNING;
 		
-		} catch(InvalidParameterException e) {
+		} catch (InvalidParameterException e) {
+			
 			mensagens.clear();
 			mensagens.add(WARNING_COTA_AUSENTE_DUPLICADA);
-			status=TipoMensagem.WARNING;			
-		}catch(TipoMovimentoEstoqueInexistenteException e) {
+			status = TipoMensagem.WARNING;	
+			
+		} catch (TipoMovimentoEstoqueInexistenteException e) {
+			
 			mensagens.clear();
 			mensagens.add(e.getMessage());
-			status=TipoMensagem.WARNING;
-		} catch(Exception e) {
+			status = TipoMensagem.WARNING;
+			
+		} catch (Exception e) {
+			
 			mensagens.clear();
 			mensagens.add(ERRO_RATEIO );
-			status=TipoMensagem.ERROR;
+			status = TipoMensagem.ERROR;
 			LOG.error(ERRO_RATEIO, e);
 		}
 		
 		Object[] retorno = new Object[2];
+		
 		retorno[0] = mensagens;
 		retorno[1] = status;		
 		
-		result.use(Results.json()).from(retorno, "result").serialize();
+		this.result.use(Results.json()).from(retorno, "result").serialize();
 	}
 	
 	/**
@@ -518,4 +571,5 @@ public class CotaAusenteController extends BaseController {
 		
 		return filtro;
 	}
+
 }

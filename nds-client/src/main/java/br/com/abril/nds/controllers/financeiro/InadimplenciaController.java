@@ -53,6 +53,7 @@ public class InadimplenciaController extends BaseController {
 	
 	private static final String ERRO_PESQUISAR_INADIMPLENCIAS = "Erro inesperado ao pesquisar inadimplencias.";	
 	private static final String WARNING_PESQUISA_SEM_RESULTADO = "Não há resultados para a pesquisa realizada.";
+	private static final String WARNING_PESQUISA_VALIDACAO_SITUACAO = "É necessário selecionar a situação da dívida.";
 
 	@Autowired
 	private DistribuidorService distribuidorService;
@@ -109,11 +110,19 @@ public class InadimplenciaController extends BaseController {
 			String periodoDe, String periodoAte, String nomeCota, Integer numCota, String statusCota, 
 			boolean situacaoEmAberto, boolean situacaoNegociada, boolean situacaoPaga) {
 		
-		TipoMensagem status = TipoMensagem.SUCCESS;
-		
 		List<String> mensagens = new ArrayList<String>();
-
-		TableModel<CellModelKeyValue<StatusDividaDTO>> grid = null;
+		TipoMensagem status = TipoMensagem.SUCCESS;
+		TableModel<CellModelKeyValue<StatusDividaDTO>> grid = new TableModel<CellModelKeyValue<StatusDividaDTO>>();
+		
+		if (!situacaoEmAberto && !situacaoNegociada && !situacaoPaga) {
+			
+			mensagens.add(WARNING_PESQUISA_VALIDACAO_SITUACAO);
+			status=TipoMensagem.WARNING;
+			
+			this.tratraRetornoPesquisa(mensagens, status, grid, null, null);
+			
+			return;
+		}
 		
 		String total = "0,00";
 		String count = "0";
@@ -158,19 +167,22 @@ public class InadimplenciaController extends BaseController {
 			status=TipoMensagem.ERROR;
 			LOG.error(ERRO_PESQUISAR_INADIMPLENCIAS, e);
 		}
-	
-		if(grid==null) {
-			grid = new TableModel<CellModelKeyValue<StatusDividaDTO>>();
-		}
+		
+		this.tratraRetornoPesquisa(mensagens, status, grid, total, count);
+	}
+
+	private void tratraRetornoPesquisa(List<String> mensagens, TipoMensagem status,
+									   TableModel<CellModelKeyValue<StatusDividaDTO>> grid,
+									   String total, String count) {
 		
 		Object[] retorno = new Object[5];
-		retorno[0] = grid;
-		retorno[1] = mensagens;
-		retorno[2] = status.name();
-		retorno[3] = total;
-		retorno[4] = count;
 		
-	
+		retorno[0] = grid != null ? grid : "";
+		retorno[1] = mensagens != null ? mensagens : "";
+		retorno[2] = status != null ? status.name() : "";
+		retorno[3] = total != null ? total : "";
+		retorno[4] = count != null ? count : "";
+		
 		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 	}
 

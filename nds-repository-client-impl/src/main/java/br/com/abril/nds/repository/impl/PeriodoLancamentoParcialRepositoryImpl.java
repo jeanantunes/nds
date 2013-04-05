@@ -16,7 +16,6 @@ import br.com.abril.nds.dto.PeriodoParcialDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroParciaisDTO.ColunaOrdenacaoPeriodo;
 import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.LancamentoParcial;
 import br.com.abril.nds.model.planejamento.PeriodoLancamentoParcial;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -39,6 +38,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		hql.append(" select produtoEdicao.id as idProdutoEdicao, ");
 		hql.append("		lancamento.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append(" 		lancamento.dataRecolhimentoDistribuidor as dataRecolhimento, ");
+		hql.append("		lancamento.dataLancamentoPrevista as dataLancamentoPrevista, ");
+		hql.append(" 		lancamento.dataRecolhimentoPrevista as dataRecolhimentoPrevista, ");
+
 		hql.append("		produtoEdicao.origem as origem, ");
 		
 		hql.append("		sum(lancamento.reparte) as reparte,  ");
@@ -486,4 +488,28 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 	
 	}
 	
+	public Long obterQntPeriodosAposBalanceamentoRealizado(Long idLancamentoParcial){
+		   
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select count( periodo.id ) from PeriodoLancamentoParcial periodo  ")
+
+		.append(" join periodo.lancamento lancamento ")
+
+		.append(" join periodo.lancamentoParcial lancamentoParcial ")
+
+		.append(" where lancamento.status not in (:satatusLancamento) ")
+
+		.append(" and lancamentoParcial.id =:idLancamentoParcial ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idLancamentoParcial", idLancamentoParcial);
+
+		query.setParameterList("satatusLancamento", new StatusLancamento[] {
+				StatusLancamento.PLANEJADO, StatusLancamento.CONFIRMADO });
+
+		return (Long) query.uniqueResult();
+	}
+
 }

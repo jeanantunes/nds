@@ -9,6 +9,7 @@ var MANTER_COTA = $.extend(true, {
 
     numeroCota:"",
     idCota:"",
+    tipoCota:"",
     tipoCotaSelecionada:"",
     tipoCota_CPF:"FISICA",
     tipoCota_CNPJ:"JURIDICA",
@@ -33,8 +34,38 @@ var MANTER_COTA = $.extend(true, {
         SOCIO_COTA.initGridSocioCota();
 
         this.initCotaGridPrincipal();
+        
+        
+        $(document).ready(function(){
+        	
+        	focusSelectRefField($("#numCota"));
+        	
+        	$(document.body).keydown(function(e) {
+        		
+        		if(keyEventEnterAux(e)){
+        			MANTER_COTA.pesquisar();
+        		}
+        		
+        		return true;
+        	});
+        });
     },
     
+    verificaTipoCota : function(tipoCotaCPF){
+       	var retorno = confirm("O Mix (para o tipo alternativo) e a Fixação (para o tipo convencional) desta Cota serão apagados, confirma?");
+    	if (retorno){
+    		
+    		  $.postJSON(contextPath + "/cadastro/cota/apagarTipoCota",
+    	        		{idCota:MANTER_COTA.idCota, tipoCota:tipoCotaCPF.value},
+    	            function(){
+    	                alert("feito!!!!");
+    	            }
+    	        );
+    
+    		
+    	}
+ 
+    },
     initCotaGridPrincipal: function() {
 
         $(".pessoasGrid", MANTER_COTA.workspace).flexigrid({
@@ -113,6 +144,9 @@ var MANTER_COTA = $.extend(true, {
             {name:"numeroCpfCnpj",value:$("#txtCPF_CNPJ", this.workspace).val()},
             {name:"logradouro",value:$("#logradouroPesquisa", this.workspace).val()},
             {name:"bairro",value:$("#bairroPesquisa", this.workspace).val()},
+            
+            {name:"status",value:$("#selectStatus", this.workspace).val()},
+            
             {name:"municipio",value:$("#municipioPesquisa", this.workspace).val()}
         ];
         return formData;
@@ -300,7 +334,7 @@ var MANTER_COTA = $.extend(true, {
                     }
                     else {
                     	
-                    	$("#numeroCota", this.workspace).attr("disabled", "disabled");
+                    	$("#numeroCotaCNPJ", this.workspace).attr("disabled", "disabled");
                     	
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         
@@ -707,7 +741,7 @@ var MANTER_COTA = $.extend(true, {
 
         if (MANTER_COTA.tipoCotaSelecionada == MANTER_COTA.tipoCota_CNPJ){
 
-            numeroCota = $("#numeroCota", this.workspace).val();
+            numeroCota = $("#numeroCotaCNPJ", this.workspace).val();
 
         } else {
 
@@ -722,7 +756,7 @@ var MANTER_COTA = $.extend(true, {
 
         } else {
 
-            campoNumeroCota = $("#numeroCota", this.workspace);
+            campoNumeroCota = $("#numeroCotaCNPJ", this.workspace);
 
             COTA_CNPJ.novoCNPJ();
         }
@@ -815,13 +849,16 @@ var MANTER_COTA = $.extend(true, {
 
                         $("#cotaTemEntregador").hide();
                     }
+                    
+                    DISTRIB_COTA.verificarTipoConvencional(MANTER_COTA.idCota);
                 },
                 null,
                 true,
                 "dialog-cota"
             );
         }
-    }
+    },
+    
 
 }, BaseController);
 
@@ -1086,7 +1123,7 @@ var COTA_CNPJ = $.extend(true, {
 
                 if (!MANTER_COTA.isAlteracaoTitularidade) {
 
-                    $("#numeroCota", this.workspace).val(dados.numeroSugestaoCota);
+                    $("#numeroCotaCNPJ", this.workspace).val(dados.numeroSugestaoCota);
                 }
 
                 MANTER_COTA.montarCombo(dados.listaClassificacao,"#classificacaoSelecionada");
@@ -1094,7 +1131,7 @@ var COTA_CNPJ = $.extend(true, {
                 MANTER_COTA.popupCota(true);
             }
         );
-        MANTER_COTA.numeroCota = $("#numeroCota", this.workspace).val();
+        MANTER_COTA.numeroCota = $("#numeroCotaCNPJ", this.workspace).val();
     },
 
     editarCNPJ:function(result){
@@ -1115,7 +1152,7 @@ var COTA_CNPJ = $.extend(true, {
         $( "#tabCota", this.workspace ).tabs({ selected:0 });
         TAB_COTA.possuiDadosObrigatorios = true;
 
-        $("#numeroCota", this.workspace).val(result.numeroCota);
+        $("#numeroCotaCNPJ", this.workspace).val(result.numeroCota);
         $("#email", this.workspace).val(result.email);
         $("#status", this.workspace).val(result.status);
         $("#dataInclusao", this.workspace).html(result.dataInclusao.$);
@@ -1363,6 +1400,7 @@ var COTA_CPF = $.extend(true, {
         }
     },
 
+    
     salvarDadosBasico:function (){
 
         var formData = $("#formDadosBasicoCpf", this.workspace).serializeArray();
