@@ -328,16 +328,16 @@ public class ProdutoController extends BaseController {
 		
 		int startSearch = page*rp - rp;
 		
-		FiltroProdutoDTO filtroProdutoDTO = 
-				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname);
+		FiltroProdutoDTO filtro = 
+				new FiltroProdutoDTO(codigo, produto, editor, fornecedor, codigoTipoProduto, sortorder, sortname);
 		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroProdutoDTO);
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 		
 		List<ConsultaProdutoDTO> listaProdutos =
-			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
+			this.produtoService.pesquisarProdutos(filtro.getCodigo(), produto, fornecedor, editor, 
 				codigoTipoProduto, sortorder, sortname, startSearch, rp);
 		
-		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto);
+		Integer totalResultados = this.produtoService.pesquisarCountProdutos(filtro.getCodigo(), produto, fornecedor, editor, codigoTipoProduto);
 		
 		this.result.use(FlexiGridJson.class).from(listaProdutos).total(totalResultados).page(page).serialize();
 	}
