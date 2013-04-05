@@ -47,6 +47,7 @@ import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -377,29 +378,43 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	public Boolean existeGeracaoDeCobranca(Date dataOperacao) {
 		
 		Calendar dataBase = Calendar.getInstance();
+		
 		dataBase.setTime(dataOperacao);
+		
 		int diaDaSemanaDaDataDeOperacao = dataBase.get(Calendar.DAY_OF_WEEK);
+		
 		int diaDaMesDaDataDeOperacao = dataBase.get(Calendar.DAY_OF_MONTH);
 		
 		List<ValidacaoGeracaoCobrancaFecharDiaDTO> listaDePoliticaCobranca = this.fecharDiaRepository.obterFormasDeCobranca();
 		
 		for(ValidacaoGeracaoCobrancaFecharDiaDTO dto: listaDePoliticaCobranca){
+			
 			FormaCobranca fc = this.formaCobrancaRepository.buscarPorId(dto.getFormaCobrancaId());
-			if(dto.getTipoFormaCobranca().equals("Diária")){	
+			
+			if(dto.getTipoFormaCobranca().equals(TipoFormaCobranca.DIARIA)){
+				
 				return impressaoDividaService.validarDividaGerada(dataOperacao);				
 			}
-			if(dto.getTipoFormaCobranca().equals("Semanal")){
+			
+			if(dto.getTipoFormaCobranca().equals(TipoFormaCobranca.SEMANAL)){
+				
 				List<ValidacaoGeracaoCobrancaFecharDiaDTO> lista = this.fecharDiaRepository.obterDiasDaConcentracao(fc);
-				for(ValidacaoGeracaoCobrancaFecharDiaDTO con: lista){					
+				
+				for(ValidacaoGeracaoCobrancaFecharDiaDTO con: lista){			
+					
 					if(con.getDiaDoMes() == diaDaSemanaDaDataDeOperacao){
+						
 						return impressaoDividaService.validarDividaGerada(dataOperacao);
 					}					
 				}
-				
 			}
-			if(fc.getTipoFormaCobranca().getDescricao().equals("Mensal") || fc.getTipoFormaCobranca().getDescricao().equals("Quinzenal") ){
+			
+			if(fc.getTipoFormaCobranca().getDescricao().equals(TipoFormaCobranca.MENSAL) || fc.getTipoFormaCobranca().getDescricao().equals(TipoFormaCobranca.QUINZENAL) ){
+				
 				for(Integer diaDeCobranca: fc.getDiasDoMes()){
+					
 					if(diaDeCobranca ==  diaDaMesDaDataDeOperacao){
+						
 						return impressaoDividaService.validarDividaGerada(dataOperacao);
 					}
 				}

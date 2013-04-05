@@ -207,9 +207,9 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		
 		jpql.append(" SELECT fc.tipoFormaCobranca as tipoFormaCobranca, ");
 		jpql.append(" fc.id as formaCobrancaId ");
-		
-		jpql.append("FROM PoliticaCobranca pc ");
-		jpql.append("JOIN pc.formaCobranca as fc ");				
+		jpql.append(" FROM PoliticaCobranca pc ");
+		jpql.append(" JOIN pc.formaCobranca as fc ");
+		jpql.append(" WHERE pc.ativo = true ");
 				
 		Query query = getSession().createQuery(jpql.toString());
 		
