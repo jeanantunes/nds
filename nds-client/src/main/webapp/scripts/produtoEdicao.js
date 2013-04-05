@@ -80,7 +80,7 @@ var produtoEdicaoController =$.extend(true,  {
 		var nome = $(idProduto,this.workspace).val();
 
 		if (nome && nome.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {"nomeProduto" : nome},
+			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'filtro.nome': nome},
 					function(result) { produtoEdicaoController.exibirAutoComplete(result, idProduto); },
 					null, isFromModal);
 		}
@@ -151,7 +151,7 @@ var produtoEdicaoController =$.extend(true,  {
 		$(idCodigo,this.workspace).val("");
 
 		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"nomeProduto" : nomeProduto},
+			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"filtro.nome" : nomeProduto},
 					function(result) { produtoEdicaoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
 					function() { produtoEdicaoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
 		} else {
@@ -468,8 +468,8 @@ var produtoEdicaoController =$.extend(true,  {
 
 		$(".edicoesGrid",this.workspace).flexOptions({
 			url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
-			params: [{name:'codigoProduto', value: codigoProduto },
-			         {name:'nomeProduto', value: nomeProduto },
+			params: [{name:'filtro.codigo', value: codigoProduto },
+			         {name:'filtro.nome', value: nomeProduto },
 			         {name:'dataLancamentoDe', value: dataLancamentoDe },
 			         {name:'dataLancamentoAte', value: dataLancamentoAte },
 			         {name:'precoDe', value: precoDe },
@@ -644,8 +644,8 @@ var produtoEdicaoController =$.extend(true,  {
 
 		$(".prodsPesqGrid",this.workspace).flexOptions({
 			url: contextPath + "/cadastro/edicao/pesquisarEdicoes.json",
-			params: [{name:'codigoProduto', value: codigo },
-			         {name:'nomeProduto', value: nomeProduto },
+			params: [{name:'filtro.codigo', value: codigo },
+			         {name:'filtro.nome', value: nomeProduto },
 			         {name:'dataLancamentoDe', value: dataLancamentoDe },
 			         {name:'dataLancamentoAte', value: dataLancamentoAte },
 			         {name:'precoDe', value: precoDe },
@@ -669,7 +669,7 @@ var produtoEdicaoController =$.extend(true,  {
 		// Exibir os dados do Produto:
 		$.postJSON(
 				 contextPath + '/cadastro/edicao/carregarDadosProdutoEdicao.json',
-				{ codigoProduto : codigoProduto, 
+				{ 'filtro.codigo': codigoProduto, 
 					idProdutoEdicao : id},
 					function(result) {
 						

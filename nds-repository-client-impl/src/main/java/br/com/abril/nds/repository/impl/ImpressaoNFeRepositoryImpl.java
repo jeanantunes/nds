@@ -485,7 +485,11 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			StringBuilder sql = new StringBuilder();
 			sql.append("select distinct p ");
 			sql.append("from Lancamento l join l.produtoEdicao pe join pe.produto p join p.fornecedores f ");
-			sql.append("where l.dataLancamentoDistribuidor between :dataMovimentoInicial and :dataMovimentoFinal ");
+			sql.append("where 1 = 1 ");
+			
+			if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
+				sql.append("and l.dataLancamentoDistribuidor between :dataMovimentoInicial and :dataMovimentoFinal ");
+			}
 			
 			if(filtro.getIdsFornecedores() != null) {
 				sql.append("and f.id in (:idsFornecedores) ");
@@ -501,22 +505,25 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			
 			Query q = getSession().createQuery(sql.toString());
 			
-			Calendar dataMovimentoInicial = Calendar.getInstance();
-			dataMovimentoInicial.setTime(filtro.getDataMovimentoInicial());
-			dataMovimentoInicial.set(Calendar.HOUR_OF_DAY, 0);
-			dataMovimentoInicial.set(Calendar.MINUTE, 0);
-			dataMovimentoInicial.set(Calendar.SECOND, 0);
-			dataMovimentoInicial.set(Calendar.MILLISECOND, 0);
-			
-			Calendar dataMovimentoFinal = Calendar.getInstance();
-			dataMovimentoFinal.setTime(filtro.getDataMovimentoFinal());
-			dataMovimentoFinal.set(Calendar.HOUR_OF_DAY, 23);
-			dataMovimentoFinal.set(Calendar.MINUTE, 59);
-			dataMovimentoFinal.set(Calendar.SECOND, 59);
-			dataMovimentoFinal.set(Calendar.MILLISECOND, 999);
-			
-			q.setParameter("dataMovimentoInicial", new java.sql.Date(dataMovimentoInicial.getTime().getTime()));
-			q.setParameter("dataMovimentoFinal", new java.sql.Date(dataMovimentoFinal.getTime().getTime()));
+			if(filtro.getDataMovimentoInicial() != null && filtro.getDataMovimentoFinal() != null) {
+				Calendar dataMovimentoInicial = Calendar.getInstance();
+				dataMovimentoInicial.setTime(filtro.getDataMovimentoInicial());
+				dataMovimentoInicial.set(Calendar.HOUR_OF_DAY, 0);
+				dataMovimentoInicial.set(Calendar.MINUTE, 0);
+				dataMovimentoInicial.set(Calendar.SECOND, 0);
+				dataMovimentoInicial.set(Calendar.MILLISECOND, 0);
+				
+				Calendar dataMovimentoFinal = Calendar.getInstance();
+				dataMovimentoFinal.setTime(filtro.getDataMovimentoFinal());
+				dataMovimentoFinal.set(Calendar.HOUR_OF_DAY, 23);
+				dataMovimentoFinal.set(Calendar.MINUTE, 59);
+				dataMovimentoFinal.set(Calendar.SECOND, 59);
+				dataMovimentoFinal.set(Calendar.MILLISECOND, 999);
+				
+				q.setParameter("dataMovimentoInicial", new java.sql.Date(dataMovimentoInicial.getTime().getTime()));
+				q.setParameter("dataMovimentoFinal", new java.sql.Date(dataMovimentoFinal.getTime().getTime()));
+			}
+		
 			q.setParameterList("idsFornecedores", filtro.getIdsFornecedores());
 			
 			if(filtro.getCodigoProduto() != null) {

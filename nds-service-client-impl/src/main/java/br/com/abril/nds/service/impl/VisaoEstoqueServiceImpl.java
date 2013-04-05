@@ -249,13 +249,13 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			
 			if (BigInteger.ZERO.compareTo(qtdeDiferenca) < 0) {
 				
-				diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
+				diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
 				
 				statusAprovacao = StatusAprovacao.GANHO;
 				
 			} else {
 				
-				diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+				diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
 				
 				statusAprovacao = StatusAprovacao.PERDA;
 			}

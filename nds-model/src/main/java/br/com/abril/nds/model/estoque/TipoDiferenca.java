@@ -15,7 +15,9 @@ public enum TipoDiferenca {
 	FALTA_DE(GrupoMovimentoEstoque.FALTA_DE, "Falta de"),
 	FALTA_EM(GrupoMovimentoEstoque.FALTA_EM, "Falta em"),
 	SOBRA_DE(GrupoMovimentoEstoque.SOBRA_DE, "Sobra de"),
-	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em");
+	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em"),
+	PERDA_EM(GrupoMovimentoEstoque.PERDA_EM, "Perda em"),
+	GANHO_EM(GrupoMovimentoEstoque.GANHO_EM, "Ganho em");
 	
 	private GrupoMovimentoEstoque tipoMovimentoEstoque;
 	
