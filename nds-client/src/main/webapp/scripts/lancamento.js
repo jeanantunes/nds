@@ -308,7 +308,7 @@ var lancamentoController = $.extend(true, {
 	configurarFlexiGrid : function() {
 
 		$("#gridLancamentos", lancamentoController.workspace).flexigrid({
-			onSuccess: function() {bloquearItensEdicao(confirmaExpedicaoController.workspace);},
+			onSuccess: function() {bloquearItensEdicao(lancamentoController.workspace);},
 			preProcess: lancamentoController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [{
