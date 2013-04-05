@@ -734,8 +734,7 @@ var lancamentoNovoController = $.extend(true, {
 
 	obterDadosProduto : function(idCodigoProduto, idEdicaoProduto) {
 
-
-		var data = {codigoProduto:$(idCodigoProduto).val(),numeroEdicao:$(idEdicaoProduto).val()};
+		var data = {'filtro.codigo':$(idCodigoProduto).val(), numeroEdicao: $(idEdicaoProduto).val()};
 		
 		$.postJSON(
 			contextPath + "/produto/obterProdutoEdicao", 

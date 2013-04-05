@@ -379,9 +379,19 @@ var painelProcessamentoController = $.extend(true, {
 		$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
 				   data,
 				   function (resultado) {
-					   exibirMensagem(resultado.tipoMensagem, 
+			
+						$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
+							url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
+							params: [],
+							newp: 1,
+						});
+						$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
+						
+						exibirMensagem(resultado.tipoMensagem, 
 					   				  resultado.listaMensagens);
+					   
 				   });
+		
 	},
 	reprocessarInterfacesEmOrdem : function() {
 		
@@ -396,11 +406,22 @@ var painelProcessamentoController = $.extend(true, {
 					
 					var data = {};
 					$.postJSON(contextPath + "/administracao/painelProcessamento/executarTodasInterfacesEmOrdem",
-						   data,
-						   function (resultado) {
-							   exibirMensagem(resultado.tipoMensagem, 
-							   				  resultado.listaMensagens);
-					});
+					   data,
+					   function (resultado) {
+					
+							$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
+								url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
+								params: [],
+								newp: 1,
+							});
+							$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
+						
+							exibirMensagem(resultado.tipoMensagem, 
+						   				  resultado.listaMensagens);
+						   
+						}
+					);
+					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -411,3 +432,4 @@ var painelProcessamentoController = $.extend(true, {
 	}
 
 }, BaseController);
+//@ sourceURL=painelProcessamento.js

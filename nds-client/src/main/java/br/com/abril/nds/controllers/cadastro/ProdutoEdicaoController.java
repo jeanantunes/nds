@@ -15,6 +15,7 @@ import br.com.abril.nds.client.vo.PeriodoLancamentosProdutoEdicaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Brinde;
@@ -162,26 +163,29 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Post
 	@Path("/pesquisarEdicoes.json")
-	public void pesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public void pesquisarEdicoes(FiltroProdutoDTO filtro,
 			Date dataLancamentoDe, Date dataLancamentoAte, BigDecimal precoDe,
 			BigDecimal precoAte , StatusLancamento situacaoLancamento,
 			String codigoDeBarras, boolean brinde,
             String sortorder, String sortname, int page, int rp) {
+		
 		Intervalo<BigDecimal> intervaloPreco = null;
 		Intervalo<Date> intervaloLancamento = null;
+		
 		// Validar:
-		if(dataLancamentoDe == null ^ dataLancamentoAte == null ){
+		if(dataLancamentoDe == null ^ dataLancamentoAte == null ) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
-		}else if(dataLancamentoDe != null && dataLancamentoAte != null){
+		} else if(dataLancamentoDe != null && dataLancamentoAte != null) {
 			if(dataLancamentoDe.after(dataLancamentoAte)){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Lançamento'!");
 			}
 			
 			intervaloLancamento = new Intervalo<Date>(dataLancamentoDe, dataLancamentoAte);		
 		}
-		if(precoDe == null ^ precoAte == null ){
+		
+		if(precoDe == null ^ precoAte == null ) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
-		}else if(precoDe != null && precoAte != null ){
+		} else if(precoDe != null && precoAte != null ) {
 			if(precoDe.compareTo(precoAte) > 0){
 				throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, preencha o intervalo válido de 'Preço'!");
 			}
@@ -190,18 +194,18 @@ public class ProdutoEdicaoController extends BaseController {
 	
 		// Pesquisar:
 		Long qtd = produtoEdicaoService.countPesquisarEdicoes(
-				codigoProduto, nomeProduto, intervaloLancamento, 
+				filtro.getCodigo(), filtro.getNome(), intervaloLancamento, 
 				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde);
 		
-		if(qtd > 0){		
+		if(qtd > 0) {		
 			
 			List<ProdutoEdicaoDTO> lst = 
-					produtoEdicaoService.pesquisarEdicoes(codigoProduto, nomeProduto, 
+					produtoEdicaoService.pesquisarEdicoes(filtro.getCodigo(), filtro.getNome(), 
 							intervaloLancamento, intervaloPreco, situacaoLancamento, codigoDeBarras, 
 							brinde, sortorder, sortname, page, rp);
 			
 			this.result.use(FlexiGridJson.class).from(lst).total(qtd.intValue()).page(page).serialize();
-		}else{
+		} else {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Registros não encontrados."));
 		}
@@ -210,13 +214,13 @@ public class ProdutoEdicaoController extends BaseController {
 	@Post
 	@Path("/carregarDadosProdutoEdicao.json")
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
-	public void carregarDadosProdutoEdicao(String codigoProduto, String idProdutoEdicao) {
+	public void carregarDadosProdutoEdicao(FiltroProdutoDTO filtro, String idProdutoEdicao) {
 		
-		if (codigoProduto == null || codigoProduto.trim().isEmpty()) {
+		if (filtro.getCodigo() == null || filtro.getCodigo().trim().isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
-		ProdutoEdicaoDTO dto = produtoEdicaoService.obterProdutoEdicaoDTO(codigoProduto, idProdutoEdicao);
+		ProdutoEdicaoDTO dto = produtoEdicaoService.obterProdutoEdicaoDTO(filtro.getCodigo(), idProdutoEdicao);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}
