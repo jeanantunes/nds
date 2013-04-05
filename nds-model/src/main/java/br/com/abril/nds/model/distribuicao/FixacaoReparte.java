@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.eclipse.jdt.internal.compiler.ast.FalseLiteral;
+
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
@@ -61,8 +63,8 @@ public class FixacaoReparte {
 	@Column(name="DATA_HORA")
 	private Date dataHora;
 	
-	@Column(name="MANTER_FIXA", nullable=false)
-	private boolean manterFixa;
+	@Column(name="MANTER_FIXA")
+	private Boolean manterFixa = false;
 	
 	public Long getId() {
 		return id;
@@ -169,11 +171,11 @@ public class FixacaoReparte {
 		this.repartesPDV = repartesPDV;
 	}
 
-	public boolean isManterFixa() {
+	public Boolean isManterFixa() {
 		return manterFixa;
 	}
 
-	public void setManterFixa(boolean manterFixa) {
+	public void setManterFixa(Boolean manterFixa) {
 		this.manterFixa = manterFixa;
 	}
 

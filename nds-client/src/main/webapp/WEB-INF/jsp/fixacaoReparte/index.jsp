@@ -286,7 +286,7 @@ function mostraIntervalo(){
   </tr>
   <tr>
     <td colspan="3" align="right">Manter Fixa&nbsp; </td>
-    <td><input name="input2" type="checkbox" value="" /></td>
+    <td><input id="manterFixa" name="manterFixa" type="checkbox" /></td>
   </tr>
 </table>
 	</fieldset>

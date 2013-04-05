@@ -54,36 +54,7 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 		return repartePDVRepository.obterRepartePdvMix(idMix, idProduto, idPdv);
 	}
 
-	@Override
-	@Transactional
-	public void salvarRepartesPDV(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idFixacao) {
-		int soma = 0;
-		Cota cota=  cotaRepository.obterPorNumerDaCota(new Integer(codCota));
-		Produto produto= produtoRepository.obterProdutoPorCodigo(codProduto);
-		FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorId(idFixacao);
-		PDV pdv = null;
-		
-		for (RepartePDVDTO repartePDVDTO : listaRepartes) {
-			if(repartePDVDTO.getCodigoPdv() !=null){
-				pdv= pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
-			}
-			RepartePDV repartePDV =  repartePDVRepository.obterRepartePorPdv(idFixacao, produto.getId(), pdv.getId());
-			if(repartePDV == null){
-				repartePDV = new RepartePDV();
-			}	
-			repartePDV.setFixacaoReparte(fixacaoReparte);
-			repartePDV.setPdv(pdv);
-			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
-			repartePDV.setProduto(produto);
-			
-			soma += repartePDV.getReparte();
-			repartePDVRepository.merge(repartePDV);
-		}
-		fixacaoReparte.setQtdeExemplares(soma);
-		fixacaoReparteRepository.alterar(fixacaoReparte);
-		
-	}
-
+	
 
 	@Override
 	@Transactional
@@ -114,6 +85,38 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 		mixCotaProdutoRepository.alterar(mixCotaProduto);
 		
 	}
+
+	@Override
+	@Transactional
+	public void salvarRepartesPDV(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idFixacao, boolean manterFixa) {
+		int soma = 0;
+		Cota cota=  cotaRepository.obterPorNumerDaCota(new Integer(codCota));
+		Produto produto= produtoRepository.obterProdutoPorCodigo(codProduto);
+		FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorId(idFixacao);
+		fixacaoReparte.setManterFixa(manterFixa);
+		PDV pdv = null;
+		
+		for (RepartePDVDTO repartePDVDTO : listaRepartes) {
+			if(repartePDVDTO.getCodigoPdv() !=null){
+				pdv= pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
+			}
+			RepartePDV repartePDV =  repartePDVRepository.obterRepartePorPdv(idFixacao, produto.getId(), pdv.getId());
+			if(repartePDV == null){
+				repartePDV = new RepartePDV();
+			}	
+			repartePDV.setFixacaoReparte(fixacaoReparte);
+			repartePDV.setPdv(pdv);
+			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
+			repartePDV.setProduto(produto);
+			
+			soma += repartePDV.getReparte();
+			repartePDVRepository.merge(repartePDV);
+		}
+		fixacaoReparte.setQtdeExemplares(soma);
+		fixacaoReparteRepository.alterar(fixacaoReparte);
+		
+	}
+
 	
 	
 }

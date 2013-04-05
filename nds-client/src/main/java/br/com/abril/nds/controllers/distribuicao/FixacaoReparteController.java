@@ -299,8 +299,8 @@ public class FixacaoReparteController extends BaseController {
 	}
 	@Post
 	@Path("/salvarGridPdvReparte")
-	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idFixacao){
-		repartePdvService.salvarRepartesPDV(listPDV,codProduto, codCota, idFixacao);
+	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idFixacao, boolean manterFixa){
+		repartePdvService.salvarRepartesPDV(listPDV,codProduto, codCota, idFixacao, manterFixa);
 		throw new ValidacaoException(TipoMensagem.SUCCESS,"Operação realizada com sucesso!");
 	}
 	

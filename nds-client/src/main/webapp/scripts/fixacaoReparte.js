@@ -584,6 +584,11 @@ var fixacaoReparteController = $.extend(true, {
 						  value : idFixacao
 						  });
 					  
+					  listaPDV.push({
+						  name : "manterFixa" , 
+						  value : $("#manterFixa").is(":checked")
+						  });
+					  
 					if(somaReparte > reparteTotal){
 						$("#dialog-confirma-reparte").dialog({
 							resizable: false,
