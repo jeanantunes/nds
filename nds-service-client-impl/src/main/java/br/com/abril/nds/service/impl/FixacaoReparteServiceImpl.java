@@ -306,7 +306,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO) {
 		Cota cota = cotaRepository.buscarPorId(new Long(fixacaoReparteDTO.getCotaFixada()));
 		String situacaoCadastro = cota.getSituacaoCadastro().toString();
-		return situacaoCadastro.equals(cota.getSituacaoCadastro().ATIVO);
+		return situacaoCadastro.equalsIgnoreCase(cota.getSituacaoCadastro().ATIVO.toString());
 	}
 	
 	

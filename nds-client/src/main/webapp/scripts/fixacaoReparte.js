@@ -500,7 +500,7 @@ var fixacaoReparteController = $.extend(true, {
 	
 	//funcao que executa chamada postJSON que busca dados da fixacao 
 	editarFixacao:function (idFixacao, qtdeReparte, numeroCota, codigoProduto){
-		
+		listaPDV=[]; //evitar que a registros permaneçam na lista apos fechar janela
 		var reparteTotal= qtdeReparte;
 		arrayPesquisa = [];
 		arrayPesquisa.push({
@@ -613,7 +613,7 @@ var fixacaoReparteController = $.extend(true, {
 						});
 						
 					}else{
-						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', listaPDV);
+						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', listaPDV,function(result){$("#dialog-defineReparte").dialog("close");} );
 						
 					}
 //					$( this ).dialog( "close" );
