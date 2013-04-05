@@ -230,43 +230,45 @@ public abstract class Util {
 				
 			case BANCO_ITAU:
 				
-				//String nossoNumero = "" + numeroCota + idMovimentoFinanceiro;
-				String nossoNumero = idMovimentoFinanceiro.toString();
+//				String nossoNumero = "" + numeroCota + idMovimentoFinanceiro;
+//				String nossoNumero = idMovimentoFinanceiro.toString();
+//				
+//				StringBuilder composto = new StringBuilder();
+//				composto.append(agencia)
+//						.append(contaCorrente)
+//						.append(carteira)
+//						.append(nossoNumero);
+//				
+//				composto.reverse();
+//				
+//				int multiplicador = 2;
+//				
+//				StringBuilder compostoAux = new StringBuilder();
+//				
+//				for (int index = 0 ; index < composto.length() ; index++){
+//					
+//					compostoAux.insert(0, Character.getNumericValue(composto.charAt(index)) * multiplicador);
+//					
+//					if (multiplicador == 2){
+//						
+//						multiplicador = 1;
+//					} else {
+//						
+//						multiplicador = 2;
+//					}
+//				}
+//				
+//				int somatorio = 0;
+//				for (int index = 0 ; index < compostoAux.length() ; index++){
+//					
+//					somatorio += Character.getNumericValue(compostoAux.charAt(index));
+//				}
+//				
+//				somatorio = somatorio % 10;
 				
-				StringBuilder composto = new StringBuilder();
-				composto.append(agencia)
-						.append(contaCorrente)
-						.append(carteira)
-						.append(nossoNumero);
+//				A composição do nosso número com os cálculos acima estavam ultrapassando a quantidade de caracteres [8] para o banco Itau.
 				
-				composto.reverse();
-				
-				int multiplicador = 2;
-				
-				StringBuilder compostoAux = new StringBuilder();
-				
-				for (int index = 0 ; index < composto.length() ; index++){
-					
-					compostoAux.insert(0, Character.getNumericValue(composto.charAt(index)) * multiplicador);
-					
-					if (multiplicador == 2){
-						
-						multiplicador = 1;
-					} else {
-						
-						multiplicador = 2;
-					}
-				}
-				
-				int somatorio = 0;
-				for (int index = 0 ; index < compostoAux.length() ; index++){
-					
-					somatorio += Character.getNumericValue(compostoAux.charAt(index));
-				}
-				
-				somatorio = somatorio % 10;
-				
-				return Util.padLeft("" + carteira + nossoNumero + (10 - somatorio), "0", 8);
+				return Util.padLeft(idMovimentoFinanceiro.toString(), "0", 8);
 				
 			case BANCO_RURAL:
 				return codSacado + auxData + idMovimentoFinanceiro + (idFornecedor == null ? "0" : idFornecedor);
