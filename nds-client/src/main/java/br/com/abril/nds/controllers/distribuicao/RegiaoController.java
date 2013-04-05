@@ -1,10 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,15 +10,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.AddLoteRegiaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
@@ -36,6 +35,7 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -308,29 +308,25 @@ public class RegiaoController extends BaseController {
 		}
 	}
 	
-
 	@Post
 	@Path("/addLote")
 	public void addCotasEmLote (UploadedFile xls, Long idRegiao) throws IOException {  
 		List<Integer> numerosCota = new ArrayList<Integer>();
 		
-		File x = upLoadArquivo(xls);		
-		//Implementar a mensagem de erro...
+		File x = XlsUploaderUtils.upLoadArquivo(xls); 
+
+		List<AddLoteRegiaoDTO> listaDto = XlsUploaderUtils.getBeanListFromXls(AddLoteRegiaoDTO.class, x);
+		
+		for (AddLoteRegiaoDTO list : listaDto) {
+			numerosCota.add(list.getNumeroCota());
+		}
+		
 		this.validarEntradaDeVariasCotas(numerosCota, idRegiao);
 		this.popularRegistroESalvarCotasEmLote(numerosCota, idRegiao);
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas inseridas com sucesso!"),
 			"result").recursive().serialize();
 
-	}
-
-	private File upLoadArquivo(UploadedFile xls) throws IOException, FileNotFoundException {
-		File x = new File(xls.getFileName());
-	    File destino = new File(xls.getFileName());  
-	    destino.createNewFile();  
-	    InputStream stream = xls.getFile();  
-	    IOUtils.copy(stream,new FileOutputStream(destino));
-		return x;
 	}
 
 	private void popularRegistroESalvarCotasEmLote(List<Integer> cotas, long idRegiao) {
@@ -362,6 +358,63 @@ public class RegiaoController extends BaseController {
 		}
 	}
 
+	@Post
+	@Path("/buscarProduto")
+	public void buscarProduto (FiltroRegiaoNMaioresProdDTO filtro, String sortorder, String sortname, int page, int rp){
+		
+		this.tratarArgumentosFiltro(filtro);
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		tratarFiltroNMaiores(filtro);
+		
+		TableModel<CellModelKeyValue<RegiaoNMaiores_ProdutoDTO>> tableModel = gridProdutos(filtro);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+
+	}
+	
+	private TableModel<CellModelKeyValue<RegiaoNMaiores_ProdutoDTO>> gridProdutos (FiltroRegiaoNMaioresProdDTO filtro) {
+		
+		List<RegiaoNMaiores_ProdutoDTO> produtos = regiaoService.buscarProdutos(filtro);
+		
+		if (produtos == null || produtos.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_ProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoNMaiores_ProdutoDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(produtos));
+
+		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+
+		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
+
+		return tableModel;
+	}
+	
+	private void tratarArgumentosFiltro (FiltroRegiaoNMaioresProdDTO filtro){
+		
+		if(filtro.getCodigoProduto() == null || filtro.getCodigoProduto().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Informe o Código e o Nome do produto.");
+		}
+		
+		if(filtro.getNome() == null || filtro.getNome().isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Informe o Código e o Nome do produto.");
+		}
+	}
+	
+	private void tratarFiltroNMaiores(FiltroRegiaoNMaioresProdDTO filtroAtual) {
+		
+		FiltroRegiaoNMaioresProdDTO filtroSession = (FiltroRegiaoNMaioresProdDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
+			
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+	}
+	
 	private void validarEntradaDeVariasCotas(List<Integer> cotas, Long idRegiao) {
 
 		List<Integer> cotasCadas =  this.regiaoService.buscarNumeroCotasPorIdRegiao(idRegiao);

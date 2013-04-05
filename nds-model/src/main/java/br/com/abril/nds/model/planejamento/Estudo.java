@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,6 +26,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * @author francisco.garcia
@@ -82,16 +82,14 @@ public class Estudo implements Serializable {
 	private BigInteger reparteDistribuir;
 	
 	@Column(name = "DISTRIBUICAO_POR_MULTIPLOS")
-	private Integer distribuicaoPorMultiplos;
+	private Integer distribuicaoPorMultiplos; //TODO no estudo usa boolean, verificar alteração
 	
 	@Column(name = "PACOTE_PADRAO")
-	private BigInteger pacotePadrao;
+	private BigInteger pacotePadrao; //TODO BigDecimal
 	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_PDV")
-	private BigDecimal percentualProporcaoExcedentePDV;
-	
-	@Column(name = "PERCENTUAL_PROPORCAO_EXCEDENTE_VENDA")
-	private BigDecimal percentualProporcaoExcedenteVenda;
+	@ManyToOne (optional = false)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario; 
 	
 	public Long getId() {
 		return id;
@@ -207,22 +205,11 @@ public class Estudo implements Serializable {
 		this.pacotePadrao = pacotePadrao;
 	}
 
-	public BigDecimal getPercentualProporcaoExcedentePDV() {
-		return percentualProporcaoExcedentePDV;
+	public Usuario getUsuarioId() {
+		return usuario;
 	}
 
-	public void setPercentualProporcaoExcedentePDV(
-			BigDecimal percentualProporcaoExcedentePDV) {
-		this.percentualProporcaoExcedentePDV = percentualProporcaoExcedentePDV;
+	public void setUsuarioId(Usuario usuarioId) {
+		this.usuario = usuarioId;
 	}
-
-	public BigDecimal getPercentualProporcaoExcedenteVenda() {
-		return percentualProporcaoExcedenteVenda;
-	}
-
-	public void setPercentualProporcaoExcedenteVenda(
-			BigDecimal percentualProporcaoExcedenteVenda) {
-		this.percentualProporcaoExcedenteVenda = percentualProporcaoExcedenteVenda;
-	}
-	
 }

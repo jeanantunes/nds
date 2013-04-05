@@ -2391,7 +2391,7 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas){
+	public List<CotaDTO> buscarCotasQueEnquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas){
 		return cotaRepository.buscarCotasQuePossuemRangeReparte(qtdReparteInicial, qtdReparteFinal, listProdutoEdicaoDto, cotasAtivas);
 	}
 	
@@ -2600,6 +2600,11 @@ public class CotaServiceImpl implements CotaService {
 	public boolean cotaVinculadaCotaBase(Long idCota) {
 		
 		return cotaRepository.cotaVinculadaCotaBase(idCota);
+	}
+
+	@Override
+	public List<CotaDTO> obterPorNomeAutoComplete(String nome) {
+	    return cotaRepository.obterCotasPorNomeAutoComplete(nome);
 	}
 }
 

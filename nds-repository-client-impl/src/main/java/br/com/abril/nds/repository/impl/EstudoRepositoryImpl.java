@@ -9,6 +9,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -120,6 +121,7 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append("   qtdCotasRecebemReparte, ");
 		sql.append("   qtdCotasAdicionadasPelaComplementarAutomatica ");
 		sql.append("   qtdReparteMinimoSugerido, ");
+		sql.append("   abrangenciaSugerida, ");
 		sql.append("   qtdReparteMinimoEstudo, ");
 		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 as abrangenciaEstudo, ");
 		sql.append("   ( qtdCotasQueVenderam  / qtdCotasRecebemReparte ) * 100 as abrangenciaDeVenda ");
@@ -131,8 +133,9 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append("        	inner join movimento_estoque_cota ON movimento_estoque_cota.ESTUDO_COTA_ID = estudo_cota.ID ");
 		sql.append(" 				where ESTUDO_ID = :estudoId) AS qtdCotasRecebemReparte, ");
 		sql.append("       (select count(id) from estudo_cota where CLASSIFICACAO in ('CP') and estudo_id = :estudoId ) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
-		sql.append(" 		ifnull((select distinct estudo.REPARTE_MINIMO_SUGERIDO from estudo where id = :estudoId ),0) as qtdReparteMinimoSugerido, ");
-		sql.append(" 		ifnull((select min(REPARTE_MINIMO) from estudo_cota where estudo_id = :estudoId ),0) as qtdReparteMinimoEstudo, ");
+		sql.append(" 		ifnull((select distinct estudo.REPARTE_DISTRIBUIR from estudo where id = :estudoId ),0) as qtdReparteMinimoEstudo, ");
+		sql.append("		(select REPARTE_MINIMO from estrategia join estudo on estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID where estudo.ID = @estudoId) as qtdReparteMinimoSugerido, ");
+		sql.append("		(select ABRANGENCIA from estrategia join estudo on estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID where estudo.ID = @estudoId) as abrangenciaSugerida, ");
 		sql.append(" 		(select sum(case when qtde_recebida - qtde_devolvida > 0 then 1 else 0 end) from estoque_produto_cota ");
 		sql.append(" 		 inner join produto_edicao on estoque_produto_cota.produto_edicao_id = produto_edicao.id");
 		sql.append(" 		 where estoque_produto_cota.produto_edicao_id = (select produto_edicao_id from estudo where id = :estudoId)");
@@ -160,6 +163,44 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		super.remover(estudo);
 	}
+	
+    @Override
+    public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO) {
+
+	StringBuilder hql = new StringBuilder();
+
+	hql.append(" from Estudo estudo ");
+	hql.append(" where estudo.id = :numeroEstudoOriginal ");
+	hql.append(" and estudo.produtoEdicao.produto.codigo = :codigoProduto ");
+	hql.append(" and estudo.produtoEdicao.produto.nome = :nomeProduto ");
+	hql.append(" and estudo.produtoEdicao.numeroEdicao = :numeroEdicao ");
+	hql.append(" and estudo.dataLancamento = :dataDistribuicao ");
+
+	Query query = getSession().createQuery(hql.toString());
+
+	query.setParameter("numeroEstudoOriginal", divisaoEstudoVO.getNumeroEstudoOriginal());
+	query.setParameter("codigoProduto", divisaoEstudoVO.getCodigoProduto());
+	query.setParameter("nomeProduto", divisaoEstudoVO.getNomeProduto());
+	query.setParameter("numeroEdicao", divisaoEstudoVO.getEdicaoProduto());
+	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicao());
+
+	Estudo estudo = (Estudo) query.uniqueResult();
+
+	return estudo;
+    }
+
+    @Override
+    public Long obterMaxId() {
+
+	StringBuilder hql = new StringBuilder();
+	hql.append(" select max(estudo.id) from Estudo estudo ");
+
+	Query query = getSession().createQuery(hql.toString());
+
+	Long maxId = (Long) query.uniqueResult();
+
+	return maxId;
+    }
 }
 
 

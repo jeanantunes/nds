@@ -162,14 +162,14 @@ public class PdvServiceImpl implements PdvService {
     @Override
     public List<AreaInfluenciaPDV> obterTipoAreaInfluencia() {
 
-        return areaInfluenciaPDVRepository.buscarTodos();
+        return areaInfluenciaPDVRepository.obterTodasAreaInfluenciaPDV();
     }
 
     @Transactional(readOnly = true)
     @Override
 	public List<TipoGeradorFluxoPDV> obterTipoGeradorDeFluxo() {
 		// TODO Auto-generated method stub
-    	return tipoGeradorFluxoPDVRepsitory.buscarTodos();
+    	return tipoGeradorFluxoPDVRepsitory.obterTodosTiposGeradorFluxo();
 	}
     
     @Transactional(readOnly = true)

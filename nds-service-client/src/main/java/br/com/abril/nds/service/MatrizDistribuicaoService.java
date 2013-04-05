@@ -10,11 +10,7 @@ import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 
 public interface MatrizDistribuicaoService {
 	
-	/**
-	 *  Obtém a matriz de distribuicao 
-	 * @param filtro
-	 * @return
-	 */
+
 	public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroDistribuicaoDTO filtro);
 	
 	public void reabrirEstudos(List<ProdutoDistribuicaoVO> produtosDistribuicao);
@@ -27,7 +23,11 @@ public interface MatrizDistribuicaoService {
 	
 	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO FiltroDistribuicaoDTO, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs);
 	
-	public void reabrirMatrizDistribuicao(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtosDistribuicao); 
+	public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao); 
+	
+	public void reabrirMatrizDistribuicaoTodosItens(FiltroDistribuicaoDTO filtro); 
 	
 	public void duplicarLinhas(ProdutoDistribuicaoVO prodDistribVO);
+
+	public void finalizarMatrizDistribuicaoTodosItens(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs);
 }

@@ -3,13 +3,15 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class ProdutoDistribuicaoVO  implements Serializable {
+public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoDistribuicaoVO> {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 	
@@ -46,7 +48,7 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	private BigDecimal suplem;
 	
 	@Export(label="Lancto.", exhibitionOrder = 10)
-	private Integer lancto;
+	private BigDecimal lancto;
 	
 	@Export(label="Promo.", exhibitionOrder = 11)
 	private BigDecimal promo;
@@ -56,6 +58,8 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 
 	@Export(label="Estudo", exhibitionOrder = 13)
 	private BigInteger idEstudo;
+	
+	private BigInteger idProdutoEdicao;
 	
 	private String dataLancto;
 	
@@ -67,7 +71,6 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	
 	private Long idUsuario;
 	
-	private String codigoBarraProduto;
 	
 	public BigInteger getIdLancamento() {
 		return idLancamento;
@@ -158,11 +161,11 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		this.suplem = suplem;
 	}
 
-	public Integer getLancto() {
+	public BigDecimal getLancto() {
 		return lancto;
 	}
 
-	public void setLancto(Integer lancto) {
+	public void setLancto(BigDecimal lancto) {
 		this.lancto = lancto;
 	}
 
@@ -188,6 +191,17 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 
 	public void setNomeFornecedor(String nomeFornecedor) {
 		this.nomeFornecedor = nomeFornecedor;
+	}
+	
+	public Date getDataLanctoSemFormatacao() {
+	    try {
+		return new SimpleDateFormat("dd/MM/yyyy").parse(dataLancto);
+	    } catch (Exception ex) {}
+	    return null;
+	}
+	
+	public void setDataLanctoSemFormatacao(Date dataLancto) {
+		this.dataLancto = new SimpleDateFormat("dd/MM/yyyy").format(dataLancto);
 	}
 	
 	public String getDataLancto() {
@@ -235,12 +249,13 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		this.idUsuario = idUsuario;
 	}
 	
-	public String getCodigoBarraProduto() {
-		return codigoBarraProduto;
+
+	public BigInteger getIdProdutoEdicao() {
+	    return idProdutoEdicao;
 	}
 
-	public void setCodigoBarraProduto(String codigoBarraProduto) {
-		this.codigoBarraProduto = codigoBarraProduto;
+	public void setIdProdutoEdicao(BigInteger idProdutoEdicao) {
+	    this.idProdutoEdicao = idProdutoEdicao;
 	}
 
 	@Override
@@ -267,7 +282,27 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
+	@Override
+	public int compareTo(ProdutoDistribuicaoVO prodDistribVO) {
+		
+		if (this.getCodigoProduto().equals(prodDistribVO.getCodigoProduto()) && 
+				this.getNumeroEdicao().equals(prodDistribVO.getNumeroEdicao())) {
+				
+				if (prodDistribVO.getIdEstudo() == null) {
+					return -1;
+				}
+				else {
+					
+					return this.getIdLancamento().compareTo(prodDistribVO.getIdLancamento());
+				}
+		}
+		else if (prodDistribVO.isItemFinalizado() || prodDistribVO.getLiberado().equals(StatusEstudo.LIBERADO.name())) {
+			
+			return -1;
+		}
+		
+		return 1;
+	}
+	
 }

@@ -1,4 +1,4 @@
-﻿var areaInfluenciaGeradorFluxoController = $.extend(true,	{
+var areaInfluenciaGeradorFluxoController = $.extend(true,	{
 	
 					init : function() {
         
@@ -229,12 +229,26 @@
 						$('.filtroPorCota').show();
 						$('.filtroPorArea').hide();
 						$('.porArea').hide();
+						areaInfluenciaGeradorFluxoController.limparCamposCota();
 					},
 
 					filtroPorArea : function() {
 						$('.filtroPorCota').hide();
 						$('.filtroPorArea').show();
 						$('.porCota').hide();
+						areaInfluenciaGeradorFluxoController.limparCamposArea(); 
+					},
+					
+					limparCamposCota : function() {
+						$('#numeroCota').val("");
+						$('#nomeCota').val("");
+					},
+					
+					limparCamposArea : function() {
+						$('#areaInfluencia').val(null);
+						$('#geradorFluxoPrincipal').val(null);
+						$('#geradorFluxoSecundario').val(null);
+						$('#cotasAtivas').click();
 					}
 
 				}, BaseController);

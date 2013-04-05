@@ -94,7 +94,7 @@ $(".produtosInfosGrid").flexigrid({
 			align : 'left'
 		},{
 			display : 'Data',
-			name : 'dataInser',
+			name : 'dataAlteracao',
 			width : 54,
 			sortable : true,
 			align : 'center'
@@ -126,7 +126,7 @@ $(".editorBaseApuradaGrid").flexigrid({
 		dataType : 'json',
 		colModel : [ {
 			display : 'Cód.',
-			name : 'codProduto',
+			name : 'codigoProduto',
 			width : 30,
 			sortable : true,
 			align : 'left'
@@ -158,7 +158,7 @@ $(".editorBaseGrid").flexigrid({
 		dataType : 'json',
 		colModel : [ {
 			display : 'Cód.',
-			name : 'codProduto',
+			name : 'codigoProduto',
 			width : 30,
 			sortable : true,
 			align : 'left'
@@ -186,23 +186,23 @@ $(".editorBaseGrid").flexigrid({
 	});
 
 $(".itensRegioesEspecificasGrid").flexigrid({
-		//url : '../xml/itensRegioesEspecificas-xml.xml',
-		//dataType : 'xml',
+	preProcess : informacoesProdutoController.executarPreProcessItemRegiao,
+	dataType : 'json',
 		colModel : [ {
 			display : 'Nome Item',
-			name : 'nomeItem',
+			name : 'nomeItemRegiao',
 			width : 150,
 			sortable : true,
 			align : 'left'
 		},{
 			display : 'Qtde',
-			name : 'qtde',
+			name : 'quantidade',
 			width : 25,
 			sortable : true,
 			align : 'center'
 		},{
 			display : '%',
-			name : 'perc',
+			name : 'bonificacao',
 			width : 20,
 			sortable : true,
 			align : 'right'
@@ -230,7 +230,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 		$.each(resultado.rows, function(index, row) {
 			
-			var detalhes = '<a href="javascript:;" onclick="informacoesProdutoController.pop_detalhes('+"'"+row.cell.codProduto+"'"+','+row.cell.numeroEdicao+');" style="cursor:pointer">' +
+			var detalhes = '<a href="javascript:;" onclick="informacoesProdutoController.pop_detalhes('+"'"+row.cell.codProduto+"'"+','+row.cell.numeroEdicao+','+row.cell.estudo+');" style="cursor:pointer">' +
 						'<img src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0" />'+
 		   	 			'</a>';
 			
@@ -282,7 +282,22 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		$(".grids", informacoesProdutoController.workspace).show();
 		return resultado;
 	},
-
+	
+	executarPreProcessItemRegiao : function(resultado){
+		
+		if (resultado.mensagens) {
+			exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+			);
+			
+			return resultado;
+		}
+	
+		$(".grids", informacoesProdutoController.workspace).show();
+		return resultado;
+	},
+	
 	recuperarNumeroEstudo: function(numeroEstudo){
 		
 		if($("#codigoEstudo").val()==undefined && $(".pesquisaEstudo").val() == undefined){
@@ -308,27 +323,33 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	filtroPrincipal : function(){
 		var codigo = $("#idCodigo").val();
+		var nomeProduto = $("#nomeProduto").val();
+		var classificacao = $("#comboClassificacao").val();
 		
 		$(".produtosInfosGrid", this.workspace).flexOptions({
 			url: contextPath + "/distribuicao/informacoesProduto/buscarProduto",
 			dataType : 'json',
-			params:[{
-				name : 'filtro.codProduto', value:codigo
-			}]
+			params:[
+			        {name : 'filtro.codProduto', value:codigo},
+			        {name : 'filtro.nomeProduto', value:nomeProduto},
+			        {name : 'filtro.idTipoClassificacaoProd', value:classificacao}
+			        ]
 		});
 			
 		$(".produtosInfosGrid", this.workspace).flexReload();		
 	},
 	
-	pop_detalhes : function (codProd, numeroEdicao){
+	
+	pop_detalhes : function (codProd, numeroEdicao, estudo){
 	
 		$( "#dialog-detalhe" ).dialog({
 			resizable: false,
 			height:570,
 			width:950,
 			modal: true,
-			open: informacoesProdutoController.baseSugerida(codProd),
-			open: informacoesProdutoController.baseEstudo(codProd),
+			open: informacoesProdutoController.baseSugerida(estudo),
+			open: informacoesProdutoController.itensRegiao(),
+			open: informacoesProdutoController.baseEstudo(estudo),
 			open: informacoesProdutoController.caracteristicasProduto(codProd, numeroEdicao),
 			open: informacoesProdutoController.openDetalhe(codProd, numeroEdicao),
 			
@@ -342,25 +363,34 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		});
 	},
 	
-	baseSugerida : function(codProd){
+	baseSugerida : function(estudo){
 		
 		$(".editorBaseGrid").flexOptions({
 			url: contextPath + "/distribuicao/informacoesProduto/buscarBaseSugerida",
 			dataType : 'json',
 			params:[{
-				name : 'codProd', value:codProd
+				name : 'idEstudo', value:estudo
 			}]
 		});
 		$(".editorBaseGrid").flexReload();		
 	},
 	
-	baseEstudo : function(codProd){
+	itensRegiao : function(codProd){
+		
+		$(".itensRegioesEspecificasGrid").flexOptions({
+			url: contextPath + "/distribuicao/informacoesProduto/buscarItemRegiao",
+			dataType : 'json',
+		});
+		$(".itensRegioesEspecificasGrid").flexReload();		
+	},
+	
+	baseEstudo : function(estudo){
 		
 		$(".editorBaseApuradaGrid").flexOptions({
 			url: contextPath + "/distribuicao/informacoesProduto/buscarBaseEstudo",
 			dataType : 'json',
 			params:[{
-				name : 'codProd', value:codProd
+				name : 'idEstudo', value:estudo
 			}]
 		});
 		$(".editorBaseApuradaGrid").flexReload();		
@@ -386,6 +416,25 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		$("#boletimInfor").val(result.boletimInformativo).disable();;
 		$("#nomeComercial").val(result.nomeComercial).disable();;
 		
+	},
+	
+	detalhes_MinimoEAbrangencia : function (estudo){
+		
+		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarAbrangenciaEMinimo",
+				{
+			name : 'idEstudo', value:estudo
+				},
+				function(result) {
+					informacoesProdutoController.dadosMinimoEAbrangencia(result);
+				});
+		
+	},
+	
+	dadosMinimoEAbrangencia : function(result){
+		$("#sugeridoAbrang").val(result.abrangenciaSugerida).disable();
+		$("#apuradaAbrang").val(result.abrangenciaApurada).disable();
+		$("#sugeridoMinimo").val(result.minimoSugerido).disable();
+		$("#estudoMinimo").val(result.minimoEstudoId).disable();
 	},
 	
 	pop_capa : function(){

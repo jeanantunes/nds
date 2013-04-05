@@ -228,5 +228,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	public void setSession(HttpSession session) {
 		this.session = session;
 	}
+
 	
+	public void blank() {
+	    result.nothing();
+	}
 }

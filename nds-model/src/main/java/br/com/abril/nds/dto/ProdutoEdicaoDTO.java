@@ -39,7 +39,6 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private PeriodicidadeProduto periodicidade;
 	private Integer numeroPeriodicidade;
 	private TipoClassificacaoProduto tipoClassificacaoProduto;
-	
 	private String nomeProduto;
 	private String nomeComercial;
 	private GrupoProduto grupoProduto;
@@ -848,4 +847,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}  
+
+	
+	
 }

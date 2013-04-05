@@ -3,9 +3,11 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.TipoGeradorFluxoPDVRepsitory;
@@ -36,5 +38,18 @@ public class TipoGeradorFluxoPDVRepositoryImpl extends AbstractRepositoryModel<T
 		criteria.add(Restrictions.not(Restrictions.in("codigo", codigos)));
 		
 		return criteria.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from TipoGeradorFluxoPDV order by descricao");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		return query.list();
 	}
 }

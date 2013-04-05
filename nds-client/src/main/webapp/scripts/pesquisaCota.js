@@ -33,6 +33,33 @@ function PesquisaCota(workspace) {
 		}
 	},
 	
+	this.pesquisarNomeCota = function(idCampoNomeCota, idCampoNumeroCota, isFromModal, successCallBack, errorCallBack) {
+		
+		var nomeCota = $(idCampoNomeCota, pesquisaCota.workspace).val();
+
+		nomeCota = $.trim(nomeCota);
+		
+		$(idCampoNumeroCota, pesquisaCota.workspace).val("");
+		
+		if (nomeCota && nomeCota.length > 0) {
+			
+			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNome", {nomeCota:nomeCota},
+				function(result) { 
+					pesquisaCota.pesquisarPorNomeSuccessCallBack(result, idCampoNumeroCota, successCallBack); 
+				},
+				function() {
+					pesquisaCota.pesquisarPorNomeErrorCallBack(idCampoNomeCota, errorCallBack); 
+				}, 
+				isFromModal
+			);
+
+		} else {
+			if (errorCallBack) {
+				errorCallBack();
+			}
+		}
+	},
+	
 	//Success callback para pesquisa por número da cota
 	this.pesquisarPorNumeroSuccessCallBack = function(result, idCampoNomeCota, successCallBack) {
 
@@ -46,12 +73,38 @@ function PesquisaCota(workspace) {
 		}
 	},
 	
+	//Success callback para pesquisa por nome da cota
+	this.pesquisarPorNomeSuccessCallBack = function(result, idCampoNumeroCota, successCallBack) {
+
+		pesquisaCota.pesquisaRealizada = true;
+		
+		$(idCampoNumeroCota, pesquisaCota.workspace).val(result.numero);
+		
+		if (successCallBack) {
+			
+			successCallBack(result);
+		}
+	},
+	
 	//Error callback para pesquisa por número da cota
 	this.pesquisarPorNumeroErrorCallBack = function(idCampoNumeroCota, errorCallBack) {
 		
 		$(idCampoNumeroCota, pesquisaCota.workspace).val("");
 		
 		$(idCampoNumeroCota, pesquisaCota.workspace).focus();
+		
+		if (errorCallBack) {
+			
+			errorCallBack();
+		}
+	},
+	
+	//Error callback para pesquisa por nome da cota
+	this.pesquisarPorNomeErrorCallBack = function(idCampoNomeCota, errorCallBack) {
+		
+		$(idCampoNomeCota, pesquisaCota.workspace).val("");
+		
+		$(idCampoNomeCota, pesquisaCota.workspace).focus();
 		
 		if (errorCallBack) {
 			

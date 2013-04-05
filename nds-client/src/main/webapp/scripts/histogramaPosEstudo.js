@@ -480,10 +480,10 @@ var histogramaPosEstudoController = $.extend(true, {
 					$('#fieldSetResumoReparteMedioCota').html((parseInt(matrizSelecionada.repDistrib) / parseInt(response.qtdCotasRecebemReparte)) || 0 ); // quantidade de exemplares que cada cota irá receber na média 
 					
 					// Terceira coluna
-					$('#fieldSetResumoReparteMinimoSugerida').html( "??"/*response.qtdReparteMinimoSugerido*/);
+					$('#fieldSetResumoReparteMinimoSugerida').html(response.qtdReparteMinimoSugerido || 0);
 					$('#fieldSetResumoReparteMinimoEstudo').html(response.qtdReparteMinimoEstudo);
 					
-					$('#fieldSetResumoAbrangenciaSugerida').html( "??"/*response.abrangenciaSugerida || 0*/);
+					$('#fieldSetResumoAbrangenciaSugerida').html(response.abrangenciaSugerida || 0);
 					$('#fieldSetResumoAbrangenciaEstudo').html((response.abrangenciaEstudo * 100).toFixed(2));
 					
 					$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;' + (parseFloat(response.abrangenciaDeVenda) || 0 ).toFixed(2) + '% ');
@@ -600,6 +600,15 @@ var histogramaPosEstudoController = $.extend(true, {
 		var baseEstudo = histogramaPosEstudoController.Grids.BaseEstudoGrid;
 		
 		baseEstudo.reload({
+			params : [{
+				name : "estudoId",
+				value : estudoId
+			}]
+		});
+		
+		var baseSugerida = histogramaPosEstudoController.Grids.BaseSugeridaGrid;
+		
+		baseSugerida.reload({
 			params : [{
 				name : "estudoId",
 				value : estudoId

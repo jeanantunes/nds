@@ -81,7 +81,7 @@
                 </td>
                 <td width="40">Nome:</td>
                 <td width="465">
-                	<input type="text" name="textfield2" id="nomeCotaFiltro1"
+                	<input type="text" name="textfield2" id="nomeCotaFiltro1" onchange="pesquisaCota.pesquisarNomeCota('#nomeCotaFiltro1','#numeroCotaFiltro1');"
                 		onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCotaFiltro1')" style="width:200px;"/>
                 </td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="segmentoNaoRecebidoController.porCota();">Pesquisar</a></span></td>
@@ -110,7 +110,7 @@
             
       </fieldset>
 
-	<!-- GRID COTA PARA SELEﾃ�ﾃグ E INCLUSﾃグ NO SEGMENTO Nﾃグ RECEBIDO -->
+	<!-- GRID COTA PARA SELEﾇﾃグ E INCLUSﾃグ NO SEGMENTO Nﾃグ RECEBIDO -->
       <fieldset class="classFieldset" style="float:left; width:300px!important;">
        	  <legend>Cota</legend>
        	  <table width="275" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -121,7 +121,8 @@
        	      	onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCotaFiltro2','#nomeCotaFiltro2');" style="width:40px;"/>
        	      </td>
               <td width="41">Nome:</td>
-       	      <td width="115"><input type="text" id="nomeCotaFiltro2" onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCotaFiltro2')" style="width:140px;"/></td>
+       	      <td width="115"><input type="text" id="nomeCotaFiltro2"  style="width:140px;" onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCotaFiltro2')"
+       	      onchange="pesquisaCota.pesquisarNomeCota('#nomeCotaFiltro2','#numeroCotaFiltro2');"	/></td>
               <td width="19">
               	<span class="classPesquisar"><a href="javascript:;"  
               	onclick="segmentoNaoRecebidoController.pesquisarCotasNaoEstaoNoSegmento()">&nbsp;</a></span>

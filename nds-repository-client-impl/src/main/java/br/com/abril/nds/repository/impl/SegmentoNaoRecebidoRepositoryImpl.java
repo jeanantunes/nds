@@ -64,6 +64,8 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 			parameters.put("statusCota", SituacaoCadastro.ATIVO);
 		}
 		
+		hql.append(" order by nomeCota, numeroCota");
+		
 		Query query =  getSession().createQuery(hql.toString());
 
 		setParameters(query);
@@ -109,6 +111,8 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 			hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') = :nomePessoa )");
 			parameters.put("nomePessoa", filtro.getNomeCota());
 		}
+		
+		hql.append(" order by nomeSegmento, nomeUsuario");
 		
 		Query query =  getSession().createQuery(hql.toString());
 
@@ -160,6 +164,8 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 		if (filtro.getTipoSegmentoProdutoId() != null && !filtro.getTipoSegmentoProdutoId().equals(0)) {
 			parameters.put("tipoSegmentoProdutoId", filtro.getTipoSegmentoProdutoId());
 		}
+		
+		hql.append(" order by nomePessoa");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -217,6 +223,8 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 			}
 		}
 		
+		hql.append(" order by descricao");
+		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		setParameters(query);
@@ -273,6 +281,8 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 		hql.append(" WHERE ");
 		hql.append(" cota.id = :idCota ");
 
+		hql.append(" order by nomeSegmento");
+		
 		Query query =  getSession().createQuery(hql.toString());
 		
 		query.setParameter("idCota", cota.getId());
