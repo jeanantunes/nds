@@ -63,6 +63,16 @@ public enum GrupoMovimentoEstoque  {
 	FALTA_EM(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
 	
 	/**
+	 * Ganho em pacote distribuidor
+	 */
+	GANHO_EM(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * Perda em pacote distribuidor
+	 */
+	PERDA_EM(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.LANCAMENTO),
+	
+	/**
 	 * Recebimento do reparte cota
 	 */
 	RECEBIMENTO_REPARTE(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
