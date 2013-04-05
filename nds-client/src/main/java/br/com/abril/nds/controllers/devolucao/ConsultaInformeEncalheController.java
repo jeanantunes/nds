@@ -96,10 +96,19 @@ public class ConsultaInformeEncalheController extends BaseController {
 		}
 
 		if (semanaRecolhimento != null) {
+			
+			String strSemanaRecolhimento = semanaRecolhimento.toString();
+			
+			if (strSemanaRecolhimento.length() != 6) {
+				
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+						"Semana deve estar no padrão ano+semana (Ex: semana 4 de 2012, 201204)"));
+			}
+			
 			dataInicioRecolhimento = Calendar.getInstance();
 			dataFimRecolhimento = Calendar.getInstance();
 			
-			Intervalo<Date> intervalo = obterDataDaSemana(semanaRecolhimento.toString());
+			Intervalo<Date> intervalo = obterDataDaSemana(strSemanaRecolhimento);
 			dataInicioRecolhimento.setTime(intervalo.getDe());
 			dataFimRecolhimento.setTime(intervalo.getAte());
 

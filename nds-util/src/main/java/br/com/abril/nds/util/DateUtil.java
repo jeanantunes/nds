@@ -255,7 +255,9 @@ public class DateUtil {
 				
 		Calendar calendar = getCalendarioDistribuidor(diaInicioSemana, data);
 		
-		return calendar.get(Calendar.WEEK_OF_YEAR);
+		int semana = calendar.get(Calendar.WEEK_OF_YEAR);
+		
+		return Integer.parseInt(calendar.get(Calendar.YEAR) +""+ ((semana < 10)?"0"+semana:semana));
 	}
 	
 	/**
