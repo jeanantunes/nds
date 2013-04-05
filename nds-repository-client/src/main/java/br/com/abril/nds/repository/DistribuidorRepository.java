@@ -121,6 +121,8 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	Long qntDiasReutilizacaoCodigoCota();
 
 	Set<PoliticaCobranca> politicasCobranca();
+	
+	Set<PoliticaCobranca> politicasCobrancaAtivas();
 
 	String assuntoEmailCobranca();
 

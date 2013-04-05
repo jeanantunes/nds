@@ -87,6 +87,8 @@ public interface DistribuidorService {
 	Long qntDiasReutilizacaoCodigoCota();
 
 	Set<PoliticaCobranca> politicasCobranca();
+	
+	Set<PoliticaCobranca> politicasCobrancaAtivas();
 
 	String assuntoEmailCobranca();
 

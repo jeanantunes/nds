@@ -379,15 +379,20 @@ public class DividaServiceImpl implements DividaService {
      */
     private Map<TipoCobranca, SumarizacaoDividasDTO> criarMapaTiposCobrancaDistribuidor(Date data, TipoDivida tipoDivida,
             Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao) {
+    	
         Map<TipoCobranca, SumarizacaoDividasDTO> novaSumarizacao = new EnumMap<TipoCobranca, SumarizacaoDividasDTO>(sumarizacao);
-        Set<PoliticaCobranca> pcs = this.distribuidorService.politicasCobranca();
+        
+        Set<PoliticaCobranca> pcs = this.distribuidorService.politicasCobrancaAtivas();
+        
         for (PoliticaCobranca pc : pcs) {
+        	
             FormaCobranca formaCobranca = pc.getFormaCobranca();
-            if (formaCobranca.isAtiva()) {
-                TipoCobranca tipoCobranca = formaCobranca.getTipoCobranca();
-                if (!novaSumarizacao.containsKey(tipoCobranca)) {
-                    novaSumarizacao.put(tipoCobranca, new SumarizacaoDividasDTO(data, tipoDivida, tipoCobranca));
-                }
+
+            TipoCobranca tipoCobranca = formaCobranca.getTipoCobranca();
+            
+            if (!novaSumarizacao.containsKey(tipoCobranca)) {
+            	
+                novaSumarizacao.put(tipoCobranca, new SumarizacaoDividasDTO(data, tipoDivida, tipoCobranca));
             }
         }
         return novaSumarizacao;
