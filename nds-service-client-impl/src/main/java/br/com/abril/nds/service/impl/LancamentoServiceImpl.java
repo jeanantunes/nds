@@ -27,6 +27,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -46,6 +47,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Autowired
 	private ExpedicaoRepository expedicaoRepository;
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Override
 	@Transactional
@@ -233,6 +237,14 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Override
 	@Transactional(readOnly=true)
 	public List<Lancamento> obterLancamentosEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
+		
+		Boolean isEdicaoParcial = produtoEdicaoRepository.isEdicaoParcial(idProdutoEdicao);
+		
+		if(isEdicaoParcial){
+			
+			return lancamentoRepository.obterLancamentosParcialEdicao(idProdutoEdicao, sortorder, sortname);
+		}
+		
 		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao, sortorder, sortname);
 	}
 
