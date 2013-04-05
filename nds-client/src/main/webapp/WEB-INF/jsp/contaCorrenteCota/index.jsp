@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/scripts/jquery.numeric.js'></script>
@@ -15,6 +16,8 @@
 	
 	$(function(){
 		contaCorrenteCotaController.init();
+		
+		bloquearItensEdicao(contaCorrenteCotaController.workspace);
 	});
 	
 </script>
@@ -228,7 +231,7 @@
 				</span>
 				
 				<span class="bt_novos" id="bt_email">
-					<a href="javascript:;"  onclick="contaCorrenteCotaController.popup_email();" rel="tipsy" title="Enviar por e-mail">
+					<a isEdicao="true" href="javascript:;"  onclick="contaCorrenteCotaController.popup_email();" rel="tipsy" title="Enviar por e-mail">
 						<img src="${pageContext.request.contextPath}/images/ico_email.png" hspace="5" border="0" />
 					</a>
 				</span>
@@ -243,10 +246,15 @@
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
               <td width="33">Cota:</td>
-              <td width="92"><input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
+              <td width="92">
+              	<input type="text" name="filtroViewContaCorrenteCota.numeroCota" id="cota" onchange="pesquisaCotaContaCorrentCota.pesquisarPorNumeroCota('#cota', '#nomeCota');" style="width:80px; float:left; margin-right:5px;"/>
+              	<input type="hidden" name="filtroViewContaCorrenteCota.cotaHidden" id="cotaHidden"/>
               </td>
               <td width="41">Nome:</td>
-              <td width="240"><input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/></td>
+              <td width="240">
+              	<input type="text" name="nomeCota" id="nomeCota" onkeyup="pesquisaCotaContaCorrentCota.autoCompletarPorNome('#nomeCota');" onblur="pesquisaCotaContaCorrentCota.pesquisarPorNomeCota('#cota', '#nomeCota');" style="width:230px;"/>
+              	<input type="hidden" name="nomeCotaHidden" id="nomeCotaHidden"/>
+              </td>
               
 			   <td width="10"></td>
 			  

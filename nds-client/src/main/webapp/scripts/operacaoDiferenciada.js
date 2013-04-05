@@ -23,11 +23,11 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	gerarAcao : function(index,row) {
 				
 		row.cell.acao = 
-			'<a href="javascript:;" onclick="OperacaoDiferenciadaController.editarGrupo(' + index + ');" style="margin-right:10px;">' +
+			'<a isEdicao="true" href="javascript:;" onclick="OperacaoDiferenciadaController.editarGrupo(' + index + ');" style="margin-right:10px;">' +
 			'<img src="' + contextPath + '/images/ico_editar.gif" border="0" alt="Editar" hspace="5" />' +
 			'</a>' +
 			
-			'<a href="javascript:;" onclick="OperacaoDiferenciadaController.dialogExcluirGrupo(' + index + ');">' +
+			'<a isEdicao="true" href="javascript:;" onclick="OperacaoDiferenciadaController.dialogExcluirGrupo(' + index + ');">' +
 			'<img src="' + contextPath + '/images/ico_excluir.gif" border="0" alt="Excluir" />' +
 			'</a>';
 	},
@@ -473,6 +473,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 			url : contextPath + '/administracao/parametrosDistribuidor/obterGrupos',
 			dataType : 'json',
 			preProcess: OperacaoDiferenciadaController.processaRetornoPesquisa,
+			onSuccess:function(){bloquearItensEdicao(OperacaoDiferenciadaController.workspace);	},
 			colModel : [ {
 				display : 'Nome',
 				name : 'nome',
@@ -501,6 +502,5 @@ var OperacaoDiferenciadaController = $.extend(true, {
 
 $(function() {
 	OperacaoDiferenciadaController.init();
-				
 });
 //@ sourceURL=operacaoDiferenciada.js

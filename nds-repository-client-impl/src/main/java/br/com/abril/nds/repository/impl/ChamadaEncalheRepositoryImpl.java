@@ -209,12 +209,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao ")
 		   .append(" join produtoEdicao.produto produto ")
 		   .append(" join produto.fornecedores fornecedores ")
-		//   .append(" join cota.box box ")
+		   .append(" join cota.box box ")
 		   .append(" join cota.pdvs pdv ")
 		   .append(" join pdv.rotas rotaPdv ")
 		   .append(" join rotaPdv.rota rota ")
 		   .append(" join rota.roteiro roteiro ")
-		   .append(" where box.id = cota.box.id  ");
+		   .append(" where cota.box.id = box.id ");
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			hql.append(" and chamadaEncalhe.dataRecolhimento >= :dataDe ");
@@ -260,7 +260,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			hql.append(" and fornecedores.id in (:listaFornecedores) ");
 			param.put("listaFornecedores", filtro.getFornecedores());
 		}
-
+		
+		hql.append(" and chamEncCota.postergado = :isPostergado "); 
 		param.put("isPostergado", false);
 	}
 

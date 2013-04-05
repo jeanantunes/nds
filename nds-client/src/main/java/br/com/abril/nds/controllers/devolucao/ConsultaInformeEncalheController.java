@@ -31,7 +31,6 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;

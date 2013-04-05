@@ -158,6 +158,7 @@ public class GeracaoNFeController extends BaseController {
 	}
 	
 	@Post("/gerar.json")
+	@Rules(Permissao.ROLE_NFE_GERACAO_NFE_ALTERACAO)
 	public void gerar(Integer intervaloBoxDe, 	  Integer intervaloBoxAte,
 			Integer intervaloCotaDe, Integer intervaloCotaAte,
 			Date intervaloDateMovimentoDe, Date intervaloDateMovimentoAte, List<Long> listIdFornecedor, 

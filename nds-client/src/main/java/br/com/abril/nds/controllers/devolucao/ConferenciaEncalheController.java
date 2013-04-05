@@ -4,24 +4,20 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.print.PrintException;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.com.abril.nds.applet.ImpressaoFinalizacaoEncalhe;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -173,6 +169,20 @@ public class ConferenciaEncalheController extends BaseController {
 		carregarComboBoxEncalhe();
 	}
 	
+	@Path("/contingencia")
+	public void contingencia() {
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+
+		this.result.include("dataOperacao", DateUtil.formatarDataPTBR(dataOperacao));
+		
+		TipoContabilizacaoCE tipoContabilizacaoCE = conferenciaEncalheService.obterTipoContabilizacaoCE();
+		
+		if(tipoContabilizacaoCE!=null) {
+			this.result.include("tipoContabilizacaoCE", tipoContabilizacaoCE.name());
+		}
+	}
+	
 	public void carregarComboBoxEncalheContingencia() {
 		
 		List<Box> boxes = 
@@ -306,7 +316,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Post
 	public void verificarReabertura(Integer numeroCota){
 		
-		limparDadosSessaoManterBoxLogado();
+		limparDadosSessao();
 		
 		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		
@@ -534,21 +544,10 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
 		}
 
-		List<ProdutoEdicao> produtosEdicao = new ArrayList<ProdutoEdicao>();
-
-		produtosEdicao = this.produtoEdicaoService.obterPorCodigoBarraILike(codigoBarra);
-		if (produtosEdicao == null || produtosEdicao.isEmpty()) {
+		List<ItemAutoComplete> listaProdutos = this.produtoEdicaoService.obterPorCodigoBarraILike(codigoBarra);
+		if (listaProdutos == null || listaProdutos.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
-		}
-
-		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
-
-		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
-
-			listaProdutos.add(new ItemAutoComplete(
-					produtoEdicao.getCodigoDeBarras() + " - " + produtoEdicao.getProduto().getNome() + " - Ed.:" + produtoEdicao.getNumeroEdicao(), 
-					null, new Object[]{produtoEdicao.getId()}));
 		}
 
 		this.result.use(Results.json()).from(listaProdutos, "result").recursive().serialize();
@@ -726,6 +725,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void adicionarProdutoConferido(Long idProdutoEdicao, String quantidade, Boolean juramentada, boolean indConferenciaContingencia) {
 		
 		if (idProdutoEdicao == null){
@@ -803,6 +803,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void atualizarValores(Long idConferencia, Long qtdExemplares, Boolean juramentada, BigDecimal valorCapa, boolean indConferenciaContingencia){
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
@@ -863,6 +864,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void alterarQtdeValorInformado(Long idConferencia, Long qtdInformada, BigDecimal valorCapaInformado){
 		
 		List<ConferenciaEncalheDTO> listaConferencia = this.getListaConferenciaEncalheFromSession();
@@ -907,6 +909,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * Salva os dados da conferência de encalhe.
 	 */
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void salvarConferencia(boolean indConferenciaContingencia){
 		
 		this.verificarInicioConferencia();
@@ -1012,6 +1015,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) throws Exception {
 		
 		try {
@@ -1033,7 +1037,7 @@ public class ConferenciaEncalheController extends BaseController {
 							null, 
 							TipoDocumentoConferenciaEncalhe.SLIP_PDF));
 			
-				for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
+				for(String nossoNumero : dtoDoc.getListaNossoNumero().keySet()) {
 
 					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
 							idControleConferenciaEncalheCota, 
@@ -1044,7 +1048,7 @@ public class ConferenciaEncalheController extends BaseController {
 				byte[] arquivo = PDFUtil.mergePDFs(arquivos);
 				mapFileNameFile.put("arquivos_cobranca_boleto_slip.pdf", arquivo);
 					
-			}else if(isUtilizaSlip && !isUtilizaBoleto){//é slip sem boleto
+			}else if(isUtilizaSlip && !isUtilizaBoleto){//Ã© slip sem boleto
 
 				//Imprime apenas SLIP txt, dados para matricial.
 				String slipMatricial = conferenciaEncalheService.gerarSlipMatricial(idControleConferenciaEncalheCota, true);
@@ -1063,7 +1067,7 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				if(isUtilizaBoleto) {
 					
-					for(String nossoNumero : dtoDoc.getListaNossoNumero()) {
+					for(String nossoNumero : dtoDoc.getListaNossoNumero().keySet()) {
 	
 						arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
 								idControleConferenciaEncalheCota, 
@@ -1081,11 +1085,12 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		} catch (Exception e) {
 			
-			throw new Exception("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança - " + e.getMessage(), e);
+			throw new Exception("CobranÃ§a gerada. Erro ao gerar arquivo(s) de cobranÃ§a - " + e.getMessage(), e);
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void imprimirDocumentosCobranca() throws IOException{
 		
 		Map<String, Object> arquivos = (Map<String, Object>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
@@ -1189,6 +1194,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void finalizarConferencia(boolean indConferenciaContingencia) throws Exception {
 		
 		Date horaInicio = (Date) this.session.getAttribute(HORA_INICIO_CONFERENCIA);
@@ -1356,6 +1362,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void excluirConferencia(Long idConferenciaEncalhe){
 		
 		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
@@ -1382,6 +1389,7 @@ public class ConferenciaEncalheController extends BaseController {
 
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void gravarObservacaoConferecnia(Long idConferenciaEncalhe, String observacao){
 		
 		List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
@@ -1432,6 +1440,7 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void salvarNotaFiscal(NotaFiscalEntradaCota notaFiscal){
 		
 		validarCamposNotaFiscalEntrada(notaFiscal);
@@ -1474,6 +1483,7 @@ public class ConferenciaEncalheController extends BaseController {
 	 * 
 	 */
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void verificarValorTotalNotaFiscal(boolean indConferenciaContingencia) throws Exception {
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1653,19 +1663,6 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	private void limparDadosSessao() {
-		
-		this.session.removeAttribute(NUMERO_COTA);
-		this.session.removeAttribute(INFO_CONFERENCIA);
-		this.session.removeAttribute(NOTA_FISCAL_CONFERENCIA);
-		this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
-		this.session.removeAttribute(HORA_INICIO_CONFERENCIA);
-		this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
-		this.session.removeAttribute(CONFERENCIA_ENCALHE_COTA_STATUS);
-		
-		indicarStatusConferenciaEncalheCotaSalvo();
-	}
-	
-	private void limparDadosSessaoManterBoxLogado() {
 		
 		this.session.removeAttribute(NUMERO_COTA);
 		this.session.removeAttribute(INFO_CONFERENCIA);

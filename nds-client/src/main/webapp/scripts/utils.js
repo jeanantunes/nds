@@ -186,7 +186,9 @@ function montarExibicaoMensagem(isFromDialog, tipoMensagem, mensagens,
 							    divWarning, textWarning,
 							    divError, textError, isPopUp) {
 	
-	$("<div id='disabledBackground' class='ui-widget-overlay' style='width: 100%; height: 100%; z-index: 10001;'/>").appendTo($("#divCorpo"));
+	if(!$('#disabledBackground') || $('#disabledBackground').size() < 1) {
+		$("<div id='disabledBackground' class='ui-widget-overlay disabledBackground' style='width: 100%; height: 100%; z-index: 10001;'/>").appendTo($("#divCorpo"));
+	}
 	
 	var campoTexto;
 
@@ -522,19 +524,22 @@ function visibleOverlay(){
 }
 
 function bloquearItensEdicao(workspace) {
-		
+
 	if($('#permissaoAlteracao',workspace).val()=="true")
 		return;
 	
 	$('a[isEdicao="true"]',workspace).each(function() {
 		this.href="#";
+		$(this).removeAttr("onClick");
+		$(this).unbind('click');
 		$(this).click(function(e){
 			exibirAcessoNegado();
 		});
 	});
 	
-	$('input[isEdicao="true"][type:"checkbox"]',workspace).each(function() {
-		this.disabled = true;
+	$('input[isEdicao="true"]',workspace).each(function() {
+		$(this).attr("disabled",true);
+		$(this).removeAttr("onClick");
 	});
 }
 

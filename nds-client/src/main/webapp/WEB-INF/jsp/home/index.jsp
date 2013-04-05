@@ -251,9 +251,12 @@
 	$(document).ready(function() {
 		
 		$("#ajaxLoading").ajaxStart(function() {
+			$(document).keydown(function(event){event.stopPropagation();return false;});
 			$(this).fadeIn(200);
+			
 		});
 		$("#ajaxLoading").ajaxStop(function() {
+			$(document).unbind('keydown');
 			$(this).fadeOut(200);
 			redimensionarWorkspace();
 		});
@@ -338,6 +341,36 @@
 			.dialog( "open" );
 		});
 		
+	
+	
+	
+	var suppressKeyPress = false;	
+	$(document).keydown(function(event){		
+		var keyCode = $.ui.keyCode;
+		switch( event.keyCode ) {		
+		case keyCode.ENTER:
+		case keyCode.NUMPAD_ENTER:
+			if(suppressKeyPress){
+				event.stopPropagation();				
+				return false;
+			}else{
+				suppressKeyPress = true;
+			}
+			break;
+		}
+		return true;
+	});
+	
+	$(document).keyup(function(event){
+		var keyCode = $.ui.keyCode;
+		switch( event.keyCode ) {		
+		case keyCode.ENTER:
+		case keyCode.NUMPAD_ENTER:
+			suppressKeyPress = false;
+			break;
+		}
+		return true;
+	});
 	});
 	//@ sourceURL=abas.js
 	

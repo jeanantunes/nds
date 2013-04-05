@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rel_produtos_ne_modelo2" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.zoom" value="1.996500000000001"/>
+	<property name="ireport.x" value="39"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
@@ -206,7 +206,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="10" isBold="false" isUnderline="false" isStrikeThrough="false"/>
+					<font size="8" isBold="false" isUnderline="false" isStrikeThrough="false"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{produtoEdicao}]]></textFieldExpression>
@@ -218,7 +218,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{codigoProduto}]]></textFieldExpression>
@@ -230,7 +230,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 					<paragraph rightIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valorUnitarioProduto}]]></textFieldExpression>
@@ -242,8 +242,8 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="10"/>
-					<paragraph lineSpacing="Fixed" leftIndent="5"/>
+					<font size="8"/>
+					<paragraph lineSpacing="Single" leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descricaoProduto}]]></textFieldExpression>
 			</textField>
@@ -254,7 +254,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{quantidadeProduto}]]></textFieldExpression>
 			</textField>
@@ -265,7 +265,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10"/>
+					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sequencia}]]></textFieldExpression>
 			</textField>

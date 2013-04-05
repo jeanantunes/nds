@@ -44,6 +44,7 @@ import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
+import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
@@ -55,6 +56,7 @@ import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.BoletoService;
@@ -122,6 +124,9 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	protected BancoRepository bancoRepository;
+	
+	@Autowired
+	protected DividaRepository dividaRepository;
 	
 	/**
 	 * Método responsável por obter boletos por numero da cota
@@ -503,7 +508,7 @@ public class BoletoServiceImpl implements BoletoService {
 		efetivarBaixaCobranca(boleto, dataOperacao);
 		
 		BigDecimal valorJurosCalculado = 
-				cobrancaService.calcularJuros(null, boleto.getCota(),
+				cobrancaService.calcularJuros(null, boleto.getCota().getId(),
 											  boleto.getValor(), boleto.getDataVencimento(),
 											  pagamento.getDataPagamento());
 		
@@ -842,6 +847,30 @@ public class BoletoServiceImpl implements BoletoService {
 		boleto.getDivida().setStatus(StatusDivida.QUITADA);
 		
 		boletoRepository.alterar(boleto);
+		
+		this.pagarCobrancasRaizes(boleto.getDivida(), dataOperacao);	
+	}
+
+	private void pagarCobrancasRaizes(Divida divida, Date dataOperacao) {
+		
+		Divida dividaRaiz = null;
+		
+		if (divida != null) {
+			
+			dividaRaiz = divida.getDividaRaiz();
+		}
+		
+		while (dividaRaiz != null) {
+		
+			dividaRaiz.setStatus(StatusDivida.QUITADA);
+			
+			dividaRaiz.getCobranca().setStatusCobranca(StatusCobranca.PAGO);
+			dividaRaiz.getCobranca().setDataPagamento(dataOperacao);
+			
+			this.dividaRepository.alterar(dividaRaiz);
+			
+			dividaRaiz = dividaRaiz.getDividaRaiz();
+		}
 	}
 	
 	private MovimentoFinanceiroCotaDTO getMovimentoFinanceiroCotaDTO(Cota cota,

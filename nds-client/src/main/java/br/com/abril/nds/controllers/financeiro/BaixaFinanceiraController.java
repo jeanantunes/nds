@@ -75,7 +75,6 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.serialization.JSONSerialization;
 import br.com.caelum.vraptor.view.Results;
@@ -85,15 +84,16 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA)
 public class BaixaFinanceiraController extends BaseController {
 
+	@Autowired
 	private Result result;
 	
-	@SuppressWarnings("unused")
-	private Localization localization;
-	
+	@Autowired
 	private HttpSession httpSession;
 	
+	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
 	private ServletContext servletContext;
 	
 	@Autowired
@@ -132,16 +132,6 @@ public class BaixaFinanceiraController extends BaseController {
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaConsultaDividas";
 	
 	private static final String FILTRO_DETALHE_BOLETO_SESSION_ATTRIBUTE = "filtroDetalheBoleto";
-	   
-	public BaixaFinanceiraController(Result result, Localization localization,
-									 HttpSession httpSession, ServletContext servletContext,  HttpServletResponse httpResponse) {
-		
-		this.result = result;
-		this.localization = localization;
-		this.httpSession = httpSession;
-		this.servletContext = servletContext;
-		this.httpResponse = httpResponse;
-	}
 		
 	@Get
 	@Path("/")
@@ -167,6 +157,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void realizarBaixaAutomatica(Date data, UploadedFile uploadedFile, String valorFinanceiro) {
 		
 		valorFinanceiro = CurrencyUtil.convertValorInternacional(valorFinanceiro);
@@ -517,6 +508,7 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("/baixaManualBoleto")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void baixaManualBoleto(String nossoNumero, 
 					              String valor,
 					              Date dataVencimento,
@@ -740,6 +732,7 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("baixaManualDividas")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void baixaManualDividas(Boolean manterPendente,
 			                       String valorDividas, 
 								   String valorMulta, 
@@ -848,6 +841,7 @@ public class BaixaFinanceiraController extends BaseController {
 	
 	@Post
 	@Path("finalizarPostergacao")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void finalizarPostergacao(Date dataPostergacao, boolean isIsento, List<Long> idCobrancas) {
 		
 		List<String> listaMensagens = new ArrayList<String>();
@@ -1167,6 +1161,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void confirmarBaixaDividas(List<Long> idCobrancas) {
 		
 		if (idCobrancas == null || idCobrancas.isEmpty()) {
@@ -1183,6 +1178,7 @@ public class BaixaFinanceiraController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void cancelarBaixaDividas(List<Long> idCobrancas) {
 		
 		if (idCobrancas == null || idCobrancas.isEmpty()) {

@@ -331,6 +331,7 @@ public class ChamadaoController extends BaseController {
 	
 	@Post
 	@Path("/confirmarChamadao")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CHAMADAO_ALTERACAO)
 	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
 								  boolean chamarTodos,
 								  String novaDataChamadaoFormatada) {

@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -11,6 +12,8 @@
 		var pesquisaCotaBaixaFinanceira = new PesquisaCota(baixaFinanceiraController.workspace);
 		$(function(){
 			baixaFinanceiraController.init();
+
+			bloquearItensEdicao(baixaFinanceiraController.workspace);
 		});
 	</script>
 	
@@ -50,26 +53,26 @@
 			
 			<div id="botoesDividasNaoPagas">
 				<span class="bt_novos">
-					<a onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;" rel="tipsy" title="À Vista">
+					<a isEdicao="true" onclick="baixaFinanceiraController.obterPagamentoDividas();" href="javascript:;" rel="tipsy" title="À Vista">
 						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
 					</a>
 				</span>
 				
 				<span class="bt_novos">
-					<a onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;" rel="tipsy" title="Postergar">
+					<a isEdicao="true" onclick="baixaFinanceiraController.obterPostergacao();" href="javascript:;" rel="tipsy" title="Postergar">
 						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_reprogramar.gif">
 					</a>
 				</span>
 			</div>
 			
 			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/financeiro/baixa/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a>
 			</span>
 			
 			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/financeiro/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+				<a href="${pageContext.request.contextPath}/financeiro/baixa/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 			</span>
@@ -104,7 +107,7 @@
 		
 		<!-- BAIXA AUTOMÁTICA -->
 		
-		<form action="<c:url value='/financeiro/realizarBaixaAutomatica' />" id="formBaixaAutomatica"
+		<form action="<c:url value='/financeiro/baixa/realizarBaixaAutomatica' />" id="formBaixaAutomatica"
 			  method="post" enctype="multipart/form-data" >
 		
 			<input type="hidden" name="formUploadAjax" value="true" />
@@ -353,7 +356,7 @@
 		                            Marcar Todos
 		                        </label>
 		                        
-		                        <input title="Selecionar todas as Dívidas" type="checkbox" id="selTodos" name="selTodos" onclick="baixaFinanceiraController.selecionarTodos(this.checked);" style="float:left;"/>
+		                        <input isEdicao="true" title="Selecionar todas as Dívidas" type="checkbox" id="selTodos" name="selTodos" onclick="baixaFinanceiraController.selecionarTodos(this.checked);" style="float:left;"/>
 		                    </span>
 
 		                </td>

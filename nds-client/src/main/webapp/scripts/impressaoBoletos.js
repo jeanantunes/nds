@@ -18,6 +18,7 @@ var impressaoBoletosController = $.extend(true, {
 		$("#dataMovimento", impressaoBoletosController.workspace).focus();
 		
 		$("#impressosGrid", impressaoBoletosController.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(impressaoBoletosController.workspace);},
 			preProcess:impressaoBoletosController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ {
@@ -119,17 +120,17 @@ var impressaoBoletosController = $.extend(true, {
 			
 			var nossoNumero  = row.cell.nossoNumero;
 			
-			var linkImpressao = '<a href="javascript:;" onclick="impressaoBoletosController.imprimirDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
+			var linkImpressao = '<a isEdicao="true" href="javascript:;" onclick="impressaoBoletosController.imprimirDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
 				 '<img src="' + contextPath + '/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime" />' +
 				 '</a>';			
 			
-			var linkEmail ='<a href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+			var linkEmail ='<a isEdicao="true" href="javascript:;" style="cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
             				'<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Divida não tem suporte para Envio de Arquivo por E-Mail" />' +
             				'</a>';
 			
 			if(row.cell.suportaEmail == "true"){
 			 
-				linkEmail ='<a href="javascript:;" onclick="impressaoBoletosController.enviarDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
+				linkEmail ='<a isEdicao="true" href="javascript:;" onclick="impressaoBoletosController.enviarDivida(\'' + nossoNumero + '\');" style="cursor:pointer">' +
                  '<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Enviar Arquivo por E-Mail" />' +
                   '</a>';		 					 
 				

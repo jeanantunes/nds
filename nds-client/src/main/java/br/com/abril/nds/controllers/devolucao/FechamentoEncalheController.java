@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -160,6 +161,7 @@ public class FechamentoEncalheController extends BaseController {
 	
 	
 	@Path("/salvar")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
 		gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId,
@@ -226,6 +228,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("/postergarCotas")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas, boolean postergarTodasCotas) {//TODO
 		
 		if (dataEncalhe != null && dataEncalhe.after(dataPostergacao)) {
@@ -292,6 +295,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 
 	@Path("/cobrarCotas")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void cobrarCotas(Date dataOperacao, List<Long> idsCotas, boolean cobrarTodasCotas) {
 
 		if (!cobrarTodasCotas && (idsCotas == null || idsCotas.isEmpty())) {
@@ -390,6 +394,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 
 	@Path("/encerrarOperacaoEncalhe")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void encerrarOperacaoEncalhe(Date dataEncalhe) {
 		
 		try {
@@ -531,6 +536,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("/salvarNoEncerrementoOperacao")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
 		if (listaFechamento !=null && !listaFechamento.isEmpty()) {
@@ -579,6 +585,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.result.use(FlexiGridJson.class).from(listVO).total(totalRegistro).page(page).serialize();
 	}
+	
 	
 	@Get
 	@Path("/imprimirArquivoAnaliticoEncalhe")

@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -50,4 +51,6 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
     List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
     
     int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);
+    
+    BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, Integer page, Integer rp );
 }

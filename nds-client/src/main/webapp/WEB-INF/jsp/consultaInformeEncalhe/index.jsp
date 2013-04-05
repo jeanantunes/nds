@@ -1,4 +1,5 @@
 <html>
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <link rel="stylesheet" type="text/css"

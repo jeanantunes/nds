@@ -63,6 +63,7 @@ var negociacaoDividaController = $.extend(true, {
 	
 		$(".negociacaoGrid", this.workspace).flexOptions({
 			url : this.path + 'pesquisar.json?' + params, 
+			onSuccess: function() {bloquearItensEdicao(negociacaoDividaController.workspace);},
 			preProcess : negociacaoDividaController.montaColunaDetalhesAcao,
 			newp : 1
 		});
@@ -134,7 +135,7 @@ var negociacaoDividaController = $.extend(true, {
 		$.each(data.rows, function(index, value) {
 			
 			var detalhes = '<a href="javascript:;" onclick="negociacaoDividaController.popup_detalhe('+value.cell.idCobranca+');" title="Ver Detalhes"><img src="' + contextPath + '/images/ico_detalhes.png" alt="Detalhes" border="0" /></a>    ';
-			var acao = '<input name="checkDividasSelecionadas" value="'+ value.cell.idCobranca +'" type="checkbox" class="negociacaoCheck" onclick="negociacaoDividaController.verificarCheck()"></input> ';
+			var acao = '<input isEdicao="true" name="checkDividasSelecionadas" value="'+ value.cell.idCobranca +'" type="checkbox" class="negociacaoCheck" onclick="negociacaoDividaController.verificarCheck()"></input> ';
 			value.cell.detalhes = detalhes;
 			value.cell.acao = acao;
 

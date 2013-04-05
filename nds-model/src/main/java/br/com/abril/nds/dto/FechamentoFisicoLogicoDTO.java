@@ -110,12 +110,12 @@ public class FechamentoFisicoLogicoDTO {
 		return exemplaresDevolucao;
 	}
 	public void setExemplaresDevolucao(BigInteger exemplaresDevolucao) {
-		if (exemplaresDevolucao == null) {
+		if (exemplaresDevolucao == null || exemplaresDevolucao.compareTo(BigInteger.ZERO) == -1) {
 			this.exemplaresDevolucao = BigInteger.ZERO;
-		} else {
+		}else{
 			this.exemplaresDevolucao = exemplaresDevolucao;
 		}
-		this.exemplaresDevolucaoFormatado = CurrencyUtil.formatarValorTruncado(this.exemplaresDevolucao).replaceAll("\\D", "");
+		this.exemplaresDevolucaoFormatado = String.valueOf(this.exemplaresDevolucao.intValue());
 		
 	}
 	public BigDecimal getTotal() {

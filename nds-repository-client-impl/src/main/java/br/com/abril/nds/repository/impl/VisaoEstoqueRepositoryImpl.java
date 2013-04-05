@@ -29,7 +29,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 
 		hql.append(
 				" SELECT COALESCE(SUM(CASE WHEN (COALESCE(ep." + coluna
-						+ ", 0) > 0) THEN 1 ELSE 0 END), 0) as produtos, ")
+						+ ", 0) <> 0) THEN 1 ELSE 0 END), 0) as produtos, ")
 				.append("        COALESCE(SUM(ep." + coluna
 						+ "), 0) as exemplares, ")
 				.append("        COALESCE(SUM(pe.precoVenda * ep." + coluna
@@ -68,7 +68,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 
 		hql.append(
 				" SELECT COALESCE(SUM(CASE WHEN (COALESCE(ep." + coluna
-						+ ", 0) > 0) THEN 1 ELSE 0 END), 0) as produtos, ")
+						+ ", 0) <> 0) THEN 1 ELSE 0 END), 0) as produtos, ")
 				.append("        COALESCE(SUM(ep." + coluna
 						+ "), 0) as exemplares, ")
 				.append("        COALESCE(SUM(pe.precoVenda * ep." + coluna
@@ -108,7 +108,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(
-				" SELECT COALESCE(SUM(CASE WHEN (COALESCE(ep.qtde, 0) > 0) THEN 1 ELSE 0 END), 0) as produtos, ")
+				" SELECT COALESCE(SUM(CASE WHEN (COALESCE(ep.qtde, 0) <> 0) THEN 1 ELSE 0 END), 0) as produtos, ")
 				.append("        COALESCE(SUM(ep.qtde), 0) as exemplares, ")
 				.append("        COALESCE(SUM(pe.precoVenda * ep.qtde), 0) as valor  ")
 				.append("   FROM EstoqueProdutoCotaJuramentado as ep ")
@@ -152,7 +152,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 			hql.append("   JOIN pe.produto.fornecedores f ");
 		}
 		
-		hql.append("  WHERE ep." + coluna + " > 0 ");
+		hql.append("  WHERE ep." + coluna + " is not null and ep." + coluna + " <> 0 ");
 		
 		if (filtro.getIdFornecedor() != -1) {
 			hql.append("    AND f.id = :idFornecedor ");
@@ -231,7 +231,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 			hql.append("   JOIN pr.fornecedores f ");
 		}
 		
-		hql.append("  WHERE ep." + coluna + " > 0 ");
+		hql.append("  WHERE ep." + coluna + " is not null and ep." + coluna + " <> 0 ");
 		hql.append("    AND ep.data = :data ");
 		
 		if (filtro.getIdFornecedor() != -1) {
@@ -306,7 +306,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		if (filtro.getIdFornecedor() != -1) {
 			hql.append("   JOIN pr.fornecedores f ");
 		}
-		hql.append("  WHERE ep.qtde > 0 ");
+		hql.append("  WHERE ep.qtde is not null and ep.qtde <> 0 ");
 		hql.append("    AND ep.data = :data ");
 		if (filtro.getIdFornecedor() != -1) {
 			hql.append("    AND f.id = :idFornecedor ");

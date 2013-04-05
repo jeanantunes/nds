@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.cadastro;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,6 +173,7 @@ public class ParametroCobrancaController extends BaseController {
 	 */
 	@Post
 	@Path("/postarParametroCobranca")
+	@Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA_ALTERACAO)
 	public void postarParametroCobranca(ParametroCobrancaDTO parametros){
 
 		PoliticaCobranca politica = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
@@ -254,6 +254,7 @@ public class ParametroCobrancaController extends BaseController {
      */
 	@Post
 	@Path("/desativaParametroCobranca")
+	@Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA_ALTERACAO)
 	public void desativaParametroCobranca(Long idPolitica){
 		
 		this.politicaCobrancaService.dasativarPoliticaCobranca(idPolitica);

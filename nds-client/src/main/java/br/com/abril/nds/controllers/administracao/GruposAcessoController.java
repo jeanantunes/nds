@@ -107,6 +107,7 @@ public class GruposAcessoController extends BaseController {
 	 */
 	@Get
 	@Path("/excluirGrupoPermissao")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
 	public void excluirGrupoPermissao(Long codigoGrupo) {
 		grupoPermissaoService.excluir(codigoGrupo);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Grupo de Permissões excluído com Sucesso."),"result").recursive().serialize();
@@ -130,6 +131,7 @@ public class GruposAcessoController extends BaseController {
 	 */
 	@Get
 	@Path("/editarGrupoPermissao")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
 	public void editarGrupoPermissao(Long codigoGrupo) {
 		
 		GrupoPermissao grupoPermissao = grupoPermissaoService.buscar(codigoGrupo);
@@ -170,6 +172,7 @@ public class GruposAcessoController extends BaseController {
 	 */
 	@Post
 	@Path("/salvarGrupoPermissao")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
 	public void salvarGrupoPermissao(GrupoPermissaoDTO grupoPermissaoDTO) throws Exception {
 		
 		this.validarDadosGrupoPermissao(grupoPermissaoDTO);
@@ -368,6 +371,7 @@ public class GruposAcessoController extends BaseController {
 	
 	@Post
 	@Path("/alterarSenha")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
 	public void alterarSenha(UsuarioDTO usuarioDTO) {
 		usuarioDTO = this.criptografarSenhas(usuarioDTO);
 		validarAlteracaoSenhas(usuarioDTO);
@@ -390,6 +394,7 @@ public class GruposAcessoController extends BaseController {
 	 */
 	@Post
 	@Path("/salvarUsuario")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
 	public void salvarUsuario(UsuarioDTO usuarioDTO) {
 
 		this.validarDadosUsuario(usuarioDTO);
@@ -412,7 +417,7 @@ public class GruposAcessoController extends BaseController {
 
 		Set<GrupoPermissao> grupos = new HashSet<GrupoPermissao>();
 		
-		if(usuarioDTO.getGrupos() != null) {
+		if(usuarioDTO.getIdsGrupos() != null && !usuarioDTO.getIdsGrupos().isEmpty()) {
 			for (Long id : usuarioDTO.getIdsGrupos()) {
 					grupos.add(grupoPermissaoService.buscar(id));
 			}
@@ -536,6 +541,7 @@ public class GruposAcessoController extends BaseController {
 	 */
 	@Get
 	@Path("/excluirUsuario")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
 	public void excluirUsuario(Long codigoUsuario) {
 		usuarioService.excluir(codigoUsuario);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Usuário excluído com Sucesso."),"result").recursive().serialize();
@@ -551,6 +557,7 @@ public class GruposAcessoController extends BaseController {
 	 */
 	@Get
 	@Path("/editarUsuario")
+	@Rules(Permissao.ROLE_ADMINISTRACAO_GRUPOS_ACESSO_ALTERACAO)
 	public void editarUsuario(Long codigoUsuario) {
 
 		UsuarioDTO dto = new UsuarioDTO();

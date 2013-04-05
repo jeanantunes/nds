@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -76,6 +78,7 @@ import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -196,7 +199,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
 				
 				for (FechamentoEncalhe fechamento : listaFechamento) {
-					if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
+					if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getId())) {
 						conferencia.setFisico(fechamento.getQuantidade());
 						conferencia.setDiferenca(calcularDiferencao(conferencia));
 						break;
@@ -211,7 +214,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
 				
 				for (FechamentoEncalheBox fechamento : listaFechamentoBox) {
-					if (conferencia.getCodigo().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getProduto().getCodigo())) {
+					if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getId())) {
 												
 						conferencia.setFisico(fechamento.getQuantidade());
 												
@@ -511,9 +514,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 			
+			Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+			
 			GerarCobrancaValidacaoException ex = null;
 			try {
-				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), new HashSet<String>());
+				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
 			} catch (GerarCobrancaValidacaoException e) {
 				ex = e;
 				
@@ -525,11 +530,29 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
 			}
 			
+			for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
+				
+				if (nossoNumeroEnvioEmail.get(nossoNumero)){
+					
+					try {
+						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, cota.getPessoa().getEmail());
+					} catch (AutenticacaoEmailException e) {
+						
+						validacaoVO.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
+								cota.getNumeroCota() + ", " +
+								e.getMessage());
+					}
+				}
+			}
+			
 			List<ChamadaEncalhe> listaChamadaEncalhe = 
 				this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
 			
 			TipoMovimentoEstoque tipoMovimentoEstoque =
-					this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+			
+			TipoMovimentoEstoque tipoMovimentoEstoqueCota =
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 			
 			for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
 				
@@ -544,13 +567,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				}
 				
 				if (ex == null){
+					
+					this.movimentoEstoqueService.gerarMovimentoEstoque(
+						chamadaEncalhe.getProdutoEdicao().getId(), 
+							usuario.getId(), BigInteger.ZERO, tipoMovimentoEstoque);
+					
 					this.movimentoEstoqueService.gerarMovimentoCota(
-							new Date(), 
+							null, 
 							chamadaEncalhe.getProdutoEdicao().getId(), 
 							cota.getId(), 
 							usuario.getId(), 
 							BigInteger.ZERO, 
-							tipoMovimentoEstoque,
+							tipoMovimentoEstoqueCota,
 							dataOperacao);
 				}
 	
@@ -1002,6 +1030,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		return fechamentoEncalheRepository.buscarAnaliticoEncalhe(filtro,  sortorder,  sortname,  startSearch,  rp);
+	}
+	
+	@Transactional
+	public BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, Integer page, Integer rp) {
+		
+		return fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro, page, rp);
+		
 	}
 	
 	@Override
