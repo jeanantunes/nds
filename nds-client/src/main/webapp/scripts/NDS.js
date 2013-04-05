@@ -456,6 +456,7 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 		type: method,
 		url: url,
 		data: data,
+		async: true,
 		dataType: dataType,
 		success: function(json) {
 			

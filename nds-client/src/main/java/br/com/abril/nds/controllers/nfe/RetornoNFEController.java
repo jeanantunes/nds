@@ -100,6 +100,7 @@ public class RetornoNFEController extends BaseController {
 	
 	@SuppressWarnings("unchecked")
 	@Post("/confirmar.json")
+	@Rules(Permissao.ROLE_NFE_RETORNO_NFE_ALTERACAO)
 	public void confirmar() {
 		
 		List<RetornoNFEDTO> listaNotasRetorno = (List<RetornoNFEDTO>) this.session.getAttribute(LISTA_NOTAS_DE_RETORNO);

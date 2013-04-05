@@ -534,6 +534,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA_ALTERACAO)
 	public void removerMovimentoFinanceiroCota(Long idMovimento) {
 
 		if (idMovimento == null) {
@@ -551,6 +552,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	}
 
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA_ALTERACAO)
 	public void criarMovimentoFincanceiroCota(List<DebitoCreditoDTO> listaNovosDebitoCredito, Long idTipoMovimento) {
 
 		validarPreenchimentoCampos(listaNovosDebitoCredito, idTipoMovimento);
@@ -585,6 +587,7 @@ public class DebitoCreditoCotaController extends BaseController{
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_FINANCEIRO_DEBITOS_CREDITOS_COTA_ALTERACAO)
 	public void editarMovimentoFincanceiroCota(DebitoCreditoDTO debitoCredito) {
 		
 		validarPreenchimentoCamposEdicao(debitoCredito);

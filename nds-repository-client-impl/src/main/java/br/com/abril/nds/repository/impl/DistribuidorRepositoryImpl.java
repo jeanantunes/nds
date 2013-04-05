@@ -428,6 +428,15 @@ public class DistribuidorRepositoryImpl extends
 				this.getSession().
 				createQuery("select politicasCobranca from Distribuidor").list());
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<PoliticaCobranca> politicasCobrancaAtivas() {
+		
+		return new HashSet<PoliticaCobranca>(
+				this.getSession().
+				createQuery("select p from PoliticaCobranca p JOIN p.formaCobranca f where p.ativo = true").list());
+	}
 
 	@Override
 	public String assuntoEmailCobranca() {

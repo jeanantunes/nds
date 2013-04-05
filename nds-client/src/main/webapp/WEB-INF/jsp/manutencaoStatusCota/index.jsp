@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
@@ -12,6 +13,8 @@
 		
 		$(function(){
 			manutencaoStatusCotaController.init(pesquisaCotaManutencaoStatusCota);
+			
+			bloquearItensEdicao(manutencaoStatusCotaController.workspace);
 		});
 		
 	</script>
@@ -26,7 +29,7 @@
 		<div class="area">
 
 			<span class="bt_novos" id="botao-novo-status-cota">
-				<a href="javascript:;" onclick="manutencaoStatusCotaController.novo();" rel="tipsy" title="Incluir Novo Status"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a>
+				<a isEdicao="true" href="javascript:;" onclick="manutencaoStatusCotaController.novo();" rel="tipsy" title="Incluir Novo Status"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" /></a>
 			</span>
 		</div>
 	</div>

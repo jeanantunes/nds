@@ -133,6 +133,7 @@ obterColunasGridPesquisaSemCota:function(){
 		$(".grids", this.workspace).append($("<table>").attr("class", "manutencaoStatusCotaGrid"));
 
 		$(".manutencaoStatusCotaGrid", manutencaoStatusCotaController.workspace).flexigrid({
+			onSuccess: function() {bloquearItensEdicao(manutencaoStatusCotaController.workspace);},
 			preProcess: manutencaoStatusCotaController.executarPreProcessamento,
 			dataType : 'json',
 			colModel : colunas,
@@ -170,7 +171,7 @@ obterColunasGridPesquisaSemCota:function(){
 			
 			if(row.cell.numeroCota){
 				
-				var linkEdicao = '<a href="javascript:;" onclick="manutencaoStatusCotaController.novo('+ row.cell.numeroCota +');" style="cursor:pointer">' +
+				var linkEdicao = '<a isEdicao="true" href="javascript:;" onclick="manutencaoStatusCotaController.novo('+ row.cell.numeroCota +');" style="cursor:pointer">' +
 				 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Incluir Novo Status" />' +
 				 '</a>';			
 			

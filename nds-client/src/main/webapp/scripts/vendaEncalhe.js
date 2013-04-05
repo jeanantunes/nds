@@ -102,11 +102,11 @@ var VENDA_PRODUTO = {
 			
 			if(row.cell.edicaoExclusaoItem){
 				
-				linkEdicao = '<a href="javascript:;" onclick="VENDA_PRODUTO.editar('+ row.cell.idVenda +');" style="margin-right: 5px;cursor:pointer">' +
+				linkEdicao = '<a isEdicao="true" href="javascript:;" onclick="VENDA_PRODUTO.editar('+ row.cell.idVenda +');" style="margin-right: 5px;cursor:pointer">' +
 				 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar Venda" />' +
 				 '</a>';			
 			 
-				linkExclusao ='<a href="javascript:;" onclick="VENDA_PRODUTO.exibirDialogExclusao('+ row.cell.idVenda +' );" style="margin-right: 5px;cursor:pointer">' +
+				linkExclusao ='<a isEdicao="true" href="javascript:;" onclick="VENDA_PRODUTO.exibirDialogExclusao('+ row.cell.idVenda +' );" style="margin-right: 5px;cursor:pointer">' +
                 '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
                  '</a>';		 					 
 				
@@ -121,11 +121,11 @@ var VENDA_PRODUTO = {
 			}
 			else{
 				
-				linkEdicao = '<a href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+				linkEdicao = '<a isEdicao="true" href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
 				 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Editar Venda" />' +
 				 '</a>';			
 			 
-				linkExclusao ='<a href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
+				linkExclusao ='<a isEdicao="true" href="javascript:;" style="margin-right: 5px;;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
                '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Venda" />' +
                 '</a>';		
 				linkReimpressao  ='<a href="javascript:;" style="margin-right: 5px;cursor:default; opacity:0.4; filter:alpha(opacity=40)">' +
@@ -1180,6 +1180,7 @@ $(function() {
 		
 	$(".vendaEncalheGrid", VENDA_PRODUTO.workspace).flexigrid({
 		preProcess:VENDA_PRODUTO.executarPreProcessamento,
+		onSuccess: function() {bloquearItensEdicao(VENDA_PRODUTO.workspace);},
 		dataType : 'json',
 		colModel : [ {
 			display : 'Data',

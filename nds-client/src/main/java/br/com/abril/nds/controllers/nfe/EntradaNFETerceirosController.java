@@ -269,6 +269,7 @@ public class EntradaNFETerceirosController extends BaseController {
 	
 	@Post
 	@Path("/cadastrarNota")
+	@Rules(Permissao.ROLE_NFE_ENTRADA_NFE_TERCEIROS_ALTERACAO)	
 	public void cadastrarNota(NotaFiscalEntradaCota nota, Integer numeroCota, Long idControleConferenciaEncalheCota){
 		this.notaFiscalEntradaService.inserirNotaFiscal(nota, numeroCota, idControleConferenciaEncalheCota);
 

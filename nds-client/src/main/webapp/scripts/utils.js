@@ -531,6 +531,7 @@ function bloquearItensEdicao(workspace) {
 	$('a[isEdicao="true"]',workspace).each(function() {
 		this.href="#";
 		$(this).removeAttr("onClick");
+		$(this).unbind('click');
 		$(this).click(function(e){
 			exibirAcessoNegado();
 		});

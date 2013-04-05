@@ -189,6 +189,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		balanceamentoRecolhimentoController.habilitarLink("linkSalvar", balanceamentoRecolhimentoController.salvar);
 		balanceamentoRecolhimentoController.habilitarLink("linkConfiguracaoInicial", function() { balanceamentoRecolhimentoController.confirmacaoConfiguracaoInicial(balanceamentoRecolhimentoController.voltarConfiguracaoInicial); });
 		balanceamentoRecolhimentoController.habilitarLink("linkReprogramar", balanceamentoRecolhimentoController.reprogramarSelecionados);
+		
+		bloquearItensEdicao(balanceamentoRecolhimentoController.workspace);
 	},
 	
 	bloquearLink : function(idLink) {
@@ -276,7 +278,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			btnExcluir = '<img src="' + contextPath + '/images/ico_excluir.gif" border="0" disabled="disabled" class="linkDisabled" />';
 		
 		} else {
-			btnExcluir = '<a href="javascript:;" class="btn_excluir" '+
+			btnExcluir = '<a isEdicao="true" href="javascript:;" class="btn_excluir" '+
 		    'onclick="balanceamentoRecolhimentoController.excluirBalanceamento(' + idLancamento + ');">'+
 		    '<img src="' + contextPath + '/images/ico_excluir.gif" border="0"  /></a>';
 		}
@@ -296,12 +298,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		retornoHTML += '<input type="hidden" name="hiddenIdFornecedor"'
 		    		+ 	     ' value="' + row.cell.idFornecedor + '" />';
 		
-		retornoHTML += '<input type="text" name="novaData"'
+		retornoHTML += '<input isEdicao="true" type="text" name="novaData"'
 					 + 	     ' value="' + row.cell.novaData + '"'
 					 + 	     ' style="width:55px; margin-right:5px; float:left;margin-top: -3px;" />';
 		
 		retornoHTML += '<div class="bt_atualizarIco" style="margin-top: -9px;" title="Reprogramar">'
-			  		 + '  <a href="javascript:;">&nbsp;</a>'
+			  		 + '  <a isEdicao="true" href="javascript:;">&nbsp;</a>'
 			  		 + '</div>';
 			  		 
 		retornoHTML += '</div>';
@@ -316,12 +318,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		if (row.cell.bloqueioAlteracaoBalanceamento) {
 			
 			retornoHTML = '<input type="checkbox" id="ch' + row.id + '"'
-	   		   			+       ' name="balanceamentoRecolhimentoController.checkReprogramar"'
+	   		   			+       ' name="balanceamentoRecolhimentoController.checkReprogramar" isEdicao="true" '
 	   		   			+       ' value="' + row.id + '" disabled="disabled"  />';
 		} else {
 			
 			retornoHTML = '<input type="checkbox" id="checkReprogramar' + row.id + '"'
-	   		   			+       ' name="checkReprogramar"'
+	   		   			+       ' name="checkReprogramar" isEdicao="true" '
 	   		   			+       ' value="' + row.id + '"'
 	   		   			+       ' onclick="balanceamentoRecolhimentoController.checarBalanceamento(\'' + row.id + '\');" />';
 		}
@@ -338,6 +340,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		$("input[name='novaData']", balanceamentoRecolhimentoController.workspace).mask("99/99/9999");
 		
 		balanceamentoRecolhimentoController.criarDivsNovaData();
+		
+		bloquearItensEdicao(balanceamentoRecolhimentoController.workspace);
 	},
 			
 	criarDivsNovaData : function() {
@@ -560,6 +564,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexigrid({
 			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
+			
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',

@@ -140,12 +140,14 @@ public class VendaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO)
 	public void confirmaNovaVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito){
 		
 		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.TRUE);
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO)
 	public void confirmaEdicaoVenda(List<VendaEncalheDTO> listaVendas, Long numeroCota, Date dataDebito){
 		
 		confirmaVenda(listaVendas, numeroCota, dataDebito, Boolean.FALSE);
@@ -397,6 +399,7 @@ public class VendaEncalheController extends BaseController {
 	}
 	
 	@Post
+	@Rules(Permissao.ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO)
 	public void excluir(Long idVenda){
 		
 		vendaEncalheService.excluirVendaEncalhe(idVenda);

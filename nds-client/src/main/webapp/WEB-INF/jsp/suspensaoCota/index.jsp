@@ -1,3 +1,4 @@
+<input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
 
 <script type="text/javascript" src="scripts/suspensaoCota.js"></script>
@@ -5,6 +6,7 @@
 <script type="text/javascript">
 $(function(){
 	suspensaoCotaController.init();
+	bloquearItensEdicao(suspensaoCotaController.workspace);
 });
 </script>
 
@@ -55,7 +57,7 @@ $(function(){
                 	 
                      <span class="bt_novos" title="Suspender Cota">
 <!-- SUSPENDER COTAS -->
-                     	<a href="javascript:;" onclick="suspensaoCotaController.popupConfirmar();">
+                     	<a isEdicao="true" href="javascript:;" onclick="suspensaoCotaController.popupConfirmar();">
                      		<img src="${pageContext.request.contextPath}/images/ico_suspender.gif" hspace="5" border="0"/>
                      		Suspender Cotas
                      	</a>
@@ -104,7 +106,7 @@ $(function(){
 <!-- SELECIONAR TODOS -->	                
 	                <span class="bt_sellAll">
 	                	<label for="sel">Selecionar Todos</label>
-	                	<input type="checkbox" id="sel" name="Todos" onclick="suspensaoCotaController.selecionarTodos(this)" style="float:left;"/>
+	                	<input isEdicao="true" type="checkbox" id="sel" name="Todos" onclick="suspensaoCotaController.selecionarTodos(this)" style="float:left;"/>
 	                </span>
 	                
                 </td>

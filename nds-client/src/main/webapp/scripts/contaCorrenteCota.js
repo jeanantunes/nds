@@ -197,7 +197,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
 				value.cell.valorPago = floatToPrice(formatMoneyValue(value.cell.valorPago));
-				value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.saldo));
+				value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.saldo) * -1);
 				
 				if (value.cell.tipo == 'CONSOLIDADO'){
 					
@@ -205,7 +205,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				} else {
 					
 					value.cell.tipo = '<img src="'+ contextPath +'/images/ico_excluir.gif"/>';
-					value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.total));
+					value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.total) * -1);
 				}
 			});
 			

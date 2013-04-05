@@ -157,7 +157,6 @@ public class ImpressaoNFEController extends BaseController {
 			throw new ValidacaoException(validacaoVO);
 		}
 
-
 		TableModel<CellModelKeyValue<ProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoDTO>>();
 
 		List<ProdutoDTO> listaProdutos = impressaoNFEService.obterProdutosExpedicaoConfirmada(filtro); // c.getTime()

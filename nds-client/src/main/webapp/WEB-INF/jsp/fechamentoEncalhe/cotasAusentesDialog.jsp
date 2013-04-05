@@ -20,7 +20,7 @@
 			</a>
 		</span>
 		<span class="bt_sellAll" style="float:right;">
-			<input type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="fechamentoEncalheController.checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
+			<input isEdicao="true" type="checkbox" id="checkTodasCotas" name="checkTodasCotas" onchange="fechamentoEncalheController.checarTodasCotasGrid(this.checked);" style="float:right;margin-right:25px;"/>
 			<label for="checkTodasCotas" id="textoCheckAllCotas" ></label>
 		</span>
 	</fieldset>

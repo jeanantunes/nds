@@ -576,8 +576,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case POSTERGADO_DEBITO:
 				case POSTERGADO_CREDITO:
 					
-					vlMovPostergado = 
-						this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
+					if (movimentoFinanceiroCota.getData().after(dataOperacao)){
+						
+						vlMovPostergado = 
+							this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
+					}
 				break;
 			}
 		}
@@ -604,7 +607,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			MovimentoFinanceiroCota movPost = 
 					this.gerarPostergado(cota, qtdDiasNovaCobranca, msgs, fornecedor, 
-							consolidadoFinanceiroCota, vlMovFinanTotal, usuario, null);
+							consolidadoFinanceiroCota, vlMovFinanTotal, usuario, null, dataOperacao);
 			
 			this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 			this.movimentoFinanceiroCotaRepository.adicionar(movPost);
@@ -627,6 +630,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		boolean cobrarHoje = false;
 		
+		Calendar c = null;
+		
 		switch(formaCobrancaPrincipal.getTipoFormaCobranca()){
 
 			case DIARIA:
@@ -644,9 +649,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 														  fatorVencimento,
 														  null, 
 														  formaCobrancaPrincipal.getDiasDoMes());
+				c = Calendar.getInstance();
+				c.setTime(dataOperacao);
 				cobrarHoje = 
 						formaCobrancaPrincipal.getDiasDoMes().contains(
-								Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+								c.get(Calendar.DAY_OF_MONTH));
 			break;
 			
 			case MENSAL:
@@ -655,9 +662,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 														  fatorVencimento,
 														  null, 
 														  formaCobrancaPrincipal.getDiasDoMes());
+				c = Calendar.getInstance();
+				c.setTime(dataOperacao);
 				cobrarHoje =
 						formaCobrancaPrincipal.getDiasDoMes().get(0).equals(
-								Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+								c.get(Calendar.DAY_OF_MONTH));
 			break;
 			
 			case SEMANAL:
@@ -668,10 +677,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 														  fatorVencimento,
 														  diasSemanaConcentracaoPagamento, 
 														  null);
-				
+				c = Calendar.getInstance();
+				c.setTime(dataOperacao);
 				cobrarHoje = 
 						diasSemanaConcentracaoPagamento.contains(
-								Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+								c.get(Calendar.DAY_OF_WEEK));
 			break;
 		}
 		
@@ -751,7 +761,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 									cota.getId(),
 									vlMovFinanTotal.add(divida.getValor()).add(valorMulta.abs()),
 									divida.getCobranca().getDataVencimento(),
-									new Date());
+									dataOperacao);
 
 					this.dividaRepository.alterar(divida);
 
@@ -776,7 +786,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			movimentoFinanceiroCota = this.gerarPostergado(cota,
 					qtdDiasNovaCobranca, msgs, fornecedor,
 					consolidadoFinanceiroCota, vlMovFinanTotal, usuario,
-					diasSemanaConcentracaoPagamento);
+					diasSemanaConcentracaoPagamento, dataOperacao);
 		}
 		
 		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
@@ -819,7 +829,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			cobranca.setBanco(formaCobrancaPrincipal.getBanco());
 			cobranca.setCota(cota);
-			cobranca.setDataEmissao(new Date());
+			cobranca.setDataEmissao(dataOperacao);
 			cobranca.setDivida(novaDivida);
 			cobranca.setStatusCobranca(StatusCobranca.NAO_PAGO);
 			cobranca.setDataVencimento(dataVencimento);
@@ -872,7 +882,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			int qtdDiasNovaCobranca, List<String> msgs, Fornecedor fornecedor,
 			ConsolidadoFinanceiroCota consolidadoFinanceiroCota,
 			BigDecimal vlMovFinanTotal, Usuario usuario,
-			List<Integer> diasSemanaConcentracaoPagamento) {
+			List<Integer> diasSemanaConcentracaoPagamento, Date dataOperacao) {
 		
 		//gerar postergado
 		consolidadoFinanceiroCota.setValorPostergado(vlMovFinanTotal);
@@ -881,11 +891,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		MovimentoFinanceiroCota movimentoFinanceiroCota = new MovimentoFinanceiroCota();
 		
 		Calendar diaPostergado = Calendar.getInstance();
-		diaPostergado.setTime(new Date());
+		diaPostergado.setTime(dataOperacao);
 		diaPostergado.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca);
 		
 		movimentoFinanceiroCota.setData(diaPostergado.getTime());
-		movimentoFinanceiroCota.setDataCriacao(new Date());
+		movimentoFinanceiroCota.setDataCriacao(dataOperacao);
 		movimentoFinanceiroCota.setUsuario(usuario);
 		movimentoFinanceiroCota.setValor(vlMovFinanTotal.abs());
 		movimentoFinanceiroCota.setLancamentoManual(false);

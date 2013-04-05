@@ -306,6 +306,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	@Post
 	@Path("/gravarCotasPesquisa")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void gravarCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 									String dataRecolhimento,String codigoProduto,
 									Long numeroEdicao,String dataProgramada){
@@ -329,6 +330,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	@Post
 	@Path("/gravarCotas")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void gravarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 							String dataRecolhimento, String codigoProduto, 
 							Long numeroEdicao,String dataProgramada,String gravarTodos){
@@ -364,6 +366,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	@Post
 	@Path("/reprogramarCotas")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void reprogramarCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 								String dataRecolhimento, String codigoProduto, 
 								Long numeroEdicao, String dataProgramada, 
@@ -391,6 +394,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	
 	@Post
 	@Path("/cancelarChamdaEncalheCotas")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void cancelarChamdaEncalheCotas(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 											String codigoProduto,Long numeroEdicao,String cancelarTodos){
 		
@@ -415,6 +419,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	
 	@Post
 	@Path("/cancelarChamdaEncalheCotasPesquisa")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void cancelarChamdaEncalheCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 												   String codigoProduto,Long numeroEdicao){
 		
@@ -436,6 +441,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	 */
 	@Post
 	@Path("/reprogramarCotasPesquisa")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CE_ANTECIPADA_PRODUTO_ALTERACAO)
 	public void reprogramarCotasPesquisa(List<ChamadaEncalheAntecipadaVO> listaChamadaEncalheAntecipada,
 										String dataRecolhimento,String codigoProduto,
 										Long numeroEdicao,String dataProgramada){

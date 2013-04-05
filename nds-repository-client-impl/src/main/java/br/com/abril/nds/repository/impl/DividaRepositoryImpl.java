@@ -61,9 +61,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	@Override
 	public Long obterQunatidadeDividaGeradas(Date dataMovimento){
 		
-		String hql  = "select count (divida.id) from Divida divida where divida.data =:data";
+		String hql  = "select count (divida.id) from Divida divida where divida.data =: data";
 		
 		Query query  = super.getSession().createQuery(hql);
+		
 		query.setParameter("data", dataMovimento);
 		
 		return (Long) query.uniqueResult();

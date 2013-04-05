@@ -138,11 +138,13 @@ public class ProdutoController extends BaseController {
 		if(codigoProduto == null || "".equals(codigoProduto.trim()))
 				throw new ValidacaoException(TipoMensagem.WARNING, "Código vazio!");
 		
-		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+		FiltroProdutoDTO filtro = new FiltroProdutoDTO();
+		filtro.setCodigo(codigoProduto);
+		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
 		
 		if (produto == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + filtro.getCodigo() + "\" não encontrado!");
 			
 		} else {
 			
@@ -152,8 +154,9 @@ public class ProdutoController extends BaseController {
 	}
 
 	@Post
-	public void autoCompletarPorNomeProduto(String nomeProduto) {
-		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
+	public void autoCompletarPorNomeProduto(FiltroProdutoDTO filtro) {
+		
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(filtro.getNome(), Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -200,7 +203,11 @@ public class ProdutoController extends BaseController {
 	
 	@Post
 	public void autoCompletarEdicaoPorProduto(String codigoProduto) {
-		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(codigoProduto);
+		
+		FiltroProdutoDTO filtro = new FiltroProdutoDTO();
+		filtro.setCodigo(codigoProduto);
+		
+		List<ProdutoEdicao> listaProdutoEdicao = this.produtoEdicaoService.obterProdutosEdicaoPorCodigoProduto(filtro.getCodigo());
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 				
@@ -219,39 +226,39 @@ public class ProdutoController extends BaseController {
 	}
 		
 	@Post
-	public void pesquisarPorNomeProduto(String nomeProduto,String codigoProduto) {
+	public void pesquisarPorNomeProduto(FiltroProdutoDTO filtro) {
 		
 		Produto produto = null;
 		
-		if(codigoProduto!= null){
+		if(filtro.getCodigo() != null) {
 			
-			produto = this.produtoService.obterProdutoPorCodigo(codigoProduto);
+			produto = this.produtoService.obterProdutoPorCodigo(filtro.getCodigo());
 			
-			if(produto == null || !produto.getNome().equals(nomeProduto)){
+			if(produto == null || !produto.getNome().equals(filtro.getNome())){
 				
-				produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+				produto = this.produtoService.obterProdutoPorNome(filtro.getNome());
 			}
-		}
-		else{
 			
-			produto = this.produtoService.obterProdutoPorNome(nomeProduto);
+		} else {
+			
+			produto = this.produtoService.obterProdutoPorNome(filtro.getNome());
 		}
 		
 		if (produto == null) {
 		
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + nomeProduto + "\" não encontrado!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + filtro.getNome() + "\" não encontrado!");
 		}
 			
 		result.use(Results.json()).from(produto, "result").serialize();
 	}
 	
 	@Post
-	public void validarNumeroEdicao(String codigoProduto, String numeroEdicao) {
+	public void validarNumeroEdicao(FiltroProdutoDTO filtro, String numeroEdicao) {
 		
 		boolean numEdicaoValida = false;
 			
 		ProdutoEdicao produtoEdicao =
-			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), numeroEdicao);
 		
 		numEdicaoValida = (produtoEdicao != null);
 		
@@ -267,10 +274,10 @@ public class ProdutoController extends BaseController {
 	
 	@Post
 	@Path("/obterProdutoEdicao")
-	public void obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, String numeroEdicao) {
+	public void obterProdutoEdicaoPorCodProdutoNumEdicao(FiltroProdutoDTO filtro, String numeroEdicao) {
 		
 		ProdutoEdicao produtoEdicao =
-			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
+			produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(filtro.getCodigo(), numeroEdicao);
 		
 		if (produtoEdicao == null) {
 			

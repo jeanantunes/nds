@@ -307,11 +307,8 @@ public class FecharDiaController extends BaseController {
 		result.use(FlexiGridJson.class).from(lista).page(page).total(total.intValue()).serialize();    
 	}
 	
-	
-	
 	@Get
 	public void exportarResumoReparte(FileType fileType){
-		
 		
 		try {
 		List<ReparteFecharDiaDTO> listaReparte = this.resumoFecharDiaService.obterResumoReparte(dataOperacao, null);
@@ -326,15 +323,11 @@ public class FecharDiaController extends BaseController {
 			e.printStackTrace();
 		}
 		
-		
-		
 		result.nothing();
-		
 	}
 	
 	@Get
 	public void exportarResumoEncalhe(FileType fileType){
-		
 		
 		try {
 		
@@ -350,10 +343,7 @@ public class FecharDiaController extends BaseController {
 			e.printStackTrace();
 		}
 		
-		
-		
 		result.nothing();
-		
 	}
 	
 	@Get
@@ -400,14 +390,10 @@ public class FecharDiaController extends BaseController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
-	
-	
 	
 	@Get
 	public void exportarRecebimentoFisico(FileType fileType){
-		
 		
 		try {
 		List<ValidacaoRecebimentoFisicoFecharDiaDTO> listaRecebimentoFisicoNaoConfirmado = 
@@ -423,10 +409,7 @@ public class FecharDiaController extends BaseController {
 			e.printStackTrace();
 		}
 		
-		
-		
 		result.nothing();
-		
 	}
 	
 	@Post
@@ -475,7 +458,6 @@ public class FecharDiaController extends BaseController {
         
         result.nothing();
     }
-	
 	
 	@Post
 	public void obterDividasVencer(Integer page, Integer rp) {
@@ -574,7 +556,6 @@ public class FecharDiaController extends BaseController {
 		    LOG.error("ERRO AO CONFIRMAR FECHAMENTO DO DIA!", ex);
 		    throw ex;
 		}
-	    
 	}
 
 	private List<DetalheCotaFechamentoDiarioVO> obterDetalheCotaFechamentoDiario(TipoResumo tipoResumo) {
