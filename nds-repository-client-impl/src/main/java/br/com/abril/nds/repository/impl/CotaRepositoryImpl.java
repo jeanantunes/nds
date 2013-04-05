@@ -2745,6 +2745,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return query.list();
 	}
+	
+	
+	
 
 	@Override
 	public List<CotaDTO> obterCotasPorNomeAutoComplete(String nome) {
