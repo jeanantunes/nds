@@ -78,27 +78,20 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 			.append("   (SELECT min(lancamentos.dataRecolhimentoDistribuidor) from Lancamento AS lancamentos WHERE lancamentos.produtoEdicao = movimentoEstoque.estoqueProduto.produtoEdicao) as dataLancamento , ")
 			.append("   produtoEdicao.parcial as parcial, ")
 			.append("   (SELECT max(lancamentos.dataRecolhimentoDistribuidor) from Lancamento AS lancamentos WHERE lancamentos.produtoEdicao = movimentoEstoque.estoqueProduto.produtoEdicao)  as dataRecolhimento, ")
-			.append("   (sum(movimentoEstoque.qtde)) as saldo");
+			.append("   (sum(fechamentoEncalhe.qtde)) as saldo");
 		
-		hql.append(" FROM MovimentoEstoque AS movimentoEstoque ")
-			.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao AS produtoEdicao ")
-			.append(" LEFT JOIN produtoEdicao.produto AS produto ")
-			.append(" LEFT JOIN produto.fornecedores AS fornecedores ")
-			.append(" LEFT JOIN fornecedores.juridica AS juridica ");
-		hql.append(" WHERE ( produtoEdicao.dataDesativacao BETWEEN :dataDe AND :dataAte ) ");
+		hql.append(" FROM FechamentoEncalheBox AS fechamentoEncalhe ")
+			.append(" inner JOIN fechamentoEncalhe.fechamentoEncalheBoxPK.produtoEdicao AS produtoEdicao ")
+			.append(" inner JOIN produtoEdicao.produto AS produto ")
+			.append(" inner JOIN produto.fornecedores AS fornecedores ")
+			.append(" inner JOIN fornecedores.juridica AS juridica ");
+		hql.append(" WHERE ( fechamentoEncalhe.fechamentoEncalheBoxPK.dataEncalhe BETWEEN :dataDe AND :dataAte ) ");
 		
 		if (idFornecedor !=  null) {
 			hql.append(" AND fornecedores.id = :idFornecedor ");
 		}
-		hql.append(" GROUP BY produtoEdicao.id  ");
-//		hql.append(" GROUP BY produto.codigo , ")
-//			.append("   produto.nome , ")
-//			.append("   produtoEdicao.numeroEdicao, " )
-//			.append("   juridica.nomeFantasia, " )
-//			.append("   produtoEdicao.parcial ");
-
-		hql.append(" HAVING ( sum(movimentoEstoque.qtde) ) > 0 ");
 		
+		hql.append(" GROUP BY produtoEdicao.id  ");
 		
 		if(sortname != null){
 			hql.append("ORDER BY ").append(sortname).append(" ").append(sortorder);
