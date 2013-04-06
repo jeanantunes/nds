@@ -249,7 +249,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					dataLancto : row.cell.dataLancto,
 					reparte : row.cell.reparte,
 					pctPadrao : row.cell.pctPadrao,
-					liberado : liberado
+					liberado : liberado,
+					dataFinMatDistrib : row.cell.dataFinMatDistrib
 		});
 		
 	},
@@ -1314,6 +1315,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		var params = 'produto.codigoProduto='+ selecionado.codigoProduto;
 		params += '&produto.nomeProduto='+ selecionado.nomeProduto;
 		params += '&produto.numeroEdicao='+ selecionado.edicao;
+		params += '&produto.periodo='+ selecionado.periodo;
 		params += '&produto.classificacao='+ selecionado.classificacao;
 		params += '&produto.dataLancto='+ selecionado.dataLancto;
 		params += '&produto.reparte='+ selecionado.repDistrib;

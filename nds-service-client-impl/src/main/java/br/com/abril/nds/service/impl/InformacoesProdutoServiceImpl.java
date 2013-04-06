@@ -6,13 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.InformacoesBaseProdDTO;
+import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
+import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InformacoesAbrangenciaEMinimoProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
+import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.InformacoesProdutoService;
 
@@ -24,6 +28,12 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 
 	@Autowired
 	private InformacoesProdutoRepository infoProdutosRepo;
+	
+	@Autowired	
+	private EstudoProdutoEdicaoBaseRepository estudoProdEdicBaseRepo;
+	
+	@Autowired
+	private ProdutoBaseSugeridaRepository baseSugRepo;
 	
 	
 	@Override
@@ -40,8 +50,14 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 
 	@Override
 	@Transactional
-	public List<InformacoesBaseProdDTO> buscarBases(String codProduto) {
-		return infoProdutosRepo.buscarBase(codProduto);
+	public List<EdicaoBaseEstudoDTO> buscarBases(Long idEstudo) {
+		return estudoProdEdicBaseRepo.obterEdicoesBase(idEstudo);
+	}
+	
+	@Override
+	@Transactional
+	public List<ProdutoBaseSugeridaDTO> buscarBaseSugerida(Long idEstudo) {
+		return baseSugRepo.obterBaseSugerida(idEstudo);
 	}
 
 	@Override
@@ -53,6 +69,11 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 	@Override
 	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItemRegiao() {
 		return infoProdutosRepo.buscarItensRegiao();
+	}
+
+	@Override
+	public InformacoesAbrangenciaEMinimoProdDTO buscarAbrangenciaEMinimo(Long idEstudo) {
+		return infoProdutosRepo.buscarAbrangenciaEMinimo(idEstudo);
 	}
 
 }

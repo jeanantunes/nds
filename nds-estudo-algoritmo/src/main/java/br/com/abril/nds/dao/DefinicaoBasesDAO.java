@@ -84,9 +84,9 @@ public class DefinicaoBasesDAO {
 		ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
 		produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
 		produtoEdicao.setIdLancamento(rs.getLong("ID"));
-		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getNString("STATUS")));
+		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getString("STATUS")));
 		produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
-		produtoEdicao.setColecao(traduzColecionavel(rs.getNString("GRUPO_PRODUTO")));
+		produtoEdicao.setColecao(traduzColecionavel(rs.getString("GRUPO_PRODUTO")));
 		produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
 		produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
 		produtoEdicao.setProduto(new Produto());

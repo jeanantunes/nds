@@ -2,7 +2,6 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 
 @SuppressWarnings("serial")
