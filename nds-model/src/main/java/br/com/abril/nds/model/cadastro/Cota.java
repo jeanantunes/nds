@@ -33,6 +33,8 @@ import org.hibernate.annotations.Cascade;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.distribuicao.RankingSegmento;
+import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -89,7 +91,10 @@ public class Cota implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "BOX_ID")
-	private Box box; 
+	private Box box;
+	
+	@OneToOne(mappedBy="cota")
+	private RegistroCotaRegiao registroCotaRegiao;
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
 	@OneToMany(mappedBy = "cota")
@@ -117,6 +122,12 @@ public class Cota implements Serializable {
 	@Column(name = "TIPO_DISTRIBUICAO_COTA", columnDefinition = "VARCHAR(255)")
 	@Enumerated(EnumType.STRING)
 	private TipoDistribuicaoCota tipoDistribuicaoCota;
+	
+	@OneToMany(mappedBy="cota", fetch=FetchType.LAZY)
+	private List<RankingSegmento> rankingSegmento;
+	
+	@OneToMany(mappedBy="cota", fetch=FetchType.LAZY)
+	private List<EstoqueProdutoCota> estoqueProdutoCota;
 	
 
 	/**
@@ -563,5 +574,35 @@ public class Cota implements Serializable {
 
 	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	}
+
+
+	public RegistroCotaRegiao getRegistroCotaRegiao() {
+		return registroCotaRegiao;
+	}
+
+
+	public void setRegistroCotaRegiao(RegistroCotaRegiao registroCotaRegiao) {
+		this.registroCotaRegiao = registroCotaRegiao;
+	}
+
+
+	public List<RankingSegmento> getRankingSegmento() {
+		return rankingSegmento;
+	}
+
+
+	public void setRankingSegmento(List<RankingSegmento> rankingSegmento) {
+		this.rankingSegmento = rankingSegmento;
+	}
+
+
+	public List<EstoqueProdutoCota> getEstoqueProdutoCota() {
+		return estoqueProdutoCota;
+	}
+
+
+	public void setEstoqueProdutoCota(List<EstoqueProdutoCota> estoqueProdutoCota) {
+		this.estoqueProdutoCota = estoqueProdutoCota;
 	}
 }
