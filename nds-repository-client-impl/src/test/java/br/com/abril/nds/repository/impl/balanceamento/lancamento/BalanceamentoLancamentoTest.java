@@ -69,6 +69,8 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 	
 	private List<Long> fornecedores;
 	
+	private List<Long> produtoEdicaoIds;
+	
 	private BigInteger repartePrevisto;
 	
 	@Before
@@ -394,7 +396,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		montarParametrosConsulta();
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
-			lancamentoRepository.obterBalanceamentoLancamento(periodoLancamento, fornecedores);
+			lancamentoRepository.obterBalanceamentoLancamento(periodoLancamento, fornecedores, produtoEdicaoIds);
 
 		Assert.assertEquals(lancamentos.size(), produtosLancamento.size());
 
@@ -428,6 +430,8 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 												DateUtil.removerTimestamp(dataLancamentoFinal));
 		
 		fornecedores = Collections.singletonList(fornecedorDinap.getId());
+		
+		produtoEdicaoIds = new ArrayList<Long>();
 	}
 	
 	private ProdutoLancamentoDTO getProdutoLancamento(List<ProdutoLancamentoDTO> produtosLancamento,

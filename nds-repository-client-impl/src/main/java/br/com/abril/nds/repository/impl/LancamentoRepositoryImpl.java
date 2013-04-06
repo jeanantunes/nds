@@ -967,16 +967,16 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao, List<Long> fornecedores) {
+    public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, List<Long> produtoEdicaoIds) {
 
-	String sql = this.montarConsultaBalanceamentoLancamentoAnalitico() + " order by dataLancamentoDistribuidor ";
+	String sql = this.montarConsultaBalanceamentoLancamentoAnalitico(produtoEdicaoIds) + " order by dataLancamentoDistribuidor ";
 
-	Query query = this.getQueryBalanceamentoRecolhimento(periodoDistribuicao, fornecedores, sql);
+	Query query = this.getQueryBalanceamentoRecolhimento(periodoDistribuicao, fornecedores, produtoEdicaoIds, sql);
 
 	return query.list();
     }
 
-    private String montarConsultaBalanceamentoLancamentoAnalitico() {
+    private String montarConsultaBalanceamentoLancamentoAnalitico(List<Long> produtoEdicaoIds) {
 
 	StringBuilder sql = new StringBuilder();
 
@@ -1054,12 +1054,12 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 	sql.append(" estudo.QTDE_REPARTE as distribuicao ");
 
-	sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
+	sql.append(montarClausulaFromConsultaBalanceamentoLancamento(produtoEdicaoIds));
 
 	return sql.toString();
     }
 
-    private String montarClausulaFromConsultaBalanceamentoLancamento() {
+    private String montarClausulaFromConsultaBalanceamentoLancamento(List<Long> produtoEdicaoIds) {
 
 	StringBuilder sql = new StringBuilder();
 
@@ -1104,12 +1104,14 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 	sql.append("		and UPPER(lancamento.STATUS) in ( :statusLancamentoDataMenorInicial )) ");
 	sql.append(" ) ");
 	
-	sql.append(" and lancamento.PRODUTO_EDICAO_ID in (:produtosNaCesta) ");
+	if (!produtoEdicaoIds.isEmpty()) {
+		sql.append(" and lancamento.PRODUTO_EDICAO_ID in (:produtosNaCesta) ");		
+	}
 
 	return sql.toString();
     }
 
-    private Query getQueryBalanceamentoRecolhimento(Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, String sql) {
+    private Query getQueryBalanceamentoRecolhimento(Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, List<Long> produtoEdicaoIds, String sql) {
 
 	Query query = getSession().createSQLQuery(sql).addScalar("parcial").addScalar("statusLancamento").addScalar("idLancamento", StandardBasicTypes.LONG)
 		.addScalar("dataLancamentoPrevista").addScalar("dataLancamentoDistribuidor").addScalar("novaDataLancamento").addScalar("dataRecolhimentoPrevista")
@@ -1120,14 +1122,14 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 		.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN).addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN)
 		.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER);
 
-	this.aplicarParametros(query, periodoDistribuicao, fornecedores);
+	this.aplicarParametros(query, periodoDistribuicao, fornecedores, produtoEdicaoIds);
 
 	query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoLancamentoDTO.class));
 
 	return query;
     }
 
-    private void aplicarParametros(Query query, Intervalo<Date> periodoDistribuicao, List<Long> fornecedores) {
+    private void aplicarParametros(Query query, Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, List<Long> produtoEdicaoIds) {
 
 	String[] arrayStatusLancamentoNoPeriodo = { StatusLancamento.PLANEJADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.BALANCEADO.name(),
 		StatusLancamento.FURO.name() };
@@ -1144,7 +1146,10 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 	query.setParameterList("statusLancamentoNoPeriodo", statusLancamentoNoPeriodo);
 	query.setParameterList("statusLancamentoDataMenorInicial", statusLancamentoDataMenorInicial);
 	query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
-    query.setParameterList("produtosNaCesta", Arrays.asList(135542, 135530, 135614));
+    
+	if (!produtoEdicaoIds.isEmpty()) {
+		query.setParameterList("produtosNaCesta", produtoEdicaoIds);
+	}
     
     }
 
