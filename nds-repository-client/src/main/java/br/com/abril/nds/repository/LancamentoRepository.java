@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -209,11 +210,12 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 *            - período de distribuição
 	 * @param fornecedores
 	 *            - fornecedores
+	 * @param list 
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
 	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(
-			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
+			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, List<Long> produtoEdicaoIds);
 
 	/**
 	 * Burca último balançeamento de lançamento realizado no dia
@@ -335,5 +337,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 			Date data, Long idFornecedor);
 
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
+	
+	public List<Lancamento> obterPorEstudo(Estudo estudo);
 
 }

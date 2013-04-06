@@ -45,7 +45,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" else ''")
 	    .append(" end as liberado,")
 	    .append(" estudo.ID as idEstudo,")
-	    .append(" lanc.REPARTE as reparte,")
+	    .append(" estudo.QTDE_REPARTE as reparte,")
 	    .append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
 	    .append(" lanc.REPARTE as lancto")
 	    .append(" from produto prod")
@@ -69,6 +69,8 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	 	if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
 	 		sql.append(" and forn.id in (:idFornecedores)");
 	 	}
+	 	
+	 	sql.append(" order by codigoProduto, numeroEdicao");
 	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		

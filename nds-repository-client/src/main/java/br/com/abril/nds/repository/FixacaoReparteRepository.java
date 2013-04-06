@@ -25,4 +25,6 @@ public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Lo
 	
 	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO);
 
+	public void execucaoQuartz();
+
 }

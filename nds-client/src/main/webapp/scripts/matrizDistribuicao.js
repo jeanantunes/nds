@@ -119,12 +119,62 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.onSuccessPesquisa = function() {
 		
 		$(T.lancamentos).each(function(i,lancamento){
-			 id = '#row' + i;		
+			 var index = i + 1;
+			 var id = '#row' + index;
+			 
+			 if (i % 2 == 0) {
+				 $(id, _workspace).addClass("gridLinha");
+			 }
+			 
+		});	 
+		
+		$(T.lancamentos).each(function(i,lancamento){
+			 var index = i + 1;
+			 var id = '#row' + index;	
+			 $(id, _workspace).children("td").removeClass("sorted");
+			 $(id, _workspace).removeClass("erow");
+			 
+			 var codigo = T.lancamentos[i].codigoProduto;
+			 var edicao = T.lancamentos[i].edicao;
+			 var css = $(id, _workspace).attr('class');
+			 var trTochange = "#row" + (index + 1);
+			 
+			 if (index < T.lancamentos.length - 1) {
+				 
+				 if (codigo == T.lancamentos[index].codigoProduto &&  edicao == T.lancamentos[index].edicao) {
+					 
+					 for (var i=0; i < 12; i++) {
+						 $($(trTochange).children()[i]).html("");
+					 }
+					 
+					 if (css == undefined) {
+					 	 $(trTochange, _workspace).removeClass("gridLinha");
+					 }
+					 else {
+						 $(trTochange, _workspace).addClass("gridLinha");
+					 }
+					 
+					 css = $(trTochange, _workspace).attr('class');
+					 
+					 trTochange = "#row" + (index + 2);
+						 
+					 if (css == undefined) {
+						 $(trTochange, _workspace).addClass("gridLinha");
+					 }
+					 else {
+						$(trTochange, _workspace).removeClass("gridLinha");
+					 }
+						 
+				 }
+				 
+			 }
+			 
 			 $("#inputRepDistrib" + i, _workspace).removeAttr('disabled');
 			 if (lancamento.dataFinMatDistrib != undefined) {
 				 
 				 T.finalizaItem(i);
 			 }
+			 
 		});
 		
 	},
@@ -199,7 +249,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					dataLancto : row.cell.dataLancto,
 					reparte : row.cell.reparte,
 					pctPadrao : row.cell.pctPadrao,
-					liberado : liberado
+					liberado : liberado,
+					dataFinMatDistrib : row.cell.dataFinMatDistrib
 		});
 		
 	},
@@ -1264,6 +1315,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		var params = 'produto.codigoProduto='+ selecionado.codigoProduto;
 		params += '&produto.nomeProduto='+ selecionado.nomeProduto;
 		params += '&produto.numeroEdicao='+ selecionado.edicao;
+		params += '&produto.periodo='+ selecionado.periodo;
 		params += '&produto.classificacao='+ selecionado.classificacao;
 		params += '&produto.dataLancto='+ selecionado.dataLancto;
 		params += '&produto.reparte='+ selecionado.repDistrib;

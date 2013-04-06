@@ -26,18 +26,22 @@ function filtroPorCota(){
 	$('.filtroPorCota').show();
 	$('.filtroPorProduto').hide();
 	$('.porExcessao').hide();
+	$("#codigoProduto").val("");
+	$("#nomeProduto").val("");
 	
-	$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
-	$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
+	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
+	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
 	
 }
 function filtroPorProduto(){
 	$('.filtroPorCota').hide();
 	$('.filtroPorProduto').show();
 	$('.porCota').hide();
+	$("#codigoCota").val("");
+	$("#nomeCota").val("");
 	
-	$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
-	$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
+	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
+	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
 }
 function mostraQtd(){
 	$('#edInicialModal').val("");
@@ -112,14 +116,12 @@ function mostraIntervalo(){
 		       	  	<legend>Fixação Produto</legend>
 		        		<table class="fixacaoProdutoGrid"></table>
  			            <span class="bt_novos" title="Incluir Novo"  id="btNovoProduto"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="add_lote_prod();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
+			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 	         	    	<span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoProduto"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=produto"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 						<span class="bt_novos" title="Imprimir" id="btImprimirProduto"><a  href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=produto"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		      </fieldset>
 		     
-		      <form id="formUploadLoteFixacao"  action="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao"  method="post" style="display:none;" enctype="multipart/form-data">
-		      	<input type="file" id="excelFileFixacao" name="excelFileFixacao" />
-		      </form>
+		     
 	      </div>
 	       <div class="porCota" style="display:none;">
 		      <fieldset class="classFieldset">
@@ -156,7 +158,7 @@ function mostraIntervalo(){
 		    <table width="588" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		        <tr>
 		          <td width="41" id="label1">Cota:</td>
-		          <td width="66"><input type="text" name="codigoModal" id="codigoModal" style="width:60px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoModal','#nomeModal');"/></td>
+		          <td width="66"><input type="text" name="codigoModal" id="codigoModal" style="width:60px;" onkeydown="onlyNumeric(event);" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoModal','#nomeModal');"/></td>
 		          <td width="41" id="label2">Nome:</td>
 		          <td width="119">
 		          	<input type="text" name="nomeModal" id="nomeModal" style="width:110px;"/>
@@ -190,15 +192,15 @@ function mostraIntervalo(){
 		          <tr>
 		          	<td width="20"><input type="radio" name="radio" id="radioQtdeEdicoes" value="radio" checked onclick="mostraQtd();" /></td>
 		            <td width="74">Qtde Edições:</td>
-		            <td width="57"><input type="text" name="textfield" id="qtdeEdicoesModal" style="width:50px;" class="qtdEd"/></td>
+		            <td width="57"><input type="text" name="textfield" id="qtdeEdicoesModal" onkeydown="onlyNumeric(event);" style="width:50px;" class="qtdEd"/></td>
 		            <td width="20"><input type="radio" name="radio" id="radioIntervalo" value="radio" onclick="mostraIntervalo();" /></td>
 		            <td width="93">Intervalo Edições:</td>
 		            <td width="29" class="intervalo"> Inicial:</td>
-		            <td width="60" class="intervalo"><input type="text" name="edInicialModal" id="edInicialModal" style="width:50px;"/></td>
+		            <td width="60" class="intervalo"><input type="text" name="edInicialModal" onkeydown="onlyNumeric(event);" id="edInicialModal" style="width:50px;"/></td>
 		            <td width="31" class="intervalo"> Final:</td>
-		            <td width="52" class="intervalo"><input type="text" name="edFinalModal" id="edFinalModal" style="width:50px;"/></td>
+		            <td width="52" class="intervalo"><input type="text" name="edFinalModal" id="edFinalModal" onkeydown="onlyNumeric(event);" style="width:50px;"/></td>
 		            <td width="67">Qtde Fixada:</td>
-		            <td width="50"><input type="text" name="textfield2" id="qtdeFixadaModal" style="width:50px;"/></td>
+		            <td width="50"><input type="text" name="textfield2" id="qtdeFixadaModal" onkeydown="onlyNumeric(event);" style="width:50px;"/></td>
 		          </tr>
 		  </table>
 		  </fieldset>
@@ -211,11 +213,18 @@ function mostraIntervalo(){
 		       
 		    <br clear="all" />
 		    
-		     <span class="bt_novos" title="Gerar Arquivo"><a id="historicoXLS" ><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+		     <!-- <span class="bt_novos" title="Gerar Arquivo"><a id="historicoXLS" ><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span> -->
 		    
-		    <span class="bt_novos" title="Imprimir"><a id="historicoPDF" ><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		    <!-- <span class="bt_novos" title="Imprimir"><a id="historicoPDF" ><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span> -->
 		   </fieldset>
 	</div>
+	
+<!-- DIALOG  UPLOAD -->		
+	<div id="modalUploadArquivo" title="Selecione arquivo" style="display:none;">
+	 <form id="formUploadLoteFixacao"  action="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao"  method="post"  enctype="multipart/form-data">
+	      	<input type="file" id="excelFileFixacao" name="excelFileFixacao" style="width:200px"/>
+      </form>
+	</div>	
 	
 <!-- DIALOG MSG UPLOAD -->		
 	<div id="dialog-msg-upload" title="Adicionar em Lote" style="display:none;">
@@ -277,7 +286,7 @@ function mostraIntervalo(){
   </tr>
   <tr>
     <td colspan="3" align="right">Manter Fixa&nbsp; </td>
-    <td><input name="input2" type="checkbox" value="" /></td>
+    <td><input id="manterFixa" name="manterFixa" type="checkbox" /></td>
   </tr>
 </table>
 	</fieldset>
