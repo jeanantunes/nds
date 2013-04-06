@@ -1103,6 +1103,8 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 	sql.append(" 	or (lancamento.DATA_LCTO_DISTRIBUIDOR < :periodoInicial ");
 	sql.append("		and UPPER(lancamento.STATUS) in ( :statusLancamentoDataMenorInicial )) ");
 	sql.append(" ) ");
+	
+	sql.append(" and lancamento.PRODUTO_EDICAO_ID in (:produtosNaCesta) ");
 
 	return sql.toString();
     }
@@ -1142,6 +1144,8 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 	query.setParameterList("statusLancamentoNoPeriodo", statusLancamentoNoPeriodo);
 	query.setParameterList("statusLancamentoDataMenorInicial", statusLancamentoDataMenorInicial);
 	query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
+    query.setParameterList("produtosNaCesta", Arrays.asList(135542, 135530, 135614));
+    
     }
 
     @Override
