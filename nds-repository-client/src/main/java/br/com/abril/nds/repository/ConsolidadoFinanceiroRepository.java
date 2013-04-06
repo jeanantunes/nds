@@ -46,8 +46,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 
 	BigInteger countObterContaCorrente(FiltroViewContaCorrenteCotaDTO filtro);
 	
-	
 	Long obterQuantidadeDividasGeradasData(Date dataVencimentoDebito, Long... idsCota);
-
+	
 	Long obterQuantidadeConsolidadosDia(Date data);
 }

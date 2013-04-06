@@ -952,17 +952,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		return movimentoFinanceiroCota;
 	}
-	
-	@Transactional(readOnly=true)
-	@Override
-	public Boolean validarDividaGeradaDataOperacao() {
-		
-		Long quantidadeRegistro = 
-				movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroDataOperacao(
-						this.distribuidorRepository.obterDataOperacaoDistribuidor()); 
-		
-		return (quantidadeRegistro == null || quantidadeRegistro == 0) ? Boolean.FALSE : Boolean.TRUE;
-	}
 
 	@Transactional
 	@Override
