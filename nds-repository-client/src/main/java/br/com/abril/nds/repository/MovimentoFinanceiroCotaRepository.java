@@ -42,7 +42,7 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
 
-	Long obterQuantidadeMovimentoFinanceiroDataOperacao(Date dataAtual);
+	Long obterQuantidadeMovimentoFinanceiroData(Date dataAtual);
 
 	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
