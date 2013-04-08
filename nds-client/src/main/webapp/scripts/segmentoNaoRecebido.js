@@ -540,13 +540,6 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 							value : $('#tipoSegmentoProduto option:selected',segmentoNaoRecebidoController.workspace).val()
 						});
 						
-//						this.sendPostJsonToController(
-//								segmentoNaoRecebidoController.urlIncluirCotasSegmentoNaoRecebido,
-//								data,
-//								["segmentoNaoRecebidaGrid","segmentosGrid"],
-//								this.callBackOnSucess
-//						);
-							
 							$( "#dialog-novo").dialog({
 								resizable: false,
 								height:170,
@@ -563,7 +556,6 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 												["segmentoNaoRecebidaGrid","segmentosGrid"],
 												segmentoNaoRecebidoController.callBackOnSucess
 										);
-//										segmentoNaoRecebidoController.limparFiltroCota2();
 									},
 									"Cancelar": function() {
 										$( this ).dialog( "close" );

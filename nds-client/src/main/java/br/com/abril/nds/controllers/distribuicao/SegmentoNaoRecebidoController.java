@@ -127,8 +127,6 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
-//		this.validarEntradaFiltroCota(filtro);
-		
 		if (filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty()) {
 			filtro.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtro.getNomeCota()));
 		}
