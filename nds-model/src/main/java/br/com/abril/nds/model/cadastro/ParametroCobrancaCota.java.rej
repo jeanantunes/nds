@@ -1,0 +1,10 @@
+diff a/nds-model/src/main/java/br/com/abril/nds/model/cadastro/ParametroCobrancaCota.java b/nds-model/src/main/java/br/com/abril/nds/model/cadastro/ParametroCobrancaCota.java	(rejected hunks)
+@@ -48,7 +48,7 @@ public class ParametroCobrancaCota implements Serializable {
+ 	private Integer fatorVencimento;
+ 	
+ 	@Column(name = "UNIFICA_COBRANCA")
+-	private boolean unificaCobranca;
++	private Boolean unificaCobranca;
+ 	
+ 	@Embedded
+ 	private PoliticaSuspensao politicaSuspensao;

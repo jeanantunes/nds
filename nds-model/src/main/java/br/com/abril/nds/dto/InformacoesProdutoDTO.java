@@ -38,7 +38,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private BigInteger reparteDistribuido;
 	
 	@Export(label = "Venda", alignment=Alignment.LEFT, exhibitionOrder = 7)
-	private BigDecimal venda;
+	private BigInteger venda;
 
 	@Export(label = "Abrangência", alignment=Alignment.LEFT, exhibitionOrder = 8)
 	private BigInteger percentualAbrangencia;
@@ -146,11 +146,15 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 		}
 	}
 	
-	public BigDecimal getVenda() {
+	public BigInteger getVenda() {
 		return venda;
 	}
-	public void setVenda(BigDecimal venda) {
-		this.venda = venda;
+	public void setVenda(BigInteger venda) {
+		if(venda == null){
+			this.venda = new BigInteger("0");	
+		}else{
+			this.venda = venda;
+		}
 	}
 	public BigInteger getPercentualAbrangencia() {
 		return percentualAbrangencia;
@@ -181,13 +185,16 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 		this.dataInser = dataInser;
 	}
 	public String getReparteMinimo() {
+		if ((this.reparteMinimo == null) || (this.reparteMinimo.equals(""))){
+			this.reparteMinimo = ("");
+		}
 		return reparteMinimo;
 	}
-	public void setReparteMinimo(String reparteMinimoGhoma) {
-		if ((reparteMinimoGhoma == null) || (reparteMinimoGhoma.equals(""))){
+	public void setReparteMinimo(String reparteMinimo) {
+		if ((reparteMinimo == null) || (reparteMinimo.equals(""))){
 			this.reparteMinimo = ("");
 		}else{
-			this.reparteMinimo = reparteMinimoGhoma;
+			this.reparteMinimo = reparteMinimo;
 		}
 	}
 	public Long getEstudo() {

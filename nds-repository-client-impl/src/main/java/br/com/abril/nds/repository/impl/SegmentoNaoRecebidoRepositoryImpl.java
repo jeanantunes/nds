@@ -64,7 +64,7 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 			parameters.put("statusCota", SituacaoCadastro.ATIVO);
 		}
 		
-		hql.append(" order by nomeCota, numeroCota");
+		hql.append(" order by numeroCota");
 		
 		Query query =  getSession().createQuery(hql.toString());
 
