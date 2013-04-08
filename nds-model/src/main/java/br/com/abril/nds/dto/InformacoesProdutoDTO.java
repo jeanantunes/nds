@@ -53,7 +53,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private String algoritmo;	
 	
 	@Export(label = "Rep. Min.", alignment=Alignment.LEFT, exhibitionOrder = 12)
-	private String reparteMinimoGhoma;
+	private String reparteMinimo;
 	
 	@Export(label = "Estudo", alignment=Alignment.LEFT, exhibitionOrder = 13)
 	private Long estudo;
@@ -62,10 +62,14 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private String nomeUsuario;
 	
 	@Export(label = "Data", alignment=Alignment.LEFT, exhibitionOrder = 15)
-	private Date dataInsercao;
+	private String dataAlteracao;
 	
 	@Export(label = "Hora", alignment=Alignment.LEFT, exhibitionOrder = 16)
 	private String hora;
+	
+//	private String periodo;
+//	private String status;
+//	private BigInteger estudo;
 	
 	private String datalanc;
 	private String dataRecb;
@@ -76,8 +80,13 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public String getNomeUsuario() {
 		return nomeUsuario;
 	}
+	
+//	public void setNomeUsuario(String nomeUsuario) {
+//		this.nomeUsuario = nomeUsuario;
+//	}
+
 	public void setNomeUsuario(String nomeUsuario) {
-		if(nomeUsuario.equals("") || nomeUsuario == null){
+		if(nomeUsuario == null || nomeUsuario.equals("")){
 			this.nomeUsuario = "";
 		}else{
 			this.nomeUsuario = nomeUsuario;
@@ -171,14 +180,14 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setDataInser(String dataInser) {
 		this.dataInser = dataInser;
 	}
-	public String getReparteMinimoGhoma() {
-		return reparteMinimoGhoma;
+	public String getReparteMinimo() {
+		return reparteMinimo;
 	}
-	public void setReparteMinimoGhoma(String reparteMinimoGhoma) {
+	public void setReparteMinimo(String reparteMinimoGhoma) {
 		if ((reparteMinimoGhoma == null) || (reparteMinimoGhoma.equals(""))){
-			this.reparteMinimoGhoma = ("");
+			this.reparteMinimo = ("");
 		}else{
-			this.reparteMinimoGhoma = reparteMinimoGhoma;
+			this.reparteMinimo = reparteMinimoGhoma;
 		}
 	}
 	public Long getEstudo() {
@@ -187,11 +196,12 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setEstudo(Long estudo) {
 		this.estudo = estudo;
 	}
-	public Date getDataInsercao() {
-		return dataInsercao;
+	public String getDataAlteracao() {
+		return dataAlteracao;
 	}
-	public void setDataInsercao(Date dataInsercao) {
-		this.dataInsercao = dataInsercao;
+	public void setDataAlteracao(Date data) {
+		this.dataAlteracao = DateUtil.formatarDataPTBR(data);
+		this.hora = DateUtil.formatarHoraMinuto(data);
 	}
 	public String getDatalanc() {
 		return datalanc;
@@ -205,13 +215,28 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setDataRecb(String dataRecb) {
 		this.dataRecb = dataRecb;
 	}
-	public void setHora(String hora) {
-		this.hora = hora;
-	}
 	public String getCodProduto() {
 		return codProduto;
 	}
 	public void setCodProduto(String codProduto) {
 		this.codProduto = codProduto;
 	}
+//	public String getPeriodo() {
+//		return periodo;
+//	}
+//	public void setPeriodo(String periodo) {
+//		this.periodo = periodo;
+//	}
+//	public String getLancamento() {
+//		return status;
+//	}
+//	public void setLancamento(String lancamento) {
+//		this.status = lancamento;
+//	}
+//	public BigInteger getEstudo() {
+//		return estudo;
+//	}
+//	public void setEstudo(BigInteger estudo) {
+//		this.estudo = estudo;
+//	}
 }

@@ -75,10 +75,18 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 		return qtdCotaPossuemReparteMenorVendaFormatado;
 	}
 
+	public BigDecimal getQtdRecebida() {
+		return qtdRecebida;
+	}
+	
 	public void setQtdRecebida(BigDecimal qtdRecebida) {
 		this.qtdRecebida = qtdRecebida != null ? qtdRecebida : BigDecimal.ZERO;
 	}
 
+	public String getFaixaReparte() {
+		return faixaReparte;
+	}
+	
 	public void setFaixaReparte(String faixaReparte) {
 		this.faixaReparte = faixaReparte;
 	}

@@ -1,0 +1,28 @@
+diff a/nds-model/src/main/java/br/com/abril/nds/model/cadastro/Cota.java b/nds-model/src/main/java/br/com/abril/nds/model/cadastro/Cota.java	(rejected hunks)
+@@ -567,4 +578,26 @@ public class Cota implements Serializable {
+ 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+ 	}
+ 
++
++	public RegistroCotaRegiao getRegistroCotaRegiao() {
++		return registroCotaRegiao;
++	}
++
++
++	public void setRegistroCotaRegiao(RegistroCotaRegiao registroCotaRegiao) {
++		this.registroCotaRegiao = registroCotaRegiao;
++	}
++
++
++	public List<RankingSegmento> getRankingSegmento() {
++		return rankingSegmento;
++	}
++
++
++	public void setRankingSegmento(List<RankingSegmento> rankingSegmento) {
++		this.rankingSegmento = rankingSegmento;
++	}
++	
++	
++
+ }
