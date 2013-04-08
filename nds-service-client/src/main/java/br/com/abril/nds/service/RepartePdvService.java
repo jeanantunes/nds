@@ -9,7 +9,7 @@ public interface RepartePdvService {
 
 	public RepartePDV obterRepartePorPdv (Long idFixacao, Long idProduto, Long idPdv);
 	
-	public void salvarRepartesPDV(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idFixacao);
+	public void salvarRepartesPDV(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idFixacao, boolean manterFixa);
 	
 	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idMix);
 	

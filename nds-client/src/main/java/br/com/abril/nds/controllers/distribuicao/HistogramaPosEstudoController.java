@@ -9,12 +9,14 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoDadoInicioDTO;
+import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
+import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -51,6 +53,9 @@ public class HistogramaPosEstudoController extends BaseController{
 	@Autowired
 	private HistogramaPosEstudoFaixaReparteService histogramaPosEstudoFaixaReparteService;
 	
+	@Autowired
+	private ProdutoBaseSugeridaRepository baseSugeridaRepository;
+	
 	@Path("/index")
 	public void histogramaPosEstudo(){
 	}
@@ -73,7 +78,7 @@ public class HistogramaPosEstudoController extends BaseController{
 		selecionado.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
 		selecionado.setPeriodicidadeProduto(produto.getPeriodicidade().getOrdem());
 		
-		if (estudo.getLiberado() != null && estudo.getLiberado() == 1) {
+		if (estudo != null && estudo.getLiberado() != null && estudo.getLiberado() == 1) {
 			selecionado.setEstudoLiberado(Boolean.TRUE);
 		}else{
 			selecionado.setEstudoLiberado(Boolean.FALSE);
@@ -119,8 +124,15 @@ public class HistogramaPosEstudoController extends BaseController{
 	}
 	
 	@Post
-	public void carregarGridBaseSugerida(){
+	public void carregarGridBaseSugerida(long estudoId){
+		List<ProdutoBaseSugeridaDTO> baseSugeridaDTO = baseSugeridaRepository.obterBaseSugerida(estudoId);
 		
+		TableModel<CellModelKeyValue<ProdutoBaseSugeridaDTO>> tableModel = new TableModel<>();
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(baseSugeridaDTO));
+		tableModel.setPage(1);
+		tableModel.setTotal(6);
+		
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	}
 	
 	@Post
@@ -129,11 +141,8 @@ public class HistogramaPosEstudoController extends BaseController{
 		List<EdicaoBaseEstudoDTO> estudoProdutoEdicaoBaseDTO = estudoProdutoEdicaoBaseRepository.obterEdicoesBase(estudoId);
 		
 		TableModel<CellModelKeyValue<EdicaoBaseEstudoDTO>> tableModel = new TableModel<>();
-		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(estudoProdutoEdicaoBaseDTO));
-
 		tableModel.setPage(1);
-
 		tableModel.setTotal(6);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
