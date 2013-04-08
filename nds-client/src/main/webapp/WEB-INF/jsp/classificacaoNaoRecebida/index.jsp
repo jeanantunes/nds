@@ -30,11 +30,14 @@ function excluirClassificacao() {
 };		
 
 function mostraFiltroPorCota(){
+	$('#porCota_numeroCota').val(null);
+	$('#porCota_nomeCota').val(null);
 	$('.filtroPorCota').show();
 	$('.filtroPorClassificacao').hide();
 	$('.porClassificacao').hide();
 	}
 function mostraFiltroPorClassificacao(){
+	$('#selectClassificacao').val(null);
 	$('.filtroPorCota').hide();
 	$('.filtroPorClassificacao').show();
 	$('.porCota').hide();	
@@ -45,15 +48,15 @@ function mostraFiltroPorClassificacao(){
 
 <body>
 
-<div id="dialog-incluirCotaNaClassificacaoNaoRecebida" style="display: none;" title="Incluir cota(s) na Classificação Não Recebida">
+<div id="dialog-incluirCotaNaClassificacaoNaoRecebida" style="display: none;" title="Incluir Classificação Não Recebida">
 	<p>Confirma a inclusão desta cota?</p>
 </div>
 
-<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir cota da Classificação Não Recebida">
-	<p>Confirma a exclusão desta cota na classificação não recebida?</p>
+<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classificação Não Recebida">
+	<p>Confirma a exclusão desta classificação não recebida?</p>
 </div>
 
-<div id="dialog-incluirClassificacaoNaCota" style="display: none;" title="Incluir classificação(ões) não recebidas na cota">
+<div id="dialog-incluirClassificacaoNaCota" style="display: none;" title="Incluir Classifica��o Recebida">
 	<p>Confirma a inclusão desta classificação?</p>
 </div>
 
@@ -102,7 +105,8 @@ function mostraFiltroPorClassificacao(){
 	            <td width="122"><input type="text" name="filtro.cotaDto.numeroCota" id="porCota_numeroCota" style="width:80px; float:left; margin-right:5px;"/>
 	              <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
 	            <td width="50">Nome:</td>
-	            <td width="412"><input type="text" name="filtro.cotaDto.nomePessoa" id="porCota_nomeCota" style="width:200px;"/></td>
+	            <td width="412"><input type="text" name="filtro.cotaDto.nomePessoa" id="porCota_nomeCota" style="width:200px;"
+	            onblur="pesquisaCota.pesquisarPorNomeCota('#porCota_numeroCota', '#porCota_nomeCota');" /></td>
 	            <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="pesquisarPorCota" onclick="porCota();">Pesquisar</a></span></td>
 	          </tr>
 	        </table>
@@ -136,7 +140,8 @@ function mostraFiltroPorClassificacao(){
        	      <td width="33">Cota:</td>
        	      <td width="41"><input type="text" id="cotasQueRecebem_numeroCota" style="width:40px;"/></td>
               <td width="41">Nome:</td>
-       	      <td width="115"><input type="text" id="cotasQueRecebem_nomeCota" style="width:140px;"/></td>
+       	      <td width="115"><input type="text" id="cotasQueRecebem_nomeCota" style="width:140px;" 
+       	      onblur="pesquisaCota.pesquisarPorNomeCota('#cotasQueRecebem_numeroCota', '#cotasQueRecebem_nomeCota');" /></td>
               <td width="19"><span class="classPesquisar"><a href="javascript:;" id="pesquisarCotaQueRecebeClassificacao">&nbsp;</a></span></td>
    	        </tr>
    	      </table>
