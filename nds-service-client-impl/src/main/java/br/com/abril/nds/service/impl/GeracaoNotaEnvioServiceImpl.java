@@ -290,9 +290,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			BigInteger qtdRateio = this.movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(data,idCota,GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 			
-			quantidadeResultante = quantidadeResultante.subtract(qtdEstorno);
+			quantidadeResultante = quantidadeResultante.subtract((qtdEstorno==null)?BigInteger.ZERO: qtdEstorno);
 			
-			quantidadeResultante = quantidadeResultante.add(qtdRateio);
+			quantidadeResultante = quantidadeResultante.add( (qtdRateio== null)?BigInteger.ZERO: qtdRateio);
 			
 			
 			Desconto percentualDesconto = this.descontoService

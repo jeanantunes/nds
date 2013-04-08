@@ -480,7 +480,7 @@ public class MovimentoFinanceiroCotaRepositoryImplTest extends AbstractRepositor
 		Date dataAtual = Fixture.criarData(06, Calendar.NOVEMBER, 2012);
 		
 		Long totalMovimentosFinanceiroCota = 
-				this.movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroDataOperacao(dataAtual);
+				this.movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroData(dataAtual);
 
 	}
 

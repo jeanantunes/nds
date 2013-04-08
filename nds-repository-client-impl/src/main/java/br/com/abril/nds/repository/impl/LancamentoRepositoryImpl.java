@@ -778,6 +778,26 @@ public class LancamentoRepositoryImpl extends
 		
 		return (List<Lancamento>) query.list();		
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname) {
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from PeriodoLancamentoParcial periodo ")
+		   .append(" join periodo.lancamento lancamento ")
+		   .append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ")
+		   .append(" order by lancamento."+ sortname + " " + sortorder);
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (List<Lancamento>) query.list();		
+	}
+
 
 	/**
 	 * {@inheritDoc}

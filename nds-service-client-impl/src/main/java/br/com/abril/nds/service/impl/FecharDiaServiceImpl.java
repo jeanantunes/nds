@@ -4,7 +4,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +23,6 @@ import br.com.abril.nds.dto.ResumoFechamentoDiarioCotasDTO;
 import br.com.abril.nds.dto.ResumoSuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
-import br.com.abril.nds.dto.ValidacaoGeracaoCobrancaFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
@@ -42,7 +40,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -77,6 +74,7 @@ import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
+import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
@@ -229,6 +227,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Autowired
 	private ConferenciaEncalheParcialRepository conferenciaEncalheParcialRepository;
 	
+	@Autowired
+	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
+	
 	@Override
 	@Transactional
 	public boolean existeCobrancaParaFecharDia(Date dataOperacaoDistribuidor) {
@@ -373,40 +374,19 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Boolean existeGeracaoDeCobranca(Date dataOperacao) {
 		
-		Calendar dataBase = Calendar.getInstance();
-		dataBase.setTime(dataOperacao);
-		int diaDaSemanaDaDataDeOperacao = dataBase.get(Calendar.DAY_OF_WEEK);
-		int diaDaMesDaDataDeOperacao = dataBase.get(Calendar.DAY_OF_MONTH);
+		Long qtd = 
+				this.movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroData(dataOperacao);
 		
-		List<ValidacaoGeracaoCobrancaFecharDiaDTO> listaDePoliticaCobranca = this.fecharDiaRepository.obterFormasDeCobranca();
-		
-		for(ValidacaoGeracaoCobrancaFecharDiaDTO dto: listaDePoliticaCobranca){
-			FormaCobranca fc = this.formaCobrancaRepository.buscarPorId(dto.getFormaCobrancaId());
-			if(dto.getTipoFormaCobranca().equals("Diária")){	
-				return impressaoDividaService.validarDividaGerada(dataOperacao);				
-			}
-			if(dto.getTipoFormaCobranca().equals("Semanal")){
-				List<ValidacaoGeracaoCobrancaFecharDiaDTO> lista = this.fecharDiaRepository.obterDiasDaConcentracao(fc);
-				for(ValidacaoGeracaoCobrancaFecharDiaDTO con: lista){					
-					if(con.getDiaDoMes() == diaDaSemanaDaDataDeOperacao){
-						return impressaoDividaService.validarDividaGerada(dataOperacao);
-					}					
-				}
-				
-			}
-			if(fc.getTipoFormaCobranca().getDescricao().equals("Mensal") || fc.getTipoFormaCobranca().getDescricao().equals("Quinzenal") ){
-				for(Integer diaDeCobranca: fc.getDiasDoMes()){
-					if(diaDeCobranca ==  diaDaMesDaDataDeOperacao){
-						return impressaoDividaService.validarDividaGerada(dataOperacao);
-					}
-				}
-			}
+		if (qtd.equals(0L)){
+			
+			qtd = 
+				this.consolidadoFinanceiroRepository.obterQuantidadeConsolidadosDia(dataOperacao);
 		}
-		 
-		return true;
+		
+		return qtd > 0;
 	}
 	
 	/**
@@ -594,26 +574,46 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	
 		Distribuidor distribuidor = distribuidorRepository.obter();		
 		
-		List<Integer> dias = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null, null);
+		List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null, null);
 		
-		Date novaData = obterDataValida(distribuidor.getDataOperacao(), dias);
+		if(diasSemanaDistribuidorOpera == null || diasSemanaDistribuidorOpera.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível realizar fechamento diário. Nenhum dia da semana com operação cadastradado para o Distribuidor."); 
+		}
+		
+		Date novaData = obterDataValida(distribuidor.getDataOperacao(), diasSemanaDistribuidorOpera);
 				
 		distribuidor.setDataOperacao(novaData);
 		
 		distribuidorRepository.alterar(distribuidor);
 		
 	}
-		
-	public Date obterDataValida(Date dataAtual, List<Integer> dias) {
+	
+    /**
+     * Retorna a próxima data em que o distribuidor opera.
+     *
+     * @param dataAtual
+     * @param diasSemanaDistribuidorOpera
+     * 
+     * @return Date
+     */
+	public Date obterDataValida(Date dataAtual, List<Integer> diasSemanaDistribuidorOpera) {
 		
 		Date novaData = DateUtil.adicionarDias(dataAtual, 1);
 		
 		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
 
-		if (dias.contains(codigoDiaCorrente))
+		if ( 	diasSemanaDistribuidorOpera.contains(codigoDiaCorrente) && 
+				!calendarioService.isFeriadoSemOperacao(novaData) && 
+				!calendarioService.isFeriadoMunicipalSemOperacao(novaData) 	) {
+			
 			return novaData;
-		else
-			return obterDataValida(novaData, dias);
+			
+		} else {
+
+			return obterDataValida(novaData, diasSemanaDistribuidorOpera);
+			
+		}
+			
 		
 	}
 

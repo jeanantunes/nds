@@ -490,6 +490,14 @@ var fecharDiaController =  $.extend(true, {
 			width : 850,
 			height : 255
 		});
+        
+        $("#dataDaOperacao", fecharDiaController.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+        $("#dataDaOperacao", fecharDiaController.workspace).mask("99/99/9999");
 	},
 	
 	executarPreProcessamentoRecebimentoFisicoNaoConfirmado : function(resultado){
@@ -652,7 +660,7 @@ var fecharDiaController =  $.extend(true, {
 				contextPath + "/administracao/fecharDia/obterDataOperacao",
 				null, 
 				function(result){
-					$('#dataDaOperacao').html(result.string);
+					$('#dataDaOperacao', fecharDiaController.workspace).val(result.string);
 					$('.grids').find('legend').html('Confirmação de Valores em: ' + result.string);
 				});
 				
@@ -933,17 +941,25 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	iniciarValidacoes : function(){
-		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes", null,
-				function(result){	
-					$('#tabela-validacao').clear();
-					fecharDiaController.validacaoBaixaBancaria(result);
-					fecharDiaController.validacaoGeracaoCobranca(result);
-					fecharDiaController.validacaoRecebimentoFisico(result);
-					fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
-					fecharDiaController.validacaoFechamentoDeEncalhe(result);
-					fecharDiaController.validacaoLancamentoFaltasESobras(result);
-					fecharDiaController.validacaoControleDeAprovacao(result);
-				});
+		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes",
+			{data: $('#dataDaOperacao', fecharDiaController.workspace).val()},
+			function(result){	
+				$('#tabela-validacao').clear();
+				fecharDiaController.validacaoBaixaBancaria(result);
+				fecharDiaController.validacaoGeracaoCobranca(result);
+				fecharDiaController.validacaoRecebimentoFisico(result);
+				fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
+				fecharDiaController.validacaoFechamentoDeEncalhe(result);
+				fecharDiaController.validacaoLancamentoFaltasESobras(result);
+				fecharDiaController.validacaoControleDeAprovacao(result);
+				
+				if (result.habilitarConfirmar){
+					$('#btnConfirmarFechamento', fecharDiaController.workspace).show();
+				} else {
+					$('#btnConfirmarFechamento', fecharDiaController.workspace).hide();
+				}
+			}
+		);
 	},
 	
 	validacaoBaixaBancaria : function(result){

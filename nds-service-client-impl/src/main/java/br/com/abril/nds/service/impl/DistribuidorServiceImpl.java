@@ -289,6 +289,13 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		return this.distribuidorRepository.politicasCobranca();
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Set<PoliticaCobranca> politicasCobrancaAtivas() {
+		
+		return this.distribuidorRepository.politicasCobrancaAtivas();
+	}
 
 	@Override
 	@Transactional(readOnly = true)

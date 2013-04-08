@@ -24,6 +24,8 @@ public class FecharDiaDTO implements Serializable {
 	private Boolean manutencaoStatusCota;
 	
 	private Boolean fechamentoEncalhe;
+	
+	private Boolean habilitarConfirmar;
 
 	public Boolean getBaixaBancaria() {
 		return baixaBancaria;
@@ -87,6 +89,14 @@ public class FecharDiaDTO implements Serializable {
 
 	public void setFechamentoEncalhe(Boolean fechamentoEncalhe) {
 		this.fechamentoEncalhe = fechamentoEncalhe;
+	}
+
+	public Boolean getHabilitarConfirmar() {
+		return habilitarConfirmar;
+	}
+
+	public void setHabilitarConfirmar(Boolean habilitarConfirmar) {
+		this.habilitarConfirmar = habilitarConfirmar;
 	}
 	
 }

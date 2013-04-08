@@ -282,7 +282,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.DISTRIBUIDOR);
 		
 		MovimentoEstoque movimentoEstoque = new MovimentoEstoque();
-
+		
+		if (dataOperacao == null) {
+			
+			dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		}
+		
 		if (dataLancamento!= null) {
 			
 			Long idItemRecebimentoFisico =
@@ -295,12 +300,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		}
 
 		movimentoEstoque.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
-		
-		if (isImportacao) {
-			movimentoEstoque.setData(dataOperacao);
-		}else {
-			movimentoEstoque.setData(new Date());
-		}
+
+		movimentoEstoque.setData(dataOperacao);
+
 		movimentoEstoque.setUsuario(new Usuario(idUsuario));
 		movimentoEstoque.setTipoMovimento(tipoMovimentoEstoque);
 		movimentoEstoque.setQtde(quantidade);
@@ -318,6 +320,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
 		
 		}
+		
 		movimentoEstoque = movimentoEstoqueRepository.merge(movimentoEstoque);
 		
 		return movimentoEstoque;
