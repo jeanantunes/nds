@@ -17,6 +17,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,8 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
+import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
+import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
@@ -39,6 +42,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstrategiaRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.CalendarioService;
@@ -63,6 +67,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
+	
+	@Autowired
+	private EstrategiaRepository estrategiaRepository;
 	
 
 	@Override
@@ -1343,8 +1350,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			this.distribuidorRepository.capacidadeDistribuicao());
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
-			this.lancamentoRepository.obterBalanceamentoLancamento(periodoDistribuicao,
-																   filtro.getIdsFornecedores());
+			this.lancamentoRepository.obterBalanceamentoLancamento(periodoDistribuicao, filtro.getIdsFornecedores(), verificaPrioridade());
 		
 		dadosBalanceamentoLancamento.setProdutosLancamento(produtosLancamento);
 		
@@ -1364,6 +1370,20 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		dadosBalanceamentoLancamento.setDataLancamento(dataLancamento);
 		
 		return dadosBalanceamentoLancamento;
+	}
+
+	private List<Long> verificaPrioridade() {
+		List<Estrategia> produtosEstrategia = estrategiaRepository.buscarTodos();
+		List<Long> produtoEdicaoIds = new ArrayList<Long>();
+		for (Estrategia estrategia : produtosEstrategia) {
+			if (StringUtils.isNotEmpty(estrategia.getCesta())) {
+				List<EdicaoBaseEstrategia> basesEstrategia = estrategia.getBasesEstrategia();
+				for (EdicaoBaseEstrategia edicaoBaseEstrategia : basesEstrategia) {
+					produtoEdicaoIds.add(edicaoBaseEstrategia.getProdutoEdicao().getId());
+				}
+			}
+		}
+		return produtoEdicaoIds;
 	}
 
 	/**
