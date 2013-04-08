@@ -1,40 +1,40 @@
 
-s k      808 Thu Apr 04 19:25:00 BRT 2013 META-INF/MANIFEST.MF
+s k      814 Sat Apr 06 16:16:16 BRT 2013 META-INF/MANIFEST.MF
 
-      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
-      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
-        1013 Thu Apr 04 19:25:00 BRT 2013 META-INF/IMPRESSA.SF
-        1364 Thu Apr 04 19:25:00 BRT 2013 META-INF/IMPRESSA.RSA
-smk     1155 Thu Apr 04 19:23:44 BRT 2013 br/com/abril/nds/applet/ImpressaoFinalizacaoEncalhe$1.class
+        1019 Sat Apr 06 16:16:16 BRT 2013 META-INF/IMPRESSA.SF
+        1364 Sat Apr 06 16:16:16 BRT 2013 META-INF/IMPRESSA.RSA
+smk     1400 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/ConstantesImpressao.class
 
-      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
-      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
-smk     4370 Thu Apr 04 19:23:44 BRT 2013 br/com/abril/nds/applet/ImpressaoFinalizacaoEncalhe.class
+smk     1374 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/MatricialThreadUtil$1.class
 
-      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
-      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
-smk     4015 Thu Apr 04 19:19:18 BRT 2013 br/com/abril/nds/applet/EmissorNotaFiscalMatricial.class
+smk      920 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/MatricialThreadUtil.class
 
-      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
-      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
-smk     1299 Thu Apr 04 19:19:18 BRT 2013 br/com/abril/nds/applet/ConstantesAppletImpressao.class
+smk     1522 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/ImpressaoFinalizacaoEncalheApplet$1.class
 
-      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
-      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
-smk     1431 Thu Apr 04 11:29:16 BRT 2013 br/com/abril/nds/applet/ImpressaoFinalizacaoEncalheUtil$1.class
+smk      994 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/ImpressaoFinalizacaoEncalheApplet.class
 
-      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
-      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
-smk      968 Thu Apr 04 11:29:16 BRT 2013 br/com/abril/nds/applet/ImpressaoFinalizacaoEncalheUtil.class
+smk     7438 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/EmissorNotaFiscalMatricial.class
 
-      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalhe)
-      [certificate is valid from 01/04/13 15:04 to 17/08/40 15:04]
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
 
   s = signature was verified 

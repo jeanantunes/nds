@@ -1085,7 +1085,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		} catch (Exception e) {
 			
-			throw new Exception("CobranÃ§a gerada. Erro ao gerar arquivo(s) de cobranÃ§a - " + e.getMessage(), e);
+			throw new Exception("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança - " + e.getMessage(), e);
 		}
 	}
 	

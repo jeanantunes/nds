@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.applet.EmissorNotaFiscalMatricial;
 import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -45,6 +45,7 @@ import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.matricial.EmissorNotaFiscalMatricial;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoSlip;
@@ -262,6 +263,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	public SlipDTO getSlipDTO(){
 		return slipDTO;
+	}
+	
+	public void setSlipDTO(SlipDTO dto){
+		this.slipDTO = dto;
 	}
 	
 	public Map<String, Object> getParametersSlip(){
@@ -3075,8 +3080,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		StringBuffer sb = new StringBuffer();
 		EmissorNotaFiscalMatricial e = new EmissorNotaFiscalMatricial(sb);
 		
+		e.darEspaco(1);
 		e.adicionar("TREELOG S/A LOGISTICA E DISTRIBUICAO");
 		e.quebrarLinhaEscape();
+		e.darEspaco(3);
 		e.adicionar("SLIP DE RECOLHIMENTO DE ENCALHE");
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
@@ -3086,26 +3093,81 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		e.adicionar("Hora: "+new SimpleDateFormat("HH:mm:ss").format(slipDTO.getDataConferencia()));
 		e.quebrarLinhaEscape();
-		e.adicionar("BOX: "+slipDTO.getCodigoBox());e.darEspaco(3);e.adicionar("Num. Slip: "+slipDTO.getNumSlip());
+		e.adicionar("BOX:  "+slipDTO.getCodigoBox());e.darEspaco(2);e.adicionar("Num. Slip: "+(slipDTO.getNumSlip() == null ? 0 : slipDTO.getNumSlip()));
 		e.quebrarLinhaEscape();
-		e.adicionar("-------------------------------------------");
-
-		for(ProdutoEdicaoSlipDTO itemLista : slipDTO.getListaProdutoEdicaoSlipDTO()){
-			e.adicionar(itemLista.getOrdinalDiaConferenciaEncalhe());
+		e.adicionar("----------------------------------------");
+		e.quebrarLinhaEscape();
+		e.adicionar("DESCRICAO", 9);e.darEspaco(1);
+		e.adicionar("EDICAO", 6);e.darEspaco(1);
+		e.adicionar("REP", 3);e.darEspaco(1);
+		e.adicionar("ENC", 3);e.darEspaco(1);
+		e.adicionar("PRECO", 7);e.darEspaco(1);
+		e.adicionar("TOTAL", 8);
+		e.quebrarLinhaEscape();
+		
+		Iterator<ProdutoEdicaoSlipDTO> iterator = slipDTO.getListaProdutoEdicaoSlipDTO().iterator();
+		while(iterator.hasNext()){
+			ProdutoEdicaoSlipDTO itemLista = iterator.next();
+			
+			//Comentado a definir com Cesar como ficará OrdinalDiaConferenciaEncalhe
+//			e.adicionar(itemLista.getOrdinalDiaConferenciaEncalhe());
+//			e.quebrarLinhaEscape();
+			
+			e.adicionar(itemLista.getNomeProduto() == null ? "": itemLista.getNomeProduto(), 9);e.darEspaco(1);
+			e.adicionar(itemLista.getNumeroEdicao() == null ? "" : itemLista.getNumeroEdicao().toString(), 6);e.darEspaco(1);
+			e.adicionar(itemLista.getReparte() == null ? "" : itemLista.getReparte().toString(), 3);e.darEspaco(1);
+			e.adicionar(itemLista.getEncalhe() == null ? "" : itemLista.getEncalhe().toString(), 3);e.darEspaco(1);
+			e.adicionar(itemLista.getPrecoVenda() == null ? "0,00" : itemLista.getPrecoVenda().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString(), 7);e.darEspaco(1);
+			e.adicionar(itemLista.getValorTotal() == null ? "0,00" : itemLista.getValorTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString(), 8);
 			e.quebrarLinhaEscape();
-			e.adicionar(itemLista.getNomeProduto());
-			e.adicionar(itemLista.getNumeroEdicao() == null ? "" : itemLista.getNumeroEdicao().toString());
-			e.adicionar(itemLista.getReparte() == null ? "" : itemLista.getReparte().toString());
-			e.adicionar(itemLista.getEncalhe() == null ? "" : itemLista.getEncalhe().toString());
-			e.adicionar(itemLista.getPrecoVenda() == null ? "" : itemLista.getPrecoVenda().toString());
-			e.adicionar(itemLista.getValorTotal() == null ? "" : itemLista.getValorTotal().toString());
+			
+			//Ultima linha
+			if(!iterator.hasNext()){
+				e.quebrarLinhaEscape();
+				
+				String dataRecolhimentoStr = "";
+				if(itemLista.getDataRecolhimento()!=null ){
+					dataRecolhimentoStr = new SimpleDateFormat("dd/MM/yyyy").format(itemLista.getDataRecolhimento());
+				}
+
+				String qtdeTotalProdutos =  itemLista.getQtdeTotalProdutos() == null ? "0" : itemLista.getQtdeTotalProdutos();
+				e.adicionarCompleteEspaco("Total de Produtos do dia "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
+				
+				e.quebrarLinhaEscape();
+
+				String valorTotalEncalhe = itemLista.getValorTotalEncalhe() == null ? "0" : itemLista.getValorTotalEncalhe();
+				e.adicionarCompleteEspaco("Total do Encalhe  do dia "+ dataRecolhimentoStr +":", valorTotalEncalhe);
+				e.quebrarLinhaEscape();
+				e.quebrarLinhaEscape();
+			}
 		}
+		e.adicionar("SUB-TOTAL-------------------------------");
+		e.quebrarLinhaEscape();
+		
+		String totalProdutos = slipDTO.getTotalProdutos() == null ? "0" : slipDTO.getTotalProdutos().toString();
+		e.adicionarCompleteEspaco("Total de produtos:", totalProdutos);
+		e.quebrarLinhaEscape();
+		
+		String valorTotalEncalhe = slipDTO.getValorTotalEncalhe() == null ? "0,00" : slipDTO.getValorTotalEncalhe().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
+		e.adicionarCompleteEspaco("Valor total de encalhe: ( A )", valorTotalEncalhe);
+		e.quebrarLinhaEscape();
+		e.quebrarLinhaEscape();
+		e.adicionar("COMPOSICAO COBRANCA---------------------");
+		e.quebrarLinhaEscape();
+		
+		String valorSlip = slipDTO.getValorSlip() == null ? "0,00" : slipDTO.getValorSlip().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
+		e.adicionarCompleteEspaco("Valor SLIP do dia: ( B - A ) D", valorSlip);
+		e.quebrarLinhaEscape();
+		e.quebrarLinhaEscape();
+		
+		String valorTotalPagar = slipDTO.getValorTotalPagar() == null ? "0,00" : slipDTO.getValorTotalPagar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
+		e.adicionarCompleteTraco("VALOR TOTAL A PAGAR", valorTotalPagar);
 		
 		e.quebrarLinhaEscape(9);//Espaços fim da impressao
 		
 		String saida = sb.toString();
-		System.out.println("SAIDA SERVICE\n\n");
-        System.out.println(saida);
+//		System.out.println("SAIDA SERVICE\n\n");
+//        System.out.println(saida);
         
 		
 		return saida;

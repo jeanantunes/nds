@@ -869,45 +869,15 @@ var ConferenciaEncalhe = $.extend(true, {
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
 				null,
 				function(resultado){
-				
-					
-//					var saidaTeste = 'TREELOG S/A LOGISTICA E DISTRIBUICAO$#;;';
-//					saidaTeste+="SLIP DE RECOLHIMENTO DE ENCALHE\r\n";
-//					saidaTeste+="\r\n";
-//					saidaTeste+="Cota: BALBALBALBAL - 545646\r\n";
-//					saidaTeste+="Data: 04/04/2013\r\n";
-//					saidaTeste+="Hora: 15:57:02\r\n";
-//					saidaTeste+="BOX: 4564\r\n";
-//					saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";
-//					saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";saidaTeste+="\r\n";
-//					resultado.resultado= saidaTeste;
-					
-			
-			//FIXME MELHORAR ESSE CÓDIGO PARA QUE NÃO ABRA ABA E TENHA QUE FECHAR
-					var w = window.open();
-					self.focus();
-					w.document.open();
-					w.document.write('<html>'); 
-					w.document.write('<head></head>');
-					w.document.write('<body>');
 
-//					w.document.write('<script src="scripts/applet/deployJava.js"></script>');
-//					w.document.write('<script>');
-//					w.document.write('var attributes = { code:"br.com.abril.nds.applet.ImpressaoFinalizacaoEncalhe.class", archive:"scripts/applet/ImpressaoFinalizacaoEncalhe.jar",  width:300, height:300};');
-//					w.document.write('var parameters = {jnlp_href: "scripts/applet/ImpressaoFinalizacaoEncalhe.jnlp", resultado: "\u001b\u0040'+resultado.resultado+'\u001B\u004A"};');
-//					w.document.write('deployJava.runApplet(attributes, parameters, "1.7");');
-//					w.document.write('</script>');
-					
-					w.document.write('<applet archive="scripts/applet/ImpressaoFinalizacaoEncalhe.jar"'); 
-					w.document.write('	code="br.com.abril.nds.applet.ImpressaoFinalizacaoEncalhe.class" width="600" height="500">');
-					w.document.write('<param name="resultado" value="'+resultado.resultado+'"/>');
-					w.document.write('</applet>');	
+					var callApplet = '';
+					callApplet +='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
+					callApplet+='	<param name="parameter" value="'+resultado.resultado+'"/>';
+					callApplet+='</applet>';						
+
+					$('#replaceAppletFinal').html(callApplet);
+					$('#idImpressaoFinalizacaoApplet', ConferenciaEncalhe.workspace).show();					
 			
-//					w.document.write("<pre>"+resultado.resultado+"</pre>");
-					w.document.write('</body>');
-					w.document.write('</html>');
-					
-					setTimeout(function(){w.document.close();w.close();},5000);
 				}
 		); 
 		
