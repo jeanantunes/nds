@@ -3,6 +3,8 @@ var informacoesProdutoController = $.extend(true, {
 init : function() {
 	
 	var T = this;
+	
+	$("#apuradaAbrang").mask("99.9");
 
 $(".produtosInfosGrid").flexigrid({
 		preProcess : informacoesProdutoController.executarPreProcessProdutosInfosGrid,
@@ -13,8 +15,7 @@ $(".produtosInfosGrid").flexigrid({
 			width : 40,
 			sortable : true,
 			align : 'left'
-		},
-		{
+		},{
 			display : 'Nome',
 			name : 'nomeProduto',
 			width : 40,
@@ -76,7 +77,7 @@ $(".produtosInfosGrid").flexigrid({
 			align : 'left'
 		},{
 			display : 'Rep. Min.',
-			name : 'reparteMinimoGhoma',
+			name : 'reparteMinimo',
 			width : 45,
 			sortable : true,
 			align : 'center'
@@ -352,6 +353,11 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			open: informacoesProdutoController.baseEstudo(estudo),
 			open: informacoesProdutoController.caracteristicasProduto(codProd, numeroEdicao),
 			open: informacoesProdutoController.openDetalhe(codProd, numeroEdicao),
+			open: informacoesProdutoController.detalhes_MinimoEAbrangencia(estudo, codProd, numeroEdicao),
+			open: informacoesProdutoController.detalhes_ReparteTotalEPromocional(codProd, numeroEdicao),
+			open: informacoesProdutoController.detalhes_ReparteDistribuido(codProd),
+			open: informacoesProdutoController.detalhes_ReparteSobra(estudo),
+			open: informacoesProdutoController.detalhes_venda(codProd, numeroEdicao),
 			
 			buttons: {
 				"Fechar": function() {
@@ -418,11 +424,13 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 	},
 	
-	detalhes_MinimoEAbrangencia : function (estudo){
+	detalhes_MinimoEAbrangencia : function (estudo, codProd, numeroEdicao){
 		
 		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarAbrangenciaEMinimo",
 				{
-			name : 'idEstudo', value:estudo
+			"idEstudo":estudo,
+			"codProduto":codProd,
+			"numEdicao":numeroEdicao
 				},
 				function(result) {
 					informacoesProdutoController.dadosMinimoEAbrangencia(result);
@@ -431,10 +439,80 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	},
 	
 	dadosMinimoEAbrangencia : function(result){
+		
 		$("#sugeridoAbrang").val(result.abrangenciaSugerida).disable();
 		$("#apuradaAbrang").val(result.abrangenciaApurada).disable();
 		$("#sugeridoMinimo").val(result.minimoSugerido).disable();
 		$("#estudoMinimo").val(result.minimoEstudoId).disable();
+	},
+	
+	
+	detalhes_ReparteTotalEPromocional : function (codProd, numeroEdicao){
+		
+		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarRepartesTotalEPromocional",
+				{
+			"codProduto":codProd,
+			"numEdicao":numeroEdicao
+				},
+				function(result) {
+					informacoesProdutoController.dadosReparte(result);
+				});
+	},
+	
+	dadosReparte : function(result){
+		
+		$("#reparteTotal").val(result.reparteTotal).disable();
+		$("#repartePromocional").val(result.repartePromocional).disable();
+	},
+	
+	detalhes_ReparteSobra : function (estudo){
+		
+		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarReparteSobra",
+				{
+			"idEstudo":estudo,
+				},
+				function(result) {
+					informacoesProdutoController.dadosReparteSobra(result);
+				});
+	},
+	
+	dadosReparteSobra : function(result){
+		
+		$("#sobra").val(result.sobra).disable();
+	},
+	
+	detalhes_ReparteDistribuido : function (codProd){
+		
+		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarReparteDist",
+				{
+			"codProduto":codProd,
+				},
+				function(result) {
+					informacoesProdutoController.dadosReparteDistribuido(result);
+				});
+	},
+	
+	dadosReparteDistribuido : function(result){
+		
+		$("#reparteDistribuido").val(result).disable();
+	},
+	
+	detalhes_venda : function (codProd, numeroEdicao){
+		
+		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarVendas",
+				{
+			"codProduto":codProd,
+			"numEdicao":numeroEdicao
+				},
+				function(result) {
+					informacoesProdutoController.dadosVendas(result);
+				});
+	},
+	
+	dadosVendas : function(result){
+		
+		$("#venda").val(result.totalVenda).disable();
+		$("#porcentagemVenda").val(result.porcentagemDeVenda).disable();
 	},
 	
 	pop_capa : function(){

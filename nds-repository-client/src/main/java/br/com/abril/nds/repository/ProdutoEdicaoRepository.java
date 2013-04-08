@@ -331,4 +331,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	List<ProdutoEdicaoDTO> findReparteEVenda(
 			List<ProdutoEdicaoDTO> produtosEdicao);
 
+	List<ProdutoEdicao> pesquisar(String codigoProduto, String nomeProduto,
+			Long edicao);
+
 }
