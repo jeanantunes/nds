@@ -817,29 +817,28 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 														   RateioDiferenca rateioDiferenca, 
 														   Long idUsuario,
 														   boolean isAprovacaoAutomatica) {
-		
-		TipoMovimentoEstoque tipoMovimentoEstoque =
-			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
-		
-		TipoMovimentoEstoque tipoMovimentoEstoqueCota =
-			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-				diferenca.getTipoDiferenca().getGrupoMovimentoEstoqueCota());
-		
-		if (isAprovacaoAutomatica) {
-			
-			tipoMovimentoEstoque.setAprovacaoAutomatica(true);
-		}
-	   	
-		Long estudoCotaId = (rateioDiferenca.getEstudoCota() != null) 
-								? rateioDiferenca.getEstudoCota().getId() : null;
-		
+
 		if (diferenca.getTipoDiferenca().isSobra()) {
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque =
+				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+					diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+				
+			tipoMovimentoEstoque.setAprovacaoAutomatica(isAprovacaoAutomatica);
 			
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
 				diferenca.getProdutoEdicao().getId(), idUsuario, 
 					rateioDiferenca.getQtde(), tipoMovimentoEstoque);
 		}
+		
+		TipoMovimentoEstoque tipoMovimentoEstoqueCota =
+			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+				diferenca.getTipoDiferenca().getGrupoMovimentoEstoqueCota());
+			
+		tipoMovimentoEstoqueCota.setAprovacaoAutomatica(isAprovacaoAutomatica);
+		
+		Long estudoCotaId = (rateioDiferenca.getEstudoCota() != null) 
+								? rateioDiferenca.getEstudoCota().getId() : null;
 		
 		return this.movimentoEstoqueService.gerarMovimentoCota(
 					null, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
