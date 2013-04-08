@@ -145,6 +145,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			height:'auto',
 			width:'auto',
 			modal: false,
+			escondeHeader: false,
 			open : function(event, ui) {
 				
 				$("#imagemCapaEdicao").one('load', function() {

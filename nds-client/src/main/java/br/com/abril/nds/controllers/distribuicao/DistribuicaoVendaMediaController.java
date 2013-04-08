@@ -16,10 +16,12 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.EstrategiaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -71,6 +73,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
     @Autowired
     private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
+    
+    @Autowired
+    private EstrategiaRepository estrategiaRepository;
 
     @Autowired
     private EstudoAlgoritmoService estudoAlgoritmoService;
@@ -87,7 +92,6 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorProdutoEEdicaoOuNome(produto.getId(), edicao,
 		produto.getNomeComercial());
 	if (estudoId != null) {
-	    // TODO Verificar a necessidade de criar algo no else
 	    Estudo estudo = estudoRepository.buscarPorId(estudoId);
 	    result.include("estudo", estudo);
 	}
@@ -97,6 +101,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	} else {
 	    lancamento = lancamentoRepository.buscarPorId(lancamentoId);
 	}
+	Estrategia estrategia = estrategiaRepository.buscarPorProdutoEdicao(produtoEdicao);
 
 	List<Roteiro> roteiros = roteiroRepository.buscarTodos();
 
@@ -109,7 +114,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	result.include("sobra", sobra);
 
 	result.include("lancamento", lancamento);
-
+	result.include("estrategia", estrategia);
 	ProdutoEdicaoDTO convertido = converterResultado(produtoEdicao, lancamento);
 	// produtoEdicaoRepository.findReparteEVenda(convertido);
 
@@ -118,8 +123,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
     @Transactional(readOnly = true)
     public void pesquisarProdutosEdicao(String codigo, String nome, Long edicao) {
-	List<ProdutoEdicao> resultado = null;
-	// produtoEdicaoRepository.pesquisar(codigo, nome, edicao);
+	List<ProdutoEdicao> resultado = produtoEdicaoRepository.pesquisar(codigo, nome, edicao);
 
 	List<ProdutoEdicaoDTO> convertido = converterResultado(resultado);
 
@@ -223,7 +227,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     }
 
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia) {
-	estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, this.getUsuarioLogado());
+//	estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, this.getUsuarioLogado());
     }
 
     public HttpSession getSession() {

@@ -214,7 +214,9 @@ public class EstudoAlgoritmoService {
 
 		estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.getDistribuicaoPorMultiplo() ? 1 : 0);
 		estudo.setReparteMinimo(new BigInteger(distribuicaoVendaMedia.getReparteMinimo()));
-		estudo.setPacotePadrao(new BigInteger(distribuicaoVendaMedia.getMultiplo()));
+		if(distribuicaoVendaMedia.getMultiplo() != null){
+			estudo.setPacotePadrao(new BigInteger(distribuicaoVendaMedia.getMultiplo().toString()));
+		}
 
 		// carregando parâmetros do banco de dados
 		carregarParametros(estudo);

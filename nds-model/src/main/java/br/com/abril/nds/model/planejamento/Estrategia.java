@@ -7,8 +7,11 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -23,10 +26,11 @@ public class Estrategia implements Serializable {
     private static final long serialVersionUID = -1961518736407632634L;
 
     @Id
-    @GeneratedValue(generator = "ESTUDO_SEQ")
+    @GeneratedValue(generator = "ESTRATEGIA_SEQ")
     @Column(name = "ID")
     private Long id;
-    @Column(name = "PRODUTO_EDICAO_ID", nullable = false)
+    @ManyToOne()
+    @JoinColumn(name = "PRODUTO_EDICAO_ID")
     private ProdutoEdicao produtoEdicao;
     @Column(name = "REPARTE_MINIMO")
     private BigInteger reparteMinimo;
@@ -38,7 +42,7 @@ public class Estrategia implements Serializable {
     private String oportunidadeVenda;
     @Column(name = "CESTA")
     private String cesta;
-    @OneToMany(mappedBy = "estrategia")
+    @OneToMany(mappedBy="estrategia", fetch = FetchType.EAGER)
     private List<EdicaoBaseEstrategia> basesEstrategia;
 
     public Long getId() {
