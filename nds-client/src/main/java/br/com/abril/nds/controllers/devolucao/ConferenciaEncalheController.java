@@ -1109,15 +1109,7 @@ public class ConferenciaEncalheController extends BaseController {
 			} else {
 				
 				if(dtoDoc.isUtilizaSlip() && !dtoDoc.isUtilizaBoleto()){//é slip txt sem boleto
-					
-//					this.result.use(Results.json()).from(arquivos.get(keyName),"resultado").serialize();
-//					result.use(CustomJson.class).put("resultado", arquivos.get(keyName)).serialize();
-					
-					String saida = (String) arquivos.get(keyName);
-					System.out.println("SAIDA CONTROLLER\n\n");
-			        System.out.println(saida);
-			        
-					result.use(PlainJSONSerialization.class).from(saida, "resultado").serialize();
+					result.use(PlainJSONSerialization.class).from(arquivos.get(keyName), "resultado").serialize();
 				}else{
 					fileName  = arquivos.keySet().iterator().next();
 					fileBytes = (byte[])arquivos.get(keyName);
