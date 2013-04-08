@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.HistoramaPosEstudoRepository;
-import br.com.caelum.stella.inwords.FormatoDeInteiro;
-import br.com.caelum.stella.inwords.FormatoDeReal;
 
 @SuppressWarnings("rawtypes")
 @Repository

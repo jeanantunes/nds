@@ -47,7 +47,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		return ret;	
 	},
 	
-	init:function(){
+	init : function () {
 
 		var flexGridService = new FlexGridService();
 		
@@ -56,6 +56,19 @@ var histogramaPosEstudoController = $.extend(true, {
 		 */
 		$('#botaoVoltarMatrizDistribuicao').click(function(){
 			histogramaPosEstudoController.voltarPagina();
+		});
+		
+		// Analise do estudo - EMS 2031
+		$('#analiseEstudo').click(function() {
+			$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + '/distribuicao/analiseEstudo');
+			$('#workspace').tabs({load : function(event, ui) {
+				
+				$("#idEstudo").val(histogramaPosEstudoController.matrizSelecionado.estudo);
+				analiseEstudoController.carregarEstudos();
+				
+				$('#workspace').tabs({load : function(event, ui) {}});
+			}});
+			
 		});
 		
 		// RECALCULAR ESTUDO - EMS 2025 - Distribuição Venda Média
@@ -93,8 +106,6 @@ var histogramaPosEstudoController = $.extend(true, {
 			});
 		});
 		
-		
-		
 		$('#alterarFaixaReparte').click(function(){
 			$( "#dialog-alterar-faixa" ).dialog({
 				resizable: false,
@@ -129,7 +140,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					};
 				},
 				buttons: {
-					"Confirmar": function() {
+					"Confirmar": function () {
 						$( this ).dialog( "close" );
 						
 						var faixasReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
@@ -321,7 +332,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					gridName : "baseSugeridaGrid",
 					url : contextPath + "/distribuicao/histogramaPosEstudo/carregarGridBaseSugerida",
 					cached : true,
-					gridConfiguration : {
+					gridConfiguration : {	
 						dataType : 'json',
 						colModel : [ {
 							display : 'Código',
@@ -419,7 +430,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	
-	popularFieldsetHistogramaPreAnalise : function popularFieldsetHistogramaPreAnalise(selecionado){
+	popularFieldsetHistogramaPreAnalise : function (selecionado){
 		
 		var	url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldsetHistogramaPreAnalise";
 
@@ -428,6 +439,7 @@ var histogramaPosEstudoController = $.extend(true, {
 			 selecionado,
 			 function onSucessCallBack(jsonData){
 				 if (jsonData) {
+					 histogramaPosEstudoController.matrizSelecionado = jsonData;
 					 histogramaPosEstudoController.fieldSetValues = jsonData;
 					 
 					 histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
@@ -453,7 +465,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		);
 	},
 	
-	popularFieldsetResumoEstudo : function popularFieldsetResumoEstudo(){
+	popularFieldsetResumoEstudo : function (){
 		var matrizSelecionada = histogramaPosEstudoController.matrizSelecionado,
 			rowConsolidada = histogramaPosEstudoController.analiseGridRowConsolidada,
 			url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo";
@@ -491,7 +503,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		);
 	},
 	
-	alterarFaixaAte : function alterarFaixaAte(rowId, event){
+	alterarFaixaAte : function (rowId, event){
 		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
 		
 		if (event.keyIdentifier == "Enter") {
@@ -545,7 +557,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		}
 	},
 	
-	excluirFaixa : function excluirFaixa(rowId, event){
+	excluirFaixa : function (rowId, event){
 		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
 			createInput = histogramaPosEstudoController.createInput,
 			createImgExcluir = histogramaPosEstudoController.createImgExcluir;
@@ -586,7 +598,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		}
 	},
 	
-	organizarRowId : function(grid){
+	organizarRowId : function (grid){
 		// organizando os ID das linhas
 		for ( var int = 0; int < grid.tableModel.rows.length; int++) {
 			row = grid.tableModel.rows[int];
@@ -596,7 +608,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		}
 	},
 	
-	mostrarBaseEstudo : function mostrarBaseEstudo(estudoId){
+	mostrarBaseEstudo : function (estudoId){
 		var baseEstudo = histogramaPosEstudoController.Grids.BaseEstudoGrid;
 		
 		baseEstudo.reload({
@@ -616,7 +628,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		});
 	},
 	
-	recalcularEstudo : function(){
+	recalcularEstudo : function (){
 		var data = [],
 			matrizSelecionado = histogramaPosEstudoController.matrizSelecionado;
 		
@@ -635,6 +647,10 @@ var histogramaPosEstudoController = $.extend(true, {
 			$('#telasAuxiliaresContent').html(response);
 			$('#telasAuxiliaresContent').show();
 		});
+	},
+	
+	analise : function() {
+		
 	}
 
 }, BaseController);
