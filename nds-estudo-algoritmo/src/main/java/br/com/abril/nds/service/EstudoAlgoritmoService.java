@@ -18,11 +18,13 @@ import org.springframework.stereotype.Service;
 import br.com.abril.nds.dao.DefinicaoBasesDAO;
 import br.com.abril.nds.dao.EstudoDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.enumerators.DataReferencia;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.ajustefinalreparte.AjusteFinalReparte;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
@@ -195,23 +197,26 @@ public class EstudoAlgoritmoService {
 		estudoDAO.gravarEstudo(estudo);
 	}
 
-	public EstudoTransient gerarEstudoAutomatico(ProdutoEdicaoEstudo produto, BigInteger reparte) throws Exception {
-		return gerarEstudoAutomatico(null, false, null, null, produto, reparte);
+	public EstudoTransient gerarEstudoAutomatico(ProdutoEdicaoEstudo produto, BigInteger reparte, Usuario usuario) throws Exception {
+		return gerarEstudoAutomatico(null, produto, reparte, usuario);
 	}
 
-    public EstudoTransient gerarEstudoAutomatico(List<ProdutoEdicaoEstudo> edicoesBase, boolean distribuicaoPorMultiplos, BigInteger _reparteMinimo,
-			BigInteger pacotePadrao, ProdutoEdicaoEstudo produto, BigInteger reparte) throws Exception {
+    public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto,
+	    BigInteger reparte, Usuario usuario) throws Exception {
 		log.debug("Iniciando execução do estudo.");
 		EstudoTransient estudo = new EstudoTransient();
 		estudo.setDataCadastro(new Date());
 		estudo.setStatusEstudo("ESTUDO_FECHADO");
+		estudo.setUsuario(usuario);
 		estudo.setProdutoEdicaoEstudo(produto);
 		estudo.setReparteDistribuir(reparte);
 		estudo.setReparteDistribuirInicial(reparte);
 
-		estudo.setDistribuicaoPorMultiplos(distribuicaoPorMultiplos ? 1 : 0);
-		estudo.setReparteMinimo(_reparteMinimo);
-		estudo.setPacotePadrao(pacotePadrao);
+		estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.getDistribuicaoPorMultiplo() ? 1 : 0);
+		estudo.setReparteMinimo(new BigInteger(distribuicaoVendaMedia.getReparteMinimo()));
+		if(distribuicaoVendaMedia.getMultiplo() != null){
+			estudo.setPacotePadrao(new BigInteger(distribuicaoVendaMedia.getMultiplo().toString()));
+		}
 
 		// carregando parâmetros do banco de dados
 		carregarParametros(estudo);

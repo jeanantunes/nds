@@ -8,6 +8,7 @@ import java.util.Map;
 
 import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public class EstudoTransient extends Estudo {
 
@@ -26,6 +27,7 @@ public class EstudoTransient extends Estudo {
 	private BigInteger reparteComplementar;
 	private String statusEstudo;
 	private List<BonificacaoDTO> bonificacoes;
+	private Usuario usuario;
 	
 	private boolean complementarAutomatico;
 	private boolean pracaVeraneio;
@@ -156,6 +158,14 @@ public class EstudoTransient extends Estudo {
 	}
 	public void setPercentualExcedente(Map<String, PercentualExcedenteEstudo> percentualExcedente) {
 		this.percentualExcedente = percentualExcedente;
+	}
+
+	public Usuario getUsuario() {
+	    return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+	    this.usuario = usuario;
 	}
 
 	@Override
