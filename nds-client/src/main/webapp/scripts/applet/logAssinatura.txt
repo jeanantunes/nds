@@ -1,0 +1,45 @@
+
+s k      814 Sat Apr 06 16:16:16 BRT 2013 META-INF/MANIFEST.MF
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
+
+        1019 Sat Apr 06 16:16:16 BRT 2013 META-INF/IMPRESSA.SF
+        1364 Sat Apr 06 16:16:16 BRT 2013 META-INF/IMPRESSA.RSA
+smk     1400 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/ConstantesImpressao.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
+
+smk     1374 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/MatricialThreadUtil$1.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
+
+smk      920 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/MatricialThreadUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
+
+smk     1522 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/ImpressaoFinalizacaoEncalheApplet$1.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
+
+smk      994 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/ImpressaoFinalizacaoEncalheApplet.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
+
+smk     7438 Sat Apr 06 15:37:34 BRT 2013 br/com/abril/nds/matricial/EmissorNotaFiscalMatricial.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
+
+
+  s = signature was verified 
+  m = entry is listed in manifest
+  k = at least one certificate was found in keystore
+  i = at least one certificate was found in identity scope
+
+jar verified.

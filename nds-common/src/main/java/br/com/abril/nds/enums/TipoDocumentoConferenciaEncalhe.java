@@ -5,5 +5,5 @@ package br.com.abril.nds.enums;
  *
  */
 public enum TipoDocumentoConferenciaEncalhe {
-	SLIP, BOLETO_OU_RECIBO, BOLETO_SLIP;
+	SLIP_TXT, SLIP_PDF, BOLETO_OU_RECIBO, BOLETO_SLIP;
 }

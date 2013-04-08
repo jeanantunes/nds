@@ -3,15 +3,18 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -231,6 +234,16 @@ public interface ConferenciaEncalheService {
 			Usuario usuario,
 			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException;
 	
+	
+	/**
+	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota para impressora matricial
+	 * 
+	 * @param idControleConferenciaEncalheCota
+	 * @param incluirNumeroSlip
+	 * @return
+	 */
+	public String gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+	
 	/**
 	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota
 	 * 
@@ -238,7 +251,7 @@ public interface ConferenciaEncalheService {
 	 * @param incluirNumeroSlip
 	 * @return
 	 */
-	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip, TipoArquivo tpArquivo);
 	
 	/**
 	 * Obtem valor total para geração de crédito na C.E.
@@ -246,5 +259,10 @@ public interface ConferenciaEncalheService {
 	 * @return BigDecimal
 	 */
 	BigDecimal obterValorTotalConferenciaEncalhe(Long idControleConferenciaEncalheCota);
-		
+
+	public SlipDTO getSlipDTO();
+	
+	public Map<String, Object> getParametersSlip();
+	
+	public void setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
 }

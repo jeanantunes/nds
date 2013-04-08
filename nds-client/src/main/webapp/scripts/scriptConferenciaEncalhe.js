@@ -390,7 +390,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		}));
 
 		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
-			
 			if (!ConferenciaEncalhe.modalAberta){
 				
 				ConferenciaEncalhe.veificarCobrancaGerada();
@@ -565,7 +564,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	verificarValorTotalNotaFiscal : function() {
-		
 		var data = [{name: 'indConferenciaContingencia', value: false}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal', data,
@@ -626,7 +624,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	verificarValorTotalCE : function() {
-		
 		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())},
 		            {name: "qtdCEInformado", value: $("#qtdCE", ConferenciaEncalhe.workspace).val()}];
 		
@@ -869,31 +866,20 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
-		/*
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
 				null,
 				function(resultado){
-//					var html = "<html><body><applet code=Impressao.class width=1 height=1></applet><pre>";
-//					html+=resultado.resultado
-//					html+="</pre></body></html>";
-//					
-//					window.location =  html;
+
+					var callApplet = '';
+					callApplet +='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
+					callApplet+='	<param name="parameter" value="'+resultado.resultado+'"/>';
+					callApplet+='</applet>';						
+
+					$('#replaceAppletFinal').html(callApplet);
+					$('#idImpressaoFinalizacaoApplet', ConferenciaEncalhe.workspace).show();					
 			
-					var w = window.open();
-					self.focus();
-					w.document.open();
-					w.document.write('<html>');
-					w.document.write('<head></head>');
-					w.document.write('<body>');
-					w.document.write('<pre>'+resultado.resultado+'</pre>');
-					w.document.write('<applet code="br.com.abril.nds.print.Impressao.class" width=320 height=80></applet>');
-					w.document.write('</body>');
-					w.document.write('</html>');
-//					w.document.close();
-//					w.print();
-//					w.close();
 				}
-		); */
+		); 
 		
 		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
 		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
@@ -1668,7 +1654,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	veificarCobrancaGerada: function(){
-		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/veificarCobrancaGerada', null,
 		
 			function(conteudo){
