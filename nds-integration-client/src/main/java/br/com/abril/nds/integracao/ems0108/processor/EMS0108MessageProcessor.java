@@ -15,6 +15,7 @@ import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -26,11 +27,14 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.DescontoLogisticaRepository;
 
 @Component
 public class EMS0108MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
 
+	@Autowired
+	private DescontoLogisticaRepository descontoLogisticaRepository;
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -292,6 +296,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	private ProdutoEdicao atualizarProdutoEdicao(EMS0108Input input,
 			Produto produto, ProdutoEdicao produtoEdicao) {
+		
 		produto.setSlogan(input.getSloganProduto());
 		
 		produto.setFormaComercializacao(getFormaComercializacao(input.getFormaComercializacao()));
@@ -302,8 +307,11 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		
 		produtoEdicao.setPeb(input.getPEB());
 		produtoEdicao.setPacotePadrao(input.getPacotePadrao());
+
+		DescontoLogistica descontoLogistica = descontoLogisticaRepository.obterPorTipoDesconto(input.getTipoDesconto());
+
 		produtoEdicao.setDesconto(input.getPercentualDesconto());
-		produtoEdicao.setDescricaoDesconto(input.getTipoDesconto().toString());
+		produtoEdicao.setDescricaoDesconto(descontoLogistica.getDescricao());
 
 		this.getSession().persist(produtoEdicao);
 		
