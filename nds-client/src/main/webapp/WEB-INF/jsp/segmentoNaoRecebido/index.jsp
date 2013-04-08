@@ -12,12 +12,14 @@
 <body>
 
 <div id="dialog-excluir" title="Excluir Segmento Não Recebida">
-	<p>Confirma a exclusão desta Segmento?</p>
+	<p>Confirma a exclusão deste Segmento?</p>
 </div>
 
-<div id="dialog-novo" title="Novo Segmento">
-	<p>Confirma a inclusão do(s) Segmento(s)?</p>
+
+<div id="dialog-novo" title="Novo">
+	<p>Confirma esta inclusão?</p>
 </div>
+
 
 <div class="corpo">
     <br clear="all"/>
@@ -81,7 +83,7 @@
                 </td>
                 <td width="40">Nome:</td>
                 <td width="465">
-                	<input type="text" name="textfield2" id="nomeCotaFiltro1" onchange="pesquisaCota.pesquisarNomeCota('#nomeCotaFiltro1','#numeroCotaFiltro1');"
+                	<input type="text" name="textfield2" id="nomeCotaFiltro1" onblur="pesquisaCota.pesquisarPorNomeCota('#numeroCotaFiltro1','#nomeCotaFiltro1');"
                 		onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCotaFiltro1')" style="width:200px;"/>
                 </td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="segmentoNaoRecebidoController.porCota();">Pesquisar</a></span></td>
@@ -110,19 +112,21 @@
             
       </fieldset>
 
-	<!-- GRID COTA PARA SELE�ÃO E INCLUSÃO NO SEGMENTO NÃO RECEBIDO -->
+	<!-- GRID COTA PARA SELE�ÃO E INCLUSÃO NO SEGMENTO NÃO RECEBIDO -->
       <fieldset class="classFieldset" style="float:left; width:300px!important;">
        	  <legend>Cota</legend>
        	  <table width="275" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="33">Cota:</td>
        	      <td width="41">
-       	      	<input type="text" id="numeroCotaFiltro2" 
-       	      	onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCotaFiltro2','#nomeCotaFiltro2');" style="width:40px;"/>
+       	      	<input type="text" name="nomeCotaFiltro2" id="numeroCotaFiltro2" 
+       	      		onchange="pesquisaCota.pesquisarPorNumeroCota('#numeroCotaFiltro2','#nomeCotaFiltro2');" style="width:40px;"/>
        	      </td>
               <td width="41">Nome:</td>
-       	      <td width="115"><input type="text" id="nomeCotaFiltro2"  style="width:140px;" onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCotaFiltro2')"
-       	      onchange="pesquisaCota.pesquisarNomeCota('#nomeCotaFiltro2','#numeroCotaFiltro2');"	/></td>
+       	      <td width="115">
+       	      <input type="text" name="nomeCotaFiltro2" id="nomeCotaFiltro2"  style="width:140px;" 
+       	      		onkeyup="pesquisaCota.autoCompletarPorNome('#nomeCotaFiltro2')"
+       	      		onblur="pesquisaCota.pesquisarPorNomeCota('#numeroCotaFiltro2','#nomeCotaFiltro2');"/></td>
               <td width="19">
               	<span class="classPesquisar"><a href="javascript:;"  
               	onclick="segmentoNaoRecebidoController.pesquisarCotasNaoEstaoNoSegmento()">&nbsp;</a></span>

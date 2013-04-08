@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -11,7 +13,8 @@ import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
 import br.com.abril.nds.dto.InformacoesAbrangenciaEMinimoProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
-import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
+import br.com.abril.nds.dto.InformacoesReparteTotalEPromocionalDTO;
+import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
@@ -27,7 +30,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<InformacoesProdutoDTO> buscarProdutos(FiltroInformacoesProdutoDTO filtro) {
-//		
+
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT ");
@@ -43,13 +46,17 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
 
-//		hql.append(" prodEdicao.venda AS venda, ");
 		hql.append(" prodEdicao.reparteDistribuido AS reparteMinimo, "); // DADO INCONSISTENTE...
 		
 		hql.append(" algortm.descricao AS algoritmo, "); 
 		hql.append(" estudoG.dataAlteracao AS dataAlteracao, ");
 		hql.append(" estudoG.id AS estudo, "); 
-		hql.append(" usuarioEstudo.nome AS nomeUsuario ");
+		hql.append(" usuarioEstudo.nome AS nomeUsuario, ");
+		
+		hql.append(" (select sum(estqPC.qtdeRecebida - estqPC.qtdeDevolvida) as totalVenda           " + 
+				"			  from MovimentoEstoqueCota movEC                                        " + 
+				"		      inner join movEC.estoqueProdutoCota AS estqPC                          " + 
+				"				  where estqPC.produtoEdicao = prodEdicao.id) AS venda               ");                                                                
 
 		hql.append(" FROM ProdutoEdicao AS prodEdicao ");
 		
@@ -79,66 +86,6 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		return query.list();
 	}
 		
-	
-//	StringBuilder sql = new StringBuilder();
-//	
-//				 sql.append(" select ")
-//				.append(" 	produto.CODIGO as codProduto,") 
-//				.append(" 	produtoEdicao.NUMERO_EDICAO as numeroEdicao,")	    
-//				.append("   produto.NOME as nomeProduto,") 
-//				.append("   produto.PERIODICIDADE as periodo,")
-//				.append("   produtoEdicao.PRECO_VENDA as preco,")
-//				.append("   lancamento.TIPO_LANCAMENTO as status,")
-//				.append("   produtoEdicao.REPARTE_DISTRIBUIDO as reparteDistribuido,")
-//				.append("   produto.PERCENTUAl_ABRANGENCIA as percentualAbrangencia,")
-//				.append("   lancamento.DATA_LCTO_PREVISTA as dataLcto,")
-//				.append("   lancamento.DATA_REC_PREVISTA as dataRcto,")
-//				.append("   estrateg.REPARTE_MINIMO as reparteMinimoGhoma,")
-//				.append("   algoritmo.DESCRICAO as algoritmo,")
-//				.append("   estudo.ID as estudo,")
-//				.append("   usua.NOME as nomeUsuario,")
-//				.append("   estudo.DATA_ALTERACAO as dataAlteracao ")
-//				.append("   from		")
-//				.append("   PRODUTO_EDICAO produtoEdicao") 
-//				.append("   left outer join")
-//				.append("   	PRODUTO produto") 
-//				.append("       	on produtoEdicao.PRODUTO_ID=produto.ID") 
-//				.append("   left outer join")
-//				.append("       ALGORITMO algoritmo") 
-//				.append("           on produto.ALGORITMO_ID=algoritmo.ID") 
-//				.append("   left outer join")
-//				.append("       LANCAMENTO lancamento") 
-//				.append("           on produtoEdicao.ID=lancamento.PRODUTO_EDICAO_ID") 
-//				.append("   inner join")
-//				.append("       ESTUDO estudo") 
-//				.append("           on lancamento.PRODUTO_EDICAO_ID=estudo.PRODUTO_EDICAO_ID") 
-//				.append("           and lancamento.DATA_LCTO_PREVISTA=estudo.DATA_LANCAMENTO")
-//				.append("   left join usuario usua ")
-//				.append("         on usua.ID = estudo.USUARIO_ID")
-//				.append("   left join estrategia estrateg")
-//				.append("         on estrateg.PRODUTO_EDICAO_ID = produtoEdicao.ID")
-//				.append("   where		")
-//				.append(" 		produto.codigo = :COD_PRODUTO ")
-//				.append(" 		AND produto.nome = :NOME_PRODUTO ")
-//				.append(this.getSqlWhereBuscarProdutos(filtro));
-//				 
-////				.append(" ORDER BY numeroEdicao ");
-//				 
-//		SQLQuery query = getSession().createSQLQuery(sql.toString());
-//		
-//		query.setParameter("COD_PRODUTO", filtro.getCodProduto());
-//		query.setParameter("NOME_PRODUTO", filtro.getNomeProduto());
-//		
-//		this.paramsDinamicosBuscarProdutos(query, filtro);
-//
-//		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
-//
-//		if (filtro != null){
-//			configurarPaginacao(filtro, query);
-//		}
-//		
-//		return query.list();
-	
 	private String paramsDinamicosBuscarProdutos (Query query, FiltroInformacoesProdutoDTO filtro) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -191,34 +138,23 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 	
 	@Override
 	public InformacoesAbrangenciaEMinimoProdDTO buscarAbrangenciaEMinimo(Long estudoId) {
-		/*
-		 * select 
-	est.reparte_minimo as minimoSugerido, est.ABRANGENCIA as abrangSugerido, estudo.ID as estudoId 
-	from estrategia est
-	inner join produto_edicao prodEdic 
-	  ON est.PRODUTO_EDICAO_ID = prodEdic.ID
-	inner join estudo 
-	  ON estudo.PRODUTO_EDICAO_ID = prodEdic.ID
-	where estudo.id = 27161;
-		 */
 
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select ");
 		sql.append("     distinct ");
 		sql.append("         est.reparte_minimo as minimoSugerido, ");
-		sql.append("         est.ABRANGENCIA as abrangenciaSugerida, ");
-		sql.append("         estudo.ID as minimoEstudoId ");
+		sql.append("         est.ABRANGENCIA as abrangenciaSugerida ");
 		sql.append("     FROM ");
 		sql.append("         estrategia est ");
 		sql.append("     INNER JOIN ");
 		sql.append("         produto_edicao prodEdic  ");
 		sql.append("             ON est.PRODUTO_EDICAO_ID = prodEdic.ID ");
 		sql.append("     INNER JOIN  ");
-		sql.append("         estudo  ");
-		sql.append("             ON estudo.PRODUTO_EDICAO_ID = prodEdic.ID ");
+		sql.append("         estudo estud ");
+		sql.append("             ON estud.PRODUTO_EDICAO_ID = prodEdic.ID ");
 		sql.append("     where ");
-		sql.append("         estudo.id = ");
+		sql.append("         estud.id = ");
 		sql.append(estudoId);
 
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
@@ -228,6 +164,29 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		return (InformacoesAbrangenciaEMinimoProdDTO) query.uniqueResult();
 		
 	}
+	
+	@Override
+	public BigDecimal buscarAbrangenciaApurada(String codProduto, Long numEdicao) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append("   sum( ");
+		sql.append("   		(select sum(reparte) from lancamento ");
+		sql.append("       		JOIN produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID ");
+		sql.append("        	JOIN PRODUTO ON produto_edicao.PRODUTO_ID=PRODUTO.ID ");
+		sql.append("        	where produto.CODIGO = :COD_PRODUTO ");
+		sql.append("         	and produto_Edicao.NUMERO_EDICAO in (:NUM_EDICAO)) ");
+		sql.append("         /estd.REPARTE_DISTRIBUIR)");
+		sql.append("         from estudo estd");
+
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("COD_PRODUTO", codProduto);
+		query.setParameter("NUM_EDICAO", numEdicao);
+		
+		return (BigDecimal)query.uniqueResult();	
+		}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -263,4 +222,118 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		}
 	}
 
+	@Override
+	public InformacoesReparteTotalEPromocionalDTO buscarRepartes(String codProduto, Long numEdicao) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append("         sum(lanc.reparte) as reparteTotal, ");
+		sql.append("         lanc.REPARTE_PROMOCIONAL as repartePromocional ");
+		sql.append("     FROM ");
+		sql.append("         lancamento lanc ");
+		sql.append("     JOIN ");
+		sql.append("         produto_edicao prodEdic  ");
+		sql.append("             ON prodEdic.ID=lanc.PRODUTO_EDICAO_ID ");
+		sql.append("     JOIN  ");
+		sql.append("         PRODUTO prod ");
+		sql.append("             ON prodEdic.PRODUTO_ID=prod.ID ");
+		sql.append("     where ");
+		sql.append("         prod.CODIGO = :COD_PRODUTO ");
+		sql.append("	 and prodEdic.NUMERO_EDICAO = :NUM_EDICAO ");
+
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("COD_PRODUTO", codProduto);
+		query.setParameter("NUM_EDICAO", numEdicao);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesReparteTotalEPromocionalDTO.class));
+		 
+		return (InformacoesReparteTotalEPromocionalDTO) query.uniqueResult();
+	}
+
+	@Override
+	public BigInteger buscarReparteDaEdica_Sobra(Long estudoID) {
+		
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" SELECT ");
+		
+		hql.append(" (lanc.reparte - lanc.repartePromocional - estud.reparteDistribuir) as sobra ");
+
+		hql.append(" FROM Lancamento AS lanc ");
+		
+		hql.append(" inner join lanc.estudo AS estud ");
+		
+		hql.append(" WHERE estud.id = :estudo_id ");
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("estudo_id", estudoID);
+		
+		return (BigInteger)query.uniqueResult();
+
+	}
+
+	@Override
+	public BigInteger buscarVendaTotal(String codProduto, Long numEdicao) {
+
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append("         sum(estqPC.QTDE_RECEBIDA - estqPC.QTDE_DEVOLVIDA) as totalVenda ");
+		sql.append("     FROM ");
+		sql.append("         movimento_estoque_cota movEC ");
+		sql.append("     JOIN ");
+		sql.append("         estoque_produto_cota estqPC  ");
+		sql.append("             ON movEC.ESTOQUE_PROD_COTA_ID = estqPC.ID ");
+		sql.append("     where ");
+		sql.append("         estqPC.PRODUTO_EDICAO_ID in ( ");
+		sql.append("         	select prodEdic.ID from produto_edicao prodEdic ");
+		sql.append("         		inner join produto prod ");
+		sql.append("        			ON prodEdic.PRODUTO_ID = prod.ID ");
+		sql.append("				where prod.CODIGO = :COD_PRODUTO and prodEdic.NUMERO_EDICAO = :NUM_EDICAO ");
+
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("COD_PRODUTO", codProduto);
+		query.setParameter("NUM_EDICAO", numEdicao);
+		
+		return (BigInteger) query.uniqueResult();
+		
+	}
+
+	@Override
+	public InformacoesVendaEPerceDeVendaDTO buscarVendas(String codProduto, Long numEdicao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append("     sum(estqPC.QTDE_RECEBIDA - estqPC.QTDE_DEVOLVIDA) as totalVenda, ");
+		sql.append("     ((sum(estqPC.QTDE_RECEBIDA - estqPC.QTDE_DEVOLVIDA)/ ");
+		sql.append("     (select ");
+		sql.append("      	sum(reparte) from lancamento ");
+		sql.append("      	JOIN produto_edicao prodEdic on prodEdic.ID = lancamento.PRODUTO_EDICAO_ID ");
+		sql.append("      	JOIN PRODUTO ON prodEdic.PRODUTO_ID=PRODUTO.ID ");
+		sql.append("      where produto.CODIGO = :COD_PRODUTO and ");
+		sql.append("      	prodEdic.NUMERO_EDICAO in (:NUM_EDICAO) ");
+		sql.append("      )))*100 as porcentagemDeVenda ");
+		sql.append("   from movimento_estoque_cota");
+		sql.append("   	  inner join estoque_produto_cota estqPC ");
+		sql.append("      	ON movimento_estoque_cota.ESTOQUE_PROD_COTA_ID = estqPC.ID ");
+		sql.append("where estqPC.PRODUTO_EDICAO_ID in ( ");
+		sql.append("   	    select prodEdic.ID from produto_edicao prodEdic ");
+		sql.append("      		inner join produto prod ON prodEdic.PRODUTO_ID = prod.ID ");
+		sql.append("     	where prod.CODIGO = ':COD_PRODUTO' and prodEdic.NUMERO_EDICAO = :NUM_EDICAO )");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("COD_PRODUTO", codProduto);
+		query.setParameter("NUM_EDICAO", numEdicao);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesVendaEPerceDeVendaDTO.class));
+		 
+		return (InformacoesVendaEPerceDeVendaDTO) query.uniqueResult();
+		
+	}
 }
