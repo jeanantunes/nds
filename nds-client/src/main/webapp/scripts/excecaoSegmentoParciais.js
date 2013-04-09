@@ -1,4 +1,3 @@
-
 ﻿var excecaoSegmentoParciaisController = $.extend(true, {
 	
 	/**
@@ -241,7 +240,7 @@
 			ProdutosNaoRecebidosGrid : {
 				gridName : "excessaoBGrid",
 				Url : {
-					urlDefault : contextPath + "/distribuicao/excecaoSegmentoParciais/pesquisarProdutosNaoRecebidosPelaCota",
+					/*urlDefault : contextPath + "/distribuicao/excecaoSegmentoParciais/pesquisarProdutosNaoRecebidosPelaCota",*/
 				},
 				comments : "Grid (Produtos Não Recebidos) que fica na parte direita da tela que é responsável pela listagem dos produtos para inserção na cota",
 				reload : excecaoSegmentoParciaisController.Grids.Util.reload,
@@ -384,7 +383,7 @@
 							sortable : true,
 							align : 'center'
 						}],
-						sortname : "codigo",
+						sortname : "codigoProduto",
 						sortorder : "asc",
 						usepager : true,
 						useRp : true,
@@ -474,7 +473,7 @@
 							sortable : true,
 							align : 'center'
 						}],
-						sortname : "cota",
+						sortname : "nomePessoa",
 						sortorder : "asc",
 						usepager : true,
 						useRp : true,
@@ -488,7 +487,7 @@
 			CotasQueNaoRecebemExcecaoGrid : {
 				gridName : "excessaoGrid",
 				Url : {
-					urlDefault : contextPath + "/distribuicao/excecaoSegmentoParciais/pesquisarCotasQueNaoRecebemExcecao",
+					/*urlDefault : contextPath + "/distribuicao/excecaoSegmentoParciais/pesquisarCotasQueNaoRecebemExcecao",*/
 				},
 				comments : "Grid (Cotas que não recebem) que fica na parte direita da tela que é responsável pela listagem de cotas para inserção no produto cota",
 				reload : excecaoSegmentoParciaisController.Grids.Util.reload,
@@ -1047,11 +1046,18 @@
 		$('.filtroPorCota').show();
 		$('.filtroPorProduto').hide();
 		$('.porExcessao').hide();
+		
+		$('#numeroCotaFiltroPrincipal').val('');
+	    $('#nomeCotaFiltroPrincipal').val('');
+		
 	},
 	filtroPorProduto: function filtroPorProduto(){
 		$('.filtroPorCota').hide();
 		$('.filtroPorProduto').show();
 		$('.porCota').hide();
+		
+		$('#codigoProdutoPrincipal').val('');
+	    $('#nomeProdutoPrincipal').val('');
 	},
 	
 }, BaseController);

@@ -217,7 +217,7 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		hql.append(" INNER JOIN cota.pessoa as pessoa ");
 		
 		// O filtro sempre terá OU nomeCota OU codigoCota
-	hql.append(" WHERE ");
+		hql.append(" WHERE ");
 		
 		hql.append(" excecaoProdutoCota.tipoExcecao = :tipoExcecao and");
 		if(filtro.isExcecaoSegmento()){
@@ -232,7 +232,9 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		} else if (filtroHasNomeProduto) {
 			hql.append(" produto.nome = :nomeProduto");
 			parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
-		} 
+		}
+		
+		hql.append(" order by nomePessoa asc ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
