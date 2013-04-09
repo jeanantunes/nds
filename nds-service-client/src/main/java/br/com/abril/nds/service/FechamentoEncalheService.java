@@ -67,7 +67,7 @@ public interface FechamentoEncalheService {
 
 	Boolean buscaControleFechamentoEncalhe(Date data);
 	
-	BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, Integer page, Integer rp);
+	BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 
 	public abstract void realizarCobrancaCotas(Date dataOperacao, Usuario usuario,
 			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException;

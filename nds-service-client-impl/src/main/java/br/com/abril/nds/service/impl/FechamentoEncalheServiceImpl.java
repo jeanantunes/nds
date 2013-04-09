@@ -1033,9 +1033,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 	
 	@Transactional
-	public BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, Integer page, Integer rp) {
+	public BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
 		
-		return fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro, page, rp);
+		return fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro);
 		
 	}
 	

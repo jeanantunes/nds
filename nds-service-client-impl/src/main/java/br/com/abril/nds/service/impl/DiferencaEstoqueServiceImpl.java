@@ -379,9 +379,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					qntTotalRateio = qntTotalRateio.add(rateioDiferenca.getQtde());
 					
 					listaMovimentosEstoqueCota.add(
-							this.gerarMovimentoEstoqueCota(diferenca, rateioDiferenca.getQtde(), 
-													       rateioDiferenca.getCota(), usuario.getId(),
-													       diferenca.isAutomatica()));
+						this.gerarMovimentoEstoqueCota(diferenca, rateioDiferenca, 
+							usuario.getId(), diferenca.isAutomatica()));
 				}
 				
 				//Verifica se ha direcionamento de produtos para o estoque do distribuidor
@@ -815,34 +814,36 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	 * Efetua a geração do movimento de estoque do rateio da diferença para cota.
 	 */
 	private MovimentoEstoqueCota gerarMovimentoEstoqueCota(Diferenca diferenca,
-														   BigInteger quantidade,
-														   Cota cota, 
-														   Long idUsuario,boolean isAprovacaoAutomatica) {
-		
-		TipoMovimentoEstoque tipoMovimentoEstoque =
-			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
-		
-		if(isAprovacaoAutomatica){
-			tipoMovimentoEstoque.setAprovacaoAutomatica(true);
-		}
-	   	
-		Long estudoCotaId = null;
-		for(RateioDiferenca rd : diferenca.getRateios()) {
-			if(rd.getEstudoCota()!= null && rd.getEstudoCota().getCota().getId() == cota.getId()) {
-				estudoCotaId = rd.getEstudoCota().getId();
-				break;
-			}
-		}
-		
-		if(diferenca.getTipoDiferenca().isSobra()) {
+														   RateioDiferenca rateioDiferenca, 
+														   Long idUsuario,
+														   boolean isAprovacaoAutomatica) {
+
+		if (diferenca.getTipoDiferenca().isSobra()) {
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque =
+				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+					diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+				
+			tipoMovimentoEstoque.setAprovacaoAutomatica(isAprovacaoAutomatica);
+			
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
-					diferenca.getProdutoEdicao().getId(), idUsuario, quantidade, tipoMovimentoEstoque);
+				diferenca.getProdutoEdicao().getId(), idUsuario, 
+					rateioDiferenca.getQtde(), tipoMovimentoEstoque);
 		}
+		
+		TipoMovimentoEstoque tipoMovimentoEstoqueCota =
+			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
+				diferenca.getTipoDiferenca().getGrupoMovimentoEstoqueCota());
+			
+		tipoMovimentoEstoqueCota.setAprovacaoAutomatica(isAprovacaoAutomatica);
+		
+		Long estudoCotaId = (rateioDiferenca.getEstudoCota() != null) 
+								? rateioDiferenca.getEstudoCota().getId() : null;
+		
 		return this.movimentoEstoqueService.gerarMovimentoCota(
-				null, diferenca.getProdutoEdicao().getId(), cota.getId()
-				, idUsuario, quantidade, tipoMovimentoEstoque
-				, null, null, null, estudoCotaId);
+					null, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
+						idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota,
+							null, null, null, estudoCotaId);
 	}
 	
 	/*
