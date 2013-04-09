@@ -449,7 +449,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			return;
 		}
 		
-//		var dataBase=new Date();
+		var dataBase=new Date();
 		
 		var anoBase = numeroSemana.slice(0,4);
 		var nmSemana = numeroSemana.substr(4);
@@ -462,7 +462,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				{name: 'dataBase', value: dataBase}
 			];
 		
-		$.getJSON(
+		$.getJSON( 
 			contextPath + "/cadastro/distribuidor/obterDataDaSemana", 
 			data,
 			function(result) {
@@ -506,7 +506,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 
 				if (result) {
 
-					$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val((dataBase.substr(6))+(result.int));
+					$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val(result.int);
 				}
 			}
 		);

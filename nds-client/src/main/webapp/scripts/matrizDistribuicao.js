@@ -1217,26 +1217,23 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			if (selecionado.estudo == null || selecionado.estudo == "") {
 				exibirMensagem("WARNING",["Selecione um produto que tenha um estudo gerado."]);
 				return;
-			}else{
-				$.get(
-					pathTela + '/matrizDistribuicao/histogramaPosEstudo', //url
-					null, // parametros
-					function(html){ // onSucessCallBack
-						$('#matrizDistribuicaoContent').hide();
-						$('#telasAuxiliaresContent').html(html);
-						$('#telasAuxiliaresContent').show();
-
-						params = [];
-						
-						for(var prop in selecionado){
-							params.push({
-								name : "selecionado." + prop, value : selecionado[prop]
-							});
-						}
-						
-						histogramaPosEstudoController.matrizSelecionado = selecionado;
-						histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(params);
-				});
+			} else {
+				$('#workspace').tabs({load : function(event, ui) {
+					
+					params = [];
+					
+					for(var prop in selecionado){
+						params.push({
+							name : "selecionado." + prop, value : selecionado[prop]
+						});
+					}
+					
+					histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(params);
+					
+					$('#workspace').tabs({load : function(event, ui) {}});
+				}});
+				
+				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo');
 			}
 			
 		}else{
