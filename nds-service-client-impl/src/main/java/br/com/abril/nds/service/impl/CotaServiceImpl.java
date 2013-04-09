@@ -82,6 +82,7 @@ import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
@@ -2401,31 +2402,12 @@ public class CotaServiceImpl implements CotaService {
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
-		for (PDV pdv: cota.getPdvs()) {
+		if (cota.getTipoDistribuicaoCota() == null) {
 			
-			if (pdv != null) {
-				
-				CaracteristicasPDV caracteristicasPDV = pdv.getCaracteristicas();
-				
-				if (caracteristicasPDV != null && caracteristicasPDV.isPontoPrincipal()) {
-					
-					SegmentacaoPDV segmentacaoPDV = pdv.getSegmentacao();
-					
-					if (segmentacaoPDV != null) {
-						
-						if (segmentacaoPDV.getTipoCaracteristica() != null &&
-								segmentacaoPDV.getTipoCaracteristica().equals(TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL)) {
-							
-							return true;
-						}
-					}
-				}
-			}
-			
+			return false;
 		}
 		
-		
-		return false;
+		return cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL);
 	}
 
 	@Transactional(readOnly = true)
