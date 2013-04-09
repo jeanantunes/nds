@@ -7,26 +7,29 @@ import java.util.List;
 public class EMS2021Input extends IntegracaoDocumentMaster<EMS2021InputItem> implements Serializable {
 
     private static final long serialVersionUID = -3176527752303474423L;
-    private Long codigoProduto;
-    private Integer numeroEdicao;
+    private String codigoDistribuidor;
+    private String codigoProduto;
+    private Long numeroEdicao;
     private Double abrangencia;
-    private Integer periodo;
     private Long reparteMinimo;
+    private Integer periodo;
+    private String oportunidadeVenda;
+    private String cesta;
     private List<EMS2021InputItem> itens = new ArrayList<EMS2021InputItem>();
 
-    public Long getCodigoProduto() {
+    public String getCodigoProduto() {
         return codigoProduto;
     }
 
-    public void setCodigoProduto(Long codigoProduto) {
+    public void setCodigoProduto(String codigoProduto) {
         this.codigoProduto = codigoProduto;
     }
 
-    public Integer getNumeroEdicao() {
+    public Long getNumeroEdicao() {
         return numeroEdicao;
     }
 
-    public void setNumeroEdicao(Integer numeroEdicao) {
+    public void setNumeroEdicao(Long numeroEdicao) {
         this.numeroEdicao = numeroEdicao;
     }
 
@@ -46,12 +49,12 @@ public class EMS2021Input extends IntegracaoDocumentMaster<EMS2021InputItem> imp
         this.periodo = periodo;
     }
 
-    public Long getReparteMinimo() {
-        return reparteMinimo;
+    public String getOportunidadeVenda() {
+        return oportunidadeVenda;
     }
 
-    public void setReparteMinimo(Long reparteMinimo) {
-        this.reparteMinimo = reparteMinimo;
+    public void setOportunidadeVenda(String oportunidadeVenda) {
+        this.oportunidadeVenda = oportunidadeVenda;
     }
 
     @Override
@@ -67,5 +70,29 @@ public class EMS2021Input extends IntegracaoDocumentMaster<EMS2021InputItem> imp
     @Override
     public boolean sameObject(IntegracaoDocumentMaster<?> docM) {
 	return false;
+    }
+
+    public String getCodigoDistribuidor() {
+        return codigoDistribuidor;
+    }
+
+    public void setCodigoDistribuidor(String codigoDistribuidor) {
+        this.codigoDistribuidor = codigoDistribuidor;
+    }
+
+    public String getCesta() {
+        return cesta;
+    }
+
+    public void setCesta(String cesta) {
+        this.cesta = cesta;
+    }
+
+    public Long getReparteMinimo() {
+        return reparteMinimo;
+    }
+
+    public void setReparteMinimo(Long reparteMinimo) {
+        this.reparteMinimo = reparteMinimo;
     }
 }

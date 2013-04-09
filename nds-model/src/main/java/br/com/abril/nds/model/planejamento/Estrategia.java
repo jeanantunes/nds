@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,7 +46,7 @@ public class Estrategia implements Serializable {
     @Column(name = "CESTA")
     private String cesta;
     
-    @OneToMany(mappedBy = "estrategia")
+    @OneToMany(mappedBy = "estrategia", cascade = {CascadeType.ALL})
     private List<EdicaoBaseEstrategia> basesEstrategia;
 
 	public Long getId() {

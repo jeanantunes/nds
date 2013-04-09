@@ -1,5 +1,7 @@
 package br.com.abril.nds.integracao.ems2021.processor;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,10 +22,12 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
-import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
-import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
-import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
+import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
+import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.EstrategiaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 
 public class EMS2021MessageProcessor extends AbstractRepository implements MessageProcessor {
 
@@ -32,162 +36,102 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
     @Autowired
     private NdsiLoggerFactory ndsiLoggerFactory;
 
+    @Autowired
+    private EstrategiaService estrategiaService;
+
+    @Autowired
+    private DistribuidorService distribuidorService;
+
+    @Autowired
+    private ProdutoEdicaoRepository produtoEdicaoRepository;
+
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
-
     }
 
     @Override
     public void processMessage(Message message) {
 
 	message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "Oracle : Icd : TH152 : icd_user");
-
 	CouchDbClient dbClient = null;
-
 	Connection connection = null;
-
 	EMS2021Input input = (EMS2021Input) message.getBody();
-
 	try {
-
-	    String codigoDistribuidor = distribuidorService.obter().getCodigoDistribuidorDinap();
-
 	    // Validar código do distribuidor:
-	    Distribuidor distribuidor = this.distribuidorService.obter();
+	    Distribuidor distribuidor = distribuidorService.obter();
 	    if (!distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor())) {
 		this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO,
 			"Código do distribuidor do arquivo não é o mesmo do Sistema.");
 		return;
 	    }
-
-	    dbClient = getCouchDBClient(codigoDistribuidor);
-
-	    ChamadaEncalheFornecedor ce = montarChamadaEncalheFornecedor(message, input);
-
-	    getSession().merge(ce);
+	    dbClient = getCouchDBClient(distribuidor.getCodigoDistribuidorDinap());
+	    Estrategia estrategia = montarEstrategia(message, input);
+	    getSession().merge(estrategia);
 	    getSession().flush();
-
 	} catch (Exception e) {
 	    LOGGER.error(e.getMessage(), e);
 	    message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), "Erro ao processar registro. " + e.getMessage());
 	} finally {
-
 	    if (connection != null) {
 		try {
 		    connection.close();
 		} catch (SQLException e) {
 		}
 	    }
-
 	    if (dbClient != null) {
 		dbClient.shutdown();
 	    }
 	}
-
     }
 
-    private ChamadaEncalheFornecedor montarChamadaEncalheFornecedor(Message message, EMS2021Input input) {
+    private Estrategia montarEstrategia(Message message, EMS2021Input input) {
 
-	ChamadaEncalheFornecedor ce = new ChamadaEncalheFornecedor();
+	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
+		    StringUtils.leftPad(input.getCodigoProduto(), 8, "0"), input.getNumeroEdicao());
 
-	ce.setNumeroChamadaEncalhe(input.getCePK().getNumeroChamadaEncalhe());
-	ce.setAnoReferencia(input.getDataAnoReferencia());
-	ce.setCodigoDistribuidor(Long.parseLong(input.getCodigoDistribuidor()));
-	ce.setCodigoPreenchimento(input.getCodigoPreenchimento());
-	ce.setDataEmissao(input.getDataEmissao());
-	ce.setDataVencimento(input.getDataLimiteRecebimento()); // TODO: Sérgio: verificar se a data esta correta
-	ce.setDataLimiteRecebimento(input.getDataLimiteRecebimento());
-	ce.setNotaValoresDiversos(input.getValorNotaValoresDiversos());
-	ce.setNumeroSemana(input.getNumeroSemanaReferencia());
-	ce.setStatus(input.getTipoStatus());
-	ce.setTipoChamadaEncalhe(input.getCodigoTipoChamadaEncalhe());
-	ce.setTotalCreditoApurado(input.getValorTotalCreditoApurado());
-	ce.setTotalCreditoInformado(input.getValorTotalCreditoInformado());
-	ce.setTotalMargemApurado(input.getValorTotalMargemApurado());
-	ce.setTotalMargemInformado(input.getValorTotalMargemInformado());
-	ce.setTotalVendaApurada(input.getValorTotalVendaApurada());
-	ce.setTotalVendaInformada(input.getValorTotalVendaInformada());
-
-	if (ce.getItens() == null && input.getItems().size() > 0) {
-	    ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
+	if (produtoEdicao == null) {
+	    this.ndsiLoggerFactory.getLogger().logError(
+		    message, EventoExecucaoEnum.RELACIONAMENTO,
+		    "Não foi possível incluir registro - Nenhum resultado encontrado para Produto/Edição: " + input.getCodigoProduto() + " e Edicao: "
+		    + input.getNumeroEdicao() + " no cadastro de edições do Novo Distrib");
 	}
-
-	montarItensChamadaEncalheFornecedor(message, input, ce);
-
-	return ce;
-
+	
+	Estrategia estrategia = new Estrategia();
+	estrategia.setAbrangencia(BigDecimal.valueOf(input.getAbrangencia()));
+	estrategia.setCesta(input.getCesta());
+	estrategia.setOportunidadeVenda(input.getOportunidadeVenda());
+	estrategia.setReparteMinimo(BigInteger.valueOf(input.getReparteMinimo()));
+	estrategia.setProdutoEdicao(produtoEdicao);
+	estrategia.setPeriodo(input.getPeriodo());
+	
+	if (estrategia.getBasesEstrategia() == null && input.getItems().size() > 0) {
+	    estrategia.setBasesEstrategia(new ArrayList<EdicaoBaseEstrategia>());
+	}
+	montarEdicoesBaseEstrategia(message, input, estrategia);
+	return estrategia;
     }
 
-    private void montarItensChamadaEncalheFornecedor(Message message, EMS2021Input input, ChamadaEncalheFornecedor ce) {
+    private void montarEdicoesBaseEstrategia(Message message, EMS2021Input input, Estrategia estrategia) {
 
 	for (EMS2021InputItem item : input.getItems()) {
 
-	    if (item.getLancamentoEdicaoPublicacao() == null
-		    || (item.getLancamentoEdicaoPublicacao() != null && item.getLancamentoEdicaoPublicacao().getCodigoPublicacao() == null)) {
-
-		this.ndsiLoggerFactory.getLogger().logError(
-			message,
-			EventoExecucaoEnum.SEM_DOMINIO,
-			"Não foi possível incluir registro - Dados incompletos vindos do Icd - Codigo Produto: " + "Chamada Encalhe: "
-				+ item.getCeItemPK().getNumeroChamadaEncalhe() + " Item Chamada Encalhe: " + item.getCeItemPK().getNumeroItem());
-		continue;
-
-	    }
-
-	    if (item.getLancamentoEdicaoPublicacao() != null && item.getLancamentoEdicaoPublicacao().getNumeroEdicao() == null) {
-
-		this.ndsiLoggerFactory.getLogger().logError(
-			message,
-			EventoExecucaoEnum.SEM_DOMINIO,
-			"Não foi possível incluir registro - Dados incompletos vindos do Icd - Numero edição: " + "Chamada Encalhe: "
-				+ item.getCeItemPK().getNumeroChamadaEncalhe() + " Item Chamada Encalhe: " + item.getCeItemPK().getNumeroItem());
-		continue;
-
-	    }
-
-	    String codigoProduto = item.getLancamentoEdicaoPublicacao().getCodigoPublicacao();
-
-	    Long numeroEdicao = item.getLancamentoEdicaoPublicacao().getNumeroEdicao().longValue();
-
 	    ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
-		    StringUtils.leftPad(codigoProduto, 8, "0"), numeroEdicao);
+		    StringUtils.leftPad(item.getCodigoProduto(), 8, "0"), item.getNumeroEdicao());
 
 	    if (produtoEdicao == null) {
 		this.ndsiLoggerFactory.getLogger().logError(
 			message,
 			EventoExecucaoEnum.RELACIONAMENTO,
-			"Não foi possível incluir registro - Nenhum resultado encontrado para Produto/Edição: " + codigoProduto + " e Edicao: "
-				+ numeroEdicao + " no cadastro de edições do Novo Distrib");
+			"Não foi possível incluir registro - Nenhum resultado encontrado para Produto/Edição: " + item.getCodigoProduto()
+				+ " e Edicao: " + item.getNumeroEdicao() + " no cadastro de edições do Novo Distrib");
 		continue;
 	    }
 
-	    ItemChamadaEncalheFornecedor ice = new ItemChamadaEncalheFornecedor();
-
-	    ice.setChamadaEncalheFornecedor(ce);
-	    ice.setNumeroItem(item.getCeItemPK().getNumeroItem());
-	    ice.setProdutoEdicao(produtoEdicao);
-	    ice.setControle(item.getNumeroControle());
-	    ice.setDataRecolhimento(item.getDataRecolhimento());
-	    ice.setRegimeRecolhimento(RegimeRecolhimento.getByCodigo(item.getCodigoRegimeRecolhimento()));
-	    ice.setDataRecolhimento(item.getDataRecolhimento());
-	    ice.setControle(item.getNumeroControle());
-	    ice.setNumeroDocumento(item.getNumeroDocumento());
-	    ice.setNumeroNotaEnvio(item.getNumeroNotaEnvio());
-	    ice.setPrecoUnitario(item.getValorPrecoUnitario());
-	    ice.setQtdeDevolucaoApurada(item.getQuantidadeDevolucaoApurada());
-	    ice.setQtdeDevolucaoInformada(item.getQuantidadeDevolucaoInformada());
-	    ice.setQtdeDevolucaoParcial(item.getQuantidadeDevolucaoParcial());
-	    ice.setQtdeEnviada(item.getQuantidadeEnviada());
-	    ice.setQtdeVendaApurada(item.getQuantidadeVendaApurada());
-	    ice.setQtdeVendaInformada(item.getQuantidadeVendaInformada());
-	    ice.setTipoProduto(item.getTipoProduto());
-	    ice.setStatus(item.getTipoStatus());
-	    ice.setValorMargemApurado(item.getValorMargemApurado());
-	    ice.setValorMargemInformado(item.getValorMargemInformado());
-	    ice.setValorVendaApurado(item.getValorVendaApurada());
-	    ice.setValorVendaInformado(item.getValorVendaInformada());
-	    // item.getCodigoLancamentoEdicao()
-	    ce.getItens().add(ice);
+	    EdicaoBaseEstrategia edicao = new EdicaoBaseEstrategia();
+	    edicao.setEstrategia(estrategia);
+	    edicao.setPeso(1);
+	    edicao.setProdutoEdicao(produtoEdicao);
+	    estrategia.getBasesEstrategia().add(edicao);
 	}
     }
 

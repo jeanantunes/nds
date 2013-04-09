@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -223,7 +224,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
     }
 
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia) {
-	estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, this.getUsuarioLogado());
+//	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(distribuicaoVendaMedia.get)
+//	estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia,  this.getUsuarioLogado());
     }
 
     public HttpSession getSession() {
