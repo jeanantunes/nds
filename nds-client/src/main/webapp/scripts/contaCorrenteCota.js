@@ -195,7 +195,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				value.cell.pendente = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'">' +
 					floatToPrice(formatMoneyValue(value.cell.pendente ? value.cell.pendente : '0,00')) +'</a></span>';
 				
-				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
+				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total) * -1);
 				value.cell.valorPago = floatToPrice(formatMoneyValue(value.cell.valorPago));
 				value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.saldo) * -1);
 				
