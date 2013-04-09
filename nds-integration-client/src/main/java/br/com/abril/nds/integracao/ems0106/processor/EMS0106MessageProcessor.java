@@ -46,7 +46,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 		String codigoPublicacao = input.getCodigoPublicacao();
 		Long edicao = input.getEdicao();
-			
+
 		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
 				edicao);
 		if (produtoEdicao == null) {
