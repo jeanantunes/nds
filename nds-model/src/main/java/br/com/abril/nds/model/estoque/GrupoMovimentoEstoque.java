@@ -160,7 +160,7 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Devolução de encalhe do distruibuidor para o fornecedor.
 	 */
-	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
+	DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_FORNECEDOR),
 	
 	/**
 	 * Estorno de encalhe vendido, devido a um cancelamento da venda.
