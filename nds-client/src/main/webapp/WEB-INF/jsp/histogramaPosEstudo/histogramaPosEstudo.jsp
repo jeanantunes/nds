@@ -90,7 +90,7 @@ $(function(){
 				        <td width="423" rowspan="4" valign="top"><!--<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>-->
 				          <!-- <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>-->
 				          <span class="bt_novos"><a href="javascript:;" id="alterarFaixaReparte"><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span>
-				          <span class="bt_novos"><a href="analise_2.htm"><img src="images/ico_redistribuicao_complementar.gif" alt="Análise" hspace="5" border="0" />Análise</a></span>
+				          <span class="bt_novos"><a href="javascript:;" id="analiseEstudo"><img src="images/ico_redistribuicao_complementar.gif" alt="Análise" hspace="5" border="0" />Análise</a></span>
 				          <span class="bt_novos"><a href="javascript:;" id="recalcularEstudo"><img src="images/ico_add_novo.gif" alt="Recalcular Estudo" hspace="5" border="0" />Recalcular Estudo</a></span>
 				          <!-- <span class="bt_novos"><a href="javascript:;"><img src="images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
 				          <span class="bt_novos"><a href="javascript:;" id="baseEstudo"><img src="images/ico_estudo_complementar.gif" alt="Divergências" hspace="5" border="0" />Base de estudo</a></span>

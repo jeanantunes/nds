@@ -119,7 +119,7 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append(" select ");
 		sql.append("   qtdCotasAtivas, ");
 		sql.append("   qtdCotasRecebemReparte, ");
-		sql.append("   qtdCotasAdicionadasPelaComplementarAutomatica ");
+		sql.append("   qtdCotasAdicionadasPelaComplementarAutomatica, ");
 		sql.append("   qtdReparteMinimoSugerido, ");
 		sql.append("   abrangenciaSugerida, ");
 		sql.append("   qtdReparteMinimoEstudo, ");
