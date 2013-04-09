@@ -1,8 +1,12 @@
 package br.com.abril.nds.integracao.ems2021.processor;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -11,6 +15,9 @@ import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
@@ -18,6 +25,7 @@ import br.com.abril.nds.model.integracao.icd.IcdEdicaoBaseEstrategia;
 import br.com.abril.nds.model.integracao.icd.IcdEstrategia;
 import br.com.abril.nds.repository.AbstractRepository;
 
+@Component
 public class EMS2021MessageProcessor extends AbstractRepository implements MessageProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EMS2021MessageProcessor.class);
@@ -27,6 +35,8 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 
     protected Session getSessionIcd() {
 
+	ApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring/applicationContext-ndsi-cli.xml");
+	applicationContext.getBean("dataSourceIcd");
 	Session session = null;
 	try {
 	    session = sessionFactoryIcd.getCurrentSession();
