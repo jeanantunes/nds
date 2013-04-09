@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -48,6 +49,7 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.PeriodoVO;
 
 @Repository
 public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository {
@@ -1347,27 +1349,54 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdMovimentoCotaPorTipoMovimento(java.util.Date, java.lang.Long, br.com.abril.nds.model.estoque.GrupoMovimentoEstoque)
 	 */
 	@Override
-	public BigInteger obterQtdMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
+	public Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(Intervalo<Date> periodo, Long idCota, GrupoMovimentoEstoque... grupoMovimentoEstoque){
 		
-		StringBuffer hql = new StringBuffer(" select sum(movimento.qtde) as quantidade ");
+		StringBuffer hql = new StringBuffer();
 		
-		hql.append(" from MovimentoEstoqueCota movimento");			
+		hql.append(" select sum( case when (movimento.tipoMovimento.grupoMovimentoEstoque = :rateio) ");
+		hql.append(	" 				then  movimento.qtde  ");
+		hql.append(" 			 	else  - movimento.qtde " );
+		hql.append("  			 end  ) as quantidade, ");
+		
+		hql.append(" produtoEdicao.id as idProdutoEdicao ");
+		
+		hql.append(" from MovimentoEstoqueCota movimento join movimento.produtoEdicao produtoEdicao ");			
 		
 		hql.append(" where movimento.cota.id = :idCota ");
 		
-		hql.append(" and movimento.data = :data ");
+		hql.append(" and movimento.data between :inicio and :fim ");
 		
-		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque  in(:grupoMovimentoEstoque) ");
+		
+		hql.append(" group by produtoEdicao.id ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		query.setParameter("data", data);
+		query.setParameter("inicio", periodo.getDe());
+		
+		query.setParameter("fim", periodo.getAte());
 		
 		query.setParameter("idCota", idCota);
 		
-		query.setParameter("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		query.setParameterList("grupoMovimentoEstoque", grupoMovimentoEstoque);
 		
-		return (BigInteger) query.uniqueResult();
+		query.setParameter("rateio",GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+		
+		@SuppressWarnings("unchecked")
+		List<Object[]> listaResultados = query.list();
+
+		Map<Long, BigInteger> mapResult = new HashMap<>();
+		
+		for (Object[] item : listaResultados) {
+
+			BigInteger quantidade = (BigInteger) item[0];
+			
+			Long id = (Long) item[1];
+			
+			mapResult.put(id,quantidade);
+		}
+		
+		return mapResult;
 		
 	}
 	
