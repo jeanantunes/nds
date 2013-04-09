@@ -5,7 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.AnaliticoEncalheVO;
+import br.com.abril.nds.client.vo.DigitacaoContagemDevolucaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
@@ -28,6 +31,7 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.CalendarioService;
@@ -37,7 +41,10 @@ import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -577,13 +584,32 @@ public class FechamentoEncalheController extends BaseController {
 		
 		Integer totalRegistro = fechamentoEncalheService.buscarTotalAnaliticoEncalhe(filtro);
 		
+		BigDecimal valorTotalAnalitico = fechamentoEncalheService.obterValorTotalAnaliticoEncalhe(filtro);
+		
+		if(valorTotalAnalitico == null) {
+			valorTotalAnalitico = BigDecimal.ZERO;
+		}
+		
 		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
 		
 		for (AnaliticoEncalheDTO dto : listDTO) {
 			listVO.add(new AnaliticoEncalheVO(dto));
 		}
 		
-		this.result.use(FlexiGridJson.class).from(listVO).total(totalRegistro).page(page).serialize();
+		TableModel<CellModelKeyValue<AnaliticoEncalheVO>> tableModel = new TableModel<CellModelKeyValue<AnaliticoEncalheVO>>();
+		
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listVO));
+		
+		tableModel.setTotal((totalRegistro!= null)? totalRegistro.intValue():0);
+		
+		tableModel.setPage(page);
+		
+		
+		this.result.use(CustomMapJson.class)
+		.put("tableModel", tableModel)
+		.put("valorTotalAnalitico", CurrencyUtil.formatarValor(valorTotalAnalitico))
+		.put("qtdCotas", ( (totalRegistro!= null)? totalRegistro.intValue():0) ).serialize();
+		
 	}
 	
 	
