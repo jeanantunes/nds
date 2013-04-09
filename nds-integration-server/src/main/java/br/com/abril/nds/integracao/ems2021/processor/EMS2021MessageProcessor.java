@@ -11,6 +11,7 @@ import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
@@ -18,6 +19,7 @@ import br.com.abril.nds.model.integracao.icd.IcdEdicaoBaseEstrategia;
 import br.com.abril.nds.model.integracao.icd.IcdEstrategia;
 import br.com.abril.nds.repository.AbstractRepository;
 
+@Component
 public class EMS2021MessageProcessor extends AbstractRepository implements MessageProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EMS2021MessageProcessor.class);
@@ -53,7 +55,9 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
     public void processMessage(Message message) {
 
 	CouchDbClient cdbc = null;
+	System.out.println(">>>>>>>>> inicio");
 	List<IcdEstrategia> estrategias = obterEstrategias();
+	System.out.println(">>>>>>>>> fim");
 	for (IcdEstrategia estrategia : estrategias) {
 	    try {
 		estrategia.setTipoDocumento("EMS2021");

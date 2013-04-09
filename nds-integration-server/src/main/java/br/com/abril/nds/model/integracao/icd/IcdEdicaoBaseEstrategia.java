@@ -1,11 +1,14 @@
 package br.com.abril.nds.model.integracao.icd;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
 public class IcdEdicaoBaseEstrategia {
 
+	@Id
+	private Long id;
     private String codigoProduto;
     private Long numeroEdicao;
     private Integer periodo;
@@ -37,4 +40,16 @@ public class IcdEdicaoBaseEstrategia {
     public void setPeso(Integer peso) {
         this.peso = peso;
     }
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public IcdEstrategia getEstrategia() {
+		return estrategia;
+	}
+	public void setEstrategia(IcdEstrategia estrategia) {
+		this.estrategia = estrategia;
+	}
 }
