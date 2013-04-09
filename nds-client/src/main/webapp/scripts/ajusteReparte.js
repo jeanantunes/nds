@@ -869,9 +869,9 @@ init : function() {
 			$("#AJUSTE_ENCALHE_MAX_editar_input").mask("99");
 			$("#AJUSTE_ENCALHE_MAX_editar_input").val("50");
 			
-			$("#AJUSTE_VENDA_MEDIA_input").mask("99.9");
-			$("#AJUSTE_VENDA_MEDIA_input").val("1.0");
-			$("#AJUSTE_VENDA_MEDIA_editar_input").mask("99.9");
+			$("#AJUSTE_VENDA_MEDIA_input").mask("99");
+			$("#AJUSTE_VENDA_MEDIA_input").val("01");
+			$("#AJUSTE_VENDA_MEDIA_editar_input").mask("9");
 			$("#AJUSTE_VENDA_MEDIA_editar_input").val("1.0");
 			
 			

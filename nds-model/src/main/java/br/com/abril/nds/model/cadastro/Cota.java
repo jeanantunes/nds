@@ -93,8 +93,8 @@ public class Cota implements Serializable {
 	@JoinColumn(name = "BOX_ID")
 	private Box box;
 	
-	@OneToOne(mappedBy="cota")
-	private RegistroCotaRegiao registroCotaRegiao;
+//	@OneToOne(mappedBy="cota")
+//	private RegistroCotaRegiao registroCotaRegiao;
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
 	@OneToMany(mappedBy = "cota")
@@ -577,14 +577,14 @@ public class Cota implements Serializable {
 	}
 
 
-	public RegistroCotaRegiao getRegistroCotaRegiao() {
-		return registroCotaRegiao;
-	}
-
-
-	public void setRegistroCotaRegiao(RegistroCotaRegiao registroCotaRegiao) {
-		this.registroCotaRegiao = registroCotaRegiao;
-	}
+//	public RegistroCotaRegiao getRegistroCotaRegiao() {
+//		return registroCotaRegiao;
+//	}
+//
+//
+//	public void setRegistroCotaRegiao(RegistroCotaRegiao registroCotaRegiao) {
+//		this.registroCotaRegiao = registroCotaRegiao;
+//	}
 
 
 	public List<RankingSegmento> getRankingSegmento() {
