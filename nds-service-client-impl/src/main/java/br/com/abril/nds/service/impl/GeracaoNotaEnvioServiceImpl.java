@@ -127,13 +127,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 
 	private List<ItemNotaEnvio> gerarItensNotaEnvio(
-			List<EstudoCota> listaEstudoCota, Cota cota, List<MovimentoEstoqueCota> listaMovimentoEstoqueCota) {
+			List<EstudoCota> listaEstudoCota, Cota cota, List<MovimentoEstoqueCota> listaMovimentoEstoqueCota,Intervalo<Date> periodo) {
 
 		List<ItemNotaEnvio> listItemNotaEnvio = new ArrayList<ItemNotaEnvio>();
 
 		gerarItensNEMovimento(listaMovimentoEstoqueCota, cota, listItemNotaEnvio);
 		
-		gerarItensNEEstudo(listaEstudoCota, cota, listItemNotaEnvio);
+		gerarItensNEEstudo(listaEstudoCota, cota, listItemNotaEnvio,periodo);
 		
 		sortItensByProdutoNome(listItemNotaEnvio);
 		
@@ -168,16 +168,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			itemNotaEnvio.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 			itemNotaEnvio.setPublicacao(produtoEdicao.getProduto().getNome());
 			
-			BigDecimal valorDesconto = itemNotaEnvio.getDesconto();
+			BigDecimal valorDesconto = BigDecimal.ZERO;
 			
-			if(valorDesconto == null) {
-			
-				Desconto desconto = 
-						descontoService.obterDescontoPorCotaProdutoEdicao(mec.getLancamento(), cota, produtoEdicao);
-				
-				valorDesconto = (desconto != null && desconto.getValor() != null) ? 
-						desconto.getValor() : BigDecimal.ZERO;
-			}
+			valorDesconto = obterValorDesconto(cota, mec, produtoEdicao,valorDesconto);
 			
 			itemNotaEnvio.setDesconto(valorDesconto);
 			
@@ -206,6 +199,27 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			listItemNotaEnvio.add(itemNotaEnvio);
 		}
 		
+	}
+
+	private BigDecimal obterValorDesconto(Cota cota, MovimentoEstoqueCota mec,
+			ProdutoEdicao produtoEdicao, BigDecimal valorDesconto) {
+		if(valorDesconto == null) {
+		
+			if(mec.getValoresAplicados()== null){
+
+				Desconto desconto = 
+						descontoService.obterDescontoPorCotaProdutoEdicao(mec.getLancamento(), cota, produtoEdicao);
+				
+				valorDesconto = (desconto != null && desconto.getValor() != null) ? 
+						desconto.getValor() : BigDecimal.ZERO;
+				
+			}
+			else{
+				
+				valorDesconto = mec.getValoresAplicados().getValorDesconto();
+			}	
+		}
+		return valorDesconto;
 	}
 
 	/**
@@ -240,12 +254,17 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * @param listItemNotaEnvio
 	 */
 	private void gerarItensNEEstudo(List<EstudoCota> listaEstudoCota,
-			Cota cota, List<ItemNotaEnvio> listItemNotaEnvio) {
+			Cota cota, List<ItemNotaEnvio> listItemNotaEnvio, Intervalo<Date> periodo) {
 		
 		if (listaEstudoCota == null || listaEstudoCota.isEmpty()){
 			
 			return;
 		}
+		
+		Map<Long, BigInteger> mapProdutos = 
+				this.movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(periodo,cota.getId(),
+																						  GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE,
+																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE); 
 		
 		for (EstudoCota estudoCota : listaEstudoCota) {
 
@@ -264,41 +283,27 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			for(RateioDiferenca rateioDiferenca : estudoCota.getRateiosDiferenca()) {
 				
-				for(MovimentoEstoqueCota mec : estudoCota.getMovimentosEstoqueCota()) {
+				if(rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)
+						|| rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_EM)) {
 					
-					if(mec.getEstudoCota().getId() == rateioDiferenca.getEstudoCota().getId()) {
-						
-						if(rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)
-								|| rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_EM)) {
-							
-							quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde().negate());
-							
-						} else {
-							
-							quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde());
-							
-						}
-					}
+					quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde().negate());
+					
+				} else {
+					
+					quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde());	
 				}
 			}
 
-			Date data = estudoCota.getEstudo().getLancamento().getDataLancamentoDistribuidor();
-			
-			Long idCota = cota.getId();
-			
-			BigInteger qtdEstorno = this.movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(data,idCota,GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
-			
-			BigInteger qtdRateio = this.movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(data,idCota,GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
-			
-			quantidadeResultante = quantidadeResultante.subtract((qtdEstorno==null)?BigInteger.ZERO: qtdEstorno);
-			
-			quantidadeResultante = quantidadeResultante.add( (qtdRateio== null)?BigInteger.ZERO: qtdRateio);
-			
+			quantidadeResultante = mapProdutos.get(estudoCota.getEstudo().getProdutoEdicao().getId());
 			
 			Desconto percentualDesconto = this.descontoService
 					.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo()
 							.getLancamento(), cota, produtoEdicao);
 
+			if(quantidadeResultante == null){
+				quantidadeResultante = BigInteger.ZERO;
+			}
+			
 			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva());
 
 			ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(
@@ -309,8 +314,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 							.getValor() != null) ? percentualDesconto
 							.getValor() : BigDecimal.ZERO), 
 					quantidade);
-			listItemNotaEnvio.add(itemNotaEnvio);
 			
+			listItemNotaEnvio.add(itemNotaEnvio);
 		}
 	}
 
@@ -435,7 +440,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 						listaIdFornecedores);
 
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(
-				listaEstudosCota, cota, listaMovimentoEstoqueCota);
+				listaEstudosCota, cota, listaMovimentoEstoqueCota,periodo);
 
 		if (listaItemNotaEnvio.isEmpty()) {
 
@@ -562,7 +567,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(idCota, periodo, listaIdFornecedores, 
 																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
-		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota);
+		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota,periodo);
 
 		if (listaItemNotaEnvio==null || listaItemNotaEnvio.isEmpty()) {
 
@@ -596,6 +601,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
 	
 			notaEnvio = notaEnvioRepository.merge(notaEnvio);
+			
+			notasEnvio.add(notaEnvio);
 		}
 	}
 	
