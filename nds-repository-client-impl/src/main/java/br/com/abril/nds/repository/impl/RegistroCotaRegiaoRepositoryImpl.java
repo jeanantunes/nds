@@ -56,6 +56,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		hql.append(" WHERE registroCotaRegiao.cota.id = estoqueProdutoCota.cota.id AND ");
 		hql.append(" registroCotaRegiao.regiao.id = :ID_REGIAO ");
 		hql.append(" group by cota.id ");
+		hql.append(" order by cota.numeroCota ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
