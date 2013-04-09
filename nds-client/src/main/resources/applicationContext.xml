@@ -16,9 +16,11 @@
      http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd">
 
 	<context:component-scan base-package="br.com.abril.nds" />
-			
-	<util:properties id="properties" location="classpath:/nds-client.properties" />
 	
+	<context:property-placeholder location="classpath:nds-client.properties" />
+			
+	<util:properties id="properties" location="classpath:nds-client.properties" />	
+		
 	<util:properties id="queries" location="classpath:/query.properties" />
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
