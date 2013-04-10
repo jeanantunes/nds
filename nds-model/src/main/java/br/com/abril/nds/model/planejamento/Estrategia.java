@@ -28,7 +28,8 @@ public class Estrategia implements Serializable {
     @Column(name = "ID")
     private Long id;
     
-    @Column(name = "PRODUTO_EDICAO_ID", nullable = false)
+	@ManyToOne
+    @JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
     private ProdutoEdicao produtoEdicao;
     
     @Column(name = "REPARTE_MINIMO")
@@ -46,7 +47,7 @@ public class Estrategia implements Serializable {
     @Column(name = "CESTA")
     private String cesta;
     
-    @OneToMany(mappedBy = "estrategia", cascade = {CascadeType.ALL})
+	@OneToMany(mappedBy = "estrategia", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private List<EdicaoBaseEstrategia> basesEstrategia;
 
 	public Long getId() {

@@ -131,9 +131,9 @@ $(function(){
                   <table width="240" border="0" cellpadding="2" cellspacing="1">
                       <tr>
                          <td width="52">Sugerido:</td>
-                        <td width="55"><input type="text" name="dataLcto5" id="sugeridoAbrang" style="width:35px; text-align:right;" /></td>
+                        <td width="55"><input type="text" name="dataLcto5" id="sugeridoAbrang" style="width:35px; text-align:left;" /></td>
                        <td width="45">Apurada:</td>
-                        <td width="35"><input type="text" name="dataLcto2" id="apuradaAbrang" style="width:35px; text-align:right;" /></td>
+                        <td width="35"><input type="text" name="dataLcto2" id="apuradaAbrang" style="width:35px; text-align:left;" /></td>
                       </tr>
                 </table>
     	</fieldset>
@@ -143,9 +143,9 @@ $(function(){
                   <table width="230" border="0" cellpadding="2" cellspacing="1">
                       <tr>
                         <td width="52">Sugerido:</td>
-                        <td width="55"><input type="text" name="dataLcto5" id="sugeridoMinimo" style="width:35px; text-align:right;" /></td>
+                        <td width="55"><input type="text" name="dataLcto5" id="sugeridoMinimo" style="width:35px; text-align:left;" /></td>
                         <td width="44">Estudo:</td>
-                        <td width="59"><input type="text" name="dataLcto5" id="estudoMinimo" style="width:35px; text-align:right;" /></td>
+                        <td width="59"><input type="text" name="dataLcto5" id="estudoMinimo" style="width:35px; text-align:left;" /></td>
                       </tr>
                 </table>
     	</fieldset>
@@ -169,17 +169,17 @@ $(function(){
        	    <table width="520" border="0" cellpadding="2" cellspacing="1">
                 <tr>
                   <td width="26">Total:</td>
-                  <td width="41"><input type="text" name="dataLcto3" id="dataLcto3" style="width:35px; text-align:right;" /></td>
+                  <td width="41"><input type="text" name="dataLcto3" id="reparteTotal" style="width:35px; text-align:left;" /></td>
                   <td width="55">Promocional:</td>
-                  <td width="41"><input type="text" name="dataLcto4" id="dataLcto4" style="width:35px; text-align:right;" /></td>
+                  <td width="41"><input type="text" name="dataLcto4" id="repartePromocional" style="width:35px; text-align:left;" /></td>
                   <td width="54">Distribuido:</td>
-                  <td width="35"><input type="text" name="dataLcto6" id="dataLcto6" style="width:35px; text-align:right;" /></td>
+                  <td width="35"><input type="text" name="dataLcto6" id="reparteDistribuido" style="width:35px; text-align:left;" /></td>
                   <td width="32">Sobra:</td>
-                  <td width="36"><input type="text" name="dataLcto5" id="dataLcto5" style="width:35px; text-align:right;" /></td>
+                  <td width="36"><input type="text" name="dataLcto5" id="sobra" style="width:35px; text-align:left;" /></td>
                   <td width="23">Vda:</td>
-                  <td width="44"><input type="text" name="dataLcto5" id="dataLcto5" style="width:35px; text-align:right;" /></td>
+                  <td width="44"><input type="text" name="dataLcto5" id="venda" style="width:35px; text-align:left;" /></td>
                   <td width="48" align="right">% Vda:</td>
-                  <td width="24"><input type="text" name="dataLcto5" id="dataLcto5" style="width:35px; text-align:right;" /></td>
+                  <td width="24"><input type="text" name="dataLcto5" id="porcentagemVenda" style="width:35px; text-align:left;" /></td>
               </tr>
             </table>
       </fieldset>
@@ -197,24 +197,24 @@ $(function(){
               <table width="320" border="0" cellpadding="2" cellspacing="1">
             <tr>
               <td width="99">Preço Capa R$:</td>
-              <td width="210"><input type="text" name="precoCapa" id="precoCapa" style="width:70px; text-align:right;" /></td>
+              <td width="210"><input type="text" name="precoCapa" id="precoCapa" style="width:70px; text-align:left;" /></td>
               </tr>
             <tr>
               <td>Pct. Padrão:</td>
-              <td><input type="text" name="pctPadrao" id="pctPadrao" style="width:60px;" /></td>
+              <td><input type="text" name="pctPadrao" id="pctPadrao" style="width:60px; text-align:left;" /></td>
               </tr>
             <tr>
 
               <td>Chamada Capa:</td>
-              <td><input type="text" name="chamadaCapa" id="chamadaCapa" style="width:200px;" /></td>
+              <td><input type="text" name="chamadaCapa" id="chamadaCapa" style="width:200px; text-align:left;" /></td>
               </tr>
             <tr>
               <td>Nome Comercial:</td>
-              <td><input type="text" name="nomeComercial" id="nomeComercial" style="width:200px;" /></td>
+              <td><input type="text" name="nomeComercial" id="nomeComercial" style="width:200px; text-align:left;" /></td>
               </tr>
             <tr>
               <td>Boletim Informativo:</td>
-              <td><textarea name="boletimInfor" rows="2" id="boletimInfor" style="width:200px;"></textarea></td>
+              <td><textarea name="boletimInfor" rows="2" id="boletimInfor" style="width:200px; text-align:left;"></textarea></td>
               </tr>
             </table>
    	      </fieldset>

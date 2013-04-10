@@ -150,7 +150,7 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 			}
 		}
 		
-		hql.append(" order by nomeUsuario");
+		hql.append(" order by tipoClassificacaoProduto.descricao");
 		
 		Query query = getSession().createQuery(hql.toString());
 		

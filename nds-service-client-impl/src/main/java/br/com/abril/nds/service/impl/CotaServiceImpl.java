@@ -16,14 +16,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.impl.Log4JLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +82,7 @@ import br.com.abril.nds.model.cadastro.SocioCota;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
@@ -152,6 +153,8 @@ import br.com.abril.nds.vo.ValidacaoVO;
  */
 @Service
 public class CotaServiceImpl implements CotaService {
+	
+	Logger log = LoggerFactory.getLogger(CotaServiceImpl.class);
 	
 	@Autowired
 	private SituacaoCotaService situacaoCotaService; 
@@ -2401,31 +2404,12 @@ public class CotaServiceImpl implements CotaService {
 		
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
-		for (PDV pdv: cota.getPdvs()) {
+		if (cota.getTipoDistribuicaoCota() == null) {
 			
-			if (pdv != null) {
-				
-				CaracteristicasPDV caracteristicasPDV = pdv.getCaracteristicas();
-				
-				if (caracteristicasPDV != null && caracteristicasPDV.isPontoPrincipal()) {
-					
-					SegmentacaoPDV segmentacaoPDV = pdv.getSegmentacao();
-					
-					if (segmentacaoPDV != null) {
-						
-						if (segmentacaoPDV.getTipoCaracteristica() != null &&
-								segmentacaoPDV.getTipoCaracteristica().equals(TipoCaracteristicaSegmentacaoPDV.CONVENCIONAL)) {
-							
-							return true;
-						}
-					}
-				}
-			}
-			
+			return false;
 		}
 		
-		
-		return false;
+		return cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL);
 	}
 
 	@Transactional(readOnly = true)
@@ -2541,52 +2525,37 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional
 	@Override
-	public void apagarTipoCota(Long idCota, String TipoCota){
-
-		Log4JLogger log =new Log4JLogger();
-		log.info(  "CotaServiceImpl.apagarTipoCota");
-
+	public void apagarTipoCota(Long idCota, String TipoCota) {
+		log.info("CotaServiceImpl.apagarTipoCota");
 		
 		if(idCota == null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada invÃ¡lida!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota informada inválida!");
 		}
 		
 		if (TipoCota==null || TipoCota.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Cota InvÃ¡lida");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de Cota inválida");
 		}
 		
-
-		
-
-	
 		try{	
-			
 			if(TipoCota.equalsIgnoreCase("A")){
 				mixCotaProdutoService.excluirMixPorCota(idCota);
 			}
-			
 
 			if(TipoCota.equalsIgnoreCase("C")){
 				fixacaoReparteService.excluirFixacaoPorCota(idCota);
 			}
-
-			
 			
 		}catch (RuntimeException e) {
 			
 			if( e instanceof org.springframework.dao.DataIntegrityViolationException){
-				throw new ValidacaoException(TipoMensagem.ERROR,"ExclusÃ£o nÃ£o permitida, registro possui dependÃªncias!");
+				throw new ValidacaoException(TipoMensagem.ERROR,"Exclusão não permitida, registro possui dependências!");
 			}
 		}
-			
-		
-		
 	}
 
 	@Override
 	public List<DistribuidorClassificacaoCota> obterListaClassificacao() {
-		Logger logger = Logger.getLogger(CotaServiceImpl.class.getName());
-		logger.info("-->CotaServiceImpl.obterListaClassificacao");
+		log.info("-->CotaServiceImpl.obterListaClassificacao");
 		return distribuidorClassificacaoCotaRepository.buscarTodos();
 	}
 

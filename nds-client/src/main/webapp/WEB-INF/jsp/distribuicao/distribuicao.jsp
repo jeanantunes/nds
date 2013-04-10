@@ -78,13 +78,13 @@
     			</table>
     			<!-- Entrega de Reparte de Venda -->
         		<input id="${param.tela}repPorPontoVenda" name="repPorPontoVenda" type="checkbox"  value="" style="margin-top:9px;" />
-        		<label for="${param.tela}entregaReparteVenda" style="width:190px;float:left;">Reparte por PDV</label>
+        		<label for="${param.tela}entregaReparteVenda" style="width:190px;float:left;">Entrega de Reparte de Venda</label>
 
          		<br clear="all" />
 
         		<!-- Solicitação Num. Atrasados -->
 				<input id="${param.tela}solNumAtras" name="solNumAtrs" type="checkbox" value="" style="margin-top:9px;"/>
-				<label for="${param.tela}solNumAtrs" style="width: 190px;">Solicitação Num. Atrasados - Internet</label>
+				<label for="${param.tela}solNumAtrs" style="width: 190px;">Solicitação N&ordm;. Atrasados - Internet</label>
 
          		<br clear="all" />
 
@@ -96,7 +96,7 @@
 				
 				<!-- Recebe Complementar -->
 				<input id="${param.tela}recebeComplementar"  name="recebeComplementar" type="checkbox" value="" style="margin-top:9px;" />
-				<label for="recebeComplementar" style="width: 190px;">Recebe Complementar</label> 
+				<label for="recebeComplementar" style="width: 190px;">Cota Recebe Complementar</label> 
 				
     		</td>
     		<td width="10" style="width:10px;">

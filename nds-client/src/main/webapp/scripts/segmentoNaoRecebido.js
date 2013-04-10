@@ -366,6 +366,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 										         
 										         segmentoNaoRecebidoController.carregarSelectComSegmentosParaInclusao();
  												 segmentoNaoRecebidoController.reloadFlexGrid("segmentosBGrid");
+ 												 segmentoNaoRecebidoController.reloadFlexGrid("segmentoCotaGrid");
 										    },
 											null,
 									        true);
@@ -536,15 +537,31 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 
 							data.push({
 							name : "idTipoSegmento",
-							value : $('#tipoSegmentoProduto option:selected',	segmentoNaoRecebidoController.workspace).val()
+							value : $('#tipoSegmentoProduto option:selected',segmentoNaoRecebidoController.workspace).val()
 						});
 						
-						this.sendPostJsonToController(
-								segmentoNaoRecebidoController.urlIncluirCotasSegmentoNaoRecebido,
-								data,
-								["segmentoNaoRecebidaGrid","segmentosGrid"],
-								this.callBackOnSucess
-						);
+							$( "#dialog-novo").dialog({
+								resizable: false,
+								height:170,
+								width:380,
+								modal: true,
+								buttons: {
+									"Confirmar": function() {
+										$( this ).dialog( "close" );
+										//$("#effect").show("highlight", {}, 1000, callback);
+										
+										segmentoNaoRecebidoController.sendPostJsonToController(
+												segmentoNaoRecebidoController.urlIncluirCotasSegmentoNaoRecebido,
+												data,
+												["segmentoNaoRecebidaGrid","segmentosGrid"],
+												segmentoNaoRecebidoController.callBackOnSucess
+										);
+									},
+									"Cancelar": function() {
+										$( this ).dialog( "close" );
+									}
+								}
+							});
 					},
 					
 					/**
@@ -602,6 +619,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 												params : segmentoNaoRecebidoController.getFiltroCota2ParaReload(),
 											});
 
+					        		segmentoNaoRecebidoController.limparFiltroCota2();
 									$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexReload();
 									
 								}else{
@@ -736,6 +754,16 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						$('.porCota').show();
 						$('.porSegmento').hide();
 						
+						if($("#numeroCotaFiltro1").val()=="" && $("#nomeCotaFiltro1").val()==""){						
+					           var erros = new Array();
+					           erros[0] = "Informe Cota/Nome para pesquisa.";
+					           exibirMensagemDialog('WARNING',   erros,"");                
+					           $("#numeroCotaFiltro1").val("");
+					           $("#nomeCotaFiltro1").val("");
+					           
+					           return;
+						   }
+						
 						segmentoNaoRecebidoController.popularSegmentosNaoRecebemCota();
 						segmentoNaoRecebidoController.popularSegmentosBGrid();
 						segmentoNaoRecebidoController.carregarSelectComSegmentosParaInclusao();
@@ -773,12 +801,30 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						$('.filtroPorCota').show();
 						$('.filtroPorSegmento').hide();
 						$('.porSegmento').hide();
+						segmentoNaoRecebidoController.limparFiltroSegmento();
 					},
 					
 					filtroPorSegmento : function (){
 						$('.filtroPorCota').hide();
 						$('.filtroPorSegmento').show();
 						$('.porCota').hide();
+						segmentoNaoRecebidoController.limparFiltroCota();
+					},
+					
+					
+					limparFiltroSegmento : function(){
+						$("#tipoSegmentoProduto").val("");
+						$('#cotasAtivas').attr('checked', true);
+					},
+					
+					limparFiltroCota : function(){
+						$("#numeroCotaFiltro1").val("");
+						$("#nomeCotaFiltro1").val("");
+					},
+					
+					limparFiltroCota2 : function(){
+						$("#numeroCotaFiltro2").val("");
+						$("#nomeCotaFiltro2").val("");
 					},
 					
 					// Processa e apresenta ao usuário as mensagens de erro, sucesso

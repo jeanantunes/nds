@@ -1,7 +1,6 @@
 <%--
  --%>
- <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+ <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <script language="javascript">
 $(function() {
 		$( "#tab-distribuicao" ).tabs();
@@ -320,7 +319,7 @@ function esconde_redutor(){
                           </tr>
                           <tr>
                             <td width="110">Código</td>
-                            <td>${ produtoEdicao.codigoProduto }</td>
+                            <td id="codigoProduto">${ produtoEdicao.codigoProduto }</td>
                           </tr>
                           <tr>
                             <td>Edição:</td>
@@ -631,25 +630,45 @@ function esconde_redutor(){
        	  <legend>Estratégia</legend>
           <table width="270" border="0" cellspacing="2" cellpadding="0">
   <tr>
-    <td width="219">Veja - Edição: 021</td>
+    <td width="219">${ produtoEdicao.nomeProduto } - Edição: ${ produtoEdicao.numeroEdicao }</td>
     <td width="28">Capa:</td>
-    <td width="15"><a href="javascript:;" onmouseover="popup_detalhes();" onmouseout="popup_detalhes_close();"><img src="images/ico_detalhes.png" alt="Capa" width="15" height="15" border="0" /></a></td>
+    <td width="15"><a href="javascript:;" onmouseover="distribuicaoVendaMedia.popup_detalhes('${ produtoEdicao.codigoProduto }','${ produtoEdicao.numeroEdicao }');" onmouseout="popup_detalhes_close();"><img src="images/ico_detalhes.png" alt="Capa" width="15" height="15" border="0" /></a></td>
   </tr>
 </table>
-<p><strong>Período:</strong> 1</p>
-<p><strong>Chamada de Capa:</strong> Os Segredos de Valério</p>
+<p><strong>Período:</strong> ${ estrategia.periodo }</p>
+<p><strong>Chamada de Capa:</strong> ${ estrategia.produtoEdicao.chamadaCapa }</p>
 
 
-        <table class="estrategiaGrid"></table>
+        <table class="estrategiaGrid">
+        	<c:forEach var="estrategiaEdicao" items="${ estrategia.basesEstrategia }">
+        		<tr>
+        			<td>
+        				${ estrategiaEdicao.produtoEdicao.produto.codigo }
+        			</td>
+        			<td>
+        				${ estrategiaEdicao.produtoEdicao.produto.nome }
+        			</td>
+        			<td>
+        				${ estrategiaEdicao.produtoEdicao.numeroEdicao }
+        			</td>
+        			<td>
+        				${ estrategiaEdicao.periodo }
+        			</td>
+        			<td>
+        				${ estrategiaEdicao.produtoEdicao.peso }
+        			</td>
+        		</tr>
+        	</c:forEach>
+        </table>
         <br />
 
 
-          <p><strong>Reparte Mánimo:</strong> 02</p>
+          <p><strong>Reparte Mánimo:</strong> ${ estrategia.reparteMinimo }</p>
 
-          <p><strong>Abrangência:</strong> 60%</p>
+          <p><strong>Abrangência:</strong> ${ estrategia.abrangencia }%</p>
           
         <p><strong>Oportunidade de Venda:</strong></p>
-          <textarea cols="30" rows="6"></textarea>
+          <textarea cols="30" rows="6" >${ estrategia.oportunidadeVenda }</textarea>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
