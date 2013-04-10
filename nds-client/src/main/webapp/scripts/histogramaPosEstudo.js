@@ -60,6 +60,17 @@ var histogramaPosEstudoController = $.extend(true, {
 		
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
+			
+			//TODO As telas de analise estão com erro, validar este direcionamento após correções.
+			var urlAnalise;
+			if ($('#parcial').val() === 'true') {
+				urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
+			} else {
+				urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
+			}
+			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
+			
+			/*
 			$('#workspace').tabs('addTab', 'Análise de Estudos', contextPath + '/distribuicao/analiseEstudo');
 			$('#workspace').tabs({load : function(event, ui) {
 				
@@ -68,7 +79,7 @@ var histogramaPosEstudoController = $.extend(true, {
 				
 				$('#workspace').tabs({load : function(event, ui) {}});
 			}});
-			
+			*/
 		});
 		
 		// RECALCULAR ESTUDO - EMS 2025 - Distribuição Venda Média
@@ -453,6 +464,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					 $('#segmentoFs').html(jsonData.tipoSegmentoProduto.descricao);
 					 $('#codigoEstudoFs').html(jsonData.estudo);
 					 $('#periodoFs').html(jsonData.periodicidadeProduto);
+					 $('#parcial').val(jsonData.parcial);
 
 					 if (jsonData.estudoLiberado) {
 						 $('#estudoLiberadoFs').show();
@@ -594,7 +606,7 @@ var histogramaPosEstudoController = $.extend(true, {
 			
 			faixaReparteGrid.addTableModel(faixaReparteGrid.tableModel);
 		}else {
-			exibirMensagem("WARNING", ["deve existir pelo menos uma faixa."]);
+			exibirMensagem("WARNING", ["Deve existir pelo menos uma faixa."]);
 		}
 	},
 	
