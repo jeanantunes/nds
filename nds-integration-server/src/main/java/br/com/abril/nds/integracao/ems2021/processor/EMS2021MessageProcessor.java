@@ -97,8 +97,8 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
 	sql.append("  JOIN PUBLICACAO_DINAP PD ON PD.COD_PUBLICACAO = LEP.COD_PUBLICACAO ");
 	sql.append("  JOIN ESTRATEGIA_LANCTO_PRACA ELP ON ELP.COD_ESTRATEGIA = EMD.COD_ESTRATEGIA ");
 	sql.append("   AND ELP.COD_LANCTO_EDICAO = LEP.COD_LANCTO_EDICAO ");
-	sql.append("  JOIN PRACA P ON P.COD_PRACA = ELP.COD_PRACA AND P.IND_PRACA_ATIVA = 'S' AND P.COD_DISTRIBUIDOR = 6248116 ");
-	sql.append(" WHERE (EMD.DAT_ALT > (SYSDATE - 80) OR EMD.DAT_INC > (SYSDATE - 80)) ");
+	sql.append("  JOIN PRACA P ON P.COD_PRACA = ELP.COD_PRACA AND P.IND_PRACA_ATIVA = 'S' ");
+	sql.append(" WHERE (EMD.DAT_ALT > (SYSDATE - 5) OR EMD.DAT_INC > (SYSDATE - 5)) ");
 
 	Query query = getSessionIcd().createSQLQuery(sql.toString()).addEntity(IcdEstrategia.class);
 	return query.list();
