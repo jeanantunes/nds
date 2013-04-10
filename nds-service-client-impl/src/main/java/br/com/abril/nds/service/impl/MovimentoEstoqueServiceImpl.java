@@ -401,11 +401,17 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 				case DEVOLUCAO_FORNECEDOR:
 	
-					 BigInteger qtdeFornecedor = estoqueProduto.getQtdeDevolucaoFornecedor() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoFornecedor();
+					 BigInteger qtdeDevolucaoFornecedor = estoqueProduto.getQtdeDevolucaoFornecedor() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoFornecedor();
 	
-					 novaQuantidade = isOperacaoEntrada ? qtdeFornecedor.add(movimentoEstoque.getQtde()) :
-						 							      qtdeFornecedor.subtract(movimentoEstoque.getQtde());
+					 novaQuantidade = isOperacaoEntrada ? qtdeDevolucaoFornecedor.add(movimentoEstoque.getQtde()) :
+						 qtdeDevolucaoFornecedor.subtract(movimentoEstoque.getQtde());
+					 
+					 BigInteger qtdeDevolucaoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
 	
+					 qtdeDevolucaoEncalhe = qtdeDevolucaoEncalhe.subtract(movimentoEstoque.getQtde());
+					 
+					 estoqueProduto.setQtdeDevolucaoEncalhe(qtdeDevolucaoEncalhe);
+					 
 					 estoqueProduto.setQtdeDevolucaoFornecedor(novaQuantidade);
 	
 					 break;
