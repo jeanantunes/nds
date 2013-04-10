@@ -13,27 +13,28 @@ import br.com.abril.nds.integracao.model.canonic.InterfaceEnum;
 @Component
 @Scope("prototype")
 public class EMS2021Route extends CouchDBImportRouteTemplate {
+	
+	@Autowired
+	private EMS2021MessageProcessor messageProcessor;
 
-    @Autowired
-    private EMS2021MessageProcessor messageProcessor;
+	@Override
+	public InterfaceEnum getInterfaceEnum() {
+		return InterfaceEnum.EMS2021;
+	}
 
-    @Override
-    public String getUri() {
-	return "EMS2021";
-    }
+	@Override
+	public String getUri() { 
+		return "EMS2021";
+	}
 
-    @Override
-    public MessageProcessor getMessageProcessor() {
-	return messageProcessor;
-    }
+	@Override
+	public MessageProcessor getMessageProcessor() {
+		return this.messageProcessor;
+	}
 
-    @Override
-    public RouteInterface getRouteInterface() {
-	return RouteInterface.EMS2021;
-    }
+	@Override
+	public RouteInterface getRouteInterface() {
+		return RouteInterface.EMS2021;
+	}
 
-    @Override
-    public InterfaceEnum getInterfaceEnum() {
-	return InterfaceEnum.EMS2021;
-    }
 }
