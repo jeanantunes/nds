@@ -73,18 +73,6 @@ function PesquisaCota(workspace) {
 		}
 	},
 	
-	//Success callback para pesquisa por nome da cota
-	this.pesquisarPorNomeSuccessCallBack = function(result, idCampoNumeroCota, successCallBack) {
-
-		pesquisaCota.pesquisaRealizada = true;
-		
-		$(idCampoNumeroCota, pesquisaCota.workspace).val(result.numero);
-		
-		if (successCallBack) {
-			
-			successCallBack(result);
-		}
-	},
 	
 	//Error callback para pesquisa por número da cota
 	this.pesquisarPorNumeroErrorCallBack = function(idCampoNumeroCota, errorCallBack) {
@@ -99,18 +87,6 @@ function PesquisaCota(workspace) {
 		}
 	},
 	
-	//Error callback para pesquisa por nome da cota
-	this.pesquisarPorNomeErrorCallBack = function(idCampoNomeCota, errorCallBack) {
-		
-		$(idCampoNomeCota, pesquisaCota.workspace).val("");
-		
-		$(idCampoNomeCota, pesquisaCota.workspace).focus();
-		
-		if (errorCallBack) {
-			
-			errorCallBack();
-		}
-	},
 	
 	//Busca dados para o auto complete do nome da cota
 	this.autoCompletarPorNome = function(idCampoNomeCota, isFromModal) {
@@ -168,7 +144,7 @@ function PesquisaCota(workspace) {
 	//Pesquisar por nome da cota
 	this.pesquisarPorNomeCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
 		
-		setTimeout(function() { clearInterval(pesquisaCota.intervalo); }, 10 * 3000);
+		setTimeout(function() { clearInterval(pesquisaCota.intervalo); }, 10 * 1000);
 		
 		pesquisaCota.intervalo = $().interval(function() {
 			
@@ -192,8 +168,6 @@ function PesquisaCota(workspace) {
 		
 		clearInterval(pesquisaCota.intervalo);
 		
-		pesquisaCota.pesquisaRealizada = true;
-		
 		var nomeCota = $(idCampoNomeCota, pesquisaCota.workspace).val();
 		
 		nomeCota = $.trim(nomeCota);
@@ -210,6 +184,7 @@ function PesquisaCota(workspace) {
 
 						if (pesquisaCota.numeroCotaSelecionada){
 							
+							pesquisaCota.pesquisaRealizada = true;
 							$(idCampoNumeroCota, pesquisaCota.workspace).val(pesquisaCota.numeroCotaSelecionada);
 						}
 					}

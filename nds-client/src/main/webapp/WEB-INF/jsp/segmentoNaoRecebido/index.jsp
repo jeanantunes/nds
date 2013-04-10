@@ -166,7 +166,8 @@
             <tr>
            	  <td width="60">Segmento:</td>
               <td width="210">
-              	<input name="lstSegmento" type="text" onkeyup="segmentoNaoRecebidoController.autoCompletarSegmentoPorNome('#lstSegmento')"  style="width:200px;" id="lstSegmento"/>
+              	<input name="lstSegmento" type="text" onkeyup="segmentoNaoRecebidoController.autoCompletarSegmentoPorNome('#lstSegmento')"  
+              	onblur="segmentoNaoRecebidoController.porSegmento();" style="width:200px;" id="lstSegmento"/>
               </td>
             </tr>
           </table>
