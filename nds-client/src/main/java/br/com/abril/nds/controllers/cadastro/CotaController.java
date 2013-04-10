@@ -841,7 +841,7 @@ public class CotaController extends BaseController {
 		logger.info("-->CotaController.apagarTipoCota");
 		cotaService.apagarTipoCota(idCota,  tipoCota);
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Mix da Cota Apagados com sucesso!!"),
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Mix da Cota Apagados com sucesso!"),
 				Constantes.PARAM_MSGS).recursive().serialize();
 	
 		
