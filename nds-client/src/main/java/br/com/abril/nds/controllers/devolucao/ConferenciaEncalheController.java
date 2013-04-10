@@ -82,6 +82,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
 	private static final String CONF_IMPRESSAO_ENCALHE_COTA = "configImpressaoEncalheCota";
+	private static final String TIPO_DOCUMENTO_IMPRESSAO_ENCALHE = "tipo_documento_impressao_encalhe";
 	
 	private static final String INFO_CONFERENCIA = "infoCoferencia";
 	
@@ -1019,7 +1020,7 @@ public class ConferenciaEncalheController extends BaseController {
 	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) throws Exception {
 		
 		try {
-				
+			String tipoDocumentoImpressao = null;
 			Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
 			
 			boolean isUtilizaBoleto = dtoDoc.isUtilizaBoleto();
@@ -1028,7 +1029,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			
-			Map<String, Object> mapFileNameFile = new HashMap<String, Object>();
+			Map<String, byte[]> mapFileNameFile = new HashMap<String, byte[]>();
 			
 			if(dtoDoc.isUtilizaBoletoSlip()) {
 					
@@ -1047,12 +1048,15 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				byte[] arquivo = PDFUtil.mergePDFs(arquivos);
 				mapFileNameFile.put("arquivos_cobranca_boleto_slip.pdf", arquivo);
+				
+				tipoDocumentoImpressao="Boleto+Slip";
 					
 			}else if(isUtilizaSlip && !isUtilizaBoleto){//Ã© slip sem boleto
 
 				//Imprime apenas SLIP txt, dados para matricial.
-				String slipMatricial = conferenciaEncalheService.gerarSlipMatricial(idControleConferenciaEncalheCota, true);
+				byte[] slipMatricial = conferenciaEncalheService.gerarSlipMatricial(idControleConferenciaEncalheCota, true);
 				mapFileNameFile.put("arquivo_cobranca_matricial", slipMatricial);
+				tipoDocumentoImpressao="SlipMatricial";
 			}else {
 				
 				arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
@@ -1078,8 +1082,11 @@ public class ConferenciaEncalheController extends BaseController {
 						mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
 					}
 				} 
+				
+				tipoDocumentoImpressao="Boleto";
 			}
 
+			this.session.setAttribute(TIPO_DOCUMENTO_IMPRESSAO_ENCALHE, tipoDocumentoImpressao);
 			this.session.setAttribute(CONF_IMPRESSAO_ENCALHE_COTA, dtoDoc);
 			this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, mapFileNameFile);
 			
@@ -1093,7 +1100,7 @@ public class ConferenciaEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
 	public void imprimirDocumentosCobranca() throws IOException{
 		
-		Map<String, Object> arquivos = (Map<String, Object>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+		Map<String, byte[]> arquivos = (Map<String, byte[]>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
 		DadosDocumentacaoConfEncalheCotaDTO dtoDoc = (DadosDocumentacaoConfEncalheCotaDTO) this.session.getAttribute(CONF_IMPRESSAO_ENCALHE_COTA);
 		
 		byte[] fileBytes = null;
@@ -1103,13 +1110,13 @@ public class ConferenciaEncalheController extends BaseController {
 			String keyName = arquivos.keySet().iterator().next();
 			if (arquivos.size() > 1){
 				
-				fileBytes  = ZipFileUtil.getZipFile(keyName, (byte[])arquivos.get(keyName));
+				fileBytes  = ZipFileUtil.getZipFile(arquivos);
 				fileName = "arquivos_cobranca.zip";
 				this.escreverArquivoParaResponse(fileBytes, fileName);
 			} else {
 				
 				if(dtoDoc.isUtilizaSlip() && !dtoDoc.isUtilizaBoleto()){//é slip txt sem boleto
-					result.use(PlainJSONSerialization.class).from(arquivos.get(keyName), "resultado").serialize();
+					result.use(PlainJSONSerialization.class).from(new String(arquivos.get(keyName)), "resultado").serialize();
 				}else{
 					fileName  = arquivos.keySet().iterator().next();
 					fileBytes = (byte[])arquivos.get(keyName);
@@ -1262,6 +1269,7 @@ public class ConferenciaEncalheController extends BaseController {
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
+			dados.put(TIPO_DOCUMENTO_IMPRESSAO_ENCALHE, session.getAttribute(TIPO_DOCUMENTO_IMPRESSAO_ENCALHE));
 			
 			if(dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca()!=null) {
 				

@@ -573,8 +573,14 @@ var ConferenciaEncalhe = $.extend(true, {
 					if(result.tipoMensagem == 'SUCCESS') {
 						
 						if(result.indGeraDocumentoConfEncalheCota == true) {
-
-							ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(result.tiposDocumento);
+							console.log("tipo_documento_impressao_encalhe "+result.tipo_documento_impressao_encalhe)
+							
+							if(result.tipo_documento_impressao_encalhe == "SlipMatricial"){
+								ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(result.tipo_documento_impressao_encalhe);
+							}else{
+								var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
+								$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
+							}
 							
 						}
 						
@@ -866,6 +872,7 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
+		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
 				null,
 				function(resultado){
@@ -882,7 +889,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		); 
 		
 		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
-		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
+		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);
 	},
 	
 	carregarGridItensNotaFiscal : function (modeloConferenciaEncalhe) {
