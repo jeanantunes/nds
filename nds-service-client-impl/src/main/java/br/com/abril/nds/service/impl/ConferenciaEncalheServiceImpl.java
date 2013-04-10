@@ -2801,7 +2801,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional
-	public String gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
+	public byte[] gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
 		setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
 		
 		return gerarSlipTxtMatricial();
@@ -3078,7 +3078,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 	
-	public String gerarSlipTxtMatricial(){
+	public byte[] gerarSlipTxtMatricial(){
 		
 		StringBuffer sb = new StringBuffer();
 		EmissorNotaFiscalMatricial e = new EmissorNotaFiscalMatricial(sb);
@@ -3169,11 +3169,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape(9);//Espaços fim da impressao
 		
 		String saida = sb.toString();
-//		System.out.println("SAIDA SERVICE\n\n");
-//        System.out.println(saida);
-        
 		
-		return saida;
+		return saida.getBytes();
 	}
 
 	private byte[] gerarSlipPDF() {

@@ -242,7 +242,7 @@ public interface ConferenciaEncalheService {
 	 * @param incluirNumeroSlip
 	 * @return
 	 */
-	public String gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+	public byte[] gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
 	
 	/**
 	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota
