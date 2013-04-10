@@ -1352,7 +1352,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
 		);
 			
-		this.movimentoFinanceiroCotaService.removerPostergadosDia(idCota, listaPostergados);
+		this.movimentoFinanceiroCotaService.removerPostergadosDia(
+				idCota, listaPostergados, 
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 	}
 	
 	private void removerItensConferenciaEncallhe(Set<Long> listaIdConferenciaEncalheParaExclusao) {
