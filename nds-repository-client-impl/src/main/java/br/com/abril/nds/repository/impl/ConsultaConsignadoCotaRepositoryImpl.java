@@ -65,17 +65,22 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		   
 		hql.append(createFromConsultaConsignadoCota(filtro));
 		
-		if (	filtro.getPaginacao().getSortColumn() != null && 
+		if(filtro.getPaginacao()!=null){
+			
+			if (filtro.getPaginacao().getSortColumn() != null && 
 				!filtro.getPaginacao().getSortColumn().trim().isEmpty()) {
-			hql.append(" ORDER BY ");
-			hql.append(filtro.getPaginacao().getSortColumn());		
-		
-			if ( filtro.getPaginacao().getOrdenacao() != null ) {
-				hql.append(" ");
-				hql.append( filtro.getPaginacao().getOrdenacao().toString());
+				
+				hql.append(" ORDER BY ");
+				hql.append(filtro.getPaginacao().getSortColumn());		
+			
+				if ( filtro.getPaginacao().getOrdenacao() != null ) {
+					
+					hql.append(" ");
+					hql.append( filtro.getPaginacao().getOrdenacao().toString());
+				}
 			}
 		}
-
+		
 		Query query =  getSession().createQuery(hql.toString());
 		
 		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
@@ -91,11 +96,14 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
-		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		if(filtro.getPaginacao()!=null){
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
 		return query.list();
 				
