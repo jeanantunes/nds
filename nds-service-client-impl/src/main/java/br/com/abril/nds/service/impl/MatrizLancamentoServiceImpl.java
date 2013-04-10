@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -542,6 +541,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		balanceamentoLancamento.setDataLancamento(
 			dadosBalanceamentoLancamento.getDataLancamento());
 		
+		balanceamentoLancamento.setDatasExpedicaoConfirmada(
+			dadosBalanceamentoLancamento.getDatasExpedicaoConfirmada());
+		
 		return balanceamentoLancamento;
 	}
 	
@@ -577,7 +579,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			this.processarProdutosLancamentoNaoBalanceaveis(matrizLancamento,
 															dadosBalanceamentoLancamento);
 		
-		Set<Date> datasConfirmadas = this.obterDatasConfirmadas(matrizLancamento);
+		Set<Date> datasConfirmadas =
+			this.obterDatasConfirmadas(
+				matrizLancamento, dadosBalanceamentoLancamento.getDatasExpedicaoConfirmada());
 		
 		TreeSet<Date> datasDistribuicao =
 			this.obterDatasDistribuicao(dadosBalanceamentoLancamento, datasConfirmadas);
@@ -628,7 +632,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		return matrizLancamento;
 	}
 
-	private Set<Date> obterDatasConfirmadas(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
+	private Set<Date> obterDatasConfirmadas(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+											Set<Date> datasExpedicaoConfirmada) {
 		
 		Set<Date> datasConfirmadas = new TreeSet<>();
 		
@@ -648,6 +653,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				}
 			}
 		}
+		
+		datasConfirmadas.addAll(datasExpedicaoConfirmada);
 		
 		return datasConfirmadas;
 	}
@@ -747,7 +754,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		List<ProdutoLancamentoDTO> produtosLancamentoNaoProcessados = new ArrayList<>();
 		
-		Set<Date> datasConfirmadas = this.obterDatasConfirmadas(matrizLancamento);
+		Set<Date> datasConfirmadas =
+			this.obterDatasConfirmadas(
+				matrizLancamento, dadosLancamentoBalanceamento.getDatasExpedicaoConfirmada());
 		
 		TreeSet<Date> datasDistribuicao =
 			this.obterDatasDistribuicao(dadosLancamentoBalanceamento, datasConfirmadas);
@@ -1363,6 +1372,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		dadosBalanceamentoLancamento.setDataLancamento(dataLancamento);
 		
+		Set<Date> datasExpedicaoConfirmada =
+			this.lancamentoRepository.obterDatasLancamentosExpedidos(periodoDistribuicao);
+		
+		dadosBalanceamentoLancamento.setDatasExpedicaoConfirmada(datasExpedicaoConfirmada);
+		
 		return dadosBalanceamentoLancamento;
 	}
 
@@ -1469,32 +1483,32 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 	
 	@Transactional(readOnly=true)
-	public List<ConfirmacaoVO> obterDatasConfirmacao(List<ProdutoLancamentoDTO> produtosLancamento) {
+	public List<ConfirmacaoVO> obterDatasConfirmacao(BalanceamentoLancamentoDTO balanceamentoLancamento) {
+		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+			balanceamentoLancamento.getMatrizLancamento();
+		
+		Set<Date> datasConfirmacao = balanceamentoLancamento.getMatrizLancamento().keySet();
+		
+		Set<Date> datasExpedicaoConfirmada = balanceamentoLancamento.getDatasExpedicaoConfirmada();
+		
+		Set<Date> datasConfirmadas =
+			this.obterDatasConfirmadas(matrizLancamento, datasExpedicaoConfirmada);
+		
+		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new TreeMap<Date, Boolean>();
+
+		for (Date dataConfirmacao : datasConfirmacao) {
+			mapaDatasConfirmacaoOrdenada.put(dataConfirmacao, false);	
+		}
+		
+		for (Date dataConfirmada : datasConfirmadas) {
+			mapaDatasConfirmacaoOrdenada.put(dataConfirmada, true);	
+		}
 		
 		List<ConfirmacaoVO> confirmacoesVO = new ArrayList<ConfirmacaoVO>();
 
-		Map<Date, Boolean> mapaDatasConfirmacaoOrdenada = new LinkedHashMap<Date, Boolean>();
-
-		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
-
-			Date novaData = produtoLancamento.getNovaDataLancamento();
-			
-			boolean confirmado =
-				(produtoLancamento.isBalanceamentoConfirmado()
-					&& (produtoLancamento.getDataLancamentoDistribuidor()
-							.compareTo(novaData) == 0));
-			
-			if (mapaDatasConfirmacaoOrdenada.get(novaData) != null
-					&& !mapaDatasConfirmacaoOrdenada.get(novaData)) {
-				
-				continue;
-			}
-			
-			mapaDatasConfirmacaoOrdenada.put(novaData, confirmado);
-		}
-
 		Set<Entry<Date, Boolean>> entrySet = mapaDatasConfirmacaoOrdenada.entrySet();
-
+		
 		for (Entry<Date, Boolean> item : entrySet) {
 			
 			boolean dataConfirmada = item.getValue();
@@ -1507,7 +1521,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 	
 	@Transactional
-	public void voltarConfiguracaoInicial(Date dataLancamento, TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento) {
+	public void voltarConfiguracaoInicial(Date dataLancamento, BalanceamentoLancamentoDTO balanceamentoLancamento) {
 		
 		if (dataLancamento == null) {
 			
@@ -1523,7 +1537,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		Intervalo<Date> periodoDistribuicao = 
 			this.getPeriodoDistribuicao(codigoDiaSemana, dataLancamento, numeroSemana);
 		
-		Set<Date> datasConfirmadas = this.obterDatasConfirmadas(matrizLancamento);
+		Set<Date> datasConfirmadas =
+			this.obterDatasConfirmadas(balanceamentoLancamento.getMatrizLancamento(),
+									   balanceamentoLancamento.getDatasExpedicaoConfirmada());
 		
 		this.voltarConfiguracaoInicialLancamentosPrevistos(periodoDistribuicao, datasConfirmadas);
 		
@@ -1538,7 +1554,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		for (Lancamento lancamento : lancamentos) {
 			
-			//TODO: o trecho abaixo será retirado no momento da CR para inclusão de botão de salva na matriz.
+			//TODO: o trecho abaixo será retirado no momento da CR para inclusão de botão de salvar na matriz.
 			
 //			if (lancamento.getNumeroReprogramacoes() == null
 //					|| lancamento.getNumeroReprogramacoes() < Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
