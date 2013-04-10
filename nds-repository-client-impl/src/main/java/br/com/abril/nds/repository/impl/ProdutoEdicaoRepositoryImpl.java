@@ -312,6 +312,26 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 
 	@Override
+	public List<ProdutoEdicao> pesquisar(String codigoProduto,
+			String nomeProduto, Long edicao) {
+		
+		Criteria criteria = super.getSession().createCriteria(ProdutoEdicao.class);
+		if(edicao != null){
+			criteria = criteria.add(Restrictions.eq("numeroEdicao", edicao));
+		}
+		criteria = criteria.createAlias("produto", "produto");
+		if(codigoProduto != null){
+			criteria = criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+		}
+		if(nomeProduto != null){
+			criteria = criteria.add(Restrictions.eq("produto.nome", nomeProduto));
+		}
+		List<ProdutoEdicao> resultado =  criteria.list();
+		
+		return resultado;
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicaoDTO> pesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,

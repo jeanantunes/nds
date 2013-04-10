@@ -1,12 +1,8 @@
 package br.com.abril.nds.integracao.ems2021.processor;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.Session;

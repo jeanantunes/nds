@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,8 @@ import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
 import br.com.abril.nds.dto.InformacoesAbrangenciaEMinimoProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
+import br.com.abril.nds.dto.InformacoesReparteTotalEPromocionalDTO;
+import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
@@ -93,7 +97,7 @@ public class InformacoesProdutoController extends BaseController {
 	private TableModel<CellModelKeyValue<InformacoesProdutoDTO>> gridProdutos (FiltroInformacoesProdutoDTO filtro) {
 		
 		List<InformacoesProdutoDTO> produtos = infoProdService.buscarProduto(filtro);
-		
+
 		if (produtos == null || produtos.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
@@ -197,11 +201,73 @@ public class InformacoesProdutoController extends BaseController {
 	
 	@Post
 	@Path("/buscarAbrangenciaEMinimo")
-	public void buscarAbrangenciaEMinimo(Long idEstudo){
+	public void buscarAbrangenciaEMinimo(Long idEstudo, String codProduto, Long numEdicao){
 
 		InformacoesAbrangenciaEMinimoProdDTO informacoes = infoProdService.buscarAbrangenciaEMinimo(idEstudo);
 		
+		//Tratamento por falta de dados na tabela Estratégia. Dados vindo de outro sistema.
+		if (informacoes == null){
+			informacoes = new InformacoesAbrangenciaEMinimoProdDTO();
+			informacoes.setMinimoSugerido(new BigInteger("0"));
+		}
+		
+		BigDecimal abrang = infoProdService.buscarAbrangenciaApurada(codProduto, numEdicao);
+		
+		if (abrang == BigDecimal.ZERO || ((abrang.intValue()) == 0)){
+			informacoes.setAbrangenciaApurada(abrang);
+		}
+		
+		informacoes.setMinimoEstudoId(idEstudo);
+		
 		result.use(Results.json()).from(informacoes, "result").serialize();
+
+	}
+	
+	@Post
+	@Path("/buscarRepartesTotalEPromocional")
+	public void buscarRepartesTotalEPromocional(String codProduto, Long numEdicao){
+
+		InformacoesReparteTotalEPromocionalDTO repartes = infoProdService.buscarReparteTotalEPromocional(codProduto, numEdicao);
+		
+		result.use(Results.json()).from(repartes, "result").serialize();
+
+	}
+	
+	@Post
+	@Path("/buscarVendas")
+	public void buscarVendas (String codProduto, Long numEdicao){
+
+		InformacoesVendaEPerceDeVendaDTO vendas = infoProdService.buscarVendas(codProduto, numEdicao);
+		result.use(Results.json()).from(vendas, "result").serialize();
+		
+		if (vendas.getPorcentagemDeVenda() == null){
+			vendas.setPorcentagemDeVenda(new BigInteger("0"));
+		}
+		if(vendas.getTotalVenda() == null){
+			vendas.setTotalVenda(new BigInteger("0"));
+		}
+	}
+	
+	@Post
+	@Path("/buscarReparteDist")
+	public void buscarReparteDist (String codProduto){
+
+		BigInteger reparteDistrb = infoProdService.obterReparteDistribuido(codProduto);
+		if (reparteDistrb == null){
+			reparteDistrb = new BigInteger("0");
+		}
+		result.use(Results.json()).from(reparteDistrb, "result").serialize();
+	}
+	
+	@Post
+	@Path("/buscarReparteSobra")
+	public void buscarReparteSobra(Long idEstudo){
+
+		BigInteger sobra = infoProdService.buscarSobra(idEstudo);
+		if (sobra == null){
+			sobra = new BigInteger("0");
+		}
+		result.use(Results.json()).from(sobra, "result").serialize();
 
 	}
 	

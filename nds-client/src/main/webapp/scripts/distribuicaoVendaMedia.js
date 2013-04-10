@@ -145,6 +145,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			height:'auto',
 			width:'auto',
 			modal: false,
+			escondeHeader: false,
 			open : function(event, ui) {
 				
 				$("#imagemCapaEdicao").one('load', function() {
@@ -304,54 +305,77 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	this.gerar = function(){
 		var data = [];
 		
-		data.push({name : "dto.reparteDistribuir", value : $("#reparteDistribuir").val() });
-		data.push({name : "dto.reparteMinimo", value : $("#reparteMinimo").val() });
-		data.push({name : "dto.usarFixacao", value : $("#usarFixacao")[0].checked });
-		data.push({name : "dto.distribuicaoPorMultiplo", value : $("#distribuicaoPorMultiplo")[0].checked });
-		data.push({name : "dto.multiplo", value : $("#multiplo").val() });
+		data.push({name : "distribuicaoVendaMedia.reparteDistribuir", value : $("#reparteDistribuir").val() });
+		data.push({name : "distribuicaoVendaMedia.reparteMinimo", value : $("#reparteMinimo").val() });
+		data.push({name : "distribuicaoVendaMedia.usarFixacao", value : $("#usarFixacao")[0].checked });
+		data.push({name : "distribuicaoVendaMedia.distribuicaoPorMultiplo", value : $("#distribuicaoPorMultiplo")[0].checked });
+		data.push({name : "distribuicaoVendaMedia.multiplo", value : $("#multiplo").val() });
 		
 		if(T.produtoEdicaoBases != undefined){
 			for(var i = 0; i < T.produtoEdicaoBases.length; i++){
 				var produtoEdicao = T.produtoEdicaoBases[i];
-				data.push({name: "dto.bases["+i+"].id", value : produtoEdicao.id});
-				data.push({name: "dto.bases["+i+"].peso", value : produtoEdicao.peso});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].id", value : produtoEdicao.id});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].peso", value : produtoEdicao.peso});
 			}
 		}
 		
 		if(T.bonificacaoSelecionados != undefined){
 			for(var i = 0; i < T.bonificacaoSelecionados.length; i++){
-				data.push({name: "dto.bonificacoes["+i+"].componente", value : T.bonificacaoSelecionados[i].componente.enumValue});
-				data.push({name: "dto.bonificacoes["+i+"].elemento", value : T.bonificacaoSelecionados[i].elemento.key.$});
-				data.push({name: "dto.bonificacoes["+i+"].bonificacao", value : T.bonificacaoSelecionados[i].percBonificacao});
-				data.push({name: "dto.bonificacoes["+i+"].reparteMinimo", value : T.bonificacaoSelecionados[i].reparteMinimo});
-				data.push({name: "dto.bonificacoes["+i+"].todasAsCotas", value : T.bonificacaoSelecionados[i].todasAsCotas});
+				data.push({name: "distribuicaoVendaMedia.bonificacoes["+i+"].componente", value : T.bonificacaoSelecionados[i].componente.enumValue});
+				data.push({name: "distribuicaoVendaMedia.bonificacoes["+i+"].elemento", value : T.bonificacaoSelecionados[i].elemento.key.$});
+				data.push({name: "distribuicaoVendaMedia.bonificacoes["+i+"].bonificacao", value : T.bonificacaoSelecionados[i].percBonificacao});
+				data.push({name: "distribuicaoVendaMedia.bonificacoes["+i+"].reparteMinimo", value : T.bonificacaoSelecionados[i].reparteMinimo});
+				data.push({name: "distribuicaoVendaMedia.bonificacoes["+i+"].todasAsCotas", value : T.bonificacaoSelecionados[i].todasAsCotas});
 			}
 		}
-		data.push({name : "dto.todasAsCotas", value : $("#RDtodasAsCotas")[0].checked });
+		data.push({name : "distribuicaoVendaMedia.todasAsCotas", value : $("#RDtodasAsCotas")[0].checked });
 		if($("#RDcomponente")[0].checked){
-			data.push({name : "dto.componente", value : $("#componenteRegiaoDistribuicao").val() });
-			data.push({name : "dto.elemento", value : $("#elementoRegiaoDistribuicao").val() });
+			data.push({name : "distribuicaoVendaMedia.componente", value : $("#componenteRegiaoDistribuicao").val() });
+			data.push({name : "distribuicaoVendaMedia.elemento", value : $("#elementoRegiaoDistribuicao").val() });
 		}
 		if($("#RDAbrangencia")[0].checked){
-			data.push({name : "dto.abrangenciaCriterio", value : $("#RDabrangenciaCriterio").val() });
-			data.push({name : "dto.abrangencia", value : $("#RDabrangencia").val() });
+			data.push({name : "distribuicaoVendaMedia.abrangenciaCriterio", value : $("#RDabrangenciaCriterio").val() });
+			data.push({name : "distribuicaoVendaMedia.abrangencia", value : $("#RDabrangencia").val() });
 		}
 		
 		if($("#RDroteiroEntrega")[0].checked){
-			data.push({name : "dto.roteiroEntregaId", value : $("#selRoteiro").val() });
+			data.push({name : "distribuicaoVendaMedia.roteiroEntregaId", value : $("#selRoteiro").val() });
 		}
-		data.push({name : "dto.complementarAutomatico", value : $("#complementarAutomatico")[0].checked });
-		data.push({name : "dto.cotasAVista", value : $("#distribuicaoPorMultiplo")[0].checked });
+		data.push({name : "distribuicaoVendaMedia.complementarAutomatico", value : $("#complementarAutomatico")[0].checked });
+		data.push({name : "distribuicaoVendaMedia.cotasAVista", value : $("#distribuicaoPorMultiplo")[0].checked });
 		if($("#RDExcecaoBancas")[0].checked){
-			data.push({name : "dto.excecaoDeBancasComponente", value : $("#componenteInformacoesComplementares").val() });
-			data.push({name : "dto.excecaoDeBancasElemento", value : $("#elementoInformacoesComplementares").val() });
+			data.push({name : "distribuicaoVendaMedia.excecaoDeBancasComponente", value : $("#componenteInformacoesComplementares").val() });
+			data.push({name : "distribuicaoVendaMedia.excecaoDeBancasElemento", value : $("#elementoInformacoesComplementares").val() });
 		}
 		
+		data.push({name : "codigoProduto", value : $('#codigoProduto').text()});
+		
+		//FIXME O que exibir nesta tela após estudo?
+		
 		$.post(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(response) {
+			$('<div>Exibir variaveis do estudo?</div>').dialog({ 
+        	    title: "Estudo",
+        	    buttons: [ { 
+        	        text: "OK", 
+        	        click: function() { 
+        	            $( this ).dialog( "close" );
+        	            var myWindow=window.open('','');
+        	            myWindow.document.write(response.estudo);
+        	            myWindow.focus();
+        	        } 
+        	    }, {
+        	    	text: "Cancel", 
+        	        click: function() { 
+        	            $( this ).dialog( "close" ); 
+        	        }
+        	    } ] 
+        	});
+			/*
 			var currentTab = getCurrentTabContainer();
 			currentTab.html(response);
 			currentTab.innerHeight(650);
 			redimensionarWorkspace();
+			*/
 		});
 	};
 	
