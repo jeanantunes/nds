@@ -71,6 +71,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -1330,6 +1331,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
 						
 						mec.setMovimentoFinanceiroCota(null);
+						
+						mec.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 						
 						this.movimentoEstoqueCotaRepository.merge(mec);
 					}
