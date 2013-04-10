@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,11 +8,11 @@ import br.com.abril.nds.util.ComponentesPDV;
 
 public class DistribuicaoVendaMediaDTO {
 	
-	private String reparteDistribuir;
-	private String reparteMinimo;
+	private BigInteger reparteDistribuir;
+	private BigInteger reparteMinimo;
 	private Boolean usarFixacao;
 	private Boolean distribuicaoPorMultiplo;
-	private Double multiplo;
+	private BigInteger multiplo;
 	
 	private List<ProdutoEdicaoDTO> bases = new ArrayList<ProdutoEdicaoDTO>();
 	private List<BonificacaoDTO> bonificacoes = new ArrayList<BonificacaoDTO>();
@@ -28,16 +29,16 @@ public class DistribuicaoVendaMediaDTO {
 	private ComponentesPDV excecaoDeBancasComponente;
 	private String excecaoDeBancasElemento;
 	
-	public String getReparteDistribuir() {
+	public BigInteger getReparteDistribuir() {
 		return reparteDistribuir;
 	}
-	public void setReparteDistribuir(String reparteDistribuir) {
+	public void setReparteDistribuir(BigInteger reparteDistribuir) {
 		this.reparteDistribuir = reparteDistribuir;
 	}
-	public String getReparteMinimo() {
+	public BigInteger getReparteMinimo() {
 		return reparteMinimo;
 	}
-	public void setReparteMinimo(String reparteMinimo) {
+	public void setReparteMinimo(BigInteger reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
 	}
 	public Boolean getUsarFixacao() {
@@ -46,7 +47,7 @@ public class DistribuicaoVendaMediaDTO {
 	public void setUsarFixacao(Boolean usarFixacao) {
 		this.usarFixacao = usarFixacao;
 	}
-	public Boolean getDistribuicaoPorMultiplo() {
+	public Boolean isDistribuicaoPorMultiplo() {
 		return distribuicaoPorMultiplo;
 	}
 	public void setDistribuicaoPorMultiplo(Boolean distribuicaoPorMultiplo) {
@@ -139,10 +140,10 @@ public class DistribuicaoVendaMediaDTO {
 				+ ", excecaoDeBancasComponente=" + excecaoDeBancasComponente
 				+ ", excecaoDeBancasElemento=" + excecaoDeBancasElemento + "]";
 	}
-	public Double getMultiplo() {
+	public BigInteger getMultiplo() {
 		return multiplo;
 	}
-	public void setMultiplo(Double multiplo) {
+	public void setMultiplo(BigInteger multiplo) {
 		this.multiplo = multiplo;
 	}
 	

@@ -1,4 +1,4 @@
-﻿var excecaoSegmentoParciaisController = $.extend(true, {
+var excecaoSegmentoParciaisController = $.extend(true, {
 	
 	/**
 	* @author InfoA2 - Samuel Mendes
