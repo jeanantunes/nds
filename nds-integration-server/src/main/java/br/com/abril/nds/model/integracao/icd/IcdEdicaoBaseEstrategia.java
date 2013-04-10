@@ -1,20 +1,24 @@
 package br.com.abril.nds.model.integracao.icd;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
-public class IcdEdicaoBaseEstrategia {
+public class IcdEdicaoBaseEstrategia implements Serializable {
 
+	private static final long serialVersionUID = -2752476981818369215L;
+	
 	@Id
-	private Long id;
     private String codigoProduto;
-    private Long numeroEdicao;
-    private Integer periodo;
-    private Integer peso;
-    @ManyToOne
-    private IcdEstrategia estrategia;
+	@Id
+    private BigDecimal numeroEdicao;
+    private BigDecimal periodo;
+    private BigDecimal peso;
+    @Id
+    private BigDecimal estrategia;
     
     public String getCodigoProduto() {
         return codigoProduto;
@@ -22,34 +26,28 @@ public class IcdEdicaoBaseEstrategia {
     public void setCodigoProduto(String codigoProduto) {
         this.codigoProduto = codigoProduto;
     }
-    public Long getNumeroEdicao() {
+    public BigDecimal getNumeroEdicao() {
         return numeroEdicao;
     }
-    public void setNumeroEdicao(Long numeroEdicao) {
+    public void setNumeroEdicao(BigDecimal numeroEdicao) {
         this.numeroEdicao = numeroEdicao;
     }
-    public Integer getPeriodo() {
+    public BigDecimal getPeriodo() {
         return periodo;
     }
-    public void setPeriodo(Integer periodo) {
+    public void setPeriodo(BigDecimal periodo) {
         this.periodo = periodo;
     }
-    public Integer getPeso() {
+    public BigDecimal getPeso() {
         return peso;
     }
-    public void setPeso(Integer peso) {
+    public void setPeso(BigDecimal peso) {
         this.peso = peso;
     }
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public IcdEstrategia getEstrategia() {
+	public BigDecimal getEstrategia() {
 		return estrategia;
 	}
-	public void setEstrategia(IcdEstrategia estrategia) {
+	public void setEstrategia(BigDecimal estrategia) {
 		this.estrategia = estrategia;
 	}
 }

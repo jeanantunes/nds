@@ -1,38 +1,47 @@
 package br.com.abril.nds.model.integracao.icd;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class IcdEstrategia {
+public class IcdEstrategia implements Serializable {
 
-    private String tipoDocumento;
+    private static final long serialVersionUID = -3153202639762497831L;
+	
+	private String tipoDocumento;
     @Id
-    private Long codigoEstrategia;
+    private BigDecimal codigoEstrategia;
     private String codigoProduto;
-    private Integer numeroEdicao;
-    private Integer codigoDistribuidor;
+    private BigDecimal numeroEdicao;
+    private BigDecimal codigoDistribuidor;
     private String oportunidadeVenda;
-    private Long reparteMinimo;
-    private Integer abrangenciaDistribuicao;
-    private Integer peso;
+    private BigDecimal reparteMinimo;
+    private BigDecimal abrangenciaDistribuicao;
     private String cesta;
-    @OneToMany(mappedBy = "estrategia")
+    @OneToMany(mappedBy = "estrategia", fetch = FetchType.LAZY)
     private List<IcdEdicaoBaseEstrategia> basesEstrategia;
 
+    public IcdEstrategia() { }
+    public IcdEstrategia(BigDecimal codigoEstrategia) {
+    	this.codigoEstrategia = codigoEstrategia;
+    }
+    
     public String getTipoDocumento() {
         return tipoDocumento;
     }
     public void setTipoDocumento(String tipoDocumento) {
         this.tipoDocumento = tipoDocumento;
     }
-    public Long getCodigoEstrategia() {
+    public BigDecimal getCodigoEstrategia() {
         return codigoEstrategia;
     }
-    public void setCodigoEstrategia(Long codigoEstrategia) {
+    public void setCodigoEstrategia(BigDecimal codigoEstrategia) {
         this.codigoEstrategia = codigoEstrategia;
     }
     public String getCodigoProduto() {
@@ -41,16 +50,16 @@ public class IcdEstrategia {
     public void setCodigoProduto(String codigoProduto) {
         this.codigoProduto = codigoProduto;
     }
-    public Integer getNumeroEdicao() {
+    public BigDecimal getNumeroEdicao() {
         return numeroEdicao;
     }
-    public void setNumeroEdicao(Integer numeroEdicao) {
+    public void setNumeroEdicao(BigDecimal numeroEdicao) {
         this.numeroEdicao = numeroEdicao;
     }
-    public Integer getCodigoDistribuidor() {
+    public BigDecimal getCodigoDistribuidor() {
         return codigoDistribuidor;
     }
-    public void setCodigoDistribuidor(Integer codigoDistribuidor) {
+    public void setCodigoDistribuidor(BigDecimal codigoDistribuidor) {
         this.codigoDistribuidor = codigoDistribuidor;
     }
     public String getOportunidadeVenda() {
@@ -59,23 +68,17 @@ public class IcdEstrategia {
     public void setOportunidadeVenda(String oportunidadeVenda) {
         this.oportunidadeVenda = oportunidadeVenda;
     }
-    public Long getReparteMinimo() {
+    public BigDecimal getReparteMinimo() {
         return reparteMinimo;
     }
-    public void setReparteMinimo(Long reparteMinimo) {
+    public void setReparteMinimo(BigDecimal reparteMinimo) {
         this.reparteMinimo = reparteMinimo;
     }
-    public Integer getAbrangenciaDistribuicao() {
+    public BigDecimal getAbrangenciaDistribuicao() {
         return abrangenciaDistribuicao;
     }
-    public void setAbrangenciaDistribuicao(Integer abrangenciaDistribuicao) {
+    public void setAbrangenciaDistribuicao(BigDecimal abrangenciaDistribuicao) {
         this.abrangenciaDistribuicao = abrangenciaDistribuicao;
-    }
-    public Integer getPeso() {
-        return peso;
-    }
-    public void setPeso(Integer peso) {
-        this.peso = peso;
     }
     public String getCesta() {
         return cesta;

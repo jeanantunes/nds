@@ -12,6 +12,7 @@ import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
@@ -29,6 +30,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.EstrategiaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
+@Component
 public class EMS2021MessageProcessor extends AbstractRepository implements MessageProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EMS2021MessageProcessor.class);
