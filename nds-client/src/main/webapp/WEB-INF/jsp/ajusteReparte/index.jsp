@@ -41,7 +41,7 @@ $(function(){
 			<table class="lstSegmentosGrid">
 				<tr>
 				<td>
-				<select name="tipoSegmento1" id="tipoSegmento1" style="width: 200px;" >
+				<select name="tipoSegmento1" id="tipoSegmento1" style="width: 200px;" onchange="ajusteReparteController.validarTipoSegmento1()">
 					<option selected="selected">Selecione...</option>
 						<c:forEach items="${listaSegmentos}" var="segmento">
 					<option value="${segmento.id}">${segmento.descricao}</option>
@@ -50,14 +50,14 @@ $(function(){
 				</td>
 				<td>
 				<input name="segmento1" id="segmento1"
-						onblur="ajusteReparteController.formatarAjusteAplicadoSegmento1();"
+						onblur="ajusteReparteController.formatarAjusteAplicadoSegmento1(); "
 						type="text" style="width: 60px; float: left; margin-right: 5px;" />
 					</td>
 				</tr>
 
 				<tr>
 				<td>
-				<select name="tipoSegmento2" id="tipoSegmento2" style="width: 200px;" >
+				<select name="tipoSegmento2" id="tipoSegmento2" style="width: 200px;" onchange="ajusteReparteController.validarTipoSegmento2()" >
 					<option selected="selected">Selecione...</option>
 						<c:forEach items="${listaSegmentos}" var="segmento">
 					<option value="${segmento.id}">${segmento.descricao}</option>
@@ -71,7 +71,7 @@ $(function(){
 
 				<tr>
 				<td>
-				<select name="tipoSegmento3" id="tipoSegmento3" style="width: 200px;" >
+				<select name="tipoSegmento3" id="tipoSegmento3" style="width: 200px;" onchange="ajusteReparteController.validarTipoSegmento3()" >
 					<option selected="selected">Selecione...</option>
 						<c:forEach items="${listaSegmentos}" var="segmento">
 					<option value="${segmento.id}">${segmento.descricao}</option>
