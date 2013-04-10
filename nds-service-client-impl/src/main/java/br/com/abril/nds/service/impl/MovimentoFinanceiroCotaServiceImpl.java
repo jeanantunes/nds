@@ -487,11 +487,12 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	
 	@Transactional
 	@Override
-	public void removerPostergadosDia(Long idCota, List<TipoMovimentoFinanceiro> tiposMovimentoPostergado) {
+	public void removerPostergadosDia(Long idCota, List<TipoMovimentoFinanceiro> tiposMovimentoPostergado,
+			Date dataOperacao) {
 		
 		List<MovimentoFinanceiroCota> movs = 
 				this.movimentoFinanceiroCotaRepository.obterMovimentosFinanceirosCotaPorTipoMovimento(
-						idCota, null, tiposMovimentoPostergado, new Date());
+						idCota, null, tiposMovimentoPostergado, dataOperacao);
 		
 		for (MovimentoFinanceiroCota mfc : movs){
 			

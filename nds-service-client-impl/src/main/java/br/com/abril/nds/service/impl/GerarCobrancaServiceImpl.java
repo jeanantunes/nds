@@ -577,11 +577,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case POSTERGADO_DEBITO:
 				case POSTERGADO_CREDITO:
 					
-					if (movimentoFinanceiroCota.getData().after(dataOperacao)){
-						
+					if (dataOperacao.after(movimentoFinanceiroCota.getData())){
+					
 						vlMovPostergado = 
-							this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
+								this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
+
 					}
+					
 				break;
 			}
 		}
@@ -608,7 +610,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			MovimentoFinanceiroCota movPost = 
 					this.gerarPostergado(cota, qtdDiasNovaCobranca, msgs, fornecedor, 
-							consolidadoFinanceiroCota, vlMovFinanTotal, usuario, null, dataOperacao);
+							consolidadoFinanceiroCota, vlMovFinanTotal, vlMovPostergado, usuario, null, dataOperacao);
 			
 			this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 			this.movimentoFinanceiroCotaRepository.adicionar(movPost);
@@ -793,7 +795,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 			movimentoFinanceiroCota = this.gerarPostergado(cota,
 					qtdDiasNovaCobranca, msgs, fornecedor,
-					consolidadoFinanceiroCota, vlMovFinanTotal, usuario,
+					consolidadoFinanceiroCota, vlMovFinanTotal, vlMovFinanTotal, usuario,
 					diasSemanaConcentracaoPagamento, dataOperacao);
 		}
 		
@@ -889,11 +891,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	private MovimentoFinanceiroCota gerarPostergado(Cota cota,
 			int qtdDiasNovaCobranca, List<String> msgs, Fornecedor fornecedor,
 			ConsolidadoFinanceiroCota consolidadoFinanceiroCota,
-			BigDecimal vlMovFinanTotal, Usuario usuario,
+			BigDecimal vlMovFinanTotal, BigDecimal vlMovFinanPostergado, Usuario usuario,
 			List<Integer> diasSemanaConcentracaoPagamento, Date dataOperacao) {
 		
+		
+
 		//gerar postergado
-		consolidadoFinanceiroCota.setValorPostergado(vlMovFinanTotal);
+		consolidadoFinanceiroCota.setValorPostergado(vlMovFinanPostergado);
+
 		
 		//gera movimento financeiro cota
 		MovimentoFinanceiroCota movimentoFinanceiroCota = new MovimentoFinanceiroCota();
@@ -983,6 +988,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
 		}
 		
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		
 		if (consolidados != null){
 			
 			for (ConsolidadoFinanceiroCota consolidado : consolidados){
@@ -1003,12 +1010,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						
 						    this.negociacaoRepository.remover(negociacao);
 						    
-						    this.removerDividaCobrancaConsolidado(divida,consolidado);
+						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
 						}
 					
 					} else{
 					
-						this.removerDividaCobrancaConsolidado(divida,consolidado);
+						this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
 					}
 				}
 				
@@ -1017,7 +1024,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
-	private void removerDividaCobrancaConsolidado(Divida divida, ConsolidadoFinanceiroCota consolidado){
+	private void removerDividaCobrancaConsolidado(Divida divida, ConsolidadoFinanceiroCota consolidado,
+			Date dataOperacao){
 		
 		this.cobrancaRepository.remover(divida.getCobranca());
 		
@@ -1033,7 +1041,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		this.movimentoFinanceiroCotaService.removerPostergadosDia(
 				consolidado.getCota().getId(), 
-				listaPostergados);
+				listaPostergados,
+				dataOperacao);
 	}
 	
 	/**
