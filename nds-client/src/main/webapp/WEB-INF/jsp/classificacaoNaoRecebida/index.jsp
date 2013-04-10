@@ -48,20 +48,20 @@ function mostraFiltroPorClassificacao(){
 
 <body>
 
-<div id="dialog-incluirCotaNaClassificacaoNaoRecebida" style="display: none;" title="Incluir Classificação Não Recebida">
-	<p>Confirma a inclusão desta cota?</p>
+<div id="dialog-incluirCotaNaClassificacaoNaoRecebida" style="display: none;" title="Incluir Classifica&ccedil;&atilde;o N&atilde;o Recebida">
+	<p>Confirma a inclus&atilde;o desta cota?</p>
 </div>
 
-<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classificação Não Recebida">
-	<p>Confirma a exclusão desta classificação não recebida?</p>
+<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classifica&ccedil;&atilde;o N&atilde;o Recebida">
+	<p>Confirma a exclus&atilde;o desta classifica&ccedil;&atilde;o n&atilde;o recebida?</p>
 </div>
 
-<div id="dialog-incluirClassificacaoNaCota" style="display: none;" title="Incluir Classifica��o Recebida">
-	<p>Confirma a inclusão desta classificação?</p>
+<div id="dialog-incluirClassificacaoNaCota" style="display: none;" title="Incluir Classifica&ccedil;&atilde;o Recebida">
+	<p>Confirma a inclus&atilde;o desta classifica&ccedil;&atilde;o?</p>
 </div>
 
-<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classificação Não Recebida">
-	<p>Confirma a exclusão desta classificação?</p>
+<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classifica&ccedil;&atilde;o N&atilde;o Recebida">
+	<p>Confirma a exclus&atilde;o desta classifica&ccedil;&atilde;o?</p>
 </div>
 
 <div class="corpo">
@@ -76,18 +76,18 @@ function mostraFiltroPorClassificacao(){
 	</div-->
     	
       <fieldset class="classFieldset">
-   	    <legend> Pesquisar Classificação Não Recebida</legend>
+   	    <legend> Pesquisar Classifica&ccedil;&atilde;o N&atilde;o Recebida</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
             <td width="20"><input type="radio" name="radio" id="radio" value="radio" onclick="mostraFiltroPorClassificacao();" /></td>
-            <td width="90">Classificação</td>
+            <td width="90">Classifica&ccedil;&atilde;o</td>
             <td width="20"><input type="radio" name="radio" id="radio2" value="radio" onclick="mostraFiltroPorCota();" /></td>
             <td width="37">Cota</td>
             <td width="757">
             <form id="filtroPrincipalClassificacao">
            	  <table width="756" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorClassificacao" style="display:none;">
             <tr>
-            	<td width="76">Classificação:</td>
+            	<td width="76">Classifica&ccedil;&atilde;o:</td>
                 <td width="560"><select name="filtro.idTipoClassificacaoProduto" id="selectClassificacao" style="width:200px;">
                   <option selected="selected">Selecione...</option>
                   <c:forEach items="${listaTipoClassificacao}" var="tipoClassificacao">
@@ -123,7 +123,7 @@ function mostraFiltroPorClassificacao(){
       
       <div class="porClassificacao" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
-       	  <legend>Cotas que Não Recebem</legend>
+       	  <legend>Cotas que  N&otilde;o Recebem</legend>
         
         	<table class="classificaNaoRecebidaGrid"></table>
              <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="porClassificacaoGerarXLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -155,7 +155,7 @@ function mostraFiltroPorClassificacao(){
       
       <div class="porCota" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
-       	  <legend>Classificações Não Recebidas</legend>
+       	  <legend>Classifica&ccedil;&otilde;es Recebidas N&otilde;o Recebidas</legend>
         
         	<table class="classificaCotaGrid"></table>
              <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="porCotaGerarXLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -165,7 +165,7 @@ function mostraFiltroPorClassificacao(){
       </fieldset>
      
       <fieldset class="classFieldset" style="float:left; width:300px!important;">
-       	  <legend>Classificações Recebidas</legend>
+       	  <legend>Classifica&ccedil;&otilde;es Recebidas</legend>
        	  <br />
         	<table class="classificacaoBGrid"></table>
               <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" id="confirmarInclusaoDaClassificacaoNaCota"><img src="images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>

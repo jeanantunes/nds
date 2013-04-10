@@ -51,21 +51,27 @@ var MANTER_COTA = $.extend(true, {
         });
     },
     
-    verificaTipoCota : function(tipoCotaCPF){
-       	var retorno = confirm("O Mix (para o tipo alternativo) e a Fixação (para o tipo convencional) desta Cota serão apagados, confirma?");
-    	if (retorno){
-    		
-    		  $.postJSON(contextPath + "/cadastro/cota/apagarTipoCota",
-    	        		{idCota:MANTER_COTA.idCota, tipoCota:tipoCotaCPF.value},
-    	            function(){
-    	                alert("feito!!!!");
-    	            }
-    	        );
-    
-    		
-    	}
- 
+    verificaTipoCota : function(tipoCotaCPF) {
+    	$("<div>")
+    	.html("O Mix (para o tipo alternativo) e a Fixação (para o tipo convencional) desta Cota serão apagados, confirma?")
+    	.dialog({
+    		title: "Confirmação",
+            resizable: false,
+            height:'auto',
+            width:350,
+            modal: true,
+            buttons: {
+                "Confirmar": function() {
+                    $( this, this.workspace ).dialog( "close" );
+					$.postJSON(contextPath + "/cadastro/cota/apagarTipoCota", {idCota:MANTER_COTA.idCota, tipoCota:tipoCotaCPF.value});
+                },
+                "Cancelar": function() {
+                    $( this, this.workspace ).dialog( "close" );
+                }
+            },
+        });
     },
+    
     initCotaGridPrincipal: function() {
 
         $(".pessoasGrid", MANTER_COTA.workspace).flexigrid({
@@ -1201,7 +1207,8 @@ var COTA_CNPJ = $.extend(true, {
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
 
-        var numeroCota = {name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota};
+//        var numeroCota = {name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota};
+        var numeroCota = {name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()};
         if ($('#numeroCota').is(':disabled')) {
             formData.push(numeroCota);
         }

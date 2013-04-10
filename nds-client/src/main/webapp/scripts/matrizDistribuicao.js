@@ -1377,10 +1377,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			value : selecionado.sobra
 		});
 		
-		$.post(pathTela + "/distribuicaoVendaMedia/", postData, function(response) {
-			addTabWithPost($('#workspace').tabs(), 'Distribuição Venda Média', response, pathTela +'/distribuicaoVendaMedia/blank');
-		});
-
+		var temp = $('#workspace').tabs( "option", "ajaxOptions");
+		$('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );
+		$('#workspace').tabs('addTab', 'Distribuição Venda Média', pathTela + '/distribuicaoVendaMedia/index');
+		$('#workspace').tabs( "option", "ajaxOptions", temp );
+		
 		T.esconderOpcoes();
 	};
 }

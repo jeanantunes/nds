@@ -168,7 +168,7 @@ function PesquisaCota(workspace) {
 	//Pesquisar por nome da cota
 	this.pesquisarPorNomeCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
 		
-		setTimeout(function() { clearInterval(pesquisaCota.intervalo); }, 10 * 1000);
+		setTimeout(function() { clearInterval(pesquisaCota.intervalo); }, 10 * 3000);
 		
 		pesquisaCota.intervalo = $().interval(function() {
 			
