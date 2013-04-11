@@ -31,7 +31,7 @@ public class Bonificacoes extends ProcessoAbstrato {
 		if ((estudo.getBonificacoes() != null) && (!estudo.getBonificacoes().isEmpty())) {
 			for (BonificacaoDTO bonificacao : estudo.getBonificacoes()) {
 				for (CotaEstudo cota : estudo.getCotas()) {
-					if ((bonificacao.getComponente().equals(ComponentesPDV.Região)) && (cota.getRegiao().equals(bonificacao.getElemento()))) {
+					if ((bonificacao.getComponente().equals(ComponentesPDV.REGIAO)) && (cota.getRegiao().equals(bonificacao.getElemento()))) {
 						if (bonificacao.getBonificacaoBigDecimal().compareTo(BigDecimal.ZERO) > 0) {
 							BigDecimal indiceBonificacao = BigDecimal.valueOf(100).add(bonificacao.getBonificacaoBigDecimal()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
 							if (indiceBonificacao.compareTo(BigDecimal.ONE) > 0) {

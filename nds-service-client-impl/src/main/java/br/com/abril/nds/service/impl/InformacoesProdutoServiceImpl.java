@@ -76,8 +76,8 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 
 	@Override
 	@Transactional
-	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItemRegiao() {
-		return infoProdutosRepo.buscarItensRegiao();
+	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItemRegiao(Long idEstudo) {
+		return infoProdutosRepo.buscarItensRegiao(idEstudo);
 	}
 
 	@Override

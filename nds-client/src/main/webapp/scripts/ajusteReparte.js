@@ -560,13 +560,11 @@ init : function() {
 			},
 			buttons: {
 				"Confirmar": function() {
-//					$( this ).dialog( "close" );
 					ajusteReparteController.validarPopUpDeSegmentos();			
 					
 				},
 				"Cancelar": function() {
 					ajusteReparteController.validarPopUpDeSegmentos();
-//					$( this ).dialog( "close" );
 				}
 			}
 		});
@@ -608,13 +606,12 @@ init : function() {
 		
 		var tpSeg = new Array();
 		
-//		tpSeg[0] = ajusteReparteController.get("tipoSegmento1");
-		tpSeg[1] = ajusteReparteController.get("tipoSegmento2");
-		tpSeg[2] = ajusteReparteController.get("tipoSegmento3");
+		tpSeg[0] = ajusteReparteController.get("tipoSegmento2");
+		tpSeg[1] = ajusteReparteController.get("tipoSegmento3");
 		
 		for (var i=0;i<tpSeg.length;i++)
 		{ 
-			if (tipoSegmento == tpSeg[i] && (tpSeg[i] != "Selecione..."){
+			if (tipoSegmento == tpSeg[i] && (tpSeg[i] != "Selecione...")){
 		        
 		           var erros = new Array();
 		           erros[0] = "Este tipo de segmento já foi selecionado anteriormente.";
@@ -635,12 +632,11 @@ init : function() {
 		var tpSeg = new Array();
 		
 		tpSeg[0] = ajusteReparteController.get("tipoSegmento1");
-//		tpSeg[1] = ajusteReparteController.get("tipoSegmento2");
-		tpSeg[2] = ajusteReparteController.get("tipoSegmento3");
+		tpSeg[1] = ajusteReparteController.get("tipoSegmento3");
 		
 		for (var i=0;i<tpSeg.length;i++)
 		{ 
-			if (tipoSegmento == tpSeg[i] && (tpSeg[i] != "Selecione..."){
+			if (tipoSegmento == tpSeg[i] && (tpSeg[i] != "Selecione...")){
 		        
 		           var erros = new Array();
 		           erros[0] = "Este tipo de segmento já foi selecionado anteriormente.";
@@ -662,7 +658,6 @@ init : function() {
 		
 		tpSeg[0] = ajusteReparteController.get("tipoSegmento1");
 		tpSeg[1] = ajusteReparteController.get("tipoSegmento2");
-//		tpSeg[2] = ajusteReparteController.get("tipoSegmento3");
 		
 		for (var i=0;i<tpSeg.length;i++)
 		{ 
@@ -947,7 +942,6 @@ init : function() {
 		           erros[0] = "O Índice deve estar entre 0.5 e 1.5.";
 		           exibirMensagemDialog('WARNING',   erros,"");
 
-//		           this.closeDialogPopUpSegmento = false;
 		           this.closeDialogPopUpSegmento1 = false;
 		           
 		           return;

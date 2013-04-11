@@ -41,7 +41,7 @@ $(function(){
 			<table class="lstSegmentosGrid">
 				<tr>
 				<td>
-				<select name="tipoSegmento1" id="tipoSegmento1" style="width: 200px;" onchange="ajusteReparteController.validarTipoSegmento1()">
+				<select name="tipoSegmento1" id="tipoSegmento1" style="width: 200px;" onchange="ajusteReparteController.validarTipoSegmento1()" >
 					<option selected="selected">Selecione...</option>
 						<c:forEach items="${listaSegmentos}" var="segmento">
 					<option value="${segmento.id}">${segmento.descricao}</option>
