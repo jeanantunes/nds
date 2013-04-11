@@ -71,6 +71,7 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -1331,6 +1332,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						
 						mec.setMovimentoFinanceiroCota(null);
 						
+						mec.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+						
 						this.movimentoEstoqueCotaRepository.merge(mec);
 					}
 				}
@@ -1349,7 +1352,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
 		);
 			
-		this.movimentoFinanceiroCotaService.removerPostergadosDia(idCota, listaPostergados);
+		this.movimentoFinanceiroCotaService.removerPostergadosDia(
+				idCota, listaPostergados, 
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 	}
 	
 	private void removerItensConferenciaEncallhe(Set<Long> listaIdConferenciaEncalheParaExclusao) {
@@ -2798,7 +2803,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional
-	public String gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
+	public byte[] gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
 		setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
 		
 		return gerarSlipTxtMatricial();
@@ -3075,7 +3080,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 	
-	public String gerarSlipTxtMatricial(){
+	public byte[] gerarSlipTxtMatricial(){
 		
 		StringBuffer sb = new StringBuffer();
 		EmissorNotaFiscalMatricial e = new EmissorNotaFiscalMatricial(sb);
@@ -3166,11 +3171,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape(9);//Espaços fim da impressao
 		
 		String saida = sb.toString();
-//		System.out.println("SAIDA SERVICE\n\n");
-//        System.out.println(saida);
-        
 		
-		return saida;
+		return saida.getBytes();
 	}
 
 	private byte[] gerarSlipPDF() {

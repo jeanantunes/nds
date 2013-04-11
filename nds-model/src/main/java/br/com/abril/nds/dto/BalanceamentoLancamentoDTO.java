@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -28,6 +29,8 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	private Date dataLancamento;
 	
 	private List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados;
+	
+	private Set<Date> datasExpedicaoConfirmada;
 	
 	/**
 	 * Construtor padrão.
@@ -106,6 +109,20 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	public void setProdutosLancamentosCancelados(
 			List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados) {
 		this.produtosLancamentosCancelados = produtosLancamentosCancelados;
+	}
+
+	/**
+	 * @return the datasExpedicaoConfirmada
+	 */
+	public Set<Date> getDatasExpedicaoConfirmada() {
+		return datasExpedicaoConfirmada;
+	}
+
+	/**
+	 * @param datasExpedicaoConfirmada the datasExpedicaoConfirmada to set
+	 */
+	public void setDatasExpedicaoConfirmada(Set<Date> datasExpedicaoConfirmada) {
+		this.datasExpedicaoConfirmada = datasExpedicaoConfirmada;
 	}
 	
 }

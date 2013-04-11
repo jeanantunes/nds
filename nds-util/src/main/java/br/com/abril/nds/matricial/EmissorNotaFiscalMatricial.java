@@ -278,14 +278,18 @@ public class EmissorNotaFiscalMatricial {
 		System.out.println(saida);
 		System.out.println("<<<<<<<<<<<<<<<<###############");
 		
+		imprimir(saida.getBytes(), PrinterJob.getPrinterJob().getPrintService());
+    }
+    
+    public void imprimir(byte[] saida, PrintService impressora) throws PrintException, IOException {
+    	
 		InputStream ps = null;
-		ps = new ByteArrayInputStream(saida.getBytes());
+		ps = new ByteArrayInputStream(saida);
 		
 		DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
 		DocPrintJob job = null;
 		
-		PrintService pserv = PrinterJob.getPrinterJob().getPrintService();
-		job = pserv.createPrintJob();
+		job = impressora.createPrintJob();
 		
 		MatricialThreadUtil pjDone = new MatricialThreadUtil(job);
 		Doc doc = new SimpleDoc(ps, flavor, null);

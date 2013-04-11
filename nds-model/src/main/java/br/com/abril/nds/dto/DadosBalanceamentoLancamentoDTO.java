@@ -33,6 +33,8 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	private int numeroSemana;
 	
 	private Date dataLancamento;
+	
+	private Set<Date> datasExpedicaoConfirmada;
 
 	/**
 	 * Construtor padrão.
@@ -139,6 +141,20 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
+	}
+
+	/**
+	 * @return the datasExpedicaoConfirmada
+	 */
+	public Set<Date> getDatasExpedicaoConfirmada() {
+		return datasExpedicaoConfirmada;
+	}
+
+	/**
+	 * @param datasExpedicaoConfirmada the datasExpedicaoConfirmada to set
+	 */
+	public void setDatasExpedicaoConfirmada(Set<Date> datasExpedicaoConfirmada) {
+		this.datasExpedicaoConfirmada = datasExpedicaoConfirmada;
 	}
 	
 }

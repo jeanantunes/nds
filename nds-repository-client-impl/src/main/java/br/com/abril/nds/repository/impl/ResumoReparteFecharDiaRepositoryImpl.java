@@ -33,6 +33,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 
 	@Override
 	public SumarizacaoReparteDTO obterSumarizacaoReparte(Date data) {
+		
 	    Objects.requireNonNull(data, "Data para contagem dos lançamentos expedidos não deve ser nula!");
         
         Date dataInicio = DateUtil.removerTimestamp(data);
@@ -49,7 +50,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         StringBuilder hql = new StringBuilder("select sum(lancamento.reparte * produtoEdicao.precoVenda) as totalReparte, ");
 	    
 	    hql.append(String.format(templateHqlDiferenca, "tipoDiferencaSobraDe", "tipoDiferencaSobraDe", "tipoDiferencaSobraEm", "totalSobras")).append(",")
-	    .append(String.format(templateHqlDiferenca, "tipoDiferencaFaltaDe", "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm", "totalFaltas")).append(",");
+	       .append(String.format(templateHqlDiferenca, "tipoDiferencaFaltaDe", "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm", "totalFaltas")).append(",");
 	    
 	    hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ")
         .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
@@ -85,15 +86,20 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         query.setParameter("grupoMovimentoEstornoEnvioJornaleiro", GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO);
         
         try {
-            Constructor<SumarizacaoReparteDTO> constructor = SumarizacaoReparteDTO.class
-                    .getConstructor(BigDecimal.class, BigDecimal.class, BigDecimal.class,
-                            BigDecimal.class, BigDecimal.class);
+        	
+            Constructor<SumarizacaoReparteDTO> constructor = SumarizacaoReparteDTO.class.getConstructor(BigDecimal.class, BigDecimal.class, BigDecimal.class, BigDecimal.class, BigDecimal.class);
+            
             query.setResultTransformer(new AliasToBeanConstructorResultTransformer(constructor));
+        
         } catch (NoSuchMethodException | SecurityException e) {
-            String msg = "Erro definindo result transformer para classe: " + SumarizacaoReparteDTO.class.getName();
-            LOG.error(msg, e);
+            
+        	String msg = "Erro definindo result transformer para classe: " + SumarizacaoReparteDTO.class.getName();
+            
+        	LOG.error(msg, e);
+            
             throw new RuntimeException(msg, e);
         } 
+        
 	    return (SumarizacaoReparteDTO) query.uniqueResult();
 	}
 		

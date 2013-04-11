@@ -54,7 +54,7 @@ public interface MovimentoFinanceiroCotaService {
 	boolean existeOutrosMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCredito, Long idMovimentoFinanceiroAtual);
 
 	void removerPostergadosDia(Long idCota,
-			List<TipoMovimentoFinanceiro> tiposMovimentoPostergado);
+			List<TipoMovimentoFinanceiro> tiposMovimentoPostergado, Date dataOperacao);
 	
 	List<GrupoMovimentoFinaceiro> getGrupoMovimentosFinanceirosDebitosCreditos();
 

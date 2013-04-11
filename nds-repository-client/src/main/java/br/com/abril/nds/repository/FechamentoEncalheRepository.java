@@ -52,5 +52,5 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
     
     int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);
     
-    BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, Integer page, Integer rp );
+    BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 }

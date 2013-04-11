@@ -27,16 +27,7 @@ public class ImpressaoFinalizacaoEncalheTest {
 	}
 	
 	public void gerarSlipTxtMatricialTest() throws PrintException, IOException{
-		ConferenciaEncalheServiceImpl conf = new ConferenciaEncalheServiceImpl();
-		conf.setSlipDTO(getSlipDtoMock());
-		String saida = conf.gerarSlipTxtMatricial();
-		saida = saida.replaceAll(ConstantesImpressao.CARACTER_INDENT_LINEFEED_SCAPE, ConstantesImpressao.CR + ConstantesImpressao.LINE_FEED);
-		
-        new EmissorNotaFiscalMatricial(null).imprimir(saida);
-		
-//		System.out.println("#########>>>>>>>>>>>>>>>");
-//		System.out.println(saida);
-//		System.out.println("<<<<<<<<<<<<<<<<###############");
+        new EmissorNotaFiscalMatricial(null).imprimir(FindImpressoraTest.getDadosSlipMock());
 	}
 
 	public SlipDTO getSlipDtoMock() {

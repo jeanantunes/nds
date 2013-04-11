@@ -182,7 +182,51 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 				movimentoEstoqueCota2, movimentoEstoqueCota3, movimentoEstoqueCota4);
 
 	}
+
+	@Test
+	public void buscarConsignadoCota_sintaxe_filtro_vazio_test(){
+		
+		FiltroConsultaConsignadoCotaDTO filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+
+		@SuppressWarnings("unused")
+		List<ConsultaConsignadoCotaDTO> lista = this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+	}
 	
+	@Test
+	public void buscarConsignadoCota_sintaxe_filtro_por_cota_test(){
+		
+		FiltroConsultaConsignadoCotaDTO filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		
+		filtroConsultaConsignadoCotaDTO.setIdCota(this.cotaManoelCunha.getId());
+		
+		@SuppressWarnings("unused")
+		List<ConsultaConsignadoCotaDTO> lista = this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+	}
+	
+	@Test
+	public void buscarConsignadoCota_sintaxe_filtro_por_fornecedor_test(){
+		
+		FiltroConsultaConsignadoCotaDTO filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		
+		filtroConsultaConsignadoCotaDTO.setIdFornecedor(this.fornecedorAcme.getId());
+		
+		@SuppressWarnings("unused")
+		List<ConsultaConsignadoCotaDTO> lista = this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+	}
+	
+	@Test
+	public void buscarConsignadoCota_sintaxe_filtro_por_cota_e_fornecedor_test(){
+		
+		FiltroConsultaConsignadoCotaDTO filtroConsultaConsignadoCotaDTO = new FiltroConsultaConsignadoCotaDTO();
+		
+		filtroConsultaConsignadoCotaDTO.setIdCota(this.cotaManoelCunha.getId());
+		
+		filtroConsultaConsignadoCotaDTO.setIdFornecedor(this.fornecedorAcme.getId());
+		
+		@SuppressWarnings("unused")
+		List<ConsultaConsignadoCotaDTO> lista = this.consignadoCotaRepository.buscarConsignadoCota(filtroConsultaConsignadoCotaDTO, false);
+	}
+
 	@Test
 	public void buscarConsignadoCota(){
 		
