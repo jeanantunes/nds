@@ -61,7 +61,7 @@ $(function(){
               <td><span id="periodoFs"></td>
               <td><strong>Liberado:</strong></td>
               <td><img id="estudoLiberadoFs" width="16" height="16" alt="Liberado" /></td>
-              <td>&nbsp;</td>
+              <td>&nbsp;<input type="hidden" id="parcial" /></td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>

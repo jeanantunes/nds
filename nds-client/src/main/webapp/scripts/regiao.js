@@ -81,8 +81,8 @@ var regiaoController = $.extend(true, {
 		});
 
 		$(".lstProdutosGrid").flexigrid({
-//			url : '../xml/nMaioresLst-xml.xml',
-//			dataType : 'xml',
+			preProcess : regiaoController.executarPreProcessLstProdutosGrid,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Edição',
 				name : 'edicao',
@@ -513,6 +513,34 @@ var regiaoController = $.extend(true, {
 		return resultado;
 	},
 	
+	
+	// PREPROCESS REGIAO AUTOMATICA - N_MAIORES - Lista Produtos
+	
+	executarPreProcessLstProdutosGrid : function (resultado){
+		if (resultado.mensagens) {
+			
+			exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+			);
+			
+			$(".lstProdutosGrid", regiaoController.workspace).hide();
+			
+			return resultado;
+		}
+		
+//		$.each(resultado.rows, function(index, row) {
+//			
+//			var checkAll = '<input type="checkbox" name="cotaSegmentoSelected" id="cotaSegmentoSelected" checked value='+row.cell.numeroCota+'>';
+//			
+//			row.cell.sel = checkAll;
+//			
+//		});
+		
+		$(".lstProdutosGrid", regiaoController.workspace).show();
+		
+		return resultado;
+	},
 	
 	// -- FUNCTIONS --
 	
@@ -976,29 +1004,79 @@ var regiaoController = $.extend(true, {
 
 	
 	filtroNMaiores : function(){
-		var codigo = $("#idCodigo").val();
-		var nomeProduto = $("#nomeProduto").val();
-		var classificacao = $("#comboClassificacao").val();
+		$('.lstProdutosGrid').show();
 		
-		$(".produtosInfosGrid", this.workspace).flexOptions({
+		$("#lstProdutosGrid").flexOptions({
 			url: contextPath + "/distribuicao/regiao/buscarProduto",
 			dataType : 'json',
-			params:[
-			        {name : 'filtro.codigoProduto', value:codigo},
-			        {name : 'filtro.nome', value:nomeProduto},
-			        {name : 'filtro.idTipoClassificacaoProduto', value:classificacao}
-			        ]
+			params : regiaoController.obterFiltroProdNMaiores()
 		});
-			
-		$(".produtosInfosGrid", this.workspace).flexReload();
+		
+		$("#lstProdutosGrid").flexReload();
+	},
+		
+//		var codigo = $("#idCodigo").val();
+//		var nomeProduto = $("#nomeProduto").val();
+//		var classificacao = $("#comboClassificacao").val();
+//		
+//		$(".lstProdutosGrid", this.workspace).flexOptions({
+//			url: contextPath + "/distribuicao/regiao/buscarProduto",
+//			dataType : 'json',
+//			params:[
+//			        {name : 'filtro.codigoProduto', value:codigo},
+//			        {name : 'filtro.nome', value:nomeProduto},
+//			        {name : 'filtro.idTipoClassificacaoProduto', value:classificacao}
+//			        ]
+//		});
+//			
+//		$(".lstProdutosGrid", this.workspace).flexReload();
 		/*
 		 * 
 		 * acabar de arrumar os grid, preprocess e função do botão pesquisar!
 		 * 
 		 * 
 		 */
-	},
 	
+	/*
+	 * 	mostrarPorSegmento : function() {
+		$('.gridsegmentos').show();
+	
+		$("#segmentosGrid").flexOptions({
+			url: contextPath + "/distribuicao/regiao/buscarPorSegmento",
+			dataType : 'json',
+			params : regiaoController.obterFiltroSegmento()
+		});
+		
+		$("#segmentosGrid").flexReload();
+	},
+obterFiltroSegmento : function(){
+		
+		var data = [];
+		
+		var segmento = $("#comboSegmento option:selected").val();
+		var limite = $("#qtdCotas").val();
+		
+		data.push({name:'filtro.idSegmento', value: segmento});
+		data.push({name:'filtro.limiteBuscaPorSegmento', value: limite});
+		
+		return data;
+	},
+	 */
+	
+	obterFiltroProdNMaiores : function(){
+		
+		var data = [];
+		
+		var codigo = $("#idCodigo").val();
+		var nomeProduto = $("#nomeProduto").val();
+		var classificacao = $("#comboClassificacao").val();
+		
+		data.push({name : 'filtro.codigoProduto', value:codigo});
+		data.push({name : 'filtro.nome', value:nomeProduto});
+		data.push({name : 'filtro.idTipoClassificacaoProduto', value:classificacao});
+		
+		return data;
+	},
 	
 	//FUNCTIONS ADD REGI�O AUTOM�TICA  
 	

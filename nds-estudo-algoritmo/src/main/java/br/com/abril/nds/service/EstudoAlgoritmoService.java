@@ -212,10 +212,15 @@ public class EstudoAlgoritmoService {
 		estudo.setReparteDistribuir(reparte);
 		estudo.setReparteDistribuirInicial(reparte);
 
-		estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() ? 1 : 0);
-		estudo.setReparteMinimo(distribuicaoVendaMedia.getReparteMinimo());
-		if(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null){
-			estudo.setPacotePadrao(distribuicaoVendaMedia.getMultiplo());
+		estudo.setDistribuicaoPorMultiplos(0); //valor default
+		estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); //valor default
+		
+		if (distribuicaoVendaMedia != null) {
+			estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() ? 1 : 0);
+			estudo.setReparteMinimo(distribuicaoVendaMedia.getReparteMinimo());
+			if(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null){
+				estudo.setPacotePadrao(distribuicaoVendaMedia.getMultiplo());
+			}
 		}
 
 		// carregando parâmetros do banco de dados

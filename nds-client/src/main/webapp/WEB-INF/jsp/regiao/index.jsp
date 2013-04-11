@@ -122,9 +122,12 @@ $(function(){
 				  					</c:forEach>
                 			</select>
                 		</td>
-					<td width="31"><span title="Pesquisar Produto"
-						class="classPesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">&nbsp;</a> </span>
+					<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">Pesquisar</a></span></td>					
+					<!-- 
+					<td width="31">
+						<span title="Pesquisar Produto" class="classPesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">Pesquisar</a> </span>
 					</td>
+					 -->
 				</tr>
 			</table>
 		</fieldset>
