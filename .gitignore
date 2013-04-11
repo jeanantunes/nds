@@ -22,3 +22,4 @@ node_modules
 /nds-client/src/test/java/br/com/abril/nds/client/util/RepositoryTest.java
 /nds-estudo-algoritmo/.classpath
 /nds-server/WebContent/
+nds-client/src/main/webapp/temp/
