@@ -400,6 +400,7 @@ public class FixacaoReparteController extends BaseController {
 		result.nothing();
 	}
 	
+
 	private void tratarFiltroPorCota(FiltroConsultaFixacaoCotaDTO filtroAtual) {
 
 		FiltroConsultaFixacaoCotaDTO filtroSession = (FiltroConsultaFixacaoCotaDTO) session
@@ -571,5 +572,10 @@ public class FixacaoReparteController extends BaseController {
 
 	public void setErrosUpload(List<String> errosUpload) {
 		this.errosUpload = errosUpload;
+	}
+
+	
+	public static void main(String[] args) {
+//		String s = "file:\C:\WORKSPACE_NOVO\.metadata\.plugins\org.eclipse.wst.server.core\tmp2\wtpwebapps\nds-client\WEB-INF\classes\ehcache.xml";
 	}
 }
