@@ -5,6 +5,8 @@ import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -12,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import br.com.abril.nds.util.ComponentesPDV;
 
 @Entity
 @Table(name = "ESTUDO_BONIFICACOES", uniqueConstraints = { @UniqueConstraint(columnNames = { "ESTUDO_ID" }) })
@@ -29,8 +33,9 @@ public class Bonificacao implements Serializable {
 	@JoinColumn(name = "ESTUDO_ID", nullable = false)
 	private Estudo estudo;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "COMPONENTE")
-	private String componente;
+	private ComponentesPDV componente;
 	
 	@Column(name = "ELEMENTO")
 	private String elemento;
@@ -60,11 +65,11 @@ public class Bonificacao implements Serializable {
 		this.estudo = estudo;
 	}
 
-	public String getComponente() {
+	public ComponentesPDV getComponente() {
 		return componente;
 	}
 
-	public void setComponente(String componente) {
+	public void setComponente(ComponentesPDV componente) {
 		this.componente = componente;
 	}
 

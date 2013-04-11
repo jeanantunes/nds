@@ -2,14 +2,14 @@ package br.com.abril.nds.util;
 
 public enum ComponentesPDV {
 
-	TipoPontodeVenda("Tipo Ponto de Venda"),
-	GeradorDeFluxo("Gerador de Fluxo"),
-	Bairro("Bairro"),     
-	Região("Região"),       
-	CotasAVista("Cota À Vista"),
-	CotasNovasRetivadas("Cotas Novas/Reativadas"),
-	Area_de_Influência("Área de Influência"),
-	Distrito("Distrito");   
+	TIPO_PONTO_DE_VENDA("Tipo Ponto de Venda"),
+	GERADOR_DE_FLUXO("Gerador de Fluxo"),
+	BAIRRO("Bairro"),     
+	REGIAO("Região"),       
+	COTAS_A_VISTA("Cota À Vista"),
+	COTAS_NOVAS_RETIVADAS("Cotas Novas/Reativadas"),
+	AREA_DE_INFLUENCIA("Área de Influência"),
+	DISTRITO("Distrito");   
 	
 	private String descricao;
 	
@@ -24,5 +24,12 @@ public enum ComponentesPDV {
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
+	
+	@Override
+	public String toString() {
+
+		return this.descricao;
+	}
+
 	
 }
