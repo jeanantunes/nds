@@ -237,10 +237,28 @@
 						}, {
 							display : 'Nome',
 							name : 'nomePessoa',
-							width : 420,
+							width : 200,
 							sortable : true,
 							align : 'left'
-						},  {
+						}, {
+							display : 'Usuário',
+							name : 'nomeUsuario',
+							width : 100,
+							sortable : true,
+							align : 'left'
+						}, {
+							display : 'Data',
+							name : 'dataAlteracaoFormatada',
+							width : 80,
+							sortable : true,
+							align : 'center'
+						}, {
+							display : 'Hora',
+							name : 'horaAlteracaoFormatada',
+							width : 80,
+							sortable : true,
+							align : 'center'
+						}, {
 							display : 'Ação',
 							name : 'acao',
 							width : 30,
