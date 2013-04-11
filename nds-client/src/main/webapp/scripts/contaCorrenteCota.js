@@ -188,11 +188,14 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				value.cell.encargos = '<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+
 					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + floatToPrice(formatMoneyValue(value.cell.encargos)) +'</a>';
-					
-				value.cell.valorPostergado = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'">' +
+				
+				var hint = value.cell.valorPostergado && value.cell.valorPostergado != 0 ? '<a rel="tipsy" title="Valor Referente à '+ 
+						(value.cell.tipo != 'CONSOLIDADO' ? dataRaizPendente : dataRaizPostergado)  + '">' : "";
+				value.cell.valorPostergado = '<span class="bt_tool">' + hint +
 					(value.cell.valorPostergado != null ? floatToPrice(formatMoneyValue(value.cell.valorPostergado)) : '0,00') + '</a></span>';
 				
-				value.cell.pendente = '<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'">' +
+				hint = value.cell.pendente && value.cell.pendente != 0 ? '<a rel="tipsy" title="Valor Referente à '+ dataRaizPendente + '">' : "";
+				value.cell.pendente = '<span class="bt_tool">' + hint +
 					floatToPrice(formatMoneyValue(value.cell.pendente ? value.cell.pendente : '0,00')) +'</a></span>';
 				
 				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total) * -1);
@@ -205,7 +208,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				} else {
 					
 					value.cell.tipo = '<img src="'+ contextPath +'/images/ico_excluir.gif"/>';
-					value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.total) * -1);
+					value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.total));
 				}
 			});
 			
