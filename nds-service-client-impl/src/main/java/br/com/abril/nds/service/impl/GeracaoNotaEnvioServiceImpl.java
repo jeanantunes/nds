@@ -484,12 +484,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			if (notaEnvio != null){
 				
-				if (novasNotasEnvio.contains(notaEnvio)) {
+				itensNotasEnvioExistentes.add(ine);
+				
+				if (!novasNotasEnvio.contains(notaEnvio)) {
 					
-					itensNotasEnvioExistentes.add(ine);
-				}	
-				else{
-
 					notaEnvio.setDestinatario(destinatarioAtualizado);
 
 					novasNotasEnvio.add(notaEnvio);
