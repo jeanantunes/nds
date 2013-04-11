@@ -93,6 +93,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 		
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaDTO.class));
 		
@@ -134,6 +136,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		if(filtro.getIdFornecedor() != null) { 
 			hql.append(" AND fornecedor.id = :idFornecedor ");
 		}
+		
+		hql.append(" AND ( movimento.statusEstoqueFinanceiro is null or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) ");
 		
 		hql.append(" GROUP BY pe.id ");
 		
@@ -221,6 +225,8 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 		
 		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
+		
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		
 		List<Long> totalRegistros = query.list();
 		
