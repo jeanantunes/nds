@@ -20,6 +20,7 @@ public class HistogramaPosEstudoDadoInicioDTO implements Serializable {
 	private TipoSegmentoProduto tipoSegmentoProduto;
 	private Integer periodicidadeProduto;
 	private boolean estudoLiberado;
+	private boolean parcial;
 
 	public String getClassificacao() {
 		return classificacao;
@@ -124,6 +125,14 @@ public class HistogramaPosEstudoDadoInicioDTO implements Serializable {
 
 	public void setEstudoLiberado(boolean estudoLiberado) {
 		this.estudoLiberado = estudoLiberado;
+	}
+
+	public boolean isParcial() {
+		return parcial;
+	}
+
+	public void setParcial(boolean parcial) {
+		this.parcial = parcial;
 	}
 
 }
