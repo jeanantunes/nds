@@ -39,6 +39,7 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
 .classROLE_LINKS{background:url(../images/bt_links.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:3px;}
 .classROLE_HELP{background:url(../images/bt_help.png) no-repeat 2px 4px; width:21px; height:21px; float:left;  margin-top:-4px; margin-right:3px;}
 .classROLE_ADMINISTRACAO{background:url(../images/bt_administracao.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:-4px;}
+.classROLE_DISTRIBUICAO{background:url(../images/ico_distribuicao.png) no-repeat left center; width:16px; height:18px; float:left; margin-top:-4px;}
 
 #workspace .classROLE_CADASTRO{ margin-top:4px; margin-left:5px;  margin-right:0px;}
 #workspace .classROLE_FINANCEIRO{ margin-top:4px; margin-right:0px; margin-left:5px;}
@@ -53,6 +54,7 @@ body{font-family:arial;  font-size:medium; background:#FFFFFF;height:100%;}
 #workspace .classROLE_LINKS{margin-top:4px; margin-right:0px; margin-left:5px;}
 #workspace .classROLE_HELP{margin-top:4px; margin-right:0px; margin-left:5px;}
 #workspace .classROLE_ADMINISTRACAO{margin-top:4px; margin-right:0px; margin-left:5px;}
+#workspace .classROLE_DISTRIBUICAO{margin-top:4px; margin-right:0px; margin-left:5px;}
 
 
 
