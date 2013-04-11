@@ -56,7 +56,6 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		EMS0135Input input = (EMS0135Input) message.getBody();
 	
-		
 		// Validar código do distribuidor:
 		Distribuidor distribuidor = this.distribuidorService.obter();
 		if(!distribuidor.getCodigoDistribuidorDinap().equals(
@@ -68,7 +67,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		}
 
 		NotaFiscalEntradaFornecedor notafiscalEntrada = null;
-		
+
 		// Atualização por chave de acesso NFE
 		if (input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty()) {
 			
@@ -106,7 +105,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 					, input.getNumeroNotaEnvio()
 					);		
 		//}
-		
+			
 		if(notafiscalEntrada == null){
 			
 			notafiscalEntrada = new NotaFiscalEntradaFornecedor();
@@ -128,7 +127,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			// Validar código do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.REGISTRO_JA_EXISTENTE, 
-						String.format("Nota Fiscal %1$s já cadastrada", notafiscalEntrada.getNumero()));
+						String.format("Nota Fiscal %1$s já cadastrada com serie %2$s e nota envio %3$s", notafiscalEntrada.getNumero(), notafiscalEntrada.getSerie(), notafiscalEntrada.getNumeroNotaEnvio()));
 				return;			
 		}		
 	}
@@ -323,36 +322,35 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	private NotaFiscalEntradaFornecedor obterNotaFiscal(Long numero, String serie, String cnpjEmissor, String numeroNotaEnvio) {
 		StringBuilder hql = new StringBuilder();
 
+		boolean existeNotaFiscal = (numero != null && !numero.equals(0L) && serie != null && !serie.isEmpty() && !serie.equals("0"));
+		
 		PessoaJuridica emitente = this.obterPessoaJuridica( cnpjEmissor );		
 				
 		hql.append("from NotaFiscalEntradaFornecedor nf ");
 		hql.append("where nf.emitente = :emitente ");
-		
-		if (numero == null || numero.equals(0L)) {
-			hql.append("and (nf.numero is null or nf.numero = 0 or nf.numero = '') ");
+
+		if (existeNotaFiscal) {
+			hql.append("and nf.numero = :numero and nf.serie = :serie");
 		} else {
-			hql.append("and nf.numero = :numero ");
-		}
-		
-		if (serie == null || serie.isEmpty() || serie.equals("0")) {
-			hql.append("and ( nf.serie is null or nf.serie = 0 or nf.serie = '') ");
-		} else {
-			hql.append("and nf.serie = :serie ");
+			hql.append("and nf.numeroNotaEnvio = :numeroNotaEnvio ");
 		}
 
-		hql.append("and nf.numeroNotaEnvio = :numeroNotaEnvio ");
 
 		Query query = super.getSession().createQuery(hql.toString());
 
-		if ( numero != null && !numero.equals(0L) ) {
-			query.setParameter("numero", numero);
-		}
-		
-		if ( serie != null && !serie.isEmpty() && !serie.equals("0")) {
-			query.setParameter("serie", serie);
-		}
 		query.setParameter("emitente",  emitente);
-		query.setParameter("numeroNotaEnvio",  Long.parseLong(numeroNotaEnvio) );
+
+		if (existeNotaFiscal) {
+			if ( numero != null && !numero.equals(0L) ) {
+				query.setParameter("numero", numero);
+			}
+			
+			if ( serie != null && !serie.isEmpty() && !serie.equals("0")) {
+				query.setParameter("serie", serie);
+			}
+		} else {
+			query.setParameter("numeroNotaEnvio",  Long.parseLong(numeroNotaEnvio) );
+		}
 		
 		return (NotaFiscalEntradaFornecedor) query.uniqueResult();
 		
