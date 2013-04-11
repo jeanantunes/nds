@@ -220,7 +220,6 @@ public class MixCotaDTO implements Serializable{
 		this.numeroCota = numeroCota;
 	}
 	
-	
 
 }
 
