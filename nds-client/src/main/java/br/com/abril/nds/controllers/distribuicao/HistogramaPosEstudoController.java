@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
@@ -74,6 +75,9 @@ public class HistogramaPosEstudoController extends BaseController{
 	public void carregarDadosFieldsetHistogramaPreAnalise(HistogramaPosEstudoDadoInicioDTO selecionado ){
 		Produto produto = produtoService.obterProdutoPorCodigo(selecionado.getCodigoProduto());
 		Estudo estudo = estudoService.obterEstudo(Long.parseLong(selecionado.getEstudo()));
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(selecionado.getCodigoProduto(), selecionado.getEdicao());
+		selecionado.setParcial(produtoEdicao.isParcial());
 		
 		selecionado.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
 		selecionado.setPeriodicidadeProduto(produto.getPeriodicidade().getOrdem());
