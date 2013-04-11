@@ -213,69 +213,69 @@ var mixCotaProdutoController = $.extend(true, {
 		
 		//UPLOAD LOTE
 		
-		$("#excelFile").change(function (){
-			
-			       var fileName = $(this).val();
-			       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
-			       if(ext!="xls" & ext!="xlsx"){
-			    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
-			    	   $(this).val('');
-			    	   return;
-			       }
-			       
-			       //SUBMIT FORM
-			       $("#formUploadLoteMix").ajaxSubmit({
-						/*beforeSubmit: function(arr, formData, options) {
-						},*/
-						success: function(responseText, statusText, xhr, $form)  { 
-							
-							console.log(responseText.mixCotaDTOInconsistente);
-							
-							var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
-							if(typeof(mensagens)!='undefined'){
-								var tipoMensagem = mensagens.tipoMensagem;
-								var listaMensagens = mensagens.listaMensagens;
-								
-								if (tipoMensagem && listaMensagens) {
-									
-									if (tipoMensagem != 'SUCCESS') {
-										
-										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
-									}
-									$("#dialog-lote").dialog( "close" );
-									regiaoController.cotasDaRegiao();
-									exibirMensagem(tipoMensagem, listaMensagens);	
-								}
-								
-							}else if (typeof(responseText.mixCotaDTOInconsistente)=='object'){
-								
-								if(responseText.mixCotaDTOInconsistente.length==0){
-									exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
-									return;
-								}else{
-									var a = new Array();
-									a.push("A arquivo possui registros incosistentes no total de "+responseText.mixCotaDTOInconsistente.length);
-									for ( var int = 0; int < responseText.mixCotaDTOInconsistente.length; int++) {
-										a.push("codigoProduto="+responseText.mixCotaDTOInconsistente[int].codigoProduto
-												+",numeroCota="+responseText.mixCotaDTOInconsistente[int].numeroCota
-												+",reparteMinimo="+responseText.mixCotaDTOInconsistente[int].reparteMinimo
-												+",reparteMaximo="+responseText.mixCotaDTOInconsistente[int].reparteMaximo);
-									}
-									exibirMensagemDialog("WARNING", a);
-									
-								}
-							
-							
-								
-							}
-						}, 
-//						url:  contextPath + '/distribuicao/regiao/addLote',
-						type: 'POST',
-						dataType: 'json'//,
-//						data: { "tipoUpload" : ""}
-					});
-			       
-		     });
+//		$("#excelFile").change(function (){
+//			
+//			       var fileName = $(this).val();
+//			       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+//			       if(ext!="xls" & ext!="xlsx"){
+//			    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+//			    	   $(this).val('');
+//			    	   return;
+//			       }
+//			       
+//			       //SUBMIT FORM
+//			       $("#formUploadLoteMix").ajaxSubmit({
+//						/*beforeSubmit: function(arr, formData, options) {
+//						},*/
+//						success: function(responseText, statusText, xhr, $form)  { 
+//							
+//							console.log(responseText.mixCotaDTOInconsistente);
+//							
+//							var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
+//							if(typeof(mensagens)!='undefined'){
+//								var tipoMensagem = mensagens.tipoMensagem;
+//								var listaMensagens = mensagens.listaMensagens;
+//								
+//								if (tipoMensagem && listaMensagens) {
+//									
+//									if (tipoMensagem != 'SUCCESS') {
+//										
+//										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+//									}
+//									$("#dialog-lote").dialog( "close" );
+//									regiaoController.cotasDaRegiao();
+//									exibirMensagem(tipoMensagem, listaMensagens);	
+//								}
+//								
+//							}else if (typeof(responseText.mixCotaDTOInconsistente)=='object'){
+//								
+//								if(responseText.mixCotaDTOInconsistente.length==0){
+//									exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
+//									return;
+//								}else{
+//									var a = new Array();
+//									a.push("A arquivo possui registros incosistentes no total de "+responseText.mixCotaDTOInconsistente.length);
+//									for ( var int = 0; int < responseText.mixCotaDTOInconsistente.length; int++) {
+//										a.push("codigoProduto="+responseText.mixCotaDTOInconsistente[int].codigoProduto
+//												+",numeroCota="+responseText.mixCotaDTOInconsistente[int].numeroCota
+//												+",reparteMinimo="+responseText.mixCotaDTOInconsistente[int].reparteMinimo
+//												+",reparteMaximo="+responseText.mixCotaDTOInconsistente[int].reparteMaximo);
+//									}
+//									exibirMensagemDialog("WARNING", a);
+//									
+//								}
+//							
+//							
+//								
+//							}
+//						}, 
+////						url:  contextPath + '/distribuicao/regiao/addLote',
+//						type: 'POST',
+//						dataType: 'json'//,
+////						data: { "tipoUpload" : ""}
+//					});
+//			       
+//		     });
 		
 		},
 		
@@ -1052,7 +1052,7 @@ var mixCotaProdutoController = $.extend(true, {
 	
 		get : function(campo) {
 			
-			var elemento = $("#" + campo, fixacaoReparteController.workspace);
+			var elemento = $("#" + campo, mixCotaProdutoController.workspace);
 			
 			if(elemento.attr('type') == 'checkbox') {
 				return (elemento.attr('checked') == 'checked') ;
@@ -1083,9 +1083,84 @@ var mixCotaProdutoController = $.extend(true, {
 			return data;
 		},
 		
-		add_lote:function(){
+		addLoteMix:function(){
+			$("#modalUploadArquivoMix").dialog({
+				resizable: false,
+				height:'auto',
+				width:400,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						mixCotaProdutoController.executarSubmitArquivo();
+					},
+					"Cancelar": function() {
+						$("#excelFile").val("");
+						$(this).dialog("close");
+					}
+				},
+			});
 			
-			$("#excelFile").val('').click();
+		},
+		
+		//submit do arquivo adicionar em lote
+		executarSubmitArquivo:function(){
+			 var fileName = $("#excelFile").val();
+		      
+		       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+		       if(ext!="xls" & ext!="xlsx"){
+		    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+		    	   $(this).val('');
+		    	   return;
+		       }else{
+		    	   
+		    	   $("#formUploadLoteMix").ajaxSubmit({
+					
+						success: function(responseText, statusText, xhr, $form)  { 
+							
+							console.log(responseText.mixCotaDTOInconsistente);
+							
+							var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
+							if(typeof(mensagens)!='undefined'){
+								var tipoMensagem = mensagens.tipoMensagem;
+								var listaMensagens = mensagens.listaMensagens;
+								
+								if (tipoMensagem && listaMensagens) {
+									
+									if (tipoMensagem != 'SUCCESS') {
+										
+										exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+									}
+									$(this).dialog( "close" );
+									exibirMensagem(tipoMensagem, listaMensagens);	
+								}
+								
+							}else if (typeof(responseText.mixCotaDTOInconsistente)=='object'){
+								
+								if(responseText.mixCotaDTOInconsistente.length==0){
+									exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
+									return;
+								}else{
+									var a = new Array();
+									a.push("A arquivo possui registros incosistentes no total de "+responseText.mixCotaDTOInconsistente.length);
+									for ( var int = 0; int < responseText.mixCotaDTOInconsistente.length; int++) {
+										a.push("codigoProduto="+responseText.mixCotaDTOInconsistente[int].codigoProduto
+												+",numeroCota="+responseText.mixCotaDTOInconsistente[int].numeroCota
+												+",reparteMinimo="+responseText.mixCotaDTOInconsistente[int].reparteMinimo
+												+",reparteMaximo="+responseText.mixCotaDTOInconsistente[int].reparteMaximo);
+									}
+									exibirMensagemDialog("WARNING", a);
+									
+								}
+								
+							}
+						}, 
+						type: 'POST',
+						dataType: 'json'//,
+					});
+		    	   
+		       }
 		}
+		
+		
 	}, BaseController);
 //@ sourceURL=mixCotaProduto.js
