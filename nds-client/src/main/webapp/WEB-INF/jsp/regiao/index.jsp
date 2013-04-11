@@ -299,23 +299,14 @@ $(function(){
 			<legend>Adicionar em Lote</legend>
 			<table width="200" border="0" cellspacing="2" cellpadding="2">
 				<tr>
-				<!-- 
-					<form action="myWebForm">
-						Caminho do arquivo: 
-						<input type="text" name="usrname"><br>
-						<input type="submit" value="Submit">
-					</form>					
-				 -->
-				 
+				 <p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+		      	<p ><span class="bt_novos" title="Download Modelo"><a href="${pageContext.request.contextPath}/modelos/modelo_regiao.xls"><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
+		      	<br><br><br>
+		      	<hr>
+				 <p>Selecione um arquivo para upload:</p>
 				 <form name="arquivoUpLoad" id="arquivoUpLoad" method="post" enctype="multipart/form-data">
 					<input type="file" id="xls" name="xls" />
 				 </form>
-					
-					<!-- 
-					<td width="44">N° cota: <textarea rows="4" cols="30" > </textarea> 
-					<!-- <input name="numCota" id="numCota" type="text" style="width: 100px;" /> 
-					</td>
-					--> 
 				</tr>
 			</table>
 			<div id="example2grid" class="dataTable" style="background: #FFF;"></div>

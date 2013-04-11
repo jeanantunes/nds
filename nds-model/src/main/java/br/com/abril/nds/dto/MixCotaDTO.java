@@ -3,7 +3,6 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DecimalFormat;
 import java.util.Date;
 
 import br.com.abril.nds.util.DateUtil;
@@ -101,12 +100,10 @@ public class MixCotaDTO implements Serializable{
 			return reparteMedio;
 	}
 	public void setReparteMedio(BigDecimal reparteMedio) {
-		DecimalFormat formatador = new DecimalFormat("#0.0");
 		if(reparteMedio==null){
 			this.reparteMedio=new BigDecimal(0);
 		}else{
-			String reparteFormatado = formatador.format(reparteMedio);
-			this.reparteMedio= new BigDecimal(reparteFormatado);
+			this.reparteMedio=reparteMedio;
 		}
 	}
 	public BigDecimal getVendaMedia() {
