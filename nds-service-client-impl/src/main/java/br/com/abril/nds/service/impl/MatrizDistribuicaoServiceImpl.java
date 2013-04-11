@@ -721,6 +721,12 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		return obterSomaReparteFinal(mapReparte, false, null);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo(BigInteger id) {
+		return this.distribuicaoRepository.obterMatrizDistribuicaoPorEstudo(id);
+	}
+
 	
 	
 	

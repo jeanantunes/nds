@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -7,6 +8,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
@@ -15,6 +17,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.AnaliseEstudoService;
+import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -41,8 +44,11 @@ public class AnaliseEstudoController extends BaseController {
 	@Autowired
 	private HttpSession session;
 	
-	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroEstudo";
+	@Autowired
+	private MatrizDistribuicaoService matrizDistribuicaoService;
 	
+	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroEstudo";
+
 	public AnaliseEstudoController(Result result) {
 		this.result = result;
 	}
@@ -144,5 +150,12 @@ public class AnaliseEstudoController extends BaseController {
 				}
 			}		
 		return estudos;
+	}
+	
+	@Post
+	public void obterMatrizDistribuicaoPorEstudo(BigInteger id){
+		ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterMatrizDistribuicaoPorEstudo(id);
+		
+		result.use(Results.json()).withoutRoot().from(produtoDistribuicaoVO).recursive().serialize();
 	}
 }

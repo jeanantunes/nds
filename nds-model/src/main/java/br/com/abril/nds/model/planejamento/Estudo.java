@@ -86,7 +86,7 @@ public class Estudo implements Serializable {
 	@Column(name = "PACOTE_PADRAO")
 	private BigInteger pacotePadrao; //TODO BigDecimal
 	
-	@ManyToOne (optional = false)
+	@ManyToOne (optional = true)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario; 
 	

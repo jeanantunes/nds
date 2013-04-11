@@ -17,12 +17,6 @@ var histogramaPosEstudoController = $.extend(true, {
 			   '</a>';
 	},
 	
-	voltarPagina : function voltarPagina(){
-		$('#matrizDistribuicaoContent').show();
-		$('#telasAuxiliaresContent').hide();
-	},
-	
-	
 	formatarMilhar : function formatarMilhar(num){	
 		x = 0;   
 		
@@ -54,10 +48,6 @@ var histogramaPosEstudoController = $.extend(true, {
 		/**
 		 * Associando eventos ao DOM
 		 */
-		$('#botaoVoltarMatrizDistribuicao').click(function(){
-			histogramaPosEstudoController.voltarPagina();
-		});
-		
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
 			
@@ -104,8 +94,8 @@ var histogramaPosEstudoController = $.extend(true, {
 							url,
 							[{name : "id", value : matrizSelecionada.estudo}],
 							function(response){
-								histogramaPosEstudoController.voltarPagina();
-								matrizDistribuicao.pesquisar();
+								// fecha a aba
+								$('.ui-tabs-selected').children('.ui-icon-close').click();
 							}
 						);
 						
@@ -202,8 +192,6 @@ var histogramaPosEstudoController = $.extend(true, {
 				}
 			});
 		});
-		
-		
 		
 		histogramaPosEstudoController.Grids = {
 				EstudosAnaliseGrid : flexGridService.GridFactory.createGrid({
@@ -654,7 +642,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		data.push({name: "lancado", value: matrizSelecionado.lancto || 0});
 		data.push({name: "promocional", value: matrizSelecionado.promo || 0});
 		data.push({name: "sobra", value: matrizSelecionado.sobra || 0});
-		$.post(pathTela + "/distribuicaoVendaMedia/", data, function(response) {
+		$.post(contextPath + "/distribuicaoVendaMedia/index", data, function(response) {
 			$('#matrizDistribuicaoContent').hide();
 			$('#telasAuxiliaresContent').html(response);
 			$('#telasAuxiliaresContent').show();

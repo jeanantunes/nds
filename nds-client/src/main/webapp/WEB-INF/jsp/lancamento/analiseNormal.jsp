@@ -1,6 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>NDS - Novo Distrib</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
@@ -9,13 +8,14 @@
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/jquery-1.6.2.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
-<%-- <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/acessoRapido.js"></script> --%>
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/acessoRapido.js"></script> --%>
 <script language="javascript" src="${pageContext.request.contextPath}/scripts/tooltip/jquery.tools.min.js"></script>
 <script language="javascript" src="${pageContext.request.contextPath}/scripts/tooltip/jquery.tipsy.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath}/scripts/tooltip/tipsy-docs.css" />
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/flexigrid-1.1/css/flexigrid.pack.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/flexigrid-1.1/css/flexigrid.pack.css" /> !-->
+<head>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/analiseNormal.js"></script>
 <script language="javascript" type="text/javascript">
 
@@ -228,7 +228,7 @@ function definicaoReparte(){
 <div id="dialog-detalhes" title="Visualizando Produto">
 	<img src="${pageContext.request.contextPath}/capas/revista-nautica-11.jpg" width="235" height="314" />
 </div>
-<div id="dialog-edicoes-produtos" title="Pesquisar Edições de Produto (Ainda n�o funcionando)" style="display:none;">  
+<div id="dialog-edicoes-produtos" title="Pesquisar Edições de Produto (Ainda n�o funcionando)" style="display:none;">  
     <fieldset style="width:500px!important; margin-top:10px;">
     	<legend>Edições do Produto</legend>
         <table class="edicaoProdCadastradosGrid"></table>
@@ -318,205 +318,6 @@ function definicaoReparte(){
 
 
 <div class="corpo">
-  <div class="header">
-  	<div class="sub-header">
-    	<div class="logo"><img src="${pageContext.request.contextPath}/images/logo_sistema.png" width="110" height="70" alt="Novo Distrib"  /></div>
-        
-        <div class="titAplicacao">
-        	<h1>Treelog S/A. Logística e Distribuição - SP</h1>
-
-			<h2>CNPJ: 00.000.000/00001-00</h2>
-            <h3>Distrib vs.1</h3>
-        </div>
-        
-        <div class="usuario"><a href="${pageContext.request.contextPath}/login.htm"><img src="${pageContext.request.contextPath}/images/bt_sair.jpg" alt="Sair do Sistema" title="Sair do Sistema" width="63" height="27" border="0" align="right" /></a>
-            <br clear="all" />
-          <span>Usuário: Junior Fonseca</span>
-          <span>
-          <script type="text/javascript" language="JavaScript">
-		  diaSemana();
-          </script>
-         
-
-          </span>
-        </div>
-    	<div id="div_acessoRapido" class="box_acesso_rapido">
-          <span class="titulo"><a href="javascript:;" onclick="acessoRapido();" style="float:left;">Acesso Rápido</a></span>
-          <a href="javascript:;" onclick="acessoRapidoFechar();" style="float:right;" class="fechar"><span class="ui-icon ui-icon-close">&nbsp;</span></a>
-				
-          <div class="class_acessos">
-             	<ul id="acessoRapido"></ul>
-          </div>
-       </div>
-
-    </div>
-  
-  </div>
-  <div class="bg_menu">
-  <div id="menu_principal">
-  <ul>
-    <li><a href="${pageContext.request.contextPath}/index.htm"><span class="classHome">&nbsp;</span>Home</a>
-    </li>
-    <li><a href="javascript:;" class="trigger"><span class="classCadastros">&nbsp;</span>Cadastro</a>
-        <ul>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_produtos.htm">Produto</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_edicao.htm">Edição</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_cotas.htm">Cota</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/jornaleiros_equivalentes.htm">Cotas Base</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_fiador.htm">Fiador</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_entregador.htm">Entregador</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_transportador.htm">Transportador</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_fornecedor.htm">Fornecedor</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/roteirizacao.htm">Roteirização</a></li>
-            
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_box.htm">Box</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_bancos.htm">Banco</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/alteracao_cotas.htm">Alteração / Cota</a></li>
-            <!--<li><a href="${pageContext.request.contextPath}/Cadastro/consulta_geral_equivalentes.htm">Consulta Geral Equivalentes</a></li>-->
-            <li><a href="${pageContext.request.contextPath}/Cadastro/help_cadastros.htm">Help</a></li>
-</ul>
-    </li>
-    <li><a href="javascript:;" class="trigger"><span class="classLancamento">&nbsp;</span>Lançamento</a>
-        <ul>
-	<!--<li class="criando"><a href="javascript:;"  onclick="alert('Serviço em construção.');">Conectividade</a></li>-->
-    <li><a href="balanceamento_da_matriz.htm">Balanceamento da Matriz</a></li>
-  <li><a href="furo_publicacao.htm">Furo de Lançamento</a></li>
-  <li><a href="cadastro_parciais.htm">Parciais</a></li>
-  <li><a href="relatorio_vendas.htm">Relatório de Vendas</a></li>
-  <li><a href="venda_produto.htm">Venda por Produto</a></li>
-  <li><a href="relatorio_tipos_produtos.htm">Relatório Tipos de Produtos</a></li>
-    <li><a href="help_lancamento.htm">Help</a></li>
-</ul>
-    </li>
-    <li><a href="javascript:;" class="trigger"><span class="classDistribuicao">&nbsp;</span>Distribuição</a>
-        <ul>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/matriz_distribuicao.htm">Matriz de Distribuição</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/analise_estudo.htm">Análise de Estudos</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/mix_produto.htm">Mix de Produto</a></li>
-    <li ><a href="${pageContext.request.contextPath}/Distribuicao/fixacao.htm">Fixação de Reparte</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/classificacao_nao_recebida.htm">Classificação Não Recebida</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/segmento_nao_recebido.htm">Segmento Não Recebido</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/tratamento_excessao.htm">Exceções de Segmentos e Parciais</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/ajustes_reparte.htm">Ajustes Reparte</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/engloba_desengloba.htm">Desenglobação</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/histograma.htm">Histograma de Venda</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/historico_venda.htm">Histórico de Venda</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/regiao.htm">Região</a></li><li><a href="Distribuicao/area_influencia.htm">Área de Influência/Gerador de Fluxo</a></li><li><a href="${pageContext.request.contextPath}/Distribuicao/informacoes_produtos.htm">Informações do Produto</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/caracteristica_distribuicao.htm">Caracteristicas de Distribuição</a></li>
-    <li><a href="${pageContext.request.contextPath}/Distribuicao/help_distribuicao.htm">Help</a></li>
-</ul>
-    </li>
-    <li><a href="javascript:;" class="trigger"><span class="classEstoque">&nbsp;</span>Estoque</a>
-        <ul>
-    <li><a href="${pageContext.request.contextPath}/Estoque/recebimento_fisico.htm">Recebimento Fisico</a></li>
-    <li><a href="${pageContext.request.contextPath}/Estoque/lancamento_faltas_sobras.htm">Lançamento  Faltas e Sobras</a></li>
-<!--
-    <li><a href="${pageContext.request.contextPath}/Estoque/relatorio_faltas_sobras.htm">Relatório Faltas e Sobras</a></li>-->
-    <!--<li><a href="${pageContext.request.contextPath}/Estoque/ajuste_estoque.htm">Ajuste Estoque - Inventário</a></li>-->
-    <li><a href="${pageContext.request.contextPath}/Estoque/consulta_notas_sem_fisico.htm">Consulta Notas</a></li>
-    <li><a href="${pageContext.request.contextPath}/Estoque/consulta_faltas_sobras.htm">Consulta Faltas e Sobras</a></li>
-    <li><a href="${pageContext.request.contextPath}/Estoque/extrato_edicao.htm">Extrato de Edição</a></li>
-    <li><a href="${pageContext.request.contextPath}/Estoque/visao_estoque.htm">Visão do Estoque</a></li>
-    <li><a href="${pageContext.request.contextPath}/Estoque/edicoes_fechadas.htm">Edições Fechadas com Saldo</a></li>
-    <li><a href="${pageContext.request.contextPath}/Estoque/help_estoque.htm">Help</a></li>
-</ul>
-    </li>
-    
-    <li><a href="javascript:;" class="trigger"><span class="classExpedicao">&nbsp;</span>Expedição</a>
-        <ul>
-    <li><a href="${pageContext.request.contextPath}/Expedicao/interface_picking.htm">Interface Picking</a></li>
-  <li><a href="${pageContext.request.contextPath}/Expedicao/mapa_abastecimento.htm">Mapa Abastecimento</a></li>
-  <li><a href="${pageContext.request.contextPath}/Expedicao/confirma_expedicao.htm">Confirma Expedição</a></li>
-    <li><a href="${pageContext.request.contextPath}/Expedicao/jornaleiro_ausente.htm">Cota Ausente - Reparte</a></li>
-    <li><a href="${pageContext.request.contextPath}/Expedicao/geracao_nfe.htm">Nota de Envio</a></li>
-    <li><a href="${pageContext.request.contextPath}/Expedicao/resumo_expedicao_nota.htm">Resumo de Expedição</a></li>
-    <li><a href="${pageContext.request.contextPath}/Expedicao/romaneios.htm">Romaneios</a></li>
-    <li><a href="${pageContext.request.contextPath}/Expedicao/help_expedicao.htm">Help</a></li>
-</ul>  
-    </li>
-    <li><a href="javascript:;" class="trigger"><span class="classDevolucao">&nbsp;</span>Devolução</a>
-    <ul>
-	<li><a href="${pageContext.request.contextPath}/Devolucao/balanceamento_da_matriz_recolhimento.htm">Balanceamento da Matriz</a></li>
-    <li><a href="${pageContext.request.contextPath}/Devolucao/consulta_informe_encalhe.htm">Informe Recolhimento</a></li>
-    <li><a href="${pageContext.request.contextPath}/Devolucao/ce_antecipada.htm">CE Antecipada - Produto</a></li>
-    <li><a href="${pageContext.request.contextPath}/Devolucao/emissao_ce.htm">Emissão CE</a></li>
-    <li><a href="${pageContext.request.contextPath}/Devolucao/conferencia_encalhe_jornaleiro.htm">Conferência de Encalhe</a></li>
-    <li><a href="${pageContext.request.contextPath}/Devolucao/venda_encalhe.htm">Venda de Encalhe / Suplementar</a></li>
-  <li><a href="${pageContext.request.contextPath}/Devolucao/fechamento_fisico_logico.htm">Fechamento Encalhe</a></li>
-    <li><a href="${pageContext.request.contextPath}/Devolucao/fechamento_ce_integracao.htm">Fechamento CE - Integração</a></li>
-  <li><a href="${pageContext.request.contextPath}/Devolucao/devolucao_fornecedor.htm">Devolução ao Fornecedor</a></li>
-   <!--<li><a href="${pageContext.request.contextPath}/Devolucao/digitacao_contagem_devolucao.htm">Devolução Fornecedor</a></li>-->
-  <li><a href="${pageContext.request.contextPath}/Devolucao/emissao_bandeira.htm">Emissão das Bandeiras</a></li>
-   <li><a href="${pageContext.request.contextPath}/Devolucao/chamadao.htm">Chamadão</a></li>
-   <li><a href="${pageContext.request.contextPath}/Devolucao/edicoes_chamada.htm">Consulta Encalhe</a></li>
-   <li><a href="${pageContext.request.contextPath}/Devolucao/help_devolucao.htm">Help</a></li>
-</ul></li>
-<li><a href="javascript:;" class="trigger"><span class="classNFe">&nbsp;</span>NF-e</a>
-    <ul>
-	<li><a href="${pageContext.request.contextPath}/NFE/tratamento_arquivo_retorno_nfe.htm">Retorno NF-e</a></li>
-    <li><a href="${pageContext.request.contextPath}/NFE/consulta_nfe_encalhe_tratamento.htm">Entrada NF-e Terceiros</a></li>
-    <li><a href="${pageContext.request.contextPath}/NFE/geracao_nfe_NFE.htm">Geração NF-e</a></li>
-    <li><a href="${pageContext.request.contextPath}/NFE/impressao_nfe_NFE.htm">Impressão NF-e</a></li>
-    <!--<li><a href="${pageContext.request.contextPath}/NFE/cancelamento_nfe.htm">Cancelamento NFE</a></li>-->
-    <li><a href="${pageContext.request.contextPath}/NFE/painel_monitor_nfe.htm">Painel Monitor NF-e</a></li>
-    <li><a href="${pageContext.request.contextPath}/NFE/help_nfe.htm">Help</a></li>    
-</ul>
-    
-    
-    </li>
-    
-    
-<li><a href="javascript:;" class="trigger"><span class="classFinanceiro">&nbsp;</span>Financeiro</a>
-    <ul>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/baixa_bancaria.htm">Baixa Financeira</a></li>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/negociar_divida.htm">Negociação de Divida</a></li>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/debitos_creditos.htm">Débitos / Créditos Cota</a></li>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/impressao_boletos.htm">Impressão de Boletos</a></li>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/cadastro_manutencao_status.htm">Manutenção de Status Cota</a></li>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/suspensao_jornaleiro.htm">Suspensão  Cota</a></li>
-  <li><a href="${pageContext.request.contextPath}/Financeiro/consulta_boletos_jornaleiros.htm">Consulta Boletos por Cota</a></li>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/conta_corrente.htm">Conta Corrente</a></li>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/conta_pagar.htm">Contas a pagar</a></li>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/historico_inadimplencia.htm">Inadimplência</a></li>
-  <li><a href="${pageContext.request.contextPath}/Financeiro/consignado_cota.htm">Consulta Consignado</a></li>
-  <li><a href="${pageContext.request.contextPath}/Financeiro/cadastro_tipo_desconto.htm">Tipo de Desconto Cota</a></li>
-  <li><a href="${pageContext.request.contextPath}/Financeiro/relatorio_garantias.htm">Relatório de Garantias</a></li>
-  <li><a href="${pageContext.request.contextPath}/Financeiro/parametros_cobranca.htm">Parâmetros de Cobrança</a></li>
-    <li><a href="${pageContext.request.contextPath}/Financeiro/help_financeiro.htm">Help</a></li>
-</ul>
-    
-    
-    </li>
-    <li><a href="javascript:;" class="trigger"><span class="classAdministracao">&nbsp;</span>Administração</a>
-    <ul>
-	<li><a href="${pageContext.request.contextPath}/Administracao/fechar_dia.htm">Fechamento Diário</a></li>
-    <li><a href="${pageContext.request.contextPath}/Administracao/workflow_aprovacao.htm">Controle Aprovação</a></li>
-   <!-- <li><a href="painel_operacional.htm">Painel Operacional</a></li>-->
-    <li><a href="${pageContext.request.contextPath}/Administracao/painel_processamento.htm">Painel Processamento</a></li>
-    <li><a href="${pageContext.request.contextPath}/Administracao/fallowup_sistema.htm">Follow Up do Sistema</a></li>
-    <li><a href="${pageContext.request.contextPath}/Administracao/cadastro_usuario.htm">Grupos de Acesso</a></li>
-  <li><a href="${pageContext.request.contextPath}/Administracao/cadastro_calendario.htm">Calendário</a></li>
-  <!--<li><a href="${pageContext.request.contextPath}/Administracao/cadastro_tipos_movimento.htm">Tipo de Movimento</a></li>-->
-  <li><a href="${pageContext.request.contextPath}/Administracao/faixa_reparte.htm">Faixa de Reparte</a></li>
- <li><a href="${pageContext.request.contextPath}/Administracao/gerar_arquivo_jornaleiro.htm">Gerar Arquivo Jornaleiro</a></li>
-  <li><a href="${pageContext.request.contextPath}/Administracao/cadastro_tipo_nota.htm">Tipos de NF-e</a></li>
-       
-           <!--<li><a href="${pageContext.request.contextPath}/Administracao/cadastro_servico_entrega.htm">Serviço de Entrega</a></li>-->
-           
-           <li><a href="${pageContext.request.contextPath}/Administracao/relatorio_servico_entrega.htm">Relatório de Serviços de Entrega</a></li>
-   
-   <!--<li><a href="${pageContext.request.contextPath}/Administracao/tipos_produtos.htm">Tipos de Produtos</a></li>-->
-  <!--<li class="criando"><a href="javascript:;" onclick="alert('Serviço em construção.');">Plano de Contas</a></li>-->
-  <li><a href="${pageContext.request.contextPath}/Administracao/parametros_sistema.htm">Parâmetros de Sistema</a></li>
-  <li><a href="${pageContext.request.contextPath}/Administracao/parametros_distribuidor.htm">Parâmetros Distribuidor</a></li>
-  <!--<li class="criando"><a href="javascript:;" onclick="alert('Serviço em construção.');">Histórico do PDV</a></li>-->
-    <li><a href="${pageContext.request.contextPath}/Administracao/help_administracao.htm">Help</a></li>
-</ul></li>
-    <li><a href="${pageContext.request.contextPath}/help.htm" style="width:14px!important	;"><span class="classHelp">&nbsp;</span></a></li>
-</ul>
-  	<br class="clearit" />
-	</div>
-</div>
     <br clear="all"/>
     <br />
    
@@ -756,8 +557,6 @@ function definicaoReparte(){
  
  
  $(".cotasDetalhesGrid").flexigrid({
-			url : '${pageContext.request.contextPath}/xml/cotasDetalhes-xml.xml',
-			dataType : 'xml',
 			colModel : [ {
 				display : 'Código',
 				name : 'codigo',
@@ -794,8 +593,6 @@ function definicaoReparte(){
 		});
  
  $(".cotasEstudoGrid").flexigrid({
-			url : '${pageContext.request.contextPath}/xml/cotasEstudo-xml.xml',
-			dataType : 'xml',
 			colModel : [ {
 				display : 'Cota',
 				name : 'cota',
@@ -837,4 +634,3 @@ function definicaoReparte(){
  </span>
  </div>
   </body>
-</html>
