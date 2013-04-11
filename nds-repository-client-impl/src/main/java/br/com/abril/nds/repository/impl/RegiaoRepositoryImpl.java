@@ -36,6 +36,7 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		
 		hql.append(" FROM Regiao as regiao ");
 		hql.append(" JOIN regiao.idUsuario as usuario");
+		hql.append(" order by regiao.nomeRegiao");
 		
 		Query query =  getSession().createQuery(hql.toString());
 		

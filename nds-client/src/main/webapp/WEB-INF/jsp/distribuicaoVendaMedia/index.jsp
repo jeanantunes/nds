@@ -1,7 +1,6 @@
 <%--
  --%>
- <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+ <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <script language="javascript">
 $(function() {
 		$( "#tab-distribuicao" ).tabs();
@@ -320,7 +319,7 @@ function esconde_redutor(){
                           </tr>
                           <tr>
                             <td width="110">Código</td>
-                            <td>${ produtoEdicao.codigoProduto }</td>
+                            <td id="codigoProduto">${ produtoEdicao.codigoProduto }</td>
                           </tr>
                           <tr>
                             <td>Edição:</td>
