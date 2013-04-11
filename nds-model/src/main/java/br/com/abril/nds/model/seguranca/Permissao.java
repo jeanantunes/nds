@@ -34,26 +34,23 @@ public enum Permissao
 	ROLE_LANCAMENTO_HELP("Help",																		   Permissao.ROLE_LANCAMENTO),
 	
 	ROLE_DISTRIBUICAO("Distribuição",																	   null),
-	ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE("Ajuste de reparte",	 										   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO("Informações do Produto",	 									   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
-
-	ROLE_DISTRIBUICAO_REGIAO("Região", 				  													   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO("Segmento Não Recebido",					 				   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS("Exceção de Segmentos e Parciais",					 	   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS("Histograma de Vendas", 				   						   Permissao.ROLE_DISTRIBUICAO),
-
-	ROLE_DISTRIBUICAO_FIXACAO_REPARTE("Fixação de Reparte", 				   							   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO("Mix por Cota/Publicação", 				   						   Permissao.ROLE_DISTRIBUICAO),
-
-	ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA("Classificação Não Recebida",						 	   Permissao.ROLE_DISTRIBUICAO),
-
-	ROLE_DISTRIBUICAO_DESENGLOBACAO("Desenglobação",												 	   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_HISTORICO_VENDA("Histórico de Vendas",										 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO("Matriz Distribuição"				 ,					 	   	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_ANALISE_DE_ESTUDOS("Analise de Estudos", 				  							   Permissao.ROLE_DISTRIBUICAO),
-	ROLE_DISTRIBUICAO_MANUAL("Distribuição Manual", 				  							   Permissao.ROLE_DISTRIBUICAO),
-	
+	ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO("Mix por Cota/Publicação", 				   						   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_FIXACAO_REPARTE("Fixação de Reparte", 				   							   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_CLASSIFICACAO_NAO_RECEBIDA("Classificação Não Recebida",						 	   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_SEGMENTO_NAO_RECEBIDO("Segmento Não Recebido",					 				   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS("Exceção de Segmentos e Parciais",					 	   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_AJUSTE_DE_REPARTE("Ajuste de reparte",	 										   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_DESENGLOBACAO("Desenglobação",												 	   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS("Histograma de Vendas", 				   						   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_HISTORICO_VENDA("Histórico de Vendas",										 	   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_REGIAO("Região", 				  													   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO("Informações do Produto",	 									   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_MANUAL("Distribuição Manual", 				  							   		   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_HELP("Help",																		   Permissao.ROLE_DISTRIBUICAO),
+
 	ROLE_ESTOQUE("Estoque",																	  			   null),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO("Recebimento Físico",												   Permissao.ROLE_ESTOQUE),
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS("Lançamento Faltas e Sobras",									   Permissao.ROLE_ESTOQUE),
