@@ -123,7 +123,7 @@ function popup_mudar_base() {
 			params.push({name:"edicoes",value:edicoes});
 		}
 		$(".baseEstudo2Grid").flexigrid({
-			url : 'init',
+			url : contextPath + '/lancamento/analise/normal/init',
 			dataType : 'json',
 			"params":params,
 			onChangeSort:newOrder,
@@ -263,9 +263,12 @@ function popup_edicoes_produto(tr) {
 	
 	
 function preProcessPrincipal(json){
-	for ( var i = 1; i <= 6; i++) {
-		if(json["rows"][0]["cell"]["edicao"+i]){
-			$("#edicao"+i).text(json["rows"][0]["cell"]["edicao"+i]);
+	
+	if (json.cell) {
+		for ( var i = 1; i <= 6; i++) {
+			if(json["rows"][0]["cell"]["edicao"+i]){
+				$("#edicao"+i).text(json["rows"][0]["cell"]["edicao"+i]);
+			}
 		}
 	}
 	return json;
@@ -453,7 +456,7 @@ function arrowDownClick(event){
 	event.preventDefault();
 	return false;
 }
-
+//@ sourceURL=analiseNormal.js
 
 //$(".pdvCotaGrid").flexigrid({
 //url : 'init?id=9',

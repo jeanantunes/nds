@@ -17,6 +17,10 @@ $(function(){
 
 </head>
 
+<div id="histogramaPosEstudoContent" />
+
+<div id="AnaliseEstudoMainContent">
+
 <body>
 <form name="form" id="form">
 
@@ -78,3 +82,4 @@ $(function(){
      
  </form>
 </body>
+</div>

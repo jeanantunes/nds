@@ -20,7 +20,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						segmentoNaoRecebidoController.urlCarregarComboboxInclusaoDeSegmentoNaCota = contextPath + "/distribuicao/segmentoNaoRecebido/carregarComboboxInclusaoDeSegmentoNaCota";
 						
 						// GRID NA TELA PRINCIPAL LADO ESQUERDO PESQUISAS POR COTA (numero ou nome)
-						$(".segmentoCotaGrid").flexigrid({
+						$(".segmentoCotaGrid", segmentoNaoRecebidoController.workspace).flexigrid({
 							preProcess : segmentoNaoRecebidoController.preProcessIncluirBotaoExcluirCota ,
 							dataType : 'json',
 							colModel : [ {
@@ -64,7 +64,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 							height : 250
 						});
 						
-					$(".pesqBancasGrid").flexigrid({
+					$(".pesqBancasGrid", segmentoNaoRecebidoController.workspace).flexigrid({
 							url : '../xml/pesqBancas-xml.xml',
 							dataType : 'xml',
 							colModel : [ {
@@ -97,7 +97,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						});
 						
 						// Grid que mostra ao usuário os segmentos disponíveis para incluir na cota
-						$(".segmentosBGrid").flexigrid({
+						$(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexigrid({
 							preProcess : segmentoNaoRecebidoController.preProcessIncluirCheckBoxSegmentosBGrid,
 							dataType : 'json',
 							colModel : [ {
@@ -118,7 +118,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						});
 						
 						// GRID COTA PARA SELEÇÃO E INCLUSÃO NO SEGMENTO NÃO RECEBIDO
-						$(".segmentosGrid").flexigrid({
+						$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexigrid({
 							preProcess : segmentoNaoRecebidoController.preProcessIncluirCheckBox,
 							dataType : 'json',
 							colModel : [ {
@@ -147,7 +147,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						});
 						
 					// GRID NA TELA PRINCIPAL LADO ESQUERDO PESQUISAS POR SEGMENTO
-					$(".segmentoNaoRecebidaGrid").flexigrid({
+					$(".segmentoNaoRecebidaGrid", segmentoNaoRecebidoController.workspace).flexigrid({
 						preProcess : segmentoNaoRecebidoController.preProcessIncluirBotaoExcluirSegmento,
 							dataType : 'json',
 							colModel : [ {
@@ -744,22 +744,22 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					
 					
 					porSegmento : function(){
-						$('.porCota').hide();
-						$('.porSegmento').show();
+						$('.porCota', segmentoNaoRecebidoController.workspace).hide();
+						$('.porSegmento', segmentoNaoRecebidoController.workspace).show();
 						
 						segmentoNaoRecebidoController.pesquisarCotasNaoRecebemSegmento();
 					},
 					
 					porCota : function(){
-						$('.porCota').show();
-						$('.porSegmento').hide();
+						$('.porCota', segmentoNaoRecebidoController.workspace).show();
+						$('.porSegmento', segmentoNaoRecebidoController.workspace).hide();
 						
-						if($("#numeroCotaFiltro1").val()=="" && $("#nomeCotaFiltro1").val()==""){						
+						if($("#numeroCotaFiltro1", segmentoNaoRecebidoController.workspace).val()=="" && $("#nomeCotaFiltro1", segmentoNaoRecebidoController.workspace).val()==""){						
 					           var erros = new Array();
 					           erros[0] = "Informe Cota/Nome para pesquisa.";
 					           exibirMensagemDialog('WARNING',   erros,"");                
-					           $("#numeroCotaFiltro1").val("");
-					           $("#nomeCotaFiltro1").val("");
+					           $("#numeroCotaFiltro1", segmentoNaoRecebidoController.workspace).val("");
+					           $("#nomeCotaFiltro1", segmentoNaoRecebidoController.workspace).val("");
 					           
 					           return;
 						   }
@@ -798,33 +798,33 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					
 					
 					filtroPorCota : function(){
-						$('.filtroPorCota').show();
-						$('.filtroPorSegmento').hide();
-						$('.porSegmento').hide();
+						$('.filtroPorCota', segmentoNaoRecebidoController.workspace).show();
+						$('.filtroPorSegmento', segmentoNaoRecebidoController.workspace).hide();
+						$('.porSegmento', segmentoNaoRecebidoController.workspace).hide();
 						segmentoNaoRecebidoController.limparFiltroSegmento();
 					},
 					
 					filtroPorSegmento : function (){
-						$('.filtroPorCota').hide();
-						$('.filtroPorSegmento').show();
-						$('.porCota').hide();
+						$('.filtroPorCota', segmentoNaoRecebidoController.workspace).hide();
+						$('.filtroPorSegmento', segmentoNaoRecebidoController.workspace).show();
+						$('.porCota', segmentoNaoRecebidoController.workspace).hide();
 						segmentoNaoRecebidoController.limparFiltroCota();
 					},
 					
 					
 					limparFiltroSegmento : function(){
-						$("#tipoSegmentoProduto").val("");
-						$('#cotasAtivas').attr('checked', true);
+						$("#tipoSegmentoProduto", segmentoNaoRecebidoController.workspace).val("");
+						$('#cotasAtivas', segmentoNaoRecebidoController.workspace).attr('checked', true);
 					},
 					
 					limparFiltroCota : function(){
-						$("#numeroCotaFiltro1").val("");
-						$("#nomeCotaFiltro1").val("");
+						$("#numeroCotaFiltro1", segmentoNaoRecebidoController.workspace).val("");
+						$("#nomeCotaFiltro1", segmentoNaoRecebidoController.workspace).val("");
 					},
 					
 					limparFiltroCota2 : function(){
-						$("#numeroCotaFiltro2").val("");
-						$("#nomeCotaFiltro2").val("");
+						$("#numeroCotaFiltro2", segmentoNaoRecebidoController.workspace).val("");
+						$("#nomeCotaFiltro2", segmentoNaoRecebidoController.workspace).val("");
 					},
 					
 					// Processa e apresenta ao usuário as mensagens de erro, sucesso
@@ -944,19 +944,6 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 
 				}, BaseController);
 
-$(document).ready(function(){
-	
-	segmentoNaoRecebidoController.filtroPorSegmento();
-	focusSelectRefField($("#radio", segmentoNaoRecebidoController.workspace));
-	$("#radio", segmentoNaoRecebidoController.workspace).attr("checked", true);
-	
-//	$(document.body).keydown(function(e) {
-//		
-//		if(keyEventEnterAux(e)){
-//			mostrar(); segmentoNaoRecebidoController.porSegmento();
-//		}
-//		
-//		return true;
-//	});
-});
+
+
  //@ sourceURL=segmentoNaoRecebido.js
