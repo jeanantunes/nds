@@ -21,5 +21,6 @@ public interface DistribuicaoRepository extends Repository<Lancamento, Long> {
 	 */
 	public ProdutoDistribuicaoVO obterProdutoDistribuicaoPorEstudo(BigInteger idEstudo);
 	
+	public ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo(BigInteger id);
 	
 }
