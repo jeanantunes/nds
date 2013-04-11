@@ -77,12 +77,7 @@ init : function() {
 	
 	$.each(resultado.rows, function(index, row) {
 		
-//<<<<<<< HEAD
-//		var analise = '<select name="select" id="select" style="width:140px;" onchange="analiseEstudoController.redirectToTelaAnalise('+ row.cell.numeroEstudo +',event);"> <option selected="selected">Selecione...</option> <option value="normal">Normal</option> <option value="parcial">Parcial</option>';
-//=======
-		var analise = '<select name="select" id="select" onchange="analiseEstudoController.carregarTela('+row.cell.numeroEstudo+', this)">'+
-					  '<option selected="selected">Selecione...</option> <option value="Normal">Normal</option> <option value="Parcial">Parcial</option></select>';
-//>>>>>>> DGBti/fase2
+		var analise = '<select name="select" id="select" style="width:140px;" onchange="analiseEstudoController.redirectToTelaAnalise('+ row.cell.numeroEstudo +',event);"> <option selected="selected">Selecione...</option> <option value="normal">Normal</option> <option value="parcial">Parcial</option>';
 		
 		row.cell.telaAnalise = analise;
 	});
@@ -151,15 +146,8 @@ init : function() {
 			}
 		);
 		
-	}
+	},
 	
-	carregarTela : function (numeroEstudo, select){
-		
-		if((select.value == "Normal") || (select.value == "Parcial")){
-			alert("numeroEstudo "+numeroEstudo+" select.value"+select.value);
-		}
-	}
-
 }, BaseController);
 //@ sourceURL=analiseEstudo.js
 
