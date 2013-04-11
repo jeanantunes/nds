@@ -35,12 +35,17 @@ function mostraFiltroPorCota(){
 	$('.filtroPorCota').show();
 	$('.filtroPorClassificacao').hide();
 	$('.porClassificacao').hide();
-	}
+	$('#cotasQueRecebem_numeroCota').val('');
+	$('#cotasQueRecebem_nomeCota').val('');
+}
+
 function mostraFiltroPorClassificacao(){
 	$('#selectClassificacao').val(null);
 	$('.filtroPorCota').hide();
 	$('.filtroPorClassificacao').show();
 	$('.porCota').hide();	
+	$('#cotasQueRecebem_numeroCota').val('');
+	$('#cotasQueRecebem_nomeCota').val('');
 }
 </script>
 
@@ -123,7 +128,7 @@ function mostraFiltroPorClassificacao(){
       
       <div class="porClassificacao" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
-       	  <legend>Cotas que  N&otilde;o Recebem</legend>
+       	  <legend>Cotas que  N&atilde;o Recebem</legend>
         
         	<table class="classificaNaoRecebidaGrid"></table>
              <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="porClassificacaoGerarXLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -141,7 +146,7 @@ function mostraFiltroPorClassificacao(){
        	      <td width="41"><input type="text" id="cotasQueRecebem_numeroCota" style="width:40px;"/></td>
               <td width="41">Nome:</td>
        	      <td width="115"><input type="text" id="cotasQueRecebem_nomeCota" style="width:140px;" 
-       	      onblur="pesquisaCota.pesquisarPorNomeCota('#cotasQueRecebem_numeroCota', '#cotasQueRecebem_nomeCota');" /></td>
+       	      onblur="pesquisaCota.pesquisarPorNomeCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');" /></td>
               <td width="19"><span class="classPesquisar"><a href="javascript:;" id="pesquisarCotaQueRecebeClassificacao">&nbsp;</a></span></td>
    	        </tr>
    	      </table>
