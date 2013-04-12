@@ -49,31 +49,37 @@
 
 <body>
 	
-	<div id="dialog-excluirCota" title="Aten√ß√£o" style="display:none">
-		<p>Confirmar exclus√£o Cota ?</p>
+	<div id="dialog-excluirCota" title="AtenÁ„o" style="display:none">
+		<p>Confirmar exclus&atilde;o Cota ?</p>
+	</div>
+	<div id="dialog-confirmarSenha" title="AtenÁ„o" style="display:none">
+		<p>Informe sua senha: 
+		<input type="password" id="confirmarSenhaInput" name="confirmarSenhaInput">
+		<input type="hidden" name="fileType" id="fileType" />
+		</p>
 	</div>
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCPF();" rel="tipsy" title="Incluir Nova Cota Pessoa F√≠sica">
+				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCPF();" rel="tipsy" title="Incluir Nova Cota Pessoa FÌsica">
 					<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/>
 				</a>
 			</span>
 			
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCNPJ();" rel="tipsy" title="Incluir Nova Cota Pessoa Jur√≠dica">
+				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCNPJ();" rel="tipsy" title="Incluir Nova Cota Pessoa JurÌdica">
 					<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/>
 				</a>
 			</span>
 			
 			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/cadastro/cota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+				<a href="javascript:;" onclick="MANTER_COTA.imprimir('XLS')" rel="tipsy" title="Gerar Arquivo">
 					<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				</a>
 			</span>
 			
 			<span class="bt_arq">
-				<a href="${pageContext.request.contextPath}/cadastro/cota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+				<a href="javascript:;" onclick="MANTER_COTA.imprimir('PDF')" rel="tipsy" title="Imprimir">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 				</a>
 			</span>
@@ -96,7 +102,7 @@
 	              		    />
           		
              </td>
-               <td width="121">Nome / Raz√£o Social:</td>
+               <td width="121">Nome / Raz&atilde;o Social:</td>
                <td width="205">
                
                		<input   name="descricaoPessoa" 
@@ -134,7 +140,7 @@
 					<input type="text" id="bairroPesquisa" style="width:200px;"
 						   onkeyup="MANTER_COTA.pesquisarBairros('#bairroPesquisa');"/>
 				</td>
-				<td width="86">Munic√≠pio:</td>
+				<td width="86">Munic&iacute;pio:</td>
 				<td width="193">
 					<input type="text" id="municipioPesquisa" style="width:180px;"
 						   onkeyup="MANTER_COTA.pesquisarMunicipios('#municipioPesquisa');"/>
