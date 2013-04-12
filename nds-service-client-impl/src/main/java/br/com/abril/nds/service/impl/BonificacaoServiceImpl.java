@@ -30,7 +30,7 @@ public class BonificacaoServiceImpl implements BonificacaoService {
 		Bonificacao bonificacao = new Bonificacao();
 		
 		bonificacao.setBonificacao(bonificacaoDTO.getBonificacao().intValue());
-		bonificacao.setComponente(bonificacaoDTO.getComponente().toString());
+		bonificacao.setComponente(bonificacaoDTO.getComponente());
 		bonificacao.setElemento(bonificacaoDTO.getElemento());
 		bonificacao.setEstudo(estudo);
 		bonificacao.setReparteMinimo(bonificacaoDTO.getReparteMinimoBigInteger());

@@ -197,7 +197,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			align : 'left'
 		},{
 			display : 'Qtde',
-			name : 'quantidade',
+			name : 'qtdReparteMin',
 			width : 25,
 			sortable : true,
 			align : 'center'
@@ -242,8 +242,29 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			
 			row.cell.numeroEdicao = capa;
 			
-			var numeroEstudo = '<a href="javascript:;" onclick="informacoesProdutoController.recuperarNumeroEstudo(' + row.cell.estudo + ')">' + row.cell.estudo +'</a>'
+			var numeroEstudo = '<a href="javascript:;" onclick="informacoesProdutoController.recuperarNumeroEstudo(' + row.cell.estudo + ')">' + row.cell.estudo +'</a>';
 			row.cell.estudo = numeroEstudo;
+			
+			//Validando campos vazios
+			var repMinimo = row.cell.reparteMinimo;
+			if(repMinimo == 0){
+			   row.cell.reparteMinimo = "";
+			}
+
+			var percAbrang = row.cell.percentualAbrangencia;
+			if(percAbrang == 0){
+				row.cell.percentualAbrangencia = "";
+			}
+			
+			var venda = row.cell.venda;
+			if(venda == 0){
+				row.cell.venda = "";
+			}
+			
+			var repDist = row.cell.reparteDistribuido;
+			if(repDist == 0){
+				row.cell.reparteDistribuido = "";
+			}
 			
 		});
 		
@@ -349,7 +370,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			width:950,
 			modal: true,
 			open: informacoesProdutoController.baseSugerida(estudo),
-			open: informacoesProdutoController.itensRegiao(),
+			open: informacoesProdutoController.itensRegiao(estudo),
 			open: informacoesProdutoController.baseEstudo(estudo),
 			open: informacoesProdutoController.caracteristicasProduto(codProd, numeroEdicao),
 			open: informacoesProdutoController.openDetalhe(codProd, numeroEdicao),
@@ -381,11 +402,14 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		$(".editorBaseGrid").flexReload();		
 	},
 	
-	itensRegiao : function(codProd){
+	itensRegiao : function(estudo){
 		
 		$(".itensRegioesEspecificasGrid").flexOptions({
 			url: contextPath + "/distribuicao/informacoesProduto/buscarItemRegiao",
 			dataType : 'json',
+			params:[{
+				name : 'idEstudo', value:estudo
+			}]
 		});
 		$(".itensRegioesEspecificasGrid").flexReload();		
 	},
@@ -416,11 +440,21 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	},
 	
 	caracteristicasProd : function(result){
-		$("#precoCapa").val(result.precoVenda).disable();;
-		$("#pctPadrao").val(result.pacotePadrao).disable();;
-		$("#chamadaCapa").val(result.chamadaCapa).disable();;
-		$("#boletimInfor").val(result.boletimInformativo).disable();;
-		$("#nomeComercial").val(result.nomeComercial).disable();;
+		
+		var precoCapa = "#precoCapa";
+		informacoesProdutoController.validarCamposVazios(result.precoVenda, precoCapa);
+		
+		var pctPadrao = "#pctPadrao";
+		informacoesProdutoController.validarCamposVazios(result.pacotePadrao, pctPadrao);
+		
+		var chamCapa = "#chamadaCapa";
+		informacoesProdutoController.validarCamposVazios(result.chamadaCapa, chamCapa);
+		
+		var boletimInfo = "#boletimInfor";
+		informacoesProdutoController.validarCamposVazios(result.boletimInformativo, boletimInfo);
+		
+		var nmComer = "#nomeComercial";
+		informacoesProdutoController.validarCamposVazios(result.nomeComercial, nmComer);
 		
 	},
 	
@@ -440,12 +474,29 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	dadosMinimoEAbrangencia : function(result){
 		
-		$("#sugeridoAbrang").val(result.abrangenciaSugerida).disable();
-		$("#apuradaAbrang").val(result.abrangenciaApurada).disable();
-		$("#sugeridoMinimo").val(result.minimoSugerido).disable();
-		$("#estudoMinimo").val(result.minimoEstudoId).disable();
+		
+		var sgAbrang = "#sugeridoAbrang";
+		informacoesProdutoController.validarCamposVazios(result.abrangenciaSugerida, sgAbrang);
+
+		var apAbrang = "#apuradaAbrang"; 
+		informacoesProdutoController.validarCamposVazios(result.abrangenciaApurada, apAbrang);
+		
+		var sgMin = "#sugeridoMinimo";
+		informacoesProdutoController.validarCamposVazios(result.minimoSugerido, sgMin);
+		
+		var estudoMin = "#estudoMinimo";
+		informacoesProdutoController.validarCamposVazios(result.minimoEstudoId, estudoMin);
+
 	},
 	
+	validarCamposVazios : function (valor, campo){
+		if(valor == 0){
+			valor = "";
+			$(campo).val(valor).disable();
+		}else{
+			$(campo).val(valor).disable();
+		}
+	},
 	
 	detalhes_ReparteTotalEPromocional : function (codProd, numeroEdicao){
 		
@@ -461,8 +512,12 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	dadosReparte : function(result){
 		
-		$("#reparteTotal").val(result.reparteTotal).disable();
-		$("#repartePromocional").val(result.repartePromocional).disable();
+		var repTotal = "#reparteTotal";
+		informacoesProdutoController.validarCamposVazios(result.reparteTotal, repTotal);
+		
+		var repProm = "#repartePromocional";
+		informacoesProdutoController.validarCamposVazios(result.repartePromocional, repProm);
+		
 	},
 	
 	detalhes_ReparteSobra : function (estudo){
@@ -478,7 +533,8 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	dadosReparteSobra : function(result){
 		
-		$("#sobra").val(result.sobra).disable();
+		var sobra = "#sobra";
+		informacoesProdutoController.validarCamposVazios(result.sobra, sobra);
 	},
 	
 	detalhes_ReparteDistribuido : function (codProd){
@@ -494,7 +550,8 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	dadosReparteDistribuido : function(result){
 		
-		$("#reparteDistribuido").val(result).disable();
+		var repDist = "#reparteDistribuido";
+		informacoesProdutoController.validarCamposVazios(result, repDist);
 	},
 	
 	detalhes_venda : function (codProd, numeroEdicao){
@@ -511,8 +568,11 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	dadosVendas : function(result){
 		
-		$("#venda").val(result.totalVenda).disable();
-		$("#porcentagemVenda").val(result.porcentagemDeVenda).disable();
+		var venda = "#venda";
+		informacoesProdutoController.validarCamposVazios(result.totalVenda, venda);
+		
+		var porcVenda = "#porcentagemVenda";
+		informacoesProdutoController.validarCamposVazios(result.porcentagemDeVenda, porcVenda);
 	},
 	
 	pop_capa : function(){
