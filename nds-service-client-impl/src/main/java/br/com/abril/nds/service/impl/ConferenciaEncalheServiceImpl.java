@@ -2074,9 +2074,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 				} else {
 					
-					BigInteger qtdeOriginal = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
+					BigInteger qtdeOriginal = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
 					
-					estoqueProduto.setQtde(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
+					estoqueProduto.setQtdeDevolucaoEncalhe(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
 
 					estoqueProdutoRepository.alterar(estoqueProduto);
 					
