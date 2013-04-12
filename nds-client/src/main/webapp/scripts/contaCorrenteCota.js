@@ -743,7 +743,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				var texto = $("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).text();
 				$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).text(dataConsolidado + " - " + texto);
-				$("#valorTotalDebitoCredito", contaCorrenteCotaController.workspace).text(floatToPrice(formatMoneyValue(valorTotal)));
+				$("#valorTotalDebitoCredito", contaCorrenteCotaController.workspace).text(floatToPrice(formatMoneyValue(valorTotal) * -1));
 			
 				contaCorrenteCotaController.montarGridDebitoCredio();
 				$("#dialog-debitos-creditos", contaCorrenteCotaController.workspace ).dialog({
@@ -765,7 +765,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				});
 				
 				$(".debitoCreditoCotaGrid", contaCorrenteCotaController.workspace).flexAddData({
-					page: result.page, total: (parseFloat(result.total) * -1), rows: result.rows
+					page: result.page, total: result.total, rows: result.rows
 				});
 				
 				contaCorrenteCotaController.idConsolidadoDebitoCredito = idConsolidado;
