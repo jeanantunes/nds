@@ -77,6 +77,12 @@ public class DesenglobacaoDTO implements Serializable {
 	}
 	public void setDataAlteracao(Date dataAlteracao) {
 		this.dataAlteracao = DateUtil.formatarDataPTBR(dataAlteracao);
-		this.hora = DateUtil.formatarHoraMinuto(dataAlteracao);
+		this.setHora(DateUtil.formatarHoraMinuto(dataAlteracao));
+	}
+	public String getHora() {
+		return hora;
+	}
+	public void setHora(String hora) {
+		this.hora = hora;
 	}
 }

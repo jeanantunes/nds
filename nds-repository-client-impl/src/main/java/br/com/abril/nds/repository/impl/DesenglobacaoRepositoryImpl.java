@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,13 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Desenglobacao> obterDesenglobacaoPorCota(Long cotaId) {
-		return getSession().createCriteria(Desenglobacao.class)
-			.add(Restrictions.eq("desenglobaNumeroCota", cotaId))
-			.list();
+		
+		StringBuilder hql = new StringBuilder("");
+		hql.append(" from Desenglobacao d where d.englobadaNumeroCota = :cotaId ");
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("cotaId", cotaId);
+		return query.list();
+
 	}
 	
 	public Float verificaPorcentagemCota(Long cotaId) {
