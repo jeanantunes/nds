@@ -1,3 +1,6 @@
+<div id="dividirEstudoTelaAnalise" />
+<div id="dividirEstudoContent">
+
 <head>
 
 <style>
@@ -177,7 +180,7 @@
 				onclick="dividirEstudo.confirmar();"><img
 					src="${pageContext.request.contextPath}/images/ico_check.gif"
 					alt="Confirmar" hspace="5" border="0" />Confirmar</a></span> <span
-				class="bt_novos"><a href="analise_2.htm"><img
+				class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.redirectToTelaAnalise('#dividirEstudoContent', '#dividirEstudoTelaAnalise')"><img
 					src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif"
 					alt="An&aacute;lise" hspace="5" border="0" />An&aacute;lise</a></span>
 
@@ -187,4 +190,4 @@
 
 
 </body>
-</html>
+</div>

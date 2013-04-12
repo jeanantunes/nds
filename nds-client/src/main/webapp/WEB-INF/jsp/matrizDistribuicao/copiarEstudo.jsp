@@ -1,3 +1,5 @@
+
+
 	<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
                 <span class="ui-state-default ui-corner-all" style="float:right;">
@@ -7,6 +9,9 @@
 	
 	<span id="copiarEstudo-reparteDistribuido" style="display: none;"></span>
 	<span id="copiarEstudo-idLancamento" style="display: none;"></span>
+
+<div id="copiarEstudoTelaAnalise" />
+<div id="copiarEstudoContent">
 	
   <fieldset class="classFieldset">
   <legend>Copia Proporcional de Estudo</legend>
@@ -108,7 +113,7 @@
       <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.mostraTelaMatrizDistribuicao()"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
                      <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.cancelarCopiaProporcionalDeEstudo()"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
                      <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.confirmarCopiarProporcionalDeEstudo()" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" hspace="5" border="0" />Confirmar</a></span>
-                     <span class="bt_novos"><a href="analise_2.htm"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.redirectToTelaAnalise('#copiarEstudoContent', '#copiarEstudoTelaAnalise', matrizDistribuicao.getEstudoCopiarEstudo)" ><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
         </fieldset>
 
     
