@@ -1,32 +1,26 @@
-package br.com.abril.nds.matricial;
+package br.com.abril.nds.util;
 
 
-import java.awt.print.PrinterJob;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
 import javax.print.PrintException;
 import javax.print.PrintService;
-import javax.print.SimpleDoc;
 
 
-public class EmissorNotaFiscalMatricial {
+
+public class ImpressaoMatricialUtil {
 
 
 	private StringBuffer saida = new StringBuffer();
 
-	public EmissorNotaFiscalMatricial(StringBuffer saida) {
+	public ImpressaoMatricialUtil(StringBuffer saida) {
 		this.saida = saida;
 	}
 
 	
 	public static void main(String[] args) {
 		StringBuffer sb = new StringBuffer();
-		new EmissorNotaFiscalMatricial(sb).adicionarCompleteTraco("12", "500,66");
+		new ImpressaoMatricialUtil(sb).adicionarCompleteTraco("12", "500,66");
 		System.out.println(sb);
 		System.out.println(sb.length());
 	}
@@ -44,11 +38,11 @@ public class EmissorNotaFiscalMatricial {
 	}
 	
 	public void adicionarCompleteEspaco(String textoColuna, String valor) {
-		adicionar(textoColuna, valor, ConstantesImpressao.LARGURA_FOLHA_MATRICIAL, ConstantesImpressao.ESPACO);
+		adicionar(textoColuna, valor, ImpressaoConstantes.LARGURA_FOLHA_MATRICIAL, ImpressaoConstantes.ESPACO);
 	}
 	
 	public void adicionarCompleteTraco(String textoColuna, String valor) {
-		adicionar(textoColuna, valor, ConstantesImpressao.LARGURA_FOLHA_MATRICIAL, ConstantesImpressao.TRACO);
+		adicionar(textoColuna, valor, ImpressaoConstantes.LARGURA_FOLHA_MATRICIAL, ImpressaoConstantes.TRACO);
 	}
 	
 	public void adicionar(String textoColuna, String valor, int tamanhoColuna, String caracterPreenchimento) {
@@ -91,25 +85,25 @@ public class EmissorNotaFiscalMatricial {
     //negrito
 	public void adicionarNegrito(String texto) {
     
-		adicionar(ConstantesImpressao.ESC + ConstantesImpressao.E + texto + ConstantesImpressao.ESC + ConstantesImpressao.F);
+		adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.E + texto + ImpressaoConstantes.ESC + ImpressaoConstantes.F);
 
 	}
 
     public void inic(){
         //reset default settings
-        adicionar(ConstantesImpressao.ESC + ConstantesImpressao.AT);
+        adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.AT);
     }
 
     //define tabela de caracteres
     
     public void setCharacterSet(String charset) {
         //assign character table
-        adicionar(ConstantesImpressao.ESC + ConstantesImpressao.PARENTHESIS_LEFT + ConstantesImpressao.t + ConstantesImpressao.ARGUMENT_3 + ConstantesImpressao.ARGUMENT_0 + ConstantesImpressao.ARGUMENT_1 + charset + ConstantesImpressao.ARGUMENT_0);
+        adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.PARENTHESIS_LEFT + ImpressaoConstantes.t + ImpressaoConstantes.ARGUMENT_3 + ImpressaoConstantes.ARGUMENT_0 + ImpressaoConstantes.ARGUMENT_1 + charset + ImpressaoConstantes.ARGUMENT_0);
         //adicionar("\u001B" + "(t" + (char)3 + (char)0 + (char)0 + (char)25 + (char)0);
         
         
         //select character table
-        adicionar(ConstantesImpressao.ESC + ConstantesImpressao.t + ConstantesImpressao.ARGUMENT_1);
+        adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.t + ImpressaoConstantes.ARGUMENT_1);
         //adicionar("\u001B" + "t" + (char)0);
         //Character.toString( ESC);
         
@@ -130,14 +124,14 @@ public class EmissorNotaFiscalMatricial {
     //pula linha
     public void quebrarLinha() {
           
-        adicionar(ConstantesImpressao.CR + ConstantesImpressao.LINE_FEED);//according to epson esc/p ref. manual always send carriage return before line feed
+        adicionar(ImpressaoConstantes.CR + ImpressaoConstantes.LINE_FEED);//according to epson esc/p ref. manual always send carriage return before line feed
     }
     
     
     //pula linha
     public void quebrarLinhaEscape() {
           
-        adicionar(ConstantesImpressao.CARACTER_INDENT_LINEFEED_SCAPE);
+        adicionar(ImpressaoConstantes.CARACTER_INDENT_LINEFEED_SCAPE);
     }
     
 
@@ -146,11 +140,11 @@ public class EmissorNotaFiscalMatricial {
      */
     public void ejectFolha() {
         //post: ejects single sheet
-        adicionar(ConstantesImpressao.CR + ConstantesImpressao.FF );
+        adicionar(ImpressaoConstantes.CR + ImpressaoConstantes.FF );
         
     }
     public void comecoPag(){
-        adicionar(ConstantesImpressao.CR);
+        adicionar(ImpressaoConstantes.CR);
     }
 
 
@@ -162,11 +156,11 @@ public class EmissorNotaFiscalMatricial {
     public void avancaHorizontal(float cem) {
         //pre: centimeters >= 0
         //post: advances horizontal print position approx. centimeters
-        float inches = cem / ConstantesImpressao.CM_PER_INCH;
+        float inches = cem / ImpressaoConstantes.CM_PER_INCH;
         int units_low = (int) (inches * 120) % 256;
         int units_high = (int) (inches * 120) / 256;
 
-        adicionar(ConstantesImpressao.ESC + ConstantesImpressao.BACKSLASH + (char) units_low + (char) units_high);
+        adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.BACKSLASH + (char) units_low + (char) units_high);
 
     }
 
@@ -177,11 +171,11 @@ public class EmissorNotaFiscalMatricial {
      */
     public void avancaAbsHorizontal(float cem) {
 
-        float inches = cem / ConstantesImpressao.CM_PER_INCH;
+        float inches = cem / ImpressaoConstantes.CM_PER_INCH;
         int units_low = (int) (inches * 60) % 256;
         int units_high = (int) (inches * 60) / 256;
 
-        adicionar(ConstantesImpressao.ESC + ConstantesImpressao.$ + (char) units_low + (char) units_high);
+        adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.$ + (char) units_low + (char) units_high);
 
     }
 
@@ -192,19 +186,19 @@ public class EmissorNotaFiscalMatricial {
          * */
         //pre: centimeters >= 0 (cm)
         //post: advances vertical print position approx. y centimeters (not precise due to truncation)
-        float inches = cem / ConstantesImpressao.CM_PER_INCH;
+        float inches = cem / ImpressaoConstantes.CM_PER_INCH;
         int units = (int) (inches * 216);
 
         while (units > 0) {
             char n;
-            if (units > ConstantesImpressao.MAX_UNITS)
-                n = (char) ConstantesImpressao.MAX_UNITS; //want to move more than range of parameter allows (0 - 255) so move max amount
+            if (units > ImpressaoConstantes.MAX_UNITS)
+                n = (char) ImpressaoConstantes.MAX_UNITS; //want to move more than range of parameter allows (0 - 255) so move max amount
             else
                 n = (char) units; //want to move a distance which fits in range of parameter (0 - 255)
 
-           adicionar(ConstantesImpressao.ESC + ConstantesImpressao.J + (char) n);
+           adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.J + (char) n);
 
-           units -= ConstantesImpressao.MAX_UNITS;
+           units -= ImpressaoConstantes.MAX_UNITS;
         }
 
     }
@@ -218,7 +212,7 @@ public class EmissorNotaFiscalMatricial {
         //pre: tabs >= 0
         //post: performs horizontal tabs tabs number of times
         for (int i = 0; i < tabs; i++)
-            adicionar(ConstantesImpressao.TAB+"");
+            adicionar(ImpressaoConstantes.TAB+"");
     }
 
     /**
@@ -229,10 +223,10 @@ public class EmissorNotaFiscalMatricial {
      */
     public void setMargem(int colunaEsq, int colunaDir) {
         //esquerda
-        adicionar(ConstantesImpressao.ESC + ConstantesImpressao.l + (char) colunaEsq);
+        adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.l + (char) colunaEsq);
 
         //direita
-        adicionar(ConstantesImpressao.ESC + ConstantesImpressao.Q + (char) colunaDir);
+        adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.Q + (char) colunaDir);
     }
 
 
@@ -244,8 +238,8 @@ public class EmissorNotaFiscalMatricial {
      * @param tam
      */
     public void setTamPag(float tam){
-        float inches = tam / ConstantesImpressao.CM_PER_INCH;
-        adicionar(ConstantesImpressao.ESC + ConstantesImpressao.C + ConstantesImpressao.NULL+ (char) inches);
+        float inches = tam / ImpressaoConstantes.CM_PER_INCH;
+        adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.C + ImpressaoConstantes.NULL+ (char) inches);
     }
     /**
      * ESC k 0 -Roman
@@ -253,55 +247,32 @@ public class EmissorNotaFiscalMatricial {
      * @param fonte
      */
     public void setFonte(int fonte){
-        adicionar(ConstantesImpressao.ESC + ConstantesImpressao.k + (char) fonte);
+        adicionar(ImpressaoConstantes.ESC + ImpressaoConstantes.k + (char) fonte);
     }
 
     public void setCondensado(){
-         adicionar(ConstantesImpressao.SI);
+         adicionar(ImpressaoConstantes.SI);
     }
 
     public void setRascunho() { //set draft quality printing
-        adicionar(ConstantesImpressao.ESC+ ConstantesImpressao.x +(char) 48);
+        adicionar(ImpressaoConstantes.ESC+ ImpressaoConstantes.x +(char) 48);
     }
 
     public void setLQ() { //set letter quality printing
-        adicionar(ConstantesImpressao.ESC+ ConstantesImpressao.x +(char) 49);
+        adicionar(ImpressaoConstantes.ESC+ ImpressaoConstantes.x +(char) 49);
     }
     public void set10CPI() { //10 characters per inch (condensed available)
-        adicionar(ConstantesImpressao.ESC+ ConstantesImpressao.P);
+        adicionar(ImpressaoConstantes.ESC+ ImpressaoConstantes.P);
     }
 
-    public void imprimir(String saida) throws PrintException, IOException {
+    public void imprimirImpressoraPadrao(String saida) throws PrintException, IOException {
     	
-    	saida = saida.replaceAll(ConstantesImpressao.CARACTER_INDENT_LINEFEED_SCAPE, ConstantesImpressao.CR + ConstantesImpressao.LINE_FEED);
-    	System.out.println("#########>>>>>>>>>>>>>>>");
-		System.out.println(saida);
-		System.out.println("<<<<<<<<<<<<<<<<###############");
+    	saida = replaceComandosImpressao(saida);
 		
-		imprimir(saida.getBytes(), PrinterJob.getPrinterJob().getPrintService());
+		new ImpressoraUtil().imprimir(saida.getBytes(), ImpressoraUtil.getImpressoraLocalConfiguradaPadrao());
     }
-    
-    public void imprimir(byte[] saida, PrintService impressora) throws PrintException, IOException {
-    	
-		InputStream ps = null;
-		ps = new ByteArrayInputStream(saida);
-		
-		DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
-		DocPrintJob job = null;
-		
-		job = impressora.createPrintJob();
-		
-		MatricialThreadUtil pjDone = new MatricialThreadUtil(job);
-		Doc doc = new SimpleDoc(ps, flavor, null);
-		
-		job.print(doc, null);
-		
-		// AGUARDA A CONCLUSAO DO TRABALHO
-		pjDone.waitForDone();
-		
-		ps.close();
-    }
-    
+
+
     public void imprimir() throws PrintException, IOException {
 		
 		if(this.saida == null || "".equals(this.saida)){
@@ -309,7 +280,24 @@ public class EmissorNotaFiscalMatricial {
 			return;
 		}
 		
-		imprimir(this.saida.toString());
+		imprimirImpressoraPadrao(this.saida.toString());
 	}
 
+    public void imprimir(PrintService impressora) throws PrintException, IOException {
+		
+		if(this.saida == null || "".equals(this.saida)){
+			this.saida.append("parameter NULL");
+			return;
+		}
+		
+		new ImpressoraUtil().imprimir(replaceComandosImpressao(saida.toString()).getBytes(), impressora);
+	}
+    
+    private String replaceComandosImpressao(String saida) {
+		saida = saida.replaceAll(ImpressaoConstantes.CARACTER_INDENT_LINEFEED_SCAPE, ImpressaoConstantes.CR + ImpressaoConstantes.LINE_FEED);
+    	System.out.println("#########>>>>>>>>>>>>>>>");
+		System.out.println(saida);
+		System.out.println("<<<<<<<<<<<<<<<<###############");
+		return saida;
+	}
 }

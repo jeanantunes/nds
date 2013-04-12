@@ -1,8 +1,4 @@
-package br.com.abril.nds.matricial;
-
-
-
-
+package br.com.abril.nds.util;
 
 import javax.print.DocPrintJob;
 import javax.print.event.PrintJobAdapter;
@@ -10,22 +6,21 @@ import javax.print.event.PrintJobEvent;
 
  	/**
  * 
- * Classe para controle de impressões em impressoras matriciais.
+ * Classe para controle de impressões
  */
-public class MatricialThreadUtil {
+public class ImpressoraThreadUtil {
 
 	// true iff it is safe to close the print job's input stream
 	boolean done = false;
 
 	/**
-	 * Método para verificar o trabalho de impressão em impressoras
-	 * matriciais.
+	 * Método para verificar o trabalho de impressão
 	 * 
 	 * @param DocPrintJog
 	 *            Objeto com o trabalho de impressão.
 	 * @return Não se aplica.
 	 */
-	MatricialThreadUtil(DocPrintJob job) {
+	ImpressoraThreadUtil(DocPrintJob job) {
 
 		// Add a listener to the print job
 
@@ -48,9 +43,9 @@ public class MatricialThreadUtil {
 			}
 
 			void allDone() {
-				synchronized (MatricialThreadUtil.this) {
+				synchronized (ImpressoraThreadUtil.this) {
 					done = true;
-					MatricialThreadUtil.this.notify();
+					ImpressoraThreadUtil.this.notify();
 				}
 			}
 		});

@@ -1,6 +1,10 @@
 package br.com.abril.nds.applet;
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -9,12 +13,16 @@ import java.util.Date;
 import java.util.List;
 
 import javax.print.PrintException;
+import javax.print.PrintService;
+
+import org.apache.poi.util.IOUtils;
 
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.dto.SlipDTO;
-import br.com.abril.nds.matricial.ConstantesImpressao;
-import br.com.abril.nds.matricial.EmissorNotaFiscalMatricial;
 import br.com.abril.nds.service.impl.ConferenciaEncalheServiceImpl;
+import br.com.abril.nds.util.ImpressaoConstantes;
+import br.com.abril.nds.util.ImpressaoMatricialUtil;
+import br.com.abril.nds.util.ImpressoraUtil;
 
 public class ImpressaoFinalizacaoEncalheTest {
 
@@ -26,8 +34,59 @@ public class ImpressaoFinalizacaoEncalheTest {
 		}
 	}
 	
+	private static void getBoletoTest()  {
+		BufferedReader in;
+		try {
+			in = new BufferedReader(new FileReader("C:\\arquivos_cobranca_boleto.pdf"));
+			String line;  
+			while ((line = in.readLine()) != null) {  
+
+				System.out.println(line);  
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+	}
+
+
+	private static void imprimirDuasImpressorasTest() {
+		
+		PrintService Gneric = ImpressoraUtil.getImpressoraByName("\\\\10.37.28.166\\Generic / Text Only");
+		PrintService HDU16400 = ImpressoraUtil.getImpressoraByName("\\\\abdcw2k305\\HDU16400");
+		
+		
+		if(HDU16400 != null){
+			ImpressaoMatricialUtil emissorNotaFiscalMatricial = new ImpressaoMatricialUtil(null);
+			try {
+				
+				byte[] boleto = IOUtils.toByteArray(new FileInputStream(new File("C:\\arquivos_cobranca_boleto.pdf")));
+				byte[] bytesSlip = getDadosSlipMock().getBytes();
+				
+				ImpressoraUtil impressoraUtil = new ImpressoraUtil();
+				impressoraUtil.imprimir(bytesSlip, Gneric);
+				impressoraUtil.imprimir(boleto, HDU16400);
+				
+			} catch (PrintException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}else{
+			System.out.println("Impressora não localizada");
+		}
+	}
+	
+	public static String getDadosSlipMock() {
+		ConferenciaEncalheServiceImpl conf = new ConferenciaEncalheServiceImpl();
+		conf.setSlipDTO(new ImpressaoFinalizacaoEncalheTest().getSlipDtoMock());
+		String saida = conf.gerarSlipTxtMatricial().toString();
+		saida = saida.replaceAll(ImpressaoConstantes.CARACTER_INDENT_LINEFEED_SCAPE, ImpressaoConstantes.CR + ImpressaoConstantes.LINE_FEED);
+		return saida;
+	}
+	
 	public void gerarSlipTxtMatricialTest() throws PrintException, IOException{
-        new EmissorNotaFiscalMatricial(null).imprimir(FindImpressoraTest.getDadosSlipMock());
+        new ImpressaoMatricialUtil(null).imprimirImpressoraPadrao(getDadosSlipMock());
 	}
 
 	public SlipDTO getSlipDtoMock() {

@@ -1,7 +1,7 @@
-package br.com.abril.nds.matricial;
+package br.com.abril.nds.util;
 
 
-public interface ConstantesImpressao {
+public interface ImpressaoConstantes {
 
 	//Constantes ref a impressao na matricial
 		int MAX_UNITS = 127; //for vertical positioning range is between 0 - 255 (0 <= n <= 255) according to epson ref. but 255 gives weird errors at 1.5f, 127 as max (0 - 128) seems to be working
@@ -51,4 +51,7 @@ public interface ConstantesImpressao {
 	    int LARGURA_FOLHA_MATRICIAL = 40;
 	    String ESPACO = " ";
 	    String TRACO = "-";
+	    
+	    String NOME_PADRAO_IMPRESSORA_NAO_MATRICIAL = "impressora_dgb_default_nao_matricial";
+	    String NOME_PADRAO_IMPRESSORA_MATRICIAL = "impressora_dgb_default_matricial";
 }
