@@ -902,7 +902,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			*/ 
 			 
 			switch (ComponentesPDV.values()[Integer.parseInt(filtro.getComponente())]) {
-			case TipoPontodeVenda:
+			case TIPO_PONTO_DE_VENDA:
 				
 				if(filtro.getElemento().equals("-1")){
 					break;
@@ -915,7 +915,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameterMap.put("codigoTipoPontoPDV",Long.parseLong(filtro.getElemento()));
 				
 				break;
-			case Area_de_Influência:
+			case AREA_DE_INFLUENCIA:
 				
 				if(filtro.getElemento().equals("-1")){
 					break;
@@ -929,7 +929,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameterMap.put("codigoAreaInfluenciaPDV",Long.parseLong(filtro.getElemento()));
 				break;
 
-			case Bairro:
+			case BAIRRO:
 				if(filtro.getElemento().equals("-1")){
 					break;
 				}
@@ -942,7 +942,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameterMap.put("bairroPDV",filtro.getElemento());
 		
 				break;
-			case Distrito:
+			case DISTRITO:
 				
 				if(filtro.getElemento().equals("-1")){
 					break;
@@ -956,7 +956,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameterMap.put("ufSigla",filtro.getElemento());
 		
 				break;
-			case GeradorDeFluxo:
+			case GERADOR_DE_FLUXO:
 				
 				if(filtro.getElemento().equals("-1")){
 					break;
@@ -968,7 +968,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameterMap.put("idGeradorFluxoPDV",Long.parseLong(filtro.getElemento()));
 				
 				break;
-			case CotasAVista:
+			case COTAS_A_VISTA:
 				
 				queryStringProdutoEdicao +=	" join cota.parametroCobranca  ";
 				
@@ -976,10 +976,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameterMap.put("tipoCota",TipoCota.A_VISTA);
 				
 				break;
-			case CotasNovasRetivadas:
+			case COTAS_NOVAS_RETIVADAS:
 				
 				break;
-			case Região:
+			case REGIAO:
 				//todo: EMS 2004
 				break;
 			default:
@@ -1118,7 +1118,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 			switch (ComponentesPDV.values()[Integer.parseInt(filtro
 					.getComponente())]) {
-			case TipoPontodeVenda:
+			case TIPO_PONTO_DE_VENDA:
 				/*queryStringProdutoEdicao += 
 							" join pdvs.segmentacao segmentacao "
 						  + " join segmentacao.tipoPontoPDV ";*/
@@ -1128,7 +1128,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 						Long.parseLong(filtro.getElemento()));
 
 				break;
-			case Area_de_Influência:
+			case AREA_DE_INFLUENCIA:
 
 				/*queryStringProdutoEdicao += " join pdvs.segmentacao segmentacao "
 						+ " join segmentacao.areaInfluenciaPDV ";*/
@@ -1139,7 +1139,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 						Long.parseLong(filtro.getElemento()));
 				break;
 
-			case Bairro:
+			case BAIRRO:
 
 				queryStringProdutoEdicao += 
 						  " left outer join ENDERECO_PDV enderecoPDV on enderecoPDV.pdv_id=pdvs.id"
@@ -1150,7 +1150,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameterMap.put("bairroPDV", filtro.getElemento());
 
 				break;
-			case Distrito:
+			case DISTRITO:
 				queryStringProdutoEdicao += 
 									" left outer join ENDERECO_PDV enderecoPDV on enderecoPDV.pdv_id=pdvs.id"
 							      +" left outer join ENDERECO endereco on endereco.id=enderecoPDV.endereco_id";
@@ -1159,7 +1159,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameterMap.put("ufSigla", filtro.getElemento());
 
 				break;
-			case GeradorDeFluxo:
+			case GERADOR_DE_FLUXO:
 
 				queryStringProdutoEdicao += " left outer join GERADOR_FLUXO_PDV geradorFluxoPDV on cota2_.ID = geradorFluxoPDV.ID ";
 
@@ -1168,7 +1168,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 						Long.parseLong(filtro.getElemento()));
 
 				break;
-			case CotasAVista:
+			case COTAS_A_VISTA:
 
 				queryStringProdutoEdicao += " left outer join PARAMETRO_COBRANCA_COTA param_cob_cota on cota2_.ID = param_cob_cota.cota_id ";
 				
@@ -1176,10 +1176,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				parameterMap.put("tipoCota",TipoCota.A_VISTA);
 				
 				break;
-			case CotasNovasRetivadas:
+			case COTAS_NOVAS_RETIVADAS:
 
 				break;
-			case Região:
+			case REGIAO:
 				// todo: EMS 2004
 				break;
 			default:

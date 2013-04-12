@@ -31,7 +31,7 @@
 	<jee:jndi-lookup  id="couchDbProperties" jndi-name="java:comp/env/couchDbProperties" />
 
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-		<constructor-arg ref="dataSource" />
+		<constructor-arg ref="dataSource" />	
 	</bean>
 
 	<task:annotation-driven />

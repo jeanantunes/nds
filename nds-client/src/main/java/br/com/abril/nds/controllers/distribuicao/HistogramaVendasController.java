@@ -92,39 +92,39 @@ public class HistogramaVendasController extends BaseController {
 		List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
 		
 		switch (ComponentesPDV.values()[Integer.parseInt(componente)]) {
-		case TipoPontodeVenda:
+		case TIPO_PONTO_DE_VENDA:
 			for(TipoPontoPDV tipo:pdvService.obterTiposPontoPDVPrincipal()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
-		case Area_de_Influência:
+		case AREA_DE_INFLUENCIA:
 			for(AreaInfluenciaPDV tipo:pdvService.obterAreasInfluenciaPDV()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
 
-		case Bairro:
+		case BAIRRO:
 			for(String tipo:enderecoService.obterBairrosCotas()){
 				resultList.add(new ItemDTO(tipo,tipo));
 			}
 			break;
-		case Distrito:
+		case DISTRITO:
 			for(UfEnum tipo:UfEnum.values()){
 				resultList.add(new ItemDTO(tipo.getSigla(),tipo.getSigla()));
 			}
 			break;
-		case GeradorDeFluxo:
+		case GERADOR_DE_FLUXO:
 			for(TipoGeradorFluxoPDV tipo:pdvService.obterTodosTiposGeradorFluxo()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
-		case CotasAVista:
+		case COTAS_A_VISTA:
 			
 			break;
-		case CotasNovasRetivadas:
+		case COTAS_NOVAS_RETIVADAS:
 			
 			break;
-		case Região:
+		case REGIAO:
 			for (RegiaoDTO regiao : regiaoService.buscarRegiao()) {
 				resultList.add(new ItemDTO(regiao.getIdRegiao(), regiao.getNomeRegiao()));
 			}

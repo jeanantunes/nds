@@ -89,14 +89,16 @@ public class ClassificacaoNaoRecebidarRepositoryImpl extends AbstractRepositoryM
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT ");
-		hql.append(" classificacaoNaoRecebida.id as idClassificacaoNaoRecebida, "); // ID ClassificacaoNaoRecebida
+		hql.append(" classificacaoNaoRecebida.id as idClassificacaoNaoRecebida,"); // ID ClassificacaoNaoRecebida
+		hql.append(" classificacaoNaoRecebida.usuario.nome as nomeUsuario,"); //NOME USUARIO
+		hql.append(" classificacaoNaoRecebida.dataAlteracao as dataAlteracao,"); //DATA DE ALTERACAO
 		hql.append(" cota.numeroCota as numeroCota, "); // NUMERO DA COTA
-		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomePessoa "); // NOME DA COTA
+		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') as nomePessoa"); // NOME DA COTA
 		
-		hql.append(" FROM ClassificacaoNaoRecebida as classificacaoNaoRecebida ");
-		hql.append(" INNER JOIN classificacaoNaoRecebida.tipoClassificacaoProduto as tipoClassificacaoProduto ");
-		hql.append(" INNER JOIN classificacaoNaoRecebida.cota as cota ");
-		hql.append(" INNER JOIN cota.pessoa as pessoa ");
+		hql.append(" FROM ClassificacaoNaoRecebida as classificacaoNaoRecebida");
+		hql.append(" INNER JOIN classificacaoNaoRecebida.tipoClassificacaoProduto as tipoClassificacaoProduto");
+		hql.append(" INNER JOIN classificacaoNaoRecebida.cota as cota");
+		hql.append(" INNER JOIN cota.pessoa as pessoa");
 		
 		// O filtro sempre terá OU nomeCota OU codigoCota
 		hql.append(" WHERE ");

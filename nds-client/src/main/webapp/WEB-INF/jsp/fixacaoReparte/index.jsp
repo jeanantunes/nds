@@ -116,7 +116,7 @@ function mostraIntervalo(){
 		       	  	<legend>Fixação Produto</legend>
 		        		<table class="fixacaoProdutoGrid"></table>
  			            <span class="bt_novos" title="Incluir Novo"  id="btNovoProduto"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
+			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 	         	    	<span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoProduto"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=produto"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 						<span class="bt_novos" title="Imprimir" id="btImprimirProduto"><a  href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=produto"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		      </fieldset>
@@ -220,9 +220,15 @@ function mostraIntervalo(){
 	</div>
 	
 <!-- DIALOG  UPLOAD -->		
-	<div id="modalUploadArquivo" title="Selecione arquivo" style="display:none;">
+	<div id="modalUploadArquivo" title="Adicionar em Lote" style="display:none;">
 	 <form id="formUploadLoteFixacao"  action="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao"  method="post"  enctype="multipart/form-data">
-	      	<input type="file" id="excelFileFixacao" name="excelFileFixacao" style="width:200px"/>
+	 		<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+	      	<p ><span class="bt_novos" title="Download Modelo"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls"><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
+	      	<br><br><br>
+	      	<hr>
+	      	<p>Selecione um arquivo para upload:</p>
+	      	<br>
+	      	<p align="center"><input type="file" id="excelFileFixacao" name="excelFileFixacao" style="width:200px"/></p>
       </form>
 	</div>	
 	

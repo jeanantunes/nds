@@ -260,48 +260,7 @@ var fixacaoReparteController = $.extend(true, {
 			height : 250
 		});
 	
-	//UPLOAD Arquivo Lote - evento selecao de arquivo
-//	$("#excelFileFixacao").change(function(){
-//	       var fileName = $(this).val();
-//	      
-//	       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
-//	       if(ext!="xls" & ext!="xlsx"){
-//	    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
-//	    	   $(this).val('');
-//	    	   return;
-//	       }else{
-//	    	   
-//	    	   $("#formUploadLoteFixacao").ajaxSubmit({
-//	     		   
-//	     		   /*beforeSubmit: function(arr, formData, options) {
-//	     		      },*/
-//	     		      success: function(responseText, statusText, xhr, $form)  { 
-//	     		    	  
-//	     		    	  var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
-//	     		          var tipoMensagem = mensagens.tipoMensagem;
-//	     		          var listaMensagens = mensagens.listaMensagens;
-//
-//	     		          if (tipoMensagem && listaMensagens) {
-//	     		           
-//	     		           if (tipoMensagem != 'SUCCESS') {
-//	     		            
-//	     		            exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
-//	     		           }
-//	     		           $("#dialog-lote").dialog( "close" );
-//	     		           
-//	     		           exibirMensagem(tipoMensagem, listaMensagens); 
-//	     		          }
-//	     		      }, 
-////	     		      url:  contextPath + '/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao',
-//	     		      type: 'POST',
-//	     		      dataType: 'json',
-//
-//	     		   
-//	     	   });
-//	    	   
-//	       }
-//	});
-//	
+
 	
 	},
 	
@@ -364,7 +323,6 @@ var fixacaoReparteController = $.extend(true, {
 		if (data.result){
 			data.rows = data.result[1].rows;
 		}
-		
 		
 		
 		var i;
@@ -616,8 +574,6 @@ var fixacaoReparteController = $.extend(true, {
 						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', listaPDV,function(result){$("#dialog-defineReparte").dialog("close");} );
 						
 					}
-//					$( this ).dialog( "close" );
-//					$("#effect").show("highlight", {}, 1000, callback);
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -625,7 +581,6 @@ var fixacaoReparteController = $.extend(true, {
 			}
 		});
 		$('#dialog-defineReparte').bind('dialogclose', function(event) {
-//			fixacaoReparteController.limparCamposModalReparteAoFechar();
 		 });
 		
 		
@@ -671,7 +626,6 @@ var fixacaoReparteController = $.extend(true, {
 			
 			data.rows[i].cell["reparte"]=fixacaoReparteController.getInputReparte(data.rows[i].cell);
 		}
-		//$('.excessaoCotaGrid').show();
 		if (data.result){
 			return data.result[1];
 		}
@@ -979,7 +933,6 @@ var fixacaoReparteController = $.extend(true, {
 				url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoProduto",
 				dataType : 'json',
 				params: fixacaoReparteController.getDadosProdutoHistorico(),
-				//preProcess:function(data){return fixacaoReparteController.preProcessarGridHistoricoPorProduto(data);}, 
 			});
 			
 			$(".historicoGrid").flexReload();
@@ -1008,15 +961,13 @@ var fixacaoReparteController = $.extend(true, {
 				dataType : 'json',
 				params: fixacaoReparteController.getDadosCotaHistorico()
 			});
-		//	$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
-		//	$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
+	
 			$(".historicoGrid").flexReload();
 			
 		},
 		
 //click do botao adicionar em lote		
 		add_lote:function(){
-			//$("#excelFileFixacao").val('').click();
 			$("#modalUploadArquivo").dialog({
 				resizable: false,
 				height:'auto',
@@ -1048,8 +999,6 @@ var fixacaoReparteController = $.extend(true, {
 		    	   
 		    	   $("#formUploadLoteFixacao").ajaxSubmit({
 		     		   
-		     		   /*beforeSubmit: function(arr, formData, options) {
-		     		      },*/
 		     		      success: function(responseText, statusText, xhr, $form)  { 
 		     		    	  
 		     		    	  var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
@@ -1067,7 +1016,6 @@ var fixacaoReparteController = $.extend(true, {
 		     		           exibirMensagem(tipoMensagem, listaMensagens); 
 		     		          }
 		     		      }, 
-//		     		      url:  contextPath + '/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao',
 		     		      type: 'POST',
 		     		      dataType: 'json',
 
