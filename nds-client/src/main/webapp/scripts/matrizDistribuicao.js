@@ -770,6 +770,44 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-informacoes-produto", _workspace).show();
 	},
 	
+	this.getEstudoCopiarEstudo = function getEstudoCopiarEstudo(){
+		return 83531;
+	},
+	
+	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, callBackParaPegarEstudo){
+		var lancamentoSelecionado;
+		
+		$.each(T.lancamentos, function(index, lancamento){
+			if(lancamento.selecionado) {
+				lancamentoSelecionado = lancamento;
+			}
+		});
+		
+		//TODO As telas de analise estão com erro, validar este direcionamento após correções.
+		var urlAnalise;
+		if ($('#parcial').val() === 'true') {
+			urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
+		} else {
+			urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + (lancamentoSelecionado.estudo || callBackParaPegarEstudo());
+		}
+		
+		$.get(
+				urlAnalise,
+				null, // parametros
+				function(html){ // onSucessCallBack
+					$(divToHide).hide();
+					$(divToShow).html(html);
+					$(divToShow).show();
+					$( divToShow + ' #botaoVoltarTelaAnalise').click(function voltarTelaAnalise(){
+						$(divToShow).hide();
+						$(divToHide).show();
+					});
+			});
+		
+	},
+	
+	
+	
 	this.somarEstudos = function() {
 		
 		T.esconderOpcoes();
