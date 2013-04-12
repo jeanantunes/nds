@@ -189,7 +189,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				value.cell.debitoCredito = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
 										   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito +'\');"/>' +
-											floatToPrice(formatMoneyValue(value.cell.debitoCredito)) +'</a>' : '0,00';
+											floatToPrice(formatMoneyValue(value.cell.debitoCredito) * -1) +'</a>' : '0,00';
 
 				value.cell.encargos = (value.cell.encargos != null && value.cell.encargos != 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+
 									  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + floatToPrice(formatMoneyValue(value.cell.encargos)) +'</a>' : '0,00';
@@ -198,7 +198,7 @@ var contaCorrenteCotaController = $.extend(true, {
 						  (value.cell.tipo != 'CONSOLIDADO' ? dataRaizPendente : dataRaizPostergado)  + '">' : "";
 				
 			    value.cell.valorPostergado = (value.cell.valorPostergado != null && value.cell.valorPostergado != 0)?'<span class="bt_tool">' + hint +
-					                          floatToPrice(formatMoneyValue(value.cell.valorPostergado)) + '</a></span>' : '0,00';
+					                          floatToPrice(formatMoneyValue(value.cell.valorPostergado) * -1) + '</a></span>' : '0,00';
 
 				hint = value.cell.pendente && value.cell.pendente != 0 ? '<a rel="tipsy" title="Valor Referente à '+ dataRaizPendente + '">' : "";
 				       
@@ -743,7 +743,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				var texto = $("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).text();
 				$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).text(dataConsolidado + " - " + texto);
-				$("#valorTotalDebitoCredito", contaCorrenteCotaController.workspace).text(floatToPrice(formatMoneyValue(valorTotal)));
+				$("#valorTotalDebitoCredito", contaCorrenteCotaController.workspace).text(floatToPrice(formatMoneyValue(valorTotal) * -1));
 			
 				contaCorrenteCotaController.montarGridDebitoCredio();
 				$("#dialog-debitos-creditos", contaCorrenteCotaController.workspace ).dialog({
