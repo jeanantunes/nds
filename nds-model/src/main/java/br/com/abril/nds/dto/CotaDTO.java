@@ -115,6 +115,8 @@ public class CotaDTO implements Serializable {
 	
 	private String tipoCota;
 	
+	private BigDecimal percentualCotaBase=BigDecimal.ZERO; 
+	
 	public String getNumeroRG() {
 		return numeroRG;
 	}
@@ -656,6 +658,14 @@ public class CotaDTO implements Serializable {
 
 	public void setTipoCota(String tipoCota) {
 		this.tipoCota = tipoCota;
+	}
+
+	public BigDecimal getPercentualCotaBase() {
+		return percentualCotaBase;
+	}
+
+	public void setPercentualCotaBase(BigDecimal percentualCotaBase) {
+		this.percentualCotaBase = percentualCotaBase;
 	}
 	
 	
