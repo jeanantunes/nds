@@ -1076,15 +1076,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		
-		query.setParameter("statusLancamentoRecolhido", StatusLancamento.RECOLHIDO);
-		
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
-		}
 
 		return complementarCurvaABCCota((List<RegistroCurvaABCCotaDTO>) query.list());
-
 	}
 
 	/**
@@ -1200,6 +1193,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 		if (filtro.getMunicipio() != null && !filtro.getMunicipio().isEmpty() && !filtro.getMunicipio().equalsIgnoreCase("Todos")) {
 			param.put("municipio", filtro.getMunicipio());
+		}
+		
+		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
+			param.put("edicaoProduto", (filtro.getEdicaoProduto()));
 		}
 
 		return param;
