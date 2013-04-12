@@ -53,7 +53,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private String algoritmo;	
 	
 	@Export(label = "Rep. Min.", alignment=Alignment.LEFT, exhibitionOrder = 12)
-	private String reparteMinimo;
+	private BigInteger reparteMinimo;
 	
 	@Export(label = "Estudo", alignment=Alignment.LEFT, exhibitionOrder = 13)
 	private Long estudo;
@@ -67,10 +67,6 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	@Export(label = "Hora", alignment=Alignment.LEFT, exhibitionOrder = 16)
 	private String hora;
 	
-//	private String periodo;
-//	private String status;
-//	private BigInteger estudo;
-	
 	private String datalanc;
 	private String dataRecb;
 	private String dataInser;
@@ -81,10 +77,6 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 		return nomeUsuario;
 	}
 	
-//	public void setNomeUsuario(String nomeUsuario) {
-//		this.nomeUsuario = nomeUsuario;
-//	}
-
 	public void setNomeUsuario(String nomeUsuario) {
 		if(nomeUsuario == null || nomeUsuario.equals("")){
 			this.nomeUsuario = "";
@@ -140,7 +132,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	}
 	public void setReparteDistribuido(BigInteger reparteDistribuido) {
 		if ((reparteDistribuido == null) || (reparteDistribuido.equals(""))){
-			this.reparteDistribuido = new BigInteger("0");
+			this.reparteDistribuido = BigInteger.ZERO;
 		}else{
 			this.reparteDistribuido = reparteDistribuido;
 		}
@@ -151,7 +143,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	}
 	public void setVenda(BigInteger venda) {
 		if(venda == null){
-			this.venda = new BigInteger("0");	
+			this.venda = BigInteger.ZERO;	
 		}else{
 			this.venda = venda;
 		}
@@ -161,7 +153,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	}
 	public void setPercentualAbrangencia(BigInteger percentualAbrangencia) {
 		if ((percentualAbrangencia == null) || (percentualAbrangencia.equals(""))){
-			this.percentualAbrangencia = new BigInteger("0");
+			this.percentualAbrangencia = BigInteger.ZERO;
 		}else{
 			this.percentualAbrangencia = percentualAbrangencia;
 		}
@@ -184,19 +176,17 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setDataInser(String dataInser) {
 		this.dataInser = dataInser;
 	}
-	public String getReparteMinimo() {
-		if ((this.reparteMinimo == null) || (this.reparteMinimo.equals(""))){
-			this.reparteMinimo = ("");
-		}
+	public BigInteger getReparteMinimo() {
 		return reparteMinimo;
 	}
-	public void setReparteMinimo(String reparteMinimo) {
+	public void setReparteMinimo(BigInteger reparteMinimo) {
 		if ((reparteMinimo == null) || (reparteMinimo.equals(""))){
-			this.reparteMinimo = ("");
+			this.reparteMinimo = BigInteger.ZERO;
 		}else{
 			this.reparteMinimo = reparteMinimo;
 		}
 	}
+
 	public Long getEstudo() {
 		return estudo;
 	}
@@ -228,22 +218,4 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setCodProduto(String codProduto) {
 		this.codProduto = codProduto;
 	}
-//	public String getPeriodo() {
-//		return periodo;
-//	}
-//	public void setPeriodo(String periodo) {
-//		this.periodo = periodo;
-//	}
-//	public String getLancamento() {
-//		return status;
-//	}
-//	public void setLancamento(String lancamento) {
-//		this.status = lancamento;
-//	}
-//	public BigInteger getEstudo() {
-//		return estudo;
-//	}
-//	public void setEstudo(BigInteger estudo) {
-//		this.estudo = estudo;
-//	}
 }

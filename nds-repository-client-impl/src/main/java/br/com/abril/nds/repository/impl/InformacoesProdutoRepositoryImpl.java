@@ -45,12 +45,15 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" produto.percentualAbrangencia AS percentualAbrangencia, ");
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
-
-		hql.append(" prodEdicao.reparteDistribuido AS reparteMinimo, "); // DADO INCONSISTENTE...
-		
-		hql.append(" algortm.descricao AS algoritmo, "); 
 		hql.append(" estudoG.dataAlteracao AS dataAlteracao, ");
 		hql.append(" estudoG.id AS estudo, "); 
+
+		hql.append(" (select sum(estCota.reparteMinimo)    					" + 
+				   "	from EstudoCota estCota  							" +
+				   "  	inner join estCota.estudo as estRM                  " + 
+				   "	where estRM.id in (estudoG.id)) as reparteMinimo,   ");
+		
+		hql.append(" algortm.descricao AS algoritmo, "); 
 		hql.append(" usuarioEstudo.nome AS nomeUsuario, ");
 		
 		hql.append(" (select sum(estqPC.qtdeRecebida - estqPC.qtdeDevolvida) as totalVenda           " + 
@@ -190,19 +193,28 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItensRegiao() {
+	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItensRegiao(Long idEstudo) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" estBoni.ELEMENTO AS nomeItemRegiao, ");
+		sql.append(" estBoni.REPARTE_MINIMO AS qtdReparteMin, ");
+		sql.append(" estBoni.BONIFICACAO AS bonificacao ");
+		sql.append(" from ");
+		sql.append(" estudo_bonificacoes as estBoni ");
+		sql.append(" where ");
+		sql.append(" ESTUDO_ID in (:ESTUDO_ID) and estBoni.COMPONENTE in (:COMPONENTE) ");
 
-			StringBuilder hql = new StringBuilder();
-			
-			hql.append(" SELECT ");
-			hql.append(" regiao.nomeRegiao as nomeItemRegiao");
-			hql.append(" FROM Regiao AS regiao ");
-			
-			Query query = super.getSession().createQuery(hql.toString());
-
-			query.setResultTransformer(new AliasToBeanResultTransformer(InfoProdutosItemRegiaoEspecificaDTO.class));
-			
-			return query.list();
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("ESTUDO_ID", idEstudo);
+		query.setParameter("COMPONENTE", "REGIAO");
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(InfoProdutosItemRegiaoEspecificaDTO.class));
+		
+		return query.list();
+		
 	}
 	
 	private void configurarPaginacao(FiltroInformacoesProdutoDTO filtro, Query query) {
@@ -336,4 +348,5 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		return (InformacoesVendaEPerceDeVendaDTO) query.uniqueResult();
 		
 	}
+
 }

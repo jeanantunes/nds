@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 
 public interface InformacoesProdutoService {
+	
 	List<TipoClassificacaoProduto> buscarClassificacao();
 	
 	List<InformacoesProdutoDTO> buscarProduto (FiltroInformacoesProdutoDTO filtro);
@@ -24,7 +25,7 @@ public interface InformacoesProdutoService {
 	
 	InformacoesCaracteristicasProdDTO buscarCaracteristicas (String codProduto, Long numEdicao);
 	
-	List<InfoProdutosItemRegiaoEspecificaDTO> buscarItemRegiao ();
+	List<InfoProdutosItemRegiaoEspecificaDTO> buscarItemRegiao (Long idEstudos);
 	
 	List<ProdutoBaseSugeridaDTO> buscarBaseSugerida(Long idEstudo);
 	

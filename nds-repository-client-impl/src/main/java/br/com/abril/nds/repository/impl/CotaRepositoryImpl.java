@@ -2482,7 +2482,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		switch (componente) {
-		case TipoPontodeVenda:
+		case TIPO_PONTO_DE_VENDA:
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.segmentacao as segmentacao ");
 			hql.append(" LEFT JOIN segmentacao.tipoPontoPDV tipoPontoPDV ");
@@ -2491,7 +2491,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("codigoTipoPontoPDV", Long.parseLong(elemento));
 
 			break;
-		case Area_de_Influência:
+		case AREA_DE_INFLUENCIA:
 
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.segmentacao as segmentacao ");
@@ -2501,7 +2501,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("codigoAreaInfluenciaPDV", Long.parseLong(elemento));
 			break;
 
-		case Bairro:
+		case BAIRRO:
 
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.enderecos enderecosPdv ");
@@ -2511,7 +2511,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("bairroPDV", elemento);
 
 			break;
-		case Distrito:
+		case DISTRITO:
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.enderecos enderecosPdv ");
 			hql.append(" LEFT JOIN enderecosPdv.endereco endereco ");
@@ -2520,7 +2520,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("ufSigla", elemento);
 
 			break;
-		case GeradorDeFluxo:
+		case GERADOR_DE_FLUXO:
 
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.geradorFluxoPDV geradorFluxoPdvs ");
@@ -2530,18 +2530,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("idGeradorFluxoPDV",	Long.parseLong(elemento));
 
 			break;
-		case CotasAVista:
+		case COTAS_A_VISTA:
 			hql.append(" LEFT JOIN cota.parametroCobranca as parametroCobranca ");
 			
 			whereParameter.append(" parametroCobranca.tipoCota = :tipoCota AND");
 			parameters.put("tipoCota",TipoCota.A_VISTA);
 			
 			break;
-		case CotasNovasRetivadas:
+		case COTAS_NOVAS_RETIVADAS:
 			whereParameter.append(" cota.id in (SELECT cotaBase.cota.id FROM CotaBase as cotaBase) AND ");
 			
 			break;
-		case Região:
+		case REGIAO:
 			whereParameter.append(" cota.id in (SELECT registro.cota.id FROM RegistroCotaRegiao as registro WHERE regiao.id = :regiaoId) AND ");
 			parameters.put("regiaoId",Long.parseLong(elemento));
 			

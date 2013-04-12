@@ -1064,7 +1064,7 @@ obterFiltroSegmento : function(){
 	 */
 	
 	obterFiltroProdNMaiores : function(){
-		
+
 		var data = [];
 		
 		var codigo = $("#idCodigo").val();
@@ -1073,7 +1073,13 @@ obterFiltroSegmento : function(){
 		
 		data.push({name : 'filtro.codigoProduto', value:codigo});
 		data.push({name : 'filtro.nome', value:nomeProduto});
-		data.push({name : 'filtro.idTipoClassificacaoProduto', value:classificacao});
+		
+		if(classificacao != "Selecione..."){
+			data.push({name : 'filtro.idTipoClassificacaoProduto', value:classificacao});
+		}else{
+			classificacao = 0;
+			data.push({name : 'filtro.idTipoClassificacaoProduto', value:classificacao});
+		}
 		
 		return data;
 	},

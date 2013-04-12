@@ -47,6 +47,9 @@ public class EstudoCota implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
+	
+	@Column(name = "REPARTE_MINIMO")
+	private BigInteger reparteMinimo;
 
 	@Column(name = "REPARTE")
 	private BigInteger reparte;
@@ -157,4 +160,11 @@ public class EstudoCota implements Serializable {
 		this.reparte = reparte;
 	}
 
+	public BigInteger getReparteMinimo() {
+		return reparteMinimo;
+	}
+
+	public void setReparteMinimo(BigInteger reparteMinimo) {
+		this.reparteMinimo = reparteMinimo;
+	}
 }
