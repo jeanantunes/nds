@@ -157,43 +157,53 @@ var contaCorrenteCotaController = $.extend(true, {
 			exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 			
 		}else{			
-			$.each(data.rows, function(index, value) {			
-				var dataRaizPostergado =  value.cell.dataRaizConsolidado;			
+			$.each(data.rows, function(index, value) {	
+				
+				var dataRaizPostergado =  value.cell.dataRaizConsolidado;	
+				
 				if(!dataRaizPostergado){
+					
 					dataRaizPostergado = value.cell.dataConsolidado;
 				}
+				
 				var dataRaizPendente =  value.cell.dataRaiz;
 				
 				if(!dataRaizPendente){
+					
 					dataRaizPendente = value.cell.dataConsolidado;
 				}
 				
 				value.cell.consignado = (value.cell.consignado != null && value.cell.consignado > 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarConsignadoCota('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>'+
-					floatToPrice(formatMoneyValue(value.cell.consignado))+'</a>' : '0,00';
+										[value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>'+
+										floatToPrice(formatMoneyValue(value.cell.consignado))+'</a>' : '0,00';
 				
 				value.cell.encalhe = (value.cell.encalhe != null && value.cell.encalhe > 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.pesquisarEncalheCota('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>' + 
-					floatToPrice(formatMoneyValue(value.cell.encalhe)) + '</a>' : '0,00';
+									 [value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>' + 
+									 floatToPrice(formatMoneyValue(value.cell.encalhe)) + '</a>' : '0,00';
 				
 				value.cell.valorVendaDia = floatToPrice(formatMoneyValue(value.cell.valorVendaDia));
 				
 				value.cell.vendaEncalhe = (value.cell.vendaEncalhe != null && value.cell.vendaEncalhe > 0)?'<a href="javascript:;" onclick="vendaEncalhe.showDialog('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cotaHidden", contaCorrenteCotaController.workspace).val() +
-					',\''+value.cell.nomeBox+'\');"/>' + floatToPrice(formatMoneyValue(value.cell.vendaEncalhe)) + '</a>' : '0,00';
+										  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cotaHidden", contaCorrenteCotaController.workspace).val() +
+										  ',\''+value.cell.nomeBox+'\');"/>' + floatToPrice(formatMoneyValue(value.cell.vendaEncalhe)) + '</a>' : '0,00';
 				
 				value.cell.debitoCredito = (value.cell.debitoCredito != null && value.cell.debitoCredito > 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito +'\');"/>' +
-					floatToPrice(formatMoneyValue(value.cell.debitoCredito)) +'</a>' : '0,00';
-				
+										   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito +'\');"/>' +
+											floatToPrice(formatMoneyValue(value.cell.debitoCredito)) +'</a>' : '0,00';
+
 				value.cell.encargos = (value.cell.encargos != null && value.cell.encargos > 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+
-					[value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + floatToPrice(formatMoneyValue(value.cell.encargos)) +'</a>' : '0,00';
-					
-				value.cell.valorPostergado = (value.cell.valorPostergado != null && value.cell.valorPostergado > 0)?'<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPostergado+'">' +
-					floatToPrice(formatMoneyValue(value.cell.valorPostergado)) + '</a></span>' : '0,00';
+									  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + floatToPrice(formatMoneyValue(value.cell.encargos)) +'</a>' : '0,00';
 				
-				value.cell.pendente = (value.cell.pendente != null && value.cell.pendente > 0)?'<span class="bt_tool"><a rel="tipsy" title="Valor Referente à '+dataRaizPendente+'">' +
-					floatToPrice(formatMoneyValue(value.cell.pendente)) +'</a></span>' : '0,00';
+				var hint = value.cell.valorPostergado && value.cell.valorPostergado != 0 ? '<a rel="tipsy" title="Valor Referente à '+ 
+						  (value.cell.tipo != 'CONSOLIDADO' ? dataRaizPendente : dataRaizPostergado)  + '">' : "";
+				
+			    value.cell.valorPostergado = (value.cell.valorPostergado != null && value.cell.valorPostergado > 0)?'<span class="bt_tool">' + hint +
+					                          floatToPrice(formatMoneyValue(value.cell.valorPostergado)) + '</a></span>' : '0,00';
+
+				hint = value.cell.pendente && value.cell.pendente != 0 ? '<a rel="tipsy" title="Valor Referente à '+ dataRaizPendente + '">' : "";
+				       
+				value.cell.pendente = (value.cell.pendente != null && value.cell.pendente > 0)?'<span class="bt_tool">' + hint +
+					                   floatToPrice(formatMoneyValue(value.cell.pendente)) +'</a></span>' : '0,00';
 				
 				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total) * -1);
 				value.cell.valorPago = floatToPrice(formatMoneyValue(value.cell.valorPago));
@@ -205,11 +215,10 @@ var contaCorrenteCotaController = $.extend(true, {
 				} else {
 					
 					value.cell.tipo = '<img src="'+ contextPath +'/images/ico_excluir.gif"/>';
-					value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.total) * -1);
+					value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.total));
 				}
 			});
 			
-		
 			$("#cotanomeselecionado", contaCorrenteCotaController.workspace).html($("#cotaHidden", contaCorrenteCotaController.workspace).val()+" "+
 					$("#nomeCotaHidden", contaCorrenteCotaController.workspace).val());
 			
@@ -223,7 +232,6 @@ var contaCorrenteCotaController = $.extend(true, {
 			
 			return data;
 		}
-
 	},
 	
 	preProcessEncalheCota : function (data){
