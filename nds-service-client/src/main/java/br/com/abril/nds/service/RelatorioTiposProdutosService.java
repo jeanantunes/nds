@@ -8,4 +8,6 @@ import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
 public interface RelatorioTiposProdutosService {
 
 	List<RelatorioTiposProdutosDTO> gerarRelatorio(FiltroRelatorioTiposProdutos filtro);
+	
+	Long obterQunatidade(FiltroRelatorioTiposProdutos filtro);
 }
