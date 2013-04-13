@@ -1051,7 +1051,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" 'MOVIMENTO FINAN' as tipo, ")
 		   
 		   //data raiz
-		   .append(" mfc.DATA as dataRaiz, ")
+		   .append(" mfc.DATA_CRIACAO as dataRaiz, ")
 		   
 		   //valor pago
 		   .append(" 0 as valorPago, ")

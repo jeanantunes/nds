@@ -88,13 +88,14 @@ public interface FormaCobrancaService {
     FormaCobranca obterFormaCobrancaDistribuidor(Long idFornecedor, Date data, BigDecimal valor);
     
     /**
-   	 * Obtem FormaCobranca da Cota com os Parâmetros passados, caso não encontre, busca FormaCobranca do Distribuidor 
-   	 * @param idCota
-   	 * @param idFornecedor
-   	 * @param data
-   	 * @param valor
-   	 * @return FormaCobranca
-   	 */
+	 * Obtem FormaCobranca da Cota com os Parâmetros passados. 
+	 * Caso não encontre e a cota não tenha FormaCobranca cadastrada, busca FormaCobranca do Distribuidor 
+	 * @param idCota
+	 * @param idFornecedor
+	 * @param data
+	 * @param valor
+	 * @return FormaCobranca
+	 */
      FormaCobranca obterFormaCobranca(Long idCota, Long idFornecedor, Date data, BigDecimal valor);
     
     /**

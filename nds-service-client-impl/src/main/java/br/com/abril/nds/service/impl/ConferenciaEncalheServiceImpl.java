@@ -1352,7 +1352,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
 		);
 			
-		this.movimentoFinanceiroCotaService.removerPostergadosDia(idCota, listaPostergados);
+		this.movimentoFinanceiroCotaService.removerPostergadosDia(
+				idCota, listaPostergados, 
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 	}
 	
 	private void removerItensConferenciaEncallhe(Set<Long> listaIdConferenciaEncalheParaExclusao) {
@@ -2072,9 +2074,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 				} else {
 					
-					BigInteger qtdeOriginal = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
+					BigInteger qtdeOriginal = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
 					
-					estoqueProduto.setQtde(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
+					estoqueProduto.setQtdeDevolucaoEncalhe(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
 
 					estoqueProdutoRepository.alterar(estoqueProduto);
 					

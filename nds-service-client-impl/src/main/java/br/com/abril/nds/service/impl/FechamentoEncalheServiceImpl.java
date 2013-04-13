@@ -538,6 +538,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, cota.getPessoa().getEmail());
 					} catch (AutenticacaoEmailException e) {
 						
+						if (validacaoVO.getListaMensagens() == null){
+							validacaoVO.setListaMensagens(new ArrayList<String>());
+						}
+						
 						validacaoVO.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
 								cota.getNumeroCota() + ", " +
 								e.getMessage());

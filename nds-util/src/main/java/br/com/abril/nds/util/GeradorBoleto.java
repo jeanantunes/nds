@@ -53,7 +53,12 @@ public class GeradorBoleto {
         //ENDERECO DO SACADO
         
         Endereco enderecoSac = new Endereco();
-        enderecoSac.setUF(UnidadeFederativa.valueOf(corpoBoleto.getEnderecoSacadoUf()));
+        
+        
+        if(corpoBoleto.getEnderecoSacadoUf() != null && !corpoBoleto.getEnderecoSacadoUf().trim().isEmpty()) {
+            enderecoSac.setUF(UnidadeFederativa.valueOf(corpoBoleto.getEnderecoSacadoUf()));
+        }
+        
         enderecoSac.setLocalidade(corpoBoleto.getEnderecoSacadoBairro());
         enderecoSac.setCep(new CEP(corpoBoleto.getEnderecoSacadoCep()));
         enderecoSac.setBairro(corpoBoleto.getEnderecoSacadoLogradouro());

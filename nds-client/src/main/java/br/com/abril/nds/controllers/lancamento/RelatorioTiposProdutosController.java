@@ -75,7 +75,11 @@ public class RelatorioTiposProdutosController extends BaseController {
 		
  		List<RelatorioTiposProdutosVO> list = this.convertList(service.gerarRelatorio(filtro));
  		
-		result.use(FlexiGridJson.class).from(list).total(filtro.getPaginacaoVO().getQtdResultadosTotal()).page(page).serialize();
+ 		filtro.setPaginacaoVO(null);
+ 		
+ 		Integer total = this.service.obterQunatidade(filtro).intValue();
+ 		
+		result.use(FlexiGridJson.class).from(list).total(total).page(page).serialize();
 	}
 	
 	private void tratarFiltroPesquisa(FiltroRelatorioTiposProdutos filtro, 
