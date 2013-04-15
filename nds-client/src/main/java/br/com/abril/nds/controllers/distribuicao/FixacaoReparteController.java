@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.distribuicao;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -447,10 +447,9 @@ public class FixacaoReparteController extends BaseController {
 	
 	@Post
 	@Path("/uploadArquivoLoteFixacao")
-	public void uploadArquivoEmLote(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFileFixacao) throws FileNotFoundException, IOException{
+	public void uploadArquivoEmLote(UploadedFile excelFileFixacao) throws FileNotFoundException, IOException{
 		List<FixacaoReparteDTO> listaRegistrosInvalidosExcel=null;
-		File file = XlsUploaderUtils.upLoadArquivo(excelFileFixacao);
-		List<FixacaoReparteDTO> listaFixacaoExcel = XlsUploaderUtils.getBeanListFromXls(FixacaoReparteDTO.class, file );
+		List<FixacaoReparteDTO> listaFixacaoExcel = XlsUploaderUtils.getBeanListFromXls(FixacaoReparteDTO.class, excelFileFixacao);
 	
 		if(!isListaVazia(listaFixacaoExcel)){
 			 listaRegistrosInvalidosExcel = obterListaInvalidos(listaFixacaoExcel);
