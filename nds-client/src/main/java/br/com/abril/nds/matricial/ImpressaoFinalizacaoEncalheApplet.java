@@ -6,6 +6,8 @@ import java.security.PrivilegedAction;
 
 import javax.swing.JApplet;
 
+import com.itextpdf.text.pdf.codec.Base64;
+
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.util.ImpressaoMatricialUtil;
 import br.com.abril.nds.util.ImpressoraUtil;
@@ -25,16 +27,21 @@ public class ImpressaoFinalizacaoEncalheApplet extends JApplet{
 					
 					System.out.println("###>>>>>tipo_documento_impressao_encalhe = "+tipo_documento_impressao_encalhe+" <<<<<<<#########");
 					System.out.println("###>>>>>conteudoImpressao = "+conteudoImpressao+" <<<<<<<#########");
-					
-					if(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name().equalsIgnoreCase(tipo_documento_impressao_encalhe)){
+
+					if(conteudoImpressao != null){
 						
-						//Impressão matricial
-						if(conteudoImpressao != null)
+						if(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name().equalsIgnoreCase(tipo_documento_impressao_encalhe)){
+							
+							//Impressão matricial
 							new ImpressaoMatricialUtil(new StringBuffer(conteudoImpressao)).imprimir(ImpressoraUtil.getImpressoraLocalMatricialNomePadrao());
-					}else{
-						
-						//Impressão laser
-						new ImpressoraUtil().imprimir(conteudoImpressao.getBytes(), ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao());
+							
+						}else{
+							
+							//Impressão laser
+							new ImpressoraUtil().imprimirRPCEstrategia(Base64.decode(conteudoImpressao), ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao());
+							
+//						new ImpressoraUtil().imprimir(conteudoImpressao.getBytes(), ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao());
+						}
 					}
 
 				} catch (Exception e) {

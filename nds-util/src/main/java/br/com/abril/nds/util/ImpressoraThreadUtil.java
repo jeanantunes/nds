@@ -20,7 +20,7 @@ public class ImpressoraThreadUtil {
 	 *            Objeto com o trabalho de impressão.
 	 * @return Não se aplica.
 	 */
-	ImpressoraThreadUtil(DocPrintJob job) {
+	public ImpressoraThreadUtil(DocPrintJob job) {
 
 		// Add a listener to the print job
 

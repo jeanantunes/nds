@@ -11,11 +11,8 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=nds-common/src\/main\/java"/>
-        <javaElement handleIdentifier="=nds-client/src\/main\/resources"/>
-        <javaElement handleIdentifier="=nds-util/src\/main\/resources"/>
-        <javaElement handleIdentifier="=nds-client/src\/main\/java"/>
-        <javaElement handleIdentifier="=nds-client/src\/test\/java"/>
+        <javaElement handleIdentifier="=nds-common/src\/main\/java&lt;br.com.abril.nds.enums{TipoDocumentoConferenciaEncalhe.java"/>
         <javaElement handleIdentifier="=nds-util/src\/main\/java"/>
+        <javaElement handleIdentifier="=nds-client/src\/main\/java&lt;br.com.abril.nds.matricial"/>
     </selectedElements>
 </jardesc>

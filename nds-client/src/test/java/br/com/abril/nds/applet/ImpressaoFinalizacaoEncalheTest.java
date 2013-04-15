@@ -1,11 +1,10 @@
 package br.com.abril.nds.applet;
 
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -27,26 +26,161 @@ import br.com.abril.nds.util.ImpressoraUtil;
 public class ImpressaoFinalizacaoEncalheTest {
 
 	public static void main(String[] args) {
-		try {
-			new ImpressaoFinalizacaoEncalheTest().gerarSlipTxtMatricialTest();
-		} catch (PrintException | IOException e) {
-			e.printStackTrace();
-		}
+		getBoletoTest();
 	}
 	
+/*	
+	image/gif; class="[B"
+	image/gif; class="java.io.InputStream"
+	image/gif; class="java.net.URL"
+	image/jpeg; class="[B"
+	image/jpeg; class="java.io.InputStream"
+	image/jpeg; class="java.net.URL"
+	image/png; class="[B"
+	image/png; class="java.io.InputStream"
+	image/png; class="java.net.URL"
+	application/x-java-jvm-local-objectref; class="java.awt.print.Pageable"
+	application/x-java-jvm-local-objectref; class="java.awt.print.Printable"
+	application/octet-stream; class="[B"
+	application/octet-stream; class="java.net.URL"
+	application/octet-stream; class="java.io.InputStream"
+	*/
 	private static void getBoletoTest()  {
-		BufferedReader in;
+		
+		InputStream fis;
 		try {
-			in = new BufferedReader(new FileReader("C:\\arquivos_cobranca_boleto.pdf"));
-			String line;  
-			while ((line = in.readLine()) != null) {  
 
-				System.out.println(line);  
+			fis = new FileInputStream(new File("C:\\temp\\arquivos_cobranca_boleto.pdf"));
+			byte[] buffer = new byte[fis.available()];
+			int buff = 0;
+			while((buff = fis.available()) != 0){
+				fis.read(buffer, 0, buff);
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
+			System.out.println(new String(buffer));
+			
+			new ImpressoraUtil().imprimirRPCEstrategia(buffer, ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao());
+			
+		}catch(Exception e){
 			e.printStackTrace();
-		}  
+		}
+		
+		
+//		File input = new File("C:\\temp\\arquivos_cobranca_boleto.pdf");
+//		FileInputStream fis;
+//		try {
+//			fis = new FileInputStream(input);
+//		
+//			FileChannel fc = fis.getChannel();
+//			ByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+//	
+//			PDFFile curFile=null;
+//			PDFPrintPage pages=null;
+//			curFile = new PDFFile(bb); // Create PDF Print Page
+//			pages = new PDFPrintPage(curFile);
+//			PrinterJob pjob = PrinterJob.getPrinterJob();
+//	
+//	        pjob.setPrintService(ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao());
+//	
+////			pjob.setJobName("C:\\arquivos_cobranca_boleto222.pdf");
+//			Book book = new Book();
+//			PageFormat pformat = PrinterJob.getPrinterJob().defaultPage();
+//			book.append(pages, pformat, curFile.getNumPages());
+//			pjob.setPageable(book);
+//	
+//			// print
+//			PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
+//	
+//	
+//			// Print it
+//			pjob.print(aset);
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (PrinterException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+//		InputStream in;
+//		try {
+//			in = new FileInputStream(new File("C:\\arquivos_cobranca_boleto.pdf"));
+//	        DocFlavor flavor = DocFlavor.INPUT_STREAM.PDF;
+//	
+//	        // find the printing service
+//	        AttributeSet attributeSet = new HashAttributeSet();
+//	        attributeSet.add(new PrinterName("FX", null));
+//	        attributeSet.add(new Copies(1));
+//	
+//	        PrintService[] services = PrintServiceLookup.lookupPrintServices(
+//	                DocFlavor.INPUT_STREAM.PDF, attributeSet);
+//	
+//	        //create document
+//	        Doc doc = new SimpleDoc(in, flavor, null);
+//	
+//	        // create the print job
+////	        PrintService service = services[0];
+//	        DocPrintJob job = dpj;
+//	
+//	        // monitor print job events
+//	        ImpressoraThreadUtil watcher = new ImpressoraThreadUtil(job);
+//	
+//	        System.out.println("Printing...");
+//	        job.print(doc, null);
+//	
+//	        // wait for the job to be done
+//	        watcher.waitForDone();
+//	        System.out.println("Job Completed!!");
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (PrintException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		
+		
+//        InputStream fis;
+//		try {
+//			
+//			fis = new FileInputStream(new File("C:\\arquivos_cobranca_boleto.pdf"));
+//			byte[] buffer = new byte[fis.available()];
+//			int buff = 0;
+//			while((buff = fis.available()) != 0){
+//				fis.read(buffer, 0, buff);
+//			}
+//			
+//			System.out.println(new String(buffer));
+//			InputStream stream = new ByteArrayInputStream(buffer);   
+//			
+//			
+//			DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;  
+//			Doc doc = new SimpleDoc(stream, flavor, null);  
+//			dpj.print(doc, null);
+//		
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (PrintException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+			
+//			try {
+//				Desktop.getDesktop().print(new java.io.File("C:\\temp\\logAssinatura.txt"));
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+		
+        
 	}
 
 

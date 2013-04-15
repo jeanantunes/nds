@@ -1,9 +1,16 @@
 package br.com.abril.nds.util;
 
+import java.awt.print.Book;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -11,6 +18,11 @@ import javax.print.DocPrintJob;
 import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.SimpleDoc;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+
+import com.sun.pdfview.PDFFile;
+import com.sun.pdfview.PDFPrintPage;
 
 
 
@@ -36,6 +48,35 @@ public class ImpressoraUtil {
 		
 		ps.close();
     }
+	
+	public void imprimirRPCEstrategia(byte[] saida, PrintService impressora)throws PrintException, IOException, PrinterException{
+//		DocPrintJob dpj = ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao().createPrintJob();
+		
+//		InputStream fis = new ByteArrayInputStream(saida)
+//	
+//		FileChannel fc = fis.getChannel();
+//		ByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+
+		PDFFile curFile=new PDFFile(ByteBuffer.wrap(saida));// Create PDF Print Page
+		PDFPrintPage pages=null;
+		pages = new PDFPrintPage(curFile);
+		PrinterJob pjob = PrinterJob.getPrinterJob();
+
+        pjob.setPrintService(ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao());
+
+//			pjob.setJobName("C:\\arquivos_cobranca_boleto222.pdf");
+		Book book = new Book();
+		PageFormat pformat = PrinterJob.getPrinterJob().defaultPage();
+		book.append(pages, pformat, curFile.getNumPages());
+		pjob.setPageable(book);
+
+		// print
+		PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
+
+
+		// Print it
+		pjob.print(aset);
+	}
 	
 	public static PrintService getImpressoraLocalConfiguradaPadrao(){
 		return PrinterJob.getPrinterJob().getPrintService();

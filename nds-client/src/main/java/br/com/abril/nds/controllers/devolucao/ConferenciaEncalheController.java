@@ -42,7 +42,6 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
-import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -67,6 +66,8 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+
+import com.itextpdf.text.pdf.codec.Base64;
 
 @Resource
 @Path(value="/devolucao/conferenciaEncalhe")
@@ -1067,7 +1068,13 @@ public class ConferenciaEncalheController extends BaseController {
 			this.session.setAttribute(CONF_IMPRESSAO_ENCALHE_COTA, dtoDoc);
 			this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, mapFileNameFile);
 			
-		} catch (Exception e) {
+		} catch (ValidacaoException e) {
+			
+			if(e.getValidacao() != null){
+				throw new Exception(e.getValidacao().getListaMensagens().get(0));
+			}
+			
+		}catch (Exception e) {
 			
 			throw new Exception("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança - " + e.getMessage(), e);
 		}
@@ -1087,11 +1094,14 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				Map<String, Object> dados = new HashMap<String, Object>();
 				
-				dados.put("resultado", new String(arquivos.get(tipo_documento_impressao_encalhe)));
+				if(tipo_documento_impressao_encalhe.equals(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name())){
+					dados.put("resultado", new String(arquivos.get(tipo_documento_impressao_encalhe)));
+				}else{
+					dados.put("resultado", Base64.encodeBytes(arquivos.get(tipo_documento_impressao_encalhe)));	
+				}
+				
 				dados.put("tipo_documento_impressao_encalhe", tipo_documento_impressao_encalhe);
-				
 				this.result.use(CustomJson.class).from(dados).serialize();
-				
 			}else{
 				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Cenário de impressão não tratado, favor contatar a área de sistemas."));
 			}

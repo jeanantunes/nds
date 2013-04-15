@@ -872,20 +872,23 @@ var ConferenciaEncalhe = $.extend(true, {
 			var data = [{name: 'tipo_documento_impressao_encalhe', value: tiposDocumento[i]}];
 			
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
-				data,
-				function(resultado){
-					
-					var callApplet = '';
-					callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
-					callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
-					callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
-					callApplet+='</applet>';						
+					data,
+					function(resultado){
 				
-					$('#replaceAppletFinal'+cont).html(callApplet);
-					$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).show();		
-					
-					cont++;
-				}
+						if(resultado != "" && resultado.resultado!=""){
+							
+							var callApplet = '';
+							callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
+							callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
+							callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
+							callApplet+='</applet>';						
+							
+							$('#replaceAppletFinal'+cont).html(callApplet);
+							$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).show();		
+							
+							cont++;
+						}
+					}
 			); 			
 		}
 		

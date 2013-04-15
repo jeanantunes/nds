@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.ValidationException;
+
 import org.jrimum.bopepo.BancosSuportados;
 import org.jrimum.bopepo.Boleto;
 import org.jrimum.bopepo.view.BoletoViewer;
@@ -42,8 +44,9 @@ public class GeradorBoleto {
 	 * Monta o boleto para o formato "Bopepo"
 	 * @param b : Dados do boleto
 	 * @return
+	 * @throws ValidationException 
 	 */
-	private Boleto createBoleto(CorpoBoleto corpoBoleto){
+	private Boleto createBoleto(CorpoBoleto corpoBoleto) throws ValidationException{
 		
         //CEDENTE
         Cedente cedente = new Cedente(corpoBoleto.getCedenteNome(), corpoBoleto.getCedenteDocumento());
@@ -82,7 +85,11 @@ public class GeradorBoleto {
         }
         
         //CONTA BANCARIA
-        ContaBancaria contaBancaria = new ContaBancaria(getBancoByNumero(corpoBoleto.getContaNumeroBanco()).create());
+        BancosSuportados bancoByNumero = getBancoByNumero(corpoBoleto.getContaNumeroBanco());
+        if(bancoByNumero == null)
+        	throw new ValidationException("Número do banco não encontrado: "+corpoBoleto.getContaNumeroBanco() +". favor contatar a área de sistemas. - Tabela Cobrança BANCO_ID");
+        	
+        ContaBancaria contaBancaria = new ContaBancaria(bancoByNumero.create());
         contaBancaria.setNumeroDaConta(new NumeroDaConta(corpoBoleto.getCodigoCedente(), null));
         //CARTEIRA DA CONTA BANCARIA  
         Carteira carteira = new Carteira(corpoBoleto.getContaCarteira());
@@ -148,7 +155,7 @@ public class GeradorBoleto {
 	}
 	
 	
-	private List<Boleto> createBoletos(){
+	private List<Boleto> createBoletos() throws ValidationException{
 		
 		List<Boleto> listaBoletos = new ArrayList<Boleto>();
 		
@@ -164,8 +171,9 @@ public class GeradorBoleto {
 	 /**
 	  * Gera o arquivo PDF local.
 	  * @param path
+	 * @throws ValidationException 
 	  */
-	 public File gerar(String path) {
+	 public File gerar(String path) throws ValidationException {
 	    Boleto boleto = this.createBoleto(corpoBoleto);
 	    BoletoViewer boletoViewer = new BoletoViewer(boleto);
 	    File arquivoPdf = boletoViewer.getPdfAsFile(path);
@@ -174,9 +182,10 @@ public class GeradorBoleto {
 	  
 	 /**
 	  * Retorna um Array de Bytes do Boleto PDF.
+	 * @throws ValidationException 
 	  * 
 	  */
-	 public byte[] getBytePdf()  {
+	 public byte[] getBytePdf() throws ValidationException  {
 	    Boleto boleto = this.createBoleto(corpoBoleto);
 	    BoletoViewer boletoViewer = new BoletoViewer(boleto);
 	    byte[] byteArrayPdf = boletoViewer.getPdfAsByteArray();
@@ -185,9 +194,10 @@ public class GeradorBoleto {
 	 
 	 /**
 	  * Retorna um Array de Bytes do Boleto PDF.
+	 * @throws ValidationException 
 	  * 
 	  */
-	 public byte[] getByteGroupPdf()  {
+	 public byte[] getByteGroupPdf() throws ValidationException  {
 	    
 		List<Boleto> list = createBoletos();
 		
@@ -200,9 +210,10 @@ public class GeradorBoleto {
 	  
 	 /**
 	  * Retorna um File do Boleto PDF.
+	 * @throws ValidationException 
 	  * 
 	  */
-	 public File getFilePdf(){
+	 public File getFilePdf() throws ValidationException{
  		Boleto boleto = this.createBoleto(corpoBoleto);
  		BoletoViewer viewer = new BoletoViewer(boleto);
  		File file = new File("boleto"+boleto.getTitulo().getNossoNumero()+".pdf");
