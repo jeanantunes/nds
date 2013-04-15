@@ -277,6 +277,23 @@ var parametrosDistribuidorController = $.extend(true, {
 	},
 
 	popup_confirm: function() {
+	    
+	    var arrayMensagemWarning = new Array();
+	    
+	    var vendaMediaMais = $('#vendaMediaMais', this.workspace).val();
+	    var percentualMaximoFixacao = $('#percentualMaximoFixacao', this.workspace).val();
+	    
+	    if(vendaMediaMais > 10 || vendaMediaMais < 0) {
+		arrayMensagemWarning.push("- \'Venda Média +\' deve ser de 0 a 10!");
+	    }
+		
+	    if(percentualMaximoFixacao > 75 || percentualMaximoFixacao < 1) {
+		arrayMensagemWarning.push("- \'% Máximo de Fixação\' deve ser de 1% a 75%!");
+	    }
+	    
+	    if(arrayMensagemWarning.length > 0) {
+		exibirMensagem('WARNING', arrayMensagemWarning);
+	    } else {
 		
 		$("#dialog-confirm", this.workspace).dialog({
 			resizable: false,
@@ -294,6 +311,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			}, 
 			form: $("#dialog-confirm", this.workspace).parents("form")
 		});
+	    }
 	},
 	
 	popup_pesq_fornecedor: function() {
@@ -622,7 +640,8 @@ var parametrosDistribuidorController = $.extend(true, {
 			$('#listClassificacaoCota4\\.valorDe', this.workspace).val('0.00');
 		}
 		
-		$('#listClassificacaoCota1\\.valorAte', this.workspace)
+		$('#listClassificacaoCota0\\.valorAte', this.workspace)
+		.add('#listClassificacaoCota1\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota2\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
@@ -635,7 +654,17 @@ var parametrosDistribuidorController = $.extend(true, {
 //		        console.log(numValorAte,campoValorDe.val());
 		    }
 		});
-
+		
+		$('#vendaMediaMais', this.workspace)
+		.add('#percentualMaximoFixacao', this.workspace)
+		.add('#listPercentualExcedente0\\.venda', this.workspace)
+		.add('#listPercentualExcedente0\\.pdv', this.workspace)
+		.add('#listPercentualExcedente1\\.venda', this.workspace)
+		.add('#listPercentualExcedente1\\.pdv', this.workspace)
+		.add('#listPercentualExcedente2\\.venda', this.workspace)
+		.add('#listPercentualExcedente2\\.pdv', this.workspace)
+		.numeric();
+		
 	},
 	
 	dialogConfirmarGrupo: function() {

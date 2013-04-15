@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.impl.Log4JLogger;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -54,6 +54,7 @@ import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -65,7 +66,7 @@ import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.PessoaFisicaService;
 import br.com.abril.nds.service.PessoaJuridicaService;
-import br.com.abril.nds.service.impl.CotaServiceImpl;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -105,6 +106,8 @@ public class CotaController extends BaseController {
 	public static final String LISTA_ENDERECOS_EXIBICAO = "listaEnderecoExibicaoCota";
 	
 	public static final String TERMO_ADESAO = "imgTermoAdesao";
+	
+	public static final String SENHA_USUARIO_IMPRIMIR = "SENHA_USUARIO_IMPRIMIR";
 	
 	public static final int[] vetor =  {1};
 	
@@ -155,6 +158,9 @@ public class CotaController extends BaseController {
 	@Autowired
 	private FileService fileService;
 	
+	@Autowired
+	private UsuarioService usuarioService;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE="filtroCadastroCota";
 
 	private static final String NOME_DEFAULT_TERMO_ADESAO = "termo_adesao.pdf";
@@ -198,6 +204,16 @@ public class CotaController extends BaseController {
 	    CotaDTO cotaDTO = cotaService.obterHistoricoTitularidade(idCota, idHistorico);
 	    carregarEnderecosHistoricoTitularidade(idCota, idHistorico);
 	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
+	    
+	    
+	    // Ajuste 0153
+	    Cota cota = this.cotaService.obterPorId(idCota);
+	    BigDecimal totalPerc = BigDecimal.ZERO;
+	    for (ReferenciaCota refCota : cota.getBaseReferenciaCota().getReferenciasCota()) {
+	    	totalPerc = totalPerc.add(refCota.getPercentual());
+		}
+	    cotaDTO.setPercentualCotaBase(totalPerc);
+	    
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
@@ -815,7 +831,7 @@ public class CotaController extends BaseController {
 		
 		CotaDTO cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 		cotaDTO.setListaClassificacao(getListaClassificacao());
-	
+
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	
@@ -1119,6 +1135,13 @@ public class CotaController extends BaseController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
+		Object attribute = session.getAttribute(SENHA_USUARIO_IMPRIMIR);
+		if(attribute==null || this.validarSenhaUsuarioLogado((String)attribute)==false){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Senha inválida.");
+		}
+		
+		session.removeAttribute(SENHA_USUARIO_IMPRIMIR);
+		
 		FiltroCotaDTO filtro = (FiltroCotaDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 				
 		filtro.getPaginacao().setQtdResultadosPorPagina(null);
@@ -1141,6 +1164,31 @@ public class CotaController extends BaseController {
 				listaCotasVO, CotaVO.class, this.httpResponse);
 		
 		result.nothing();
+	}
+
+	@Post
+	public void validarSenha(String confirmarSenhaInput) throws IOException {
+		
+		Boolean valido = validarSenhaUsuarioLogado(confirmarSenhaInput);
+		
+		session.setAttribute(SENHA_USUARIO_IMPRIMIR,confirmarSenhaInput);
+		
+		result.use(Results.json()).from(valido.toString(), "senhaValida").recursive().serialize();
+	}
+
+	private Boolean validarSenhaUsuarioLogado(String confirmarSenhaInput) {
+		Boolean valido=Boolean.TRUE;
+		
+		
+		if(StringUtils.isEmpty(confirmarSenhaInput)){
+			valido=Boolean.FALSE;
+		}else {
+			String md5 = Util.md5(confirmarSenhaInput);
+			if(this.usuarioService.getUsuarioLogado().getSenha().equals(md5)==false){
+				valido=Boolean.FALSE;
+			}
+		}
+		return valido;
 	}
 	
 	/**
