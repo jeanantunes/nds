@@ -3201,4 +3201,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
 		}
 	}
+	
+	public static void main (String...strings){
+		
+		float x = (float) 12.00000000000000;
+		
+		System.out.println(new BigDecimal(x));
+		
+		
+	}
+	
 }
