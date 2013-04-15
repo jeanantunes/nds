@@ -101,4 +101,6 @@ public interface DistribuidorService {
 	Integer fatorRelancamentoParcial();
 
 	Long obterId();
+	
+	boolean utilizaControleAprovacaoFaltaSobra();
 }
