@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.CopiaProporcionalDeDistribuicaoVO;
+import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
@@ -32,6 +33,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.SomarEstudosService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -79,7 +81,10 @@ public class MatrizDistribuicaoController extends BaseController {
     private EstudoAlgoritmoService estudoAlgoritmoService;
     
     @Autowired
-	private SomarEstudosService somarEstudosService;
+    private SomarEstudosService somarEstudosService;
+    
+    @Autowired
+    private ParametrosDistribuidorService parametrosDistribuidorService;
 
     private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
 
@@ -99,11 +104,13 @@ public class MatrizDistribuicaoController extends BaseController {
     @Post
 	public void obterMatrizDistribuicao(Date dataLancamento, List<Long> idsFornecedores) {
 
+		ParametrosDistribuidorVO parametrosDistribuidorVO = parametrosDistribuidorService.getParametrosDistribuidor();
+	
 		validarDadosPesquisa(dataLancamento);
 			
 		configurarFiltropesquisa(dataLancamento, idsFornecedores);
 
-		this.result.use(Results.json()).from(Results.nothing()).serialize();
+		this.result.use(Results.json()).from(parametrosDistribuidorVO).recursive().serialize();
 	}
 
     @Post

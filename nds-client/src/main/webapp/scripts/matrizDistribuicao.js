@@ -40,6 +40,14 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
 			data,
 			function(result) {
+			    	if(result.parametrosDistribuidorVO.geracaoAutomaticaEstudo) {
+			    	    $('#spanGerarEstudoAutomatico').attr('class', 'bt_novos');
+			    	    $('#linkGerarEstudoAutomatico').attr('onclick', 'matrizDistribuicao.gerarEstudoAutomatico();');
+			    	} else {
+			    	    $('#spanGerarEstudoAutomatico').attr('class', 'linkDisabled');
+			    	    $('#linkGerarEstudoAutomatico').attr('onclick', '');
+			    	}
+			    	
 				T.carregarGrid();
 			},
 			T.escondeGrid()

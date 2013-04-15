@@ -51,13 +51,13 @@
 								Cota:
 							</td>
 							<td width="111">
-								<input type="text" name="filtro.cotaDto.numeroCota" id="filtroPrincipalNumeroCota" style="width: 100px;" />
+								<input type="text" name="filtro.cotaDto.numeroCota" id="filtroPrincipalNumeroCota" style="width: 100px;" onkeydown="onlyNumeric(event);" />
 							</td>
 							<td width="44">
 								Nome:
 							</td>
 							<td width="270">
-								<input type="text" name="filtro.cotaDto.nomePessoa" id="filtroPrincipalNomePessoa" style="width: 250px;" />
+								<input type="text" name="filtro.cotaDto.nomePessoa" id="filtroPrincipalNomePessoa" style="width: 250px;"  />
 							</td>
 							<td width="104">
 								<span class="bt_pesquisar">
@@ -76,13 +76,13 @@
 					<table class="englobadosGrid"></table>
 
 					<span class="bt_novos" title="Gerar Arquivo">
-						<a href="${pageContext.request.contextPath}/distribuicao/desenglobacao/exportar?fileType=XLS">
+						<a href="javascript:;" onclick="desenglobacaoController.exportar('XLS')">
 							<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 								Arquivo
 						</a>
 					</span>
 					<span class="bt_novos" title="Imprimir">
-						<a href="${pageContext.request.contextPath}/distribuicao/desenglobacao/exportar?fileType=PDF">
+						<a href="javascript:;" onclick="desenglobacaoController.exportar('PDF')">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 								Imprimir
 						</a>
@@ -109,7 +109,7 @@
 							Cota:
 						</td>
 						<td>
-							<input type="text" name="desenglobaDTO[0].desenglobaNumeroCota" id="filtroDesenglobaNumeroCota" style="width: 60px;" />
+							<input type="text" name="desenglobaDTO[0].desenglobaNumeroCota" id="filtroDesenglobaNumeroCota" style="width: 60px;" onkeydown="onlyNumeric(event);"/>
 						</td>
 						<td>
 							Nome:
@@ -166,6 +166,7 @@
 					</table>
 				</div>
 			</fieldset>
+			
 		</form>
 	</div>
 </body>

@@ -189,9 +189,6 @@ public class FixacaoReparteController extends BaseController {
 		tratarFiltroPorProduto(filtro);
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterHistoricoLancamentoPorProduto(filtro);
 		
-		
-		
-		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModel = new TableModel<CellModelKeyValue<FixacaoReparteDTO>>();
 
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPesquisa));
@@ -575,7 +572,5 @@ public class FixacaoReparteController extends BaseController {
 	}
 
 	
-	public static void main(String[] args) {
-//		String s = "file:\C:\WORKSPACE_NOVO\.metadata\.plugins\org.eclipse.wst.server.core\tmp2\wtpwebapps\nds-client\WEB-INF\classes\ehcache.xml";
-	}
+	
 }
