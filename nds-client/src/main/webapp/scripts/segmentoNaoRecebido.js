@@ -616,7 +616,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 											{
 												url : segmentoNaoRecebidoController.urlPesquisarCotasNaoEstaoNoSegmento,
 												dataType : 'json',
-												params : segmentoNaoRecebidoController.getFiltroCota2ParaReload(),
+												params : segmentoNaoRecebidoController.getFiltroCota2Vazio(),
 											});
 
 					        		segmentoNaoRecebidoController.limparFiltroCota2();
@@ -707,7 +707,14 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						return data;
 					},
 					
-					
+					getFiltroCota2Vazio : function() {
+						var data = [];
+						data.push({name : 'isReload', value : true});
+						data.push({name : 'filtro.numeroCota', value : ''});
+						data.push({name : 'filtro.nomeCota', value : ''});
+						data.push({name : 'filtro.tipoSegmentoProdutoId', value : ''});
+						return data;
+					},
 					
 					getFiltroCota2 : function() {
 
