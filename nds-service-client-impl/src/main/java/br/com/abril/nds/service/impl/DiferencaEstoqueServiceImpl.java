@@ -196,7 +196,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		diferenca = processarDiferenca(diferenca, tipoEstoque, StatusConfirmacao.CONFIRMADO);
 		
-		this.confirmarLancamentosDiferenca(Arrays.asList(diferenca), statusAprovacao);
+		this.confirmarLancamentosDiferenca(Arrays.asList(diferenca), statusAprovacao,true);
 		
 		return diferenca;
 	}
@@ -226,7 +226,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		listaNovasDiferencas = salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario, isDiferencaNova, StatusConfirmacao.PENDENTE);
 		
-		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null);
+		boolean isAprovacaoMovimentoDiferencaAutomatico = distribuidorService.utilizaControleAprovacaoFaltaSobra();
+		
+		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null,!isAprovacaoMovimentoDiferencaAutomatico);
 	} 
 	
 	@Transactional
@@ -357,7 +359,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 	}
 
-	private void confirmarLancamentosDiferenca(List<Diferenca> listaDiferencas, StatusAprovacao statusAprovacao) {
+	private void confirmarLancamentosDiferenca(List<Diferenca> listaDiferencas, StatusAprovacao statusAprovacao,boolean isMovimentoDiferencaAutomatico) {
 		
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
@@ -380,7 +382,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					
 					listaMovimentosEstoqueCota.add(
 						this.gerarMovimentoEstoqueCota(diferenca, rateioDiferenca, 
-							usuario.getId(), diferenca.isAutomatica()));
+							usuario.getId(), isMovimentoDiferencaAutomatico));
 				}
 				
 				//Verifica se ha direcionamento de produtos para o estoque do distribuidor
@@ -393,7 +395,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 			} else {
 				
-				movimentoEstoque = this.gerarMovimentoEstoque(diferenca, usuario.getId(), diferenca.isAutomatica());
+				movimentoEstoque = this.gerarMovimentoEstoque(diferenca, usuario.getId(),isMovimentoDiferencaAutomatico);
 			}
 
 			if (statusAprovacao == null) {
@@ -801,13 +803,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
 		
-		if(isAprovacaoAutomatica){
-			tipoMovimentoEstoque.setAprovacaoAutomatica(true);
-		}
-		
-		return this.movimentoEstoqueService.gerarMovimentoEstoque(
+		return this.movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
 			diferenca.getProdutoEdicao().getId(), idUsuario,
-				diferenca.getQtde(), tipoMovimentoEstoque);
+				diferenca.getQtde(), tipoMovimentoEstoque,isAprovacaoAutomatica);
 	}
 	
 	/*
@@ -823,27 +821,22 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			TipoMovimentoEstoque tipoMovimentoEstoque =
 				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 					diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
-				
-			tipoMovimentoEstoque.setAprovacaoAutomatica(isAprovacaoAutomatica);
 			
-			this.movimentoEstoqueService.gerarMovimentoEstoque(
+			this.movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
 				diferenca.getProdutoEdicao().getId(), idUsuario, 
-					rateioDiferenca.getQtde(), tipoMovimentoEstoque);
+					rateioDiferenca.getQtde(), tipoMovimentoEstoque,isAprovacaoAutomatica);
 		}
 		
 		TipoMovimentoEstoque tipoMovimentoEstoqueCota =
 			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				diferenca.getTipoDiferenca().getGrupoMovimentoEstoqueCota());
-			
-		tipoMovimentoEstoqueCota.setAprovacaoAutomatica(isAprovacaoAutomatica);
 		
 		Long estudoCotaId = (rateioDiferenca.getEstudoCota() != null) 
 								? rateioDiferenca.getEstudoCota().getId() : null;
 		
-		return this.movimentoEstoqueService.gerarMovimentoCota(
+		return this.movimentoEstoqueService.gerarMovimentoCotaDiferenca(
 					null, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
-						idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota,
-							null, null, null, estudoCotaId);
+						idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota,estudoCotaId,isAprovacaoAutomatica);
 	}
 	
 	/*

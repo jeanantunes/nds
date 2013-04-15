@@ -167,19 +167,24 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		} else {
 			
 			hql = " select "
-				+ " movimento.id as idMovimento, movimento.tipoMovimento.descricao as descricaoTipoMovimento,"
-				+ " movimento.dataCriacao as dataCriacao, cota.numeroCota as numeroCota,"
+				+ " movimento.id as idMovimento, "
+				+ " movimento.tipoMovimento.descricao as descricaoTipoMovimento,"
+				+ " movimento.dataCriacao as dataCriacao, "
+				+ " cota.numeroCota as numeroCota,"
 				+ " (case when (pessoa.nome is not null) then ( pessoa.nome )"
 				+ " when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )"
-				+ " else null end) as nomeCota, movimento.valor as valor,"
-				+ " movimento.parcelas as parcelas, movimento.prazo as prazo,"
-				+ " movimento.usuario.nome as nomeUsuarioRequerente, movimento.status as statusMovimento,"
-				+ " movimento.motivo as motivo";
+				+ " else null end) as nomeCota, "
+				+ " movimento.valor as valor, "
+				+ " movimento.parcelas as parcelas, "
+				+ " movimento.prazo as prazo, "
+				+ " movimento.usuario.nome as nomeUsuarioRequerente, "
+				+ " movimento.status as statusMovimento, "
+				+ " movimento.motivo as motivo ";
 		}
 		
 		hql += " from Movimento movimento "
-			+ " left join movimento.cota cota "
-			+ " left join cota.pessoa pessoa ";
+			 + " left join movimento.cota cota "
+			 + " left join cota.pessoa pessoa ";
 		
 		hql += " where movimento.tipoMovimento.aprovacaoAutomatica = :aprovacaoAutomatica ";
 		
