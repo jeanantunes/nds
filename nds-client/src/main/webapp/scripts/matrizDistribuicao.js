@@ -1,3 +1,4 @@
+
 function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	var _workspace = workspace;
@@ -325,7 +326,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 
 	this.obeterQuantosItensMarcados = function() {
-		return $('[name=checkgroup]:checked', _workspace).size();
+		return $('input[name=checkgroup]:checked', _workspace).size();
 	},
 	
 	this.alterarReparte = function(input, index) {
@@ -345,6 +346,28 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.gerarCheckDistribuicao = function(id, index) { 
 		return '<input id="checkDistribuicao' + index + '" type="checkbox" value="'+id+'" name="checkgroup" ' +
 			   ' onclick="' + T.instancia + '.selecionarCheck(this,\'' + index + '\');" />';
+	},
+	
+	this.dividirEstudo=function(){
+		if($("input[type='checkbox'][name='checkgroup']:checked").length>1){
+			exibirMensagemDialog("WARNING",["Escolha somente 1 estudo para ser dividido."],"");
+			return;
+		}else if($("input[type='checkbox'][name='checkgroup']:checked").length==0){
+			exibirMensagemDialog("WARNING",["Não há um estudo selecionado para ser dividido."],"");
+			return;
+		}
+		else{
+			var id= parseInt($("input[type='checkbox'][name='checkgroup']:checked").attr("id").replace("checkDistribuicao",""));
+			if(T.lancamentos[id].estudo==""){
+				exibirMensagemDialog("WARNING",["Estudo não foi gerado."],"");				
+				return;
+			}
+		}
+		
+		estudoParaDivisao=T.lancamentos[id];
+		console.log(estudoParaDivisao);
+		showTab(contextPath +"/dividirEstudo/index", "Dividir Estudo");
+		T.mostrarOpcoes();
 	},
 	
 	this.selecionarCheck = function(check, index) {
