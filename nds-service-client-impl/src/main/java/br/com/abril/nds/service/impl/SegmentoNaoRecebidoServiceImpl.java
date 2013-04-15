@@ -10,11 +10,14 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaNaoRecebeSegmentoDTO;
 import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroSegmentoNaoRecebidoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.repository.SegmentoNaoRecebidoRepository;
 import br.com.abril.nds.service.SegmentoNaoRecebidoService;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoService {
@@ -45,7 +48,10 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
-		return  segmentoNaoRecebidoRepo.obterCotasNaoEstaoNoSegmento(filtro);
+	    if (segmentoNaoRecebidoRepo.isCotaJaInserida(filtro.getTipoSegmentoProdutoId(), filtro.getNumeroCota())) {
+		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Cota Duplicada!"));
+	    }
+	    return  segmentoNaoRecebidoRepo.obterCotasNaoEstaoNoSegmento(filtro);
 	}
 
 	@Transactional(readOnly = true)
