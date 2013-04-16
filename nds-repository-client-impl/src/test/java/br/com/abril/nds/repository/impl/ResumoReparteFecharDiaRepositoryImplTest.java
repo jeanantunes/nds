@@ -147,6 +147,13 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractDataUtilRe
     }
     
     @Test
+    public void testObterSumarioReparte_por_data_operacao() {
+    	
+        @SuppressWarnings("deprecation")
+		SumarizacaoReparteDTO sumario = repository.obterSumarizacaoReparte(distribuidor.getDataOperacao());  
+    }
+    
+    @Test
     public void testObterSumarioReparte() {
         SumarizacaoReparteDTO sumario = repository.obterSumarizacaoReparte(distribuidor.getDataOperacao());
         Assert.assertEquals(BigDecimal.valueOf(4125).setScale(2), sumario.getTotalReparte().setScale(2));
