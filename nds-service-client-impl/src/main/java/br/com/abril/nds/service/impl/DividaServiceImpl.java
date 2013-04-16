@@ -353,39 +353,4 @@ public class DividaServiceImpl implements DividaService {
     public long contarDividasVencerApos(Date data) {
         return dividaRepository.contarDividasVencerApos(data);
     }
-
-//    /**
-//     * Cria um mapa de sumarização de dívidas com os tipos de cobranças
-//     * parametrizadas pelo distribuidor x sumarização calculada sobre as dívidas
-//     * existentes
-//     * 
-//     * @param data
-//     *            data base para sumarização
-//     * @param tipoDivida
-//     *            tipo da sumarização das dívidas, dividas à receber na data base ou dívidas
-//     *            à vencer após a data base
-//     * @param sumarizacao mapa com as sumarizações calculadas sobre dívidas existentes
-//     * @return mapa com os tipos de cobranças e sumarização de dívidas existentes 
-//     *         
-//     */
-//    private Map<TipoCobranca, SumarizacaoDividasDTO> criarMapaTiposCobrancaDistribuidor(Date data, TipoDivida tipoDivida,
-//            Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao) {
-//    	
-//        Map<TipoCobranca, SumarizacaoDividasDTO> novaSumarizacao = new EnumMap<TipoCobranca, SumarizacaoDividasDTO>(sumarizacao);
-//        
-//        Set<PoliticaCobranca> pcs = this.distribuidorService.politicasCobrancaAtivas();
-//        
-//        for (PoliticaCobranca pc : pcs) {
-//        	
-//            FormaCobranca formaCobranca = pc.getFormaCobranca();
-//
-//            TipoCobranca tipoCobranca = formaCobranca.getTipoCobranca();
-//            
-//            if (!novaSumarizacao.containsKey(tipoCobranca)) {
-//            	
-//                novaSumarizacao.put(tipoCobranca, new SumarizacaoDividasDTO(data, tipoDivida, tipoCobranca));
-//            }
-//        }
-//        return novaSumarizacao;
-//    }
 }
