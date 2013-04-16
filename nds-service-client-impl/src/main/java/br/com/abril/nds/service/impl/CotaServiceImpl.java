@@ -21,6 +21,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1250,6 +1251,12 @@ public class CotaServiceImpl implements CotaService {
 	    cota.setClassificacaoEspectativaFaturamento(cotaDto.getClassificacaoSelecionada());
 	    
 	    cota.setPessoa(persistePessoaCota(cota, cotaDto));
+	    
+	    if (!StringUtils.isEmpty(cotaDto.getTipoCota())) {
+	    	
+	    	cota.setTipoDistribuicaoCota(cotaDto.getTipoCota().equals("A")?TipoDistribuicaoCota.ALTERNATIVO:
+	    		(cotaDto.getTipoCota().equals("C")?TipoDistribuicaoCota.CONVENCIONAL:null));
+	    }
 	    
 	    cota  = cotaRepository.merge(cota);
 	    

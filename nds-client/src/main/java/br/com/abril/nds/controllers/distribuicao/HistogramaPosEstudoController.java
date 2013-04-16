@@ -65,7 +65,7 @@ public class HistogramaPosEstudoController extends BaseController{
 	@Post
 	public void excluirEstudo(long id){
 		if (id > 0) {
-			estudoService.excluirEstudo(id);
+			//estudoService.excluirEstudo(id);
 			
 			throw new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso!");
 		}

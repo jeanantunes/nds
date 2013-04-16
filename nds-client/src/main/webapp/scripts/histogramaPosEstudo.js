@@ -6,6 +6,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	analiseGridRowConsolidada : {},
 	oldTabContent : "",
 	oldTabHeight : 0,
+	matrizDistribuicaoController : null,
 	
 	createInput : function createInput(id, value){
 		return '<input type="text" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
@@ -94,6 +95,9 @@ var histogramaPosEstudoController = $.extend(true, {
 							url,
 							[{name : "id", value : matrizSelecionada.estudo}],
 							function(response){
+								// refaz a pesquisa na matriz de distribuicao
+								var filtro = histogramaPosEstudoController.matrizDistribuicaoController.parametrosDePesquisa;
+								histogramaPosEstudoController.matrizDistribuicaoController.pesquisar(filtro);
 								// fecha a aba
 								$('.ui-tabs-selected').children('.ui-icon-close').click();
 							}
@@ -429,7 +433,9 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	
-	popularFieldsetHistogramaPreAnalise : function (selecionado){
+	popularFieldsetHistogramaPreAnalise : function (selecionado, matrizDistribuicaoController){
+		
+		histogramaPosEstudoController.matrizDistribuicaoController = matrizDistribuicaoController;
 		
 		var	url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldsetHistogramaPreAnalise";
 
@@ -449,7 +455,11 @@ var histogramaPosEstudoController = $.extend(true, {
 					 $('#nomeProdutoFs').html(jsonData.nomeProduto);
 					 $('#edicaoProdutoFs').html(jsonData.edicao);
 					 $('#classificacaoProdutoFs').html(jsonData.classificacao);
-					 $('#segmentoFs').html(jsonData.tipoSegmentoProduto.descricao);
+					 
+					 if (jsonData.tipoSegmentoProduto != undefined) {
+						 $('#segmentoFs').html(jsonData.tipoSegmentoProduto.descricao);
+					 }
+					 
 					 $('#codigoEstudoFs').html(jsonData.estudo);
 					 $('#periodoFs').html(jsonData.periodicidadeProduto);
 					 $('#parcial').val(jsonData.parcial);

@@ -133,10 +133,10 @@ var lancamentosSelecionados = [];
 			      <fieldset class="fieldGridMatriz">
 			       	  <legend>Matriz de Distribui&ccedil&atildeo</legend>
 			       
-			        	<div class="gridDistribuicao" style="display:none;">
+			        	<div id="gridMatrizDistribuicao" class="gridMatrizDistribuicao" style="display:none;">
 	
 		        
-		       	   <table id="lancamentosProgramadosGrid" class="lancamentosProgramadosGrid"></table>
+		       	   <table id="lancamentoMatrizDistribuicaoGrid" class="lancamentoMatrizDistribuicaoGrid"></table>
 		         	  		
 		         	  		<span class="bt_novos">
 			         	  			<a id="linkExcluir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_exclusao_estudo();" rel="tipsy" title="Excluir Estudo"> 
@@ -235,7 +235,7 @@ var lancamentosSelecionados = [];
 			      	
 			      	</div>
 			      	
-			      	<div class="matrizFinalizada" style="display: none;">
+			      	<div id="matrizFinalizada" class="matrizFinalizada" style="display: none;">
 			       	   	<span align="center"><h3>MATRIZ FINALIZADA</h3></span>
 						<br clear="all" />
 						<span class="bt_novos">

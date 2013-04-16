@@ -70,7 +70,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" AND produto.nome = :NOME_PRODUTO ");
 		hql.append(this.getSqlWhereBuscarProdutos(filtro));
 		
-		hql.append(" ORDER BY numeroEdicao ");
+		hql.append(" ORDER BY dataLcto, dataRcto, numeroEdicao ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		

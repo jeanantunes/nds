@@ -28,6 +28,7 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+import br.com.abril.nds.util.export.Exportable;
 
 
 /**
@@ -35,6 +36,7 @@ import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
  * @version 1.0
  * @created 14-fev-2012 11:35:32
  */
+@Exportable
 @Entity
 @Table(name = "PRODUTO")
 @SequenceGenerator(name="PRODUTO_SEQ", initialValue = 1, allocationSize = 1)

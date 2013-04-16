@@ -1,11 +1,15 @@
 <head>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="scripts/consultaCota.js"></script>
+<script type="text/javascript" src="scripts/autoCompleteController.js"></script>
 <script type="text/javascript" src="scripts/classificacaoNaoRecebida.js" ></script>
 <script language="javascript" type="text/javascript">
 
 var	pesquisaCota = new PesquisaCota();
+var consultaCota = new ConsultaCota();
 
 $(function() {
+
 	classificacaoNaoRecebidaController.init();
 });
 
@@ -110,8 +114,7 @@ function mostraFiltroPorClassificacao(){
 	            <td width="122"><input type="text" name="filtro.cotaDto.numeroCota" id="porCota_numeroCota" style="width:80px; float:left; margin-right:5px;"/>
 	              <span class="classPesquisar"><a href="javascript:;">&nbsp;</a></span></td>
 	            <td width="50">Nome:</td>
-	            <td width="412"><input type="text" name="filtro.cotaDto.nomePessoa" id="porCota_nomeCota" style="width:200px;"
-	            onblur="pesquisaCota.pesquisarPorNomeCota('#porCota_numeroCota', '#porCota_nomeCota');" /></td>
+	            <td width="412"><input type="text" name="filtro.cotaDto.nomePessoa" id="porCota_nomeCota" style="width:200px;" /></td>
 	            <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="pesquisarPorCota" onclick="porCota();">Pesquisar</a></span></td>
 	          </tr>
 	        </table>
@@ -145,8 +148,7 @@ function mostraFiltroPorClassificacao(){
        	      <td width="33">Cota:</td>
        	      <td width="41"><input type="text" id="cotasQueRecebem_numeroCota" style="width:40px;"/></td>
               <td width="41">Nome:</td>
-       	      <td width="115"><input type="text" id="cotasQueRecebem_nomeCota" style="width:140px;" 
-       	      onblur="pesquisaCota.pesquisarPorNomeCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');" /></td>
+       	      <td width="115"><input type="text" id="cotasQueRecebem_nomeCota" style="width:140px;"/></td>
               <td width="19"><span class="classPesquisar"><a href="javascript:;" id="pesquisarCotaQueRecebeClassificacao">&nbsp;</a></span></td>
    	        </tr>
    	      </table>
