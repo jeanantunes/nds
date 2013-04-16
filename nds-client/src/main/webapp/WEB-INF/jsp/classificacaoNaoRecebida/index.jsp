@@ -160,7 +160,7 @@ function mostraFiltroPorClassificacao(){
       
       <div class="porCota" id="classificacaoNaoRecebida_porCota" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
-       	  <legend>Classifica&ccedil;&otilde;es Recebidas N&otilde;o Recebidas</legend>
+       	  <legend>Classifica&ccedil;&otilde;es N&atilde;o Recebidas</legend>
         
         	<table class="classificaCotaGrid"></table>
              <span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;" id="porCotaGerarXLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
