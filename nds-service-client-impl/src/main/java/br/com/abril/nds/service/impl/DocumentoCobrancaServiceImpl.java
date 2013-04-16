@@ -84,7 +84,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 					retorno = getDocumentoCobranca(cobranca);
 			}
 			
-		} catch (Exception e) {
+		}catch (Exception e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar arquivo de cobrança para nosso número: " + nossoNumero + " - " + e.getMessage());
 		}
 		

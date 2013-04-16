@@ -257,8 +257,15 @@
 			</table>
 		</fieldset>
 		
-		<div id="idImpressaoFinalizacaoApplet" style="display: none;">&nbsp;
-			<div id="replaceAppletFinal"></div>
+		<div id="idImpressaoFinalizacaoApplet1" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal1"></div>
 		</div>	
 
+		<div id="idImpressaoFinalizacaoApplet2" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal2"></div>
+		</div>	
+		
+		<div id="idImpressaoFinalizacaoApplet3" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal3"></div>
+		</div>			
 </body>
