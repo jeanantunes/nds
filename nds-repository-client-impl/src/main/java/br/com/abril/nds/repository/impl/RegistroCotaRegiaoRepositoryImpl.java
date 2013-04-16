@@ -154,14 +154,21 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				hql.append(" prodEdicao.numeroEdicao AS numeroEdicao, ");
 				hql.append(" produto.codigo AS codProduto, ");
 				hql.append(" produto.tipoClassificacaoProduto.descricao AS descricaoClassificacao, ");
-				hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
-				hql.append(" lancamento.tipoLancamento AS status ");
+				hql.append(" lancam.dataLancamentoPrevista AS dataLcto, ");
+				hql.append(" lancam.tipoLancamento AS status ");
 				
-				hql.append(" FROM ProdutoEdicao AS prodEdicao ");
+			//	hql.append(" FROM ProdutoEdicao AS prodEdicao ");
 				
+				hql.append(" FROM Lancamento AS lancam ");
+				
+				hql.append(" left join lancam.produtoEdicao AS prodEdicao ");
+				hql.append(" left join prodEdicao.produto AS produto ");
+				
+				
+				/*
 				hql.append(" left join prodEdicao.produto AS produto ");
 				hql.append(" left join prodEdicao.lancamentos AS lancamento ");
-				
+				*/
 				hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
 				hql.append(" AND produto.nome = :NOME_PRODUTO ");
 				hql.append(this.getSqlWhereBuscarProdutos(filtro));
@@ -174,7 +181,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				query.setParameter("NOME_PRODUTO", filtro.getNome());
 				this.paramsDinamicosBuscarProdutos(query, filtro);
 				
-				query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
+				query.setResultTransformer(new AliasToBeanResultTransformer(RegiaoNMaiores_ProdutoDTO.class));
 				
 				if (filtro != null){
 					configurarPaginacao(filtro, query);

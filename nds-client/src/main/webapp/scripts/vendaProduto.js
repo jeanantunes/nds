@@ -7,14 +7,34 @@ var vendaProdutoController = $.extend(true, {
 	intervalo : null,
 
 	init : function() {
+		
+		var workSpace = vendaProdutoController.workspace;
 
-		$(".area", vendaProdutoController.workspace).hide();
+		var autoComp = new AutoCompleteController(workSpace);
+		
+		$('#codigo', workSpace).bind({
+			keyup: function(){
+				autoComp.autoCompletarPorCodigo ("/produto/autoCompletarPorCodProduto",'#codigo', '#produto', false, 4);
+			},
+			blur: function(){
+				autoComp.pesquisarPorCodigo ("/produto/pesquisarPorCodigoProduto",'#codigo', '#produto');
+			}
+		});
+		
+		$('#produto', workSpace).bind({
+			keyup: function(){
+				autoComp.autoCompletarPorNome("/produto/autoCompletarPorNomeProduto",'#codigo', '#produto', false, 2);
+			},
+			blur: function(){
+				autoComp.pesquisarPorNome("/produto/pesquisarPorNomeProduto",'#codigo', '#produto');
+			}
+		});
+		
+		$(".area", workSpace).hide();
 		
 		window.addEventListener('blur', function() {
 			window.clearInterval(vendaProdutoController.intervalo);
 		});
-
-		$("#produto", vendaProdutoController.workspace).autocomplete({source: ""});				
 
 		$(".parciaisGrid", vendaProdutoController.workspace).flexigrid({
 			preProcess: vendaProdutoController.executarPreProcessamento,
@@ -201,150 +221,6 @@ var vendaProdutoController = $.extend(true, {
 		});
 	},
 	
-	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		var codigoProduto = $(idCodigo,this.workspace).val();
-
-		codigoProduto = $.trim(codigoProduto);
-
-		$(idCodigo,this.workspace).val(codigoProduto);
-
-		$(idProduto,this.workspace).val("");
-
-		if (codigoProduto && codigoProduto.length > 0) {
-
-			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					{codigoProduto:codigoProduto},
-					function(result) { vendaProdutoController.pesquisarPorCodigoSuccessCallBack(result, idProduto, successCallBack); },
-					function() { vendaProdutoController.pesquisarPorCodigoErrorCallBack(idCodigo, errorCallBack); }, isFromModal);
-
-		} else {
-
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-
-	autoCompletarPorNome : function(idProduto, isFromModal) {
-		
-		vendaProdutoController.pesquisaRealizada = false;
-
-		var nome = $(idProduto,this.workspace).val();
-
-		if (nome && nome.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {"nomeProduto" : nome},
-					function(result) { vendaProdutoController.exibirAutoComplete(result, idProduto); },
-					null, isFromModal);
-		}
-	},
-	
-	pesquisarPorNome : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		setTimeout(function() {
-			
-			clearInterval(vendaProdutoController.intervalo); 
-		
-		}, 10 * 1000);
-
-		vendaProdutoController.intervalo = setInterval(function() {
-			
-			if (vendaProdutoController.descricaoAtribuida) {
-
-				if (vendaProdutoController.pesquisaRealizada) {
-					
-					clearInterval(vendaProdutoController.intervalo);
-
-					return;
-				}
-
-				vendaProdutoController.pesquisarPorNomeAposIntervalo(idCodigo, idProduto,
-						isFromModal, successCallBack, errorCallBack);
-			}
-
-		}, 100);
-		
-	},
-
-	pesquisarPorNomeAposIntervalo : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		
-		clearInterval(vendaProdutoController.intervalo);
-
-		vendaProdutoController.pesquisaRealizada = true;
-
-		var nomeProduto = $(idProduto,this.workspace).val();
-
-		nomeProduto = $.trim(nomeProduto);
-
-		$(idCodigo,this.workspace).val("");
-
-		if (nomeProduto && nomeProduto.length > 0) {
-			$.postJSON(contextPath + "/produto/pesquisarPorNomeProduto", {"nomeProduto" : nomeProduto},
-					function(result) { vendaProdutoController.pesquisarPorNomeSuccessCallBack(result, idCodigo, idProduto, successCallBack); },
-					function() { vendaProdutoController.pesquisarPorNomeErrorCallBack(idCodigo, idProduto, errorCallBack); }, isFromModal);
-		} else {
-
-			if (errorCallBack) {
-				errorCallBack();
-			}
-		}
-	},
-	
-	pesquisarPorCodigoSuccessCallBack : function(result, idProduto, successCallBack, idCodigo, isFromModal) {
-
-		$(idProduto,this.workspace).val(result.nome);
-
-		vendaProdutoController.pesquisaRealizada = true;
-
-		if (successCallBack) {
-			successCallBack();
-		}
-	},
-
-	pesquisarPorCodigoErrorCallBack : function(idCodigo, errorCallBack) {
-		$(idCodigo,this.workspace).val("");
-		$(idCodigo).focus();
-
-		if (errorCallBack) {
-			errorCallBack();
-		}
-	},
-
-	pesquisarPorNomeSuccessCallBack : function(result, idCodigo, idProduto, successCallBack) {
-		if (result != "") {
-			$(idCodigo,this.workspace).val(result.codigo);
-			$(idProduto,this.workspace).val(result.nome);
-
-			if (successCallBack) {
-				successCallBack();
-			}
-		}
-	},
-
-	pesquisarPorNomeErrorCallBack : function(idCodigo, idProduto, errorCallBack) {
-		$(idProduto,this.workspace).val("");
-		$(idProduto).focus();
-
-		if (errorCallBack) {
-			errorCallBack();
-		}
-	},	
-
-	exibirAutoComplete : function(result, idProduto) {
-		
-		$(idProduto).autocomplete({
-			source : result,
-			focus : function(event, ui) {
-				vendaProdutoController.descricaoAtribuida = false;
-			},
-			close : function(event, ui) {
-				vendaProdutoController.descricaoAtribuida = true;
-			},
-			select : function(event, ui) {
-				vendaProdutoController.descricaoAtribuida = true;
-			},
-			minLength: 4,
-			delay : 0,
-		});
-	},
 	
 	completarPesquisa : function(chave){
 		$("#codigo", vendaProdutoController.workspace).val(chave.codigoProduto);
