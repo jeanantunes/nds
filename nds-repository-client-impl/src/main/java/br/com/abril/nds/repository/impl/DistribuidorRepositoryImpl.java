@@ -229,6 +229,17 @@ public class DistribuidorRepositoryImpl extends
 		
 		return controle == null ? false : controle;
 	}
+	
+	@Override
+	public boolean utilizaControleAprovacaoFaltaSobra() {
+		
+		Boolean controle = 
+				(Boolean) this.getSession().createQuery(
+						"select parametrosAprovacaoDistribuidor.faltasSobras from Distribuidor").uniqueResult();
+		
+		return controle == null ? false : controle;
+	}
+
 
 	@Override
 	public Boolean utilizaTermoAdesao() {
