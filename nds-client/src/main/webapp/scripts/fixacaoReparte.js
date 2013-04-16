@@ -648,14 +648,16 @@ var fixacaoReparteController = $.extend(true, {
 	},
 	//funcao de exibicao de grid
 	exibeGridCota:function(){
-		$('.porCota', fixacaoReparteController.workspace).show();
-		$('.porExcessao', fixacaoReparteController.workspace).hide();
+
+		$('#fixacaoReparte_porCota').show();
+		$('#fixacaoReparte_fixacaoProduto').hide();
 	},
 	
 	//funcao de exibicao de grid
 	exibeGridProduto:function(){
-		$('.porExcessao', fixacaoReparteController.workspace).show();
-		$('.porCota', fixacaoReparteController.workspace).hide();
+
+		$('#fixacaoReparte_fixacaoProduto').show();
+		$('#fixacaoReparte_porCota').hide();
 	},
 	
 	//Funcao de pre-processamento da chamada postJSON que preenche a grid de historico

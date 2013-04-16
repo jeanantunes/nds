@@ -21,6 +21,9 @@
 </style>
 </head>
 
+<div id="distribuicaoManualTelaAnalise" />
+<div id="distribuicaoManualContent">
+
 <body>
 	<div id="dialog-cancelar" title="Cancelar Operação"
 		style="display: none;">
@@ -129,4 +132,4 @@
 			</fieldset>
 		</div>
 	</div>
-</body>
+</body></div>

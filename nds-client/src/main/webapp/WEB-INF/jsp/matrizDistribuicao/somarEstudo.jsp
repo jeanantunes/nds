@@ -1,3 +1,19 @@
+<script>
+
+function analisar() {
+	//testa se registro selecionado possui estudo gerado
+	if ($('#somarEstudo-estudo').html() == null || $('#somarEstudo-estudo').html() == "") {
+		exibirMensagem("WARNING",["Gere o estudo antes de fazer a an�lise."]);
+		return;
+	} else {
+		// Deve ir direto para EMS 2031
+		matrizDistribuicao.redirectToTelaAnalise('#somarEstudoContent','#somarEstudoTelaAnalise', $('#somarEstudo-estudo').html());
+	}
+}
+
+</script>
+
+  <div id="somarEstudoTelaAnalise" />
   <div id="somarEstudoContent">
   <span id="somarEstudo-statusOperacao" style="display: none;"></span>
 	
@@ -95,7 +111,7 @@
       <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.mostraTelaMatrizDistribuicao()"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
                      <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.cancelarSomarEstudos()"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
                      <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.confirmarSomaDeEstudos()" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" hspace="5" border="0" />Confirmar</a></span>
-                     <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.redirectToTelaAnalise('#somarEstudoContent','#matrizDistribuicaoContent')" ><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="analisar()" ><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
         </fieldset>
 
     

@@ -815,21 +815,14 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		return 83531;
 	},
 	
-	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, callBackParaPegarEstudo){
-		var lancamentoSelecionado;
-		
-		$.each(T.lancamentos, function(index, lancamento){
-			if(lancamento.selecionado) {
-				lancamentoSelecionado = lancamento;
-			}
-		});
+	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, estudo){
 		
 		//TODO As telas de analise estão com erro, validar este direcionamento após correções.
 		var urlAnalise;
 		if ($('#parcial').val() === 'true') {
 			urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
 		} else {
-			urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + (lancamentoSelecionado.estudo || callBackParaPegarEstudo());
+			urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + estudo;
 		}
 		
 		$.get(

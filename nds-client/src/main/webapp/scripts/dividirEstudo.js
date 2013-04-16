@@ -332,6 +332,17 @@ var dividirEstudo = $.extend(true, {
 	});
     },
     
+    analisar : function() {
+		//testa se registro selecionado possui estudo gerado
+		if ($('#numeroEstudoOriginal').val() == null || $('#numeroEstudoOriginal').val() == "") {
+			exibirMensagem("WARNING",["Gere o estudo antes de fazer a análise."]);
+			return;
+		} else {
+			// Deve ir direto para EMS 2031
+			matrizDistribuicao.redirectToTelaAnalise('#dividirEstudoContent', '#dividirEstudoTelaAnalise', $('#numeroEstudoOriginal').val());
+		}
+	},
+	
     tratarPercentualDivisao:function(input,target){
     	
     	var perc1 =0;

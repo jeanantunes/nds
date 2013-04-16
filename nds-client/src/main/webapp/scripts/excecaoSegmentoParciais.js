@@ -842,8 +842,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	},
 	
 	porCota : function (){
-		$('.porCota').show();
-		$('.porExcessao').hide();
+		$('#excecaoSegmentoParciais_porCota').show();
+		$('#excecaoSegmentoParciais_porExcessao').hide();
 		
 		var filtroPrincipalCota = [],
 			util = excecaoSegmentoParciaisController.Util,
@@ -868,8 +868,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	},
 	
 	porExcecao : function porExcessao(){
-		$('.porCota').hide();
-		$('.porExcessao').show();
+		$('#excecaoSegmentoParciais_porCota').hide();
+		$('#excecaoSegmentoParciais_porExcessao').show();
 		
 		var filtroPrincipalProduto = [],
 			util = excecaoSegmentoParciaisController.Util,
@@ -1077,18 +1077,18 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	},
 	
 	filtroPorCota : function filtroPorCota(){
-		$('.filtroPorCota').show();
-		$('.filtroPorProduto').hide();
-		$('.porExcessao').hide();
+		$('#excecaoSegmentoParciais_filtroPorCota').show();
+		$('#excecaoSegmentoParciais_filtroPorProduto').hide();
+		$('#excecaoSegmentoParciais_porExcessao').hide();
 		
 		$('#numeroCotaFiltroPrincipal').val('');
 	    $('#nomeCotaFiltroPrincipal').val('');
 		
 	},
 	filtroPorProduto: function filtroPorProduto(){
-		$('.filtroPorCota').hide();
-		$('.filtroPorProduto').show();
-		$('.porCota').hide();
+		$('#excecaoSegmentoParciais_filtroPorCota').hide();
+		$('#excecaoSegmentoParciais_filtroPorProduto').show();
+		$('#excecaoSegmentoParciais_porCota').hide();
 		
 		$('#codigoProdutoPrincipal').val('');
 	    $('#nomeProdutoPrincipal').val('');
