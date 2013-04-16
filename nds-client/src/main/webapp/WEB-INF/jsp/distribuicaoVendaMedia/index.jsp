@@ -379,11 +379,11 @@ function esconde_redutor(){
                	        </tr>
                    	    <tr>
                    	      <td>Sobra:</td>
-                   	      <td colspan="2">${ sobra }</td>
+                   	      <td colspan="2">${sobra}</td>
                	        </tr>
                    	    <tr>
                    	      <td>Reparte Distribuir:</td>
-                   	      <td colspan="2"><input type="text" name="textfield6" id="reparteDistribuir" style="width:40px; text-align:center;"  /></td>
+                   	      <td colspan="2"><input type="text" name="textfield6" id="reparteDistribuir" style="width:40px; text-align:center;" value="${repDistrib}" /></td>
                	        </tr>
                    	    <tr>
                    	      <td>Reparte Mínimo:</td>

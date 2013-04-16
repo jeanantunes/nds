@@ -28,6 +28,7 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -49,6 +50,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
+import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -68,6 +70,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
@@ -91,6 +94,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	public String queryCountSuspensaoCota;
 	
 
+	@Autowired
+	private BaseReferenciaCotaRepository baseReferenciaCotaRepository;
 	/**
 	 * Construtor.
 	 */
@@ -2766,6 +2771,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		cotas.add(cota);
 	    }
 	    return cotas;
+	}
+
+	/**
+	 * Método foi criado para o ajuste 0153-Fase2
+	 */
+	@Override
+	public Cota obterCotaComBaseReferencia(Long idCota) {
+
+		Cota cota = (Cota)super.getSession().load(Cota.class,idCota);
+		
+		BaseReferenciaCota base = (BaseReferenciaCota)super.getSession().createCriteria(BaseReferenciaCota.class).add(Restrictions.eq("cota.id", idCota)).uniqueResult();
+		cota.setBaseReferenciaCota(base);
+		
+		return cota;
 	}
 
 }

@@ -1,3 +1,4 @@
+
 function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	var _workspace = workspace;
@@ -39,6 +40,14 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
 			data,
 			function(result) {
+			    	if(result.parametrosDistribuidorVO.geracaoAutomaticaEstudo) {
+			    	    $('#spanGerarEstudoAutomatico').attr('class', 'bt_novos');
+			    	    $('#linkGerarEstudoAutomatico').attr('onclick', 'matrizDistribuicao.gerarEstudoAutomatico();');
+			    	} else {
+			    	    $('#spanGerarEstudoAutomatico').attr('class', 'linkDisabled');
+			    	    $('#linkGerarEstudoAutomatico').attr('onclick', '');
+			    	}
+			    	
 				T.carregarGrid();
 			},
 			T.escondeGrid()
@@ -235,7 +244,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		T.lancamentos.push({
 					idLancamento : row.cell.idLancamento,
 					estudo : row.cell.idEstudo,
-					lancto : row.cell.lancto,
+					lancto : row.cell.reparte,
 					promo : row.cell.promo,
 					suplem : row.cell.suplem,
 					juram : row.cell.juram,
@@ -325,7 +334,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 
 	this.obeterQuantosItensMarcados = function() {
-		return $('[name=checkgroup]:checked', _workspace).size();
+		return $('input[name=checkgroup]:checked', _workspace).size();
 	},
 	
 	this.alterarReparte = function(input, index) {
@@ -345,6 +354,28 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.gerarCheckDistribuicao = function(id, index) { 
 		return '<input id="checkDistribuicao' + index + '" type="checkbox" value="'+id+'" name="checkgroup" ' +
 			   ' onclick="' + T.instancia + '.selecionarCheck(this,\'' + index + '\');" />';
+	},
+	
+	this.dividirEstudo=function(){
+		if($("input[type='checkbox'][name='checkgroup']:checked").length>1){
+			exibirMensagemDialog("WARNING",["Escolha somente 1 estudo para ser dividido."],"");
+			return;
+		}else if($("input[type='checkbox'][name='checkgroup']:checked").length==0){
+			exibirMensagemDialog("WARNING",["Não há um estudo selecionado para ser dividido."],"");
+			return;
+		}
+		else{
+			var id= parseInt($("input[type='checkbox'][name='checkgroup']:checked").attr("id").replace("checkDistribuicao",""));
+			if(T.lancamentos[id].estudo==""){
+				exibirMensagemDialog("WARNING",["Estudo não foi gerado."],"");				
+				return;
+			}
+		}
+		
+		estudoParaDivisao=T.lancamentos[id];
+		console.log(estudoParaDivisao);
+		showTab(contextPath +"/dividirEstudo/index", "Dividir Estudo");
+		T.mostrarOpcoes();
 	},
 	
 	this.selecionarCheck = function(check, index) {
@@ -769,6 +800,44 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$( "#tabsNovoEntregador", this.workspace ).tabs();
 		$("#dialog-informacoes-produto", _workspace).show();
 	},
+	
+	this.getEstudoCopiarEstudo = function getEstudoCopiarEstudo(){
+		return 83531;
+	},
+	
+	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, callBackParaPegarEstudo){
+		var lancamentoSelecionado;
+		
+		$.each(T.lancamentos, function(index, lancamento){
+			if(lancamento.selecionado) {
+				lancamentoSelecionado = lancamento;
+			}
+		});
+		
+		//TODO As telas de analise estão com erro, validar este direcionamento após correções.
+		var urlAnalise;
+		if ($('#parcial').val() === 'true') {
+			urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
+		} else {
+			urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + (lancamentoSelecionado.estudo || callBackParaPegarEstudo());
+		}
+		
+		$.get(
+				urlAnalise,
+				null, // parametros
+				function(html){ // onSucessCallBack
+					$(divToHide).hide();
+					$(divToShow).html(html);
+					$(divToShow).show();
+					$( divToShow + ' #botaoVoltarTelaAnalise').click(function voltarTelaAnalise(){
+						$(divToShow).hide();
+						$(divToHide).show();
+					});
+			});
+		
+	},
+	
+	
 	
 	this.somarEstudos = function() {
 		
@@ -1339,43 +1408,16 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}
 		var postData = [];
-		postData.push({
-			name : "edicao",
-			value : selecionado.edicao
-		});
-		postData.push({
-			name : "estudoId",
-			value : selecionado.estudo
-		});
-		postData.push({
-			name : "lancamentoId",
-			value : selecionado.idLancamento
-		});
-		postData.push({
-			name : "codigoProduto",
-			value : selecionado.codigoProduto
-		});
-		
-		postData.push({
-			name : "juramentado",
-			value : selecionado.juram
-		});
-		postData.push({
-			name : "suplementar",
-			value : selecionado.suplem
-		});
-		postData.push({
-			name : "lancado",
-			value : selecionado.lancto
-		});
-		postData.push({
-			name : "promocional",
-			value : selecionado.promo
-		});
-		postData.push({
-			name : "sobra",
-			value : selecionado.sobra
-		});
+		postData.push({name : "edicao", value : selecionado.edicao});
+		postData.push({name : "estudoId", value : selecionado.estudo});
+		postData.push({name : "lancamentoId", value : selecionado.idLancamento});
+		postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
+		postData.push({name : "juramentado", value : selecionado.juram});
+		postData.push({name : "suplementar", value : selecionado.suplem});
+		postData.push({name : "lancado", value : selecionado.lancto});
+		postData.push({name : "promocional", value : selecionado.promo});
+		postData.push({name : "sobra", value : selecionado.sobra});
+		postData.push({name : "repDistrib", value : selecionado.repDistrib});
 		
 		var temp = $('#workspace').tabs( "option", "ajaxOptions");
 		$('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );

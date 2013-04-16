@@ -171,6 +171,7 @@ public class SegmentoNaoRecebidoController extends BaseController {
 	@Post("/pesquisarCotasNaoEstaoNoSegmento")
 	public void pesquisarCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro, String sortorder, int page, int rp, boolean isReload){
 		
+	    if (!isReload || filtro.getNomeCota() != null || filtro.getNumeroCota() != null || filtro.getTipoSegmentoProdutoId() != null) {
 		this.validarEntradaFiltroSegmento(filtro);
 		this.validarEntradaFiltroCota(filtro);
 		
@@ -189,6 +190,9 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		TableModel<CellModelKeyValue<CotaDTO>> tableModel = montarTableModelCotasParaInclusaoSegmento(filtro, listaCotaDTO);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	    } else {
+		result.nothing();
+	    }
 	}
 	
 	@Post("/pesquisarSegmentosElegiveisParaInclusao")

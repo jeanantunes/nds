@@ -1,3 +1,6 @@
+<div id="dividirEstudoTelaAnalise" />
+<div id="dividirEstudoContent">
+
 <head>
 
 <style>
@@ -84,14 +87,17 @@
 											cellspacing="0" cellpadding="0">
 											<tr>
 												<td width="48%">Percentuais da Divis&atilde;o:</td>
-												<td width="16%"><input type="text"
-													name="percentualDivisaoPrimeiroEstudo"
-													id="percentualDivisaoPrimeiroEstudo" style="width: 40px;" /></td>
+												<td width="20%">
+												1:
+												<input type="text" maxlength="2" name="percentualDivisaoPrimeiroEstudo"	id="percentualDivisaoPrimeiroEstudo" style="width: 40px;" 
+												 onkeydown='onlyNumeric(event);' onkeyup="dividirEstudo.tratarPercentualDivisao(this,'#percentualDivisaoSegundoEstudo')"/>
+												
+												</td>
 												<td width="5%">%</td>
-												<td width="31%"><input type="text"
-													name="percentualDivisaoSegundoEstudo"
-													id="percentualDivisaoSegundoEstudo" style="width: 40px;"
-													onchange="dividirEstudo.gerarDivisao();" /></td>
+												<td width="31%">
+												2:
+												<input type="text" maxlength="2"	name="percentualDivisaoSegundoEstudo"	id="percentualDivisaoSegundoEstudo" style="width: 40px;"
+													onkeydown='onlyNumeric(event);' onkeyup="dividirEstudo.tratarPercentualDivisao(this,'#percentualDivisaoPrimeiroEstudo')" /></td>
 											</tr>
 										</table></td>
 								</tr>
@@ -100,7 +106,8 @@
 											cellspacing="0" cellpadding="0">
 											<tr>
 												<td width="49%">N&atilde;o dividir reparte menor que:</td>
-												<td width="51%"><input type="text"
+												<td width="51%">
+												<input type="text"
 													name="quantidadeReparte" id="quantidadeReparte"
 													style="width: 40px;"
 													onchange="dividirEstudo.gerarDivisao();" /> exs</td>
@@ -167,7 +174,7 @@
 			<div class="linha_separa_fields">&nbsp;</div>
 
 			<span class="bt_novos"><a
-				href="javascript:$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));"><img
+				href="javascript:;" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'))"><img
 					src="${pageContext.request.contextPath}/images/seta_voltar.gif"
 					alt="Voltar" hspace="5" border="0" />Voltar</a></span> <span class="bt_novos">
 				<a href="#" onclick="dividirEstudo.cancelar();"><img
@@ -177,7 +184,7 @@
 				onclick="dividirEstudo.confirmar();"><img
 					src="${pageContext.request.contextPath}/images/ico_check.gif"
 					alt="Confirmar" hspace="5" border="0" />Confirmar</a></span> <span
-				class="bt_novos"><a href="analise_2.htm"><img
+				class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.redirectToTelaAnalise('#dividirEstudoContent', '#dividirEstudoTelaAnalise')"><img
 					src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif"
 					alt="An&aacute;lise" hspace="5" border="0" />An&aacute;lise</a></span>
 
@@ -187,4 +194,4 @@
 
 
 </body>
-</html>
+</div>
