@@ -128,7 +128,6 @@ public class RegiaoServiceImpl implements RegiaoService  {
 
 	@Override
 	public List<RegiaoNMaiores_ProdutoDTO> buscarProdutos(FiltroRegiaoNMaioresProdDTO filtro) {
-
-		return null;
+		return registroCotaRegiaoRepository.buscarProdutos(filtro);
 	}
 }

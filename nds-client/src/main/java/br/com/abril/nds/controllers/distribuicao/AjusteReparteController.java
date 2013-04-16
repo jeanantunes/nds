@@ -89,13 +89,17 @@ public class AjusteReparteController extends BaseController {
 		
 		evitarCotaRepetidaSegmento(ajusteDTO);
 		
+		// Testar essa inserção deste IF if(seg...)
+		
 		for (int i = 0; i < segmentos.length; i++) {
-			 		TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[i]);
+			 		if(segmentos[i] != null){
+					TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[i]);
 					ajusteDTO.setAjusteAplicado(ajustes[i]);
 					ajusteDTO.setTipoSegmento_Ajuste(segmento);
 					evitarSegmentosRepetidos(ajusteDTO, segmento);
 					AjusteReparte ajusteModel = DTOParaModel(ajusteDTO);
 					ajusteService.salvarAjuste(ajusteModel);
+			 		}
 		 }
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste incluído com sucesso."), 
