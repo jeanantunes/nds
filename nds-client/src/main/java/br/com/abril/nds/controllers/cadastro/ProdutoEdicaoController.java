@@ -84,6 +84,12 @@ public class ProdutoEdicaoController extends BaseController {
 	private static List<ItemDTO<Long,String>> listaTipoSegmentoProduto =  new ArrayList<ItemDTO<Long,String>>();
 
 	
+	// TODO: retirar após homologação
+	@Path("/insereVendaRandomica")
+	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
+	    produtoEdicaoService.insereVendaRandomica(codigoProduto, numeroEdicao);
+	}
+	
 	/** Traz a página inicial. */
 	@Get
 	@Path("/")
