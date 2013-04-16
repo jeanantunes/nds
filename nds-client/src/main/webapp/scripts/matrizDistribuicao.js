@@ -1,3 +1,4 @@
+
 function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	var _workspace = workspace;
@@ -243,7 +244,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		T.lancamentos.push({
 					idLancamento : row.cell.idLancamento,
 					estudo : row.cell.idEstudo,
-					lancto : row.cell.lancto,
+					lancto : row.cell.reparte,
 					promo : row.cell.promo,
 					suplem : row.cell.suplem,
 					juram : row.cell.juram,
@@ -333,7 +334,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 
 	this.obeterQuantosItensMarcados = function() {
-		return $('[name=checkgroup]:checked', _workspace).size();
+		return $('input[name=checkgroup]:checked', _workspace).size();
 	},
 	
 	this.alterarReparte = function(input, index) {
@@ -353,6 +354,28 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.gerarCheckDistribuicao = function(id, index) { 
 		return '<input id="checkDistribuicao' + index + '" type="checkbox" value="'+id+'" name="checkgroup" ' +
 			   ' onclick="' + T.instancia + '.selecionarCheck(this,\'' + index + '\');" />';
+	},
+	
+	this.dividirEstudo=function(){
+		if($("input[type='checkbox'][name='checkgroup']:checked").length>1){
+			exibirMensagemDialog("WARNING",["Escolha somente 1 estudo para ser dividido."],"");
+			return;
+		}else if($("input[type='checkbox'][name='checkgroup']:checked").length==0){
+			exibirMensagemDialog("WARNING",["Não há um estudo selecionado para ser dividido."],"");
+			return;
+		}
+		else{
+			var id= parseInt($("input[type='checkbox'][name='checkgroup']:checked").attr("id").replace("checkDistribuicao",""));
+			if(T.lancamentos[id].estudo==""){
+				exibirMensagemDialog("WARNING",["Estudo não foi gerado."],"");				
+				return;
+			}
+		}
+		
+		estudoParaDivisao=T.lancamentos[id];
+		console.log(estudoParaDivisao);
+		showTab(contextPath +"/dividirEstudo/index", "Dividir Estudo");
+		T.mostrarOpcoes();
 	},
 	
 	this.selecionarCheck = function(check, index) {
@@ -1385,43 +1408,16 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}
 		var postData = [];
-		postData.push({
-			name : "edicao",
-			value : selecionado.edicao
-		});
-		postData.push({
-			name : "estudoId",
-			value : selecionado.estudo
-		});
-		postData.push({
-			name : "lancamentoId",
-			value : selecionado.idLancamento
-		});
-		postData.push({
-			name : "codigoProduto",
-			value : selecionado.codigoProduto
-		});
-		
-		postData.push({
-			name : "juramentado",
-			value : selecionado.juram
-		});
-		postData.push({
-			name : "suplementar",
-			value : selecionado.suplem
-		});
-		postData.push({
-			name : "lancado",
-			value : selecionado.lancto
-		});
-		postData.push({
-			name : "promocional",
-			value : selecionado.promo
-		});
-		postData.push({
-			name : "sobra",
-			value : selecionado.sobra
-		});
+		postData.push({name : "edicao", value : selecionado.edicao});
+		postData.push({name : "estudoId", value : selecionado.estudo});
+		postData.push({name : "lancamentoId", value : selecionado.idLancamento});
+		postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
+		postData.push({name : "juramentado", value : selecionado.juram});
+		postData.push({name : "suplementar", value : selecionado.suplem});
+		postData.push({name : "lancado", value : selecionado.lancto});
+		postData.push({name : "promocional", value : selecionado.promo});
+		postData.push({name : "sobra", value : selecionado.sobra});
+		postData.push({name : "repDistrib", value : selecionado.repDistrib});
 		
 		var temp = $('#workspace').tabs( "option", "ajaxOptions");
 		$('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );

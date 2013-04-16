@@ -1,11 +1,7 @@
 package br.com.abril.nds.util.upload;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -18,7 +14,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -38,28 +33,21 @@ public class XlsUploaderUtils {
 	 * @param file File pode ser do tipo XLS e XLSX
 	 * @return retorna uma lista de @param clazz
 	 */
-	public static <T> List<T> getBeanListFromXls(Class<T> clazz, File file) {
+	public static <T> List<T> getBeanListFromXls(Class<T> clazz, UploadedFile file) {
 		
 		List<T> list = new ArrayList<T>();
-		String extension = file.getName().substring(file.getName().lastIndexOf("."));
+		String extension = file.getFileName().substring(file.getFileName().lastIndexOf("."));
 		
 		try {
-			
-			FileInputStream xls = new FileInputStream(file);
-			
 			if (extension.equals(XLS)) {
-				HSSFWorkbook workbook = new HSSFWorkbook(xls);
+				HSSFWorkbook workbook = new HSSFWorkbook(file.getFile());
 				HSSFSheet sheet = workbook.getSheetAt(0);
 				getContentUsingReflection(clazz, list, sheet);
-				
 			} else if (extension.equals(XLSX)) {
-				XSSFWorkbook workbook = new XSSFWorkbook(xls);
+				XSSFWorkbook workbook = new XSSFWorkbook(file.getFile());
 				XSSFSheet sheet = workbook.getSheetAt(0);
 				getContentUsingReflection(clazz, list, sheet);
 			}
-			
-			xls.close();
-			
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -154,18 +142,5 @@ public class XlsUploaderUtils {
 				return cell.getStringCellValue();
 		}
 		return null;
-	}
-	
-	
-	public static File upLoadArquivo(UploadedFile xls) throws IOException, FileNotFoundException {
-		
-		File x = new File(xls.getFileName());
-	    
-		File destino = new File(xls.getFileName());  
-	    destino.createNewFile();  
-	    
-	    InputStream stream = xls.getFile();  
-	    IOUtils.copy(stream,new FileOutputStream(destino));
-		return x;
 	}
 }

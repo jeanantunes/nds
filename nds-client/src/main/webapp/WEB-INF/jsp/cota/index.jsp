@@ -49,10 +49,10 @@
 
 <body>
 	
-	<div id="dialog-excluirCota" title="Atenção" style="display:none">
+	<div id="dialog-excluirCota" title="Aten&ccedil;&atilde;o" style="display:none">
 		<p>Confirmar exclus&atilde;o Cota ?</p>
 	</div>
-	<div id="dialog-confirmarSenha" title="Atenção" style="display:none">
+	<div id="dialog-confirmarSenha" title="Aten&ccedil;&atilde;o" style="display:none">
 		<p>Informe sua senha: 
 		<input type="password" id="confirmarSenhaInput" name="confirmarSenhaInput">
 		<input type="hidden" name="fileType" id="fileType" />

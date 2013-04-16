@@ -182,5 +182,7 @@ public interface ProdutoEdicaoService {
 	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(FiltroHistogramaVendas filtro);
 	
 	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes);
+
+	void insereVendaRandomica(String codigoProduto, Integer numeroEdicao);
 	
 }
