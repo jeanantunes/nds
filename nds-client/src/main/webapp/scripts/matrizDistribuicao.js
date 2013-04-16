@@ -244,7 +244,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		T.lancamentos.push({
 					idLancamento : row.cell.idLancamento,
 					estudo : row.cell.idEstudo,
-					lancto : row.cell.lancto,
+					lancto : row.cell.reparte,
 					promo : row.cell.promo,
 					suplem : row.cell.suplem,
 					juram : row.cell.juram,
@@ -1408,43 +1408,16 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}
 		var postData = [];
-		postData.push({
-			name : "edicao",
-			value : selecionado.edicao
-		});
-		postData.push({
-			name : "estudoId",
-			value : selecionado.estudo
-		});
-		postData.push({
-			name : "lancamentoId",
-			value : selecionado.idLancamento
-		});
-		postData.push({
-			name : "codigoProduto",
-			value : selecionado.codigoProduto
-		});
-		
-		postData.push({
-			name : "juramentado",
-			value : selecionado.juram
-		});
-		postData.push({
-			name : "suplementar",
-			value : selecionado.suplem
-		});
-		postData.push({
-			name : "lancado",
-			value : selecionado.lancto
-		});
-		postData.push({
-			name : "promocional",
-			value : selecionado.promo
-		});
-		postData.push({
-			name : "sobra",
-			value : selecionado.sobra
-		});
+		postData.push({name : "edicao", value : selecionado.edicao});
+		postData.push({name : "estudoId", value : selecionado.estudo});
+		postData.push({name : "lancamentoId", value : selecionado.idLancamento});
+		postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
+		postData.push({name : "juramentado", value : selecionado.juram});
+		postData.push({name : "suplementar", value : selecionado.suplem});
+		postData.push({name : "lancado", value : selecionado.lancto});
+		postData.push({name : "promocional", value : selecionado.promo});
+		postData.push({name : "sobra", value : selecionado.sobra});
+		postData.push({name : "repDistrib", value : selecionado.repDistrib});
 		
 		var temp = $('#workspace').tabs( "option", "ajaxOptions");
 		$('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );
