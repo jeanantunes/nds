@@ -52,6 +52,10 @@ $(function(){
 	</div>
 	</form>
 	
+	<div id="dialog-AddProdutos" title="Incluir produtos para pesquisa de cotas." style="display: none;">
+		<p>Confirma a inserção destes produtos?</p>
+	</div>
+	
 	<div id="dialog-pesqCotas" title="Selecionar Cotas"
 		style="display: none;">
 		<fieldset style="width: 600px !important;">
@@ -135,11 +139,12 @@ $(function(){
 		<fieldset
 			style="width: 600px !important; margin-top: 10px !important;">
 			<legend>Produtos</legend>
+			
 			<table class="lstProdutosGrid"></table>
-			<span class="bt_sellAll" style="float: right;"><label
-				for="sel">Selecionar Todos</label><input type="checkbox" id="sel"
-				name="Todos" onclick="regiaoController.checkAll();"
-				style="float: left; margin-right: 25px;" /> </span>
+			<span class="bt_sellAll" style="float: right;">
+				<label for="sel">Selecionar Todos</label>
+					<input type="checkbox" id="selTodosProdutos" name="Todos" onclick="regiaoController.checkAllNMaiores();"
+				style="float: left; margin-right: 25px;" checked /> </span>
 		</fieldset>
 
 	</div>

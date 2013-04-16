@@ -51,6 +51,8 @@ public class RegiaoController extends BaseController {
 	private Result result;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroCotasRegiao";
+	
+	private static final String FILTRO_SESSION_ATTRIBUTE_NMaiores = "FiltroProdutosNMaiores";
 
 	@Autowired
 	private RegiaoService regiaoService;
@@ -403,13 +405,13 @@ public class RegiaoController extends BaseController {
 	
 	private void tratarFiltroNMaiores(FiltroRegiaoNMaioresProdDTO filtroAtual) {
 		
-		FiltroRegiaoNMaioresProdDTO filtroSession = (FiltroRegiaoNMaioresProdDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroRegiaoNMaioresProdDTO filtroSession = (FiltroRegiaoNMaioresProdDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_NMaiores);
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
 			
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_NMaiores, filtroAtual);
 	}
 	
 	private void validarEntradaDeVariasCotas(List<Integer> cotas, Long idRegiao) {
