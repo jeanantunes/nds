@@ -15,17 +15,17 @@ $(function(){
 });
 
 function porCota(){
-	$('.porCota').show();
-	$('.porExcessao').hide();
+	$('#fixacaoReparte_porCota').show();
+	$('#fixacaoReparte_fixacaoProduto').hide();
 }
 function porExcessao(){
-	$('.porCota').hide();
-	$('.porExcessao').show();
+	$('#fixacaoReparte_porCota').hide();
+	$('#fixacaoReparte_fixacaoProduto').show();
 }
 function filtroPorCota(){
-	$('.filtroPorCota').show();
-	$('.filtroPorProduto').hide();
-	$('.porExcessao').hide();
+	$('#fixaxaoReparte_filtroPorCota').show();
+	$('#fixacaoReparte_filtroPorProduto').hide();
+	$('#fixacaoReparte_fixacaoProduto').hide();
 	$("#codigoProduto").val("");
 	$("#nomeProduto").val("");
 	
@@ -34,9 +34,9 @@ function filtroPorCota(){
 	
 }
 function filtroPorProduto(){
-	$('.filtroPorCota').hide();
-	$('.filtroPorProduto').show();
-	$('.porCota').hide();
+	$('#fixaxaoReparte_filtroPorCota').hide();
+	$('#fixacaoReparte_filtroPorProduto').show();
+	$('#fixacaoReparte_porCota').hide();
 	$("#codigoCota").val("");
 	$("#nomeCota").val("");
 	
@@ -73,7 +73,7 @@ function mostraIntervalo(){
             <td width="50"> <label for="radio"> Cota </label></td>
             <td width="22"><input type="radio" name="filtroPrincipalRadio" id="radio2" value="Produto" onclick="filtroPorProduto()" /></td>
             <td width="49"> <label for="radio2">Produto</label></td>
-            <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
+            <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" id="fixacaoReparte_filtroPorProduto" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="52">Código:</td>
             <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onkeydown="onlyNumeric(event);" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
@@ -92,7 +92,7 @@ function mostraIntervalo(){
           </tr>
         </table>
         
-        <table width="758" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
+        <table width="758" border="0" cellpadding="2" cellspacing="1" id="fixaxaoReparte_filtroPorCota" class="filtro filtroPorCota" style="display:none;">
             <tr>
            	  <td width="30" >Cota:</td>
                 <td width="91">
@@ -111,7 +111,7 @@ function mostraIntervalo(){
       <div class="linha_separa_fields">&nbsp;</div>
 
 	 <div class="grids" style="display:block;">
-	      <div class="porExcessao" style="display:none;">
+	      <div class="porExcessao" id="fixacaoReparte_fixacaoProduto" style="display:none;">
 		      <fieldset class="classFieldset">
 		       	  	<legend>Fixação Produto</legend>
 		        		<table class="fixacaoProdutoGrid"></table>
@@ -123,7 +123,7 @@ function mostraIntervalo(){
 		     
 		     
 	      </div>
-	       <div class="porCota" style="display:none;">
+	       <div class="porCota" id="fixacaoReparte_porCota" style="display:none;">
 		      <fieldset class="classFieldset">
 		       	  <legend>Produtos</legend>
 		        
