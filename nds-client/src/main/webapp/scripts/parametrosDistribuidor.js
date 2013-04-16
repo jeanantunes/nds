@@ -283,12 +283,28 @@ var parametrosDistribuidorController = $.extend(true, {
 	    var vendaMediaMais = $('#vendaMediaMais', this.workspace).val();
 	    var percentualMaximoFixacao = $('#percentualMaximoFixacao', this.workspace).val();
 	    
+	    var eficiencia0 = parseInt($('#listPercentualExcedente0\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente0\\.pdv', this.workspace).val());
+	    var eficiencia1 = parseInt($('#listPercentualExcedente1\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente1\\.pdv', this.workspace).val());
+	    var eficiencia2 = parseInt($('#listPercentualExcedente2\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente2\\.pdv', this.workspace).val());
+	    
 	    if(vendaMediaMais > 10 || vendaMediaMais < 0) {
 		arrayMensagemWarning.push("- \'Venda Média +\' deve ser de 0 a 10!");
 	    }
 		
 	    if(percentualMaximoFixacao > 75 || percentualMaximoFixacao < 1) {
 		arrayMensagemWarning.push("- \'% Máximo de Fixação\' deve ser de 1% a 75%!");
+	    }
+	    
+	    if(eficiencia0 != 100) {
+		arrayMensagemWarning.push("- '\> 60 %\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(eficiencia1 != 100) {
+		arrayMensagemWarning.push("- '\> 30% a 60%\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(eficiencia2 != 100) {
+		arrayMensagemWarning.push("- '\0% a 30%\' deve ter o total da soma igual a 100%!");
 	    }
 	    
 	    if(arrayMensagemWarning.length > 0) {

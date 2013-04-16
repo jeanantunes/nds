@@ -171,13 +171,15 @@
 					<input name="parametrosDistribuidor.listPercentualExcedente[0].venda"
 					id="listPercentualExcedente0.venda"
 					value="${parametrosDistribuidor.listPercentualExcedente[0].venda}"
-					type="text" style="width: 80px; text-align: center;" />
+					type="text" style="width: 80px; text-align: center;" 
+					maxlength="2"/>
 				</td>
 				<td width="85" align="center">
 					<input name="parametrosDistribuidor.listPercentualExcedente[0].pdv"
 					id="listPercentualExcedente0.pdv"
 					value="${parametrosDistribuidor.listPercentualExcedente[0].pdv}"
-					type="text" style="width: 80px; text-align: center;" />
+					type="text" style="width: 80px; text-align: center;" 
+					maxlength="2"/>
 				</td>
 			</tr>
 			<tr class="class_linha_2">
@@ -189,13 +191,15 @@
 					<input name="parametrosDistribuidor.listPercentualExcedente[1].venda"
 					id="listPercentualExcedente1.venda"
 					value="${parametrosDistribuidor.listPercentualExcedente[1].venda}"
-					type="text" style="width: 80px; text-align: center;" />
+					type="text" style="width: 80px; text-align: center;" 
+					maxlength="2"/>
 				</td>
 				<td width="85" align="center">
 					<input name="parametrosDistribuidor.listPercentualExcedente[1].pdv"
 					id="listPercentualExcedente1.pdv"
 					value="${parametrosDistribuidor.listPercentualExcedente[1].pdv}"
-					type="text" style="width: 80px; text-align: center;" />
+					type="text" style="width: 80px; text-align: center;" 
+					maxlength="2"/>
 				</td>
 			</tr>
 			<tr class="class_linha_1">
@@ -207,13 +211,15 @@
 					<input name="parametrosDistribuidor.listPercentualExcedente[2].venda"
 					id="listPercentualExcedente2.venda"
 					value="${parametrosDistribuidor.listPercentualExcedente[2].venda}"
-					type="text" style="width: 80px; text-align: center;" />
+					type="text" style="width: 80px; text-align: center;" 
+					maxlength="2"/>
 				</td>
 				<td align="center">
 					<input name="parametrosDistribuidor.listPercentualExcedente[2].pdv"
 					id="listPercentualExcedente2.pdv"
 					value="${parametrosDistribuidor.listPercentualExcedente[2].pdv}"
-					type="text" style="width: 80px; text-align: center;" />
+					type="text" style="width: 80px; text-align: center;" 
+					maxlength="2"/>
 				</td>
 			</tr>
 		</table>
