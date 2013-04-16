@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.DividaComissaoDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -124,7 +125,7 @@ public interface DividaService {
      *            neste caso retorna todas as dívidas
      * @return lista de dividas a receber em uma determinada data
      */
-	List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
+	List<Cobranca> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
 	
 	/**
      * Recupera as dívidas a vencer após uma determinada data
@@ -136,7 +137,7 @@ public interface DividaService {
      *            neste caso retorna todas as dívidas
      * @return lista de dividas a vencer após uma determinada data
      */
-	List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
+	List<Cobranca> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
 
 
     /**

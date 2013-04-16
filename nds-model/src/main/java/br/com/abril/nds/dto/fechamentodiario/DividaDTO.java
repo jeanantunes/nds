@@ -8,7 +8,6 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Cobranca;
-import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
@@ -236,10 +235,9 @@ public class DividaDTO implements Serializable {
      *            divida para criação do DTO
      * @return {@link DividaDTO} criado à partir da da divida
      */
-    public static DividaDTO fromDivida(Divida divida) {
-        Cota cota = divida.getCota();
+    public static DividaDTO fromDivida(Cobranca cobranca) {
+        Cota cota = cobranca.getCota();
         String nomeCota = cota.getPessoa().getNome();
-        Cobranca cobranca = divida.getCobranca();
         String nomeBanco = "";
         String contaCorrente = "";
         Banco banco = cobranca.getBanco();
@@ -247,9 +245,9 @@ public class DividaDTO implements Serializable {
             nomeBanco = banco.getNome();
             contaCorrente = String.format("%s-%s", banco.getConta(), Util.nvl(banco.getDvConta(), ""));
         }
-        DividaDTO dto = new DividaDTO(divida.getId(), cota.getNumeroCota(),
+        DividaDTO dto = new DividaDTO(cobranca.getId(), cota.getNumeroCota(),
                 nomeCota, nomeBanco, contaCorrente, cobranca.getNossoNumero(),
-                divida.getValor(), cobranca.getDataVencimento(),
+                cobranca.getValor(), cobranca.getDataVencimento(),
                 cobranca.getTipoCobranca());
         return dto;
     }
