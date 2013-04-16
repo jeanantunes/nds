@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -1117,7 +1118,7 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setTituloAceite("A");
         corpoBoleto.setTituloTipoIdentificadorCNR("COM_VENCIMENTO");
         
-        corpoBoleto.setTituloValor(valor);   
+        corpoBoleto.setTituloValor(valor.setScale(2, RoundingMode.HALF_EVEN));   
         corpoBoleto.setTituloDataDoDocumento(dataEmissao);   
         corpoBoleto.setTituloDataDoVencimento(dataVencimento);  
         corpoBoleto.setTituloDesconto(BigDecimal.ZERO);

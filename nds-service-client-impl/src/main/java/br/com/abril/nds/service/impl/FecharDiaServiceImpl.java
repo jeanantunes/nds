@@ -67,7 +67,7 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoAvista;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsignado;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
-import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.Movimento;
@@ -493,7 +493,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+    public List<Cobranca> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
         return dividaService.obterDividasReceberEm(data, paginacao);
     }
 
@@ -502,7 +502,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+    public List<Cobranca> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
         return dividaService.obterDividasVencerApos(data, paginacao);
     }
 
@@ -793,7 +793,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		validarDadosFechamentoDiario(resumoDividas, "Erro na obtenção dos dados de Resumo de Dividas A Vencer!");
 		
-		List<Divida> dividas = dividaService.obterDividasVencerApos(fechamento.getDataFechamento(), null);
+		List<Cobranca> dividas = dividaService.obterDividasVencerApos(fechamento.getDataFechamento(), null);
 		
 		incluirDividas(fechamento, resumoDividas, dividas,TipoDividaFechamentoDia.A_VENCER);
 		
@@ -806,7 +806,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		validarDadosFechamentoDiario(resumoDividas, "Erro na obtenção dos dados de Resumo de Dividas A Receber!");
 		
-		List<Divida> dividas = dividaService.obterDividasReceberEm(fechamento.getDataFechamento(), null);
+		List<Cobranca> dividas = dividaService.obterDividasReceberEm(fechamento.getDataFechamento(), null);
 		
 		incluirDividas(fechamento, resumoDividas, dividas,TipoDividaFechamentoDia.A_RECEBER);
 		
@@ -814,7 +814,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	}
 
 	private void incluirDividas(FechamentoDiario fechamento,
-			List<SumarizacaoDividasDTO> resumoDividas, List<Divida> dividas,TipoDividaFechamentoDia tipoDividaFechamentoDia) throws FechamentoDiarioException {
+			List<SumarizacaoDividasDTO> resumoDividas, List<Cobranca> dividas,TipoDividaFechamentoDia tipoDividaFechamentoDia) throws FechamentoDiarioException {
 		
 		FechamentoDiarioConsolidadoDivida resumoConsolidadoDivida = new FechamentoDiarioConsolidadoDivida();
 		
@@ -843,7 +843,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		if(dividas!= null && !dividas.isEmpty()){
 			
-			for(Divida item : dividas ){
+			for(Cobranca item : dividas ){
 				
 				FechamentoDiarioDivida dividaFechamentoDiario = new FechamentoDiarioDivida();
 				

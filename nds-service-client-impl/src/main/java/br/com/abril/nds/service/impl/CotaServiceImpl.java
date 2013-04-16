@@ -1207,7 +1207,7 @@ public class CotaServiceImpl implements CotaService {
 		boolean newCota = false;
 		if(cota == null){
 			cota = new Cota();
-			cota.setInicioAtividade(new Date());
+			cota.setInicioAtividade(distribuidorService.obterDataOperacaoDistribuidor());
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
 			incluirPDV = true;
 			newCota = true;
@@ -2005,7 +2005,7 @@ public class CotaServiceImpl implements CotaService {
 		Long idCotaNova = this.salvarCota(cotaDTO);
 
 		Cota cotaNova = this.cotaRepository.buscarPorId(idCotaNova);
-		cotaNova.setInicioTitularidade(new Date());
+		cotaNova.setInicioTitularidade(this.distribuidorService.obterDataOperacaoDistribuidor());
 		cotaNova.setPdvs(pdvs);
 		cotaNova.setFornecedores(fornecedores);
 		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);
