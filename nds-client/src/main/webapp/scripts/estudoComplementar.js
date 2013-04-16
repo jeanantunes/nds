@@ -161,8 +161,19 @@ consultarEstudo:function (obj) {
 		$('#publicacaoDataRclto').html("");
 		$('#publicacaoClassificacao').html("");
     }
-}
+},
 
+	analisar : function() {
+		//testa se registro selecionado possui estudo gerado
+		if ($('#idEstudoComplementar').html() == null || $('#idEstudoComplementar').html() == "") {
+			exibirMensagem("WARNING",["Gere o estudo antes de fazer a análise."]);
+			return;
+		} else {
+			// Deve ir direto para EMS 2031
+			matrizDistribuicao.redirectToTelaAnalise('#estudoComplementarContent', '#estudoComplementarTelaAnalise', $('#idEstudoComplementar').html());
+		}
+	}
+	
 
 }, BaseController);
 

@@ -1,4 +1,19 @@
+<script>
 
+function analisar(){
+	if ($('#copiarEstudo-estudo').html() == null || $('#copiarEstudo-estudo').html() == "") {
+		exibirMensagem("WARNING",["Gere o estudo antes de fazer a an&aacute;lise."]);
+		return;
+	} else {
+		var idEstudoComplementar = $('#copiarEstudo-estudo').html(); 
+		matrizDistribuicao.redirectToTelaAnalise('#copiarEstudoContent', '#copiarEstudoTelaAnalise', idEstudoComplementar)
+	}
+}
+
+
+
+
+</script>
 
 	<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
@@ -113,7 +128,7 @@
       <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.mostraTelaMatrizDistribuicao()"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
                      <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.cancelarCopiaProporcionalDeEstudo()"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
                      <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.confirmarCopiarProporcionalDeEstudo()" ><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" hspace="5" border="0" />Confirmar</a></span>
-                     <span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.redirectToTelaAnalise('#copiarEstudoContent', '#copiarEstudoTelaAnalise', matrizDistribuicao.getEstudoCopiarEstudo)" ><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="analisar()" ><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
         </fieldset>
 
     
