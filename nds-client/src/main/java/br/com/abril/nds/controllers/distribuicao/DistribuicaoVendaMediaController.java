@@ -16,7 +16,6 @@ import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -93,15 +92,13 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	@Path("index")
 	@Post
 	@Transactional(readOnly = true)
-	public void index(String codigoProduto, Long edicao, Long estudoId, Long lancamentoId, String juramentado, String suplementar, String lancado,
-			String promocional, String sobra) {
+	public void index(String codigoProduto, Long edicao, Long estudoId, Long lancamentoId, String juramentado, String suplementar,
+		String lancado, String promocional, String sobra, Long repDistrib) {
 		if (codigoProduto == null) {
 			result.nothing();
 			return;
 		}
-		Produto produto = produtoRepository.obterProdutoPorCodigo(codigoProduto);
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorProdutoEEdicaoOuNome(produto.getId(), edicao,
-				produto.getNomeComercial());
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
 		if (estudoId != null) {
 			Estudo estudo = estudoRepository.buscarPorId(estudoId);
 			result.include("estudo", estudo);
@@ -123,6 +120,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		result.include("lancado", lancado);
 		result.include("promocional", promocional);
 		result.include("sobra", sobra);
+		result.include("repDistrib", repDistrib);
 
 		result.include("lancamento", lancamento);
 		result.include("estrategia", estrategia);

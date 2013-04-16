@@ -14,10 +14,12 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
@@ -33,6 +35,8 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -1492,6 +1496,27 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 			}
 		}
+	}
+
+	@Transactional
+	@Override
+	public void insereVendaRandomica(ProdutoEdicao produtoEdicao) {
+	    
+	    Session s = getSession();
+	    
+	    Criteria esto = s.createCriteria(EstoqueProdutoCota.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
+	    List<EstoqueProdutoCota> temp = esto.list();
+	    for (EstoqueProdutoCota x : temp) {
+		x.setQtdeDevolvida(BigInteger.valueOf(Math.round(1 + (Math.random() * x.getQtdeRecebida().longValue()))));
+		s.persist(x);
+	    }
+	    
+	    Criteria lanc = s.createCriteria(Lancamento.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
+	    List<Lancamento> temp2 = lanc.list();
+	    for (Lancamento x : temp2) {
+		x.setStatus(StatusLancamento.FECHADO);
+		s.persist(x);
+	    }
 	}
 
 }

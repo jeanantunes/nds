@@ -1121,5 +1121,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro) {
 		return this.produtoEdicaoRepository.obterEdicoesProduto(filtro);
 	}
+
+	@Override
+	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
+	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, new Long(numeroEdicao)));
+	}
 	
 }

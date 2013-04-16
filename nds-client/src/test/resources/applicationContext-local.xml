@@ -17,9 +17,9 @@
 
 	<context:component-scan base-package="br.com.abril.nds" />
 			
-	<util:properties id="properties" location="file:C:\Tiago\Info2a\DGB\workspace\NDS\nds-client\src\main\resources\nds-client.properties" />
+	<util:properties id="properties" location="file:C:\workspace-22-marco-13\NDS\nds-client\src\main\resources\nds-client.properties" />
 	
-	<util:properties id="queries" location="file:C:\Tiago\Info2a\DGB\workspace\NDS\nds-repository-client-impl\src\test\resources\query.properties" />
+	<util:properties id="queries" location="file:C:\workspace-22-marco-13\NDS\nds-repository-client-impl\src\test\resources\query.properties" />
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 		

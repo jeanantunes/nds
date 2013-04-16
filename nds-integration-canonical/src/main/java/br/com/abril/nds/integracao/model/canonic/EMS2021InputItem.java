@@ -9,25 +9,24 @@ public class EMS2021InputItem extends IntegracaoDocumentDetail implements Serial
 
     private static final long serialVersionUID = -6768730628645056820L;
 
-    private Long codigoProduto;
-    private Integer numeroEdicao;
+    private String codigoProduto;
+    private Long numeroEdicao;
     private Integer periodo;
     private Integer peso;
-    private String cesta;
 
-    public Long getCodigoProduto() {
+    public String getCodigoProduto() {
 	return codigoProduto;
     }
 
-    public void setCodigoProduto(Long codigoProduto) {
+    public void setCodigoProduto(String codigoProduto) {
 	this.codigoProduto = codigoProduto;
     }
 
-    public Integer getNumeroEdicao() {
+    public Long getNumeroEdicao() {
 	return numeroEdicao;
     }
 
-    public void setNumeroEdicao(Integer numeroEdicao) {
+    public void setNumeroEdicao(Long numeroEdicao) {
 	this.numeroEdicao = numeroEdicao;
     }
 
@@ -45,13 +44,5 @@ public class EMS2021InputItem extends IntegracaoDocumentDetail implements Serial
 
     public void setPeso(Integer peso) {
 	this.peso = peso;
-    }
-
-    public String getCesta() {
-	return cesta;
-    }
-
-    public void setCesta(String cesta) {
-	this.cesta = cesta;
     }
 }

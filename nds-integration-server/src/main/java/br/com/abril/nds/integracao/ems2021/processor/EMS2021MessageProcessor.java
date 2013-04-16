@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.ems2021.processor;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -12,35 +11,39 @@ import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.integracao.ems0127.processor.EMS0127MessageProcessor;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.MessageProcessor;
-import br.com.abril.nds.model.integracao.icd.IcdChamadaEncalhe;
+import br.com.abril.nds.model.integracao.icd.IcdEdicaoBaseEstrategia;
+import br.com.abril.nds.model.integracao.icd.IcdEstrategia;
 import br.com.abril.nds.repository.AbstractRepository;
 
+@Component
 public class EMS2021MessageProcessor extends AbstractRepository implements MessageProcessor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EMS0127MessageProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EMS2021MessageProcessor.class);
 
     @Autowired
-    private SessionFactory sessionFactoryIcd;
-
-    protected Session getSessionIcd() {
-
-	Session session = null;
-	try {
-	    session = sessionFactoryIcd.getCurrentSession();
-	} catch (Exception e) {
-	    LOGGER.error("Erro ao obter sessão do Hibernate.", e);
+	private SessionFactory sessionFactoryIcd;
+    
+    private Session session = null;
+	
+	protected Session getSessionIcd() {
+		
+		if (session == null) {
+			try {
+				session = sessionFactoryIcd.getCurrentSession();
+			} catch(Exception e) {
+				LOGGER.error("Erro ao obter sessão do Hibernate.", e);
+			}
+			if(session == null) {
+				session = sessionFactoryIcd.openSession();
+			}
+		}
+		return session;
 	}
-
-	if (session == null) {
-	    session = sessionFactoryIcd.openSession();
-	}
-	return session;
-    }
-
+	
     @Override
     public void preProcess(AtomicReference<Object> tempVar) {
 
@@ -54,51 +57,67 @@ public class EMS2021MessageProcessor extends AbstractRepository implements Messa
     public void processMessage(Message message) {
 
 	CouchDbClient cdbc = null;
-	List<String> distribuidores = obterDistribuidores();
-	for (String distribuidor : distribuidores) {
-	    List<IcdChamadaEncalhe> chamadasEncalhe = obterEstrategias(distribuidor);
-	    for (IcdChamadaEncalhe ce : chamadasEncalhe) {
-		try {
-		    ce.setTipoDocumento("EMS0137");
-		    cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
-		    cdbc.save(ce);
-		} catch (Exception e) {
-		    LOGGER.error("Erro executando importação de Chamada Encalhe Prodin.", e);
-		} finally {
-		    if (cdbc != null) {
-			cdbc.shutdown();
-		    }
+	List<IcdEstrategia> estrategias = obterEstrategias();
+	IcdEstrategia estrategiaTemp = null;
+	for (IcdEstrategia estrategia : estrategias) {
+	    try {
+		estrategia.setTipoDocumento("EMS2021");
+		if ((estrategiaTemp != null) && (estrategia.getCodigoEstrategia().equals(estrategiaTemp.getCodigoEstrategia()))) {
+			estrategia.setBasesEstrategia(estrategiaTemp.getBasesEstrategia());
+		} else {
+			estrategia.setBasesEstrategia(obterEdicaoBaseEstrategia(estrategia));
+		}
+		cdbc = this.getCouchDBClient(estrategia.getCodigoDistribuidor().toString());
+		cdbc.save(estrategia);
+	    } catch (Exception e) {
+		LOGGER.error("Erro executando importação de Estratégias ICD.", e);
+	    } finally {
+		if (cdbc != null) {
+		    cdbc.shutdown();
 		}
 	    }
+	    estrategiaTemp = estrategia;
 	}
     }
 
-    @SuppressWarnings("unchecked")
-    private List<String> obterDistribuidores() {
+    private List<IcdEstrategia> obterEstrategias() {
 
-	StringBuilder hql = new StringBuilder();
-	hql.append(" select distinct cod_distribuidor ").append("from chamada_encalhe ").append("where cod_distribuidor = '6248116' ");
+	StringBuilder sql = new StringBuilder();
+	sql.append("SELECT EMD.COD_ESTRATEGIA codigoEstrategia, ");
+	sql.append("       TO_CHAR(LPAD(LEP.COD_PUBLICACAO_ADABAS, 8, '0')) AS codigoProduto, ");
+	sql.append("       LEP.NUM_EDICAO numeroEdicao, ");
+	sql.append("       P.COD_DISTRIBUIDOR codigoDistribuidor, ");
+	sql.append("       EMD.TXT_OPORTUNIDADE_VENDA oportunidadeVenda, ");
+	sql.append("       EMD.QTD_REPARTE_MINIMO reparteMinimo, ");
+	sql.append("       EMD.PCT_ABRANGENCIA_DISTBCAO abrangenciaDistribuicao, ");
+	sql.append("       null cesta, ");
+	sql.append("       null tipoDocumento ");
+	sql.append("  FROM ESTRATEGIA_MICRO_DISTBCAO EMD ");
+	sql.append("  JOIN LANCTO_EDICAO_PUBLICACAO LEP ON EMD.COD_LANCTO_EDICAO = LEP.COD_LANCTO_EDICAO ");
+	sql.append("  JOIN PUBLICACAO_DINAP PD ON PD.COD_PUBLICACAO = LEP.COD_PUBLICACAO ");
+	sql.append("  JOIN ESTRATEGIA_LANCTO_PRACA ELP ON ELP.COD_ESTRATEGIA = EMD.COD_ESTRATEGIA ");
+	sql.append("   AND ELP.COD_LANCTO_EDICAO = LEP.COD_LANCTO_EDICAO ");
+	sql.append("  JOIN PRACA P ON P.COD_PRACA = ELP.COD_PRACA AND P.IND_PRACA_ATIVA = 'S' ");
+	sql.append(" WHERE (EMD.DAT_ALT > (SYSDATE - 5) OR EMD.DAT_INC > (SYSDATE - 5)) ");
 
-	Query query = this.getSessionIcd().createSQLQuery(hql.toString());
-	List<BigDecimal> codigos = query.list();
-	List<String> codigosConvertidos = new ArrayList<String>();
-
-	for (BigDecimal c : codigos) {
-	    codigosConvertidos.add(c.toString());
-	}
-	return codigosConvertidos;
+	Query query = getSessionIcd().createSQLQuery(sql.toString()).addEntity(IcdEstrategia.class);
+	return query.list();
     }
+    
+    private List<IcdEdicaoBaseEstrategia> obterEdicaoBaseEstrategia(IcdEstrategia estrategia) {
 
-    @SuppressWarnings("unchecked")
-    private List<IcdChamadaEncalhe> obterEstrategias(String distribuidor) {
+	StringBuilder sql = new StringBuilder();
+	sql.append("SELECT TO_CHAR(LPAD(LEP.COD_PUBLICACAO_ADABAS, 8, '0')) AS codigoProduto, ");
+	sql.append("       LEP.NUM_EDICAO numeroEdicao, ");
+	sql.append("       CBC.COD_ESTRATEGIA estrategia, ");
+	sql.append("       null periodo, ");
+	sql.append("       null peso ");
+	sql.append("  FROM COMPOSICAO_BASE_CALCULO CBC ");
+	sql.append("  JOIN LANCTO_EDICAO_PUBLICACAO LEP ON LEP.COD_LANCTO_EDICAO = CBC.COD_LANCTO_EDICAO ");
+	sql.append(" WHERE CBC.COD_ESTRATEGIA = :COD_ESTRATEGIA ");
 
-	StringBuilder hql = new StringBuilder();
-	hql.append(" select ce ")
-		.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
-		.append("where ce.tipoStatus in (:status) ").append("and ce.codigoDistribuidor = :distribuidor ");
-	Query query = this.getSessionIcd().createQuery(hql.toString());
-	query.setParameterList("status", new String[] { "A" });
-	query.setParameter("distribuidor", Long.parseLong(distribuidor));
+	Query query = getSessionIcd().createSQLQuery(sql.toString()).addEntity(IcdEdicaoBaseEstrategia.class);
+	query.setBigDecimal("COD_ESTRATEGIA", estrategia.getCodigoEstrategia());
 	return query.list();
     }
 

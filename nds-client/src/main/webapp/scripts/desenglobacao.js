@@ -197,6 +197,7 @@ var desenglobacaoController = $.extend(true, {
 			comments : "GRID PRINCIPAL DA TELA DESENGLOBAÇÃO",
 			reload : desenglobacaoController.Grids.Util.reload,
 			PreProcess : {
+				
 				_default : function(result) {
 	
 					if (result.mensagens) {
@@ -204,7 +205,7 @@ var desenglobacaoController = $.extend(true, {
 						$(".grids").hide();
 						return result;
 					}
-	
+					desenglobacaoController.listaDesenglobacaoLength = result.rows.length;
 					$.each(
 						result.rows,
 							function(index,
@@ -336,7 +337,14 @@ var desenglobacaoController = $.extend(true, {
 		});
 	},
 	
+	//guarda resultado da pesquisa de desenglobacao
+	listaDesenglobacaoLength: 0,
+	
 	exportar: function exportar(fileType) {
+		if(desenglobacaoController.listaDesenglobacaoLength==0){
+		      exibirMensagemDialog("WARNING",["Sem resultados para exportar."]);
+		      return;
+		     }
 		$.get(contextPath + "/distribuicao/desenglobacao/exportar?fileType=" + fileType, function(result) {
         	if (result.mensagens) {
 				exibirMensagem(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);

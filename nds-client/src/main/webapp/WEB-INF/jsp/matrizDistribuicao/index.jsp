@@ -31,6 +31,8 @@ display: none;
 
 <script type="text/javascript">
 
+var estudoParaDivisao=null;
+
 function showTab(link, title) {
 	$('#workspace').tabs('addTab', title, link);
 }
@@ -153,7 +155,7 @@ var lancamentosSelecionados = [];
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.distribuicaoVendaMedia();"><img src="${pageContext.request.contextPath}/images/ico_distribuicao_normal.gif" border="0"/>Distribuição Venda Média</a></li>
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.gerarEstudoManual();"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribuição Manual</a></li>
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.somarEstudos();"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
-									               <li><a href="javascript:;" onclick="showTab('${pageContext.request.contextPath}/dividirEstudo/index', 'Dividir Estudo')"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
+									               <li><a href="javascript:;" onclick="matrizDistribuicao.dividirEstudo();"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
 									               <li><a href="javascript:;" onclick="estudoComplementarShow('${pageContext.request.contextPath}/lancamento/estudoComplementar')" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
 								           </ul>
@@ -222,7 +224,7 @@ var lancamentosSelecionados = [];
 								</span>
 							</td>
 							<td>
-									<span class="bt_novos"><a href="javascript:;" onclick="matrizDistribuicao.gerarEstudoAutomatico();"><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Geração Automática</a></span>
+								<span class="bt_novos" id="spanGerarEstudoAutomatico"><a id="linkGerarEstudoAutomatico" href="#" onclick=""><img src="${pageContext.request.contextPath}/images/ico_geracao_automatica.gif" hspace="5" border="0" />Gera&ccedil;&atilde;o Autom&aacute;tica</a></span>
 							</td>
 						</tr>
 						<tr>

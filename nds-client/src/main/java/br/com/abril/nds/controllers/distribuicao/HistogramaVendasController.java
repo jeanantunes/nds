@@ -20,19 +20,19 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.TipoClassificacaoProdutoService;
+import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
@@ -83,6 +83,9 @@ public class HistogramaVendasController extends BaseController {
 		result.include("componenteList", ComponentesPDV.values());
 	}
 	
+	@Autowired
+	private RegiaoService regiaoService;
+	
 	@Post
 	@Path("/carregarElementos")
 	public void carregarElementos(String componente){
@@ -122,7 +125,9 @@ public class HistogramaVendasController extends BaseController {
 			
 			break;
 		case REGIAO:
-			//todo: EMS 2004
+			for (RegiaoDTO regiao : regiaoService.buscarRegiao()) {
+				resultList.add(new ItemDTO(regiao.getIdRegiao(), regiao.getNomeRegiao()));
+			}
 			break;
 		default:
 			break;

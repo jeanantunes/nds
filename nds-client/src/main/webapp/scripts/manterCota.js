@@ -3,6 +3,7 @@ var ModoTela = {
     HISTORICO_TITULARIDADE : {value: 'HISTORICO_TITULARIDADE'}
 };
 
+
 var TAB_COTA = new TabCota('tabCota');
 
 var MANTER_COTA = $.extend(true, {
@@ -19,7 +20,8 @@ var MANTER_COTA = $.extend(true, {
     _workspace: this.workspace,
     modoTela: null,
     idHistorico:"",
-
+    resultCotaLength:0,
+    
     init: function() {
         this.definirModoTelaCadastroCota();
 
@@ -278,6 +280,8 @@ var MANTER_COTA = $.extend(true, {
             row.cell.acao = linkEdicao + linkExclusao;
         });
 
+        MANTER_COTA.resultCotaLength=resultado.rows.length;
+        
         $("#gridsCota", this.workspace).show();
 
         return resultado;
@@ -865,6 +869,56 @@ var MANTER_COTA = $.extend(true, {
         }
     },
     
+    imprimir:function(type){
+    	
+    	if(MANTER_COTA.resultCotaLength==0){
+    		exibirMensagemDialog("WARNING",["Sem resultados para exportar."]);
+    		return;
+    	}
+    	if(type){
+    		$("#dialog-confirmarSenha").dialog({
+        		title: "Confirmação",
+                resizable: false,
+                height:'auto',
+                width:300,
+                modal: true,
+                open:function(){$("#confirmarSenhaInput").val("");},
+                buttons: {
+                    "Confirmar": function() {
+
+                        URL = contextPath +"/cadastro/cota/exportar?fileType="+type;
+                        dialog=this;
+    					$.postJSON(contextPath + "/cadastro/cota/validarSenha", {confirmarSenhaInput:$("#confirmarSenhaInput").val()},
+    							function(result){
+
+    							if(result && result.mensagens){
+		    		                        exibirMensagem(
+		    		                        		result.mensagens.tipoMensagem,
+		    		                        		result.mensagens.listaMensagens
+		    		                        );
+		    		                        return;
+		    		                        
+		    		                }
+		    		                
+		    		                if(result.senhaValida=="true"){
+		    		                	window.location.href=URL;
+		    		                	$("#confirmarSenhaInput").val("");
+		    		                }else{
+		    		                	exibirMensagemDialog("WARNING",["Senha inválida."]);
+		    		                }
+    		            });
+                        
+                        
+                    },
+                    "Cancelar": function() {
+                        $( this, this.workspace ).dialog( "close" );
+                    }
+                },
+            });
+    	}
+    	
+    	
+    }
 
 }, BaseController);
 
@@ -1170,12 +1224,15 @@ var COTA_CNPJ = $.extend(true, {
         $("#emailNF", this.workspace).val(result.emailNF);
         $("#emiteNFE", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionada", this.workspace).val(result.classificacaoSelecionada);
-        $("#historicoPrimeiraCota", this.workspace).val(result.historicoPrimeiraCota);
+        
+        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
+        
+        /*$("#historicoPrimeiraCota", this.workspace).val(result.historicoPrimeiraCota);
         $("#historicoPrimeiraPorcentagem", this.workspace).val( eval( result.historicoPrimeiraPorcentagem));
         $("#historicoSegundaCota", this.workspace).val(result.historicoSegundaCota);
         $("#historicoSegundaPorcentagem", this.workspace).val( eval( result.historicoSegundaPorcentagem));
         $("#historicoTerceiraCota", this.workspace).val(result.historicoTerceiraCota);
-        $("#historicoTerceiraPorcentagem", this.workspace).val( eval( result.historicoTerceiraPorcentagem));
+        $("#historicoTerceiraPorcentagem", this.workspace).val( eval( result.historicoTerceiraPorcentagem));*/
 
         if(result.inicioPeriodo){
             $("#periodoCotaDe", this.workspace).val(result.inicioPeriodo.$);
@@ -1373,12 +1430,16 @@ var COTA_CPF = $.extend(true, {
         $("#emailNFCPF", this.workspace).val(result.emailNF);
         $("#emiteNFECPF", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
-        $("#historicoPrimeiraCotaCPF", this.workspace).val(result.historicoPrimeiraCota);
+        
+        //Ajuste 0153
+        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
+        
+        /*$("#historicoPrimeiraCotaCPF", this.workspace).val(result.historicoPrimeiraCota);
         $("#historicoPrimeiraPorcentagemCPF", this.workspace).val( eval( result.historicoPrimeiraPorcentagem));
         $("#historicoSegundaCotaCPF", this.workspace).val(result.historicoSegundaCota);
         $("#historicoSegundaPorcentagemCPF", this.workspace).val( eval( result.historicoSegundaPorcentagem));
         $("#historicoTerceiraCotaCPF", this.workspace).val(result.historicoTerceiraCota);
-        $("#historicoTerceiraPorcentagemCPF", this.workspace).val( eval( result.historicoTerceiraPorcentagem));
+        $("#historicoTerceiraPorcentagemCPF", this.workspace).val( eval( result.historicoTerceiraPorcentagem));*/
 
         if(result.dataNascimento){
             $("#dataNascimento", this.workspace).val(result.dataNascimento.$);
@@ -1484,14 +1545,14 @@ var COTA_CPF = $.extend(true, {
         $("#emailNFCPF", this.workspace).val("");
         $("#emiteNFECPF", this.workspace).attr("checked", null);
         $("#classificacaoSelecionadaCPF", this.workspace).val("");
-        $("#historicoPrimeiraCotaCPF", this.workspace).val("");
+        /*$("#historicoPrimeiraCotaCPF", this.workspace).val("");
         $("#historicoPrimeiraPorcentagemCPF", this.workspace).val("");
         $("#historicoSegundaCotaCPF", this.workspace).val("");
         $("#historicoSegundaPorcentagemCPF", this.workspace).val("");
         $("#historicoTerceiraCotaCPF", this.workspace).val("");
         $("#historicoTerceiraPorcentagemCPF", this.workspace).val("");
         $("#periodoCotaDeCPF", this.workspace).val("");
-        $("#periodoCotaAteCPF", this.workspace).val("");
+        $("#periodoCotaAteCPF", this.workspace).val("");*/
 
         clearMessageDialogTimeout(null);
     }

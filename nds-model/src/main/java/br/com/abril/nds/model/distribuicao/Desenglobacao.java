@@ -55,7 +55,6 @@ public class Desenglobacao implements Serializable {
 	@Column(name = "PORCENTAGEM_COTA_ENGLOBADA")
 	private Float englobadaPorcentagemCota;
 
-	@Temporal(TemporalType.DATE)
 	@Column (name = "DATA_ALTERACAO")
 	private Date dataAlteracao;
 
