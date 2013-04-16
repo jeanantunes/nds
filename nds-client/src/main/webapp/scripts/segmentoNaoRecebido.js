@@ -295,7 +295,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 
 					excluirSegmentoNaoRecebidoSegmento : function (segmentoNaoRecebidoId) {
 
-						$( "#dialog-excluir" ).dialog({
+						$( "#dialog-excluir-cota" ).dialog({
 							resizable: false,
 							height:170,
 							width:380,
@@ -540,7 +540,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 							value : $('#tipoSegmentoProduto option:selected',segmentoNaoRecebidoController.workspace).val()
 						});
 						
-							$( "#dialog-novo").dialog({
+							$( "#dialog-novo-cota").dialog({
 								resizable: false,
 								height:170,
 								width:380,
@@ -764,6 +764,9 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						if($("#numeroCotaFiltro1", segmentoNaoRecebidoController.workspace).val()=="" && $("#nomeCotaFiltro1", segmentoNaoRecebidoController.workspace).val()==""){						
 					           var erros = new Array();
 					           erros[0] = "Informe Cota/Nome para pesquisa.";
+
+					           segmentoNaoRecebidoController.popularSegmentosNaoRecebemCota();
+					           
 					           exibirMensagemDialog('WARNING',   erros,"");                
 					           $("#numeroCotaFiltro1", segmentoNaoRecebidoController.workspace).val("");
 					           $("#nomeCotaFiltro1", segmentoNaoRecebidoController.workspace).val("");

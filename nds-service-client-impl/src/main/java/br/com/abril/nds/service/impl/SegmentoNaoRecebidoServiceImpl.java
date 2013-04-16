@@ -49,7 +49,7 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 	@Override
 	public List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
 	    if (segmentoNaoRecebidoRepo.isCotaJaInserida(filtro.getTipoSegmentoProdutoId(), filtro.getNumeroCota())) {
-		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Cota Duplicada!"));
+		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota Duplicada!"));
 	    }
 	    return  segmentoNaoRecebidoRepo.obterCotasNaoEstaoNoSegmento(filtro);
 	}

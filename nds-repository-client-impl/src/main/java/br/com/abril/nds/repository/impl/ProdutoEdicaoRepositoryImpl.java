@@ -1251,7 +1251,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
 		hql.append(" sum(lancamento.reparte) as repartePrevisto, ");
-		hql.append(" sum(ifnull(estoqueProduto.qtdeDevolucaoFornecedor,0)  - movimentos.qtde) as qtdeVendas,");
+		hql.append(" sum(movimentos.qtde - coalesce(estoqueProduto.qtdeDevolucaoFornecedor, 0)) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
 		hql.append(" produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
@@ -1286,7 +1286,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
 		} 
 		
-		hql.append("GROUP BY produtoEdicao.numeroEdicao");
+		hql.append(" GROUP BY produtoEdicao.numeroEdicao ");
+		hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
