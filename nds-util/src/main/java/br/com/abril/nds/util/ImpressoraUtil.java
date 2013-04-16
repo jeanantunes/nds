@@ -2,15 +2,13 @@ package br.com.abril.nds.util;
 
 import java.awt.print.Book;
 import java.awt.print.PageFormat;
+import java.awt.print.Paper;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -50,33 +48,44 @@ public class ImpressoraUtil {
     }
 	
 	public void imprimirRPCEstrategia(byte[] saida, PrintService impressora)throws PrintException, IOException, PrinterException{
-//		DocPrintJob dpj = ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao().createPrintJob();
-		
-//		InputStream fis = new ByteArrayInputStream(saida)
-//	
-//		FileChannel fc = fis.getChannel();
-//		ByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
 		PDFFile curFile=new PDFFile(ByteBuffer.wrap(saida));// Create PDF Print Page
-		PDFPrintPage pages=null;
-		pages = new PDFPrintPage(curFile);
+		PDFPrintPage pages=new PDFPrintPage(curFile);
 		PrinterJob pjob = PrinterJob.getPrinterJob();
 
-        pjob.setPrintService(ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao());
+        pjob.setPrintService(impressora);
 
-//			pjob.setJobName("C:\\arquivos_cobranca_boleto222.pdf");
+		Paper PAPER = new Paper();  
+
+		PageFormat pformat= pjob.defaultPage();
+		
+		double x = PAPER.getImageableX()/2.5;
+		double y = -150;
+		double w = pformat.getWidth()*2;
+		double h = pformat.getHeight();
+		
+		System.out.println("x "+x);
+		System.out.println("y "+y);
+		System.out.println("w "+w);
+		System.out.println("h "+h);
+
+		PAPER.setImageableArea(x, y, w, h);
+		
+		pformat.setPaper(PAPER);  
+		pformat.setOrientation(PageFormat.PORTRAIT);
+		
 		Book book = new Book();
-		PageFormat pformat = PrinterJob.getPrinterJob().defaultPage();
 		book.append(pages, pformat, curFile.getNumPages());
 		pjob.setPageable(book);
 
 		// print
 		PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
 
-
 		// Print it
 		pjob.print(aset);
 	}
+	
+//	public static final  A4 = new PageSize(595, 842);
 	
 	public static PrintService getImpressoraLocalConfiguradaPadrao(){
 		return PrinterJob.getPrinterJob().getPrintService();
@@ -84,16 +93,16 @@ public class ImpressoraUtil {
 	
 	public static PrintService getImpressoraLocalNaoMatricialNomePadrao(){
 //		PropertiesUtil propertiesUtil = new PropertiesUtil(Constantes.NOME_PROPERTIES_NDS_CLIENT);
-//		return getImpressoraByName(propertiesUtil.getPropertyValue(ImpressaoConstantes.NOME_PADRAO_IMPRESSORA_NAO_MATRICIAL));
-		
-		return getImpressoraByName("HDU16400");
+		String propertyValue = "NDS_NAO_MATRICIAL";//propertiesUtil.getPropertyValue(ImpressaoConstantes.NOME_PADRAO_IMPRESSORA_NAO_MATRICIAL);
+		System.out.println("Nome Impressora: "+propertyValue);
+		return getImpressoraByName(propertyValue);
 	}
 	
 	public static PrintService getImpressoraLocalMatricialNomePadrao(){
 //		PropertiesUtil propertiesUtil = new PropertiesUtil(Constantes.NOME_PROPERTIES_NDS_CLIENT);
-//		return getImpressoraByName(propertiesUtil.getPropertyValue(ImpressaoConstantes.NOME_PADRAO_IMPRESSORA_MATRICIAL));
-		
-		return getImpressoraByName("IMPRESSORA_DGB_PADRAO_MATRICIAL");
+		String propertyValue = "NDS_MATRICIAL";//propertiesUtil.getPropertyValue(ImpressaoConstantes.NOME_PADRAO_IMPRESSORA_MATRICIAL);
+		System.out.println("Nome Impressora: "+propertyValue);
+		return getImpressoraByName(propertyValue);
 	}
 	
 	public static PrintService getImpressoraByName(String nomeImpressora){

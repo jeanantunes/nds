@@ -39,8 +39,6 @@ public class ImpressaoFinalizacaoEncalheApplet extends JApplet{
 							
 							//Impressão laser
 							new ImpressoraUtil().imprimirRPCEstrategia(Base64.decode(conteudoImpressao), ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao());
-							
-//						new ImpressoraUtil().imprimir(conteudoImpressao.getBytes(), ImpressoraUtil.getImpressoraLocalNaoMatricialNomePadrao());
 						}
 					}
 

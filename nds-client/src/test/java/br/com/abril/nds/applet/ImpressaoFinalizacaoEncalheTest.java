@@ -50,7 +50,7 @@ public class ImpressaoFinalizacaoEncalheTest {
 		InputStream fis;
 		try {
 
-			fis = new FileInputStream(new File("C:\\temp\\arquivos_cobranca_boleto.pdf"));
+			fis = new FileInputStream(new File("C:\\temp\\arquivosCobranca4.pdf"));
 			byte[] buffer = new byte[fis.available()];
 			int buff = 0;
 			while((buff = fis.available()) != 0){
