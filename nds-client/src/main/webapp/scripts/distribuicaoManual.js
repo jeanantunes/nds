@@ -261,21 +261,11 @@ var distribuicaoManual = $.extend(true, {
 			exibirMensagem("WARNING",["Gere o estudo antes de fazer a análise."]);
 			return;
 		} else {
-			var dados = [];
-			dados.push({name: 'selecionado.codigoProduto', value: $('#codigoProduto').html()});
-			dados.push({name: 'selecionado.nomeProduto', value: $('#nomeProduto').html()});
-			dados.push({name: 'selecionado.edicao', value: $('#numeroEdicao').html()});
-			dados.push({name: 'selecionado.periodo', value: $('#periodicidadeProduto').html()});
-			dados.push({name: 'selecionado.classificacao', value: $('#classificacao').html()});
-			dados.push({name: 'selecionado.estudo', value: $('#estudo').html()});
-			dados.push({name: 'selecionado.estudoLiberado', value: false});
-			$('#workspace').tabs({load : function(event, ui) {
-				histogramaPosEstudoController.matrizSelecionado = dados;
-				histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(dados);
-			}});
-			$('#workspace').tabs('addTab', 'Análise', pathTela + '/matrizDistribuicao/histogramaPosEstudo');
+			// Deve ir direto para EMS 2031
+			matrizDistribuicao.redirectToTelaAnalise('#distribuicaoManualContent','#distribuicaoManualTelaAnalise', $('#estudo').html());
 		}
 	}
+	
 });
 
 //@ sourceURL=distribuicaoManual.js

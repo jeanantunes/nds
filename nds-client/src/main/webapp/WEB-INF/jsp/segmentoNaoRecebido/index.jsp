@@ -57,7 +57,7 @@
             <td width="20"><input type="radio" name="filtrar" id="radio2" value="radio" onclick="segmentoNaoRecebidoController.filtroPorCota();" /></td>
             <td width="35">Cota</td>
             <td width="772">
-            	<table width="756" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorSegmento" style="display:none;">
+            	<table width="756" border="0" cellpadding="2" cellspacing="1" id="segmentoNaoRecebido_filtroPorSegmento" class="filtro filtroPorSegmento" style="display:none;">
           			<tr>
 			            <td width="64">Segmento:</td>
 			            <td width="214">
@@ -89,7 +89,7 @@
         
         
         
-        <table width="756" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
+        <table width="756" border="0" cellpadding="2" cellspacing="1" id="segmentoNaoRecebido_filtroPorCota" class="filtro filtroPorCota" style="display:none;">
             <tr>
            	  <td width="31">Cota:</td>
                 <td width="90">
@@ -113,7 +113,7 @@
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display:noneA;">
       
-      <div class="porSegmento" style="display:none;">
+      <div class="porSegmento" id="segmentoNaoRecebido_porSegmento" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
        	  <legend>Cotas que Não Recebem Segmento</legend>
         
@@ -157,7 +157,7 @@
       </fieldset>
       </div>
       
-      <div class="porCota" style="display:none;">
+      <div class="porCota" id="segmentoNaoRecebido_porCota" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
        	  <legend>Segmentos que Não Recebem Cota</legend>
         
@@ -176,7 +176,7 @@
            	  <td width="60">Segmento:</td>
               <td width="210">
               	<input name="lstSegmento" type="text" onkeyup="segmentoNaoRecebidoController.autoCompletarSegmentoPorNome('#lstSegmento')"  
-              	onblur="segmentoNaoRecebidoController.porSegmento();" style="width:200px;" id="lstSegmento"/>
+              	 style="width:200px;" id="lstSegmento"/>
               </td>
             </tr>
           </table>
@@ -190,8 +190,6 @@
       </div>
       <div class="linha_separa_fields">&nbsp;</div>
        
-
-        
 
     
     </div>
