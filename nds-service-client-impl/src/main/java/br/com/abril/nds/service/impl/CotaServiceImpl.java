@@ -1040,7 +1040,7 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Número da Cota não deve ser nulo.");
 		}
 		
-		Cota cota  = cotaRepository.buscarPorId(idCota);
+		Cota cota  = cotaRepository.obterCotaComBaseReferencia(idCota);
 		
 		if (cota == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
@@ -1150,25 +1150,13 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setInicioPeriodo(baseReferenciaCota.getInicioPeriodo());
 		cotaDTO.setFimPeriodo(baseReferenciaCota.getFinalPeriodo());
 		
-		if(baseReferenciaCota.getReferenciasCota()!= null && !baseReferenciaCota.getReferenciasCota().isEmpty()){
-			
-			List<ReferenciaCota> referenicasCota = new ArrayList<ReferenciaCota>();
-			referenicasCota.addAll(baseReferenciaCota.getReferenciasCota());
-			
-			if(referenicasCota.size() > 0){
-				cotaDTO.setHistoricoPrimeiraCota(referenicasCota.get(0).getCota().getNumeroCota());
-				cotaDTO.setHistoricoPrimeiraPorcentagem(referenicasCota.get(0).getPercentual());
+		if (baseReferenciaCota.getReferenciasCota() != null	&& !baseReferenciaCota.getReferenciasCota().isEmpty()) {
+
+			BigDecimal totalPerc = BigDecimal.ZERO;
+			for (ReferenciaCota refCota : baseReferenciaCota.getReferenciasCota()) {
+				totalPerc = totalPerc.add(refCota.getPercentual());
 			}
-			
-			if(referenicasCota.size() > 1){
-				cotaDTO.setHistoricoSegundaCota(referenicasCota.get(1).getCota().getNumeroCota());
-				cotaDTO.setHistoricoSegundaPorcentagem(referenicasCota.get(1).getPercentual());
-			}
-			
-			if(referenicasCota.size() > 2){
-				cotaDTO.setHistoricoTerceiraCota(referenicasCota.get(2).getCota().getNumeroCota());
-				cotaDTO.setHistoricoTerceiraPorcentagem(referenicasCota.get(2).getPercentual());
-			}
+			cotaDTO.setPercentualCotaBase(totalPerc);
 		}
 	}
 	

@@ -18,6 +18,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DesenglobacaoRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.DesenglobacaoService;
+import br.com.abril.nds.util.DateUtil;
 
 @Service
 public class DesenglobacaoServiceImpl implements DesenglobacaoService {
@@ -41,6 +42,7 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 			dto.setPorcentagemCota(desenglobacao.getEnglobadaPorcentagemCota());
 			dto.setNomeUsuario(desenglobacao.getResponsavel().getNome());
 			dto.setDataAlteracao(desenglobacao.getDataAlteracao());
+			dto.setHora(DateUtil.formatarHoraMinuto(desenglobacao.getDataAlteracao()));
 			dtoList.add(dto);
 		}
 		return dtoList;

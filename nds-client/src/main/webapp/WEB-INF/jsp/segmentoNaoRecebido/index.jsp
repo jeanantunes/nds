@@ -16,7 +16,7 @@
 </div>
 
 
-<div id="dialog-novo" title="Novo">
+<div id="dialog-novo" title="Incluir Segmento">
 	<p>Confirma esta inclusão?</p>
 </div>
 
@@ -149,11 +149,6 @@
         
         	<table class="segmentoCotaGrid"></table>
             
-            
-            <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=XLS&tipoExportacao=segmentos_nao_recebem_cota"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-			<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=segmentos_nao_recebem_cota"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-	
       		 <span class="bt_novos" title="Exceções Segmentos e Parciais">            	
             	<a href="javascript:;" onclick="$('#workspace').tabs('addTab', 'Exceção de Segmentos e Parciais', '${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/chamarTelaExcecaoSegmentoParcias')"> 
             		<img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" hspace="5" border="0" />Exceções Segmentos e Parciais</a>

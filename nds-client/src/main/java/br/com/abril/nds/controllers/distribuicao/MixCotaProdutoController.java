@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.distribuicao;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -50,6 +49,7 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @SuppressWarnings("restriction")
@@ -378,11 +378,9 @@ public class MixCotaProdutoController extends BaseController {
 	@Post
 	@Path("/uploadArquivoLote")
 
-	public void uploadExcel(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFile) throws FileNotFoundException, IOException{
-		
-		File file = XlsUploaderUtils.upLoadArquivo(excelFile);
-		
-		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, file );
+	public void uploadExcel(UploadedFile excelFile) throws FileNotFoundException, IOException{
+
+		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, excelFile);
 		
 		List<MixCotaDTO> mixCotaDTOInconsistente = importarMixCotaDTO(listMixExcel);
 		

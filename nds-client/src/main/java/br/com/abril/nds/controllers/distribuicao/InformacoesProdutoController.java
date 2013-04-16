@@ -166,17 +166,17 @@ public class InformacoesProdutoController extends BaseController {
 	
 	@Post
 	@Path("/buscarItemRegiao")
-	public void buscarItemRegiao (){
+	public void buscarItemRegiao (Long idEstudo){
 		
-		TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> tableModel = gridItemRegiao();
+		TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> tableModel = gridItemRegiao(idEstudo);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 	
 	}
 	
-	private TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> gridItemRegiao () {
+	private TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> gridItemRegiao (Long idEstudo) {
 		
-		List<InfoProdutosItemRegiaoEspecificaDTO> itensRegiao = infoProdService.buscarItemRegiao();
+		List<InfoProdutosItemRegiaoEspecificaDTO> itensRegiao = infoProdService.buscarItemRegiao(idEstudo);
 		
 		TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>> tableModel = new TableModel<CellModelKeyValue<InfoProdutosItemRegiaoEspecificaDTO>>();
 	

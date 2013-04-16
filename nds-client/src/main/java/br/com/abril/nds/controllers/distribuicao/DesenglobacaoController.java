@@ -102,13 +102,8 @@ public class DesenglobacaoController extends BaseController {
 		FiltroDesenglobacaoDTO filtro = (FiltroDesenglobacaoDTO) session.getAttribute("filtroDesengloba");
 		List<DesenglobacaoDTO> cotasDesenglobadas = service.obterDesenglobacaoPorCota(filtro.getCotaDto().getNumeroCota().longValue());
 			
-			if(cotasDesenglobadas.isEmpty()) {
-				throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada não obteve resultado.");
-			}
-			
 			FileExporter.to("ENGLOBACAO_DESENGLOBACAO", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					cotasDesenglobadas, DesenglobacaoDTO.class, this.httpResponse);
-			
 			result.nothing();
 	}
 }

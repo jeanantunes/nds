@@ -135,7 +135,13 @@
       </span>
       </td> 
 	  <td width="439" valign="top"><table width="439" border="0" cellspacing="2" cellpadding="2">
-      <tr class="linhas">
+	  <tr class="linhas">
+        <td width="127" nowrap="nowrap"><strong>Cota Base:</strong></td>
+        <td id="percentualCotaBase">
+			
+		</td>
+      </tr>
+     <!-- <tr class="linhas">
         <td width="127" nowrap="nowrap"><strong>Cota Base:</strong></td>
         <td><table width="348" border="0" cellspacing="1" cellpadding="2">
           <tr>
@@ -147,8 +153,8 @@
             	<input type="text" name="cotaDTO.fimPeriodo" id="periodoCotaAteCPF" style="width:80px;" /></td>
           </tr>
         </table></td>
-      </tr>
-      <tr class="linhas">
+      </tr> -->
+      <!-- <tr class="linhas">
         <td valign="top"><strong>Utilizar Histórico:</strong></td>
         <td width="374"><table width="348" border="0" cellspacing="1" cellpadding="2">
           <tr>
@@ -176,7 +182,7 @@
             	<input type="text" name="cotaDTO.historicoTerceiraPorcentagem" id="historicoTerceiraPorcentagemCPF" maxlength="4" style="width:50px;"/></td>
           </tr>
         </table></td>
-      </tr>
+      </tr> -->
 	</table>
  </td>
   </tr>

@@ -1,7 +1,8 @@
 var ajusteReparteController = $.extend(true, {
 
+	
 init : function() {
-		
+	
 	$('#formaAjusteAjusteSegmento').change(function(){
 		ajusteReparteController.filtroPorSegmento();
 	});
@@ -100,7 +101,13 @@ init : function() {
 		height : 290
 	});
 	ajusteReparteController.carregarCotasEmAjuste();
+	
 	var isAjusteSegmento=false;
+	
+	var closeDialogPopUpSegmento1=true;
+	var closeDialogPopUpSegmento2=true;
+	var closeDialogPopUpSegmento3=true;
+	
 	},
 	
 	// PREPROCESS	
@@ -163,26 +170,31 @@ init : function() {
 		
 		var data = ajusteReparteController.getDados();
 
+		// Testar essa modificação!! 12/04 10hrs
+		
 		if (ajusteReparteController.isAjusteSegmento == true){
 			if(ajusteReparteController.get("segmento1") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento1")});
+				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")});
 			}
 			if(ajusteReparteController.get("segmento2") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento2")});
+				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")});
 			}
 			if(ajusteReparteController.get("segmento3") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento3")});
+				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")});
 			}
 			
-			if(ajusteReparteController.get("tipoSegmento1") != "Selecione..."){
-				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")})
-			}
-			if(ajusteReparteController.get("tipoSegmento2") != "Selecione..."){
-				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")})
-			}
-			if(ajusteReparteController.get("tipoSegmento3") != "Selecione..."){
-				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")})
-			}
+//			if(ajusteReparteController.get("tipoSegmento1") != "Selecione..."){
+//				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")})
+//			}
+//			if(ajusteReparteController.get("tipoSegmento2") != "Selecione..."){
+//				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")})
+//			}
+//			if(ajusteReparteController.get("tipoSegmento3") != "Selecione..."){
+//				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")})
+//			}
 			
 			$.postJSON(contextPath + "/distribuicao/ajusteReparte/incluirAjusteSegmento", 
 					data,
@@ -244,13 +256,15 @@ init : function() {
 		  data.push({name:"ajusteDTO.numeroCota",  value: ajusteReparteController.get("numeroCota")});
 		  data.push({name:"ajusteDTO.nomeCota",  value: ajusteReparteController.get("nomeCota")});
 		  data.push({name:"ajusteDTO.formaAjuste",  value: ajusteReparteController.getRadio()});
-		  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicado()});
 		  data.push({name:"ajusteDTO.motivoAjuste",  value: ajusteReparteController.get("motivoAjuste")});
 		  data.push({name:"ajusteDTO.dataInicioCadastro",  value: ajusteReparteController.get("dataInicio")});
 		  data.push({name:"ajusteDTO.dataFimCadastro",  value: ajusteReparteController.get("dataFim")});
 		  
-		  if($('input:radio[name=formaAjuste]:checked').val() == "AJUSTE_SEGMENTO"){
+		  if(ajusteReparteController.getRadio() == "AJUSTE_SEGMENTO"){
 			  this.isAjusteSegmento = true;
+		  }else{
+			  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicado()});
+			  this.isAjusteSegmento = false;
 		  }
 		  
 		  return data;
@@ -263,13 +277,15 @@ init : function() {
 		  data.push({name:"ajusteDTO.numeroCota",  value: ajusteReparteController.get("numeroCotaEditar")});
 		  data.push({name:"ajusteDTO.nomeCota",  value: ajusteReparteController.get("nomeCotaEditar")});
 		  data.push({name:"ajusteDTO.formaAjuste",  value: ajusteReparteController.getRadioEditar()});
-		  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicadoEditar()});
 		  data.push({name:"ajusteDTO.motivoAjuste",  value: ajusteReparteController.get("motivoAjusteEditar")});
 		  data.push({name:"ajusteDTO.dataInicioCadastro",  value: ajusteReparteController.get("dataInicioEditar")});
 		  data.push({name:"ajusteDTO.dataFimCadastro",  value: ajusteReparteController.get("dataFimEditar")});
 		  
-		  if($('input:radio[name=formaAjuste]:checked').val() == "AJUSTE_SEGMENTO"){
+		  if(ajusteReparteController.getRadioEditar() == "AJUSTE_SEGMENTO"){
 			  this.isAjusteSegmento = true;
+		  }else{
+			  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicadoEditar()});
+			  this.isAjusteSegmento = false;
 		  }
 		  
 		  return data;
@@ -384,6 +400,7 @@ init : function() {
 						ajusteReparteController.popularPopUpEditarSegmento(result);
 						ajusteReparteController.filtroPorSegmentoEditar();
 					}else{
+						ajusteReparteController.limparPopUpEditar();
 						ajusteReparteController.popularPopUpEditar(result);
 					}
 		});
@@ -553,13 +570,119 @@ init : function() {
 			},
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );	
+					ajusteReparteController.validarPopUpDeSegmentos();			
+					
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+					ajusteReparteController.validarPopUpDeSegmentos();
 				}
 			}
 		});
+	},
+	
+	validarPopUpDeSegmentos : function(){
+		
+		this.closeDialogPopUpSegmento1 = true;
+		this.closeDialogPopUpSegmento2 = true;
+		this.closeDialogPopUpSegmento3 = true;
+		
+		if((ajusteReparteController.get("tipoSegmento1") != "Selecione...")){
+			ajusteReparteController.formatarAjusteAplicadoSegmento1();
+		}else{
+			ajusteReparteController.validarFechamentoPopUpAjuste(ajusteReparteController.get("tipoSegmento1"), ajusteReparteController.get("segmento1"), 1);
+		}
+		
+		if((ajusteReparteController.get("tipoSegmento2") != "Selecione...")){
+			ajusteReparteController.formatarAjusteAplicadoSegmento2();
+		}else{
+			ajusteReparteController.validarFechamentoPopUpAjuste(ajusteReparteController.get("tipoSegmento2"), ajusteReparteController.get("segmento2"), 2);
+		}
+		
+		if((ajusteReparteController.get("tipoSegmento3") != "Selecione...")){
+			ajusteReparteController.formatarAjusteAplicadoSegmento3();
+		}else{
+			ajusteReparteController.validarFechamentoPopUpAjuste(ajusteReparteController.get("tipoSegmento3"), ajusteReparteController.get("segmento3"), 3);
+		}
+		
+			
+		if((this.closeDialogPopUpSegmento1 == true) && (this.closeDialogPopUpSegmento2 == true) && (this.closeDialogPopUpSegmento3 == true)){
+			$("#dialog-segmentos").dialog("close");
+		}
+	},
+	
+	validarTipoSegmento1 : function(){
+		
+		tipoSegmento = ajusteReparteController.get("tipoSegmento1");
+		
+		var tpSeg = new Array();
+		
+		tpSeg[0] = ajusteReparteController.get("tipoSegmento2");
+		tpSeg[1] = ajusteReparteController.get("tipoSegmento3");
+		
+		for (var i=0;i<tpSeg.length;i++)
+		{ 
+			if (tipoSegmento == tpSeg[i] && (tpSeg[i] != "Selecione...")){
+		        
+		           var erros = new Array();
+		           erros[0] = "Este tipo de segmento já foi selecionado anteriormente.";
+		           exibirMensagemDialog('WARNING',   erros,"");
+
+		        	   this.closeDialogPopUpSegmento1 = false;
+
+		           return;
+		    
+			}
+		}
+	},
+	
+	validarTipoSegmento2 : function(){
+	
+		tipoSegmento = ajusteReparteController.get("tipoSegmento2");
+		
+		var tpSeg = new Array();
+		
+		tpSeg[0] = ajusteReparteController.get("tipoSegmento1");
+		tpSeg[1] = ajusteReparteController.get("tipoSegmento3");
+		
+		for (var i=0;i<tpSeg.length;i++)
+		{ 
+			if (tipoSegmento == tpSeg[i] && (tpSeg[i] != "Selecione...")){
+		        
+		           var erros = new Array();
+		           erros[0] = "Este tipo de segmento já foi selecionado anteriormente.";
+		           exibirMensagemDialog('WARNING',   erros,"");
+
+		        	   this.closeDialogPopUpSegmento1 = false;
+
+		           return;
+		    
+			}
+		}
+	},
+	
+	validarTipoSegmento3 : function(){
+		
+		tipoSegmento = ajusteReparteController.get("tipoSegmento3");
+		
+		var tpSeg = new Array();
+		
+		tpSeg[0] = ajusteReparteController.get("tipoSegmento1");
+		tpSeg[1] = ajusteReparteController.get("tipoSegmento2");
+		
+		for (var i=0;i<tpSeg.length;i++)
+		{ 
+			if (tipoSegmento == tpSeg[i] && (tpSeg[i] != "Selecione...")){
+		        
+		           var erros = new Array();
+		           erros[0] = "Este tipo de segmento já foi selecionado anteriormente.";
+		           exibirMensagemDialog('WARNING',   erros,"");
+
+		        	   this.closeDialogPopUpSegmento1 = false;
+
+		           return;
+		    
+			}
+		}
 	},
 	
 	mostrarSegmentosEditar : function() {
@@ -574,10 +697,10 @@ init : function() {
 			},
 			buttons: {
 				"Confirmar": function() {
-					$( this ).dialog( "close" );	
+					ajusteReparteController.validarPopUpDeSegmentos();
 				},
 				"Cancelar": function() {
-					$( this ).dialog( "close" );
+					ajusteReparteController.validarPopUpDeSegmentos();
 				}
 			}
 		});
@@ -799,6 +922,27 @@ init : function() {
 	    }
 	},
 	
+	validarFechamentoPopUpAjuste : function (tpSegmento, indiceAjuste, id){
+		
+		if(indiceAjuste != ""){
+			if(tpSegmento == "Selecione..."){        
+		           var erros = new Array();
+		           erros[0] = "Informe um tipo de segmento para o índice de ajuste inserido.";
+		           exibirMensagemDialog('WARNING',   erros,"");
+
+		           if(id == 1){
+		        	   this.closeDialogPopUpSegmento1 = false;
+		           }
+		           if(id == 2){
+		        	   this.closeDialogPopUpSegmento2 = false;
+		           }
+		           if(id == 3){
+		        	   this.closeDialogPopUpSegmento3 = false;
+		           }
+		           return;
+		    }
+		}
+	},
 	
 		formatarAjusteAplicadoSegmento1 : function (){
 			var indiceAjuste1 = $("#segmento1").val();
@@ -806,8 +950,10 @@ init : function() {
 			if(indiceAjuste1 < 0.5 || indiceAjuste1 > 1.5){        
 		           var erros = new Array();
 		           erros[0] = "O Índice deve estar entre 0.5 e 1.5.";
-		           exibirMensagemDialog('WARNING',   erros,"");                
-		           $("#segmento1").val("");
+		           exibirMensagemDialog('WARNING',   erros,"");
+
+		           this.closeDialogPopUpSegmento1 = false;
+		           
 		           return;
 		    }
 		},
@@ -818,8 +964,10 @@ init : function() {
 			if(indiceAjuste2 < 0.5 || indiceAjuste2 > 1.5){        
 		           var erros = new Array();
 		           erros[0] = "O Índice deve estar entre 0.5 e 1.5.";
-		           exibirMensagemDialog('WARNING',   erros,"");                
-		           $("#segmento2").val("");
+		           exibirMensagemDialog('WARNING',   erros,"");
+		           
+		           this.closeDialogPopUpSegmento2 = false;
+		           
 		           return;
 		    }
 		},
@@ -830,8 +978,10 @@ init : function() {
 			if(indiceAjuste3 < 0.5 || indiceAjuste3 > 1.5){        
 		           var erros = new Array();
 		           erros[0] = "O Índice deve estar entre 0.5 e 1.5.";
-		           exibirMensagemDialog('WARNING',   erros,"");                
-		           $("#segmento3").val("");
+		           exibirMensagemDialog('WARNING',   erros,"");
+		           
+		           this.closeDialogPopUpSegmento3 = false;
+		           
 		           return;
 		    }
 		},

@@ -85,13 +85,13 @@ var regiaoController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 80,
 				sortable : true,
 				align : 'left',
 			}, {
 				display : 'Data de Lançamento',
-				name : 'dtLancamento',
+				name : 'dataLcto',
 				width : 130,
 				sortable : true,
 				align : 'left'
@@ -103,7 +103,7 @@ var regiaoController = $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Classificação',
-				name : 'classificacao',
+				name : 'descricaoClassificacao',
 				width : 120,
 				sortable : true,
 				align : 'left'
@@ -529,13 +529,13 @@ var regiaoController = $.extend(true, {
 			return resultado;
 		}
 		
-//		$.each(resultado.rows, function(index, row) {
-//			
-//			var checkAll = '<input type="checkbox" name="cotaSegmentoSelected" id="cotaSegmentoSelected" checked value='+row.cell.numeroCota+'>';
-//			
-//			row.cell.sel = checkAll;
-//			
-//		});
+		$.each(resultado.rows, function(index, row) {
+			
+			var checkAll = '<input type="checkbox" name="prodNMaioresSelected" id="prodNMaioresSelected" checked value='+row.cell.numeroEdicao+'>';
+			
+			row.cell.sel = checkAll;
+			
+		});
 		
 		$(".lstProdutosGrid", regiaoController.workspace).show();
 		
@@ -1006,15 +1006,51 @@ var regiaoController = $.extend(true, {
 	filtroNMaiores : function(){
 		$('.lstProdutosGrid').show();
 		
-		$("#lstProdutosGrid").flexOptions({
+		$(".lstProdutosGrid").flexOptions({
 			url: contextPath + "/distribuicao/regiao/buscarProduto",
 			dataType : 'json',
 			params : regiaoController.obterFiltroProdNMaiores()
 		});
 		
-		$("#lstProdutosGrid").flexReload();
-	},
+		$(".lstProdutosGrid").flexReload();
 		
+		/*
+		 * $(".cotasRegiaoGrid", this.workspace).flexOptions({
+			url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
+			dataType : 'json',
+			params:[{
+				name : 'filtro.id', value:segmento
+			}]
+		});
+		 */
+		
+		//########################################
+		
+		//teste.js
+		
+		// guardo nessa variável todos os parametros (Produtos e quantidadeCota)
+//		regiaoController.parametrosPesquisaNMaiores;
+//		
+//		regiaoController.parametrosPesquisaNMaiores = {
+//				"codigo" : "00000001"
+//		};
+//		
+//		
+//		regiaoController.parametrosPesquisaNMaiores = {
+//				name : "codigo", value : "00000001",
+//				name : "codigo", value : "00000001",
+//				name : "codigo", value : "00000001",
+//				name : "codigo", value : "00000001"
+//		};
+		
+		
+		//########################################		
+	},
+
+	
+	
+	
+	
 //		var codigo = $("#idCodigo").val();
 //		var nomeProduto = $("#nomeProduto").val();
 //		var classificacao = $("#comboClassificacao").val();
@@ -1030,6 +1066,7 @@ var regiaoController = $.extend(true, {
 //		});
 //			
 //		$(".lstProdutosGrid", this.workspace).flexReload();
+	
 		/*
 		 * 
 		 * acabar de arrumar os grid, preprocess e função do botão pesquisar!
@@ -1037,34 +1074,8 @@ var regiaoController = $.extend(true, {
 		 * 
 		 */
 	
-	/*
-	 * 	mostrarPorSegmento : function() {
-		$('.gridsegmentos').show();
-	
-		$("#segmentosGrid").flexOptions({
-			url: contextPath + "/distribuicao/regiao/buscarPorSegmento",
-			dataType : 'json',
-			params : regiaoController.obterFiltroSegmento()
-		});
-		
-		$("#segmentosGrid").flexReload();
-	},
-obterFiltroSegmento : function(){
-		
-		var data = [];
-		
-		var segmento = $("#comboSegmento option:selected").val();
-		var limite = $("#qtdCotas").val();
-		
-		data.push({name:'filtro.idSegmento', value: segmento});
-		data.push({name:'filtro.limiteBuscaPorSegmento', value: limite});
-		
-		return data;
-	},
-	 */
-	
 	obterFiltroProdNMaiores : function(){
-		
+
 		var data = [];
 		
 		var codigo = $("#idCodigo").val();
@@ -1073,7 +1084,13 @@ obterFiltroSegmento : function(){
 		
 		data.push({name : 'filtro.codigoProduto', value:codigo});
 		data.push({name : 'filtro.nome', value:nomeProduto});
-		data.push({name : 'filtro.idTipoClassificacaoProduto', value:classificacao});
+		
+		if(classificacao != "Selecione..."){
+			data.push({name : 'filtro.idTipoClassificacaoProduto', value:classificacao});
+		}else{
+			classificacao = 0;
+			data.push({name : 'filtro.idTipoClassificacaoProduto', value:classificacao});
+		}
 		
 		return data;
 	},
@@ -1207,6 +1224,50 @@ obterFiltroSegmento : function(){
 					$("input[type=checkbox][name='cotaSegmentoSelected']:checked").each(function() {
 						if(this.value.length>0)
 							cotas.push({name:'cotas', value:this.value});
+					});
+
+					// adicionando a regi�o
+					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
+					
+					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
+							cotas, 
+							function(result) {
+
+						var tipoMensagem = result.tipoMensagem;
+						var listaMensagens = result.listaMensagens;
+						
+						if (tipoMensagem && listaMensagens) 
+							exibirMensagem(tipoMensagem, listaMensagens);
+						
+						$(".cotasRegiaoGrid", this.workspace).flexReload();
+					});
+			},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+
+	},
+	
+	
+	// add Produtos no Grid NMaiores, para pesquisa de cotas 
+
+	addProdutosParaPesquisa : function() {
+		$("#dialog-AddProdutos").dialog({
+			resizable : false,
+			height : 150,
+			width : 200,
+			modal : true,
+			buttons : {"Confirmar" : function() {
+					$(this).dialog("close");
+					$("#effect").show("highlight", {}, 1000, callback);
+					
+					var produtos = [];
+
+					$("input[type=checkbox][name='prodNMaioresSelected']:checked").each(function() {
+						if(this.value.length>0)
+							produtos.push({name:'Produtos', value:this.value});
 					});
 
 					// adicionando a regi�o
@@ -1738,6 +1799,11 @@ obterFiltroSegmento : function(){
 	checkAllSegmento : function() {
 		var valor = $("#todosSegmento").is(":checked");
 		$("input[type=checkbox][name='cotaSegmentoSelected']").attr("checked", valor);
+	},
+	
+	checkAllNMaiores : function() {
+		var valor = $("#selTodosProdutos").is(":checked");
+		$("input[type=checkbox][name='prodNMaioresSelected']").attr("checked", valor);
 	},
 	
 	

@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.distribuicao;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -52,6 +51,8 @@ public class RegiaoController extends BaseController {
 	private Result result;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroCotasRegiao";
+	
+	private static final String FILTRO_SESSION_ATTRIBUTE_NMaiores = "FiltroProdutosNMaiores";
 
 	@Autowired
 	private RegiaoService regiaoService;
@@ -312,10 +313,8 @@ public class RegiaoController extends BaseController {
 	@Path("/addLote")
 	public void addCotasEmLote (UploadedFile xls, Long idRegiao) throws IOException {  
 		List<Integer> numerosCota = new ArrayList<Integer>();
-		
-		File x = XlsUploaderUtils.upLoadArquivo(xls); 
 
-		List<AddLoteRegiaoDTO> listaDto = XlsUploaderUtils.getBeanListFromXls(AddLoteRegiaoDTO.class, x);
+		List<AddLoteRegiaoDTO> listaDto = XlsUploaderUtils.getBeanListFromXls(AddLoteRegiaoDTO.class, xls);
 		
 		for (AddLoteRegiaoDTO list : listaDto) {
 			numerosCota.add(list.getNumeroCota());
@@ -406,13 +405,13 @@ public class RegiaoController extends BaseController {
 	
 	private void tratarFiltroNMaiores(FiltroRegiaoNMaioresProdDTO filtroAtual) {
 		
-		FiltroRegiaoNMaioresProdDTO filtroSession = (FiltroRegiaoNMaioresProdDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroRegiaoNMaioresProdDTO filtroSession = (FiltroRegiaoNMaioresProdDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_NMaiores);
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
 			
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_NMaiores, filtroAtual);
 	}
 	
 	private void validarEntradaDeVariasCotas(List<Integer> cotas, Long idRegiao) {

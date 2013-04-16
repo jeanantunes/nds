@@ -334,4 +334,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	List<ProdutoEdicao> pesquisar(String codigoProduto, String nomeProduto,
 			Long edicao);
 
+	void insereVendaRandomica(ProdutoEdicao produtoEdicao);
+
 }

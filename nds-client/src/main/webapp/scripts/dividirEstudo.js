@@ -24,6 +24,15 @@ var dividirEstudo = $.extend(true, {
 	percentualDivisaoSegundoEstudo.numeric();
 	quantidadeReparte.numeric();
 	
+	
+		if(typeof(matrizDistribuicao)=="object"){
+			var estudo = estudoParaDivisao;
+			$(codigoProduto).val(estudo.codigoProduto);
+			$(numeroEstudoOriginal).val(estudo.estudo);
+			$(nomeProduto).val(estudo.nomeProduto);
+			$(edicaoProduto).val(estudo.edicao);
+//			$(dataDistribuicao).val($("#datepickerDe").val());
+		}
     },
 
     gerarDivisao : function() {
@@ -321,5 +330,17 @@ var dividirEstudo = $.extend(true, {
 	    dataLancamentoSegundoEstudo.val(response.divisaoEstudoDTO.dataLancamentoSegundoEstudo);
 	}, function() {
 	});
+    },
+    
+    tratarPercentualDivisao:function(input,target){
+    	
+    	var perc1 =0;
+    	if(input.value!=""){
+    		perc1 = parseInt(input.value);
+    	}
+    	
+    	$(target).val(100-perc1);
+    	
     }
 }, BaseController);
+

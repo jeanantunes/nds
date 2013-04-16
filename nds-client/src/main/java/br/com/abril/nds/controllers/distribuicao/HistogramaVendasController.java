@@ -20,19 +20,19 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.TipoClassificacaoProdutoService;
+import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
@@ -83,46 +83,51 @@ public class HistogramaVendasController extends BaseController {
 		result.include("componenteList", ComponentesPDV.values());
 	}
 	
+	@Autowired
+	private RegiaoService regiaoService;
+	
 	@Post
 	@Path("/carregarElementos")
 	public void carregarElementos(String componente){
 		List<ItemDTO<Long, String>> resultList = new ArrayList<ItemDTO<Long, String>>();
 		
 		switch (ComponentesPDV.values()[Integer.parseInt(componente)]) {
-		case TipoPontodeVenda:
+		case TIPO_PONTO_DE_VENDA:
 			for(TipoPontoPDV tipo:pdvService.obterTiposPontoPDVPrincipal()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
-		case Area_de_Influência:
+		case AREA_DE_INFLUENCIA:
 			for(AreaInfluenciaPDV tipo:pdvService.obterAreasInfluenciaPDV()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
 
-		case Bairro:
+		case BAIRRO:
 			for(String tipo:enderecoService.obterBairrosCotas()){
 				resultList.add(new ItemDTO(tipo,tipo));
 			}
 			break;
-		case Distrito:
+		case DISTRITO:
 			for(UfEnum tipo:UfEnum.values()){
 				resultList.add(new ItemDTO(tipo.getSigla(),tipo.getSigla()));
 			}
 			break;
-		case GeradorDeFluxo:
+		case GERADOR_DE_FLUXO:
 			for(TipoGeradorFluxoPDV tipo:pdvService.obterTodosTiposGeradorFluxo()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
-		case CotasAVista:
+		case COTAS_A_VISTA:
 			
 			break;
-		case CotasNovasRetivadas:
+		case COTAS_NOVAS_RETIVADAS:
 			
 			break;
-		case Região:
-			//todo: EMS 2004
+		case REGIAO:
+			for (RegiaoDTO regiao : regiaoService.buscarRegiao()) {
+				resultList.add(new ItemDTO(regiao.getIdRegiao(), regiao.getNomeRegiao()));
+			}
 			break;
 		default:
 			break;

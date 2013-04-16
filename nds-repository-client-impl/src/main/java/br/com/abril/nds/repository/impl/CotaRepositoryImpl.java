@@ -28,6 +28,7 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -49,6 +50,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
+import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -68,6 +70,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaSocio;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
@@ -91,6 +94,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	public String queryCountSuspensaoCota;
 	
 
+	@Autowired
+	private BaseReferenciaCotaRepository baseReferenciaCotaRepository;
 	/**
 	 * Construtor.
 	 */
@@ -2482,7 +2487,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		switch (componente) {
-		case TipoPontodeVenda:
+		case TIPO_PONTO_DE_VENDA:
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.segmentacao as segmentacao ");
 			hql.append(" LEFT JOIN segmentacao.tipoPontoPDV tipoPontoPDV ");
@@ -2491,7 +2496,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("codigoTipoPontoPDV", Long.parseLong(elemento));
 
 			break;
-		case Area_de_Influência:
+		case AREA_DE_INFLUENCIA:
 
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.segmentacao as segmentacao ");
@@ -2501,7 +2506,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("codigoAreaInfluenciaPDV", Long.parseLong(elemento));
 			break;
 
-		case Bairro:
+		case BAIRRO:
 
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.enderecos enderecosPdv ");
@@ -2511,7 +2516,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("bairroPDV", elemento);
 
 			break;
-		case Distrito:
+		case DISTRITO:
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.enderecos enderecosPdv ");
 			hql.append(" LEFT JOIN enderecosPdv.endereco endereco ");
@@ -2520,7 +2525,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("ufSigla", elemento);
 
 			break;
-		case GeradorDeFluxo:
+		case GERADOR_DE_FLUXO:
 
 			hql.append(" LEFT JOIN cota.pdvs pdvs ");
 			hql.append(" LEFT JOIN pdvs.geradorFluxoPDV geradorFluxoPdvs ");
@@ -2530,18 +2535,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			parameters.put("idGeradorFluxoPDV",	Long.parseLong(elemento));
 
 			break;
-		case CotasAVista:
+		case COTAS_A_VISTA:
 			hql.append(" LEFT JOIN cota.parametroCobranca as parametroCobranca ");
 			
 			whereParameter.append(" parametroCobranca.tipoCota = :tipoCota AND");
 			parameters.put("tipoCota",TipoCota.A_VISTA);
 			
 			break;
-		case CotasNovasRetivadas:
+		case COTAS_NOVAS_RETIVADAS:
 			whereParameter.append(" cota.id in (SELECT cotaBase.cota.id FROM CotaBase as cotaBase) AND ");
 			
 			break;
-		case Região:
+		case REGIAO:
 			whereParameter.append(" cota.id in (SELECT registro.cota.id FROM RegistroCotaRegiao as registro WHERE regiao.id = :regiaoId) AND ");
 			parameters.put("regiaoId",Long.parseLong(elemento));
 			
@@ -2766,6 +2771,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		cotas.add(cota);
 	    }
 	    return cotas;
+	}
+
+	/**
+	 * Método foi criado para o ajuste 0153-Fase2
+	 */
+	@Override
+	public Cota obterCotaComBaseReferencia(Long idCota) {
+
+		Cota cota = (Cota)super.getSession().load(Cota.class,idCota);
+		
+		BaseReferenciaCota base = (BaseReferenciaCota)super.getSession().createCriteria(BaseReferenciaCota.class).add(Restrictions.eq("cota.id", idCota)).uniqueResult();
+		cota.setBaseReferenciaCota(base);
+		
+		return cota;
 	}
 
 }

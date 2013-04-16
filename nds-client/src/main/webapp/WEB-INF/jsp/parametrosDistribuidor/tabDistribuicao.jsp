@@ -16,7 +16,7 @@
 				<td width="81" align="center">
 					<input name="parametrosDistribuidor.vendaMediaMais" type="text" 
 					id="vendaMediaMais" value="${parametrosDistribuidor.vendaMediaMais}" 
-					style="width: 50px; text-align: center;" />
+					style="width: 50px; text-align: center;" maxlength="2"/>
 				</td>
 			</tr>
 			<tr>
@@ -41,7 +41,7 @@
 					<input name="parametrosDistribuidor.percentualMaximoFixacao"
 					id="percentualMaximoFixacao"
 					value="${parametrosDistribuidor.percentualMaximoFixacao}" 
-					type="text" style="width: 50px; text-align: center;" />
+					type="text" style="width: 50px; text-align: center;" maxlength="2"/>
 				</td>
 			</tr>
 		</table>
@@ -65,13 +65,13 @@
 					<input name="parametrosDistribuidor.listClassificacaoCota[0].valorDe" 
 					id="listClassificacaoCota0.valorDe" 
 					value="${parametrosDistribuidor.listClassificacaoCota[0].valorDe}"
-					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
 				</td>
 				<td width="80" align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[0].valorAte"
 					id="listClassificacaoCota0.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[0].valorAte}"
-					type="text" style="width: 70px; text-align: right;" />
+					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
 				</td>
 			</tr>
 			<tr class="class_linha_2">
@@ -83,13 +83,13 @@
 					<input name="parametrosDistribuidor.listClassificacaoCota[1].valorDe"
 					id="listClassificacaoCota1.valorDe"
 					value="${parametrosDistribuidor.listClassificacaoCota[1].valorDe}"
-					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
 				</td>
 				<td width="80" align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[1].valorAte"
 					id="listClassificacaoCota1.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[1].valorAte}"
-					type="text" style="width: 70px; text-align: right;" />
+					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
 				</td>
 			</tr>
 			<tr class="class_linha_1">
@@ -101,13 +101,13 @@
 					<input name="parametrosDistribuidor.listClassificacaoCota[2].valorDe"
 					id="listClassificacaoCota2.valorDe"
 					value="${parametrosDistribuidor.listClassificacaoCota[2].valorDe}"
-					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
 				</td>
 				<td align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[2].valorAte"
 					id="listClassificacaoCota2.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[2].valorAte}"
-					type="text" style="width: 70px; text-align: right;" />
+					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
 				</td>
 			</tr>
 			<tr class="class_linha_2">
@@ -119,13 +119,13 @@
 					<input name="parametrosDistribuidor.listClassificacaoCota[3].valorDe"
 					id="listClassificacaoCota3.valorDe"
 					value="${parametrosDistribuidor.listClassificacaoCota[3].valorDe}"
-					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
 				</td>
 				<td align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[3].valorAte"
 					id="listClassificacaoCota3.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[3].valorAte}"
-					type="text" style="width: 70px; text-align: right;" />
+					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
 				</td>
 			</tr>
 			<tr class="class_linha_1">
@@ -137,13 +137,13 @@
 					<input name="parametrosDistribuidor.listClassificacaoCota[4].valorDe"
 					id="listClassificacaoCota4.valorDe"
 					value="${parametrosDistribuidor.listClassificacaoCota[4].valorDe}"
-					type="text" disabled="disabled" style="width: 70px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
 				</td>
 				<td align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[4].valorAte"
 					id="listClassificacaoCota4.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[4].valorAte}"
-					type="text" style="width: 70px; text-align: right;" />
+					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
 				</td>
 			</tr>
 		</table>
