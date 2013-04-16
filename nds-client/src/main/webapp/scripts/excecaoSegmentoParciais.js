@@ -273,7 +273,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			ProdutosNaoRecebidosGrid : {
 				gridName : "excessaoBGrid",
 				Url : {
-					/*urlDefault : contextPath + "/distribuicao/excecaoSegmentoParciais/pesquisarProdutosNaoRecebidosPelaCota",*/
+					urlDefault : contextPath + "/distribuicao/excecaoSegmentoParciais/pesquisarProdutosNaoRecebidosPelaCota",
 				},
 				comments : "Grid (Produtos Não Recebidos) que fica na parte direita da tela que é responsável pela listagem dos produtos para inserção na cota",
 				reload : excecaoSegmentoParciaisController.Grids.Util.reload,

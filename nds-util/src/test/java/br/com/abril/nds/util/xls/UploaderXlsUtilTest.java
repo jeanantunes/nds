@@ -20,13 +20,13 @@ public class UploaderXlsUtilTest {
 	 * 
 	 */
 	public static void main(String[] args) throws URISyntaxException {		
-		URL url = ClassLoader.getSystemResource("cota-template.xlsx");
-		List<CotaTemplateDTO> lista = XlsUploaderUtils.getBeanListFromXls(CotaTemplateDTO.class, new File(url.toURI()));
-		for (CotaTemplateDTO cotaTemplateDTO : lista) {
-			System.out.println(cotaTemplateDTO.getCodigoProduto());
-			System.out.println(cotaTemplateDTO.getNumeroCota());
-			System.out.println(cotaTemplateDTO.getReparteMinimo());
-			System.out.println(cotaTemplateDTO.getReparteMaximo());
-		}
+//		URL url = ClassLoader.getSystemResource("cota-template.xlsx");
+//		List<CotaTemplateDTO> lista = XlsUploaderUtils.getBeanListFromXls(CotaTemplateDTO.class, new File(url.toURI()));
+//		for (CotaTemplateDTO cotaTemplateDTO : lista) {
+//			System.out.println(cotaTemplateDTO.getCodigoProduto());
+//			System.out.println(cotaTemplateDTO.getNumeroCota());
+//			System.out.println(cotaTemplateDTO.getReparteMinimo());
+//			System.out.println(cotaTemplateDTO.getReparteMaximo());
+//		}
 	}
 }
