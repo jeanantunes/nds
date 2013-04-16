@@ -2,18 +2,15 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
@@ -27,6 +24,7 @@ import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -192,9 +190,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		StringBuilder hql = new StringBuilder();
 		
 		if(count){
-			hql.append(" SELECT count(distinct divida.id )");
+			hql.append(" SELECT count(divida.id )");
 		}else{
-			hql.append(" SELECT distinct new ").append(GeraDividaDTO.class.getCanonicalName())
+			hql.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
 			.append("(")
 				.append(" box.codigo || '-'|| box.nome,")
 				.append(" rota.descricaoRota,")
@@ -239,13 +237,13 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		.append(" JOIN divida.cobranca cobranca ")
 		.append(" JOIN divida.consolidado consolidado ")
 		.append(" JOIN cobranca.cota cota ")
-		.append(" JOIN cota.box box ")
-		.append(" JOIN cota.pdvs pdv ")
-		.append(" JOIN cota.pessoa pessoa ")
-		.append(" JOIN cota.parametroCobranca parametroCobranca ")
-		.append(" JOIN pdv.rotas rotaPdv  ")
-		.append(" JOIN rotaPdv.rota rota  ")
-		.append(" JOIN rota.roteiro roteiro ")
+		.append(" left JOIN cota.box box ")
+		.append(" left JOIN cota.pdvs pdv ")
+		.append(" left JOIN cota.pessoa pessoa ")
+		.append(" left JOIN cota.parametroCobranca parametroCobranca ")
+		.append(" left JOIN pdv.rotas rotaPdv  ")
+		.append(" left JOIN rotaPdv.rota rota  ")
+		.append(" left JOIN rota.roteiro roteiro ")
 		
 		.append(" WHERE ")
 		
@@ -277,6 +275,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		if(filtro.getIdRoteiro()!= null ){
 			hql.append(" AND roteiro.id =:roteiro ");
 		}
+		
+		hql.append(" GROUP BY cobranca.id ");
 		
 		return hql.toString();
 	}
@@ -704,7 +704,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      * {@inheritDoc}
      */
     @Override
-    public Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
+    public List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
 	    Objects.requireNonNull(data, "Data para sumarização das dívidas a receber EM não pode ser nula!");
 	    return sumarizarDividas(data, TipoDivida.DIVIDA_A_RECEBER);
     }
@@ -713,7 +713,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      * {@inheritDoc}
      */
 	@Override
-    public Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
+    public List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
 	    Objects.requireNonNull(data, "Data para sumarização das dívidas à vencer APÓS não pode ser nula!");
         return sumarizarDividas(data, TipoDivida.DIVIDA_A_VENCER);
     }
@@ -728,21 +728,25 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      *            data base para sumarização das dívidas
      * @param tipoDivida
      *            tipo da dívida para sumarização
-     * @return Mapa com as dívidas sumarizadas pelo tipo de cobrança
+     * @return Lista com as dívidas sumarizadas
      */
 	@SuppressWarnings("unchecked")
-	private Map<TipoCobranca, SumarizacaoDividasDTO> sumarizarDividas(Date data, TipoDivida tipoDivida) {
+	private List<SumarizacaoDividasDTO> sumarizarDividas(Date data, TipoDivida tipoDivida) {
 	    boolean isDividaReceber = TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida);
 	    
 	    Map<String, Object> parametros = new HashMap<String, Object>();
 	    parametros.put("data", data);
 	    parametros.put("statusCobrancaPago", StatusCobranca.PAGO);
 	    
-	    StringBuilder hql = new StringBuilder("select new map(cobranca.tipoCobranca as tipoCobranca, ");
-	    hql.append("sum(divida.valor) as total, ");
-	    hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaPago then divida.valor else 0 end) as pago, ");
+	    StringBuilder hql = new StringBuilder("select new ");
+	    hql.append(SumarizacaoDividasDTO.class.getCanonicalName());
+	    hql.append("(cobranca.dataVencimento as data,");
+	    hql.append("'").append(tipoDivida).append("'").append(" as tipoSumarizacao, ");
+	    hql.append(" cobranca.tipoCobranca as tipoCobranca, ");
+	    hql.append(" sum(cobranca.valor) as total, ");
+	    hql.append(" sum(case when cobranca.statusCobranca = :statusCobrancaPago then cobranca.valor else 0 end) as pago, ");
 	    if (isDividaReceber) {
-	        hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaNaoPago then divida.valor else 0 end) as inadimplencia) ");
+	        hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaNaoPago then cobranca.valor else 0 end) as inadimplencia) ");
 	        parametros.put("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO);
 	    } else {
 	        //Dívidas à vencer, sem possibilidade de verificação de inadimplência 
@@ -752,28 +756,21 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    hql.append("where cobranca.dataVencimento ");
         hql.append(isDividaReceber ? " = " : " > ");
 	    hql.append(" :data ");
-	    hql.append("group by cobranca.tipoCobranca");
 	    
 	    Query query = getSession().createQuery(hql.toString());
 	    for (Entry<String, Object> entry : parametros.entrySet()) {
 	        query.setParameter(entry.getKey(), entry.getValue());
 	    }
 	    
-	    List<Map<String, Object>> maps = query.list();
-	    Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacoes = new EnumMap<TipoCobranca, SumarizacaoDividasDTO>(TipoCobranca.class);
+	    List<SumarizacaoDividasDTO> lista = query.list();
 	    
-	    for (Map<String, Object> map : maps) {
-	        
-	        TipoCobranca tipoCobranca = (TipoCobranca) map.get("tipoCobranca");
-	        BigDecimal total = (BigDecimal) map.get("total");
-	        BigDecimal pago = (BigDecimal) map.get("pago");
-	        BigDecimal inadimplencia = (BigDecimal) map.get("inadimplencia");
-	        
-	        SumarizacaoDividasDTO sumarizacao = new SumarizacaoDividasDTO(data, tipoDivida, tipoCobranca, total, pago, inadimplencia);
-	        sumarizacoes.put(tipoCobranca, sumarizacao);
+	    if (lista != null && lista.size() == 1 &&
+	    		lista.get(0).getData() == null){
+	    	
+	    	return new ArrayList<SumarizacaoDividasDTO>();
 	    }
 	    
-	    return sumarizacoes;
+	    return lista;
 	}
     
 	/**
@@ -781,7 +778,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@SuppressWarnings("unchecked")
     @Override
-    public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+    public List<Cobranca> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
 	    Objects.requireNonNull(data, "Data para consulta das dívidas à receber EM não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_RECEBER, paginacao, false);
 	    return query.list();
@@ -793,7 +790,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@SuppressWarnings("unchecked")
     @Override
-    public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+    public List<Cobranca> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
 	    Objects.requireNonNull(data, "Data para consulta das dívidas à vencer APÓS não pode ser nula!");
 	    Query query = queryDividas(data, TipoDivida.DIVIDA_A_VENCER, paginacao, false);
         return query.list();
@@ -838,17 +835,21 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    boolean isDividaReceber = TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida);
 	    
 	    StringBuilder hql = new StringBuilder("select ");
-	    hql.append(count ? "count(divida) " : "divida ");
-	    hql.append("from Divida divida ");
-	    hql.append("left join divida.cobranca cobranca ");
+	    hql.append(count ? "count(cobranca.id) " : "cobranca ");
+	    hql.append("from Cobranca cobranca ");
+	    hql.append(" join cobranca.cota as cota ");
 	    hql.append("where cobranca.dataVencimento ");
 	    hql.append(isDividaReceber ? " = " : " > ");
 	    hql.append(" :data ");
+	    hql.append(" and cobranca.statusCobranca = :status ");
+	    
 	    if (!count) {
-	        hql.append("order by divida.cota.numeroCota ");
+	        hql.append("order by cota.numeroCota ");
 	    }
+	    
 	    Query query = getSession().createQuery(hql.toString());
 	    query.setParameter("data", data);
+	    query.setParameter("status", StatusCobranca.NAO_PAGO);
 	    
 	    if (!count && paginacao != null) {
 	        query.setFirstResult(paginacao.getPosicaoInicial());
