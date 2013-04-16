@@ -296,7 +296,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		.append( getClausulaFromWhereQueryCotaAusentes(isSomenteCotasSemAcao) );
 		 
-		 
+		
+		if("acao".equals(sortname)) {
+			sortname = "fechado";
+		}
 		 
 		if (sortname != null && sortorder != null) {
 			sql.append("  ORDER BY " + sortname + " " + sortorder);
@@ -592,7 +595,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		hql.append("   SELECT  ");
 		
-		hql.append("   sum( mec.qtde * mec.valoresAplicados.precoComDesconto ) ");
+		hql.append("   sum( coalesce(mec.qtde, 0) * coalesce(mec.valoresAplicados.precoComDesconto, 0) ) ");
 		
 		getQueryAnalitico(filtro, hql);	
 		
@@ -631,9 +634,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		hql.append("	box.nome as boxEncalhe, 	");
 		
-		hql.append("   sum( mec.qtde * mec.valoresAplicados.precoComDesconto ) as total ");
+		hql.append("   sum( coalesce(mec.qtde, 0)  *  coalesce(mec.valoresAplicados.precoComDesconto, 0)  ) as total ");
 		
-		hql.append("   , coalesce(div.status, 'EM_ABERTO') as statusCobranca ");
+		hql.append("   , coalesce(div.status, 'POSTERGADA') as statusCobranca ");
 		
 		getQueryAnalitico(filtro, hql);	
 		
@@ -754,13 +757,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		hql.append("     JOIN controle.box  box ");
 
-		hql.append("     JOIN controle.conferenciasEncalhe confEnc ");
+		hql.append("     LEFT JOIN controle.conferenciasEncalhe confEnc ");
 		
-		hql.append("     JOIN confEnc.movimentoEstoqueCota mec ");
+		hql.append("     LEFT JOIN confEnc.movimentoEstoqueCota mec ");
 
-		hql.append("     JOIN mec.produtoEdicao pe ");
+		hql.append("     LEFT JOIN mec.produtoEdicao pe ");
 		
-		hql.append("     JOIN pe.produto pro ");
+		hql.append("     LEFT JOIN pe.produto pro ");
 		
 		hql.append("  	LEFT JOIN pe.descontoLogistica as descLogProdEdicao ");
 		

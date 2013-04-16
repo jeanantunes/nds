@@ -2074,9 +2074,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					
 				} else {
 					
-					BigInteger qtdeOriginal = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
+					BigInteger qtdeOriginal = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
 					
-					estoqueProduto.setQtde(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
+					estoqueProduto.setQtdeDevolucaoEncalhe(qtdeOriginal.subtract(movimentoEstoque.getQtde()));
 
 					estoqueProdutoRepository.alterar(estoqueProduto);
 					
@@ -3201,4 +3201,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
 		}
 	}
+	
+	public static void main (String...strings){
+		
+		float x = (float) 12.00000000000000;
+		
+		System.out.println(new BigDecimal(x));
+		
+		
+	}
+	
 }

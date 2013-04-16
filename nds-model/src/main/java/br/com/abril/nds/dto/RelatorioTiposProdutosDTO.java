@@ -42,13 +42,21 @@ public class RelatorioTiposProdutosDTO implements Serializable {
 	public void setPrecoCapa(BigDecimal precoCapa) {
 		this.precoCapa = precoCapa;
 	}
+	/**
+	 * @return the faturamento
+	 */
 	public BigDecimal getFaturamento() {
-		if(faturamento == null)
+		if (this.faturamento == null) {
 			return BigDecimal.ZERO;
+		}
+		
 		return faturamento;
 	}
+	/**
+	 * @param faturamento the faturamento to set
+	 */
 	public void setFaturamento(BigDecimal faturamento) {
-		this.faturamento = (BigDecimal) faturamento;
+		this.faturamento = faturamento;
 	}
 	public String getTipoProduto() {
 		return tipoProduto;

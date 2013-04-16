@@ -613,7 +613,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							consolidadoFinanceiroCota, vlMovFinanTotal, vlMovPostergado, usuario, null, dataOperacao);
 			
 			this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
-			this.movimentoFinanceiroCotaRepository.adicionar(movPost);
+			
+			if (movPost != null){
+				
+				this.movimentoFinanceiroCotaRepository.adicionar(movPost);
+			}
 			
 			return null;
 		}
@@ -894,26 +898,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			BigDecimal vlMovFinanTotal, BigDecimal vlMovFinanPostergado, Usuario usuario,
 			List<Integer> diasSemanaConcentracaoPagamento, Date dataOperacao) {
 		
-		
-
 		//gerar postergado
 		consolidadoFinanceiroCota.setValorPostergado(vlMovFinanPostergado);
-
-		
-		//gera movimento financeiro cota
-		MovimentoFinanceiroCota movimentoFinanceiroCota = new MovimentoFinanceiroCota();
 		
 		Calendar diaPostergado = Calendar.getInstance();
 		diaPostergado.setTime(dataOperacao);
 		diaPostergado.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca);
-		
-		movimentoFinanceiroCota.setData(diaPostergado.getTime());
-		movimentoFinanceiroCota.setDataCriacao(dataOperacao);
-		movimentoFinanceiroCota.setUsuario(usuario);
-		movimentoFinanceiroCota.setValor(vlMovFinanTotal.abs());
-		movimentoFinanceiroCota.setLancamentoManual(false);
-		movimentoFinanceiroCota.setCota(cota);
-		movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
 		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
@@ -949,11 +939,23 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			descPostergado = "Valor mínimo para dívida não atingido";
 		}
 		
-		movimentoFinanceiroCota.setMotivo(descPostergado);
+		//gera movimento financeiro cota
+		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
 		
-		movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-		
-		movimentoFinanceiroCota.setFornecedor(fornecedor);
+		if (vlMovFinanTotal != null && vlMovFinanTotal.compareTo(BigDecimal.ZERO) != 0){
+			
+			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
+			movimentoFinanceiroCota.setData(diaPostergado.getTime());
+			movimentoFinanceiroCota.setDataCriacao(dataOperacao);
+			movimentoFinanceiroCota.setUsuario(usuario);
+			movimentoFinanceiroCota.setValor(vlMovFinanTotal.abs());
+			movimentoFinanceiroCota.setLancamentoManual(false);
+			movimentoFinanceiroCota.setCota(cota);
+			movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
+			movimentoFinanceiroCota.setMotivo(descPostergado);
+			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
+			movimentoFinanceiroCota.setFornecedor(fornecedor);
+		}
 		
 		return movimentoFinanceiroCota;
 	}
