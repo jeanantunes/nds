@@ -2,6 +2,14 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 
 					init : function() {
 						
+						$('#lstSegmento').keyup(function(event){
+							
+							if($(event.target).val() == ""){
+								segmentoNaoRecebidoController.popularSegmentosBGrid();
+							}
+							
+						});
+						
 						// URLs utilizadas nas requisições
 						segmentoNaoRecebidoController.urlExcluirSegmentoNaoRecebido = contextPath + "/distribuicao/segmentoNaoRecebido/excluirSegmentoNaoRecebido";
 						
@@ -295,7 +303,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 
 					excluirSegmentoNaoRecebidoSegmento : function (segmentoNaoRecebidoId) {
 
-						$( "#dialog-excluir" ).dialog({
+						$( "#dialog-excluir-cota" ).dialog({
 							resizable: false,
 							height:170,
 							width:380,
@@ -540,7 +548,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 							value : $('#tipoSegmentoProduto option:selected',segmentoNaoRecebidoController.workspace).val()
 						});
 						
-							$( "#dialog-novo").dialog({
+							$( "#dialog-novo-cota").dialog({
 								resizable: false,
 								height:170,
 								width:380,
@@ -596,7 +604,6 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					         for (var i in flexGridClass){
 					        	 
 					        	// Fazendo uma nova requisição quando for reload Segundo filtro
-					        	//TODO
 					        	 if (flexGridClass[i] === "segmentosBGrid") {
 					        	 
 					        		 $(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexOptions(
@@ -751,19 +758,22 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					
 					
 					porSegmento : function(){
-						$('.porCota', segmentoNaoRecebidoController.workspace).hide();
-						$('.porSegmento', segmentoNaoRecebidoController.workspace).show();
+						$('#segmentoNaoRecebido_porCota', segmentoNaoRecebidoController.workspace).hide();
+						$('#segmentoNaoRecebido_porSegmento', segmentoNaoRecebidoController.workspace).show();
 						
 						segmentoNaoRecebidoController.pesquisarCotasNaoRecebemSegmento();
 					},
 					
 					porCota : function(){
-						$('.porCota', segmentoNaoRecebidoController.workspace).show();
-						$('.porSegmento', segmentoNaoRecebidoController.workspace).hide();
+						$('#segmentoNaoRecebido_porCota', segmentoNaoRecebidoController.workspace).show();
+						$('#segmentoNaoRecebido_porSegmento', segmentoNaoRecebidoController.workspace).hide();
 						
 						if($("#numeroCotaFiltro1", segmentoNaoRecebidoController.workspace).val()=="" && $("#nomeCotaFiltro1", segmentoNaoRecebidoController.workspace).val()==""){						
 					           var erros = new Array();
 					           erros[0] = "Informe Cota/Nome para pesquisa.";
+
+					           segmentoNaoRecebidoController.popularSegmentosNaoRecebemCota();
+					           
 					           exibirMensagemDialog('WARNING',   erros,"");                
 					           $("#numeroCotaFiltro1", segmentoNaoRecebidoController.workspace).val("");
 					           $("#nomeCotaFiltro1", segmentoNaoRecebidoController.workspace).val("");
@@ -805,16 +815,16 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					
 					
 					filtroPorCota : function(){
-						$('.filtroPorCota', segmentoNaoRecebidoController.workspace).show();
-						$('.filtroPorSegmento', segmentoNaoRecebidoController.workspace).hide();
-						$('.porSegmento', segmentoNaoRecebidoController.workspace).hide();
+						$('#segmentoNaoRecebido_filtroPorCota', segmentoNaoRecebidoController.workspace).show();
+						$('#segmentoNaoRecebido_filtroPorSegmento', segmentoNaoRecebidoController.workspace).hide();
+						$('#segmentoNaoRecebido_porSegmento', segmentoNaoRecebidoController.workspace).hide();
 						segmentoNaoRecebidoController.limparFiltroSegmento();
 					},
 					
 					filtroPorSegmento : function (){
-						$('.filtroPorCota', segmentoNaoRecebidoController.workspace).hide();
-						$('.filtroPorSegmento', segmentoNaoRecebidoController.workspace).show();
-						$('.porCota', segmentoNaoRecebidoController.workspace).hide();
+						$('#segmentoNaoRecebido_filtroPorCota', segmentoNaoRecebidoController.workspace).hide();
+						$('#segmentoNaoRecebido_filtroPorSegmento', segmentoNaoRecebidoController.workspace).show();
+						$('#segmentoNãoRecebido_porCota', segmentoNaoRecebidoController.workspace).hide();
 						segmentoNaoRecebidoController.limparFiltroCota();
 					},
 					

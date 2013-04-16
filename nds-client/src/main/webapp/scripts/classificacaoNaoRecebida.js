@@ -473,14 +473,14 @@
 			focusSelectRefField($("#radio", classificacaoNaoRecebidaController.workspace));
 			$("#radio", classificacaoNaoRecebidaController.workspace).attr("checked", true);
 			
-			$(document.body).keydown(function(e) {
-				
-				if(keyEventEnterAux(e)){
-					classificacaoNaoRecebidaController.porClassificacao();
-				}
-				
-				return true;
-			});
+//			$(document.body).keydown(function(e) {
+//				
+//				if(keyEventEnterAux(e)){
+//					classificacaoNaoRecebidaController.porClassificacao();
+//				}
+//				
+//				return true;
+//			});
 		});
 	},
 	
@@ -673,8 +673,8 @@
 	
 	//pesquisarPorCota
 	porCota : function porCota(){
-		$('.porCota', classificacaoNaoRecebidaController.workspace).show();
-		$('.porClassificacao', classificacaoNaoRecebidaController.workspace).hide();
+		$('#classificacaoNaoRecebida_porCota', classificacaoNaoRecebidaController.workspace).show();
+		$('#classificacaoNaoRecebida_porClassificacao', classificacaoNaoRecebidaController.workspace).hide();
 		
 		var grids = classificacaoNaoRecebidaController.Grids,
 		params = [];
@@ -693,8 +693,8 @@
 	},
 	
 	porClassificacao : function porClassificacao(){
-		$('.porCota', classificacaoNaoRecebidaController.workspace).hide();
-		$('.porClassificacao', classificacaoNaoRecebidaController.workspace).show();
+		$('#classificacaoNaoRecebida_porCota', classificacaoNaoRecebidaController.workspace).hide();
+		$('#classificacaoNaoRecebida_porClassificacao', classificacaoNaoRecebidaController.workspace).show();
 		
 		var grids = classificacaoNaoRecebidaController.Grids,
 		params = [];

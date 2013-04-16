@@ -170,26 +170,31 @@ init : function() {
 		
 		var data = ajusteReparteController.getDados();
 
+		// Testar essa modificação!! 12/04 10hrs
+		
 		if (ajusteReparteController.isAjusteSegmento == true){
 			if(ajusteReparteController.get("segmento1") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento1")});
+				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")});
 			}
 			if(ajusteReparteController.get("segmento2") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento2")});
+				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")});
 			}
 			if(ajusteReparteController.get("segmento3") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento3")});
+				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")});
 			}
 			
-			if(ajusteReparteController.get("tipoSegmento1") != "Selecione..."){
-				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")})
-			}
-			if(ajusteReparteController.get("tipoSegmento2") != "Selecione..."){
-				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")})
-			}
-			if(ajusteReparteController.get("tipoSegmento3") != "Selecione..."){
-				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")})
-			}
+//			if(ajusteReparteController.get("tipoSegmento1") != "Selecione..."){
+//				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")})
+//			}
+//			if(ajusteReparteController.get("tipoSegmento2") != "Selecione..."){
+//				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")})
+//			}
+//			if(ajusteReparteController.get("tipoSegmento3") != "Selecione..."){
+//				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")})
+//			}
 			
 			$.postJSON(contextPath + "/distribuicao/ajusteReparte/incluirAjusteSegmento", 
 					data,
@@ -251,13 +256,15 @@ init : function() {
 		  data.push({name:"ajusteDTO.numeroCota",  value: ajusteReparteController.get("numeroCota")});
 		  data.push({name:"ajusteDTO.nomeCota",  value: ajusteReparteController.get("nomeCota")});
 		  data.push({name:"ajusteDTO.formaAjuste",  value: ajusteReparteController.getRadio()});
-		  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicado()});
 		  data.push({name:"ajusteDTO.motivoAjuste",  value: ajusteReparteController.get("motivoAjuste")});
 		  data.push({name:"ajusteDTO.dataInicioCadastro",  value: ajusteReparteController.get("dataInicio")});
 		  data.push({name:"ajusteDTO.dataFimCadastro",  value: ajusteReparteController.get("dataFim")});
 		  
-		  if($('input:radio[name=formaAjuste]:checked').val() == "AJUSTE_SEGMENTO"){
+		  if(ajusteReparteController.getRadio() == "AJUSTE_SEGMENTO"){
 			  this.isAjusteSegmento = true;
+		  }else{
+			  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicado()});
+			  this.isAjusteSegmento = false;
 		  }
 		  
 		  return data;
@@ -270,13 +277,15 @@ init : function() {
 		  data.push({name:"ajusteDTO.numeroCota",  value: ajusteReparteController.get("numeroCotaEditar")});
 		  data.push({name:"ajusteDTO.nomeCota",  value: ajusteReparteController.get("nomeCotaEditar")});
 		  data.push({name:"ajusteDTO.formaAjuste",  value: ajusteReparteController.getRadioEditar()});
-		  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicadoEditar()});
 		  data.push({name:"ajusteDTO.motivoAjuste",  value: ajusteReparteController.get("motivoAjusteEditar")});
 		  data.push({name:"ajusteDTO.dataInicioCadastro",  value: ajusteReparteController.get("dataInicioEditar")});
 		  data.push({name:"ajusteDTO.dataFimCadastro",  value: ajusteReparteController.get("dataFimEditar")});
 		  
-		  if($('input:radio[name=formaAjuste]:checked').val() == "AJUSTE_SEGMENTO"){
+		  if(ajusteReparteController.getRadioEditar() == "AJUSTE_SEGMENTO"){
 			  this.isAjusteSegmento = true;
+		  }else{
+			  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicadoEditar()});
+			  this.isAjusteSegmento = false;
 		  }
 		  
 		  return data;
@@ -391,6 +400,7 @@ init : function() {
 						ajusteReparteController.popularPopUpEditarSegmento(result);
 						ajusteReparteController.filtroPorSegmentoEditar();
 					}else{
+						ajusteReparteController.limparPopUpEditar();
 						ajusteReparteController.popularPopUpEditar(result);
 					}
 		});

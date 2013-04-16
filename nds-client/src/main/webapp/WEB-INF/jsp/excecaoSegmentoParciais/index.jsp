@@ -104,7 +104,7 @@ function incluirSegmento() {
             <td width="49">Produto</td>
             <td width="781">
             <form id="filtroPrincipalCota">
-	            <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
+	            <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" id="excecaoSegmentoParciais_filtroPorCota" style="display:none;">
 		            <tr>
 		           	  <td width="30">Cota:</td>
 		                <td width="88">
@@ -119,7 +119,7 @@ function incluirSegmento() {
 	            </table>
             </form>
             <form id="filtroPrincipalProduto">
-          <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
+          <table width="771" border="0" cellpadding="2" cellspacing="1" id="excecaoSegmentoParciais_filtroPorProduto" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="42">Código:</td>
             <td width="65"><input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProdutoPrincipal" style="width:60px; float:left; margin-right:5px;"/></td>
@@ -143,7 +143,7 @@ function incluirSegmento() {
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display:block;">
       
-      <div class="porExcessao" style="display:none;">
+      <div class="porExcessao" id="excecaoSegmentoParciais_porExcessao" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:600px!important; margin-right:10px!important;">
        	  <legend>Cotas que Recebem a Publicação</legend>
         
@@ -173,7 +173,7 @@ function incluirSegmento() {
       </div>
       
       
-      <div class="porCota" style="display:none;">
+      <div class="porCota" id="excecaoSegmentoParciais_porCota" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:600px!important; margin-right:10px!important;">
        	  <legend>Produtos Parciais Recebidos</legend>
         
