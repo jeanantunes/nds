@@ -33,6 +33,7 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
 public class EMS0117MessageProcessor extends AbstractRepository implements
@@ -43,6 +44,9 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	private static final String INDICE_PESSOA_JURIDICA = "J";
 	private static final String INDICE_PESSOA_FISICA = "F";
@@ -188,9 +192,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 		if (cotas.isEmpty()) {
 
+			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+			
 			cota = new Cota();
-
-			cota.setInicioAtividade(new Date());
+			
+			cota.setInicioAtividade(dataOperacao);
 			cota.setNumeroCota(input.getCodCota());
 			cota.setPossuiContrato(false);
 						

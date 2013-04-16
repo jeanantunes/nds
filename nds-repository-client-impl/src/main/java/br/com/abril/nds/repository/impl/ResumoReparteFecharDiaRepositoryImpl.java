@@ -44,8 +44,11 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
            .append("expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim and lancamento.status <> :statusFuro)").toString();
 
         String templateHqlDiferenca =  new StringBuilder("(select sum(case when diferenca.tipoDiferenca = :%s then (diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) ")
-           .append("else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
-           .append("and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
+        	.append("else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
+	        .append("left join lancamentoDiferenca.movimentosEstoqueCota movimentosEstoqueCota left join lancamentoDiferenca.movimentoEstoque movimentoEstoque ")
+	        .append("where (movimentosEstoqueCota.status = :movimentoAprovado OR movimentoEstoque.status = :movimentoAprovado) ")
+	        .append("and diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
+	        .append("and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
 
         StringBuilder hql = new StringBuilder(" select sum(me.qtde * produtoEdicao.precoVenda) as totalReparte, ");
         
@@ -72,6 +75,8 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
            .append(" and produtoEdicao in ").append(templateHqlProdutoEdicaoExpedido);
  
         Query query = getSession().createQuery(hql.toString());
+        
+        query.setParameter("movimentoAprovado", StatusAprovacao.APROVADO);
         query.setParameter("data", data);
         query.setParameter("dataInicio", dataInicio);
         query.setParameter("dataFim", dataFim);
@@ -157,15 +162,16 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         Date dataInicio = DateUtil.removerTimestamp(data);
         Date dataFim = DateUtil.adicionarDias(dataInicio, 1);
         
-        String exemplaresDiferencaDe = "qtde * produtoEdicao.pacotePadrao";
-        String exemplaresDiferencaEm = "qtde";
+        String exemplaresDiferencaDe = "diferenca.qtde * produtoEdicao.pacotePadrao";
+        String exemplaresDiferencaEm = "diferenca.qtde";
         
         String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
            .append("join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
            .append("expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim and lancamento.status <> :statusFuro)").toString();
         
-        String templateHqlDiferenca = new StringBuilder("(select sum(%s) from Diferenca diferenca ") 
-           .append("where diferenca.dataMovimento = :data and diferenca.produtoEdicao.id = produtoEdicao.id and diferenca.tipoDiferenca = :%s) as %s ").toString();
+        
+        String templateHqlDiferenca = new StringBuilder("(select sum(%s) from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca left join lancamentoDiferenca.movimentosEstoqueCota movimentosEstoqueCota left join lancamentoDiferenca.movimentoEstoque movimentoEstoque ") 
+        	.append("where (movimentosEstoqueCota.status = :movimentoAprovado OR movimentoEstoque.status = :movimentoAprovado) and diferenca.dataMovimento = :data and diferenca.produtoEdicao.id = produtoEdicao.id and diferenca.tipoDiferenca = :%s) as %s ").toString();
         
         StringBuilder hql = new StringBuilder("select produtoEdicao.id as idProdutoEdicao, produto.codigo as codigo, ");
 				      hql.append("produto.nome as nomeProduto, ");
@@ -202,6 +208,8 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         hql.append("order by produto.codigo asc");
     
         Query query = getSession().createQuery(hql.toString());
+        
+        query.setParameter("movimentoAprovado", StatusAprovacao.APROVADO);
         query.setParameter("data", dataInicio);
         query.setParameter("dataInicio", dataInicio);
         query.setParameter("dataFim", dataFim);
