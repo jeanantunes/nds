@@ -821,7 +821,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					filtroPorSegmento : function (){
 						$('#segmentoNaoRecebido_filtroPorCota', segmentoNaoRecebidoController.workspace).hide();
 						$('#segmentoNaoRecebido_filtroPorSegmento', segmentoNaoRecebidoController.workspace).show();
-						$('#segmentoNãoRecebido_porCota', segmentoNaoRecebidoController.workspace).hide();
+						$('#segmentoNaoRecebido_porCota', segmentoNaoRecebidoController.workspace).hide();
 						segmentoNaoRecebidoController.limparFiltroCota();
 					},
 					
