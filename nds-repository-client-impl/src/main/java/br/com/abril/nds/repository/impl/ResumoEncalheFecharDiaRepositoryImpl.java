@@ -198,8 +198,12 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         .append(" and confEncalhe.controleConferenciaEncalheCota.status = :statusOperacao )  ").toString();
 	    
 	    String templateHqlDiferenca =  new StringBuilder("(select sum(case when diferenca.tipoDiferenca = :%s then (diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) ")
-        .append("else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
-        .append("and diferenca.lancamentoDiferenca.status in(:statusPerdaGanho) and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoEncalhe).append(") as %s ").toString();
+	    .append(" else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca  ")
+	    .append(" inner join diferenca.lancamentoDiferenca lancamentoDiferenca ")
+	    .append(" inner join lancamentoDiferenca.movimentoEstoque movimentoEstoque ")
+        .append(" where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
+        .append(" and movimentoEstoque.status = :movimentoAprovado ")
+        .append(" and lancamentoDiferenca.status in (:statusPerdaGanho) and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoEncalhe).append(") as %s ").toString();
 	    
         //TOTAL ENCALHE LÓGICO
         StringBuilder hql = new StringBuilder("select new map(sum(conferenciaEncalhe.qtde * produtoEdicao.precoVenda) as totalLogico, ");
@@ -235,6 +239,7 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("data", data);
+        query.setParameter("movimentoAprovado", StatusAprovacao.APROVADO);
         query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
         query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE);
         query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);

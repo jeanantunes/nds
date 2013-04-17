@@ -1296,7 +1296,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Map<String, Boolean> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 
-		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCotaRecolhimento(controleConferenciaEncalheCota, FormaComercializacao.CONSIGNADO);
+		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
+				controleConferenciaEncalheCota.getCota(),
+				controleConferenciaEncalheCota.getDataOperacao(),
+				controleConferenciaEncalheCota.getUsuario(),
+				controleConferenciaEncalheCota.getId(), 
+				FormaComercializacao.CONSIGNADO);
 
 		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
 		
