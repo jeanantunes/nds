@@ -131,10 +131,10 @@
           <tr>
             <td width="42">Código:</td>
             <td width="60"><input type="text" name="codigo" id="codigo" style="width:60px;"  maxlength="8"
-		            onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigo', '#produto', null , false);"
+		            onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigo', '#produto_hist', null , false);"
 		            /></td>
             <td width="47">Produto:</td>
-            <td width="140"><input type="text" name="produto" id="produto" style="width:140px;" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#'+this.id);" /></td>
+            <td width="140"><input type="text" name="produto" id="produto_hist" style="width:140px;" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#'+this.id);" /></td>
             <td width="38">Edição:</td>
             <td width="60"><input type="text" name="edicao" id="edicao" style="width:60px;"/></td>
             <td width="16"><span class="classPesquisar"><a href="javascript:histogramaVendasController.pesquisarFiltro();">&nbsp;</a></span></td>

@@ -358,6 +358,7 @@ var anaLiseHistogramaController = $.extend(true, {
 	},
 	
 	executarAnaliseHistoricoVenda:function(idx){
+		console.log(resultadoAnalise[idx].cell.idCotaStr);
 		var idCotaArray = resultadoAnalise[idx].cell.idCotaStr.split(',');
 		
 		url = contextPath + "/distribuicao/historicoVenda/analiseHistorico";
