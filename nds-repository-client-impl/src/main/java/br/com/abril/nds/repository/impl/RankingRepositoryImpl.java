@@ -1,6 +1,12 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -89,44 +95,39 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		return (retorno == null)?0L:retorno.longValue();
 	}
 	
-	public Long obterRankingProdutoCota(Long idCota,Long idProduto){
+	@SuppressWarnings("unchecked")
+	public Map<Long, Long> obterRankingProdutoCota(Long idCota){
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" select subRank.rankProduto ")
-			
-			.append(" from ( ")
-				
-				.append(" select @rankProduto \\:= @rankProduto+1 as rankProduto, sub.PRODUTO_ID  ")
-			
-				.append("  from ( ")
-					
-					.append(" select @rankProduto \\:= 0) as init, ")
-									
-					.append("  	(select  consolidado.PRODUTO_ID as PRODUTO_ID, consolidado.COTA_ID as COTA_ID ,sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as VALOR ")
-				
-					.append("    from view_consolidado_movimento_estoque_cota consolidado  ")
-					
-					.append("    where consolidado.COTA_ID = :idCota ")
-				
-					.append("    group by consolidado.PRODUTO_ID ")
-				
-					.append("    order by VALOR desc ")
-				
-					.append("   ) as sub ") 
-				
-				.append(" ) as subRank  ")
+		sql.append("  	select  consolidado.PRODUTO_EDICAO_ID as idProdutoEdicao, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
 		
-			.append(" where subRank.PRODUTO_ID = :idProduto");
+		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+		
+		.append("    where consolidado.COTA_ID = :idCota ")
 	
-		Query query  = getSession().createSQLQuery(sql.toString());
-		query.setParameter("idProduto", idProduto);
+		.append("    group by consolidado.PRODUTO_EDICAO_ID ")
+	
+		.append("    order by valor desc ");
+		
+		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("valor");
+		
 		query.setParameter("idCota", idCota);
 		
-		Number  retorno = (Number)  query.uniqueResult(); 
+		Map<Long, Long> mapRanking = new HashMap<>();
 		
-		return (retorno == null)?0L:retorno.longValue();
+		List<Object[]> resultList = query.list();
 		
+		long i = 1;
+		
+		for (Object[] result : resultList) {
+			
+			mapRanking.put((long) result[0], i++);
+		}
+		
+		return mapRanking;
 	}
 	
 	
