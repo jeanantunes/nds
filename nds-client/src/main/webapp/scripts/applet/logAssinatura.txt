@@ -1,11 +1,11 @@
 
-s k   117495 Tue Apr 16 15:22:08 BRT 2013 META-INF/MANIFEST.MF
+s k   117392 Tue Apr 16 21:21:48 BRT 2013 META-INF/MANIFEST.MF
 
       X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
       [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
-      117700 Tue Apr 16 15:22:08 BRT 2013 META-INF/IMPRESSA.SF
-        1364 Tue Apr 16 15:22:08 BRT 2013 META-INF/IMPRESSA.RSA
+      117597 Tue Apr 16 21:21:48 BRT 2013 META-INF/IMPRESSA.SF
+        1364 Tue Apr 16 21:21:48 BRT 2013 META-INF/IMPRESSA.RSA
            0 Mon Apr 15 18:42:40 BRT 2013 br/
            0 Mon Apr 15 18:42:40 BRT 2013 br/com/
            0 Mon Apr 15 18:42:40 BRT 2013 br/com/abril/
@@ -14,7 +14,6 @@ s k   117495 Tue Apr 16 15:22:08 BRT 2013 META-INF/MANIFEST.MF
            0 Tue Apr 16 10:53:52 BRT 2013 br/com/abril/nds/util/
            0 Mon Apr 15 18:42:36 BRT 2013 br/com/abril/nds/util/export/
            0 Mon Apr 15 18:44:12 BRT 2013 br/com/abril/nds/matricial/
-           0 Tue Apr 09 18:10:08 BRT 2013 resources/
            0 Mon Apr 15 16:40:24 BRT 2013 com/
            0 Mon Apr 15 16:40:24 BRT 2013 com/itextpdf/
            0 Mon Apr 15 16:40:24 BRT 2013 com/itextpdf/awt/
@@ -153,7 +152,7 @@ smk     1974 Mon Apr 15 18:42:36 BRT 2013 br/com/abril/nds/util/QuartzUtil.class
       X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
       [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
-smk     5193 Tue Apr 16 14:51:20 BRT 2013 br/com/abril/nds/util/ImpressoraUtil.class
+smk     5154 Tue Apr 16 21:12:04 BRT 2013 br/com/abril/nds/util/ImpressoraUtil.class
 
       X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
       [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
@@ -444,11 +443,6 @@ smk     2659 Tue Apr 16 12:41:24 BRT 2013 br/com/abril/nds/matricial/ImpressaoFi
       [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
 
 smk      994 Tue Apr 16 12:41:24 BRT 2013 br/com/abril/nds/matricial/ImpressaoFinalizacaoEncalheApplet.class
-
-      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
-      [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
-
-smk      318 Thu Apr 11 19:35:22 BRT 2013 resources/nds-client.properties
 
       X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
       [certificate is valid from 05/04/13 15:00 to 21/08/40 15:00]
