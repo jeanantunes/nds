@@ -16,6 +16,7 @@ import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.repository.CotaRepository;
@@ -268,6 +269,30 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	}
 	
 	/**
+	 * Verifica se a Cota possui Parametro de Cobranca e Forma de Cobranca cadastrados
+	 * @param cota
+	 * @return boolean
+	 */
+	private boolean cotaPossuiFormaCobranca(Cota cota){
+		
+		ParametroCobrancaCota pcc = cota.getParametroCobranca();
+		
+		if (pcc==null){
+			
+			return false;
+		}
+		else{
+			
+			if (pcc.getFormasCobrancaCota()==null || pcc.getFormasCobrancaCota().isEmpty()){
+				
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
 	 * Obtem FormaCobranca da Cota com os Parâmetros passados
 	 * @param idCota
 	 * @param idFornecedor
@@ -309,7 +334,8 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	}
 	
 	/**
-	 * Obtem FormaCobranca da Cota com os Parâmetros passados, caso não encontre, busca FormaCobranca do Distribuidor 
+	 * Obtem FormaCobranca da Cota com os Parâmetros passados. 
+	 * Caso não encontre e a cota não tenha FormaCobranca cadastrada, busca FormaCobranca do Distribuidor 
 	 * @param idCota
 	 * @param idFornecedor
 	 * @param data
@@ -340,6 +366,11 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 		FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota, idFornecedor, data, valor);
 
 		if (formaCobranca == null){
+			
+			if (cota!=null && this.cotaPossuiFormaCobranca(cota)){
+				
+				return null;
+			}
 			
 			formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor, data, valor);
 		}

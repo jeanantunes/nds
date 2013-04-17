@@ -97,10 +97,14 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		sql.append("	, ie.descricao, ie.extensao_arquivo as extensaoArquivo, ");
 		sql.append("	case when (le.status = 'S' and lem.nome_arquivo is null and ie.extensao_arquivo <> 'BANCO') then 'V' "); 
 		sql.append("	else coalesce(le.status, 'N') end as status ");
-		sql.append("	, le.data_inicio as dataInicio, lem.nome_arquivo as nomeArquivo ");
+		sql.append("	, le.data_inicio as dataInicio, lem.nome_arquivo as nomeArquivo, ");
+		sql.append("case when descricao like 'Prodin > NDS%' then 0 ");
+		sql.append("when descricao like 'MDC > NDS%' then 1 ");
+		sql.append("when descricao like 'NDS > MDC%' then 2 ");
+		sql.append("else 3 end as ordenacao ");
 		sql.append(" from interface_execucao ie ");
 		sql.append(" left join ( ");
-		sql.append(" 	select le.id, le.interface_execucao_id, le.status, MAX(le.data_inicio) as data_inicio ");
+		sql.append(" 	select MAX(le.id) as id, le.interface_execucao_id, le.status, MAX(le.data_inicio) as data_inicio ");
 		sql.append(" 	from log_execucao le ");
 		sql.append(" 	where date(le.data_inicio) between '"+ data +" 00:00:00' and '"+ data +" 23:59:59' ");
 		sql.append(" 	group by interface_execucao_id) le on ie.id = le.interface_execucao_id ");
@@ -119,13 +123,13 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				switch (filtro.getOrdenacaoColuna()) {
 				
 					case DESCRICAO_INTERFACE:
-						orderByColumn = " ie.descricao ";
+						orderByColumn = "ordenacao, ie.descricao ";
 						break;
 					case STATUS:
-						orderByColumn = " status ";
+						orderByColumn = "ordenacao, status ";
 						break;
 					case DATA_PROCESSAMENTO:
-						orderByColumn = " dataInicio ";
+						orderByColumn = "ordenacao, dataInicio ";
 						break;
 						
 					default:

@@ -556,3 +556,4 @@ function verificarPermissaoAcesso(workspace) {
 	
 	return false;
 }
+//@ sourceURL=util.js

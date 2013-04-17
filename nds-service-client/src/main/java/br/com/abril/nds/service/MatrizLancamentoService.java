@@ -57,13 +57,13 @@ public interface MatrizLancamentoService {
 	/**
 	 * Obtém as datas dos lançamento e se estão confirmadas ou não.
 	 * 
-	 * @param produtosLancamento - Produtos de lançamento
+	 * @param balanceamentoLancamento
 	 * 
 	 * @return {@link ConfirmacaoVO}
 	 */
-	public List<ConfirmacaoVO> obterDatasConfirmacao(List<ProdutoLancamentoDTO> produtosLancamento);
+	List<ConfirmacaoVO> obterDatasConfirmacao(BalanceamentoLancamentoDTO balanceamentoLancamento);
 	
-	void voltarConfiguracaoInicial(Date dataLancamento, TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento);
+	void voltarConfiguracaoInicial(Date dataLancamento, BalanceamentoLancamentoDTO balanceamentoLancamento);
 	
 	void verificaDataOperacao(Date data);
 	

@@ -12,16 +12,18 @@ import java.util.Set;
  */
 public enum TipoDiferenca {
 	
-	FALTA_DE(GrupoMovimentoEstoque.FALTA_DE, "Falta de"),
-	FALTA_EM(GrupoMovimentoEstoque.FALTA_EM, "Falta em"),
-	SOBRA_DE(GrupoMovimentoEstoque.SOBRA_DE, "Sobra de"),
-	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em"),
+	FALTA_DE(GrupoMovimentoEstoque.FALTA_DE, "Falta de", GrupoMovimentoEstoque.FALTA_DE_COTA),
+	FALTA_EM(GrupoMovimentoEstoque.FALTA_EM, "Falta em", GrupoMovimentoEstoque.FALTA_EM_COTA),
+	SOBRA_DE(GrupoMovimentoEstoque.SOBRA_DE, "Sobra de", GrupoMovimentoEstoque.SOBRA_DE_COTA),
+	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em", GrupoMovimentoEstoque.SOBRA_EM_COTA),
 	PERDA_EM(GrupoMovimentoEstoque.PERDA_EM, "Perda em"),
 	GANHO_EM(GrupoMovimentoEstoque.GANHO_EM, "Ganho em");
 	
-	private GrupoMovimentoEstoque tipoMovimentoEstoque;
+	private GrupoMovimentoEstoque grupoMovimentoEstoque;
 	
 	private String descricao;
+	
+	private GrupoMovimentoEstoque grupoMovimentoEstoqueCota;
 	
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_DE = EnumSet.of(FALTA_DE, SOBRA_DE);
 
@@ -31,15 +33,30 @@ public enum TipoDiferenca {
 	
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_SOBRA = EnumSet.of(SOBRA_DE, SOBRA_EM);
 	
-	private TipoDiferenca(GrupoMovimentoEstoque tipoMovimentoEstoque, String descricao) {
+	private TipoDiferenca(GrupoMovimentoEstoque grupoMovimentoEstoqueCota, 
+						  String descricao) {
 		
-		this.tipoMovimentoEstoque = tipoMovimentoEstoque;
+		this.grupoMovimentoEstoque = grupoMovimentoEstoqueCota;
 		this.descricao = descricao;
+	}
+	
+	private TipoDiferenca(GrupoMovimentoEstoque tipoMovimentoEstoque, 
+						  String descricao,
+						  GrupoMovimentoEstoque grupoMovimentoEstoqueCota) {
+		
+		this.grupoMovimentoEstoque = tipoMovimentoEstoque;
+		this.descricao = descricao;
+		this.grupoMovimentoEstoqueCota = grupoMovimentoEstoqueCota;
 	}
 	
 	public GrupoMovimentoEstoque getTipoMovimentoEstoque() {
 		
-		return tipoMovimentoEstoque;
+		return grupoMovimentoEstoque;
+	}
+	
+	public GrupoMovimentoEstoque getGrupoMovimentoEstoqueCota() {
+		
+		return grupoMovimentoEstoqueCota;
 	}
 
 	public String getDescricao() {

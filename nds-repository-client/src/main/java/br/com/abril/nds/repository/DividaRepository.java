@@ -3,14 +3,13 @@ package br.com.abril.nds.repository;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -102,7 +101,7 @@ public interface DividaRepository extends Repository<Divida, Long>{
      * @return mapa com as sumarizações das dívidas a receber em uma 
      *         determinada data
      */
-	Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data);
+	List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data);
 
 	/**
      * Sumariza as dívidas a vencer após um determinada data
@@ -112,7 +111,7 @@ public interface DividaRepository extends Repository<Divida, Long>{
      * @return mapa com as sumarizações das dívidas a receber em uma
      *         determinada data
      */
-	Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data);
+	List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data);
 
     /**
      * Obtém as dívidas a receber em uma determinada data
@@ -124,7 +123,7 @@ public interface DividaRepository extends Repository<Divida, Long>{
      *            neste caso retorna todas as dívidas
      * @return lista de dividas à receber em uma determinada data
      */
-    List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
+    List<Cobranca> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
 
     /**
      * Obtém as dívidas a vencer após uma determinada data
@@ -136,7 +135,7 @@ public interface DividaRepository extends Repository<Divida, Long>{
      *            neste caso retorna todas as dívidas
      * @return lista de dividas à vencer após uma determinada data
      */
-    List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
+    List<Cobranca> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
 
     /**
      * Conta a quantidade de dívidas à receber em uma determinada data

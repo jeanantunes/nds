@@ -150,7 +150,7 @@ public class MatrizLancamentoController extends BaseController {
 		if (balanceamentoLancamento == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
-		}		
+		}
 
 		List<ProdutoLancamentoDTO> listaProdutoBalanceamento =
 			new ArrayList<ProdutoLancamentoDTO>();
@@ -225,7 +225,7 @@ public class MatrizLancamentoController extends BaseController {
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
 		this.matrizLancamentoService.voltarConfiguracaoInicial(
-			filtro.getData(), balanceamentoLancamento.getMatrizLancamento());
+			filtro.getData(), balanceamentoLancamento);
 		
 		balanceamentoLancamento =
 			this.obterBalanceamentoLancamento(filtro);
@@ -1042,8 +1042,16 @@ public class MatrizLancamentoController extends BaseController {
 	 */
 	private List<ConfirmacaoVO> montarListaDatasConfirmacao() {
 
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		if (balanceamentoLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
+		
 		List<ConfirmacaoVO> confirmacoesVO =
-			matrizLancamentoService.obterDatasConfirmacao(this.getProdutoLancamentoDTOFromMatrizSessao());
+			matrizLancamentoService.obterDatasConfirmacao(balanceamentoLancamento);
 
 		return confirmacoesVO;
 	}

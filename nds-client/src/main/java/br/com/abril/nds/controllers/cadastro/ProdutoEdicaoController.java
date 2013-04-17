@@ -496,12 +496,7 @@ public class ProdutoEdicaoController extends BaseController {
 			listaPeriodosLancamentos.add(periodoLancamento); 
 		}
 		
-		if (!listaPeriodosLancamentos.isEmpty()) {
-			this.result.use(FlexiGridJson.class).from(listaPeriodosLancamentos).total(listaPeriodosLancamentos.size()).serialize();
-		} else {
-			result.nothing();
-		}
-
+		this.result.use(FlexiGridJson.class).from(listaPeriodosLancamentos).total(listaPeriodosLancamentos.size()).serialize();
 	}
 	
 	/**

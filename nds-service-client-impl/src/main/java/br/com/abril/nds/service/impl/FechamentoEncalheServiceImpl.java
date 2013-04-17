@@ -538,6 +538,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, cota.getPessoa().getEmail());
 					} catch (AutenticacaoEmailException e) {
 						
+						if (validacaoVO.getListaMensagens() == null){
+							validacaoVO.setListaMensagens(new ArrayList<String>());
+						}
+						
 						validacaoVO.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
 								cota.getNumeroCota() + ", " +
 								e.getMessage());
@@ -703,7 +707,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	private void gerarMovimentoFaltasSobras(FechamentoFisicoLogicoDTO item, Usuario usuarioLogado) {
 		
-		BigInteger qntDiferenca = new BigInteger(item.getDiferenca().toString());
+		BigInteger qntDiferenca = BigInteger.ZERO;
+		if(item != null && item.getDiferenca() != null) {
+			qntDiferenca = new BigInteger(item.getDiferenca().toString());
+		}
 		
 		if(qntDiferenca.compareTo(BigInteger.ZERO) == 0){
 			return;
@@ -1033,9 +1040,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 	
 	@Transactional
-	public BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro, Integer page, Integer rp) {
+	public BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro) {
 		
-		return fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro, page, rp);
+		return fechamentoEncalheRepository.obterValorTotalAnaliticoEncalhe(filtro);
 		
 	}
 	

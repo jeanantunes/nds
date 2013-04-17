@@ -18,9 +18,17 @@ public class RelatorioTiposProdutosServiceImpl implements RelatorioTiposProdutos
 	private RelatorioTiposProdutosRepository repository;
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<RelatorioTiposProdutosDTO> gerarRelatorio(FiltroRelatorioTiposProdutos filtro) {
 
 		return repository.gerarRelatorio(filtro);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Long obterQunatidade(FiltroRelatorioTiposProdutos filtro) {
+
+		return repository.obterQunatidade(filtro);
+	}
+	
 }
