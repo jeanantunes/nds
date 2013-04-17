@@ -61,7 +61,7 @@ var fechamentoEncalheController = $.extend(true, {
 				display : ' ',
 				name : 'check',
 				width : 20,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "numeroCota",

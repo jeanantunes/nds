@@ -314,19 +314,12 @@ public class FechamentoEncalheController extends BaseController {
 		try {
 			
 			if (cobrarTodasCotas) {
-				List<Integer> listNumeroCota =  new ArrayList<Integer>();
 				
 				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
 						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
 				
 				this.fechamentoEncalheService.realizarCobrancaCotas(dataOperacao, getUsuarioLogado(), listaCotaAusenteEncalhe, null);				
 			
-				if(!listNumeroCota.isEmpty()){					
-					String cotas = "[" +StringUtils.join(listNumeroCota, ", ")+"]";					
-					this.result.use(Results.json()).from(
-							new ValidacaoVO(TipoMensagem.WARNING, "Atenção algumas cotas não foram processadas por não atimgirem o valor mínimo. Cotas " + cotas ), "result").recursive().serialize();		
-					return;
-				}
 				
 			} else {
 			
