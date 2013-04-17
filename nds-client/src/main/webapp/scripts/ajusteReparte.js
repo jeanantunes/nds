@@ -782,7 +782,8 @@ init : function() {
 	
 	
 	filtroPorVenda : function(){
-
+		
+		$("#AJUSTE_VENDA_MEDIA_input").val('');
 		$("#AJUSTE_VENDA_MEDIA_input").show();
 		$("#AJUSTE_HISTORICO_input").hide();
 		$("#AJUSTE_ENCALHE_MAX_input").hide();
@@ -790,6 +791,7 @@ init : function() {
 	
 	filtroPorVendaEditar : function(){
 
+		$("#AJUSTE_VENDA_MEDIA_editar_input").val('');
 		$("#AJUSTE_VENDA_MEDIA_editar_input").show();
 		$("#AJUSTE_HISTORICO_editar_input").hide();
 		$("#AJUSTE_ENCALHE_MAX_editar_input").hide();
@@ -797,6 +799,7 @@ init : function() {
 	
 	filtroPorEncalhe : function(){
 		
+		$("#AJUSTE_ENCALHE_MAX_input").val('');
 		$("#AJUSTE_ENCALHE_MAX_input").show();
 		$("#AJUSTE_HISTORICO_input").hide();
 		$("#AJUSTE_VENDA_MEDIA_input").hide();
@@ -804,6 +807,7 @@ init : function() {
 	
 	filtroPorEncalheEditar : function(){
 		
+		$("#AJUSTE_ENCALHE_MAX_editar_input").val('');
 		$("#AJUSTE_ENCALHE_MAX_editar_input").show();
 		$("#AJUSTE_HISTORICO_editar_input").hide();
 		$("#AJUSTE_VENDA_MEDIA_editar_input").hide();
@@ -1021,7 +1025,7 @@ init : function() {
 			
 			$("#AJUSTE_VENDA_MEDIA_input").mask("99");
 			$("#AJUSTE_VENDA_MEDIA_input").val("01");
-			$("#AJUSTE_VENDA_MEDIA_editar_input").mask("9");
+			$("#AJUSTE_VENDA_MEDIA_editar_input").mask("99");
 			$("#AJUSTE_VENDA_MEDIA_editar_input").val("1.0");
 			
 			
