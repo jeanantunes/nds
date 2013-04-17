@@ -40,12 +40,13 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
@@ -69,7 +70,6 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -98,6 +98,7 @@ import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaReposi
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -223,6 +224,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
+	
+	@Autowired
+	private MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
 	@Autowired
 	private ConferenciaEncalheParcialRepository conferenciaEncalheParcialRepository;
@@ -428,17 +432,18 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		ResumoFechamentoDiarioConsignadoDTO.ResumoConsignado resumoConsignado = 
 			resumoFechamentoDiarioConsignado.new ResumoConsignado();
 
+		//Consignado
 		resumoConsignado.setSaldoAnterior(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				DateUtil.subtrairDias(dataFechamento, 1), TipoCota.CONSIGNADO, null));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				DateUtil.subtrairDias(dataFechamento, 1), null, FormaComercializacao.CONSIGNADO));
 
 		resumoConsignado.setValorEntradas(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.CONSIGNADO, OperacaoFinaceira.DEBITO));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				dataFechamento, OperacaoEstoque.ENTRADA, FormaComercializacao.CONSIGNADO));
 		
 		resumoConsignado.setValorSaidas(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.CONSIGNADO, OperacaoFinaceira.CREDITO));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONSIGNADO));
 		
 		resumoConsignado.setSaldoAtual(
 			resumoConsignado.getSaldoAnterior().add(
@@ -449,17 +454,18 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
 			resumoFechamentoDiarioConsignado.new ResumoAVista();
 		
+		//A Vista
 		resumoAVista.setSaldoAnterior(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				DateUtil.subtrairDias(dataFechamento, 1), TipoCota.A_VISTA, null));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				DateUtil.subtrairDias(dataFechamento, 1), null, FormaComercializacao.CONTA_FIRME));
 
 		resumoAVista.setValorEntradas(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.A_VISTA, OperacaoFinaceira.DEBITO));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				dataFechamento, OperacaoEstoque.ENTRADA, FormaComercializacao.CONTA_FIRME));
 		
 		resumoAVista.setValorSaidas(
-			this.movimentoFinanceiroCotaRepository.obterSaldoDistribuidor(
-				dataFechamento, TipoCota.A_VISTA, OperacaoFinaceira.CREDITO));
+			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
+				dataFechamento, OperacaoEstoque.SAIDA, FormaComercializacao.CONTA_FIRME));
 		
 		resumoAVista.setSaldoAtual(
 			resumoAVista.getSaldoAnterior().add(

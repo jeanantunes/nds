@@ -381,7 +381,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 					.append(" inner join ")
 					.append(" FORNECEDOR fornecedor ")
 					.append(" on produtoFornecedor.fornecedores_ID=fornecedor.ID ")
-					.append(" inner join ").append(" PESSOA pessoa ")
+					.append(" inner join ")
+					.append(" PESSOA pessoa ")
 					.append(" on fornecedor.JURIDICA_ID=pessoa.ID ");
 		}
 

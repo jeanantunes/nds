@@ -543,16 +543,16 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * @param listaEstudosCota
 	 */
 	private void getNotaEnvioCota(PessoaJuridica pessoaEmitente,
-			                           Long idCota, 
-				                       Long idRota, 
-				                       List<NotaEnvio> notasEnvio, 
-				                       Date dataEmissao, 
-				                       Intervalo<Date> periodo,
-	                                   List<Long> listaIdFornecedores, 
-	                                   String chaveAcesso,
-				                       Integer codigoNaturezaOperacao, 
-				                       String descricaoNaturezaOperacao,
-				                       List<EstudoCota> listaEstudosCota){
+		                          Long idCota, 
+			                      Long idRota, 
+			                      List<NotaEnvio> notasEnvio, 
+			                      Date dataEmissao, 
+			                      Intervalo<Date> periodo,
+                                  List<Long> listaIdFornecedores, 
+                                  String chaveAcesso,
+			                      Integer codigoNaturezaOperacao, 
+			                      String descricaoNaturezaOperacao,
+			                      List<EstudoCota> listaEstudosCota){
 
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
