@@ -871,12 +871,12 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 		return count;
 	}
-	
+		
 	@Override
 	public BigDecimal obterSaldoDistribuidor(Date data, 
 									 	     TipoCota tipoCota, 
 									 	     OperacaoFinaceira operacaoFinaceira) {
-		
+
 		StringBuilder hql = new StringBuilder(" select sum(mfc.valor) ");
 		
 		hql.append(" from MovimentoFinanceiroCota mfc ");
@@ -916,7 +916,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			
 			query.setParameter("data", data);
 		}
-		
+
 		Object result = query.uniqueResult();
 
 		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
