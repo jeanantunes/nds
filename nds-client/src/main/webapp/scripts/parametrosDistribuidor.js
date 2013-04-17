@@ -654,6 +654,13 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		if ($('#listClassificacaoCota4\\.valorDe', this.workspace).val() === '') {
 			$('#listClassificacaoCota4\\.valorDe', this.workspace).val('0.00');
+			$('#listClassificacaoCota4\\.valorDe', this.workspace).formatCurrency({
+		            decimalSymbol: ',',
+		            digitGroupSymbol: '.',
+		            dropDecimals: false,
+		            groupDigits: true,
+		            symbol: ''
+		          });
 		}
 		
 		$('#listClassificacaoCota0\\.valorAte', this.workspace)
@@ -661,12 +668,19 @@ var parametrosDistribuidorController = $.extend(true, {
 		.add('#listClassificacaoCota2\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
-		.on('blur', function(){
+		.bind('blur', function(){
 		    if (this.value) {
 		        var intIdValorDe = parseInt(this.id.match(/\d/), 10) - 1;
 		        var campoValorDe = $('#listClassificacaoCota' + intIdValorDe + '\\.valorDe');
 		        var numValorAte = parseFloat(this.value.replace(/\./g, '').replace(/,/, '.'));
-		        campoValorDe.val((numValorAte + 0.01).toFixed(2)).maskMoney('mask');
+		        campoValorDe.val((numValorAte + 0.01).toFixed(2));
+		        campoValorDe.formatCurrency({
+		            decimalSymbol: ',',
+		            digitGroupSymbol: '.',
+		            dropDecimals: false,
+		            groupDigits: true,
+		            symbol: ''
+		          });
 //		        console.log(numValorAte,campoValorDe.val());
 		    }
 		});
