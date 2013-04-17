@@ -886,6 +886,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							$('#replaceAppletFinal'+cont).html(callApplet);
 							$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).show();		
 							
+							$('#replaceAppletFinal'+cont).html("");
+							$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).hide();		
 							cont++;
 						}
 					}

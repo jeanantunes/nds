@@ -265,7 +265,4 @@
 			<div id="replaceAppletFinal2"></div>
 		</div>	
 		
-		<div id="idImpressaoFinalizacaoApplet3" style="display: none;">&nbsp;
-			<div id="replaceAppletFinal3"></div>
-		</div>			
 </body>
