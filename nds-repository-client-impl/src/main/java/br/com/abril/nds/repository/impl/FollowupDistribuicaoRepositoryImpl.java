@@ -36,7 +36,8 @@ public class FollowupDistribuicaoRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		hql.append(" where datediff(ajuste.dataFim,now())<=5 ");
-	  
+		
+		hql.append(" order by cota.numeroCota, nomeJornaleiro");
 		
 		Query query =  getSession().createQuery(hql.toString());		
 		

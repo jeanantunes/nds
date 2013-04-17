@@ -648,12 +648,14 @@ var fixacaoReparteController = $.extend(true, {
 	},
 	//funcao de exibicao de grid
 	exibeGridCota:function(){
+
 		$('#fixacaoReparte_porCota').show();
 		$('#fixacaoReparte_fixacaoProduto').hide();
 	},
 	
 	//funcao de exibicao de grid
 	exibeGridProduto:function(){
+
 		$('#fixacaoReparte_fixacaoProduto').show();
 		$('#fixacaoReparte_porCota').hide();
 	},
