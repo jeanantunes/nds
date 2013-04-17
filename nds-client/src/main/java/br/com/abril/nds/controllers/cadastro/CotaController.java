@@ -335,6 +335,16 @@ public class CotaController extends BaseController {
 	}
 	
 	/**
+	 * Metodo a ser ultilizado pelo componente autocomplete.js
+	 * @param codigo
+	 */
+	@Post
+	public void pesquisarPorNumeroAutoComplete(String codigo) {
+		
+		pesquisarPorNumero(new Integer(codigo));
+	}
+	
+	/**
 	 * Efetua consulta de cota pelo número informado
 	 * 
 	 * @param numeroCota - número da cota
@@ -406,6 +416,16 @@ public class CotaController extends BaseController {
 		
 		this.result.use(Results.json()).from(listaCotasAutoComplete, "result").include("value", "chave").serialize();
 	}
+	
+	/**
+	 * Metodo utilizado para componente autocomplet.js
+	 * @param nome
+	 */
+	@Post
+	public void autoCompletarPorNomeAutoComplete(String nome) {
+		
+		autoCompletarPorNome(nome);
+	}
 
 	/**
 	 * Auto complete para numeroCota. Casos de pesquisa por nome onde existem cotas com nomes iguais.
@@ -465,6 +485,16 @@ public class CotaController extends BaseController {
 		
 		    this.result.use(Results.json()).from(cotasVO.get(0), "result").recursive().serialize();
 		}
+	}
+	
+	/**
+	 * Metodo a ser ultilizado pelo componente autocomplet.js 
+	 * @param nome
+	 */
+	@Post
+	public void pesquisarPorNomeAutoComplete(String nome) {
+		
+		pesquisarPorNome(nome);
 	}
 	
 	/**

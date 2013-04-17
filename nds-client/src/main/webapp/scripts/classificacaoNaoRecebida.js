@@ -26,6 +26,8 @@
 	*/
 	init : function() {
 	
+		var autoComplete = new AutoCompleteController(classificacaoNaoRecebidaController.workspace);
+		
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####
 
 		// ### POR COTA ###
@@ -34,12 +36,17 @@
 		});
 		
 		$('#porCota_numeroCota', classificacaoNaoRecebidaController.workspace).change(function (){
-			pesquisaCota.pesquisarPorNumeroCota('#porCota_numeroCota','#porCota_nomeCota');
+			autoComplete.pesquisarPorCodigo("/cadastro/cota/pesquisarPorNumeroAutoComplete",'#porCota_numeroCota','#porCota_nomeCota');
+			//pesquisaCota.pesquisarPorNumeroCota('#porCota_numeroCota','#porCota_nomeCota');
 		});
 		
 		$('#porCota_nomeCota', classificacaoNaoRecebidaController.workspace).keyup(function (){
-			pesquisaCota.autoCompletarPorNome('#porCota_nomeCota');
+			autoComplete.autoCompletar("/cadastro/cota/autoCompletarPorNomeAutoComplete",'#porCota_numeroCota','#porCota_nomeCota');
+			//consultaCota.autoCompletarPorNome(inputsCota);
+			
 		});
+		
+		autoComplete.limparCampoOnChange('#porCota_nomeCota', new Array('#porCota_numeroCota'));
 		
 		// INCLUIR CLASSIFICAÇÃO NA COTA
 		$('#confirmarInclusaoDaClassificacaoNaCota', classificacaoNaoRecebidaController.workspace).click(function (){
@@ -52,12 +59,20 @@
 		});
 		
 		$('#cotasQueRecebem_numeroCota', classificacaoNaoRecebidaController.workspace).change(function (){
-			pesquisaCota.pesquisarPorNumeroCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
+			autoComplete.pesquisarPorCodigo("/cadastro/cota/pesquisarPorNumeroAutoComplete",'#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
+			//pesquisaCota.pesquisarPorNumeroCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
 		});
 		
 		$('#cotasQueRecebem_nomeCota', classificacaoNaoRecebidaController.workspace).keyup(function (){
-			classificacaoNaoRecebidaController.autoCompletarPorNomeCotaQueRecebeClassificacao('#cotasQueRecebem_nomeCota');
+			autoComplete.autoCompletar("/cadastro/cota/autoCompletarPorNomeAutoComplete",'#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
+			//pesquisaCota.autoCompletarPorNome('#cotasQueRecebem_nomeCota');
 		});
+		
+		autoComplete.limparCampoOnChange('#cotasQueRecebem_nomeCota', new Array('#cotasQueRecebem_numeroCota'));
+		
+//		$('#cotasQueRecebem_nomeCota', classificacaoNaoRecebidaController.workspace).change(function (){
+//			pesquisaCota.pesquisarPorNomeCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');
+//		});
 		
 		// INCLUIR COTAS NA CLASSIFICAÇÃO NÃO RECEBIDA
 		$('#confirmarInclusaoDaCotaNaClassificacaoNaoRecebida', classificacaoNaoRecebidaController.workspace).click(function (){
@@ -231,7 +246,7 @@
 						colModel : [ {
 							display : 'Cota',
 							name : 'numeroCota',
-							width : 120,
+							width : 60,
 							sortable : true,
 							align : 'left'
 						}, {

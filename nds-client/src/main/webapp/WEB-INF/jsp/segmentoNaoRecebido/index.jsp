@@ -8,8 +8,22 @@
 			segmentoNaoRecebidoController.init();
 		});
 	</script>
+	<style type="text/css">
+		#dialog-excluir-cota, #dialog-novo-cota {
+			display:none;
+		}
+	</style>
 </head>
 <body>
+
+<div id="dialog-excluir-cota" title="Excluir Cota">
+	<p>Confirma a exclusão desta Cota?</p>
+</div>
+
+
+<div id="dialog-novo-cota" title="Incluir Cota">
+	<p>Confirma esta inclusão?</p>
+</div>
 
 <div id="dialog-excluir" title="Excluir Segmento Não Recebida">
 	<p>Confirma a exclusão deste Segmento?</p>
@@ -169,10 +183,6 @@
           <br />
 
        	<table class="segmentosBGrid"></table>
-            <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=XLS&tipoExportacao=''"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-		<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=''"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-
       <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirSegmento()"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
         
       </fieldset>
