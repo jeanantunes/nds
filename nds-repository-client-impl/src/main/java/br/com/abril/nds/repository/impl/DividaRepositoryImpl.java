@@ -73,17 +73,17 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(getSqldividas(true,filtro,true));
+		hql.append(getSqldividas(true, filtro, true));
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		HashMap<String, Object> param = getParametrosConsultaDividas(filtro,true);
+		HashMap<String, Object> param = getParametrosConsultaDividas(filtro, true);
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
 		
-		return  (Long) query.uniqueResult();
+		return (long) query.list().size();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -92,7 +92,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(getSqldividas(false,filtro,false));
+		hql.append(getSqldividas(false, filtro, false));
 		
 		hql.append(getOrdenacaoDivida(filtro));
 		
@@ -144,13 +144,13 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	 * @param filtro
 	 * @return HashMap<String,Object>
 	 */
-	private HashMap<String,Object> getParametrosConsultaDividas(FiltroDividaGeradaDTO filtro,boolean isBoleto){
+	private HashMap<String,Object> getParametrosConsultaDividas(FiltroDividaGeradaDTO filtro, boolean isBoleto){
 		
 		HashMap<String,Object> param = new HashMap<String, Object>();
 		
-		param.put("data",filtro.getDataMovimento());
+		param.put("data", filtro.getDataMovimento());
 		param.put("acumulaDivida", Boolean.FALSE);
-		param.put("statusCobranca",StatusCobranca.NAO_PAGO);
+		param.put("statusCobranca", StatusCobranca.NAO_PAGO);
 		
 		if(!isBoleto){
 			param.put("tipoCobrancaBoleto",TipoCobranca.BOLETO);
@@ -189,9 +189,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		StringBuilder hql = new StringBuilder();
 		
-		if(count){
-			hql.append(" SELECT count(divida.id )");
-		}else{
+		if(count) {
+			hql.append(" SELECT count(divida.id)");
+		} else {
 			hql.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
 			.append("(")
 				.append(" box.codigo || '-'|| box.nome,")

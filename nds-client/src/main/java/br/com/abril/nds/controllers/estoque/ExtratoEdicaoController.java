@@ -17,6 +17,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.InfoGeralExtratoEdicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -100,13 +101,13 @@ public class ExtratoEdicaoController extends BaseController {
 		
 	}
 	
-	public void obterProdutoEdicao(String codigo, Long edicao) {
+	public void obterProdutoEdicao(FiltroProdutoDTO filtro, Long edicao) {
 		
 		String resultado = "";
 		
-		if(codigo!=null && !codigo.trim().isEmpty() && edicao != null) {
+		if(filtro.getCodigo() != null && !filtro.getCodigo().trim().isEmpty() && edicao != null) {
 			
-			ProdutoEdicao produtoEdicao = extratoEdicaoService.obterProdutoEdicao(codigo, edicao);
+			ProdutoEdicao produtoEdicao = extratoEdicaoService.obterProdutoEdicao(filtro.getCodigo(), edicao);
 		
 			if(produtoEdicao!=null) {
 				
@@ -125,19 +126,18 @@ public class ExtratoEdicaoController extends BaseController {
 	 * 
 	 * @throws Exception
 	 */
-	public void pesquisaExtratoEdicao(String codigoProduto, 
+	public void pesquisaExtratoEdicao(FiltroProdutoDTO filtro, 
 									  Long numeroEdicao,
-									  String nomeProduto,
 									  BigDecimal precoCapa,
-									  String nomeFornecedor, int page, int rp) throws ValidacaoException {
+									  int page, int rp) throws ValidacaoException {
 		
-		FiltroExtratoEdicaoDTO filtroExtratoEdicaoDTO = this.montarFiltro(codigoProduto, nomeProduto, numeroEdicao, precoCapa, nomeFornecedor, page, rp);
+		FiltroExtratoEdicaoDTO filtroExtratoEdicaoDTO = this.montarFiltro(filtro.getCodigo(), filtro.getNome(), numeroEdicao, precoCapa, filtro.getFornecedor(), page, rp);
 		
 		TableModel<CellModel> tableModel = null;
 		
 		Map<String, Object> resultado = new HashMap<String, Object>();
 		
-		List<String> listaWarningMsg = validarParametrosPesquisa(codigoProduto, numeroEdicao);
+		List<String> listaWarningMsg = validarParametrosPesquisa(filtro.getCodigo(), numeroEdicao);
 		
 		if(!listaWarningMsg.isEmpty()) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaWarningMsg));
