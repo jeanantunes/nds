@@ -61,7 +61,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	private BigDecimal valorPago;
 	
-	private String tipo;
+	private boolean cobrado;
 	
 	private BigDecimal saldo;
 	
@@ -260,12 +260,12 @@ public class ContaCorrenteCotaVO implements Serializable {
 						valorPago.setScale(2, RoundingMode.HALF_EVEN) : valorPago;
 	}
 
-	public String getTipo() {
-		return tipo;
+	public boolean getCobrado() {
+		return cobrado;
 	}
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setCobrado(boolean cobrado) {
+		this.cobrado = cobrado;
 	}
 
 	public BigDecimal getSaldo() {

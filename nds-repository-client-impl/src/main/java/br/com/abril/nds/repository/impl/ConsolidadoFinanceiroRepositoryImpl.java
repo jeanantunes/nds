@@ -876,7 +876,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" cfc.PENDENTE as pendente, ")
 		   .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
 		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
-		   .append(" 'CONSOLIDADO' as tipo, ")
+		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
 		   .append(" COALESCE ( ")
 		   .append(" 	COALESCE ( ")
 		   .append(" 		MIN(dividaRaiz.DATA), divida.DATA ")
@@ -1047,8 +1047,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(") and m.DATA = mfc.DATA ")
 		   .append("),0) as vendaEncalhe, ")
 		   
-		   //tipo
-		   .append(" 'MOVIMENTO FINAN' as tipo, ")
+		   //cobrado
+		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = mfc.DATA and cob.COTA_ID = mfc.COTA_ID) > 0) as cobrado, ")
 		   
 		   //data raiz
 		   .append(" mfc.DATA_CRIACAO as dataRaiz, ")
@@ -1239,7 +1239,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("valorPostergado", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("vendaEncalhe", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("tipo", StandardBasicTypes.STRING);
+		query.addScalar("cobrado", StandardBasicTypes.BOOLEAN);
 		query.addScalar("dataRaiz", StandardBasicTypes.DATE);
 		query.addScalar("valorPago", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("saldo", StandardBasicTypes.BIG_DECIMAL);
