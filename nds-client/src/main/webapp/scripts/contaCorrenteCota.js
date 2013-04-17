@@ -195,7 +195,7 @@ var contaCorrenteCotaController = $.extend(true, {
 									  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + floatToPrice(formatMoneyValue(value.cell.encargos)) +'</a>' : '0,00';
 				
 				var hint = value.cell.valorPostergado && value.cell.valorPostergado != 0 ? '<a rel="tipsy" title="Valor Referente à '+ 
-						  (value.cell.tipo != 'CONSOLIDADO' ? dataRaizPendente : dataRaizPostergado)  + '">' : "";
+						  (value.cell.cobrado ? dataRaizPendente : dataRaizPostergado)  + '">' : "";
 				
 			    value.cell.valorPostergado = (value.cell.valorPostergado != null && value.cell.valorPostergado != 0)?'<span class="bt_tool">' + hint +
 					                          floatToPrice(formatMoneyValue(value.cell.valorPostergado) * -1) + '</a></span>' : '0,00';
@@ -209,12 +209,12 @@ var contaCorrenteCotaController = $.extend(true, {
 				value.cell.valorPago = floatToPrice(formatMoneyValue(value.cell.valorPago));
 				value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.saldo) * -1);
 				
-				if (value.cell.tipo == 'CONSOLIDADO'){
+				if (value.cell.cobrado){
 					
-					value.cell.tipo = '<img src="'+ contextPath +'/images/ico_check.gif"/>';
+					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_check.gif"/>';
 				} else {
 					
-					value.cell.tipo = '<img src="'+ contextPath +'/images/ico_excluir.gif"/>';
+					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_excluir.gif"/>';
 					value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.total));
 				}
 			});
@@ -401,7 +401,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Cobrado',
-				name : 'tipo',
+				name : 'cobrado',
 				width : 65,
 				sortable : true,
 				align : 'center'
