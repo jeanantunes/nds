@@ -106,14 +106,14 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 					.append("  	(select  consolidado.PRODUTO_ID as PRODUTO_ID, consolidado.COTA_ID as COTA_ID ,sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as VALOR ")
 				
 					.append("    from view_consolidado_movimento_estoque_cota consolidado  ")
+					
+					.append("    where consolidado.COTA_ID = :idCota ")
 				
 					.append("    group by consolidado.PRODUTO_ID ")
 				
 					.append("    order by VALOR desc ")
 				
 					.append("   ) as sub ") 
-					
-					.append(" where sub.COTA_ID = :idCota ")
 				
 				.append(" ) as subRank  ")
 		

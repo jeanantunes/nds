@@ -122,7 +122,7 @@ var painelProcessamentoController = $.extend(true, {
 				display : 'Interface',
 				name : 'descricaoInterface',
 				width : 245,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Arquivo',

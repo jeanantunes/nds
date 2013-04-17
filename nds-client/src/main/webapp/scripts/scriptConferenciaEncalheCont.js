@@ -266,8 +266,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
-		
-		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
+		//FIXME testar impressão contingência
+		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca?tipo_documento_impressao_encalhe='+tiposDocumento;
 		
 		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
 	},

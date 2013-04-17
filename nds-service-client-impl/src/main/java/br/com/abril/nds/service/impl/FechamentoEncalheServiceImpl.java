@@ -698,7 +698,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	private void gerarMovimentoFaltasSobras(FechamentoFisicoLogicoDTO item, Usuario usuarioLogado) {
 		
-		BigInteger qntDiferenca = new BigInteger(item.getDiferenca().toString());
+		BigInteger qntDiferenca = BigInteger.ZERO;
+		if(item != null && item.getDiferenca() != null) {
+			qntDiferenca = new BigInteger(item.getDiferenca().toString());
+		}
 		
 		if(qntDiferenca.compareTo(BigInteger.ZERO) == 0){
 			return;
