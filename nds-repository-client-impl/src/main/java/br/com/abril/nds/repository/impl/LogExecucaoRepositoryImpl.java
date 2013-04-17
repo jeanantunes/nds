@@ -104,7 +104,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		sql.append("else 3 end as ordenacao ");
 		sql.append(" from interface_execucao ie ");
 		sql.append(" left join ( ");
-		sql.append(" 	select le.id, le.interface_execucao_id, le.status, MAX(le.data_inicio) as data_inicio ");
+		sql.append(" 	select MAX(le.id) as id, le.interface_execucao_id, le.status, MAX(le.data_inicio) as data_inicio ");
 		sql.append(" 	from log_execucao le ");
 		sql.append(" 	where date(le.data_inicio) between '"+ data +" 00:00:00' and '"+ data +" 23:59:59' ");
 		sql.append(" 	group by interface_execucao_id) le on ie.id = le.interface_execucao_id ");
