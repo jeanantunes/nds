@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.ValidationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1152,8 +1154,9 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @param boleto
 	 * @return f: Boleto PDF em File.
 	 * @throws IOException
+	 * @throws ValidationException 
 	 */
-	private byte[]  gerarAnexoBoleto(Boleto boleto) throws IOException {
+	private byte[]  gerarAnexoBoleto(Boleto boleto) throws IOException, ValidationException {
 		
 		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto));
 		
@@ -1201,10 +1204,11 @@ public class BoletoServiceImpl implements BoletoService {
 	 * @param nossoNumero
 	 * @return b: Boleto PDF em Array de bytes
 	 * @throws IOException
+	 * @throws ValidationException 
 	 */
 	@Override
 	@Transactional
-	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException {
+	public byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException, ValidationException {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 		
@@ -1221,10 +1225,11 @@ public class BoletoServiceImpl implements BoletoService {
 	 * Método responsável pela busca de dados referentes à cobrança
 	 * @param nossoNumero
 	 * @return CobrancaVO: dados da cobrança
+	 * @throws ValidationException 
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException {
+	public byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException, ValidationException {
 		
 		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
 		
@@ -1251,7 +1256,7 @@ public class BoletoServiceImpl implements BoletoService {
 
 	@Override
 	@Transactional(readOnly=true)
-	public byte[] gerarImpressaoBoletosDistribuidor(List<BoletoDistribuidor> listaBoletoDistribuidor) throws IOException {
+	public byte[] gerarImpressaoBoletosDistribuidor(List<BoletoDistribuidor> listaBoletoDistribuidor) throws IOException, ValidationException {
 		
 		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
 		

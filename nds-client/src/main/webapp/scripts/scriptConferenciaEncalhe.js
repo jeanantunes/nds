@@ -573,15 +573,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					if(result.tipoMensagem == 'SUCCESS') {
 						
 						if(result.indGeraDocumentoConfEncalheCota == true) {
-							console.log("tipo_documento_impressao_encalhe "+result.tipo_documento_impressao_encalhe)
-							
-							if(result.tipo_documento_impressao_encalhe == "SlipMatricial"){
-								ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(result.tipo_documento_impressao_encalhe);
-							}else{
-								var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
-								$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
-							}
-							
+							ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(result.tipos_documento_impressao_encalhe);
 						}
 						
 						ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
@@ -872,24 +864,39 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
-		
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
-				null,
-				function(resultado){
-
-					var callApplet = '';
-					callApplet +='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
-					callApplet+='	<param name="parameter" value="'+resultado.resultado+'"/>';
-					callApplet+='</applet>';						
-
-					$('#replaceAppletFinal').html(callApplet);
-					$('#idImpressaoFinalizacaoApplet', ConferenciaEncalhe.workspace).show();					
+		var cont = 1;
+		//Imprime todos os documentos recebidos
+		for(i=0;i < tiposDocumento.length;i++){
+			console.log(tiposDocumento[i]);
 			
-				}
-		); 
+			var data = [{name: 'tipo_documento_impressao_encalhe', value: tiposDocumento[i]}];
+			
+			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
+					data,
+					function(resultado){
+				
+						if(resultado != "" && resultado.resultado!=""){
+							
+							var callApplet = '';
+							callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
+							callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
+							callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
+							callApplet+='</applet>';						
+							
+							$('#replaceAppletFinal'+cont).html(callApplet);
+							$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).show();		
+							
+							cont++;
+						}
+					}
+			); 			
+		}
 		
-		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
-		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);
+		
+//		if(result.tipos_documento_impressao_encalhe != "SlipMatricial"){
+//			var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
+//			$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
+//		}
 	},
 	
 	carregarGridItensNotaFiscal : function (modeloConferenciaEncalhe) {

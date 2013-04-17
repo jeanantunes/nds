@@ -45,7 +45,6 @@ import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.matricial.EmissorNotaFiscalMatricial;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoSlip;
@@ -143,6 +142,7 @@ import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ImpressaoMatricialUtil;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.MathUtil;
 
@@ -2666,7 +2666,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			return gerarSlip(idControleConferenciaEncalheCota, true, TipoArquivo.PDF);
 		
-		case BOLETO_OU_RECIBO:
+		case BOLETO_SLIP:
 			
 			return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
 		
@@ -3083,7 +3083,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public byte[] gerarSlipTxtMatricial(){
 		
 		StringBuffer sb = new StringBuffer();
-		EmissorNotaFiscalMatricial e = new EmissorNotaFiscalMatricial(sb);
+		ImpressaoMatricialUtil e = new ImpressaoMatricialUtil(sb);
 		
 		e.darEspaco(1);
 		e.adicionar("TREELOG S/A LOGISTICA E DISTRIBUICAO");
