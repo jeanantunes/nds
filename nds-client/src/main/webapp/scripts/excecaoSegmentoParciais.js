@@ -1092,6 +1092,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		
 		$('#codigoProdutoPrincipal').val('');
 	    $('#nomeProdutoPrincipal').val('');
+	    $('#fornecedorPrincipal').val('');
+	    $('#segmentoProdutoPrincipal').val('');
 	},
 	
 }, BaseController);
