@@ -52,7 +52,7 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT ");
+		hql.append(" SELECT DISTINCT ");
 		
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,");
