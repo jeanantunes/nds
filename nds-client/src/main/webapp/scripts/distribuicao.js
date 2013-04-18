@@ -24,10 +24,10 @@ function Distribuicao(tela) {
 					if (result && result.boolean){
 						
 						D.$('recebeComplementar').removeAttr('disabled');
-						D.$('recebeComplementar').attr('checked','checked');
+						//D.$('recebeComplementar').attr('checked','checked');
 					} else {
 					
-						D.$('recebeComplementar').removeAttr('checked');
+						//D.$('recebeComplementar').removeAttr('checked');
 						D.$('recebeComplementar').attr('disabled', true);
 					}
 				},

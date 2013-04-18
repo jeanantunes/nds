@@ -6,7 +6,6 @@ import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
@@ -155,7 +154,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				hql.append(" produto.codigo AS codProduto, ");
 				hql.append(" produto.tipoClassificacaoProduto.descricao AS descricaoClassificacao, ");
 				hql.append(" lancam.dataLancamentoPrevista AS dataLcto, ");
-				hql.append(" lancam.tipoLancamento AS status ");
+				hql.append(" lancam.status AS status ");
 				
 			//	hql.append(" FROM ProdutoEdicao AS prodEdicao ");
 				
@@ -173,7 +172,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				hql.append(" AND produto.nome = :NOME_PRODUTO ");
 				hql.append(this.getSqlWhereBuscarProdutos(filtro));
 				
-				hql.append(" ORDER BY numeroEdicao ");
+				hql.append(" ORDER BY numeroEdicao desc ");
 				
 				Query query = super.getSession().createQuery(hql.toString());
 				

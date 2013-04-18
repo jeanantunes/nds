@@ -1,4 +1,5 @@
 <head>
+	<script type="text/javascript" src="scripts/autoCompleteController.js" ></script>
 	<script type="text/javascript" src="scripts/excecaoSegmentoParciais.js" ></script>
 	<script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="scripts/pesquisaProduto.js"></script>

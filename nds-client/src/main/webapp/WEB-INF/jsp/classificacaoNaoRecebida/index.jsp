@@ -1,11 +1,15 @@
 <head>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="scripts/consultaCota.js"></script>
+<script type="text/javascript" src="scripts/autoCompleteController.js"></script>
 <script type="text/javascript" src="scripts/classificacaoNaoRecebida.js" ></script>
 <script language="javascript" type="text/javascript">
 
 var	pesquisaCota = new PesquisaCota();
+var consultaCota = new ConsultaCota();
 
 $(function() {
+
 	classificacaoNaoRecebidaController.init();
 });
 
@@ -53,19 +57,19 @@ function mostraFiltroPorClassificacao(){
 
 <body>
 
-<div id="dialog-incluirCotaNaClassificacaoNaoRecebida" style="display: none;" title="Incluir Classifica&ccedil;&atilde;o N&atilde;o Recebida">
+<div id="dialog-incluirCotaNaClassificacaoNaoRecebida" style="display: none;" title="Incluir Cota">
 	<p>Confirma a inclus&atilde;o desta cota?</p>
 </div>
 
-<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classifica&ccedil;&atilde;o N&atilde;o Recebida">
-	<p>Confirma a exclus&atilde;o desta classifica&ccedil;&atilde;o n&atilde;o recebida?</p>
+<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Cota">
+	<p>Confirma a exclus&atilde;o desta cota?</p>
 </div>
 
-<div id="dialog-incluirClassificacaoNaCota" style="display: none;" title="Incluir Classifica&ccedil;&atilde;o Recebida">
+<div id="dialog-incluirClassificacaoNaCota" style="display: none;" title="Incluir Classifica&ccedil;&atilde;o">
 	<p>Confirma a inclus&atilde;o desta classifica&ccedil;&atilde;o?</p>
 </div>
 
-<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classifica&ccedil;&atilde;o N&atilde;o Recebida">
+<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classifica&ccedil;&atilde;o">
 	<p>Confirma a exclus&atilde;o desta classifica&ccedil;&atilde;o?</p>
 </div>
 
@@ -145,8 +149,7 @@ function mostraFiltroPorClassificacao(){
        	      <td width="33">Cota:</td>
        	      <td width="41"><input type="text" id="cotasQueRecebem_numeroCota" style="width:40px;"/></td>
               <td width="41">Nome:</td>
-       	      <td width="115"><input type="text" id="cotasQueRecebem_nomeCota" style="width:140px;" 
-       	      onblur="pesquisaCota.pesquisarPorNomeCota('#cotasQueRecebem_numeroCota','#cotasQueRecebem_nomeCota');" /></td>
+       	      <td width="115"><input type="text" id="cotasQueRecebem_nomeCota" style="width:140px;"/></td>
               <td width="19"><span class="classPesquisar"><a href="javascript:;" id="pesquisarCotaQueRecebeClassificacao">&nbsp;</a></span></td>
    	        </tr>
    	      </table>

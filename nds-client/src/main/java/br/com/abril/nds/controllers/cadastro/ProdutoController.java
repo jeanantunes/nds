@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BaseComboVO;
 import br.com.abril.nds.client.vo.ProdutoCadastroVO;
+import br.com.abril.nds.client.vo.ProdutoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -135,6 +136,18 @@ public class ProdutoController extends BaseController {
 		}
 	}
 	
+	/**
+	 * Metodo a ser utilizado para o componente autocomplete.js
+	 * @param codigo
+	 * @throws ValidacaoException
+	 */
+	@Post
+	public void pesquisarPorCodigoProdutoAutoComplete(String codigo) throws ValidacaoException{
+		
+		pesquisarPorCodigoProduto(codigo); 
+	}
+	
+	
 	@Post
 	public void pesquisarPorCodigoProduto(String codigoProduto) throws ValidacaoException{
 		
@@ -154,6 +167,16 @@ public class ProdutoController extends BaseController {
 		}		
 	}
 
+	/**
+	 * Metodo a ser utilizado no componente autocomplete.js
+	 * @param nome
+	 */
+	@Post
+	public void autoCompletarPorNomeProdutoAutoComplete(String nome) {
+		
+		autoCompletarPorNomeProduto(nome); 
+	}
+	
 	@Post
 	public void autoCompletarPorNomeProduto(String nomeProduto) {
 		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nomeProduto, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
@@ -169,6 +192,28 @@ public class ProdutoController extends BaseController {
 				
 				ItemAutoComplete itemAutoComplete =
 					new ItemAutoComplete(produto.getNome(), null, produtoAutoComplete);
+				
+				listaProdutos.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
+	}
+	
+	@Post
+	public void autoCompletarPorNome(String nome) {
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeNome(nome, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProduto != null && !listaProduto.isEmpty()) {
+			ProdutoVO produtoAutoComplete = null;
+			
+			for (Produto produto : listaProduto) {
+				produtoAutoComplete = new ProdutoVO(produto.getCodigo(),produto.getNome(),produto);
+				
+				ItemAutoComplete itemAutoComplete =
+					new ItemAutoComplete(produtoAutoComplete.getNumero(), produtoAutoComplete.getLabel(), produtoAutoComplete);
 				
 				listaProdutos.add(itemAutoComplete);
 			}
@@ -221,6 +266,17 @@ public class ProdutoController extends BaseController {
 		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 	}
 	
+	/**
+	 * Metodo a ser utilizado para o componente autocomplete.js
+	 * @param codigo
+	 */
+	@Post
+	public void autoCompletarPorCodProdutoAutoComplete(String codigo) {
+		
+		autoCompletarPorCodProduto(codigo);
+	}
+	
+	
 	@Post
 	public void autoCompletarPorCodProduto(String codigoProduto) {
 		List<Produto> listaProduto = this.produtoService.obterProdutoLikeCodigo(codigoProduto);
@@ -239,7 +295,13 @@ public class ProdutoController extends BaseController {
 		
 		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 	}
+	
+	@Post
+	public void pesquisarPorNomeProdutoAutoComplete(String nome,String codigo) {
 		
+		pesquisarPorNomeProduto(nome, codigo);
+	}
+	
 	@Post
 	public void pesquisarPorNomeProduto(String nomeProduto,String codigoProduto) {
 		
@@ -266,6 +328,27 @@ public class ProdutoController extends BaseController {
 			
 		result.use(Results.json()).from(produto, "result").serialize();
 	}
+	
+	
+	/**
+	 * Auto complete para produto. Casos de pesquisa por nome onde existem protudos com nomes iguais.
+	 * @param produtos
+	 * @return List<ItemAutoComplete>
+	 */
+	private List<ItemAutoComplete> getAutocompleteCodigoProduto(List<Produto> produtos){
+		
+		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
+		
+		for (Produto produto : produtos){
+			
+			String numeroExibicao = produto.getCodigo();
+
+			listaCotasAutoComplete.add(new ItemAutoComplete(numeroExibicao, null, produto));
+		}
+		
+		return listaCotasAutoComplete;
+	}
+	
 	
 	@Post
 	public void validarNumeroEdicao(String codigoProduto, String numeroEdicao) {

@@ -25,9 +25,9 @@ $(function(){
 	display: none;
 }
 
-#row5 {
+/* #row5 {
 	display: none;
-}
+} */
 </style>
 </head>
 

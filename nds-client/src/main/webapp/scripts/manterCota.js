@@ -54,6 +54,11 @@ var MANTER_COTA = $.extend(true, {
     },
     
     verificaTipoCota : function(tipoCotaCPF) {
+    	
+    	if (MANTER_COTA.idCota == "") {
+    		return;
+    	}
+    	
     	$("<div>")
     	.html("O Mix (para o tipo alternativo) e a Fixação (para o tipo convencional) desta Cota serão apagados, confirma?")
     	.dialog({
