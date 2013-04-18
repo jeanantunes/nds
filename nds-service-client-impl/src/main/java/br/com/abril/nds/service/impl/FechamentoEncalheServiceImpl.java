@@ -523,8 +523,20 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				if (nossoNumeroEnvioEmail.get(nossoNumero)){
 					
+					String email = cota.getPessoa().getEmail();
+					
+					if (email == null || email.trim().isEmpty()){
+						
+						if (validacaoVO.getListaMensagens() == null){
+							validacaoVO.setListaMensagens(new ArrayList<String>());
+						}
+						
+						validacaoVO.getListaMensagens().add(
+								"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
+					}
+					
 					try {
-						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, cota.getPessoa().getEmail());
+						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
 					} catch (AutenticacaoEmailException e) {
 						
 						if (validacaoVO.getListaMensagens() == null){
