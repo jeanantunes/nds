@@ -245,6 +245,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		return itemNE;
 	}
+	
+	/**
+	 * Atualiza o preco de capa do item da nota de envio com o preco de venda do produto vinculado
+	 * @param itensNotaenvio
+	 */
+	private void atualizaPrecoCapaItemNotaEnvio(List<ItemNotaEnvio> itensNotaEnvio){
+		
+		for (ItemNotaEnvio ine : itensNotaEnvio){
+			
+			ine.setPrecoCapa(ine.getProdutoEdicao().getPrecoVenda());
+		}
+	}
 
 	/**
 	 * Gera itens de Nota de Envio a partir dos Estudos Cota
@@ -269,6 +281,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		for (EstudoCota estudoCota : listaEstudoCota) {
 
 			if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
+				
+				this.atualizaPrecoCapaItemNotaEnvio(estudoCota.getItemNotaEnvios());
 				
 				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
 				
