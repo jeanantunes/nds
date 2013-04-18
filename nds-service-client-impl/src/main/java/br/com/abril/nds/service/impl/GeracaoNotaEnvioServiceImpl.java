@@ -141,6 +141,34 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 
 	/**
+	 * Obtém Quantidade de Movimentos de Saida x Entrada por Produto
+	 * Considera Movimentos de grupos especificos para apurar após Expedição
+	 * @param periodo
+	 * @param idCota
+	 * @return Map<Long, BigInteger>
+	 */
+	public Map<Long, BigInteger> obtemQuantidadeMovimentosPorProdutoAposExpedicao(Intervalo<Date> periodo, Long idCota){
+		
+		GrupoMovimentoEstoque[] gruposMovimentoEstoque   = {
+														      GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO,
+														      GrupoMovimentoEstoque.FALTA_DE_COTA,
+														      GrupoMovimentoEstoque.FALTA_EM_COTA,
+														      GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE,
+														      GrupoMovimentoEstoque.SOBRA_DE_COTA,
+														      GrupoMovimentoEstoque.SOBRA_EM_COTA,
+											                  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
+											                  GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE
+														   };
+		
+		Map<Long, BigInteger> mapProdutos = 
+				this.movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(periodo,
+																						  idCota,
+																						  gruposMovimentoEstoque); 
+	
+		return mapProdutos;
+	}
+
+	/**
 	 * Gera itens de nota de envio a partir do movimentos de estoque que não possuem estudo.
 	 * 
 	 * @param listaMovimentoEstoqueCota
@@ -247,14 +275,23 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 	
 	/**
-	 * Atualiza o preco de capa do item da nota de envio com o preco de venda do produto vinculado
+	 * Atualiza o item da nota de envio com o preco de venda do produto vinculado e quantidade recalculada
 	 * @param itensNotaenvio
+	 * @param produtoEdicao
+	 * @param quantidade
 	 */
-	private void atualizaPrecoCapaItemNotaEnvio(List<ItemNotaEnvio> itensNotaEnvio){
+	private void atualizaItemNotaEnvio(List<ItemNotaEnvio> itensNotaEnvio, 
+			                           ProdutoEdicao produtoEdicao, 
+			                           BigInteger quantidade){
 		
 		for (ItemNotaEnvio ine : itensNotaEnvio){
 			
 			ine.setPrecoCapa(ine.getProdutoEdicao().getPrecoVenda());
+			
+			if (ine.getProdutoEdicao().equals(produtoEdicao)){
+				
+			    ine.setReparte(quantidade);
+			}
 		}
 	}
 
@@ -273,21 +310,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			return;
 		}
 		
-		Map<Long, BigInteger> mapProdutos = 
-				this.movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(periodo,cota.getId(),
-																						  GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE,
-																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE); 
+		
+		//Movimentos de Entrada e Saida para recalcular após Expedicão.
+		Map<Long, BigInteger> mapProdutos = this.obtemQuantidadeMovimentosPorProdutoAposExpedicao(periodo, cota.getId());
+		
 		
 		for (EstudoCota estudoCota : listaEstudoCota) {
-
-			if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
-				
-				this.atualizaPrecoCapaItemNotaEnvio(estudoCota.getItemNotaEnvios());
-				
-				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
-				
-				continue;
-			}
+			
 			
 			ProdutoEdicao produtoEdicao = estudoCota.getEstudo().getProdutoEdicao();
 
@@ -295,39 +324,44 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			BigInteger quantidadeResultante = BigInteger.ZERO;
 			
-			for(RateioDiferenca rateioDiferenca : estudoCota.getRateiosDiferenca()) {
-				
-				if(rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)
-						|| rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_EM)) {
-					
-					quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde().negate());
-					
-				} else {
-					
-					quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde());	
-				}
-			}
-
-			quantidadeResultante = mapProdutos.get(estudoCota.getEstudo().getProdutoEdicao().getId());
+			quantidadeResultante = mapProdutos.get(produtoEdicao.getId());
 			
-			Desconto percentualDesconto = this.descontoService
-					.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo()
-							.getLancamento(), cota, produtoEdicao);
+			
+			//Desconto Produto x cota.
+			Desconto percentualDesconto = 
+					this.descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo().getLancamento(), 
+																		   cota, 
+																		   produtoEdicao);
 
 			if(quantidadeResultante == null){
-				quantidadeResultante = BigInteger.ZERO;
+			
+			    quantidadeResultante = BigInteger.ZERO;
 			}
 			
 			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva());
+			
+			
+			//Verifica se Estudo ja possui itens de Nota de Envio.
+			if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
+				
+				this.atualizaItemNotaEnvio(estudoCota.getItemNotaEnvios(), 
+						                   produtoEdicao, 
+						                   quantidade);
+				
+				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
+				
+				continue;
+			}
 
-			ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(
-					estudoCota,
-					produtoEdicao,
-					precoVenda,
-					((percentualDesconto != null && percentualDesconto
-							.getValor() != null) ? percentualDesconto
-							.getValor() : BigDecimal.ZERO), 
-					quantidade);
+			
+			//Cria novo item nota caso o Estudo ainda não possua
+			ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(estudoCota,
+																 produtoEdicao,
+																 precoVenda,
+																 ((percentualDesconto != null && percentualDesconto.getValor() != null) ? 
+																   percentualDesconto.getValor() : 
+																   BigDecimal.ZERO), 
+																 quantidade);
 			
 			listItemNotaEnvio.add(itemNotaEnvio);
 		}
@@ -541,7 +575,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			}
 		}
 	}
-	
+
 	/**
 	 * Gera Nota de envio da Cota
 	 * @param pessoaEmitente
