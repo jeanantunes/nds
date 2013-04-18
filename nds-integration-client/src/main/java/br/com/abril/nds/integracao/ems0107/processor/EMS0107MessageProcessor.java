@@ -68,9 +68,9 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			
 		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
 				produtoEdicao);
-		if (lancamento == null) {
+		/*if (lancamento == null) {
 			
-			lancamento = getLancamentoPrevistoAnteriorMaisProximo(produtoEdicao);
+			lancamento = getLancamentoPrevistoAnteriorMaisProximo(produtoEdicao);*/
 			
 			if (lancamento == null) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
@@ -78,7 +78,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 						"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
 				return;
 			}
-		}
+		//}
 		
 		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
@@ -204,7 +204,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 * @param produtoEdicao
 	 * @return
 	 */
-	private Lancamento getLancamentoPrevistoAnteriorMaisProximo(
+	/*private Lancamento getLancamentoPrevistoAnteriorMaisProximo(
 			ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
@@ -225,7 +225,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		query.setFetchSize(1);
 		
 		return (Lancamento) query.uniqueResult();
-	}	
+	}*/	
 	
 	/**
 	 * Verifica se já existe EstudoCota cadastrado.

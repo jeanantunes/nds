@@ -53,7 +53,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		EMS0108Input input = (EMS0108Input) message.getBody();
 		
 		// Verifica se existe Produto		
-		Produto produto = recuperaProduto(input.getCodigoPublicacao()); 
+		Produto produto = recuperaProduto(input.getCodigoPublicacao());
 		if (null == produto) {
 			ndsiLoggerFactory.getLogger().logError(
 					message,
@@ -164,14 +164,16 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			}
 			
 			Lancamento lancamento;
-			try {
-				lancamento = this.recuperarLancamento(produtoEdicaoLancamento, DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
-			} catch (ParseException e1) {
+			//try {
+				//lancamento = this.recuperarLancamento(produtoEdicaoLancamento, DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
+				// Alterado em conjunto com Cesar Pop Punk para buscar o lançamento pela data de movimento
+				lancamento = this.recuperarLancamento(produtoEdicaoLancamento, input.getDataMovimento());
+			/*} catch (ParseException e1) {
 				ndsiLoggerFactory.getLogger().logError(
 						message,
 						EventoExecucaoEnum.ERRO_INFRA,
 						String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
-				return;			}
+				return;			}*/
 			if (null == lancamento) {
 				try {
 					lancamento = inserirLancamento(produtoEdicaoLancamento, input);
