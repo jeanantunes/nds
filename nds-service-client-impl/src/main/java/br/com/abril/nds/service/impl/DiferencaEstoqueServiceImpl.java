@@ -300,9 +300,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return diferencasAtualizadas;
 	}
 	
-	private void direcionarItensEstoque(Diferenca diferenca,BigInteger qntTotalRateio, boolean validarTransfEstoqueDiferenca){
+	private void direcionarItensEstoque(Diferenca diferenca,BigInteger qntDiferenca, boolean validarTransfEstoqueDiferenca){
 
-		Diferenca diferencaRedirecionada = this.redirecionarDiferencaEstoque(qntTotalRateio, diferenca);
+		Diferenca diferencaRedirecionada = this.redirecionarDiferencaEstoque(qntDiferenca, diferenca);
 	
 		StatusAprovacao statusAprovacao = obterStatusLancamento(diferencaRedirecionada);
 		
@@ -320,7 +320,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		this.processarTransferenciaEstoque(diferencaRedirecionada,diferencaRedirecionada.getResponsavel().getId());
 	}
 	
-	private Diferenca redirecionarDiferencaEstoque(BigInteger qntTotalRateio,Diferenca diferenca){
+	private Diferenca redirecionarDiferencaEstoque(BigInteger qntDiferenca,Diferenca diferenca){
 		
 		Diferenca diferencaEstoque = new Diferenca();
 		
@@ -334,7 +334,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		diferencaEstoque.setItemRecebimentoFisico(diferenca.getItemRecebimentoFisico());
 		diferencaEstoque.setStatusConfirmacao(diferenca.getStatusConfirmacao());
 		diferencaEstoque.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
-		diferencaEstoque.setQtde( diferenca.getQtde().subtract(qntTotalRateio) );
+		diferencaEstoque.setQtde(qntDiferenca);
 		
 		return diferencaEstoque;
 	}
@@ -388,10 +388,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 							usuario.getId(), isMovimentoDiferencaAutomatico));
 				}
 				
+				if (diferenca.getTipoDiferenca().isSobra()) {
+					
+					this.direcionarItensEstoque(diferenca, qntTotalRateio, validarTransfEstoqueDiferenca);
+				}
+				
 				//Verifica se ha direcionamento de produtos para o estoque do distribuidor
 				if(diferenca.getQtde().compareTo(qntTotalRateio)>0){
 					
-					this.direcionarItensEstoque(diferenca, qntTotalRateio, validarTransfEstoqueDiferenca);
+					this.direcionarItensEstoque(diferenca, diferenca.getQtde().subtract(qntTotalRateio), validarTransfEstoqueDiferenca);
 					
 					diferenca.setQtde(qntTotalRateio);
 				}
@@ -835,19 +840,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 														   Long idUsuario,
 														   boolean isAprovacaoAutomatica) {
 
-		if (diferenca.getTipoDiferenca().isSobra()) {
-			
-			TipoMovimentoEstoque tipoMovimentoEstoque =
-				this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-					diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
-			
-			this.movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
-				diferenca.getProdutoEdicao().getId(), idUsuario, 
-					rateioDiferenca.getQtde(), tipoMovimentoEstoque,isAprovacaoAutomatica, true);
-			
-			//TODO: acertar este fluxo para geração de diferença, lançamento diferença, transferencia de estoque
-		}
-		
 		TipoMovimentoEstoque tipoMovimentoEstoqueCota =
 			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				diferenca.getTipoDiferenca().getGrupoMovimentoEstoqueCota());
