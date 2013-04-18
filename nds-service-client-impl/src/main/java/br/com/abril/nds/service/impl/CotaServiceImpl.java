@@ -90,8 +90,6 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -939,6 +937,7 @@ public class CotaServiceImpl implements CotaService {
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
 		dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
+		dto.setRecebeComplementar(parametro.getRecebeComplementar());
 		dto.setNeImpresso(parametro.getNotaEnvioImpresso());
 		dto.setNeEmail(parametro.getNotaEnvioEmail());
 		dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
@@ -1056,6 +1055,10 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica()!= null)
 				?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
+		if (cota.getTipoDistribuicaoCota() != null) {
+		    cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
+		    cotaDTO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota());
+		}
 		
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());

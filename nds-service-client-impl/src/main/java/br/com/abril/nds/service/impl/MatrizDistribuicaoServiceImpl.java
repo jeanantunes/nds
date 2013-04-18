@@ -273,7 +273,14 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			else if (vo.getIdEstudo() != null && vo.getIdEstudo().intValue() > 0) {
 				
 				Estudo estudo = estudoRepository.buscarPorId(vo.getIdEstudo().longValue());
-				estudoRepository.remover(estudo);
+				if (!estudo.isLiberado()) {
+				    for (EstudoCota ec : estudo.getEstudoCotas()) {
+					estudoCotaRepository.remover(ec);
+				    }
+				    estudoRepository.remover(estudo);
+				} else {
+				    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Este estudo já foi liberado, não é permitido excluí-lo!"));
+				}
 			}
 			else {
 				

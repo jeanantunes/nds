@@ -997,7 +997,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		queryStringProdutoEdicao += " where "+StringUtils.join(whereList," and ");
 		
 		//Group by
-		queryStringProdutoEdicao +=" GROUP BY produtoEdicao.numeroEdicao "; 
+		queryStringProdutoEdicao +=" GROUP BY produtoEdicao.numeroEdicao ";
+		queryStringProdutoEdicao +=" ORDER BY produtoEdicao.numeroEdicao desc ";
 		
 		Query query = this.getSession().createQuery(queryStringProdutoEdicao);
 
@@ -1511,7 +1512,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    Criteria esto = s.createCriteria(EstoqueProdutoCota.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
 	    List<EstoqueProdutoCota> temp = esto.list();
 	    for (EstoqueProdutoCota x : temp) {
-		BigInteger venda = BigInteger.valueOf(Math.round(1 + (Math.random() * x.getQtdeRecebida().longValue())));
+		BigInteger venda = BigInteger.valueOf(Math.round((Math.random() * x.getQtdeRecebida().longValue())));
 		if (prod.get(x.getProdutoEdicao().getId()) == null) {
 		    prod.put(x.getProdutoEdicao().getId(), venda);
 		} else {
