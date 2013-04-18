@@ -232,6 +232,8 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				$.each(data.rows, function(index, value) {
 //					console.log(value.cell.idCotaStr);
+					value.cell.repTotal = parseInt(value.cell.repTotal, 10);
+					
 					if(parseInt(value.cell.qtdeCotas)>0){
 						value.cell.faixaVenda="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+");\">"+value.cell.faixaVenda+"</a>";						
 					}
