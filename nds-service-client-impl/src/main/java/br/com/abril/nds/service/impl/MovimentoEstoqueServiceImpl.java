@@ -236,7 +236,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	public MovimentoEstoque gerarMovimentoEstoqueJuramentado(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false, true);
 
 		return movimentoEstoque;
 	}
@@ -245,7 +245,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(dataLancamento, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false, true);
 
 		return movimentoEstoque;
 	}
@@ -254,7 +254,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque, origem, null, false,false);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque, origem, null, false,false, true);
 
 		return movimentoEstoque;
 	}
@@ -262,7 +262,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Override
 	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false, true);
 
 		return movimentoEstoque;
 	}
@@ -272,7 +272,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao, boolean isImportacao) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, dataOperacao, isImportacao,false);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, dataOperacao, isImportacao,false, true);
 
 		return movimentoEstoque;
 	}
@@ -281,18 +281,19 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public MovimentoEstoque gerarMovimentoEstoqueDiferenca(Long idProdutoEdicao, Long idUsuario, 
 														   BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, 
-														   boolean isMovimentoDiferencaAutomatica) {
+														   boolean isMovimentoDiferencaAutomatica,
+														   boolean validarTransfEstoqueDiferenca) {
 
 		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, 
 																		tipoMovimentoEstoque,null, null, 
-																		false,isMovimentoDiferencaAutomatica);
+																		false,isMovimentoDiferencaAutomatica, validarTransfEstoqueDiferenca);
 		return movimentoEstoque;
 	}
 
 	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, 
 												   BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, 
 												   Origem origem, Date dataOperacao, boolean isImportacao,
-												   boolean isMovimentoDiferencaAutomatica){
+												   boolean isMovimentoDiferencaAutomatica, boolean validarTransfEstoqueDiferenca){
 
 		this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.DISTRIBUIDOR);
 		
@@ -330,7 +331,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoque.setAprovador(new Usuario(idUsuario));
 			movimentoEstoque.setDataAprovacao(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
-			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao);			
+			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao, validarTransfEstoqueDiferenca);			
 			
 			movimentoEstoque.setEstoqueProduto(new EstoqueProduto(idEstoque));
 		
@@ -345,13 +346,14 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Transactional
 	public Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
 			 							MovimentoEstoque movimentoEstoque) {
-		return this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, false);
+		return this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, false, true);
 	}
 
 	@Override
 	@Transactional
 	public Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque,
-			 							MovimentoEstoque movimentoEstoque, boolean isImportacao) {
+			 							MovimentoEstoque movimentoEstoque, boolean isImportacao,
+			 							boolean validarTransfEstoqueDiferenca) {
 
 		if (StatusAprovacao.APROVADO.equals(movimentoEstoque.getStatus())) {
 
@@ -473,7 +475,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			// Caso seja importação, deve inserir mesmo se o estoque ficar negativo - Definido em conjunto com Cesar Pop Punk
 			if (!isImportacao) {
 				this.validarAlteracaoEstoqueProdutoDistribuidor(
-					novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao());
+					novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao(),
+					validarTransfEstoqueDiferenca);
 			}
 			
 			if (estoqueProduto.getId() == null) {
@@ -493,9 +496,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	private void validarAlteracaoEstoqueProdutoDistribuidor(BigInteger saldoEstoque, 
 															TipoEstoque tipoEstoque,
-															ProdutoEdicao produtoEdicao) {
+															ProdutoEdicao produtoEdicao,
+															boolean validarTransfEstoqueDiferenca) {
 		
-		if (!this.validarSaldoEstoque(saldoEstoque)) {
+		if (validarTransfEstoqueDiferenca && !this.validarSaldoEstoque(saldoEstoque)) {
 			
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, 
@@ -933,7 +937,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 			this.criarMovimentoEstoque(null,
 					produtoServico.getProdutoEdicao().getId(),
-					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null, null, false,false);
+					idUsuario, produtoServico.getQuantidade(), tipoMovimento,null, null, false,false, true);
 		}
 	}
 	

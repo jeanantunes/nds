@@ -874,24 +874,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		return gruposMovimentoFinanceiro;
 	}
-	
-	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueAjusteEstoque() {
-		
-		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
-			Arrays.asList(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
-		
-		return gruposMovimentoEstoque;
-	}
-	
+
 	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroPostergacaoCobranca() {
 		
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
