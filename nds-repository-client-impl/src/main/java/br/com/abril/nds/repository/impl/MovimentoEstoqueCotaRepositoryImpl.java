@@ -49,7 +49,6 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.abril.nds.vo.PeriodoVO;
 
 @Repository
 public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository {
@@ -1349,14 +1348,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdMovimentoCotaPorTipoMovimento(java.util.Date, java.lang.Long, br.com.abril.nds.model.estoque.GrupoMovimentoEstoque)
 	 */
 	@Override
-	public Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(Intervalo<Date> periodo, Long idCota, GrupoMovimentoEstoque... grupoMovimentoEstoque){
+	public Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(Intervalo<Date> periodo, 
+			                                                           Long idCota, 
+			                                                           GrupoMovimentoEstoque... gruposMovimentoEstoque){
 		
 		StringBuffer hql = new StringBuffer();
 		
-		hql.append(" select sum( case when (movimento.tipoMovimento.grupoMovimentoEstoque = :rateio) ");
-		hql.append(	" 				then  movimento.qtde  ");
-		hql.append(" 			 	else  - movimento.qtde " );
-		hql.append("  			 end  ) as quantidade, ");
+		hql.append(" select sum( case when (movimento.tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = :operacaoEntrada) ");
+		
+		hql.append(	" 			 then  movimento.qtde else - movimento.qtde end ) as quantidade, ");
 		
 		hql.append(" produtoEdicao.id as idProdutoEdicao ");
 		
@@ -1366,7 +1366,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" and movimento.data between :inicio and :fim ");
 		
-		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque  in(:grupoMovimentoEstoque) ");
+		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque  in (:gruposMovimento) ");
 		
 		hql.append(" group by produtoEdicao.id ");
 		
@@ -1378,9 +1378,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setParameter("idCota", idCota);
 		
-		query.setParameterList("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		query.setParameter("operacaoEntrada", OperacaoEstoque.ENTRADA);
 		
-		query.setParameter("rateio",GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+		query.setParameterList("gruposMovimento", gruposMovimentoEstoque);
 		
 		@SuppressWarnings("unchecked")
 		List<Object[]> listaResultados = query.list();
