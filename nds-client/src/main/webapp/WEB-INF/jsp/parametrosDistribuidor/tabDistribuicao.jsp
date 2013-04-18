@@ -53,7 +53,7 @@
 		<table width="274" border="0" cellpadding="0" cellspacing="1">
 			<tr class="header_table">
 				<td>Classificação Cota</td>
-				<td align="center">Dê</td>
+				<td align="center">De</td>
 				<td align="center">Até</td>
 			</tr>
 			<tr class="class_linha_1">
