@@ -173,7 +173,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 
 			jdbcTemplate = new JdbcTemplate(dataSource);
 			 
-			return jdbcTemplate.queryForObject(sql.toString(), new Object[] { 
+			return (ProdutoEdicao) jdbcTemplate.queryForObject(sql.toString(), new Object[] { 
 					codigoPublicacao, 
 					edicao}, 
 					produtoEdicaoRowMapper);
@@ -205,7 +205,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 
 		jdbcTemplate = new JdbcTemplate(dataSource);
 		 
-		return jdbcTemplate.queryForObject(sql.toString(), new Object[] { 
+		return (Cota) jdbcTemplate.queryForObject(sql.toString(), new Object[] { 
 				numeroCota}, 
 				cotaRowMapper);
 		
@@ -252,7 +252,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		jdbcTemplate = new JdbcTemplate(dataSource);
 		 
-		return jdbcTemplate.queryForObject(sql.toString(), new Object[] { 
+		return (Lancamento) jdbcTemplate.queryForObject(sql.toString(), new Object[] { 
 				produtoEdicao.getId(), 
 				distribuidorService.obter().getDataOperacao() }, 
 				lancamentoRowMapper);
@@ -313,18 +313,6 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		return (qtd != null && qtd.intValue() > 0);
 		
-		/*
-		stringbuilder hql = new stringbuilder();
-		hql.append(" select count(ec) from estudocota ec " );
-		hql.append("  where ec.estudo = :estudo and ec.cota = :cota");
-		
-		query query = getsession().createquery(hql.tostring());
-		query.setparameter("estudo", estudo);
-		query.setparameter("cota", cota);
-		
-		long qtd = (long) query.uniqueresult();
-		return (qtd != null && qtd.intvalue() > 0);
-		*/
 	}
 	
 	@Override
