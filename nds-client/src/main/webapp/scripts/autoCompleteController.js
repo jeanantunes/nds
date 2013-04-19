@@ -36,7 +36,9 @@ function AutoCompleteController(workspace) {
 	
 	this.pesquisarPorCodigoSuccessCallBack = function(result, idCampoNome, successCallBack) {
 
-		$(idCampoNome, autoComplete.workspace).val(result.nome);
+		if (result.nome != undefined) {
+			$(idCampoNome, autoComplete.workspace).val(result.nome);
+		}
 		
 		if (successCallBack) {
 			

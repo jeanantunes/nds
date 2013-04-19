@@ -99,7 +99,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
 		
 		List<ProdutoRecebidoDTO> listaProdutoRecebidoDto = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtro);
-
+		
 		guardarFiltroNaSession(filtro);
 		
 		TableModel<CellModelKeyValue<ProdutoNaoRecebidoDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoNaoRecebidoDTO>>();
@@ -132,7 +132,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		validarEntradaFiltroProduto(filtro);
 		
 		List<CotaQueRecebeExcecaoDTO> listaCotaQueRecebeExcecaoDto = this.excecaoSegmentoParciaisService.obterCotasQueRecebemExcecaoPorProduto(filtro);
-
+		
 		guardarFiltroNaSession(filtro);
 		
 		TableModel<CellModelKeyValue<CotaQueRecebeExcecaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueRecebeExcecaoDTO>>();
@@ -147,7 +147,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		validarEntradaFiltroProduto(filtro);
 		
 		List<CotaQueNaoRecebeExcecaoDTO> listaCotaQueNaoRecebeExcecaoDto = this.excecaoSegmentoParciaisService.obterCotasQueNaoRecebemExcecaoPorProduto(filtro);
-
+		
 		TableModel<CellModelKeyValue<CotaQueNaoRecebeExcecaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueNaoRecebeExcecaoDTO>>();
 		
 		configurarTableModelSemPaginacao(listaCotaQueNaoRecebeExcecaoDto, tableModel);
@@ -276,6 +276,12 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		}
 		
 		this.result.use(Results.json()).from(listaCotaQueNaoRecebeExcecaoDTOAutoComplete, "result").include("value", "chave").serialize();
+	}
+	
+	@Post
+	public void pesquisarPorCodigoProdutoAutoComplete(String codigo){
+		
+		pesquisarPorCodigoProduto(codigo);
 	}
 	
 	@Post

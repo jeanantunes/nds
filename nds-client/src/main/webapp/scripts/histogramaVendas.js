@@ -32,7 +32,6 @@ function checkEdicao(check){
 
 var histogramaVendasController = $.extend(true, { 
 	
-	
 	iniciarGrid: function(){
 		
 		$(".edicaoProdCadastradosGrid",this.workspace).flexigrid({
@@ -199,6 +198,23 @@ var histogramaVendasController = $.extend(true, {
 	},
 	
 	init: function(){
+		
+		var autoComplete = new AutoCompleteController(histogramaVendasController.workspace);
+		
+		$('#produto').keyup(function () {
+			
+			autoComplete.autoCompletar("/produto/autoCompletarPorNomeProdutoAutoComplete",'#codigo','#produto');
+		});
+		
+		autoComplete.limparCampoOnChange('#produto', new Array('#codigo','#edicao'));
+		
+		$('#codigo').change(function () {
+			
+			autoComplete.pesquisarPorCodigo("/produto/pesquisarPorCodigoProdutoAutoComplete",'#codigo','#produto');
+		});
+		
+		autoComplete.limparCampoOnChange('#codigo', new Array('#produto','#edicao'));
+		
 		this.iniciarGrid();
 		
 		//

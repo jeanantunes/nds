@@ -77,6 +77,8 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 			parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
 		}
 		
+		hql.append(" order by nomeProduto, codigoProduto");
+		
 		Query query = getSession().createQuery(hql.toString());
 		
 		setParameters(query, parameters);
@@ -176,6 +178,8 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 			parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
 		}
 		
+		hql.append(" order by nomeProduto, codigoProduto");
+		
 		Query query = getSession().createQuery(hql.toString());
 		
 		setParameters(query, parameters);
@@ -234,7 +238,7 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 			parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 		}
 		
-		hql.append(" order by nomePessoa asc ");
+		hql.append(" order by numeroCota, nomePessoa");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -327,6 +331,8 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 			hql.append(" produto.nome = :nomeProduto )");
 			parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 		}
+		
+		hql.append(" order by numeroCota, nomePessoa");
 		
 		Query query = getSession().createQuery(hql.toString());
 		

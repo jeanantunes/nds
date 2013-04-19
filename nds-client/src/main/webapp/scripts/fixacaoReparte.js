@@ -174,7 +174,7 @@ var fixacaoReparteController = $.extend(true, {
 	
 	
 	//Grid de fixacao por cota
-	$(".excessaoCotaGrid").flexigrid({
+	$(".fixacaoCotaGrid").flexigrid({
 			preProcess: function(data){return fixacaoReparteController.preProcessarResultadoConsultaFixacao(data);},			
 			dataType : 'json',
 			colModel : [ {
@@ -333,7 +333,7 @@ var fixacaoReparteController = $.extend(true, {
 			data.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoCota(data.rows[i].cell);
 		}
 		
-		$('.excessaoCotaGrid').show();
+		$('.fixacaoCotaGrid').show();
 		if (data.result){
 			return data.result[1];
 		}
@@ -438,7 +438,7 @@ var fixacaoReparteController = $.extend(true, {
 	
 	//retorna msg de sucesso durante exclusao de cota
 	exclusaoCotaSucesso:function(result){
-		$(".excessaoCotaGrid").flexReload();
+		$(".fixacaoCotaGrid").flexReload();
 		
 	},
 	
@@ -558,7 +558,7 @@ var fixacaoReparteController = $.extend(true, {
 									//parametros para salvar repartes pdvs
 									$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte',  listaPDV, 
 											function(result){
-														$(".excessaoCotaGrid").flexReload();
+														$(".fixacaoCotaGrid").flexReload();
 														$("#dialog-defineReparte").dialog("close"); 
 											},
 											function(result){ });
@@ -692,13 +692,13 @@ var fixacaoReparteController = $.extend(true, {
 	//Funcao que realiza pesquisa de fixações por cota
 	pesquisarPorCota:function(){
 		fixacaoReparteController.exibeGridCota();
-		$(".excessaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
+		$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
 			url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorCota",
 			dataType : 'json',
 			params: fixacaoReparteController.getDadosCota()
 		});
 		
-		$(".excessaoCotaGrid", fixacaoReparteController.workspace).flexReload();
+		$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexReload();
 				
 	},
 	
@@ -826,7 +826,7 @@ var fixacaoReparteController = $.extend(true, {
 		//Executada em caso de sucesso durante tentativa de chamada postJSON para adicionar fixação
 		executarSuccessCallBack:function(result){
 			if($('#selectModal').css('display')=='inline-block'){
-				$(".excessaoCotaGrid",fixacaoReparteController.workspace).flexReload();
+				$(".fixacaoCotaGrid",fixacaoReparteController.workspace).flexReload();
 				fixacaoReparteController.limparCamposModalNovo();
 				$("#dialog-novo").dialog('close');
 			}else if($('#selectModal').css('display')=='none'){

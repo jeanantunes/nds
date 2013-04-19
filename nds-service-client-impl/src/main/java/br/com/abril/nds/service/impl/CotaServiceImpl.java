@@ -90,8 +90,6 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -2569,6 +2567,22 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	public List<CotaDTO> obterPorNomeAutoComplete(String nome) {
 	    return cotaRepository.obterCotasPorNomeAutoComplete(nome);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota) {
+		
+		return cotaRepository.obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
+	}
+	
+	
+	@Override
+	public boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota) {
+		
+		TipoDistribuicaoCota tpDistribuicaoCota = obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
+		
+		return (tpDistribuicaoCota != null && tpDistribuicaoCota.equals(tipoDistribuicaoCota));
 	}
 }
 
