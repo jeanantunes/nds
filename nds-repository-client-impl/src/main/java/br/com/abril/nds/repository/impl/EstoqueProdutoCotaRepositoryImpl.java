@@ -202,7 +202,7 @@ public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 		sql.append("  			join historico_lancamento on historico_lancamento.LANCAMENTO_ID = lancamento.ID ");
 		sql.append(" 			join produto on produto.ID = produto_edicao.PRODUTO_ID");
 		sql.append(" where produto.codigo = :produtoBusca ");
-		sql.append("	group by produto_edicao.NUMERO_EDICAO limit 6");
+		sql.append("	group by produto_edicao.NUMERO_EDICAO order by produto_edicao.NUMERO_EDICAO desc limit 6");
 		
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -214,7 +214,7 @@ public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 		return query.list();
 	}
 		
-	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota){
+	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota, String codigoProduto){
 			
 			StringBuilder sql = new StringBuilder("");
 	
@@ -230,12 +230,14 @@ public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 			sql.append("  			join historico_lancamento on historico_lancamento.LANCAMENTO_ID = lancamento.ID ");
 			sql.append(" 			join produto on produto.ID = produto_edicao.PRODUTO_ID");
 			sql.append(" where cota_id = :cotaBusca ");
-			sql.append("	group by edicao order by dataLancamento desc limit 6");
+			sql.append(" and produto_edicao.PRODUTO_ID = :produtoBusca ");
+			sql.append("	group by edicao order by edicao desc limit 6");
 			
 			
 			SQLQuery query = getSession().createSQLQuery(sql.toString());
 			
 			query.setParameter("cotaBusca", cota.getId());
+			query.setParameter("produtoBusca", codigoProduto);
 			query.setResultTransformer(new AliasToBeanResultTransformer(
 					FixacaoReparteDTO.class));
 			

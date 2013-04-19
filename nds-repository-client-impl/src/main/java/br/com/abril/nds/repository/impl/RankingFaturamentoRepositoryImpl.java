@@ -61,9 +61,9 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<Ra
 	public List<RankingFaturamento>  buscarPorCota(Cota cota){
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select rankingFaturamento from RankingFaturamento rankingFaturamento  where " + 
-		           "     rankingFaturamento.rankingFaturamentoGerado.id = (select max(id) from RankingFaturamentoGerado)"+
-				   "     and rankingFaturamento.cota = :cota");
+		hql.append(" select rf from RankingFaturamento rf where "); 
+		hql.append(" rf.rankingFaturamentoGerado.id = (select max(rfg.id) from RankingFaturamentoGerado rfg)");
+		hql.append(" and rf.cota = :cota");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("cota", cota);

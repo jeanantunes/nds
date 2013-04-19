@@ -145,7 +145,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 
 		sql.append(" GROUP BY f.id ");
 		
-		sql.append(" order by f.dataHora asc ");
+		sql.append(" order by nomeProduto asc ");
 		
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("nomeCota", "%"+ cota.getNomeCota() +"%");
