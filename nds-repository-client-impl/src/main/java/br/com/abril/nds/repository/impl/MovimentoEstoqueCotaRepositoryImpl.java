@@ -754,8 +754,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	and CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		
-		if(filtro.getIdCota()!=null) {
-			sql.append(" and MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota  ");
+		if(filtro.getNumeroCota()!=null) {
+			sql.append(" and COTA.NUMERO_COTA = :numeroCota  ");
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
@@ -805,8 +805,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDetalheDTO.class));
 		
-		if(filtro.getIdCota()!=null) {
-			sqlquery.setParameter("idCota", filtro.getIdCota());
+		if(filtro.getNumeroCota()!=null) {
+			sqlquery.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 
 		if(filtro.getIdFornecedor() != null) {
@@ -878,8 +878,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	and CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		
-		if(filtro.getIdCota()!=null) {
-			sql.append(" and MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota  ");
+		if(filtro.getNumeroCota()!=null) {
+			sql.append(" and COTA.NUMERO_COTA = :numeroCota  ");
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
@@ -892,8 +892,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
 		
-		if(filtro.getIdCota()!=null) {
-			sqlquery.setParameter("idCota", filtro.getIdCota());
+		if(filtro.getNumeroCota()!=null) {
+			sqlquery.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 
 		if(filtro.getIdFornecedor() != null) {

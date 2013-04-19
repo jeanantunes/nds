@@ -143,6 +143,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		hql.append(" , sum(mec.qtde) - ( "+ this.getQueryVendaProduto()  +" )    as exemplaresDevolucao ");
 		
+		hql.append(" , che.sequencia as sequencia ");
+		
 		hql.append(this.getFromConferenciaEncalhe());
 	
 		hql.append(this.getWhereFechamentoEncalhe(filtro));

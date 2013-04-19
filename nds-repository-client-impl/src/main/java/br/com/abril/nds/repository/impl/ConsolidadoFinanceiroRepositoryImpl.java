@@ -101,7 +101,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("	movimentos4_.VALOR_DESCONTO as desconto, ")
            .append("	coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi7_.PRECO_VENDA) as precoComDesconto, ")
            .append("	sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi7_.PRECO_VENDA) as total,")
-           .append("	sum(movimentos4_.QTDE) as encalhe  ")
+           .append("	sum(movimentos4_.QTDE) as encalhe,  ")
+           .append("	chamadaEncalhe.sequencia as sequencia ")
            .append("from ")
            .append("	CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
            .append("left outer join ")
@@ -137,6 +138,13 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("left outer join ")
            .append("	TIPO_MOVIMENTO tipomovime5_  ")
            .append("		on movimentof3_.TIPO_MOVIMENTO_ID=tipomovime5_.ID  ")
+           .append("inner join ")
+		   .append("	CHAMADA_ENCALHE_COTA chamadaEncalheCota ")
+		   .append("		on cota1_.ID = chamadaEncalheCota.COTA_ID ")
+		   .append("inner join ")
+		   .append("	CHAMADA_ENCALHE chamadaEncalhe ")
+		   .append("		on (produtoedi7_.ID = chamadaEncalhe.PRODUTO_EDICAO_ID ")
+		   .append("		and chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID) ")
            .append("where ")
            .append("	cota1_.NUMERO_COTA = :numeroCota ")
            .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
@@ -160,7 +168,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("	movimentos2_.VALOR_DESCONTO as desconto, ")
            .append("	coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi5_.PRECO_VENDA) as precoComDesconto, ")
            .append("	sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi5_.PRECO_VENDA) as total,")
-           .append("	sum(movimentos2_.QTDE) as encalhe  ")
+           .append("	sum(movimentos2_.QTDE) as encalhe,  ")
+           .append("	chamadaEncalhe.sequencia as sequencia ")
            .append("from ")
            .append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
            .append("left outer join ")
@@ -190,6 +199,13 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("left outer join ")
            .append("	TIPO_MOVIMENTO tipomovime3_  ")
            .append("		on movimentof0_.TIPO_MOVIMENTO_ID=tipomovime3_.ID  ")
+           .append("inner join ")
+		   .append("	CHAMADA_ENCALHE_COTA chamadaEncalheCota ")
+		   .append("		on cota1_.ID = chamadaEncalheCota.COTA_ID ")
+		   .append("inner join ")
+		   .append("	CHAMADA_ENCALHE chamadaEncalhe ")
+		   .append("		on (produtoedi5_.ID = chamadaEncalhe.PRODUTO_EDICAO_ID ")
+		   .append("		and chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID) ")
            .append("where ")
            .append("	cota1_.NUMERO_COTA = :numeroCota ")
            .append("	and movimentof0_.DATA = :dataConsolidado ")
@@ -250,7 +266,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			case TOTAL:
 				orderByColumn = " total ";
 				break;
+			case SEQUENCIA:
+				orderByColumn = " sequencia ";
+				break;
 			default:
+				orderByColumn = " sequencia ";
 				break;
 			}
 
@@ -274,6 +294,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.addScalar("precoComDesconto", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("encalhe", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("sequencia", StandardBasicTypes.INTEGER);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(EncalheCotaDTO.class));
 		
@@ -503,7 +524,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	coalesce(estudocota7_.QTDE_EFETIVA,0) as reparteFinal, ")
 		   .append("	coalesce(estudocota7_.QTDE_PREVISTA-estudocota7_.QTDE_EFETIVA,0) as diferenca, ")
 		   .append("	diferenca10_.TIPO_DIFERENCA as motivo, ")
-		   .append("	sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as total ")
+		   .append("	sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as total, ")
+		   .append("	chamadaEncalhe.sequencia as sequencia ")
 		   .append("from ")
 		   .append("	CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
 		   .append("inner join ")
@@ -548,6 +570,13 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("inner join ")
 		   .append("	TIPO_MOVIMENTO tipomovime5_  ")
 		   .append("		on movimentof3_.TIPO_MOVIMENTO_ID=tipomovime5_.ID  ")
+		   .append("inner join ")
+		   .append("	CHAMADA_ENCALHE_COTA chamadaEncalheCota ")
+		   .append("		on cota1_.ID = chamadaEncalheCota.COTA_ID ")
+		   .append("inner join ")
+		   .append("	CHAMADA_ENCALHE chamadaEncalhe ")
+		   .append("		on (produtoedi8_.ID = chamadaEncalhe.PRODUTO_EDICAO_ID ")
+		   .append("		and chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID) ")
 		   .append("where ")
 		   .append("	cota1_.NUMERO_COTA = :numeroCota ")
 		   .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
@@ -573,7 +602,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	estudocota5_.QTDE_EFETIVA as reparteFinal, ")
 		   .append("	estudocota5_.QTDE_PREVISTA-estudocota5_.QTDE_EFETIVA as diferenca, ")
 		   .append("	diferenca8_.TIPO_DIFERENCA as motivo, ")
-		   .append("	sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as total ")
+		   .append("	sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as total, ")
+		   .append("	chamadaEncalhe.sequencia as sequencia ")
 		   .append("from ")
 		   .append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
 		   .append("inner join ")
@@ -612,6 +642,13 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("inner join ")
 		   .append("	TIPO_MOVIMENTO tipomovime3_  ")
 		   .append("		on movimentof0_.TIPO_MOVIMENTO_ID=tipomovime3_.ID  ")
+		   .append("inner join ")
+		   .append("	CHAMADA_ENCALHE_COTA chamadaEncalheCota ")
+		   .append("		on cota1_.ID = chamadaEncalheCota.COTA_ID ")
+		   .append("inner join ")
+		   .append("	CHAMADA_ENCALHE chamadaEncalhe ")
+		   .append("		on (produtoedi6_.ID = chamadaEncalhe.PRODUTO_EDICAO_ID ")
+		   .append("		and chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID) ")
 		   .append("where ")
 		   .append("	cota1_.NUMERO_COTA = :numeroCota ")
 		   .append("	and movimentof0_.DATA = :dataConsolidado ")
@@ -680,8 +717,12 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 					case TOTAL:
 						orderByColumn = " total ";
 						break;
+					case SEQUENCIA:
+						orderByColumn = " sequencia ";
+					break;
 					default:
-						break;
+						orderByColumn = " sequencia ";
+					break;
 				}
 			
 			hql.append(orderByColumn);
@@ -709,6 +750,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.addScalar("diferenca", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("motivo", StandardBasicTypes.STRING);
 		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("sequencia", StandardBasicTypes.INTEGER);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ConsignadoCotaDTO.class));
 		
@@ -877,10 +919,14 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
 		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
-		   .append(" COALESCE ( ")
-		   .append(" 	COALESCE ( ")
-		   .append(" 		MIN(dividaRaiz.DATA), divida.DATA ")
-		   .append(" 	), cfc.DT_CONSOLIDADO ")
+		   //.append(" COALESCE ( ")
+		   //.append(" 	COALESCE ( ")
+		   //.append(" 		MIN(dividaRaiz.DATA), divida.DATA ")
+		   //.append(" 	), cfc.DT_CONSOLIDADO ")
+		   
+		   
+		   .append(" (select max(mfp.DATA) from MOVIMENTO_FINANCEIRO_COTA mfp where mfp.COTA_ID = cfc.COTA_ID and mfp.DATA < cfc.DT_CONSOLIDADO and mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) or mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito)")
+		   
 		   .append(" ) AS dataRaiz, ")
 		   .append(" coalesce((select sum(bc.VALOR_PAGO) ")
 		   .append("           from BAIXA_COBRANCA bc ")
@@ -1051,7 +1097,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = mfc.DATA and cob.COTA_ID = mfc.COTA_ID) > 0) as cobrado, ")
 		   
 		   //data raiz
-		   .append(" mfc.DATA_CRIACAO as dataRaiz, ")
+		   .append(" (select max(mfp.DATA) from MOVIMENTO_FINANCEIRO_COTA mfp where mfp.COTA_ID = mfc.COTA_ID and mfp.DATA < mfc.DATA and mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) or mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito)) ")
+		   .append("  as dataRaiz, ")
 		   
 		   //valor pago
 		   .append(" 0 as valorPago, ")
