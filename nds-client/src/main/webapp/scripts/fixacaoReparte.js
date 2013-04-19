@@ -770,6 +770,7 @@ var fixacaoReparteController = $.extend(true, {
 				data.push({name:'fixacaoReparteDTO.produtoFixado',value: $("#codigoModal").val()});
 			}
 		
+			data.push({name:'fixacaoReparteDTO.edicao', 		value: $('#edicaoDestaque').text()});
 			data.push({name:'fixacaoReparteDTO.qtdeEdicoes',	value: $("#qtdeEdicoesModal").val()});
 			data.push({name:'fixacaoReparteDTO.qtdeExemplares',	value: $("#qtdeFixadaModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoInicial',	value: $("#edInicialModal").val()});
@@ -830,7 +831,6 @@ var fixacaoReparteController = $.extend(true, {
 				fixacaoReparteController.limparCamposModalNovo();
 				$("#dialog-novo").dialog('close');
 			}else if($('#selectModal').css('display')=='none'){
-				console.log('escondido');
 				$(".fixacaoProdutoGrid",fixacaoReparteController.workspace).flexReload();
 				fixacaoReparteController.limparCamposModalNovo();
 				$("#dialog-novo").dialog('close');
