@@ -94,7 +94,7 @@ var analiticoEncalheController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,

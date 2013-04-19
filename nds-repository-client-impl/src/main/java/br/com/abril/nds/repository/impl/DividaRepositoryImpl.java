@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.hibernate.Query;
@@ -732,45 +730,41 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
      */
 	@SuppressWarnings("unchecked")
 	private List<SumarizacaoDividasDTO> sumarizarDividas(Date data, TipoDivida tipoDivida) {
-	    boolean isDividaReceber = TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida);
-	    
-	    Map<String, Object> parametros = new HashMap<String, Object>();
-	    parametros.put("data", data);
-	    parametros.put("statusCobrancaPago", StatusCobranca.PAGO);
-	    
-	    StringBuilder hql = new StringBuilder("select new ");
-	    hql.append(SumarizacaoDividasDTO.class.getCanonicalName());
-	    hql.append("(cobranca.dataVencimento as data,");
-	    hql.append("'").append(tipoDivida).append("'").append(" as tipoSumarizacao, ");
-	    hql.append(" cobranca.tipoCobranca as tipoCobranca, ");
-	    hql.append(" sum(cobranca.valor) as total, ");
-	    hql.append(" sum(case when cobranca.statusCobranca = :statusCobrancaPago then cobranca.valor else 0 end) as pago, ");
-	    if (isDividaReceber) {
-	        hql.append("sum(case when cobranca.statusCobranca = :statusCobrancaNaoPago then cobranca.valor else 0 end) as inadimplencia) ");
-	        parametros.put("statusCobrancaNaoPago", StatusCobranca.NAO_PAGO);
-	    } else {
-	        //Dívidas à vencer, sem possibilidade de verificação de inadimplência 
-	        hql.append("cast(0 as big_decimal) as inadimplencia) ");
-	    }
-	    hql.append("from Cobranca cobranca ");
-	    hql.append("where cobranca.dataVencimento ");
-        hql.append(isDividaReceber ? " = " : " > ");
-	    hql.append(" :data ");
-	    
-	    Query query = getSession().createQuery(hql.toString());
-	    for (Entry<String, Object> entry : parametros.entrySet()) {
-	        query.setParameter(entry.getKey(), entry.getValue());
-	    }
-	    
-	    List<SumarizacaoDividasDTO> lista = query.list();
-	    
-	    if (lista != null && lista.size() == 1 &&
-	    		lista.get(0).getData() == null){
-	    	
-	    	return new ArrayList<SumarizacaoDividasDTO>();
-	    }
-	    
-	    return lista;
+		
+		StringBuilder hql = new StringBuilder("select new ");
+		
+		hql.append(SumarizacaoDividasDTO.class.getCanonicalName())
+		   .append("(cobranca.dataVencimento as data,")
+		   .append(" cobranca.tipoCobranca as tipoCobranca, ")
+		   .append(" sum(cobranca.valor) as total, ")
+		   .append(" sum(case when cobranca.statusCobranca != :statusNaoPago then cobranca.valor else 0 end) as pago, ")
+		   .append(" sum(cobranca.valor) -  ")
+		   .append(" sum(case when cobranca.statusCobranca != :statusNaoPago then cobranca.valor else 0 end) as inadimplencia ");
+		
+		hql.append(")")
+		   .append(" from Cobranca cobranca ");
+		
+		if (tipoDivida == TipoDivida.DIVIDA_A_VENCER){
+			
+			hql.append(" where cobranca.dataVencimento = :data  ");
+		} else {
+			
+			hql.append(" where cobranca.dataEmissao = :data  ")
+			   .append(" and cobranca.statusCobranca = :statusNaoPago ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("data", data);
+		query.setParameter("statusNaoPago", StatusCobranca.NAO_PAGO);
+		
+		List<SumarizacaoDividasDTO> lista = query.list();
+		
+		if (lista != null && lista.size() == 1 && lista.get(0).getData() == null){
+			
+			return new ArrayList<SumarizacaoDividasDTO>();
+		}
+		
+		return lista;
 	}
     
 	/**
@@ -832,16 +826,20 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	 * @return query criada com os parâmetros recebidos
 	 */
 	private Query queryDividas(Date data, TipoDivida tipoDivida, PaginacaoVO paginacao, boolean count) {
-	    boolean isDividaReceber = TipoDivida.DIVIDA_A_RECEBER.equals(tipoDivida);
 	    
-	    StringBuilder hql = new StringBuilder("select ");
+		StringBuilder hql = new StringBuilder("select ");
 	    hql.append(count ? "count(cobranca.id) " : "cobranca ");
 	    hql.append("from Cobranca cobranca ");
 	    hql.append(" join cobranca.cota as cota ");
-	    hql.append("where cobranca.dataVencimento ");
-	    hql.append(isDividaReceber ? " = " : " > ");
-	    hql.append(" :data ");
-	    hql.append(" and cobranca.statusCobranca = :status ");
+	    
+	    if (tipoDivida == TipoDivida.DIVIDA_A_VENCER){
+			
+			hql.append(" where cobranca.dataVencimento = :data  ");
+		} else {
+			
+			hql.append(" where cobranca.dataEmissao = :data  ");
+			hql.append(" and cobranca.statusCobranca = :status ");
+		}
 	    
 	    if (!count) {
 	        hql.append("order by cota.numeroCota ");
@@ -849,7 +847,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    
 	    Query query = getSession().createQuery(hql.toString());
 	    query.setParameter("data", data);
-	    query.setParameter("status", StatusCobranca.NAO_PAGO);
+	   
+	    if (tipoDivida != TipoDivida.DIVIDA_A_VENCER){
+			
+	    	query.setParameter("status", StatusCobranca.NAO_PAGO);
+		}
 	    
 	    if (!count && paginacao != null) {
 	        query.setFirstResult(paginacao.getPosicaoInicial());

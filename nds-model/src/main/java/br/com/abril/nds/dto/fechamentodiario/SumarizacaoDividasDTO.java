@@ -6,7 +6,6 @@ import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.Util;
 
 /**
  * DTO com informações de sumarização das dívidas para fechamento diário
@@ -45,12 +44,14 @@ public class SumarizacaoDividasDTO implements Serializable {
         this.inadimplencia = inadimplencia;
     }
     
-    public SumarizacaoDividasDTO(Date data, String tipoSumarizacao, TipoCobranca tipoCobranca, BigDecimal total, BigDecimal valorPago,
-            BigDecimal inadimplencia) {
-        this(data, Util.getEnumByStringValue(TipoDivida.values(), tipoSumarizacao) , tipoCobranca);
-        this.total = total;
-        this.valorPago = valorPago;
-        this.inadimplencia = inadimplencia;
+    public SumarizacaoDividasDTO(Date data, TipoCobranca tipoCobranca, BigDecimal total,
+    		BigDecimal valorPago, BigDecimal inadimplencia) {
+        
+    	this.data = data;
+    	this.tipoCobranca = tipoCobranca;
+    	this.total = total;
+    	this.valorPago = valorPago;
+    	this.inadimplencia = inadimplencia;
     }
     
     /**

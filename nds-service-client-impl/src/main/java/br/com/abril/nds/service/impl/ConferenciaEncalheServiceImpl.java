@@ -3027,7 +3027,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parametersSlip.put("VALOR_DEVIDO", devido);
 		parametersSlip.put("VALOR_SLIP", totalSlip);
 		parametersSlip.put("VALOR_TOTAL_PAGAR", totalPagar);
-
+		parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", this.distribuidorService.obterRazaoSocialDistribuidor());
 	}
 	
 	protected String obterSlipReportPath() throws URISyntaxException {

@@ -15,6 +15,9 @@ public class ConsignadoCotaDTO implements Serializable{
 	
 	private static final long serialVersionUID = 2186060384671120600L;
 	
+	@Export(label="Sequência")
+	private Integer sequencia;
+	
 	@Export(label="Código")
 	private String codigoProduto;
 	
@@ -144,6 +147,14 @@ public class ConsignadoCotaDTO implements Serializable{
 
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
+	}
+
+	public Integer getSequencia() {
+		return sequencia;
+	}
+
+	public void setSequencia(Integer sequencia) {
+		this.sequencia = sequencia;
 	}
 	
 }
