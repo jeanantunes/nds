@@ -510,6 +510,15 @@ var lancamentoNovoController = $.extend(true, {
 		
 		var pacotePadrao = $("#pacotePadrao", lancamentoNovoController.workspace).html();
 			
+		var tipoEstoqueSelecionado = lancamentoNovoController.tipoEstoqueSelecionado;
+		
+		if (!tipoEstoqueSelecionado) {
+			
+			tipoEstoqueSelecionado = "LANCAMENTO";
+			
+			reparteAtual = $( "#selectTipoEstoque option[enum='LANCAMENTO']").attr("valor");
+		}
+		
 		var data = [
 				 {name: "tipoDiferenca", value: tipoDiferenca},
 				 {name: "codigoProduto", value: codigoProduto},
@@ -518,7 +527,7 @@ var lancamentoNovoController = $.extend(true, {
 				 {name: "direcionadoParaEstoque", value: direcionadoParaEstoque},
 				 {name: "reparteAtual", value: reparteAtual},
 				 {name: "idDiferenca", value:lancamentoNovoController.idDiferenca},
-				 {name: "tipoEstoque", value:lancamentoNovoController.tipoEstoqueSelecionado},
+				 {name: "tipoEstoque", value:tipoEstoqueSelecionado},
 				 {name: "pacotePadrao", value:pacotePadrao}
 		 ];
 		
