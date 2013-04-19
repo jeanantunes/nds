@@ -2,6 +2,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	modalAberta: false,
 	
+	verificarReabertura: false,
+	
 	idProdutoEdicaoNovoEncalhe: "",
 
 	init : function() {
@@ -57,8 +59,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#numeroCota", ConferenciaEncalheCont.workspace).keyup(function(e) {
 			
 			if (e.keyCode == 13) {
-				
-				ConferenciaEncalheCont.pesquisarCota();
+
+				if (ConferenciaEncalheCont.verificarReabertura){
+				    
+				    ConferenciaEncalheCont.pesquisarCota();
+			    }
+			    else{
+			
+			    	ConferenciaEncalheCont.verificarReabertura = true;
+		    	}
 			}
 		});
 		
@@ -149,15 +158,22 @@ var ConferenciaEncalheCont = $.extend(true, {
 							"Sim" : function() {
 								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
+								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
+								
 								ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
 							},
 							"Não" : function() {
+								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 							}
 						}, close : function(){
 							
 							ConferenciaEncalheCont.modalAberta = false;
+							
+							ConferenciaEncalheCont.verificarReabertura = false;
+							
+							$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 						},
 						form: $("#dialog-reabertura", this.workspace).parents("form")
 					});

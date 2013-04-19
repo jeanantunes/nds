@@ -845,6 +845,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
 				produtoEdicaoDTO.setDia(dia);
 			}
+			else{
+				
+				atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(idProdutoEdicao, produtoEdicaoDTO);
+			}
 			
 			produtoEdicaoDTO.setId(produtoEdicao.getId());
 			produtoEdicaoDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
@@ -879,6 +883,23 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return produtoEdicaoDTO;
 	}
 	
+	/*
+	 * Obtem a maior data de lançamnto de um produto edição
+	 */
+	private void atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(Long idProdutoEdicao, ProdutoEdicaoDTO produtoEdicaoDTO) {
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		Date dataRecolhimentoDistribuidor = lancamentoRepository.obterDataUltimoLancamento(idProdutoEdicao, dataOperacao);
+		 
+		produtoEdicaoDTO.setDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
+		
+		Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
+		
+		produtoEdicaoDTO.setDia(dia);
+	}
+	
+	
 	@Transactional(readOnly = true)
 	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
 		
@@ -911,6 +932,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
 				produtoEdicaoDTO.setDia(dia);
+			}
+			else{
+				
+				atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(produtoEdicao.getId(), produtoEdicaoDTO);
 			}
 			
 			produtoEdicaoDTO.setId(produtoEdicao.getId());
@@ -1020,6 +1045,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 					produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
 					produtoEdicaoDTO.setDia(dia);
+				}
+				else{
+					
+					atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(produtoEdicao.getId(), produtoEdicaoDTO);
 				}
 				
 				produtoEdicaoDTO.setId(produtoEdicao.getId());
