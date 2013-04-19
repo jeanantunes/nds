@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.RelatorioTiposProdutosRepository;
 
@@ -153,20 +154,6 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 		hql.append(" 			 AND fechamentoEncalhe.PRODUTO_EDICAO_ID = produtoedi0_.ID) ");
 		hql.append(" WHERE ");
 		hql.append("     produtoedi0_.ATIVO = :verdadeiro ");
-		
-		
-		
-		
-//		hql.append(
-//				"FROM ProdutoEdicao pe " +
-//				"JOIN pe.produto p " +
-//				"JOIN p.tipoProduto t " +
-//				"JOIN pe.lancamentos l " +
-//				"LEFT JOIN l.fechamentoEncalhe WITH  ");
-//
-//		hql.append(" (fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe = l.dataRecolhimentoDistribuidor ");
-//		hql.append(" and fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao = pe) ");
-//		hql.append(" WHERE pe.ativo = :verdadeiro ");
 
 		if(hasFilter) {
 
@@ -184,6 +171,11 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 			}
 			if(hasRecolhimentoAte) {
 				hql.append(" and lancamento3_.DATA_REC_DISTRIB <= :dataRecolhimentoAte");
+			}
+			
+			if (hasRecolhimentoDe && hasRecolhimentoAte) {
+				
+				hql.append(" and lancamento3_.STATUS in (:statusLancamentoAposRecolhimento)");
 			}
 		}
 		
@@ -264,6 +256,17 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 			}
 			if(hasRecolhimentoAte) {
 				query.setParameter("dataRecolhimentoAte", filtro.getDataRecolhimentoAte());
+			}
+			
+			if (hasRecolhimentoDe && hasRecolhimentoAte) {
+				
+				List<String> listaStatusAposRecolhimento = new ArrayList<>();
+				
+				listaStatusAposRecolhimento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO.name());
+				listaStatusAposRecolhimento.add(StatusLancamento.RECOLHIDO.name());
+				
+				query.setParameterList(
+					"statusLancamentoAposRecolhimento", listaStatusAposRecolhimento);
 			}
 		}
 	}
