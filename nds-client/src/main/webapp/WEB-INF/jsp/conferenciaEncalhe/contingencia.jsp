@@ -160,5 +160,12 @@
 			</fieldset>
 				
 		</div>
-	
+
+		<div id="idImpressaoFinalizacaoApplet1" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal1"></div>
+		</div>	
+
+		<div id="idImpressaoFinalizacaoApplet2" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal2"></div>
+		</div>		
 </body>
