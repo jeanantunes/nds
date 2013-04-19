@@ -42,8 +42,6 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.RateioDiferenca;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -273,27 +271,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		return itemNE;
 	}
-	
-	/**
-	 * Atualiza o item da nota de envio com o preco de venda do produto vinculado e quantidade recalculada
-	 * @param itensNotaenvio
-	 * @param produtoEdicao
-	 * @param quantidade
-	 */
-	private void atualizaItemNotaEnvio(List<ItemNotaEnvio> itensNotaEnvio, 
-			                           ProdutoEdicao produtoEdicao, 
-			                           BigInteger quantidade){
-		
-		for (ItemNotaEnvio ine : itensNotaEnvio){
-			
-			ine.setPrecoCapa(ine.getProdutoEdicao().getPrecoVenda());
-			
-			if (ine.getProdutoEdicao().equals(produtoEdicao)){
-				
-			    ine.setReparte(quantidade);
-			}
-		}
-	}
 
 	/**
 	 * Gera itens de Nota de Envio a partir dos Estudos Cota
@@ -318,6 +295,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		for (EstudoCota estudoCota : listaEstudoCota) {
 			
 			
+			//Verifica se Estudo ja possui itens de Nota de Envio.
+			if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
+				
+				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
+				
+				continue;
+			}
+			
+			
 			ProdutoEdicao produtoEdicao = estudoCota.getEstudo().getProdutoEdicao();
 
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
@@ -339,19 +325,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			}
 			
 			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva());
-			
-			
-			//Verifica se Estudo ja possui itens de Nota de Envio.
-			if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
-				
-				this.atualizaItemNotaEnvio(estudoCota.getItemNotaEnvios(), 
-						                   produtoEdicao, 
-						                   quantidade);
-				
-				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
-				
-				continue;
-			}
 
 			
 			//Cria novo item nota caso o Estudo ainda não possua
@@ -721,7 +694,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		return notasEnvio;
 	}
-
 
 	/**
 	 * Cria nova nota de Envio
