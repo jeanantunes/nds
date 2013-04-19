@@ -1185,7 +1185,7 @@ var regiaoController = $.extend(true, {
 							cotas.push({name:'cotas', value:this.value});
 					});
 
-					// adicionando a regi�o
+					// adicionando a regiao
 					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
 					
 					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",

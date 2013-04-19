@@ -124,7 +124,7 @@ public class EstudoServiceImpl implements EstudoService {
 	@Override
 	public void criarNovoEstudo(ProdutoDistribuicaoVO produto) {
 	    Estudo estudo = new Estudo();
-	    estudo.setLiberado(0);
+	    estudo.setLiberado(false);
 	    estudo.setReparteDistribuir(produto.getRepDistrib());
 	    estudo.setDataLancamento(produto.getDataLanctoSemFormatacao());
 	    estudo.setDataCadastro(new Date());

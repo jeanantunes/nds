@@ -283,12 +283,28 @@ var parametrosDistribuidorController = $.extend(true, {
 	    var vendaMediaMais = $('#vendaMediaMais', this.workspace).val();
 	    var percentualMaximoFixacao = $('#percentualMaximoFixacao', this.workspace).val();
 	    
+	    var eficiencia0 = parseInt($('#listPercentualExcedente0\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente0\\.pdv', this.workspace).val());
+	    var eficiencia1 = parseInt($('#listPercentualExcedente1\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente1\\.pdv', this.workspace).val());
+	    var eficiencia2 = parseInt($('#listPercentualExcedente2\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente2\\.pdv', this.workspace).val());
+	    
 	    if(vendaMediaMais > 10 || vendaMediaMais < 0) {
 		arrayMensagemWarning.push("- \'Venda Média +\' deve ser de 0 a 10!");
 	    }
 		
 	    if(percentualMaximoFixacao > 75 || percentualMaximoFixacao < 1) {
 		arrayMensagemWarning.push("- \'% Máximo de Fixação\' deve ser de 1% a 75%!");
+	    }
+	    
+	    if(eficiencia0 != 100) {
+		arrayMensagemWarning.push("- '\> 60 %\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(eficiencia1 != 100) {
+		arrayMensagemWarning.push("- '\> 30% a 60%\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(eficiencia2 != 100) {
+		arrayMensagemWarning.push("- '\0% a 30%\' deve ter o total da soma igual a 100%!");
 	    }
 	    
 	    if(arrayMensagemWarning.length > 0) {
@@ -638,6 +654,13 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		if ($('#listClassificacaoCota4\\.valorDe', this.workspace).val() === '') {
 			$('#listClassificacaoCota4\\.valorDe', this.workspace).val('0.00');
+			$('#listClassificacaoCota4\\.valorDe', this.workspace).formatCurrency({
+		            decimalSymbol: ',',
+		            digitGroupSymbol: '.',
+		            dropDecimals: false,
+		            groupDigits: true,
+		            symbol: ''
+		          });
 		}
 		
 		$('#listClassificacaoCota0\\.valorAte', this.workspace)
@@ -645,12 +668,19 @@ var parametrosDistribuidorController = $.extend(true, {
 		.add('#listClassificacaoCota2\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
-		.on('blur', function(){
+		.bind('blur', function(){
 		    if (this.value) {
 		        var intIdValorDe = parseInt(this.id.match(/\d/), 10) - 1;
 		        var campoValorDe = $('#listClassificacaoCota' + intIdValorDe + '\\.valorDe');
 		        var numValorAte = parseFloat(this.value.replace(/\./g, '').replace(/,/, '.'));
-		        campoValorDe.val((numValorAte + 0.01).toFixed(2)).maskMoney('mask');
+		        campoValorDe.val((numValorAte + 0.01).toFixed(2));
+		        campoValorDe.formatCurrency({
+		            decimalSymbol: ',',
+		            digitGroupSymbol: '.',
+		            dropDecimals: false,
+		            groupDigits: true,
+		            symbol: ''
+		          });
 //		        console.log(numValorAte,campoValorDe.val());
 		    }
 		});

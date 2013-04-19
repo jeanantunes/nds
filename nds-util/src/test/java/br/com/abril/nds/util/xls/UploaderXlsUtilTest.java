@@ -14,6 +14,7 @@ import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 public class UploaderXlsUtilTest {
 
+
     private static URL url = ClassLoader.getSystemResource("cota-template.xlsx");
 
     /**
@@ -28,12 +29,12 @@ public class UploaderXlsUtilTest {
     public static void main(String[] args) throws URISyntaxException {
 	
 	List<CotaTemplateDTO> lista = XlsUploaderUtils.getBeanListFromXls(CotaTemplateDTO.class, getUploadedFile());
-	for (CotaTemplateDTO cotaTemplateDTO : lista) {
-	    System.out.println(cotaTemplateDTO.getCodigoProduto());
-	    System.out.println(cotaTemplateDTO.getNumeroCota());
-	    System.out.println(cotaTemplateDTO.getReparteMinimo());
-	    System.out.println(cotaTemplateDTO.getReparteMaximo());
-	}
+		for (CotaTemplateDTO cotaTemplateDTO : lista) {
+		    System.out.println(cotaTemplateDTO.getCodigoProduto());
+		    System.out.println(cotaTemplateDTO.getNumeroCota());
+		    System.out.println(cotaTemplateDTO.getReparteMinimo());
+		    System.out.println(cotaTemplateDTO.getReparteMaximo());
+		}
     }
     
     public static UploadedFile getUploadedFile() {

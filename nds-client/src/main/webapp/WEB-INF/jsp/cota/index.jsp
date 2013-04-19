@@ -61,13 +61,13 @@
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCPF();" rel="tipsy" title="Incluir Nova Cota Pessoa Física">
+				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCPF();" rel="tipsy" title="Incluir Nova Cota Pessoa F&igrave;sica">
 					<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" hspace="5" border="0"/>
 				</a>
 			</span>
 			
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCNPJ();" rel="tipsy" title="Incluir Nova Cota Pessoa Jurídica">
+				<a href="javascript:;" onclick="MANTER_COTA.novoPopupCotaCNPJ();" rel="tipsy" title="Incluir Nova Cota Pessoa Jur&igrave;dica">
 					<img src="${pageContext.request.contextPath}/images/ico_usuarios1.gif" hspace="5" border="0"/>
 				</a>
 			</span>

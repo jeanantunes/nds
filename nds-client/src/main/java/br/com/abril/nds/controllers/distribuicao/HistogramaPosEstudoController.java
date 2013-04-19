@@ -82,7 +82,7 @@ public class HistogramaPosEstudoController extends BaseController{
 		selecionado.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
 		selecionado.setPeriodicidadeProduto(produto.getPeriodicidade().getOrdem());
 		
-		if (estudo != null && estudo.getLiberado() != null && estudo.getLiberado() == 1) {
+		if (estudo != null && estudo.isLiberado()) {
 			selecionado.setEstudoLiberado(Boolean.TRUE);
 		}else{
 			selecionado.setEstudoLiberado(Boolean.FALSE);
