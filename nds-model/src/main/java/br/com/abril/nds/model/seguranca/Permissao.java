@@ -138,6 +138,14 @@ public enum Permissao {
 	
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO("Lançamento Faltas e Sobras",							Permissao.ROLE_ESTOQUE, true),
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS("Lançamento Faltas e Sobras",									   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO, true),
+	 
+	//ROLE_ESPECIFICA_ALTERACAO("Permisão Específica",														null, false),
+	//ROLE_ESPECIFICA("Permisão Específica",																	null, Permissao.ROLE_ESPECIFICA_ALTERACAO, false),
+	//ROLE_ALTERACAO_ESPECIFICA("Permissão de alteração especifica",											Permissao.ROLE_ESPECIFICA, false),
+
+	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO_ALTERACAO("Lançamento Faltas e Sobras, botão Confirmar", null, false),
+	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO("Lançamento Faltas e Sobras, botão Confirmar",	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO_ALTERACAO, false),
+//	ROLE_ALTERACAO_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO("Lançamento Faltas e Sobras, botão Confirmar",	Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO, false),
 	
 	ROLE_ESTOQUE_CONSULTA_NOTAS_ALTERACAO("Consulta de Notas",												Permissao.ROLE_ESTOQUE, true),
 	ROLE_ESTOQUE_CONSULTA_NOTAS("Consulta de Notas",													   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_CONSULTA_NOTAS_ALTERACAO, true),
