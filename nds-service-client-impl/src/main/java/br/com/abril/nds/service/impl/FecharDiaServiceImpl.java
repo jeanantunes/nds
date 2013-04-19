@@ -38,6 +38,7 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -46,8 +47,11 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiario;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoCota;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioConsolidadoDivida;
@@ -109,6 +113,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ImpressaoDividaService;
+import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
@@ -233,6 +238,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
+	
+	@Autowired
+	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Override
 	@Transactional
@@ -1153,5 +1161,80 @@ public class FecharDiaServiceImpl implements FecharDiaService {
         Objects.requireNonNull(data, "Data para recuperação das diferenças não deve ser nula!");
         return diferencaRepository.obterDiferencas(data);
     }
+	
+	 /**
+     * {@inheritDoc}
+     */
+	@Override
+	@Transactional
+	public void transferirDiferencasParaEstoqueDePerdaGanho(Date dataOperacao, Long idUsuario) {
+		
+		List<Diferenca> diferencasATransferir = 
+			this.diferencaRepository.obterDiferencas(dataOperacao, StatusConfirmacao.PENDENTE);
+		
+		for (Diferenca diferenca : diferencasATransferir) {
+			
+			diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
+			
+			TipoDiferenca novoTipoDiferenca = null;
+			
+			LancamentoDiferenca lancamentoDiferenca = diferenca.getLancamentoDiferenca();
+			
+			switch (diferenca.getTipoDiferenca()) {
+			
+				case FALTA_DE: 
+					
+					novoTipoDiferenca = TipoDiferenca.PERDA_DE;
+					
+					break;
+				
+				case FALTA_EM: 
+					
+					novoTipoDiferenca = TipoDiferenca.PERDA_EM;
+					
+					break;
+					
+				case SOBRA_DE:
+					
+					novoTipoDiferenca = TipoDiferenca.GANHO_DE;
+					
+					break;
+				
+				case SOBRA_EM:
+					
+					novoTipoDiferenca = TipoDiferenca.GANHO_EM;
+					
+					break;
+
+				default:
+					
+					throw new RuntimeException("Tipo de Diferença não identificado");
+			}
+			
+			if (lancamentoDiferenca != null) {
+				
+				if (novoTipoDiferenca.isPerda()) {
+					
+					lancamentoDiferenca.setStatus(StatusAprovacao.PERDA);
+					
+				} else if (novoTipoDiferenca.isGanho()) {
+					
+					lancamentoDiferenca.setStatus(StatusAprovacao.GANHO);
+				}
+			}
+			
+			diferenca.setTipoDiferenca(novoTipoDiferenca);
+			
+			this.diferencaRepository.merge(diferenca);
+			
+			TipoMovimentoEstoque tipoMovimentoEstoque = 
+				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
+					novoTipoDiferenca.getTipoMovimentoEstoque());
+			
+			this.movimentoEstoqueService.gerarMovimentoEstoque(
+				null, diferenca.getProdutoEdicao().getId(), idUsuario, 
+					diferenca.getQtde(), tipoMovimentoEstoque);
+		}
+	}
   
 }

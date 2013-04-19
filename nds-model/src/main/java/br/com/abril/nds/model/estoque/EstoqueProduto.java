@@ -52,6 +52,12 @@ public class EstoqueProduto implements Serializable {
 	@Column(name = "QTDE_DANIFICADO")
 	private BigInteger qtdeDanificado;
 	
+	@Column(name = "QTDE_PERDA")
+	private BigInteger qtdePerda;
+	
+	@Column(name = "QTDE_GANHO")
+	private BigInteger qtdeGanho;
+	
 	@OneToMany(mappedBy = "estoqueProduto")
 	private List<MovimentoEstoque> movimentos = new ArrayList<MovimentoEstoque>();
 	
@@ -148,6 +154,22 @@ public class EstoqueProduto implements Serializable {
 
 	public void setQtdeDanificado(BigInteger qtdeDanificado) {
 		this.qtdeDanificado = qtdeDanificado;
+	}
+
+	public BigInteger getQtdePerda() {
+		return qtdePerda;
+	}
+
+	public void setQtdePerda(BigInteger qtdePerda) {
+		this.qtdePerda = qtdePerda;
+	}
+
+	public BigInteger getQtdeGanho() {
+		return qtdeGanho;
+	}
+
+	public void setQtdeGanho(BigInteger qtdeGanho) {
+		this.qtdeGanho = qtdeGanho;
 	}
 
 }

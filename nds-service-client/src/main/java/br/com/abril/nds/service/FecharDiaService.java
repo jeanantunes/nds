@@ -188,5 +188,12 @@ public interface FecharDiaService {
      * @return lista de diferenças lançadas na data
      */
 	List<Diferenca> obterDiferencas(Date data);
+	
+	/**
+	 * Efetua a transferência das diferenças para estoque de Perda/Ganho.
+	 * 
+	 * @param dataOperacao - data de operação
+	 */
+	void transferirDiferencasParaEstoqueDePerdaGanho(Date dataOperacao, Long idUsuario);
 
 }

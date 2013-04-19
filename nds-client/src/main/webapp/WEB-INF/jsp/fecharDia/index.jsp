@@ -128,7 +128,7 @@
 		       	<div id="linkParaFaltasESobra"></div>		        	
 		        
 		        <span class="bt_novos">
-		        	<a href="javascript:;" onclick="popup_transferencias();">
+		        	<a href="javascript:;" onclick="fecharDiaController.transferirDiferencasParaEstoqueDePerdaGanho();">
 		        		<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />
 		        	Não</a>
 		        </span>
