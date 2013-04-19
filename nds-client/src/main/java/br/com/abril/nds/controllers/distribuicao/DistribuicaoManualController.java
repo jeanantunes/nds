@@ -82,7 +82,7 @@ public class DistribuicaoManualController extends BaseController {
 	estudo.setQtdeReparte(BigInteger.valueOf(estudoDTO.getReparteDistribuir()));
 	estudo.setDataCadastro(new Date());
 	estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
-	estudo.setLiberado(0);
+	estudo.setLiberado(false);
 	try {
 	    estudo.setDataLancamento(new SimpleDateFormat("dd/MM/yyyy").parse(estudoDTO.getDataLancamento()));
 	} catch (ParseException e) {

@@ -490,11 +490,11 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					pesquisarCotasNaoEstaoNoSegmento : function(){
 						
 						$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexOptions(
-								{
-									url : segmentoNaoRecebidoController.urlPesquisarCotasNaoEstaoNoSegmento,
-									dataType : 'json',
-									params : segmentoNaoRecebidoController.getFiltroCota2(),
-								});
+						{
+							url : segmentoNaoRecebidoController.urlPesquisarCotasNaoEstaoNoSegmento,
+							dataType : 'json',
+							params : segmentoNaoRecebidoController.getFiltroCota2()
+						});
 
 						$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexReload();
 						
@@ -620,15 +620,15 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					        	if (flexGridClass[i] === "segmentosGrid") {
 					        		
 					        		$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexOptions(
-											{
-												url : segmentoNaoRecebidoController.urlPesquisarCotasNaoEstaoNoSegmento,
-												dataType : 'json',
-												params : segmentoNaoRecebidoController.getFiltroCota2Vazio(),
-											});
+									{
+										url : segmentoNaoRecebidoController.urlPesquisarCotasNaoEstaoNoSegmento,
+										dataType : 'json',
+										params : segmentoNaoRecebidoController.getFiltroCota2Vazio(),
+									});
 
 					        		segmentoNaoRecebidoController.limparFiltroCota2();
 									$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexReload();
-									
+									segmentoNaoRecebidoController.filtroPorCota();
 								}else{
 									segmentoNaoRecebidoController.reloadFlexGrid(flexGridClass[i]);
 								}
@@ -819,6 +819,8 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						$('#segmentoNaoRecebido_filtroPorSegmento', segmentoNaoRecebidoController.workspace).hide();
 						$('#segmentoNaoRecebido_porSegmento', segmentoNaoRecebidoController.workspace).hide();
 						segmentoNaoRecebidoController.limparFiltroSegmento();
+						segmentoNaoRecebidoController.limparFiltroCota2();
+						segmentoNaoRecebidoController.limparFiltroSegmento2();
 					},
 					
 					filtroPorSegmento : function (){
@@ -826,12 +828,18 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						$('#segmentoNaoRecebido_filtroPorSegmento', segmentoNaoRecebidoController.workspace).show();
 						$('#segmentoNaoRecebido_porCota', segmentoNaoRecebidoController.workspace).hide();
 						segmentoNaoRecebidoController.limparFiltroCota();
+						segmentoNaoRecebidoController.limparFiltroCota2();
+						segmentoNaoRecebidoController.limparFiltroSegmento2();
 					},
 					
 					
 					limparFiltroSegmento : function(){
 						$("#tipoSegmentoProduto", segmentoNaoRecebidoController.workspace).val("");
 						$('#cotasAtivas', segmentoNaoRecebidoController.workspace).attr('checked', true);
+					},
+					
+					limparFiltroSegmento2 : function(){
+						$('#lstSegmento', segmentoNaoRecebidoController.workspace).val("");
 					},
 					
 					limparFiltroCota : function(){

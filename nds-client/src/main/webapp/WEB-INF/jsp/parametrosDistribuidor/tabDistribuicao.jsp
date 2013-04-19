@@ -1,4 +1,4 @@
-<div id="tabDistribuicao" style="width: 930px; margin: auto;">
+<div id="tabDistribuicao" style="width: 1030px; margin: auto;">
 	<br clear="all" />
 	<fieldset style="width: 260px;">
 		<legend>Distribuição</legend>
@@ -47,31 +47,31 @@
 		</table>
 	</fieldset>
 
-	<fieldset style="width: 280px; margin-left: 10px;">
+	<fieldset style="width: 350px; margin-left: 10px;">
 		<legend>Tabela de Classificação da Cota</legend>
 
-		<table width="274" border="0" cellpadding="0" cellspacing="1">
+		<table width="345" border="0" cellpadding="0" cellspacing="1">
 			<tr class="header_table">
-				<td>Classificação Cota</td>
-				<td align="center">Dê</td>
+				<td width="115">Classificação Cota</td>
+				<td align="center">De</td>
 				<td align="center">Até</td>
 			</tr>
 			<tr class="class_linha_1">
-				<td width="110">AA ( + de 1 PDV )
+				<td width="115">AA ( + de 1 PDV )
 					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[0].id" id="listClassificacaoCota0.id" value="${parametrosDistribuidor.listClassificacaoCota[0].id}" />
 					<input type="hidden" name="parametrosDistribuidor.listClassificacaoCota[0].codigoClassificacaoCota" id="listClassificacaoCota0.codigoClassificacaoCota" value="AA" />
 				</td>
-				<td width="80" align="center">
+				<td width="110" align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[0].valorDe" 
 					id="listClassificacaoCota0.valorDe" 
 					value="${parametrosDistribuidor.listClassificacaoCota[0].valorDe}"
-					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 105px; text-align: right;" />
 				</td>
-				<td width="80" align="center">
+				<td width="110" align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[0].valorAte"
 					id="listClassificacaoCota0.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[0].valorAte}"
-					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
+					type="text" disabled="disabled" style="width: 105px; text-align: right;" maxlength="10"/>
 				</td>
 			</tr>
 			<tr class="class_linha_2">
@@ -83,13 +83,13 @@
 					<input name="parametrosDistribuidor.listClassificacaoCota[1].valorDe"
 					id="listClassificacaoCota1.valorDe"
 					value="${parametrosDistribuidor.listClassificacaoCota[1].valorDe}"
-					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 105px; text-align: right;" />
 				</td>
-				<td width="80" align="center">
+				<td width="110" align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[1].valorAte"
 					id="listClassificacaoCota1.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[1].valorAte}"
-					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
+					type="text" style="width: 105px; text-align: right;" maxlength="10"/>
 				</td>
 			</tr>
 			<tr class="class_linha_1">
@@ -101,13 +101,13 @@
 					<input name="parametrosDistribuidor.listClassificacaoCota[2].valorDe"
 					id="listClassificacaoCota2.valorDe"
 					value="${parametrosDistribuidor.listClassificacaoCota[2].valorDe}"
-					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 105px; text-align: right;" />
 				</td>
 				<td align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[2].valorAte"
 					id="listClassificacaoCota2.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[2].valorAte}"
-					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
+					type="text" style="width: 105px; text-align: right;" maxlength="10"/>
 				</td>
 			</tr>
 			<tr class="class_linha_2">
@@ -119,13 +119,13 @@
 					<input name="parametrosDistribuidor.listClassificacaoCota[3].valorDe"
 					id="listClassificacaoCota3.valorDe"
 					value="${parametrosDistribuidor.listClassificacaoCota[3].valorDe}"
-					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 105px; text-align: right;" />
 				</td>
 				<td align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[3].valorAte"
 					id="listClassificacaoCota3.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[3].valorAte}"
-					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
+					type="text" style="width: 105px; text-align: right;" maxlength="10"/>
 				</td>
 			</tr>
 			<tr class="class_linha_1">
@@ -137,13 +137,13 @@
 					<input name="parametrosDistribuidor.listClassificacaoCota[4].valorDe"
 					id="listClassificacaoCota4.valorDe"
 					value="${parametrosDistribuidor.listClassificacaoCota[4].valorDe}"
-					type="text" disabled="disabled" style="width: 75px; text-align: right;" />
+					type="text" disabled="disabled" style="width: 105px; text-align: right;" />
 				</td>
 				<td align="center">
 					<input name="parametrosDistribuidor.listClassificacaoCota[4].valorAte"
 					id="listClassificacaoCota4.valorAte"
 					value="${parametrosDistribuidor.listClassificacaoCota[4].valorAte}"
-					type="text" style="width: 75px; text-align: right;" maxlength="12"/>
+					type="text" style="width: 105px; text-align: right;" maxlength="10"/>
 				</td>
 			</tr>
 		</table>
@@ -163,23 +163,21 @@
 				<td align="center">PDV</td>
 			</tr>
 			<tr class="class_linha_1">
-				<td width="110">&gt; 60 %
+				<td width="90">&gt; 60 %
 					<input type="hidden" name="parametrosDistribuidor.listPercentualExcedente[0].id" id="listPercentualExcedente0.id" value="${parametrosDistribuidor.listPercentualExcedente[0].id}" />
 					<input type="hidden" name="parametrosDistribuidor.listPercentualExcedente[0].eficiencia" id="listPercentualExcedente0.eficiencia" value="DE_60_100" />
 				</td>
-				<td width="85" align="center">
+				<td width="75" align="center">
 					<input name="parametrosDistribuidor.listPercentualExcedente[0].venda"
 					id="listPercentualExcedente0.venda"
 					value="${parametrosDistribuidor.listPercentualExcedente[0].venda}"
-					type="text" style="width: 80px; text-align: center;" 
-					maxlength="2"/>
+					type="text" style="width: 70px; text-align: center;" maxlength="2" />
 				</td>
-				<td width="85" align="center">
+				<td width="75" align="center">
 					<input name="parametrosDistribuidor.listPercentualExcedente[0].pdv"
 					id="listPercentualExcedente0.pdv"
 					value="${parametrosDistribuidor.listPercentualExcedente[0].pdv}"
-					type="text" style="width: 80px; text-align: center;" 
-					maxlength="2"/>
+					type="text" style="width: 70px; text-align: center;" maxlength="2" />
 				</td>
 			</tr>
 			<tr class="class_linha_2">
@@ -191,15 +189,13 @@
 					<input name="parametrosDistribuidor.listPercentualExcedente[1].venda"
 					id="listPercentualExcedente1.venda"
 					value="${parametrosDistribuidor.listPercentualExcedente[1].venda}"
-					type="text" style="width: 80px; text-align: center;" 
-					maxlength="2"/>
+					type="text" style="width: 70px; text-align: center;" maxlength="2" />
 				</td>
-				<td width="85" align="center">
+				<td width="75" align="center">
 					<input name="parametrosDistribuidor.listPercentualExcedente[1].pdv"
 					id="listPercentualExcedente1.pdv"
 					value="${parametrosDistribuidor.listPercentualExcedente[1].pdv}"
-					type="text" style="width: 80px; text-align: center;" 
-					maxlength="2"/>
+					type="text" style="width: 70px; text-align: center;" maxlength="2" />
 				</td>
 			</tr>
 			<tr class="class_linha_1">
@@ -211,15 +207,13 @@
 					<input name="parametrosDistribuidor.listPercentualExcedente[2].venda"
 					id="listPercentualExcedente2.venda"
 					value="${parametrosDistribuidor.listPercentualExcedente[2].venda}"
-					type="text" style="width: 80px; text-align: center;" 
-					maxlength="2"/>
+					type="text" style="width: 70px; text-align: center;" maxlength="2" />
 				</td>
 				<td align="center">
 					<input name="parametrosDistribuidor.listPercentualExcedente[2].pdv"
 					id="listPercentualExcedente2.pdv"
 					value="${parametrosDistribuidor.listPercentualExcedente[2].pdv}"
-					type="text" style="width: 80px; text-align: center;" 
-					maxlength="2"/>
+					type="text" style="width: 70px; text-align: center;" maxlength="2" />
 				</td>
 			</tr>
 		</table>

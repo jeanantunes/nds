@@ -154,6 +154,7 @@ function Distribuicao(tela) {
 		D.set('repPorPontoVenda',	    dto.repPorPontoVenda);
 		D.set('solNumAtras',			dto.solNumAtras);
 		D.set('recebeRecolhe',			dto.recebeRecolhe);
+		D.set('recebeComplementar',		dto.recebeComplementar);
 		D.set('neImpresso',				dto.neImpresso);
 		D.set('neEmail',				dto.neEmail);
 		D.set('ceImpresso',				dto.ceImpresso);

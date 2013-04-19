@@ -937,6 +937,7 @@ public class CotaServiceImpl implements CotaService {
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
 		dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
+		dto.setRecebeComplementar(parametro.getRecebeComplementar());
 		dto.setNeImpresso(parametro.getNotaEnvioImpresso());
 		dto.setNeEmail(parametro.getNotaEnvioEmail());
 		dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
@@ -1054,6 +1055,10 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica()!= null)
 				?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
+		if (cota.getTipoDistribuicaoCota() != null) {
+		    cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
+		    cotaDTO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota());
+		}
 		
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());

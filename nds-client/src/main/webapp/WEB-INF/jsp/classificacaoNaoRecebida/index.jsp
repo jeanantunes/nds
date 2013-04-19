@@ -57,19 +57,19 @@ function mostraFiltroPorClassificacao(){
 
 <body>
 
-<div id="dialog-incluirCotaNaClassificacaoNaoRecebida" style="display: none;" title="Incluir Classifica&ccedil;&atilde;o N&atilde;o Recebida">
+<div id="dialog-incluirCotaNaClassificacaoNaoRecebida" style="display: none;" title="Incluir Cota">
 	<p>Confirma a inclus&atilde;o desta cota?</p>
 </div>
 
-<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classifica&ccedil;&atilde;o N&atilde;o Recebida">
-	<p>Confirma a exclus&atilde;o desta classifica&ccedil;&atilde;o n&atilde;o recebida?</p>
+<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Cota">
+	<p>Confirma a exclus&atilde;o desta cota?</p>
 </div>
 
-<div id="dialog-incluirClassificacaoNaCota" style="display: none;" title="Incluir Classifica&ccedil;&atilde;o Recebida">
+<div id="dialog-incluirClassificacaoNaCota" style="display: none;" title="Incluir Classifica&ccedil;&atilde;o">
 	<p>Confirma a inclus&atilde;o desta classifica&ccedil;&atilde;o?</p>
 </div>
 
-<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classifica&ccedil;&atilde;o N&atilde;o Recebida">
+<div id="dialog-excluirCotaDaClassificacaoNaoRecebida" style="display: none;" title="Excluir Classifica&ccedil;&atilde;o">
 	<p>Confirma a exclus&atilde;o desta classifica&ccedil;&atilde;o?</p>
 </div>
 
