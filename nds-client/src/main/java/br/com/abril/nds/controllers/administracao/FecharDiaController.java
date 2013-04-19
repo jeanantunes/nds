@@ -51,6 +51,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
@@ -95,6 +96,9 @@ public class FecharDiaController extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	@Autowired
 	private CotaService cotaService;
@@ -644,6 +648,15 @@ public class FecharDiaController extends BaseController {
             return download;
         }
         return null;
+    }
+    
+    @Post
+    public void transferirDiferencasParaEstoqueDePerdaGanho() {
+    	
+    	this.fecharDiaService.transferirDiferencasParaEstoqueDePerdaGanho(
+    		dataOperacao, getUsuarioLogado().getId());
+    	
+    	this.result.use(CustomMapJson.class).put("result", "").serialize();
     }
     
     private FechamentoDiarioDTO getFechamentoDiarioDTO() {
