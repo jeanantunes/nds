@@ -93,8 +93,15 @@ function imprimir(){
       
       </c:forEach>
       
-    </table></td>
+    </table>
+    </td>
+  </tr>
+  <tr style="float: left; margin-top: 20px;">
+  	<td style="font-size: 12px; font-weight: bold;">
+  		* Cota possui produtos juramentados.
+  	</td>
   </tr>
 </table>
+
 </body>
 </html>
