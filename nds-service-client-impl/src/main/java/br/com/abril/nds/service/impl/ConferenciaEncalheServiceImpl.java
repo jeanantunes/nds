@@ -676,26 +676,34 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Date dataOperacao) {
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 
 		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
 		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
+		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
-
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
-		
+
+		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = 
-				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(
-						cota.getNumeroCota(), 
-						dataOperacao, 
-						tiposMovimentoFinanceiroIgnorados);
-		
-		if(listaDebitoCreditoCota!=null && !listaDebitoCreditoCota.isEmpty()) {
-			listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCota);
+				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
+																					 dataOperacao, 
+																					 tiposMovimentoFinanceiroIgnorados);
+
+		for (DebitoCreditoCotaDTO dccDto : listaDebitoCreditoCota){
+			
+			dccDto.setObservacoes("Débitos e Créditos");
 		}
 		
+		if(listaDebitoCreditoCota!=null && !listaDebitoCreditoCota.isEmpty()) {
+			
+			listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCota);
+		}
+
+		//NEGOCIACOES AVULSAS DA COTA
 		List<DebitoCreditoCotaDTO> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
 				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cota.getNumeroCota());
 		
@@ -705,14 +713,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				negociacao.setTipoLancamento(OperacaoFinaceira.DEBITO);
 				
+				negociacao.setObservacoes("Negociação Avulsa e Encargos.");
 			}
 			
 			listaDebitoCreditoCompleta.addAll(listaDebitoNegociacaoNaoAvulsaMaisEncargos);
 		}
-		
-		List<DebitoCreditoCotaDTO> listaCobrancas 
-		= cobrancaRepository.obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(
-				cota.getId(), infoConfereciaEncalheCota.getIdControleConferenciaEncalheCota());
+
+		//COBRANCAS VENCIDAS EM ABERTO DA COTA
+		List<DebitoCreditoCotaDTO> listaCobrancas = 
+				cobrancaRepository.obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(cota.getId(), 
+						                                                                    infoConfereciaEncalheCota.getIdControleConferenciaEncalheCota(), 
+						                                                                    dataOperacao);
 		
 		
 		if( listaCobrancas != null && !listaCobrancas.isEmpty() ) {
@@ -720,17 +731,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			for ( DebitoCreditoCotaDTO cobranca : listaCobrancas ) {
 				
 				cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
+				
 				cobranca.setObservacoes("Cobrança em aberto.");
+				
 				cobranca.setDataVencimento(cobranca.getDataLancamento());
 				
 				listaDebitoCreditoCompleta.add(cobranca);
-				
 			}
-			
 		}
 		
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
-
 	}
 	
 	/*

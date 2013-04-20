@@ -1139,7 +1139,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdProdutoEdicao(veja1.getId());
-		filtro.setIdCota(cotaManoel.getId());
+		filtro.setNumeroCota(cotaManoel.getNumeroCota());
 
 		List<ConsultaEncalheDetalheDTO> listaConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalheDetalhe(filtro);
 		
@@ -1265,7 +1265,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		filtro.setDataMovimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setDataRecolhimento(Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		filtro.setIdProdutoEdicao(veja1.getId());
-		filtro.setIdCota(cotaManoel.getId());
+		filtro.setNumeroCota(cotaManoel.getNumeroCota());
 
 		Integer qtdeConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalheDetalhe(filtro);
 		
