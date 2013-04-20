@@ -753,7 +753,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		
 		//OUTRO DEBIDO OU CREDITO DO CONSOLIDADO
-		DebitoCreditoCotaDTO outroDebitoCreditoConsolidado = this.obterOutroDebitoCreditoDeConsolidados(cota.getId(), dataOperacao);
+		DebitoCreditoCotaDTO outroDebitoCreditoConsolidado = this.obterOutroDebitoCreditoDeConsolidados(cota, dataOperacao);
 		
 		listaDebitoCreditoCompleta.add(outroDebitoCreditoConsolidado);
 
@@ -761,14 +761,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
 	}
 	
-	private DebitoCreditoCotaDTO obterOutroDebitoCreditoDeConsolidados(Long idCota, Date dataOperacao) {
+	private DebitoCreditoCotaDTO obterOutroDebitoCreditoDeConsolidados(Cota cota, Date dataOperacao) {
 		
-		ConsolidadoFinanceiroCota consolidado = 
-				this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
-		
+		ConsolidadoFinanceiroCota consolidado = this.consolidadoFinanceiroRepository.buscarPorCotaEData(cota, dataOperacao);
 		
 		BigDecimal outrosValores = BigDecimal.ZERO;
-		
 		
 		if (consolidado != null){
 			BigDecimal valorConsolidEncalhe = consolidado.getEncalhe() != null ? consolidado.getEncalhe().abs() : BigDecimal.ZERO;

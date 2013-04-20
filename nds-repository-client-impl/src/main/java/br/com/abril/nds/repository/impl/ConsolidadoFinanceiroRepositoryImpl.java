@@ -856,8 +856,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	}
 
 	@Override
-	public ConsolidadoFinanceiroCota buscarPorCotaEData(Cota cota,
-			java.sql.Date data) {
+	public ConsolidadoFinanceiroCota buscarPorCotaEData(Cota cota, Date data) {
 		
 		Criteria criteria = getSession().createCriteria(ConsolidadoFinanceiroCota.class);
 		
