@@ -1774,7 +1774,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			dados.put("valorEncalhe", valorEncalhe);
 			dados.put("valorVendaDia", valorVendaDia);
-			dados.put("valorDebitoCredito", valorDebitoCredito);
+			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
 			dados.put("valorPagar", valorPagar);
 			dados.put("valorTotal", valorTotal);
 			dados.put("valorPagarAtualizado", valorPagarAtualizado);
