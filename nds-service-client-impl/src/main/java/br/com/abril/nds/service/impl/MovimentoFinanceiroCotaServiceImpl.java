@@ -38,7 +38,6 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
@@ -381,7 +380,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		movimento.setAprovador(usuarioRepository.getUsuarioImportacao());
 		movimento.setUsuario(usuarioRepository.getUsuarioImportacao());
 		
-		ConsolidadoFinanceiroCota cfc = consolidadoFinanceiroRepository.buscarPorCotaEData(cota, valorInput.getData());
+		ConsolidadoFinanceiroCota cfc = consolidadoFinanceiroRepository.buscarPorCotaEData(cota.getId(), valorInput.getData());
 		
 		if (cfc == null) {
 			cfc = new ConsolidadoFinanceiroCota();				
