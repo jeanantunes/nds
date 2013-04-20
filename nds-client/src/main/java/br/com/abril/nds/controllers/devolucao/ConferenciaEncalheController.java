@@ -961,23 +961,16 @@ public class ConferenciaEncalheController extends BaseController {
 		limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 		
 		try {
-			
-			Long idControleConferenciaEncalheCota = this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
-					controleConfEncalheCota, 
-					listaConferenciaEncalheCotaToSave, 
-					this.getSetConferenciaEncalheExcluirFromSession(), 
-					this.getUsuarioLogado(),
-					indConferenciaContingencia);
-			
-			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
-			
-			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
-			
-			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-			
-			StatusConferenciaEncalheCota statusConf = obterStatusConferenciaEncalheCotaFromSession();
-			statusConf.setIndConferenciaEncalheCotaSalva(true);
-			
+
+	        this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(controleConfEncalheCota, 
+																         listaConferenciaEncalheCotaToSave, 
+																         this.getSetConferenciaEncalheExcluirFromSession(), 
+																         this.getUsuarioLogado(),
+																         indConferenciaContingencia);
+	       
+	
+	        limparDadosSessao();
+	
 		} catch (EncalheSemPermissaoSalvarException e) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
