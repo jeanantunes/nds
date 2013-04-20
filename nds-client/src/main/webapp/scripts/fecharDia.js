@@ -1466,6 +1466,22 @@ var fecharDiaController =  $.extend(true, {
 		parent.$('#dialog-lancto-faltas-sobras').dialog("option", "modal", false);
 		parent.$('#dialog-lancto-faltas-sobras').dialog('close');
 		
+	},
+	
+	transferirDiferencasParaEstoqueDePerdaGanho : function() {
+		
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/transferirDiferencasParaEstoqueDePerdaGanho",
+			null,
+			function(result) {
+
+				$("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).dialog("close");
+				
+				$("#dialog-processos", fecharDiaController.workspace).dialog("close");
+				
+				fecharDiaController.popup_processos();
+			}
+		);
 	}
 
 }, BaseController);

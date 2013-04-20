@@ -10,7 +10,9 @@ public enum TipoEstoque {
 	DEVOLUCAO_ENCALHE("Devolução Encalhe"),
 	DEVOLUCAO_FORNECEDOR("Devolução Fornecedor"), 
 	JURAMENTADO("Juramentado"), 
-	DANIFICADO("Danificado");
+	DANIFICADO("Danificado"),
+	PERDA("Perda"),
+	GANHO("Ganho");
 	
 	String descricao;
 	

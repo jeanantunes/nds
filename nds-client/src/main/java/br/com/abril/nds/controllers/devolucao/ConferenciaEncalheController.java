@@ -1843,6 +1843,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		Long idTemporario = obterIdTemporario();
 		
+		conferenciaEncalheDTO.setDia(produtoEdicao.getDia());
 		conferenciaEncalheDTO.setIdConferenciaEncalhe(idTemporario);
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
