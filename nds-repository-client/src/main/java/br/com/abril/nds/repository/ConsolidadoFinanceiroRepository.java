@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 
 public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoFinanceiroCota, Long> {
@@ -33,7 +34,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 
 	Long obterQuantidadeDividasGeradasData(List<Long> idsCota);
 
-	ConsolidadoFinanceiroCota buscarPorCotaEData(Long cota, Date data);
+	ConsolidadoFinanceiroCota buscarPorCotaEData(Cota cota, Date data);
 
 	List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(Long idCota);
 

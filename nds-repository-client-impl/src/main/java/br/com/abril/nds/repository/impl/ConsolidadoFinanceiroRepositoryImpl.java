@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.ViewContaCorrenteCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoEncalheCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsolidadoVendaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -855,20 +856,16 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	}
 
 	@Override
-	public ConsolidadoFinanceiroCota buscarPorCotaEData(Long cota, Date data) {
+	public ConsolidadoFinanceiroCota buscarPorCotaEData(Cota cota, Date data) {
 		
-		StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
-		hql.append(" join c.cota cota ");
-		hql.append(" where c.dataConsolidado = :data ");
-		hql.append(" and cota.id = :idCota ");
+		Criteria criteria = getSession().createCriteria(ConsolidadoFinanceiroCota.class);
 		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("data", data);
-		query.setParameter("idCota", cota);
+		criteria.add(Restrictions.eq("cota", cota));
+		criteria.add(Restrictions.eq("dataConsolidado", data));
 		
-		query.setMaxResults(1);
+		criteria.setMaxResults(1);
 		
-		return (ConsolidadoFinanceiroCota) query.uniqueResult();
+		return (ConsolidadoFinanceiroCota) criteria.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")

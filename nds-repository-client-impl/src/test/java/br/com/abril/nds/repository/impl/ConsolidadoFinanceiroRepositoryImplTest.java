@@ -486,10 +486,10 @@ public class ConsolidadoFinanceiroRepositoryImplTest extends
 		cota.setId(1L);
 		
 
-		Date data = new Date(Fixture.criarData(14, Calendar.NOVEMBER, 2012).getTime());
+		java.sql.Date data = new java.sql.Date(Fixture.criarData(14, Calendar.NOVEMBER, 2012).getTime());
 
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = 
-				consolidadoFinanceiroRepository.buscarPorCotaEData(cota.getId(), data);
+				consolidadoFinanceiroRepository.buscarPorCotaEData(cota, data);
 		
 	}
 	

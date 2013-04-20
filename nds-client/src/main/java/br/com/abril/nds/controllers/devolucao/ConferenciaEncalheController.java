@@ -962,14 +962,21 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		try {
 			
-			this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
+			Long idControleConferenciaEncalheCota = this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
 					controleConfEncalheCota, 
 					listaConferenciaEncalheCotaToSave, 
 					this.getSetConferenciaEncalheExcluirFromSession(), 
 					this.getUsuarioLogado(),
 					indConferenciaContingencia);
 			
-			limparDadosSessao();
+			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
+			
+			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
+			
+			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
+			
+			StatusConferenciaEncalheCota statusConf = obterStatusConferenciaEncalheCotaFromSession();
+			statusConf.setIndConferenciaEncalheCotaSalva(true);
 			
 		} catch (EncalheSemPermissaoSalvarException e) {
 			

@@ -1530,7 +1530,13 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 							if(result.tipoMensagem == 'SUCCESS') {
 								
-								ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
+								var data = [
+								      {name : 'numeroCota', value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
+								      {name: 'indObtemDadosFromBD', value : true},
+								      {name: 'indConferenciaContingencia', value: false}
+								];
+								
+								ConferenciaEncalhe.carregarListaConferencia(data);
 								
 							}
 						
