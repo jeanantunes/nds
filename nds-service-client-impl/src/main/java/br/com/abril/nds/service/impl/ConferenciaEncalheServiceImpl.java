@@ -73,6 +73,7 @@ import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
@@ -98,6 +99,7 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
+import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
@@ -255,6 +257,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ParametrosDistribuidorEmissaoDocumentoRepository parametrosDistribuidorEmissaoDocumentoRepository;
+	
+	@Autowired
+	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
 	
 	private SlipDTO slipDTO = new SlipDTO();
 	private Map<String, Object> parametersSlip = new HashMap<String, Object>();
@@ -655,7 +660,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
-		carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, dataOperacao);
+		boolean indConferenciaEncalheReaberta = 
+				(controleConferenciaEncalheCota != null && StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus()));
+		
+		carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, dataOperacao, indConferenciaEncalheReaberta);
 		
 		infoConfereciaEncalheCota.setCota(cota);
 		infoConfereciaEncalheCota.setReparte(obterValorTotalReparte(numeroCota, dataOperacao));
@@ -670,10 +678,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	private void carregarDadosDebitoCreditoDaCota(
-			InfoConferenciaEncalheCota infoConfereciaEncalheCota, 
-			Cota cota,
-			Date dataOperacao) {
+	private void carregarDadosDebitoCreditoDaCota(InfoConferenciaEncalheCota infoConfereciaEncalheCota, 
+												  Cota cota,
+												  Date dataOperacao,
+												  boolean indConferenciaEncalheReaberta) {
+		
+		
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 		
@@ -685,7 +696,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
 		
-		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
 
 		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = 
@@ -693,16 +703,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																					 dataOperacao, 
 																					 tiposMovimentoFinanceiroIgnorados);
 
-		for (DebitoCreditoCotaDTO dccDto : listaDebitoCreditoCota){
-			
-			dccDto.setObservacoes("Débitos e Créditos");
-		}
-		
 		if(listaDebitoCreditoCota!=null && !listaDebitoCreditoCota.isEmpty()) {
 			
-			listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCota);
+			for (DebitoCreditoCotaDTO dccDto : listaDebitoCreditoCota){
+				
+				dccDto.setObservacoes("Débitos e Créditos");
+				
+				listaDebitoCreditoCompleta.add(dccDto);
+			}
 		}
 
+		
 		//NEGOCIACOES AVULSAS DA COTA
 		List<DebitoCreditoCotaDTO> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
 				movimentoFinanceiroCotaRepository.obterValorFinanceiroNaoConsolidadoDeNegociacaoNaoAvulsaMaisEncargos(cota.getNumeroCota());
@@ -714,17 +725,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				negociacao.setTipoLancamento(OperacaoFinaceira.DEBITO);
 				
 				negociacao.setObservacoes("Negociação Avulsa e Encargos.");
+				
+				listaDebitoCreditoCompleta.add(negociacao);
 			}
-			
-			listaDebitoCreditoCompleta.addAll(listaDebitoNegociacaoNaoAvulsaMaisEncargos);
 		}
+
 
 		//COBRANCAS VENCIDAS EM ABERTO DA COTA
 		List<DebitoCreditoCotaDTO> listaCobrancas = 
 				cobrancaRepository.obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(cota.getId(), 
 						                                                                    infoConfereciaEncalheCota.getIdControleConferenciaEncalheCota(), 
 						                                                                    dataOperacao);
-		
 		
 		if( listaCobrancas != null && !listaCobrancas.isEmpty() ) {
 
@@ -739,8 +750,40 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				listaDebitoCreditoCompleta.add(cobranca);
 			}
 		}
+
+		
+		//OUTRO DEBIDO OU CREDITO DO CONSOLIDADO
+		DebitoCreditoCotaDTO outroDebitoCreditoConsolidado = this.obterOutroDebitoCreditoDeConsolidados(cota.getId(), dataOperacao);
+		
+		listaDebitoCreditoCompleta.add(outroDebitoCreditoConsolidado);
+
 		
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
+	}
+	
+	private DebitoCreditoCotaDTO obterOutroDebitoCreditoDeConsolidados(Long idCota, Date dataOperacao) {
+		
+		ConsolidadoFinanceiroCota consolidado = 
+				this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
+		
+		
+		BigDecimal outrosValores = BigDecimal.ZERO;
+		
+		
+		if (consolidado != null){
+			BigDecimal valorConsolidEncalhe = consolidado.getEncalhe() != null ? consolidado.getEncalhe().abs() : BigDecimal.ZERO;
+			BigDecimal valorConsolidReparte = consolidado.getConsignado() != null ? consolidado.getConsignado().abs() : BigDecimal.ZERO;
+			outrosValores = consolidado.getTotal().abs().subtract(valorConsolidReparte.subtract(valorConsolidEncalhe));
+		}
+		
+		DebitoCreditoCotaDTO cobranca = new DebitoCreditoCotaDTO();
+		
+		cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
+		cobranca.setObservacoes("Outros valores");
+		cobranca.setDataVencimento(consolidado.getDataConsolidado());
+		cobranca.setValor(outrosValores);
+		
+		return cobranca;
 	}
 	
 	/*
