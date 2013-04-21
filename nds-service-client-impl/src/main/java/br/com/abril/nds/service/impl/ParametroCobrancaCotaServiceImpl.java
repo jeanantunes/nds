@@ -466,25 +466,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			}  
 		}
 		
-		
-		
-		
-		
-		
-		
-		
-		
 		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(formaCobrancaDTO.getIdCota());
 		
 		formaCobranca.setPrincipal(formaCobrancaPrincipal==null);
-
-		
-		
-		
-		
-		
-		
-		
 		
 		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
 		concentracoesCobranca = new HashSet<ConcentracaoCobrancaCota>();
@@ -599,7 +583,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		    }
 		}
 		
-	    if(novaFormaCobranca){
+	    if(novaFormaCobranca || formaCobrancaDTO.isParametroDistribuidor()){
 	    	ParametroCobrancaCota parametroCobranca = this.parametroCobrancaCotaRepository.buscarPorId(formaCobrancaDTO.getIdParametroCobranca());
 		    formaCobranca.setParametroCobrancaCota(parametroCobranca);
 
@@ -631,8 +615,18 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		String strConcentracoes="";
 		String strFornecedores="";
+		boolean isParametroDistribuidor = false;
 		Set<ConcentracaoCobrancaCota> concentracoes = new HashSet<ConcentracaoCobrancaCota>();
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		
+		
+		// caso não encontre as formas de cobrança... incluir aqui a forma de cobrança Principal do Distribuidor
+		if (formasCobranca == null || formasCobranca.size() == 0) {
+			formasCobranca = new ArrayList<>();
+			FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaRepository.obterFormaCobranca();
+			isParametroDistribuidor = true;
+			formasCobranca.add(formaCobrancaDistribuidor);
+		}
 		
 		for(FormaCobranca formaCobrancaItem:formasCobranca){
 			
@@ -675,7 +669,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 					                                   strFornecedores,
 					                                   strConcentracoes,
 					                                   (formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
-					                                   (formaCobrancaItem.getBanco()!=null?formaCobrancaItem.getBanco().getNome()+" : "+formaCobrancaItem.getBanco().getAgencia()+" : "+formaCobrancaItem.getBanco().getConta()+"-"+formaCobrancaItem.getBanco().getDvConta():"")
+					                                   (formaCobrancaItem.getBanco()!=null?formaCobrancaItem.getBanco().getNome()+" : "+formaCobrancaItem.getBanco().getAgencia()+" : "+formaCobrancaItem.getBanco().getConta()+"-"+formaCobrancaItem.getBanco().getDvConta():""),
+					                                   isParametroDistribuidor
 					                                  )
 			                    );
 		}

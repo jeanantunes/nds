@@ -305,7 +305,6 @@ public class ParametroCobrancaCotaController extends BaseController {
                 .serialize();
     }
 
-	
 	/**
      * Retorna formas de cobrança da cota para preencher a grid da view
      * @param idCota
@@ -322,7 +321,7 @@ public class ParametroCobrancaCotaController extends BaseController {
             
             //BUSCA FORMAS DE COBRANCA DA COTA
             listaFormasCobranca = this.parametroCobrancaCotaService.obterDadosFormasCobrancaPorCota(idCota);
-            qtdeRegistros = this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(idCota);
+            qtdeRegistros = listaFormasCobranca != null ? listaFormasCobranca.size() : 0;
             
         } else {
             listaFormasCobranca = parametroCobrancaCotaService.obterFormasCobrancaHistoricoTitularidadeCota(idCota, idHistorico);
@@ -370,6 +369,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 		//validar();
 		
 	    List<FormaCobranca> formasCobranca = this.parametroCobrancaCotaService.obterFormasCobrancaCota(parametroCobranca.getIdCota());
+	    
+	    // a cota terá sempre uma forma de cobrança a forma de cobrança principal do Distribuidor
 		if ((formasCobranca==null)||(formasCobranca.size()<=0)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Adicione ao menos uma Forma de Cobrança para a Cota.");
 		}
@@ -490,6 +491,10 @@ public class ParametroCobrancaCotaController extends BaseController {
 		formaCobranca = formatarFormaCobranca(formaCobranca);
 		
 		validarFormaCobranca(formaCobranca);
+		
+		if (this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(formaCobranca.getIdCota()) == 0) {
+			formaCobranca.setParametroDistribuidor(true);
+		}
 		
 		this.parametroCobrancaCotaService.postarFormaCobranca(formaCobranca);	
 	    

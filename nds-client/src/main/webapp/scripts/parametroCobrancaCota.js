@@ -37,6 +37,12 @@ var parametroCobrancaCotaController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
+				display : 'Parâmetro Distribuidor',
+				name : 'parametroDistribuidor',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Ação',
 				name : 'acao',
 				width : 50,
@@ -244,6 +250,11 @@ var parametroCobrancaCotaController = $.extend(true, {
                     '<img title="Excluir Forma Pagamento" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
                     '</a>';
             }
+            
+            row.cell.parametroDistribuidor = row.cell.parametroDistribuidor ? 'Sim' : 'Não';
+            
+            row.cell.principal = row.cell.principal ? '<img src="/nds-client/images/ico_check.gif" hspace="5" border="0px" title="Forma de cobrança principal">' : '';
+            
 			row.cell.acao = linkEditar + linkExcluir;
 		});
 			
@@ -427,13 +438,23 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 
 	postarParametroCobranca : function() {
-		
-		//hidden
+		// hidden
 		var idParametroCobranca = $("#_idParametroCobranca", this.workspace).val();
 		var idCota = $("#_idCota", this.workspace).val();
 		var numCota = $("#_numCota", this.workspace).val();
 		
 		var fatorVencimento  = $("#fatorVencimento", this.workspace).val();
+		
+		// validar se a cota não possui formas de cobrança
+//		$.postJSON(
+//				contextPath + "/cota/parametroCobrancaCota/obterQtdFormasCobranca", 
+//				idCota,
+//				function(response){
+//					if (response == 0) {
+//						this.postarFormaCobranca(false, false);
+//					}
+//					
+//				});
 		
 		$("#sugereSuspensao", this.workspace).val(0);
 		//if (document.formFinanceiro.sugereSuspensao.checked){
@@ -735,10 +756,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		return fornecedorMarcado;
 	},
 	
-	postarFormaCobranca : function(novo, incluirSemFechar) {
-		
-		var telaMensagem="idModalUnificacao";
-		
+	buildFormaCobrancaDTO : function(){
+
 		//hidden
 		var idFormaCobranca = $("#_idFormaCobranca", this.workspace).val();
 		var idCota = $("#_idCota", this.workspace).val();
@@ -836,6 +855,18 @@ var parametroCobrancaCotaController = $.extend(true, {
 				 "tipoFormaCobranca":tipoFormaCobranca};
 		 params = serializeArrayToPost('listaIdsFornecedores',parametroCobrancaCotaController.obterFornecedoresMarcados(), params );
 		 
+		 return params;
+	},
+	
+	postarFormaCobranca : function(novo, incluirSemFechar) {
+		
+		var telaMensagem="idModalUnificacao",
+			idFormaCobranca = $("#_idFormaCobranca", this.workspace).val(),
+			idCota = $("#_idCota", this.workspace).val(),
+			idParametroCobranca = $("#_idParametroCobranca", this.workspace).val(),
+			params = {};
+		
+		params = parametroCobrancaCotaController.buildFormaCobrancaDTO();
 		 
 		if (novo) {
 			$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarFormaCobranca",

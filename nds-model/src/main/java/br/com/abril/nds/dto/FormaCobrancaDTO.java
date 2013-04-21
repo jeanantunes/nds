@@ -17,6 +17,7 @@ public class FormaCobrancaDTO {
 	String concentracaoPagto = "";
 	String tipoPagto;
 	String detalhesTipoPagto = "";
+	boolean parametroDistribuidor;
 	
 	//DADOS DO FORMULARIO
 	TipoCobranca tipoCobranca;
@@ -46,19 +47,22 @@ public class FormaCobrancaDTO {
 	List<Long> fornecedoresId;
 	
 	
+	
 	public FormaCobrancaDTO(){
 		
 	}
 
 	//CONTRUTOR PARA DADOS DA GRID
 	public FormaCobrancaDTO(Long idFormaCobranca, String fornecedor,
-			String concentracaoPagto, String tipoPagto, String detalhesTipoPagto) {
+			String concentracaoPagto, String tipoPagto, String detalhesTipoPagto,
+			boolean parametroDistribuidor) {
 		super();
 		this.idFormaCobranca = idFormaCobranca;
 		this.fornecedor = fornecedor;
 		this.concentracaoPagto = concentracaoPagto;
 		this.tipoPagto = tipoPagto;
 		this.detalhesTipoPagto = detalhesTipoPagto;
+		this.parametroDistribuidor = parametroDistribuidor;
 	}
 	
 	//CONTRUTOR PARA O FORMULARIO
@@ -148,6 +152,14 @@ public class FormaCobrancaDTO {
 
 	public void setDetalhesTipoPagto(String detalhesTipoPagto) {
 		this.detalhesTipoPagto = detalhesTipoPagto;
+	}
+
+	public boolean isParametroDistribuidor() {
+		return parametroDistribuidor;
+	}
+
+	public void setParametroDistribuidor(boolean parametroDistribuidor) {
+		this.parametroDistribuidor = parametroDistribuidor;
 	}
 
 	public TipoCobranca getTipoCobranca() {
