@@ -85,6 +85,8 @@ public class MatrizLancamentoController extends BaseController {
 	
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
+	private static final String GRID_MATRIZ_LANCAMENTO = "gridMatrizLancamento";
+	
 	@Path("/")
 	public void index() {
 		
@@ -101,19 +103,11 @@ public class MatrizLancamentoController extends BaseController {
 	
 	@Post
 	public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
-				
 		validarDadosPesquisa(dataLancamento, idsFornecedores);
-		
 		removerAtributoAlteracaoSessao();
-		
 		FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
-		
-		BalanceamentoLancamentoDTO balanceamentoLancamento = 
-			this.obterBalanceamentoLancamento(filtro);
-				
-		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
-			this.obterResultadoResumoLancamento(balanceamentoLancamento);
-						
+		BalanceamentoLancamentoDTO balanceamentoLancamento = this.obterBalanceamentoLancamento(filtro);
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this.obterResultadoResumoLancamento(balanceamentoLancamento);
 		this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
 		
 	}
@@ -135,6 +129,7 @@ public class MatrizLancamentoController extends BaseController {
 		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
 			
 			processarBalanceamento(listaProdutoBalanceamento, filtro);
+			session.setAttribute(GRID_MATRIZ_LANCAMENTO, listaProdutoBalanceamento);
 			
 		} else {
 			
@@ -238,10 +233,14 @@ public class MatrizLancamentoController extends BaseController {
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
-												   String novaDataFormatada) {
+	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento, String novaDataFormatada, boolean selTodos) {
+		
+		if (selTodos) {
+			produtosLancamento = (List<ProdutoLancamentoVO>) session.getAttribute(GRID_MATRIZ_LANCAMENTO);			
+		}
 		
 		this.validarDadosReprogramar(novaDataFormatada);
 		
