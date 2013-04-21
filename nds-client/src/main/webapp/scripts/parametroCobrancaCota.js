@@ -37,7 +37,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Parâmetro Distribuidora',
+				display : 'Parâmetro Distribuidoraaaaaaaaaaaaaaaaaaaaaaaaa',
 				name : 'parametroDistribuidor',
 				width : 50,
 				sortable : true,
