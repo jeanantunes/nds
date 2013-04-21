@@ -2,7 +2,10 @@ package br.com.abril.nds.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
@@ -35,6 +38,7 @@ public class FormaCobrancaDTO {
 	Integer diaDoMes;
 	Integer primeiroDiaQuinzenal;
 	Integer segundoDiaQuinzenal;
+	List<Integer> diasDoMes;
 	
 	boolean domingo;
 	boolean segunda;
@@ -45,8 +49,8 @@ public class FormaCobrancaDTO {
 	boolean sabado;
 	
 	List<Long> fornecedoresId;
-	
-	
+	Set<Fornecedor> fornecedores;
+	Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota;
 	
 	public FormaCobrancaDTO(){
 		
@@ -339,5 +343,30 @@ public class FormaCobrancaDTO {
        }
        fornecedoresId.add(id);
     }
+
+	public Set<ConcentracaoCobrancaCota> getConcentracaoCobrancaCota() {
+		return concentracaoCobrancaCota;
+	}
+
+	public void setConcentracaoCobrancaCota(
+			Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota) {
+		this.concentracaoCobrancaCota = concentracaoCobrancaCota;
+	}
+
+	public List<Integer> getDiasDoMes() {
+		return diasDoMes;
+	}
+
+	public void setDiasDoMes(List<Integer> diasDoMes) {
+		this.diasDoMes = diasDoMes;
+	}
+
+	public Set<Fornecedor> getFornecedores() {
+		return fornecedores;
+	}
+
+	public void setFornecedores(Set<Fornecedor> fornecedores) {
+		this.fornecedores = fornecedores;
+	}
 
 }

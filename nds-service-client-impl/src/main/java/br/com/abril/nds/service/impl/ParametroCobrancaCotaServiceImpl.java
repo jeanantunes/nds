@@ -429,7 +429,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	@Transactional
 	public void postarFormaCobranca(FormaCobrancaDTO formaCobrancaDTO) {
 		
-		
 		FormaCobranca formaCobranca = null;
 		ContaBancariaDeposito contaBancariaCota = null;
 		Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
@@ -539,13 +538,20 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		if(concentracoesCobranca.size()>0){
 		    formaCobranca.setConcentracaoCobrancaCota(concentracoesCobranca);
+		}else if (formaCobrancaDTO.getConcentracaoCobrancaCota() != null) {
+			formaCobranca.setConcentracaoCobrancaCota(formaCobrancaDTO.getConcentracaoCobrancaCota());
 		}
 		
-		List<Integer> diasdoMes = new ArrayList<Integer>();
-		diasdoMes.add(formaCobrancaDTO.getDiaDoMes());
-		diasdoMes.add(formaCobrancaDTO.getPrimeiroDiaQuinzenal());
-		diasdoMes.add(formaCobrancaDTO.getSegundoDiaQuinzenal());
-		formaCobranca.setDiasDoMes(diasdoMes);
+		if (formaCobrancaDTO.getDiasDoMes() != null) {
+			formaCobranca.setDiasDoMes(formaCobrancaDTO.getDiasDoMes());
+		}else{
+			List<Integer> diasdoMes = new ArrayList<Integer>();
+			diasdoMes.add(formaCobrancaDTO.getDiaDoMes());
+			diasdoMes.add(formaCobrancaDTO.getPrimeiroDiaQuinzenal());
+			diasdoMes.add(formaCobrancaDTO.getSegundoDiaQuinzenal());
+			formaCobranca.setDiasDoMes(diasdoMes);
+		}
+		
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
 		formaCobranca.setBanco(banco);
@@ -564,12 +570,13 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		contaBancariaCota.setDvConta(formaCobrancaDTO.getContaDigito());
 		
 		formaCobranca.setContaBancariaCota(contaBancariaCota);
-
 		
 		formaCobranca.setAtiva(true);
 		
 		formaCobranca.setFornecedores(null);
-		if ((formaCobrancaDTO.getFornecedoresId()!=null)&&(formaCobrancaDTO.getFornecedoresId().size()>0)){
+		if(formaCobrancaDTO.getFornecedores() != null){
+			formaCobranca.setFornecedores(formaCobrancaDTO.getFornecedores());
+		}else if ((formaCobrancaDTO.getFornecedoresId()!=null)&&(formaCobrancaDTO.getFornecedoresId().size()>0)){
 			Fornecedor fornecedor;
 		    Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		    for (Long idFornecedor:formaCobrancaDTO.getFornecedoresId()){

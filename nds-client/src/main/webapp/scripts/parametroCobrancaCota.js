@@ -37,9 +37,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'Parâmetro Distribuidoraaaaaaaaaaaaaaaaaaaaaaaaa',
+				display : 'Parâmetro Distribuidora',
 				name : 'parametroDistribuidor',
-				width : 50,
+				width : 120,
 				sortable : true,
 				align : 'left'
 			},{
@@ -445,17 +445,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		var fatorVencimento  = $("#fatorVencimento", this.workspace).val();
 		
-		// validar se a cota não possui formas de cobrança
-//		$.postJSON(
-//				contextPath + "/cota/parametroCobrancaCota/obterQtdFormasCobranca", 
-//				idCota,
-//				function(response){
-//					if (response == 0) {
-//						this.postarFormaCobranca(false, false);
-//					}
-//					
-//				});
-		
 		$("#sugereSuspensao", this.workspace).val(0);
 		//if (document.formFinanceiro.sugereSuspensao.checked){
 		if ($("#sugereSuspensao", this.workspace).is(":checked")) {
@@ -477,26 +466,31 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
 		var unificaCobranca = $("#unificaCobranca", this.workspace).val()==0?1:0;
 		
-		$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
-				{"parametroCobranca.idParametroCobranca":idParametroCobranca,
-			"parametroCobranca.idCota":idCota,
-			"parametroCobranca.numCota":numCota,   
-			"parametroCobranca.fatorVencimento":fatorVencimento,   
-			"parametroCobranca.sugereSuspensao":sugereSuspensao,   
-			"parametroCobranca.contrato":contrato,         
-			"parametroCobranca.valorMinimo":valorMinimo,   
-			"parametroCobranca.qtdDividasAberto":qtdDividasAberto,  
-			"parametroCobranca.vrDividasAberto":vrDividasAberto,
-			"parametroCobranca.tipoCota":tipoCota,
-			"parametroCobranca.idFornecedor":fornecedorPadrao,
-			"parametroCobranca.unificaCobranca":unificaCobranca},
-				   function(){
-			           return true;
-				   },
-				   function(){
-			           return false;
-				   },
-				   true);
+		var params = {"parametroCobranca.idParametroCobranca":idParametroCobranca,
+				"parametroCobranca.idCota":idCota,
+				"parametroCobranca.numCota":numCota,   
+				"parametroCobranca.fatorVencimento":fatorVencimento,   
+				"parametroCobranca.sugereSuspensao":sugereSuspensao,   
+				"parametroCobranca.contrato":contrato,         
+				"parametroCobranca.valorMinimo":valorMinimo,   
+				"parametroCobranca.qtdDividasAberto":qtdDividasAberto,  
+				"parametroCobranca.vrDividasAberto":vrDividasAberto,
+				"parametroCobranca.tipoCota":tipoCota,
+				"parametroCobranca.idFornecedor":fornecedorPadrao,
+				"parametroCobranca.unificaCobranca":unificaCobranca};
+		
+		$.postJSON(
+			   contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
+			   params,
+			   function(){
+		           return true;
+			   },
+			   function(){
+		           return false;
+			   },
+			   true
+		);
+
 	},
 	calcularDataTermino : function() {
 		if(parametroCobrancaCotaController.isModoTelaCadastroCota()) {

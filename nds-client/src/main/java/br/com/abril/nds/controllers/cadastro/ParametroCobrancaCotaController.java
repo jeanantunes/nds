@@ -33,8 +33,10 @@ import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -47,6 +49,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FormaCobrancaService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
@@ -87,6 +90,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 	
 	@Autowired
 	private ParametrosDistribuidorService parametroDistribuidorService;
+	
+	@Autowired
+	private FornecedorService fornecedorService;
 	
 	@Autowired
 	private Validator validator;	
@@ -365,15 +371,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 	@Post
 	@Path("/postarParametroCobranca")
 	public void postarParametroCobranca(ParametroCobrancaCotaDTO parametroCobranca){	
-		
-		//validar();
-		
-	    List<FormaCobranca> formasCobranca = this.parametroCobrancaCotaService.obterFormasCobrancaCota(parametroCobranca.getIdCota());
-	    
-	    // a cota terá sempre uma forma de cobrança a forma de cobrança principal do Distribuidor
-		if ((formasCobranca==null)||(formasCobranca.size()<=0)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Adicione ao menos uma Forma de Cobrança para a Cota.");
-		}
+	    // A cota sempre terá  uma forma de cobrança a forma de cobrança principal do Distribuidor
+		inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
 		
 		if(parametroCobranca.getTipoCota()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
@@ -386,6 +385,47 @@ public class ParametroCobrancaCotaController extends BaseController {
 		this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);	
 		this.salvarContrato();
 	    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+
+	private void inserirFormaCobrancaDoDistribuidorNaCota(ParametroCobrancaCotaDTO parametroCobranca){
+		FormaCobrancaDTO formaCobrancaDTO = new FormaCobrancaDTO();
+		FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+
+		formaCobrancaDTO.setIdCota(parametroCobranca.getIdCota());
+		formaCobrancaDTO.setIdParametroCobranca(parametroCobranca.getIdParametroCobranca());
+		formaCobrancaDTO.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
+		formaCobrancaDTO.setRecebeEmail(formaCobrancaDistribuidor.isRecebeCobrancaEmail());
+		
+		Banco bancoCadastrado = formaCobrancaDistribuidor.getBanco();
+		
+		if (bancoCadastrado != null) {
+			formaCobrancaDTO.setIdBanco(bancoCadastrado.getId());
+			formaCobrancaDTO.setNumBanco(bancoCadastrado.getNumeroBanco());
+			formaCobrancaDTO.setNomeBanco(bancoCadastrado.getNome());
+			formaCobrancaDTO.setAgencia(bancoCadastrado.getAgencia());
+			formaCobrancaDTO.setAgenciaDigito(bancoCadastrado.getDvAgencia());
+			formaCobrancaDTO.setConta(bancoCadastrado.getConta());
+			formaCobrancaDTO.setContaDigito(bancoCadastrado.getDvConta());
+		}
+		
+		if (formaCobrancaDistribuidor.getConcentracaoCobrancaCota() != null) {
+			formaCobrancaDTO.setConcentracaoCobrancaCota(formaCobrancaDistribuidor.getConcentracaoCobrancaCota());
+		}
+		
+		if (formaCobrancaDistribuidor.getDiasDoMes() != null) {
+			formaCobrancaDTO.setDiasDoMes(formaCobrancaDistribuidor.getDiasDoMes());
+		}
+		
+		if (formaCobrancaDistribuidor.getTipoFormaCobranca() != null) {
+			formaCobrancaDTO.setTipoFormaCobranca(formaCobrancaDistribuidor.getTipoFormaCobranca());
+		}
+		
+		if (formaCobrancaDistribuidor.getFornecedores() != null) {
+			formaCobrancaDTO.setFornecedores(formaCobrancaDistribuidor.getFornecedores());
+		}
+		
+		this.parametroCobrancaCotaService.postarFormaCobranca(formaCobrancaDTO);
+		
 	}
 
 	/**
@@ -492,6 +532,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 		validarFormaCobranca(formaCobranca);
 		
+		// Caso a cota não possua formas de cobrança, informa que essa cobrança veio pelo distribuidor
 		if (this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(formaCobranca.getIdCota()) == 0) {
 			formaCobranca.setParametroDistribuidor(true);
 		}
