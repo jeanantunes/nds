@@ -85,15 +85,18 @@ public class XlsUploaderUtils {
 				while (cellIterator.hasNext()) {
 					Cell cell = (Cell) cellIterator.next();
 					
-					String xlsHeader = sheet.getRow(header).getCell(cell.getColumnIndex()).getStringCellValue();
-					
-					for (Field f : clazz.getDeclaredFields()) {
-						if(f.isAnnotationPresent(XlsMapper.class)){
-							XlsMapper mapper = f.getAnnotation(XlsMapper.class);
-							if(mapper.value().equals(xlsHeader)){
-								Cell cellIndex = sheet.getRow(content).getCell(cell.getColumnIndex(), Row.RETURN_BLANK_AS_NULL);
-								if (cellIndex != null) {
-									BeanUtils.setProperty(obj, f.getName(), returnCellValue(cellIndex));										
+					Cell headerCell = sheet.getRow(header).getCell(cell.getColumnIndex());
+					if (headerCell != null) {
+						String xlsHeader = headerCell.getStringCellValue();
+						
+						for (Field f : clazz.getDeclaredFields()) {
+							if(f.isAnnotationPresent(XlsMapper.class)){
+								XlsMapper mapper = f.getAnnotation(XlsMapper.class);
+								if(mapper.value().equals(xlsHeader)){
+									Cell cellIndex = sheet.getRow(content).getCell(cell.getColumnIndex(), Row.RETURN_BLANK_AS_NULL);
+									if (cellIndex != null) {
+										BeanUtils.setProperty(obj, f.getName(), returnCellValue(cellIndex));										
+									}
 								}
 							}
 						}

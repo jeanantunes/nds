@@ -188,6 +188,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return (ProdutoEdicao) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicao> listProdutoEdicaoPorCodProdutoNumEdicoes(String codigoProduto, Long numeroEdicaoInicial, Long numeroEdicaoFinal) {
+		return super.getSession().createCriteria(ProdutoEdicao.class)
+				.add(Restrictions.between("numeroEdicao", numeroEdicaoInicial, numeroEdicaoFinal))
+				.addOrder(Order.asc("numeroEdicao"))
+				.createCriteria("produto")
+				.add(Restrictions.eq("codigo", codigoProduto)).list();
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoBarra(String codigoBarra) {

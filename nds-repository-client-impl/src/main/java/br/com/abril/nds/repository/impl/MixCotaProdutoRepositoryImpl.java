@@ -76,7 +76,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		sql.append(" and lancamento.status='FECHADO'")
 		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
-		.append(" group by cota.id ")
+		.append(" group by produto.codigo ")
 		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -152,7 +152,7 @@ public class MixCotaProdutoRepositoryImpl extends
 			sql.append(" and upper(tipo_classificacao_produto.descricao) = upper(:classificacaoProduto)");
 		}
 		sql.append(" and cota.tipo_distribuicao_cota = :tipoCota")
-		.append(" GROUP BY produto.id")
+		.append(" group by cota.numero_cota ")
 		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
 	
 		

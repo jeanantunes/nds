@@ -73,7 +73,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" AND produto.nome = :NOME_PRODUTO ");
 		hql.append(this.getSqlWhereBuscarProdutos(filtro));
 		
-		hql.append(" ORDER BY dataLcto, dataRcto, numeroEdicao ");
+		hql.append(" ORDER BY numeroEdicao desc ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -128,6 +128,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" FROM ProdutoEdicao AS prodEdicao ");
 		hql.append(" WHERE produto.codigo = :COD_PRODUTO AND ");
 		hql.append(" prodEdicao.numeroEdicao = :NUM_EDICAO ");
+		hql.append(" order by nomeComercial ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 

@@ -2573,5 +2573,21 @@ public class CotaServiceImpl implements CotaService {
 	public List<CotaDTO> obterPorNomeAutoComplete(String nome) {
 	    return cotaRepository.obterCotasPorNomeAutoComplete(nome);
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota) {
+		
+		return cotaRepository.obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
+	}
+	
+	
+	@Override
+	public boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota) {
+		
+		TipoDistribuicaoCota tpDistribuicaoCota = obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
+		
+		return (tpDistribuicaoCota != null && tpDistribuicaoCota.equals(tipoDistribuicaoCota));
+	}
 }
 

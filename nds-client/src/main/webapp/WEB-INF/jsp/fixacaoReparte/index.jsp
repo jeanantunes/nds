@@ -83,7 +83,7 @@ function mostraIntervalo(){
             <td width="167">
             	<select name="select" id="select" style="width:160px;">
 			            <c:forEach items="${classificacao}" var="tipoProduto">
-							<option value="<c:out value="${tipoProduto.id}"/>"><c:out value="${tipoProduto.descricao}"/></option>
+							<option value="<c:out value="${tipoProduto.id}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
 						</c:forEach>
           		</select>
             
@@ -127,7 +127,7 @@ function mostraIntervalo(){
 		      <fieldset class="classFieldset">
 		       	  <legend>Produtos</legend>
 		        
-		        	<table class="excessaoCotaGrid"></table> 
+		        	<table class="fixacaoCotaGrid"></table> 
 		             <span class="bt_novos" title="Incluir Novo" id="btNovoCota"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
 		             <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteCota">
 		             	<a href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a>
@@ -166,7 +166,7 @@ function mostraIntervalo(){
 			       <td width="119">
 			       		<select name="selectModal" id="selectModal" style="width:160px;display:none;">
 				            <c:forEach items="${classificacao}" var="tipoProduto">
-								<option value="<c:out value="${tipoProduto.id}"/>"><c:out value="${tipoProduto.descricao}"/></option>
+								<option value="<c:out value="${tipoProduto.id}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
 							</c:forEach>
 	          			</select>
 			       

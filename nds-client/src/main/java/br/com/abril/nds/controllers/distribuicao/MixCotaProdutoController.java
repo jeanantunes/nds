@@ -25,9 +25,11 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
@@ -44,6 +46,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -139,8 +142,13 @@ public class MixCotaProdutoController extends BaseController {
 
 	@Post
 	@Path("/pesquisarPorCota")
-	public void pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtro,
-			String sortorder, String sortname, int page, int rp) {
+	public void pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
+		
+		if (!cotaService.isTipoDistribuicaoCotaEspecifico(filtro.getCota(), TipoDistribuicaoCota.ALTERNATIVO)) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota não é do tipo Alternativo"));
+		}
+		
 		if (session.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE) == null) {
 			this.session.setAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE, filtro);
 		}

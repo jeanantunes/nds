@@ -14,30 +14,47 @@ import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.FixacaoRepartePdvRepository;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.PdvRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.UsuarioService;
+
 @Service
 public class FixacaoReparteServiceImpl implements FixacaoReparteService {
+	
+	@Autowired
+	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
+	
 	@Autowired
 	private FixacaoReparteRepository fixacaoReparteRepository;
+	
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
 	@Autowired
 	private UsuarioService usuarioService;
 	
@@ -52,10 +69,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	
 	@Autowired
 	private FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
-	
-	
-	
-
 	
 	@Transactional
 	@Override
@@ -92,14 +105,11 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		return listaFixacaoReparteDTO;
 	}
 
-	
 	@Transactional
 	@Override
 	public List<FixacaoReparteDTO> obterFixacoesRepartePorCota(
 			FiltroConsultaFixacaoCotaDTO filtroConsultaFixacaoCotaDTO) {
 		List<FixacaoReparteDTO> listaFixacaoReparteDTO = new ArrayList<FixacaoReparteDTO>();
-		Cota cota = null;
-		String nomeCotaBusca =  filtroConsultaFixacaoCotaDTO.getNomeCota();
 		String codigoCotaBusca = filtroConsultaFixacaoCotaDTO.getCota();
 		
 		if(codigoCotaBusca != null && codigoCotaBusca !=""){
@@ -108,7 +118,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		return listaFixacaoReparteDTO;
 	}
 
-	
 	@Override
 	@Transactional
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorProduto(
@@ -116,7 +125,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		List<FixacaoReparteDTO> resultado = null;
 		if(filtroProduto != null && filtroProduto.getCodigoProduto()!=null){
 			Produto produto = produtoRepository.obterProdutoPorCodigo(filtroProduto.getCodigoProduto());
-			 resultado =estoqueProdutoCotaRepository.obterHistoricoEdicaoPorProduto(produto) ;
+			 resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorProduto(produto) ;
 		}
 		return resultado; 
 	}
@@ -126,7 +135,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(
 			FiltroConsultaFixacaoCotaDTO filtroCota) {
 		Cota cota = cotaRepository.obterPorNumerDaCota(new Integer(filtroCota.getCota()));
-		List<FixacaoReparteDTO> resutado =estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota) ;
+		List<FixacaoReparteDTO> resutado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;
 		return resutado; 
 	}
 	
@@ -158,17 +167,18 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorId(fixacaoReparteDTO.getId());
 		List<FixacaoRepartePdv> repartes = fixacaoRepartePdvRepository.obterFixacaoRepartePdvPorFixacaoReparte(fixacaoReparte);
 		
-			for (FixacaoRepartePdv fixacaoRepartePdv : repartes) {
-				fixacaoRepartePdvRepository.remover(fixacaoRepartePdv);
-			}
-			fixacaoReparteRepository.remover(fixacaoReparte);
+		for (FixacaoRepartePdv fixacaoRepartePdv : repartes) {
+			fixacaoRepartePdvRepository.remover(fixacaoRepartePdv);
+		}
+		fixacaoReparteRepository.remover(fixacaoReparte);
 	}
 	
-	
-	private FixacaoReparte getFixacaoRepartePorDTO(FixacaoReparteDTO fixacaoReparteDTO){
+	private FixacaoReparte getFixacaoRepartePorDTO(FixacaoReparteDTO fixacaoReparteDTO) {
 		FixacaoReparte fixacaoReparte = new FixacaoReparte();
 		Cota cota = cotaRepository.obterPorNumerDaCota(fixacaoReparteDTO.getCotaFixada().intValue());
 		Produto produto = produtoRepository.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado().toString());
+		
+		validaStatusProduto(fixacaoReparteDTO, produto);
 		
 		fixacaoReparte.setProdutoFixado(produto);
 		fixacaoReparte.setCotaFixada(cota);
@@ -190,10 +200,44 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		fixacaoReparte.setQtdeEdicoes(fixacaoReparteDTO.getQtdeEdicoes());
 		fixacaoReparte.setEdicaoInicial(fixacaoReparteDTO.getEdicaoInicial()!=null? new Integer(fixacaoReparteDTO.getEdicaoInicial()) : null);
 		fixacaoReparte.setEdicaoFinal(fixacaoReparteDTO.getEdicaoFinal() !=null? new Integer(fixacaoReparteDTO.getEdicaoFinal()):null);
+		
 		return fixacaoReparte;
+	}
+
+	private void validaStatusProduto(FixacaoReparteDTO fixacaoReparteDTO, Produto produto) {
+		
+		if (fixacaoReparteDTO.getEdicaoInicial() != null && fixacaoReparteDTO.getEdicaoFinal() != null) {
+			List<ProdutoEdicao> listProdutoEdicao = produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());
+			for (ProdutoEdicao produtoEdicao : listProdutoEdicao) {
+				statusPermitido(new ArrayList<>(produtoEdicao.getLancamentos()).get(0).getStatus());
+			}
+		}
 		
 	}
-	
+
+	private void statusPermitido(StatusLancamento status) {
+		switch (status) {
+		
+		case CONFIRMADO:
+		case FECHADO:
+			throw new ValidacaoException(TipoMensagem.WARNING,"Não permitido a fixação devido ao status das edições.");
+			
+		case BALANCEADO:
+		case BALANCEADO_RECOLHIMENTO:
+		case CANCELADO:
+		case EM_BALANCEAMENTO:
+		case EM_BALANCEAMENTO_RECOLHIMENTO:
+		case ESTUDO_FECHADO:
+		case EXCLUIDO_RECOLHIMENTO:
+		case EXPEDIDO:
+		case FURO:
+		case PLANEJADO:
+		case RECOLHIDO:
+			
+		default:
+			break;
+		}
+	}
 	
 	@Override
 	@Transactional
@@ -206,6 +250,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public FixacaoReparte obterFixacao(Long id) {
 		return fixacaoReparteRepository.buscarPorId(id); 
 	}
+	
 	@Override
 	@Transactional
 	public FixacaoReparteDTO obterFixacaoDTO(Long id){
@@ -213,9 +258,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		return getFixacaoRepartePorDTO(fixacaoReparte);
 		
 	}
-	
-	
-	
 	
 	private FixacaoReparteDTO getFixacaoRepartePorDTO(FixacaoReparte fixacaoReparte) {
 		FixacaoReparteDTO fixacaoReparteDTO = new FixacaoReparteDTO();
@@ -230,7 +272,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 				fixacaoReparteDTO.setEdicaoFinal((fixacaoReparte.getEdicaoFinal()));
 			}
 			if(fixacaoReparte.getCotaFixada()!=null){
-				fixacaoReparteDTO.setCotaFixadaString(fixacaoReparte.getCotaFixada().getNumeroCota().toString());
+				fixacaoReparteDTO.setCotaFixada(fixacaoReparte.getCotaFixada().getNumeroCota());
 				fixacaoReparteDTO.setNomeCota(fixacaoReparte.getCotaFixada().getPessoa().getNome());
 			}
 			if(fixacaoReparte.getProdutoFixado()!=null){
@@ -244,15 +286,12 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		}
 		return fixacaoReparteDTO;
 	}
-	
 
 	@Override
 	public FixacaoReparte buscarFixacaoCadastrada(FixacaoReparte fixacaoReparte) {
 		return fixacaoReparteRepository.buscarPorProdutoCota(fixacaoReparte.getCotaFixada(), fixacaoReparte.getProdutoFixado()); 
 		
 	}
-
-	
 
 	public CotaDTO getCotaDTO(Cota cota){
 		if(cota != null){	
@@ -277,7 +316,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			return false;
 		}
 	}
-
 	
 	@Transactional
 	@Override
@@ -302,13 +340,10 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		return fixacaoReparteRepository.isFixacaoExistente(fixacaoReparteDTO);
 	}
 
+	@Transactional
 	@Override
 	public boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO) {
-		Cota cota = cotaRepository.buscarPorId(new Long(fixacaoReparteDTO.getCotaFixada()));
-		String situacaoCadastro = cota.getSituacaoCadastro().toString();
-		return situacaoCadastro.equalsIgnoreCase(cota.getSituacaoCadastro().ATIVO.toString());
+		Cota cota = cotaRepository.obterPorNumerDaCota(fixacaoReparteDTO.getCotaFixada());
+		return cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO);
 	}
-	
-	
-
 }

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.vo.DistribuidorClassificacaoCotaVO;
 import br.com.abril.nds.client.vo.DistribuidorPercentualExcedenteVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.controllers.BaseController;
@@ -208,9 +210,20 @@ public class ParametrosDistribuidorController extends BaseController {
 		parametrosDistribuidorService.salvarDistribuidor(
 			parametrosDistribuidor, imgLogotipo, contentType);
 		
-		classificacaoCotaService.executeReclassificacaoCota();
+		boolean erroNaReclassificacao = false;
+		try {
+			classificacaoCotaService.executeReclassificacaoCota();
+		} catch (Exception e) {
+			e.printStackTrace();
+			erroNaReclassificacao = true;
+		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
+		String mensagem = "Parâmetros do Distribuidor alterados com sucesso.";
+		if (erroNaReclassificacao) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, mensagem + "<br>Não foi possivel re-classificar as cotas."),"result").recursive().serialize();
+		} else {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, mensagem),"result").recursive().serialize();
+		}
 	}
 	
 	private void gravarArquivoTemporario(InputStream imgLogotipo) {
