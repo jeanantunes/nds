@@ -754,22 +754,29 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		ConsolidadoFinanceiroCota consolidado = 
 				this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
 		
-		
 		BigDecimal outrosValores = BigDecimal.ZERO;
 		
+		DebitoCreditoCotaDTO cobranca = null;
 		
 		if (consolidado != null){
+			
 			BigDecimal valorConsolidEncalhe = consolidado.getEncalhe() != null ? consolidado.getEncalhe().abs() : BigDecimal.ZERO;
 			BigDecimal valorConsolidReparte = consolidado.getConsignado() != null ? consolidado.getConsignado().abs() : BigDecimal.ZERO;
 			outrosValores = consolidado.getTotal().abs().subtract(valorConsolidReparte.subtract(valorConsolidEncalhe));
+
+			if(outrosValores != null && BigDecimal.ZERO.compareTo(outrosValores) != 0) {
+
+				cobranca = new DebitoCreditoCotaDTO();
+				
+				cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
+				cobranca.setObservacoes("Outros valores");
+				cobranca.setDataVencimento(consolidado.getDataConsolidado());
+				cobranca.setValor(outrosValores);
+				
+			}
+			
+		
 		}
-		
-		DebitoCreditoCotaDTO cobranca = new DebitoCreditoCotaDTO();
-		
-		cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
-		cobranca.setObservacoes("Outros valores");
-		cobranca.setDataVencimento(consolidado.getDataConsolidado());
-		cobranca.setValor(outrosValores);
 		
 		return cobranca;
 		
