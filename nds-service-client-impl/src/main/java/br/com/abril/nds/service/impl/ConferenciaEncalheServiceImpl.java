@@ -752,8 +752,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	/**
 	 * Obtém débito ou crédito do consolidado da cota
+	 * 
 	 * @param idCota
 	 * @param dataOperacao
+	 * 
 	 * @return DebitoCreditoCotaDTO
 	 */
 	private DebitoCreditoCotaDTO obterOutroDebitoCreditoDeConsolidados(Long idCota, Date dataOperacao) {
@@ -761,11 +763,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		ConsolidadoFinanceiroCota consolidado = this.obterConsolidadoCota(idCota, dataOperacao);
 		
 		if (consolidado==null){
-			
 			return null;
 		}
 		
 		BigDecimal outrosValores = this.obterValorOutroDebitoCreditoDeConsolidados(consolidado);
+		
+		if(BigDecimal.ZERO.compareTo(outrosValores) == 0){
+			return null;
+		}
 		
 		DebitoCreditoCotaDTO cobranca = new DebitoCreditoCotaDTO();
 		
