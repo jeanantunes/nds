@@ -37,13 +37,13 @@ function filtrarOrdenarPor(estudo){
 }
 
 var analiseParcialController = $.extend(true,{
-	init:function(_id){
+	init:function(_id, _faixaDe, _faixaAte){
 		
 		$(".baseEstudoGrid").flexigrid({
-			url : 'init',
-			params:[{"name":"id","value":_id}],
+			url : contextPath + '/distribuicao/analise/parcial/init',
+			params: [{name: 'id', value: _id}, {name: 'faixaDe', value: _faixaDe}, {name: 'faixaAte', value: _faixaAte}],
 			dataType : 'json',
-			colModel : [ { display : 'Cota', name : 'cota', width : 35, sortable : true, align : 'left' }, 
+			colModel : [ { display : 'Cota', name : 'cota', width : 33, sortable : true, align : 'left' }, 
 			             { display : 'Class.', name : 'classificacao', width : 30, sortable : true, align : 'center' }, 
 			             { display : 'Nome', name : 'nome', width : 100, sortable : true, align : 'left' }, 
 			             { display : 'NPDV', name : 'npdv', width : 30, sortable : true, align : 'right' }, 
@@ -52,14 +52,24 @@ var analiseParcialController = $.extend(true,{
 			             { display : 'Juram.', name : 'juramento', width : 40, sortable : true, align : 'right' }, 
 			             { display : 'Média.VDA', name : 'mediaVenda', width : 50, sortable : true, align : 'right' }, 
 			             { display : 'Último. Reparte', name : 'ultimoReparte', width : 50, sortable : true, align : 'right' },
-			             { display : 'REP', name : 'reparte1', width : 40, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda1', width : 40, sortable : true, align : 'right' }, 
-			             { display : 'REP', name : 'reparte2', width : 40, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda2', width : 40, sortable : true, align : 'right' }, 
-			             { display : 'REP', name : 'reparte3', width : 40, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda3', width : 40, sortable : true, align : 'right' }, 
-			             { display : 'REP', name : 'reparte4', width : 40, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda4', width : 40, sortable : true, align : 'right' }
+			             { display : 'REP', name : 'reparte1', width : 23, sortable : true, align : 'right' }, 
+			             { display : 'VDA', name : 'venda1',   width : 23, sortable : true, align : 'right' }, 
+			             { display : 'REP', name : 'reparte2', width : 23, sortable : true, align : 'right' }, 
+			             { display : 'VDA', name : 'venda2',   width : 23, sortable : true, align : 'right' }, 
+			             { display : 'REP', name : 'reparte3', width : 23, sortable : true, align : 'right' }, 
+			             { display : 'VDA', name : 'venda3',   width : 23, sortable : true, align : 'right' }, 
+			             { display : 'REP', name : 'reparte4', width : 23, sortable : true, align : 'right' }, 
+			             { display : 'VDA', name : 'venda4',   width : 23, sortable : true, align : 'right' }, 
+			             { display : 'REP', name : 'reparte5', width : 23, sortable : true, align : 'right' }, 
+			             { display : 'VDA', name : 'venda5',   width : 23, sortable : true, align : 'right' }, 
+			             { display : 'REP', name : 'reparte6', width : 23, sortable : true, align : 'right' }, 
+			             { display : 'VDA', name : 'venda6',   width : 23, sortable : true, align : 'right' }, 
+			             { display : 'VDA', name : 'numeroEdicao1',   width : 23, sortable : true, align : 'right', hide: true },
+			             { display : 'VDA', name : 'numeroEdicao2',   width : 23, sortable : true, align : 'right', hide: true },
+			             { display : 'VDA', name : 'numeroEdicao3',   width : 23, sortable : true, align : 'right', hide: true },
+			             { display : 'VDA', name : 'numeroEdicao4',   width : 23, sortable : true, align : 'right', hide: true },
+			             { display : 'VDA', name : 'numeroEdicao5',   width : 23, sortable : true, align : 'right', hide: true },
+			             { display : 'VDA', name : 'numeroEdicao6',   width : 23, sortable : true, align : 'right', hide: true }
 			           ],
 			width : 950,
 			height : 200,
@@ -67,6 +77,14 @@ var analiseParcialController = $.extend(true,{
 			sortname:'cota',
 			onSuccess:function(x){
 				addDbClickSupport(".baseEstudoGrid", "td[abbr=reparteSugerido]");
+				
+				$('#edicao_base_1').html($('td[abbr=numeroEdicao1] div').html());
+				$('#edicao_base_2').html($('td[abbr=numeroEdicao2] div').html());
+				$('#edicao_base_3').html($('td[abbr=numeroEdicao3] div').html());
+				$('#edicao_base_4').html($('td[abbr=numeroEdicao4] div').html());
+				$('#edicao_base_5').html($('td[abbr=numeroEdicao5] div').html());
+				$('#edicao_base_6').html($('td[abbr=numeroEdicao6] div').html());
+				
 				soma("#total_juramento", "td[abbr=juramento]");
 				soma("#total_media_venda", "td[abbr=mediaVenda]");
 				soma("#total_ultimo_reparte", "td[abbr=ultimoReparte]");
@@ -78,6 +96,10 @@ var analiseParcialController = $.extend(true,{
 				soma("#total_venda3", "td[abbr=venda3]");
 				soma("#total_reparte4", "td[abbr=reparte4]");
 				soma("#total_venda4", "td[abbr=venda4]");
+				soma("#total_reparte5", "td[abbr=reparte5]");
+				soma("#total_venda5", "td[abbr=venda5]");
+				soma("#total_reparte6", "td[abbr=reparte6]");
+				soma("#total_venda6", "td[abbr=venda6]");
 				conta("#total_de_cotas","td[abbr=cota]");
 				
 			}
