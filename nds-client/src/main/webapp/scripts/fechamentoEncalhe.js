@@ -156,12 +156,15 @@ var fechamentoEncalheController = $.extend(true, {
 			usepager : true,
 			useRp : true,
 			rp : 15,
-			showTableToggleBtn : true,
+			showTableToggleBtn : false,
 			width : 1020,
 			height : 'auto',
 			singleSelect : true
 		});
 		
+		if($("#permissaoColExemplDevolucao").val() != "true"){
+			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(6,false);
+		}
 	},
 	
 	pesquisar : function(aplicaRegraMudancaTipo) {

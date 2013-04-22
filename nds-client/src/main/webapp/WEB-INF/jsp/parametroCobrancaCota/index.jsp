@@ -63,6 +63,16 @@ $(function(){
 
 <input type="hidden" name="tipoFormaCobranca" id="tipoFormaCobranca" />
 
+
+<div id="dialog-confirm-formaCobrancaDistribuidor" title="Atenção" style="display: none;">
+	<fieldset>
+		<legend>Forma Cobrança do Distribuidor</legend>
+		<p>
+			Será incluso a forma de cobrança do distribuidor, deseja continuar?
+		</p>
+	</fieldset>
+</div>
+
 <div name="formFinanceiro" id="formFinanceiro">
 <fieldset style="width:880px!important; margin:5px;">
  	<legend>Financeiro</legend>

@@ -145,7 +145,13 @@ var ConferenciaEncalhe = $.extend(true, {
 						function(result){
 						
 							ConferenciaEncalhe.setarValoresPesquisados(result);
+							
 							$("#sm", ConferenciaEncalhe.workspace).focus();
+							
+							ConferenciaEncalhe.ultimoIdProdutoEdicao = result.idProdutoEdicao;
+					    	
+		        		    ConferenciaEncalhe.getProdutoEdicaoPorCodigoDeBarras();
+		        		    
 						}, null, false, "idTelaConferenciaEncalhe"
 					);
 				}
