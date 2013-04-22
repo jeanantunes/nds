@@ -161,6 +161,14 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		itemNotaEnvioRepository.removerItemNotaEnvioPorEstudo(idEstudo);
 		estudoCotaRepository.removerEstudoCotaPorEstudo(idEstudo);
 		
+		Query queryBases = getSession().createSQLQuery("DELETE FROM ESTUDO_PRODUTO_EDICAO_BASE WHERE ESTUDO_ID = :ESTUDO_ID ");
+		queryBases.setLong("ESTUDO_ID", estudo.getId());
+		queryBases.executeUpdate();
+		
+		Query queryProdutos = getSession().createSQLQuery("DELETE FROM ESTUDO_PRODUTO_EDICAO WHERE ESTUDO_ID = :ESTUDO_ID ");
+		queryProdutos.setLong("ESTUDO_ID", estudo.getId());
+		queryProdutos.executeUpdate();
+		
 		super.remover(estudo);
 	}
 	

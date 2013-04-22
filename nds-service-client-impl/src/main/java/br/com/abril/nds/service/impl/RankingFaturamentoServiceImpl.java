@@ -32,7 +32,6 @@ public class RankingFaturamentoServiceImpl implements RankingFaturamentoService 
 	@Transactional
 	@Override
 	public List<RankingFaturamento> buscarPorCota(Cota cota){
-		
 		return rankingFaturamentoRepository.buscarPorCota(cota);
 	}
 

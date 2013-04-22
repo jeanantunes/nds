@@ -353,7 +353,7 @@ function esconde_redutor(){
                         
                     </fieldset>
                   <fieldset style="width:270px!important; margin-bottom:10px; margin-left:10px; float:left;">
-               	    <legend>Estudo Nº: ${ estudo.id }</legend>
+               	    <legend>Estudo Nº: <span id="idEstudo">${estudo.id}</span></legend>
                    	  <table width="270" border="0" cellspacing="2" cellpadding="2">
                         <tr class="class_linha_1">
                           <td width="99"><strong>Status do Estudo:</strong></td>

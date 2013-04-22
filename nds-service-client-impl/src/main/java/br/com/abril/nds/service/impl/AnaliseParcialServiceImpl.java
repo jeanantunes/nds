@@ -26,8 +26,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 	}
 
 	@Override
-	public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(
-			AnaliseParcialQueryDTO queryDTO) {
+	public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
 		return analiseNormalRepository.buscaAnaliseParcialPorEstudo(queryDTO);
 	}
 

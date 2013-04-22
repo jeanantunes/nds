@@ -346,3 +346,5 @@ function popup_detalhes() {
 function popup_detalhes_close() {
   $( "#dialog-detalhes" ).dialog( "close" );
 }
+
+//@ sourceURL=analiseParcial.js

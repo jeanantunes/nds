@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.AjusteReparteDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -30,88 +29,99 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/distribuicao/analise/parcial")
 public class AnaliseParcialController extends BaseController {
 
-	private Result result;
+    private Result result;
 
-	@Autowired
-	private AnaliseParcialService analiseParcialService;
+    @Autowired
+    private AnaliseParcialService analiseParcialService;
 
-	@Autowired
-	private HttpServletResponse httpResponse;
+    @Autowired
+    private HttpServletResponse httpResponse;
 
-	public AnaliseParcialController(Result result) {
-		this.result = result;
+    public AnaliseParcialController(Result result) {
+	this.result = result;
+    }
+
+    @Path("/")
+    public void index(Long id, Long faixaDe, Long faixaAte) {
+
+	EstudoCota estudo = analiseParcialService.buscarPorId(id);
+	result.include("estudoCota", estudo);
+	result.include("faixaDe", faixaDe);
+	result.include("faixaAte", faixaAte);
+	result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
+    }
+
+    @Path("/abrirAnaliseFaixa")
+    public void abrirAnaliseFaixa(Long estudo, Long faixaDe, Long faixaAte) {
+	AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
+	queryDTO.setEstudoId(estudo);
+
+	List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+
+	TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
+	table.setPage(1);
+	table.setTotal(50);
+	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+	result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
+    }
+
+    @Path("/init")
+    public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
+	    Long faixaDe, Long faixaAte) {
+
+	AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
+	queryDTO.setEstudoId(id);
+	queryDTO.setSortName(sortname);
+	queryDTO.setSortOrder(sortorder);
+	queryDTO.setFilterSortName(filterSortName);
+	queryDTO.setFilterSortFrom(filterSortFrom);
+	queryDTO.setFilterSortTo(filterSortTo);
+	queryDTO.setElemento(elemento);
+	queryDTO.setFaixaDe(faixaDe);
+	queryDTO.setFaixaAte(faixaAte);
+
+	List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+
+	TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
+	table.setPage(1);
+	table.setTotal(50);
+	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+    }
+
+    @Path("/mudarReparte")
+    public void mudarReparte(Long numeroCota, Long estudoId, Double reparte) {
+	analiseParcialService.atualizaReparte(estudoId, numeroCota, reparte);
+	result.nothing();
+    }
+
+    @Path("/liberar")
+    public void liberar(Long id) {
+	analiseParcialService.liberar(id);
+	result.nothing();
+    }
+
+    private TableModel<CellModelKeyValue<AnaliseParcialDTO>> monta(List<AnaliseParcialDTO> lista) {
+	TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = new TableModel<>();
+	table.setRows(CellModelKeyValue.toCellModelKeyValue(new ArrayList<>(lista)));
+	return table;
+    }
+
+    @Get("/exportar")
+    public void exportar(FileType fileType, Long id) throws IOException {
+
+	AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
+	queryDTO.setEstudoId(id);
+
+	List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+
+	if (lista.isEmpty()) {
+	    throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 	}
 
-	@Path("/")
-	public void index(Long id) {
+	FileExporter.to("AJUSTE_REPARTE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista, AnaliseParcialDTO.class,
+		this.httpResponse);
 
-		EstudoCota estudo = analiseParcialService.buscarPorId(id);
-		result.include("estudoCota", estudo);
-		result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
-	}
-
-	@Path("/init")
-	public void init(Long id, String sortname, String sortorder,
-			String filterSortName, Double filterSortFrom, Double filterSortTo,
-			String elemento) {
-
-		AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
-		queryDTO.setEstudoId(id);
-		queryDTO.setSortName(sortname);
-		queryDTO.setSortOrder(sortorder);
-		queryDTO.setFilterSortName(filterSortName);
-		queryDTO.setFilterSortFrom(filterSortFrom);
-		queryDTO.setFilterSortTo(filterSortTo);
-		queryDTO.setElemento(elemento);
-
-		List<AnaliseParcialDTO> lista = analiseParcialService
-				.buscaAnaliseParcialPorEstudo(queryDTO);
-
-		TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
-		table.setPage(1);
-		table.setTotal(50);
-		result.use(Results.json()).withoutRoot().from(table).recursive()
-				.serialize();
-	}
-
-	@Path("/mudarReparte")
-	public void mudarReparte(Long numeroCota, Long estudoId, Double reparte) {
-		analiseParcialService.atualizaReparte(estudoId, numeroCota, reparte);
-		result.nothing();
-	}
-
-	@Path("/liberar")
-	public void liberar(Long id) {
-		analiseParcialService.liberar(id);
-		result.nothing();
-	}
-
-	private TableModel<CellModelKeyValue<AnaliseParcialDTO>> monta(
-			List<AnaliseParcialDTO> lista) {
-		TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = new TableModel<>();
-		table.setRows(CellModelKeyValue.toCellModelKeyValue(new ArrayList<>(
-				lista)));
-		return table;
-	}
-
-	@Get("/exportar")
-	public void exportar(FileType fileType, Long id) throws IOException {
-		
-		AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
-		queryDTO.setEstudoId(id);
-
-		List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
-
-		if (lista.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"A pesquisa realizada não obteve resultado.");
-		}
-
-		FileExporter.to("AJUSTE_REPARTE", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), null, null, lista,
-				AnaliseParcialDTO.class, this.httpResponse);
-
-		result.nothing();
-	}
+	result.nothing();
+    }
 
 }

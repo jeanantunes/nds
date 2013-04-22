@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 
 public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
@@ -32,7 +33,7 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 	private BigDecimal participacaoReparte;
 	private String participacaoReparteFormatado = "0.0";
 
-	private BigDecimal qtdCotas;
+	private BigInteger qtdCotas;
 	private String qtdCotasFormatado = "0";
 
 	// Rep Menor Vda (nome da coluna no grid)
@@ -126,8 +127,8 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 		this.participacaoReparteFormatado = decimalFormat.format(this.participacaoReparte.doubleValue());
 	}
 
-	public void setQtdCotas(BigDecimal qtdCotas) {
-		this.qtdCotas = qtdCotas != null ? qtdCotas : BigDecimal.ZERO;
+	public void setQtdCotas(BigInteger qtdCotas) {
+		this.qtdCotas = qtdCotas != null ? qtdCotas : BigInteger.ZERO;
 		this.qtdCotasFormatado = String.valueOf(this.qtdCotas.intValue());
 	}
 

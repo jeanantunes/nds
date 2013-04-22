@@ -50,7 +50,7 @@ public class Estudo implements Serializable {
 	@Column(name = "DATA_LANCAMENTO", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
-	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
 	private ProdutoEdicao produtoEdicao;
 	@NotFound(action = NotFoundAction.IGNORE)

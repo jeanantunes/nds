@@ -10,19 +10,19 @@ var fixacaoReparteController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Edição',
-				name : 'edicaoString',
+				name : 'edicao',
 				width : 75,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Reparte',
-				name : 'reparteString',
+				name : 'reparte',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			},{
 				display : 'Venda',
-				name : 'vendaString',
+				name : 'venda',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -663,7 +663,7 @@ var fixacaoReparteController = $.extend(true, {
 	//Funcao de pre-processamento da chamada postJSON que preenche a grid de historico
 	preProcessHistoricoGrid:function(result){
 		if(result.rows[0]){
-			$("#edicaoDestaque").text(result.rows[0].cell.edicaoString);
+			$("#edicaoDestaque").text(result.rows[0].cell.edicao);
 			$("#statusDestaque").text(result.rows[0].cell.status);
 			//$("#historicoXLS").show();
 			//$("#historicoPDF").show();

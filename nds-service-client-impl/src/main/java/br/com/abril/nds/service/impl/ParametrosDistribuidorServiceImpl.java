@@ -934,8 +934,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			classificacaoCota.setValorDe(classificacaoCotaVO.getValorDe());
 			classificacaoCota.setValorAte(classificacaoCotaVO.getValorAte());
 			
-//			classificacaoCotaRepository.merge(classificacaoCota);
-			
 			listClassificacaoCota.add(classificacaoCota);
 		}
 		
