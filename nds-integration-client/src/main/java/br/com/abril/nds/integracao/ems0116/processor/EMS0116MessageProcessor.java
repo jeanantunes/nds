@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -255,9 +254,9 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		EnderecoPDV enderecoPDV = null;
 
-		String logradouro = input.getEndereco().split(",")[0].trim();
+		//String logradouro = input.getEndereco().split(",")[0].trim();
+		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
 		String numero = input.getEndereco().split(",")[1].trim();
-		numero = StringUtils.leftPad(numero, 6, '0');
 		
 		for (EnderecoPDV item : enderecosPDV) {
 
@@ -320,9 +319,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private EnderecoPDV incluirNovoEnderecoPDV(EMS0116Input input, PDV pdv) {
 		
-		String logradouro = input.getEndereco().split(",")[0].trim();
+		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
 		String numero = input.getEndereco().split(",")[1].trim();
-		numero = StringUtils.leftPad(numero, 6, '0');
 		
 		Endereco endereco = new Endereco();
 		endereco.setCep(input.getCep());
@@ -521,9 +519,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private PDV obterPdvCorrenteImportacao(EMS0116Input input,Cota cota) {
 		
-		String logradouro = input.getEndereco().split(",")[0].trim();
+		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
 		String numero = input.getEndereco().split(",")[1].trim();
-		numero = StringUtils.leftPad(numero, 6, '0');
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -591,9 +588,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	@SuppressWarnings("unchecked")
 	private List<EnderecoPDV> obterEnderecoPDVPorLogradouro(EMS0116Input input, PDV pdv) {
 		
-		String logradouro = input.getEndereco().split(",")[0].trim();
+		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
 		String numero = input.getEndereco().split(",")[1].trim();
-		numero = StringUtils.leftPad(numero, 6, '0');
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT ep  ");
@@ -612,6 +608,36 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		return query.list();
 	}
 
+	private String getLogradouroSemTipo(String logradouro) {
+		String rua = "RUA ";
+		if (logradouro.startsWith("RUA"))
+			return logradouro.substring(rua.length());
+
+		String avenida = "AV. ";
+		if (logradouro.startsWith(avenida))
+			return logradouro.substring(avenida.length());
+		
+		String praca = "PR. ";
+		if (logradouro.startsWith(praca))
+			return logradouro.substring(praca.length());
+		
+		String rodovia = "RO. ";
+		if (logradouro.startsWith(rodovia))
+			return logradouro.substring(rodovia.length());
+		
+		String alameda = "AL. ";
+		if (logradouro.startsWith(alameda))
+			return logradouro.substring(alameda.length());
+		
+		String lagoa = "LA. ";
+		if (logradouro.startsWith(lagoa))
+			return logradouro.substring(lagoa.length());
+		
+		String jardins = "JA. ";
+		if (logradouro.startsWith(jardins))
+			return logradouro.substring(jardins.length());
+		return logradouro;
+	}
 	
 	@Override
 	public void posProcess(Object tempVar) {

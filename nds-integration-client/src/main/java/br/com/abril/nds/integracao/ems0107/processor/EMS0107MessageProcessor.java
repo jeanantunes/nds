@@ -1,15 +1,20 @@
 package br.com.abril.nds.integracao.ems0107.processor;
 
 import java.math.BigInteger;
-import java.util.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
-import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.integracao.ems0107.inbound.EMS0107Input;
@@ -37,6 +42,11 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	@Autowired
+	private DataSource dataSource;
+	
+	private JdbcTemplate jdbcTemplate;
+	
 	public static EMS0107MessageProcessor getInstance() {
 		return instance;
 	}
@@ -57,8 +67,8 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		String codigoPublicacao = input.getCodigoPublicacao();
 		Long edicao = input.getEdicao();
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
-				edicao);
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao, edicao);
+		
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
@@ -66,11 +76,10 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 			
-		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
-				produtoEdicao);
-		if (lancamento == null) {
+		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(produtoEdicao);
+		/*if (lancamento == null) {
 			
-			lancamento = getLancamentoPrevistoAnteriorMaisProximo(produtoEdicao);
+			lancamento = getLancamentoPrevistoAnteriorMaisProximo(produtoEdicao);*/
 			
 			if (lancamento == null) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
@@ -78,16 +87,16 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 						"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
 				return;
 			}
-		}
+		//}
 		
-		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
+		if (lancamento.getStatus() == StatusLancamento.CONFIRMADO) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO, 
 					"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo cota!");
 			return;
 		}		
 		
-		Estudo estudo = lancamento.getEstudo();
+		Estudo estudo = lancamento.getEstudo();		
 		if (estudo == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
@@ -135,38 +144,71 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
 			Long edicao) {
 
 		try {
 
-			Criteria criteria = this.getSession().createCriteria(
-					ProdutoEdicao.class, "produtoEdicao");
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append("SELECT * FROM produto_edicao pe ");
+			sql.append("INNER JOIN produto p ");
+			sql.append("WHERE pe.produto_id = p.id ");
+			sql.append("AND p.codigo = ? ");
+			sql.append("AND pe.numero_edicao = ? ");
+			
+			@SuppressWarnings("rawtypes")
+			RowMapper produtoEdicaoRowMapper = new RowMapper() {
 
-			criteria.createAlias("produtoEdicao.produto", "produto");
-			criteria.setFetchMode("produto", FetchMode.JOIN);
+				public Object mapRow(ResultSet rs, int arg1) throws SQLException {
 
-			criteria.add(Restrictions.eq("produto.codigo", codigoPublicacao));
-			criteria.add(Restrictions.eq("produtoEdicao.numeroEdicao", edicao));
+					ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+					produtoEdicao.setId(rs.getLong("ID"));
+					
+					return produtoEdicao;
+				}
+			};
+			
 
-			return (ProdutoEdicao) criteria.uniqueResult();
-
+			jdbcTemplate = new JdbcTemplate(dataSource);
+			 
+			return (ProdutoEdicao) jdbcTemplate.queryForObject(sql.toString(), new Object[] { 
+					codigoPublicacao, 
+					edicao}, 
+					produtoEdicaoRowMapper);
+			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Cota obterCota(Integer numeroCota) {
 		
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT co FROM Cota co ");
-		sql.append(" WHERE co.numeroCota = :numeroCota ");
+		StringBuilder sql = new StringBuilder();		
+		sql.append("SELECT * FROM cota c ");
+		sql.append("WHERE c.numero_cota = ? ");
+		
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
 
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("numeroCota", numeroCota);
-		query.setMaxResults(1);
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
 
-		return (Cota) query.uniqueResult();		
+				Cota cota = new Cota();
+				cota.setId(rs.getLong("ID"));
+				
+				return cota;
+			}
+		};
+		
+
+		jdbcTemplate = new JdbcTemplate(dataSource);
+		 
+		return (Cota) jdbcTemplate.queryForObject(sql.toString(), new Object[] { 
+				numeroCota}, 
+				cotaRowMapper);
+		
 	}
 
 	/**
@@ -175,36 +217,55 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 * @param produtoEdicao
 	 * @return
 	 */
-	private Lancamento getLancamentoPrevistoMaisProximo(
-			ProdutoEdicao produtoEdicao) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private Lancamento getLancamentoPrevistoMaisProximo(ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("SELECT lcto FROM Lancamento lcto ");
-		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
-		sql.append("    WHERE pe = :produtoEdicao ");
-		sql.append("      AND lcto.dataLancamentoPrevista >= :dataOperacao ");
-		sql.append(" ORDER BY lcto.dataLancamentoPrevista ASC");
+		sql.append("SELECT l.*, e.ID as ESTUDO_ID FROM lancamento l ");
+		sql.append("INNER JOIN produto_edicao pe ON pe.id = l.PRODUTO_EDICAO_ID ");
+		sql.append("INNER JOIN estudo e ON e.PRODUTO_EDICAO_ID = pe.ID AND e.DATA_LANCAMENTO = l.DATA_LCTO_PREVISTA ");
+		sql.append("WHERE pe.ID = ? ");
+		sql.append("AND l.DATA_LCTO_PREVISTA >= ? ");
+		sql.append("ORDER BY l.DATA_LCTO_PREVISTA ASC");
 		
-		Query query = getSession().createQuery(sql.toString());
-		
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
-		query.setParameter("produtoEdicao", produtoEdicao);
-		query.setDate("dataOperacao", dataOperacao);
-		
-		query.setMaxResults(1);
-		query.setFetchSize(1);
-		
-		return (Lancamento) query.uniqueResult();
-	}
+		RowMapper lancamentoRowMapper = new RowMapper() {
 
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+
+				Lancamento lancamento = new Lancamento();
+				
+				Estudo estudo = new Estudo();
+				
+				lancamento.setId(rs.getLong("ID"));
+				lancamento.setDataCriacao(rs.getDate("DATA_CRIACAO"));
+				lancamento.setDataLancamentoPrevista(rs.getDate("DATA_LCTO_PREVISTA"));
+				lancamento.setStatus(StatusLancamento.valueOf(rs.getString("STATUS")));
+				estudo.setId(rs.getLong("ESTUDO_ID"));
+				lancamento.setEstudo(estudo);
+				
+				return lancamento;
+
+			}
+
+		};
+		
+		jdbcTemplate = new JdbcTemplate(dataSource);
+		 
+		return (Lancamento) jdbcTemplate.queryForObject(sql.toString(), new Object[] { 
+				produtoEdicao.getId(), 
+				distribuidorService.obter().getDataOperacao() }, 
+				lancamentoRowMapper);
+		
+	}
+	
 	/**
 	 * Obtém o Lançamento com data de lançamento mais próximo do dia corrente.
 	 *  
 	 * @param produtoEdicao
 	 * @return
 	 */
-	private Lancamento getLancamentoPrevistoAnteriorMaisProximo(
+	/*private Lancamento getLancamentoPrevistoAnteriorMaisProximo(
 			ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
@@ -225,7 +286,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		query.setFetchSize(1);
 		
 		return (Lancamento) query.uniqueResult();
-	}	
+	}*/	
 	
 	/**
 	 * Verifica se já existe EstudoCota cadastrado.
@@ -237,20 +298,27 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 */
 	private boolean hasEstudoCota(Estudo estudo, Cota cota) {
 		
-		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT COUNT(ec) FROM EstudoCota ec " );
-		hql.append("  WHERE ec.estudo = :estudo AND ec.cota = :cota");
+		StringBuilder sql = new StringBuilder();
 		
-		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("estudo", estudo);
-		query.setParameter("cota", cota);
+		sql.append("SELECT COUNT(0) FROM estudo_cota ec ");
+		sql.append("INNER JOIN estudo e ON ec.estudo_id = e.id ");
+		sql.append("WHERE e.id = ? ");
+		sql.append("AND ec.cota_id = ? ");
 		
-		Long qtd = (Long) query.uniqueResult();
+		jdbcTemplate = new JdbcTemplate(dataSource);
+		 
+		Long qtd = jdbcTemplate.queryForLong(sql.toString(), new Object[] { 
+					estudo.getId(), 
+					cota.getId() });
+		
 		return (qtd != null && qtd.intValue() > 0);
+		
 	}
 	
 	@Override
 	public void posProcess(Object tempVar) {
+		
+		jdbcTemplate = new JdbcTemplate(dataSource);
 		
 		/*
 		 * Regras de validação para EMS-107:
@@ -262,51 +330,93 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		 * valor contido na "quantidade Efetiva" do respectivo Estudo.
 		 */
 		
-		// 01) Verificar se existe algum Estudo sem EstudoCota;
-		StringBuilder hqlEstudoSemEstudoCota = new StringBuilder();
-		hqlEstudoSemEstudoCota.append(" SELECT e FROM Estudo e " );
-		hqlEstudoSemEstudoCota.append("  WHERE NOT EXISTS( FROM EstudoCota ec WHERE ec.estudo = e)");
+		StringBuilder sql = new StringBuilder();
 		
-		Query query = getSession().createQuery(hqlEstudoSemEstudoCota.toString());
-		List<Estudo> lstEstudos = query.list();
+		sql.append("SELECT id FROM estudo e ");
+		sql.append("WHERE e.ID NOT IN (SELECT ec.ESTUDO_ID FROM estudo_cota ec WHERE ec.ESTUDO_ID = e.ID) ");
+		
+		List<Map<String, Object>> lstEstudos = jdbcTemplate.queryForList(sql.toString());
+		
+		// 01) Verificar se existe algum Estudo sem EstudoCota;
 		if (lstEstudos != null && !lstEstudos.isEmpty()) {
-			for (Estudo estudo : lstEstudos) {
+			
+			// this.ndsiLoggerFactory.getLogger().logError(message,
+			// EventoExecucaoEnum.INF_DADO_ALTERADO,
+			// "NAO EXISTE EstudoCota para a publicacao: " + estudo.getProdutoEdicao());
+			
+			final List<Long> idsAExcluir = new ArrayList<Long>();
+			
+			for (Map<String, Object> estudo : lstEstudos) {
 				
-				//TODO: Incluir log
-//				this.ndsiLoggerFactory.getLogger().logError(message,
-//						EventoExecucaoEnum.INF_DADO_ALTERADO,
-//						"NAO EXISTE EstudoCota para a publicacao: " + estudo.getProdutoEdicao());
-				this.getSession().delete(estudo);
+				idsAExcluir.add((Long) estudo.get("id"));
+			
 			}
+			
+			sql = new StringBuilder();				
+			sql.append("DELETE FROM estudo WHERE id = ? ");			
+			
+			jdbcTemplate.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+				@Override
+				public int getBatchSize() {
+					return idsAExcluir.size();
+				}
+
+				@Override
+				public void setValues(PreparedStatement ps, int i)
+						throws SQLException {
+					
+					ps.setLong(1, (Long) idsAExcluir.get(i));
+					
+				}
+				
+			});
+			
 		}
 		
 		// 02) Verificar se a soma de todos os qtdeEfetiva e qtdePrevista de um
 		// EstudoCota batem com a qtdeReparte do respectivo Estudo
-		StringBuilder sql = new StringBuilder();
+		sql = new StringBuilder();
 		sql.append(" SELECT e.id ");
-		sql.append("   FROM estudo e, ");
+		sql.append(" FROM estudo e, ");
 		sql.append("       (SELECT ec.estudo_id AS estudo_id, SUM(ec.qtde_prevista) AS qtde ");
 		sql.append("          FROM estudo_cota ec GROUP BY ec.estudo_id ");
 		sql.append("       ) AS c");
-		sql.append("  WHERE e.id = c.estudo_id ");
-		sql.append("    AND e.qtde_reparte <> c.qtde ");
-		
-		Query queryQtdeReparte = getSession().createSQLQuery(sql.toString());
-		List<Object> lstEstudoId = queryQtdeReparte.list();
-		if (lstEstudoId != null && !lstEstudoId.isEmpty()) {
-			for (Object estudoId : lstEstudoId) {
+		sql.append(" WHERE e.id = c.estudo_id ");
+		sql.append(" AND e.qtde_reparte <> c.qtde ");
 				
-				Criteria criteriaEstudo = this.getSession().createCriteria(
-						Estudo.class, "estudo");
-				criteriaEstudo.add(Restrictions.eq("estudo.id", estudoId));
-				Estudo estudo = (Estudo) criteriaEstudo.uniqueResult();
+		List<Map<String, Object>> lstEstudosId = jdbcTemplate.queryForList(sql.toString());
+		if (lstEstudosId != null && !lstEstudosId.isEmpty()) {
+			
+			final List<Long> idsAExcluir = new ArrayList<Long>();
+			
+			for (Map<String, Object> estudo : lstEstudosId) {
 				
-				//TODO: Incluir log
-				
-				this.getSession().delete(estudo);
+				idsAExcluir.add((Long) estudo.get("id"));
+			
 			}
+			
+			sql = new StringBuilder();				
+			sql.append("DELETE FROM estudo WHERE id = ? ");			
+			
+			jdbcTemplate.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+				@Override
+				public int getBatchSize() {
+					return idsAExcluir.size();
+				}
+
+				@Override
+				public void setValues(PreparedStatement ps, int i)
+						throws SQLException {
+					
+					ps.setLong(1, (Long) idsAExcluir.get(i));
+					
+				}
+				
+			});
 		}
 				
 	}
-		
+			
 }

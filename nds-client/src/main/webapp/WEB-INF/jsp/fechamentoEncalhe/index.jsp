@@ -116,7 +116,7 @@
 
     <div class="linha_separa_fields">&nbsp;</div>
       
-    <fieldset class="fieldGrid">
+    <fieldset class="fieldGrid" style="width: 1030px;">
        	<legend> Fechamento Encalhe</legend>
         <div class="grids" style="display:none;" id="divFechamentoGrid">	
 			

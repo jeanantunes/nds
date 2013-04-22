@@ -22,7 +22,6 @@ import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDTO;
 import br.com.abril.nds.dto.InfoConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ItemDTO;
-import br.com.abril.nds.dto.TotalizadorConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -368,13 +367,14 @@ public class ConsultaEncalheController extends BaseController {
 	 */
 	@Post
 	@Path("/pesquisarDetalhe")
-	public void pesquisarDetalhe(Long idProdutoEdicao, Long idFornecedor, Long idCota, String dataRecolhimento, String dataMovimento, String sortorder, String sortname, int page, int rp) {
+	public void pesquisarDetalhe(Long idProdutoEdicao, Long idFornecedor, Integer numeroCota, 
+			String dataRecolhimento, String dataMovimento, String sortorder, String sortname, int page, int rp) {
 		
 		FiltroConsultaEncalheDetalheDTO filtro = new FiltroConsultaEncalheDetalheDTO();
 		
 		filtro.setDataRecolhimento(DateUtil.parseData(dataRecolhimento, "dd/MM/yyyy"));
 		filtro.setDataMovimento(DateUtil.parseData(dataMovimento, "dd/MM/yyyy"));
-		filtro.setIdCota(idCota);
+		filtro.setNumeroCota(numeroCota);
 		filtro.setIdProdutoEdicao(idProdutoEdicao);
 		
 		configurarPaginacaoPesquisaDetalhe(filtro, sortorder, sortname, page, rp);

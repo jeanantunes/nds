@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.lang.StringUtils;
-
 public class ZipFileUtil {
 
 	public static byte[] getZipFile(Map<String, byte[]> filesToZip) throws IOException {
@@ -22,12 +20,7 @@ public class ZipFileUtil {
 		
 			String fileName = file.getKey();
 			byte[] fileBytes = file.getValue();
-			
-			if (StringUtils.isEmpty(fileName) || fileBytes == null) {
 				
-				continue;
-			}
-			
 			fileToZip = new ZipEntry(fileName);
 				
 			zos.putNextEntry(fileToZip);

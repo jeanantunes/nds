@@ -378,10 +378,12 @@ var geracaoNotaEnvioController = $.extend({
 		 * Visualizar Nota Envio
 		 */
 		visualizarNE:function(e) {
+			
 			var results = $("#geracaoNotaEnvio-flexigrid-pesquisa tr");
 			
-			if (results.length != 1) {
-				exibirMensagem("WARNING", ["Funcionalidade permitida apenas para pesquisas com um resultado."]);
+			if (results.length == 0) {
+				
+				exibirMensagem("WARNING", ["Funcionalidade permitida apenas para pesquisas com resultado."]);
 				
 				return false;
 			}

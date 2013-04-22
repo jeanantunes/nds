@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
@@ -101,13 +102,15 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	/**
 	 * Obtém o somatorio do campo qtde do Movimento de Estoque da cota pelo Tipo de Movimento.
 	 * 
-	 * @param data
+	 * @param periodo
 	 * @param idCota
-	 * @param grupoMovimentoEstoque
+	 * @param gruposMovimentoEstoque
 	 * 
-	 * @return BigInteger
+	 * @return Map<Long, BigInteger>
 	 */
-	BigInteger obterQtdMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
+	Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(Intervalo<Date> periodo, 
+													            Long idCota, 
+													            GrupoMovimentoEstoque... gruposMovimentoEstoque);
 		
 	/**
 	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.

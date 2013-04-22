@@ -57,12 +57,14 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	
 	private Long idProduto;
 	
+	private Long idProdutoEdicao;
+	
 	public RegistroCurvaABCCotaDTO	() {
 	}
 
 	public RegistroCurvaABCCotaDTO(String numeroProduto, String codigoProduto,
 			Long numeroEdicao, BigInteger reparte,
-			BigInteger vendaExemplares, BigDecimal faturamento,Long idCota,Long idProduto) {
+			BigInteger vendaExemplares, BigDecimal faturamento,Long idCota,Long idProduto, Long idProdutoEdicao) {
 		this.codigoProduto = numeroProduto;
 		this.nomeProduto = codigoProduto;
 		this.edicaoProduto = numeroEdicao;
@@ -71,6 +73,8 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 		this.faturamento = faturamento;
 		this.idCota = idCota;
 		this.idProduto = idProduto;
+		this.idProdutoEdicao = idProdutoEdicao;
+		
 		this.formatarCampos();
 	}
 	
@@ -187,6 +191,20 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 
 	public void setFaturamentoFormatado(String faturamentoFormatado) {
 		this.faturamentoFormatado = faturamentoFormatado;
+	}
+
+	/**
+	 * @return the idProdutoEdicao
+	 */
+	public Long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+
+	/**
+	 * @param idProdutoEdicao the idProdutoEdicao to set
+	 */
+	public void setIdProdutoEdicao(Long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
 	private void formatarCampos() {

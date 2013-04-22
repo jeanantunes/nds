@@ -65,6 +65,16 @@ public interface MovimentoEstoqueService {
 			TipoMovimentoEstoque tipoMovimentoEstoque, Date dataOperacao,
 			boolean isImportacao);
 
-	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque, MovimentoEstoque movimentoEstoque, boolean isImportacao);
+	Long atualizarEstoqueProduto(TipoMovimentoEstoque tipoMovimentoEstoque, MovimentoEstoque movimentoEstoque, boolean isImportacao, boolean atualizarEstoqueProduto);
+	
+	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Long idProdutoEdicao, Long idUsuario, 
+													   BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, 
+													   boolean isMovimentoDiferencaAutomatico, boolean validarTransfEstoqueDiferenca);
+	
+	 MovimentoEstoqueCota gerarMovimentoCotaDiferenca(Date dataLancamento,Long idProdutoEdicao, 
+														Long idCota, Long idUsuario, 
+														BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
+														Long idEstudoCota,
+														boolean isMovimentoDiferencaAutomatico);
 	
 }

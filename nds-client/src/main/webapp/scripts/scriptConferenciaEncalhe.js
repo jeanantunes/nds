@@ -1,16 +1,19 @@
 function disableEnterKey(e) {
 	
 	var key;
+	
      if(window.event)
-          key = window.event.keyCode;     //IE
+    	 
+         key = window.event.keyCode;     //IE
      else
+    	 
           key = e.which;     //firefox
      if(key == 13)
     	 
-    	 
          return false;
      else
-          return true;
+    	 
+         return true;
 }
 
 var ConferenciaEncalhe = $.extend(true, {
@@ -390,7 +393,6 @@ var ConferenciaEncalhe = $.extend(true, {
 		}));
 
 		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
-			
 			if (!ConferenciaEncalhe.modalAberta){
 				
 				ConferenciaEncalhe.veificarCobrancaGerada();
@@ -565,7 +567,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	verificarValorTotalNotaFiscal : function() {
-		
 		var data = [{name: 'indConferenciaContingencia', value: false}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal', data,
@@ -575,9 +576,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					if(result.tipoMensagem == 'SUCCESS') {
 						
 						if(result.indGeraDocumentoConfEncalheCota == true) {
-
-							ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(result.tiposDocumento);
-							
+							ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(result.tipos_documento_impressao_encalhe);
 						}
 						
 						ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
@@ -626,7 +625,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	verificarValorTotalCE : function() {
-		
 		var data = [{name: "valorCEInformado", value: ConferenciaEncalhe.preparaValor($("#vlrCE", ConferenciaEncalhe.workspace).val())},
 		            {name: "qtdCEInformado", value: $("#qtdCE", ConferenciaEncalhe.workspace).val()}];
 		
@@ -869,34 +867,33 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
-		/*
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca',
-				null,
-				function(resultado){
-//					var html = "<html><body><applet code=Impressao.class width=1 height=1></applet><pre>";
-//					html+=resultado.resultado
-//					html+="</pre></body></html>";
-//					
-//					window.location =  html;
+		var cont = 1;
+		//Imprime todos os documentos recebidos
+		for(i=0;i < tiposDocumento.length;i++){
 			
-					var w = window.open();
-					self.focus();
-					w.document.open();
-					w.document.write('<html>');
-					w.document.write('<head></head>');
-					w.document.write('<body>');
-					w.document.write('<pre>'+resultado.resultado+'</pre>');
-					w.document.write('<applet code="br.com.abril.nds.print.Impressao.class" width=320 height=80></applet>');
-					w.document.write('</body>');
-					w.document.write('</html>');
-//					w.document.close();
-//					w.print();
-//					w.close();
+			var data = [{name: 'tipo_documento_impressao_encalhe', value: tiposDocumento[i]}];
+			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
+				data,
+				function(resultado){
+			
+					if(resultado != "" && resultado.resultado!=""){
+						
+						var callApplet = '';
+						callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
+						callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
+						callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
+						callApplet+='</applet>';						
+						
+						$('#replaceAppletFinal'+cont).html(callApplet);
+						$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).show();		
+						
+						$('#replaceAppletFinal'+cont).html("");
+						$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).hide();		
+						cont++;
+					}
 				}
-		); */
-		
-		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
-		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
+			); 			
+		}
 	},
 	
 	carregarGridItensNotaFiscal : function (modeloConferenciaEncalhe) {
@@ -988,7 +985,7 @@ var ConferenciaEncalhe = $.extend(true, {
 
 								
 								if(conteudo.indGeraDocumentoConfEncalheCota == true) {
-									ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(conteudo.tiposDocumento);
+									ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(conteudo.tipos_documento_impressao_encalhe);
 								}
 								
 								ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
@@ -1533,14 +1530,7 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 							if(result.tipoMensagem == 'SUCCESS') {
 								
-								var data = [
-								      {name : 'numeroCota', value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
-								      {name: 'indObtemDadosFromBD', value : true},
-								      {name: 'indConferenciaContingencia', value: false}
-								];
-								
-								ConferenciaEncalhe.carregarListaConferencia(data);
-								
+						        ConferenciaEncalhe.limparDadosConferenciaEncalheCota();	
 							}
 						
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);
@@ -1668,7 +1658,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	veificarCobrancaGerada: function(){
-		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/veificarCobrancaGerada', null,
 		
 			function(conteudo){

@@ -1,13 +1,19 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RelatorioTiposProdutosDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioTiposProdutos;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.RelatorioTiposProdutosRepository;
 
@@ -18,18 +24,24 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 	@Override
 	public List<RelatorioTiposProdutosDTO> gerarRelatorio(FiltroRelatorioTiposProdutos filtro) {
 		
-		Query query = getSession().createQuery(obterHql(filtro,false));
+		SQLQuery query = getSession().createSQLQuery(this.obterHql(filtro,false));
+		
+		query.addScalar("codigo");
+		query.addScalar("produto");
+		query.addScalar("edicao", StandardBasicTypes.LONG);
+		query.addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("faturamento", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("tipoProduto");
+		query.addScalar("recolhimento");
+		query.addScalar("lancamento");		
 		
 		this.aplicarFiltroQuery(query, filtro);
 		
+		this.aplicarParametros(query);
+		
+		this.aplicarParametrosList(query);
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(RelatorioTiposProdutosDTO.class));
-		
-		if(filtro.getPaginacaoVO().getQtdResultadosTotal()!= null){
-
-			Long qntTotal = obterQunatidade(filtro);
-		
-			filtro.getPaginacaoVO().setQtdResultadosTotal( (qntTotal==null) ? 0 : qntTotal.intValue() );
-		}
 		
 		Integer paginaAtual = filtro.getPaginacaoVO().getPaginaAtual();
 		Integer qtdResultadosPorPagina = filtro.getPaginacaoVO().getQtdResultadosPorPagina();
@@ -44,10 +56,38 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 		
 		return query.list();
 	}
-	
-	private Long obterQunatidade(FiltroRelatorioTiposProdutos filtro){
+
+	private void aplicarParametros(Query query) {
 		
-		Query query = getSession().createQuery(obterHql(filtro,true));
+		query.setParameter("operacaoEstoqueEntrada", OperacaoEstoque.ENTRADA.name());
+		query.setParameter("operacaoEstoqueSaida", OperacaoEstoque.SAIDA.name());
+	}
+	
+	private void aplicarParametrosList(Query query) {
+		
+		List<String> lista = new ArrayList<>();
+		
+		lista.add(GrupoMovimentoEstoque.ENVIO_JORNALEIRO.name());
+		lista.add(GrupoMovimentoEstoque.ENVIO_JORNALEIRO_JURAMENTADO.name());
+		lista.add(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE.name());
+		lista.add(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO.name());
+		lista.add(GrupoMovimentoEstoque.ESTORNO_REPARTE_FURO_PUBLICACAO.name());
+		lista.add(GrupoMovimentoEstoque.SUPLEMENTAR_COTA_AUSENTE.name());
+		lista.add(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO.name());
+		lista.add(GrupoMovimentoEstoque.REPARTE_COTA_AUSENTE.name());
+		lista.add(GrupoMovimentoEstoque.VENDA_ENCALHE.name());
+		lista.add(GrupoMovimentoEstoque.VENDA_ENCALHE_SUPLEMENTAR.name());
+		lista.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE.name());
+		lista.add(GrupoMovimentoEstoque.ESTORNO_VENDA_ENCALHE_SUPLEMENTAR.name());
+		
+		query.setParameterList("gruposMovimentoEstoque", lista);
+	}
+	
+	public Long obterQunatidade(FiltroRelatorioTiposProdutos filtro){
+		
+		SQLQuery query = getSession().createSQLQuery(obterHql(filtro,true));
+		
+		query.addScalar("total", StandardBasicTypes.LONG);
 		
 		this.aplicarFiltroQuery(query, filtro);
 		
@@ -68,51 +108,74 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 		
 		if(isCount){
 			
-			hql.append(" select count (p.codigo) ");
+			hql.append(" SELECT COUNT(*) AS total ");
 			
 		}else{
 			
-			hql.append("SELECT p.codigo AS codigo, " +
-					"p.nome AS produto, " +
-					"pe.numeroEdicao AS edicao, " +
-					"pe.precoVenda AS precoCapa, " +
-					"( " +
-					" (" +
-					"	(select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'SAIDA' and mec.lancamento.id = l.id)" +
-					" - " +
-					"   (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'ENTRADA' and mec.lancamento.id = l.id)" +
-					" )" +
-					" * pe.precoVenda" +
-					") AS faturamento, " +
-					"t.descricao AS tipoProduto, " +
-					"l.dataRecolhimentoDistribuidor AS recolhimento, " +
-					"l.dataLancamentoDistribuidor AS lancamento " );
+			hql.append(" SELECT ");
+			hql.append(" produto1_.CODIGO AS codigo, ");
+			hql.append(" produto1_.NOME AS produto, ");
+			hql.append(" produtoedi0_.NUMERO_EDICAO AS edicao, ");
+			hql.append(" produtoedi0_.PRECO_VENDA AS precoCapa, ");
+	        
+			hql.append(" (( ");
+			hql.append("   		SELECT ");
+			hql.append("   				SUM( ");
+			hql.append("   					COALESCE (CASE WHEN (tipomovime7_.OPERACAO_ESTOQUE=:operacaoEstoqueSaida AND fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoe6_.QTDE when (tipomovime7_.OPERACAO_ESTOQUE=:operacaoEstoqueEntrada and fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) then - movimentoe6_.QTDE ELSE 0 END, 0) ");
+			hql.append("             ) ");
+			hql.append("         FROM ");
+			hql.append("             MOVIMENTO_ESTOQUE movimentoe6_, ");
+			hql.append("             TIPO_MOVIMENTO tipomovime7_ ");
+			hql.append("         WHERE ");
+			hql.append("             movimentoe6_.TIPO_MOVIMENTO_ID=tipomovime7_.ID ");
+			hql.append("             AND movimentoe6_.PRODUTO_EDICAO_ID = produtoedi0_.ID ");
+			hql.append(" 				AND tipomovime7_.GRUPO_MOVIMENTO_ESTOQUE IN (:gruposMovimentoEstoque) ");
+			hql.append("   ) * produtoedi0_.PRECO_VENDA) AS faturamento, ");
+	            
+			hql.append(" tipoprodut2_.DESCRICAO AS tipoProduto, ");
+			hql.append(" lancamento3_.DATA_REC_DISTRIB AS recolhimento, ");
+			hql.append(" lancamento3_.DATA_LCTO_DISTRIBUIDOR AS lancamento ");
 		}
 		
-		hql.append(
-				"FROM ProdutoEdicao pe " +
-				"JOIN pe.produto p " +
-				"JOIN p.tipoProduto t " +
-				"JOIN pe.lancamentos l");
-
-		hql.append(" where pe.ativo = :verdadeiro");
+		hql.append(" FROM ");
+		hql.append("     PRODUTO_EDICAO produtoedi0_ ");
+		hql.append(" INNER JOIN ");
+		hql.append("     PRODUTO produto1_ ");
+		hql.append("         ON produtoedi0_.PRODUTO_ID=produto1_.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append("     TIPO_PRODUTO tipoprodut2_ ");
+		hql.append("         ON produto1_.TIPO_PRODUTO_ID=tipoprodut2_.ID ");
+		hql.append(" INNER JOIN ");
+		hql.append("     LANCAMENTO lancamento3_ ");
+		hql.append("         ON produtoedi0_.ID=lancamento3_.PRODUTO_EDICAO_ID ");
+		hql.append(" LEFT JOIN ");
+		hql.append(" 	 FECHAMENTO_ENCALHE fechamentoEncalhe ");
+		hql.append(" 		 ON (fechamentoEncalhe.DATA_ENCALHE = lancamento3_.DATA_REC_DISTRIB ");
+		hql.append(" 			 AND fechamentoEncalhe.PRODUTO_EDICAO_ID = produtoedi0_.ID) ");
+		hql.append(" WHERE ");
+		hql.append("     produtoedi0_.ATIVO = :verdadeiro ");
 
 		if(hasFilter) {
 
 			if(hasTipoProduto) {
-				hql.append(" and t.id = :idTipoProduto");
+				hql.append(" and tipoprodut2_.ID = :idTipoProduto");
 			}
 			if(hasLancamentoDe) {
-				hql.append(" and l.dataLancamentoDistribuidor >= :dataLancamentoDe");
+				hql.append(" and lancamento3_.DATA_LCTO_DISTRIBUIDOR >= :dataLancamentoDe");
 			}
 			if(hasLancamentoAte) {
-				hql.append(" and l.dataLancamentoDistribuidor <= :dataLancamentoAte");
+				hql.append(" and lancamento3_.DATA_LCTO_DISTRIBUIDOR <= :dataLancamentoAte");
 			}
 			if(hasRecolhimentoDe) {
-				hql.append(" and l.dataRecolhimentoDistribuidor >= :dataRecolhimentoDe");
+				hql.append(" and lancamento3_.DATA_REC_DISTRIB >= :dataRecolhimentoDe");
 			}
 			if(hasRecolhimentoAte) {
-				hql.append(" and l.dataRecolhimentoDistribuidor <= :dataRecolhimentoAte");
+				hql.append(" and lancamento3_.DATA_REC_DISTRIB <= :dataRecolhimentoAte");
+			}
+			
+			if (hasRecolhimentoDe && hasRecolhimentoAte) {
+				
+				hql.append(" and lancamento3_.STATUS in (:statusLancamentoAposRecolhimento)");
 			}
 		}
 		
@@ -134,35 +197,31 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 			switch (filtro.getOrdenacaoColuna()) {
 				
 				case CODIGO:
-					hql.append(" order by p.codigo " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" order by codigo " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case DATA_LANCAMENTO:
-					hql.append(" order by l.dataLancamentoDistribuidor " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" order by lancamento " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case DATA_RECOLHIMENTO:
-					hql.append(" order by l.dataRecolhimentoDistribuidor " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" order by recolhimento " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case FATURAMENTO:
-					hql.append(" order by (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'SAIDA' and mec.lancamento.id = l.id)" )
-					.append(" - ")
-					.append("   (select sum(mec.qtde) from MovimentoEstoqueCota mec where mec.tipoMovimento.operacaoEstoque = 'ENTRADA' and mec.lancamento.id = l.id)" )
-					.append(" ) * pe.precoVenda " + filtro.getPaginacaoVO().getSortOrder());
-					
+					hql.append(" order by faturamento " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case NOME_PRODUTO:
-					hql.append(" order by  p.nome " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" order by  produto " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case NUMERO_EDICAO:
-					hql.append(" order by pe.numeroEdicao " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" order by edicao " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case PRECO_CAPA:
-					hql.append(" order by pe.precoVenda " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" order by precoCapa " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				case TIPO_PRODUTO:
-					hql.append(" order by t.descricao " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" order by tipoProduto " + filtro.getPaginacaoVO().getSortOrder());
 					break;
 				default:
-					hql.append(" order by pe.numeroEdicao " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" order by edicao " + filtro.getPaginacaoVO().getSortOrder());
 			}
 		}
 		
@@ -197,6 +256,17 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 			}
 			if(hasRecolhimentoAte) {
 				query.setParameter("dataRecolhimentoAte", filtro.getDataRecolhimentoAte());
+			}
+			
+			if (hasRecolhimentoDe && hasRecolhimentoAte) {
+				
+				List<String> listaStatusAposRecolhimento = new ArrayList<>();
+				
+				listaStatusAposRecolhimento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO.name());
+				listaStatusAposRecolhimento.add(StatusLancamento.RECOLHIDO.name());
+				
+				query.setParameterList(
+					"statusLancamentoAposRecolhimento", listaStatusAposRecolhimento);
 			}
 		}
 	}

@@ -121,8 +121,8 @@ var painelProcessamentoController = $.extend(true, {
 			colModel : [ {
 				display : 'Interface',
 				name : 'descricaoInterface',
-				width : 215,
-				sortable : true,
+				width : 245,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Arquivo',
@@ -139,7 +139,7 @@ var painelProcessamentoController = $.extend(true, {
 			}, {
 				display : 'Status',
 				name : 'status',
-				width : 80,
+				width : 60,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -157,7 +157,7 @@ var painelProcessamentoController = $.extend(true, {
 			}, {
 				display : 'Reprocessar',
 				name : 'reprocessar',
-				width : 110,
+				width : 95,
 				sortable : false,
 				align : 'center'
 			}],
@@ -379,6 +379,8 @@ var painelProcessamentoController = $.extend(true, {
 		$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
 				   data,
 				   function (resultado) {
+
+						exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
 			
 						$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
 							url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
@@ -386,10 +388,14 @@ var painelProcessamentoController = $.extend(true, {
 							newp: 1,
 						});
 						$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
-						
-						exibirMensagem(resultado.tipoMensagem, 
-					   				  resultado.listaMensagens);
-					   
+			
+				   },function (resultado) {
+					   	$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
+							url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
+							params: [],
+							newp: 1,
+						});
+						$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
 				   });
 		
 	},
@@ -409,6 +415,8 @@ var painelProcessamentoController = $.extend(true, {
 					   data,
 					   function (resultado) {
 					
+							exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+						
 							$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
 								url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
 								params: [],
@@ -416,9 +424,6 @@ var painelProcessamentoController = $.extend(true, {
 							});
 							$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
 						
-							exibirMensagem(resultado.tipoMensagem, 
-						   				  resultado.listaMensagens);
-						   
 						}
 					);
 					

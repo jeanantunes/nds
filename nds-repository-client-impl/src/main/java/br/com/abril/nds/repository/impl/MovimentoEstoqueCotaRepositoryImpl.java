@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -753,8 +754,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	and CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		
-		if(filtro.getIdCota()!=null) {
-			sql.append(" and MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota  ");
+		if(filtro.getNumeroCota()!=null) {
+			sql.append(" and COTA.NUMERO_COTA = :numeroCota  ");
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
@@ -804,8 +805,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDetalheDTO.class));
 		
-		if(filtro.getIdCota()!=null) {
-			sqlquery.setParameter("idCota", filtro.getIdCota());
+		if(filtro.getNumeroCota()!=null) {
+			sqlquery.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 
 		if(filtro.getIdFornecedor() != null) {
@@ -877,8 +878,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	and CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		
-		if(filtro.getIdCota()!=null) {
-			sql.append(" and MOVIMENTO_ESTOQUE_COTA.COTA_ID = :idCota  ");
+		if(filtro.getNumeroCota()!=null) {
+			sql.append(" and COTA.NUMERO_COTA = :numeroCota  ");
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
@@ -891,8 +892,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
 		
-		if(filtro.getIdCota()!=null) {
-			sqlquery.setParameter("idCota", filtro.getIdCota());
+		if(filtro.getNumeroCota()!=null) {
+			sqlquery.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 
 		if(filtro.getIdFornecedor() != null) {
@@ -1347,27 +1348,55 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQtdMovimentoCotaPorTipoMovimento(java.util.Date, java.lang.Long, br.com.abril.nds.model.estoque.GrupoMovimentoEstoque)
 	 */
 	@Override
-	public BigInteger obterQtdMovimentoCotaPorTipoMovimento(Date data, Long idCota, GrupoMovimentoEstoque grupoMovimentoEstoque){
+	public Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(Intervalo<Date> periodo, 
+			                                                           Long idCota, 
+			                                                           GrupoMovimentoEstoque... gruposMovimentoEstoque){
 		
-		StringBuffer hql = new StringBuffer(" select sum(movimento.qtde) as quantidade ");
+		StringBuffer hql = new StringBuffer();
 		
-		hql.append(" from MovimentoEstoqueCota movimento");			
+		hql.append(" select sum( case when (movimento.tipoMovimento.grupoMovimentoEstoque.operacaoEstoque = :operacaoEntrada) ");
+		
+		hql.append(	" 			 then  movimento.qtde else - movimento.qtde end ) as quantidade, ");
+		
+		hql.append(" produtoEdicao.id as idProdutoEdicao ");
+		
+		hql.append(" from MovimentoEstoqueCota movimento join movimento.produtoEdicao produtoEdicao ");			
 		
 		hql.append(" where movimento.cota.id = :idCota ");
 		
-		hql.append(" and movimento.data = :data ");
+		hql.append(" and movimento.data between :inicio and :fim ");
 		
-		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque  in (:gruposMovimento) ");
+		
+		hql.append(" group by produtoEdicao.id ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
-		query.setParameter("data", data);
+		query.setParameter("inicio", periodo.getDe());
+		
+		query.setParameter("fim", periodo.getAte());
 		
 		query.setParameter("idCota", idCota);
 		
-		query.setParameter("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		query.setParameter("operacaoEntrada", OperacaoEstoque.ENTRADA);
 		
-		return (BigInteger) query.uniqueResult();
+		query.setParameterList("gruposMovimento", gruposMovimentoEstoque);
+		
+		@SuppressWarnings("unchecked")
+		List<Object[]> listaResultados = query.list();
+
+		Map<Long, BigInteger> mapResult = new HashMap<>();
+		
+		for (Object[] item : listaResultados) {
+
+			BigInteger quantidade = (BigInteger) item[0];
+			
+			Long id = (Long) item[1];
+			
+			mapResult.put(id,quantidade);
+		}
+		
+		return mapResult;
 		
 	}
 	

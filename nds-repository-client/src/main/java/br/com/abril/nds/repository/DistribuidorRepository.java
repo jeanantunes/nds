@@ -149,4 +149,6 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	ParametroContratoCota parametroContratoCota();
 
 	ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor();
+	
+	boolean utilizaControleAprovacaoFaltaSobra();
 }

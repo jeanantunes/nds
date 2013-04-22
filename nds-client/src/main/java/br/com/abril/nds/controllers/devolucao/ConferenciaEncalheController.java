@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -60,13 +61,14 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
-import br.com.abril.nds.util.ZipFileUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
+
+import com.itextpdf.text.pdf.codec.Base64;
 
 @Resource
 @Path(value="/devolucao/conferenciaEncalhe")
@@ -80,6 +82,8 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
+	private static final String CONF_IMPRESSAO_ENCALHE_COTA = "configImpressaoEncalheCota";
+	private static final String TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE = "tipos_documento_impressao_encalhe";
 	
 	private static final String INFO_CONFERENCIA = "infoCoferencia";
 	
@@ -957,23 +961,16 @@ public class ConferenciaEncalheController extends BaseController {
 		limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 		
 		try {
-			
-			Long idControleConferenciaEncalheCota = this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
-					controleConfEncalheCota, 
-					listaConferenciaEncalheCotaToSave, 
-					this.getSetConferenciaEncalheExcluirFromSession(), 
-					this.getUsuarioLogado(),
-					indConferenciaContingencia);
-			
-			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
-			
-			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
-			
-			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-			
-			StatusConferenciaEncalheCota statusConf = obterStatusConferenciaEncalheCotaFromSession();
-			statusConf.setIndConferenciaEncalheCotaSalva(true);
-			
+
+	        this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(controleConfEncalheCota, 
+																         listaConferenciaEncalheCotaToSave, 
+																         this.getSetConferenciaEncalheExcluirFromSession(), 
+																         this.getUsuarioLogado(),
+																         indConferenciaContingencia);
+	       
+	
+	        limparDadosSessao();
+	
 		} catch (EncalheSemPermissaoSalvarException e) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
@@ -1014,92 +1011,94 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
-	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) {
+	public void gerarDocumentoConferenciaEncalhe(DadosDocumentacaoConfEncalheCotaDTO dtoDoc) throws Exception {
 		
-		Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
-		
-		boolean isUtilizaBoleto = dtoDoc.isUtilizaBoleto();
-		
-		boolean isUtilizaSlip = dtoDoc.isUtilizaSlip();
-		
-		List<byte[]> arquivos = new ArrayList<byte[]>();
-		
-		Map<String, byte[]> mapFileNameFile = new HashMap<String, byte[]>();
-		
-		if(dtoDoc.isUtilizaBoletoSlip()) {
-				
-				arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-							idControleConferenciaEncalheCota, 
-							null, 
-							TipoDocumentoConferenciaEncalhe.SLIP));
+		try {
+			ArrayList<String> tiposDocumentoImpressao = new ArrayList<String>();
+			Long idControleConferenciaEncalheCota = dtoDoc.getIdControleConferenciaEncalheCota();
+			List<byte[]> arquivos = new ArrayList<byte[]>();
+			Map<String, byte[]> mapFileNameFile = new HashMap<String, byte[]>();
 			
-				for(String nossoNumero : dtoDoc.getListaNossoNumero().keySet()) {
-
-					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-							idControleConferenciaEncalheCota, 
-							nossoNumero,
-							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
-				}
+			if(dtoDoc.isUtilizaBoletoSlip()){//Slip-PDF+Boleto
 				
-				byte[] arquivo = PDFUtil.mergePDFs(arquivos);
-				mapFileNameFile.put("arquivos_cobranca_boleto_slip.pdf", arquivo);
+				gerarSlipPDFFinalizacaoEncalhe(tiposDocumentoImpressao,
+						idControleConferenciaEncalheCota, arquivos,
+						mapFileNameFile);
 				
-		} else {
-			
-			if (isUtilizaSlip) {
+				gerarBoletoFinalizacaoEncalhe(dtoDoc,
+						tiposDocumentoImpressao,
+						idControleConferenciaEncalheCota, arquivos,
+						mapFileNameFile);
 				
-				arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-							idControleConferenciaEncalheCota, 
-							null, 
-							TipoDocumentoConferenciaEncalhe.SLIP));
-			
+				
 				byte[] arquivoSlip = PDFUtil.mergePDFs(arquivos);
-				mapFileNameFile.put("arquivos_cobranca_slip.pdf", arquivoSlip);
+				String nomeChave = TipoDocumentoConferenciaEncalhe.BOLETO_SLIP.name()+"+"+TipoDocumentoConferenciaEncalhe.SLIP_PDF.name();
+				mapFileNameFile.put(nomeChave, arquivoSlip);
+				tiposDocumentoImpressao.add(nomeChave);
+
+				arquivos.clear();
+				
+			}else if(dtoDoc.isUtilizaBoleto()) {//Boleto
+				
+				gerarBoletoFinalizacaoEncalhe(dtoDoc,
+						tiposDocumentoImpressao,
+						idControleConferenciaEncalheCota, arquivos,
+						mapFileNameFile);
+
+				byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
+				String nomeChave = TipoDocumentoConferenciaEncalhe.BOLETO_SLIP.name();
+				mapFileNameFile.put(nomeChave, arquivoBoleto);
+				tiposDocumentoImpressao.add(nomeChave);
 				arquivos.clear();
 			}
 			
-			if(isUtilizaBoleto) {
-				
-				for(String nossoNumero : dtoDoc.getListaNossoNumero().keySet()) {
+			if(dtoDoc.isUtilizaSlip()){//Slip-TXT / Matricial
 
-					arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
-							idControleConferenciaEncalheCota, 
-							nossoNumero,
-							TipoDocumentoConferenciaEncalhe.BOLETO_OU_RECIBO));
-					
-					byte[] arquivoBoleto = PDFUtil.mergePDFs(arquivos);
-					mapFileNameFile.put("arquivos_cobranca_boleto.pdf", arquivoBoleto);
-				}
-			} 
-		}
+				gerarSlipMatricialFinalizacaoEncalhe(tiposDocumentoImpressao,
+						idControleConferenciaEncalheCota, mapFileNameFile);
+			}
 
-		this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, mapFileNameFile);
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
-	public void imprimirDocumentosCobranca() throws IOException{
-		
-		Map<String, byte[]> arquivos = (Map<String, byte[]>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+			this.session.setAttribute(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE, tiposDocumentoImpressao);
+			this.session.setAttribute(CONF_IMPRESSAO_ENCALHE_COTA, dtoDoc);
+			this.session.setAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA, mapFileNameFile);
 			
-		byte[] fileBytes = null;
-		String fileName = null;
-		
-		if(arquivos != null && !arquivos.isEmpty()) {
-									
-			if (arquivos.size() > 1){
-				fileBytes  = ZipFileUtil.getZipFile(arquivos);
-				fileName = "arquivos_cobranca.zip";
-			} else {
-				
-				for(Map.Entry<String, byte[]> arquivo : arquivos.entrySet()) {
-					fileName  = arquivo.getKey();
-					fileBytes = arquivo.getValue();
-				}
+		} catch (ValidacaoException e) {
+			
+			if(e.getValidacao() != null){
+				throw new Exception(e.getValidacao().getListaMensagens().get(0));
 			}
 			
-			this.escreverArquivoParaResponse(fileBytes, fileName);
-			this.session.removeAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+		}catch (Exception e) {
+			
+			throw new Exception("Cobrança gerada. Erro ao gerar arquivo(s) de cobrança - " + e.getMessage(), e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Rules(Permissao.ROLE_RECOLHIMENTO_CONFERENCIA_ENCALHE_COTA_ALTERACAO)
+	public void imprimirDocumentosCobranca(String tipo_documento_impressao_encalhe) throws IOException{
+		
+		Map<String, byte[]> arquivos = (Map<String, byte[]>) this.session.getAttribute(DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA);
+		
+		if(arquivos != null && !arquivos.isEmpty()) {
+			
+			byte[] bs = arquivos.get(tipo_documento_impressao_encalhe);
+			
+			if(bs != null) {
+				
+				Map<String, Object> dados = new HashMap<String, Object>();
+				
+				if(tipo_documento_impressao_encalhe.equals(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name())){
+					dados.put("resultado", new String(arquivos.get(tipo_documento_impressao_encalhe)));
+				}else{
+					dados.put("resultado", Base64.encodeBytes(arquivos.get(tipo_documento_impressao_encalhe)));	
+				}
+				
+				dados.put("tipo_documento_impressao_encalhe", tipo_documento_impressao_encalhe);
+				this.result.use(CustomJson.class).from(dados).serialize();
+			}else{
+				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Cenário de impressão não tratado, favor contatar a área de sistemas."));
+			}
 			
 		} else {
 			
@@ -1245,6 +1244,7 @@ public class ConferenciaEncalheController extends BaseController {
 			Map<String, Object> dados = new HashMap<String, Object>();
 			
 			dados.put("tipoMensagem", TipoMensagem.SUCCESS);
+			dados.put(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE, session.getAttribute(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE));
 			
 			if(dadosDocumentacaoConfEncalheCota.getMsgsGeracaoCobranca()!=null) {
 				
@@ -1774,7 +1774,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			dados.put("valorEncalhe", valorEncalhe);
 			dados.put("valorVendaDia", valorVendaDia);
-			dados.put("valorDebitoCredito", valorDebitoCredito);
+			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
 			dados.put("valorPagar", valorPagar);
 			dados.put("valorTotal", valorTotal);
 			dados.put("valorPagarAtualizado", valorPagarAtualizado);
@@ -1843,6 +1843,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		Long idTemporario = obterIdTemporario();
 		
+		conferenciaEncalheDTO.setDia(produtoEdicao.getDia());
 		conferenciaEncalheDTO.setIdConferenciaEncalhe(idTemporario);
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
@@ -1985,5 +1986,43 @@ public class ConferenciaEncalheController extends BaseController {
 		usuarioLogado.setBox(box);
 		
 		usuarioService.salvar(usuarioLogado);
+	}
+	
+	private void gerarSlipMatricialFinalizacaoEncalhe(
+			ArrayList<String> tiposDocumentoImpressao,
+			Long idControleConferenciaEncalheCota,
+			Map<String, byte[]> mapFileNameFile) {
+		
+		//Imprime apenas SLIP txt, dados para matricial.
+		byte[] slipMatricial = conferenciaEncalheService.gerarSlipMatricial(idControleConferenciaEncalheCota, true);
+		mapFileNameFile.put(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name(), slipMatricial);
+		tiposDocumentoImpressao.add(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name());
+	}
+
+	private void gerarSlipPDFFinalizacaoEncalhe(
+			ArrayList<String> tiposDocumentoImpressao,
+			Long idControleConferenciaEncalheCota, List<byte[]> arquivos,
+			Map<String, byte[]> mapFileNameFile) {
+		arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+				idControleConferenciaEncalheCota, 
+				null, 
+				TipoDocumentoConferenciaEncalhe.SLIP_PDF));
+		
+	}
+
+	private void gerarBoletoFinalizacaoEncalhe(
+			DadosDocumentacaoConfEncalheCotaDTO dtoDoc,
+			ArrayList<String> tiposDocumentoImpressao,
+			Long idControleConferenciaEncalheCota, List<byte[]> arquivos,
+			Map<String, byte[]> mapFileNameFile) {
+		
+		for(String nossoNumero : dtoDoc.getListaNossoNumero().keySet()) {
+
+			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
+					idControleConferenciaEncalheCota, 
+					nossoNumero,
+					TipoDocumentoConferenciaEncalhe.BOLETO_SLIP));
+			
+		}
 	}
 }

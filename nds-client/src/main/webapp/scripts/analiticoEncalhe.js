@@ -94,7 +94,7 @@ var analiticoEncalheController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -108,23 +108,12 @@ var analiticoEncalheController = $.extend(true, {
 	
 	
 	preprocessamentoGrid : function(resultado) {
-		
 
-		var total = "0,00";
-		$.each(resultado.rows, function(index, row) {
-			total = sumPrice(total,row.cell.total );
-			
-		});
+		$('#valorTotalAnalitico', workspace).html(resultado.valorTotalAnalitico);
 		
-		if (resultado.rows.length == 0){
-			$('#valorTotal').html("0,00");
-			$('#totalCota').html("0");
-		} else {
-			$('#valorTotal').html(total);
-			$('#totalCota').html(resultado.rows.length);
-		}
+		$('#totalCotaAnalitico', workspace).html(resultado.qtdCotas);
 		
-		return resultado;
+		return resultado.tableModel;
 	},
 	
 	

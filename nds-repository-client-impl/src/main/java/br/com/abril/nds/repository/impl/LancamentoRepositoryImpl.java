@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -1687,5 +1688,23 @@ public class LancamentoRepositoryImpl extends
 		return count;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT lancamento.dataLancamentoDistribuidor ");
+		hql.append(" FROM Lancamento lancamento join lancamento.expedicao expedicao ");
+		hql.append(" WHERE lancamento.dataLancamentoDistribuidor BETWEEN :dataInicio AND :dataFim ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+
+		query.setParameter("dataInicio", intervalo.getDe());
+		query.setParameter("dataFim", intervalo.getAte());
+		
+		List<Date> retorno = query.list();
+		
+		return new TreeSet<Date>(retorno);
+	}
 	
 }

@@ -67,7 +67,7 @@ public class FiltroLancamentoDiferencaEstoqueDTO implements Serializable {
 		PRECO_DESCONTO("precoDesconto"),
 		PACOTE_PADRAO("pacotePadrao"),
 		QUANTIDADE("quantidade"),
-		TIPO_DIFERENCA("tipoDiferenca"),
+		TIPO_DIFERENCA("descricaoTipoDiferenca"),
 		VALOR_TOTAL_DIFERENCA("valorTotalDiferenca");
 		
 		private String nomeColuna;

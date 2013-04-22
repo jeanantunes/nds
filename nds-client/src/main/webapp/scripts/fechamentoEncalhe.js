@@ -61,7 +61,7 @@ var fechamentoEncalheController = $.extend(true, {
 				display : ' ',
 				name : 'check',
 				width : 20,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}],
 			sortname : "numeroCota",
@@ -79,6 +79,12 @@ var fechamentoEncalheController = $.extend(true, {
 			onSuccess: function() {bloquearItensEdicao(fechamentoEncalheController.workspace);},
 			preProcess: fechamentoEncalheController.preprocessamentoGridFechamento,
 			colModel : [ {
+				display : 'Sequencia',
+				name : 'sequencia',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
 				display : 'C&oacute;digo',
 				name : 'codigo',
 				width : 50,
@@ -145,13 +151,13 @@ var fechamentoEncalheController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}],
-			sortname : "codigo",
+			sortname : "sequencia",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
+			width : 1020,
 			height : 'auto',
 			singleSelect : true
 		});

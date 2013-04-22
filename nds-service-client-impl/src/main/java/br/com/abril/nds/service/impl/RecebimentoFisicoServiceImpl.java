@@ -250,6 +250,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(!pularValidacao)			
 			verificarValorDaNota(recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId()),notaFiscal.getValorBruto());
 		
+		notaFiscal.setDataRecebimento(new Date());
+		
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		
 		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 		
 		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId());
@@ -275,6 +279,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		verificarValorDaNota(recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId()),notaFiscal.getValorBruto());
 		
+		notaFiscal.setDataRecebimento(new Date());
+		
+		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+				
 		inserirDadosRecebimentoFisico(usuarioLogado, notaFiscal, listaItensNota, dataAtual);
 		
 		List<RecebimentoFisicoDTO> listaItemRecebimentoFisico = recebimentoFisicoRepository.obterListaItemRecebimentoFisico(notaFiscal.getId());
@@ -364,9 +372,9 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	private void atualizarDadosNotaFiscalExistente(Usuario usuarioLogado, NotaFiscalEntrada notaFiscal,  List<RecebimentoFisicoDTO> listaItensNota, Date dataAtual) {
 		
 		
-		notaFiscal.setDataRecebimento(new Date());
+		//notaFiscal.setDataRecebimento(new Date());
 		
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
+		//notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
 		
 		notaFiscalRepository.merge(notaFiscal);
 		
@@ -456,8 +464,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
 		
-		notaFiscal.setStatusNotaFiscal(StatusNotaFiscalEntrada.RECEBIDA);
-		
 		boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
 		
 		if(indNotaEnvio) {
@@ -470,11 +476,6 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			notaFiscal.setOrigem(Origem.MANUAL);
 			
 		}
-
-		notaFiscal.setDataRecebimento(new Date());
-		
-		
-		notaFiscal.setUsuario(usuarioLogado);
 		
 		notaFiscalRepository.adicionar(notaFiscal);
 		

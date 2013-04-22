@@ -457,6 +457,30 @@ var parametroCobrancaController = $.extend(true,
 			});
 			
 			parametroCobrancaController.carregarFormasEmissao(resultado.tipoCobranca,formaEmissao);
+			
+			$("#valorMinimo", this.workspace).priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.',
+			    centsLimit:2	
+			});
+			
+			$("#valorMulta", this.workspace).priceFormat({
+				centsSeparator: ',',
+			    thousandsSeparator: '.',
+			    centsLimit:2	
+			});
+			
+			$('#taxaMulta', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#taxaJuros', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
 		},	
 		
 		
@@ -680,6 +704,18 @@ var parametroCobrancaController = $.extend(true,
 			$("#valorMulta", this.workspace).val(result.vrMulta);
 			$("#taxaJuros", this.workspace).val(result.juros);
 			$("#instrucoes", this.workspace).val(result.instrucoes);
+			
+			$('#taxaMulta', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
+			
+			$('#taxaJuros', this.workspace).priceFormat({
+				allowNegative: false,
+				centsSeparator: ',',
+			    thousandsSeparator: '.'
+			});
 		}
 		
 	}	

@@ -551,7 +551,7 @@ var fecharDiaController =  $.extend(true, {
 		}
 		
 		$("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).show();
-		fecharDiaController.redirecionarFaltasESobras();
+		
 		
 		return resultado;
 		
@@ -1108,6 +1108,10 @@ var fecharDiaController =  $.extend(true, {
 					$( this ).dialog( "close" );
 				},
 			},
+			open : function(event, ui) {
+				fecharDiaController.redirecionarFaltasESobras();
+			},
+			
 			form: $("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).parents("form")
 		});
 	},
@@ -1456,11 +1460,28 @@ var fecharDiaController =  $.extend(true, {
 		$("#linkParaFaltasESobra").html(link);
 		
 	},
+	
 	customizarDialogFaltasESobras : function(){		
 		
 		parent.$('#dialog-lancto-faltas-sobras').dialog("option", "modal", false);
 		parent.$('#dialog-lancto-faltas-sobras').dialog('close');
 		
+	},
+	
+	transferirDiferencasParaEstoqueDePerdaGanho : function() {
+		
+		$.postJSON(
+			contextPath + "/administracao/fecharDia/transferirDiferencasParaEstoqueDePerdaGanho",
+			null,
+			function(result) {
+
+				$("#dialog-lancto-faltas-sobras", fecharDiaController.workspace).dialog("close");
+				
+				$("#dialog-processos", fecharDiaController.workspace).dialog("close");
+				
+				fecharDiaController.popup_processos();
+			}
+		);
 	}
 
 }, BaseController);

@@ -43,6 +43,7 @@
 			ConferenciaEncalhe.init();
 			bloquearItensEdicao(ConferenciaEncalhe.workspace);
 		});
+		
 	</script>
 	
 </head>
@@ -255,4 +256,13 @@
 				</tr>
 			</table>
 		</fieldset>
+		
+		<div id="idImpressaoFinalizacaoApplet1" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal1"></div>
+		</div>	
+
+		<div id="idImpressaoFinalizacaoApplet2" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal2"></div>
+		</div>	
+		
 </body>

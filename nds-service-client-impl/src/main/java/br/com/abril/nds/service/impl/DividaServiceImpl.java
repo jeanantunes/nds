@@ -4,10 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,15 +14,11 @@ import br.com.abril.nds.dto.DividaComissaoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.StatusDividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
-import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
-import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -218,7 +211,7 @@ public class DividaServiceImpl implements DividaService {
 			if (!isIsento) {
 			
 				BigDecimal juros = this.cobrancaService.calcularJuros(
-					cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota(), 
+					cobrancaAtualizada.getBanco(), cobrancaAtualizada.getCota().getId(), 
 					cobrancaAtualizada.getValor(), backupDataVencimento, dataPostergacao);
 					
 				movimentoFinanceiroCotaDTO.setValor(juros);
@@ -254,7 +247,7 @@ public class DividaServiceImpl implements DividaService {
 			
 			BigDecimal juros = 
 				this.cobrancaService.calcularJuros(
-					cobranca.getBanco(), cobranca.getCota(), 
+					cobranca.getBanco(), cobranca.getCota().getId(), 
 					cobranca.getValor(), cobranca.getDataVencimento(), dataPostergacao);
 			
 			BigDecimal multa = 
@@ -310,9 +303,8 @@ public class DividaServiceImpl implements DividaService {
 	@Override
     @Transactional(readOnly = true)
     public List<SumarizacaoDividasDTO> sumarizacaoDividasReceberEm(Date data) {
-        Map<TipoCobranca, SumarizacaoDividasDTO> mapaSumarizacao = criarMapaTiposCobrancaDistribuidor(
-                data, TipoDivida.DIVIDA_A_RECEBER, dividaRepository.sumarizacaoDividasReceberEm(data));
-	    return new ArrayList<SumarizacaoDividasDTO>(mapaSumarizacao.values());
+	    
+		return  dividaRepository.sumarizacaoDividasReceberEm(data);
     }
 
 
@@ -322,9 +314,8 @@ public class DividaServiceImpl implements DividaService {
 	@Override
     @Transactional(readOnly = true)
     public List<SumarizacaoDividasDTO> sumarizacaoDividasVencerApos(Date data) {
-        Map<TipoCobranca, SumarizacaoDividasDTO> mapaSumarizacao = criarMapaTiposCobrancaDistribuidor(data, TipoDivida.DIVIDA_A_VENCER,
-                dividaRepository.sumarizacaoDividasVencerApos(data));
-        return new ArrayList<SumarizacaoDividasDTO>(mapaSumarizacao.values());
+        
+		return dividaRepository.sumarizacaoDividasVencerApos(data);
     }
 
     /**
@@ -332,7 +323,7 @@ public class DividaServiceImpl implements DividaService {
      */
 	@Override
     @Transactional(readOnly = true)
-    public List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
+    public List<Cobranca> obterDividasReceberEm(Date data, PaginacaoVO paginacao) {
 	    return dividaRepository.obterDividasReceberEm(data, paginacao);
     }
 
@@ -341,7 +332,7 @@ public class DividaServiceImpl implements DividaService {
      */
 	@Override
     @Transactional(readOnly = true)
-    public List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
+    public List<Cobranca> obterDividasVencerApos(Date data, PaginacaoVO paginacao) {
 	    return dividaRepository.obterDividasVencerApos(data, paginacao);
     }
 
@@ -361,40 +352,5 @@ public class DividaServiceImpl implements DividaService {
     @Transactional(readOnly = true)
     public long contarDividasVencerApos(Date data) {
         return dividaRepository.contarDividasVencerApos(data);
-    }
-
-    /**
-     * Cria um mapa de sumarização de dívidas com os tipos de cobranças
-     * parametrizadas pelo distribuidor x sumarização calculada sobre as dívidas
-     * existentes
-     * 
-     * @param data
-     *            data base para sumarização
-     * @param tipoDivida
-     *            tipo da sumarização das dívidas, dividas à receber na data base ou dívidas
-     *            à vencer após a data base
-     * @param sumarizacao mapa com as sumarizações calculadas sobre dívidas existentes
-     * @return mapa com os tipos de cobranças e sumarização de dívidas existentes 
-     *         
-     */
-    private Map<TipoCobranca, SumarizacaoDividasDTO> criarMapaTiposCobrancaDistribuidor(Date data, TipoDivida tipoDivida,
-            Map<TipoCobranca, SumarizacaoDividasDTO> sumarizacao) {
-    	
-        Map<TipoCobranca, SumarizacaoDividasDTO> novaSumarizacao = new EnumMap<TipoCobranca, SumarizacaoDividasDTO>(sumarizacao);
-        
-        Set<PoliticaCobranca> pcs = this.distribuidorService.politicasCobrancaAtivas();
-        
-        for (PoliticaCobranca pc : pcs) {
-        	
-            FormaCobranca formaCobranca = pc.getFormaCobranca();
-
-            TipoCobranca tipoCobranca = formaCobranca.getTipoCobranca();
-            
-            if (!novaSumarizacao.containsKey(tipoCobranca)) {
-            	
-                novaSumarizacao.put(tipoCobranca, new SumarizacaoDividasDTO(data, tipoDivida, tipoCobranca));
-            }
-        }
-        return novaSumarizacao;
     }
 }
