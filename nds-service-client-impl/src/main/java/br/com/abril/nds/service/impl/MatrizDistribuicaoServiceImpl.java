@@ -277,6 +277,16 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				    for (EstudoCota ec : estudo.getEstudoCotas()) {
 					estudoCotaRepository.remover(ec);
 				    }
+				    List<Lancamento> lancamentos = lancamentoRepository.obterPorEstudo(estudo);
+				    for (Lancamento l : lancamentos) {
+					l.setEstudo(null);
+					lancamentoRepository.alterar(l);
+				    }
+				    for (Lancamento l : estudo.getLancamentos()) {
+					l.setEstudo(null);
+					lancamentoRepository.alterar(l);
+				    }
+				    estudo.setLancamentos(null);
 				    estudoRepository.remover(estudo);
 				} else {
 				    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Este estudo já foi liberado, não é permitido excluí-lo!"));

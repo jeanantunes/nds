@@ -350,23 +350,19 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		
 		data.push({name : "codigoProduto", value : $('#codigoProduto').text()});
 		
-		//FIXME O que exibir nesta tela após estudo?
-		
 		$.post(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(response) {
 			$('<div>Exibir variaveis do estudo?</div>').dialog({ 
         	    title: "Estudo",
         	    buttons: [ { 
         	        text: "OK", 
         	        click: function() { 
-        	            $( this ).dialog( "close" );
-        	            var myWindow=window.open('','');
-        	            myWindow.document.write(response.estudo);
-        	            myWindow.focus();
+        	            $(this).dialog("close");
+        	            $('#idEstudo').html(response);
         	        } 
         	    }, {
         	    	text: "Cancel", 
         	        click: function() { 
-        	            $( this ).dialog( "close" ); 
+        	        	$(this).dialog("close"); 
         	        }
         	    } ] 
         	});

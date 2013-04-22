@@ -26,7 +26,7 @@ public class AnaliseParcialDTO implements Serializable {
 	private BigInteger npdv;
 	
 	@Export(label = "Reparte Sugerido", alignment=Alignment.LEFT, exhibitionOrder = 5)
-	private BigDecimal reparteSugerido;
+	private BigInteger reparteSugerido;
 	
 	@Export(label = "Legenda", alignment=Alignment.LEFT, exhibitionOrder = 6)
 	private String leg;
@@ -41,25 +41,25 @@ public class AnaliseParcialDTO implements Serializable {
 	private BigInteger ultimoReparte;
 	
 	@Export(label = "Reparte 1", alignment=Alignment.LEFT, exhibitionOrder = 10)
-	private BigDecimal reparte1;
+	private BigInteger reparte1;
 	
 	@Export(label = "Venda 1", alignment=Alignment.LEFT, exhibitionOrder = 11)
 	private BigDecimal venda1;
 	
 	@Export(label = "Reparte 2", alignment=Alignment.LEFT, exhibitionOrder = 12)
-	private BigDecimal reparte2;
+	private BigInteger reparte2;
 	
 	@Export(label = "Venda 2", alignment=Alignment.LEFT, exhibitionOrder = 13)
 	private BigDecimal venda2;
 	
 	@Export(label = "Reparte 3", alignment=Alignment.LEFT, exhibitionOrder = 14)
-	private BigDecimal reparte3;
+	private BigInteger reparte3;
 	
 	@Export(label = "Venda 3", alignment=Alignment.LEFT, exhibitionOrder = 15)
 	private BigDecimal venda3;
 	
 	@Export(label = "Reparte 4", alignment=Alignment.LEFT, exhibitionOrder = 16)
-	private BigDecimal reparte4;
+	private BigInteger reparte4;
 	
 	@Export(label = "Venda 4", alignment=Alignment.LEFT, exhibitionOrder = 17)
 	private BigDecimal venda4;
@@ -91,7 +91,7 @@ public class AnaliseParcialDTO implements Serializable {
 	public double getReparteSugerido() {
 		return reparteSugerido.doubleValue();
 	}
-	public void setReparteSugerido(BigDecimal reparteSugerido) {
+	public void setReparteSugerido(BigInteger reparteSugerido) {
 		this.reparteSugerido = reparteSugerido;
 	}
 	public String getLeg() {
@@ -121,7 +121,7 @@ public class AnaliseParcialDTO implements Serializable {
 	public double getReparte1() {
 		return reparte1.doubleValue();
 	}
-	public void setReparte1(BigDecimal reparte1) {
+	public void setReparte1(BigInteger reparte1) {
 		this.reparte1 = reparte1;
 	}
 	public double getVenda1() {
@@ -133,7 +133,7 @@ public class AnaliseParcialDTO implements Serializable {
 	public double getReparte2() {
 		return reparte2.doubleValue();
 	}
-	public void setReparte2(BigDecimal reparte2) {
+	public void setReparte2(BigInteger reparte2) {
 		this.reparte2 = reparte2;
 	}
 	public double getVenda2() {
@@ -145,7 +145,7 @@ public class AnaliseParcialDTO implements Serializable {
 	public double getReparte3() {
 		return reparte3.doubleValue();
 	}
-	public void setReparte3(BigDecimal reparte3) {
+	public void setReparte3(BigInteger reparte3) {
 		this.reparte3 = reparte3;
 	}
 	public double getVenda3() {
@@ -157,7 +157,7 @@ public class AnaliseParcialDTO implements Serializable {
 	public double getReparte4() {
 		return reparte4.doubleValue();
 	}
-	public void setReparte4(BigDecimal reparte4) {
+	public void setReparte4(BigInteger reparte4) {
 		this.reparte4 = reparte4;
 	}
 	public double getVenda4() {

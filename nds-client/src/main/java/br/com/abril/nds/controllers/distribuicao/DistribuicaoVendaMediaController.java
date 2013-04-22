@@ -248,16 +248,15 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	@Path("gerarEstudo")
 	@Post
 	public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto) {
-		//FIXME o que retornar para a tela após estudo?
 		EstudoTransient estudo = null;
 		try {
 			estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, new ProdutoEdicaoEstudo(codigoProduto), 
 					distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
 		} catch (Exception e) {
 			log.error("Erro na geração do estudo.", e);
-    		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 		}
-		result.use(Results.json()).from(estudo).recursive().serialize();
+		result.use(Results.json()).from(estudo.getId()).recursive().serialize();
 	}
 
 	public HttpSession getSession() {
