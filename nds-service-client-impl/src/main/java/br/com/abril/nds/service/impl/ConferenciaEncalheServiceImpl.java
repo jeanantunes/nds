@@ -719,7 +719,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			listaDebitoCreditoCompleta.addAll(listaDebitoNegociacaoNaoAvulsaMaisEncargos);
 		}
 
-		listaDebitoCreditoCompleta.add(obterOutroDebitoCreditoDeConsolidados(cota.getId(), dataOperacao));
+		DebitoCreditoCotaDTO cobranca = obterOutroDebitoCreditoDeConsolidados(cota.getId(), dataOperacao);
+		
+		if(cobranca!=null) {
+
+			listaDebitoCreditoCompleta.add(cobranca);
+			
+		}
+				
 		
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
 
@@ -733,19 +740,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigDecimal outrosValores = BigDecimal.ZERO;
 		
+		DebitoCreditoCotaDTO cobranca = null;
 		
 		if (consolidado != null){
+			
 			BigDecimal valorConsolidEncalhe = consolidado.getEncalhe() != null ? consolidado.getEncalhe().abs() : BigDecimal.ZERO;
 			BigDecimal valorConsolidReparte = consolidado.getConsignado() != null ? consolidado.getConsignado().abs() : BigDecimal.ZERO;
 			outrosValores = consolidado.getTotal().abs().subtract(valorConsolidReparte.subtract(valorConsolidEncalhe));
+		
+			cobranca = new DebitoCreditoCotaDTO();
+			
+			cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
+			cobranca.setObservacoes("Outros valores");
+			cobranca.setDataVencimento(consolidado.getDataConsolidado());
+			cobranca.setValor(outrosValores);
+			
+		
 		}
 		
-		DebitoCreditoCotaDTO cobranca = new DebitoCreditoCotaDTO();
-		
-		cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
-		cobranca.setObservacoes("Outros valores");
-		cobranca.setDataVencimento(consolidado.getDataConsolidado());
-		cobranca.setValor(outrosValores);
 		
 		return cobranca;
 		
