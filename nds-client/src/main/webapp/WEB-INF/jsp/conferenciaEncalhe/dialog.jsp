@@ -78,7 +78,7 @@
 			    <td>&nbsp;</td>
 			    <td>&nbsp;</td>
 			    <td>
-			    	<textarea idEdicao="true" class="tit" name="observacao" id="observacao" cols="90" rows="5"></textarea>
+			    	<textarea idEdicao="true" class="tit" name="observacao" id="observacao" cols="80" rows="5"></textarea>
 			    </td>
 	  		</tr>
 	  		<tr>

@@ -13,6 +13,36 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class EncalheCotaDTO implements Serializable {
 
+	private static final long serialVersionUID = 2186060384671120600L;
+	
+	@Export(label = "Código")
+	private String codigoProduto;
+
+	@Export(label = "Produto")
+	private String nomeProduto;
+
+	@Export(label = "Edição")
+	private Long numeroEdicao;
+
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	private BigDecimal precoCapa;
+
+	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	private BigDecimal precoComDesconto;
+	
+	@Export(label = "Encalhe", alignment = Alignment.CENTER)
+	private BigInteger encalhe;
+	
+	@Export(label = "Fornecedor")
+	private String nomeFornecedor;
+
+	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	private BigDecimal total;
+
+	private BigDecimal desconto;
+	
+	private Integer sequencia;
+	
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -69,34 +99,6 @@ public class EncalheCotaDTO implements Serializable {
 		this.total = total != null ? total.setScale(2, RoundingMode.HALF_EVEN) : null;
 	}
 
-	private static final long serialVersionUID = 2186060384671120600L;
-	
-	@Export(label = "Código")
-	private String codigoProduto;
-
-	@Export(label = "Produto")
-	private String nomeProduto;
-
-	@Export(label = "Edição")
-	private Long numeroEdicao;
-
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
-	private BigDecimal precoCapa;
-
-	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
-	private BigDecimal precoComDesconto;
-	
-	@Export(label = "Encalhe", alignment = Alignment.CENTER)
-	private BigInteger encalhe;
-	
-	@Export(label = "Fornecedor")
-	private String nomeFornecedor;
-
-	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
-	private BigDecimal total;
-
-	private BigDecimal desconto;
-
 	public BigInteger getEncalhe() {
 		return encalhe;
 	}
@@ -113,4 +115,11 @@ public class EncalheCotaDTO implements Serializable {
 		this.desconto = desconto;
 	}
 
+	public Integer getSequencia() {
+		return sequencia;
+	}
+
+	public void setSequencia(Integer sequencia) {
+		this.sequencia = sequencia;
+	}
 }

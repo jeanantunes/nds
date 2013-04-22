@@ -1088,19 +1088,21 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_REC_PREVISTA as dataRecolhimentoPrevista, ");
 		sql.append(" lancamento.ALTERADO_INTERFACE as alteradoInteface, ");
 
+		sql.append(" coalesce( ");
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
 		sql.append(" lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO ");
 		sql.append(" else ");
 		sql.append(" lancamento.REPARTE ");
-		sql.append(" end as repartePrevisto, ");
+		sql.append(" end, 0) as repartePrevisto, ");
 		
 		sql.append(" lancamento.NUMERO_REPROGRAMACOES as numeroReprogramacoes, ");
 		
+		sql.append(" coalesce( ");
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
 		sql.append(" (lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * produtoEdicao.PRECO_VENDA ");
 		sql.append(" else ");
 		sql.append(" lancamento.REPARTE * produtoEdicao.PRECO_VENDA ");
-		sql.append(" end as valorTotal, ");
+		sql.append(" end, 0) as valorTotal, ");
 		
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
 		sql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");

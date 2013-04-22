@@ -2,6 +2,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	modalAberta: false,
 	
+	verificarReabertura: false,
+	
 	idProdutoEdicaoNovoEncalhe: "",
 
 	init : function() {
@@ -57,8 +59,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#numeroCota", ConferenciaEncalheCont.workspace).keyup(function(e) {
 			
 			if (e.keyCode == 13) {
-				
-				ConferenciaEncalheCont.pesquisarCota();
+
+				if (ConferenciaEncalheCont.verificarReabertura){
+				    
+				    ConferenciaEncalheCont.pesquisarCota();
+			    }
+			    else{
+			
+			    	ConferenciaEncalheCont.verificarReabertura = true;
+		    	}
 			}
 		});
 		
@@ -149,15 +158,22 @@ var ConferenciaEncalheCont = $.extend(true, {
 							"Sim" : function() {
 								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
+								
 								ConferenciaEncalheCont.carregarListaConferencia(data);
+								
 								ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
 							},
 							"Não" : function() {
+								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 							}
 						}, close : function(){
 							
 							ConferenciaEncalheCont.modalAberta = false;
+							
+							ConferenciaEncalheCont.verificarReabertura = false;
+							
+							$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 						},
 						form: $("#dialog-reabertura", this.workspace).parents("form")
 					});
@@ -265,15 +281,34 @@ var ConferenciaEncalheCont = $.extend(true, {
 		});
 	},
 	
-	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
-		//FIXME testar impressão contingência
-		var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca?tipo_documento_impressao_encalhe='+tiposDocumento;
+	gerarDocumentosConferenciaEncalhe : function(tipo_documento_impressao_encalhe) {
 		
-		$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
+		var data = [{name: 'tipo_documento_impressao_encalhe', value: tipo_documento_impressao_encalhe}];
+		var cont = 1;
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
+			data,
+			function(resultado){
+		
+				if(resultado != "" && resultado.resultado!=""){
+					
+					var callApplet = '';
+					callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
+					callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
+					callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
+					callApplet+='</applet>';						
+					
+					$('#replaceAppletFinal'+cont).html(callApplet);
+					$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).show();		
+					
+					$('#replaceAppletFinal'+cont).html("");
+					$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).hide();		
+					cont++;
+				}
+			}
+		); 	
 	},
 	
 	verificarValorTotalNotaFiscal : function() {
-		
 		var data = [{name: 'indConferenciaContingencia', value: true}];
 		
 		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/verificarValorTotalNotaFiscal', data,
@@ -284,7 +319,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 						
 						if(result.indGeraDocumentoConfEncalheCota == true) {
 
-							ConferenciaEncalheCont.gerarDocumentosConferenciaEncalhe(result.tiposDocumento);
+							ConferenciaEncalheCont.gerarDocumentosConferenciaEncalhe(result.tipos_documento_impressao_encalhe);
 							
 						}
 						
@@ -812,13 +847,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 		ConferenciaEncalheCont.modalAberta = true;
 		
 		$("#dialog-dadosNotaFiscalContingencia", ConferenciaEncalheCont.workspace).dialog({
+			
 			resizable : false,
 			height : 'auto',
 			width : 877,
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
-					
 					var data = [{name: 'indConferenciaContingencia', value: true}];
 					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/finalizarConferencia', data,
@@ -831,7 +866,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 							if(conteudo.indGeraDocumentoConfEncalheCota == true) {
 
-								ConferenciaEncalheCont.gerarDocumentosConferenciaEncalhe(conteudo.tiposDocumento);
+								ConferenciaEncalheCont.gerarDocumentosConferenciaEncalhe(conteudo.tipos_documento_impressao_encalhe);
 								
 							}
 							

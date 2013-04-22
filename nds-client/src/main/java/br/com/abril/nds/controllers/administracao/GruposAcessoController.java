@@ -186,7 +186,7 @@ public class GruposAcessoController extends BaseController {
 		
 		addPais(grupoPermissaoDTO.getPermissoes());
 		
-		grupoPermissao.setPermissoes(new HashSet<>(grupoPermissaoDTO.getPermissoes()));
+		grupoPermissao.setPermissoes(new HashSet(grupoPermissaoDTO.getPermissoes()));
 		
 		grupoPermissaoService.salvar(grupoPermissao);
 		

@@ -220,14 +220,19 @@ var ConsultaEncalhe = $.extend(true, {
 		},
 		
 	    //POPULA GRADE DE DETALHES DA ENCALHE
-	    obterDetalhesEncalhe : function(idCota, idFornecedor, idProdutoEdicao, dataMovimento, dataRecolhimento){
+	    obterDetalhesEncalhe : function(numeroCota, idFornecedor, idProdutoEdicao, dataMovimento, dataRecolhimento){
+	    	
+	    	if (!numeroCota){
+	    		
+	    		numeroCota = $("#cota", ConsultaEncalhe.workspace).val();
+	    	}
 	    	
 			$("#dadosDetalheEncalheGrid", ConsultaEncalhe.workspace).flexOptions({
 				url: contextPath + "/devolucao/consultaEncalhe/pesquisarDetalhe",
 				params: [
 						{name:'idProdutoEdicao', value: idProdutoEdicao},
 						{name:'idFornecedor', value: idFornecedor},
-						{name:'idCota', value: idCota},
+						{name:'numeroCota', value: numeroCota},
 						{name:'dataRecolhimento', value: dataRecolhimento},
 						{name:'dataMovimento', value: dataMovimento}
 				        ] ,
