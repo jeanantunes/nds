@@ -51,7 +51,6 @@ public class ClassificacaoCotaServiceImpl implements ClassificacaoCotaService {
 		  cota.setId(cotaDTO.getIdCota());
 		  String tipoClassificacao = new String();
 		  // BUSCA O ULTIMO FATURAMENTO GERARDO DA COTA PELA ROTINA executeJobGerarRankingFaturamento
-		  //FIXME erro na query
 		  List<RankingFaturamento> rf = rankingFaturamentoService.buscarPorCota(cota);
 		  if(!rf.isEmpty()){
 			  BigDecimal valorFaturamento = rf.get(0).getFaturamento();

@@ -8,13 +8,11 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -49,6 +47,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxRegRetorno) {
 		String hql = "from Produto produto "
@@ -364,8 +363,9 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> verificarProdutoExiste(String[] codigoProduto) {
+	public List<String> verificarProdutoExiste(String... codigoProduto) {
 		StringBuilder hql = new StringBuilder("select codigo from produto where produto.codigo in (:codigoProdutoList)");
 		
 		SQLQuery query = super.getSession().createSQLQuery(hql.toString());

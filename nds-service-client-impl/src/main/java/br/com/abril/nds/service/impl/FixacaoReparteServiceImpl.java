@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
@@ -38,6 +36,7 @@ import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.FixacaoReparteService;
 import br.com.abril.nds.service.UsuarioService;
+
 @Service
 public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	
@@ -179,30 +178,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		Cota cota = cotaRepository.obterPorNumerDaCota(fixacaoReparteDTO.getCotaFixada().intValue());
 		Produto produto = produtoRepository.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado().toString());
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(produto.getCodigo(), fixacaoReparteDTO.getEdicao().longValue());
-		
-		StatusLancamento status = new ArrayList<>(produtoEdicao.getLancamentos()).get(0).getStatus();
-		switch (status) {
-		
-		case CONFIRMADO:
-		case FECHADO:
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não permitido a fixação devido ao status das edições.");
-			
-		case BALANCEADO:
-		case BALANCEADO_RECOLHIMENTO:
-		case CANCELADO:
-		case EM_BALANCEAMENTO:
-		case EM_BALANCEAMENTO_RECOLHIMENTO:
-		case ESTUDO_FECHADO:
-		case EXCLUIDO_RECOLHIMENTO:
-		case EXPEDIDO:
-		case FURO:
-		case PLANEJADO:
-		case RECOLHIDO:
-			
-		default:
-			break;
-		}
+		validaStatusProduto(fixacaoReparteDTO, produto);
 		
 		fixacaoReparte.setProdutoFixado(produto);
 		fixacaoReparte.setCotaFixada(cota);
@@ -226,6 +202,41 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		fixacaoReparte.setEdicaoFinal(fixacaoReparteDTO.getEdicaoFinal() !=null? new Integer(fixacaoReparteDTO.getEdicaoFinal()):null);
 		
 		return fixacaoReparte;
+	}
+
+	private void validaStatusProduto(FixacaoReparteDTO fixacaoReparteDTO, Produto produto) {
+		
+		if (fixacaoReparteDTO.getEdicaoInicial() != null && fixacaoReparteDTO.getEdicaoFinal() != null) {
+			List<ProdutoEdicao> listProdutoEdicao = produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());
+			for (ProdutoEdicao produtoEdicao : listProdutoEdicao) {
+				statusPermitido(new ArrayList<>(produtoEdicao.getLancamentos()).get(0).getStatus());
+			}
+		}
+		
+	}
+
+	private void statusPermitido(StatusLancamento status) {
+		switch (status) {
+		
+		case CONFIRMADO:
+		case FECHADO:
+			throw new ValidacaoException(TipoMensagem.WARNING,"Não permitido a fixação devido ao status das edições.");
+			
+		case BALANCEADO:
+		case BALANCEADO_RECOLHIMENTO:
+		case CANCELADO:
+		case EM_BALANCEAMENTO:
+		case EM_BALANCEAMENTO_RECOLHIMENTO:
+		case ESTUDO_FECHADO:
+		case EXCLUIDO_RECOLHIMENTO:
+		case EXPEDIDO:
+		case FURO:
+		case PLANEJADO:
+		case RECOLHIDO:
+			
+		default:
+			break;
+		}
 	}
 	
 	@Override
@@ -261,7 +272,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 				fixacaoReparteDTO.setEdicaoFinal((fixacaoReparte.getEdicaoFinal()));
 			}
 			if(fixacaoReparte.getCotaFixada()!=null){
-				fixacaoReparteDTO.setCotaFixadaString(fixacaoReparte.getCotaFixada().getNumeroCota().toString());
+				fixacaoReparteDTO.setCotaFixada(fixacaoReparte.getCotaFixada().getNumeroCota());
 				fixacaoReparteDTO.setNomeCota(fixacaoReparte.getCotaFixada().getPessoa().getNome());
 			}
 			if(fixacaoReparte.getProdutoFixado()!=null){
