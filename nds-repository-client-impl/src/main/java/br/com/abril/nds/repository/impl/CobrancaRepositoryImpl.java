@@ -66,11 +66,24 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		return criteria.list();				
 	}
 	
-	public List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota) {
+	/**
+	 * Obtem cobrancas em aberto que não estejam associadas a 
+	 * operacao de encalhe em questão (caso flag seja true)
+	 * 
+	 * @param idCota
+	 * @param idControleConfEncCota
+	 * 
+	 * @return List - DebitoCreditoCotaDTO
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota, Date data) {
 		
 		StringBuffer sql = new StringBuffer();
 			
-		sql.append(" SELECT cobranca.VALOR as valor, cobranca.DT_EMISSAO as dataLancamento FROM COBRANCA cobranca ");
+		sql.append(" SELECT cobranca.VALOR as valor, cobranca.DT_EMISSAO as dataLancamento "); 
+		
+		sql.append(" FROM COBRANCA cobranca ");
 		
 		sql.append(" inner join DIVIDA d on ( 	");
 		sql.append(" 	cobranca.DIVIDA_ID = d.id 	");
@@ -96,7 +109,9 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 
 		sql.append(" cota.id = :idCota and ");
 		
-		sql.append(" d.ORIGEM_NEGOCIACAO = :origemNegociacao  ");
+		sql.append(" d.ORIGEM_NEGOCIACAO = :origemNegociacao and ");
+		
+		sql.append(" cobranca.DT_VENCIMENTO <= :data ");
 		
 		if(idControleConfEncCota != null) {
 			sql.append(" and cc.id is null ");
@@ -118,6 +133,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO.name());
 		
 		query.setParameter("origemNegociacao", false);
+		
+		query.setParameter("data", data);
 		
 		return query.list();
 		

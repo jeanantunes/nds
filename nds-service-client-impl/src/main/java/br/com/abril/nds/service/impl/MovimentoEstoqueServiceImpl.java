@@ -466,6 +466,27 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 					break;
 					
+				case PERDA:
+					
+					BigInteger qtdePerda = estoqueProduto.getQtdePerda() == null ? BigInteger.ZERO : estoqueProduto.getQtdePerda();
+					
+					novaQuantidade = isOperacaoEntrada ? qtdePerda.add(movimentoEstoque.getQtde()) :
+						 								 qtdePerda.subtract(movimentoEstoque.getQtde());
+					 
+					estoqueProduto.setQtdePerda(novaQuantidade);
+	
+					break;
+					 
+				case GANHO:
+					
+					BigInteger qtdeGanho = estoqueProduto.getQtdeGanho() == null ? BigInteger.ZERO : estoqueProduto.getQtdeGanho();
+					
+					novaQuantidade = isOperacaoEntrada ? qtdeGanho.add(movimentoEstoque.getQtde()) :
+														 qtdeGanho.subtract(movimentoEstoque.getQtde());
+					 
+					 estoqueProduto.setQtdeGanho(novaQuantidade);
+	
+					 break;
 					
 				default:
 	

@@ -1,16 +1,19 @@
 function disableEnterKey(e) {
 	
 	var key;
+	
      if(window.event)
-          key = window.event.keyCode;     //IE
+    	 
+         key = window.event.keyCode;     //IE
      else
+    	 
           key = e.which;     //firefox
      if(key == 13)
     	 
-    	 
          return false;
      else
-          return true;
+    	 
+         return true;
 }
 
 var ConferenciaEncalhe = $.extend(true, {
@@ -867,38 +870,30 @@ var ConferenciaEncalhe = $.extend(true, {
 		var cont = 1;
 		//Imprime todos os documentos recebidos
 		for(i=0;i < tiposDocumento.length;i++){
-			console.log(tiposDocumento[i]);
 			
 			var data = [{name: 'tipo_documento_impressao_encalhe', value: tiposDocumento[i]}];
-			
 			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
-					data,
-					function(resultado){
-				
-						if(resultado != "" && resultado.resultado!=""){
-							
-							var callApplet = '';
-							callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
-							callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
-							callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
-							callApplet+='</applet>';						
-							
-							$('#replaceAppletFinal'+cont).html(callApplet);
-							$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).show();		
-							
-							$('#replaceAppletFinal'+cont).html("");
-							$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).hide();		
-							cont++;
-						}
+				data,
+				function(resultado){
+			
+					if(resultado != "" && resultado.resultado!=""){
+						
+						var callApplet = '';
+						callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
+						callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
+						callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
+						callApplet+='</applet>';						
+						
+						$('#replaceAppletFinal'+cont).html(callApplet);
+						$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).show();		
+						
+						$('#replaceAppletFinal'+cont).html("");
+						$('#idImpressaoFinalizacaoApplet'+cont, ConferenciaEncalhe.workspace).hide();		
+						cont++;
 					}
+				}
 			); 			
 		}
-		
-		
-//		if(result.tipos_documento_impressao_encalhe != "SlipMatricial"){
-//			var file = contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca';
-//			$('#download-iframe', ConferenciaEncalhe.workspace).attr('src', file);		
-//		}
 	},
 	
 	carregarGridItensNotaFiscal : function (modeloConferenciaEncalhe) {
@@ -990,7 +985,7 @@ var ConferenciaEncalhe = $.extend(true, {
 
 								
 								if(conteudo.indGeraDocumentoConfEncalheCota == true) {
-									ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(conteudo.tiposDocumento);
+									ConferenciaEncalhe.gerarDocumentosConferenciaEncalhe(conteudo.tipos_documento_impressao_encalhe);
 								}
 								
 								ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
@@ -1535,14 +1530,7 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 							if(result.tipoMensagem == 'SUCCESS') {
 								
-								var data = [
-								      {name : 'numeroCota', value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
-								      {name: 'indObtemDadosFromBD', value : true},
-								      {name: 'indConferenciaContingencia', value: false}
-								];
-								
-								ConferenciaEncalhe.carregarListaConferencia(data);
-								
+						        ConferenciaEncalhe.limparDadosConferenciaEncalheCota();	
 							}
 						
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);

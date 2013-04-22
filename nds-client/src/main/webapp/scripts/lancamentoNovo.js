@@ -509,15 +509,6 @@ var lancamentoNovoController = $.extend(true, {
 		var reparteAtual = $("#reparteProduto", lancamentoNovoController.workspace).html();
 		
 		var pacotePadrao = $("#pacotePadrao", lancamentoNovoController.workspace).html();
-			
-		var tipoEstoqueSelecionado = lancamentoNovoController.tipoEstoqueSelecionado;
-		
-		if (!tipoEstoqueSelecionado) {
-			
-			tipoEstoqueSelecionado = "LANCAMENTO";
-			
-			reparteAtual = $( "#selectTipoEstoque option[enum='LANCAMENTO']").attr("valor");
-		}
 		
 		var data = [
 				 {name: "tipoDiferenca", value: tipoDiferenca},
@@ -527,7 +518,7 @@ var lancamentoNovoController = $.extend(true, {
 				 {name: "direcionadoParaEstoque", value: direcionadoParaEstoque},
 				 {name: "reparteAtual", value: reparteAtual},
 				 {name: "idDiferenca", value:lancamentoNovoController.idDiferenca},
-				 {name: "tipoEstoque", value:tipoEstoqueSelecionado},
+				 {name: "tipoEstoque", value:lancamentoNovoController.tipoEstoqueSelecionado},
 				 {name: "pacotePadrao", value:pacotePadrao}
 		 ];
 		
@@ -982,6 +973,8 @@ var lancamentoNovoController = $.extend(true, {
 		} else  {
 			
 			$( "#selectTipoEstoque").clear();
+			
+			lancamentoNovoController.tipoEstoqueSelecionado = null;
 						
 			$.each(estoques, function(index, item){
 				$( "#selectTipoEstoque").append('<option enum="'+item.nameEnum+'" valor="'+item.qtde+'">'+item.desc+'</option>');
@@ -994,6 +987,8 @@ var lancamentoNovoController = $.extend(true, {
 				height:160,
 				width:330,
 				modal: true,
+				closeOnEscape: false,
+			    open: function(event, ui) { $(".ui-dialog-titlebar-close", $(this).parent()).hide(); },
 				buttons: {
 					"Confirmar": function() {
 						
@@ -1008,13 +1003,49 @@ var lancamentoNovoController = $.extend(true, {
 						$( this ).dialog( "close" );
 					},
 					"Cancelar": function() {
-						$( this ).dialog( "close" );
+						
+						lancamentoNovoController.popupConfirmacaoEstoque();
 					}
 				},
 				form: $("#dialog-tipo-estoque", this.workspace).parents("form")
 			});
 		}
 		
+	},
+	
+	popupConfirmacaoEstoque : function() {
+		
+		if (!lancamentoNovoController.tipoEstoqueSelecionado) {
+			
+			$( "#dialog-selecionar-tipo-estoque", this.workspace).dialog({
+				resizable: false,
+				modal: true,
+				closeOnEscape: false,
+				open: function(event, ui) { $(".ui-dialog-titlebar-close", $(this).parent()).hide(); },
+				buttons: {
+					"Sim": function() {
+						
+						if (!lancamentoNovoController.tipoEstoqueSelecionado) {
+							
+							lancamentoNovoController.tipoEstoqueSelecionado = "LANCAMENTO";
+							
+							var reparteAtual = $( "#selectTipoEstoque option[enum='LANCAMENTO']").attr("valor");
+							
+							$("#reparteProduto", lancamentoNovoController.workspace).text(reparteAtual);
+						}
+						
+						$( this ).dialog( "close" );
+						
+						$("#dialog-tipo-estoque", this.workspace).dialog("close");
+					},
+					"Não": function() {
+						
+						$( this ).dialog( "close" );
+					}
+				},
+				form: $("#dialog-selecionar-tipo-estoque", this.workspace).parents("form")
+			});
+		}
 	},
 	
 	atualizarQuantidade : function() {		
