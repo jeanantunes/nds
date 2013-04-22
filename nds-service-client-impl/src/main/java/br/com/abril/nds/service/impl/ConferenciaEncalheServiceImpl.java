@@ -737,44 +737,46 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 		}
 
+		
+		//DÉBIDO OU CRÉDITO DO CONSOLIDADO
 		DebitoCreditoCotaDTO cobranca = obterOutroDebitoCreditoDeConsolidados(cota.getId(), dataOperacao);
 		
 		if(cobranca!=null) {
 
 			listaDebitoCreditoCompleta.add(cobranca);
-			
 		}
 				
 		
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
 	}
 	
+	/**
+	 * Obtém débito ou crédito do consolidado da cota
+	 * @param idCota
+	 * @param dataOperacao
+	 * @return DebitoCreditoCotaDTO
+	 */
 	private DebitoCreditoCotaDTO obterOutroDebitoCreditoDeConsolidados(Long idCota, Date dataOperacao) {
 
-		ConsolidadoFinanceiroCota consolidado = 
-				this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
+		ConsolidadoFinanceiroCota consolidado = this.obterConsolidadoCota(idCota, dataOperacao);
 		
-		
-		BigDecimal outrosValores = BigDecimal.ZERO;
-		
-		
-		if (consolidado != null){
-			BigDecimal valorConsolidEncalhe = consolidado.getEncalhe() != null ? consolidado.getEncalhe().abs() : BigDecimal.ZERO;
-			BigDecimal valorConsolidReparte = consolidado.getConsignado() != null ? consolidado.getConsignado().abs() : BigDecimal.ZERO;
-			outrosValores = consolidado.getTotal().abs().subtract(valorConsolidReparte.subtract(valorConsolidEncalhe));
+		if (consolidado==null){
+			
+			return null;
 		}
+		
+		BigDecimal outrosValores = this.obterValorOutroDebitoCreditoDeConsolidados(consolidado);
 		
 		DebitoCreditoCotaDTO cobranca = new DebitoCreditoCotaDTO();
 		
 		cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
 		cobranca.setObservacoes("Outros valores");
 		cobranca.setDataVencimento(consolidado.getDataConsolidado());
+		cobranca.setDataLancamento(DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
 		cobranca.setValor(outrosValores);
 		
 		return cobranca;
-		
  	}
-
 	
 	/**
 	 * Obtem Consolidado da Cota na Data
@@ -792,7 +794,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	/**
 	 * Obtem Valor do Consolidado da Cota na Data
 	 * @param consolidado
-	 * @return
+	 * @return BigDecimal
 	 */
 	private BigDecimal obterValorOutroDebitoCreditoDeConsolidados(ConsolidadoFinanceiroCota consolidado){
 		
@@ -806,7 +808,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 
 		return outrosValores;	
-	
 	}
 	
 	/*
@@ -860,7 +861,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 		return conferenciaEncalheDTO;
-		
 	}
 
 	/**
