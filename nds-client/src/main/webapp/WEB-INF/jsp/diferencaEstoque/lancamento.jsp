@@ -1,5 +1,4 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
-<input id="permissaoBotaoConfirmacao" type="hidden" value="${permissaoBotaoConfirmacao}">
 
 <head>
 
