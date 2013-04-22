@@ -737,32 +737,32 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 		}
 
+		
+		//DÉBIDO OU CRÉDITO DO CONSOLIDADO
 		DebitoCreditoCotaDTO cobranca = obterOutroDebitoCreditoDeConsolidados(cota.getId(), dataOperacao);
 		
 		if(cobranca!=null) {
 
 			listaDebitoCreditoCompleta.add(cobranca);
-			
 		}
 				
 		
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
 	}
 	
+	/**
+	 * Obtém débito ou crédito do consolidado da cota
+	 * @param idCota
+	 * @param dataOperacao
+	 * @return DebitoCreditoCotaDTO
+	 */
 	private DebitoCreditoCotaDTO obterOutroDebitoCreditoDeConsolidados(Long idCota, Date dataOperacao) {
 
-		ConsolidadoFinanceiroCota consolidado = 
-				this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
+		ConsolidadoFinanceiroCota consolidado = this.obterConsolidadoCota(idCota, dataOperacao);
 		
-		BigDecimal outrosValores = BigDecimal.ZERO;
-		
-		DebitoCreditoCotaDTO cobranca = null;
-		
-		if (consolidado != null){
+		if (consolidado==null){
 			
-			BigDecimal valorConsolidEncalhe = consolidado.getEncalhe() != null ? consolidado.getEncalhe().abs() : BigDecimal.ZERO;
-			BigDecimal valorConsolidReparte = consolidado.getConsignado() != null ? consolidado.getConsignado().abs() : BigDecimal.ZERO;
-			outrosValores = consolidado.getTotal().abs().subtract(valorConsolidReparte.subtract(valorConsolidEncalhe));
+			return null;
 
 			if(outrosValores != null && BigDecimal.ZERO.compareTo(outrosValores) != 0) {
 
@@ -778,10 +778,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		}
 		
-		return cobranca;
+		BigDecimal outrosValores = this.obterValorOutroDebitoCreditoDeConsolidados(consolidado);
 		
+		DebitoCreditoCotaDTO cobranca = new DebitoCreditoCotaDTO();
+		
+		cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
+		cobranca.setObservacoes("Outros valores");
+		cobranca.setDataVencimento(consolidado.getDataConsolidado());
+		cobranca.setDataLancamento(DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
+		cobranca.setValor(outrosValores);
+		
+		return cobranca;
  	}
-
 	
 	/**
 	 * Obtem Consolidado da Cota na Data
@@ -799,7 +807,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	/**
 	 * Obtem Valor do Consolidado da Cota na Data
 	 * @param consolidado
-	 * @return
+	 * @return BigDecimal
 	 */
 	private BigDecimal obterValorOutroDebitoCreditoDeConsolidados(ConsolidadoFinanceiroCota consolidado){
 		
@@ -813,7 +821,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 
 		return outrosValores;	
-	
 	}
 	
 	/*
@@ -867,7 +874,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 		return conferenciaEncalheDTO;
-		
 	}
 
 	/**
@@ -1090,8 +1096,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 	}
-	
-	
 	
 	@Transactional(readOnly = true)
 	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
@@ -3046,15 +3050,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         ConsolidadoFinanceiroCota consolidado = this.obterConsolidadoCota(idCota, dataOperacao);
 		
 		BigDecimal outrosValoresConsolidados = this.obterValorOutroDebitoCreditoDeConsolidados(consolidado);
-		
-        if(BigDecimal.ZERO.compareTo(outrosValoresConsolidados)>0) {
-			
-			valorTotalPagar = valorTotalPagar.add(outrosValoresConsolidados.abs());
-			
-		} else {
-			
-			valorTotalPagar = valorTotalPagar.subtract(outrosValoresConsolidados.abs());
-		}
+	
+		valorTotalPagar = outrosValoresConsolidados.compareTo(BigDecimal.ZERO) >0?valorTotalPagar.add(outrosValoresConsolidados.abs()):valorTotalPagar.subtract(outrosValoresConsolidados.abs());
 		
 		
 		slipDTO.setNumeroCota(numeroCota);
