@@ -311,6 +311,13 @@ public class ParametroCobrancaCotaController extends BaseController {
                 .serialize();
     }
 
+    @Post
+    public void obterQtdFormaCobrancaCota(Long id){
+    	int qtdFormaCobranca = this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(id);
+    	
+    	result.use(Results.json()).withoutRoot().from(qtdFormaCobranca).serialize();
+    }
+    
 	/**
      * Retorna formas de cobrança da cota para preencher a grid da view
      * @param idCota
@@ -371,8 +378,11 @@ public class ParametroCobrancaCotaController extends BaseController {
 	@Post
 	@Path("/postarParametroCobranca")
 	public void postarParametroCobranca(ParametroCobrancaCotaDTO parametroCobranca){	
-	    // A cota sempre terá  uma forma de cobrança a forma de cobrança principal do Distribuidor
-		inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
+	    
+		if (this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0) {
+			// A cota sempre terá  uma forma de cobrança a forma de cobrança principal do Distribuidor
+			inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
+		}
 		
 		if(parametroCobranca.getTipoCota()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");

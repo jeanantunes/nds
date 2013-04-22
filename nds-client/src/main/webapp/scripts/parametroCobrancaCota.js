@@ -437,7 +437,7 @@ var parametroCobrancaCotaController = $.extend(true, {
         parametroCobrancaCotaController.carregarFornecedoresPadrao(resultado.idFornecedor);
 	},
 
-	postarParametroCobranca : function() {
+	buildParametroCobrancaDto : function(){
 		// hidden
 		var idParametroCobranca = $("#_idParametroCobranca", this.workspace).val();
 		var idCota = $("#_idCota", this.workspace).val();
@@ -479,18 +479,63 @@ var parametroCobrancaCotaController = $.extend(true, {
 				"parametroCobranca.idFornecedor":fornecedorPadrao,
 				"parametroCobranca.unificaCobranca":unificaCobranca};
 		
+		return params;
+	},
+	
+	postarParametroCobranca : function() {
+		
+		var params = parametroCobrancaCotaController.buildParametroCobrancaDto();
+		
 		$.postJSON(
-			   contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
-			   params,
-			   function(){
-		           return true;
-			   },
-			   function(){
-		           return false;
-			   },
-			   true
+				   contextPath + "/cota/parametroCobrancaCota/obterQtdFormaCobrancaCota",
+				   {"id" : params["parametroCobranca.idCota"]},
+				   function(response){
+					   if (response == 0) {
+						   
+						   $("#dialog-confirm-formaCobrancaDistribuidor").dialog({
+								resizable : false,
+								height:170,
+								width:490,
+								modal : true,
+								buttons : {
+									"Confirmar" : function() {
+										$(this).dialog("close");
+										$.postJSON(
+											   contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
+											   params,
+											   function(){
+												   parametroCobrancaCotaController.mostrarGrid(params["parametroCobranca.idCota"]);
+										           return true;
+											   },
+											   function(){
+										           return false;
+											   },
+											   true
+										);	
+									},
+									"Cancelar" : function() {
+										$(this).dialog("close");
+									}
+								}
+							});
+						   
+					   }
+					   else {
+						   $.postJSON(
+								   contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
+								   params,
+								   function(){
+									   parametroCobrancaCotaController.mostrarGrid(params["parametroCobranca.idCota"]);
+							           return true;
+								   },
+								   function(){
+							           return false;
+								   },
+								   true
+							);	
+					   }
+				   }
 		);
-
 	},
 	calcularDataTermino : function() {
 		if(parametroCobrancaCotaController.isModoTelaCadastroCota()) {
