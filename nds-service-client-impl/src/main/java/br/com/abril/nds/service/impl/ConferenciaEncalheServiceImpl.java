@@ -859,7 +859,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		conferenciaEncalheDTO.setNomeEditor(produtoEdicao.getProduto().getFornecedor().getJuridica().getNome());
 		
 		
-		
 		return conferenciaEncalheDTO;
 		
 	}
