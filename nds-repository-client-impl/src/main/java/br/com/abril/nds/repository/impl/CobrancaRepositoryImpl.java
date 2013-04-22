@@ -375,7 +375,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			.append(" inner join cobranca.cota cota ")
 			.append(" where cota.numeroCota		  =	 :numeroCota ")
 			.append(" and cobranca.statusCobranca =  :status ")
-			.append(" and cobranca.dataEmissao < distribuidor.dataOperacao ")
+			.append(" and cobranca.dataVencimento > distribuidor.dataOperacao ")
 			.append(" and (cobranca.divida.origemNegociacao = :origemNegociacao ")
 			.append(" 	or cobranca.divida.origemNegociacao is null) ");
 
