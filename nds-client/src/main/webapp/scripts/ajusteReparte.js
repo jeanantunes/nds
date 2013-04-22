@@ -284,9 +284,10 @@ init : function() {
 		  if(ajusteReparteController.getRadioEditar() == "AJUSTE_SEGMENTO"){
 			  this.isAjusteSegmento = true;
 		  }else{
-			  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicadoEditar()});
 			  this.isAjusteSegmento = false;
 		  }
+		  
+		  
 		  
 		  return data;
 		 },
@@ -338,6 +339,15 @@ init : function() {
 	
 	getAjusteAplicadoEditar : function (){
 		var valElemento = $("#"+ajusteReparteController.getRadioEditar()+"_editar_input").val();
+		
+//		if((valElemento == 0) || (valElemento == "")){
+//			var erros = new Array();
+//	           erros[0] = "Insira um índice para ajuste";
+//	           exibirMensagemDialog('WARNING',   erros,"");
+//	           
+//	           return;
+//		}
+		
 		return valElemento;
 	},
 	
@@ -415,6 +425,8 @@ init : function() {
 			buttons: {
 				"Confirmar": function() {
 					var data = ajusteReparteController.getDadosEditar();
+					
+					
 					data.push({name: 'id', value:idAjusteReparte});
 
 					if (ajusteReparteController.isAjusteSegmento == true){
@@ -444,7 +456,15 @@ init : function() {
 								   true
 						);
 						$( this ).dialog( "close" );
+					
 					}else{
+						
+						var ajusteAplicado = ajusteReparteController.getAjusteAplicadoEditar(); 
+						
+						if (ajusteAplicado){
+							
+						data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteAplicado });
+						
 						$.postJSON(contextPath + "/distribuicao/ajusteReparte/alterarAjuste", 
 								data,
 								function(result) {
@@ -467,6 +487,13 @@ init : function() {
 							   true
 						);
 						$( this ).dialog( "close" );
+						
+						}else{
+						   var erros = new Array();
+				           erros[0] = "Insira um índice para ajuste";
+				           exibirMensagemDialog('WARNING',   erros,"");
+				           return;
+						}
 					}
 				},
 				"Cancelar": function() {
@@ -1021,8 +1048,8 @@ init : function() {
 			
 			$("#AJUSTE_VENDA_MEDIA_input").mask("99");
 			$("#AJUSTE_VENDA_MEDIA_input").val("01");
-			$("#AJUSTE_VENDA_MEDIA_editar_input").mask("9");
-			$("#AJUSTE_VENDA_MEDIA_editar_input").val("1.0");
+			$("#AJUSTE_VENDA_MEDIA_editar_input").mask("99");
+			$("#AJUSTE_VENDA_MEDIA_editar_input").val("01");
 			
 			
 			$("#segmento1").mask("9.9");

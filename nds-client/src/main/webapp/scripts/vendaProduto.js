@@ -14,19 +14,19 @@ var vendaProdutoController = $.extend(true, {
 		
 		$('#codigo', workSpace).bind({
 			keyup: function(){
-				autoComp.autoCompletarPorCodigo ("/produto/autoCompletarPorCodProduto",'#codigo', '#produto', false, 4);
+				autoComp.autoCompletarPorCodigo ("/produto/autoCompletarPorCodProduto",'#codigo', '#produto', 'codigoProduto', false, 4);
 			},
 			blur: function(){
-				autoComp.pesquisarPorCodigo ("/produto/pesquisarPorCodigoProduto",'#codigo', '#produto');
+				autoComp.pesquisarPorCodigo ("/produto/pesquisarPorCodigoProduto",'#codigo', '#produto', 'codigoProduto');
 			}
 		});
 		
 		$('#produto', workSpace).bind({
 			keyup: function(){
-				autoComp.autoCompletarPorNome("/produto/autoCompletarPorNomeProduto",'#codigo', '#produto', false, 2);
+				autoComp.autoCompletarPorNome("/produto/autoCompletarPorNomeProduto",'#codigo', '#produto', 'nomeProduto', false, 2);
 			},
 			blur: function(){
-				autoComp.pesquisarPorNome("/produto/pesquisarPorNomeProduto",'#codigo', '#produto');
+				autoComp.pesquisarPorNome("/produto/pesquisarPorNomeProduto",'#codigo', '#produto', 'nomeProduto');
 			}
 		});
 		

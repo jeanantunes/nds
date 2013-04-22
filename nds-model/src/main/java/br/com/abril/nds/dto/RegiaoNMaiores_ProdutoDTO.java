@@ -12,6 +12,7 @@ public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable
 	private static final long serialVersionUID = -8665752560777384228L;
 	
 	private String codProduto;
+	private String nomeProduto;
 	private Long numeroEdicao;
 	private String dataLcto;
 	private TipoLancamento status;
@@ -53,5 +54,11 @@ public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable
 	}
 	public void setClassificacao(Long classificacao) {
 		this.classificacao = classificacao;
+	}
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
 	}
 }
