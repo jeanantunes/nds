@@ -17,7 +17,7 @@ public class EstudoTransient extends Estudo {
 	private BigInteger reparteDistribuirInicial;
 	private ProdutoEdicaoEstudo produtoEdicaoEstudo;
 	private LinkedList<ProdutoEdicaoEstudo> edicoesBase;
-	private List<CotaEstudo> cotas; //Cotas que receberam as edições base.
+	private LinkedList<CotaEstudo> cotas; //Cotas que receberam as edições base.
 	private BigInteger reparteMinimo;
 	private BigDecimal somatoriaVendaMedia;
 	private BigDecimal somatoriaReparteEdicoesAbertas;
@@ -59,10 +59,10 @@ public class EstudoTransient extends Estudo {
 	public void setEdicoesBase(LinkedList<ProdutoEdicaoEstudo> edicoesBase) {
 		this.edicoesBase = edicoesBase;
 	}
-	public List<CotaEstudo> getCotas() {
+	public LinkedList<CotaEstudo> getCotas() {
 		return cotas;
 	}
-	public void setCotas(List<CotaEstudo> cotas) {
+	public void setCotas(LinkedList<CotaEstudo> cotas) {
 		this.cotas = cotas;
 	}
 	public BigInteger getReparteMinimo() {

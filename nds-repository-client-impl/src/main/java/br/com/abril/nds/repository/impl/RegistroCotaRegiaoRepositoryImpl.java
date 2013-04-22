@@ -159,7 +159,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				hql.append(" produto.nome AS nomeProduto, ");
 				hql.append(" produto.tipoClassificacaoProduto.descricao AS descricaoClassificacao, ");
 				hql.append(" lancam.dataLancamentoPrevista AS dataLcto, ");
-				hql.append(" lancam.tipoLancamento AS status ");
+				hql.append(" lancam.status AS status ");
 				
 				hql.append(" FROM Lancamento AS lancam ");
 				
@@ -170,7 +170,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				hql.append(" AND produto.nome = :NOME_PRODUTO ");
 				hql.append(this.getSqlWhereBuscarProdutos(filtro));
 				
-				hql.append(" ORDER BY numeroEdicao ");
+				hql.append(" ORDER BY numeroEdicao desc ");
 				
 				Query query = super.getSession().createQuery(hql.toString());
 				

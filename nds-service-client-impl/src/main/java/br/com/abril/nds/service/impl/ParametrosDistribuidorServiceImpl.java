@@ -904,7 +904,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			percentualExcedente.setVenda(percentualExcedenteVO.getVenda());
 			percentualExcedente.setPdv(percentualExcedenteVO.getPdv());
 			
-			percentualExcedenteRepository.merge(percentualExcedente);
+//			percentualExcedenteRepository.merge(percentualExcedente);
 			
 			listPercentualExcedente.add(percentualExcedente);
 		}
@@ -933,8 +933,6 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			classificacaoCota.setCodigoClassificacaoCota(classificacaoCotaVO.getCodigoClassificacaoCota());
 			classificacaoCota.setValorDe(classificacaoCotaVO.getValorDe());
 			classificacaoCota.setValorAte(classificacaoCotaVO.getValorAte());
-			
-			classificacaoCotaRepository.merge(classificacaoCota);
 			
 			listClassificacaoCota.add(classificacaoCota);
 		}

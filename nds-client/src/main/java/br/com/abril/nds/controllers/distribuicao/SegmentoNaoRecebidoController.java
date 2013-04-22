@@ -2,6 +2,8 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -46,10 +48,9 @@ import br.com.caelum.vraptor.view.Results;
 public class SegmentoNaoRecebidoController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroSegmentoNaoRecebido";
-	
 	private static final String COTAS_NAO_RECEBEM_SEGMENTO = "cotas_nao_recebem_segmento";
-	
 	private static final String SEGMENTOS_NAO_RECEBEM_COTA = "segmentos_nao_recebem_cota";
+	private static final String PESQUISAR_COTAS_NAO_ESTAO_NO_SEGMENTO = "pesquisar_cotas_nao_estao_no_segmento";
 	
 	@Autowired
 	private Result result;
@@ -77,6 +78,8 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		// POPULANDO FILTROS
 		List<TipoSegmentoProduto> listaTipoSegmentoProduto = tipoSegmentoProdutoService.obterTipoSegmentoProduto();
 		this.carregarComboSegmento(listaTipoSegmentoProduto, "listaTipoSegmentoProduto");
+		
+		session.removeAttribute(PESQUISAR_COTAS_NAO_ESTAO_NO_SEGMENTO);
 	}
 	
 	@Get
@@ -168,8 +171,15 @@ public class SegmentoNaoRecebidoController extends BaseController {
 				"result").recursive().serialize();
 	}
 	
+	@Get("/limparPesquisarCotasNaoEstaoNoSegmento")
+	public void limparPesquisarCotasNaoEstaoNoSegmento() {
+		session.removeAttribute(PESQUISAR_COTAS_NAO_ESTAO_NO_SEGMENTO);
+		result.nothing();
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Post("/pesquisarCotasNaoEstaoNoSegmento")
-	public void pesquisarCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro, String sortorder, int page, int rp, boolean isReload){
+	public void pesquisarCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro, String sortorder, int page, int rp, boolean isReload) {
 		
 	    if (!isReload || filtro.getNomeCota() != null || filtro.getNumeroCota() != null || filtro.getTipoSegmentoProdutoId() != null) {
 		this.validarEntradaFiltroSegmento(filtro);
@@ -179,7 +189,25 @@ public class SegmentoNaoRecebidoController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
 		
-		List<CotaDTO> listaCotaDTO = segmentoNaoRecebidoService.obterCotasNaoEstaoNoSegmento(filtro);
+		List<CotaDTO> listaCotaDTO = new ArrayList<>();
+		listaCotaDTO.addAll(segmentoNaoRecebidoService.obterCotasNaoEstaoNoSegmento(filtro));
+		
+		if (filtro.getNumeroCota() != null) {
+			List<CotaDTO> sessionListaCotaDTO = (List<CotaDTO>) session.getAttribute(PESQUISAR_COTAS_NAO_ESTAO_NO_SEGMENTO);
+			if (sessionListaCotaDTO != null) {
+				listaCotaDTO.addAll(sessionListaCotaDTO);
+			}
+			session.setAttribute(PESQUISAR_COTAS_NAO_ESTAO_NO_SEGMENTO, listaCotaDTO);
+		} else {
+			session.removeAttribute(PESQUISAR_COTAS_NAO_ESTAO_NO_SEGMENTO);
+		}
+		
+		Collections.sort(listaCotaDTO, new Comparator<CotaDTO>() {
+			@Override
+			public int compare(CotaDTO o1, CotaDTO o2) {
+				return o1.getNumeroCota().compareTo(o2.getNumeroCota());
+			}
+		});
 		
 		if (!isReload) {
 			if (listaCotaDTO == null || listaCotaDTO.isEmpty()) {

@@ -44,9 +44,9 @@ function removeProdutoEscohido(idx){
 	display: none;
 }
 
-#row5 {
+/* #row5 {
 	display: none;
-}
+} */
 </style>
 </head>
 

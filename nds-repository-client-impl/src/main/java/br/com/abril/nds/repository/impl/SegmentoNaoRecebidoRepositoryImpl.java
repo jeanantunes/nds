@@ -100,8 +100,13 @@ public class SegmentoNaoRecebidoRepositoryImpl extends AbstractRepositoryModel<S
 	hql.append(" inner join segmentoNaoRecebido.tipoSegmentoProduto as tipoSegmentoProduto ");
 	hql.append(" inner join segmentoNaoRecebido.usuario as usuario ");
 
-	// WHERE
-	hql.append(" WHERE ");
+	// WHERE (validação para não carregar ninguém quando não houver valores no filtro)
+	if ((filtro.getNumeroCota() != null && !filtro.getNumeroCota().equals(0)) ||
+		(filtro.getNomeCota() != null && !filtro.getNomeCota().isEmpty())) {
+	    hql.append(" WHERE ");
+	} else {
+	    hql.append(" WHERE 1 = 0 ");
+	}
 
 	if (filtro.getNumeroCota() != null && !filtro.getNumeroCota().equals(0)) {
 	    hql.append(" cota.numeroCota = :numeroCota ");

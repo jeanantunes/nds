@@ -6,7 +6,7 @@
 <body>
 
 
-<div class="areaBts">
+<div id="contasAPagar_areaBts" >
     <div class="area">
 
 		<span class="bt_arq">
@@ -41,7 +41,7 @@
 	            	
 	            	<!-- Exibe check group com lista de distribuidores -->  
 	            	
-	            	<div class="filtroFornecedor" style="display:none;"><a href="#" id="selFornecedor">Clique e Selecione o Fornecedor</a>
+	            	<div id="contasAPagar_filtroFornecedor" style="display:none;"><a href="#" id="selFornecedor">Clique e Selecione o Fornecedor</a>
 	              		<div class="menu_fornecedor" style="display:none;">
 	                	 	<span class="bt_sellAll">
 	                	 		<input type="checkbox" id="contasAPagarCheckSelecionarTodos" name="Todos1" onclick="contasAPagarController.checkAll(this);" style="float:left;"/><label for="sel">Selecionar Todos</label>
@@ -59,7 +59,7 @@
 	            	
 	            	<!-- Exibe popup para consulta de produtos -->  
 	            	    
-		            <div class="filtroProduto" style="display:none;">                       
+		            <div id="contasAPagar_filtroProduto" style="display:none;">                       
 		            	<a href="javascript:;" onclick="contasAPagarController.popup_pesq_produto();">Clique e Selecione o Produto</a>              
 		            </div>
 		            
@@ -85,8 +85,8 @@
 <fieldset class="classFieldset">
 	<legend>Contas a Pagar </legend>
 
-		<div class="gridDistrib" style="display:none;">
-          <div class="distrFornecedor">
+		<div id="contasAPagar_gridDistrib" class="gridDistrib" style="display:none;">
+          <div id="contasAPagar_distrFornecedor">
        	  	<table class="porDistrFornecedorGrid"></table>
             <table width="950" border="0" cellspacing="1" cellpadding="1">
 				<tr>
@@ -98,11 +98,11 @@
           </div>
  
 		</div>
-        <div class="gridProduto" style="display:none;">
-			<div class="porProdutos">
+        <div id="contasAPagar_gridProduto" style="display:none;">
+			<div id="contasAPagar_porProdutos">
 			
 				<!-- tabela que renderiza o flexgrid contendo os resultados da busca contas a pagar  -->
-	       		<table class="porProdutosGrid"></table>
+	       		<table id="contasAPagar_porProdutosGrid"></table>
 	            <table width="950" border="0" cellspacing="1" cellpadding="1">
 					<tr>
 	                	<td width="241">

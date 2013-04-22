@@ -1,4 +1,5 @@
 <head>
+	<script type="text/javascript" src="scripts/autoCompleteController.js" ></script>
 	<script type="text/javascript" src="scripts/excecaoSegmentoParciais.js" ></script>
 	<script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
@@ -104,7 +105,7 @@ function incluirSegmento() {
             <td width="49">Produto</td>
             <td width="781">
             <form id="filtroPrincipalCota">
-	            <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
+	            <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" id="excecaoSegmentoParciais_filtroPorCota" style="display:none;">
 		            <tr>
 		           	  <td width="30">Cota:</td>
 		                <td width="88">
@@ -119,7 +120,7 @@ function incluirSegmento() {
 	            </table>
             </form>
             <form id="filtroPrincipalProduto">
-          <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
+          <table width="771" border="0" cellpadding="2" cellspacing="1" id="excecaoSegmentoParciais_filtroPorProduto" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="42">Código:</td>
             <td width="65"><input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProdutoPrincipal" style="width:60px; float:left; margin-right:5px;"/></td>
@@ -143,8 +144,8 @@ function incluirSegmento() {
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display:block;">
       
-      <div class="porExcessao" style="display:none;">
-      <fieldset class="classFieldset" style="float:left; width:600px!important; margin-right:10px!important;">
+      <div class="porExcessao" id="excecaoSegmentoParciais_porExcessao" style="display:none;">
+      <fieldset class="classFieldset" style="float:left; width:585px!important; margin-right:10px!important;">
        	  <legend>Cotas que Recebem a Publicação</legend>
         
         	<table class="excessaoNaoRecebidaGrid"></table>
@@ -153,7 +154,7 @@ function incluirSegmento() {
 	<span class="bt_novos" title="Imprimir"><a id="gerarPDFPorExcecao"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
         
       </fieldset>
-       <fieldset class="classFieldset" style="float:left; width:333px!important;">
+       <fieldset class="classFieldset" style="float:left; width:330px!important;">
        	  <legend>Cotas que Não Recebem o Segmento</legend>
        	  <table width="276" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
@@ -164,6 +165,9 @@ function incluirSegmento() {
               <td width="121">
               	<input type="text" id="cotasQueNaoRecebemNomeCota" style="width:160px;"/>
               </td>
+              <td width="19">
+              	<span class="classPesquisar"><a href="javascript:;" id="pesquisarCotaQueNaoRecebem">&nbsp;</a></span>
+              </td>
    	      </table>
        	  <br />
         	<table class="excessaoGrid"></table>
@@ -173,18 +177,18 @@ function incluirSegmento() {
       </div>
       
       
-      <div class="porCota" style="display:none;">
-      <fieldset class="classFieldset" style="float:left; width:600px!important; margin-right:10px!important;">
+      <div class="porCota" id="excecaoSegmentoParciais_porCota" style="display:none;">
+      <fieldset class="classFieldset" style="float:left; width:510px!important; margin-right:10px!important;">
        	  <legend>Produtos Parciais Recebidos</legend>
         
-        	<table class="excessaoCotaGrid"></table>
+        	<table class="excessaoCotaGrid" ></table>
              <span class="bt_novos" title="Gerar Arquivo"><a id="gerarXLSPorCota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 
 	<span class="bt_novos" title="Imprimir"><a id="gerarPDFPorCota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
         
       </fieldset>
       
-      <fieldset class="classFieldset" style="float:left; width:333px!important;">
+      <fieldset class="classFieldset" style="float:left; width:430px!important;">
        	  <legend>Produtos Parciais Não Recebidos</legend>
        	  <table width="312" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
@@ -198,6 +202,9 @@ function incluirSegmento() {
               </td>
               <td width="132">
               	<input type="text" id="nomeProduto" name="filtro.produtoDto.nomeProduto" style="width:120px;"/>
+              </td>
+              <td width="19">
+              	<span class="classPesquisar"><a href="javascript:;" id="pesquisarProdutosParciaisNaoRecebidos">&nbsp;</a></span>
               </td>
    	      </table>
        	  <br />

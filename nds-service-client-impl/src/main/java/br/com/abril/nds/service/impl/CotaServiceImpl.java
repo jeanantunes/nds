@@ -21,6 +21,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,8 +90,6 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.CaracteristicasPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.cadastro.pdv.SegmentacaoPDV;
-import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -938,6 +937,7 @@ public class CotaServiceImpl implements CotaService {
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
 		dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
+		dto.setRecebeComplementar(parametro.getRecebeComplementar());
 		dto.setNeImpresso(parametro.getNotaEnvioImpresso());
 		dto.setNeEmail(parametro.getNotaEnvioEmail());
 		dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
@@ -1055,6 +1055,10 @@ public class CotaServiceImpl implements CotaService {
 		cotaDTO.setEmiteNFE((cota.getParametrosCotaNotaFiscalEletronica()!= null)
 				?cota.getParametrosCotaNotaFiscalEletronica().getEmiteNotaFiscalEletronica():false);
 		cotaDTO.setStatus(cota.getSituacaoCadastro());
+		if (cota.getTipoDistribuicaoCota() != null) {
+		    cotaDTO.setTipoCota(cota.getTipoDistribuicaoCota().getDescTipoDistribuicaoCota().substring(0, 1));
+		    cotaDTO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota());
+		}
 		
 		this.atribuirDadosPessoaCota(cotaDTO, cota.getPessoa());
 		this.atribuirDadosBaseReferencia(cotaDTO, cota.getBaseReferenciaCota());
@@ -1238,6 +1242,12 @@ public class CotaServiceImpl implements CotaService {
 	    cota.setClassificacaoEspectativaFaturamento(cotaDto.getClassificacaoSelecionada());
 	    
 	    cota.setPessoa(persistePessoaCota(cota, cotaDto));
+	    
+	    if (!StringUtils.isEmpty(cotaDto.getTipoCota())) {
+	    	
+	    	cota.setTipoDistribuicaoCota(cotaDto.getTipoCota().equals("A")?TipoDistribuicaoCota.ALTERNATIVO:
+	    		(cotaDto.getTipoCota().equals("C")?TipoDistribuicaoCota.CONVENCIONAL:null));
+	    }
 	    
 	    cota  = cotaRepository.merge(cota);
 	    
@@ -2562,6 +2572,22 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	public List<CotaDTO> obterPorNomeAutoComplete(String nome) {
 	    return cotaRepository.obterCotasPorNomeAutoComplete(nome);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota) {
+		
+		return cotaRepository.obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
+	}
+	
+	
+	@Override
+	public boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota) {
+		
+		TipoDistribuicaoCota tpDistribuicaoCota = obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
+		
+		return (tpDistribuicaoCota != null && tpDistribuicaoCota.equals(tipoDistribuicaoCota));
 	}
 }
 

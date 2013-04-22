@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import br.com.abril.nds.dto.filtro.FiltroDTO;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.DateUtil;
 
 public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable {
@@ -15,7 +15,7 @@ public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable
 	private String nomeProduto;
 	private Long numeroEdicao;
 	private String dataLcto;
-	private TipoLancamento status;
+	private StatusLancamento status;
 	private Long classificacao;
 	private String descricaoClassificacao;
 
@@ -37,10 +37,10 @@ public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable
 	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
-	public TipoLancamento getStatus() {
+	public StatusLancamento getStatus() {
 		return status;
 	}
-	public void setStatus(TipoLancamento status) {
+	public void setStatus(StatusLancamento status) {
 		this.status = status;
 	}
 	public String getDataLcto() {

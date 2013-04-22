@@ -8,8 +8,22 @@
 			segmentoNaoRecebidoController.init();
 		});
 	</script>
+	<style type="text/css">
+		#dialog-excluir-cota, #dialog-novo-cota {
+			display:none;
+		}
+	</style>
 </head>
 <body>
+
+<div id="dialog-excluir-cota" title="Excluir Cota">
+	<p>Confirma a exclusão desta Cota?</p>
+</div>
+
+
+<div id="dialog-novo-cota" title="Incluir Cota">
+	<p>Confirma esta inclusão?</p>
+</div>
 
 <div id="dialog-excluir" title="Excluir Segmento Não Recebida">
 	<p>Confirma a exclusão deste Segmento?</p>
@@ -43,7 +57,7 @@
             <td width="20"><input type="radio" name="filtrar" id="radio2" value="radio" onclick="segmentoNaoRecebidoController.filtroPorCota();" /></td>
             <td width="35">Cota</td>
             <td width="772">
-            	<table width="756" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorSegmento" style="display:none;">
+            	<table width="756" border="0" cellpadding="2" cellspacing="1" id="segmentoNaoRecebido_filtroPorSegmento" class="filtro filtroPorSegmento" style="display:none;">
           			<tr>
 			            <td width="64">Segmento:</td>
 			            <td width="214">
@@ -75,7 +89,7 @@
         
         
         
-        <table width="756" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
+        <table width="756" border="0" cellpadding="2" cellspacing="1" id="segmentoNaoRecebido_filtroPorCota" class="filtro filtroPorCota" style="display:none;">
             <tr>
            	  <td width="31">Cota:</td>
                 <td width="90">
@@ -99,7 +113,7 @@
       <div class="linha_separa_fields">&nbsp;</div>
       <div class="grids" style="display:noneA;">
       
-      <div class="porSegmento" style="display:none;">
+      <div class="porSegmento" id="segmentoNaoRecebido_porSegmento" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
        	  <legend>Cotas que Não Recebem Segmento</legend>
         
@@ -139,11 +153,12 @@
              
       <!-- Confirmar a inclusão das cotas no segmento não recebido -->
       <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirCotaSegmentoNaoRecebido()"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+      <span class="bt_novos" title="Limpar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.limparListaCotas()">Limpar</a></span>
         
       </fieldset>
       </div>
       
-      <div class="porCota" style="display:none;">
+      <div class="porCota" id="segmentoNaoRecebido_porCota" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">
        	  <legend>Segmentos que Não Recebem Cota</legend>
         
@@ -162,17 +177,13 @@
            	  <td width="60">Segmento:</td>
               <td width="210">
               	<input name="lstSegmento" type="text" onkeyup="segmentoNaoRecebidoController.autoCompletarSegmentoPorNome('#lstSegmento')"  
-              	onblur="segmentoNaoRecebidoController.porSegmento();" style="width:200px;" id="lstSegmento"/>
+              	 style="width:200px;" id="lstSegmento"/>
               </td>
             </tr>
           </table>
           <br />
 
        	<table class="segmentosBGrid"></table>
-            <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=XLS&tipoExportacao=''"><img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-
-		<span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/segmentoNaoRecebido/exportar?fileType=PDF&tipoExportacao=''"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-
       <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirSegmento()"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
         
       </fieldset>
@@ -180,8 +191,6 @@
       </div>
       <div class="linha_separa_fields">&nbsp;</div>
        
-
-        
 
     
     </div>
