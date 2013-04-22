@@ -139,6 +139,15 @@ public class AnaliseParcialRepositoryImpl extends
 		where += " and estudo_cota.ESTUDO_ID = ? ";
 		params.add(queryDTO.getEstudoId());
 
+		if (queryDTO.getFaixaDe() != null) {
+		    where += " and estudo_cota.reparte >= ? ";
+		    params.add(queryDTO.getFaixaDe());
+		}
+		if (queryDTO.getFaixaAte() != null) {
+		    where += " and estudo_cota.reparte <= ? ";
+		    params.add(queryDTO.getFaixaAte());
+		}
+
 		sql += " where 1=1 " + where;
 
 		if (queryDTO.possuiOrderBy()) {

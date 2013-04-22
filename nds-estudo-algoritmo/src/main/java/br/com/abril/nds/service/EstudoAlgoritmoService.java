@@ -201,7 +201,7 @@ public class EstudoAlgoritmoService {
 		return gerarEstudoAutomatico(null, produto, reparte, usuario);
 	}
 
-    public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto,
+	public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto,
 	    BigInteger reparte, Usuario usuario) throws Exception {
 		log.debug("Iniciando execução do estudo.");
 		EstudoTransient estudo = new EstudoTransient();

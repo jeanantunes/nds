@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>NDS - Novo Distribuição</title>
+<title>NDS - Novo DistribuiÃ§Ã£o</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/NDS.css" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/development-bundle/themes/redmond/jquery.ui.all.css" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/menu_superior.css" />
@@ -179,7 +179,7 @@ function escondeDados(){
         
     <table width="686" border="0" cellpadding="2" cellspacing="1">
         <tr>
-          <td width="48"><strong>Código:</strong></td>
+          <td width="48"><strong>Cï¿½digo:</strong></td>
           <td width="52" id="estudoId">${estudoCota.estudo.id}</td>
           <td width="54"><strong>Produto:</strong></td>
           <td width="511">${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</td>
@@ -187,13 +187,13 @@ function escondeDados(){
       </table>
     <table width="686" border="0" cellpadding="2" cellspacing="1">
       <tr>
-        <td width="55"><strong>Rep.Mí­n.:</strong></td>
+        <td width="55"><strong>Rep.Mï¿½n.:</strong></td>
         <td width="41">05</td>
-        <td width="60"><strong>Rep. Máx.:</strong></td>
+        <td width="60"><strong>Rep. Mï¿½x.:</strong></td>
         <td width="79">9.999</td>
-        <td width="49"><strong>Usuá¡rio:</strong></td>
+        <td width="49"><strong>Usuï¿½rio:</strong></td>
         <td width="141">Rodrigue</td>
-        <td width="105"><strong>Data Manutenção:</strong></td>
+        <td width="105"><strong>Data Manutenï¿½ï¿½o:</strong></td>
         <td width="115">28/03/2012 10:56</td>
       </tr>
   </table>
@@ -210,7 +210,7 @@ function escondeDados(){
         
       <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
-            <td width="36">Código:</td>
+            <td width="36">Cï¿½digo:</td>
             <td width="76"><input type="text" name="textfield" id="textfield" style="width:60px;" /></td>
             <td width="40">Produto:</td>
             <td width="169"><input type="text" name="textfield2" id="textfield2" style="width:160px;" /></td>
@@ -228,7 +228,7 @@ function escondeDados(){
      </fieldset>
 </div>
 
-<div id="dialog-cotas-estudos" title="Cotas que não entraram no estudo" style="display:none;">  
+<div id="dialog-cotas-estudos" title="Cotas que nï¿½o entraram no estudo" style="display:none;">  
 	<fieldset style="width:500px!important;">
     <legend>Pesquisar Cota</legend>
         
@@ -244,13 +244,13 @@ function escondeDados(){
             <td colspan="3">
             	<select id="cotasQueNaoEntraramNoEstudo_motivo" style="width:408px">
               		<option selected="selected" value="null">Todas as Cotas</option>
-              		<option>Não recebeu as edições-base</option>
-              		<option>Sem vendas nas edições-bases</option>
-              		<option>Publicação não está no MIX da cota</option>
-              		<option>Cota não recebe esse Segmento</option>
-              		<option>Cota não recebe essa Classificação</option>
+              		<option>Nï¿½o recebeu as ediï¿½ï¿½es-base</option>
+              		<option>Sem vendas nas ediï¿½ï¿½es-bases</option>
+              		<option>Publicaï¿½ï¿½o nï¿½o estï¿½ no MIX da cota</option>
+              		<option>Cota nï¿½o recebe esse Segmento</option>
+              		<option>Cota nï¿½o recebe essa Classificaï¿½ï¿½o</option>
               		<option>Cota Suspensa</option>
-              		<option>Não está na Região de Distribuição</option>
+              		<option>Nï¿½o estï¿½ na Regiï¿½o de Distribuiï¿½ï¿½o</option>
             	</select>
             </td>
           </tr>
@@ -268,10 +268,10 @@ function escondeDados(){
 						<option value="tipo_ponto_venda">Tipo de Ponto de Venda</option>
 						<option value="gerador_de_fluxo">Gerador de Fluxo</option>
 						<option value="bairro">Bairro</option>
-						<option value="regiao">Região</option>
+						<option value="regiao">Regiï¿½o</option>
 						<option value="cotas_a_vista">Cotas A Vista</option>
 						<option value="cotas_novas">Cotas Novas</option>
-						<option value="area_influencia">Área de Influência</option>
+						<option value="area_influencia">ï¿½rea de Influï¿½ncia</option>
 						<option value="distrito">Distrito</option>
 					</select>
 				</td>
@@ -286,7 +286,7 @@ function escondeDados(){
         
      </fieldset>
     <fieldset style="width:500px!important; margin-top:10px;">
-    	<legend>Cotas que nãao entraram no estudo</legend>
+    	<legend>Cotas que nï¿½ao entraram no estudo</legend>
         <table class="cotasEstudoGrid"></table>
         <div style="float:right; margin-top:5px; margin-right:60px;"><strong>Saldo:</strong> 999</div>
      </fieldset>
@@ -375,18 +375,18 @@ function escondeDados(){
     <li><a href="javascript:;" class="trigger"><span class="classCadastros">&nbsp;</span>Cadastro</a>
         <ul>
             <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_produtos.htm">Produto</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_edicao.htm">Edição</a></li>
+            <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_edicao.htm">Ediï¿½ï¿½o</a></li>
             <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_cotas.htm">Cota</a></li>
             <li><a href="${pageContext.request.contextPath}/Cadastro/jornaleiros_equivalentes.htm">Cotas Base</a></li>
             <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_fiador.htm">Fiador</a></li>
             <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_entregador.htm">Entregador</a></li>
             <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_transportador.htm">Transportador</a></li>
             <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_fornecedor.htm">Fornecedor</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/roteirizacao.htm">Roteirização</a></li>
+            <li><a href="${pageContext.request.contextPath}/Cadastro/roteirizacao.htm">Roteirizaï¿½ï¿½o</a></li>
             
             <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_box.htm">Box</a></li>
             <li><a href="${pageContext.request.contextPath}/Cadastro/cadastro_bancos.htm">Banco</a></li>
-            <li><a href="${pageContext.request.contextPath}/Cadastro/alteracao_cotas.htm">Alteração / Cota</a></li>
+            <li><a href="${pageContext.request.contextPath}/Cadastro/alteracao_cotas.htm">Alteraï¿½ï¿½o / Cota</a></li>
             <li><a href="${pageContext.request.contextPath}/Cadastro/help_cadastros.htm">Help</a></li>
 </ul>
     </li>
@@ -603,16 +603,16 @@ function escondeDados(){
    	    <legend> Pesquisar </legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
             <tr>
-              <td width="51">Código:</td>
+              <td width="51">Cï¿½digo:</td>
               <td width="65">${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
               <td width="54">Produto:</td>
               <td width="210">${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</td>
-              <td width="45">Edição:</td>
+              <td width="45">Ediï¿½ï¿½o:</td>
               <td width="140">${estudoCota.estudo.produtoEdicao.numeroEdicao}</td>
               <td width="45">Estudo:</td>
               <td width="141">${estudoCota.estudo.id}</td>
               <td width="83">Nro. da Parcial:</td>
-              <td width="65">BUSCAR NÚMERO DA PARCIAL</td>
+              <td width="65">BUSCAR Nï¿½MERO DA PARCIAL</td>
             </tr>
           </table>
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -669,7 +669,7 @@ function escondeDados(){
             		<span id="label_percentual_de_venda" style="display:none;" class="label"> % Venda: </span>
             		
             		<input id="ordenarPorDe" type="text"style="width:60px;" />
-              		Até <input id="ordenarPorAte" type="text" style="width:60px;" />
+              		Atï¿½ <input id="ordenarPorAte" type="text" style="width:60px;" />
               		Exs. <a href="javascript:filtrarOrdenarPor(${estudoCota.estudo.id});">
               				<img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" border="0" />
 						</a> 
@@ -738,8 +738,8 @@ function escondeDados(){
     </span>
     <span class="bt_novos">
     	<a href="javascript:;" onclick="popup_cotas_estudo();">
-    		<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" alt="Cotas que não entraram no Estudo" hspace="5" border="0" />
-    		Cotas que não entraram no Estudo
+    		<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" alt="Cotas que nï¿½o entraram no Estudo" hspace="5" border="0" />
+    		Cotas que nï¿½o entraram no Estudo
     	</a>
     </span>
     <span class="bt_novos" title="Imprimir">
@@ -762,7 +762,7 @@ function escondeDados(){
      
  <script type="text/javascript">
  $(function(){
-	 analiseParcialController.init("${estudoCota.estudo.id}"); 
+	analiseParcialController.init("${estudoCota.estudo.id}", "${faixaDe}", "${faixaAte}"); 
  });
  
  </script>

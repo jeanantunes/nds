@@ -9,6 +9,8 @@ public class AnaliseParcialQueryDTO {
 	private Double filterSortFrom;
 	private Double filterSortTo;
 	private String elemento;
+	private Long faixaDe;
+	private Long faixaAte;
 
 	public long getEstudoId() {
 		return estudoId;
@@ -129,5 +131,21 @@ public class AnaliseParcialQueryDTO {
 
 	public boolean elementoIsCotasNovas() {
 		return getTipoElemento().equals("cotas_novas");
+	}
+
+	public Long getFaixaDe() {
+	    return faixaDe;
+	}
+
+	public void setFaixaDe(Long faixaDe) {
+	    this.faixaDe = faixaDe;
+	}
+
+	public Long getFaixaAte() {
+	    return faixaAte;
+	}
+
+	public void setFaixaAte(Long faixaAte) {
+	    this.faixaAte = faixaAte;
 	}
 }
