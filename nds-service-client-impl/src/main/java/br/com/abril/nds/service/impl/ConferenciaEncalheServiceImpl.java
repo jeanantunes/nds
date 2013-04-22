@@ -749,6 +749,33 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
 	}
 	
+	private DebitoCreditoCotaDTO obterOutroDebitoCreditoDeConsolidados(Long idCota, Date dataOperacao) {
+
+		ConsolidadoFinanceiroCota consolidado = 
+				this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
+		
+		
+		BigDecimal outrosValores = BigDecimal.ZERO;
+		
+		
+		if (consolidado != null){
+			BigDecimal valorConsolidEncalhe = consolidado.getEncalhe() != null ? consolidado.getEncalhe().abs() : BigDecimal.ZERO;
+			BigDecimal valorConsolidReparte = consolidado.getConsignado() != null ? consolidado.getConsignado().abs() : BigDecimal.ZERO;
+			outrosValores = consolidado.getTotal().abs().subtract(valorConsolidReparte.subtract(valorConsolidEncalhe));
+		}
+		
+		DebitoCreditoCotaDTO cobranca = new DebitoCreditoCotaDTO();
+		
+		cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
+		cobranca.setObservacoes("Outros valores");
+		cobranca.setDataVencimento(consolidado.getDataConsolidado());
+		cobranca.setValor(outrosValores);
+		
+		return cobranca;
+		
+ 	}
+
+	
 	/**
 	 * Obtem Consolidado da Cota na Data
 	 * @param idCota
@@ -770,27 +797,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private BigDecimal obterValorOutroDebitoCreditoDeConsolidados(ConsolidadoFinanceiroCota consolidado){
 		
 		BigDecimal outrosValores = BigDecimal.ZERO;
-		
-		DebitoCreditoCotaDTO cobranca = null;
-		
+
 		if (consolidado != null){
-			
+
 			BigDecimal valorConsolidEncalhe = consolidado.getEncalhe() != null ? consolidado.getEncalhe().abs() : BigDecimal.ZERO;
 			BigDecimal valorConsolidReparte = consolidado.getConsignado() != null ? consolidado.getConsignado().abs() : BigDecimal.ZERO;
 			outrosValores = consolidado.getTotal().abs().subtract(valorConsolidReparte.subtract(valorConsolidEncalhe));
-		
-			cobranca = new DebitoCreditoCotaDTO();
-			
-			cobranca.setTipoLancamento(OperacaoFinaceira.DEBITO);
-			cobranca.setObservacoes("Outros valores");
-			cobranca.setDataVencimento(consolidado.getDataConsolidado());
-			cobranca.setValor(outrosValores);
-			
-		
 		}
-		
-		
-		return cobranca;
+
+		return outrosValores;	
+	
 	}
 	
 	/*
