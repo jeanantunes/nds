@@ -57,6 +57,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -2790,4 +2791,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return cota;
 	}
 
+	@Override
+	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota) {
+		
+		StringBuilder query = new StringBuilder();
+		query.append("select tipoDistribuicaoCota from Cota where numeroCota = :numeroCota and situacaoCadastro = 'Ativo'");
+		
+		Query q = getSession().createQuery(query.toString());
+		
+		q.setParameter("numeroCota", numeroCota);
+		
+		return (TipoDistribuicaoCota)q.uniqueResult();
+	}
 }

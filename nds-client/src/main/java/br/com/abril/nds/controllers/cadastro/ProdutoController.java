@@ -174,7 +174,7 @@ public class ProdutoController extends BaseController {
 	@Post
 	public void autoCompletarPorNomeProdutoAutoComplete(String nome) {
 		
-		autoCompletarPorNomeProduto(nome); 
+		autoCompletarPorNome(nome); 
 	}
 	
 	@Post
@@ -271,9 +271,26 @@ public class ProdutoController extends BaseController {
 	 * @param codigo
 	 */
 	@Post
-	public void autoCompletarPorCodProdutoAutoComplete(String codigo) {
+	public void autoCompletarPorCodigoProdutoAutoComplete(String codigo) {
 		
-		autoCompletarPorCodProduto(codigo);
+		List<Produto> listaProduto = this.produtoService.obterProdutoLikeCodigo(codigo);
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProduto != null && !listaProduto.isEmpty()) {
+			ProdutoVO produtoAutoComplete = null;
+			
+			for (Produto produto : listaProduto) {
+				produtoAutoComplete = new ProdutoVO(produto.getCodigo(),produto.getNome(),produto);
+				
+				ItemAutoComplete itemAutoComplete =
+					new ItemAutoComplete(produtoAutoComplete.getNumero(), produtoAutoComplete.getLabel(), produtoAutoComplete);
+				
+				listaProdutos.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 	}
 	
 	

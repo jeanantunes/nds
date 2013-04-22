@@ -127,7 +127,7 @@ function mostraIntervalo(){
 		      <fieldset class="classFieldset">
 		       	  <legend>Produtos</legend>
 		        
-		        	<table class="excessaoCotaGrid"></table> 
+		        	<table class="fixacaoCotaGrid"></table> 
 		             <span class="bt_novos" title="Incluir Novo" id="btNovoCota"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
 		             <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteCota">
 		             	<a href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a>
