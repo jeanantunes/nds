@@ -6,19 +6,24 @@ function AutoCompleteController(workspace) {
 	this.tamanhoInicial = 3;
 	
 	//Pesquisar por código
-	this.pesquisarPorCodigo = function(action, idCampoCodigo, idCampoNome, successCallBack, errorCallBack, isFromModal) {
+	this.pesquisarPorCodigo = function(action, idCampoCodigo, idCampoNome, parametroPesquisa, resultNome, resultCodigo, successCallBack, errorCallBack, isFromModal) {
 		
-		var codigo = $.trim($(idCampoCodigo, autoComplete.workspace).val());
+		var codigo = $.trim($(idCampoCodigo, autoComplete.workspace).val()),
+			localParametroPesquisa = parametroPesquisa;
 
+		if(!parametroPesquisa){
+			localParametroPesquisa = 'codigoProduto';
+		}
+		
 		$(idCampoNome, autoComplete.workspace).val("");
 		
 		if (codigo && codigo.length > 0) {
 			
 			$.postJSON(contextPath + action,
-					{codigoProduto:codigo},
+					[{name : localParametroPesquisa, value : codigo}],
 				function(result) { 
 						
-					autoComplete.pesquisarPorCodigoSuccessCallBack(result, idCampoNome, idCampoCodigo, successCallBack); 
+					autoComplete.pesquisarPorCodigoSuccessCallBack(result, idCampoNome, idCampoCodigo, resultNome, resultCodigo, successCallBack); 
 				},
 				function() {
 					
@@ -37,16 +42,21 @@ function AutoCompleteController(workspace) {
 	
 	
 	//Pesquisar por nome
-	this.pesquisarPorNome = function(action, idCampoCodigo, idCampoNome, successCallBack, errorCallBack, isFromModal) {
+	this.pesquisarPorNome = function(action, idCampoCodigo, idCampoNome, parametroPesquisa, successCallBack, errorCallBack, isFromModal) {
 		
-		var nome = $.trim($(idCampoNome, autoComplete.workspace).val());
+		var nome = $.trim($(idCampoNome, autoComplete.workspace).val()),
+		localParametroPesquisa = parametroPesquisa;
 
+		if(!parametroPesquisa){
+			localParametroPesquisa = nomeProduto;
+		}
+		
 		$(idCampoNome, autoComplete.workspace).val("");
 		
 		if (nome && nome.length > 0) {
 			
 			$.postJSON(contextPath + action,
-					{nomeProduto:nome},
+					[{name : localParametroPesquisa, value : nome}],
 				function(result) { 
 						
 					autoComplete.pesquisarPorCodigoSuccessCallBack(result, idCampoNome, idCampoCodigo, successCallBack); 
@@ -67,10 +77,16 @@ function AutoCompleteController(workspace) {
 	},
 	
 	
-	this.autoCompletarPorNome = function(action, idCampoCodigo, idCampoNome, isFromModal, disparoDaPesquisa) {
+	this.autoCompletarPorNome = function(action, idCampoCodigo, idCampoNome, parametroPesquisa, disparoDaPesquisa, isFromModal) {
+		
+		var	localParametroPesquisa = parametroPesquisa;
 		
 		if(!disparoDaPesquisa){
 			disparoDaPesquisa = 2;
+		}
+		
+		if(!parametroPesquisa){
+			localParametroPesquisa = nomeProduto;
 		}
 		
 		var nome = $(idCampoNome, autoComplete.workspace).val();
@@ -82,7 +98,7 @@ function AutoCompleteController(workspace) {
 		if (nome && nome.length > disparoDaPesquisa) {
 			
 			$.postJSON(
-				contextPath + action, {nomeProduto:nome},
+				contextPath + action, [{name : localParametroPesquisa, value : nome}],
 				function(result) { 
 					autoComplete.exibirAutoCompletePorNome(result, idCampoCodigo, idCampoNome);
 				},
@@ -92,10 +108,16 @@ function AutoCompleteController(workspace) {
 		}
 },
 	
-	this.autoCompletarPorCodigo = function(action, idCampoCodigo, idCampoNome, isFromModal, disparoDaPesquisa) {
+	this.autoCompletarPorCodigo = function(action, idCampoCodigo, idCampoNome, parametroPesquisa, isFromModal, disparoDaPesquisa) {
+	
+	var	localParametroPesquisa = parametroPesquisa;
 	
 	if(!disparoDaPesquisa){
 		disparoDaPesquisa = 2;
+	}
+	
+	if(!parametroPesquisa){
+		localParametroPesquisa = codigoProduto;
 	}
 	
 	var cod = $(idCampoCodigo, autoComplete.workspace).val();
@@ -107,7 +129,7 @@ function AutoCompleteController(workspace) {
 	if (cod && cod.length > disparoDaPesquisa) {
 		
 		$.postJSON(
-			contextPath + action, {codigoProduto:cod},
+			contextPath + action, [{name : localParametroPesquisa, value : cod}],
 			function(result) { 
 				autoComplete.exibirAutoCompletePorCodigo(result, idCampoCodigo, idCampoNome);
 			},
@@ -166,10 +188,18 @@ function AutoCompleteController(workspace) {
 			});
 	};
 	
-	this.pesquisarPorCodigoSuccessCallBack = function(result, idCampoNome, idCampoCodigo, successCallBack) {
+	this.pesquisarPorCodigoSuccessCallBack = function(result, idCampoNome, idCampoCodigo, resultNome, resultCodigo, successCallBack) {
 		
-		$(idCampoNome, autoComplete.workspace).val(result.nome);
-		$(idCampoCodigo, autoComplete.workspace).val(result.codigo);
+		if(!resultNome){
+			resultNome = "nome";
+		}
+		
+		if(!resultCodigo){
+			resultCodigo = "codigo";
+		}
+		
+		$(idCampoNome, autoComplete.workspace).val(result[resultNome]);
+		$(idCampoCodigo, autoComplete.workspace).val(result[resultCodigo]);
 		
 		if (successCallBack) {
 			

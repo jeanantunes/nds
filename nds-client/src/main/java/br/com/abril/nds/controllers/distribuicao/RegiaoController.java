@@ -17,9 +17,11 @@ import br.com.abril.nds.dto.AddLoteRegiaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_CotaDTO;
 import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
+import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresRankingDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
@@ -242,10 +244,6 @@ public class RegiaoController extends BaseController {
 	@Path("/buscarPorSegmento")
 	public void buscarPorSegmento(FiltroCotasRegiaoDTO filtro){
 
-//		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
-
-//		this.tratarFiltroCotasRegiao(filtro);
-
 		tratarFiltroSegmento(filtro);
 
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = montarTableModelBuscaSegmento(filtro);
@@ -269,10 +267,6 @@ public class RegiaoController extends BaseController {
 		tableModel.setPage(1);
 
 		tableModel.setTotal(listaCotasSegmento.size());
-
-//		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-//
-//		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 
 		return tableModel;
 	}
@@ -390,6 +384,101 @@ public class RegiaoController extends BaseController {
 		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 
 		return tableModel;
+	}
+	
+	@Post
+	@Path("/rankingCota")
+	public void rankingCota(FiltroRegiaoNMaioresRankingDTO filtro) throws Exception{
+
+		tratarFiltroRanking(filtro);
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = montarTableModelRanking(filtro);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+
+	}
+
+	
+
+	private TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> montarTableModelRanking (FiltroRegiaoNMaioresRankingDTO filtro) throws Exception {
+		
+		List<String> ids = new ArrayList<>();
+		List<RegiaoNMaiores_CotaDTO> ranking = new ArrayList<>();
+		
+		ids = tratarCodigosENumeros(filtro);
+//		ids.add("134633");
+//		ids.add("133764");
+		Integer limite = filtro.getLimitePesquisa();
+		
+		if(ids != null){
+			ranking = regiaoService.rankingCotas(ids, limite);
+		}
+		
+		ranking = regiaoService.rankingCotas(ids, limite);
+
+		if (ranking == null || ranking.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(ranking));
+
+		tableModel.setPage(1);
+
+		tableModel.setTotal(ranking.size());
+
+		return tableModel;
+	}
+	
+	private List<String> tratarCodigosENumeros(FiltroRegiaoNMaioresRankingDTO filtro) {
+		String codigos[] = null;
+		for (String cod : filtro.getCodigoProduto()) {
+			codigos = cod.split(",");
+		}
+		
+		String numeros[] = null;
+		for (String num : filtro.getNumeroEdicao()) {
+			numeros = num.split(",");
+		}
+		
+		List<String> ids = obterIdsProdEdicaoParaRanking(codigos, numeros); 
+		
+		return ids;
+	}
+
+	private List<String> obterIdsProdEdicaoParaRanking(String[] codigos, String[] numeros) {
+		
+		List<String> idS_prodEdicao = new ArrayList<>();
+		
+		for (int i = 0; i < codigos.length; i++) {
+			
+			for (int u = 0; u < numeros.length; u++) {
+
+				if(i == u){
+				String cod = codigos[i];
+				String num = numeros[u];
+				
+				List<String> idsTemp = regiaoService.listaIdProdEdicaoParaRanking(cod, num); 
+				
+				idS_prodEdicao.addAll(idsTemp);
+				
+				}
+			}
+		}
+		return idS_prodEdicao;
+	}
+	
+	private void tratarFiltroRanking (FiltroRegiaoNMaioresRankingDTO filtro) {
+
+		if((filtro.getLimitePesquisa() <= 0)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de Cotas.");
+		}
+
+		if(filtro.getLimitePesquisa() > 4) {
+			filtro.setLimitePesquisa(filtro.getLimitePesquisa() + 1);
+		}
+		
 	}
 	
 	private void tratarArgumentosFiltro (FiltroRegiaoNMaioresProdDTO filtro){

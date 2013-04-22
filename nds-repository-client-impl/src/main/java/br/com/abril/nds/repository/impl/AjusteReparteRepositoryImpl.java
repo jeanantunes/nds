@@ -44,9 +44,14 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		hql.append(" FROM AjusteReparte AS ajuste ");
 		hql.append(" LEFT JOIN ajuste.cota AS cota ");
 		hql.append(" LEFT JOIN cota.pdvs AS pdv ");
+		hql.append(" LEFT JOIN pdv.caracteristicas AS caracteristicasPdv ");
 		hql.append(" LEFT JOIN cota.pessoa AS pessoa ");
 		hql.append(" LEFT JOIN ajuste.usuario  AS usuario ");
 		hql.append(" LEFT JOIN ajuste.tipoSegmentoAjuste AS tipoSegmento ");
+		
+		hql.append(" WHERE caracteristicasPdv.pontoPrincipal in (true) ");
+		
+		//where pdvs2_.PONTO_PRINCIPAL in(true)
 		
 		hql.append(" ORDER BY numeroCota ");
 		
@@ -87,10 +92,12 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 		hql.append(" FROM AjusteReparte AS ajuste ");
 		hql.append(" LEFT JOIN ajuste.cota as cota ");
 		hql.append(" LEFT JOIN cota.pdvs as pdv ");
+		hql.append(" LEFT JOIN pdv.caracteristicas AS caracteristicasPdv ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		hql.append(" LEFT JOIN ajuste.usuario  as usuario ");
 		hql.append(" LEFT JOIN ajuste.tipoSegmentoAjuste AS tipoSegmento ");
 		hql.append(" WHERE ajuste.id = :ID_AJUSTE ");
+		hql.append(" AND caracteristicasPdv.pontoPrincipal in (true) ");
 
 		Query query = super.getSession().createQuery(hql.toString());
 

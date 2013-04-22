@@ -5,6 +5,7 @@
 <script type="text/javascript" src="scripts/flexGridService.js"></script>
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="scripts/historicoVenda.js" ></script>
+<script type="text/javascript" src="scripts/autoCompleteCampos.js" ></script>
 <script language="javascript" type="text/javascript">
 
 $(function() {
@@ -17,34 +18,60 @@ function filtroReparte(){
 	$('.filtroComponentes').hide();
 	$('.filtroCotas').hide();
 	$('.filtroPercVenda').hide();
+	
+	this.limparInputsFiltro(false, false, '#qtdVendaInicial', '#qtdVendaFinal', '#percentualVenda', '#componente', '#elemento', '#numeroCota', '#nomePessoa');
 	}
+	
 function filtroVenda(){
 	$('.filtroQtdeReparte').hide();
 	$('.filtroQtdeVenda').show();
 	$('.filtroComponentes').hide();
 	$('.filtroCotas').hide();
 	$('.filtroPercVenda').hide();
+	
+	this.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', false, false, '#percentualVenda', '#componente', '#elemento', '#numeroCota', '#nomePessoa');
 	}
+	
 function filtroComponentes(){
 	$('.filtroQtdeReparte').hide();
 	$('.filtroQtdeVenda').hide();
 	$('.filtroComponentes').show();
 	$('.filtroCotas').hide();
 	$('.filtroPercVenda').hide();
+	
+	this.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', '#qtdVendaInicial', '#qtdVendaFinal', '#percentualVenda', false, false, '#numeroCota', '#nomePessoa');
 	}
+	
 function filtroCotas(){
 	$('.filtroQtdeReparte').hide();
 	$('.filtroQtdeVenda').hide();
 	$('.filtroComponentes').hide();
 	$('.filtroCotas').show();
 	$('.filtroPercVenda').hide();
+	
+	this.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', '#qtdVendaInicial', '#qtdVendaFinal', '#percentualVenda', '#componente', '#elemento', false, false);
 	}
+	
 function filtroPercVenda(){
 	$('.filtroQtdeReparte').hide();
 	$('.filtroQtdeVenda').hide();
 	$('.filtroComponentes').hide();
 	$('.filtroCotas').hide();
 	$('.filtroPercVenda').show();
+	
+	this.limparInputsFiltro('#qtdReparteInicial', '#qtdReparteFinal', '#qtdVendaInicial', '#qtdVendaFinal', false, '#componente', '#elemento', '#numeroCota', '#nomePessoa');
+	}
+	
+function limparInputsFiltro(input1, input2, input3, input4, input5, input6, input7, input8, input9){
+	$(input1).val("");
+	$(input2).val("");
+	$(input3).val("");
+	$(input4).val("");
+	$(input5).val("");
+	$(input6).val("");
+	$(input7).val("");
+	$(input8).val("");
+	$(input9).val("");
 	}
 	
 	
