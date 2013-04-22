@@ -1530,8 +1530,7 @@ var ConferenciaEncalhe = $.extend(true, {
 						
 							if(result.tipoMensagem == 'SUCCESS') {
 								
-								ConferenciaEncalhe.limparDadosConferenciaEncalheCota();
-								
+						        ConferenciaEncalhe.limparDadosConferenciaEncalheCota();	
 							}
 						
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);

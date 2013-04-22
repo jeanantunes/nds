@@ -485,13 +485,10 @@ public class ConsolidadoFinanceiroRepositoryImplTest extends
 		Cota cota = new Cota();
 		cota.setId(1L);
 		
-
-		Date data = new Date(Fixture.criarData(14, Calendar.NOVEMBER, 2012).getTime());
-
-		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = 
-				consolidadoFinanceiroRepository.buscarPorCotaEData(cota.getId(), data);
-		
+	    Date data = new Date(Fixture.criarData(14, Calendar.NOVEMBER, 2012).getTime());
+		 
+		@SuppressWarnings("unused")
+		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = consolidadoFinanceiroRepository.buscarPorCotaEData(cota.getId(), data);	
 	}
 	
-
 }

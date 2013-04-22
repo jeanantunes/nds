@@ -855,20 +855,20 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	}
 
 	@Override
-	public ConsolidadoFinanceiroCota buscarPorCotaEData(Long cota, Date data) {
+	public ConsolidadoFinanceiroCota buscarPorCotaEData(Long idCota, Date data) {
 		
 		StringBuilder hql = new StringBuilder("select c from ConsolidadoFinanceiroCota c ");
-		hql.append(" join c.cota cota ");
-		hql.append(" where c.dataConsolidado = :data ");
-		hql.append(" and cota.id = :idCota ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("data", data);
-		query.setParameter("idCota", cota);
-		
-		query.setMaxResults(1);
-		
-		return (ConsolidadoFinanceiroCota) query.uniqueResult();
+	    hql.append(" join c.cota cota ");
+	    hql.append(" where c.dataConsolidado = :data ");
+	    hql.append(" and cota.id = :idCota ");
+
+	    Query query = this.getSession().createQuery(hql.toString());
+	    query.setParameter("data", data);
+	    query.setParameter("idCota", idCota);
+
+	    query.setMaxResults(1);
+
+	    return (ConsolidadoFinanceiroCota) query.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")

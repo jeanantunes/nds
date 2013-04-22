@@ -381,7 +381,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		movimento.setUsuario(usuarioRepository.getUsuarioImportacao());
 		
 		ConsolidadoFinanceiroCota cfc = consolidadoFinanceiroRepository.buscarPorCotaEData(cota.getId(), valorInput.getData());
-		
+
 		if (cfc == null) {
 			cfc = new ConsolidadoFinanceiroCota();				
 			cfc.setCota(cota);

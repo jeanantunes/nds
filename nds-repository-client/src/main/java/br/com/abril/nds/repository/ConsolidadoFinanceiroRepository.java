@@ -33,7 +33,7 @@ public interface ConsolidadoFinanceiroRepository extends Repository<ConsolidadoF
 
 	Long obterQuantidadeDividasGeradasData(List<Long> idsCota);
 
-	ConsolidadoFinanceiroCota buscarPorCotaEData(Long cota, Date data);
+	ConsolidadoFinanceiroCota buscarPorCotaEData(Long idCota, Date data);
 
 	List<ConsolidadoFinanceiroCota> obterConsolidadosDataOperacao(Long idCota);
 
