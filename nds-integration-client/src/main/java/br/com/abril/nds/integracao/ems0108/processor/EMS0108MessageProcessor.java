@@ -15,19 +15,26 @@ import br.com.abril.nds.integracao.ems0108.inbound.EMS0108Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.Origem;
+import br.com.abril.nds.model.cadastro.DescontoLogistica;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.DescontoLogisticaRepository;
 
 @Component
 public class EMS0108MessageProcessor extends AbstractRepository implements
 		MessageProcessor {
 
+	@Autowired
+	private DescontoLogisticaRepository descontoLogisticaRepository;
 	
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
@@ -53,7 +60,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		EMS0108Input input = (EMS0108Input) message.getBody();
 		
 		// Verifica se existe Produto		
-		Produto produto = recuperaProduto(input.getCodigoPublicacao()); 
+		Produto produto = recuperaProduto(input.getCodigoPublicacao());
 		if (null == produto) {
 			ndsiLoggerFactory.getLogger().logError(
 					message,
@@ -117,7 +124,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 									String.format( "Não foi possivel Alterar a data devido ao status de BALANCEADO_RECOLHIMENTO, para o Produto %1$s Edicao %2$s.", input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString())
 								);
 							return ;
-						} else {							
+						} else {
 							if (input.getDataLancamentoRecolhimentoProduto() != null && input.getDataLancamentoRecolhimentoProduto().isEmpty() && !DATA_ZEROS.equals(input.getDataLancamentoRecolhimentoProduto())) {
 								try {
 									lancamento.setDataRecolhimentoDistribuidor(DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
@@ -161,17 +168,21 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
 						String.format( "Produto %1$s Edicao %2$s cadastrada. Necessário atualizar o preço.", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString() )
 					);
+			} else {
+				produtoEdicaoLancamento = atualizarProdutoEdicao(input, produto, produtoEdicaoLancamento);
 			}
 			
 			Lancamento lancamento;
-			try {
-				lancamento = this.recuperarLancamento(produtoEdicaoLancamento, DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
-			} catch (ParseException e1) {
+			//try {
+				//lancamento = this.recuperarLancamento(produtoEdicaoLancamento, DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
+				// Alterado em conjunto com Cesar Pop Punk para buscar o lançamento pela data de movimento
+				lancamento = this.recuperarLancamento(produtoEdicaoLancamento, input.getDataMovimento());
+			/*} catch (ParseException e1) {
 				ndsiLoggerFactory.getLogger().logError(
 						message,
 						EventoExecucaoEnum.ERRO_INFRA,
 						String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
-				return;			}
+				return;			}*/
 			if (null == lancamento) {
 				try {
 					lancamento = inserirLancamento(produtoEdicaoLancamento, input);
@@ -285,10 +296,44 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		return (Lancamento) query.uniqueResult();
 	}
 
+	private ProdutoEdicao atualizarProdutoEdicao(EMS0108Input input,
+			Produto produto, ProdutoEdicao produtoEdicao) {
+		
+		produto.setSlogan(input.getSloganProduto());
+		
+		produto.setFormaComercializacao(getFormaComercializacao(input.getFormaComercializacao()));
+		produto.setPeriodicidade(getPeriodicidade(Integer.parseInt(input.getPeriodicidade())));
+		produto.setTributacaoFiscal(getTributacaoFiscal(input.getTributacaoFiscal()));
+		
+		this.getSession().persist(produto);
+		
+		produtoEdicao.setPeb(input.getPEB());
+		produtoEdicao.setPacotePadrao(input.getPacotePadrao());
+
+		DescontoLogistica descontoLogistica = descontoLogisticaRepository.obterPorTipoDesconto(input.getTipoDesconto());
+
+		produtoEdicao.setDesconto(input.getPercentualDesconto());
+		produtoEdicao.setDescricaoDesconto(descontoLogistica.getDescricao());
+
+		this.getSession().persist(produtoEdicao);
+		
+		return produtoEdicao;
+		
+	}
+
+	
 	private ProdutoEdicao inserirProdutoEdicao(EMS0108Input input, Produto produto) {
+
+		produto.setSlogan(input.getSloganProduto());
 		
+		produto.setFormaComercializacao(getFormaComercializacao(input.getFormaComercializacao()));
+		produto.setPeriodicidade(getPeriodicidade(Integer.parseInt(input.getPeriodicidade())));
+		produto.setTributacaoFiscal(getTributacaoFiscal(input.getTributacaoFiscal()));
+		
+		this.getSession().persist(produto);
+
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		
+
 		produtoEdicao.setProduto(produto);
 		produtoEdicao.setNumeroEdicao(input.getEdicaoLancamento());
 		produtoEdicao.setPeso(input.getPesoProduto());
@@ -299,6 +344,14 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		produtoEdicao.setPacotePadrao(produto.getPacotePadrao());
 		produtoEdicao.setPeb(produto.getPeb());
 		produtoEdicao.setOrigem(Origem.MANUAL);
+
+		//produtoEdicao.setCodigoDeBarraCorporativo(codigoBarrasCRP);
+		//codigoEdicaoOrigem;
+		
+		produtoEdicao.setPeb(input.getPEB());
+		produtoEdicao.setPacotePadrao(input.getPacotePadrao());
+		produtoEdicao.setDesconto(input.getPercentualDesconto());
+		produtoEdicao.setDescricaoDesconto(input.getTipoDesconto().toString());
 
 		this.getSession().persist(produtoEdicao);
 		
@@ -338,6 +391,27 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		query.setParameter("codigoProduto", codigoPublicacao);
 
 		return (Produto) query.uniqueResult();
+	}
+
+	private FormaComercializacao getFormaComercializacao(String formaComercializacao) {
+		if ("2".equalsIgnoreCase(formaComercializacao)) {
+			return FormaComercializacao.CONTA_FIRME;
+		}
+		return FormaComercializacao.CONSIGNADO;
+	}
+	
+	private TributacaoFiscal getTributacaoFiscal(String codigoSituacaoTributaria) {
+		if ("1".equalsIgnoreCase(codigoSituacaoTributaria)) {
+			return TributacaoFiscal.TRIBUTADO;
+		} else if ("2".equalsIgnoreCase(codigoSituacaoTributaria)) {
+			return TributacaoFiscal.ISENTO;
+		} else {
+			return TributacaoFiscal.OUTROS;
+		}
+	}
+
+	private PeriodicidadeProduto getPeriodicidade(int periodicidade) {
+		return PeriodicidadeProduto.getByOrdem(periodicidade);
 	}
 
 	@Override

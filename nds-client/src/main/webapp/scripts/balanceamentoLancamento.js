@@ -283,8 +283,14 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		});
 				
 		var data = [];
+		var todos = $('#selTodos', _workspace);
 		
 		data.push({name: 'novaDataFormatada', value: $("#novaDataLancamento", _workspace).val()});
+		if(todos.attr("checked") == 'checked'){
+			data.push({name: 'selTodos', value: true});
+		} else {
+			data.push({name: 'selTodos', value: false});
+		}
 		
 		$.each(T.lancamentos, function(index, lancamento){
 			if(lancamento.selecionado == true) {

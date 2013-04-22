@@ -11,7 +11,7 @@ public class FiltroConsultaEncalheDetalheDTO {
 	
 	private Long idFornecedor;
 	
-	private Long idCota;
+	private Integer numeroCota;
 	
 	private Date dataRecolhimento;
 
@@ -90,20 +90,6 @@ public class FiltroConsultaEncalheDetalheDTO {
 	}
 
 	/**
-	 * @return the idCota
-	 */
-	public Long getIdCota() {
-		return idCota;
-	}
-
-	/**
-	 * @param idCota the idCota to set
-	 */
-	public void setIdCota(Long idCota) {
-		this.idCota = idCota;
-	}
-
-	/**
 	 * @return the paginacao
 	 */
 	public PaginacaoVO getPaginacao() {
@@ -143,6 +129,14 @@ public class FiltroConsultaEncalheDetalheDTO {
 	 */
 	public void setDataMovimento(Date dataMovimento) {
 		this.dataMovimento = dataMovimento;
+	}
+
+	public Integer getNumeroCota() {
+		return numeroCota;
+	}
+
+	public void setNumeroCota(Integer numeroCota) {
+		this.numeroCota = numeroCota;
 	}	
 
 	

@@ -57,6 +57,8 @@ public class FechamentoFisicoLogicoDTO {
 	@Export(label = "Estoque", alignment = Alignment.CENTER, exhibitionOrder = 8)
 	private String estoque;
 	
+	private Integer sequencia;
+	
 	
 	public String getReplicar() {
 		return replicar;
@@ -185,5 +187,13 @@ public class FechamentoFisicoLogicoDTO {
 	public String getPrecoCapaDescFormatado() {
 	
 		return precoCapaDescFormatado;
+	}
+
+	public Integer getSequencia() {
+		return sequencia;
+	}
+
+	public void setSequencia(Integer sequencia) {
+		this.sequencia = sequencia;
 	}
 }

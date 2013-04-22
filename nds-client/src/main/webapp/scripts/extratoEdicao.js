@@ -31,11 +31,11 @@ var jsExtratoEdicao = $.extend(true, {
 			preProcess: jsExtratoEdicao.getDataFromResult,
 			dataType : 'json',
 			params:[
-		        {name:'numeroEdicao', value: numeroEdicao},
-		        {name:'codigoProduto', value: codigoProduto},
-		        {name:'nomeProduto', value: nomeProduto},
-		        {name:'precoCapa', value: precoCapa},
-		        {name:'nomeFornecedor', value: nomeFornecedor}
+				{name:'filtro.codigo', value: codigoProduto},
+				{name:'filtro.nome', value: nomeProduto},
+				{name:'filtro.fornecedor', value: nomeFornecedor},
+				{name:'numeroEdicao', value: numeroEdicao},
+		        {name:'precoCapa', value: precoCapa}
 			]
 		});
 		
@@ -61,8 +61,8 @@ var jsExtratoEdicao = $.extend(true, {
 	
 	pesquisarPrecoCapa : function() {
 		
-		var data = {codigo:$("#codigo", jsExtratoEdicao.workspace).val(),
-		  		  edicao: $("#edicao", jsExtratoEdicao.workspace).val()};
+		var data = {'filtro.codigo': $("#codigo", jsExtratoEdicao.workspace).val(),
+		  		  	edicao: $("#edicao", jsExtratoEdicao.workspace).val()};
 		
 		$.postJSON(contextPath + '/estoque/extratoEdicao/obterProdutoEdicao', data, function(result){
 			$("#precoCapa", jsExtratoEdicao.workspace).val(result);

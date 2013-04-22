@@ -24,6 +24,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Entity
 @Table(name = "FORMA_COBRANCA")
 @SequenceGenerator(name="FORMA_COBRANCA_SEQ", initialValue = 1, allocationSize = 1)

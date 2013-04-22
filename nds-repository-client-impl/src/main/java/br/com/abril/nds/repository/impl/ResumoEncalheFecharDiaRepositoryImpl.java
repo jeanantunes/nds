@@ -20,6 +20,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoEncalheFecharDiaRepository;
 import br.com.abril.nds.util.Util;
@@ -44,29 +45,36 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         hql.append("sum(conferenciaEncalhe.qtde) as qtdeLogico, ");
         
         //QTDE ENCALHE LÓGICO JURAMENTADO
-        hql.append("(select coalesce(sum(conferenciaEncalheJuramentada.qtde), 0) from ConferenciaEncalhe conferenciaEncalheJuramentada ");
-        hql.append("where conferenciaEncalheJuramentada.produtoEdicao = produtoEdicao and ");
-        hql.append("conferenciaEncalheJuramentada.data = :data and conferenciaEncalheJuramentada.juramentada is true) as qtdeLogicoJuramentado, ");
+        hql.append(" (select coalesce(sum(conferenciaEncalheJuramentada.qtde), 0) from ConferenciaEncalhe conferenciaEncalheJuramentada ");
+        hql.append(" where conferenciaEncalheJuramentada.produtoEdicao = produtoEdicao and ");
+        hql.append(" conferenciaEncalheJuramentada.controleConferenciaEncalheCota.status = :statusOperacao and ");
+        hql.append(" conferenciaEncalheJuramentada.data = :data and conferenciaEncalheJuramentada.juramentada is true) as qtdeLogicoJuramentado, ");
         
         //QTDE ENCALHE FÍSICO
-        hql.append("(select cast(fechamentoEncalhe.quantidade as big_integer) from FechamentoEncalhe fechamentoEncalhe ");
-        hql.append("where fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao = produtoEdicao and ");
-        hql.append("fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe = :data) as qtdeFisico, ");
+        
+        hql.append(" ( select cast( coalesce(fechamentoEncalheBox.quantidade, fechamentoEncalhe.quantidade, 0) as big_integer) ");
+        hql.append(" from FechamentoEncalhe fechamentoEncalhe ");
+        hql.append(" left join fechamentoEncalhe.listFechamentoEncalheBox  ");
+        hql.append(" as fechamentoEncalheBox  where fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id = produtoEdicao.id  ");
+        hql.append(" and fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe = :data ) as qtdeFisico, ");
         
         //QTDE VENDA ENCALHE
-        hql.append("(select coalesce(sum(vendaEncalhe.qntProduto), 0) from VendaProduto vendaEncalhe ");
-        hql.append("where vendaEncalhe.produtoEdicao = produtoEdicao and ");
-        hql.append("vendaEncalhe.dataVenda = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
-        hql.append("and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista) as qtdeVendaEncalhe)");
+        hql.append(" (select coalesce(sum(vendaEncalhe.qntProduto), 0) from VendaProduto vendaEncalhe ");
+        hql.append(" where vendaEncalhe.produtoEdicao = produtoEdicao and ");
+        hql.append(" vendaEncalhe.dataVenda = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
+        hql.append(" and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista) as qtdeVendaEncalhe)");
         
-        hql.append("from ConferenciaEncalhe conferenciaEncalhe ");
-        hql.append("join conferenciaEncalhe.produtoEdicao produtoEdicao ");
-        hql.append("join produtoEdicao.produto produto ");
-        hql.append("where conferenciaEncalhe.data = :data ");
-        hql.append("group by produtoEdicao ");
-        hql.append("order by codigo asc");
+        hql.append(" from ConferenciaEncalhe conferenciaEncalhe ");
+        hql.append(" join conferenciaEncalhe.produtoEdicao produtoEdicao ");
+        hql.append(" join produtoEdicao.produto produto ");
+        hql.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.dataOperacao = :data and ");
+        hql.append(" conferenciaEncalhe.controleConferenciaEncalheCota.status = :statusOperacao ");
+        hql.append(" group by produtoEdicao ");
+        hql.append(" order by codigo asc");
         
         Query query = getSession().createQuery(hql.toString());
+        
+        query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
         query.setParameter("data", data);
         query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE);
         query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);
@@ -111,11 +119,14 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 	    Objects.requireNonNull(data, "Data para contagem dos produtos conferidos no encalhe não deve ser nula!");
 
 	    StringBuilder hql = new StringBuilder("select count(distinct produtoEdicao) ");
-	    hql.append("from ConferenciaEncalhe conferenciaEncalhe ");
-        hql.append("join conferenciaEncalhe.produtoEdicao produtoEdicao ");
-        hql.append("where conferenciaEncalhe.data = :data ");
-	   
+	    hql.append(" from ConferenciaEncalhe conferenciaEncalhe ");
+        hql.append(" join conferenciaEncalhe.produtoEdicao produtoEdicao ");
+        hql.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.dataOperacao = :data and ");
+        hql.append(" conferenciaEncalhe.controleConferenciaEncalheCota.status = :statusOperacao ");
+        
         Query query = getSession().createQuery(hql.toString());
+        
+        query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
         query.setParameter("data", data);
                 
         return (Long) query.uniqueResult();
@@ -125,6 +136,16 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 	@Override
 	public List<VendaFechamentoDiaDTO> obterDadosVendaEncalhe(Date dataOperacao, PaginacaoVO paginacao) {
 		StringBuilder hql = new StringBuilder();
+		
+		StringBuffer hqlProdutoEdicaoConferenciaEncalhe = new StringBuffer()
+		.append(" ( ")
+		.append(" select distinct pe.id from ControleConferenciaEncalheCota ccec ")
+		.append(" inner join ccec.conferenciasEncalhe conferenciaEncalhe	")
+		.append(" inner join conferenciaEncalhe.produtoEdicao pe ")
+		.append(" where ccec.dataOperacao = :dataOperacao and  ")
+		.append(" ccec.status = :statusOperacao  ")
+		.append(" ) ");
+		
 		
 		hql.append(" SELECT pe.id as idProdutoEdicao , p.codigo as codigo,  ");
 		hql.append(" p.nome as nomeProduto, ");
@@ -141,9 +162,14 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
 		
 		hql.append(" AND ve.tipoVenda = :encalhe");
 
+		hql.append(" AND pe.id in ").append(hqlProdutoEdicaoConferenciaEncalhe.toString());
+		
+		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
 		
 		query.setParameter("encalhe", TipoVendaEncalhe.ENCALHE);
 		
@@ -167,24 +193,31 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
     public ResumoEncalheFecharDiaDTO obterResumoEncalhe(Date data) {
 	    Objects.requireNonNull(data, "Data para resumo de encalhe não deve ser nula!");
         
-	    String templateHqlProdutoEdicaoEncalhe = new StringBuilder("(select distinct(confEncalhe.produtoEdicao.id) from ConferenciaEncalhe confEncalhe ")
-        .append("where confEncalhe.data = :data)").toString();
+	    String templateHqlProdutoEdicaoEncalhe = new StringBuilder(" ( select distinct(confEncalhe.produtoEdicao.id) from ConferenciaEncalhe confEncalhe ")
+        .append(" where confEncalhe.controleConferenciaEncalheCota.dataOperacao = :data ")
+        .append(" and confEncalhe.controleConferenciaEncalheCota.status = :statusOperacao )  ").toString();
 	    
 	    String templateHqlDiferenca =  new StringBuilder("(select sum(case when diferenca.tipoDiferenca = :%s then (diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) ")
-        .append("else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
-        .append("and diferenca.lancamentoDiferenca.status in(:statusPerdaGanho) and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoEncalhe).append(") as %s ").toString();
+	    .append(" else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca  ")
+	    .append(" inner join diferenca.lancamentoDiferenca lancamentoDiferenca ")
+	    .append(" inner join lancamentoDiferenca.movimentoEstoque movimentoEstoque ")
+        .append(" where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
+        .append(" and movimentoEstoque.status = :movimentoAprovado ")
+        .append(" and lancamentoDiferenca.status in (:statusPerdaGanho) and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoEncalhe).append(") as %s ").toString();
 	    
         //TOTAL ENCALHE LÓGICO
         StringBuilder hql = new StringBuilder("select new map(sum(conferenciaEncalhe.qtde * produtoEdicao.precoVenda) as totalLogico, ");
         
         //TOTAL ENCALHE FÍSICO
-        hql.append("(select sum(fechamentoEncalhe.quantidade * fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.precoVenda) from  ");
-        hql.append("FechamentoEncalhe fechamentoEncalhe where fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe = :data) as totalFisico, ");
+        
+        hql.append(" ( select sum( coalesce(fechamentoEncalheBox.quantidade, fechamentoEncalhe.quantidade, 0) * fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.precoVenda) from  ");
+        
+        hql.append(" FechamentoEncalhe fechamentoEncalhe left join fechamentoEncalhe.listFechamentoEncalheBox as fechamentoEncalheBox  where fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe = :data) as totalFisico, ");
         
         //TOTAL ENCALHE LÓGICO JURAMENTADO
-        hql.append("(select coalesce(sum(conferenciaEncalheJuramentada.qtde * conferenciaEncalheJuramentada.produtoEdicao.precoVenda), 0) ");
-        hql.append("from ConferenciaEncalhe conferenciaEncalheJuramentada where conferenciaEncalheJuramentada.juramentada is true and ");
-        hql.append("conferenciaEncalheJuramentada.data = :data) as totalJuramentado, ");
+        hql.append("( select coalesce(sum(conferenciaEncalheJuramentada.qtde * conferenciaEncalheJuramentada.produtoEdicao.precoVenda), 0) ");
+        hql.append(" from ConferenciaEncalhe conferenciaEncalheJuramentada where conferenciaEncalheJuramentada.juramentada is true and ");
+        hql.append(" conferenciaEncalheJuramentada.controleConferenciaEncalheCota.status = :statusOperacao and conferenciaEncalheJuramentada.data = :data) as totalJuramentado, ");
         
         //TOTAL VENDA ENCALHE
         hql.append("(select coalesce(sum(vendaEncalhe.qntProduto * vendaEncalhe.produtoEdicao.precoVenda), 0) from VendaProduto vendaEncalhe ");
@@ -198,13 +231,16 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         //TOTAL FALTAS
         hql.append(String.format(templateHqlDiferenca, "tipoDiferencaFaltaDe", "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm", "totalFaltas")).append(")");
 
-        hql.append("from ConferenciaEncalhe conferenciaEncalhe ");
-        hql.append("join conferenciaEncalhe.produtoEdicao produtoEdicao ");
-        hql.append("join produtoEdicao.produto produto ");
-        hql.append("where conferenciaEncalhe.data = :data ");
+        hql.append(" from ConferenciaEncalhe conferenciaEncalhe ");
+        hql.append(" join conferenciaEncalhe.produtoEdicao produtoEdicao ");
+        hql.append(" join produtoEdicao.produto produto ");
+        hql.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.dataOperacao = :data ");
+        hql.append(" and conferenciaEncalhe.controleConferenciaEncalheCota.status = :statusOperacao "); 
         
         Query query = getSession().createQuery(hql.toString());
         query.setParameter("data", data);
+        query.setParameter("movimentoAprovado", StatusAprovacao.APROVADO);
+        query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
         query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE);
         query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);
         query.setParameter("tipoDiferencaSobraDe", TipoDiferenca.SOBRA_DE);
@@ -245,12 +281,30 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
     public Long contarVendasEncalhe(Date data) {
         Objects.requireNonNull(data, "Data para contagem das vendas de encalhe não deve ser nula!");
         
+        
+        StringBuffer hqlProdutoEdicaoConferenciaEncalhe = new StringBuffer()
+		.append(" ( ")
+		.append(" select distinct pe.id from ControleConferenciaEncalheCota ccec ")
+		.append(" inner join ccec.conferenciasEncalhe conferenciaEncalhe ")
+		.append(" inner join conferenciaEncalhe.produtoEdicao pe ")
+		.append(" where ccec.dataOperacao = :data and  ")
+		.append(" ccec.status = :statusOperacao  ")
+		.append(" ) ");
+        
+        
         StringBuilder hql = new StringBuilder("select count(vendaEncalhe) from VendaProduto vendaEncalhe ");
-        hql.append("where vendaEncalhe.dataVenda = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
-        hql.append("and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista");
+        
+        hql.append(" where vendaEncalhe.dataVenda = :data and vendaEncalhe.tipoVenda = :tipoVendaEncalhe ");
+        
+        hql.append(" and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista");
+        
+        hql.append(" and vendaEncalhe.produtoEdicao.id in ").append(hqlProdutoEdicaoConferenciaEncalhe.toString());
+        
         
         Query query = getSession().createQuery(hql.toString());
+        
         query.setParameter("data", data);
+        query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
         query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE);
         query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);        
         

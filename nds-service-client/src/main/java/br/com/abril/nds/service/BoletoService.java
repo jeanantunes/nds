@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.ValidationException;
+
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.ArquivoPagamentoBancoDTO;
 import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
@@ -27,7 +29,7 @@ import br.com.abril.nds.util.TipoBaixaCobranca;
  */
 public interface BoletoService {
     
-	byte[] gerarImpressaoBoletosDistribuidor(List<BoletoDistribuidor> listaBoletoDistribuidor) throws IOException;
+	byte[] gerarImpressaoBoletosDistribuidor(List<BoletoDistribuidor> listaBoletoDistribuidor) throws IOException, ValidationException;
 	
 	List<Boleto> obterBoletosPorCota(FiltroConsultaBoletosCotaDTO filtro);
 	
@@ -45,13 +47,13 @@ public interface BoletoService {
 			 		  Date dataNovoMovimento, ResumoBaixaBoletosDTO resumoBaixaBoletos,
 			 		  Banco banco, Date dataPagamento);
 	
-	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException;
+	byte[] gerarImpressaoBoleto(String nossoNumero) throws IOException, ValidationException;
 
 	void enviarBoletoEmail(String nossoNumero);
 	
 	CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero);
 	
-	byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException;
+	byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException, ValidationException;
 	
 	void incrementarVia(String... nossoNumero);
 	

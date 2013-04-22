@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -42,8 +41,6 @@ import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.RateioDiferenca;
-import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -138,6 +135,34 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		sortItensByProdutoNome(listItemNotaEnvio);
 		
 		return listItemNotaEnvio;
+	}
+
+	/**
+	 * Obtém Quantidade de Movimentos de Saida x Entrada por Produto
+	 * Considera Movimentos de grupos especificos para apurar após Expedição
+	 * @param periodo
+	 * @param idCota
+	 * @return Map<Long, BigInteger>
+	 */
+	public Map<Long, BigInteger> obtemQuantidadeMovimentosPorProdutoAposExpedicao(Intervalo<Date> periodo, Long idCota){
+		
+		GrupoMovimentoEstoque[] gruposMovimentoEstoque   = {
+														      GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO,
+														      GrupoMovimentoEstoque.FALTA_DE_COTA,
+														      GrupoMovimentoEstoque.FALTA_EM_COTA,
+														      GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE,
+														      GrupoMovimentoEstoque.SOBRA_DE_COTA,
+														      GrupoMovimentoEstoque.SOBRA_EM_COTA,
+											                  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
+											                  GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE
+														   };
+		
+		Map<Long, BigInteger> mapProdutos = 
+				this.movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(periodo,
+																						  idCota,
+																						  gruposMovimentoEstoque); 
+	
+		return mapProdutos;
 	}
 
 	/**
@@ -261,13 +286,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			return;
 		}
 		
-		Map<Long, BigInteger> mapProdutos = 
-				this.movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(periodo,cota.getId(),
-																						  GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE,
-																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE); 
+		
+		//Movimentos de Entrada e Saida para recalcular após Expedicão.
+		Map<Long, BigInteger> mapProdutos = this.obtemQuantidadeMovimentosPorProdutoAposExpedicao(periodo, cota.getId());
+		
 		
 		for (EstudoCota estudoCota : listaEstudoCota) {
-
+			
+			
+			//Verifica se Estudo ja possui itens de Nota de Envio.
 			if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
 				
 				listItemNotaEnvio.addAll(estudoCota.getItemNotaEnvios());
@@ -275,45 +302,38 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				continue;
 			}
 			
+			
 			ProdutoEdicao produtoEdicao = estudoCota.getEstudo().getProdutoEdicao();
 
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 			
 			BigInteger quantidadeResultante = BigInteger.ZERO;
 			
-			for(RateioDiferenca rateioDiferenca : estudoCota.getRateiosDiferenca()) {
-				
-				if(rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_DE)
-						|| rateioDiferenca.getDiferenca().getTipoDiferenca().equals(TipoDiferenca.FALTA_EM)) {
-					
-					quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde().negate());
-					
-				} else {
-					
-					quantidadeResultante = quantidadeResultante.add(rateioDiferenca.getQtde());	
-				}
-			}
-
-			quantidadeResultante = mapProdutos.get(estudoCota.getEstudo().getProdutoEdicao().getId());
+			quantidadeResultante = mapProdutos.get(produtoEdicao.getId());
 			
-			Desconto percentualDesconto = this.descontoService
-					.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo()
-							.getLancamento(), cota, produtoEdicao);
+			
+			//Desconto Produto x cota.
+			Desconto percentualDesconto = 
+					this.descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo().getLancamento(), 
+																		   cota, 
+																		   produtoEdicao);
 
 			if(quantidadeResultante == null){
-				quantidadeResultante = BigInteger.ZERO;
+			
+			    quantidadeResultante = BigInteger.ZERO;
 			}
 			
 			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva());
 
-			ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(
-					estudoCota,
-					produtoEdicao,
-					precoVenda,
-					((percentualDesconto != null && percentualDesconto
-							.getValor() != null) ? percentualDesconto
-							.getValor() : BigDecimal.ZERO), 
-					quantidade);
+			
+			//Cria novo item nota caso o Estudo ainda não possua
+			ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(estudoCota,
+																 produtoEdicao,
+																 precoVenda,
+																 ((percentualDesconto != null && percentualDesconto.getValor() != null) ? 
+																   percentualDesconto.getValor() : 
+																   BigDecimal.ZERO), 
+																 quantidade);
 			
 			listItemNotaEnvio.add(itemNotaEnvio);
 		}
@@ -407,61 +427,104 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public NotaEnvio visualizar(Integer numeroCota, Long idRota,
-								String chaveAcesso, Integer codigoNaturezaOperacao,
-								String descricaoNaturezaOperacao, Date dataEmissao,
-								Intervalo<Date> periodo, List<Long> listaIdFornecedores) {
-
-		PessoaJuridica pessoaEmitente = this.distribuidorRepository.juridica();
-
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
-
-		Long idCota = cota.getId();
+	public List<NotaEnvio> visualizar(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		PDV pdvPrincipal = this.pdvRepository.obterPDVPrincipal(cota.getId());
+		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
+		
+		situacoesCadastro.add(SituacaoCadastro.ATIVO);
+		situacoesCadastro.add(SituacaoCadastro.SUSPENSO);
 
-		if (idRota == null) {
-			
-			idRota = this.getIdRotaCota(pdvPrincipal, cota);
+		List<Long> listaIdCotas = 
+				this.cotaRepository.obterIdCotasEntre(filtro.getIntervaloCota(), filtro.getIntervaloBox(),
+													  situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
+													  null, null, null, null);
+
+		
+		validarRoteirizacaoCota(filtro, listaIdCotas);
+		
+		PessoaJuridica pessoaEmitente = this.distribuidorRepository.juridica();
+		
+		List<EstudoCota> listaEstudosCotas = 
+				this.estudoCotaRepository.obterEstudosCotaParaNotaEnvio(listaIdCotas, filtro.getIntervaloMovimento(),filtro.getIdFornecedores());
+		
+		List<NotaEnvio> notasEnvio = new ArrayList<>();
+		
+		Map<Long, List<EstudoCota>> mapEstudosCota = this.getMapEstudosCota(listaEstudosCotas);
+		
+		for (Long idCota:listaIdCotas){
+
+			this.gerarNotaEnvioParaVisualizacao(pessoaEmitente,
+				                                idCota,  
+				                                filtro.getIdRota(), 
+												notasEnvio, 
+												filtro.getDataEmissao(), 
+												filtro.getIntervaloMovimento(), 
+												filtro.getIdFornecedores(), 
+												null,null,null, 
+												mapEstudosCota.get(idCota));
 		}
 		
-		IdentificacaoDestinatario destinatarioAtualizado = this.carregaDestinatario(cota, idRota, pdvPrincipal);
+		return notasEnvio;
+	}
 
-		NotaEnvio notaEnvio = criarNotaEnvio(destinatarioAtualizado, chaveAcesso,
-											 codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
-											 pessoaEmitente);
-
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
-				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(idCota, periodo, listaIdFornecedores, 
-																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+	private void gerarNotaEnvioParaVisualizacao(PessoaJuridica pessoaEmitente,
+											    Long idCota, 
+											    Long idRota, 
+											    List<NotaEnvio> notasEnvio, 
+											    Date dataEmissao, 
+											    Intervalo<Date> periodo,
+											    List<Long> listaIdFornecedores, 
+											    String chaveAcesso,
+											    Integer codigoNaturezaOperacao, 
+											    String descricaoNaturezaOperacao,
+											    List<EstudoCota> listaEstudosCota) {
 		
-		List<EstudoCota> listaEstudosCota = this.estudoCotaRepository
-				.obterEstudosCotaParaNotaEnvio(Arrays.asList(idCota), periodo,
-						listaIdFornecedores);
+		Cota cota = cotaRepository.buscarPorId(idCota);
+		
+		if (cota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
+		}
+		
+		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota);
+		
+		List<ItemNotaEnvio> listaItemNotaEnvio = 
+				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado);
 
-		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(
-				listaEstudosCota, cota, listaMovimentoEstoqueCota,periodo);
+		NotaEnvio notaEnvio = null;
+		
+		if(listaItemNotaEnvio != null && listaItemNotaEnvio.size() > 0) {
 
-		if (listaItemNotaEnvio.isEmpty()) {
+			notaEnvio = criarNotaEnvio(destinatarioAtualizado,
+					                   chaveAcesso,
+					                   codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+					                   pessoaEmitente);
+	
+			int sequencia = 0;
+
+			for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
+
+				if (itemNotaEnvio.getItemNotaEnvioPK() == null) {
+					
+					itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,++sequencia));
+				}
+			}
+
+			notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
+	
+			notasEnvio.add(notaEnvio);
+		}
+		
+		for(NotaEnvio item : notasEnvio){
+			item.getListaItemNotaEnvio().isEmpty();
+		}
+		
+		/*if (listaItemNotaEnvio.isEmpty()) {
 
 			throw new ValidacaoException(TipoMensagem.ERROR,
 					"Não é possível gerar Nota de Envio para a Cota "
 							+ cota.getNumeroCota());
-		}
-
-		int sequencia = 0;
-
-		for (ItemNotaEnvio itemNotaEnvio : listaItemNotaEnvio) {
-
-			if (itemNotaEnvio.getItemNotaEnvioPK() == null) {
-				
-				itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,++sequencia));
-			}
-		}
-
-		notaEnvio.setListaItemNotaEnvio(listaItemNotaEnvio);
-
-		return notaEnvio;
+		}*/
 	}
 	
 	/**
@@ -527,7 +590,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			}
 		}
 	}
-	
+
 	/**
 	 * Gera Nota de envio da Cota
 	 * @param pessoaEmitente
@@ -543,17 +606,17 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * @param listaEstudosCota
 	 */
 	private void getNotaEnvioCota(PessoaJuridica pessoaEmitente,
-			                           Long idCota, 
-				                       Long idRota, 
-				                       List<NotaEnvio> notasEnvio, 
-				                       Date dataEmissao, 
-				                       Intervalo<Date> periodo,
-	                                   List<Long> listaIdFornecedores, 
-	                                   String chaveAcesso,
-				                       Integer codigoNaturezaOperacao, 
-				                       String descricaoNaturezaOperacao,
-				                       List<EstudoCota> listaEstudosCota){
-
+		                          Long idCota, 
+			                      Long idRota, 
+			                      List<NotaEnvio> notasEnvio, 
+			                      Date dataEmissao, 
+			                      Intervalo<Date> periodo,
+                                  List<Long> listaIdFornecedores, 
+                                  String chaveAcesso,
+			                      Integer codigoNaturezaOperacao, 
+			                      String descricaoNaturezaOperacao,
+			                      List<EstudoCota> listaEstudosCota){
+		
 		Cota cota = cotaRepository.buscarPorId(idCota);
 		
 		if (cota == null) {
@@ -561,36 +624,17 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
 		}
 		
-		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
-				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(idCota, periodo, listaIdFornecedores, 
-																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota);
 		
-		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota,periodo);
+		List<ItemNotaEnvio>listaItemNotaEnvio = 
+				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado);
 
-		if (listaItemNotaEnvio==null || listaItemNotaEnvio.isEmpty()) {
-
-			return;
-		}
-		
-		PDV pdvPrincipal = this.pdvRepository.obterPDVPrincipal(cota.getId());
-
-		if (idRota == null) {
-			
-			idRota = this.getIdRotaCota(pdvPrincipal, cota);
-		}
-		
-		IdentificacaoDestinatario destinatarioAtualizado = this.carregaDestinatario(cota, idRota, pdvPrincipal);
-		
-		this.atualizarNotasEnvio(notasEnvio, listaItemNotaEnvio, destinatarioAtualizado);
-
-		NotaEnvio notaEnvio = null;
-		
 		if(listaItemNotaEnvio != null && listaItemNotaEnvio.size() > 0) {
 
-			notaEnvio = criarNotaEnvio(destinatarioAtualizado,
-					                   chaveAcesso,
-					                   codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
-					                   pessoaEmitente);
+			NotaEnvio notaEnvio = criarNotaEnvio(destinatarioAtualizado,
+								                   chaveAcesso,
+								                   codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
+								                   pessoaEmitente);
 	
 			notaEnvioRepository.adicionar(notaEnvio);
 			
@@ -602,6 +646,45 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			notasEnvio.add(notaEnvio);
 		}
+	}
+	
+	/*
+	 * Efetua o processamento das notas de envio já geradas
+	 */
+	private List<ItemNotaEnvio> processarNotasDeEnvioGeradas(Cota cota, 
+												            Long idRota, 
+												            List<NotaEnvio> notasEnvio, 
+												            Intervalo<Date> periodo,
+												            List<Long> listaIdFornecedores, 
+												            List<EstudoCota> listaEstudosCota,
+												            IdentificacaoDestinatario destinatarioAtualizado){
+		
+		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(cota.getId(), periodo, listaIdFornecedores, 
+																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+		
+		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota,periodo);
+
+		if (listaItemNotaEnvio==null || listaItemNotaEnvio.isEmpty()) {
+
+			return null;
+		}
+		
+		this.atualizarNotasEnvio(notasEnvio, listaItemNotaEnvio, destinatarioAtualizado);
+		
+		return listaItemNotaEnvio;
+	}
+	
+	private IdentificacaoDestinatario obterDestinatarioAtualizado(Cota cota, Long idRota){
+		
+		PDV pdvPrincipal = this.pdvRepository.obterPDVPrincipal(cota.getId());
+
+		if (idRota == null) {
+			
+			idRota = this.getIdRotaCota(pdvPrincipal, cota);
+		}
+		
+		return this.carregaDestinatario(cota, idRota, pdvPrincipal);
 	}
 	
 	/**
@@ -673,7 +756,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		return notasEnvio;
 	}
-
 
 	/**
 	 * Cria nova nota de Envio

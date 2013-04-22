@@ -59,7 +59,7 @@
 					<table>
 						<tr>
 							<td><strong>Total R$:</strong></td>
-							<td> </td>
+							<td id="totalGeralConsignado"></td>
 						</tr>				
 						<tr>
 							<td></td>													

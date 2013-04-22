@@ -1207,7 +1207,7 @@ public class CotaServiceImpl implements CotaService {
 		boolean newCota = false;
 		if(cota == null){
 			cota = new Cota();
-			cota.setInicioAtividade(new Date());
+			cota.setInicioAtividade(distribuidorService.obterDataOperacaoDistribuidor());
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
 			incluirPDV = true;
 			newCota = true;
@@ -1896,10 +1896,15 @@ public class CotaServiceImpl implements CotaService {
 		
 		List<RegistroCurvaABCCotaDTO> lista = cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 		
+		Cota cota = cotaRepository.obterPorNumerDaCota(filtroCurvaABCCotaDTO.getCodigoCota());
+		
+		Map<Long, Long> mapRanking =
+			rankingRepository.obterRankingProdutoCota(cota.getId());
+		
 		if(!lista.isEmpty()){
 			
 			for(RegistroCurvaABCCotaDTO dto : lista){
-				dto.setRkProduto(rankingRepository.obterRankingProdutoCota(dto.getIdCota(),dto.getIdProduto()));
+				dto.setRkProduto(mapRanking.get(dto.getIdProdutoEdicao()));
 			}
 		}
 		
@@ -2005,7 +2010,7 @@ public class CotaServiceImpl implements CotaService {
 		Long idCotaNova = this.salvarCota(cotaDTO);
 
 		Cota cotaNova = this.cotaRepository.buscarPorId(idCotaNova);
-		cotaNova.setInicioTitularidade(new Date());
+		cotaNova.setInicioTitularidade(this.distribuidorService.obterDataOperacaoDistribuidor());
 		cotaNova.setPdvs(pdvs);
 		cotaNova.setFornecedores(fornecedores);
 		cotaNova.setDescontosProdutoEdicao(descontosProdutoEdicao);

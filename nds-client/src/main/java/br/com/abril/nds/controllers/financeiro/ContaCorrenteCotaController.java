@@ -230,9 +230,16 @@ public class ContaCorrenteCotaController extends BaseController {
 			
 			boolean temMaisQueUm = listaInfoTotalFornecedor.size() > 1;
 									
-			Object[] dados = new Object[2];
+			Object[] dados = new Object[3];
 			dados[0] = temMaisQueUm;
-			dados[1] = resultado;		
+			dados[1] = resultado;
+			
+			BigDecimal total = BigDecimal.ZERO;
+			for (ConsignadoCotaDTO c : listaConsignadoCota){
+				
+				total = total.add(c.getTotal());
+			}
+			dados[2] = total;
 						
 			result.use(Results.json()).from(dados, "result").recursive().serialize();
 						

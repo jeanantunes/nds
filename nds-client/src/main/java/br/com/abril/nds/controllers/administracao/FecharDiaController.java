@@ -46,11 +46,12 @@ import br.com.abril.nds.dto.fechamentodiario.TipoDivida;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.FecharDiaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
@@ -95,6 +96,9 @@ public class FecharDiaController extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private DiferencaEstoqueService diferencaEstoqueService;
 	
 	@Autowired
 	private CotaService cotaService;
@@ -410,11 +414,11 @@ public class FecharDiaController extends BaseController {
 	    
 	    PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
 	    
-	    List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataOperacao, paginacao);
+	    List<Cobranca> dividas = fecharDiaService.obterDividasReceberEm(dataOperacao, paginacao);
 	    Long totalDividas = fecharDiaService.contarDividasReceberEm(dataOperacao);
 	    
 	    List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
-	    for (Divida divida : dividas) {
+	    for (Cobranca divida : dividas) {
 	        dividasDTO.add(DividaDTO.fromDivida(divida));
 	    }
 	    result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();       
@@ -423,10 +427,10 @@ public class FecharDiaController extends BaseController {
 	@Get
     public void exportarDividasReceber(FileType fileType) throws IOException {
 	    
-		List<Divida> dividas = fecharDiaService.obterDividasReceberEm(dataOperacao, null);
+		List<Cobranca> dividas = fecharDiaService.obterDividasReceberEm(dataOperacao, null);
         List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>(dividas.size());
 
-        for (Divida divida : dividas) {
+        for (Cobranca divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
         
@@ -441,11 +445,11 @@ public class FecharDiaController extends BaseController {
 	    
         PaginacaoVO paginacao = new PaginacaoVO(page, rp, null);
         
-        List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataOperacao, paginacao);
+        List<Cobranca> dividas = fecharDiaService.obterDividasVencerApos(dataOperacao, paginacao);
         Long totalDividas = fecharDiaService.contarDividasVencerApos(dataOperacao);
         
         List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
-        for (Divida divida : dividas) {
+        for (Cobranca divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
         result.use(FlexiGridJson.class).from(dividasDTO).page(page).total(totalDividas.intValue()).serialize();            
@@ -454,10 +458,10 @@ public class FecharDiaController extends BaseController {
 	@Get
     public void exportarDividasVencer(FileType fileType) throws IOException {
 	    
-		List<Divida> dividas = fecharDiaService.obterDividasVencerApos(dataOperacao, null);
+		List<Cobranca> dividas = fecharDiaService.obterDividasVencerApos(dataOperacao, null);
         List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>(dividas.size());
 
-        for (Divida divida : dividas) {
+        for (Cobranca divida : dividas) {
             dividasDTO.add(DividaDTO.fromDivida(divida));
         }
         
@@ -644,6 +648,15 @@ public class FecharDiaController extends BaseController {
             return download;
         }
         return null;
+    }
+    
+    @Post
+    public void transferirDiferencasParaEstoqueDePerdaGanho() {
+    	
+    	this.fecharDiaService.transferirDiferencasParaEstoqueDePerdaGanho(
+    		dataOperacao, getUsuarioLogado().getId());
+    	
+    	this.result.use(CustomMapJson.class).put("result", "").serialize();
     }
     
     private FechamentoDiarioDTO getFechamentoDiarioDTO() {

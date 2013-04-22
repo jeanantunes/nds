@@ -378,16 +378,14 @@ public class ImpressaoBoletosController extends BaseController {
 	 */
 	private void efetuarConsulta(FiltroDividaGeradaDTO filtro) {
 
-		List<GeraDividaDTO> listaDividasGeradas = dividaService
-				.obterDividasGeradas(filtro);
+		List<GeraDividaDTO> listaDividasGeradas = dividaService.obterDividasGeradas(filtro);
 
 		if (listaDividasGeradas == null || listaDividasGeradas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 					"Nenhum registro encontrado.");
 		}
 
-		Long totalRegistros = dividaService
-				.obterQuantidadeDividasGeradas(filtro);
+		Long totalRegistros = dividaService.obterQuantidadeDividasGeradas(filtro);
 
 		List<DividaGeradaVO> listaDividasGeradasVO = getListaDividaGeradaVO(listaDividasGeradas);
 
@@ -470,13 +468,18 @@ public class ImpressaoBoletosController extends BaseController {
 			filtro.setPaginacao(paginacao);
 
 			String[] sortNames = sortname.split(",");
+			
+			if(sortNames.length == 1) {
+				filtro.getPaginacao().setSortColumn(sortNames[0]);
+				filtro.getPaginacao().setSortOrder(sortorder);
+			}
 
 			List<FiltroDividaGeradaDTO.ColunaOrdenacao> ordenacaoColunas = new ArrayList<FiltroDividaGeradaDTO.ColunaOrdenacao>();
 
 			for (String sort : sortNames) {
 
 				ordenacaoColunas.add(Util.getEnumByStringValue(
-						FiltroDividaGeradaDTO.ColunaOrdenacao.values(), sort));
+						FiltroDividaGeradaDTO.ColunaOrdenacao.values(), sort.trim()));
 			}
 
 			filtro.setListaColunaOrdenacao(ordenacaoColunas);
