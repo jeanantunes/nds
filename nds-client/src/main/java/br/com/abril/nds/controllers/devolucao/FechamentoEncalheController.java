@@ -109,6 +109,8 @@ public class FechamentoEncalheController extends BaseController {
 		result.include("dataOperacao", DateUtil.formatarDataPTBR(this.distribuidorService.obterDataOperacaoDistribuidor()));
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
+		
+		result.include("permissaoColExemplDevolucao", usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_COLUNA_EXEMPL_DEVOLUCAO_ALTERACAO));
 	}
 	
 	@Path("/pesquisar")

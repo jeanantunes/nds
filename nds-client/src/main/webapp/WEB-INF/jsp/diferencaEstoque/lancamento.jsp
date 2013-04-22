@@ -1,4 +1,5 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+
 <head>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -82,12 +83,15 @@
 						
 						
 						<div id="btnsControleDiferenca">
-							<span class="bt_novos">
-								<a isEdicao="true" href="javascript:;" onclick="lancamentoController.popupConfirmar();"
-								   title="Confirmar Lançamento de Faltas e Sobras">
-									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
-								</a>
-							</span>
+							
+							<c:if test="${permissaoBotaoConfirmacao eq true}">
+								<span class="bt_novos">
+									<a isEdicao="true" href="javascript:;" onclick="lancamentoController.popupConfirmar();"
+									   title="Confirmar Lançamento de Faltas e Sobras">
+										<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
+									</a>
+								</span>
+							</c:if>
 							
 							<span class="bt_novos">
 								<a isEdicao="true" href="javascript:;" onclick="lancamentoController.popupSalvarLancamentos();"

@@ -161,6 +161,7 @@ public class DiferencaEstoqueController extends BaseController {
 		this.limparSessao();
 		
 		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
+		result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO_ALTERACAO));
 	}
 	
 	@Get
