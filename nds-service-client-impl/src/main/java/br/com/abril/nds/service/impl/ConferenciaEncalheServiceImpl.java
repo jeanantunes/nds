@@ -1084,8 +1084,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	
 	@Transactional(readOnly = true)
 	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
 		
@@ -3039,15 +3037,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
         ConsolidadoFinanceiroCota consolidado = this.obterConsolidadoCota(idCota, dataOperacao);
 		
 		BigDecimal outrosValoresConsolidados = this.obterValorOutroDebitoCreditoDeConsolidados(consolidado);
-		
-        if(BigDecimal.ZERO.compareTo(outrosValoresConsolidados)>0) {
-			
-			valorTotalPagar = valorTotalPagar.add(outrosValoresConsolidados.abs());
-			
-		} else {
-			
-			valorTotalPagar = valorTotalPagar.subtract(outrosValoresConsolidados.abs());
-		}
+	
+		valorTotalPagar = outrosValoresConsolidados.compareTo(BigDecimal.ZERO) >0?valorTotalPagar.add(outrosValoresConsolidados.abs()):valorTotalPagar.subtract(outrosValoresConsolidados.abs());
 		
 		
 		slipDTO.setNumeroCota(numeroCota);
