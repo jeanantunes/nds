@@ -2,6 +2,8 @@
 
 <script type="text/javascript" src="scripts/desenglobacao.js"></script>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script type="text/javascript">
 
 	var	pesquisaCota = new PesquisaCota();
@@ -99,7 +101,7 @@
 		</div>
 	</div>
 
-	<div id="dialog-novo" title="Englobar">
+	<div id="dialog-novo-desenglobacao" class="dialog" title="Englobar">
 		<form id="formInserirEnglobada">
 			<fieldset style="float: left; width: 600px !important; margin-bottom: 10px;">
 				<legend>Desenglobar de:</legend>
