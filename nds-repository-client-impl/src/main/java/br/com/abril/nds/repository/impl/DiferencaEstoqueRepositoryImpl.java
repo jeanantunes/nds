@@ -7,8 +7,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -17,6 +19,7 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 
@@ -579,6 +582,68 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
         query.setParameter("statusConfirmacao", statusConfirmacao);
         
         return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<ImpressaoDiferencaEstoqueDTO> obterDadosParaImpressaoNaData(Date data) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select distinct produtoEdicao as produtoEdicao, ")
+		   .append(" sum( ")
+		   .append(" coalesce( ")
+		   .append(" case when (diferenca.tipoDiferenca = 'FALTA_DE' or diferenca.tipoDiferenca = 'FALTA_EM') ")
+		   .append(" then diferenca.qtde else 0 end ")
+		   .append(" , 0)) as qtdeFaltas, ")
+		   .append(" sum( ")
+		   .append(" coalesce( ")
+		   .append(" case when (diferenca.tipoDiferenca = 'SOBRA_DE' or diferenca.tipoDiferenca = 'SOBRA_EM') ")
+		   .append(" then diferenca.qtde else 0 end ")
+		   .append(" , 0)) as qtdeSobras ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" join lancamento.estudo estudo ")
+		   .append(" join lancamento.produtoEdicao produtoEdicao ")
+		   .append(" left join produtoEdicao.diferencas diferenca ")
+		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
+		   .append(" and lancamento.status in (:statusLancamento) ")
+		   .append(" group by produtoEdicao.id ")
+		   .append(" order by produtoEdicao.produto.nome, produtoEdicao.numeroEdicao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataBalanceamento", data);
+		
+		query.setParameterList(
+			"statusLancamento", new StatusLancamento[] {StatusLancamento.BALANCEADO});
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ImpressaoDiferencaEstoqueDTO.class));
+
+		return query.list();
+	}
+	
+	@Override
+	public Long obterQuantidadeDadosParaImpressaoNaData(Date data) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(distinct produtoEdicao) ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" join lancamento.estudo estudo ")
+		   .append(" join lancamento.produtoEdicao produtoEdicao ")
+		   .append(" left join produtoEdicao.diferencas diferenca ")
+		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
+		   .append(" and lancamento.status in (:statusLancamento) ")
+		   .append(" group by produtoEdicao.id ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataBalanceamento", data);
+		
+		query.setParameterList(
+			"statusLancamento", new StatusLancamento[] {StatusLancamento.BALANCEADO});
+
+		return (Long) query.uniqueResult();
 	}
 	
 }

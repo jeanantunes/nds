@@ -9,11 +9,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -143,6 +144,7 @@ import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ImpressaoMatricialUtil;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.MathUtil;
 
@@ -418,13 +420,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @param cota
 	 * @param produtoEdicao
-	 * 
+	 *  
 	 * @return ChamadaEncalhe
 	 */
 	private ChamadaEncalhe validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
 
-		boolean encalheConferido = false;
-		boolean indPesquisaCEFutura = false;
 		boolean postergado = false;
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -433,7 +433,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 			
 			List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.
-					obterListaChamaEncalheCota(cota.getNumeroCota(), dataOperacao, produtoEdicao.getId(), indPesquisaCEFutura, encalheConferido, postergado);
+					obterListaChamaEncalheCota(cota.getNumeroCota(),produtoEdicao.getId(),postergado,dataOperacao);
 
 			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
 				
@@ -447,14 +447,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		} else {
 
-			encalheConferido = false;
-			indPesquisaCEFutura = true;
-			postergado = false;
+			List<Date> dataRecolhimentoReferencia = distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento();
 			
-			Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
-			
-			List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.
-					obterListaChamaEncalheCota(cota.getNumeroCota(), dataRecolhimentoReferencia, produtoEdicao.getId(), indPesquisaCEFutura, encalheConferido, postergado);
+			List<ChamadaEncalheCota> listaChamadaEncalheCota = 
+					chamadaEncalheCotaRepository.obterListaChamaEncalheCota(cota.getNumeroCota(), 
+																			produtoEdicao.getId(), 
+																			postergado,
+																			dataOperacao,
+																			dataRecolhimentoReferencia.toArray(new Date[]{}));
 			
 			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
 				
@@ -1210,7 +1210,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return dataRecolhimentoReferencia;
 	}
 	
-	
 	/**
 	 * Associa a Cobrança relativa a uma operação 
 	 * ControleConferenciaEncalheCota.
@@ -1453,18 +1452,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 			}
 		}
-
-		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
-				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-						GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
-						
-				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-						GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
-		);
-			
-		this.movimentoFinanceiroCotaService.removerPostergadosDia(
-				idCota, listaPostergados, 
-				this.distribuidorService.obterDataOperacaoDistribuidor());
 	}
 	
 	private void removerItensConferenciaEncallhe(Set<Long> listaIdConferenciaEncalheParaExclusao) {
@@ -2438,12 +2425,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Date dataRecolhimentoReferencia,
 			Long idProdutoEdicao) {
 		
-		boolean encalheConferido = false;
-		boolean indPesquisaCEFutura = true;
 		boolean postergado = false;
 		
 		List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-				chamadaEncalheCotaRepository.obterListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, idProdutoEdicao, indPesquisaCEFutura, encalheConferido, postergado);
+				chamadaEncalheCotaRepository.obterListaChamaEncalheCota(numeroCota, idProdutoEdicao, postergado,dataRecolhimentoReferencia);
 
 		StringBuffer errorMsg = new StringBuffer();
 
@@ -3232,7 +3217,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public byte[] gerarSlipTxtMatricial(){
 		
 		StringBuffer sb = new StringBuffer();
-		/*ImpressaoMatricialUtil e = new ImpressaoMatricialUtil(sb);
+		ImpressaoMatricialUtil e = new ImpressaoMatricialUtil(sb);
 		
 		e.darEspaco(1);
 		e.adicionar("TREELOG S/A LOGISTICA E DISTRIBUICAO");
@@ -3318,7 +3303,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.adicionarCompleteTraco("VALOR TOTAL A PAGAR", valorTotalPagar);
 		
 		e.quebrarLinhaEscape(9);//Espaços fim da impressao
-*/		
+		
 		String saida = sb.toString();
 		
 		return saida.getBytes();
@@ -3350,14 +3335,4 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
 		}
 	}
-	
-	public static void main (String...strings){
-		
-		float x = (float) 12.00000000000000;
-		
-		System.out.println(new BigDecimal(x));
-		
-		
-	}
-	
 }

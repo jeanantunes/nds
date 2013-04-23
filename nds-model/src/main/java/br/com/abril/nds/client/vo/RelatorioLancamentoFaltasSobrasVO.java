@@ -2,38 +2,34 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.util.CurrencyUtil;
 
-public class relatorioLancamentoFaltasSobrasVO implements Serializable  {
+public class RelatorioLancamentoFaltasSobrasVO implements Serializable  {
 
-	
-	
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5342968572475646951L;
-	
 	
 	private String 	codigoProduto;
 	private String 	descricaoProduto;
 	private String 	numeroEdicao;
 	private String 	precoCapa;
-	private String 	reparte;
+	private String 	qtdeFaltas;
+	private String 	qtdeSobras;
 	
-	public relatorioLancamentoFaltasSobrasVO(Diferenca diferenca) {
-		super();
-		ProdutoEdicao produtoEdicao = diferenca.getProdutoEdicao();
+	public RelatorioLancamentoFaltasSobrasVO(ImpressaoDiferencaEstoqueDTO impressaoDiferencaEstoqueDTO) {
+		
+		ProdutoEdicao produtoEdicao = impressaoDiferencaEstoqueDTO.getProdutoEdicao();
 		Produto produto = produtoEdicao.getProduto();
 		
 		this.codigoProduto = produto.getCodigo();
 		this.descricaoProduto = produto.getNomeComercial();;
 		this.numeroEdicao = produtoEdicao.getNumeroEdicao().toString();
 		this.precoCapa = CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda());
-		this.reparte = diferenca.getQtde().toString();
+		
+		this.qtdeFaltas = impressaoDiferencaEstoqueDTO.getQtdeFaltas().toString();
+		this.qtdeSobras = impressaoDiferencaEstoqueDTO.getQtdeSobras().toString();
 	}
 
 	public String getCodigoProduto() {
@@ -68,17 +64,20 @@ public class relatorioLancamentoFaltasSobrasVO implements Serializable  {
 		this.precoCapa = precoCapa;
 	}
 
-	public String getReparte() {
-		return reparte;
+	public String getQtdeFaltas() {
+		return qtdeFaltas;
 	}
 
-	public void setReparte(String reparte) {
-		this.reparte = reparte;
+	public void setQtdeFaltas(String qtdeFaltas) {
+		this.qtdeFaltas = qtdeFaltas;
 	}
-	
-	
 
-	
-	
+	public String getQtdeSobras() {
+		return qtdeSobras;
+	}
+
+	public void setQtdeSobras(String qtdeSobras) {
+		this.qtdeSobras = qtdeSobras;
+	}	
 		
 }
