@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -2931,6 +2932,31 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 
+	private void carregarListaProdutoEdicaoAusenteNoEncalhe(
+			List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip, 
+			Long idCota, 
+			Date dataOperacao) {
+
+		if(listaProdutoEdicaoSlip == null) {
+			listaProdutoEdicaoSlip = new LinkedList<ProdutoEdicaoSlipDTO>();
+		}
+		
+		Set<Long> listaIdProdutoEdicaoNoEncalhe = new HashSet<Long>();
+		
+		for(ProdutoEdicaoSlipDTO produto: listaProdutoEdicaoSlip) {
+			listaIdProdutoEdicaoNoEncalhe.add(produto.getIdProdutoEdicao());
+		}
+		
+		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoAusenteConferenciaEncalhe = 
+				conferenciaEncalheRepository.obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
+						idCota, dataOperacao, false, false, listaIdProdutoEdicaoNoEncalhe);
+		
+		if( listaProdutoEdicaoAusenteConferenciaEncalhe != null ) {
+			listaProdutoEdicaoSlip.addAll(listaProdutoEdicaoAusenteConferenciaEncalhe);
+		}
+		
+	}
+	
 	@Transactional
 	public void setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
@@ -2947,10 +2973,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(
 						idControleConferenciaEncalheCota);
 		
+		Long idCota	= controleConferenciaEncalheCota.getCota().getId();
+		
+		carregarListaProdutoEdicaoAusenteNoEncalhe(listaProdutoEdicaoSlip, idCota, dataOperacao);
+		
+		
 		NumberFormat formatter = new DecimalFormat("00000");
 		
 		Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
-		Long idCota				= controleConferenciaEncalheCota.getCota().getId();
+	
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
 		Date dataConferencia 	= controleConferenciaEncalheCota.getDataFim();
 		Integer codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
