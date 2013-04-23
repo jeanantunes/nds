@@ -48,5 +48,7 @@ public interface RegiaoService {
 	List<RegiaoNMaiores_CotaDTO> rankingCotas (List<String> idsProdEdicaoParaMontagemRanking, Integer limite);
 	
 	List<String> listaIdProdEdicaoParaRanking(String codProd, String numEdicao);
+	
+	List<RegiaoNMaiores_CotaDTO> filtroRankingCotas (Integer numCota);
 
 }

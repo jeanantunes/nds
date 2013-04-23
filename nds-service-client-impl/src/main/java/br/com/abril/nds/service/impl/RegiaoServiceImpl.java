@@ -128,17 +128,26 @@ public class RegiaoServiceImpl implements RegiaoService  {
 	}
 
 	@Override
+	@Transactional
 	public List<RegiaoNMaiores_ProdutoDTO> buscarProdutos(FiltroRegiaoNMaioresProdDTO filtro) {
 		return registroCotaRegiaoRepository.buscarProdutos(filtro);
 	}
 
 	@Override
+	@Transactional
 	public List<RegiaoNMaiores_CotaDTO> rankingCotas(List<String> idsProdEdicaoParaMontagemRanking, Integer limite) {
 		return registroCotaRegiaoRepository.rankingCotas(idsProdEdicaoParaMontagemRanking, limite);
 	}
 
 	@Override
+	@Transactional
 	public List<String> listaIdProdEdicaoParaRanking(String codProd, String numEdicao) {
 		return registroCotaRegiaoRepository.idProdEdicaoParaMontagemDoRanking(codProd, numEdicao);
+	}
+
+	@Override
+	@Transactional
+	public List<RegiaoNMaiores_CotaDTO> filtroRankingCotas(Integer numCota) {
+		return registroCotaRegiaoRepository.filtroRanking(numCota);
 	}
 }

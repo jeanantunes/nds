@@ -1,8 +1,12 @@
 var regiaoController = $.extend(true, {
 	cotaAtual : '',
 	numCotas : null,
-	
+	tableResultNMaiores : "", 
 	init : function() {
+		
+		$('#numeroCota').change(function (){
+			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');
+		});
 	
 		$(".faixaGrid", regiaoController.workspace).flexigrid({
 			preProcess : regiaoController.executarPreProcessFaixaGrid,
@@ -42,7 +46,7 @@ var regiaoController = $.extend(true, {
 			height : 200,
 		});
 
-		$(".lstCotasGrid").flexigrid({
+		$("#lstCotasRankingGrid").flexigrid({
 			preProcess : regiaoController.executarPreProcessSelCotas,
 			dataType : 'json',
 			colModel : [ {
@@ -472,10 +476,12 @@ var regiaoController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 			
+			var checkAll;
+			
 			if($("#todos").is(":checked")){
-				var checkAll = '<input type="checkbox" name="cotaSelected" id="cotaSelected" checked value='+row.cell.numeroCota+'>';
+				checkAll = '<input type="checkbox" name="cotaSelected" id="cotaSelected" checked value='+row.cell.numeroCota+'>';
 			}else{
-				var checkAll = '<input type="checkbox" name="cotaSelected" id="cotaSelected" unchecked value='+row.cell.numeroCota+'>';
+				checkAll = '<input type="checkbox" name="cotaSelected" id="cotaSelected" unchecked value='+row.cell.numeroCota+'>';
 			}
 
 			row.cell.sel = checkAll;
@@ -488,6 +494,8 @@ var regiaoController = $.extend(true, {
 		
 	},
 	
+	rankingResult:new Array(),
+
 	//PreProcess ranking Nmaiores
 	executarPreProcessSelCotas : function(resultado){
 		
@@ -497,24 +505,31 @@ var regiaoController = $.extend(true, {
 					resultado.mensagens.listaMensagens
 			);
 			
-			$(".lstCotasGrid", regiaoController.workspace).hide();
+			$("#lstCotasRankingGrid", regiaoController.workspace).hide();
 			
 			return resultado;
 		}
 		
+		//Resultado da pesquisa
+		regiaoController.rankingResult = resultado.rows;
+		
 		$.each(resultado.rows, function(index, row) {
 			
+			var checkAll;
+			
 			if($("#selTodasCotas").is(":checked")){
-				var checkAll = '<input type="checkbox" name="rankingCotaSelected" id="rankingCotaSelected" checked value='+row.cell.numeroCota+'>';
+				checkAll = '<input type="checkbox" name="rankingCotaSelected" id="rankingCotaSelected" checked value='+row.cell.numeroCota+'>';
 			}else{
-				var checkAll = '<input type="checkbox" name="rankingCotaSelected" id="rankingCotaSelected" unchecked value='+row.cell.numeroCota+'>';
+				checkAll = '<input type="checkbox" name="rankingCotaSelected" id="rankingCotaSelected" unchecked value='+row.cell.numeroCota+'>';
 			}
 			
 			row.cell.sel = checkAll;
 			
 		});
 		
-		$(".lstCotasGrid", regiaoController.workspace).show();
+		$("#lstCotasRankingGrid", regiaoController.workspace).show();
+		
+		regiaoController.tableResultNMaiores = resultado;
 		
 		return resultado;
 		
@@ -573,11 +588,12 @@ var regiaoController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 			
+			var checkAll;
 			
 			if($("#selTodosProdutos").is(":checked")){
-				var checkAll = '<input type="checkbox" name="prodNMaioresSelected" id="prodNMaioresSelected" checked value='+index+'>';
+				checkAll = '<input type="checkbox" name="prodNMaioresSelected" id="prodNMaioresSelected" checked value='+index+'>';
 			}else{
-				var checkAll = '<input type="checkbox" name="prodNMaioresSelected" id="prodNMaioresSelected" unchecked value='+index+'>';
+				checkAll = '<input type="checkbox" name="prodNMaioresSelected" id="prodNMaioresSelected" unchecked value='+index+'>';
 			}
 			
 			row.cell.sel = checkAll;
@@ -853,17 +869,27 @@ var regiaoController = $.extend(true, {
 		});
 	},
 	
-
-	
-	
 	// FUNCTION - REGI�O AUTOM�TICA - GRID PRINCIPAL
 	addCotasRegAutomatica : function() {
-
+		
+		$('#qtdCotasRanking').val("");
+		
 		$("#dialog-cotas").dialog({
 			resizable : false,
 			height : 550,
 			width : 650,
 			modal : true,
+			open:function(){
+				produtosEscolhidosArray=new Array();
+				var clearData = {
+				        total: 0,    
+				        page:1,
+				        rows: []
+				};
+				
+				
+				$("#nMaioresGrid").flexAddData(clearData);
+			},
 			buttons : {
 				"Confirmar" : function() {
 					var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
@@ -879,21 +905,43 @@ var regiaoController = $.extend(true, {
 					$(this).dialog("close");
 
 					regiaoController.limparCamposAddAutomatica();
+					
+					//limpando grid utilizado
+					clearData = {
+					        total: 0,    
+					        page:1,
+					        rows: []
+					};
+					
+					$("#nMaioresGrid").flexAddData(clearData);
+					
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
 					regiaoController.limparCamposAddAutomatica();
-//					
-					$("#faixaGrid").closest('#grid');
+
+					$("#nMaioresGrid").flexAddData(data);
+					
+					//limpando grid utilizado
+					clearData = {
+					        total: 0,    
+					        page:1,
+					        rows: []
+					};
+					
+					
+					$("#nMaioresGrid").flexAddData(clearData);
+					
 				}
 			}
 		});
 	},
 	
 	limparCamposAddAutomatica : function (){
-		regiaoController.filtroPorCep();
-		$("#radio").attr('checked', true);
 		
+		regiaoController.filtroInit();
+		
+		$("#radio").attr('checked', true);
 		$("#radio2").attr('checked', false);
 		$("#radio3").attr('checked', false);
 		$("#cepInicialPart1").val("");
@@ -1028,7 +1076,15 @@ var regiaoController = $.extend(true, {
 	// FUNCTION - ADD PRODUTOS
 
 	add_produtos : function() {
+		
+		$("#idCodigo").val("");
+		$("#nomeProduto").val("");
+		$("#comboClassificacao").val("");
+		
+		$('#selTodosProdutos').attr('checked', true);
+		
 		$('#lstProdutosGrid').hide();
+		
 		$("#dialog-addNMaiores").dialog({
 			resizable : false,
 			height : 520,
@@ -1038,24 +1094,52 @@ var regiaoController = $.extend(true, {
 				"Confirmar" : function() {
 					
 					$("#lstProdutosGrid input[type=checkbox][name=prodNMaioresSelected]:checked").each(function() {
-						produtosEscolhidosArray.push(regiaoController.produtosResult[$(this).val()]);
+						validatorProdEscolhidos.push(regiaoController.produtosResult[$(this).val()]);
 					});
 					
-					$(this).dialog("close");
+					
+					if(validatorProdEscolhidos.length == 0){
+						var erros = new Array();
+				           erros[0] = "Nenhum produto selecionado. Selecione no mínimo 01 produto para inserção ou clique em cancelar para fechar a janela.";
+				           exibirMensagemDialog('WARNING',   erros,"");
+				           
+				           validatorProdEscolhidos.length= 0;
+				           return;
+					}else{
+						
+					if((validatorProdEscolhidos.length > 0) && (validatorProdEscolhidos.length <= 6)){
+					
+					$("#lstProdutosGrid input[type=checkbox][name=prodNMaioresSelected]:checked").each(function() {
+						produtosEscolhidosArray.push(regiaoController.produtosResult[$(this).val()]);
+					});
 					
 					for(var i=0; i < produtosEscolhidosArray.length; i++){
 						produtosEscolhidosArray[i].cell.acao="<input type='image' class='btnExcluir' onclick='removeProdutoEscohido(this.value);' value='"+i+"' style='cursor:pointer' src='" + contextPath + "/images/ico_excluir.gif'/>";
 					}
-
-					var data = {
-					        total: produtosEscolhidosArray.length,    
-					        page:1,
-					        rows: produtosEscolhidosArray
-					};
 					
+						var data = {
+								total: produtosEscolhidosArray.length,    
+								page:1,
+								rows: produtosEscolhidosArray
+						};
+						
+						
+						$("#nMaioresGrid").flexAddData(data);
+				
+						validatorProdEscolhidos.length= 0;
+						
+						$(this).dialog("close");
 					
-					$("#nMaioresGrid").flexAddData(data);
-
+					}else{
+						var erros = new Array();
+				           erros[0] = "Selecione no máximo 06 edicões.";
+				           exibirMensagemDialog('WARNING',   erros,"");
+				           
+				           validatorProdEscolhidos.length= 0;
+				           return;
+				           
+					}
+					}
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
@@ -1085,10 +1169,12 @@ var regiaoController = $.extend(true, {
 							cotas.push({name:'cotas', value:this.value});
 					});
 
-					// adicionando a regiao
-					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
 					
 					if(cotas.length > 0){
+				
+						// adicionando a regiao
+						cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
+						
 						$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
 								cotas, 
 								function(result) {
@@ -1103,7 +1189,7 @@ var regiaoController = $.extend(true, {
 						});
 					}else{
 						var erros = new Array();
-				           erros[0] = "Nenhuma Cota Selecionada. Volte e selecione uma cota para adição!";
+				           erros[0] = "Nenhuma cota selecionada. Volte e selecione uma cota para adição!";
 				           exibirMensagemDialog('WARNING',   erros,"");
 
 				           this.closeDialogPopUpSegmento1 = false;
@@ -1136,21 +1222,34 @@ var regiaoController = $.extend(true, {
 							cotas.push({name:'cotas', value:this.value});
 					});
 
-					// adicionando a regi�o
-					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
-					
-					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
-							cotas, 
-							function(result) {
+					if(cotas.length > 0){
+						
+						// adicionando a regi�o
+						cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
+						
+						$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
+								cotas, 
+								function(result) {
 
-						var tipoMensagem = result.tipoMensagem;
-						var listaMensagens = result.listaMensagens;
+							var tipoMensagem = result.tipoMensagem;
+							var listaMensagens = result.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) 
+								exibirMensagem(tipoMensagem, listaMensagens);
+							
+							$(".cotasRegiaoGrid", this.workspace).flexReload();
+						});
 						
-						if (tipoMensagem && listaMensagens) 
-							exibirMensagem(tipoMensagem, listaMensagens);
-						
-						$(".cotasRegiaoGrid", this.workspace).flexReload();
-					});
+					}else{
+						var erros = new Array();
+				           erros[0] = "Nenhuma cota selecionada. Volte e selecione uma cota para adição!";
+				           exibirMensagemDialog('WARNING',   erros,"");
+
+				           this.closeDialogPopUpSegmento1 = false;
+
+				           return;
+					}
+					
 			},
 				"Cancelar" : function() {
 					$(this).dialog("close");
@@ -1218,8 +1317,17 @@ var regiaoController = $.extend(true, {
 	},
 
 	// FILTROS REGI�O AUTOM�TICA
-	// FUNCTION - FILTRO POR CEP
+
+	filtroInit: function() {
+		$('.porCep').hide();
+		$('.porSegmento').hide();
+		$('.gridfaixaCep').hide();
+		$('.gridNMaiores').hide();
+		$('.gridsegmentos').hide();
+		
+	},
 	
+	// FUNCTION - FILTRO POR CEP
 	filtroPorCep : function() {
 		$('.porCep').show();
 		$('.porSegmento').hide("drop", { direction: "left" }, "slow");
@@ -1236,6 +1344,8 @@ var regiaoController = $.extend(true, {
 		$('.gridfaixaCep').hide("drop", { direction: "left" }, "slow");
 		$('.gridNMaiores').show();
 		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
+		
+		$("#qtdCotasRanking").val("");
 	},
 
 	// FUNCTION - FILTRO POR SEGMENTO
@@ -1262,9 +1372,20 @@ var regiaoController = $.extend(true, {
 
 	validarDadosParaRanking : function() {
 		
+		$('#numeroCota').val("");
+		$('#nomeCota').val("");
+		
 		var isValid = true;
 		var codValidado = new Array();
 		var edicaoValidada = new Array();
+		
+		if((produtosEscolhidosArray.length == 0) || (produtosEscolhidosArray == "")){
+			 var erros = new Array();
+	           erros[0] = "Inclua no mínimo 01 produto.";
+	           exibirMensagemDialog('WARNING',   erros,"");
+
+	           return;
+		}
 		
 		if(produtosEscolhidosArray.length <= 6){
 			
@@ -1291,10 +1412,11 @@ var regiaoController = $.extend(true, {
 			
 		}else{
 			 var erros = new Array();
-	           erros[0] = "Os produtos selecionados só podem ser edições do mesmo produto ou 6 produtos com edições diferentes";
+	           erros[0] = "Os produtos selecionados só podem ser até 6 edições do mesmo produto ou até 6 produtos com edições diferentes";
 	           exibirMensagemDialog('WARNING',   erros,"");
 
 	           return;
+	           isValid = true;
 		}
 	},	
 	
@@ -1303,15 +1425,23 @@ var regiaoController = $.extend(true, {
 			
 			var limitePesquisa = $("#qtdCotasRanking").val();
 			
-			$(".lstCotasGrid", regiaoController.workspace).flexOptions({
+			if((limitePesquisa < 0) || (limitePesquisa == "")){
+				var erros = new Array();
+		           erros[0] = "Insira a quantidade de cotas.";
+		           exibirMensagemDialog('WARNING',   erros,"");
+
+		           return;
+			}else{
+			
+			$("#lstCotasRankingGrid").flexOptions({
 				url: contextPath + "/distribuicao/regiao/rankingCota",
 				dataType : 'json',
-					params: [{name: "filtro.codigoProduto", value: codValidado},
-					         {name: "filtro.numeroEdicao", value: edicaoValidada},
-					         {name: "filtro.limitePesquisa", value: limitePesquisa}]
+				params: [{name: "filtro.codigoProduto", value: codValidado},
+				         {name: "filtro.numeroEdicao", value: edicaoValidada},
+				         {name: "filtro.limitePesquisa", value: limitePesquisa}]
 			});
 			
-			$(".lstCotasGrid", regiaoController.workspace).flexReload();
+				$("#lstCotasRankingGrid").flexReload();
 			
 			$("#dialog-rankingCotas").dialog({
 				resizable : false,
@@ -1320,8 +1450,6 @@ var regiaoController = $.extend(true, {
 				modal : true,
 				buttons : {
 					"Confirmar" : function() {
-						$(this).dialog("close");
-						$("#effect").show("highlight", {}, 1000, callback);
 						
 						var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
 						var cotas = new Array();
@@ -1329,11 +1457,12 @@ var regiaoController = $.extend(true, {
 						$("input[type=checkbox][name='rankingCotaSelected']:checked").each(function() {
 							cotas.push({name:'cotas', value: $(this).val()});
 						});
-
-						// adicionando a regi�o
-						cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
 						
 						if(cotas.length > 0){
+							
+							// adicionando a regi�o
+							cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
+							
 							$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
 									cotas, 
 									function(result) {
@@ -1345,24 +1474,63 @@ var regiaoController = $.extend(true, {
 									exibirMensagem(tipoMensagem, listaMensagens);
 								
 								$(".cotasRegiaoGrid", this.workspace).flexReload();
+								$("#dialog-rankingCotas").dialog("close");
 							});
 						}else{
 							var erros = new Array();
-					           erros[0] = "Nenhuma Cota Selecionada. Volte e selecione uma cota para adição!";
+					           erros[0] = "Nenhuma cota selecionada. Volte e selecione uma cota para adição!";
 					           exibirMensagemDialog('WARNING',   erros,"");
-
-					           this.closeDialogPopUpSegmento1 = false;
-
 					           return;
 						}
+						
+						cotasRankingNMaioresArray.length = 0;
 						
 					},
 					"Cancelar" : function() {
 						$(this).dialog("close");
+						
+						cotasRankingNMaioresArray.length = 0;
 					}
 				}
 			});
+			}
 	},
+	
+	
+	filtroCotaRanking : function (){
+		
+		var numCota = $("#numeroCota").val();
+		var cotaEncontrada = "";
+		
+		for(var i=0; i<regiaoController.tableResultNMaiores.total; i++){
+		
+			if(regiaoController.tableResultNMaiores.rows[i].cell.numeroCota == numCota){
+				cotaEncontrada = regiaoController.tableResultNMaiores.rows[i].cell.numeroCota;
+			}
+		}
+		
+		if (cotaEncontrada != ""){
+			
+			$("#lstCotasRankingGrid").flexOptions({
+				url: contextPath + "/distribuicao/regiao/filtroRankingCota",
+				dataType : 'json',
+				params: [{name: "numCota", value: cotaEncontrada}]
+			});
+			
+				$("#lstCotasRankingGrid").flexReload();
+			
+		}else{
+			 var erros = new Array();
+	           erros[0] = "Cota não encontrada";
+	           exibirMensagemDialog('WARNING',   erros,"");
+
+	           return;
+		}
+		cotaEncontrada.length = 0;
+		
+	},
+	
+	
 	// FUNCTION - MOSTRAR POR SEGMENTO
 
 	mostrarPorSegmento : function() {
@@ -1449,7 +1617,6 @@ var regiaoController = $.extend(true, {
 	// FUNCTION - POP UP DETALHES
 	
 	popup_detalhes : function() {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$("#dialog-detalhes").dialog({
 			resizable : false,

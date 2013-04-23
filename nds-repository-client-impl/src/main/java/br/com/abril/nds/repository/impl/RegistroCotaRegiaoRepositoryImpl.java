@@ -241,7 +241,6 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 			sql.append(" join pessoa pessoaJoin ON cotas.pessoa_ID = pessoaJoin.ID ");
 			
 			sql.append(" where tipo_movimento_id in (21,26) ");
-			//sql.append(" and p.codigo in (").append(StringUtils.join(filtro.getCodigoProduto(),",")).append(")");
 			sql.append(" and EPC.PRODUTO_EDICAO_ID in (").append(StringUtils.join(idsProdEdicaoParaMontagemRanking,",")).append(")");
 			
 			sql.append(" order by mec.cota_id ");
@@ -285,5 +284,34 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 			query.setParameter("numEdicao", numeroEdicao);
 			
 			return (List<String>)query.list();
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public List<RegiaoNMaiores_CotaDTO> filtroRanking(Integer numCota) {
+			
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append(" select ");
+			sql.append(" cotas.numero_cota as numeroCota, ");
+			sql.append(" coalesce(pessoaJoin.nome_fantasia, pessoaJoin.razao_social, pessoaJoin.nome, '') as nomePessoa, ");
+			sql.append(" cotas.situacao_cadastro as status ");
+
+			sql.append(" from ");
+			
+			sql.append(" cota cotas ");
+			
+			sql.append(" inner join pessoa pessoaJoin ");
+			sql.append(" ON cotas.pessoa_ID = pessoaJoin.ID ");
+			
+			sql.append(" where cotas.NUMERO_COTA in (:numCota) ");
+			
+			SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+			
+			query.setParameter("numCota", numCota);
+			
+			query.setResultTransformer(new AliasToBeanResultTransformer(RegiaoNMaiores_CotaDTO.class));
+			
+			return query.list();
 		}
 }

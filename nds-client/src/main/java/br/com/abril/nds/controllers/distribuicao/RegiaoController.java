@@ -390,34 +390,30 @@ public class RegiaoController extends BaseController {
 	@Path("/rankingCota")
 	public void rankingCota(FiltroRegiaoNMaioresRankingDTO filtro) throws Exception{
 
-		tratarFiltroRanking(filtro);
+		List<RegiaoNMaiores_CotaDTO> cotasRanking = new ArrayList<>();
 
-		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = montarTableModelRanking(filtro);
+		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = montarTableModelRanking(filtro, cotasRanking);
 
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
-
 	}
 
 	
 
-	private TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> montarTableModelRanking (FiltroRegiaoNMaioresRankingDTO filtro) throws Exception {
+	private TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> montarTableModelRanking (FiltroRegiaoNMaioresRankingDTO filtro, List<RegiaoNMaiores_CotaDTO> cotasRanking) throws Exception {
 		
 		List<String> ids = new ArrayList<>();
 		List<RegiaoNMaiores_CotaDTO> ranking = new ArrayList<>();
 		
 		ids = tratarCodigosENumeros(filtro);
-//		ids.add("134633");
-//		ids.add("133764");
 		Integer limite = filtro.getLimitePesquisa();
 		
 		if(ids != null){
 			ranking = regiaoService.rankingCotas(ids, limite);
+			cotasRanking = ranking;
 		}
 		
-		ranking = regiaoService.rankingCotas(ids, limite);
-
 		if (ranking == null || ranking.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível montar um ranking, por produto edição! Não há dados.");
 		}
 
 		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>>();
@@ -427,6 +423,32 @@ public class RegiaoController extends BaseController {
 		tableModel.setPage(1);
 
 		tableModel.setTotal(ranking.size());
+
+		return tableModel;
+	}
+	
+	@Post
+	@Path("/filtroRankingCota")
+	public void filtroRankingCota(Integer numCota) {
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = montarTableFiltroRanking(numCota);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+
+	
+
+	private TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> montarTableFiltroRanking (Integer numCota) {
+		
+		List<RegiaoNMaiores_CotaDTO> filtroCotasRanking = regiaoService.filtroRankingCotas(numCota);
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(filtroCotasRanking));
+
+		tableModel.setPage(1);
+
+		tableModel.setTotal(1);
 
 		return tableModel;
 	}
@@ -467,18 +489,6 @@ public class RegiaoController extends BaseController {
 			}
 		}
 		return idS_prodEdicao;
-	}
-	
-	private void tratarFiltroRanking (FiltroRegiaoNMaioresRankingDTO filtro) {
-
-		if((filtro.getLimitePesquisa() <= 0)){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de Cotas.");
-		}
-
-		if(filtro.getLimitePesquisa() > 4) {
-			filtro.setLimitePesquisa(filtro.getLimitePesquisa() + 1);
-		}
-		
 	}
 	
 	private void tratarArgumentosFiltro (FiltroRegiaoNMaioresProdDTO filtro){
@@ -532,7 +542,7 @@ public class RegiaoController extends BaseController {
 			comboRegiao.add(new ItemDTO<Long,String>(itemRegiao.getIdRegiao() , itemRegiao.getNomeRegiao()));
 		}
 
-		result.include("listaRegiao",comboRegiao );
+		result.include("listaRegiao",comboRegiao);
 	}
 
 	private void carregarComboSegmento() {
