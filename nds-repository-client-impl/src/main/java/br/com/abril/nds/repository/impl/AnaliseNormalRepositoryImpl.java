@@ -45,19 +45,18 @@ public class AnaliseNormalRepositoryImpl extends AbstractRepositoryModel<Estudo,
 		}
 		
 		List<Object> params = new ArrayList<>();
-		String sql = 
-				" select  " +
-				"	distinct(cota.numero_cota) as cota, " +
-				"	cota.classificacao_espectativa_faturamento as classificacao, " +
-				"	p.nome as nome,  " +
-				"	ec.quantidade_pdvs as npdvs, " +
-				"	ec.reparte as reparteSugerido," +
-				"	cota.tipo_distribuicao_cota as tipoDistribuicaoCota";
-		
+		StringBuilder sql = new StringBuilder();
+		sql.append("select distinct ");
+		sql.append("       cota.numero_cota as cota, ");
+		sql.append("       cota.classificacao_espectativa_faturamento classificacao, ");
+		sql.append("       p.nome nome, ");
+		sql.append("       ec.quantidade_pdvs npdvs, ");
+		sql.append("       ec.reparte reparteSugerido, ");
+		sql.append("       cota.tipo_distribuicao_cota tipoDistribuicaoCota ");
 		
 		for (int i = 0; i < edicoes.size(); i++) {
-			sql+=String.format("	,(select epe.reparte from estudo_produto_edicao epe left join produto_edicao pe2 on pe2.id=epe.produto_edicao_id left join produto p2 on p2.id=pe2.produto_id where pe2.numero_edicao=? and prod.id=p2.id and epe.cota_id=cota.id) as reparte%d,"+
-					"	(select epe.venda from estudo_produto_edicao epe left join produto_edicao pe2 on pe2.id=epe.produto_edicao_id left join produto p2 on p2.id=pe2.produto_id where pe2.numero_edicao=? and prod.id=p2.id and epe.cota_id=cota.id) as venda%1$d", 6-i);
+//			sql.append(String.format(" , (,"+
+//					"	(select epe.venda from estudo_produto_edicao epe left join produto_edicao pe2 on pe2.id=epe.produto_edicao_id left join produto p2 on p2.id=pe2.produto_id where pe2.numero_edicao=? and prod.id=p2.id and epe.cota_id=cota.id) as venda%1$d", 6-i);
 			BigInteger numeroEdicao = edicoes.get(i);
 			params.add(numeroEdicao);
 			params.add(numeroEdicao);
@@ -66,65 +65,65 @@ public class AnaliseNormalRepositoryImpl extends AbstractRepositoryModel<Estudo,
 		params.add(queryDTO.getEstudoId());
 		
 				if(queryDTO.isRankingFilteredSorted()){
-					sql+=" ,rs.qtde as filtroRanking";
+					sql.append(" ,rs.qtde as filtroRanking");
 				}
 				if(queryDTO.isPorcentagemVendaFilteredSorted()){
-					sql+=" ,(((epc.qtde_recebida-epc.qtde_devolvida)*100)/epc.qtde_recebida) as filtroPercVenda";
+					sql.append(" ,(((epc.qtde_recebida-epc.qtde_devolvida)*100)/epc.qtde_recebida) as filtroPercVenda");
 				}
-				sql+=" from estudo_cota ec " +
+				sql.append(" from estudo_cota ec " +
 				"	left join cota cota on cota.id=ec.cota_id " +
 				"	left join pessoa p on cota.pessoa_id=p.id  " +
 				"	left join estudo e on e.id=ec.estudo_id  " +
 				"	left join produto_edicao pe on pe.id=e.produto_edicao_id " +
-				"	left join produto prod on prod.id=pe.produto_id ";
+				"	left join produto prod on prod.id=pe.produto_id ");
 				if(queryDTO.isRankingFilteredSorted()){
-					sql+="	left join ranking_segmento rs on rs.cota_id=ec.cota_id ";
+					sql.append("	left join ranking_segmento rs on rs.cota_id=ec.cota_id ");
 				}
 				if(queryDTO.isPorcentagemVendaFilteredSorted()){
-					sql+=" left join estoque_produto_cota epc on epc.cota_id=ec.cota_id and epc.produto_edicao_id=e.produto_edicao_id ";
+					sql.append(" left join estoque_produto_cota epc on epc.cota_id=ec.cota_id and epc.produto_edicao_id=e.produto_edicao_id ");
 				}
 				
 				if (queryDTO.possuiElemento()) {
 					if (queryDTO.elementoIsTipoPontoVenda()) {
-						sql += " left join pdv on pdv.cota_id= cota.id ";
-						sql += " left join TIPO_PONTO_PDV tipo_pdv on tipo_pdv.id= pdv.TIPO_PONTO_PDV_ID ";
+						sql.append(" left join pdv on pdv.cota_id= cota.id ");
+						sql.append(" left join TIPO_PONTO_PDV tipo_pdv on tipo_pdv.id= pdv.TIPO_PONTO_PDV_ID ");
 
 						where += " and tipo_pdv.id = ?";
 						params.add(queryDTO.getValorElemento());
 					}
 					if (queryDTO.elementoIsGeradoorDeFluxo()) {
-						sql += " left join pdv on pdv.cota_id= cota.id ";
-						sql += " left join GERADOR_FLUXO_PDV gerador_fluxo_pdv on gerador_fluxo_pdv.PDV_ID= pdv.ID";
+						sql.append(" left join pdv on pdv.cota_id= cota.id ");
+						sql.append(" left join GERADOR_FLUXO_PDV gerador_fluxo_pdv on gerador_fluxo_pdv.PDV_ID= pdv.ID");
 
 						where += " and gerador_fluxo_pdv.id = ?";
 						params.add(queryDTO.getValorElemento());
 					}
 					if (queryDTO.elementoIsBairro()) {
-						sql += " left join pdv on pdv.cota_id= cota.id ";
-						sql += " left join ENDERECO_PDV endereco_pdv on endereco_pdv.PDV_ID= pdv.ID";
-						sql += " left join ENDERECO endereco on endereco.ID= endereco_pdv.ENDERECO_ID";
+						sql.append(" left join pdv on pdv.cota_id= cota.id ");
+						sql.append(" left join ENDERECO_PDV endereco_pdv on endereco_pdv.PDV_ID= pdv.ID");
+						sql.append(" left join ENDERECO endereco on endereco.ID= endereco_pdv.ENDERECO_ID");
 
 						where += " and endereco.bairro = ?";
 						params.add(queryDTO.getValorElemento());
 					}
 					if (queryDTO.elementoIsRegiao()) {
-						sql += " left join REGISTRO_COTA_REGIAO as regiao_cota on regiao_cota.cota_id = cota.id ";
-						sql += " left join REGIAO regiao on regiao.id= regiao_cota.regiao_id";
+						sql.append(" left join REGISTRO_COTA_REGIAO as regiao_cota on regiao_cota.cota_id = cota.id ");
+						sql.append(" left join REGIAO regiao on regiao.id= regiao_cota.regiao_id");
 
 						where += " and regiao.nome_regiao = ?";
 						params.add(queryDTO.getValorElemento());
 					}
 					if (queryDTO.elementoIsAreaDeInfluencia()) {
-						sql += " left join pdv on pdv.cota_id= cota.id ";
-						sql += " left join AREA_INFLUENCIA_PDV area on area.id= area.TIPO_CARACTERISTICA_PDV";
+						sql.append(" left join pdv on pdv.cota_id= cota.id ");
+						sql.append(" left join AREA_INFLUENCIA_PDV area on area.id= area.TIPO_CARACTERISTICA_PDV");
 
 						where += " and area.desccricao = ?";
 						params.add(queryDTO.getValorElemento());
 					}
 					if (queryDTO.elementoIsDistrito()) {
-						sql += " left join pdv on pdv.cota_id= cota.id ";
-						sql += " left join ENDERECO_PDV endereco_pdv on endereco_pdv.PDV_ID= pdv.ID";
-						sql += " left join ENDERECO endereco on endereco.ID= endereco_pdv.ENDERECO_ID";
+						sql.append(" left join pdv on pdv.cota_id= cota.id ");
+						sql.append(" left join ENDERECO_PDV endereco_pdv on endereco_pdv.PDV_ID= pdv.ID");
+						sql.append(" left join ENDERECO endereco on endereco.ID= endereco_pdv.ENDERECO_ID");
 
 						where += " and endereco.uf = ?";
 						params.add(queryDTO.getValorElemento());
@@ -136,8 +135,6 @@ public class AnaliseNormalRepositoryImpl extends AbstractRepositoryModel<Estudo,
 
 					}
 				}
-				
-				
 				
 				if(queryDTO.isRankingFilteredSorted()){
 					Double from = queryDTO.from();
