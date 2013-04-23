@@ -106,4 +106,13 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
 	 */
 	List<ImpressaoDiferencaEstoqueDTO> obterDadosParaImpressaoNaData(Date data);
 	
+	/**
+	 * Obtém a quantidade de dados para impressão de diferenças de estoque.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return Quantidade de dados para impressão
+	 */
+	Long obterQuantidadeDadosParaImpressaoNaData(Date data);
+	
 }

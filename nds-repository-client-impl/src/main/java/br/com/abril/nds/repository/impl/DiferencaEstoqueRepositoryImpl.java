@@ -622,4 +622,28 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		return query.list();
 	}
 	
+	@Override
+	public Long obterQuantidadeDadosParaImpressaoNaData(Date data) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(distinct produtoEdicao) ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" join lancamento.estudo estudo ")
+		   .append(" join lancamento.produtoEdicao produtoEdicao ")
+		   .append(" left join produtoEdicao.diferencas diferenca ")
+		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
+		   .append(" and lancamento.status in (:statusLancamento) ")
+		   .append(" group by produtoEdicao.id ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataBalanceamento", data);
+		
+		query.setParameterList(
+			"statusLancamento", new StatusLancamento[] {StatusLancamento.BALANCEADO});
+
+		return (Long) query.uniqueResult();
+	}
+	
 }

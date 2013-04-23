@@ -884,7 +884,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		if (dadosImpressao == null
 				|| dadosImpressao.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há dados para impressão nesta data");
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não há dados para impressão nesta data");
 		}
 		
 	 	List<RelatorioLancamentoFaltasSobrasVO> listaRelatorio =  
@@ -909,6 +910,29 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		String caminhoRelatorio = urlRelatorio.toURI().getPath();
 		
 		return JasperRunManager.runReportToPdf(caminhoRelatorio, parametrosRelatorio, datasourceRelatorio);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public void validarDadosParaImpressaoNaData(String dataMovimentoFormatada) {
+		
+		if (dataMovimentoFormatada == null 
+				|| dataMovimentoFormatada.trim().equals("")) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma data de movimento");
+		}	
+		
+		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
+		
+		Long quantidadeDadosImpressao = 
+			this.diferencaEstoqueRepository.obterQuantidadeDadosParaImpressaoNaData(dataMovimento);
+		
+		if (quantidadeDadosImpressao == null 
+				|| quantidadeDadosImpressao == 0L) {
+		
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não há dados para impressão nesta data");
+		}
 	}
 	
 }
