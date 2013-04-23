@@ -2818,24 +2818,27 @@ public class DiferencaEstoqueController extends BaseController {
 	}
 	
 	@Post
-	@Path("/validaDataRelatorioFaltasSobras")
-	public void validaDataRelatorioFaltasSobras(String dataMovimentoFormatada ) throws Exception{
-		if (dataMovimentoFormatada == null || dataMovimentoFormatada.equals("")){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma data de movimento");
-		}		
+	@Path("/validarDadosParaImpressao")
+	public void validarDadosParaImpressao(String dataMovimentoFormatada) throws Exception {
+		
+		this.diferencaEstoqueService.validarDadosParaImpressaoNaData(dataMovimentoFormatada);
 	
 		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 	
-	
-	@Get("/imprimirRelatorioFaltasSobras")
-	public Download imprimirRelatorioFaltasSobras(String dataMovimentoFormatada ) throws Exception{
+	@Get
+	@Path("/imprimirRelatorioFaltasSobras")
+	public Download imprimirRelatorioFaltasSobras(String dataMovimentoFormatada) throws Exception {
 		
 		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
 		
-		byte[] comprovate = diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
+		byte[] relatorio = this.diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
+
+		String nomeArquivoRelatorio = "relatorioFaltasSobras" + FileType.PDF.getExtension();
 		
-		return new ByteArrayDownload(comprovate,"application/pdf", "relatorioFaltasSobras.pdf", true);
+		return new ByteArrayDownload(
+			relatorio, FileType.PDF.getContentType(), nomeArquivoRelatorio, true);
 	}
+	
 }
  

@@ -75,17 +75,26 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 					
 				} else if (lancamento.getDataLancamentoPrevista().equals(dataOperacao)) {
 					
+					if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
+						this.ndsiLoggerFactory.getLogger().logError(message,
+								EventoExecucaoEnum.RELACIONAMENTO, 
+								"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo!");
+						return;
+					}
+
+					estudo = lancamento.getEstudo();
+					long id = estudo.getId();
+
 					lancamento.setEstudo(null);
 					getSession().merge(lancamento);
 					
-					estudo = lancamento.getEstudo();
-					Query query = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo = :estudo");
-					query.setParameter("estudo", estudo);
+					Query query = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo.id = :id");
+					query.setParameter("id", id);
 					query.executeUpdate();
 		
 					estudo = lancamento.getEstudo();
-					query = getSession().createQuery("DELETE Estudo e WHERE e = :estudo");
-					query.setParameter("estudo", estudo);
+					query = getSession().createQuery("DELETE Estudo e WHERE e.id = :id");
+					query.setParameter("id", id);
 					query.executeUpdate();
 					
 					getSession().flush();
