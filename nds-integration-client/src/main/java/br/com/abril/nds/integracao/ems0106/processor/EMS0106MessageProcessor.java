@@ -1,7 +1,7 @@
 package br.com.abril.nds.integracao.ems0106.processor;
 
 import java.math.BigInteger;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -19,9 +19,9 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -55,57 +55,9 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 					"NAO ENCONTROU Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
 			return;
 		}
-
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
-
+			
 		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(produtoEdicao);
-		
-		Estudo estudo = null;
-		
 		if (lancamento == null) {
-			lancamento = this.novoLancamento(produtoEdicao, null);
-		} else {
-		
-			estudo = lancamento.getEstudo();
-	
-			if (estudo != null) {
-			
-				if ((lancamento.getDataLancamentoPrevista().after(dataOperacao))) {
-					lancamento = this.novoLancamento(produtoEdicao, lancamento);
-					
-				} else if (lancamento.getDataLancamentoPrevista().equals(dataOperacao)) {
-					
-					if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
-						this.ndsiLoggerFactory.getLogger().logError(message,
-								EventoExecucaoEnum.RELACIONAMENTO, 
-								"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo!");
-						return;
-					}
-
-					estudo = lancamento.getEstudo();
-					long id = estudo.getId();
-
-					lancamento.setEstudo(null);
-					getSession().merge(lancamento);
-					
-					Query query = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo.id = :id");
-					query.setParameter("id", id);
-					query.executeUpdate();
-		
-					estudo = lancamento.getEstudo();
-					query = getSession().createQuery("DELETE Estudo e WHERE e.id = :id");
-					query.setParameter("id", id);
-					query.executeUpdate();
-					
-					getSession().flush();
-					
-				}
-			
-			}
-		
-		}
-
-		/*if (lancamento == null) {
 			lancamento = getLancamentoPrevistoAnteriorMaisProximo(produtoEdicao);
 			
 			if (lancamento == null) {
@@ -114,7 +66,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 						"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
 				return;
 			}
-		}*/
+		}
 		
 		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
@@ -123,26 +75,25 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 		
-		/*estudo = lancamento.getEstudo();
-		if (estudo == null) {*/
+		Estudo estudo = lancamento.getEstudo();
+		if (estudo == null) {
 			
-		// Cadastrar novo estudo:
-		estudo = new Estudo();
-		estudo.setQtdeReparte(BigInteger.valueOf(
-				input.getReparteDistribuir()));
-		estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
-		estudo.setProdutoEdicao(produtoEdicao);
-		estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
-		estudo.setDataCadastro(new Date());			
-		
-		// Associar novo estudo com o lançamento existente:
-		lancamento.setEstudo(estudo);
-		this.getSession().merge(lancamento);
+			// Cadastrar novo estudo:
+			estudo = new Estudo();
+			estudo.setQtdeReparte(BigInteger.valueOf(
+					input.getReparteDistribuir()));
+			estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
+			estudo.setProdutoEdicao(produtoEdicao);
+			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
+			estudo.setDataCadastro(new Date());			
 			
-		/*} else {
+			// Associar novo estudo com o lançamento existente:
+			lancamento.setEstudo(estudo);
+			this.getSession().merge(lancamento);
+		} else {
 			
 			// Remoção dos EstudoCotas que ficaram desatualizados:
-			/*Query query = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo = :estudo");
+			Query query = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo = :estudo");
 			query.setParameter("estudo", estudo);
 			query.executeUpdate();
 			estudo.setEstudoCotas(Collections.<EstudoCota>emptySet());
@@ -173,48 +124,10 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			estudo.setDataAlteracao(new Date());
 			this.getSession().merge(estudo);
-			
-		}*/
+		}
 		
 	}
 	
-	private Lancamento novoLancamento(ProdutoEdicao produtoEdicao, Lancamento lancamentoParecido) {
-		
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
-		
-		Lancamento lancamento = new Lancamento();
-		lancamento.setProdutoEdicao(produtoEdicao);
-		lancamento.setAlteradoInteface(true);
-		lancamento.setDataCriacao(dataOperacao);
-		lancamento.setDataLancamentoDistribuidor(dataOperacao);
-		lancamento.setDataLancamentoPrevista(dataOperacao);
-		if (lancamentoParecido != null) {
-			lancamento.setDataRecolhimentoDistribuidor(lancamentoParecido.getDataRecolhimentoDistribuidor());
-			lancamento.setDataRecolhimentoPrevista(lancamentoParecido.getDataRecolhimentoPrevista());
-		} else {
-			
-			int peb = produtoEdicao.getPeb() == 0 ? produtoEdicao.getProduto().getPeb() : produtoEdicao.getPeb();
-			if (peb == 0) {
-				peb = 10;
-			}
-
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(dataOperacao);
-			cal.add(Calendar.DATE, peb); 		
-
-			lancamento.setDataRecolhimentoDistribuidor(cal.getTime());
-			lancamento.setDataRecolhimentoPrevista(cal.getTime());
-		}
-		lancamento.setDataStatus(dataOperacao);
-		lancamento.setStatus(StatusLancamento.CONFIRMADO);
-		lancamento.setTipoLancamento(TipoLancamento.RELANCAMENTO);
-		
-		getSession().persist(lancamento);
-		getSession().flush();
-
-		return lancamento;
-	}
-
 	/**
 	 * Obtém o Produto Edição cadastrado previamente.
 	 * 
@@ -273,7 +186,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		return (Lancamento) query.uniqueResult();
 	}
 
-	/*private Lancamento getLancamentoPrevistoAnteriorMaisProximo(
+	private Lancamento getLancamentoPrevistoAnteriorMaisProximo(
 			ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
@@ -294,7 +207,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		query.setFetchSize(1);
 		
 		return (Lancamento) query.uniqueResult();
-	}*/
+	}
 	
 	
 	@Override
