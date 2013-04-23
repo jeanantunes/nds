@@ -17,7 +17,9 @@ public enum TipoDiferenca {
 	SOBRA_DE(GrupoMovimentoEstoque.SOBRA_DE, "Sobra de", GrupoMovimentoEstoque.SOBRA_DE_COTA),
 	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em", GrupoMovimentoEstoque.SOBRA_EM_COTA),
 	PERDA_EM(GrupoMovimentoEstoque.PERDA_EM, "Perda em"),
-	GANHO_EM(GrupoMovimentoEstoque.GANHO_EM, "Ganho em");
+	PERDA_DE(GrupoMovimentoEstoque.PERDA_DE, "Perda de"),
+	GANHO_EM(GrupoMovimentoEstoque.GANHO_EM, "Ganho em"),
+	GANHO_DE(GrupoMovimentoEstoque.GANHO_DE, "Ganho de");
 	
 	private GrupoMovimentoEstoque grupoMovimentoEstoque;
 	
@@ -32,6 +34,10 @@ public enum TipoDiferenca {
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_FALTA = EnumSet.of(FALTA_DE, FALTA_EM);
 	
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_SOBRA = EnumSet.of(SOBRA_DE, SOBRA_EM);
+	
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_PERDA = EnumSet.of(PERDA_DE, PERDA_EM);
+	
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_GANHO = EnumSet.of(GANHO_DE, GANHO_EM);
 	
 	private TipoDiferenca(GrupoMovimentoEstoque grupoMovimentoEstoqueCota, 
 						  String descricao) {
@@ -88,6 +94,14 @@ public enum TipoDiferenca {
      */
 	public boolean isSobra() {
 	    return TIPOS_DIFERENCA_SOBRA.contains(this);
+	}
+	
+	public boolean isPerda() {
+		return TIPOS_DIFERENCA_PERDA.contains(this);  
+	}
+	
+	public boolean isGanho() {
+		return TIPOS_DIFERENCA_GANHO.contains(this);  
 	}
 	
 	/**

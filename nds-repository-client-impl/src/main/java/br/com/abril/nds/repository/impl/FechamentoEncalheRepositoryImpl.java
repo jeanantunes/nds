@@ -138,8 +138,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		hql.append(" , pe.id as produtoEdicao ");
 		hql.append(" , case when  pe.parcial  = true  then 'P' else 'N' end  as tipo ");
+		
 		hql.append(" , che.dataRecolhimento as dataRecolhimento ");
+		
 		hql.append(" , sum(mec.qtde) - ( "+ this.getQueryVendaProduto()  +" )    as exemplaresDevolucao ");
+		
+		hql.append(" , che.sequencia as sequencia ");
 		
 		hql.append(this.getFromConferenciaEncalhe());
 	
@@ -333,44 +337,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 	}
 	
-	private Query criarQueryCotasAusentesEncalhe(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname) {
-		
-		StringBuffer hql = new StringBuffer();
-		
-		hql.append("    SELECT cota.id as idCota");
-		hql.append("          ,cota.numeroCota as numeroCota");
-		hql.append("          ,coalesce(pessoa.nome, pessoa.razaoSocial) as colaboradorName");
-		hql.append("          ,box.nome as boxName");
-		hql.append("          ,rotas.rota.roteiro.descricaoRoteiro as roteiroName");
-		hql.append("          ,rotas.rota.descricaoRota as rotaName");
-		hql.append("          ,cec.fechado as fechado");
-		hql.append("          ,cec.postergado as postergado");
-		hql.append("          ,cec.chamadaEncalhe.dataRecolhimento as dataEncalhe");
-		hql.append("      FROM ChamadaEncalheCota cec");
-		hql.append("      join cec.cota cota ");
-		hql.append("      join cota.pessoa pessoa ");
-		hql.append("      join cota.box box ");
-		hql.append("      join cota.pdvs pdvs ");
-		hql.append("      join pdvs.rotas rotas ");
-		
-		hql.append(getClausulaWhereQueryCotasAusentesEncalhe(isSomenteCotasSemAcao));
-		
-		hql.append(" GROUP BY cota.id ");
-
-		if (sortname != null && sortorder != null) {
-			hql.append("  ORDER BY " + sortname + " " + sortorder);
-		}
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setResultTransformer(Transformers.aliasToBean(CotaAusenteEncalheDTO.class));
-		
-		query.setDate("dataEncalhe", dataEncalhe);
-		query.setBoolean("principal", true);
-		
-		return query;
-	}
-	
-	
 	
 	
 	private String getClausulaFromWhereQueryCotaAusentes(boolean isSomenteCotasSemAcao) {
@@ -411,6 +377,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		.append("	        rotaPdv.ROTA_ID=rota.ID                                             ")
 		
+		.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ")
+		
 		.append("	        and rota.ROTEIRO_ID=roteiro.ID                                      ")
 
 		.append("	        and ( chamadaEncalhe.DATA_RECOLHIMENTO is null         				")
@@ -428,8 +396,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		.append("	and pdv.PONTO_PRINCIPAL=:principal  ");
 		
 		if (isSomenteCotasSemAcao) {
-			sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		")
-			   .append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");			
+			
+			sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		");
+			   		
 		}
 		
 		sql.append(" group by ")
@@ -437,28 +406,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		return sql.toString();
 		
-	}
-	
-	private String getClausulaWhereQueryCotasAusentesEncalhe(boolean isSomenteCotasSemAcao) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append("     WHERE cec.chamadaEncalhe.dataRecolhimento = :dataEncalhe");
-		hql.append("       AND cec.cota.id NOT IN (");
-		hql.append("           select distinct cc.cota.id   ");
-		hql.append("		   from ConferenciaEncalhe ce, ChamadaEncalheCota cc ");
-		hql.append("            ");
-		hql.append("           where cc.chamadaEncalhe.dataRecolhimento = :dataEncalhe and ce.chamadaEncalheCota.id = cc.id ");
-		hql.append("       )");
-		hql.append("	   AND pdvs.caracteristicas.pontoPrincipal = :principal");
-		
-		if (isSomenteCotasSemAcao) {
-			
-			hql.append(" AND cec.fechado = false ");
-			hql.append(" AND cec.postergado = false ");
-		}
-		
-		return hql.toString();
 	}
 	
 	@Override

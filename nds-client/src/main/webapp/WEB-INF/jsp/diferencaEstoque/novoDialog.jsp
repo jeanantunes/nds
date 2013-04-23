@@ -208,6 +208,14 @@
 	</script>
 </div>
 
+<form id="form-selecionar-tipo-estoque">
+	<div id="dialog-selecionar-tipo-estoque" title="Tipo de Estoque" style="display:none">
+		<p>Nenhum estoque foi selecionado. Será utlilizado o estoque padrão [Lancamento].</p>
+		<br></br>
+		<p>Deseja continuar?</p>
+	</div>
+</form>
+
 <form id="idTipoEstoque">
 		<div id="dialog-tipo-estoque" title="Tipo de Estoque" style="display:none">
 			<fieldset>

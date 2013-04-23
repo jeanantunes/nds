@@ -140,6 +140,13 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		return this.distribuidorRepository.utilizaControleAprovacao();
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public boolean utilizaControleAprovacaoFaltaSobra() {
+		
+		return this.distribuidorRepository.utilizaControleAprovacaoFaltaSobra();
+	}
 
 	@Override
 	@Transactional(readOnly = true)

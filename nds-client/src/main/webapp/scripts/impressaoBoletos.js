@@ -90,7 +90,7 @@ var impressaoBoletosController = $.extend(true, {
 			}],
 			usepager : true,
 			useRp : true,
-			sortname : "rota,roteiro,numeroCota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			rp : 15,
 			showTableToggleBtn : true,

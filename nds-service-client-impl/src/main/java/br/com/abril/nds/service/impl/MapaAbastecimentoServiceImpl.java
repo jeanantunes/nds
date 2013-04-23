@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -21,7 +22,9 @@ import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.MapaAbastecimentoService;
 
@@ -33,6 +36,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired EstoqueProdutoCotaJuramentadoRepository cotaJuramentadoRepository;
 	
 	@Override
 	@Transactional
@@ -271,8 +276,20 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 					null);
 		
 		for(ProdutoAbastecimentoDTO item : produtosCota) {
-			
-			if(!produtoMapa.containsKey(item.getIdProdutoEdicao()))
+			if(!produtoMapa.containsKey(item.getIdProdutoEdicao())){
+				
+				EstoqueProdutoCotaJuramentado produtoJuramentado = cotaJuramentadoRepository
+						.buscarEstoquePorProdutoECotaNaData(
+								item.getIdProdutoEdicao(),
+								filtro.getCodigoCota().longValue(),
+								filtro.getDataDate());
+				
+				if (produtoJuramentado != null) {
+					BigInteger newReparte = BigInteger.valueOf(item.getReparte().longValue());
+					item.setNomeProduto(item.getNomeProduto() + " *");
+					item.setReparte(newReparte.subtract(produtoJuramentado.getQtde()));
+				}
+				
 				produtoMapa.put(
 						item.getIdProdutoEdicao(), 
 						new ProdutoMapaCotaDTO(
@@ -280,10 +297,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 								item.getNumeroEdicao(), 
 								item.getSequenciaMatriz(), 
 								0));
-			
-			Integer qtdeAtual = produtoMapa.get(item.getIdProdutoEdicao()).getTotal();
-			produtoMapa.get(item.getIdProdutoEdicao()).setTotal(qtdeAtual + item.getReparte());
-			
+				
+				Integer qtdeAtual = produtoMapa.get(item.getIdProdutoEdicao()).getTotal();
+				produtoMapa.get(item.getIdProdutoEdicao()).setTotal(qtdeAtual + item.getReparte());
+			}
 		}
 		
 		TreeMap<Long, ProdutoMapaCotaDTO> mapaProdutosOrdenados = new TreeMap<Long, ProdutoMapaCotaDTO>(comparator);
@@ -392,8 +409,25 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	@Override
 	@Transactional
 	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorCota(FiltroMapaAbastecimentoDTO filtro) {
-
-		return this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+		List<ProdutoAbastecimentoDTO> mapaRetorno = new ArrayList<ProdutoAbastecimentoDTO>();
+		List<ProdutoAbastecimentoDTO> mapaCota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+		for (ProdutoAbastecimentoDTO produto : mapaCota) {
+			EstoqueProdutoCotaJuramentado produtoJuramentado = cotaJuramentadoRepository
+					.buscarEstoquePorProdutoECotaNaData(
+							produto.getIdProdutoEdicao(),
+							filtro.getCodigoCota().longValue(),
+							filtro.getDataDate());
+			
+			if (produtoJuramentado != null) {
+				BigInteger newReparte = BigInteger.valueOf(produto.getReparte().longValue());
+				produto.setReparte(newReparte.subtract(produtoJuramentado.getQtde()));
+				mapaRetorno.add(produto);
+			} else {
+				mapaRetorno.add(produto);
+			}
+		}
+		
+		return mapaRetorno;
 	}
 
 	/**

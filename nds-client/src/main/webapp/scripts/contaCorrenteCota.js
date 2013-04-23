@@ -141,6 +141,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				$(".consignadoCotaGrid", contaCorrenteCotaController.workspace).show();
 				$(".gridsConsignado", contaCorrenteCotaController.workspace).show();
+				$("#totalGeralConsignado", contaCorrenteCotaController.workspace).text(floatToPrice(formatMoneyValue(result[2])));
 			});
 		contaCorrenteCotaController.popup_consignado();
 	},
@@ -195,7 +196,7 @@ var contaCorrenteCotaController = $.extend(true, {
 									  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado +'\');"/>' + floatToPrice(formatMoneyValue(value.cell.encargos)) +'</a>' : '0,00';
 				
 				var hint = value.cell.valorPostergado && value.cell.valorPostergado != 0 ? '<a rel="tipsy" title="Valor Referente à '+ 
-						  (value.cell.tipo != 'CONSOLIDADO' ? dataRaizPendente : dataRaizPostergado)  + '">' : "";
+						  dataRaizPendente + '">' : "";
 				
 			    value.cell.valorPostergado = (value.cell.valorPostergado != null && value.cell.valorPostergado != 0)?'<span class="bt_tool">' + hint +
 					                          floatToPrice(formatMoneyValue(value.cell.valorPostergado) * -1) + '</a></span>' : '0,00';
@@ -209,12 +210,12 @@ var contaCorrenteCotaController = $.extend(true, {
 				value.cell.valorPago = floatToPrice(formatMoneyValue(value.cell.valorPago));
 				value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.saldo) * -1);
 				
-				if (value.cell.tipo == 'CONSOLIDADO'){
+				if (value.cell.cobrado){
 					
-					value.cell.tipo = '<img src="'+ contextPath +'/images/ico_check.gif"/>';
+					value.cell.cobrado = '<img src="'+ contextPath +'/images/bt_financeiro.png"/>';
 				} else {
 					
-					value.cell.tipo = '<img src="'+ contextPath +'/images/ico_excluir.gif"/>';
+					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_boletos.gif"/>';
 					value.cell.saldo = floatToPrice(formatMoneyValue(value.cell.total));
 				}
 			});
@@ -401,7 +402,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Cobrado',
-				name : 'tipo',
+				name : 'cobrado',
 				width : 65,
 				sortable : true,
 				align : 'center'
@@ -431,6 +432,12 @@ var contaCorrenteCotaController = $.extend(true, {
 			dataType : 'json',
 			preProcess: contaCorrenteCotaController.preProcessEncalheCota,
 			colModel : [ {
+				display : 'Sequência',
+				name : 'sequencia',
+				width : 50,
+				sortable : true,
+				align : 'left'
+			}, {
 				display : 'Código',
 				name : 'codigoProduto',
 				width : 50,
@@ -441,7 +448,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				name : 'nomeProduto',
 				width : 130,
 				sortable : true,
-				align : 'right'
+				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
@@ -479,9 +486,9 @@ var contaCorrenteCotaController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}],
-			sortname : "codigoProduto",
+			sortname : "sequencia",
 			sortorder : "asc",
-			width : 800,
+			width : 850,
 			height : 200
 		});
 	},
@@ -503,7 +510,13 @@ var contaCorrenteCotaController = $.extend(true, {
 			return data;
 		},
 		dataType : 'json',	
-		colModel : [ {
+		colModel : [{
+			display : 'Sequência',
+			name : 'sequencia',
+			width : 50,
+			sortable : true,
+			align : 'left'
+		}, {
 			display : 'Código',
 			name : 'codigoProduto',
 			width : 40,
@@ -570,9 +583,9 @@ var contaCorrenteCotaController = $.extend(true, {
 			sortable : true,
 			align : 'right'
 		}],
-		sortname : "codigo",
+		sortname : "sequencia",
 		sortorder : "asc",
-		width : 860,
+		width : 900,
 		height : 200
 	});
 
@@ -583,7 +596,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		$( "#dialog-consignado", contaCorrenteCotaController.workspace ).dialog({
 			resizable: false,
 			height:490,
-			width:900,
+			width:940,
 			modal: true,
 			buttons: {
 				"Fechar": function() {
@@ -602,8 +615,8 @@ var contaCorrenteCotaController = $.extend(true, {
 		
 		$( "#dialog-encalhe", contaCorrenteCotaController.workspace ).dialog({
 			resizable: false,
-			height:460,
-			width:860,
+			height:470,
+			width:890,
 			modal: true,
 			buttons: {
 				"Fechar": function() {

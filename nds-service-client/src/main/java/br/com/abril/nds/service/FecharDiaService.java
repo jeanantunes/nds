@@ -12,7 +12,7 @@ import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -112,12 +112,12 @@ public interface FecharDiaService {
     /**
      * @see DividaService#obterDividasReceberEm(Date, PaginacaoVO)
      */
-    List<Divida> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
+    List<Cobranca> obterDividasReceberEm(Date data, PaginacaoVO paginacao);
     
     /**
      * @see DividaService#obterDividasVencerApos(Date, PaginacaoVO)
      */
-    List<Divida> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
+    List<Cobranca> obterDividasVencerApos(Date data, PaginacaoVO paginacao);
 
 
     /**
@@ -188,5 +188,12 @@ public interface FecharDiaService {
      * @return lista de diferenças lançadas na data
      */
 	List<Diferenca> obterDiferencas(Date data);
+	
+	/**
+	 * Efetua a transferência das diferenças para estoque de Perda/Ganho.
+	 * 
+	 * @param dataOperacao - data de operação
+	 */
+	void transferirDiferencasParaEstoqueDePerdaGanho(Date dataOperacao, Long idUsuario);
 
 }

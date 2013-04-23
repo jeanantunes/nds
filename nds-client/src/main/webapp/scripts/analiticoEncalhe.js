@@ -94,7 +94,7 @@ var analiticoEncalheController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}],
-			sortname : "cota",
+			sortname : "numeroCota",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
@@ -109,9 +109,9 @@ var analiticoEncalheController = $.extend(true, {
 	
 	preprocessamentoGrid : function(resultado) {
 
-		$('#valorTotal').html(resultado.valorTotalAnalitico);
+		$('#valorTotalAnalitico', workspace).html(resultado.valorTotalAnalitico);
 		
-		$('#totalCota').html(resultado.qtdCotas);
+		$('#totalCotaAnalitico', workspace).html(resultado.qtdCotas);
 		
 		return resultado.tableModel;
 	},

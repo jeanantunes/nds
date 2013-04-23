@@ -1064,7 +1064,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append("   (sum(movimentos.qtde)) , ")
 		.append("   (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
 		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) , ")
-		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id ) ");
+		.append("     estoqueProdutoCota.cota.id , estoqueProdutoCota.produtoEdicao.produto.id, estoqueProdutoCota.produtoEdicao.id ) ");
 
 		hql.append(getWhereQueryObterCurvaABCCota(filtro));
 		hql.append(getGroupQueryObterCurvaABCCota(filtro));
@@ -1325,7 +1325,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	@SuppressWarnings("unchecked")
 	public List<CotaResumoDTO> obterCotasComInicioAtividadeEm(Date dataInicioAtividade) {
 		
-		StringBuilder hql = new StringBuilder("select pessoa.nome as nome, cota.numeroCota as numero from Cota cota ");
+		StringBuilder hql = new StringBuilder("select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from Cota cota ");
 
 		hql.append(" join cota.pessoa pessoa ");
 		

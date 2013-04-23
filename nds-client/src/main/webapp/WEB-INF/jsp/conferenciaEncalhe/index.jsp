@@ -188,7 +188,7 @@
 						
 						<input name="idProdutoEdicaoHidden" type="hidden" id="idProdutoEdicaoHidden" />
 						
-						<a isEdicao="true" href="javascript:;" class="ok_filtro" onclick="ConferenciaEncalhe.adicionarProdutoConferido();">
+						<a isEdicao="true" href="javascript:;" class="ok_filtro" onclick="ConferenciaEncalhe.buscarProdutoConferencia();" >
 							<img src="${pageContext.request.contextPath}/images/bt_check.gif" alt="Incluir" width="22" height="22" border="0" />
 						</a>
 					</td>
@@ -257,8 +257,12 @@
 			</table>
 		</fieldset>
 		
-		<div id="idImpressaoFinalizacaoApplet" style="display: none;">&nbsp;
-			<div id="replaceAppletFinal"></div>
+		<div id="idImpressaoFinalizacaoApplet1" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal1"></div>
 		</div>	
 
+		<div id="idImpressaoFinalizacaoApplet2" style="display: none;">&nbsp;
+			<div id="replaceAppletFinal2"></div>
+		</div>	
+		
 </body>

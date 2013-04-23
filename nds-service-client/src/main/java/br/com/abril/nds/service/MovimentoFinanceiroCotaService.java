@@ -14,6 +14,7 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
 public interface MovimentoFinanceiroCotaService {
@@ -45,7 +46,11 @@ public interface MovimentoFinanceiroCotaService {
 	 * Gera movimento financeiro para cota a vista (crédito)
 	 * @param controleConferenciaEncalheCota
 	 */
-	void gerarMovimentoFinanceiroCotaRecolhimento(ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+	void gerarMovimentoFinanceiroCota(
+			Cota cota,
+			Date dataOperacao,
+			Usuario usuario,
+			Long idControleConferenciaEncalheCota,
 			FormaComercializacao formaComercializacaoProduto);
 
 	void processarRegistrohistoricoFinanceiro(

@@ -104,11 +104,13 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @param periodo
 	 * @param idCota
-	 * @param grupoMovimentoEstoque
+	 * @param gruposMovimentoEstoque
 	 * 
 	 * @return Map<Long, BigInteger>
 	 */
-	Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(Intervalo<Date> periodo, Long idCota, GrupoMovimentoEstoque... grupoMovimentoEstoque);
+	Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento(Intervalo<Date> periodo, 
+													            Long idCota, 
+													            GrupoMovimentoEstoque... gruposMovimentoEstoque);
 		
 	/**
 	 * Obtém a qtde registros da pesquisa de ConsultaEncalhe.

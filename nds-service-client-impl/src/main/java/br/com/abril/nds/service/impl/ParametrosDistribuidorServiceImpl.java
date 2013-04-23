@@ -705,14 +705,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 				 					 		   !parametrosDistribuidor.getNegociacao());
 		
 		parametrosAprovacaoDistribuidor.setAjusteEstoque(parametrosDistribuidor.getAjusteEstoque());
-		
-//		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
-//		  	  Tratar futuramente, como será utilizado o parametro de ajuste.
-//		
-//		this.atualizarTiposMovimentoEstoque(parametrosDistribuidor,
-//				 					 		this.getGruposMovimentoEstoqueAjusteEstoque(),
-//				 					 		!parametrosDistribuidor.getAjusteEstoque());
-		
+				
 		parametrosAprovacaoDistribuidor.setPostergacaoCobranca(parametrosDistribuidor.getPostergacaoCobranca());
 		
 		this.atualizarTiposMovimentoFinanceiro(parametrosDistribuidor,
@@ -881,24 +874,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		return gruposMovimentoFinanceiro;
 	}
-	
-	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueAjusteEstoque() {
-		
-		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
-			Arrays.asList(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
-		
-		return gruposMovimentoEstoque;
-	}
-	
+
 	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroPostergacaoCobranca() {
 		
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
@@ -920,7 +896,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
 			Arrays.asList(GrupoMovimentoEstoque.FALTA_DE, GrupoMovimentoEstoque.FALTA_EM,
-						  GrupoMovimentoEstoque.SOBRA_DE, GrupoMovimentoEstoque.SOBRA_EM);
+						  GrupoMovimentoEstoque.SOBRA_DE, GrupoMovimentoEstoque.SOBRA_EM,
+						  GrupoMovimentoEstoque.FALTA_DE_COTA, GrupoMovimentoEstoque.FALTA_EM_COTA,
+						  GrupoMovimentoEstoque.SOBRA_DE_COTA, GrupoMovimentoEstoque.SOBRA_EM_COTA);
 		
 		return gruposMovimentoEstoque;
 	}
