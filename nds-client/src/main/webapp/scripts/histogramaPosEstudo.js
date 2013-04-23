@@ -52,13 +52,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
 			
-			//TODO As telas de analise estão com erro, validar este direcionamento após correções.
-			var urlAnalise;
-			if ($('#parcial').val() === 'true') {
-				urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
-			} else {
-				urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
-			}
+			var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
 			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
 			
 			/*
@@ -408,7 +402,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					gridConfiguration : {
 						dataType : 'json',
 						colModel : [ {
-							display : 'Faixa de Reparte Dê',
+							display : 'Faixa de Reparte De',
 							name : 'faixaReparteDe',
 							width : 130,
 							sortable : true,

@@ -87,7 +87,7 @@ $(function(){
 	   		<legend>Resumo do Estudo</legend>
 	            <table width="950" border="0" cellspacing="2" cellpadding="2">
 				      <tr>
-				        <td width="423" rowspan="4" valign="top"><!--<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>-->
+				        <td width="260" rowspan="4" valign="top"><!--<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>-->
 				          <!-- <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>-->
 				          <span class="bt_novos"><a href="javascript:;" id="alterarFaixaReparte"><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span>
 				          <span class="bt_novos"><a href="javascript:;" id="analiseEstudo"><img src="images/ico_redistribuicao_complementar.gif" alt="Análise" hspace="5" border="0" />Análise</a></span>

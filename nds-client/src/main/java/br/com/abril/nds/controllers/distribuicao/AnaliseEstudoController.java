@@ -22,6 +22,7 @@ import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -156,6 +157,10 @@ public class AnaliseEstudoController extends BaseController {
 	public void obterMatrizDistribuicaoPorEstudo(BigInteger id){
 		ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterMatrizDistribuicaoPorEstudo(id);
 		
-		result.use(Results.json()).withoutRoot().from(produtoDistribuicaoVO).recursive().serialize();
+		if (produtoDistribuicaoVO != null) {
+		    result.use(Results.json()).withoutRoot().from(produtoDistribuicaoVO).recursive().serialize();
+		} else {
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Este estudo não pode ser analisado por problemas com os dados deste produto"));
+		}
 	}
 }
