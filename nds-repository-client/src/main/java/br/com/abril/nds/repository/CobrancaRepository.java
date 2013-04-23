@@ -23,7 +23,7 @@ public interface CobrancaRepository extends Repository<Cobranca, Long>{
 	 * 
 	 * @return List - DebitoCreditoCotaDTO
 	 */
-	List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota);
+	List<DebitoCreditoCotaDTO> obterCobrancasDaCotaEmAbertoAssociacaoConferenciaEncalhe(Long idCota, Long idControleConfEncCota, Date data);
 	
 	/**
 	 * Obtem data em que houve a primeira inadimplencia com cobrança ainda em aberto

@@ -78,26 +78,21 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * Obtém lista de chamada encalhe cota a partir do 
 	 * numeroCota e dataRecolhimento.  
 	 * 
-	 * Se flag indPesquisaCEFutura for true sera pesquisado registro com 
-	 * dataRecolhimento >= a data passado por parâmetro, senão, pesquisará 
-	 * registros com dataRecolhimento igual data passada por parâmetro.
+	 * Se dataRecolhimento for null sera pesquisado apenas registro com 
+	 * data recolhimento iguais a dataOperacao passado por parâmetro (para produtos parciais), senão, pesquisará 
+	 * registros com dataRecolhimento maior ou igual igual data passada por parâmetro.
 	 * 
 	 * @param numeroCota
 	 * @param dataOperacao
+	 * @param dataRecolhimento
 	 * @param idProdutoEdicao
-	 * @param indPesquisaCEFutura
-	 * @param conferido
 	 * @param postergado
 	 * 
 	 * @return List - ChamadaEncalheCota
 	 */
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
-			Integer numeroCota, 
-			Date dataOperacao, 
-			Long idProdutoEdicao, 
-			boolean indPesquisaCEFutura, 
-			boolean conferido,
-			boolean postergado);
+	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(Integer numeroCota,Long idProdutoEdicao,
+			   												   boolean postergado,Date dataOperacao, 
+			   												   Date... dataRecolhimento);
 	
 	
 	/**

@@ -25,12 +25,10 @@ import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
-import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -42,14 +40,11 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalheBox;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
-import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
@@ -474,7 +469,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED, noRollbackFor=GerarCobrancaValidacaoException.class)
+	@Transactional(propagation=Propagation.REQUIRED, 
+		noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class})
 	public void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, 
 			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException {
 
@@ -523,17 +519,30 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				if (nossoNumeroEnvioEmail.get(nossoNumero)){
 					
-					try {
-						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, cota.getPessoa().getEmail());
-					} catch (AutenticacaoEmailException e) {
+					String email = cota.getPessoa().getEmail();
+					
+					if (email == null || email.trim().isEmpty()){
 						
 						if (validacaoVO.getListaMensagens() == null){
 							validacaoVO.setListaMensagens(new ArrayList<String>());
 						}
 						
-						validacaoVO.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
-								cota.getNumeroCota() + ", " +
-								e.getMessage());
+						validacaoVO.getListaMensagens().add(
+								"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
+					} else {
+					
+						try {
+							this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
+						} catch (AutenticacaoEmailException e) {
+							
+							if (validacaoVO.getListaMensagens() == null){
+								validacaoVO.setListaMensagens(new ArrayList<String>());
+							}
+							
+							validacaoVO.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
+									cota.getNumeroCota() + ", " +
+									e.getMessage());
+						}
 					}
 				}
 			}

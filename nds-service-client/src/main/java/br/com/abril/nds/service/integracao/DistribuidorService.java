@@ -103,4 +103,6 @@ public interface DistribuidorService {
 	Long obterId();
 	
 	boolean utilizaControleAprovacaoFaltaSobra();
+	
+	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento();
 }

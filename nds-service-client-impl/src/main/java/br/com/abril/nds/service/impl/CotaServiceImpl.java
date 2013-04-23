@@ -1896,10 +1896,15 @@ public class CotaServiceImpl implements CotaService {
 		
 		List<RegistroCurvaABCCotaDTO> lista = cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 		
+		Cota cota = cotaRepository.obterPorNumerDaCota(filtroCurvaABCCotaDTO.getCodigoCota());
+		
+		Map<Long, Long> mapRanking =
+			rankingRepository.obterRankingProdutoCota(cota.getId());
+		
 		if(!lista.isEmpty()){
 			
 			for(RegistroCurvaABCCotaDTO dto : lista){
-				dto.setRkProduto(rankingRepository.obterRankingProdutoCota(dto.getIdCota(),dto.getIdProduto()));
+				dto.setRkProduto(mapRanking.get(dto.getIdProdutoEdicao()));
 			}
 		}
 		

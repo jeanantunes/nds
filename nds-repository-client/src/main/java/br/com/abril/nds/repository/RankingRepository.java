@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.util.Map;
+
 
 /**
  * 
@@ -27,7 +29,7 @@ public interface RankingRepository {
 	 */
 	Long obterRankingCota(Long idProduto,Long idCota);
 	
-	Long obterRankingProdutoCota(Long idCota,Long idProduto);
+	Map<Long, Long> obterRankingProdutoCota(Long idCota);
 	
 	Long obterRankingCotaDistribuidor(Long idCota);
 	

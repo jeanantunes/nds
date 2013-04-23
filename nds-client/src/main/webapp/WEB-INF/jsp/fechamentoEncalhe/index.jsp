@@ -1,4 +1,5 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+<input id="permissaoColExemplDevolucao" type="hidden" value="${permissaoColExemplDevolucao}">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
@@ -116,7 +117,7 @@
 
     <div class="linha_separa_fields">&nbsp;</div>
       
-    <fieldset class="fieldGrid">
+    <fieldset class="fieldGrid" style="width: 1030px;">
        	<legend> Fechamento Encalhe</legend>
         <div class="grids" style="display:none;" id="divFechamentoGrid">	
 			

@@ -961,23 +961,16 @@ public class ConferenciaEncalheController extends BaseController {
 		limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 		
 		try {
-			
-			Long idControleConferenciaEncalheCota = this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(
-					controleConfEncalheCota, 
-					listaConferenciaEncalheCotaToSave, 
-					this.getSetConferenciaEncalheExcluirFromSession(), 
-					this.getUsuarioLogado(),
-					indConferenciaContingencia);
-			
-			recarregarInfoConferenciaEncalheCotaEmSession(getNumeroCotaFromSession(), indConferenciaContingencia);
-			
-			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
-			
-			this.getInfoConferenciaSession().setIdControleConferenciaEncalheCota(idControleConferenciaEncalheCota);
-			
-			StatusConferenciaEncalheCota statusConf = obterStatusConferenciaEncalheCotaFromSession();
-			statusConf.setIndConferenciaEncalheCotaSalva(true);
-			
+
+	        this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(controleConfEncalheCota, 
+																         listaConferenciaEncalheCotaToSave, 
+																         this.getSetConferenciaEncalheExcluirFromSession(), 
+																         this.getUsuarioLogado(),
+																         indConferenciaContingencia);
+	       
+	
+	        limparDadosSessao();
+	
 		} catch (EncalheSemPermissaoSalvarException e) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
@@ -1091,7 +1084,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			byte[] bs = arquivos.get(tipo_documento_impressao_encalhe);
 			
-			if(bs != null) {
+			if(bs != null && bs.length > 0) {
 				
 				Map<String, Object> dados = new HashMap<String, Object>();
 				
@@ -1103,10 +1096,7 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				dados.put("tipo_documento_impressao_encalhe", tipo_documento_impressao_encalhe);
 				this.result.use(CustomJson.class).from(dados).serialize();
-			}else{
-				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Cenário de impressão não tratado, favor contatar a área de sistemas."));
 			}
-			
 		} else {
 			
 			this.result.use(Results.nothing());
@@ -1781,7 +1771,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			dados.put("valorEncalhe", valorEncalhe);
 			dados.put("valorVendaDia", valorVendaDia);
-			dados.put("valorDebitoCredito", valorDebitoCredito);
+			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
 			dados.put("valorPagar", valorPagar);
 			dados.put("valorTotal", valorTotal);
 			dados.put("valorPagarAtualizado", valorPagarAtualizado);
@@ -1850,6 +1840,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		Long idTemporario = obterIdTemporario();
 		
+		conferenciaEncalheDTO.setDia(produtoEdicao.getDia());
 		conferenciaEncalheDTO.setIdConferenciaEncalhe(idTemporario);
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());

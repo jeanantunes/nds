@@ -5,8 +5,10 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
+import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -84,5 +86,33 @@ public interface DiferencaEstoqueRepository extends Repository<Diferenca, Long> 
      * @return lista de diferenças lançadas na data
      */
 	List<Diferenca> obterDiferencas(Date data);
+	
+	/**
+	 * Obtém as diferenças.
+	 * 
+	 * @param dataMovimento - data de movimentação
+	 * @param statusConfirmacao - status de confirmação
+	 * 
+	 * @return {@link List} de {@link Diferenca}
+	 */
+	List<Diferenca> obterDiferencas(Date dataMovimento, StatusConfirmacao statusConfirmacao);
+	
+	/**
+	 * Obtém os dados para impressão de diferenças de estoque.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return {@link List} de {@link ImpressaoDiferencaEstoqueDTO}
+	 */
+	List<ImpressaoDiferencaEstoqueDTO> obterDadosParaImpressaoNaData(Date data);
+	
+	/**
+	 * Obtém a quantidade de dados para impressão de diferenças de estoque.
+	 * 
+	 * @param data - data
+	 * 
+	 * @return Quantidade de dados para impressão
+	 */
+	Long obterQuantidadeDadosParaImpressaoNaData(Date data);
 	
 }

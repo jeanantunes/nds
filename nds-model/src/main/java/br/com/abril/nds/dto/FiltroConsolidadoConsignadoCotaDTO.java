@@ -48,7 +48,8 @@ public class FiltroConsolidadoConsignadoCotaDTO {
 		DIFERENCA("diferenca"),
 		MOTIVO("motivo"),		
 		FORNECEDOR("fornecedor"),
-		TOTAL("total");
+		TOTAL("total"),
+		SEQUENCIA("sequencia");
 		
 		private String nomeColuna;
 		
