@@ -119,7 +119,10 @@ public class RecebimentoFisicoController extends BaseController {
 		preencherCombos();
 		
 		preencherDataEmissao();
-	
+
+		result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO_ALTERACAO));
+		result.include("permissaoGridColRepartePrevisto", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO_ALTERACAO));
+		result.include("permissaoGridColDiferenca", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA_ALTERACAO));
 	}
 	
 	/**

@@ -616,11 +616,24 @@ var recebimentoFisicoController = $.extend(true, {
 					
 			}],
 		
-			showTableToggleBtn : true,
+			showTableToggleBtn : false,
 			width : 980,
 			height : 180
 		});
+		
+		recebimentoFisicoController.apresentarEsconderConteudoPermissao();
 	},
+	
+	apresentarEsconderConteudoPermissao : function() {
+		if($("#permissaoGridColRepartePrevisto").val() != "true"){
+			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(5,false);
+		}
+		
+		if($("#permissaoGridColDiferenca").val() != "true"){
+			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(8,false);
+		}
+	},
+	
 	
 	/**
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
@@ -687,10 +700,12 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center'
 			}],
 			
-			showTableToggleBtn : true,
+			showTableToggleBtn : false,
 			width : 960,
 			height : 180
 		});
+		
+		recebimentoFisicoController.apresentarEsconderConteudoPermissao();
 	},
 	
     /**
