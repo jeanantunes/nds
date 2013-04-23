@@ -11,7 +11,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1453,18 +1452,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
 			}
 		}
-
-		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
-				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-						GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
-						
-				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-						GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
-		);
-			
-		this.movimentoFinanceiroCotaService.removerPostergadosDia(
-				idCota, listaPostergados, 
-				this.distribuidorService.obterDataOperacaoDistribuidor());
 	}
 	
 	private void removerItensConferenciaEncallhe(Set<Long> listaIdConferenciaEncalheParaExclusao) {
@@ -3348,14 +3335,4 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
 		}
 	}
-	
-	public static void main (String...strings){
-		
-		float x = (float) 12.00000000000000;
-		
-		System.out.println(new BigDecimal(x));
-		
-		
-	}
-	
 }
