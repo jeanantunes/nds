@@ -128,6 +128,7 @@ var lancamentoNovoController = $.extend(true, {
 		$("#diferencaInput1", lancamentoNovoController.workspace).val("");
 		$("#reparteAtualText1", lancamentoNovoController.workspace).text("");
 		$("#checkboxLancCota", lancamentoNovoController.workspace).uncheck();
+		$("#tipoDiferenca", lancamentoNovoController.workspace).val("");
 		
 		$(".prodSemCota", lancamentoNovoController.workspace).show();
 		$(".prodComCota", lancamentoNovoController.workspace).hide();
@@ -160,7 +161,9 @@ var lancamentoNovoController = $.extend(true, {
 		
 		lancamentoNovoController.openModalDiferenca();
 		
-		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque("FALTA_DE");
+		var tipoDiferenca = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+		
+		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(tipoDiferenca);
 	},
 	
 	editarDiferenca:function(idDiferenca){
