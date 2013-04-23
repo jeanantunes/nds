@@ -533,6 +533,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$(".gridWrapper", recebimentoFisicoController.workspace).append($("<table>").attr("class", "itemNotaGrid"));
 		
+		//ATENTO AO ALTERAR A ORDEM DAS COLUNAS DO GRID POIS HÁ COLUNAS NA POLÍTICA DE SEGURANÇA DO USUÁRIO
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
 				onSuccess: function() {bloquearItensEdicao(recebimentoFisicoController.workspace);},
 				preProcess: recebimentoFisicoController.getDataFromResultNotaInterface,
@@ -622,16 +623,17 @@ var recebimentoFisicoController = $.extend(true, {
 		});
 		
 		recebimentoFisicoController.apresentarEsconderConteudoPermissao();
+		
+		if($("#permissaoGridColDiferenca").val() != "true"){
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(8,false);
+		}
 	},
 	
 	apresentarEsconderConteudoPermissao : function() {
 		if($("#permissaoGridColRepartePrevisto").val() != "true"){
-			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(5,false);
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(5,false);
 		}
 		
-		if($("#permissaoGridColDiferenca").val() != "true"){
-			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(8,false);
-		}
 	},
 	
 	
@@ -644,6 +646,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$(".gridWrapper", recebimentoFisicoController.workspace).append($("<table>").attr("class", "itemNotaGrid"));
 		
+		//ATENTO AO ALTERAR A ORDEM DAS COLUNAS DO GRID POIS HÁ COLUNAS NA POLÍTICA DE SEGURANÇA DO USUÁRIO
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
 			
 				preProcess: recebimentoFisicoController.getDataFromResultNotaManual,

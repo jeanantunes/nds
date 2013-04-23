@@ -64,6 +64,7 @@ import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/estoque/recebimentoFisico")
+
 @Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO)
 public class RecebimentoFisicoController extends BaseController {
 	
@@ -120,9 +121,9 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		preencherDataEmissao();
 
-		result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO_ALTERACAO));
-		result.include("permissaoGridColRepartePrevisto", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO_ALTERACAO));
-		result.include("permissaoGridColDiferenca", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA_ALTERACAO));
+		result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO));
+		result.include("permissaoGridColRepartePrevisto", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO));
+		result.include("permissaoGridColDiferenca", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA));
 	}
 	
 	/**
@@ -1172,6 +1173,7 @@ public class RecebimentoFisicoController extends BaseController {
 	 * @param itensRecebimento
 	 */
 	@Post
+	@Rules(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO)
 	public void confirmarRecebimentoFisico(List<RecebimentoFisicoDTO> itensRecebimento){
 		
 		NotaFiscalEntrada notaFiscalEntrada = getNotaFiscalFromSession();
