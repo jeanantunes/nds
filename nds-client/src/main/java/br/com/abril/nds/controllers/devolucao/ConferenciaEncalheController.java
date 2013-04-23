@@ -1084,7 +1084,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			byte[] bs = arquivos.get(tipo_documento_impressao_encalhe);
 			
-			if(bs != null) {
+			if(bs != null && bs.length > 0) {
 				
 				Map<String, Object> dados = new HashMap<String, Object>();
 				
@@ -1096,10 +1096,7 @@ public class ConferenciaEncalheController extends BaseController {
 				
 				dados.put("tipo_documento_impressao_encalhe", tipo_documento_impressao_encalhe);
 				this.result.use(CustomJson.class).from(dados).serialize();
-			}else{
-				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Cenário de impressão não tratado, favor contatar a área de sistemas."));
 			}
-			
 		} else {
 			
 			this.result.use(Results.nothing());
