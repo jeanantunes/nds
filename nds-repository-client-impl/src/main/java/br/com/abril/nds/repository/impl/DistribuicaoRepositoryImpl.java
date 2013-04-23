@@ -53,7 +53,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" left join estoque_produto estoqueProd on estoqueProd.PRODUTO_EDICAO_ID = prodEdic.ID ")
 		.append(" left join estoque_produto_cota_juramentado estoqueProdJuram on estoqueProdJuram.PRODUTO_EDICAO_ID = prodEdic.ID ")
 		.append(" join lancamento lanc on lanc.PRODUTO_EDICAO_ID = prodEdic.ID")
-		.append(" left join estudo estudo on lanc.ID = estudo.LANCAMENTO_ID")
+		.append(" left join estudo estudo on lanc.ID = estudo.LANCAMENTO_ID and estudo.produto_edicao_id = prodEdic.id ")
 		.append(" left join tipo_classificacao_produto tpClassProd on prod.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")
 		.append(" join produto_fornecedor prodForn on prodForn.PRODUTO_ID = prod.ID")
 		.append(" join fornecedor forn on forn.ID = prodForn.fornecedores_ID")

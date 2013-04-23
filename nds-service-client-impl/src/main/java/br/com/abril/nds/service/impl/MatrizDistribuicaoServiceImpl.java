@@ -291,9 +291,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				} else {
 				    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Este estudo já foi liberado, não é permitido excluí-lo!"));
 				}
-			}
-			else {
-				
+			} else {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não existe estudo para o produto selecionado!"));
 			}
 		}

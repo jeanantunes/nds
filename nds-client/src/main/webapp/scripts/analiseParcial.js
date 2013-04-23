@@ -85,6 +85,16 @@ var analiseParcialController = $.extend(true,{
 				$('#edicao_base_5').html($('td[abbr=numeroEdicao5] div').html());
 				$('#edicao_base_6').html($('td[abbr=numeroEdicao6] div').html());
 				
+				$('td[abbr^=venda]', $('.baseEstudoGrid')).each(function(i, el) {
+					$(el).css({'color': 'red', 'font-weight': 'bold'});
+				});
+				$('td[abbr^=ultimoReparte]', $('.baseEstudoGrid')).each(function(i, el) {
+					$(el).css({'font-weight': 'bold'});
+				});
+				$('td[abbr^=reparteSugerido]', $('.baseEstudoGrid')).each(function(i, el) {
+					$(el).css({'font-weight': 'bold'});
+				});
+				
 				soma("#total_juramento", "td[abbr=juramento]");
 				soma("#total_media_venda", "td[abbr=mediaVenda]");
 				soma("#total_ultimo_reparte", "td[abbr=ultimoReparte]");

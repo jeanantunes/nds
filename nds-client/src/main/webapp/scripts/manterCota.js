@@ -1271,10 +1271,19 @@ var COTA_CNPJ = $.extend(true, {
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
         formData.push({name:"cotaDTO.tipoCota", value: $('[name="cotaDTO.TipoCota"]').val()});
 
-        if (MANTER_COTA.numeroCota) {
-        	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
-        } else {
-        	formData.push({name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()});
+        var existeCota = false;
+        for (var i = 0; i < formData.length; i++) {
+        	if (formData[i].value == 'cotaDTO.numeroCota') {
+        		existeCota = true;
+        		break;
+        	}
+        }
+        if (!existeCota) {
+	        if (MANTER_COTA.numeroCota) {
+	        	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
+	        } else {
+	        	formData.push({name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()});
+	        }
         }
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCNPJ",

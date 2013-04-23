@@ -311,12 +311,6 @@ function definicaoReparte(){
      </fieldset>
 </div>
 
-
-
-
-
-
-
 <div class="corpo">
     <br clear="all"/>
     <br />
@@ -335,53 +329,22 @@ function definicaoReparte(){
     	    <tr>
     	      <td class="class_linha_1"><strong>Edição:</strong></td>
     	      <td class="class_linha_1">0209</td>
-    	      <td class="class_linha_1">0208</td>
-    	      <td class="class_linha_1">0207</td>
-    	      <td class="class_linha_1">0206</td>
-    	      <td class="class_linha_1">0205</td>
-    	      <td class="class_linha_1">0204</td>
-    	      <td class="class_linha_1">0203</td>
-    	      <td class="class_linha_1">0202</td>
-    	      <td class="class_linha_1">0202</td>
     	      <td><a href="javascript:;" onclick="escondeDados();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></td>
   	        </tr>
     	    <tr>
     	      <td width="165" class="class_linha_2"><strong>Data Lançamento:</strong></td>
     	      <td width="80" align="center" class="class_linha_2">09/08/2012</td>
-    	      <td width="80" align="center" class="class_linha_2">12/07/2012</td>
-    	      <td width="80" align="center" class="class_linha_2">18/06/2012</td>
-    	      <td width="80" align="center" class="class_linha_2">14/05/2012</td>
-    	      <td width="80" align="center" class="class_linha_2">13/04/2012</td>
-    	      <td width="80" align="center" class="class_linha_2">12/03/2012</td>
-    	      <td width="80" align="center" class="class_linha_2">07/02/2012</td>
-    	      <td width="80" align="center" class="class_linha_2">04/01/2012</td>
-    	      <td width="80" align="center" class="class_linha_2">04/01/2012</td>
     	      <td width="19" align="center">&nbsp;</td>
   	        </tr>
     	    <tr>
     	      <td class="class_linha_1"><strong>Reparte:</strong></td>
     	      <td align="right" class="class_linha_1">8.588</td>
-    	      <td align="right" class="class_linha_1">8.590</td>
-    	      <td align="right" class="class_linha_1">8.595</td>
-    	      <td align="right" class="class_linha_1">8.590</td>
-    	      <td align="right" class="class_linha_1">8.585</td>
-    	      <td align="right" class="class_linha_1">7.797</td>
-    	      <td align="right" class="class_linha_1">7.797</td>
-    	      <td align="right" class="class_linha_1">7.237</td>
-    	      <td align="right" class="class_linha_1">6.588</td>
     	      <td align="right">&nbsp;</td>
   	        </tr>
     	    <tr>
     	      <td class="class_linha_2"><strong>Venda:</strong></td>
     	      <td align="right" class="class_linha_2">0</td>
     	      <td align="right" class="class_linha_2">2.587</td>
-    	      <td align="right" class="class_linha_2">2.713</td>
-    	      <td align="right" class="class_linha_2">3.007</td>
-    	      <td align="right" class="class_linha_2">2.691</td>
-    	      <td align="right" class="class_linha_2">2.791</td>
-    	      <td align="right" class="class_linha_2">2.409</td>
-    	      <td align="right" class="class_linha_2">2.109</td>
-    	      <td align="right" class="class_linha_2">1.109</td>
     	      <td align="right">&nbsp;</td>
   	        </tr>
   	    </table>
@@ -408,9 +371,7 @@ function definicaoReparte(){
                 <td>Ordenar por:</td>
                 <td width="169">
 <!--                 nao mudar os values dessas options, pois tem coisa na tela e no banco que dependem desses nomes -->
-	                <select 
-	                name="filterOrder" 
-	                id="filterOrder" style="width:150px;">
+	                <select name="filterOrder" id="filterOrder" style="width:150px;">
 	                  <option value="0">Selecione:.</option>
 	                  <option value="filtroReparte">Reparte</option>
 	                  <option value="filtroRanking">Ranking</option>

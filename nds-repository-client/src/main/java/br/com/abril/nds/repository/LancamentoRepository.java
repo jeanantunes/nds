@@ -340,4 +340,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	public List<Lancamento> obterPorEstudo(Estudo estudo);
 
+	Lancamento buscarPorIdSemEstudo(Long lancamentoId);
+
 }
