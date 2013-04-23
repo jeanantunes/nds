@@ -89,7 +89,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			}
 		//}
 		
-		if (lancamento.getStatus() == StatusLancamento.CONFIRMADO) {
+		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO, 
 					"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo cota!");
@@ -227,7 +227,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		sql.append("INNER JOIN estudo e ON e.PRODUTO_EDICAO_ID = pe.ID AND e.DATA_LANCAMENTO = l.DATA_LCTO_PREVISTA ");
 		sql.append("WHERE pe.ID = ? ");
 		sql.append("AND l.DATA_LCTO_PREVISTA >= ? ");
-		sql.append("ORDER BY l.DATA_LCTO_PREVISTA ASC");
+		sql.append("ORDER BY l.DATA_LCTO_PREVISTA ASC LIMIT 1");
 		
 		RowMapper lancamentoRowMapper = new RowMapper() {
 

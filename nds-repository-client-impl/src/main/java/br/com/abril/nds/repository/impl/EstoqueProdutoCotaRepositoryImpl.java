@@ -186,7 +186,8 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		return retorno.doubleValue();
 	}
 	
-public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
+	@SuppressWarnings("unchecked")
+	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 		
 		StringBuilder sql = new StringBuilder("");
 
@@ -214,6 +215,7 @@ public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 		return query.list();
 	}
 		
+	@SuppressWarnings("unchecked")
 	public List<FixacaoReparteDTO> obterHistoricoEdicaoPorCota(Cota cota){
 			
 			StringBuilder sql = new StringBuilder("");
@@ -241,5 +243,4 @@ public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 			
 			return query.list();
 	}
-	
 }
