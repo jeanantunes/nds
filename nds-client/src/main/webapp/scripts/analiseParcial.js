@@ -1,3 +1,81 @@
+function popup_mudar_base() {
+	// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+	$("#dialog-mudar-base").dialog({
+		resizable : false,
+		height : 470,
+		width : 550,
+		modal : true,
+		buttons : {
+			"Confirmar" : function() {
+				$(this).dialog("close");
+				$("#effect").show("highlight", {}, 1000, callback);
+
+			},
+			"Cancelar" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+};
+function popup_cotas_estudo() {
+	// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+	$("#dialog-cotas-estudos").dialog({
+		resizable : false,
+		height : 530,
+		width : 550,
+		modal : true,
+		buttons : {
+			"Confirmar" : function() {
+				$(this).dialog("close");
+				$("#effect").show("highlight", {}, 1000, callback);
+
+			},
+			"Cancelar" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+};
+
+function popup_cotas_detalhes() {
+	// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+	$("#dialog-cotas-detalhes").dialog({
+		resizable : false,
+		height : 560,
+		width : 740,
+		modal : true,
+		buttons : {
+			"Fechar" : function() {
+				$(this).dialog("close");
+
+			}
+		}
+	});
+};
+
+function popup_edicoes_produto() {
+	// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+
+	$("#dialog-edicoes-produtos").dialog({
+		resizable : false,
+		height : 420,
+		width : 550,
+		modal : true,
+		buttons : {
+			"Confirmar" : function() {
+				$(this).dialog("close");
+
+			},
+			"Cancelar" : function() {
+				$(this).dialog("close");
+			}
+		}
+	});
+};
+
 function selecionarElementos(tipo,optionsId){
 	
 	$.getJSON("/nds-client/componentes/elementos",{"tipo":tipo},function(data){
@@ -37,9 +115,44 @@ function filtrarOrdenarPor(estudo){
 }
 
 var analiseParcialController = $.extend(true,{
+	
+	preProcessGrid : function(resultado) {
+		for (var i = 0; i < resultado.rows.length; i++) {
+			if (resultado.rows[i].cell.classificacao == undefined) {
+				resultado.rows[i].cell.classificacao = '';
+			}
+			if (resultado.rows[i].cell.reparte1 == 0) {
+				resultado.rows[i].cell.reparte1 = "";
+				resultado.rows[i].cell.venda1 = "";
+			}
+			if (resultado.rows[i].cell.reparte2 == 0) {
+				resultado.rows[i].cell.reparte2 = "";
+				resultado.rows[i].cell.venda2 = "";
+			}
+			if (resultado.rows[i].cell.reparte3 == 0) {
+				resultado.rows[i].cell.reparte3 = "";
+				resultado.rows[i].cell.venda3 = "";
+			}
+			if (resultado.rows[i].cell.reparte4 == 0) {
+				resultado.rows[i].cell.reparte4 = "";
+				resultado.rows[i].cell.venda4 = "";
+			}
+			if (resultado.rows[i].cell.reparte5 == 0) {
+				resultado.rows[i].cell.reparte5 = "";
+				resultado.rows[i].cell.venda5 = "";
+			}
+			if (resultado.rows[i].cell.reparte6 == 0) {
+				resultado.rows[i].cell.reparte6 = "";
+				resultado.rows[i].cell.venda6 = "";
+			}
+		};
+		return resultado;
+	},
+	
 	init:function(_id, _faixaDe, _faixaAte){
 		
-		$(".baseEstudoGrid").flexigrid({
+		$("#baseEstudoGridParcial").flexigrid({
+			preProcess : analiseParcialController.preProcessGrid,
 			url : contextPath + '/distribuicao/analise/parcial/init',
 			params: [{name: 'id', value: _id}, {name: 'faixaDe', value: _faixaDe}, {name: 'faixaAte', value: _faixaAte}],
 			dataType : 'json',
@@ -74,7 +187,7 @@ var analiseParcialController = $.extend(true,{
 			width : 950,
 			height : 200,
 			sortorder:'desc',
-			sortname:'cota',
+			sortname:'reparteSugerido',
 			onSuccess:function(x){
 				addDbClickSupport(".baseEstudoGrid", "td[abbr=reparteSugerido]");
 				
@@ -84,6 +197,16 @@ var analiseParcialController = $.extend(true,{
 				$('#edicao_base_4').html($('td[abbr=numeroEdicao4] div').html());
 				$('#edicao_base_5').html($('td[abbr=numeroEdicao5] div').html());
 				$('#edicao_base_6').html($('td[abbr=numeroEdicao6] div').html());
+				
+				$('td[abbr^=venda]', $('.baseEstudoGrid')).each(function(i, el) {
+					$(el).css({'color': 'red', 'font-weight': 'bold'});
+				});
+				$('td[abbr^=ultimoReparte]', $('.baseEstudoGrid')).each(function(i, el) {
+					$(el).css({'font-weight': 'bold'});
+				});
+				$('td[abbr^=reparteSugerido]', $('.baseEstudoGrid')).each(function(i, el) {
+					$(el).css({'font-weight': 'bold'});
+				});
 				
 				soma("#total_juramento", "td[abbr=juramento]");
 				soma("#total_media_venda", "td[abbr=mediaVenda]");
@@ -211,7 +334,9 @@ function addDbClickSupport(){
 function soma(idDest, abbr){
 	var totalSugerido=0;
 	$(abbr).each(function(i,value){
-		totalSugerido+=parseFloat(value.textContent);
+		if (!isNaN(parseFloat(value.textContent))) {
+			totalSugerido += parseFloat(value.textContent);
+		}
 	});
 	
 	var vermelho = $(idDest).find(".vermelho");
@@ -236,7 +361,7 @@ $(".cotasDetalhesGrid").flexigrid({
 	url : '${pageContext.request.contextPath}/xml/cotasDetalhes-xml.xml',
 	dataType : 'xml',
 	colModel : [ {
-		display : 'CÃ³digo',
+		display : 'Código',
 		name : 'codigo',
 		width : 40,
 		sortable : true,
@@ -260,7 +385,7 @@ $(".cotasDetalhesGrid").flexigrid({
 		sortable : true,
 		align : 'center'
 	}, {
-		display : 'EndereÃ§o',
+		display : 'Endereço',
 		name : 'endereco',
 		width : 420,
 		sortable : true,
@@ -274,7 +399,7 @@ $(".prodCadastradosGrid").flexigrid({
 	url : '${pageContext.request.contextPath}/xml/prodCadastrados-xml.xml',
 	dataType : 'xml',
 	colModel : [ {
-		display : 'CÃ³digo',
+		display : 'Código',
 		name : 'codigo',
 		width : 70,
 		sortable : true,
@@ -286,13 +411,13 @@ $(".prodCadastradosGrid").flexigrid({
 		sortable : true,
 		align : 'left'
 	}, {
-		display : 'EdiÃ§Ã£o',
+		display : 'Edição',
 		name : 'edicao',
 		width : 70,
 		sortable : true,
 		align : 'left'
 	}, {
-		display : 'AÃ§Ã£o',
+		display : 'Ação',
 		name : 'acao',
 		width : 50,
 		sortable : true,
@@ -311,13 +436,13 @@ $(".edicaoProdCadastradosGrid").flexigrid({
 	url : '${pageContext.request.contextPath}/xml/pesqEdicao-xml.xml',
 	dataType : 'xml',
 	colModel : [ {
-		display : 'EdiÃ§Ã£o',
+		display : 'Edição',
 		name : 'edicao',
 		width : 45,
 		sortable : true,
 		align : 'left'
 	}, {
-		display : 'Data LanÃ§amento',
+		display : 'Data Lançamento',
 		name : 'dtLancamento',
 		width : 100,
 		sortable : true,
@@ -366,7 +491,7 @@ function popup_detalhes() {
 	});
 };
 function popup_detalhes_close() {
-  $( "#dialog-detalhes" ).dialog( "close" );
+  $("#dialog-detalhes").dialog("close");
 }
 
 //@ sourceURL=analiseParcial.js

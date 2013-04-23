@@ -2553,19 +2553,16 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	public List<DistribuidorClassificacaoCota> obterListaClassificacao() {
-		log.info("-->CotaServiceImpl.obterListaClassificacao");
 		return distribuidorClassificacaoCotaRepository.buscarTodos();
 	}
 
 	@Override
 	public List<Integer> verificarNumeroCotaExiste(Integer... cotaIdArray) {
-
 		return cotaRepository.verificarNumeroCotaExiste(cotaIdArray);
 	}
 	
 	@Override
 	public boolean cotaVinculadaCotaBase(Long idCota) {
-		
 		return cotaRepository.cotaVinculadaCotaBase(idCota);
 	}
 

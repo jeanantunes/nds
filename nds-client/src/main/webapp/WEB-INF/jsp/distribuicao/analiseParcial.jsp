@@ -1,83 +1,5 @@
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/analiseParcial.js"></script>
 <script language="javascript" type="text/javascript">
-function popup_mudar_base() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-mudar-base" ).dialog({
-			resizable: false,
-			height:470,
-			width:550,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-function popup_cotas_estudo() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-cotas-estudos" ).dialog({
-			resizable: false,
-			height:530,
-			width:550,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					$("#effect").show("highlight", {}, 1000, callback);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-
-function popup_cotas_detalhes() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-cotas-detalhes" ).dialog({
-			resizable: false,
-			height:560,
-			width:740,
-			modal: true,
-			buttons: {
-				"Fechar": function() {
-					$( this ).dialog( "close" );
-					
-				}
-			}
-		});
-	};
-	
-function popup_edicoes_produto() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
-		$( "#dialog-edicoes-produtos" ).dialog({
-			resizable: false,
-			height:420,
-			width:550,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
-					$( this ).dialog( "close" );
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-	};
-
 $(function() {   
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
   });
@@ -286,7 +208,7 @@ function escondeDados(){
                 <td width="13" align="center">&nbsp;</td>
             </tr>
           </table>
-        <table class="baseEstudoGrid"></table>
+        <table class="baseEstudoGrid" id="baseEstudoGridParcial"></table>
         
 
         <table width="950" border="0" cellspacing="2" cellpadding="2">
@@ -311,14 +233,14 @@ function escondeDados(){
             <td width="15" align="right">&nbsp;</td>
           </tr>
           </table>
-	<span class="bt_novos">123
+	<span class="bt_novos">
 		<a href="javascript:return false;" id="liberar">
 			<img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" alt="Liberar" hspace="5" border="0" />
 			Liberar
 		</a>
 	</span>
     <span class="bt_novos">
-    	<a href="javascript:history.back(-1);;">
+    	<a href="javascript:;" onclick="">
     		<img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />
     		Voltar
     	</a>

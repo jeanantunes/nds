@@ -2746,11 +2746,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray) {
 
 		StringBuilder hql = new StringBuilder("select NUMERO_COTA from cota where cota.NUMERO_COTA in (:cotaIDList)");
-		hql.append(" and cota.SITUACAO_CADASTRO = upper(:situacaoCadastro)");
+		hql.append(" and (cota.SITUACAO_CADASTRO = upper(:situacaoCadastroAtivo) ");
+		hql.append("      or cota.SITUACAO_CADASTRO = upper(:situacaoCadastroSuspenso) )");
+		hql.append(" and cota.TIPO_DISTRIBUICAO_COTA = upper(:tipoDistribuicaoCota)");
 		
 		SQLQuery query = super.getSession().createSQLQuery(hql.toString());
 		query.setParameterList("cotaIDList", cotaIdArray);
-		query.setParameter("situacaoCadastro", SituacaoCadastro.ATIVO.toString());
+		query.setParameter("situacaoCadastroAtivo", SituacaoCadastro.ATIVO.toString());
+		query.setParameter("situacaoCadastroSuspenso", SituacaoCadastro.SUSPENSO.toString());
+		query.setParameter("tipoDistribuicaoCota", TipoDistribuicaoCota.CONVENCIONAL.toString());
 		
 		return query.list();
 	}

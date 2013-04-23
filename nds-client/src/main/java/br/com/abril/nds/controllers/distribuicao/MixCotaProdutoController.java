@@ -274,8 +274,8 @@ public class MixCotaProdutoController extends BaseController {
 
 	@Post
 	@Path("/salvarGridPdvReparte")
-	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idMix){
-		repartePdvService.salvarRepartesPDVMix(listPDV,codProduto, codCota, idMix);
+	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, Long idMix){
+		repartePdvService.salvarRepartesPDVMix(listPDV,codProduto, idMix);
 		throw new ValidacaoException(TipoMensagem.SUCCESS,"Operação realizada com sucesso!");
 	}
 	

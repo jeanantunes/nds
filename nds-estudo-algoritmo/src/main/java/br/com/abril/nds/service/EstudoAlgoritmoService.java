@@ -137,7 +137,7 @@ public class EstudoAlgoritmoService {
 	}
 
 	public void carregarParametros(EstudoTransient estudo) {
-		estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo()));
+		estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), estudo.getProdutoEdicaoEstudo().getNumeroEdicao()));
 		if (estudo.getPacotePadrao() == null) {
 			estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProdutoEdicaoEstudo().getPacotePadrao()));
 		}

@@ -36,7 +36,7 @@ public class AnaliseParcialRepositoryImpl extends
 		sql.append("       pdvs.quantidade npdv, ");
 		sql.append("       ec.reparte reparteSugerido, ");
 		sql.append("       cota.tipo_distribuicao_cota leg, ");
-		sql.append("       1000 juramento, ");
+		sql.append("       0 juramento, ");
 		sql.append("       ifnull((select round(avg(epe.venda), 1) ");
 		sql.append("                 from estudo_produto_edicao epe ");
 		sql.append("                where epe.cota_id = cota.id ");

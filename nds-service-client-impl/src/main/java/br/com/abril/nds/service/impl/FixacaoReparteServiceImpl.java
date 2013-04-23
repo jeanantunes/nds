@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
@@ -141,14 +142,18 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	
 	@Override
 	@Transactional
-	public void adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
+	public FixacaoReparte adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
 		FixacaoReparte fixacaoReparte = getFixacaoRepartePorDTO(fixacaoReparteDTO);
 		
-		if(fixacaoReparte.getId() == null){
-			fixacaoReparteRepository.adicionar(fixacaoReparte);
-		}else{
-			fixacaoReparteRepository.alterar(fixacaoReparte);
+		if(fixacaoReparte.getId() != null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Já existe fixação para esta cota[" +
+					fixacaoReparteDTO.getCotaFixadaString() +
+					"] e produto[" + fixacaoReparteDTO.getProdutoFixado() + "].");
 		}
+		
+		fixacaoReparteRepository.adicionar(fixacaoReparte);
+		
+		return fixacaoReparte;
 	}
 
 	@Override
@@ -344,6 +349,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Override
 	public boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO) {
 		Cota cota = cotaRepository.obterPorNumerDaCota(fixacaoReparteDTO.getCotaFixada());
-		return cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO);
+		return (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) 
+				|| cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO))
+				&& cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL);
 	}
 }
