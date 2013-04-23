@@ -577,13 +577,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case POSTERGADO_DEBITO:
 				case POSTERGADO_CREDITO:
 					
-					if (dataOperacao.after(movimentoFinanceiroCota.getData())){
-					
-						vlMovPostergado = 
-								this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
-
-					}
-					
+					vlMovPostergado = 
+							this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
 				break;
 			}
 		}
