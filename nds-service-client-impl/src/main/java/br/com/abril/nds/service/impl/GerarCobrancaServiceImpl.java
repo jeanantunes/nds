@@ -1029,8 +1029,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		this.cobrancaRepository.remover(divida.getCobranca());
 		
 	    this.dividaRepository.remover(divida);
-	    
-	    this.removerPostergados(consolidado.getCota().getId(), dataOperacao);
 	}
 	
 	private void removerPostergados(Long idCota, Date dataOperacao){
