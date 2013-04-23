@@ -2829,13 +2829,16 @@ public class DiferencaEstoqueController extends BaseController {
 	
 	
 	@Get("/imprimirRelatorioFaltasSobras")
-	public Download imprimirRelatorioFaltasSobras(String dataMovimentoFormatada ) throws Exception{
+	public Download imprimirRelatorioFaltasSobras(String dataMovimentoFormatada) throws Exception {
 		
 		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
 		
-		byte[] comprovate = diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
+		byte[] relatorio = diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
 		
-		return new ByteArrayDownload(comprovate,"application/pdf", "relatorioFaltasSobras.pdf", true);
+		String nomeArquivoRelatorio = "relatorioFaltasSobras" + FileType.PDF.getExtension();
+		
+		return new ByteArrayDownload(
+			relatorio, FileType.PDF.getContentType(), nomeArquivoRelatorio, true);
 	}
 }
  
