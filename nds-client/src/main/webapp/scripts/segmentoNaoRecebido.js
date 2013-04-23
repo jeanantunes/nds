@@ -12,19 +12,12 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						
 						// URLs utilizadas nas requisições
 						segmentoNaoRecebidoController.urlExcluirSegmentoNaoRecebido = contextPath + "/distribuicao/segmentoNaoRecebido/excluirSegmentoNaoRecebido";
-						
 						segmentoNaoRecebidoController.urlPesquisarCotasNaoRecebemSegmento = contextPath + "/distribuicao/segmentoNaoRecebido/pesquisarCotasNaoRecebemSegmento";
-						
 						segmentoNaoRecebidoController.urlPesquisarCotasNaoEstaoNoSegmento = contextPath + "/distribuicao/segmentoNaoRecebido/pesquisarCotasNaoEstaoNoSegmento";
-						
 						segmentoNaoRecebidoController.urlIncluirCotasSegmentoNaoRecebido = contextPath + "/distribuicao/segmentoNaoRecebido/incluirCotasSegmentoNaoRecebido";
-						
 						segmentoNaoRecebidoController.urlIncluirSegmentosNaCota = contextPath + "/distribuicao/segmentoNaoRecebido/incluirSegmentosNaCota";
-						
 						segmentoNaoRecebidoController.urlPesquisarSegmentosCadastradosNaCota = contextPath + "/distribuicao/segmentoNaoRecebido/pesquisarSegmentosCadastradosNaCota";
-						
 						segmentoNaoRecebidoController.urlPesquisarSegmentosElegiveisParaInclusao = contextPath + "/distribuicao/segmentoNaoRecebido/pesquisarSegmentosElegiveisParaInclusao";
-						
 						segmentoNaoRecebidoController.urlCarregarComboboxInclusaoDeSegmentoNaCota = contextPath + "/distribuicao/segmentoNaoRecebido/carregarComboboxInclusaoDeSegmentoNaCota";
 						
 						// GRID NA TELA PRINCIPAL LADO ESQUERDO PESQUISAS POR COTA (numero ou nome)
@@ -262,13 +255,11 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 										      
 										         // Faz o reload no grid on lista os segmentos disponíveis para inserção 
 										         $(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexOptions(
-															{
-																url : segmentoNaoRecebidoController.urlPesquisarSegmentosElegiveisParaInclusao,
-																dataType : 'json',
-																params : segmentoNaoRecebidoController.getFiltroCotaParaReload()
-															});
-
-												 $(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexReload();
+													{
+														url : segmentoNaoRecebidoController.urlPesquisarSegmentosElegiveisParaInclusao,
+														dataType : 'json',
+														params : segmentoNaoRecebidoController.getFiltroCotaParaReload()
+													}).flexReload();
 												 
 										         segmentoNaoRecebidoController.reloadFlexGrid("segmentoCotaGrid");
 										         
@@ -336,7 +327,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 															{
 																url : segmentoNaoRecebidoController.urlPesquisarCotasNaoRecebemSegmento,
 																dataType : 'json',
-																params : segmentoNaoRecebidoController.getFiltroSegmentoParaReload(),
+																params : segmentoNaoRecebidoController.getFiltroSegmentoParaReload()
 															}
 										         ).flexReload();
 										         
@@ -482,7 +473,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								{
 									url : segmentoNaoRecebidoController.urlPesquisarCotasNaoRecebemSegmento,
 									dataType : 'json',
-									params : segmentoNaoRecebidoController.getFiltroSegmento(),
+									params : segmentoNaoRecebidoController.getFiltroSegmento()
 						}).flexReload();
 					},
 					
@@ -505,12 +496,6 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 										$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexAddData(result);
 									}
 								});
-						
-//						$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexOptions({
-//							url : segmentoNaoRecebidoController.urlPesquisarCotasNaoEstaoNoSegmento,
-//							dataType : 'json',
-//							params : segmentoNaoRecebidoController.getFiltroCota2()
-//						}).flexReload();
 					},
 
 					/**
@@ -569,14 +554,19 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								buttons: {
 									"Confirmar": function() {
 										$( this ).dialog( "close" );
-										//$("#effect").show("highlight", {}, 1000, callback);
-										
-										segmentoNaoRecebidoController.sendPostJsonToController(
-												segmentoNaoRecebidoController.urlIncluirCotasSegmentoNaoRecebido,
+										$.postJSON(
+												segmentoNaoRecebidoController.urlIncluirCotasSegmentoNaoRecebido, 
 												data,
-												["segmentoNaoRecebidaGrid","segmentosGrid"],
-												segmentoNaoRecebidoController.callBackOnSucess
+												function(result) {
+													if(result.mensagens) {
+														exibirMensagem(result.mensagens.tipoMensagem,
+																result.mensagens.listaMensagens);
+													}
+													segmentoNaoRecebidoController.limparListaCotas();
+													segmentoNaoRecebidoController.porSegmento();
+												}
 										);
+										
 									},
 									"Cancelar": function() {
 										$( this ).dialog( "close" );
@@ -606,18 +596,18 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					},
 					
 					callBackOnSucess : function (result, flexGridClass){
-						 var tipoMensagem = result.tipoMensagem;
-				         var listaMensagens = result.listaMensagens;
+						 var tipoMensagem = result.tipoMensagem,
+				             listaMensagens = result.listaMensagens;
 				         
 				         if (tipoMensagem && listaMensagens) {
 				        	 exibirMensagem(tipoMensagem, listaMensagens);
 				         }
 				         
 				         if (flexGridClass != null) {
-					         for (var i in flexGridClass){
+					         for (var ii in flexGridClass){
 					        	 
 					        	// Fazendo uma nova requisição quando for reload Segundo filtro
-					        	 if (flexGridClass[i] === "segmentosBGrid") {
+					        	 if (flexGridClass[ii] === "segmentosBGrid") {
 					        	 
 					        		 $(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexOptions(
 				        				 {
@@ -627,22 +617,32 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 				        				 }
 			        				 ).flexReload();
 					        		 
-					        	 }
-					        	 // Fazendo uma nova requisição quando for reload Primeiro filtro
-					        	if (flexGridClass[i] === "segmentosGrid") {
+				        		 // Fazendo uma nova requisição quando for reload Primeiro filtro
+					        	 } else if (flexGridClass[ii] === "segmentosGrid") {
 					        		
 					        		$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexOptions(
 									{
 										url : segmentoNaoRecebidoController.urlPesquisarCotasNaoEstaoNoSegmento,
 										dataType : 'json',
-										params : segmentoNaoRecebidoController.getFiltroCota2Vazio(),
+										params : segmentoNaoRecebidoController.getFiltroCota2Vazio()
 									});
 
 					        		segmentoNaoRecebidoController.limparFiltroCota2();
 									$(".segmentosGrid", segmentoNaoRecebidoController.workspace).flexReload();
 									segmentoNaoRecebidoController.filtroPorCota();
-								}else{
-									segmentoNaoRecebidoController.reloadFlexGrid(flexGridClass[i]);
+									
+					        	} else if (flexGridClass[ii] === "segmentoNaoRecebidaGrid") {
+					        		
+					        		$(".segmentoNaoRecebidaGrid", segmentoNaoRecebidoController.workspace).flexOptions(
+					        				{
+					        					url : segmentoNaoRecebidoController.urlPesquisarCotasNaoRecebemSegmento,
+					        					dataType : 'json',
+					        					params : segmentoNaoRecebidoController.getFiltroSegmentoParaReload()
+					        				}
+					        		).flexReload();
+					        		
+								} else {
+									segmentoNaoRecebidoController.reloadFlexGrid(flexGridClass[ii]);
 								}
 					     	}
 				         }
@@ -781,7 +781,7 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						$('#segmentoNaoRecebido_porSegmento', segmentoNaoRecebidoController.workspace).hide();
 						
 						if($("#numeroCotaFiltro1", segmentoNaoRecebidoController.workspace).val()=="" && $("#nomeCotaFiltro1", segmentoNaoRecebidoController.workspace).val()==""){						
-					           var erros = new Array();
+					           var erros = [];
 					           erros[0] = "Informe Cota/Nome para pesquisa.";
 
 					           segmentoNaoRecebidoController.popularSegmentosNaoRecebemCota();
@@ -884,12 +884,10 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 						if (elemento.attr('type') == 'checkbox') {
 							return (elemento.attr('checked') == 'checked');
 						} 
-						else if (elemento.attr('type') == 'radio') {
+						if (elemento.attr('type') == 'radio') {
 							return (elemento.attr('checked') == 'checked');
 						}
-						else {
-							return elemento.val();
-						}
+						return elemento.val();
 
 					},
 					
@@ -920,29 +918,29 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 											
 									selectedNomeSegmento = $(idCampoNomeSegmento).val();
 									
-									for ( var index in result) {
-										if (result[index].value === selectedNomeSegmento) {
+									for (var ii in result) {
+										if (result[ii].value === selectedNomeSegmento) {
 											
-										returnFromController = segmentoNaoRecebidoController.getFiltroCota();
-										
-										returnFromController.push({
-											name : "filtro.nomeSegmento", 
-											value : selectedNomeSegmento
-										});
-										
-										returnFromController.push({
-											name : "filtro.autoComplete", 
-											value : true
-										});
-										
-										$(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexOptions(
-												{
-													url : segmentoNaoRecebidoController.urlPesquisarSegmentosElegiveisParaInclusao,
-													dataType : 'json',
-													params : returnFromController
-												});
-	
-										$(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexReload();
+											returnFromController = segmentoNaoRecebidoController.getFiltroCota();
+											
+											returnFromController.push({
+												name : "filtro.nomeSegmento", 
+												value : selectedNomeSegmento
+											});
+											
+											returnFromController.push({
+												name : "filtro.autoComplete", 
+												value : true
+											});
+											
+											$(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexOptions(
+													{
+														url : segmentoNaoRecebidoController.urlPesquisarSegmentosElegiveisParaInclusao,
+														dataType : 'json',
+														params : returnFromController
+													});
+		
+											$(".segmentosBGrid", segmentoNaoRecebidoController.workspace).flexReload();
 										
 										}
 									}
@@ -975,9 +973,9 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 								segmentoNaoRecebidoController.descricaoAtribuida = true;
 							},
 							minLength: 3,
-							delay : 0,
+							delay : 0
 						});
-					},
+					}
 
 				}, BaseController);
 

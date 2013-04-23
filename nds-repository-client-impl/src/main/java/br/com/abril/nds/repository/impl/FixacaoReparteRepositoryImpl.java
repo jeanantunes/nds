@@ -29,7 +29,6 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		super(FixacaoReparte.class);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public FixacaoReparte buscarPorId(Long id){
 		return super.buscarPorId(id);
@@ -181,14 +180,11 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	@Override
 	public FixacaoReparte buscarPorProdutoCota(Cota cota, Produto produto) {
 		
-		StringBuilder sql = new StringBuilder("");
+		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" from ");
-
 		sql.append(" FixacaoReparte f ");
-		
 		sql.append(" where f.cotaFixada = :cotaSelecionada ");
-		
 		sql.append(" and f.produtoFixado = :produtoSelecionado  ");
 		
 		Query query  = getSession().createQuery(sql.toString());
@@ -201,13 +197,12 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<FixacaoReparte> buscarPorCota(Cota cota){
 		StringBuilder sql = new StringBuilder("");
 		
 		sql.append(" from ");
-
 		sql.append(" FixacaoReparte f ");
-		
 		sql.append(" where f.cotaFixada = :cotaSelecionada ");
 		
 		Query query  = getSession().createQuery(sql.toString());
