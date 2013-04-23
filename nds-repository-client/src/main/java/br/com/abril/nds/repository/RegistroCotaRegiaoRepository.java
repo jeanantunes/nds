@@ -23,4 +23,6 @@ public interface RegistroCotaRegiaoRepository extends Repository<RegistroCotaReg
 	
 	List<String> idProdEdicaoParaMontagemDoRanking (String codigoProduto, String numeroEdicao);
 	
+	List<RegiaoNMaiores_CotaDTO> filtroRanking (Integer numCota);
+	
 }

@@ -23,10 +23,6 @@ public class FiltroRegiaoNMaioresRankingDTO extends FiltroDTO {
 		return limitePesquisa;
 	}
 
-	public void setLimitePesquisa(int limitePesquisa) {
-		this.limitePesquisa = limitePesquisa;
-	}
-
 	public List<String> getNumeroEdicao() {
 		return numeroEdicao;
 	}

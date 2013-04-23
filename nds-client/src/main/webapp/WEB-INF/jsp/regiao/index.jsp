@@ -15,6 +15,10 @@ $(function(){
 });
 
 var produtosEscolhidosArray=new Array();
+var validatorProdEscolhidos=new Array();
+
+var cotasRankingNMaioresArray=new Array();
+var numCotasRankingNM=new Array();
 
 function removeProdutoEscohido(idx){
 	produtosEscolhidosArray.splice(parseInt(idx),1);
@@ -188,7 +192,7 @@ function removeProdutoEscohido(idx){
 					<td width="129">
 						<input type="text" name="nomeCota" id="nomeCota" style="width: 120px;" />
 					</td>
-					<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">Pesquisar</a></span></td>					
+					<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="regiaoController.filtroCotaRanking();">Pesquisar</a></span></td>					
 				</tr>
 			</table>
 		</fieldset>
@@ -197,7 +201,7 @@ function removeProdutoEscohido(idx){
 			style="width: 600px !important; margin-top: 10px !important;">
 			<legend>Cotas</legend>
 			
-			<table class="lstCotasGrid"></table>
+			<table id="lstCotasRankingGrid"></table>
 			<span class="bt_sellAll" style="float: right;">
 				<label for="sel">Selecionar Todos</label>
 					<input type="checkbox" id="selTodasCotas" name="Todos" onclick="regiaoController.checkAllRankingNMaiores();"
