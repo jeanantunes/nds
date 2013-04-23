@@ -1,5 +1,5 @@
-var codigos =  new Array(),
-	repartes =  new Array(),
+var codigos =  [],
+	repartes =  [],
 	listaPDV = [];
 
 var fixacaoReparteController = $.extend(true, {
@@ -507,8 +507,6 @@ var fixacaoReparteController = $.extend(true, {
 								  name : "listPDV["+idx+"].codigoPdv" , 
 								  value : linha.name
 								  });
-							  
-							
 						  }
 						 
 						  if(linha.value == 'undefined'){
@@ -522,8 +520,6 @@ var fixacaoReparteController = $.extend(true, {
 								  name : "listPDV["+idx+"].reparte" , 
 								  value : linha.value
 								  });
-							  
-							  
 						  }
 						  
 					  });
@@ -547,7 +543,7 @@ var fixacaoReparteController = $.extend(true, {
 						  value : $("#manterFixa").is(":checked")
 						  });
 					  
-					if(somaReparte > reparteTotal){
+					if(somaReparte != reparteTotal) {
 						$("#dialog-confirma-reparte").dialog({
 							resizable: false,
 							height:'auto',
@@ -557,11 +553,11 @@ var fixacaoReparteController = $.extend(true, {
 								"Confirmar": function() {
 									//parametros para salvar repartes pdvs
 									$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte',  listaPDV, 
-											function(result){
-														$(".fixacaoCotaGrid").flexReload();
-														$("#dialog-defineReparte").dialog("close"); 
-											},
-											function(result){ });
+										function(result){
+											$(".fixacaoCotaGrid").flexReload();
+											$("#dialog-defineReparte").dialog("close"); 
+										},
+										function(result){ });
 									$(this).dialog("close");
 								},
 								"Cancelar": function() {
@@ -570,9 +566,8 @@ var fixacaoReparteController = $.extend(true, {
 							},
 						});
 						
-					}else{
+					} else {
 						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', listaPDV,function(result){$("#dialog-defineReparte").dialog("close");} );
-						
 					}
 				},
 				"Cancelar": function() {
@@ -839,7 +834,7 @@ var fixacaoReparteController = $.extend(true, {
 			
 		},
 		
-		//Limpa os campos preenchidos durante a fixa��o, apos finalizada a adi��o de fixa��o
+		//Limpa os campos preenchidos durante a fixação, apos finalizada a adição de fixação
 		limparCamposModalNovo:function(){
 			$("#qtdeEdicoesModal").val("");
 			$("#qtdeFixadaModal").val("");
@@ -850,8 +845,9 @@ var fixacaoReparteController = $.extend(true, {
 
 		//Executada em caso de erro durante tentativa de chamada postJSON para adicionar fixação
 		executarErrorCallBack:function(result){
-			console.log(result);
-			//exibirMensagem("ERROR", ["Não foi possivel adicionar fixação "]);
+			if(result.mensagens.listaMensagens[0] === "Operação realizada com sucesso!<br>Status da Cota: Suspenso") {
+				fixacaoReparteController.executarSuccessCallBack(result);
+			}
 		},
 		
 		// Função que valida campos obrigatorios no modal  de nova fixação

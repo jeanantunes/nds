@@ -142,7 +142,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	
 	@Override
 	@Transactional
-	public void adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
+	public FixacaoReparte adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO) {
 		FixacaoReparte fixacaoReparte = getFixacaoRepartePorDTO(fixacaoReparteDTO);
 		
 		if(fixacaoReparte.getId() != null) {
@@ -153,10 +153,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		
 		fixacaoReparteRepository.adicionar(fixacaoReparte);
 		
-		if(fixacaoReparte.getCotaFixada().getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Operação realizada com sucesso!" +
-					"<br>Cota " + SituacaoCadastro.SUSPENSO.toString());
-		}
+		return fixacaoReparte;
 	}
 
 	@Override

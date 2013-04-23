@@ -27,8 +27,10 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
+import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FixacaoReparteService;
@@ -234,9 +236,13 @@ public class FixacaoReparteController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, fixacaoInvalida);
 		}
 		
-		fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
+		FixacaoReparte fixacaoReparte = fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
 		
-//		throw new ValidacaoException(TipoMensagem.SUCCESS,OPERACAO_REALIZADA_COM_SUCESSO);
+		if(fixacaoReparte.getCotaFixada().getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, OPERACAO_REALIZADA_COM_SUCESSO +
+					"<br>Status da Cota: " + SituacaoCadastro.SUSPENSO.toString());
+		}
+		
 		result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
 				"result").recursive().serialize();
@@ -248,7 +254,6 @@ public class FixacaoReparteController extends BaseController {
 	public void removerFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO){
 		fixacaoReparteService.removerFixacaoReparte(fixacaoReparteDTO);
 		
-//		throw new ValidacaoException(TipoMensagem.SUCCESS,OPERACAO_REALIZADA_COM_SUCESSO);
 		result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
 				"result").recursive().serialize();
@@ -283,12 +288,12 @@ public class FixacaoReparteController extends BaseController {
 		FixacaoReparteDTO fixacaoReparteDTO = fixacaoReparteService.obterFixacaoDTO(filtro.getIdFixacao());
 		result.use(Results.json()).withoutRoot().from(fixacaoReparteDTO).recursive().serialize();
 	}
+	
 	@Post
 	@Path("/salvarGridPdvReparte")
 	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idFixacao, boolean manterFixa){
 		repartePdvService.salvarRepartesPDV(listPDV,codProduto, idFixacao, manterFixa);
 		
-//		throw new ValidacaoException(TipoMensagem.SUCCESS,OPERACAO_REALIZADA_COM_SUCESSO);
 		result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
 				"result").recursive().serialize();
@@ -447,10 +452,9 @@ public class FixacaoReparteController extends BaseController {
 			listaFixacaoExcel.removeAll(listaRegistrosInvalidosExcel);
 			
 			for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
-				try {
-					fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
-				} catch (ValidacaoException e) {
-					getErrosUpload().add("- " + e.getMessage() + " (Cota[" + fixacaoReparteDTO.getCotaFixadaString() + "] Produto[" + fixacaoReparteDTO.getProdutoFixado() + "]).");
+				FixacaoReparte fixacaoReparte = fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
+				if(fixacaoReparte.getCotaFixada().getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+					getErrosUpload().add("- Status da Cota: " + SituacaoCadastro.SUSPENSO.toString() + ". (Cota[" + fixacaoReparteDTO.getCotaFixadaString() + "] Produto[" + fixacaoReparteDTO.getProdutoFixado() + "]).");
 				}
 			}
 			
