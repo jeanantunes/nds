@@ -2,11 +2,14 @@ package br.com.abril.nds.repository.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RegiaoCotaDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_CotaDTO;
 import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
@@ -123,6 +126,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<Integer> buscarNumeroCotasPorIdRegiao(Long idRegiao) {
 				
@@ -152,22 +156,16 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				
 				hql.append(" prodEdicao.numeroEdicao AS numeroEdicao, ");
 				hql.append(" produto.codigo AS codProduto, ");
+				hql.append(" produto.nome AS nomeProduto, ");
 				hql.append(" produto.tipoClassificacaoProduto.descricao AS descricaoClassificacao, ");
 				hql.append(" lancam.dataLancamentoPrevista AS dataLcto, ");
 				hql.append(" lancam.status AS status ");
-				
-			//	hql.append(" FROM ProdutoEdicao AS prodEdicao ");
 				
 				hql.append(" FROM Lancamento AS lancam ");
 				
 				hql.append(" left join lancam.produtoEdicao AS prodEdicao ");
 				hql.append(" left join prodEdicao.produto AS produto ");
 				
-				
-				/*
-				hql.append(" left join prodEdicao.produto AS produto ");
-				hql.append(" left join prodEdicao.lancamentos AS lancamento ");
-				*/
 				hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
 				hql.append(" AND produto.nome = :NOME_PRODUTO ");
 				hql.append(this.getSqlWhereBuscarProdutos(filtro));
@@ -210,5 +208,82 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 
 			return hql.toString();
 		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public List<RegiaoNMaiores_CotaDTO> rankingCotas(List<String> idsProdEdicaoParaMontagemRanking, Integer limite) {
 			
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append(" select ");
+			sql.append(" cota_id as cotaId, numCota as numeroCota, situacao as status, nomeCota as nomePessoa, ");
+			sql.append(" sum(venda_edicoes) as vdMedia ");
+			
+			sql.append(" from ");
+			
+			sql.append(" ( ");
+			
+			sql.append(" select ");
+			sql.append(" mec.cota_id as cota_id, ");
+			sql.append(" cotas.numero_cota as numCota, ");
+			sql.append(" cotas.situacao_cadastro as situacao, ");
+			sql.append(" coalesce(pessoaJoin.nome_fantasia, pessoaJoin.razao_social, pessoaJoin.nome, '') as nomeCota, ");
+			
+			sql.append(" case when mec.tipo_movimento_id=21 then (mec.qtde) ");
+			sql.append(" 	when mec.tipo_movimento_id=26 then (mec.qtde*-1) ");
+			sql.append(" 	else 0 end as venda_edicoes ");
+			
+			sql.append(" from movimento_estoque_cota mec ");
+			sql.append(" join estoque_produto_cota EPC ON EPC.ID = mec.ESTOQUE_PROD_COTA_ID ");
+			sql.append(" join produto_edicao PE ON pe.ID = EPC.PRODUTO_EDICAO_ID ");
+			sql.append(" join produto P ON p.ID = PE.PRODUTO_ID ");
+			sql.append(" join cota cotas ON EPC.COTA_ID = cotas.ID ");
+			sql.append(" join pessoa pessoaJoin ON cotas.pessoa_ID = pessoaJoin.ID ");
+			
+			sql.append(" where tipo_movimento_id in (21,26) ");
+			//sql.append(" and p.codigo in (").append(StringUtils.join(filtro.getCodigoProduto(),",")).append(")");
+			sql.append(" and EPC.PRODUTO_EDICAO_ID in (").append(StringUtils.join(idsProdEdicaoParaMontagemRanking,",")).append(")");
+			
+			sql.append(" order by mec.cota_id ");
+			sql.append(" ) as q1 ");
+			
+			sql.append(" group by COTA_ID ");
+			sql.append(" order by vdMedia DESC ");
+			sql.append(" LIMIT :limitePesquisa ");
+			
+			SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+			
+			query.setParameter("limitePesquisa", limite);
+			
+			query.setResultTransformer(new AliasToBeanResultTransformer(RegiaoNMaiores_CotaDTO.class));
+			
+			return query.list();
+			
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		public List<String> idProdEdicaoParaMontagemDoRanking(String codigoProduto, String numeroEdicao) {
+			
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append(" select ");
+			sql.append(" prodEdic.ID ");
+
+			sql.append(" from ");
+			
+			sql.append(" produto_edicao prodEdic ");
+			
+			sql.append(" inner join produto ");
+			sql.append(" ON prodEdic.PRODUTO_ID = produto.ID ");
+			sql.append(" where prodEdic.NUMERO_EDICAO in (:numEdicao) ");
+			sql.append(" and produto.CODIGO in (:codProduto) ");
+			
+			SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+			
+			query.setParameter("codProduto", codigoProduto);
+			query.setParameter("numEdicao", numeroEdicao);
+			
+			return (List<String>)query.list();
+		}
 }

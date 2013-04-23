@@ -158,7 +158,7 @@ var fixacaoReparteController = $.extend(true, {
 		},  {
 			display : 'Reparte',
 			name : 'reparte',
-			width : 40,
+			width : 50,
 			sortable : true,
 			align : 'center'
 		}],
@@ -643,7 +643,7 @@ var fixacaoReparteController = $.extend(true, {
 	
 	//funcao que retorna input de reparte a grid de reparte por pdv
 	getInputReparte:function(cell){
-		return "<input type='text' class='reparteGridinput'  onkeydown='onlyNumeric(event);' maxlength='5'  name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+		return "<input type='text' class='reparteGridinput'  onkeydown='onlyNumeric(event);' maxlength='5' size='6'  name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
 		
 	},
 	//funcao de exibicao de grid
@@ -850,6 +850,7 @@ var fixacaoReparteController = $.extend(true, {
 
 		//Executada em caso de erro durante tentativa de chamada postJSON para adicionar fixação
 		executarErrorCallBack:function(result){
+			console.log(result);
 			//exibirMensagem("ERROR", ["Não foi possivel adicionar fixação "]);
 		},
 		

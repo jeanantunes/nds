@@ -83,7 +83,7 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	
 	public boolean validarPorCota(){
 		boolean isValid = true;
-		if((cotaDto.getNumeroCota() == null || cotaDto.getNumeroCota() == 0) &&
+		if((cotaDto.getNumeroCota() == null || cotaDto.getNumeroCota() == 0) ||
 				(cotaDto.getNomePessoa() == null || cotaDto.getNomePessoa().trim().isEmpty())){
 			validationMsg = "Código ou nome da cota é obrigatório.";
 			isValid = false;
