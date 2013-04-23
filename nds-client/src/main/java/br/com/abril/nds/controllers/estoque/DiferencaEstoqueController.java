@@ -2516,60 +2516,42 @@ public class DiferencaEstoqueController extends BaseController {
 
 		List<EstoqueDTO> estoques = new ArrayList<EstoqueDTO>();
 		
-		if(estoque.getQtde() != null ) {
-			
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.LANCAMENTO.name(), 
-							TipoEstoque.LANCAMENTO.getDescricao(),
-							estoque.getQtde() 
-							) 
-					); 
-		}
+		BigInteger qtde =
+			(estoque.getQtde() != null)
+				? estoque.getQtde() : BigInteger.ZERO;
 		
-		if(estoque.getQtdeSuplementar() != null ) {
-				
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.SUPLEMENTAR.name(), 
-							TipoEstoque.SUPLEMENTAR.getDescricao(),
-							estoque.getQtdeSuplementar() 
-							) 
-					);
-		}
+		estoques.add(
+				new EstoqueDTO(
+						TipoEstoque.LANCAMENTO.name(), 
+						TipoEstoque.LANCAMENTO.getDescricao(),
+						qtde 
+						) 
+				); 
+	
 		
-		if(estoque.getQtdeDevolucaoEncalhe() != null ) {
-			
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.DEVOLUCAO_ENCALHE.name(), 
-							TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao(),
-						    estoque.getQtdeDevolucaoEncalhe()
-							) 
-					); 
-		}
+		BigInteger qtdeSuplementar =
+			(estoque.getQtdeSuplementar() != null)
+				? estoque.getQtdeSuplementar() : BigInteger.ZERO;
 		
-		if(estoque.getQtdeDevolucaoFornecedor() != null ) {
+		estoques.add(
+				new EstoqueDTO(
+						TipoEstoque.SUPLEMENTAR.name(), 
+						TipoEstoque.SUPLEMENTAR.getDescricao(),
+						qtdeSuplementar
+						) 
+				);
 		
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.DEVOLUCAO_FORNECEDOR.name(), 
-							TipoEstoque.DEVOLUCAO_FORNECEDOR.getDescricao(),
-							estoque.getQtdeDevolucaoFornecedor()
-							) 
-					); 
-		}
+		BigInteger qtdeDevolucaoEncalhe =
+			(estoque.getQtdeDevolucaoEncalhe() != null)
+				? estoque.getQtdeDevolucaoEncalhe() : BigInteger.ZERO;
 		
-		if(estoque.getQtdeDanificado() != null ) {
-		
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.DANIFICADO.name(), 
-							TipoEstoque.DANIFICADO.getDescricao(),
-							estoque.getQtdeDanificado()
-							) 
-					); 
-		}
+		estoques.add(
+				new EstoqueDTO(
+						TipoEstoque.DEVOLUCAO_ENCALHE.name(), 
+						TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao(),
+					    qtdeDevolucaoEncalhe
+						) 
+				); 
 		
 		return estoques;
 	}
