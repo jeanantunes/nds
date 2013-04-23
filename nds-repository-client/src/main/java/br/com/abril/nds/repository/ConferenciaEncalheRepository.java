@@ -85,6 +85,27 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 */
 	public List<ProdutoEdicaoSlipDTO> obterDadosSlipConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 
+	
+	/**
+	 * Obtem dados relativos a um slip de produto edicao com chamada encalhe para
+	 * a cota e data operação em questão porém ausentes na conferencia de encalhe.
+	 * 
+	 * @param idCota
+	 * @param dataOperacao
+	 * @param indFechado
+	 * @param indPostergado
+	 * @param listaIdProdutoEdicao
+	 * 
+	 * @return List<ProdutoEdicaoSlipDTO>
+	 */
+	public List<ProdutoEdicaoSlipDTO> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
+			Long idCota,
+			Date dataOperacao,
+			boolean indFechado,
+			boolean indPostergado,
+			Set<Long> listaIdProdutoEdicao);
+	
+	
     /**
      * Obtém composição de cobrança da cota na data de operação para a exibição no Slip
      * @param numeroCota
