@@ -418,13 +418,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * 
 	 * @param cota
 	 * @param produtoEdicao
-	 * 
+	 *  
 	 * @return ChamadaEncalhe
 	 */
 	private ChamadaEncalhe validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
 
-		boolean encalheConferido = false;
-		boolean indPesquisaCEFutura = false;
 		boolean postergado = false;
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -433,7 +431,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 			
 			List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.
-					obterListaChamaEncalheCota(cota.getNumeroCota(), dataOperacao, produtoEdicao.getId(), indPesquisaCEFutura, encalheConferido, postergado);
+					obterListaChamaEncalheCota(cota.getNumeroCota(),produtoEdicao.getId(),postergado,dataOperacao);
 
 			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
 				
@@ -447,14 +445,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		} else {
 
-			encalheConferido = false;
-			indPesquisaCEFutura = true;
-			postergado = false;
+			List<Date> dataRecolhimentoReferencia = distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento();
 			
-			Date dataRecolhimentoReferencia = obterDataRecolhimentoReferencia();
-			
-			List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.
-					obterListaChamaEncalheCota(cota.getNumeroCota(), dataRecolhimentoReferencia, produtoEdicao.getId(), indPesquisaCEFutura, encalheConferido, postergado);
+			List<ChamadaEncalheCota> listaChamadaEncalheCota = 
+					chamadaEncalheCotaRepository.obterListaChamaEncalheCota(cota.getNumeroCota(), 
+																			produtoEdicao.getId(), 
+																			postergado,
+																			dataOperacao,
+																			dataRecolhimentoReferencia.toArray(new Date[]{}));
 			
 			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
 				
@@ -1209,7 +1207,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return dataRecolhimentoReferencia;
 	}
-	
 	
 	/**
 	 * Associa a Cobrança relativa a uma operação 
@@ -2438,12 +2435,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Date dataRecolhimentoReferencia,
 			Long idProdutoEdicao) {
 		
-		boolean encalheConferido = false;
-		boolean indPesquisaCEFutura = true;
 		boolean postergado = false;
 		
 		List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-				chamadaEncalheCotaRepository.obterListaChamaEncalheCota(numeroCota, dataRecolhimentoReferencia, idProdutoEdicao, indPesquisaCEFutura, encalheConferido, postergado);
+				chamadaEncalheCotaRepository.obterListaChamaEncalheCota(numeroCota, idProdutoEdicao, postergado,dataRecolhimentoReferencia);
 
 		StringBuffer errorMsg = new StringBuffer();
 
