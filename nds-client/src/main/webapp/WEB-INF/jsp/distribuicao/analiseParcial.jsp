@@ -318,7 +318,7 @@ function escondeDados(){
 		</a>
 	</span>
     <span class="bt_novos">
-    	<a href="javascript:history.back(-1);;">
+    	<a href="javascript:;" onclick="">
     		<img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />
     		Voltar
     	</a>

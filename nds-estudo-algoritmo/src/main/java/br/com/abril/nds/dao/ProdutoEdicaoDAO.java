@@ -27,8 +27,8 @@ public class ProdutoEdicaoDAO {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
-	@Value("#{query_estudo.queryUltimoProdutoEdicao}")
-	private String queryUltimoProdutoEdicao;
+	@Value("#{query_estudo.queryProdutoEdicaoEstudo}")
+	private String queryProdutoEdicaoEstudo;
 
 	@Value("#{query_estudo.queryEdicoesRecebidas}")
 	private String queryEdicoesRecebidas;
@@ -93,10 +93,11 @@ public class ProdutoEdicaoDAO {
 		return 0;
 	}
 
-	public ProdutoEdicaoEstudo getLastProdutoEdicaoByIdProduto(String codigoProduto) {
+	public ProdutoEdicaoEstudo getProdutoEdicaoEstudo(String codigoProduto, Long numeroEdicao) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("CODIGO_PRODUTO", codigoProduto);
-		return jdbcTemplate.queryForObject(queryUltimoProdutoEdicao, params, new RowMapper<ProdutoEdicaoEstudo>() {
+		params.put("NUMERO_EDICAO", numeroEdicao);
+		return jdbcTemplate.queryForObject(queryProdutoEdicaoEstudo, params, new RowMapper<ProdutoEdicaoEstudo>() {
 			@Override
 			public ProdutoEdicaoEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
 				ProdutoEdicaoEstudo produtoEdicaoBase = new ProdutoEdicaoEstudo();
