@@ -400,7 +400,7 @@ public interface CotaService {
 	public abstract boolean cotaVinculadaCotaBase(Long idCota);
 	
 	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
-
+	
 	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota);
 
 	public abstract boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota,

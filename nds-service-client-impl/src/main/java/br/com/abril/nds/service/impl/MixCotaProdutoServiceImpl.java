@@ -23,6 +23,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -95,16 +96,6 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		return mixCotaProdutoRepository.pesquisarPorProduto(filtroConsultaMixProdutoDTO);
 	}
 
-//	@Override
-//	@Transactional(readOnly = true)
-//	public List<RepartePDVDTO> obterRepartePdv(
-//			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
-//		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(filtroConsultaMixCotaDTO.getId());
-//		return null;
-////				repartePDVRepository.obterRepartePdvPorCota(mixCotaProduto.getCota().getId());
-//	}
-	
-	
 	@Override
 	@Transactional(readOnly=true)
 	public MixCotaProdutoDTO obterPorId(Long id){
@@ -167,12 +158,12 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	
 	@Override
 	@Transactional
-	public void adicionarListaMixPorCota(List<MixCotaProdutoDTO> listaMixCota , Integer cotaId) {
+	public List<String> adicionarListaMixPorCota(List<MixCotaProdutoDTO> listaMixCota , Integer cotaId) {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(cotaId);
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
-		List<String> produtosJaCadastrados = new ArrayList<String>(); 
+		List<String> mensagens = new ArrayList<String>(); 
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : listaMixCota) {
 				if(StringUtils.isEmpty(mixCotaProdutoDTO.getCodigoProduto()) || StringUtils.isEmpty(mixCotaProdutoDTO.getNomeProduto()) || mixCotaProdutoDTO.getReparteMinimo()==null || mixCotaProdutoDTO.getReparteMaximo()==null){
@@ -192,33 +183,31 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 							mixCotaProdutoRepository.adicionar(mixCotaProduto);
 						}
 						else {
-							produtosJaCadastrados.add("Produto já Cadastrado: ["+produto.getCodigo()+":"+produto.getNome()+"]");
+							mensagens.add("Produto já Cadastrado: ["+produto.getCodigo()+":"+produto.getNome()+"]");
 						}
 					}
 				}
 		}
 		
-		if (!produtosJaCadastrados.isEmpty()) {
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, produtosJaCadastrados));
-		}
+		return mensagens;
 	}
 	
 	
 	@Override
 	@Transactional
-	public void adicionarListaMixPorProduto(List<MixCotaProdutoDTO> listaMixCota , String produtoId) {
+	public List<String> adicionarListaMixPorProduto(List<MixCotaProdutoDTO> listaMixCota , String produtoId) {
 		
 		Produto produto = produtoService.obterProdutoPorCodigo(produtoId);
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
-		List<String> cotasJaCadastradas = new ArrayList<String>(); 
+		List<String> mensagens = new ArrayList<String>(); 
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : listaMixCota) {
 			if(StringUtils.isEmpty(mixCotaProdutoDTO.getNomeCota()) || StringUtils.isEmpty(mixCotaProdutoDTO.getNumeroCota()) || mixCotaProdutoDTO.getReparteMinimo()==null || mixCotaProdutoDTO.getReparteMaximo()==null){
 				continue;
 			}else{
 				Cota cota = cotaService.obterPorNumeroDaCota(Integer.parseInt(mixCotaProdutoDTO.getNumeroCota()));
+				
 				MixCotaProduto mixCotaProduto = new MixCotaProduto();
 				mixCotaProduto.setUsuario(usuario);
 				mixCotaProduto.setProduto(produto);
@@ -227,26 +216,30 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
 				mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
 				if(mixCotaProduto.getProduto()!=null || mixCotaProduto.getProduto().getId() !=null){
-					if(!mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())){
-						mixCotaProdutoRepository.adicionar(mixCotaProduto);
+					if(mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())) {
+						
+						mensagens.add("Cota já Cadastrada: ["+cota.getNumeroCota()+":"+cota.getPessoa().getNome()+"]");
+					}
+					else if (cota.getTipoDistribuicaoCota() == null || !cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+						
+						mensagens.add("Cota  ["+cota.getNumeroCota()+":"+cota.getPessoa().getNome()+"] não é do tipo Alternativa.");
 					}
 					else {
-						cotasJaCadastradas.add("Produto já Cadastrado: ["+cota.getNumeroCota()+":"+cota.getPessoa().getNome()+"]");
+						
+						mixCotaProdutoRepository.adicionar(mixCotaProduto);
 					}
 				}
 			}
 		}
 		
-		if (!cotasJaCadastradas.isEmpty()) {
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, cotasJaCadastradas));
-		}
-		
+		return mensagens;
 	}
 	
 	@Override
 	@Transactional
-	public void adicionarListaMixPorCota(List<MixCotaProdutoDTO> mixCotaProdutoDTOList) {
+	public List<String> adicionarListaMixPorCota(List<MixCotaProdutoDTO> mixCotaProdutoDTOList) {
+		
+		List<String> mensagens = new ArrayList<String>(); 
 		
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : mixCotaProdutoDTOList) {
@@ -257,7 +250,6 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				}else{
 					
 					Cota cota = cotaService.obterPorNumeroDaCota(new Integer(mixCotaProdutoDTO.getNumeroCota()));
-					
 					Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
 					MixCotaProduto mixCotaProduto = new MixCotaProduto();
 					mixCotaProduto.setProduto(produto);
@@ -266,15 +258,25 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
 					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
 					mixCotaProduto.setUsuario(usuario);
-					if(mixCotaProduto.getProduto()!=null || mixCotaProduto.getProduto().getId() !=null){
-						if(!mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())){
+					if(mixCotaProduto.getProduto()!=null || mixCotaProduto.getProduto().getId() !=null) {
+						
+						if(!mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())) {
+							
+							mensagens.add("Produto já Cadastrado: ["+produto.getCodigo()+":"+produto.getNome()+"]");
+						}
+						else if (cota.getTipoDistribuicaoCota() == null || !cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) { 
+							
+							mensagens.add("Cota  ["+cota.getNumeroCota()+":"+cota.getPessoa().getNome()+"] não é do tipo Alternativa.");
+						}
+						else {
+								
 							mixCotaProdutoRepository.adicionar(mixCotaProduto);
 						}
-					}else{
-						continue;
 					}
 				
 				}
 		}
+		
+		return mensagens;
 	}
 }

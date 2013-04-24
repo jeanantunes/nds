@@ -292,17 +292,28 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/adicionarMixProduto")
 	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto,String produtoId ){
 		
-		mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto,produtoId);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto,produtoId);
+		
+		if (mensagens != null && !mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+		
+		throw new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso!");
 	}
 	
 	@Post
 	@Path("/adicionarMixCota")
 	public void adicionarMixCota(List<MixCotaProdutoDTO>listaNovosMixCota, Integer cotaId){
-		mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+		
+		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);
+		
+		if (mensagens != null && !mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+		
+		throw new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso!");
 	}
 
 	
@@ -432,11 +443,13 @@ public class MixCotaProdutoController extends BaseController {
 		}
 		listMixExcel.removeAll(listCotaInconsistente);
 
-//		validar se a cota existe		
+//		validar se a cota existe e se é do tipo alternativo		
 		Integer[] cotaIdArray = new Integer[listMixExcel.size()];
 		for (int i = 0; i < listMixExcel.size(); i++) {
 			cotaIdArray[i] = listMixExcel.get(i).getNumeroCota();
 		}
+		
+		//valida se a cota existe
 		List<Integer> verificarNumeroCotaExiste = this.cotaService.verificarNumeroCotaExiste(cotaIdArray);
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
@@ -445,8 +458,7 @@ public class MixCotaProdutoController extends BaseController {
 			}
 		}
 		listMixExcel.removeAll(listCotaInconsistente);
-
-
+		
 		/*
 		validar se o produto é um produtoValido
 		*/
