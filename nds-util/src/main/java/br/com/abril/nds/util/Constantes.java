@@ -42,6 +42,12 @@ public abstract class Constantes {
 	
 	public static final String NOME_PROPERTIES_NDS_CLIENT = "nds-client.properties";
 	
+	public static final String COMPOSICAO_COBRANCA_CREDITO = "C";
+	
+	public static final String COMPOSICAO_COBRANCA_DEBITO = "D";
+	
+	
+	
 }
 
 
