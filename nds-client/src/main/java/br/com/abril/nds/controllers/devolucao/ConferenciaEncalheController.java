@@ -1732,11 +1732,15 @@ public class ConferenciaEncalheController extends BaseController {
 					
 					BigDecimal desconto = conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto();
 					
+					BigDecimal precoComDesconto = conferenciaEncalheDTO.getPrecoComDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoComDesconto();
+					
+					
+					
 					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
 					
 					valorTotal = precoCapa.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada()));
 					
-					valorEncalhe = valorEncalhe.add(precoCapa.subtract(desconto).multiply(qtdExemplar));
+					valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
 					
 					valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(
 						new BigDecimal(conferenciaEncalheDTO.getQtdInformada()))

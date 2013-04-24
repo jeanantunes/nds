@@ -3145,6 +3145,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		//OBTEM OS MOVIMENTOS FINANCEIROS(DÉBITOS E CRÉDITOS) DA COTA NA DATA DE OPERAÇÃO
 		List<ComposicaoCobrancaSlipDTO> listaComposicaoCobranca = obterListaComposicaoCobranca(idCota, dataOperacao);
 		
+		slipDTO.setListaComposicaoCobrancaDTO(listaComposicaoCobranca);
+		
 		parametersSlip.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
 		
 		BigDecimal totalComposicao = BigDecimal.ZERO;
@@ -3364,24 +3366,29 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		e.quebrarLinhaEscape();
 		
-		for(ComposicaoCobrancaSlipDTO composicao : listaComposicaoCobrancaDTO) {
-		
-			String descricao = composicao.getDescricao();
-			
-			String valor = (composicao.getValor() == null) ? "0,00" : composicao.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
-			
-			String operacaoFinanceira = (composicao.getOperacaoFinanceira() == null) ? "" : composicao.getOperacaoFinanceira();
-			
-			e.adicionarCompleteEspaco(descricao + ": " + operacaoFinanceira, valor);
+		if(listaComposicaoCobrancaDTO!=null && !listaComposicaoCobrancaDTO.isEmpty()) {
+
+			for(ComposicaoCobrancaSlipDTO composicao : listaComposicaoCobrancaDTO) {
+				
+				String descricao = composicao.getDescricao();
+				
+				String valor = (composicao.getValor() == null) ? "0,00" : composicao.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
+				
+				String operacaoFinanceira = (composicao.getOperacaoFinanceira() == null) ? "" : composicao.getOperacaoFinanceira();
+				
+				e.adicionarCompleteEspaco(descricao + ": " + operacaoFinanceira, valor);
+
+				e.quebrarLinhaEscape();
+
+			}
+
 
 			e.quebrarLinhaEscape();
-
+			
+			e.quebrarLinhaEscape();
+			
 		}
 		
-		e.quebrarLinhaEscape();
-		
-		e.quebrarLinhaEscape();
-	
 		
 	}
 	
