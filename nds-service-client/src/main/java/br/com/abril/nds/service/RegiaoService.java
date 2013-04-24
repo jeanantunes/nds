@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_CotaDTO;
 import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
@@ -43,5 +44,11 @@ public interface RegiaoService {
 	List<TipoClassificacaoProduto> buscarClassificacao();
 	
 	List<RegiaoNMaiores_ProdutoDTO> buscarProdutos(FiltroRegiaoNMaioresProdDTO filtro);
+	
+	List<RegiaoNMaiores_CotaDTO> rankingCotas (List<String> idsProdEdicaoParaMontagemRanking, Integer limite);
+	
+	List<String> listaIdProdEdicaoParaRanking(String codProd, String numEdicao);
+	
+	List<RegiaoNMaiores_CotaDTO> filtroRankingCotas (Integer numCota);
 
 }
