@@ -56,15 +56,15 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" avg(lancamento.reparte) as reparteMedio, avg(venda_produto.valor_total_venda) as vendaMedia, ")
 		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
-		.append(" FROM lancamento ") 
-		.append(" LEFT join produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID ")
-		.append(" LEFT join produto on produto_edicao.ID = produto.ID ") 
+		
+		.append(" FROM mix_cota_produto ") 
+		.append(" LEFT join produto on mix_cota_produto.ID_PRODUTO = produto.ID ")
+		.append(" LEFT join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ") 
+		.append(" LEFT join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID")
 		.append(" LEFT join venda_produto on venda_produto.ID_PRODUTO_EDICAO = produto_edicao.ID ")
-		.append(" LEFT join mix_cota_produto on mix_cota_produto.ID_PRODUTO = produto.ID ")
 		.append(" LEFT join cota on mix_cota_produto.ID_COTA = cota.ID ")
 		.append(" LEFT join tipo_classificacao_produto ON tipo_classificacao_produto.ID = produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
-		
 
 		.append("where");
 		if(filtroConsultaMixCotaDTO.getProdutoId()!=null ){

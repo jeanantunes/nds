@@ -179,7 +179,7 @@ function incluirSegmento() {
       
       <div class="porCota" id="excecaoSegmentoParciais_porCota" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:510px!important; margin-right:10px!important;">
-       	  <legend>Produtos Parciais Recebidos</legend>
+       	  <legend>Produtos Recebidos</legend>
         
         	<table class="excessaoCotaGrid" ></table>
              <span class="bt_novos" title="Gerar Arquivo"><a id="gerarXLSPorCota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -189,7 +189,7 @@ function incluirSegmento() {
       </fieldset>
       
       <fieldset class="classFieldset" style="float:left; width:430px!important;">
-       	  <legend>Produtos Parciais Não Recebidos</legend>
+       	  <legend>Produtos Não Recebidos</legend>
        	  <table width="312" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="45">

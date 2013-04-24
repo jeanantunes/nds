@@ -1073,7 +1073,6 @@ var mixCotaProdutoController = $.extend(true, {
 								
 								if(responseText.mixCotaDTOInconsistente.length==0){
 									exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
-									return;
 								}else{
 									var a = new Array();
 									a.push("A arquivo possui registros incosistentes no total de "+responseText.mixCotaDTOInconsistente.length);
@@ -1088,6 +1087,15 @@ var mixCotaProdutoController = $.extend(true, {
 								}
 								
 							}
+							
+							$(this).dialog("close");
+							
+							if($("#radio").attr('checked') == 'checked'){
+								$(".mixCotasGrid").flexReload();
+							}else{
+								$(".mixProdutosGrid").flexReload();
+							}
+							
 						}, 
 						type: 'POST',
 						dataType: 'json'//,
