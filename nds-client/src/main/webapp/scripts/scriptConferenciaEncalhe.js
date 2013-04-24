@@ -396,7 +396,6 @@ var ConferenciaEncalhe = $.extend(true, {
 			if (!ConferenciaEncalhe.modalAberta){
 				
 				ConferenciaEncalhe.veificarCobrancaGerada();
-				
 			}
 			
 		}));
@@ -709,6 +708,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).focus();
 		
+		ConferenciaEncalhe.setarValoresPesquisados();
 	},
 	
 	preProcessarConsultaConferenciaEncalhe : function(result) {
@@ -1232,6 +1232,26 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	setarValoresPesquisados : function(result){
+		
+		if (!result){
+			
+			$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
+			$("#sm", ConferenciaEncalhe.workspace).val("");
+			$("#codProduto", ConferenciaEncalhe.workspace).val("");
+			
+			$("#idProdutoEdicaoHidden", ConferenciaEncalhe.workspace).val("");
+			
+			$("#nomeProduto", ConferenciaEncalhe.workspace).text("");
+			$("#edicaoProduto", ConferenciaEncalhe.workspace).text("");
+			$("#precoCapa", ConferenciaEncalhe.workspace).text("");
+			$("#desconto", ConferenciaEncalhe.workspace).text("");
+			
+			$("#valorTotal", ConferenciaEncalhe.workspace).text("");
+			
+			$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("");
+			
+			return;
+		}
 		
 		if (ConferenciaEncalhe.ultimoCodeBar && ConferenciaEncalhe.ultimoCodeBar != result.codigoDeBarras){
 		
