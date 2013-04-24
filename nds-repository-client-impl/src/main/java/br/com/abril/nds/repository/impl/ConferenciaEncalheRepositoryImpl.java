@@ -294,73 +294,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		return (ChamadaEncalheCota) query.uniqueResult();
 	}
 	
-	/**
-     * Obtém composição de cobrança da cota na data de operação para a exibição no Slip
-     * @param numeroCota
-     * @param dataOperacao
-     * @param tiposMovimentoFinanceiroIgnorados
-     * @return List<ComposicaoCobrancaSlipDTO>
-     */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ComposicaoCobrancaSlipDTO> obterComposicaoCobrancaSlip(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
-		
-		StringBuilder hql = new StringBuilder(" select ");
-
-		hql.append(" mfc.id as idMovimentoFinanceiro, ");
-		
-		hql.append(" tipoMovimento.descricao as descricao, ");
-		
-		hql.append(" (case when tipoMovimento.operacaoFinaceira = 'CREDITO' then 'C' else 'D' end) as operacaoFinanceira, ");
-		
-		hql.append(" coalesce(mfc.valor,0) as valor ");
-		
-		hql.append(" from MovimentoFinanceiroCota mfc ");
-		
-		hql.append(" join mfc.tipoMovimento tipoMovimento ");
-        
-		hql.append(" where ");
-		
-		hql.append(" mfc.data = :dataOperacao ");
-		
-		hql.append(" and mfc.status = :statusAprovado ");
-		
-		hql.append(" and mfc.cota.numeroCota = :numeroCota ");
-		
-		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
-			hql.append(" and mfc.tipoMovimento not in (:tiposMovimentoFinanceiroIgnorados) ");
-		}
-		
-		hql.append(" and mfc.id not in ");
-		
-		hql.append(" (   ");
-		
-		hql.append("     select distinct(movimentos.id) ");
-
-		hql.append("     from ConsolidadoFinanceiroCota c join c.movimentos movimentos ");
-		
-		hql.append("     where ");
-		
-		hql.append("     c.cota.numeroCota = :numeroCota  ");
-		
-		hql.append(" ) ");
-		
-		hql.append(" order by mfc.data ");
-		
-		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ComposicaoCobrancaSlipDTO.class));
-		
-		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-		
-		query.setParameter("numeroCota", numeroCota);
-		
-		query.setParameter("dataOperacao", dataOperacao);
-		
-		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
-			query.setParameterList("tiposMovimentoFinanceiroIgnorados", tiposMovimentoFinanceiroIgnorados);
-		}
-		
-		return query.list();
-	}
+	
 
 	/*
 	 * (non-Javadoc)

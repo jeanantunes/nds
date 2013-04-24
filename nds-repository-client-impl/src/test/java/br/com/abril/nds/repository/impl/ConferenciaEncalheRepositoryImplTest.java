@@ -473,54 +473,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 		// Assert.assertNull(chamadaEncalheCota);
 
 	}
-
-	@Test
-	public void testarObterComposicaoCobrancaSlip() {
-
-		List<ComposicaoCobrancaSlipDTO> composicaoCobranca;
-
-		Integer numeroCota = 1;
-
-		Calendar data = Calendar.getInstance();
-		Date dataOperacao = data.getTime();
-
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
-
-		composicaoCobranca = conferenciaEncalheRepository
-				.obterComposicaoCobrancaSlip(numeroCota, dataOperacao,
-						tiposMovimentoFinanceiroIgnorados);
-
-		Assert.assertNotNull(composicaoCobranca);
-
-	}
-
-	// Testa condição TipoMovimentoFinanceiro dentro de
-	// obterComposicaoCobrancaSlip()
-	@Test
-	public void testarObterComposicaoCobrancaSlipTipoMovimentoFinanceiro() {
-
-		List<ComposicaoCobrancaSlipDTO> composicaoCobranca;
-
-		Integer numeroCota = 1;
-
-		Calendar data = Calendar.getInstance();
-		Date dataOperacao = data.getTime();
-
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
-		tipoMovimentoFinanceiro.setAprovacaoAutomatica(true);
-		tipoMovimentoFinanceiro.setDescricao("testeDescricao");
-		tipoMovimentoFinanceiro.setId(1L);
-
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiro);
-
-		composicaoCobranca = conferenciaEncalheRepository
-				.obterComposicaoCobrancaSlip(numeroCota, dataOperacao,
-						tiposMovimentoFinanceiroIgnorados);
-
-		Assert.assertNotNull(composicaoCobranca);
-
-	}
+	
 
 	@Test
 	public void testarObterListaConferenciaEncalheDTOContigencia() {

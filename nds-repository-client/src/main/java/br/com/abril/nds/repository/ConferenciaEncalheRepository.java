@@ -6,12 +6,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
-import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 public interface ConferenciaEncalheRepository extends Repository<ConferenciaEncalhe, Long> { 
@@ -105,15 +103,6 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao);
 	
-	
-    /**
-     * Obtém composição de cobrança da cota na data de operação para a exibição no Slip
-     * @param numeroCota
-     * @param dataOperacao
-     * @param tiposMovimentoFinanceiroIgnorados
-     * @return List<ComposicaoCobrancaSlipDTO>
-     */
-	public List<ComposicaoCobrancaSlipDTO> obterComposicaoCobrancaSlip(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados);
 
 
 	/**
