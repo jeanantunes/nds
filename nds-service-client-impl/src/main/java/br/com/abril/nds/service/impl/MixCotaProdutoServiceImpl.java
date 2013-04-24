@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.exolab.castor.xml.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,7 +98,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	@Override
 	public List<RepartePDVDTO> obterRepartePdv(
 			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
-		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(filtroConsultaMixCotaDTO.getId());
+//		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(filtroConsultaMixCotaDTO.getId());
 		return null;
 //				repartePDVRepository.obterRepartePdvPorCota(mixCotaProduto.getCota().getId());
 	}
@@ -132,7 +131,6 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			mixCotaProdutoDTO.setClassificacaoProduto(mixCotaProduto.getProduto().getTipoClassificacaoProduto().getDescricao());
 		}
 		if(mixCotaProduto.getRepartesPDV()!=null){
-			List<RepartePDVDTO> repartesDTO =new ArrayList<RepartePDVDTO>();
 			for(RepartePDV repartePDV: mixCotaProduto.getRepartesPDV()){
 				RepartePDVDTO repartePDVDTO = new RepartePDVDTO();
 				repartePDVDTO.setReparte(repartePDV.getReparte());
