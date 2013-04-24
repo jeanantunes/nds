@@ -159,7 +159,14 @@
 				<textFieldExpression><![CDATA[$P{NUMERO_COTA} + " - " + $P{NOME_COTA}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="cfae351d-de43-4833-8a58-8587f5145919" positionType="Float" x="1" y="0" width="95" height="8"/>
+				<reportElement uuid="cfae351d-de43-4833-8a58-8587f5145919" positionType="Float" x="0" y="0" width="96" height="8"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="3" isBold="true"/>
 				</textElement>
