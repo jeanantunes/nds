@@ -47,7 +47,6 @@ import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
-import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
@@ -55,6 +54,7 @@ import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 @Service
 public class MovimentoFinanceiroCotaServiceImpl implements
 		MovimentoFinanceiroCotaService {
+	
 
 	@Autowired
 	private CotaService cotaService;
@@ -72,9 +72,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
-	private ConferenciaEncalheService conferenciaEncalheService;
-	
-	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;  
 	
 	@Autowired
@@ -85,10 +82,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	
 	@Autowired
 	private FornecedorRepository fornecedorRepository;
-	
-	
-	
-	
+
 	
 	@Override
 	@Transactional

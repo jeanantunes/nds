@@ -110,7 +110,7 @@ public class FechamentoEncalheController extends BaseController {
 		result.include("listaFornecedores", listaFornecedores);
 		result.include("listaBoxes", listaBoxes);
 		
-		result.include("permissaoColExemplDevolucao", usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_COLUNA_EXEMPL_DEVOLUCAO_ALTERACAO));
+		result.include("permissaoColExemplDevolucao", usuarioPossuiRule(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_COLUNA_EXEMPL_DEVOLUCAO));
 	}
 	
 	@Path("/pesquisar")
