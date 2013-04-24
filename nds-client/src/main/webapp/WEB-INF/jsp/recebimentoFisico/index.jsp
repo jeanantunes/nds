@@ -1,4 +1,6 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+<input id="permissaoGridColRepartePrevisto" type="hidden" value="${permissaoGridColRepartePrevisto}">
+<input id="permissaoGridColDiferenca" type="hidden" value="${permissaoGridColDiferenca}">
 
 <head>
 
@@ -46,7 +48,7 @@
 
 			<table width="341" border="0" cellspacing="2" cellpadding="2">
 				<tr>
-					<td>CÃ³digo:</td>
+					<td>Código:</td>
 					<td width="202">
 						<input 
 						type="text"
@@ -202,11 +204,14 @@
 							</a> 
 						</span>
 
-						<span class="bt_novos">
-							<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
-								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
-							</a>
-						</span>
+						<c:if test="${permissaoBotaoConfirmacao eq true}">
+							<span class="bt_novos">
+								<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.confirmarRecebimentoFisico()" rel="tipsy" title="Confirmar Recebimento Físico">
+									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" />
+								</a>
+							</span>
+						</c:if>
+						
 					</div>	
 
 					<div id="botoesOpacos">
@@ -223,11 +228,13 @@
 							</a> 
 						</span>
 
-						<span class="bt_novos">
-							<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento FÃ­sico"> 
-								<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0"/>
-							</a>
-						</span>						
+						<c:if test="${permissaoBotaoConfirmacao eq true}">
+							<span class="bt_novos">
+								<a isEdicao="true" href="javascript:;" style="opacity:0.4; filter:alpha(opacity=40)" rel="tipsy" title="Confirmar Recebimento Físico"> 
+									<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0"/>
+								</a>
+							</span>				
+						</c:if>		
 
 					</div>
 		</div>

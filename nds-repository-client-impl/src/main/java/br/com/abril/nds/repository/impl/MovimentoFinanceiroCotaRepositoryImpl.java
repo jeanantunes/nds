@@ -951,7 +951,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			
 			hql.append(indWhere ? " and " : " where ")
 			   .append(" m.dataCriacao = :data ");
-			
 			indWhere = true;
 		}
 		
