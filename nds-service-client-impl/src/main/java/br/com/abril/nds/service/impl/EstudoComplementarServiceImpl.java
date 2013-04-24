@@ -1,35 +1,27 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.EstudoComplementarVO;
 import br.com.abril.nds.dto.EstudoComplementarDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.EstudoComplementarRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
-import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
-import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 
 
 @Service
@@ -64,7 +56,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		ProdutoEdicao  pe = produtoEdicaoRepository.buscarPorId(estudo.getProdutoEdicao().getId());
 		
 		
-	    Produto produto = produtoRepository.buscarPorId(pe.getId());
+//	    Produto produto = produtoRepository.buscarPorId(pe.getId());
 	    
 	   
 	    

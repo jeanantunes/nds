@@ -162,7 +162,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		FixacaoReparte fixacaoReparte = this.obterFixacao(id);
 		FiltroPdvDTO filtroPdvDTO = new FiltroPdvDTO();
 		filtroPdvDTO.setIdCota(fixacaoReparte.getCotaFixada().getId());
-		List <PdvDTO> listPDVs = pdvRepository.obterPdvPorCotaComEndereco(filtroPdvDTO.getIdCota());
+		List <PdvDTO> listPDVs = pdvRepository.obterPDVsPorCota(filtroPdvDTO);
 		return listPDVs; 
 	}
 	
