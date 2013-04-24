@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -15,12 +16,13 @@ public class RelatorioLancamentoFaltasSobrasVO implements Serializable  {
 	private String 	descricaoProduto;
 	private String 	numeroEdicao;
 	private String 	precoCapa;
-	private String 	qtdeFaltas;
-	private String 	qtdeSobras;
+	private String 	qtdeFaltas = "";
+	private String 	qtdeSobras = "";
 	
 	public RelatorioLancamentoFaltasSobrasVO(ImpressaoDiferencaEstoqueDTO impressaoDiferencaEstoqueDTO) {
 		
 		ProdutoEdicao produtoEdicao = impressaoDiferencaEstoqueDTO.getProdutoEdicao();
+		
 		Produto produto = produtoEdicao.getProduto();
 		
 		this.codigoProduto = produto.getCodigo();
@@ -28,8 +30,17 @@ public class RelatorioLancamentoFaltasSobrasVO implements Serializable  {
 		this.numeroEdicao = produtoEdicao.getNumeroEdicao().toString();
 		this.precoCapa = CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda());
 		
-		this.qtdeFaltas = impressaoDiferencaEstoqueDTO.getQtdeFaltas().toString();
-		this.qtdeSobras = impressaoDiferencaEstoqueDTO.getQtdeSobras().toString();
+		if (impressaoDiferencaEstoqueDTO.getQtdeFaltas() != null
+				&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeFaltas()) < 0) {
+			
+			this.qtdeFaltas = impressaoDiferencaEstoqueDTO.getQtdeFaltas().toString();
+		}
+		
+		if (impressaoDiferencaEstoqueDTO.getQtdeSobras() != null
+				&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeSobras()) < 0) {
+			
+			this.qtdeSobras = impressaoDiferencaEstoqueDTO.getQtdeSobras().toString();
+		}
 	}
 
 	public String getCodigoProduto() {
