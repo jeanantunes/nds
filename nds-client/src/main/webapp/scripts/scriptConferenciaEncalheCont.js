@@ -281,19 +281,22 @@ var ConferenciaEncalheCont = $.extend(true, {
 		});
 	},
 	
-	gerarDocumentosConferenciaEncalhe : function(tipo_documento_impressao_encalhe) {
-		
-		var data = [{name: 'tipo_documento_impressao_encalhe', value: tipo_documento_impressao_encalhe}];
+	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
 		var cont = 1;
-		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
-			data,
-			function(resultado){
-		
+
+		//Imprime todos os documentos recebidos
+		for(i=0;i < tiposDocumento.length;i++){
+			
+			var data = [{name: 'tipo_documento_impressao_encalhe', value: tiposDocumento[i]}];
+			$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/imprimirDocumentosCobranca', 
+					data,
+					function(resultado){
+				
 				if(resultado != "" && resultado.resultado!=""){
 					
 					var callApplet = '';
 					callApplet+='<applet archive="scripts/applet/ImpressaoFinalizacaoEncalheApplet.jar" code="br.com.abril.nds.matricial.ImpressaoFinalizacaoEncalheApplet.class" width="10" height="10">'
-					callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
+						callApplet+='	<param name="tipo_documento_impressao_encalhe" value="'+resultado.tipo_documento_impressao_encalhe+'">';
 					callApplet+='	<param name="conteudoImpressao" value="'+resultado.resultado+'">';
 					callApplet+='</applet>';						
 					
@@ -305,7 +308,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 					cont++;
 				}
 			}
-		); 	
+			); 	
+		}
 	},
 	
 	verificarValorTotalNotaFiscal : function() {
