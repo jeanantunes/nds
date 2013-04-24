@@ -944,13 +944,14 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			hql.append(indWhere ? " and " : " where ")
 			   .append(" m.cota.id = :idCota ");
 			
-			indWhere = true;
+			indWhere = true; 
 		}
 		
 		if (dataCriacao != null){
 			
 			hql.append(indWhere ? " and " : " where ")
 			   .append(" m.dataCriacao = :data ");
+			indWhere = true;
 		}
 		
 		hql.append(indWhere ? " and " : " where ")

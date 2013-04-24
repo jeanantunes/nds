@@ -533,6 +533,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$(".gridWrapper", recebimentoFisicoController.workspace).append($("<table>").attr("class", "itemNotaGrid"));
 		
+		//ATENTO AO ALTERAR A ORDEM DAS COLUNAS DO GRID POIS HÁ COLUNAS NA POLÍTICA DE SEGURANÇA DO USUÁRIO
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
 				onSuccess: function() {bloquearItensEdicao(recebimentoFisicoController.workspace);},
 				preProcess: recebimentoFisicoController.getDataFromResultNotaInterface,
@@ -616,11 +617,25 @@ var recebimentoFisicoController = $.extend(true, {
 					
 			}],
 		
-			showTableToggleBtn : true,
+			showTableToggleBtn : false,
 			width : 980,
 			height : 180
 		});
+		
+		recebimentoFisicoController.apresentarEsconderConteudoPermissao();
+		
+		if($("#permissaoGridColDiferenca").val() != "true"){
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(8,false);
+		}
 	},
+	
+	apresentarEsconderConteudoPermissao : function() {
+		if($("#permissaoGridColRepartePrevisto").val() != "true"){
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(5,false);
+		}
+		
+	},
+	
 	
 	/**
 	 * ESTRUTURA DE COLUNAS DA GRID DE RESULTADO.
@@ -631,6 +646,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$(".gridWrapper", recebimentoFisicoController.workspace).append($("<table>").attr("class", "itemNotaGrid"));
 		
+		//ATENTO AO ALTERAR A ORDEM DAS COLUNAS DO GRID POIS HÁ COLUNAS NA POLÍTICA DE SEGURANÇA DO USUÁRIO
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
 			
 				preProcess: recebimentoFisicoController.getDataFromResultNotaManual,
@@ -687,10 +703,12 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center'
 			}],
 			
-			showTableToggleBtn : true,
+			showTableToggleBtn : false,
 			width : 960,
 			height : 180
 		});
+		
+		recebimentoFisicoController.apresentarEsconderConteudoPermissao();
 	},
 	
     /**
