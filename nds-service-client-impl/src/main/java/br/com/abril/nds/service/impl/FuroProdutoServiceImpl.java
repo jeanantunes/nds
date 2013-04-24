@@ -111,7 +111,20 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		if (!mensagensValidacao.isEmpty()){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagensValidacao));
 		}
-
+		
+		boolean ultrapassouLimiteReprogramacoes =
+			lancamento.getNumeroReprogramacoes() != null
+				&& lancamento.getNumeroReprogramacoes() >= Constantes.NUMERO_REPROGRAMACOES_LIMITE;
+		
+		boolean possuiRecebimento =
+			lancamento.getRecebimentos() != null && !lancamento.getRecebimentos().isEmpty();
+		
+		if (ultrapassouLimiteReprogramacoes && possuiRecebimento) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "Produto não pode sofrer furo! Já ultrapassou o limite de reprogramações!");
+		}
+		
 		//verificar se existe distribuição nesse dia da semana
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(novaData);
