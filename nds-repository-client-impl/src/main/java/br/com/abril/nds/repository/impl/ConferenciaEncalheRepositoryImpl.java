@@ -227,14 +227,15 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.numeroEdicao as numeroEdicao,	");
 		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.id as idProdutoEdicao,			");
 		
-		hql.append(" (conferencia.movimentoEstoqueCota.valoresAplicados.precoVenda -	");
-		hql.append(" ( conferencia.movimentoEstoqueCota.valoresAplicados.precoVenda * (conferencia.movimentoEstoqueCota.valoresAplicados.valorDesconto) / 100 )) as precoVenda,	");
+		hql.append(" coalesce(conferencia.movimentoEstoqueCota.valoresAplicados.precoComDesconto,  conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda, 0) as precoVenda,	");
 		
 		hql.append(" conferencia.movimentoEstoqueCota.qtde as encalhe, ");
 		
-		hql.append(" ((conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda -  			");
-		hql.append(" ( conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda * (conferencia.movimentoEstoqueCota.valoresAplicados.valorDesconto) / 100 ))  ");
-		hql.append(" * conferencia.movimentoEstoqueCota.qtde) as valorTotal, ");
+		hql.append(" ( coalesce(conferencia.movimentoEstoqueCota.valoresAplicados.precoComDesconto,  ");
+		
+		hql.append(" conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda, 0) ");
+		hql.append("  * conferencia.movimentoEstoqueCota.qtde ) as valorTotal,  ");
+		
 		hql.append(" conferencia.controleConferenciaEncalheCota.dataOperacao as dataOperacao,");
 		hql.append(" conferencia.chamadaEncalheCota.chamadaEncalhe.dataRecolhimento as dataRecolhimento");
 		
