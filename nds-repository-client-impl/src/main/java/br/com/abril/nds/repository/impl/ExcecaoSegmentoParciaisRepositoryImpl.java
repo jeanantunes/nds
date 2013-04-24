@@ -1,4 +1,4 @@
-ackage br.com.abril.nds.repository.impl;
+package br.com.abril.nds.repository.impl;
 
 import java.util.HashMap;
 import java.util.List;
