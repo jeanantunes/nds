@@ -1735,10 +1735,9 @@ public class ConferenciaEncalheController extends BaseController {
 					BigDecimal precoComDesconto = conferenciaEncalheDTO.getPrecoComDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoComDesconto();
 					
 					
-					
 					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
 					
-					valorTotal = precoCapa.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada()));
+					valorTotal = valorTotal.add( conferenciaEncalheDTO.getValorTotal() != null ? conferenciaEncalheDTO.getValorTotal() :  BigDecimal.ZERO );
 					
 					valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
 					
