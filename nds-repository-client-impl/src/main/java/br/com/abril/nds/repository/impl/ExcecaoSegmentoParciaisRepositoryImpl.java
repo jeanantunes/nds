@@ -18,6 +18,7 @@ import br.com.abril.nds.model.distribuicao.ExcecaoProdutoCota;
 import br.com.abril.nds.model.distribuicao.TipoExcecao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ExcecaoSegmentoParciaisRepository;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
@@ -93,32 +94,9 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 	@Override
 	public List<ProdutoNaoRecebidoDTO> obterProdutosNaoRecebidosPelaCota(FiltroExcecaoSegmentoParciaisDTO filtro) {
 
-		boolean filtroHasNumeroCota = false;
-		boolean filtroHasNomePessoa = false;
-		boolean filtroHasNomeProduto = false;
-		boolean filtroHasCodigoProduto = false;
-		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 
 		StringBuilder hql = new StringBuilder();
-		
-		if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
-			filtroHasNumeroCota = true;
-		}
-		
-		if (filtro.getCotaDto().getNomePessoa() != null && !filtro.getCotaDto().getNomePessoa().isEmpty()) {
-			filtroHasNomePessoa = true;
-		}
-		
-		if (filtro.getProdutoDto() != null) {
-			if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
-				filtroHasNomeProduto = true;
-			}
-			
-			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
-				filtroHasCodigoProduto = true;
-			}
-		}
 		
 		hql.append(" SELECT ");
 		hql.append(" DISTINCT ");
@@ -144,39 +122,28 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		hql.append(" INNER JOIN produto.fornecedores as fornecedores ");
 		hql.append(" INNER JOIN fornecedores.juridica as juridica ");
 		
-		// O filtro sempre terá OU nomeCota OU codigoCota
-		hql.append(" WHERE ");
+		hql.append(" WHERE cota.numeroCota = :numeroCota");
+		
+		parameters.put("numeroCota", filtro.getCotaDto().getNumeroCota());
 		
 		if (!filtro.isExcecaoSegmento()) {
-			hql.append(" cota.parametroDistribuicao.recebeRecolheParciais = :recolheParciais and ");
+			hql.append(" and cota.parametroDistribuicao.recebeRecolheParciais = :recolheParciais");
 			parameters.put("recolheParciais", false);
 		}
 		
-		if (filtroHasNomeProduto) {
-			if (filtro.isAutoComplete()) {
-				hql.append(" produto.nome like :nomeProduto and ");
-				parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto() + "%");
-			}else {
-				hql.append(" produto.nome = :nomeProduto and ");
-				parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
-			}			
-		}else if(filtroHasCodigoProduto) {
-			hql.append(" produto.codigo = :codigoProduto and ");
+		if (filtro.getProdutoDto() != null && !StringUtil.isEmpty(filtro.getProdutoDto().getCodigoProduto())) {
+			
+			hql.append(" AND produto.codigo = :codigoProduto");
 			parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 		}
 		
-		hql.append(" produto.id not in ( SELECT excecao.produto.id FROM ExcecaoProdutoCota as excecao ");
+		hql.append(" AND produto.id not in ( SELECT excecao.produto.id FROM ExcecaoProdutoCota as excecao ");
 		hql.append(" INNER JOIN excecao.cota as cota ");
 		hql.append(" INNER JOIN cota.pessoa as pessoa ");
 		hql.append(" WHERE ");
 		
-		if (filtroHasNumeroCota) {
-			hql.append(" cota.numeroCota = :numeroCota )");
-			parameters.put("numeroCota", filtro.getCotaDto().getNumeroCota());
-		}else if (filtroHasNomePessoa) {
-			hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') = :nomePessoa )");
-			parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
-		}
+		hql.append(" cota.numeroCota = :numeroCota )");
+		parameters.put("numeroCota", filtro.getCotaDto().getNumeroCota());
 		
 		hql.append(" order by nomeProduto, codigoProduto");
 		

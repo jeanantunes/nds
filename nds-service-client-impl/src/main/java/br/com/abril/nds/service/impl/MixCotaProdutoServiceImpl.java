@@ -72,8 +72,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	private RepartePDVRepository repartePDVRepository;
 	
 
-	@Transactional
 	@Override
+	@Transactional(readOnly = true)
 	public List<MixCotaDTO> pesquisarPorCota(FiltroConsultaMixPorCotaDTO
 			filtroConsultaMixCotaDTO) {
 		return mixCotaProdutoRepository.pesquisarPorCota(filtroConsultaMixCotaDTO);
@@ -87,26 +87,26 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		mixCotaProdutoRepository.remover(mixCotaProduto);
 		
 	}
-
-	@Transactional
+	
 	@Override
+	@Transactional(readOnly = true)
 	public List<MixProdutoDTO> pesquisarPorProduto(
 			FiltroConsultaMixPorProdutoDTO filtroConsultaMixProdutoDTO) {
 		return mixCotaProdutoRepository.pesquisarPorProduto(filtroConsultaMixProdutoDTO);
 	}
 
-	@Transactional
-	@Override
-	public List<RepartePDVDTO> obterRepartePdv(
-			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
-		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(filtroConsultaMixCotaDTO.getId());
-		return null;
-//				repartePDVRepository.obterRepartePdvPorCota(mixCotaProduto.getCota().getId());
-	}
+//	@Override
+//	@Transactional(readOnly = true)
+//	public List<RepartePDVDTO> obterRepartePdv(
+//			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
+//		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(filtroConsultaMixCotaDTO.getId());
+//		return null;
+////				repartePDVRepository.obterRepartePdvPorCota(mixCotaProduto.getCota().getId());
+//	}
 	
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public MixCotaProdutoDTO obterPorId(Long id){
 		return getMixCotaProdutoDTO(mixCotaProdutoRepository.buscarPorId(id));
 	}
@@ -142,7 +142,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<PdvDTO> obterListaPdvPorMix(Long id) {
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(id);
 		FiltroPdvDTO filtroPdvDTO = new FiltroPdvDTO();
@@ -185,7 +185,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 					mixCotaProduto.setCota(cota);
 					mixCotaProduto.setDataHora(new Date());
 					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
-					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMinimo());
+					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
 					mixCotaProduto.setUsuario(usuario);
 					if(mixCotaProduto.getProduto()!=null || mixCotaProduto.getProduto().getId() !=null){
 						if(!mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())){
