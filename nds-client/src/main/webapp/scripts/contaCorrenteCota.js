@@ -435,43 +435,43 @@ var contaCorrenteCotaController = $.extend(true, {
 				display : 'Sequência',
 				name : 'sequencia',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Código',
 				name : 'codigoProduto',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
 				width : 130,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoCapa',
 				width : 95,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Preço c/ Desc. R$',
 				name : 'precoComDesconto',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Encalhe',
 				name : 'encalhe',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right',
 			}, {
 				display : 'Fornecedor',
@@ -483,7 +483,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				display : 'Total R$',
 				name : 'total',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}],
 			sortname : "sequencia",
@@ -514,73 +514,73 @@ var contaCorrenteCotaController = $.extend(true, {
 			display : 'Sequência',
 			name : 'sequencia',
 			width : 50,
-			sortable : true,
+			sortable : false,
 			align : 'left'
 		}, {
 			display : 'Código',
 			name : 'codigoProduto',
 			width : 40,
-			sortable : true,
+			sortable : false,
 			align : 'left'
 		}, {
 			display : 'Produto',
 			name : 'nomeProduto',
 			width : 90,
-			sortable : true,
+			sortable : false,
 			align : 'left'
 		}, {
 			display : 'Edição',
 			name : 'numeroEdicao',
 			width : 40,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}, {
 			display : 'Preço Capa R$',
 			name : 'precoCapa',
 			width : 80,
-			sortable : true,
+			sortable : false,
 			align : 'right',
 		}, {
 			display : 'Preço c/ Desc. R$',
 			name : 'precoComDesconto',
 			width : 60,
-			sortable : true,
+			sortable : false,
 			align : 'right',
 		}, {
 			display : 'Reparte Sugerido',
 			name : 'reparteSugerido',
 			width : 82,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}, {
 			display : 'Reparte Final',
 			name : 'reparteFinal',
 			width : 70,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}, {
 			display : 'Diferença',
 			name : 'diferenca',
 			width : 45,
-			sortable : true,
+			sortable : false,
 			align : 'center'
 		}, {
 			display : 'Motivo',
 			name : 'motivo',
 			width : 80,
-			sortable : true,
+			sortable : false,
 			align : 'left'
 		}, {
 			display : 'Fornecedor',
 			name : 'nomeFornecedor',
 			width : 60,
-			sortable : true,
+			sortable : false,
 			align : 'left'
 		}, {
 			display : 'Total R$',
 			name : 'total',
 			width : 50,
-			sortable : true,
+			sortable : false,
 			align : 'right'
 		}],
 		sortname : "sequencia",
