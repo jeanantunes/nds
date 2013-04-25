@@ -60,6 +60,9 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/distribuicao/mixCotaProduto")
 public class MixCotaProdutoController extends BaseController {
 
+	private static final String OPERACAO_REALIZADA_COM_SUCESSO = "Operação realizada com sucesso!";
+	private static final ValidacaoVO SUCCESS_MSG = new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO);
+	private static final int REPARTE_MAXIMO = 99999;
 	private static final String FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE = "filtroMixPorProduto";
 	private static final String FILTRO_MIX_COTA_SESSION_ATTRIBUTE = "filtroMixPorCota";
 	private static final String COTA_IMPORT_INCONSISTENTE="cotaImportInconsistente";
@@ -126,8 +129,7 @@ public class MixCotaProdutoController extends BaseController {
 
 		tratarFiltroPorProduto(filtro);
 
-		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService
-				.pesquisarPorProduto(filtro);
+		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorProduto(filtro);
 
 		if (resultadoPesquisa.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
@@ -156,8 +158,7 @@ public class MixCotaProdutoController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		tratarFiltroPorCota(filtro);
 
-		List<MixCotaDTO> resultadoPesquisa = mixCotaProdutoService
-				.pesquisarPorCota(filtro);
+		List<MixCotaDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorCota(filtro);
 
 		if (resultadoPesquisa.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
@@ -174,8 +175,7 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/removerMixCotaProduto")
 	public void removerMixCotaProduto(FiltroConsultaMixPorCotaDTO filtro) {
 		mixCotaProdutoService.removerMixCotaProduto(filtro);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 
 	private TableModel<CellModelKeyValue<MixCotaDTO>> montarTableModelCota(
@@ -276,33 +276,29 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/salvarGridPdvReparte")
 	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, Long idMix){
 		repartePdvService.salvarRepartesPDVMix(listPDV,codProduto, idMix);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,"Operação realizada com sucesso!");
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/excluirTodos")
-	public void excluirTodos(){
+	public void excluirTodos() {
 		mixCotaProdutoService.excluirTodos();
-		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	
 	@Post
 	@Path("/adicionarMixProduto")
-	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto,String produtoId ){
-		
+	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto,String produtoId ) {
 		mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto,produtoId);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/adicionarMixCota")
 	public void adicionarMixCota(List<MixCotaProdutoDTO>listaNovosMixCota, Integer cotaId){
 		mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,
-				"Operação realizada com sucesso!");
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 
 	
@@ -377,19 +373,13 @@ public class MixCotaProdutoController extends BaseController {
 		session.setAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 
-//	private boolean isRangeRepartesValido(FixacaoReparteDTO fixacaoReparteDTO) {
-//		boolean rangeEdicoesOK = (fixacaoReparteDTO.getEdicaoFinal() >= fixacaoReparteDTO
-//				.getEdicaoInicial());
-//		return rangeEdicoesOK;
-//	}
-	
 	@Post
 	@Path("/uploadArquivoLote")
 	public void uploadExcel(UploadedFile excelFile) throws FileNotFoundException, IOException{
 
 		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, excelFile);
 		
-		List<MixCotaDTO> mixCotaDTOInconsistente = importarMixCotaDTO(listMixExcel);
+		List<MixCotaDTO> mixCotaDTOInconsistente = validaMixEmLote(listMixExcel);
 		
 		//salvar lista listMixExcel 
 		List<MixCotaProdutoDTO> mixCotaProdutoDTOList = new ArrayList<MixCotaProdutoDTO>();
@@ -401,29 +391,29 @@ public class MixCotaProdutoController extends BaseController {
 			mix.setReparteMaximo(mixCotaDTO.getReparteMaximo().longValue());
 			mixCotaProdutoDTOList.add(mix);
 		}
-		this.mixCotaProdutoService.adicionarListaMixPorCota(mixCotaProdutoDTOList);
+		this.mixCotaProdutoService.adicionarMixEmLote(mixCotaProdutoDTOList);
 		
-		//salvar em sessao mixxCotaDTOIconsistente para posteriormente mostrar na tela
+		//salvar em sessao mixCotaDTOIconsistente para posteriormente mostrar na tela
 		session.setAttribute(COTA_IMPORT_INCONSISTENTE,mixCotaDTOInconsistente );
 		
-		/*this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas inseridas com sucesso!"),
-				"result").recursive().serialize();*/
 		this.result.use(Results.json()).from(mixCotaDTOInconsistente, "mixCotaDTOInconsistente").recursive().serialize();
 	}
 
-	private List<MixCotaDTO> importarMixCotaDTO(List<MixCotaDTO> listMixExcel) {
+	private List<MixCotaDTO> validaMixEmLote(List<MixCotaDTO> listMixExcel) {
 		List<MixCotaDTO> listCotaInconsistente = new ArrayList<MixCotaDTO>();
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
-			if(StringUtils.isEmpty(mixCotaDTO.getCodigoProduto())
-					|| (mixCotaDTO.getNumeroCota()==null||mixCotaDTO.getNumeroCota().equals(0))
-					|| (mixCotaDTO.getReparteMinimo()==null||mixCotaDTO.getReparteMinimo().equals(BigInteger.ZERO))
-					|| (mixCotaDTO.getReparteMaximo()==null||mixCotaDTO.getReparteMaximo().equals(BigInteger.ZERO))){
+			if ( StringUtils.isEmpty(mixCotaDTO.getCodigoProduto())
+					|| ( mixCotaDTO.getNumeroCota() == null    || mixCotaDTO.getNumeroCota().equals(0) )
+					|| ( mixCotaDTO.getReparteMinimo() == null || mixCotaDTO.getReparteMinimo().compareTo(BigInteger.ZERO) < 0 )
+					|| ( mixCotaDTO.getReparteMaximo() == null || mixCotaDTO.getReparteMaximo().compareTo(BigInteger.ZERO) <= 0
+						|| mixCotaDTO.getReparteMaximo().compareTo(BigInteger.valueOf(REPARTE_MAXIMO)) > 0 ) 
+					) {
 				listCotaInconsistente.add(mixCotaDTO);
 			}
 		}
 		listMixExcel.removeAll(listCotaInconsistente);
 		
-//		validar se o reparteMaximo é maior que o reparteMinimo
+		//validar se o reparteMaximo é maior que o reparteMinimo
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			if(mixCotaDTO.getReparteMinimo().compareTo(mixCotaDTO.getReparteMaximo())==1){
 				listCotaInconsistente.add(mixCotaDTO);
@@ -431,7 +421,7 @@ public class MixCotaProdutoController extends BaseController {
 		}
 		listMixExcel.removeAll(listCotaInconsistente);
 
-//		validar se a cota existe		
+		//validar se a cota existe		
 		Integer[] cotaIdArray = new Integer[listMixExcel.size()];
 		for (int i = 0; i < listMixExcel.size(); i++) {
 			cotaIdArray[i] = listMixExcel.get(i).getNumeroCota();
@@ -445,10 +435,7 @@ public class MixCotaProdutoController extends BaseController {
 		}
 		listMixExcel.removeAll(listCotaInconsistente);
 
-
-		/*
-		validar se o produto é um produtoValido
-		*/
+		// validar se o produto é um produtoValido
 		String[] codigoProdutoArray = new String[listMixExcel.size()];
 		for (int i = 0; i < listMixExcel.size(); i++) {
 			codigoProdutoArray[i]=listMixExcel.get(i).getCodigoProduto();

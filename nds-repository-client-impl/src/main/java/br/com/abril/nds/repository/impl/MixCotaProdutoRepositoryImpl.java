@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -50,14 +51,11 @@ public class MixCotaProdutoRepositoryImpl extends
 		super(MixCotaProduto.class);
 	}
 
-		
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MixCotaDTO> pesquisarPorCota(
 			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
 		StringBuilder sql = new StringBuilder("");
-		
 		
 		sql.append(" select ") 
 		.append(" mix_cota_produto.ID id,  ")
@@ -95,7 +93,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		sql.append(" and lancamento.status='FECHADO'")
 		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" group by produto.codigo ")
-		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
+		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
@@ -170,7 +168,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		sql.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" group by cota.numero_cota ")
-		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
+		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC");
 	
 		
 		Query query = getSession().createSQLQuery(sql.toString());
@@ -200,7 +198,6 @@ public class MixCotaProdutoRepositoryImpl extends
 		query.setParameter("idProduto", idProduto);
 		query.setParameter("idCota", idCota);
 		return query.list().size() >0;
-		
 	}
 
 
@@ -266,8 +263,6 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 	}
 
-
-
 	@Override
 	public void gerarCopiaMixProduto(List<MixProdutoDTO> mixProdutoOrigem,Usuario usuarioLogado) {
 		
@@ -302,32 +297,14 @@ public class MixCotaProdutoRepositoryImpl extends
 			}
 			adicionar(mcp);
 		}
-		
-		
-		
-		/*
-
-		StringBuilder hql = new StringBuilder("");
-
-		hql.append(" INSERT INTO mix_cota_produto ")
-		.append(" (DATAHORA, REPARTE_MAX, REPARTE_MED, REPARTE_MIN, ULTIMO_REPARTE, VENDA_MED, ID_COTA, ID_PRODUTO, ID_USUARIO) VALUES "); 
-		
-		List<String> insertsList = new ArrayList<String>();
-		
-		for (MixProdutoDTO mixProdutoDTO : mixProdutoOrigem) {
-//			insertsList.add(" (now(), REPARTE_MAX, REPARTE_MED, REPARTE_MIN, ULTIMO_REPARTE, VENDA_MED, ID_COTA, ID_PRODUTO, :idUsuario) ");
-			insertsList.add(" (now(), "+mixProdutoDTO.getReparteMaximo()+", "+mixProdutoDTO.getReparteMedio()+", "+mixProdutoDTO.getReparteMinimo()+"," +
-					mixProdutoDTO.getUltimoReparte()+", "+mixProdutoDTO.getVendaMedia()+", "+mixProdutoDTO.getIdCota()+", "+mixProdutoDTO.getIdProduto()+", "+usuarioLogado.getId()+") ");
-		}
-				
-		hql.append(StringUtils.join(insertsList, ","));
-		Query query = getSession().createSQLQuery(hql.toString());
-		query.executeUpdate();
-		
-	*/}
-
-	
-	public static void main(String[] args) {
-		System.out.println("54654564654".matches("[0-9]+"));
 	}
+		
+	@Override
+	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId) {
+		return (MixCotaProduto) getSession().createCriteria(MixCotaProduto.class)
+		.add(Restrictions.eq("cota.id", cotaId))
+		.add(Restrictions.eq("produto.id", produtoId))
+		.uniqueResult();
+	}
+
 }

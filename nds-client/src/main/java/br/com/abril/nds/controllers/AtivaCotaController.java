@@ -44,8 +44,11 @@ public class AtivaCotaController {
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("numeroCota", numeroCota);
 		paramMap.put("situacaoCadastro", situacaoCadastro);
-		return jdbcTemplate.update(UPDATE_COTA, paramMap) + 
-				" row(s) affected.<br>Cota[" + numeroCota + "] atualizada com exito.";
+		
+		if (jdbcTemplate.update(UPDATE_COTA, paramMap) > 0) {
+			return "Cota[" + numeroCota + "] atualizada com exito. Situacao de Cadastro: " + situacaoCadastro;
+		}
+		return "Cota[" + numeroCota + "] não atualizada.";
 	}
 	
 }
