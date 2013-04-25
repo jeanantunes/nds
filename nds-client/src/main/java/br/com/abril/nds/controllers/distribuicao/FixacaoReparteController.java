@@ -517,7 +517,7 @@ public class FixacaoReparteController extends BaseController {
 		}
 		
 		if (!cotaIds.isEmpty()) {
-			cotasExistentes = cotaService.verificarNumeroCotaExiste(cotaIds.toArray(new Integer[0]));
+			cotasExistentes = cotaService.numeroCotaExiste(TipoDistribuicaoCota.CONVENCIONAL, cotaIds.toArray(new Integer[0]));
 		}
 		if (!codigoProdutos.isEmpty()) {
 			produtosExistentes = produtoService.verificarProdutoExiste(codigoProdutos.toArray(new String[0]));
